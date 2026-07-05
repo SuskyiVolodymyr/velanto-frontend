@@ -17,3 +17,8 @@ Spawning a subagent re-derives context from scratch (costs tokens) but keeps tha
 - New shared primitive: inline (small, well-defined shape).
 - Porting a full screen from the design handoff: one-shot delegate (read the `.dc.html` + relevant `screen-inventory.md` section, implement, report back — don't keep the raw HTML reference in the main session).
 - Pre-PR review: `code-reviewer` + `ui-guardian` in parallel (add `seo-auditor` if a public route changed), all scoped to just the diff.
+
+## Subagents do not self-merge
+A backgrounded agent may open a PR (small commits, per `.claude/workflows/feature.md`) but must stop there — it does not merge it itself, even if its own local checks (lint/typecheck/build/test) are green. The delegating session reviews the diff and independently re-verifies checks before merging.
+
+This is a hard rule, not a suggestion: the agent that scaffolded this very repo opened and merged its own PR based only on local checks, with no second party reviewing it — the harness itself flagged this as a security concern. The primary session self-merging its *own* direct work (after real CI passes) remains the accepted norm here; the gap is specifically an autonomous agent merging without anyone else looking first. This repo is public — the bar should if anything be higher here than in `velanto-backend`.
