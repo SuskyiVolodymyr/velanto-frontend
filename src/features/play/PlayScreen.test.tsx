@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { PlayScreen } from "./PlayScreen";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { authClient } from "@/src/shared/lib/auth-client";
+import { playsClient } from "@/src/shared/lib/plays-client";
 import { ApiError } from "@/src/shared/lib/api-client";
 import type { Pack } from "@/src/shared/types/pack";
 
@@ -19,6 +20,12 @@ vi.mock("@/src/shared/lib/auth-client", () => ({
     login: vi.fn(),
     logout: vi.fn(),
     refresh: vi.fn(),
+  },
+}));
+
+vi.mock("@/src/shared/lib/plays-client", () => ({
+  playsClient: {
+    record: vi.fn().mockResolvedValue({ id: "play-1" }),
   },
 }));
 
@@ -70,6 +77,8 @@ function renderScreen(pack: Pack) {
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "t", user: MOCK_USER });
+  vi.mocked(playsClient.record).mockResolvedValue({ id: "play-1" });
+  sessionStorage.clear();
 });
 
 describe("PlayScreen", () => {
@@ -131,5 +140,34 @@ describe("PlayScreen", () => {
     expect(
       await screen.findByText("Pick the one you'd sacrifice. Check it below, then confirm."),
     ).toBeInTheDocument();
+  });
+
+  it("records the finished play and stores the picks for the result page", async () => {
+    const user = userEvent.setup();
+    renderScreen(SAVE_ONE_PACK);
+    await screen.findByText("Guren no Yumiya");
+
+    await user.click(screen.getByRole("button", { name: "Show all" }));
+    await user.click(screen.getByText("Redo"));
+    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await screen.findByText("Silhouette");
+    await user.click(screen.getByText("Silhouette"));
+    await user.click(screen.getByRole("button", { name: "Next round →" }));
+
+    await screen.findByText("All rounds done");
+    expect(playsClient.record).toHaveBeenCalledWith("pack-a", {
+      picks: [
+        { groupId: "g1", itemId: "2" },
+        { groupId: "g2", itemId: "3" },
+      ],
+    });
+    expect(JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!)).toEqual([
+      { groupId: "g1", itemId: "2" },
+      { groupId: "g2", itemId: "3" },
+    ]);
+    expect(screen.getByRole("link", { name: "See your result" })).toHaveAttribute(
+      "href",
+      "/packs/pack-a/result",
+    );
   });
 });
