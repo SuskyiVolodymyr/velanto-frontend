@@ -1,18 +1,11 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
 import { Card } from "@/src/shared/components/Card";
-import type { Pack } from "@/src/shared/types/pack";
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
-
-async function getPack(id: string): Promise<Pack | null> {
-  const res = await fetch(`${API_BASE_URL}/packs/${id}`, { cache: "no-store" });
-  if (res.status === 404) return null;
-  if (!res.ok) throw new Error(`Failed to load pack: ${res.status}`);
-  return (await res.json()) as Pack;
-}
+import { buttonClassName } from "@/src/shared/components/Button";
+import { getPackServer } from "@/src/shared/lib/get-pack-server";
 
 export async function generateMetadata({
   params,
@@ -20,18 +13,18 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
-  const pack = await getPack(id);
+  const pack = await getPackServer(id);
   return { title: pack ? pack.title : "Pack not found" };
 }
 
 /**
  * Minimal read-only view — just enough to confirm the create flow worked
- * end to end. The real Pack screen (cover art, stats, play CTA, comments)
- * is separate future work per screen-inventory.md item 3.
+ * end to end. The real Pack screen (cover art, stats, comments) is separate
+ * future work per screen-inventory.md item 3.
  */
 export default async function PackPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const pack = await getPack(id);
+  const pack = await getPackServer(id);
   if (!pack) notFound();
 
   return (
@@ -49,6 +42,9 @@ export default async function PackPage({ params }: { params: Promise<{ id: strin
           ))}
         </div>
       )}
+      <Link href={`/packs/${pack.id}/play`} className={buttonClassName("primary", "mb-6 w-fit")}>
+        Play
+      </Link>
       <div className="flex flex-col gap-4">
         {pack.groups.map((group) => (
           <Card key={group.id} className="hover:translate-y-0 hover:shadow-none">
