@@ -46,11 +46,11 @@ export default async function PackPage({ params }: { params: Promise<{ id: strin
         Play
       </Link>
       <div className="flex flex-col gap-4">
-        {pack.groups.map((group) => (
-          <Card key={group.id} className="hover:translate-y-0 hover:shadow-none">
-            <Text className="mb-2 font-semibold">{group.name}</Text>
+        {(pack.format === "nxn" ? pack.categories : pack.groups)?.map((section) => (
+          <Card key={section.id} className="hover:translate-y-0 hover:shadow-none">
+            <Text className="mb-2 font-semibold">{section.name}</Text>
             <ul className="flex flex-col gap-1">
-              {group.items.map((item) => (
+              {section.items.map((item) => (
                 <li key={item.id}>
                   <Text variant="secondary" className="text-sm">
                     {item.title}

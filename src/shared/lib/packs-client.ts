@@ -1,5 +1,5 @@
 import { apiClient } from "@/src/shared/lib/api-client";
-import type { Pack, PackFormat, PackTag, Group } from "@/src/shared/types/pack";
+import type { Pack, PackFormat, PackTag, Group, Category } from "@/src/shared/types/pack";
 
 export interface CreatePackInput {
   title: string;
@@ -7,7 +7,10 @@ export interface CreatePackInput {
   coverTone: string;
   format: PackFormat;
   tags: PackTag[];
-  groups: Group[];
+  groups?: Group[];
+  categories?: Category[];
+  versusRounds?: number;
+  versusN?: number;
 }
 
 export interface ListPacksFilters {

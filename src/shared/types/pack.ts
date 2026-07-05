@@ -1,9 +1,8 @@
 /**
  * Local, independent type definitions (this repo does not import types from
- * velanto-backend — see coding-conventions.md). Scoped to Save One/Sacrifice
- * One only, matching the backend's current vertical slice.
+ * velanto-backend — see coding-conventions.md).
  */
-export type PackFormat = "save_one" | "sacrifice_one";
+export type PackFormat = "save_one" | "sacrifice_one" | "nxn";
 
 // 'image' is intentionally omitted — no storage backend yet (backend issue #3).
 export type ItemType = "text" | "youtube";
@@ -22,6 +21,14 @@ export interface Group {
   name: string;
   selectionMode: SelectionMode;
   sampleSize?: number;
+  items: Item[];
+}
+
+// nxn categories are flat item pools sampled at play time (no selectionMode/
+// sampleSize — that's resolved per-round from the pack-level versusN).
+export interface Category {
+  id: string;
+  name: string;
   items: Item[];
 }
 
@@ -63,7 +70,10 @@ export interface Pack {
   coverTone: string;
   format: PackFormat;
   tags: PackTag[];
-  groups: Group[];
+  groups?: Group[];
+  categories?: Category[];
+  versusRounds?: number;
+  versusN?: number;
   authorId: string;
   createdAt: string;
 }
