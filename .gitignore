@@ -44,3 +44,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Claude Code project config — this repo is public/open-source; internal
+# agent/workflow/security docs stay local-only, never pushed. (Not applied
+# to velanto-backend, which is private.)
+.claude/
