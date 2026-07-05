@@ -21,6 +21,11 @@ const variantClasses: Record<ButtonVariant, string> = {
   ghost: "bg-transparent text-foreground-secondary hover:text-foreground",
 };
 
+/** For non-`<button>` elements (e.g. a `Link`) that need to look like a Button. */
+export function buttonClassName(variant: ButtonVariant = "primary", className?: string) {
+  return cn(baseClasses, variantClasses[variant], className);
+}
+
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ variant = "primary", className, type = "button", ...props }, ref) => {
     return (
