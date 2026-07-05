@@ -1,12 +1,15 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
+import { Button, buttonClassName } from "@/src/shared/components/Button";
 import { Badge } from "@/src/shared/components/Badge";
 import { cn } from "@/src/shared/lib/cn";
+import { playsClient } from "@/src/shared/lib/plays-client";
+import { writeLastPlayPicks } from "@/src/shared/lib/last-play-storage";
 import type { Pack } from "@/src/shared/types/pack";
 import { resolveRoundCandidates } from "@/src/features/play/round-sampling";
 
@@ -27,7 +30,8 @@ const FORMAT_COPY: Record<
 };
 
 interface Pick {
-  roundName: string;
+  groupId: string;
+  itemId: string;
   itemTitle: string;
 }
 
@@ -57,11 +61,26 @@ export function PlayScreen({ pack }: { pack: Pack }) {
     if (!canConfirm || !group) return;
     const item = candidates.find((candidate) => candidate.id === selectedId);
     if (!item) return;
-    setPicks((prev) => [...prev, { roundName: group.name, itemTitle: item.title }]);
+    setPicks((prev) => [...prev, { groupId: group.id, itemId: item.id, itemTitle: item.title }]);
     setRoundIndex((prev) => prev + 1);
     setSelectedId(null);
     setRevealed(1);
   }
+
+  // Fires once when the last round is confirmed: records the play, then
+  // stashes the picks for the result page — only once we know the server
+  // actually counted them, so "your pick" never shows a percentage that
+  // didn't include your own vote (e.g. after a failed request).
+  const recordedRef = useRef(false);
+  useEffect(() => {
+    if (!isFinished || recordedRef.current) return;
+    recordedRef.current = true;
+    const recordedPicks = picks.map(({ groupId, itemId }) => ({ groupId, itemId }));
+    playsClient
+      .record(pack.id, { picks: recordedPicks })
+      .then(() => writeLastPlayPicks(pack.id, recordedPicks))
+      .catch(() => undefined);
+  }, [isFinished, pack.id, picks]);
 
   if (status === "loading") return null;
 
@@ -160,10 +179,13 @@ export function PlayScreen({ pack }: { pack: Pack }) {
           <Text as="h1" variant="title" className="mb-2 text-3xl">
             All rounds done
           </Text>
-          <Text variant="secondary">
+          <Text variant="secondary" className="mb-4">
             You {copy.finishedVerb} {picks.length} pick{picks.length === 1 ? "" : "s"}, one per
             round.
           </Text>
+          <Link href={`/packs/${pack.id}/result`} className={buttonClassName("primary", "w-fit")}>
+            See your result
+          </Link>
         </section>
       )}
 
@@ -174,7 +196,7 @@ export function PlayScreen({ pack }: { pack: Pack }) {
           </Text>
           <div className="flex flex-wrap gap-2">
             {picks.map((pick, index) => (
-              <Badge key={`${pick.roundName}-${index}`}>{pick.itemTitle}</Badge>
+              <Badge key={`${pick.groupId}-${index}`}>{pick.itemTitle}</Badge>
             ))}
           </div>
         </section>
