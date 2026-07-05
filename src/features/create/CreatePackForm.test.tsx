@@ -177,4 +177,109 @@ describe("CreatePackForm", () => {
     expect(await screen.findByText("Not allowed")).toBeInTheDocument();
     expect(push).not.toHaveBeenCalled();
   });
+
+  describe("nxn format", () => {
+    async function switchToNxn(user: ReturnType<typeof userEvent.setup>) {
+      await user.click(await screen.findByRole("button", { name: /^NxN/ }));
+    }
+
+    it("switches from Groups to Categories when NxN is selected", async () => {
+      const user = userEvent.setup();
+      renderForm();
+      await switchToNxn(user);
+
+      expect(screen.getByLabelText("Category 1 name")).toBeInTheDocument();
+      expect(screen.getByLabelText("Category 2 name")).toBeInTheDocument();
+      expect(screen.queryByLabelText("Group 1 name")).not.toBeInTheDocument();
+    });
+
+    it("rejects an nxn submission with a category that has no items", async () => {
+      const user = userEvent.setup();
+      renderForm();
+      await user.type(await screen.findByLabelText("Pack title"), "Boys vs Girls");
+      await user.type(screen.getByLabelText("Pack description"), "Pick a side.");
+      await switchToNxn(user);
+      await user.type(screen.getByLabelText("Category 1 name"), "Boys");
+      await user.type(screen.getByLabelText("Category 2 name"), "Girls");
+
+      await user.click(screen.getByRole("button", { name: "Publish" }));
+
+      expect(screen.getByText('Category "Boys" needs at least one item.')).toBeInTheDocument();
+      expect(packsClient.create).not.toHaveBeenCalled();
+    });
+
+    it("rejects an nxn submission when versusN exceeds a category's item count", async () => {
+      const user = userEvent.setup();
+      renderForm();
+      await user.type(await screen.findByLabelText("Pack title"), "Boys vs Girls");
+      await user.type(screen.getByLabelText("Pack description"), "Pick a side.");
+      await switchToNxn(user);
+      await user.type(screen.getByLabelText("Category 1 name"), "Boys");
+      await user.type(screen.getByLabelText("Category 1 new item"), "Naruto");
+      await user.click(screen.getAllByRole("button", { name: "Add" })[0]);
+      await user.type(screen.getByLabelText("Category 2 name"), "Girls");
+      await user.type(screen.getByLabelText("Category 2 new item"), "Sakura");
+      await user.click(screen.getAllByRole("button", { name: "Add" })[1]);
+      await user.type(screen.getByLabelText("Rounds"), "8");
+      await user.type(screen.getByLabelText("Items per round"), "5");
+
+      await user.click(screen.getByRole("button", { name: "Publish" }));
+
+      expect(
+        screen.getByText('Category "Boys" needs at least 5 item(s).'),
+      ).toBeInTheDocument();
+      expect(packsClient.create).not.toHaveBeenCalled();
+    });
+
+    it("submits a valid nxn pack with categories/versusRounds/versusN and no groups", async () => {
+      const user = userEvent.setup();
+      vi.mocked(packsClient.create).mockResolvedValue({
+        id: "pack-nxn",
+        title: "Boys vs Girls",
+        description: "Pick a side.",
+        coverTone: "#2b2a3a",
+        format: "nxn",
+        tags: [],
+        categories: [],
+        versusRounds: 8,
+        versusN: 1,
+        authorId: "u1",
+        createdAt: "2026-01-01T00:00:00.000Z",
+      });
+      renderForm();
+      await user.type(await screen.findByLabelText("Pack title"), "Boys vs Girls");
+      await user.type(screen.getByLabelText("Pack description"), "Pick a side.");
+      await switchToNxn(user);
+      await user.type(screen.getByLabelText("Category 1 name"), "Boys");
+      await user.type(screen.getByLabelText("Category 1 new item"), "Naruto");
+      await user.click(screen.getAllByRole("button", { name: "Add" })[0]);
+      await user.type(screen.getByLabelText("Category 2 name"), "Girls");
+      await user.type(screen.getByLabelText("Category 2 new item"), "Sakura");
+      await user.click(screen.getAllByRole("button", { name: "Add" })[1]);
+      await user.type(screen.getByLabelText("Rounds"), "8");
+      await user.type(screen.getByLabelText("Items per round"), "1");
+
+      await user.click(screen.getByRole("button", { name: "Publish" }));
+
+      await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-nxn"));
+      expect(packsClient.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          format: "nxn",
+          versusRounds: 8,
+          versusN: 1,
+          categories: [
+            expect.objectContaining({
+              name: "Boys",
+              items: [expect.objectContaining({ title: "Naruto" })],
+            }),
+            expect.objectContaining({
+              name: "Girls",
+              items: [expect.objectContaining({ title: "Sakura" })],
+            }),
+          ],
+        }),
+      );
+      expect(vi.mocked(packsClient.create).mock.calls[0][0]).not.toHaveProperty("groups");
+    });
+  });
 });
