@@ -89,6 +89,31 @@ describe("PlayScreen", () => {
     expect(await screen.findByText("You need to be logged in to play a pack.")).toBeInTheDocument();
   });
 
+  it("shows a not-supported message for nxn packs instead of crashing", async () => {
+    const NXN_PACK: Pack = {
+      id: "pack-nxn",
+      title: "Boys vs Girls",
+      description: "Pick a side each round.",
+      coverTone: "#2b2a3a",
+      format: "nxn",
+      tags: ["Anime"],
+      categories: [
+        { id: "ca", name: "Boys", items: [textItem("1", "Naruto")] },
+        { id: "cb", name: "Girls", items: [textItem("2", "Sakura")] },
+      ],
+      versusRounds: 8,
+      versusN: 1,
+      authorId: "u1",
+      createdAt: "2026-01-01T00:00:00.000Z",
+    };
+    renderScreen(NXN_PACK);
+
+    expect(
+      await screen.findByText("Playing NxN packs isn't supported yet — check back soon."),
+    ).toBeInTheDocument();
+    expect(playsClient.record).not.toHaveBeenCalled();
+  });
+
   it("keeps Next round disabled until every item in the round is revealed", async () => {
     const user = userEvent.setup();
     renderScreen(SAVE_ONE_PACK);

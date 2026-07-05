@@ -15,7 +15,7 @@ import { resolveRoundCandidates } from "@/src/features/play/round-sampling";
 
 const FORMAT_COPY: Record<
   Pack["format"],
-  { instruction: string; pickedLabel: string; finishedVerb: string }
+  { instruction: string; pickedLabel: string; finishedVerb: string } | null
 > = {
   save_one: {
     instruction: "Pick the one you'd save. Check it below, then confirm.",
@@ -27,6 +27,10 @@ const FORMAT_COPY: Record<
     pickedLabel: "Sacrificed so far",
     finishedVerb: "sacrificed",
   },
+  // NxN isn't playable yet — backend rejects both recording and results for
+  // it too (see plays.service.ts). No copy needed since PlayScreen bails out
+  // before reaching any of it.
+  nxn: null,
 };
 
 interface Pick {
@@ -39,7 +43,8 @@ export function PlayScreen({ pack }: { pack: Pack }) {
   const { status } = useAuth();
   const router = useRouter();
   const copy = FORMAT_COPY[pack.format];
-  const totalRounds = pack.groups.length;
+  const groups = pack.groups ?? [];
+  const totalRounds = groups.length;
 
   const [roundIndex, setRoundIndex] = useState(0);
   const [revealed, setRevealed] = useState(1);
@@ -47,7 +52,7 @@ export function PlayScreen({ pack }: { pack: Pack }) {
   const [picks, setPicks] = useState<Pick[]>([]);
 
   const isFinished = roundIndex >= totalRounds;
-  const group = isFinished ? null : pack.groups[roundIndex];
+  const group = isFinished ? null : groups[roundIndex];
 
   // Re-sampled only when the round changes, not on every render.
   const candidates = useMemo(() => (group ? resolveRoundCandidates(group) : []), [group]);
@@ -73,14 +78,14 @@ export function PlayScreen({ pack }: { pack: Pack }) {
   // didn't include your own vote (e.g. after a failed request).
   const recordedRef = useRef(false);
   useEffect(() => {
-    if (!isFinished || recordedRef.current) return;
+    if (!isFinished || recordedRef.current || !copy) return;
     recordedRef.current = true;
     const recordedPicks = picks.map(({ groupId, itemId }) => ({ groupId, itemId }));
     playsClient
       .record(pack.id, { picks: recordedPicks })
       .then(() => writeLastPlayPicks(pack.id, recordedPicks))
       .catch(() => undefined);
-  }, [isFinished, pack.id, picks]);
+  }, [isFinished, pack.id, picks, copy]);
 
   if (status === "loading") return null;
 
@@ -91,6 +96,14 @@ export function PlayScreen({ pack }: { pack: Pack }) {
         <Button className="mt-4" onClick={() => router.push("/auth")}>
           Log in
         </Button>
+      </div>
+    );
+  }
+
+  if (!copy) {
+    return (
+      <div className="mx-auto max-w-md py-16 text-center">
+        <Text variant="secondary">Playing NxN packs isn&apos;t supported yet — check back soon.</Text>
       </div>
     );
   }

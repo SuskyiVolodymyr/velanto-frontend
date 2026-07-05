@@ -6,9 +6,12 @@ import type { Pack } from "@/src/shared/types/pack";
 const FORMAT_LABELS: Record<Pack["format"], string> = {
   save_one: "Save One",
   sacrifice_one: "Sacrifice One",
+  nxn: "NxN",
 };
 
 export function PackCard({ pack }: { pack: Pack }) {
+  const roundsCount = pack.format === "nxn" ? (pack.versusRounds ?? 0) : (pack.groups?.length ?? 0);
+
   return (
     <Link href={`/packs/${pack.id}`} className="block">
       <div className="flex h-full flex-col overflow-hidden rounded-[15px] border border-border bg-surface transition-transform duration-200 ease-[cubic-bezier(0.2,0.7,0.3,1)] hover:-translate-y-1 hover:shadow-[0_14px_34px_rgba(0,0,0,0.42)]">
@@ -24,7 +27,7 @@ export function PackCard({ pack }: { pack: Pack }) {
             {pack.description}
           </Text>
           <Text variant="tertiary" className="mt-auto text-xs">
-            {pack.groups.length} round{pack.groups.length === 1 ? "" : "s"}
+            {roundsCount} round{roundsCount === 1 ? "" : "s"}
           </Text>
         </div>
       </div>

@@ -14,6 +14,7 @@ const FORMAT_OPTIONS: { value: FormatFilter; label: string }[] = [
   { value: "all", label: "All" },
   { value: "save_one", label: "Save One" },
   { value: "sacrifice_one", label: "Sacrifice One" },
+  { value: "nxn", label: "NxN" },
 ];
 
 export function HomeFeed() {
