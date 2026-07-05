@@ -2,11 +2,17 @@
  * Small typed fetch wrapper. All data fetching in this repo should go
  * through here (see coding-conventions.md) rather than calling `fetch`
  * directly from components/pages.
- *
- * No real screens call this yet — this is infra scaffolding (issue #1).
  */
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+
+// Held in memory only (never localStorage) — see .claude/docs/security-checklist.md.
+// Set by AuthProvider after login/register/refresh; cleared on logout.
+let accessToken: string | null = null;
+
+export function setAccessToken(token: string | null): void {
+  accessToken = token;
+}
 
 export class ApiError extends Error {
   constructor(
@@ -28,8 +34,15 @@ async function request<T>(path: string, options: ApiRequestOptions = {}): Promis
 
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...rest,
+    // Required so the httpOnly refresh-token cookie is sent/received on
+    // cross-origin requests to the backend.
+    credentials: "include",
     headers: {
-      "Content-Type": "application/json",
+      // Fastify's JSON body parser rejects a request that declares
+      // application/json but sends no body (FST_ERR_CTP_EMPTY_JSON_BODY) —
+      // only set this header when there's actually a body to send.
+      ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       ...headers,
     },
     body: body === undefined ? undefined : JSON.stringify(body),
