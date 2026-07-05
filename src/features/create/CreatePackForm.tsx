@@ -21,6 +21,7 @@ const DESCRIPTION_MAX = 500;
 // Matches backend's CATEGORY_COUNT / MIN|MAX_VERSUS_ROUNDS / MIN|MAX_VERSUS_N
 // (velanto-backend/src/modules/packs/types/nxn.ts) — exactly 2 categories,
 // a true head-to-head "versus", not N-way.
+const CATEGORY_COUNT = 2;
 const MIN_VERSUS_ROUNDS = 1;
 const MAX_VERSUS_ROUNDS = 30;
 const MIN_VERSUS_N = 1;
@@ -45,7 +46,7 @@ interface FormFields {
   versusN?: number;
 }
 
-function validate(fields: FormFields): string | null {
+export function validate(fields: FormFields): string | null {
   if (!fields.title.trim()) return "Give your pack a title.";
   if (fields.title.length > TITLE_MAX) return `Title must be ${TITLE_MAX} characters or fewer.`;
   if (!fields.description.trim()) return "Add a short description.";
@@ -55,6 +56,9 @@ function validate(fields: FormFields): string | null {
   if (fields.tags.length > MAX_TAGS) return `Choose at most ${MAX_TAGS} tags.`;
 
   if (fields.format === "nxn") {
+    if (fields.categories.length !== CATEGORY_COUNT) {
+      return `NxN packs need exactly ${CATEGORY_COUNT} categories.`;
+    }
     for (const category of fields.categories) {
       if (!category.name.trim()) return "Every category needs a name.";
       if (category.items.length === 0) {
@@ -328,7 +332,7 @@ export function CreatePackForm() {
           >
             <Text className="font-semibold">NxN</Text>
             <Text variant="secondary" className="mt-1 text-xs">
-              Two groups compared side by side.
+              Two categories compared side by side.
             </Text>
           </button>
         </div>

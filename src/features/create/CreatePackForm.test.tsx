@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { CreatePackForm } from "./CreatePackForm";
+import { CreatePackForm, validate } from "./CreatePackForm";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { packsClient } from "@/src/shared/lib/packs-client";
@@ -182,6 +182,26 @@ describe("CreatePackForm", () => {
     async function switchToNxn(user: ReturnType<typeof userEvent.setup>) {
       await user.click(await screen.findByRole("button", { name: /^NxN/ }));
     }
+
+    it("rejects an nxn submission with a category count other than 2", () => {
+      const category = (name: string) => ({
+        id: name,
+        name,
+        items: [{ id: "i1", type: "text" as const, title: "x", value: "x" }],
+      });
+      const fields = {
+        title: "Boys vs Girls",
+        description: "Pick a side.",
+        tags: [],
+        format: "nxn" as const,
+        groups: [],
+        categories: [category("Boys"), category("Girls"), category("Extra")],
+        versusRounds: 8,
+        versusN: 1,
+      };
+
+      expect(validate(fields)).toBe("NxN packs need exactly 2 categories.");
+    });
 
     it("switches from Groups to Categories when NxN is selected", async () => {
       const user = userEvent.setup();
