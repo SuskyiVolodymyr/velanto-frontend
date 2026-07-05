@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { PlayScreen } from "./PlayScreen";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
@@ -161,13 +161,33 @@ describe("PlayScreen", () => {
         { groupId: "g2", itemId: "3" },
       ],
     });
-    expect(JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!)).toEqual([
-      { groupId: "g1", itemId: "2" },
-      { groupId: "g2", itemId: "3" },
-    ]);
+    await waitFor(() =>
+      expect(JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!)).toEqual([
+        { groupId: "g1", itemId: "2" },
+        { groupId: "g2", itemId: "3" },
+      ]),
+    );
     expect(screen.getByRole("link", { name: "See your result" })).toHaveAttribute(
       "href",
       "/packs/pack-a/result",
     );
+  });
+
+  it("does not persist picks for the result page when recording the play fails", async () => {
+    vi.mocked(playsClient.record).mockRejectedValue(new Error("network error"));
+    const user = userEvent.setup();
+    renderScreen(SAVE_ONE_PACK);
+    await screen.findByText("Guren no Yumiya");
+
+    await user.click(screen.getByRole("button", { name: "Show all" }));
+    await user.click(screen.getByText("Redo"));
+    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await screen.findByText("Silhouette");
+    await user.click(screen.getByText("Silhouette"));
+    await user.click(screen.getByRole("button", { name: "Next round →" }));
+
+    await screen.findByText("All rounds done");
+    await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
+    expect(sessionStorage.getItem("velanto:last-play:pack-a")).toBeNull();
   });
 });

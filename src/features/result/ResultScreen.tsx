@@ -5,22 +5,9 @@ import { useEffect, useState } from "react";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { buttonClassName } from "@/src/shared/components/Button";
+import { readLastPlayPicks } from "@/src/shared/lib/last-play-storage";
 import type { Pack } from "@/src/shared/types/pack";
 import type { PackResults, RecordedPick } from "@/src/shared/types/play-results";
-
-function lastPlayStorageKey(packId: string): string {
-  return `velanto:last-play:${packId}`;
-}
-
-function readOwnPicks(packId: string): RecordedPick[] | null {
-  try {
-    const raw = sessionStorage.getItem(lastPlayStorageKey(packId));
-    if (!raw) return null;
-    return JSON.parse(raw) as RecordedPick[];
-  } catch {
-    return null;
-  }
-}
 
 export function ResultScreen({ pack, results }: { pack: Pack; results: PackResults }) {
   const [ownPicks, setOwnPicks] = useState<RecordedPick[] | null>(null);
@@ -30,7 +17,7 @@ export function ResultScreen({ pack, results }: { pack: Pack; results: PackResul
   // after mount, on the client.
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setOwnPicks(readOwnPicks(pack.id));
+    setOwnPicks(readLastPlayPicks(pack.id));
   }, [pack.id]);
 
   return (

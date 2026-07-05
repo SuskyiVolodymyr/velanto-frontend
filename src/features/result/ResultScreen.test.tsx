@@ -75,4 +75,39 @@ describe("ResultScreen", () => {
       "/packs/pack-1/play",
     );
   });
+
+  it("falls back to the aggregate breakdown when the recorded pick's item isn't in this round's results", async () => {
+    sessionStorage.setItem(
+      "velanto:last-play:pack-1",
+      JSON.stringify([{ groupId: "g1", itemId: "does-not-exist" }]),
+    );
+
+    render(<ResultScreen pack={PACK} results={RESULTS} />);
+
+    expect(await screen.findByText("75%")).toBeInTheDocument();
+    expect(screen.getByText("25%")).toBeInTheDocument();
+    expect(screen.queryByText(/Your pick/)).not.toBeInTheDocument();
+  });
+
+  it("renders without crashing when the pack has no recorded plays yet", () => {
+    const emptyResults: PackResults = {
+      packId: "pack-1",
+      totalPlays: 0,
+      rounds: [
+        {
+          groupId: "g1",
+          groupName: "2016",
+          items: [
+            { itemId: "i1", itemTitle: "Guren no Yumiya", count: 0, percentage: 0 },
+            { itemId: "i2", itemTitle: "Redo", count: 0, percentage: 0 },
+          ],
+        },
+      ],
+    };
+
+    render(<ResultScreen pack={PACK} results={emptyResults} />);
+
+    expect(screen.getByText(/0 plays recorded/)).toBeInTheDocument();
+    expect(screen.getAllByText("0%")).toHaveLength(2);
+  });
 });

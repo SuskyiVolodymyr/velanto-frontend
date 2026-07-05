@@ -9,6 +9,7 @@ import { Button, buttonClassName } from "@/src/shared/components/Button";
 import { Badge } from "@/src/shared/components/Badge";
 import { cn } from "@/src/shared/lib/cn";
 import { playsClient } from "@/src/shared/lib/plays-client";
+import { writeLastPlayPicks } from "@/src/shared/lib/last-play-storage";
 import type { Pack } from "@/src/shared/types/pack";
 import { resolveRoundCandidates } from "@/src/features/play/round-sampling";
 
@@ -32,10 +33,6 @@ interface Pick {
   groupId: string;
   itemId: string;
   itemTitle: string;
-}
-
-function lastPlayStorageKey(packId: string): string {
-  return `velanto:last-play:${packId}`;
 }
 
 export function PlayScreen({ pack }: { pack: Pack }) {
@@ -70,15 +67,19 @@ export function PlayScreen({ pack }: { pack: Pack }) {
     setRevealed(1);
   }
 
-  // Fires once when the last round is confirmed: records the play and stashes
-  // the picks so the result page can show "your pick" alongside the aggregate.
+  // Fires once when the last round is confirmed: records the play, then
+  // stashes the picks for the result page — only once we know the server
+  // actually counted them, so "your pick" never shows a percentage that
+  // didn't include your own vote (e.g. after a failed request).
   const recordedRef = useRef(false);
   useEffect(() => {
     if (!isFinished || recordedRef.current) return;
     recordedRef.current = true;
     const recordedPicks = picks.map(({ groupId, itemId }) => ({ groupId, itemId }));
-    sessionStorage.setItem(lastPlayStorageKey(pack.id), JSON.stringify(recordedPicks));
-    playsClient.record(pack.id, { picks: recordedPicks }).catch(() => undefined);
+    playsClient
+      .record(pack.id, { picks: recordedPicks })
+      .then(() => writeLastPlayPicks(pack.id, recordedPicks))
+      .catch(() => undefined);
   }, [isFinished, pack.id, picks]);
 
   if (status === "loading") return null;
