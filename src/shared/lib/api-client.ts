@@ -38,7 +38,10 @@ async function request<T>(path: string, options: ApiRequestOptions = {}): Promis
     // cross-origin requests to the backend.
     credentials: "include",
     headers: {
-      "Content-Type": "application/json",
+      // Fastify's JSON body parser rejects a request that declares
+      // application/json but sends no body (FST_ERR_CTP_EMPTY_JSON_BODY) —
+      // only set this header when there's actually a body to send.
+      ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
       ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       ...headers,
     },
