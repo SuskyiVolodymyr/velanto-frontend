@@ -2,7 +2,7 @@ import { describe, expect, it, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { ResultScreen } from "./ResultScreen";
 import type { Pack } from "@/src/shared/types/pack";
-import type { PackResults } from "@/src/shared/types/play-results";
+import type { PackResults, RankResults } from "@/src/shared/types/play-results";
 
 const PACK: Pack = {
   id: "pack-1",
@@ -28,6 +28,7 @@ const PACK: Pack = {
 
 const RESULTS: PackResults = {
   packId: "pack-1",
+  format: "save_one",
   totalPlays: 4,
   rounds: [
     {
@@ -92,6 +93,7 @@ describe("ResultScreen", () => {
   it("renders without crashing when the pack has no recorded plays yet", () => {
     const emptyResults: PackResults = {
       packId: "pack-1",
+      format: "save_one",
       totalPlays: 0,
       rounds: [
         {
@@ -109,5 +111,33 @@ describe("ResultScreen", () => {
 
     expect(screen.getByText(/0 plays recorded/)).toBeInTheDocument();
     expect(screen.getAllByText("0%")).toHaveLength(2);
+  });
+
+  it("delegates to RankResultScreen for rank_blind results", () => {
+    const rankPack: Pack = { ...PACK, format: "rank_blind" };
+    const rankResults: RankResults = {
+      packId: "pack-1",
+      format: "rank_blind",
+      totalPlays: 1,
+      rounds: [
+        {
+          groupId: "g1",
+          groupName: "2016",
+          items: [
+            {
+              itemId: "i1",
+              itemTitle: "Guren no Yumiya",
+              timesRanked: 1,
+              averagePosition: 0,
+              positionCounts: [1],
+            },
+          ],
+        },
+      ],
+    };
+
+    render(<ResultScreen pack={rankPack} results={rankResults} />);
+
+    expect(screen.getByText(/avg 0.*ranked 1x/)).toBeInTheDocument();
   });
 });

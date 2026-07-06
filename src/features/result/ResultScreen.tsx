@@ -6,10 +6,18 @@ import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { buttonClassName } from "@/src/shared/components/Button";
 import { readLastPlayPicks } from "@/src/shared/lib/last-play-storage";
+import { RankResultScreen } from "@/src/features/result/RankResultScreen";
 import type { Pack } from "@/src/shared/types/pack";
-import type { PackResults, RecordedPick } from "@/src/shared/types/play-results";
+import type { PackResults, RankResults, RecordedPick } from "@/src/shared/types/play-results";
 
-export function ResultScreen({ pack, results }: { pack: Pack; results: PackResults }) {
+export function ResultScreen({ pack, results }: { pack: Pack; results: PackResults | RankResults }) {
+  if (results.format === "rank_blind") {
+    return <RankResultScreen pack={pack} results={results} />;
+  }
+  return <GroupResultScreen pack={pack} results={results} />;
+}
+
+function GroupResultScreen({ pack, results }: { pack: Pack; results: PackResults }) {
   const [ownPicks, setOwnPicks] = useState<RecordedPick[] | null>(null);
 
   // sessionStorage doesn't exist during server rendering, so this can't be a
