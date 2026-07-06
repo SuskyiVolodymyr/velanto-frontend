@@ -114,8 +114,8 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
           </section>
 
           <div className="mb-8 flex justify-center">
-            <div className="w-[230px] rounded-2xl border border-acc bg-surface p-4 text-center">
-              <Text className="font-semibold">{currentItem?.title}</Text>
+            <div className="flex h-[100px] w-[230px] items-center justify-center rounded-2xl border border-acc bg-surface p-4 text-center">
+              <Text className="line-clamp-2 font-semibold">{currentItem?.title}</Text>
             </div>
           </div>
 
@@ -130,7 +130,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
                   onClick={() => place(slotIndex)}
                   aria-label={filled ? `Rank ${slotIndex + 1}: ${filled.title}` : `Place at rank ${slotIndex + 1}`}
                   className={cn(
-                    "flex min-h-[100px] flex-col justify-between rounded-2xl border p-3 text-left transition-colors",
+                    "flex h-[100px] flex-col justify-between rounded-2xl border p-3 text-left transition-colors",
                     filled
                       ? "border-border bg-surface"
                       : "border-dashed border-border-strong bg-white/[0.02] hover:border-acc/40",
@@ -139,7 +139,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
                   <Text variant="tertiary" className="text-xs font-semibold">
                     #{slotIndex + 1}
                   </Text>
-                  <Text className={cn("text-sm font-semibold", !filled && "text-foreground-tertiary")}>
+                  <Text className={cn("line-clamp-2 text-sm font-semibold", !filled && "text-foreground-tertiary")}>
                     {filled ? filled.title : "Place here"}
                   </Text>
                 </button>
