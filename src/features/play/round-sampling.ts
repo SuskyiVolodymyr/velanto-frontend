@@ -1,4 +1,4 @@
-import type { Group, Item } from "@/src/shared/types/pack";
+import type { Category, Group, Item } from "@/src/shared/types/pack";
 
 function shuffle<T>(items: T[]): T[] {
   const result = [...items];
@@ -18,4 +18,13 @@ export function resolveRoundCandidates(group: Group): Item[] {
   if (group.selectionMode === "manual") return group.items;
   const size = group.sampleSize ?? group.items.length;
   return shuffle(group.items).slice(0, size);
+}
+
+/**
+ * Resolves which items an nxn round shows for one side: a fresh random
+ * sample of `versusN` items, re-sampled every round (categories are flat
+ * pools, not pre-split — there's no manual mode for nxn).
+ */
+export function resolveVersusRoundCandidates(category: Category, versusN: number): Item[] {
+  return shuffle(category.items).slice(0, versusN);
 }

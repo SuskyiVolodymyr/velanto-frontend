@@ -89,29 +89,86 @@ describe("PlayScreen", () => {
     expect(await screen.findByText("You need to be logged in to play a pack.")).toBeInTheDocument();
   });
 
-  it("shows a not-supported message for nxn packs instead of crashing", async () => {
-    const NXN_PACK: Pack = {
-      id: "pack-nxn",
-      title: "Boys vs Girls",
-      description: "Pick a side each round.",
-      coverTone: "#2b2a3a",
-      format: "nxn",
-      tags: ["Anime"],
+  const NXN_PACK: Pack = {
+    id: "pack-nxn",
+    title: "Boys vs Girls",
+    description: "Pick a side each round.",
+    coverTone: "#2b2a3a",
+    format: "nxn",
+    tags: ["Anime"],
+    categories: [
+      { id: "ca", name: "Boys", items: [textItem("1", "Naruto"), textItem("2", "Sasuke")] },
+      { id: "cb", name: "Girls", items: [textItem("3", "Sakura"), textItem("4", "Hinata")] },
+    ],
+    versusRounds: 2,
+    versusN: 2,
+    authorId: "u1",
+    createdAt: "2026-01-01T00:00:00.000Z",
+  };
+
+  it("derives the reveal count from the actual sampled items, not a possibly-stale versusN", async () => {
+    const user = userEvent.setup();
+    const shortPack: Pack = {
+      ...NXN_PACK,
       categories: [
         { id: "ca", name: "Boys", items: [textItem("1", "Naruto")] },
-        { id: "cb", name: "Girls", items: [textItem("2", "Sakura")] },
+        { id: "cb", name: "Girls", items: [textItem("3", "Sakura"), textItem("4", "Hinata")] },
       ],
-      versusRounds: 8,
-      versusN: 1,
-      authorId: "u1",
-      createdAt: "2026-01-01T00:00:00.000Z",
     };
+    renderScreen(shortPack);
+    await screen.findByRole("button", { name: "Pick Boys" });
+
+    expect(screen.getByText("Showing 1 of 1")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Pick Boys" }));
+    expect(screen.getByRole("button", { name: "Next round →" })).toBeEnabled();
+  });
+
+  it("renders nxn rounds as two side-by-side categories with a VS divider", async () => {
     renderScreen(NXN_PACK);
 
+    expect(await screen.findByRole("button", { name: "Pick Boys" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Pick Girls" })).toBeInTheDocument();
+    expect(screen.getByText("VS")).toBeInTheDocument();
+    expect(screen.getByText("Showing 1 of 2")).toBeInTheDocument();
+  });
+
+  it("keeps nxn's Next round disabled until both sides are revealed and a side is picked", async () => {
+    const user = userEvent.setup();
+    renderScreen(NXN_PACK);
+    await screen.findByRole("button", { name: "Pick Boys" });
+
+    await user.click(screen.getByRole("button", { name: "Pick Boys" }));
+    expect(screen.getByRole("button", { name: "Next round →" })).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: "Show all" }));
+    expect(screen.getByText("Showing 2 of 2")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Next round →" })).toBeEnabled();
+  });
+
+  it("advances through nxn rounds and records picks with round index as groupId, category id as itemId", async () => {
+    const user = userEvent.setup();
+    renderScreen(NXN_PACK);
+    await screen.findByRole("button", { name: "Pick Boys" });
+
+    await user.click(screen.getByRole("button", { name: "Show all" }));
+    await user.click(screen.getByRole("button", { name: "Pick Boys" }));
+    await user.click(screen.getByRole("button", { name: "Next round →" }));
+
+    expect(await screen.findByText("Round 2 of 2")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Show all" }));
+    await user.click(screen.getByRole("button", { name: "Pick Girls" }));
+    await user.click(screen.getByRole("button", { name: "Next round →" }));
+
+    expect(await screen.findByText("All rounds done")).toBeInTheDocument();
     expect(
-      await screen.findByText("Playing NxN packs isn't supported yet — check back soon."),
+      screen.getByText("You picked a side in 2 rounds between Boys and Girls."),
     ).toBeInTheDocument();
-    expect(playsClient.record).not.toHaveBeenCalled();
+    expect(playsClient.record).toHaveBeenCalledWith("pack-nxn", {
+      picks: [
+        { groupId: "0", itemId: "ca" },
+        { groupId: "1", itemId: "cb" },
+      ],
+    });
   });
 
   it("keeps Next round disabled until every item in the round is revealed", async () => {

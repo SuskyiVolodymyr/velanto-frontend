@@ -11,12 +11,10 @@ import { cn } from "@/src/shared/lib/cn";
 import { playsClient } from "@/src/shared/lib/plays-client";
 import { writeLastPlayPicks } from "@/src/shared/lib/last-play-storage";
 import type { Pack } from "@/src/shared/types/pack";
-import { resolveRoundCandidates } from "@/src/features/play/round-sampling";
+import { resolveRoundCandidates, resolveVersusRoundCandidates } from "@/src/features/play/round-sampling";
+import { VersusRound } from "@/src/features/play/VersusRound";
 
-const FORMAT_COPY: Record<
-  Pack["format"],
-  { instruction: string; pickedLabel: string; finishedVerb: string } | null
-> = {
+const FORMAT_COPY: Record<Pack["format"], { instruction: string; pickedLabel: string; finishedVerb?: string }> = {
   save_one: {
     instruction: "Pick the one you'd save. Check it below, then confirm.",
     pickedLabel: "Saved so far",
@@ -27,10 +25,10 @@ const FORMAT_COPY: Record<
     pickedLabel: "Sacrificed so far",
     finishedVerb: "sacrificed",
   },
-  // NxN isn't playable yet — backend rejects both recording and results for
-  // it too (see plays.service.ts). No copy needed since PlayScreen bails out
-  // before reaching any of it.
-  nxn: null,
+  nxn: {
+    instruction: "Pick the side you'd save. Check it below, then confirm.",
+    pickedLabel: "Saved so far",
+  },
 };
 
 interface Pick {
@@ -43,8 +41,12 @@ export function PlayScreen({ pack }: { pack: Pack }) {
   const { status } = useAuth();
   const router = useRouter();
   const copy = FORMAT_COPY[pack.format];
+  const isVersus = pack.format === "nxn";
   const groups = pack.groups ?? [];
-  const totalRounds = groups.length;
+  const categories = pack.categories ?? [];
+  const versusN = pack.versusN ?? 0;
+  const [categoryA, categoryB] = categories;
+  const totalRounds = isVersus ? pack.versusRounds ?? 0 : groups.length;
 
   const [roundIndex, setRoundIndex] = useState(0);
   const [revealed, setRevealed] = useState(1);
@@ -52,21 +54,67 @@ export function PlayScreen({ pack }: { pack: Pack }) {
   const [picks, setPicks] = useState<Pick[]>([]);
 
   const isFinished = roundIndex >= totalRounds;
-  const group = isFinished ? null : groups[roundIndex];
+  const group = !isVersus && !isFinished ? groups[roundIndex] : null;
 
   // Re-sampled only when the round changes, not on every render.
   const candidates = useMemo(() => (group ? resolveRoundCandidates(group) : []), [group]);
+  // categoryA/categoryB are the same 2 categories for the whole play session
+  // (unlike `group`, which changes reference every round) — roundIndex is
+  // the only thing that actually changes when a new round starts, so it
+  // must stay in the deps to force a fresh sample each round even though
+  // the callback itself never reads it.
+  const versusCandidatesA = useMemo(
+    () => (isVersus && !isFinished && categoryA ? resolveVersusRoundCandidates(categoryA, versusN) : []),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [isVersus, isFinished, categoryA, versusN, roundIndex],
+  );
+  const versusCandidatesB = useMemo(
+    () => (isVersus && !isFinished && categoryB ? resolveVersusRoundCandidates(categoryB, versusN) : []),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [isVersus, isFinished, categoryB, versusN, roundIndex],
+  );
 
-  const totalCount = candidates.length;
+  // A single per-round model unifies the two formats so the rest of the
+  // component reads one shape instead of branching on `isVersus` at every
+  // site. `title` and `totalCount` drive the UI; `resolvePick` turns the
+  // current `selectedId` into the Pick to record (or null if invalid).
+  //
+  // totalCount is derived from the actual sampled candidates, not the
+  // pack-level versusN directly — a malformed pack with fewer items than
+  // versusN in a category would otherwise make "Showing X of Y" over-report
+  // and leave "Show next" stuck past the last real card. Backend create-flow
+  // validation guarantees this can't happen today, but TS can't express it.
+  const round = isVersus
+    ? {
+        title: `Round ${roundIndex + 1}`,
+        totalCount: Math.min(versusCandidatesA.length, versusCandidatesB.length),
+        resolvePick(id: string): Pick | null {
+          const category = categories.find((c) => c.id === id);
+          if (!category) return null;
+          return { groupId: String(roundIndex), itemId: category.id, itemTitle: category.name };
+        },
+      }
+    : {
+        title: group?.name ?? "",
+        totalCount: candidates.length,
+        resolvePick(id: string): Pick | null {
+          if (!group) return null;
+          const item = candidates.find((candidate) => candidate.id === id);
+          if (!item) return null;
+          return { groupId: group.id, itemId: item.id, itemTitle: item.title };
+        },
+      };
+
+  const totalCount = round.totalCount;
   const revealedCount = Math.min(revealed, totalCount);
   const canRevealMore = revealedCount < totalCount;
   const canConfirm = selectedId !== null && revealedCount >= totalCount;
 
   function confirmPick() {
-    if (!canConfirm || !group) return;
-    const item = candidates.find((candidate) => candidate.id === selectedId);
-    if (!item) return;
-    setPicks((prev) => [...prev, { groupId: group.id, itemId: item.id, itemTitle: item.title }]);
+    if (!canConfirm || selectedId === null) return;
+    const pick = round.resolvePick(selectedId);
+    if (!pick) return;
+    setPicks((prev) => [...prev, pick]);
     setRoundIndex((prev) => prev + 1);
     setSelectedId(null);
     setRevealed(1);
@@ -100,15 +148,8 @@ export function PlayScreen({ pack }: { pack: Pack }) {
     );
   }
 
-  if (!copy) {
-    return (
-      <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">Playing NxN packs isn&apos;t supported yet — check back soon.</Text>
-      </div>
-    );
-  }
-
   const progressPct = isFinished ? 100 : Math.round((roundIndex / totalRounds) * 100);
+  const showRound = isVersus ? !isFinished && categoryA && categoryB : Boolean(group);
 
   return (
     <div className="mx-auto w-full max-w-2xl flex-1 px-7 py-10">
@@ -126,11 +167,11 @@ export function PlayScreen({ pack }: { pack: Pack }) {
         </div>
       </div>
 
-      {group && (
+      {showRound && (
         <>
           <section className="mb-6">
             <Text as="h1" variant="title" className="mb-2 text-3xl">
-              {group.name}
+              {round.title}
             </Text>
             <Text variant="secondary">{copy.instruction}</Text>
           </section>
@@ -154,30 +195,42 @@ export function PlayScreen({ pack }: { pack: Pack }) {
             )}
           </div>
 
-          <div className="mb-8 flex flex-wrap gap-4">
-            {candidates.slice(0, revealedCount).map((item, index) => {
-              const selected = item.id === selectedId;
-              return (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => setSelectedId(item.id)}
-                  className={cn(
-                    "w-[200px] flex-none rounded-2xl border p-4 text-left transition-colors",
-                    selected
-                      ? "border-acc bg-acc/10"
-                      : "border-border bg-surface hover:border-border-strong",
-                  )}
-                >
-                  {item.type === "youtube" && <Badge className="mb-2">YouTube</Badge>}
-                  <Text className="font-semibold">{item.title}</Text>
-                  <Text variant="tertiary" className="mt-1 text-xs">
-                    {String(index + 1).padStart(2, "0")}
-                  </Text>
-                </button>
-              );
-            })}
-          </div>
+          {isVersus ? (
+            <div className="mb-8">
+              <VersusRound
+                sideA={{ ...categoryA!, items: versusCandidatesA }}
+                sideB={{ ...categoryB!, items: versusCandidatesB }}
+                revealedCount={revealedCount}
+                selectedId={selectedId}
+                onSelect={setSelectedId}
+              />
+            </div>
+          ) : (
+            <div className="mb-8 flex flex-wrap gap-4">
+              {candidates.slice(0, revealedCount).map((item, index) => {
+                const selected = item.id === selectedId;
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => setSelectedId(item.id)}
+                    className={cn(
+                      "w-[200px] flex-none rounded-2xl border p-4 text-left transition-colors",
+                      selected
+                        ? "border-acc bg-acc/10"
+                        : "border-border bg-surface hover:border-border-strong",
+                    )}
+                  >
+                    {item.type === "youtube" && <Badge className="mb-2">YouTube</Badge>}
+                    <Text className="font-semibold">{item.title}</Text>
+                    <Text variant="tertiary" className="mt-1 text-xs">
+                      {String(index + 1).padStart(2, "0")}
+                    </Text>
+                  </button>
+                );
+              })}
+            </div>
+          )}
 
           <div className="mb-10 flex justify-end">
             <Button disabled={!canConfirm} onClick={confirmPick}>
@@ -193,8 +246,9 @@ export function PlayScreen({ pack }: { pack: Pack }) {
             All rounds done
           </Text>
           <Text variant="secondary" className="mb-4">
-            You {copy.finishedVerb} {picks.length} pick{picks.length === 1 ? "" : "s"}, one per
-            round.
+            {isVersus
+              ? `You picked a side in ${picks.length} round${picks.length === 1 ? "" : "s"} between ${categoryA?.name} and ${categoryB?.name}.`
+              : `You ${copy.finishedVerb} ${picks.length} pick${picks.length === 1 ? "" : "s"}, one per round.`}
           </Text>
           <Link href={`/packs/${pack.id}/result`} className={buttonClassName("primary", "w-fit")}>
             See your result
