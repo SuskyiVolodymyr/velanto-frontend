@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { resolveRoundCandidates } from "./round-sampling";
-import type { Group } from "@/src/shared/types/pack";
+import { resolveRoundCandidates, resolveVersusRoundCandidates } from "./round-sampling";
+import type { Category, Group } from "@/src/shared/types/pack";
 
 function textItem(id: string, title: string) {
   return { id, type: "text" as const, title, value: title };
@@ -57,6 +57,39 @@ describe("resolveRoundCandidates", () => {
 
     const first = resolveRoundCandidates(group).map((item) => item.id);
     const second = resolveRoundCandidates(group).map((item) => item.id);
+
+    expect(first).not.toEqual(second);
+  });
+});
+
+describe("resolveVersusRoundCandidates", () => {
+  it("samples exactly versusN unique items from the category", () => {
+    const items = [textItem("1", "A"), textItem("2", "B"), textItem("3", "C"), textItem("4", "D")];
+    const category: Category = { id: "ca", name: "Boys", items };
+
+    const result = resolveVersusRoundCandidates(category, 2);
+
+    expect(result).toHaveLength(2);
+    const ids = result.map((item) => item.id);
+    expect(new Set(ids).size).toBe(2);
+    for (const item of result) {
+      expect(items).toContainEqual(item);
+    }
+  });
+
+  it("returns all items when versusN equals the category's item count", () => {
+    const items = [textItem("1", "A"), textItem("2", "B")];
+    const category: Category = { id: "ca", name: "Boys", items };
+
+    expect(resolveVersusRoundCandidates(category, 2)).toHaveLength(2);
+  });
+
+  it("re-samples randomly across calls", () => {
+    const items = Array.from({ length: 20 }, (_, i) => textItem(String(i), `Item ${i}`));
+    const category: Category = { id: "ca", name: "Boys", items };
+
+    const first = resolveVersusRoundCandidates(category, 20).map((item) => item.id);
+    const second = resolveVersusRoundCandidates(category, 20).map((item) => item.id);
 
     expect(first).not.toEqual(second);
   });
