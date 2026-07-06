@@ -6,6 +6,9 @@ import { Badge } from "@/src/shared/components/Badge";
 import { Card } from "@/src/shared/components/Card";
 import { buttonClassName } from "@/src/shared/components/Button";
 import { getPackServer } from "@/src/shared/lib/get-pack-server";
+import { getResultsServer } from "@/src/shared/lib/get-results-server";
+import { PackCoverBanner } from "@/src/features/pack/PackCoverBanner";
+import { PackStats } from "@/src/features/pack/PackStats";
 
 export async function generateMetadata({
   params,
@@ -18,20 +21,20 @@ export async function generateMetadata({
 }
 
 /**
- * Minimal read-only view — just enough to confirm the create flow worked
- * end to end. The real Pack screen (cover art, stats, comments) is separate
- * future work per screen-inventory.md item 3.
+ * Comments are separate future work (velanto-frontend#34, blocked on
+ * velanto-backend#31 — no comments concept exists in the backend yet).
  */
 export default async function PackPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const pack = await getPackServer(id);
   if (!pack) notFound();
+  const results = await getResultsServer(id);
 
   return (
     <main className="mx-auto w-full max-w-2xl flex-1 px-7 py-10">
-      <Text as="h1" variant="title" className="mb-2 text-3xl">
-        {pack.title}
-      </Text>
+      <div className="mb-6">
+        <PackCoverBanner pack={pack} />
+      </div>
       <Text variant="secondary" className="mb-4">
         {pack.description}
       </Text>
@@ -45,6 +48,14 @@ export default async function PackPage({ params }: { params: Promise<{ id: strin
       <Link href={`/packs/${pack.id}/play`} className={buttonClassName("primary", "mb-6 w-fit")}>
         Play
       </Link>
+
+      <Text as="h2" variant="title" className="mb-3 text-lg">
+        Stats
+      </Text>
+      <div className="mb-8">
+        <PackStats results={results} />
+      </div>
+
       <div className="flex flex-col gap-4">
         {(pack.format === "nxn" ? pack.categories : pack.groups)?.map((section) => (
           <Card key={section.id} className="hover:translate-y-0 hover:shadow-none">
