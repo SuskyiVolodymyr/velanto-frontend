@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { PackStats } from "./PackStats";
-import type { PackResults } from "@/src/shared/types/play-results";
+import type { PackResults, RankResults } from "@/src/shared/types/play-results";
 
 describe("PackStats", () => {
   it("shows a no-plays message when nobody has played yet", () => {
-    const results: PackResults = { packId: "pack-a", totalPlays: 0, rounds: [] };
+    const results: PackResults = { packId: "pack-a", format: "save_one", totalPlays: 0, rounds: [] };
     render(<PackStats results={results} />);
 
     expect(screen.getByText("No plays yet — be the first!")).toBeInTheDocument();
@@ -14,6 +14,7 @@ describe("PackStats", () => {
   it("shows total plays and the top pick per round", () => {
     const results: PackResults = {
       packId: "pack-a",
+      format: "save_one",
       totalPlays: 10,
       rounds: [
         {
@@ -44,6 +45,7 @@ describe("PackStats", () => {
   it("singularizes the play count for a single play", () => {
     const results: PackResults = {
       packId: "pack-a",
+      format: "save_one",
       totalPlays: 1,
       rounds: [
         {
@@ -61,6 +63,7 @@ describe("PackStats", () => {
   it("picks the first item as the winner on a percentage tie", () => {
     const results: PackResults = {
       packId: "pack-a",
+      format: "save_one",
       totalPlays: 4,
       rounds: [
         {
@@ -82,7 +85,44 @@ describe("PackStats", () => {
   it("skips a round with no items rather than crashing", () => {
     const results: PackResults = {
       packId: "pack-a",
+      format: "save_one",
       totalPlays: 5,
+      rounds: [{ groupId: "g1", groupName: "Empty round", items: [] }],
+    };
+
+    expect(() => render(<PackStats results={results} />)).not.toThrow();
+    expect(screen.queryByText("Empty round")).not.toBeInTheDocument();
+  });
+
+  it("shows the top-ranked item by lowest averagePosition for rank_blind results", () => {
+    const results: RankResults = {
+      packId: "pack-rank",
+      format: "rank_blind",
+      totalPlays: 6,
+      rounds: [
+        {
+          groupId: "g1",
+          groupName: "Openers",
+          items: [
+            { itemId: "i1", itemTitle: "Kaikai Kitan", timesRanked: 6, averagePosition: 0.5, positionCounts: [3, 3] },
+            { itemId: "i2", itemTitle: "Redo", timesRanked: 6, averagePosition: 1.5, positionCounts: [0, 3] },
+          ],
+        },
+      ],
+    };
+    render(<PackStats results={results} />);
+
+    expect(screen.getByText("6 plays")).toBeInTheDocument();
+    expect(screen.getByText("Openers")).toBeInTheDocument();
+    expect(screen.getByText("Kaikai Kitan — avg 0.5")).toBeInTheDocument();
+    expect(screen.queryByText(/Redo/)).not.toBeInTheDocument();
+  });
+
+  it("skips a rank_blind round with no items rather than crashing", () => {
+    const results: RankResults = {
+      packId: "pack-rank",
+      format: "rank_blind",
+      totalPlays: 2,
       rounds: [{ groupId: "g1", groupName: "Empty round", items: [] }],
     };
 
