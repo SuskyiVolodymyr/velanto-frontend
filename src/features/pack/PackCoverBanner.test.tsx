@@ -1,0 +1,54 @@
+import { describe, expect, it } from "vitest";
+import { render, screen } from "@testing-library/react";
+import { PackCoverBanner } from "./PackCoverBanner";
+import type { Pack } from "@/src/shared/types/pack";
+
+const SAVE_ONE_PACK: Pack = {
+  id: "pack-a",
+  title: "Best Anime Openings",
+  description: "Pick your favorite each round.",
+  coverTone: "#2b2a3a",
+  format: "save_one",
+  tags: [],
+  groups: [
+    { id: "g1", name: "2016", selectionMode: "manual", items: [] },
+    { id: "g2", name: "2020", selectionMode: "manual", items: [] },
+  ],
+  authorId: "u1",
+  createdAt: "2026-01-01T00:00:00.000Z",
+};
+
+describe("PackCoverBanner", () => {
+  it("shows the pack title, format badge, and round count", () => {
+    render(<PackCoverBanner pack={SAVE_ONE_PACK} />);
+
+    expect(screen.getByText("Best Anime Openings")).toBeInTheDocument();
+    expect(screen.getByText("Save One")).toBeInTheDocument();
+    expect(screen.getByText("2 rounds")).toBeInTheDocument();
+  });
+
+  it("singularizes the round count for a single round", () => {
+    const pack: Pack = { ...SAVE_ONE_PACK, groups: [SAVE_ONE_PACK.groups![0]] };
+    render(<PackCoverBanner pack={pack} />);
+
+    expect(screen.getByText("1 round")).toBeInTheDocument();
+  });
+
+  it("uses versusRounds for an nxn pack", () => {
+    const pack: Pack = {
+      ...SAVE_ONE_PACK,
+      format: "nxn",
+      groups: undefined,
+      categories: [
+        { id: "ca", name: "Boys", items: [] },
+        { id: "cb", name: "Girls", items: [] },
+      ],
+      versusRounds: 8,
+      versusN: 1,
+    };
+    render(<PackCoverBanner pack={pack} />);
+
+    expect(screen.getByText("NxN")).toBeInTheDocument();
+    expect(screen.getByText("8 rounds")).toBeInTheDocument();
+  });
+});
