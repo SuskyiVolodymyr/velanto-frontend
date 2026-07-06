@@ -14,11 +14,10 @@ export function PackStats({ results }: { results: PackResults }) {
       </Text>
       <div className="flex flex-col gap-2">
         {results.rounds.map((round) => {
-          const topItem = round.items.reduce<PackResults["rounds"][number]["items"][number] | null>(
-            (top, item) => (top && top.percentage >= item.percentage ? top : item),
-            null,
+          if (round.items.length === 0) return null;
+          const topItem = round.items.reduce((top, item) =>
+            top.percentage >= item.percentage ? top : item,
           );
-          if (!topItem) return null;
           return (
             <Card key={round.groupId} className="hover:translate-y-0 hover:shadow-none">
               <div className="flex items-center justify-between gap-2">

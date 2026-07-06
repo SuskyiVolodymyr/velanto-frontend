@@ -58,6 +58,27 @@ describe("PackStats", () => {
     expect(screen.getByText("1 play")).toBeInTheDocument();
   });
 
+  it("picks the first item as the winner on a percentage tie", () => {
+    const results: PackResults = {
+      packId: "pack-a",
+      totalPlays: 4,
+      rounds: [
+        {
+          groupId: "g1",
+          groupName: "2016",
+          items: [
+            { itemId: "i1", itemTitle: "Guren no Yumiya", count: 2, percentage: 50 },
+            { itemId: "i2", itemTitle: "Redo", count: 2, percentage: 50 },
+          ],
+        },
+      ],
+    };
+    render(<PackStats results={results} />);
+
+    expect(screen.getByText("Guren no Yumiya — 50%")).toBeInTheDocument();
+    expect(screen.queryByText("Redo — 50%")).not.toBeInTheDocument();
+  });
+
   it("skips a round with no items rather than crashing", () => {
     const results: PackResults = {
       packId: "pack-a",
