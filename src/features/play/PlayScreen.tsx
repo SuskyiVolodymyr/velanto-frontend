@@ -74,33 +74,47 @@ export function PlayScreen({ pack }: { pack: Pack }) {
     [isVersus, isFinished, categoryB, versusN, roundIndex],
   );
 
-  // Derived from the actual sampled candidates, not the pack-level versusN
-  // directly — a malformed pack with fewer items than versusN in a category
-  // would otherwise make "Showing X of Y" over-report and leave "Show next"
-  // stuck past the last real card. Backend create-flow validation guarantees
-  // this can't happen today, but TS can't express that invariant.
-  const totalCount = isVersus
-    ? Math.min(versusCandidatesA.length, versusCandidatesB.length)
-    : candidates.length;
+  // A single per-round model unifies the two formats so the rest of the
+  // component reads one shape instead of branching on `isVersus` at every
+  // site. `title` and `totalCount` drive the UI; `resolvePick` turns the
+  // current `selectedId` into the Pick to record (or null if invalid).
+  //
+  // totalCount is derived from the actual sampled candidates, not the
+  // pack-level versusN directly — a malformed pack with fewer items than
+  // versusN in a category would otherwise make "Showing X of Y" over-report
+  // and leave "Show next" stuck past the last real card. Backend create-flow
+  // validation guarantees this can't happen today, but TS can't express it.
+  const round = isVersus
+    ? {
+        title: `Round ${roundIndex + 1}`,
+        totalCount: Math.min(versusCandidatesA.length, versusCandidatesB.length),
+        resolvePick(id: string): Pick | null {
+          const category = categories.find((c) => c.id === id);
+          if (!category) return null;
+          return { groupId: String(roundIndex), itemId: category.id, itemTitle: category.name };
+        },
+      }
+    : {
+        title: group?.name ?? "",
+        totalCount: candidates.length,
+        resolvePick(id: string): Pick | null {
+          if (!group) return null;
+          const item = candidates.find((candidate) => candidate.id === id);
+          if (!item) return null;
+          return { groupId: group.id, itemId: item.id, itemTitle: item.title };
+        },
+      };
+
+  const totalCount = round.totalCount;
   const revealedCount = Math.min(revealed, totalCount);
   const canRevealMore = revealedCount < totalCount;
   const canConfirm = selectedId !== null && revealedCount >= totalCount;
 
   function confirmPick() {
-    if (!canConfirm) return;
-    if (isVersus) {
-      const category = categories.find((c) => c.id === selectedId);
-      if (!category) return;
-      setPicks((prev) => [
-        ...prev,
-        { groupId: String(roundIndex), itemId: category.id, itemTitle: category.name },
-      ]);
-    } else {
-      if (!group) return;
-      const item = candidates.find((candidate) => candidate.id === selectedId);
-      if (!item) return;
-      setPicks((prev) => [...prev, { groupId: group.id, itemId: item.id, itemTitle: item.title }]);
-    }
+    if (!canConfirm || selectedId === null) return;
+    const pick = round.resolvePick(selectedId);
+    if (!pick) return;
+    setPicks((prev) => [...prev, pick]);
     setRoundIndex((prev) => prev + 1);
     setSelectedId(null);
     setRevealed(1);
@@ -157,7 +171,7 @@ export function PlayScreen({ pack }: { pack: Pack }) {
         <>
           <section className="mb-6">
             <Text as="h1" variant="title" className="mb-2 text-3xl">
-              {isVersus ? `Round ${roundIndex + 1}` : group!.name}
+              {round.title}
             </Text>
             <Text variant="secondary">{copy.instruction}</Text>
           </section>
