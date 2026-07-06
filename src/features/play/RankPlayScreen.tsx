@@ -128,6 +128,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
                   type="button"
                   disabled={Boolean(filled)}
                   onClick={() => place(slotIndex)}
+                  aria-label={filled ? `Rank ${slotIndex + 1}: ${filled.title}` : `Place at rank ${slotIndex + 1}`}
                   className={cn(
                     "flex min-h-[100px] flex-col justify-between rounded-2xl border p-3 text-left transition-colors",
                     filled
