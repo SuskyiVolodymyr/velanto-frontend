@@ -9,7 +9,7 @@ export function PackCoverBanner({ pack }: { pack: Pack }) {
   return (
     <div
       className="relative flex min-h-[220px] flex-col justify-between overflow-hidden rounded-2xl border border-border p-5"
-      style={{ background: `linear-gradient(158deg, ${pack.coverTone}, #0b0c0f 78%)` }}
+      style={{ background: `linear-gradient(158deg, ${pack.coverTone}, var(--background) 78%)` }}
     >
       <div className="flex items-start justify-between">
         <Badge>{FORMAT_LABELS[pack.format]}</Badge>
