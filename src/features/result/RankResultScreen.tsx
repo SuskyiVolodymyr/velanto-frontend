@@ -67,7 +67,7 @@ export function RankResultScreen({ pack, results }: { pack: Pack; results: RankR
                               <div
                                 className={
                                   isOwn
-                                    ? "w-[18px] rounded-sm bg-acc ring-2 ring-white"
+                                    ? "w-[18px] rounded-sm bg-acc ring-2 ring-foreground"
                                     : "w-[18px] rounded-sm bg-acc/30"
                                 }
                                 style={{ height: `${Math.max((count / maxCount) * 32, 2)}px` }}
