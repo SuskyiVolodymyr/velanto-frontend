@@ -106,6 +106,23 @@ describe("PlayScreen", () => {
     createdAt: "2026-01-01T00:00:00.000Z",
   };
 
+  it("derives the reveal count from the actual sampled items, not a possibly-stale versusN", async () => {
+    const user = userEvent.setup();
+    const shortPack: Pack = {
+      ...NXN_PACK,
+      categories: [
+        { id: "ca", name: "Boys", items: [textItem("1", "Naruto")] },
+        { id: "cb", name: "Girls", items: [textItem("3", "Sakura"), textItem("4", "Hinata")] },
+      ],
+    };
+    renderScreen(shortPack);
+    await screen.findByRole("button", { name: "Pick Boys" });
+
+    expect(screen.getByText("Showing 1 of 1")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Pick Boys" }));
+    expect(screen.getByRole("button", { name: "Next round →" })).toBeEnabled();
+  });
+
   it("renders nxn rounds as two side-by-side categories with a VS divider", async () => {
     renderScreen(NXN_PACK);
 

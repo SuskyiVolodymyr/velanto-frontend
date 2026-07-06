@@ -74,7 +74,14 @@ export function PlayScreen({ pack }: { pack: Pack }) {
     [isVersus, isFinished, categoryB, versusN, roundIndex],
   );
 
-  const totalCount = isVersus ? versusN : candidates.length;
+  // Derived from the actual sampled candidates, not the pack-level versusN
+  // directly — a malformed pack with fewer items than versusN in a category
+  // would otherwise make "Showing X of Y" over-report and leave "Show next"
+  // stuck past the last real card. Backend create-flow validation guarantees
+  // this can't happen today, but TS can't express that invariant.
+  const totalCount = isVersus
+    ? Math.min(versusCandidatesA.length, versusCandidatesB.length)
+    : candidates.length;
   const revealedCount = Math.min(revealed, totalCount);
   const canRevealMore = revealedCount < totalCount;
   const canConfirm = selectedId !== null && revealedCount >= totalCount;
