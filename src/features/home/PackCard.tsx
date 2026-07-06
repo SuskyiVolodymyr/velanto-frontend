@@ -1,16 +1,11 @@
 import Link from "next/link";
 import { Badge } from "@/src/shared/components/Badge";
 import { Text } from "@/src/shared/components/Text";
+import { FORMAT_LABELS, getRoundsCount } from "@/src/shared/lib/pack-display";
 import type { Pack } from "@/src/shared/types/pack";
 
-const FORMAT_LABELS: Record<Pack["format"], string> = {
-  save_one: "Save One",
-  sacrifice_one: "Sacrifice One",
-  nxn: "NxN",
-};
-
 export function PackCard({ pack }: { pack: Pack }) {
-  const roundsCount = pack.format === "nxn" ? (pack.versusRounds ?? 0) : (pack.groups?.length ?? 0);
+  const roundsCount = getRoundsCount(pack);
 
   return (
     <Link href={`/packs/${pack.id}`} className="block">
