@@ -9,6 +9,7 @@ import { getPackServer } from "@/src/shared/lib/get-pack-server";
 import { getResultsServer } from "@/src/shared/lib/get-results-server";
 import { PackCoverBanner } from "@/src/features/pack/PackCoverBanner";
 import { PackStats } from "@/src/features/pack/PackStats";
+import { CommentSection } from "@/src/features/pack/CommentSection";
 
 export async function generateMetadata({
   params,
@@ -20,10 +21,6 @@ export async function generateMetadata({
   return { title: pack ? pack.title : "Pack not found" };
 }
 
-/**
- * Comments are separate future work (velanto-frontend#34, blocked on
- * velanto-backend#31 — no comments concept exists in the backend yet).
- */
 export default async function PackPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const pack = await getPackServer(id);
@@ -71,6 +68,10 @@ export default async function PackPage({ params }: { params: Promise<{ id: strin
             </ul>
           </Card>
         ))}
+      </div>
+
+      <div className="mt-10">
+        <CommentSection packId={pack.id} />
       </div>
     </main>
   );
