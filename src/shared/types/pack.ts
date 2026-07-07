@@ -2,7 +2,7 @@
  * Local, independent type definitions (this repo does not import types from
  * velanto-backend — see coding-conventions.md).
  */
-export type PackFormat = "save_one" | "sacrifice_one" | "nxn" | "rank_blind";
+export type PackFormat = "save_one" | "sacrifice_one" | "nxn" | "rank_blind" | "1v1";
 
 // 'image' is intentionally omitted — no storage backend yet (backend issue #3).
 export type ItemType = "text" | "youtube";

@@ -23,7 +23,7 @@ export interface PackResults {
   packId: string;
   // Already sent by the backend for every non-rank_blind pack; typed now so
   // ResultScreen can discriminate between PackResults and RankResults.
-  format: "save_one" | "sacrifice_one" | "nxn";
+  format: "save_one" | "sacrifice_one" | "nxn" | "1v1";
   totalPlays: number;
   rounds: RoundResult[];
 }
