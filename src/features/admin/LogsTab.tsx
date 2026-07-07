@@ -26,6 +26,7 @@ export function LogsTab() {
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [loadingMore, setLoadingMore] = useState(false);
+  const [loadMoreError, setLoadMoreError] = useState("");
 
   useEffect(() => {
     const timeout = setTimeout(
@@ -84,6 +85,9 @@ export function LogsTab() {
       });
       setTotal(result.total);
       setPage(nextPage);
+      setLoadMoreError("");
+    } catch {
+      setLoadMoreError("Couldn't load more logs. Try again.");
     } finally {
       setLoadingMore(false);
     }
@@ -140,9 +144,12 @@ export function LogsTab() {
       )}
 
       {status === "ready" && logs.length < total && (
-        <Button variant="secondary" disabled={loadingMore} onClick={() => void handleLoadMore()}>
-          {loadingMore ? "Loading…" : "Load more"}
-        </Button>
+        <div className="flex flex-col gap-2">
+          <Button variant="secondary" disabled={loadingMore} onClick={() => void handleLoadMore()}>
+            {loadingMore ? "Loading…" : "Load more"}
+          </Button>
+          {loadMoreError && <Text className="text-sm text-[#ff6b6b]">{loadMoreError}</Text>}
+        </div>
       )}
     </div>
   );
