@@ -154,7 +154,14 @@ export function UsersTab() {
                       ) : (
                         <Button
                           variant="secondary"
-                          onClick={() => setBanTargetId(banTargetId === row.id ? null : row.id)}
+                          onClick={() => {
+                            const opening = banTargetId !== row.id;
+                            setBanTargetId(opening ? row.id : null);
+                            if (opening) {
+                              setBanDuration("week");
+                              setBanReason("");
+                            }
+                          }}
                         >
                           Ban
                         </Button>
@@ -169,6 +176,7 @@ export function UsersTab() {
                       <select
                         value={banDuration}
                         onChange={(e) => setBanDuration(e.target.value as BanDuration)}
+                        aria-label="Ban duration"
                         className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground"
                       >
                         {BAN_DURATIONS.map((d) => (
