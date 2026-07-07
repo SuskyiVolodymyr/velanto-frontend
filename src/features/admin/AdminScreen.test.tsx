@@ -79,6 +79,10 @@ describe("AdminScreen", () => {
     );
 
     await vi.waitFor(() => expect(replace).toHaveBeenCalledWith("/"));
+    // Locks in the no-flash guarantee: the tabs (and thus any admin content)
+    // must never render for a disallowed role, not even for a frame before
+    // the redirect fires.
+    expect(screen.queryByRole("button", { name: "Overview" })).not.toBeInTheDocument();
   });
 
   it("shows a login prompt when unauthenticated", async () => {
