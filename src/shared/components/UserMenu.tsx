@@ -8,6 +8,12 @@ import type { User } from "@/src/shared/types/user";
 export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void }) {
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+
+  function closeAndRefocus() {
+    setOpen(false);
+    triggerRef.current?.focus();
+  }
 
   useEffect(() => {
     if (!open) return;
@@ -18,7 +24,7 @@ export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void 
       }
     }
     function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key === "Escape") closeAndRefocus();
     }
 
     document.addEventListener("mousedown", handlePointerDown);
@@ -34,6 +40,7 @@ export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void 
   return (
     <div ref={containerRef} className="relative">
       <button
+        ref={triggerRef}
         type="button"
         aria-haspopup="menu"
         aria-expanded={open}
@@ -74,7 +81,7 @@ export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void 
             type="button"
             role="menuitem"
             onClick={() => {
-              setOpen(false);
+              closeAndRefocus();
               onLogout();
             }}
             className="block w-full px-3.5 py-2.5 text-left text-sm text-[#ff6b6b] hover:bg-white/[0.06]"

@@ -60,14 +60,27 @@ describe("UserMenu", () => {
     expect(screen.queryByRole("menu")).not.toBeInTheDocument();
   });
 
-  it("closes the menu on Escape", async () => {
+  it("closes the menu on Escape and returns focus to the trigger", async () => {
     const user = userEvent.setup();
     render(<UserMenu user={USER} onLogout={vi.fn()} />);
 
-    await user.click(screen.getByRole("button", { name: "Account menu" }));
+    const trigger = screen.getByRole("button", { name: "Account menu" });
+    await user.click(trigger);
     expect(screen.getByRole("menu")).toBeInTheDocument();
 
     await user.keyboard("{Escape}");
     expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+    expect(trigger).toHaveFocus();
+  });
+
+  it("returns focus to the trigger after logging out", async () => {
+    const user = userEvent.setup();
+    render(<UserMenu user={USER} onLogout={vi.fn()} />);
+
+    const trigger = screen.getByRole("button", { name: "Account menu" });
+    await user.click(trigger);
+    await user.click(screen.getByRole("menuitem", { name: "Log out" }));
+
+    expect(trigger).toHaveFocus();
   });
 });
