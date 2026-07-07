@@ -12,6 +12,7 @@ const push = vi.fn();
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push }),
+  usePathname: () => "/packs/pack-a/play",
 }));
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
@@ -86,9 +87,13 @@ beforeEach(() => {
 describe("PlayScreen", () => {
   it("prompts to log in when there is no session", async () => {
     vi.mocked(authClient.refresh).mockRejectedValue(new ApiError(401, "Unauthorized", null));
+    const user = userEvent.setup();
     renderScreen(SAVE_ONE_PACK);
 
     expect(await screen.findByText("You need to be logged in to play a pack.")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Log in" }));
+    expect(push).toHaveBeenCalledWith("/auth?next=%2Fpacks%2Fpack-a%2Fplay");
   });
 
   const NXN_PACK: Pack = {

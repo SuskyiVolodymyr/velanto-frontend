@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import { ApiError } from "@/src/shared/lib/api-client";
@@ -131,6 +131,7 @@ function messageFromError(error: unknown): string {
 
 export function CreatePackForm() {
   const router = useRouter();
+  const pathname = usePathname();
   const { status } = useAuth();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -220,7 +221,7 @@ export function CreatePackForm() {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
         <Text variant="secondary">You need to be logged in to create a pack.</Text>
-        <Button className="mt-4" onClick={() => router.push("/auth")}>
+        <Button className="mt-4" onClick={() => router.push(`/auth?next=${encodeURIComponent(pathname)}`)}>
           Log in
         </Button>
       </div>

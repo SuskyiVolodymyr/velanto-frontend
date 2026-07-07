@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { useAuth } from "@/src/shared/lib/auth-context";
@@ -23,6 +23,7 @@ const TABS: { value: Tab; label: string }[] = [
 export function AdminScreen() {
   const { user, status } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const [tab, setTab] = useState<Tab>("overview");
 
   const allowed = user?.role === "admin" || user?.role === "manager";
@@ -39,7 +40,7 @@ export function AdminScreen() {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
         <Text variant="secondary">You need to be logged in to view this page.</Text>
-        <Button className="mt-4" onClick={() => router.push("/auth")}>
+        <Button className="mt-4" onClick={() => router.push(`/auth?next=${encodeURIComponent(pathname)}`)}>
           Log in
         </Button>
       </div>

@@ -12,6 +12,7 @@ const push = vi.fn();
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push }),
+  usePathname: () => "/packs/pack-1v1/play",
 }));
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
@@ -86,9 +87,13 @@ beforeEach(() => {
 describe("HeadToHeadPlayScreen", () => {
   it("prompts to log in when there is no session", async () => {
     vi.mocked(authClient.refresh).mockRejectedValue(new ApiError(401, "Unauthorized", null));
+    const user = userEvent.setup();
     renderScreen(HEAD_TO_HEAD_PACK);
 
     expect(await screen.findByText("You need to be logged in to play a pack.")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Log in" }));
+    expect(push).toHaveBeenCalledWith("/auth?next=%2Fpacks%2Fpack-1v1%2Fplay");
   });
 
   it("shows both items of the first matchup immediately", async () => {

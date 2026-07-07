@@ -12,6 +12,7 @@ const push = vi.fn();
 const replace = vi.fn();
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push, replace }),
+  usePathname: () => "/admin",
 }));
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
@@ -87,6 +88,7 @@ describe("AdminScreen", () => {
 
   it("shows a login prompt when unauthenticated", async () => {
     vi.mocked(authClient.refresh).mockRejectedValue(new Error("no session"));
+    const user = userEvent.setup();
     render(
       <AuthProvider>
         <AdminScreen />
@@ -94,5 +96,8 @@ describe("AdminScreen", () => {
     );
 
     expect(await screen.findByText("You need to be logged in to view this page.")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Log in" }));
+    expect(push).toHaveBeenCalledWith("/auth?next=%2Fadmin");
   });
 });
