@@ -17,6 +17,7 @@ export function CommentSection({ packId }: { packId: string }) {
   const [page, setPage] = useState(1);
   const [loadStatus, setLoadStatus] = useState<"loading" | "ready" | "error">("loading");
   const [loadingMore, setLoadingMore] = useState(false);
+  const [loadMoreError, setLoadMoreError] = useState("");
   const [draft, setDraft] = useState("");
   const [posting, setPosting] = useState(false);
   const [postError, setPostError] = useState("");
@@ -46,9 +47,19 @@ export function CommentSection({ packId }: { packId: string }) {
     try {
       const nextPage = page + 1;
       const result = await commentsClient.list(packId, { page: nextPage, limit: PAGE_SIZE });
-      setComments((prev) => [...prev, ...result.items]);
+      // A comment posted between page loads shifts every later comment's
+      // server-side offset by one, so the next page can re-return a comment
+      // already shown on a prior page — filter those out rather than
+      // trusting the offset math to stay aligned with local inserts.
+      setComments((prev) => {
+        const existingIds = new Set(prev.map((c) => c.id));
+        return [...prev, ...result.items.filter((c) => !existingIds.has(c.id))];
+      });
       setTotal(result.total);
       setPage(nextPage);
+      setLoadMoreError("");
+    } catch {
+      setLoadMoreError("Couldn't load more comments. Try again.");
     } finally {
       setLoadingMore(false);
     }
@@ -124,14 +135,12 @@ export function CommentSection({ packId }: { packId: string }) {
       )}
 
       {loadStatus === "ready" && comments.length < total && (
-        <Button
-          variant="secondary"
-          className="mt-4"
-          disabled={loadingMore}
-          onClick={handleLoadMore}
-        >
-          Load more
-        </Button>
+        <div className="mt-4 flex flex-col gap-2">
+          <Button variant="secondary" disabled={loadingMore} onClick={handleLoadMore}>
+            {loadingMore ? "Loading…" : "Load more"}
+          </Button>
+          {loadMoreError && <Text className="text-sm text-[#ff6b6b]">{loadMoreError}</Text>}
+        </div>
       )}
     </section>
   );

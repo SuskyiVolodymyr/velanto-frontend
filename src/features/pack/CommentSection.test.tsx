@@ -213,6 +213,59 @@ describe("CommentSection", () => {
     expect(screen.queryByRole("button", { name: "Load more" })).not.toBeInTheDocument();
   });
 
+  it("filters out a comment the next page re-returns after a post shifted server offsets", async () => {
+    const user = userEvent.setup();
+    const thirdComment: Comment = {
+      id: "c3",
+      packId: "pack-1",
+      authorId: "u4",
+      authorUsername: "dave",
+      body: "Third comment.",
+      createdAt: "2026-01-03T00:00:00.000Z",
+    };
+    vi.mocked(commentsClient.list).mockResolvedValueOnce({
+      items: [COMMENT_A],
+      total: 2,
+      page: 1,
+      limit: 1,
+    });
+    renderAsUnauthenticated();
+
+    await screen.findByText("Loved this pack.");
+
+    // Simulate the next page re-returning COMMENT_A (already shown) alongside
+    // a genuinely new comment — the offset-shift scenario found in review.
+    vi.mocked(commentsClient.list).mockResolvedValueOnce({
+      items: [COMMENT_A, thirdComment],
+      total: 3,
+      page: 2,
+      limit: 1,
+    });
+    await user.click(screen.getByRole("button", { name: "Load more" }));
+
+    expect(await screen.findByText("Third comment.")).toBeInTheDocument();
+    expect(screen.getAllByText("Loved this pack.")).toHaveLength(1);
+  });
+
+  it("shows an error when Load more fails", async () => {
+    const user = userEvent.setup();
+    vi.mocked(commentsClient.list).mockResolvedValueOnce({
+      items: [COMMENT_A],
+      total: 2,
+      page: 1,
+      limit: 1,
+    });
+    renderAsUnauthenticated();
+
+    await screen.findByText("Loved this pack.");
+    vi.mocked(commentsClient.list).mockRejectedValueOnce(new Error("network error"));
+    await user.click(screen.getByRole("button", { name: "Load more" }));
+
+    expect(
+      await screen.findByText("Couldn't load more comments. Try again."),
+    ).toBeInTheDocument();
+  });
+
   it("keeps the Load more button correctly visible after posting a new comment", async () => {
     const user = userEvent.setup();
     vi.mocked(commentsClient.list).mockResolvedValue({
