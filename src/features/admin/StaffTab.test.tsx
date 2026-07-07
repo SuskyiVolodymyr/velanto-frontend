@@ -81,6 +81,21 @@ describe("StaffTab", () => {
     await waitFor(() => expect(usersClient.changeRole).toHaveBeenCalledWith("u2", "user"));
   });
 
+  it("shows an error and keeps the original role when the role change is rejected", async () => {
+    vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [TARGET], total: 1, page: 1, limit: 20 });
+    vi.mocked(usersClient.changeRole).mockRejectedValue(new Error("forbidden"));
+    const user = userEvent.setup();
+    renderAsManager();
+
+    await screen.findByText("bob");
+    await user.selectOptions(screen.getByLabelText("Change role for bob"), "user");
+
+    expect(
+      await screen.findByText("Couldn't change this user's role. Try again."),
+    ).toBeInTheDocument();
+    expect(screen.getByText("moderator")).toBeInTheDocument();
+  });
+
   it("hides the role select for a target the actor cannot act on", async () => {
     const peerManager: AdminUserRow = { ...TARGET, id: "u3", username: "peer", role: "manager" };
     vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [peerManager], total: 1, page: 1, limit: 20 });
