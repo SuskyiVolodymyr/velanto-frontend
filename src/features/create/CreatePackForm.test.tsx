@@ -346,4 +346,142 @@ describe("CreatePackForm", () => {
       );
     });
   });
+
+  describe("1v1 format", () => {
+    it("shows the Groups section (not Categories) when 1v1 is selected", async () => {
+      const user = userEvent.setup();
+      renderForm();
+      await user.click(await screen.findByRole("button", { name: /^1v1/ }));
+
+      expect(
+        screen.getByRole("button", { name: "+ Add group (one more round)" }),
+      ).toBeInTheDocument();
+      expect(screen.queryByLabelText("Category 1 name")).not.toBeInTheDocument();
+    });
+
+    it("submits a valid 1v1 pack with the same groups payload shape as save_one", async () => {
+      const user = userEvent.setup();
+      vi.mocked(packsClient.create).mockResolvedValue({
+        id: "pack-1v1",
+        title: "Anime Face-Offs",
+        description: "Pick a winner each round.",
+        coverTone: "#2b2a3a",
+        format: "1v1",
+        tags: [],
+        groups: [],
+        authorId: "u1",
+        createdAt: "2026-01-01T00:00:00.000Z",
+      });
+      renderForm();
+      await user.click(await screen.findByRole("button", { name: /^1v1/ }));
+      await fillMinimalValidPack(user);
+      // fillMinimalValidPack adds exactly one item to the default group —
+      // 1v1 needs exactly 2, so add a second one before publishing (same
+      // "Group 1 new item" input + "Add" button fillMinimalValidPack itself
+      // used, see GroupEditor.tsx).
+      await user.type(screen.getByLabelText("Group 1 new item"), "Second item");
+      await user.click(screen.getByRole("button", { name: "Add" }));
+
+      await user.click(screen.getByRole("button", { name: "Publish" }));
+
+      await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-1v1"));
+      expect(packsClient.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          format: "1v1",
+          groups: expect.arrayContaining([expect.objectContaining({ name: "2016" })]),
+        }),
+      );
+      expect(packsClient.create).not.toHaveBeenCalledWith(
+        expect.objectContaining({ categories: expect.anything() }),
+      );
+    });
+
+    it("rejects a 1v1 pack whose group has only 1 item", () => {
+      const result = validate({
+        title: "t",
+        description: "d",
+        tags: [],
+        format: "1v1",
+        groups: [
+          {
+            id: "g1",
+            name: "Round 1",
+            selectionMode: "manual",
+            items: [{ id: "i1", type: "text", title: "Goku", value: "Goku" }],
+          },
+        ],
+        categories: [],
+      });
+      expect(result).toBe('Group "Round 1" needs exactly 2 items for a 1v1 matchup.');
+    });
+
+    it("rejects a 1v1 pack whose group has 3 items", () => {
+      const result = validate({
+        title: "t",
+        description: "d",
+        tags: [],
+        format: "1v1",
+        groups: [
+          {
+            id: "g1",
+            name: "Round 1",
+            selectionMode: "manual",
+            items: [
+              { id: "i1", type: "text", title: "Goku", value: "Goku" },
+              { id: "i2", type: "text", title: "Vegeta", value: "Vegeta" },
+              { id: "i3", type: "text", title: "Piccolo", value: "Piccolo" },
+            ],
+          },
+        ],
+        categories: [],
+      });
+      expect(result).toBe('Group "Round 1" needs exactly 2 items for a 1v1 matchup.');
+    });
+
+    it("rejects a 1v1 pack whose random-mode group has sampleSize !== 2", () => {
+      const result = validate({
+        title: "t",
+        description: "d",
+        tags: [],
+        format: "1v1",
+        groups: [
+          {
+            id: "g1",
+            name: "Round 1",
+            selectionMode: "random",
+            sampleSize: 3,
+            items: [
+              { id: "i1", type: "text", title: "Goku", value: "Goku" },
+              { id: "i2", type: "text", title: "Vegeta", value: "Vegeta" },
+              { id: "i3", type: "text", title: "Piccolo", value: "Piccolo" },
+            ],
+          },
+        ],
+        categories: [],
+      });
+      expect(result).toBe('Group "Round 1" needs a sample size of exactly 2 for a 1v1 matchup.');
+    });
+
+    it("accepts a valid 1v1 pack (exactly 2 items, manual mode)", () => {
+      const result = validate({
+        title: "t",
+        description: "d",
+        tags: [],
+        format: "1v1",
+        groups: [
+          {
+            id: "g1",
+            name: "Round 1",
+            selectionMode: "manual",
+            items: [
+              { id: "i1", type: "text", title: "Goku", value: "Goku" },
+              { id: "i2", type: "text", title: "Vegeta", value: "Vegeta" },
+            ],
+          },
+        ],
+        categories: [],
+      });
+      expect(result).toBeNull();
+    });
+  });
 });
