@@ -302,4 +302,48 @@ describe("CreatePackForm", () => {
       expect(vi.mocked(packsClient.create).mock.calls[0][0]).not.toHaveProperty("groups");
     });
   });
+
+  describe("rank_blind format", () => {
+    it("shows the Groups section (not Categories) when Rank Blind is selected", async () => {
+      const user = userEvent.setup();
+      renderForm();
+      await user.click(await screen.findByRole("button", { name: /^Rank Blind/ }));
+
+      expect(
+        screen.getByRole("button", { name: "+ Add group (one more round)" }),
+      ).toBeInTheDocument();
+      expect(screen.queryByLabelText("Category 1 name")).not.toBeInTheDocument();
+    });
+
+    it("submits a valid rank_blind pack with the same groups payload shape as save_one", async () => {
+      const user = userEvent.setup();
+      vi.mocked(packsClient.create).mockResolvedValue({
+        id: "pack-rank",
+        title: "Anime Openers, Ranked",
+        description: "Place each pick blind into a growing ranked list.",
+        coverTone: "#2b2a3a",
+        format: "rank_blind",
+        tags: [],
+        groups: [],
+        authorId: "u1",
+        createdAt: "2026-01-01T00:00:00.000Z",
+      });
+      renderForm();
+      await user.click(await screen.findByRole("button", { name: /^Rank Blind/ }));
+      await fillMinimalValidPack(user);
+
+      await user.click(screen.getByRole("button", { name: "Publish" }));
+
+      await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-rank"));
+      expect(packsClient.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          format: "rank_blind",
+          groups: expect.arrayContaining([expect.objectContaining({ name: "2016" })]),
+        }),
+      );
+      expect(packsClient.create).not.toHaveBeenCalledWith(
+        expect.objectContaining({ categories: expect.anything() }),
+      );
+    });
+  });
 });

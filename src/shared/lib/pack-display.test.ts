@@ -17,6 +17,7 @@ describe("FORMAT_LABELS", () => {
     expect(FORMAT_LABELS.save_one).toBe("Save One");
     expect(FORMAT_LABELS.sacrifice_one).toBe("Sacrifice One");
     expect(FORMAT_LABELS.nxn).toBe("NxN");
+    expect(FORMAT_LABELS.rank_blind).toBe("Rank Blind");
   });
 });
 
@@ -47,5 +48,18 @@ describe("getRoundsCount", () => {
     };
 
     expect(getRoundsCount(pack)).toBe(8);
+  });
+
+  it("counts groups as rounds for rank_blind packs", () => {
+    const pack: Pack = {
+      ...BASE_PACK,
+      format: "rank_blind",
+      groups: [
+        { id: "g1", name: "Openers", selectionMode: "manual", items: [] },
+        { id: "g2", name: "Closers", selectionMode: "random", sampleSize: 2, items: [] },
+      ],
+    };
+
+    expect(getRoundsCount(pack)).toBe(2);
   });
 });

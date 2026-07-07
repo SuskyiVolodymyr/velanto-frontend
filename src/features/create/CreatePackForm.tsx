@@ -335,6 +335,20 @@ export function CreatePackForm() {
               Two categories compared side by side.
             </Text>
           </button>
+          <button
+            type="button"
+            onClick={() => setFormat("rank_blind")}
+            aria-pressed={format === "rank_blind"}
+            className={cn(
+              "flex-1 rounded-[12px] border px-4 py-3 text-left transition-colors",
+              format === "rank_blind" ? "border-acc/40 bg-acc/5" : "border-border bg-white/[0.02]",
+            )}
+          >
+            <Text className="font-semibold">Rank Blind</Text>
+            <Text variant="secondary" className="mt-1 text-xs">
+              Place each pick blind into a growing ranked list.
+            </Text>
+          </button>
         </div>
       </section>
 

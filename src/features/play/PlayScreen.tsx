@@ -29,6 +29,13 @@ const FORMAT_COPY: Record<Pack["format"], { instruction: string; pickedLabel: st
     instruction: "Pick the side you'd save. Check it below, then confirm.",
     pickedLabel: "Saved so far",
   },
+  // Unreachable: rank_blind packs are routed to RankPlayScreen instead (see
+  // app/packs/[id]/play/page.tsx) — this entry exists only to satisfy
+  // Record<PackFormat, ...>'s exhaustiveness.
+  rank_blind: {
+    instruction: "",
+    pickedLabel: "",
+  },
 };
 
 interface Pick {

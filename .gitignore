@@ -49,3 +49,4 @@ next-env.d.ts
 # agent/workflow/security docs stay local-only, never pushed. (Not applied
 # to velanto-backend, which is private.)
 .claude/
+.superpowers/
