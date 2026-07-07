@@ -108,4 +108,79 @@ describe("HomeFeed", () => {
     render(<HomeFeed />);
     expect(await screen.findByRole("button", { name: "1v1" })).toBeInTheDocument();
   });
+
+  describe("search", () => {
+    it("debounces search input before re-fetching with q", async () => {
+      const user = userEvent.setup();
+      vi.mocked(packsClient.list).mockResolvedValue({ items: [PACK_A], total: 1, page: 1, limit: 50 });
+      render(<HomeFeed />);
+      await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
+
+      await user.type(screen.getByRole("searchbox"), "anime");
+      expect(packsClient.list).toHaveBeenCalledTimes(1);
+
+      await waitFor(
+        () =>
+          expect(packsClient.list).toHaveBeenLastCalledWith({
+            format: undefined,
+            tags: [],
+            q: "anime",
+            limit: 50,
+          }),
+        { timeout: 1000 },
+      );
+    });
+
+    it("trims leading/trailing whitespace before sending q", async () => {
+      const user = userEvent.setup();
+      vi.mocked(packsClient.list).mockResolvedValue({ items: [PACK_A], total: 1, page: 1, limit: 50 });
+      render(<HomeFeed />);
+      await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
+
+      await user.type(screen.getByRole("searchbox"), "  anime  ");
+
+      await waitFor(
+        () =>
+          expect(packsClient.list).toHaveBeenLastCalledWith({
+            format: undefined,
+            tags: [],
+            q: "anime",
+            limit: 50,
+          }),
+        { timeout: 1000 },
+      );
+    });
+
+    it("clearing the search box re-fetches without q", async () => {
+      const user = userEvent.setup();
+      vi.mocked(packsClient.list).mockResolvedValue({ items: [PACK_A], total: 1, page: 1, limit: 50 });
+      render(<HomeFeed />);
+      await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
+
+      const searchBox = screen.getByRole("searchbox");
+      await user.type(searchBox, "anime");
+      await waitFor(
+        () =>
+          expect(packsClient.list).toHaveBeenLastCalledWith({
+            format: undefined,
+            tags: [],
+            q: "anime",
+            limit: 50,
+          }),
+        { timeout: 1000 },
+      );
+
+      await user.clear(searchBox);
+      await waitFor(
+        () =>
+          expect(packsClient.list).toHaveBeenLastCalledWith({
+            format: undefined,
+            tags: [],
+            q: undefined,
+            limit: 50,
+          }),
+        { timeout: 1000 },
+      );
+    });
+  });
 });

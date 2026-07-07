@@ -59,4 +59,20 @@ describe("packsClient.list", () => {
 
     expect(apiClient.get).toHaveBeenCalledWith("/packs?page=2&limit=50");
   });
+
+  it("forwards q in the query string", async () => {
+    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+
+    await packsClient.list({ q: "anime" });
+
+    expect(apiClient.get).toHaveBeenCalledWith("/packs?q=anime");
+  });
+
+  it("omits q from the query string when it is an empty string", async () => {
+    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+
+    await packsClient.list({ q: "" });
+
+    expect(apiClient.get).toHaveBeenCalledWith("/packs");
+  });
 });
