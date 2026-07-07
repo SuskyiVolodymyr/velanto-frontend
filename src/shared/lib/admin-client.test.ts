@@ -46,6 +46,22 @@ describe("adminClient", () => {
     expect(apiClient.get).toHaveBeenCalledWith("/admin/users?q=alice&page=2&limit=20");
   });
 
+  it("listUsers() forwards only page when q and limit are absent", async () => {
+    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 2, limit: 20 });
+
+    await adminClient.listUsers({ page: 2 });
+
+    expect(apiClient.get).toHaveBeenCalledWith("/admin/users?page=2");
+  });
+
+  it("listUsers() forwards page 0 (falsy but a valid page value)", async () => {
+    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 0, limit: 20 });
+
+    await adminClient.listUsers({ page: 0 });
+
+    expect(apiClient.get).toHaveBeenCalledWith("/admin/users?page=0");
+  });
+
   it("auditLogs() fetches with no params when filters are empty", async () => {
     const envelope: AuditLogList = { items: [], total: 0, page: 1, limit: 20 };
     vi.mocked(apiClient.get).mockResolvedValue(envelope);
@@ -63,5 +79,13 @@ describe("adminClient", () => {
     expect(apiClient.get).toHaveBeenCalledWith(
       "/admin/audit-logs?actor=u1&action=ban_user&target=u2&page=1&limit=20",
     );
+  });
+
+  it("auditLogs() forwards only action when actor and target are absent", async () => {
+    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+
+    await adminClient.auditLogs({ action: "ban_user" });
+
+    expect(apiClient.get).toHaveBeenCalledWith("/admin/audit-logs?action=ban_user");
   });
 });
