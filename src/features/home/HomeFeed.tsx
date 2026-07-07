@@ -10,6 +10,11 @@ import { PackCard } from "@/src/features/home/PackCard";
 
 type FormatFilter = "all" | PackFormat;
 
+// Backend caps `limit` at 50 — request that in one page since there's no
+// pagination UI yet; a real "Page N" control is future work if pack counts
+// grow past this.
+const PAGE_SIZE = 50;
+
 const FORMAT_OPTIONS: { value: FormatFilter; label: string }[] = [
   { value: "all", label: "All" },
   { value: "save_one", label: "Save One" },
@@ -28,10 +33,10 @@ export function HomeFeed() {
   useEffect(() => {
     let cancelled = false;
     packsClient
-      .list({ format: format === "all" ? undefined : format, tags })
+      .list({ format: format === "all" ? undefined : format, tags, limit: PAGE_SIZE })
       .then((result) => {
         if (cancelled) return;
-        setPacks(result);
+        setPacks(result.items);
         setStatus("ready");
       })
       .catch(() => {
