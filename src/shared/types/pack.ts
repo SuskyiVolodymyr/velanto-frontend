@@ -76,4 +76,6 @@ export interface Pack {
   versusN?: number;
   authorId: string;
   createdAt: string;
+  totalPlays: number;
+  avgAgreementPercent: number;
 }

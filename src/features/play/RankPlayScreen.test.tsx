@@ -64,6 +64,8 @@ const RANK_BLIND_PACK: Pack = {
   ],
   authorId: "u1",
   createdAt: "2026-01-01T00:00:00.000Z",
+  totalPlays: 0,
+  avgAgreementPercent: 0,
 };
 
 function renderScreen(pack: Pack) {

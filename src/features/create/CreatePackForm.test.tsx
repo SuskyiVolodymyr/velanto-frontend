@@ -148,6 +148,8 @@ describe("CreatePackForm", () => {
       groups: [],
       authorId: "u1",
       createdAt: "2026-01-01T00:00:00.000Z",
+      totalPlays: 0,
+      avgAgreementPercent: 0,
     });
     renderForm();
     await fillMinimalValidPack(user);
@@ -265,6 +267,8 @@ describe("CreatePackForm", () => {
         versusN: 1,
         authorId: "u1",
         createdAt: "2026-01-01T00:00:00.000Z",
+        totalPlays: 0,
+        avgAgreementPercent: 0,
       });
       renderForm();
       await user.type(await screen.findByLabelText("Pack title"), "Boys vs Girls");
@@ -327,6 +331,8 @@ describe("CreatePackForm", () => {
         groups: [],
         authorId: "u1",
         createdAt: "2026-01-01T00:00:00.000Z",
+        totalPlays: 0,
+        avgAgreementPercent: 0,
       });
       renderForm();
       await user.click(await screen.findByRole("button", { name: /^Rank Blind/ }));
@@ -371,6 +377,8 @@ describe("CreatePackForm", () => {
         groups: [],
         authorId: "u1",
         createdAt: "2026-01-01T00:00:00.000Z",
+        totalPlays: 0,
+        avgAgreementPercent: 0,
       });
       renderForm();
       await user.click(await screen.findByRole("button", { name: /^1v1/ }));

@@ -64,6 +64,8 @@ const SAVE_ONE_PACK: Pack = {
   ],
   authorId: "u1",
   createdAt: "2026-01-01T00:00:00.000Z",
+  totalPlays: 0,
+  avgAgreementPercent: 0,
 };
 
 function renderScreen(pack: Pack) {
@@ -104,6 +106,8 @@ describe("PlayScreen", () => {
     versusN: 2,
     authorId: "u1",
     createdAt: "2026-01-01T00:00:00.000Z",
+    totalPlays: 0,
+    avgAgreementPercent: 0,
   };
 
   it("derives the reveal count from the actual sampled items, not a possibly-stale versusN", async () => {
