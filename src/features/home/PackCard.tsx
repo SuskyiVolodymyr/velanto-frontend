@@ -9,7 +9,7 @@ export function PackCard({ pack }: { pack: Pack }) {
   const statsLabel =
     pack.totalPlays === 0
       ? "No plays yet"
-      : `${pack.totalPlays} play${pack.totalPlays === 1 ? "" : "s"} · ${pack.avgAgreementPercent}% agreement`;
+      : `${pack.totalPlays} play${pack.totalPlays === 1 ? "" : "s"} · ${Math.round(pack.avgAgreementPercent)}% agreement`;
 
   return (
     <Link href={`/packs/${pack.id}`} className="block">
@@ -25,11 +25,11 @@ export function PackCard({ pack }: { pack: Pack }) {
           <Text variant="secondary" className="line-clamp-2 text-sm">
             {pack.description}
           </Text>
-          <div className="mt-auto flex items-center justify-between">
-            <Text variant="tertiary" className="text-xs">
+          <div className="mt-auto flex items-center justify-between gap-2">
+            <Text variant="tertiary" className="shrink-0 text-xs">
               {roundsCount} round{roundsCount === 1 ? "" : "s"}
             </Text>
-            <Text variant="tertiary" className="text-xs">
+            <Text variant="tertiary" className="truncate text-xs">
               {statsLabel}
             </Text>
           </div>

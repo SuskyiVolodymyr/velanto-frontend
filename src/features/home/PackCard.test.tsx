@@ -86,4 +86,17 @@ describe("PackCard", () => {
 
     expect(screen.getByText("124 plays · 68% agreement")).toBeInTheDocument();
   });
+
+  it("rounds a fractional agreement percentage for display", () => {
+    const pack: Pack = {
+      ...BASE_PACK,
+      format: "save_one",
+      groups: [{ id: "g1", name: "2016", selectionMode: "manual", items: [] }],
+      totalPlays: 3,
+      avgAgreementPercent: 33.3,
+    };
+    render(<PackCard pack={pack} />);
+
+    expect(screen.getByText("3 plays · 33% agreement")).toBeInTheDocument();
+  });
 });
