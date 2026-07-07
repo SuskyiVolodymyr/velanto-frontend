@@ -112,7 +112,7 @@ export function UsersTab() {
       <div className="max-w-sm">
         <Input
           type="search"
-          aria-label="Search users"
+          aria-label="Search users by username or email"
           placeholder="Search by username or email…"
           value={searchInput}
           onChange={(event) => setSearchInput(event.target.value)}

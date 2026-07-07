@@ -85,7 +85,7 @@ export function StaffTab() {
       <div className="max-w-sm">
         <Input
           type="search"
-          aria-label="Search staff"
+          aria-label="Search staff by username or email"
           placeholder="Search by username or email…"
           value={searchInput}
           onChange={(event) => setSearchInput(event.target.value)}
