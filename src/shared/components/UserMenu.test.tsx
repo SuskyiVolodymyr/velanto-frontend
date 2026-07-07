@@ -32,6 +32,16 @@ describe("UserMenu", () => {
     expect(screen.getByRole("menuitem", { name: "Settings" })).toHaveAttribute("href", "/settings");
   });
 
+  it("shows an Admin link for a manager/admin role but not for a plain user", async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(<UserMenu user={{ ...USER, role: "manager" }} onLogout={vi.fn()} />);
+    await user.click(screen.getByRole("button", { name: "Account menu" }));
+    expect(screen.getByRole("menuitem", { name: "Admin" })).toHaveAttribute("href", "/admin");
+
+    rerender(<UserMenu user={USER} onLogout={vi.fn()} />);
+    expect(screen.queryByRole("menuitem", { name: "Admin" })).not.toBeInTheDocument();
+  });
+
   it("closes the menu when clicking outside", async () => {
     const user = userEvent.setup();
     render(
