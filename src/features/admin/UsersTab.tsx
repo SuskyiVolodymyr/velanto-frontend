@@ -46,7 +46,6 @@ export function UsersTab() {
 
   useEffect(() => {
     let cancelled = false;
-    setStatus("loading");
     adminClient
       .listUsers({ q: query || undefined, page: 1, limit: PAGE_SIZE })
       .then((result) => {

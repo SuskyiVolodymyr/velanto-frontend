@@ -32,7 +32,6 @@ export function StaffTab() {
 
   useEffect(() => {
     let cancelled = false;
-    setStatus("loading");
     adminClient
       .listUsers({ q: query || undefined, page: 1, limit: PAGE_SIZE })
       .then((result) => {

@@ -43,7 +43,6 @@ export function LogsTab() {
 
   useEffect(() => {
     let cancelled = false;
-    setStatus("loading");
     adminClient
       .auditLogs({
         actor: filters.actor || undefined,
