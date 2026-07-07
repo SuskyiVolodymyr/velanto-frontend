@@ -26,6 +26,10 @@ const MIN_VERSUS_ROUNDS = 1;
 const MAX_VERSUS_ROUNDS = 30;
 const MIN_VERSUS_N = 1;
 const MAX_VERSUS_N = 6;
+// Matches backend's HEAD_TO_HEAD_ROUND_SIZE
+// (velanto-backend/src/modules/packs/types/head-to-head.ts) — exactly 2
+// items per matchup, a group IS a matchup.
+const HEAD_TO_HEAD_ROUND_SIZE = 2;
 
 function newGroup(): Group {
   return { id: crypto.randomUUID(), name: "", selectionMode: "manual", items: [] };
@@ -80,6 +84,20 @@ export function validate(fields: FormFields): string | null {
     for (const category of fields.categories) {
       if (fields.versusN > category.items.length) {
         return `Category "${category.name}" needs at least ${fields.versusN} item(s).`;
+      }
+    }
+    return null;
+  }
+
+  if (fields.format === "1v1") {
+    if (fields.groups.length === 0) return "Add at least one group.";
+    for (const group of fields.groups) {
+      if (!group.name.trim()) return "Every group needs a name.";
+      const roundSize = group.selectionMode === "random" ? group.sampleSize : group.items.length;
+      if (roundSize !== HEAD_TO_HEAD_ROUND_SIZE) {
+        return group.selectionMode === "random"
+          ? `Group "${group.name}" needs a sample size of exactly ${HEAD_TO_HEAD_ROUND_SIZE} for a 1v1 matchup.`
+          : `Group "${group.name}" needs exactly ${HEAD_TO_HEAD_ROUND_SIZE} items for a 1v1 matchup.`;
       }
     }
     return null;
@@ -347,6 +365,20 @@ export function CreatePackForm() {
             <Text className="font-semibold">Rank Blind</Text>
             <Text variant="secondary" className="mt-1 text-xs">
               Place each pick blind into a growing ranked list.
+            </Text>
+          </button>
+          <button
+            type="button"
+            onClick={() => setFormat("1v1")}
+            aria-pressed={format === "1v1"}
+            className={cn(
+              "flex-1 rounded-[12px] border px-4 py-3 text-left transition-colors",
+              format === "1v1" ? "border-acc/40 bg-acc/5" : "border-border bg-white/[0.02]",
+            )}
+          >
+            <Text className="font-semibold">1v1</Text>
+            <Text variant="secondary" className="mt-1 text-xs">
+              Pick a winner in each head-to-head matchup.
             </Text>
           </button>
         </div>

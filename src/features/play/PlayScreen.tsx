@@ -36,6 +36,12 @@ const FORMAT_COPY: Record<Pack["format"], { instruction: string; pickedLabel: st
     instruction: "",
     pickedLabel: "",
   },
+  // Unreachable: 1v1 packs are routed to HeadToHeadPlayScreen instead (see
+  // app/packs/[id]/play/page.tsx) — same treatment as rank_blind above.
+  "1v1": {
+    instruction: "",
+    pickedLabel: "",
+  },
 };
 
 interface Pick {

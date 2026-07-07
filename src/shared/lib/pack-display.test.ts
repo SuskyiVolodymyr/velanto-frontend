@@ -19,6 +19,10 @@ describe("FORMAT_LABELS", () => {
     expect(FORMAT_LABELS.nxn).toBe("NxN");
     expect(FORMAT_LABELS.rank_blind).toBe("Rank Blind");
   });
+
+  it("has a label for the 1v1 format", () => {
+    expect(FORMAT_LABELS["1v1"]).toBe("1v1");
+  });
 });
 
 describe("getRoundsCount", () => {
@@ -60,6 +64,24 @@ describe("getRoundsCount", () => {
       ],
     };
 
+    expect(getRoundsCount(pack)).toBe(2);
+  });
+
+  it("counts groups.length as the rounds count for a 1v1 pack", () => {
+    const pack = {
+      id: "p1",
+      title: "t",
+      description: "d",
+      coverTone: "#000",
+      format: "1v1" as const,
+      tags: [],
+      groups: [
+        { id: "g1", name: "Round 1", selectionMode: "manual" as const, items: [] },
+        { id: "g2", name: "Round 2", selectionMode: "manual" as const, items: [] },
+      ],
+      authorId: "u1",
+      createdAt: "2026-01-01T00:00:00.000Z",
+    };
     expect(getRoundsCount(pack)).toBe(2);
   });
 });

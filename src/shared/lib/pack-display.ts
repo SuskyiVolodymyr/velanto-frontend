@@ -5,6 +5,7 @@ export const FORMAT_LABELS: Record<Pack["format"], string> = {
   sacrifice_one: "Sacrifice One",
   nxn: "NxN",
   rank_blind: "Rank Blind",
+  "1v1": "1v1",
 };
 
 export function getRoundsCount(pack: Pack): number {
