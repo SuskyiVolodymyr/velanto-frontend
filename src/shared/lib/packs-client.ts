@@ -16,12 +16,23 @@ export interface CreatePackInput {
 export interface ListPacksFilters {
   format?: PackFormat;
   tags?: PackTag[];
+  page?: number;
+  limit?: number;
+}
+
+export interface PackList {
+  items: Pack[];
+  total: number;
+  page: number;
+  limit: number;
 }
 
 function buildListQuery(filters: ListPacksFilters): string {
   const params = new URLSearchParams();
   if (filters.format) params.set("format", filters.format);
   if (filters.tags && filters.tags.length > 0) params.set("tags", filters.tags.join(","));
+  if (filters.page !== undefined) params.set("page", String(filters.page));
+  if (filters.limit !== undefined) params.set("limit", String(filters.limit));
   const query = params.toString();
   return query ? `?${query}` : "";
 }
@@ -29,5 +40,5 @@ function buildListQuery(filters: ListPacksFilters): string {
 export const packsClient = {
   create: (input: CreatePackInput) => apiClient.post<Pack>("/packs", input),
   getById: (id: string) => apiClient.get<Pack>(`/packs/${id}`),
-  list: (filters: ListPacksFilters = {}) => apiClient.get<Pack[]>(`/packs${buildListQuery(filters)}`),
+  list: (filters: ListPacksFilters = {}) => apiClient.get<PackList>(`/packs${buildListQuery(filters)}`),
 };

@@ -31,15 +31,15 @@ beforeEach(() => {
 
 describe("HomeFeed", () => {
   it("fetches with no filters on mount and renders the results", async () => {
-    vi.mocked(packsClient.list).mockResolvedValue([PACK_A]);
+    vi.mocked(packsClient.list).mockResolvedValue({ items: [PACK_A], total: 1, page: 1, limit: 50 });
     render(<HomeFeed />);
 
     expect(await screen.findByText("Best Anime Openings")).toBeInTheDocument();
-    expect(packsClient.list).toHaveBeenCalledWith({ format: undefined, tags: [] });
+    expect(packsClient.list).toHaveBeenCalledWith({ format: undefined, tags: [], limit: 50 });
   });
 
   it("shows the empty state when no packs match", async () => {
-    vi.mocked(packsClient.list).mockResolvedValue([]);
+    vi.mocked(packsClient.list).mockResolvedValue({ items: [], total: 0, page: 1, limit: 50 });
     render(<HomeFeed />);
 
     expect(await screen.findByText("No packs match these filters yet.")).toBeInTheDocument();
@@ -54,26 +54,34 @@ describe("HomeFeed", () => {
 
   it("re-fetches with the selected format when a format chip is clicked", async () => {
     const user = userEvent.setup();
-    vi.mocked(packsClient.list).mockResolvedValue([PACK_A]);
+    vi.mocked(packsClient.list).mockResolvedValue({ items: [PACK_A], total: 1, page: 1, limit: 50 });
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
 
     await user.click(screen.getByRole("button", { name: "Sacrifice One" }));
 
     await waitFor(() =>
-      expect(packsClient.list).toHaveBeenLastCalledWith({ format: "sacrifice_one", tags: [] }),
+      expect(packsClient.list).toHaveBeenLastCalledWith({
+        format: "sacrifice_one",
+        tags: [],
+        limit: 50,
+      }),
     );
   });
 
   it("re-fetches with selected tags (additive) when tag chips are toggled", async () => {
     const user = userEvent.setup();
-    vi.mocked(packsClient.list).mockResolvedValue([PACK_A]);
+    vi.mocked(packsClient.list).mockResolvedValue({ items: [PACK_A], total: 1, page: 1, limit: 50 });
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
 
     await user.click(screen.getByRole("button", { name: "Anime" }));
     await waitFor(() =>
-      expect(packsClient.list).toHaveBeenLastCalledWith({ format: undefined, tags: ["Anime"] }),
+      expect(packsClient.list).toHaveBeenLastCalledWith({
+        format: undefined,
+        tags: ["Anime"],
+        limit: 50,
+      }),
     );
 
     await user.click(screen.getByRole("button", { name: "Music" }));
@@ -81,17 +89,22 @@ describe("HomeFeed", () => {
       expect(packsClient.list).toHaveBeenLastCalledWith({
         format: undefined,
         tags: ["Anime", "Music"],
+        limit: 50,
       }),
     );
 
     await user.click(screen.getByRole("button", { name: "Anime" }));
     await waitFor(() =>
-      expect(packsClient.list).toHaveBeenLastCalledWith({ format: undefined, tags: ["Music"] }),
+      expect(packsClient.list).toHaveBeenLastCalledWith({
+        format: undefined,
+        tags: ["Music"],
+        limit: 50,
+      }),
     );
   });
 
   it("includes a 1v1 filter chip", async () => {
-    vi.mocked(packsClient.list).mockResolvedValue([]);
+    vi.mocked(packsClient.list).mockResolvedValue({ items: [], total: 0, page: 1, limit: 50 });
     render(<HomeFeed />);
     expect(await screen.findByRole("button", { name: "1v1" })).toBeInTheDocument();
   });
