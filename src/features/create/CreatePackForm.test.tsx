@@ -11,6 +11,7 @@ const push = vi.fn();
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push }),
+  usePathname: () => "/create",
 }));
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
@@ -61,10 +62,14 @@ beforeEach(() => {
 describe("CreatePackForm", () => {
   it("prompts to log in when there is no session", async () => {
     vi.mocked(authClient.refresh).mockRejectedValue(new ApiError(401, "Unauthorized", null));
+    const user = userEvent.setup();
     renderForm();
 
     expect(await screen.findByText("You need to be logged in to create a pack.")).toBeInTheDocument();
     expect(screen.queryByLabelText("Pack title")).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Log in" }));
+    expect(push).toHaveBeenCalledWith("/auth?next=%2Fcreate");
   });
 
   it("rejects an empty submission without calling the API", async () => {

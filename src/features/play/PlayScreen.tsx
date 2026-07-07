@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { Text } from "@/src/shared/components/Text";
 import { Button, buttonClassName } from "@/src/shared/components/Button";
@@ -53,6 +53,7 @@ interface Pick {
 export function PlayScreen({ pack }: { pack: Pack }) {
   const { status } = useAuth();
   const router = useRouter();
+  const pathname = usePathname();
   const copy = FORMAT_COPY[pack.format];
   const isVersus = pack.format === "nxn";
   const groups = pack.groups ?? [];
@@ -154,7 +155,7 @@ export function PlayScreen({ pack }: { pack: Pack }) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
         <Text variant="secondary">You need to be logged in to play a pack.</Text>
-        <Button className="mt-4" onClick={() => router.push("/auth")}>
+        <Button className="mt-4" onClick={() => router.push(`/auth?next=${encodeURIComponent(pathname)}`)}>
           Log in
         </Button>
       </div>
