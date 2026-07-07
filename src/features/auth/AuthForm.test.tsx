@@ -7,9 +7,11 @@ import { authClient } from "@/src/shared/lib/auth-client";
 import { ApiError } from "@/src/shared/lib/api-client";
 
 const push = vi.fn();
+let searchParams = new URLSearchParams();
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push }),
+  useSearchParams: () => searchParams,
 }));
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
@@ -31,6 +33,7 @@ function renderAuthForm() {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  searchParams = new URLSearchParams();
   // Silent refresh-on-mount finds no session by default — most tests don't care.
   vi.mocked(authClient.refresh).mockRejectedValue(
     new ApiError(401, "Unauthorized", { message: "Refresh token invalid or expired" }),
@@ -144,6 +147,50 @@ describe("AuthForm", () => {
       identifier: "alice",
       password: "password123",
     });
+  });
+
+  it("redirects to a sanitized ?next= path on successful login instead of home", async () => {
+    searchParams = new URLSearchParams({ next: "/create" });
+    const user = userEvent.setup();
+    vi.mocked(authClient.login).mockResolvedValue({
+      accessToken: "access-token",
+      user: {
+        id: "u1",
+        email: "a@example.com",
+        username: "alice",
+        role: "user",
+        createdAt: "2026-01-01T00:00:00.000Z",
+      },
+    });
+    renderAuthForm();
+
+    await user.type(screen.getByLabelText("Email or username"), "alice");
+    await user.type(screen.getByLabelText("Password"), "password123");
+    await user.click(screen.getByRole("button", { name: "Log in" }));
+
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/create"));
+  });
+
+  it("ignores an unsafe ?next= value and redirects home instead", async () => {
+    searchParams = new URLSearchParams({ next: "https://evil.com" });
+    const user = userEvent.setup();
+    vi.mocked(authClient.login).mockResolvedValue({
+      accessToken: "access-token",
+      user: {
+        id: "u1",
+        email: "a@example.com",
+        username: "alice",
+        role: "user",
+        createdAt: "2026-01-01T00:00:00.000Z",
+      },
+    });
+    renderAuthForm();
+
+    await user.type(screen.getByLabelText("Email or username"), "alice");
+    await user.type(screen.getByLabelText("Password"), "password123");
+    await user.click(screen.getByRole("button", { name: "Log in" }));
+
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/"));
   });
 
   it("shows the server error message and does not redirect on invalid credentials", async () => {

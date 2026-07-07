@@ -2,13 +2,14 @@
 
 import { useState } from "react";
 import type { FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { ApiError } from "@/src/shared/lib/api-client";
 import { Button } from "@/src/shared/components/Button";
 import { Input } from "@/src/shared/components/Input";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
+import { sanitizeNextPath } from "@/src/shared/lib/safe-redirect";
 
 type Mode = "login" | "register";
 
@@ -55,6 +56,7 @@ function messageFromError(error: unknown): string {
 
 export function AuthForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { login, register } = useAuth();
   const [mode, setMode] = useState<Mode>("login");
   const [identifier, setIdentifier] = useState("");
@@ -95,7 +97,7 @@ export function AuthForm() {
       } else {
         await login({ identifier: identifier.trim(), password });
       }
-      router.push("/");
+      router.push(sanitizeNextPath(searchParams.get("next")));
     } catch (err) {
       triggerError(messageFromError(err));
     } finally {
