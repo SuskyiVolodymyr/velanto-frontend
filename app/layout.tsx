@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { AppHeader } from "@/src/shared/components/AppHeader";
-import { ThemeInitializer } from "@/src/shared/components/ThemeInitializer";
+import { getThemeInitScript } from "@/src/shared/lib/theme";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -33,9 +33,18 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      // The theme-init script (below) sets --acc on this element before
+      // hydration, which the server-rendered markup can't know about —
+      // an expected mismatch for this pattern, not a real bug.
+      suppressHydrationWarning
     >
+      <head>
+        {/* Applies a stored accent color before first paint, avoiding a
+            flash of the default --acc on reload. Not user content — see
+            getThemeInitScript's own doc comment for why this is safe. */}
+        <script dangerouslySetInnerHTML={{ __html: getThemeInitScript() }} />
+      </head>
       <body className="min-h-full flex flex-col">
-        <ThemeInitializer />
         <AuthProvider>
           <AppHeader />
           {children}

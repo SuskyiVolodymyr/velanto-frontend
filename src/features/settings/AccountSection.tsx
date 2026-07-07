@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { useAuth } from "@/src/shared/lib/auth-context";
 
@@ -15,12 +16,12 @@ export function AccountSection() {
         Account
       </Text>
       {status === "authenticated" && user && (
-        <div className="rounded-2xl border border-border bg-white/[0.02] px-4 py-4">
+        <Card className="hover:translate-y-0 hover:shadow-none">
           <Text className="font-semibold">{user.email}</Text>
           <Text variant="secondary" className="text-sm">
             Signed in via email
           </Text>
-        </div>
+        </Card>
       )}
       {status === "unauthenticated" && (
         <div className="rounded-xl border border-dashed border-border-strong px-4 py-4 text-sm text-foreground-secondary">
