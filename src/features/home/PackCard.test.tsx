@@ -11,6 +11,8 @@ const BASE_PACK = {
   tags: ["Anime"] as Pack["tags"],
   authorId: "u1",
   createdAt: "2026-01-01T00:00:00.000Z",
+  totalPlays: 0,
+  avgAgreementPercent: 0,
 };
 
 describe("PackCard", () => {
@@ -44,5 +46,57 @@ describe("PackCard", () => {
 
     expect(screen.getByText("8 rounds")).toBeInTheDocument();
     expect(screen.getByText("NxN")).toBeInTheDocument();
+  });
+
+  it("shows 'No plays yet' when the pack has never been played", () => {
+    const pack: Pack = {
+      ...BASE_PACK,
+      format: "save_one",
+      groups: [{ id: "g1", name: "2016", selectionMode: "manual", items: [] }],
+      totalPlays: 0,
+      avgAgreementPercent: 0,
+    };
+    render(<PackCard pack={pack} />);
+
+    expect(screen.getByText("No plays yet")).toBeInTheDocument();
+  });
+
+  it("shows the play count and agreement percentage when the pack has been played", () => {
+    const pack: Pack = {
+      ...BASE_PACK,
+      format: "save_one",
+      groups: [{ id: "g1", name: "2016", selectionMode: "manual", items: [] }],
+      totalPlays: 1,
+      avgAgreementPercent: 75,
+    };
+    render(<PackCard pack={pack} />);
+
+    expect(screen.getByText("1 play · 75% agreement")).toBeInTheDocument();
+  });
+
+  it("pluralizes play count for more than one play", () => {
+    const pack: Pack = {
+      ...BASE_PACK,
+      format: "save_one",
+      groups: [{ id: "g1", name: "2016", selectionMode: "manual", items: [] }],
+      totalPlays: 124,
+      avgAgreementPercent: 68,
+    };
+    render(<PackCard pack={pack} />);
+
+    expect(screen.getByText("124 plays · 68% agreement")).toBeInTheDocument();
+  });
+
+  it("rounds a fractional agreement percentage for display", () => {
+    const pack: Pack = {
+      ...BASE_PACK,
+      format: "save_one",
+      groups: [{ id: "g1", name: "2016", selectionMode: "manual", items: [] }],
+      totalPlays: 3,
+      avgAgreementPercent: 33.3,
+    };
+    render(<PackCard pack={pack} />);
+
+    expect(screen.getByText("3 plays · 33% agreement")).toBeInTheDocument();
   });
 });
