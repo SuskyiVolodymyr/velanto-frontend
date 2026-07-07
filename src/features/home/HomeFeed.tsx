@@ -5,6 +5,7 @@ import { packsClient } from "@/src/shared/lib/packs-client";
 import { PACK_TAGS } from "@/src/shared/types/pack";
 import type { Pack, PackFormat, PackTag } from "@/src/shared/types/pack";
 import { Text } from "@/src/shared/components/Text";
+import { Input } from "@/src/shared/components/Input";
 import { cn } from "@/src/shared/lib/cn";
 import { PackCard } from "@/src/features/home/PackCard";
 
@@ -14,6 +15,9 @@ type FormatFilter = "all" | PackFormat;
 // pagination UI yet; a real "Page N" control is future work if pack counts
 // grow past this.
 const PAGE_SIZE = 50;
+
+// Avoids firing a request per keystroke.
+const SEARCH_DEBOUNCE_MS = 300;
 
 const FORMAT_OPTIONS: { value: FormatFilter; label: string }[] = [
   { value: "all", label: "All" },
@@ -27,13 +31,25 @@ const FORMAT_OPTIONS: { value: FormatFilter; label: string }[] = [
 export function HomeFeed() {
   const [format, setFormat] = useState<FormatFilter>("all");
   const [tags, setTags] = useState<PackTag[]>([]);
+  const [searchInput, setSearchInput] = useState("");
+  const [query, setQuery] = useState("");
   const [packs, setPacks] = useState<Pack[]>([]);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
 
   useEffect(() => {
+    const timeout = setTimeout(() => setQuery(searchInput.trim()), SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(timeout);
+  }, [searchInput]);
+
+  useEffect(() => {
     let cancelled = false;
     packsClient
-      .list({ format: format === "all" ? undefined : format, tags, limit: PAGE_SIZE })
+      .list({
+        format: format === "all" ? undefined : format,
+        tags,
+        q: query || undefined,
+        limit: PAGE_SIZE,
+      })
       .then((result) => {
         if (cancelled) return;
         setPacks(result.items);
@@ -46,7 +62,7 @@ export function HomeFeed() {
     return () => {
       cancelled = true;
     };
-  }, [format, tags]);
+  }, [format, tags, query]);
 
   function toggleTag(tag: PackTag) {
     setTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
@@ -54,6 +70,16 @@ export function HomeFeed() {
 
   return (
     <div className="flex flex-col gap-6">
+      <div className="max-w-sm">
+        <Input
+          type="search"
+          aria-label="Search packs"
+          placeholder="Search packs…"
+          value={searchInput}
+          onChange={(event) => setSearchInput(event.target.value)}
+        />
+      </div>
+
       <div className="flex flex-wrap gap-2">
         {FORMAT_OPTIONS.map((option) => (
           <button
