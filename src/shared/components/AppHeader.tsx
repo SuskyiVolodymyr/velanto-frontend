@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { useAuth } from "@/src/shared/lib/auth-context";
-import { Button, buttonClassName } from "@/src/shared/components/Button";
+import { buttonClassName } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
+import { UserMenu } from "@/src/shared/components/UserMenu";
 
 export function AppHeader() {
   const { user, status, logout } = useAuth();
@@ -18,14 +19,7 @@ export function AppHeader() {
       </Link>
 
       {status === "authenticated" && user && (
-        <div className="flex items-center gap-3">
-          <Text variant="secondary" className="text-sm">
-            {user.username}
-          </Text>
-          <Button variant="ghost" onClick={() => void logout()}>
-            Log out
-          </Button>
-        </div>
+        <UserMenu user={user} onLogout={() => void logout()} />
       )}
 
       {status === "unauthenticated" && (

@@ -61,8 +61,8 @@ describe("AppHeader", () => {
     });
     renderHeader();
 
-    expect(await screen.findByText("alice")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Log out" })).toBeInTheDocument();
+    const trigger = await screen.findByRole("button", { name: "Account menu" });
+    expect(trigger).toHaveTextContent("A");
     expect(screen.queryByRole("link", { name: "Log in" })).not.toBeInTheDocument();
   });
 
@@ -81,8 +81,9 @@ describe("AppHeader", () => {
     vi.mocked(authClient.logout).mockResolvedValue({ success: true });
     renderHeader();
 
-    await screen.findByText("alice");
-    await user.click(screen.getByRole("button", { name: "Log out" }));
+    await screen.findByRole("button", { name: "Account menu" });
+    await user.click(screen.getByRole("button", { name: "Account menu" }));
+    await user.click(screen.getByRole("menuitem", { name: "Log out" }));
 
     expect(await screen.findByRole("link", { name: "Log in" })).toBeInTheDocument();
     expect(authClient.logout).toHaveBeenCalledTimes(1);
