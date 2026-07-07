@@ -89,4 +89,10 @@ describe("HomeFeed", () => {
       expect(packsClient.list).toHaveBeenLastCalledWith({ format: undefined, tags: ["Music"] }),
     );
   });
+
+  it("includes a 1v1 filter chip", async () => {
+    vi.mocked(packsClient.list).mockResolvedValue([]);
+    render(<HomeFeed />);
+    expect(await screen.findByRole("button", { name: "1v1" })).toBeInTheDocument();
+  });
 });
