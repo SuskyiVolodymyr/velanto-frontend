@@ -116,6 +116,8 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
             {history.map((entry, index) => (
               <div
                 key={index}
+                role="group"
+                aria-label={`${entry.winnerTitle} beat ${entry.loserTitle}`}
                 className="flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3"
               >
                 <Text className="font-semibold">{entry.winnerTitle}</Text>

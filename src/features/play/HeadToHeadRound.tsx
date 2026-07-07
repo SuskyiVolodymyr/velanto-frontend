@@ -13,7 +13,7 @@ function HeadToHeadCard({ item, onPick }: HeadToHeadCardProps) {
       type="button"
       onClick={onPick}
       aria-label={`Pick ${item.title}`}
-      className="flex flex-1 flex-col gap-3 rounded-2xl border border-border bg-surface p-4 text-center transition-colors hover:border-border-strong"
+      className="flex min-h-[230px] flex-1 flex-col justify-center gap-3 rounded-2xl border border-border bg-surface p-4 text-center transition-colors hover:border-border-strong"
     >
       {item.type === "youtube" && <Badge className="mx-auto">YouTube</Badge>}
       <Text className="font-semibold">{item.title}</Text>
