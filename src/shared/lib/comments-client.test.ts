@@ -24,13 +24,22 @@ beforeEach(() => {
 });
 
 describe("commentsClient", () => {
-  it("list() fetches comments for a pack", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue([COMMENT]);
+  it("list() fetches the paginated envelope for a pack with no params", async () => {
+    const envelope = { items: [COMMENT], total: 1, page: 1, limit: 10 };
+    vi.mocked(apiClient.get).mockResolvedValue(envelope);
 
     const result = await commentsClient.list("pack-1");
 
     expect(apiClient.get).toHaveBeenCalledWith("/packs/pack-1/comments");
-    expect(result).toEqual([COMMENT]);
+    expect(result).toEqual(envelope);
+  });
+
+  it("list() forwards page and limit as query params", async () => {
+    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 2, limit: 10 });
+
+    await commentsClient.list("pack-1", { page: 2, limit: 10 });
+
+    expect(apiClient.get).toHaveBeenCalledWith("/packs/pack-1/comments?page=2&limit=10");
   });
 
   it("create() posts a comment body for a pack", async () => {
