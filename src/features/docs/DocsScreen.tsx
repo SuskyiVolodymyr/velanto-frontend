@@ -57,8 +57,8 @@ export function DocsScreen() {
   const [activeTopic, setActiveTopic] = useState<TopicId>("start");
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-1 gap-11 px-7 py-10">
-      <nav className="flex w-[220px] flex-none flex-col gap-6">
+    <main className="mx-auto flex w-full max-w-5xl flex-1 gap-11 px-7 py-10">
+      <nav className="sticky top-[80px] flex w-[220px] flex-none flex-col gap-6">
         {NAV.map((section) => (
           <div key={section.label}>
             <Text variant="tertiary" className="mb-2 pl-3 text-[11px] font-semibold tracking-[0.12em]">
@@ -75,7 +75,7 @@ export function DocsScreen() {
                     aria-pressed={active}
                     className={cn(
                       "rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors",
-                      active ? "bg-white/[0.08] text-foreground" : "text-foreground-secondary",
+                      active ? "bg-white/[0.12] text-foreground" : "text-foreground-secondary",
                     )}
                   >
                     {topic.label}
@@ -207,6 +207,6 @@ export function DocsScreen() {
           </>
         )}
       </article>
-    </div>
+    </main>
   );
 }
