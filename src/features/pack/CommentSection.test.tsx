@@ -135,4 +135,18 @@ describe("CommentSection", () => {
     expect(await screen.findByText("My take too.")).toBeInTheDocument();
     expect(textbox).toHaveValue("");
   });
+
+  it("shows an error and keeps the draft when posting fails", async () => {
+    const user = userEvent.setup();
+    vi.mocked(commentsClient.list).mockResolvedValue([]);
+    vi.mocked(commentsClient.create).mockRejectedValue(new Error("network error"));
+    renderAsAuthenticated();
+
+    const textbox = await screen.findByRole("textbox");
+    await user.type(textbox, "My take too.");
+    await user.click(screen.getByRole("button", { name: "Post" }));
+
+    expect(await screen.findByText("Couldn't post your comment. Try again.")).toBeInTheDocument();
+    expect(textbox).toHaveValue("My take too.");
+  });
 });
