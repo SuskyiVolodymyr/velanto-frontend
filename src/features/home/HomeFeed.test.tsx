@@ -274,5 +274,28 @@ describe("HomeFeed", () => {
         expect(lastCall?.window).toBeUndefined();
       });
     });
+
+    it("resets the window back to the default when re-selecting Popular after switching away", async () => {
+      const user = userEvent.setup();
+      vi.mocked(packsClient.list).mockResolvedValue({ items: [], total: 0, page: 1, limit: 50 });
+      render(<HomeFeed />);
+      await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
+
+      await user.click(screen.getByRole("button", { name: "Popular" }));
+      await user.click(screen.getByRole("button", { name: "Month" }));
+      await waitFor(() => {
+        const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
+        expect(lastCall?.window).toBe("month");
+      });
+
+      await user.click(screen.getByRole("button", { name: "Relevance" }));
+      await user.click(screen.getByRole("button", { name: "Popular" }));
+
+      await waitFor(() => {
+        const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
+        expect(lastCall?.sort).toBe("popular");
+        expect(lastCall?.window).toBe("week");
+      });
+    });
   });
 });
