@@ -22,6 +22,7 @@ export function NotificationsBell() {
   const [page, setPage] = useState(1);
   const [listStatus, setListStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
   const [loadingMore, setLoadingMore] = useState(false);
+  const [loadMoreError, setLoadMoreError] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
@@ -76,7 +77,9 @@ export function NotificationsBell() {
   useEffect(() => {
     if (!open) return;
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setListStatus("loading");
+    setLoadMoreError("");
     notificationsClient
       .list({ page: 1, limit: PAGE_SIZE })
       .then((result) => {
@@ -85,8 +88,8 @@ export function NotificationsBell() {
         setTotal(result.total);
         setPage(1);
         setListStatus("ready");
-        // Fire after the list renders once, so this open still shows each
-        // row's real readAt state before the dot clears.
+        // Fired after the list state is set (not before), so the bell's dot
+        // clears only once this open's fetch has actually resolved.
         void notificationsClient.markAllRead().then(() => {
           if (!cancelled) setUnreadCount(0);
         });
@@ -110,6 +113,9 @@ export function NotificationsBell() {
       });
       setTotal(result.total);
       setPage(nextPage);
+      setLoadMoreError("");
+    } catch {
+      setLoadMoreError("Couldn't load more notifications. Try again.");
     } finally {
       setLoadingMore(false);
     }
@@ -190,14 +196,19 @@ export function NotificationsBell() {
               </ul>
             )}
             {listStatus === "ready" && notifications.length < total && (
-              <Button
-                variant="secondary"
-                disabled={loadingMore}
-                onClick={() => void handleLoadMore()}
-                className="mt-2 w-full"
-              >
-                {loadingMore ? "Loading…" : "Load more"}
-              </Button>
+              <div className="mt-2 flex flex-col gap-1">
+                <Button
+                  variant="secondary"
+                  disabled={loadingMore}
+                  onClick={() => void handleLoadMore()}
+                  className="w-full"
+                >
+                  {loadingMore ? "Loading…" : "Load more"}
+                </Button>
+                {loadMoreError && (
+                  <Text className="text-xs text-[#ff6b6b]">{loadMoreError}</Text>
+                )}
+              </div>
             )}
           </div>
         </div>

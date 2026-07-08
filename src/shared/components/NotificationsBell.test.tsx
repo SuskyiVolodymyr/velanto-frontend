@@ -113,7 +113,7 @@ describe("NotificationsBell", () => {
     await waitFor(() => expect(screen.getByText(/couldn't load notifications/i)).toBeInTheDocument());
   });
 
-  it("loads more results and appends without duplicates", async () => {
+  it("loads more results and appends new items", async () => {
     mockAuth("authenticated");
     mockedClient.list
       .mockResolvedValueOnce({ items: [makeNotification({ id: "n1" })], total: 2, page: 1, limit: 1 })
@@ -123,6 +123,39 @@ describe("NotificationsBell", () => {
     await waitFor(() => expect(screen.getByText("bob started following you")).toBeInTheDocument());
     await userEvent.click(screen.getByRole("button", { name: /load more/i }));
     await waitFor(() => expect(screen.getByText("carol started following you")).toBeInTheDocument());
+    expect(screen.getByText("bob started following you")).toBeInTheDocument();
+  });
+
+  it("does not duplicate a row the next page re-returns", async () => {
+    mockAuth("authenticated");
+    mockedClient.list
+      .mockResolvedValueOnce({ items: [makeNotification({ id: "n1" })], total: 2, page: 1, limit: 1 })
+      .mockResolvedValueOnce({
+        items: [makeNotification({ id: "n1" }), makeNotification({ id: "n2", payload: { followerId: "u3", followerUsername: "carol" } })],
+        total: 2,
+        page: 2,
+        limit: 1,
+      });
+    render(<NotificationsBell />);
+    await userEvent.click(screen.getByRole("button", { name: /notifications/i }));
+    await waitFor(() => expect(screen.getByText("bob started following you")).toBeInTheDocument());
+    await userEvent.click(screen.getByRole("button", { name: /load more/i }));
+    await waitFor(() => expect(screen.getByText("carol started following you")).toBeInTheDocument());
+    expect(screen.getAllByText("bob started following you")).toHaveLength(1);
+  });
+
+  it("shows a load-more error and re-enables the button on failure, without losing the loaded rows", async () => {
+    mockAuth("authenticated");
+    mockedClient.list
+      .mockResolvedValueOnce({ items: [makeNotification({ id: "n1" })], total: 2, page: 1, limit: 1 })
+      .mockRejectedValueOnce(new Error("network"));
+    render(<NotificationsBell />);
+    await userEvent.click(screen.getByRole("button", { name: /notifications/i }));
+    await waitFor(() => expect(screen.getByText("bob started following you")).toBeInTheDocument());
+    await userEvent.click(screen.getByRole("button", { name: /load more/i }));
+    await waitFor(() => expect(screen.getByText(/couldn't load more notifications/i)).toBeInTheDocument());
+    expect(screen.getByText("bob started following you")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /load more/i })).not.toBeDisabled();
   });
 
   it("polls unread-count again after the interval elapses", async () => {
