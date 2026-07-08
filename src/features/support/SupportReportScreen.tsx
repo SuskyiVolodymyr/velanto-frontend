@@ -9,17 +9,12 @@ import { packsClient } from "@/src/shared/lib/packs-client";
 import { usersClient, type BanDuration } from "@/src/shared/lib/users-client";
 import { BAN_DURATIONS } from "@/src/shared/lib/ban-durations";
 import { reportReasonLabel } from "@/src/shared/lib/report-reasons";
+import { REPORT_STATUS_BADGE_CLASS, reportTargetLabel } from "@/src/shared/lib/report-display";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { Input } from "@/src/shared/components/Input";
 import { Badge } from "@/src/shared/components/Badge";
-import type { ReportStatus, ReportWithReporter } from "@/src/shared/types/report";
-
-const STATUS_BADGE_CLASS: Record<ReportStatus, string> = {
-  new: "border-acc/30 bg-acc/10 text-acc",
-  reviewing: "border-yellow-500/30 bg-yellow-500/10 text-yellow-400",
-  closed: "border-white/10 bg-white/[0.06] text-foreground-secondary",
-};
+import type { ReportWithReporter } from "@/src/shared/types/report";
 
 export function SupportReportScreen({ reportId }: { reportId: string }) {
   const { user, status: authStatus } = useAuth();
@@ -148,7 +143,7 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
     );
   }
 
-  const targetHref = report.type === "user" ? `/users/${report.targetId}` : `/packs/${report.targetId}`;
+  const target = reportTargetLabel(report);
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-7 py-10">
@@ -156,7 +151,7 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
         <Text as="h1" variant="title" className="text-2xl">
           {reportReasonLabel(report.type, report.reason)}
         </Text>
-        <Badge className={STATUS_BADGE_CLASS[report.status]}>{report.status.toUpperCase()}</Badge>
+        <Badge className={REPORT_STATUS_BADGE_CLASS[report.status]}>{report.status.toUpperCase()}</Badge>
       </div>
 
       <div className="flex flex-col gap-2 text-sm">
@@ -164,8 +159,9 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
           Reported by <span className="font-semibold text-foreground">{report.reporterUsername}</span> on{" "}
           {new Date(report.createdAt).toLocaleString()}
         </Text>
-        <Link href={targetHref} className="text-acc hover:underline">
-          View {report.type === "user" ? "reported user" : "reported pack"}
+        <span className="text-xs font-semibold uppercase text-foreground-secondary">{report.type}</span>
+        <Link href={target.href} className="text-acc hover:underline">
+          {target.text}
         </Link>
         {report.comment && <Text variant="secondary">{report.comment}</Text>}
       </div>

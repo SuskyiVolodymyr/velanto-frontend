@@ -6,6 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { reportsClient, type ListReportsFilters } from "@/src/shared/lib/reports-client";
 import { reportReasonLabel } from "@/src/shared/lib/report-reasons";
+import { REPORT_STATUS_BADGE_CLASS, reportTargetLabel } from "@/src/shared/lib/report-display";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { Badge } from "@/src/shared/components/Badge";
@@ -26,21 +27,6 @@ const TYPE_FILTERS: { value: ReportType | undefined; label: string }[] = [
   { value: "user", label: "Users" },
   { value: "round", label: "Rounds" },
 ];
-
-const STATUS_BADGE_CLASS: Record<ReportStatus, string> = {
-  new: "border-acc/30 bg-acc/10 text-acc",
-  reviewing: "border-yellow-500/30 bg-yellow-500/10 text-yellow-400",
-  closed: "border-white/10 bg-white/[0.06] text-foreground-secondary",
-};
-
-function targetLabel(report: ReportWithReporter): { text: string; href: string } {
-  const shortId = report.targetId.slice(0, 8);
-  if (report.type === "user") return { text: `User ${shortId}`, href: `/users/${report.targetId}` };
-  if (report.type === "round") {
-    return { text: `Round ${(report.roundIndex ?? 0) + 1} of pack ${shortId}`, href: `/packs/${report.targetId}` };
-  }
-  return { text: `Pack ${shortId}`, href: `/packs/${report.targetId}` };
-}
 
 export function SupportScreen() {
   const { user, status: authStatus } = useAuth();
@@ -168,7 +154,7 @@ export function SupportScreen() {
       {status === "ready" && reports.length > 0 && (
         <div className="flex flex-col gap-2">
           {reports.map((report) => {
-            const target = targetLabel(report);
+            const target = reportTargetLabel(report);
             return (
               <Link
                 key={report.id}
@@ -186,7 +172,7 @@ export function SupportScreen() {
                 <Text variant="tertiary" className="text-xs">
                   {new Date(report.createdAt).toLocaleDateString()}
                 </Text>
-                <Badge className={STATUS_BADGE_CLASS[report.status]}>{report.status.toUpperCase()}</Badge>
+                <Badge className={REPORT_STATUS_BADGE_CLASS[report.status]}>{report.status.toUpperCase()}</Badge>
               </Link>
             );
           })}
