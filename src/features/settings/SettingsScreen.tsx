@@ -1,5 +1,6 @@
 import { Text } from "@/src/shared/components/Text";
 import { AppearanceSection } from "@/src/features/settings/AppearanceSection";
+import { NotificationsSection } from "@/src/features/settings/NotificationsSection";
 import { AccountSection } from "@/src/features/settings/AccountSection";
 
 export function SettingsScreen() {
@@ -9,6 +10,7 @@ export function SettingsScreen() {
         Preferences
       </Text>
       <AppearanceSection />
+      <NotificationsSection />
       <AccountSection />
     </main>
   );
