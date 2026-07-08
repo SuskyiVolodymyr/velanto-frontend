@@ -1,5 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { YouTubeCard } from "./YouTubeCard";
 import { loadYouTubeIframeApi } from "@/src/shared/lib/youtube-iframe-api";
 import type { YouTubeIframeApi, YouTubePlayer } from "@/src/shared/lib/youtube-iframe-api";
@@ -101,5 +102,36 @@ describe("YouTubeCard", () => {
 
     await waitFor(() => expect(mockedLoad).toHaveBeenCalledTimes(1));
     expect(screen.getByRole("img", { name: "YouTube video thumbnail" })).toBeInTheDocument();
+  });
+
+  it("lets a touch/keyboard user start playback via the play button, without hovering", async () => {
+    const fakePlayer = makeFakePlayer();
+    const fakeApi = makeFakeApi(fakePlayer);
+    mockedLoad.mockResolvedValue(fakeApi);
+    const user = userEvent.setup();
+
+    render(<YouTubeCard videoId="abc123" />);
+    await user.click(screen.getByRole("button", { name: "Play video preview" }));
+
+    await waitFor(() => expect(fakeApi.Player).toHaveBeenCalledTimes(1));
+    expect(fakePlayer.playVideo).toHaveBeenCalled();
+  });
+
+  it("destroys the old player and falls back to the new thumbnail when videoId changes", async () => {
+    const fakePlayer = makeFakePlayer();
+    const fakeApi = makeFakeApi(fakePlayer);
+    mockedLoad.mockResolvedValue(fakeApi);
+
+    const { rerender } = render(<YouTubeCard videoId="abc123" />);
+    fireEvent.mouseEnter(screen.getByTestId("youtube-card"));
+    await waitFor(() => expect(fakeApi.Player).toHaveBeenCalledTimes(1));
+
+    rerender(<YouTubeCard videoId="xyz789" />);
+
+    expect(fakePlayer.destroy).toHaveBeenCalledTimes(1);
+    expect(screen.getByRole("img", { name: "YouTube video thumbnail" })).toHaveAttribute(
+      "src",
+      "https://img.youtube.com/vi/xyz789/mqdefault.jpg",
+    );
   });
 });

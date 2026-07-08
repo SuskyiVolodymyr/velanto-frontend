@@ -18,6 +18,18 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
   const [hovered, setHovered] = useState(false);
   const [playerReady, setPlayerReady] = useState(false);
 
+  // Tears down any player built for a previous videoId so a re-render with a
+  // new video (rather than a fresh mount) doesn't leave the old one playing
+  // behind a stale "ready" state, and falls back to the new video's own
+  // thumbnail instead of staying hidden behind the destroyed player.
+  useEffect(() => {
+    return () => {
+      playerRef.current?.destroy();
+      playerRef.current = null;
+      setPlayerReady(false);
+    };
+  }, [videoId]);
+
   // Lazily loads the API and constructs the player on first hover only —
   // repeated hovers reuse the same instance via the effect below. A failed
   // load (e.g. blocked by an ad-blocker) is swallowed: the card just stays
@@ -53,10 +65,6 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
     else playerRef.current.pauseVideo();
   }, [hovered]);
 
-  useEffect(() => {
-    return () => playerRef.current?.destroy();
-  }, []);
-
   return (
     <div
       data-testid="youtube-card"
@@ -74,11 +82,19 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
       )}
       <div ref={mountRef} className="absolute inset-0" />
       {!hovered && (
-        <span className="absolute inset-0 flex items-center justify-center" aria-hidden>
+        // Mouse users get autoplay via onMouseEnter above; this button is the
+        // equivalent trigger for touch and keyboard users, who can never fire
+        // a hover event.
+        <button
+          type="button"
+          onClick={() => setHovered(true)}
+          aria-label="Play video preview"
+          className="absolute inset-0 flex items-center justify-center"
+        >
           <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-black/50">
             <span className="ml-0.5 h-0 w-0 border-y-8 border-l-[12px] border-y-transparent border-l-white" />
           </span>
-        </span>
+        </button>
       )}
       <Badge className="absolute left-2 top-2">YouTube</Badge>
     </div>
