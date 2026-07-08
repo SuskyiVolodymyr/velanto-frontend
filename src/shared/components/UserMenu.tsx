@@ -85,6 +85,16 @@ export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void 
           >
             Settings
           </Link>
+          {(user.role === "moderator" || user.role === "manager" || user.role === "admin") && (
+            <Link
+              href="/support"
+              role="menuitem"
+              onClick={() => setOpen(false)}
+              className="block px-3.5 py-2.5 text-sm text-foreground hover:bg-white/[0.06]"
+            >
+              Support
+            </Link>
+          )}
           {(user.role === "admin" || user.role === "manager") && (
             <Link
               href="/admin"
