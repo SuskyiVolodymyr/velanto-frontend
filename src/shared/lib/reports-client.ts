@@ -1,5 +1,5 @@
 import { apiClient } from "@/src/shared/lib/api-client";
-import type { Report, ReportList, ReportType, ReportWithReporter } from "@/src/shared/types/report";
+import type { Report, ReportList, ReportStatus, ReportType, ReportWithReporter } from "@/src/shared/types/report";
 
 export interface CreateReportInput {
   type: ReportType;
@@ -10,7 +10,7 @@ export interface CreateReportInput {
 }
 
 export interface ListReportsFilters {
-  status?: "new" | "reviewing" | "closed";
+  status?: ReportStatus;
   type?: ReportType;
   page?: number;
   limit?: number;
