@@ -1,6 +1,8 @@
 import type { Item } from "@/src/shared/types/pack";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
+import { YouTubeCard } from "@/src/shared/components/YouTubeCard";
+import { extractYouTubeId } from "@/src/shared/lib/youtube";
 
 interface HeadToHeadCardProps {
   item: Item;
@@ -8,6 +10,24 @@ interface HeadToHeadCardProps {
 }
 
 function HeadToHeadCard({ item, onPick }: HeadToHeadCardProps) {
+  const videoId = item.type === "youtube" ? extractYouTubeId(item.value) : null;
+
+  if (videoId) {
+    return (
+      <div className="flex flex-1 flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-colors">
+        <YouTubeCard videoId={videoId} />
+        <button
+          type="button"
+          onClick={onPick}
+          aria-label={`Pick ${item.title}`}
+          className="flex min-h-[80px] flex-1 items-center justify-center p-4 text-center transition-colors hover:bg-white/[0.04]"
+        >
+          <Text className="font-semibold">{item.title}</Text>
+        </button>
+      </div>
+    );
+  }
+
   return (
     <button
       type="button"

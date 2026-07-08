@@ -34,4 +34,24 @@ describe("HeadToHeadRound", () => {
 
     expect(onPick).toHaveBeenCalledWith("i2");
   });
+
+  it("shows a real YouTube player for a youtube item and still calls onPick via its own pick control", async () => {
+    const user = userEvent.setup();
+    const onPick = vi.fn();
+    const videoItem = {
+      id: "v1",
+      type: "youtube" as const,
+      title: "Opening theme",
+      value: "https://youtu.be/KsF_hdjWJjo",
+    };
+    render(<HeadToHeadRound left={videoItem} right={RIGHT} onPick={onPick} />);
+
+    expect(screen.getByRole("img", { name: "YouTube video thumbnail" })).toBeInTheDocument();
+
+    await user.click(screen.getByRole("button", { name: "Play video preview" }));
+    expect(onPick).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole("button", { name: "Pick Opening theme" }));
+    expect(onPick).toHaveBeenCalledWith("v1");
+  });
 });

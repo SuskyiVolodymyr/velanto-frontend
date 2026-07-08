@@ -42,6 +42,10 @@ function textItem(id: string, title: string) {
   return { id, type: "text" as const, title, value: title };
 }
 
+function youtubeItem(id: string, title: string, value: string) {
+  return { id, type: "youtube" as const, title, value };
+}
+
 const SAVE_ONE_PACK: Pack = {
   id: "pack-a",
   title: "Best Anime Openings",
@@ -274,6 +278,40 @@ describe("PlayScreen", () => {
       "href",
       "/packs/pack-a/result",
     );
+  });
+
+  it("shows a real YouTube player for a youtube-type item and selects it via its own pick control, not the video area", async () => {
+    const user = userEvent.setup();
+    const packWithVideo: Pack = {
+      ...SAVE_ONE_PACK,
+      groups: [
+        {
+          id: "g1",
+          name: "2016",
+          selectionMode: "manual",
+          items: [
+            youtubeItem("v1", "Guren no Yumiya", "https://youtu.be/KsF_hdjWJjo"),
+            textItem("2", "Redo"),
+          ],
+        },
+      ],
+    };
+    renderScreen(packWithVideo);
+    await screen.findByText("Guren no Yumiya");
+
+    expect(screen.getByRole("img", { name: "YouTube video thumbnail" })).toHaveAttribute(
+      "src",
+      "https://img.youtube.com/vi/KsF_hdjWJjo/mqdefault.jpg",
+    );
+
+    // Interacting with the video area itself must not select the item —
+    // only the dedicated "Pick ..." control below it does.
+    await user.click(screen.getByRole("button", { name: "Play video preview" }));
+    await user.click(screen.getByRole("button", { name: "Show all" }));
+    expect(screen.getByRole("button", { name: "Next round →" })).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: "Pick Guren no Yumiya" }));
+    expect(screen.getByRole("button", { name: "Next round →" })).toBeEnabled();
   });
 
   it("does not persist picks for the result page when recording the play fails", async () => {

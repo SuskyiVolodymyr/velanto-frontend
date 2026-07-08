@@ -13,6 +13,8 @@ import { writeLastPlayPicks } from "@/src/shared/lib/last-play-storage";
 import type { Pack } from "@/src/shared/types/pack";
 import { resolveRoundCandidates, resolveVersusRoundCandidates } from "@/src/features/play/round-sampling";
 import { VersusRound } from "@/src/features/play/VersusRound";
+import { YouTubeCard } from "@/src/shared/components/YouTubeCard";
+import { extractYouTubeId } from "@/src/shared/lib/youtube";
 
 const FORMAT_COPY: Record<Pack["format"], { instruction: string; pickedLabel: string; finishedVerb?: string }> = {
   save_one: {
@@ -223,6 +225,40 @@ export function PlayScreen({ pack }: { pack: Pack }) {
             <div className="mb-8 flex flex-wrap gap-4">
               {candidates.slice(0, revealedCount).map((item, index) => {
                 const selected = item.id === selectedId;
+                const videoId = item.type === "youtube" ? extractYouTubeId(item.value) : null;
+
+                if (videoId) {
+                  return (
+                    <div
+                      key={item.id}
+                      className={cn(
+                        "w-[200px] flex-none overflow-hidden rounded-2xl border transition-colors",
+                        selected ? "border-acc bg-acc/10" : "border-border bg-surface",
+                      )}
+                    >
+                      <YouTubeCard videoId={videoId} />
+                      <button
+                        type="button"
+                        onClick={() => setSelectedId(item.id)}
+                        aria-label={`Pick ${item.title}`}
+                        className="flex w-full items-center gap-2 p-4 text-left"
+                      >
+                        <span
+                          aria-hidden
+                          className={cn(
+                            "h-4 w-4 flex-none rounded border",
+                            selected ? "border-acc bg-acc" : "border-border-strong",
+                          )}
+                        />
+                        <Text className="flex-1 font-semibold">{item.title}</Text>
+                        <Text variant="tertiary" className="text-xs">
+                          {String(index + 1).padStart(2, "0")}
+                        </Text>
+                      </button>
+                    </div>
+                  );
+                }
+
                 return (
                   <button
                     key={item.id}
