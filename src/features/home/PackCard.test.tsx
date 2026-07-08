@@ -13,6 +13,8 @@ const BASE_PACK = {
   createdAt: "2026-01-01T00:00:00.000Z",
   totalPlays: 0,
   avgAgreementPercent: 0,
+  status: "approved" as const,
+  rejectionReason: null,
 };
 
 describe("PackCard", () => {
@@ -98,5 +100,26 @@ describe("PackCard", () => {
     render(<PackCard pack={pack} />);
 
     expect(screen.getByText("3 plays · 33% agreement")).toBeInTheDocument();
+  });
+
+  it("shows a pending badge when showStatus is true and the pack is pending", () => {
+    render(<PackCard pack={{ ...BASE_PACK, format: "save_one", status: "pending" }} showStatus />);
+    expect(screen.getByText("Pending review")).toBeInTheDocument();
+  });
+
+  it("shows a rejected badge when showStatus is true and the pack is rejected", () => {
+    render(<PackCard pack={{ ...BASE_PACK, format: "save_one", status: "rejected" }} showStatus />);
+    expect(screen.getByText("Rejected")).toBeInTheDocument();
+  });
+
+  it("shows no status badge when showStatus is true but the pack is approved", () => {
+    render(<PackCard pack={{ ...BASE_PACK, format: "save_one", status: "approved" }} showStatus />);
+    expect(screen.queryByText("Pending review")).not.toBeInTheDocument();
+    expect(screen.queryByText("Rejected")).not.toBeInTheDocument();
+  });
+
+  it("shows no status badge when showStatus is not passed, even for a pending pack", () => {
+    render(<PackCard pack={{ ...BASE_PACK, format: "save_one", status: "pending" }} />);
+    expect(screen.queryByText("Pending review")).not.toBeInTheDocument();
   });
 });

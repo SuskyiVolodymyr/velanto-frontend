@@ -169,6 +169,8 @@ describe("CreatePackForm", () => {
       createdAt: "2026-01-01T00:00:00.000Z",
       totalPlays: 0,
       avgAgreementPercent: 0,
+      status: "approved",
+      rejectionReason: null,
     });
     renderForm();
     await fillMinimalValidPack(user);
@@ -288,6 +290,8 @@ describe("CreatePackForm", () => {
         createdAt: "2026-01-01T00:00:00.000Z",
         totalPlays: 0,
         avgAgreementPercent: 0,
+        status: "approved",
+        rejectionReason: null,
       });
       renderForm();
       await user.type(await screen.findByLabelText("Pack title"), "Boys vs Girls");
@@ -352,6 +356,8 @@ describe("CreatePackForm", () => {
         createdAt: "2026-01-01T00:00:00.000Z",
         totalPlays: 0,
         avgAgreementPercent: 0,
+        status: "approved",
+        rejectionReason: null,
       });
       renderForm();
       await user.click(await screen.findByRole("button", { name: /^Rank Blind/ }));
@@ -398,6 +404,8 @@ describe("CreatePackForm", () => {
         createdAt: "2026-01-01T00:00:00.000Z",
         totalPlays: 0,
         avgAgreementPercent: 0,
+        status: "approved",
+        rejectionReason: null,
       });
       renderForm();
       await user.click(await screen.findByRole("button", { name: /^1v1/ }));

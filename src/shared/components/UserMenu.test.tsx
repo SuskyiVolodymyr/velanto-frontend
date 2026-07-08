@@ -32,6 +32,13 @@ describe("UserMenu", () => {
     expect(screen.getByRole("menuitem", { name: "Settings" })).toHaveAttribute("href", "/settings");
   });
 
+  it("links to the profile page", async () => {
+    const user = userEvent.setup();
+    render(<UserMenu user={USER} onLogout={vi.fn()} />);
+    await user.click(screen.getByRole("button", { name: "Account menu" }));
+    expect(screen.getByRole("menuitem", { name: "Profile" })).toHaveAttribute("href", "/profile");
+  });
+
   it("shows an Admin link for a manager/admin role but not for a plain user", async () => {
     const user = userEvent.setup();
     const { rerender } = render(<UserMenu user={{ ...USER, role: "manager" }} onLogout={vi.fn()} />);

@@ -4,7 +4,7 @@ import { apiClient } from "@/src/shared/lib/api-client";
 import { usersClient } from "@/src/shared/lib/users-client";
 
 vi.mock("@/src/shared/lib/api-client", () => ({
-  apiClient: { post: vi.fn(), patch: vi.fn() },
+  apiClient: { post: vi.fn(), patch: vi.fn(), get: vi.fn() },
 }));
 
 beforeEach(() => {
@@ -40,5 +40,31 @@ describe("usersClient", () => {
 
     expect(apiClient.patch).toHaveBeenCalledWith("/users/u2/role", { role: "moderator" });
     expect(result).toEqual({ id: "u2", role: "moderator" });
+  });
+
+  it("getProfile fetches a user's public profile by id", async () => {
+    const profile = {
+      id: "user-1",
+      username: "alice",
+      bio: "hello",
+      createdAt: "2026-01-01T00:00:00.000Z",
+      followerCount: 3,
+      isFollowedByMe: false,
+    };
+    vi.mocked(apiClient.get).mockResolvedValue(profile);
+
+    const result = await usersClient.getProfile("user-1");
+
+    expect(apiClient.get).toHaveBeenCalledWith("/users/user-1");
+    expect(result).toEqual(profile);
+  });
+
+  it("updateProfile PATCHes the caller's own bio", async () => {
+    vi.mocked(apiClient.patch).mockResolvedValue({ id: "user-1", bio: "New bio" });
+
+    const result = await usersClient.updateProfile("New bio");
+
+    expect(apiClient.patch).toHaveBeenCalledWith("/users/me", { bio: "New bio" });
+    expect(result).toEqual({ id: "user-1", bio: "New bio" });
   });
 });
