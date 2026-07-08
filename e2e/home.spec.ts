@@ -23,7 +23,7 @@ test.describe("Home feed", () => {
 
   test("lists packs returned by the backend", async ({ page }) => {
     await page.route(`${API_BASE}/packs*`, (route) =>
-      route.fulfill({ status: 200, json: [PACK_A] }),
+      route.fulfill({ status: 200, json: { items: [PACK_A], total: 1, page: 1, limit: 20 } }),
     );
 
     await page.goto("/");
@@ -32,7 +32,9 @@ test.describe("Home feed", () => {
   });
 
   test("shows the empty state when the backend returns no packs", async ({ page }) => {
-    await page.route(`${API_BASE}/packs*`, (route) => route.fulfill({ status: 200, json: [] }));
+    await page.route(`${API_BASE}/packs*`, (route) =>
+      route.fulfill({ status: 200, json: { items: [], total: 0, page: 1, limit: 20 } }),
+    );
 
     await page.goto("/");
 
@@ -43,7 +45,7 @@ test.describe("Home feed", () => {
     const requestedUrls: string[] = [];
     await page.route(`${API_BASE}/packs*`, (route) => {
       requestedUrls.push(route.request().url());
-      return route.fulfill({ status: 200, json: [PACK_A] });
+      return route.fulfill({ status: 200, json: { items: [PACK_A], total: 1, page: 1, limit: 20 } });
     });
 
     await page.goto("/");
