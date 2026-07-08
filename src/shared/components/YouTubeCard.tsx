@@ -80,7 +80,14 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
           className="absolute inset-0 h-full w-full object-cover"
         />
       )}
-      <div ref={mountRef} className="absolute inset-0" />
+      {/* YT.Player replaces the element handed to it with an <iframe>, detaching
+          it from React's tree. mountRef is that sacrificial node; this wrapper
+          is what React actually reconciles against, so a re-render (e.g. the
+          thumbnail reappearing after videoId changes) never has to touch — or
+          insertBefore relative to — a node YouTube has already ripped out. */}
+      <div className="absolute inset-0">
+        <div ref={mountRef} />
+      </div>
       {!hovered && (
         // Mouse users get autoplay via onMouseEnter above; this button is the
         // equivalent trigger for touch and keyboard users, who can never fire
