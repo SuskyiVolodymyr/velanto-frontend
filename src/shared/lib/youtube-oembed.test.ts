@@ -49,4 +49,18 @@ describe("fetchYouTubeOEmbed", () => {
       "https://www.youtube.com/oembed?url=https%3A%2F%2Fyoutu.be%2FKsF_hdjWJjo&format=json",
     );
   });
+
+  it("falls back to an empty title when the response body has no title", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: () => Promise.resolve({}),
+      }),
+    );
+
+    const result = await fetchYouTubeOEmbed("https://youtu.be/KsF_hdjWJjo");
+
+    expect(result).toEqual({ title: "" });
+  });
 });
