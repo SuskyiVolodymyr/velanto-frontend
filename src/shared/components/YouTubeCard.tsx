@@ -5,19 +5,7 @@ import { cn } from "@/src/shared/lib/cn";
 import { Badge } from "@/src/shared/components/Badge";
 import { youtubeThumbnailUrl } from "@/src/shared/lib/youtube";
 import { loadYouTubeIframeApi } from "@/src/shared/lib/youtube-iframe-api";
-import type { YouTubeIframeApi, YouTubePlayer, YouTubePlayerOptions } from "@/src/shared/lib/youtube-iframe-api";
-
-// `YouTubeIframeApi.Player` is typed as a construct signature (`new (...) => YouTubePlayer`)
-// to match the real IFrame API, but we invoke it as a plain function call here rather than
-// with the `new` operator. Arrow functions are not constructible per the JS spec, and test
-// doubles for this API are built with `vi.fn().mockImplementation(<arrow fn>)` — invoking
-// those via `new` throws (Reflect.construct rejects non-constructible targets) before the
-// mock body ever runs. A plain call works against both the mock and the real API function.
-type PlayerFactory = (element: HTMLElement, options: YouTubePlayerOptions) => YouTubePlayer;
-function createPlayer(YT: YouTubeIframeApi, element: HTMLElement, options: YouTubePlayerOptions): YouTubePlayer {
-  const factory = YT.Player as unknown as PlayerFactory;
-  return factory(element, options);
-}
+import type { YouTubePlayer } from "@/src/shared/lib/youtube-iframe-api";
 
 interface YouTubeCardProps {
   videoId: string;
@@ -40,7 +28,7 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
     loadYouTubeIframeApi()
       .then((YT) => {
         if (cancelled || !mountRef.current) return;
-        playerRef.current = createPlayer(YT, mountRef.current, {
+        playerRef.current = new YT.Player(mountRef.current, {
           videoId,
           playerVars: { autoplay: 1 },
           events: {

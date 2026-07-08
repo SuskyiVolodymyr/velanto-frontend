@@ -20,7 +20,10 @@ function makeFakePlayer(): YouTubePlayer {
 
 function makeFakeApi(fakePlayer: YouTubePlayer): YouTubeIframeApi {
   return {
-    Player: vi.fn().mockImplementation((_el, options) => {
+    // A `function` expression, not an arrow function — vitest's mock machinery
+    // requires this to support the real IFrame API's `new YT.Player(...)` contract
+    // (invoking a `vi.fn().mockImplementation(<arrow fn>)` via `new` throws).
+    Player: vi.fn().mockImplementation(function (_el, options) {
       options.events.onReady({ target: fakePlayer });
       return fakePlayer;
     }) as unknown as YouTubeIframeApi["Player"],
