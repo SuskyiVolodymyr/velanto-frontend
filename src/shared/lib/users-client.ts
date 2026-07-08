@@ -24,6 +24,11 @@ export interface ChangeRoleResult {
   role: AssignableRole;
 }
 
+export interface SetTrustedResult {
+  id: string;
+  trusted: boolean;
+}
+
 export interface BanHistoryEntry {
   actorUsername: string;
   meta: { duration: string; reason: string };
@@ -42,6 +47,8 @@ export const usersClient = {
   unban: (id: string) => apiClient.post<UnbanResult>(`/users/${id}/unban`),
   changeRole: (id: string, role: AssignableRole) =>
     apiClient.patch<ChangeRoleResult>(`/users/${id}/role`, { role }),
+  setTrusted: (id: string, trusted: boolean) =>
+    apiClient.patch<SetTrustedResult>(`/users/${id}/trusted`, { trusted }),
   getProfile: (id: string) => apiClient.get<PublicUserProfile>(`/users/${id}`),
   updateProfile: (bio: string) =>
     apiClient.patch<{ id: string; bio: string }>("/users/me", { bio }),
