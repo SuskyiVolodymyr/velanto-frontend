@@ -4,14 +4,14 @@
 
 ## Problem
 
-`getPackServer()`/`getResultsServer()` (`src/shared/lib/get-pack-server.ts`, `get-results-server.ts`) run in Next.js Server Components and fetch anonymously — no auth attached. The backend's visibility gate (`PacksService.findById`, see `velanto-backend/src/modules/packs/packs.service.ts:205-225`) 404s any non-approved pack unless the viewer is its owner or moderator+. Since the Server Component never has a viewer identity, it always hits that gate for non-approved packs, regardless of who's actually logged in in the browser.
+`getPackServer()`/`getResultsServer()` (`src/shared/lib/get-pack-server.ts`, `get-results-server.ts`) run in Next.js Server Components and fetch anonymously — no auth attached. The backend's visibility gate 404s any non-approved pack unless the viewer is its owner or moderator+. Since the Server Component never has a viewer identity, it always hits that gate for non-approved packs, regardless of who's actually logged in in the browser.
 
 Two structural reasons a Server Component can't just "attach the token" the way client code does:
 
 - The access token lives only in an in-memory JS variable inside `api-client.ts` (deliberately never `localStorage`/a client-readable store, per `security-checklist.md`), which the Next.js server process running Server Components has no access to.
 - The refresh-token httpOnly cookie is scoped to the *backend's* origin (`localhost:3001`, path `/auth`) — a different origin than the Next.js frontend server, so it's never present on the incoming request to a Server Component either, and in production frontend/backend will likely be genuinely different domains.
 
-`PacksService.findById`'s companion, `GET /packs/:id/results` (`plays.controller.ts:42-53`), runs the identical gate before returning results, so `getResultsServer` has the same problem in practice — though see "Why `getResultsServer` needs no code change" below.
+The pack detail endpoint's companion, `GET /packs/:id/results`, runs the identical gate before returning results, so `getResultsServer` has the same problem in practice — though see "Why `getResultsServer` needs no code change" below.
 
 Both symptoms named in the original issue — the moderation queue's "View" link and Profile → "My Packs" pending/rejected pack link — route through these same three pages (confirmed: `ModerationQueueScreen.tsx` and `PackCard.tsx` both link to `/packs/${id}`), so fixing these three routes covers both.
 
@@ -110,10 +110,10 @@ Mocking conventions follow this repo's existing precedent (e.g. `VoteButtons.tes
 - **`src/features/pack/PackDetailFallback.test.tsx`**: authenticated + success → screen content visible, `notFound` not called; unauthenticated → `notFound` called; authenticated + `getById` 404 → `notFound` called.
 - **`src/features/play/PlayRouter.test.tsx`**: `rank_blind` → `RankPlayScreen`, `1v1` → `HeadToHeadPlayScreen`, `save_one` (or any other format) → `PlayScreen`, asserted via a distinctive element from each.
 - **`src/features/play/PlayFallback.test.tsx`**, **`src/features/result/ResultFallback.test.tsx`**: one success-render case + one 404→`notFound` case + one unauthenticated→`notFound` case each — kept light since the hook already covers the fetch logic exhaustively.
-- **`e2e/pack-access.spec.ts`** (the real regression guard — the only layer that exercises actual Bearer-token forwarding, since unit tests mock that boundary away): register/log in, create a pack (lands `pending`), navigate directly to `/packs/[id]`, assert the real pack title renders and "Pack not found" does not.
+- **No new e2e spec.** `getPackServer`/`getResultsServer` fetch runs in the Next.js Server Component (Node process), which Playwright's `page.route()` cannot intercept — it only sees browser-issued requests (confirmed by `create-pack.spec.ts`'s own comment noting the identical limitation for `/packs/[id]`). The Playwright config also doesn't run a live backend alongside `next dev`. Per `testing-requirements.md`, e2e is gated on PRs into `main` only, not `develop`, so this isn't a gap against this repo's actual bar. The real end-to-end regression check is manual: verify against the live backend (both dev servers running) that an owner/moderator can view a pending/rejected pack via direct URL, and that an anonymous/unrelated viewer still gets a genuine 404.
 
 ## Out of scope
 
 - The full httpOnly-cookie/BFF auth migration (rejected strategy above) — no changes to `api-client.ts`'s token storage model, no new Route Handlers, no backend changes.
 - Rendering a "rejected" banner/reason on `PackDetailScreen` — `pack.rejectionReason` isn't surfaced there today; unrelated to this fix.
-- Any change to the backend's visibility gate itself (`PacksService.findById`) — it already behaves correctly; the bug is purely in how the frontend forwards (or fails to forward) a viewer identity to it.
+- Any change to the backend's visibility gate itself — it already behaves correctly; the bug is purely in how the frontend forwards (or fails to forward) a viewer identity to it.
