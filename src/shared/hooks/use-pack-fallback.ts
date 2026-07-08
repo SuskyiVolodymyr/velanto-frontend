@@ -23,6 +23,7 @@ export function usePackFallback(
   packId: string,
   opts: { needsResults: boolean },
 ): PackFallbackState {
+  const { needsResults } = opts;
   const { status: authStatus } = useAuth();
   const [state, setState] = useState<PackFallbackState>({ status: "loading" });
 
@@ -42,7 +43,7 @@ export function usePackFallback(
     packsClient
       .getById(packId)
       .then(async (pack) => {
-        if (!opts.needsResults) return { pack, results: null };
+        if (!needsResults) return { pack, results: null };
         const results = await playsClient.getResults(packId);
         return { pack, results };
       })
@@ -58,10 +59,7 @@ export function usePackFallback(
     return () => {
       cancelled = true;
     };
-    // opts.needsResults is a caller-supplied constant for a given fallback
-    // component, not reactive state — omitted from deps deliberately.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [packId, authStatus]);
+  }, [packId, authStatus, needsResults]);
 
   return state;
 }
