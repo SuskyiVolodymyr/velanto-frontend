@@ -125,7 +125,9 @@ export function CommentSection({ packId }: { packId: string }) {
         <div className="flex flex-col gap-4">
           {comments.map((comment) => (
             <div key={comment.id}>
-              <Text className="text-sm font-semibold">{comment.authorUsername}</Text>
+              <Link href={`/users/${comment.authorId}`} className="text-sm font-semibold hover:underline">
+                {comment.authorUsername}
+              </Link>
               <Text variant="secondary" className="text-sm">
                 {comment.body}
               </Text>
