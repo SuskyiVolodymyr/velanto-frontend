@@ -19,6 +19,7 @@ export interface ListPacksFilters {
   q?: string;
   page?: number;
   limit?: number;
+  authorId?: string;
 }
 
 export interface PackList {
@@ -35,6 +36,7 @@ function buildListQuery(filters: ListPacksFilters): string {
   if (filters.q) params.set("q", filters.q);
   if (filters.page !== undefined) params.set("page", String(filters.page));
   if (filters.limit !== undefined) params.set("limit", String(filters.limit));
+  if (filters.authorId) params.set("authorId", filters.authorId);
   const query = params.toString();
   return query ? `?${query}` : "";
 }

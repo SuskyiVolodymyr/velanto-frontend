@@ -96,4 +96,6 @@ export interface Pack {
   createdAt: string;
   totalPlays: number;
   avgAgreementPercent: number;
+  status: "pending" | "approved" | "rejected";
+  rejectionReason: string | null;
 }

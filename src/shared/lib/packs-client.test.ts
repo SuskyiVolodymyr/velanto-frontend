@@ -22,6 +22,8 @@ const PACK_A: Pack = {
   createdAt: "2026-01-01T00:00:00.000Z",
   totalPlays: 0,
   avgAgreementPercent: 0,
+  status: "approved",
+  rejectionReason: null,
 };
 
 beforeEach(() => {
@@ -76,5 +78,13 @@ describe("packsClient.list", () => {
     await packsClient.list({ q: "" });
 
     expect(apiClient.get).toHaveBeenCalledWith("/packs");
+  });
+
+  it("includes authorId in the query string when provided", async () => {
+    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+
+    await packsClient.list({ authorId: "user-1" });
+
+    expect(apiClient.get).toHaveBeenCalledWith("/packs?authorId=user-1");
   });
 });

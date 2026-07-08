@@ -1,5 +1,6 @@
 import { apiClient } from "@/src/shared/lib/api-client";
 import type { AssignableRole } from "@/src/shared/lib/staff-permissions";
+import type { PublicUserProfile } from "@/src/shared/types/user";
 
 export type BanDuration = "week" | "month" | "year" | "forever";
 
@@ -28,4 +29,7 @@ export const usersClient = {
   unban: (id: string) => apiClient.post<UnbanResult>(`/users/${id}/unban`),
   changeRole: (id: string, role: AssignableRole) =>
     apiClient.patch<ChangeRoleResult>(`/users/${id}/role`, { role }),
+  getProfile: (id: string) => apiClient.get<PublicUserProfile>(`/users/${id}`),
+  updateProfile: (bio: string) =>
+    apiClient.patch<{ id: string; bio: string }>("/users/me", { bio }),
 };

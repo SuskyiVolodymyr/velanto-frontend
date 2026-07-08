@@ -14,3 +14,12 @@ export interface User {
   role: Role;
   createdAt: string;
 }
+
+export interface PublicUserProfile {
+  id: string;
+  username: string;
+  bio: string | null;
+  createdAt: string;
+  followerCount: number;
+  isFollowedByMe: boolean | null;
+}

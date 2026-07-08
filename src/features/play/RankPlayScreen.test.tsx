@@ -67,6 +67,8 @@ const RANK_BLIND_PACK: Pack = {
   createdAt: "2026-01-01T00:00:00.000Z",
   totalPlays: 0,
   avgAgreementPercent: 0,
+  status: "approved",
+  rejectionReason: null,
 };
 
 function renderScreen(pack: Pack) {
