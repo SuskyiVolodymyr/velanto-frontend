@@ -10,16 +10,11 @@ import { adminClient } from "@/src/shared/lib/admin-client";
 import { usersClient, type BanDuration } from "@/src/shared/lib/users-client";
 import { canActOn } from "@/src/shared/lib/staff-permissions";
 import { formatBanStatus } from "@/src/shared/lib/ban-display";
+import { BAN_DURATIONS } from "@/src/shared/lib/ban-durations";
 import type { AdminUserRow } from "@/src/shared/types/admin";
 
 const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
-const BAN_DURATIONS: { value: BanDuration; label: string }[] = [
-  { value: "week", label: "1 week" },
-  { value: "month", label: "1 month" },
-  { value: "year", label: "1 year" },
-  { value: "forever", label: "Forever" },
-];
 
 function isCurrentlyBanned(bannedUntil: string | null): boolean {
   return bannedUntil !== null && new Date(bannedUntil).getTime() > Date.now();
