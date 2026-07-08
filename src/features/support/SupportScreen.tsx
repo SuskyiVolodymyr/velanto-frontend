@@ -54,6 +54,7 @@ export function SupportScreen() {
   const [page, setPage] = useState(1);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [loadingMore, setLoadingMore] = useState(false);
+  const [loadMoreError, setLoadMoreError] = useState("");
 
   const allowed = user?.role === "moderator" || user?.role === "manager" || user?.role === "admin";
 
@@ -63,6 +64,9 @@ export function SupportScreen() {
     }
   }, [authStatus, allowed, router]);
 
+  // statusFilter/typeFilter can change without a remount (e.g. clicking a
+  // different filter chip while already on the support page), so the reset
+  // to "loading" must happen here rather than via a useState initializer.
   useEffect(() => {
     if (!allowed) return;
     let cancelled = false;
@@ -98,6 +102,9 @@ export function SupportScreen() {
       });
       setTotal(result.total);
       setPage(nextPage);
+      setLoadMoreError("");
+    } catch {
+      setLoadMoreError("Couldn't load more reports. Try again.");
     } finally {
       setLoadingMore(false);
     }
@@ -128,7 +135,9 @@ export function SupportScreen() {
         {STATUS_FILTERS.map((f) => (
           <button
             key={f.label}
+            type="button"
             onClick={() => setStatusFilter(f.value)}
+            aria-pressed={statusFilter === f.value}
             className={`rounded-[9px] border px-3.5 py-2 text-sm font-medium ${
               statusFilter === f.value ? "border-acc/40 bg-acc/10 text-acc" : "border-border bg-white/[0.02] text-foreground-secondary"
             }`}
@@ -140,7 +149,9 @@ export function SupportScreen() {
         {TYPE_FILTERS.map((f) => (
           <button
             key={f.label}
+            type="button"
             onClick={() => setTypeFilter(f.value)}
+            aria-pressed={typeFilter === f.value}
             className={`rounded-[9px] border px-3.5 py-2 text-sm font-medium ${
               typeFilter === f.value ? "border-acc/40 bg-acc/10 text-acc" : "border-border bg-white/[0.02] text-foreground-secondary"
             }`}
@@ -183,9 +194,12 @@ export function SupportScreen() {
       )}
 
       {status === "ready" && reports.length < total && (
-        <Button variant="secondary" disabled={loadingMore} onClick={() => void handleLoadMore()}>
-          {loadingMore ? "Loading…" : "Load more"}
-        </Button>
+        <div className="flex flex-col gap-2">
+          <Button variant="secondary" disabled={loadingMore} onClick={() => void handleLoadMore()}>
+            {loadingMore ? "Loading…" : "Load more"}
+          </Button>
+          {loadMoreError && <Text className="text-sm text-[#ff6b6b]">{loadMoreError}</Text>}
+        </div>
       )}
     </main>
   );

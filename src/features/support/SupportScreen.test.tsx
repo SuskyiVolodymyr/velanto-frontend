@@ -113,4 +113,23 @@ describe("SupportScreen", () => {
     render(<SupportScreen />);
     await waitFor(() => expect(screen.getByText(/no reports match/i)).toBeInTheDocument());
   });
+
+  it("shows an error message when the initial reports fetch fails", async () => {
+    mockAuth("moderator");
+    mockedReportsClient.list.mockRejectedValue(new Error("network"));
+    render(<SupportScreen />);
+    await waitFor(() => expect(screen.getByText(/couldn't load reports/i)).toBeInTheDocument());
+  });
+
+  it("shows an error message when loading more fails, keeping the first page visible", async () => {
+    mockAuth("moderator");
+    mockedReportsClient.list
+      .mockResolvedValueOnce({ items: [report], total: 2, page: 1, limit: 1 })
+      .mockRejectedValueOnce(new Error("network"));
+    render(<SupportScreen />);
+    await waitFor(() => expect(screen.getByText("reporter1")).toBeInTheDocument());
+    await userEvent.click(screen.getByRole("button", { name: /load more/i }));
+    await waitFor(() => expect(screen.getByText(/couldn't load more reports/i)).toBeInTheDocument());
+    expect(screen.getByText("reporter1")).toBeInTheDocument();
+  });
 });
