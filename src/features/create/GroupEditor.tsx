@@ -7,6 +7,8 @@ import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { Card } from "@/src/shared/components/Card";
 import { cn } from "@/src/shared/lib/cn";
+import { extractYouTubeId } from "@/src/shared/lib/youtube";
+import { fetchYouTubeOEmbed } from "@/src/shared/lib/youtube-oembed";
 
 interface GroupEditorProps {
   group: Group;
@@ -20,19 +22,52 @@ export function GroupEditor({ group, index, removable, onChange, onRemove }: Gro
   const [draftType, setDraftType] = useState<ItemType>("text");
   const [draftTitle, setDraftTitle] = useState("");
   const [draftValue, setDraftValue] = useState("");
+  const [validating, setValidating] = useState(false);
+  const [addError, setAddError] = useState("");
 
-  function addItem() {
-    if (!draftValue.trim()) return;
-    const title = draftType === "youtube" ? draftTitle.trim() || "Untitled" : draftValue.trim();
-    const item: Item = {
-      id: crypto.randomUUID(),
-      type: draftType,
-      title,
-      value: draftValue.trim(),
-    };
-    onChange({ ...group, items: [...group.items, item] });
-    setDraftTitle("");
-    setDraftValue("");
+  async function addItem() {
+    if (!draftValue.trim() || validating) return;
+    setAddError("");
+
+    if (draftType === "text") {
+      const item: Item = {
+        id: crypto.randomUUID(),
+        type: "text",
+        title: draftValue.trim(),
+        value: draftValue.trim(),
+      };
+      onChange({ ...group, items: [...group.items, item] });
+      setDraftTitle("");
+      setDraftValue("");
+      return;
+    }
+
+    const videoId = extractYouTubeId(draftValue.trim());
+    if (!videoId) {
+      setAddError("That doesn't look like a YouTube link.");
+      return;
+    }
+
+    setValidating(true);
+    try {
+      const result = await fetchYouTubeOEmbed(draftValue.trim());
+      if (!result) {
+        setAddError("Couldn't find that video — check the link.");
+        return;
+      }
+
+      const item: Item = {
+        id: crypto.randomUUID(),
+        type: "youtube",
+        title: draftTitle.trim() || result.title || "Untitled",
+        value: draftValue.trim(),
+      };
+      onChange({ ...group, items: [...group.items, item] });
+      setDraftTitle("");
+      setDraftValue("");
+    } finally {
+      setValidating(false);
+    }
   }
 
   function removeItem(itemId: string) {
@@ -123,7 +158,10 @@ export function GroupEditor({ group, index, removable, onChange, onRemove }: Gro
         <div className="flex w-fit rounded-[9px] border border-border bg-white/[0.03] p-0.5">
           <button
             type="button"
-            onClick={() => setDraftType("text")}
+            onClick={() => {
+              setDraftType("text");
+              setAddError("");
+            }}
             className={cn(
               "rounded-[7px] px-3 py-1.5 text-xs font-medium",
               draftType === "text" ? "bg-white/[0.12] text-foreground" : "text-foreground-secondary",
@@ -133,7 +171,10 @@ export function GroupEditor({ group, index, removable, onChange, onRemove }: Gro
           </button>
           <button
             type="button"
-            onClick={() => setDraftType("youtube")}
+            onClick={() => {
+              setDraftType("youtube");
+              setAddError("");
+            }}
             className={cn(
               "rounded-[7px] px-3 py-1.5 text-xs font-medium",
               draftType === "youtube" ? "bg-white/[0.12] text-foreground" : "text-foreground-secondary",
@@ -148,38 +189,42 @@ export function GroupEditor({ group, index, removable, onChange, onRemove }: Gro
               value={draftValue}
               onChange={(e) => setDraftValue(e.target.value)}
               onKeyDown={(e) => {
-                if (e.key === "Enter") addItem();
+                if (e.key === "Enter") void addItem();
               }}
               placeholder="Add an item…"
               aria-label={`Group ${index + 1} new item`}
               className="flex-1"
             />
-            <Button type="button" onClick={addItem}>
+            <Button type="button" onClick={() => void addItem()}>
               Add
             </Button>
           </div>
         ) : (
-          <div className="flex flex-wrap gap-2">
-            <Input
-              value={draftTitle}
-              onChange={(e) => setDraftTitle(e.target.value)}
-              placeholder="Title"
-              aria-label={`Group ${index + 1} new item title`}
-              className="flex-1 min-w-[100px]"
-            />
-            <Input
-              value={draftValue}
-              onChange={(e) => setDraftValue(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") addItem();
-              }}
-              placeholder="YouTube link…"
-              aria-label={`Group ${index + 1} new item link`}
-              className="flex-[2] min-w-[140px]"
-            />
-            <Button type="button" onClick={addItem}>
-              Add
-            </Button>
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-wrap gap-2">
+              <Input
+                value={draftTitle}
+                onChange={(e) => setDraftTitle(e.target.value)}
+                placeholder="Title"
+                aria-label={`Group ${index + 1} new item title`}
+                className="flex-1 min-w-[100px]"
+              />
+              <Input
+                value={draftValue}
+                onChange={(e) => setDraftValue(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") void addItem();
+                }}
+                disabled={validating}
+                placeholder="YouTube link…"
+                aria-label={`Group ${index + 1} new item link`}
+                className="flex-[2] min-w-[140px]"
+              />
+              <Button type="button" onClick={() => void addItem()} disabled={validating}>
+                {validating ? "Checking…" : "Add"}
+              </Button>
+            </div>
+            {addError && <Text className="text-xs text-[#ff6b6b]">{addError}</Text>}
           </div>
         )}
       </div>
