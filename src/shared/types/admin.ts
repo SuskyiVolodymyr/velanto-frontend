@@ -15,6 +15,7 @@ export interface AdminUserRow {
   role: Role;
   createdAt: string;
   bannedUntil: string | null;
+  trusted: boolean;
 }
 
 export interface AdminUserList {

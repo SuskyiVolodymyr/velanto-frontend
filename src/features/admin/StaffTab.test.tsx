@@ -35,6 +35,7 @@ const TARGET: AdminUserRow = {
   role: "moderator",
   createdAt: "2026-01-01T00:00:00.000Z",
   bannedUntil: null,
+  trusted: false,
 };
 
 function renderAsManager() {

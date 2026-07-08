@@ -100,6 +100,16 @@ export function UsersTab() {
     }
   }
 
+  async function handleSetTrusted(id: string, trusted: boolean) {
+    setActionError("");
+    try {
+      await usersClient.setTrusted(id, trusted);
+      setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, trusted } : u)));
+    } catch {
+      setActionError(`Couldn't ${trusted ? "trust" : "untrust"} this user. Try again.`);
+    }
+  }
+
   if (!user) return null;
 
   return (
@@ -141,6 +151,12 @@ export function UsersTab() {
                   </div>
                   {canAct && (
                     <div className="flex gap-2">
+                      <Button
+                        variant="secondary"
+                        onClick={() => void handleSetTrusted(row.id, !row.trusted)}
+                      >
+                        {row.trusted ? "Untrust" : "Trust"}
+                      </Button>
                       {banned ? (
                         <Button variant="secondary" onClick={() => void handleUnban(row.id)}>
                           Unban
