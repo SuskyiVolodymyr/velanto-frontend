@@ -24,7 +24,7 @@ export function CategoryEditor({ category, index, onChange }: CategoryEditorProp
   const [addError, setAddError] = useState("");
 
   async function addItem() {
-    if (!draftValue.trim()) return;
+    if (!draftValue.trim() || validating) return;
     setAddError("");
 
     if (draftType === "text") {
@@ -47,22 +47,25 @@ export function CategoryEditor({ category, index, onChange }: CategoryEditorProp
     }
 
     setValidating(true);
-    const result = await fetchYouTubeOEmbed(draftValue.trim());
-    setValidating(false);
-    if (!result) {
-      setAddError("Couldn't find that video — check the link.");
-      return;
-    }
+    try {
+      const result = await fetchYouTubeOEmbed(draftValue.trim());
+      if (!result) {
+        setAddError("Couldn't find that video — check the link.");
+        return;
+      }
 
-    const item: Item = {
-      id: crypto.randomUUID(),
-      type: "youtube",
-      title: draftTitle.trim() || result.title || "Untitled",
-      value: draftValue.trim(),
-    };
-    onChange({ ...category, items: [...category.items, item] });
-    setDraftTitle("");
-    setDraftValue("");
+      const item: Item = {
+        id: crypto.randomUUID(),
+        type: "youtube",
+        title: draftTitle.trim() || result.title || "Untitled",
+        value: draftValue.trim(),
+      };
+      onChange({ ...category, items: [...category.items, item] });
+      setDraftTitle("");
+      setDraftValue("");
+    } finally {
+      setValidating(false);
+    }
   }
 
   function removeItem(itemId: string) {
@@ -161,6 +164,7 @@ export function CategoryEditor({ category, index, onChange }: CategoryEditorProp
                 onKeyDown={(e) => {
                   if (e.key === "Enter") void addItem();
                 }}
+                disabled={validating}
                 placeholder="YouTube link…"
                 aria-label={`Category ${index + 1} new item link`}
                 className="flex-[2] min-w-[140px]"

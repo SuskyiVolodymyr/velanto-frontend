@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { useState } from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { CategoryEditor } from "./CategoryEditor";
 import { fetchYouTubeOEmbed } from "@/src/shared/lib/youtube-oembed";
@@ -144,6 +144,37 @@ describe("CategoryEditor", () => {
 
     expect(await screen.findByText("Couldn't find that video — check the link.")).toBeInTheDocument();
     expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it("ignores a second Enter fired while validation is still in flight, adding only one item", async () => {
+    let resolveOEmbed!: (value: { title: string } | null) => void;
+    vi.mocked(fetchYouTubeOEmbed).mockReturnValue(
+      new Promise((resolve) => {
+        resolveOEmbed = resolve;
+      }),
+    );
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<CategoryEditor category={emptyCategory()} index={0} onChange={onChange} />);
+
+    await user.click(screen.getByRole("button", { name: "Link" }));
+    const link = screen.getByLabelText("Category 1 new item link");
+    await user.type(link, "https://youtu.be/KsF_hdjWJjo");
+
+    // Two Enter keydowns back-to-back, with no await between them, to hit
+    // the actual in-flight-validation race rather than the DOM's disabled
+    // attribute (which user-event's own interaction guards would otherwise
+    // mask by refusing to dispatch on a disabled element).
+    fireEvent.keyDown(link, { key: "Enter" });
+    fireEvent.keyDown(link, { key: "Enter" });
+
+    expect(fetchYouTubeOEmbed).toHaveBeenCalledTimes(1);
+
+    resolveOEmbed({ title: "Guren no Yumiya (Official)" });
+    await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({ items: [expect.objectContaining({ title: "Guren no Yumiya (Official)" })] }),
+    );
   });
 
   it("rejects a non-YouTube-shaped link without calling oEmbed", async () => {
