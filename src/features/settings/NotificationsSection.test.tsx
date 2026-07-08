@@ -3,9 +3,13 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NotificationsSection } from "./NotificationsSection";
 import { notificationsClient } from "@/src/shared/lib/notifications-client";
+import { useAuth } from "@/src/shared/lib/auth-context";
 
 vi.mock("@/src/shared/lib/notifications-client");
+vi.mock("@/src/shared/lib/auth-context");
+
 const mockedClient = vi.mocked(notificationsClient);
+const mockedUseAuth = vi.mocked(useAuth);
 
 const ALL_ON = {
   new_follower: true,
@@ -14,10 +18,34 @@ const ALL_ON = {
   pack_deleted_warning: true,
 };
 
+function mockAuth(status: "authenticated" | "unauthenticated" | "loading") {
+  mockedUseAuth.mockReturnValue({
+    user: status === "authenticated" ? { id: "u1", email: "a@x.com", username: "alice", role: "user", createdAt: "" } : null,
+    status,
+    login: vi.fn(),
+    register: vi.fn(),
+    logout: vi.fn(),
+  } as ReturnType<typeof useAuth>);
+}
+
 describe("NotificationsSection", () => {
   beforeEach(() => {
     vi.resetAllMocks();
+    mockAuth("authenticated");
     mockedClient.getPreferences.mockResolvedValue(ALL_ON);
+  });
+
+  it("shows a login prompt when unauthenticated, without calling getPreferences", async () => {
+    mockAuth("unauthenticated");
+    render(<NotificationsSection />);
+    await waitFor(() => expect(screen.getByText(/manage notification preferences/i)).toBeInTheDocument());
+    expect(mockedClient.getPreferences).not.toHaveBeenCalled();
+  });
+
+  it("shows an error message when the initial preferences fetch fails", async () => {
+    mockedClient.getPreferences.mockRejectedValue(new Error("network"));
+    render(<NotificationsSection />);
+    await waitFor(() => expect(screen.getByText(/couldn't load your notification preferences/i)).toBeInTheDocument());
   });
 
   it("renders all four toggles in their fetched state", async () => {
