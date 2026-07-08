@@ -32,24 +32,42 @@ export interface Category {
   items: Item[];
 }
 
-// Fixed taxonomy, not free text — see .claude/docs/domain-rules.md.
+// Fixed taxonomy, not free text — see .claude/docs/domain-rules.md. Kept in
+// sync with velanto-backend's PACK_TAGS (src/modules/packs/types/tags.ts) —
+// this repo doesn't import backend types (see file header), so the list is
+// duplicated deliberately and must be updated by hand alongside the backend.
 export const PACK_TAGS = [
   "Anime",
   "Movies",
   "Music",
   "Sports",
   "Football",
+  "Basketball",
+  "Wrestling",
   "Food",
   "Gaming",
+  "Board Games",
   "Comics",
   "Sci-Fi",
+  "Fantasy",
+  "Horror",
   "TV",
+  "Cartoons",
   "Books",
   "Fashion",
   "Cars",
   "History",
+  "Mythology",
   "Nature",
+  "Animals",
   "Technology",
+  "Science",
+  "Space",
+  "Art",
+  "Travel",
+  "Celebrities",
+  "K-pop",
+  "Memes",
 ] as const;
 
 export type PackTag = (typeof PACK_TAGS)[number];
