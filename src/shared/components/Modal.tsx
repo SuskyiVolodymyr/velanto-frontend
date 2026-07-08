@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useId, type ReactNode } from "react";
 import { cn } from "@/src/shared/lib/cn";
 import { Text } from "@/src/shared/components/Text";
 
@@ -13,6 +13,10 @@ export interface ModalProps {
 }
 
 export function Modal({ open, onClose, title, children, className }: ModalProps) {
+  // Unique per instance so aria-labelledby stays correct if two Modals
+  // ever render concurrently — a hardcoded id would silently collide.
+  const titleId = useId();
+
   useEffect(() => {
     if (!open) return;
     function handleKeyDown(event: KeyboardEvent) {
@@ -33,7 +37,7 @@ export function Modal({ open, onClose, title, children, className }: ModalProps)
       <div
         role="dialog"
         aria-modal="true"
-        aria-labelledby="modal-title"
+        aria-labelledby={titleId}
         onClick={(event) => event.stopPropagation()}
         className={cn(
           "flex max-h-[85vh] w-full max-w-md flex-col rounded-[15px] border border-border bg-surface p-5",
@@ -41,7 +45,7 @@ export function Modal({ open, onClose, title, children, className }: ModalProps)
         )}
       >
         <div className="mb-4 flex items-center justify-between">
-          <Text as="h2" id="modal-title" variant="title" className="text-lg">
+          <Text as="h2" id={titleId} variant="title" className="text-lg">
             {title}
           </Text>
           <button
