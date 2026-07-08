@@ -39,8 +39,12 @@ export function AuthorScreen({ authorId }: { authorId: string }) {
   const isModeratorPlus = user?.role === "moderator" || user?.role === "manager" || user?.role === "admin";
   const showModeratorTools = isModeratorPlus && !isOwnProfile;
 
+  // authorId can change without a remount (e.g. clicking a different
+  // commenter's link while already on an author page), so the reset to
+  // "loading" must happen here rather than via a useState initializer.
   useEffect(() => {
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setStatus("loading");
     Promise.all([usersClient.getProfile(authorId), packsClient.list({ authorId, limit: 50 })])
       .then(([profileResult, packsResult]) => {
@@ -61,6 +65,7 @@ export function AuthorScreen({ authorId }: { authorId: string }) {
   useEffect(() => {
     if (status !== "ready" || !showModeratorTools) return;
     let cancelled = false;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setBanHistoryStatus("loading");
     usersClient
       .banHistory(authorId, { page: 1, limit: 20 })
