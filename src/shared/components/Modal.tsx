@@ -48,7 +48,7 @@ export function Modal({ open, onClose, title, children, className }: ModalProps)
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="rounded-[9px] px-2 py-1 text-foreground-secondary transition-colors hover:text-foreground"
+            className="rounded-[9px] px-2 py-1 text-foreground-secondary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
           >
             ✕
           </button>
