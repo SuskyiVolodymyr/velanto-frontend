@@ -98,6 +98,13 @@ describe("ModerationQueueScreen", () => {
     await waitFor(() => expect(screen.getByText("No packs waiting for review.")).toBeInTheDocument());
   });
 
+  it("shows an error message when the initial queue fetch fails", async () => {
+    mockAuth("moderator");
+    mockedPacksClient.moderationQueue.mockRejectedValue(new Error("network"));
+    render(<ModerationQueueScreen />);
+    await waitFor(() => expect(screen.getByText(/couldn't load packs/i)).toBeInTheDocument());
+  });
+
   it("approves a pack and removes it from the list on success", async () => {
     mockAuth("moderator");
     mockedPacksClient.moderationQueue.mockResolvedValue({ items: [makePack()], total: 1, page: 1, limit: 20 });
