@@ -304,8 +304,13 @@ describe("PlayScreen", () => {
       "https://img.youtube.com/vi/KsF_hdjWJjo/mqdefault.jpg",
     );
 
-    await user.click(screen.getByRole("button", { name: "Pick Guren no Yumiya" }));
+    // Interacting with the video area itself must not select the item —
+    // only the dedicated "Pick ..." control below it does.
+    await user.click(screen.getByRole("button", { name: "Play video preview" }));
     await user.click(screen.getByRole("button", { name: "Show all" }));
+    expect(screen.getByRole("button", { name: "Next round →" })).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: "Pick Guren no Yumiya" }));
     expect(screen.getByRole("button", { name: "Next round →" })).toBeEnabled();
   });
 
