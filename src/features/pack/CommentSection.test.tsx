@@ -78,6 +78,20 @@ describe("CommentSection", () => {
     expect(commentsClient.list).toHaveBeenCalledWith("pack-1", { page: 1, limit: 10 });
   });
 
+  it("links each comment author's username to their author page", async () => {
+    vi.mocked(commentsClient.list).mockResolvedValue({
+      items: [COMMENT_A],
+      total: 1,
+      page: 1,
+      limit: 10,
+    });
+    renderAsUnauthenticated();
+
+    await screen.findByText("bob");
+    const link = screen.getByRole("link", { name: "bob" });
+    expect(link).toHaveAttribute("href", "/users/u2");
+  });
+
   it("shows the comment count in the header", async () => {
     vi.mocked(commentsClient.list).mockResolvedValue({
       items: [COMMENT_A],

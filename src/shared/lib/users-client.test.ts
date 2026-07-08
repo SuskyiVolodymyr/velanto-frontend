@@ -68,3 +68,42 @@ describe("usersClient", () => {
     expect(result).toEqual({ id: "user-1", bio: "New bio" });
   });
 });
+
+describe("usersClient.follow", () => {
+  it("POSTs to /users/:id/follow", async () => {
+    const postSpy = vi.spyOn(apiClient, "post").mockResolvedValue({ followerCount: 5 });
+    const result = await usersClient.follow("user-1");
+    expect(postSpy).toHaveBeenCalledWith("/users/user-1/follow");
+    expect(result).toEqual({ followerCount: 5 });
+  });
+});
+
+describe("usersClient.unfollow", () => {
+  it("POSTs to /users/:id/unfollow", async () => {
+    const postSpy = vi.spyOn(apiClient, "post").mockResolvedValue({ followerCount: 4 });
+    const result = await usersClient.unfollow("user-1");
+    expect(postSpy).toHaveBeenCalledWith("/users/user-1/unfollow");
+    expect(result).toEqual({ followerCount: 4 });
+  });
+});
+
+describe("usersClient.banHistory", () => {
+  it("GETs /users/:id/ban-history with page/limit query params", async () => {
+    const page = {
+      items: [{ actorUsername: "mod1", meta: { duration: "week", reason: "spam" }, createdAt: "2026-01-01T00:00:00.000Z" }],
+      total: 1,
+      page: 1,
+      limit: 20,
+    };
+    const getSpy = vi.spyOn(apiClient, "get").mockResolvedValue(page);
+    const result = await usersClient.banHistory("user-1", { page: 1, limit: 20 });
+    expect(getSpy).toHaveBeenCalledWith("/users/user-1/ban-history?page=1&limit=20");
+    expect(result).toEqual(page);
+  });
+
+  it("omits query params when not provided", async () => {
+    const getSpy = vi.spyOn(apiClient, "get").mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    await usersClient.banHistory("user-1");
+    expect(getSpy).toHaveBeenCalledWith("/users/user-1/ban-history");
+  });
+});
