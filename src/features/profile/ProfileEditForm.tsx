@@ -13,9 +13,9 @@ export function ProfileEditForm() {
   const { user, status: authStatus } = useAuth();
   const router = useRouter();
   const [bio, setBio] = useState("");
-  const [loaded, setLoaded] = useState(false);
+  const [loadStatus, setLoadStatus] = useState<"loading" | "ready" | "error">("loading");
   const [pending, setPending] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   useEffect(() => {
     if (authStatus !== "authenticated" || !user) return;
@@ -25,11 +25,11 @@ export function ProfileEditForm() {
       .then((profile) => {
         if (cancelled) return;
         setBio(profile.bio ?? "");
-        setLoaded(true);
+        setLoadStatus("ready");
       })
       .catch(() => {
         if (cancelled) return;
-        setError("Couldn't load your current bio.");
+        setLoadStatus("error");
       });
     return () => {
       cancelled = true;
@@ -39,12 +39,12 @@ export function ProfileEditForm() {
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     setPending(true);
-    setError(null);
+    setSaveError(null);
     try {
       await usersClient.updateProfile(bio);
       router.push("/profile");
     } catch {
-      setError("Couldn't save your changes. Try again.");
+      setSaveError("Couldn't save your changes. Try again.");
       setPending(false);
     }
   }
@@ -59,7 +59,15 @@ export function ProfileEditForm() {
     );
   }
 
-  if (!loaded) return null;
+  if (loadStatus === "loading") return null;
+
+  if (loadStatus === "error") {
+    return (
+      <div className="mx-auto max-w-md py-16 text-center">
+        <Text className="text-[#ff6b6b]">Couldn&apos;t load your current bio. Try again later.</Text>
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={handleSubmit} className="mx-auto w-full max-w-md px-7 py-10">
@@ -84,7 +92,7 @@ export function ProfileEditForm() {
         className="w-full rounded-[10px] border border-border bg-surface p-3 text-sm text-foreground placeholder:text-foreground-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
       />
 
-      {error && <Text className="mt-3 text-sm text-[#ff6b6b]">{error}</Text>}
+      {saveError && <Text className="mt-3 text-sm text-[#ff6b6b]">{saveError}</Text>}
 
       <Button type="submit" disabled={pending} className="mt-6 w-fit">
         {pending ? "Saving…" : "Save"}

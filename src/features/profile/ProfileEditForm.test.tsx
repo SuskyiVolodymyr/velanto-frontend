@@ -85,4 +85,10 @@ describe("ProfileEditForm", () => {
     renderForm();
     expect(await screen.findByText(/need to be logged in/i)).toBeInTheDocument();
   });
+
+  it("shows an error message if the initial bio load fails", async () => {
+    vi.mocked(usersClient.getProfile).mockRejectedValue(new Error("network error"));
+    renderForm();
+    expect(await screen.findByText(/couldn.t load/i)).toBeInTheDocument();
+  });
 });
