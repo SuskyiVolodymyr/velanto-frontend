@@ -31,7 +31,7 @@ let apiPromise: Promise<YouTubeIframeApi> | null = null;
 
 export function loadYouTubeIframeApi(): Promise<YouTubeIframeApi> {
   if (apiPromise) return apiPromise;
-  apiPromise = new Promise((resolve) => {
+  apiPromise = new Promise((resolve, reject) => {
     if (window.YT?.Player) {
       resolve(window.YT);
       return;
@@ -43,6 +43,10 @@ export function loadYouTubeIframeApi(): Promise<YouTubeIframeApi> {
     };
     const script = document.createElement("script");
     script.src = "https://www.youtube.com/iframe_api";
+    script.onerror = () => {
+      apiPromise = null; // don't cache a dead promise — a later call can retry
+      reject(new Error("Failed to load YouTube IFrame API"));
+    };
     document.head.appendChild(script);
   });
   return apiPromise;

@@ -46,4 +46,18 @@ describe("loadYouTubeIframeApi", () => {
 
     expect(previous).toHaveBeenCalledTimes(1);
   });
+
+  it("rejects and allows a retry when the script fails to load", async () => {
+    const promise = loadYouTubeIframeApi();
+    const script = document.head.querySelector(
+      'script[src="https://www.youtube.com/iframe_api"]',
+    )!;
+    script.dispatchEvent(new Event("error"));
+
+    await expect(promise).rejects.toThrow("Failed to load YouTube IFrame API");
+
+    const fakeYT = { Player: vi.fn() } as unknown as Window["YT"];
+    window.YT = fakeYT;
+    await expect(loadYouTubeIframeApi()).resolves.toBe(fakeYT);
+  });
 });
