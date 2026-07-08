@@ -11,6 +11,8 @@ import { cn } from "@/src/shared/lib/cn";
 import { PackCard } from "@/src/features/home/PackCard";
 
 type FormatFilter = "all" | PackFormat;
+type SortFilter = "relevance" | "popular";
+type WindowFilter = "day" | "week" | "month" | "year" | "all";
 
 // Backend caps `limit` at 50 — request that in one page since there's no
 // pagination UI yet; a real "Page N" control is future work if pack counts
@@ -29,6 +31,21 @@ const FORMAT_OPTIONS: { value: FormatFilter; label: string }[] = [
   { value: "1v1", label: "1v1" },
 ];
 
+const SORT_OPTIONS: { value: SortFilter; label: string }[] = [
+  { value: "relevance", label: "Relevance" },
+  { value: "popular", label: "Popular" },
+];
+
+const WINDOW_OPTIONS: { value: WindowFilter; label: string }[] = [
+  { value: "day", label: "Day" },
+  { value: "week", label: "Week" },
+  { value: "month", label: "Month" },
+  { value: "year", label: "Year" },
+  { value: "all", label: "All" },
+];
+
+const DEFAULT_POPULAR_WINDOW: WindowFilter = "week";
+
 export function HomeFeed() {
   const [format, setFormat] = useState<FormatFilter>("all");
   const [tags, setTags] = useState<PackTag[]>([]);
@@ -37,6 +54,8 @@ export function HomeFeed() {
   const [packs, setPacks] = useState<Pack[]>([]);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [tagPickerOpen, setTagPickerOpen] = useState(false);
+  const [sort, setSort] = useState<SortFilter>("relevance");
+  const [window, setWindow] = useState<WindowFilter>(DEFAULT_POPULAR_WINDOW);
 
   useEffect(() => {
     const timeout = setTimeout(() => setQuery(searchInput.trim()), SEARCH_DEBOUNCE_MS);
@@ -51,6 +70,8 @@ export function HomeFeed() {
         tags,
         q: query || undefined,
         limit: PAGE_SIZE,
+        sort: sort === "popular" ? "popular" : undefined,
+        window: sort === "popular" ? window : undefined,
       })
       .then((result) => {
         if (cancelled) return;
@@ -64,7 +85,7 @@ export function HomeFeed() {
     return () => {
       cancelled = true;
     };
-  }, [format, tags, query]);
+  }, [format, tags, query, sort, window]);
 
   return (
     <div className="flex flex-col gap-6">
@@ -96,6 +117,53 @@ export function HomeFeed() {
           </button>
         ))}
       </div>
+
+      <div className="flex flex-wrap gap-2">
+        {SORT_OPTIONS.map((option) => (
+          <button
+            key={option.value}
+            type="button"
+            onClick={() => {
+              setSort(option.value);
+              // Reset to the default window every time Popular is (re)selected,
+              // rather than remembering the last-chosen window across a
+              // Relevance -> Popular round-trip — "week" is the expected
+              // starting point each time you opt into popularity sorting.
+              if (option.value === "popular") setWindow(DEFAULT_POPULAR_WINDOW);
+            }}
+            aria-pressed={sort === option.value}
+            className={cn(
+              "rounded-[9px] border px-3 py-1.5 text-sm font-medium transition-colors",
+              sort === option.value
+                ? "border-acc/30 bg-acc/10 text-acc"
+                : "border-border bg-white/[0.03] text-foreground-secondary",
+            )}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+
+      {sort === "popular" && (
+        <div className="flex flex-wrap gap-2">
+          {WINDOW_OPTIONS.map((option) => (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => setWindow(option.value)}
+              aria-pressed={window === option.value}
+              className={cn(
+                "rounded-[9px] border px-3 py-1.5 text-sm font-medium transition-colors",
+                window === option.value
+                  ? "border-acc/30 bg-acc/10 text-acc"
+                  : "border-border bg-white/[0.03] text-foreground-secondary",
+              )}
+            >
+              {option.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       <Button
         type="button"

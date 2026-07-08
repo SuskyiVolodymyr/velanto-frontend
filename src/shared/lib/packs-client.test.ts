@@ -92,6 +92,38 @@ describe("packsClient.list", () => {
 
     expect(apiClient.get).toHaveBeenCalledWith("/packs?authorId=user-1");
   });
+
+  it("omits sort and window from the query string when not provided", async () => {
+    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+
+    await packsClient.list();
+
+    expect(apiClient.get).toHaveBeenCalledWith("/packs");
+  });
+
+  it("includes sort in the query string when provided", async () => {
+    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+
+    await packsClient.list({ sort: "popular" });
+
+    expect(apiClient.get).toHaveBeenCalledWith("/packs?sort=popular");
+  });
+
+  it("includes window in the query string when provided", async () => {
+    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+
+    await packsClient.list({ window: "week" });
+
+    expect(apiClient.get).toHaveBeenCalledWith("/packs?window=week");
+  });
+
+  it("includes both sort and window in the query string when provided together", async () => {
+    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+
+    await packsClient.list({ sort: "popular", window: "month" });
+
+    expect(apiClient.get).toHaveBeenCalledWith("/packs?sort=popular&window=month");
+  });
 });
 
 describe("packsClient.delete", () => {
