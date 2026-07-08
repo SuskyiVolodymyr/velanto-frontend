@@ -88,6 +88,7 @@ export function GroupEditor({ group, index, removable, onChange, onRemove }: Gro
           <button
             type="button"
             onClick={() => onChange({ ...group, selectionMode: "random" })}
+            disabled={validating}
             className={cn(
               "rounded-[7px] px-3 py-1.5 text-xs font-medium transition-colors",
               group.selectionMode === "random"
@@ -100,6 +101,7 @@ export function GroupEditor({ group, index, removable, onChange, onRemove }: Gro
           <button
             type="button"
             onClick={() => onChange({ ...group, selectionMode: "manual", sampleSize: undefined })}
+            disabled={validating}
             className={cn(
               "rounded-[7px] px-3 py-1.5 text-xs font-medium transition-colors",
               group.selectionMode === "manual"
@@ -121,6 +123,7 @@ export function GroupEditor({ group, index, removable, onChange, onRemove }: Gro
                 sampleSize: e.target.value === "" ? undefined : Number(e.target.value),
               })
             }
+            disabled={validating}
             aria-label={`Group ${index + 1} sample size`}
             title="Items drawn per round"
             className="w-16 text-center"

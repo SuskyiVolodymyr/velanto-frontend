@@ -117,4 +117,19 @@ describe("GroupEditor", () => {
       expect.objectContaining({ items: [expect.objectContaining({ title: "Guren no Yumiya (Official)" })] }),
     );
   });
+
+  it("disables the selection-mode and sample-size controls while validation is in flight", async () => {
+    vi.mocked(fetchYouTubeOEmbed).mockReturnValue(new Promise(() => {}));
+    const user = userEvent.setup();
+    const group: Group = { id: "g1", name: "", selectionMode: "random", sampleSize: 3, items: [] };
+    render(<GroupEditor group={group} index={0} removable={false} onChange={vi.fn()} onRemove={vi.fn()} />);
+
+    await user.click(screen.getByRole("button", { name: "Link" }));
+    await user.type(screen.getByLabelText("Group 1 new item link"), "https://youtu.be/KsF_hdjWJjo");
+    await user.click(screen.getByRole("button", { name: "Add" }));
+
+    expect(screen.getByRole("button", { name: "Random" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Manual" })).toBeDisabled();
+    expect(screen.getByLabelText("Group 1 sample size")).toBeDisabled();
+  });
 });
