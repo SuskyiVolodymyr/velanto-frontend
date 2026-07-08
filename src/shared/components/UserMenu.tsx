@@ -62,6 +62,14 @@ export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void 
             </Text>
           </div>
           <Link
+            href="/profile"
+            role="menuitem"
+            onClick={() => setOpen(false)}
+            className="block px-3.5 py-2.5 text-sm text-foreground hover:bg-white/[0.06]"
+          >
+            Profile
+          </Link>
+          <Link
             href="/docs"
             role="menuitem"
             onClick={() => setOpen(false)}
