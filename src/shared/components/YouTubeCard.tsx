@@ -87,7 +87,13 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
         // a hover event.
         <button
           type="button"
-          onClick={() => setHovered(true)}
+          onClick={(event) => {
+            // A YouTubeCard may sit inside another clickable element (e.g. a
+            // pickable side card) — starting the preview must never also
+            // trigger that ancestor's own click handler.
+            event.stopPropagation();
+            setHovered(true);
+          }}
           aria-label="Play video preview"
           className="absolute inset-0 flex items-center justify-center"
         >

@@ -117,6 +117,21 @@ describe("YouTubeCard", () => {
     expect(fakePlayer.playVideo).toHaveBeenCalled();
   });
 
+  it("does not let a click on the play button bubble to an ancestor's own click handler", async () => {
+    mockedLoad.mockReturnValue(new Promise(() => {}));
+    const ancestorClick = vi.fn();
+    const user = userEvent.setup();
+
+    render(
+      <div onClick={ancestorClick}>
+        <YouTubeCard videoId="abc123" />
+      </div>,
+    );
+    await user.click(screen.getByRole("button", { name: "Play video preview" }));
+
+    expect(ancestorClick).not.toHaveBeenCalled();
+  });
+
   it("destroys the old player and falls back to the new thumbnail when videoId changes", async () => {
     const fakePlayer = makeFakePlayer();
     const fakeApi = makeFakeApi(fakePlayer);
