@@ -315,7 +315,6 @@ Add the component directly below the `PackCoverBanner` block (before the descrip
       <div className="mb-4">
         <VoteButtons
           packId={pack.id}
-          initialScore={pack.score}
           initialLikes={pack.likes}
           initialDislikes={pack.dislikes}
           initialMyVote={pack.myVote}

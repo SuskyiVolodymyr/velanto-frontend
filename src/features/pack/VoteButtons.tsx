@@ -9,13 +9,11 @@ import { Text } from "@/src/shared/components/Text";
 
 export function VoteButtons({
   packId,
-  initialScore,
   initialLikes,
   initialDislikes,
   initialMyVote,
 }: {
   packId: string;
-  initialScore: number;
   initialLikes: number;
   initialDislikes: number;
   initialMyVote: 1 | -1 | null;
