@@ -71,13 +71,14 @@ describe("HomeFeed", () => {
     );
   });
 
-  it("re-fetches with selected tags (additive) when tag chips are toggled", async () => {
+  it("re-fetches with selected tags (additive) when tags are toggled in the picker modal", async () => {
     const user = userEvent.setup();
     vi.mocked(packsClient.list).mockResolvedValue({ items: [PACK_A], total: 1, page: 1, limit: 50 });
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
 
-    await user.click(screen.getByRole("button", { name: "Anime" }));
+    await user.click(screen.getByRole("button", { name: "Filter by tags" }));
+    await user.click(screen.getByRole("checkbox", { name: "Anime" }));
     await waitFor(() =>
       expect(packsClient.list).toHaveBeenLastCalledWith({
         format: undefined,
@@ -85,8 +86,9 @@ describe("HomeFeed", () => {
         limit: 50,
       }),
     );
+    expect(screen.getByRole("button", { name: "1 tag" })).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Music" }));
+    await user.click(screen.getByRole("checkbox", { name: "Music" }));
     await waitFor(() =>
       expect(packsClient.list).toHaveBeenLastCalledWith({
         format: undefined,
@@ -94,8 +96,9 @@ describe("HomeFeed", () => {
         limit: 50,
       }),
     );
+    expect(screen.getByRole("button", { name: "2 tags" })).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Anime" }));
+    await user.click(screen.getByRole("checkbox", { name: "Anime" }));
     await waitFor(() =>
       expect(packsClient.list).toHaveBeenLastCalledWith({
         format: undefined,
