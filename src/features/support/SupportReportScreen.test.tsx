@@ -93,9 +93,18 @@ describe("SupportReportScreen", () => {
     mockedPacksClient.delete.mockResolvedValue({ deleted: true });
     render(<SupportReportScreen reportId="r1" />);
     await waitFor(() => expect(screen.getByRole("button", { name: /delete pack/i })).toBeInTheDocument());
+    expect(screen.queryByRole("button", { name: /^ban user$/i })).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: /delete pack/i }));
     await waitFor(() => expect(mockedPacksClient.delete).toHaveBeenCalledWith("pack-1"));
     await waitFor(() => expect(screen.getByText(/pack deleted/i)).toBeInTheDocument());
+  });
+
+  it("shows Mark resolved but not Review for a reviewing report", async () => {
+    mockAuth();
+    mockedReportsClient.getById.mockResolvedValue({ ...packReport, status: "reviewing" });
+    render(<SupportReportScreen reportId="r1" />);
+    await waitFor(() => expect(screen.getByRole("button", { name: /mark resolved/i })).toBeInTheDocument());
+    expect(screen.queryByRole("button", { name: "Review" })).not.toBeInTheDocument();
   });
 
   it("shows a Ban user button and inline ban form for a user-type report", async () => {
@@ -120,5 +129,34 @@ describe("SupportReportScreen", () => {
     await userEvent.click(screen.getByRole("button", { name: "Review" }));
     await waitFor(() => expect(screen.getByText(/couldn't/i)).toBeInTheDocument());
     expect(screen.getByRole("button", { name: "Review" })).toBeInTheDocument();
+  });
+
+  it("shows an inline error next to Delete pack (not the queue actions) when packsClient.delete() fails, and the button stays clickable", async () => {
+    mockAuth();
+    mockedReportsClient.getById.mockResolvedValue(packReport);
+    mockedPacksClient.delete.mockRejectedValue(new Error("network"));
+    render(<SupportReportScreen reportId="r1" />);
+    await waitFor(() => expect(screen.getByRole("button", { name: /delete pack/i })).toBeInTheDocument());
+    await userEvent.click(screen.getByRole("button", { name: /delete pack/i }));
+    await waitFor(() => expect(screen.getByText(/couldn't delete this pack/i)).toBeInTheDocument());
+    const deleteButton = screen.getByRole("button", { name: /delete pack/i });
+    expect(deleteButton).toBeInTheDocument();
+    expect(deleteButton).not.toBeDisabled();
+    // The error must render alongside Delete pack, not near the queue-action buttons.
+    expect(screen.getByText(/couldn't delete this pack/i).parentElement).toBe(deleteButton.parentElement);
+  });
+
+  it("shows an inline error and keeps the ban form open when usersClient.ban() fails", async () => {
+    mockAuth();
+    mockedReportsClient.getById.mockResolvedValue(userReport);
+    mockedUsersClient.ban.mockRejectedValue(new Error("network"));
+    render(<SupportReportScreen reportId="r2" />);
+    await waitFor(() => expect(screen.getByRole("button", { name: /^ban user$/i })).toBeInTheDocument());
+    await userEvent.click(screen.getByRole("button", { name: /^ban user$/i }));
+    await userEvent.type(screen.getByLabelText(/ban reason/i), "repeated harassment");
+    await userEvent.click(screen.getByRole("button", { name: /confirm ban/i }));
+    await waitFor(() => expect(screen.getByText(/couldn't ban this user/i)).toBeInTheDocument());
+    expect(screen.getByLabelText(/ban reason/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /confirm ban/i })).toBeInTheDocument();
   });
 });

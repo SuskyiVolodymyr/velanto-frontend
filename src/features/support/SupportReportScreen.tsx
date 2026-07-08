@@ -31,6 +31,7 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
   const [actionError, setActionError] = useState("");
   const [actionBusy, setActionBusy] = useState(false);
   const [deleted, setDeleted] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
   const [showBanForm, setShowBanForm] = useState(false);
   const [banDuration, setBanDuration] = useState<BanDuration>("week");
   const [banReason, setBanReason] = useState("");
@@ -101,12 +102,12 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
 
   async function handleDeletePack() {
     if (!report) return;
-    setActionError("");
+    setDeleteError("");
     try {
       await packsClient.delete(report.targetId);
       setDeleted(true);
     } catch {
-      setActionError("Couldn't delete this pack. Try again.");
+      setDeleteError("Couldn't delete this pack. Try again.");
     }
   }
 
@@ -190,6 +191,7 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
             <Button variant="secondary" disabled={deleted} onClick={() => void handleDeletePack()}>
               {deleted ? "Pack deleted ✓" : "Delete pack"}
             </Button>
+            {deleteError && <Text className="mt-2 text-xs text-[#ff6b6b]">{deleteError}</Text>}
           </div>
         )}
         {report.type === "user" && (
