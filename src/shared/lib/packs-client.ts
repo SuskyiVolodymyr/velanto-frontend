@@ -29,6 +29,13 @@ export interface PackList {
   limit: number;
 }
 
+export interface VoteResult {
+  score: number;
+  likes: number;
+  dislikes: number;
+  myVote: 1 | -1 | null;
+}
+
 function buildListQuery(filters: ListPacksFilters): string {
   const params = new URLSearchParams();
   if (filters.format) params.set("format", filters.format);
@@ -46,4 +53,6 @@ export const packsClient = {
   getById: (id: string) => apiClient.get<Pack>(`/packs/${id}`),
   list: (filters: ListPacksFilters = {}) => apiClient.get<PackList>(`/packs${buildListQuery(filters)}`),
   delete: (id: string) => apiClient.delete<{ deleted: true }>(`/packs/${id}`),
+  vote: (id: string, value: 1 | -1) => apiClient.post<VoteResult>(`/packs/${id}/vote`, { value }),
+  unvote: (id: string) => apiClient.delete<VoteResult>(`/packs/${id}/vote`),
 };

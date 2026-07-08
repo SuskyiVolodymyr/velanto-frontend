@@ -25,6 +25,10 @@ const PACK_A: Pack = {
   avgAgreementPercent: 0,
   status: "approved",
   rejectionReason: null,
+  score: 0,
+  likes: 0,
+  dislikes: 0,
+  myVote: null,
 };
 
 beforeEach(() => {
@@ -96,5 +100,21 @@ describe("packsClient.delete", () => {
     const result = await packsClient.delete("pack-1");
     expect(deleteSpy).toHaveBeenCalledWith("/packs/pack-1");
     expect(result).toEqual({ deleted: true });
+  });
+});
+
+describe("packsClient.vote", () => {
+  it("vote() POSTs to /packs/:id/vote with the given value", async () => {
+    const postSpy = vi.spyOn(apiClient, "post").mockResolvedValue({ score: 1, likes: 1, dislikes: 0, myVote: 1 });
+    const result = await packsClient.vote("pack-1", 1);
+    expect(postSpy).toHaveBeenCalledWith("/packs/pack-1/vote", { value: 1 });
+    expect(result).toEqual({ score: 1, likes: 1, dislikes: 0, myVote: 1 });
+  });
+
+  it("unvote() DELETEs /packs/:id/vote", async () => {
+    const deleteSpy = vi.spyOn(apiClient, "delete").mockResolvedValue({ score: 0, likes: 0, dislikes: 0, myVote: null });
+    const result = await packsClient.unvote("pack-1");
+    expect(deleteSpy).toHaveBeenCalledWith("/packs/pack-1/vote");
+    expect(result).toEqual({ score: 0, likes: 0, dislikes: 0, myVote: null });
   });
 });

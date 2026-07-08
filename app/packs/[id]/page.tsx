@@ -10,6 +10,7 @@ import { getResultsServer } from "@/src/shared/lib/get-results-server";
 import { PackCoverBanner } from "@/src/features/pack/PackCoverBanner";
 import { PackStats } from "@/src/features/pack/PackStats";
 import { CommentSection } from "@/src/features/pack/CommentSection";
+import { VoteButtons } from "@/src/features/pack/VoteButtons";
 
 export async function generateMetadata({
   params,
@@ -31,6 +32,14 @@ export default async function PackPage({ params }: { params: Promise<{ id: strin
     <main className="mx-auto w-full max-w-2xl flex-1 px-7 py-10">
       <div className="mb-6">
         <PackCoverBanner pack={pack} />
+      </div>
+      <div className="mb-4">
+        <VoteButtons
+          packId={pack.id}
+          initialLikes={pack.likes}
+          initialDislikes={pack.dislikes}
+          initialMyVote={pack.myVote}
+        />
       </div>
       <Text variant="secondary" className="mb-4">
         {pack.description}

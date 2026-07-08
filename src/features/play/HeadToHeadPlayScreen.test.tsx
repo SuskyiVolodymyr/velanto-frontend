@@ -69,6 +69,10 @@ const HEAD_TO_HEAD_PACK: Pack = {
   avgAgreementPercent: 0,
   status: "approved",
   rejectionReason: null,
+  score: 0,
+  likes: 0,
+  dislikes: 0,
+  myVote: null,
 };
 
 function renderScreen(pack: Pack) {
