@@ -59,4 +59,8 @@ export const packsClient = {
   delete: (id: string) => apiClient.delete<{ deleted: true }>(`/packs/${id}`),
   vote: (id: string, value: 1 | -1) => apiClient.post<VoteResult>(`/packs/${id}/vote`, { value }),
   unvote: (id: string) => apiClient.delete<VoteResult>(`/packs/${id}/vote`),
+  moderationQueue: (filters: { page?: number; limit?: number } = {}) =>
+    apiClient.get<PackList>(`/packs/moderation-queue${buildListQuery(filters)}`),
+  approve: (id: string) => apiClient.post<Pack>(`/packs/${id}/approve`),
+  reject: (id: string, reason?: string) => apiClient.post<Pack>(`/packs/${id}/reject`, { reason }),
 };

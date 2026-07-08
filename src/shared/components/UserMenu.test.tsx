@@ -59,6 +59,16 @@ describe("UserMenu", () => {
     expect(screen.queryByRole("menuitem", { name: "Support" })).not.toBeInTheDocument();
   });
 
+  it("shows a Moderation link for moderator+ but not for a plain user", async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(<UserMenu user={{ ...USER, role: "moderator" }} onLogout={vi.fn()} />);
+    await user.click(screen.getByRole("button", { name: "Account menu" }));
+    expect(screen.getByRole("menuitem", { name: "Moderation" })).toHaveAttribute("href", "/moderation");
+
+    rerender(<UserMenu user={USER} onLogout={vi.fn()} />);
+    expect(screen.queryByRole("menuitem", { name: "Moderation" })).not.toBeInTheDocument();
+  });
+
   it("closes the menu when clicking outside", async () => {
     const user = userEvent.setup();
     render(

@@ -150,3 +150,52 @@ describe("packsClient.vote", () => {
     expect(result).toEqual({ score: 0, likes: 0, dislikes: 0, myVote: null });
   });
 });
+
+describe("packsClient.moderationQueue", () => {
+  beforeEach(() => {
+    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+  });
+
+  it("calls GET /packs/moderation-queue with page/limit", async () => {
+    await packsClient.moderationQueue({ page: 2, limit: 20 });
+    expect(apiClient.get).toHaveBeenCalledWith("/packs/moderation-queue?page=2&limit=20");
+  });
+
+  it("calls with no query string when no filters are given", async () => {
+    await packsClient.moderationQueue();
+    expect(apiClient.get).toHaveBeenCalledWith("/packs/moderation-queue");
+  });
+
+  it("returns the paginated envelope from the API", async () => {
+    const envelope = { items: [PACK_A], total: 1, page: 1, limit: 20 };
+    vi.mocked(apiClient.get).mockResolvedValue(envelope);
+
+    const result = await packsClient.moderationQueue();
+
+    expect(result).toEqual(envelope);
+  });
+});
+
+describe("packsClient.approve", () => {
+  it("approve() POSTs to /packs/:id/approve with no body", async () => {
+    const postSpy = vi.spyOn(apiClient, "post").mockResolvedValue(PACK_A);
+    const result = await packsClient.approve("pack-1");
+    expect(postSpy).toHaveBeenCalledWith("/packs/pack-1/approve");
+    expect(result).toEqual(PACK_A);
+  });
+});
+
+describe("packsClient.reject", () => {
+  it("reject() POSTs to /packs/:id/reject with the given reason", async () => {
+    const postSpy = vi.spyOn(apiClient, "post").mockResolvedValue(PACK_A);
+    const result = await packsClient.reject("pack-1", "Duplicate of an existing pack");
+    expect(postSpy).toHaveBeenCalledWith("/packs/pack-1/reject", { reason: "Duplicate of an existing pack" });
+    expect(result).toEqual(PACK_A);
+  });
+
+  it("reject() POSTs an undefined reason when none is given", async () => {
+    const postSpy = vi.spyOn(apiClient, "post").mockResolvedValue(PACK_A);
+    await packsClient.reject("pack-1");
+    expect(postSpy).toHaveBeenCalledWith("/packs/pack-1/reject", { reason: undefined });
+  });
+});
