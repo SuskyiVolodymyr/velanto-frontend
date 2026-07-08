@@ -194,4 +194,40 @@ describe("AuthorScreen", () => {
     await userEvent.click(screen.getByRole("button", { name: /confirm ban/i }));
     await waitFor(() => expect(mockedUsersClient.ban).toHaveBeenCalledWith("author-1", { duration: "week", reason: "repeated spam" }));
   });
+
+  it("shows an error and keeps the form open when the ban request fails", async () => {
+    mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
+    mockedUsersClient.getProfile.mockResolvedValue(profile);
+    mockedUsersClient.banHistory.mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    mockedUsersClient.ban.mockRejectedValue(new Error("boom"));
+    render(<AuthorScreen authorId="author-1" />);
+    await waitFor(() => expect(screen.getByRole("button", { name: /^ban$/i })).toBeInTheDocument());
+    await userEvent.click(screen.getByRole("button", { name: /^ban$/i }));
+    await userEvent.type(screen.getByLabelText(/ban reason/i), "repeated spam");
+    await userEvent.click(screen.getByRole("button", { name: /confirm ban/i }));
+    await waitFor(() => expect(screen.getByText(/couldn't ban/i)).toBeInTheDocument());
+    expect(screen.getByLabelText(/ban reason/i)).toBeInTheDocument();
+  });
+
+  it("shows a loading indicator while ban history is being fetched", async () => {
+    mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
+    mockedUsersClient.getProfile.mockResolvedValue(profile);
+    let resolveBanHistory: (value: { items: never[]; total: number; page: number; limit: number }) => void = () => {};
+    mockedUsersClient.banHistory.mockReturnValue(
+      new Promise((resolve) => {
+        resolveBanHistory = resolve;
+      })
+    );
+    render(<AuthorScreen authorId="author-1" />);
+    await waitFor(() => expect(screen.getByText(/loading ban history/i)).toBeInTheDocument());
+    resolveBanHistory({ items: [], total: 0, page: 1, limit: 20 });
+  });
+
+  it("shows an error message when the ban history fetch fails", async () => {
+    mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
+    mockedUsersClient.getProfile.mockResolvedValue(profile);
+    mockedUsersClient.banHistory.mockRejectedValue(new Error("network"));
+    render(<AuthorScreen authorId="author-1" />);
+    await waitFor(() => expect(screen.getByText(/couldn't load ban history/i)).toBeInTheDocument());
+  });
 });
