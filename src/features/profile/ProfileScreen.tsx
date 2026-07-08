@@ -39,7 +39,7 @@ export function ProfileScreen() {
     };
   }, [authStatus, user]);
 
-  if (authStatus === "loading" || status === "loading") return null;
+  if (authStatus === "loading") return null;
 
   if (authStatus === "unauthenticated") {
     return (
@@ -51,6 +51,8 @@ export function ProfileScreen() {
       </div>
     );
   }
+
+  if (status === "loading") return null;
 
   if (status === "error" || !profile) {
     return (

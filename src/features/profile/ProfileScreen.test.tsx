@@ -5,6 +5,7 @@ import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { usersClient } from "@/src/shared/lib/users-client";
 import { packsClient } from "@/src/shared/lib/packs-client";
+import { ApiError } from "@/src/shared/lib/api-client";
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
   authClient: { register: vi.fn(), login: vi.fn(), logout: vi.fn(), refresh: vi.fn() },
@@ -82,6 +83,16 @@ describe("ProfileScreen", () => {
   it("shows 'no packs yet' when the user has created nothing", async () => {
     renderScreen();
     expect(await screen.findByText(/no packs yet/i)).toBeInTheDocument();
+  });
+
+  it("shows a log-in prompt when the viewer is not authenticated", async () => {
+    vi.mocked(authClient.refresh).mockRejectedValue(new ApiError(401, "Unauthorized", null));
+    renderScreen();
+    expect(await screen.findByText(/need to be logged in/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /log in/i })).toHaveAttribute(
+      "href",
+      "/auth?next=%2Fprofile",
+    );
   });
 
   it("renders a pack grid with status badges when packs exist", async () => {
