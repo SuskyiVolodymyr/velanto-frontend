@@ -132,7 +132,7 @@ export function ModerationQueueScreen() {
 
       {status === "loading" && <Text variant="secondary">Loading packs…</Text>}
       {status === "error" && <Text className="text-[#ff6b6b]">Couldn&apos;t load packs. Try again later.</Text>}
-      {status === "ready" && packs.length === 0 && (
+      {status === "ready" && total === 0 && (
         <Text variant="secondary">No packs waiting for review.</Text>
       )}
 
