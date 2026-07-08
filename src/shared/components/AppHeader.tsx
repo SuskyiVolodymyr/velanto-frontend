@@ -5,6 +5,7 @@ import { useAuth } from "@/src/shared/lib/auth-context";
 import { buttonClassName } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { UserMenu } from "@/src/shared/components/UserMenu";
+import { NotificationsBell } from "@/src/shared/components/NotificationsBell";
 
 export function AppHeader() {
   const { user, status, logout } = useAuth();
@@ -19,7 +20,10 @@ export function AppHeader() {
       </Link>
 
       {status === "authenticated" && user && (
-        <UserMenu user={user} onLogout={() => void logout()} />
+        <div className="flex items-center gap-3">
+          <NotificationsBell />
+          <UserMenu user={user} onLogout={() => void logout()} />
+        </div>
       )}
 
       {status === "unauthenticated" && (

@@ -5,6 +5,7 @@ import { AppHeader } from "./AppHeader";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { ApiError } from "@/src/shared/lib/api-client";
+import { notificationsClient } from "@/src/shared/lib/notifications-client";
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
   authClient: {
@@ -12,6 +13,20 @@ vi.mock("@/src/shared/lib/auth-client", () => ({
     login: vi.fn(),
     logout: vi.fn(),
     refresh: vi.fn(),
+  },
+}));
+
+// NotificationsBell polls this on mount whenever AppHeader renders
+// authenticated — stub it so these auth-focused tests don't make (or wait
+// on) real network calls.
+vi.mock("@/src/shared/lib/notifications-client", () => ({
+  notificationsClient: {
+    unreadCount: vi.fn(),
+    list: vi.fn(),
+    markRead: vi.fn(),
+    markAllRead: vi.fn(),
+    getPreferences: vi.fn(),
+    setPreferences: vi.fn(),
   },
 }));
 
@@ -25,6 +40,7 @@ function renderHeader() {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.mocked(notificationsClient.unreadCount).mockResolvedValue({ count: 0 });
 });
 
 describe("AppHeader", () => {
@@ -64,6 +80,32 @@ describe("AppHeader", () => {
     const trigger = await screen.findByRole("button", { name: "Account menu" });
     expect(trigger).toHaveTextContent("A");
     expect(screen.queryByRole("link", { name: "Log in" })).not.toBeInTheDocument();
+  });
+
+  it("renders the notifications bell only when authenticated", async () => {
+    vi.mocked(authClient.refresh).mockRejectedValue(
+      new ApiError(401, "Unauthorized", null),
+    );
+    renderHeader();
+
+    await screen.findByRole("link", { name: "Log in" });
+    expect(screen.queryByRole("button", { name: /notifications/i })).not.toBeInTheDocument();
+  });
+
+  it("renders the notifications bell when authenticated", async () => {
+    vi.mocked(authClient.refresh).mockResolvedValue({
+      accessToken: "access-token",
+      user: {
+        id: "u1",
+        email: "a@example.com",
+        username: "alice",
+        role: "user",
+        createdAt: "2026-01-01T00:00:00.000Z",
+      },
+    });
+    renderHeader();
+
+    expect(await screen.findByRole("button", { name: /notifications/i })).toBeInTheDocument();
   });
 
   it("logging out clears the session and shows Log in again", async () => {
