@@ -1,6 +1,8 @@
 import type { Item } from "@/src/shared/types/pack";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
+import { YouTubeCard } from "@/src/shared/components/YouTubeCard";
+import { extractYouTubeId } from "@/src/shared/lib/youtube";
 import { cn } from "@/src/shared/lib/cn";
 
 interface VersusSide {
@@ -18,25 +20,45 @@ interface SideCardProps {
 
 function SideCard({ side, revealedCount, selected, onSelect }: SideCardProps) {
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onSelect}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          onSelect();
+        }
+      }}
       aria-label={`Pick ${side.name}`}
       className={cn(
-        "flex flex-1 flex-col gap-3 rounded-2xl border p-4 text-left transition-colors",
+        "flex flex-1 cursor-pointer flex-col gap-3 rounded-2xl border p-4 text-left transition-colors",
         selected ? "border-acc bg-acc/10" : "border-border bg-surface hover:border-border-strong",
       )}
     >
       <Text className="text-center font-semibold">{side.name}</Text>
       <div className="flex flex-col gap-2">
-        {side.items.slice(0, revealedCount).map((item) => (
-          <div key={item.id} className="rounded-xl border border-border bg-white/[0.03] p-3">
-            {item.type === "youtube" && <Badge className="mb-2">YouTube</Badge>}
-            <Text className="text-sm font-medium">{item.title}</Text>
-          </div>
-        ))}
+        {side.items.slice(0, revealedCount).map((item) => {
+          const videoId = item.type === "youtube" ? extractYouTubeId(item.value) : null;
+
+          if (videoId) {
+            return (
+              <div key={item.id} className="overflow-hidden rounded-xl border border-border bg-white/[0.03]">
+                <YouTubeCard videoId={videoId} />
+                <Text className="p-3 text-sm font-medium">{item.title}</Text>
+              </div>
+            );
+          }
+
+          return (
+            <div key={item.id} className="rounded-xl border border-border bg-white/[0.03] p-3">
+              {item.type === "youtube" && <Badge className="mb-2">YouTube</Badge>}
+              <Text className="text-sm font-medium">{item.title}</Text>
+            </div>
+          );
+        })}
       </div>
-    </button>
+    </div>
   );
 }
 
