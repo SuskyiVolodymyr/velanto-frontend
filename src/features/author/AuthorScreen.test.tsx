@@ -139,4 +139,59 @@ describe("AuthorScreen", () => {
     await waitFor(() => expect(screen.getByText("Anime Showdown")).toBeInTheDocument());
     expect(mockedPacksClient.list).toHaveBeenCalledWith({ authorId: "author-1", limit: 50 });
   });
+
+  it("does not show ban history or a ban button to a plain-user viewer", async () => {
+    mockAuth({ user: { id: "viewer-1", email: "v@x.com", username: "viewer", role: "user", createdAt: "" } });
+    mockedUsersClient.getProfile.mockResolvedValue(profile);
+    render(<AuthorScreen authorId="author-1" />);
+    await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
+    expect(mockedUsersClient.banHistory).not.toHaveBeenCalled();
+    expect(screen.queryByRole("button", { name: /^ban$/i })).not.toBeInTheDocument();
+  });
+
+  it("shows ban history and a ban button to a moderator viewer", async () => {
+    mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
+    mockedUsersClient.getProfile.mockResolvedValue(profile);
+    mockedUsersClient.banHistory.mockResolvedValue({
+      items: [{ actorUsername: "mod2", meta: { duration: "week", reason: "spam" }, createdAt: "2026-01-01T00:00:00.000Z" }],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
+    render(<AuthorScreen authorId="author-1" />);
+    await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
+    expect(mockedUsersClient.banHistory).toHaveBeenCalledWith("author-1", { page: 1, limit: 20 });
+    await waitFor(() => expect(screen.getByText(/spam/)).toBeInTheDocument());
+    expect(screen.getByRole("button", { name: /^ban$/i })).toBeInTheDocument();
+  });
+
+  it("shows an empty-state message when the author has no ban history", async () => {
+    mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
+    mockedUsersClient.getProfile.mockResolvedValue(profile);
+    mockedUsersClient.banHistory.mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    render(<AuthorScreen authorId="author-1" />);
+    await waitFor(() => expect(screen.getByText(/no ban history/i)).toBeInTheDocument());
+  });
+
+  it("hides ban history and the ban button when a moderator views their own page", async () => {
+    mockAuth({ user: { id: "author-1", email: "a@x.com", username: "quizmaster", role: "moderator", createdAt: "" } });
+    mockedUsersClient.getProfile.mockResolvedValue(profile);
+    render(<AuthorScreen authorId="author-1" />);
+    await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
+    expect(mockedUsersClient.banHistory).not.toHaveBeenCalled();
+    expect(screen.queryByRole("button", { name: /^ban$/i })).not.toBeInTheDocument();
+  });
+
+  it("submits a ban via the inline form and shows the updated status", async () => {
+    mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
+    mockedUsersClient.getProfile.mockResolvedValue(profile);
+    mockedUsersClient.banHistory.mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    mockedUsersClient.ban.mockResolvedValue({ id: "author-1", bannedUntil: "2027-01-01T00:00:00.000Z" });
+    render(<AuthorScreen authorId="author-1" />);
+    await waitFor(() => expect(screen.getByRole("button", { name: /^ban$/i })).toBeInTheDocument());
+    await userEvent.click(screen.getByRole("button", { name: /^ban$/i }));
+    await userEvent.type(screen.getByLabelText(/ban reason/i), "repeated spam");
+    await userEvent.click(screen.getByRole("button", { name: /confirm ban/i }));
+    await waitFor(() => expect(mockedUsersClient.ban).toHaveBeenCalledWith("author-1", { duration: "week", reason: "repeated spam" }));
+  });
 });
