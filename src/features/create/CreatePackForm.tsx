@@ -6,11 +6,12 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import { ApiError } from "@/src/shared/lib/api-client";
-import { PACK_TAGS, COVER_TONES } from "@/src/shared/types/pack";
+import { COVER_TONES } from "@/src/shared/types/pack";
 import type { PackFormat, PackTag, Group, Category } from "@/src/shared/types/pack";
 import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
+import { TagPickerModal } from "@/src/shared/components/TagPickerModal";
 import { cn } from "@/src/shared/lib/cn";
 import { GroupEditor } from "@/src/features/create/GroupEditor";
 import { CategoryEditor } from "@/src/features/create/CategoryEditor";
@@ -144,14 +145,7 @@ export function CreatePackForm() {
   const [versusN, setVersusN] = useState<number | undefined>(undefined);
   const [error, setError] = useState("");
   const [pending, setPending] = useState(false);
-
-  function toggleTag(tag: PackTag) {
-    setTags((prev) => {
-      const has = prev.includes(tag);
-      if (!has && prev.length >= MAX_TAGS) return prev;
-      return has ? prev.filter((t) => t !== tag) : [...prev, tag];
-    });
-  }
+  const [tagPickerOpen, setTagPickerOpen] = useState(false);
 
   function updateGroup(id: string, next: Group) {
     setGroups((prev) => prev.map((g) => (g.id === id ? next : g)));
@@ -272,38 +266,24 @@ export function CreatePackForm() {
           </div>
         </div>
         <div className="flex flex-col gap-2">
-          <div className="flex items-center justify-between">
-            <Text variant="secondary" className="text-xs">
-              Tags
-            </Text>
-            <Text variant="tertiary" className="text-xs">
-              {tags.length}/{MAX_TAGS}
-            </Text>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {PACK_TAGS.map((tag) => {
-              const selected = tags.includes(tag);
-              const atCap = !selected && tags.length >= MAX_TAGS;
-              return (
-                <button
-                  key={tag}
-                  type="button"
-                  disabled={atCap}
-                  onClick={() => toggleTag(tag)}
-                  aria-pressed={selected}
-                  className={cn(
-                    "rounded-[9px] border px-3 py-1.5 text-xs font-medium transition-colors",
-                    selected
-                      ? "border-acc/30 bg-acc/10 text-acc"
-                      : "border-border bg-white/[0.03] text-foreground-secondary",
-                    atCap && "opacity-40",
-                  )}
-                >
-                  {tag}
-                </button>
-              );
-            })}
-          </div>
+          <Text variant="secondary" className="text-xs">
+            Tags
+          </Text>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => setTagPickerOpen(true)}
+            className="self-start"
+          >
+            {tags.length === 0 ? "Select tags" : `${tags.length} tag${tags.length === 1 ? "" : "s"} selected`}
+          </Button>
+          <TagPickerModal
+            open={tagPickerOpen}
+            onClose={() => setTagPickerOpen(false)}
+            selected={tags}
+            onChange={setTags}
+            maxTags={MAX_TAGS}
+          />
         </div>
       </section>
 

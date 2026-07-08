@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { packsClient } from "@/src/shared/lib/packs-client";
-import { PACK_TAGS } from "@/src/shared/types/pack";
 import type { Pack, PackFormat, PackTag } from "@/src/shared/types/pack";
 import { Text } from "@/src/shared/components/Text";
 import { Input } from "@/src/shared/components/Input";
+import { Button } from "@/src/shared/components/Button";
+import { TagPickerModal } from "@/src/shared/components/TagPickerModal";
 import { cn } from "@/src/shared/lib/cn";
 import { PackCard } from "@/src/features/home/PackCard";
 
@@ -35,6 +36,7 @@ export function HomeFeed() {
   const [query, setQuery] = useState("");
   const [packs, setPacks] = useState<Pack[]>([]);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [tagPickerOpen, setTagPickerOpen] = useState(false);
 
   useEffect(() => {
     const timeout = setTimeout(() => setQuery(searchInput.trim()), SEARCH_DEBOUNCE_MS);
@@ -63,10 +65,6 @@ export function HomeFeed() {
       cancelled = true;
     };
   }, [format, tags, query]);
-
-  function toggleTag(tag: PackTag) {
-    setTags((prev) => (prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]));
-  }
 
   return (
     <div className="flex flex-col gap-6">
@@ -99,27 +97,20 @@ export function HomeFeed() {
         ))}
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        {PACK_TAGS.map((tag) => {
-          const selected = tags.includes(tag);
-          return (
-            <button
-              key={tag}
-              type="button"
-              onClick={() => toggleTag(tag)}
-              aria-pressed={selected}
-              className={cn(
-                "rounded-[9px] border px-3 py-1.5 text-xs font-medium transition-colors",
-                selected
-                  ? "border-acc/30 bg-acc/10 text-acc"
-                  : "border-border bg-white/[0.03] text-foreground-secondary",
-              )}
-            >
-              {tag}
-            </button>
-          );
-        })}
-      </div>
+      <Button
+        type="button"
+        variant="secondary"
+        onClick={() => setTagPickerOpen(true)}
+        className="self-start"
+      >
+        {tags.length === 0 ? "Filter by tags" : `${tags.length} tag${tags.length === 1 ? "" : "s"}`}
+      </Button>
+      <TagPickerModal
+        open={tagPickerOpen}
+        onClose={() => setTagPickerOpen(false)}
+        selected={tags}
+        onChange={setTags}
+      />
 
       {status === "loading" && <Text variant="secondary">Loading packs…</Text>}
       {status === "error" && (

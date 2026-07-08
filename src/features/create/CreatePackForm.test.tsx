@@ -123,21 +123,35 @@ describe("CreatePackForm", () => {
     expect(packsClient.create).not.toHaveBeenCalled();
   });
 
-  it("caps tag selection at 10 and dims the rest", async () => {
+  it("opens the tag picker modal and reflects the selected count on the button", async () => {
     const user = userEvent.setup();
     renderForm();
     await screen.findByLabelText("Pack title");
 
-    const tagButtons = [
+    await user.click(screen.getByRole("button", { name: "Select tags" }));
+    await user.click(screen.getByRole("checkbox", { name: "Anime" }));
+    await user.click(screen.getByRole("checkbox", { name: "Music" }));
+    await user.click(screen.getByRole("button", { name: "Close" }));
+
+    expect(screen.getByRole("button", { name: "2 tags selected" })).toBeInTheDocument();
+  });
+
+  it("passes maxTags through to the tag picker so the cap disables further boxes", async () => {
+    const user = userEvent.setup();
+    renderForm();
+    await screen.findByLabelText("Pack title");
+
+    await user.click(screen.getByRole("button", { name: "Select tags" }));
+    const tagsToSelect = [
       "Anime", "Movies", "Music", "Sports", "Football",
-      "Food", "Gaming", "Comics", "Sci-Fi", "TV",
+      "Basketball", "Wrestling", "Food", "Gaming", "Board Games",
     ];
-    for (const tag of tagButtons) {
-      await user.click(screen.getByRole("button", { name: tag }));
+    for (const tag of tagsToSelect) {
+      await user.click(screen.getByRole("checkbox", { name: tag }));
     }
 
-    expect(screen.getByText("10/10")).toBeInTheDocument();
-    const eleventh = screen.getByRole("button", { name: "Books" });
+    expect(screen.getByRole("button", { name: "10 tags selected" })).toBeInTheDocument();
+    const eleventh = screen.getByRole("checkbox", { name: "Comics" });
     expect(eleventh).toBeDisabled();
   });
 
