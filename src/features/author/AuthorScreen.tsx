@@ -21,6 +21,7 @@ export function AuthorScreen({ authorId }: { authorId: string }) {
 
   const [profile, setProfile] = useState<PublicUserProfile | null>(null);
   const [packs, setPacks] = useState<Pack[]>([]);
+  const [packsTotal, setPacksTotal] = useState(0);
   const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [followBusy, setFollowBusy] = useState(false);
   const [followError, setFollowError] = useState("");
@@ -51,6 +52,7 @@ export function AuthorScreen({ authorId }: { authorId: string }) {
         if (cancelled) return;
         setProfile(profileResult);
         setPacks(packsResult.items);
+        setPacksTotal(packsResult.total);
         setStatus("ready");
       })
       .catch(() => {
@@ -140,8 +142,8 @@ export function AuthorScreen({ authorId }: { authorId: string }) {
               {profile.username}
             </Text>
             <Text variant="tertiary" className="text-sm">
-              {profile.followerCount} follower{profile.followerCount === 1 ? "" : "s"} · {packs.length} pack
-              {packs.length === 1 ? "" : "s"}
+              {profile.followerCount} follower{profile.followerCount === 1 ? "" : "s"} · {packsTotal} pack
+              {packsTotal === 1 ? "" : "s"}
             </Text>
           </div>
         </div>

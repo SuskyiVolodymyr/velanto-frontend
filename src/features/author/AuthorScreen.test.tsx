@@ -140,6 +140,34 @@ describe("AuthorScreen", () => {
     expect(mockedPacksClient.list).toHaveBeenCalledWith({ authorId: "author-1", limit: 50 });
   });
 
+  it("shows the response's total pack count, not just the number of items returned by the capped fetch", async () => {
+    mockAuth();
+    mockedUsersClient.getProfile.mockResolvedValue(profile);
+    mockedPacksClient.list.mockResolvedValue({
+      items: [
+        {
+          id: "pack-1",
+          title: "Anime Showdown",
+          description: "d",
+          coverTone: "#111",
+          format: "save_one",
+          tags: [],
+          authorId: "author-1",
+          status: "approved",
+          rejectionReason: null,
+          totalPlays: 0,
+          avgAgreementPercent: 0,
+          groups: [],
+        } as never,
+      ],
+      total: 60,
+      page: 1,
+      limit: 50,
+    });
+    render(<AuthorScreen authorId="author-1" />);
+    await waitFor(() => expect(screen.getByText(/60 packs/)).toBeInTheDocument());
+  });
+
   it("does not show ban history or a ban button to a plain-user viewer", async () => {
     mockAuth({ user: { id: "viewer-1", email: "v@x.com", username: "viewer", role: "user", createdAt: "" } });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
