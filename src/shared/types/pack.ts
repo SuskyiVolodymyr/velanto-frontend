@@ -98,4 +98,8 @@ export interface Pack {
   avgAgreementPercent: number;
   status: "pending" | "approved" | "rejected";
   rejectionReason: string | null;
+  score: number;
+  likes: number;
+  dislikes: number;
+  myVote: 1 | -1 | null;
 }

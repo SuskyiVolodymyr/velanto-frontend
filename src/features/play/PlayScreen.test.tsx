@@ -69,6 +69,10 @@ const SAVE_ONE_PACK: Pack = {
   avgAgreementPercent: 0,
   status: "approved",
   rejectionReason: null,
+  score: 0,
+  likes: 0,
+  dislikes: 0,
+  myVote: null,
 };
 
 function renderScreen(pack: Pack) {
@@ -117,6 +121,10 @@ describe("PlayScreen", () => {
     avgAgreementPercent: 0,
     status: "approved",
     rejectionReason: null,
+    score: 0,
+    likes: 0,
+    dislikes: 0,
+    myVote: null,
   };
 
   it("derives the reveal count from the actual sampled items, not a possibly-stale versusN", async () => {

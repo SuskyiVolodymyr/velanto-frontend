@@ -15,6 +15,10 @@ const BASE_PACK = {
   avgAgreementPercent: 0,
   status: "approved" as const,
   rejectionReason: null,
+  score: 0,
+  likes: 0,
+  dislikes: 0,
+  myVote: null,
 };
 
 describe("PackCard", () => {
