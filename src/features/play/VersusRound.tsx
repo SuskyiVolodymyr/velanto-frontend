@@ -25,10 +25,15 @@ function SideCard({ side, revealedCount, selected, onSelect }: SideCardProps) {
       tabIndex={0}
       onClick={onSelect}
       onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          onSelect();
-        }
+        if (event.key !== "Enter" && event.key !== " ") return;
+        // A youtube item's own play button lives inside this div and is
+        // independently focusable. Keydown bubbles regardless of which
+        // descendant has focus, so without this check, activating that
+        // button via the keyboard would also select the side — unlike a
+        // mouse click, which the button already stops from propagating.
+        if (event.target !== event.currentTarget) return;
+        event.preventDefault();
+        onSelect();
       }}
       aria-label={`Pick ${side.name}`}
       className={cn(

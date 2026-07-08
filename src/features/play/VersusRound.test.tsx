@@ -88,4 +88,39 @@ describe("VersusRound", () => {
     await user.click(screen.getByRole("button", { name: "Play video preview" }));
     expect(onSelect).not.toHaveBeenCalled();
   });
+
+  it("does not select the side when activating the video's own play button via the keyboard", async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    const sideWithVideo = {
+      id: "ca",
+      name: "Boys",
+      items: [youtubeItem("v1", "Opening", "https://youtu.be/KsF_hdjWJjo")],
+    };
+    render(
+      <VersusRound
+        sideA={sideWithVideo}
+        sideB={SIDE_B}
+        revealedCount={1}
+        selectedId={null}
+        onSelect={onSelect}
+      />,
+    );
+
+    screen.getByRole("button", { name: "Play video preview" }).focus();
+    await user.keyboard("{Enter}");
+    expect(onSelect).not.toHaveBeenCalled();
+  });
+
+  it("selects a side via the keyboard (Space)", async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    render(
+      <VersusRound sideA={SIDE_A} sideB={SIDE_B} revealedCount={2} selectedId={null} onSelect={onSelect} />,
+    );
+
+    screen.getByRole("button", { name: "Pick Boys" }).focus();
+    await user.keyboard(" ");
+    expect(onSelect).toHaveBeenCalledWith("ca");
+  });
 });
