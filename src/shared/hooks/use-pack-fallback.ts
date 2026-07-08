@@ -12,6 +12,11 @@ export type PackFallbackState =
   | { status: "notfound" }
   | { status: "ready"; pack: Pack; results: PackResults | RankResults | null };
 
+type FetchResult =
+  | { pack: Pack; results: PackResults | RankResults | null }
+  | "notfound"
+  | null;
+
 /**
  * Retries a pack (and optionally its results) as the authenticated viewer,
  * for the case where the Server Component's anonymous fetch already
@@ -25,20 +30,12 @@ export function usePackFallback(
 ): PackFallbackState {
   const { needsResults } = opts;
   const { status: authStatus } = useAuth();
-  const [state, setState] = useState<PackFallbackState>({ status: "loading" });
+  const [fetchResult, setFetchResult] = useState<FetchResult>(null);
 
   useEffect(() => {
-    if (authStatus === "loading") {
-      setState({ status: "loading" });
-      return;
-    }
-    if (authStatus === "unauthenticated") {
-      setState({ status: "notfound" });
-      return;
-    }
+    if (authStatus !== "authenticated") return;
 
     let cancelled = false;
-    setState({ status: "loading" });
 
     packsClient
       .getById(packId)
@@ -47,13 +44,13 @@ export function usePackFallback(
         const results = await playsClient.getResults(packId);
         return { pack, results };
       })
-      .then(({ pack, results }) => {
+      .then((result) => {
         if (cancelled) return;
-        setState({ status: "ready", pack, results });
+        setFetchResult(result);
       })
       .catch(() => {
         if (cancelled) return;
-        setState({ status: "notfound" });
+        setFetchResult("notfound");
       });
 
     return () => {
@@ -61,5 +58,9 @@ export function usePackFallback(
     };
   }, [packId, authStatus, needsResults]);
 
-  return state;
+  if (authStatus === "loading") return { status: "loading" };
+  if (authStatus === "unauthenticated") return { status: "notfound" };
+  if (fetchResult === null) return { status: "loading" };
+  if (fetchResult === "notfound") return { status: "notfound" };
+  return { status: "ready", pack: fetchResult.pack, results: fetchResult.results };
 }
