@@ -20,6 +20,8 @@ export interface ListPacksFilters {
   page?: number;
   limit?: number;
   authorId?: string;
+  sort?: "popular";
+  window?: "day" | "week" | "month" | "year" | "all";
 }
 
 export interface PackList {
@@ -44,6 +46,8 @@ function buildListQuery(filters: ListPacksFilters): string {
   if (filters.page !== undefined) params.set("page", String(filters.page));
   if (filters.limit !== undefined) params.set("limit", String(filters.limit));
   if (filters.authorId) params.set("authorId", filters.authorId);
+  if (filters.sort) params.set("sort", filters.sort);
+  if (filters.window) params.set("window", filters.window);
   const query = params.toString();
   return query ? `?${query}` : "";
 }
