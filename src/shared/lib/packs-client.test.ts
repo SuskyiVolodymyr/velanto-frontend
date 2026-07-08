@@ -7,6 +7,7 @@ vi.mock("@/src/shared/lib/api-client", () => ({
   apiClient: {
     get: vi.fn(),
     post: vi.fn(),
+    delete: vi.fn(),
   },
 }));
 
@@ -86,5 +87,14 @@ describe("packsClient.list", () => {
     await packsClient.list({ authorId: "user-1" });
 
     expect(apiClient.get).toHaveBeenCalledWith("/packs?authorId=user-1");
+  });
+});
+
+describe("packsClient.delete", () => {
+  it("delete() DELETEs /packs/:id", async () => {
+    const deleteSpy = vi.spyOn(apiClient, "delete").mockResolvedValue({ deleted: true });
+    const result = await packsClient.delete("pack-1");
+    expect(deleteSpy).toHaveBeenCalledWith("/packs/pack-1");
+    expect(result).toEqual({ deleted: true });
   });
 });

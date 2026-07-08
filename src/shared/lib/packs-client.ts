@@ -45,4 +45,5 @@ export const packsClient = {
   create: (input: CreatePackInput) => apiClient.post<Pack>("/packs", input),
   getById: (id: string) => apiClient.get<Pack>(`/packs/${id}`),
   list: (filters: ListPacksFilters = {}) => apiClient.get<PackList>(`/packs${buildListQuery(filters)}`),
+  delete: (id: string) => apiClient.delete<{ deleted: true }>(`/packs/${id}`),
 };
