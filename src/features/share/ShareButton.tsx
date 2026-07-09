@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/src/shared/components/Button";
 import { Input } from "@/src/shared/components/Input";
 import { buildShareUrl } from "@/src/shared/lib/share-url";
@@ -27,10 +27,15 @@ export function ShareButton({
   // hydration concern.
   const url = open ? buildShareUrl(path, picks) : "";
 
-  function closeAndRefocus() {
+  const close = useCallback(() => {
     setOpen(false);
+    setCopied(false);
+  }, []);
+
+  const closeAndRefocus = useCallback(() => {
+    close();
     triggerRef.current?.focus();
-  }
+  }, [close]);
 
   useEffect(() => {
     if (!open) return;
@@ -38,7 +43,7 @@ export function ShareButton({
 
     function handlePointerDown(event: MouseEvent) {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
-        setOpen(false);
+        close();
       }
     }
     function handleKeyDown(event: KeyboardEvent) {
@@ -50,7 +55,7 @@ export function ShareButton({
       document.removeEventListener("mousedown", handlePointerDown);
       document.removeEventListener("keydown", handleKeyDown);
     };
-  }, [open]);
+  }, [open, close, closeAndRefocus]);
 
   useEffect(() => {
     return () => {
@@ -76,7 +81,7 @@ export function ShareButton({
         variant="secondary"
         aria-haspopup="dialog"
         aria-expanded={open}
-        onClick={() => setOpen((prev) => !prev)}
+        onClick={() => (open ? close() : setOpen(true))}
       >
         {label}
       </Button>
