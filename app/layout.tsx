@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { NextIntlClientProvider } from "next-intl";
+import { getLocale } from "next-intl/server";
+import { isRtl, type Locale } from "@/src/i18n/config";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { AppHeader } from "@/src/shared/components/AppHeader";
 import { getThemeInitScript } from "@/src/shared/lib/theme";
@@ -28,14 +31,16 @@ export const metadata: Metadata = {
     "Velanto is an elimination-quiz-pack platform: create packs, play them solo or with others, and see who's left standing.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = (await getLocale()) as Locale;
   return (
     <html
-      lang="en"
+      lang={locale}
+      dir={isRtl(locale) ? "rtl" : "ltr"}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       // The theme-init script (below) sets --acc on this element before
       // hydration, which the server-rendered markup can't know about —
@@ -49,10 +54,12 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: getThemeInitScript() }} />
       </head>
       <body className="min-h-full flex flex-col">
-        <AuthProvider>
-          <AppHeader />
-          {children}
-        </AuthProvider>
+        <NextIntlClientProvider>
+          <AuthProvider>
+            <AppHeader />
+            {children}
+          </AuthProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );
