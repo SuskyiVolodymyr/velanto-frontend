@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { negotiateLocale } from "./locale";
+import { negotiateLocale } from "./negotiate";
 import { isRtl } from "./config";
 
 describe("negotiateLocale", () => {
