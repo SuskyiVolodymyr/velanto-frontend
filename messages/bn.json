@@ -1,11 +1,11 @@
 {
-  "_note": "Machine-translated, pending native review (velanto-frontend#44).",
+  "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
     "logIn": "লগ ইন করুন",
     "logOut": "লগ আউট করুন",
     "accountMenu": "অ্যাকাউন্ট মেনু",
     "profile": "প্রোফাইল",
-    "docs": "নথিপত্র",
+    "docs": "ডকুমেন্টেশন",
     "settings": "সেটিংস",
     "support": "সহায়তা",
     "moderation": "মডারেশন",
@@ -14,8 +14,8 @@
   "settings": {
     "title": "পছন্দসমূহ",
     "languageHeading": "ভাষা",
-    "languageLabel": "ইন্টারফেস ভাষা",
-    "languageHint": "মেনু এবং বোতামের ভাষা পরিবর্তন করে। প্যাকের বিষয়বস্তু সেই ভাষাতেই থাকে যে ভাষায় এর নির্মাতা এটি লিখেছেন।",
-    "languageSelectAria": "ইন্টারফেস ভাষা"
+    "languageLabel": "ইন্টারফেসের ভাষা",
+    "languageHint": "মেনু ও বোতামের ভাষা পরিবর্তন করে। প্যাকের বিষয়বস্তু সেই ভাষাতেই থাকে যে ভাষায় এর নির্মাতা লিখেছেন।",
+    "languageSelectAria": "ইন্টারফেসের ভাষা"
   }
 }

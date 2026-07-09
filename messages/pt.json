@@ -1,5 +1,5 @@
 {
-  "_note": "Machine-translated, pending native review (velanto-frontend#44).",
+  "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
     "logIn": "Entrar",
     "logOut": "Sair",
@@ -15,7 +15,7 @@
     "title": "Preferências",
     "languageHeading": "Idioma",
     "languageLabel": "Idioma da interface",
-    "languageHint": "Altera o idioma dos menus e botões. O conteúdo do pacote permanece no idioma em que o seu criador o escreveu.",
+    "languageHint": "Altera o idioma dos menus e botões. O conteúdo do pacote permanece no idioma em que o criador o escreveu.",
     "languageSelectAria": "Idioma da interface"
   }
 }

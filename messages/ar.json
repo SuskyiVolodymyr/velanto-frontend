@@ -1,11 +1,11 @@
 {
-  "_note": "Machine-translated, pending native review (velanto-frontend#44).",
+  "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
     "logIn": "تسجيل الدخول",
     "logOut": "تسجيل الخروج",
     "accountMenu": "قائمة الحساب",
     "profile": "الملف الشخصي",
-    "docs": "المستندات",
+    "docs": "التوثيق",
     "settings": "الإعدادات",
     "support": "الدعم",
     "moderation": "الإشراف",
