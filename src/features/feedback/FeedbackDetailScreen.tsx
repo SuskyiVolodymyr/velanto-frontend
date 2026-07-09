@@ -13,6 +13,7 @@ import { TOPIC_LABELS, STATUS_LABELS } from "@/src/features/feedback/FeedbackCar
 import { FeedbackVote } from "@/src/features/feedback/FeedbackVote";
 import { FeedbackComments } from "@/src/features/feedback/FeedbackComments";
 import type { Feedback, FeedbackStatus } from "@/src/shared/types/feedback";
+import { LOCALE_NAMES, type Locale } from "@/src/i18n/config";
 
 const STATUS_OPTIONS: { value: FeedbackStatus; label: string }[] = [
   { value: "new", label: "New" },
@@ -153,7 +154,8 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
           </Text>
           {post.locale && (
             <Text variant="secondary" className="text-sm">
-              <span className="font-semibold text-foreground">Locale:</span> {post.locale}
+              <span className="font-semibold text-foreground">Language:</span>{" "}
+              {LOCALE_NAMES[post.locale as Locale] ?? post.locale}
             </Text>
           )}
           {post.translationContext && (

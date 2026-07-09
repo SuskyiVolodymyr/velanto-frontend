@@ -86,6 +86,7 @@ export function FeedbackScreen() {
     let cancelled = false;
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setPhase("loading");
+    setLoadMoreError("");
     feedbackClient
       .list({ q: q || undefined, topic, status: statusFilter, sort, page: 1, limit: PAGE_SIZE })
       .then((result) => {
