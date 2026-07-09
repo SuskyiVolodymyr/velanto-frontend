@@ -1,12 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
-import { buttonClassName } from "@/src/shared/components/Button";
 import { RankResultScreen } from "@/src/features/result/RankResultScreen";
-import { ShareButton } from "@/src/features/share/ShareButton";
 import { useResultPicks } from "@/src/features/result/use-result-picks";
+import { SharedResultNote } from "@/src/features/result/SharedResultNote";
+import { ResultActions } from "@/src/features/result/ResultActions";
 import type { Pack } from "@/src/shared/types/pack";
 import type { PackResults, RankResults } from "@/src/shared/types/play-results";
 
@@ -32,14 +31,7 @@ function GroupResultScreen({ pack, results }: { pack: Pack; results: PackResults
         {results.totalPlays} play{results.totalPlays === 1 ? "" : "s"} recorded.
       </Text>
 
-      {shared && (
-        <Text
-          variant="secondary"
-          className="mb-6 rounded-[10px] border border-border bg-surface px-4 py-2 text-sm"
-        >
-          You&apos;re viewing a shared result.
-        </Text>
-      )}
+      {shared && <SharedResultNote />}
 
       <div className="mb-8 flex flex-col gap-4">
         {results.rounds.map((round) => {
@@ -79,18 +71,7 @@ function GroupResultScreen({ pack, results }: { pack: Pack; results: PackResults
         })}
       </div>
 
-      <div className="flex items-center gap-3">
-        <Link href={`/packs/${pack.id}/play`} className={buttonClassName("primary", "w-fit")}>
-          Play again
-        </Link>
-        {pack.status === "approved" && (
-          <ShareButton
-            path={`/packs/${pack.id}/result`}
-            picks={ownPicks}
-            label="Share result"
-          />
-        )}
-      </div>
+      <ResultActions packId={pack.id} status={pack.status} picks={ownPicks} />
     </div>
   );
 }

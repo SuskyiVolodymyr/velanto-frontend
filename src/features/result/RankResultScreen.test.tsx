@@ -148,5 +148,7 @@ describe("RankResultScreen", () => {
     });
     render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
     expect(await screen.findByText(/viewing a shared result/i)).toBeInTheDocument();
+    expect(screen.getByText(/Placed #1/)).toBeInTheDocument();
+    expect(screen.queryByText(/You placed this/)).not.toBeInTheDocument();
   });
 });
