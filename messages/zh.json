@@ -9,7 +9,8 @@
     "settings": "设置",
     "support": "支持",
     "moderation": "审核",
-    "admin": "管理"
+    "admin": "管理",
+    "feedback": "反馈"
   },
   "settings": {
     "title": "偏好设置",

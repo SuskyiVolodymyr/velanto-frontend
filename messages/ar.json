@@ -9,7 +9,8 @@
     "settings": "الإعدادات",
     "support": "الدعم",
     "moderation": "الإشراف",
-    "admin": "الإدارة"
+    "admin": "الإدارة",
+    "feedback": "الملاحظات"
   },
   "settings": {
     "title": "التفضيلات",
