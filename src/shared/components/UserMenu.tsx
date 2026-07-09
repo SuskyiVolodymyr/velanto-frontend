@@ -1,11 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { Text } from "@/src/shared/components/Text";
 import type { User } from "@/src/shared/types/user";
 
 export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void }) {
+  const t = useTranslations("header");
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -44,7 +46,7 @@ export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void 
         type="button"
         aria-haspopup="menu"
         aria-expanded={open}
-        aria-label="Account menu"
+        aria-label={t("accountMenu")}
         onClick={() => setOpen((prev) => !prev)}
         className="flex h-10 w-10 items-center justify-center rounded-[11px] border border-border bg-surface text-sm font-semibold text-foreground-secondary transition-colors hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
@@ -53,7 +55,7 @@ export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void 
       {open && (
         <div
           role="menu"
-          className="absolute right-0 top-12 z-10 w-[190px] overflow-hidden rounded-xl border border-border bg-surface shadow-[0_16px_40px_rgba(0,0,0,0.5)]"
+          className="absolute end-0 top-12 z-10 w-[190px] overflow-hidden rounded-xl border border-border bg-surface shadow-[0_16px_40px_rgba(0,0,0,0.5)]"
         >
           <div className="border-b border-border px-3.5 py-3">
             <Text className="text-sm font-semibold">{user.username}</Text>
@@ -67,7 +69,7 @@ export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void 
             onClick={() => setOpen(false)}
             className="block px-3.5 py-2.5 text-sm text-foreground hover:bg-white/[0.06]"
           >
-            Profile
+            {t("profile")}
           </Link>
           <Link
             href="/docs"
@@ -75,7 +77,7 @@ export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void 
             onClick={() => setOpen(false)}
             className="block px-3.5 py-2.5 text-sm text-foreground hover:bg-white/[0.06]"
           >
-            Docs
+            {t("docs")}
           </Link>
           <Link
             href="/settings"
@@ -83,7 +85,7 @@ export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void 
             onClick={() => setOpen(false)}
             className="block px-3.5 py-2.5 text-sm text-foreground hover:bg-white/[0.06]"
           >
-            Settings
+            {t("settings")}
           </Link>
           {(user.role === "moderator" || user.role === "manager" || user.role === "admin") && (
             <Link
@@ -92,7 +94,7 @@ export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void 
               onClick={() => setOpen(false)}
               className="block px-3.5 py-2.5 text-sm text-foreground hover:bg-white/[0.06]"
             >
-              Support
+              {t("support")}
             </Link>
           )}
           {(user.role === "moderator" || user.role === "manager" || user.role === "admin") && (
@@ -102,7 +104,7 @@ export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void 
               onClick={() => setOpen(false)}
               className="block px-3.5 py-2.5 text-sm text-foreground hover:bg-white/[0.06]"
             >
-              Moderation
+              {t("moderation")}
             </Link>
           )}
           {(user.role === "admin" || user.role === "manager") && (
@@ -112,7 +114,7 @@ export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void 
               onClick={() => setOpen(false)}
               className="block px-3.5 py-2.5 text-sm text-foreground hover:bg-white/[0.06]"
             >
-              Admin
+              {t("admin")}
             </Link>
           )}
           <button
@@ -122,9 +124,9 @@ export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void 
               closeAndRefocus();
               onLogout();
             }}
-            className="block w-full px-3.5 py-2.5 text-left text-sm text-[#ff6b6b] hover:bg-white/[0.06]"
+            className="block w-full px-3.5 py-2.5 text-start text-sm text-[#ff6b6b] hover:bg-white/[0.06]"
           >
-            Log out
+            {t("logOut")}
           </button>
         </div>
       )}

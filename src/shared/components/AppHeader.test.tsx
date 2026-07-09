@@ -1,6 +1,8 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { NextIntlClientProvider } from "next-intl";
+import messages from "@/messages/en.json";
 import { AppHeader } from "./AppHeader";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { authClient } from "@/src/shared/lib/auth-client";
@@ -32,9 +34,11 @@ vi.mock("@/src/shared/lib/notifications-client", () => ({
 
 function renderHeader() {
   return render(
-    <AuthProvider>
-      <AppHeader />
-    </AuthProvider>,
+    <NextIntlClientProvider locale="en" messages={messages}>
+      <AuthProvider>
+        <AppHeader />
+      </AuthProvider>
+    </NextIntlClientProvider>,
   );
 }
 
