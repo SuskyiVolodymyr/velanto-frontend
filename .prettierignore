@@ -1,0 +1,10 @@
+# Build output & deps
+node_modules
+.next
+out
+build
+coverage
+
+# Lockfiles & generated
+package-lock.json
+next-env.d.ts
