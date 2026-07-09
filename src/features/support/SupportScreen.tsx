@@ -6,10 +6,10 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { reportsClient, type ListReportsFilters } from "@/src/shared/lib/reports-client";
 import { reportReasonLabel } from "@/src/shared/lib/report-reasons";
-import { REPORT_STATUS_BADGE_CLASS, reportTargetLabel } from "@/src/shared/lib/report-display";
+import { reportTargetLabel } from "@/src/shared/lib/report-display";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
-import { Badge } from "@/src/shared/components/Badge";
+import { StatusBadge } from "@/src/shared/components/StatusBadge";
 import type { ReportStatus, ReportType, ReportWithReporter } from "@/src/shared/types/report";
 
 const PAGE_SIZE = 20;
@@ -172,7 +172,7 @@ export function SupportScreen() {
                 <Text variant="tertiary" className="text-xs">
                   {new Date(report.createdAt).toLocaleDateString()}
                 </Text>
-                <Badge className={REPORT_STATUS_BADGE_CLASS[report.status]}>{report.status.toUpperCase()}</Badge>
+                <StatusBadge kind="report" status={report.status} />
               </Link>
             );
           })}

@@ -9,7 +9,8 @@ import { ApiError } from "@/src/shared/lib/api-client";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { Badge } from "@/src/shared/components/Badge";
-import { TOPIC_LABELS, STATUS_LABELS } from "@/src/features/feedback/FeedbackCard";
+import { StatusBadge } from "@/src/shared/components/StatusBadge";
+import { TOPIC_LABELS } from "@/src/features/feedback/FeedbackCard";
 import { FeedbackVote } from "@/src/features/feedback/FeedbackVote";
 import { FeedbackComments } from "@/src/features/feedback/FeedbackComments";
 import type { Feedback, FeedbackStatus } from "@/src/shared/types/feedback";
@@ -21,13 +22,6 @@ const STATUS_OPTIONS: { value: FeedbackStatus; label: string }[] = [
   { value: "done", label: "Done" },
   { value: "declined", label: "Declined" },
 ];
-
-const STATUS_BADGE_CLASS: Record<FeedbackStatus, string> = {
-  new: "border-acc/30 bg-acc/10 text-acc",
-  in_progress: "border-yellow-500/30 bg-yellow-500/10 text-yellow-400",
-  done: "border-green-500/30 bg-green-500/10 text-green-400",
-  declined: "border-red-500/30 bg-red-500/10 text-red-400",
-};
 
 export function FeedbackDetailScreen({ postId }: { postId: string }) {
   const { user } = useAuth();
@@ -128,7 +122,7 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-7 py-10">
       <div className="flex flex-wrap items-center gap-2">
         <Badge>{TOPIC_LABELS[post.topic]}</Badge>
-        <Badge className={STATUS_BADGE_CLASS[post.status]}>{STATUS_LABELS[post.status]}</Badge>
+        <StatusBadge kind="feedback" status={post.status} />
       </div>
 
       <Text as="h1" variant="title" className="text-2xl">
