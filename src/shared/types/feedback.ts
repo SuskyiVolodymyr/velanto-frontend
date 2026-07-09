@@ -1,10 +1,17 @@
 // Local re-declaration of the backend feedback API shapes. NOT imported from
 // the backend (the repos share no types package).
 
-export type FeedbackTopic = "bug" | "feature" | "translation" | "other";
-export type FeedbackVisibility = "everyone" | "staff_only";
-export type FeedbackStatus = "new" | "in_progress" | "done" | "declined";
-export type FeedbackSort = "new" | "top";
+export const FEEDBACK_TOPICS = ["bug", "feature", "translation", "other"] as const;
+export type FeedbackTopic = (typeof FEEDBACK_TOPICS)[number];
+
+export const FEEDBACK_VISIBILITIES = ["everyone", "staff_only"] as const;
+export type FeedbackVisibility = (typeof FEEDBACK_VISIBILITIES)[number];
+
+export const FEEDBACK_STATUSES = ["new", "in_progress", "done", "declined"] as const;
+export type FeedbackStatus = (typeof FEEDBACK_STATUSES)[number];
+
+export const FEEDBACK_SORTS = ["new", "top"] as const;
+export type FeedbackSort = (typeof FEEDBACK_SORTS)[number];
 
 export interface Feedback {
   id: string;

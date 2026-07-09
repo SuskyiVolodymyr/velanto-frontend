@@ -1,3 +1,5 @@
+import type { PackFormat } from "@/src/shared/types/pack";
+
 export interface RecordedPick {
   groupId: string;
   itemId: string;
@@ -22,8 +24,10 @@ export interface RoundResult {
 export interface PackResults {
   packId: string;
   // Already sent by the backend for every non-rank_blind pack; typed now so
-  // ResultScreen can discriminate between PackResults and RankResults.
-  format: "save_one" | "sacrifice_one" | "nxn" | "1v1";
+  // ResultScreen can discriminate between PackResults and RankResults. Derived
+  // from PackFormat (minus "rank_blind", which RankResults carries) so the
+  // format literals stay deduped against the canonical PACK_FORMATS list.
+  format: Exclude<PackFormat, "rank_blind">;
   totalPlays: number;
   rounds: RoundResult[];
 }

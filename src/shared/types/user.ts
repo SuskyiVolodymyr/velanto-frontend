@@ -5,7 +5,8 @@
  * what the backend currently exposes over its API, but is redeclared here
  * on purpose so the two repos can evolve independently.
  */
-export type Role = "user" | "moderator" | "admin" | "manager";
+export const ROLES = ["user", "moderator", "admin", "manager"] as const;
+export type Role = (typeof ROLES)[number];
 
 export interface User {
   id: string;

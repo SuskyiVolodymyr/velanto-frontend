@@ -3,8 +3,11 @@
  * velanto-backend — see coding-conventions.md). Field shapes mirror
  * velanto-backend's actual shipped response shapes from PR #63.
  */
-export type ReportType = "pack" | "user" | "round";
-export type ReportStatus = "new" | "reviewing" | "closed";
+export const REPORT_TYPES = ["pack", "user", "round"] as const;
+export type ReportType = (typeof REPORT_TYPES)[number];
+
+export const REPORT_STATUSES = ["new", "reviewing", "closed"] as const;
+export type ReportStatus = (typeof REPORT_STATUSES)[number];
 
 export interface Report {
   id: string;
