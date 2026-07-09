@@ -1,5 +1,5 @@
 {
-  "_note": "Machine-translated, pending native review (velanto-frontend#44).",
+  "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
     "logIn": "登录",
     "logOut": "退出登录",
@@ -15,7 +15,7 @@
     "title": "偏好设置",
     "languageHeading": "语言",
     "languageLabel": "界面语言",
-    "languageHint": "更改菜单和按钮的语言。内容包将保留其创作者编写时所使用的语言。",
+    "languageHint": "更改菜单和按钮的显示语言。题包内容会保持创作者编写时使用的语言。",
     "languageSelectAria": "界面语言"
   }
 }

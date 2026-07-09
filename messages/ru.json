@@ -1,5 +1,5 @@
 {
-  "_note": "Machine-translated, pending native review (velanto-frontend#44).",
+  "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
     "logIn": "Войти",
     "logOut": "Выйти",
@@ -12,10 +12,10 @@
     "admin": "Администрирование"
   },
   "settings": {
-    "title": "Параметры",
+    "title": "Настройки",
     "languageHeading": "Язык",
     "languageLabel": "Язык интерфейса",
-    "languageHint": "Изменяет язык меню и кнопок. Содержимое пакета остаётся на языке, на котором его написал автор.",
+    "languageHint": "Меняет язык меню и кнопок. Содержимое пакета остаётся на том языке, на котором его написал автор.",
     "languageSelectAria": "Язык интерфейса"
   }
 }

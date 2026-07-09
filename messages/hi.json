@@ -1,5 +1,5 @@
 {
-  "_note": "Machine-translated, pending native review (velanto-frontend#44).",
+  "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
     "logIn": "लॉग इन करें",
     "logOut": "लॉग आउट करें",
@@ -15,7 +15,7 @@
     "title": "प्राथमिकताएँ",
     "languageHeading": "भाषा",
     "languageLabel": "इंटरफ़ेस भाषा",
-    "languageHint": "मेनू और बटन की भाषा बदलता है। पैक की सामग्री उसी भाषा में रहती है जिसमें उसके निर्माता ने उसे लिखा था।",
+    "languageHint": "मेनू और बटन की भाषा बदलती है। पैक की सामग्री उसी भाषा में रहती है जिसमें उसे बनाने वाले ने लिखा था।",
     "languageSelectAria": "इंटरफ़ेस भाषा"
   }
 }

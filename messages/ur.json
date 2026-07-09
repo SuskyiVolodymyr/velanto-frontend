@@ -1,5 +1,5 @@
 {
-  "_note": "Machine-translated, pending native review (velanto-frontend#44).",
+  "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
     "logIn": "لاگ اِن کریں",
     "logOut": "لاگ آؤٹ کریں",
@@ -7,9 +7,9 @@
     "profile": "پروفائل",
     "docs": "دستاویزات",
     "settings": "ترتیبات",
-    "support": "معاونت",
-    "moderation": "نگرانی",
-    "admin": "منتظم"
+    "support": "مدد",
+    "moderation": "ماڈریشن",
+    "admin": "ایڈمن"
   },
   "settings": {
     "title": "ترجیحات",
