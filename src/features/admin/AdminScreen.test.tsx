@@ -39,7 +39,7 @@ beforeEach(() => {
     packs: 0,
     plays: 0,
     onlineUsers: null,
-    pendingReports: null,
+    pendingReports: 0,
   });
 });
 

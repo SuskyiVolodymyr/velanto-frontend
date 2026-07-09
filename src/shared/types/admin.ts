@@ -4,8 +4,11 @@ export interface AdminOverview {
   registeredUsers: number;
   packs: number;
   plays: number;
+  // Always null — no presence tracking yet; rendered as "—" (see OverviewTab).
   onlineUsers: null;
-  pendingReports: null;
+  // Real count of open (unresolved) reports. Was null before the report
+  // feature shipped — see velanto-backend#71.
+  pendingReports: number;
 }
 
 export interface AdminUserRow {
