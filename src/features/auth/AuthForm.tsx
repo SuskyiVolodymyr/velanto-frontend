@@ -1,107 +1,69 @@
 "use client";
 
 import { useState } from "react";
-import type { FormEvent } from "react";
+import { useForm, FormProvider } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
-import { ApiError } from "@/src/shared/lib/api-client";
+import { messageFromError } from "@/src/shared/lib/messageFromError";
 import { Button } from "@/src/shared/components/Button";
-import { Input } from "@/src/shared/components/Input";
 import { Text } from "@/src/shared/components/Text";
+import { TextField } from "@/src/shared/components/form/TextField";
 import { cn } from "@/src/shared/lib/cn";
 import { sanitizeNextPath } from "@/src/shared/lib/safe-redirect";
+import { loginSchema, registerSchema, type AuthFormValues } from "@/src/features/auth/auth.schema";
 
 type Mode = "login" | "register";
-
-// Mirrors velanto-backend's registerSchema (src/modules/auth/dto/register.dto.ts).
-const USERNAME_PATTERN = /^[a-zA-Z0-9_]{3,20}$/;
-const MIN_PASSWORD_LENGTH = 8;
-
-interface FormFields {
-  identifier: string;
-  username: string;
-  email: string;
-  password: string;
-}
-
-function validate(mode: Mode, fields: FormFields): string | null {
-  if (mode === "login") {
-    if (!fields.identifier.trim() || !fields.password) {
-      return "Enter your email/username and password.";
-    }
-    return null;
-  }
-  if (!fields.username.trim() || !fields.email.trim() || !fields.password) {
-    return "Fill in your username, email, and password.";
-  }
-  if (!USERNAME_PATTERN.test(fields.username.trim())) {
-    return "Username must be 3-20 characters: letters, numbers, underscore only.";
-  }
-  if (fields.password.length < MIN_PASSWORD_LENGTH) {
-    return `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`;
-  }
-  return null;
-}
-
-function messageFromError(error: unknown): string {
-  if (error instanceof ApiError) {
-    const body = error.body as { message?: string | string[] } | null;
-    if (body?.message) {
-      return Array.isArray(body.message) ? body.message[0] : body.message;
-    }
-    if (error.status === 401) return "Invalid credentials.";
-  }
-  return "Something went wrong. Please try again.";
-}
 
 export function AuthForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login, register } = useAuth();
   const [mode, setMode] = useState<Mode>("login");
-  const [identifier, setIdentifier] = useState("");
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [shake, setShake] = useState(false);
-  const [pending, setPending] = useState(false);
 
   const isRegister = mode === "register";
 
-  function switchMode(next: Mode) {
-    setMode(next);
-    setError("");
-  }
+  // react-hook-form re-reads the resolver each render, so swapping schemas on a
+  // mode change is enough — no need to recreate the form.
+  const methods = useForm<AuthFormValues>({
+    resolver: zodResolver(isRegister ? registerSchema : loginSchema),
+    defaultValues: { identifier: "", username: "", email: "", password: "" },
+  });
+  const {
+    handleSubmit,
+    clearErrors,
+    setError,
+    formState: { isSubmitting, errors },
+  } = methods;
 
-  function triggerError(message: string) {
-    setError(message);
+  function triggerShake() {
     setShake(true);
     setTimeout(() => setShake(false), 400);
   }
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    if (pending) return;
+  function switchMode(next: Mode) {
+    setMode(next);
+    clearErrors();
+  }
 
-    const validationError = validate(mode, { identifier, username, email, password });
-    if (validationError) {
-      triggerError(validationError);
-      return;
-    }
-
-    setPending(true);
+  async function onValid(values: AuthFormValues) {
     try {
       if (isRegister) {
-        await register({ email: email.trim(), username: username.trim(), password });
+        await register({
+          email: values.email.trim(),
+          username: values.username.trim(),
+          password: values.password,
+        });
       } else {
-        await login({ identifier: identifier.trim(), password });
+        await login({ identifier: values.identifier.trim(), password: values.password });
       }
       router.push(sanitizeNextPath(searchParams.get("next")));
     } catch (err) {
-      triggerError(messageFromError(err));
-    } finally {
-      setPending(false);
+      setError("root", {
+        message: messageFromError(err, { statusFallbacks: { 401: "Invalid credentials." } }),
+      });
+      triggerShake();
     }
   }
 
@@ -143,57 +105,63 @@ export function AuthForm() {
           : "Sign in to build and play packs."}
       </Text>
 
-      <form
-        onSubmit={handleSubmit}
-        noValidate
-        className={cn("flex flex-col gap-3", shake && "animate-[shake_0.4s_ease-in-out]")}
-      >
-        {isRegister && (
-          <Input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="Username"
-            aria-label="Username"
-            autoComplete="username"
-            disabled={pending}
+      <FormProvider {...methods}>
+        <form
+          onSubmit={handleSubmit(onValid, triggerShake)}
+          noValidate
+          className={cn("flex flex-col gap-3", shake && "animate-[shake_0.4s_ease-in-out]")}
+        >
+          {isRegister && (
+            <TextField
+              name="username"
+              label="Username"
+              srOnlyLabel
+              placeholder="Username"
+              autoComplete="username"
+              disabled={isSubmitting}
+            />
+          )}
+          {isRegister ? (
+            <TextField
+              name="email"
+              label="Email"
+              srOnlyLabel
+              type="email"
+              placeholder="Email"
+              autoComplete="email"
+              disabled={isSubmitting}
+            />
+          ) : (
+            <TextField
+              name="identifier"
+              label="Email or username"
+              srOnlyLabel
+              placeholder="Email or username"
+              autoComplete="username"
+              disabled={isSubmitting}
+            />
+          )}
+          <TextField
+            name="password"
+            label="Password"
+            srOnlyLabel
+            type="password"
+            placeholder="Password"
+            autoComplete={isRegister ? "new-password" : "current-password"}
+            disabled={isSubmitting}
           />
-        )}
-        {isRegister ? (
-          <Input
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email"
-            type="email"
-            aria-label="Email"
-            autoComplete="email"
-            disabled={pending}
-          />
-        ) : (
-          <Input
-            value={identifier}
-            onChange={(e) => setIdentifier(e.target.value)}
-            placeholder="Email or username"
-            aria-label="Email or username"
-            autoComplete="username"
-            disabled={pending}
-          />
-        )}
-        <Input
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          placeholder="Password"
-          type="password"
-          aria-label="Password"
-          autoComplete={isRegister ? "new-password" : "current-password"}
-          disabled={pending}
-        />
 
-        {error && <Text className="text-sm text-[#ff6b6b]">{error}</Text>}
+          {errors.root?.message && (
+            <Text role="alert" className="text-sm text-[#ff6b6b]">
+              {errors.root.message}
+            </Text>
+          )}
 
-        <Button type="submit" disabled={pending} className="w-full h-[50px] mt-2">
-          {pending ? "Please wait…" : isRegister ? "Create account" : "Log in"}
-        </Button>
-      </form>
+          <Button type="submit" disabled={isSubmitting} className="w-full h-[50px] mt-2">
+            {isSubmitting ? "Please wait…" : isRegister ? "Create account" : "Log in"}
+          </Button>
+        </form>
+      </FormProvider>
 
       <Text variant="tertiary" className="text-center text-xs mt-5 leading-relaxed">
         By continuing you agree to Velanto&apos;s Terms and Privacy Policy.

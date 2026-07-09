@@ -109,6 +109,25 @@ describe("AuthForm", () => {
     expect(authClient.register).not.toHaveBeenCalled();
   });
 
+  it("wires the validation error to its field inline (aria-invalid + describedby)", async () => {
+    const user = userEvent.setup();
+    renderAuthForm();
+    await user.click(screen.getByRole("tab", { name: "Sign up" }));
+
+    await user.type(screen.getByLabelText("Username"), "alice");
+    await user.type(screen.getByLabelText("Email"), "a@example.com");
+    await user.type(screen.getByLabelText("Password"), "short");
+    await user.click(screen.getByRole("button", { name: "Create account" }));
+
+    const password = screen.getByLabelText("Password");
+    expect(password).toHaveAttribute("aria-invalid", "true");
+    const errorId = password.getAttribute("aria-describedby");
+    expect(errorId).toBeTruthy();
+    expect(document.getElementById(errorId!)).toHaveTextContent(
+      "Password must be at least 8 characters.",
+    );
+  });
+
   it("switching tabs clears a previously shown error", async () => {
     const user = userEvent.setup();
     renderAuthForm();
