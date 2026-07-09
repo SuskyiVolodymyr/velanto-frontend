@@ -1,20 +1,21 @@
 {
+  "_note": "Machine-translated, pending native review (velanto-frontend#44).",
   "header": {
-    "logIn": "Log in",
-    "logOut": "Log out",
-    "accountMenu": "Account menu",
-    "profile": "Profile",
-    "docs": "Docs",
-    "settings": "Settings",
-    "support": "Support",
-    "moderation": "Moderation",
-    "admin": "Admin"
+    "logIn": "लॉग इन करें",
+    "logOut": "लॉग आउट करें",
+    "accountMenu": "खाता मेनू",
+    "profile": "प्रोफ़ाइल",
+    "docs": "दस्तावेज़",
+    "settings": "सेटिंग्स",
+    "support": "सहायता",
+    "moderation": "मॉडरेशन",
+    "admin": "एडमिन"
   },
   "settings": {
-    "title": "Preferences",
-    "languageHeading": "Language",
-    "languageLabel": "Interface language",
-    "languageHint": "Changes the language of menus and buttons. Pack content stays in the language its creator wrote it.",
-    "languageSelectAria": "Interface language"
+    "title": "प्राथमिकताएँ",
+    "languageHeading": "भाषा",
+    "languageLabel": "इंटरफ़ेस भाषा",
+    "languageHint": "मेनू और बटन की भाषा बदलता है। पैक की सामग्री उसी भाषा में रहती है जिसमें उसके निर्माता ने उसे लिखा था।",
+    "languageSelectAria": "इंटरफ़ेस भाषा"
   }
 }

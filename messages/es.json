@@ -1,20 +1,21 @@
 {
+  "_note": "Machine-translated, pending native review (velanto-frontend#44).",
   "header": {
-    "logIn": "Log in",
-    "logOut": "Log out",
-    "accountMenu": "Account menu",
-    "profile": "Profile",
-    "docs": "Docs",
-    "settings": "Settings",
-    "support": "Support",
-    "moderation": "Moderation",
-    "admin": "Admin"
+    "logIn": "Iniciar sesión",
+    "logOut": "Cerrar sesión",
+    "accountMenu": "Menú de la cuenta",
+    "profile": "Perfil",
+    "docs": "Documentación",
+    "settings": "Configuración",
+    "support": "Soporte",
+    "moderation": "Moderación",
+    "admin": "Administración"
   },
   "settings": {
-    "title": "Preferences",
-    "languageHeading": "Language",
-    "languageLabel": "Interface language",
-    "languageHint": "Changes the language of menus and buttons. Pack content stays in the language its creator wrote it.",
-    "languageSelectAria": "Interface language"
+    "title": "Preferencias",
+    "languageHeading": "Idioma",
+    "languageLabel": "Idioma de la interfaz",
+    "languageHint": "Cambia el idioma de los menús y botones. El contenido del paquete permanece en el idioma en que lo escribió su creador.",
+    "languageSelectAria": "Idioma de la interfaz"
   }
 }

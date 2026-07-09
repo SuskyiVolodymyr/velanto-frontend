@@ -1,20 +1,21 @@
 {
+  "_note": "Machine-translated, pending native review (velanto-frontend#44).",
   "header": {
-    "logIn": "Log in",
-    "logOut": "Log out",
-    "accountMenu": "Account menu",
-    "profile": "Profile",
-    "docs": "Docs",
-    "settings": "Settings",
-    "support": "Support",
-    "moderation": "Moderation",
-    "admin": "Admin"
+    "logIn": "লগ ইন করুন",
+    "logOut": "লগ আউট করুন",
+    "accountMenu": "অ্যাকাউন্ট মেনু",
+    "profile": "প্রোফাইল",
+    "docs": "নথিপত্র",
+    "settings": "সেটিংস",
+    "support": "সহায়তা",
+    "moderation": "মডারেশন",
+    "admin": "অ্যাডমিন"
   },
   "settings": {
-    "title": "Preferences",
-    "languageHeading": "Language",
-    "languageLabel": "Interface language",
-    "languageHint": "Changes the language of menus and buttons. Pack content stays in the language its creator wrote it.",
-    "languageSelectAria": "Interface language"
+    "title": "পছন্দসমূহ",
+    "languageHeading": "ভাষা",
+    "languageLabel": "ইন্টারফেস ভাষা",
+    "languageHint": "মেনু এবং বোতামের ভাষা পরিবর্তন করে। প্যাকের বিষয়বস্তু সেই ভাষাতেই থাকে যে ভাষায় এর নির্মাতা এটি লিখেছেন।",
+    "languageSelectAria": "ইন্টারফেস ভাষা"
   }
 }

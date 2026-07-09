@@ -1,20 +1,21 @@
 {
+  "_note": "Machine-translated, pending native review (velanto-frontend#44).",
   "header": {
-    "logIn": "Log in",
-    "logOut": "Log out",
-    "accountMenu": "Account menu",
-    "profile": "Profile",
-    "docs": "Docs",
-    "settings": "Settings",
-    "support": "Support",
-    "moderation": "Moderation",
-    "admin": "Admin"
+    "logIn": "تسجيل الدخول",
+    "logOut": "تسجيل الخروج",
+    "accountMenu": "قائمة الحساب",
+    "profile": "الملف الشخصي",
+    "docs": "المستندات",
+    "settings": "الإعدادات",
+    "support": "الدعم",
+    "moderation": "الإشراف",
+    "admin": "الإدارة"
   },
   "settings": {
-    "title": "Preferences",
-    "languageHeading": "Language",
-    "languageLabel": "Interface language",
-    "languageHint": "Changes the language of menus and buttons. Pack content stays in the language its creator wrote it.",
-    "languageSelectAria": "Interface language"
+    "title": "التفضيلات",
+    "languageHeading": "اللغة",
+    "languageLabel": "لغة الواجهة",
+    "languageHint": "يغيّر لغة القوائم والأزرار. يبقى محتوى الحزمة باللغة التي كتبه بها منشئه.",
+    "languageSelectAria": "لغة الواجهة"
   }
 }
