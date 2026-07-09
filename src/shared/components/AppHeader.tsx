@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { buttonClassName } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
@@ -9,6 +10,7 @@ import { NotificationsBell } from "@/src/shared/components/NotificationsBell";
 
 export function AppHeader() {
   const { user, status, logout } = useAuth();
+  const t = useTranslations("header");
 
   return (
     <header className="flex items-center justify-between px-7 py-6">
@@ -28,7 +30,7 @@ export function AppHeader() {
 
       {status === "unauthenticated" && (
         <Link href="/auth" className={buttonClassName("secondary")}>
-          Log in
+          {t("logIn")}
         </Link>
       )}
     </header>

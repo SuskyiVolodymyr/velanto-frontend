@@ -1,0 +1,21 @@
+{
+  "_note": "Machine-translated, pending native review (velanto-frontend#44).",
+  "header": {
+    "logIn": "Entrar",
+    "logOut": "Sair",
+    "accountMenu": "Menu da conta",
+    "profile": "Perfil",
+    "docs": "Documentação",
+    "settings": "Configurações",
+    "support": "Suporte",
+    "moderation": "Moderação",
+    "admin": "Administração"
+  },
+  "settings": {
+    "title": "Preferências",
+    "languageHeading": "Idioma",
+    "languageLabel": "Idioma da interface",
+    "languageHint": "Altera o idioma dos menus e botões. O conteúdo do pacote permanece no idioma em que o seu criador o escreveu.",
+    "languageSelectAria": "Idioma da interface"
+  }
+}

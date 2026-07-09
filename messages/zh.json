@@ -1,0 +1,21 @@
+{
+  "_note": "Machine-translated, pending native review (velanto-frontend#44).",
+  "header": {
+    "logIn": "登录",
+    "logOut": "退出登录",
+    "accountMenu": "账户菜单",
+    "profile": "个人资料",
+    "docs": "文档",
+    "settings": "设置",
+    "support": "支持",
+    "moderation": "审核",
+    "admin": "管理"
+  },
+  "settings": {
+    "title": "偏好设置",
+    "languageHeading": "语言",
+    "languageLabel": "界面语言",
+    "languageHint": "更改菜单和按钮的语言。内容包将保留其创作者编写时所使用的语言。",
+    "languageSelectAria": "界面语言"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "_note": "Machine-translated, pending native review (velanto-frontend#44).",
+  "header": {
+    "logIn": "Войти",
+    "logOut": "Выйти",
+    "accountMenu": "Меню аккаунта",
+    "profile": "Профиль",
+    "docs": "Документация",
+    "settings": "Настройки",
+    "support": "Поддержка",
+    "moderation": "Модерация",
+    "admin": "Администрирование"
+  },
+  "settings": {
+    "title": "Параметры",
+    "languageHeading": "Язык",
+    "languageLabel": "Язык интерфейса",
+    "languageHint": "Изменяет язык меню и кнопок. Содержимое пакета остаётся на языке, на котором его написал автор.",
+    "languageSelectAria": "Язык интерфейса"
+  }
+}

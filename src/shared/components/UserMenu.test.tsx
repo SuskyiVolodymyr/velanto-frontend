@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { NextIntlClientProvider } from "next-intl";
+import type { ReactNode } from "react";
+import messages from "@/messages/en.json";
 import { UserMenu } from "./UserMenu";
 import type { User } from "@/src/shared/types/user";
 
@@ -12,16 +15,24 @@ const USER: User = {
   createdAt: "2026-01-01T00:00:00.000Z",
 };
 
+function withIntl(ui: ReactNode) {
+  return (
+    <NextIntlClientProvider locale="en" messages={messages}>
+      {ui}
+    </NextIntlClientProvider>
+  );
+}
+
 describe("UserMenu", () => {
   it("shows only the initial-letter trigger when closed", () => {
-    render(<UserMenu user={USER} onLogout={vi.fn()} />);
+    render(withIntl(<UserMenu user={USER} onLogout={vi.fn()} />));
     expect(screen.getByRole("button", { name: "Account menu" })).toHaveTextContent("A");
     expect(screen.queryByRole("menu")).not.toBeInTheDocument();
   });
 
   it("opens the menu on click, showing username/email and nav links", async () => {
     const user = userEvent.setup();
-    render(<UserMenu user={USER} onLogout={vi.fn()} />);
+    render(withIntl(<UserMenu user={USER} onLogout={vi.fn()} />));
 
     await user.click(screen.getByRole("button", { name: "Account menu" }));
 
@@ -34,48 +45,50 @@ describe("UserMenu", () => {
 
   it("links to the profile page", async () => {
     const user = userEvent.setup();
-    render(<UserMenu user={USER} onLogout={vi.fn()} />);
+    render(withIntl(<UserMenu user={USER} onLogout={vi.fn()} />));
     await user.click(screen.getByRole("button", { name: "Account menu" }));
     expect(screen.getByRole("menuitem", { name: "Profile" })).toHaveAttribute("href", "/profile");
   });
 
   it("shows an Admin link for a manager/admin role but not for a plain user", async () => {
     const user = userEvent.setup();
-    const { rerender } = render(<UserMenu user={{ ...USER, role: "manager" }} onLogout={vi.fn()} />);
+    const { rerender } = render(withIntl(<UserMenu user={{ ...USER, role: "manager" }} onLogout={vi.fn()} />));
     await user.click(screen.getByRole("button", { name: "Account menu" }));
     expect(screen.getByRole("menuitem", { name: "Admin" })).toHaveAttribute("href", "/admin");
 
-    rerender(<UserMenu user={USER} onLogout={vi.fn()} />);
+    rerender(withIntl(<UserMenu user={USER} onLogout={vi.fn()} />));
     expect(screen.queryByRole("menuitem", { name: "Admin" })).not.toBeInTheDocument();
   });
 
   it("shows a Support link for moderator+ but not for a plain user", async () => {
     const user = userEvent.setup();
-    const { rerender } = render(<UserMenu user={{ ...USER, role: "moderator" }} onLogout={vi.fn()} />);
+    const { rerender } = render(withIntl(<UserMenu user={{ ...USER, role: "moderator" }} onLogout={vi.fn()} />));
     await user.click(screen.getByRole("button", { name: "Account menu" }));
     expect(screen.getByRole("menuitem", { name: "Support" })).toHaveAttribute("href", "/support");
 
-    rerender(<UserMenu user={USER} onLogout={vi.fn()} />);
+    rerender(withIntl(<UserMenu user={USER} onLogout={vi.fn()} />));
     expect(screen.queryByRole("menuitem", { name: "Support" })).not.toBeInTheDocument();
   });
 
   it("shows a Moderation link for moderator+ but not for a plain user", async () => {
     const user = userEvent.setup();
-    const { rerender } = render(<UserMenu user={{ ...USER, role: "moderator" }} onLogout={vi.fn()} />);
+    const { rerender } = render(withIntl(<UserMenu user={{ ...USER, role: "moderator" }} onLogout={vi.fn()} />));
     await user.click(screen.getByRole("button", { name: "Account menu" }));
     expect(screen.getByRole("menuitem", { name: "Moderation" })).toHaveAttribute("href", "/moderation");
 
-    rerender(<UserMenu user={USER} onLogout={vi.fn()} />);
+    rerender(withIntl(<UserMenu user={USER} onLogout={vi.fn()} />));
     expect(screen.queryByRole("menuitem", { name: "Moderation" })).not.toBeInTheDocument();
   });
 
   it("closes the menu when clicking outside", async () => {
     const user = userEvent.setup();
     render(
-      <div>
-        <UserMenu user={USER} onLogout={vi.fn()} />
-        <div data-testid="outside">outside</div>
-      </div>,
+      withIntl(
+        <div>
+          <UserMenu user={USER} onLogout={vi.fn()} />
+          <div data-testid="outside">outside</div>
+        </div>,
+      ),
     );
 
     await user.click(screen.getByRole("button", { name: "Account menu" }));
@@ -88,7 +101,7 @@ describe("UserMenu", () => {
   it("calls onLogout and closes the menu when Log out is clicked", async () => {
     const user = userEvent.setup();
     const onLogout = vi.fn();
-    render(<UserMenu user={USER} onLogout={onLogout} />);
+    render(withIntl(<UserMenu user={USER} onLogout={onLogout} />));
 
     await user.click(screen.getByRole("button", { name: "Account menu" }));
     await user.click(screen.getByRole("menuitem", { name: "Log out" }));
@@ -99,7 +112,7 @@ describe("UserMenu", () => {
 
   it("closes the menu on Escape and returns focus to the trigger", async () => {
     const user = userEvent.setup();
-    render(<UserMenu user={USER} onLogout={vi.fn()} />);
+    render(withIntl(<UserMenu user={USER} onLogout={vi.fn()} />));
 
     const trigger = screen.getByRole("button", { name: "Account menu" });
     await user.click(trigger);
@@ -112,7 +125,7 @@ describe("UserMenu", () => {
 
   it("returns focus to the trigger after logging out", async () => {
     const user = userEvent.setup();
-    render(<UserMenu user={USER} onLogout={vi.fn()} />);
+    render(withIntl(<UserMenu user={USER} onLogout={vi.fn()} />));
 
     const trigger = screen.getByRole("button", { name: "Account menu" });
     await user.click(trigger);

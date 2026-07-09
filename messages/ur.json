@@ -1,0 +1,21 @@
+{
+  "_note": "Machine-translated, pending native review (velanto-frontend#44).",
+  "header": {
+    "logIn": "لاگ اِن کریں",
+    "logOut": "لاگ آؤٹ کریں",
+    "accountMenu": "اکاؤنٹ مینو",
+    "profile": "پروفائل",
+    "docs": "دستاویزات",
+    "settings": "ترتیبات",
+    "support": "معاونت",
+    "moderation": "نگرانی",
+    "admin": "منتظم"
+  },
+  "settings": {
+    "title": "ترجیحات",
+    "languageHeading": "زبان",
+    "languageLabel": "انٹرفیس کی زبان",
+    "languageHint": "مینو اور بٹنوں کی زبان تبدیل کرتا ہے۔ پیک کا مواد اسی زبان میں رہتا ہے جس میں اس کے تخلیق کار نے اسے لکھا تھا۔",
+    "languageSelectAria": "انٹرفیس کی زبان"
+  }
+}

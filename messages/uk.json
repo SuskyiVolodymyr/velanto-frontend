@@ -1,0 +1,21 @@
+{
+  "_note": "Machine-translated, pending native review (velanto-frontend#44).",
+  "header": {
+    "logIn": "Увійти",
+    "logOut": "Вийти",
+    "accountMenu": "Меню облікового запису",
+    "profile": "Профіль",
+    "docs": "Документація",
+    "settings": "Налаштування",
+    "support": "Підтримка",
+    "moderation": "Модерація",
+    "admin": "Адміністрування"
+  },
+  "settings": {
+    "title": "Уподобання",
+    "languageHeading": "Мова",
+    "languageLabel": "Мова інтерфейсу",
+    "languageHint": "Змінює мову меню та кнопок. Вміст пакета залишається мовою, якою його написав автор.",
+    "languageSelectAria": "Мова інтерфейсу"
+  }
+}
