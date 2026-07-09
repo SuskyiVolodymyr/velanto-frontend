@@ -1,0 +1,20 @@
+{
+  "header": {
+    "logIn": "Log in",
+    "logOut": "Log out",
+    "accountMenu": "Account menu",
+    "profile": "Profile",
+    "docs": "Docs",
+    "settings": "Settings",
+    "support": "Support",
+    "moderation": "Moderation",
+    "admin": "Admin"
+  },
+  "settings": {
+    "title": "Preferences",
+    "languageHeading": "Language",
+    "languageLabel": "Interface language",
+    "languageHint": "Changes the language of menus and buttons. Pack content stays in the language its creator wrote it.",
+    "languageSelectAria": "Interface language"
+  }
+}
