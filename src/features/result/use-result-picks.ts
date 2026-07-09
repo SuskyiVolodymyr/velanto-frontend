@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { readLastPlayPicks } from "@/src/shared/lib/last-play-storage";
 import { decodePicks } from "@/src/shared/lib/share-url";
@@ -18,7 +18,10 @@ export function useResultPicks(packId: string): {
 } {
   const searchParams = useSearchParams();
   const code = searchParams.get("p");
-  const sharedPicks = code ? decodePicks(code) : null;
+  // Memoized on the stable `code` string so both the effect deps below and the
+  // returned `picks` reference stay stable across re-renders (a consumer may put
+  // `picks` in its own dependency array).
+  const sharedPicks = useMemo(() => (code ? decodePicks(code) : null), [code]);
 
   const [ownPicks, setOwnPicks] = useState<RecordedPick[] | null>(null);
   useEffect(() => {
