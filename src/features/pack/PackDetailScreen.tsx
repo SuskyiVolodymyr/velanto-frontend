@@ -7,6 +7,7 @@ import { PackCoverBanner } from "@/src/features/pack/PackCoverBanner";
 import { PackStats } from "@/src/features/pack/PackStats";
 import { CommentSection } from "@/src/features/pack/CommentSection";
 import { VoteButtons } from "@/src/features/pack/VoteButtons";
+import { ShareButton } from "@/src/features/share/ShareButton";
 import type { Pack } from "@/src/shared/types/pack";
 import type { PackResults, RankResults } from "@/src/shared/types/play-results";
 
@@ -40,9 +41,12 @@ export function PackDetailScreen({
           ))}
         </div>
       )}
-      <Link href={`/packs/${pack.id}/play`} className={buttonClassName("primary", "mb-6 w-fit")}>
-        Play
-      </Link>
+      <div className="mb-6 flex items-center gap-3">
+        <Link href={`/packs/${pack.id}/play`} className={buttonClassName("primary", "w-fit")}>
+          Play
+        </Link>
+        {pack.status === "approved" && <ShareButton path={`/packs/${pack.id}`} />}
+      </div>
 
       <Text as="h2" variant="title" className="mb-3 text-lg">
         Stats

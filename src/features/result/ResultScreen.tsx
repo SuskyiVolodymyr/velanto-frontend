@@ -1,14 +1,13 @@
 "use client";
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
-import { buttonClassName } from "@/src/shared/components/Button";
-import { readLastPlayPicks } from "@/src/shared/lib/last-play-storage";
 import { RankResultScreen } from "@/src/features/result/RankResultScreen";
+import { useResultPicks } from "@/src/features/result/use-result-picks";
+import { SharedResultNote } from "@/src/features/result/SharedResultNote";
+import { ResultActions } from "@/src/features/result/ResultActions";
 import type { Pack } from "@/src/shared/types/pack";
-import type { PackResults, RankResults, RecordedPick } from "@/src/shared/types/play-results";
+import type { PackResults, RankResults } from "@/src/shared/types/play-results";
 
 export function ResultScreen({ pack, results }: { pack: Pack; results: PackResults | RankResults }) {
   if (results.format === "rank_blind") {
@@ -18,15 +17,7 @@ export function ResultScreen({ pack, results }: { pack: Pack; results: PackResul
 }
 
 function GroupResultScreen({ pack, results }: { pack: Pack; results: PackResults }) {
-  const [ownPicks, setOwnPicks] = useState<RecordedPick[] | null>(null);
-
-  // sessionStorage doesn't exist during server rendering, so this can't be a
-  // lazy useState initializer without a hydration mismatch — it must run only
-  // after mount, on the client.
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setOwnPicks(readLastPlayPicks(pack.id));
-  }, [pack.id]);
+  const { picks: ownPicks, shared } = useResultPicks(pack.id);
 
   return (
     <div className="mx-auto w-full max-w-2xl flex-1 px-7 py-10">
@@ -39,6 +30,8 @@ function GroupResultScreen({ pack, results }: { pack: Pack; results: PackResults
       <Text variant="secondary" className="mb-8">
         {results.totalPlays} play{results.totalPlays === 1 ? "" : "s"} recorded.
       </Text>
+
+      {shared && <SharedResultNote />}
 
       <div className="mb-8 flex flex-col gap-4">
         {results.rounds.map((round) => {
@@ -53,7 +46,7 @@ function GroupResultScreen({ pack, results }: { pack: Pack; results: PackResults
               {ownItem ? (
                 <div className="flex items-center justify-between gap-2">
                   <Text variant="secondary" className="text-sm">
-                    Your pick: {ownItem.itemTitle}
+                    {shared ? "Pick" : "Your pick"}: {ownItem.itemTitle}
                   </Text>
                   <Text className="text-sm font-semibold text-acc">
                     {ownItem.percentage}%
@@ -78,9 +71,7 @@ function GroupResultScreen({ pack, results }: { pack: Pack; results: PackResults
         })}
       </div>
 
-      <Link href={`/packs/${pack.id}/play`} className={buttonClassName("primary", "w-fit")}>
-        Play again
-      </Link>
+      <ResultActions packId={pack.id} status={pack.status} picks={ownPicks} />
     </div>
   );
 }

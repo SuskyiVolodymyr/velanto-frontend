@@ -68,4 +68,14 @@ describe("PackDetailScreen", () => {
     expect(screen.getByText("Item X")).toBeInTheDocument();
     expect(screen.queryByText("2016")).not.toBeInTheDocument();
   });
+
+  it("shows a Share button for an approved pack", () => {
+    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
+    expect(screen.getByRole("button", { name: "Share" })).toBeInTheDocument();
+  });
+
+  it("hides the Share button for a non-approved pack", () => {
+    render(<PackDetailScreen pack={{ ...BASE_PACK, status: "pending" }} results={RESULTS} />);
+    expect(screen.queryByRole("button", { name: "Share" })).not.toBeInTheDocument();
+  });
 });
