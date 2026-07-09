@@ -35,7 +35,7 @@ jobs:
         run: npm run build
 
   e2e:
-    if: github.event_name == 'pull_request' && github.base_ref == 'main'
+    if: github.event_name == 'pull_request' && (github.base_ref == 'develop' || github.base_ref == 'main')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

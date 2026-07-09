@@ -1,0 +1,5 @@
+# Shell scripts (incl. git hooks) must be LF so the shebang works on every
+# platform — a CRLF carriage return after the shebang breaks with
+# "bad interpreter" on Unix/CI.
+*.sh text eol=lf
+.githooks/** text eol=lf

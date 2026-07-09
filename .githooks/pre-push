@@ -1,0 +1,17 @@
+#!/bin/sh
+# Pre-push gate: run the fast, deterministic CI checks before code can leave
+# the machine, mirroring the quick steps of .github/workflows/ci.yml. Catches
+# the class of failure that reached CI before (a lint error, a type error, a
+# build break) so it can not get into a PR in the first place.
+#
+# Unit + e2e are intentionally NOT here — too slow to gate every push. CI
+# remains the source of truth for the full suite.
+#
+# Bypass deliberately with `git push --no-verify`.
+set -e
+
+echo "pre-push: lint:ci + typecheck + build (skip with --no-verify)…"
+npm run lint:ci
+npm run typecheck
+npm run build
+echo "pre-push: all checks passed ✓"
