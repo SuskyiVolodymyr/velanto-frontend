@@ -1,8 +1,9 @@
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { NewFeedbackForm, validate, type NewFeedbackFields } from "./NewFeedbackForm";
+import { NewFeedbackForm } from "./NewFeedbackForm";
 import { feedbackClient } from "@/src/shared/lib/feedback-client";
+import { ApiError } from "@/src/shared/lib/api-client";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import type { Feedback } from "@/src/shared/types/feedback";
 
@@ -32,19 +33,6 @@ function mockAuth(status: "authenticated" | "unauthenticated" | "loading") {
   } as ReturnType<typeof useAuth>);
 }
 
-function makeFields(overrides: Partial<NewFeedbackFields> = {}): NewFeedbackFields {
-  return {
-    topic: "bug",
-    title: "A title",
-    body: "Some details",
-    visibility: "everyone",
-    locale: "",
-    translationContext: "",
-    translationSuggestion: "",
-    ...overrides,
-  };
-}
-
 function makePost(overrides: Partial<Feedback> = {}): Feedback {
   return {
     id: "fb1",
@@ -70,34 +58,6 @@ function makePost(overrides: Partial<Feedback> = {}): Feedback {
   };
 }
 
-describe("validate", () => {
-  it("returns null for a bug post with title + body", () => {
-    expect(validate(makeFields())).toBeNull();
-  });
-
-  it("returns a message when the title is empty", () => {
-    expect(validate(makeFields({ title: "   " }))).not.toBeNull();
-  });
-
-  it("returns a message for a translation post missing the locale", () => {
-    expect(
-      validate(makeFields({ topic: "translation", locale: "", translationSuggestion: "Better wording" })),
-    ).not.toBeNull();
-  });
-
-  it("returns a message for a translation post missing the suggestion", () => {
-    expect(
-      validate(makeFields({ topic: "translation", locale: "uk", translationSuggestion: "  " })),
-    ).not.toBeNull();
-  });
-
-  it("returns null for a valid translation post", () => {
-    expect(
-      validate(makeFields({ topic: "translation", locale: "uk", translationSuggestion: "Better wording" })),
-    ).toBeNull();
-  });
-});
-
 describe("NewFeedbackForm", () => {
   beforeEach(() => {
     vi.resetAllMocks();
@@ -109,7 +69,7 @@ describe("NewFeedbackForm", () => {
 
     expect(screen.queryByLabelText(/suggested wording/i)).not.toBeInTheDocument();
 
-    await userEvent.click(screen.getByRole("button", { name: "Translation" }));
+    await userEvent.click(screen.getByRole("radio", { name: "Translation" }));
 
     expect(screen.getByLabelText(/suggested wording/i)).toBeInTheDocument();
     expect(screen.getByLabelText(/language/i)).toBeInTheDocument();
@@ -131,6 +91,89 @@ describe("NewFeedbackForm", () => {
         visibility: "everyone",
       }),
     );
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/feedback/fb1"));
+  });
+
+  it("submits a translation post with the locale + suggestion payload", async () => {
+    mockedFeedbackClient.create.mockResolvedValue(makePost({ id: "fb9" }));
+    render(<NewFeedbackForm />);
+
+    await userEvent.click(screen.getByRole("radio", { name: "Translation" }));
+    await userEvent.type(screen.getByLabelText(/title/i), "Wrong word");
+    await userEvent.type(screen.getByLabelText(/details/i), "The label reads oddly");
+    await userEvent.selectOptions(screen.getByLabelText(/language/i), "uk");
+    await userEvent.type(screen.getByLabelText(/suggested wording/i), "Краще формулювання");
+    await userEvent.click(screen.getByRole("button", { name: /post feedback/i }));
+
+    await waitFor(() =>
+      expect(mockedFeedbackClient.create).toHaveBeenCalledWith({
+        topic: "translation",
+        title: "Wrong word",
+        body: "The label reads oddly",
+        visibility: "everyone",
+        locale: "uk",
+        translationSuggestion: "Краще формулювання",
+      }),
+    );
+  });
+
+  it("shows a validation message and does not submit when required fields are empty", async () => {
+    render(<NewFeedbackForm />);
+
+    await userEvent.click(screen.getByRole("button", { name: /post feedback/i }));
+
+    expect(await screen.findByText("Title is required.")).toBeInTheDocument();
+    expect(mockedFeedbackClient.create).not.toHaveBeenCalled();
+    expect(push).not.toHaveBeenCalled();
+  });
+
+  it("requires the language and suggestion for a translation post", async () => {
+    render(<NewFeedbackForm />);
+
+    await userEvent.click(screen.getByRole("radio", { name: "Translation" }));
+    await userEvent.type(screen.getByLabelText(/title/i), "Wrong word");
+    await userEvent.type(screen.getByLabelText(/details/i), "The label reads oddly");
+    await userEvent.click(screen.getByRole("button", { name: /post feedback/i }));
+
+    expect(
+      await screen.findByText("Please choose the language for your translation suggestion."),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Please enter your suggested wording.")).toBeInTheDocument();
+    expect(mockedFeedbackClient.create).not.toHaveBeenCalled();
+  });
+
+  it("surfaces a server error message when the create call fails", async () => {
+    mockedFeedbackClient.create.mockRejectedValue(
+      new ApiError(400, "Bad Request", { message: "That topic is closed." }),
+    );
+    render(<NewFeedbackForm />);
+
+    await userEvent.type(screen.getByLabelText(/title/i), "My bug");
+    await userEvent.type(screen.getByLabelText(/details/i), "It crashes on load");
+    await userEvent.click(screen.getByRole("button", { name: /post feedback/i }));
+
+    expect(await screen.findByText("That topic is closed.")).toBeInTheDocument();
+    expect(push).not.toHaveBeenCalled();
+  });
+
+  it("disables the submit button while the create call is in flight", async () => {
+    let resolveCreate: (value: Feedback) => void = () => {};
+    mockedFeedbackClient.create.mockReturnValue(
+      new Promise<Feedback>((resolve) => {
+        resolveCreate = resolve;
+      }),
+    );
+    render(<NewFeedbackForm />);
+
+    await userEvent.type(screen.getByLabelText(/title/i), "My bug");
+    await userEvent.type(screen.getByLabelText(/details/i), "It crashes on load");
+    await userEvent.click(screen.getByRole("button", { name: /post feedback/i }));
+
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: /posting/i })).toBeDisabled(),
+    );
+
+    resolveCreate(makePost({ id: "fb1" }));
     await waitFor(() => expect(push).toHaveBeenCalledWith("/feedback/fb1"));
   });
 });

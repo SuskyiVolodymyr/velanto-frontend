@@ -26,6 +26,7 @@ export function SelectField({
   id,
   options,
   children,
+  "aria-describedby": ariaDescribedby,
   ...rest
 }: SelectFieldProps) {
   const {
@@ -34,6 +35,11 @@ export function SelectField({
   } = useFormContext();
   const fieldId = id ?? name;
   const error = getFieldError(errors, name);
+  // Merge the error association with any caller-supplied describedby (e.g. a
+  // hint id) so neither clobbers the other.
+  const describedBy =
+    [error ? `${fieldId}-error` : undefined, ariaDescribedby].filter(Boolean).join(" ") ||
+    undefined;
 
   return (
     <FormField htmlFor={fieldId} label={label} error={error} srOnlyLabel={srOnlyLabel}>
@@ -41,9 +47,9 @@ export function SelectField({
         id={fieldId}
         options={options}
         aria-invalid={error ? true : undefined}
-        aria-describedby={error ? `${fieldId}-error` : undefined}
         {...rest}
         {...register(name)}
+        aria-describedby={describedBy}
       >
         {children}
       </Select>

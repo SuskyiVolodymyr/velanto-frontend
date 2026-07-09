@@ -14,6 +14,12 @@ export interface SegmentedControlProps<T extends string> {
   /** Accessible name for the group; applied to the `role="radiogroup"` wrapper. */
   ariaLabel?: string;
   className?: string;
+  /** Applied to the `role="radiogroup"` wrapper so a `<label htmlFor>` can target it. */
+  id?: string;
+  /** Points the radiogroup at an inline error/description element (e.g. `${id}-error`). */
+  "aria-describedby"?: string;
+  /** Marks the radiogroup invalid for assistive tech when the field is errored. */
+  "aria-invalid"?: boolean;
 }
 
 // Single-select toggle-button group. Uses radiogroup/radio semantics
@@ -28,6 +34,9 @@ export function SegmentedControl<T extends string>({
   onChange,
   ariaLabel,
   className,
+  id,
+  "aria-describedby": ariaDescribedby,
+  "aria-invalid": ariaInvalid,
 }: SegmentedControlProps<T>) {
   const buttonsRef = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -63,7 +72,14 @@ export function SegmentedControl<T extends string>({
   }
 
   return (
-    <div role="radiogroup" aria-label={ariaLabel} className={cn("flex gap-2", className)}>
+    <div
+      role="radiogroup"
+      id={id}
+      aria-label={ariaLabel}
+      aria-describedby={ariaDescribedby}
+      aria-invalid={ariaInvalid}
+      className={cn("flex gap-2", className)}
+    >
       {options.map((option, index) => {
         const selected = option.value === value;
         return (
