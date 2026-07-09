@@ -19,7 +19,7 @@ describe("adminClient", () => {
       packs: 5,
       plays: 20,
       onlineUsers: null,
-      pendingReports: null,
+      pendingReports: 3,
     };
     vi.mocked(apiClient.get).mockResolvedValue(overview);
 

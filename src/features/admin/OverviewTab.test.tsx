@@ -19,13 +19,13 @@ describe("OverviewTab", () => {
     expect(screen.getByText("Loading overview…")).toBeInTheDocument();
   });
 
-  it("renders counts and dashes for null metrics", async () => {
+  it("renders real counts, including pendingReports, and a dash only for the null metric", async () => {
     vi.mocked(adminClient.overview).mockResolvedValue({
       registeredUsers: 42,
       packs: 7,
       plays: 130,
       onlineUsers: null,
-      pendingReports: null,
+      pendingReports: 4,
     });
 
     render(<OverviewTab />);
@@ -33,8 +33,9 @@ describe("OverviewTab", () => {
     expect(await screen.findByText("42")).toBeInTheDocument();
     expect(screen.getByText("7")).toBeInTheDocument();
     expect(screen.getByText("130")).toBeInTheDocument();
-    // onlineUsers and pendingReports both render as "—", so two matches.
-    expect(screen.getAllByText("—")).toHaveLength(2);
+    expect(screen.getByText("4")).toBeInTheDocument();
+    // Only onlineUsers is still null ("—"); pendingReports now shows a count.
+    expect(screen.getAllByText("—")).toHaveLength(1);
   });
 
   it("shows an error message when the fetch rejects", async () => {
