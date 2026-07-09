@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Badge } from "@/src/shared/components/Badge";
+import { StatusBadge } from "@/src/shared/components/StatusBadge";
 import { Text } from "@/src/shared/components/Text";
 import { FORMAT_LABELS, getRoundsCount } from "@/src/shared/lib/pack-display";
 import type { Pack } from "@/src/shared/types/pack";
@@ -10,10 +11,7 @@ export function PackCard({ pack, showStatus }: { pack: Pack; showStatus?: boolea
     pack.totalPlays === 0
       ? "No plays yet"
       : `${pack.totalPlays} play${pack.totalPlays === 1 ? "" : "s"} · ${Math.round(pack.avgAgreementPercent)}% agreement`;
-  const statusBadge =
-    showStatus && pack.status !== "approved"
-      ? { label: pack.status === "pending" ? "Pending review" : "Rejected", tone: pack.status }
-      : null;
+  const showStatusBadge = showStatus && pack.status !== "approved";
 
   return (
     <Link href={`/packs/${pack.id}`} className="block">
@@ -23,17 +21,7 @@ export function PackCard({ pack, showStatus }: { pack: Pack; showStatus?: boolea
           style={{ background: `linear-gradient(150deg, ${pack.coverTone}, #0b0c0f)` }}
         >
           <Badge>{FORMAT_LABELS[pack.format]}</Badge>
-          {statusBadge && (
-            <Badge
-              className={
-                statusBadge.tone === "pending"
-                  ? "border-yellow-500/30 bg-yellow-500/10 text-yellow-400"
-                  : "border-red-500/30 bg-red-500/10 text-red-400"
-              }
-            >
-              {statusBadge.label}
-            </Badge>
-          )}
+          {showStatusBadge && <StatusBadge kind="pack" status={pack.status} />}
         </div>
         <div className="flex flex-1 flex-col gap-2 p-4">
           <Text className="font-semibold">{pack.title}</Text>

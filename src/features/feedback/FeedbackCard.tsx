@@ -1,27 +1,14 @@
 import Link from "next/link";
 import { Badge } from "@/src/shared/components/Badge";
+import { StatusBadge } from "@/src/shared/components/StatusBadge";
 import { Text } from "@/src/shared/components/Text";
-import type { Feedback, FeedbackStatus, FeedbackTopic } from "@/src/shared/types/feedback";
+import type { Feedback, FeedbackTopic } from "@/src/shared/types/feedback";
 
 export const TOPIC_LABELS: Record<FeedbackTopic, string> = {
   bug: "Bug",
   feature: "Feature",
   translation: "Translation",
   other: "Other",
-};
-
-export const STATUS_LABELS: Record<FeedbackStatus, string> = {
-  new: "New",
-  in_progress: "In progress",
-  done: "Done",
-  declined: "Declined",
-};
-
-const STATUS_BADGE_CLASS: Record<FeedbackStatus, string> = {
-  new: "border-acc/30 bg-acc/10 text-acc",
-  in_progress: "border-yellow-500/30 bg-yellow-500/10 text-yellow-400",
-  done: "border-green-500/30 bg-green-500/10 text-green-400",
-  declined: "border-red-500/30 bg-red-500/10 text-red-400",
 };
 
 export function FeedbackCard({ post, compact }: { post: Feedback; compact?: boolean }) {
@@ -54,7 +41,7 @@ export function FeedbackCard({ post, compact }: { post: Feedback; compact?: bool
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2">
           <Badge>{TOPIC_LABELS[post.topic]}</Badge>
-          <Badge className={STATUS_BADGE_CLASS[post.status]}>{STATUS_LABELS[post.status]}</Badge>
+          <StatusBadge kind="feedback" status={post.status} />
         </div>
         <Text className="font-semibold">{post.title}</Text>
         <div className="flex flex-wrap items-center gap-2">

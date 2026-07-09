@@ -9,11 +9,11 @@ import { packsClient } from "@/src/shared/lib/packs-client";
 import { usersClient, type BanDuration } from "@/src/shared/lib/users-client";
 import { BAN_DURATIONS } from "@/src/shared/lib/ban-durations";
 import { reportReasonLabel } from "@/src/shared/lib/report-reasons";
-import { REPORT_STATUS_BADGE_CLASS, reportTargetLabel } from "@/src/shared/lib/report-display";
+import { reportTargetLabel } from "@/src/shared/lib/report-display";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { Input } from "@/src/shared/components/Input";
-import { Badge } from "@/src/shared/components/Badge";
+import { StatusBadge } from "@/src/shared/components/StatusBadge";
 import type { ReportWithReporter } from "@/src/shared/types/report";
 
 export function SupportReportScreen({ reportId }: { reportId: string }) {
@@ -151,7 +151,7 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
         <Text as="h1" variant="title" className="text-2xl">
           {reportReasonLabel(report.type, report.reason)}
         </Text>
-        <Badge className={REPORT_STATUS_BADGE_CLASS[report.status]}>{report.status.toUpperCase()}</Badge>
+        <StatusBadge kind="report" status={report.status} />
       </div>
 
       <div className="flex flex-col gap-2 text-sm">
