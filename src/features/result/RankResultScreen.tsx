@@ -76,8 +76,8 @@ export function RankResultScreen({ pack, results }: { pack: Pack; results: RankR
                       {ownPick && ownPick.position !== undefined ? (
                         <Text className="pl-10 text-xs text-acc">
                           {shared ? "Placed" : "You placed this"} #{ownPick.position + 1} ·{" "}
-                          {Math.max(item.positionCounts[ownPick.position] - 1, 0)} other play
-                          {item.positionCounts[ownPick.position] - 1 === 1 ? "" : "s"} agreed
+                          {Math.max((item.positionCounts[ownPick.position] ?? 0) - 1, 0)} other play
+                          {(item.positionCounts[ownPick.position] ?? 0) - 1 === 1 ? "" : "s"} agreed
                         </Text>
                       ) : (
                         playedThisRound && (

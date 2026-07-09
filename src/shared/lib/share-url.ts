@@ -27,7 +27,8 @@ export function decodePicks(code: string): RecordedPick[] | null {
         typeof (pick as RecordedPick).groupId !== "string" ||
         typeof (pick as RecordedPick).itemId !== "string" ||
         ((pick as RecordedPick).position !== undefined &&
-          typeof (pick as RecordedPick).position !== "number")
+          (!Number.isInteger((pick as RecordedPick).position) ||
+            (pick as RecordedPick).position! < 0))
       ) {
         return null;
       }
