@@ -19,11 +19,20 @@ describe("share-url", () => {
     expect(decodePicks(encodePicks(picks))).toEqual(picks);
   });
 
+  it("round-trips an empty pick list", () => {
+    expect(decodePicks(encodePicks([]))).toEqual([]);
+  });
+
   it("produces a URL-safe code (no +, /, or = characters)", () => {
-    const picks: RecordedPick[] = Array.from({ length: 8 }, (_, n) => ({
-      groupId: `group-${n}`,
-      itemId: `item-${n}`,
-    }));
+    // Chosen so the RAW base64 actually contains `=` padding — this proves the
+    // fixture is non-trivial and forces the assertion below to genuinely
+    // exercise encodePicks's substitutions. Without the raw guard, a fixture
+    // that already yielded clean base64 would make the test vacuously pass even
+    // if encodePicks dropped its `.replace()` calls.
+    const picks: RecordedPick[] = [{ groupId: "g1", itemId: "i1" }];
+    const raw = btoa(JSON.stringify(picks));
+    expect(raw).toMatch(/[+/=]/);
+
     const code = encodePicks(picks);
     expect(code).not.toMatch(/[+/=]/);
   });
