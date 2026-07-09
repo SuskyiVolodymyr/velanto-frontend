@@ -1,10 +1,14 @@
-import { describe, expect, it, beforeEach } from "vitest";
+import { describe, expect, it, beforeEach, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { RankResultScreen } from "./RankResultScreen";
+import { encodePicks } from "@/src/shared/lib/share-url";
 import type { Pack } from "@/src/shared/types/pack";
 import type { RankResults } from "@/src/shared/types/play-results";
 
-const PACK: Pack = {
+let searchParams = new URLSearchParams();
+vi.mock("next/navigation", () => ({ useSearchParams: () => searchParams }));
+
+const RANK_PACK: Pack = {
   id: "pack-rank",
   title: "Anime Openers, Ranked",
   description: "Place each pick blind into a growing ranked list.",
@@ -34,7 +38,7 @@ const PACK: Pack = {
   myVote: null,
 };
 
-const RESULTS: RankResults = {
+const RANK_RESULTS: RankResults = {
   packId: "pack-rank",
   format: "rank_blind",
   totalPlays: 2,
@@ -64,11 +68,12 @@ const RESULTS: RankResults = {
 
 beforeEach(() => {
   sessionStorage.clear();
+  searchParams = new URLSearchParams();
 });
 
 describe("RankResultScreen", () => {
   it("sorts items by averagePosition (best first) and shows avg/timesRanked captions", () => {
-    render(<RankResultScreen pack={PACK} results={RESULTS} />);
+    render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
 
     const titles = screen.getAllByText(/Kaikai Kitan|Redo/).map((el) => el.textContent);
     expect(titles).toEqual(["Kaikai Kitan", "Redo"]);
@@ -82,7 +87,7 @@ describe("RankResultScreen", () => {
       JSON.stringify([{ groupId: "g1", itemId: "i1", position: 0 }]),
     );
 
-    render(<RankResultScreen pack={PACK} results={RESULTS} />);
+    render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
 
     expect(screen.getByText(/You placed this #1.*1 other play agreed/)).toBeInTheDocument();
   });
@@ -93,13 +98,13 @@ describe("RankResultScreen", () => {
       JSON.stringify([{ groupId: "g1", itemId: "i1", position: 0 }]),
     );
 
-    render(<RankResultScreen pack={PACK} results={RESULTS} />);
+    render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
 
     expect(screen.getByText("Not in your play this round")).toBeInTheDocument();
   });
 
   it("shows no personal annotations when the player never played this pack", () => {
-    render(<RankResultScreen pack={PACK} results={RESULTS} />);
+    render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
 
     expect(screen.queryByText(/You placed this/)).not.toBeInTheDocument();
     expect(screen.queryByText("Not in your play this round")).not.toBeInTheDocument();
@@ -122,8 +127,26 @@ describe("RankResultScreen", () => {
       ],
     };
 
-    render(<RankResultScreen pack={PACK} results={emptyResults} />);
+    render(<RankResultScreen pack={RANK_PACK} results={emptyResults} />);
 
     expect(screen.getByText(/0 plays recorded/)).toBeInTheDocument();
+  });
+
+  it("shows a Share result button for an approved pack", () => {
+    render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
+    expect(screen.getByRole("button", { name: "Share result" })).toBeInTheDocument();
+  });
+
+  it("hides the Share result button for a non-approved pack", () => {
+    render(<RankResultScreen pack={{ ...RANK_PACK, status: "pending" }} results={RANK_RESULTS} />);
+    expect(screen.queryByRole("button", { name: "Share result" })).not.toBeInTheDocument();
+  });
+
+  it("shows the shared-result note when opened via a ?p= link", async () => {
+    searchParams = new URLSearchParams({
+      p: encodePicks([{ groupId: "g1", itemId: "i1", position: 0 }]),
+    });
+    render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
+    expect(await screen.findByText(/viewing a shared result/i)).toBeInTheDocument();
   });
 });

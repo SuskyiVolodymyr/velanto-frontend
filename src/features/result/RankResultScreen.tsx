@@ -1,23 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { buttonClassName } from "@/src/shared/components/Button";
-import { readLastPlayPicks } from "@/src/shared/lib/last-play-storage";
+import { ShareButton } from "@/src/features/share/ShareButton";
+import { useResultPicks } from "@/src/features/result/use-result-picks";
 import type { Pack } from "@/src/shared/types/pack";
-import type { RankResults, RecordedPick } from "@/src/shared/types/play-results";
+import type { RankResults } from "@/src/shared/types/play-results";
 
 export function RankResultScreen({ pack, results }: { pack: Pack; results: RankResults }) {
-  const [ownPicks, setOwnPicks] = useState<RecordedPick[] | null>(null);
-
-  // sessionStorage doesn't exist during server rendering — same rationale as
-  // ResultScreen's own effect.
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setOwnPicks(readLastPlayPicks(pack.id));
-  }, [pack.id]);
+  const { picks: ownPicks, shared } = useResultPicks(pack.id);
 
   return (
     <div className="mx-auto w-full max-w-2xl flex-1 px-7 py-10">
@@ -30,6 +23,15 @@ export function RankResultScreen({ pack, results }: { pack: Pack; results: RankR
       <Text variant="secondary" className="mb-8">
         {results.totalPlays} play{results.totalPlays === 1 ? "" : "s"} recorded.
       </Text>
+
+      {shared && (
+        <Text
+          variant="secondary"
+          className="mb-6 rounded-[10px] border border-border bg-surface px-4 py-2 text-sm"
+        >
+          You&apos;re viewing a shared result.
+        </Text>
+      )}
 
       <div className="mb-8 flex flex-col gap-6">
         {results.rounds.map((round) => {
@@ -81,14 +83,14 @@ export function RankResultScreen({ pack, results }: { pack: Pack; results: RankR
                       </div>
                       {ownPick && ownPick.position !== undefined ? (
                         <Text className="pl-10 text-xs text-acc">
-                          You placed this #{ownPick.position + 1} ·{" "}
+                          {shared ? "Placed" : "You placed this"} #{ownPick.position + 1} ·{" "}
                           {Math.max(item.positionCounts[ownPick.position] - 1, 0)} other play
                           {item.positionCounts[ownPick.position] - 1 === 1 ? "" : "s"} agreed
                         </Text>
                       ) : (
                         playedThisRound && (
                           <Text variant="tertiary" className="pl-10 text-xs">
-                            Not in your play this round
+                            {shared ? "Not in this play this round" : "Not in your play this round"}
                           </Text>
                         )
                       )}
@@ -101,9 +103,18 @@ export function RankResultScreen({ pack, results }: { pack: Pack; results: RankR
         })}
       </div>
 
-      <Link href={`/packs/${pack.id}/play`} className={buttonClassName("primary", "w-fit")}>
-        Play again
-      </Link>
+      <div className="flex items-center gap-3">
+        <Link href={`/packs/${pack.id}/play`} className={buttonClassName("primary", "w-fit")}>
+          Play again
+        </Link>
+        {pack.status === "approved" && (
+          <ShareButton
+            path={`/packs/${pack.id}/result`}
+            picks={ownPicks}
+            label="Share result"
+          />
+        )}
+      </div>
     </div>
   );
 }
