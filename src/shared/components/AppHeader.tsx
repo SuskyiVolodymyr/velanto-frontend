@@ -14,12 +14,21 @@ export function AppHeader() {
 
   return (
     <header className="flex items-center justify-between px-7 py-6">
-      <Link href="/" className="flex items-center gap-2.5">
-        <span className="h-3 w-3 rotate-45 rounded-sm bg-acc" aria-hidden />
-        <Text as="span" variant="title" className="text-[19px] tracking-[0.2em]">
-          VELANTO
-        </Text>
-      </Link>
+      <div className="flex items-center gap-7">
+        <Link href="/" className="flex items-center gap-2.5">
+          <span className="h-3 w-3 rotate-45 rounded-sm bg-acc" aria-hidden />
+          <Text as="span" variant="title" className="text-[19px] tracking-[0.2em]">
+            VELANTO
+          </Text>
+        </Link>
+
+        <Link
+          href="/feedback"
+          className="text-sm text-foreground-secondary transition-colors hover:text-foreground"
+        >
+          {t("feedback")}
+        </Link>
+      </div>
 
       {status === "authenticated" && user && (
         <div className="flex items-center gap-3">

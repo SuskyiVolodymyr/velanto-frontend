@@ -9,7 +9,8 @@
     "settings": "Paramètres",
     "support": "Assistance",
     "moderation": "Modération",
-    "admin": "Administration"
+    "admin": "Administration",
+    "feedback": "Retours"
   },
   "settings": {
     "title": "Préférences",
