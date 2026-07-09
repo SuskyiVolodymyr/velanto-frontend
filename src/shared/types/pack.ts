@@ -2,7 +2,9 @@
  * Local, independent type definitions (this repo does not import types from
  * velanto-backend — see coding-conventions.md).
  */
-export type PackFormat = "save_one" | "sacrifice_one" | "nxn" | "rank_blind" | "1v1";
+export const PACK_FORMATS = ["save_one", "sacrifice_one", "nxn", "rank_blind", "1v1"] as const;
+
+export type PackFormat = (typeof PACK_FORMATS)[number];
 
 // 'image' is intentionally omitted — no storage backend yet (backend issue #3).
 export type ItemType = "text" | "youtube";
@@ -72,6 +74,10 @@ export const PACK_TAGS = [
 
 export type PackTag = (typeof PACK_TAGS)[number];
 
+export const PACK_STATUSES = ["pending", "approved", "rejected"] as const;
+
+export type PackStatus = (typeof PACK_STATUSES)[number];
+
 export const COVER_TONES = [
   "#2b2a3a",
   "#20303a",
@@ -96,7 +102,7 @@ export interface Pack {
   createdAt: string;
   totalPlays: number;
   avgAgreementPercent: number;
-  status: "pending" | "approved" | "rejected";
+  status: PackStatus;
   rejectionReason: string | null;
   score: number;
   likes: number;

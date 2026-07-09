@@ -1,4 +1,4 @@
-import type { Role } from "@/src/shared/types/user";
+import { ROLES, type Role } from "@/src/shared/types/user";
 
 const ROLE_RANK: Record<Role, number> = { user: 0, moderator: 1, manager: 2, admin: 3 };
 
@@ -11,11 +11,14 @@ function outranks(actor: Role, target: Role): boolean {
   return ROLE_RANK[actor] > ROLE_RANK[target];
 }
 
-export type AssignableRole = "user" | "moderator" | "manager";
+export type AssignableRole = Exclude<Role, "admin">;
 
 // 'admin' is deliberately excluded — it can never be granted through any
-// endpoint, only via direct database/terminal access.
-const ASSIGNABLE_ROLES: AssignableRole[] = ["user", "moderator", "manager"];
+// endpoint, only via direct database/terminal access. Derived from the
+// canonical ROLES list so it stays in sync if a new role is added.
+const ASSIGNABLE_ROLES: AssignableRole[] = ROLES.filter(
+  (role): role is AssignableRole => role !== "admin",
+);
 
 export function canActOn(actorRole: Role, targetRole: Role): boolean {
   return outranks(actorRole, targetRole);
