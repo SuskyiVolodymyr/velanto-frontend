@@ -12,7 +12,15 @@ export async function generateMetadata({
   const { id } = await params;
   const pack = await getPackServer(id);
   if (!pack) return { title: "Pack not found", robots: { index: false, follow: false } };
-  return { title: `${pack.title} — Result` };
+  // Canonicalize to the bare result path so the per-viewer `?p=<picks>` share
+  // variants (see share-url.ts / #67) consolidate onto one indexable URL
+  // instead of bloating the index with near-duplicates. Canonical alone —
+  // deliberately no `noindex` on `?p=`, since Google treats canonical + noindex
+  // on the same URL as contradictory signals. See #73.
+  return {
+    title: `${pack.title} — Result`,
+    alternates: { canonical: `/packs/${id}/result` },
+  };
 }
 
 export default async function ResultPage({ params }: { params: Promise<{ id: string }> }) {
