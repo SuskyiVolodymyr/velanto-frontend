@@ -2,6 +2,8 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { FormProvider, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { SegmentedField } from "./SegmentedField";
 
 type Topic = "bug" | "feature";
@@ -26,11 +28,45 @@ function Harness({ onValid }: { onValid: (v: Values) => void }) {
   );
 }
 
+const errorSchema = z.object({
+  topic: z.enum(["bug", "feature"]).refine((v) => v === "feature", "Pick a topic."),
+});
+
+function ErrorHarness() {
+  const methods = useForm<Values>({
+    resolver: zodResolver(errorSchema),
+    defaultValues: { topic: "bug" },
+  });
+  return (
+    <FormProvider {...methods}>
+      <form onSubmit={methods.handleSubmit(vi.fn())}>
+        <SegmentedField<Topic> name="topic" label="Topic" options={OPTIONS} />
+        <button type="submit">Save</button>
+      </form>
+    </FormProvider>
+  );
+}
+
 describe("SegmentedField", () => {
   it("renders a radiogroup with the label as its accessible name", () => {
     render(<Harness onValid={vi.fn()} />);
     expect(screen.getByRole("radiogroup", { name: "Topic" })).toBeInTheDocument();
     expect(screen.getByRole("radio", { name: "Bug" })).toBeChecked();
+  });
+
+  it("wires id, aria-invalid and aria-describedby to the error on a bad submit", async () => {
+    const user = userEvent.setup();
+    render(<ErrorHarness />);
+
+    const group = screen.getByRole("radiogroup", { name: "Topic" });
+    expect(group).toHaveAttribute("id", "topic");
+    expect(group).not.toHaveAttribute("aria-invalid", "true");
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(await screen.findByText("Pick a topic.")).toBeInTheDocument();
+    expect(group).toHaveAttribute("aria-invalid", "true");
+    expect(group).toHaveAttribute("aria-describedby", "topic-error");
   });
 
   it("submits the selected value through react-hook-form", async () => {

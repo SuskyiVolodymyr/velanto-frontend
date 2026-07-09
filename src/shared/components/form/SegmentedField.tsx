@@ -40,10 +40,13 @@ export function SegmentedField<T extends string>({
         control={control}
         render={({ field }) => (
           <SegmentedControl
+            id={name}
             options={options}
             value={field.value as T}
             onChange={field.onChange}
             ariaLabel={ariaLabel ?? label}
+            aria-invalid={error ? true : undefined}
+            aria-describedby={error ? `${name}-error` : undefined}
           />
         )}
       />

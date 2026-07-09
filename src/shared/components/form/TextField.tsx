@@ -17,22 +17,34 @@ export interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElemen
  * Renders its label + inline error through {@link FormField}. Pull `control`
  * from a parent `<FormProvider>`.
  */
-export function TextField({ name, label, srOnlyLabel, id, ...rest }: TextFieldProps) {
+export function TextField({
+  name,
+  label,
+  srOnlyLabel,
+  id,
+  "aria-describedby": ariaDescribedby,
+  ...rest
+}: TextFieldProps) {
   const {
     register,
     formState: { errors },
   } = useFormContext();
   const fieldId = id ?? name;
   const error = getFieldError(errors, name);
+  // Merge the error association with any caller-supplied describedby (e.g. a
+  // hint id) so neither clobbers the other.
+  const describedBy =
+    [error ? `${fieldId}-error` : undefined, ariaDescribedby].filter(Boolean).join(" ") ||
+    undefined;
 
   return (
     <FormField htmlFor={fieldId} label={label} error={error} srOnlyLabel={srOnlyLabel}>
       <Input
         id={fieldId}
         aria-invalid={error ? true : undefined}
-        aria-describedby={error ? `${fieldId}-error` : undefined}
         {...rest}
         {...register(name)}
+        aria-describedby={describedBy}
       />
     </FormField>
   );

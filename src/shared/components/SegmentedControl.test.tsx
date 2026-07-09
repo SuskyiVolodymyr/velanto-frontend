@@ -16,6 +16,24 @@ describe("SegmentedControl", () => {
     expect(screen.getAllByRole("radio")).toHaveLength(3);
   });
 
+  it("wires id, aria-describedby and aria-invalid onto the radiogroup", () => {
+    render(
+      <SegmentedControl
+        options={OPTIONS}
+        value="one"
+        onChange={vi.fn()}
+        ariaLabel="Pick one"
+        id="topic"
+        aria-describedby="topic-error"
+        aria-invalid
+      />,
+    );
+    const group = screen.getByRole("radiogroup", { name: "Pick one" });
+    expect(group).toHaveAttribute("id", "topic");
+    expect(group).toHaveAttribute("aria-describedby", "topic-error");
+    expect(group).toHaveAttribute("aria-invalid", "true");
+  });
+
   it("marks the selected option with aria-checked", () => {
     render(<SegmentedControl options={OPTIONS} value="two" onChange={vi.fn()} />);
     expect(screen.getByRole("radio", { name: "Two" })).toBeChecked();

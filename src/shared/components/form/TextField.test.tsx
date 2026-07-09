@@ -11,7 +11,13 @@ const schema = z.object({
 });
 type Values = z.infer<typeof schema>;
 
-function Harness({ onValid }: { onValid: (v: Values) => void }) {
+function Harness({
+  onValid,
+  describedBy,
+}: {
+  onValid: (v: Values) => void;
+  describedBy?: string;
+}) {
   const methods = useForm<Values>({
     resolver: zodResolver(schema),
     defaultValues: { email: "" },
@@ -19,7 +25,7 @@ function Harness({ onValid }: { onValid: (v: Values) => void }) {
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onValid)}>
-        <TextField name="email" label="Email" placeholder="Email" />
+        <TextField name="email" label="Email" placeholder="Email" aria-describedby={describedBy} />
         <button type="submit">Save</button>
       </form>
     </FormProvider>
@@ -57,5 +63,22 @@ describe("TextField", () => {
     expect(screen.getByLabelText("Email")).toHaveAttribute("aria-invalid", "true");
     expect(screen.getByLabelText("Email")).toHaveAttribute("aria-describedby", "email-error");
     expect(onValid).not.toHaveBeenCalled();
+  });
+
+  it("merges the error id with a caller-supplied aria-describedby hint", async () => {
+    const user = userEvent.setup();
+    render(<Harness onValid={vi.fn()} describedBy="email-hint" />);
+
+    // Hint alone before any error.
+    expect(screen.getByLabelText("Email")).toHaveAttribute("aria-describedby", "email-hint");
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await screen.findByText("Email is required.");
+    // Error id and the caller hint coexist, error first.
+    expect(screen.getByLabelText("Email")).toHaveAttribute(
+      "aria-describedby",
+      "email-error email-hint",
+    );
   });
 });
