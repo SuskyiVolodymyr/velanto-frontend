@@ -86,6 +86,21 @@ export function SupportScreen() {
 
   const reports = reportsQuery.data?.items ?? [];
   const total = reportsQuery.data?.total ?? 0;
+  // Gate the list/empty/load-more branches on a *settled* fetch (mirrors
+  // NotificationsBell): during a filter-triggered refetch `loading` is true while
+  // the previous data is still held, so without this the stale rows flash under
+  // the loading text. `listReady` shows the loading state instead.
+  const listReady = reportsQuery.data !== null && !reportsQuery.loading && reportsQuery.error === null;
+
+  // Reset a stale load-more error whenever the active filters change. Done during
+  // render (React's "adjust state on a changed input" pattern) rather than in an
+  // effect.
+  const filterKey = `${statusFilter ?? ""} ${typeFilter ?? ""}`;
+  const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
+  if (prevFilterKey !== filterKey) {
+    setPrevFilterKey(filterKey);
+    setLoadMoreError("");
+  }
 
   if (authStatus === "loading") return null;
 
@@ -140,9 +155,9 @@ export function SupportScreen() {
 
       {reportsQuery.loading && <Text variant="secondary">Loading reports…</Text>}
       {reportsQuery.error && <Text className="text-[#ff6b6b]">Couldn&apos;t load reports. Try again later.</Text>}
-      {reportsQuery.data && reports.length === 0 && <Text variant="secondary">No reports match these filters.</Text>}
+      {listReady && reports.length === 0 && <Text variant="secondary">No reports match these filters.</Text>}
 
-      {reportsQuery.data && reports.length > 0 && (
+      {listReady && reports.length > 0 && (
         <div className="flex flex-col gap-2">
           {reports.map((report) => {
             const target = reportTargetLabel(report);
@@ -170,7 +185,7 @@ export function SupportScreen() {
         </div>
       )}
 
-      {reportsQuery.data && reports.length < total && (
+      {listReady && reports.length < total && (
         <div className="flex flex-col gap-2">
           <Button variant="secondary" disabled={loadingMore} onClick={() => void handleLoadMore()}>
             {loadingMore ? "Loading…" : "Load more"}

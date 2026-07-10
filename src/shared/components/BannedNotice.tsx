@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { isActiveBan, isPermanentBan } from "@/src/shared/lib/ban-display";
+import { resolveBanReasonTitle } from "@/src/shared/lib/ban-reason-title";
 import type { RuleCategory } from "@/src/shared/types/rules";
 
 export interface BannedNoticeProps {
@@ -35,15 +36,10 @@ export function BannedNotice({
 
   if (!isActiveBan(bannedUntil) || !bannedUntil) return null;
 
-  // Resolve the reason to a human label. `'other'` → localized "Other"; a
-  // category id → its title from the rules; unknown/unloaded → the raw id
-  // (never crash, and it's the user's own reason so no leak).
-  const reasonTitle =
-    banReason === "other"
-      ? t("other")
-      : banReason
-        ? (categories.find((c) => c.id === banReason)?.title ?? banReason)
-        : null;
+  // Resolve the reason to a human label via the shared resolver: `'other'` →
+  // localized "Other"; a category id → its title from the rules; unknown/unloaded
+  // → the raw id (never crash, and it's the user's own reason so no leak).
+  const reasonTitle = resolveBanReasonTitle(banReason, categories, t("other"));
 
   const expiry = isPermanentBan(bannedUntil)
     ? t("permanent")

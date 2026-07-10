@@ -2,9 +2,12 @@
 
 import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { usersClient } from "@/src/shared/lib/users-client";
 import { packsClient } from "@/src/shared/lib/packs-client";
+import { rulesClient } from "@/src/shared/lib/rules-client";
+import { resolveBanReasonTitle } from "@/src/shared/lib/ban-reason-title";
 import { useClientData } from "@/src/shared/hooks/useClientData";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
@@ -43,6 +46,7 @@ export function AuthorScreen({
   const { user, status: authStatus } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
+  const tBanReason = useTranslations("banReason");
 
   // Loading/error/data for the profile+packs fetch is owned by useClientData,
   // which aborts the in-flight request on unmount / authorId change — that
@@ -70,6 +74,12 @@ export function AuthorScreen({
     [authorId],
     { enabled: showModeratorTools && authorQuery.data !== null },
   );
+
+  // Rule categories resolve each ban-history entry's reason id (e.g.
+  // `spam_manipulation`) to its human title, shared with the ban picker below.
+  // Gated to the moderator view so a plain visitor never triggers the fetch.
+  const rulesQuery = useClientData(() => rulesClient.getRules(), [], { enabled: showModeratorTools });
+  const ruleCategories = rulesQuery.data?.categories ?? [];
 
   const [followBusy, setFollowBusy] = useState(false);
   const [followError, setFollowError] = useState("");
@@ -253,7 +263,10 @@ export function AuthorScreen({
                   </Text>
                   <Text>
                     <span className="font-semibold">{entry.actorUsername}</span> · {entry.meta.duration} ·{" "}
-                    <span className="text-foreground-secondary">{entry.meta.reason}</span>
+                    <span className="text-foreground-secondary">
+                      {resolveBanReasonTitle(entry.meta.reason, ruleCategories, tBanReason("other")) ??
+                        entry.meta.reason}
+                    </span>
                   </Text>
                 </div>
               ))}

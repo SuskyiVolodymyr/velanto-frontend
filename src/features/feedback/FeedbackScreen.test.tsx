@@ -132,6 +132,55 @@ describe("FeedbackScreen", () => {
     );
   });
 
+  it("shows a loading state instead of the stale list while a filter change refetches", async () => {
+    let resolveRefetch: (value: { items: Feedback[]; total: number; page: number; limit: number }) => void =
+      () => {};
+    let mainCall = 0;
+    mockedFeedbackClient.list.mockImplementation((filters = {}) => {
+      if (filters.sort === "top" && filters.limit === 3) {
+        return Promise.resolve({ items: [], total: 0, page: 1, limit: 3 });
+      }
+      mainCall += 1;
+      if (mainCall === 1) {
+        return Promise.resolve({ items: [makePost({ id: "f1", title: "First list post" })], total: 1, page: 1, limit: 20 });
+      }
+      return new Promise((resolve) => {
+        resolveRefetch = resolve;
+      });
+    });
+    render(<FeedbackScreen />);
+    await waitFor(() => expect(screen.getByText("First list post")).toBeInTheDocument());
+
+    await userEvent.click(screen.getByRole("button", { name: "Feature" }));
+
+    // While the refetch is in flight, the stale row is gone and a loading state shows.
+    await waitFor(() => expect(screen.getByText(/loading feedback/i)).toBeInTheDocument());
+    expect(screen.queryByText("First list post")).not.toBeInTheDocument();
+
+    resolveRefetch({ items: [makePost({ id: "f2", title: "Filtered post" })], total: 1, page: 1, limit: 20 });
+    await waitFor(() => expect(screen.getByText("Filtered post")).toBeInTheDocument());
+  });
+
+  it("clears a stale load-more error when the filter changes", async () => {
+    mockedFeedbackClient.list.mockImplementation((filters = {}) => {
+      if (filters.sort === "top" && filters.limit === 3) {
+        return Promise.resolve({ items: [], total: 0, page: 1, limit: 3 });
+      }
+      if (filters.page === 2) return Promise.reject(new Error("network"));
+      return Promise.resolve({ items: [makePost({ id: "f1", title: "Row" })], total: 2, page: 1, limit: 20 });
+    });
+    render(<FeedbackScreen />);
+    await waitFor(() => expect(screen.getByText("Row")).toBeInTheDocument());
+
+    await userEvent.click(screen.getByRole("button", { name: /load more/i }));
+    await waitFor(() => expect(screen.getByText(/couldn't load more feedback/i)).toBeInTheDocument());
+
+    await userEvent.click(screen.getByRole("button", { name: "Feature" }));
+    await waitFor(() =>
+      expect(screen.queryByText(/couldn't load more feedback/i)).not.toBeInTheDocument(),
+    );
+  });
+
   it("shows an empty message when there are no items", async () => {
     mockList([]);
     render(<FeedbackScreen />);

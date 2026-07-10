@@ -227,6 +227,28 @@ describe("AuthorScreen", () => {
     expect(screen.getByRole("button", { name: /^ban$/i })).toBeInTheDocument();
   });
 
+  it("renders the human category title for a ban-history reason, not the raw id", async () => {
+    mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
+    mockedUsersClient.getProfile.mockResolvedValue(profile);
+    mockedUsersClient.banHistory.mockResolvedValue({
+      items: [
+        {
+          actorUsername: "mod2",
+          meta: { duration: "week", reason: "spam_manipulation" },
+          createdAt: "2026-01-01T00:00:00.000Z",
+        },
+      ],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
+    renderScreen(<AuthorScreen authorId="author-1" />);
+    // The rules fetch resolves the category id to its human title…
+    await waitFor(() => expect(screen.getByText("Spam & Manipulation")).toBeInTheDocument());
+    // …and the raw id is never shown to the moderator.
+    expect(screen.queryByText("spam_manipulation")).not.toBeInTheDocument();
+  });
+
   it("shows an empty-state message when the author has no ban history", async () => {
     mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
