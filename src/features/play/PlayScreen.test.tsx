@@ -314,6 +314,73 @@ describe("PlayScreen", () => {
     expect(screen.getByRole("button", { name: "Next round →" })).toBeEnabled();
   });
 
+  it("resets the reveal count and selection when advancing to the next round", async () => {
+    const user = userEvent.setup();
+    renderScreen(SAVE_ONE_PACK);
+    await screen.findByText("Guren no Yumiya");
+
+    await user.click(screen.getByRole("button", { name: "Show all" }));
+    expect(screen.getByText("Showing 2 of 2")).toBeInTheDocument();
+    await user.click(screen.getByText("Redo"));
+    await user.click(screen.getByRole("button", { name: "Next round →" }));
+
+    // Round 2 starts collapsed again (reveal reset to 1) with nothing selected.
+    await screen.findByText("Silhouette");
+    expect(screen.getByText("Showing 1 of 1")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Next round →" })).toBeDisabled();
+  });
+
+  it("records the finished play exactly once", async () => {
+    const user = userEvent.setup();
+    renderScreen(SAVE_ONE_PACK);
+    await screen.findByText("Guren no Yumiya");
+
+    await user.click(screen.getByRole("button", { name: "Show all" }));
+    await user.click(screen.getByText("Redo"));
+    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await screen.findByText("Silhouette");
+    await user.click(screen.getByText("Silhouette"));
+    await user.click(screen.getByRole("button", { name: "Next round →" }));
+
+    await screen.findByText("All rounds done");
+    await waitFor(() => expect(playsClient.record).toHaveBeenCalledTimes(1));
+    // Re-render must not trigger a second record (recordedRef guards it).
+    await user.click(screen.getByText("Redo"));
+    expect(playsClient.record).toHaveBeenCalledTimes(1);
+  });
+
+  it("writes the last-play picks only after the record request resolves", async () => {
+    let resolveRecord!: (value: { id: string }) => void;
+    vi.mocked(playsClient.record).mockReturnValue(
+      new Promise<{ id: string }>((resolve) => {
+        resolveRecord = resolve;
+      }),
+    );
+    const user = userEvent.setup();
+    renderScreen(SAVE_ONE_PACK);
+    await screen.findByText("Guren no Yumiya");
+
+    await user.click(screen.getByRole("button", { name: "Show all" }));
+    await user.click(screen.getByText("Redo"));
+    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await screen.findByText("Silhouette");
+    await user.click(screen.getByText("Silhouette"));
+    await user.click(screen.getByRole("button", { name: "Next round →" }));
+
+    await screen.findByText("All rounds done");
+    await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
+    // Record is still pending: nothing may be persisted yet.
+    expect(sessionStorage.getItem("velanto:last-play:pack-a")).toBeNull();
+
+    resolveRecord({ id: "play-1" });
+    await waitFor(() =>
+      expect(JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!)).toEqual([
+        { groupId: "g1", itemId: "2" },
+        { groupId: "g2", itemId: "3" },
+      ]),
+    );
+  });
+
   it("does not persist picks for the result page when recording the play fails", async () => {
     vi.mocked(playsClient.record).mockRejectedValue(new Error("network error"));
     const user = userEvent.setup();
