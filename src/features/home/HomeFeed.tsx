@@ -46,13 +46,19 @@ const WINDOW_OPTIONS: { value: WindowFilter; label: string }[] = [
 
 const DEFAULT_POPULAR_WINDOW: WindowFilter = "week";
 
-export function HomeFeed() {
+export function HomeFeed({ initialPacks }: { initialPacks?: Pack[] }) {
   const [format, setFormat] = useState<FormatFilter>("all");
   const [tags, setTags] = useState<PackTag[]>([]);
   const [searchInput, setSearchInput] = useState("");
   const [query, setQuery] = useState("");
-  const [packs, setPacks] = useState<Pack[]>([]);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  // Seed from the server-rendered default feed when provided so the landing
+  // page has indexable content and doesn't flash a loading state on hydration.
+  // The mount effect below still refetches the default query once (filters may
+  // differ once the user interacts); seeded content stays visible meanwhile.
+  const [packs, setPacks] = useState<Pack[]>(initialPacks ?? []);
+  const [status, setStatus] = useState<"loading" | "ready" | "error">(
+    initialPacks ? "ready" : "loading",
+  );
   const [tagPickerOpen, setTagPickerOpen] = useState(false);
   const [sort, setSort] = useState<SortFilter>("relevance");
   const [window, setWindow] = useState<WindowFilter>(DEFAULT_POPULAR_WINDOW);

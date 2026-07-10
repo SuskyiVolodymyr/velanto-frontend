@@ -15,13 +15,25 @@ import type { PublicUserProfile } from "@/src/shared/types/user";
 import type { Pack } from "@/src/shared/types/pack";
 import type { BanDuration } from "@/src/shared/lib/users-client";
 
-interface AuthorData {
+export interface AuthorData {
   profile: PublicUserProfile;
   packs: Pack[];
   packsTotal: number;
 }
 
-export function AuthorScreen({ authorId }: { authorId: string }) {
+export function AuthorScreen({
+  authorId,
+  initialData,
+}: {
+  authorId: string;
+  /**
+   * Server-seeded public profile + first page of packs. When present the
+   * screen renders immediately server-side (indexable) and skips the mount
+   * fetch; viewer-specific fields (isFollowedByMe) refresh only on a later
+   * follow action / authorId change. Omitted → full client-fetch path.
+   */
+  initialData?: AuthorData;
+}) {
   const { user, status: authStatus } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -38,6 +50,7 @@ export function AuthorScreen({ authorId }: { authorId: string }) {
       return { profile, packs: packs.items, packsTotal: packs.total };
     },
     [authorId],
+    { initialData },
   );
 
   const isOwnProfile = authStatus === "authenticated" && user?.id === authorId;
