@@ -30,7 +30,21 @@
     "off": "Off"
   },
   "auth": {
-    "acceptRules": "I have read and accept the <link>Community Rules</link>."
+    "acceptRules": "I have read and accept the <link>Community Rules</link>.",
+    "tabSignup": "Sign up",
+    "logIn": "Log in",
+    "headingLogin": "Log in to Velanto",
+    "headingRegister": "Join Velanto",
+    "subtitleLogin": "Sign in to build and play packs.",
+    "subtitleRegister": "Create packs and play, save your results.",
+    "identifier": "Email or username",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "invalidCredentials": "Invalid credentials.",
+    "pleaseWait": "Please wait…",
+    "createAccount": "Create account",
+    "terms": "By continuing you agree to Velanto's Terms and Privacy Policy."
   },
   "rules": {
     "metaTitle": "Community Rules — Velanto",

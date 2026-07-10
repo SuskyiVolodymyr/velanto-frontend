@@ -56,6 +56,8 @@ const IDENTICAL_ALLOWED = new Set([
   // "Packs" stays untranslated where the catalog keeps the borrowed "pack".
   "profile.bio",
   "profile.packs",
+  // auth loanword: "Email" is the same word (borrowed) in several locales.
+  "auth.email",
 ]);
 
 /**

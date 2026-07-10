@@ -31,7 +31,21 @@
     "off": "बंद"
   },
   "auth": {
-    "acceptRules": "मैंने <link>समुदाय नियम</link> पढ़ लिए हैं और उन्हें स्वीकार करता/करती हूँ।"
+    "acceptRules": "मैंने <link>समुदाय नियम</link> पढ़ लिए हैं और उन्हें स्वीकार करता/करती हूँ।",
+    "tabSignup": "साइन अप करें",
+    "logIn": "लॉग इन करें",
+    "headingLogin": "Velanto में लॉग इन करें",
+    "headingRegister": "Velanto से जुड़ें",
+    "subtitleLogin": "पैक बनाने और खेलने के लिए साइन इन करें।",
+    "subtitleRegister": "पैक बनाएँ और खेलें, अपने नतीजे सहेजें।",
+    "identifier": "ईमेल या उपयोगकर्ता नाम",
+    "username": "उपयोगकर्ता नाम",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "invalidCredentials": "अमान्य क्रेडेंशियल।",
+    "pleaseWait": "कृपया प्रतीक्षा करें…",
+    "createAccount": "खाता बनाएँ",
+    "terms": "जारी रखकर आप Velanto की सेवा शर्तों और गोपनीयता नीति से सहमत होते हैं।"
   },
   "rules": {
     "metaTitle": "समुदाय नियम — Velanto",

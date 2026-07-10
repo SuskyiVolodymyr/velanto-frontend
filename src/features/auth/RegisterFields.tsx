@@ -11,22 +11,23 @@ import { CheckboxField } from "@/src/shared/components/form/CheckboxField";
  * TextField's `name`.
  */
 export function RegisterFields({ disabled }: { disabled: boolean }) {
+  const t = useTranslations("auth");
   return (
     <>
       <TextField
         name="username"
-        label="Username"
+        label={t("username")}
         srOnlyLabel
-        placeholder="Username"
+        placeholder={t("username")}
         autoComplete="username"
         disabled={disabled}
       />
       <TextField
         name="email"
-        label="Email"
+        label={t("email")}
         srOnlyLabel
         type="email"
-        placeholder="Email"
+        placeholder={t("email")}
         autoComplete="email"
         disabled={disabled}
       />

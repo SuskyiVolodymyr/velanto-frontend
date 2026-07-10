@@ -31,7 +31,21 @@
     "off": "Выкл."
   },
   "auth": {
-    "acceptRules": "Я прочитал(а) и принимаю <link>Правила сообщества</link>."
+    "acceptRules": "Я прочитал(а) и принимаю <link>Правила сообщества</link>.",
+    "tabSignup": "Регистрация",
+    "logIn": "Войти",
+    "headingLogin": "Вход в Velanto",
+    "headingRegister": "Присоединяйся к Velanto",
+    "subtitleLogin": "Войди, чтобы создавать и проходить паки.",
+    "subtitleRegister": "Создавай паки, играй и сохраняй свои результаты.",
+    "identifier": "Эл. почта или имя пользователя",
+    "username": "Имя пользователя",
+    "email": "Эл. почта",
+    "password": "Пароль",
+    "invalidCredentials": "Неверные данные для входа.",
+    "pleaseWait": "Подожди…",
+    "createAccount": "Создать аккаунт",
+    "terms": "Продолжая, ты соглашаешься с Условиями и Политикой конфиденциальности Velanto."
   },
   "rules": {
     "metaTitle": "Правила сообщества — Velanto",

@@ -31,7 +31,21 @@
     "off": "Desactivado"
   },
   "auth": {
-    "acceptRules": "He leído y acepto las <link>Reglas de la comunidad</link>."
+    "acceptRules": "He leído y acepto las <link>Reglas de la comunidad</link>.",
+    "tabSignup": "Registrarse",
+    "logIn": "Iniciar sesión",
+    "headingLogin": "Inicia sesión en Velanto",
+    "headingRegister": "Únete a Velanto",
+    "subtitleLogin": "Inicia sesión para crear y jugar packs.",
+    "subtitleRegister": "Crea packs, juega y guarda tus resultados.",
+    "identifier": "Correo o nombre de usuario",
+    "username": "Nombre de usuario",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "invalidCredentials": "Credenciales no válidas.",
+    "pleaseWait": "Espera un momento…",
+    "createAccount": "Crear cuenta",
+    "terms": "Al continuar, aceptas los Términos y la Política de Privacidad de Velanto."
   },
   "rules": {
     "metaTitle": "Reglas de la comunidad — Velanto",

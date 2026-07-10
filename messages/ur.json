@@ -31,7 +31,21 @@
     "off": "آف"
   },
   "auth": {
-    "acceptRules": "میں نے <link>کمیونٹی قواعد</link> پڑھ لیے ہیں اور انہیں قبول کرتا/کرتی ہوں۔"
+    "acceptRules": "میں نے <link>کمیونٹی قواعد</link> پڑھ لیے ہیں اور انہیں قبول کرتا/کرتی ہوں۔",
+    "tabSignup": "سائن اپ کریں",
+    "logIn": "لاگ اِن کریں",
+    "headingLogin": "Velanto میں لاگ اِن کریں",
+    "headingRegister": "Velanto میں شامل ہوں",
+    "subtitleLogin": "پیکس بنانے اور کھیلنے کے لیے لاگ اِن کریں۔",
+    "subtitleRegister": "پیکس بنائیں اور کھیلیں، اپنے نتائج محفوظ کریں۔",
+    "identifier": "ای میل یا صارف نام",
+    "username": "صارف نام",
+    "email": "ای میل",
+    "password": "پاس ورڈ",
+    "invalidCredentials": "غلط تفصیلات۔",
+    "pleaseWait": "براہ کرم انتظار کریں…",
+    "createAccount": "اکاؤنٹ بنائیں",
+    "terms": "جاری رکھ کر آپ Velanto کی شرائط اور رازداری کی پالیسی سے اتفاق کرتے ہیں۔"
   },
   "rules": {
     "metaTitle": "کمیونٹی قواعد — Velanto",

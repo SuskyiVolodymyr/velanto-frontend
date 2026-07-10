@@ -31,7 +31,21 @@
     "off": "مُعطّل"
   },
   "auth": {
-    "acceptRules": "لقد قرأت <link>قواعد المجتمع</link> وأوافق عليها."
+    "acceptRules": "لقد قرأت <link>قواعد المجتمع</link> وأوافق عليها.",
+    "tabSignup": "التسجيل",
+    "logIn": "تسجيل الدخول",
+    "headingLogin": "تسجيل الدخول إلى Velanto",
+    "headingRegister": "انضم إلى Velanto",
+    "subtitleLogin": "سجّل الدخول لإنشاء الحزم ولعبها.",
+    "subtitleRegister": "أنشئ الحزم والعبها، واحفظ نتائجك.",
+    "identifier": "البريد الإلكتروني أو اسم المستخدم",
+    "username": "اسم المستخدم",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "invalidCredentials": "بيانات الدخول غير صحيحة.",
+    "pleaseWait": "يرجى الانتظار…",
+    "createAccount": "إنشاء حساب",
+    "terms": "بمتابعتك فإنك توافق على شروط Velanto وسياسة الخصوصية."
   },
   "rules": {
     "metaTitle": "قواعد المجتمع — Velanto",

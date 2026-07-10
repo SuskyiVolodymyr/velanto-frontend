@@ -31,7 +31,21 @@
     "off": "Вимк."
   },
   "auth": {
-    "acceptRules": "Я прочитав(ла) і приймаю <link>Правила спільноти</link>."
+    "acceptRules": "Я прочитав(ла) і приймаю <link>Правила спільноти</link>.",
+    "tabSignup": "Зареєструватися",
+    "logIn": "Увійти",
+    "headingLogin": "Увійти в Velanto",
+    "headingRegister": "Приєднуйся до Velanto",
+    "subtitleLogin": "Увійди, щоб створювати та грати в паки.",
+    "subtitleRegister": "Створюй паки, грай і зберігай свої результати.",
+    "identifier": "Email або ім'я користувача",
+    "username": "Ім'я користувача",
+    "email": "Email",
+    "password": "Пароль",
+    "invalidCredentials": "Неправильний логін або пароль.",
+    "pleaseWait": "Зачекай…",
+    "createAccount": "Створити обліковий запис",
+    "terms": "Продовжуючи, ти погоджуєшся з Умовами та Політикою конфіденційності Velanto."
   },
   "rules": {
     "metaTitle": "Правила спільноти — Velanto",

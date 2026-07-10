@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { messageFromError } from "@/src/shared/lib/messageFromError";
@@ -25,6 +26,7 @@ import {
 type Mode = "login" | "register";
 
 export function AuthForm() {
+  const t = useTranslations("auth");
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login, register } = useAuth();
@@ -81,7 +83,7 @@ export function AuthForm() {
     } catch (err) {
       setError("root", {
         message: messageFromError(err, {
-          statusFallbacks: { 401: "Invalid credentials." },
+          statusFallbacks: { 401: t("invalidCredentials") },
         }),
       });
       triggerShake();
@@ -106,7 +108,7 @@ export function AuthForm() {
               : "text-foreground-secondary",
           )}
         >
-          Log in
+          {t("logIn")}
         </button>
         <button
           type="button"
@@ -120,17 +122,15 @@ export function AuthForm() {
               : "text-foreground-secondary",
           )}
         >
-          Sign up
+          {t("tabSignup")}
         </button>
       </div>
 
       <Text as="h1" variant="title" className="text-2xl text-center mb-1.5">
-        {isRegister ? "Join Velanto" : "Log in to Velanto"}
+        {isRegister ? t("headingRegister") : t("headingLogin")}
       </Text>
       <Text variant="secondary" className="text-center text-sm mb-6">
-        {isRegister
-          ? "Create packs and play, save your results."
-          : "Sign in to build and play packs."}
+        {isRegister ? t("subtitleRegister") : t("subtitleLogin")}
       </Text>
 
       <FormProvider {...methods}>
@@ -149,10 +149,10 @@ export function AuthForm() {
           )}
           <TextField
             name="password"
-            label="Password"
+            label={t("password")}
             srOnlyLabel
             type="password"
-            placeholder="Password"
+            placeholder={t("password")}
             autoComplete={isRegister ? "new-password" : "current-password"}
             disabled={isSubmitting}
           />
@@ -171,10 +171,10 @@ export function AuthForm() {
             className="w-full h-[50px] mt-2"
           >
             {isSubmitting
-              ? "Please wait…"
+              ? t("pleaseWait")
               : isRegister
-                ? "Create account"
-                : "Log in"}
+                ? t("createAccount")
+                : t("logIn")}
           </Button>
         </form>
       </FormProvider>
@@ -183,7 +183,7 @@ export function AuthForm() {
         variant="tertiary"
         className="text-center text-xs mt-5 leading-relaxed"
       >
-        By continuing you agree to Velanto&apos;s Terms and Privacy Policy.
+        {t("terms")}
       </Text>
     </div>
   );
