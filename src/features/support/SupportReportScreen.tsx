@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
+import { useClientData } from "@/src/shared/hooks/useClientData";
 import { reportsClient } from "@/src/shared/lib/reports-client";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import { usersClient, type BanDuration } from "@/src/shared/lib/users-client";
@@ -14,15 +15,12 @@ import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { Input } from "@/src/shared/components/Input";
 import { StatusBadge } from "@/src/shared/components/StatusBadge";
-import type { ReportWithReporter } from "@/src/shared/types/report";
 
 export function SupportReportScreen({ reportId }: { reportId: string }) {
   const { user, status: authStatus } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
-  const [report, setReport] = useState<ReportWithReporter | null>(null);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [actionError, setActionError] = useState("");
   const [actionBusy, setActionBusy] = useState(false);
   const [deleted, setDeleted] = useState(false);
@@ -46,35 +44,19 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
   }, [authStatus, allowed, router]);
 
   // reportId can change without a remount (e.g. clicking a different report
-  // link while already on a report detail page), so the reset to "loading"
-  // must happen here rather than via a useState initializer.
-  useEffect(() => {
-    if (!allowed) return;
-    let cancelled = false;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setStatus("loading");
-    reportsClient
-      .getById(reportId)
-      .then((result) => {
-        if (cancelled) return;
-        setReport(result);
-        setStatus("ready");
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setStatus("error");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [allowed, reportId]);
+  // link while already on a report detail page); useClientData handles the
+  // reset-to-loading + abort of the previous fetch on that change.
+  const reportQuery = useClientData(() => reportsClient.getById(reportId), [reportId], {
+    enabled: allowed,
+  });
+  const report = reportQuery.data;
 
   async function handleReview() {
     setActionBusy(true);
     setActionError("");
     try {
       const updated = await reportsClient.review(reportId);
-      setReport((prev) => (prev ? { ...prev, ...updated } : prev));
+      reportQuery.setData((prev) => (prev ? { ...prev, ...updated } : prev));
     } catch {
       setActionError("Couldn't mark this report as reviewing. Try again.");
     } finally {
@@ -87,7 +69,7 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
     setActionError("");
     try {
       const updated = await reportsClient.close(reportId);
-      setReport((prev) => (prev ? { ...prev, ...updated } : prev));
+      reportQuery.setData((prev) => (prev ? { ...prev, ...updated } : prev));
     } catch {
       setActionError("Couldn't close this report. Try again.");
     } finally {
@@ -133,9 +115,9 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
 
   if (!allowed) return null;
 
-  if (status === "loading") return null;
+  if (reportQuery.loading) return null;
 
-  if (status === "error" || !report) {
+  if (reportQuery.error || !report) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
         <Text className="text-[#ff6b6b]">This report doesn&apos;t exist.</Text>

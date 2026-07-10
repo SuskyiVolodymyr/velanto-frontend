@@ -4,7 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { feedbackClient } from "@/src/shared/lib/feedback-client";
-import type { Feedback, FeedbackSort, FeedbackStatus, FeedbackTopic } from "@/src/shared/types/feedback";
+import { useClientData } from "@/src/shared/hooks/useClientData";
+import type { FeedbackSort, FeedbackStatus, FeedbackTopic } from "@/src/shared/types/feedback";
 import { Text } from "@/src/shared/components/Text";
 import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
@@ -53,62 +54,47 @@ export function FeedbackScreen() {
   const [statusFilter, setStatusFilter] = useState<FeedbackStatus | undefined>(undefined);
   const [sort, setSort] = useState<FeedbackSort>("new");
 
-  const [items, setItems] = useState<Feedback[]>([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [phase, setPhase] = useState<"loading" | "ready" | "error">("loading");
   const [loadingMore, setLoadingMore] = useState(false);
   const [loadMoreError, setLoadMoreError] = useState("");
-  const [top3, setTop3] = useState<Feedback[]>([]);
 
-  // Effect A: Top-3 sidebar, fetched once on mount. Non-critical — swallow errors.
-  useEffect(() => {
-    let cancelled = false;
-    feedbackClient
-      .list({ sort: "top", limit: 3 })
-      .then((result) => {
-        if (!cancelled) setTop3(result.items);
-      })
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
-  }, []);
+  // Top-3 sidebar, fetched once on mount. Non-critical — a failed fetch just
+  // leaves `data` null, which renders the same "No feedback yet" empty state.
+  const top3Query = useClientData(() => feedbackClient.list({ sort: "top", limit: 3 }), []);
+  const top3 = top3Query.data?.items ?? [];
 
-  // Effect B: debounce the raw search input into `q`.
+  // Debounce the raw search input into `q` (setState lives in the async timeout
+  // callback, so it isn't the flagged synchronous set-state-in-effect pattern).
   useEffect(() => {
     const timeout = setTimeout(() => setQ(searchInput.trim()), SEARCH_DEBOUNCE_MS);
     return () => clearTimeout(timeout);
   }, [searchInput]);
 
-  // Effect C: main list, refetched whenever a filter/search/sort changes.
-  useEffect(() => {
-    let cancelled = false;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setPhase("loading");
-    setLoadMoreError("");
-    feedbackClient
-      .list({ q: q || undefined, topic, status: statusFilter, sort, page: 1, limit: PAGE_SIZE })
-      .then((result) => {
-        if (cancelled) return;
-        setItems(result.items);
-        setTotal(result.total);
-        setPage(1);
-        setPhase("ready");
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setPhase("error");
+  // Main list, refetched whenever a filter/search/sort changes. `page` is stored
+  // in the fetched data so it resets to 1 on every filter-driven refetch.
+  const listQuery = useClientData(
+    async () => {
+      const result = await feedbackClient.list({
+        q: q || undefined,
+        topic,
+        status: statusFilter,
+        sort,
+        page: 1,
+        limit: PAGE_SIZE,
       });
-    return () => {
-      cancelled = true;
-    };
-  }, [q, topic, statusFilter, sort]);
+      return { items: result.items, total: result.total, page: 1 };
+    },
+    [q, topic, statusFilter, sort],
+  );
+
+  const items = listQuery.data?.items ?? [];
+  const total = listQuery.data?.total ?? 0;
 
   async function handleLoadMore() {
+    const current = listQuery.data;
+    if (!current) return;
     setLoadingMore(true);
     try {
-      const nextPage = page + 1;
+      const nextPage = current.page + 1;
       const result = await feedbackClient.list({
         q: q || undefined,
         topic,
@@ -117,12 +103,15 @@ export function FeedbackScreen() {
         page: nextPage,
         limit: PAGE_SIZE,
       });
-      setItems((prev) => {
-        const existingIds = new Set(prev.map((p) => p.id));
-        return [...prev, ...result.items.filter((p) => !existingIds.has(p.id))];
+      listQuery.setData((prev) => {
+        if (!prev) return prev;
+        const existingIds = new Set(prev.items.map((p) => p.id));
+        return {
+          items: [...prev.items, ...result.items.filter((p) => !existingIds.has(p.id))],
+          total: result.total,
+          page: nextPage,
+        };
       });
-      setTotal(result.total);
-      setPage(nextPage);
       setLoadMoreError("");
     } catch {
       setLoadMoreError("Couldn't load more feedback. Try again.");
@@ -200,15 +189,15 @@ export function FeedbackScreen() {
             ))}
           </div>
 
-          {phase === "loading" && <Text variant="secondary">Loading feedback…</Text>}
-          {phase === "error" && (
+          {listQuery.loading && <Text variant="secondary">Loading feedback…</Text>}
+          {listQuery.error && (
             <Text className="text-[#ff6b6b]">Couldn&apos;t load feedback. Try again.</Text>
           )}
-          {phase === "ready" && items.length === 0 && (
+          {listQuery.data && items.length === 0 && (
             <Text variant="secondary">No feedback matches these filters.</Text>
           )}
 
-          {phase === "ready" && items.length > 0 && (
+          {listQuery.data && items.length > 0 && (
             <div className="flex flex-col gap-2">
               {items.map((post) => (
                 <FeedbackCard key={post.id} post={post} />
@@ -216,7 +205,7 @@ export function FeedbackScreen() {
             </div>
           )}
 
-          {phase === "ready" && items.length < total && (
+          {listQuery.data && items.length < total && (
             <div className="flex flex-col gap-2">
               <Button variant="secondary" disabled={loadingMore} onClick={() => void handleLoadMore()}>
                 {loadingMore ? "Loading…" : "Load more"}

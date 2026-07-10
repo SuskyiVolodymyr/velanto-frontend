@@ -1,26 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
+import { useHydratedValue } from "@/src/shared/hooks/useHydratedValue";
 import { ACCENTS, DEFAULT_ACCENT, getStoredAccent, setStoredAccent } from "@/src/shared/lib/theme";
 
 export function AppearanceSection() {
-  const [accent, setAccent] = useState<string>(DEFAULT_ACCENT);
-
-  // localStorage doesn't exist during server rendering, so this can't be a
-  // lazy useState initializer without a hydration mismatch — it must run
-  // only after mount, on the client.
-  useEffect(() => {
-    const stored = getStoredAccent();
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    if (stored) setAccent(stored);
-  }, []);
+  // The persisted accent (localStorage) is a client-only read, hydrated via
+  // useHydratedValue — no set-state-in-effect, no hydration mismatch. `selected`
+  // layers the optimistic in-session choice on top of the stored value.
+  const storedAccent = useHydratedValue(() => getStoredAccent() ?? DEFAULT_ACCENT, DEFAULT_ACCENT);
+  const [selected, setSelected] = useState<string | null>(null);
+  const accent = selected ?? storedAccent;
 
   function handleSelect(color: string) {
     setStoredAccent(color);
-    setAccent(color);
+    setSelected(color);
   }
 
   return (

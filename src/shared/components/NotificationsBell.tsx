@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/src/shared/lib/auth-context";
+import { useClientData } from "@/src/shared/hooks/useClientData";
 import { notificationsClient } from "@/src/shared/lib/notifications-client";
 import { describeNotification } from "@/src/shared/lib/notification-display";
 import { formatRelativeTime } from "@/src/shared/lib/relative-time";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
-import type { Notification } from "@/src/shared/types/notification";
 
 const POLL_INTERVAL_MS = 30_000;
 const PAGE_SIZE = 20;
@@ -17,10 +17,6 @@ export function NotificationsBell() {
   const { status } = useAuth();
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [listStatus, setListStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
   const [loadingMore, setLoadingMore] = useState(false);
   const [loadMoreError, setLoadMoreError] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
@@ -74,51 +70,59 @@ export function NotificationsBell() {
     };
   }, [open]);
 
+  // The drawer's list is fetched only while it's open (enabled: open) and its
+  // in-flight request is aborted if the drawer closes first. `page` is stored
+  // in the fetched data so it resets on each reopen.
+  const listQuery = useClientData(
+    async () => {
+      const result = await notificationsClient.list({ page: 1, limit: PAGE_SIZE });
+      return { items: result.items, total: result.total, page: 1 };
+    },
+    [],
+    { enabled: open },
+  );
+
+  const notifications = listQuery.data?.items ?? [];
+  const total = listQuery.data?.total ?? 0;
+  const listLoaded = listQuery.data !== null;
+  const listReady = listLoaded && !listQuery.loading && listQuery.error === null;
+
+  // Once the open drawer's list has loaded, mark everything read and clear the
+  // bell's dot. markAllRead's setState lives in its async .then, so this is not
+  // the flagged synchronous set-state-in-effect pattern.
   useEffect(() => {
-    if (!open) return;
+    if (!open || !listLoaded) return;
     let cancelled = false;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setListStatus("loading");
-    setLoadMoreError("");
-    notificationsClient
-      .list({ page: 1, limit: PAGE_SIZE })
-      .then((result) => {
-        if (cancelled) return;
-        setNotifications(result.items);
-        setTotal(result.total);
-        setPage(1);
-        setListStatus("ready");
-        // Fired after the list state is set (not before), so the bell's dot
-        // clears only once this open's fetch has actually resolved.
-        void notificationsClient
-          .markAllRead()
-          .then(() => {
-            if (!cancelled) setUnreadCount(0);
-          })
-          .catch(() => {
-            // Silent, matching the poll's own catch — a failed mark-all-read
-            // just means the dot clears on a later successful poll instead.
-          });
+    void notificationsClient
+      .markAllRead()
+      .then(() => {
+        if (!cancelled) setUnreadCount(0);
       })
       .catch(() => {
-        if (!cancelled) setListStatus("error");
+        // Silent, matching the poll's own catch — a failed mark-all-read just
+        // means the dot clears on a later successful poll instead.
       });
     return () => {
       cancelled = true;
     };
-  }, [open]);
+  }, [open, listLoaded]);
 
   async function handleLoadMore() {
+    const current = listQuery.data;
+    if (!current) return;
     setLoadingMore(true);
     try {
-      const nextPage = page + 1;
+      const nextPage = current.page + 1;
       const result = await notificationsClient.list({ page: nextPage, limit: PAGE_SIZE });
-      setNotifications((prev) => {
-        const existingIds = new Set(prev.map((n) => n.id));
-        return [...prev, ...result.items.filter((n) => !existingIds.has(n.id))];
+      listQuery.setData((prev) => {
+        if (!prev) return prev;
+        const existingIds = new Set(prev.items.map((n) => n.id));
+        return {
+          items: [...prev.items, ...result.items.filter((n) => !existingIds.has(n.id))],
+          total: result.total,
+          page: nextPage,
+        };
       });
-      setTotal(result.total);
-      setPage(nextPage);
       setLoadMoreError("");
     } catch {
       setLoadMoreError("Couldn't load more notifications. Try again.");
@@ -171,20 +175,20 @@ export function NotificationsBell() {
               <Text className="font-semibold">Notifications</Text>
             </div>
             <div className="flex-1 overflow-y-auto p-2">
-              {listStatus === "loading" && (
+              {listQuery.loading && (
                 <Text variant="secondary" className="px-2 py-4 text-sm">
                   Loading…
                 </Text>
               )}
-              {listStatus === "error" && (
+              {listQuery.error && (
                 <Text className="px-2 py-4 text-sm text-[#ff6b6b]">Couldn&apos;t load notifications.</Text>
               )}
-              {listStatus === "ready" && notifications.length === 0 && (
+              {listReady && notifications.length === 0 && (
                 <Text variant="secondary" className="px-2 py-4 text-sm">
                   No notifications yet.
                 </Text>
               )}
-              {listStatus === "ready" && notifications.length > 0 && (
+              {listReady && notifications.length > 0 && (
                 <ul className="flex flex-col gap-1">
                   {notifications.map((notification) => {
                     const { message, href } = describeNotification(notification);
@@ -210,7 +214,7 @@ export function NotificationsBell() {
                   })}
                 </ul>
               )}
-              {listStatus === "ready" && notifications.length < total && (
+              {listReady && notifications.length < total && (
                 <div className="mt-2 flex flex-col gap-1">
                   <Button
                     variant="secondary"
