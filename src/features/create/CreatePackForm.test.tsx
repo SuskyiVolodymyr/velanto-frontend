@@ -244,6 +244,35 @@ describe("CreatePackForm", () => {
     expect(push).not.toHaveBeenCalled();
   });
 
+  it("surfaces the backend's blocked-term rejection inline and does not navigate", async () => {
+    const user = userEvent.setup();
+    // The real nestjs-zod validation 400: generic top-level `message`, with the
+    // field-level moderation rejection under `errors[]` at the offending path.
+    // The input itself is innocuous — the block is decided entirely server-side.
+    vi.mocked(packsClient.create).mockRejectedValue(
+      new ApiError(400, "Bad Request", {
+        statusCode: 400,
+        message: "Validation failed",
+        errors: [
+          {
+            code: "custom",
+            path: ["description"],
+            message: "This text contains language that isn't allowed on Velanto.",
+          },
+        ],
+      }),
+    );
+    renderForm();
+    await fillMinimalValidPack(user);
+
+    await user.click(screen.getByRole("button", { name: "Publish" }));
+
+    expect(
+      await screen.findByText("This text contains language that isn't allowed on Velanto."),
+    ).toBeInTheDocument();
+    expect(push).not.toHaveBeenCalled();
+  });
+
   describe("nxn format", () => {
     async function switchToNxn(user: ReturnType<typeof userEvent.setup>) {
       await user.click(await screen.findByRole("button", { name: /^NxN/ }));

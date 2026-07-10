@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { usersClient } from "@/src/shared/lib/users-client";
+import { messageFromError } from "@/src/shared/lib/messageFromError";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 
@@ -43,8 +44,10 @@ export function ProfileEditForm() {
     try {
       await usersClient.updateProfile(bio);
       router.push("/profile");
-    } catch {
-      setSaveError("Couldn't save your changes. Try again.");
+    } catch (err) {
+      // Surface the backend's specific validation message (e.g. the moderation
+      // blocked-term rejection) when present, falling back to generic copy.
+      setSaveError(messageFromError(err, { fallback: "Couldn't save your changes. Try again." }));
       setPending(false);
     }
   }

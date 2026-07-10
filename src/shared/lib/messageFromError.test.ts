@@ -15,6 +15,48 @@ describe("messageFromError", () => {
     expect(messageFromError(err)).toBe("username must be longer");
   });
 
+  it("surfaces the field-level message from a nestjs-zod validation body", () => {
+    // The real backend (global nestjs-zod ZodValidationPipe) returns the
+    // generic string "Validation failed" at `message` and puts the actual
+    // field issues under `errors[]`. The specific copy must win over the
+    // useless top-level string — this is how the moderation rejection reaches
+    // the user.
+    const err = new ApiError(400, "Bad Request", {
+      statusCode: 400,
+      message: "Validation failed",
+      errors: [
+        {
+          code: "custom",
+          path: ["description"],
+          message: "This text contains language that isn't allowed on Velanto.",
+        },
+      ],
+    });
+    expect(messageFromError(err)).toBe(
+      "This text contains language that isn't allowed on Velanto.",
+    );
+  });
+
+  it("surfaces the first usable field message when several zod issues are present", () => {
+    const err = new ApiError(400, "Bad Request", {
+      statusCode: 400,
+      message: "Validation failed",
+      errors: [
+        { code: "too_small", path: ["title"], message: "Title is too short." },
+        { code: "custom", path: ["description"], message: "Second issue." },
+      ],
+    });
+    expect(messageFromError(err)).toBe("Title is too short.");
+  });
+
+  it("falls back to the top-level message when errors[] carries no usable message", () => {
+    const err = new ApiError(400, "Bad Request", {
+      message: "Something specific broke.",
+      errors: [],
+    });
+    expect(messageFromError(err)).toBe("Something specific broke.");
+  });
+
   it("falls back to the default message for a non-ApiError value", () => {
     expect(messageFromError(new Error("boom"))).toBe("Something went wrong. Please try again.");
     expect(messageFromError("nope")).toBe("Something went wrong. Please try again.");

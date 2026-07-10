@@ -7,6 +7,7 @@ import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { commentsClient } from "@/src/shared/lib/comments-client";
+import { messageFromError } from "@/src/shared/lib/messageFromError";
 import type { Comment } from "@/src/shared/types/comment";
 
 const PAGE_SIZE = 10;
@@ -76,8 +77,10 @@ export function CommentSection({ packId }: { packId: string }) {
       setTotal((t) => t + 1);
       setDraft("");
       setPostError("");
-    } catch {
-      setPostError("Couldn't post your comment. Try again.");
+    } catch (err) {
+      // Surface the backend's specific validation message (e.g. the moderation
+      // blocked-term rejection) when present, falling back to generic copy.
+      setPostError(messageFromError(err, { fallback: "Couldn't post your comment. Try again." }));
     } finally {
       setPosting(false);
     }

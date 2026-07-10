@@ -80,6 +80,35 @@ describe("ProfileEditForm", () => {
     expect(await screen.findByText(/couldn.t save/i)).toBeInTheDocument();
   });
 
+  it("surfaces the backend's blocked-term rejection inline and does not navigate", async () => {
+    // Real nestjs-zod validation 400 shape: the field-level moderation
+    // rejection lives under `errors[]`. The bio itself is innocuous.
+    vi.mocked(usersClient.updateProfile).mockRejectedValue(
+      new ApiError(400, "Bad Request", {
+        statusCode: 400,
+        message: "Validation failed",
+        errors: [
+          {
+            code: "custom",
+            path: ["bio"],
+            message: "This text contains language that isn't allowed on Velanto.",
+          },
+        ],
+      }),
+    );
+    const user = userEvent.setup();
+    renderForm();
+    const textarea = await screen.findByDisplayValue("Old bio");
+    await user.clear(textarea);
+    await user.type(textarea, "New bio");
+    await user.click(screen.getByRole("button", { name: /save/i }));
+
+    expect(
+      await screen.findByText("This text contains language that isn't allowed on Velanto."),
+    ).toBeInTheDocument();
+    expect(push).not.toHaveBeenCalled();
+  });
+
   it("shows a log-in prompt when the viewer is not authenticated", async () => {
     vi.mocked(authClient.refresh).mockRejectedValue(new ApiError(401, "Unauthorized", null));
     renderForm();
