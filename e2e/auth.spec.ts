@@ -28,6 +28,10 @@ test.describe("Auth screen", () => {
     await page.getByLabel("Username").fill("alice");
     await page.getByLabel("Email").fill("alice@example.com");
     await page.getByLabel("Password").fill("password123");
+    // Registration now requires accepting the community rules (acceptedRules:
+    // z.literal(true)); without ticking it the form fails client validation and
+    // never calls /auth/register.
+    await page.getByRole("checkbox").check();
     await page.getByRole("button", { name: "Create account" }).click();
 
     await page.waitForURL("/");
