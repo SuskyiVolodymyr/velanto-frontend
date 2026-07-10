@@ -107,6 +107,53 @@ describe("SupportScreen", () => {
     expect(screen.getByText("reporter1")).toBeInTheDocument();
   });
 
+  it("shows a loading state instead of the stale list while a filter change refetches", async () => {
+    mockAuth("moderator");
+    let resolveRefetch: (value: { items: (typeof report)[]; total: number; page: number; limit: number }) => void =
+      () => {};
+    let call = 0;
+    mockedReportsClient.list.mockImplementation(() => {
+      call += 1;
+      if (call === 1) return Promise.resolve({ items: [report], total: 1, page: 1, limit: 20 });
+      return new Promise((resolve) => {
+        resolveRefetch = resolve;
+      });
+    });
+    render(<SupportScreen />);
+    await waitFor(() => expect(screen.getByText("reporter1")).toBeInTheDocument());
+
+    await userEvent.click(screen.getByRole("button", { name: "New" }));
+
+    await waitFor(() => expect(screen.getByText(/loading reports/i)).toBeInTheDocument());
+    expect(screen.queryByText("reporter1")).not.toBeInTheDocument();
+
+    resolveRefetch({
+      items: [{ ...report, id: "r2", reporterUsername: "reporter2" }],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
+    await waitFor(() => expect(screen.getByText("reporter2")).toBeInTheDocument());
+  });
+
+  it("clears a stale load-more error when the filter changes", async () => {
+    mockAuth("moderator");
+    mockedReportsClient.list.mockImplementation((filters = {}) => {
+      if (filters.page === 2) return Promise.reject(new Error("network"));
+      return Promise.resolve({ items: [report], total: 2, page: 1, limit: 20 });
+    });
+    render(<SupportScreen />);
+    await waitFor(() => expect(screen.getByText("reporter1")).toBeInTheDocument());
+
+    await userEvent.click(screen.getByRole("button", { name: /load more/i }));
+    await waitFor(() => expect(screen.getByText(/couldn't load more reports/i)).toBeInTheDocument());
+
+    await userEvent.click(screen.getByRole("button", { name: "New" }));
+    await waitFor(() =>
+      expect(screen.queryByText(/couldn't load more reports/i)).not.toBeInTheDocument(),
+    );
+  });
+
   it("shows an empty-state message when no reports match", async () => {
     mockAuth("moderator");
     mockedReportsClient.list.mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });

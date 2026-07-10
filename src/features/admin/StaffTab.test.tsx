@@ -131,15 +131,17 @@ describe("StaffTab", () => {
       renderWithStreamerMode();
 
       // Wait for the fetch to resolve — the role select is a stable, non-identity
-      // anchor that renders once the row is present.
-      await screen.findByLabelText("Change role for bob");
+      // anchor that renders once the row is present. Its aria-label is the
+      // name-free generic form so a screen reader doesn't leak the identity.
+      await screen.findByLabelText("Change role for this user");
 
-      // Identity is redacted…
+      // Identity is redacted, in the a11y tree as well as visually…
       expect(screen.queryByText("bob")).not.toBeInTheDocument();
       expect(screen.queryByText("bob@example.com")).not.toBeInTheDocument();
+      expect(screen.queryByLabelText("Change role for bob")).not.toBeInTheDocument();
       // …but role and the moderator's action control stay usable.
       expect(screen.getByText("moderator")).toBeInTheDocument();
-      expect(screen.getByLabelText("Change role for bob")).toBeInTheDocument();
+      expect(screen.getByLabelText("Change role for this user")).toBeInTheDocument();
     });
 
     it("reveals the username and email when the row is revealed", async () => {
@@ -148,7 +150,7 @@ describe("StaffTab", () => {
       vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [TARGET], total: 1, page: 1, limit: 20 });
       renderWithStreamerMode();
 
-      await screen.findByLabelText("Change role for bob");
+      await screen.findByLabelText("Change role for this user");
       const revealButtons = screen.getAllByRole("button", { name: /reveal/i });
       // One reveal control per masked identity field (username + email).
       expect(revealButtons).toHaveLength(2);
@@ -167,6 +169,8 @@ describe("StaffTab", () => {
       expect(await screen.findByText("bob")).toBeInTheDocument();
       expect(screen.getByText("bob@example.com")).toBeInTheDocument();
       expect(screen.queryByRole("button", { name: /reveal/i })).not.toBeInTheDocument();
+      // With streamer mode off, the specific (name-carrying) label is kept.
+      expect(screen.getByLabelText("Change role for bob")).toBeInTheDocument();
     });
   });
 });

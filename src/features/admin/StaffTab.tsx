@@ -7,6 +7,7 @@ import { Button } from "@/src/shared/components/Button";
 import { Badge } from "@/src/shared/components/Badge";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { useAuth } from "@/src/shared/lib/auth-context";
+import { useStreamerModeOrDefault } from "@/src/shared/lib/streamer-mode-context";
 import { adminClient } from "@/src/shared/lib/admin-client";
 import { usersClient } from "@/src/shared/lib/users-client";
 import { assignableRolesFor, type AssignableRole } from "@/src/shared/lib/staff-permissions";
@@ -17,6 +18,9 @@ const SEARCH_DEBOUNCE_MS = 300;
 
 export function StaffTab() {
   const { user } = useAuth();
+  // Streamer mode masks identity visually; also keep it out of the role-select
+  // aria-label so a screen reader on a shared screen doesn't announce the name.
+  const { enabled: streamerMode } = useStreamerModeOrDefault();
   const [searchInput, setSearchInput] = useState("");
   const [query, setQuery] = useState("");
   const [users, setUsers] = useState<AdminUserRow[]>([]);
@@ -131,7 +135,7 @@ export function StaffTab() {
                       e.target.value = "";
                       void handleRoleChange(row.id, role);
                     }}
-                    aria-label={`Change role for ${row.username}`}
+                    aria-label={streamerMode ? "Change role for this user" : `Change role for ${row.username}`}
                     className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground"
                   >
                     <option value="" disabled>
