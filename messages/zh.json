@@ -333,5 +333,21 @@
     "follow": "关注",
     "packs": "题包",
     "noPacks": "还没有题包。"
+  },
+  "pages": {
+    "createTitle": "创建题包",
+    "createSubtitle": "选择一种淘汰玩法，搭建你的各轮内容。选项可以是文字，也可以是 YouTube 链接。",
+    "metaProfile": "个人资料",
+    "metaEditProfile": "编辑个人资料",
+    "metaPlaying": "正在玩 {title}",
+    "metaResult": "{title} — 结果",
+    "packNotFound": "未找到题包",
+    "userNotFound": "未找到用户",
+    "userNotFoundBody": "该个人资料不存在或已被移除。",
+    "userMetaDescription": "{username} 在 Velanto 上的淘汰问答题包——玩上一局，看看谁能拔得头筹。",
+    "backToDiscover": "返回发现",
+    "errorTitle": "出错了",
+    "errorBody": "无法加载该个人资料，请重试。",
+    "tryAgain": "重试"
   }
 }

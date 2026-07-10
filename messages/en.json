@@ -332,5 +332,21 @@
     "follow": "Follow",
     "packs": "Packs",
     "noPacks": "No packs yet."
+  },
+  "pages": {
+    "createTitle": "Create a pack",
+    "createSubtitle": "Pick an elimination format and build your rounds. Elements can be text or a YouTube link.",
+    "metaProfile": "Profile",
+    "metaEditProfile": "Edit profile",
+    "metaPlaying": "Playing {title}",
+    "metaResult": "{title} — Result",
+    "packNotFound": "Pack not found",
+    "userNotFound": "User not found",
+    "userNotFoundBody": "This profile doesn't exist or has been removed.",
+    "userMetaDescription": "{username}'s elimination-quiz packs on Velanto — play through one to see who comes out on top.",
+    "backToDiscover": "Back to discover",
+    "errorTitle": "Something went wrong",
+    "errorBody": "We couldn't load this profile. Please try again.",
+    "tryAgain": "Try again"
   }
 }

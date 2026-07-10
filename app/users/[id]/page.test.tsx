@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import messages from "@/messages/en.json";
 import { generateMetadata } from "./page";
 import { getUserServer } from "@/src/features/author/get-user-server";
 import type { PublicUserProfile } from "@/src/shared/types/user";
@@ -6,6 +7,18 @@ import type { PublicUserProfile } from "@/src/shared/types/user";
 vi.mock("@/src/features/author/get-user-server", () => ({
   getUserServer: vi.fn(),
   getAuthorPacksServer: vi.fn(),
+}));
+
+// getTranslations needs a request context we don't have in unit tests; back it
+// with the real English catalog (interpolating {args}) so titles/descriptions
+// read the shipped copy.
+vi.mock("next-intl/server", () => ({
+  getTranslations: vi.fn(async () => (key: string, vals?: Record<string, unknown>) => {
+    let out = (messages.pages as Record<string, string>)[key] ?? key;
+    for (const [k, v] of Object.entries(vals ?? {}))
+      out = out.replaceAll(`{${k}}`, String(v));
+    return out;
+  }),
 }));
 
 const profile: PublicUserProfile = {

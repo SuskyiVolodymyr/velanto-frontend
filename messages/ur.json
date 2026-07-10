@@ -333,5 +333,21 @@
     "follow": "فالو کریں",
     "packs": "پیکس",
     "noPacks": "ابھی کوئی پیک نہیں۔"
+  },
+  "pages": {
+    "createTitle": "پیک بنائیں",
+    "createSubtitle": "ایک ایلیمینیشن فارمیٹ منتخب کریں اور اپنے راؤنڈز ترتیب دیں۔ آئٹمز متن یا YouTube لنک ہو سکتے ہیں۔",
+    "metaProfile": "پروفائل",
+    "metaEditProfile": "پروفائل میں ترمیم",
+    "metaPlaying": "{title} کھیل رہے ہیں",
+    "metaResult": "{title} — نتیجہ",
+    "packNotFound": "پیک نہیں ملا",
+    "userNotFound": "صارف نہیں ملا",
+    "userNotFoundBody": "یہ پروفائل موجود نہیں ہے یا اسے ہٹا دیا گیا ہے۔",
+    "userMetaDescription": "Velanto پر {username} کے ایلیمینیشن-کوئز پیکس — کوئی ایک کھیل کر دیکھیں کہ کون سب سے بہتر ثابت ہوتا ہے۔",
+    "backToDiscover": "دریافت پر واپس جائیں",
+    "errorTitle": "کچھ غلط ہو گیا",
+    "errorBody": "ہم یہ پروفائل لوڈ نہیں کر سکے۔ براہ کرم دوبارہ کوشش کریں۔",
+    "tryAgain": "دوبارہ کوشش کریں"
   }
 }

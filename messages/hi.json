@@ -333,5 +333,21 @@
     "follow": "फ़ॉलो करें",
     "packs": "पैक",
     "noPacks": "अभी तक कोई पैक नहीं।"
+  },
+  "pages": {
+    "createTitle": "पैक बनाएँ",
+    "createSubtitle": "एक एलिमिनेशन फ़ॉर्मेट चुनें और अपने राउंड तैयार करें। आइटम टेक्स्ट या YouTube लिंक हो सकते हैं।",
+    "metaProfile": "प्रोफ़ाइल",
+    "metaEditProfile": "प्रोफ़ाइल संपादित करें",
+    "metaPlaying": "{title} खेल रहे हैं",
+    "metaResult": "{title} — नतीजा",
+    "packNotFound": "पैक नहीं मिला",
+    "userNotFound": "उपयोगकर्ता नहीं मिला",
+    "userNotFoundBody": "यह प्रोफ़ाइल मौजूद नहीं है या हटा दी गई है।",
+    "userMetaDescription": "Velanto पर {username} के एलिमिनेशन-क्विज़ पैक — किसी एक को खेलें और देखें कि कौन बाज़ी मारता है।",
+    "backToDiscover": "खोज पर वापस जाएँ",
+    "errorTitle": "कुछ गड़बड़ हो गई",
+    "errorBody": "हम यह प्रोफ़ाइल लोड नहीं कर सके। कृपया फिर से प्रयास करें।",
+    "tryAgain": "फिर से प्रयास करें"
   }
 }

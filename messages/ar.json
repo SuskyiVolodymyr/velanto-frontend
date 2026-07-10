@@ -333,5 +333,21 @@
     "follow": "متابعة",
     "packs": "الحِزَم",
     "noPacks": "لا توجد حزم بعد."
+  },
+  "pages": {
+    "createTitle": "أنشئ حزمة",
+    "createSubtitle": "اختر نمط إقصاء وابنِ جولاتك. يمكن أن تكون العناصر نصًا أو رابط YouTube.",
+    "metaProfile": "الملف الشخصي",
+    "metaEditProfile": "تعديل الملف الشخصي",
+    "metaPlaying": "جارٍ لعب {title}",
+    "metaResult": "{title} — النتيجة",
+    "packNotFound": "الحزمة غير موجودة",
+    "userNotFound": "المستخدم غير موجود",
+    "userNotFoundBody": "هذا الملف الشخصي غير موجود أو تمّت إزالته.",
+    "userMetaDescription": "حزم اختبارات الإقصاء الخاصة بـ {username} على Velanto — العب إحداها لترى من يتصدّر في النهاية.",
+    "backToDiscover": "العودة إلى الاكتشاف",
+    "errorTitle": "حدث خطأ ما",
+    "errorBody": "تعذّر تحميل هذا الملف الشخصي. حاول مرة أخرى.",
+    "tryAgain": "حاول مرة أخرى"
   }
 }

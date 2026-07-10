@@ -333,5 +333,21 @@
     "follow": "Подписаться",
     "packs": "Паки",
     "noPacks": "Пока нет паков."
+  },
+  "pages": {
+    "createTitle": "Создать пак",
+    "createSubtitle": "Выбери формат на выбывание и собери свои раунды. Элементы могут быть текстом или ссылкой на YouTube.",
+    "metaProfile": "Профиль",
+    "metaEditProfile": "Редактировать профиль",
+    "metaPlaying": "Играешь в {title}",
+    "metaResult": "{title} — Результат",
+    "packNotFound": "Пак не найден",
+    "userNotFound": "Пользователь не найден",
+    "userNotFoundBody": "Такого профиля не существует или он был удалён.",
+    "userMetaDescription": "Паки на выбывание от {username} на Velanto — запусти любой, чтобы узнать, кто окажется лучшим.",
+    "backToDiscover": "К обзору паков",
+    "errorTitle": "Что-то пошло не так",
+    "errorBody": "Не удалось загрузить профиль. Попробуй снова.",
+    "tryAgain": "Попробовать снова"
   }
 }

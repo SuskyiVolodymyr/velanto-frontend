@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { AuthorScreen } from "@/src/features/author/AuthorScreen";
 import {
@@ -15,6 +16,7 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
+  const t = await getTranslations("pages");
 
   let profile;
   try {
@@ -26,13 +28,16 @@ export async function generateMetadata({
     return {};
   }
   if (!profile)
-    return { title: "User not found", robots: { index: false, follow: false } };
+    return {
+      title: t("userNotFound"),
+      robots: { index: false, follow: false },
+    };
 
   const url = `${SITE_URL}/users/${id}`;
   const title = `${profile.username} — Velanto`;
   const description =
     profile.bio?.trim() ||
-    `${profile.username}'s elimination-quiz packs on Velanto — play through one to see who's left standing.`;
+    t("userMetaDescription", { username: profile.username });
 
   return {
     title,

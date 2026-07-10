@@ -333,5 +333,21 @@
     "follow": "Seguir",
     "packs": "Packs",
     "noPacks": "Aún no hay packs."
+  },
+  "pages": {
+    "createTitle": "Crear un pack",
+    "createSubtitle": "Elige un formato de eliminación y crea tus rondas. Los elementos pueden ser texto o un enlace de YouTube.",
+    "metaProfile": "Perfil",
+    "metaEditProfile": "Editar perfil",
+    "metaPlaying": "Jugando {title}",
+    "metaResult": "{title} — Resultado",
+    "packNotFound": "Pack no encontrado",
+    "userNotFound": "Usuario no encontrado",
+    "userNotFoundBody": "Este perfil no existe o ha sido eliminado.",
+    "userMetaDescription": "Los packs de quiz de eliminación de {username} en Velanto: juega uno para ver quién sale ganando.",
+    "backToDiscover": "Volver a descubrir",
+    "errorTitle": "Algo salió mal",
+    "errorBody": "No pudimos cargar este perfil. Inténtalo de nuevo.",
+    "tryAgain": "Inténtalo de nuevo"
   }
 }

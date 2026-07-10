@@ -333,5 +333,21 @@
     "follow": "Suivre",
     "packs": "Packs",
     "noPacks": "Aucun pack pour l'instant."
+  },
+  "pages": {
+    "createTitle": "Créer un pack",
+    "createSubtitle": "Choisissez un format d'élimination et composez vos manches. Les éléments peuvent être du texte ou un lien YouTube.",
+    "metaProfile": "Profil",
+    "metaEditProfile": "Modifier le profil",
+    "metaPlaying": "En cours : {title}",
+    "metaResult": "{title} — Résultat",
+    "packNotFound": "Pack introuvable",
+    "userNotFound": "Utilisateur introuvable",
+    "userNotFoundBody": "Ce profil n'existe pas ou a été supprimé.",
+    "userMetaDescription": "Les packs de quiz à élimination de {username} sur Velanto — lancez-en un pour voir qui s'impose.",
+    "backToDiscover": "Retour à la découverte",
+    "errorTitle": "Une erreur est survenue",
+    "errorBody": "Impossible de charger ce profil. Veuillez réessayer.",
+    "tryAgain": "Réessayer"
   }
 }
