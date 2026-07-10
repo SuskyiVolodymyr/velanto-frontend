@@ -11,7 +11,7 @@
     "moderation": "Modération",
     "admin": "Administration",
     "feedback": "Retours",
-    "rules": "Rules"
+    "rules": "Règles"
   },
   "settings": {
     "title": "Préférences",
@@ -21,42 +21,42 @@
     "languageSelectAria": "Langue de l'interface"
   },
   "streamerMode": {
-    "hiddenHint": "Hidden because of streamer mode",
-    "hiddenName": "Hidden",
-    "reveal": "Reveal",
-    "settingsHeading": "Privacy",
-    "settingsLabel": "Streamer mode",
-    "settingsDescription": "Hides all viewer avatars, names, and comments so you can screen-share without exposing anyone. Reveal any item individually when you need to.",
-    "on": "On",
-    "off": "Off"
+    "hiddenHint": "Masqué par le mode streamer",
+    "hiddenName": "Masqué",
+    "reveal": "Afficher",
+    "settingsHeading": "Confidentialité",
+    "settingsLabel": "Mode streamer",
+    "settingsDescription": "Masque tous les avatars, noms et commentaires des spectateurs pour que vous puissiez partager votre écran sans exposer personne. Affichez chaque élément individuellement selon vos besoins.",
+    "on": "Activé",
+    "off": "Désactivé"
   },
   "auth": {
-    "acceptRules": "I have read and accept the <link>Community Rules</link>."
+    "acceptRules": "J'ai lu et j'accepte les <link>Règles de la communauté</link>."
   },
   "rules": {
-    "metaTitle": "Community Rules — Velanto",
-    "metaDescription": "The community rules for creating and playing packs on Velanto — read them before you register.",
-    "heading": "Community Rules",
-    "intro": "These rules keep Velanto safe and fair for everyone. By creating an account you agree to follow them.",
-    "loadError": "We couldn't load the rules right now. Please try again in a moment."
+    "metaTitle": "Règles de la communauté — Velanto",
+    "metaDescription": "Les règles de la communauté pour créer et jouer des packs sur Velanto — à lire avant de vous inscrire.",
+    "heading": "Règles de la communauté",
+    "intro": "Ces règles garantissent que Velanto reste sûr et équitable pour tous. En créant un compte, vous acceptez de les respecter.",
+    "loadError": "Nous n'avons pas pu charger les règles pour le moment. Veuillez réessayer dans un instant."
   },
   "banReason": {
-    "label": "Reason",
-    "placeholder": "Select a reason…",
-    "other": "Other",
-    "detailLabelRequired": "Details (required)",
-    "detailLabelOptional": "Details (optional)",
-    "detailPlaceholder": "Add context for this ban",
-    "detailRequired": "Please add details for this ban.",
-    "loadError": "Couldn't load ban reasons. Try again."
+    "label": "Motif",
+    "placeholder": "Sélectionnez un motif…",
+    "other": "Autre",
+    "detailLabelRequired": "Détails (obligatoire)",
+    "detailLabelOptional": "Détails (facultatif)",
+    "detailPlaceholder": "Ajoutez du contexte pour ce bannissement",
+    "detailRequired": "Veuillez ajouter des détails pour ce bannissement.",
+    "loadError": "Impossible de charger les motifs. Réessayez."
   },
   "banned": {
-    "heading": "Your account is banned",
-    "reasonLabel": "Reason",
-    "detailLabel": "Details",
-    "expiresOn": "Your ban is lifted on {date}.",
-    "permanent": "This ban is permanent.",
-    "rulesLink": "Read the Community Rules",
-    "other": "Other"
+    "heading": "Votre compte est banni",
+    "reasonLabel": "Motif",
+    "detailLabel": "Détails",
+    "expiresOn": "Votre bannissement sera levé le {date}.",
+    "permanent": "Ce bannissement est permanent.",
+    "rulesLink": "Lire les Règles de la communauté",
+    "other": "Autre"
   }
 }

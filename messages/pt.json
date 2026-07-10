@@ -10,8 +10,8 @@
     "support": "Suporte",
     "moderation": "Moderação",
     "admin": "Administração",
-    "feedback": "Feedback",
-    "rules": "Rules"
+    "feedback": "Comentários",
+    "rules": "Regras"
   },
   "settings": {
     "title": "Preferências",
@@ -21,42 +21,42 @@
     "languageSelectAria": "Idioma da interface"
   },
   "streamerMode": {
-    "hiddenHint": "Hidden because of streamer mode",
-    "hiddenName": "Hidden",
-    "reveal": "Reveal",
-    "settingsHeading": "Privacy",
-    "settingsLabel": "Streamer mode",
-    "settingsDescription": "Hides all viewer avatars, names, and comments so you can screen-share without exposing anyone. Reveal any item individually when you need to.",
-    "on": "On",
-    "off": "Off"
+    "hiddenHint": "Oculto pelo modo streamer",
+    "hiddenName": "Oculto",
+    "reveal": "Mostrar",
+    "settingsHeading": "Privacidade",
+    "settingsLabel": "Modo streamer",
+    "settingsDescription": "Oculta todos os avatares, nomes e comentários dos espectadores para que você possa compartilhar a tela sem expor ninguém. Mostre qualquer item individualmente quando precisar.",
+    "on": "Ativado",
+    "off": "Desativado"
   },
   "auth": {
-    "acceptRules": "I have read and accept the <link>Community Rules</link>."
+    "acceptRules": "Li e aceito as <link>Regras da comunidade</link>."
   },
   "rules": {
-    "metaTitle": "Community Rules — Velanto",
-    "metaDescription": "The community rules for creating and playing packs on Velanto — read them before you register.",
-    "heading": "Community Rules",
-    "intro": "These rules keep Velanto safe and fair for everyone. By creating an account you agree to follow them.",
-    "loadError": "We couldn't load the rules right now. Please try again in a moment."
+    "metaTitle": "Regras da comunidade — Velanto",
+    "metaDescription": "As regras da comunidade para criar e jogar pacotes no Velanto — leia-as antes de se registrar.",
+    "heading": "Regras da comunidade",
+    "intro": "Estas regras mantêm o Velanto seguro e justo para todos. Ao criar uma conta, você concorda em segui-las.",
+    "loadError": "Não foi possível carregar as regras agora. Tente novamente em instantes."
   },
   "banReason": {
-    "label": "Reason",
-    "placeholder": "Select a reason…",
-    "other": "Other",
-    "detailLabelRequired": "Details (required)",
-    "detailLabelOptional": "Details (optional)",
-    "detailPlaceholder": "Add context for this ban",
-    "detailRequired": "Please add details for this ban.",
-    "loadError": "Couldn't load ban reasons. Try again."
+    "label": "Motivo",
+    "placeholder": "Selecione um motivo…",
+    "other": "Outro",
+    "detailLabelRequired": "Detalhes (obrigatório)",
+    "detailLabelOptional": "Detalhes (opcional)",
+    "detailPlaceholder": "Adicione contexto para este banimento",
+    "detailRequired": "Adicione detalhes para este banimento.",
+    "loadError": "Não foi possível carregar os motivos. Tente novamente."
   },
   "banned": {
-    "heading": "Your account is banned",
-    "reasonLabel": "Reason",
-    "detailLabel": "Details",
-    "expiresOn": "Your ban is lifted on {date}.",
-    "permanent": "This ban is permanent.",
-    "rulesLink": "Read the Community Rules",
-    "other": "Other"
+    "heading": "Sua conta está banida",
+    "reasonLabel": "Motivo",
+    "detailLabel": "Detalhes",
+    "expiresOn": "Seu banimento é removido em {date}.",
+    "permanent": "Este banimento é permanente.",
+    "rulesLink": "Ler as Regras da comunidade",
+    "other": "Outro"
   }
 }

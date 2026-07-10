@@ -11,7 +11,7 @@
     "moderation": "मॉडरेशन",
     "admin": "एडमिन",
     "feedback": "प्रतिक्रिया",
-    "rules": "Rules"
+    "rules": "नियम"
   },
   "settings": {
     "title": "प्राथमिकताएँ",
@@ -21,42 +21,42 @@
     "languageSelectAria": "इंटरफ़ेस भाषा"
   },
   "streamerMode": {
-    "hiddenHint": "Hidden because of streamer mode",
-    "hiddenName": "Hidden",
-    "reveal": "Reveal",
-    "settingsHeading": "Privacy",
-    "settingsLabel": "Streamer mode",
-    "settingsDescription": "Hides all viewer avatars, names, and comments so you can screen-share without exposing anyone. Reveal any item individually when you need to.",
-    "on": "On",
-    "off": "Off"
+    "hiddenHint": "स्ट्रीमर मोड के कारण छिपाया गया",
+    "hiddenName": "छिपा हुआ",
+    "reveal": "दिखाएँ",
+    "settingsHeading": "गोपनीयता",
+    "settingsLabel": "स्ट्रीमर मोड",
+    "settingsDescription": "सभी दर्शकों के अवतार, नाम और टिप्पणियाँ छिपा देता है ताकि आप किसी को उजागर किए बिना स्क्रीन साझा कर सकें। ज़रूरत पड़ने पर किसी भी आइटम को अलग से दिखाएँ।",
+    "on": "चालू",
+    "off": "बंद"
   },
   "auth": {
-    "acceptRules": "I have read and accept the <link>Community Rules</link>."
+    "acceptRules": "मैंने <link>समुदाय नियम</link> पढ़ लिए हैं और उन्हें स्वीकार करता/करती हूँ।"
   },
   "rules": {
-    "metaTitle": "Community Rules — Velanto",
-    "metaDescription": "The community rules for creating and playing packs on Velanto — read them before you register.",
-    "heading": "Community Rules",
-    "intro": "These rules keep Velanto safe and fair for everyone. By creating an account you agree to follow them.",
-    "loadError": "We couldn't load the rules right now. Please try again in a moment."
+    "metaTitle": "समुदाय नियम — Velanto",
+    "metaDescription": "Velanto पर पैक बनाने और खेलने के लिए समुदाय नियम — रजिस्टर करने से पहले इन्हें पढ़ें।",
+    "heading": "समुदाय नियम",
+    "intro": "ये नियम Velanto को सभी के लिए सुरक्षित और निष्पक्ष बनाए रखते हैं। खाता बनाकर आप इनका पालन करने के लिए सहमत होते हैं।",
+    "loadError": "हम अभी नियम लोड नहीं कर सके। कृपया थोड़ी देर में फिर से प्रयास करें।"
   },
   "banReason": {
-    "label": "Reason",
-    "placeholder": "Select a reason…",
-    "other": "Other",
-    "detailLabelRequired": "Details (required)",
-    "detailLabelOptional": "Details (optional)",
-    "detailPlaceholder": "Add context for this ban",
-    "detailRequired": "Please add details for this ban.",
-    "loadError": "Couldn't load ban reasons. Try again."
+    "label": "कारण",
+    "placeholder": "एक कारण चुनें…",
+    "other": "अन्य",
+    "detailLabelRequired": "विवरण (आवश्यक)",
+    "detailLabelOptional": "विवरण (वैकल्पिक)",
+    "detailPlaceholder": "इस प्रतिबंध के लिए संदर्भ जोड़ें",
+    "detailRequired": "कृपया इस प्रतिबंध के लिए विवरण जोड़ें।",
+    "loadError": "प्रतिबंध के कारण लोड नहीं हो सके। फिर से प्रयास करें।"
   },
   "banned": {
-    "heading": "Your account is banned",
-    "reasonLabel": "Reason",
-    "detailLabel": "Details",
-    "expiresOn": "Your ban is lifted on {date}.",
-    "permanent": "This ban is permanent.",
-    "rulesLink": "Read the Community Rules",
-    "other": "Other"
+    "heading": "आपका खाता प्रतिबंधित है",
+    "reasonLabel": "कारण",
+    "detailLabel": "विवरण",
+    "expiresOn": "आपका प्रतिबंध {date} को हट जाएगा।",
+    "permanent": "यह प्रतिबंध स्थायी है।",
+    "rulesLink": "समुदाय नियम पढ़ें",
+    "other": "अन्य"
   }
 }

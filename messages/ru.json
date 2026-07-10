@@ -11,7 +11,7 @@
     "moderation": "Модерация",
     "admin": "Администрирование",
     "feedback": "Отзывы",
-    "rules": "Rules"
+    "rules": "Правила"
   },
   "settings": {
     "title": "Настройки",
@@ -21,42 +21,42 @@
     "languageSelectAria": "Язык интерфейса"
   },
   "streamerMode": {
-    "hiddenHint": "Hidden because of streamer mode",
-    "hiddenName": "Hidden",
-    "reveal": "Reveal",
-    "settingsHeading": "Privacy",
-    "settingsLabel": "Streamer mode",
-    "settingsDescription": "Hides all viewer avatars, names, and comments so you can screen-share without exposing anyone. Reveal any item individually when you need to.",
-    "on": "On",
-    "off": "Off"
+    "hiddenHint": "Скрыто из-за режима стримера",
+    "hiddenName": "Скрыто",
+    "reveal": "Показать",
+    "settingsHeading": "Конфиденциальность",
+    "settingsLabel": "Режим стримера",
+    "settingsDescription": "Скрывает аватары, имена и комментарии всех зрителей, чтобы вы могли делиться экраном, никого не раскрывая. Показывайте любой элемент по отдельности, когда нужно.",
+    "on": "Вкл.",
+    "off": "Выкл."
   },
   "auth": {
-    "acceptRules": "I have read and accept the <link>Community Rules</link>."
+    "acceptRules": "Я прочитал(а) и принимаю <link>Правила сообщества</link>."
   },
   "rules": {
-    "metaTitle": "Community Rules — Velanto",
-    "metaDescription": "The community rules for creating and playing packs on Velanto — read them before you register.",
-    "heading": "Community Rules",
-    "intro": "These rules keep Velanto safe and fair for everyone. By creating an account you agree to follow them.",
-    "loadError": "We couldn't load the rules right now. Please try again in a moment."
+    "metaTitle": "Правила сообщества — Velanto",
+    "metaDescription": "Правила сообщества для создания и прохождения паков в Velanto — прочитайте их перед регистрацией.",
+    "heading": "Правила сообщества",
+    "intro": "Эти правила делают Velanto безопасным и честным для всех. Создавая аккаунт, вы соглашаетесь их соблюдать.",
+    "loadError": "Не удалось загрузить правила. Пожалуйста, попробуйте снова через мгновение."
   },
   "banReason": {
-    "label": "Reason",
-    "placeholder": "Select a reason…",
-    "other": "Other",
-    "detailLabelRequired": "Details (required)",
-    "detailLabelOptional": "Details (optional)",
-    "detailPlaceholder": "Add context for this ban",
-    "detailRequired": "Please add details for this ban.",
-    "loadError": "Couldn't load ban reasons. Try again."
+    "label": "Причина",
+    "placeholder": "Выберите причину…",
+    "other": "Другое",
+    "detailLabelRequired": "Подробности (обязательно)",
+    "detailLabelOptional": "Подробности (необязательно)",
+    "detailPlaceholder": "Добавьте контекст для этой блокировки",
+    "detailRequired": "Пожалуйста, добавьте подробности для этой блокировки.",
+    "loadError": "Не удалось загрузить причины. Попробуйте снова."
   },
   "banned": {
-    "heading": "Your account is banned",
-    "reasonLabel": "Reason",
-    "detailLabel": "Details",
-    "expiresOn": "Your ban is lifted on {date}.",
-    "permanent": "This ban is permanent.",
-    "rulesLink": "Read the Community Rules",
-    "other": "Other"
+    "heading": "Ваш аккаунт заблокирован",
+    "reasonLabel": "Причина",
+    "detailLabel": "Подробности",
+    "expiresOn": "Ваша блокировка снимается {date}.",
+    "permanent": "Эта блокировка постоянная.",
+    "rulesLink": "Читать Правила сообщества",
+    "other": "Другое"
   }
 }

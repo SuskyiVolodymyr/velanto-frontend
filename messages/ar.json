@@ -11,7 +11,7 @@
     "moderation": "الإشراف",
     "admin": "الإدارة",
     "feedback": "الملاحظات",
-    "rules": "Rules"
+    "rules": "القواعد"
   },
   "settings": {
     "title": "التفضيلات",
@@ -21,42 +21,42 @@
     "languageSelectAria": "لغة الواجهة"
   },
   "streamerMode": {
-    "hiddenHint": "Hidden because of streamer mode",
-    "hiddenName": "Hidden",
-    "reveal": "Reveal",
-    "settingsHeading": "Privacy",
-    "settingsLabel": "Streamer mode",
-    "settingsDescription": "Hides all viewer avatars, names, and comments so you can screen-share without exposing anyone. Reveal any item individually when you need to.",
-    "on": "On",
-    "off": "Off"
+    "hiddenHint": "مخفي بسبب وضع البث",
+    "hiddenName": "مخفي",
+    "reveal": "إظهار",
+    "settingsHeading": "الخصوصية",
+    "settingsLabel": "وضع البث",
+    "settingsDescription": "يخفي جميع الصور الرمزية وأسماء المشاهدين وتعليقاتهم حتى تتمكن من مشاركة شاشتك دون كشف هوية أي شخص. أظهِر أي عنصر على حدة عند الحاجة.",
+    "on": "مُفعّل",
+    "off": "مُعطّل"
   },
   "auth": {
-    "acceptRules": "I have read and accept the <link>Community Rules</link>."
+    "acceptRules": "لقد قرأت <link>قواعد المجتمع</link> وأوافق عليها."
   },
   "rules": {
-    "metaTitle": "Community Rules — Velanto",
-    "metaDescription": "The community rules for creating and playing packs on Velanto — read them before you register.",
-    "heading": "Community Rules",
-    "intro": "These rules keep Velanto safe and fair for everyone. By creating an account you agree to follow them.",
-    "loadError": "We couldn't load the rules right now. Please try again in a moment."
+    "metaTitle": "قواعد المجتمع — Velanto",
+    "metaDescription": "قواعد المجتمع لإنشاء الحزم ولعبها على Velanto — اقرأها قبل التسجيل.",
+    "heading": "قواعد المجتمع",
+    "intro": "تحافظ هذه القواعد على أمان Velanto وعدالته للجميع. بإنشائك حسابًا فإنك توافق على الالتزام بها.",
+    "loadError": "تعذّر تحميل القواعد الآن. يرجى المحاولة مرة أخرى بعد قليل."
   },
   "banReason": {
-    "label": "Reason",
-    "placeholder": "Select a reason…",
-    "other": "Other",
-    "detailLabelRequired": "Details (required)",
-    "detailLabelOptional": "Details (optional)",
-    "detailPlaceholder": "Add context for this ban",
-    "detailRequired": "Please add details for this ban.",
-    "loadError": "Couldn't load ban reasons. Try again."
+    "label": "السبب",
+    "placeholder": "اختر سببًا…",
+    "other": "أخرى",
+    "detailLabelRequired": "التفاصيل (مطلوبة)",
+    "detailLabelOptional": "التفاصيل (اختيارية)",
+    "detailPlaceholder": "أضف سياقًا لهذا الحظر",
+    "detailRequired": "يرجى إضافة تفاصيل لهذا الحظر.",
+    "loadError": "تعذّر تحميل أسباب الحظر. حاول مرة أخرى."
   },
   "banned": {
-    "heading": "Your account is banned",
-    "reasonLabel": "Reason",
-    "detailLabel": "Details",
-    "expiresOn": "Your ban is lifted on {date}.",
-    "permanent": "This ban is permanent.",
-    "rulesLink": "Read the Community Rules",
-    "other": "Other"
+    "heading": "حسابك محظور",
+    "reasonLabel": "السبب",
+    "detailLabel": "التفاصيل",
+    "expiresOn": "يُرفع الحظر عن حسابك في {date}.",
+    "permanent": "هذا الحظر دائم.",
+    "rulesLink": "اقرأ قواعد المجتمع",
+    "other": "أخرى"
   }
 }
