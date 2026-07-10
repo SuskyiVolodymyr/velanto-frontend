@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { describe, it, expect, vi } from "vitest";
 import { PackDetailScreen } from "./PackDetailScreen";
 import type { Pack } from "@/src/shared/types/pack";
@@ -54,19 +55,21 @@ describe("PackDetailScreen", () => {
     expect(
       screen.getByText("Pick your favorite each round."),
     ).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Play" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "Play now" })).toHaveAttribute(
       "href",
       "/packs/p1/play",
     );
   });
 
-  it("renders each group's name and items for a non-nxn pack", () => {
+  it("lists each group as a chip with its item count for a non-nxn pack", () => {
     render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
     expect(screen.getByText("2016")).toBeInTheDocument();
-    expect(screen.getByText("Opening A")).toBeInTheDocument();
+    expect(screen.getByText("1 item")).toBeInTheDocument();
+    // The full item titles are no longer listed on the pack page.
+    expect(screen.queryByText("Opening A")).not.toBeInTheDocument();
   });
 
-  it("renders categories (not groups) for an nxn pack", () => {
+  it("lists categories (not groups) as chips for an nxn pack", () => {
     const nxnPack: Pack = {
       ...BASE_PACK,
       format: "nxn",
@@ -81,7 +84,8 @@ describe("PackDetailScreen", () => {
     };
     render(<PackDetailScreen pack={nxnPack} results={RESULTS} />);
     expect(screen.getByText("Category A")).toBeInTheDocument();
-    expect(screen.getByText("Item X")).toBeInTheDocument();
+    expect(screen.getByText("1 item")).toBeInTheDocument();
+    expect(screen.queryByText("Item X")).not.toBeInTheDocument();
     expect(screen.queryByText("2016")).not.toBeInTheDocument();
   });
 
