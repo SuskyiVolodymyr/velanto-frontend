@@ -1,36 +1,40 @@
 "use client";
 
 import { useState } from "react";
-import type { FormEvent } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import {
+  useForm,
+  useFieldArray,
+  useWatch,
+  FormProvider,
+  type FieldErrors,
+} from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { packsClient } from "@/src/shared/lib/packs-client";
-import { ApiError } from "@/src/shared/lib/api-client";
+import type { CreatePackInput } from "@/src/shared/lib/packs-client";
+import { messageFromError } from "@/src/shared/lib/messageFromError";
 import { COVER_TONES } from "@/src/shared/types/pack";
-import type { PackFormat, PackTag, Group, Category } from "@/src/shared/types/pack";
+import type { PackFormat, Group, Category } from "@/src/shared/types/pack";
 import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { TagPickerModal } from "@/src/shared/components/TagPickerModal";
+import { TextField } from "@/src/shared/components/form/TextField";
+import { TextareaField } from "@/src/shared/components/form/TextareaField";
+import { getFieldError } from "@/src/shared/components/form/getFieldError";
 import { cn } from "@/src/shared/lib/cn";
 import { GroupEditor } from "@/src/features/create/GroupEditor";
 import { CategoryEditor } from "@/src/features/create/CategoryEditor";
-
-const MAX_TAGS = 10;
-const TITLE_MAX = 100;
-const DESCRIPTION_MAX = 500;
-// Matches backend's CATEGORY_COUNT / MIN|MAX_VERSUS_ROUNDS / MIN|MAX_VERSUS_N
-// (velanto-backend/src/modules/packs/types/nxn.ts) — exactly 2 categories,
-// a true head-to-head "versus", not N-way.
-const CATEGORY_COUNT = 2;
-const MIN_VERSUS_ROUNDS = 1;
-const MAX_VERSUS_ROUNDS = 30;
-const MIN_VERSUS_N = 1;
-const MAX_VERSUS_N = 6;
-// Matches backend's HEAD_TO_HEAD_ROUND_SIZE
-// (velanto-backend/src/modules/packs/types/head-to-head.ts) — exactly 2
-// items per matchup, a group IS a matchup.
-const HEAD_TO_HEAD_ROUND_SIZE = 2;
+import {
+  createPackSchema,
+  type CreatePackValues,
+  MAX_TAGS,
+  MIN_VERSUS_ROUNDS,
+  MAX_VERSUS_ROUNDS,
+  MIN_VERSUS_N,
+  MAX_VERSUS_N,
+} from "@/src/features/create/create-pack.schema";
 
 function newGroup(): Group {
   return { id: crypto.randomUUID(), name: "", selectionMode: "manual", items: [] };
@@ -40,172 +44,106 @@ function newCategory(): Category {
   return { id: crypto.randomUUID(), name: "", items: [] };
 }
 
-interface FormFields {
-  title: string;
-  description: string;
-  tags: PackTag[];
-  format: PackFormat;
-  groups: Group[];
-  categories: Category[];
-  versusRounds?: number;
-  versusN?: number;
+// A group's validation error can attach to its name, its round-size (an
+// index-level issue used by the 1v1 format), its item list, or its sample size.
+// Surface the first in that priority order — matching the old validate()'s
+// short-circuit ordering.
+function firstGroupError(errors: FieldErrors<CreatePackValues>, index: number): string | undefined {
+  return (
+    getFieldError(errors, `groups.${index}.name`) ??
+    getFieldError(errors, `groups.${index}`) ??
+    getFieldError(errors, `groups.${index}.items`) ??
+    getFieldError(errors, `groups.${index}.sampleSize`)
+  );
 }
 
-export function validate(fields: FormFields): string | null {
-  if (!fields.title.trim()) return "Give your pack a title.";
-  if (fields.title.length > TITLE_MAX) return `Title must be ${TITLE_MAX} characters or fewer.`;
-  if (!fields.description.trim()) return "Add a short description.";
-  if (fields.description.length > DESCRIPTION_MAX) {
-    return `Description must be ${DESCRIPTION_MAX} characters or fewer.`;
-  }
-  if (fields.tags.length > MAX_TAGS) return `Choose at most ${MAX_TAGS} tags.`;
-
-  if (fields.format === "nxn") {
-    if (fields.categories.length !== CATEGORY_COUNT) {
-      return `NxN packs need exactly ${CATEGORY_COUNT} categories.`;
-    }
-    for (const category of fields.categories) {
-      if (!category.name.trim()) return "Every category needs a name.";
-      if (category.items.length === 0) {
-        return `Category "${category.name}" needs at least one item.`;
-      }
-    }
-    if (!fields.versusRounds || fields.versusRounds < MIN_VERSUS_ROUNDS) {
-      return "Set how many rounds to play.";
-    }
-    if (fields.versusRounds > MAX_VERSUS_ROUNDS) {
-      return `Rounds can't exceed ${MAX_VERSUS_ROUNDS}.`;
-    }
-    if (!fields.versusN || fields.versusN < MIN_VERSUS_N) {
-      return "Set how many items to show per side.";
-    }
-    if (fields.versusN > MAX_VERSUS_N) {
-      return `Items per round can't exceed ${MAX_VERSUS_N}.`;
-    }
-    for (const category of fields.categories) {
-      if (fields.versusN > category.items.length) {
-        return `Category "${category.name}" needs at least ${fields.versusN} item(s).`;
-      }
-    }
-    return null;
-  }
-
-  if (fields.format === "1v1") {
-    if (fields.groups.length === 0) return "Add at least one group.";
-    for (const group of fields.groups) {
-      if (!group.name.trim()) return "Every group needs a name.";
-      const roundSize = group.selectionMode === "random" ? group.sampleSize : group.items.length;
-      if (roundSize !== HEAD_TO_HEAD_ROUND_SIZE) {
-        return group.selectionMode === "random"
-          ? `Group "${group.name}" needs a sample size of exactly ${HEAD_TO_HEAD_ROUND_SIZE} for a 1v1 matchup.`
-          : `Group "${group.name}" needs exactly ${HEAD_TO_HEAD_ROUND_SIZE} items for a 1v1 matchup.`;
-      }
-    }
-    return null;
-  }
-
-  if (fields.groups.length === 0) return "Add at least one group.";
-  for (const group of fields.groups) {
-    if (!group.name.trim()) return "Every group needs a name.";
-    if (group.items.length === 0) return `Group "${group.name}" needs at least one item.`;
-    if (group.selectionMode === "random") {
-      if (!group.sampleSize || group.sampleSize < 1) {
-        return `Group "${group.name}" needs a sample size.`;
-      }
-      if (group.sampleSize > group.items.length) {
-        return `Group "${group.name}"'s sample size can't exceed its ${group.items.length} item(s).`;
-      }
-    }
-  }
-  return null;
+function firstCategoryError(errors: FieldErrors<CreatePackValues>, index: number): string | undefined {
+  return (
+    getFieldError(errors, `categories.${index}.name`) ??
+    getFieldError(errors, `categories.${index}.items`)
+  );
 }
 
-function messageFromError(error: unknown): string {
-  if (error instanceof ApiError) {
-    const body = error.body as { message?: string | string[] } | null;
-    if (body?.message) {
-      return Array.isArray(body.message) ? body.message[0] : body.message;
-    }
-  }
-  return "Something went wrong. Please try again.";
-}
+const FORMAT_OPTIONS: { value: PackFormat; title: string; blurb: string }[] = [
+  { value: "save_one", title: "Save One", blurb: "Show a group, keep one to advance." },
+  { value: "sacrifice_one", title: "Sacrifice One", blurb: "Remove one at a time; a favorite remains." },
+  { value: "nxn", title: "NxN", blurb: "Two categories compared side by side." },
+  { value: "rank_blind", title: "Rank Blind", blurb: "Place each pick blind into a growing ranked list." },
+  { value: "1v1", title: "1v1", blurb: "Pick a winner in each head-to-head matchup." },
+];
 
 export function CreatePackForm() {
   const router = useRouter();
   const pathname = usePathname();
   const { status } = useAuth();
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
-  const [coverTone, setCoverTone] = useState<string>(COVER_TONES[0]);
-  const [tags, setTags] = useState<PackTag[]>([]);
-  const [format, setFormat] = useState<PackFormat>("save_one");
-  const [groups, setGroups] = useState<Group[]>([newGroup()]);
-  const [categories, setCategories] = useState<Category[]>([newCategory(), newCategory()]);
-  const [versusRounds, setVersusRounds] = useState<number | undefined>(undefined);
-  const [versusN, setVersusN] = useState<number | undefined>(undefined);
-  const [error, setError] = useState("");
-  const [pending, setPending] = useState(false);
+
+  const methods = useForm<CreatePackValues>({
+    resolver: zodResolver(createPackSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      coverTone: COVER_TONES[0],
+      tags: [],
+      format: "save_one",
+      groups: [newGroup()],
+      categories: [newCategory(), newCategory()],
+      versusRounds: undefined,
+      versusN: undefined,
+    },
+  });
+  const {
+    control,
+    handleSubmit,
+    setValue,
+    setError,
+    formState: { isSubmitting, errors },
+  } = methods;
+
+  // The groups field array owns add/remove; rendering iterates the `useWatch`ed
+  // value arrays (below) keyed by each entry's stable domain `id` — NOT
+  // `fields` — because `fields` updates synchronously on append while `useWatch`
+  // lags a render, so `fields[i]` can point at a value that isn't there yet.
+  // Per-entry edits go back through `setValue` (which does NOT remount the child
+  // the way useFieldArray's `update` does — that would drop focus mid-keystroke).
+  // Categories need no field array: they are fixed at CATEGORY_COUNT with no
+  // add/remove UI, so `setValue` on each index is all that's required.
+  const groupsArray = useFieldArray({ control, name: "groups", keyName: "fieldId" });
+
+  // `useWatch` (not `methods.watch`) is the memoization-safe subscription the
+  // React Compiler is happy with.
+  const format = useWatch({ control, name: "format" });
+  const tags = useWatch({ control, name: "tags" });
+  const coverTone = useWatch({ control, name: "coverTone" });
+  const groups = useWatch({ control, name: "groups" });
+  const categories = useWatch({ control, name: "categories" });
+  const versusRounds = useWatch({ control, name: "versusRounds" });
+  const versusN = useWatch({ control, name: "versusN" });
+
   const [tagPickerOpen, setTagPickerOpen] = useState(false);
 
-  function updateGroup(id: string, next: Group) {
-    setGroups((prev) => prev.map((g) => (g.id === id ? next : g)));
-  }
+  async function onValid(values: CreatePackValues) {
+    const base = {
+      title: values.title,
+      description: values.description,
+      coverTone: values.coverTone,
+      format: values.format,
+      tags: values.tags,
+    };
+    const input: CreatePackInput =
+      values.format === "nxn"
+        ? {
+            ...base,
+            categories: values.categories,
+            versusRounds: values.versusRounds,
+            versusN: values.versusN,
+          }
+        : { ...base, groups: values.groups };
 
-  function removeGroup(id: string) {
-    setGroups((prev) => prev.filter((g) => g.id !== id));
-  }
-
-  function updateCategory(id: string, next: Category) {
-    setCategories((prev) => prev.map((c) => (c.id === id ? next : c)));
-  }
-
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
-    if (pending) return;
-
-    const validationError = validate({
-      title,
-      description,
-      tags,
-      format,
-      groups,
-      categories,
-      versusRounds,
-      versusN,
-    });
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
-    setError("");
-    setPending(true);
     try {
-      const pack = await packsClient.create(
-        format === "nxn"
-          ? {
-              title: title.trim(),
-              description: description.trim(),
-              coverTone,
-              format,
-              tags,
-              categories,
-              versusRounds,
-              versusN,
-            }
-          : {
-              title: title.trim(),
-              description: description.trim(),
-              coverTone,
-              format,
-              tags,
-              groups,
-            },
-      );
+      const pack = await packsClient.create(input);
       router.push(`/packs/${pack.id}`);
     } catch (err) {
-      setError(messageFromError(err));
-    } finally {
-      setPending(false);
+      setError("root", { message: messageFromError(err) });
     }
   }
 
@@ -222,211 +160,206 @@ export function CreatePackForm() {
     );
   }
 
+  const groupsError = getFieldError(errors, "groups");
+  const categoriesError = getFieldError(errors, "categories");
+  const versusRoundsError = getFieldError(errors, "versusRounds");
+  const versusNError = getFieldError(errors, "versusN");
+
   return (
-    <form onSubmit={handleSubmit} noValidate className="flex max-w-2xl flex-col gap-8">
-      <section className="flex flex-col gap-3">
-        <Text as="h2" variant="title" className="text-lg">
-          Basics
-        </Text>
-        <Input
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          placeholder="Pack title"
-          aria-label="Pack title"
-          disabled={pending}
-        />
-        <textarea
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          placeholder="Short description"
-          aria-label="Pack description"
-          disabled={pending}
-          rows={2}
-          className="w-full resize-none rounded-[10px] border border-border bg-surface px-4 py-2.5 text-sm text-foreground placeholder:text-foreground-tertiary outline-none focus-visible:ring-2 focus-visible:ring-acc disabled:opacity-45"
-        />
-        <div className="flex flex-col gap-2">
-          <Text variant="secondary" className="text-xs">
-            Cover tone
+    <FormProvider {...methods}>
+      <form onSubmit={handleSubmit(onValid)} noValidate className="flex max-w-2xl flex-col gap-8">
+        <section className="flex flex-col gap-3">
+          <Text as="h2" variant="title" className="text-lg">
+            Basics
+          </Text>
+          <TextField
+            name="title"
+            label="Pack title"
+            srOnlyLabel
+            placeholder="Pack title"
+            disabled={isSubmitting}
+          />
+          <TextareaField
+            name="description"
+            label="Pack description"
+            srOnlyLabel
+            placeholder="Short description"
+            rows={2}
+            disabled={isSubmitting}
+          />
+          <div className="flex flex-col gap-2">
+            <Text variant="secondary" className="text-xs">
+              Cover tone
+            </Text>
+            <div className="flex gap-2">
+              {COVER_TONES.map((tone) => (
+                <button
+                  key={tone}
+                  type="button"
+                  onClick={() => setValue("coverTone", tone)}
+                  aria-label={`Cover tone ${tone}`}
+                  aria-pressed={coverTone === tone}
+                  style={{ background: tone }}
+                  className={cn(
+                    "h-9 w-9 rounded-[10px] border-2",
+                    coverTone === tone ? "border-acc" : "border-transparent",
+                  )}
+                />
+              ))}
+            </div>
+          </div>
+          <div className="flex flex-col gap-2">
+            <Text variant="secondary" className="text-xs">
+              Tags
+            </Text>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => setTagPickerOpen(true)}
+              className="self-start"
+            >
+              {tags.length === 0
+                ? "Select tags"
+                : `${tags.length} tag${tags.length === 1 ? "" : "s"} selected`}
+            </Button>
+            <TagPickerModal
+              open={tagPickerOpen}
+              onClose={() => setTagPickerOpen(false)}
+              selected={tags}
+              onChange={(next) => setValue("tags", next)}
+              maxTags={MAX_TAGS}
+            />
+          </div>
+        </section>
+
+        <section className="flex flex-col gap-3">
+          <Text as="h2" variant="title" className="text-lg">
+            Format
           </Text>
           <div className="flex gap-2">
-            {COVER_TONES.map((tone) => (
+            {FORMAT_OPTIONS.map((option) => (
               <button
-                key={tone}
+                key={option.value}
                 type="button"
-                onClick={() => setCoverTone(tone)}
-                aria-label={`Cover tone ${tone}`}
-                aria-pressed={coverTone === tone}
-                style={{ background: tone }}
+                onClick={() => setValue("format", option.value)}
+                aria-pressed={format === option.value}
                 className={cn(
-                  "h-9 w-9 rounded-[10px] border-2",
-                  coverTone === tone ? "border-acc" : "border-transparent",
+                  "flex-1 rounded-[12px] border px-4 py-3 text-left transition-colors",
+                  format === option.value ? "border-acc/40 bg-acc/5" : "border-border bg-white/[0.02]",
                 )}
-              />
+              >
+                <Text className="font-semibold">{option.title}</Text>
+                <Text variant="secondary" className="mt-1 text-xs">
+                  {option.blurb}
+                </Text>
+              </button>
             ))}
           </div>
-        </div>
-        <div className="flex flex-col gap-2">
-          <Text variant="secondary" className="text-xs">
-            Tags
-          </Text>
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={() => setTagPickerOpen(true)}
-            className="self-start"
-          >
-            {tags.length === 0 ? "Select tags" : `${tags.length} tag${tags.length === 1 ? "" : "s"} selected`}
-          </Button>
-          <TagPickerModal
-            open={tagPickerOpen}
-            onClose={() => setTagPickerOpen(false)}
-            selected={tags}
-            onChange={setTags}
-            maxTags={MAX_TAGS}
-          />
-        </div>
-      </section>
-
-      <section className="flex flex-col gap-3">
-        <Text as="h2" variant="title" className="text-lg">
-          Format
-        </Text>
-        <div className="flex gap-2">
-          <button
-            type="button"
-            onClick={() => setFormat("save_one")}
-            aria-pressed={format === "save_one"}
-            className={cn(
-              "flex-1 rounded-[12px] border px-4 py-3 text-left transition-colors",
-              format === "save_one" ? "border-acc/40 bg-acc/5" : "border-border bg-white/[0.02]",
-            )}
-          >
-            <Text className="font-semibold">Save One</Text>
-            <Text variant="secondary" className="mt-1 text-xs">
-              Show a group, keep one to advance.
-            </Text>
-          </button>
-          <button
-            type="button"
-            onClick={() => setFormat("sacrifice_one")}
-            aria-pressed={format === "sacrifice_one"}
-            className={cn(
-              "flex-1 rounded-[12px] border px-4 py-3 text-left transition-colors",
-              format === "sacrifice_one" ? "border-acc/40 bg-acc/5" : "border-border bg-white/[0.02]",
-            )}
-          >
-            <Text className="font-semibold">Sacrifice One</Text>
-            <Text variant="secondary" className="mt-1 text-xs">
-              Remove one at a time; a favorite remains.
-            </Text>
-          </button>
-          <button
-            type="button"
-            onClick={() => setFormat("nxn")}
-            aria-pressed={format === "nxn"}
-            className={cn(
-              "flex-1 rounded-[12px] border px-4 py-3 text-left transition-colors",
-              format === "nxn" ? "border-acc/40 bg-acc/5" : "border-border bg-white/[0.02]",
-            )}
-          >
-            <Text className="font-semibold">NxN</Text>
-            <Text variant="secondary" className="mt-1 text-xs">
-              Two categories compared side by side.
-            </Text>
-          </button>
-          <button
-            type="button"
-            onClick={() => setFormat("rank_blind")}
-            aria-pressed={format === "rank_blind"}
-            className={cn(
-              "flex-1 rounded-[12px] border px-4 py-3 text-left transition-colors",
-              format === "rank_blind" ? "border-acc/40 bg-acc/5" : "border-border bg-white/[0.02]",
-            )}
-          >
-            <Text className="font-semibold">Rank Blind</Text>
-            <Text variant="secondary" className="mt-1 text-xs">
-              Place each pick blind into a growing ranked list.
-            </Text>
-          </button>
-          <button
-            type="button"
-            onClick={() => setFormat("1v1")}
-            aria-pressed={format === "1v1"}
-            className={cn(
-              "flex-1 rounded-[12px] border px-4 py-3 text-left transition-colors",
-              format === "1v1" ? "border-acc/40 bg-acc/5" : "border-border bg-white/[0.02]",
-            )}
-          >
-            <Text className="font-semibold">1v1</Text>
-            <Text variant="secondary" className="mt-1 text-xs">
-              Pick a winner in each head-to-head matchup.
-            </Text>
-          </button>
-        </div>
-      </section>
-
-      {format === "nxn" ? (
-        <section className="flex flex-col gap-3">
-          <Text as="h2" variant="title" className="text-lg">
-            Categories
-          </Text>
-          {categories.map((category, index) => (
-            <CategoryEditor
-              key={category.id}
-              category={category}
-              index={index}
-              onChange={(next) => updateCategory(category.id, next)}
-            />
-          ))}
-          <div className="flex gap-3">
-            <Input
-              type="number"
-              min={MIN_VERSUS_ROUNDS}
-              max={MAX_VERSUS_ROUNDS}
-              value={versusRounds ?? ""}
-              onChange={(e) => setVersusRounds(e.target.value === "" ? undefined : Number(e.target.value))}
-              placeholder="Rounds"
-              aria-label="Rounds"
-              className="flex-1"
-            />
-            <Input
-              type="number"
-              min={MIN_VERSUS_N}
-              max={MAX_VERSUS_N}
-              value={versusN ?? ""}
-              onChange={(e) => setVersusN(e.target.value === "" ? undefined : Number(e.target.value))}
-              placeholder="Items per round"
-              aria-label="Items per round"
-              className="flex-1"
-            />
-          </div>
         </section>
-      ) : (
-        <section className="flex flex-col gap-3">
-          <Text as="h2" variant="title" className="text-lg">
-            Groups
+
+        {format === "nxn" ? (
+          <section className="flex flex-col gap-3">
+            <Text as="h2" variant="title" className="text-lg">
+              Categories
+            </Text>
+            {categories.map((category, index) => (
+              <CategoryEditor
+                key={category.id}
+                category={category}
+                index={index}
+                onChange={(next) =>
+                  setValue(`categories.${index}`, next, { shouldValidate: false, shouldDirty: true })
+                }
+                error={firstCategoryError(errors, index)}
+              />
+            ))}
+            {categoriesError && (
+              <Text role="alert" className="text-sm text-[#ff6b6b]">
+                {categoriesError}
+              </Text>
+            )}
+            <div className="flex gap-3">
+              <div className="flex flex-1 flex-col gap-2">
+                <Input
+                  type="number"
+                  min={MIN_VERSUS_ROUNDS}
+                  max={MAX_VERSUS_ROUNDS}
+                  value={versusRounds ?? ""}
+                  onChange={(e) =>
+                    setValue("versusRounds", e.target.value === "" ? undefined : Number(e.target.value), {
+                      shouldValidate: false,
+                    })
+                  }
+                  placeholder="Rounds"
+                  aria-label="Rounds"
+                />
+                {versusRoundsError && (
+                  <Text role="alert" className="text-sm text-[#ff6b6b]">
+                    {versusRoundsError}
+                  </Text>
+                )}
+              </div>
+              <div className="flex flex-1 flex-col gap-2">
+                <Input
+                  type="number"
+                  min={MIN_VERSUS_N}
+                  max={MAX_VERSUS_N}
+                  value={versusN ?? ""}
+                  onChange={(e) =>
+                    setValue("versusN", e.target.value === "" ? undefined : Number(e.target.value), {
+                      shouldValidate: false,
+                    })
+                  }
+                  placeholder="Items per round"
+                  aria-label="Items per round"
+                />
+                {versusNError && (
+                  <Text role="alert" className="text-sm text-[#ff6b6b]">
+                    {versusNError}
+                  </Text>
+                )}
+              </div>
+            </div>
+          </section>
+        ) : (
+          <section className="flex flex-col gap-3">
+            <Text as="h2" variant="title" className="text-lg">
+              Groups
+            </Text>
+            {groups.map((group, index) => (
+              <GroupEditor
+                key={group.id}
+                group={group}
+                index={index}
+                removable={groups.length > 1}
+                onChange={(next) =>
+                  setValue(`groups.${index}`, next, { shouldValidate: false, shouldDirty: true })
+                }
+                onRemove={() => groupsArray.remove(index)}
+                error={firstGroupError(errors, index)}
+              />
+            ))}
+            {groupsError && (
+              <Text role="alert" className="text-sm text-[#ff6b6b]">
+                {groupsError}
+              </Text>
+            )}
+            <Button type="button" variant="secondary" onClick={() => groupsArray.append(newGroup())}>
+              + Add group (one more round)
+            </Button>
+          </section>
+        )}
+
+        {errors.root?.message && (
+          <Text role="alert" className="text-sm text-[#ff6b6b]">
+            {errors.root.message}
           </Text>
-          {groups.map((group, index) => (
-            <GroupEditor
-              key={group.id}
-              group={group}
-              index={index}
-              removable={groups.length > 1}
-              onChange={(next) => updateGroup(group.id, next)}
-              onRemove={() => removeGroup(group.id)}
-            />
-          ))}
-          <Button type="button" variant="secondary" onClick={() => setGroups((prev) => [...prev, newGroup()])}>
-            + Add group (one more round)
-          </Button>
-        </section>
-      )}
+        )}
 
-      {error && <Text className="text-sm text-[#ff6b6b]">{error}</Text>}
-
-      <Button type="submit" disabled={pending} className="h-[50px] w-full">
-        {pending ? "Publishing…" : "Publish"}
-      </Button>
-    </form>
+        <Button type="submit" disabled={isSubmitting} className="h-[50px] w-full">
+          {isSubmitting ? "Publishing…" : "Publish"}
+        </Button>
+      </form>
+    </FormProvider>
   );
 }

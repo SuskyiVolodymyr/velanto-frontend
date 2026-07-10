@@ -16,9 +16,11 @@ interface GroupEditorProps {
   removable: boolean;
   onChange: (group: Group) => void;
   onRemove: () => void;
+  /** Validation error for this group, surfaced by the parent form on submit. */
+  error?: string;
 }
 
-export function GroupEditor({ group, index, removable, onChange, onRemove }: GroupEditorProps) {
+export function GroupEditor({ group, index, removable, onChange, onRemove, error }: GroupEditorProps) {
   const [draftType, setDraftType] = useState<ItemType>("text");
   const [draftTitle, setDraftTitle] = useState("");
   const [draftValue, setDraftValue] = useState("");
@@ -235,6 +237,12 @@ export function GroupEditor({ group, index, removable, onChange, onRemove }: Gro
       <Text variant="tertiary" className="text-xs">
         {group.items.length} item{group.items.length === 1 ? "" : "s"}
       </Text>
+
+      {error && (
+        <Text role="alert" className="text-sm text-[#ff6b6b]">
+          {error}
+        </Text>
+      )}
     </Card>
   );
 }
