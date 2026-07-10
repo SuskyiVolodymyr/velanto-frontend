@@ -7,7 +7,6 @@ import {
   resolveRoundCandidates,
   resolveVersusRoundCandidates,
 } from "@/src/features/play/round-sampling";
-import { FORMAT_COPY } from "@/src/features/play/play-format-copy";
 import type { Category, Item, Pack } from "@/src/shared/types/pack";
 
 export interface Pick {
@@ -50,7 +49,6 @@ export interface PlaySession {
  * Returns a flat interface so PlayScreen can stay a thin presentational shell.
  */
 export function usePlaySession(pack: Pack): PlaySession {
-  const copy = FORMAT_COPY[pack.format];
   const isVersus = pack.format === "nxn";
   const groups = pack.groups ?? [];
   const categories = pack.categories ?? [];
@@ -160,7 +158,7 @@ export function usePlaySession(pack: Pack): PlaySession {
   // didn't include your own vote (e.g. after a failed request).
   const recordedRef = useRef(false);
   useEffect(() => {
-    if (!isFinished || recordedRef.current || !copy) return;
+    if (!isFinished || recordedRef.current) return;
     recordedRef.current = true;
     const recordedPicks = picks.map(({ groupId, itemId }) => ({
       groupId,
@@ -170,7 +168,7 @@ export function usePlaySession(pack: Pack): PlaySession {
       .record(pack.id, { picks: recordedPicks })
       .then(() => writeLastPlayPicks(pack.id, recordedPicks))
       .catch(() => undefined);
-  }, [isFinished, pack.id, picks, copy]);
+  }, [isFinished, pack.id, picks]);
 
   const progressPct = isFinished
     ? 100

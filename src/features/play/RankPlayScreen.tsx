@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { Text } from "@/src/shared/components/Text";
@@ -15,6 +16,7 @@ import type { RecordedPick } from "@/src/shared/types/play-results";
 
 export function RankPlayScreen({ pack }: { pack: Pack }) {
   const { status } = useAuth();
+  const t = useTranslations("play");
   const router = useRouter();
   const pathname = usePathname();
   const groups = pack.groups ?? [];
@@ -78,16 +80,14 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   if (status === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">
-          You need to be logged in to play a pack.
-        </Text>
+        <Text variant="secondary">{t("loginRequired")}</Text>
         <Button
           className="mt-4"
           onClick={() =>
             router.push(`/auth?next=${encodeURIComponent(pathname)}`)
           }
         >
-          Log in
+          {t("logIn")}
         </Button>
       </div>
     );
@@ -103,8 +103,8 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
         <div className="mb-2 flex items-center justify-between">
           <Text variant="tertiary" className="text-xs uppercase tracking-wide">
             {isFinished
-              ? "Complete"
-              : `Round ${roundIndex + 1} of ${totalRounds}`}
+              ? t("complete")
+              : t("roundOf", { current: roundIndex + 1, total: totalRounds })}
           </Text>
         </div>
         <div className="h-[3px] w-full rounded-full bg-white/[0.06]">
@@ -122,7 +122,10 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
               {group.name}
             </Text>
             <Text variant="secondary">
-              Choose where this one goes — item {placedCount + 1} of {slotCount}
+              {t("rankInstruction", {
+                current: placedCount + 1,
+                total: slotCount,
+              })}
             </Text>
           </section>
 
@@ -145,8 +148,11 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
                   onClick={() => place(slotIndex)}
                   aria-label={
                     filled
-                      ? `Rank ${slotIndex + 1}: ${filled.title}`
-                      : `Place at rank ${slotIndex + 1}`
+                      ? t("rankSlotFilled", {
+                          rank: slotIndex + 1,
+                          title: filled.title,
+                        })
+                      : t("rankSlotEmpty", { rank: slotIndex + 1 })
                   }
                   className={cn(
                     "flex h-[100px] flex-col justify-between rounded-2xl border p-3 text-left transition-colors",
@@ -164,7 +170,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
                       !filled && "text-foreground-tertiary",
                     )}
                   >
-                    {filled ? filled.title : "Place here"}
+                    {filled ? filled.title : t("placeHere")}
                   </Text>
                 </button>
               );
@@ -176,7 +182,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
       {isRoundComplete && group && (
         <section className="mb-10 text-center">
           <Text as="h1" variant="title" className="mb-2 text-3xl">
-            {group.name} ranked
+            {t("ranked", { name: group.name })}
           </Text>
           <div className="mb-8 flex flex-col gap-2 text-left">
             {Array.from({ length: slotCount }, (_, slotIndex) => (
@@ -193,23 +199,23 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
               </div>
             ))}
           </div>
-          <Button onClick={goToNextRound}>Next round →</Button>
+          <Button onClick={goToNextRound}>{t("nextRound")}</Button>
         </section>
       )}
 
       {isFinished && (
         <section className="mb-10 text-center">
           <Text as="h1" variant="title" className="mb-2 text-3xl">
-            Your ranking is done
+            {t("rankingDone")}
           </Text>
           <Text variant="secondary" className="mb-4">
-            All {totalRounds} round{totalRounds === 1 ? "" : "s"} placed, blind.
+            {t("rankingDoneSummary", { count: totalRounds })}
           </Text>
           <Link
             href={`/packs/${pack.id}/result`}
             className={buttonClassName("primary", "w-fit")}
           >
-            See your result
+            {t("seeResult")}
           </Link>
         </section>
       )}

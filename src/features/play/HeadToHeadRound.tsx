@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import type { Item } from "@/src/shared/types/pack";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
@@ -10,6 +11,7 @@ interface HeadToHeadCardProps {
 }
 
 function HeadToHeadCard({ item, onPick }: HeadToHeadCardProps) {
+  const t = useTranslations("play");
   const videoId = item.type === "youtube" ? extractYouTubeId(item.value) : null;
 
   if (videoId) {
@@ -19,7 +21,7 @@ function HeadToHeadCard({ item, onPick }: HeadToHeadCardProps) {
         <button
           type="button"
           onClick={onPick}
-          aria-label={`Pick ${item.title}`}
+          aria-label={t("pick", { name: item.title })}
           className="flex min-h-[80px] flex-1 items-center justify-center p-4 text-center transition-colors hover:bg-white/[0.04]"
         >
           <Text className="font-semibold">{item.title}</Text>
@@ -32,7 +34,7 @@ function HeadToHeadCard({ item, onPick }: HeadToHeadCardProps) {
     <button
       type="button"
       onClick={onPick}
-      aria-label={`Pick ${item.title}`}
+      aria-label={t("pick", { name: item.title })}
       className="flex min-h-[230px] flex-1 flex-col justify-center gap-3 rounded-2xl border border-border bg-surface p-4 text-center transition-colors hover:border-border-strong"
     >
       {item.type === "youtube" && <Badge className="mx-auto">YouTube</Badge>}

@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 
 interface PlayProgressProps {
@@ -13,13 +14,14 @@ export function PlayProgress({
   totalRounds,
   progressPct,
 }: PlayProgressProps) {
+  const t = useTranslations("play");
   return (
     <div className="mb-8">
       <div className="mb-2 flex items-center justify-between">
         <Text variant="tertiary" className="text-xs uppercase tracking-wide">
           {isFinished
-            ? "Complete"
-            : `Round ${roundIndex + 1} of ${totalRounds}`}
+            ? t("complete")
+            : t("roundOf", { current: roundIndex + 1, total: totalRounds })}
         </Text>
       </div>
       <div className="h-[3px] w-full rounded-full bg-white/[0.06]">
