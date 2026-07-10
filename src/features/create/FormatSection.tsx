@@ -7,11 +7,31 @@ import { cn } from "@/src/shared/lib/cn";
 import { type CreatePackValues } from "@/src/features/create/create-pack.schema";
 
 const FORMAT_OPTIONS: { value: PackFormat; title: string; blurb: string }[] = [
-  { value: "save_one", title: "Save One", blurb: "Show a group, keep one to advance." },
-  { value: "sacrifice_one", title: "Sacrifice One", blurb: "Remove one at a time; a favorite remains." },
-  { value: "nxn", title: "NxN", blurb: "Two categories compared side by side." },
-  { value: "rank_blind", title: "Rank Blind", blurb: "Place each pick blind into a growing ranked list." },
-  { value: "1v1", title: "1v1", blurb: "Pick a winner in each head-to-head matchup." },
+  {
+    value: "save_one",
+    title: "Save One",
+    blurb: "Show a group, keep one to advance.",
+  },
+  {
+    value: "sacrifice_one",
+    title: "Sacrifice One",
+    blurb: "Remove one at a time; a favorite remains.",
+  },
+  {
+    value: "nxn",
+    title: "NxN",
+    blurb: "Two categories compared side by side.",
+  },
+  {
+    value: "rank_blind",
+    title: "Rank Blind",
+    blurb: "Place each pick blind into a growing ranked list.",
+  },
+  {
+    value: "1v1",
+    title: "1v1",
+    blurb: "Pick a winner in each head-to-head matchup.",
+  },
 ];
 
 /**
@@ -37,7 +57,9 @@ export function FormatSection() {
             aria-pressed={format === option.value}
             className={cn(
               "flex-1 rounded-[12px] border px-4 py-3 text-left transition-colors",
-              format === option.value ? "border-acc/40 bg-acc/5" : "border-border bg-white/[0.02]",
+              format === option.value
+                ? "border-acc/40 bg-acc/5"
+                : "border-border bg-white/[0.02]",
             )}
           >
             <Text className="font-semibold">{option.title}</Text>

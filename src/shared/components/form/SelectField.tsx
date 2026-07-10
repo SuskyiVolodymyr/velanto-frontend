@@ -4,8 +4,10 @@ import { Select, type SelectOption } from "@/src/shared/components/Select";
 import { FormField } from "@/src/shared/components/form/FormField";
 import { getFieldError } from "@/src/shared/components/form/getFieldError";
 
-export interface SelectFieldProps
-  extends Omit<SelectHTMLAttributes<HTMLSelectElement>, "name"> {
+export interface SelectFieldProps extends Omit<
+  SelectHTMLAttributes<HTMLSelectElement>,
+  "name"
+> {
   name: string;
   label: string;
   srOnlyLabel?: boolean;
@@ -38,11 +40,17 @@ export function SelectField({
   // Merge the error association with any caller-supplied describedby (e.g. a
   // hint id) so neither clobbers the other.
   const describedBy =
-    [error ? `${fieldId}-error` : undefined, ariaDescribedby].filter(Boolean).join(" ") ||
-    undefined;
+    [error ? `${fieldId}-error` : undefined, ariaDescribedby]
+      .filter(Boolean)
+      .join(" ") || undefined;
 
   return (
-    <FormField htmlFor={fieldId} label={label} error={error} srOnlyLabel={srOnlyLabel}>
+    <FormField
+      htmlFor={fieldId}
+      label={label}
+      error={error}
+      srOnlyLabel={srOnlyLabel}
+    >
       <Select
         id={fieldId}
         options={options}

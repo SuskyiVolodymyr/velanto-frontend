@@ -15,6 +15,7 @@
 ### Task 1: `AdminUserRow` type gains `trusted`
 
 **Files:**
+
 - Modify: `src/shared/types/admin.ts:11-18`
 
 - [ ] **Step 1: Add the field**
@@ -52,6 +53,7 @@ git commit -m "feat: add trusted field to AdminUserRow"
 ### Task 2: `usersClient.setTrusted()`
 
 **Files:**
+
 - Modify: `src/shared/lib/users-client.ts`
 
 - [ ] **Step 1: Add the result type and client method**
@@ -91,6 +93,7 @@ git commit -m "feat: add usersClient.setTrusted"
 ### Task 3: `UsersTab.tsx` — Trust/Untrust button
 
 **Files:**
+
 - Modify: `src/features/admin/UsersTab.tsx`
 - Test: `src/features/admin/UsersTab.test.tsx`
 
@@ -123,41 +126,77 @@ vi.mock("@/src/shared/lib/users-client", () => ({
 3. Add these two tests inside `describe("UsersTab", ...)`, after the existing `"does not show a Ban button..."` test:
 
 ```ts
-  it("shows a Trust button for an untrusted target and marks them trusted on click", async () => {
-    vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [TARGET], total: 1, page: 1, limit: 20 });
-    vi.mocked(usersClient.setTrusted).mockResolvedValue({ id: "u2", trusted: true });
-    const user = userEvent.setup();
-    renderAsAdmin();
-
-    await screen.findByText("bob");
-    await user.click(screen.getByRole("button", { name: "Trust" }));
-
-    await waitFor(() => expect(usersClient.setTrusted).toHaveBeenCalledWith("u2", true));
-    expect(await screen.findByRole("button", { name: "Untrust" })).toBeInTheDocument();
+it("shows a Trust button for an untrusted target and marks them trusted on click", async () => {
+  vi.mocked(adminClient.listUsers).mockResolvedValue({
+    items: [TARGET],
+    total: 1,
+    page: 1,
+    limit: 20,
   });
-
-  it("shows an Untrust button for a trusted target and reverts them on click", async () => {
-    const trustedTarget: AdminUserRow = { ...TARGET, trusted: true };
-    vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [trustedTarget], total: 1, page: 1, limit: 20 });
-    vi.mocked(usersClient.setTrusted).mockResolvedValue({ id: "u2", trusted: false });
-    const user = userEvent.setup();
-    renderAsAdmin();
-
-    await screen.findByText("bob");
-    await user.click(screen.getByRole("button", { name: "Untrust" }));
-
-    await waitFor(() => expect(usersClient.setTrusted).toHaveBeenCalledWith("u2", false));
-    expect(await screen.findByRole("button", { name: "Trust" })).toBeInTheDocument();
+  vi.mocked(usersClient.setTrusted).mockResolvedValue({
+    id: "u2",
+    trusted: true,
   });
+  const user = userEvent.setup();
+  renderAsAdmin();
 
-  it("does not show a Trust button for a target the actor cannot act on (equal rank)", async () => {
-    const peerAdmin: AdminUserRow = { ...TARGET, id: "u3", username: "peer", role: "admin" };
-    vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [peerAdmin], total: 1, page: 1, limit: 20 });
-    renderAsAdmin();
+  await screen.findByText("bob");
+  await user.click(screen.getByRole("button", { name: "Trust" }));
 
-    await screen.findByText("peer");
-    expect(screen.queryByRole("button", { name: "Trust" })).not.toBeInTheDocument();
+  await waitFor(() =>
+    expect(usersClient.setTrusted).toHaveBeenCalledWith("u2", true),
+  );
+  expect(
+    await screen.findByRole("button", { name: "Untrust" }),
+  ).toBeInTheDocument();
+});
+
+it("shows an Untrust button for a trusted target and reverts them on click", async () => {
+  const trustedTarget: AdminUserRow = { ...TARGET, trusted: true };
+  vi.mocked(adminClient.listUsers).mockResolvedValue({
+    items: [trustedTarget],
+    total: 1,
+    page: 1,
+    limit: 20,
   });
+  vi.mocked(usersClient.setTrusted).mockResolvedValue({
+    id: "u2",
+    trusted: false,
+  });
+  const user = userEvent.setup();
+  renderAsAdmin();
+
+  await screen.findByText("bob");
+  await user.click(screen.getByRole("button", { name: "Untrust" }));
+
+  await waitFor(() =>
+    expect(usersClient.setTrusted).toHaveBeenCalledWith("u2", false),
+  );
+  expect(
+    await screen.findByRole("button", { name: "Trust" }),
+  ).toBeInTheDocument();
+});
+
+it("does not show a Trust button for a target the actor cannot act on (equal rank)", async () => {
+  const peerAdmin: AdminUserRow = {
+    ...TARGET,
+    id: "u3",
+    username: "peer",
+    role: "admin",
+  };
+  vi.mocked(adminClient.listUsers).mockResolvedValue({
+    items: [peerAdmin],
+    total: 1,
+    page: 1,
+    limit: 20,
+  });
+  renderAsAdmin();
+
+  await screen.findByText("peer");
+  expect(
+    screen.queryByRole("button", { name: "Trust" }),
+  ).not.toBeInTheDocument();
+});
 ```
 
 - [ ] **Step 2: Run tests to verify they fail**
@@ -172,49 +211,53 @@ In `src/features/admin/UsersTab.tsx`:
 1. Add an `actionError`-adjacent handler, right after `handleUnban` (after line 101):
 
 ```ts
-  async function handleSetTrusted(id: string, trusted: boolean) {
-    setActionError("");
-    try {
-      await usersClient.setTrusted(id, trusted);
-      setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, trusted } : u)));
-    } catch {
-      setActionError(`Couldn't ${trusted ? "trust" : "untrust"} this user. Try again.`);
-    }
+async function handleSetTrusted(id: string, trusted: boolean) {
+  setActionError("");
+  try {
+    await usersClient.setTrusted(id, trusted);
+    setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, trusted } : u)));
+  } catch {
+    setActionError(
+      `Couldn't ${trusted ? "trust" : "untrust"} this user. Try again.`,
+    );
   }
+}
 ```
 
 2. In the JSX, inside the `canAct && (...)` block (line 142-164), add the new button alongside the Ban/Unban button:
 
 ```tsx
-                  {canAct && (
-                    <div className="flex gap-2">
-                      <Button
-                        variant="secondary"
-                        onClick={() => void handleSetTrusted(row.id, !row.trusted)}
-                      >
-                        {row.trusted ? "Untrust" : "Trust"}
-                      </Button>
-                      {banned ? (
-                        <Button variant="secondary" onClick={() => void handleUnban(row.id)}>
-                          Unban
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="secondary"
-                          onClick={() => {
-                            const opening = banTargetId !== row.id;
-                            setBanTargetId(opening ? row.id : null);
-                            if (opening) {
-                              setBanDuration("week");
-                              setBanReason("");
-                            }
-                          }}
-                        >
-                          Ban
-                        </Button>
-                      )}
-                    </div>
-                  )}
+{
+  canAct && (
+    <div className="flex gap-2">
+      <Button
+        variant="secondary"
+        onClick={() => void handleSetTrusted(row.id, !row.trusted)}
+      >
+        {row.trusted ? "Untrust" : "Trust"}
+      </Button>
+      {banned ? (
+        <Button variant="secondary" onClick={() => void handleUnban(row.id)}>
+          Unban
+        </Button>
+      ) : (
+        <Button
+          variant="secondary"
+          onClick={() => {
+            const opening = banTargetId !== row.id;
+            setBanTargetId(opening ? row.id : null);
+            if (opening) {
+              setBanDuration("week");
+              setBanReason("");
+            }
+          }}
+        >
+          Ban
+        </Button>
+      )}
+    </div>
+  );
+}
 ```
 
 (Only the new `Button` block is added; the existing `banned ? ... : ...` structure is unchanged.)

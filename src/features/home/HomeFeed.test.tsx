@@ -39,30 +39,53 @@ beforeEach(() => {
 
 describe("HomeFeed", () => {
   it("fetches with no filters on mount and renders the results", async () => {
-    vi.mocked(packsClient.list).mockResolvedValue({ items: [PACK_A], total: 1, page: 1, limit: 50 });
+    vi.mocked(packsClient.list).mockResolvedValue({
+      items: [PACK_A],
+      total: 1,
+      page: 1,
+      limit: 50,
+    });
     render(<HomeFeed />);
 
     expect(await screen.findByText("Best Anime Openings")).toBeInTheDocument();
-    expect(packsClient.list).toHaveBeenCalledWith({ format: undefined, tags: [], limit: 50 });
+    expect(packsClient.list).toHaveBeenCalledWith({
+      format: undefined,
+      tags: [],
+      limit: 50,
+    });
   });
 
   it("shows the empty state when no packs match", async () => {
-    vi.mocked(packsClient.list).mockResolvedValue({ items: [], total: 0, page: 1, limit: 50 });
+    vi.mocked(packsClient.list).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 50,
+    });
     render(<HomeFeed />);
 
-    expect(await screen.findByText("No packs match these filters yet.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("No packs match these filters yet."),
+    ).toBeInTheDocument();
   });
 
   it("shows an error message when the request fails", async () => {
     vi.mocked(packsClient.list).mockRejectedValue(new Error("network error"));
     render(<HomeFeed />);
 
-    expect(await screen.findByText("Couldn't load packs. Try again later.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Couldn't load packs. Try again later."),
+    ).toBeInTheDocument();
   });
 
   it("re-fetches with the selected format when a format chip is clicked", async () => {
     const user = userEvent.setup();
-    vi.mocked(packsClient.list).mockResolvedValue({ items: [PACK_A], total: 1, page: 1, limit: 50 });
+    vi.mocked(packsClient.list).mockResolvedValue({
+      items: [PACK_A],
+      total: 1,
+      page: 1,
+      limit: 50,
+    });
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
 
@@ -79,7 +102,12 @@ describe("HomeFeed", () => {
 
   it("re-fetches with selected tags (additive) when tags are toggled in the picker modal", async () => {
     const user = userEvent.setup();
-    vi.mocked(packsClient.list).mockResolvedValue({ items: [PACK_A], total: 1, page: 1, limit: 50 });
+    vi.mocked(packsClient.list).mockResolvedValue({
+      items: [PACK_A],
+      total: 1,
+      page: 1,
+      limit: 50,
+    });
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
 
@@ -115,15 +143,27 @@ describe("HomeFeed", () => {
   });
 
   it("includes a 1v1 filter chip", async () => {
-    vi.mocked(packsClient.list).mockResolvedValue({ items: [], total: 0, page: 1, limit: 50 });
+    vi.mocked(packsClient.list).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 50,
+    });
     render(<HomeFeed />);
-    expect(await screen.findByRole("button", { name: "1v1" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("button", { name: "1v1" }),
+    ).toBeInTheDocument();
   });
 
   describe("search", () => {
     it("debounces search input before re-fetching with q", async () => {
       const user = userEvent.setup();
-      vi.mocked(packsClient.list).mockResolvedValue({ items: [PACK_A], total: 1, page: 1, limit: 50 });
+      vi.mocked(packsClient.list).mockResolvedValue({
+        items: [PACK_A],
+        total: 1,
+        page: 1,
+        limit: 50,
+      });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
 
@@ -144,7 +184,12 @@ describe("HomeFeed", () => {
 
     it("trims leading/trailing whitespace before sending q", async () => {
       const user = userEvent.setup();
-      vi.mocked(packsClient.list).mockResolvedValue({ items: [PACK_A], total: 1, page: 1, limit: 50 });
+      vi.mocked(packsClient.list).mockResolvedValue({
+        items: [PACK_A],
+        total: 1,
+        page: 1,
+        limit: 50,
+      });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
 
@@ -164,7 +209,12 @@ describe("HomeFeed", () => {
 
     it("clearing the search box re-fetches without q", async () => {
       const user = userEvent.setup();
-      vi.mocked(packsClient.list).mockResolvedValue({ items: [PACK_A], total: 1, page: 1, limit: 50 });
+      vi.mocked(packsClient.list).mockResolvedValue({
+        items: [PACK_A],
+        total: 1,
+        page: 1,
+        limit: 50,
+      });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
 
@@ -197,7 +247,12 @@ describe("HomeFeed", () => {
 
   describe("popularity sort", () => {
     it("does not send sort/window by default", async () => {
-      vi.mocked(packsClient.list).mockResolvedValue({ items: [], total: 0, page: 1, limit: 50 });
+      vi.mocked(packsClient.list).mockResolvedValue({
+        items: [],
+        total: 0,
+        page: 1,
+        limit: 50,
+      });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
       const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
@@ -207,7 +262,12 @@ describe("HomeFeed", () => {
 
     it("sends sort=popular and window=week (default) when Popular is clicked", async () => {
       const user = userEvent.setup();
-      vi.mocked(packsClient.list).mockResolvedValue({ items: [], total: 0, page: 1, limit: 50 });
+      vi.mocked(packsClient.list).mockResolvedValue({
+        items: [],
+        total: 0,
+        page: 1,
+        limit: 50,
+      });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
 
@@ -222,22 +282,36 @@ describe("HomeFeed", () => {
 
     it("shows the window picker only when Popular is active", async () => {
       const user = userEvent.setup();
-      vi.mocked(packsClient.list).mockResolvedValue({ items: [], total: 0, page: 1, limit: 50 });
+      vi.mocked(packsClient.list).mockResolvedValue({
+        items: [],
+        total: 0,
+        page: 1,
+        limit: 50,
+      });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
 
-      expect(screen.queryByRole("button", { name: "Month" })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: "Month" }),
+      ).not.toBeInTheDocument();
 
       await user.click(screen.getByRole("button", { name: "Popular" }));
       expect(screen.getByRole("button", { name: "Month" })).toBeInTheDocument();
 
       await user.click(screen.getByRole("button", { name: "Relevance" }));
-      expect(screen.queryByRole("button", { name: "Month" })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: "Month" }),
+      ).not.toBeInTheDocument();
     });
 
     it("changing the window while Popular is active sends the new window", async () => {
       const user = userEvent.setup();
-      vi.mocked(packsClient.list).mockResolvedValue({ items: [], total: 0, page: 1, limit: 50 });
+      vi.mocked(packsClient.list).mockResolvedValue({
+        items: [],
+        total: 0,
+        page: 1,
+        limit: 50,
+      });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
       await user.click(screen.getByRole("button", { name: "Popular" }));
@@ -257,7 +331,12 @@ describe("HomeFeed", () => {
 
     it("switching back to Relevance omits sort and window from the next request", async () => {
       const user = userEvent.setup();
-      vi.mocked(packsClient.list).mockResolvedValue({ items: [], total: 0, page: 1, limit: 50 });
+      vi.mocked(packsClient.list).mockResolvedValue({
+        items: [],
+        total: 0,
+        page: 1,
+        limit: 50,
+      });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
       await user.click(screen.getByRole("button", { name: "Popular" }));
@@ -277,7 +356,12 @@ describe("HomeFeed", () => {
 
     it("resets the window back to the default when re-selecting Popular after switching away", async () => {
       const user = userEvent.setup();
-      vi.mocked(packsClient.list).mockResolvedValue({ items: [], total: 0, page: 1, limit: 50 });
+      vi.mocked(packsClient.list).mockResolvedValue({
+        items: [],
+        total: 0,
+        page: 1,
+        limit: 50,
+      });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
 

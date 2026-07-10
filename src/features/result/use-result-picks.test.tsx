@@ -25,11 +25,16 @@ describe("useResultPicks", () => {
   });
 
   it("falls back to sessionStorage picks when there is no ?p=", () => {
-    vi.mocked(readLastPlayPicks).mockReturnValue([{ groupId: "g1", itemId: "i2" }]);
+    vi.mocked(readLastPlayPicks).mockReturnValue([
+      { groupId: "g1", itemId: "i2" },
+    ]);
 
     const { result } = renderHook(() => useResultPicks("pack-1"));
 
-    expect(result.current).toEqual({ picks: [{ groupId: "g1", itemId: "i2" }], shared: false });
+    expect(result.current).toEqual({
+      picks: [{ groupId: "g1", itemId: "i2" }],
+      shared: false,
+    });
   });
 
   it("falls back to sessionStorage when ?p= is malformed", () => {

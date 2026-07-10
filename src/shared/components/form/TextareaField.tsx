@@ -4,8 +4,10 @@ import { Textarea } from "@/src/shared/components/Textarea";
 import { FormField } from "@/src/shared/components/form/FormField";
 import { getFieldError } from "@/src/shared/components/form/getFieldError";
 
-export interface TextareaFieldProps
-  extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, "name"> {
+export interface TextareaFieldProps extends Omit<
+  TextareaHTMLAttributes<HTMLTextAreaElement>,
+  "name"
+> {
   name: string;
   label: string;
   srOnlyLabel?: boolean;
@@ -32,11 +34,17 @@ export function TextareaField({
   // Merge the error association with any caller-supplied describedby (e.g. a
   // hint id) so neither clobbers the other.
   const describedBy =
-    [error ? `${fieldId}-error` : undefined, ariaDescribedby].filter(Boolean).join(" ") ||
-    undefined;
+    [error ? `${fieldId}-error` : undefined, ariaDescribedby]
+      .filter(Boolean)
+      .join(" ") || undefined;
 
   return (
-    <FormField htmlFor={fieldId} label={label} error={error} srOnlyLabel={srOnlyLabel}>
+    <FormField
+      htmlFor={fieldId}
+      label={label}
+      error={error}
+      srOnlyLabel={srOnlyLabel}
+    >
       <Textarea
         id={fieldId}
         aria-invalid={error ? true : undefined}

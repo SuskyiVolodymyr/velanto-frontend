@@ -1,5 +1,10 @@
 import { describe, expect, it, beforeEach } from "vitest";
-import { ACCENTS, getStoredAccent, getThemeInitScript, setStoredAccent } from "./theme";
+import {
+  ACCENTS,
+  getStoredAccent,
+  getThemeInitScript,
+  setStoredAccent,
+} from "./theme";
 
 beforeEach(() => {
   localStorage.clear();
@@ -18,7 +23,9 @@ describe("theme", () => {
 
   it("setStoredAccent applies the color to the --acc CSS custom property", () => {
     setStoredAccent("#39d98a");
-    expect(document.documentElement.style.getPropertyValue("--acc")).toBe("#39d98a");
+    expect(document.documentElement.style.getPropertyValue("--acc")).toBe(
+      "#39d98a",
+    );
   });
 
   it("getStoredAccent rejects a value outside the known accent list", () => {

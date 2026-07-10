@@ -19,14 +19,30 @@ beforeEach(() => {
 
 describe("GroupEditor", () => {
   it("adds a youtube item after successful oEmbed validation, keeping a typed title", async () => {
-    vi.mocked(fetchYouTubeOEmbed).mockResolvedValue({ title: "Guren no Yumiya (Official)" });
+    vi.mocked(fetchYouTubeOEmbed).mockResolvedValue({
+      title: "Guren no Yumiya (Official)",
+    });
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<GroupEditor group={emptyGroup()} index={0} removable={false} onChange={onChange} onRemove={vi.fn()} />);
+    render(
+      <GroupEditor
+        group={emptyGroup()}
+        index={0}
+        removable={false}
+        onChange={onChange}
+        onRemove={vi.fn()}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Link" }));
-    await user.type(screen.getByLabelText("Group 1 new item title"), "My title");
-    await user.type(screen.getByLabelText("Group 1 new item link"), "https://youtu.be/KsF_hdjWJjo");
+    await user.type(
+      screen.getByLabelText("Group 1 new item title"),
+      "My title",
+    );
+    await user.type(
+      screen.getByLabelText("Group 1 new item link"),
+      "https://youtu.be/KsF_hdjWJjo",
+    );
     await user.click(screen.getByRole("button", { name: "Add" }));
 
     await waitFor(() =>
@@ -45,19 +61,34 @@ describe("GroupEditor", () => {
   });
 
   it("falls back to the oEmbed video title when no title was typed", async () => {
-    vi.mocked(fetchYouTubeOEmbed).mockResolvedValue({ title: "Guren no Yumiya (Official)" });
+    vi.mocked(fetchYouTubeOEmbed).mockResolvedValue({
+      title: "Guren no Yumiya (Official)",
+    });
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<GroupEditor group={emptyGroup()} index={0} removable={false} onChange={onChange} onRemove={vi.fn()} />);
+    render(
+      <GroupEditor
+        group={emptyGroup()}
+        index={0}
+        removable={false}
+        onChange={onChange}
+        onRemove={vi.fn()}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Link" }));
-    await user.type(screen.getByLabelText("Group 1 new item link"), "https://youtu.be/KsF_hdjWJjo");
+    await user.type(
+      screen.getByLabelText("Group 1 new item link"),
+      "https://youtu.be/KsF_hdjWJjo",
+    );
     await user.click(screen.getByRole("button", { name: "Add" }));
 
     await waitFor(() =>
       expect(onChange).toHaveBeenCalledWith(
         expect.objectContaining({
-          items: [expect.objectContaining({ title: "Guren no Yumiya (Official)" })],
+          items: [
+            expect.objectContaining({ title: "Guren no Yumiya (Official)" }),
+          ],
         }),
       ),
     );
@@ -67,26 +98,52 @@ describe("GroupEditor", () => {
     vi.mocked(fetchYouTubeOEmbed).mockResolvedValue(null);
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<GroupEditor group={emptyGroup()} index={0} removable={false} onChange={onChange} onRemove={vi.fn()} />);
+    render(
+      <GroupEditor
+        group={emptyGroup()}
+        index={0}
+        removable={false}
+        onChange={onChange}
+        onRemove={vi.fn()}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Link" }));
-    await user.type(screen.getByLabelText("Group 1 new item link"), "https://youtu.be/doesnotexist");
+    await user.type(
+      screen.getByLabelText("Group 1 new item link"),
+      "https://youtu.be/doesnotexist",
+    );
     await user.click(screen.getByRole("button", { name: "Add" }));
 
-    expect(await screen.findByText("Couldn't find that video — check the link.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Couldn't find that video — check the link."),
+    ).toBeInTheDocument();
     expect(onChange).not.toHaveBeenCalled();
   });
 
   it("rejects a non-YouTube-shaped link without calling oEmbed", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<GroupEditor group={emptyGroup()} index={0} removable={false} onChange={onChange} onRemove={vi.fn()} />);
+    render(
+      <GroupEditor
+        group={emptyGroup()}
+        index={0}
+        removable={false}
+        onChange={onChange}
+        onRemove={vi.fn()}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Link" }));
-    await user.type(screen.getByLabelText("Group 1 new item link"), "not a link");
+    await user.type(
+      screen.getByLabelText("Group 1 new item link"),
+      "not a link",
+    );
     await user.click(screen.getByRole("button", { name: "Add" }));
 
-    expect(await screen.findByText("That doesn't look like a YouTube link.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("That doesn't look like a YouTube link."),
+    ).toBeInTheDocument();
     expect(fetchYouTubeOEmbed).not.toHaveBeenCalled();
     expect(onChange).not.toHaveBeenCalled();
   });
@@ -100,7 +157,15 @@ describe("GroupEditor", () => {
     );
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<GroupEditor group={emptyGroup()} index={0} removable={false} onChange={onChange} onRemove={vi.fn()} />);
+    render(
+      <GroupEditor
+        group={emptyGroup()}
+        index={0}
+        removable={false}
+        onChange={onChange}
+        onRemove={vi.fn()}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Link" }));
     const link = screen.getByLabelText("Group 1 new item link");
@@ -114,7 +179,11 @@ describe("GroupEditor", () => {
     resolveOEmbed({ title: "Guren no Yumiya (Official)" });
     await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
     expect(onChange).toHaveBeenCalledWith(
-      expect.objectContaining({ items: [expect.objectContaining({ title: "Guren no Yumiya (Official)" })] }),
+      expect.objectContaining({
+        items: [
+          expect.objectContaining({ title: "Guren no Yumiya (Official)" }),
+        ],
+      }),
     );
   });
 
@@ -130,17 +199,36 @@ describe("GroupEditor", () => {
       />,
     );
 
-    expect(screen.getByRole("alert")).toHaveTextContent('Group "R1" needs at least one item.');
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      'Group "R1" needs at least one item.',
+    );
   });
 
   it("disables the selection-mode and sample-size controls while validation is in flight", async () => {
     vi.mocked(fetchYouTubeOEmbed).mockReturnValue(new Promise(() => {}));
     const user = userEvent.setup();
-    const group: Group = { id: "g1", name: "", selectionMode: "random", sampleSize: 3, items: [] };
-    render(<GroupEditor group={group} index={0} removable={false} onChange={vi.fn()} onRemove={vi.fn()} />);
+    const group: Group = {
+      id: "g1",
+      name: "",
+      selectionMode: "random",
+      sampleSize: 3,
+      items: [],
+    };
+    render(
+      <GroupEditor
+        group={group}
+        index={0}
+        removable={false}
+        onChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Link" }));
-    await user.type(screen.getByLabelText("Group 1 new item link"), "https://youtu.be/KsF_hdjWJjo");
+    await user.type(
+      screen.getByLabelText("Group 1 new item link"),
+      "https://youtu.be/KsF_hdjWJjo",
+    );
     await user.click(screen.getByRole("button", { name: "Add" }));
 
     expect(screen.getByRole("button", { name: "Random" })).toBeDisabled();

@@ -85,18 +85,25 @@ function renderScreen(pack: Pack) {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "t", user: MOCK_USER });
+  vi.mocked(authClient.refresh).mockResolvedValue({
+    accessToken: "t",
+    user: MOCK_USER,
+  });
   vi.mocked(playsClient.record).mockResolvedValue({ id: "play-1" });
   sessionStorage.clear();
 });
 
 describe("RankPlayScreen", () => {
   it("prompts to log in when there is no session", async () => {
-    vi.mocked(authClient.refresh).mockRejectedValue(new ApiError(401, "Unauthorized", null));
+    vi.mocked(authClient.refresh).mockRejectedValue(
+      new ApiError(401, "Unauthorized", null),
+    );
     const user = userEvent.setup();
     renderScreen(RANK_BLIND_PACK);
 
-    expect(await screen.findByText("You need to be logged in to play a pack.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("You need to be logged in to play a pack."),
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Log in" }));
     expect(push).toHaveBeenCalledWith("/auth?next=%2Fpacks%2Fpack-rank%2Fplay");
@@ -147,7 +154,9 @@ describe("RankPlayScreen", () => {
     await user.click(screen.getByText("#1"));
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
-    await user.click(await screen.findByRole("button", { name: "Next round →" }));
+    await user.click(
+      await screen.findByRole("button", { name: "Next round →" }),
+    );
 
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("#1"));
@@ -162,16 +171,17 @@ describe("RankPlayScreen", () => {
       ],
     });
     await waitFor(() =>
-      expect(JSON.parse(sessionStorage.getItem("velanto:last-play:pack-rank")!)).toEqual([
+      expect(
+        JSON.parse(sessionStorage.getItem("velanto:last-play:pack-rank")!),
+      ).toEqual([
         { groupId: "g1", itemId: "i1", position: 0 },
         { groupId: "g1", itemId: "i2", position: 1 },
         { groupId: "g2", itemId: "i3", position: 0 },
       ]),
     );
-    expect(screen.getByRole("link", { name: "See your result" })).toHaveAttribute(
-      "href",
-      "/packs/pack-rank/result",
-    );
+    expect(
+      screen.getByRole("link", { name: "See your result" }),
+    ).toHaveAttribute("href", "/packs/pack-rank/result");
   });
 
   it("sizes a random-mode round's slots to sampleSize, not the full item count", async () => {
@@ -183,7 +193,11 @@ describe("RankPlayScreen", () => {
           name: "Closers",
           selectionMode: "random",
           sampleSize: 2,
-          items: [textItem("i1", "A"), textItem("i2", "B"), textItem("i3", "C")],
+          items: [
+            textItem("i1", "A"),
+            textItem("i2", "B"),
+            textItem("i3", "C"),
+          ],
         },
       ],
     };

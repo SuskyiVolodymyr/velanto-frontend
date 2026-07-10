@@ -16,7 +16,9 @@ const mockedUseAuth = vi.mocked(useAuth);
 const mockedPacksClient = vi.mocked(packsClient);
 const mockedPlaysClient = vi.mocked(playsClient);
 
-function mockAuthStatus(status: "loading" | "authenticated" | "unauthenticated") {
+function mockAuthStatus(
+  status: "loading" | "authenticated" | "unauthenticated",
+) {
   mockedUseAuth.mockReturnValue({
     user: null,
     status,
@@ -45,21 +47,30 @@ const PACK: Pack = {
   myVote: null,
 };
 
-const RESULTS: PackResults = { packId: "p1", format: "save_one", totalPlays: 0, rounds: [] };
+const RESULTS: PackResults = {
+  packId: "p1",
+  format: "save_one",
+  totalPlays: 0,
+  rounds: [],
+};
 
 describe("usePackFallback", () => {
   beforeEach(() => vi.resetAllMocks());
 
   it("stays loading and does not fetch while auth status is still loading", () => {
     mockAuthStatus("loading");
-    const { result } = renderHook(() => usePackFallback("p1", { needsResults: false }));
+    const { result } = renderHook(() =>
+      usePackFallback("p1", { needsResults: false }),
+    );
     expect(result.current).toEqual({ status: "loading" });
     expect(mockedPacksClient.getById).not.toHaveBeenCalled();
   });
 
   it("resolves to notfound without fetching when the viewer is unauthenticated", async () => {
     mockAuthStatus("unauthenticated");
-    const { result } = renderHook(() => usePackFallback("p1", { needsResults: false }));
+    const { result } = renderHook(() =>
+      usePackFallback("p1", { needsResults: false }),
+    );
     await waitFor(() => expect(result.current).toEqual({ status: "notfound" }));
     expect(mockedPacksClient.getById).not.toHaveBeenCalled();
   });
@@ -67,8 +78,16 @@ describe("usePackFallback", () => {
   it("resolves to ready with the pack when authenticated and needsResults is false", async () => {
     mockAuthStatus("authenticated");
     mockedPacksClient.getById.mockResolvedValue(PACK);
-    const { result } = renderHook(() => usePackFallback("p1", { needsResults: false }));
-    await waitFor(() => expect(result.current).toEqual({ status: "ready", pack: PACK, results: null }));
+    const { result } = renderHook(() =>
+      usePackFallback("p1", { needsResults: false }),
+    );
+    await waitFor(() =>
+      expect(result.current).toEqual({
+        status: "ready",
+        pack: PACK,
+        results: null,
+      }),
+    );
     expect(mockedPlaysClient.getResults).not.toHaveBeenCalled();
   });
 
@@ -76,22 +95,38 @@ describe("usePackFallback", () => {
     mockAuthStatus("authenticated");
     mockedPacksClient.getById.mockResolvedValue(PACK);
     mockedPlaysClient.getResults.mockResolvedValue(RESULTS);
-    const { result } = renderHook(() => usePackFallback("p1", { needsResults: true }));
-    await waitFor(() => expect(result.current).toEqual({ status: "ready", pack: PACK, results: RESULTS }));
+    const { result } = renderHook(() =>
+      usePackFallback("p1", { needsResults: true }),
+    );
+    await waitFor(() =>
+      expect(result.current).toEqual({
+        status: "ready",
+        pack: PACK,
+        results: RESULTS,
+      }),
+    );
   });
 
   it("resolves to notfound when the authenticated retry itself 404s", async () => {
     mockAuthStatus("authenticated");
-    mockedPacksClient.getById.mockRejectedValue(new ApiError(404, "Not Found", null));
-    const { result } = renderHook(() => usePackFallback("p1", { needsResults: false }));
+    mockedPacksClient.getById.mockRejectedValue(
+      new ApiError(404, "Not Found", null),
+    );
+    const { result } = renderHook(() =>
+      usePackFallback("p1", { needsResults: false }),
+    );
     await waitFor(() => expect(result.current).toEqual({ status: "notfound" }));
   });
 
   it("resolves to notfound when the pack fetch succeeds but the results fetch fails", async () => {
     mockAuthStatus("authenticated");
     mockedPacksClient.getById.mockResolvedValue(PACK);
-    mockedPlaysClient.getResults.mockRejectedValue(new ApiError(404, "Not Found", null));
-    const { result } = renderHook(() => usePackFallback("p1", { needsResults: true }));
+    mockedPlaysClient.getResults.mockRejectedValue(
+      new ApiError(404, "Not Found", null),
+    );
+    const { result } = renderHook(() =>
+      usePackFallback("p1", { needsResults: true }),
+    );
     await waitFor(() => expect(result.current).toEqual({ status: "notfound" }));
   });
 
@@ -103,7 +138,9 @@ describe("usePackFallback", () => {
         resolveGetById = resolve;
       }),
     );
-    const { unmount } = renderHook(() => usePackFallback("p1", { needsResults: false }));
+    const { unmount } = renderHook(() =>
+      usePackFallback("p1", { needsResults: false }),
+    );
     unmount();
     resolveGetById(PACK);
     // If the cancelled-guard were missing, resolving after unmount would

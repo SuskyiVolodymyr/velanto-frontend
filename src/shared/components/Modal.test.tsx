@@ -28,7 +28,9 @@ describe("Modal", () => {
         <p>Modal content</p>
       </Modal>,
     );
-    expect(screen.getByRole("heading", { name: "Test modal" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Test modal" }),
+    ).toBeInTheDocument();
   });
 
   it("calls onClose when the close button is clicked", async () => {

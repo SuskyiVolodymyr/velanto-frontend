@@ -4,7 +4,12 @@ import userEvent from "@testing-library/user-event";
 import { HeadToHeadRound } from "./HeadToHeadRound";
 
 const LEFT = { id: "i1", type: "text" as const, title: "Goku", value: "Goku" };
-const RIGHT = { id: "i2", type: "text" as const, title: "Vegeta", value: "Vegeta" };
+const RIGHT = {
+  id: "i2",
+  type: "text" as const,
+  title: "Vegeta",
+  value: "Vegeta",
+};
 
 describe("HeadToHeadRound", () => {
   it("renders both items in full immediately, with no reveal control", () => {
@@ -12,7 +17,9 @@ describe("HeadToHeadRound", () => {
 
     expect(screen.getByText("Goku")).toBeInTheDocument();
     expect(screen.getByText("Vegeta")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /show next/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /show next/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("calls onPick with the left item's id when the left card is clicked", async () => {
@@ -46,12 +53,18 @@ describe("HeadToHeadRound", () => {
     };
     render(<HeadToHeadRound left={videoItem} right={RIGHT} onPick={onPick} />);
 
-    expect(screen.getByRole("img", { name: "YouTube video thumbnail" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", { name: "YouTube video thumbnail" }),
+    ).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Play video preview" }));
+    await user.click(
+      screen.getByRole("button", { name: "Play video preview" }),
+    );
     expect(onPick).not.toHaveBeenCalled();
 
-    await user.click(screen.getByRole("button", { name: "Pick Opening theme" }));
+    await user.click(
+      screen.getByRole("button", { name: "Pick Opening theme" }),
+    );
     expect(onPick).toHaveBeenCalledWith("v1");
   });
 });

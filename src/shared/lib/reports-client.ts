@@ -1,5 +1,11 @@
 import { apiClient } from "@/src/shared/lib/api-client";
-import type { Report, ReportList, ReportStatus, ReportType, ReportWithReporter } from "@/src/shared/types/report";
+import type {
+  Report,
+  ReportList,
+  ReportStatus,
+  ReportType,
+  ReportWithReporter,
+} from "@/src/shared/types/report";
 
 export interface CreateReportInput {
   type: ReportType;
@@ -27,7 +33,8 @@ function buildListQuery(filters: ListReportsFilters): string {
 }
 
 export const reportsClient = {
-  create: (input: CreateReportInput) => apiClient.post<Report>("/reports", input),
+  create: (input: CreateReportInput) =>
+    apiClient.post<Report>("/reports", input),
   list: (filters: ListReportsFilters = {}) =>
     apiClient.get<ReportList>(`/reports${buildListQuery(filters)}`),
   getById: (id: string) => apiClient.get<ReportWithReporter>(`/reports/${id}`),

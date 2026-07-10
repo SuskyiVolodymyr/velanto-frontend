@@ -25,7 +25,11 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 
 import { ROLES } from "@/src/shared/types/user";
-import { PACK_FORMATS, PACK_STATUSES, PACK_TAGS } from "@/src/shared/types/pack";
+import {
+  PACK_FORMATS,
+  PACK_STATUSES,
+  PACK_TAGS,
+} from "@/src/shared/types/pack";
 import {
   FEEDBACK_TOPICS,
   FEEDBACK_VISIBILITIES,
@@ -168,7 +172,10 @@ describe("cross-repo mirrored constants (velanto-backend contract)", () => {
   // wire contract.
   it("REPORT_REASON_LABELS keys (reason ids)", () => {
     const reasonIds = Object.fromEntries(
-      REPORT_TYPES.map((type) => [type, Object.keys(REPORT_REASON_LABELS[type])]),
+      REPORT_TYPES.map((type) => [
+        type,
+        Object.keys(REPORT_REASON_LABELS[type]),
+      ]),
     );
     expect(reasonIds).toEqual({
       pack: ["inappropriate", "copyright", "spam", "other"],

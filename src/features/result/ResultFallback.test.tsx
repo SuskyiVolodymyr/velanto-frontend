@@ -8,7 +8,9 @@ import type { PackResults } from "@/src/shared/types/play-results";
 
 vi.mock("@/src/shared/hooks/use-pack-fallback");
 vi.mock("next/navigation", () => ({ notFound: vi.fn() }));
-vi.mock("@/src/features/result/ResultScreen", () => ({ ResultScreen: () => <div>ResultScreen</div> }));
+vi.mock("@/src/features/result/ResultScreen", () => ({
+  ResultScreen: () => <div>ResultScreen</div>,
+}));
 
 const mockedUsePackFallback = vi.mocked(usePackFallback);
 const mockedNotFound = vi.mocked(notFound);
@@ -32,13 +34,22 @@ const PACK: Pack = {
   dislikes: 0,
   myVote: null,
 };
-const RESULTS: PackResults = { packId: "p1", format: "save_one", totalPlays: 0, rounds: [] };
+const RESULTS: PackResults = {
+  packId: "p1",
+  format: "save_one",
+  totalPlays: 0,
+  rounds: [],
+};
 
 describe("ResultFallback", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("renders ResultScreen once the fallback resolves to ready", () => {
-    mockedUsePackFallback.mockReturnValue({ status: "ready", pack: PACK, results: RESULTS });
+    mockedUsePackFallback.mockReturnValue({
+      status: "ready",
+      pack: PACK,
+      results: RESULTS,
+    });
     render(<ResultFallback packId="p1" />);
     expect(screen.getByText("ResultScreen")).toBeInTheDocument();
     expect(mockedNotFound).not.toHaveBeenCalled();

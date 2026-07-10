@@ -13,7 +13,10 @@ export function ModerationQueueScreen() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const allowed = user?.role === "moderator" || user?.role === "manager" || user?.role === "admin";
+  const allowed =
+    user?.role === "moderator" ||
+    user?.role === "manager" ||
+    user?.role === "admin";
 
   useEffect(() => {
     if (authStatus === "authenticated" && !allowed) {
@@ -28,8 +31,15 @@ export function ModerationQueueScreen() {
   if (authStatus === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">You need to be logged in to view this page.</Text>
-        <Button className="mt-4" onClick={() => router.push(`/auth?next=${encodeURIComponent(pathname)}`)}>
+        <Text variant="secondary">
+          You need to be logged in to view this page.
+        </Text>
+        <Button
+          className="mt-4"
+          onClick={() =>
+            router.push(`/auth?next=${encodeURIComponent(pathname)}`)
+          }
+        >
           Log in
         </Button>
       </div>
@@ -45,7 +55,11 @@ export function ModerationQueueScreen() {
       </Text>
 
       {queue.loading && <Text variant="secondary">Loading packs…</Text>}
-      {queue.error && <Text className="text-[#ff6b6b]">Couldn&apos;t load packs. Try again later.</Text>}
+      {queue.error && (
+        <Text className="text-[#ff6b6b]">
+          Couldn&apos;t load packs. Try again later.
+        </Text>
+      )}
       {queue.hasData && queue.total === 0 && (
         <Text variant="secondary">No packs waiting for review.</Text>
       )}
@@ -72,10 +86,18 @@ export function ModerationQueueScreen() {
 
       {queue.hasData && queue.packs.length < queue.total && (
         <div className="flex flex-col gap-2">
-          <Button variant="secondary" disabled={queue.loadingMore} onClick={() => void queue.handleLoadMore()}>
+          <Button
+            variant="secondary"
+            disabled={queue.loadingMore}
+            onClick={() => void queue.handleLoadMore()}
+          >
             {queue.loadingMore ? "Loading…" : "Load more"}
           </Button>
-          {queue.loadMoreError && <Text className="text-sm text-[#ff6b6b]">{queue.loadMoreError}</Text>}
+          {queue.loadMoreError && (
+            <Text className="text-sm text-[#ff6b6b]">
+              {queue.loadMoreError}
+            </Text>
+          )}
         </div>
       )}
     </main>

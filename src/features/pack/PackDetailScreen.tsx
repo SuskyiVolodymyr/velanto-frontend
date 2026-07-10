@@ -42,10 +42,15 @@ export function PackDetailScreen({
         </div>
       )}
       <div className="mb-6 flex items-center gap-3">
-        <Link href={`/packs/${pack.id}/play`} className={buttonClassName("primary", "w-fit")}>
+        <Link
+          href={`/packs/${pack.id}/play`}
+          className={buttonClassName("primary", "w-fit")}
+        >
           Play
         </Link>
-        {pack.status === "approved" && <ShareButton path={`/packs/${pack.id}`} />}
+        {pack.status === "approved" && (
+          <ShareButton path={`/packs/${pack.id}`} />
+        )}
       </div>
 
       <Text as="h2" variant="title" className="mb-3 text-lg">
@@ -56,20 +61,25 @@ export function PackDetailScreen({
       </div>
 
       <div className="flex flex-col gap-4">
-        {(pack.format === "nxn" ? pack.categories : pack.groups)?.map((section) => (
-          <Card key={section.id} className="hover:translate-y-0 hover:shadow-none">
-            <Text className="mb-2 font-semibold">{section.name}</Text>
-            <ul className="flex flex-col gap-1">
-              {section.items.map((item) => (
-                <li key={item.id}>
-                  <Text variant="secondary" className="text-sm">
-                    {item.title}
-                  </Text>
-                </li>
-              ))}
-            </ul>
-          </Card>
-        ))}
+        {(pack.format === "nxn" ? pack.categories : pack.groups)?.map(
+          (section) => (
+            <Card
+              key={section.id}
+              className="hover:translate-y-0 hover:shadow-none"
+            >
+              <Text className="mb-2 font-semibold">{section.name}</Text>
+              <ul className="flex flex-col gap-1">
+                {section.items.map((item) => (
+                  <li key={item.id}>
+                    <Text variant="secondary" className="text-sm">
+                      {item.title}
+                    </Text>
+                  </li>
+                ))}
+              </ul>
+            </Card>
+          ),
+        )}
       </div>
 
       <div className="mt-10">

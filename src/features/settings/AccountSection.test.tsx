@@ -23,7 +23,10 @@ const USER: User = {
 };
 
 function renderAsAuthenticated() {
-  vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "token", user: USER });
+  vi.mocked(authClient.refresh).mockResolvedValue({
+    accessToken: "token",
+    user: USER,
+  });
   return render(
     <AuthProvider>
       <AccountSection />

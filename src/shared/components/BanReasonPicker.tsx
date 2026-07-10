@@ -61,7 +61,11 @@ export interface BanReasonPickerProps {
  * conditional detail `Textarea` that is required only for `'Other'`. Fully
  * controlled: it emits `{ reason, reasonDetail }` and never bans by itself.
  */
-export function BanReasonPicker({ value, onChange, idPrefix }: BanReasonPickerProps) {
+export function BanReasonPicker({
+  value,
+  onChange,
+  idPrefix,
+}: BanReasonPickerProps) {
   const t = useTranslations("banReason");
   const rules = useClientData(() => rulesClient.getRules(), []);
 
@@ -70,10 +74,12 @@ export function BanReasonPicker({ value, onChange, idPrefix }: BanReasonPickerPr
   const isOther = value.reason === "other";
   const detailMissing = isOther && value.reasonDetail.trim().length === 0;
 
-  const categoryOptions: SelectOption[] = (rules.data?.categories ?? []).map((c) => ({
-    value: c.id,
-    label: c.title,
-  }));
+  const categoryOptions: SelectOption[] = (rules.data?.categories ?? []).map(
+    (c) => ({
+      value: c.id,
+      label: c.title,
+    }),
+  );
   const options: SelectOption[] = [
     { value: "", label: t("placeholder"), disabled: true },
     ...categoryOptions,
@@ -116,7 +122,9 @@ export function BanReasonPicker({ value, onChange, idPrefix }: BanReasonPickerPr
             value={value.reasonDetail}
             aria-invalid={detailMissing ? true : undefined}
             aria-describedby={detailMissing ? `${detailId}-error` : undefined}
-            onChange={(e) => onChange({ ...value, reasonDetail: e.target.value })}
+            onChange={(e) =>
+              onChange({ ...value, reasonDetail: e.target.value })
+            }
           />
         </label>
       )}

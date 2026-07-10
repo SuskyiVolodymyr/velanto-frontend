@@ -11,8 +11,17 @@ const OPTIONS = [
 
 describe("SegmentedControl", () => {
   it("renders a radiogroup of radios with an accessible group name", () => {
-    render(<SegmentedControl options={OPTIONS} value="one" onChange={vi.fn()} ariaLabel="Pick one" />);
-    expect(screen.getByRole("radiogroup", { name: "Pick one" })).toBeInTheDocument();
+    render(
+      <SegmentedControl
+        options={OPTIONS}
+        value="one"
+        onChange={vi.fn()}
+        ariaLabel="Pick one"
+      />,
+    );
+    expect(
+      screen.getByRole("radiogroup", { name: "Pick one" }),
+    ).toBeInTheDocument();
     expect(screen.getAllByRole("radio")).toHaveLength(3);
   });
 
@@ -35,21 +44,33 @@ describe("SegmentedControl", () => {
   });
 
   it("marks the selected option with aria-checked", () => {
-    render(<SegmentedControl options={OPTIONS} value="two" onChange={vi.fn()} />);
+    render(
+      <SegmentedControl options={OPTIONS} value="two" onChange={vi.fn()} />,
+    );
     expect(screen.getByRole("radio", { name: "Two" })).toBeChecked();
     expect(screen.getByRole("radio", { name: "One" })).not.toBeChecked();
   });
 
   it("gives only the selected radio a tab stop (roving tabindex)", () => {
-    render(<SegmentedControl options={OPTIONS} value="two" onChange={vi.fn()} />);
-    expect(screen.getByRole("radio", { name: "Two" })).toHaveAttribute("tabindex", "0");
-    expect(screen.getByRole("radio", { name: "One" })).toHaveAttribute("tabindex", "-1");
+    render(
+      <SegmentedControl options={OPTIONS} value="two" onChange={vi.fn()} />,
+    );
+    expect(screen.getByRole("radio", { name: "Two" })).toHaveAttribute(
+      "tabindex",
+      "0",
+    );
+    expect(screen.getByRole("radio", { name: "One" })).toHaveAttribute(
+      "tabindex",
+      "-1",
+    );
   });
 
   it("calls onChange when an option is clicked", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<SegmentedControl options={OPTIONS} value="one" onChange={onChange} />);
+    render(
+      <SegmentedControl options={OPTIONS} value="one" onChange={onChange} />,
+    );
 
     await user.click(screen.getByRole("radio", { name: "Three" }));
 
@@ -59,7 +80,9 @@ describe("SegmentedControl", () => {
   it("moves selection to the next option with ArrowRight", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<SegmentedControl options={OPTIONS} value="one" onChange={onChange} />);
+    render(
+      <SegmentedControl options={OPTIONS} value="one" onChange={onChange} />,
+    );
 
     screen.getByRole("radio", { name: "One" }).focus();
     await user.keyboard("{ArrowRight}");
@@ -70,7 +93,9 @@ describe("SegmentedControl", () => {
   it("wraps from the last option to the first with ArrowRight", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<SegmentedControl options={OPTIONS} value="three" onChange={onChange} />);
+    render(
+      <SegmentedControl options={OPTIONS} value="three" onChange={onChange} />,
+    );
 
     screen.getByRole("radio", { name: "Three" }).focus();
     await user.keyboard("{ArrowRight}");
@@ -81,7 +106,9 @@ describe("SegmentedControl", () => {
   it("moves to the previous option with ArrowLeft", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<SegmentedControl options={OPTIONS} value="two" onChange={onChange} />);
+    render(
+      <SegmentedControl options={OPTIONS} value="two" onChange={onChange} />,
+    );
 
     screen.getByRole("radio", { name: "Two" }).focus();
     await user.keyboard("{ArrowLeft}");

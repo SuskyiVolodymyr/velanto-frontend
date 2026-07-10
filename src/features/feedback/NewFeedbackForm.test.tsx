@@ -24,7 +24,13 @@ function mockAuth(status: "authenticated" | "unauthenticated" | "loading") {
   mockedUseAuth.mockReturnValue({
     user:
       status === "authenticated"
-        ? { id: "u1", email: "a@x.com", username: "alice", role: "user", createdAt: "" }
+        ? {
+            id: "u1",
+            email: "a@x.com",
+            username: "alice",
+            role: "user",
+            createdAt: "",
+          }
         : null,
     status,
     login: vi.fn(),
@@ -67,7 +73,9 @@ describe("NewFeedbackForm", () => {
   it("hides translation-specific fields for a bug post and reveals them after switching to Translation", async () => {
     render(<NewFeedbackForm />);
 
-    expect(screen.queryByLabelText(/suggested wording/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByLabelText(/suggested wording/i),
+    ).not.toBeInTheDocument();
 
     await userEvent.click(screen.getByRole("radio", { name: "Translation" }));
 
@@ -80,8 +88,13 @@ describe("NewFeedbackForm", () => {
     render(<NewFeedbackForm />);
 
     await userEvent.type(screen.getByLabelText(/title/i), "My bug");
-    await userEvent.type(screen.getByLabelText(/details/i), "It crashes on load");
-    await userEvent.click(screen.getByRole("button", { name: /post feedback/i }));
+    await userEvent.type(
+      screen.getByLabelText(/details/i),
+      "It crashes on load",
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: /post feedback/i }),
+    );
 
     await waitFor(() =>
       expect(mockedFeedbackClient.create).toHaveBeenCalledWith({
@@ -100,10 +113,18 @@ describe("NewFeedbackForm", () => {
 
     await userEvent.click(screen.getByRole("radio", { name: "Translation" }));
     await userEvent.type(screen.getByLabelText(/title/i), "Wrong word");
-    await userEvent.type(screen.getByLabelText(/details/i), "The label reads oddly");
+    await userEvent.type(
+      screen.getByLabelText(/details/i),
+      "The label reads oddly",
+    );
     await userEvent.selectOptions(screen.getByLabelText(/language/i), "uk");
-    await userEvent.type(screen.getByLabelText(/suggested wording/i), "Краще формулювання");
-    await userEvent.click(screen.getByRole("button", { name: /post feedback/i }));
+    await userEvent.type(
+      screen.getByLabelText(/suggested wording/i),
+      "Краще формулювання",
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: /post feedback/i }),
+    );
 
     await waitFor(() =>
       expect(mockedFeedbackClient.create).toHaveBeenCalledWith({
@@ -120,7 +141,9 @@ describe("NewFeedbackForm", () => {
   it("shows a validation message and does not submit when required fields are empty", async () => {
     render(<NewFeedbackForm />);
 
-    await userEvent.click(screen.getByRole("button", { name: /post feedback/i }));
+    await userEvent.click(
+      screen.getByRole("button", { name: /post feedback/i }),
+    );
 
     expect(await screen.findByText("Title is required.")).toBeInTheDocument();
     expect(mockedFeedbackClient.create).not.toHaveBeenCalled();
@@ -132,13 +155,22 @@ describe("NewFeedbackForm", () => {
 
     await userEvent.click(screen.getByRole("radio", { name: "Translation" }));
     await userEvent.type(screen.getByLabelText(/title/i), "Wrong word");
-    await userEvent.type(screen.getByLabelText(/details/i), "The label reads oddly");
-    await userEvent.click(screen.getByRole("button", { name: /post feedback/i }));
+    await userEvent.type(
+      screen.getByLabelText(/details/i),
+      "The label reads oddly",
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: /post feedback/i }),
+    );
 
     expect(
-      await screen.findByText("Please choose the language for your translation suggestion."),
+      await screen.findByText(
+        "Please choose the language for your translation suggestion.",
+      ),
     ).toBeInTheDocument();
-    expect(screen.getByText("Please enter your suggested wording.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Please enter your suggested wording."),
+    ).toBeInTheDocument();
     expect(mockedFeedbackClient.create).not.toHaveBeenCalled();
   });
 
@@ -149,10 +181,17 @@ describe("NewFeedbackForm", () => {
     render(<NewFeedbackForm />);
 
     await userEvent.type(screen.getByLabelText(/title/i), "My bug");
-    await userEvent.type(screen.getByLabelText(/details/i), "It crashes on load");
-    await userEvent.click(screen.getByRole("button", { name: /post feedback/i }));
+    await userEvent.type(
+      screen.getByLabelText(/details/i),
+      "It crashes on load",
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: /post feedback/i }),
+    );
 
-    expect(await screen.findByText("That topic is closed.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("That topic is closed."),
+    ).toBeInTheDocument();
     expect(push).not.toHaveBeenCalled();
   });
 
@@ -167,7 +206,8 @@ describe("NewFeedbackForm", () => {
           {
             code: "custom",
             path: ["body"],
-            message: "This text contains language that isn't allowed on Velanto.",
+            message:
+              "This text contains language that isn't allowed on Velanto.",
           },
         ],
       }),
@@ -175,11 +215,18 @@ describe("NewFeedbackForm", () => {
     render(<NewFeedbackForm />);
 
     await userEvent.type(screen.getByLabelText(/title/i), "My bug");
-    await userEvent.type(screen.getByLabelText(/details/i), "It crashes on load");
-    await userEvent.click(screen.getByRole("button", { name: /post feedback/i }));
+    await userEvent.type(
+      screen.getByLabelText(/details/i),
+      "It crashes on load",
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: /post feedback/i }),
+    );
 
     expect(
-      await screen.findByText("This text contains language that isn't allowed on Velanto."),
+      await screen.findByText(
+        "This text contains language that isn't allowed on Velanto.",
+      ),
     ).toBeInTheDocument();
     expect(push).not.toHaveBeenCalled();
   });
@@ -194,8 +241,13 @@ describe("NewFeedbackForm", () => {
     render(<NewFeedbackForm />);
 
     await userEvent.type(screen.getByLabelText(/title/i), "My bug");
-    await userEvent.type(screen.getByLabelText(/details/i), "It crashes on load");
-    await userEvent.click(screen.getByRole("button", { name: /post feedback/i }));
+    await userEvent.type(
+      screen.getByLabelText(/details/i),
+      "It crashes on load",
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: /post feedback/i }),
+    );
 
     await waitFor(() =>
       expect(screen.getByRole("button", { name: /posting/i })).toBeDisabled(),

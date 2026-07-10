@@ -38,17 +38,23 @@ function SideCard({ side, revealedCount, selected, onSelect }: SideCardProps) {
       aria-label={`Pick ${side.name}`}
       className={cn(
         "flex flex-1 cursor-pointer flex-col gap-3 rounded-2xl border p-4 text-left transition-colors",
-        selected ? "border-acc bg-acc/10" : "border-border bg-surface hover:border-border-strong",
+        selected
+          ? "border-acc bg-acc/10"
+          : "border-border bg-surface hover:border-border-strong",
       )}
     >
       <Text className="text-center font-semibold">{side.name}</Text>
       <div className="flex flex-col gap-2">
         {side.items.slice(0, revealedCount).map((item) => {
-          const videoId = item.type === "youtube" ? extractYouTubeId(item.value) : null;
+          const videoId =
+            item.type === "youtube" ? extractYouTubeId(item.value) : null;
 
           if (videoId) {
             return (
-              <div key={item.id} className="overflow-hidden rounded-xl border border-border bg-white/[0.03]">
+              <div
+                key={item.id}
+                className="overflow-hidden rounded-xl border border-border bg-white/[0.03]"
+              >
                 <YouTubeCard videoId={videoId} />
                 <Text className="p-3 text-sm font-medium">{item.title}</Text>
               </div>
@@ -56,8 +62,13 @@ function SideCard({ side, revealedCount, selected, onSelect }: SideCardProps) {
           }
 
           return (
-            <div key={item.id} className="rounded-xl border border-border bg-white/[0.03] p-3">
-              {item.type === "youtube" && <Badge className="mb-2">YouTube</Badge>}
+            <div
+              key={item.id}
+              className="rounded-xl border border-border bg-white/[0.03] p-3"
+            >
+              {item.type === "youtube" && (
+                <Badge className="mb-2">YouTube</Badge>
+              )}
               <Text className="text-sm font-medium">{item.title}</Text>
             </div>
           );
@@ -75,7 +86,13 @@ interface VersusRoundProps {
   onSelect: (id: string) => void;
 }
 
-export function VersusRound({ sideA, sideB, revealedCount, selectedId, onSelect }: VersusRoundProps) {
+export function VersusRound({
+  sideA,
+  sideB,
+  revealedCount,
+  selectedId,
+  onSelect,
+}: VersusRoundProps) {
   return (
     <div className="flex items-start gap-4">
       <SideCard

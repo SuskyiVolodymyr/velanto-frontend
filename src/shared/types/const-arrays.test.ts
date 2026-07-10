@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 
-import { FEEDBACK_SORTS, FEEDBACK_STATUSES, FEEDBACK_TOPICS, FEEDBACK_VISIBILITIES } from "./feedback";
+import {
+  FEEDBACK_SORTS,
+  FEEDBACK_STATUSES,
+  FEEDBACK_TOPICS,
+  FEEDBACK_VISIBILITIES,
+} from "./feedback";
 import { PACK_FORMATS, PACK_STATUSES } from "./pack";
 import { REPORT_STATUSES, REPORT_TYPES } from "./report";
 import { ROLES } from "./user";
@@ -10,7 +15,13 @@ import { ROLES } from "./user";
 // byte-identical. If a value changes here, it must change in the backend too.
 describe("domain const arrays", () => {
   it("PACK_FORMATS", () => {
-    expect([...PACK_FORMATS]).toEqual(["save_one", "sacrifice_one", "nxn", "rank_blind", "1v1"]);
+    expect([...PACK_FORMATS]).toEqual([
+      "save_one",
+      "sacrifice_one",
+      "nxn",
+      "rank_blind",
+      "1v1",
+    ]);
   });
 
   it("PACK_STATUSES", () => {
@@ -18,7 +29,12 @@ describe("domain const arrays", () => {
   });
 
   it("FEEDBACK_TOPICS", () => {
-    expect([...FEEDBACK_TOPICS]).toEqual(["bug", "feature", "translation", "other"]);
+    expect([...FEEDBACK_TOPICS]).toEqual([
+      "bug",
+      "feature",
+      "translation",
+      "other",
+    ]);
   });
 
   it("FEEDBACK_VISIBILITIES", () => {
@@ -26,7 +42,12 @@ describe("domain const arrays", () => {
   });
 
   it("FEEDBACK_STATUSES", () => {
-    expect([...FEEDBACK_STATUSES]).toEqual(["new", "in_progress", "done", "declined"]);
+    expect([...FEEDBACK_STATUSES]).toEqual([
+      "new",
+      "in_progress",
+      "done",
+      "declined",
+    ]);
   });
 
   it("FEEDBACK_SORTS", () => {

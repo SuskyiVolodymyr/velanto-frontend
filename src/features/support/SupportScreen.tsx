@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { useClientData } from "@/src/shared/hooks/useClientData";
-import { reportsClient, type ListReportsFilters } from "@/src/shared/lib/reports-client";
+import {
+  reportsClient,
+  type ListReportsFilters,
+} from "@/src/shared/lib/reports-client";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { ReportFilters } from "@/src/features/support/ReportFilters";
@@ -18,12 +21,19 @@ export function SupportScreen() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [statusFilter, setStatusFilter] = useState<ReportStatus | undefined>(undefined);
-  const [typeFilter, setTypeFilter] = useState<ReportType | undefined>(undefined);
+  const [statusFilter, setStatusFilter] = useState<ReportStatus | undefined>(
+    undefined,
+  );
+  const [typeFilter, setTypeFilter] = useState<ReportType | undefined>(
+    undefined,
+  );
   const [loadingMore, setLoadingMore] = useState(false);
   const [loadMoreError, setLoadMoreError] = useState("");
 
-  const allowed = user?.role === "moderator" || user?.role === "manager" || user?.role === "admin";
+  const allowed =
+    user?.role === "moderator" ||
+    user?.role === "manager" ||
+    user?.role === "admin";
 
   useEffect(() => {
     if (authStatus === "authenticated" && !allowed) {
@@ -36,7 +46,12 @@ export function SupportScreen() {
   // data so it resets to 1 automatically on every filter-driven refetch.
   const reportsQuery = useClientData(
     async () => {
-      const filters: ListReportsFilters = { status: statusFilter, type: typeFilter, page: 1, limit: PAGE_SIZE };
+      const filters: ListReportsFilters = {
+        status: statusFilter,
+        type: typeFilter,
+        page: 1,
+        limit: PAGE_SIZE,
+      };
       const result = await reportsClient.list(filters);
       return { items: result.items, total: result.total, page: 1 };
     },
@@ -50,12 +65,20 @@ export function SupportScreen() {
     setLoadingMore(true);
     try {
       const nextPage = current.page + 1;
-      const result = await reportsClient.list({ status: statusFilter, type: typeFilter, page: nextPage, limit: PAGE_SIZE });
+      const result = await reportsClient.list({
+        status: statusFilter,
+        type: typeFilter,
+        page: nextPage,
+        limit: PAGE_SIZE,
+      });
       reportsQuery.setData((prev) => {
         if (!prev) return prev;
         const existingIds = new Set(prev.items.map((r) => r.id));
         return {
-          items: [...prev.items, ...result.items.filter((r) => !existingIds.has(r.id))],
+          items: [
+            ...prev.items,
+            ...result.items.filter((r) => !existingIds.has(r.id)),
+          ],
           total: result.total,
           page: nextPage,
         };
@@ -74,7 +97,10 @@ export function SupportScreen() {
   // NotificationsBell): during a filter-triggered refetch `loading` is true while
   // the previous data is still held, so without this the stale rows flash under
   // the loading text. `listReady` shows the loading state instead.
-  const listReady = reportsQuery.data !== null && !reportsQuery.loading && reportsQuery.error === null;
+  const listReady =
+    reportsQuery.data !== null &&
+    !reportsQuery.loading &&
+    reportsQuery.error === null;
 
   // Reset a stale load-more error whenever the active filters change. Done during
   // render (React's "adjust state on a changed input" pattern) rather than in an
@@ -91,8 +117,15 @@ export function SupportScreen() {
   if (authStatus === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">You need to be logged in to view this page.</Text>
-        <Button className="mt-4" onClick={() => router.push(`/auth?next=${encodeURIComponent(pathname)}`)}>
+        <Text variant="secondary">
+          You need to be logged in to view this page.
+        </Text>
+        <Button
+          className="mt-4"
+          onClick={() =>
+            router.push(`/auth?next=${encodeURIComponent(pathname)}`)
+          }
+        >
           Log in
         </Button>
       </div>

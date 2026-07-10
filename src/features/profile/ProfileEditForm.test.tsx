@@ -11,10 +11,21 @@ const push = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
-  authClient: { register: vi.fn(), login: vi.fn(), logout: vi.fn(), refresh: vi.fn() },
+  authClient: {
+    register: vi.fn(),
+    login: vi.fn(),
+    logout: vi.fn(),
+    refresh: vi.fn(),
+  },
 }));
 vi.mock("@/src/shared/lib/users-client", () => ({
-  usersClient: { getProfile: vi.fn(), updateProfile: vi.fn(), ban: vi.fn(), unban: vi.fn(), changeRole: vi.fn() },
+  usersClient: {
+    getProfile: vi.fn(),
+    updateProfile: vi.fn(),
+    ban: vi.fn(),
+    unban: vi.fn(),
+    changeRole: vi.fn(),
+  },
 }));
 
 const MOCK_USER = {
@@ -35,7 +46,10 @@ function renderForm() {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "t", user: MOCK_USER });
+  vi.mocked(authClient.refresh).mockResolvedValue({
+    accessToken: "t",
+    user: MOCK_USER,
+  });
   vi.mocked(usersClient.getProfile).mockResolvedValue({
     id: "u1",
     username: "alice",
@@ -44,7 +58,10 @@ beforeEach(() => {
     followerCount: 0,
     isFollowedByMe: null,
   });
-  vi.mocked(usersClient.updateProfile).mockResolvedValue({ id: "u1", bio: "New bio" });
+  vi.mocked(usersClient.updateProfile).mockResolvedValue({
+    id: "u1",
+    bio: "New bio",
+  });
 });
 
 describe("ProfileEditForm", () => {
@@ -61,7 +78,9 @@ describe("ProfileEditForm", () => {
     await user.type(textarea, "New bio");
     await user.click(screen.getByRole("button", { name: /save/i }));
 
-    await waitFor(() => expect(usersClient.updateProfile).toHaveBeenCalledWith("New bio"));
+    await waitFor(() =>
+      expect(usersClient.updateProfile).toHaveBeenCalledWith("New bio"),
+    );
     await waitFor(() => expect(push).toHaveBeenCalledWith("/profile"));
   });
 
@@ -72,7 +91,9 @@ describe("ProfileEditForm", () => {
   });
 
   it("shows an error message if saving fails", async () => {
-    vi.mocked(usersClient.updateProfile).mockRejectedValue(new Error("network error"));
+    vi.mocked(usersClient.updateProfile).mockRejectedValue(
+      new Error("network error"),
+    );
     const user = userEvent.setup();
     renderForm();
     await screen.findByDisplayValue("Old bio");
@@ -91,7 +112,8 @@ describe("ProfileEditForm", () => {
           {
             code: "custom",
             path: ["bio"],
-            message: "This text contains language that isn't allowed on Velanto.",
+            message:
+              "This text contains language that isn't allowed on Velanto.",
           },
         ],
       }),
@@ -104,19 +126,27 @@ describe("ProfileEditForm", () => {
     await user.click(screen.getByRole("button", { name: /save/i }));
 
     expect(
-      await screen.findByText("This text contains language that isn't allowed on Velanto."),
+      await screen.findByText(
+        "This text contains language that isn't allowed on Velanto.",
+      ),
     ).toBeInTheDocument();
     expect(push).not.toHaveBeenCalled();
   });
 
   it("shows a log-in prompt when the viewer is not authenticated", async () => {
-    vi.mocked(authClient.refresh).mockRejectedValue(new ApiError(401, "Unauthorized", null));
+    vi.mocked(authClient.refresh).mockRejectedValue(
+      new ApiError(401, "Unauthorized", null),
+    );
     renderForm();
-    expect(await screen.findByText(/need to be logged in/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/need to be logged in/i),
+    ).toBeInTheDocument();
   });
 
   it("shows an error message if the initial bio load fails", async () => {
-    vi.mocked(usersClient.getProfile).mockRejectedValue(new Error("network error"));
+    vi.mocked(usersClient.getProfile).mockRejectedValue(
+      new Error("network error"),
+    );
     renderForm();
     expect(await screen.findByText(/couldn.t load/i)).toBeInTheDocument();
   });

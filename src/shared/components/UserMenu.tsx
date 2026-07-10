@@ -7,7 +7,13 @@ import { Text } from "@/src/shared/components/Text";
 import { Hidden } from "@/src/shared/components/Hidden";
 import type { User } from "@/src/shared/types/user";
 
-export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void }) {
+export function UserMenu({
+  user,
+  onLogout,
+}: {
+  user: User;
+  onLogout: () => void;
+}) {
   const t = useTranslations("header");
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -22,7 +28,10 @@ export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void 
     if (!open) return;
 
     function handlePointerDown(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         setOpen(false);
       }
     }
@@ -94,7 +103,9 @@ export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void 
           >
             {t("settings")}
           </Link>
-          {(user.role === "moderator" || user.role === "manager" || user.role === "admin") && (
+          {(user.role === "moderator" ||
+            user.role === "manager" ||
+            user.role === "admin") && (
             <Link
               href="/support"
               role="menuitem"
@@ -104,7 +115,9 @@ export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void 
               {t("support")}
             </Link>
           )}
-          {(user.role === "moderator" || user.role === "manager" || user.role === "admin") && (
+          {(user.role === "moderator" ||
+            user.role === "manager" ||
+            user.role === "admin") && (
             <Link
               href="/moderation"
               role="menuitem"

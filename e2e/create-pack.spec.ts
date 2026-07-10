@@ -17,7 +17,10 @@ const MOCK_USER = {
 test.describe("Create pack", () => {
   test.beforeEach(async ({ page }) => {
     await page.route(`${API_BASE}/auth/refresh`, (route) =>
-      route.fulfill({ status: 201, json: { accessToken: "access-token", user: MOCK_USER } }),
+      route.fulfill({
+        status: 201,
+        json: { accessToken: "access-token", user: MOCK_USER },
+      }),
     );
   });
 
@@ -25,7 +28,10 @@ test.describe("Create pack", () => {
   // create request with a stub pack. Mirrors the mock style of the auth stub
   // above; returns a getter for the captured payload so each test can assert
   // the exact shape it sent per format.
-  async function stubCreate(page: import("@playwright/test").Page, pack: Record<string, unknown>) {
+  async function stubCreate(
+    page: import("@playwright/test").Page,
+    pack: Record<string, unknown>,
+  ) {
     const captured: { body: Record<string, unknown> | null } = { body: null };
     await page.route(`${API_BASE}/packs`, (route) => {
       captured.body = route.request().postDataJSON();
@@ -34,7 +40,9 @@ test.describe("Create pack", () => {
     return captured;
   }
 
-  test("publishes a valid save_one pack and redirects with a groups payload", async ({ page }) => {
+  test("publishes a valid save_one pack and redirects with a groups payload", async ({
+    page,
+  }) => {
     const captured = await stubCreate(page, {
       id: "pack-1",
       title: "Best Anime Openings",
@@ -49,7 +57,9 @@ test.describe("Create pack", () => {
 
     await page.goto("/create");
     await page.getByLabel("Pack title").fill("Best Anime Openings");
-    await page.getByLabel("Pack description").fill("Pick your favorite each round.");
+    await page
+      .getByLabel("Pack description")
+      .fill("Pick your favorite each round.");
     await page.getByLabel("Group 1 name").fill("2016");
     await page.getByLabel("Group 1 new item").fill("Guren no Yumiya");
     await page.getByRole("button", { name: "Add", exact: true }).click();
@@ -61,7 +71,9 @@ test.describe("Create pack", () => {
     expect(captured.body).not.toHaveProperty("categories");
   });
 
-  test("publishes a valid sacrifice_one pack and redirects with a groups payload", async ({ page }) => {
+  test("publishes a valid sacrifice_one pack and redirects with a groups payload", async ({
+    page,
+  }) => {
     const captured = await stubCreate(page, {
       id: "pack-sac",
       title: "Worst Endings",
@@ -89,7 +101,9 @@ test.describe("Create pack", () => {
     expect(captured.body).not.toHaveProperty("categories");
   });
 
-  test("publishes a valid nxn pack and redirects with a categories payload", async ({ page }) => {
+  test("publishes a valid nxn pack and redirects with a categories payload", async ({
+    page,
+  }) => {
     const captured = await stubCreate(page, {
       id: "pack-nxn",
       title: "Boys vs Girls",
@@ -119,12 +133,18 @@ test.describe("Create pack", () => {
     await page.getByRole("button", { name: "Publish" }).click();
 
     await page.waitForURL("**/packs/pack-nxn");
-    expect(captured.body).toMatchObject({ format: "nxn", versusRounds: 8, versusN: 1 });
+    expect(captured.body).toMatchObject({
+      format: "nxn",
+      versusRounds: 8,
+      versusN: 1,
+    });
     expect(captured.body?.categories).toBeDefined();
     expect(captured.body).not.toHaveProperty("groups");
   });
 
-  test("shows a validation error and does not call the API for an empty submission", async ({ page }) => {
+  test("shows a validation error and does not call the API for an empty submission", async ({
+    page,
+  }) => {
     let called = false;
     await page.route(`${API_BASE}/packs`, (route) => {
       called = true;

@@ -11,7 +11,10 @@ import { fetchYouTubeOEmbed } from "@/src/shared/lib/youtube-oembed";
  * add-error message. Lifted out of the editor so the group-level controls can
  * share the `validating` flag (they disable while an add is in flight).
  */
-export function useGroupItemDraft(group: Group, onChange: (group: Group) => void) {
+export function useGroupItemDraft(
+  group: Group,
+  onChange: (group: Group) => void,
+) {
   const [draftType, setDraftType] = useState<ItemType>("text");
   const [draftTitle, setDraftTitle] = useState("");
   const [draftValue, setDraftValue] = useState("");

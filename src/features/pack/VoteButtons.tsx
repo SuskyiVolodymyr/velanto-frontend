@@ -63,9 +63,7 @@ export function VoteButtons({
       >
         Dislike <span>{dislikes}</span>
       </Button>
-      {error && (
-        <Text className="text-xs text-[#ff6b6b]">{error}</Text>
-      )}
+      {error && <Text className="text-xs text-[#ff6b6b]">{error}</Text>}
     </div>
   );
 }

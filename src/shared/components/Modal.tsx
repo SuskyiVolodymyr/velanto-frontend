@@ -12,7 +12,13 @@ export interface ModalProps {
   className?: string;
 }
 
-export function Modal({ open, onClose, title, children, className }: ModalProps) {
+export function Modal({
+  open,
+  onClose,
+  title,
+  children,
+  className,
+}: ModalProps) {
   // Unique per instance so aria-labelledby stays correct if two Modals
   // ever render concurrently — a hardcoded id would silently collide.
   const titleId = useId();

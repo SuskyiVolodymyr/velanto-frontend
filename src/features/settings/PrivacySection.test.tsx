@@ -31,8 +31,14 @@ describe("PrivacySection", () => {
   it("renders the streamer-mode control defaulting to Off", () => {
     renderPrivacySection();
     expect(screen.getByText("Streamer mode")).toBeInTheDocument();
-    expect(screen.getByRole("radio", { name: "Off" })).toHaveAttribute("aria-checked", "true");
-    expect(screen.getByRole("radio", { name: "On" })).toHaveAttribute("aria-checked", "false");
+    expect(screen.getByRole("radio", { name: "Off" })).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
+    expect(screen.getByRole("radio", { name: "On" })).toHaveAttribute(
+      "aria-checked",
+      "false",
+    );
   });
 
   it("enables streamer mode and persists it when On is chosen", async () => {
@@ -41,13 +47,19 @@ describe("PrivacySection", () => {
 
     await user.click(screen.getByRole("radio", { name: "On" }));
 
-    expect(screen.getByRole("radio", { name: "On" })).toHaveAttribute("aria-checked", "true");
+    expect(screen.getByRole("radio", { name: "On" })).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
     expect(localStorage.getItem(STORAGE_KEY)).toBe("on");
   });
 
   it("reflects an already-stored On value on mount", () => {
     localStorage.setItem(STORAGE_KEY, "on");
     renderPrivacySection();
-    expect(screen.getByRole("radio", { name: "On" })).toHaveAttribute("aria-checked", "true");
+    expect(screen.getByRole("radio", { name: "On" })).toHaveAttribute(
+      "aria-checked",
+      "true",
+    );
   });
 });

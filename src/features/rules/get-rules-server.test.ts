@@ -4,7 +4,11 @@ import { getRulesServer, type RulesDocument } from "./get-rules-server";
 const doc: RulesDocument = {
   version: 3,
   categories: [
-    { id: "conduct", title: "Conduct", rules: [{ number: 1, text: "Be kind." }] },
+    {
+      id: "conduct",
+      title: "Conduct",
+      rules: [{ number: 1, text: "Be kind." }],
+    },
   ],
 };
 
@@ -27,7 +31,9 @@ describe("getRulesServer", () => {
   });
 
   it("throws when the backend responds non-ok", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response("nope", { status: 500 }));
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response("nope", { status: 500 }),
+    );
 
     await expect(getRulesServer()).rejects.toThrow(/Failed to load rules: 500/);
   });

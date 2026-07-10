@@ -49,7 +49,13 @@ type Role = "user" | "moderator" | "manager" | "admin";
 function mockAuth(user: { id: string; role: Role } | null) {
   mockedUseAuth.mockReturnValue({
     user: user
-      ? { id: user.id, email: "a@x.com", username: "u", role: user.role, createdAt: "" }
+      ? {
+          id: user.id,
+          email: "a@x.com",
+          username: "u",
+          role: user.role,
+          createdAt: "",
+        }
       : null,
     status: user ? "authenticated" : "unauthenticated",
     login: vi.fn(),
@@ -61,7 +67,12 @@ function mockAuth(user: { id: string; role: Role } | null) {
 beforeEach(() => {
   vi.resetAllMocks();
   // Comment list is fetched by the embedded FeedbackComments on every render.
-  mockedFeedbackClient.listComments.mockResolvedValue({ items: [], total: 0, page: 1, limit: 10 });
+  mockedFeedbackClient.listComments.mockResolvedValue({
+    items: [],
+    total: 0,
+    page: 1,
+    limit: 10,
+  });
 });
 
 describe("FeedbackDetailScreen", () => {
@@ -81,7 +92,9 @@ describe("FeedbackDetailScreen", () => {
   it("shows the status select to a staff viewer and calls setStatus on change", async () => {
     mockAuth({ id: "mod", role: "moderator" });
     mockedFeedbackClient.getById.mockResolvedValue(makePost());
-    mockedFeedbackClient.setStatus.mockResolvedValue(makePost({ status: "in_progress" }));
+    mockedFeedbackClient.setStatus.mockResolvedValue(
+      makePost({ status: "in_progress" }),
+    );
 
     render(<FeedbackDetailScreen postId="f1" />);
 
@@ -89,7 +102,10 @@ describe("FeedbackDetailScreen", () => {
     await userEvent.selectOptions(select, "in_progress");
 
     await waitFor(() =>
-      expect(mockedFeedbackClient.setStatus).toHaveBeenCalledWith("f1", "in_progress"),
+      expect(mockedFeedbackClient.setStatus).toHaveBeenCalledWith(
+        "f1",
+        "in_progress",
+      ),
     );
   });
 
@@ -101,7 +117,9 @@ describe("FeedbackDetailScreen", () => {
 
     await screen.findByText("A bug report");
     expect(screen.queryByLabelText("Status")).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Delete" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Delete" }),
+    ).not.toBeInTheDocument();
   });
 
   it("lets the author delete the post and redirects to /feedback", async () => {
@@ -116,14 +134,18 @@ describe("FeedbackDetailScreen", () => {
     await userEvent.click(deleteButton);
 
     expect(confirmSpy).toHaveBeenCalled();
-    await waitFor(() => expect(mockedFeedbackClient.remove).toHaveBeenCalledWith("f1"));
+    await waitFor(() =>
+      expect(mockedFeedbackClient.remove).toHaveBeenCalledWith("f1"),
+    );
     expect(push).toHaveBeenCalledWith("/feedback");
     confirmSpy.mockRestore();
   });
 
   it("renders the not-found state when getById rejects with a 404 ApiError", async () => {
     mockAuth({ id: "u2", role: "user" });
-    mockedFeedbackClient.getById.mockRejectedValue(new ApiError(404, "Not Found", null));
+    mockedFeedbackClient.getById.mockRejectedValue(
+      new ApiError(404, "Not Found", null),
+    );
 
     render(<FeedbackDetailScreen postId="f1" />);
 

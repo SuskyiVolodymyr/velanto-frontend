@@ -34,7 +34,12 @@ export function SegmentedField<T extends string>({
   const error = getFieldError(errors, name);
 
   return (
-    <FormField htmlFor={name} label={label} error={error} srOnlyLabel={srOnlyLabel}>
+    <FormField
+      htmlFor={name}
+      label={label}
+      error={error}
+      srOnlyLabel={srOnlyLabel}
+    >
       <Controller
         name={name}
         control={control}

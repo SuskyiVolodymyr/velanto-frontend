@@ -3,7 +3,10 @@ import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { YouTubeCard } from "./YouTubeCard";
 import { loadYouTubeIframeApi } from "@/src/shared/lib/youtube-iframe-api";
-import type { YouTubeIframeApi, YouTubePlayer } from "@/src/shared/lib/youtube-iframe-api";
+import type {
+  YouTubeIframeApi,
+  YouTubePlayer,
+} from "@/src/shared/lib/youtube-iframe-api";
 
 vi.mock("@/src/shared/lib/youtube-iframe-api", () => ({
   loadYouTubeIframeApi: vi.fn(),
@@ -40,10 +43,9 @@ describe("YouTubeCard", () => {
     mockedLoad.mockReturnValue(new Promise(() => {}));
     render(<YouTubeCard videoId="abc123" />);
 
-    expect(screen.getByRole("img", { name: "YouTube video thumbnail" })).toHaveAttribute(
-      "src",
-      "https://img.youtube.com/vi/abc123/mqdefault.jpg",
-    );
+    expect(
+      screen.getByRole("img", { name: "YouTube video thumbnail" }),
+    ).toHaveAttribute("src", "https://img.youtube.com/vi/abc123/mqdefault.jpg");
     expect(mockedLoad).not.toHaveBeenCalled();
   });
 
@@ -57,7 +59,10 @@ describe("YouTubeCard", () => {
 
     await waitFor(() => expect(fakeApi.Player).toHaveBeenCalledTimes(1));
     expect(vi.mocked(fakeApi.Player).mock.calls[0][1]).toEqual(
-      expect.objectContaining({ videoId: "abc123", playerVars: { autoplay: 1 } }),
+      expect.objectContaining({
+        videoId: "abc123",
+        playerVars: { autoplay: 1 },
+      }),
     );
     expect(fakePlayer.playVideo).toHaveBeenCalled();
   });
@@ -95,13 +100,17 @@ describe("YouTubeCard", () => {
   });
 
   it("does not crash and stays on the thumbnail if the API fails to load", async () => {
-    mockedLoad.mockRejectedValue(new Error("Failed to load YouTube IFrame API"));
+    mockedLoad.mockRejectedValue(
+      new Error("Failed to load YouTube IFrame API"),
+    );
 
     render(<YouTubeCard videoId="abc123" />);
     fireEvent.mouseEnter(screen.getByTestId("youtube-card"));
 
     await waitFor(() => expect(mockedLoad).toHaveBeenCalledTimes(1));
-    expect(screen.getByRole("img", { name: "YouTube video thumbnail" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", { name: "YouTube video thumbnail" }),
+    ).toBeInTheDocument();
   });
 
   it("lets a touch/keyboard user start playback via the play button, without hovering", async () => {
@@ -111,7 +120,9 @@ describe("YouTubeCard", () => {
     const user = userEvent.setup();
 
     render(<YouTubeCard videoId="abc123" />);
-    await user.click(screen.getByRole("button", { name: "Play video preview" }));
+    await user.click(
+      screen.getByRole("button", { name: "Play video preview" }),
+    );
 
     await waitFor(() => expect(fakeApi.Player).toHaveBeenCalledTimes(1));
     expect(fakePlayer.playVideo).toHaveBeenCalled();
@@ -127,7 +138,9 @@ describe("YouTubeCard", () => {
         <YouTubeCard videoId="abc123" />
       </div>,
     );
-    await user.click(screen.getByRole("button", { name: "Play video preview" }));
+    await user.click(
+      screen.getByRole("button", { name: "Play video preview" }),
+    );
 
     expect(ancestorClick).not.toHaveBeenCalled();
   });
@@ -144,9 +157,8 @@ describe("YouTubeCard", () => {
     rerender(<YouTubeCard videoId="xyz789" />);
 
     expect(fakePlayer.destroy).toHaveBeenCalledTimes(1);
-    expect(screen.getByRole("img", { name: "YouTube video thumbnail" })).toHaveAttribute(
-      "src",
-      "https://img.youtube.com/vi/xyz789/mqdefault.jpg",
-    );
+    expect(
+      screen.getByRole("img", { name: "YouTube video thumbnail" }),
+    ).toHaveAttribute("src", "https://img.youtube.com/vi/xyz789/mqdefault.jpg");
   });
 });

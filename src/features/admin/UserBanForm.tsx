@@ -46,7 +46,11 @@ export function UserBanForm({
           </select>
         </label>
         <div className="min-w-[16rem] max-w-sm flex-1">
-          <BanReasonPicker idPrefix={userId} value={banReason} onChange={onReasonChange} />
+          <BanReasonPicker
+            idPrefix={userId}
+            value={banReason}
+            onChange={onReasonChange}
+          />
         </div>
       </div>
       <Button

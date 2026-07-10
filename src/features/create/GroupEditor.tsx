@@ -20,12 +20,22 @@ interface GroupEditorProps {
   error?: string;
 }
 
-export function GroupEditor({ group, index, removable, onChange, onRemove, error }: GroupEditorProps) {
+export function GroupEditor({
+  group,
+  index,
+  removable,
+  onChange,
+  onRemove,
+  error,
+}: GroupEditorProps) {
   const draft = useGroupItemDraft(group, onChange);
   const { validating } = draft;
 
   function removeItem(itemId: string) {
-    onChange({ ...group, items: group.items.filter((item) => item.id !== itemId) });
+    onChange({
+      ...group,
+      items: group.items.filter((item) => item.id !== itemId),
+    });
   }
 
   return (
@@ -54,7 +64,13 @@ export function GroupEditor({ group, index, removable, onChange, onRemove, error
           </button>
           <button
             type="button"
-            onClick={() => onChange({ ...group, selectionMode: "manual", sampleSize: undefined })}
+            onClick={() =>
+              onChange({
+                ...group,
+                selectionMode: "manual",
+                sampleSize: undefined,
+              })
+            }
             disabled={validating}
             className={cn(
               "rounded-[7px] px-3 py-1.5 text-xs font-medium transition-colors",
@@ -74,7 +90,8 @@ export function GroupEditor({ group, index, removable, onChange, onRemove, error
             onChange={(e) =>
               onChange({
                 ...group,
-                sampleSize: e.target.value === "" ? undefined : Number(e.target.value),
+                sampleSize:
+                  e.target.value === "" ? undefined : Number(e.target.value),
               })
             }
             disabled={validating}
@@ -84,7 +101,12 @@ export function GroupEditor({ group, index, removable, onChange, onRemove, error
           />
         )}
         {removable && (
-          <Button variant="ghost" type="button" onClick={onRemove} aria-label={`Remove group ${index + 1}`}>
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={onRemove}
+            aria-label={`Remove group ${index + 1}`}
+          >
             Remove
           </Button>
         )}

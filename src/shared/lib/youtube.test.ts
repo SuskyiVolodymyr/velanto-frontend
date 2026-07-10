@@ -3,19 +3,27 @@ import { extractYouTubeId, youtubeThumbnailUrl } from "./youtube";
 
 describe("extractYouTubeId", () => {
   it("extracts the id from a youtu.be short link", () => {
-    expect(extractYouTubeId("https://youtu.be/KsF_hdjWJjo")).toBe("KsF_hdjWJjo");
+    expect(extractYouTubeId("https://youtu.be/KsF_hdjWJjo")).toBe(
+      "KsF_hdjWJjo",
+    );
   });
 
   it("extracts the id from a watch?v= link", () => {
-    expect(extractYouTubeId("https://www.youtube.com/watch?v=KsF_hdjWJjo")).toBe("KsF_hdjWJjo");
+    expect(
+      extractYouTubeId("https://www.youtube.com/watch?v=KsF_hdjWJjo"),
+    ).toBe("KsF_hdjWJjo");
   });
 
   it("extracts the id from an /embed/ link", () => {
-    expect(extractYouTubeId("https://www.youtube.com/embed/KsF_hdjWJjo")).toBe("KsF_hdjWJjo");
+    expect(extractYouTubeId("https://www.youtube.com/embed/KsF_hdjWJjo")).toBe(
+      "KsF_hdjWJjo",
+    );
   });
 
   it("extracts the id from a /shorts/ link", () => {
-    expect(extractYouTubeId("https://www.youtube.com/shorts/KsF_hdjWJjo")).toBe("KsF_hdjWJjo");
+    expect(extractYouTubeId("https://www.youtube.com/shorts/KsF_hdjWJjo")).toBe(
+      "KsF_hdjWJjo",
+    );
   });
 
   it("returns null for a non-YouTube URL", () => {

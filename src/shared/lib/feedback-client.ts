@@ -34,14 +34,17 @@ export const feedbackClient = {
   list: (filters: ListFeedbackFilters = {}) =>
     apiClient.get<FeedbackList>(`/feedback${buildListQuery(filters)}`),
   getById: (id: string) => apiClient.get<Feedback>(`/feedback/${id}`),
-  create: (input: CreateFeedbackInput) => apiClient.post<Feedback>("/feedback", input),
+  create: (input: CreateFeedbackInput) =>
+    apiClient.post<Feedback>("/feedback", input),
   setStatus: (id: string, status: FeedbackStatus) =>
     apiClient.patch<Feedback>(`/feedback/${id}/status`, { status }),
   remove: (id: string) => apiClient.delete<undefined>(`/feedback/${id}`),
   vote: (id: string, value: 1 | -1) =>
     apiClient.post<FeedbackVoteResult>(`/feedback/${id}/vote`, { value }),
   listComments: (id: string, page: { page?: number; limit?: number } = {}) =>
-    apiClient.get<FeedbackCommentList>(`/feedback/${id}/comments${buildPageQuery(page)}`),
+    apiClient.get<FeedbackCommentList>(
+      `/feedback/${id}/comments${buildPageQuery(page)}`,
+    ),
   addComment: (id: string, input: { body: string }) =>
     apiClient.post<FeedbackComment>(`/feedback/${id}/comments`, input),
 };

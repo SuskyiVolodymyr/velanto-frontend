@@ -15,7 +15,15 @@ const mockedUseAuth = vi.mocked(useAuth);
 
 function mockAuth(authenticated: boolean) {
   mockedUseAuth.mockReturnValue({
-    user: authenticated ? { id: "u1", email: "a@x.com", username: "alice", role: "user", createdAt: "" } : null,
+    user: authenticated
+      ? {
+          id: "u1",
+          email: "a@x.com",
+          username: "alice",
+          role: "user",
+          createdAt: "",
+        }
+      : null,
     status: authenticated ? "authenticated" : "unauthenticated",
     login: vi.fn(),
     register: vi.fn(),
@@ -37,18 +45,31 @@ beforeEach(() => vi.resetAllMocks());
 describe("FeedbackComments", () => {
   it("fetches page 1 with limit 10 and renders existing comments", async () => {
     mockAuth(false);
-    mockedFeedbackClient.listComments.mockResolvedValue({ items: [COMMENT_A], total: 1, page: 1, limit: 10 });
+    mockedFeedbackClient.listComments.mockResolvedValue({
+      items: [COMMENT_A],
+      total: 1,
+      page: 1,
+      limit: 10,
+    });
 
     render(<FeedbackComments feedbackId="f1" />);
 
     expect(await screen.findByText("bob")).toBeInTheDocument();
     expect(screen.getByText("Loved this.")).toBeInTheDocument();
-    expect(mockedFeedbackClient.listComments).toHaveBeenCalledWith("f1", { page: 1, limit: 10 });
+    expect(mockedFeedbackClient.listComments).toHaveBeenCalledWith("f1", {
+      page: 1,
+      limit: 10,
+    });
   });
 
   it("shows a log-in prompt instead of a compose form when unauthenticated", async () => {
     mockAuth(false);
-    mockedFeedbackClient.listComments.mockResolvedValue({ items: [], total: 0, page: 1, limit: 10 });
+    mockedFeedbackClient.listComments.mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 10,
+    });
 
     render(<FeedbackComments feedbackId="f1" />);
 
@@ -58,7 +79,12 @@ describe("FeedbackComments", () => {
 
   it("posts a comment and prepends it, clearing the draft", async () => {
     mockAuth(true);
-    mockedFeedbackClient.listComments.mockResolvedValue({ items: [COMMENT_A], total: 1, page: 1, limit: 10 });
+    mockedFeedbackClient.listComments.mockResolvedValue({
+      items: [COMMENT_A],
+      total: 1,
+      page: 1,
+      limit: 10,
+    });
     const created: FeedbackComment = {
       id: "c2",
       feedbackId: "f1",
@@ -76,7 +102,9 @@ describe("FeedbackComments", () => {
     await userEvent.click(screen.getByRole("button", { name: "Post" }));
 
     await waitFor(() =>
-      expect(mockedFeedbackClient.addComment).toHaveBeenCalledWith("f1", { body: "My take." }),
+      expect(mockedFeedbackClient.addComment).toHaveBeenCalledWith("f1", {
+        body: "My take.",
+      }),
     );
     expect(await screen.findByText("My take.")).toBeInTheDocument();
     expect(textbox).toHaveValue("");
@@ -84,7 +112,12 @@ describe("FeedbackComments", () => {
 
   it("surfaces the backend's blocked-term rejection inline and keeps the draft", async () => {
     mockAuth(true);
-    mockedFeedbackClient.listComments.mockResolvedValue({ items: [], total: 0, page: 1, limit: 10 });
+    mockedFeedbackClient.listComments.mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 10,
+    });
     // Real nestjs-zod validation 400 shape: the moderation rejection lives
     // under `errors[]`. The comment text itself is innocuous.
     mockedFeedbackClient.addComment.mockRejectedValue(
@@ -95,7 +128,8 @@ describe("FeedbackComments", () => {
           {
             code: "custom",
             path: ["body"],
-            message: "This text contains language that isn't allowed on Velanto.",
+            message:
+              "This text contains language that isn't allowed on Velanto.",
           },
         ],
       }),
@@ -108,7 +142,9 @@ describe("FeedbackComments", () => {
     await userEvent.click(screen.getByRole("button", { name: "Post" }));
 
     expect(
-      await screen.findByText("This text contains language that isn't allowed on Velanto."),
+      await screen.findByText(
+        "This text contains language that isn't allowed on Velanto.",
+      ),
     ).toBeInTheDocument();
     expect(textbox).toHaveValue("My take.");
   });

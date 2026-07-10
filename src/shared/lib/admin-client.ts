@@ -1,5 +1,9 @@
 import { apiClient } from "@/src/shared/lib/api-client";
-import type { AdminOverview, AdminUserList, AuditLogList } from "@/src/shared/types/admin";
+import type {
+  AdminOverview,
+  AdminUserList,
+  AuditLogList,
+} from "@/src/shared/types/admin";
 
 export interface ListAdminUsersFilters {
   q?: string;

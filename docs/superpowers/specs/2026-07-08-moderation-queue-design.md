@@ -5,6 +5,7 @@
 ## Scope check against the issue
 
 The issue lists two pieces of work:
+
 1. A "pending review"/"rejected" badge on the creator's own Profile "My Packs" view.
 2. A new moderator+ queue screen listing pending packs with approve/reject actions.
 
@@ -20,11 +21,13 @@ The issue lists two pieces of work:
 ## UI
 
 New top-level screen at `/moderation`, moderator+-gated (`moderator`/`manager`/`admin` — matches the endpoint's own `@Roles`), following `SupportScreen.tsx`'s exact template:
+
 - Same auth-gating boilerplate: `loading` → null, unauthenticated → redirect, non-allowed role → redirect to `/`, `if (!allowed) return null` before the main render.
 - Same fetch/pagination shape: `status` state (`loading`/`ready`/`error`), a `useEffect` on mount calling `packsClient.moderationQueue({ page: 1, limit: PAGE_SIZE })`, `handleLoadMore` bumping `page` and deduping by id via `Set`, separate `loadingMore`/`loadMoreError` state.
 - No filter chips needed (unlike Support's status filter) — the queue is inherently "pending only," there's nothing to filter by.
 
 **Row layout:** each pending pack renders as a card/row showing title, format badge, truncated description, and three actions:
+
 - **View** — `Link href={`/packs/${pack.id}`}` (opens in the same tab; moderator can read the full pack before deciding, then use browser back or re-visit `/moderation`).
 - **Approve** — a button that calls `packsClient.approve(pack.id)` directly from the row, no confirmation dialog (matches the low-friction, reversible-enough nature of approval — a wrongly-approved pack can still be rejected/removed later via Support's existing `DELETE /packs/:id` moderation path). On success, remove the row from the list (optimistic-after-response, not optimistic-before — wait for the 200 before removing, to avoid a false "approved" flash on a network error).
 - **Reject** — expands an inline reason textarea (`maxLength={500}`) with a "Confirm reject"/"Cancel" pair, rather than a full modal — mirrors the low-ceremony, single-row-scoped nature of the action and avoids introducing a new modal component for one screen. Reason is optional (backend allows empty), so "Confirm reject" is enabled even with an empty textarea. On success, remove the row from the list.

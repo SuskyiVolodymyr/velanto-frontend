@@ -1,7 +1,12 @@
 const ACCENT_STORAGE_KEY = "velanto:accent";
 
 export const DEFAULT_ACCENT = "#00e5ff";
-export const ACCENTS = [DEFAULT_ACCENT, "#7c8cff", "#39d98a", "#f5a623"] as const;
+export const ACCENTS = [
+  DEFAULT_ACCENT,
+  "#7c8cff",
+  "#39d98a",
+  "#f5a623",
+] as const;
 
 function isValidAccent(value: string): boolean {
   return (ACCENTS as readonly string[]).includes(value);

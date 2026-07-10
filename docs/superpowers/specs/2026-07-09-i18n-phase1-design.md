@@ -41,9 +41,23 @@ One file per locale: `messages/<locale>.json`, with **nested namespaces** so key
 
 ```jsonc
 {
-  "common": { "appName": "Velanto", "save": "Save", "cancel": "Cancel", "loading": "Loading…" },
-  "header": { "home": "Home", "create": "Create", "signIn": "Sign in", "signOut": "Sign out" },
-  "settings": { "title": "Preferences", "language": "Language", "languageHint": "…" }
+  "common": {
+    "appName": "Velanto",
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading…",
+  },
+  "header": {
+    "home": "Home",
+    "create": "Create",
+    "signIn": "Sign in",
+    "signOut": "Sign out",
+  },
+  "settings": {
+    "title": "Preferences",
+    "language": "Language",
+    "languageHint": "…",
+  },
 }
 ```
 

@@ -52,7 +52,12 @@ const PACKS: Record<string, unknown> = {
         selectionMode: "manual",
         items: [textItem("1", "Guren no Yumiya"), textItem("2", "Redo")],
       },
-      { id: "g2", name: "2020", selectionMode: "manual", items: [textItem("3", "Silhouette")] },
+      {
+        id: "g2",
+        name: "2020",
+        selectionMode: "manual",
+        items: [textItem("3", "Silhouette")],
+      },
     ],
   },
   "pack-sacrifice": {
@@ -68,7 +73,12 @@ const PACKS: Record<string, unknown> = {
         selectionMode: "manual",
         items: [textItem("1", "Guren no Yumiya"), textItem("2", "Redo")],
       },
-      { id: "g2", name: "2020", selectionMode: "manual", items: [textItem("3", "Silhouette")] },
+      {
+        id: "g2",
+        name: "2020",
+        selectionMode: "manual",
+        items: [textItem("3", "Silhouette")],
+      },
     ],
   },
   "pack-nxn": {
@@ -78,8 +88,16 @@ const PACKS: Record<string, unknown> = {
     description: "Pick a side each round.",
     format: "nxn",
     categories: [
-      { id: "ca", name: "Boys", items: [textItem("1", "Naruto"), textItem("2", "Sasuke")] },
-      { id: "cb", name: "Girls", items: [textItem("3", "Sakura"), textItem("4", "Hinata")] },
+      {
+        id: "ca",
+        name: "Boys",
+        items: [textItem("1", "Naruto"), textItem("2", "Sasuke")],
+      },
+      {
+        id: "cb",
+        name: "Girls",
+        items: [textItem("3", "Sakura"), textItem("4", "Hinata")],
+      },
     ],
     versusRounds: 2,
     versusN: 2,
@@ -122,7 +140,10 @@ test.describe("Play a pack", () => {
   test.beforeEach(async ({ page }) => {
     // Authenticated session so the login gate never shows.
     await page.route(`${API_BASE}/auth/refresh`, (route) =>
-      route.fulfill({ status: 201, json: { accessToken: "access-token", user: MOCK_USER } }),
+      route.fulfill({
+        status: 201,
+        json: { accessToken: "access-token", user: MOCK_USER },
+      }),
     );
   });
 
@@ -142,42 +163,55 @@ test.describe("Play a pack", () => {
       await expect(page.getByRole("heading", { name: "2016" })).toBeVisible();
       await expect(page.getByText("Round 1 of 2")).toBeVisible();
       await expect(page.getByText("Showing 1 of 2")).toBeVisible();
-      await expect(page.getByRole("button", { name: "Next round →" })).toBeDisabled();
+      await expect(
+        page.getByRole("button", { name: "Next round →" }),
+      ).toBeDisabled();
 
       await page.getByRole("button", { name: "Show all" }).click();
       await expect(page.getByText("Showing 2 of 2")).toBeVisible();
-      await expect(page.getByRole("button", { name: "Next round →" })).toBeDisabled();
+      await expect(
+        page.getByRole("button", { name: "Next round →" }),
+      ).toBeDisabled();
 
       await page.getByText("Guren no Yumiya").click();
-      await expect(page.getByRole("button", { name: "Next round →" })).toBeEnabled();
+      await expect(
+        page.getByRole("button", { name: "Next round →" }),
+      ).toBeEnabled();
       await page.getByRole("button", { name: "Next round →" }).click();
 
       // Round 2: single item, still gated on selection.
       await expect(page.getByRole("heading", { name: "2020" })).toBeVisible();
       await expect(page.getByText("Round 2 of 2")).toBeVisible();
       await expect(page.getByText("Showing 1 of 1")).toBeVisible();
-      await expect(page.getByRole("button", { name: "Next round →" })).toBeDisabled();
+      await expect(
+        page.getByRole("button", { name: "Next round →" }),
+      ).toBeDisabled();
       await page.getByText("Silhouette").click();
       await page.getByRole("button", { name: "Next round →" }).click();
 
       // Finished.
-      await expect(page.getByRole("heading", { name: "All rounds done" })).toBeVisible();
+      await expect(
+        page.getByRole("heading", { name: "All rounds done" }),
+      ).toBeVisible();
       await expect(page.getByText("Complete")).toBeVisible();
-      await expect(page.getByRole("link", { name: "See your result" })).toHaveAttribute(
-        "href",
-        `/packs/${format}/result`,
-      );
+      await expect(
+        page.getByRole("link", { name: "See your result" }),
+      ).toHaveAttribute("href", `/packs/${format}/result`);
 
-      await expect.poll(() => recordBody).toEqual({
-        picks: [
-          { groupId: "g1", itemId: "1" },
-          { groupId: "g2", itemId: "3" },
-        ],
-      });
+      await expect
+        .poll(() => recordBody)
+        .toEqual({
+          picks: [
+            { groupId: "g1", itemId: "1" },
+            { groupId: "g2", itemId: "3" },
+          ],
+        });
     });
   }
 
-  test("plays a full nxn session with confirm-gating and records the side picks", async ({ page }) => {
+  test("plays a full nxn session with confirm-gating and records the side picks", async ({
+    page,
+  }) => {
     let recordBody: unknown;
     await page.route(`${API_BASE}/packs/pack-nxn/plays`, (route) => {
       recordBody = route.request().postDataJSON();
@@ -188,15 +222,21 @@ test.describe("Play a pack", () => {
 
     // Round 1: two sides with a VS divider, gated until both revealed + a pick.
     await expect(page.getByRole("button", { name: "Pick Boys" })).toBeVisible();
-    await expect(page.getByRole("button", { name: "Pick Girls" })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Pick Girls" }),
+    ).toBeVisible();
     await expect(page.getByText("VS")).toBeVisible();
     await expect(page.getByText("Showing 1 of 2")).toBeVisible();
-    await expect(page.getByRole("button", { name: "Next round →" })).toBeDisabled();
+    await expect(
+      page.getByRole("button", { name: "Next round →" }),
+    ).toBeDisabled();
 
     await page.getByRole("button", { name: "Show all" }).click();
     await expect(page.getByText("Showing 2 of 2")).toBeVisible();
     await page.getByRole("button", { name: "Pick Boys" }).click();
-    await expect(page.getByRole("button", { name: "Next round →" })).toBeEnabled();
+    await expect(
+      page.getByRole("button", { name: "Next round →" }),
+    ).toBeEnabled();
     await page.getByRole("button", { name: "Next round →" }).click();
 
     // Round 2.
@@ -206,16 +246,20 @@ test.describe("Play a pack", () => {
     await page.getByRole("button", { name: "Next round →" }).click();
 
     // Finished.
-    await expect(page.getByRole("heading", { name: "All rounds done" })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { name: "All rounds done" }),
+    ).toBeVisible();
     await expect(
       page.getByText("You picked a side in 2 rounds between Boys and Girls."),
     ).toBeVisible();
 
-    await expect.poll(() => recordBody).toEqual({
-      picks: [
-        { groupId: "0", itemId: "ca" },
-        { groupId: "1", itemId: "cb" },
-      ],
-    });
+    await expect
+      .poll(() => recordBody)
+      .toEqual({
+        picks: [
+          { groupId: "0", itemId: "ca" },
+          { groupId: "1", itemId: "cb" },
+        ],
+      });
   });
 });

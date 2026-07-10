@@ -43,22 +43,30 @@ describe("share-url", () => {
     expect(decodePicks(btoa("not json"))).toBeNull();
     expect(decodePicks(btoa(JSON.stringify({ not: "an array" })))).toBeNull();
     expect(decodePicks(btoa(JSON.stringify([{ groupId: "g1" }])))).toBeNull(); // missing itemId
-    expect(decodePicks(btoa(JSON.stringify([{ groupId: 1, itemId: "i1" }])))).toBeNull(); // wrong type
+    expect(
+      decodePicks(btoa(JSON.stringify([{ groupId: 1, itemId: "i1" }]))),
+    ).toBeNull(); // wrong type
   });
 
   it("rejects a negative or non-integer position (forged link hardening)", () => {
-    const neg = btoa(JSON.stringify([{ groupId: "g1", itemId: "i1", position: -1 }]));
-    const frac = btoa(JSON.stringify([{ groupId: "g1", itemId: "i1", position: 1.5 }]));
+    const neg = btoa(
+      JSON.stringify([{ groupId: "g1", itemId: "i1", position: -1 }]),
+    );
+    const frac = btoa(
+      JSON.stringify([{ groupId: "g1", itemId: "i1", position: 1.5 }]),
+    );
     expect(decodePicks(neg)).toBeNull();
     expect(decodePicks(frac)).toBeNull();
     // a valid non-negative integer position still decodes fine
-    expect(decodePicks(encodePicks([{ groupId: "g1", itemId: "i1", position: 0 }]))).toEqual([
-      { groupId: "g1", itemId: "i1", position: 0 },
-    ]);
+    expect(
+      decodePicks(encodePicks([{ groupId: "g1", itemId: "i1", position: 0 }])),
+    ).toEqual([{ groupId: "g1", itemId: "i1", position: 0 }]);
   });
 
   it("buildShareUrl appends ?p= only when picks are present and non-empty", () => {
-    const withPicks = buildShareUrl("/packs/p1/result", [{ groupId: "g1", itemId: "i1" }]);
+    const withPicks = buildShareUrl("/packs/p1/result", [
+      { groupId: "g1", itemId: "i1" },
+    ]);
     expect(withPicks).toContain("/packs/p1/result?p=");
 
     expect(buildShareUrl("/packs/p1", [])).not.toContain("?p=");

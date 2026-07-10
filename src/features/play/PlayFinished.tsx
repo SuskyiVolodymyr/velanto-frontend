@@ -29,7 +29,10 @@ export function PlayFinished({
           ? `You picked a side in ${pickCount} round${pickCount === 1 ? "" : "s"} between ${categoryAName} and ${categoryBName}.`
           : `You ${finishedVerb} ${pickCount} pick${pickCount === 1 ? "" : "s"}, one per round.`}
       </Text>
-      <Link href={`/packs/${packId}/result`} className={buttonClassName("primary", "w-fit")}>
+      <Link
+        href={`/packs/${packId}/result`}
+        className={buttonClassName("primary", "w-fit")}
+      >
         See your result
       </Link>
     </section>

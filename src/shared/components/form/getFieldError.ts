@@ -5,7 +5,10 @@ import type { FieldErrors } from "react-hook-form";
  * `formState.errors`, given a dotted `name` like `"email"` or
  * `"categories.0.name"`. Returns `undefined` when there's no message.
  */
-export function getFieldError(errors: FieldErrors, name: string): string | undefined {
+export function getFieldError(
+  errors: FieldErrors,
+  name: string,
+): string | undefined {
   let current: unknown = errors;
   for (const part of name.split(".")) {
     if (current == null || typeof current !== "object") return undefined;

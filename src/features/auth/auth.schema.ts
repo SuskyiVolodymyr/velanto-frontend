@@ -40,27 +40,28 @@ export const registerSchema = authFields
     }),
   })
   .superRefine((data, ctx) => {
-  if (!data.username.trim() || !data.email.trim() || !data.password) {
-    ctx.addIssue({
-      code: "custom",
-      message: "Fill in your username, email, and password.",
-      path: ["username"],
-    });
-    return;
-  }
-  if (!USERNAME_PATTERN.test(data.username.trim())) {
-    ctx.addIssue({
-      code: "custom",
-      message: "Username must be 3-20 characters: letters, numbers, underscore only.",
-      path: ["username"],
-    });
-    return;
-  }
-  if (data.password.length < MIN_PASSWORD_LENGTH) {
-    ctx.addIssue({
-      code: "custom",
-      message: `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`,
-      path: ["password"],
-    });
-  }
-});
+    if (!data.username.trim() || !data.email.trim() || !data.password) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Fill in your username, email, and password.",
+        path: ["username"],
+      });
+      return;
+    }
+    if (!USERNAME_PATTERN.test(data.username.trim())) {
+      ctx.addIssue({
+        code: "custom",
+        message:
+          "Username must be 3-20 characters: letters, numbers, underscore only.",
+        path: ["username"],
+      });
+      return;
+    }
+    if (data.password.length < MIN_PASSWORD_LENGTH) {
+      ctx.addIssue({
+        code: "custom",
+        message: `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`,
+        path: ["password"],
+      });
+    }
+  });

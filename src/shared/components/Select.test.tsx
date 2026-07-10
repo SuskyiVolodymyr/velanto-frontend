@@ -32,16 +32,28 @@ describe("Select", () => {
 
   it("forwards a ref to the underlying select element", () => {
     const ref = createRef<HTMLSelectElement>();
-    render(<Select ref={ref} aria-label="Pick" options={OPTIONS} defaultValue="a" />);
+    render(
+      <Select ref={ref} aria-label="Pick" options={OPTIONS} defaultValue="a" />,
+    );
     expect(ref.current).toBeInstanceOf(HTMLSelectElement);
   });
 
   it("calls onChange with the chosen value", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<Select aria-label="Pick" options={OPTIONS} value="a" onChange={onChange} />);
+    render(
+      <Select
+        aria-label="Pick"
+        options={OPTIONS}
+        value="a"
+        onChange={onChange}
+      />,
+    );
 
-    await user.selectOptions(screen.getByRole("combobox", { name: "Pick" }), "b");
+    await user.selectOptions(
+      screen.getByRole("combobox", { name: "Pick" }),
+      "b",
+    );
 
     expect(onChange).toHaveBeenCalled();
   });
@@ -57,7 +69,9 @@ describe("Select", () => {
   });
 
   it("is disabled when the disabled prop is set", () => {
-    render(<Select aria-label="Pick" options={OPTIONS} defaultValue="a" disabled />);
+    render(
+      <Select aria-label="Pick" options={OPTIONS} defaultValue="a" disabled />,
+    );
     expect(screen.getByRole("combobox", { name: "Pick" })).toBeDisabled();
   });
 });

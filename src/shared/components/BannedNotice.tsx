@@ -46,7 +46,10 @@ export function BannedNotice({
     : t("expiresOn", { date: new Date(bannedUntil).toLocaleDateString() });
 
   return (
-    <div role="alert" className="border-b border-[#ff6b6b]/40 bg-[#ff6b6b]/10 px-7 py-4">
+    <div
+      role="alert"
+      className="border-b border-[#ff6b6b]/40 bg-[#ff6b6b]/10 px-7 py-4"
+    >
       <div className="mx-auto flex max-w-4xl flex-col gap-1">
         <Text as="h2" className="text-sm font-semibold text-[#ff6b6b]">
           {t("heading")}
@@ -54,14 +57,18 @@ export function BannedNotice({
 
         {reasonTitle && (
           <Text variant="secondary" className="text-sm">
-            <span className="text-foreground-tertiary">{t("reasonLabel")}: </span>
+            <span className="text-foreground-tertiary">
+              {t("reasonLabel")}:{" "}
+            </span>
             {reasonTitle}
           </Text>
         )}
 
         {banReasonDetail && (
           <Text variant="secondary" className="text-sm">
-            <span className="text-foreground-tertiary">{t("detailLabel")}: </span>
+            <span className="text-foreground-tertiary">
+              {t("detailLabel")}:{" "}
+            </span>
             {banReasonDetail}
           </Text>
         )}
@@ -70,7 +77,10 @@ export function BannedNotice({
           {expiry}
         </Text>
 
-        <Link href="/rules" className="text-sm text-acc underline underline-offset-2">
+        <Link
+          href="/rules"
+          className="text-sm text-acc underline underline-offset-2"
+        >
           {t("rulesLink")}
         </Link>
       </div>

@@ -15,7 +15,9 @@ export function ProfileScreen() {
   const { user, status: authStatus } = useAuth();
   const [profile, setProfile] = useState<PublicUserProfile | null>(null);
   const [packs, setPacks] = useState<Pack[]>([]);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "ready" | "error">(
+    "loading",
+  );
 
   useEffect(() => {
     if (authStatus !== "authenticated" || !user) return;
@@ -44,8 +46,13 @@ export function ProfileScreen() {
   if (authStatus === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">You need to be logged in to view your profile.</Text>
-        <Link href="/auth?next=%2Fprofile" className={buttonClassName("primary", "mt-4 w-fit")}>
+        <Text variant="secondary">
+          You need to be logged in to view your profile.
+        </Text>
+        <Link
+          href="/auth?next=%2Fprofile"
+          className={buttonClassName("primary", "mt-4 w-fit")}
+        >
           Log in
         </Link>
       </div>
@@ -57,7 +64,9 @@ export function ProfileScreen() {
   if (status === "error" || !profile) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text className="text-[#ff6b6b]">Couldn&apos;t load your profile. Try again later.</Text>
+        <Text className="text-[#ff6b6b]">
+          Couldn&apos;t load your profile. Try again later.
+        </Text>
       </div>
     );
   }
@@ -76,11 +85,15 @@ export function ProfileScreen() {
               {profile.username}
             </Text>
             <Text variant="tertiary" className="text-sm">
-              {profile.followerCount} follower{profile.followerCount === 1 ? "" : "s"}
+              {profile.followerCount} follower
+              {profile.followerCount === 1 ? "" : "s"}
             </Text>
           </div>
         </div>
-        <Link href="/profile/edit" className={buttonClassName("secondary", "w-fit")}>
+        <Link
+          href="/profile/edit"
+          className={buttonClassName("secondary", "w-fit")}
+        >
           Edit profile
         </Link>
       </div>

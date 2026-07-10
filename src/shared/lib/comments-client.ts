@@ -27,7 +27,9 @@ function buildListQuery(filters: ListCommentsFilters): string {
 
 export const commentsClient = {
   list: (packId: string, filters: ListCommentsFilters = {}) =>
-    apiClient.get<CommentList>(`/packs/${packId}/comments${buildListQuery(filters)}`),
+    apiClient.get<CommentList>(
+      `/packs/${packId}/comments${buildListQuery(filters)}`,
+    ),
   create: (packId: string, input: CreateCommentInput) =>
     apiClient.post<Comment>(`/packs/${packId}/comments`, input),
 };

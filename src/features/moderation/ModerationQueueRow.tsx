@@ -35,7 +35,10 @@ export function ModerationQueueRow({
       <div className="flex items-center gap-3">
         <Badge>{FORMAT_LABELS[pack.format]}</Badge>
         <Text className="flex-1 truncate font-semibold">{pack.title}</Text>
-        <Link href={`/packs/${pack.id}`} className="text-sm text-acc hover:underline">
+        <Link
+          href={`/packs/${pack.id}`}
+          className="text-sm text-acc hover:underline"
+        >
           View
         </Link>
         <Button variant="secondary" disabled={busy} onClick={onApprove}>

@@ -3,7 +3,12 @@
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 
-export default function UserProfileError({ reset }: { error: Error; reset: () => void }) {
+export default function UserProfileError({
+  reset,
+}: {
+  error: Error;
+  reset: () => void;
+}) {
   return (
     <div className="mx-auto max-w-md py-16 text-center">
       <Text as="h1" variant="title" className="mb-2 text-2xl">

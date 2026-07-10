@@ -25,6 +25,9 @@ export function resolveRoundCandidates(group: Group): Item[] {
  * sample of `versusN` items, re-sampled every round (categories are flat
  * pools, not pre-split — there's no manual mode for nxn).
  */
-export function resolveVersusRoundCandidates(category: Category, versusN: number): Item[] {
+export function resolveVersusRoundCandidates(
+  category: Category,
+  versusN: number,
+): Item[] {
   return shuffle(category.items).slice(0, versusN);
 }

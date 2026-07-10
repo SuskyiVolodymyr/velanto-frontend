@@ -15,7 +15,9 @@ const PAGE_SIZE = 50;
  */
 export async function getHomeFeedServer(): Promise<Pack[] | null> {
   try {
-    const res = await fetch(`${API_BASE_URL}/packs?limit=${PAGE_SIZE}`, { cache: "no-store" });
+    const res = await fetch(`${API_BASE_URL}/packs?limit=${PAGE_SIZE}`, {
+      cache: "no-store",
+    });
     if (!res.ok) return null;
     const data = (await res.json()) as { items?: Pack[] };
     return data.items ?? [];

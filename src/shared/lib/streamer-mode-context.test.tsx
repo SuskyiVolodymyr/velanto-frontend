@@ -40,7 +40,9 @@ describe("useStreamerMode", () => {
     act(() => result.current.setEnabled(true));
     expect(result.current.enabled).toBe(true);
     expect(localStorage.getItem(STORAGE_KEY)).toBe("on");
-    expect(document.documentElement.getAttribute("data-streamer-mode")).toBe("on");
+    expect(document.documentElement.getAttribute("data-streamer-mode")).toBe(
+      "on",
+    );
   });
 
   it("clears persistence when disabled", () => {
@@ -49,7 +51,9 @@ describe("useStreamerMode", () => {
     act(() => result.current.setEnabled(false));
     expect(result.current.enabled).toBe(false);
     expect(localStorage.getItem(STORAGE_KEY)).toBeNull();
-    expect(document.documentElement.hasAttribute("data-streamer-mode")).toBe(false);
+    expect(document.documentElement.hasAttribute("data-streamer-mode")).toBe(
+      false,
+    );
   });
 
   it("toggle flips the current value", () => {
@@ -85,6 +89,8 @@ describe("useStreamerMode", () => {
 
   it("throws when used outside a provider", () => {
     // Silence React's error boundary noise for the expected throw.
-    expect(() => renderHook(() => useStreamerMode())).toThrow(/StreamerModeProvider/);
+    expect(() => renderHook(() => useStreamerMode())).toThrow(
+      /StreamerModeProvider/,
+    );
   });
 });

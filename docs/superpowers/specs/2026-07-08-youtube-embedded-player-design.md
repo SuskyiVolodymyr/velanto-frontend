@@ -5,6 +5,7 @@
 ## Scope
 
 Per the issue, three parts:
+
 1. Validate a pasted YouTube URL is a real, existing video at Create-time (oEmbed, no API key).
 2. Replace the static badge with a real embedded YouTube iframe player (native controls) everywhere an item can be watched during play — all three surfaces, since choosing a pick requires being able to watch every candidate first.
 3. Hover-to-play/pause.
@@ -16,6 +17,7 @@ Ground truth for the hover/selection interaction pattern comes from `Vilante Pla
 No changes to `Item`/`ItemType` (`src/shared/types/pack.ts`) — `youtube` already exists, `value` already holds the raw pasted URL.
 
 New shared helper, `src/shared/lib/youtube.ts`:
+
 ```ts
 const VIDEO_ID_RE = /(?:youtu\.be\/|v=|\/embed\/|\/shorts\/)([\w-]{11})/;
 
@@ -28,19 +30,25 @@ export function youtubeThumbnailUrl(videoId: string): string {
   return `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
 }
 ```
+
 (Regex matches the one already used in the `Vilante Create.dc.html` mock's `ytId()`.)
 
 ## Create-time validation (oEmbed)
 
 New `src/shared/lib/youtube-oembed.ts`:
+
 ```ts
 export interface OEmbedResult {
   title: string;
 }
 
-export async function fetchYouTubeOEmbed(url: string): Promise<OEmbedResult | null> {
+export async function fetchYouTubeOEmbed(
+  url: string,
+): Promise<OEmbedResult | null> {
   try {
-    const res = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`);
+    const res = await fetch(
+      `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`,
+    );
     if (!res.ok) return null;
     const data = await res.json();
     return { title: typeof data.title === "string" ? data.title : "" };
@@ -49,9 +57,11 @@ export async function fetchYouTubeOEmbed(url: string): Promise<OEmbedResult | nu
   }
 }
 ```
+
 `null` covers both network failure and a real-but-invalid/private/deleted video (oEmbed 404s in that case) — both are the same "can't add this" outcome for the UI.
 
 `CategoryEditor.tsx` and `GroupEditor.tsx`'s `addItem()` flow (currently synchronous) becomes async for the `youtube` branch only:
+
 - On "Add" (or Enter) with `draftType === "youtube"`: first run `extractYouTubeId(draftValue)` — if it doesn't even look like a YouTube URL, show an inline error immediately without a network call.
 - If it looks valid, disable the Add button + show a small "Checking…" state, call `fetchYouTubeOEmbed`.
 - On `null`: inline error ("Couldn't find that video — check the link.") and don't add.
@@ -63,6 +73,7 @@ This duplicates across `CategoryEditor.tsx` and `GroupEditor.tsx` exactly like t
 ## IFrame Player API loader
 
 New `src/shared/lib/youtube-iframe-api.ts` — loads `https://www.youtube.com/iframe_api` once globally and resolves when `window.YT.Player` is ready, memoized so every card doesn't re-inject the script:
+
 ```ts
 let apiPromise: Promise<typeof YT> | null = null;
 
@@ -85,11 +96,13 @@ export function loadYouTubeIframeApi(): Promise<typeof YT> {
   return apiPromise;
 }
 ```
+
 A minimal global type declaration (`window.YT`, `window.onYouTubeIframeAPIReady`) is added alongside it since `@types/youtube` isn't installed and pulling in a dependency for a handful of fields isn't worth it — declare only what's used (`YT.Player` constructor, `playVideo`/`pauseVideo`/`destroy` methods).
 
 ## `YouTubeCard` component
 
 New `src/shared/components/YouTubeCard.tsx` — the one place hover/player logic lives, used by all three play surfaces:
+
 ```tsx
 interface YouTubeCardProps {
   videoId: string;
@@ -112,7 +125,9 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
         events: { onReady: (e) => e.target.playVideo() },
       });
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [hovered, videoId]);
 
   useEffect(() => {
@@ -130,7 +145,11 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
       onMouseLeave={() => setHovered(false)}
     >
       {!playerRef.current && (
-        <img src={youtubeThumbnailUrl(videoId)} alt="" className="absolute inset-0 h-full w-full object-cover" />
+        <img
+          src={youtubeThumbnailUrl(videoId)}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+        />
       )}
       <div ref={mountRef} className="absolute inset-0" />
       {!hovered && <PlayIconOverlay />}
@@ -139,6 +158,7 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
   );
 }
 ```
+
 - Before first hover: thumbnail image only (cheap — no iframe, no script load), matching the mock's lazy "hover to preview" intent and keeping `VersusRound`'s denser lists light until actually hovered.
 - First hover: kicks off the API load + player construction (`autoplay: 1` so it starts playing the moment it's ready, since the user is already mid-hover by the time it loads).
 - Subsequent hover/leave on an already-constructed player: `playVideo()`/`pauseVideo()` directly, no reload — instant resume.
@@ -154,7 +174,7 @@ All three currently render their card as a single `<button onClick={...}>` wrapp
 
 **`HeadToHeadRound.tsx`**: `HeadToHeadCard` becomes a `<div>` with the same split — `YouTubeCard` (or plain text block) on top, an explicit "Pick this" row/element beneath it calling `onPick`.
 
-**`VersusRound.tsx`**: no change to the *selection* unit — the whole side is still the pickable thing, not individual items, so `SideCard` stays as-is except for one required fix: it's currently a `<button>` wrapping the item list, which has the same invalid-nesting problem once one of those items is a real iframe. `SideCard`'s outer element changes from `<button>` to `<div role="button" tabIndex={0} onClick={onSelect} onKeyDown={...}>` (Enter/Space trigger select, matching native button keyboard semantics) so a `YouTubeCard` can be nested inside one of its items without being swallowed or invalid.
+**`VersusRound.tsx`**: no change to the _selection_ unit — the whole side is still the pickable thing, not individual items, so `SideCard` stays as-is except for one required fix: it's currently a `<button>` wrapping the item list, which has the same invalid-nesting problem once one of those items is a real iframe. `SideCard`'s outer element changes from `<button>` to `<div role="button" tabIndex={0} onClick={onSelect} onKeyDown={...}>` (Enter/Space trigger select, matching native button keyboard semantics) so a `YouTubeCard` can be nested inside one of its items without being swallowed or invalid.
 
 All three use `extractYouTubeId(item.value)` to get the video ID for `YouTubeCard`; if extraction somehow fails for a legacy/malformed stored item (shouldn't happen post-validation, but defensively), fall back to today's plain `<Badge>YouTube</Badge>` treatment rather than rendering a broken player.
 

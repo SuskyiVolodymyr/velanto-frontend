@@ -45,7 +45,9 @@ describe("Hidden", () => {
         renderHidden(kind);
         expect(screen.queryByText("SecretValue")).not.toBeInTheDocument();
         // The reveal control is a button with an accessible name mentioning "Reveal".
-        expect(screen.getByRole("button", { name: /reveal/i })).toBeInTheDocument();
+        expect(
+          screen.getByRole("button", { name: /reveal/i }),
+        ).toBeInTheDocument();
       },
     );
 
@@ -60,7 +62,9 @@ describe("Hidden", () => {
 
     it("shows the hint text for a hidden comment", () => {
       renderHidden("comment");
-      expect(screen.getByText("Hidden because of streamer mode")).toBeInTheDocument();
+      expect(
+        screen.getByText("Hidden because of streamer mode"),
+      ).toBeInTheDocument();
     });
 
     it("reveals only that item when its Reveal button is clicked", async () => {
@@ -71,7 +75,9 @@ describe("Hidden", () => {
       await user.click(screen.getByRole("button", { name: /reveal/i }));
 
       expect(screen.getByText("SecretValue")).toBeInTheDocument();
-      expect(screen.queryByRole("button", { name: /reveal/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: /reveal/i }),
+      ).not.toBeInTheDocument();
     });
 
     it("keeps a sibling item hidden when another is revealed", async () => {

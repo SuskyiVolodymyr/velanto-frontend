@@ -3,7 +3,8 @@ import { FeedbackScreen } from "@/src/features/feedback/FeedbackScreen";
 
 export const metadata: Metadata = {
   title: "Feedback — Velanto",
-  description: "Report bugs, suggest features, and propose translation improvements.",
+  description:
+    "Report bugs, suggest features, and propose translation improvements.",
 };
 
 export default function FeedbackPage() {

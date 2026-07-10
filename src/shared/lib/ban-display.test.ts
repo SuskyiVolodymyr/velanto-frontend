@@ -19,12 +19,16 @@ describe("formatBanStatus", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-01-01T00:00:00.000Z"));
     const until = "2026-01-08T00:00:00.000Z";
-    expect(formatBanStatus(until)).toBe(`Banned until ${new Date(until).toLocaleDateString()}`);
+    expect(formatBanStatus(until)).toBe(
+      `Banned until ${new Date(until).toLocaleDateString()}`,
+    );
   });
 
   it("returns 'Permanently banned' for a ban more than 20 years out", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-01-01T00:00:00.000Z"));
-    expect(formatBanStatus("2126-01-01T00:00:00.000Z")).toBe("Permanently banned");
+    expect(formatBanStatus("2126-01-01T00:00:00.000Z")).toBe(
+      "Permanently banned",
+    );
   });
 });

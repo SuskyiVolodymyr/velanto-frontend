@@ -14,7 +14,10 @@ interface NotificationItemProps {
 
 /** A single notification row: its formatted message, relative time, and an
  * optional Link wrapper when the notification points somewhere. */
-export function NotificationItem({ notification, onNavigate }: NotificationItemProps) {
+export function NotificationItem({
+  notification,
+  onNavigate,
+}: NotificationItemProps) {
   const { message, href } = describeNotification(notification);
   const row = (
     <div className="flex flex-col gap-0.5 rounded-lg px-2 py-2 hover:bg-white/[0.04]">

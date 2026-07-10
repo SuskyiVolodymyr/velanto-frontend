@@ -9,7 +9,10 @@ import { TagPickerModal } from "@/src/shared/components/TagPickerModal";
 import { TextField } from "@/src/shared/components/form/TextField";
 import { TextareaField } from "@/src/shared/components/form/TextareaField";
 import { cn } from "@/src/shared/lib/cn";
-import { type CreatePackValues, MAX_TAGS } from "@/src/features/create/create-pack.schema";
+import {
+  type CreatePackValues,
+  MAX_TAGS,
+} from "@/src/features/create/create-pack.schema";
 
 /**
  * The "Basics" section: title, description, cover tone and tag picker. Reads and

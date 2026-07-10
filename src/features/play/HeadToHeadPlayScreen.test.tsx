@@ -85,18 +85,25 @@ function renderScreen(pack: Pack) {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "t", user: MOCK_USER });
+  vi.mocked(authClient.refresh).mockResolvedValue({
+    accessToken: "t",
+    user: MOCK_USER,
+  });
   vi.mocked(playsClient.record).mockResolvedValue({ id: "play-1" });
   sessionStorage.clear();
 });
 
 describe("HeadToHeadPlayScreen", () => {
   it("prompts to log in when there is no session", async () => {
-    vi.mocked(authClient.refresh).mockRejectedValue(new ApiError(401, "Unauthorized", null));
+    vi.mocked(authClient.refresh).mockRejectedValue(
+      new ApiError(401, "Unauthorized", null),
+    );
     const user = userEvent.setup();
     renderScreen(HEAD_TO_HEAD_PACK);
 
-    expect(await screen.findByText("You need to be logged in to play a pack.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("You need to be logged in to play a pack."),
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Log in" }));
     expect(push).toHaveBeenCalledWith("/auth?next=%2Fpacks%2Fpack-1v1%2Fplay");

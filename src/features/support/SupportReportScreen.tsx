@@ -24,7 +24,10 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
   // rather than alongside the JSX, per Rules of Hooks: the report-fetch
   // effect below reads `allowed`, and hooks can't follow a conditional
   // return — same discipline AuthorScreen.tsx had to apply.
-  const allowed = user?.role === "moderator" || user?.role === "manager" || user?.role === "admin";
+  const allowed =
+    user?.role === "moderator" ||
+    user?.role === "manager" ||
+    user?.role === "admin";
 
   useEffect(() => {
     if (authStatus === "authenticated" && !allowed) {
@@ -35,9 +38,13 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
   // reportId can change without a remount (e.g. clicking a different report
   // link while already on a report detail page); useClientData handles the
   // reset-to-loading + abort of the previous fetch on that change.
-  const reportQuery = useClientData(() => reportsClient.getById(reportId), [reportId], {
-    enabled: allowed,
-  });
+  const reportQuery = useClientData(
+    () => reportsClient.getById(reportId),
+    [reportId],
+    {
+      enabled: allowed,
+    },
+  );
   const report = reportQuery.data;
 
   const moderation = useReportModeration(report);
@@ -73,8 +80,15 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
   if (authStatus === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">You need to be logged in to view this page.</Text>
-        <Button className="mt-4" onClick={() => router.push(`/auth?next=${encodeURIComponent(pathname)}`)}>
+        <Text variant="secondary">
+          You need to be logged in to view this page.
+        </Text>
+        <Button
+          className="mt-4"
+          onClick={() =>
+            router.push(`/auth?next=${encodeURIComponent(pathname)}`)
+          }
+        >
           Log in
         </Button>
       </div>

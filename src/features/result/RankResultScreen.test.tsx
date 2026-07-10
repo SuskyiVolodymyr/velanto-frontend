@@ -21,7 +21,12 @@ const RANK_PACK: Pack = {
       name: "Openers",
       selectionMode: "manual",
       items: [
-        { id: "i1", type: "text", title: "Kaikai Kitan", value: "Kaikai Kitan" },
+        {
+          id: "i1",
+          type: "text",
+          title: "Kaikai Kitan",
+          value: "Kaikai Kitan",
+        },
         { id: "i2", type: "text", title: "Redo", value: "Redo" },
       ],
     },
@@ -75,7 +80,9 @@ describe("RankResultScreen", () => {
   it("sorts items by averagePosition (best first) and shows avg/timesRanked captions", () => {
     render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
 
-    const titles = screen.getAllByText(/Kaikai Kitan|Redo/).map((el) => el.textContent);
+    const titles = screen
+      .getAllByText(/Kaikai Kitan|Redo/)
+      .map((el) => el.textContent);
     expect(titles).toEqual(["Kaikai Kitan", "Redo"]);
     expect(screen.getByText(/avg 0.*ranked 2x/)).toBeInTheDocument();
     expect(screen.getByText(/avg 1.*ranked 2x/)).toBeInTheDocument();
@@ -89,7 +96,9 @@ describe("RankResultScreen", () => {
 
     render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
 
-    expect(screen.getByText(/You placed this #1.*1 other play agreed/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/You placed this #1.*1 other play agreed/),
+    ).toBeInTheDocument();
   });
 
   it("shows a neutral note for an item that wasn't in the player's own play", () => {
@@ -107,7 +116,9 @@ describe("RankResultScreen", () => {
     render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
 
     expect(screen.queryByText(/You placed this/)).not.toBeInTheDocument();
-    expect(screen.queryByText("Not in your play this round")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Not in your play this round"),
+    ).not.toBeInTheDocument();
   });
 
   it("renders without crashing when there are no recorded plays yet", () => {
@@ -120,8 +131,20 @@ describe("RankResultScreen", () => {
           groupId: "g1",
           groupName: "Openers",
           items: [
-            { itemId: "i1", itemTitle: "Kaikai Kitan", timesRanked: 0, averagePosition: 0, positionCounts: [0, 0] },
-            { itemId: "i2", itemTitle: "Redo", timesRanked: 0, averagePosition: 0, positionCounts: [0, 0] },
+            {
+              itemId: "i1",
+              itemTitle: "Kaikai Kitan",
+              timesRanked: 0,
+              averagePosition: 0,
+              positionCounts: [0, 0],
+            },
+            {
+              itemId: "i2",
+              itemTitle: "Redo",
+              timesRanked: 0,
+              averagePosition: 0,
+              positionCounts: [0, 0],
+            },
           ],
         },
       ],
@@ -134,12 +157,21 @@ describe("RankResultScreen", () => {
 
   it("shows a Share result button for an approved pack", () => {
     render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
-    expect(screen.getByRole("button", { name: "Share result" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Share result" }),
+    ).toBeInTheDocument();
   });
 
   it("hides the Share result button for a non-approved pack", () => {
-    render(<RankResultScreen pack={{ ...RANK_PACK, status: "pending" }} results={RANK_RESULTS} />);
-    expect(screen.queryByRole("button", { name: "Share result" })).not.toBeInTheDocument();
+    render(
+      <RankResultScreen
+        pack={{ ...RANK_PACK, status: "pending" }}
+        results={RANK_RESULTS}
+      />,
+    );
+    expect(
+      screen.queryByRole("button", { name: "Share result" }),
+    ).not.toBeInTheDocument();
   });
 
   it("shows the shared-result note when opened via a ?p= link", async () => {
@@ -147,7 +179,9 @@ describe("RankResultScreen", () => {
       p: encodePicks([{ groupId: "g1", itemId: "i1", position: 0 }]),
     });
     render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
-    expect(await screen.findByText(/viewing a shared result/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/viewing a shared result/i),
+    ).toBeInTheDocument();
     expect(screen.getByText(/Placed #1/)).toBeInTheDocument();
     expect(screen.queryByText(/You placed this/)).not.toBeInTheDocument();
   });

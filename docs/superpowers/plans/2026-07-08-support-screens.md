@@ -15,6 +15,7 @@
 ### Task 1: Report types + `reportsClient` + `packsClient.delete()` + reason labels
 
 **Files:**
+
 - Create: `src/shared/types/report.ts`
 - Create: `src/shared/lib/reports-client.ts`
 - Create: `src/shared/lib/report-reasons.ts`
@@ -74,7 +75,10 @@ import type { ReportType } from "@/src/shared/types/report";
 // label text is duplicated deliberately, sourced verbatim from the design
 // mocks' own REPORT_REASONS arrays (Vilante Pack.dc.html, Vilante
 // Author.dc.html, Vilante Play*.dc.html).
-export const REPORT_REASON_LABELS: Record<ReportType, Record<string, string>> = {
+export const REPORT_REASON_LABELS: Record<
+  ReportType,
+  Record<string, string>
+> = {
   pack: {
     inappropriate: "Inappropriate or offensive content",
     copyright: "Copyright or ownership issue",
@@ -120,15 +124,30 @@ describe("reportsClient", () => {
   });
 
   it("list() GETs /reports with status/type/page/limit query params", async () => {
-    mockedApiClient.get.mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
-    await reportsClient.list({ status: "new", type: "pack", page: 2, limit: 20 });
+    mockedApiClient.get.mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
+    await reportsClient.list({
+      status: "new",
+      type: "pack",
+      page: 2,
+      limit: 20,
+    });
     expect(mockedApiClient.get).toHaveBeenCalledWith(
       "/reports?status=new&type=pack&page=2&limit=20",
     );
   });
 
   it("list() omits query params when no filters given", async () => {
-    mockedApiClient.get.mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    mockedApiClient.get.mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
     await reportsClient.list({});
     expect(mockedApiClient.get).toHaveBeenCalledWith("/reports");
   });
@@ -164,7 +183,12 @@ Expected: FAIL — module `@/src/shared/lib/reports-client` doesn't exist.
 
 ```ts
 import { apiClient } from "@/src/shared/lib/api-client";
-import type { Report, ReportList, ReportType, ReportWithReporter } from "@/src/shared/types/report";
+import type {
+  Report,
+  ReportList,
+  ReportType,
+  ReportWithReporter,
+} from "@/src/shared/types/report";
 
 export interface CreateReportInput {
   type: ReportType;
@@ -192,7 +216,8 @@ function buildListQuery(filters: ListReportsFilters): string {
 }
 
 export const reportsClient = {
-  create: (input: CreateReportInput) => apiClient.post<Report>("/reports", input),
+  create: (input: CreateReportInput) =>
+    apiClient.post<Report>("/reports", input),
   list: (filters: ListReportsFilters = {}) =>
     apiClient.get<ReportList>(`/reports${buildListQuery(filters)}`),
   getById: (id: string) => apiClient.get<ReportWithReporter>(`/reports/${id}`),
@@ -214,7 +239,9 @@ Read `src/shared/lib/packs-client.ts` and check for an existing `packs-client.te
 
 ```ts
 it("delete() DELETEs /packs/:id", async () => {
-  const deleteSpy = vi.spyOn(apiClient, "delete").mockResolvedValue({ deleted: true });
+  const deleteSpy = vi
+    .spyOn(apiClient, "delete")
+    .mockResolvedValue({ deleted: true });
   const result = await packsClient.delete("pack-1");
   expect(deleteSpy).toHaveBeenCalledWith("/packs/pack-1");
   expect(result).toEqual({ deleted: true });
@@ -264,6 +291,7 @@ git commit -m "feat: add reportsClient, report types, reason labels, packsClient
 ### Task 2: `SupportScreen` — queue
 
 **Files:**
+
 - Create: `src/features/support/SupportScreen.tsx`
 - Test: `src/features/support/SupportScreen.test.tsx`
 
@@ -306,7 +334,9 @@ const report = {
 
 function mockAuth(role: string | null) {
   mockedUseAuth.mockReturnValue({
-    user: role ? { id: "mod-1", email: "m@x.com", username: "mod", role, createdAt: "" } : null,
+    user: role
+      ? { id: "mod-1", email: "m@x.com", username: "mod", role, createdAt: "" }
+      : null,
     status: role ? "authenticated" : "unauthenticated",
     login: vi.fn(),
     register: vi.fn(),
@@ -320,7 +350,9 @@ describe("SupportScreen", () => {
   it("shows a log-in prompt for an unauthenticated viewer", async () => {
     mockAuth(null);
     render(<SupportScreen />);
-    await waitFor(() => expect(screen.getByText(/need to be logged in/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/need to be logged in/i)).toBeInTheDocument(),
+    );
   });
 
   it("renders nothing for a plain-user viewer (redirect path)", async () => {
@@ -331,17 +363,31 @@ describe("SupportScreen", () => {
 
   it("renders the report queue for a moderator viewer", async () => {
     mockAuth("moderator");
-    mockedReportsClient.list.mockResolvedValue({ items: [report], total: 1, page: 1, limit: 20 });
+    mockedReportsClient.list.mockResolvedValue({
+      items: [report],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
     render(<SupportScreen />);
-    await waitFor(() => expect(screen.getByText("reporter1")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("reporter1")).toBeInTheDocument(),
+    );
     expect(screen.getByText("Spam or misleading")).toBeInTheDocument();
   });
 
   it("filters by status when a status chip is clicked", async () => {
     mockAuth("moderator");
-    mockedReportsClient.list.mockResolvedValue({ items: [report], total: 1, page: 1, limit: 20 });
+    mockedReportsClient.list.mockResolvedValue({
+      items: [report],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
     render(<SupportScreen />);
-    await waitFor(() => expect(screen.getByText("reporter1")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("reporter1")).toBeInTheDocument(),
+    );
     await userEvent.click(screen.getByRole("button", { name: "New" }));
     await waitFor(() =>
       expect(mockedReportsClient.list).toHaveBeenLastCalledWith(
@@ -352,9 +398,16 @@ describe("SupportScreen", () => {
 
   it("filters by type when a type chip is clicked", async () => {
     mockAuth("moderator");
-    mockedReportsClient.list.mockResolvedValue({ items: [report], total: 1, page: 1, limit: 20 });
+    mockedReportsClient.list.mockResolvedValue({
+      items: [report],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
     render(<SupportScreen />);
-    await waitFor(() => expect(screen.getByText("reporter1")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("reporter1")).toBeInTheDocument(),
+    );
     await userEvent.click(screen.getByRole("button", { name: "Users" }));
     await waitFor(() =>
       expect(mockedReportsClient.list).toHaveBeenLastCalledWith(
@@ -374,17 +427,28 @@ describe("SupportScreen", () => {
         limit: 1,
       });
     render(<SupportScreen />);
-    await waitFor(() => expect(screen.getByText("reporter1")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("reporter1")).toBeInTheDocument(),
+    );
     await userEvent.click(screen.getByRole("button", { name: /load more/i }));
-    await waitFor(() => expect(screen.getByText("reporter2")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("reporter2")).toBeInTheDocument(),
+    );
     expect(screen.getByText("reporter1")).toBeInTheDocument();
   });
 
   it("shows an empty-state message when no reports match", async () => {
     mockAuth("moderator");
-    mockedReportsClient.list.mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    mockedReportsClient.list.mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
     render(<SupportScreen />);
-    await waitFor(() => expect(screen.getByText(/no reports match/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/no reports match/i)).toBeInTheDocument(),
+    );
   });
 });
 ```
@@ -403,12 +467,19 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
-import { reportsClient, type ListReportsFilters } from "@/src/shared/lib/reports-client";
+import {
+  reportsClient,
+  type ListReportsFilters,
+} from "@/src/shared/lib/reports-client";
 import { reportReasonLabel } from "@/src/shared/lib/report-reasons";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { Badge } from "@/src/shared/components/Badge";
-import type { ReportStatus, ReportType, ReportWithReporter } from "@/src/shared/types/report";
+import type {
+  ReportStatus,
+  ReportType,
+  ReportWithReporter,
+} from "@/src/shared/types/report";
 
 const PAGE_SIZE = 20;
 
@@ -432,11 +503,18 @@ const STATUS_BADGE_CLASS: Record<ReportStatus, string> = {
   closed: "border-white/10 bg-white/[0.06] text-foreground-secondary",
 };
 
-function targetLabel(report: ReportWithReporter): { text: string; href: string } {
+function targetLabel(report: ReportWithReporter): {
+  text: string;
+  href: string;
+} {
   const shortId = report.targetId.slice(0, 8);
-  if (report.type === "user") return { text: `User ${shortId}`, href: `/users/${report.targetId}` };
+  if (report.type === "user")
+    return { text: `User ${shortId}`, href: `/users/${report.targetId}` };
   if (report.type === "round") {
-    return { text: `Round ${(report.roundIndex ?? 0) + 1} of pack ${shortId}`, href: `/packs/${report.targetId}` };
+    return {
+      text: `Round ${(report.roundIndex ?? 0) + 1} of pack ${shortId}`,
+      href: `/packs/${report.targetId}`,
+    };
   }
   return { text: `Pack ${shortId}`, href: `/packs/${report.targetId}` };
 }
@@ -446,15 +524,24 @@ export function SupportScreen() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [statusFilter, setStatusFilter] = useState<ReportStatus | undefined>(undefined);
-  const [typeFilter, setTypeFilter] = useState<ReportType | undefined>(undefined);
+  const [statusFilter, setStatusFilter] = useState<ReportStatus | undefined>(
+    undefined,
+  );
+  const [typeFilter, setTypeFilter] = useState<ReportType | undefined>(
+    undefined,
+  );
   const [reports, setReports] = useState<ReportWithReporter[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "ready" | "error">(
+    "loading",
+  );
   const [loadingMore, setLoadingMore] = useState(false);
 
-  const allowed = user?.role === "moderator" || user?.role === "manager" || user?.role === "admin";
+  const allowed =
+    user?.role === "moderator" ||
+    user?.role === "manager" ||
+    user?.role === "admin";
 
   useEffect(() => {
     if (authStatus === "authenticated" && !allowed) {
@@ -466,7 +553,12 @@ export function SupportScreen() {
     if (!allowed) return;
     let cancelled = false;
     setStatus("loading");
-    const filters: ListReportsFilters = { status: statusFilter, type: typeFilter, page: 1, limit: PAGE_SIZE };
+    const filters: ListReportsFilters = {
+      status: statusFilter,
+      type: typeFilter,
+      page: 1,
+      limit: PAGE_SIZE,
+    };
     reportsClient
       .list(filters)
       .then((result) => {
@@ -489,7 +581,12 @@ export function SupportScreen() {
     setLoadingMore(true);
     try {
       const nextPage = page + 1;
-      const result = await reportsClient.list({ status: statusFilter, type: typeFilter, page: nextPage, limit: PAGE_SIZE });
+      const result = await reportsClient.list({
+        status: statusFilter,
+        type: typeFilter,
+        page: nextPage,
+        limit: PAGE_SIZE,
+      });
       setReports((prev) => {
         const existingIds = new Set(prev.map((r) => r.id));
         return [...prev, ...result.items.filter((r) => !existingIds.has(r.id))];
@@ -506,8 +603,15 @@ export function SupportScreen() {
   if (authStatus === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">You need to be logged in to view this page.</Text>
-        <Button className="mt-4" onClick={() => router.push(`/auth?next=${encodeURIComponent(pathname)}`)}>
+        <Text variant="secondary">
+          You need to be logged in to view this page.
+        </Text>
+        <Button
+          className="mt-4"
+          onClick={() =>
+            router.push(`/auth?next=${encodeURIComponent(pathname)}`)
+          }
+        >
           Log in
         </Button>
       </div>
@@ -528,7 +632,9 @@ export function SupportScreen() {
             key={f.label}
             onClick={() => setStatusFilter(f.value)}
             className={`rounded-[9px] border px-3.5 py-2 text-sm font-medium ${
-              statusFilter === f.value ? "border-acc/40 bg-acc/10 text-acc" : "border-border bg-white/[0.02] text-foreground-secondary"
+              statusFilter === f.value
+                ? "border-acc/40 bg-acc/10 text-acc"
+                : "border-border bg-white/[0.02] text-foreground-secondary"
             }`}
           >
             {f.label}
@@ -540,7 +646,9 @@ export function SupportScreen() {
             key={f.label}
             onClick={() => setTypeFilter(f.value)}
             className={`rounded-[9px] border px-3.5 py-2 text-sm font-medium ${
-              typeFilter === f.value ? "border-acc/40 bg-acc/10 text-acc" : "border-border bg-white/[0.02] text-foreground-secondary"
+              typeFilter === f.value
+                ? "border-acc/40 bg-acc/10 text-acc"
+                : "border-border bg-white/[0.02] text-foreground-secondary"
             }`}
           >
             {f.label}
@@ -548,9 +656,17 @@ export function SupportScreen() {
         ))}
       </div>
 
-      {status === "loading" && <Text variant="secondary">Loading reports…</Text>}
-      {status === "error" && <Text className="text-[#ff6b6b]">Couldn&apos;t load reports. Try again later.</Text>}
-      {status === "ready" && reports.length === 0 && <Text variant="secondary">No reports match these filters.</Text>}
+      {status === "loading" && (
+        <Text variant="secondary">Loading reports…</Text>
+      )}
+      {status === "error" && (
+        <Text className="text-[#ff6b6b]">
+          Couldn&apos;t load reports. Try again later.
+        </Text>
+      )}
+      {status === "ready" && reports.length === 0 && (
+        <Text variant="secondary">No reports match these filters.</Text>
+      )}
 
       {status === "ready" && reports.length > 0 && (
         <div className="flex flex-col gap-2">
@@ -562,7 +678,9 @@ export function SupportScreen() {
                 href={`/support/${report.id}`}
                 className="grid grid-cols-[70px_1.4fr_1.1fr_1fr_100px_110px] items-center gap-3 rounded-[12px] border border-border bg-surface px-4 py-3 text-sm hover:bg-white/[0.03]"
               >
-                <span className="text-xs font-semibold uppercase text-foreground-secondary">{report.type}</span>
+                <span className="text-xs font-semibold uppercase text-foreground-secondary">
+                  {report.type}
+                </span>
                 <Text className="truncate font-semibold">{target.text}</Text>
                 <Text variant="secondary" className="truncate">
                   {reportReasonLabel(report.type, report.reason)}
@@ -573,7 +691,9 @@ export function SupportScreen() {
                 <Text variant="tertiary" className="text-xs">
                   {new Date(report.createdAt).toLocaleDateString()}
                 </Text>
-                <Badge className={STATUS_BADGE_CLASS[report.status]}>{report.status.toUpperCase()}</Badge>
+                <Badge className={STATUS_BADGE_CLASS[report.status]}>
+                  {report.status.toUpperCase()}
+                </Badge>
               </Link>
             );
           })}
@@ -581,7 +701,11 @@ export function SupportScreen() {
       )}
 
       {status === "ready" && reports.length < total && (
-        <Button variant="secondary" disabled={loadingMore} onClick={() => void handleLoadMore()}>
+        <Button
+          variant="secondary"
+          disabled={loadingMore}
+          onClick={() => void handleLoadMore()}
+        >
           {loadingMore ? "Loading…" : "Load more"}
         </Button>
       )}
@@ -612,6 +736,7 @@ git commit -m "feat: add SupportScreen report queue with status/type filters"
 ### Task 3: `SupportReportScreen` — detail + actions
 
 **Files:**
+
 - Create: `src/features/support/SupportReportScreen.tsx`
 - Test: `src/features/support/SupportReportScreen.test.tsx`
 
@@ -658,11 +783,23 @@ const packReport = {
   createdAt: "2026-01-01T00:00:00.000Z",
 };
 
-const userReport = { ...packReport, id: "r2", type: "user" as const, targetId: "user-1", reason: "harassment" };
+const userReport = {
+  ...packReport,
+  id: "r2",
+  type: "user" as const,
+  targetId: "user-1",
+  reason: "harassment",
+};
 
 function mockAuth() {
   mockedUseAuth.mockReturnValue({
-    user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" },
+    user: {
+      id: "mod-1",
+      email: "m@x.com",
+      username: "mod",
+      role: "moderator",
+      createdAt: "",
+    },
     status: "authenticated",
     login: vi.fn(),
     register: vi.fn(),
@@ -677,36 +814,67 @@ describe("SupportReportScreen", () => {
     mockAuth();
     mockedReportsClient.getById.mockRejectedValue(new Error("404"));
     render(<SupportReportScreen reportId="missing" />);
-    await waitFor(() => expect(screen.getByText(/doesn't exist/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/doesn't exist/i)).toBeInTheDocument(),
+    );
   });
 
   it("shows Review for a new report and calls review() on click", async () => {
     mockAuth();
     mockedReportsClient.getById.mockResolvedValue(packReport);
-    mockedReportsClient.review.mockResolvedValue({ ...packReport, status: "reviewing" });
+    mockedReportsClient.review.mockResolvedValue({
+      ...packReport,
+      status: "reviewing",
+    });
     render(<SupportReportScreen reportId="r1" />);
-    await waitFor(() => expect(screen.getByRole("button", { name: "Review" })).toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: "Review" }),
+      ).toBeInTheDocument(),
+    );
     await userEvent.click(screen.getByRole("button", { name: "Review" }));
-    await waitFor(() => expect(mockedReportsClient.review).toHaveBeenCalledWith("r1"));
+    await waitFor(() =>
+      expect(mockedReportsClient.review).toHaveBeenCalledWith("r1"),
+    );
   });
 
   it("shows Mark resolved for a new report (no review required first) and calls close()", async () => {
     mockAuth();
     mockedReportsClient.getById.mockResolvedValue(packReport);
-    mockedReportsClient.close.mockResolvedValue({ ...packReport, status: "closed" });
+    mockedReportsClient.close.mockResolvedValue({
+      ...packReport,
+      status: "closed",
+    });
     render(<SupportReportScreen reportId="r1" />);
-    await waitFor(() => expect(screen.getByRole("button", { name: /mark resolved/i })).toBeInTheDocument());
-    await userEvent.click(screen.getByRole("button", { name: /mark resolved/i }));
-    await waitFor(() => expect(mockedReportsClient.close).toHaveBeenCalledWith("r1"));
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: /mark resolved/i }),
+      ).toBeInTheDocument(),
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: /mark resolved/i }),
+    );
+    await waitFor(() =>
+      expect(mockedReportsClient.close).toHaveBeenCalledWith("r1"),
+    );
   });
 
   it("hides both queue-action buttons once a report is closed", async () => {
     mockAuth();
-    mockedReportsClient.getById.mockResolvedValue({ ...packReport, status: "closed" });
+    mockedReportsClient.getById.mockResolvedValue({
+      ...packReport,
+      status: "closed",
+    });
     render(<SupportReportScreen reportId="r1" />);
-    await waitFor(() => expect(screen.getByText("looks fake")).toBeInTheDocument());
-    expect(screen.queryByRole("button", { name: "Review" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /mark resolved/i })).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByText("looks fake")).toBeInTheDocument(),
+    );
+    expect(
+      screen.queryByRole("button", { name: "Review" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /mark resolved/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("shows a Delete pack button for a pack-type report and calls packsClient.delete()", async () => {
@@ -714,23 +882,48 @@ describe("SupportReportScreen", () => {
     mockedReportsClient.getById.mockResolvedValue(packReport);
     mockedPacksClient.delete.mockResolvedValue({ deleted: true });
     render(<SupportReportScreen reportId="r1" />);
-    await waitFor(() => expect(screen.getByRole("button", { name: /delete pack/i })).toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: /delete pack/i }),
+      ).toBeInTheDocument(),
+    );
     await userEvent.click(screen.getByRole("button", { name: /delete pack/i }));
-    await waitFor(() => expect(mockedPacksClient.delete).toHaveBeenCalledWith("pack-1"));
-    await waitFor(() => expect(screen.getByText(/pack deleted/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(mockedPacksClient.delete).toHaveBeenCalledWith("pack-1"),
+    );
+    await waitFor(() =>
+      expect(screen.getByText(/pack deleted/i)).toBeInTheDocument(),
+    );
   });
 
   it("shows a Ban user button and inline ban form for a user-type report", async () => {
     mockAuth();
     mockedReportsClient.getById.mockResolvedValue(userReport);
-    mockedUsersClient.ban.mockResolvedValue({ id: "user-1", bannedUntil: "2027-01-01T00:00:00.000Z" });
+    mockedUsersClient.ban.mockResolvedValue({
+      id: "user-1",
+      bannedUntil: "2027-01-01T00:00:00.000Z",
+    });
     render(<SupportReportScreen reportId="r2" />);
-    await waitFor(() => expect(screen.getByRole("button", { name: /^ban user$/i })).toBeInTheDocument());
-    expect(screen.queryByRole("button", { name: /delete pack/i })).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: /^ban user$/i }),
+      ).toBeInTheDocument(),
+    );
+    expect(
+      screen.queryByRole("button", { name: /delete pack/i }),
+    ).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: /^ban user$/i }));
-    await userEvent.type(screen.getByLabelText(/ban reason/i), "repeated harassment");
+    await userEvent.type(
+      screen.getByLabelText(/ban reason/i),
+      "repeated harassment",
+    );
     await userEvent.click(screen.getByRole("button", { name: /confirm ban/i }));
-    await waitFor(() => expect(mockedUsersClient.ban).toHaveBeenCalledWith("user-1", { duration: "week", reason: "repeated harassment" }));
+    await waitFor(() =>
+      expect(mockedUsersClient.ban).toHaveBeenCalledWith("user-1", {
+        duration: "week",
+        reason: "repeated harassment",
+      }),
+    );
   });
 
   it("shows an inline error and does not clear state when review() fails", async () => {
@@ -738,9 +931,15 @@ describe("SupportReportScreen", () => {
     mockedReportsClient.getById.mockResolvedValue(packReport);
     mockedReportsClient.review.mockRejectedValue(new Error("network"));
     render(<SupportReportScreen reportId="r1" />);
-    await waitFor(() => expect(screen.getByRole("button", { name: "Review" })).toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: "Review" }),
+      ).toBeInTheDocument(),
+    );
     await userEvent.click(screen.getByRole("button", { name: "Review" }));
-    await waitFor(() => expect(screen.getByText(/couldn't/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/couldn't/i)).toBeInTheDocument(),
+    );
     expect(screen.getByRole("button", { name: "Review" })).toBeInTheDocument();
   });
 });
@@ -783,7 +982,9 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
   const pathname = usePathname();
 
   const [report, setReport] = useState<ReportWithReporter | null>(null);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "ready" | "error">(
+    "loading",
+  );
   const [actionError, setActionError] = useState("");
   const [actionBusy, setActionBusy] = useState(false);
   const [deleted, setDeleted] = useState(false);
@@ -793,7 +994,10 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
   const [banError, setBanError] = useState("");
   const [banDone, setBanDone] = useState(false);
 
-  const allowed = user?.role === "moderator" || user?.role === "manager" || user?.role === "admin";
+  const allowed =
+    user?.role === "moderator" ||
+    user?.role === "manager" ||
+    user?.role === "admin";
 
   useEffect(() => {
     if (authStatus === "authenticated" && !allowed) {
@@ -862,7 +1066,10 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
     if (!report || !banReason.trim()) return;
     setBanError("");
     try {
-      await usersClient.ban(report.targetId, { duration: banDuration, reason: banReason.trim() });
+      await usersClient.ban(report.targetId, {
+        duration: banDuration,
+        reason: banReason.trim(),
+      });
       setBanDone(true);
       setShowBanForm(false);
     } catch {
@@ -875,8 +1082,15 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
   if (authStatus === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">You need to be logged in to view this page.</Text>
-        <Button className="mt-4" onClick={() => router.push(`/auth?next=${encodeURIComponent(pathname)}`)}>
+        <Text variant="secondary">
+          You need to be logged in to view this page.
+        </Text>
+        <Button
+          className="mt-4"
+          onClick={() =>
+            router.push(`/auth?next=${encodeURIComponent(pathname)}`)
+          }
+        >
           Log in
         </Button>
       </div>
@@ -895,7 +1109,10 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
     );
   }
 
-  const targetHref = report.type === "user" ? `/users/${report.targetId}` : `/packs/${report.targetId}`;
+  const targetHref =
+    report.type === "user"
+      ? `/users/${report.targetId}`
+      : `/packs/${report.targetId}`;
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-7 py-10">
@@ -903,13 +1120,18 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
         <Text as="h1" variant="title" className="text-2xl">
           {reportReasonLabel(report.type, report.reason)}
         </Text>
-        <Badge className={STATUS_BADGE_CLASS[report.status]}>{report.status.toUpperCase()}</Badge>
+        <Badge className={STATUS_BADGE_CLASS[report.status]}>
+          {report.status.toUpperCase()}
+        </Badge>
       </div>
 
       <div className="flex flex-col gap-2 text-sm">
         <Text variant="secondary">
-          Reported by <span className="font-semibold text-foreground">{report.reporterUsername}</span> on{" "}
-          {new Date(report.createdAt).toLocaleString()}
+          Reported by{" "}
+          <span className="font-semibold text-foreground">
+            {report.reporterUsername}
+          </span>{" "}
+          on {new Date(report.createdAt).toLocaleString()}
         </Text>
         <Link href={targetHref} className="text-acc hover:underline">
           View {report.type === "user" ? "reported user" : "reported pack"}
@@ -924,18 +1146,30 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
           </Button>
         )}
         {report.status !== "closed" && (
-          <Button variant="secondary" disabled={actionBusy} onClick={() => void handleClose()}>
+          <Button
+            variant="secondary"
+            disabled={actionBusy}
+            onClick={() => void handleClose()}
+          >
             Mark resolved
           </Button>
         )}
       </div>
-      {actionError && <Text className="text-sm text-[#ff6b6b]">{actionError}</Text>}
+      {actionError && (
+        <Text className="text-sm text-[#ff6b6b]">{actionError}</Text>
+      )}
 
       <div className="flex flex-col gap-3 rounded-[15px] border border-red-500/20 bg-red-500/[0.03] p-5">
-        <Text className="text-xs font-semibold tracking-wide text-red-400">MODERATION ACTIONS</Text>
+        <Text className="text-xs font-semibold tracking-wide text-red-400">
+          MODERATION ACTIONS
+        </Text>
         {(report.type === "pack" || report.type === "round") && (
           <div>
-            <Button variant="secondary" disabled={deleted} onClick={() => void handleDeletePack()}>
+            <Button
+              variant="secondary"
+              disabled={deleted}
+              onClick={() => void handleDeletePack()}
+            >
               {deleted ? "Pack deleted ✓" : "Delete pack"}
             </Button>
           </div>
@@ -943,7 +1177,10 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
         {report.type === "user" && (
           <div>
             {!banDone && (
-              <Button variant="secondary" onClick={() => setShowBanForm((v) => !v)}>
+              <Button
+                variant="secondary"
+                onClick={() => setShowBanForm((v) => !v)}
+              >
                 Ban user
               </Button>
             )}
@@ -954,7 +1191,9 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
                   Duration
                   <select
                     value={banDuration}
-                    onChange={(e) => setBanDuration(e.target.value as BanDuration)}
+                    onChange={(e) =>
+                      setBanDuration(e.target.value as BanDuration)
+                    }
                     aria-label="Ban duration"
                     className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground"
                   >
@@ -972,10 +1211,16 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
                   aria-label="Ban reason"
                   className="h-9 max-w-xs"
                 />
-                <Button variant="primary" disabled={!banReason.trim()} onClick={() => void handleBanSubmit()}>
+                <Button
+                  variant="primary"
+                  disabled={!banReason.trim()}
+                  onClick={() => void handleBanSubmit()}
+                >
                   Confirm ban
                 </Button>
-                {banError && <Text className="text-xs text-[#ff6b6b]">{banError}</Text>}
+                {banError && (
+                  <Text className="text-xs text-[#ff6b6b]">{banError}</Text>
+                )}
               </div>
             )}
           </div>
@@ -1008,6 +1253,7 @@ git commit -m "feat: add SupportReportScreen with review/close/delete/ban action
 ### Task 4: Routing + nav entry point
 
 **Files:**
+
 - Create: `app/support/page.tsx`
 - Create: `app/support/[id]/page.tsx`
 - Modify: `src/shared/components/UserMenu.tsx`
@@ -1029,7 +1275,11 @@ export default function SupportPage() {
 ```tsx
 import { SupportReportScreen } from "@/src/features/support/SupportReportScreen";
 
-export default async function SupportReportPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function SupportReportPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   return <SupportReportScreen reportId={id} />;
 }

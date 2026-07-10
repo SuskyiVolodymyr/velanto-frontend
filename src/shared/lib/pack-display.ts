@@ -9,5 +9,7 @@ export const FORMAT_LABELS: Record<Pack["format"], string> = {
 };
 
 export function getRoundsCount(pack: Pack): number {
-  return pack.format === "nxn" ? (pack.versusRounds ?? 0) : (pack.groups?.length ?? 0);
+  return pack.format === "nxn"
+    ? (pack.versusRounds ?? 0)
+    : (pack.groups?.length ?? 0);
 }

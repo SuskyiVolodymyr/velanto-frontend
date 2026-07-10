@@ -5,7 +5,13 @@ import { Text } from "@/src/shared/components/Text";
 import { FORMAT_LABELS, getRoundsCount } from "@/src/shared/lib/pack-display";
 import type { Pack } from "@/src/shared/types/pack";
 
-export function PackCard({ pack, showStatus }: { pack: Pack; showStatus?: boolean }) {
+export function PackCard({
+  pack,
+  showStatus,
+}: {
+  pack: Pack;
+  showStatus?: boolean;
+}) {
   const roundsCount = getRoundsCount(pack);
   const statsLabel =
     pack.totalPlays === 0
@@ -18,7 +24,9 @@ export function PackCard({ pack, showStatus }: { pack: Pack; showStatus?: boolea
       <div className="flex h-full flex-col overflow-hidden rounded-[15px] border border-border bg-surface transition-transform duration-200 ease-[cubic-bezier(0.2,0.7,0.3,1)] hover:-translate-y-1 hover:shadow-[0_14px_34px_rgba(0,0,0,0.42)]">
         <div
           className="flex aspect-[4/3] items-end justify-between p-4"
-          style={{ background: `linear-gradient(150deg, ${pack.coverTone}, #0b0c0f)` }}
+          style={{
+            background: `linear-gradient(150deg, ${pack.coverTone}, #0b0c0f)`,
+          }}
         >
           <Badge>{FORMAT_LABELS[pack.format]}</Badge>
           {showStatusBadge && <StatusBadge kind="pack" status={pack.status} />}

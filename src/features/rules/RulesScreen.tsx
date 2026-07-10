@@ -31,7 +31,10 @@ export function RulesScreen({ rules }: RulesScreenProps) {
       ) : (
         <div className="flex flex-col gap-10">
           {rules.categories.map((category) => (
-            <section key={category.id} aria-labelledby={`rules-cat-${category.id}`}>
+            <section
+              key={category.id}
+              aria-labelledby={`rules-cat-${category.id}`}
+            >
               <Text
                 as="h2"
                 id={`rules-cat-${category.id}`}
@@ -49,7 +52,10 @@ export function RulesScreen({ rules }: RulesScreenProps) {
                     >
                       {rule.number}.
                     </span>
-                    <Text variant="body" className="text-[15px] leading-relaxed">
+                    <Text
+                      variant="body"
+                      className="text-[15px] leading-relaxed"
+                    >
                       {rule.text}
                     </Text>
                   </li>

@@ -47,7 +47,12 @@ describe("TextareaField", () => {
 
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    expect(await screen.findByText("Details are required.")).toBeInTheDocument();
-    expect(screen.getByLabelText("Details")).toHaveAttribute("aria-invalid", "true");
+    expect(
+      await screen.findByText("Details are required."),
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText("Details")).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
   });
 });

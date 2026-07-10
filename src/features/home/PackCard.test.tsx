@@ -107,23 +107,42 @@ describe("PackCard", () => {
   });
 
   it("shows a pending badge when showStatus is true and the pack is pending", () => {
-    render(<PackCard pack={{ ...BASE_PACK, format: "save_one", status: "pending" }} showStatus />);
+    render(
+      <PackCard
+        pack={{ ...BASE_PACK, format: "save_one", status: "pending" }}
+        showStatus
+      />,
+    );
     expect(screen.getByText("Pending review")).toBeInTheDocument();
   });
 
   it("shows a rejected badge when showStatus is true and the pack is rejected", () => {
-    render(<PackCard pack={{ ...BASE_PACK, format: "save_one", status: "rejected" }} showStatus />);
+    render(
+      <PackCard
+        pack={{ ...BASE_PACK, format: "save_one", status: "rejected" }}
+        showStatus
+      />,
+    );
     expect(screen.getByText("Rejected")).toBeInTheDocument();
   });
 
   it("shows no status badge when showStatus is true but the pack is approved", () => {
-    render(<PackCard pack={{ ...BASE_PACK, format: "save_one", status: "approved" }} showStatus />);
+    render(
+      <PackCard
+        pack={{ ...BASE_PACK, format: "save_one", status: "approved" }}
+        showStatus
+      />,
+    );
     expect(screen.queryByText("Pending review")).not.toBeInTheDocument();
     expect(screen.queryByText("Rejected")).not.toBeInTheDocument();
   });
 
   it("shows no status badge when showStatus is not passed, even for a pending pack", () => {
-    render(<PackCard pack={{ ...BASE_PACK, format: "save_one", status: "pending" }} />);
+    render(
+      <PackCard
+        pack={{ ...BASE_PACK, format: "save_one", status: "pending" }}
+      />,
+    );
     expect(screen.queryByText("Pending review")).not.toBeInTheDocument();
   });
 });

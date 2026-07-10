@@ -17,7 +17,11 @@ export function AppHeader() {
       <div className="flex items-center gap-7">
         <Link href="/" className="flex items-center gap-2.5">
           <span className="h-3 w-3 rotate-45 rounded-sm bg-acc" aria-hidden />
-          <Text as="span" variant="title" className="text-[19px] tracking-[0.2em]">
+          <Text
+            as="span"
+            variant="title"
+            className="text-[19px] tracking-[0.2em]"
+          >
             VELANTO
           </Text>
         </Link>

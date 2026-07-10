@@ -20,7 +20,10 @@ export function useModerationQueue({ enabled }: { enabled: boolean }) {
 
   const queueQuery = useClientData(
     async () => {
-      const result = await packsClient.moderationQueue({ page: 1, limit: PAGE_SIZE });
+      const result = await packsClient.moderationQueue({
+        page: 1,
+        limit: PAGE_SIZE,
+      });
       return { items: result.items, total: result.total, page: 1 };
     },
     [],
@@ -33,12 +36,18 @@ export function useModerationQueue({ enabled }: { enabled: boolean }) {
     setLoadingMore(true);
     try {
       const nextPage = current.page + 1;
-      const result = await packsClient.moderationQueue({ page: nextPage, limit: PAGE_SIZE });
+      const result = await packsClient.moderationQueue({
+        page: nextPage,
+        limit: PAGE_SIZE,
+      });
       queueQuery.setData((prev) => {
         if (!prev) return prev;
         const existingIds = new Set(prev.items.map((p) => p.id));
         return {
-          items: [...prev.items, ...result.items.filter((p) => !existingIds.has(p.id))],
+          items: [
+            ...prev.items,
+            ...result.items.filter((p) => !existingIds.has(p.id)),
+          ],
           total: result.total,
           page: nextPage,
         };
@@ -53,7 +62,13 @@ export function useModerationQueue({ enabled }: { enabled: boolean }) {
 
   function removePackFromQueue(id: string) {
     queueQuery.setData((prev) =>
-      prev ? { ...prev, items: prev.items.filter((p) => p.id !== id), total: prev.total - 1 } : prev,
+      prev
+        ? {
+            ...prev,
+            items: prev.items.filter((p) => p.id !== id),
+            total: prev.total - 1,
+          }
+        : prev,
     );
   }
 
@@ -64,7 +79,10 @@ export function useModerationQueue({ enabled }: { enabled: boolean }) {
       await packsClient.approve(id);
       removePackFromQueue(id);
     } catch {
-      setRowError((prev) => ({ ...prev, [id]: "Couldn't approve this pack. Try again." }));
+      setRowError((prev) => ({
+        ...prev,
+        [id]: "Couldn't approve this pack. Try again.",
+      }));
     } finally {
       setRowBusy((prev) => ({ ...prev, [id]: false }));
     }
@@ -79,7 +97,10 @@ export function useModerationQueue({ enabled }: { enabled: boolean }) {
       setRejectingId(null);
       setRejectReason("");
     } catch {
-      setRowError((prev) => ({ ...prev, [id]: "Couldn't reject this pack. Try again." }));
+      setRowError((prev) => ({
+        ...prev,
+        [id]: "Couldn't reject this pack. Try again.",
+      }));
     } finally {
       setRowBusy((prev) => ({ ...prev, [id]: false }));
     }

@@ -20,7 +20,16 @@ const ALL_ON = {
 
 function mockAuth(status: "authenticated" | "unauthenticated" | "loading") {
   mockedUseAuth.mockReturnValue({
-    user: status === "authenticated" ? { id: "u1", email: "a@x.com", username: "alice", role: "user", createdAt: "" } : null,
+    user:
+      status === "authenticated"
+        ? {
+            id: "u1",
+            email: "a@x.com",
+            username: "alice",
+            role: "user",
+            createdAt: "",
+          }
+        : null,
     status,
     login: vi.fn(),
     register: vi.fn(),
@@ -38,42 +47,85 @@ describe("NotificationsSection", () => {
   it("shows a login prompt when unauthenticated, without calling getPreferences", async () => {
     mockAuth("unauthenticated");
     render(<NotificationsSection />);
-    await waitFor(() => expect(screen.getByText(/manage notification preferences/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.getByText(/manage notification preferences/i),
+      ).toBeInTheDocument(),
+    );
     expect(mockedClient.getPreferences).not.toHaveBeenCalled();
   });
 
   it("shows an error message when the initial preferences fetch fails", async () => {
     mockedClient.getPreferences.mockRejectedValue(new Error("network"));
     render(<NotificationsSection />);
-    await waitFor(() => expect(screen.getByText(/couldn't load your notification preferences/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.getByText(/couldn't load your notification preferences/i),
+      ).toBeInTheDocument(),
+    );
   });
 
   it("renders all four toggles in their fetched state", async () => {
     render(<NotificationsSection />);
-    await waitFor(() => expect(screen.getByRole("switch", { name: "New follower" })).toBeInTheDocument());
-    expect(screen.getByRole("switch", { name: "New pack from someone you follow" })).toBeInTheDocument();
-    expect(screen.getByRole("switch", { name: "New comment on your pack" })).toBeInTheDocument();
-    expect(screen.getByRole("switch", { name: "Pack removed by a moderator" })).toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        screen.getByRole("switch", { name: "New follower" }),
+      ).toBeInTheDocument(),
+    );
+    expect(
+      screen.getByRole("switch", { name: "New pack from someone you follow" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("switch", { name: "New comment on your pack" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("switch", { name: "Pack removed by a moderator" }),
+    ).toBeInTheDocument();
   });
 
   it("toggling one calls setPreferences with only that key", async () => {
-    mockedClient.setPreferences.mockResolvedValue({ ...ALL_ON, new_comment: false });
+    mockedClient.setPreferences.mockResolvedValue({
+      ...ALL_ON,
+      new_comment: false,
+    });
     render(<NotificationsSection />);
-    await waitFor(() => expect(screen.getByRole("switch", { name: "New comment on your pack" })).toBeInTheDocument());
-    await userEvent.click(screen.getByRole("switch", { name: "New comment on your pack" }));
-    expect(mockedClient.setPreferences).toHaveBeenCalledWith({ new_comment: false });
     await waitFor(() =>
-      expect(screen.getByRole("switch", { name: "New comment on your pack" })).toHaveAttribute("aria-checked", "false"),
+      expect(
+        screen.getByRole("switch", { name: "New comment on your pack" }),
+      ).toBeInTheDocument(),
+    );
+    await userEvent.click(
+      screen.getByRole("switch", { name: "New comment on your pack" }),
+    );
+    expect(mockedClient.setPreferences).toHaveBeenCalledWith({
+      new_comment: false,
+    });
+    await waitFor(() =>
+      expect(
+        screen.getByRole("switch", { name: "New comment on your pack" }),
+      ).toHaveAttribute("aria-checked", "false"),
     );
   });
 
   it("a failed toggle reverts to the prior state, shows a per-row error, and does not affect other toggles", async () => {
     mockedClient.setPreferences.mockRejectedValue(new Error("network"));
     render(<NotificationsSection />);
-    await waitFor(() => expect(screen.getByRole("switch", { name: "New comment on your pack" })).toBeInTheDocument());
-    await userEvent.click(screen.getByRole("switch", { name: "New comment on your pack" }));
-    await waitFor(() => expect(screen.getByText(/couldn't update/i)).toBeInTheDocument());
-    expect(screen.getByRole("switch", { name: "New comment on your pack" })).toHaveAttribute("aria-checked", "true");
-    expect(screen.getByRole("switch", { name: "New follower" })).toHaveAttribute("aria-checked", "true");
+    await waitFor(() =>
+      expect(
+        screen.getByRole("switch", { name: "New comment on your pack" }),
+      ).toBeInTheDocument(),
+    );
+    await userEvent.click(
+      screen.getByRole("switch", { name: "New comment on your pack" }),
+    );
+    await waitFor(() =>
+      expect(screen.getByText(/couldn't update/i)).toBeInTheDocument(),
+    );
+    expect(
+      screen.getByRole("switch", { name: "New comment on your pack" }),
+    ).toHaveAttribute("aria-checked", "true");
+    expect(
+      screen.getByRole("switch", { name: "New follower" }),
+    ).toHaveAttribute("aria-checked", "true");
   });
 });

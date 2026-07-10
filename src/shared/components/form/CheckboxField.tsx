@@ -4,8 +4,10 @@ import { Text } from "@/src/shared/components/Text";
 import { getFieldError } from "@/src/shared/components/form/getFieldError";
 import { cn } from "@/src/shared/lib/cn";
 
-export interface CheckboxFieldProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "name" | "type"> {
+export interface CheckboxFieldProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "name" | "type"
+> {
   /** Field name; must exist on the form's schema. */
   name: string;
   /**
@@ -39,8 +41,9 @@ export function CheckboxField({
   const fieldId = id ?? name;
   const error = getFieldError(errors, name);
   const describedBy =
-    [error ? `${fieldId}-error` : undefined, ariaDescribedby].filter(Boolean).join(" ") ||
-    undefined;
+    [error ? `${fieldId}-error` : undefined, ariaDescribedby]
+      .filter(Boolean)
+      .join(" ") || undefined;
 
   return (
     <div className="flex flex-col gap-2">
@@ -59,12 +62,19 @@ export function CheckboxField({
           {...register(name)}
           aria-describedby={describedBy}
         />
-        <label htmlFor={fieldId} className="text-sm text-foreground-secondary leading-snug">
+        <label
+          htmlFor={fieldId}
+          className="text-sm text-foreground-secondary leading-snug"
+        >
           {label}
         </label>
       </div>
       {error && (
-        <Text id={`${fieldId}-error`} role="alert" className="text-sm text-[#ff6b6b]">
+        <Text
+          id={`${fieldId}-error`}
+          role="alert"
+          className="text-sm text-[#ff6b6b]"
+        >
           {error}
         </Text>
       )}

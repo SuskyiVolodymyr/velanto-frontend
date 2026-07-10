@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { loginSchema, registerSchema, type AuthFormValues } from "./auth.schema";
+import {
+  loginSchema,
+  registerSchema,
+  type AuthFormValues,
+} from "./auth.schema";
 
 /**
  * These encode the EXACT rules + copy the old module-level `validate()` used,
@@ -21,24 +25,32 @@ function values(overrides: Partial<AuthFormValues>): AuthFormValues {
   };
 }
 
-function firstError(result: { success: boolean; error?: { issues: { message: string }[] } }) {
+function firstError(result: {
+  success: boolean;
+  error?: { issues: { message: string }[] };
+}) {
   return result.success ? null : result.error!.issues[0].message;
 }
 
 describe("loginSchema", () => {
   it("accepts a non-empty identifier + password", () => {
-    expect(loginSchema.safeParse(values({ identifier: "alice", password: "pw" })).success).toBe(
-      true,
-    );
+    expect(
+      loginSchema.safeParse(values({ identifier: "alice", password: "pw" }))
+        .success,
+    ).toBe(true);
   });
 
   it("rejects a blank identifier with the combined message", () => {
-    const r = loginSchema.safeParse(values({ identifier: "   ", password: "pw" }));
+    const r = loginSchema.safeParse(
+      values({ identifier: "   ", password: "pw" }),
+    );
     expect(firstError(r)).toBe("Enter your email/username and password.");
   });
 
   it("rejects an empty password with the combined message", () => {
-    const r = loginSchema.safeParse(values({ identifier: "alice", password: "" }));
+    const r = loginSchema.safeParse(
+      values({ identifier: "alice", password: "" }),
+    );
     expect(firstError(r)).toBe("Enter your email/username and password.");
   });
 });
@@ -47,7 +59,11 @@ describe("registerSchema", () => {
   it("accepts a valid username + email + password", () => {
     expect(
       registerSchema.safeParse(
-        values({ username: "alice", email: "a@example.com", password: "password123" }),
+        values({
+          username: "alice",
+          email: "a@example.com",
+          password: "password123",
+        }),
       ).success,
     ).toBe(true);
   });
@@ -61,7 +77,11 @@ describe("registerSchema", () => {
 
   it("rejects a username with invalid characters", () => {
     const r = registerSchema.safeParse(
-      values({ username: "no spaces!", email: "a@example.com", password: "password123" }),
+      values({
+        username: "no spaces!",
+        email: "a@example.com",
+        password: "password123",
+      }),
     );
     expect(firstError(r)).toBe(
       "Username must be 3-20 characters: letters, numbers, underscore only.",
@@ -70,7 +90,11 @@ describe("registerSchema", () => {
 
   it("rejects a username that is too short", () => {
     const r = registerSchema.safeParse(
-      values({ username: "ab", email: "a@example.com", password: "password123" }),
+      values({
+        username: "ab",
+        email: "a@example.com",
+        password: "password123",
+      }),
     );
     expect(firstError(r)).toBe(
       "Username must be 3-20 characters: letters, numbers, underscore only.",
@@ -93,11 +117,15 @@ describe("registerSchema", () => {
         acceptedRules: false,
       }),
     );
-    expect(firstError(r)).toBe("You must accept the Community Rules to register.");
+    expect(firstError(r)).toBe(
+      "You must accept the Community Rules to register.",
+    );
   });
 
   it("reports the empty-field message before the username-pattern message (matches old precedence)", () => {
-    const r = registerSchema.safeParse(values({ username: "", email: "", password: "" }));
+    const r = registerSchema.safeParse(
+      values({ username: "", email: "", password: "" }),
+    );
     expect(firstError(r)).toBe("Fill in your username, email, and password.");
   });
 });

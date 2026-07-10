@@ -1,7 +1,10 @@
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { BAN_DURATIONS } from "@/src/shared/lib/ban-durations";
-import { BanReasonPicker, isBanReasonValid } from "@/src/shared/components/BanReasonPicker";
+import {
+  BanReasonPicker,
+  isBanReasonValid,
+} from "@/src/shared/components/BanReasonPicker";
 import type { BanDuration } from "@/src/shared/lib/users-client";
 import type { ReportWithReporter } from "@/src/shared/types/report";
 import type { useReportModeration } from "@/src/features/support/use-report-moderation";
@@ -11,7 +14,10 @@ interface ReportModerationPanelProps {
   moderation: ReturnType<typeof useReportModeration>;
 }
 
-export function ReportModerationPanel({ report, moderation }: ReportModerationPanelProps) {
+export function ReportModerationPanel({
+  report,
+  moderation,
+}: ReportModerationPanelProps) {
   const {
     deleted,
     deleteError,
@@ -29,13 +35,21 @@ export function ReportModerationPanel({ report, moderation }: ReportModerationPa
 
   return (
     <div className="flex flex-col gap-3 rounded-[15px] border border-red-500/20 bg-red-500/[0.03] p-5">
-      <Text className="text-xs font-semibold tracking-wide text-red-400">MODERATION ACTIONS</Text>
+      <Text className="text-xs font-semibold tracking-wide text-red-400">
+        MODERATION ACTIONS
+      </Text>
       {(report.type === "pack" || report.type === "round") && (
         <div>
-          <Button variant="secondary" disabled={deleted} onClick={() => void handleDeletePack()}>
+          <Button
+            variant="secondary"
+            disabled={deleted}
+            onClick={() => void handleDeletePack()}
+          >
             {deleted ? "Pack deleted ✓" : "Delete pack"}
           </Button>
-          {deleteError && <Text className="mt-2 text-xs text-[#ff6b6b]">{deleteError}</Text>}
+          {deleteError && (
+            <Text className="mt-2 text-xs text-[#ff6b6b]">{deleteError}</Text>
+          )}
         </div>
       )}
       {report.type === "user" && (
@@ -53,7 +67,9 @@ export function ReportModerationPanel({ report, moderation }: ReportModerationPa
                   Duration
                   <select
                     value={banDuration}
-                    onChange={(e) => setBanDuration(e.target.value as BanDuration)}
+                    onChange={(e) =>
+                      setBanDuration(e.target.value as BanDuration)
+                    }
                     aria-label="Ban duration"
                     className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground"
                   >
@@ -65,7 +81,11 @@ export function ReportModerationPanel({ report, moderation }: ReportModerationPa
                   </select>
                 </label>
                 <div className="min-w-[16rem] max-w-sm flex-1">
-                  <BanReasonPicker idPrefix={report.targetId} value={banReason} onChange={setBanReason} />
+                  <BanReasonPicker
+                    idPrefix={report.targetId}
+                    value={banReason}
+                    onChange={setBanReason}
+                  />
                 </div>
               </div>
               <Button
@@ -76,7 +96,9 @@ export function ReportModerationPanel({ report, moderation }: ReportModerationPa
               >
                 Confirm ban
               </Button>
-              {banError && <Text className="text-xs text-[#ff6b6b]">{banError}</Text>}
+              {banError && (
+                <Text className="text-xs text-[#ff6b6b]">{banError}</Text>
+              )}
             </div>
           )}
         </div>

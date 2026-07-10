@@ -40,7 +40,9 @@ beforeEach(() => {
   searchParams = new URLSearchParams();
   // Silent refresh-on-mount finds no session by default — most tests don't care.
   vi.mocked(authClient.refresh).mockRejectedValue(
-    new ApiError(401, "Unauthorized", { message: "Refresh token invalid or expired" }),
+    new ApiError(401, "Unauthorized", {
+      message: "Refresh token invalid or expired",
+    }),
   );
 });
 
@@ -64,7 +66,9 @@ describe("AuthForm", () => {
 
     expect(screen.getByLabelText("Username")).toBeInTheDocument();
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Create account" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Create account" }),
+    ).toBeInTheDocument();
   });
 
   it("rejects an empty login submission without calling the API", async () => {
@@ -221,7 +225,9 @@ describe("AuthForm", () => {
 
   it("shows the server error message and does not redirect on invalid credentials", async () => {
     const user = userEvent.setup();
-    vi.mocked(authClient.login).mockRejectedValue(new ApiError(401, "Unauthorized", null));
+    vi.mocked(authClient.login).mockRejectedValue(
+      new ApiError(401, "Unauthorized", null),
+    );
     renderAuthForm();
 
     await user.type(screen.getByLabelText("Email or username"), "alice");
@@ -280,7 +286,10 @@ describe("AuthForm", () => {
 
   it("disables the submit button while a request is pending, preventing a double submit", async () => {
     const user = userEvent.setup();
-    let resolveLogin: (value: { accessToken: string; user: import("@/src/shared/types/user").User }) => void;
+    let resolveLogin: (value: {
+      accessToken: string;
+      user: import("@/src/shared/types/user").User;
+    }) => void;
     vi.mocked(authClient.login).mockReturnValue(
       new Promise((resolve) => {
         resolveLogin = resolve;

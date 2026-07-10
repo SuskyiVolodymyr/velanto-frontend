@@ -20,11 +20,17 @@ export function LogsTab() {
   const [actorInput, setActorInput] = useState("");
   const [actionInput, setActionInput] = useState("");
   const [targetInput, setTargetInput] = useState("");
-  const [filters, setFilters] = useState<Filters>({ actor: "", action: "", target: "" });
+  const [filters, setFilters] = useState<Filters>({
+    actor: "",
+    action: "",
+    target: "",
+  });
   const [logs, setLogs] = useState<AuditLogEntry[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "ready" | "error">(
+    "loading",
+  );
   const [loadingMore, setLoadingMore] = useState(false);
   const [loadMoreError, setLoadMoreError] = useState("");
 
@@ -120,21 +126,29 @@ export function LogsTab() {
 
       {status === "loading" && <Text variant="secondary">Loading logs…</Text>}
       {status === "error" && (
-        <Text className="text-[#ff6b6b]">Couldn&apos;t load logs. Try again later.</Text>
+        <Text className="text-[#ff6b6b]">
+          Couldn&apos;t load logs. Try again later.
+        </Text>
       )}
       {status === "ready" && logs.length === 0 && (
-        <Text variant="secondary">No audit log entries match these filters.</Text>
+        <Text variant="secondary">
+          No audit log entries match these filters.
+        </Text>
       )}
 
       {status === "ready" && logs.length > 0 && (
         <div className="flex flex-col gap-2">
           {logs.map((log) => (
-            <div key={log.id} className="rounded-[12px] border border-border bg-surface p-3 text-sm">
+            <div
+              key={log.id}
+              className="rounded-[12px] border border-border bg-surface p-3 text-sm"
+            >
               <Text variant="tertiary" className="text-xs">
                 {new Date(log.createdAt).toLocaleString()}
               </Text>
               <Text>
-                <span className="font-semibold">{log.actorUsername}</span> · {log.action} ·{" "}
+                <span className="font-semibold">{log.actorUsername}</span> ·{" "}
+                {log.action} ·{" "}
                 <span className="text-foreground-secondary">{log.target}</span>
               </Text>
             </div>
@@ -144,10 +158,16 @@ export function LogsTab() {
 
       {status === "ready" && logs.length < total && (
         <div className="flex flex-col gap-2">
-          <Button variant="secondary" disabled={loadingMore} onClick={() => void handleLoadMore()}>
+          <Button
+            variant="secondary"
+            disabled={loadingMore}
+            onClick={() => void handleLoadMore()}
+          >
             {loadingMore ? "Loading…" : "Load more"}
           </Button>
-          {loadMoreError && <Text className="text-sm text-[#ff6b6b]">{loadMoreError}</Text>}
+          {loadMoreError && (
+            <Text className="text-sm text-[#ff6b6b]">{loadMoreError}</Text>
+          )}
         </div>
       )}
     </div>

@@ -20,8 +20,10 @@ export interface LoginInput {
 }
 
 export const authClient = {
-  register: (input: RegisterInput) => apiClient.post<AuthResult>("/auth/register", input),
-  login: (input: LoginInput) => apiClient.post<AuthResult>("/auth/login", input),
+  register: (input: RegisterInput) =>
+    apiClient.post<AuthResult>("/auth/register", input),
+  login: (input: LoginInput) =>
+    apiClient.post<AuthResult>("/auth/login", input),
   refresh: () => apiClient.post<AuthResult>("/auth/refresh"),
   logout: () => apiClient.post<{ success: true }>("/auth/logout"),
 };

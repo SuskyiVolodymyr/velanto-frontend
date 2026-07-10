@@ -16,7 +16,9 @@ const STATS: { key: keyof AdminOverview; label: string }[] = [
 
 export function OverviewTab() {
   const [overview, setOverview] = useState<AdminOverview | null>(null);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "ready" | "error">(
+    "loading",
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -36,9 +38,14 @@ export function OverviewTab() {
     };
   }, []);
 
-  if (status === "loading") return <Text variant="secondary">Loading overview…</Text>;
+  if (status === "loading")
+    return <Text variant="secondary">Loading overview…</Text>;
   if (status === "error" || !overview) {
-    return <Text className="text-[#ff6b6b]">Couldn&apos;t load overview. Try again later.</Text>;
+    return (
+      <Text className="text-[#ff6b6b]">
+        Couldn&apos;t load overview. Try again later.
+      </Text>
+    );
   }
 
   return (
@@ -47,7 +54,10 @@ export function OverviewTab() {
         const value = overview[key];
         return (
           <Card key={key} className="hover:translate-y-0 hover:shadow-none">
-            <Text variant="tertiary" className="text-xs uppercase tracking-wide">
+            <Text
+              variant="tertiary"
+              className="text-xs uppercase tracking-wide"
+            >
               {label}
             </Text>
             <Text as="p" variant="title" className="mt-2 text-2xl">

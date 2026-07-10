@@ -20,7 +20,10 @@ export function PackStats({ results }: { results: PackResults | RankResults }) {
               top.averagePosition <= item.averagePosition ? top : item,
             );
             return (
-              <Card key={round.groupId} className="hover:translate-y-0 hover:shadow-none">
+              <Card
+                key={round.groupId}
+                className="hover:translate-y-0 hover:shadow-none"
+              >
                 <div className="flex items-center justify-between gap-2">
                   <Text variant="secondary" className="text-sm">
                     {round.groupName}
@@ -49,7 +52,10 @@ export function PackStats({ results }: { results: PackResults | RankResults }) {
             top.percentage >= item.percentage ? top : item,
           );
           return (
-            <Card key={round.groupId} className="hover:translate-y-0 hover:shadow-none">
+            <Card
+              key={round.groupId}
+              className="hover:translate-y-0 hover:shadow-none"
+            >
               <div className="flex items-center justify-between gap-2">
                 <Text variant="secondary" className="text-sm">
                   {round.groupName}

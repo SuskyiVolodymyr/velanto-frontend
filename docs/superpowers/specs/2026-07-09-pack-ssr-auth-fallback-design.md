@@ -9,7 +9,7 @@
 Two structural reasons a Server Component can't just "attach the token" the way client code does:
 
 - The access token lives only in an in-memory JS variable inside `api-client.ts` (deliberately never `localStorage`/a client-readable store, per `security-checklist.md`), which the Next.js server process running Server Components has no access to.
-- The refresh-token httpOnly cookie is scoped to the *backend's* origin (`localhost:3001`, path `/auth`) — a different origin than the Next.js frontend server, so it's never present on the incoming request to a Server Component either, and in production frontend/backend will likely be genuinely different domains.
+- The refresh-token httpOnly cookie is scoped to the _backend's_ origin (`localhost:3001`, path `/auth`) — a different origin than the Next.js frontend server, so it's never present on the incoming request to a Server Component either, and in production frontend/backend will likely be genuinely different domains.
 
 The pack detail endpoint's companion, `GET /packs/:id/results`, runs the identical gate before returning results, so `getResultsServer` has the same problem in practice — though see "Why `getResultsServer` needs no code change" below.
 
@@ -35,10 +35,14 @@ type PackFallbackState =
   | { status: "notfound" }
   | { status: "ready"; pack: Pack; results: PackResults | RankResults | null };
 
-function usePackFallback(packId: string, opts: { needsResults: boolean }): PackFallbackState
+function usePackFallback(
+  packId: string,
+  opts: { needsResults: boolean },
+): PackFallbackState;
 ```
 
 Behavior:
+
 - `useAuth().status === "loading"` → `{ status: "loading" }`. No fetch attempted yet — never 404s a valid owner mid-refresh.
 - `"unauthenticated"` → `{ status: "notfound" }`. Matches today's behavior for anonymous viewers exactly: no new information disclosure, no wasted network round trip.
 - `"authenticated"` → effect fetches `packsClient.getById(packId)` (already sends the in-memory Bearer token); on success, if `opts.needsResults`, sequentially fetches `playsClient.getResults(packId)` (new client method, see below). Success → `{ status: "ready", pack, results }`. Any rejection at either step → `{ status: "notfound" }`.
@@ -65,7 +69,8 @@ Each is a small `"use client"` component: call `usePackFallback`, and
 ### New client method — `src/shared/lib/plays-client.ts`
 
 ```ts
-getResults: (packId: string) => apiClient.get<PackResults | RankResults>(`/packs/${packId}/results`)
+getResults: (packId: string) =>
+  apiClient.get<PackResults | RankResults>(`/packs/${packId}/results`);
 ```
 
 Mirrors `get-results-server.ts`'s request shape, but goes through `apiClient`, which attaches the in-memory Bearer token.
@@ -99,7 +104,7 @@ The existing `if (!pack) notFound()` calls in these three Server Components are 
 
 ### SEO/robots mitigation for `generateMetadata`
 
-Client-fallback means the server now returns a 200 shell (which client-renders into either the real content or, eventually, a 404) instead of an immediate hard 404 whenever the anonymous fetch returns null — including for **genuinely deleted** packs, not only pending/rejected ones a real owner might resolve. Since `generateMetadata` runs server-side only (no client auth visibility), it can't tell these apart either. Fix: when `getPackServer` returns null, `generateMetadata` sets `robots: { index: false, follow: false }` alongside the existing "Pack not found" title. Crawlers are always anonymous, so for them the null branch *is* genuinely not-found; noindex keeps the soft-404 shell out of search results without affecting a real logged-in owner/moderator, who never looks at `<meta name="robots">`.
+Client-fallback means the server now returns a 200 shell (which client-renders into either the real content or, eventually, a 404) instead of an immediate hard 404 whenever the anonymous fetch returns null — including for **genuinely deleted** packs, not only pending/rejected ones a real owner might resolve. Since `generateMetadata` runs server-side only (no client auth visibility), it can't tell these apart either. Fix: when `getPackServer` returns null, `generateMetadata` sets `robots: { index: false, follow: false }` alongside the existing "Pack not found" title. Crawlers are always anonymous, so for them the null branch _is_ genuinely not-found; noindex keeps the soft-404 shell out of search results without affecting a real logged-in owner/moderator, who never looks at `<meta name="robots">`.
 
 ## Testing plan
 

@@ -28,15 +28,23 @@ export function useUsersAdmin() {
   const [users, setUsers] = useState<AdminUserRow[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "ready" | "error">(
+    "loading",
+  );
   const [loadingMore, setLoadingMore] = useState(false);
   const [banTargetId, setBanTargetId] = useState<string | null>(null);
   const [banDuration, setBanDuration] = useState<BanDuration>("week");
-  const [banReason, setBanReason] = useState<BanReasonState>({ reason: "", reasonDetail: "" });
+  const [banReason, setBanReason] = useState<BanReasonState>({
+    reason: "",
+    reasonDetail: "",
+  });
   const [actionError, setActionError] = useState("");
 
   useEffect(() => {
-    const timeout = setTimeout(() => setQuery(searchInput.trim()), SEARCH_DEBOUNCE_MS);
+    const timeout = setTimeout(
+      () => setQuery(searchInput.trim()),
+      SEARCH_DEBOUNCE_MS,
+    );
     return () => clearTimeout(timeout);
   }, [searchInput]);
 
@@ -64,7 +72,11 @@ export function useUsersAdmin() {
     setLoadingMore(true);
     try {
       const nextPage = page + 1;
-      const result = await adminClient.listUsers({ q: query || undefined, page: nextPage, limit: PAGE_SIZE });
+      const result = await adminClient.listUsers({
+        q: query || undefined,
+        page: nextPage,
+        limit: PAGE_SIZE,
+      });
       setUsers((prev) => {
         const existingIds = new Set(prev.map((u) => u.id));
         return [...prev, ...result.items.filter((u) => !existingIds.has(u.id))];
@@ -86,7 +98,11 @@ export function useUsersAdmin() {
         duration: banDuration,
         ...buildBanReasonPayload(banReason),
       });
-      setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, bannedUntil: result.bannedUntil } : u)));
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.id === id ? { ...u, bannedUntil: result.bannedUntil } : u,
+        ),
+      );
       setBanTargetId(null);
       setBanReason({ reason: "", reasonDetail: "" });
     } catch {
@@ -98,7 +114,9 @@ export function useUsersAdmin() {
     setActionError("");
     try {
       await usersClient.unban(id);
-      setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, bannedUntil: null } : u)));
+      setUsers((prev) =>
+        prev.map((u) => (u.id === id ? { ...u, bannedUntil: null } : u)),
+      );
     } catch {
       setActionError("Couldn't unban this user. Try again.");
     }
@@ -108,9 +126,13 @@ export function useUsersAdmin() {
     setActionError("");
     try {
       await usersClient.setTrusted(id, trusted);
-      setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, trusted } : u)));
+      setUsers((prev) =>
+        prev.map((u) => (u.id === id ? { ...u, trusted } : u)),
+      );
     } catch {
-      setActionError(`Couldn't ${trusted ? "trust" : "untrust"} this user. Try again.`);
+      setActionError(
+        `Couldn't ${trusted ? "trust" : "untrust"} this user. Try again.`,
+      );
     }
   }
 

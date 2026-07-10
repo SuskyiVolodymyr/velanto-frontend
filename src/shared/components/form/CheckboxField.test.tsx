@@ -9,7 +9,9 @@ import { CheckboxField } from "./CheckboxField";
 // Boolean-typed (not a literal) so the react-hook-form values type stays
 // `{ accepted: boolean }`, matching how a real form registers the field.
 const schema = z.object({
-  accepted: z.boolean().refine((v) => v === true, { message: "You must accept." }),
+  accepted: z
+    .boolean()
+    .refine((v) => v === true, { message: "You must accept." }),
 });
 type Values = z.infer<typeof schema>;
 
@@ -64,8 +66,14 @@ describe("CheckboxField", () => {
     await user.click(screen.getByRole("button", { name: "Save" }));
 
     expect(await screen.findByText("You must accept.")).toBeInTheDocument();
-    expect(screen.getByRole("checkbox")).toHaveAttribute("aria-invalid", "true");
-    expect(screen.getByRole("checkbox")).toHaveAttribute("aria-describedby", "accepted-error");
+    expect(screen.getByRole("checkbox")).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
+    expect(screen.getByRole("checkbox")).toHaveAttribute(
+      "aria-describedby",
+      "accepted-error",
+    );
     expect(onValid).not.toHaveBeenCalled();
   });
 
@@ -80,6 +88,9 @@ describe("CheckboxField", () => {
         }
       />,
     );
-    expect(screen.getByRole("link", { name: "rules" })).toHaveAttribute("href", "/rules");
+    expect(screen.getByRole("link", { name: "rules" })).toHaveAttribute(
+      "href",
+      "/rules",
+    );
   });
 });

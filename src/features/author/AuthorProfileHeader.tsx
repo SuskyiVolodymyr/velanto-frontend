@@ -46,7 +46,8 @@ export function AuthorProfileHeader({
               </Hidden>
             </Text>
             <Text variant="tertiary" className="text-sm">
-              {profile.followerCount} follower{profile.followerCount === 1 ? "" : "s"} · {packsTotal} pack
+              {profile.followerCount} follower
+              {profile.followerCount === 1 ? "" : "s"} · {packsTotal} pack
               {packsTotal === 1 ? "" : "s"}
             </Text>
           </div>
@@ -60,7 +61,9 @@ export function AuthorProfileHeader({
             >
               {profile.isFollowedByMe ? "Following" : "Follow"}
             </Button>
-            {followError && <Text className="text-xs text-[#ff6b6b]">{followError}</Text>}
+            {followError && (
+              <Text className="text-xs text-[#ff6b6b]">{followError}</Text>
+            )}
           </div>
         )}
       </div>

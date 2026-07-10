@@ -89,18 +89,25 @@ function renderScreen(pack: Pack) {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "t", user: MOCK_USER });
+  vi.mocked(authClient.refresh).mockResolvedValue({
+    accessToken: "t",
+    user: MOCK_USER,
+  });
   vi.mocked(playsClient.record).mockResolvedValue({ id: "play-1" });
   sessionStorage.clear();
 });
 
 describe("PlayScreen", () => {
   it("prompts to log in when there is no session", async () => {
-    vi.mocked(authClient.refresh).mockRejectedValue(new ApiError(401, "Unauthorized", null));
+    vi.mocked(authClient.refresh).mockRejectedValue(
+      new ApiError(401, "Unauthorized", null),
+    );
     const user = userEvent.setup();
     renderScreen(SAVE_ONE_PACK);
 
-    expect(await screen.findByText("You need to be logged in to play a pack.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("You need to be logged in to play a pack."),
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Log in" }));
     expect(push).toHaveBeenCalledWith("/auth?next=%2Fpacks%2Fpack-a%2Fplay");
@@ -114,8 +121,16 @@ describe("PlayScreen", () => {
     format: "nxn",
     tags: ["Anime"],
     categories: [
-      { id: "ca", name: "Boys", items: [textItem("1", "Naruto"), textItem("2", "Sasuke")] },
-      { id: "cb", name: "Girls", items: [textItem("3", "Sakura"), textItem("4", "Hinata")] },
+      {
+        id: "ca",
+        name: "Boys",
+        items: [textItem("1", "Naruto"), textItem("2", "Sasuke")],
+      },
+      {
+        id: "cb",
+        name: "Girls",
+        items: [textItem("3", "Sakura"), textItem("4", "Hinata")],
+      },
     ],
     versusRounds: 2,
     versusN: 2,
@@ -137,7 +152,11 @@ describe("PlayScreen", () => {
       ...NXN_PACK,
       categories: [
         { id: "ca", name: "Boys", items: [textItem("1", "Naruto")] },
-        { id: "cb", name: "Girls", items: [textItem("3", "Sakura"), textItem("4", "Hinata")] },
+        {
+          id: "cb",
+          name: "Girls",
+          items: [textItem("3", "Sakura"), textItem("4", "Hinata")],
+        },
       ],
     };
     renderScreen(shortPack);
@@ -151,8 +170,12 @@ describe("PlayScreen", () => {
   it("renders nxn rounds as two side-by-side categories with a VS divider", async () => {
     renderScreen(NXN_PACK);
 
-    expect(await screen.findByRole("button", { name: "Pick Boys" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Pick Girls" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("button", { name: "Pick Boys" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Pick Girls" }),
+    ).toBeInTheDocument();
     expect(screen.getByText("VS")).toBeInTheDocument();
     expect(screen.getByText("Showing 1 of 2")).toBeInTheDocument();
   });
@@ -234,7 +257,9 @@ describe("PlayScreen", () => {
     await user.click(screen.getByRole("button", { name: "Next round →" }));
 
     expect(await screen.findByText("All rounds done")).toBeInTheDocument();
-    expect(screen.getByText("You saved 2 picks, one per round.")).toBeInTheDocument();
+    expect(
+      screen.getByText("You saved 2 picks, one per round."),
+    ).toBeInTheDocument();
     expect(screen.getByText("Saved so far")).toBeInTheDocument();
     expect(screen.getByText("Redo")).toBeInTheDocument();
     expect(screen.getByText("Silhouette")).toBeInTheDocument();
@@ -245,7 +270,9 @@ describe("PlayScreen", () => {
     renderScreen(sacrificePack);
 
     expect(
-      await screen.findByText("Pick the one you'd sacrifice. Check it below, then confirm."),
+      await screen.findByText(
+        "Pick the one you'd sacrifice. Check it below, then confirm.",
+      ),
     ).toBeInTheDocument();
   });
 
@@ -269,15 +296,16 @@ describe("PlayScreen", () => {
       ],
     });
     await waitFor(() =>
-      expect(JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!)).toEqual([
+      expect(
+        JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
+      ).toEqual([
         { groupId: "g1", itemId: "2" },
         { groupId: "g2", itemId: "3" },
       ]),
     );
-    expect(screen.getByRole("link", { name: "See your result" })).toHaveAttribute(
-      "href",
-      "/packs/pack-a/result",
-    );
+    expect(
+      screen.getByRole("link", { name: "See your result" }),
+    ).toHaveAttribute("href", "/packs/pack-a/result");
   });
 
   it("shows a real YouTube player for a youtube-type item and selects it via its own pick control, not the video area", async () => {
@@ -290,7 +318,11 @@ describe("PlayScreen", () => {
           name: "2016",
           selectionMode: "manual",
           items: [
-            youtubeItem("v1", "Guren no Yumiya", "https://youtu.be/KsF_hdjWJjo"),
+            youtubeItem(
+              "v1",
+              "Guren no Yumiya",
+              "https://youtu.be/KsF_hdjWJjo",
+            ),
             textItem("2", "Redo"),
           ],
         },
@@ -299,18 +331,24 @@ describe("PlayScreen", () => {
     renderScreen(packWithVideo);
     await screen.findByText("Guren no Yumiya");
 
-    expect(screen.getByRole("img", { name: "YouTube video thumbnail" })).toHaveAttribute(
+    expect(
+      screen.getByRole("img", { name: "YouTube video thumbnail" }),
+    ).toHaveAttribute(
       "src",
       "https://img.youtube.com/vi/KsF_hdjWJjo/mqdefault.jpg",
     );
 
     // Interacting with the video area itself must not select the item —
     // only the dedicated "Pick ..." control below it does.
-    await user.click(screen.getByRole("button", { name: "Play video preview" }));
+    await user.click(
+      screen.getByRole("button", { name: "Play video preview" }),
+    );
     await user.click(screen.getByRole("button", { name: "Show all" }));
     expect(screen.getByRole("button", { name: "Next round →" })).toBeDisabled();
 
-    await user.click(screen.getByRole("button", { name: "Pick Guren no Yumiya" }));
+    await user.click(
+      screen.getByRole("button", { name: "Pick Guren no Yumiya" }),
+    );
     expect(screen.getByRole("button", { name: "Next round →" })).toBeEnabled();
   });
 
@@ -374,7 +412,9 @@ describe("PlayScreen", () => {
 
     resolveRecord({ id: "play-1" });
     await waitFor(() =>
-      expect(JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!)).toEqual([
+      expect(
+        JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
+      ).toEqual([
         { groupId: "g1", itemId: "2" },
         { groupId: "g2", itemId: "3" },
       ]),

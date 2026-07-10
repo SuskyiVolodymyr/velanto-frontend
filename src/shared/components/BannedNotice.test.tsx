@@ -10,7 +10,9 @@ const CATEGORIES: RuleCategory[] = [
   { id: "hate_discrimination", title: "Hate & Discrimination", rules: [] },
 ];
 
-function renderNotice(props: Partial<React.ComponentProps<typeof BannedNotice>>) {
+function renderNotice(
+  props: Partial<React.ComponentProps<typeof BannedNotice>>,
+) {
   return render(
     <NextIntlClientProvider locale="en" messages={messages}>
       <BannedNotice
@@ -35,7 +37,10 @@ describe("BannedNotice", () => {
   });
 
   it("renders nothing when the ban has already expired", () => {
-    const { container } = renderNotice({ bannedUntil: inPast, banReason: "spam_manipulation" });
+    const { container } = renderNotice({
+      bannedUntil: inPast,
+      banReason: "spam_manipulation",
+    });
     expect(container).toBeEmptyDOMElement();
   });
 
@@ -45,19 +50,29 @@ describe("BannedNotice", () => {
   });
 
   it("shows 'Other' for an 'other' ban reason without leaking a raw id", () => {
-    renderNotice({ bannedUntil: inFuture, banReason: "other", banReasonDetail: "Repeated ToS abuse" });
+    renderNotice({
+      bannedUntil: inFuture,
+      banReason: "other",
+      banReasonDetail: "Repeated ToS abuse",
+    });
     expect(screen.getByText("Other")).toBeInTheDocument();
     expect(screen.queryByText("other")).not.toBeInTheDocument();
   });
 
   it("shows the free-text detail when present", () => {
-    renderNotice({ bannedUntil: inFuture, banReason: "other", banReasonDetail: "Repeated ToS abuse" });
+    renderNotice({
+      bannedUntil: inFuture,
+      banReason: "other",
+      banReasonDetail: "Repeated ToS abuse",
+    });
     expect(screen.getByText("Repeated ToS abuse")).toBeInTheDocument();
   });
 
   it("shows a dated expiry for a time-limited ban", () => {
     renderNotice({ bannedUntil: inFuture, banReason: "spam_manipulation" });
-    expect(screen.getByText(new RegExp(new Date(inFuture).toLocaleDateString()))).toBeInTheDocument();
+    expect(
+      screen.getByText(new RegExp(new Date(inFuture).toLocaleDateString())),
+    ).toBeInTheDocument();
   });
 
   it("shows a permanent message instead of a date for a far-future ban", () => {
@@ -70,7 +85,9 @@ describe("BannedNotice", () => {
 
   it("links to the Community Rules page", () => {
     renderNotice({ bannedUntil: inFuture, banReason: "spam_manipulation" });
-    expect(screen.getByRole("link", { name: /community rules/i })).toHaveAttribute("href", "/rules");
+    expect(
+      screen.getByRole("link", { name: /community rules/i }),
+    ).toHaveAttribute("href", "/rules");
   });
 
   it("is announced as an alert and is not dismissible (no close control)", () => {
@@ -80,7 +97,11 @@ describe("BannedNotice", () => {
   });
 
   it("falls back to the raw reason id only if the category is unknown (rules unavailable)", () => {
-    renderNotice({ bannedUntil: inFuture, banReason: "spam_manipulation", categories: [] });
+    renderNotice({
+      bannedUntil: inFuture,
+      banReason: "spam_manipulation",
+      categories: [],
+    });
     // No title available; the notice still renders and shows the id rather than crashing.
     expect(screen.getByText("spam_manipulation")).toBeInTheDocument();
   });

@@ -62,7 +62,10 @@ export function UserRow({
         </div>
         {canAct && (
           <div className="flex gap-2">
-            <Button variant="secondary" onClick={() => void onSetTrusted(row.id, !row.trusted)}>
+            <Button
+              variant="secondary"
+              onClick={() => void onSetTrusted(row.id, !row.trusted)}
+            >
               {row.trusted ? "Untrust" : "Trust"}
             </Button>
             {banned ? (
@@ -70,7 +73,10 @@ export function UserRow({
                 Unban
               </Button>
             ) : (
-              <Button variant="secondary" onClick={() => onToggleBanForm(row.id)}>
+              <Button
+                variant="secondary"
+                onClick={() => onToggleBanForm(row.id)}
+              >
                 Ban
               </Button>
             )}

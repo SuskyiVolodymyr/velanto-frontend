@@ -1,16 +1,16 @@
 # Share Button — Design
 
-> Implements velanto-frontend#67: a "Share" / "Share result" copy-link popover on the Pack and Result screens. The Result-screen variant embeds the sharer's own picks in the link so an opener sees the *sharer's* result, not their own.
+> Implements velanto-frontend#67: a "Share" / "Share result" copy-link popover on the Pack and Result screens. The Result-screen variant embeds the sharer's own picks in the link so an opener sees the _sharer's_ result, not their own.
 
 ## Problem
 
-The pack detail and result screens have no way to share a link. For the result screen specifically, "your pick" per round is read from the viewer's own `sessionStorage` (`readLastPlayPicks`), which is local to their browser — so a naively-shared `/packs/:id/result` link shows the *opener's* picks (or none), never the sharer's. To make "share my result" meaningful, the sharer's picks must travel with the link.
+The pack detail and result screens have no way to share a link. For the result screen specifically, "your pick" per round is read from the viewer's own `sessionStorage` (`readLastPlayPicks`), which is local to their browser — so a naively-shared `/packs/:id/result` link shows the _opener's_ picks (or none), never the sharer's. To make "share my result" meaningful, the sharer's picks must travel with the link.
 
 ## Chosen strategy: encode picks in the URL (frontend-only)
 
 Two strategies were considered: (A) encode the sharer's picks into the share URL, decoded client-side by the opener's result screen; (B) a backend shareable play-record endpoint (`?play=<id>`). **Strategy A is chosen** — it keeps #67 a self-contained frontend change, needs no backend, and works for logged-out openers. If share URLs ever become unwieldy we can migrate to B later without changing the UX.
 
-The community aggregate (per-round %s, average positions) is always fetched live from the backend the same way for everyone; only the *picks overlay* differs between "your result" and "a shared result". So the only thing that must be encoded is the sharer's `RecordedPick[]`.
+The community aggregate (per-round %s, average positions) is always fetched live from the backend the same way for everyone; only the _picks overlay_ differs between "your result" and "a shared result". So the only thing that must be encoded is the sharer's `RecordedPick[]`.
 
 ## Architecture
 
@@ -43,7 +43,7 @@ buildShareUrl(path: string, picks?: RecordedPick[] | null): string
 
 ### Shared-result read path
 
-Both result screens already resolve a `RecordedPick[] | null` (`ownPicks`) to overlay onto the aggregate. This design changes only its *source*:
+Both result screens already resolve a `RecordedPick[] | null` (`ownPicks`) to overlay onto the aggregate. This design changes only its _source_:
 
 1. Read the `?p=` param via `useSearchParams()` (client). These routes are already dynamic (`getPackServer`/`getResultsServer` use `cache: "no-store"`), so `useSearchParams` causes no static-render/Suspense deopt — a code comment records this so reviewers don't flag it. **No change to `app/packs/[id]/result/page.tsx`.**
 2. Picks source precedence: **if `?p=` decodes to a non-null `RecordedPick[]` → use it (shared mode); else → `readLastPlayPicks(pack.id)` (own mode).**

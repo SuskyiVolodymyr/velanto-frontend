@@ -19,7 +19,15 @@ const mockedUseAuth = vi.mocked(useAuth);
 
 function mockAuth(authenticated: boolean) {
   mockedUseAuth.mockReturnValue({
-    user: authenticated ? { id: "u1", email: "a@x.com", username: "a", role: "user", createdAt: "" } : null,
+    user: authenticated
+      ? {
+          id: "u1",
+          email: "a@x.com",
+          username: "a",
+          role: "user",
+          createdAt: "",
+        }
+      : null,
     status: authenticated ? "authenticated" : "unauthenticated",
     login: vi.fn(),
     register: vi.fn(),
@@ -48,7 +56,12 @@ describe("FeedbackVote", () => {
 
   it("clicking Like calls vote with value 1 and updates counts from the response", async () => {
     mockAuth(true);
-    mockedFeedbackClient.vote.mockResolvedValue({ score: 1, likes: 1, dislikes: 0, myVote: 1 });
+    mockedFeedbackClient.vote.mockResolvedValue({
+      score: 1,
+      likes: 1,
+      dislikes: 0,
+      myVote: 1,
+    });
     render(
       <FeedbackVote
         feedbackId="f1"
@@ -61,7 +74,9 @@ describe("FeedbackVote", () => {
     await userEvent.click(screen.getByRole("button", { name: /^like/i }));
     expect(mockedFeedbackClient.vote).toHaveBeenCalledWith("f1", 1);
     const likeButton = screen.getByRole("button", { name: /^like/i });
-    await waitFor(() => expect(within(likeButton).getByText("1")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(within(likeButton).getByText("1")).toBeInTheDocument(),
+    );
   });
 
   it("redirects an anonymous viewer to /auth on click instead of calling the API", async () => {
@@ -93,6 +108,8 @@ describe("FeedbackVote", () => {
       />,
     );
     await userEvent.click(screen.getByRole("button", { name: /^like/i }));
-    await waitFor(() => expect(screen.getByText(/couldn't/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/couldn't/i)).toBeInTheDocument(),
+    );
   });
 });

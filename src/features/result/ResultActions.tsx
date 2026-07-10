@@ -17,11 +17,18 @@ export function ResultActions({
 }) {
   return (
     <div className="flex items-center gap-3">
-      <Link href={`/packs/${packId}/play`} className={buttonClassName("primary", "w-fit")}>
+      <Link
+        href={`/packs/${packId}/play`}
+        className={buttonClassName("primary", "w-fit")}
+      >
         Play again
       </Link>
       {status === "approved" && (
-        <ShareButton path={`/packs/${packId}/result`} picks={picks} label="Share result" />
+        <ShareButton
+          path={`/packs/${packId}/result`}
+          picks={picks}
+          label="Share result"
+        />
       )}
     </div>
   );

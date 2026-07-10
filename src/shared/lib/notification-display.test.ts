@@ -21,14 +21,21 @@ describe("describeNotification", () => {
         payload: { followerId: "u1", followerUsername: "alice" },
       }),
     );
-    expect(result).toEqual({ message: "alice started following you", href: "/users/u1" });
+    expect(result).toEqual({
+      message: "alice started following you",
+      href: "/users/u1",
+    });
   });
 
   it("formats new_pack_from_followed with a link to the pack", () => {
     const result = describeNotification(
       makeNotification({
         type: "new_pack_from_followed",
-        payload: { packId: "p1", packTitle: "Anime OSTs", authorUsername: "bob" },
+        payload: {
+          packId: "p1",
+          packTitle: "Anime OSTs",
+          authorUsername: "bob",
+        },
       }),
     );
     expect(result).toEqual({
@@ -41,7 +48,12 @@ describe("describeNotification", () => {
     const result = describeNotification(
       makeNotification({
         type: "new_comment",
-        payload: { packId: "p1", packTitle: "Anime OSTs", commentId: "c1", commenterUsername: "carol" },
+        payload: {
+          packId: "p1",
+          packTitle: "Anime OSTs",
+          commentId: "c1",
+          commenterUsername: "carol",
+        },
       }),
     );
     expect(result).toEqual({
@@ -52,7 +64,10 @@ describe("describeNotification", () => {
 
   it("formats pack_deleted_warning with no link", () => {
     const result = describeNotification(
-      makeNotification({ type: "pack_deleted_warning", payload: { packTitle: "Old Pack" } }),
+      makeNotification({
+        type: "pack_deleted_warning",
+        payload: { packTitle: "Old Pack" },
+      }),
     );
     expect(result).toEqual({
       message: 'Your pack "Old Pack" was removed by a moderator',

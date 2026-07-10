@@ -25,7 +25,12 @@ function Harness({
   return (
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onValid)}>
-        <TextField name="email" label="Email" placeholder="Email" aria-describedby={describedBy} />
+        <TextField
+          name="email"
+          label="Email"
+          placeholder="Email"
+          aria-describedby={describedBy}
+        />
         <button type="submit">Save</button>
       </form>
     </FormProvider>
@@ -60,8 +65,14 @@ describe("TextField", () => {
     await user.click(screen.getByRole("button", { name: "Save" }));
 
     expect(await screen.findByText("Email is required.")).toBeInTheDocument();
-    expect(screen.getByLabelText("Email")).toHaveAttribute("aria-invalid", "true");
-    expect(screen.getByLabelText("Email")).toHaveAttribute("aria-describedby", "email-error");
+    expect(screen.getByLabelText("Email")).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
+    expect(screen.getByLabelText("Email")).toHaveAttribute(
+      "aria-describedby",
+      "email-error",
+    );
     expect(onValid).not.toHaveBeenCalled();
   });
 
@@ -70,7 +81,10 @@ describe("TextField", () => {
     render(<Harness onValid={vi.fn()} describedBy="email-hint" />);
 
     // Hint alone before any error.
-    expect(screen.getByLabelText("Email")).toHaveAttribute("aria-describedby", "email-hint");
+    expect(screen.getByLabelText("Email")).toHaveAttribute(
+      "aria-describedby",
+      "email-hint",
+    );
 
     await user.click(screen.getByRole("button", { name: "Save" }));
 

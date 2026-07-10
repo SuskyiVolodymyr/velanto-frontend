@@ -3,7 +3,11 @@ import { FeedbackDetailScreen } from "@/src/features/feedback/FeedbackDetailScre
 
 export const metadata: Metadata = { title: "Feedback — Velanto" };
 
-export default async function FeedbackDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function FeedbackDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   return <FeedbackDetailScreen postId={id} />;
 }

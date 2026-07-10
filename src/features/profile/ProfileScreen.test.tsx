@@ -8,10 +8,21 @@ import { packsClient } from "@/src/shared/lib/packs-client";
 import { ApiError } from "@/src/shared/lib/api-client";
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
-  authClient: { register: vi.fn(), login: vi.fn(), logout: vi.fn(), refresh: vi.fn() },
+  authClient: {
+    register: vi.fn(),
+    login: vi.fn(),
+    logout: vi.fn(),
+    refresh: vi.fn(),
+  },
 }));
 vi.mock("@/src/shared/lib/users-client", () => ({
-  usersClient: { getProfile: vi.fn(), updateProfile: vi.fn(), ban: vi.fn(), unban: vi.fn(), changeRole: vi.fn() },
+  usersClient: {
+    getProfile: vi.fn(),
+    updateProfile: vi.fn(),
+    ban: vi.fn(),
+    unban: vi.fn(),
+    changeRole: vi.fn(),
+  },
 }));
 vi.mock("@/src/shared/lib/packs-client", () => ({
   packsClient: { list: vi.fn(), create: vi.fn(), getById: vi.fn() },
@@ -35,7 +46,10 @@ function renderScreen() {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "t", user: MOCK_USER });
+  vi.mocked(authClient.refresh).mockResolvedValue({
+    accessToken: "t",
+    user: MOCK_USER,
+  });
   vi.mocked(usersClient.getProfile).mockResolvedValue({
     id: "u1",
     username: "alice",
@@ -44,7 +58,12 @@ beforeEach(() => {
     followerCount: 3,
     isFollowedByMe: null,
   });
-  vi.mocked(packsClient.list).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+  vi.mocked(packsClient.list).mockResolvedValue({
+    items: [],
+    total: 0,
+    page: 1,
+    limit: 20,
+  });
 });
 
 describe("ProfileScreen", () => {
@@ -71,13 +90,18 @@ describe("ProfileScreen", () => {
   it("fetches the current user's own packs across every status", async () => {
     renderScreen();
     await screen.findByText("alice");
-    expect(packsClient.list).toHaveBeenCalledWith(expect.objectContaining({ authorId: "u1" }));
+    expect(packsClient.list).toHaveBeenCalledWith(
+      expect.objectContaining({ authorId: "u1" }),
+    );
   });
 
   it("shows a link to edit the profile", async () => {
     renderScreen();
     await screen.findByText("alice");
-    expect(screen.getByRole("link", { name: /edit/i })).toHaveAttribute("href", "/profile/edit");
+    expect(screen.getByRole("link", { name: /edit/i })).toHaveAttribute(
+      "href",
+      "/profile/edit",
+    );
   });
 
   it("shows 'no packs yet' when the user has created nothing", async () => {
@@ -86,9 +110,13 @@ describe("ProfileScreen", () => {
   });
 
   it("shows a log-in prompt when the viewer is not authenticated", async () => {
-    vi.mocked(authClient.refresh).mockRejectedValue(new ApiError(401, "Unauthorized", null));
+    vi.mocked(authClient.refresh).mockRejectedValue(
+      new ApiError(401, "Unauthorized", null),
+    );
     renderScreen();
-    expect(await screen.findByText(/need to be logged in/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/need to be logged in/i),
+    ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /log in/i })).toHaveAttribute(
       "href",
       "/auth?next=%2Fprofile",

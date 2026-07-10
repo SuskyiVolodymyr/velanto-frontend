@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AuthorScreen } from "@/src/features/author/AuthorScreen";
-import { getUserServer, getAuthorPacksServer } from "@/src/features/author/get-user-server";
+import {
+  getUserServer,
+  getAuthorPacksServer,
+} from "@/src/features/author/get-user-server";
 import { buildJsonLd, jsonLdScript } from "@/src/shared/lib/jsonld";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://velanto.app";
@@ -22,7 +25,8 @@ export async function generateMetadata({
     // to the client path.
     return {};
   }
-  if (!profile) return { title: "User not found", robots: { index: false, follow: false } };
+  if (!profile)
+    return { title: "User not found", robots: { index: false, follow: false } };
 
   const url = `${SITE_URL}/users/${id}`;
   const title = `${profile.username} — Velanto`;
@@ -38,7 +42,11 @@ export async function generateMetadata({
   };
 }
 
-export default async function AuthorPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function AuthorPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
 
   let profile;

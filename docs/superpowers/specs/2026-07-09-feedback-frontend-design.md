@@ -18,7 +18,7 @@ Today `FeedbackService.list` shows a plain (non-staff) viewer only `everyone` po
   - anon (no viewer): `visibility = 'everyone'`
   - staff viewer: no visibility constraint
   - authenticated non-staff viewer: `OR: [{ visibility: 'everyone' }, { visibility: 'staff_only', authorId: viewer.id }]`
-- **Where-clause restructure:** the search filter already uses `where.OR = [{title contains}, {body contains}]`. Two independent `OR` groups can't both live on `where.OR`. Combine them under `where.AND = [ <visibilityClause>, <searchClause> ]` (each an `{ OR: [...] }`), adding each only when applicable. `topic`/`status` stay as direct `where` keys. Detail/vote/comment gating (`findById` via `canView`) is unchanged — this only affects the *list*.
+- **Where-clause restructure:** the search filter already uses `where.OR = [{title contains}, {body contains}]`. Two independent `OR` groups can't both live on `where.OR`. Combine them under `where.AND = [ <visibilityClause>, <searchClause> ]` (each an `{ OR: [...] }`), adding each only when applicable. `topic`/`status` stay as direct `where` keys. Detail/vote/comment gating (`findById` via `canView`) is unchanged — this only affects the _list_.
 - **Tests:** unit — an authed non-staff viewer's list includes their own `staff_only` post and excludes other users' `staff_only`; staff still see all; anon unchanged; search + own-staff_only compose correctly. e2e — user A lists and sees their own `staff_only` post; user B does not.
 - Ships as its own backend branch/PR (`feature/feedback-list-own-private`) before the frontend consumes it.
 
@@ -27,12 +27,15 @@ Today `FeedbackService.list` shows a plain (non-staff) viewer only `everyone` po
 Convention (confirmed during exploration): `app/` holds thin Server-Component route wrappers (metadata + render a feature component); `src/features/feedback/` holds the screens (`"use client"`); `src/shared/{lib,types,components}` holds the client, types, and nav. **Backend types are never imported** — re-declare locally in `src/shared/types/feedback.ts`.
 
 ### Routes — new
+
 - `app/feedback/page.tsx` → renders `<FeedbackScreen/>`. Exports `metadata` (title/description). No `"use client"`.
 - `app/feedback/new/page.tsx` → renders `<NewFeedbackForm/>`.
 - `app/feedback/[id]/page.tsx` → `const { id } = await params;` (Next 16 async params) → `<FeedbackDetailScreen postId={id}/>`.
 
 ### Types — new: `src/shared/types/feedback.ts`
+
 Mirror `report.ts`. Declare:
+
 - Unions: `FeedbackTopic = 'bug'|'feature'|'translation'|'other'`, `FeedbackVisibility = 'everyone'|'staff_only'`, `FeedbackStatus = 'new'|'in_progress'|'done'|'declined'`, `FeedbackSort = 'new'|'top'`, `FeedbackLocale` (the 11 codes — reuse `src/i18n/config.ts` `LOCALES` if exported, else a local tuple).
 - `Feedback` — the full post shape returned by the API (id, topic, title, body, visibility, status, authorId, authorUsername, handledById, locale, translationContext, translationSuggestion, createdAt, updatedAt, score, likes, dislikes, myVote, commentCount).
 - `FeedbackList = { items: Feedback[]; total; page; limit }`.
@@ -40,7 +43,9 @@ Mirror `report.ts`. Declare:
 - `CreateFeedbackInput`, `ListFeedbackFilters` (q?/topic?/status?/sort?/page?/limit?), `FeedbackVoteResult = { score; likes; dislikes; myVote }`.
 
 ### Client — new: `src/shared/lib/feedback-client.ts`
+
 Mirror `reports-client.ts` + `packs-client.ts`, wrapping `apiClient` and a `buildListQuery(filters)` (URLSearchParams, only defined params):
+
 - `list(f = {})` → `GET /feedback{query}` → `FeedbackList`
 - `getById(id)` → `GET /feedback/:id` → `Feedback`
 - `create(input)` → `POST /feedback` → `Feedback`
@@ -51,6 +56,7 @@ Mirror `reports-client.ts` + `packs-client.ts`, wrapping `apiClient` and a `buil
 - `addComment(id, {body})` → `POST /feedback/:id/comments {body}` → `FeedbackComment`
 
 ### Board — `src/features/feedback/FeedbackScreen.tsx` (`"use client"`)
+
 Mirror `SupportScreen.tsx` (filters + load-more) and `HomeFeed.tsx` (debounced search + conditional group). Public — works logged-out (no role gate; anon fetch returns only `everyone` posts).
 
 - **Layout:** two columns. Main = controls + post list. Right sidebar = **Top 3 by rating** — a separate `feedbackClient.list({ sort: 'top', limit: 3 })` fetched once on mount. On narrow screens the sidebar stacks below (responsive; logical Tailwind utilities, consistent with the RTL-aware direction work — but feedback ships LTR English so this is light).
@@ -61,6 +67,7 @@ Mirror `SupportScreen.tsx` (filters + load-more) and `HomeFeed.tsx` (debounced s
 - **States:** `Loading feedback…`, empty (`No feedback matches these filters.`), error (`text-[#ff6b6b]`, `Couldn't load feedback. Try again.`).
 
 ### New-post form — `src/features/feedback/NewFeedbackForm.tsx` (`"use client"`)
+
 Mirror `CreatePackForm.tsx`: controlled `useState` per field, `<form onSubmit noValidate>`, an exported pure `validate(fields): string | null`, single `error` string above submit, `messageFromError(err)` for server errors, pending submit label.
 
 - **Auth gate:** `useAuth()`; if `unauthenticated`, redirect to `/auth?next=/feedback/new` (effect) — a non-authed user can't reach the form meaningfully.
@@ -69,6 +76,7 @@ Mirror `CreatePackForm.tsx`: controlled `useState` per field, `<form onSubmit no
 - **Submit:** `feedbackClient.create(input)` → on success `router.push('/feedback/' + created.id)`.
 
 ### Detail — `src/features/feedback/FeedbackDetailScreen.tsx` (`"use client"`, prop `postId`)
+
 Mirror `SupportReportScreen.tsx` (staff-gated detail + `<select>` action + delete) composed with `VoteButtons.tsx` and `CommentSection.tsx` patterns.
 
 - **Fetch:** `feedbackClient.getById(postId)` in `useEffect`; handle `ApiError` 404 → a "Not found" state (covers hidden `staff_only` for non-viewers — the API 404s).
@@ -79,12 +87,15 @@ Mirror `SupportReportScreen.tsx` (staff-gated detail + `<select>` action + delet
 - **Author controls:** if `user?.id === post.authorId`, show the same **Delete** control (author may delete own).
 
 ### Nav — modify `src/shared/components/AppHeader.tsx`
+
 Add a public top-level **Feedback** link (visible to everyone, incl. logged-out). Header already uses `useTranslations('header')`, so add a `feedback` key to `messages/en.json`'s `header` namespace (and, to keep catalogs structurally complete, the same key to the other 10 locale files — English value is acceptable as a placeholder there since header is the extracted surface; or translate the single word, consistent with the existing header keys). Verify placement doesn't crowd the auth controls on mobile.
 
 ## i18n handling
+
 Feedback **screens** ship hardcoded English strings, exactly like `SupportScreen`, `HomeFeed`, `CommentSection`, `CreatePackForm`, `VoteButtons` today. ESLint does not force `useTranslations`. The **only** translated string is the header nav label (the header namespace is already extracted). A later i18n phase extracts the feedback screens.
 
 ## Testing strategy
+
 - **Backend prereq:** unit + e2e (above) in velanto-backend.
 - **Client lib** (`feedback-client.test.ts`): mock `api-client`; assert each method hits the exact path + query string (mirror `reports-client.test.ts`).
 - **Board** (`FeedbackScreen.test.tsx`): mock `feedback-client` + `useAuth` + `next/navigation`; assert filters/search change the query, "Load more" appends, empty/error states render, "New post" routes appropriately for authed vs anon.
@@ -95,6 +106,7 @@ Feedback **screens** ship hardcoded English strings, exactly like `SupportScreen
 - **Manual browser verification** (per the frontend workflow) against the live backend: board loads for anon + authed, filters/search/sort/Top-3 work, create flow (incl. a translation post + a staff_only post), vote, comment, and staff status/delete as a promoted account.
 
 ## Out of scope (this sub-project)
+
 - Notifications on status-change / new-comment (sub-project 3).
 - i18n extraction of the feedback screens (later phase).
 - Public-board SEO / SSR of the board (later; the board is client-fetched, consistent with `SupportScreen`).
@@ -102,5 +114,6 @@ Feedback **screens** ship hardcoded English strings, exactly like `SupportScreen
 - Editing a post after submit (delete + repost, per the parent design).
 
 ## Decomposition / build order
+
 1. **Backend prereq PR** (velanto-backend) — list shows own `staff_only`. Merge to `develop`.
 2. **Frontend build** (velanto-frontend, this branch) — types + client → board → new-post form → detail (vote/comments/staff) → nav link → verify/review/manual/PR. Gets its own implementation plan.

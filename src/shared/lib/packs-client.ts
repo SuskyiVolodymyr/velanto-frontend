@@ -1,5 +1,11 @@
 import { apiClient } from "@/src/shared/lib/api-client";
-import type { Pack, PackFormat, PackTag, Group, Category } from "@/src/shared/types/pack";
+import type {
+  Pack,
+  PackFormat,
+  PackTag,
+  Group,
+  Category,
+} from "@/src/shared/types/pack";
 
 export interface CreatePackInput {
   title: string;
@@ -41,7 +47,8 @@ export interface VoteResult {
 function buildListQuery(filters: ListPacksFilters): string {
   const params = new URLSearchParams();
   if (filters.format) params.set("format", filters.format);
-  if (filters.tags && filters.tags.length > 0) params.set("tags", filters.tags.join(","));
+  if (filters.tags && filters.tags.length > 0)
+    params.set("tags", filters.tags.join(","));
   if (filters.q) params.set("q", filters.q);
   if (filters.page !== undefined) params.set("page", String(filters.page));
   if (filters.limit !== undefined) params.set("limit", String(filters.limit));
@@ -55,12 +62,17 @@ function buildListQuery(filters: ListPacksFilters): string {
 export const packsClient = {
   create: (input: CreatePackInput) => apiClient.post<Pack>("/packs", input),
   getById: (id: string) => apiClient.get<Pack>(`/packs/${id}`),
-  list: (filters: ListPacksFilters = {}) => apiClient.get<PackList>(`/packs${buildListQuery(filters)}`),
+  list: (filters: ListPacksFilters = {}) =>
+    apiClient.get<PackList>(`/packs${buildListQuery(filters)}`),
   delete: (id: string) => apiClient.delete<{ deleted: true }>(`/packs/${id}`),
-  vote: (id: string, value: 1 | -1) => apiClient.post<VoteResult>(`/packs/${id}/vote`, { value }),
+  vote: (id: string, value: 1 | -1) =>
+    apiClient.post<VoteResult>(`/packs/${id}/vote`, { value }),
   unvote: (id: string) => apiClient.delete<VoteResult>(`/packs/${id}/vote`),
   moderationQueue: (filters: { page?: number; limit?: number } = {}) =>
-    apiClient.get<PackList>(`/packs/moderation-queue${buildListQuery(filters)}`),
+    apiClient.get<PackList>(
+      `/packs/moderation-queue${buildListQuery(filters)}`,
+    ),
   approve: (id: string) => apiClient.post<Pack>(`/packs/${id}/approve`),
-  reject: (id: string, reason?: string) => apiClient.post<Pack>(`/packs/${id}/reject`, { reason }),
+  reject: (id: string, reason?: string) =>
+    apiClient.post<Pack>(`/packs/${id}/reject`, { reason }),
 };

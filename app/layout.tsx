@@ -25,7 +25,9 @@ export const metadata: Metadata = {
   // Base for resolving relative metadata URLs (e.g. per-page `alternates.canonical`)
   // into absolute production URLs. Mirrors robots.ts's SITE_URL fallback; without
   // it Next defaults to http://localhost:3000 and emits localhost canonicals.
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "https://velanto.app"),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://velanto.app",
+  ),
   title: {
     default: "Velanto",
     template: "%s | Velanto",
@@ -58,7 +60,9 @@ export default async function RootLayout({
         {/* Stamps data-streamer-mode on <html> before first paint so identity
             content is CSS-hidden immediately on reload — see the script's own
             doc comment and the globals.css rule it pairs with. */}
-        <script dangerouslySetInnerHTML={{ __html: getStreamerModeInitScript() }} />
+        <script
+          dangerouslySetInnerHTML={{ __html: getStreamerModeInitScript() }}
+        />
       </head>
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider>

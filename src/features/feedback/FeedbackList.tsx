@@ -28,7 +28,9 @@ export function FeedbackList({
     <>
       {loading && <Text variant="secondary">Loading feedback…</Text>}
       {error && (
-        <Text className="text-[#ff6b6b]">Couldn&apos;t load feedback. Try again.</Text>
+        <Text className="text-[#ff6b6b]">
+          Couldn&apos;t load feedback. Try again.
+        </Text>
       )}
       {listReady && items.length === 0 && (
         <Text variant="secondary">No feedback matches these filters.</Text>
@@ -44,10 +46,16 @@ export function FeedbackList({
 
       {listReady && items.length < total && (
         <div className="flex flex-col gap-2">
-          <Button variant="secondary" disabled={loadingMore} onClick={onLoadMore}>
+          <Button
+            variant="secondary"
+            disabled={loadingMore}
+            onClick={onLoadMore}
+          >
             {loadingMore ? "Loading…" : "Load more"}
           </Button>
-          {loadMoreError && <Text className="text-sm text-[#ff6b6b]">{loadMoreError}</Text>}
+          {loadMoreError && (
+            <Text className="text-sm text-[#ff6b6b]">{loadMoreError}</Text>
+          )}
         </div>
       )}
     </>

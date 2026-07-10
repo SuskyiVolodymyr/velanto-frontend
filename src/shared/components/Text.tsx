@@ -21,5 +21,7 @@ export function Text({
   className,
   ...props
 }: TextProps) {
-  return <Component className={cn(variantClasses[variant], className)} {...props} />;
+  return (
+    <Component className={cn(variantClasses[variant], className)} {...props} />
+  );
 }

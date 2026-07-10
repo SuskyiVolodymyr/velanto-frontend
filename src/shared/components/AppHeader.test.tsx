@@ -54,8 +54,12 @@ describe("AppHeader", () => {
     renderHeader();
 
     expect(screen.getByText("VELANTO")).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Log in" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Log out" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Log in" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Log out" }),
+    ).not.toBeInTheDocument();
   });
 
   it("shows a Log in link when there is no session", async () => {
@@ -83,7 +87,9 @@ describe("AppHeader", () => {
 
     const trigger = await screen.findByRole("button", { name: "Account menu" });
     expect(trigger).toHaveTextContent("A");
-    expect(screen.queryByRole("link", { name: "Log in" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Log in" }),
+    ).not.toBeInTheDocument();
   });
 
   it("renders the notifications bell only when authenticated", async () => {
@@ -93,7 +99,9 @@ describe("AppHeader", () => {
     renderHeader();
 
     await screen.findByRole("link", { name: "Log in" });
-    expect(screen.queryByRole("button", { name: /notifications/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /notifications/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("renders the notifications bell when authenticated", async () => {
@@ -109,7 +117,9 @@ describe("AppHeader", () => {
     });
     renderHeader();
 
-    expect(await screen.findByRole("button", { name: /notifications/i })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("button", { name: /notifications/i }),
+    ).toBeInTheDocument();
   });
 
   it("logging out clears the session and shows Log in again", async () => {
@@ -131,7 +141,9 @@ describe("AppHeader", () => {
     await user.click(screen.getByRole("button", { name: "Account menu" }));
     await user.click(screen.getByRole("menuitem", { name: "Log out" }));
 
-    expect(await screen.findByRole("link", { name: "Log in" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("link", { name: "Log in" }),
+    ).toBeInTheDocument();
     expect(authClient.logout).toHaveBeenCalledTimes(1);
   });
 });

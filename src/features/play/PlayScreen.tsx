@@ -26,8 +26,15 @@ export function PlayScreen({ pack }: { pack: Pack }) {
   if (status === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">You need to be logged in to play a pack.</Text>
-        <Button className="mt-4" onClick={() => router.push(`/auth?next=${encodeURIComponent(pathname)}`)}>
+        <Text variant="secondary">
+          You need to be logged in to play a pack.
+        </Text>
+        <Button
+          className="mt-4"
+          onClick={() =>
+            router.push(`/auth?next=${encodeURIComponent(pathname)}`)
+          }
+        >
           Log in
         </Button>
       </div>
@@ -63,8 +70,14 @@ export function PlayScreen({ pack }: { pack: Pack }) {
           {session.isVersus ? (
             <div className="mb-8">
               <VersusRound
-                sideA={{ ...session.categoryA!, items: session.versusCandidatesA }}
-                sideB={{ ...session.categoryB!, items: session.versusCandidatesB }}
+                sideA={{
+                  ...session.categoryA!,
+                  items: session.versusCandidatesA,
+                }}
+                sideB={{
+                  ...session.categoryB!,
+                  items: session.versusCandidatesB,
+                }}
                 revealedCount={session.revealedCount}
                 selectedId={session.selectedId}
                 onSelect={session.setSelectedId}
@@ -72,20 +85,25 @@ export function PlayScreen({ pack }: { pack: Pack }) {
             </div>
           ) : (
             <div className="mb-8 flex flex-wrap gap-4">
-              {session.candidates.slice(0, session.revealedCount).map((item, index) => (
-                <CandidateCard
-                  key={item.id}
-                  item={item}
-                  index={index}
-                  selected={item.id === session.selectedId}
-                  onSelect={() => session.setSelectedId(item.id)}
-                />
-              ))}
+              {session.candidates
+                .slice(0, session.revealedCount)
+                .map((item, index) => (
+                  <CandidateCard
+                    key={item.id}
+                    item={item}
+                    index={index}
+                    selected={item.id === session.selectedId}
+                    onSelect={() => session.setSelectedId(item.id)}
+                  />
+                ))}
             </div>
           )}
 
           <div className="mb-10 flex justify-end">
-            <Button disabled={!session.canConfirm} onClick={session.confirmPick}>
+            <Button
+              disabled={!session.canConfirm}
+              onClick={session.confirmPick}
+            >
               Next round →
             </Button>
           </div>
@@ -103,7 +121,9 @@ export function PlayScreen({ pack }: { pack: Pack }) {
         />
       )}
 
-      {session.picks.length > 0 && <PicksSummary label={copy.pickedLabel} picks={session.picks} />}
+      {session.picks.length > 0 && (
+        <PicksSummary label={copy.pickedLabel} picks={session.picks} />
+      )}
     </div>
   );
 }

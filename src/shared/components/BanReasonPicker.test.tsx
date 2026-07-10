@@ -77,9 +77,15 @@ describe("BanReasonPicker", () => {
     render(<Harness />);
     const select = await screen.findByLabelText("Reason");
     // Two categories + 'Other' (+ the disabled placeholder).
-    expect(within(select).getByRole("option", { name: "Hate & Discrimination" })).toBeInTheDocument();
-    expect(within(select).getByRole("option", { name: "Spam & Manipulation" })).toBeInTheDocument();
-    expect(within(select).getByRole("option", { name: "Other" })).toBeInTheDocument();
+    expect(
+      within(select).getByRole("option", { name: "Hate & Discrimination" }),
+    ).toBeInTheDocument();
+    expect(
+      within(select).getByRole("option", { name: "Spam & Manipulation" }),
+    ).toBeInTheDocument();
+    expect(
+      within(select).getByRole("option", { name: "Other" }),
+    ).toBeInTheDocument();
   });
 
   it("does not fetch category titles from anything but the rules endpoint (single source of truth)", async () => {
@@ -99,7 +105,10 @@ describe("BanReasonPicker", () => {
     render(<Harness onChangeSpy={onChangeSpy} />);
     const select = await screen.findByLabelText("Reason");
     await userEvent.selectOptions(select, "spam_manipulation");
-    expect(onChangeSpy).toHaveBeenCalledWith({ reason: "spam_manipulation", reasonDetail: "" });
+    expect(onChangeSpy).toHaveBeenCalledWith({
+      reason: "spam_manipulation",
+      reasonDetail: "",
+    });
   });
 
   it("is valid once a category is chosen (detail optional for categories)", async () => {
@@ -107,7 +116,9 @@ describe("BanReasonPicker", () => {
     const select = await screen.findByLabelText("Reason");
     expect(screen.getByTestId("valid")).toHaveTextContent("false");
     await userEvent.selectOptions(select, "hate_discrimination");
-    await waitFor(() => expect(screen.getByTestId("valid")).toHaveTextContent("true"));
+    await waitFor(() =>
+      expect(screen.getByTestId("valid")).toHaveTextContent("true"),
+    );
   });
 
   it("requires non-empty detail when 'Other' is selected", async () => {
@@ -121,14 +132,18 @@ describe("BanReasonPicker", () => {
     expect(screen.getByText(/please add details/i)).toBeInTheDocument();
 
     await userEvent.type(detail, "context here");
-    await waitFor(() => expect(screen.getByTestId("valid")).toHaveTextContent("true"));
+    await waitFor(() =>
+      expect(screen.getByTestId("valid")).toHaveTextContent("true"),
+    );
   });
 
   it("caps the detail textarea at 500 characters", async () => {
     render(<Harness />);
     const select = await screen.findByLabelText("Reason");
     await userEvent.selectOptions(select, "other");
-    const detail = (await screen.findByLabelText(/details/i)) as HTMLTextAreaElement;
+    const detail = (await screen.findByLabelText(
+      /details/i,
+    )) as HTMLTextAreaElement;
     expect(detail.maxLength).toBe(500);
   });
 
@@ -137,33 +152,53 @@ describe("BanReasonPicker", () => {
       expect(isBanReasonValid({ reason: "", reasonDetail: "" })).toBe(false);
     });
     it("accepts a category with no detail", () => {
-      expect(isBanReasonValid({ reason: "spam_manipulation", reasonDetail: "" })).toBe(true);
+      expect(
+        isBanReasonValid({ reason: "spam_manipulation", reasonDetail: "" }),
+      ).toBe(true);
     });
     it("rejects 'other' with blank detail", () => {
-      expect(isBanReasonValid({ reason: "other", reasonDetail: "   " })).toBe(false);
+      expect(isBanReasonValid({ reason: "other", reasonDetail: "   " })).toBe(
+        false,
+      );
     });
     it("accepts 'other' with detail", () => {
-      expect(isBanReasonValid({ reason: "other", reasonDetail: "x" })).toBe(true);
+      expect(isBanReasonValid({ reason: "other", reasonDetail: "x" })).toBe(
+        true,
+      );
     });
     it("rejects detail longer than 500 chars", () => {
-      expect(isBanReasonValid({ reason: "other", reasonDetail: "a".repeat(501) })).toBe(false);
+      expect(
+        isBanReasonValid({ reason: "other", reasonDetail: "a".repeat(501) }),
+      ).toBe(false);
     });
   });
 
   describe("buildBanReasonPayload", () => {
     it("omits reasonDetail for a category with no detail", () => {
-      expect(buildBanReasonPayload({ reason: "spam_manipulation", reasonDetail: "" })).toEqual({
+      expect(
+        buildBanReasonPayload({
+          reason: "spam_manipulation",
+          reasonDetail: "",
+        }),
+      ).toEqual({
         reason: "spam_manipulation",
       });
     });
     it("includes trimmed reasonDetail for a category when provided", () => {
-      expect(buildBanReasonPayload({ reason: "spam_manipulation", reasonDetail: "  note  " })).toEqual({
+      expect(
+        buildBanReasonPayload({
+          reason: "spam_manipulation",
+          reasonDetail: "  note  ",
+        }),
+      ).toEqual({
         reason: "spam_manipulation",
         reasonDetail: "note",
       });
     });
     it("includes trimmed reasonDetail for 'other'", () => {
-      expect(buildBanReasonPayload({ reason: "other", reasonDetail: "  because  " })).toEqual({
+      expect(
+        buildBanReasonPayload({ reason: "other", reasonDetail: "  because  " }),
+      ).toEqual({
         reason: "other",
         reasonDetail: "because",
       });

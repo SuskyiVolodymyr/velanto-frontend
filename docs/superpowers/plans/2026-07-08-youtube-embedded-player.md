@@ -13,6 +13,7 @@
 ### Task 1: Video ID + thumbnail helper
 
 **Files:**
+
 - Create: `src/shared/lib/youtube.ts`
 - Test: `src/shared/lib/youtube.test.ts`
 
@@ -25,19 +26,27 @@ import { extractYouTubeId, youtubeThumbnailUrl } from "./youtube";
 
 describe("extractYouTubeId", () => {
   it("extracts the id from a youtu.be short link", () => {
-    expect(extractYouTubeId("https://youtu.be/KsF_hdjWJjo")).toBe("KsF_hdjWJjo");
+    expect(extractYouTubeId("https://youtu.be/KsF_hdjWJjo")).toBe(
+      "KsF_hdjWJjo",
+    );
   });
 
   it("extracts the id from a watch?v= link", () => {
-    expect(extractYouTubeId("https://www.youtube.com/watch?v=KsF_hdjWJjo")).toBe("KsF_hdjWJjo");
+    expect(
+      extractYouTubeId("https://www.youtube.com/watch?v=KsF_hdjWJjo"),
+    ).toBe("KsF_hdjWJjo");
   });
 
   it("extracts the id from an /embed/ link", () => {
-    expect(extractYouTubeId("https://www.youtube.com/embed/KsF_hdjWJjo")).toBe("KsF_hdjWJjo");
+    expect(extractYouTubeId("https://www.youtube.com/embed/KsF_hdjWJjo")).toBe(
+      "KsF_hdjWJjo",
+    );
   });
 
   it("extracts the id from a /shorts/ link", () => {
-    expect(extractYouTubeId("https://www.youtube.com/shorts/KsF_hdjWJjo")).toBe("KsF_hdjWJjo");
+    expect(extractYouTubeId("https://www.youtube.com/shorts/KsF_hdjWJjo")).toBe(
+      "KsF_hdjWJjo",
+    );
   });
 
   it("returns null for a non-YouTube URL", () => {
@@ -96,6 +105,7 @@ git commit -m "feat: add YouTube video id and thumbnail URL helpers"
 ### Task 2: oEmbed validation client
 
 **Files:**
+
 - Create: `src/shared/lib/youtube-oembed.ts`
 - Test: `src/shared/lib/youtube-oembed.test.ts`
 
@@ -134,7 +144,10 @@ describe("fetchYouTubeOEmbed", () => {
   });
 
   it("returns null when the network request fails", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("network error")));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockRejectedValue(new Error("network error")),
+    );
 
     const result = await fetchYouTubeOEmbed("https://youtu.be/KsF_hdjWJjo");
 
@@ -170,9 +183,13 @@ export interface OEmbedResult {
   title: string;
 }
 
-export async function fetchYouTubeOEmbed(url: string): Promise<OEmbedResult | null> {
+export async function fetchYouTubeOEmbed(
+  url: string,
+): Promise<OEmbedResult | null> {
   try {
-    const res = await fetch(`https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`);
+    const res = await fetch(
+      `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`,
+    );
     if (!res.ok) return null;
     const data = await res.json();
     return { title: typeof data.title === "string" ? data.title : "" };
@@ -199,6 +216,7 @@ git commit -m "feat: add YouTube oEmbed validation client"
 ### Task 3: IFrame Player API loader
 
 **Files:**
+
 - Create: `src/shared/lib/youtube-iframe-api.ts`
 - Test: `src/shared/lib/youtube-iframe-api.test.ts`
 
@@ -207,7 +225,10 @@ git commit -m "feat: add YouTube oEmbed validation client"
 ```ts
 // src/shared/lib/youtube-iframe-api.test.ts
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { loadYouTubeIframeApi, resetYouTubeIframeApiForTests } from "./youtube-iframe-api";
+import {
+  loadYouTubeIframeApi,
+  resetYouTubeIframeApiForTests,
+} from "./youtube-iframe-api";
 
 describe("loadYouTubeIframeApi", () => {
   beforeEach(() => {
@@ -285,7 +306,10 @@ export interface YouTubePlayerOptions {
 }
 
 export interface YouTubeIframeApi {
-  Player: new (element: HTMLElement, options: YouTubePlayerOptions) => YouTubePlayer;
+  Player: new (
+    element: HTMLElement,
+    options: YouTubePlayerOptions,
+  ) => YouTubePlayer;
 }
 
 declare global {
@@ -338,6 +362,7 @@ git commit -m "feat: add memoized YouTube IFrame Player API loader"
 ### Task 4: `YouTubeCard` component
 
 **Files:**
+
 - Create: `src/shared/components/YouTubeCard.tsx`
 - Test: `src/shared/components/YouTubeCard.test.tsx`
 
@@ -351,7 +376,10 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { YouTubeCard } from "./YouTubeCard";
 import { loadYouTubeIframeApi } from "@/src/shared/lib/youtube-iframe-api";
-import type { YouTubeIframeApi, YouTubePlayer } from "@/src/shared/lib/youtube-iframe-api";
+import type {
+  YouTubeIframeApi,
+  YouTubePlayer,
+} from "@/src/shared/lib/youtube-iframe-api";
 
 vi.mock("@/src/shared/lib/youtube-iframe-api", () => ({
   loadYouTubeIframeApi: vi.fn(),
@@ -385,10 +413,9 @@ describe("YouTubeCard", () => {
     mockedLoad.mockReturnValue(new Promise(() => {}));
     render(<YouTubeCard videoId="abc123" />);
 
-    expect(screen.getByRole("img", { name: "YouTube video thumbnail" })).toHaveAttribute(
-      "src",
-      "https://img.youtube.com/vi/abc123/mqdefault.jpg",
-    );
+    expect(
+      screen.getByRole("img", { name: "YouTube video thumbnail" }),
+    ).toHaveAttribute("src", "https://img.youtube.com/vi/abc123/mqdefault.jpg");
     expect(mockedLoad).not.toHaveBeenCalled();
   });
 
@@ -402,7 +429,10 @@ describe("YouTubeCard", () => {
 
     await waitFor(() => expect(fakeApi.Player).toHaveBeenCalledTimes(1));
     expect(vi.mocked(fakeApi.Player).mock.calls[0][1]).toEqual(
-      expect.objectContaining({ videoId: "abc123", playerVars: { autoplay: 1 } }),
+      expect.objectContaining({
+        videoId: "abc123",
+        playerVars: { autoplay: 1 },
+      }),
     );
     expect(fakePlayer.playVideo).toHaveBeenCalled();
   });
@@ -520,7 +550,10 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
       )}
       <div ref={mountRef} className="absolute inset-0" />
       {!hovered && (
-        <span className="absolute inset-0 flex items-center justify-center" aria-hidden>
+        <span
+          className="absolute inset-0 flex items-center justify-center"
+          aria-hidden
+        >
           <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-black/50">
             <span className="ml-0.5 h-0 w-0 border-y-8 border-l-[12px] border-y-transparent border-l-white" />
           </span>
@@ -549,6 +582,7 @@ git commit -m "feat: add YouTubeCard hover-to-play component"
 ### Task 5: Wire `YouTubeCard` into `PlayScreen.tsx`
 
 **Files:**
+
 - Modify: `src/features/play/PlayScreen.tsx:222-247`
 - Test: `src/features/play/PlayScreen.test.tsx`
 
@@ -565,34 +599,38 @@ function youtubeItem(id: string, title: string, value: string) {
 ```
 
 ```tsx
-  it("shows a real YouTube player for a youtube-type item and selects it via its own pick control, not the video area", async () => {
-    const user = userEvent.setup();
-    const packWithVideo: Pack = {
-      ...SAVE_ONE_PACK,
-      groups: [
-        {
-          id: "g1",
-          name: "2016",
-          selectionMode: "manual",
-          items: [
-            youtubeItem("v1", "Guren no Yumiya", "https://youtu.be/KsF_hdjWJjo"),
-            textItem("2", "Redo"),
-          ],
-        },
-      ],
-    };
-    renderScreen(packWithVideo);
-    await screen.findByText("Guren no Yumiya");
+it("shows a real YouTube player for a youtube-type item and selects it via its own pick control, not the video area", async () => {
+  const user = userEvent.setup();
+  const packWithVideo: Pack = {
+    ...SAVE_ONE_PACK,
+    groups: [
+      {
+        id: "g1",
+        name: "2016",
+        selectionMode: "manual",
+        items: [
+          youtubeItem("v1", "Guren no Yumiya", "https://youtu.be/KsF_hdjWJjo"),
+          textItem("2", "Redo"),
+        ],
+      },
+    ],
+  };
+  renderScreen(packWithVideo);
+  await screen.findByText("Guren no Yumiya");
 
-    expect(screen.getByRole("img", { name: "YouTube video thumbnail" })).toHaveAttribute(
-      "src",
-      "https://img.youtube.com/vi/KsF_hdjWJjo/mqdefault.jpg",
-    );
+  expect(
+    screen.getByRole("img", { name: "YouTube video thumbnail" }),
+  ).toHaveAttribute(
+    "src",
+    "https://img.youtube.com/vi/KsF_hdjWJjo/mqdefault.jpg",
+  );
 
-    await user.click(screen.getByRole("button", { name: "Pick Guren no Yumiya" }));
-    await user.click(screen.getByRole("button", { name: "Show all" }));
-    expect(screen.getByRole("button", { name: "Next round →" })).toBeEnabled();
-  });
+  await user.click(
+    screen.getByRole("button", { name: "Pick Guren no Yumiya" }),
+  );
+  await user.click(screen.getByRole("button", { name: "Show all" }));
+  expect(screen.getByRole("button", { name: "Next round →" })).toBeEnabled();
+});
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -605,64 +643,65 @@ Expected: FAIL — no `img` with name "YouTube video thumbnail" found (current c
 Replace the item-rendering block in `src/features/play/PlayScreen.tsx` (currently lines 222-247):
 
 ```tsx
-            <div className="mb-8 flex flex-wrap gap-4">
-              {candidates.slice(0, revealedCount).map((item, index) => {
-                const selected = item.id === selectedId;
-                const videoId = item.type === "youtube" ? extractYouTubeId(item.value) : null;
+<div className="mb-8 flex flex-wrap gap-4">
+  {candidates.slice(0, revealedCount).map((item, index) => {
+    const selected = item.id === selectedId;
+    const videoId =
+      item.type === "youtube" ? extractYouTubeId(item.value) : null;
 
-                if (videoId) {
-                  return (
-                    <div
-                      key={item.id}
-                      className={cn(
-                        "w-[200px] flex-none overflow-hidden rounded-2xl border transition-colors",
-                        selected ? "border-acc bg-acc/10" : "border-border bg-surface",
-                      )}
-                    >
-                      <YouTubeCard videoId={videoId} />
-                      <button
-                        type="button"
-                        onClick={() => setSelectedId(item.id)}
-                        aria-label={`Pick ${item.title}`}
-                        className="flex w-full items-center gap-2 p-4 text-left"
-                      >
-                        <span
-                          aria-hidden
-                          className={cn(
-                            "h-4 w-4 flex-none rounded border",
-                            selected ? "border-acc bg-acc" : "border-border-strong",
-                          )}
-                        />
-                        <Text className="flex-1 font-semibold">{item.title}</Text>
-                        <Text variant="tertiary" className="text-xs">
-                          {String(index + 1).padStart(2, "0")}
-                        </Text>
-                      </button>
-                    </div>
-                  );
-                }
+    if (videoId) {
+      return (
+        <div
+          key={item.id}
+          className={cn(
+            "w-[200px] flex-none overflow-hidden rounded-2xl border transition-colors",
+            selected ? "border-acc bg-acc/10" : "border-border bg-surface",
+          )}
+        >
+          <YouTubeCard videoId={videoId} />
+          <button
+            type="button"
+            onClick={() => setSelectedId(item.id)}
+            aria-label={`Pick ${item.title}`}
+            className="flex w-full items-center gap-2 p-4 text-left"
+          >
+            <span
+              aria-hidden
+              className={cn(
+                "h-4 w-4 flex-none rounded border",
+                selected ? "border-acc bg-acc" : "border-border-strong",
+              )}
+            />
+            <Text className="flex-1 font-semibold">{item.title}</Text>
+            <Text variant="tertiary" className="text-xs">
+              {String(index + 1).padStart(2, "0")}
+            </Text>
+          </button>
+        </div>
+      );
+    }
 
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => setSelectedId(item.id)}
-                    className={cn(
-                      "w-[200px] flex-none rounded-2xl border p-4 text-left transition-colors",
-                      selected
-                        ? "border-acc bg-acc/10"
-                        : "border-border bg-surface hover:border-border-strong",
-                    )}
-                  >
-                    {item.type === "youtube" && <Badge className="mb-2">YouTube</Badge>}
-                    <Text className="font-semibold">{item.title}</Text>
-                    <Text variant="tertiary" className="mt-1 text-xs">
-                      {String(index + 1).padStart(2, "0")}
-                    </Text>
-                  </button>
-                );
-              })}
-            </div>
+    return (
+      <button
+        key={item.id}
+        type="button"
+        onClick={() => setSelectedId(item.id)}
+        className={cn(
+          "w-[200px] flex-none rounded-2xl border p-4 text-left transition-colors",
+          selected
+            ? "border-acc bg-acc/10"
+            : "border-border bg-surface hover:border-border-strong",
+        )}
+      >
+        {item.type === "youtube" && <Badge className="mb-2">YouTube</Badge>}
+        <Text className="font-semibold">{item.title}</Text>
+        <Text variant="tertiary" className="mt-1 text-xs">
+          {String(index + 1).padStart(2, "0")}
+        </Text>
+      </button>
+    );
+  })}
+</div>
 ```
 
 Add imports near the top of `src/features/play/PlayScreen.tsx` (alongside the existing `VersusRound` import):
@@ -689,6 +728,7 @@ git commit -m "feat: render a real YouTube player for youtube items in PlayScree
 ### Task 6: Wire `YouTubeCard` into `HeadToHeadRound.tsx`
 
 **Files:**
+
 - Modify: `src/features/play/HeadToHeadRound.tsx`
 - Test: `src/features/play/HeadToHeadRound.test.tsx`
 
@@ -699,22 +739,24 @@ git commit -m "feat: render a real YouTube player for youtube items in PlayScree
 Add to `src/features/play/HeadToHeadRound.test.tsx`:
 
 ```tsx
-  it("shows a real YouTube player for a youtube item and still calls onPick via its own pick control", async () => {
-    const user = userEvent.setup();
-    const onPick = vi.fn();
-    const videoItem = {
-      id: "v1",
-      type: "youtube" as const,
-      title: "Opening theme",
-      value: "https://youtu.be/KsF_hdjWJjo",
-    };
-    render(<HeadToHeadRound left={videoItem} right={RIGHT} onPick={onPick} />);
+it("shows a real YouTube player for a youtube item and still calls onPick via its own pick control", async () => {
+  const user = userEvent.setup();
+  const onPick = vi.fn();
+  const videoItem = {
+    id: "v1",
+    type: "youtube" as const,
+    title: "Opening theme",
+    value: "https://youtu.be/KsF_hdjWJjo",
+  };
+  render(<HeadToHeadRound left={videoItem} right={RIGHT} onPick={onPick} />);
 
-    expect(screen.getByRole("img", { name: "YouTube video thumbnail" })).toBeInTheDocument();
+  expect(
+    screen.getByRole("img", { name: "YouTube video thumbnail" }),
+  ).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Pick Opening theme" }));
-    expect(onPick).toHaveBeenCalledWith("v1");
-  });
+  await user.click(screen.getByRole("button", { name: "Pick Opening theme" }));
+  expect(onPick).toHaveBeenCalledWith("v1");
+});
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -806,10 +848,11 @@ git commit -m "feat: render a real YouTube player for youtube items in HeadToHea
 ### Task 7: Wire `YouTubeCard` into `VersusRound.tsx`
 
 **Files:**
+
 - Modify: `src/features/play/VersusRound.tsx`
 - Create: `src/features/play/VersusRound.test.tsx`
 
-**Context:** Unlike the other two surfaces, the *side* is the pickable unit here, not individual items — so `SideCard` itself needs no click-target split. But `SideCard` is currently a `<button>` wrapping the item list, and a real `<iframe>`-based player can't be validly nested inside a `<button>`. `SideCard`'s outer element changes from `<button>` to a `<div role="button" tabIndex={0}>` with Enter/Space keyboard handling (matching native button semantics), so a `YouTubeCard` can be nested inside one of its items safely. `VersusRound.test.tsx` doesn't exist yet (today it's only exercised indirectly through `PlayScreen.test.tsx`'s nxn tests) — this task adds a standalone unit test file, matching `HeadToHeadRound.test.tsx`'s existing per-component convention.
+**Context:** Unlike the other two surfaces, the _side_ is the pickable unit here, not individual items — so `SideCard` itself needs no click-target split. But `SideCard` is currently a `<button>` wrapping the item list, and a real `<iframe>`-based player can't be validly nested inside a `<button>`. `SideCard`'s outer element changes from `<button>` to a `<div role="button" tabIndex={0}>` with Enter/Space keyboard handling (matching native button semantics), so a `YouTubeCard` can be nested inside one of its items safely. `VersusRound.test.tsx` doesn't exist yet (today it's only exercised indirectly through `PlayScreen.test.tsx`'s nxn tests) — this task adds a standalone unit test file, matching `HeadToHeadRound.test.tsx`'s existing per-component convention.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -828,13 +871,23 @@ function youtubeItem(id: string, title: string, value: string) {
   return { id, type: "youtube" as const, title, value };
 }
 
-const SIDE_A = { id: "ca", name: "Boys", items: [textItem("1", "Naruto"), textItem("2", "Sasuke")] };
+const SIDE_A = {
+  id: "ca",
+  name: "Boys",
+  items: [textItem("1", "Naruto"), textItem("2", "Sasuke")],
+};
 const SIDE_B = { id: "cb", name: "Girls", items: [textItem("3", "Sakura")] };
 
 describe("VersusRound", () => {
   it("renders both sides with a VS divider", () => {
     render(
-      <VersusRound sideA={SIDE_A} sideB={SIDE_B} revealedCount={2} selectedId={null} onSelect={vi.fn()} />,
+      <VersusRound
+        sideA={SIDE_A}
+        sideB={SIDE_B}
+        revealedCount={2}
+        selectedId={null}
+        onSelect={vi.fn()}
+      />,
     );
 
     expect(screen.getByText("Boys")).toBeInTheDocument();
@@ -846,7 +899,13 @@ describe("VersusRound", () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();
     render(
-      <VersusRound sideA={SIDE_A} sideB={SIDE_B} revealedCount={2} selectedId={null} onSelect={onSelect} />,
+      <VersusRound
+        sideA={SIDE_A}
+        sideB={SIDE_B}
+        revealedCount={2}
+        selectedId={null}
+        onSelect={onSelect}
+      />,
     );
 
     await user.click(screen.getByRole("button", { name: "Pick Boys" }));
@@ -857,7 +916,13 @@ describe("VersusRound", () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();
     render(
-      <VersusRound sideA={SIDE_A} sideB={SIDE_B} revealedCount={2} selectedId={null} onSelect={onSelect} />,
+      <VersusRound
+        sideA={SIDE_A}
+        sideB={SIDE_B}
+        revealedCount={2}
+        selectedId={null}
+        onSelect={onSelect}
+      />,
     );
 
     screen.getByRole("button", { name: "Pick Girls" }).focus();
@@ -881,7 +946,9 @@ describe("VersusRound", () => {
       />,
     );
 
-    expect(screen.getByRole("img", { name: "YouTube video thumbnail" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", { name: "YouTube video thumbnail" }),
+    ).toBeInTheDocument();
   });
 });
 ```
@@ -931,17 +998,23 @@ function SideCard({ side, revealedCount, selected, onSelect }: SideCardProps) {
       aria-label={`Pick ${side.name}`}
       className={cn(
         "flex flex-1 cursor-pointer flex-col gap-3 rounded-2xl border p-4 text-left transition-colors",
-        selected ? "border-acc bg-acc/10" : "border-border bg-surface hover:border-border-strong",
+        selected
+          ? "border-acc bg-acc/10"
+          : "border-border bg-surface hover:border-border-strong",
       )}
     >
       <Text className="text-center font-semibold">{side.name}</Text>
       <div className="flex flex-col gap-2">
         {side.items.slice(0, revealedCount).map((item) => {
-          const videoId = item.type === "youtube" ? extractYouTubeId(item.value) : null;
+          const videoId =
+            item.type === "youtube" ? extractYouTubeId(item.value) : null;
 
           if (videoId) {
             return (
-              <div key={item.id} className="overflow-hidden rounded-xl border border-border bg-white/[0.03]">
+              <div
+                key={item.id}
+                className="overflow-hidden rounded-xl border border-border bg-white/[0.03]"
+              >
                 <YouTubeCard videoId={videoId} />
                 <Text className="p-3 text-sm font-medium">{item.title}</Text>
               </div>
@@ -949,8 +1022,13 @@ function SideCard({ side, revealedCount, selected, onSelect }: SideCardProps) {
           }
 
           return (
-            <div key={item.id} className="rounded-xl border border-border bg-white/[0.03] p-3">
-              {item.type === "youtube" && <Badge className="mb-2">YouTube</Badge>}
+            <div
+              key={item.id}
+              className="rounded-xl border border-border bg-white/[0.03] p-3"
+            >
+              {item.type === "youtube" && (
+                <Badge className="mb-2">YouTube</Badge>
+              )}
               <Text className="text-sm font-medium">{item.title}</Text>
             </div>
           );
@@ -968,7 +1046,13 @@ interface VersusRoundProps {
   onSelect: (id: string) => void;
 }
 
-export function VersusRound({ sideA, sideB, revealedCount, selectedId, onSelect }: VersusRoundProps) {
+export function VersusRound({
+  sideA,
+  sideB,
+  revealedCount,
+  selectedId,
+  onSelect,
+}: VersusRoundProps) {
   return (
     <div className="flex items-start gap-4">
       <SideCard
@@ -1015,6 +1099,7 @@ git commit -m "feat: render a real YouTube player for youtube items in VersusRou
 ### Task 8: oEmbed validation in `CategoryEditor.tsx`
 
 **Files:**
+
 - Modify: `src/features/create/CategoryEditor.tsx`
 - Test: `src/features/create/CategoryEditor.test.tsx`
 
@@ -1045,78 +1130,111 @@ beforeEach(() => {
 Then add these tests inside the existing `describe("CategoryEditor", ...)` block:
 
 ```tsx
-  it("adds a youtube item after successful oEmbed validation, keeping a typed title", async () => {
-    vi.mocked(fetchYouTubeOEmbed).mockResolvedValue({ title: "Guren no Yumiya (Official)" });
-    const user = userEvent.setup();
-    const onChange = vi.fn();
-    render(<CategoryEditor category={emptyCategory()} index={0} onChange={onChange} />);
-
-    await user.click(screen.getByRole("button", { name: "Link" }));
-    await user.type(screen.getByLabelText("Category 1 new item title"), "My title");
-    await user.type(screen.getByLabelText("Category 1 new item link"), "https://youtu.be/KsF_hdjWJjo");
-    await user.click(screen.getByRole("button", { name: "Add" }));
-
-    await waitFor(() =>
-      expect(onChange).toHaveBeenCalledWith(
-        expect.objectContaining({
-          items: [
-            expect.objectContaining({
-              type: "youtube",
-              title: "My title",
-              value: "https://youtu.be/KsF_hdjWJjo",
-            }),
-          ],
-        }),
-      ),
-    );
+it("adds a youtube item after successful oEmbed validation, keeping a typed title", async () => {
+  vi.mocked(fetchYouTubeOEmbed).mockResolvedValue({
+    title: "Guren no Yumiya (Official)",
   });
+  const user = userEvent.setup();
+  const onChange = vi.fn();
+  render(
+    <CategoryEditor category={emptyCategory()} index={0} onChange={onChange} />,
+  );
 
-  it("falls back to the oEmbed video title when no title was typed", async () => {
-    vi.mocked(fetchYouTubeOEmbed).mockResolvedValue({ title: "Guren no Yumiya (Official)" });
-    const user = userEvent.setup();
-    const onChange = vi.fn();
-    render(<CategoryEditor category={emptyCategory()} index={0} onChange={onChange} />);
+  await user.click(screen.getByRole("button", { name: "Link" }));
+  await user.type(
+    screen.getByLabelText("Category 1 new item title"),
+    "My title",
+  );
+  await user.type(
+    screen.getByLabelText("Category 1 new item link"),
+    "https://youtu.be/KsF_hdjWJjo",
+  );
+  await user.click(screen.getByRole("button", { name: "Add" }));
 
-    await user.click(screen.getByRole("button", { name: "Link" }));
-    await user.type(screen.getByLabelText("Category 1 new item link"), "https://youtu.be/KsF_hdjWJjo");
-    await user.click(screen.getByRole("button", { name: "Add" }));
+  await waitFor(() =>
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        items: [
+          expect.objectContaining({
+            type: "youtube",
+            title: "My title",
+            value: "https://youtu.be/KsF_hdjWJjo",
+          }),
+        ],
+      }),
+    ),
+  );
+});
 
-    await waitFor(() =>
-      expect(onChange).toHaveBeenCalledWith(
-        expect.objectContaining({
-          items: [expect.objectContaining({ title: "Guren no Yumiya (Official)" })],
-        }),
-      ),
-    );
+it("falls back to the oEmbed video title when no title was typed", async () => {
+  vi.mocked(fetchYouTubeOEmbed).mockResolvedValue({
+    title: "Guren no Yumiya (Official)",
   });
+  const user = userEvent.setup();
+  const onChange = vi.fn();
+  render(
+    <CategoryEditor category={emptyCategory()} index={0} onChange={onChange} />,
+  );
 
-  it("shows an error and does not add when the video can't be found", async () => {
-    vi.mocked(fetchYouTubeOEmbed).mockResolvedValue(null);
-    const user = userEvent.setup();
-    const onChange = vi.fn();
-    render(<CategoryEditor category={emptyCategory()} index={0} onChange={onChange} />);
+  await user.click(screen.getByRole("button", { name: "Link" }));
+  await user.type(
+    screen.getByLabelText("Category 1 new item link"),
+    "https://youtu.be/KsF_hdjWJjo",
+  );
+  await user.click(screen.getByRole("button", { name: "Add" }));
 
-    await user.click(screen.getByRole("button", { name: "Link" }));
-    await user.type(screen.getByLabelText("Category 1 new item link"), "https://youtu.be/doesnotexist");
-    await user.click(screen.getByRole("button", { name: "Add" }));
+  await waitFor(() =>
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        items: [
+          expect.objectContaining({ title: "Guren no Yumiya (Official)" }),
+        ],
+      }),
+    ),
+  );
+});
 
-    expect(await screen.findByText("Couldn't find that video — check the link.")).toBeInTheDocument();
-    expect(onChange).not.toHaveBeenCalled();
-  });
+it("shows an error and does not add when the video can't be found", async () => {
+  vi.mocked(fetchYouTubeOEmbed).mockResolvedValue(null);
+  const user = userEvent.setup();
+  const onChange = vi.fn();
+  render(
+    <CategoryEditor category={emptyCategory()} index={0} onChange={onChange} />,
+  );
 
-  it("rejects a non-YouTube-shaped link without calling oEmbed", async () => {
-    const user = userEvent.setup();
-    const onChange = vi.fn();
-    render(<CategoryEditor category={emptyCategory()} index={0} onChange={onChange} />);
+  await user.click(screen.getByRole("button", { name: "Link" }));
+  await user.type(
+    screen.getByLabelText("Category 1 new item link"),
+    "https://youtu.be/doesnotexist",
+  );
+  await user.click(screen.getByRole("button", { name: "Add" }));
 
-    await user.click(screen.getByRole("button", { name: "Link" }));
-    await user.type(screen.getByLabelText("Category 1 new item link"), "not a link");
-    await user.click(screen.getByRole("button", { name: "Add" }));
+  expect(
+    await screen.findByText("Couldn't find that video — check the link."),
+  ).toBeInTheDocument();
+  expect(onChange).not.toHaveBeenCalled();
+});
 
-    expect(await screen.findByText("That doesn't look like a YouTube link.")).toBeInTheDocument();
-    expect(fetchYouTubeOEmbed).not.toHaveBeenCalled();
-    expect(onChange).not.toHaveBeenCalled();
-  });
+it("rejects a non-YouTube-shaped link without calling oEmbed", async () => {
+  const user = userEvent.setup();
+  const onChange = vi.fn();
+  render(
+    <CategoryEditor category={emptyCategory()} index={0} onChange={onChange} />,
+  );
+
+  await user.click(screen.getByRole("button", { name: "Link" }));
+  await user.type(
+    screen.getByLabelText("Category 1 new item link"),
+    "not a link",
+  );
+  await user.click(screen.getByRole("button", { name: "Add" }));
+
+  expect(
+    await screen.findByText("That doesn't look like a YouTube link."),
+  ).toBeInTheDocument();
+  expect(fetchYouTubeOEmbed).not.toHaveBeenCalled();
+  expect(onChange).not.toHaveBeenCalled();
+});
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -1147,7 +1265,11 @@ interface CategoryEditorProps {
   onChange: (category: Category) => void;
 }
 
-export function CategoryEditor({ category, index, onChange }: CategoryEditorProps) {
+export function CategoryEditor({
+  category,
+  index,
+  onChange,
+}: CategoryEditorProps) {
   const [draftType, setDraftType] = useState<ItemType>("text");
   const [draftTitle, setDraftTitle] = useState("");
   const [draftValue, setDraftValue] = useState("");
@@ -1197,7 +1319,10 @@ export function CategoryEditor({ category, index, onChange }: CategoryEditorProp
   }
 
   function removeItem(itemId: string) {
-    onChange({ ...category, items: category.items.filter((item) => item.id !== itemId) });
+    onChange({
+      ...category,
+      items: category.items.filter((item) => item.id !== itemId),
+    });
   }
 
   return (
@@ -1241,7 +1366,9 @@ export function CategoryEditor({ category, index, onChange }: CategoryEditorProp
             }}
             className={cn(
               "rounded-[7px] px-3 py-1.5 text-xs font-medium",
-              draftType === "text" ? "bg-white/[0.12] text-foreground" : "text-foreground-secondary",
+              draftType === "text"
+                ? "bg-white/[0.12] text-foreground"
+                : "text-foreground-secondary",
             )}
           >
             Text
@@ -1254,7 +1381,9 @@ export function CategoryEditor({ category, index, onChange }: CategoryEditorProp
             }}
             className={cn(
               "rounded-[7px] px-3 py-1.5 text-xs font-medium",
-              draftType === "youtube" ? "bg-white/[0.12] text-foreground" : "text-foreground-secondary",
+              draftType === "youtube"
+                ? "bg-white/[0.12] text-foreground"
+                : "text-foreground-secondary",
             )}
           >
             Link
@@ -1296,11 +1425,17 @@ export function CategoryEditor({ category, index, onChange }: CategoryEditorProp
                 aria-label={`Category ${index + 1} new item link`}
                 className="flex-[2] min-w-[140px]"
               />
-              <Button type="button" onClick={() => void addItem()} disabled={validating}>
+              <Button
+                type="button"
+                onClick={() => void addItem()}
+                disabled={validating}
+              >
                 {validating ? "Checking…" : "Add"}
               </Button>
             </div>
-            {addError && <Text className="text-xs text-[#ff6b6b]">{addError}</Text>}
+            {addError && (
+              <Text className="text-xs text-[#ff6b6b]">{addError}</Text>
+            )}
           </div>
         )}
       </div>
@@ -1330,6 +1465,7 @@ git commit -m "feat: validate YouTube links via oEmbed before adding a category 
 ### Task 9: oEmbed validation in `GroupEditor.tsx`
 
 **Files:**
+
 - Modify: `src/features/create/GroupEditor.tsx`
 - Create: `src/features/create/GroupEditor.test.tsx`
 
@@ -1360,14 +1496,30 @@ beforeEach(() => {
 
 describe("GroupEditor", () => {
   it("adds a youtube item after successful oEmbed validation, keeping a typed title", async () => {
-    vi.mocked(fetchYouTubeOEmbed).mockResolvedValue({ title: "Guren no Yumiya (Official)" });
+    vi.mocked(fetchYouTubeOEmbed).mockResolvedValue({
+      title: "Guren no Yumiya (Official)",
+    });
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<GroupEditor group={emptyGroup()} index={0} removable={false} onChange={onChange} onRemove={vi.fn()} />);
+    render(
+      <GroupEditor
+        group={emptyGroup()}
+        index={0}
+        removable={false}
+        onChange={onChange}
+        onRemove={vi.fn()}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Link" }));
-    await user.type(screen.getByLabelText("Group 1 new item title"), "My title");
-    await user.type(screen.getByLabelText("Group 1 new item link"), "https://youtu.be/KsF_hdjWJjo");
+    await user.type(
+      screen.getByLabelText("Group 1 new item title"),
+      "My title",
+    );
+    await user.type(
+      screen.getByLabelText("Group 1 new item link"),
+      "https://youtu.be/KsF_hdjWJjo",
+    );
     await user.click(screen.getByRole("button", { name: "Add" }));
 
     await waitFor(() =>
@@ -1386,19 +1538,34 @@ describe("GroupEditor", () => {
   });
 
   it("falls back to the oEmbed video title when no title was typed", async () => {
-    vi.mocked(fetchYouTubeOEmbed).mockResolvedValue({ title: "Guren no Yumiya (Official)" });
+    vi.mocked(fetchYouTubeOEmbed).mockResolvedValue({
+      title: "Guren no Yumiya (Official)",
+    });
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<GroupEditor group={emptyGroup()} index={0} removable={false} onChange={onChange} onRemove={vi.fn()} />);
+    render(
+      <GroupEditor
+        group={emptyGroup()}
+        index={0}
+        removable={false}
+        onChange={onChange}
+        onRemove={vi.fn()}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Link" }));
-    await user.type(screen.getByLabelText("Group 1 new item link"), "https://youtu.be/KsF_hdjWJjo");
+    await user.type(
+      screen.getByLabelText("Group 1 new item link"),
+      "https://youtu.be/KsF_hdjWJjo",
+    );
     await user.click(screen.getByRole("button", { name: "Add" }));
 
     await waitFor(() =>
       expect(onChange).toHaveBeenCalledWith(
         expect.objectContaining({
-          items: [expect.objectContaining({ title: "Guren no Yumiya (Official)" })],
+          items: [
+            expect.objectContaining({ title: "Guren no Yumiya (Official)" }),
+          ],
         }),
       ),
     );
@@ -1408,26 +1575,52 @@ describe("GroupEditor", () => {
     vi.mocked(fetchYouTubeOEmbed).mockResolvedValue(null);
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<GroupEditor group={emptyGroup()} index={0} removable={false} onChange={onChange} onRemove={vi.fn()} />);
+    render(
+      <GroupEditor
+        group={emptyGroup()}
+        index={0}
+        removable={false}
+        onChange={onChange}
+        onRemove={vi.fn()}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Link" }));
-    await user.type(screen.getByLabelText("Group 1 new item link"), "https://youtu.be/doesnotexist");
+    await user.type(
+      screen.getByLabelText("Group 1 new item link"),
+      "https://youtu.be/doesnotexist",
+    );
     await user.click(screen.getByRole("button", { name: "Add" }));
 
-    expect(await screen.findByText("Couldn't find that video — check the link.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Couldn't find that video — check the link."),
+    ).toBeInTheDocument();
     expect(onChange).not.toHaveBeenCalled();
   });
 
   it("rejects a non-YouTube-shaped link without calling oEmbed", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<GroupEditor group={emptyGroup()} index={0} removable={false} onChange={onChange} onRemove={vi.fn()} />);
+    render(
+      <GroupEditor
+        group={emptyGroup()}
+        index={0}
+        removable={false}
+        onChange={onChange}
+        onRemove={vi.fn()}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Link" }));
-    await user.type(screen.getByLabelText("Group 1 new item link"), "not a link");
+    await user.type(
+      screen.getByLabelText("Group 1 new item link"),
+      "not a link",
+    );
     await user.click(screen.getByRole("button", { name: "Add" }));
 
-    expect(await screen.findByText("That doesn't look like a YouTube link.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("That doesn't look like a YouTube link."),
+    ).toBeInTheDocument();
     expect(fetchYouTubeOEmbed).not.toHaveBeenCalled();
     expect(onChange).not.toHaveBeenCalled();
   });
@@ -1464,7 +1657,13 @@ interface GroupEditorProps {
   onRemove: () => void;
 }
 
-export function GroupEditor({ group, index, removable, onChange, onRemove }: GroupEditorProps) {
+export function GroupEditor({
+  group,
+  index,
+  removable,
+  onChange,
+  onRemove,
+}: GroupEditorProps) {
   const [draftType, setDraftType] = useState<ItemType>("text");
   const [draftTitle, setDraftTitle] = useState("");
   const [draftValue, setDraftValue] = useState("");
@@ -1514,7 +1713,10 @@ export function GroupEditor({ group, index, removable, onChange, onRemove }: Gro
   }
 
   function removeItem(itemId: string) {
-    onChange({ ...group, items: group.items.filter((item) => item.id !== itemId) });
+    onChange({
+      ...group,
+      items: group.items.filter((item) => item.id !== itemId),
+    });
   }
 
   return (
@@ -1542,7 +1744,13 @@ export function GroupEditor({ group, index, removable, onChange, onRemove }: Gro
           </button>
           <button
             type="button"
-            onClick={() => onChange({ ...group, selectionMode: "manual", sampleSize: undefined })}
+            onClick={() =>
+              onChange({
+                ...group,
+                selectionMode: "manual",
+                sampleSize: undefined,
+              })
+            }
             className={cn(
               "rounded-[7px] px-3 py-1.5 text-xs font-medium transition-colors",
               group.selectionMode === "manual"
@@ -1561,7 +1769,8 @@ export function GroupEditor({ group, index, removable, onChange, onRemove }: Gro
             onChange={(e) =>
               onChange({
                 ...group,
-                sampleSize: e.target.value === "" ? undefined : Number(e.target.value),
+                sampleSize:
+                  e.target.value === "" ? undefined : Number(e.target.value),
               })
             }
             aria-label={`Group ${index + 1} sample size`}
@@ -1570,7 +1779,12 @@ export function GroupEditor({ group, index, removable, onChange, onRemove }: Gro
           />
         )}
         {removable && (
-          <Button variant="ghost" type="button" onClick={onRemove} aria-label={`Remove group ${index + 1}`}>
+          <Button
+            variant="ghost"
+            type="button"
+            onClick={onRemove}
+            aria-label={`Remove group ${index + 1}`}
+          >
             Remove
           </Button>
         )}
@@ -1607,7 +1821,9 @@ export function GroupEditor({ group, index, removable, onChange, onRemove }: Gro
             }}
             className={cn(
               "rounded-[7px] px-3 py-1.5 text-xs font-medium",
-              draftType === "text" ? "bg-white/[0.12] text-foreground" : "text-foreground-secondary",
+              draftType === "text"
+                ? "bg-white/[0.12] text-foreground"
+                : "text-foreground-secondary",
             )}
           >
             Text
@@ -1620,7 +1836,9 @@ export function GroupEditor({ group, index, removable, onChange, onRemove }: Gro
             }}
             className={cn(
               "rounded-[7px] px-3 py-1.5 text-xs font-medium",
-              draftType === "youtube" ? "bg-white/[0.12] text-foreground" : "text-foreground-secondary",
+              draftType === "youtube"
+                ? "bg-white/[0.12] text-foreground"
+                : "text-foreground-secondary",
             )}
           >
             Link
@@ -1662,11 +1880,17 @@ export function GroupEditor({ group, index, removable, onChange, onRemove }: Gro
                 aria-label={`Group ${index + 1} new item link`}
                 className="flex-[2] min-w-[140px]"
               />
-              <Button type="button" onClick={() => void addItem()} disabled={validating}>
+              <Button
+                type="button"
+                onClick={() => void addItem()}
+                disabled={validating}
+              >
                 {validating ? "Checking…" : "Add"}
               </Button>
             </div>
-            {addError && <Text className="text-xs text-[#ff6b6b]">{addError}</Text>}
+            {addError && (
+              <Text className="text-xs text-[#ff6b6b]">{addError}</Text>
+            )}
           </div>
         )}
       </div>
@@ -1720,6 +1944,7 @@ Provide the reviewer the full `git diff develop...feature/youtube-embedded-playe
 - [ ] **Step 3: Manual browser verification**
 
 Using the Claude Preview tooling against a locally running backend + frontend:
+
 1. Go to Create, paste a real YouTube link (e.g. `https://youtu.be/dQw4w9WgXcQ`) as a group/category item — confirm the Add button shows "Checking…" then adds the item, and that leaving Title blank picks up the real video title.
 2. Paste an obviously invalid link (e.g. `https://youtu.be/not-a-real-id-000`) — confirm the inline error and that nothing is added.
 3. Publish (or use an existing approved) pack containing that item across each format that renders it (save_one/sacrifice_one via `PlayScreen`, 1v1 via `HeadToHeadRound`, nxn via `VersusRound`) and confirm: thumbnail shows before hover, hovering starts real playback with sound, native YouTube controls are usable, leaving pauses it, and the pick control still works without triggering the player.

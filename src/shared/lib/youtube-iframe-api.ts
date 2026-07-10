@@ -17,7 +17,10 @@ export interface YouTubePlayerOptions {
 }
 
 export interface YouTubeIframeApi {
-  Player: new (element: HTMLElement, options: YouTubePlayerOptions) => YouTubePlayer;
+  Player: new (
+    element: HTMLElement,
+    options: YouTubePlayerOptions,
+  ) => YouTubePlayer;
 }
 
 declare global {

@@ -81,8 +81,14 @@ function renderForm() {
 }
 
 async function fillMinimalValidPack(user: ReturnType<typeof userEvent.setup>) {
-  await user.type(await screen.findByLabelText("Pack title"), "Best Anime Openings");
-  await user.type(screen.getByLabelText("Pack description"), "Pick your favorite each round.");
+  await user.type(
+    await screen.findByLabelText("Pack title"),
+    "Best Anime Openings",
+  );
+  await user.type(
+    screen.getByLabelText("Pack description"),
+    "Pick your favorite each round.",
+  );
   await user.type(screen.getByLabelText("Group 1 name"), "2016");
   await user.type(screen.getByLabelText("Group 1 new item"), "Guren no Yumiya");
   await user.click(screen.getByRole("button", { name: "Add" }));
@@ -90,16 +96,23 @@ async function fillMinimalValidPack(user: ReturnType<typeof userEvent.setup>) {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "t", user: MOCK_USER });
+  vi.mocked(authClient.refresh).mockResolvedValue({
+    accessToken: "t",
+    user: MOCK_USER,
+  });
 });
 
 describe("CreatePackForm", () => {
   it("prompts to log in when there is no session", async () => {
-    vi.mocked(authClient.refresh).mockRejectedValue(new ApiError(401, "Unauthorized", null));
+    vi.mocked(authClient.refresh).mockRejectedValue(
+      new ApiError(401, "Unauthorized", null),
+    );
     const user = userEvent.setup();
     renderForm();
 
-    expect(await screen.findByText("You need to be logged in to create a pack.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("You need to be logged in to create a pack."),
+    ).toBeInTheDocument();
     expect(screen.queryByLabelText("Pack title")).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Log in" }));
@@ -113,7 +126,9 @@ describe("CreatePackForm", () => {
 
     await user.click(screen.getByRole("button", { name: "Publish" }));
 
-    expect(await screen.findByText("Give your pack a title.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Give your pack a title."),
+    ).toBeInTheDocument();
     expect(packsClient.create).not.toHaveBeenCalled();
   });
 
@@ -126,7 +141,9 @@ describe("CreatePackForm", () => {
 
     await user.click(screen.getByRole("button", { name: "Publish" }));
 
-    expect(await screen.findByText('Group "Round 1" needs at least one item.')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Group "Round 1" needs at least one item.'),
+    ).toBeInTheDocument();
     expect(packsClient.create).not.toHaveBeenCalled();
   });
 
@@ -138,7 +155,9 @@ describe("CreatePackForm", () => {
 
     await user.click(screen.getByRole("button", { name: "Publish" }));
 
-    expect(await screen.findByText('Group "2016" needs a sample size.')).toBeInTheDocument();
+    expect(
+      await screen.findByText('Group "2016" needs a sample size.'),
+    ).toBeInTheDocument();
     expect(packsClient.create).not.toHaveBeenCalled();
   });
 
@@ -152,7 +171,9 @@ describe("CreatePackForm", () => {
     await user.click(screen.getByRole("button", { name: "Publish" }));
 
     expect(
-      await screen.findByText('Group "2016"\'s sample size can\'t exceed its 1 item(s).'),
+      await screen.findByText(
+        "Group \"2016\"'s sample size can't exceed its 1 item(s).",
+      ),
     ).toBeInTheDocument();
     expect(packsClient.create).not.toHaveBeenCalled();
   });
@@ -164,10 +185,14 @@ describe("CreatePackForm", () => {
 
     // Default: one group, not removable.
     expect(screen.getByLabelText("Group 1 name")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Remove group 1" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Remove group 1" }),
+    ).not.toBeInTheDocument();
 
     await user.type(screen.getByLabelText("Group 1 name"), "Round 1");
-    await user.click(screen.getByRole("button", { name: "+ Add group (one more round)" }));
+    await user.click(
+      screen.getByRole("button", { name: "+ Add group (one more round)" }),
+    );
 
     // Second editor appears; both are now removable and hold independent values.
     await user.type(screen.getByLabelText("Group 2 name"), "Round 2");
@@ -190,7 +215,9 @@ describe("CreatePackForm", () => {
     await user.click(screen.getByRole("checkbox", { name: "Music" }));
     await user.click(screen.getByRole("button", { name: "Close" }));
 
-    expect(screen.getByRole("button", { name: "2 tags selected" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "2 tags selected" }),
+    ).toBeInTheDocument();
   });
 
   it("passes maxTags through to the tag picker so the cap disables further boxes", async () => {
@@ -200,14 +227,24 @@ describe("CreatePackForm", () => {
 
     await user.click(screen.getByRole("button", { name: "Select tags" }));
     const tagsToSelect = [
-      "Anime", "Movies", "Music", "Sports", "Football",
-      "Basketball", "Wrestling", "Food", "Gaming", "Board Games",
+      "Anime",
+      "Movies",
+      "Music",
+      "Sports",
+      "Football",
+      "Basketball",
+      "Wrestling",
+      "Food",
+      "Gaming",
+      "Board Games",
     ];
     for (const tag of tagsToSelect) {
       await user.click(screen.getByRole("checkbox", { name: tag }));
     }
 
-    expect(screen.getByRole("button", { name: "10 tags selected" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "10 tags selected" }),
+    ).toBeInTheDocument();
     const eleventh = screen.getByRole("checkbox", { name: "Comics" });
     expect(eleventh).toBeDisabled();
   });
@@ -286,7 +323,8 @@ describe("CreatePackForm", () => {
           {
             code: "custom",
             path: ["description"],
-            message: "This text contains language that isn't allowed on Velanto.",
+            message:
+              "This text contains language that isn't allowed on Velanto.",
           },
         ],
       }),
@@ -297,7 +335,9 @@ describe("CreatePackForm", () => {
     await user.click(screen.getByRole("button", { name: "Publish" }));
 
     expect(
-      await screen.findByText("This text contains language that isn't allowed on Velanto."),
+      await screen.findByText(
+        "This text contains language that isn't allowed on Velanto.",
+      ),
     ).toBeInTheDocument();
     expect(push).not.toHaveBeenCalled();
   });
@@ -306,12 +346,16 @@ describe("CreatePackForm", () => {
     it("shows the Groups section (not Categories) when Sacrifice One is selected", async () => {
       const user = userEvent.setup();
       renderForm();
-      await user.click(await screen.findByRole("button", { name: /^Sacrifice One/ }));
+      await user.click(
+        await screen.findByRole("button", { name: /^Sacrifice One/ }),
+      );
 
       expect(
         screen.getByRole("button", { name: "+ Add group (one more round)" }),
       ).toBeInTheDocument();
-      expect(screen.queryByLabelText("Category 1 name")).not.toBeInTheDocument();
+      expect(
+        screen.queryByLabelText("Category 1 name"),
+      ).not.toBeInTheDocument();
     });
 
     it("submits a valid sacrifice_one pack with the same groups payload shape as save_one", async () => {
@@ -320,7 +364,9 @@ describe("CreatePackForm", () => {
         makePack({ id: "pack-sac", format: "sacrifice_one" }),
       );
       renderForm();
-      await user.click(await screen.findByRole("button", { name: /^Sacrifice One/ }));
+      await user.click(
+        await screen.findByRole("button", { name: /^Sacrifice One/ }),
+      );
       await fillMinimalValidPack(user);
 
       await user.click(screen.getByRole("button", { name: "Publish" }));
@@ -329,7 +375,9 @@ describe("CreatePackForm", () => {
       expect(packsClient.create).toHaveBeenCalledWith(
         expect.objectContaining({
           format: "sacrifice_one",
-          groups: expect.arrayContaining([expect.objectContaining({ name: "2016" })]),
+          groups: expect.arrayContaining([
+            expect.objectContaining({ name: "2016" }),
+          ]),
         }),
       );
       expect(packsClient.create).not.toHaveBeenCalledWith(
@@ -356,23 +404,37 @@ describe("CreatePackForm", () => {
     it("rejects an nxn submission with a category that has no items", async () => {
       const user = userEvent.setup();
       renderForm();
-      await user.type(await screen.findByLabelText("Pack title"), "Boys vs Girls");
-      await user.type(screen.getByLabelText("Pack description"), "Pick a side.");
+      await user.type(
+        await screen.findByLabelText("Pack title"),
+        "Boys vs Girls",
+      );
+      await user.type(
+        screen.getByLabelText("Pack description"),
+        "Pick a side.",
+      );
       await switchToNxn(user);
       await user.type(screen.getByLabelText("Category 1 name"), "Boys");
       await user.type(screen.getByLabelText("Category 2 name"), "Girls");
 
       await user.click(screen.getByRole("button", { name: "Publish" }));
 
-      expect(await screen.findByText('Category "Boys" needs at least one item.')).toBeInTheDocument();
+      expect(
+        await screen.findByText('Category "Boys" needs at least one item.'),
+      ).toBeInTheDocument();
       expect(packsClient.create).not.toHaveBeenCalled();
     });
 
     it("rejects an nxn submission when versusN exceeds a category's item count", async () => {
       const user = userEvent.setup();
       renderForm();
-      await user.type(await screen.findByLabelText("Pack title"), "Boys vs Girls");
-      await user.type(screen.getByLabelText("Pack description"), "Pick a side.");
+      await user.type(
+        await screen.findByLabelText("Pack title"),
+        "Boys vs Girls",
+      );
+      await user.type(
+        screen.getByLabelText("Pack description"),
+        "Pick a side.",
+      );
       await switchToNxn(user);
       await user.type(screen.getByLabelText("Category 1 name"), "Boys");
       await user.type(screen.getByLabelText("Category 1 new item"), "Naruto");
@@ -385,18 +447,33 @@ describe("CreatePackForm", () => {
 
       await user.click(screen.getByRole("button", { name: "Publish" }));
 
-      expect(await screen.findByText('Category "Boys" needs at least 5 item(s).')).toBeInTheDocument();
+      expect(
+        await screen.findByText('Category "Boys" needs at least 5 item(s).'),
+      ).toBeInTheDocument();
       expect(packsClient.create).not.toHaveBeenCalled();
     });
 
     it("submits a valid nxn pack with categories/versusRounds/versusN and no groups", async () => {
       const user = userEvent.setup();
       vi.mocked(packsClient.create).mockResolvedValue(
-        makePack({ id: "pack-nxn", format: "nxn", categories: [], versusRounds: 8, versusN: 1, groups: undefined }),
+        makePack({
+          id: "pack-nxn",
+          format: "nxn",
+          categories: [],
+          versusRounds: 8,
+          versusN: 1,
+          groups: undefined,
+        }),
       );
       renderForm();
-      await user.type(await screen.findByLabelText("Pack title"), "Boys vs Girls");
-      await user.type(screen.getByLabelText("Pack description"), "Pick a side.");
+      await user.type(
+        await screen.findByLabelText("Pack title"),
+        "Boys vs Girls",
+      );
+      await user.type(
+        screen.getByLabelText("Pack description"),
+        "Pick a side.",
+      );
       await switchToNxn(user);
       await user.type(screen.getByLabelText("Category 1 name"), "Boys");
       await user.type(screen.getByLabelText("Category 1 new item"), "Naruto");
@@ -427,7 +504,9 @@ describe("CreatePackForm", () => {
           ],
         }),
       );
-      expect(vi.mocked(packsClient.create).mock.calls[0][0]).not.toHaveProperty("groups");
+      expect(vi.mocked(packsClient.create).mock.calls[0][0]).not.toHaveProperty(
+        "groups",
+      );
     });
   });
 
@@ -435,28 +514,40 @@ describe("CreatePackForm", () => {
     it("shows the Groups section (not Categories) when Rank Blind is selected", async () => {
       const user = userEvent.setup();
       renderForm();
-      await user.click(await screen.findByRole("button", { name: /^Rank Blind/ }));
+      await user.click(
+        await screen.findByRole("button", { name: /^Rank Blind/ }),
+      );
 
       expect(
         screen.getByRole("button", { name: "+ Add group (one more round)" }),
       ).toBeInTheDocument();
-      expect(screen.queryByLabelText("Category 1 name")).not.toBeInTheDocument();
+      expect(
+        screen.queryByLabelText("Category 1 name"),
+      ).not.toBeInTheDocument();
     });
 
     it("submits a valid rank_blind pack with the same groups payload shape as save_one", async () => {
       const user = userEvent.setup();
-      vi.mocked(packsClient.create).mockResolvedValue(makePack({ id: "pack-rank", format: "rank_blind" }));
+      vi.mocked(packsClient.create).mockResolvedValue(
+        makePack({ id: "pack-rank", format: "rank_blind" }),
+      );
       renderForm();
-      await user.click(await screen.findByRole("button", { name: /^Rank Blind/ }));
+      await user.click(
+        await screen.findByRole("button", { name: /^Rank Blind/ }),
+      );
       await fillMinimalValidPack(user);
 
       await user.click(screen.getByRole("button", { name: "Publish" }));
 
-      await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-rank"));
+      await waitFor(() =>
+        expect(push).toHaveBeenCalledWith("/packs/pack-rank"),
+      );
       expect(packsClient.create).toHaveBeenCalledWith(
         expect.objectContaining({
           format: "rank_blind",
-          groups: expect.arrayContaining([expect.objectContaining({ name: "2016" })]),
+          groups: expect.arrayContaining([
+            expect.objectContaining({ name: "2016" }),
+          ]),
         }),
       );
       expect(packsClient.create).not.toHaveBeenCalledWith(
@@ -474,7 +565,9 @@ describe("CreatePackForm", () => {
       expect(
         screen.getByRole("button", { name: "+ Add group (one more round)" }),
       ).toBeInTheDocument();
-      expect(screen.queryByLabelText("Category 1 name")).not.toBeInTheDocument();
+      expect(
+        screen.queryByLabelText("Category 1 name"),
+      ).not.toBeInTheDocument();
     });
 
     it("rejects a 1v1 group with only one item and does not call the API", async () => {
@@ -486,14 +579,18 @@ describe("CreatePackForm", () => {
       await user.click(screen.getByRole("button", { name: "Publish" }));
 
       expect(
-        await screen.findByText('Group "2016" needs exactly 2 items for a 1v1 matchup.'),
+        await screen.findByText(
+          'Group "2016" needs exactly 2 items for a 1v1 matchup.',
+        ),
       ).toBeInTheDocument();
       expect(packsClient.create).not.toHaveBeenCalled();
     });
 
     it("submits a valid 1v1 pack with the same groups payload shape as save_one", async () => {
       const user = userEvent.setup();
-      vi.mocked(packsClient.create).mockResolvedValue(makePack({ id: "pack-1v1", format: "1v1" }));
+      vi.mocked(packsClient.create).mockResolvedValue(
+        makePack({ id: "pack-1v1", format: "1v1" }),
+      );
       renderForm();
       await user.click(await screen.findByRole("button", { name: /^1v1/ }));
       await fillMinimalValidPack(user);
@@ -510,7 +607,9 @@ describe("CreatePackForm", () => {
       expect(packsClient.create).toHaveBeenCalledWith(
         expect.objectContaining({
           format: "1v1",
-          groups: expect.arrayContaining([expect.objectContaining({ name: "2016" })]),
+          groups: expect.arrayContaining([
+            expect.objectContaining({ name: "2016" }),
+          ]),
         }),
       );
       expect(packsClient.create).not.toHaveBeenCalledWith(

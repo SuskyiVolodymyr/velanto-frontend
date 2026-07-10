@@ -11,11 +11,16 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const pack = await getPackServer(id);
-  if (!pack) return { title: "Pack not found", robots: { index: false, follow: false } };
+  if (!pack)
+    return { title: "Pack not found", robots: { index: false, follow: false } };
   return { title: pack.title };
 }
 
-export default async function PackPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function PackPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const pack = await getPackServer(id);
   if (!pack) return <PackDetailFallback packId={id} />;

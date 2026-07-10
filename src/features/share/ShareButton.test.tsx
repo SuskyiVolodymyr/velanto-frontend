@@ -29,7 +29,9 @@ describe("ShareButton", () => {
 
     await waitFor(() => expect(writeText).toHaveBeenCalledTimes(1));
     expect(writeText.mock.calls[0][0]).toContain("/packs/p1");
-    expect(await screen.findByRole("button", { name: "Copied!" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("button", { name: "Copied!" }),
+    ).toBeInTheDocument();
   });
 
   it("does not show 'Copied!' when the clipboard write fails", async () => {
@@ -40,7 +42,9 @@ describe("ShareButton", () => {
     fireEvent.click(screen.getByRole("button", { name: "Copy" }));
 
     await waitFor(() => expect(writeText).toHaveBeenCalled());
-    expect(screen.queryByRole("button", { name: "Copied!" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Copied!" }),
+    ).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Copy" })).toBeInTheDocument();
   });
 
@@ -61,7 +65,13 @@ describe("ShareButton", () => {
   });
 
   it("encodes provided picks into the shared URL", () => {
-    render(<ShareButton path="/packs/p1/result" picks={[{ groupId: "g1", itemId: "i1" }]} label="Share result" />);
+    render(
+      <ShareButton
+        path="/packs/p1/result"
+        picks={[{ groupId: "g1", itemId: "i1" }]}
+        label="Share result"
+      />,
+    );
     fireEvent.click(screen.getByRole("button", { name: "Share result" }));
 
     const input = screen.getByRole("textbox") as HTMLInputElement;

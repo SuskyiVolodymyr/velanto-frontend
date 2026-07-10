@@ -5,7 +5,10 @@ import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { canActOn } from "@/src/shared/lib/staff-permissions";
-import { useUsersAdmin, isCurrentlyBanned } from "@/src/features/admin/use-users-admin";
+import {
+  useUsersAdmin,
+  isCurrentlyBanned,
+} from "@/src/features/admin/use-users-admin";
 import { UserRow } from "@/src/features/admin/UserRow";
 
 export function UsersTab() {
@@ -46,7 +49,9 @@ export function UsersTab() {
 
       {status === "loading" && <Text variant="secondary">Loading users…</Text>}
       {status === "error" && (
-        <Text className="text-[#ff6b6b]">Couldn&apos;t load users. Try again later.</Text>
+        <Text className="text-[#ff6b6b]">
+          Couldn&apos;t load users. Try again later.
+        </Text>
       )}
       {status === "ready" && users.length === 0 && (
         <Text variant="secondary">No users match this search.</Text>
@@ -74,10 +79,16 @@ export function UsersTab() {
         </div>
       )}
 
-      {actionError && <Text className="text-sm text-[#ff6b6b]">{actionError}</Text>}
+      {actionError && (
+        <Text className="text-sm text-[#ff6b6b]">{actionError}</Text>
+      )}
 
       {status === "ready" && users.length < total && (
-        <Button variant="secondary" disabled={loadingMore} onClick={() => void handleLoadMore()}>
+        <Button
+          variant="secondary"
+          disabled={loadingMore}
+          onClick={() => void handleLoadMore()}
+        >
           {loadingMore ? "Loading…" : "Load more"}
         </Button>
       )}

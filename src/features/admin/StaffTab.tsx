@@ -10,7 +10,10 @@ import { useAuth } from "@/src/shared/lib/auth-context";
 import { useStreamerModeOrDefault } from "@/src/shared/lib/streamer-mode-context";
 import { adminClient } from "@/src/shared/lib/admin-client";
 import { usersClient } from "@/src/shared/lib/users-client";
-import { assignableRolesFor, type AssignableRole } from "@/src/shared/lib/staff-permissions";
+import {
+  assignableRolesFor,
+  type AssignableRole,
+} from "@/src/shared/lib/staff-permissions";
 import type { AdminUserRow } from "@/src/shared/types/admin";
 
 const PAGE_SIZE = 20;
@@ -26,12 +29,17 @@ export function StaffTab() {
   const [users, setUsers] = useState<AdminUserRow[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "ready" | "error">(
+    "loading",
+  );
   const [loadingMore, setLoadingMore] = useState(false);
   const [actionError, setActionError] = useState("");
 
   useEffect(() => {
-    const timeout = setTimeout(() => setQuery(searchInput.trim()), SEARCH_DEBOUNCE_MS);
+    const timeout = setTimeout(
+      () => setQuery(searchInput.trim()),
+      SEARCH_DEBOUNCE_MS,
+    );
     return () => clearTimeout(timeout);
   }, [searchInput]);
 
@@ -59,7 +67,11 @@ export function StaffTab() {
     setLoadingMore(true);
     try {
       const nextPage = page + 1;
-      const result = await adminClient.listUsers({ q: query || undefined, page: nextPage, limit: PAGE_SIZE });
+      const result = await adminClient.listUsers({
+        q: query || undefined,
+        page: nextPage,
+        limit: PAGE_SIZE,
+      });
       setUsers((prev) => {
         const existingIds = new Set(prev.map((u) => u.id));
         return [...prev, ...result.items.filter((u) => !existingIds.has(u.id))];
@@ -77,7 +89,9 @@ export function StaffTab() {
     setActionError("");
     try {
       const result = await usersClient.changeRole(id, role);
-      setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, role: result.role } : u)));
+      setUsers((prev) =>
+        prev.map((u) => (u.id === id ? { ...u, role: result.role } : u)),
+      );
     } catch {
       setActionError("Couldn't change this user's role. Try again.");
     }
@@ -99,7 +113,9 @@ export function StaffTab() {
 
       {status === "loading" && <Text variant="secondary">Loading users…</Text>}
       {status === "error" && (
-        <Text className="text-[#ff6b6b]">Couldn&apos;t load users. Try again later.</Text>
+        <Text className="text-[#ff6b6b]">
+          Couldn&apos;t load users. Try again later.
+        </Text>
       )}
       {status === "ready" && users.length === 0 && (
         <Text variant="secondary">No users match this search.</Text>
@@ -108,7 +124,9 @@ export function StaffTab() {
       {status === "ready" && users.length > 0 && (
         <div className="flex flex-col gap-3">
           {users.map((row) => {
-            const options = assignableRolesFor(user.role, row.role).filter((role) => role !== row.role);
+            const options = assignableRolesFor(user.role, row.role).filter(
+              (role) => role !== row.role,
+            );
             return (
               <div
                 key={row.id}
@@ -135,7 +153,11 @@ export function StaffTab() {
                       e.target.value = "";
                       void handleRoleChange(row.id, role);
                     }}
-                    aria-label={streamerMode ? "Change role for this user" : `Change role for ${row.username}`}
+                    aria-label={
+                      streamerMode
+                        ? "Change role for this user"
+                        : `Change role for ${row.username}`
+                    }
                     className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground"
                   >
                     <option value="" disabled>
@@ -154,10 +176,16 @@ export function StaffTab() {
         </div>
       )}
 
-      {actionError && <Text className="text-sm text-[#ff6b6b]">{actionError}</Text>}
+      {actionError && (
+        <Text className="text-sm text-[#ff6b6b]">{actionError}</Text>
+      )}
 
       {status === "ready" && users.length < total && (
-        <Button variant="secondary" disabled={loadingMore} onClick={() => void handleLoadMore()}>
+        <Button
+          variant="secondary"
+          disabled={loadingMore}
+          onClick={() => void handleLoadMore()}
+        >
           {loadingMore ? "Loading…" : "Load more"}
         </Button>
       )}
