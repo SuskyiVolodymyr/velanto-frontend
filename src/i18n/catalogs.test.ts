@@ -31,13 +31,34 @@ const CATALOGS: Record<Locale, Catalog> = {
 /** Keys the source catalog may legitimately introduce that translated catalogs need not carry. */
 const META_KEYS = new Set(["_note"]);
 
-/** Flatten a nested message catalog into `a.b.c` → string leaves. */
+/**
+ * Keys whose value is deliberately identical across every locale (notation /
+ * proper nouns that are not translated), exempt from the untranslated check.
+ */
+const IDENTICAL_ALLOWED = new Set([
+  // Notation — never translated.
+  "formats.nxn",
+  "formats.1v1",
+  // Pure placeholder/punctuation, no translatable words: "{item} — {pct}%".
+  "pack.topItemPct",
+  // Cognates / loanwords that are genuinely the same word in some locales.
+  "home.sortPopular",
+  "home.groupFormat",
+  "home.groupTags",
+  "home.tagCount",
+]);
+
+/**
+ * Flatten a nested message catalog into `a.b.c` → string leaves. Recurses into
+ * both objects and arrays (arrays index by position, e.g. structured lists such
+ * as `pack.howItPlays.save_one.0.title`).
+ */
 function flatten(obj: Catalog, prefix = ""): Record<string, string> {
   const out: Record<string, string> = {};
   for (const [key, value] of Object.entries(obj)) {
     if (META_KEYS.has(key)) continue;
     const path = prefix ? `${prefix}.${key}` : key;
-    if (value && typeof value === "object" && !Array.isArray(value)) {
+    if (value && typeof value === "object") {
       Object.assign(out, flatten(value as Catalog, path));
     } else if (typeof value === "string") {
       out[path] = value;
@@ -89,7 +110,9 @@ describe("message catalogs", () => {
     });
 
     it("leaves no string identical to the English source (untranslated placeholder)", () => {
-      const untranslated = EN_KEYS.filter((key) => flat[key] === EN[key]);
+      const untranslated = EN_KEYS.filter(
+        (key) => flat[key] === EN[key] && !IDENTICAL_ALLOWED.has(key),
+      );
       expect(untranslated, `untranslated keys in ${locale}`).toEqual([]);
     });
   });

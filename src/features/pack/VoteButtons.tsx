@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { packsClient } from "@/src/shared/lib/packs-client";
@@ -42,6 +43,7 @@ export function VoteButtons({
   initialMyVote: 1 | -1 | null;
 }) {
   const { status: authStatus } = useAuth();
+  const t = useTranslations("pack");
   const router = useRouter();
   const pathname = usePathname();
 
@@ -66,7 +68,7 @@ export function VoteButtons({
       setDislikes(result.dislikes);
       setMyVote(result.myVote);
     } catch {
-      setError("Couldn't record your vote. Try again.");
+      setError(t("voteError"));
     } finally {
       setBusy(false);
     }
@@ -77,7 +79,7 @@ export function VoteButtons({
       <div className="inline-flex items-center gap-0.5 rounded-[10px] border border-border bg-white/[0.03] p-1">
         <button
           type="button"
-          aria-label="Upvote"
+          aria-label={t("upvote")}
           aria-pressed={myVote === 1}
           disabled={busy}
           onClick={() => void handleVote(1)}
@@ -104,7 +106,7 @@ export function VoteButtons({
         </span>
         <button
           type="button"
-          aria-label="Downvote"
+          aria-label={t("downvote")}
           aria-pressed={myVote === -1}
           disabled={busy}
           onClick={() => void handleVote(-1)}

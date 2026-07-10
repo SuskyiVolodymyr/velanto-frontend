@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { getRoundsCount } from "@/src/shared/lib/pack-display";
 import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
@@ -15,13 +16,14 @@ function humanize(n: number): string {
 // mirroring the design's stat cluster (we don't track a distinct "players"
 // count, so rounds stands in for it).
 export function PackHeroStats({ pack }: { pack: Pack }) {
+  const t = useTranslations("pack");
   const rounds = getRoundsCount(pack);
   const stats = [
-    { value: humanize(pack.totalPlays), label: "plays" },
-    { value: String(rounds), label: rounds === 1 ? "round" : "rounds" },
+    { value: humanize(pack.totalPlays), label: t("statPlays") },
+    { value: String(rounds), label: t("statRoundsLabel") },
     {
       value: `${Math.round(pack.avgAgreementPercent)}%`,
-      label: "top-pick agree",
+      label: t("statAgree"),
       accent: true,
     },
   ];

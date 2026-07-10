@@ -96,5 +96,119 @@
     "clear": "Clear",
     "cancel": "Cancel",
     "apply": "Apply"
+  },
+  "pack": {
+    "viewAuthor": "View author",
+    "viewProfile": "View profile",
+    "published": "Published {date}",
+    "playNow": "Play now",
+    "roundsCount": "{count, plural, one {# round} other {# rounds}}",
+    "itemsCount": "{count, plural, one {# item} other {# items}}",
+    "statPlays": "plays",
+    "statRoundsLabel": "rounds",
+    "statAgree": "top-pick agree",
+    "howItPlaysHeading": "How it plays — {format}",
+    "roundsHeading": "Rounds · one per {section}",
+    "sectionGroup": "group",
+    "sectionCategory": "category",
+    "playerStats": "Player stats",
+    "noPlays": "No plays yet — be the first!",
+    "statsPlays": "{count, plural, one {# play} other {# plays}}",
+    "topItemPct": "{item} — {pct}%",
+    "topItemAvg": "{item} — avg {pos}",
+    "howItPlays": {
+      "save_one": [
+        {
+          "title": "A group's pool appears",
+          "desc": "Each round shows a group's items — a random sample, or all of them if the creator arranged them manually."
+        },
+        {
+          "title": "You save one",
+          "desc": "Pick your single favorite; the rest are dropped for that round."
+        },
+        {
+          "title": "Next group, same deal",
+          "desc": "One save per group, across every round — no going back to change a pick."
+        }
+      ],
+      "sacrifice_one": [
+        {
+          "title": "A group's pool appears",
+          "desc": "Each round shows a group's items to choose between."
+        },
+        {
+          "title": "You sacrifice one",
+          "desc": "Cut the one you like least; the others move on."
+        },
+        {
+          "title": "Next group, same deal",
+          "desc": "One cut per round, across every group."
+        }
+      ],
+      "nxn": [
+        {
+          "title": "Two categories face off",
+          "desc": "Each round pits items from two categories head-to-head."
+        },
+        {
+          "title": "Pick a side",
+          "desc": "Choose the item you prefer in every matchup."
+        },
+        {
+          "title": "Picks tally up",
+          "desc": "Your choices add up across all rounds to a final result."
+        }
+      ],
+      "rank_blind": [
+        {
+          "title": "Items appear one at a time",
+          "desc": "You see each item blind, without knowing what comes next."
+        },
+        {
+          "title": "Place it in your ranking",
+          "desc": "Slot each item into your growing ranked list as you go."
+        },
+        {
+          "title": "No do-overs",
+          "desc": "Your ranking locks in once every item is placed."
+        }
+      ],
+      "1v1": [
+        {
+          "title": "Two items, head-to-head",
+          "desc": "Every round is a straight one-versus-one matchup."
+        },
+        {
+          "title": "Pick the winner",
+          "desc": "Choose your favorite of the two."
+        },
+        {
+          "title": "Winners tally up",
+          "desc": "Results add up across every matchup."
+        }
+      ]
+    },
+    "comments": "Comments · {count}",
+    "commentPlaceholder": "Share your thoughts on this pack…",
+    "commentLabel": "Comment",
+    "post": "Post",
+    "loginPrompt": "<link>Log in</link> to leave a comment.",
+    "loadingComments": "Loading comments…",
+    "loadCommentsError": "Couldn't load comments. Try again later.",
+    "noComments": "No comments yet.",
+    "loadMore": "Load more",
+    "loadingMore": "Loading…",
+    "loadMoreError": "Couldn't load more comments. Try again.",
+    "postErrorFallback": "Couldn't post your comment. Try again.",
+    "upvote": "Upvote",
+    "downvote": "Downvote",
+    "voteError": "Couldn't record your vote. Try again."
+  },
+  "share": {
+    "trigger": "Share",
+    "dialogLabel": "Share link",
+    "urlLabel": "Share URL",
+    "copy": "Copy",
+    "copied": "Copied!"
   }
 }

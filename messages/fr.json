@@ -97,5 +97,119 @@
     "clear": "Tout effacer",
     "cancel": "Annuler",
     "apply": "Appliquer"
+  },
+  "pack": {
+    "viewAuthor": "Voir l'auteur",
+    "viewProfile": "Voir le profil",
+    "published": "Publié le {date}",
+    "playNow": "Jouer",
+    "roundsCount": "{count, plural, one {# manche} other {# manches}}",
+    "itemsCount": "{count, plural, one {# élément} other {# éléments}}",
+    "statPlays": "parties",
+    "statRoundsLabel": "manches",
+    "statAgree": "même favori",
+    "howItPlaysHeading": "Comment on joue — {format}",
+    "roundsHeading": "Manches · une par {section}",
+    "sectionGroup": "groupe",
+    "sectionCategory": "catégorie",
+    "playerStats": "Stats des joueurs",
+    "noPlays": "Aucune partie pour l'instant — sois le premier !",
+    "statsPlays": "{count, plural, one {# partie} other {# parties}}",
+    "topItemPct": "{item} — {pct}%",
+    "topItemAvg": "{item} — moy. {pos}",
+    "howItPlays": {
+      "save_one": [
+        {
+          "title": "Un groupe entre en scène",
+          "desc": "Chaque manche montre les éléments d'un groupe — un échantillon aléatoire, ou tous si le créateur les a rangés à la main."
+        },
+        {
+          "title": "Tu en sauves un",
+          "desc": "Choisis ton favori ; les autres sautent pour cette manche."
+        },
+        {
+          "title": "Groupe suivant, même règle",
+          "desc": "Un sauvetage par groupe, à chaque manche — pas de retour en arrière."
+        }
+      ],
+      "sacrifice_one": [
+        {
+          "title": "Un groupe entre en scène",
+          "desc": "Chaque manche présente les éléments d'un groupe, à toi de trancher."
+        },
+        {
+          "title": "Tu en sacrifies un",
+          "desc": "Élimine celui que tu aimes le moins ; les autres continuent."
+        },
+        {
+          "title": "Groupe suivant, même règle",
+          "desc": "Une élimination par manche, sur tous les groupes."
+        }
+      ],
+      "nxn": [
+        {
+          "title": "Deux catégories s'affrontent",
+          "desc": "Chaque manche oppose les éléments de deux catégories en duel."
+        },
+        {
+          "title": "Choisis ton camp",
+          "desc": "Désigne l'élément que tu préfères à chaque duel."
+        },
+        {
+          "title": "Les votes s'additionnent",
+          "desc": "Tes choix s'accumulent au fil des manches jusqu'au résultat final."
+        }
+      ],
+      "rank_blind": [
+        {
+          "title": "Les éléments arrivent un par un",
+          "desc": "Tu découvres chaque élément à l'aveugle, sans savoir ce qui suit."
+        },
+        {
+          "title": "Place-le dans ton classement",
+          "desc": "Insère chaque élément dans ton classement au fur et à mesure."
+        },
+        {
+          "title": "Pas de seconde chance",
+          "desc": "Ton classement se verrouille dès que tout est placé."
+        }
+      ],
+      "1v1": [
+        {
+          "title": "Deux éléments, face à face",
+          "desc": "Chaque manche est un duel un-contre-un."
+        },
+        {
+          "title": "Désigne le gagnant",
+          "desc": "Choisis ton favori entre les deux."
+        },
+        {
+          "title": "Les victoires s'additionnent",
+          "desc": "Les résultats s'accumulent sur tous les duels."
+        }
+      ]
+    },
+    "comments": "Commentaires · {count}",
+    "commentPlaceholder": "Partage ton avis sur ce pack…",
+    "commentLabel": "Commentaire",
+    "post": "Publier",
+    "loginPrompt": "<link>Connecte-toi</link> pour laisser un commentaire.",
+    "loadingComments": "Chargement des commentaires…",
+    "loadCommentsError": "Impossible de charger les commentaires. Réessaie plus tard.",
+    "noComments": "Aucun commentaire pour l'instant.",
+    "loadMore": "Voir plus",
+    "loadingMore": "Chargement…",
+    "loadMoreError": "Impossible de charger plus de commentaires. Réessaie.",
+    "postErrorFallback": "Impossible de publier ton commentaire. Réessaie.",
+    "upvote": "Voter pour",
+    "downvote": "Voter contre",
+    "voteError": "Impossible d'enregistrer ton vote. Réessaie."
+  },
+  "share": {
+    "trigger": "Partager",
+    "dialogLabel": "Lien de partage",
+    "urlLabel": "URL de partage",
+    "copy": "Copier",
+    "copied": "Copié !"
   }
 }

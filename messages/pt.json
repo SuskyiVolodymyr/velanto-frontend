@@ -97,5 +97,119 @@
     "clear": "Limpar",
     "cancel": "Cancelar",
     "apply": "Aplicar"
+  },
+  "pack": {
+    "viewAuthor": "Ver autor",
+    "viewProfile": "Ver perfil",
+    "published": "Publicado em {date}",
+    "playNow": "Jogar agora",
+    "roundsCount": "{count, plural, one {# rodada} other {# rodadas}}",
+    "itemsCount": "{count, plural, one {# item} other {# itens}}",
+    "statPlays": "jogadas",
+    "statRoundsLabel": "rodadas",
+    "statAgree": "concordam com o favorito",
+    "howItPlaysHeading": "Como se joga — {format}",
+    "roundsHeading": "Rodadas · uma por {section}",
+    "sectionGroup": "grupo",
+    "sectionCategory": "categoria",
+    "playerStats": "Estatísticas dos jogadores",
+    "noPlays": "Ninguém jogou ainda — seja o primeiro!",
+    "statsPlays": "{count, plural, one {# jogada} other {# jogadas}}",
+    "topItemPct": "{item} — {pct}%",
+    "topItemAvg": "{item} — méd. {pos}",
+    "howItPlays": {
+      "save_one": [
+        {
+          "title": "Aparece o grupo",
+          "desc": "Cada rodada mostra os itens de um grupo — uma amostra aleatória ou todos, se o criador os organizou na mão."
+        },
+        {
+          "title": "Você salva um",
+          "desc": "Escolha o seu favorito; o resto cai fora naquela rodada."
+        },
+        {
+          "title": "Próximo grupo, mesma regra",
+          "desc": "Um salvo por grupo, em todas as rodadas — sem voltar atrás para mudar a escolha."
+        }
+      ],
+      "sacrifice_one": [
+        {
+          "title": "Aparece o grupo",
+          "desc": "Cada rodada mostra os itens de um grupo para você escolher."
+        },
+        {
+          "title": "Você sacrifica um",
+          "desc": "Elimine o que você menos curte; os outros seguem em frente."
+        },
+        {
+          "title": "Próximo grupo, mesma regra",
+          "desc": "Um corte por rodada, em todos os grupos."
+        }
+      ],
+      "nxn": [
+        {
+          "title": "Duas categorias se enfrentam",
+          "desc": "Cada rodada coloca itens de duas categorias frente a frente."
+        },
+        {
+          "title": "Escolha um lado",
+          "desc": "Fique com o item que você prefere em cada confronto."
+        },
+        {
+          "title": "Os votos se somam",
+          "desc": "Suas escolhas se acumulam ao longo das rodadas até o resultado final."
+        }
+      ],
+      "rank_blind": [
+        {
+          "title": "Os itens surgem um a um",
+          "desc": "Você vê cada item às cegas, sem saber o que vem depois."
+        },
+        {
+          "title": "Encaixe no seu ranking",
+          "desc": "Coloque cada item na sua lista, que vai crescendo a cada jogada."
+        },
+        {
+          "title": "Sem segunda chance",
+          "desc": "Seu ranking é travado assim que o último item entra."
+        }
+      ],
+      "1v1": [
+        {
+          "title": "Dois itens, cara a cara",
+          "desc": "Cada rodada é um duelo direto, um contra um."
+        },
+        {
+          "title": "Escolha o vencedor",
+          "desc": "Fique com o seu favorito entre os dois."
+        },
+        {
+          "title": "Os vencedores se somam",
+          "desc": "Os resultados se acumulam a cada confronto."
+        }
+      ]
+    },
+    "comments": "Comentários · {count}",
+    "commentPlaceholder": "Conte o que você achou deste pack…",
+    "commentLabel": "Comentário",
+    "post": "Publicar",
+    "loginPrompt": "<link>Entre</link> para deixar um comentário.",
+    "loadingComments": "Carregando comentários…",
+    "loadCommentsError": "Não foi possível carregar os comentários. Tente novamente mais tarde.",
+    "noComments": "Nenhum comentário ainda.",
+    "loadMore": "Carregar mais",
+    "loadingMore": "Carregando…",
+    "loadMoreError": "Não foi possível carregar mais comentários. Tente novamente.",
+    "postErrorFallback": "Não foi possível publicar seu comentário. Tente novamente.",
+    "upvote": "Curtir",
+    "downvote": "Descurtir",
+    "voteError": "Não foi possível registrar seu voto. Tente novamente."
+  },
+  "share": {
+    "trigger": "Compartilhar",
+    "dialogLabel": "Compartilhar link",
+    "urlLabel": "URL para compartilhar",
+    "copy": "Copiar",
+    "copied": "Copiado!"
   }
 }

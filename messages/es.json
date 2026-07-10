@@ -97,5 +97,119 @@
     "clear": "Limpiar",
     "cancel": "Cancelar",
     "apply": "Aplicar"
+  },
+  "pack": {
+    "viewAuthor": "Ver autor",
+    "viewProfile": "Ver perfil",
+    "published": "Publicado el {date}",
+    "playNow": "Jugar ahora",
+    "roundsCount": "{count, plural, one {# ronda} other {# rondas}}",
+    "itemsCount": "{count, plural, one {# elemento} other {# elementos}}",
+    "statPlays": "partidas",
+    "statRoundsLabel": "rondas",
+    "statAgree": "coincidencia con la favorita",
+    "howItPlaysHeading": "Cómo se juega — {format}",
+    "roundsHeading": "Rondas · una por {section}",
+    "sectionGroup": "grupo",
+    "sectionCategory": "categoría",
+    "playerStats": "Estadísticas de jugadores",
+    "noPlays": "Aún no hay partidas, ¡sé el primero!",
+    "statsPlays": "{count, plural, one {# partida} other {# partidas}}",
+    "topItemPct": "{item} — {pct}%",
+    "topItemAvg": "{item} — prom. {pos}",
+    "howItPlays": {
+      "save_one": [
+        {
+          "title": "Aparece el grupo",
+          "desc": "Cada ronda muestra los elementos de un grupo: una muestra al azar, o todos si el creador los ordenó a mano."
+        },
+        {
+          "title": "Salvas a uno",
+          "desc": "Elige tu único favorito; el resto queda eliminado en esa ronda."
+        },
+        {
+          "title": "Siguiente grupo, igual",
+          "desc": "Un salvado por grupo, ronda tras ronda, sin poder volver atrás."
+        }
+      ],
+      "sacrifice_one": [
+        {
+          "title": "Aparece el grupo",
+          "desc": "Cada ronda muestra los elementos de un grupo para que elijas."
+        },
+        {
+          "title": "Sacrificas a uno",
+          "desc": "Elimina al que menos te guste; los demás avanzan."
+        },
+        {
+          "title": "Siguiente grupo, igual",
+          "desc": "Un descarte por ronda, grupo tras grupo."
+        }
+      ],
+      "nxn": [
+        {
+          "title": "Dos categorías se enfrentan",
+          "desc": "Cada ronda enfrenta elementos de dos categorías, mano a mano."
+        },
+        {
+          "title": "Elige un lado",
+          "desc": "Escoge el elemento que prefieras en cada duelo."
+        },
+        {
+          "title": "Se suman los votos",
+          "desc": "Tus elecciones se acumulan en todas las rondas hasta el resultado final."
+        }
+      ],
+      "rank_blind": [
+        {
+          "title": "Los elementos van llegando de uno en uno",
+          "desc": "Ves cada elemento a ciegas, sin saber qué viene después."
+        },
+        {
+          "title": "Colócalo en tu ranking",
+          "desc": "Ve encajando cada elemento en tu lista según avanzas."
+        },
+        {
+          "title": "Sin repeticiones",
+          "desc": "Tu ranking queda fijo en cuanto colocas el último elemento."
+        }
+      ],
+      "1v1": [
+        {
+          "title": "Dos elementos, cara a cara",
+          "desc": "Cada ronda es un duelo directo, uno contra uno."
+        },
+        {
+          "title": "Elige al ganador",
+          "desc": "Escoge tu favorito entre los dos."
+        },
+        {
+          "title": "Se suman las victorias",
+          "desc": "Los resultados se acumulan en cada duelo."
+        }
+      ]
+    },
+    "comments": "Comentarios · {count}",
+    "commentPlaceholder": "Comparte lo que piensas de este pack…",
+    "commentLabel": "Comentario",
+    "post": "Publicar",
+    "loginPrompt": "<link>Inicia sesión</link> para dejar un comentario.",
+    "loadingComments": "Cargando comentarios…",
+    "loadCommentsError": "No se pudieron cargar los comentarios. Inténtalo más tarde.",
+    "noComments": "Aún no hay comentarios.",
+    "loadMore": "Cargar más",
+    "loadingMore": "Cargando…",
+    "loadMoreError": "No se pudieron cargar más comentarios. Inténtalo de nuevo.",
+    "postErrorFallback": "No se pudo publicar tu comentario. Inténtalo de nuevo.",
+    "upvote": "Votar a favor",
+    "downvote": "Votar en contra",
+    "voteError": "No se pudo registrar tu voto. Inténtalo de nuevo."
+  },
+  "share": {
+    "trigger": "Compartir",
+    "dialogLabel": "Compartir enlace",
+    "urlLabel": "URL para compartir",
+    "copy": "Copiar",
+    "copied": "¡Copiado!"
   }
 }

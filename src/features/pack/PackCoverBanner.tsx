@@ -8,6 +8,7 @@ import type { Pack } from "@/src/shared/types/pack";
 // overlaid along the bottom (per the design handoff).
 export function PackCoverBanner({ pack }: { pack: Pack }) {
   const tFormat = useTranslations("formats");
+  const t = useTranslations("pack");
   const rounds = getRoundsCount(pack);
 
   return (
@@ -38,7 +39,7 @@ export function PackCoverBanner({ pack }: { pack: Pack }) {
         {tFormat(pack.format)}
       </div>
       <div className="absolute right-5 top-5 text-xs font-medium text-white/65">
-        {rounds} round{rounds === 1 ? "" : "s"}
+        {t("roundsCount", { count: rounds })}
       </div>
 
       <div className="absolute inset-x-6 bottom-6">
@@ -54,7 +55,7 @@ export function PackCoverBanner({ pack }: { pack: Pack }) {
             className="h-5 w-5 rounded-md border border-white/25"
             style={{ background: pack.coverTone }}
           />
-          View author
+          {t("viewAuthor")}
         </Link>
       </div>
     </div>

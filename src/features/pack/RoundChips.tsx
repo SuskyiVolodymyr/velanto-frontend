@@ -1,9 +1,11 @@
+import { useTranslations } from "next-intl";
 import type { Pack } from "@/src/shared/types/pack";
 
 // Compact overview of the pack's groups (or nxn categories) as chips showing
 // each section's name and how many items it holds — the design's "rounds"
 // strip, replacing the old full item-list cards.
 export function RoundChips({ pack }: { pack: Pack }) {
+  const t = useTranslations("pack");
   const sections =
     pack.format === "nxn" ? (pack.categories ?? []) : (pack.groups ?? []);
 
@@ -18,7 +20,7 @@ export function RoundChips({ pack }: { pack: Pack }) {
         >
           <span className="text-[14.5px] font-semibold">{section.name}</span>
           <span className="text-[11px] text-foreground-tertiary">
-            {section.items.length} item{section.items.length === 1 ? "" : "s"}
+            {t("itemsCount", { count: section.items.length })}
           </span>
         </div>
       ))}

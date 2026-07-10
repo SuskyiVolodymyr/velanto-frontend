@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import type { Pack } from "@/src/shared/types/pack";
 
@@ -18,6 +19,7 @@ function formatPublished(iso: string): string {
 // handle and totals; we only have the authorId on the pack payload, so this is
 // a leaner stand-in until that data is exposed.
 export function PackCreatorCard({ pack }: { pack: Pack }) {
+  const t = useTranslations("pack");
   const published = formatPublished(pack.createdAt);
 
   return (
@@ -34,16 +36,16 @@ export function PackCreatorCard({ pack }: { pack: Pack }) {
           }}
         />
         <div>
-          <Text className="text-[15px] font-semibold">View author</Text>
+          <Text className="text-[15px] font-semibold">{t("viewAuthor")}</Text>
           {published && (
             <Text variant="tertiary" className="mt-0.5 text-xs">
-              Published {published}
+              {t("published", { date: published })}
             </Text>
           )}
         </div>
       </div>
       <span className="rounded-[10px] border border-border bg-white/[0.05] px-[17px] py-2.5 text-sm font-medium text-foreground">
-        View profile
+        {t("viewProfile")}
       </span>
     </Link>
   );

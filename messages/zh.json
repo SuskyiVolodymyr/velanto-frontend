@@ -97,5 +97,119 @@
     "clear": "清除",
     "cancel": "取消",
     "apply": "应用"
+  },
+  "pack": {
+    "viewAuthor": "查看作者",
+    "viewProfile": "查看主页",
+    "published": "发布于 {date}",
+    "playNow": "立即开玩",
+    "roundsCount": "{count, plural, other {# 轮}}",
+    "itemsCount": "{count, plural, other {# 个选项}}",
+    "statPlays": "次游玩",
+    "statRoundsLabel": "轮",
+    "statAgree": "首选一致",
+    "howItPlaysHeading": "玩法介绍 — {format}",
+    "roundsHeading": "轮次 · 每{section}一轮",
+    "sectionGroup": "组",
+    "sectionCategory": "类别",
+    "playerStats": "玩家数据",
+    "noPlays": "还没有人玩过——快来当第一个！",
+    "statsPlays": "{count, plural, other {# 次游玩}}",
+    "topItemPct": "{item} — {pct}%",
+    "topItemAvg": "{item} — 平均 {pos}",
+    "howItPlays": {
+      "save_one": [
+        {
+          "title": "一组选项登场",
+          "desc": "每轮会亮出一组选项——可能是随机抽取的，也可能是创作者手动排好的全部选项。"
+        },
+        {
+          "title": "留下一个",
+          "desc": "选出你最爱的那一个，其余的本轮统统淘汰。"
+        },
+        {
+          "title": "下一组，规则照旧",
+          "desc": "每组只留一个，轮轮如此——选了就不能反悔。"
+        }
+      ],
+      "sacrifice_one": [
+        {
+          "title": "一组选项登场",
+          "desc": "每轮亮出一组选项供你抉择。"
+        },
+        {
+          "title": "淘汰一个",
+          "desc": "把你最不喜欢的那个划掉，其余晋级。"
+        },
+        {
+          "title": "下一组，规则照旧",
+          "desc": "每轮淘汰一个，组组如此。"
+        }
+      ],
+      "nxn": [
+        {
+          "title": "两大类别对决",
+          "desc": "每轮让两个类别的选项正面交锋。"
+        },
+        {
+          "title": "选边站队",
+          "desc": "在每场对决中选出你更中意的一方。"
+        },
+        {
+          "title": "选择累计",
+          "desc": "你的每次选择层层相加，得出最终结果。"
+        }
+      ],
+      "rank_blind": [
+        {
+          "title": "选项逐个登场",
+          "desc": "每个选项盲抽亮相，你无从得知下一个是什么。"
+        },
+        {
+          "title": "排进你的榜单",
+          "desc": "边玩边把每个选项塞进你逐渐成型的排名里。"
+        },
+        {
+          "title": "没有重来",
+          "desc": "所有选项排定后，你的榜单就此锁定。"
+        }
+      ],
+      "1v1": [
+        {
+          "title": "两两对决",
+          "desc": "每一轮都是一对一的正面较量。"
+        },
+        {
+          "title": "选出胜者",
+          "desc": "在两者之间选出你的最爱。"
+        },
+        {
+          "title": "胜者累计",
+          "desc": "每场对决的结果层层累加。"
+        }
+      ]
+    },
+    "comments": "评论 · {count}",
+    "commentPlaceholder": "说说你对这个题包的看法…",
+    "commentLabel": "评论",
+    "post": "发布",
+    "loginPrompt": "<link>登录</link>后即可发表评论。",
+    "loadingComments": "正在加载评论…",
+    "loadCommentsError": "无法加载评论，请稍后再试。",
+    "noComments": "还没有评论。",
+    "loadMore": "加载更多",
+    "loadingMore": "加载中…",
+    "loadMoreError": "无法加载更多评论，请重试。",
+    "postErrorFallback": "无法发布你的评论，请重试。",
+    "upvote": "顶",
+    "downvote": "踩",
+    "voteError": "无法记录你的投票，请重试。"
+  },
+  "share": {
+    "trigger": "分享",
+    "dialogLabel": "分享链接",
+    "urlLabel": "分享网址",
+    "copy": "复制",
+    "copied": "已复制！"
   }
 }

@@ -51,18 +51,22 @@ function renderAsAuthenticated() {
     user: USER,
   });
   return render(
-    <AuthProvider>
-      <CommentSection packId="pack-1" />
-    </AuthProvider>,
+    <NextIntlClientProvider locale="en" messages={messages}>
+      <AuthProvider>
+        <CommentSection packId="pack-1" />
+      </AuthProvider>
+    </NextIntlClientProvider>,
   );
 }
 
 function renderAsUnauthenticated() {
   vi.mocked(authClient.refresh).mockRejectedValue(new Error("no session"));
   return render(
-    <AuthProvider>
-      <CommentSection packId="pack-1" />
-    </AuthProvider>,
+    <NextIntlClientProvider locale="en" messages={messages}>
+      <AuthProvider>
+        <CommentSection packId="pack-1" />
+      </AuthProvider>
+    </NextIntlClientProvider>,
   );
 }
 

@@ -36,7 +36,9 @@ export function PackDetailScreen({
   results: PackResults | RankResults;
 }) {
   const tFormat = useTranslations("formats");
-  const sectionLabel = pack.format === "nxn" ? "category" : "group";
+  const t = useTranslations("pack");
+  const sectionLabel =
+    pack.format === "nxn" ? t("sectionCategory") : t("sectionGroup");
 
   return (
     <main className="mx-auto w-full max-w-[1120px] flex-1 px-7 py-10">
@@ -73,7 +75,7 @@ export function PackDetailScreen({
                   aria-hidden
                   className="border-y-[6px] border-l-[9px] border-y-transparent border-l-current"
                 />
-                Play now
+                {t("playNow")}
               </Link>
               {pack.status === "approved" && (
                 <ShareButton path={`/packs/${pack.id}`} />
@@ -93,17 +95,21 @@ export function PackDetailScreen({
         </section>
 
         <section>
-          <SectionHeading>How it plays — {tFormat(pack.format)}</SectionHeading>
+          <SectionHeading>
+            {t("howItPlaysHeading", { format: tFormat(pack.format) })}
+          </SectionHeading>
           <PackHowItPlays format={pack.format} />
         </section>
 
         <section>
-          <SectionHeading>Rounds · one per {sectionLabel}</SectionHeading>
+          <SectionHeading>
+            {t("roundsHeading", { section: sectionLabel })}
+          </SectionHeading>
           <RoundChips pack={pack} />
         </section>
 
         <section>
-          <SectionHeading>Player stats</SectionHeading>
+          <SectionHeading>{t("playerStats")}</SectionHeading>
           <PackStats results={results} />
         </section>
 

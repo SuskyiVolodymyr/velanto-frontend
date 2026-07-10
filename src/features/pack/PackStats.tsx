@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import type { PackResults, RankResults } from "@/src/shared/types/play-results";
 
@@ -37,15 +38,17 @@ function StatRow({
 }
 
 export function PackStats({ results }: { results: PackResults | RankResults }) {
+  const t = useTranslations("pack");
+
   if (results.totalPlays === 0) {
     return (
       <Panel>
-        <Text variant="secondary">No plays yet — be the first!</Text>
+        <Text variant="secondary">{t("noPlays")}</Text>
       </Panel>
     );
   }
 
-  const playsLabel = `${results.totalPlays} play${results.totalPlays === 1 ? "" : "s"}`;
+  const playsLabel = t("statsPlays", { count: results.totalPlays });
 
   if (results.format === "rank_blind") {
     return (
@@ -63,7 +66,10 @@ export function PackStats({ results }: { results: PackResults | RankResults }) {
               <StatRow
                 key={round.groupId}
                 name={round.groupName}
-                label={`${topItem.itemTitle} — avg ${topItem.averagePosition}`}
+                label={t("topItemAvg", {
+                  item: topItem.itemTitle,
+                  pos: topItem.averagePosition,
+                })}
               />
             );
           })}
@@ -87,7 +93,10 @@ export function PackStats({ results }: { results: PackResults | RankResults }) {
             <StatRow
               key={round.groupId}
               name={round.groupName}
-              label={`${topItem.itemTitle} — ${topItem.percentage}%`}
+              label={t("topItemPct", {
+                item: topItem.itemTitle,
+                pct: topItem.percentage,
+              })}
               pct={topItem.percentage}
             />
           );

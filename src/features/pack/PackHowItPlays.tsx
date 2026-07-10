@@ -1,84 +1,14 @@
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import type { PackFormat } from "@/src/shared/types/pack";
 
 type Step = { title: string; desc: string };
 
-// Short, mode-specific "how it plays" explainer steps, one set per format.
-const STEPS: Record<PackFormat, Step[]> = {
-  save_one: [
-    {
-      title: "A group's pool appears",
-      desc: "Each round shows a group's items — a random sample, or all of them if the creator arranged them manually.",
-    },
-    {
-      title: "You save one",
-      desc: "Pick your single favorite; the rest are dropped for that round.",
-    },
-    {
-      title: "Next group, same deal",
-      desc: "One save per group, across every round — no going back to change a pick.",
-    },
-  ],
-  sacrifice_one: [
-    {
-      title: "A group's pool appears",
-      desc: "Each round shows a group's items to choose between.",
-    },
-    {
-      title: "You sacrifice one",
-      desc: "Cut the one you like least; the others move on.",
-    },
-    {
-      title: "Next group, same deal",
-      desc: "One cut per round, across every group.",
-    },
-  ],
-  nxn: [
-    {
-      title: "Two categories face off",
-      desc: "Each round pits items from two categories head-to-head.",
-    },
-    {
-      title: "Pick a side",
-      desc: "Choose the item you prefer in every matchup.",
-    },
-    {
-      title: "Picks tally up",
-      desc: "Your choices add up across all rounds to a final result.",
-    },
-  ],
-  rank_blind: [
-    {
-      title: "Items appear one at a time",
-      desc: "You see each item blind, without knowing what comes next.",
-    },
-    {
-      title: "Place it in your ranking",
-      desc: "Slot each item into your growing ranked list as you go.",
-    },
-    {
-      title: "No do-overs",
-      desc: "Your ranking locks in once every item is placed.",
-    },
-  ],
-  "1v1": [
-    {
-      title: "Two items, head-to-head",
-      desc: "Every round is a straight one-versus-one matchup.",
-    },
-    {
-      title: "Pick the winner",
-      desc: "Choose your favorite of the two.",
-    },
-    {
-      title: "Winners tally up",
-      desc: "Results add up across every matchup.",
-    },
-  ],
-};
-
 export function PackHowItPlays({ format }: { format: PackFormat }) {
-  const steps = STEPS[format];
+  const t = useTranslations("pack");
+  // The per-format step list is stored as structured JSON in the catalog, so
+  // read it raw rather than key-by-key.
+  const steps = t.raw(`howItPlays.${format}`) as Step[];
 
   return (
     <div className="grid gap-3.5 sm:grid-cols-2 lg:grid-cols-3">

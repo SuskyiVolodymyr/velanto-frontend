@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/src/shared/components/Button";
 import { Input } from "@/src/shared/components/Input";
 import { buildShareUrl } from "@/src/shared/lib/share-url";
@@ -9,12 +10,14 @@ import type { RecordedPick } from "@/src/shared/types/play-results";
 export function ShareButton({
   path,
   picks,
-  label = "Share",
+  label,
 }: {
   path: string;
   picks?: RecordedPick[] | null;
   label?: string;
 }) {
+  const t = useTranslations("share");
+  const triggerLabel = label ?? t("trigger");
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -86,12 +89,12 @@ export function ShareButton({
         aria-expanded={open}
         onClick={() => (open ? close() : setOpen(true))}
       >
-        {label}
+        {triggerLabel}
       </Button>
       {open && (
         <div
           role="dialog"
-          aria-label="Share link"
+          aria-label={t("dialogLabel")}
           className="absolute right-0 top-12 z-10 flex w-[300px] items-center gap-2 rounded-xl border border-border bg-surface p-3 shadow-[0_16px_40px_rgba(0,0,0,0.5)]"
         >
           <Input
@@ -100,10 +103,10 @@ export function ShareButton({
             value={url}
             onFocus={(event) => event.currentTarget.select()}
             className="flex-1"
-            aria-label="Share URL"
+            aria-label={t("urlLabel")}
           />
           <Button variant="secondary" onClick={handleCopy}>
-            {copied ? "Copied!" : "Copy"}
+            {copied ? t("copied") : t("copy")}
           </Button>
         </div>
       )}
