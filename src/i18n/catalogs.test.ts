@@ -46,6 +46,12 @@ const IDENTICAL_ALLOWED = new Set([
   "home.groupFormat",
   "home.groupTags",
   "home.tagCount",
+  // create-form loanwords: "Format" (fr), "Tags" (fr/pt), "Manual" (es/pt),
+  // "Link" (pt) are the same word in those locales.
+  "create.formatHeading",
+  "create.tags",
+  "create.manual",
+  "create.link",
 ]);
 
 /**

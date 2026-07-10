@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import type { Category, Item, ItemType } from "@/src/shared/types/pack";
 import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
@@ -24,6 +25,7 @@ export function CategoryEditor({
   onChange,
   error,
 }: CategoryEditorProps) {
+  const t = useTranslations("create");
   const [draftType, setDraftType] = useState<ItemType>("text");
   const [draftTitle, setDraftTitle] = useState("");
   const [draftValue, setDraftValue] = useState("");
@@ -49,7 +51,7 @@ export function CategoryEditor({
 
     const videoId = extractYouTubeId(draftValue.trim());
     if (!videoId) {
-      setAddError("That doesn't look like a YouTube link.");
+      setAddError(t("notYoutubeLink"));
       return;
     }
 
@@ -57,14 +59,14 @@ export function CategoryEditor({
     try {
       const result = await fetchYouTubeOEmbed(draftValue.trim());
       if (!result) {
-        setAddError("Couldn't find that video — check the link.");
+        setAddError(t("videoNotFound"));
         return;
       }
 
       const item: Item = {
         id: crypto.randomUUID(),
         type: "youtube",
-        title: draftTitle.trim() || result.title || "Untitled",
+        title: draftTitle.trim() || result.title || t("untitled"),
         value: draftValue.trim(),
       };
       onChange({ ...category, items: [...category.items, item] });
@@ -87,8 +89,8 @@ export function CategoryEditor({
       <Input
         value={category.name}
         onChange={(e) => onChange({ ...category, name: e.target.value })}
-        placeholder={`Category ${index + 1} name`}
-        aria-label={`Category ${index + 1} name`}
+        placeholder={t("categoryName", { index: index + 1 })}
+        aria-label={t("categoryName", { index: index + 1 })}
         className="font-semibold"
       />
 
@@ -103,7 +105,7 @@ export function CategoryEditor({
               <button
                 type="button"
                 onClick={() => removeItem(item.id)}
-                aria-label={`Remove ${item.title}`}
+                aria-label={t("removeItemAria", { title: item.title })}
                 className="text-foreground-tertiary hover:text-[#ff6b6b]"
               >
                 ×
@@ -128,7 +130,7 @@ export function CategoryEditor({
                 : "text-foreground-secondary",
             )}
           >
-            Text
+            {t("text")}
           </button>
           <button
             type="button"
@@ -143,7 +145,7 @@ export function CategoryEditor({
                 : "text-foreground-secondary",
             )}
           >
-            Link
+            {t("link")}
           </button>
         </div>
         {draftType === "text" ? (
@@ -154,12 +156,12 @@ export function CategoryEditor({
               onKeyDown={(e) => {
                 if (e.key === "Enter") void addItem();
               }}
-              placeholder="Add an item…"
-              aria-label={`Category ${index + 1} new item`}
+              placeholder={t("addItemPlaceholder")}
+              aria-label={t("categoryNewItem", { index: index + 1 })}
               className="flex-1"
             />
             <Button type="button" onClick={() => void addItem()}>
-              Add
+              {t("add")}
             </Button>
           </div>
         ) : (
@@ -168,8 +170,8 @@ export function CategoryEditor({
               <Input
                 value={draftTitle}
                 onChange={(e) => setDraftTitle(e.target.value)}
-                placeholder="Title"
-                aria-label={`Category ${index + 1} new item title`}
+                placeholder={t("itemTitlePlaceholder")}
+                aria-label={t("categoryNewItemTitle", { index: index + 1 })}
                 className="flex-1 min-w-[100px]"
               />
               <Input
@@ -179,8 +181,8 @@ export function CategoryEditor({
                   if (e.key === "Enter") void addItem();
                 }}
                 disabled={validating}
-                placeholder="YouTube link…"
-                aria-label={`Category ${index + 1} new item link`}
+                placeholder={t("youtubeLinkPlaceholder")}
+                aria-label={t("categoryNewItemLink", { index: index + 1 })}
                 className="flex-[2] min-w-[140px]"
               />
               <Button
@@ -188,7 +190,7 @@ export function CategoryEditor({
                 onClick={() => void addItem()}
                 disabled={validating}
               >
-                {validating ? "Checking…" : "Add"}
+                {validating ? t("checking") : t("add")}
               </Button>
             </div>
             {addError && (
@@ -199,7 +201,7 @@ export function CategoryEditor({
       </div>
 
       <Text variant="tertiary" className="text-xs">
-        {category.items.length} item{category.items.length === 1 ? "" : "s"}
+        {t("itemCount", { count: category.items.length })}
       </Text>
 
       {error && (

@@ -6,6 +6,7 @@ import {
   useWatch,
   type FieldErrors,
 } from "react-hook-form";
+import { useTranslations } from "next-intl";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { getFieldError } from "@/src/shared/components/form/getFieldError";
@@ -41,6 +42,7 @@ function firstGroupError(
  * useFieldArray's `update` does — that would drop focus mid-keystroke).
  */
 export function GroupsSection() {
+  const t = useTranslations("create");
   const { control, setValue, formState } = useFormContext<CreatePackValues>();
   const { errors } = formState;
   const groupsArray = useFieldArray({
@@ -54,7 +56,7 @@ export function GroupsSection() {
   return (
     <section className="flex flex-col gap-3">
       <Text as="h2" variant="title" className="text-lg">
-        Groups
+        {t("groupsHeading")}
       </Text>
       {groups.map((group, index) => (
         <GroupEditor
@@ -82,7 +84,7 @@ export function GroupsSection() {
         variant="secondary"
         onClick={() => groupsArray.append(newGroup())}
       >
-        + Add group (one more round)
+        {t("addGroup")}
       </Button>
     </section>
   );

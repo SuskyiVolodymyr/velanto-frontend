@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { ItemType } from "@/src/shared/types/pack";
 import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
@@ -32,6 +33,7 @@ export function GroupItemAdder({
   onDraftValueChange,
   onAdd,
 }: GroupItemAdderProps) {
+  const t = useTranslations("create");
   return (
     <div className="flex flex-col gap-2">
       <div className="flex w-fit rounded-[9px] border border-border bg-white/[0.03] p-0.5">
@@ -45,7 +47,7 @@ export function GroupItemAdder({
               : "text-foreground-secondary",
           )}
         >
-          Text
+          {t("text")}
         </button>
         <button
           type="button"
@@ -57,7 +59,7 @@ export function GroupItemAdder({
               : "text-foreground-secondary",
           )}
         >
-          Link
+          {t("link")}
         </button>
       </div>
       {draftType === "text" ? (
@@ -68,12 +70,12 @@ export function GroupItemAdder({
             onKeyDown={(e) => {
               if (e.key === "Enter") onAdd();
             }}
-            placeholder="Add an item…"
-            aria-label={`Group ${index + 1} new item`}
+            placeholder={t("addItemPlaceholder")}
+            aria-label={t("groupNewItem", { index: index + 1 })}
             className="flex-1"
           />
           <Button type="button" onClick={() => onAdd()}>
-            Add
+            {t("add")}
           </Button>
         </div>
       ) : (
@@ -82,8 +84,8 @@ export function GroupItemAdder({
             <Input
               value={draftTitle}
               onChange={(e) => onDraftTitleChange(e.target.value)}
-              placeholder="Title"
-              aria-label={`Group ${index + 1} new item title`}
+              placeholder={t("itemTitlePlaceholder")}
+              aria-label={t("groupNewItemTitle", { index: index + 1 })}
               className="flex-1 min-w-[100px]"
             />
             <Input
@@ -93,12 +95,12 @@ export function GroupItemAdder({
                 if (e.key === "Enter") onAdd();
               }}
               disabled={validating}
-              placeholder="YouTube link…"
-              aria-label={`Group ${index + 1} new item link`}
+              placeholder={t("youtubeLinkPlaceholder")}
+              aria-label={t("groupNewItemLink", { index: index + 1 })}
               className="flex-[2] min-w-[140px]"
             />
             <Button type="button" onClick={() => onAdd()} disabled={validating}>
-              {validating ? "Checking…" : "Add"}
+              {validating ? t("checking") : t("add")}
             </Button>
           </div>
           {addError && (

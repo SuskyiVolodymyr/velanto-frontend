@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useForm, useWatch, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/src/shared/lib/auth-context";
@@ -24,6 +25,7 @@ import {
 } from "@/src/features/create/create-pack.schema";
 
 export function CreatePackForm() {
+  const t = useTranslations("create");
   const router = useRouter();
   const pathname = usePathname();
   const { status } = useAuth();
@@ -84,16 +86,14 @@ export function CreatePackForm() {
   if (status === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">
-          You need to be logged in to create a pack.
-        </Text>
+        <Text variant="secondary">{t("loginRequired")}</Text>
         <Button
           className="mt-4"
           onClick={() =>
             router.push(`/auth?next=${encodeURIComponent(pathname)}`)
           }
         >
-          Log in
+          {t("logIn")}
         </Button>
       </div>
     );
@@ -123,7 +123,7 @@ export function CreatePackForm() {
           disabled={isSubmitting}
           className="h-[50px] w-full"
         >
-          {isSubmitting ? "Publishing…" : "Publish"}
+          {isSubmitting ? t("publishing") : t("publish")}
         </Button>
       </form>
     </FormProvider>
