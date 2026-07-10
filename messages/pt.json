@@ -10,7 +10,8 @@
     "support": "Suporte",
     "moderation": "Moderação",
     "admin": "Administração",
-    "feedback": "Feedback"
+    "feedback": "Feedback",
+    "rules": "Rules"
   },
   "settings": {
     "title": "Preferências",
@@ -28,5 +29,15 @@
     "settingsDescription": "Hides all viewer avatars, names, and comments so you can screen-share without exposing anyone. Reveal any item individually when you need to.",
     "on": "On",
     "off": "Off"
+  },
+  "auth": {
+    "acceptRules": "I have read and accept the <link>Community Rules</link>."
+  },
+  "rules": {
+    "metaTitle": "Community Rules — Velanto",
+    "metaDescription": "The community rules for creating and playing packs on Velanto — read them before you register.",
+    "heading": "Community Rules",
+    "intro": "These rules keep Velanto safe and fair for everyone. By creating an account you agree to follow them.",
+    "loadError": "We couldn't load the rules right now. Please try again in a moment."
   }
 }

@@ -1,6 +1,8 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { NextIntlClientProvider } from "next-intl";
+import messages from "@/messages/en.json";
 import { AuthForm } from "./AuthForm";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { authClient } from "@/src/shared/lib/auth-client";
@@ -25,9 +27,11 @@ vi.mock("@/src/shared/lib/auth-client", () => ({
 
 function renderAuthForm() {
   return render(
-    <AuthProvider>
-      <AuthForm />
-    </AuthProvider>,
+    <NextIntlClientProvider locale="en" messages={messages}>
+      <AuthProvider>
+        <AuthForm />
+      </AuthProvider>
+    </NextIntlClientProvider>,
   );
 }
 
@@ -83,6 +87,7 @@ describe("AuthForm", () => {
     await user.type(screen.getByLabelText("Username"), "no spaces!");
     await user.type(screen.getByLabelText("Email"), "a@example.com");
     await user.type(screen.getByLabelText("Password"), "password123");
+    await user.click(screen.getByRole("checkbox"));
     await user.click(screen.getByRole("button", { name: "Create account" }));
 
     expect(
@@ -101,6 +106,7 @@ describe("AuthForm", () => {
     await user.type(screen.getByLabelText("Username"), "alice");
     await user.type(screen.getByLabelText("Email"), "a@example.com");
     await user.type(screen.getByLabelText("Password"), "short");
+    await user.click(screen.getByRole("checkbox"));
     await user.click(screen.getByRole("button", { name: "Create account" }));
 
     expect(
@@ -117,6 +123,7 @@ describe("AuthForm", () => {
     await user.type(screen.getByLabelText("Username"), "alice");
     await user.type(screen.getByLabelText("Email"), "a@example.com");
     await user.type(screen.getByLabelText("Password"), "short");
+    await user.click(screen.getByRole("checkbox"));
     await user.click(screen.getByRole("button", { name: "Create account" }));
 
     const password = screen.getByLabelText("Password");
@@ -223,6 +230,52 @@ describe("AuthForm", () => {
 
     expect(await screen.findByText("Invalid credentials.")).toBeInTheDocument();
     expect(push).not.toHaveBeenCalled();
+  });
+
+  it("rejects registration when the rules-acceptance box is unchecked", async () => {
+    const user = userEvent.setup();
+    renderAuthForm();
+    await user.click(screen.getByRole("tab", { name: "Sign up" }));
+
+    await user.type(screen.getByLabelText("Username"), "alice");
+    await user.type(screen.getByLabelText("Email"), "a@example.com");
+    await user.type(screen.getByLabelText("Password"), "password123");
+    await user.click(screen.getByRole("button", { name: "Create account" }));
+
+    expect(
+      screen.getByText("You must accept the Community Rules to register."),
+    ).toBeInTheDocument();
+    expect(authClient.register).not.toHaveBeenCalled();
+  });
+
+  it("registers with acceptedRules:true once the box is checked", async () => {
+    const user = userEvent.setup();
+    vi.mocked(authClient.register).mockResolvedValue({
+      accessToken: "access-token",
+      user: {
+        id: "u1",
+        email: "a@example.com",
+        username: "alice",
+        role: "user",
+        createdAt: "2026-01-01T00:00:00.000Z",
+      },
+    });
+    renderAuthForm();
+    await user.click(screen.getByRole("tab", { name: "Sign up" }));
+
+    await user.type(screen.getByLabelText("Username"), "  alice  ");
+    await user.type(screen.getByLabelText("Email"), "  a@example.com  ");
+    await user.type(screen.getByLabelText("Password"), "password123");
+    await user.click(screen.getByRole("checkbox"));
+    await user.click(screen.getByRole("button", { name: "Create account" }));
+
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/"));
+    expect(authClient.register).toHaveBeenCalledWith({
+      username: "alice",
+      email: "a@example.com",
+      password: "password123",
+      acceptedRules: true,
+    });
   });
 
   it("disables the submit button while a request is pending, preventing a double submit", async () => {

@@ -10,6 +10,8 @@ export interface RegisterInput {
   email: string;
   username: string;
   password: string;
+  /** Backend requires an explicit acceptance of the Community Rules. */
+  acceptedRules: true;
 }
 
 export interface LoginInput {
