@@ -1,33 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { useClientData } from "@/src/shared/hooks/useClientData";
 import { reportsClient, type ListReportsFilters } from "@/src/shared/lib/reports-client";
-import { reportReasonLabel } from "@/src/shared/lib/report-reasons";
-import { reportTargetLabel } from "@/src/shared/lib/report-display";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
-import { StatusBadge } from "@/src/shared/components/StatusBadge";
+import { ReportFilters } from "@/src/features/support/ReportFilters";
+import { ReportList } from "@/src/features/support/ReportList";
 import type { ReportStatus, ReportType } from "@/src/shared/types/report";
 
 const PAGE_SIZE = 20;
-
-const STATUS_FILTERS: { value: ReportStatus | undefined; label: string }[] = [
-  { value: undefined, label: "All" },
-  { value: "new", label: "New" },
-  { value: "reviewing", label: "Reviewing" },
-  { value: "closed", label: "Closed" },
-];
-
-const TYPE_FILTERS: { value: ReportType | undefined; label: string }[] = [
-  { value: undefined, label: "All types" },
-  { value: "pack", label: "Packs" },
-  { value: "user", label: "Users" },
-  { value: "round", label: "Rounds" },
-];
 
 export function SupportScreen() {
   const { user, status: authStatus } = useAuth();
@@ -123,76 +107,23 @@ export function SupportScreen() {
         Reports
       </Text>
 
-      <div className="flex flex-wrap items-center gap-2">
-        {STATUS_FILTERS.map((f) => (
-          <button
-            key={f.label}
-            type="button"
-            onClick={() => setStatusFilter(f.value)}
-            aria-pressed={statusFilter === f.value}
-            className={`rounded-[9px] border px-3.5 py-2 text-sm font-medium ${
-              statusFilter === f.value ? "border-acc/40 bg-acc/10 text-acc" : "border-border bg-white/[0.02] text-foreground-secondary"
-            }`}
-          >
-            {f.label}
-          </button>
-        ))}
-        <div className="flex-1" />
-        {TYPE_FILTERS.map((f) => (
-          <button
-            key={f.label}
-            type="button"
-            onClick={() => setTypeFilter(f.value)}
-            aria-pressed={typeFilter === f.value}
-            className={`rounded-[9px] border px-3.5 py-2 text-sm font-medium ${
-              typeFilter === f.value ? "border-acc/40 bg-acc/10 text-acc" : "border-border bg-white/[0.02] text-foreground-secondary"
-            }`}
-          >
-            {f.label}
-          </button>
-        ))}
-      </div>
+      <ReportFilters
+        statusFilter={statusFilter}
+        onStatusChange={setStatusFilter}
+        typeFilter={typeFilter}
+        onTypeChange={setTypeFilter}
+      />
 
-      {reportsQuery.loading && <Text variant="secondary">Loading reports…</Text>}
-      {reportsQuery.error && <Text className="text-[#ff6b6b]">Couldn&apos;t load reports. Try again later.</Text>}
-      {listReady && reports.length === 0 && <Text variant="secondary">No reports match these filters.</Text>}
-
-      {listReady && reports.length > 0 && (
-        <div className="flex flex-col gap-2">
-          {reports.map((report) => {
-            const target = reportTargetLabel(report);
-            return (
-              <Link
-                key={report.id}
-                href={`/support/${report.id}`}
-                className="grid grid-cols-[70px_1.4fr_1.1fr_1fr_100px_110px] items-center gap-3 rounded-[12px] border border-border bg-surface px-4 py-3 text-sm hover:bg-white/[0.03]"
-              >
-                <span className="text-xs font-semibold uppercase text-foreground-secondary">{report.type}</span>
-                <Text className="truncate font-semibold">{target.text}</Text>
-                <Text variant="secondary" className="truncate">
-                  {reportReasonLabel(report.type, report.reason)}
-                </Text>
-                <Text variant="tertiary" className="truncate">
-                  {report.reporterUsername}
-                </Text>
-                <Text variant="tertiary" className="text-xs">
-                  {new Date(report.createdAt).toLocaleDateString()}
-                </Text>
-                <StatusBadge kind="report" status={report.status} />
-              </Link>
-            );
-          })}
-        </div>
-      )}
-
-      {listReady && reports.length < total && (
-        <div className="flex flex-col gap-2">
-          <Button variant="secondary" disabled={loadingMore} onClick={() => void handleLoadMore()}>
-            {loadingMore ? "Loading…" : "Load more"}
-          </Button>
-          {loadMoreError && <Text className="text-sm text-[#ff6b6b]">{loadMoreError}</Text>}
-        </div>
-      )}
+      <ReportList
+        loading={reportsQuery.loading}
+        error={reportsQuery.error}
+        listReady={listReady}
+        reports={reports}
+        total={total}
+        loadingMore={loadingMore}
+        loadMoreError={loadMoreError}
+        onLoadMore={() => void handleLoadMore()}
+      />
     </main>
   );
 }

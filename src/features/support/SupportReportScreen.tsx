@@ -1,25 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { useClientData } from "@/src/shared/hooks/useClientData";
 import { reportsClient } from "@/src/shared/lib/reports-client";
-import { packsClient } from "@/src/shared/lib/packs-client";
-import { usersClient, type BanDuration } from "@/src/shared/lib/users-client";
-import { BAN_DURATIONS } from "@/src/shared/lib/ban-durations";
-import { reportReasonLabel } from "@/src/shared/lib/report-reasons";
-import { reportTargetLabel } from "@/src/shared/lib/report-display";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
-import { StatusBadge } from "@/src/shared/components/StatusBadge";
-import {
-  BanReasonPicker,
-  isBanReasonValid,
-  buildBanReasonPayload,
-  type BanReasonState,
-} from "@/src/shared/components/BanReasonPicker";
+import { ReportDetailSummary } from "@/src/features/support/ReportDetailSummary";
+import { ReportQueueActions } from "@/src/features/support/ReportQueueActions";
+import { ReportModerationPanel } from "@/src/features/support/ReportModerationPanel";
+import { useReportModeration } from "@/src/features/support/use-report-moderation";
 
 export function SupportReportScreen({ reportId }: { reportId: string }) {
   const { user, status: authStatus } = useAuth();
@@ -28,13 +19,6 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
 
   const [actionError, setActionError] = useState("");
   const [actionBusy, setActionBusy] = useState(false);
-  const [deleted, setDeleted] = useState(false);
-  const [deleteError, setDeleteError] = useState("");
-  const [showBanForm, setShowBanForm] = useState(false);
-  const [banDuration, setBanDuration] = useState<BanDuration>("week");
-  const [banReason, setBanReason] = useState<BanReasonState>({ reason: "", reasonDetail: "" });
-  const [banError, setBanError] = useState("");
-  const [banDone, setBanDone] = useState(false);
 
   // Computed here (ahead of the `authStatus`/`status` early returns below)
   // rather than alongside the JSX, per Rules of Hooks: the report-fetch
@@ -55,6 +39,8 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
     enabled: allowed,
   });
   const report = reportQuery.data;
+
+  const moderation = useReportModeration(report);
 
   async function handleReview() {
     setActionBusy(true);
@@ -79,32 +65,6 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
       setActionError("Couldn't close this report. Try again.");
     } finally {
       setActionBusy(false);
-    }
-  }
-
-  async function handleDeletePack() {
-    if (!report) return;
-    setDeleteError("");
-    try {
-      await packsClient.delete(report.targetId);
-      setDeleted(true);
-    } catch {
-      setDeleteError("Couldn't delete this pack. Try again.");
-    }
-  }
-
-  async function handleBanSubmit() {
-    if (!report || !isBanReasonValid(banReason)) return;
-    setBanError("");
-    try {
-      await usersClient.ban(report.targetId, {
-        duration: banDuration,
-        ...buildBanReasonPayload(banReason),
-      });
-      setBanDone(true);
-      setShowBanForm(false);
-    } catch {
-      setBanError("Couldn't ban this user. Try again.");
     }
   }
 
@@ -133,109 +93,19 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
     );
   }
 
-  const target = reportTargetLabel(report);
-
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-7 py-10">
-      <div className="flex items-center justify-between">
-        <Text as="h1" variant="title" className="text-2xl">
-          {reportReasonLabel(report.type, report.reason)}
-        </Text>
-        <StatusBadge kind="report" status={report.status} />
-      </div>
+      <ReportDetailSummary report={report} />
 
-      <div className="flex flex-col gap-2 text-sm">
-        <Text variant="secondary">
-          Reported by <span className="font-semibold text-foreground">{report.reporterUsername}</span> on{" "}
-          {new Date(report.createdAt).toLocaleString()}
-        </Text>
-        <span className="text-xs font-semibold uppercase text-foreground-secondary">{report.type}</span>
-        <Link href={target.href} className="text-acc hover:underline">
-          {target.text}
-        </Link>
-        {report.comment && <Text variant="secondary">{report.comment}</Text>}
-      </div>
+      <ReportQueueActions
+        status={report.status}
+        actionBusy={actionBusy}
+        actionError={actionError}
+        onReview={() => void handleReview()}
+        onClose={() => void handleClose()}
+      />
 
-      <div className="flex flex-wrap gap-2">
-        {report.status === "new" && (
-          <Button disabled={actionBusy} onClick={() => void handleReview()}>
-            Review
-          </Button>
-        )}
-        {report.status !== "closed" && (
-          <Button variant="secondary" disabled={actionBusy} onClick={() => void handleClose()}>
-            Mark resolved
-          </Button>
-        )}
-      </div>
-      {actionError && <Text className="text-sm text-[#ff6b6b]">{actionError}</Text>}
-
-      <div className="flex flex-col gap-3 rounded-[15px] border border-red-500/20 bg-red-500/[0.03] p-5">
-        <Text className="text-xs font-semibold tracking-wide text-red-400">MODERATION ACTIONS</Text>
-        {(report.type === "pack" || report.type === "round") && (
-          <div>
-            <Button variant="secondary" disabled={deleted} onClick={() => void handleDeletePack()}>
-              {deleted ? "Pack deleted ✓" : "Delete pack"}
-            </Button>
-            {deleteError && <Text className="mt-2 text-xs text-[#ff6b6b]">{deleteError}</Text>}
-          </div>
-        )}
-        {report.type === "user" && (
-          <div>
-            {!banDone && (
-              <Button
-                variant="secondary"
-                onClick={() =>
-                  setShowBanForm((v) => {
-                    const opening = !v;
-                    if (opening) {
-                      setBanDuration("week");
-                      setBanReason({ reason: "", reasonDetail: "" });
-                    }
-                    return opening;
-                  })
-                }
-              >
-                Ban user
-              </Button>
-            )}
-            {banDone && <Text variant="secondary">User banned.</Text>}
-            {showBanForm && (
-              <div className="mt-3 flex flex-col gap-3 border-t border-border pt-3">
-                <div className="flex flex-wrap items-start gap-3">
-                  <label className="flex flex-col gap-1 text-xs text-foreground-secondary">
-                    Duration
-                    <select
-                      value={banDuration}
-                      onChange={(e) => setBanDuration(e.target.value as BanDuration)}
-                      aria-label="Ban duration"
-                      className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground"
-                    >
-                      {BAN_DURATIONS.map((d) => (
-                        <option key={d.value} value={d.value}>
-                          {d.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <div className="min-w-[16rem] max-w-sm flex-1">
-                    <BanReasonPicker idPrefix={report.targetId} value={banReason} onChange={setBanReason} />
-                  </div>
-                </div>
-                <Button
-                  variant="primary"
-                  className="self-start"
-                  disabled={!isBanReasonValid(banReason)}
-                  onClick={() => void handleBanSubmit()}
-                >
-                  Confirm ban
-                </Button>
-                {banError && <Text className="text-xs text-[#ff6b6b]">{banError}</Text>}
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+      <ReportModerationPanel report={report} moderation={moderation} />
     </main>
   );
 }
