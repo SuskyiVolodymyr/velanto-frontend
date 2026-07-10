@@ -157,6 +157,29 @@ describe("CreatePackForm", () => {
     expect(packsClient.create).not.toHaveBeenCalled();
   });
 
+  it("adds and removes group rounds, keeping each editor's live value", async () => {
+    const user = userEvent.setup();
+    renderForm();
+    await screen.findByLabelText("Pack title");
+
+    // Default: one group, not removable.
+    expect(screen.getByLabelText("Group 1 name")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Remove group 1" })).not.toBeInTheDocument();
+
+    await user.type(screen.getByLabelText("Group 1 name"), "Round 1");
+    await user.click(screen.getByRole("button", { name: "+ Add group (one more round)" }));
+
+    // Second editor appears; both are now removable and hold independent values.
+    await user.type(screen.getByLabelText("Group 2 name"), "Round 2");
+    expect(screen.getByLabelText("Group 1 name")).toHaveValue("Round 1");
+    expect(screen.getByLabelText("Group 2 name")).toHaveValue("Round 2");
+
+    await user.click(screen.getByRole("button", { name: "Remove group 2" }));
+
+    expect(screen.queryByLabelText("Group 2 name")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Group 1 name")).toHaveValue("Round 1");
+  });
+
   it("opens the tag picker modal and reflects the selected count on the button", async () => {
     const user = userEvent.setup();
     renderForm();

@@ -99,12 +99,15 @@ export function CreatePackForm() {
     formState: { isSubmitting, errors },
   } = methods;
 
-  // Field arrays own the add/remove + stable React keys; live values come from
-  // `useWatch` and per-entry edits go back through `setValue` (which does NOT
-  // remount the child the way useFieldArray's `update` does — that would drop
-  // focus mid-keystroke). `keyName: "fieldId"` keeps our domain `id` intact.
+  // The groups field array owns add/remove; rendering iterates the `useWatch`ed
+  // value arrays (below) keyed by each entry's stable domain `id` — NOT
+  // `fields` — because `fields` updates synchronously on append while `useWatch`
+  // lags a render, so `fields[i]` can point at a value that isn't there yet.
+  // Per-entry edits go back through `setValue` (which does NOT remount the child
+  // the way useFieldArray's `update` does — that would drop focus mid-keystroke).
+  // Categories need no field array: they are fixed at CATEGORY_COUNT with no
+  // add/remove UI, so `setValue` on each index is all that's required.
   const groupsArray = useFieldArray({ control, name: "groups", keyName: "fieldId" });
-  const categoriesArray = useFieldArray({ control, name: "categories", keyName: "fieldId" });
 
   // `useWatch` (not `methods.watch`) is the memoization-safe subscription the
   // React Compiler is happy with.
@@ -259,10 +262,10 @@ export function CreatePackForm() {
             <Text as="h2" variant="title" className="text-lg">
               Categories
             </Text>
-            {categoriesArray.fields.map((field, index) => (
+            {categories.map((category, index) => (
               <CategoryEditor
-                key={field.fieldId}
-                category={categories[index]}
+                key={category.id}
+                category={category}
                 index={index}
                 onChange={(next) =>
                   setValue(`categories.${index}`, next, { shouldValidate: false, shouldDirty: true })
@@ -323,12 +326,12 @@ export function CreatePackForm() {
             <Text as="h2" variant="title" className="text-lg">
               Groups
             </Text>
-            {groupsArray.fields.map((field, index) => (
+            {groups.map((group, index) => (
               <GroupEditor
-                key={field.fieldId}
-                group={groups[index]}
+                key={group.id}
+                group={group}
                 index={index}
-                removable={groupsArray.fields.length > 1}
+                removable={groups.length > 1}
                 onChange={(next) =>
                   setValue(`groups.${index}`, next, { shouldValidate: false, shouldDirty: true })
                 }
