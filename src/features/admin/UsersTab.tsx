@@ -1,124 +1,34 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Text } from "@/src/shared/components/Text";
 import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
-import { Badge } from "@/src/shared/components/Badge";
-import { Hidden } from "@/src/shared/components/Hidden";
 import { useAuth } from "@/src/shared/lib/auth-context";
-import { adminClient } from "@/src/shared/lib/admin-client";
-import { usersClient, type BanDuration } from "@/src/shared/lib/users-client";
 import { canActOn } from "@/src/shared/lib/staff-permissions";
-import { formatBanStatus } from "@/src/shared/lib/ban-display";
-import { BAN_DURATIONS } from "@/src/shared/lib/ban-durations";
-import {
-  BanReasonPicker,
-  isBanReasonValid,
-  buildBanReasonPayload,
-  type BanReasonState,
-} from "@/src/shared/components/BanReasonPicker";
-import type { AdminUserRow } from "@/src/shared/types/admin";
-
-const PAGE_SIZE = 20;
-const SEARCH_DEBOUNCE_MS = 300;
-
-function isCurrentlyBanned(bannedUntil: string | null): boolean {
-  return bannedUntil !== null && new Date(bannedUntil).getTime() > Date.now();
-}
+import { useUsersAdmin, isCurrentlyBanned } from "@/src/features/admin/use-users-admin";
+import { UserRow } from "@/src/features/admin/UserRow";
 
 export function UsersTab() {
   const { user } = useAuth();
-  const [searchInput, setSearchInput] = useState("");
-  const [query, setQuery] = useState("");
-  const [users, setUsers] = useState<AdminUserRow[]>([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [banTargetId, setBanTargetId] = useState<string | null>(null);
-  const [banDuration, setBanDuration] = useState<BanDuration>("week");
-  const [banReason, setBanReason] = useState<BanReasonState>({ reason: "", reasonDetail: "" });
-  const [actionError, setActionError] = useState("");
-
-  useEffect(() => {
-    const timeout = setTimeout(() => setQuery(searchInput.trim()), SEARCH_DEBOUNCE_MS);
-    return () => clearTimeout(timeout);
-  }, [searchInput]);
-
-  useEffect(() => {
-    let cancelled = false;
-    adminClient
-      .listUsers({ q: query || undefined, page: 1, limit: PAGE_SIZE })
-      .then((result) => {
-        if (cancelled) return;
-        setUsers(result.items);
-        setTotal(result.total);
-        setPage(1);
-        setStatus("ready");
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setStatus("error");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [query]);
-
-  async function handleLoadMore() {
-    setLoadingMore(true);
-    try {
-      const nextPage = page + 1;
-      const result = await adminClient.listUsers({ q: query || undefined, page: nextPage, limit: PAGE_SIZE });
-      setUsers((prev) => {
-        const existingIds = new Set(prev.map((u) => u.id));
-        return [...prev, ...result.items.filter((u) => !existingIds.has(u.id))];
-      });
-      setTotal(result.total);
-      setPage(nextPage);
-    } catch {
-      setActionError("Couldn't load more users. Try again.");
-    } finally {
-      setLoadingMore(false);
-    }
-  }
-
-  async function handleBan(id: string) {
-    if (!isBanReasonValid(banReason)) return;
-    setActionError("");
-    try {
-      const result = await usersClient.ban(id, {
-        duration: banDuration,
-        ...buildBanReasonPayload(banReason),
-      });
-      setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, bannedUntil: result.bannedUntil } : u)));
-      setBanTargetId(null);
-      setBanReason({ reason: "", reasonDetail: "" });
-    } catch {
-      setActionError("Couldn't ban this user. Try again.");
-    }
-  }
-
-  async function handleUnban(id: string) {
-    setActionError("");
-    try {
-      await usersClient.unban(id);
-      setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, bannedUntil: null } : u)));
-    } catch {
-      setActionError("Couldn't unban this user. Try again.");
-    }
-  }
-
-  async function handleSetTrusted(id: string, trusted: boolean) {
-    setActionError("");
-    try {
-      await usersClient.setTrusted(id, trusted);
-      setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, trusted } : u)));
-    } catch {
-      setActionError(`Couldn't ${trusted ? "trust" : "untrust"} this user. Try again.`);
-    }
-  }
+  const {
+    searchInput,
+    setSearchInput,
+    users,
+    total,
+    status,
+    loadingMore,
+    banTargetId,
+    banDuration,
+    setBanDuration,
+    banReason,
+    setBanReason,
+    actionError,
+    handleLoadMore,
+    handleBan,
+    handleUnban,
+    handleSetTrusted,
+    toggleBanForm,
+  } = useUsersAdmin();
 
   if (!user) return null;
 
@@ -144,93 +54,23 @@ export function UsersTab() {
 
       {status === "ready" && users.length > 0 && (
         <div className="flex flex-col gap-3">
-          {users.map((row) => {
-            const banned = isCurrentlyBanned(row.bannedUntil);
-            const canAct = canActOn(user.role, row.role);
-            return (
-              <div key={row.id} className="rounded-[15px] border border-border bg-surface p-4">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <Text className="font-semibold">
-                      <Hidden kind="name" id={row.id}>
-                        {row.username}
-                      </Hidden>
-                    </Text>
-                    <Text variant="tertiary" className="text-xs">
-                      <Hidden kind="name" id={row.id}>
-                        {row.email}
-                      </Hidden>{" "}
-                      · <Badge>{row.role}</Badge>
-                    </Text>
-                    <Text variant="secondary" className="text-xs">
-                      {formatBanStatus(row.bannedUntil)}
-                    </Text>
-                  </div>
-                  {canAct && (
-                    <div className="flex gap-2">
-                      <Button
-                        variant="secondary"
-                        onClick={() => void handleSetTrusted(row.id, !row.trusted)}
-                      >
-                        {row.trusted ? "Untrust" : "Trust"}
-                      </Button>
-                      {banned ? (
-                        <Button variant="secondary" onClick={() => void handleUnban(row.id)}>
-                          Unban
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="secondary"
-                          onClick={() => {
-                            const opening = banTargetId !== row.id;
-                            setBanTargetId(opening ? row.id : null);
-                            if (opening) {
-                              setBanDuration("week");
-                              setBanReason({ reason: "", reasonDetail: "" });
-                            }
-                          }}
-                        >
-                          Ban
-                        </Button>
-                      )}
-                    </div>
-                  )}
-                </div>
-                {banTargetId === row.id && (
-                  <div className="mt-3 flex flex-col gap-3 border-t border-border pt-3">
-                    <div className="flex flex-wrap items-start gap-3">
-                      <label className="flex flex-col gap-1 text-xs text-foreground-secondary">
-                        Duration
-                        <select
-                          value={banDuration}
-                          onChange={(e) => setBanDuration(e.target.value as BanDuration)}
-                          aria-label="Ban duration"
-                          className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground"
-                        >
-                          {BAN_DURATIONS.map((d) => (
-                            <option key={d.value} value={d.value}>
-                              {d.label}
-                            </option>
-                          ))}
-                        </select>
-                      </label>
-                      <div className="min-w-[16rem] max-w-sm flex-1">
-                        <BanReasonPicker idPrefix={row.id} value={banReason} onChange={setBanReason} />
-                      </div>
-                    </div>
-                    <Button
-                      variant="primary"
-                      className="self-start"
-                      disabled={!isBanReasonValid(banReason)}
-                      onClick={() => void handleBan(row.id)}
-                    >
-                      Confirm ban
-                    </Button>
-                  </div>
-                )}
-              </div>
-            );
-          })}
+          {users.map((row) => (
+            <UserRow
+              key={row.id}
+              row={row}
+              canAct={canActOn(user.role, row.role)}
+              banned={isCurrentlyBanned(row.bannedUntil)}
+              banFormOpen={banTargetId === row.id}
+              banDuration={banDuration}
+              banReason={banReason}
+              onSetTrusted={handleSetTrusted}
+              onUnban={handleUnban}
+              onToggleBanForm={toggleBanForm}
+              onBanDurationChange={setBanDuration}
+              onBanReasonChange={setBanReason}
+              onConfirmBan={handleBan}
+            />
+          ))}
         </div>
       )}
 
