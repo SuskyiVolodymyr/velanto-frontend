@@ -18,5 +18,15 @@
     "languageLabel": "انٹرفیس کی زبان",
     "languageHint": "مینو اور بٹنوں کی زبان تبدیل کرتا ہے۔ پیک کا مواد اسی زبان میں رہتا ہے جس میں اس کے تخلیق کار نے اسے لکھا تھا۔",
     "languageSelectAria": "انٹرفیس کی زبان"
+  },
+  "streamerMode": {
+    "hiddenHint": "Hidden because of streamer mode",
+    "hiddenName": "Hidden",
+    "reveal": "Reveal",
+    "settingsHeading": "Privacy",
+    "settingsLabel": "Streamer mode",
+    "settingsDescription": "Hides all viewer avatars, names, and comments so you can screen-share without exposing anyone. Reveal any item individually when you need to.",
+    "on": "On",
+    "off": "Off"
   }
 }

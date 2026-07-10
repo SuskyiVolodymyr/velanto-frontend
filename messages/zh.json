@@ -18,5 +18,15 @@
     "languageLabel": "界面语言",
     "languageHint": "更改菜单和按钮的显示语言。题包内容会保持创作者编写时使用的语言。",
     "languageSelectAria": "界面语言"
+  },
+  "streamerMode": {
+    "hiddenHint": "Hidden because of streamer mode",
+    "hiddenName": "Hidden",
+    "reveal": "Reveal",
+    "settingsHeading": "Privacy",
+    "settingsLabel": "Streamer mode",
+    "settingsDescription": "Hides all viewer avatars, names, and comments so you can screen-share without exposing anyone. Reveal any item individually when you need to.",
+    "on": "On",
+    "off": "Off"
   }
 }

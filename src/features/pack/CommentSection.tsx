@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
+import { Hidden } from "@/src/shared/components/Hidden";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { commentsClient } from "@/src/shared/lib/comments-client";
 import type { Comment } from "@/src/shared/types/comment";
@@ -125,12 +126,16 @@ export function CommentSection({ packId }: { packId: string }) {
         <div className="flex flex-col gap-4">
           {comments.map((comment) => (
             <div key={comment.id}>
-              <Link href={`/users/${comment.authorId}`} className="text-sm font-semibold hover:underline">
-                {comment.authorUsername}
-              </Link>
-              <Text variant="secondary" className="text-sm">
-                {comment.body}
-              </Text>
+              <Hidden kind="name" id={comment.authorId}>
+                <Link href={`/users/${comment.authorId}`} className="text-sm font-semibold hover:underline">
+                  {comment.authorUsername}
+                </Link>
+              </Hidden>
+              <Hidden kind="comment" id={comment.id}>
+                <Text variant="secondary" className="text-sm">
+                  {comment.body}
+                </Text>
+              </Hidden>
             </div>
           ))}
         </div>

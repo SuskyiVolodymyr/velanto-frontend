@@ -4,8 +4,10 @@ import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
 import { isRtl, type Locale } from "@/src/i18n/config";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
+import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
 import { AppHeader } from "@/src/shared/components/AppHeader";
 import { getThemeInitScript } from "@/src/shared/lib/theme";
+import { getStreamerModeInitScript } from "@/src/shared/lib/streamer-mode";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -52,12 +54,18 @@ export default async function RootLayout({
             flash of the default --acc on reload. Not user content — see
             getThemeInitScript's own doc comment for why this is safe. */}
         <script dangerouslySetInnerHTML={{ __html: getThemeInitScript() }} />
+        {/* Stamps data-streamer-mode on <html> before first paint so identity
+            content is CSS-hidden immediately on reload — see the script's own
+            doc comment and the globals.css rule it pairs with. */}
+        <script dangerouslySetInnerHTML={{ __html: getStreamerModeInitScript() }} />
       </head>
       <body className="min-h-full flex flex-col">
         <NextIntlClientProvider>
           <AuthProvider>
-            <AppHeader />
-            {children}
+            <StreamerModeProvider>
+              <AppHeader />
+              {children}
+            </StreamerModeProvider>
           </AuthProvider>
         </NextIntlClientProvider>
       </body>

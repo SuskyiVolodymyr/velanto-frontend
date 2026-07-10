@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
+import { Hidden } from "@/src/shared/components/Hidden";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { feedbackClient } from "@/src/shared/lib/feedback-client";
 import type { FeedbackComment } from "@/src/shared/types/feedback";
@@ -126,19 +127,23 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
           {comments.map((comment) => (
             <div key={comment.id}>
               <div className="flex items-baseline gap-2">
-                <Link
-                  href={`/users/${comment.authorId}`}
-                  className="text-sm font-semibold hover:underline"
-                >
-                  {comment.authorUsername}
-                </Link>
+                <Hidden kind="name" id={comment.authorId}>
+                  <Link
+                    href={`/users/${comment.authorId}`}
+                    className="text-sm font-semibold hover:underline"
+                  >
+                    {comment.authorUsername}
+                  </Link>
+                </Hidden>
                 <span className="text-xs text-foreground-tertiary">
                   {new Date(comment.createdAt).toLocaleString()}
                 </span>
               </div>
-              <Text variant="secondary" className="text-sm">
-                {comment.body}
-              </Text>
+              <Hidden kind="comment" id={comment.id}>
+                <Text variant="secondary" className="text-sm">
+                  {comment.body}
+                </Text>
+              </Hidden>
             </div>
           ))}
         </div>

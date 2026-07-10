@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { LanguageSection } from "@/src/features/settings/LanguageSection";
 import { AppearanceSection } from "@/src/features/settings/AppearanceSection";
+import { PrivacySection } from "@/src/features/settings/PrivacySection";
 import { NotificationsSection } from "@/src/features/settings/NotificationsSection";
 import { AccountSection } from "@/src/features/settings/AccountSection";
 
@@ -16,6 +17,7 @@ export function SettingsScreen() {
       </Text>
       <LanguageSection />
       <AppearanceSection />
+      <PrivacySection />
       <NotificationsSection />
       <AccountSection />
     </main>
