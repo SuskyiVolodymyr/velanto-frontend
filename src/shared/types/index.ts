@@ -9,3 +9,4 @@ export * from "./notification";
 export * from "./comment";
 export * from "./play-results";
 export * from "./admin";
+export * from "./rules";

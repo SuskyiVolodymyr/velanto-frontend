@@ -39,5 +39,24 @@
     "heading": "Community Rules",
     "intro": "These rules keep Velanto safe and fair for everyone. By creating an account you agree to follow them.",
     "loadError": "We couldn't load the rules right now. Please try again in a moment."
+  },
+  "banReason": {
+    "label": "Reason",
+    "placeholder": "Select a reason…",
+    "other": "Other",
+    "detailLabelRequired": "Details (required)",
+    "detailLabelOptional": "Details (optional)",
+    "detailPlaceholder": "Add context for this ban",
+    "detailRequired": "Please add details for this ban.",
+    "loadError": "Couldn't load ban reasons. Try again."
+  },
+  "banned": {
+    "heading": "Your account is banned",
+    "reasonLabel": "Reason",
+    "detailLabel": "Details",
+    "expiresOn": "Your ban is lifted on {date}.",
+    "permanent": "This ban is permanent.",
+    "rulesLink": "Read the Community Rules",
+    "other": "Other"
   }
 }

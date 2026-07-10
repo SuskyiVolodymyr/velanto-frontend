@@ -1,12 +1,16 @@
 import { apiClient } from "@/src/shared/lib/api-client";
 import type { AssignableRole } from "@/src/shared/lib/staff-permissions";
 import type { PublicUserProfile } from "@/src/shared/types/user";
+import type { BanReason } from "@/src/shared/types/rules";
 
 export type BanDuration = "week" | "month" | "year" | "forever";
 
 export interface BanUserInput {
   duration: BanDuration;
-  reason: string;
+  /** A rule-category id or `'other'` — no longer free text (see rules.ts). */
+  reason: BanReason;
+  /** Required (non-empty, ≤500 chars) when `reason === 'other'`; optional otherwise. */
+  reasonDetail?: string;
 }
 
 export interface BanResult {

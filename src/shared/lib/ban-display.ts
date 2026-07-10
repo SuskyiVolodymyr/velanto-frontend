@@ -9,3 +9,17 @@ export function formatBanStatus(bannedUntil: string | null): string {
   if (remainingMs > PERMANENT_THRESHOLD_MS) return "Permanently banned";
   return `Banned until ${new Date(bannedUntil).toLocaleDateString()}`;
 }
+
+/** True when `bannedUntil` is currently in effect (present and in the future). */
+export function isActiveBan(bannedUntil: string | null | undefined): boolean {
+  return !!bannedUntil && new Date(bannedUntil).getTime() > Date.now();
+}
+
+/**
+ * True when a ban is far enough out to read as "permanent" rather than a dated
+ * expiry — same ~20-year threshold `formatBanStatus` uses, exposed so the
+ * banned-user notice can mirror the distinction.
+ */
+export function isPermanentBan(bannedUntil: string): boolean {
+  return new Date(bannedUntil).getTime() - Date.now() > PERMANENT_THRESHOLD_MS;
+}

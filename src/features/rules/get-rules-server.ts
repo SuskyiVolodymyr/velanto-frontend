@@ -1,20 +1,11 @@
+import type { RulesDocument } from "@/src/shared/types/rules";
+
+// Canonical rules types now live in `@/src/shared/types/rules` (resolves the
+// #91 review Minor about them being defined inline here). Re-exported so the
+// existing `import ... from "./get-rules-server"` call sites keep working.
+export type { RuleItem, RuleCategory, RulesDocument } from "@/src/shared/types/rules";
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
-
-export interface RuleItem {
-  number: number;
-  text: string;
-}
-
-export interface RuleCategory {
-  id: string;
-  title: string;
-  rules: RuleItem[];
-}
-
-export interface RulesDocument {
-  version: number;
-  categories: RuleCategory[];
-}
 
 /**
  * Server Component-only fetch of the public Community Rules, bypassing
