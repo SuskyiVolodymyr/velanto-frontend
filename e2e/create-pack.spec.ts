@@ -25,9 +25,9 @@ test.describe("Create pack", () => {
   // create request with a stub pack. Mirrors the mock style of the auth stub
   // above; returns a getter for the captured payload so each test can assert
   // the exact shape it sent per format.
-  function stubCreate(page: import("@playwright/test").Page, pack: Record<string, unknown>) {
+  async function stubCreate(page: import("@playwright/test").Page, pack: Record<string, unknown>) {
     const captured: { body: Record<string, unknown> | null } = { body: null };
-    void page.route(`${API_BASE}/packs`, (route) => {
+    await page.route(`${API_BASE}/packs`, (route) => {
       captured.body = route.request().postDataJSON();
       return route.fulfill({ status: 201, json: pack });
     });
@@ -35,7 +35,7 @@ test.describe("Create pack", () => {
   }
 
   test("publishes a valid save_one pack and redirects with a groups payload", async ({ page }) => {
-    const captured = stubCreate(page, {
+    const captured = await stubCreate(page, {
       id: "pack-1",
       title: "Best Anime Openings",
       description: "Pick your favorite each round.",
@@ -62,7 +62,7 @@ test.describe("Create pack", () => {
   });
 
   test("publishes a valid sacrifice_one pack and redirects with a groups payload", async ({ page }) => {
-    const captured = stubCreate(page, {
+    const captured = await stubCreate(page, {
       id: "pack-sac",
       title: "Worst Endings",
       description: "Cut them one by one.",
@@ -90,7 +90,7 @@ test.describe("Create pack", () => {
   });
 
   test("publishes a valid nxn pack and redirects with a categories payload", async ({ page }) => {
-    const captured = stubCreate(page, {
+    const captured = await stubCreate(page, {
       id: "pack-nxn",
       title: "Boys vs Girls",
       description: "Pick a side.",
