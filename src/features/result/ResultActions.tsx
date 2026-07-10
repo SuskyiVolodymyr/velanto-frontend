@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { buttonClassName } from "@/src/shared/components/Button";
 import { ShareButton } from "@/src/features/share/ShareButton";
 import type { Pack } from "@/src/shared/types/pack";
@@ -15,19 +16,20 @@ export function ResultActions({
   status: Pack["status"];
   picks: RecordedPick[] | null;
 }) {
+  const t = useTranslations("result");
   return (
     <div className="flex items-center gap-3">
       <Link
         href={`/packs/${packId}/play`}
         className={buttonClassName("primary", "w-fit")}
       >
-        Play again
+        {t("playAgain")}
       </Link>
       {status === "approved" && (
         <ShareButton
           path={`/packs/${packId}/result`}
           picks={picks}
-          label="Share result"
+          label={t("shareResult")}
         />
       )}
     </div>

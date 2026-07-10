@@ -243,5 +243,19 @@
     "ranked": "{name} classé",
     "rankingDone": "Ton classement est bouclé",
     "rankingDoneSummary": "{count, plural, one {# manche placée} other {# manches placées}}, à l'aveugle."
+  },
+  "result": {
+    "label": "Résultat",
+    "playsRecorded": "{count, plural, one {# partie enregistrée.} other {# parties enregistrées.}}",
+    "yourPick": "Ton choix",
+    "sharedPick": "Choix",
+    "rankCaption": "moy. {avg} · classé {count}x",
+    "youPlaced": "Tu l'as placé #{position} · {count, plural, one {# autre partie d'accord} other {# autres parties d'accord}}",
+    "placed": "Placé #{position} · {count, plural, one {# autre partie d'accord} other {# autres parties d'accord}}",
+    "notInYourPlay": "Absent de ta partie cette manche",
+    "notInThisPlay": "Absent de cette partie cette manche",
+    "playAgain": "Rejouer",
+    "shareResult": "Partager le résultat",
+    "sharedNote": "Tu consultes un résultat partagé."
   }
 }

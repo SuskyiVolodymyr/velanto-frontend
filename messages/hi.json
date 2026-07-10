@@ -243,5 +243,19 @@
     "ranked": "{name} रैंक हुआ",
     "rankingDone": "आपकी रैंकिंग पूरी हुई",
     "rankingDoneSummary": "सभी {count, plural, one {# राउंड} other {# राउंड}} बिना देखे रखे गए।"
+  },
+  "result": {
+    "label": "नतीजा",
+    "playsRecorded": "{count, plural, one {# प्ले दर्ज हुआ.} other {# प्ले दर्ज हुए.}}",
+    "yourPick": "आपका पिक",
+    "sharedPick": "पिक",
+    "rankCaption": "औसत {avg} · {count}x रैंक",
+    "youPlaced": "आपने इसे #{position} रखा · {count, plural, one {# और प्ले सहमत रहा} other {# और प्ले सहमत रहे}}",
+    "placed": "#{position} पर रखा गया · {count, plural, one {# और प्ले सहमत रहा} other {# और प्ले सहमत रहे}}",
+    "notInYourPlay": "इस राउंड में आपके प्ले में नहीं था",
+    "notInThisPlay": "इस राउंड में इस प्ले में नहीं था",
+    "playAgain": "फिर से खेलें",
+    "shareResult": "नतीजा शेयर करें",
+    "sharedNote": "आप एक शेयर किया गया नतीजा देख रहे हैं।"
   }
 }

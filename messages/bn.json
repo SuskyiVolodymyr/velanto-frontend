@@ -243,5 +243,19 @@
     "ranked": "{name} র‍্যাঙ্ক করা হয়েছে",
     "rankingDone": "আপনার র‍্যাঙ্কিং শেষ",
     "rankingDoneSummary": "সব {count, plural, one {# রাউন্ড} other {# রাউন্ড}} না দেখেই বসানো হয়েছে।"
+  },
+  "result": {
+    "label": "ফলাফল",
+    "playsRecorded": "{count, plural, one {# টি খেলা রেকর্ড হয়েছে।} other {# টি খেলা রেকর্ড হয়েছে।}}",
+    "yourPick": "আপনার বাছাই",
+    "sharedPick": "বাছাই",
+    "rankCaption": "গড় {avg} · {count}x র‍্যাঙ্ক",
+    "youPlaced": "আপনি এটিকে #{position} নম্বরে বসিয়েছেন · {count, plural, one {আরও # টি খেলায় মিল} other {আরও # টি খেলায় মিল}}",
+    "placed": "#{position} নম্বরে বসানো হয়েছে · {count, plural, one {আরও # টি খেলায় মিল} other {আরও # টি খেলায় মিল}}",
+    "notInYourPlay": "এই রাউন্ডে আপনার খেলায় ছিল না",
+    "notInThisPlay": "এই রাউন্ডে এই খেলায় ছিল না",
+    "playAgain": "আবার খেলুন",
+    "shareResult": "ফলাফল শেয়ার করুন",
+    "sharedNote": "আপনি একটি শেয়ার করা ফলাফল দেখছেন।"
   }
 }

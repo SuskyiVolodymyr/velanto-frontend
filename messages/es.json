@@ -243,5 +243,19 @@
     "ranked": "{name} clasificado",
     "rankingDone": "Tu ranking está listo",
     "rankingDoneSummary": "Colocaste {count, plural, one {# ronda} other {# rondas}}, a ciegas."
+  },
+  "result": {
+    "label": "Resultado",
+    "playsRecorded": "{count, plural, one {# partida registrada.} other {# partidas registradas.}}",
+    "yourPick": "Tu elección",
+    "sharedPick": "Elección",
+    "rankCaption": "prom. {avg} · clasificado {count}x",
+    "youPlaced": "Lo colocaste en el #{position} · {count, plural, one {# otra partida coincidió} other {# otras partidas coincidieron}}",
+    "placed": "Colocado en el #{position} · {count, plural, one {# otra partida coincidió} other {# otras partidas coincidieron}}",
+    "notInYourPlay": "No estaba en tu partida esta ronda",
+    "notInThisPlay": "No estaba en esta partida esta ronda",
+    "playAgain": "Volver a jugar",
+    "shareResult": "Compartir resultado",
+    "sharedNote": "Estás viendo un resultado compartido."
   }
 }

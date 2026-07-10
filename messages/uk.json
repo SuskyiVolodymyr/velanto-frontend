@@ -243,5 +243,19 @@
     "ranked": "{name} у рейтингу",
     "rankingDone": "Твій рейтинг готовий",
     "rankingDoneSummary": "Усі {count, plural, one {# раунд} few {# раунди} many {# раундів} other {# раунду}} розставлено наосліп."
+  },
+  "result": {
+    "label": "Результат",
+    "playsRecorded": "{count, plural, one {# гру записано.} few {# гри записано.} many {# ігор записано.} other {# гри записано.}}",
+    "yourPick": "Твій вибір",
+    "sharedPick": "Вибір",
+    "rankCaption": "сер. {avg} · оцінено {count}×",
+    "youPlaced": "Ти поставив на #{position} · {count, plural, one {ще # гра погодилась} few {ще # гри погодились} many {ще # ігор погодились} other {ще # гри погодились}}",
+    "placed": "Поставлено на #{position} · {count, plural, one {ще # гра погодилась} few {ще # гри погодились} many {ще # ігор погодились} other {ще # гри погодились}}",
+    "notInYourPlay": "Не було у твоїй грі цього раунду",
+    "notInThisPlay": "Не було в цій грі цього раунду",
+    "playAgain": "Грати знову",
+    "shareResult": "Поділитися результатом",
+    "sharedNote": "Ти переглядаєш поширений результат."
   }
 }

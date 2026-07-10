@@ -243,5 +243,19 @@
     "ranked": "{name} ranqueado",
     "rankingDone": "Seu ranking está pronto",
     "rankingDoneSummary": "{count, plural, one {# rodada colocada} other {# rodadas colocadas}}, às cegas."
+  },
+  "result": {
+    "label": "Resultado",
+    "playsRecorded": "{count, plural, one {# jogada registrada.} other {# jogadas registradas.}}",
+    "yourPick": "Sua escolha",
+    "sharedPick": "Escolha",
+    "rankCaption": "méd. {avg} · ranqueado {count}x",
+    "youPlaced": "Você colocou em #{position} · {count, plural, one {# outra jogada concordou} other {# outras jogadas concordaram}}",
+    "placed": "Colocado em #{position} · {count, plural, one {# outra jogada concordou} other {# outras jogadas concordaram}}",
+    "notInYourPlay": "Fora da sua jogada nesta rodada",
+    "notInThisPlay": "Fora desta jogada nesta rodada",
+    "playAgain": "Jogar de novo",
+    "shareResult": "Compartilhar resultado",
+    "sharedNote": "Você está vendo um resultado compartilhado."
   }
 }

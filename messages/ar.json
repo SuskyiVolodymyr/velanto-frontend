@@ -243,5 +243,19 @@
     "ranked": "تم ترتيب {name}",
     "rankingDone": "اكتمل ترتيبك",
     "rankingDoneSummary": "وُضعت كل {count, plural, zero {# جولة} one {جولة واحدة} two {جولتان} few {# جولات} many {# جولة} other {# جولة}} دون رؤية."
+  },
+  "result": {
+    "label": "النتيجة",
+    "playsRecorded": "{count, plural, zero {# لعبة مُسجّلة.} one {# لعبة مُسجّلة.} two {# لعبتان مُسجّلتان.} few {# ألعاب مُسجّلة.} many {# لعبة مُسجّلة.} other {# لعبة مُسجّلة.}}",
+    "yourPick": "اختيارك",
+    "sharedPick": "الاختيار",
+    "rankCaption": "متوسط {avg} · رُتّب {count}×",
+    "youPlaced": "رتّبته #{position} · {count, plural, zero {# لعبة أخرى وافقتك} one {# لعبة أخرى وافقتك} two {# لعبتان أخريان وافقتاك} few {# ألعاب أخرى وافقتك} many {# لعبة أخرى وافقتك} other {# لعبة أخرى وافقتك}}",
+    "placed": "رُتِّب #{position} · {count, plural, zero {# لعبة أخرى وافقت} one {# لعبة أخرى وافقت} two {# لعبتان أخريان وافقتا} few {# ألعاب أخرى وافقت} many {# لعبة أخرى وافقت} other {# لعبة أخرى وافقت}}",
+    "notInYourPlay": "لم يكن ضمن لعبتك في هذه الجولة",
+    "notInThisPlay": "لم يكن ضمن هذه اللعبة في هذه الجولة",
+    "playAgain": "العب مجددًا",
+    "shareResult": "شارك النتيجة",
+    "sharedNote": "أنت تشاهد نتيجة مُشارَكة."
   }
 }
