@@ -41,6 +41,20 @@ body {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
+/*
+ * Streamer mode pre-hydration guard. The init script in <head> stamps
+ * data-streamer-mode="on" before first paint; the StreamerModeProvider stamps
+ * data-streamer-hydrated once React controls rendering. In the window between
+ * (SSR markup + hydration render, where enabled reads false and real children
+ * are emitted) this blunt rule keeps every [data-streamer-hideable] element
+ * invisible, so a streamer never sees a real name/avatar/comment for one frame.
+ * visibility (not display) preserves layout to avoid a reflow when React swaps
+ * in the placeholder. After hydration React alone governs visibility.
+ */
+html[data-streamer-mode="on"]:not([data-streamer-hydrated]) [data-streamer-hideable] {
+  visibility: hidden !important;
+}
+
 /* Form-error micro-interaction — see design-tokens.md's motion section. */
 @keyframes shake {
   0%,

@@ -1,8 +1,11 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { NextIntlClientProvider } from "next-intl";
+import messages from "@/messages/en.json";
 import { CommentSection } from "./CommentSection";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
+import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { commentsClient } from "@/src/shared/lib/comments-client";
 import type { Comment } from "@/src/shared/types/comment";
@@ -278,6 +281,50 @@ describe("CommentSection", () => {
     expect(
       await screen.findByText("Couldn't load more comments. Try again."),
     ).toBeInTheDocument();
+  });
+
+  describe("streamer mode", () => {
+    afterEach(() => localStorage.clear());
+
+    function renderWithStreamerMode() {
+      vi.mocked(authClient.refresh).mockRejectedValue(new Error("no session"));
+      return render(
+        <NextIntlClientProvider locale="en" messages={messages}>
+          <AuthProvider>
+            <StreamerModeProvider>
+              <CommentSection packId="pack-1" />
+            </StreamerModeProvider>
+          </AuthProvider>
+        </NextIntlClientProvider>,
+      );
+    }
+
+    it("hides a comment's author name and body until each is revealed", async () => {
+      const user = userEvent.setup();
+      localStorage.setItem("velanto:streamer-mode", "on");
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items: [COMMENT_A],
+        total: 1,
+        page: 1,
+        limit: 10,
+      });
+      renderWithStreamerMode();
+
+      // Wait for the fetch to resolve (header shows the count) then assert the
+      // identity + body are redacted rather than shown.
+      await screen.findByText("Comments · 1");
+      expect(screen.queryByText("bob")).not.toBeInTheDocument();
+      expect(screen.queryByText("Loved this pack.")).not.toBeInTheDocument();
+
+      const revealButtons = screen.getAllByRole("button", { name: /reveal/i });
+      expect(revealButtons).toHaveLength(2); // one for the name, one for the body
+
+      await user.click(revealButtons[0]);
+      await user.click(screen.getAllByRole("button", { name: /reveal/i })[0]);
+
+      expect(screen.getByText("bob")).toBeInTheDocument();
+      expect(screen.getByText("Loved this pack.")).toBeInTheDocument();
+    });
   });
 
   it("keeps the Load more button correctly visible after posting a new comment", async () => {

@@ -9,6 +9,7 @@ import { useClientData } from "@/src/shared/hooks/useClientData";
 import { ApiError } from "@/src/shared/lib/api-client";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
+import { Hidden } from "@/src/shared/components/Hidden";
 import { Badge } from "@/src/shared/components/Badge";
 import { StatusBadge } from "@/src/shared/components/StatusBadge";
 import { TOPIC_LABELS } from "@/src/features/feedback/FeedbackCard";
@@ -109,7 +110,12 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
       </Text>
 
       <div className="flex flex-wrap items-center gap-2 text-xs">
-        <Text variant="tertiary">by {post.authorUsername}</Text>
+        <Text variant="tertiary" as="span">
+          by{" "}
+          <Hidden kind="name" id={post.authorId}>
+            {post.authorUsername}
+          </Hidden>
+        </Text>
         <Text variant="tertiary">· {new Date(post.createdAt).toLocaleString()}</Text>
         {post.updatedAt !== post.createdAt && (
           <Text variant="tertiary">· edited {new Date(post.updatedAt).toLocaleString()}</Text>

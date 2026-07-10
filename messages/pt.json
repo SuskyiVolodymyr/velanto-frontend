@@ -18,5 +18,15 @@
     "languageLabel": "Idioma da interface",
     "languageHint": "Altera o idioma dos menus e botões. O conteúdo do pacote permanece no idioma em que o criador o escreveu.",
     "languageSelectAria": "Idioma da interface"
+  },
+  "streamerMode": {
+    "hiddenHint": "Hidden because of streamer mode",
+    "hiddenName": "Hidden",
+    "reveal": "Reveal",
+    "settingsHeading": "Privacy",
+    "settingsLabel": "Streamer mode",
+    "settingsDescription": "Hides all viewer avatars, names, and comments so you can screen-share without exposing anyone. Reveal any item individually when you need to.",
+    "on": "On",
+    "off": "Off"
   }
 }

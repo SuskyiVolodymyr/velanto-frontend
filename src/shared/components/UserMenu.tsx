@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { Text } from "@/src/shared/components/Text";
+import { Hidden } from "@/src/shared/components/Hidden";
 import type { User } from "@/src/shared/types/user";
 
 export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void }) {
@@ -58,9 +59,15 @@ export function UserMenu({ user, onLogout }: { user: User; onLogout: () => void 
           className="absolute end-0 top-12 z-10 w-[190px] overflow-hidden rounded-xl border border-border bg-surface shadow-[0_16px_40px_rgba(0,0,0,0.5)]"
         >
           <div className="border-b border-border px-3.5 py-3">
-            <Text className="text-sm font-semibold">{user.username}</Text>
+            <Text className="text-sm font-semibold">
+              <Hidden kind="name" id={user.id}>
+                {user.username}
+              </Hidden>
+            </Text>
             <Text variant="tertiary" className="text-xs">
-              {user.email}
+              <Hidden kind="name" id={user.id}>
+                {user.email}
+              </Hidden>
             </Text>
           </div>
           <Link

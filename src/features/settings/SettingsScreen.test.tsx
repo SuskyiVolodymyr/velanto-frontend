@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { SettingsScreen } from "./SettingsScreen";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
+import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
   authClient: {
@@ -19,7 +20,9 @@ describe("SettingsScreen", () => {
     render(
       <NextIntlClientProvider locale="en" messages={messages}>
         <AuthProvider>
-          <SettingsScreen />
+          <StreamerModeProvider>
+            <SettingsScreen />
+          </StreamerModeProvider>
         </AuthProvider>
       </NextIntlClientProvider>,
     );

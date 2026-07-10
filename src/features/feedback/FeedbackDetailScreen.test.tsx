@@ -73,7 +73,9 @@ describe("FeedbackDetailScreen", () => {
 
     expect(await screen.findByText("A bug report")).toBeInTheDocument();
     expect(screen.getByText("Something is broken.")).toBeInTheDocument();
-    expect(screen.getByText(/by alice/)).toBeInTheDocument();
+    // The author name sits in its own element (wrapped for streamer mode), so
+    // "by" and the username are separate text nodes.
+    expect(screen.getByText("alice")).toBeInTheDocument();
   });
 
   it("shows the status select to a staff viewer and calls setStatus on change", async () => {
