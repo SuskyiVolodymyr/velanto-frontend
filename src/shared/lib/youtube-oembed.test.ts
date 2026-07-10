@@ -29,7 +29,10 @@ describe("fetchYouTubeOEmbed", () => {
   });
 
   it("returns null when the network request fails", async () => {
-    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new Error("network error")));
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockRejectedValue(new Error("network error")),
+    );
 
     const result = await fetchYouTubeOEmbed("https://youtu.be/KsF_hdjWJjo");
 

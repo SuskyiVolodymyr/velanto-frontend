@@ -18,7 +18,12 @@ interface CandidateCardProps {
  * with the video area doesn't select the item); everything else renders as a
  * single selectable card.
  */
-export function CandidateCard({ item, index, selected, onSelect }: CandidateCardProps) {
+export function CandidateCard({
+  item,
+  index,
+  selected,
+  onSelect,
+}: CandidateCardProps) {
   const videoId = item.type === "youtube" ? extractYouTubeId(item.value) : null;
 
   if (videoId) {
@@ -58,7 +63,9 @@ export function CandidateCard({ item, index, selected, onSelect }: CandidateCard
       onClick={onSelect}
       className={cn(
         "w-[200px] flex-none rounded-2xl border p-4 text-left transition-colors",
-        selected ? "border-acc bg-acc/10" : "border-border bg-surface hover:border-border-strong",
+        selected
+          ? "border-acc bg-acc/10"
+          : "border-border bg-surface hover:border-border-strong",
       )}
     >
       {item.type === "youtube" && <Badge className="mb-2">YouTube</Badge>}

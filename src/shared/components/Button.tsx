@@ -22,7 +22,10 @@ const variantClasses: Record<ButtonVariant, string> = {
 };
 
 /** For non-`<button>` elements (e.g. a `Link`) that need to look like a Button. */
-export function buttonClassName(variant: ButtonVariant = "primary", className?: string) {
+export function buttonClassName(
+  variant: ButtonVariant = "primary",
+  className?: string,
+) {
   return cn(baseClasses, variantClasses[variant], className);
 }
 

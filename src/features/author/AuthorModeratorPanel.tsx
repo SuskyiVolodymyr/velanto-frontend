@@ -4,10 +4,16 @@ import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { BAN_DURATIONS } from "@/src/shared/lib/ban-durations";
-import { BanReasonPicker, isBanReasonValid } from "@/src/shared/components/BanReasonPicker";
+import {
+  BanReasonPicker,
+  isBanReasonValid,
+} from "@/src/shared/components/BanReasonPicker";
 import { resolveBanReasonTitle } from "@/src/shared/lib/ban-reason-title";
 import type { UseClientDataResult } from "@/src/shared/hooks/useClientData";
-import type { BanHistoryPage, BanDuration } from "@/src/shared/lib/users-client";
+import type {
+  BanHistoryPage,
+  BanDuration,
+} from "@/src/shared/lib/users-client";
 import type { RuleCategory } from "@/src/shared/types/rules";
 import type { AuthorModeration } from "./use-author-moderation";
 
@@ -78,7 +84,11 @@ export function AuthorModeratorPanel({
               </select>
             </label>
             <div className="min-w-[16rem] max-w-sm flex-1">
-              <BanReasonPicker idPrefix={authorId} value={banReason} onChange={setBanReason} />
+              <BanReasonPicker
+                idPrefix={authorId}
+                value={banReason}
+                onChange={setBanReason}
+              />
             </div>
           </div>
           <Button
@@ -89,11 +99,19 @@ export function AuthorModeratorPanel({
           >
             Confirm ban
           </Button>
-          {banActionError && <Text className="text-xs text-[#ff6b6b]">{banActionError}</Text>}
+          {banActionError && (
+            <Text className="text-xs text-[#ff6b6b]">{banActionError}</Text>
+          )}
         </div>
       )}
-      {banHistoryQuery.loading && <Text variant="secondary">Loading ban history…</Text>}
-      {banHistoryQuery.error && <Text className="text-sm text-[#ff6b6b]">Couldn&apos;t load ban history.</Text>}
+      {banHistoryQuery.loading && (
+        <Text variant="secondary">Loading ban history…</Text>
+      )}
+      {banHistoryQuery.error && (
+        <Text className="text-sm text-[#ff6b6b]">
+          Couldn&apos;t load ban history.
+        </Text>
+      )}
       {banHistoryQuery.data && banHistoryQuery.data.items.length === 0 && (
         <Text variant="secondary">No ban history for this user.</Text>
       )}
@@ -105,10 +123,14 @@ export function AuthorModeratorPanel({
                 {new Date(entry.createdAt).toLocaleString()}
               </Text>
               <Text>
-                <span className="font-semibold">{entry.actorUsername}</span> · {entry.meta.duration} ·{" "}
+                <span className="font-semibold">{entry.actorUsername}</span> ·{" "}
+                {entry.meta.duration} ·{" "}
                 <span className="text-foreground-secondary">
-                  {resolveBanReasonTitle(entry.meta.reason, ruleCategories, tBanReason("other")) ??
-                    entry.meta.reason}
+                  {resolveBanReasonTitle(
+                    entry.meta.reason,
+                    ruleCategories,
+                    tBanReason("other"),
+                  ) ?? entry.meta.reason}
                 </span>
               </Text>
             </div>

@@ -7,7 +7,9 @@ import type { Pack } from "@/src/shared/types/pack";
 
 vi.mock("@/src/shared/hooks/use-pack-fallback");
 vi.mock("next/navigation", () => ({ notFound: vi.fn() }));
-vi.mock("@/src/features/play/PlayRouter", () => ({ PlayRouter: () => <div>PlayRouter</div> }));
+vi.mock("@/src/features/play/PlayRouter", () => ({
+  PlayRouter: () => <div>PlayRouter</div>,
+}));
 
 const mockedUsePackFallback = vi.mocked(usePackFallback);
 const mockedNotFound = vi.mocked(notFound);
@@ -36,7 +38,11 @@ describe("PlayFallback", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("renders PlayRouter once the fallback resolves to ready", () => {
-    mockedUsePackFallback.mockReturnValue({ status: "ready", pack: PACK, results: null });
+    mockedUsePackFallback.mockReturnValue({
+      status: "ready",
+      pack: PACK,
+      results: null,
+    });
     render(<PlayFallback packId="p1" />);
     expect(screen.getByText("PlayRouter")).toBeInTheDocument();
     expect(mockedNotFound).not.toHaveBeenCalled();

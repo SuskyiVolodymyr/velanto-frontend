@@ -71,7 +71,13 @@ const profile = {
 
 function mockAuth(overrides: Partial<ReturnType<typeof useAuth>> = {}) {
   mockedUseAuth.mockReturnValue({
-    user: { id: "viewer-1", email: "v@x.com", username: "viewer", role: "user", createdAt: "" },
+    user: {
+      id: "viewer-1",
+      email: "v@x.com",
+      username: "viewer",
+      role: "user",
+      createdAt: "",
+    },
     status: "authenticated",
     login: vi.fn(),
     register: vi.fn(),
@@ -84,7 +90,12 @@ describe("AuthorScreen", () => {
   beforeEach(() => {
     vi.resetAllMocks();
     push.mockReset();
-    mockedPacksClient.list.mockResolvedValue({ items: [], total: 0, page: 1, limit: 50 });
+    mockedPacksClient.list.mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 50,
+    });
     mockedRulesClient.getRules.mockResolvedValue(RULES);
   });
 
@@ -92,7 +103,9 @@ describe("AuthorScreen", () => {
     mockAuth();
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+    );
     expect(screen.getByText("I make packs")).toBeInTheDocument();
     // The follower count and pack count render as one combined stat line
     // ("3 followers · 0 packs"), so match the substring, not the whole node.
@@ -103,15 +116,29 @@ describe("AuthorScreen", () => {
     mockAuth();
     mockedUsersClient.getProfile.mockRejectedValue(new Error("404"));
     renderScreen(<AuthorScreen authorId="missing" />);
-    await waitFor(() => expect(screen.getByText(/doesn't exist/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/doesn't exist/i)).toBeInTheDocument(),
+    );
   });
 
   it("hides the Follow button when viewing your own author page", async () => {
-    mockAuth({ user: { id: "author-1", email: "a@x.com", username: "quizmaster", role: "user", createdAt: "" } });
+    mockAuth({
+      user: {
+        id: "author-1",
+        email: "a@x.com",
+        username: "quizmaster",
+        role: "user",
+        createdAt: "",
+      },
+    });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
-    expect(screen.queryByRole("button", { name: /follow/i })).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+    );
+    expect(
+      screen.queryByRole("button", { name: /follow/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("toggles Follow to Following and updates the follower count on click", async () => {
@@ -119,9 +146,15 @@ describe("AuthorScreen", () => {
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     mockedUsersClient.follow.mockResolvedValue({ followerCount: 4 });
     renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+    );
     await userEvent.click(screen.getByRole("button", { name: "Follow" }));
-    await waitFor(() => expect(screen.getByRole("button", { name: "Following" })).toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: "Following" }),
+      ).toBeInTheDocument(),
+    );
     expect(screen.getByText(/4 followers/)).toBeInTheDocument();
   });
 
@@ -130,9 +163,13 @@ describe("AuthorScreen", () => {
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     mockedUsersClient.follow.mockRejectedValue(new Error("network"));
     renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+    );
     await userEvent.click(screen.getByRole("button", { name: "Follow" }));
-    await waitFor(() => expect(screen.getByText(/couldn't update/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/couldn't update/i)).toBeInTheDocument(),
+    );
     expect(screen.getByRole("button", { name: "Follow" })).toBeInTheDocument();
   });
 
@@ -140,7 +177,9 @@ describe("AuthorScreen", () => {
     mockAuth({ user: null, status: "unauthenticated" });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+    );
     await userEvent.click(screen.getByRole("button", { name: "Follow" }));
     expect(mockedUsersClient.follow).not.toHaveBeenCalled();
     expect(push).toHaveBeenCalledWith("/auth?next=%2Fusers%2Fauthor-1");
@@ -171,8 +210,13 @@ describe("AuthorScreen", () => {
       limit: 50,
     });
     renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText("Anime Showdown")).toBeInTheDocument());
-    expect(mockedPacksClient.list).toHaveBeenCalledWith({ authorId: "author-1", limit: 50 });
+    await waitFor(() =>
+      expect(screen.getByText("Anime Showdown")).toBeInTheDocument(),
+    );
+    expect(mockedPacksClient.list).toHaveBeenCalledWith({
+      authorId: "author-1",
+      limit: 50,
+    });
   });
 
   it("shows the response's total pack count, not just the number of items returned by the capped fetch", async () => {
@@ -200,36 +244,77 @@ describe("AuthorScreen", () => {
       limit: 50,
     });
     renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText(/60 packs/)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/60 packs/)).toBeInTheDocument(),
+    );
   });
 
   it("does not show ban history or a ban button to a plain-user viewer", async () => {
-    mockAuth({ user: { id: "viewer-1", email: "v@x.com", username: "viewer", role: "user", createdAt: "" } });
+    mockAuth({
+      user: {
+        id: "viewer-1",
+        email: "v@x.com",
+        username: "viewer",
+        role: "user",
+        createdAt: "",
+      },
+    });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+    );
     expect(mockedUsersClient.banHistory).not.toHaveBeenCalled();
-    expect(screen.queryByRole("button", { name: /^ban$/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /^ban$/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("shows ban history and a ban button to a moderator viewer", async () => {
-    mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
+    mockAuth({
+      user: {
+        id: "mod-1",
+        email: "m@x.com",
+        username: "mod",
+        role: "moderator",
+        createdAt: "",
+      },
+    });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     mockedUsersClient.banHistory.mockResolvedValue({
-      items: [{ actorUsername: "mod2", meta: { duration: "week", reason: "spam" }, createdAt: "2026-01-01T00:00:00.000Z" }],
+      items: [
+        {
+          actorUsername: "mod2",
+          meta: { duration: "week", reason: "spam" },
+          createdAt: "2026-01-01T00:00:00.000Z",
+        },
+      ],
       total: 1,
       page: 1,
       limit: 20,
     });
     renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
-    expect(mockedUsersClient.banHistory).toHaveBeenCalledWith("author-1", { page: 1, limit: 20 });
+    await waitFor(() =>
+      expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+    );
+    expect(mockedUsersClient.banHistory).toHaveBeenCalledWith("author-1", {
+      page: 1,
+      limit: 20,
+    });
     await waitFor(() => expect(screen.getByText(/spam/)).toBeInTheDocument());
     expect(screen.getByRole("button", { name: /^ban$/i })).toBeInTheDocument();
   });
 
   it("renders the human category title for a ban-history reason, not the raw id", async () => {
-    mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
+    mockAuth({
+      user: {
+        id: "mod-1",
+        email: "m@x.com",
+        username: "mod",
+        role: "moderator",
+        createdAt: "",
+      },
+    });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     mockedUsersClient.banHistory.mockResolvedValue({
       items: [
@@ -245,39 +330,91 @@ describe("AuthorScreen", () => {
     });
     renderScreen(<AuthorScreen authorId="author-1" />);
     // The rules fetch resolves the category id to its human title…
-    await waitFor(() => expect(screen.getByText("Spam & Manipulation")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("Spam & Manipulation")).toBeInTheDocument(),
+    );
     // …and the raw id is never shown to the moderator.
     expect(screen.queryByText("spam_manipulation")).not.toBeInTheDocument();
   });
 
   it("shows an empty-state message when the author has no ban history", async () => {
-    mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
+    mockAuth({
+      user: {
+        id: "mod-1",
+        email: "m@x.com",
+        username: "mod",
+        role: "moderator",
+        createdAt: "",
+      },
+    });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
-    mockedUsersClient.banHistory.mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    mockedUsersClient.banHistory.mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
     renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText(/no ban history/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/no ban history/i)).toBeInTheDocument(),
+    );
   });
 
   it("hides ban history and the ban button when a moderator views their own page", async () => {
-    mockAuth({ user: { id: "author-1", email: "a@x.com", username: "quizmaster", role: "moderator", createdAt: "" } });
+    mockAuth({
+      user: {
+        id: "author-1",
+        email: "a@x.com",
+        username: "quizmaster",
+        role: "moderator",
+        createdAt: "",
+      },
+    });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+    );
     expect(mockedUsersClient.banHistory).not.toHaveBeenCalled();
-    expect(screen.queryByRole("button", { name: /^ban$/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /^ban$/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("submits a ban via the inline form and shows the updated status", async () => {
-    mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
+    mockAuth({
+      user: {
+        id: "mod-1",
+        email: "m@x.com",
+        username: "mod",
+        role: "moderator",
+        createdAt: "",
+      },
+    });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
-    mockedUsersClient.banHistory.mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
-    mockedUsersClient.ban.mockResolvedValue({ id: "author-1", bannedUntil: "2027-01-01T00:00:00.000Z" });
+    mockedUsersClient.banHistory.mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
+    mockedUsersClient.ban.mockResolvedValue({
+      id: "author-1",
+      bannedUntil: "2027-01-01T00:00:00.000Z",
+    });
     renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByRole("button", { name: /^ban$/i })).toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: /^ban$/i }),
+      ).toBeInTheDocument(),
+    );
     await userEvent.click(screen.getByRole("button", { name: /^ban$/i }));
     // Pick a rule-category reason from the picker (populated by the rules fetch).
     await screen.findByRole("option", { name: "Spam & Manipulation" });
-    await userEvent.selectOptions(screen.getByLabelText("Reason"), "spam_manipulation");
+    await userEvent.selectOptions(
+      screen.getByLabelText("Reason"),
+      "spam_manipulation",
+    );
     await userEvent.click(screen.getByRole("button", { name: /confirm ban/i }));
     await waitFor(() =>
       expect(mockedUsersClient.ban).toHaveBeenCalledWith("author-1", {
@@ -288,41 +425,90 @@ describe("AuthorScreen", () => {
   });
 
   it("shows an error and keeps the form open when the ban request fails", async () => {
-    mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
+    mockAuth({
+      user: {
+        id: "mod-1",
+        email: "m@x.com",
+        username: "mod",
+        role: "moderator",
+        createdAt: "",
+      },
+    });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
-    mockedUsersClient.banHistory.mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    mockedUsersClient.banHistory.mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
     mockedUsersClient.ban.mockRejectedValue(new Error("boom"));
     renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByRole("button", { name: /^ban$/i })).toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: /^ban$/i }),
+      ).toBeInTheDocument(),
+    );
     await userEvent.click(screen.getByRole("button", { name: /^ban$/i }));
     await screen.findByRole("option", { name: "Spam & Manipulation" });
-    await userEvent.selectOptions(screen.getByLabelText("Reason"), "spam_manipulation");
+    await userEvent.selectOptions(
+      screen.getByLabelText("Reason"),
+      "spam_manipulation",
+    );
     await userEvent.click(screen.getByRole("button", { name: /confirm ban/i }));
-    await waitFor(() => expect(screen.getByText(/couldn't ban/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/couldn't ban/i)).toBeInTheDocument(),
+    );
     // The form stays open (the reason picker is still on screen).
     expect(screen.getByLabelText("Reason")).toBeInTheDocument();
   });
 
   it("shows a loading indicator while ban history is being fetched", async () => {
-    mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
+    mockAuth({
+      user: {
+        id: "mod-1",
+        email: "m@x.com",
+        username: "mod",
+        role: "moderator",
+        createdAt: "",
+      },
+    });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
-    let resolveBanHistory: (value: { items: never[]; total: number; page: number; limit: number }) => void = () => {};
+    let resolveBanHistory: (value: {
+      items: never[];
+      total: number;
+      page: number;
+      limit: number;
+    }) => void = () => {};
     mockedUsersClient.banHistory.mockReturnValue(
       new Promise((resolve) => {
         resolveBanHistory = resolve;
-      })
+      }),
     );
     renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText(/loading ban history/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/loading ban history/i)).toBeInTheDocument(),
+    );
     resolveBanHistory({ items: [], total: 0, page: 1, limit: 20 });
   });
 
   it("shows an error message when the ban history fetch fails", async () => {
-    mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
+    mockAuth({
+      user: {
+        id: "mod-1",
+        email: "m@x.com",
+        username: "mod",
+        role: "moderator",
+        createdAt: "",
+      },
+    });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     mockedUsersClient.banHistory.mockRejectedValue(new Error("network"));
     renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText(/couldn't load ban history/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.getByText(/couldn't load ban history/i),
+      ).toBeInTheDocument(),
+    );
   });
 
   // --- Characterization tests added alongside the F6 decomposition. These lock
@@ -333,28 +519,63 @@ describe("AuthorScreen", () => {
 
   it("toggles Following to Follow and updates the count via unfollow when already followed", async () => {
     mockAuth();
-    mockedUsersClient.getProfile.mockResolvedValue({ ...profile, isFollowedByMe: true, followerCount: 3 });
+    mockedUsersClient.getProfile.mockResolvedValue({
+      ...profile,
+      isFollowedByMe: true,
+      followerCount: 3,
+    });
     mockedUsersClient.unfollow.mockResolvedValue({ followerCount: 2 });
     renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByRole("button", { name: "Following" })).toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: "Following" }),
+      ).toBeInTheDocument(),
+    );
     await userEvent.click(screen.getByRole("button", { name: "Following" }));
-    await waitFor(() => expect(screen.getByRole("button", { name: "Follow" })).toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: "Follow" }),
+      ).toBeInTheDocument(),
+    );
     expect(mockedUsersClient.unfollow).toHaveBeenCalledWith("author-1");
     expect(mockedUsersClient.follow).not.toHaveBeenCalled();
     expect(screen.getByText(/2 followers/)).toBeInTheDocument();
   });
 
   it("submits a ban with a trimmed reasonDetail when the reason is 'other'", async () => {
-    mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
+    mockAuth({
+      user: {
+        id: "mod-1",
+        email: "m@x.com",
+        username: "mod",
+        role: "moderator",
+        createdAt: "",
+      },
+    });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
-    mockedUsersClient.banHistory.mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
-    mockedUsersClient.ban.mockResolvedValue({ id: "author-1", bannedUntil: "2027-01-01T00:00:00.000Z" });
+    mockedUsersClient.banHistory.mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
+    mockedUsersClient.ban.mockResolvedValue({
+      id: "author-1",
+      bannedUntil: "2027-01-01T00:00:00.000Z",
+    });
     renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByRole("button", { name: /^ban$/i })).toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: /^ban$/i }),
+      ).toBeInTheDocument(),
+    );
     await userEvent.click(screen.getByRole("button", { name: /^ban$/i }));
     await screen.findByRole("option", { name: "Other" });
     await userEvent.selectOptions(screen.getByLabelText("Reason"), "other");
-    await userEvent.type(screen.getByLabelText("Details (required)"), "  posting scam links  ");
+    await userEvent.type(
+      screen.getByLabelText("Details (required)"),
+      "  posting scam links  ",
+    );
     await userEvent.click(screen.getByRole("button", { name: /confirm ban/i }));
     await waitFor(() =>
       expect(mockedUsersClient.ban).toHaveBeenCalledWith("author-1", {
@@ -377,11 +598,15 @@ describe("AuthorScreen", () => {
       </NextIntlClientProvider>,
     );
     // The non-identity stat line still renders, so the screen has loaded…
-    await waitFor(() => expect(screen.getByText(/3 followers/)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/3 followers/)).toBeInTheDocument(),
+    );
     // …but the username is redacted (never painted as plain text) and a Reveal
     // control stands in for it.
     expect(screen.queryByText("quizmaster")).not.toBeInTheDocument();
-    expect(screen.getAllByRole("button", { name: /reveal/i }).length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByRole("button", { name: /reveal/i }).length,
+    ).toBeGreaterThan(0);
     localStorage.removeItem("velanto:streamer-mode");
   });
 });

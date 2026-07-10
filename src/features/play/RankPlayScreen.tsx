@@ -27,7 +27,10 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   const group = roundIndex < totalRounds ? groups[roundIndex] : undefined;
   // Re-sampled only when the round changes, not on every render — same
   // rationale as PlayScreen's own `candidates` useMemo.
-  const candidates = useMemo(() => (group ? resolveRoundCandidates(group) : []), [group]);
+  const candidates = useMemo(
+    () => (group ? resolveRoundCandidates(group) : []),
+    [group],
+  );
   const slotCount = candidates.length;
   const placedCount = Object.keys(placements).length;
   const roundDone = slotCount > 0 && placedCount >= slotCount;
@@ -75,8 +78,15 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   if (status === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">You need to be logged in to play a pack.</Text>
-        <Button className="mt-4" onClick={() => router.push(`/auth?next=${encodeURIComponent(pathname)}`)}>
+        <Text variant="secondary">
+          You need to be logged in to play a pack.
+        </Text>
+        <Button
+          className="mt-4"
+          onClick={() =>
+            router.push(`/auth?next=${encodeURIComponent(pathname)}`)
+          }
+        >
           Log in
         </Button>
       </div>
@@ -92,7 +102,9 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
       <div className="mb-8">
         <div className="mb-2 flex items-center justify-between">
           <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-            {isFinished ? "Complete" : `Round ${roundIndex + 1} of ${totalRounds}`}
+            {isFinished
+              ? "Complete"
+              : `Round ${roundIndex + 1} of ${totalRounds}`}
           </Text>
         </div>
         <div className="h-[3px] w-full rounded-full bg-white/[0.06]">
@@ -116,7 +128,9 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
 
           <div className="mb-8 flex justify-center">
             <div className="flex h-[100px] w-[230px] items-center justify-center rounded-2xl border border-acc bg-surface p-4 text-center">
-              <Text className="line-clamp-2 font-semibold">{currentItem?.title}</Text>
+              <Text className="line-clamp-2 font-semibold">
+                {currentItem?.title}
+              </Text>
             </div>
           </div>
 
@@ -129,7 +143,11 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
                   type="button"
                   disabled={Boolean(filled)}
                   onClick={() => place(slotIndex)}
-                  aria-label={filled ? `Rank ${slotIndex + 1}: ${filled.title}` : `Place at rank ${slotIndex + 1}`}
+                  aria-label={
+                    filled
+                      ? `Rank ${slotIndex + 1}: ${filled.title}`
+                      : `Place at rank ${slotIndex + 1}`
+                  }
                   className={cn(
                     "flex h-[100px] flex-col justify-between rounded-2xl border p-3 text-left transition-colors",
                     filled
@@ -140,7 +158,12 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
                   <Text variant="tertiary" className="text-xs font-semibold">
                     #{slotIndex + 1}
                   </Text>
-                  <Text className={cn("line-clamp-2 text-sm font-semibold", !filled && "text-foreground-tertiary")}>
+                  <Text
+                    className={cn(
+                      "line-clamp-2 text-sm font-semibold",
+                      !filled && "text-foreground-tertiary",
+                    )}
+                  >
                     {filled ? filled.title : "Place here"}
                   </Text>
                 </button>
@@ -164,7 +187,9 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
                 <Text variant="tertiary" className="text-xs font-semibold">
                   #{slotIndex + 1}
                 </Text>
-                <Text className="font-semibold">{placements[slotIndex]?.title}</Text>
+                <Text className="font-semibold">
+                  {placements[slotIndex]?.title}
+                </Text>
               </div>
             ))}
           </div>
@@ -180,7 +205,10 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
           <Text variant="secondary" className="mb-4">
             All {totalRounds} round{totalRounds === 1 ? "" : "s"} placed, blind.
           </Text>
-          <Link href={`/packs/${pack.id}/result`} className={buttonClassName("primary", "w-fit")}>
+          <Link
+            href={`/packs/${pack.id}/result`}
+            className={buttonClassName("primary", "w-fit")}
+          >
             See your result
           </Link>
         </section>

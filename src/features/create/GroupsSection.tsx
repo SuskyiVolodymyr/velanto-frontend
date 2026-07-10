@@ -1,6 +1,11 @@
 "use client";
 
-import { useFormContext, useFieldArray, useWatch, type FieldErrors } from "react-hook-form";
+import {
+  useFormContext,
+  useFieldArray,
+  useWatch,
+  type FieldErrors,
+} from "react-hook-form";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { getFieldError } from "@/src/shared/components/form/getFieldError";
@@ -12,7 +17,10 @@ import { type CreatePackValues } from "@/src/features/create/create-pack.schema"
 // index-level issue used by the 1v1 format), its item list, or its sample size.
 // Surface the first in that priority order — matching the old validate()'s
 // short-circuit ordering.
-function firstGroupError(errors: FieldErrors<CreatePackValues>, index: number): string | undefined {
+function firstGroupError(
+  errors: FieldErrors<CreatePackValues>,
+  index: number,
+): string | undefined {
   return (
     getFieldError(errors, `groups.${index}.name`) ??
     getFieldError(errors, `groups.${index}`) ??
@@ -35,7 +43,11 @@ function firstGroupError(errors: FieldErrors<CreatePackValues>, index: number): 
 export function GroupsSection() {
   const { control, setValue, formState } = useFormContext<CreatePackValues>();
   const { errors } = formState;
-  const groupsArray = useFieldArray({ control, name: "groups", keyName: "fieldId" });
+  const groupsArray = useFieldArray({
+    control,
+    name: "groups",
+    keyName: "fieldId",
+  });
   const groups = useWatch({ control, name: "groups" });
   const groupsError = getFieldError(errors, "groups");
 
@@ -51,7 +63,10 @@ export function GroupsSection() {
           index={index}
           removable={groups.length > 1}
           onChange={(next) =>
-            setValue(`groups.${index}`, next, { shouldValidate: false, shouldDirty: true })
+            setValue(`groups.${index}`, next, {
+              shouldValidate: false,
+              shouldDirty: true,
+            })
           }
           onRemove={() => groupsArray.remove(index)}
           error={firstGroupError(errors, index)}
@@ -62,7 +77,11 @@ export function GroupsSection() {
           {groupsError}
         </Text>
       )}
-      <Button type="button" variant="secondary" onClick={() => groupsArray.append(newGroup())}>
+      <Button
+        type="button"
+        variant="secondary"
+        onClick={() => groupsArray.append(newGroup())}
+      >
         + Add group (one more round)
       </Button>
     </section>

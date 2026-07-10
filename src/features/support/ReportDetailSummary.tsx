@@ -5,7 +5,11 @@ import { Text } from "@/src/shared/components/Text";
 import { StatusBadge } from "@/src/shared/components/StatusBadge";
 import type { ReportWithReporter } from "@/src/shared/types/report";
 
-export function ReportDetailSummary({ report }: { report: ReportWithReporter }) {
+export function ReportDetailSummary({
+  report,
+}: {
+  report: ReportWithReporter;
+}) {
   const target = reportTargetLabel(report);
   return (
     <>
@@ -18,10 +22,15 @@ export function ReportDetailSummary({ report }: { report: ReportWithReporter }) 
 
       <div className="flex flex-col gap-2 text-sm">
         <Text variant="secondary">
-          Reported by <span className="font-semibold text-foreground">{report.reporterUsername}</span> on{" "}
-          {new Date(report.createdAt).toLocaleString()}
+          Reported by{" "}
+          <span className="font-semibold text-foreground">
+            {report.reporterUsername}
+          </span>{" "}
+          on {new Date(report.createdAt).toLocaleString()}
         </Text>
-        <span className="text-xs font-semibold uppercase text-foreground-secondary">{report.type}</span>
+        <span className="text-xs font-semibold uppercase text-foreground-secondary">
+          {report.type}
+        </span>
         <Link href={target.href} className="text-acc hover:underline">
           {target.text}
         </Link>

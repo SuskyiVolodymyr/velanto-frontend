@@ -50,7 +50,10 @@ export function CategoriesSection() {
           category={category}
           index={index}
           onChange={(next) =>
-            setValue(`categories.${index}`, next, { shouldValidate: false, shouldDirty: true })
+            setValue(`categories.${index}`, next, {
+              shouldValidate: false,
+              shouldDirty: true,
+            })
           }
           error={firstCategoryError(errors, index)}
         />
@@ -68,9 +71,13 @@ export function CategoriesSection() {
             max={MAX_VERSUS_ROUNDS}
             value={versusRounds ?? ""}
             onChange={(e) =>
-              setValue("versusRounds", e.target.value === "" ? undefined : Number(e.target.value), {
-                shouldValidate: false,
-              })
+              setValue(
+                "versusRounds",
+                e.target.value === "" ? undefined : Number(e.target.value),
+                {
+                  shouldValidate: false,
+                },
+              )
             }
             placeholder="Rounds"
             aria-label="Rounds"
@@ -88,9 +95,13 @@ export function CategoriesSection() {
             max={MAX_VERSUS_N}
             value={versusN ?? ""}
             onChange={(e) =>
-              setValue("versusN", e.target.value === "" ? undefined : Number(e.target.value), {
-                shouldValidate: false,
-              })
+              setValue(
+                "versusN",
+                e.target.value === "" ? undefined : Number(e.target.value),
+                {
+                  shouldValidate: false,
+                },
+              )
             }
             placeholder="Items per round"
             aria-label="Items per round"

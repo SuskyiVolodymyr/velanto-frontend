@@ -163,10 +163,14 @@ describe("useClientData", () => {
   });
 
   it("still refetches on a dep change after being seeded with initialData", async () => {
-    const fetcher = vi.fn(async (_signal: AbortSignal, id?: number) => `v${id}`);
+    const fetcher = vi.fn(
+      async (_signal: AbortSignal, id?: number) => `v${id}`,
+    );
     const { result, rerender } = renderHook(
       ({ id }: { id: number }) =>
-        useClientData((signal) => fetcher(signal, id), [id], { initialData: "seed" }),
+        useClientData((signal) => fetcher(signal, id), [id], {
+          initialData: "seed",
+        }),
       { initialProps: { id: 1 } },
     );
 

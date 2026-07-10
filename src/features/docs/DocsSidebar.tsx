@@ -39,7 +39,10 @@ export function DocsSidebar({
     <nav className="sticky top-[80px] flex w-[220px] flex-none flex-col gap-6">
       {NAV.map((section) => (
         <div key={section.label}>
-          <Text variant="tertiary" className="mb-2 pl-3 text-[11px] font-semibold tracking-[0.12em]">
+          <Text
+            variant="tertiary"
+            className="mb-2 pl-3 text-[11px] font-semibold tracking-[0.12em]"
+          >
             {section.label}
           </Text>
           <div className="flex flex-col gap-0.5">
@@ -53,7 +56,9 @@ export function DocsSidebar({
                   aria-pressed={active}
                   className={cn(
                     "rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors",
-                    active ? "bg-white/[0.12] text-foreground" : "text-foreground-secondary",
+                    active
+                      ? "bg-white/[0.12] text-foreground"
+                      : "text-foreground-secondary",
                   )}
                 >
                   {topic.label}

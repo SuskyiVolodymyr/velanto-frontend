@@ -25,6 +25,7 @@
 ### Task 1: Types + pure permission/display helpers (TDD)
 
 **Files:**
+
 - Create: `src/shared/types/admin.ts`
 - Create: `src/shared/lib/staff-permissions.ts`
 - Create: `src/shared/lib/staff-permissions.test.ts`
@@ -106,11 +107,18 @@ describe("canActOn", () => {
 
 describe("assignableRolesFor", () => {
   it("admin acting on a moderator can assign user, moderator, or manager", () => {
-    expect(assignableRolesFor("admin", "moderator")).toEqual(["user", "moderator", "manager"]);
+    expect(assignableRolesFor("admin", "moderator")).toEqual([
+      "user",
+      "moderator",
+      "manager",
+    ]);
   });
 
   it("manager acting on a moderator can only assign user or moderator", () => {
-    expect(assignableRolesFor("manager", "moderator")).toEqual(["user", "moderator"]);
+    expect(assignableRolesFor("manager", "moderator")).toEqual([
+      "user",
+      "moderator",
+    ]);
   });
 
   it("manager acting on a manager gets no options (cannot act on equal rank)", () => {
@@ -133,7 +141,12 @@ Expected: FAIL with "Cannot find module './staff-permissions'"
 ```ts
 import type { Role } from "@/src/shared/types/user";
 
-const ROLE_RANK: Record<Role, number> = { user: 0, moderator: 1, manager: 2, admin: 3 };
+const ROLE_RANK: Record<Role, number> = {
+  user: 0,
+  moderator: 1,
+  manager: 2,
+  admin: 3,
+};
 
 /**
  * Mirrors the shape of velanto-backend's own outranks() check, but this copy
@@ -154,7 +167,10 @@ export function canActOn(actorRole: Role, targetRole: Role): boolean {
   return outranks(actorRole, targetRole);
 }
 
-export function assignableRolesFor(actorRole: Role, targetRole: Role): AssignableRole[] {
+export function assignableRolesFor(
+  actorRole: Role,
+  targetRole: Role,
+): AssignableRole[] {
   if (!outranks(actorRole, targetRole)) return [];
   return ASSIGNABLE_ROLES.filter((role) => outranks(actorRole, role));
 }
@@ -189,13 +205,17 @@ describe("formatBanStatus", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-01-01T00:00:00.000Z"));
     const until = "2026-01-08T00:00:00.000Z";
-    expect(formatBanStatus(until)).toBe(`Banned until ${new Date(until).toLocaleDateString()}`);
+    expect(formatBanStatus(until)).toBe(
+      `Banned until ${new Date(until).toLocaleDateString()}`,
+    );
   });
 
   it("returns 'Permanently banned' for a ban more than 20 years out", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-01-01T00:00:00.000Z"));
-    expect(formatBanStatus("2126-01-01T00:00:00.000Z")).toBe("Permanently banned");
+    expect(formatBanStatus("2126-01-01T00:00:00.000Z")).toBe(
+      "Permanently banned",
+    );
   });
 });
 ```
@@ -243,6 +263,7 @@ git commit -m "feat: add admin types and staff-permission/ban-display helpers"
 ### Task 2: `admin-client.ts` (TDD)
 
 **Files:**
+
 - Create: `src/shared/lib/admin-client.ts`
 - Create: `src/shared/lib/admin-client.test.ts`
 
@@ -253,7 +274,11 @@ git commit -m "feat: add admin types and staff-permission/ban-display helpers"
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { apiClient } from "@/src/shared/lib/api-client";
 import { adminClient } from "@/src/shared/lib/admin-client";
-import type { AdminOverview, AdminUserList, AuditLogList } from "@/src/shared/types/admin";
+import type {
+  AdminOverview,
+  AdminUserList,
+  AuditLogList,
+} from "@/src/shared/types/admin";
 
 vi.mock("@/src/shared/lib/api-client", () => ({
   apiClient: { get: vi.fn() },
@@ -290,11 +315,18 @@ describe("adminClient", () => {
   });
 
   it("listUsers() forwards q, page, and limit as query params", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 2, limit: 20 });
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 2,
+      limit: 20,
+    });
 
     await adminClient.listUsers({ q: "alice", page: 2, limit: 20 });
 
-    expect(apiClient.get).toHaveBeenCalledWith("/admin/users?q=alice&page=2&limit=20");
+    expect(apiClient.get).toHaveBeenCalledWith(
+      "/admin/users?q=alice&page=2&limit=20",
+    );
   });
 
   it("auditLogs() fetches with no params when filters are empty", async () => {
@@ -307,9 +339,20 @@ describe("adminClient", () => {
   });
 
   it("auditLogs() forwards actor, action, target, page, and limit as query params", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
 
-    await adminClient.auditLogs({ actor: "u1", action: "ban_user", target: "u2", page: 1, limit: 20 });
+    await adminClient.auditLogs({
+      actor: "u1",
+      action: "ban_user",
+      target: "u2",
+      page: 1,
+      limit: 20,
+    });
 
     expect(apiClient.get).toHaveBeenCalledWith(
       "/admin/audit-logs?actor=u1&action=ban_user&target=u2&page=1&limit=20",
@@ -327,7 +370,11 @@ Expected: FAIL with "Cannot find module './admin-client'"
 
 ```ts
 import { apiClient } from "@/src/shared/lib/api-client";
-import type { AdminOverview, AdminUserList, AuditLogList } from "@/src/shared/types/admin";
+import type {
+  AdminOverview,
+  AdminUserList,
+  AuditLogList,
+} from "@/src/shared/types/admin";
 
 export interface ListAdminUsersFilters {
   q?: string;
@@ -394,6 +441,7 @@ git commit -m "feat: add adminClient for overview/users/audit-logs read endpoint
 ### Task 3: `users-client.ts` (TDD)
 
 **Files:**
+
 - Create: `src/shared/lib/users-client.ts`
 - Create: `src/shared/lib/users-client.test.ts`
 
@@ -415,19 +463,31 @@ beforeEach(() => {
 
 describe("usersClient", () => {
   it("ban() posts duration and reason to /users/:id/ban", async () => {
-    vi.mocked(apiClient.post).mockResolvedValue({ id: "u2", bannedUntil: "2026-01-08T00:00:00.000Z" });
+    vi.mocked(apiClient.post).mockResolvedValue({
+      id: "u2",
+      bannedUntil: "2026-01-08T00:00:00.000Z",
+    });
 
-    const result = await usersClient.ban("u2", { duration: "week", reason: "spamming" });
+    const result = await usersClient.ban("u2", {
+      duration: "week",
+      reason: "spamming",
+    });
 
     expect(apiClient.post).toHaveBeenCalledWith("/users/u2/ban", {
       duration: "week",
       reason: "spamming",
     });
-    expect(result).toEqual({ id: "u2", bannedUntil: "2026-01-08T00:00:00.000Z" });
+    expect(result).toEqual({
+      id: "u2",
+      bannedUntil: "2026-01-08T00:00:00.000Z",
+    });
   });
 
   it("unban() posts to /users/:id/unban with no body", async () => {
-    vi.mocked(apiClient.post).mockResolvedValue({ id: "u2", bannedUntil: null });
+    vi.mocked(apiClient.post).mockResolvedValue({
+      id: "u2",
+      bannedUntil: null,
+    });
 
     const result = await usersClient.unban("u2");
 
@@ -436,11 +496,16 @@ describe("usersClient", () => {
   });
 
   it("changeRole() patches the role to /users/:id/role", async () => {
-    vi.mocked(apiClient.patch).mockResolvedValue({ id: "u2", role: "moderator" });
+    vi.mocked(apiClient.patch).mockResolvedValue({
+      id: "u2",
+      role: "moderator",
+    });
 
     const result = await usersClient.changeRole("u2", "moderator");
 
-    expect(apiClient.patch).toHaveBeenCalledWith("/users/u2/role", { role: "moderator" });
+    expect(apiClient.patch).toHaveBeenCalledWith("/users/u2/role", {
+      role: "moderator",
+    });
     expect(result).toEqual({ id: "u2", role: "moderator" });
   });
 });
@@ -480,7 +545,8 @@ export interface ChangeRoleResult {
 }
 
 export const usersClient = {
-  ban: (id: string, input: BanUserInput) => apiClient.post<BanResult>(`/users/${id}/ban`, input),
+  ban: (id: string, input: BanUserInput) =>
+    apiClient.post<BanResult>(`/users/${id}/ban`, input),
   unban: (id: string) => apiClient.post<UnbanResult>(`/users/${id}/unban`),
   changeRole: (id: string, role: AssignableRole) =>
     apiClient.patch<ChangeRoleResult>(`/users/${id}/role`, { role }),
@@ -509,6 +575,7 @@ git commit -m "feat: add usersClient for ban/unban/role-change endpoints"
 ### Task 4: `OverviewTab` component (TDD)
 
 **Files:**
+
 - Create: `src/features/admin/OverviewTab.tsx`
 - Create: `src/features/admin/OverviewTab.test.tsx`
 
@@ -555,9 +622,13 @@ describe("OverviewTab", () => {
   });
 
   it("shows an error message when the fetch rejects", async () => {
-    vi.mocked(adminClient.overview).mockRejectedValue(new Error("network error"));
+    vi.mocked(adminClient.overview).mockRejectedValue(
+      new Error("network error"),
+    );
     render(<OverviewTab />);
-    expect(await screen.findByText(/Couldn't load overview/)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Couldn't load overview/),
+    ).toBeInTheDocument();
   });
 });
 ```
@@ -588,7 +659,9 @@ const STATS: { key: keyof AdminOverview; label: string }[] = [
 
 export function OverviewTab() {
   const [overview, setOverview] = useState<AdminOverview | null>(null);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "ready" | "error">(
+    "loading",
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -608,9 +681,14 @@ export function OverviewTab() {
     };
   }, []);
 
-  if (status === "loading") return <Text variant="secondary">Loading overview…</Text>;
+  if (status === "loading")
+    return <Text variant="secondary">Loading overview…</Text>;
   if (status === "error" || !overview) {
-    return <Text className="text-[#ff6b6b]">Couldn&apos;t load overview. Try again later.</Text>;
+    return (
+      <Text className="text-[#ff6b6b]">
+        Couldn&apos;t load overview. Try again later.
+      </Text>
+    );
   }
 
   return (
@@ -619,7 +697,10 @@ export function OverviewTab() {
         const value = overview[key];
         return (
           <Card key={key} className="hover:translate-y-0 hover:shadow-none">
-            <Text variant="tertiary" className="text-xs uppercase tracking-wide">
+            <Text
+              variant="tertiary"
+              className="text-xs uppercase tracking-wide"
+            >
               {label}
             </Text>
             <Text as="p" variant="title" className="mt-2 text-2xl">
@@ -655,6 +736,7 @@ git commit -m "feat: add OverviewTab admin component"
 ### Task 5: `UsersTab` component — search + ban/unban (TDD)
 
 **Files:**
+
 - Create: `src/features/admin/UsersTab.tsx`
 - Create: `src/features/admin/UsersTab.test.tsx`
 
@@ -674,7 +756,12 @@ import type { User } from "@/src/shared/types/user";
 import type { AdminUserRow } from "@/src/shared/types/admin";
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
-  authClient: { register: vi.fn(), login: vi.fn(), logout: vi.fn(), refresh: vi.fn() },
+  authClient: {
+    register: vi.fn(),
+    login: vi.fn(),
+    logout: vi.fn(),
+    refresh: vi.fn(),
+  },
 }));
 vi.mock("@/src/shared/lib/admin-client", () => ({
   adminClient: { listUsers: vi.fn() },
@@ -701,7 +788,10 @@ const TARGET: AdminUserRow = {
 };
 
 function renderAsAdmin() {
-  vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "token", user: ADMIN });
+  vi.mocked(authClient.refresh).mockResolvedValue({
+    accessToken: "token",
+    user: ADMIN,
+  });
   return render(
     <AuthProvider>
       <UsersTab />
@@ -715,18 +805,34 @@ beforeEach(() => {
 
 describe("UsersTab", () => {
   it("fetches page 1 and renders matching users", async () => {
-    vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [TARGET], total: 1, page: 1, limit: 20 });
+    vi.mocked(adminClient.listUsers).mockResolvedValue({
+      items: [TARGET],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
     renderAsAdmin();
 
     expect(await screen.findByText("bob")).toBeInTheDocument();
-    expect(adminClient.listUsers).toHaveBeenCalledWith({ q: undefined, page: 1, limit: 20 });
+    expect(adminClient.listUsers).toHaveBeenCalledWith({
+      q: undefined,
+      page: 1,
+      limit: 20,
+    });
   });
 
   it("bans a user after picking a duration and entering a reason", async () => {
-    vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [TARGET], total: 1, page: 1, limit: 20 });
+    vi.mocked(adminClient.listUsers).mockResolvedValue({
+      items: [TARGET],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
     // A week out from "now" — computed relative to the real clock (not a
     // hardcoded date) so this assertion can't go stale as time passes.
-    const bannedUntil = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    const bannedUntil = new Date(
+      Date.now() + 7 * 24 * 60 * 60 * 1000,
+    ).toISOString();
     vi.mocked(usersClient.ban).mockResolvedValue({ id: "u2", bannedUntil });
     const user = userEvent.setup();
     renderAsAdmin();
@@ -737,20 +843,37 @@ describe("UsersTab", () => {
     await user.click(screen.getByRole("button", { name: "Confirm ban" }));
 
     await waitFor(() =>
-      expect(usersClient.ban).toHaveBeenCalledWith("u2", { duration: "week", reason: "spamming" }),
+      expect(usersClient.ban).toHaveBeenCalledWith("u2", {
+        duration: "week",
+        reason: "spamming",
+      }),
     );
     expect(
-      await screen.findByText(`Banned until ${new Date(bannedUntil).toLocaleDateString()}`),
+      await screen.findByText(
+        `Banned until ${new Date(bannedUntil).toLocaleDateString()}`,
+      ),
     ).toBeInTheDocument();
   });
 
   it("does not show a Ban button for a target the actor cannot act on (equal rank)", async () => {
-    const peerAdmin: AdminUserRow = { ...TARGET, id: "u3", username: "peer", role: "admin" };
-    vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [peerAdmin], total: 1, page: 1, limit: 20 });
+    const peerAdmin: AdminUserRow = {
+      ...TARGET,
+      id: "u3",
+      username: "peer",
+      role: "admin",
+    };
+    vi.mocked(adminClient.listUsers).mockResolvedValue({
+      items: [peerAdmin],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
     renderAsAdmin();
 
     await screen.findByText("peer");
-    expect(screen.queryByRole("button", { name: "Ban" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Ban" }),
+    ).not.toBeInTheDocument();
   });
 });
 ```
@@ -797,7 +920,9 @@ export function UsersTab() {
   const [users, setUsers] = useState<AdminUserRow[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "ready" | "error">(
+    "loading",
+  );
   const [loadingMore, setLoadingMore] = useState(false);
   const [banTargetId, setBanTargetId] = useState<string | null>(null);
   const [banDuration, setBanDuration] = useState<BanDuration>("week");
@@ -805,7 +930,10 @@ export function UsersTab() {
   const [actionError, setActionError] = useState("");
 
   useEffect(() => {
-    const timeout = setTimeout(() => setQuery(searchInput.trim()), SEARCH_DEBOUNCE_MS);
+    const timeout = setTimeout(
+      () => setQuery(searchInput.trim()),
+      SEARCH_DEBOUNCE_MS,
+    );
     return () => clearTimeout(timeout);
   }, [searchInput]);
 
@@ -834,7 +962,11 @@ export function UsersTab() {
     setLoadingMore(true);
     try {
       const nextPage = page + 1;
-      const result = await adminClient.listUsers({ q: query || undefined, page: nextPage, limit: PAGE_SIZE });
+      const result = await adminClient.listUsers({
+        q: query || undefined,
+        page: nextPage,
+        limit: PAGE_SIZE,
+      });
       setUsers((prev) => {
         const existingIds = new Set(prev.map((u) => u.id));
         return [...prev, ...result.items.filter((u) => !existingIds.has(u.id))];
@@ -852,8 +984,15 @@ export function UsersTab() {
     if (!banReason.trim()) return;
     setActionError("");
     try {
-      const result = await usersClient.ban(id, { duration: banDuration, reason: banReason.trim() });
-      setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, bannedUntil: result.bannedUntil } : u)));
+      const result = await usersClient.ban(id, {
+        duration: banDuration,
+        reason: banReason.trim(),
+      });
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.id === id ? { ...u, bannedUntil: result.bannedUntil } : u,
+        ),
+      );
       setBanTargetId(null);
       setBanReason("");
     } catch {
@@ -865,7 +1004,9 @@ export function UsersTab() {
     setActionError("");
     try {
       await usersClient.unban(id);
-      setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, bannedUntil: null } : u)));
+      setUsers((prev) =>
+        prev.map((u) => (u.id === id ? { ...u, bannedUntil: null } : u)),
+      );
     } catch {
       setActionError("Couldn't unban this user. Try again.");
     }
@@ -887,7 +1028,9 @@ export function UsersTab() {
 
       {status === "loading" && <Text variant="secondary">Loading users…</Text>}
       {status === "error" && (
-        <Text className="text-[#ff6b6b]">Couldn&apos;t load users. Try again later.</Text>
+        <Text className="text-[#ff6b6b]">
+          Couldn&apos;t load users. Try again later.
+        </Text>
       )}
       {status === "ready" && users.length === 0 && (
         <Text variant="secondary">No users match this search.</Text>
@@ -899,7 +1042,10 @@ export function UsersTab() {
             const banned = isCurrentlyBanned(row.bannedUntil);
             const canAct = canActOn(user.role, row.role);
             return (
-              <div key={row.id} className="rounded-[15px] border border-border bg-surface p-4">
+              <div
+                key={row.id}
+                className="rounded-[15px] border border-border bg-surface p-4"
+              >
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <div>
                     <Text className="font-semibold">{row.username}</Text>
@@ -913,13 +1059,20 @@ export function UsersTab() {
                   {canAct && (
                     <div className="flex gap-2">
                       {banned ? (
-                        <Button variant="secondary" onClick={() => void handleUnban(row.id)}>
+                        <Button
+                          variant="secondary"
+                          onClick={() => void handleUnban(row.id)}
+                        >
                           Unban
                         </Button>
                       ) : (
                         <Button
                           variant="secondary"
-                          onClick={() => setBanTargetId(banTargetId === row.id ? null : row.id)}
+                          onClick={() =>
+                            setBanTargetId(
+                              banTargetId === row.id ? null : row.id,
+                            )
+                          }
                         >
                           Ban
                         </Button>
@@ -933,7 +1086,9 @@ export function UsersTab() {
                       Duration
                       <select
                         value={banDuration}
-                        onChange={(e) => setBanDuration(e.target.value as BanDuration)}
+                        onChange={(e) =>
+                          setBanDuration(e.target.value as BanDuration)
+                        }
                         className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground"
                       >
                         {BAN_DURATIONS.map((d) => (
@@ -965,10 +1120,16 @@ export function UsersTab() {
         </div>
       )}
 
-      {actionError && <Text className="text-sm text-[#ff6b6b]">{actionError}</Text>}
+      {actionError && (
+        <Text className="text-sm text-[#ff6b6b]">{actionError}</Text>
+      )}
 
       {status === "ready" && users.length < total && (
-        <Button variant="secondary" disabled={loadingMore} onClick={() => void handleLoadMore()}>
+        <Button
+          variant="secondary"
+          disabled={loadingMore}
+          onClick={() => void handleLoadMore()}
+        >
           {loadingMore ? "Loading…" : "Load more"}
         </Button>
       )}
@@ -999,6 +1160,7 @@ git commit -m "feat: add UsersTab admin component with search and ban/unban"
 ### Task 6: `StaffTab` component — search + role change (TDD)
 
 **Files:**
+
 - Create: `src/features/admin/StaffTab.tsx`
 - Create: `src/features/admin/StaffTab.test.tsx`
 
@@ -1018,7 +1180,12 @@ import type { User } from "@/src/shared/types/user";
 import type { AdminUserRow } from "@/src/shared/types/admin";
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
-  authClient: { register: vi.fn(), login: vi.fn(), logout: vi.fn(), refresh: vi.fn() },
+  authClient: {
+    register: vi.fn(),
+    login: vi.fn(),
+    logout: vi.fn(),
+    refresh: vi.fn(),
+  },
 }));
 vi.mock("@/src/shared/lib/admin-client", () => ({
   adminClient: { listUsers: vi.fn() },
@@ -1045,7 +1212,10 @@ const TARGET: AdminUserRow = {
 };
 
 function renderAsManager() {
-  vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "token", user: MANAGER });
+  vi.mocked(authClient.refresh).mockResolvedValue({
+    accessToken: "token",
+    user: MANAGER,
+  });
   return render(
     <AuthProvider>
       <StaffTab />
@@ -1059,7 +1229,12 @@ beforeEach(() => {
 
 describe("StaffTab", () => {
   it("fetches page 1 and renders matching users with a role select", async () => {
-    vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [TARGET], total: 1, page: 1, limit: 20 });
+    vi.mocked(adminClient.listUsers).mockResolvedValue({
+      items: [TARGET],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
     renderAsManager();
 
     expect(await screen.findByText("bob")).toBeInTheDocument();
@@ -1067,34 +1242,66 @@ describe("StaffTab", () => {
   });
 
   it("does not offer 'manager' as an option for a manager actor (cannot grant own rank)", async () => {
-    vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [TARGET], total: 1, page: 1, limit: 20 });
+    vi.mocked(adminClient.listUsers).mockResolvedValue({
+      items: [TARGET],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
     renderAsManager();
 
     await screen.findByText("bob");
     const select = screen.getByLabelText("Change role for bob");
-    const optionValues = Array.from(select.querySelectorAll("option")).map((o) => o.getAttribute("value"));
+    const optionValues = Array.from(select.querySelectorAll("option")).map(
+      (o) => o.getAttribute("value"),
+    );
     expect(optionValues).not.toContain("manager");
   });
 
   it("changes a user's role via the select", async () => {
-    vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [TARGET], total: 1, page: 1, limit: 20 });
-    vi.mocked(usersClient.changeRole).mockResolvedValue({ id: "u2", role: "user" });
+    vi.mocked(adminClient.listUsers).mockResolvedValue({
+      items: [TARGET],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
+    vi.mocked(usersClient.changeRole).mockResolvedValue({
+      id: "u2",
+      role: "user",
+    });
     const user = userEvent.setup();
     renderAsManager();
 
     await screen.findByText("bob");
-    await user.selectOptions(screen.getByLabelText("Change role for bob"), "user");
+    await user.selectOptions(
+      screen.getByLabelText("Change role for bob"),
+      "user",
+    );
 
-    await waitFor(() => expect(usersClient.changeRole).toHaveBeenCalledWith("u2", "user"));
+    await waitFor(() =>
+      expect(usersClient.changeRole).toHaveBeenCalledWith("u2", "user"),
+    );
   });
 
   it("hides the role select for a target the actor cannot act on", async () => {
-    const peerManager: AdminUserRow = { ...TARGET, id: "u3", username: "peer", role: "manager" };
-    vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [peerManager], total: 1, page: 1, limit: 20 });
+    const peerManager: AdminUserRow = {
+      ...TARGET,
+      id: "u3",
+      username: "peer",
+      role: "manager",
+    };
+    vi.mocked(adminClient.listUsers).mockResolvedValue({
+      items: [peerManager],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
     renderAsManager();
 
     await screen.findByText("peer");
-    expect(screen.queryByLabelText("Change role for peer")).not.toBeInTheDocument();
+    expect(
+      screen.queryByLabelText("Change role for peer"),
+    ).not.toBeInTheDocument();
   });
 });
 ```
@@ -1117,7 +1324,10 @@ import { Badge } from "@/src/shared/components/Badge";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { adminClient } from "@/src/shared/lib/admin-client";
 import { usersClient } from "@/src/shared/lib/users-client";
-import { assignableRolesFor, type AssignableRole } from "@/src/shared/lib/staff-permissions";
+import {
+  assignableRolesFor,
+  type AssignableRole,
+} from "@/src/shared/lib/staff-permissions";
 import type { AdminUserRow } from "@/src/shared/types/admin";
 
 const PAGE_SIZE = 20;
@@ -1130,12 +1340,17 @@ export function StaffTab() {
   const [users, setUsers] = useState<AdminUserRow[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "ready" | "error">(
+    "loading",
+  );
   const [loadingMore, setLoadingMore] = useState(false);
   const [actionError, setActionError] = useState("");
 
   useEffect(() => {
-    const timeout = setTimeout(() => setQuery(searchInput.trim()), SEARCH_DEBOUNCE_MS);
+    const timeout = setTimeout(
+      () => setQuery(searchInput.trim()),
+      SEARCH_DEBOUNCE_MS,
+    );
     return () => clearTimeout(timeout);
   }, [searchInput]);
 
@@ -1164,7 +1379,11 @@ export function StaffTab() {
     setLoadingMore(true);
     try {
       const nextPage = page + 1;
-      const result = await adminClient.listUsers({ q: query || undefined, page: nextPage, limit: PAGE_SIZE });
+      const result = await adminClient.listUsers({
+        q: query || undefined,
+        page: nextPage,
+        limit: PAGE_SIZE,
+      });
       setUsers((prev) => {
         const existingIds = new Set(prev.map((u) => u.id));
         return [...prev, ...result.items.filter((u) => !existingIds.has(u.id))];
@@ -1182,7 +1401,9 @@ export function StaffTab() {
     setActionError("");
     try {
       const result = await usersClient.changeRole(id, role);
-      setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, role: result.role } : u)));
+      setUsers((prev) =>
+        prev.map((u) => (u.id === id ? { ...u, role: result.role } : u)),
+      );
     } catch {
       setActionError("Couldn't change this user's role. Try again.");
     }
@@ -1204,7 +1425,9 @@ export function StaffTab() {
 
       {status === "loading" && <Text variant="secondary">Loading users…</Text>}
       {status === "error" && (
-        <Text className="text-[#ff6b6b]">Couldn&apos;t load users. Try again later.</Text>
+        <Text className="text-[#ff6b6b]">
+          Couldn&apos;t load users. Try again later.
+        </Text>
       )}
       {status === "ready" && users.length === 0 && (
         <Text variant="secondary">No users match this search.</Text>
@@ -1213,7 +1436,9 @@ export function StaffTab() {
       {status === "ready" && users.length > 0 && (
         <div className="flex flex-col gap-3">
           {users.map((row) => {
-            const options = assignableRolesFor(user.role, row.role).filter((role) => role !== row.role);
+            const options = assignableRolesFor(user.role, row.role).filter(
+              (role) => role !== row.role,
+            );
             return (
               <div
                 key={row.id}
@@ -1252,10 +1477,16 @@ export function StaffTab() {
         </div>
       )}
 
-      {actionError && <Text className="text-sm text-[#ff6b6b]">{actionError}</Text>}
+      {actionError && (
+        <Text className="text-sm text-[#ff6b6b]">{actionError}</Text>
+      )}
 
       {status === "ready" && users.length < total && (
-        <Button variant="secondary" disabled={loadingMore} onClick={() => void handleLoadMore()}>
+        <Button
+          variant="secondary"
+          disabled={loadingMore}
+          onClick={() => void handleLoadMore()}
+        >
           {loadingMore ? "Loading…" : "Load more"}
         </Button>
       )}
@@ -1286,6 +1517,7 @@ git commit -m "feat: add StaffTab admin component with hierarchy-gated role chan
 ### Task 7: `LogsTab` component — filters + paginated audit log (TDD)
 
 **Files:**
+
 - Create: `src/features/admin/LogsTab.tsx`
 - Create: `src/features/admin/LogsTab.test.tsx`
 
@@ -1320,7 +1552,12 @@ beforeEach(() => {
 
 describe("LogsTab", () => {
   it("fetches page 1 with no filters and renders log rows", async () => {
-    vi.mocked(adminClient.auditLogs).mockResolvedValue({ items: [LOG], total: 1, page: 1, limit: 20 });
+    vi.mocked(adminClient.auditLogs).mockResolvedValue({
+      items: [LOG],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
     render(<LogsTab />);
 
     expect(await screen.findByText(/admin1/)).toBeInTheDocument();
@@ -1336,7 +1573,12 @@ describe("LogsTab", () => {
 
   it("re-fetches with an action filter after debounce", async () => {
     vi.useFakeTimers();
-    vi.mocked(adminClient.auditLogs).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    vi.mocked(adminClient.auditLogs).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
     const user = userEvent.setup({ delay: null });
     render(<LogsTab />);
 
@@ -1356,9 +1598,16 @@ describe("LogsTab", () => {
   });
 
   it("shows an empty state when no logs match", async () => {
-    vi.mocked(adminClient.auditLogs).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    vi.mocked(adminClient.auditLogs).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
     render(<LogsTab />);
-    expect(await screen.findByText("No audit log entries match these filters.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("No audit log entries match these filters."),
+    ).toBeInTheDocument();
   });
 });
 ```
@@ -1393,11 +1642,17 @@ export function LogsTab() {
   const [actorInput, setActorInput] = useState("");
   const [actionInput, setActionInput] = useState("");
   const [targetInput, setTargetInput] = useState("");
-  const [filters, setFilters] = useState<Filters>({ actor: "", action: "", target: "" });
+  const [filters, setFilters] = useState<Filters>({
+    actor: "",
+    action: "",
+    target: "",
+  });
   const [logs, setLogs] = useState<AuditLogEntry[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "ready" | "error">(
+    "loading",
+  );
   const [loadingMore, setLoadingMore] = useState(false);
 
   useEffect(() => {
@@ -1490,21 +1745,29 @@ export function LogsTab() {
 
       {status === "loading" && <Text variant="secondary">Loading logs…</Text>}
       {status === "error" && (
-        <Text className="text-[#ff6b6b]">Couldn&apos;t load logs. Try again later.</Text>
+        <Text className="text-[#ff6b6b]">
+          Couldn&apos;t load logs. Try again later.
+        </Text>
       )}
       {status === "ready" && logs.length === 0 && (
-        <Text variant="secondary">No audit log entries match these filters.</Text>
+        <Text variant="secondary">
+          No audit log entries match these filters.
+        </Text>
       )}
 
       {status === "ready" && logs.length > 0 && (
         <div className="flex flex-col gap-2">
           {logs.map((log) => (
-            <div key={log.id} className="rounded-[12px] border border-border bg-surface p-3 text-sm">
+            <div
+              key={log.id}
+              className="rounded-[12px] border border-border bg-surface p-3 text-sm"
+            >
               <Text variant="tertiary" className="text-xs">
                 {new Date(log.createdAt).toLocaleString()}
               </Text>
               <Text>
-                <span className="font-semibold">{log.actorUsername}</span> · {log.action} ·{" "}
+                <span className="font-semibold">{log.actorUsername}</span> ·{" "}
+                {log.action} ·{" "}
                 <span className="text-foreground-secondary">{log.target}</span>
               </Text>
             </div>
@@ -1513,7 +1776,11 @@ export function LogsTab() {
       )}
 
       {status === "ready" && logs.length < total && (
-        <Button variant="secondary" disabled={loadingMore} onClick={() => void handleLoadMore()}>
+        <Button
+          variant="secondary"
+          disabled={loadingMore}
+          onClick={() => void handleLoadMore()}
+        >
           {loadingMore ? "Loading…" : "Load more"}
         </Button>
       )}
@@ -1544,6 +1811,7 @@ git commit -m "feat: add LogsTab admin component with filterable audit log"
 ### Task 8: `AdminScreen` component — tab switcher + role gate (TDD)
 
 **Files:**
+
 - Create: `src/features/admin/AdminScreen.tsx`
 - Create: `src/features/admin/AdminScreen.test.tsx`
 
@@ -1567,7 +1835,12 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
-  authClient: { register: vi.fn(), login: vi.fn(), logout: vi.fn(), refresh: vi.fn() },
+  authClient: {
+    register: vi.fn(),
+    login: vi.fn(),
+    logout: vi.fn(),
+    refresh: vi.fn(),
+  },
 }));
 vi.mock("@/src/shared/lib/admin-client", () => ({
   adminClient: { overview: vi.fn(), listUsers: vi.fn(), auditLogs: vi.fn() },
@@ -1581,7 +1854,12 @@ const MANAGER: User = {
   createdAt: "2026-01-01T00:00:00.000Z",
 };
 
-const PLAIN_USER: User = { ...MANAGER, id: "u1", role: "user", username: "plain" };
+const PLAIN_USER: User = {
+  ...MANAGER,
+  id: "u1",
+  role: "user",
+  username: "plain",
+};
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -1596,7 +1874,10 @@ beforeEach(() => {
 
 describe("AdminScreen", () => {
   it("renders the Overview tab by default for a manager", async () => {
-    vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "token", user: MANAGER });
+    vi.mocked(authClient.refresh).mockResolvedValue({
+      accessToken: "token",
+      user: MANAGER,
+    });
     render(
       <AuthProvider>
         <AdminScreen />
@@ -1607,8 +1888,16 @@ describe("AdminScreen", () => {
   });
 
   it("switches to the Logs tab on click", async () => {
-    vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "token", user: MANAGER });
-    vi.mocked(adminClient.auditLogs).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    vi.mocked(authClient.refresh).mockResolvedValue({
+      accessToken: "token",
+      user: MANAGER,
+    });
+    vi.mocked(adminClient.auditLogs).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
     const user = userEvent.setup();
     render(
       <AuthProvider>
@@ -1623,7 +1912,10 @@ describe("AdminScreen", () => {
   });
 
   it("redirects home for an authenticated user without admin/manager role", async () => {
-    vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "token", user: PLAIN_USER });
+    vi.mocked(authClient.refresh).mockResolvedValue({
+      accessToken: "token",
+      user: PLAIN_USER,
+    });
     render(
       <AuthProvider>
         <AdminScreen />
@@ -1641,7 +1933,9 @@ describe("AdminScreen", () => {
       </AuthProvider>,
     );
 
-    expect(await screen.findByText("You need to be logged in to view this page.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("You need to be logged in to view this page."),
+    ).toBeInTheDocument();
   });
 });
 ```
@@ -1694,7 +1988,9 @@ export function AdminScreen() {
   if (status === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">You need to be logged in to view this page.</Text>
+        <Text variant="secondary">
+          You need to be logged in to view this page.
+        </Text>
         <Button className="mt-4" onClick={() => router.push("/auth")}>
           Log in
         </Button>
@@ -1760,6 +2056,7 @@ git commit -m "feat: add AdminScreen tab switcher with role gate"
 ### Task 9: Routing + `UserMenu` Admin link
 
 **Files:**
+
 - Create: `app/admin/page.tsx`
 - Modify: `src/shared/components/UserMenu.tsx`
 - Modify: `src/shared/components/UserMenu.test.tsx`
@@ -1784,15 +2081,22 @@ export default function AdminPage() {
 Add this test inside the existing `describe("UserMenu", ...)` block, after the existing "opens the menu on click..." test:
 
 ```tsx
-  it("shows an Admin link for a manager/admin role but not for a plain user", async () => {
-    const user = userEvent.setup();
-    const { rerender } = render(<UserMenu user={{ ...USER, role: "manager" }} onLogout={vi.fn()} />);
-    await user.click(screen.getByRole("button", { name: "Account menu" }));
-    expect(screen.getByRole("menuitem", { name: "Admin" })).toHaveAttribute("href", "/admin");
+it("shows an Admin link for a manager/admin role but not for a plain user", async () => {
+  const user = userEvent.setup();
+  const { rerender } = render(
+    <UserMenu user={{ ...USER, role: "manager" }} onLogout={vi.fn()} />,
+  );
+  await user.click(screen.getByRole("button", { name: "Account menu" }));
+  expect(screen.getByRole("menuitem", { name: "Admin" })).toHaveAttribute(
+    "href",
+    "/admin",
+  );
 
-    rerender(<UserMenu user={USER} onLogout={vi.fn()} />);
-    expect(screen.queryByRole("menuitem", { name: "Admin" })).not.toBeInTheDocument();
-  });
+  rerender(<UserMenu user={USER} onLogout={vi.fn()} />);
+  expect(
+    screen.queryByRole("menuitem", { name: "Admin" }),
+  ).not.toBeInTheDocument();
+});
 ```
 
 - [ ] **Step 3: Run test to verify it fails**
@@ -1805,16 +2109,18 @@ Expected: FAIL — "Admin" menuitem not found
 In `src/shared/components/UserMenu.tsx`, insert this block right after the existing Settings `<Link>` (currently lines 72-79) and before the "Log out" `<button>`:
 
 ```tsx
-          {(user.role === "admin" || user.role === "manager") && (
-            <Link
-              href="/admin"
-              role="menuitem"
-              onClick={() => setOpen(false)}
-              className="block px-3.5 py-2.5 text-sm text-foreground hover:bg-white/[0.06]"
-            >
-              Admin
-            </Link>
-          )}
+{
+  (user.role === "admin" || user.role === "manager") && (
+    <Link
+      href="/admin"
+      role="menuitem"
+      onClick={() => setOpen(false)}
+      className="block px-3.5 py-2.5 text-sm text-foreground hover:bg-white/[0.06]"
+    >
+      Admin
+    </Link>
+  );
+}
 ```
 
 - [ ] **Step 5: Run test to verify it passes**
@@ -1843,6 +2149,7 @@ git commit -m "feat: wire up /admin route and Admin link in UserMenu"
 ```bash
 npm run lint && npm run typecheck && npm test && npm run build
 ```
+
 Expected: all four green. Fix any failures before proceeding (do not skip ahead with red output).
 
 - [ ] **Step 2: Re-check the diff against the public-repo boundary**
@@ -1856,6 +2163,7 @@ Dispatch `code-reviewer` and `ui-guardian` (always required per `.claude/docs/gi
 - [ ] **Step 4: Manual browser verification**
 
 Using the Claude Preview tooling against a running `frontend` dev server (and a running `backend` dev server, since this screen is fully data-dependent):
+
 - Log in as a seeded `admin` or `manager` user (or promote a test user directly via Prisma Studio/DB if no staff account exists yet) and confirm the Admin link appears in `UserMenu` and `/admin` renders all four tabs.
 - Confirm Overview shows real counts and em-dashes for online users/pending reports.
 - Confirm Staff tab lets a manager promote a `user` to `moderator` but does not offer `manager` as an option.
@@ -1869,6 +2177,7 @@ Using the Claude Preview tooling against a running `frontend` dev server (and a 
 ```bash
 git push -u origin <branch-name>
 ```
+
 Open a PR into `develop` titled something like "Add Admin screen (Overview/Staff/Users/Logs)" with body covering: what changed, why, test files + the manual verification steps from Step 4, `Closes #50`. Wait for CI (lint/typecheck/test/build) to go green, then squash-merge.
 
 - [ ] **Step 6: Close issues manually**

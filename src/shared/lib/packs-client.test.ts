@@ -46,7 +46,12 @@ describe("packsClient.list", () => {
   });
 
   it("requests with no query params when no filters are given", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
 
     await packsClient.list();
 
@@ -54,15 +59,27 @@ describe("packsClient.list", () => {
   });
 
   it("forwards format and tags in the query string", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
 
     await packsClient.list({ format: "save_one", tags: ["Anime", "Music"] });
 
-    expect(apiClient.get).toHaveBeenCalledWith("/packs?format=save_one&tags=Anime%2CMusic");
+    expect(apiClient.get).toHaveBeenCalledWith(
+      "/packs?format=save_one&tags=Anime%2CMusic",
+    );
   });
 
   it("forwards page and limit in the query string", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 2, limit: 50 });
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 2,
+      limit: 50,
+    });
 
     await packsClient.list({ page: 2, limit: 50 });
 
@@ -70,7 +87,12 @@ describe("packsClient.list", () => {
   });
 
   it("forwards q in the query string", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
 
     await packsClient.list({ q: "anime" });
 
@@ -78,7 +100,12 @@ describe("packsClient.list", () => {
   });
 
   it("omits q from the query string when it is an empty string", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
 
     await packsClient.list({ q: "" });
 
@@ -86,7 +113,12 @@ describe("packsClient.list", () => {
   });
 
   it("includes authorId in the query string when provided", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
 
     await packsClient.list({ authorId: "user-1" });
 
@@ -94,7 +126,12 @@ describe("packsClient.list", () => {
   });
 
   it("omits sort and window from the query string when not provided", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
 
     await packsClient.list();
 
@@ -102,7 +139,12 @@ describe("packsClient.list", () => {
   });
 
   it("includes sort in the query string when provided", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
 
     await packsClient.list({ sort: "popular" });
 
@@ -110,7 +152,12 @@ describe("packsClient.list", () => {
   });
 
   it("includes window in the query string when provided", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
 
     await packsClient.list({ window: "week" });
 
@@ -118,17 +165,26 @@ describe("packsClient.list", () => {
   });
 
   it("includes both sort and window in the query string when provided together", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
 
     await packsClient.list({ sort: "popular", window: "month" });
 
-    expect(apiClient.get).toHaveBeenCalledWith("/packs?sort=popular&window=month");
+    expect(apiClient.get).toHaveBeenCalledWith(
+      "/packs?sort=popular&window=month",
+    );
   });
 });
 
 describe("packsClient.delete", () => {
   it("delete() DELETEs /packs/:id", async () => {
-    const deleteSpy = vi.spyOn(apiClient, "delete").mockResolvedValue({ deleted: true });
+    const deleteSpy = vi
+      .spyOn(apiClient, "delete")
+      .mockResolvedValue({ deleted: true });
     const result = await packsClient.delete("pack-1");
     expect(deleteSpy).toHaveBeenCalledWith("/packs/pack-1");
     expect(result).toEqual({ deleted: true });
@@ -137,14 +193,18 @@ describe("packsClient.delete", () => {
 
 describe("packsClient.vote", () => {
   it("vote() POSTs to /packs/:id/vote with the given value", async () => {
-    const postSpy = vi.spyOn(apiClient, "post").mockResolvedValue({ score: 1, likes: 1, dislikes: 0, myVote: 1 });
+    const postSpy = vi
+      .spyOn(apiClient, "post")
+      .mockResolvedValue({ score: 1, likes: 1, dislikes: 0, myVote: 1 });
     const result = await packsClient.vote("pack-1", 1);
     expect(postSpy).toHaveBeenCalledWith("/packs/pack-1/vote", { value: 1 });
     expect(result).toEqual({ score: 1, likes: 1, dislikes: 0, myVote: 1 });
   });
 
   it("unvote() DELETEs /packs/:id/vote", async () => {
-    const deleteSpy = vi.spyOn(apiClient, "delete").mockResolvedValue({ score: 0, likes: 0, dislikes: 0, myVote: null });
+    const deleteSpy = vi
+      .spyOn(apiClient, "delete")
+      .mockResolvedValue({ score: 0, likes: 0, dislikes: 0, myVote: null });
     const result = await packsClient.unvote("pack-1");
     expect(deleteSpy).toHaveBeenCalledWith("/packs/pack-1/vote");
     expect(result).toEqual({ score: 0, likes: 0, dislikes: 0, myVote: null });
@@ -153,12 +213,19 @@ describe("packsClient.vote", () => {
 
 describe("packsClient.moderationQueue", () => {
   beforeEach(() => {
-    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
   });
 
   it("calls GET /packs/moderation-queue with page/limit", async () => {
     await packsClient.moderationQueue({ page: 2, limit: 20 });
-    expect(apiClient.get).toHaveBeenCalledWith("/packs/moderation-queue?page=2&limit=20");
+    expect(apiClient.get).toHaveBeenCalledWith(
+      "/packs/moderation-queue?page=2&limit=20",
+    );
   });
 
   it("calls with no query string when no filters are given", async () => {
@@ -188,14 +255,21 @@ describe("packsClient.approve", () => {
 describe("packsClient.reject", () => {
   it("reject() POSTs to /packs/:id/reject with the given reason", async () => {
     const postSpy = vi.spyOn(apiClient, "post").mockResolvedValue(PACK_A);
-    const result = await packsClient.reject("pack-1", "Duplicate of an existing pack");
-    expect(postSpy).toHaveBeenCalledWith("/packs/pack-1/reject", { reason: "Duplicate of an existing pack" });
+    const result = await packsClient.reject(
+      "pack-1",
+      "Duplicate of an existing pack",
+    );
+    expect(postSpy).toHaveBeenCalledWith("/packs/pack-1/reject", {
+      reason: "Duplicate of an existing pack",
+    });
     expect(result).toEqual(PACK_A);
   });
 
   it("reject() POSTs an undefined reason when none is given", async () => {
     const postSpy = vi.spyOn(apiClient, "post").mockResolvedValue(PACK_A);
     await packsClient.reject("pack-1");
-    expect(postSpy).toHaveBeenCalledWith("/packs/pack-1/reject", { reason: undefined });
+    expect(postSpy).toHaveBeenCalledWith("/packs/pack-1/reject", {
+      reason: undefined,
+    });
   });
 });

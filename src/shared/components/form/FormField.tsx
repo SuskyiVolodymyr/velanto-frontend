@@ -40,7 +40,11 @@ export function FormField({
       </label>
       {children}
       {error && (
-        <Text id={`${htmlFor}-error`} role="alert" className="text-sm text-[#ff6b6b]">
+        <Text
+          id={`${htmlFor}-error`}
+          role="alert"
+          className="text-sm text-[#ff6b6b]"
+        >
           {error}
         </Text>
       )}

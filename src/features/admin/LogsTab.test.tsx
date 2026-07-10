@@ -26,7 +26,12 @@ beforeEach(() => {
 
 describe("LogsTab", () => {
   it("fetches page 1 with no filters and renders log rows", async () => {
-    vi.mocked(adminClient.auditLogs).mockResolvedValue({ items: [LOG], total: 1, page: 1, limit: 20 });
+    vi.mocked(adminClient.auditLogs).mockResolvedValue({
+      items: [LOG],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
     render(<LogsTab />);
 
     expect(await screen.findByText(/admin1/)).toBeInTheDocument();
@@ -51,7 +56,12 @@ describe("LogsTab", () => {
     // is unaffected either way — vi.advanceTimersByTime(300) below still
     // deterministically fires the actual filter-debounce timer.
     vi.useFakeTimers({ shouldAdvanceTime: true });
-    vi.mocked(adminClient.auditLogs).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    vi.mocked(adminClient.auditLogs).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
     const user = userEvent.setup({ delay: null });
     render(<LogsTab />);
 
@@ -71,15 +81,26 @@ describe("LogsTab", () => {
   });
 
   it("shows an empty state when no logs match", async () => {
-    vi.mocked(adminClient.auditLogs).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    vi.mocked(adminClient.auditLogs).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
     render(<LogsTab />);
-    expect(await screen.findByText("No audit log entries match these filters.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("No audit log entries match these filters."),
+    ).toBeInTheDocument();
   });
 
   it("shows an error state when the initial fetch rejects", async () => {
-    vi.mocked(adminClient.auditLogs).mockRejectedValue(new Error("network error"));
+    vi.mocked(adminClient.auditLogs).mockRejectedValue(
+      new Error("network error"),
+    );
     render(<LogsTab />);
-    expect(await screen.findByText("Couldn't load logs. Try again later.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Couldn't load logs. Try again later."),
+    ).toBeInTheDocument();
   });
 
   it("shows a load-more error and re-enables the button when loading more rejects", async () => {
@@ -93,10 +114,16 @@ describe("LogsTab", () => {
     render(<LogsTab />);
 
     await screen.findByText(/admin1/);
-    vi.mocked(adminClient.auditLogs).mockRejectedValueOnce(new Error("network error"));
+    vi.mocked(adminClient.auditLogs).mockRejectedValueOnce(
+      new Error("network error"),
+    );
     await user.click(screen.getByRole("button", { name: "Load more" }));
 
-    expect(await screen.findByText("Couldn't load more logs. Try again.")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Load more" })).not.toBeDisabled();
+    expect(
+      await screen.findByText("Couldn't load more logs. Try again."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Load more" }),
+    ).not.toBeDisabled();
   });
 });

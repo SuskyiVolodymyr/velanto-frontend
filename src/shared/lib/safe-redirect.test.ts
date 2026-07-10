@@ -11,7 +11,9 @@ describe("sanitizeNextPath", () => {
   });
 
   it("preserves query strings on the returned path", () => {
-    expect(sanitizeNextPath("/packs/abc/play?round=2")).toBe("/packs/abc/play?round=2");
+    expect(sanitizeNextPath("/packs/abc/play?round=2")).toBe(
+      "/packs/abc/play?round=2",
+    );
   });
 
   it("falls back to / for an empty string", () => {

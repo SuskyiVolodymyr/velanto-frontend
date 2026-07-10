@@ -15,6 +15,7 @@
 ### Task 1: Types + API client additions
 
 **Files:**
+
 - Modify: `src/shared/types/pack.ts`
 - Modify: `src/shared/types/user.ts`
 - Modify: `src/shared/lib/packs-client.ts`
@@ -27,8 +28,8 @@
 In `src/shared/types/pack.ts`, add to the `Pack` interface (after `avgAgreementPercent`):
 
 ```ts
-  status: "pending" | "approved" | "rejected";
-  rejectionReason: string | null;
+status: "pending" | "approved" | "rejected";
+rejectionReason: string | null;
 ```
 
 - [ ] **Step 2: Add a `PublicUserProfile` type**
@@ -51,12 +52,12 @@ export interface PublicUserProfile {
 Read `src/shared/lib/packs-client.test.ts` first to see its exact current structure, then add a test alongside the existing filter-query tests (e.g. near a test that checks `format`/`tags`/`q` end up in the query string):
 
 ```ts
-  it("includes authorId in the query string when provided", async () => {
-    mockFetchOnce({ items: [], total: 0, page: 1, limit: 20 });
-    await packsClient.list({ authorId: "user-1" });
-    const url = getLastFetchUrl();
-    expect(url).toContain("authorId=user-1");
-  });
+it("includes authorId in the query string when provided", async () => {
+  mockFetchOnce({ items: [], total: 0, page: 1, limit: 20 });
+  await packsClient.list({ authorId: "user-1" });
+  const url = getLastFetchUrl();
+  expect(url).toContain("authorId=user-1");
+});
 ```
 
 (Adapt the exact mock/assertion helper names to whatever this test file's existing tests already use — e.g. if it mocks `global.fetch` directly rather than via named helpers like `mockFetchOnce`/`getLastFetchUrl`, follow that same pattern instead. Read the file fully before writing this.)
@@ -77,7 +78,7 @@ In `src/shared/lib/packs-client.ts`, add to `ListPacksFilters`:
 Add to `buildListQuery`, alongside the existing `if` checks:
 
 ```ts
-  if (filters.authorId) params.set("authorId", filters.authorId);
+if (filters.authorId) params.set("authorId", filters.authorId);
 ```
 
 - [ ] **Step 6: Run test to verify it passes**
@@ -90,27 +91,27 @@ Expected: PASS.
 Read `src/shared/lib/users-client.test.ts` first to see its exact existing structure/mocking pattern (it already tests `ban`/`unban`/`changeRole`), then add:
 
 ```ts
-  it("getProfile fetches a user's public profile by id", async () => {
-    mockFetchOnce({
-      id: "user-1",
-      username: "alice",
-      bio: "Hello",
-      createdAt: "2026-01-01T00:00:00.000Z",
-      followerCount: 3,
-      isFollowedByMe: null,
-    });
-    const result = await usersClient.getProfile("user-1");
-    expect(result.username).toBe("alice");
-    expect(getLastFetchUrl()).toContain("/users/user-1");
+it("getProfile fetches a user's public profile by id", async () => {
+  mockFetchOnce({
+    id: "user-1",
+    username: "alice",
+    bio: "Hello",
+    createdAt: "2026-01-01T00:00:00.000Z",
+    followerCount: 3,
+    isFollowedByMe: null,
   });
+  const result = await usersClient.getProfile("user-1");
+  expect(result.username).toBe("alice");
+  expect(getLastFetchUrl()).toContain("/users/user-1");
+});
 
-  it("updateProfile PATCHes the caller's own bio", async () => {
-    mockFetchOnce({ id: "user-1", bio: "New bio" });
-    const result = await usersClient.updateProfile("New bio");
-    expect(result.bio).toBe("New bio");
-    expect(getLastFetchUrl()).toContain("/users/me");
-    expect(getLastFetchMethod()).toBe("PATCH");
-  });
+it("updateProfile PATCHes the caller's own bio", async () => {
+  mockFetchOnce({ id: "user-1", bio: "New bio" });
+  const result = await usersClient.updateProfile("New bio");
+  expect(result.bio).toBe("New bio");
+  expect(getLastFetchUrl()).toContain("/users/me");
+  expect(getLastFetchMethod()).toBe("PATCH");
+});
 ```
 
 (Again, adapt exact mock-helper names to this file's real existing pattern — read it first.)
@@ -160,6 +161,7 @@ git commit -m "feat: add authorId pack filter and user profile API client method
 ### Task 2: `ProfileScreen` component (self-view)
 
 **Files:**
+
 - Create: `src/features/profile/ProfileScreen.tsx`
 - Create: `src/features/profile/ProfileScreen.test.tsx`
 - Modify: `src/features/home/PackCard.tsx`
@@ -170,26 +172,26 @@ git commit -m "feat: add authorId pack filter and user profile API client method
 Read `src/features/home/PackCard.test.tsx` first, then add:
 
 ```tsx
-  it("shows a pending badge when showStatus is true and the pack is pending", () => {
-    render(<PackCard pack={{ ...SAMPLE_PACK, status: "pending" }} showStatus />);
-    expect(screen.getByText("Pending review")).toBeInTheDocument();
-  });
+it("shows a pending badge when showStatus is true and the pack is pending", () => {
+  render(<PackCard pack={{ ...SAMPLE_PACK, status: "pending" }} showStatus />);
+  expect(screen.getByText("Pending review")).toBeInTheDocument();
+});
 
-  it("shows a rejected badge when showStatus is true and the pack is rejected", () => {
-    render(<PackCard pack={{ ...SAMPLE_PACK, status: "rejected" }} showStatus />);
-    expect(screen.getByText("Rejected")).toBeInTheDocument();
-  });
+it("shows a rejected badge when showStatus is true and the pack is rejected", () => {
+  render(<PackCard pack={{ ...SAMPLE_PACK, status: "rejected" }} showStatus />);
+  expect(screen.getByText("Rejected")).toBeInTheDocument();
+});
 
-  it("shows no status badge when showStatus is true but the pack is approved", () => {
-    render(<PackCard pack={{ ...SAMPLE_PACK, status: "approved" }} showStatus />);
-    expect(screen.queryByText("Pending review")).not.toBeInTheDocument();
-    expect(screen.queryByText("Rejected")).not.toBeInTheDocument();
-  });
+it("shows no status badge when showStatus is true but the pack is approved", () => {
+  render(<PackCard pack={{ ...SAMPLE_PACK, status: "approved" }} showStatus />);
+  expect(screen.queryByText("Pending review")).not.toBeInTheDocument();
+  expect(screen.queryByText("Rejected")).not.toBeInTheDocument();
+});
 
-  it("shows no status badge when showStatus is not passed, even for a pending pack", () => {
-    render(<PackCard pack={{ ...SAMPLE_PACK, status: "pending" }} />);
-    expect(screen.queryByText("Pending review")).not.toBeInTheDocument();
-  });
+it("shows no status badge when showStatus is not passed, even for a pending pack", () => {
+  render(<PackCard pack={{ ...SAMPLE_PACK, status: "pending" }} />);
+  expect(screen.queryByText("Pending review")).not.toBeInTheDocument();
+});
 ```
 
 (Use whatever this test file's existing sample-pack fixture is named — likely `SAMPLE_PACK` or similar; read the file to confirm the exact name and its shape, and make sure it already includes `status: "approved"` per Task 1's fixture-update step, or add it now if this is the fixture that needed updating.)
@@ -258,10 +260,21 @@ import { usersClient } from "@/src/shared/lib/users-client";
 import { packsClient } from "@/src/shared/lib/packs-client";
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
-  authClient: { register: vi.fn(), login: vi.fn(), logout: vi.fn(), refresh: vi.fn() },
+  authClient: {
+    register: vi.fn(),
+    login: vi.fn(),
+    logout: vi.fn(),
+    refresh: vi.fn(),
+  },
 }));
 vi.mock("@/src/shared/lib/users-client", () => ({
-  usersClient: { getProfile: vi.fn(), updateProfile: vi.fn(), ban: vi.fn(), unban: vi.fn(), changeRole: vi.fn() },
+  usersClient: {
+    getProfile: vi.fn(),
+    updateProfile: vi.fn(),
+    ban: vi.fn(),
+    unban: vi.fn(),
+    changeRole: vi.fn(),
+  },
 }));
 vi.mock("@/src/shared/lib/packs-client", () => ({
   packsClient: { list: vi.fn(), create: vi.fn(), getById: vi.fn() },
@@ -285,7 +298,10 @@ function renderScreen() {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "t", user: MOCK_USER });
+  vi.mocked(authClient.refresh).mockResolvedValue({
+    accessToken: "t",
+    user: MOCK_USER,
+  });
   vi.mocked(usersClient.getProfile).mockResolvedValue({
     id: "u1",
     username: "alice",
@@ -294,7 +310,12 @@ beforeEach(() => {
     followerCount: 3,
     isFollowedByMe: null,
   });
-  vi.mocked(packsClient.list).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+  vi.mocked(packsClient.list).mockResolvedValue({
+    items: [],
+    total: 0,
+    page: 1,
+    limit: 20,
+  });
 });
 
 describe("ProfileScreen", () => {
@@ -321,13 +342,18 @@ describe("ProfileScreen", () => {
   it("fetches the current user's own packs across every status", async () => {
     renderScreen();
     await screen.findByText("alice");
-    expect(packsClient.list).toHaveBeenCalledWith(expect.objectContaining({ authorId: "u1" }));
+    expect(packsClient.list).toHaveBeenCalledWith(
+      expect.objectContaining({ authorId: "u1" }),
+    );
   });
 
   it("shows a link to edit the profile", async () => {
     renderScreen();
     await screen.findByText("alice");
-    expect(screen.getByRole("link", { name: /edit/i })).toHaveAttribute("href", "/profile/edit");
+    expect(screen.getByRole("link", { name: /edit/i })).toHaveAttribute(
+      "href",
+      "/profile/edit",
+    );
   });
 
   it("shows 'no packs yet' when the user has created nothing", async () => {
@@ -391,7 +417,9 @@ export function ProfileScreen() {
   const { user, status: authStatus } = useAuth();
   const [profile, setProfile] = useState<PublicUserProfile | null>(null);
   const [packs, setPacks] = useState<Pack[]>([]);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "ready" | "error">(
+    "loading",
+  );
 
   useEffect(() => {
     if (authStatus !== "authenticated" || !user) return;
@@ -420,8 +448,13 @@ export function ProfileScreen() {
   if (authStatus === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">You need to be logged in to view your profile.</Text>
-        <Link href="/auth?next=%2Fprofile" className={buttonClassName("primary", "mt-4 w-fit")}>
+        <Text variant="secondary">
+          You need to be logged in to view your profile.
+        </Text>
+        <Link
+          href="/auth?next=%2Fprofile"
+          className={buttonClassName("primary", "mt-4 w-fit")}
+        >
           Log in
         </Link>
       </div>
@@ -431,7 +464,9 @@ export function ProfileScreen() {
   if (status === "error" || !profile) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text className="text-[#ff6b6b]">Couldn&apos;t load your profile. Try again later.</Text>
+        <Text className="text-[#ff6b6b]">
+          Couldn&apos;t load your profile. Try again later.
+        </Text>
       </div>
     );
   }
@@ -450,11 +485,15 @@ export function ProfileScreen() {
               {profile.username}
             </Text>
             <Text variant="tertiary" className="text-sm">
-              {profile.followerCount} follower{profile.followerCount === 1 ? "" : "s"}
+              {profile.followerCount} follower
+              {profile.followerCount === 1 ? "" : "s"}
             </Text>
           </div>
         </div>
-        <Link href="/profile/edit" className={buttonClassName("secondary", "w-fit")}>
+        <Link
+          href="/profile/edit"
+          className={buttonClassName("secondary", "w-fit")}
+        >
           Edit profile
         </Link>
       </div>
@@ -512,6 +551,7 @@ git commit -m "feat: add ProfileScreen with bio, follower count, and My Packs"
 ### Task 3: `ProfileEditForm` component
 
 **Files:**
+
 - Create: `src/features/profile/ProfileEditForm.tsx`
 - Create: `src/features/profile/ProfileEditForm.test.tsx`
 
@@ -532,10 +572,21 @@ const push = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
-  authClient: { register: vi.fn(), login: vi.fn(), logout: vi.fn(), refresh: vi.fn() },
+  authClient: {
+    register: vi.fn(),
+    login: vi.fn(),
+    logout: vi.fn(),
+    refresh: vi.fn(),
+  },
 }));
 vi.mock("@/src/shared/lib/users-client", () => ({
-  usersClient: { getProfile: vi.fn(), updateProfile: vi.fn(), ban: vi.fn(), unban: vi.fn(), changeRole: vi.fn() },
+  usersClient: {
+    getProfile: vi.fn(),
+    updateProfile: vi.fn(),
+    ban: vi.fn(),
+    unban: vi.fn(),
+    changeRole: vi.fn(),
+  },
 }));
 
 const MOCK_USER = {
@@ -556,7 +607,10 @@ function renderForm() {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "t", user: MOCK_USER });
+  vi.mocked(authClient.refresh).mockResolvedValue({
+    accessToken: "t",
+    user: MOCK_USER,
+  });
   vi.mocked(usersClient.getProfile).mockResolvedValue({
     id: "u1",
     username: "alice",
@@ -565,7 +619,10 @@ beforeEach(() => {
     followerCount: 0,
     isFollowedByMe: null,
   });
-  vi.mocked(usersClient.updateProfile).mockResolvedValue({ id: "u1", bio: "New bio" });
+  vi.mocked(usersClient.updateProfile).mockResolvedValue({
+    id: "u1",
+    bio: "New bio",
+  });
 });
 
 describe("ProfileEditForm", () => {
@@ -582,7 +639,9 @@ describe("ProfileEditForm", () => {
     await user.type(textarea, "New bio");
     await user.click(screen.getByRole("button", { name: /save/i }));
 
-    await waitFor(() => expect(usersClient.updateProfile).toHaveBeenCalledWith("New bio"));
+    await waitFor(() =>
+      expect(usersClient.updateProfile).toHaveBeenCalledWith("New bio"),
+    );
     await waitFor(() => expect(push).toHaveBeenCalledWith("/profile"));
   });
 
@@ -593,7 +652,9 @@ describe("ProfileEditForm", () => {
   });
 
   it("shows an error message if saving fails", async () => {
-    vi.mocked(usersClient.updateProfile).mockRejectedValue(new Error("network error"));
+    vi.mocked(usersClient.updateProfile).mockRejectedValue(
+      new Error("network error"),
+    );
     const user = userEvent.setup();
     renderForm();
     await screen.findByDisplayValue("Old bio");
@@ -656,18 +717,24 @@ export function ProfileEditForm() {
     }
   }
 
-  if (authStatus === "loading" || (authStatus === "authenticated" && !loaded)) return null;
+  if (authStatus === "loading" || (authStatus === "authenticated" && !loaded))
+    return null;
 
   if (authStatus === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">You need to be logged in to edit your profile.</Text>
+        <Text variant="secondary">
+          You need to be logged in to edit your profile.
+        </Text>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto w-full max-w-md px-7 py-10">
+    <form
+      onSubmit={handleSubmit}
+      className="mx-auto w-full max-w-md px-7 py-10"
+    >
       <Text as="h1" variant="title" className="mb-6 text-2xl">
         Edit profile
       </Text>
@@ -689,9 +756,7 @@ export function ProfileEditForm() {
         className="w-full rounded-[10px] border border-border bg-surface p-3 text-sm text-foreground placeholder:text-foreground-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
       />
 
-      {error && (
-        <Text className="mt-3 text-sm text-[#ff6b6b]">{error}</Text>
-      )}
+      {error && <Text className="mt-3 text-sm text-[#ff6b6b]">{error}</Text>}
 
       <Button type="submit" disabled={pending} className="mt-6 w-fit">
         {pending ? "Saving…" : "Save"}
@@ -723,6 +788,7 @@ git commit -m "feat: add ProfileEditForm for bio editing"
 ### Task 4: Routing + `UserMenu` nav link
 
 **Files:**
+
 - Create: `app/profile/page.tsx`
 - Create: `app/profile/edit/page.tsx`
 - Modify: `src/shared/components/UserMenu.tsx`
@@ -765,12 +831,15 @@ export default function ProfileEditPage() {
 In `src/shared/components/UserMenu.test.tsx`, read the file first, then add (following the existing pattern for how the `Docs`/`Settings` link tests are written):
 
 ```tsx
-  it("links to the profile page", async () => {
-    const user = userEvent.setup();
-    render(<UserMenu user={MOCK_USER} onLogout={vi.fn()} />);
-    await user.click(screen.getByRole("button", { name: "Account menu" }));
-    expect(screen.getByRole("menuitem", { name: "Profile" })).toHaveAttribute("href", "/profile");
-  });
+it("links to the profile page", async () => {
+  const user = userEvent.setup();
+  render(<UserMenu user={MOCK_USER} onLogout={vi.fn()} />);
+  await user.click(screen.getByRole("button", { name: "Account menu" }));
+  expect(screen.getByRole("menuitem", { name: "Profile" })).toHaveAttribute(
+    "href",
+    "/profile",
+  );
+});
 ```
 
 (Match `MOCK_USER`'s exact name/shape to whatever this test file already defines.)
@@ -785,14 +854,14 @@ Expected: FAIL — no "Profile" menuitem exists yet.
 In `src/shared/components/UserMenu.tsx`, add a new `Link` between the user-info header block and the "Docs" link:
 
 ```tsx
-          <Link
-            href="/profile"
-            role="menuitem"
-            onClick={() => setOpen(false)}
-            className="block px-3.5 py-2.5 text-sm text-foreground hover:bg-white/[0.06]"
-          >
-            Profile
-          </Link>
+<Link
+  href="/profile"
+  role="menuitem"
+  onClick={() => setOpen(false)}
+  className="block px-3.5 py-2.5 text-sm text-foreground hover:bg-white/[0.06]"
+>
+  Profile
+</Link>
 ```
 
 - [ ] **Step 5: Run test to verify it passes**

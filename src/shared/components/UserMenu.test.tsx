@@ -26,7 +26,9 @@ function withIntl(ui: ReactNode) {
 describe("UserMenu", () => {
   it("shows only the initial-letter trigger when closed", () => {
     render(withIntl(<UserMenu user={USER} onLogout={vi.fn()} />));
-    expect(screen.getByRole("button", { name: "Account menu" })).toHaveTextContent("A");
+    expect(
+      screen.getByRole("button", { name: "Account menu" }),
+    ).toHaveTextContent("A");
     expect(screen.queryByRole("menu")).not.toBeInTheDocument();
   });
 
@@ -39,45 +41,80 @@ describe("UserMenu", () => {
     expect(screen.getByRole("menu")).toBeInTheDocument();
     expect(screen.getByText("alice")).toBeInTheDocument();
     expect(screen.getByText("alice@example.com")).toBeInTheDocument();
-    expect(screen.getByRole("menuitem", { name: "Docs" })).toHaveAttribute("href", "/docs");
-    expect(screen.getByRole("menuitem", { name: "Settings" })).toHaveAttribute("href", "/settings");
+    expect(screen.getByRole("menuitem", { name: "Docs" })).toHaveAttribute(
+      "href",
+      "/docs",
+    );
+    expect(screen.getByRole("menuitem", { name: "Settings" })).toHaveAttribute(
+      "href",
+      "/settings",
+    );
   });
 
   it("links to the profile page", async () => {
     const user = userEvent.setup();
     render(withIntl(<UserMenu user={USER} onLogout={vi.fn()} />));
     await user.click(screen.getByRole("button", { name: "Account menu" }));
-    expect(screen.getByRole("menuitem", { name: "Profile" })).toHaveAttribute("href", "/profile");
+    expect(screen.getByRole("menuitem", { name: "Profile" })).toHaveAttribute(
+      "href",
+      "/profile",
+    );
   });
 
   it("shows an Admin link for a manager/admin role but not for a plain user", async () => {
     const user = userEvent.setup();
-    const { rerender } = render(withIntl(<UserMenu user={{ ...USER, role: "manager" }} onLogout={vi.fn()} />));
+    const { rerender } = render(
+      withIntl(
+        <UserMenu user={{ ...USER, role: "manager" }} onLogout={vi.fn()} />,
+      ),
+    );
     await user.click(screen.getByRole("button", { name: "Account menu" }));
-    expect(screen.getByRole("menuitem", { name: "Admin" })).toHaveAttribute("href", "/admin");
+    expect(screen.getByRole("menuitem", { name: "Admin" })).toHaveAttribute(
+      "href",
+      "/admin",
+    );
 
     rerender(withIntl(<UserMenu user={USER} onLogout={vi.fn()} />));
-    expect(screen.queryByRole("menuitem", { name: "Admin" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("menuitem", { name: "Admin" }),
+    ).not.toBeInTheDocument();
   });
 
   it("shows a Support link for moderator+ but not for a plain user", async () => {
     const user = userEvent.setup();
-    const { rerender } = render(withIntl(<UserMenu user={{ ...USER, role: "moderator" }} onLogout={vi.fn()} />));
+    const { rerender } = render(
+      withIntl(
+        <UserMenu user={{ ...USER, role: "moderator" }} onLogout={vi.fn()} />,
+      ),
+    );
     await user.click(screen.getByRole("button", { name: "Account menu" }));
-    expect(screen.getByRole("menuitem", { name: "Support" })).toHaveAttribute("href", "/support");
+    expect(screen.getByRole("menuitem", { name: "Support" })).toHaveAttribute(
+      "href",
+      "/support",
+    );
 
     rerender(withIntl(<UserMenu user={USER} onLogout={vi.fn()} />));
-    expect(screen.queryByRole("menuitem", { name: "Support" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("menuitem", { name: "Support" }),
+    ).not.toBeInTheDocument();
   });
 
   it("shows a Moderation link for moderator+ but not for a plain user", async () => {
     const user = userEvent.setup();
-    const { rerender } = render(withIntl(<UserMenu user={{ ...USER, role: "moderator" }} onLogout={vi.fn()} />));
+    const { rerender } = render(
+      withIntl(
+        <UserMenu user={{ ...USER, role: "moderator" }} onLogout={vi.fn()} />,
+      ),
+    );
     await user.click(screen.getByRole("button", { name: "Account menu" }));
-    expect(screen.getByRole("menuitem", { name: "Moderation" })).toHaveAttribute("href", "/moderation");
+    expect(
+      screen.getByRole("menuitem", { name: "Moderation" }),
+    ).toHaveAttribute("href", "/moderation");
 
     rerender(withIntl(<UserMenu user={USER} onLogout={vi.fn()} />));
-    expect(screen.queryByRole("menuitem", { name: "Moderation" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("menuitem", { name: "Moderation" }),
+    ).not.toBeInTheDocument();
   });
 
   it("closes the menu when clicking outside", async () => {

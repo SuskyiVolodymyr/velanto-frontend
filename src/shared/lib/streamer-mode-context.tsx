@@ -1,6 +1,13 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from "react";
 import type { ReactNode } from "react";
 import { useHydratedValue } from "@/src/shared/hooks/useHydratedValue";
 import {
@@ -20,7 +27,9 @@ export interface StreamerModeContextValue {
   reveal: (id: string) => void;
 }
 
-const StreamerModeContext = createContext<StreamerModeContextValue | null>(null);
+const StreamerModeContext = createContext<StreamerModeContextValue | null>(
+  null,
+);
 
 export function StreamerModeProvider({ children }: { children: ReactNode }) {
   // The persisted flag is a client-only localStorage read, hydrated via
@@ -62,19 +71,29 @@ export function StreamerModeProvider({ children }: { children: ReactNode }) {
     });
   }, []);
 
-  const isRevealed = useCallback((id: string) => revealedIds.has(id), [revealedIds]);
+  const isRevealed = useCallback(
+    (id: string) => revealedIds.has(id),
+    [revealedIds],
+  );
 
   const value = useMemo<StreamerModeContextValue>(
     () => ({ enabled, setEnabled, toggle, isRevealed, reveal }),
     [enabled, setEnabled, toggle, isRevealed, reveal],
   );
 
-  return <StreamerModeContext.Provider value={value}>{children}</StreamerModeContext.Provider>;
+  return (
+    <StreamerModeContext.Provider value={value}>
+      {children}
+    </StreamerModeContext.Provider>
+  );
 }
 
 export function useStreamerMode(): StreamerModeContextValue {
   const ctx = useContext(StreamerModeContext);
-  if (!ctx) throw new Error("useStreamerMode must be used within a StreamerModeProvider");
+  if (!ctx)
+    throw new Error(
+      "useStreamerMode must be used within a StreamerModeProvider",
+    );
   return ctx;
 }
 

@@ -13,6 +13,7 @@
 ### Task 1: `packsClient` — `sort`/`window` query params
 
 **Files:**
+
 - Modify: `src/shared/lib/packs-client.ts`
 - Test: `src/shared/lib/packs-client.test.ts` (create if it doesn't exist — check first; if a test file already exists for this module, add to it)
 
@@ -31,7 +32,12 @@ vi.mock("@/src/shared/lib/api-client", () => ({
 
 describe("packsClient.list — sort/window query params", () => {
   beforeEach(() => {
-    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 50 });
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 50,
+    });
   });
 
   it("omits sort/window when not provided", async () => {
@@ -89,8 +95,8 @@ export interface ListPacksFilters {
 And `buildListQuery`, adding after the existing `authorId` line:
 
 ```ts
-  if (filters.sort) params.set("sort", filters.sort);
-  if (filters.window) params.set("window", filters.window);
+if (filters.sort) params.set("sort", filters.sort);
+if (filters.window) params.set("window", filters.window);
 ```
 
 - [ ] **Step 4: Run tests to verify they pass**
@@ -115,6 +121,7 @@ git commit -m "feat: add sort/window params to packsClient.list()"
 ### Task 2: `HomeFeed` — sort toggle + window picker
 
 **Files:**
+
 - Modify: `src/features/home/HomeFeed.tsx`
 - Test: `src/features/home/HomeFeed.test.tsx` (check if it exists first — read and match its existing mocking pattern for `packsClient`; if none exists, mock `packsClient.list` the same way Task 1 mocks `apiClient`)
 
@@ -135,7 +142,12 @@ vi.mock("@/src/shared/lib/packs-client", () => ({
 
 describe("HomeFeed — popularity sort", () => {
   beforeEach(() => {
-    vi.mocked(packsClient.list).mockResolvedValue({ items: [], total: 0, page: 1, limit: 50 });
+    vi.mocked(packsClient.list).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 50,
+    });
   });
 
   it("does not send sort/window by default", async () => {
@@ -165,13 +177,17 @@ describe("HomeFeed — popularity sort", () => {
     render(<HomeFeed />);
     await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
 
-    expect(screen.queryByRole("button", { name: "Month" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Month" }),
+    ).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Popular" }));
     expect(screen.getByRole("button", { name: "Month" })).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Relevance" }));
-    expect(screen.queryByRole("button", { name: "Month" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Month" }),
+    ).not.toBeInTheDocument();
   });
 
   it("changing the window while Popular is active sends the new window", async () => {
@@ -282,45 +298,47 @@ Update the fetch `useEffect`'s call and dependency array:
 Add the sort pill group in the JSX, right after the existing format pill group (reuses the exact same pill button markup/classes — extract nothing new, just repeat the pattern for a second `.map()`):
 
 ```tsx
-      <div className="flex flex-wrap gap-2">
-        {SORT_OPTIONS.map((option) => (
-          <button
-            key={option.value}
-            type="button"
-            onClick={() => setSort(option.value)}
-            aria-pressed={sort === option.value}
-            className={cn(
-              "rounded-[9px] border px-3 py-1.5 text-sm font-medium transition-colors",
-              sort === option.value
-                ? "border-acc/30 bg-acc/10 text-acc"
-                : "border-border bg-white/[0.03] text-foreground-secondary",
-            )}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
-
-      {sort === "popular" && (
-        <div className="flex flex-wrap gap-2">
-          {WINDOW_OPTIONS.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              onClick={() => setWindow(option.value)}
-              aria-pressed={window === option.value}
-              className={cn(
-                "rounded-[9px] border px-3 py-1.5 text-sm font-medium transition-colors",
-                window === option.value
-                  ? "border-acc/30 bg-acc/10 text-acc"
-                  : "border-border bg-white/[0.03] text-foreground-secondary",
-              )}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
+<div className="flex flex-wrap gap-2">
+  {SORT_OPTIONS.map((option) => (
+    <button
+      key={option.value}
+      type="button"
+      onClick={() => setSort(option.value)}
+      aria-pressed={sort === option.value}
+      className={cn(
+        "rounded-[9px] border px-3 py-1.5 text-sm font-medium transition-colors",
+        sort === option.value
+          ? "border-acc/30 bg-acc/10 text-acc"
+          : "border-border bg-white/[0.03] text-foreground-secondary",
       )}
+    >
+      {option.label}
+    </button>
+  ))}
+</div>;
+
+{
+  sort === "popular" && (
+    <div className="flex flex-wrap gap-2">
+      {WINDOW_OPTIONS.map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          onClick={() => setWindow(option.value)}
+          aria-pressed={window === option.value}
+          className={cn(
+            "rounded-[9px] border px-3 py-1.5 text-sm font-medium transition-colors",
+            window === option.value
+              ? "border-acc/30 bg-acc/10 text-acc"
+              : "border-border bg-white/[0.03] text-foreground-secondary",
+          )}
+        >
+          {option.label}
+        </button>
+      ))}
+    </div>
+  );
+}
 ```
 
 Note: `window` as a state variable name shadows the global `window` object. This file is a client component that doesn't reference `globalThis.window` anywhere currently (confirm via search before implementing) — if it turns out something does need the global, rename the state variable to `popularityWindow` instead and update all references accordingly. Prefer catching this yourself during implementation over leaving a latent shadowing bug.
@@ -363,6 +381,7 @@ Dispatch `pr-review-toolkit:code-reviewer` against the full diff of `feature/pop
 - [ ] **Step 3: Manual browser verification**
 
 Using Claude Preview against the running dev server (frontend on :3000, backend on :3001):
+
 - Load the home feed, confirm default order unchanged (no `sort`/`window` sent — check via `preview_network`).
 - Click "Popular", confirm the request now includes `sort=popular&window=week` and the pack order visibly changes/re-fetches.
 - Click through each window option (Day/Month/Year/All), confirm each changes the request's `window` param.

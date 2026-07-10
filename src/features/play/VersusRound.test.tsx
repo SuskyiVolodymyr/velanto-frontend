@@ -11,13 +11,23 @@ function youtubeItem(id: string, title: string, value: string) {
   return { id, type: "youtube" as const, title, value };
 }
 
-const SIDE_A = { id: "ca", name: "Boys", items: [textItem("1", "Naruto"), textItem("2", "Sasuke")] };
+const SIDE_A = {
+  id: "ca",
+  name: "Boys",
+  items: [textItem("1", "Naruto"), textItem("2", "Sasuke")],
+};
 const SIDE_B = { id: "cb", name: "Girls", items: [textItem("3", "Sakura")] };
 
 describe("VersusRound", () => {
   it("renders both sides with a VS divider", () => {
     render(
-      <VersusRound sideA={SIDE_A} sideB={SIDE_B} revealedCount={2} selectedId={null} onSelect={vi.fn()} />,
+      <VersusRound
+        sideA={SIDE_A}
+        sideB={SIDE_B}
+        revealedCount={2}
+        selectedId={null}
+        onSelect={vi.fn()}
+      />,
     );
 
     expect(screen.getByText("Boys")).toBeInTheDocument();
@@ -29,7 +39,13 @@ describe("VersusRound", () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();
     render(
-      <VersusRound sideA={SIDE_A} sideB={SIDE_B} revealedCount={2} selectedId={null} onSelect={onSelect} />,
+      <VersusRound
+        sideA={SIDE_A}
+        sideB={SIDE_B}
+        revealedCount={2}
+        selectedId={null}
+        onSelect={onSelect}
+      />,
     );
 
     await user.click(screen.getByRole("button", { name: "Pick Boys" }));
@@ -40,7 +56,13 @@ describe("VersusRound", () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();
     render(
-      <VersusRound sideA={SIDE_A} sideB={SIDE_B} revealedCount={2} selectedId={null} onSelect={onSelect} />,
+      <VersusRound
+        sideA={SIDE_A}
+        sideB={SIDE_B}
+        revealedCount={2}
+        selectedId={null}
+        onSelect={onSelect}
+      />,
     );
 
     screen.getByRole("button", { name: "Pick Girls" }).focus();
@@ -64,7 +86,9 @@ describe("VersusRound", () => {
       />,
     );
 
-    expect(screen.getByRole("img", { name: "YouTube video thumbnail" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("img", { name: "YouTube video thumbnail" }),
+    ).toBeInTheDocument();
   });
 
   it("does not select the side when clicking the video's own play button", async () => {
@@ -85,7 +109,9 @@ describe("VersusRound", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Play video preview" }));
+    await user.click(
+      screen.getByRole("button", { name: "Play video preview" }),
+    );
     expect(onSelect).not.toHaveBeenCalled();
   });
 
@@ -116,7 +142,13 @@ describe("VersusRound", () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();
     render(
-      <VersusRound sideA={SIDE_A} sideB={SIDE_B} revealedCount={2} selectedId={null} onSelect={onSelect} />,
+      <VersusRound
+        sideA={SIDE_A}
+        sideB={SIDE_B}
+        revealedCount={2}
+        selectedId={null}
+        onSelect={onSelect}
+      />,
     );
 
     screen.getByRole("button", { name: "Pick Boys" }).focus();

@@ -23,11 +23,18 @@ describe("canActOn", () => {
 
 describe("assignableRolesFor", () => {
   it("admin acting on a moderator can assign user, moderator, or manager", () => {
-    expect(assignableRolesFor("admin", "moderator")).toEqual(["user", "moderator", "manager"]);
+    expect(assignableRolesFor("admin", "moderator")).toEqual([
+      "user",
+      "moderator",
+      "manager",
+    ]);
   });
 
   it("manager acting on a moderator can only assign user or moderator", () => {
-    expect(assignableRolesFor("manager", "moderator")).toEqual(["user", "moderator"]);
+    expect(assignableRolesFor("manager", "moderator")).toEqual([
+      "user",
+      "moderator",
+    ]);
   });
 
   it("manager acting on a manager gets no options (cannot act on equal rank)", () => {

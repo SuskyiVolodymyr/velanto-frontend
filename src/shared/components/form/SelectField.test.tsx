@@ -53,7 +53,12 @@ describe("SelectField", () => {
 
     await user.click(screen.getByRole("button", { name: "Save" }));
 
-    expect(await screen.findByText("Please choose a language.")).toBeInTheDocument();
-    expect(screen.getByLabelText("Language")).toHaveAttribute("aria-invalid", "true");
+    expect(
+      await screen.findByText("Please choose a language."),
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText("Language")).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
   });
 });

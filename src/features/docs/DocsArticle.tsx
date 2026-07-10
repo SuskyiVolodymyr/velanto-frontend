@@ -36,23 +36,37 @@ export function DocsArticle({ activeTopic }: { activeTopic: TopicId }) {
             What is Velanto?
           </Text>
           <Text variant="secondary" className="mb-4 leading-7">
-            Velanto is a builder for elimination-style quizzes, called packs. A creator picks a
-            topic and one of five elimination formats, adds items, and publishes. Anyone can
-            play a pack as many times as they like — every playthrough draws a fresh sample, so
-            no two runs are quite the same.
+            Velanto is a builder for elimination-style quizzes, called packs. A
+            creator picks a topic and one of five elimination formats, adds
+            items, and publishes. Anyone can play a pack as many times as they
+            like — every playthrough draws a fresh sample, so no two runs are
+            quite the same.
           </Text>
           <Text variant="secondary" className="mb-7 leading-7">
-            Play is always blind: you never see how anyone else picked until you finish. Once
-            you&apos;re done, stats unlock — popular choices, agreement rates, and how your
-            result compares to everyone else who&apos;s played.
+            Play is always blind: you never see how anyone else picked until you
+            finish. Once you&apos;re done, stats unlock — popular choices,
+            agreement rates, and how your result compares to everyone else
+            who&apos;s played.
           </Text>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             {[
-              { title: "Build a pack", body: "Pick a format, add items or tag pools, set rounds." },
-              { title: "Play blind", body: "No influence from other players' choices." },
-              { title: "Compare after", body: "Stats unlock only once you've finished." },
+              {
+                title: "Build a pack",
+                body: "Pick a format, add items or tag pools, set rounds.",
+              },
+              {
+                title: "Play blind",
+                body: "No influence from other players' choices.",
+              },
+              {
+                title: "Compare after",
+                body: "Stats unlock only once you've finished.",
+              },
             ].map((card) => (
-              <Card key={card.title} className="hover:translate-y-0 hover:shadow-none">
+              <Card
+                key={card.title}
+                className="hover:translate-y-0 hover:shadow-none"
+              >
                 <Text className="mb-1.5 font-semibold">{card.title}</Text>
                 <Text variant="tertiary" className="text-sm leading-6">
                   {card.body}
@@ -69,8 +83,9 @@ export function DocsArticle({ activeTopic }: { activeTopic: TopicId }) {
             Creating a pack
           </Text>
           <Text variant="secondary" className="mb-4 leading-7">
-            Every pack pairs a topic with exactly one elimination format. Items can be added two
-            ways, and you can freely mix both inside the same pack:
+            Every pack pairs a topic with exactly one elimination format. Items
+            can be added two ways, and you can freely mix both inside the same
+            pack:
           </Text>
           <ul className="mb-4 list-disc pl-5">
             <li className="mb-2">
@@ -88,14 +103,14 @@ export function DocsArticle({ activeTopic }: { activeTopic: TopicId }) {
               </Text>
               <Text as="span" variant="secondary">
                 {" "}
-                — tag items (year, genre, whatever) and a round pulls N random items sharing
-                that tag.
+                — tag items (year, genre, whatever) and a round pulls N random
+                items sharing that tag.
               </Text>
             </li>
           </ul>
           <Text variant="secondary" className="leading-7">
-            Items can be text, an image upload, or a YouTube link — each with a title. Once your
-            items and rounds are set, publish.
+            Items can be text, an image upload, or a YouTube link — each with a
+            title. Once your items and rounds are set, publish.
           </Text>
         </>
       )}
@@ -107,7 +122,10 @@ export function DocsArticle({ activeTopic }: { activeTopic: TopicId }) {
           </Text>
           <div className="flex flex-col gap-3">
             {FORMAT_DOCS.map((format) => (
-              <Card key={format.name} className="hover:translate-y-0 hover:shadow-none">
+              <Card
+                key={format.name}
+                className="hover:translate-y-0 hover:shadow-none"
+              >
                 <Text className="mb-1.5 font-semibold">{format.name}</Text>
                 <Text variant="secondary" className="text-sm leading-6">
                   {format.desc}
@@ -124,14 +142,16 @@ export function DocsArticle({ activeTopic }: { activeTopic: TopicId }) {
             Playing a pack
           </Text>
           <Text variant="secondary" className="mb-4 leading-7">
-            Open any pack and press Play. You&apos;ll go round by round following the logic of
-            its format — save one, rank blind, eliminate — with no visibility into how anyone
-            else played. At the end you get a personal artifact: a final ranking, a favorite, or
-            a saved set, depending on the format.
+            Open any pack and press Play. You&apos;ll go round by round
+            following the logic of its format — save one, rank blind, eliminate
+            — with no visibility into how anyone else played. At the end you get
+            a personal artifact: a final ranking, a favorite, or a saved set,
+            depending on the format.
           </Text>
           <Text variant="secondary" className="leading-7">
-            You can replay any pack as many times as you like — tag pools resample randomly each
-            run, so the experience isn&apos;t identical twice.
+            You can replay any pack as many times as you like — tag pools
+            resample randomly each run, so the experience isn&apos;t identical
+            twice.
           </Text>
         </>
       )}
@@ -142,9 +162,10 @@ export function DocsArticle({ activeTopic }: { activeTopic: TopicId }) {
             Stats &amp; comparisons
           </Text>
           <Text variant="secondary" className="leading-7">
-            Stats stay locked while you&apos;re playing so nobody&apos;s choices are influenced
-            by the crowd. Once you finish, you&apos;ll see popular picks, percent agreement, and
-            how rare or common your result was among everyone who&apos;s played that pack.
+            Stats stay locked while you&apos;re playing so nobody&apos;s choices
+            are influenced by the crowd. Once you finish, you&apos;ll see
+            popular picks, percent agreement, and how rare or common your result
+            was among everyone who&apos;s played that pack.
           </Text>
         </>
       )}

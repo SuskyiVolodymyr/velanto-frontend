@@ -13,6 +13,7 @@
 ### Task 1: Data model additions
 
 **Files:**
+
 - Modify: `src/shared/types/pack.ts`
 - Modify: `src/shared/types/play-results.ts`
 - Modify: `src/shared/lib/get-results-server.ts`
@@ -140,7 +141,9 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
  * rationale — aggregate results should reflect the play just recorded.
  */
 export async function getResultsServer(packId: string): Promise<PackResults> {
-  const res = await fetch(`${API_BASE_URL}/packs/${packId}/results`, { cache: "no-store" });
+  const res = await fetch(`${API_BASE_URL}/packs/${packId}/results`, {
+    cache: "no-store",
+  });
   if (!res.ok) throw new Error(`Failed to load results: ${res.status}`);
   return (await res.json()) as PackResults;
 }
@@ -157,8 +160,12 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
  * Server Component-only fetch, mirroring getPackServer's cache: "no-store"
  * rationale — aggregate results should reflect the play just recorded.
  */
-export async function getResultsServer(packId: string): Promise<PackResults | RankResults> {
-  const res = await fetch(`${API_BASE_URL}/packs/${packId}/results`, { cache: "no-store" });
+export async function getResultsServer(
+  packId: string,
+): Promise<PackResults | RankResults> {
+  const res = await fetch(`${API_BASE_URL}/packs/${packId}/results`, {
+    cache: "no-store",
+  });
   if (!res.ok) throw new Error(`Failed to load results: ${res.status}`);
   return (await res.json()) as PackResults | RankResults;
 }
@@ -181,6 +188,7 @@ git commit -m "feat: add rank_blind types (PackFormat, RankResults, RecordedPick
 ### Task 2: FORMAT_LABELS entry for rank_blind
 
 **Files:**
+
 - Modify: `src/shared/lib/pack-display.ts`
 - Test: `src/shared/lib/pack-display.test.ts`
 
@@ -189,12 +197,12 @@ git commit -m "feat: add rank_blind types (PackFormat, RankResults, RecordedPick
 Add to `src/shared/lib/pack-display.test.ts`, inside the existing `describe("FORMAT_LABELS", ...)` block:
 
 ```typescript
-  it("has a human-readable label for every supported format", () => {
-    expect(FORMAT_LABELS.save_one).toBe("Save One");
-    expect(FORMAT_LABELS.sacrifice_one).toBe("Sacrifice One");
-    expect(FORMAT_LABELS.nxn).toBe("NxN");
-    expect(FORMAT_LABELS.rank_blind).toBe("Rank Blind");
-  });
+it("has a human-readable label for every supported format", () => {
+  expect(FORMAT_LABELS.save_one).toBe("Save One");
+  expect(FORMAT_LABELS.sacrifice_one).toBe("Sacrifice One");
+  expect(FORMAT_LABELS.nxn).toBe("NxN");
+  expect(FORMAT_LABELS.rank_blind).toBe("Rank Blind");
+});
 ```
 
 (This replaces the existing test of the same name — it's the same test, just asserting one more format.)
@@ -202,18 +210,24 @@ Add to `src/shared/lib/pack-display.test.ts`, inside the existing `describe("FOR
 Also add, inside the existing `describe("getRoundsCount", ...)` block:
 
 ```typescript
-  it("counts groups as rounds for rank_blind packs", () => {
-    const pack: Pack = {
-      ...BASE_PACK,
-      format: "rank_blind",
-      groups: [
-        { id: "g1", name: "Openers", selectionMode: "manual", items: [] },
-        { id: "g2", name: "Closers", selectionMode: "random", sampleSize: 2, items: [] },
-      ],
-    };
+it("counts groups as rounds for rank_blind packs", () => {
+  const pack: Pack = {
+    ...BASE_PACK,
+    format: "rank_blind",
+    groups: [
+      { id: "g1", name: "Openers", selectionMode: "manual", items: [] },
+      {
+        id: "g2",
+        name: "Closers",
+        selectionMode: "random",
+        sampleSize: 2,
+        items: [],
+      },
+    ],
+  };
 
-    expect(getRoundsCount(pack)).toBe(2);
-  });
+  expect(getRoundsCount(pack)).toBe(2);
+});
 ```
 
 - [ ] **Step 2: Run the test to verify it fails**
@@ -253,6 +267,7 @@ git commit -m "feat: add rank_blind to FORMAT_LABELS"
 ### Task 3: Create flow — Rank Blind format button
 
 **Files:**
+
 - Modify: `src/features/create/CreatePackForm.tsx`
 - Test: `src/features/create/CreatePackForm.test.tsx`
 
@@ -263,49 +278,55 @@ No changes needed to `validate()` or `handleSubmit()`'s payload builder — both
 Add a new `describe` block to `src/features/create/CreatePackForm.test.tsx`, after the existing `describe("nxn format", ...)` block (before its closing and the file's final `});`):
 
 ```typescript
-  describe("rank_blind format", () => {
-    it("shows the Groups section (not Categories) when Rank Blind is selected", async () => {
-      const user = userEvent.setup();
-      renderForm();
-      await user.click(await screen.findByRole("button", { name: /^Rank Blind/ }));
+describe("rank_blind format", () => {
+  it("shows the Groups section (not Categories) when Rank Blind is selected", async () => {
+    const user = userEvent.setup();
+    renderForm();
+    await user.click(
+      await screen.findByRole("button", { name: /^Rank Blind/ }),
+    );
 
-      expect(
-        screen.getByRole("button", { name: "+ Add group (one more round)" }),
-      ).toBeInTheDocument();
-      expect(screen.queryByLabelText("Category 1 name")).not.toBeInTheDocument();
-    });
-
-    it("submits a valid rank_blind pack with the same groups payload shape as save_one", async () => {
-      const user = userEvent.setup();
-      vi.mocked(packsClient.create).mockResolvedValue({
-        id: "pack-rank",
-        title: "Anime Openers, Ranked",
-        description: "Place each pick blind into a growing ranked list.",
-        coverTone: "#2b2a3a",
-        format: "rank_blind",
-        tags: [],
-        groups: [],
-        authorId: "u1",
-        createdAt: "2026-01-01T00:00:00.000Z",
-      });
-      renderForm();
-      await user.click(await screen.findByRole("button", { name: /^Rank Blind/ }));
-      await fillMinimalValidPack(user);
-
-      await user.click(screen.getByRole("button", { name: "Publish" }));
-
-      await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-rank"));
-      expect(packsClient.create).toHaveBeenCalledWith(
-        expect.objectContaining({
-          format: "rank_blind",
-          groups: expect.arrayContaining([expect.objectContaining({ name: "2016" })]),
-        }),
-      );
-      expect(packsClient.create).not.toHaveBeenCalledWith(
-        expect.objectContaining({ categories: expect.anything() }),
-      );
-    });
+    expect(
+      screen.getByRole("button", { name: "+ Add group (one more round)" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByLabelText("Category 1 name")).not.toBeInTheDocument();
   });
+
+  it("submits a valid rank_blind pack with the same groups payload shape as save_one", async () => {
+    const user = userEvent.setup();
+    vi.mocked(packsClient.create).mockResolvedValue({
+      id: "pack-rank",
+      title: "Anime Openers, Ranked",
+      description: "Place each pick blind into a growing ranked list.",
+      coverTone: "#2b2a3a",
+      format: "rank_blind",
+      tags: [],
+      groups: [],
+      authorId: "u1",
+      createdAt: "2026-01-01T00:00:00.000Z",
+    });
+    renderForm();
+    await user.click(
+      await screen.findByRole("button", { name: /^Rank Blind/ }),
+    );
+    await fillMinimalValidPack(user);
+
+    await user.click(screen.getByRole("button", { name: "Publish" }));
+
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-rank"));
+    expect(packsClient.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        format: "rank_blind",
+        groups: expect.arrayContaining([
+          expect.objectContaining({ name: "2016" }),
+        ]),
+      }),
+    );
+    expect(packsClient.create).not.toHaveBeenCalledWith(
+      expect.objectContaining({ categories: expect.anything() }),
+    );
+  });
+});
 ```
 
 - [ ] **Step 2: Run the test to verify it fails**
@@ -318,20 +339,22 @@ Expected: FAIL — no button with accessible name matching `/^Rank Blind/` exist
 In `src/features/create/CreatePackForm.tsx`, inside the `Format` section's button row, add a fourth button right after the existing NxN button (before the row's closing `</div>`):
 
 ```tsx
-          <button
-            type="button"
-            onClick={() => setFormat("rank_blind")}
-            aria-pressed={format === "rank_blind"}
-            className={cn(
-              "flex-1 rounded-[12px] border px-4 py-3 text-left transition-colors",
-              format === "rank_blind" ? "border-acc/40 bg-acc/5" : "border-border bg-white/[0.02]",
-            )}
-          >
-            <Text className="font-semibold">Rank Blind</Text>
-            <Text variant="secondary" className="mt-1 text-xs">
-              Place each pick blind into a growing ranked list.
-            </Text>
-          </button>
+<button
+  type="button"
+  onClick={() => setFormat("rank_blind")}
+  aria-pressed={format === "rank_blind"}
+  className={cn(
+    "flex-1 rounded-[12px] border px-4 py-3 text-left transition-colors",
+    format === "rank_blind"
+      ? "border-acc/40 bg-acc/5"
+      : "border-border bg-white/[0.02]",
+  )}
+>
+  <Text className="font-semibold">Rank Blind</Text>
+  <Text variant="secondary" className="mt-1 text-xs">
+    Place each pick blind into a growing ranked list.
+  </Text>
+</button>
 ```
 
 - [ ] **Step 4: Run the test to verify it passes**
@@ -351,10 +374,11 @@ git commit -m "feat: add Rank Blind format button to Create flow"
 ### Task 4: Play flow — `RankPlayScreen` component
 
 **Files:**
+
 - Create: `src/features/play/RankPlayScreen.tsx`
 - Test: `src/features/play/RankPlayScreen.test.tsx`
 
-This reuses `resolveRoundCandidates(group)` (`src/features/play/round-sampling.ts`) unchanged — it already returns items in stored order for `selectionMode: "manual"` groups, or a fresh shuffled sample of `sampleSize` for `"random"` groups. The candidate array's length *is* the round's slot count; no separate slot-count calculation is needed client-side.
+This reuses `resolveRoundCandidates(group)` (`src/features/play/round-sampling.ts`) unchanged — it already returns items in stored order for `selectionMode: "manual"` groups, or a fresh shuffled sample of `sampleSize` for `"random"` groups. The candidate array's length _is_ the round's slot count; no separate slot-count calculation is needed client-side.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -439,17 +463,24 @@ function renderScreen(pack: Pack) {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "t", user: MOCK_USER });
+  vi.mocked(authClient.refresh).mockResolvedValue({
+    accessToken: "t",
+    user: MOCK_USER,
+  });
   vi.mocked(playsClient.record).mockResolvedValue({ id: "play-1" });
   sessionStorage.clear();
 });
 
 describe("RankPlayScreen", () => {
   it("prompts to log in when there is no session", async () => {
-    vi.mocked(authClient.refresh).mockRejectedValue(new ApiError(401, "Unauthorized", null));
+    vi.mocked(authClient.refresh).mockRejectedValue(
+      new ApiError(401, "Unauthorized", null),
+    );
     renderScreen(RANK_BLIND_PACK);
 
-    expect(await screen.findByText("You need to be logged in to play a pack.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("You need to be logged in to play a pack."),
+    ).toBeInTheDocument();
   });
 
   it("shows the first item and one empty numbered slot per item in a manual-mode round", async () => {
@@ -497,7 +528,9 @@ describe("RankPlayScreen", () => {
     await user.click(screen.getByText("#1"));
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
-    await user.click(await screen.findByRole("button", { name: "Next round →" }));
+    await user.click(
+      await screen.findByRole("button", { name: "Next round →" }),
+    );
 
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("#1"));
@@ -512,16 +545,17 @@ describe("RankPlayScreen", () => {
       ],
     });
     await waitFor(() =>
-      expect(JSON.parse(sessionStorage.getItem("velanto:last-play:pack-rank")!)).toEqual([
+      expect(
+        JSON.parse(sessionStorage.getItem("velanto:last-play:pack-rank")!),
+      ).toEqual([
         { groupId: "g1", itemId: "i1", position: 0 },
         { groupId: "g1", itemId: "i2", position: 1 },
         { groupId: "g2", itemId: "i3", position: 0 },
       ]),
     );
-    expect(screen.getByRole("link", { name: "See your result" })).toHaveAttribute(
-      "href",
-      "/packs/pack-rank/result",
-    );
+    expect(
+      screen.getByRole("link", { name: "See your result" }),
+    ).toHaveAttribute("href", "/packs/pack-rank/result");
   });
 
   it("sizes a random-mode round's slots to sampleSize, not the full item count", async () => {
@@ -533,7 +567,11 @@ describe("RankPlayScreen", () => {
           name: "Closers",
           selectionMode: "random",
           sampleSize: 2,
-          items: [textItem("i1", "A"), textItem("i2", "B"), textItem("i3", "C")],
+          items: [
+            textItem("i1", "A"),
+            textItem("i2", "B"),
+            textItem("i3", "C"),
+          ],
         },
       ],
     };
@@ -583,7 +621,10 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   const group = roundIndex < totalRounds ? groups[roundIndex] : undefined;
   // Re-sampled only when the round changes, not on every render — same
   // rationale as PlayScreen's own `candidates` useMemo.
-  const candidates = useMemo(() => (group ? resolveRoundCandidates(group) : []), [group]);
+  const candidates = useMemo(
+    () => (group ? resolveRoundCandidates(group) : []),
+    [group],
+  );
   const slotCount = candidates.length;
   const placedCount = Object.keys(placements).length;
   const roundDone = slotCount > 0 && placedCount >= slotCount;
@@ -631,7 +672,9 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   if (status === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">You need to be logged in to play a pack.</Text>
+        <Text variant="secondary">
+          You need to be logged in to play a pack.
+        </Text>
         <Button className="mt-4" onClick={() => router.push("/auth")}>
           Log in
         </Button>
@@ -648,7 +691,9 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
       <div className="mb-8">
         <div className="mb-2 flex items-center justify-between">
           <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-            {isFinished ? "Complete" : `Round ${roundIndex + 1} of ${totalRounds}`}
+            {isFinished
+              ? "Complete"
+              : `Round ${roundIndex + 1} of ${totalRounds}`}
           </Text>
         </div>
         <div className="h-[3px] w-full rounded-full bg-white/[0.06]">
@@ -695,7 +740,12 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
                   <Text variant="tertiary" className="text-xs font-semibold">
                     #{slotIndex + 1}
                   </Text>
-                  <Text className={cn("text-sm font-semibold", !filled && "text-foreground-tertiary")}>
+                  <Text
+                    className={cn(
+                      "text-sm font-semibold",
+                      !filled && "text-foreground-tertiary",
+                    )}
+                  >
                     {filled ? filled.title : "Place here"}
                   </Text>
                 </button>
@@ -719,7 +769,9 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
                 <Text variant="tertiary" className="text-xs font-semibold">
                   #{slotIndex + 1}
                 </Text>
-                <Text className="font-semibold">{placements[slotIndex]?.title}</Text>
+                <Text className="font-semibold">
+                  {placements[slotIndex]?.title}
+                </Text>
               </div>
             ))}
           </div>
@@ -735,7 +787,10 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
           <Text variant="secondary" className="mb-4">
             All {totalRounds} round{totalRounds === 1 ? "" : "s"} placed, blind.
           </Text>
-          <Link href={`/packs/${pack.id}/result`} className={buttonClassName("primary", "w-fit")}>
+          <Link
+            href={`/packs/${pack.id}/result`}
+            className={buttonClassName("primary", "w-fit")}
+          >
             See your result
           </Link>
         </section>
@@ -767,6 +822,7 @@ git commit -m "feat: add RankPlayScreen for the rank_blind play mechanic"
 ### Task 5: Wire `RankPlayScreen` into the play route
 
 **Files:**
+
 - Modify: `app/packs/[id]/play/page.tsx`
 
 No test — this repo's `app/` route files are thin Server Component wrappers with no existing test precedent (`PlayPage`/`ResultPage` aren't tested directly; behavior is covered by the feature components' own tests).
@@ -776,7 +832,11 @@ No test — this repo's `app/` route files are thin Server Component wrappers wi
 `app/packs/[id]/play/page.tsx` currently ends with:
 
 ```tsx
-export default async function PlayPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function PlayPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const pack = await getPackServer(id);
   if (!pack) notFound();
@@ -804,12 +864,20 @@ export async function generateMetadata({
   return { title: pack ? `Playing ${pack.title}` : "Pack not found" };
 }
 
-export default async function PlayPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function PlayPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const pack = await getPackServer(id);
   if (!pack) notFound();
 
-  return pack.format === "rank_blind" ? <RankPlayScreen pack={pack} /> : <PlayScreen pack={pack} />;
+  return pack.format === "rank_blind" ? (
+    <RankPlayScreen pack={pack} />
+  ) : (
+    <PlayScreen pack={pack} />
+  );
 }
 ```
 
@@ -830,6 +898,7 @@ git commit -m "feat: route rank_blind packs to RankPlayScreen"
 ### Task 6: Result flow — `RankResultScreen` component
 
 **Files:**
+
 - Create: `src/features/result/RankResultScreen.tsx`
 - Test: `src/features/result/RankResultScreen.test.tsx`
 
@@ -857,7 +926,12 @@ const PACK: Pack = {
       name: "Openers",
       selectionMode: "manual",
       items: [
-        { id: "i1", type: "text", title: "Kaikai Kitan", value: "Kaikai Kitan" },
+        {
+          id: "i1",
+          type: "text",
+          title: "Kaikai Kitan",
+          value: "Kaikai Kitan",
+        },
         { id: "i2", type: "text", title: "Redo", value: "Redo" },
       ],
     },
@@ -902,7 +976,9 @@ describe("RankResultScreen", () => {
   it("sorts items by averagePosition (best first) and shows avg/timesRanked captions", () => {
     render(<RankResultScreen pack={PACK} results={RESULTS} />);
 
-    const titles = screen.getAllByText(/Kaikai Kitan|Redo/).map((el) => el.textContent);
+    const titles = screen
+      .getAllByText(/Kaikai Kitan|Redo/)
+      .map((el) => el.textContent);
     expect(titles).toEqual(["Kaikai Kitan", "Redo"]);
     expect(screen.getByText(/avg 0.*ranked 2x/)).toBeInTheDocument();
     expect(screen.getByText(/avg 1.*ranked 2x/)).toBeInTheDocument();
@@ -916,7 +992,9 @@ describe("RankResultScreen", () => {
 
     render(<RankResultScreen pack={PACK} results={RESULTS} />);
 
-    expect(screen.getByText(/You placed this #1.*1 other play agreed/)).toBeInTheDocument();
+    expect(
+      screen.getByText(/You placed this #1.*1 other play agreed/),
+    ).toBeInTheDocument();
   });
 
   it("shows a neutral note for an item that wasn't in the player's own play", () => {
@@ -934,7 +1012,9 @@ describe("RankResultScreen", () => {
     render(<RankResultScreen pack={PACK} results={RESULTS} />);
 
     expect(screen.queryByText(/You placed this/)).not.toBeInTheDocument();
-    expect(screen.queryByText("Not in your play this round")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Not in your play this round"),
+    ).not.toBeInTheDocument();
   });
 
   it("renders without crashing when there are no recorded plays yet", () => {
@@ -947,8 +1027,20 @@ describe("RankResultScreen", () => {
           groupId: "g1",
           groupName: "Openers",
           items: [
-            { itemId: "i1", itemTitle: "Kaikai Kitan", timesRanked: 0, averagePosition: 0, positionCounts: [0, 0] },
-            { itemId: "i2", itemTitle: "Redo", timesRanked: 0, averagePosition: 0, positionCounts: [0, 0] },
+            {
+              itemId: "i1",
+              itemTitle: "Kaikai Kitan",
+              timesRanked: 0,
+              averagePosition: 0,
+              positionCounts: [0, 0],
+            },
+            {
+              itemId: "i2",
+              itemTitle: "Redo",
+              timesRanked: 0,
+              averagePosition: 0,
+              positionCounts: [0, 0],
+            },
           ],
         },
       ],
@@ -980,9 +1072,18 @@ import { Text } from "@/src/shared/components/Text";
 import { buttonClassName } from "@/src/shared/components/Button";
 import { readLastPlayPicks } from "@/src/shared/lib/last-play-storage";
 import type { Pack } from "@/src/shared/types/pack";
-import type { RankResults, RecordedPick } from "@/src/shared/types/play-results";
+import type {
+  RankResults,
+  RecordedPick,
+} from "@/src/shared/types/play-results";
 
-export function RankResultScreen({ pack, results }: { pack: Pack; results: RankResults }) {
+export function RankResultScreen({
+  pack,
+  results,
+}: {
+  pack: Pack;
+  results: RankResults;
+}) {
   const [ownPicks, setOwnPicks] = useState<RecordedPick[] | null>(null);
 
   // sessionStorage doesn't exist during server rendering — same rationale as
@@ -1009,7 +1110,8 @@ export function RankResultScreen({ pack, results }: { pack: Pack; results: RankR
           const sortedItems = [...round.items].sort(
             (a, b) => a.averagePosition - b.averagePosition,
           );
-          const playedThisRound = ownPicks?.some((pick) => pick.groupId === round.groupId) ?? false;
+          const playedThisRound =
+            ownPicks?.some((pick) => pick.groupId === round.groupId) ?? false;
 
           return (
             <div key={round.groupId}>
@@ -1017,33 +1119,46 @@ export function RankResultScreen({ pack, results }: { pack: Pack; results: RankR
               <div className="flex flex-col gap-3">
                 {sortedItems.map((item, index) => {
                   const ownPick = ownPicks?.find(
-                    (pick) => pick.groupId === round.groupId && pick.itemId === item.itemId,
+                    (pick) =>
+                      pick.groupId === round.groupId &&
+                      pick.itemId === item.itemId,
                   );
                   const maxCount = Math.max(...item.positionCounts, 1);
 
                   return (
-                    <Card key={item.itemId} className="hover:translate-y-0 hover:shadow-none">
+                    <Card
+                      key={item.itemId}
+                      className="hover:translate-y-0 hover:shadow-none"
+                    >
                       <div className="mb-2 flex items-center gap-3">
                         <span className="flex h-7 w-7 flex-none items-center justify-center rounded-lg bg-white/[0.06] text-xs font-bold">
                           {index + 1}
                         </span>
-                        <Text className="flex-1 font-semibold">{item.itemTitle}</Text>
+                        <Text className="flex-1 font-semibold">
+                          {item.itemTitle}
+                        </Text>
                         <Text variant="tertiary" className="text-xs">
-                          avg {item.averagePosition} · ranked {item.timesRanked}x
+                          avg {item.averagePosition} · ranked {item.timesRanked}
+                          x
                         </Text>
                       </div>
                       <div className="mb-2 flex items-end gap-1 pl-10">
                         {item.positionCounts.map((count, position) => {
                           const isOwn = ownPick?.position === position;
                           return (
-                            <div key={position} className="flex flex-col items-center gap-1">
+                            <div
+                              key={position}
+                              className="flex flex-col items-center gap-1"
+                            >
                               <div
                                 className={
                                   isOwn
                                     ? "w-[18px] rounded-sm bg-acc ring-2 ring-white"
                                     : "w-[18px] rounded-sm bg-acc/30"
                                 }
-                                style={{ height: `${Math.max((count / maxCount) * 32, 2)}px` }}
+                                style={{
+                                  height: `${Math.max((count / maxCount) * 32, 2)}px`,
+                                }}
                               />
                               <Text variant="tertiary" className="text-[10px]">
                                 #{position + 1}
@@ -1055,8 +1170,15 @@ export function RankResultScreen({ pack, results }: { pack: Pack; results: RankR
                       {ownPick && ownPick.position !== undefined ? (
                         <Text className="pl-10 text-xs text-acc">
                           You placed this #{ownPick.position + 1} ·{" "}
-                          {Math.max(item.positionCounts[ownPick.position] - 1, 0)} other play
-                          {item.positionCounts[ownPick.position] - 1 === 1 ? "" : "s"} agreed
+                          {Math.max(
+                            item.positionCounts[ownPick.position] - 1,
+                            0,
+                          )}{" "}
+                          other play
+                          {item.positionCounts[ownPick.position] - 1 === 1
+                            ? ""
+                            : "s"}{" "}
+                          agreed
                         </Text>
                       ) : (
                         playedThisRound && (
@@ -1074,7 +1196,10 @@ export function RankResultScreen({ pack, results }: { pack: Pack; results: RankR
         })}
       </div>
 
-      <Link href={`/packs/${pack.id}/play`} className={buttonClassName("primary", "w-fit")}>
+      <Link
+        href={`/packs/${pack.id}/play`}
+        className={buttonClassName("primary", "w-fit")}
+      >
         Play again
       </Link>
     </div>
@@ -1104,6 +1229,7 @@ git commit -m "feat: add RankResultScreen for rank_blind average-position result
 ### Task 7: Wire `RankResultScreen` into `ResultScreen`
 
 **Files:**
+
 - Modify: `src/features/result/ResultScreen.tsx`
 - Test: `src/features/result/ResultScreen.test.tsx`
 
@@ -1123,7 +1249,12 @@ const RESULTS: PackResults = {
       groupId: "g1",
       groupName: "2016",
       items: [
-        { itemId: "i1", itemTitle: "Guren no Yumiya", count: 3, percentage: 75 },
+        {
+          itemId: "i1",
+          itemTitle: "Guren no Yumiya",
+          count: 3,
+          percentage: 75,
+        },
         { itemId: "i2", itemTitle: "Redo", count: 1, percentage: 25 },
       ],
     },
@@ -1134,21 +1265,21 @@ const RESULTS: PackResults = {
 And add `format: "save_one"` to the `emptyResults` fixture in the `"renders without crashing when the pack has no recorded plays yet"` test:
 
 ```typescript
-    const emptyResults: PackResults = {
-      packId: "pack-1",
-      format: "save_one",
-      totalPlays: 0,
-      rounds: [
-        {
-          groupId: "g1",
-          groupName: "2016",
-          items: [
-            { itemId: "i1", itemTitle: "Guren no Yumiya", count: 0, percentage: 0 },
-            { itemId: "i2", itemTitle: "Redo", count: 0, percentage: 0 },
-          ],
-        },
+const emptyResults: PackResults = {
+  packId: "pack-1",
+  format: "save_one",
+  totalPlays: 0,
+  rounds: [
+    {
+      groupId: "g1",
+      groupName: "2016",
+      items: [
+        { itemId: "i1", itemTitle: "Guren no Yumiya", count: 0, percentage: 0 },
+        { itemId: "i2", itemTitle: "Redo", count: 0, percentage: 0 },
       ],
-    };
+    },
+  ],
+};
 ```
 
 Then add a new test at the end of the `describe("ResultScreen", ...)` block:
@@ -1209,16 +1340,32 @@ import { buttonClassName } from "@/src/shared/components/Button";
 import { readLastPlayPicks } from "@/src/shared/lib/last-play-storage";
 import { RankResultScreen } from "@/src/features/result/RankResultScreen";
 import type { Pack } from "@/src/shared/types/pack";
-import type { PackResults, RankResults, RecordedPick } from "@/src/shared/types/play-results";
+import type {
+  PackResults,
+  RankResults,
+  RecordedPick,
+} from "@/src/shared/types/play-results";
 
-export function ResultScreen({ pack, results }: { pack: Pack; results: PackResults | RankResults }) {
+export function ResultScreen({
+  pack,
+  results,
+}: {
+  pack: Pack;
+  results: PackResults | RankResults;
+}) {
   if (results.format === "rank_blind") {
     return <RankResultScreen pack={pack} results={results} />;
   }
   return <GroupResultScreen pack={pack} results={results} />;
 }
 
-function GroupResultScreen({ pack, results }: { pack: Pack; results: PackResults }) {
+function GroupResultScreen({
+  pack,
+  results,
+}: {
+  pack: Pack;
+  results: PackResults;
+}) {
   const [ownPicks, setOwnPicks] = useState<RecordedPick[] | null>(null);
 
   // sessionStorage doesn't exist during server rendering, so this can't be a
@@ -1243,13 +1390,18 @@ function GroupResultScreen({ pack, results }: { pack: Pack; results: PackResults
 
       <div className="mb-8 flex flex-col gap-4">
         {results.rounds.map((round) => {
-          const ownPick = ownPicks?.find((pick) => pick.groupId === round.groupId);
+          const ownPick = ownPicks?.find(
+            (pick) => pick.groupId === round.groupId,
+          );
           const ownItem = ownPick
             ? round.items.find((item) => item.itemId === ownPick.itemId)
             : undefined;
 
           return (
-            <Card key={round.groupId} className="hover:translate-y-0 hover:shadow-none">
+            <Card
+              key={round.groupId}
+              className="hover:translate-y-0 hover:shadow-none"
+            >
               <Text className="mb-2 font-semibold">{round.groupName}</Text>
               {ownItem ? (
                 <div className="flex items-center justify-between gap-2">
@@ -1263,7 +1415,10 @@ function GroupResultScreen({ pack, results }: { pack: Pack; results: PackResults
               ) : (
                 <ul className="flex flex-col gap-1">
                   {round.items.map((item) => (
-                    <li key={item.itemId} className="flex items-center justify-between gap-2">
+                    <li
+                      key={item.itemId}
+                      className="flex items-center justify-between gap-2"
+                    >
                       <Text variant="secondary" className="text-sm">
                         {item.itemTitle}
                       </Text>
@@ -1279,7 +1434,10 @@ function GroupResultScreen({ pack, results }: { pack: Pack; results: PackResults
         })}
       </div>
 
-      <Link href={`/packs/${pack.id}/play`} className={buttonClassName("primary", "w-fit")}>
+      <Link
+        href={`/packs/${pack.id}/play`}
+        className={buttonClassName("primary", "w-fit")}
+      >
         Play again
       </Link>
     </div>

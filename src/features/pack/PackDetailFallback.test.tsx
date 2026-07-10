@@ -8,8 +8,12 @@ import type { PackResults } from "@/src/shared/types/play-results";
 
 vi.mock("@/src/shared/hooks/use-pack-fallback");
 vi.mock("next/navigation", () => ({ notFound: vi.fn() }));
-vi.mock("@/src/features/pack/VoteButtons", () => ({ VoteButtons: () => <div>VoteButtons</div> }));
-vi.mock("@/src/features/pack/CommentSection", () => ({ CommentSection: () => <div>CommentSection</div> }));
+vi.mock("@/src/features/pack/VoteButtons", () => ({
+  VoteButtons: () => <div>VoteButtons</div>,
+}));
+vi.mock("@/src/features/pack/CommentSection", () => ({
+  CommentSection: () => <div>CommentSection</div>,
+}));
 
 const mockedUsePackFallback = vi.mocked(usePackFallback);
 const mockedNotFound = vi.mocked(notFound);
@@ -33,13 +37,22 @@ const PACK: Pack = {
   dislikes: 0,
   myVote: null,
 };
-const RESULTS: PackResults = { packId: "p1", format: "save_one", totalPlays: 0, rounds: [] };
+const RESULTS: PackResults = {
+  packId: "p1",
+  format: "save_one",
+  totalPlays: 0,
+  rounds: [],
+};
 
 describe("PackDetailFallback", () => {
   beforeEach(() => vi.clearAllMocks());
 
   it("renders the pack once the fallback resolves to ready", () => {
-    mockedUsePackFallback.mockReturnValue({ status: "ready", pack: PACK, results: RESULTS });
+    mockedUsePackFallback.mockReturnValue({
+      status: "ready",
+      pack: PACK,
+      results: RESULTS,
+    });
     render(<PackDetailFallback packId="p1" />);
     expect(screen.getByText("Pending Pack")).toBeInTheDocument();
     expect(mockedNotFound).not.toHaveBeenCalled();

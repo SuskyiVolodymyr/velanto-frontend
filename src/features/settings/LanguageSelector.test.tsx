@@ -23,7 +23,9 @@ describe("LanguageSelector", () => {
     renderSelector("uk");
     const select = screen.getByRole("combobox", { name: "Interface language" });
     expect(select).toHaveValue("uk");
-    expect(screen.getByRole("option", { name: "Українська" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("option", { name: "Українська" }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "العربية" })).toBeInTheDocument();
     expect(screen.getAllByRole("option")).toHaveLength(11);
   });

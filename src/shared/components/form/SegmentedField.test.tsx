@@ -29,7 +29,9 @@ function Harness({ onValid }: { onValid: (v: Values) => void }) {
 }
 
 const errorSchema = z.object({
-  topic: z.enum(["bug", "feature"]).refine((v) => v === "feature", "Pick a topic."),
+  topic: z
+    .enum(["bug", "feature"])
+    .refine((v) => v === "feature", "Pick a topic."),
 });
 
 function ErrorHarness() {
@@ -50,7 +52,9 @@ function ErrorHarness() {
 describe("SegmentedField", () => {
   it("renders a radiogroup with the label as its accessible name", () => {
     render(<Harness onValid={vi.fn()} />);
-    expect(screen.getByRole("radiogroup", { name: "Topic" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("radiogroup", { name: "Topic" }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("radio", { name: "Bug" })).toBeChecked();
   });
 

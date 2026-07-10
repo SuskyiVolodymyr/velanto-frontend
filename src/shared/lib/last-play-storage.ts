@@ -5,7 +5,10 @@ function lastPlayStorageKey(packId: string): string {
 }
 
 /** Written only once a play is confirmed recorded server-side (see PlayScreen). */
-export function writeLastPlayPicks(packId: string, picks: RecordedPick[]): void {
+export function writeLastPlayPicks(
+  packId: string,
+  picks: RecordedPick[],
+): void {
   sessionStorage.setItem(lastPlayStorageKey(packId), JSON.stringify(picks));
 }
 

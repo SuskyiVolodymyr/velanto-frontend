@@ -35,29 +35,37 @@ function renderScreen(rules: RulesDocument | null) {
 describe("RulesScreen", () => {
   it("renders the heading and intro", () => {
     renderScreen(doc);
-    expect(screen.getByRole("heading", { level: 1, name: "Community Rules" })).toBeInTheDocument();
     expect(
-      screen.getByText(/keep Velanto safe and fair/i),
+      screen.getByRole("heading", { level: 1, name: "Community Rules" }),
     ).toBeInTheDocument();
+    expect(screen.getByText(/keep Velanto safe and fair/i)).toBeInTheDocument();
   });
 
   it("renders each category as a section with its rules in an ordered list", () => {
     renderScreen(doc);
 
-    expect(screen.getByRole("heading", { level: 2, name: "Conduct" })).toBeInTheDocument();
-    expect(screen.getByRole("heading", { level: 2, name: "Content" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Conduct" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Content" }),
+    ).toBeInTheDocument();
 
     const lists = screen.getAllByRole("list");
     expect(lists).toHaveLength(2);
     // First category has two rules.
     expect(within(lists[0]).getAllByRole("listitem")).toHaveLength(2);
-    expect(screen.getByText("Be respectful to other players.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Be respectful to other players."),
+    ).toBeInTheDocument();
     expect(screen.getByText("No illegal content.")).toBeInTheDocument();
   });
 
   it("renders a graceful error state when rules are null", () => {
     renderScreen(null);
-    expect(screen.getByRole("alert")).toHaveTextContent(/couldn't load the rules/i);
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      /couldn't load the rules/i,
+    );
     expect(screen.queryByRole("list")).not.toBeInTheDocument();
   });
 });

@@ -3,7 +3,11 @@
 import { useState } from "react";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import { usersClient, type BanDuration } from "@/src/shared/lib/users-client";
-import { isBanReasonValid, buildBanReasonPayload, type BanReasonState } from "@/src/shared/components/BanReasonPicker";
+import {
+  isBanReasonValid,
+  buildBanReasonPayload,
+  type BanReasonState,
+} from "@/src/shared/components/BanReasonPicker";
 import type { ReportWithReporter } from "@/src/shared/types/report";
 
 /**
@@ -18,7 +22,10 @@ export function useReportModeration(report: ReportWithReporter | null) {
   const [deleteError, setDeleteError] = useState("");
   const [showBanForm, setShowBanForm] = useState(false);
   const [banDuration, setBanDuration] = useState<BanDuration>("week");
-  const [banReason, setBanReason] = useState<BanReasonState>({ reason: "", reasonDetail: "" });
+  const [banReason, setBanReason] = useState<BanReasonState>({
+    reason: "",
+    reasonDetail: "",
+  });
   const [banError, setBanError] = useState("");
   const [banDone, setBanDone] = useState(false);
 

@@ -9,6 +9,7 @@ Per the issue: a bell icon + drawer in the header (poll-based, no websockets), a
 ## Data model (local, independent — this repo doesn't import backend types)
 
 `src/shared/types/notification.ts`:
+
 ```ts
 export const NOTIFICATION_TYPES = [
   "new_follower",
@@ -30,6 +31,7 @@ export type NotificationPreferences = Record<NotificationType, boolean>;
 ```
 
 Per-type payload shapes (cast at render time in the message-formatting helper, not enforced by a discriminated union — matches the backend's own "polymorphic JSON" precedent):
+
 - `new_follower`: `{ followerId, followerUsername }`
 - `new_pack_from_followed`: `{ packId, packTitle, authorUsername }`
 - `new_comment`: `{ packId, packTitle, commentId, commenterUsername }`
@@ -38,20 +40,31 @@ Per-type payload shapes (cast at render time in the message-formatting helper, n
 ## API client
 
 `src/shared/lib/notifications-client.ts`, mirroring `packs-client.ts`'s shape (own tiny `page`/`limit` query builder, not importing the pack-specific one):
+
 ```ts
 export const notificationsClient = {
-  list: (filters: { page?: number; limit?: number } = {}) => apiClient.get<NotificationList>(`/notifications${buildListQuery(filters)}`),
-  unreadCount: () => apiClient.get<{ count: number }>("/notifications/unread-count"),
-  markRead: (id: string) => apiClient.post<Notification>(`/notifications/${id}/read`),
-  markAllRead: () => apiClient.post<{ updated: number }>("/notifications/read-all"),
-  getPreferences: () => apiClient.get<NotificationPreferences>("/notifications/preferences"),
-  setPreferences: (updates: Partial<NotificationPreferences>) => apiClient.patch<NotificationPreferences>("/notifications/preferences", updates),
+  list: (filters: { page?: number; limit?: number } = {}) =>
+    apiClient.get<NotificationList>(`/notifications${buildListQuery(filters)}`),
+  unreadCount: () =>
+    apiClient.get<{ count: number }>("/notifications/unread-count"),
+  markRead: (id: string) =>
+    apiClient.post<Notification>(`/notifications/${id}/read`),
+  markAllRead: () =>
+    apiClient.post<{ updated: number }>("/notifications/read-all"),
+  getPreferences: () =>
+    apiClient.get<NotificationPreferences>("/notifications/preferences"),
+  setPreferences: (updates: Partial<NotificationPreferences>) =>
+    apiClient.patch<NotificationPreferences>(
+      "/notifications/preferences",
+      updates,
+    ),
 };
 ```
 
 ## Message rendering
 
 `src/shared/lib/notification-display.ts` — one function mapping a `Notification` to `{ message: string; href: string | null }`:
+
 - `new_follower` → `"{followerUsername} started following you"`, href `/users/{followerId}` (the Author route, confirmed to exist at `app/users/[id]/page.tsx`).
 - `new_pack_from_followed` → `"{authorUsername} published a new pack: {packTitle}"`, href `/packs/{packId}`.
 - `new_comment` → `"{commenterUsername} commented on your pack {packTitle}"`, href `/packs/{packId}`.

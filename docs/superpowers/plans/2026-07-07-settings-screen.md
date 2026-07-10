@@ -13,6 +13,7 @@
 ### Task 1: Theme persistence helper
 
 **Files:**
+
 - Create: `src/shared/lib/theme.ts`
 - Test: `src/shared/lib/theme.test.ts`
 
@@ -40,7 +41,9 @@ describe("theme", () => {
 
   it("setStoredAccent applies the color to the --acc CSS custom property", () => {
     setStoredAccent("#39d98a");
-    expect(document.documentElement.style.getPropertyValue("--acc")).toBe("#39d98a");
+    expect(document.documentElement.style.getPropertyValue("--acc")).toBe(
+      "#39d98a",
+    );
   });
 });
 ```
@@ -92,6 +95,7 @@ git commit -m "feat: add accent-color theme persistence helper"
 ### Task 2: AppearanceSection component
 
 **Files:**
+
 - Create: `src/features/settings/AppearanceSection.tsx`
 - Test: `src/features/settings/AppearanceSection.test.tsx`
 
@@ -114,10 +118,9 @@ describe("AppearanceSection", () => {
   it("renders 4 accent swatches with the default active", () => {
     render(<AppearanceSection />);
     expect(screen.getAllByRole("button")).toHaveLength(4);
-    expect(screen.getByRole("button", { name: "Use accent color #00e5ff" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
+    expect(
+      screen.getByRole("button", { name: "Use accent color #00e5ff" }),
+    ).toHaveAttribute("aria-pressed", "true");
   });
 
   it("clicking a swatch calls setStoredAccent with that color and updates the active swatch", async () => {
@@ -125,27 +128,26 @@ describe("AppearanceSection", () => {
     const setStoredAccentSpy = vi.spyOn(theme, "setStoredAccent");
     render(<AppearanceSection />);
 
-    await user.click(screen.getByRole("button", { name: "Use accent color #7c8cff" }));
+    await user.click(
+      screen.getByRole("button", { name: "Use accent color #7c8cff" }),
+    );
 
     expect(setStoredAccentSpy).toHaveBeenCalledWith("#7c8cff");
-    expect(screen.getByRole("button", { name: "Use accent color #7c8cff" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
-    expect(screen.getByRole("button", { name: "Use accent color #00e5ff" })).toHaveAttribute(
-      "aria-pressed",
-      "false",
-    );
+    expect(
+      screen.getByRole("button", { name: "Use accent color #7c8cff" }),
+    ).toHaveAttribute("aria-pressed", "true");
+    expect(
+      screen.getByRole("button", { name: "Use accent color #00e5ff" }),
+    ).toHaveAttribute("aria-pressed", "false");
   });
 
   it("reflects a previously-stored accent as active on mount", () => {
     vi.spyOn(theme, "getStoredAccent").mockReturnValue("#39d98a");
     render(<AppearanceSection />);
 
-    expect(screen.getByRole("button", { name: "Use accent color #39d98a" })).toHaveAttribute(
-      "aria-pressed",
-      "true",
-    );
+    expect(
+      screen.getByRole("button", { name: "Use accent color #39d98a" }),
+    ).toHaveAttribute("aria-pressed", "true");
   });
 });
 ```
@@ -184,7 +186,11 @@ export function AppearanceSection() {
 
   return (
     <section className="flex flex-col gap-4">
-      <Text as="h2" variant="tertiary" className="text-xs uppercase tracking-wide">
+      <Text
+        as="h2"
+        variant="tertiary"
+        className="text-xs uppercase tracking-wide"
+      >
         Appearance
       </Text>
       <div className="flex items-center justify-between gap-4 rounded-2xl border border-border bg-white/[0.02] px-4 py-4">
@@ -233,6 +239,7 @@ git commit -m "feat: add AppearanceSection accent-color picker"
 ### Task 3: AccountSection component
 
 **Files:**
+
 - Create: `src/features/settings/AccountSection.tsx`
 - Test: `src/features/settings/AccountSection.test.tsx`
 
@@ -265,7 +272,10 @@ const USER: User = {
 };
 
 function renderAsAuthenticated() {
-  vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "token", user: USER });
+  vi.mocked(authClient.refresh).mockResolvedValue({
+    accessToken: "token",
+    user: USER,
+  });
   return render(
     <AuthProvider>
       <AccountSection />
@@ -323,7 +333,11 @@ export function AccountSection() {
 
   return (
     <section className="flex flex-col gap-4">
-      <Text as="h2" variant="tertiary" className="text-xs uppercase tracking-wide">
+      <Text
+        as="h2"
+        variant="tertiary"
+        className="text-xs uppercase tracking-wide"
+      >
         Account
       </Text>
       {status === "authenticated" && user && (
@@ -364,6 +378,7 @@ git commit -m "feat: add AccountSection with per-section auth gating"
 ### Task 4: ThemeInitializer + app-wide wiring
 
 **Files:**
+
 - Create: `src/shared/components/ThemeInitializer.tsx`
 - Test: `src/shared/components/ThemeInitializer.test.tsx`
 - Modify: `app/layout.tsx`
@@ -386,7 +401,9 @@ describe("ThemeInitializer", () => {
   it("applies a stored accent to the document root on mount", () => {
     vi.spyOn(theme, "getStoredAccent").mockReturnValue("#f5a623");
     render(<ThemeInitializer />);
-    expect(document.documentElement.style.getPropertyValue("--acc")).toBe("#f5a623");
+    expect(document.documentElement.style.getPropertyValue("--acc")).toBe(
+      "#f5a623",
+    );
   });
 
   it("does nothing when no accent is stored", () => {
@@ -444,12 +461,12 @@ import "./globals.css";
 and:
 
 ```tsx
-      <body className="min-h-full flex flex-col">
-        <AuthProvider>
-          <AppHeader />
-          {children}
-        </AuthProvider>
-      </body>
+<body className="min-h-full flex flex-col">
+  <AuthProvider>
+    <AppHeader />
+    {children}
+  </AuthProvider>
+</body>
 ```
 
 Change to:
@@ -464,13 +481,13 @@ import "./globals.css";
 and:
 
 ```tsx
-      <body className="min-h-full flex flex-col">
-        <ThemeInitializer />
-        <AuthProvider>
-          <AppHeader />
-          {children}
-        </AuthProvider>
-      </body>
+<body className="min-h-full flex flex-col">
+  <ThemeInitializer />
+  <AuthProvider>
+    <AppHeader />
+    {children}
+  </AuthProvider>
+</body>
 ```
 
 (`ThemeInitializer` sits outside `AuthProvider` since it has nothing to do with auth — it only needs to run once per page load, same lifecycle scope as the rest of `body`.)
@@ -492,6 +509,7 @@ git commit -m "feat: apply the stored accent color app-wide on load"
 ### Task 5: SettingsScreen composition + routing
 
 **Files:**
+
 - Create: `src/features/settings/SettingsScreen.tsx`
 - Test: `src/features/settings/SettingsScreen.test.tsx`
 - Create: `app/settings/page.tsx`
@@ -523,7 +541,9 @@ describe("SettingsScreen", () => {
       </AuthProvider>,
     );
 
-    expect(screen.getByRole("heading", { name: "Preferences" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Preferences" }),
+    ).toBeInTheDocument();
     expect(screen.getByText("Accent color")).toBeInTheDocument();
     expect(await screen.findByText(/log in/i)).toBeInTheDocument();
   });
@@ -598,6 +618,7 @@ npm run lint
 npm test
 npm run build
 ```
+
 Expected: all clean.
 
 - [ ] **Step 2: Dispatch review agents** (via the `Agent` tool)

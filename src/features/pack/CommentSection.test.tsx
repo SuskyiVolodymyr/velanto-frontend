@@ -46,7 +46,10 @@ const COMMENT_A: Comment = {
 };
 
 function renderAsAuthenticated() {
-  vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "token", user: USER });
+  vi.mocked(authClient.refresh).mockResolvedValue({
+    accessToken: "token",
+    user: USER,
+  });
   return render(
     <AuthProvider>
       <CommentSection packId="pack-1" />
@@ -79,7 +82,10 @@ describe("CommentSection", () => {
 
     expect(await screen.findByText("bob")).toBeInTheDocument();
     expect(screen.getByText("Loved this pack.")).toBeInTheDocument();
-    expect(commentsClient.list).toHaveBeenCalledWith("pack-1", { page: 1, limit: 10 });
+    expect(commentsClient.list).toHaveBeenCalledWith("pack-1", {
+      page: 1,
+      limit: 10,
+    });
   });
 
   it("links each comment author's username to their author page", async () => {
@@ -109,14 +115,24 @@ describe("CommentSection", () => {
   });
 
   it("shows an empty state when there are no comments yet", async () => {
-    vi.mocked(commentsClient.list).mockResolvedValue({ items: [], total: 0, page: 1, limit: 10 });
+    vi.mocked(commentsClient.list).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 10,
+    });
     renderAsUnauthenticated();
 
     expect(await screen.findByText("No comments yet.")).toBeInTheDocument();
   });
 
   it("shows a log-in prompt instead of a compose form when unauthenticated", async () => {
-    vi.mocked(commentsClient.list).mockResolvedValue({ items: [], total: 0, page: 1, limit: 10 });
+    vi.mocked(commentsClient.list).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 10,
+    });
     renderAsUnauthenticated();
 
     expect(await screen.findByText(/log in/i)).toBeInTheDocument();
@@ -124,7 +140,12 @@ describe("CommentSection", () => {
   });
 
   it("shows a compose form when authenticated", async () => {
-    vi.mocked(commentsClient.list).mockResolvedValue({ items: [], total: 0, page: 1, limit: 10 });
+    vi.mocked(commentsClient.list).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 10,
+    });
     renderAsAuthenticated();
 
     expect(await screen.findByRole("textbox")).toBeInTheDocument();
@@ -132,7 +153,12 @@ describe("CommentSection", () => {
   });
 
   it("disables the Post button while the draft is empty", async () => {
-    vi.mocked(commentsClient.list).mockResolvedValue({ items: [], total: 0, page: 1, limit: 10 });
+    vi.mocked(commentsClient.list).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 10,
+    });
     renderAsAuthenticated();
 
     const postButton = await screen.findByRole("button", { name: "Post" });
@@ -163,7 +189,9 @@ describe("CommentSection", () => {
     await user.click(screen.getByRole("button", { name: "Post" }));
 
     await waitFor(() =>
-      expect(commentsClient.create).toHaveBeenCalledWith("pack-1", { body: "My take too." }),
+      expect(commentsClient.create).toHaveBeenCalledWith("pack-1", {
+        body: "My take too.",
+      }),
     );
     expect(await screen.findByText("My take too.")).toBeInTheDocument();
     expect(textbox).toHaveValue("");
@@ -171,21 +199,35 @@ describe("CommentSection", () => {
 
   it("shows an error and keeps the draft when posting fails", async () => {
     const user = userEvent.setup();
-    vi.mocked(commentsClient.list).mockResolvedValue({ items: [], total: 0, page: 1, limit: 10 });
-    vi.mocked(commentsClient.create).mockRejectedValue(new Error("network error"));
+    vi.mocked(commentsClient.list).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 10,
+    });
+    vi.mocked(commentsClient.create).mockRejectedValue(
+      new Error("network error"),
+    );
     renderAsAuthenticated();
 
     const textbox = await screen.findByRole("textbox");
     await user.type(textbox, "My take too.");
     await user.click(screen.getByRole("button", { name: "Post" }));
 
-    expect(await screen.findByText("Couldn't post your comment. Try again.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Couldn't post your comment. Try again."),
+    ).toBeInTheDocument();
     expect(textbox).toHaveValue("My take too.");
   });
 
   it("surfaces the backend's blocked-term rejection inline and keeps the draft", async () => {
     const user = userEvent.setup();
-    vi.mocked(commentsClient.list).mockResolvedValue({ items: [], total: 0, page: 1, limit: 10 });
+    vi.mocked(commentsClient.list).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 10,
+    });
     // Real nestjs-zod validation 400 shape: the moderation rejection lives
     // under `errors[]`. The comment text itself is innocuous.
     vi.mocked(commentsClient.create).mockRejectedValue(
@@ -196,7 +238,8 @@ describe("CommentSection", () => {
           {
             code: "custom",
             path: ["body"],
-            message: "This text contains language that isn't allowed on Velanto.",
+            message:
+              "This text contains language that isn't allowed on Velanto.",
           },
         ],
       }),
@@ -208,7 +251,9 @@ describe("CommentSection", () => {
     await user.click(screen.getByRole("button", { name: "Post" }));
 
     expect(
-      await screen.findByText("This text contains language that isn't allowed on Velanto."),
+      await screen.findByText(
+        "This text contains language that isn't allowed on Velanto.",
+      ),
     ).toBeInTheDocument();
     expect(textbox).toHaveValue("My take too.");
   });
@@ -223,7 +268,9 @@ describe("CommentSection", () => {
     renderAsUnauthenticated();
 
     await screen.findByText("Loved this pack.");
-    expect(screen.queryByRole("button", { name: "Load more" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Load more" }),
+    ).not.toBeInTheDocument();
   });
 
   it("shows a Load more button when more comments exist, and appends the next page on click", async () => {
@@ -255,10 +302,15 @@ describe("CommentSection", () => {
     });
     await user.click(loadMoreButton);
 
-    expect(commentsClient.list).toHaveBeenLastCalledWith("pack-1", { page: 2, limit: 10 });
+    expect(commentsClient.list).toHaveBeenLastCalledWith("pack-1", {
+      page: 2,
+      limit: 10,
+    });
     expect(await screen.findByText("Second comment.")).toBeInTheDocument();
     expect(screen.getByText("Loved this pack.")).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Load more" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Load more" }),
+    ).not.toBeInTheDocument();
   });
 
   it("filters out a comment the next page re-returns after a post shifted server offsets", async () => {
@@ -306,7 +358,9 @@ describe("CommentSection", () => {
     renderAsUnauthenticated();
 
     await screen.findByText("Loved this pack.");
-    vi.mocked(commentsClient.list).mockRejectedValueOnce(new Error("network error"));
+    vi.mocked(commentsClient.list).mockRejectedValueOnce(
+      new Error("network error"),
+    );
     await user.click(screen.getByRole("button", { name: "Load more" }));
 
     expect(
@@ -382,6 +436,8 @@ describe("CommentSection", () => {
     await user.click(screen.getByRole("button", { name: "Post" }));
 
     expect(await screen.findByText("New one.")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Load more" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Load more" }),
+    ).toBeInTheDocument();
   });
 });

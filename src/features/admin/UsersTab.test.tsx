@@ -16,7 +16,12 @@ import type { AdminUserRow } from "@/src/shared/types/admin";
 import type { RulesDocument } from "@/src/shared/types/rules";
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
-  authClient: { register: vi.fn(), login: vi.fn(), logout: vi.fn(), refresh: vi.fn() },
+  authClient: {
+    register: vi.fn(),
+    login: vi.fn(),
+    logout: vi.fn(),
+    refresh: vi.fn(),
+  },
 }));
 vi.mock("@/src/shared/lib/admin-client", () => ({
   adminClient: { listUsers: vi.fn() },
@@ -55,7 +60,10 @@ const TARGET: AdminUserRow = {
 };
 
 function renderAsAdmin() {
-  vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "token", user: ADMIN });
+  vi.mocked(authClient.refresh).mockResolvedValue({
+    accessToken: "token",
+    user: ADMIN,
+  });
   return render(
     <NextIntlClientProvider locale="en" messages={messages}>
       <AuthProvider>
@@ -72,18 +80,34 @@ beforeEach(() => {
 
 describe("UsersTab", () => {
   it("fetches page 1 and renders matching users", async () => {
-    vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [TARGET], total: 1, page: 1, limit: 20 });
+    vi.mocked(adminClient.listUsers).mockResolvedValue({
+      items: [TARGET],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
     renderAsAdmin();
 
     expect(await screen.findByText("bob")).toBeInTheDocument();
-    expect(adminClient.listUsers).toHaveBeenCalledWith({ q: undefined, page: 1, limit: 20 });
+    expect(adminClient.listUsers).toHaveBeenCalledWith({
+      q: undefined,
+      page: 1,
+      limit: 20,
+    });
   });
 
   it("bans a user after picking a duration and a rule-category reason", async () => {
-    vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [TARGET], total: 1, page: 1, limit: 20 });
+    vi.mocked(adminClient.listUsers).mockResolvedValue({
+      items: [TARGET],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
     // A week out from "now" — computed relative to the real clock (not a
     // hardcoded date) so this assertion can't go stale as time passes.
-    const bannedUntil = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    const bannedUntil = new Date(
+      Date.now() + 7 * 24 * 60 * 60 * 1000,
+    ).toISOString();
     vi.mocked(usersClient.ban).mockResolvedValue({ id: "u2", bannedUntil });
     const user = userEvent.setup();
     renderAsAdmin();
@@ -92,7 +116,10 @@ describe("UsersTab", () => {
     await user.click(screen.getByRole("button", { name: "Ban" }));
     // Reason options come from the rules fetch — a category, no detail needed.
     await screen.findByRole("option", { name: "Spam & Manipulation" });
-    await user.selectOptions(screen.getByLabelText("Reason"), "spam_manipulation");
+    await user.selectOptions(
+      screen.getByLabelText("Reason"),
+      "spam_manipulation",
+    );
     await user.click(screen.getByRole("button", { name: "Confirm ban" }));
 
     await waitFor(() =>
@@ -102,13 +129,22 @@ describe("UsersTab", () => {
       }),
     );
     expect(
-      await screen.findByText(`Banned until ${new Date(bannedUntil).toLocaleDateString()}`),
+      await screen.findByText(
+        `Banned until ${new Date(bannedUntil).toLocaleDateString()}`,
+      ),
     ).toBeInTheDocument();
   });
 
   it("requires detail before allowing a ban with the 'Other' reason", async () => {
-    vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [TARGET], total: 1, page: 1, limit: 20 });
-    const bannedUntil = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toISOString();
+    vi.mocked(adminClient.listUsers).mockResolvedValue({
+      items: [TARGET],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
+    const bannedUntil = new Date(
+      Date.now() + 7 * 24 * 60 * 60 * 1000,
+    ).toISOString();
     vi.mocked(usersClient.ban).mockResolvedValue({ id: "u2", bannedUntil });
     const user = userEvent.setup();
     renderAsAdmin();
@@ -134,55 +170,106 @@ describe("UsersTab", () => {
   });
 
   it("does not show a Ban button for a target the actor cannot act on (equal rank)", async () => {
-    const peerAdmin: AdminUserRow = { ...TARGET, id: "u3", username: "peer", role: "admin" };
-    vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [peerAdmin], total: 1, page: 1, limit: 20 });
+    const peerAdmin: AdminUserRow = {
+      ...TARGET,
+      id: "u3",
+      username: "peer",
+      role: "admin",
+    };
+    vi.mocked(adminClient.listUsers).mockResolvedValue({
+      items: [peerAdmin],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
     renderAsAdmin();
 
     await screen.findByText("peer");
-    expect(screen.queryByRole("button", { name: "Ban" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Ban" }),
+    ).not.toBeInTheDocument();
   });
 
   it("shows a Trust button for an untrusted target and marks them trusted on click", async () => {
-    vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [TARGET], total: 1, page: 1, limit: 20 });
-    vi.mocked(usersClient.setTrusted).mockResolvedValue({ id: "u2", trusted: true });
+    vi.mocked(adminClient.listUsers).mockResolvedValue({
+      items: [TARGET],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
+    vi.mocked(usersClient.setTrusted).mockResolvedValue({
+      id: "u2",
+      trusted: true,
+    });
     const user = userEvent.setup();
     renderAsAdmin();
 
     await screen.findByText("bob");
     await user.click(screen.getByRole("button", { name: "Trust" }));
 
-    await waitFor(() => expect(usersClient.setTrusted).toHaveBeenCalledWith("u2", true));
-    expect(await screen.findByRole("button", { name: "Untrust" })).toBeInTheDocument();
+    await waitFor(() =>
+      expect(usersClient.setTrusted).toHaveBeenCalledWith("u2", true),
+    );
+    expect(
+      await screen.findByRole("button", { name: "Untrust" }),
+    ).toBeInTheDocument();
   });
 
   it("shows an Untrust button for a trusted target and reverts them on click", async () => {
     const trustedTarget: AdminUserRow = { ...TARGET, trusted: true };
-    vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [trustedTarget], total: 1, page: 1, limit: 20 });
-    vi.mocked(usersClient.setTrusted).mockResolvedValue({ id: "u2", trusted: false });
+    vi.mocked(adminClient.listUsers).mockResolvedValue({
+      items: [trustedTarget],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
+    vi.mocked(usersClient.setTrusted).mockResolvedValue({
+      id: "u2",
+      trusted: false,
+    });
     const user = userEvent.setup();
     renderAsAdmin();
 
     await screen.findByText("bob");
     await user.click(screen.getByRole("button", { name: "Untrust" }));
 
-    await waitFor(() => expect(usersClient.setTrusted).toHaveBeenCalledWith("u2", false));
-    expect(await screen.findByRole("button", { name: "Trust" })).toBeInTheDocument();
+    await waitFor(() =>
+      expect(usersClient.setTrusted).toHaveBeenCalledWith("u2", false),
+    );
+    expect(
+      await screen.findByRole("button", { name: "Trust" }),
+    ).toBeInTheDocument();
   });
 
   it("does not show a Trust button for a target the actor cannot act on (equal rank)", async () => {
-    const peerAdmin: AdminUserRow = { ...TARGET, id: "u3", username: "peer", role: "admin" };
-    vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [peerAdmin], total: 1, page: 1, limit: 20 });
+    const peerAdmin: AdminUserRow = {
+      ...TARGET,
+      id: "u3",
+      username: "peer",
+      role: "admin",
+    };
+    vi.mocked(adminClient.listUsers).mockResolvedValue({
+      items: [peerAdmin],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
     renderAsAdmin();
 
     await screen.findByText("peer");
-    expect(screen.queryByRole("button", { name: "Trust" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Trust" }),
+    ).not.toBeInTheDocument();
   });
 
   describe("streamer mode", () => {
     afterEach(() => localStorage.clear());
 
     function renderWithStreamerMode() {
-      vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "token", user: ADMIN });
+      vi.mocked(authClient.refresh).mockResolvedValue({
+        accessToken: "token",
+        user: ADMIN,
+      });
       return render(
         <NextIntlClientProvider locale="en" messages={messages}>
           <AuthProvider>
@@ -196,7 +283,12 @@ describe("UsersTab", () => {
 
     it("masks a user's username and email but keeps role, ban status, and controls visible", async () => {
       localStorage.setItem("velanto:streamer-mode", "on");
-      vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [TARGET], total: 1, page: 1, limit: 20 });
+      vi.mocked(adminClient.listUsers).mockResolvedValue({
+        items: [TARGET],
+        total: 1,
+        page: 1,
+        limit: 20,
+      });
       renderWithStreamerMode();
 
       // The Ban button is a stable non-identity anchor that renders with the row.
@@ -214,7 +306,12 @@ describe("UsersTab", () => {
     it("reveals the username and email when the row is revealed", async () => {
       const user = userEvent.setup();
       localStorage.setItem("velanto:streamer-mode", "on");
-      vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [TARGET], total: 1, page: 1, limit: 20 });
+      vi.mocked(adminClient.listUsers).mockResolvedValue({
+        items: [TARGET],
+        total: 1,
+        page: 1,
+        limit: 20,
+      });
       renderWithStreamerMode();
 
       await screen.findByRole("button", { name: "Ban" });
@@ -230,12 +327,19 @@ describe("UsersTab", () => {
     });
 
     it("shows identity normally when streamer mode is off", async () => {
-      vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [TARGET], total: 1, page: 1, limit: 20 });
+      vi.mocked(adminClient.listUsers).mockResolvedValue({
+        items: [TARGET],
+        total: 1,
+        page: 1,
+        limit: 20,
+      });
       renderWithStreamerMode();
 
       expect(await screen.findByText("bob")).toBeInTheDocument();
       expect(screen.getByText("bob@example.com")).toBeInTheDocument();
-      expect(screen.queryByRole("button", { name: /reveal/i })).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: /reveal/i }),
+      ).not.toBeInTheDocument();
     });
   });
 });

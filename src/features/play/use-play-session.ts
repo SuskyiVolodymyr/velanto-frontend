@@ -3,7 +3,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { playsClient } from "@/src/shared/lib/plays-client";
 import { writeLastPlayPicks } from "@/src/shared/lib/last-play-storage";
-import { resolveRoundCandidates, resolveVersusRoundCandidates } from "@/src/features/play/round-sampling";
+import {
+  resolveRoundCandidates,
+  resolveVersusRoundCandidates,
+} from "@/src/features/play/round-sampling";
 import { FORMAT_COPY } from "@/src/features/play/play-format-copy";
 import type { Category, Item, Pack } from "@/src/shared/types/pack";
 
@@ -53,7 +56,7 @@ export function usePlaySession(pack: Pack): PlaySession {
   const categories = pack.categories ?? [];
   const versusN = pack.versusN ?? 0;
   const [categoryA, categoryB] = categories;
-  const totalRounds = isVersus ? pack.versusRounds ?? 0 : groups.length;
+  const totalRounds = isVersus ? (pack.versusRounds ?? 0) : groups.length;
 
   const [roundIndex, setRoundIndex] = useState(0);
   const [revealed, setRevealed] = useState(1);
@@ -64,19 +67,28 @@ export function usePlaySession(pack: Pack): PlaySession {
   const group = !isVersus && !isFinished ? groups[roundIndex] : null;
 
   // Re-sampled only when the round changes, not on every render.
-  const candidates = useMemo(() => (group ? resolveRoundCandidates(group) : []), [group]);
+  const candidates = useMemo(
+    () => (group ? resolveRoundCandidates(group) : []),
+    [group],
+  );
   // categoryA/categoryB are the same 2 categories for the whole play session
   // (unlike `group`, which changes reference every round) — roundIndex is
   // the only thing that actually changes when a new round starts, so it
   // must stay in the deps to force a fresh sample each round even though
   // the callback itself never reads it.
   const versusCandidatesA = useMemo(
-    () => (isVersus && !isFinished && categoryA ? resolveVersusRoundCandidates(categoryA, versusN) : []),
+    () =>
+      isVersus && !isFinished && categoryA
+        ? resolveVersusRoundCandidates(categoryA, versusN)
+        : [],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [isVersus, isFinished, categoryA, versusN, roundIndex],
   );
   const versusCandidatesB = useMemo(
-    () => (isVersus && !isFinished && categoryB ? resolveVersusRoundCandidates(categoryB, versusN) : []),
+    () =>
+      isVersus && !isFinished && categoryB
+        ? resolveVersusRoundCandidates(categoryB, versusN)
+        : [],
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [isVersus, isFinished, categoryB, versusN, roundIndex],
   );
@@ -94,11 +106,18 @@ export function usePlaySession(pack: Pack): PlaySession {
   const round = isVersus
     ? {
         title: `Round ${roundIndex + 1}`,
-        totalCount: Math.min(versusCandidatesA.length, versusCandidatesB.length),
+        totalCount: Math.min(
+          versusCandidatesA.length,
+          versusCandidatesB.length,
+        ),
         resolvePick(id: string): Pick | null {
           const category = categories.find((c) => c.id === id);
           if (!category) return null;
-          return { groupId: String(roundIndex), itemId: category.id, itemTitle: category.name };
+          return {
+            groupId: String(roundIndex),
+            itemId: category.id,
+            itemTitle: category.name,
+          };
         },
       }
     : {
@@ -143,15 +162,22 @@ export function usePlaySession(pack: Pack): PlaySession {
   useEffect(() => {
     if (!isFinished || recordedRef.current || !copy) return;
     recordedRef.current = true;
-    const recordedPicks = picks.map(({ groupId, itemId }) => ({ groupId, itemId }));
+    const recordedPicks = picks.map(({ groupId, itemId }) => ({
+      groupId,
+      itemId,
+    }));
     playsClient
       .record(pack.id, { picks: recordedPicks })
       .then(() => writeLastPlayPicks(pack.id, recordedPicks))
       .catch(() => undefined);
   }, [isFinished, pack.id, picks, copy]);
 
-  const progressPct = isFinished ? 100 : Math.round((roundIndex / totalRounds) * 100);
-  const showRound = isVersus ? Boolean(!isFinished && categoryA && categoryB) : Boolean(group);
+  const progressPct = isFinished
+    ? 100
+    : Math.round((roundIndex / totalRounds) * 100);
+  const showRound = isVersus
+    ? Boolean(!isFinished && categoryA && categoryB)
+    : Boolean(group);
 
   return {
     isVersus,

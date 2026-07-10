@@ -54,7 +54,10 @@ export function SegmentedControl<T extends string>({
     }
   }
 
-  function handleKeyDown(event: KeyboardEvent<HTMLButtonElement>, index: number) {
+  function handleKeyDown(
+    event: KeyboardEvent<HTMLButtonElement>,
+    index: number,
+  ) {
     switch (event.key) {
       case "ArrowRight":
       case "ArrowDown":

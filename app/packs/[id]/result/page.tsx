@@ -11,7 +11,8 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const pack = await getPackServer(id);
-  if (!pack) return { title: "Pack not found", robots: { index: false, follow: false } };
+  if (!pack)
+    return { title: "Pack not found", robots: { index: false, follow: false } };
   // Canonicalize to the bare result path so the per-viewer `?p=<picks>` share
   // variants (see share-url.ts / #67) consolidate onto one indexable URL
   // instead of bloating the index with near-duplicates. Canonical alone —
@@ -23,7 +24,11 @@ export async function generateMetadata({
   };
 }
 
-export default async function ResultPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ResultPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const pack = await getPackServer(id);
   if (!pack) return <ResultFallback packId={id} />;

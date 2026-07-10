@@ -12,7 +12,11 @@ const variantClasses: Record<BadgeVariant, string> = {
   accent: "bg-acc/10 text-acc border border-acc/30",
 };
 
-export function Badge({ variant = "default", className, ...props }: BadgeProps) {
+export function Badge({
+  variant = "default",
+  className,
+  ...props
+}: BadgeProps) {
   return (
     <span
       className={cn(

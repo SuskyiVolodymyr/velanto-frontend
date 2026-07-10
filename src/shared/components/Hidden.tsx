@@ -46,7 +46,11 @@ export function Hidden({ kind, id, children, className }: HiddenProps) {
   }
 
   return (
-    <HiddenPlaceholder kind={kind} className={className} onReveal={() => reveal(id)} />
+    <HiddenPlaceholder
+      kind={kind}
+      className={className}
+      onReveal={() => reveal(id)}
+    />
   );
 }
 
@@ -83,7 +87,10 @@ function HiddenPlaceholder({
     // Too small for inline copy — the neutral blurred circle is itself the
     // reveal control; the hint rides along as its accessible description.
     return (
-      <Wrapper data-streamer-hideable="" className={cn("inline-flex", className)}>
+      <Wrapper
+        data-streamer-hideable=""
+        className={cn("inline-flex", className)}
+      >
         <button
           type="button"
           onClick={onReveal}
@@ -101,7 +108,10 @@ function HiddenPlaceholder({
 
   if (kind === "name") {
     return (
-      <Wrapper data-streamer-hideable="" className={cn("inline-flex items-baseline gap-1.5", className)}>
+      <Wrapper
+        data-streamer-hideable=""
+        className={cn("inline-flex items-baseline gap-1.5", className)}
+      >
         <span className="italic text-foreground-tertiary" title={hint}>
           {t("hiddenName")}
         </span>

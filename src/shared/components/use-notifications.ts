@@ -51,7 +51,10 @@ export function useNotifications() {
     if (!open) return;
 
     function handlePointerDown(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         setOpen(false);
       }
     }
@@ -75,7 +78,10 @@ export function useNotifications() {
   // in the fetched data so it resets on each reopen.
   const listQuery = useClientData(
     async () => {
-      const result = await notificationsClient.list({ page: 1, limit: PAGE_SIZE });
+      const result = await notificationsClient.list({
+        page: 1,
+        limit: PAGE_SIZE,
+      });
       return { items: result.items, total: result.total, page: 1 };
     },
     [],
@@ -85,7 +91,8 @@ export function useNotifications() {
   const notifications = listQuery.data?.items ?? [];
   const total = listQuery.data?.total ?? 0;
   const listLoaded = listQuery.data !== null;
-  const listReady = listLoaded && !listQuery.loading && listQuery.error === null;
+  const listReady =
+    listLoaded && !listQuery.loading && listQuery.error === null;
 
   // Once the open drawer's list has loaded, mark everything read and clear the
   // bell's dot. markAllRead's setState lives in its async .then, so this is not
@@ -113,12 +120,18 @@ export function useNotifications() {
     setLoadingMore(true);
     try {
       const nextPage = current.page + 1;
-      const result = await notificationsClient.list({ page: nextPage, limit: PAGE_SIZE });
+      const result = await notificationsClient.list({
+        page: nextPage,
+        limit: PAGE_SIZE,
+      });
       listQuery.setData((prev) => {
         if (!prev) return prev;
         const existingIds = new Set(prev.items.map((n) => n.id));
         return {
-          items: [...prev.items, ...result.items.filter((n) => !existingIds.has(n.id))],
+          items: [
+            ...prev.items,
+            ...result.items.filter((n) => !existingIds.has(n.id)),
+          ],
           total: result.total,
           page: nextPage,
         };

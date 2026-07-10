@@ -25,6 +25,7 @@ Two buttons side by side: 👍 with the like count, 👎 with the dislike count 
 ## 4. API client additions
 
 `packsClient` gains:
+
 - `vote(id, value): Promise<{score, likes, dislikes, myVote}>` → `POST /packs/:id/vote`
 - `unvote(id): Promise<{score, likes, dislikes, myVote}>` → `DELETE /packs/:id/vote`
 
@@ -33,4 +34,5 @@ Two buttons side by side: 👍 with the like count, 👎 with the dislike count 
 `Pack` type gains `score: number`, `likes: number`, `dislikes: number`, `myVote: 1 | -1 | null`.
 
 ## Issue breakdown
+
 This is the entirety of frontend#55's scope.

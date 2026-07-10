@@ -60,10 +60,15 @@ export const createPackSchema = z
       .string()
       .trim()
       .min(1, "Add a short description.")
-      .max(DESCRIPTION_MAX, `Description must be ${DESCRIPTION_MAX} characters or fewer.`),
+      .max(
+        DESCRIPTION_MAX,
+        `Description must be ${DESCRIPTION_MAX} characters or fewer.`,
+      ),
     coverTone: z.string().min(1),
     format: z.enum(PACK_FORMATS),
-    tags: z.array(z.enum(PACK_TAGS)).max(MAX_TAGS, `Choose at most ${MAX_TAGS} tags.`),
+    tags: z
+      .array(z.enum(PACK_TAGS))
+      .max(MAX_TAGS, `Choose at most ${MAX_TAGS} tags.`),
     groups: z.array(groupValueSchema),
     categories: z.array(categoryValueSchema),
     versusRounds: z.number().optional(),

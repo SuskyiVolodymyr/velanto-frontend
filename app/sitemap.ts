@@ -20,7 +20,9 @@ const STATIC_PATHS = ["/", "/docs", "/feedback"] as const;
  */
 async function fetchApprovedPacks(): Promise<Pack[]> {
   try {
-    const res = await fetch(`${API_BASE_URL}/packs?limit=${PACK_CAP}`, { cache: "no-store" });
+    const res = await fetch(`${API_BASE_URL}/packs?limit=${PACK_CAP}`, {
+      cache: "no-store",
+    });
     if (!res.ok) return [];
     const data = (await res.json()) as { items?: Pack[] };
     return data.items ?? [];
@@ -50,7 +52,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // No public users-list endpoint exists — derive indexable profile URLs from
   // the (public) authors of the approved packs above, de-duplicated.
-  const authorIds = [...new Set(packs.map((pack) => pack.authorId).filter(Boolean))];
+  const authorIds = [
+    ...new Set(packs.map((pack) => pack.authorId).filter(Boolean)),
+  ];
   const userRoutes: MetadataRoute.Sitemap = authorIds.map((authorId) => ({
     url: `${SITE_URL}/users/${authorId}`,
     lastModified: now,

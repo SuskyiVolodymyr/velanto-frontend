@@ -44,7 +44,10 @@ export function decodePicks(code: string): RecordedPick[] | null {
  * when present. Reads `window.location.origin`, so this is client-only — it must
  * not be called from a Server Component.
  */
-export function buildShareUrl(path: string, picks?: RecordedPick[] | null): string {
+export function buildShareUrl(
+  path: string,
+  picks?: RecordedPick[] | null,
+): string {
   const base = `${window.location.origin}${path}`;
   return picks && picks.length > 0 ? `${base}?p=${encodePicks(picks)}` : base;
 }

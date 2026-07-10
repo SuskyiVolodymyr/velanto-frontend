@@ -2,7 +2,13 @@
  * Local, independent type definitions (this repo does not import types from
  * velanto-backend — see coding-conventions.md).
  */
-export const PACK_FORMATS = ["save_one", "sacrifice_one", "nxn", "rank_blind", "1v1"] as const;
+export const PACK_FORMATS = [
+  "save_one",
+  "sacrifice_one",
+  "nxn",
+  "rank_blind",
+  "1v1",
+] as const;
 
 export type PackFormat = (typeof PACK_FORMATS)[number];
 

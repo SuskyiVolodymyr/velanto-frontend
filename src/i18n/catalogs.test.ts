@@ -14,7 +14,19 @@ import uk from "@/messages/uk.json";
 
 type Catalog = Record<string, unknown>;
 
-const CATALOGS: Record<Locale, Catalog> = { en, zh, hi, es, fr, ar, bn, pt, ru, ur, uk };
+const CATALOGS: Record<Locale, Catalog> = {
+  en,
+  zh,
+  hi,
+  es,
+  fr,
+  ar,
+  bn,
+  pt,
+  ru,
+  ur,
+  uk,
+};
 
 /** Keys the source catalog may legitimately introduce that translated catalogs need not carry. */
 const META_KEYS = new Set(["_note"]);
@@ -66,10 +78,13 @@ describe("message catalogs", () => {
 
     it("preserves ICU placeholders and rich-text tags for every key", () => {
       for (const key of EN_KEYS) {
-        expect(placeholders(flat[key]), `placeholders differ for ${key}`).toEqual(
-          placeholders(EN[key]),
+        expect(
+          placeholders(flat[key]),
+          `placeholders differ for ${key}`,
+        ).toEqual(placeholders(EN[key]));
+        expect(tags(flat[key]), `tags differ for ${key}`).toEqual(
+          tags(EN[key]),
         );
-        expect(tags(flat[key]), `tags differ for ${key}`).toEqual(tags(EN[key]));
       }
     });
 

@@ -14,8 +14,14 @@ import { PackMetaFields } from "@/src/features/create/PackMetaFields";
 import { FormatSection } from "@/src/features/create/FormatSection";
 import { GroupsSection } from "@/src/features/create/GroupsSection";
 import { CategoriesSection } from "@/src/features/create/CategoriesSection";
-import { newGroup, newCategory } from "@/src/features/create/create-pack.defaults";
-import { createPackSchema, type CreatePackValues } from "@/src/features/create/create-pack.schema";
+import {
+  newGroup,
+  newCategory,
+} from "@/src/features/create/create-pack.defaults";
+import {
+  createPackSchema,
+  type CreatePackValues,
+} from "@/src/features/create/create-pack.schema";
 
 export function CreatePackForm() {
   const router = useRouter();
@@ -78,8 +84,15 @@ export function CreatePackForm() {
   if (status === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">You need to be logged in to create a pack.</Text>
-        <Button className="mt-4" onClick={() => router.push(`/auth?next=${encodeURIComponent(pathname)}`)}>
+        <Text variant="secondary">
+          You need to be logged in to create a pack.
+        </Text>
+        <Button
+          className="mt-4"
+          onClick={() =>
+            router.push(`/auth?next=${encodeURIComponent(pathname)}`)
+          }
+        >
           Log in
         </Button>
       </div>
@@ -88,7 +101,11 @@ export function CreatePackForm() {
 
   return (
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onValid)} noValidate className="flex max-w-2xl flex-col gap-8">
+      <form
+        onSubmit={handleSubmit(onValid)}
+        noValidate
+        className="flex max-w-2xl flex-col gap-8"
+      >
         <PackMetaFields />
 
         <FormatSection />
@@ -101,7 +118,11 @@ export function CreatePackForm() {
           </Text>
         )}
 
-        <Button type="submit" disabled={isSubmitting} className="h-[50px] w-full">
+        <Button
+          type="submit"
+          disabled={isSubmitting}
+          className="h-[50px] w-full"
+        >
           {isSubmitting ? "Publishing…" : "Publish"}
         </Button>
       </form>

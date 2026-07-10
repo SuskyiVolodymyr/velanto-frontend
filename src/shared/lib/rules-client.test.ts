@@ -15,7 +15,9 @@ describe("rulesClient", () => {
   it("getRules() fetches the rules document from /rules", async () => {
     const doc: RulesDocument = {
       version: 4,
-      categories: [{ id: "spam_manipulation", title: "Spam & Manipulation", rules: [] }],
+      categories: [
+        { id: "spam_manipulation", title: "Spam & Manipulation", rules: [] },
+      ],
     };
     vi.mocked(apiClient.get).mockResolvedValue(doc);
 

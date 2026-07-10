@@ -34,14 +34,20 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
   // Re-sampled only when the round changes, not on every render — same
   // rationale as RankPlayScreen's own `candidates` useMemo. The backend
   // guarantees every 1v1 group resolves to exactly 2 items.
-  const candidates = useMemo(() => (group ? resolveRoundCandidates(group) : []), [group]);
+  const candidates = useMemo(
+    () => (group ? resolveRoundCandidates(group) : []),
+    [group],
+  );
   const [left, right] = candidates;
 
   function pick(winnerId: string) {
     if (!group || !left || !right) return;
     const winner = winnerId === left.id ? left : right;
     const loser = winnerId === left.id ? right : left;
-    setHistory((prev) => [...prev, { winnerTitle: winner.title, loserTitle: loser.title }]);
+    setHistory((prev) => [
+      ...prev,
+      { winnerTitle: winner.title, loserTitle: loser.title },
+    ]);
     setAllPicks((prev) => [...prev, { groupId: group.id, itemId: winner.id }]);
     setRoundIndex((prev) => prev + 1);
   }
@@ -63,8 +69,15 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
   if (status === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">You need to be logged in to play a pack.</Text>
-        <Button className="mt-4" onClick={() => router.push(`/auth?next=${encodeURIComponent(pathname)}`)}>
+        <Text variant="secondary">
+          You need to be logged in to play a pack.
+        </Text>
+        <Button
+          className="mt-4"
+          onClick={() =>
+            router.push(`/auth?next=${encodeURIComponent(pathname)}`)
+          }
+        >
           Log in
         </Button>
       </div>
@@ -80,7 +93,9 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
       <div className="mb-8">
         <div className="mb-2 flex items-center justify-between">
           <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-            {isFinished ? "Complete" : `Round ${roundIndex + 1} of ${totalRounds}`}
+            {isFinished
+              ? "Complete"
+              : `Round ${roundIndex + 1} of ${totalRounds}`}
           </Text>
         </div>
         <div className="h-[3px] w-full rounded-full bg-white/[0.06]">
@@ -131,7 +146,10 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
               </div>
             ))}
           </div>
-          <Link href={`/packs/${pack.id}/result`} className={buttonClassName("primary", "w-fit")}>
+          <Link
+            href={`/packs/${pack.id}/result`}
+            className={buttonClassName("primary", "w-fit")}
+          >
             See your result
           </Link>
         </section>

@@ -11,9 +11,14 @@ export function HomeFeedResults({
   status: "loading" | "ready" | "error";
   packs: Pack[];
 }) {
-  if (status === "loading") return <Text variant="secondary">Loading packs…</Text>;
+  if (status === "loading")
+    return <Text variant="secondary">Loading packs…</Text>;
   if (status === "error") {
-    return <Text className="text-[#ff6b6b]">Couldn&apos;t load packs. Try again later.</Text>;
+    return (
+      <Text className="text-[#ff6b6b]">
+        Couldn&apos;t load packs. Try again later.
+      </Text>
+    );
   }
   if (packs.length === 0) {
     return <Text variant="secondary">No packs match these filters yet.</Text>;

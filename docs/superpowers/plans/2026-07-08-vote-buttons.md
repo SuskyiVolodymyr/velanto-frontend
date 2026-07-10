@@ -15,6 +15,7 @@
 ### Task 1: `Pack` type + `packsClient` additions
 
 **Files:**
+
 - Modify: `src/shared/types/pack.ts`
 - Modify: `src/shared/lib/packs-client.ts`
 - Test: `src/shared/lib/packs-client.test.ts`
@@ -25,14 +26,18 @@ Read `src/shared/lib/packs-client.test.ts` first to match its existing mock/asse
 
 ```ts
 it("vote() POSTs to /packs/:id/vote with the given value", async () => {
-  const postSpy = vi.spyOn(apiClient, "post").mockResolvedValue({ score: 1, likes: 1, dislikes: 0, myVote: 1 });
+  const postSpy = vi
+    .spyOn(apiClient, "post")
+    .mockResolvedValue({ score: 1, likes: 1, dislikes: 0, myVote: 1 });
   const result = await packsClient.vote("pack-1", 1);
   expect(postSpy).toHaveBeenCalledWith("/packs/pack-1/vote", { value: 1 });
   expect(result).toEqual({ score: 1, likes: 1, dislikes: 0, myVote: 1 });
 });
 
 it("unvote() DELETEs /packs/:id/vote", async () => {
-  const deleteSpy = vi.spyOn(apiClient, "delete").mockResolvedValue({ score: 0, likes: 0, dislikes: 0, myVote: null });
+  const deleteSpy = vi
+    .spyOn(apiClient, "delete")
+    .mockResolvedValue({ score: 0, likes: 0, dislikes: 0, myVote: null });
   const result = await packsClient.unvote("pack-1");
   expect(deleteSpy).toHaveBeenCalledWith("/packs/pack-1/vote");
   expect(result).toEqual({ score: 0, likes: 0, dislikes: 0, myVote: null });
@@ -49,10 +54,10 @@ Expected: FAIL — `packsClient.vote`/`unvote` are not functions.
 In `src/shared/types/pack.ts`, add to the `Pack` interface (alongside `status`/`rejectionReason`):
 
 ```ts
-  score: number;
-  likes: number;
-  dislikes: number;
-  myVote: 1 | -1 | null;
+score: number;
+likes: number;
+dislikes: number;
+myVote: 1 | -1 | null;
 ```
 
 - [ ] **Step 4: Add `vote`/`unvote` to `packsClient`**
@@ -105,6 +110,7 @@ git commit -m "feat: add vote fields to Pack type, add packsClient.vote()/unvote
 ### Task 2: `VoteButtons` component
 
 **Files:**
+
 - Create: `src/features/pack/VoteButtons.tsx`
 - Test: `src/features/pack/VoteButtons.test.tsx`
 
@@ -134,7 +140,15 @@ const mockedUseAuth = vi.mocked(useAuth);
 
 function mockAuth(authenticated: boolean) {
   mockedUseAuth.mockReturnValue({
-    user: authenticated ? { id: "u1", email: "a@x.com", username: "a", role: "user", createdAt: "" } : null,
+    user: authenticated
+      ? {
+          id: "u1",
+          email: "a@x.com",
+          username: "a",
+          role: "user",
+          createdAt: "",
+        }
+      : null,
     status: authenticated ? "authenticated" : "unauthenticated",
     login: vi.fn(),
     register: vi.fn(),
@@ -147,15 +161,36 @@ describe("VoteButtons", () => {
 
   it("renders like/dislike counts from the initial props", () => {
     mockAuth(true);
-    render(<VoteButtons packId="pack-1" initialScore={2} initialLikes={3} initialDislikes={1} initialMyVote={null} />);
+    render(
+      <VoteButtons
+        packId="pack-1"
+        initialScore={2}
+        initialLikes={3}
+        initialDislikes={1}
+        initialMyVote={null}
+      />,
+    );
     expect(screen.getByText("3")).toBeInTheDocument();
     expect(screen.getByText("1")).toBeInTheDocument();
   });
 
   it("clicking Like calls packsClient.vote with value 1 and updates counts from the response", async () => {
     mockAuth(true);
-    mockedPacksClient.vote.mockResolvedValue({ score: 1, likes: 1, dislikes: 0, myVote: 1 });
-    render(<VoteButtons packId="pack-1" initialScore={0} initialLikes={0} initialDislikes={0} initialMyVote={null} />);
+    mockedPacksClient.vote.mockResolvedValue({
+      score: 1,
+      likes: 1,
+      dislikes: 0,
+      myVote: 1,
+    });
+    render(
+      <VoteButtons
+        packId="pack-1"
+        initialScore={0}
+        initialLikes={0}
+        initialDislikes={0}
+        initialMyVote={null}
+      />,
+    );
     await userEvent.click(screen.getByRole("button", { name: /like/i }));
     expect(mockedPacksClient.vote).toHaveBeenCalledWith("pack-1", 1);
     await waitFor(() => expect(screen.getByText("1")).toBeInTheDocument());
@@ -163,8 +198,21 @@ describe("VoteButtons", () => {
 
   it("clicking the currently-active Like button again toggles it off (still calls vote with value 1)", async () => {
     mockAuth(true);
-    mockedPacksClient.vote.mockResolvedValue({ score: 0, likes: 0, dislikes: 0, myVote: null });
-    render(<VoteButtons packId="pack-1" initialScore={1} initialLikes={1} initialDislikes={0} initialMyVote={1} />);
+    mockedPacksClient.vote.mockResolvedValue({
+      score: 0,
+      likes: 0,
+      dislikes: 0,
+      myVote: null,
+    });
+    render(
+      <VoteButtons
+        packId="pack-1"
+        initialScore={1}
+        initialLikes={1}
+        initialDislikes={0}
+        initialMyVote={1}
+      />,
+    );
     await userEvent.click(screen.getByRole("button", { name: /like/i }));
     expect(mockedPacksClient.vote).toHaveBeenCalledWith("pack-1", 1);
     await waitFor(() => expect(screen.getByText("0")).toBeInTheDocument());
@@ -172,7 +220,15 @@ describe("VoteButtons", () => {
 
   it("redirects an anonymous viewer to /auth on click instead of calling the API", async () => {
     mockAuth(false);
-    render(<VoteButtons packId="pack-1" initialScore={0} initialLikes={0} initialDislikes={0} initialMyVote={null} />);
+    render(
+      <VoteButtons
+        packId="pack-1"
+        initialScore={0}
+        initialLikes={0}
+        initialDislikes={0}
+        initialMyVote={null}
+      />,
+    );
     await userEvent.click(screen.getByRole("button", { name: /like/i }));
     expect(mockedPacksClient.vote).not.toHaveBeenCalled();
     expect(push).toHaveBeenCalledWith("/auth?next=%2Fpacks%2Fpack-1");
@@ -181,9 +237,19 @@ describe("VoteButtons", () => {
   it("shows an inline error and does not change counts when the vote call fails", async () => {
     mockAuth(true);
     mockedPacksClient.vote.mockRejectedValue(new Error("network"));
-    render(<VoteButtons packId="pack-1" initialScore={0} initialLikes={0} initialDislikes={0} initialMyVote={null} />);
+    render(
+      <VoteButtons
+        packId="pack-1"
+        initialScore={0}
+        initialLikes={0}
+        initialDislikes={0}
+        initialMyVote={null}
+      />,
+    );
     await userEvent.click(screen.getByRole("button", { name: /like/i }));
-    await waitFor(() => expect(screen.getByText(/couldn't/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/couldn't/i)).toBeInTheDocument(),
+    );
     expect(screen.getAllByText("0").length).toBeGreaterThan(0);
   });
 });
@@ -264,9 +330,7 @@ export function VoteButtons({
       >
         Dislike {dislikes}
       </Button>
-      {error && (
-        <Text className="text-xs text-[#ff6b6b]">{error}</Text>
-      )}
+      {error && <Text className="text-xs text-[#ff6b6b]">{error}</Text>}
     </div>
   );
 }
@@ -296,6 +360,7 @@ git commit -m "feat: add VoteButtons component with like/dislike toggle and auth
 ### Task 3: Wire into the Pack detail page
 
 **Files:**
+
 - Modify: `app/packs/[id]/page.tsx`
 
 - [ ] **Step 1: Add `VoteButtons` to the page**

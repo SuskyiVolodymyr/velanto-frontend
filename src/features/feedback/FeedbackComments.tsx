@@ -17,7 +17,9 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
   const [comments, setComments] = useState<FeedbackComment[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [loadStatus, setLoadStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [loadStatus, setLoadStatus] = useState<"loading" | "ready" | "error">(
+    "loading",
+  );
   const [loadingMore, setLoadingMore] = useState(false);
   const [loadMoreError, setLoadMoreError] = useState("");
   const [draft, setDraft] = useState("");
@@ -48,7 +50,10 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
     setLoadingMore(true);
     try {
       const nextPage = page + 1;
-      const result = await feedbackClient.listComments(feedbackId, { page: nextPage, limit: PAGE_SIZE });
+      const result = await feedbackClient.listComments(feedbackId, {
+        page: nextPage,
+        limit: PAGE_SIZE,
+      });
       // A comment posted between page loads shifts every later comment's
       // server-side offset by one, so the next page can re-return a comment
       // already shown on a prior page — filter those out rather than trusting
@@ -80,7 +85,11 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
     } catch (err) {
       // Surface the backend's specific validation message (e.g. the moderation
       // blocked-term rejection) when present, falling back to generic copy.
-      setPostError(messageFromError(err, { fallback: "Couldn't post your comment. Try again." }));
+      setPostError(
+        messageFromError(err, {
+          fallback: "Couldn't post your comment. Try again.",
+        }),
+      );
     } finally {
       setPosting(false);
     }
@@ -88,7 +97,11 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
 
   return (
     <section>
-      <Text as="h2" variant="tertiary" className="mb-4 text-xs uppercase tracking-wide">
+      <Text
+        as="h2"
+        variant="tertiary"
+        className="mb-4 text-xs uppercase tracking-wide"
+      >
         Comments · {total}
       </Text>
 
@@ -103,8 +116,14 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
             disabled={posting}
             className="rounded-[10px] border border-border bg-surface px-3.5 py-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-acc disabled:opacity-45"
           />
-          {postError && <Text className="text-sm text-[#ff6b6b]">{postError}</Text>}
-          <Button className="self-end" disabled={!draft.trim() || posting} onClick={handlePost}>
+          {postError && (
+            <Text className="text-sm text-[#ff6b6b]">{postError}</Text>
+          )}
+          <Button
+            className="self-end"
+            disabled={!draft.trim() || posting}
+            onClick={handlePost}
+          >
             Post
           </Button>
         </div>
@@ -118,9 +137,13 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
         </div>
       )}
 
-      {loadStatus === "loading" && <Text variant="secondary">Loading comments…</Text>}
+      {loadStatus === "loading" && (
+        <Text variant="secondary">Loading comments…</Text>
+      )}
       {loadStatus === "error" && (
-        <Text className="text-[#ff6b6b]">Couldn&apos;t load comments. Try again later.</Text>
+        <Text className="text-[#ff6b6b]">
+          Couldn&apos;t load comments. Try again later.
+        </Text>
       )}
       {loadStatus === "ready" && comments.length === 0 && (
         <Text variant="secondary">No comments yet.</Text>
@@ -154,10 +177,16 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
 
       {loadStatus === "ready" && comments.length < total && (
         <div className="mt-4 flex flex-col gap-2">
-          <Button variant="secondary" disabled={loadingMore} onClick={handleLoadMore}>
+          <Button
+            variant="secondary"
+            disabled={loadingMore}
+            onClick={handleLoadMore}
+          >
             {loadingMore ? "Loading…" : "Load more"}
           </Button>
-          {loadMoreError && <Text className="text-sm text-[#ff6b6b]">{loadMoreError}</Text>}
+          {loadMoreError && (
+            <Text className="text-sm text-[#ff6b6b]">{loadMoreError}</Text>
+          )}
         </div>
       )}
     </section>

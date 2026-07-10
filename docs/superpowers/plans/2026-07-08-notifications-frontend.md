@@ -13,6 +13,7 @@
 ### Task 1: Types, API client, relative-time helper
 
 **Files:**
+
 - Create: `src/shared/types/notification.ts`
 - Create: `src/shared/lib/notifications-client.ts`
 - Create: `src/shared/lib/relative-time.ts`
@@ -67,21 +68,35 @@ describe("notificationsClient", () => {
   });
 
   it("list() calls GET /notifications with no query when filters are empty", async () => {
-    mockedApiClient.get.mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    mockedApiClient.get.mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
     await notificationsClient.list();
     expect(mockedApiClient.get).toHaveBeenCalledWith("/notifications");
   });
 
   it("list() serializes page/limit into the query string", async () => {
-    mockedApiClient.get.mockResolvedValue({ items: [], total: 0, page: 2, limit: 5 });
+    mockedApiClient.get.mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 2,
+      limit: 5,
+    });
     await notificationsClient.list({ page: 2, limit: 5 });
-    expect(mockedApiClient.get).toHaveBeenCalledWith("/notifications?page=2&limit=5");
+    expect(mockedApiClient.get).toHaveBeenCalledWith(
+      "/notifications?page=2&limit=5",
+    );
   });
 
   it("unreadCount() calls GET /notifications/unread-count", async () => {
     mockedApiClient.get.mockResolvedValue({ count: 3 });
     await notificationsClient.unreadCount();
-    expect(mockedApiClient.get).toHaveBeenCalledWith("/notifications/unread-count");
+    expect(mockedApiClient.get).toHaveBeenCalledWith(
+      "/notifications/unread-count",
+    );
   });
 
   it("markRead() calls POST /notifications/:id/read", async () => {
@@ -93,21 +108,28 @@ describe("notificationsClient", () => {
   it("markAllRead() calls POST /notifications/read-all", async () => {
     mockedApiClient.post.mockResolvedValue({ updated: 2 });
     await notificationsClient.markAllRead();
-    expect(mockedApiClient.post).toHaveBeenCalledWith("/notifications/read-all");
+    expect(mockedApiClient.post).toHaveBeenCalledWith(
+      "/notifications/read-all",
+    );
   });
 
   it("getPreferences() calls GET /notifications/preferences", async () => {
     mockedApiClient.get.mockResolvedValue({});
     await notificationsClient.getPreferences();
-    expect(mockedApiClient.get).toHaveBeenCalledWith("/notifications/preferences");
+    expect(mockedApiClient.get).toHaveBeenCalledWith(
+      "/notifications/preferences",
+    );
   });
 
   it("setPreferences() calls PATCH /notifications/preferences with the given updates", async () => {
     mockedApiClient.patch.mockResolvedValue({});
     await notificationsClient.setPreferences({ new_comment: false });
-    expect(mockedApiClient.patch).toHaveBeenCalledWith("/notifications/preferences", {
-      new_comment: false,
-    });
+    expect(mockedApiClient.patch).toHaveBeenCalledWith(
+      "/notifications/preferences",
+      {
+        new_comment: false,
+      },
+    );
   });
 });
 ```
@@ -121,7 +143,11 @@ Run: `npm test -- notifications-client` — expect FAIL (module not found).
 ```ts
 // src/shared/lib/notifications-client.ts
 import { apiClient } from "@/src/shared/lib/api-client";
-import type { Notification, NotificationList, NotificationPreferences } from "@/src/shared/types/notification";
+import type {
+  Notification,
+  NotificationList,
+  NotificationPreferences,
+} from "@/src/shared/types/notification";
 
 function buildListQuery(filters: { page?: number; limit?: number }): string {
   const params = new URLSearchParams();
@@ -134,12 +160,19 @@ function buildListQuery(filters: { page?: number; limit?: number }): string {
 export const notificationsClient = {
   list: (filters: { page?: number; limit?: number } = {}) =>
     apiClient.get<NotificationList>(`/notifications${buildListQuery(filters)}`),
-  unreadCount: () => apiClient.get<{ count: number }>("/notifications/unread-count"),
-  markRead: (id: string) => apiClient.post<Notification>(`/notifications/${id}/read`),
-  markAllRead: () => apiClient.post<{ updated: number }>("/notifications/read-all"),
-  getPreferences: () => apiClient.get<NotificationPreferences>("/notifications/preferences"),
+  unreadCount: () =>
+    apiClient.get<{ count: number }>("/notifications/unread-count"),
+  markRead: (id: string) =>
+    apiClient.post<Notification>(`/notifications/${id}/read`),
+  markAllRead: () =>
+    apiClient.post<{ updated: number }>("/notifications/read-all"),
+  getPreferences: () =>
+    apiClient.get<NotificationPreferences>("/notifications/preferences"),
   setPreferences: (updates: Partial<NotificationPreferences>) =>
-    apiClient.patch<NotificationPreferences>("/notifications/preferences", updates),
+    apiClient.patch<NotificationPreferences>(
+      "/notifications/preferences",
+      updates,
+    ),
 };
 ```
 
@@ -154,7 +187,9 @@ describe("formatRelativeTime", () => {
   const now = new Date("2026-07-08T12:00:00.000Z");
 
   it("returns 'just now' for under a minute", () => {
-    expect(formatRelativeTime("2026-07-08T11:59:30.000Z", now)).toBe("just now");
+    expect(formatRelativeTime("2026-07-08T11:59:30.000Z", now)).toBe(
+      "just now",
+    );
   });
 
   it("returns minutes for under an hour", () => {
@@ -179,7 +214,10 @@ const MINUTE_MS = 60_000;
 const HOUR_MS = 60 * MINUTE_MS;
 const DAY_MS = 24 * HOUR_MS;
 
-export function formatRelativeTime(iso: string, now: Date = new Date()): string {
+export function formatRelativeTime(
+  iso: string,
+  now: Date = new Date(),
+): string {
   const diffMs = now.getTime() - new Date(iso).getTime();
   if (diffMs < MINUTE_MS) return "just now";
   if (diffMs < HOUR_MS) return `${Math.floor(diffMs / MINUTE_MS)}m ago`;
@@ -205,6 +243,7 @@ git commit -m "feat: add notifications types, API client, and relative-time help
 ### Task 2: Notification message formatting
 
 **Files:**
+
 - Create: `src/shared/lib/notification-display.ts`
 - Test: `src/shared/lib/notification-display.test.ts`
 
@@ -235,14 +274,21 @@ describe("describeNotification", () => {
         payload: { followerId: "u1", followerUsername: "alice" },
       }),
     );
-    expect(result).toEqual({ message: "alice started following you", href: "/users/u1" });
+    expect(result).toEqual({
+      message: "alice started following you",
+      href: "/users/u1",
+    });
   });
 
   it("formats new_pack_from_followed with a link to the pack", () => {
     const result = describeNotification(
       makeNotification({
         type: "new_pack_from_followed",
-        payload: { packId: "p1", packTitle: "Anime OSTs", authorUsername: "bob" },
+        payload: {
+          packId: "p1",
+          packTitle: "Anime OSTs",
+          authorUsername: "bob",
+        },
       }),
     );
     expect(result).toEqual({
@@ -255,7 +301,12 @@ describe("describeNotification", () => {
     const result = describeNotification(
       makeNotification({
         type: "new_comment",
-        payload: { packId: "p1", packTitle: "Anime OSTs", commentId: "c1", commenterUsername: "carol" },
+        payload: {
+          packId: "p1",
+          packTitle: "Anime OSTs",
+          commentId: "c1",
+          commenterUsername: "carol",
+        },
       }),
     );
     expect(result).toEqual({
@@ -266,7 +317,10 @@ describe("describeNotification", () => {
 
   it("formats pack_deleted_warning with no link", () => {
     const result = describeNotification(
-      makeNotification({ type: "pack_deleted_warning", payload: { packTitle: "Old Pack" } }),
+      makeNotification({
+        type: "pack_deleted_warning",
+        payload: { packTitle: "Old Pack" },
+      }),
     );
     expect(result).toEqual({
       message: 'Your pack "Old Pack" was removed by a moderator',
@@ -309,7 +363,9 @@ interface PackDeletedWarningPayload {
   packTitle: string;
 }
 
-export function describeNotification(notification: Notification): NotificationDisplay {
+export function describeNotification(
+  notification: Notification,
+): NotificationDisplay {
   switch (notification.type) {
     case "new_follower": {
       const payload = notification.payload as NewFollowerPayload;
@@ -360,6 +416,7 @@ git commit -m "feat: add per-type notification message formatting"
 ### Task 3: NotificationsBell component (bell + drawer + polling)
 
 **Files:**
+
 - Create: `src/shared/components/NotificationsBell.tsx`
 - Test: `src/shared/components/NotificationsBell.test.tsx`
 
@@ -384,7 +441,16 @@ const mockedUseAuth = vi.mocked(useAuth);
 
 function mockAuth(status: "authenticated" | "unauthenticated" | "loading") {
   mockedUseAuth.mockReturnValue({
-    user: status === "authenticated" ? { id: "u1", email: "a@x.com", username: "alice", role: "user", createdAt: "" } : null,
+    user:
+      status === "authenticated"
+        ? {
+            id: "u1",
+            email: "a@x.com",
+            username: "alice",
+            role: "user",
+            createdAt: "",
+          }
+        : null,
     status,
     login: vi.fn(),
     register: vi.fn(),
@@ -407,7 +473,12 @@ describe("NotificationsBell", () => {
   beforeEach(() => {
     vi.resetAllMocks();
     mockedClient.unreadCount.mockResolvedValue({ count: 0 });
-    mockedClient.list.mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    mockedClient.list.mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
     mockedClient.markAllRead.mockResolvedValue({ updated: 0 });
   });
 
@@ -418,7 +489,9 @@ describe("NotificationsBell", () => {
   it("renders nothing when unauthenticated", async () => {
     mockAuth("unauthenticated");
     const { container } = render(<NotificationsBell />);
-    await waitFor(() => expect(mockedClient.unreadCount).not.toHaveBeenCalled());
+    await waitFor(() =>
+      expect(mockedClient.unreadCount).not.toHaveBeenCalled(),
+    );
     expect(container).toBeEmptyDOMElement();
   });
 
@@ -426,7 +499,9 @@ describe("NotificationsBell", () => {
     mockAuth("authenticated");
     mockedClient.unreadCount.mockResolvedValue({ count: 2 });
     render(<NotificationsBell />);
-    await waitFor(() => expect(screen.getByTestId("unread-dot")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByTestId("unread-dot")).toBeInTheDocument(),
+    );
   });
 
   it("does not show an unread dot when the count is zero", async () => {
@@ -438,10 +513,19 @@ describe("NotificationsBell", () => {
 
   it("opens the drawer, fetches the list, and marks all read", async () => {
     mockAuth("authenticated");
-    mockedClient.list.mockResolvedValue({ items: [makeNotification()], total: 1, page: 1, limit: 20 });
+    mockedClient.list.mockResolvedValue({
+      items: [makeNotification()],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
     render(<NotificationsBell />);
-    await userEvent.click(screen.getByRole("button", { name: /notifications/i }));
-    await waitFor(() => expect(screen.getByText("bob started following you")).toBeInTheDocument());
+    await userEvent.click(
+      screen.getByRole("button", { name: /notifications/i }),
+    );
+    await waitFor(() =>
+      expect(screen.getByText("bob started following you")).toBeInTheDocument(),
+    );
     await waitFor(() => expect(mockedClient.markAllRead).toHaveBeenCalled());
   });
 
@@ -453,46 +537,87 @@ describe("NotificationsBell", () => {
         <button>outside</button>
       </div>,
     );
-    await userEvent.click(screen.getByRole("button", { name: /notifications/i }));
+    await userEvent.click(
+      screen.getByRole("button", { name: /notifications/i }),
+    );
     await waitFor(() => expect(screen.getByRole("dialog")).toBeInTheDocument());
     await userEvent.click(screen.getByRole("button", { name: "outside" }));
-    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
+    );
   });
 
   it("closes on Escape", async () => {
     mockAuth("authenticated");
     render(<NotificationsBell />);
-    await userEvent.click(screen.getByRole("button", { name: /notifications/i }));
+    await userEvent.click(
+      screen.getByRole("button", { name: /notifications/i }),
+    );
     await waitFor(() => expect(screen.getByRole("dialog")).toBeInTheDocument());
     await userEvent.keyboard("{Escape}");
-    await waitFor(() => expect(screen.queryByRole("dialog")).not.toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.queryByRole("dialog")).not.toBeInTheDocument(),
+    );
   });
 
   it("shows the empty state when there are no notifications", async () => {
     mockAuth("authenticated");
     render(<NotificationsBell />);
-    await userEvent.click(screen.getByRole("button", { name: /notifications/i }));
-    await waitFor(() => expect(screen.getByText("No notifications yet.")).toBeInTheDocument());
+    await userEvent.click(
+      screen.getByRole("button", { name: /notifications/i }),
+    );
+    await waitFor(() =>
+      expect(screen.getByText("No notifications yet.")).toBeInTheDocument(),
+    );
   });
 
   it("shows an error state when the list fetch fails", async () => {
     mockAuth("authenticated");
     mockedClient.list.mockRejectedValue(new Error("network"));
     render(<NotificationsBell />);
-    await userEvent.click(screen.getByRole("button", { name: /notifications/i }));
-    await waitFor(() => expect(screen.getByText(/couldn't load notifications/i)).toBeInTheDocument());
+    await userEvent.click(
+      screen.getByRole("button", { name: /notifications/i }),
+    );
+    await waitFor(() =>
+      expect(
+        screen.getByText(/couldn't load notifications/i),
+      ).toBeInTheDocument(),
+    );
   });
 
   it("loads more results and appends without duplicates", async () => {
     mockAuth("authenticated");
     mockedClient.list
-      .mockResolvedValueOnce({ items: [makeNotification({ id: "n1" })], total: 2, page: 1, limit: 1 })
-      .mockResolvedValueOnce({ items: [makeNotification({ id: "n2", payload: { followerId: "u3", followerUsername: "carol" } })], total: 2, page: 2, limit: 1 });
+      .mockResolvedValueOnce({
+        items: [makeNotification({ id: "n1" })],
+        total: 2,
+        page: 1,
+        limit: 1,
+      })
+      .mockResolvedValueOnce({
+        items: [
+          makeNotification({
+            id: "n2",
+            payload: { followerId: "u3", followerUsername: "carol" },
+          }),
+        ],
+        total: 2,
+        page: 2,
+        limit: 1,
+      });
     render(<NotificationsBell />);
-    await userEvent.click(screen.getByRole("button", { name: /notifications/i }));
-    await waitFor(() => expect(screen.getByText("bob started following you")).toBeInTheDocument());
+    await userEvent.click(
+      screen.getByRole("button", { name: /notifications/i }),
+    );
+    await waitFor(() =>
+      expect(screen.getByText("bob started following you")).toBeInTheDocument(),
+    );
     await userEvent.click(screen.getByRole("button", { name: /load more/i }));
-    await waitFor(() => expect(screen.getByText("carol started following you")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.getByText("carol started following you"),
+      ).toBeInTheDocument(),
+    );
   });
 
   it("polls unread-count again after the interval elapses", async () => {
@@ -513,12 +638,16 @@ describe("NotificationsBell", () => {
   it("polls unread-count again on window focus", async () => {
     mockAuth("authenticated");
     render(<NotificationsBell />);
-    await waitFor(() => expect(mockedClient.unreadCount).toHaveBeenCalledTimes(1));
+    await waitFor(() =>
+      expect(mockedClient.unreadCount).toHaveBeenCalledTimes(1),
+    );
     await act(async () => {
       window.dispatchEvent(new Event("focus"));
       await Promise.resolve();
     });
-    await waitFor(() => expect(mockedClient.unreadCount).toHaveBeenCalledTimes(2));
+    await waitFor(() =>
+      expect(mockedClient.unreadCount).toHaveBeenCalledTimes(2),
+    );
   });
 });
 ```
@@ -553,7 +682,9 @@ export function NotificationsBell() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [listStatus, setListStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
+  const [listStatus, setListStatus] = useState<
+    "idle" | "loading" | "ready" | "error"
+  >("idle");
   const [loadingMore, setLoadingMore] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -587,7 +718,10 @@ export function NotificationsBell() {
     if (!open) return;
 
     function handlePointerDown(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         setOpen(false);
       }
     }
@@ -636,7 +770,10 @@ export function NotificationsBell() {
     setLoadingMore(true);
     try {
       const nextPage = page + 1;
-      const result = await notificationsClient.list({ page: nextPage, limit: PAGE_SIZE });
+      const result = await notificationsClient.list({
+        page: nextPage,
+        limit: PAGE_SIZE,
+      });
       setNotifications((prev) => {
         const existingIds = new Set(prev.map((n) => n.id));
         return [...prev, ...result.items.filter((n) => !existingIds.has(n.id))];
@@ -689,7 +826,9 @@ export function NotificationsBell() {
               </Text>
             )}
             {listStatus === "error" && (
-              <Text className="px-2 py-4 text-sm text-[#ff6b6b]">Couldn&apos;t load notifications.</Text>
+              <Text className="px-2 py-4 text-sm text-[#ff6b6b]">
+                Couldn&apos;t load notifications.
+              </Text>
             )}
             {listStatus === "ready" && notifications.length === 0 && (
               <Text variant="secondary" className="px-2 py-4 text-sm">
@@ -757,6 +896,7 @@ git commit -m "feat: add NotificationsBell (poll, drawer, mark-all-read, paginat
 ### Task 4: Wire NotificationsBell into AppHeader
 
 **Files:**
+
 - Modify: `src/shared/components/AppHeader.tsx`
 - Modify: `src/shared/components/AppHeader.test.tsx`
 
@@ -782,12 +922,14 @@ Run: `npm test -- AppHeader` — the new case should FAIL (bell not rendered at 
 import { NotificationsBell } from "@/src/shared/components/NotificationsBell";
 
 // inside the authenticated branch:
-{status === "authenticated" && user && (
-  <div className="flex items-center gap-3">
-    <NotificationsBell />
-    <UserMenu user={user} onLogout={() => void logout()} />
-  </div>
-)}
+{
+  status === "authenticated" && user && (
+    <div className="flex items-center gap-3">
+      <NotificationsBell />
+      <UserMenu user={user} onLogout={() => void logout()} />
+    </div>
+  );
+}
 ```
 
 - [ ] **Step 4: Run tests to verify they pass**
@@ -807,6 +949,7 @@ git commit -m "feat: render NotificationsBell in the app header"
 ### Task 5: Settings preferences section
 
 **Files:**
+
 - Create: `src/features/settings/NotificationsSection.tsx`
 - Modify: `src/features/settings/SettingsScreen.tsx`
 - Test: `src/features/settings/NotificationsSection.test.tsx`
@@ -841,31 +984,66 @@ describe("NotificationsSection", () => {
 
   it("renders all four toggles in their fetched state", async () => {
     render(<NotificationsSection />);
-    await waitFor(() => expect(screen.getByRole("switch", { name: "New follower" })).toBeInTheDocument());
-    expect(screen.getByRole("switch", { name: "New pack from someone you follow" })).toBeInTheDocument();
-    expect(screen.getByRole("switch", { name: "New comment on your pack" })).toBeInTheDocument();
-    expect(screen.getByRole("switch", { name: "Pack removed by a moderator" })).toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        screen.getByRole("switch", { name: "New follower" }),
+      ).toBeInTheDocument(),
+    );
+    expect(
+      screen.getByRole("switch", { name: "New pack from someone you follow" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("switch", { name: "New comment on your pack" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("switch", { name: "Pack removed by a moderator" }),
+    ).toBeInTheDocument();
   });
 
   it("toggling one calls setPreferences with only that key", async () => {
-    mockedClient.setPreferences.mockResolvedValue({ ...ALL_ON, new_comment: false });
+    mockedClient.setPreferences.mockResolvedValue({
+      ...ALL_ON,
+      new_comment: false,
+    });
     render(<NotificationsSection />);
-    await waitFor(() => expect(screen.getByRole("switch", { name: "New comment on your pack" })).toBeInTheDocument());
-    await userEvent.click(screen.getByRole("switch", { name: "New comment on your pack" }));
-    expect(mockedClient.setPreferences).toHaveBeenCalledWith({ new_comment: false });
     await waitFor(() =>
-      expect(screen.getByRole("switch", { name: "New comment on your pack" })).toHaveAttribute("aria-checked", "false"),
+      expect(
+        screen.getByRole("switch", { name: "New comment on your pack" }),
+      ).toBeInTheDocument(),
+    );
+    await userEvent.click(
+      screen.getByRole("switch", { name: "New comment on your pack" }),
+    );
+    expect(mockedClient.setPreferences).toHaveBeenCalledWith({
+      new_comment: false,
+    });
+    await waitFor(() =>
+      expect(
+        screen.getByRole("switch", { name: "New comment on your pack" }),
+      ).toHaveAttribute("aria-checked", "false"),
     );
   });
 
   it("a failed toggle reverts to the prior state, shows a per-row error, and does not affect other toggles", async () => {
     mockedClient.setPreferences.mockRejectedValue(new Error("network"));
     render(<NotificationsSection />);
-    await waitFor(() => expect(screen.getByRole("switch", { name: "New comment on your pack" })).toBeInTheDocument());
-    await userEvent.click(screen.getByRole("switch", { name: "New comment on your pack" }));
-    await waitFor(() => expect(screen.getByText(/couldn't update/i)).toBeInTheDocument());
-    expect(screen.getByRole("switch", { name: "New comment on your pack" })).toHaveAttribute("aria-checked", "true");
-    expect(screen.getByRole("switch", { name: "New follower" })).toHaveAttribute("aria-checked", "true");
+    await waitFor(() =>
+      expect(
+        screen.getByRole("switch", { name: "New comment on your pack" }),
+      ).toBeInTheDocument(),
+    );
+    await userEvent.click(
+      screen.getByRole("switch", { name: "New comment on your pack" }),
+    );
+    await waitFor(() =>
+      expect(screen.getByText(/couldn't update/i)).toBeInTheDocument(),
+    );
+    expect(
+      screen.getByRole("switch", { name: "New comment on your pack" }),
+    ).toHaveAttribute("aria-checked", "true");
+    expect(
+      screen.getByRole("switch", { name: "New follower" }),
+    ).toHaveAttribute("aria-checked", "true");
   });
 });
 ```
@@ -885,7 +1063,11 @@ import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
 import { notificationsClient } from "@/src/shared/lib/notifications-client";
-import { NOTIFICATION_TYPES, type NotificationPreferences, type NotificationType } from "@/src/shared/types/notification";
+import {
+  NOTIFICATION_TYPES,
+  type NotificationPreferences,
+  type NotificationType,
+} from "@/src/shared/types/notification";
 
 const LABELS: Record<NotificationType, string> = {
   new_follower: "New follower",
@@ -915,10 +1097,15 @@ export function NotificationsSection() {
     setBusy((prev) => ({ ...prev, [type]: true }));
     setErrors((prev) => ({ ...prev, [type]: "" }));
     try {
-      const updated = await notificationsClient.setPreferences({ [type]: nextValue });
+      const updated = await notificationsClient.setPreferences({
+        [type]: nextValue,
+      });
       setPrefs(updated);
     } catch {
-      setErrors((prev) => ({ ...prev, [type]: "Couldn't update this setting. Try again." }));
+      setErrors((prev) => ({
+        ...prev,
+        [type]: "Couldn't update this setting. Try again.",
+      }));
     } finally {
       setBusy((prev) => ({ ...prev, [type]: false }));
     }
@@ -928,12 +1115,19 @@ export function NotificationsSection() {
 
   return (
     <section className="flex flex-col gap-4">
-      <Text as="h2" variant="tertiary" className="text-xs uppercase tracking-wide">
+      <Text
+        as="h2"
+        variant="tertiary"
+        className="text-xs uppercase tracking-wide"
+      >
         Notifications
       </Text>
       <div className="flex flex-col gap-2">
         {NOTIFICATION_TYPES.map((type) => (
-          <Card key={type} className="flex flex-col gap-1 hover:translate-y-0 hover:shadow-none">
+          <Card
+            key={type}
+            className="flex flex-col gap-1 hover:translate-y-0 hover:shadow-none"
+          >
             <div className="flex items-center justify-between gap-4">
               <Text className="font-semibold">{LABELS[type]}</Text>
               <button
@@ -947,7 +1141,9 @@ export function NotificationsSection() {
                   "h-6 w-11 shrink-0 rounded-full border transition-colors",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
                   "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                  prefs[type] ? "border-acc bg-acc/30" : "border-border bg-white/5",
+                  prefs[type]
+                    ? "border-acc bg-acc/30"
+                    : "border-border bg-white/5",
                 )}
               >
                 <span
@@ -958,7 +1154,9 @@ export function NotificationsSection() {
                 />
               </button>
             </div>
-            {errors[type] && <Text className="text-xs text-[#ff6b6b]">{errors[type]}</Text>}
+            {errors[type] && (
+              <Text className="text-xs text-[#ff6b6b]">{errors[type]}</Text>
+            )}
           </Card>
         ))}
       </div>

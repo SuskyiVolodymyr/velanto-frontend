@@ -29,7 +29,10 @@ export interface ApiRequestOptions extends Omit<RequestInit, "body"> {
   body?: unknown;
 }
 
-async function request<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
+async function request<T>(
+  path: string,
+  options: ApiRequestOptions = {},
+): Promise<T> {
   const { body, headers, ...rest } = options;
 
   const response = await fetch(`${API_BASE_URL}${path}`, {

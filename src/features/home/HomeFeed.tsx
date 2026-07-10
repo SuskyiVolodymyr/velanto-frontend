@@ -63,7 +63,10 @@ export function HomeFeed({ initialPacks }: { initialPacks?: Pack[] }) {
   const [window, setWindow] = useState<WindowFilter>(DEFAULT_POPULAR_WINDOW);
 
   useEffect(() => {
-    const timeout = setTimeout(() => setQuery(searchInput.trim()), SEARCH_DEBOUNCE_MS);
+    const timeout = setTimeout(
+      () => setQuery(searchInput.trim()),
+      SEARCH_DEBOUNCE_MS,
+    );
     return () => clearTimeout(timeout);
   }, [searchInput]);
 
@@ -104,7 +107,11 @@ export function HomeFeed({ initialPacks }: { initialPacks?: Pack[] }) {
         />
       </div>
 
-      <FilterChipRow options={FORMAT_OPTIONS} value={format} onSelect={setFormat} />
+      <FilterChipRow
+        options={FORMAT_OPTIONS}
+        value={format}
+        onSelect={setFormat}
+      />
 
       <FilterChipRow
         options={SORT_OPTIONS}
@@ -120,7 +127,11 @@ export function HomeFeed({ initialPacks }: { initialPacks?: Pack[] }) {
       />
 
       {sort === "popular" && (
-        <FilterChipRow options={WINDOW_OPTIONS} value={window} onSelect={setWindow} />
+        <FilterChipRow
+          options={WINDOW_OPTIONS}
+          value={window}
+          onSelect={setWindow}
+        />
       )}
 
       <Button
@@ -129,7 +140,9 @@ export function HomeFeed({ initialPacks }: { initialPacks?: Pack[] }) {
         onClick={() => setTagPickerOpen(true)}
         className="self-start"
       >
-        {tags.length === 0 ? "Filter by tags" : `${tags.length} tag${tags.length === 1 ? "" : "s"}`}
+        {tags.length === 0
+          ? "Filter by tags"
+          : `${tags.length} tag${tags.length === 1 ? "" : "s"}`}
       </Button>
       <TagPickerModal
         open={tagPickerOpen}

@@ -21,7 +21,9 @@ export interface AuthorPacksPage {
  * Returns null on 404 so the caller can `notFound()`; throws on other errors so
  * the caller can fall back to the client-only path instead of showing a 404.
  */
-export async function getUserServer(id: string): Promise<PublicUserProfile | null> {
+export async function getUserServer(
+  id: string,
+): Promise<PublicUserProfile | null> {
   const res = await fetch(`${API_BASE_URL}/users/${id}`, { cache: "no-store" });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`Failed to load user: ${res.status}`);
@@ -35,7 +37,9 @@ export async function getUserServer(id: string): Promise<PublicUserProfile | nul
  * backend's PacksService.list isSelfAuthorView check), so this is safe to
  * server-render and seed.
  */
-export async function getAuthorPacksServer(id: string): Promise<AuthorPacksPage> {
+export async function getAuthorPacksServer(
+  id: string,
+): Promise<AuthorPacksPage> {
   const res = await fetch(
     `${API_BASE_URL}/packs?authorId=${encodeURIComponent(id)}&limit=${AUTHOR_PACKS_LIMIT}`,
     { cache: "no-store" },

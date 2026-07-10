@@ -1,6 +1,11 @@
 import { ROLES, type Role } from "@/src/shared/types/user";
 
-const ROLE_RANK: Record<Role, number> = { user: 0, moderator: 1, manager: 2, admin: 3 };
+const ROLE_RANK: Record<Role, number> = {
+  user: 0,
+  moderator: 1,
+  manager: 2,
+  admin: 3,
+};
 
 /**
  * Mirrors the shape of velanto-backend's own outranks() check, but this copy
@@ -24,7 +29,10 @@ export function canActOn(actorRole: Role, targetRole: Role): boolean {
   return outranks(actorRole, targetRole);
 }
 
-export function assignableRolesFor(actorRole: Role, targetRole: Role): AssignableRole[] {
+export function assignableRolesFor(
+  actorRole: Role,
+  targetRole: Role,
+): AssignableRole[] {
   if (!outranks(actorRole, targetRole)) return [];
   return ASSIGNABLE_ROLES.filter((role) => outranks(actorRole, role));
 }

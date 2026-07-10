@@ -1,4 +1,7 @@
-import type { ReportStatus, ReportWithReporter } from "@/src/shared/types/report";
+import type {
+  ReportStatus,
+  ReportWithReporter,
+} from "@/src/shared/types/report";
 
 // Shared between SupportScreen (queue) and SupportReportScreen (detail) so
 // both surfaces render report status/target consistently.
@@ -8,11 +11,18 @@ export const REPORT_STATUS_BADGE_CLASS: Record<ReportStatus, string> = {
   closed: "border-white/10 bg-white/[0.06] text-foreground-secondary",
 };
 
-export function reportTargetLabel(report: ReportWithReporter): { text: string; href: string } {
+export function reportTargetLabel(report: ReportWithReporter): {
+  text: string;
+  href: string;
+} {
   const shortId = report.targetId.slice(0, 8);
-  if (report.type === "user") return { text: `User ${shortId}`, href: `/users/${report.targetId}` };
+  if (report.type === "user")
+    return { text: `User ${shortId}`, href: `/users/${report.targetId}` };
   if (report.type === "round") {
-    return { text: `Round ${(report.roundIndex ?? 0) + 1} of pack ${shortId}`, href: `/packs/${report.targetId}` };
+    return {
+      text: `Round ${(report.roundIndex ?? 0) + 1} of pack ${shortId}`,
+      href: `/packs/${report.targetId}`,
+    };
   }
   return { text: `Pack ${shortId}`, href: `/packs/${report.targetId}` };
 }

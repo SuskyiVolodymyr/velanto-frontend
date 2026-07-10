@@ -8,7 +8,11 @@ import { useAuth } from "@/src/shared/lib/auth-context";
 import { feedbackClient } from "@/src/shared/lib/feedback-client";
 import { messageFromError } from "@/src/shared/lib/messageFromError";
 import { LOCALES, LOCALE_NAMES } from "@/src/i18n/config";
-import type { CreateFeedbackInput, FeedbackTopic, FeedbackVisibility } from "@/src/shared/types/feedback";
+import type {
+  CreateFeedbackInput,
+  FeedbackTopic,
+  FeedbackVisibility,
+} from "@/src/shared/types/feedback";
 import { TOPIC_LABELS } from "@/src/features/feedback/FeedbackCard";
 import {
   newFeedbackSchema,
@@ -112,7 +116,11 @@ export function NewFeedbackForm() {
       </Text>
 
       <FormProvider {...methods}>
-        <form onSubmit={handleSubmit(onValid)} noValidate className="flex flex-col gap-6">
+        <form
+          onSubmit={handleSubmit(onValid)}
+          noValidate
+          className="flex flex-col gap-6"
+        >
           <SegmentedField<FeedbackTopic>
             name="topic"
             label="Topic"
@@ -148,7 +156,9 @@ export function NewFeedbackForm() {
 
           {topic === "translation" && (
             <section className="flex flex-col gap-4 rounded-[15px] border border-border bg-white/[0.02] p-5">
-              <Text className="text-sm font-semibold">Translation suggestion</Text>
+              <Text className="text-sm font-semibold">
+                Translation suggestion
+              </Text>
               <SelectField
                 name="locale"
                 label="Language"
@@ -177,7 +187,11 @@ export function NewFeedbackForm() {
             </Text>
           )}
 
-          <Button type="submit" disabled={isSubmitting} className="h-[50px] w-full">
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="h-[50px] w-full"
+          >
             {isSubmitting ? "Posting…" : "Post feedback"}
           </Button>
         </form>

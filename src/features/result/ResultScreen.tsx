@@ -9,14 +9,26 @@ import { ResultActions } from "@/src/features/result/ResultActions";
 import type { Pack } from "@/src/shared/types/pack";
 import type { PackResults, RankResults } from "@/src/shared/types/play-results";
 
-export function ResultScreen({ pack, results }: { pack: Pack; results: PackResults | RankResults }) {
+export function ResultScreen({
+  pack,
+  results,
+}: {
+  pack: Pack;
+  results: PackResults | RankResults;
+}) {
   if (results.format === "rank_blind") {
     return <RankResultScreen pack={pack} results={results} />;
   }
   return <GroupResultScreen pack={pack} results={results} />;
 }
 
-function GroupResultScreen({ pack, results }: { pack: Pack; results: PackResults }) {
+function GroupResultScreen({
+  pack,
+  results,
+}: {
+  pack: Pack;
+  results: PackResults;
+}) {
   const { picks: ownPicks, shared } = useResultPicks(pack.id);
 
   return (
@@ -35,13 +47,18 @@ function GroupResultScreen({ pack, results }: { pack: Pack; results: PackResults
 
       <div className="mb-8 flex flex-col gap-4">
         {results.rounds.map((round) => {
-          const ownPick = ownPicks?.find((pick) => pick.groupId === round.groupId);
+          const ownPick = ownPicks?.find(
+            (pick) => pick.groupId === round.groupId,
+          );
           const ownItem = ownPick
             ? round.items.find((item) => item.itemId === ownPick.itemId)
             : undefined;
 
           return (
-            <Card key={round.groupId} className="hover:translate-y-0 hover:shadow-none">
+            <Card
+              key={round.groupId}
+              className="hover:translate-y-0 hover:shadow-none"
+            >
               <Text className="mb-2 font-semibold">{round.groupName}</Text>
               {ownItem ? (
                 <div className="flex items-center justify-between gap-2">
@@ -55,7 +72,10 @@ function GroupResultScreen({ pack, results }: { pack: Pack; results: PackResults
               ) : (
                 <ul className="flex flex-col gap-1">
                   {round.items.map((item) => (
-                    <li key={item.itemId} className="flex items-center justify-between gap-2">
+                    <li
+                      key={item.itemId}
+                      className="flex items-center justify-between gap-2"
+                    >
                       <Text variant="secondary" className="text-sm">
                         {item.itemTitle}
                       </Text>

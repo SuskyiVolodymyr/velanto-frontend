@@ -11,9 +11,16 @@ import { Text } from "@/src/shared/components/Text";
 import { TextField } from "@/src/shared/components/form/TextField";
 import { cn } from "@/src/shared/lib/cn";
 import { sanitizeNextPath } from "@/src/shared/lib/safe-redirect";
-import { loginSchema, registerSchema, type AuthFormValues } from "@/src/features/auth/auth.schema";
+import {
+  loginSchema,
+  registerSchema,
+  type AuthFormValues,
+} from "@/src/features/auth/auth.schema";
 import { LoginFields } from "@/src/features/auth/LoginFields";
-import { RegisterFields, AcceptRulesField } from "@/src/features/auth/RegisterFields";
+import {
+  RegisterFields,
+  AcceptRulesField,
+} from "@/src/features/auth/RegisterFields";
 
 type Mode = "login" | "register";
 
@@ -65,12 +72,17 @@ export function AuthForm() {
           acceptedRules: true,
         });
       } else {
-        await login({ identifier: values.identifier.trim(), password: values.password });
+        await login({
+          identifier: values.identifier.trim(),
+          password: values.password,
+        });
       }
       router.push(sanitizeNextPath(searchParams.get("next")));
     } catch (err) {
       setError("root", {
-        message: messageFromError(err, { statusFallbacks: { 401: "Invalid credentials." } }),
+        message: messageFromError(err, {
+          statusFallbacks: { 401: "Invalid credentials." },
+        }),
       });
       triggerShake();
     }
@@ -78,7 +90,10 @@ export function AuthForm() {
 
   return (
     <div className="w-full max-w-[400px]">
-      <div className="flex bg-white/[0.04] border border-border rounded-xl p-1 mb-6" role="tablist">
+      <div
+        className="flex bg-white/[0.04] border border-border rounded-xl p-1 mb-6"
+        role="tablist"
+      >
         <button
           type="button"
           role="tab"
@@ -86,7 +101,9 @@ export function AuthForm() {
           onClick={() => switchMode("login")}
           className={cn(
             "flex-1 h-[38px] rounded-[9px] text-sm font-semibold transition-colors duration-200",
-            !isRegister ? "bg-white/[0.12] text-foreground" : "text-foreground-secondary",
+            !isRegister
+              ? "bg-white/[0.12] text-foreground"
+              : "text-foreground-secondary",
           )}
         >
           Log in
@@ -98,7 +115,9 @@ export function AuthForm() {
           onClick={() => switchMode("register")}
           className={cn(
             "flex-1 h-[38px] rounded-[9px] text-sm font-semibold transition-colors duration-200",
-            isRegister ? "bg-white/[0.12] text-foreground" : "text-foreground-secondary",
+            isRegister
+              ? "bg-white/[0.12] text-foreground"
+              : "text-foreground-secondary",
           )}
         >
           Sign up
@@ -118,7 +137,10 @@ export function AuthForm() {
         <form
           onSubmit={handleSubmit(onValid, triggerShake)}
           noValidate
-          className={cn("flex flex-col gap-3", shake && "animate-[shake_0.4s_ease-in-out]")}
+          className={cn(
+            "flex flex-col gap-3",
+            shake && "animate-[shake_0.4s_ease-in-out]",
+          )}
         >
           {isRegister ? (
             <RegisterFields disabled={isSubmitting} />
@@ -143,13 +165,24 @@ export function AuthForm() {
             </Text>
           )}
 
-          <Button type="submit" disabled={isSubmitting} className="w-full h-[50px] mt-2">
-            {isSubmitting ? "Please wait…" : isRegister ? "Create account" : "Log in"}
+          <Button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full h-[50px] mt-2"
+          >
+            {isSubmitting
+              ? "Please wait…"
+              : isRegister
+                ? "Create account"
+                : "Log in"}
           </Button>
         </form>
       </FormProvider>
 
-      <Text variant="tertiary" className="text-center text-xs mt-5 leading-relaxed">
+      <Text
+        variant="tertiary"
+        className="text-center text-xs mt-5 leading-relaxed"
+      >
         By continuing you agree to Velanto&apos;s Terms and Privacy Policy.
       </Text>
     </div>

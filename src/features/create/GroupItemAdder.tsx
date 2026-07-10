@@ -40,7 +40,9 @@ export function GroupItemAdder({
           onClick={() => onSelectType("text")}
           className={cn(
             "rounded-[7px] px-3 py-1.5 text-xs font-medium",
-            draftType === "text" ? "bg-white/[0.12] text-foreground" : "text-foreground-secondary",
+            draftType === "text"
+              ? "bg-white/[0.12] text-foreground"
+              : "text-foreground-secondary",
           )}
         >
           Text
@@ -50,7 +52,9 @@ export function GroupItemAdder({
           onClick={() => onSelectType("youtube")}
           className={cn(
             "rounded-[7px] px-3 py-1.5 text-xs font-medium",
-            draftType === "youtube" ? "bg-white/[0.12] text-foreground" : "text-foreground-secondary",
+            draftType === "youtube"
+              ? "bg-white/[0.12] text-foreground"
+              : "text-foreground-secondary",
           )}
         >
           Link
@@ -97,7 +101,9 @@ export function GroupItemAdder({
               {validating ? "Checking…" : "Add"}
             </Button>
           </div>
-          {addError && <Text className="text-xs text-[#ff6b6b]">{addError}</Text>}
+          {addError && (
+            <Text className="text-xs text-[#ff6b6b]">{addError}</Text>
+          )}
         </div>
       )}
     </div>

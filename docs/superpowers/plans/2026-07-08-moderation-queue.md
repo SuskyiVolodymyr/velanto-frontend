@@ -13,6 +13,7 @@
 ### Task 1: `packsClient` — moderation methods
 
 **Files:**
+
 - Modify: `src/shared/lib/packs-client.ts`
 - Test: `src/shared/lib/packs-client.test.ts` (already exists — add to it)
 
@@ -23,12 +24,19 @@ Read `src/shared/lib/packs-client.test.ts` first to match its exact mock pattern
 ```ts
 describe("packsClient.moderationQueue", () => {
   beforeEach(() => {
-    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
   });
 
   it("calls GET /packs/moderation-queue with page/limit", async () => {
     await packsClient.moderationQueue({ page: 2, limit: 20 });
-    expect(apiClient.get).toHaveBeenCalledWith("/packs/moderation-queue?page=2&limit=20");
+    expect(apiClient.get).toHaveBeenCalledWith(
+      "/packs/moderation-queue?page=2&limit=20",
+    );
   });
 
   it("calls with no query string when no filters given", async () => {
@@ -49,13 +57,17 @@ describe("packsClient.reject", () => {
   it("calls POST /packs/:id/reject with a reason", async () => {
     vi.mocked(apiClient.post).mockResolvedValue({});
     await packsClient.reject("pack-1", "Duplicate of an existing pack");
-    expect(apiClient.post).toHaveBeenCalledWith("/packs/pack-1/reject", { reason: "Duplicate of an existing pack" });
+    expect(apiClient.post).toHaveBeenCalledWith("/packs/pack-1/reject", {
+      reason: "Duplicate of an existing pack",
+    });
   });
 
   it("calls POST /packs/:id/reject with an empty reason when none given", async () => {
     vi.mocked(apiClient.post).mockResolvedValue({});
     await packsClient.reject("pack-1");
-    expect(apiClient.post).toHaveBeenCalledWith("/packs/pack-1/reject", { reason: undefined });
+    expect(apiClient.post).toHaveBeenCalledWith("/packs/pack-1/reject", {
+      reason: undefined,
+    });
   });
 });
 ```
@@ -102,6 +114,7 @@ git commit -m "feat: add moderationQueue/approve/reject to packsClient"
 ### Task 2: `ModerationQueueScreen` component
 
 **Files:**
+
 - Create: `src/features/moderation/ModerationQueueScreen.tsx`
 - Test: `src/features/moderation/ModerationQueueScreen.test.tsx`
 
@@ -154,7 +167,9 @@ export function ModerationQueueScreen() {
   const [packs, setPacks] = useState<Pack[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "ready" | "error">(
+    "loading",
+  );
   const [loadingMore, setLoadingMore] = useState(false);
   const [loadMoreError, setLoadMoreError] = useState("");
   const [rowBusy, setRowBusy] = useState<Record<string, boolean>>({});
@@ -162,7 +177,10 @@ export function ModerationQueueScreen() {
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState("");
 
-  const allowed = user?.role === "moderator" || user?.role === "manager" || user?.role === "admin";
+  const allowed =
+    user?.role === "moderator" ||
+    user?.role === "manager" ||
+    user?.role === "admin";
 
   useEffect(() => {
     if (authStatus === "authenticated" && !allowed) {
@@ -197,7 +215,10 @@ export function ModerationQueueScreen() {
     setLoadingMore(true);
     try {
       const nextPage = page + 1;
-      const result = await packsClient.moderationQueue({ page: nextPage, limit: PAGE_SIZE });
+      const result = await packsClient.moderationQueue({
+        page: nextPage,
+        limit: PAGE_SIZE,
+      });
       setPacks((prev) => {
         const existingIds = new Set(prev.map((p) => p.id));
         return [...prev, ...result.items.filter((p) => !existingIds.has(p.id))];
@@ -220,7 +241,10 @@ export function ModerationQueueScreen() {
       setPacks((prev) => prev.filter((p) => p.id !== id));
       setTotal((prev) => prev - 1);
     } catch {
-      setRowError((prev) => ({ ...prev, [id]: "Couldn't approve this pack. Try again." }));
+      setRowError((prev) => ({
+        ...prev,
+        [id]: "Couldn't approve this pack. Try again.",
+      }));
     } finally {
       setRowBusy((prev) => ({ ...prev, [id]: false }));
     }
@@ -236,7 +260,10 @@ export function ModerationQueueScreen() {
       setRejectingId(null);
       setRejectReason("");
     } catch {
-      setRowError((prev) => ({ ...prev, [id]: "Couldn't reject this pack. Try again." }));
+      setRowError((prev) => ({
+        ...prev,
+        [id]: "Couldn't reject this pack. Try again.",
+      }));
     } finally {
       setRowBusy((prev) => ({ ...prev, [id]: false }));
     }
@@ -247,8 +274,15 @@ export function ModerationQueueScreen() {
   if (authStatus === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">You need to be logged in to view this page.</Text>
-        <Button className="mt-4" onClick={() => router.push(`/auth?next=${encodeURIComponent(pathname)}`)}>
+        <Text variant="secondary">
+          You need to be logged in to view this page.
+        </Text>
+        <Button
+          className="mt-4"
+          onClick={() =>
+            router.push(`/auth?next=${encodeURIComponent(pathname)}`)
+          }
+        >
           Log in
         </Button>
       </div>
@@ -264,7 +298,11 @@ export function ModerationQueueScreen() {
       </Text>
 
       {status === "loading" && <Text variant="secondary">Loading packs…</Text>}
-      {status === "error" && <Text className="text-[#ff6b6b]">Couldn&apos;t load packs. Try again later.</Text>}
+      {status === "error" && (
+        <Text className="text-[#ff6b6b]">
+          Couldn&apos;t load packs. Try again later.
+        </Text>
+      )}
       {status === "ready" && packs.length === 0 && (
         <Text variant="secondary">No packs waiting for review.</Text>
       )}
@@ -272,11 +310,19 @@ export function ModerationQueueScreen() {
       {status === "ready" && packs.length > 0 && (
         <div className="flex flex-col gap-3">
           {packs.map((pack) => (
-            <div key={pack.id} className="flex flex-col gap-2 rounded-[12px] border border-border bg-surface px-4 py-3">
+            <div
+              key={pack.id}
+              className="flex flex-col gap-2 rounded-[12px] border border-border bg-surface px-4 py-3"
+            >
               <div className="flex items-center gap-3">
                 <Badge>{FORMAT_LABELS[pack.format]}</Badge>
-                <Text className="flex-1 truncate font-semibold">{pack.title}</Text>
-                <Link href={`/packs/${pack.id}`} className="text-sm text-acc hover:underline">
+                <Text className="flex-1 truncate font-semibold">
+                  {pack.title}
+                </Text>
+                <Link
+                  href={`/packs/${pack.id}`}
+                  className="text-sm text-acc hover:underline"
+                >
                   View
                 </Link>
                 <Button
@@ -311,16 +357,26 @@ export function ModerationQueueScreen() {
                     className="min-h-16 rounded-[8px] border border-border bg-transparent p-2 text-sm text-foreground"
                   />
                   <div className="flex gap-2">
-                    <Button disabled={rowBusy[pack.id]} onClick={() => void handleReject(pack.id)}>
+                    <Button
+                      disabled={rowBusy[pack.id]}
+                      onClick={() => void handleReject(pack.id)}
+                    >
                       Confirm reject
                     </Button>
-                    <Button variant="secondary" onClick={() => setRejectingId(null)}>
+                    <Button
+                      variant="secondary"
+                      onClick={() => setRejectingId(null)}
+                    >
                       Cancel
                     </Button>
                   </div>
                 </div>
               )}
-              {rowError[pack.id] && <Text className="text-sm text-[#ff6b6b]">{rowError[pack.id]}</Text>}
+              {rowError[pack.id] && (
+                <Text className="text-sm text-[#ff6b6b]">
+                  {rowError[pack.id]}
+                </Text>
+              )}
             </div>
           ))}
         </div>
@@ -328,10 +384,16 @@ export function ModerationQueueScreen() {
 
       {status === "ready" && packs.length < total && (
         <div className="flex flex-col gap-2">
-          <Button variant="secondary" disabled={loadingMore} onClick={() => void handleLoadMore()}>
+          <Button
+            variant="secondary"
+            disabled={loadingMore}
+            onClick={() => void handleLoadMore()}
+          >
             {loadingMore ? "Loading…" : "Load more"}
           </Button>
-          {loadMoreError && <Text className="text-sm text-[#ff6b6b]">{loadMoreError}</Text>}
+          {loadMoreError && (
+            <Text className="text-sm text-[#ff6b6b]">{loadMoreError}</Text>
+          )}
         </div>
       )}
     </main>
@@ -363,6 +425,7 @@ git commit -m "feat: add ModerationQueueScreen"
 ### Task 3: Routing + nav link
 
 **Files:**
+
 - Create: `app/moderation/page.tsx`
 - Modify: `src/shared/components/UserMenu.tsx`
 
@@ -437,6 +500,7 @@ Dispatch `pr-review-toolkit:code-reviewer` against the full diff of `feature/mod
 - [ ] **Step 3: Manual browser verification**
 
 Using Claude Preview against the running dev server:
+
 - Create a pack as a regular test user (lands as `pending` per backend#55's pre-moderation gate).
 - Confirm it does NOT appear on the public Home feed.
 - Confirm it DOES appear on that user's own Profile "My Packs" with a "Pending review" badge (already-shipped behavior — just confirming it still holds).

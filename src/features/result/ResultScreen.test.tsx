@@ -21,7 +21,12 @@ const PACK: Pack = {
       name: "2016",
       selectionMode: "manual",
       items: [
-        { id: "i1", type: "text", title: "Guren no Yumiya", value: "Guren no Yumiya" },
+        {
+          id: "i1",
+          type: "text",
+          title: "Guren no Yumiya",
+          value: "Guren no Yumiya",
+        },
         { id: "i2", type: "text", title: "Redo", value: "Redo" },
       ],
     },
@@ -47,7 +52,12 @@ const RESULTS: PackResults = {
       groupId: "g1",
       groupName: "2016",
       items: [
-        { itemId: "i1", itemTitle: "Guren no Yumiya", count: 3, percentage: 75 },
+        {
+          itemId: "i1",
+          itemTitle: "Guren no Yumiya",
+          count: 3,
+          percentage: 75,
+        },
         { itemId: "i2", itemTitle: "Redo", count: 1, percentage: 25 },
       ],
     },
@@ -68,7 +78,9 @@ describe("ResultScreen", () => {
 
     render(<ResultScreen pack={PACK} results={RESULTS} />);
 
-    expect(await screen.findByText(/Your pick:\s*Guren no Yumiya/)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Your pick:\s*Guren no Yumiya/),
+    ).toBeInTheDocument();
     expect(screen.getByText("75%")).toBeInTheDocument();
     expect(screen.getByText(/4 plays recorded/)).toBeInTheDocument();
   });
@@ -113,7 +125,12 @@ describe("ResultScreen", () => {
           groupId: "g1",
           groupName: "2016",
           items: [
-            { itemId: "i1", itemTitle: "Guren no Yumiya", count: 0, percentage: 0 },
+            {
+              itemId: "i1",
+              itemTitle: "Guren no Yumiya",
+              count: 0,
+              percentage: 0,
+            },
             { itemId: "i2", itemTitle: "Redo", count: 0, percentage: 0 },
           ],
         },
@@ -156,20 +173,30 @@ describe("ResultScreen", () => {
 
   it("shows a Share result button for an approved pack", () => {
     render(<ResultScreen pack={PACK} results={RESULTS} />);
-    expect(screen.getByRole("button", { name: "Share result" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Share result" }),
+    ).toBeInTheDocument();
   });
 
   it("hides the Share result button for a non-approved pack", () => {
-    render(<ResultScreen pack={{ ...PACK, status: "pending" }} results={RESULTS} />);
-    expect(screen.queryByRole("button", { name: "Share result" })).not.toBeInTheDocument();
+    render(
+      <ResultScreen pack={{ ...PACK, status: "pending" }} results={RESULTS} />,
+    );
+    expect(
+      screen.queryByRole("button", { name: "Share result" }),
+    ).not.toBeInTheDocument();
   });
 
   it("renders the sharer's picks and a shared-result note when opened via a ?p= link", async () => {
-    searchParams = new URLSearchParams({ p: encodePicks([{ groupId: "g1", itemId: "i1" }]) });
+    searchParams = new URLSearchParams({
+      p: encodePicks([{ groupId: "g1", itemId: "i1" }]),
+    });
 
     render(<ResultScreen pack={PACK} results={RESULTS} />);
 
-    expect(await screen.findByText(/viewing a shared result/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/viewing a shared result/i),
+    ).toBeInTheDocument();
     expect(screen.getByText(/^Pick:\s*Guren no Yumiya/)).toBeInTheDocument();
     expect(screen.queryByText(/Your pick/)).not.toBeInTheDocument();
   });

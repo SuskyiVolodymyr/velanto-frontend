@@ -32,7 +32,10 @@ export interface AuthorModeration {
 export function useAuthorModeration(authorId: string): AuthorModeration {
   const [showBanForm, setShowBanForm] = useState(false);
   const [banDuration, setBanDuration] = useState<BanDuration>("week");
-  const [banReason, setBanReason] = useState<BanReasonState>({ reason: "", reasonDetail: "" });
+  const [banReason, setBanReason] = useState<BanReasonState>({
+    reason: "",
+    reasonDetail: "",
+  });
   const [banActionError, setBanActionError] = useState("");
   const [bannedUntil, setBannedUntil] = useState<string | null>(null);
 

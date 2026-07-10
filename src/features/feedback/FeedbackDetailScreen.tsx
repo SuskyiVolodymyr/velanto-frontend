@@ -35,11 +35,15 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
 
   // postId can change without a remount (e.g. navigating between detail pages);
   // useClientData resets to loading and aborts the previous fetch on change.
-  const postQuery = useClientData(() => feedbackClient.getById(postId), [postId]);
+  const postQuery = useClientData(
+    () => feedbackClient.getById(postId),
+    [postId],
+  );
   const post = postQuery.data;
   // A 404 covers both a deleted post and a hidden staff_only one the viewer
   // isn't allowed to see — surface a friendly not-found in either case.
-  const isNotFound = postQuery.error instanceof ApiError && postQuery.error.status === 404;
+  const isNotFound =
+    postQuery.error instanceof ApiError && postQuery.error.status === 404;
 
   async function handleStatusChange(next: FeedbackStatus) {
     setStatusBusy(true);
@@ -76,8 +80,13 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
   if (isNotFound) {
     return (
       <main className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">This feedback post doesn&apos;t exist or isn&apos;t visible to you.</Text>
-        <Link href="/feedback" className="mt-4 inline-block text-acc hover:underline">
+        <Text variant="secondary">
+          This feedback post doesn&apos;t exist or isn&apos;t visible to you.
+        </Text>
+        <Link
+          href="/feedback"
+          className="mt-4 inline-block text-acc hover:underline"
+        >
           Back to feedback
         </Link>
       </main>
@@ -87,15 +96,23 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
   if (postQuery.error || !post) {
     return (
       <main className="mx-auto max-w-md py-16 text-center">
-        <Text className="text-[#ff6b6b]">Couldn&apos;t load this feedback post. Try again.</Text>
-        <Link href="/feedback" className="mt-4 inline-block text-acc hover:underline">
+        <Text className="text-[#ff6b6b]">
+          Couldn&apos;t load this feedback post. Try again.
+        </Text>
+        <Link
+          href="/feedback"
+          className="mt-4 inline-block text-acc hover:underline"
+        >
           Back to feedback
         </Link>
       </main>
     );
   }
 
-  const isStaff = user?.role === "moderator" || user?.role === "manager" || user?.role === "admin";
+  const isStaff =
+    user?.role === "moderator" ||
+    user?.role === "manager" ||
+    user?.role === "admin";
   const canDelete = isStaff || user?.id === post.authorId;
 
   return (
@@ -116,9 +133,13 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
             {post.authorUsername}
           </Hidden>
         </Text>
-        <Text variant="tertiary">· {new Date(post.createdAt).toLocaleString()}</Text>
+        <Text variant="tertiary">
+          · {new Date(post.createdAt).toLocaleString()}
+        </Text>
         {post.updatedAt !== post.createdAt && (
-          <Text variant="tertiary">· edited {new Date(post.updatedAt).toLocaleString()}</Text>
+          <Text variant="tertiary">
+            · edited {new Date(post.updatedAt).toLocaleString()}
+          </Text>
         )}
       </div>
 
@@ -139,7 +160,8 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
           )}
           {post.translationContext && (
             <Text variant="secondary" className="text-sm">
-              <span className="font-semibold text-foreground">Context:</span> {post.translationContext}
+              <span className="font-semibold text-foreground">Context:</span>{" "}
+              {post.translationContext}
             </Text>
           )}
           {post.translationSuggestion && (
@@ -167,7 +189,9 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
               <select
                 value={post.status}
                 disabled={statusBusy}
-                onChange={(e) => void handleStatusChange(e.target.value as FeedbackStatus)}
+                onChange={(e) =>
+                  void handleStatusChange(e.target.value as FeedbackStatus)
+                }
                 aria-label="Status"
                 className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground disabled:opacity-45"
               >
@@ -179,14 +203,26 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
               </select>
             </label>
           )}
-          {statusBusy && <Text variant="tertiary" className="text-xs">Saving…</Text>}
-          {statusError && <Text className="text-xs text-[#ff6b6b]">{statusError}</Text>}
+          {statusBusy && (
+            <Text variant="tertiary" className="text-xs">
+              Saving…
+            </Text>
+          )}
+          {statusError && (
+            <Text className="text-xs text-[#ff6b6b]">{statusError}</Text>
+          )}
           {canDelete && (
-            <Button variant="secondary" className="ml-auto" onClick={() => void handleDelete()}>
+            <Button
+              variant="secondary"
+              className="ml-auto"
+              onClick={() => void handleDelete()}
+            >
               Delete
             </Button>
           )}
-          {deleteError && <Text className="text-xs text-[#ff6b6b]">{deleteError}</Text>}
+          {deleteError && (
+            <Text className="text-xs text-[#ff6b6b]">{deleteError}</Text>
+          )}
         </div>
       )}
 

@@ -45,7 +45,15 @@ function makePost(overrides: Partial<Feedback> = {}): Feedback {
 
 function mockAuth(authenticated: boolean) {
   mockedUseAuth.mockReturnValue({
-    user: authenticated ? { id: "u1", email: "a@x.com", username: "alice", role: "user", createdAt: "" } : null,
+    user: authenticated
+      ? {
+          id: "u1",
+          email: "a@x.com",
+          username: "alice",
+          role: "user",
+          createdAt: "",
+        }
+      : null,
     status: authenticated ? "authenticated" : "unauthenticated",
     login: vi.fn(),
     register: vi.fn(),
@@ -54,7 +62,12 @@ function mockAuth(authenticated: boolean) {
 }
 
 function mockList(items: Feedback[], total = items.length) {
-  mockedFeedbackClient.list.mockResolvedValue({ items, total, page: 1, limit: 20 });
+  mockedFeedbackClient.list.mockResolvedValue({
+    items,
+    total,
+    page: 1,
+    limit: 20,
+  });
 }
 
 describe("FeedbackScreen", () => {
@@ -73,7 +86,9 @@ describe("FeedbackScreen", () => {
     });
     render(<FeedbackScreen />);
 
-    await waitFor(() => expect(screen.getByText("Main list post")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("Main list post")).toBeInTheDocument(),
+    );
     expect(screen.getByText("Sidebar top post")).toBeInTheDocument();
 
     // Main list call: page 1, limit 20.
@@ -81,7 +96,10 @@ describe("FeedbackScreen", () => {
       expect.objectContaining({ page: 1, limit: 20, sort: "new" }),
     );
     // Sidebar call: sort top, limit 3.
-    expect(mockedFeedbackClient.list).toHaveBeenCalledWith({ sort: "top", limit: 3 });
+    expect(mockedFeedbackClient.list).toHaveBeenCalledWith({
+      sort: "top",
+      limit: 3,
+    });
   });
 
   it("debounced search feeds a `q` into the list call", async () => {
@@ -92,7 +110,9 @@ describe("FeedbackScreen", () => {
     await userEvent.type(screen.getByRole("searchbox"), "crash");
 
     await waitFor(() =>
-      expect(mockedFeedbackClient.list).toHaveBeenCalledWith(expect.objectContaining({ q: "crash" })),
+      expect(mockedFeedbackClient.list).toHaveBeenCalledWith(
+        expect.objectContaining({ q: "crash" }),
+      ),
     );
   });
 
@@ -104,7 +124,9 @@ describe("FeedbackScreen", () => {
     await userEvent.click(screen.getByRole("button", { name: "Feature" }));
 
     await waitFor(() =>
-      expect(mockedFeedbackClient.list).toHaveBeenCalledWith(expect.objectContaining({ topic: "feature" })),
+      expect(mockedFeedbackClient.list).toHaveBeenCalledWith(
+        expect.objectContaining({ topic: "feature" }),
+      ),
     );
   });
 
@@ -116,7 +138,9 @@ describe("FeedbackScreen", () => {
     await userEvent.click(screen.getByRole("button", { name: "In progress" }));
 
     await waitFor(() =>
-      expect(mockedFeedbackClient.list).toHaveBeenCalledWith(expect.objectContaining({ status: "in_progress" })),
+      expect(mockedFeedbackClient.list).toHaveBeenCalledWith(
+        expect.objectContaining({ status: "in_progress" }),
+      ),
     );
   });
 
@@ -128,13 +152,19 @@ describe("FeedbackScreen", () => {
     await userEvent.click(screen.getByRole("button", { name: "Top" }));
 
     await waitFor(() =>
-      expect(mockedFeedbackClient.list).toHaveBeenCalledWith(expect.objectContaining({ sort: "top", page: 1, limit: 20 })),
+      expect(mockedFeedbackClient.list).toHaveBeenCalledWith(
+        expect.objectContaining({ sort: "top", page: 1, limit: 20 }),
+      ),
     );
   });
 
   it("shows a loading state instead of the stale list while a filter change refetches", async () => {
-    let resolveRefetch: (value: { items: Feedback[]; total: number; page: number; limit: number }) => void =
-      () => {};
+    let resolveRefetch: (value: {
+      items: Feedback[];
+      total: number;
+      page: number;
+      limit: number;
+    }) => void = () => {};
     let mainCall = 0;
     mockedFeedbackClient.list.mockImplementation((filters = {}) => {
       if (filters.sort === "top" && filters.limit === 3) {
@@ -142,23 +172,39 @@ describe("FeedbackScreen", () => {
       }
       mainCall += 1;
       if (mainCall === 1) {
-        return Promise.resolve({ items: [makePost({ id: "f1", title: "First list post" })], total: 1, page: 1, limit: 20 });
+        return Promise.resolve({
+          items: [makePost({ id: "f1", title: "First list post" })],
+          total: 1,
+          page: 1,
+          limit: 20,
+        });
       }
       return new Promise((resolve) => {
         resolveRefetch = resolve;
       });
     });
     render(<FeedbackScreen />);
-    await waitFor(() => expect(screen.getByText("First list post")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("First list post")).toBeInTheDocument(),
+    );
 
     await userEvent.click(screen.getByRole("button", { name: "Feature" }));
 
     // While the refetch is in flight, the stale row is gone and a loading state shows.
-    await waitFor(() => expect(screen.getByText(/loading feedback/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/loading feedback/i)).toBeInTheDocument(),
+    );
     expect(screen.queryByText("First list post")).not.toBeInTheDocument();
 
-    resolveRefetch({ items: [makePost({ id: "f2", title: "Filtered post" })], total: 1, page: 1, limit: 20 });
-    await waitFor(() => expect(screen.getByText("Filtered post")).toBeInTheDocument());
+    resolveRefetch({
+      items: [makePost({ id: "f2", title: "Filtered post" })],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
+    await waitFor(() =>
+      expect(screen.getByText("Filtered post")).toBeInTheDocument(),
+    );
   });
 
   it("clears a stale load-more error when the filter changes", async () => {
@@ -167,30 +213,45 @@ describe("FeedbackScreen", () => {
         return Promise.resolve({ items: [], total: 0, page: 1, limit: 3 });
       }
       if (filters.page === 2) return Promise.reject(new Error("network"));
-      return Promise.resolve({ items: [makePost({ id: "f1", title: "Row" })], total: 2, page: 1, limit: 20 });
+      return Promise.resolve({
+        items: [makePost({ id: "f1", title: "Row" })],
+        total: 2,
+        page: 1,
+        limit: 20,
+      });
     });
     render(<FeedbackScreen />);
     await waitFor(() => expect(screen.getByText("Row")).toBeInTheDocument());
 
     await userEvent.click(screen.getByRole("button", { name: /load more/i }));
-    await waitFor(() => expect(screen.getByText(/couldn't load more feedback/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.getByText(/couldn't load more feedback/i),
+      ).toBeInTheDocument(),
+    );
 
     await userEvent.click(screen.getByRole("button", { name: "Feature" }));
     await waitFor(() =>
-      expect(screen.queryByText(/couldn't load more feedback/i)).not.toBeInTheDocument(),
+      expect(
+        screen.queryByText(/couldn't load more feedback/i),
+      ).not.toBeInTheDocument(),
     );
   });
 
   it("shows an empty message when there are no items", async () => {
     mockList([]);
     render(<FeedbackScreen />);
-    await waitFor(() => expect(screen.getByText(/no feedback matches/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/no feedback matches/i)).toBeInTheDocument(),
+    );
   });
 
   it("shows an error message when the list call rejects", async () => {
     mockedFeedbackClient.list.mockRejectedValue(new Error("network"));
     render(<FeedbackScreen />);
-    await waitFor(() => expect(screen.getByText(/couldn't load feedback/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/couldn't load feedback/i)).toBeInTheDocument(),
+    );
   });
 
   it("routes an authenticated user to /feedback/new when clicking New post", async () => {

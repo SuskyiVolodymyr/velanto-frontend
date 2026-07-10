@@ -12,7 +12,11 @@ export function AccountSection() {
 
   return (
     <section className="flex flex-col gap-4">
-      <Text as="h2" variant="tertiary" className="text-xs uppercase tracking-wide">
+      <Text
+        as="h2"
+        variant="tertiary"
+        className="text-xs uppercase tracking-wide"
+      >
         Account
       </Text>
       {status === "authenticated" && user && (

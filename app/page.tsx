@@ -13,7 +13,8 @@ export default async function Home() {
         Discover packs
       </Text>
       <Text variant="secondary" className="mb-8 max-w-lg">
-        Browse packs by format or tag, then play through one to see who&apos;s left standing.
+        Browse packs by format or tag, then play through one to see who&apos;s
+        left standing.
       </Text>
       <HomeFeed initialPacks={initialPacks ?? undefined} />
     </main>

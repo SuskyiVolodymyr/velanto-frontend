@@ -9,9 +9,9 @@ const CATEGORIES: RuleCategory[] = [
 
 describe("resolveBanReasonTitle", () => {
   it("maps a category id to its human title", () => {
-    expect(resolveBanReasonTitle("spam_manipulation", CATEGORIES, "Other")).toBe(
-      "Spam & Manipulation",
-    );
+    expect(
+      resolveBanReasonTitle("spam_manipulation", CATEGORIES, "Other"),
+    ).toBe("Spam & Manipulation");
   });
 
   it("maps 'other' to the supplied localized label without leaking the id", () => {
@@ -19,7 +19,9 @@ describe("resolveBanReasonTitle", () => {
   });
 
   it("falls back to the raw id when the category is unknown (rules not loaded)", () => {
-    expect(resolveBanReasonTitle("spam_manipulation", [], "Other")).toBe("spam_manipulation");
+    expect(resolveBanReasonTitle("spam_manipulation", [], "Other")).toBe(
+      "spam_manipulation",
+    );
   });
 
   it("returns null for an empty/null/undefined reason so callers can omit the row", () => {

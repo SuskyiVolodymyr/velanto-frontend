@@ -35,17 +35,26 @@ describe("commentsClient", () => {
   });
 
   it("list() forwards page and limit as query params", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 2, limit: 10 });
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 2,
+      limit: 10,
+    });
 
     await commentsClient.list("pack-1", { page: 2, limit: 10 });
 
-    expect(apiClient.get).toHaveBeenCalledWith("/packs/pack-1/comments?page=2&limit=10");
+    expect(apiClient.get).toHaveBeenCalledWith(
+      "/packs/pack-1/comments?page=2&limit=10",
+    );
   });
 
   it("create() posts a comment body for a pack", async () => {
     vi.mocked(apiClient.post).mockResolvedValue(COMMENT);
 
-    const result = await commentsClient.create("pack-1", { body: "Great pack!" });
+    const result = await commentsClient.create("pack-1", {
+      body: "Great pack!",
+    });
 
     expect(apiClient.post).toHaveBeenCalledWith("/packs/pack-1/comments", {
       body: "Great pack!",

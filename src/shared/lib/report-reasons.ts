@@ -6,7 +6,10 @@ import type { ReportType } from "@/src/shared/types/report";
 // label text is duplicated deliberately, sourced verbatim from the design
 // mocks' own REPORT_REASONS arrays (Vilante Pack.dc.html, Vilante
 // Author.dc.html, Vilante Play*.dc.html).
-export const REPORT_REASON_LABELS: Record<ReportType, Record<string, string>> = {
+export const REPORT_REASON_LABELS: Record<
+  ReportType,
+  Record<string, string>
+> = {
   pack: {
     inappropriate: "Inappropriate or offensive content",
     copyright: "Copyright or ownership issue",

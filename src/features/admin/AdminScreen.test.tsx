@@ -16,7 +16,12 @@ vi.mock("next/navigation", () => ({
 }));
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
-  authClient: { register: vi.fn(), login: vi.fn(), logout: vi.fn(), refresh: vi.fn() },
+  authClient: {
+    register: vi.fn(),
+    login: vi.fn(),
+    logout: vi.fn(),
+    refresh: vi.fn(),
+  },
 }));
 vi.mock("@/src/shared/lib/admin-client", () => ({
   adminClient: { overview: vi.fn(), listUsers: vi.fn(), auditLogs: vi.fn() },
@@ -30,7 +35,12 @@ const MANAGER: User = {
   createdAt: "2026-01-01T00:00:00.000Z",
 };
 
-const PLAIN_USER: User = { ...MANAGER, id: "u1", role: "user", username: "plain" };
+const PLAIN_USER: User = {
+  ...MANAGER,
+  id: "u1",
+  role: "user",
+  username: "plain",
+};
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -45,7 +55,10 @@ beforeEach(() => {
 
 describe("AdminScreen", () => {
   it("renders the Overview tab by default for a manager", async () => {
-    vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "token", user: MANAGER });
+    vi.mocked(authClient.refresh).mockResolvedValue({
+      accessToken: "token",
+      user: MANAGER,
+    });
     render(
       <AuthProvider>
         <AdminScreen />
@@ -56,8 +69,16 @@ describe("AdminScreen", () => {
   });
 
   it("switches to the Logs tab on click", async () => {
-    vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "token", user: MANAGER });
-    vi.mocked(adminClient.auditLogs).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    vi.mocked(authClient.refresh).mockResolvedValue({
+      accessToken: "token",
+      user: MANAGER,
+    });
+    vi.mocked(adminClient.auditLogs).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
     const user = userEvent.setup();
     render(
       <AuthProvider>
@@ -72,7 +93,10 @@ describe("AdminScreen", () => {
   });
 
   it("redirects home for an authenticated user without admin/manager role", async () => {
-    vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "token", user: PLAIN_USER });
+    vi.mocked(authClient.refresh).mockResolvedValue({
+      accessToken: "token",
+      user: PLAIN_USER,
+    });
     render(
       <AuthProvider>
         <AdminScreen />
@@ -83,7 +107,9 @@ describe("AdminScreen", () => {
     // Locks in the no-flash guarantee: the tabs (and thus any admin content)
     // must never render for a disallowed role, not even for a frame before
     // the redirect fires.
-    expect(screen.queryByRole("button", { name: "Overview" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Overview" }),
+    ).not.toBeInTheDocument();
   });
 
   it("shows a login prompt when unauthenticated", async () => {
@@ -95,7 +121,9 @@ describe("AdminScreen", () => {
       </AuthProvider>,
     );
 
-    expect(await screen.findByText("You need to be logged in to view this page.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("You need to be logged in to view this page."),
+    ).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Log in" }));
     expect(push).toHaveBeenCalledWith("/auth?next=%2Fadmin");

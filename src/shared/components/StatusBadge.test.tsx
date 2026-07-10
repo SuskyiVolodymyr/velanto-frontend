@@ -42,7 +42,9 @@ describe("StatusBadge", () => {
   });
 
   it("merges a custom className", () => {
-    render(<StatusBadge kind="feedback" status="done" className="custom-class" />);
+    render(
+      <StatusBadge kind="feedback" status="done" className="custom-class" />,
+    );
     const el = screen.getByText("Done");
     expect(el).toHaveClass("custom-class");
     expect(el).toHaveClass("text-green-400");

@@ -36,7 +36,9 @@ export function ReportFilters({
           onClick={() => onStatusChange(f.value)}
           aria-pressed={statusFilter === f.value}
           className={`rounded-[9px] border px-3.5 py-2 text-sm font-medium ${
-            statusFilter === f.value ? "border-acc/40 bg-acc/10 text-acc" : "border-border bg-white/[0.02] text-foreground-secondary"
+            statusFilter === f.value
+              ? "border-acc/40 bg-acc/10 text-acc"
+              : "border-border bg-white/[0.02] text-foreground-secondary"
           }`}
         >
           {f.label}
@@ -50,7 +52,9 @@ export function ReportFilters({
           onClick={() => onTypeChange(f.value)}
           aria-pressed={typeFilter === f.value}
           className={`rounded-[9px] border px-3.5 py-2 text-sm font-medium ${
-            typeFilter === f.value ? "border-acc/40 bg-acc/10 text-acc" : "border-border bg-white/[0.02] text-foreground-secondary"
+            typeFilter === f.value
+              ? "border-acc/40 bg-acc/10 text-acc"
+              : "border-border bg-white/[0.02] text-foreground-secondary"
           }`}
         >
           {f.label}

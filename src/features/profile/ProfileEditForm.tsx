@@ -14,7 +14,9 @@ export function ProfileEditForm() {
   const { user, status: authStatus } = useAuth();
   const router = useRouter();
   const [bio, setBio] = useState("");
-  const [loadStatus, setLoadStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [loadStatus, setLoadStatus] = useState<"loading" | "ready" | "error">(
+    "loading",
+  );
   const [pending, setPending] = useState(false);
   const [saveError, setSaveError] = useState<string | null>(null);
 
@@ -47,7 +49,11 @@ export function ProfileEditForm() {
     } catch (err) {
       // Surface the backend's specific validation message (e.g. the moderation
       // blocked-term rejection) when present, falling back to generic copy.
-      setSaveError(messageFromError(err, { fallback: "Couldn't save your changes. Try again." }));
+      setSaveError(
+        messageFromError(err, {
+          fallback: "Couldn't save your changes. Try again.",
+        }),
+      );
       setPending(false);
     }
   }
@@ -57,7 +63,9 @@ export function ProfileEditForm() {
   if (authStatus === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">You need to be logged in to edit your profile.</Text>
+        <Text variant="secondary">
+          You need to be logged in to edit your profile.
+        </Text>
       </div>
     );
   }
@@ -67,13 +75,18 @@ export function ProfileEditForm() {
   if (loadStatus === "error") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text className="text-[#ff6b6b]">Couldn&apos;t load your current bio. Try again later.</Text>
+        <Text className="text-[#ff6b6b]">
+          Couldn&apos;t load your current bio. Try again later.
+        </Text>
       </div>
     );
   }
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto w-full max-w-md px-7 py-10">
+    <form
+      onSubmit={handleSubmit}
+      className="mx-auto w-full max-w-md px-7 py-10"
+    >
       <Text as="h1" variant="title" className="mb-6 text-2xl">
         Edit profile
       </Text>
@@ -95,7 +108,9 @@ export function ProfileEditForm() {
         className="w-full rounded-[10px] border border-border bg-surface p-3 text-sm text-foreground placeholder:text-foreground-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
       />
 
-      {saveError && <Text className="mt-3 text-sm text-[#ff6b6b]">{saveError}</Text>}
+      {saveError && (
+        <Text className="mt-3 text-sm text-[#ff6b6b]">{saveError}</Text>
+      )}
 
       <Button type="submit" disabled={pending} className="mt-6 w-fit">
         {pending ? "Saving…" : "Save"}

@@ -10,7 +10,8 @@
 # Bypass deliberately with `git push --no-verify`.
 set -e
 
-echo "pre-push: lint:ci + typecheck + build (skip with --no-verify)…"
+echo "pre-push: format:check + lint:ci + typecheck + build (skip with --no-verify)…"
+npm run format:check
 npm run lint:ci
 npm run typecheck
 npm run build

@@ -11,7 +11,13 @@ export const TOPIC_LABELS: Record<FeedbackTopic, string> = {
   other: "Other",
 };
 
-export function FeedbackCard({ post, compact }: { post: Feedback; compact?: boolean }) {
+export function FeedbackCard({
+  post,
+  compact,
+}: {
+  post: Feedback;
+  compact?: boolean;
+}) {
   if (compact) {
     return (
       <Link
@@ -35,8 +41,12 @@ export function FeedbackCard({ post, compact }: { post: Feedback; compact?: bool
       className="flex items-start gap-4 rounded-[12px] border border-border bg-surface px-4 py-3 hover:bg-white/[0.03]"
     >
       <span className="flex shrink-0 flex-col items-center rounded-[8px] bg-white/[0.04] px-3 py-2">
-        <span className="text-base font-semibold text-foreground">{post.score}</span>
-        <span className="text-[10px] uppercase tracking-wide text-foreground-tertiary">score</span>
+        <span className="text-base font-semibold text-foreground">
+          {post.score}
+        </span>
+        <span className="text-[10px] uppercase tracking-wide text-foreground-tertiary">
+          score
+        </span>
       </span>
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2">

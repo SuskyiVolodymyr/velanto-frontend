@@ -51,7 +51,8 @@ body {
  * visibility (not display) preserves layout to avoid a reflow when React swaps
  * in the placeholder. After hydration React alone governs visibility.
  */
-html[data-streamer-mode="on"]:not([data-streamer-hydrated]) [data-streamer-hideable] {
+html[data-streamer-mode="on"]:not([data-streamer-hydrated])
+  [data-streamer-hideable] {
   visibility: hidden !important;
 }
 

@@ -33,7 +33,9 @@ const report = {
 
 function mockAuth(role: Role | null) {
   mockedUseAuth.mockReturnValue({
-    user: role ? { id: "mod-1", email: "m@x.com", username: "mod", role, createdAt: "" } : null,
+    user: role
+      ? { id: "mod-1", email: "m@x.com", username: "mod", role, createdAt: "" }
+      : null,
     status: role ? "authenticated" : "unauthenticated",
     login: vi.fn(),
     register: vi.fn(),
@@ -47,7 +49,9 @@ describe("SupportScreen", () => {
   it("shows a log-in prompt for an unauthenticated viewer", async () => {
     mockAuth(null);
     render(<SupportScreen />);
-    await waitFor(() => expect(screen.getByText(/need to be logged in/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/need to be logged in/i)).toBeInTheDocument(),
+    );
   });
 
   it("renders nothing for a plain-user viewer (redirect path)", async () => {
@@ -58,17 +62,31 @@ describe("SupportScreen", () => {
 
   it("renders the report queue for a moderator viewer", async () => {
     mockAuth("moderator");
-    mockedReportsClient.list.mockResolvedValue({ items: [report], total: 1, page: 1, limit: 20 });
+    mockedReportsClient.list.mockResolvedValue({
+      items: [report],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
     render(<SupportScreen />);
-    await waitFor(() => expect(screen.getByText("reporter1")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("reporter1")).toBeInTheDocument(),
+    );
     expect(screen.getByText("Spam or misleading")).toBeInTheDocument();
   });
 
   it("filters by status when a status chip is clicked", async () => {
     mockAuth("moderator");
-    mockedReportsClient.list.mockResolvedValue({ items: [report], total: 1, page: 1, limit: 20 });
+    mockedReportsClient.list.mockResolvedValue({
+      items: [report],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
     render(<SupportScreen />);
-    await waitFor(() => expect(screen.getByText("reporter1")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("reporter1")).toBeInTheDocument(),
+    );
     await userEvent.click(screen.getByRole("button", { name: "New" }));
     await waitFor(() =>
       expect(mockedReportsClient.list).toHaveBeenLastCalledWith(
@@ -79,9 +97,16 @@ describe("SupportScreen", () => {
 
   it("filters by type when a type chip is clicked", async () => {
     mockAuth("moderator");
-    mockedReportsClient.list.mockResolvedValue({ items: [report], total: 1, page: 1, limit: 20 });
+    mockedReportsClient.list.mockResolvedValue({
+      items: [report],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
     render(<SupportScreen />);
-    await waitFor(() => expect(screen.getByText("reporter1")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("reporter1")).toBeInTheDocument(),
+    );
     await userEvent.click(screen.getByRole("button", { name: "Users" }));
     await waitFor(() =>
       expect(mockedReportsClient.list).toHaveBeenLastCalledWith(
@@ -101,30 +126,48 @@ describe("SupportScreen", () => {
         limit: 1,
       });
     render(<SupportScreen />);
-    await waitFor(() => expect(screen.getByText("reporter1")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("reporter1")).toBeInTheDocument(),
+    );
     await userEvent.click(screen.getByRole("button", { name: /load more/i }));
-    await waitFor(() => expect(screen.getByText("reporter2")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("reporter2")).toBeInTheDocument(),
+    );
     expect(screen.getByText("reporter1")).toBeInTheDocument();
   });
 
   it("shows a loading state instead of the stale list while a filter change refetches", async () => {
     mockAuth("moderator");
-    let resolveRefetch: (value: { items: (typeof report)[]; total: number; page: number; limit: number }) => void =
-      () => {};
+    let resolveRefetch: (value: {
+      items: (typeof report)[];
+      total: number;
+      page: number;
+      limit: number;
+    }) => void = () => {};
     let call = 0;
     mockedReportsClient.list.mockImplementation(() => {
       call += 1;
-      if (call === 1) return Promise.resolve({ items: [report], total: 1, page: 1, limit: 20 });
+      if (call === 1)
+        return Promise.resolve({
+          items: [report],
+          total: 1,
+          page: 1,
+          limit: 20,
+        });
       return new Promise((resolve) => {
         resolveRefetch = resolve;
       });
     });
     render(<SupportScreen />);
-    await waitFor(() => expect(screen.getByText("reporter1")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("reporter1")).toBeInTheDocument(),
+    );
 
     await userEvent.click(screen.getByRole("button", { name: "New" }));
 
-    await waitFor(() => expect(screen.getByText(/loading reports/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/loading reports/i)).toBeInTheDocument(),
+    );
     expect(screen.queryByText("reporter1")).not.toBeInTheDocument();
 
     resolveRefetch({
@@ -133,7 +176,9 @@ describe("SupportScreen", () => {
       page: 1,
       limit: 20,
     });
-    await waitFor(() => expect(screen.getByText("reporter2")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("reporter2")).toBeInTheDocument(),
+    );
   });
 
   it("clears a stale load-more error when the filter changes", async () => {
@@ -143,29 +188,46 @@ describe("SupportScreen", () => {
       return Promise.resolve({ items: [report], total: 2, page: 1, limit: 20 });
     });
     render(<SupportScreen />);
-    await waitFor(() => expect(screen.getByText("reporter1")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("reporter1")).toBeInTheDocument(),
+    );
 
     await userEvent.click(screen.getByRole("button", { name: /load more/i }));
-    await waitFor(() => expect(screen.getByText(/couldn't load more reports/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.getByText(/couldn't load more reports/i),
+      ).toBeInTheDocument(),
+    );
 
     await userEvent.click(screen.getByRole("button", { name: "New" }));
     await waitFor(() =>
-      expect(screen.queryByText(/couldn't load more reports/i)).not.toBeInTheDocument(),
+      expect(
+        screen.queryByText(/couldn't load more reports/i),
+      ).not.toBeInTheDocument(),
     );
   });
 
   it("shows an empty-state message when no reports match", async () => {
     mockAuth("moderator");
-    mockedReportsClient.list.mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    mockedReportsClient.list.mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
     render(<SupportScreen />);
-    await waitFor(() => expect(screen.getByText(/no reports match/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/no reports match/i)).toBeInTheDocument(),
+    );
   });
 
   it("shows an error message when the initial reports fetch fails", async () => {
     mockAuth("moderator");
     mockedReportsClient.list.mockRejectedValue(new Error("network"));
     render(<SupportScreen />);
-    await waitFor(() => expect(screen.getByText(/couldn't load reports/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/couldn't load reports/i)).toBeInTheDocument(),
+    );
   });
 
   it("shows an error message when loading more fails, keeping the first page visible", async () => {
@@ -174,9 +236,15 @@ describe("SupportScreen", () => {
       .mockResolvedValueOnce({ items: [report], total: 2, page: 1, limit: 1 })
       .mockRejectedValueOnce(new Error("network"));
     render(<SupportScreen />);
-    await waitFor(() => expect(screen.getByText("reporter1")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("reporter1")).toBeInTheDocument(),
+    );
     await userEvent.click(screen.getByRole("button", { name: /load more/i }));
-    await waitFor(() => expect(screen.getByText(/couldn't load more reports/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.getByText(/couldn't load more reports/i),
+      ).toBeInTheDocument(),
+    );
     expect(screen.getByText("reporter1")).toBeInTheDocument();
   });
 });

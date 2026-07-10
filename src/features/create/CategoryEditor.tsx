@@ -18,7 +18,12 @@ interface CategoryEditorProps {
   error?: string;
 }
 
-export function CategoryEditor({ category, index, onChange, error }: CategoryEditorProps) {
+export function CategoryEditor({
+  category,
+  index,
+  onChange,
+  error,
+}: CategoryEditorProps) {
   const [draftType, setDraftType] = useState<ItemType>("text");
   const [draftTitle, setDraftTitle] = useState("");
   const [draftValue, setDraftValue] = useState("");
@@ -71,7 +76,10 @@ export function CategoryEditor({ category, index, onChange, error }: CategoryEdi
   }
 
   function removeItem(itemId: string) {
-    onChange({ ...category, items: category.items.filter((item) => item.id !== itemId) });
+    onChange({
+      ...category,
+      items: category.items.filter((item) => item.id !== itemId),
+    });
   }
 
   return (
@@ -115,7 +123,9 @@ export function CategoryEditor({ category, index, onChange, error }: CategoryEdi
             }}
             className={cn(
               "rounded-[7px] px-3 py-1.5 text-xs font-medium",
-              draftType === "text" ? "bg-white/[0.12] text-foreground" : "text-foreground-secondary",
+              draftType === "text"
+                ? "bg-white/[0.12] text-foreground"
+                : "text-foreground-secondary",
             )}
           >
             Text
@@ -128,7 +138,9 @@ export function CategoryEditor({ category, index, onChange, error }: CategoryEdi
             }}
             className={cn(
               "rounded-[7px] px-3 py-1.5 text-xs font-medium",
-              draftType === "youtube" ? "bg-white/[0.12] text-foreground" : "text-foreground-secondary",
+              draftType === "youtube"
+                ? "bg-white/[0.12] text-foreground"
+                : "text-foreground-secondary",
             )}
           >
             Link
@@ -171,11 +183,17 @@ export function CategoryEditor({ category, index, onChange, error }: CategoryEdi
                 aria-label={`Category ${index + 1} new item link`}
                 className="flex-[2] min-w-[140px]"
               />
-              <Button type="button" onClick={() => void addItem()} disabled={validating}>
+              <Button
+                type="button"
+                onClick={() => void addItem()}
+                disabled={validating}
+              >
                 {validating ? "Checking…" : "Add"}
               </Button>
             </div>
-            {addError && <Text className="text-xs text-[#ff6b6b]">{addError}</Text>}
+            {addError && (
+              <Text className="text-xs text-[#ff6b6b]">{addError}</Text>
+            )}
           </div>
         )}
       </div>

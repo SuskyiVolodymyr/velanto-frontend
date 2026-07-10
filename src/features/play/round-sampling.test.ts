@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { resolveRoundCandidates, resolveVersusRoundCandidates } from "./round-sampling";
+import {
+  resolveRoundCandidates,
+  resolveVersusRoundCandidates,
+} from "./round-sampling";
 import type { Category, Group } from "@/src/shared/types/pack";
 
 function textItem(id: string, title: string) {
@@ -31,8 +34,19 @@ describe("resolveRoundCandidates", () => {
   });
 
   it("samples exactly sampleSize unique items from the group for random selection", () => {
-    const items = [textItem("1", "A"), textItem("2", "B"), textItem("3", "C"), textItem("4", "D")];
-    const group: Group = { id: "g1", name: "Round 1", selectionMode: "random", sampleSize: 2, items };
+    const items = [
+      textItem("1", "A"),
+      textItem("2", "B"),
+      textItem("3", "C"),
+      textItem("4", "D"),
+    ];
+    const group: Group = {
+      id: "g1",
+      name: "Round 1",
+      selectionMode: "random",
+      sampleSize: 2,
+      items,
+    };
 
     const result = resolveRoundCandidates(group);
 
@@ -46,14 +60,27 @@ describe("resolveRoundCandidates", () => {
 
   it("falls back to all items when sampleSize is missing for random selection", () => {
     const items = [textItem("1", "A"), textItem("2", "B")];
-    const group: Group = { id: "g1", name: "Round 1", selectionMode: "random", items };
+    const group: Group = {
+      id: "g1",
+      name: "Round 1",
+      selectionMode: "random",
+      items,
+    };
 
     expect(resolveRoundCandidates(group)).toHaveLength(2);
   });
 
   it("re-samples randomly rather than always returning the same order", () => {
-    const items = Array.from({ length: 20 }, (_, i) => textItem(String(i), `Item ${i}`));
-    const group: Group = { id: "g1", name: "Round 1", selectionMode: "random", sampleSize: 20, items };
+    const items = Array.from({ length: 20 }, (_, i) =>
+      textItem(String(i), `Item ${i}`),
+    );
+    const group: Group = {
+      id: "g1",
+      name: "Round 1",
+      selectionMode: "random",
+      sampleSize: 20,
+      items,
+    };
 
     const first = resolveRoundCandidates(group).map((item) => item.id);
     const second = resolveRoundCandidates(group).map((item) => item.id);
@@ -64,7 +91,12 @@ describe("resolveRoundCandidates", () => {
 
 describe("resolveVersusRoundCandidates", () => {
   it("samples exactly versusN unique items from the category", () => {
-    const items = [textItem("1", "A"), textItem("2", "B"), textItem("3", "C"), textItem("4", "D")];
+    const items = [
+      textItem("1", "A"),
+      textItem("2", "B"),
+      textItem("3", "C"),
+      textItem("4", "D"),
+    ];
     const category: Category = { id: "ca", name: "Boys", items };
 
     const result = resolveVersusRoundCandidates(category, 2);
@@ -85,11 +117,17 @@ describe("resolveVersusRoundCandidates", () => {
   });
 
   it("re-samples randomly across calls", () => {
-    const items = Array.from({ length: 20 }, (_, i) => textItem(String(i), `Item ${i}`));
+    const items = Array.from({ length: 20 }, (_, i) =>
+      textItem(String(i), `Item ${i}`),
+    );
     const category: Category = { id: "ca", name: "Boys", items };
 
-    const first = resolveVersusRoundCandidates(category, 20).map((item) => item.id);
-    const second = resolveVersusRoundCandidates(category, 20).map((item) => item.id);
+    const first = resolveVersusRoundCandidates(category, 20).map(
+      (item) => item.id,
+    );
+    const second = resolveVersusRoundCandidates(category, 20).map(
+      (item) => item.id,
+    );
 
     expect(first).not.toEqual(second);
   });

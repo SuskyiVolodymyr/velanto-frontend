@@ -18,7 +18,10 @@ describe("Textarea", () => {
 
   it("applies the rows prop", () => {
     render(<Textarea aria-label="Body" rows={6} />);
-    expect(screen.getByRole("textbox", { name: "Body" })).toHaveAttribute("rows", "6");
+    expect(screen.getByRole("textbox", { name: "Body" })).toHaveAttribute(
+      "rows",
+      "6",
+    );
   });
 
   it("merges a custom className with the defaults", () => {

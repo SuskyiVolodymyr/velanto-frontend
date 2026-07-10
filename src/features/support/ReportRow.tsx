@@ -12,7 +12,9 @@ export function ReportRow({ report }: { report: ReportWithReporter }) {
       href={`/support/${report.id}`}
       className="grid grid-cols-[70px_1.4fr_1.1fr_1fr_100px_110px] items-center gap-3 rounded-[12px] border border-border bg-surface px-4 py-3 text-sm hover:bg-white/[0.03]"
     >
-      <span className="text-xs font-semibold uppercase text-foreground-secondary">{report.type}</span>
+      <span className="text-xs font-semibold uppercase text-foreground-secondary">
+        {report.type}
+      </span>
       <Text className="truncate font-semibold">{target.text}</Text>
       <Text variant="secondary" className="truncate">
         {reportReasonLabel(report.type, report.reason)}

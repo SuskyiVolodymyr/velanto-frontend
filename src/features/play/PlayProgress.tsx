@@ -7,12 +7,19 @@ interface PlayProgressProps {
   progressPct: number;
 }
 
-export function PlayProgress({ isFinished, roundIndex, totalRounds, progressPct }: PlayProgressProps) {
+export function PlayProgress({
+  isFinished,
+  roundIndex,
+  totalRounds,
+  progressPct,
+}: PlayProgressProps) {
   return (
     <div className="mb-8">
       <div className="mb-2 flex items-center justify-between">
         <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-          {isFinished ? "Complete" : `Round ${roundIndex + 1} of ${totalRounds}`}
+          {isFinished
+            ? "Complete"
+            : `Round ${roundIndex + 1} of ${totalRounds}`}
         </Text>
       </div>
       <div className="h-[3px] w-full rounded-full bg-white/[0.06]">

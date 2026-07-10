@@ -45,6 +45,7 @@ The mock's `Vilante Support.dc.html`/`Vilante Support Report.dc.html` were built
 ## 5. API client additions needed
 
 `src/shared/lib/reports-client.ts` (new):
+
 - `create(input): Promise<Report>` → `POST /reports`
 - `list(filters): Promise<ReportList>` → `GET /reports`
 - `getById(id): Promise<ReportWithReporter>` → `GET /reports/:id`
@@ -56,7 +57,9 @@ The mock's `Vilante Support.dc.html`/`Vilante Support Report.dc.html` were built
 Types (`src/shared/types/report.ts`, new): `ReportType`, `ReportStatus`, `Report`, `ReportWithReporter`, `ReportList` — mirroring the backend's actual response shapes exactly (field names confirmed from the merged backend PR, not guessed).
 
 ## 6. Out of scope for this plan (explicitly, matching backend#56's own boundary)
+
 - The report-SUBMISSION UI (the "Report this pack"/"Report this user"/"Report this round" buttons + modal shown on Pack/Author/Play screens in the mocks) is a SEPARATE piece of work from the moderator-facing queue/detail screens this plan covers. It's real, valuable, and directly unblocks the reason this backend exists — but it touches 6+ different existing screens (Pack detail, Author, and all 4 Play variants) rather than being new standalone screens, so it's being scoped as its own immediate follow-up plan, not bundled into this one.
 
 ## Issue breakdown
+
 This plan covers the moderator-facing half of frontend#29 (queue + detail screens). The report-submission UI is deferred to an immediate follow-up (see §6).

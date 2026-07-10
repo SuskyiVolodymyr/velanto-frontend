@@ -13,7 +13,8 @@ export default function CreatePage() {
         Create a pack
       </Text>
       <Text variant="secondary" className="mb-8 max-w-lg">
-        Pick an elimination format and build your rounds. Elements can be text or a YouTube link.
+        Pick an elimination format and build your rounds. Elements can be text
+        or a YouTube link.
       </Text>
       <CreatePackForm />
     </main>

@@ -39,8 +39,12 @@ describe("OverviewTab", () => {
   });
 
   it("shows an error message when the fetch rejects", async () => {
-    vi.mocked(adminClient.overview).mockRejectedValue(new Error("network error"));
+    vi.mocked(adminClient.overview).mockRejectedValue(
+      new Error("network error"),
+    );
     render(<OverviewTab />);
-    expect(await screen.findByText(/Couldn't load overview/)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/Couldn't load overview/),
+    ).toBeInTheDocument();
   });
 });

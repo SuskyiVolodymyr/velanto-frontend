@@ -27,11 +27,15 @@ describe("SettingsScreen", () => {
       </NextIntlClientProvider>,
     );
 
-    expect(screen.getByRole("heading", { name: "Preferences" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Preferences" }),
+    ).toBeInTheDocument();
     expect(screen.getByText("Accent color")).toBeInTheDocument();
     // Both NotificationsSection and AccountSection show their own "Log in"
     // prompt while unauthenticated.
-    expect(await screen.findByText(/to manage notification preferences/i)).toBeInTheDocument();
+    expect(
+      await screen.findByText(/to manage notification preferences/i),
+    ).toBeInTheDocument();
     expect(screen.getByText(/to view account settings/i)).toBeInTheDocument();
   });
 });

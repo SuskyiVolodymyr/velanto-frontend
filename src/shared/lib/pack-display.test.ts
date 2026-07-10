@@ -68,7 +68,13 @@ describe("getRoundsCount", () => {
       format: "rank_blind",
       groups: [
         { id: "g1", name: "Openers", selectionMode: "manual", items: [] },
-        { id: "g2", name: "Closers", selectionMode: "random", sampleSize: 2, items: [] },
+        {
+          id: "g2",
+          name: "Closers",
+          selectionMode: "random",
+          sampleSize: 2,
+          items: [],
+        },
       ],
     };
 
@@ -84,8 +90,18 @@ describe("getRoundsCount", () => {
       format: "1v1" as const,
       tags: [],
       groups: [
-        { id: "g1", name: "Round 1", selectionMode: "manual" as const, items: [] },
-        { id: "g2", name: "Round 2", selectionMode: "manual" as const, items: [] },
+        {
+          id: "g1",
+          name: "Round 1",
+          selectionMode: "manual" as const,
+          items: [],
+        },
+        {
+          id: "g2",
+          name: "Round 2",
+          selectionMode: "manual" as const,
+          items: [],
+        },
       ],
       authorId: "u1",
       createdAt: "2026-01-01T00:00:00.000Z",

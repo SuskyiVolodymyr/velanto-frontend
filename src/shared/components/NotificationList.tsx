@@ -39,7 +39,9 @@ export function NotificationList({
         </Text>
       )}
       {error && (
-        <Text className="px-2 py-4 text-sm text-[#ff6b6b]">Couldn&apos;t load notifications.</Text>
+        <Text className="px-2 py-4 text-sm text-[#ff6b6b]">
+          Couldn&apos;t load notifications.
+        </Text>
       )}
       {listReady && notifications.length === 0 && (
         <Text variant="secondary" className="px-2 py-4 text-sm">
@@ -50,7 +52,10 @@ export function NotificationList({
         <ul className="flex flex-col gap-1">
           {notifications.map((notification) => (
             <li key={notification.id}>
-              <NotificationItem notification={notification} onNavigate={onNavigate} />
+              <NotificationItem
+                notification={notification}
+                onNavigate={onNavigate}
+              />
             </li>
           ))}
         </ul>
@@ -65,7 +70,9 @@ export function NotificationList({
           >
             {loadingMore ? "Loading…" : "Load more"}
           </Button>
-          {loadMoreError && <Text className="text-xs text-[#ff6b6b]">{loadMoreError}</Text>}
+          {loadMoreError && (
+            <Text className="text-xs text-[#ff6b6b]">{loadMoreError}</Text>
+          )}
         </div>
       )}
     </div>

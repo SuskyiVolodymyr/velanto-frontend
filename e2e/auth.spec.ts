@@ -14,13 +14,21 @@ test.describe("Auth screen", () => {
   test.beforeEach(async ({ page }) => {
     // No session on load — every test starts logged out.
     await page.route(`${API_BASE}/auth/refresh`, (route) =>
-      route.fulfill({ status: 401, json: { message: "Refresh token invalid or expired" } }),
+      route.fulfill({
+        status: 401,
+        json: { message: "Refresh token invalid or expired" },
+      }),
     );
   });
 
-  test("registers a new account and lands on the home page", async ({ page }) => {
+  test("registers a new account and lands on the home page", async ({
+    page,
+  }) => {
     await page.route(`${API_BASE}/auth/register`, (route) =>
-      route.fulfill({ status: 201, json: { accessToken: "access-token", user: MOCK_USER } }),
+      route.fulfill({
+        status: 201,
+        json: { accessToken: "access-token", user: MOCK_USER },
+      }),
     );
 
     await page.goto("/auth");
@@ -37,7 +45,9 @@ test.describe("Auth screen", () => {
     await page.waitForURL("/");
   });
 
-  test("logs in with either an email or a username as the identifier", async ({ page }) => {
+  test("logs in with either an email or a username as the identifier", async ({
+    page,
+  }) => {
     let capturedBody: unknown;
     await page.route(`${API_BASE}/auth/login`, (route) => {
       capturedBody = route.request().postDataJSON();
@@ -53,10 +63,15 @@ test.describe("Auth screen", () => {
     await page.getByRole("button", { name: "Log in" }).click();
 
     await page.waitForURL("/");
-    expect(capturedBody).toEqual({ identifier: "alice@example.com", password: "password123" });
+    expect(capturedBody).toEqual({
+      identifier: "alice@example.com",
+      password: "password123",
+    });
   });
 
-  test("shows an error and stays on the page when the password is wrong", async ({ page }) => {
+  test("shows an error and stays on the page when the password is wrong", async ({
+    page,
+  }) => {
     await page.route(`${API_BASE}/auth/login`, (route) =>
       route.fulfill({ status: 401, json: { message: "Invalid credentials" } }),
     );

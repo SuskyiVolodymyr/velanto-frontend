@@ -23,7 +23,9 @@ interface PackDeletedWarningPayload {
   packTitle: string;
 }
 
-export function describeNotification(notification: Notification): NotificationDisplay {
+export function describeNotification(
+  notification: Notification,
+): NotificationDisplay {
   switch (notification.type) {
     case "new_follower": {
       const payload = notification.payload as NewFollowerPayload;

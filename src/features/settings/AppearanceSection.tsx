@@ -5,13 +5,21 @@ import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
 import { useHydratedValue } from "@/src/shared/hooks/useHydratedValue";
-import { ACCENTS, DEFAULT_ACCENT, getStoredAccent, setStoredAccent } from "@/src/shared/lib/theme";
+import {
+  ACCENTS,
+  DEFAULT_ACCENT,
+  getStoredAccent,
+  setStoredAccent,
+} from "@/src/shared/lib/theme";
 
 export function AppearanceSection() {
   // The persisted accent (localStorage) is a client-only read, hydrated via
   // useHydratedValue — no set-state-in-effect, no hydration mismatch. `selected`
   // layers the optimistic in-session choice on top of the stored value.
-  const storedAccent = useHydratedValue(() => getStoredAccent() ?? DEFAULT_ACCENT, DEFAULT_ACCENT);
+  const storedAccent = useHydratedValue(
+    () => getStoredAccent() ?? DEFAULT_ACCENT,
+    DEFAULT_ACCENT,
+  );
   const [selected, setSelected] = useState<string | null>(null);
   const accent = selected ?? storedAccent;
 
@@ -22,7 +30,11 @@ export function AppearanceSection() {
 
   return (
     <section className="flex flex-col gap-4">
-      <Text as="h2" variant="tertiary" className="text-xs uppercase tracking-wide">
+      <Text
+        as="h2"
+        variant="tertiary"
+        className="text-xs uppercase tracking-wide"
+      >
         Appearance
       </Text>
       <Card className="flex items-center justify-between gap-4 hover:translate-y-0 hover:shadow-none">

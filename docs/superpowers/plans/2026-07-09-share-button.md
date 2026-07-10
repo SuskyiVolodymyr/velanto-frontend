@@ -11,6 +11,7 @@
 **Branch:** `feature/share-button` (already created, off `develop`; design spec committed at `docs/superpowers/specs/2026-07-09-share-button-design.md`).
 
 **Repo conventions the implementer must follow:**
+
 - Client components need `"use client"` at the top.
 - Reuse shared primitives: `Button` / `buttonClassName` (`src/shared/components/Button.tsx`), `Input` (`src/shared/components/Input.tsx`), `Text` (`src/shared/components/Text.tsx`). `cn` helper at `src/shared/lib/cn.ts`.
 - Reading `sessionStorage` in an effect uses the established `// eslint-disable-next-line react-hooks/set-state-in-effect` line immediately above the `setState` call (see current `ResultScreen.tsx`) — keep that convention; do NOT introduce a synchronous `setState` in an effect body without it.
@@ -23,6 +24,7 @@
 ### Task 1: `share-url` encode/decode util
 
 **Files:**
+
 - Create: `src/shared/lib/share-url.ts`
 - Test: `src/shared/lib/share-url.test.ts`
 
@@ -66,11 +68,15 @@ describe("share-url", () => {
     expect(decodePicks(btoa("not json"))).toBeNull();
     expect(decodePicks(btoa(JSON.stringify({ not: "an array" })))).toBeNull();
     expect(decodePicks(btoa(JSON.stringify([{ groupId: "g1" }])))).toBeNull(); // missing itemId
-    expect(decodePicks(btoa(JSON.stringify([{ groupId: 1, itemId: "i1" }])))).toBeNull(); // wrong type
+    expect(
+      decodePicks(btoa(JSON.stringify([{ groupId: 1, itemId: "i1" }]))),
+    ).toBeNull(); // wrong type
   });
 
   it("buildShareUrl appends ?p= only when picks are present and non-empty", () => {
-    const withPicks = buildShareUrl("/packs/p1/result", [{ groupId: "g1", itemId: "i1" }]);
+    const withPicks = buildShareUrl("/packs/p1/result", [
+      { groupId: "g1", itemId: "i1" },
+    ]);
     expect(withPicks).toContain("/packs/p1/result?p=");
 
     expect(buildShareUrl("/packs/p1", [])).not.toContain("?p=");
@@ -130,7 +136,10 @@ export function decodePicks(code: string): RecordedPick[] | null {
 }
 
 /** Builds an absolute share URL from the current origin, appending encoded picks when present. */
-export function buildShareUrl(path: string, picks?: RecordedPick[] | null): string {
+export function buildShareUrl(
+  path: string,
+  picks?: RecordedPick[] | null,
+): string {
   const base = `${window.location.origin}${path}`;
   return picks && picks.length > 0 ? `${base}?p=${encodePicks(picks)}` : base;
 }
@@ -156,6 +165,7 @@ Expected: typecheck clean, lint clean.
 ### Task 2: `ShareButton` component
 
 **Files:**
+
 - Create: `src/features/share/ShareButton.tsx`
 - Test: `src/features/share/ShareButton.test.tsx`
 
@@ -194,7 +204,9 @@ describe("ShareButton", () => {
 
     await waitFor(() => expect(writeText).toHaveBeenCalledTimes(1));
     expect(writeText.mock.calls[0][0]).toContain("/packs/p1");
-    expect(await screen.findByRole("button", { name: "Copied!" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("button", { name: "Copied!" }),
+    ).toBeInTheDocument();
   });
 
   it("does not show 'Copied!' when the clipboard write fails", async () => {
@@ -205,7 +217,9 @@ describe("ShareButton", () => {
     fireEvent.click(screen.getByRole("button", { name: "Copy" }));
 
     await waitFor(() => expect(writeText).toHaveBeenCalled());
-    expect(screen.queryByRole("button", { name: "Copied!" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Copied!" }),
+    ).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Copy" })).toBeInTheDocument();
   });
 
@@ -225,7 +239,13 @@ describe("ShareButton", () => {
   });
 
   it("encodes provided picks into the shared URL", () => {
-    render(<ShareButton path="/packs/p1/result" picks={[{ groupId: "g1", itemId: "i1" }]} label="Share result" />);
+    render(
+      <ShareButton
+        path="/packs/p1/result"
+        picks={[{ groupId: "g1", itemId: "i1" }]}
+        label="Share result"
+      />,
+    );
     fireEvent.click(screen.getByRole("button", { name: "Share result" }));
 
     const input = screen.getByRole("textbox") as HTMLInputElement;
@@ -282,7 +302,10 @@ export function ShareButton({
     inputRef.current?.select();
 
     function handlePointerDown(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         setOpen(false);
       }
     }
@@ -371,6 +394,7 @@ Expected: typecheck clean, lint clean.
 ### Task 3: Wire ShareButton into the Pack screen
 
 **Files:**
+
 - Modify: `src/features/pack/PackDetailScreen.tsx` (the Play link at lines 43-45)
 - Test: `src/features/pack/PackDetailScreen.test.tsx`
 
@@ -379,15 +403,22 @@ Expected: typecheck clean, lint clean.
 Append these two tests inside the existing `describe("PackDetailScreen", ...)` block in `src/features/pack/PackDetailScreen.test.tsx`:
 
 ```tsx
-  it("shows a Share button for an approved pack", () => {
-    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
-    expect(screen.getByRole("button", { name: "Share" })).toBeInTheDocument();
-  });
+it("shows a Share button for an approved pack", () => {
+  render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
+  expect(screen.getByRole("button", { name: "Share" })).toBeInTheDocument();
+});
 
-  it("hides the Share button for a non-approved pack", () => {
-    render(<PackDetailScreen pack={{ ...BASE_PACK, status: "pending" }} results={RESULTS} />);
-    expect(screen.queryByRole("button", { name: "Share" })).not.toBeInTheDocument();
-  });
+it("hides the Share button for a non-approved pack", () => {
+  render(
+    <PackDetailScreen
+      pack={{ ...BASE_PACK, status: "pending" }}
+      results={RESULTS}
+    />,
+  );
+  expect(
+    screen.queryByRole("button", { name: "Share" }),
+  ).not.toBeInTheDocument();
+});
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -406,20 +437,26 @@ import { ShareButton } from "@/src/features/share/ShareButton";
 Replace the existing Play link (currently lines 43-45):
 
 ```tsx
-      <Link href={`/packs/${pack.id}/play`} className={buttonClassName("primary", "mb-6 w-fit")}>
-        Play
-      </Link>
+<Link
+  href={`/packs/${pack.id}/play`}
+  className={buttonClassName("primary", "mb-6 w-fit")}
+>
+  Play
+</Link>
 ```
 
 with a flex row that adds the Share button for approved packs:
 
 ```tsx
-      <div className="mb-6 flex items-center gap-3">
-        <Link href={`/packs/${pack.id}/play`} className={buttonClassName("primary", "w-fit")}>
-          Play
-        </Link>
-        {pack.status === "approved" && <ShareButton path={`/packs/${pack.id}`} />}
-      </div>
+<div className="mb-6 flex items-center gap-3">
+  <Link
+    href={`/packs/${pack.id}/play`}
+    className={buttonClassName("primary", "w-fit")}
+  >
+    Play
+  </Link>
+  {pack.status === "approved" && <ShareButton path={`/packs/${pack.id}`} />}
+</div>
 ```
 
 - [ ] **Step 4: Run test to verify it passes**
@@ -440,6 +477,7 @@ git commit -m "feat: add Share button to pack detail screen (#67)"
 ### Task 4: `useResultPicks` hook (shared-vs-own picks source)
 
 **Files:**
+
 - Create: `src/features/result/use-result-picks.ts`
 - Test: `src/features/result/use-result-picks.test.tsx`
 
@@ -474,11 +512,16 @@ describe("useResultPicks", () => {
   });
 
   it("falls back to sessionStorage picks when there is no ?p=", () => {
-    vi.mocked(readLastPlayPicks).mockReturnValue([{ groupId: "g1", itemId: "i2" }]);
+    vi.mocked(readLastPlayPicks).mockReturnValue([
+      { groupId: "g1", itemId: "i2" },
+    ]);
 
     const { result } = renderHook(() => useResultPicks("pack-1"));
 
-    expect(result.current).toEqual({ picks: [{ groupId: "g1", itemId: "i2" }], shared: false });
+    expect(result.current).toEqual({
+      picks: [{ groupId: "g1", itemId: "i2" }],
+      shared: false,
+    });
   });
 
   it("falls back to sessionStorage when ?p= is malformed", () => {
@@ -552,6 +595,7 @@ git commit -m "feat: add useResultPicks hook for shared-vs-own result picks (#67
 ### Task 5: Wire the group Result screen (share + shared-mode copy)
 
 **Files:**
+
 - Modify: `src/features/result/ResultScreen.tsx` (the `GroupResultScreen` function)
 - Test: `src/features/result/ResultScreen.test.tsx`
 
@@ -578,25 +622,35 @@ beforeEach(() => {
 Then add these tests inside `describe("ResultScreen", ...)`:
 
 ```tsx
-  it("shows a Share result button for an approved pack", () => {
-    render(<ResultScreen pack={PACK} results={RESULTS} />);
-    expect(screen.getByRole("button", { name: "Share result" })).toBeInTheDocument();
+it("shows a Share result button for an approved pack", () => {
+  render(<ResultScreen pack={PACK} results={RESULTS} />);
+  expect(
+    screen.getByRole("button", { name: "Share result" }),
+  ).toBeInTheDocument();
+});
+
+it("hides the Share result button for a non-approved pack", () => {
+  render(
+    <ResultScreen pack={{ ...PACK, status: "pending" }} results={RESULTS} />,
+  );
+  expect(
+    screen.queryByRole("button", { name: "Share result" }),
+  ).not.toBeInTheDocument();
+});
+
+it("renders the sharer's picks and a shared-result note when opened via a ?p= link", async () => {
+  searchParams = new URLSearchParams({
+    p: encodePicks([{ groupId: "g1", itemId: "i1" }]),
   });
 
-  it("hides the Share result button for a non-approved pack", () => {
-    render(<ResultScreen pack={{ ...PACK, status: "pending" }} results={RESULTS} />);
-    expect(screen.queryByRole("button", { name: "Share result" })).not.toBeInTheDocument();
-  });
+  render(<ResultScreen pack={PACK} results={RESULTS} />);
 
-  it("renders the sharer's picks and a shared-result note when opened via a ?p= link", async () => {
-    searchParams = new URLSearchParams({ p: encodePicks([{ groupId: "g1", itemId: "i1" }]) });
-
-    render(<ResultScreen pack={PACK} results={RESULTS} />);
-
-    expect(await screen.findByText(/viewing a shared result/i)).toBeInTheDocument();
-    expect(screen.getByText(/^Pick:\s*Guren no Yumiya/)).toBeInTheDocument();
-    expect(screen.queryByText(/Your pick/)).not.toBeInTheDocument();
-  });
+  expect(
+    await screen.findByText(/viewing a shared result/i),
+  ).toBeInTheDocument();
+  expect(screen.getByText(/^Pick:\s*Guren no Yumiya/)).toBeInTheDocument();
+  expect(screen.queryByText(/Your pick/)).not.toBeInTheDocument();
+});
 ```
 
 - [ ] **Step 2: Run test to verify it fails**
@@ -627,7 +681,13 @@ import type { PackResults, RankResults } from "@/src/shared/types/play-results";
 2. Replace the body of `GroupResultScreen` (the `useState`/`useEffect` picks logic through the final `Play again` link) with:
 
 ```tsx
-function GroupResultScreen({ pack, results }: { pack: Pack; results: PackResults }) {
+function GroupResultScreen({
+  pack,
+  results,
+}: {
+  pack: Pack;
+  results: PackResults;
+}) {
   const { picks: ownPicks, shared } = useResultPicks(pack.id);
 
   return (
@@ -653,25 +713,35 @@ function GroupResultScreen({ pack, results }: { pack: Pack; results: PackResults
 
       <div className="mb-8 flex flex-col gap-4">
         {results.rounds.map((round) => {
-          const ownPick = ownPicks?.find((pick) => pick.groupId === round.groupId);
+          const ownPick = ownPicks?.find(
+            (pick) => pick.groupId === round.groupId,
+          );
           const ownItem = ownPick
             ? round.items.find((item) => item.itemId === ownPick.itemId)
             : undefined;
 
           return (
-            <Card key={round.groupId} className="hover:translate-y-0 hover:shadow-none">
+            <Card
+              key={round.groupId}
+              className="hover:translate-y-0 hover:shadow-none"
+            >
               <Text className="mb-2 font-semibold">{round.groupName}</Text>
               {ownItem ? (
                 <div className="flex items-center justify-between gap-2">
                   <Text variant="secondary" className="text-sm">
                     {shared ? "Pick" : "Your pick"}: {ownItem.itemTitle}
                   </Text>
-                  <Text className="text-sm font-semibold text-acc">{ownItem.percentage}%</Text>
+                  <Text className="text-sm font-semibold text-acc">
+                    {ownItem.percentage}%
+                  </Text>
                 </div>
               ) : (
                 <ul className="flex flex-col gap-1">
                   {round.items.map((item) => (
-                    <li key={item.itemId} className="flex items-center justify-between gap-2">
+                    <li
+                      key={item.itemId}
+                      className="flex items-center justify-between gap-2"
+                    >
                       <Text variant="secondary" className="text-sm">
                         {item.itemTitle}
                       </Text>
@@ -688,7 +758,10 @@ function GroupResultScreen({ pack, results }: { pack: Pack; results: PackResults
       </div>
 
       <div className="flex items-center gap-3">
-        <Link href={`/packs/${pack.id}/play`} className={buttonClassName("primary", "w-fit")}>
+        <Link
+          href={`/packs/${pack.id}/play`}
+          className={buttonClassName("primary", "w-fit")}
+        >
           Play again
         </Link>
         {pack.status === "approved" && (
@@ -724,6 +797,7 @@ git commit -m "feat: add Share result + shared-result mode to group result scree
 ### Task 6: Wire the rank Result screen (share + shared-mode copy)
 
 **Files:**
+
 - Modify: `src/features/result/RankResultScreen.tsx`
 - Test: `src/features/result/RankResultScreen.test.tsx`
 
@@ -741,23 +815,34 @@ vi.mock("next/navigation", () => ({ useSearchParams: () => searchParams }));
 Ensure `vi` and `beforeEach` are imported from `vitest`, and reset `searchParams = new URLSearchParams();` plus `sessionStorage.clear();` in a `beforeEach`. Then add:
 
 ```tsx
-  it("shows a Share result button for an approved pack", () => {
-    render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
-    expect(screen.getByRole("button", { name: "Share result" })).toBeInTheDocument();
-  });
+it("shows a Share result button for an approved pack", () => {
+  render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
+  expect(
+    screen.getByRole("button", { name: "Share result" }),
+  ).toBeInTheDocument();
+});
 
-  it("hides the Share result button for a non-approved pack", () => {
-    render(<RankResultScreen pack={{ ...RANK_PACK, status: "pending" }} results={RANK_RESULTS} />);
-    expect(screen.queryByRole("button", { name: "Share result" })).not.toBeInTheDocument();
-  });
+it("hides the Share result button for a non-approved pack", () => {
+  render(
+    <RankResultScreen
+      pack={{ ...RANK_PACK, status: "pending" }}
+      results={RANK_RESULTS}
+    />,
+  );
+  expect(
+    screen.queryByRole("button", { name: "Share result" }),
+  ).not.toBeInTheDocument();
+});
 
-  it("shows the shared-result note when opened via a ?p= link", async () => {
-    searchParams = new URLSearchParams({
-      p: encodePicks([{ groupId: "g1", itemId: "i1", position: 0 }]),
-    });
-    render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
-    expect(await screen.findByText(/viewing a shared result/i)).toBeInTheDocument();
+it("shows the shared-result note when opened via a ?p= link", async () => {
+  searchParams = new URLSearchParams({
+    p: encodePicks([{ groupId: "g1", itemId: "i1", position: 0 }]),
   });
+  render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
+  expect(
+    await screen.findByText(/viewing a shared result/i),
+  ).toBeInTheDocument();
+});
 ```
 
 Use whatever the existing test's pack/results fixtures are named; if they are inline, extract them to `RANK_PACK` / `RANK_RESULTS` consts (with `status: "approved"`) so the new tests can reuse and override them. The rank fixture must include at least one round `g1` with an item `i1` and `positionCounts` long enough to index `position: 0`.
@@ -781,7 +866,7 @@ import { useResultPicks } from "@/src/features/result/use-result-picks";
 2. Replace the current `const [ownPicks, setOwnPicks] = useState...; useEffect(...)` block (lines 13-20) with:
 
 ```tsx
-  const { picks: ownPicks, shared } = useResultPicks(pack.id);
+const { picks: ownPicks, shared } = useResultPicks(pack.id);
 ```
 
 (The `RecordedPick` type import may now be unused — remove it if lint flags it.)
@@ -789,49 +874,56 @@ import { useResultPicks } from "@/src/features/result/use-result-picks";
 3. Add the shared-result note immediately after the "plays recorded" `Text` (after line 32):
 
 ```tsx
-      {shared && (
-        <Text
-          variant="secondary"
-          className="mb-6 rounded-[10px] border border-border bg-surface px-4 py-2 text-sm"
-        >
-          You&apos;re viewing a shared result.
-        </Text>
-      )}
+{
+  shared && (
+    <Text
+      variant="secondary"
+      className="mb-6 rounded-[10px] border border-border bg-surface px-4 py-2 text-sm"
+    >
+      You&apos;re viewing a shared result.
+    </Text>
+  );
+}
 ```
 
 4. Neutralize the ownership copy in the per-item block. Change the `You placed this #{ownPick.position + 1}` line so it reads:
 
 ```tsx
-                      {ownPick && ownPick.position !== undefined ? (
-                        <Text className="pl-10 text-xs text-acc">
-                          {shared ? "Placed" : "You placed this"} #{ownPick.position + 1} ·{" "}
-                          {Math.max(item.positionCounts[ownPick.position] - 1, 0)} other play
-                          {item.positionCounts[ownPick.position] - 1 === 1 ? "" : "s"} agreed
-                        </Text>
-                      ) : (
-                        playedThisRound && (
-                          <Text variant="tertiary" className="pl-10 text-xs">
-                            {shared ? "Not in this play this round" : "Not in your play this round"}
-                          </Text>
-                        )
-                      )}
+{
+  ownPick && ownPick.position !== undefined ? (
+    <Text className="pl-10 text-xs text-acc">
+      {shared ? "Placed" : "You placed this"} #{ownPick.position + 1} ·{" "}
+      {Math.max(item.positionCounts[ownPick.position] - 1, 0)} other play
+      {item.positionCounts[ownPick.position] - 1 === 1 ? "" : "s"} agreed
+    </Text>
+  ) : (
+    playedThisRound && (
+      <Text variant="tertiary" className="pl-10 text-xs">
+        {shared ? "Not in this play this round" : "Not in your play this round"}
+      </Text>
+    )
+  );
+}
 ```
 
 5. Replace the final `Play again` link with the action row (matching Task 5):
 
 ```tsx
-      <div className="flex items-center gap-3">
-        <Link href={`/packs/${pack.id}/play`} className={buttonClassName("primary", "w-fit")}>
-          Play again
-        </Link>
-        {pack.status === "approved" && (
-          <ShareButton
-            path={`/packs/${pack.id}/result`}
-            picks={ownPicks}
-            label="Share result"
-          />
-        )}
-      </div>
+<div className="flex items-center gap-3">
+  <Link
+    href={`/packs/${pack.id}/play`}
+    className={buttonClassName("primary", "w-fit")}
+  >
+    Play again
+  </Link>
+  {pack.status === "approved" && (
+    <ShareButton
+      path={`/packs/${pack.id}/result`}
+      picks={ownPicks}
+      label="Share result"
+    />
+  )}
+</div>
 ```
 
 - [ ] **Step 4: Run test to verify it passes**
@@ -868,6 +960,7 @@ Dispatch `pr-review-toolkit:code-reviewer` against the full branch diff (`git di
 - [ ] **Step 3: Manual browser verification (live backend)**
 
 With both dev servers running (backend on 3001, frontend on 3000):
+
 1. Register/login, create and get an approved pack (create a pack; approve it via a moderator account if it starts pending — trusted users' packs auto-approve).
 2. Play it to a result. Confirm a "Share result" button appears next to "Play again"; open it, confirm the popover shows a `/packs/<id>/result?p=...` URL and Copy shows "Copied!".
 3. Copy the URL, open it in a fresh/logged-out session (or incognito). Confirm the result renders **the sharer's picks** with the "You're viewing a shared result" note and neutral "Pick:" labels, against the live aggregate.
@@ -897,6 +990,7 @@ git branch -d feature/share-button
 ## Self-Review
 
 **Spec coverage:**
+
 - Copy-link popover on Pack + Result screens → Tasks 2, 3, 5, 6. ✓
 - Read-only link field + Copy button + "Copied!" feedback → Task 2. ✓
 - Outside-click/Escape close → Task 2. ✓

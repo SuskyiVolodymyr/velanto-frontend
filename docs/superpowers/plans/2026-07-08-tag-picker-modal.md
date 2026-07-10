@@ -15,6 +15,7 @@
 ### Task 1: `Modal` primitive
 
 **Files:**
+
 - Create: `src/shared/components/Modal.tsx`
 - Test: `src/shared/components/Modal.test.tsx`
 
@@ -53,7 +54,9 @@ describe("Modal", () => {
         <p>Modal content</p>
       </Modal>,
     );
-    expect(screen.getByRole("heading", { name: "Test modal" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: "Test modal" }),
+    ).toBeInTheDocument();
   });
 
   it("calls onClose when the close button is clicked", async () => {
@@ -140,7 +143,13 @@ export interface ModalProps {
   className?: string;
 }
 
-export function Modal({ open, onClose, title, children, className }: ModalProps) {
+export function Modal({
+  open,
+  onClose,
+  title,
+  children,
+  className,
+}: ModalProps) {
   useEffect(() => {
     if (!open) return;
     function handleKeyDown(event: KeyboardEvent) {
@@ -212,6 +221,7 @@ git commit -m "feat: add reusable Modal primitive"
 ### Task 2: `TagPickerModal`
 
 **Files:**
+
 - Create: `src/shared/components/TagPickerModal.tsx`
 - Test: `src/shared/components/TagPickerModal.test.tsx`
 
@@ -228,7 +238,12 @@ import { TagPickerModal } from "./TagPickerModal";
 describe("TagPickerModal", () => {
   it("renders every tag as a checkbox", () => {
     render(
-      <TagPickerModal open onClose={vi.fn()} selected={[]} onChange={vi.fn()} />,
+      <TagPickerModal
+        open
+        onClose={vi.fn()}
+        selected={[]}
+        onChange={vi.fn()}
+      />,
     );
     expect(screen.getByRole("checkbox", { name: "Anime" })).toBeInTheDocument();
     expect(screen.getByRole("checkbox", { name: "Memes" })).toBeInTheDocument();
@@ -236,7 +251,12 @@ describe("TagPickerModal", () => {
 
   it("checks the boxes for already-selected tags", () => {
     render(
-      <TagPickerModal open onClose={vi.fn()} selected={["Anime", "Gaming"]} onChange={vi.fn()} />,
+      <TagPickerModal
+        open
+        onClose={vi.fn()}
+        selected={["Anime", "Gaming"]}
+        onChange={vi.fn()}
+      />,
     );
     expect(screen.getByRole("checkbox", { name: "Anime" })).toBeChecked();
     expect(screen.getByRole("checkbox", { name: "Gaming" })).toBeChecked();
@@ -247,7 +267,12 @@ describe("TagPickerModal", () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(
-      <TagPickerModal open onClose={vi.fn()} selected={["Anime"]} onChange={onChange} />,
+      <TagPickerModal
+        open
+        onClose={vi.fn()}
+        selected={["Anime"]}
+        onChange={onChange}
+      />,
     );
     await user.click(screen.getByRole("checkbox", { name: "Music" }));
     expect(onChange).toHaveBeenCalledWith(["Anime", "Music"]);
@@ -257,7 +282,12 @@ describe("TagPickerModal", () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(
-      <TagPickerModal open onClose={vi.fn()} selected={["Anime", "Music"]} onChange={onChange} />,
+      <TagPickerModal
+        open
+        onClose={vi.fn()}
+        selected={["Anime", "Music"]}
+        onChange={onChange}
+      />,
     );
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
     expect(onChange).toHaveBeenCalledWith(["Music"]);
@@ -265,7 +295,12 @@ describe("TagPickerModal", () => {
 
   it("shows a live selected count", () => {
     render(
-      <TagPickerModal open onClose={vi.fn()} selected={["Anime", "Music"]} onChange={vi.fn()} />,
+      <TagPickerModal
+        open
+        onClose={vi.fn()}
+        selected={["Anime", "Music"]}
+        onChange={vi.fn()}
+      />,
     );
     expect(screen.getByText("2 selected")).toBeInTheDocument();
   });
@@ -286,7 +321,12 @@ describe("TagPickerModal", () => {
 
   it("does not disable any box when maxTags is not provided", () => {
     render(
-      <TagPickerModal open onClose={vi.fn()} selected={["Anime", "Music"]} onChange={vi.fn()} />,
+      <TagPickerModal
+        open
+        onClose={vi.fn()}
+        selected={["Anime", "Music"]}
+        onChange={vi.fn()}
+      />,
     );
     expect(screen.getByRole("checkbox", { name: "Gaming" })).not.toBeDisabled();
   });
@@ -390,6 +430,7 @@ git commit -m "feat: add TagPickerModal"
 ### Task 3: Wire into `CreatePackForm`
 
 **Files:**
+
 - Modify: `src/features/create/CreatePackForm.tsx`
 - Modify: `src/features/create/CreatePackForm.test.tsx` (or the equivalent existing test file — locate it first; if none exists, skip updating tests but still add new ones per Step 1 below)
 
@@ -400,6 +441,7 @@ Run: `find src/features/create -iname "*.test.tsx"` (or check `CreatePackForm.te
 - [ ] **Step 2: Replace the inline chip row with a button + `TagPickerModal`**
 
 In `src/features/create/CreatePackForm.tsx`:
+
 - Add `import { TagPickerModal } from "@/src/shared/components/TagPickerModal";`
 - Add local state: `const [tagPickerOpen, setTagPickerOpen] = useState(false);`
 - Replace the `<div className="flex flex-wrap gap-2">{PACK_TAGS.map(...)}</div>` block (around line 283) with a button that opens the modal, e.g.:
@@ -446,12 +488,14 @@ git commit -m "feat: use TagPickerModal in CreatePackForm"
 ### Task 4: Wire into `HomeFeed`
 
 **Files:**
+
 - Modify: `src/features/home/HomeFeed.tsx`
 - Modify: `src/features/home/HomeFeed.test.tsx` (locate first; adapt as in Task 3)
 
 - [ ] **Step 1: Replace the inline chip row with a button + `TagPickerModal`**
 
 In `src/features/home/HomeFeed.tsx`:
+
 - Add `import { TagPickerModal } from "@/src/shared/components/TagPickerModal";`
 - Add local state: `const [tagPickerOpen, setTagPickerOpen] = useState(false);`
 - Replace the `<div className="flex flex-wrap gap-2">{PACK_TAGS.map(...)}</div>` block (around line 102) with:

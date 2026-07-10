@@ -5,10 +5,17 @@ import type { PackResults, RankResults } from "@/src/shared/types/play-results";
 
 describe("PackStats", () => {
   it("shows a no-plays message when nobody has played yet", () => {
-    const results: PackResults = { packId: "pack-a", format: "save_one", totalPlays: 0, rounds: [] };
+    const results: PackResults = {
+      packId: "pack-a",
+      format: "save_one",
+      totalPlays: 0,
+      rounds: [],
+    };
     render(<PackStats results={results} />);
 
-    expect(screen.getByText("No plays yet — be the first!")).toBeInTheDocument();
+    expect(
+      screen.getByText("No plays yet — be the first!"),
+    ).toBeInTheDocument();
   });
 
   it("shows total plays and the top pick per round", () => {
@@ -21,14 +28,26 @@ describe("PackStats", () => {
           groupId: "g1",
           groupName: "2016",
           items: [
-            { itemId: "i1", itemTitle: "Guren no Yumiya", count: 7, percentage: 70 },
+            {
+              itemId: "i1",
+              itemTitle: "Guren no Yumiya",
+              count: 7,
+              percentage: 70,
+            },
             { itemId: "i2", itemTitle: "Redo", count: 3, percentage: 30 },
           ],
         },
         {
           groupId: "g2",
           groupName: "2020",
-          items: [{ itemId: "i3", itemTitle: "Silhouette", count: 10, percentage: 100 }],
+          items: [
+            {
+              itemId: "i3",
+              itemTitle: "Silhouette",
+              count: 10,
+              percentage: 100,
+            },
+          ],
         },
       ],
     };
@@ -51,7 +70,14 @@ describe("PackStats", () => {
         {
           groupId: "g1",
           groupName: "2016",
-          items: [{ itemId: "i1", itemTitle: "Guren no Yumiya", count: 1, percentage: 100 }],
+          items: [
+            {
+              itemId: "i1",
+              itemTitle: "Guren no Yumiya",
+              count: 1,
+              percentage: 100,
+            },
+          ],
         },
       ],
     };
@@ -70,7 +96,12 @@ describe("PackStats", () => {
           groupId: "g1",
           groupName: "2016",
           items: [
-            { itemId: "i1", itemTitle: "Guren no Yumiya", count: 2, percentage: 50 },
+            {
+              itemId: "i1",
+              itemTitle: "Guren no Yumiya",
+              count: 2,
+              percentage: 50,
+            },
             { itemId: "i2", itemTitle: "Redo", count: 2, percentage: 50 },
           ],
         },
@@ -104,8 +135,20 @@ describe("PackStats", () => {
           groupId: "g1",
           groupName: "Openers",
           items: [
-            { itemId: "i1", itemTitle: "Kaikai Kitan", timesRanked: 6, averagePosition: 0.5, positionCounts: [3, 3] },
-            { itemId: "i2", itemTitle: "Redo", timesRanked: 6, averagePosition: 1.5, positionCounts: [0, 3] },
+            {
+              itemId: "i1",
+              itemTitle: "Kaikai Kitan",
+              timesRanked: 6,
+              averagePosition: 0.5,
+              positionCounts: [3, 3],
+            },
+            {
+              itemId: "i2",
+              itemTitle: "Redo",
+              timesRanked: 6,
+              averagePosition: 1.5,
+              positionCounts: [0, 3],
+            },
           ],
         },
       ],

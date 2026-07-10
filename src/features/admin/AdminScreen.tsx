@@ -39,8 +39,15 @@ export function AdminScreen() {
   if (status === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">You need to be logged in to view this page.</Text>
-        <Button className="mt-4" onClick={() => router.push(`/auth?next=${encodeURIComponent(pathname)}`)}>
+        <Text variant="secondary">
+          You need to be logged in to view this page.
+        </Text>
+        <Button
+          className="mt-4"
+          onClick={() =>
+            router.push(`/auth?next=${encodeURIComponent(pathname)}`)
+          }
+        >
           Log in
         </Button>
       </div>

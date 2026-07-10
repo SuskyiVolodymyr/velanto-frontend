@@ -55,7 +55,9 @@ export function FeedbackVote({
     <div className="flex items-center gap-3">
       <span className="flex flex-col items-center rounded-[8px] bg-white/[0.04] px-3 py-1.5">
         <span className="text-base font-semibold text-foreground">{score}</span>
-        <span className="text-[10px] uppercase tracking-wide text-foreground-tertiary">score</span>
+        <span className="text-[10px] uppercase tracking-wide text-foreground-tertiary">
+          score
+        </span>
       </span>
       <Button
         variant={myVote === 1 ? "primary" : "secondary"}

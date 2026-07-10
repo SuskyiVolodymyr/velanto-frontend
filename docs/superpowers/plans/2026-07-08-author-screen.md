@@ -15,6 +15,7 @@
 ### Task 1: Shared `BAN_DURATIONS` + `usersClient` additions
 
 **Files:**
+
 - Create: `src/shared/lib/ban-durations.ts`
 - Modify: `src/features/admin/UsersTab.tsx` (remove local `BAN_DURATIONS`, import shared one)
 - Modify: `src/shared/lib/users-client.ts`
@@ -27,7 +28,9 @@ Read `src/shared/lib/users-client.test.ts` first to match its existing mocking p
 ```ts
 describe("usersClient.follow", () => {
   it("POSTs to /users/:id/follow", async () => {
-    const postSpy = vi.spyOn(apiClient, "post").mockResolvedValue({ followerCount: 5 });
+    const postSpy = vi
+      .spyOn(apiClient, "post")
+      .mockResolvedValue({ followerCount: 5 });
     const result = await usersClient.follow("user-1");
     expect(postSpy).toHaveBeenCalledWith("/users/user-1/follow");
     expect(result).toEqual({ followerCount: 5 });
@@ -36,7 +39,9 @@ describe("usersClient.follow", () => {
 
 describe("usersClient.unfollow", () => {
   it("POSTs to /users/:id/unfollow", async () => {
-    const postSpy = vi.spyOn(apiClient, "post").mockResolvedValue({ followerCount: 4 });
+    const postSpy = vi
+      .spyOn(apiClient, "post")
+      .mockResolvedValue({ followerCount: 4 });
     const result = await usersClient.unfollow("user-1");
     expect(postSpy).toHaveBeenCalledWith("/users/user-1/unfollow");
     expect(result).toEqual({ followerCount: 4 });
@@ -46,19 +51,32 @@ describe("usersClient.unfollow", () => {
 describe("usersClient.banHistory", () => {
   it("GETs /users/:id/ban-history with page/limit query params", async () => {
     const page = {
-      items: [{ actorUsername: "mod1", meta: { duration: "week", reason: "spam" }, createdAt: "2026-01-01T00:00:00.000Z" }],
+      items: [
+        {
+          actorUsername: "mod1",
+          meta: { duration: "week", reason: "spam" },
+          createdAt: "2026-01-01T00:00:00.000Z",
+        },
+      ],
       total: 1,
       page: 1,
       limit: 20,
     };
     const getSpy = vi.spyOn(apiClient, "get").mockResolvedValue(page);
-    const result = await usersClient.banHistory("user-1", { page: 1, limit: 20 });
-    expect(getSpy).toHaveBeenCalledWith("/users/user-1/ban-history?page=1&limit=20");
+    const result = await usersClient.banHistory("user-1", {
+      page: 1,
+      limit: 20,
+    });
+    expect(getSpy).toHaveBeenCalledWith(
+      "/users/user-1/ban-history?page=1&limit=20",
+    );
     expect(result).toEqual(page);
   });
 
   it("omits query params when not provided", async () => {
-    const getSpy = vi.spyOn(apiClient, "get").mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    const getSpy = vi
+      .spyOn(apiClient, "get")
+      .mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
     await usersClient.banHistory("user-1");
     expect(getSpy).toHaveBeenCalledWith("/users/user-1/ban-history");
   });
@@ -146,6 +164,7 @@ git commit -m "feat: add follow/unfollow/banHistory to usersClient, extract BAN_
 ### Task 2: `AuthorScreen` — header, stats, follow, packs grid
 
 **Files:**
+
 - Create: `src/features/author/AuthorScreen.tsx`
 - Test: `src/features/author/AuthorScreen.test.tsx`
 
@@ -181,7 +200,13 @@ const profile = {
 
 function mockAuth(overrides: Partial<ReturnType<typeof useAuth>> = {}) {
   mockedUseAuth.mockReturnValue({
-    user: { id: "viewer-1", email: "v@x.com", username: "viewer", role: "user", createdAt: "" },
+    user: {
+      id: "viewer-1",
+      email: "v@x.com",
+      username: "viewer",
+      role: "user",
+      createdAt: "",
+    },
     status: "authenticated",
     login: vi.fn(),
     register: vi.fn(),
@@ -193,14 +218,21 @@ function mockAuth(overrides: Partial<ReturnType<typeof useAuth>> = {}) {
 describe("AuthorScreen", () => {
   beforeEach(() => {
     vi.resetAllMocks();
-    mockedPacksClient.list.mockResolvedValue({ items: [], total: 0, page: 1, limit: 50 });
+    mockedPacksClient.list.mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 50,
+    });
   });
 
   it("renders the author's username, bio, and follower count", async () => {
     mockAuth();
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     render(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+    );
     expect(screen.getByText("I make packs")).toBeInTheDocument();
     expect(screen.getByText("3 followers")).toBeInTheDocument();
   });
@@ -209,15 +241,29 @@ describe("AuthorScreen", () => {
     mockAuth();
     mockedUsersClient.getProfile.mockRejectedValue(new Error("404"));
     render(<AuthorScreen authorId="missing" />);
-    await waitFor(() => expect(screen.getByText(/doesn't exist/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/doesn't exist/i)).toBeInTheDocument(),
+    );
   });
 
   it("hides the Follow button when viewing your own author page", async () => {
-    mockAuth({ user: { id: "author-1", email: "a@x.com", username: "quizmaster", role: "user", createdAt: "" } });
+    mockAuth({
+      user: {
+        id: "author-1",
+        email: "a@x.com",
+        username: "quizmaster",
+        role: "user",
+        createdAt: "",
+      },
+    });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     render(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
-    expect(screen.queryByRole("button", { name: /follow/i })).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+    );
+    expect(
+      screen.queryByRole("button", { name: /follow/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("toggles Follow to Following and updates the follower count on click", async () => {
@@ -225,9 +271,15 @@ describe("AuthorScreen", () => {
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     mockedUsersClient.follow.mockResolvedValue({ followerCount: 4 });
     render(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+    );
     await userEvent.click(screen.getByRole("button", { name: "Follow" }));
-    await waitFor(() => expect(screen.getByRole("button", { name: "Following" })).toBeInTheDocument());
+    await waitFor(() =>
+      expect(
+        screen.getByRole("button", { name: "Following" }),
+      ).toBeInTheDocument(),
+    );
     expect(screen.getByText("4 followers")).toBeInTheDocument();
   });
 
@@ -236,19 +288,28 @@ describe("AuthorScreen", () => {
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     mockedUsersClient.follow.mockRejectedValue(new Error("network"));
     render(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+    );
     await userEvent.click(screen.getByRole("button", { name: "Follow" }));
-    await waitFor(() => expect(screen.getByText(/couldn't update/i)).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText(/couldn't update/i)).toBeInTheDocument(),
+    );
     expect(screen.getByRole("button", { name: "Follow" })).toBeInTheDocument();
   });
 
   it("redirects an anonymous viewer to /auth on Follow click instead of calling the API", async () => {
     const push = vi.fn();
-    vi.doMock("next/navigation", () => ({ useRouter: () => ({ push }), usePathname: () => "/users/author-1" }));
+    vi.doMock("next/navigation", () => ({
+      useRouter: () => ({ push }),
+      usePathname: () => "/users/author-1",
+    }));
     mockAuth({ user: null, status: "unauthenticated" });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     render(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+    );
     await userEvent.click(screen.getByRole("button", { name: "Follow" }));
     expect(mockedUsersClient.follow).not.toHaveBeenCalled();
   });
@@ -278,8 +339,13 @@ describe("AuthorScreen", () => {
       limit: 50,
     });
     render(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText("Anime Showdown")).toBeInTheDocument());
-    expect(mockedPacksClient.list).toHaveBeenCalledWith({ authorId: "author-1", limit: 50 });
+    await waitFor(() =>
+      expect(screen.getByText("Anime Showdown")).toBeInTheDocument(),
+    );
+    expect(mockedPacksClient.list).toHaveBeenCalledWith({
+      authorId: "author-1",
+      limit: 50,
+    });
   });
 });
 ```
@@ -312,14 +378,19 @@ export function AuthorScreen({ authorId }: { authorId: string }) {
 
   const [profile, setProfile] = useState<PublicUserProfile | null>(null);
   const [packs, setPacks] = useState<Pack[]>([]);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
+  const [status, setStatus] = useState<"loading" | "ready" | "error">(
+    "loading",
+  );
   const [followBusy, setFollowBusy] = useState(false);
   const [followError, setFollowError] = useState("");
 
   useEffect(() => {
     let cancelled = false;
     setStatus("loading");
-    Promise.all([usersClient.getProfile(authorId), packsClient.list({ authorId, limit: 50 })])
+    Promise.all([
+      usersClient.getProfile(authorId),
+      packsClient.list({ authorId, limit: 50 }),
+    ])
       .then(([profileResult, packsResult]) => {
         if (cancelled) return;
         setProfile(profileResult);
@@ -347,7 +418,11 @@ export function AuthorScreen({ authorId }: { authorId: string }) {
       const result = profile.isFollowedByMe
         ? await usersClient.unfollow(authorId)
         : await usersClient.follow(authorId);
-      setProfile({ ...profile, isFollowedByMe: !profile.isFollowedByMe, followerCount: result.followerCount });
+      setProfile({
+        ...profile,
+        isFollowedByMe: !profile.isFollowedByMe,
+        followerCount: result.followerCount,
+      });
     } catch {
       setFollowError("Couldn't update follow status. Try again.");
     } finally {
@@ -380,7 +455,8 @@ export function AuthorScreen({ authorId }: { authorId: string }) {
               {profile.username}
             </Text>
             <Text variant="tertiary" className="text-sm">
-              {profile.followerCount} follower{profile.followerCount === 1 ? "" : "s"} · {packs.length} pack
+              {profile.followerCount} follower
+              {profile.followerCount === 1 ? "" : "s"} · {packs.length} pack
               {packs.length === 1 ? "" : "s"}
             </Text>
           </div>
@@ -394,7 +470,9 @@ export function AuthorScreen({ authorId }: { authorId: string }) {
             >
               {profile.isFollowedByMe ? "Following" : "Follow"}
             </Button>
-            {followError && <Text className="text-xs text-[#ff6b6b]">{followError}</Text>}
+            {followError && (
+              <Text className="text-xs text-[#ff6b6b]">{followError}</Text>
+            )}
           </div>
         )}
       </div>
@@ -444,66 +522,148 @@ git commit -m "feat: add AuthorScreen with header, follow toggle, and packs grid
 ### Task 3: Moderator ban history + ban button
 
 **Files:**
+
 - Modify: `src/features/author/AuthorScreen.tsx`
 - Modify: `src/features/author/AuthorScreen.test.tsx`
 
 - [ ] **Step 1: Write the failing tests (append to the existing describe block)**
 
 ```tsx
-  it("does not show ban history or a ban button to a plain-user viewer", async () => {
-    mockAuth({ user: { id: "viewer-1", email: "v@x.com", username: "viewer", role: "user", createdAt: "" } });
-    mockedUsersClient.getProfile.mockResolvedValue(profile);
-    render(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
-    expect(mockedUsersClient.banHistory).not.toHaveBeenCalled();
-    expect(screen.queryByRole("button", { name: /^ban$/i })).not.toBeInTheDocument();
+it("does not show ban history or a ban button to a plain-user viewer", async () => {
+  mockAuth({
+    user: {
+      id: "viewer-1",
+      email: "v@x.com",
+      username: "viewer",
+      role: "user",
+      createdAt: "",
+    },
   });
+  mockedUsersClient.getProfile.mockResolvedValue(profile);
+  render(<AuthorScreen authorId="author-1" />);
+  await waitFor(() =>
+    expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+  );
+  expect(mockedUsersClient.banHistory).not.toHaveBeenCalled();
+  expect(
+    screen.queryByRole("button", { name: /^ban$/i }),
+  ).not.toBeInTheDocument();
+});
 
-  it("shows ban history and a ban button to a moderator viewer", async () => {
-    mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
-    mockedUsersClient.getProfile.mockResolvedValue(profile);
-    mockedUsersClient.banHistory.mockResolvedValue({
-      items: [{ actorUsername: "mod2", meta: { duration: "week", reason: "spam" }, createdAt: "2026-01-01T00:00:00.000Z" }],
-      total: 1,
-      page: 1,
-      limit: 20,
-    });
-    render(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
-    expect(mockedUsersClient.banHistory).toHaveBeenCalledWith("author-1", { page: 1, limit: 20 });
-    await waitFor(() => expect(screen.getByText(/spam/)).toBeInTheDocument());
-    expect(screen.getByRole("button", { name: /^ban$/i })).toBeInTheDocument();
+it("shows ban history and a ban button to a moderator viewer", async () => {
+  mockAuth({
+    user: {
+      id: "mod-1",
+      email: "m@x.com",
+      username: "mod",
+      role: "moderator",
+      createdAt: "",
+    },
   });
+  mockedUsersClient.getProfile.mockResolvedValue(profile);
+  mockedUsersClient.banHistory.mockResolvedValue({
+    items: [
+      {
+        actorUsername: "mod2",
+        meta: { duration: "week", reason: "spam" },
+        createdAt: "2026-01-01T00:00:00.000Z",
+      },
+    ],
+    total: 1,
+    page: 1,
+    limit: 20,
+  });
+  render(<AuthorScreen authorId="author-1" />);
+  await waitFor(() =>
+    expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+  );
+  expect(mockedUsersClient.banHistory).toHaveBeenCalledWith("author-1", {
+    page: 1,
+    limit: 20,
+  });
+  await waitFor(() => expect(screen.getByText(/spam/)).toBeInTheDocument());
+  expect(screen.getByRole("button", { name: /^ban$/i })).toBeInTheDocument();
+});
 
-  it("shows an empty-state message when the author has no ban history", async () => {
-    mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
-    mockedUsersClient.getProfile.mockResolvedValue(profile);
-    mockedUsersClient.banHistory.mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
-    render(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText(/no ban history/i)).toBeInTheDocument());
+it("shows an empty-state message when the author has no ban history", async () => {
+  mockAuth({
+    user: {
+      id: "mod-1",
+      email: "m@x.com",
+      username: "mod",
+      role: "moderator",
+      createdAt: "",
+    },
   });
+  mockedUsersClient.getProfile.mockResolvedValue(profile);
+  mockedUsersClient.banHistory.mockResolvedValue({
+    items: [],
+    total: 0,
+    page: 1,
+    limit: 20,
+  });
+  render(<AuthorScreen authorId="author-1" />);
+  await waitFor(() =>
+    expect(screen.getByText(/no ban history/i)).toBeInTheDocument(),
+  );
+});
 
-  it("hides ban history and the ban button when a moderator views their own page", async () => {
-    mockAuth({ user: { id: "author-1", email: "a@x.com", username: "quizmaster", role: "moderator", createdAt: "" } });
-    mockedUsersClient.getProfile.mockResolvedValue(profile);
-    render(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
-    expect(mockedUsersClient.banHistory).not.toHaveBeenCalled();
-    expect(screen.queryByRole("button", { name: /^ban$/i })).not.toBeInTheDocument();
+it("hides ban history and the ban button when a moderator views their own page", async () => {
+  mockAuth({
+    user: {
+      id: "author-1",
+      email: "a@x.com",
+      username: "quizmaster",
+      role: "moderator",
+      createdAt: "",
+    },
   });
+  mockedUsersClient.getProfile.mockResolvedValue(profile);
+  render(<AuthorScreen authorId="author-1" />);
+  await waitFor(() =>
+    expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+  );
+  expect(mockedUsersClient.banHistory).not.toHaveBeenCalled();
+  expect(
+    screen.queryByRole("button", { name: /^ban$/i }),
+  ).not.toBeInTheDocument();
+});
 
-  it("submits a ban via the inline form and shows the updated status", async () => {
-    mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
-    mockedUsersClient.getProfile.mockResolvedValue(profile);
-    mockedUsersClient.banHistory.mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
-    mockedUsersClient.ban.mockResolvedValue({ id: "author-1", bannedUntil: "2027-01-01T00:00:00.000Z" });
-    render(<AuthorScreen authorId="author-1" />);
-    await waitFor(() => expect(screen.getByRole("button", { name: /^ban$/i })).toBeInTheDocument());
-    await userEvent.click(screen.getByRole("button", { name: /^ban$/i }));
-    await userEvent.type(screen.getByLabelText(/ban reason/i), "repeated spam");
-    await userEvent.click(screen.getByRole("button", { name: /confirm ban/i }));
-    await waitFor(() => expect(mockedUsersClient.ban).toHaveBeenCalledWith("author-1", { duration: "week", reason: "repeated spam" }));
+it("submits a ban via the inline form and shows the updated status", async () => {
+  mockAuth({
+    user: {
+      id: "mod-1",
+      email: "m@x.com",
+      username: "mod",
+      role: "moderator",
+      createdAt: "",
+    },
   });
+  mockedUsersClient.getProfile.mockResolvedValue(profile);
+  mockedUsersClient.banHistory.mockResolvedValue({
+    items: [],
+    total: 0,
+    page: 1,
+    limit: 20,
+  });
+  mockedUsersClient.ban.mockResolvedValue({
+    id: "author-1",
+    bannedUntil: "2027-01-01T00:00:00.000Z",
+  });
+  render(<AuthorScreen authorId="author-1" />);
+  await waitFor(() =>
+    expect(screen.getByRole("button", { name: /^ban$/i })).toBeInTheDocument(),
+  );
+  await userEvent.click(screen.getByRole("button", { name: /^ban$/i }));
+  await userEvent.type(screen.getByLabelText(/ban reason/i), "repeated spam");
+  await userEvent.click(screen.getByRole("button", { name: /confirm ban/i }));
+  await waitFor(() =>
+    expect(mockedUsersClient.ban).toHaveBeenCalledWith("author-1", {
+      duration: "week",
+      reason: "repeated spam",
+    }),
+  );
+});
 ```
 
 - [ ] **Step 2: Run tests to verify they fail**
@@ -518,21 +678,29 @@ Add imports:
 ```ts
 import { Input } from "@/src/shared/components/Input";
 import { BAN_DURATIONS } from "@/src/shared/lib/ban-durations";
-import type { BanDuration, BanHistoryEntry } from "@/src/shared/lib/users-client";
+import type {
+  BanDuration,
+  BanHistoryEntry,
+} from "@/src/shared/lib/users-client";
 ```
 
 Add state (inside the component, alongside existing state):
 
 ```ts
 const [banHistory, setBanHistory] = useState<BanHistoryEntry[]>([]);
-const [banHistoryStatus, setBanHistoryStatus] = useState<"idle" | "loading" | "ready" | "error">("idle");
+const [banHistoryStatus, setBanHistoryStatus] = useState<
+  "idle" | "loading" | "ready" | "error"
+>("idle");
 const [showBanForm, setShowBanForm] = useState(false);
 const [banDuration, setBanDuration] = useState<BanDuration>("week");
 const [banReason, setBanReason] = useState("");
 const [banActionError, setBanActionError] = useState("");
 const [bannedUntil, setBannedUntil] = useState<string | null>(null);
 
-const isModeratorPlus = user?.role === "moderator" || user?.role === "manager" || user?.role === "admin";
+const isModeratorPlus =
+  user?.role === "moderator" ||
+  user?.role === "manager" ||
+  user?.role === "admin";
 const isOwnProfile = authStatus === "authenticated" && user?.id === authorId;
 const showModeratorTools = isModeratorPlus && !isOwnProfile;
 ```
@@ -567,7 +735,10 @@ async function handleBanSubmit() {
   if (!banReason.trim()) return;
   setBanActionError("");
   try {
-    const result = await usersClient.ban(authorId, { duration: banDuration, reason: banReason.trim() });
+    const result = await usersClient.ban(authorId, {
+      duration: banDuration,
+      reason: banReason.trim(),
+    });
     setBannedUntil(result.bannedUntil);
     setShowBanForm(false);
     setBanReason("");
@@ -580,71 +751,92 @@ async function handleBanSubmit() {
 Add JSX before the closing `</div>` of the packs section (i.e. after the bio block, before "Packs" heading — matches the design doc's section order: header → bio → follow already rendered → ban history → ban button → packs grid):
 
 ```tsx
-{showModeratorTools && (
-  <div className="mb-10 rounded-[15px] border border-border bg-surface p-4">
-    <div className="mb-3 flex items-center justify-between">
-      <Text as="h2" variant="title" className="text-lg">
-        Moderation
-      </Text>
-      {!bannedUntil && (
-        <Button variant="secondary" onClick={() => setShowBanForm((v) => !v)}>
-          Ban
-        </Button>
+{
+  showModeratorTools && (
+    <div className="mb-10 rounded-[15px] border border-border bg-surface p-4">
+      <div className="mb-3 flex items-center justify-between">
+        <Text as="h2" variant="title" className="text-lg">
+          Moderation
+        </Text>
+        {!bannedUntil && (
+          <Button variant="secondary" onClick={() => setShowBanForm((v) => !v)}>
+            Ban
+          </Button>
+        )}
+      </div>
+      {bannedUntil && (
+        <Text variant="secondary" className="mb-3 text-sm">
+          Banned until {new Date(bannedUntil).toLocaleDateString()}.
+        </Text>
+      )}
+      {showBanForm && (
+        <div className="mb-4 flex flex-wrap items-end gap-2 border-b border-border pb-4">
+          <label className="flex flex-col gap-1 text-xs text-foreground-secondary">
+            Duration
+            <select
+              value={banDuration}
+              onChange={(e) => setBanDuration(e.target.value as BanDuration)}
+              aria-label="Ban duration"
+              className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground"
+            >
+              {BAN_DURATIONS.map((d) => (
+                <option key={d.value} value={d.value}>
+                  {d.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <Input
+            value={banReason}
+            onChange={(e) => setBanReason(e.target.value)}
+            placeholder="Reason"
+            aria-label="Ban reason"
+            className="h-9 max-w-xs"
+          />
+          <Button
+            variant="primary"
+            disabled={!banReason.trim()}
+            onClick={() => void handleBanSubmit()}
+          >
+            Confirm ban
+          </Button>
+          {banActionError && (
+            <Text className="text-xs text-[#ff6b6b]">{banActionError}</Text>
+          )}
+        </div>
+      )}
+      {banHistoryStatus === "loading" && (
+        <Text variant="secondary">Loading ban history…</Text>
+      )}
+      {banHistoryStatus === "error" && (
+        <Text className="text-sm text-[#ff6b6b]">
+          Couldn&apos;t load ban history.
+        </Text>
+      )}
+      {banHistoryStatus === "ready" && banHistory.length === 0 && (
+        <Text variant="secondary">No ban history for this user.</Text>
+      )}
+      {banHistoryStatus === "ready" && banHistory.length > 0 && (
+        <div className="flex flex-col gap-2">
+          {banHistory.map((entry, i) => (
+            <div key={i} className="text-sm">
+              <Text variant="tertiary" className="text-xs">
+                {new Date(entry.createdAt).toLocaleString()}
+              </Text>
+              <Text>
+                <span className="font-semibold">{entry.actorUsername}</span> ·{" "}
+                {entry.meta.duration} ·{" "}
+                <span className="text-foreground-secondary">
+                  {entry.meta.reason}
+                </span>
+              </Text>
+            </div>
+          ))}
+        </div>
       )}
     </div>
-    {bannedUntil && <Text variant="secondary" className="mb-3 text-sm">Banned until {new Date(bannedUntil).toLocaleDateString()}.</Text>}
-    {showBanForm && (
-      <div className="mb-4 flex flex-wrap items-end gap-2 border-b border-border pb-4">
-        <label className="flex flex-col gap-1 text-xs text-foreground-secondary">
-          Duration
-          <select
-            value={banDuration}
-            onChange={(e) => setBanDuration(e.target.value as BanDuration)}
-            aria-label="Ban duration"
-            className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground"
-          >
-            {BAN_DURATIONS.map((d) => (
-              <option key={d.value} value={d.value}>
-                {d.label}
-              </option>
-            ))}
-          </select>
-        </label>
-        <Input
-          value={banReason}
-          onChange={(e) => setBanReason(e.target.value)}
-          placeholder="Reason"
-          aria-label="Ban reason"
-          className="h-9 max-w-xs"
-        />
-        <Button variant="primary" disabled={!banReason.trim()} onClick={() => void handleBanSubmit()}>
-          Confirm ban
-        </Button>
-        {banActionError && <Text className="text-xs text-[#ff6b6b]">{banActionError}</Text>}
-      </div>
-    )}
-    {banHistoryStatus === "loading" && <Text variant="secondary">Loading ban history…</Text>}
-    {banHistoryStatus === "error" && <Text className="text-sm text-[#ff6b6b]">Couldn&apos;t load ban history.</Text>}
-    {banHistoryStatus === "ready" && banHistory.length === 0 && (
-      <Text variant="secondary">No ban history for this user.</Text>
-    )}
-    {banHistoryStatus === "ready" && banHistory.length > 0 && (
-      <div className="flex flex-col gap-2">
-        {banHistory.map((entry, i) => (
-          <div key={i} className="text-sm">
-            <Text variant="tertiary" className="text-xs">
-              {new Date(entry.createdAt).toLocaleString()}
-            </Text>
-            <Text>
-              <span className="font-semibold">{entry.actorUsername}</span> · {entry.meta.duration} ·{" "}
-              <span className="text-foreground-secondary">{entry.meta.reason}</span>
-            </Text>
-          </div>
-        ))}
-      </div>
-    )}
-  </div>
-)}
+  );
+}
 ```
 
 `banHistory` entries have no stable id in the API response (`BanHistoryEntry` has no `id` field) — using the array index as `key` here is acceptable since this list is never reordered or filtered client-side, only ever appended to.
@@ -671,11 +863,12 @@ git commit -m "feat: add moderator ban history and ban button to AuthorScreen"
 ### Task 4: Routing + CommentSection author link
 
 **Files:**
+
 - Create: `app/users/[id]/page.tsx`
 - Modify: `src/features/pack/CommentSection.tsx`
 - Modify: `src/features/pack/CommentSection.test.tsx`
 
-This adds the only currently-available entry point into the Author screen for other users' pages (a moderator needs some way to reach a target author's page to use the new ban button) — read `src/features/pack/CommentSection.tsx` in full before editing, since `Comment` already carries both `authorId` and `authorUsername` (`src/shared/types/comment.ts`), which makes this a small, low-risk change: wrap the existing plain-text username in a `Link`. Disclosed UX addition, not spec creep — the design doc scoped the Author screen's *content* but didn't specify how a viewer navigates to it, since no other in-repo entry point exists yet (`PackCard`/`PackCoverBanner` don't have an author-username field on the backend response to link from — that's a separate, undone backend enhancement, not part of this task).
+This adds the only currently-available entry point into the Author screen for other users' pages (a moderator needs some way to reach a target author's page to use the new ban button) — read `src/features/pack/CommentSection.tsx` in full before editing, since `Comment` already carries both `authorId` and `authorUsername` (`src/shared/types/comment.ts`), which makes this a small, low-risk change: wrap the existing plain-text username in a `Link`. Disclosed UX addition, not spec creep — the design doc scoped the Author screen's _content_ but didn't specify how a viewer navigates to it, since no other in-repo entry point exists yet (`PackCard`/`PackCoverBanner` don't have an author-username field on the backend response to link from — that's a separate, undone backend enhancement, not part of this task).
 
 - [ ] **Step 1: Write the failing route test**
 
@@ -686,7 +879,11 @@ Check whether this repo has route-level tests for other `app/*/page.tsx` files (
 ```tsx
 import { AuthorScreen } from "@/src/features/author/AuthorScreen";
 
-export default async function AuthorPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function AuthorPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   return <AuthorScreen authorId={id} />;
 }
@@ -700,7 +897,9 @@ In `src/features/pack/CommentSection.test.tsx`, find the existing test that asse
 it("links each comment author's username to their author page", async () => {
   // reuse this file's existing comment-list mock setup, then:
   render(<CommentSection packId="pack-1" />);
-  await waitFor(() => expect(screen.getByText("commenter1")).toBeInTheDocument());
+  await waitFor(() =>
+    expect(screen.getByText("commenter1")).toBeInTheDocument(),
+  );
   const link = screen.getByRole("link", { name: "commenter1" });
   expect(link).toHaveAttribute("href", "/users/commenter-author-id");
 });
@@ -724,7 +923,10 @@ In `src/features/pack/CommentSection.tsx`, add `import Link from "next/link";` i
 to:
 
 ```tsx
-<Link href={`/users/${comment.authorId}`} className="text-sm font-semibold hover:underline">
+<Link
+  href={`/users/${comment.authorId}`}
+  className="text-sm font-semibold hover:underline"
+>
   {comment.authorUsername}
 </Link>
 ```

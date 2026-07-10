@@ -54,7 +54,10 @@ export function AuthorScreen({
   );
 
   const isOwnProfile = authStatus === "authenticated" && user?.id === authorId;
-  const isModeratorPlus = user?.role === "moderator" || user?.role === "manager" || user?.role === "admin";
+  const isModeratorPlus =
+    user?.role === "moderator" ||
+    user?.role === "manager" ||
+    user?.role === "admin";
   const showModeratorTools = isModeratorPlus && !isOwnProfile;
 
   // Ban history is a second, gated fetch: only for a moderator viewing someone
@@ -68,7 +71,9 @@ export function AuthorScreen({
   // Rule categories resolve each ban-history entry's reason id (e.g.
   // `spam_manipulation`) to its human title, shared with the ban picker below.
   // Gated to the moderator view so a plain visitor never triggers the fetch.
-  const rulesQuery = useClientData(() => rulesClient.getRules(), [], { enabled: showModeratorTools });
+  const rulesQuery = useClientData(() => rulesClient.getRules(), [], {
+    enabled: showModeratorTools,
+  });
   const ruleCategories = rulesQuery.data?.categories ?? [];
 
   const [followBusy, setFollowBusy] = useState(false);
@@ -92,7 +97,11 @@ export function AuthorScreen({
         prev
           ? {
               ...prev,
-              profile: { ...prev.profile, isFollowedByMe: !prev.profile.isFollowedByMe, followerCount: result.followerCount },
+              profile: {
+                ...prev.profile,
+                isFollowedByMe: !prev.profile.isFollowedByMe,
+                followerCount: result.followerCount,
+              },
             }
           : prev,
       );

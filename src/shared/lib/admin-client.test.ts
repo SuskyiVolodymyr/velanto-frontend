@@ -2,7 +2,11 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { apiClient } from "@/src/shared/lib/api-client";
 import { adminClient } from "@/src/shared/lib/admin-client";
-import type { AdminOverview, AdminUserList, AuditLogList } from "@/src/shared/types/admin";
+import type {
+  AdminOverview,
+  AdminUserList,
+  AuditLogList,
+} from "@/src/shared/types/admin";
 
 vi.mock("@/src/shared/lib/api-client", () => ({
   apiClient: { get: vi.fn() },
@@ -39,15 +43,27 @@ describe("adminClient", () => {
   });
 
   it("listUsers() forwards q, page, and limit as query params", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 2, limit: 20 });
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 2,
+      limit: 20,
+    });
 
     await adminClient.listUsers({ q: "alice", page: 2, limit: 20 });
 
-    expect(apiClient.get).toHaveBeenCalledWith("/admin/users?q=alice&page=2&limit=20");
+    expect(apiClient.get).toHaveBeenCalledWith(
+      "/admin/users?q=alice&page=2&limit=20",
+    );
   });
 
   it("listUsers() forwards only page when q and limit are absent", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 2, limit: 20 });
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 2,
+      limit: 20,
+    });
 
     await adminClient.listUsers({ page: 2 });
 
@@ -55,7 +71,12 @@ describe("adminClient", () => {
   });
 
   it("listUsers() forwards page 0 (falsy but a valid page value)", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 0, limit: 20 });
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 0,
+      limit: 20,
+    });
 
     await adminClient.listUsers({ page: 0 });
 
@@ -72,9 +93,20 @@ describe("adminClient", () => {
   });
 
   it("auditLogs() forwards actor, action, target, page, and limit as query params", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
 
-    await adminClient.auditLogs({ actor: "u1", action: "ban_user", target: "u2", page: 1, limit: 20 });
+    await adminClient.auditLogs({
+      actor: "u1",
+      action: "ban_user",
+      target: "u2",
+      page: 1,
+      limit: 20,
+    });
 
     expect(apiClient.get).toHaveBeenCalledWith(
       "/admin/audit-logs?actor=u1&action=ban_user&target=u2&page=1&limit=20",
@@ -82,10 +114,17 @@ describe("adminClient", () => {
   });
 
   it("auditLogs() forwards only action when actor and target are absent", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
 
     await adminClient.auditLogs({ action: "ban_user" });
 
-    expect(apiClient.get).toHaveBeenCalledWith("/admin/audit-logs?action=ban_user");
+    expect(apiClient.get).toHaveBeenCalledWith(
+      "/admin/audit-logs?action=ban_user",
+    );
   });
 });

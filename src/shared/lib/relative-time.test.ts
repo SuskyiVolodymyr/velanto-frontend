@@ -5,7 +5,9 @@ describe("formatRelativeTime", () => {
   const now = new Date("2026-07-08T12:00:00.000Z");
 
   it("returns 'just now' for under a minute", () => {
-    expect(formatRelativeTime("2026-07-08T11:59:30.000Z", now)).toBe("just now");
+    expect(formatRelativeTime("2026-07-08T11:59:30.000Z", now)).toBe(
+      "just now",
+    );
   });
 
   it("returns minutes for under an hour", () => {

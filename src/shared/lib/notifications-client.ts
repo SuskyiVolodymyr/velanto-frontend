@@ -1,5 +1,9 @@
 import { apiClient } from "@/src/shared/lib/api-client";
-import type { Notification, NotificationList, NotificationPreferences } from "@/src/shared/types/notification";
+import type {
+  Notification,
+  NotificationList,
+  NotificationPreferences,
+} from "@/src/shared/types/notification";
 
 function buildListQuery(filters: { page?: number; limit?: number }): string {
   const params = new URLSearchParams();
@@ -12,10 +16,17 @@ function buildListQuery(filters: { page?: number; limit?: number }): string {
 export const notificationsClient = {
   list: (filters: { page?: number; limit?: number } = {}) =>
     apiClient.get<NotificationList>(`/notifications${buildListQuery(filters)}`),
-  unreadCount: () => apiClient.get<{ count: number }>("/notifications/unread-count"),
-  markRead: (id: string) => apiClient.post<Notification>(`/notifications/${id}/read`),
-  markAllRead: () => apiClient.post<{ updated: number }>("/notifications/read-all"),
-  getPreferences: () => apiClient.get<NotificationPreferences>("/notifications/preferences"),
+  unreadCount: () =>
+    apiClient.get<{ count: number }>("/notifications/unread-count"),
+  markRead: (id: string) =>
+    apiClient.post<Notification>(`/notifications/${id}/read`),
+  markAllRead: () =>
+    apiClient.post<{ updated: number }>("/notifications/read-all"),
+  getPreferences: () =>
+    apiClient.get<NotificationPreferences>("/notifications/preferences"),
   setPreferences: (updates: Partial<NotificationPreferences>) =>
-    apiClient.patch<NotificationPreferences>("/notifications/preferences", updates),
+    apiClient.patch<NotificationPreferences>(
+      "/notifications/preferences",
+      updates,
+    ),
 };

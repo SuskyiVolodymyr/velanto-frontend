@@ -38,7 +38,10 @@ export function validateNxn(pack: PackDraft, ctx: z.RefinementCtx) {
     }
   });
 
-  if (pack.versusRounds === undefined || pack.versusRounds < MIN_VERSUS_ROUNDS) {
+  if (
+    pack.versusRounds === undefined ||
+    pack.versusRounds < MIN_VERSUS_ROUNDS
+  ) {
     ctx.addIssue({
       code: "custom",
       path: ["versusRounds"],
@@ -84,7 +87,11 @@ export function validateNxn(pack: PackDraft, ctx: z.RefinementCtx) {
 // / versus fields are ignored.
 export function validateHeadToHead(pack: PackDraft, ctx: z.RefinementCtx) {
   if (pack.groups.length === 0) {
-    ctx.addIssue({ code: "custom", path: ["groups"], message: "Add at least one group." });
+    ctx.addIssue({
+      code: "custom",
+      path: ["groups"],
+      message: "Add at least one group.",
+    });
     return;
   }
 
@@ -97,7 +104,8 @@ export function validateHeadToHead(pack: PackDraft, ctx: z.RefinementCtx) {
       });
     }
 
-    const roundSize = group.selectionMode === "random" ? group.sampleSize : group.items.length;
+    const roundSize =
+      group.selectionMode === "random" ? group.sampleSize : group.items.length;
     if (roundSize !== HEAD_TO_HEAD_ROUND_SIZE) {
       ctx.addIssue({
         code: "custom",
@@ -129,7 +137,11 @@ export function validateHeadToHead(pack: PackDraft, ctx: z.RefinementCtx) {
 // least one item; random groups need a sampleSize in [1, items.length].
 export function validateGroups(pack: PackDraft, ctx: z.RefinementCtx) {
   if (pack.groups.length === 0) {
-    ctx.addIssue({ code: "custom", path: ["groups"], message: "Add at least one group." });
+    ctx.addIssue({
+      code: "custom",
+      path: ["groups"],
+      message: "Add at least one group.",
+    });
     return;
   }
 

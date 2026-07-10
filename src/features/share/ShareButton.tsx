@@ -42,7 +42,10 @@ export function ShareButton({
     inputRef.current?.select();
 
     function handlePointerDown(event: MouseEvent) {
-      if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
+      if (
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
         close();
       }
     }

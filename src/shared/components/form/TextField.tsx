@@ -4,7 +4,10 @@ import { Input } from "@/src/shared/components/Input";
 import { FormField } from "@/src/shared/components/form/FormField";
 import { getFieldError } from "@/src/shared/components/form/getFieldError";
 
-export interface TextFieldProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "name"> {
+export interface TextFieldProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "name"
+> {
   /** Field name; must exist on the form's schema. */
   name: string;
   label: string;
@@ -34,11 +37,17 @@ export function TextField({
   // Merge the error association with any caller-supplied describedby (e.g. a
   // hint id) so neither clobbers the other.
   const describedBy =
-    [error ? `${fieldId}-error` : undefined, ariaDescribedby].filter(Boolean).join(" ") ||
-    undefined;
+    [error ? `${fieldId}-error` : undefined, ariaDescribedby]
+      .filter(Boolean)
+      .join(" ") || undefined;
 
   return (
-    <FormField htmlFor={fieldId} label={label} error={error} srOnlyLabel={srOnlyLabel}>
+    <FormField
+      htmlFor={fieldId}
+      label={label}
+      error={error}
+      srOnlyLabel={srOnlyLabel}
+    >
       <Input
         id={fieldId}
         aria-invalid={error ? true : undefined}

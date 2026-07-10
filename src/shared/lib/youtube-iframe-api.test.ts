@@ -1,5 +1,8 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { loadYouTubeIframeApi, resetYouTubeIframeApiForTests } from "./youtube-iframe-api";
+import {
+  loadYouTubeIframeApi,
+  resetYouTubeIframeApiForTests,
+} from "./youtube-iframe-api";
 
 describe("loadYouTubeIframeApi", () => {
   beforeEach(() => {

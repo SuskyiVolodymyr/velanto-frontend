@@ -23,7 +23,9 @@ const BASE_PACK: Pack = {
       id: "g1",
       name: "2016",
       selectionMode: "manual",
-      items: [{ id: "i1", type: "text", title: "Opening A", value: "Opening A" }],
+      items: [
+        { id: "i1", type: "text", title: "Opening A", value: "Opening A" },
+      ],
     },
   ],
   authorId: "u1",
@@ -38,14 +40,24 @@ const BASE_PACK: Pack = {
   myVote: null,
 };
 
-const RESULTS: PackResults = { packId: "p1", format: "save_one", totalPlays: 0, rounds: [] };
+const RESULTS: PackResults = {
+  packId: "p1",
+  format: "save_one",
+  totalPlays: 0,
+  rounds: [],
+};
 
 describe("PackDetailScreen", () => {
   it("renders the pack's title, description, and a Play link", () => {
     render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
     expect(screen.getByText("Best Anime Openings")).toBeInTheDocument();
-    expect(screen.getByText("Pick your favorite each round.")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "Play" })).toHaveAttribute("href", "/packs/p1/play");
+    expect(
+      screen.getByText("Pick your favorite each round."),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Play" })).toHaveAttribute(
+      "href",
+      "/packs/p1/play",
+    );
   });
 
   it("renders each group's name and items for a non-nxn pack", () => {
@@ -60,7 +72,11 @@ describe("PackDetailScreen", () => {
       format: "nxn",
       groups: undefined,
       categories: [
-        { id: "c1", name: "Category A", items: [{ id: "i2", type: "text", title: "Item X", value: "Item X" }] },
+        {
+          id: "c1",
+          name: "Category A",
+          items: [{ id: "i2", type: "text", title: "Item X", value: "Item X" }],
+        },
       ],
     };
     render(<PackDetailScreen pack={nxnPack} results={RESULTS} />);
@@ -75,7 +91,14 @@ describe("PackDetailScreen", () => {
   });
 
   it("hides the Share button for a non-approved pack", () => {
-    render(<PackDetailScreen pack={{ ...BASE_PACK, status: "pending" }} results={RESULTS} />);
-    expect(screen.queryByRole("button", { name: "Share" })).not.toBeInTheDocument();
+    render(
+      <PackDetailScreen
+        pack={{ ...BASE_PACK, status: "pending" }}
+        results={RESULTS}
+      />,
+    );
+    expect(
+      screen.queryByRole("button", { name: "Share" }),
+    ).not.toBeInTheDocument();
   });
 });

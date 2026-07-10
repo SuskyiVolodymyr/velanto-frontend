@@ -16,7 +16,9 @@ import { BannedNotice } from "@/src/shared/components/BannedNotice";
 export function BannedBanner() {
   const { user } = useAuth();
   const banned = isActiveBan(user?.bannedUntil);
-  const rules = useClientData(() => rulesClient.getRules(), [], { enabled: banned });
+  const rules = useClientData(() => rulesClient.getRules(), [], {
+    enabled: banned,
+  });
 
   if (!user || !banned) return null;
 

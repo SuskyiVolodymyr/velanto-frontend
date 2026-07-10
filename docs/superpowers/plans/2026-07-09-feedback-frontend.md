@@ -13,6 +13,7 @@
 **Design:** `docs/superpowers/specs/2026-07-09-feedback-frontend-design.md`.
 
 **Mirror these files (read before each task):**
+
 - Client: `src/shared/lib/reports-client.ts` + `src/shared/lib/api-client.ts`; vote/list variants `packs-client.ts`, `comments-client.ts`. Types: `src/shared/types/report.ts`.
 - Board: `src/features/support/SupportScreen.tsx` (filters + load-more), `src/features/home/HomeFeed.tsx` (debounced search + conditional group).
 - Detail/staff: `src/features/support/SupportReportScreen.tsx`; vote `src/features/pack/VoteButtons.tsx`; comments `src/features/pack/CommentSection.tsx`.
@@ -26,6 +27,7 @@
 ## Task 1: Types + client (+ client test)
 
 **Files:**
+
 - Create: `src/shared/types/feedback.ts`
 - Create: `src/shared/lib/feedback-client.ts`
 - Create: `src/shared/lib/feedback-client.test.ts`
@@ -36,10 +38,10 @@
 // Local re-declaration of the backend feedback API shapes. NOT imported from
 // the backend (the repos share no types package).
 
-export type FeedbackTopic = 'bug' | 'feature' | 'translation' | 'other';
-export type FeedbackVisibility = 'everyone' | 'staff_only';
-export type FeedbackStatus = 'new' | 'in_progress' | 'done' | 'declined';
-export type FeedbackSort = 'new' | 'top';
+export type FeedbackTopic = "bug" | "feature" | "translation" | "other";
+export type FeedbackVisibility = "everyone" | "staff_only";
+export type FeedbackStatus = "new" | "in_progress" | "done" | "declined";
+export type FeedbackSort = "new" | "top";
 
 export interface Feedback {
   id: string;
@@ -120,7 +122,7 @@ Run: `npm test -- feedback-client` → FAIL (module missing).
 - [ ] **Step 3: Write** `src/shared/lib/feedback-client.ts` (mirror `reports-client.ts`):
 
 ```ts
-import { apiClient } from '@/src/shared/lib/api-client';
+import { apiClient } from "@/src/shared/lib/api-client";
 import type {
   CreateFeedbackInput,
   Feedback,
@@ -130,26 +132,26 @@ import type {
   FeedbackStatus,
   FeedbackVoteResult,
   ListFeedbackFilters,
-} from '@/src/shared/types/feedback';
+} from "@/src/shared/types/feedback";
 
 function buildListQuery(filters: ListFeedbackFilters): string {
   const params = new URLSearchParams();
-  if (filters.q) params.set('q', filters.q);
-  if (filters.topic) params.set('topic', filters.topic);
-  if (filters.status) params.set('status', filters.status);
-  if (filters.sort) params.set('sort', filters.sort);
-  if (filters.page !== undefined) params.set('page', String(filters.page));
-  if (filters.limit !== undefined) params.set('limit', String(filters.limit));
+  if (filters.q) params.set("q", filters.q);
+  if (filters.topic) params.set("topic", filters.topic);
+  if (filters.status) params.set("status", filters.status);
+  if (filters.sort) params.set("sort", filters.sort);
+  if (filters.page !== undefined) params.set("page", String(filters.page));
+  if (filters.limit !== undefined) params.set("limit", String(filters.limit));
   const qs = params.toString();
-  return qs ? `?${qs}` : '';
+  return qs ? `?${qs}` : "";
 }
 
 function buildPageQuery(p: { page?: number; limit?: number }): string {
   const params = new URLSearchParams();
-  if (p.page !== undefined) params.set('page', String(p.page));
-  if (p.limit !== undefined) params.set('limit', String(p.limit));
+  if (p.page !== undefined) params.set("page", String(p.page));
+  if (p.limit !== undefined) params.set("limit", String(p.limit));
   const qs = params.toString();
-  return qs ? `?${qs}` : '';
+  return qs ? `?${qs}` : "";
 }
 
 export const feedbackClient = {
@@ -157,18 +159,21 @@ export const feedbackClient = {
     apiClient.get<FeedbackList>(`/feedback${buildListQuery(filters)}`),
   getById: (id: string) => apiClient.get<Feedback>(`/feedback/${id}`),
   create: (input: CreateFeedbackInput) =>
-    apiClient.post<Feedback>('/feedback', input),
+    apiClient.post<Feedback>("/feedback", input),
   setStatus: (id: string, status: FeedbackStatus) =>
     apiClient.patch<Feedback>(`/feedback/${id}/status`, { status }),
   remove: (id: string) => apiClient.delete<undefined>(`/feedback/${id}`),
   vote: (id: string, value: 1 | -1) =>
     apiClient.post<FeedbackVoteResult>(`/feedback/${id}/vote`, { value }),
   listComments: (id: string, page: { page?: number; limit?: number } = {}) =>
-    apiClient.get<FeedbackCommentList>(`/feedback/${id}/comments${buildPageQuery(page)}`),
+    apiClient.get<FeedbackCommentList>(
+      `/feedback/${id}/comments${buildPageQuery(page)}`,
+    ),
   addComment: (id: string, input: { body: string }) =>
     apiClient.post<FeedbackComment>(`/feedback/${id}/comments`, input),
 };
 ```
+
 > Verify `apiClient`'s exact method names/signatures against `api-client.ts` (e.g. whether `delete` takes a type param, how `patch` is called) and adjust to match. Keep the query-string order matching your test's expectations.
 
 - [ ] **Step 4: Run → PASS.** `npm test -- feedback-client`, then `npm run typecheck` clean.
@@ -180,6 +185,7 @@ export const feedbackClient = {
 ## Task 2: Board — `FeedbackScreen` + `FeedbackCard` + route + Top-3 sidebar
 
 **Files:**
+
 - Create: `src/features/feedback/FeedbackCard.tsx`
 - Create: `src/features/feedback/FeedbackScreen.tsx`
 - Create: `src/features/feedback/FeedbackScreen.test.tsx`
@@ -193,7 +199,7 @@ export const feedbackClient = {
   - Clicking a topic filter chip calls `list` with that `topic`; clicking a status chip → `status`; toggling sort → `sort:'top'`.
   - Empty result renders the empty message; a rejected fetch renders the error message.
   - "New post" for an authed user navigates to `/feedback/new`; for anon navigates to `/auth?next=/feedback`.
-  (Use `vi.useFakeTimers()` or `await waitFor` for the 300ms debounce, mirroring how `HomeFeed` is tested if a test exists; otherwise `waitFor`.)
+    (Use `vi.useFakeTimers()` or `await waitFor` for the 300ms debounce, mirroring how `HomeFeed` is tested if a test exists; otherwise `waitFor`.)
 
 Run: `npm test -- FeedbackScreen` → FAIL.
 
@@ -208,19 +214,22 @@ Run: `npm test -- FeedbackScreen` → FAIL.
   - Strings hardcoded English.
 
 - [ ] **Step 4: Write** `app/feedback/page.tsx`:
+
 ```tsx
-import type { Metadata } from 'next';
-import { FeedbackScreen } from '@/src/features/feedback/FeedbackScreen';
+import type { Metadata } from "next";
+import { FeedbackScreen } from "@/src/features/feedback/FeedbackScreen";
 
 export const metadata: Metadata = {
-  title: 'Feedback — Velanto',
-  description: 'Report bugs, suggest features, and propose translation improvements.',
+  title: "Feedback — Velanto",
+  description:
+    "Report bugs, suggest features, and propose translation improvements.",
 };
 
 export default function FeedbackPage() {
   return <FeedbackScreen />;
 }
 ```
+
 (Match the import style/alias used by `app/support/page.tsx`.)
 
 - [ ] **Step 5: Run → PASS + typecheck.** `npm test -- FeedbackScreen && npm run typecheck`.
@@ -232,6 +241,7 @@ export default function FeedbackPage() {
 ## Task 3: New-post form — `NewFeedbackForm` + route
 
 **Files:**
+
 - Create: `src/features/feedback/NewFeedbackForm.tsx`
 - Create: `src/features/feedback/NewFeedbackForm.test.tsx`
 - Create: `app/feedback/new/page.tsx`
@@ -247,7 +257,7 @@ export default function FeedbackPage() {
 - [ ] **Step 2: Write failing** `NewFeedbackForm.test.tsx`:
   - Unit-test the exported `validate`: bug post with title+body → null; translation post missing locale → error; translation post missing suggestion → error; valid translation post → null; empty title → error.
   - Component: translation fields are NOT in the document for topic `bug`, and ARE present after selecting `translation`. Submitting a valid bug post calls `feedbackClient.create` with the expected payload (no translation fields) and pushes to `/feedback/:id` (mock `create` to resolve `{ id:'new1', ... }`).
-  (Mock `feedback-client`, `auth-context` as authenticated, `next/navigation`.)
+    (Mock `feedback-client`, `auth-context` as authenticated, `next/navigation`.)
 
 Run: `npm test -- NewFeedbackForm` → FAIL then implement → PASS.
 
@@ -260,6 +270,7 @@ Run: `npm test -- NewFeedbackForm` → FAIL then implement → PASS.
 ## Task 4: Detail — `FeedbackDetailScreen` + `FeedbackVote` + `FeedbackComments` + route
 
 **Files:**
+
 - Create: `src/features/feedback/FeedbackVote.tsx`
 - Create: `src/features/feedback/FeedbackComments.tsx`
 - Create: `src/features/feedback/FeedbackDetailScreen.tsx`
@@ -282,22 +293,28 @@ Run: `npm test -- NewFeedbackForm` → FAIL then implement → PASS.
   - Staff viewer sees the status `<select>`; changing it calls `setStatus`. Non-staff non-author does NOT see it.
   - Author (or staff) sees Delete; clicking (confirm mocked true) calls `remove` and navigates to `/feedback`.
   - A `getById` rejection with an `ApiError` 404 renders the Not-found state.
-  (Mock `feedback-client`, `auth-context`, `next/navigation`; mock `window.confirm`.)
+    (Mock `feedback-client`, `auth-context`, `next/navigation`; mock `window.confirm`.)
 
 Run: `npm test -- FeedbackDetailScreen` → FAIL then implement → PASS. Also add focused tests for `FeedbackVote`/`FeedbackComments` mirroring `VoteButtons.test.tsx`/`CommentSection.test.tsx`.
 
 - [ ] **Step 5: Write** `app/feedback/[id]/page.tsx`:
+
 ```tsx
-import type { Metadata } from 'next';
-import { FeedbackDetailScreen } from '@/src/features/feedback/FeedbackDetailScreen';
+import type { Metadata } from "next";
+import { FeedbackDetailScreen } from "@/src/features/feedback/FeedbackDetailScreen";
 
-export const metadata: Metadata = { title: 'Feedback — Velanto' };
+export const metadata: Metadata = { title: "Feedback — Velanto" };
 
-export default async function FeedbackDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function FeedbackDetailPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   return <FeedbackDetailScreen postId={id} />;
 }
 ```
+
 (Match `app/support/[id]/page.tsx`'s async-params signature.)
 
 - [ ] **Step 6: Typecheck + commit** `feat(feedback): detail screen with vote, comments, staff status + delete`.
@@ -307,6 +324,7 @@ export default async function FeedbackDetailPage({ params }: { params: Promise<{
 ## Task 5: Nav link (public, top-level)
 
 **Files:**
+
 - Modify: `src/shared/components/AppHeader.tsx`
 - Modify: `messages/en.json` (+ the other 10 `messages/*.json`)
 
@@ -329,6 +347,7 @@ export default async function FeedbackDetailPage({ params }: { params: Promise<{
 ---
 
 ## Notes for the executor
+
 - **Mirror, don't reinvent:** every screen has a near-twin in the repo — read the mirror file first, copy its structure/classes, swap the client + fields.
 - **No backend type imports** — use `src/shared/types/feedback.ts` only.
 - **`npm run build` is a real gate** the way `npm run typecheck` is on the backend — an RSC/`"use client"`/`"use server"` violation passes vitest + tsc but fails the build. Run it in Task 6.

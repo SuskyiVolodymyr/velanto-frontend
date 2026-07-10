@@ -42,25 +42,37 @@ describe("CategoryEditor", () => {
   it("renames the category via onChange", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<StatefulCategoryEditor initial={emptyCategory()} onChange={onChange} />);
+    render(
+      <StatefulCategoryEditor initial={emptyCategory()} onChange={onChange} />,
+    );
 
     await user.type(screen.getByLabelText("Category 1 name"), "Boys");
 
-    expect(onChange).toHaveBeenLastCalledWith(expect.objectContaining({ name: "Boys" }));
+    expect(onChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({ name: "Boys" }),
+    );
   });
 
   it("adds a text item to the category", async () => {
     const user = userEvent.setup();
     const category = emptyCategory();
     const onChange = vi.fn();
-    render(<CategoryEditor category={category} index={0} onChange={onChange} />);
+    render(
+      <CategoryEditor category={category} index={0} onChange={onChange} />,
+    );
 
     await user.type(screen.getByLabelText("Category 1 new item"), "Naruto");
     await user.click(screen.getByRole("button", { name: "Add" }));
 
     expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({
-        items: [expect.objectContaining({ type: "text", title: "Naruto", value: "Naruto" })],
+        items: [
+          expect.objectContaining({
+            type: "text",
+            title: "Naruto",
+            value: "Naruto",
+          }),
+        ],
       }),
     );
   });
@@ -73,18 +85,32 @@ describe("CategoryEditor", () => {
       items: [{ id: "i1", type: "text", title: "Naruto", value: "Naruto" }],
     };
     const onChange = vi.fn();
-    render(<CategoryEditor category={category} index={0} onChange={onChange} />);
+    render(
+      <CategoryEditor category={category} index={0} onChange={onChange} />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Remove Naruto" }));
 
-    expect(onChange).toHaveBeenCalledWith(expect.objectContaining({ items: [] }));
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({ items: [] }),
+    );
   });
 
   it("has no selectionMode or sampleSize controls (unlike GroupEditor)", () => {
-    render(<CategoryEditor category={emptyCategory()} index={0} onChange={vi.fn()} />);
+    render(
+      <CategoryEditor
+        category={emptyCategory()}
+        index={0}
+        onChange={vi.fn()}
+      />,
+    );
 
-    expect(screen.queryByRole("button", { name: "Random" })).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Manual" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Random" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Manual" }),
+    ).not.toBeInTheDocument();
   });
 
   it("renders a validation error passed from the parent form", () => {
@@ -97,18 +123,34 @@ describe("CategoryEditor", () => {
       />,
     );
 
-    expect(screen.getByRole("alert")).toHaveTextContent('Category "Boys" needs at least one item.');
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      'Category "Boys" needs at least one item.',
+    );
   });
 
   it("adds a youtube item after successful oEmbed validation, keeping a typed title", async () => {
-    vi.mocked(fetchYouTubeOEmbed).mockResolvedValue({ title: "Guren no Yumiya (Official)" });
+    vi.mocked(fetchYouTubeOEmbed).mockResolvedValue({
+      title: "Guren no Yumiya (Official)",
+    });
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<CategoryEditor category={emptyCategory()} index={0} onChange={onChange} />);
+    render(
+      <CategoryEditor
+        category={emptyCategory()}
+        index={0}
+        onChange={onChange}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Link" }));
-    await user.type(screen.getByLabelText("Category 1 new item title"), "My title");
-    await user.type(screen.getByLabelText("Category 1 new item link"), "https://youtu.be/KsF_hdjWJjo");
+    await user.type(
+      screen.getByLabelText("Category 1 new item title"),
+      "My title",
+    );
+    await user.type(
+      screen.getByLabelText("Category 1 new item link"),
+      "https://youtu.be/KsF_hdjWJjo",
+    );
     await user.click(screen.getByRole("button", { name: "Add" }));
 
     await waitFor(() =>
@@ -127,19 +169,32 @@ describe("CategoryEditor", () => {
   });
 
   it("falls back to the oEmbed video title when no title was typed", async () => {
-    vi.mocked(fetchYouTubeOEmbed).mockResolvedValue({ title: "Guren no Yumiya (Official)" });
+    vi.mocked(fetchYouTubeOEmbed).mockResolvedValue({
+      title: "Guren no Yumiya (Official)",
+    });
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<CategoryEditor category={emptyCategory()} index={0} onChange={onChange} />);
+    render(
+      <CategoryEditor
+        category={emptyCategory()}
+        index={0}
+        onChange={onChange}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Link" }));
-    await user.type(screen.getByLabelText("Category 1 new item link"), "https://youtu.be/KsF_hdjWJjo");
+    await user.type(
+      screen.getByLabelText("Category 1 new item link"),
+      "https://youtu.be/KsF_hdjWJjo",
+    );
     await user.click(screen.getByRole("button", { name: "Add" }));
 
     await waitFor(() =>
       expect(onChange).toHaveBeenCalledWith(
         expect.objectContaining({
-          items: [expect.objectContaining({ title: "Guren no Yumiya (Official)" })],
+          items: [
+            expect.objectContaining({ title: "Guren no Yumiya (Official)" }),
+          ],
         }),
       ),
     );
@@ -149,13 +204,24 @@ describe("CategoryEditor", () => {
     vi.mocked(fetchYouTubeOEmbed).mockResolvedValue(null);
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<CategoryEditor category={emptyCategory()} index={0} onChange={onChange} />);
+    render(
+      <CategoryEditor
+        category={emptyCategory()}
+        index={0}
+        onChange={onChange}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Link" }));
-    await user.type(screen.getByLabelText("Category 1 new item link"), "https://youtu.be/doesnotexist");
+    await user.type(
+      screen.getByLabelText("Category 1 new item link"),
+      "https://youtu.be/doesnotexist",
+    );
     await user.click(screen.getByRole("button", { name: "Add" }));
 
-    expect(await screen.findByText("Couldn't find that video — check the link.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Couldn't find that video — check the link."),
+    ).toBeInTheDocument();
     expect(onChange).not.toHaveBeenCalled();
   });
 
@@ -168,7 +234,13 @@ describe("CategoryEditor", () => {
     );
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<CategoryEditor category={emptyCategory()} index={0} onChange={onChange} />);
+    render(
+      <CategoryEditor
+        category={emptyCategory()}
+        index={0}
+        onChange={onChange}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Link" }));
     const link = screen.getByLabelText("Category 1 new item link");
@@ -186,20 +258,35 @@ describe("CategoryEditor", () => {
     resolveOEmbed({ title: "Guren no Yumiya (Official)" });
     await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
     expect(onChange).toHaveBeenCalledWith(
-      expect.objectContaining({ items: [expect.objectContaining({ title: "Guren no Yumiya (Official)" })] }),
+      expect.objectContaining({
+        items: [
+          expect.objectContaining({ title: "Guren no Yumiya (Official)" }),
+        ],
+      }),
     );
   });
 
   it("rejects a non-YouTube-shaped link without calling oEmbed", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
-    render(<CategoryEditor category={emptyCategory()} index={0} onChange={onChange} />);
+    render(
+      <CategoryEditor
+        category={emptyCategory()}
+        index={0}
+        onChange={onChange}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Link" }));
-    await user.type(screen.getByLabelText("Category 1 new item link"), "not a link");
+    await user.type(
+      screen.getByLabelText("Category 1 new item link"),
+      "not a link",
+    );
     await user.click(screen.getByRole("button", { name: "Add" }));
 
-    expect(await screen.findByText("That doesn't look like a YouTube link.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("That doesn't look like a YouTube link."),
+    ).toBeInTheDocument();
     expect(fetchYouTubeOEmbed).not.toHaveBeenCalled();
     expect(onChange).not.toHaveBeenCalled();
   });
