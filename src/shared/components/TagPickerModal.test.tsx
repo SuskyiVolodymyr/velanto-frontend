@@ -31,7 +31,7 @@ describe("TagPickerModal", () => {
     expect(screen.getByRole("checkbox", { name: "Music" })).not.toBeChecked();
   });
 
-  it("calls onChange with the tag added when an unchecked box is clicked", async () => {
+  it("does not call onChange until Apply is clicked", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(
@@ -42,11 +42,32 @@ describe("TagPickerModal", () => {
         onChange={onChange}
       />,
     );
+
     await user.click(screen.getByRole("checkbox", { name: "Music" }));
-    expect(onChange).toHaveBeenCalledWith(["Anime", "Music"]);
+    expect(onChange).not.toHaveBeenCalled();
   });
 
-  it("calls onChange with the tag removed when a checked box is clicked", async () => {
+  it("commits the drafted additions and closes when Apply is clicked", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    const onClose = vi.fn();
+    render(
+      <TagPickerModal
+        open
+        onClose={onClose}
+        selected={["Anime"]}
+        onChange={onChange}
+      />,
+    );
+
+    await user.click(screen.getByRole("checkbox", { name: "Music" }));
+    await user.click(screen.getByRole("button", { name: "Apply" }));
+
+    expect(onChange).toHaveBeenCalledWith(["Anime", "Music"]);
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("commits drafted removals when Apply is clicked", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(
@@ -57,11 +78,35 @@ describe("TagPickerModal", () => {
         onChange={onChange}
       />,
     );
+
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
+    await user.click(screen.getByRole("button", { name: "Apply" }));
+
     expect(onChange).toHaveBeenCalledWith(["Music"]);
   });
 
-  it("shows a live selected count", () => {
+  it("discards the draft and does not commit when Cancel is clicked", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    const onClose = vi.fn();
+    render(
+      <TagPickerModal
+        open
+        onClose={onClose}
+        selected={["Anime"]}
+        onChange={onChange}
+      />,
+    );
+
+    await user.click(screen.getByRole("checkbox", { name: "Music" }));
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+
+    expect(onChange).not.toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  it("shows a live selected count that tracks the draft", async () => {
+    const user = userEvent.setup();
     render(
       <TagPickerModal
         open
@@ -71,6 +116,9 @@ describe("TagPickerModal", () => {
       />,
     );
     expect(screen.getByText("2 selected")).toBeInTheDocument();
+
+    await user.click(screen.getByRole("checkbox", { name: "Gaming" }));
+    expect(screen.getByText("3 selected")).toBeInTheDocument();
   });
 
   it("disables unchecked boxes once maxTags is reached", () => {

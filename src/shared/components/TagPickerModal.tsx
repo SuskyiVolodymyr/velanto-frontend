@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { PACK_TAGS } from "@/src/shared/types/pack";
 import type { PackTag } from "@/src/shared/types/pack";
 import { Modal } from "@/src/shared/components/Modal";
+import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
 
@@ -11,7 +13,7 @@ export interface TagPickerModalProps {
   onClose: () => void;
   selected: PackTag[];
   onChange: (tags: PackTag[]) => void;
-  /** When set, unchecked chips disable once `selected.length` reaches this cap. */
+  /** When set, unchecked chips disable once the draft reaches this cap. */
   maxTags?: number;
 }
 
@@ -22,28 +24,60 @@ export function TagPickerModal({
   onChange,
   maxTags,
 }: TagPickerModalProps) {
-  function toggle(tag: PackTag) {
-    const isSelected = selected.includes(tag);
-    if (isSelected) {
-      onChange(selected.filter((t) => t !== tag));
-    } else {
-      onChange([...selected, tag]);
-    }
-  }
-
-  const atCap = maxTags !== undefined && selected.length >= maxTags;
-
   return (
     <Modal open={open} onClose={onClose} title="Select tags">
+      {/* TagPickerBody is a child of Modal, which unmounts its children when
+          closed — so the draft below is freshly seeded from the committed
+          selection on every open and discarded on cancel/close. Selections
+          are only committed to the parent when Apply is pressed. */}
+      <TagPickerBody
+        selected={selected}
+        maxTags={maxTags}
+        onApply={(tags) => {
+          onChange(tags);
+          onClose();
+        }}
+        onCancel={onClose}
+      />
+    </Modal>
+  );
+}
+
+function TagPickerBody({
+  selected,
+  maxTags,
+  onApply,
+  onCancel,
+}: {
+  selected: PackTag[];
+  maxTags?: number;
+  onApply: (tags: PackTag[]) => void;
+  onCancel: () => void;
+}) {
+  const [draft, setDraft] = useState<PackTag[]>(selected);
+
+  function toggle(tag: PackTag) {
+    setDraft((current) =>
+      current.includes(tag)
+        ? current.filter((t) => t !== tag)
+        : [...current, tag],
+    );
+  }
+
+  const atCap = maxTags !== undefined && draft.length >= maxTags;
+
+  return (
+    <>
       <Text variant="tertiary" className="mb-3 text-xs">
-        {selected.length} selected{maxTags !== undefined ? ` / ${maxTags}` : ""}
+        {draft.length} selected{maxTags !== undefined ? ` / ${maxTags}` : ""}
       </Text>
+
       {/* Chip toggles, matching the pill styling used by the format/sort
           filters. Each pill wraps a visually-hidden real checkbox so multi-select
           semantics, keyboard focus and the disabled-at-cap state stay intact. */}
       <div className="flex flex-wrap gap-2">
         {PACK_TAGS.map((tag) => {
-          const isSelected = selected.includes(tag);
+          const isSelected = draft.includes(tag);
           const disabled = !isSelected && atCap;
           return (
             <label key={tag} className="cursor-pointer">
@@ -71,6 +105,15 @@ export function TagPickerModal({
           );
         })}
       </div>
-    </Modal>
+
+      <div className="mt-6 flex justify-end gap-2">
+        <Button type="button" variant="secondary" onClick={onCancel}>
+          Cancel
+        </Button>
+        <Button type="button" onClick={() => onApply(draft)}>
+          Apply
+        </Button>
+      </div>
+    </>
   );
 }

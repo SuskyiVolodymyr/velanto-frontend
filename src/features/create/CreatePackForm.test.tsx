@@ -213,7 +213,7 @@ describe("CreatePackForm", () => {
     await user.click(screen.getByRole("button", { name: "Select tags" }));
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
     await user.click(screen.getByRole("checkbox", { name: "Music" }));
-    await user.click(screen.getByRole("button", { name: "Close" }));
+    await user.click(screen.getByRole("button", { name: "Apply" }));
 
     expect(
       screen.getByRole("button", { name: "2 tags selected" }),
@@ -242,11 +242,14 @@ describe("CreatePackForm", () => {
       await user.click(screen.getByRole("checkbox", { name: tag }));
     }
 
+    // The cap applies to the in-progress draft while the modal is still open.
+    const eleventh = screen.getByRole("checkbox", { name: "Comics" });
+    expect(eleventh).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: "Apply" }));
     expect(
       screen.getByRole("button", { name: "10 tags selected" }),
     ).toBeInTheDocument();
-    const eleventh = screen.getByRole("checkbox", { name: "Comics" });
-    expect(eleventh).toBeDisabled();
   });
 
   it("submits a valid pack and redirects to its detail page", async () => {
@@ -282,7 +285,7 @@ describe("CreatePackForm", () => {
     await user.click(screen.getByRole("button", { name: "Select tags" }));
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
     await user.click(screen.getByRole("checkbox", { name: "Music" }));
-    await user.click(screen.getByRole("button", { name: "Close" }));
+    await user.click(screen.getByRole("button", { name: "Apply" }));
 
     await fillMinimalValidPack(user);
     await user.click(screen.getByRole("button", { name: "Publish" }));

@@ -100,7 +100,37 @@ describe("HomeFeed", () => {
     );
   });
 
-  it("re-fetches with selected tags (additive) when tags are toggled in the picker modal", async () => {
+  it("applies the drafted tags to the fetch only when Apply is clicked", async () => {
+    const user = userEvent.setup();
+    vi.mocked(packsClient.list).mockResolvedValue({
+      items: [PACK_A],
+      total: 1,
+      page: 1,
+      limit: 50,
+    });
+    render(<HomeFeed />);
+    await screen.findByText("Best Anime Openings");
+    await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
+
+    await user.click(screen.getByRole("button", { name: "Filter by tags" }));
+    await user.click(screen.getByRole("checkbox", { name: "Anime" }));
+    await user.click(screen.getByRole("checkbox", { name: "Music" }));
+
+    // Drafting tags must not refetch until Apply is pressed.
+    expect(packsClient.list).toHaveBeenCalledTimes(1);
+
+    await user.click(screen.getByRole("button", { name: "Apply" }));
+    await waitFor(() =>
+      expect(packsClient.list).toHaveBeenLastCalledWith({
+        format: undefined,
+        tags: ["Anime", "Music"],
+        limit: 50,
+      }),
+    );
+    expect(screen.getByRole("button", { name: "2 tags" })).toBeInTheDocument();
+  });
+
+  it("re-opening the picker and applying a removal updates the fetch", async () => {
     const user = userEvent.setup();
     vi.mocked(packsClient.list).mockResolvedValue({
       items: [PACK_A],
@@ -113,16 +143,8 @@ describe("HomeFeed", () => {
 
     await user.click(screen.getByRole("button", { name: "Filter by tags" }));
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
-    await waitFor(() =>
-      expect(packsClient.list).toHaveBeenLastCalledWith({
-        format: undefined,
-        tags: ["Anime"],
-        limit: 50,
-      }),
-    );
-    expect(screen.getByRole("button", { name: "1 tag" })).toBeInTheDocument();
-
     await user.click(screen.getByRole("checkbox", { name: "Music" }));
+    await user.click(screen.getByRole("button", { name: "Apply" }));
     await waitFor(() =>
       expect(packsClient.list).toHaveBeenLastCalledWith({
         format: undefined,
@@ -130,9 +152,10 @@ describe("HomeFeed", () => {
         limit: 50,
       }),
     );
-    expect(screen.getByRole("button", { name: "2 tags" })).toBeInTheDocument();
 
+    await user.click(screen.getByRole("button", { name: "2 tags" }));
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
+    await user.click(screen.getByRole("button", { name: "Apply" }));
     await waitFor(() =>
       expect(packsClient.list).toHaveBeenLastCalledWith({
         format: undefined,
@@ -140,6 +163,29 @@ describe("HomeFeed", () => {
         limit: 50,
       }),
     );
+    expect(screen.getByRole("button", { name: "1 tag" })).toBeInTheDocument();
+  });
+
+  it("discarding the picker with Cancel does not change the fetch", async () => {
+    const user = userEvent.setup();
+    vi.mocked(packsClient.list).mockResolvedValue({
+      items: [PACK_A],
+      total: 1,
+      page: 1,
+      limit: 50,
+    });
+    render(<HomeFeed />);
+    await screen.findByText("Best Anime Openings");
+    await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
+
+    await user.click(screen.getByRole("button", { name: "Filter by tags" }));
+    await user.click(screen.getByRole("checkbox", { name: "Anime" }));
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+
+    expect(packsClient.list).toHaveBeenCalledTimes(1);
+    expect(
+      screen.getByRole("button", { name: "Filter by tags" }),
+    ).toBeInTheDocument();
   });
 
   it("includes a 1v1 filter chip", async () => {
