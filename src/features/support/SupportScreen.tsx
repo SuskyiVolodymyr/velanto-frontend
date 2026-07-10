@@ -4,13 +4,14 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
+import { useClientData } from "@/src/shared/hooks/useClientData";
 import { reportsClient, type ListReportsFilters } from "@/src/shared/lib/reports-client";
 import { reportReasonLabel } from "@/src/shared/lib/report-reasons";
 import { reportTargetLabel } from "@/src/shared/lib/report-display";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { StatusBadge } from "@/src/shared/components/StatusBadge";
-import type { ReportStatus, ReportType, ReportWithReporter } from "@/src/shared/types/report";
+import type { ReportStatus, ReportType } from "@/src/shared/types/report";
 
 const PAGE_SIZE = 20;
 
@@ -35,10 +36,6 @@ export function SupportScreen() {
 
   const [statusFilter, setStatusFilter] = useState<ReportStatus | undefined>(undefined);
   const [typeFilter, setTypeFilter] = useState<ReportType | undefined>(undefined);
-  const [reports, setReports] = useState<ReportWithReporter[]>([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [loadingMore, setLoadingMore] = useState(false);
   const [loadMoreError, setLoadMoreError] = useState("");
 
@@ -50,44 +47,35 @@ export function SupportScreen() {
     }
   }, [authStatus, allowed, router]);
 
-  // statusFilter/typeFilter can change without a remount (e.g. clicking a
-  // different filter chip while already on the support page), so the reset
-  // to "loading" must happen here rather than via a useState initializer.
-  useEffect(() => {
-    if (!allowed) return;
-    let cancelled = false;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setStatus("loading");
-    const filters: ListReportsFilters = { status: statusFilter, type: typeFilter, page: 1, limit: PAGE_SIZE };
-    reportsClient
-      .list(filters)
-      .then((result) => {
-        if (cancelled) return;
-        setReports(result.items);
-        setTotal(result.total);
-        setPage(1);
-        setStatus("ready");
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setStatus("error");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [allowed, statusFilter, typeFilter]);
+  // The list fetch (loading/error/abort, and the reset to page 1 when a filter
+  // chip changes) is owned by useClientData; `page` is stored in the fetched
+  // data so it resets to 1 automatically on every filter-driven refetch.
+  const reportsQuery = useClientData(
+    async () => {
+      const filters: ListReportsFilters = { status: statusFilter, type: typeFilter, page: 1, limit: PAGE_SIZE };
+      const result = await reportsClient.list(filters);
+      return { items: result.items, total: result.total, page: 1 };
+    },
+    [statusFilter, typeFilter],
+    { enabled: allowed },
+  );
 
   async function handleLoadMore() {
+    const current = reportsQuery.data;
+    if (!current) return;
     setLoadingMore(true);
     try {
-      const nextPage = page + 1;
+      const nextPage = current.page + 1;
       const result = await reportsClient.list({ status: statusFilter, type: typeFilter, page: nextPage, limit: PAGE_SIZE });
-      setReports((prev) => {
-        const existingIds = new Set(prev.map((r) => r.id));
-        return [...prev, ...result.items.filter((r) => !existingIds.has(r.id))];
+      reportsQuery.setData((prev) => {
+        if (!prev) return prev;
+        const existingIds = new Set(prev.items.map((r) => r.id));
+        return {
+          items: [...prev.items, ...result.items.filter((r) => !existingIds.has(r.id))],
+          total: result.total,
+          page: nextPage,
+        };
       });
-      setTotal(result.total);
-      setPage(nextPage);
       setLoadMoreError("");
     } catch {
       setLoadMoreError("Couldn't load more reports. Try again.");
@@ -95,6 +83,9 @@ export function SupportScreen() {
       setLoadingMore(false);
     }
   }
+
+  const reports = reportsQuery.data?.items ?? [];
+  const total = reportsQuery.data?.total ?? 0;
 
   if (authStatus === "loading") return null;
 
@@ -147,11 +138,11 @@ export function SupportScreen() {
         ))}
       </div>
 
-      {status === "loading" && <Text variant="secondary">Loading reports…</Text>}
-      {status === "error" && <Text className="text-[#ff6b6b]">Couldn&apos;t load reports. Try again later.</Text>}
-      {status === "ready" && reports.length === 0 && <Text variant="secondary">No reports match these filters.</Text>}
+      {reportsQuery.loading && <Text variant="secondary">Loading reports…</Text>}
+      {reportsQuery.error && <Text className="text-[#ff6b6b]">Couldn&apos;t load reports. Try again later.</Text>}
+      {reportsQuery.data && reports.length === 0 && <Text variant="secondary">No reports match these filters.</Text>}
 
-      {status === "ready" && reports.length > 0 && (
+      {reportsQuery.data && reports.length > 0 && (
         <div className="flex flex-col gap-2">
           {reports.map((report) => {
             const target = reportTargetLabel(report);
@@ -179,7 +170,7 @@ export function SupportScreen() {
         </div>
       )}
 
-      {status === "ready" && reports.length < total && (
+      {reportsQuery.data && reports.length < total && (
         <div className="flex flex-col gap-2">
           <Button variant="secondary" disabled={loadingMore} onClick={() => void handleLoadMore()}>
             {loadingMore ? "Loading…" : "Load more"}

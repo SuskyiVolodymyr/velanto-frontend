@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { feedbackClient } from "@/src/shared/lib/feedback-client";
+import { useClientData } from "@/src/shared/hooks/useClientData";
 import { ApiError } from "@/src/shared/lib/api-client";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
@@ -13,7 +14,7 @@ import { StatusBadge } from "@/src/shared/components/StatusBadge";
 import { TOPIC_LABELS } from "@/src/features/feedback/FeedbackCard";
 import { FeedbackVote } from "@/src/features/feedback/FeedbackVote";
 import { FeedbackComments } from "@/src/features/feedback/FeedbackComments";
-import type { Feedback, FeedbackStatus } from "@/src/shared/types/feedback";
+import type { FeedbackStatus } from "@/src/shared/types/feedback";
 import { LOCALE_NAMES, type Locale } from "@/src/i18n/config";
 
 const STATUS_OPTIONS: { value: FeedbackStatus; label: string }[] = [
@@ -27,46 +28,24 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
   const { user } = useAuth();
   const router = useRouter();
 
-  const [post, setPost] = useState<Feedback | null>(null);
-  const [phase, setPhase] = useState<"loading" | "ready" | "error" | "notfound">("loading");
   const [statusBusy, setStatusBusy] = useState(false);
   const [statusError, setStatusError] = useState("");
   const [deleteError, setDeleteError] = useState("");
 
-  // postId can change without a remount (e.g. navigating between detail pages),
-  // so the reset to "loading" lives here rather than in a useState initializer.
-  useEffect(() => {
-    let cancelled = false;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setPhase("loading");
-    feedbackClient
-      .getById(postId)
-      .then((result) => {
-        if (cancelled) return;
-        setPost(result);
-        setPhase("ready");
-      })
-      .catch((err: unknown) => {
-        if (cancelled) return;
-        // 404 covers both a deleted post and a hidden staff_only one the
-        // viewer isn't allowed to see — surface a friendly not-found either way.
-        if (err instanceof ApiError && err.status === 404) {
-          setPhase("notfound");
-        } else {
-          setPhase("error");
-        }
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [postId]);
+  // postId can change without a remount (e.g. navigating between detail pages);
+  // useClientData resets to loading and aborts the previous fetch on change.
+  const postQuery = useClientData(() => feedbackClient.getById(postId), [postId]);
+  const post = postQuery.data;
+  // A 404 covers both a deleted post and a hidden staff_only one the viewer
+  // isn't allowed to see — surface a friendly not-found in either case.
+  const isNotFound = postQuery.error instanceof ApiError && postQuery.error.status === 404;
 
   async function handleStatusChange(next: FeedbackStatus) {
     setStatusBusy(true);
     setStatusError("");
     try {
       const updated = await feedbackClient.setStatus(postId, next);
-      setPost((prev) => (prev ? { ...prev, ...updated } : prev));
+      postQuery.setData((prev) => (prev ? { ...prev, ...updated } : prev));
     } catch {
       setStatusError("Couldn't update the status. Try again.");
     } finally {
@@ -85,7 +64,7 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
     }
   }
 
-  if (phase === "loading") {
+  if (postQuery.loading) {
     return (
       <main className="mx-auto w-full max-w-2xl px-7 py-10">
         <Text variant="secondary">Loading…</Text>
@@ -93,7 +72,7 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
     );
   }
 
-  if (phase === "notfound") {
+  if (isNotFound) {
     return (
       <main className="mx-auto max-w-md py-16 text-center">
         <Text variant="secondary">This feedback post doesn&apos;t exist or isn&apos;t visible to you.</Text>
@@ -104,7 +83,7 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
     );
   }
 
-  if (phase === "error" || !post) {
+  if (postQuery.error || !post) {
     return (
       <main className="mx-auto max-w-md py-16 text-center">
         <Text className="text-[#ff6b6b]">Couldn&apos;t load this feedback post. Try again.</Text>

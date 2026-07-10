@@ -4,12 +4,12 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
+import { useClientData } from "@/src/shared/hooks/useClientData";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import { FORMAT_LABELS } from "@/src/shared/lib/pack-display";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { Badge } from "@/src/shared/components/Badge";
-import type { Pack } from "@/src/shared/types/pack";
 
 const PAGE_SIZE = 20;
 
@@ -18,10 +18,6 @@ export function ModerationQueueScreen() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [packs, setPacks] = useState<Pack[]>([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">("loading");
   const [loadingMore, setLoadingMore] = useState(false);
   const [loadMoreError, setLoadMoreError] = useState("");
   const [rowBusy, setRowBusy] = useState<Record<string, boolean>>({});
@@ -37,40 +33,33 @@ export function ModerationQueueScreen() {
     }
   }, [authStatus, allowed, router]);
 
-  useEffect(() => {
-    if (!allowed) return;
-    let cancelled = false;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setStatus("loading");
-    packsClient
-      .moderationQueue({ page: 1, limit: PAGE_SIZE })
-      .then((result) => {
-        if (cancelled) return;
-        setPacks(result.items);
-        setTotal(result.total);
-        setPage(1);
-        setStatus("ready");
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setStatus("error");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [allowed]);
+  // useClientData owns the loading/error/abort lifecycle; `page` lives in the
+  // fetched data, and approve/reject mutate the cached list via setData.
+  const queueQuery = useClientData(
+    async () => {
+      const result = await packsClient.moderationQueue({ page: 1, limit: PAGE_SIZE });
+      return { items: result.items, total: result.total, page: 1 };
+    },
+    [],
+    { enabled: allowed },
+  );
 
   async function handleLoadMore() {
+    const current = queueQuery.data;
+    if (!current) return;
     setLoadingMore(true);
     try {
-      const nextPage = page + 1;
+      const nextPage = current.page + 1;
       const result = await packsClient.moderationQueue({ page: nextPage, limit: PAGE_SIZE });
-      setPacks((prev) => {
-        const existingIds = new Set(prev.map((p) => p.id));
-        return [...prev, ...result.items.filter((p) => !existingIds.has(p.id))];
+      queueQuery.setData((prev) => {
+        if (!prev) return prev;
+        const existingIds = new Set(prev.items.map((p) => p.id));
+        return {
+          items: [...prev.items, ...result.items.filter((p) => !existingIds.has(p.id))],
+          total: result.total,
+          page: nextPage,
+        };
       });
-      setTotal(result.total);
-      setPage(nextPage);
       setLoadMoreError("");
     } catch {
       setLoadMoreError("Couldn't load more packs. Try again.");
@@ -79,13 +68,18 @@ export function ModerationQueueScreen() {
     }
   }
 
+  function removePackFromQueue(id: string) {
+    queueQuery.setData((prev) =>
+      prev ? { ...prev, items: prev.items.filter((p) => p.id !== id), total: prev.total - 1 } : prev,
+    );
+  }
+
   async function handleApprove(id: string) {
     setRowBusy((prev) => ({ ...prev, [id]: true }));
     setRowError((prev) => ({ ...prev, [id]: "" }));
     try {
       await packsClient.approve(id);
-      setPacks((prev) => prev.filter((p) => p.id !== id));
-      setTotal((prev) => prev - 1);
+      removePackFromQueue(id);
     } catch {
       setRowError((prev) => ({ ...prev, [id]: "Couldn't approve this pack. Try again." }));
     } finally {
@@ -98,8 +92,7 @@ export function ModerationQueueScreen() {
     setRowError((prev) => ({ ...prev, [id]: "" }));
     try {
       await packsClient.reject(id, rejectReason.trim() || undefined);
-      setPacks((prev) => prev.filter((p) => p.id !== id));
-      setTotal((prev) => prev - 1);
+      removePackFromQueue(id);
       setRejectingId(null);
       setRejectReason("");
     } catch {
@@ -108,6 +101,9 @@ export function ModerationQueueScreen() {
       setRowBusy((prev) => ({ ...prev, [id]: false }));
     }
   }
+
+  const packs = queueQuery.data?.items ?? [];
+  const total = queueQuery.data?.total ?? 0;
 
   if (authStatus === "loading") return null;
 
@@ -130,13 +126,13 @@ export function ModerationQueueScreen() {
         Moderation queue
       </Text>
 
-      {status === "loading" && <Text variant="secondary">Loading packs…</Text>}
-      {status === "error" && <Text className="text-[#ff6b6b]">Couldn&apos;t load packs. Try again later.</Text>}
-      {status === "ready" && total === 0 && (
+      {queueQuery.loading && <Text variant="secondary">Loading packs…</Text>}
+      {queueQuery.error && <Text className="text-[#ff6b6b]">Couldn&apos;t load packs. Try again later.</Text>}
+      {queueQuery.data && total === 0 && (
         <Text variant="secondary">No packs waiting for review.</Text>
       )}
 
-      {status === "ready" && packs.length > 0 && (
+      {queueQuery.data && packs.length > 0 && (
         <div className="flex flex-col gap-3">
           {packs.map((pack) => (
             <div key={pack.id} className="flex flex-col gap-2 rounded-[12px] border border-border bg-surface px-4 py-3">
@@ -193,7 +189,7 @@ export function ModerationQueueScreen() {
         </div>
       )}
 
-      {status === "ready" && packs.length < total && (
+      {queueQuery.data && packs.length < total && (
         <div className="flex flex-col gap-2">
           <Button variant="secondary" disabled={loadingMore} onClick={() => void handleLoadMore()}>
             {loadingMore ? "Loading…" : "Load more"}
