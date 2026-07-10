@@ -118,6 +118,21 @@ describe("GroupEditor", () => {
     );
   });
 
+  it("renders a validation error passed from the parent form", () => {
+    render(
+      <GroupEditor
+        group={emptyGroup()}
+        index={0}
+        removable={false}
+        onChange={vi.fn()}
+        onRemove={vi.fn()}
+        error='Group "R1" needs at least one item.'
+      />,
+    );
+
+    expect(screen.getByRole("alert")).toHaveTextContent('Group "R1" needs at least one item.');
+  });
+
   it("disables the selection-mode and sample-size controls while validation is in flight", async () => {
     vi.mocked(fetchYouTubeOEmbed).mockReturnValue(new Promise(() => {}));
     const user = userEvent.setup();

@@ -87,6 +87,19 @@ describe("CategoryEditor", () => {
     expect(screen.queryByRole("button", { name: "Manual" })).not.toBeInTheDocument();
   });
 
+  it("renders a validation error passed from the parent form", () => {
+    render(
+      <CategoryEditor
+        category={emptyCategory()}
+        index={0}
+        onChange={vi.fn()}
+        error='Category "Boys" needs at least one item.'
+      />,
+    );
+
+    expect(screen.getByRole("alert")).toHaveTextContent('Category "Boys" needs at least one item.');
+  });
+
   it("adds a youtube item after successful oEmbed validation, keeping a typed title", async () => {
     vi.mocked(fetchYouTubeOEmbed).mockResolvedValue({ title: "Guren no Yumiya (Official)" });
     const user = userEvent.setup();

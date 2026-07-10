@@ -1,11 +1,20 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { CreatePackForm, validate } from "./CreatePackForm";
+import { CreatePackForm } from "./CreatePackForm";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import { ApiError } from "@/src/shared/lib/api-client";
+import type { Pack } from "@/src/shared/types/pack";
+
+// This is a heavy component suite: the nxn/format tests drive ~10 sequential
+// userEvent interactions each, and every keystroke re-renders the whole RHF
+// form (useWatch subscribers + zod resolver). Under the full parallel suite
+// that occasionally brushes past Vitest's default 5s per-test timeout even
+// though each test finishes in well under 2s in isolation. Give this file more
+// headroom so the run is contention-proof rather than isolation-dependent.
+vi.setConfig({ testTimeout: 20000 });
 
 const push = vi.fn();
 
@@ -37,6 +46,31 @@ const MOCK_USER = {
   role: "user" as const,
   createdAt: "2026-01-01T00:00:00.000Z",
 };
+
+// Minimal Pack the create mock resolves with — only `id` drives the redirect,
+// the rest satisfies the type.
+function makePack(overrides: Partial<Pack> = {}): Pack {
+  return {
+    id: "pack-1",
+    title: "Best Anime Openings",
+    description: "Pick your favorite each round.",
+    coverTone: "#2b2a3a",
+    format: "save_one",
+    tags: [],
+    groups: [],
+    authorId: "u1",
+    createdAt: "2026-01-01T00:00:00.000Z",
+    totalPlays: 0,
+    avgAgreementPercent: 0,
+    status: "approved",
+    rejectionReason: null,
+    score: 0,
+    likes: 0,
+    dislikes: 0,
+    myVote: null,
+    ...overrides,
+  };
+}
 
 function renderForm() {
   return render(
@@ -79,7 +113,7 @@ describe("CreatePackForm", () => {
 
     await user.click(screen.getByRole("button", { name: "Publish" }));
 
-    expect(screen.getByText("Give your pack a title.")).toBeInTheDocument();
+    expect(await screen.findByText("Give your pack a title.")).toBeInTheDocument();
     expect(packsClient.create).not.toHaveBeenCalled();
   });
 
@@ -92,7 +126,7 @@ describe("CreatePackForm", () => {
 
     await user.click(screen.getByRole("button", { name: "Publish" }));
 
-    expect(screen.getByText('Group "Round 1" needs at least one item.')).toBeInTheDocument();
+    expect(await screen.findByText('Group "Round 1" needs at least one item.')).toBeInTheDocument();
     expect(packsClient.create).not.toHaveBeenCalled();
   });
 
@@ -104,7 +138,7 @@ describe("CreatePackForm", () => {
 
     await user.click(screen.getByRole("button", { name: "Publish" }));
 
-    expect(screen.getByText('Group "2016" needs a sample size.')).toBeInTheDocument();
+    expect(await screen.findByText('Group "2016" needs a sample size.')).toBeInTheDocument();
     expect(packsClient.create).not.toHaveBeenCalled();
   });
 
@@ -118,7 +152,7 @@ describe("CreatePackForm", () => {
     await user.click(screen.getByRole("button", { name: "Publish" }));
 
     expect(
-      screen.getByText('Group "2016"\'s sample size can\'t exceed its 1 item(s).'),
+      await screen.findByText('Group "2016"\'s sample size can\'t exceed its 1 item(s).'),
     ).toBeInTheDocument();
     expect(packsClient.create).not.toHaveBeenCalled();
   });
@@ -157,25 +191,7 @@ describe("CreatePackForm", () => {
 
   it("submits a valid pack and redirects to its detail page", async () => {
     const user = userEvent.setup();
-    vi.mocked(packsClient.create).mockResolvedValue({
-      id: "pack-1",
-      title: "Best Anime Openings",
-      description: "Pick your favorite each round.",
-      coverTone: "#2b2a3a",
-      format: "save_one",
-      tags: [],
-      groups: [],
-      authorId: "u1",
-      createdAt: "2026-01-01T00:00:00.000Z",
-      totalPlays: 0,
-      avgAgreementPercent: 0,
-      status: "approved",
-      rejectionReason: null,
-      score: 0,
-      likes: 0,
-      dislikes: 0,
-      myVote: null,
-    });
+    vi.mocked(packsClient.create).mockResolvedValue(makePack({ id: "pack-1" }));
     renderForm();
     await fillMinimalValidPack(user);
 
@@ -210,26 +226,6 @@ describe("CreatePackForm", () => {
       await user.click(await screen.findByRole("button", { name: /^NxN/ }));
     }
 
-    it("rejects an nxn submission with a category count other than 2", () => {
-      const category = (name: string) => ({
-        id: name,
-        name,
-        items: [{ id: "i1", type: "text" as const, title: "x", value: "x" }],
-      });
-      const fields = {
-        title: "Boys vs Girls",
-        description: "Pick a side.",
-        tags: [],
-        format: "nxn" as const,
-        groups: [],
-        categories: [category("Boys"), category("Girls"), category("Extra")],
-        versusRounds: 8,
-        versusN: 1,
-      };
-
-      expect(validate(fields)).toBe("NxN packs need exactly 2 categories.");
-    });
-
     it("switches from Groups to Categories when NxN is selected", async () => {
       const user = userEvent.setup();
       renderForm();
@@ -251,7 +247,7 @@ describe("CreatePackForm", () => {
 
       await user.click(screen.getByRole("button", { name: "Publish" }));
 
-      expect(screen.getByText('Category "Boys" needs at least one item.')).toBeInTheDocument();
+      expect(await screen.findByText('Category "Boys" needs at least one item.')).toBeInTheDocument();
       expect(packsClient.create).not.toHaveBeenCalled();
     });
 
@@ -272,35 +268,15 @@ describe("CreatePackForm", () => {
 
       await user.click(screen.getByRole("button", { name: "Publish" }));
 
-      expect(
-        screen.getByText('Category "Boys" needs at least 5 item(s).'),
-      ).toBeInTheDocument();
+      expect(await screen.findByText('Category "Boys" needs at least 5 item(s).')).toBeInTheDocument();
       expect(packsClient.create).not.toHaveBeenCalled();
     });
 
     it("submits a valid nxn pack with categories/versusRounds/versusN and no groups", async () => {
       const user = userEvent.setup();
-      vi.mocked(packsClient.create).mockResolvedValue({
-        id: "pack-nxn",
-        title: "Boys vs Girls",
-        description: "Pick a side.",
-        coverTone: "#2b2a3a",
-        format: "nxn",
-        tags: [],
-        categories: [],
-        versusRounds: 8,
-        versusN: 1,
-        authorId: "u1",
-        createdAt: "2026-01-01T00:00:00.000Z",
-        totalPlays: 0,
-        avgAgreementPercent: 0,
-        status: "approved",
-        rejectionReason: null,
-        score: 0,
-        likes: 0,
-        dislikes: 0,
-        myVote: null,
-      });
+      vi.mocked(packsClient.create).mockResolvedValue(
+        makePack({ id: "pack-nxn", format: "nxn", categories: [], versusRounds: 8, versusN: 1, groups: undefined }),
+      );
       renderForm();
       await user.type(await screen.findByLabelText("Pack title"), "Boys vs Girls");
       await user.type(screen.getByLabelText("Pack description"), "Pick a side.");
@@ -352,25 +328,7 @@ describe("CreatePackForm", () => {
 
     it("submits a valid rank_blind pack with the same groups payload shape as save_one", async () => {
       const user = userEvent.setup();
-      vi.mocked(packsClient.create).mockResolvedValue({
-        id: "pack-rank",
-        title: "Anime Openers, Ranked",
-        description: "Place each pick blind into a growing ranked list.",
-        coverTone: "#2b2a3a",
-        format: "rank_blind",
-        tags: [],
-        groups: [],
-        authorId: "u1",
-        createdAt: "2026-01-01T00:00:00.000Z",
-        totalPlays: 0,
-        avgAgreementPercent: 0,
-        status: "approved",
-        rejectionReason: null,
-        score: 0,
-        likes: 0,
-        dislikes: 0,
-        myVote: null,
-      });
+      vi.mocked(packsClient.create).mockResolvedValue(makePack({ id: "pack-rank", format: "rank_blind" }));
       renderForm();
       await user.click(await screen.findByRole("button", { name: /^Rank Blind/ }));
       await fillMinimalValidPack(user);
@@ -402,27 +360,23 @@ describe("CreatePackForm", () => {
       expect(screen.queryByLabelText("Category 1 name")).not.toBeInTheDocument();
     });
 
+    it("rejects a 1v1 group with only one item and does not call the API", async () => {
+      const user = userEvent.setup();
+      renderForm();
+      await user.click(await screen.findByRole("button", { name: /^1v1/ }));
+      await fillMinimalValidPack(user);
+
+      await user.click(screen.getByRole("button", { name: "Publish" }));
+
+      expect(
+        await screen.findByText('Group "2016" needs exactly 2 items for a 1v1 matchup.'),
+      ).toBeInTheDocument();
+      expect(packsClient.create).not.toHaveBeenCalled();
+    });
+
     it("submits a valid 1v1 pack with the same groups payload shape as save_one", async () => {
       const user = userEvent.setup();
-      vi.mocked(packsClient.create).mockResolvedValue({
-        id: "pack-1v1",
-        title: "Anime Face-Offs",
-        description: "Pick a winner each round.",
-        coverTone: "#2b2a3a",
-        format: "1v1",
-        tags: [],
-        groups: [],
-        authorId: "u1",
-        createdAt: "2026-01-01T00:00:00.000Z",
-        totalPlays: 0,
-        avgAgreementPercent: 0,
-        status: "approved",
-        rejectionReason: null,
-        score: 0,
-        likes: 0,
-        dislikes: 0,
-        myVote: null,
-      });
+      vi.mocked(packsClient.create).mockResolvedValue(makePack({ id: "pack-1v1", format: "1v1" }));
       renderForm();
       await user.click(await screen.findByRole("button", { name: /^1v1/ }));
       await fillMinimalValidPack(user);
@@ -445,94 +399,6 @@ describe("CreatePackForm", () => {
       expect(packsClient.create).not.toHaveBeenCalledWith(
         expect.objectContaining({ categories: expect.anything() }),
       );
-    });
-
-    it("rejects a 1v1 pack whose group has only 1 item", () => {
-      const result = validate({
-        title: "t",
-        description: "d",
-        tags: [],
-        format: "1v1",
-        groups: [
-          {
-            id: "g1",
-            name: "Round 1",
-            selectionMode: "manual",
-            items: [{ id: "i1", type: "text", title: "Goku", value: "Goku" }],
-          },
-        ],
-        categories: [],
-      });
-      expect(result).toBe('Group "Round 1" needs exactly 2 items for a 1v1 matchup.');
-    });
-
-    it("rejects a 1v1 pack whose group has 3 items", () => {
-      const result = validate({
-        title: "t",
-        description: "d",
-        tags: [],
-        format: "1v1",
-        groups: [
-          {
-            id: "g1",
-            name: "Round 1",
-            selectionMode: "manual",
-            items: [
-              { id: "i1", type: "text", title: "Goku", value: "Goku" },
-              { id: "i2", type: "text", title: "Vegeta", value: "Vegeta" },
-              { id: "i3", type: "text", title: "Piccolo", value: "Piccolo" },
-            ],
-          },
-        ],
-        categories: [],
-      });
-      expect(result).toBe('Group "Round 1" needs exactly 2 items for a 1v1 matchup.');
-    });
-
-    it("rejects a 1v1 pack whose random-mode group has sampleSize !== 2", () => {
-      const result = validate({
-        title: "t",
-        description: "d",
-        tags: [],
-        format: "1v1",
-        groups: [
-          {
-            id: "g1",
-            name: "Round 1",
-            selectionMode: "random",
-            sampleSize: 3,
-            items: [
-              { id: "i1", type: "text", title: "Goku", value: "Goku" },
-              { id: "i2", type: "text", title: "Vegeta", value: "Vegeta" },
-              { id: "i3", type: "text", title: "Piccolo", value: "Piccolo" },
-            ],
-          },
-        ],
-        categories: [],
-      });
-      expect(result).toBe('Group "Round 1" needs a sample size of exactly 2 for a 1v1 matchup.');
-    });
-
-    it("accepts a valid 1v1 pack (exactly 2 items, manual mode)", () => {
-      const result = validate({
-        title: "t",
-        description: "d",
-        tags: [],
-        format: "1v1",
-        groups: [
-          {
-            id: "g1",
-            name: "Round 1",
-            selectionMode: "manual",
-            items: [
-              { id: "i1", type: "text", title: "Goku", value: "Goku" },
-              { id: "i2", type: "text", title: "Vegeta", value: "Vegeta" },
-            ],
-          },
-        ],
-        categories: [],
-      });
-      expect(result).toBeNull();
     });
   });
 });

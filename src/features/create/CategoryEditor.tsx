@@ -14,9 +14,11 @@ interface CategoryEditorProps {
   category: Category;
   index: number;
   onChange: (category: Category) => void;
+  /** Validation error for this category, surfaced by the parent form on submit. */
+  error?: string;
 }
 
-export function CategoryEditor({ category, index, onChange }: CategoryEditorProps) {
+export function CategoryEditor({ category, index, onChange, error }: CategoryEditorProps) {
   const [draftType, setDraftType] = useState<ItemType>("text");
   const [draftTitle, setDraftTitle] = useState("");
   const [draftValue, setDraftValue] = useState("");
@@ -181,6 +183,12 @@ export function CategoryEditor({ category, index, onChange }: CategoryEditorProp
       <Text variant="tertiary" className="text-xs">
         {category.items.length} item{category.items.length === 1 ? "" : "s"}
       </Text>
+
+      {error && (
+        <Text role="alert" className="text-sm text-[#ff6b6b]">
+          {error}
+        </Text>
+      )}
     </Card>
   );
 }
