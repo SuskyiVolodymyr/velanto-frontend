@@ -10,7 +10,7 @@ import {
   type SetStateAction,
 } from "react";
 
-export interface UseClientDataOptions {
+export interface UseClientDataOptions<T> {
   /**
    * When false, the fetcher is not called and the hook stays in a non-loading,
    * data-less state. Flip to true to trigger a fetch — used for gated fetches
@@ -18,6 +18,15 @@ export interface UseClientDataOptions {
    * Defaults to true.
    */
   enabled?: boolean;
+  /**
+   * Server-seeded first render. When provided, the hook starts with
+   * `{ data: initialData, loading: false }` so a Server Component's fetch is
+   * visible immediately (indexable, no post-hydration loading flash). The seed
+   * also *satisfies the mount fetch* — the fetcher is not re-run on mount, only
+   * on a later dep change or `refetch()`. Pass the anonymous/public server view
+   * only; viewer-specific fields refresh on the next dep change / refetch.
+   */
+  initialData?: T;
 }
 
 export interface UseClientDataResult<T> {
@@ -87,15 +96,23 @@ function reducer<T>(state: State<T>, action: Action<T>): State<T> {
 export function useClientData<T>(
   fetcher: (signal: AbortSignal) => Promise<T>,
   deps: DependencyList,
-  options: UseClientDataOptions = {},
+  options: UseClientDataOptions<T> = {},
 ): UseClientDataResult<T> {
   const enabled = options.enabled ?? true;
+  const { initialData } = options;
 
   const [state, dispatch] = useReducer(reducer<T>, undefined, () => ({
-    data: null,
+    data: initialData ?? null,
     error: null,
-    loading: enabled,
+    // A seeded first render is already "resolved" — don't show a loading state.
+    loading: initialData !== undefined ? false : enabled,
   }));
+
+  // True until the seeded initialData has been consumed by the first effect
+  // run. While true the mount fetch is skipped, so the server-seeded data (and
+  // its non-loading state) survives hydration untouched; any later dep change /
+  // refetch() clears it and fetches normally.
+  const skipInitialFetchRef = useRef(initialData !== undefined);
 
   // Keep the latest fetcher without making it a dep — callers pass inline
   // closures, so depending on it would refetch on every render. Assigned in an
@@ -118,6 +135,13 @@ export function useClientData<T>(
   useEffect(() => {
     if (!enabled) {
       dispatch({ type: "disable" });
+      return;
+    }
+
+    // Server-seeded first render: the seed stands in for the mount fetch, so
+    // skip it once. Cleared here so the next dep change / refetch() fetches.
+    if (skipInitialFetchRef.current) {
+      skipInitialFetchRef.current = false;
       return;
     }
 

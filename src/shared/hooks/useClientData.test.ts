@@ -132,6 +132,55 @@ describe("useClientData", () => {
     expect(fetcher).toHaveBeenCalledTimes(1);
   });
 
+  it("seeds initialData: renders it immediately, not loading, and skips the mount fetch", async () => {
+    const fetcher = vi.fn(async () => "fetched");
+    const { result } = renderHook(() =>
+      useClientData(fetcher, [], { initialData: "seed" }),
+    );
+
+    expect(result.current.loading).toBe(false);
+    expect(result.current.data).toBe("seed");
+    expect(result.current.error).toBeNull();
+
+    // Let the mount effect flush — it must not fire the fetcher.
+    await act(async () => {});
+    expect(fetcher).not.toHaveBeenCalled();
+    expect(result.current.data).toBe("seed");
+  });
+
+  it("still refetches on refetch() after being seeded with initialData", async () => {
+    const fetcher = vi.fn(async () => "fetched");
+    const { result } = renderHook(() =>
+      useClientData(fetcher, [], { initialData: "seed" }),
+    );
+
+    expect(result.current.data).toBe("seed");
+
+    act(() => result.current.refetch());
+
+    await waitFor(() => expect(result.current.data).toBe("fetched"));
+    expect(fetcher).toHaveBeenCalledTimes(1);
+  });
+
+  it("still refetches on a dep change after being seeded with initialData", async () => {
+    const fetcher = vi.fn(async (_signal: AbortSignal, id?: number) => `v${id}`);
+    const { result, rerender } = renderHook(
+      ({ id }: { id: number }) =>
+        useClientData((signal) => fetcher(signal, id), [id], { initialData: "seed" }),
+      { initialProps: { id: 1 } },
+    );
+
+    // Seed survives mount, no fetch for the seeded id.
+    expect(result.current.data).toBe("seed");
+    await act(async () => {});
+    expect(fetcher).not.toHaveBeenCalled();
+
+    rerender({ id: 2 });
+
+    await waitFor(() => expect(result.current.data).toBe("v2"));
+    expect(fetcher).toHaveBeenCalledTimes(1);
+  });
+
   it("exposes setData for optimistic updates without a refetch", async () => {
     const fetcher = vi.fn(async () => 1);
     const { result } = renderHook(() => useClientData<number>(fetcher, []));
