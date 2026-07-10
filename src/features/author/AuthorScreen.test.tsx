@@ -11,6 +11,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
+import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
 import { AuthorScreen } from "./AuthorScreen";
 import { usersClient } from "@/src/shared/lib/users-client";
 import { packsClient } from "@/src/shared/lib/packs-client";
@@ -322,5 +323,65 @@ describe("AuthorScreen", () => {
     mockedUsersClient.banHistory.mockRejectedValue(new Error("network"));
     renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() => expect(screen.getByText(/couldn't load ban history/i)).toBeInTheDocument());
+  });
+
+  // --- Characterization tests added alongside the F6 decomposition. These lock
+  // behaviors that moved into extracted sub-components so the split provably
+  // changes nothing: the optimistic unfollow path (AuthorProfileHeader), the ban
+  // payload with an "other" reasonDetail (AuthorModeratorPanel + BanReasonPicker),
+  // and streamer-mode name redaction (the <Hidden> usage in AuthorProfileHeader).
+
+  it("toggles Following to Follow and updates the count via unfollow when already followed", async () => {
+    mockAuth();
+    mockedUsersClient.getProfile.mockResolvedValue({ ...profile, isFollowedByMe: true, followerCount: 3 });
+    mockedUsersClient.unfollow.mockResolvedValue({ followerCount: 2 });
+    renderScreen(<AuthorScreen authorId="author-1" />);
+    await waitFor(() => expect(screen.getByRole("button", { name: "Following" })).toBeInTheDocument());
+    await userEvent.click(screen.getByRole("button", { name: "Following" }));
+    await waitFor(() => expect(screen.getByRole("button", { name: "Follow" })).toBeInTheDocument());
+    expect(mockedUsersClient.unfollow).toHaveBeenCalledWith("author-1");
+    expect(mockedUsersClient.follow).not.toHaveBeenCalled();
+    expect(screen.getByText(/2 followers/)).toBeInTheDocument();
+  });
+
+  it("submits a ban with a trimmed reasonDetail when the reason is 'other'", async () => {
+    mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
+    mockedUsersClient.getProfile.mockResolvedValue(profile);
+    mockedUsersClient.banHistory.mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
+    mockedUsersClient.ban.mockResolvedValue({ id: "author-1", bannedUntil: "2027-01-01T00:00:00.000Z" });
+    renderScreen(<AuthorScreen authorId="author-1" />);
+    await waitFor(() => expect(screen.getByRole("button", { name: /^ban$/i })).toBeInTheDocument());
+    await userEvent.click(screen.getByRole("button", { name: /^ban$/i }));
+    await screen.findByRole("option", { name: "Other" });
+    await userEvent.selectOptions(screen.getByLabelText("Reason"), "other");
+    await userEvent.type(screen.getByLabelText("Details (required)"), "  posting scam links  ");
+    await userEvent.click(screen.getByRole("button", { name: /confirm ban/i }));
+    await waitFor(() =>
+      expect(mockedUsersClient.ban).toHaveBeenCalledWith("author-1", {
+        duration: "week",
+        reason: "other",
+        reasonDetail: "posting scam links",
+      }),
+    );
+  });
+
+  it("redacts the author name behind a Reveal control when streamer mode is on", async () => {
+    localStorage.setItem("velanto:streamer-mode", "on");
+    mockAuth();
+    mockedUsersClient.getProfile.mockResolvedValue(profile);
+    render(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <StreamerModeProvider>
+          <AuthorScreen authorId="author-1" />
+        </StreamerModeProvider>
+      </NextIntlClientProvider>,
+    );
+    // The non-identity stat line still renders, so the screen has loaded…
+    await waitFor(() => expect(screen.getByText(/3 followers/)).toBeInTheDocument());
+    // …but the username is redacted (never painted as plain text) and a Reveal
+    // control stands in for it.
+    expect(screen.queryByText("quizmaster")).not.toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: /reveal/i }).length).toBeGreaterThan(0);
+    localStorage.removeItem("velanto:streamer-mode");
   });
 });
