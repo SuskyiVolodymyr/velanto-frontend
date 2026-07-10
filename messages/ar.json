@@ -61,10 +61,10 @@
   },
   "home": {
     "title": "اكتشف الحزم",
-    "subtitle": "تصفّح الحزم حسب النوع أو الوسم، ثم العب واحدة لترى من يبقى في النهاية.",
+    "subtitle": "تصفّح الحزم حسب النوع أو الوسم، ثم العب إحداها لترى من يصمد حتى النهاية.",
     "searchPlaceholder": "ابحث عن الحزم…",
-    "searchLabel": "ابحث عن الحزم",
-    "filters": "عوامل التصفية",
+    "searchLabel": "بحث عن الحزم",
+    "filters": "تصفية",
     "groupFormat": "النوع",
     "groupSort": "ترتيب حسب",
     "groupTags": "الوسوم",
@@ -75,25 +75,25 @@
     "windowWeek": "أسبوع",
     "windowMonth": "شهر",
     "windowYear": "سنة",
-    "filterByTags": "التصفية حسب الوسوم",
+    "filterByTags": "تصفية حسب الوسوم",
     "tagCount": "{count, plural, zero {# وسم} one {وسم واحد} two {وسمان} few {# وسوم} many {# وسمًا} other {# وسم}}",
-    "activeTagFilters": "عوامل تصفية الوسوم النشطة",
-    "removeTagFilter": "إزالة عامل التصفية {tag}",
+    "activeTagFilters": "الوسوم المُطبَّقة",
+    "removeTagFilter": "إزالة الوسم {tag}",
     "loading": "جارٍ تحميل الحزم…",
     "error": "تعذّر تحميل الحزم. حاول مرة أخرى لاحقًا.",
-    "empty": "لا توجد حزم تطابق عوامل التصفية هذه بعد."
+    "empty": "لا توجد حزم تطابق هذه التصفية بعد."
   },
   "formats": {
     "save_one": "أنقذ واحدًا",
     "sacrifice_one": "ضحِّ بواحد",
     "nxn": "NxN",
-    "rank_blind": "ترتيب أعمى",
+    "rank_blind": "رتّب بلا رؤية",
     "1v1": "1v1"
   },
   "tagPicker": {
     "title": "اختر الوسوم",
-    "selected": "{count} محدد",
-    "selectedOfMax": "{count} محدد / {max}",
+    "selected": "{count} محدَّد",
+    "selectedOfMax": "{count} / {max} محدَّد",
     "clear": "مسح",
     "cancel": "إلغاء",
     "apply": "تطبيق"

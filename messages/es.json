@@ -81,20 +81,20 @@
     "removeTagFilter": "Quitar el filtro {tag}",
     "loading": "Cargando packs…",
     "error": "No se pudieron cargar los packs. Inténtalo más tarde.",
-    "empty": "Ningún pack coincide con estos filtros todavía."
+    "empty": "Todavía no hay packs que coincidan con estos filtros."
   },
   "formats": {
-    "save_one": "Salva uno",
-    "sacrifice_one": "Sacrifica uno",
+    "save_one": "Salva a uno",
+    "sacrifice_one": "Sacrifica a uno",
     "nxn": "NxN",
-    "rank_blind": "Ranking a ciegas",
+    "rank_blind": "Clasifica a ciegas",
     "1v1": "1v1"
   },
   "tagPicker": {
     "title": "Seleccionar etiquetas",
     "selected": "{count} seleccionadas",
     "selectedOfMax": "{count} seleccionadas / {max}",
-    "clear": "Borrar",
+    "clear": "Limpiar",
     "cancel": "Cancelar",
     "apply": "Aplicar"
   }

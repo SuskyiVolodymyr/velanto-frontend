@@ -60,12 +60,12 @@
     "other": "其他"
   },
   "home": {
-    "title": "发现合集",
-    "subtitle": "按格式或标签浏览合集，然后玩一个，看看谁能坚持到最后。",
-    "searchPlaceholder": "搜索合集…",
-    "searchLabel": "搜索合集",
+    "title": "发现题包",
+    "subtitle": "按玩法或标签浏览题包，挑一个玩到底，看看谁能笑到最后。",
+    "searchPlaceholder": "搜索题包…",
+    "searchLabel": "搜索题包",
     "filters": "筛选",
-    "groupFormat": "格式",
+    "groupFormat": "玩法",
     "groupSort": "排序",
     "groupTags": "标签",
     "all": "全部",
@@ -77,15 +77,15 @@
     "windowYear": "年",
     "filterByTags": "按标签筛选",
     "tagCount": "{count, plural, other {# 个标签}}",
-    "activeTagFilters": "已启用的标签筛选",
-    "removeTagFilter": "移除筛选 {tag}",
-    "loading": "正在加载合集…",
-    "error": "无法加载合集，请稍后再试。",
-    "empty": "暂无符合这些筛选条件的合集。"
+    "activeTagFilters": "当前标签筛选",
+    "removeTagFilter": "移除 {tag} 筛选",
+    "loading": "正在加载题包…",
+    "error": "无法加载题包，请稍后再试。",
+    "empty": "暂无符合筛选条件的题包。"
   },
   "formats": {
-    "save_one": "保留其一",
-    "sacrifice_one": "淘汰其一",
+    "save_one": "留一个",
+    "sacrifice_one": "淘汰一个",
     "nxn": "NxN",
     "rank_blind": "盲排",
     "1v1": "1v1"

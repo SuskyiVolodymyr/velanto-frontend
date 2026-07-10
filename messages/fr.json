@@ -61,8 +61,8 @@
   },
   "home": {
     "title": "Découvrir les packs",
-    "subtitle": "Parcourez les packs par format ou par tag, puis jouez-en un pour voir qui reste debout.",
-    "searchPlaceholder": "Rechercher des packs…",
+    "subtitle": "Explorez les packs par format ou par tag, puis lancez-en un pour voir qui reste en lice.",
+    "searchPlaceholder": "Rechercher un pack…",
     "searchLabel": "Rechercher des packs",
     "filters": "Filtres",
     "groupFormat": "Format",
@@ -70,7 +70,7 @@
     "groupTags": "Tags",
     "all": "Tous",
     "sortRelevance": "Pertinence",
-    "sortPopular": "Populaire",
+    "sortPopular": "Populaires",
     "windowDay": "Jour",
     "windowWeek": "Semaine",
     "windowMonth": "Mois",
@@ -84,17 +84,17 @@
     "empty": "Aucun pack ne correspond à ces filtres pour l'instant."
   },
   "formats": {
-    "save_one": "Sauver un",
-    "sacrifice_one": "Sacrifier un",
+    "save_one": "Sauve-en un",
+    "sacrifice_one": "Sacrifie-en un",
     "nxn": "NxN",
-    "rank_blind": "Classement à l'aveugle",
+    "rank_blind": "Classe à l'aveugle",
     "1v1": "1v1"
   },
   "tagPicker": {
     "title": "Sélectionner des tags",
     "selected": "{count} sélectionné(s)",
     "selectedOfMax": "{count} sélectionné(s) / {max}",
-    "clear": "Effacer",
+    "clear": "Tout effacer",
     "cancel": "Annuler",
     "apply": "Appliquer"
   }

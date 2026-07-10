@@ -61,7 +61,7 @@
   },
   "home": {
     "title": "پیکس دریافت کریں",
-    "subtitle": "پیکس کو فارمیٹ یا ٹیگ کے لحاظ سے دیکھیں، پھر ایک کھیلیں اور دیکھیں کہ آخر میں کون باقی رہتا ہے۔",
+    "subtitle": "فارمیٹ یا ٹیگ کے حساب سے پیکس دیکھیں، پھر کوئی ایک کھیل کر دیکھیں کہ آخر میں کون باقی بچتا ہے۔",
     "searchPlaceholder": "پیکس تلاش کریں…",
     "searchLabel": "پیکس تلاش کریں",
     "filters": "فلٹرز",
@@ -75,23 +75,23 @@
     "windowWeek": "ہفتہ",
     "windowMonth": "مہینہ",
     "windowYear": "سال",
-    "filterByTags": "ٹیگز کے لحاظ سے فلٹر کریں",
+    "filterByTags": "ٹیگز سے فلٹر کریں",
     "tagCount": "{count, plural, one {# ٹیگ} other {# ٹیگز}}",
     "activeTagFilters": "فعال ٹیگ فلٹرز",
     "removeTagFilter": "{tag} فلٹر ہٹائیں",
     "loading": "پیکس لوڈ ہو رہے ہیں…",
     "error": "پیکس لوڈ نہیں ہو سکے۔ بعد میں دوبارہ کوشش کریں۔",
-    "empty": "ابھی ان فلٹرز سے مماثل کوئی پیک نہیں ہے۔"
+    "empty": "ان فلٹرز سے ابھی کوئی پیک نہیں ملا۔"
   },
   "formats": {
-    "save_one": "ایک بچائیں",
-    "sacrifice_one": "ایک نکالیں",
+    "save_one": "ایک بچاؤ",
+    "sacrifice_one": "ایک نکالو",
     "nxn": "NxN",
-    "rank_blind": "بلائنڈ رینک",
+    "rank_blind": "بغیر دیکھے درجہ دو",
     "1v1": "1v1"
   },
   "tagPicker": {
-    "title": "ٹیگز منتخب کریں",
+    "title": "ٹیگز چنیں",
     "selected": "{count} منتخب",
     "selectedOfMax": "{count} منتخب / {max}",
     "clear": "صاف کریں",

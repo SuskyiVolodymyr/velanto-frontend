@@ -60,17 +60,17 @@
     "other": "Outro"
   },
   "home": {
-    "title": "Descobrir packs",
-    "subtitle": "Navegue pelos packs por formato ou tag e jogue um para ver quem fica de pé.",
-    "searchPlaceholder": "Pesquisar packs…",
-    "searchLabel": "Pesquisar packs",
+    "title": "Descubra packs",
+    "subtitle": "Explore os packs por formato ou tag e jogue um para ver quem sobra no fim.",
+    "searchPlaceholder": "Buscar packs…",
+    "searchLabel": "Buscar packs",
     "filters": "Filtros",
     "groupFormat": "Formato",
     "groupSort": "Ordenar por",
     "groupTags": "Tags",
     "all": "Todos",
     "sortRelevance": "Relevância",
-    "sortPopular": "Popular",
+    "sortPopular": "Populares",
     "windowDay": "Dia",
     "windowWeek": "Semana",
     "windowMonth": "Mês",
@@ -78,16 +78,16 @@
     "filterByTags": "Filtrar por tags",
     "tagCount": "{count, plural, one {# tag} other {# tags}}",
     "activeTagFilters": "Filtros de tags ativos",
-    "removeTagFilter": "Remover o filtro {tag}",
+    "removeTagFilter": "Remover filtro {tag}",
     "loading": "Carregando packs…",
-    "error": "Não foi possível carregar os packs. Tente mais tarde.",
-    "empty": "Nenhum pack corresponde a estes filtros ainda."
+    "error": "Não foi possível carregar os packs. Tente novamente mais tarde.",
+    "empty": "Nenhum pack com esses filtros ainda."
   },
   "formats": {
-    "save_one": "Salvar um",
-    "sacrifice_one": "Sacrificar um",
+    "save_one": "Salve um",
+    "sacrifice_one": "Sacrifique um",
     "nxn": "NxN",
-    "rank_blind": "Ranking às cegas",
+    "rank_blind": "Ranqueie às cegas",
     "1v1": "1v1"
   },
   "tagPicker": {
