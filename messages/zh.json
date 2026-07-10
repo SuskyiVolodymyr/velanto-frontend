@@ -309,5 +309,29 @@
     "categoryNewItem": "第 {index} 类新选项",
     "categoryNewItemTitle": "第 {index} 类新选项标题",
     "categoryNewItemLink": "第 {index} 类新选项链接"
+  },
+  "profile": {
+    "loginRequiredView": "你需要先登录才能查看个人资料。",
+    "loginRequiredEdit": "你需要先登录才能编辑个人资料。",
+    "logIn": "登录",
+    "loadProfileError": "无法加载你的个人资料，请稍后再试。",
+    "loadBioError": "无法加载你当前的简介，请稍后再试。",
+    "followerCount": "{count, plural, other {# 位关注者}}",
+    "editProfile": "编辑个人资料",
+    "addBioPrompt": "添加简介，向大家介绍你的题包。",
+    "myPacks": "我的题包",
+    "noPacksOwn": "还没有题包——快来创建第一个吧！",
+    "bio": "简介",
+    "bioPlaceholder": "向大家介绍你的题包。",
+    "saving": "保存中…",
+    "save": "保存",
+    "saveError": "无法保存你的更改，请重试。",
+    "userNotFound": "该用户不存在。",
+    "followError": "无法更新关注状态，请重试。",
+    "followerAndPackCount": "{followers, plural, other {# 位关注者}} · {packs, plural, other {# 个题包}}",
+    "following": "已关注",
+    "follow": "关注",
+    "packs": "题包",
+    "noPacks": "还没有题包。"
   }
 }

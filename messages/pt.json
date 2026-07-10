@@ -309,5 +309,29 @@
     "categoryNewItem": "Novo item da categoria {index}",
     "categoryNewItemTitle": "Título do novo item da categoria {index}",
     "categoryNewItemLink": "Link do novo item da categoria {index}"
+  },
+  "profile": {
+    "loginRequiredView": "Você precisa estar logado para ver seu perfil.",
+    "loginRequiredEdit": "Você precisa estar logado para editar seu perfil.",
+    "logIn": "Entrar",
+    "loadProfileError": "Não foi possível carregar seu perfil. Tente novamente mais tarde.",
+    "loadBioError": "Não foi possível carregar sua bio atual. Tente novamente mais tarde.",
+    "followerCount": "{count, plural, one {# seguidor} other {# seguidores}}",
+    "editProfile": "Editar perfil",
+    "addBioPrompt": "Adicione uma bio para contar às pessoas sobre o que são seus packs.",
+    "myPacks": "Meus packs",
+    "noPacksOwn": "Nenhum pack ainda — crie o seu primeiro!",
+    "bio": "Bio",
+    "bioPlaceholder": "Conte às pessoas sobre o que são seus packs.",
+    "saving": "Salvando…",
+    "save": "Salvar",
+    "saveError": "Não foi possível salvar suas alterações. Tente novamente.",
+    "userNotFound": "Este usuário não existe.",
+    "followError": "Não foi possível atualizar o status de seguir. Tente novamente.",
+    "followerAndPackCount": "{followers, plural, one {# seguidor} other {# seguidores}} · {packs, plural, one {# pack} other {# packs}}",
+    "following": "Seguindo",
+    "follow": "Seguir",
+    "packs": "Packs",
+    "noPacks": "Nenhum pack ainda."
   }
 }

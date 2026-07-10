@@ -309,5 +309,29 @@
     "categoryNewItem": "Новий елемент категорії {index}",
     "categoryNewItemTitle": "Назва нового елемента категорії {index}",
     "categoryNewItemLink": "Посилання нового елемента категорії {index}"
+  },
+  "profile": {
+    "loginRequiredView": "Щоб переглянути свій профіль, спершу увійди.",
+    "loginRequiredEdit": "Щоб редагувати профіль, спершу увійди.",
+    "logIn": "Увійти",
+    "loadProfileError": "Не вдалося завантажити профіль. Спробуй пізніше.",
+    "loadBioError": "Не вдалося завантажити твоє біо. Спробуй пізніше.",
+    "followerCount": "{count, plural, one {# підписник} few {# підписники} many {# підписників} other {# підписника}}",
+    "editProfile": "Редагувати профіль",
+    "addBioPrompt": "Додай біо, щоб розповісти людям, про що твої паки.",
+    "myPacks": "Мої паки",
+    "noPacksOwn": "Паків поки немає — створи свій перший!",
+    "bio": "Біо",
+    "bioPlaceholder": "Розкажи людям, про що твої паки.",
+    "saving": "Збереження…",
+    "save": "Зберегти",
+    "saveError": "Не вдалося зберегти зміни. Спробуй ще раз.",
+    "userNotFound": "Такого користувача не існує.",
+    "followError": "Не вдалося оновити стеження. Спробуй ще раз.",
+    "followerAndPackCount": "{followers, plural, one {# підписник} few {# підписники} many {# підписників} other {# підписника}} · {packs, plural, one {# пак} few {# паки} many {# паків} other {# пака}}",
+    "following": "Ви стежите",
+    "follow": "Стежити",
+    "packs": "Паки",
+    "noPacks": "Паків поки немає."
   }
 }

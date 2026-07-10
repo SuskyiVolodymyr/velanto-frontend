@@ -309,5 +309,29 @@
     "categoryNewItem": "عنصر جديد في الفئة {index}",
     "categoryNewItemTitle": "عنوان العنصر الجديد في الفئة {index}",
     "categoryNewItemLink": "رابط العنصر الجديد في الفئة {index}"
+  },
+  "profile": {
+    "loginRequiredView": "يجب تسجيل الدخول لعرض ملفك الشخصي.",
+    "loginRequiredEdit": "يجب تسجيل الدخول لتعديل ملفك الشخصي.",
+    "logIn": "تسجيل الدخول",
+    "loadProfileError": "تعذّر تحميل ملفك الشخصي. حاول مرة أخرى لاحقًا.",
+    "loadBioError": "تعذّر تحميل نبذتك الحالية. حاول مرة أخرى لاحقًا.",
+    "followerCount": "{count, plural, zero {# متابِع} one {متابِع واحد} two {متابِعان} few {# متابِعين} many {# متابِعًا} other {# متابِع}}",
+    "editProfile": "تعديل الملف الشخصي",
+    "addBioPrompt": "أضِف نبذة تُعرِّف الناس بموضوع حِزَمك.",
+    "myPacks": "حِزَمي",
+    "noPacksOwn": "لا توجد حزم بعد — أنشئ حزمتك الأولى!",
+    "bio": "نبذة",
+    "bioPlaceholder": "عرِّف الناس بموضوع حِزَمك.",
+    "saving": "جارٍ الحفظ…",
+    "save": "حفظ",
+    "saveError": "تعذّر حفظ تغييراتك. حاول مرة أخرى.",
+    "userNotFound": "هذا المستخدم غير موجود.",
+    "followError": "تعذّر تحديث حالة المتابعة. حاول مرة أخرى.",
+    "followerAndPackCount": "{followers, plural, zero {# متابِع} one {متابِع واحد} two {متابِعان} few {# متابِعين} many {# متابِعًا} other {# متابِع}} · {packs, plural, zero {# حزمة} one {حزمة واحدة} two {حزمتان} few {# حزم} many {# حزمة} other {# حزمة}}",
+    "following": "متابَع",
+    "follow": "متابعة",
+    "packs": "الحِزَم",
+    "noPacks": "لا توجد حزم بعد."
   }
 }

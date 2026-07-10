@@ -309,5 +309,29 @@
     "categoryNewItem": "کیٹیگری {index} کا نیا آئٹم",
     "categoryNewItemTitle": "کیٹیگری {index} کے نئے آئٹم کا عنوان",
     "categoryNewItemLink": "کیٹیگری {index} کے نئے آئٹم کا لنک"
+  },
+  "profile": {
+    "loginRequiredView": "اپنی پروفائل دیکھنے کے لیے آپ کا لاگ اِن ہونا ضروری ہے۔",
+    "loginRequiredEdit": "اپنی پروفائل میں ترمیم کرنے کے لیے آپ کا لاگ اِن ہونا ضروری ہے۔",
+    "logIn": "لاگ اِن کریں",
+    "loadProfileError": "آپ کی پروفائل لوڈ نہیں ہو سکی۔ بعد میں دوبارہ کوشش کریں۔",
+    "loadBioError": "آپ کا موجودہ تعارف لوڈ نہیں ہو سکا۔ بعد میں دوبارہ کوشش کریں۔",
+    "followerCount": "{count, plural, one {# فالوور} other {# فالوورز}}",
+    "editProfile": "پروفائل میں ترمیم کریں",
+    "addBioPrompt": "لوگوں کو بتائیں کہ آپ کے پیکس کس بارے میں ہیں — ایک تعارف شامل کریں۔",
+    "myPacks": "میرے پیکس",
+    "noPacksOwn": "ابھی کوئی پیک نہیں — اپنا پہلا پیک بنائیں!",
+    "bio": "تعارف",
+    "bioPlaceholder": "لوگوں کو بتائیں کہ آپ کے پیکس کس بارے میں ہیں۔",
+    "saving": "محفوظ ہو رہا ہے…",
+    "save": "محفوظ کریں",
+    "saveError": "آپ کی تبدیلیاں محفوظ نہیں ہو سکیں۔ دوبارہ کوشش کریں۔",
+    "userNotFound": "یہ صارف موجود نہیں ہے۔",
+    "followError": "فالو کی حالت اپ ڈیٹ نہیں ہو سکی۔ دوبارہ کوشش کریں۔",
+    "followerAndPackCount": "{followers, plural, one {# فالوور} other {# فالوورز}} · {packs, plural, one {# پیک} other {# پیکس}}",
+    "following": "فالو کر رہے ہیں",
+    "follow": "فالو کریں",
+    "packs": "پیکس",
+    "noPacks": "ابھی کوئی پیک نہیں۔"
   }
 }

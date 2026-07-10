@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { usersClient } from "@/src/shared/lib/users-client";
 import { packsClient } from "@/src/shared/lib/packs-client";
@@ -12,6 +13,7 @@ import type { PublicUserProfile } from "@/src/shared/types/user";
 import type { Pack } from "@/src/shared/types/pack";
 
 export function ProfileScreen() {
+  const t = useTranslations("profile");
   const { user, status: authStatus } = useAuth();
   const [profile, setProfile] = useState<PublicUserProfile | null>(null);
   const [packs, setPacks] = useState<Pack[]>([]);
@@ -46,14 +48,12 @@ export function ProfileScreen() {
   if (authStatus === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">
-          You need to be logged in to view your profile.
-        </Text>
+        <Text variant="secondary">{t("loginRequiredView")}</Text>
         <Link
           href="/auth?next=%2Fprofile"
           className={buttonClassName("primary", "mt-4 w-fit")}
         >
-          Log in
+          {t("logIn")}
         </Link>
       </div>
     );
@@ -64,9 +64,7 @@ export function ProfileScreen() {
   if (status === "error" || !profile) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text className="text-[#ff6b6b]">
-          Couldn&apos;t load your profile. Try again later.
-        </Text>
+        <Text className="text-[#ff6b6b]">{t("loadProfileError")}</Text>
       </div>
     );
   }
@@ -85,8 +83,7 @@ export function ProfileScreen() {
               {profile.username}
             </Text>
             <Text variant="tertiary" className="text-sm">
-              {profile.followerCount} follower
-              {profile.followerCount === 1 ? "" : "s"}
+              {t("followerCount", { count: profile.followerCount })}
             </Text>
           </div>
         </div>
@@ -94,7 +91,7 @@ export function ProfileScreen() {
           href="/profile/edit"
           className={buttonClassName("secondary", "w-fit")}
         >
-          Edit profile
+          {t("editProfile")}
         </Link>
       </div>
 
@@ -104,17 +101,17 @@ export function ProfileScreen() {
         ) : (
           <Link href="/profile/edit">
             <Text variant="tertiary" className="italic">
-              Add a bio to tell people what your packs are about.
+              {t("addBioPrompt")}
             </Text>
           </Link>
         )}
       </div>
 
       <Text as="h2" variant="title" className="mb-4 text-lg">
-        My Packs
+        {t("myPacks")}
       </Text>
       {packs.length === 0 ? (
-        <Text variant="secondary">No packs yet — create your first one!</Text>
+        <Text variant="secondary">{t("noPacksOwn")}</Text>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {packs.map((pack) => (

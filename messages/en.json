@@ -308,5 +308,29 @@
     "categoryNewItem": "Category {index} new item",
     "categoryNewItemTitle": "Category {index} new item title",
     "categoryNewItemLink": "Category {index} new item link"
+  },
+  "profile": {
+    "loginRequiredView": "You need to be logged in to view your profile.",
+    "loginRequiredEdit": "You need to be logged in to edit your profile.",
+    "logIn": "Log in",
+    "loadProfileError": "Couldn't load your profile. Try again later.",
+    "loadBioError": "Couldn't load your current bio. Try again later.",
+    "followerCount": "{count, plural, one {# follower} other {# followers}}",
+    "editProfile": "Edit profile",
+    "addBioPrompt": "Add a bio to tell people what your packs are about.",
+    "myPacks": "My Packs",
+    "noPacksOwn": "No packs yet — create your first one!",
+    "bio": "Bio",
+    "bioPlaceholder": "Tell people what your packs are about.",
+    "saving": "Saving…",
+    "save": "Save",
+    "saveError": "Couldn't save your changes. Try again.",
+    "userNotFound": "This user doesn't exist.",
+    "followError": "Couldn't update follow status. Try again.",
+    "followerAndPackCount": "{followers, plural, one {# follower} other {# followers}} · {packs, plural, one {# pack} other {# packs}}",
+    "following": "Following",
+    "follow": "Follow",
+    "packs": "Packs",
+    "noPacks": "No packs yet."
   }
 }

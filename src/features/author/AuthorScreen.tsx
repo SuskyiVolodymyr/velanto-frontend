@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { usersClient } from "@/src/shared/lib/users-client";
 import { packsClient } from "@/src/shared/lib/packs-client";
@@ -34,6 +35,7 @@ export function AuthorScreen({
    */
   initialData?: AuthorData;
 }) {
+  const t = useTranslations("profile");
   const { user, status: authStatus } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -106,7 +108,7 @@ export function AuthorScreen({
           : prev,
       );
     } catch {
-      setFollowError("Couldn't update follow status. Try again.");
+      setFollowError(t("followError"));
     } finally {
       setFollowBusy(false);
     }
@@ -117,7 +119,7 @@ export function AuthorScreen({
   if (authorQuery.error || !authorQuery.data) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text className="text-[#ff6b6b]">This user doesn&apos;t exist.</Text>
+        <Text className="text-[#ff6b6b]">{t("userNotFound")}</Text>
       </div>
     );
   }

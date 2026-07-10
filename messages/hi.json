@@ -309,5 +309,29 @@
     "categoryNewItem": "श्रेणी {index} नया आइटम",
     "categoryNewItemTitle": "श्रेणी {index} नए आइटम का शीर्षक",
     "categoryNewItemLink": "श्रेणी {index} नए आइटम का लिंक"
+  },
+  "profile": {
+    "loginRequiredView": "अपनी प्रोफ़ाइल देखने के लिए आपको लॉग इन करना होगा।",
+    "loginRequiredEdit": "अपनी प्रोफ़ाइल संपादित करने के लिए आपको लॉग इन करना होगा।",
+    "logIn": "लॉग इन करें",
+    "loadProfileError": "आपकी प्रोफ़ाइल लोड नहीं हो सकी। थोड़ी देर बाद फिर कोशिश करें।",
+    "loadBioError": "आपका मौजूदा बायो लोड नहीं हो सका। थोड़ी देर बाद फिर कोशिश करें।",
+    "followerCount": "{count, plural, one {# फ़ॉलोअर} other {# फ़ॉलोअर}}",
+    "editProfile": "प्रोफ़ाइल संपादित करें",
+    "addBioPrompt": "लोगों को बताने के लिए बायो जोड़ें कि आपके पैक किस बारे में हैं।",
+    "myPacks": "मेरे पैक",
+    "noPacksOwn": "अभी तक कोई पैक नहीं — अपना पहला पैक बनाएँ!",
+    "bio": "बायो",
+    "bioPlaceholder": "लोगों को बताएँ कि आपके पैक किस बारे में हैं।",
+    "saving": "सहेजा जा रहा है…",
+    "save": "सहेजें",
+    "saveError": "आपके बदलाव सहेजे नहीं जा सके। फिर से प्रयास करें।",
+    "userNotFound": "यह उपयोगकर्ता मौजूद नहीं है।",
+    "followError": "फ़ॉलो स्थिति अपडेट नहीं हो सकी। फिर से प्रयास करें।",
+    "followerAndPackCount": "{followers, plural, one {# फ़ॉलोअर} other {# फ़ॉलोअर}} · {packs, plural, one {# पैक} other {# पैक}}",
+    "following": "फ़ॉलो कर रहे हैं",
+    "follow": "फ़ॉलो करें",
+    "packs": "पैक",
+    "noPacks": "अभी तक कोई पैक नहीं।"
   }
 }

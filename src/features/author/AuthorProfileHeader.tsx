@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
@@ -28,6 +29,7 @@ export function AuthorProfileHeader({
   followError: string;
   onFollowToggle: () => void;
 }) {
+  const t = useTranslations("profile");
   const initial = profile.username.slice(0, 1).toUpperCase();
 
   return (
@@ -46,9 +48,10 @@ export function AuthorProfileHeader({
               </Hidden>
             </Text>
             <Text variant="tertiary" className="text-sm">
-              {profile.followerCount} follower
-              {profile.followerCount === 1 ? "" : "s"} · {packsTotal} pack
-              {packsTotal === 1 ? "" : "s"}
+              {t("followerAndPackCount", {
+                followers: profile.followerCount,
+                packs: packsTotal,
+              })}
             </Text>
           </div>
         </div>
@@ -59,7 +62,7 @@ export function AuthorProfileHeader({
               disabled={followBusy}
               onClick={onFollowToggle}
             >
-              {profile.isFollowedByMe ? "Following" : "Follow"}
+              {profile.isFollowedByMe ? t("following") : t("follow")}
             </Button>
             {followError && (
               <Text className="text-xs text-[#ff6b6b]">{followError}</Text>

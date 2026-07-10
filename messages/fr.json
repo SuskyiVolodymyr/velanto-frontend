@@ -309,5 +309,29 @@
     "categoryNewItem": "Nouvel élément de la catégorie {index}",
     "categoryNewItemTitle": "Titre du nouvel élément de la catégorie {index}",
     "categoryNewItemLink": "Lien du nouvel élément de la catégorie {index}"
+  },
+  "profile": {
+    "loginRequiredView": "Vous devez être connecté pour voir votre profil.",
+    "loginRequiredEdit": "Vous devez être connecté pour modifier votre profil.",
+    "logIn": "Se connecter",
+    "loadProfileError": "Impossible de charger votre profil. Réessayez plus tard.",
+    "loadBioError": "Impossible de charger votre bio actuelle. Réessayez plus tard.",
+    "followerCount": "{count, plural, one {# abonné} other {# abonnés}}",
+    "editProfile": "Modifier le profil",
+    "addBioPrompt": "Ajoutez une bio pour présenter vos packs.",
+    "myPacks": "Mes packs",
+    "noPacksOwn": "Aucun pack pour l'instant — créez le premier !",
+    "bio": "Bio",
+    "bioPlaceholder": "Présentez vos packs en quelques mots.",
+    "saving": "Enregistrement…",
+    "save": "Enregistrer",
+    "saveError": "Impossible d'enregistrer vos modifications. Réessayez.",
+    "userNotFound": "Cet utilisateur n'existe pas.",
+    "followError": "Impossible de mettre à jour l'abonnement. Réessayez.",
+    "followerAndPackCount": "{followers, plural, one {# abonné} other {# abonnés}} · {packs, plural, one {# pack} other {# packs}}",
+    "following": "Abonné",
+    "follow": "Suivre",
+    "packs": "Packs",
+    "noPacks": "Aucun pack pour l'instant."
   }
 }

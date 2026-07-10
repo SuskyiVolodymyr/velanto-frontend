@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { usersClient } from "@/src/shared/lib/users-client";
 import { messageFromError } from "@/src/shared/lib/messageFromError";
@@ -11,6 +12,7 @@ import { Button } from "@/src/shared/components/Button";
 const BIO_MAX = 280;
 
 export function ProfileEditForm() {
+  const t = useTranslations("profile");
   const { user, status: authStatus } = useAuth();
   const router = useRouter();
   const [bio, setBio] = useState("");
@@ -51,7 +53,7 @@ export function ProfileEditForm() {
       // blocked-term rejection) when present, falling back to generic copy.
       setSaveError(
         messageFromError(err, {
-          fallback: "Couldn't save your changes. Try again.",
+          fallback: t("saveError"),
         }),
       );
       setPending(false);
@@ -63,9 +65,7 @@ export function ProfileEditForm() {
   if (authStatus === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">
-          You need to be logged in to edit your profile.
-        </Text>
+        <Text variant="secondary">{t("loginRequiredEdit")}</Text>
       </div>
     );
   }
@@ -75,9 +75,7 @@ export function ProfileEditForm() {
   if (loadStatus === "error") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text className="text-[#ff6b6b]">
-          Couldn&apos;t load your current bio. Try again later.
-        </Text>
+        <Text className="text-[#ff6b6b]">{t("loadBioError")}</Text>
       </div>
     );
   }
@@ -88,12 +86,12 @@ export function ProfileEditForm() {
       className="mx-auto w-full max-w-md px-7 py-10"
     >
       <Text as="h1" variant="title" className="mb-6 text-2xl">
-        Edit profile
+        {t("editProfile")}
       </Text>
 
       <label className="mb-2 flex items-center justify-between">
         <Text variant="secondary" className="text-xs">
-          Bio
+          {t("bio")}
         </Text>
         <Text variant="tertiary" className="text-xs">
           {bio.length}/{BIO_MAX}
@@ -104,7 +102,7 @@ export function ProfileEditForm() {
         onChange={(event) => setBio(event.target.value.slice(0, BIO_MAX))}
         maxLength={BIO_MAX}
         rows={4}
-        placeholder="Tell people what your packs are about."
+        placeholder={t("bioPlaceholder")}
         className="w-full rounded-[10px] border border-border bg-surface p-3 text-sm text-foreground placeholder:text-foreground-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
       />
 
@@ -113,7 +111,7 @@ export function ProfileEditForm() {
       )}
 
       <Button type="submit" disabled={pending} className="mt-6 w-fit">
-        {pending ? "Saving…" : "Save"}
+        {pending ? t("saving") : t("save")}
       </Button>
     </form>
   );
