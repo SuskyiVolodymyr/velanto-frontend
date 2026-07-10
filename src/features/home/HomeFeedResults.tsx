@@ -24,7 +24,7 @@ export function HomeFeedResults({
     return <Text variant="secondary">No packs match these filters yet.</Text>;
   }
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
       {packs.map((pack) => (
         <PackCard key={pack.id} pack={pack} />
       ))}
