@@ -1,76 +1,21 @@
 "use client";
 
-import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import {
-  useForm,
-  useFieldArray,
-  useWatch,
-  FormProvider,
-  type FieldErrors,
-} from "react-hook-form";
+import { useForm, useWatch, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import type { CreatePackInput } from "@/src/shared/lib/packs-client";
 import { messageFromError } from "@/src/shared/lib/messageFromError";
 import { COVER_TONES } from "@/src/shared/types/pack";
-import type { PackFormat, Group, Category } from "@/src/shared/types/pack";
-import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
-import { TagPickerModal } from "@/src/shared/components/TagPickerModal";
-import { TextField } from "@/src/shared/components/form/TextField";
-import { TextareaField } from "@/src/shared/components/form/TextareaField";
-import { getFieldError } from "@/src/shared/components/form/getFieldError";
-import { cn } from "@/src/shared/lib/cn";
-import { GroupEditor } from "@/src/features/create/GroupEditor";
-import { CategoryEditor } from "@/src/features/create/CategoryEditor";
-import {
-  createPackSchema,
-  type CreatePackValues,
-  MAX_TAGS,
-  MIN_VERSUS_ROUNDS,
-  MAX_VERSUS_ROUNDS,
-  MIN_VERSUS_N,
-  MAX_VERSUS_N,
-} from "@/src/features/create/create-pack.schema";
-
-function newGroup(): Group {
-  return { id: crypto.randomUUID(), name: "", selectionMode: "manual", items: [] };
-}
-
-function newCategory(): Category {
-  return { id: crypto.randomUUID(), name: "", items: [] };
-}
-
-// A group's validation error can attach to its name, its round-size (an
-// index-level issue used by the 1v1 format), its item list, or its sample size.
-// Surface the first in that priority order — matching the old validate()'s
-// short-circuit ordering.
-function firstGroupError(errors: FieldErrors<CreatePackValues>, index: number): string | undefined {
-  return (
-    getFieldError(errors, `groups.${index}.name`) ??
-    getFieldError(errors, `groups.${index}`) ??
-    getFieldError(errors, `groups.${index}.items`) ??
-    getFieldError(errors, `groups.${index}.sampleSize`)
-  );
-}
-
-function firstCategoryError(errors: FieldErrors<CreatePackValues>, index: number): string | undefined {
-  return (
-    getFieldError(errors, `categories.${index}.name`) ??
-    getFieldError(errors, `categories.${index}.items`)
-  );
-}
-
-const FORMAT_OPTIONS: { value: PackFormat; title: string; blurb: string }[] = [
-  { value: "save_one", title: "Save One", blurb: "Show a group, keep one to advance." },
-  { value: "sacrifice_one", title: "Sacrifice One", blurb: "Remove one at a time; a favorite remains." },
-  { value: "nxn", title: "NxN", blurb: "Two categories compared side by side." },
-  { value: "rank_blind", title: "Rank Blind", blurb: "Place each pick blind into a growing ranked list." },
-  { value: "1v1", title: "1v1", blurb: "Pick a winner in each head-to-head matchup." },
-];
+import { PackMetaFields } from "@/src/features/create/PackMetaFields";
+import { FormatSection } from "@/src/features/create/FormatSection";
+import { GroupsSection } from "@/src/features/create/GroupsSection";
+import { CategoriesSection } from "@/src/features/create/CategoriesSection";
+import { newGroup, newCategory } from "@/src/features/create/create-pack.defaults";
+import { createPackSchema, type CreatePackValues } from "@/src/features/create/create-pack.schema";
 
 export function CreatePackForm() {
   const router = useRouter();
@@ -94,32 +39,13 @@ export function CreatePackForm() {
   const {
     control,
     handleSubmit,
-    setValue,
     setError,
     formState: { isSubmitting, errors },
   } = methods;
 
-  // The groups field array owns add/remove; rendering iterates the `useWatch`ed
-  // value arrays (below) keyed by each entry's stable domain `id` — NOT
-  // `fields` — because `fields` updates synchronously on append while `useWatch`
-  // lags a render, so `fields[i]` can point at a value that isn't there yet.
-  // Per-entry edits go back through `setValue` (which does NOT remount the child
-  // the way useFieldArray's `update` does — that would drop focus mid-keystroke).
-  // Categories need no field array: they are fixed at CATEGORY_COUNT with no
-  // add/remove UI, so `setValue` on each index is all that's required.
-  const groupsArray = useFieldArray({ control, name: "groups", keyName: "fieldId" });
-
-  // `useWatch` (not `methods.watch`) is the memoization-safe subscription the
-  // React Compiler is happy with.
+  // The one subscription the orchestrator needs itself: which body (Groups vs
+  // Categories) to render. Each section subscribes to its own slices internally.
   const format = useWatch({ control, name: "format" });
-  const tags = useWatch({ control, name: "tags" });
-  const coverTone = useWatch({ control, name: "coverTone" });
-  const groups = useWatch({ control, name: "groups" });
-  const categories = useWatch({ control, name: "categories" });
-  const versusRounds = useWatch({ control, name: "versusRounds" });
-  const versusN = useWatch({ control, name: "versusN" });
-
-  const [tagPickerOpen, setTagPickerOpen] = useState(false);
 
   async function onValid(values: CreatePackValues) {
     const base = {
@@ -160,195 +86,14 @@ export function CreatePackForm() {
     );
   }
 
-  const groupsError = getFieldError(errors, "groups");
-  const categoriesError = getFieldError(errors, "categories");
-  const versusRoundsError = getFieldError(errors, "versusRounds");
-  const versusNError = getFieldError(errors, "versusN");
-
   return (
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onValid)} noValidate className="flex max-w-2xl flex-col gap-8">
-        <section className="flex flex-col gap-3">
-          <Text as="h2" variant="title" className="text-lg">
-            Basics
-          </Text>
-          <TextField
-            name="title"
-            label="Pack title"
-            srOnlyLabel
-            placeholder="Pack title"
-            disabled={isSubmitting}
-          />
-          <TextareaField
-            name="description"
-            label="Pack description"
-            srOnlyLabel
-            placeholder="Short description"
-            rows={2}
-            disabled={isSubmitting}
-          />
-          <div className="flex flex-col gap-2">
-            <Text variant="secondary" className="text-xs">
-              Cover tone
-            </Text>
-            <div className="flex gap-2">
-              {COVER_TONES.map((tone) => (
-                <button
-                  key={tone}
-                  type="button"
-                  onClick={() => setValue("coverTone", tone)}
-                  aria-label={`Cover tone ${tone}`}
-                  aria-pressed={coverTone === tone}
-                  style={{ background: tone }}
-                  className={cn(
-                    "h-9 w-9 rounded-[10px] border-2",
-                    coverTone === tone ? "border-acc" : "border-transparent",
-                  )}
-                />
-              ))}
-            </div>
-          </div>
-          <div className="flex flex-col gap-2">
-            <Text variant="secondary" className="text-xs">
-              Tags
-            </Text>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => setTagPickerOpen(true)}
-              className="self-start"
-            >
-              {tags.length === 0
-                ? "Select tags"
-                : `${tags.length} tag${tags.length === 1 ? "" : "s"} selected`}
-            </Button>
-            <TagPickerModal
-              open={tagPickerOpen}
-              onClose={() => setTagPickerOpen(false)}
-              selected={tags}
-              onChange={(next) => setValue("tags", next)}
-              maxTags={MAX_TAGS}
-            />
-          </div>
-        </section>
+        <PackMetaFields />
 
-        <section className="flex flex-col gap-3">
-          <Text as="h2" variant="title" className="text-lg">
-            Format
-          </Text>
-          <div className="flex gap-2">
-            {FORMAT_OPTIONS.map((option) => (
-              <button
-                key={option.value}
-                type="button"
-                onClick={() => setValue("format", option.value)}
-                aria-pressed={format === option.value}
-                className={cn(
-                  "flex-1 rounded-[12px] border px-4 py-3 text-left transition-colors",
-                  format === option.value ? "border-acc/40 bg-acc/5" : "border-border bg-white/[0.02]",
-                )}
-              >
-                <Text className="font-semibold">{option.title}</Text>
-                <Text variant="secondary" className="mt-1 text-xs">
-                  {option.blurb}
-                </Text>
-              </button>
-            ))}
-          </div>
-        </section>
+        <FormatSection />
 
-        {format === "nxn" ? (
-          <section className="flex flex-col gap-3">
-            <Text as="h2" variant="title" className="text-lg">
-              Categories
-            </Text>
-            {categories.map((category, index) => (
-              <CategoryEditor
-                key={category.id}
-                category={category}
-                index={index}
-                onChange={(next) =>
-                  setValue(`categories.${index}`, next, { shouldValidate: false, shouldDirty: true })
-                }
-                error={firstCategoryError(errors, index)}
-              />
-            ))}
-            {categoriesError && (
-              <Text role="alert" className="text-sm text-[#ff6b6b]">
-                {categoriesError}
-              </Text>
-            )}
-            <div className="flex gap-3">
-              <div className="flex flex-1 flex-col gap-2">
-                <Input
-                  type="number"
-                  min={MIN_VERSUS_ROUNDS}
-                  max={MAX_VERSUS_ROUNDS}
-                  value={versusRounds ?? ""}
-                  onChange={(e) =>
-                    setValue("versusRounds", e.target.value === "" ? undefined : Number(e.target.value), {
-                      shouldValidate: false,
-                    })
-                  }
-                  placeholder="Rounds"
-                  aria-label="Rounds"
-                />
-                {versusRoundsError && (
-                  <Text role="alert" className="text-sm text-[#ff6b6b]">
-                    {versusRoundsError}
-                  </Text>
-                )}
-              </div>
-              <div className="flex flex-1 flex-col gap-2">
-                <Input
-                  type="number"
-                  min={MIN_VERSUS_N}
-                  max={MAX_VERSUS_N}
-                  value={versusN ?? ""}
-                  onChange={(e) =>
-                    setValue("versusN", e.target.value === "" ? undefined : Number(e.target.value), {
-                      shouldValidate: false,
-                    })
-                  }
-                  placeholder="Items per round"
-                  aria-label="Items per round"
-                />
-                {versusNError && (
-                  <Text role="alert" className="text-sm text-[#ff6b6b]">
-                    {versusNError}
-                  </Text>
-                )}
-              </div>
-            </div>
-          </section>
-        ) : (
-          <section className="flex flex-col gap-3">
-            <Text as="h2" variant="title" className="text-lg">
-              Groups
-            </Text>
-            {groups.map((group, index) => (
-              <GroupEditor
-                key={group.id}
-                group={group}
-                index={index}
-                removable={groups.length > 1}
-                onChange={(next) =>
-                  setValue(`groups.${index}`, next, { shouldValidate: false, shouldDirty: true })
-                }
-                onRemove={() => groupsArray.remove(index)}
-                error={firstGroupError(errors, index)}
-              />
-            ))}
-            {groupsError && (
-              <Text role="alert" className="text-sm text-[#ff6b6b]">
-                {groupsError}
-              </Text>
-            )}
-            <Button type="button" variant="secondary" onClick={() => groupsArray.append(newGroup())}>
-              + Add group (one more round)
-            </Button>
-          </section>
-        )}
+        {format === "nxn" ? <CategoriesSection /> : <GroupsSection />}
 
         {errors.root?.message && (
           <Text role="alert" className="text-sm text-[#ff6b6b]">
