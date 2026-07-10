@@ -12,16 +12,28 @@ beforeEach(() => {
 });
 
 describe("usersClient", () => {
-  it("ban() posts duration and reason to /users/:id/ban", async () => {
+  it("ban() posts duration and a category reason to /users/:id/ban", async () => {
     vi.mocked(apiClient.post).mockResolvedValue({ id: "u2", bannedUntil: "2026-01-08T00:00:00.000Z" });
 
-    const result = await usersClient.ban("u2", { duration: "week", reason: "spamming" });
+    const result = await usersClient.ban("u2", { duration: "week", reason: "spam_manipulation" });
 
     expect(apiClient.post).toHaveBeenCalledWith("/users/u2/ban", {
       duration: "week",
-      reason: "spamming",
+      reason: "spam_manipulation",
     });
     expect(result).toEqual({ id: "u2", bannedUntil: "2026-01-08T00:00:00.000Z" });
+  });
+
+  it("ban() forwards reasonDetail for an 'other' reason", async () => {
+    vi.mocked(apiClient.post).mockResolvedValue({ id: "u2", bannedUntil: "2026-01-08T00:00:00.000Z" });
+
+    await usersClient.ban("u2", { duration: "forever", reason: "other", reasonDetail: "manual review" });
+
+    expect(apiClient.post).toHaveBeenCalledWith("/users/u2/ban", {
+      duration: "forever",
+      reason: "other",
+      reasonDetail: "manual review",
+    });
   });
 
   it("unban() posts to /users/:id/unban with no body", async () => {

@@ -13,8 +13,13 @@ import { reportReasonLabel } from "@/src/shared/lib/report-reasons";
 import { reportTargetLabel } from "@/src/shared/lib/report-display";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
-import { Input } from "@/src/shared/components/Input";
 import { StatusBadge } from "@/src/shared/components/StatusBadge";
+import {
+  BanReasonPicker,
+  isBanReasonValid,
+  buildBanReasonPayload,
+  type BanReasonState,
+} from "@/src/shared/components/BanReasonPicker";
 
 export function SupportReportScreen({ reportId }: { reportId: string }) {
   const { user, status: authStatus } = useAuth();
@@ -27,7 +32,7 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
   const [deleteError, setDeleteError] = useState("");
   const [showBanForm, setShowBanForm] = useState(false);
   const [banDuration, setBanDuration] = useState<BanDuration>("week");
-  const [banReason, setBanReason] = useState("");
+  const [banReason, setBanReason] = useState<BanReasonState>({ reason: "", reasonDetail: "" });
   const [banError, setBanError] = useState("");
   const [banDone, setBanDone] = useState(false);
 
@@ -89,10 +94,13 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
   }
 
   async function handleBanSubmit() {
-    if (!report || !banReason.trim()) return;
+    if (!report || !isBanReasonValid(banReason)) return;
     setBanError("");
     try {
-      await usersClient.ban(report.targetId, { duration: banDuration, reason: banReason.trim() });
+      await usersClient.ban(report.targetId, {
+        duration: banDuration,
+        ...buildBanReasonPayload(banReason),
+      });
       setBanDone(true);
       setShowBanForm(false);
     } catch {
@@ -175,36 +183,51 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
         {report.type === "user" && (
           <div>
             {!banDone && (
-              <Button variant="secondary" onClick={() => setShowBanForm((v) => !v)}>
+              <Button
+                variant="secondary"
+                onClick={() =>
+                  setShowBanForm((v) => {
+                    const opening = !v;
+                    if (opening) {
+                      setBanDuration("week");
+                      setBanReason({ reason: "", reasonDetail: "" });
+                    }
+                    return opening;
+                  })
+                }
+              >
                 Ban user
               </Button>
             )}
             {banDone && <Text variant="secondary">User banned.</Text>}
             {showBanForm && (
-              <div className="mt-3 flex flex-wrap items-end gap-2 border-t border-border pt-3">
-                <label className="flex flex-col gap-1 text-xs text-foreground-secondary">
-                  Duration
-                  <select
-                    value={banDuration}
-                    onChange={(e) => setBanDuration(e.target.value as BanDuration)}
-                    aria-label="Ban duration"
-                    className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground"
-                  >
-                    {BAN_DURATIONS.map((d) => (
-                      <option key={d.value} value={d.value}>
-                        {d.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <Input
-                  value={banReason}
-                  onChange={(e) => setBanReason(e.target.value)}
-                  placeholder="Reason"
-                  aria-label="Ban reason"
-                  className="h-9 max-w-xs"
-                />
-                <Button variant="primary" disabled={!banReason.trim()} onClick={() => void handleBanSubmit()}>
+              <div className="mt-3 flex flex-col gap-3 border-t border-border pt-3">
+                <div className="flex flex-wrap items-start gap-3">
+                  <label className="flex flex-col gap-1 text-xs text-foreground-secondary">
+                    Duration
+                    <select
+                      value={banDuration}
+                      onChange={(e) => setBanDuration(e.target.value as BanDuration)}
+                      aria-label="Ban duration"
+                      className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground"
+                    >
+                      {BAN_DURATIONS.map((d) => (
+                        <option key={d.value} value={d.value}>
+                          {d.label}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                  <div className="min-w-[16rem] max-w-sm flex-1">
+                    <BanReasonPicker idPrefix={report.targetId} value={banReason} onChange={setBanReason} />
+                  </div>
+                </div>
+                <Button
+                  variant="primary"
+                  className="self-start"
+                  disabled={!isBanReasonValid(banReason)}
+                  onClick={() => void handleBanSubmit()}
+                >
                   Confirm ban
                 </Button>
                 {banError && <Text className="text-xs text-[#ff6b6b]">{banError}</Text>}

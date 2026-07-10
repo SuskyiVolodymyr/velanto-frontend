@@ -11,6 +11,12 @@ import { usersClient, type BanDuration } from "@/src/shared/lib/users-client";
 import { canActOn } from "@/src/shared/lib/staff-permissions";
 import { formatBanStatus } from "@/src/shared/lib/ban-display";
 import { BAN_DURATIONS } from "@/src/shared/lib/ban-durations";
+import {
+  BanReasonPicker,
+  isBanReasonValid,
+  buildBanReasonPayload,
+  type BanReasonState,
+} from "@/src/shared/components/BanReasonPicker";
 import type { AdminUserRow } from "@/src/shared/types/admin";
 
 const PAGE_SIZE = 20;
@@ -31,7 +37,7 @@ export function UsersTab() {
   const [loadingMore, setLoadingMore] = useState(false);
   const [banTargetId, setBanTargetId] = useState<string | null>(null);
   const [banDuration, setBanDuration] = useState<BanDuration>("week");
-  const [banReason, setBanReason] = useState("");
+  const [banReason, setBanReason] = useState<BanReasonState>({ reason: "", reasonDetail: "" });
   const [actionError, setActionError] = useState("");
 
   useEffect(() => {
@@ -78,13 +84,16 @@ export function UsersTab() {
   }
 
   async function handleBan(id: string) {
-    if (!banReason.trim()) return;
+    if (!isBanReasonValid(banReason)) return;
     setActionError("");
     try {
-      const result = await usersClient.ban(id, { duration: banDuration, reason: banReason.trim() });
+      const result = await usersClient.ban(id, {
+        duration: banDuration,
+        ...buildBanReasonPayload(banReason),
+      });
       setUsers((prev) => prev.map((u) => (u.id === id ? { ...u, bannedUntil: result.bannedUntil } : u)));
       setBanTargetId(null);
-      setBanReason("");
+      setBanReason({ reason: "", reasonDetail: "" });
     } catch {
       setActionError("Couldn't ban this user. Try again.");
     }
@@ -169,7 +178,7 @@ export function UsersTab() {
                             setBanTargetId(opening ? row.id : null);
                             if (opening) {
                               setBanDuration("week");
-                              setBanReason("");
+                              setBanReason({ reason: "", reasonDetail: "" });
                             }
                           }}
                         >
@@ -180,32 +189,31 @@ export function UsersTab() {
                   )}
                 </div>
                 {banTargetId === row.id && (
-                  <div className="mt-3 flex flex-wrap items-end gap-2 border-t border-border pt-3">
-                    <label className="flex flex-col gap-1 text-xs text-foreground-secondary">
-                      Duration
-                      <select
-                        value={banDuration}
-                        onChange={(e) => setBanDuration(e.target.value as BanDuration)}
-                        aria-label="Ban duration"
-                        className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground"
-                      >
-                        {BAN_DURATIONS.map((d) => (
-                          <option key={d.value} value={d.value}>
-                            {d.label}
-                          </option>
-                        ))}
-                      </select>
-                    </label>
-                    <Input
-                      value={banReason}
-                      onChange={(e) => setBanReason(e.target.value)}
-                      placeholder="Reason"
-                      aria-label="Ban reason"
-                      className="h-9 max-w-xs"
-                    />
+                  <div className="mt-3 flex flex-col gap-3 border-t border-border pt-3">
+                    <div className="flex flex-wrap items-start gap-3">
+                      <label className="flex flex-col gap-1 text-xs text-foreground-secondary">
+                        Duration
+                        <select
+                          value={banDuration}
+                          onChange={(e) => setBanDuration(e.target.value as BanDuration)}
+                          aria-label="Ban duration"
+                          className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground"
+                        >
+                          {BAN_DURATIONS.map((d) => (
+                            <option key={d.value} value={d.value}>
+                              {d.label}
+                            </option>
+                          ))}
+                        </select>
+                      </label>
+                      <div className="min-w-[16rem] max-w-sm flex-1">
+                        <BanReasonPicker idPrefix={row.id} value={banReason} onChange={setBanReason} />
+                      </div>
+                    </div>
                     <Button
                       variant="primary"
-                      disabled={!banReason.trim()}
+                      className="self-start"
+                      disabled={!isBanReasonValid(banReason)}
                       onClick={() => void handleBan(row.id)}
                     >
                       Confirm ban

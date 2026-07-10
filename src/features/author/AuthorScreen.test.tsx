@@ -5,17 +5,42 @@
 // in-flight request on unmount / dep change and commits each result in one
 // reducer dispatch — so these assertions observe deterministic transitions.
 // Every original behavioral assertion is preserved.
+import type { ReactElement } from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { NextIntlClientProvider } from "next-intl";
+import messages from "@/messages/en.json";
 import { AuthorScreen } from "./AuthorScreen";
 import { usersClient } from "@/src/shared/lib/users-client";
 import { packsClient } from "@/src/shared/lib/packs-client";
+import { rulesClient } from "@/src/shared/lib/rules-client";
 import { useAuth } from "@/src/shared/lib/auth-context";
+import type { RulesDocument } from "@/src/shared/types/rules";
 
 vi.mock("@/src/shared/lib/users-client");
 vi.mock("@/src/shared/lib/packs-client");
+vi.mock("@/src/shared/lib/rules-client", () => ({
+  rulesClient: { getRules: vi.fn() },
+}));
 vi.mock("@/src/shared/lib/auth-context");
+
+const RULES: RulesDocument = {
+  version: 1,
+  categories: [
+    { id: "spam_manipulation", title: "Spam & Manipulation", rules: [] },
+    { id: "hate_discrimination", title: "Hate & Discrimination", rules: [] },
+  ],
+};
+
+// The BanReasonPicker uses next-intl, so moderator ban flows need a provider.
+function renderScreen(ui: ReactElement) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={messages}>
+      {ui}
+    </NextIntlClientProvider>,
+  );
+}
 
 // This repo's other feature tests mock `authClient.refresh` and wrap components
 // in the real `AuthProvider` instead of mocking `auth-context` directly (see
@@ -31,6 +56,7 @@ vi.mock("next/navigation", () => ({
 
 const mockedUsersClient = vi.mocked(usersClient);
 const mockedPacksClient = vi.mocked(packsClient);
+const mockedRulesClient = vi.mocked(rulesClient);
 const mockedUseAuth = vi.mocked(useAuth);
 
 const profile = {
@@ -58,12 +84,13 @@ describe("AuthorScreen", () => {
     vi.resetAllMocks();
     push.mockReset();
     mockedPacksClient.list.mockResolvedValue({ items: [], total: 0, page: 1, limit: 50 });
+    mockedRulesClient.getRules.mockResolvedValue(RULES);
   });
 
   it("renders the author's username, bio, and follower count", async () => {
     mockAuth();
     mockedUsersClient.getProfile.mockResolvedValue(profile);
-    render(<AuthorScreen authorId="author-1" />);
+    renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
     expect(screen.getByText("I make packs")).toBeInTheDocument();
     // The follower count and pack count render as one combined stat line
@@ -74,14 +101,14 @@ describe("AuthorScreen", () => {
   it("shows a not-found message when the profile 404s", async () => {
     mockAuth();
     mockedUsersClient.getProfile.mockRejectedValue(new Error("404"));
-    render(<AuthorScreen authorId="missing" />);
+    renderScreen(<AuthorScreen authorId="missing" />);
     await waitFor(() => expect(screen.getByText(/doesn't exist/i)).toBeInTheDocument());
   });
 
   it("hides the Follow button when viewing your own author page", async () => {
     mockAuth({ user: { id: "author-1", email: "a@x.com", username: "quizmaster", role: "user", createdAt: "" } });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
-    render(<AuthorScreen authorId="author-1" />);
+    renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
     expect(screen.queryByRole("button", { name: /follow/i })).not.toBeInTheDocument();
   });
@@ -90,7 +117,7 @@ describe("AuthorScreen", () => {
     mockAuth();
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     mockedUsersClient.follow.mockResolvedValue({ followerCount: 4 });
-    render(<AuthorScreen authorId="author-1" />);
+    renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
     await userEvent.click(screen.getByRole("button", { name: "Follow" }));
     await waitFor(() => expect(screen.getByRole("button", { name: "Following" })).toBeInTheDocument());
@@ -101,7 +128,7 @@ describe("AuthorScreen", () => {
     mockAuth();
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     mockedUsersClient.follow.mockRejectedValue(new Error("network"));
-    render(<AuthorScreen authorId="author-1" />);
+    renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
     await userEvent.click(screen.getByRole("button", { name: "Follow" }));
     await waitFor(() => expect(screen.getByText(/couldn't update/i)).toBeInTheDocument());
@@ -111,7 +138,7 @@ describe("AuthorScreen", () => {
   it("redirects an anonymous viewer to /auth on Follow click instead of calling the API", async () => {
     mockAuth({ user: null, status: "unauthenticated" });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
-    render(<AuthorScreen authorId="author-1" />);
+    renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
     await userEvent.click(screen.getByRole("button", { name: "Follow" }));
     expect(mockedUsersClient.follow).not.toHaveBeenCalled();
@@ -142,7 +169,7 @@ describe("AuthorScreen", () => {
       page: 1,
       limit: 50,
     });
-    render(<AuthorScreen authorId="author-1" />);
+    renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() => expect(screen.getByText("Anime Showdown")).toBeInTheDocument());
     expect(mockedPacksClient.list).toHaveBeenCalledWith({ authorId: "author-1", limit: 50 });
   });
@@ -171,14 +198,14 @@ describe("AuthorScreen", () => {
       page: 1,
       limit: 50,
     });
-    render(<AuthorScreen authorId="author-1" />);
+    renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() => expect(screen.getByText(/60 packs/)).toBeInTheDocument());
   });
 
   it("does not show ban history or a ban button to a plain-user viewer", async () => {
     mockAuth({ user: { id: "viewer-1", email: "v@x.com", username: "viewer", role: "user", createdAt: "" } });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
-    render(<AuthorScreen authorId="author-1" />);
+    renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
     expect(mockedUsersClient.banHistory).not.toHaveBeenCalled();
     expect(screen.queryByRole("button", { name: /^ban$/i })).not.toBeInTheDocument();
@@ -193,7 +220,7 @@ describe("AuthorScreen", () => {
       page: 1,
       limit: 20,
     });
-    render(<AuthorScreen authorId="author-1" />);
+    renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
     expect(mockedUsersClient.banHistory).toHaveBeenCalledWith("author-1", { page: 1, limit: 20 });
     await waitFor(() => expect(screen.getByText(/spam/)).toBeInTheDocument());
@@ -204,14 +231,14 @@ describe("AuthorScreen", () => {
     mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     mockedUsersClient.banHistory.mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
-    render(<AuthorScreen authorId="author-1" />);
+    renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() => expect(screen.getByText(/no ban history/i)).toBeInTheDocument());
   });
 
   it("hides ban history and the ban button when a moderator views their own page", async () => {
     mockAuth({ user: { id: "author-1", email: "a@x.com", username: "quizmaster", role: "moderator", createdAt: "" } });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
-    render(<AuthorScreen authorId="author-1" />);
+    renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() => expect(screen.getByText("quizmaster")).toBeInTheDocument());
     expect(mockedUsersClient.banHistory).not.toHaveBeenCalled();
     expect(screen.queryByRole("button", { name: /^ban$/i })).not.toBeInTheDocument();
@@ -222,12 +249,19 @@ describe("AuthorScreen", () => {
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     mockedUsersClient.banHistory.mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
     mockedUsersClient.ban.mockResolvedValue({ id: "author-1", bannedUntil: "2027-01-01T00:00:00.000Z" });
-    render(<AuthorScreen authorId="author-1" />);
+    renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() => expect(screen.getByRole("button", { name: /^ban$/i })).toBeInTheDocument());
     await userEvent.click(screen.getByRole("button", { name: /^ban$/i }));
-    await userEvent.type(screen.getByLabelText(/ban reason/i), "repeated spam");
+    // Pick a rule-category reason from the picker (populated by the rules fetch).
+    await screen.findByRole("option", { name: "Spam & Manipulation" });
+    await userEvent.selectOptions(screen.getByLabelText("Reason"), "spam_manipulation");
     await userEvent.click(screen.getByRole("button", { name: /confirm ban/i }));
-    await waitFor(() => expect(mockedUsersClient.ban).toHaveBeenCalledWith("author-1", { duration: "week", reason: "repeated spam" }));
+    await waitFor(() =>
+      expect(mockedUsersClient.ban).toHaveBeenCalledWith("author-1", {
+        duration: "week",
+        reason: "spam_manipulation",
+      }),
+    );
   });
 
   it("shows an error and keeps the form open when the ban request fails", async () => {
@@ -235,13 +269,15 @@ describe("AuthorScreen", () => {
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     mockedUsersClient.banHistory.mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 });
     mockedUsersClient.ban.mockRejectedValue(new Error("boom"));
-    render(<AuthorScreen authorId="author-1" />);
+    renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() => expect(screen.getByRole("button", { name: /^ban$/i })).toBeInTheDocument());
     await userEvent.click(screen.getByRole("button", { name: /^ban$/i }));
-    await userEvent.type(screen.getByLabelText(/ban reason/i), "repeated spam");
+    await screen.findByRole("option", { name: "Spam & Manipulation" });
+    await userEvent.selectOptions(screen.getByLabelText("Reason"), "spam_manipulation");
     await userEvent.click(screen.getByRole("button", { name: /confirm ban/i }));
     await waitFor(() => expect(screen.getByText(/couldn't ban/i)).toBeInTheDocument());
-    expect(screen.getByLabelText(/ban reason/i)).toBeInTheDocument();
+    // The form stays open (the reason picker is still on screen).
+    expect(screen.getByLabelText("Reason")).toBeInTheDocument();
   });
 
   it("shows a loading indicator while ban history is being fetched", async () => {
@@ -253,7 +289,7 @@ describe("AuthorScreen", () => {
         resolveBanHistory = resolve;
       })
     );
-    render(<AuthorScreen authorId="author-1" />);
+    renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() => expect(screen.getByText(/loading ban history/i)).toBeInTheDocument());
     resolveBanHistory({ items: [], total: 0, page: 1, limit: 20 });
   });
@@ -262,7 +298,7 @@ describe("AuthorScreen", () => {
     mockAuth({ user: { id: "mod-1", email: "m@x.com", username: "mod", role: "moderator", createdAt: "" } });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     mockedUsersClient.banHistory.mockRejectedValue(new Error("network"));
-    render(<AuthorScreen authorId="author-1" />);
+    renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() => expect(screen.getByText(/couldn't load ban history/i)).toBeInTheDocument());
   });
 });
