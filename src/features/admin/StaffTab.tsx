@@ -5,6 +5,7 @@ import { Text } from "@/src/shared/components/Text";
 import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
 import { Badge } from "@/src/shared/components/Badge";
+import { Hidden } from "@/src/shared/components/Hidden";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { adminClient } from "@/src/shared/lib/admin-client";
 import { usersClient } from "@/src/shared/lib/users-client";
@@ -110,9 +111,16 @@ export function StaffTab() {
                 className="flex flex-wrap items-center justify-between gap-3 rounded-[15px] border border-border bg-surface p-4"
               >
                 <div>
-                  <Text className="font-semibold">{row.username}</Text>
+                  <Text className="font-semibold">
+                    <Hidden kind="name" id={row.id}>
+                      {row.username}
+                    </Hidden>
+                  </Text>
                   <Text variant="tertiary" className="text-xs">
-                    {row.email} · <Badge>{row.role}</Badge>
+                    <Hidden kind="name" id={row.id}>
+                      {row.email}
+                    </Hidden>{" "}
+                    · <Badge>{row.role}</Badge>
                   </Text>
                 </div>
                 {options.length > 0 && (

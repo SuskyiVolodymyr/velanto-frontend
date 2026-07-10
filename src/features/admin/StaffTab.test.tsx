@@ -1,9 +1,12 @@
 // src/features/admin/StaffTab.test.tsx
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { NextIntlClientProvider } from "next-intl";
+import messages from "@/messages/en.json";
 import { StaffTab } from "./StaffTab";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
+import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { adminClient } from "@/src/shared/lib/admin-client";
 import { usersClient } from "@/src/shared/lib/users-client";
@@ -104,5 +107,66 @@ describe("StaffTab", () => {
 
     await screen.findByText("peer");
     expect(screen.queryByLabelText("Change role for peer")).not.toBeInTheDocument();
+  });
+
+  describe("streamer mode", () => {
+    afterEach(() => localStorage.clear());
+
+    function renderWithStreamerMode() {
+      vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "token", user: MANAGER });
+      return render(
+        <NextIntlClientProvider locale="en" messages={messages}>
+          <AuthProvider>
+            <StreamerModeProvider>
+              <StaffTab />
+            </StreamerModeProvider>
+          </AuthProvider>
+        </NextIntlClientProvider>,
+      );
+    }
+
+    it("masks a user's username and email but keeps role and controls visible", async () => {
+      localStorage.setItem("velanto:streamer-mode", "on");
+      vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [TARGET], total: 1, page: 1, limit: 20 });
+      renderWithStreamerMode();
+
+      // Wait for the fetch to resolve — the role select is a stable, non-identity
+      // anchor that renders once the row is present.
+      await screen.findByLabelText("Change role for bob");
+
+      // Identity is redacted…
+      expect(screen.queryByText("bob")).not.toBeInTheDocument();
+      expect(screen.queryByText("bob@example.com")).not.toBeInTheDocument();
+      // …but role and the moderator's action control stay usable.
+      expect(screen.getByText("moderator")).toBeInTheDocument();
+      expect(screen.getByLabelText("Change role for bob")).toBeInTheDocument();
+    });
+
+    it("reveals the username and email when the row is revealed", async () => {
+      const user = userEvent.setup();
+      localStorage.setItem("velanto:streamer-mode", "on");
+      vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [TARGET], total: 1, page: 1, limit: 20 });
+      renderWithStreamerMode();
+
+      await screen.findByLabelText("Change role for bob");
+      const revealButtons = screen.getAllByRole("button", { name: /reveal/i });
+      // One reveal control per masked identity field (username + email).
+      expect(revealButtons).toHaveLength(2);
+
+      // Both fields share the row id, so a single reveal unmasks the identity.
+      await user.click(revealButtons[0]);
+
+      expect(screen.getByText("bob")).toBeInTheDocument();
+      expect(screen.getByText("bob@example.com")).toBeInTheDocument();
+    });
+
+    it("shows identity normally when streamer mode is off", async () => {
+      vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [TARGET], total: 1, page: 1, limit: 20 });
+      renderWithStreamerMode();
+
+      expect(await screen.findByText("bob")).toBeInTheDocument();
+      expect(screen.getByText("bob@example.com")).toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: /reveal/i })).not.toBeInTheDocument();
+    });
   });
 });
