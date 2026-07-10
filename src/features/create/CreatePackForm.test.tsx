@@ -230,6 +230,35 @@ describe("CreatePackForm", () => {
     );
   });
 
+  it("submits the chosen cover tone and selected tags in the payload", async () => {
+    const user = userEvent.setup();
+    vi.mocked(packsClient.create).mockResolvedValue(makePack({ id: "pack-1" }));
+    renderForm();
+    await screen.findByLabelText("Pack title");
+
+    // Default cover tone is COVER_TONES[0]; pick a different one and confirm it
+    // becomes the pressed swatch.
+    const tone = screen.getByRole("button", { name: "Cover tone #20303a" });
+    await user.click(tone);
+    expect(tone).toHaveAttribute("aria-pressed", "true");
+
+    await user.click(screen.getByRole("button", { name: "Select tags" }));
+    await user.click(screen.getByRole("checkbox", { name: "Anime" }));
+    await user.click(screen.getByRole("checkbox", { name: "Music" }));
+    await user.click(screen.getByRole("button", { name: "Close" }));
+
+    await fillMinimalValidPack(user);
+    await user.click(screen.getByRole("button", { name: "Publish" }));
+
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-1"));
+    expect(packsClient.create).toHaveBeenCalledWith(
+      expect.objectContaining({
+        coverTone: "#20303a",
+        tags: ["Anime", "Music"],
+      }),
+    );
+  });
+
   it("shows the server error and does not navigate when create fails", async () => {
     const user = userEvent.setup();
     vi.mocked(packsClient.create).mockRejectedValue(
@@ -271,6 +300,42 @@ describe("CreatePackForm", () => {
       await screen.findByText("This text contains language that isn't allowed on Velanto."),
     ).toBeInTheDocument();
     expect(push).not.toHaveBeenCalled();
+  });
+
+  describe("sacrifice_one format", () => {
+    it("shows the Groups section (not Categories) when Sacrifice One is selected", async () => {
+      const user = userEvent.setup();
+      renderForm();
+      await user.click(await screen.findByRole("button", { name: /^Sacrifice One/ }));
+
+      expect(
+        screen.getByRole("button", { name: "+ Add group (one more round)" }),
+      ).toBeInTheDocument();
+      expect(screen.queryByLabelText("Category 1 name")).not.toBeInTheDocument();
+    });
+
+    it("submits a valid sacrifice_one pack with the same groups payload shape as save_one", async () => {
+      const user = userEvent.setup();
+      vi.mocked(packsClient.create).mockResolvedValue(
+        makePack({ id: "pack-sac", format: "sacrifice_one" }),
+      );
+      renderForm();
+      await user.click(await screen.findByRole("button", { name: /^Sacrifice One/ }));
+      await fillMinimalValidPack(user);
+
+      await user.click(screen.getByRole("button", { name: "Publish" }));
+
+      await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-sac"));
+      expect(packsClient.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          format: "sacrifice_one",
+          groups: expect.arrayContaining([expect.objectContaining({ name: "2016" })]),
+        }),
+      );
+      expect(packsClient.create).not.toHaveBeenCalledWith(
+        expect.objectContaining({ categories: expect.anything() }),
+      );
+    });
   });
 
   describe("nxn format", () => {
