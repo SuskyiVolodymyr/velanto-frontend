@@ -85,6 +85,40 @@ describe("TagPickerModal", () => {
     expect(onChange).toHaveBeenCalledWith(["Music"]);
   });
 
+  it("Clear empties the draft but only commits on Apply", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <TagPickerModal
+        open
+        onClose={vi.fn()}
+        selected={["Anime", "Music"]}
+        onChange={onChange}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Clear" }));
+
+    expect(screen.getByText("0 selected")).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: "Anime" })).not.toBeChecked();
+    expect(onChange).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole("button", { name: "Apply" }));
+    expect(onChange).toHaveBeenCalledWith([]);
+  });
+
+  it("disables Clear when the draft is already empty", () => {
+    render(
+      <TagPickerModal
+        open
+        onClose={vi.fn()}
+        selected={[]}
+        onChange={vi.fn()}
+      />,
+    );
+    expect(screen.getByRole("button", { name: "Clear" })).toBeDisabled();
+  });
+
   it("discards the draft and does not commit when Cancel is clicked", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();

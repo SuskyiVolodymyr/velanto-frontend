@@ -106,13 +106,23 @@ function TagPickerBody({
         })}
       </div>
 
-      <div className="mt-6 flex justify-end gap-2">
-        <Button type="button" variant="secondary" onClick={onCancel}>
-          Cancel
+      <div className="mt-6 flex items-center justify-between gap-2">
+        <Button
+          type="button"
+          variant="ghost"
+          onClick={() => setDraft([])}
+          disabled={draft.length === 0}
+        >
+          Clear
         </Button>
-        <Button type="button" onClick={() => onApply(draft)}>
-          Apply
-        </Button>
+        <div className="flex gap-2">
+          <Button type="button" variant="secondary" onClick={onCancel}>
+            Cancel
+          </Button>
+          <Button type="button" onClick={() => onApply(draft)}>
+            Apply
+          </Button>
+        </div>
       </div>
     </>
   );
