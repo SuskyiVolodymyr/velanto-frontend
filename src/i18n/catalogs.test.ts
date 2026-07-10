@@ -58,6 +58,8 @@ const IDENTICAL_ALLOWED = new Set([
   "profile.packs",
   // auth loanword: "Email" is the same word (borrowed) in several locales.
   "auth.email",
+  // settings loanword: "Notifications" is identical in fr (and other locales).
+  "settings.notificationsHeading",
 ]);
 
 /**

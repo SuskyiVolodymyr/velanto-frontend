@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
@@ -13,14 +14,16 @@ import {
   type NotificationType,
 } from "@/src/shared/types/notification";
 
-const LABELS: Record<NotificationType, string> = {
-  new_follower: "New follower",
-  new_pack_from_followed: "New pack from someone you follow",
-  new_comment: "New comment on your pack",
-  pack_deleted_warning: "Pack removed by a moderator",
+// Each notification type maps to a `settings` translation key for its label.
+const LABEL_KEYS: Record<NotificationType, string> = {
+  new_follower: "notifNewFollower",
+  new_pack_from_followed: "notifNewPack",
+  new_comment: "notifNewComment",
+  pack_deleted_warning: "notifPackDeleted",
 };
 
 export function NotificationsSection() {
+  const t = useTranslations("settings");
   const { status } = useAuth();
   const [prefs, setPrefs] = useState<NotificationPreferences | null>(null);
   const [fetchError, setFetchError] = useState(false);
@@ -56,7 +59,7 @@ export function NotificationsSection() {
     } catch {
       setErrors((prev) => ({
         ...prev,
-        [type]: "Couldn't update this setting. Try again.",
+        [type]: t("notificationUpdateError"),
       }));
     } finally {
       setBusy((prev) => ({ ...prev, [type]: false }));
@@ -72,24 +75,27 @@ export function NotificationsSection() {
         variant="tertiary"
         className="text-xs uppercase tracking-wide"
       >
-        Notifications
+        {t("notificationsHeading")}
       </Text>
       {status === "unauthenticated" && (
         <div className="rounded-xl border border-dashed border-border-strong px-4 py-4 text-sm text-foreground-secondary">
-          <Link href="/auth" className="text-acc">
-            Log in
-          </Link>{" "}
-          to manage notification preferences.
+          {t.rich("loginToManageNotifications", {
+            link: (chunks) => (
+              <Link href="/auth" className="text-acc">
+                {chunks}
+              </Link>
+            ),
+          })}
         </div>
       )}
       {status === "authenticated" && fetchError && (
         <Text className="text-sm text-[#ff6b6b]">
-          Couldn&apos;t load your notification preferences.
+          {t("notificationsLoadError")}
         </Text>
       )}
       {status === "authenticated" && !fetchError && !prefs && (
         <Text variant="secondary" className="text-sm">
-          Loading…
+          {t("loading")}
         </Text>
       )}
       {status === "authenticated" && prefs && (
@@ -100,12 +106,12 @@ export function NotificationsSection() {
               className="flex flex-col gap-1 hover:translate-y-0 hover:shadow-none"
             >
               <div className="flex items-center justify-between gap-4">
-                <Text className="font-semibold">{LABELS[type]}</Text>
+                <Text className="font-semibold">{t(LABEL_KEYS[type])}</Text>
                 <button
                   type="button"
                   role="switch"
                   aria-checked={prefs[type]}
-                  aria-label={LABELS[type]}
+                  aria-label={t(LABEL_KEYS[type])}
                   disabled={busy[type]}
                   onClick={() => void handleToggle(type)}
                   className={cn(
