@@ -6,6 +6,7 @@ import { isRtl, type Locale } from "@/src/i18n/config";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
 import { AppHeader } from "@/src/shared/components/AppHeader";
+import { BannedBanner } from "@/src/shared/components/BannedBanner";
 import { getThemeInitScript } from "@/src/shared/lib/theme";
 import { getStreamerModeInitScript } from "@/src/shared/lib/streamer-mode";
 import "./globals.css";
@@ -64,6 +65,7 @@ export default async function RootLayout({
           <AuthProvider>
             <StreamerModeProvider>
               <AppHeader />
+              <BannedBanner />
               {children}
             </StreamerModeProvider>
           </AuthProvider>
