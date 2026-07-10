@@ -2,27 +2,18 @@
 
 import { useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { usersClient } from "@/src/shared/lib/users-client";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import { rulesClient } from "@/src/shared/lib/rules-client";
-import { resolveBanReasonTitle } from "@/src/shared/lib/ban-reason-title";
 import { useClientData } from "@/src/shared/hooks/useClientData";
 import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
-import { Hidden } from "@/src/shared/components/Hidden";
-import { PackCard } from "@/src/features/home/PackCard";
-import { BAN_DURATIONS } from "@/src/shared/lib/ban-durations";
-import {
-  BanReasonPicker,
-  isBanReasonValid,
-  buildBanReasonPayload,
-  type BanReasonState,
-} from "@/src/shared/components/BanReasonPicker";
+import { AuthorProfileHeader } from "./AuthorProfileHeader";
+import { AuthorPackList } from "./AuthorPackList";
+import { AuthorModeratorPanel } from "./AuthorModeratorPanel";
+import { useAuthorModeration } from "./use-author-moderation";
 import type { PublicUserProfile } from "@/src/shared/types/user";
 import type { Pack } from "@/src/shared/types/pack";
-import type { BanDuration } from "@/src/shared/lib/users-client";
 
 export interface AuthorData {
   profile: PublicUserProfile;
@@ -46,7 +37,6 @@ export function AuthorScreen({
   const { user, status: authStatus } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const tBanReason = useTranslations("banReason");
 
   // Loading/error/data for the profile+packs fetch is owned by useClientData,
   // which aborts the in-flight request on unmount / authorId change — that
@@ -83,11 +73,7 @@ export function AuthorScreen({
 
   const [followBusy, setFollowBusy] = useState(false);
   const [followError, setFollowError] = useState("");
-  const [showBanForm, setShowBanForm] = useState(false);
-  const [banDuration, setBanDuration] = useState<BanDuration>("week");
-  const [banReason, setBanReason] = useState<BanReasonState>({ reason: "", reasonDetail: "" });
-  const [banActionError, setBanActionError] = useState("");
-  const [bannedUntil, setBannedUntil] = useState<string | null>(null);
+  const moderation = useAuthorModeration(authorId);
 
   async function handleFollowToggle() {
     if (authStatus !== "authenticated") {
@@ -117,22 +103,6 @@ export function AuthorScreen({
     }
   }
 
-  async function handleBanSubmit() {
-    if (!isBanReasonValid(banReason)) return;
-    setBanActionError("");
-    try {
-      const result = await usersClient.ban(authorId, {
-        duration: banDuration,
-        ...buildBanReasonPayload(banReason),
-      });
-      setBannedUntil(result.bannedUntil);
-      setShowBanForm(false);
-      setBanReason({ reason: "", reasonDetail: "" });
-    } catch {
-      setBanActionError("Couldn't ban this user. Try again.");
-    }
-  }
-
   if (authorQuery.loading) return null;
 
   if (authorQuery.error || !authorQuery.data) {
@@ -144,149 +114,29 @@ export function AuthorScreen({
   }
 
   const { profile, packs, packsTotal } = authorQuery.data;
-  const initial = profile.username.slice(0, 1).toUpperCase();
 
   return (
     <div className="mx-auto w-full max-w-4xl px-7 py-10">
-      <div className="mb-8 flex items-start justify-between gap-4">
-        <div className="flex items-center gap-4">
-          <Hidden kind="avatar" id={authorId} className="h-16 w-16">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border bg-surface text-xl font-semibold text-foreground-secondary">
-              {initial}
-            </div>
-          </Hidden>
-          <div>
-            <Text as="h1" variant="title" className="text-2xl">
-              <Hidden kind="name" id={authorId}>
-                {profile.username}
-              </Hidden>
-            </Text>
-            <Text variant="tertiary" className="text-sm">
-              {profile.followerCount} follower{profile.followerCount === 1 ? "" : "s"} · {packsTotal} pack
-              {packsTotal === 1 ? "" : "s"}
-            </Text>
-          </div>
-        </div>
-        {!isOwnProfile && (
-          <div className="flex flex-col items-end gap-1">
-            <Button
-              variant={profile.isFollowedByMe ? "secondary" : "primary"}
-              disabled={followBusy}
-              onClick={() => void handleFollowToggle()}
-            >
-              {profile.isFollowedByMe ? "Following" : "Follow"}
-            </Button>
-            {followError && <Text className="text-xs text-[#ff6b6b]">{followError}</Text>}
-          </div>
-        )}
-      </div>
-
-      {profile.bio && (
-        <div className="mb-10">
-          <Text variant="secondary">{profile.bio}</Text>
-        </div>
-      )}
+      <AuthorProfileHeader
+        authorId={authorId}
+        profile={profile}
+        packsTotal={packsTotal}
+        isOwnProfile={isOwnProfile}
+        followBusy={followBusy}
+        followError={followError}
+        onFollowToggle={() => void handleFollowToggle()}
+      />
 
       {showModeratorTools && (
-        <div className="mb-10 rounded-[15px] border border-border bg-surface p-4">
-          <div className="mb-3 flex items-center justify-between">
-            <Text as="h2" variant="title" className="text-lg">
-              Moderation
-            </Text>
-            {!bannedUntil && (
-              <Button
-                variant="secondary"
-                onClick={() =>
-                  setShowBanForm((v) => {
-                    const opening = !v;
-                    if (opening) {
-                      setBanDuration("week");
-                      setBanReason({ reason: "", reasonDetail: "" });
-                    }
-                    return opening;
-                  })
-                }
-              >
-                Ban
-              </Button>
-            )}
-          </div>
-          {bannedUntil && (
-            <Text variant="secondary" className="mb-3 text-sm">
-              Banned until {new Date(bannedUntil).toLocaleDateString()}.
-            </Text>
-          )}
-          {showBanForm && (
-            <div className="mb-4 flex flex-col gap-3 border-b border-border pb-4">
-              <div className="flex flex-wrap items-start gap-3">
-                <label className="flex flex-col gap-1 text-xs text-foreground-secondary">
-                  Duration
-                  <select
-                    value={banDuration}
-                    onChange={(e) => setBanDuration(e.target.value as BanDuration)}
-                    aria-label="Ban duration"
-                    className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground"
-                  >
-                    {BAN_DURATIONS.map((d) => (
-                      <option key={d.value} value={d.value}>
-                        {d.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <div className="min-w-[16rem] max-w-sm flex-1">
-                  <BanReasonPicker idPrefix={authorId} value={banReason} onChange={setBanReason} />
-                </div>
-              </div>
-              <Button
-                variant="primary"
-                className="self-start"
-                disabled={!isBanReasonValid(banReason)}
-                onClick={() => void handleBanSubmit()}
-              >
-                Confirm ban
-              </Button>
-              {banActionError && <Text className="text-xs text-[#ff6b6b]">{banActionError}</Text>}
-            </div>
-          )}
-          {banHistoryQuery.loading && <Text variant="secondary">Loading ban history…</Text>}
-          {banHistoryQuery.error && <Text className="text-sm text-[#ff6b6b]">Couldn&apos;t load ban history.</Text>}
-          {banHistoryQuery.data && banHistoryQuery.data.items.length === 0 && (
-            <Text variant="secondary">No ban history for this user.</Text>
-          )}
-          {banHistoryQuery.data && banHistoryQuery.data.items.length > 0 && (
-            <div className="flex flex-col gap-2">
-              {banHistoryQuery.data.items.map((entry, i) => (
-                <div key={i} className="text-sm">
-                  <Text variant="tertiary" className="text-xs">
-                    {new Date(entry.createdAt).toLocaleString()}
-                  </Text>
-                  <Text>
-                    <span className="font-semibold">{entry.actorUsername}</span> · {entry.meta.duration} ·{" "}
-                    <span className="text-foreground-secondary">
-                      {resolveBanReasonTitle(entry.meta.reason, ruleCategories, tBanReason("other")) ??
-                        entry.meta.reason}
-                    </span>
-                  </Text>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
+        <AuthorModeratorPanel
+          authorId={authorId}
+          moderation={moderation}
+          banHistoryQuery={banHistoryQuery}
+          ruleCategories={ruleCategories}
+        />
       )}
 
-      <Text as="h2" variant="title" className="mb-4 text-lg">
-        Packs
-      </Text>
-      {packs.length === 0 ? (
-        <Text variant="secondary">No packs yet.</Text>
-      ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {packs.map((pack) => (
-            <PackCard key={pack.id} pack={pack} />
-          ))}
-        </div>
-      )}
+      <AuthorPackList packs={packs} />
     </div>
   );
 }
