@@ -3,12 +3,11 @@
 import { useEffect, useState } from "react";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import type { Pack, PackFormat, PackTag } from "@/src/shared/types/pack";
-import { Text } from "@/src/shared/components/Text";
 import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
 import { TagPickerModal } from "@/src/shared/components/TagPickerModal";
-import { cn } from "@/src/shared/lib/cn";
-import { PackCard } from "@/src/features/home/PackCard";
+import { FilterChipRow } from "@/src/features/home/FilterChipRow";
+import { HomeFeedResults } from "@/src/features/home/HomeFeedResults";
 
 type FormatFilter = "all" | PackFormat;
 type SortFilter = "relevance" | "popular";
@@ -105,70 +104,23 @@ export function HomeFeed({ initialPacks }: { initialPacks?: Pack[] }) {
         />
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        {FORMAT_OPTIONS.map((option) => (
-          <button
-            key={option.value}
-            type="button"
-            onClick={() => setFormat(option.value)}
-            aria-pressed={format === option.value}
-            className={cn(
-              "rounded-[9px] border px-3 py-1.5 text-sm font-medium transition-colors",
-              format === option.value
-                ? "border-acc/30 bg-acc/10 text-acc"
-                : "border-border bg-white/[0.03] text-foreground-secondary",
-            )}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
+      <FilterChipRow options={FORMAT_OPTIONS} value={format} onSelect={setFormat} />
 
-      <div className="flex flex-wrap gap-2">
-        {SORT_OPTIONS.map((option) => (
-          <button
-            key={option.value}
-            type="button"
-            onClick={() => {
-              setSort(option.value);
-              // Reset to the default window every time Popular is (re)selected,
-              // rather than remembering the last-chosen window across a
-              // Relevance -> Popular round-trip — "week" is the expected
-              // starting point each time you opt into popularity sorting.
-              if (option.value === "popular") setWindow(DEFAULT_POPULAR_WINDOW);
-            }}
-            aria-pressed={sort === option.value}
-            className={cn(
-              "rounded-[9px] border px-3 py-1.5 text-sm font-medium transition-colors",
-              sort === option.value
-                ? "border-acc/30 bg-acc/10 text-acc"
-                : "border-border bg-white/[0.03] text-foreground-secondary",
-            )}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
+      <FilterChipRow
+        options={SORT_OPTIONS}
+        value={sort}
+        onSelect={(value) => {
+          setSort(value);
+          // Reset to the default window every time Popular is (re)selected,
+          // rather than remembering the last-chosen window across a
+          // Relevance -> Popular round-trip — "week" is the expected
+          // starting point each time you opt into popularity sorting.
+          if (value === "popular") setWindow(DEFAULT_POPULAR_WINDOW);
+        }}
+      />
 
       {sort === "popular" && (
-        <div className="flex flex-wrap gap-2">
-          {WINDOW_OPTIONS.map((option) => (
-            <button
-              key={option.value}
-              type="button"
-              onClick={() => setWindow(option.value)}
-              aria-pressed={window === option.value}
-              className={cn(
-                "rounded-[9px] border px-3 py-1.5 text-sm font-medium transition-colors",
-                window === option.value
-                  ? "border-acc/30 bg-acc/10 text-acc"
-                  : "border-border bg-white/[0.03] text-foreground-secondary",
-              )}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
+        <FilterChipRow options={WINDOW_OPTIONS} value={window} onSelect={setWindow} />
       )}
 
       <Button
@@ -186,20 +138,7 @@ export function HomeFeed({ initialPacks }: { initialPacks?: Pack[] }) {
         onChange={setTags}
       />
 
-      {status === "loading" && <Text variant="secondary">Loading packs…</Text>}
-      {status === "error" && (
-        <Text className="text-[#ff6b6b]">Couldn&apos;t load packs. Try again later.</Text>
-      )}
-      {status === "ready" && packs.length === 0 && (
-        <Text variant="secondary">No packs match these filters yet.</Text>
-      )}
-      {status === "ready" && packs.length > 0 && (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {packs.map((pack) => (
-            <PackCard key={pack.id} pack={pack} />
-          ))}
-        </div>
-      )}
+      <HomeFeedResults status={status} packs={packs} />
     </div>
   );
 }
