@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { feedbackClient } from "@/src/shared/lib/feedback-client";
 import { useClientData } from "@/src/shared/hooks/useClientData";
@@ -20,6 +21,7 @@ const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
 
 export function FeedbackScreen() {
+  const t = useTranslations("feedback");
   const { user } = useAuth();
   const router = useRouter();
 
@@ -114,7 +116,7 @@ export function FeedbackScreen() {
       });
       setLoadMoreError("");
     } catch {
-      setLoadMoreError("Couldn't load more feedback. Try again.");
+      setLoadMoreError(t("loadMoreError"));
     } finally {
       setLoadingMore(false);
     }
@@ -128,10 +130,10 @@ export function FeedbackScreen() {
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-7 py-10">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Text as="h1" variant="title" className="text-3xl">
-          Feedback
+          {t("pageTitle")}
         </Text>
         <Button type="button" onClick={handleNewPost}>
-          New post
+          {t("newPost")}
         </Button>
       </div>
 

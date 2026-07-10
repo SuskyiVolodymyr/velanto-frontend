@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
@@ -13,6 +14,7 @@ import type { FeedbackComment } from "@/src/shared/types/feedback";
 const PAGE_SIZE = 10;
 
 export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
+  const t = useTranslations("feedback");
   const { status } = useAuth();
   const [comments, setComments] = useState<FeedbackComment[]>([]);
   const [total, setTotal] = useState(0);
@@ -66,7 +68,7 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
       setPage(nextPage);
       setLoadMoreError("");
     } catch {
-      setLoadMoreError("Couldn't load more comments. Try again.");
+      setLoadMoreError(t("loadMoreCommentsError"));
     } finally {
       setLoadingMore(false);
     }
@@ -87,7 +89,7 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
       // blocked-term rejection) when present, falling back to generic copy.
       setPostError(
         messageFromError(err, {
-          fallback: "Couldn't post your comment. Try again.",
+          fallback: t("postError"),
         }),
       );
     } finally {
@@ -102,7 +104,7 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
         variant="tertiary"
         className="mb-4 text-xs uppercase tracking-wide"
       >
-        Comments · {total}
+        {t("commentsHeading", { count: total })}
       </Text>
 
       {status === "authenticated" && (
@@ -110,8 +112,8 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
           <textarea
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
-            placeholder="Share your thoughts on this feedback…"
-            aria-label="Comment"
+            placeholder={t("commentPlaceholder")}
+            aria-label={t("commentAria")}
             rows={2}
             disabled={posting}
             className="rounded-[10px] border border-border bg-surface px-3.5 py-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-acc disabled:opacity-45"
@@ -124,29 +126,30 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
             disabled={!draft.trim() || posting}
             onClick={handlePost}
           >
-            Post
+            {t("postComment")}
           </Button>
         </div>
       )}
       {status === "unauthenticated" && (
         <div className="mb-6 rounded-xl border border-dashed border-border-strong px-4 py-4 text-sm text-foreground-secondary">
-          <Link href="/auth" className="text-acc">
-            Log in
-          </Link>{" "}
-          to leave a comment.
+          {t.rich("loginToComment", {
+            link: (chunks) => (
+              <Link href="/auth" className="text-acc">
+                {chunks}
+              </Link>
+            ),
+          })}
         </div>
       )}
 
       {loadStatus === "loading" && (
-        <Text variant="secondary">Loading comments…</Text>
+        <Text variant="secondary">{t("loadingComments")}</Text>
       )}
       {loadStatus === "error" && (
-        <Text className="text-[#ff6b6b]">
-          Couldn&apos;t load comments. Try again later.
-        </Text>
+        <Text className="text-[#ff6b6b]">{t("commentsLoadError")}</Text>
       )}
       {loadStatus === "ready" && comments.length === 0 && (
-        <Text variant="secondary">No comments yet.</Text>
+        <Text variant="secondary">{t("noComments")}</Text>
       )}
       {loadStatus === "ready" && comments.length > 0 && (
         <div className="flex flex-col gap-4">
@@ -182,7 +185,7 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
             disabled={loadingMore}
             onClick={handleLoadMore}
           >
-            {loadingMore ? "Loading…" : "Load more"}
+            {loadingMore ? t("loadingMore") : t("loadMore")}
           </Button>
           {loadMoreError && (
             <Text className="text-sm text-[#ff6b6b]">{loadMoreError}</Text>

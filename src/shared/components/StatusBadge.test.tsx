@@ -1,6 +1,20 @@
+import type { ReactNode } from "react";
 import { describe, expect, it } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render as rtlRender, screen } from "@testing-library/react";
+import { NextIntlClientProvider } from "next-intl";
+import messages from "@/messages/en.json";
 import { StatusBadge } from "./StatusBadge";
+
+// A wrapper (not renderWithIntl) so `rerender` re-applies the intl provider —
+// RTL preserves the `wrapper` option across rerenders, renderWithIntl does not.
+function Wrapper({ children }: { children: ReactNode }) {
+  return (
+    <NextIntlClientProvider locale="en" messages={messages}>
+      {children}
+    </NextIntlClientProvider>
+  );
+}
+const render = (ui: React.ReactElement) => rtlRender(ui, { wrapper: Wrapper });
 
 describe("StatusBadge", () => {
   it("renders pack statuses with their labels", () => {

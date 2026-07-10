@@ -60,6 +60,11 @@ const IDENTICAL_ALLOWED = new Set([
   "auth.email",
   // settings loanword: "Notifications" is identical in fr (and other locales).
   "settings.notificationsHeading",
+  // feedback loanwords: "score", "Status", "Bug" are borrowed as-is in some
+  // Latin-script locales.
+  "feedback.scoreLabel",
+  "feedback.statusSelectLabel",
+  "feedback.topicBug",
 ]);
 
 /**

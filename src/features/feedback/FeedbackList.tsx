@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { FeedbackCard } from "@/src/features/feedback/FeedbackCard";
@@ -24,16 +25,13 @@ export function FeedbackList({
   loadMoreError,
   onLoadMore,
 }: FeedbackListProps) {
+  const t = useTranslations("feedback");
   return (
     <>
-      {loading && <Text variant="secondary">Loading feedback…</Text>}
-      {error && (
-        <Text className="text-[#ff6b6b]">
-          Couldn&apos;t load feedback. Try again.
-        </Text>
-      )}
+      {loading && <Text variant="secondary">{t("loadingList")}</Text>}
+      {error && <Text className="text-[#ff6b6b]">{t("listError")}</Text>}
       {listReady && items.length === 0 && (
-        <Text variant="secondary">No feedback matches these filters.</Text>
+        <Text variant="secondary">{t("noMatches")}</Text>
       )}
 
       {listReady && items.length > 0 && (
@@ -51,7 +49,7 @@ export function FeedbackList({
             disabled={loadingMore}
             onClick={onLoadMore}
           >
-            {loadingMore ? "Loading…" : "Load more"}
+            {loadingMore ? t("loadingMore") : t("loadMore")}
           </Button>
           {loadMoreError && (
             <Text className="text-sm text-[#ff6b6b]">{loadMoreError}</Text>
