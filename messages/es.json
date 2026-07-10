@@ -58,5 +58,44 @@
     "permanent": "Este bloqueo es permanente.",
     "rulesLink": "Leer las Reglas de la comunidad",
     "other": "Otro"
+  },
+  "home": {
+    "title": "Descubre packs",
+    "subtitle": "Explora packs por formato o etiqueta y juega uno para ver quién queda en pie.",
+    "searchPlaceholder": "Buscar packs…",
+    "searchLabel": "Buscar packs",
+    "filters": "Filtros",
+    "groupFormat": "Formato",
+    "groupSort": "Ordenar por",
+    "groupTags": "Etiquetas",
+    "all": "Todos",
+    "sortRelevance": "Relevancia",
+    "sortPopular": "Popular",
+    "windowDay": "Día",
+    "windowWeek": "Semana",
+    "windowMonth": "Mes",
+    "windowYear": "Año",
+    "filterByTags": "Filtrar por etiquetas",
+    "tagCount": "{count, plural, one {# etiqueta} other {# etiquetas}}",
+    "activeTagFilters": "Filtros de etiquetas activos",
+    "removeTagFilter": "Quitar el filtro {tag}",
+    "loading": "Cargando packs…",
+    "error": "No se pudieron cargar los packs. Inténtalo más tarde.",
+    "empty": "Ningún pack coincide con estos filtros todavía."
+  },
+  "formats": {
+    "save_one": "Salva uno",
+    "sacrifice_one": "Sacrifica uno",
+    "nxn": "NxN",
+    "rank_blind": "Ranking a ciegas",
+    "1v1": "1v1"
+  },
+  "tagPicker": {
+    "title": "Seleccionar etiquetas",
+    "selected": "{count} seleccionadas",
+    "selectedOfMax": "{count} seleccionadas / {max}",
+    "clear": "Borrar",
+    "cancel": "Cancelar",
+    "apply": "Aplicar"
   }
 }

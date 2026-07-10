@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Button } from "@/src/shared/components/Button";
 import { TagPickerModal } from "@/src/shared/components/TagPickerModal";
 import type { PackTag } from "@/src/shared/types/pack";
@@ -16,6 +17,7 @@ export function TagFilter({
   onChange: (tags: PackTag[]) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const t = useTranslations("home");
 
   return (
     <div className="flex flex-col gap-2">
@@ -47,8 +49,8 @@ export function TagFilter({
               />
             </svg>
             {tags.length === 0
-              ? "Filter by tags"
-              : `${tags.length} tag${tags.length === 1 ? "" : "s"}`}
+              ? t("filterByTags")
+              : t("tagCount", { count: tags.length })}
           </span>
           <svg
             aria-hidden
@@ -66,7 +68,10 @@ export function TagFilter({
       </Button>
 
       {tags.length > 0 && (
-        <ul className="flex flex-wrap gap-1.5" aria-label="Active tag filters">
+        <ul
+          className="flex flex-wrap gap-1.5"
+          aria-label={t("activeTagFilters")}
+        >
           {tags.map((tag) => (
             <li key={tag}>
               {/* Removing an active filter chip applies immediately, matching
@@ -74,8 +79,8 @@ export function TagFilter({
                   bulk editing inside the modal. */}
               <button
                 type="button"
-                onClick={() => onChange(tags.filter((t) => t !== tag))}
-                aria-label={`Remove ${tag} filter`}
+                onClick={() => onChange(tags.filter((other) => other !== tag))}
+                aria-label={t("removeTagFilter", { tag })}
                 className="inline-flex items-center gap-1 rounded-[8px] border border-acc/30 bg-acc/10 px-2 py-0.5 text-xs font-medium text-acc transition-colors hover:bg-acc/20"
               >
                 {tag}

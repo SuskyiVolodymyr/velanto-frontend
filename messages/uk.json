@@ -58,5 +58,44 @@
     "permanent": "Це блокування постійне.",
     "rulesLink": "Читати Правила спільноти",
     "other": "Інше"
+  },
+  "home": {
+    "title": "Знайдіть паки",
+    "subtitle": "Переглядайте паки за форматом або тегом і зіграйте один, щоб побачити, хто залишиться.",
+    "searchPlaceholder": "Пошук паків…",
+    "searchLabel": "Пошук паків",
+    "filters": "Фільтри",
+    "groupFormat": "Формат",
+    "groupSort": "Сортувати",
+    "groupTags": "Теги",
+    "all": "Усі",
+    "sortRelevance": "Релевантність",
+    "sortPopular": "Популярні",
+    "windowDay": "День",
+    "windowWeek": "Тиждень",
+    "windowMonth": "Місяць",
+    "windowYear": "Рік",
+    "filterByTags": "Фільтр за тегами",
+    "tagCount": "{count, plural, one {# тег} few {# теги} many {# тегів} other {# тега}}",
+    "activeTagFilters": "Активні фільтри тегів",
+    "removeTagFilter": "Прибрати фільтр {tag}",
+    "loading": "Завантаження паків…",
+    "error": "Не вдалося завантажити паки. Спробуйте пізніше.",
+    "empty": "Поки немає паків, що відповідають цим фільтрам."
+  },
+  "formats": {
+    "save_one": "Врятувати одного",
+    "sacrifice_one": "Пожертвувати одним",
+    "nxn": "NxN",
+    "rank_blind": "Сліпий рейтинг",
+    "1v1": "1v1"
+  },
+  "tagPicker": {
+    "title": "Вибрати теги",
+    "selected": "Вибрано: {count}",
+    "selectedOfMax": "Вибрано: {count} / {max}",
+    "clear": "Очистити",
+    "cancel": "Скасувати",
+    "apply": "Застосувати"
   }
 }

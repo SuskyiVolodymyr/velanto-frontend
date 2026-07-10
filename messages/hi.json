@@ -58,5 +58,44 @@
     "permanent": "यह प्रतिबंध स्थायी है।",
     "rulesLink": "समुदाय नियम पढ़ें",
     "other": "अन्य"
+  },
+  "home": {
+    "title": "पैक खोजें",
+    "subtitle": "पैक को फ़ॉर्मेट या टैग से ब्राउज़ करें, फिर एक खेलें और देखें कि आख़िर में कौन बचता है।",
+    "searchPlaceholder": "पैक खोजें…",
+    "searchLabel": "पैक खोजें",
+    "filters": "फ़िल्टर",
+    "groupFormat": "फ़ॉर्मेट",
+    "groupSort": "क्रमबद्ध करें",
+    "groupTags": "टैग",
+    "all": "सभी",
+    "sortRelevance": "प्रासंगिकता",
+    "sortPopular": "लोकप्रिय",
+    "windowDay": "दिन",
+    "windowWeek": "सप्ताह",
+    "windowMonth": "महीना",
+    "windowYear": "साल",
+    "filterByTags": "टैग से फ़िल्टर करें",
+    "tagCount": "{count, plural, one {# टैग} other {# टैग}}",
+    "activeTagFilters": "सक्रिय टैग फ़िल्टर",
+    "removeTagFilter": "{tag} फ़िल्टर हटाएँ",
+    "loading": "पैक लोड हो रहे हैं…",
+    "error": "पैक लोड नहीं हो सके। बाद में पुनः प्रयास करें।",
+    "empty": "इन फ़िल्टर से मेल खाने वाला कोई पैक अभी नहीं है।"
+  },
+  "formats": {
+    "save_one": "एक बचाएँ",
+    "sacrifice_one": "एक हटाएँ",
+    "nxn": "NxN",
+    "rank_blind": "ब्लाइंड रैंक",
+    "1v1": "1v1"
+  },
+  "tagPicker": {
+    "title": "टैग चुनें",
+    "selected": "{count} चुने गए",
+    "selectedOfMax": "{count} चुने गए / {max}",
+    "clear": "साफ़ करें",
+    "cancel": "रद्द करें",
+    "apply": "लागू करें"
   }
 }

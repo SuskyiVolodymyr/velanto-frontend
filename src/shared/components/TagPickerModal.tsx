@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { PACK_TAGS } from "@/src/shared/types/pack";
 import type { PackTag } from "@/src/shared/types/pack";
 import { Modal } from "@/src/shared/components/Modal";
@@ -24,8 +25,9 @@ export function TagPickerModal({
   onChange,
   maxTags,
 }: TagPickerModalProps) {
+  const t = useTranslations("tagPicker");
   return (
-    <Modal open={open} onClose={onClose} title="Select tags">
+    <Modal open={open} onClose={onClose} title={t("title")}>
       {/* TagPickerBody is a child of Modal, which unmounts its children when
           closed — so the draft below is freshly seeded from the committed
           selection on every open and discarded on cancel/close. Selections
@@ -54,12 +56,13 @@ function TagPickerBody({
   onApply: (tags: PackTag[]) => void;
   onCancel: () => void;
 }) {
+  const t = useTranslations("tagPicker");
   const [draft, setDraft] = useState<PackTag[]>(selected);
 
   function toggle(tag: PackTag) {
     setDraft((current) =>
       current.includes(tag)
-        ? current.filter((t) => t !== tag)
+        ? current.filter((other) => other !== tag)
         : [...current, tag],
     );
   }
@@ -69,7 +72,9 @@ function TagPickerBody({
   return (
     <>
       <Text variant="tertiary" className="mb-3 text-xs">
-        {draft.length} selected{maxTags !== undefined ? ` / ${maxTags}` : ""}
+        {maxTags !== undefined
+          ? t("selectedOfMax", { count: draft.length, max: maxTags })
+          : t("selected", { count: draft.length })}
       </Text>
 
       {/* Chip toggles, matching the pill styling used by the format/sort
@@ -113,14 +118,14 @@ function TagPickerBody({
           onClick={() => setDraft([])}
           disabled={draft.length === 0}
         >
-          Clear
+          {t("clear")}
         </Button>
         <div className="flex gap-2">
           <Button type="button" variant="secondary" onClick={onCancel}>
-            Cancel
+            {t("cancel")}
           </Button>
           <Button type="button" onClick={() => onApply(draft)}>
-            Apply
+            {t("apply")}
           </Button>
         </div>
       </div>

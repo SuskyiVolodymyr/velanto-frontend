@@ -58,5 +58,44 @@
     "permanent": "هذا الحظر دائم.",
     "rulesLink": "اقرأ قواعد المجتمع",
     "other": "أخرى"
+  },
+  "home": {
+    "title": "اكتشف الحزم",
+    "subtitle": "تصفّح الحزم حسب النوع أو الوسم، ثم العب واحدة لترى من يبقى في النهاية.",
+    "searchPlaceholder": "ابحث عن الحزم…",
+    "searchLabel": "ابحث عن الحزم",
+    "filters": "عوامل التصفية",
+    "groupFormat": "النوع",
+    "groupSort": "ترتيب حسب",
+    "groupTags": "الوسوم",
+    "all": "الكل",
+    "sortRelevance": "الصلة",
+    "sortPopular": "الأكثر رواجًا",
+    "windowDay": "يوم",
+    "windowWeek": "أسبوع",
+    "windowMonth": "شهر",
+    "windowYear": "سنة",
+    "filterByTags": "التصفية حسب الوسوم",
+    "tagCount": "{count, plural, zero {# وسم} one {وسم واحد} two {وسمان} few {# وسوم} many {# وسمًا} other {# وسم}}",
+    "activeTagFilters": "عوامل تصفية الوسوم النشطة",
+    "removeTagFilter": "إزالة عامل التصفية {tag}",
+    "loading": "جارٍ تحميل الحزم…",
+    "error": "تعذّر تحميل الحزم. حاول مرة أخرى لاحقًا.",
+    "empty": "لا توجد حزم تطابق عوامل التصفية هذه بعد."
+  },
+  "formats": {
+    "save_one": "أنقذ واحدًا",
+    "sacrifice_one": "ضحِّ بواحد",
+    "nxn": "NxN",
+    "rank_blind": "ترتيب أعمى",
+    "1v1": "1v1"
+  },
+  "tagPicker": {
+    "title": "اختر الوسوم",
+    "selected": "{count} محدد",
+    "selectedOfMax": "{count} محدد / {max}",
+    "clear": "مسح",
+    "cancel": "إلغاء",
+    "apply": "تطبيق"
   }
 }

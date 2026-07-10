@@ -58,5 +58,44 @@
     "permanent": "یہ پابندی مستقل ہے۔",
     "rulesLink": "کمیونٹی قواعد پڑھیں",
     "other": "دیگر"
+  },
+  "home": {
+    "title": "پیکس دریافت کریں",
+    "subtitle": "پیکس کو فارمیٹ یا ٹیگ کے لحاظ سے دیکھیں، پھر ایک کھیلیں اور دیکھیں کہ آخر میں کون باقی رہتا ہے۔",
+    "searchPlaceholder": "پیکس تلاش کریں…",
+    "searchLabel": "پیکس تلاش کریں",
+    "filters": "فلٹرز",
+    "groupFormat": "فارمیٹ",
+    "groupSort": "ترتیب دیں",
+    "groupTags": "ٹیگز",
+    "all": "سب",
+    "sortRelevance": "مطابقت",
+    "sortPopular": "مقبول",
+    "windowDay": "دن",
+    "windowWeek": "ہفتہ",
+    "windowMonth": "مہینہ",
+    "windowYear": "سال",
+    "filterByTags": "ٹیگز کے لحاظ سے فلٹر کریں",
+    "tagCount": "{count, plural, one {# ٹیگ} other {# ٹیگز}}",
+    "activeTagFilters": "فعال ٹیگ فلٹرز",
+    "removeTagFilter": "{tag} فلٹر ہٹائیں",
+    "loading": "پیکس لوڈ ہو رہے ہیں…",
+    "error": "پیکس لوڈ نہیں ہو سکے۔ بعد میں دوبارہ کوشش کریں۔",
+    "empty": "ابھی ان فلٹرز سے مماثل کوئی پیک نہیں ہے۔"
+  },
+  "formats": {
+    "save_one": "ایک بچائیں",
+    "sacrifice_one": "ایک نکالیں",
+    "nxn": "NxN",
+    "rank_blind": "بلائنڈ رینک",
+    "1v1": "1v1"
+  },
+  "tagPicker": {
+    "title": "ٹیگز منتخب کریں",
+    "selected": "{count} منتخب",
+    "selectedOfMax": "{count} منتخب / {max}",
+    "clear": "صاف کریں",
+    "cancel": "منسوخ",
+    "apply": "لاگو کریں"
   }
 }

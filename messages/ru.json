@@ -58,5 +58,44 @@
     "permanent": "Эта блокировка постоянная.",
     "rulesLink": "Читать Правила сообщества",
     "other": "Другое"
+  },
+  "home": {
+    "title": "Найдите паки",
+    "subtitle": "Просматривайте паки по формату или тегу и сыграйте один, чтобы увидеть, кто останется.",
+    "searchPlaceholder": "Поиск паков…",
+    "searchLabel": "Поиск паков",
+    "filters": "Фильтры",
+    "groupFormat": "Формат",
+    "groupSort": "Сортировать",
+    "groupTags": "Теги",
+    "all": "Все",
+    "sortRelevance": "Релевантность",
+    "sortPopular": "Популярные",
+    "windowDay": "День",
+    "windowWeek": "Неделя",
+    "windowMonth": "Месяц",
+    "windowYear": "Год",
+    "filterByTags": "Фильтр по тегам",
+    "tagCount": "{count, plural, one {# тег} few {# тега} many {# тегов} other {# тега}}",
+    "activeTagFilters": "Активные фильтры тегов",
+    "removeTagFilter": "Убрать фильтр {tag}",
+    "loading": "Загрузка паков…",
+    "error": "Не удалось загрузить паки. Повторите попытку позже.",
+    "empty": "Пока нет паков, соответствующих этим фильтрам."
+  },
+  "formats": {
+    "save_one": "Спасти одного",
+    "sacrifice_one": "Пожертвовать одним",
+    "nxn": "NxN",
+    "rank_blind": "Слепой рейтинг",
+    "1v1": "1v1"
+  },
+  "tagPicker": {
+    "title": "Выбрать теги",
+    "selected": "Выбрано: {count}",
+    "selectedOfMax": "Выбрано: {count} / {max}",
+    "clear": "Очистить",
+    "cancel": "Отмена",
+    "apply": "Применить"
   }
 }

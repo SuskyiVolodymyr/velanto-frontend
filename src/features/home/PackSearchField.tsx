@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Input } from "@/src/shared/components/Input";
 
 // Search box for the home feed. Debouncing lives in the useHomeFeed hook; this
@@ -11,11 +12,13 @@ export function PackSearchField({
   value: string;
   onChange: (value: string) => void;
 }) {
+  const t = useTranslations("home");
+
   return (
     <Input
       type="search"
-      aria-label="Search packs"
-      placeholder="Search packs…"
+      aria-label={t("searchLabel")}
+      placeholder={t("searchPlaceholder")}
       value={value}
       onChange={(event) => onChange(event.target.value)}
     />

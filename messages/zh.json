@@ -58,5 +58,44 @@
     "permanent": "此封禁为永久封禁。",
     "rulesLink": "阅读社区规则",
     "other": "其他"
+  },
+  "home": {
+    "title": "发现合集",
+    "subtitle": "按格式或标签浏览合集，然后玩一个，看看谁能坚持到最后。",
+    "searchPlaceholder": "搜索合集…",
+    "searchLabel": "搜索合集",
+    "filters": "筛选",
+    "groupFormat": "格式",
+    "groupSort": "排序",
+    "groupTags": "标签",
+    "all": "全部",
+    "sortRelevance": "相关度",
+    "sortPopular": "热门",
+    "windowDay": "日",
+    "windowWeek": "周",
+    "windowMonth": "月",
+    "windowYear": "年",
+    "filterByTags": "按标签筛选",
+    "tagCount": "{count, plural, other {# 个标签}}",
+    "activeTagFilters": "已启用的标签筛选",
+    "removeTagFilter": "移除筛选 {tag}",
+    "loading": "正在加载合集…",
+    "error": "无法加载合集，请稍后再试。",
+    "empty": "暂无符合这些筛选条件的合集。"
+  },
+  "formats": {
+    "save_one": "保留其一",
+    "sacrifice_one": "淘汰其一",
+    "nxn": "NxN",
+    "rank_blind": "盲排",
+    "1v1": "1v1"
+  },
+  "tagPicker": {
+    "title": "选择标签",
+    "selected": "已选 {count} 个",
+    "selectedOfMax": "已选 {count} / {max}",
+    "clear": "清除",
+    "cancel": "取消",
+    "apply": "应用"
   }
 }

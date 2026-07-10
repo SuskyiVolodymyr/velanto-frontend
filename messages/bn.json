@@ -58,5 +58,44 @@
     "permanent": "এই নিষেধাজ্ঞা স্থায়ী।",
     "rulesLink": "কমিউনিটি নিয়মাবলী পড়ুন",
     "other": "অন্যান্য"
+  },
+  "home": {
+    "title": "প্যাক খুঁজুন",
+    "subtitle": "ফরম্যাট বা ট্যাগ অনুযায়ী প্যাক দেখুন, তারপর একটি খেলে দেখুন শেষ পর্যন্ত কে টিকে থাকে।",
+    "searchPlaceholder": "প্যাক খুঁজুন…",
+    "searchLabel": "প্যাক খুঁজুন",
+    "filters": "ফিল্টার",
+    "groupFormat": "ফরম্যাট",
+    "groupSort": "সাজান",
+    "groupTags": "ট্যাগ",
+    "all": "সব",
+    "sortRelevance": "প্রাসঙ্গিকতা",
+    "sortPopular": "জনপ্রিয়",
+    "windowDay": "দিন",
+    "windowWeek": "সপ্তাহ",
+    "windowMonth": "মাস",
+    "windowYear": "বছর",
+    "filterByTags": "ট্যাগ দিয়ে ফিল্টার করুন",
+    "tagCount": "{count, plural, one {# ট্যাগ} other {# ট্যাগ}}",
+    "activeTagFilters": "সক্রিয় ট্যাগ ফিল্টার",
+    "removeTagFilter": "{tag} ফিল্টার সরান",
+    "loading": "প্যাক লোড হচ্ছে…",
+    "error": "প্যাক লোড করা যায়নি। পরে আবার চেষ্টা করুন।",
+    "empty": "এই ফিল্টারের সাথে মেলে এমন কোনো প্যাক এখনও নেই।"
+  },
+  "formats": {
+    "save_one": "একটি বাঁচান",
+    "sacrifice_one": "একটি বাদ দিন",
+    "nxn": "NxN",
+    "rank_blind": "ব্লাইন্ড র‍্যাঙ্ক",
+    "1v1": "1v1"
+  },
+  "tagPicker": {
+    "title": "ট্যাগ নির্বাচন করুন",
+    "selected": "{count}টি নির্বাচিত",
+    "selectedOfMax": "{count}টি নির্বাচিত / {max}",
+    "clear": "মুছুন",
+    "cancel": "বাতিল",
+    "apply": "প্রয়োগ করুন"
   }
 }

@@ -1,8 +1,11 @@
+"use client";
+
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Badge } from "@/src/shared/components/Badge";
 import { StatusBadge } from "@/src/shared/components/StatusBadge";
 import { Text } from "@/src/shared/components/Text";
-import { FORMAT_LABELS, getRoundsCount } from "@/src/shared/lib/pack-display";
+import { getRoundsCount } from "@/src/shared/lib/pack-display";
 import type { Pack } from "@/src/shared/types/pack";
 
 export function PackCard({
@@ -12,6 +15,7 @@ export function PackCard({
   pack: Pack;
   showStatus?: boolean;
 }) {
+  const tFormat = useTranslations("formats");
   const roundsCount = getRoundsCount(pack);
   const statsLabel =
     pack.totalPlays === 0
@@ -28,7 +32,7 @@ export function PackCard({
             background: `linear-gradient(150deg, ${pack.coverTone}, #0b0c0f)`,
           }}
         >
-          <Badge>{FORMAT_LABELS[pack.format]}</Badge>
+          <Badge>{tFormat(pack.format)}</Badge>
           {showStatusBadge && <StatusBadge kind="pack" status={pack.status} />}
         </div>
         <div className="flex flex-1 flex-col gap-2 p-4">

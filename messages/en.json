@@ -57,5 +57,44 @@
     "permanent": "This ban is permanent.",
     "rulesLink": "Read the Community Rules",
     "other": "Other"
+  },
+  "home": {
+    "title": "Discover packs",
+    "subtitle": "Browse packs by format or tag, then play through one to see who's left standing.",
+    "searchPlaceholder": "Search packs…",
+    "searchLabel": "Search packs",
+    "filters": "Filters",
+    "groupFormat": "Format",
+    "groupSort": "Sort by",
+    "groupTags": "Tags",
+    "all": "All",
+    "sortRelevance": "Relevance",
+    "sortPopular": "Popular",
+    "windowDay": "Day",
+    "windowWeek": "Week",
+    "windowMonth": "Month",
+    "windowYear": "Year",
+    "filterByTags": "Filter by tags",
+    "tagCount": "{count, plural, one {# tag} other {# tags}}",
+    "activeTagFilters": "Active tag filters",
+    "removeTagFilter": "Remove {tag} filter",
+    "loading": "Loading packs…",
+    "error": "Couldn't load packs. Try again later.",
+    "empty": "No packs match these filters yet."
+  },
+  "formats": {
+    "save_one": "Save One",
+    "sacrifice_one": "Sacrifice One",
+    "nxn": "NxN",
+    "rank_blind": "Rank Blind",
+    "1v1": "1v1"
+  },
+  "tagPicker": {
+    "title": "Select tags",
+    "selected": "{count} selected",
+    "selectedOfMax": "{count} selected / {max}",
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "apply": "Apply"
   }
 }

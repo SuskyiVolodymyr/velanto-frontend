@@ -1,9 +1,11 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { FilterChipRow } from "@/src/features/home/FilterChipRow";
 import {
-  SORT_OPTIONS,
-  WINDOW_OPTIONS,
+  SORT_VALUES,
+  WINDOW_VALUES,
+  WINDOW_LABEL_KEYS,
   type SortFilterValue,
   type WindowFilterValue,
 } from "@/src/features/home/filter-options";
@@ -21,16 +23,28 @@ export function SortFilter({
   window: WindowFilterValue;
   onWindowChange: (value: WindowFilterValue) => void;
 }) {
+  const t = useTranslations("home");
+
+  const sortOptions = SORT_VALUES.map((value) => ({
+    value,
+    label: value === "relevance" ? t("sortRelevance") : t("sortPopular"),
+  }));
+
+  const windowOptions = WINDOW_VALUES.map((value) => ({
+    value,
+    label: t(WINDOW_LABEL_KEYS[value]),
+  }));
+
   return (
     <div className="flex flex-col gap-3">
       <FilterChipRow
-        options={SORT_OPTIONS}
+        options={sortOptions}
         value={sort}
         onSelect={onSortChange}
       />
       {sort === "popular" && (
         <FilterChipRow
-          options={WINDOW_OPTIONS}
+          options={windowOptions}
           value={window}
           onSelect={onWindowChange}
         />

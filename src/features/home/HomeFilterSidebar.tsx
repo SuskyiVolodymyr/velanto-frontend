@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/src/shared/lib/cn";
 import { Text } from "@/src/shared/components/Text";
 import type { PackTag } from "@/src/shared/types/pack";
@@ -63,9 +64,11 @@ export function HomeFilterSidebar({
   tags: PackTag[];
   onTagsChange: (tags: PackTag[]) => void;
 }) {
+  const t = useTranslations("home");
+
   return (
     <aside
-      aria-label="Filters"
+      aria-label={t("filters")}
       className={cn(
         "lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:w-72 lg:shrink-0 lg:overflow-y-auto",
         className,
@@ -74,11 +77,11 @@ export function HomeFilterSidebar({
       <div className="flex flex-col gap-5 rounded-[14px] border border-border bg-white/[0.02] p-5">
         <PackSearchField value={search} onChange={onSearchChange} />
 
-        <FilterGroup label="Format">
+        <FilterGroup label={t("groupFormat")}>
           <FormatFilter value={format} onSelect={onFormatChange} />
         </FilterGroup>
 
-        <FilterGroup label="Sort by">
+        <FilterGroup label={t("groupSort")}>
           <SortFilter
             sort={sort}
             onSortChange={onSortChange}
@@ -87,7 +90,7 @@ export function HomeFilterSidebar({
           />
         </FilterGroup>
 
-        <FilterGroup label="Tags">
+        <FilterGroup label={t("groupTags")}>
           <TagFilter tags={tags} onChange={onTagsChange} />
         </FilterGroup>
       </div>
