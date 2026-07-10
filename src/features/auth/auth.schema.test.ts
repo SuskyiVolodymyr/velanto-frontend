@@ -9,7 +9,16 @@ import { loginSchema, registerSchema, type AuthFormValues } from "./auth.schema"
  * form), so every case fills the whole shape — mirroring how the form submits.
  */
 function values(overrides: Partial<AuthFormValues>): AuthFormValues {
-  return { identifier: "", username: "", email: "", password: "", ...overrides };
+  // acceptedRules defaults to true so field-rule cases exercise the username/
+  // password refinements; the acceptance rule is covered by its own case.
+  return {
+    identifier: "",
+    username: "",
+    email: "",
+    password: "",
+    acceptedRules: true,
+    ...overrides,
+  };
 }
 
 function firstError(result: { success: boolean; error?: { issues: { message: string }[] } }) {
@@ -73,6 +82,18 @@ describe("registerSchema", () => {
       values({ username: "alice", email: "a@example.com", password: "short" }),
     );
     expect(firstError(r)).toBe("Password must be at least 8 characters.");
+  });
+
+  it("rejects a valid submission when the Community Rules are not accepted", () => {
+    const r = registerSchema.safeParse(
+      values({
+        username: "alice",
+        email: "a@example.com",
+        password: "password123",
+        acceptedRules: false,
+      }),
+    );
+    expect(firstError(r)).toBe("You must accept the Community Rules to register.");
   });
 
   it("reports the empty-field message before the username-pattern message (matches old precedence)", () => {

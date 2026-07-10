@@ -4,11 +4,14 @@ import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter, useSearchParams } from "next/navigation";
+import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { messageFromError } from "@/src/shared/lib/messageFromError";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { TextField } from "@/src/shared/components/form/TextField";
+import { CheckboxField } from "@/src/shared/components/form/CheckboxField";
 import { cn } from "@/src/shared/lib/cn";
 import { sanitizeNextPath } from "@/src/shared/lib/safe-redirect";
 import { loginSchema, registerSchema, type AuthFormValues } from "@/src/features/auth/auth.schema";
@@ -19,6 +22,7 @@ export function AuthForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { login, register } = useAuth();
+  const t = useTranslations("auth");
   const [mode, setMode] = useState<Mode>("login");
   const [shake, setShake] = useState(false);
 
@@ -28,7 +32,13 @@ export function AuthForm() {
   // mode change is enough — no need to recreate the form.
   const methods = useForm<AuthFormValues>({
     resolver: zodResolver(isRegister ? registerSchema : loginSchema),
-    defaultValues: { identifier: "", username: "", email: "", password: "" },
+    defaultValues: {
+      identifier: "",
+      username: "",
+      email: "",
+      password: "",
+      acceptedRules: false,
+    },
   });
   const {
     handleSubmit,
@@ -54,6 +64,7 @@ export function AuthForm() {
           email: values.email.trim(),
           username: values.username.trim(),
           password: values.password,
+          acceptedRules: true,
         });
       } else {
         await login({ identifier: values.identifier.trim(), password: values.password });
@@ -150,6 +161,26 @@ export function AuthForm() {
             autoComplete={isRegister ? "new-password" : "current-password"}
             disabled={isSubmitting}
           />
+
+          {isRegister && (
+            <CheckboxField
+              name="acceptedRules"
+              disabled={isSubmitting}
+              label={t.rich("acceptRules", {
+                link: (chunks) => (
+                  <Link
+                    href="/rules"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-acc underline hover:no-underline"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    {chunks}
+                  </Link>
+                ),
+              })}
+            />
+          )}
 
           {errors.root?.message && (
             <Text role="alert" className="text-sm text-[#ff6b6b]">

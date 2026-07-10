@@ -28,6 +28,13 @@ export function AppHeader() {
         >
           {t("feedback")}
         </Link>
+
+        <Link
+          href="/rules"
+          className="text-sm text-foreground-secondary transition-colors hover:text-foreground"
+        >
+          {t("rules")}
+        </Link>
       </div>
 
       {status === "authenticated" && user && (

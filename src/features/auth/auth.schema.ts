@@ -12,6 +12,9 @@ const authFields = z.object({
   username: z.string(),
   email: z.string(),
   password: z.string(),
+  // Only meaningful in register mode; login ignores it. Kept on the shared
+  // shape so the react-hook-form values type stays stable across the toggle.
+  acceptedRules: z.boolean(),
 });
 
 export type AuthFormValues = z.infer<typeof authFields>;
@@ -30,7 +33,13 @@ export const loginSchema = authFields.superRefine((data, ctx) => {
 
 // Register: same sequential rules + copy as the old `validate()`. At most one
 // issue is added, preserving the original first-failure precedence.
-export const registerSchema = authFields.superRefine((data, ctx) => {
+export const registerSchema = authFields
+  .extend({
+    acceptedRules: z.literal(true, {
+      message: "You must accept the Community Rules to register.",
+    }),
+  })
+  .superRefine((data, ctx) => {
   if (!data.username.trim() || !data.email.trim() || !data.password) {
     ctx.addIssue({
       code: "custom",
