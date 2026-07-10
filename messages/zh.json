@@ -11,7 +11,7 @@
     "moderation": "审核",
     "admin": "管理",
     "feedback": "反馈",
-    "rules": "Rules"
+    "rules": "规则"
   },
   "settings": {
     "title": "偏好设置",
@@ -21,42 +21,42 @@
     "languageSelectAria": "界面语言"
   },
   "streamerMode": {
-    "hiddenHint": "Hidden because of streamer mode",
-    "hiddenName": "Hidden",
-    "reveal": "Reveal",
-    "settingsHeading": "Privacy",
-    "settingsLabel": "Streamer mode",
-    "settingsDescription": "Hides all viewer avatars, names, and comments so you can screen-share without exposing anyone. Reveal any item individually when you need to.",
-    "on": "On",
-    "off": "Off"
+    "hiddenHint": "已因主播模式隐藏",
+    "hiddenName": "已隐藏",
+    "reveal": "显示",
+    "settingsHeading": "隐私",
+    "settingsLabel": "主播模式",
+    "settingsDescription": "隐藏所有观众的头像、昵称和评论，让你在共享屏幕时不会暴露任何人。需要时可单独显示任意内容。",
+    "on": "开",
+    "off": "关"
   },
   "auth": {
-    "acceptRules": "I have read and accept the <link>Community Rules</link>."
+    "acceptRules": "我已阅读并接受<link>社区规则</link>。"
   },
   "rules": {
-    "metaTitle": "Community Rules — Velanto",
-    "metaDescription": "The community rules for creating and playing packs on Velanto — read them before you register.",
-    "heading": "Community Rules",
-    "intro": "These rules keep Velanto safe and fair for everyone. By creating an account you agree to follow them.",
-    "loadError": "We couldn't load the rules right now. Please try again in a moment."
+    "metaTitle": "社区规则 — Velanto",
+    "metaDescription": "在 Velanto 上创建和游玩卡包的社区规则——注册前请先阅读。",
+    "heading": "社区规则",
+    "intro": "这些规则让 Velanto 对每个人都安全、公平。创建账号即表示你同意遵守这些规则。",
+    "loadError": "目前无法加载规则。请稍后再试。"
   },
   "banReason": {
-    "label": "Reason",
-    "placeholder": "Select a reason…",
-    "other": "Other",
-    "detailLabelRequired": "Details (required)",
-    "detailLabelOptional": "Details (optional)",
-    "detailPlaceholder": "Add context for this ban",
-    "detailRequired": "Please add details for this ban.",
-    "loadError": "Couldn't load ban reasons. Try again."
+    "label": "原因",
+    "placeholder": "选择一个原因…",
+    "other": "其他",
+    "detailLabelRequired": "详情（必填）",
+    "detailLabelOptional": "详情（选填）",
+    "detailPlaceholder": "为此次封禁添加说明",
+    "detailRequired": "请为此次封禁添加详情。",
+    "loadError": "无法加载封禁原因。请重试。"
   },
   "banned": {
-    "heading": "Your account is banned",
-    "reasonLabel": "Reason",
-    "detailLabel": "Details",
-    "expiresOn": "Your ban is lifted on {date}.",
-    "permanent": "This ban is permanent.",
-    "rulesLink": "Read the Community Rules",
-    "other": "Other"
+    "heading": "你的账号已被封禁",
+    "reasonLabel": "原因",
+    "detailLabel": "详情",
+    "expiresOn": "你的封禁将于 {date} 解除。",
+    "permanent": "此封禁为永久封禁。",
+    "rulesLink": "阅读社区规则",
+    "other": "其他"
   }
 }

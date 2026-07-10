@@ -1,11 +1,12 @@
 // src/features/admin/UsersTab.test.tsx
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { UsersTab } from "./UsersTab";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
+import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { adminClient } from "@/src/shared/lib/admin-client";
 import { usersClient } from "@/src/shared/lib/users-client";
@@ -175,5 +176,66 @@ describe("UsersTab", () => {
 
     await screen.findByText("peer");
     expect(screen.queryByRole("button", { name: "Trust" })).not.toBeInTheDocument();
+  });
+
+  describe("streamer mode", () => {
+    afterEach(() => localStorage.clear());
+
+    function renderWithStreamerMode() {
+      vi.mocked(authClient.refresh).mockResolvedValue({ accessToken: "token", user: ADMIN });
+      return render(
+        <NextIntlClientProvider locale="en" messages={messages}>
+          <AuthProvider>
+            <StreamerModeProvider>
+              <UsersTab />
+            </StreamerModeProvider>
+          </AuthProvider>
+        </NextIntlClientProvider>,
+      );
+    }
+
+    it("masks a user's username and email but keeps role, ban status, and controls visible", async () => {
+      localStorage.setItem("velanto:streamer-mode", "on");
+      vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [TARGET], total: 1, page: 1, limit: 20 });
+      renderWithStreamerMode();
+
+      // The Ban button is a stable non-identity anchor that renders with the row.
+      await screen.findByRole("button", { name: "Ban" });
+
+      // Identity is redacted…
+      expect(screen.queryByText("bob")).not.toBeInTheDocument();
+      expect(screen.queryByText("bob@example.com")).not.toBeInTheDocument();
+      // …but role and the moderator's controls stay usable.
+      expect(screen.getByText("user")).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Ban" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Trust" })).toBeInTheDocument();
+    });
+
+    it("reveals the username and email when the row is revealed", async () => {
+      const user = userEvent.setup();
+      localStorage.setItem("velanto:streamer-mode", "on");
+      vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [TARGET], total: 1, page: 1, limit: 20 });
+      renderWithStreamerMode();
+
+      await screen.findByRole("button", { name: "Ban" });
+      const revealButtons = screen.getAllByRole("button", { name: /reveal/i });
+      // One reveal control per masked identity field (username + email).
+      expect(revealButtons).toHaveLength(2);
+
+      // Both fields share the row id, so a single reveal unmasks the identity.
+      await user.click(revealButtons[0]);
+
+      expect(screen.getByText("bob")).toBeInTheDocument();
+      expect(screen.getByText("bob@example.com")).toBeInTheDocument();
+    });
+
+    it("shows identity normally when streamer mode is off", async () => {
+      vi.mocked(adminClient.listUsers).mockResolvedValue({ items: [TARGET], total: 1, page: 1, limit: 20 });
+      renderWithStreamerMode();
+
+      expect(await screen.findByText("bob")).toBeInTheDocument();
+      expect(screen.getByText("bob@example.com")).toBeInTheDocument();
+      expect(screen.queryByRole("button", { name: /reveal/i })).not.toBeInTheDocument();
+    });
   });
 });
