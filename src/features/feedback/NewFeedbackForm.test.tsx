@@ -156,6 +156,34 @@ describe("NewFeedbackForm", () => {
     expect(push).not.toHaveBeenCalled();
   });
 
+  it("surfaces the backend's blocked-term rejection inline and does not navigate", async () => {
+    // Real nestjs-zod validation 400 shape: generic top-level `message`, the
+    // field-level moderation rejection under `errors[]`. Input stays innocuous.
+    mockedFeedbackClient.create.mockRejectedValue(
+      new ApiError(400, "Bad Request", {
+        statusCode: 400,
+        message: "Validation failed",
+        errors: [
+          {
+            code: "custom",
+            path: ["body"],
+            message: "This text contains language that isn't allowed on Velanto.",
+          },
+        ],
+      }),
+    );
+    render(<NewFeedbackForm />);
+
+    await userEvent.type(screen.getByLabelText(/title/i), "My bug");
+    await userEvent.type(screen.getByLabelText(/details/i), "It crashes on load");
+    await userEvent.click(screen.getByRole("button", { name: /post feedback/i }));
+
+    expect(
+      await screen.findByText("This text contains language that isn't allowed on Velanto."),
+    ).toBeInTheDocument();
+    expect(push).not.toHaveBeenCalled();
+  });
+
   it("disables the submit button while the create call is in flight", async () => {
     let resolveCreate: (value: Feedback) => void = () => {};
     mockedFeedbackClient.create.mockReturnValue(

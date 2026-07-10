@@ -8,6 +8,7 @@ import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { commentsClient } from "@/src/shared/lib/comments-client";
+import { ApiError } from "@/src/shared/lib/api-client";
 import type { Comment } from "@/src/shared/types/comment";
 import type { User } from "@/src/shared/types/user";
 
@@ -179,6 +180,36 @@ describe("CommentSection", () => {
     await user.click(screen.getByRole("button", { name: "Post" }));
 
     expect(await screen.findByText("Couldn't post your comment. Try again.")).toBeInTheDocument();
+    expect(textbox).toHaveValue("My take too.");
+  });
+
+  it("surfaces the backend's blocked-term rejection inline and keeps the draft", async () => {
+    const user = userEvent.setup();
+    vi.mocked(commentsClient.list).mockResolvedValue({ items: [], total: 0, page: 1, limit: 10 });
+    // Real nestjs-zod validation 400 shape: the moderation rejection lives
+    // under `errors[]`. The comment text itself is innocuous.
+    vi.mocked(commentsClient.create).mockRejectedValue(
+      new ApiError(400, "Bad Request", {
+        statusCode: 400,
+        message: "Validation failed",
+        errors: [
+          {
+            code: "custom",
+            path: ["body"],
+            message: "This text contains language that isn't allowed on Velanto.",
+          },
+        ],
+      }),
+    );
+    renderAsAuthenticated();
+
+    const textbox = await screen.findByRole("textbox");
+    await user.type(textbox, "My take too.");
+    await user.click(screen.getByRole("button", { name: "Post" }));
+
+    expect(
+      await screen.findByText("This text contains language that isn't allowed on Velanto."),
+    ).toBeInTheDocument();
     expect(textbox).toHaveValue("My take too.");
   });
 

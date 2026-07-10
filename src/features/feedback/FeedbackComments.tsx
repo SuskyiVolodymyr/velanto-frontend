@@ -7,6 +7,7 @@ import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { feedbackClient } from "@/src/shared/lib/feedback-client";
+import { messageFromError } from "@/src/shared/lib/messageFromError";
 import type { FeedbackComment } from "@/src/shared/types/feedback";
 
 const PAGE_SIZE = 10;
@@ -76,8 +77,10 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
       setTotal((t) => t + 1);
       setDraft("");
       setPostError("");
-    } catch {
-      setPostError("Couldn't post your comment. Try again.");
+    } catch (err) {
+      // Surface the backend's specific validation message (e.g. the moderation
+      // blocked-term rejection) when present, falling back to generic copy.
+      setPostError(messageFromError(err, { fallback: "Couldn't post your comment. Try again." }));
     } finally {
       setPosting(false);
     }
