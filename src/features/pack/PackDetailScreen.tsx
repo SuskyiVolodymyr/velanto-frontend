@@ -1,15 +1,14 @@
-import Link from "next/link";
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
-import { buttonClassName } from "@/src/shared/components/Button";
 import { PackCoverBanner } from "@/src/features/pack/PackCoverBanner";
 import { PackHeroStats } from "@/src/features/pack/PackHeroStats";
 import { PackHowItPlays } from "@/src/features/pack/PackHowItPlays";
 import { RoundChips } from "@/src/features/pack/RoundChips";
 import { PackStats } from "@/src/features/pack/PackStats";
 import { PackCreatorCard } from "@/src/features/pack/PackCreatorCard";
+import { PackPlayButton } from "@/src/features/pack/PackPlayButton";
 import { CommentSection } from "@/src/features/pack/CommentSection";
 import { VoteButtons } from "@/src/features/pack/VoteButtons";
 import { ShareButton } from "@/src/features/share/ShareButton";
@@ -67,16 +66,7 @@ export function PackDetailScreen({
             )}
 
             <div className="flex flex-wrap items-center gap-3.5">
-              <Link
-                href={`/packs/${pack.id}/play`}
-                className={buttonClassName("primary", "w-fit gap-2.5")}
-              >
-                <span
-                  aria-hidden
-                  className="border-y-[6px] border-l-[9px] border-y-transparent border-l-current"
-                />
-                {t("playNow")}
-              </Link>
+              <PackPlayButton packId={pack.id} />
               {pack.status === "approved" && (
                 <ShareButton path={`/packs/${pack.id}`} />
               )}

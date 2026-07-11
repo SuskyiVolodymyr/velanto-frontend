@@ -2,7 +2,8 @@
   "authGate": {
     "logInToVote": "वोट करने के लिए लॉग इन करें",
     "logInToFollow": "फ़ॉलो करने के लिए लॉग इन करें",
-    "logInToComment": "टिप्पणी करने के लिए लॉग इन करें"
+    "logInToComment": "टिप्पणी करने के लिए लॉग इन करें",
+    "logInToPlay": "खेलने के लिए लॉग इन करें"
   },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {

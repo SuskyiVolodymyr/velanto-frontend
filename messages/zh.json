@@ -2,7 +2,8 @@
   "authGate": {
     "logInToVote": "登录后投票",
     "logInToFollow": "登录后关注",
-    "logInToComment": "登录后评论"
+    "logInToComment": "登录后评论",
+    "logInToPlay": "登录后游玩"
   },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {

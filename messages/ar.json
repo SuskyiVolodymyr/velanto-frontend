@@ -2,7 +2,8 @@
   "authGate": {
     "logInToVote": "سجّل الدخول للتصويت",
     "logInToFollow": "سجّل الدخول للمتابعة",
-    "logInToComment": "سجّل الدخول للتعليق"
+    "logInToComment": "سجّل الدخول للتعليق",
+    "logInToPlay": "سجّل الدخول للعب"
   },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {

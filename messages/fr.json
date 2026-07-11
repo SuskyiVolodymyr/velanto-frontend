@@ -2,7 +2,8 @@
   "authGate": {
     "logInToVote": "Connectez-vous pour voter",
     "logInToFollow": "Connectez-vous pour suivre",
-    "logInToComment": "Connectez-vous pour commenter"
+    "logInToComment": "Connectez-vous pour commenter",
+    "logInToPlay": "Connectez-vous pour jouer"
   },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {

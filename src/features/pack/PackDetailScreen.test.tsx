@@ -14,6 +14,13 @@ vi.mock("@/src/features/pack/CommentSection", () => ({
 vi.mock("@/src/features/pack/PackCreatorCard", () => ({
   PackCreatorCard: () => <div>PackCreatorCard</div>,
 }));
+// PackPlayButton is a client island with its own auth gating + tests; here we
+// stand in a plain link so the screen's layout assertions stay focused.
+vi.mock("@/src/features/pack/PackPlayButton", () => ({
+  PackPlayButton: ({ packId }: { packId: string }) => (
+    <a href={`/packs/${packId}/play`}>Play now</a>
+  ),
+}));
 
 const BASE_PACK: Pack = {
   id: "p1",

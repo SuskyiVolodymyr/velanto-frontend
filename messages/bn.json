@@ -2,7 +2,8 @@
   "authGate": {
     "logInToVote": "ভোট দিতে লগ ইন করুন",
     "logInToFollow": "ফলো করতে লগ ইন করুন",
-    "logInToComment": "মন্তব্য করতে লগ ইন করুন"
+    "logInToComment": "মন্তব্য করতে লগ ইন করুন",
+    "logInToPlay": "খেলতে লগ ইন করুন"
   },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
