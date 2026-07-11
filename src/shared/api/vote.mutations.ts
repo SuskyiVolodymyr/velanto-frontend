@@ -1,7 +1,6 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 
 export interface VoteTally {
@@ -16,7 +15,9 @@ export interface UseVoteMutationResult<T extends VoteTally> {
   result: T | undefined;
   isPending: boolean;
   isError: boolean;
-  /** Cast a vote; anonymous viewers are redirected to sign in instead. */
+  /** True when the viewer isn't signed in — the control should render blocked. */
+  blocked: boolean;
+  /** Cast a vote; a no-op for a blocked (anonymous) viewer. */
   cast: (value: 1 | -1) => void;
 }
 
@@ -25,25 +26,23 @@ export interface UseVoteMutationResult<T extends VoteTally> {
  * caller passes the vote fn (`(value) => xClient.vote(id, value)`); `result` is
  * the latest server tally to display over the initial props (use it wholesale —
  * `myVote` can legitimately be `null` after a toggle-off, so don't `??` it).
- * Anonymous viewers are redirected to sign in rather than mutating.
+ * Anonymous viewers are `blocked`: `cast` no-ops so the caller can render the
+ * control disabled with a reason tooltip rather than firing a surprise redirect.
  */
 export function useVoteMutation<T extends VoteTally>(
   vote: (value: 1 | -1) => Promise<T>,
 ): UseVoteMutationResult<T> {
   const { status } = useAuth();
-  const router = useRouter();
-  const pathname = usePathname();
+  const blocked = status !== "authenticated";
   const mutation = useMutation({ mutationFn: vote });
 
   return {
     result: mutation.data,
     isPending: mutation.isPending,
     isError: mutation.isError,
+    blocked,
     cast: (value) => {
-      if (status !== "authenticated") {
-        router.push(`/auth?next=${encodeURIComponent(pathname)}`);
-        return;
-      }
+      if (blocked) return;
       mutation.mutate(value);
     },
   };

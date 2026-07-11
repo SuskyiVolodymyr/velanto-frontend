@@ -116,7 +116,7 @@ describe("VoteButtons", () => {
     await waitFor(() => expect(screen.getByText("0")).toBeInTheDocument());
   });
 
-  it("redirects an anonymous viewer to /auth on click instead of calling the API", async () => {
+  it("blocks an anonymous viewer with a reason tooltip instead of voting or redirecting", async () => {
     mockAuth(false);
     render(
       <VoteButtons
@@ -126,9 +126,16 @@ describe("VoteButtons", () => {
         initialMyVote={null}
       />,
     );
-    await userEvent.click(screen.getByRole("button", { name: "Upvote" }));
+    const upvote = screen.getByRole("button", { name: "Upvote" });
+    expect(upvote).toHaveAttribute("aria-disabled", "true");
+
+    // The reason is discoverable on hover, not fired as a surprise redirect.
+    await userEvent.hover(upvote);
+    expect(screen.getByRole("tooltip")).toHaveTextContent("Log in to vote");
+
+    await userEvent.click(upvote);
     expect(mockedPacksClient.vote).not.toHaveBeenCalled();
-    expect(push).toHaveBeenCalledWith("/auth?next=%2Fpacks%2Fpack-1");
+    expect(push).not.toHaveBeenCalled();
   });
 
   it("shows an inline error and does not change the score when the vote call fails", async () => {

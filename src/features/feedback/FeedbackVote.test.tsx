@@ -80,7 +80,7 @@ describe("FeedbackVote", () => {
     );
   });
 
-  it("redirects an anonymous viewer to /auth on click instead of calling the API", async () => {
+  it("blocks an anonymous viewer with a reason tooltip instead of voting or redirecting", async () => {
     mockAuth(false);
     render(
       <FeedbackVote
@@ -91,9 +91,15 @@ describe("FeedbackVote", () => {
         initialMyVote={null}
       />,
     );
-    await userEvent.click(screen.getByRole("button", { name: /^like/i }));
+    const likeButton = screen.getByRole("button", { name: /^like/i });
+    expect(likeButton).toHaveAttribute("aria-disabled", "true");
+
+    await userEvent.hover(likeButton);
+    expect(screen.getByRole("tooltip")).toHaveTextContent("Log in to vote");
+
+    await userEvent.click(likeButton);
     expect(mockedFeedbackClient.vote).not.toHaveBeenCalled();
-    expect(push).toHaveBeenCalledWith("/auth?next=%2Ffeedback%2Ff1");
+    expect(push).not.toHaveBeenCalled();
   });
 
   it("shows an inline error when the vote call fails", async () => {
