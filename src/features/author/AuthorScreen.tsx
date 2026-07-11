@@ -1,13 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { usersClient } from "@/src/shared/lib/users-client";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import { rulesClient } from "@/src/shared/lib/rules-client";
 import { useClientData } from "@/src/shared/hooks/useClientData";
+import { useFollowAction } from "@/src/shared/hooks/useFollowAction";
 import { Text } from "@/src/shared/components/Text";
 import { AuthorProfileHeader } from "./AuthorProfileHeader";
 import { AuthorPackList } from "./AuthorPackList";
@@ -37,8 +36,6 @@ export function AuthorScreen({
 }) {
   const t = useTranslations("profile");
   const { user, status: authStatus } = useAuth();
-  const router = useRouter();
-  const pathname = usePathname();
 
   // Loading/error/data for the profile+packs fetch is owned by useClientData,
   // which aborts the in-flight request on unmount / authorId change — that
@@ -78,41 +75,25 @@ export function AuthorScreen({
   });
   const ruleCategories = rulesQuery.data?.categories ?? [];
 
-  const [followBusy, setFollowBusy] = useState(false);
-  const [followError, setFollowError] = useState("");
   const moderation = useAuthorModeration(authorId);
 
-  async function handleFollowToggle() {
-    if (authStatus !== "authenticated") {
-      router.push(`/auth?next=${encodeURIComponent(pathname)}`);
-      return;
-    }
-    const profile = authorQuery.data?.profile;
-    if (!profile) return;
-    setFollowBusy(true);
-    setFollowError("");
-    try {
-      const result = profile.isFollowedByMe
-        ? await usersClient.unfollow(authorId)
-        : await usersClient.follow(authorId);
-      authorQuery.setData((prev) =>
-        prev
-          ? {
-              ...prev,
-              profile: {
-                ...prev.profile,
-                isFollowedByMe: !prev.profile.isFollowedByMe,
-                followerCount: result.followerCount,
-              },
-            }
-          : prev,
-      );
-    } catch {
-      setFollowError(t("followError"));
-    } finally {
-      setFollowBusy(false);
-    }
-  }
+  // Follow state lives in the fetched author data (so it survives an
+  // authorId-change refetch); useFollowAction owns only the API call, the
+  // sign-in redirect, and the in-flight/error state.
+  const follow = useFollowAction(authorId, (result, nowFollowing) =>
+    authorQuery.setData((prev) =>
+      prev
+        ? {
+            ...prev,
+            profile: {
+              ...prev.profile,
+              isFollowedByMe: nowFollowing,
+              followerCount: result.followerCount,
+            },
+          }
+        : prev,
+    ),
+  );
 
   if (authorQuery.loading) return null;
 
@@ -133,9 +114,9 @@ export function AuthorScreen({
         profile={profile}
         packsTotal={packsTotal}
         isOwnProfile={isOwnProfile}
-        followBusy={followBusy}
-        followError={followError}
-        onFollowToggle={() => void handleFollowToggle()}
+        followBusy={follow.busy}
+        followError={follow.error}
+        onFollowToggle={() => follow.toggle(profile.isFollowedByMe ?? false)}
       />
 
       {showModeratorTools && (

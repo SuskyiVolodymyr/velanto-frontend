@@ -15,6 +15,9 @@ vi.mock("@/src/features/pack/VoteButtons", () => ({
 vi.mock("@/src/features/pack/CommentSection", () => ({
   CommentSection: () => <div>CommentSection</div>,
 }));
+vi.mock("@/src/features/pack/PackCreatorCard", () => ({
+  PackCreatorCard: () => <div>PackCreatorCard</div>,
+}));
 
 const mockedUsePackFallback = vi.mocked(usePackFallback);
 const mockedNotFound = vi.mocked(notFound);

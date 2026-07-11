@@ -11,6 +11,9 @@ vi.mock("@/src/features/pack/VoteButtons", () => ({
 vi.mock("@/src/features/pack/CommentSection", () => ({
   CommentSection: () => <div>CommentSection</div>,
 }));
+vi.mock("@/src/features/pack/PackCreatorCard", () => ({
+  PackCreatorCard: () => <div>PackCreatorCard</div>,
+}));
 
 const BASE_PACK: Pack = {
   id: "p1",
