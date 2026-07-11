@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
-import { adminClient } from "@/src/shared/lib/admin-client";
+import { useAdminOverview } from "@/src/features/admin/api/admin.queries";
 import type { AdminOverview } from "@/src/shared/types/admin";
 
 const STATS: { key: keyof AdminOverview; label: string }[] = [
@@ -15,32 +14,12 @@ const STATS: { key: keyof AdminOverview; label: string }[] = [
 ];
 
 export function OverviewTab() {
-  const [overview, setOverview] = useState<AdminOverview | null>(null);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">(
-    "loading",
-  );
+  const overviewQuery = useAdminOverview();
+  const overview = overviewQuery.data;
 
-  useEffect(() => {
-    let cancelled = false;
-    adminClient
-      .overview()
-      .then((result) => {
-        if (cancelled) return;
-        setOverview(result);
-        setStatus("ready");
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setStatus("error");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  if (status === "loading")
+  if (overviewQuery.isLoading)
     return <Text variant="secondary">Loading overview…</Text>;
-  if (status === "error" || !overview) {
+  if (overviewQuery.isError || !overview) {
     return (
       <Text className="text-[#ff6b6b]">
         Couldn&apos;t load overview. Try again later.

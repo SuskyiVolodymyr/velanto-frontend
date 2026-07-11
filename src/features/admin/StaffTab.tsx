@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Text } from "@/src/shared/components/Text";
 import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
@@ -8,15 +9,17 @@ import { Badge } from "@/src/shared/components/Badge";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { useStreamerModeOrDefault } from "@/src/shared/lib/streamer-mode-context";
-import { adminClient } from "@/src/shared/lib/admin-client";
 import { usersClient } from "@/src/shared/lib/users-client";
+import {
+  useAdminUsers,
+  patchAdminUser,
+} from "@/src/features/admin/api/admin.queries";
 import {
   assignableRolesFor,
   type AssignableRole,
 } from "@/src/shared/lib/staff-permissions";
 import type { AdminUserRow } from "@/src/shared/types/admin";
 
-const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
 
 export function StaffTab() {
@@ -24,16 +27,9 @@ export function StaffTab() {
   // Streamer mode masks identity visually; also keep it out of the role-select
   // aria-label so a screen reader on a shared screen doesn't announce the name.
   const { enabled: streamerMode } = useStreamerModeOrDefault();
+  const queryClient = useQueryClient();
   const [searchInput, setSearchInput] = useState("");
   const [query, setQuery] = useState("");
-  const [users, setUsers] = useState<AdminUserRow[]>([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">(
-    "loading",
-  );
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [actionError, setActionError] = useState("");
 
   useEffect(() => {
     const timeout = setTimeout(
@@ -43,58 +39,46 @@ export function StaffTab() {
     return () => clearTimeout(timeout);
   }, [searchInput]);
 
-  useEffect(() => {
-    let cancelled = false;
-    adminClient
-      .listUsers({ q: query || undefined, page: 1, limit: PAGE_SIZE })
-      .then((result) => {
-        if (cancelled) return;
-        setUsers(result.items);
-        setTotal(result.total);
-        setPage(1);
-        setStatus("ready");
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setStatus("error");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [query]);
+  const usersQuery = useAdminUsers(query);
 
-  async function handleLoadMore() {
-    setLoadingMore(true);
-    try {
-      const nextPage = page + 1;
-      const result = await adminClient.listUsers({
-        q: query || undefined,
-        page: nextPage,
-        limit: PAGE_SIZE,
-      });
-      setUsers((prev) => {
-        const existingIds = new Set(prev.map((u) => u.id));
-        return [...prev, ...result.items.filter((u) => !existingIds.has(u.id))];
-      });
-      setTotal(result.total);
-      setPage(nextPage);
-    } catch {
-      setActionError("Couldn't load more users. Try again.");
-    } finally {
-      setLoadingMore(false);
+  const users = useMemo(() => {
+    const seen = new Set<string>();
+    const out: AdminUserRow[] = [];
+    for (const page of usersQuery.data?.pages ?? []) {
+      for (const row of page.items) {
+        if (!seen.has(row.id)) {
+          seen.add(row.id);
+          out.push(row);
+        }
+      }
     }
-  }
+    return out;
+  }, [usersQuery.data]);
 
-  async function handleRoleChange(id: string, role: AssignableRole) {
-    setActionError("");
-    try {
-      const result = await usersClient.changeRole(id, role);
-      setUsers((prev) =>
-        prev.map((u) => (u.id === id ? { ...u, role: result.role } : u)),
-      );
-    } catch {
-      setActionError("Couldn't change this user's role. Try again.");
-    }
+  const total = usersQuery.data?.pages.at(-1)?.total ?? 0;
+  const hasData = usersQuery.data !== undefined;
+  const status = usersQuery.isLoading
+    ? "loading"
+    : !hasData && usersQuery.isError
+      ? "error"
+      : "ready";
+  const loadingMore = usersQuery.isFetchingNextPage;
+
+  const changeRole = useMutation({
+    mutationFn: ({ id, role }: { id: string; role: AssignableRole }) =>
+      usersClient.changeRole(id, role),
+    onSuccess: (result, { id }) =>
+      patchAdminUser(queryClient, query, id, { role: result.role }),
+  });
+
+  const actionError = changeRole.isError
+    ? "Couldn't change this user's role. Try again."
+    : usersQuery.isFetchNextPageError
+      ? "Couldn't load more users. Try again."
+      : "";
+
+  function handleRoleChange(id: string, role: AssignableRole) {
+    changeRole.mutate({ id, role });
   }
 
   if (!user) return null;
@@ -184,7 +168,7 @@ export function StaffTab() {
         <Button
           variant="secondary"
           disabled={loadingMore}
-          onClick={() => void handleLoadMore()}
+          onClick={() => void usersQuery.fetchNextPage()}
         >
           {loadingMore ? "Loading…" : "Load more"}
         </Button>
