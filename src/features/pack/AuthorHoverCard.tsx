@@ -57,54 +57,60 @@ export function AuthorHoverCard({
   );
 
   return (
-    <div
-      id={id}
-      role="dialog"
-      aria-label={`@${profile.username}`}
-      className="absolute bottom-full left-0 z-20 mb-2 w-[280px] rounded-[14px] border border-border-strong bg-surface p-4 shadow-xl shadow-black/40"
-    >
-      <Link href={`/users/${authorId}`} className="flex items-center gap-3">
-        <Hidden kind="avatar" id={authorId} className="h-11 w-11 flex-none">
-          <div className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface text-base font-semibold text-foreground-secondary">
-            {initial}
+    // The outer element reaches all the way down to the trigger (transparent
+    // `pb-2` instead of a `mb-2` gap) so moving the pointer from the trigger up
+    // into the card never crosses empty space — which would fire the trigger's
+    // mouseleave and close the card mid-travel.
+    <div className="absolute bottom-full left-0 z-20 pb-2">
+      <div
+        id={id}
+        role="dialog"
+        aria-label={`@${profile.username}`}
+        className="w-[280px] rounded-[14px] border border-border-strong bg-surface p-4 shadow-xl shadow-black/40"
+      >
+        <Link href={`/users/${authorId}`} className="flex items-center gap-3">
+          <Hidden kind="avatar" id={authorId} className="h-11 w-11 flex-none">
+            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface text-base font-semibold text-foreground-secondary">
+              {initial}
+            </div>
+          </Hidden>
+          <div className="min-w-0">
+            <Text className="truncate text-[15px] font-semibold">
+              <Hidden kind="name" id={authorId}>
+                {`@${profile.username}`}
+              </Hidden>
+            </Text>
+            <Text variant="tertiary" className="text-xs">
+              {t("followerAndPackCount", {
+                followers: profile.followerCount,
+                packs: packsTotal,
+              })}
+            </Text>
           </div>
-        </Hidden>
-        <div className="min-w-0">
-          <Text className="truncate text-[15px] font-semibold">
-            <Hidden kind="name" id={authorId}>
-              {`@${profile.username}`}
-            </Hidden>
-          </Text>
-          <Text variant="tertiary" className="text-xs">
-            {t("followerAndPackCount", {
-              followers: profile.followerCount,
-              packs: packsTotal,
-            })}
-          </Text>
-        </div>
-      </Link>
+        </Link>
 
-      {profile.bio && (
-        <Text
-          variant="secondary"
-          className="mt-3 line-clamp-2 text-sm leading-snug"
-        >
-          {profile.bio}
-        </Text>
-      )}
+        {profile.bio && (
+          <Text
+            variant="secondary"
+            className="mt-3 line-clamp-2 text-sm leading-snug"
+          >
+            {profile.bio}
+          </Text>
+        )}
 
-      {!isOwnProfile && (
-        <div className="mt-3.5 flex flex-col gap-1">
-          {followBlocked ? (
-            <Tooltip content={tAuth("logInToFollow")}>{followButton}</Tooltip>
-          ) : (
-            followButton
-          )}
-          {followError && (
-            <Text className="text-xs text-[#ff6b6b]">{followError}</Text>
-          )}
-        </div>
-      )}
+        {!isOwnProfile && (
+          <div className="mt-3.5 flex flex-col gap-1">
+            {followBlocked ? (
+              <Tooltip content={tAuth("logInToFollow")}>{followButton}</Tooltip>
+            ) : (
+              followButton
+            )}
+            {followError && (
+              <Text className="text-xs text-[#ff6b6b]">{followError}</Text>
+            )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
