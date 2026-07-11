@@ -131,7 +131,7 @@ describe("CommentSection", () => {
     expect(await screen.findByText("No comments yet.")).toBeInTheDocument();
   });
 
-  it("shows a log-in prompt instead of a compose form when unauthenticated", async () => {
+  it("shows a blocked composer with a reason tooltip when unauthenticated", async () => {
     vi.mocked(commentsClient.list).mockResolvedValue({
       items: [],
       total: 0,
@@ -140,8 +140,19 @@ describe("CommentSection", () => {
     });
     renderAsUnauthenticated();
 
-    expect(await screen.findByText(/log in/i)).toBeInTheDocument();
-    expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+    // The composer is shown but inert: the textarea is disabled and Post is
+    // blocked, explaining the reason on hover rather than posting.
+    const textarea = await screen.findByRole("textbox");
+    expect(textarea).toBeDisabled();
+
+    const post = screen.getByRole("button", { name: "Post" });
+    expect(post).toHaveAttribute("aria-disabled", "true");
+
+    await userEvent.hover(post);
+    expect(screen.getByRole("tooltip")).toHaveTextContent("Log in to comment");
+
+    await userEvent.click(post);
+    expect(commentsClient.create).not.toHaveBeenCalled();
   });
 
   it("shows a compose form when authenticated", async () => {

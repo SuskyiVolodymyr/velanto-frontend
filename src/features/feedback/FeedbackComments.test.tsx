@@ -63,7 +63,7 @@ describe("FeedbackComments", () => {
     });
   });
 
-  it("shows a log-in prompt instead of a compose form when unauthenticated", async () => {
+  it("shows a blocked composer with a reason tooltip when unauthenticated", async () => {
     mockAuth(false);
     mockedFeedbackClient.listComments.mockResolvedValue({
       items: [],
@@ -74,8 +74,17 @@ describe("FeedbackComments", () => {
 
     render(<FeedbackComments feedbackId="f1" />);
 
-    expect(await screen.findByText(/log in/i)).toBeInTheDocument();
-    expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+    const textarea = await screen.findByRole("textbox");
+    expect(textarea).toBeDisabled();
+
+    const post = screen.getByRole("button", { name: "Post" });
+    expect(post).toHaveAttribute("aria-disabled", "true");
+
+    await userEvent.hover(post);
+    expect(screen.getByRole("tooltip")).toHaveTextContent("Log in to comment");
+
+    await userEvent.click(post);
+    expect(mockedFeedbackClient.addComment).not.toHaveBeenCalled();
   });
 
   it("posts a comment and prepends it, clearing the draft", async () => {

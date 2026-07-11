@@ -33,7 +33,9 @@ export function useVoteMutation<T extends VoteTally>(
   vote: (value: 1 | -1) => Promise<T>,
 ): UseVoteMutationResult<T> {
   const { status } = useAuth();
-  const blocked = status !== "authenticated";
+  // Only a *known* signed-out viewer is blocked; during the initial auth
+  // refresh (status "loading") we don't yet flash the login reason.
+  const blocked = status === "unauthenticated";
   const mutation = useMutation({ mutationFn: vote });
 
   return {
@@ -42,7 +44,7 @@ export function useVoteMutation<T extends VoteTally>(
     isError: mutation.isError,
     blocked,
     cast: (value) => {
-      if (blocked) return;
+      if (status !== "authenticated") return;
       mutation.mutate(value);
     },
   };

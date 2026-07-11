@@ -29,7 +29,9 @@ export function useFollowMutation<T extends { profile: PublicUserProfile }>(
 ): UseFollowMutationResult {
   const queryClient = useQueryClient();
   const { status } = useAuth();
-  const blocked = status !== "authenticated";
+  // Only a *known* signed-out viewer is blocked; during the initial auth
+  // refresh (status "loading") we don't yet flash the login reason.
+  const blocked = status === "unauthenticated";
 
   const mutation = useMutation({
     mutationFn: (currentlyFollowing: boolean) =>
@@ -54,7 +56,7 @@ export function useFollowMutation<T extends { profile: PublicUserProfile }>(
 
   return {
     toggle: (currentlyFollowing) => {
-      if (blocked) return;
+      if (status !== "authenticated") return;
       mutation.mutate(currentlyFollowing);
     },
     isPending: mutation.isPending,

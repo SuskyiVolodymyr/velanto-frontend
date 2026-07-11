@@ -1,6 +1,7 @@
 "use client";
 
 import { cloneElement, useId, useState, type ReactElement } from "react";
+import { cn } from "@/src/shared/lib/cn";
 
 /**
  * A small hover/focus tooltip that states a reason. Used to explain why an
@@ -15,9 +16,12 @@ import { cloneElement, useId, useState, type ReactElement } from "react";
 export function Tooltip({
   content,
   children,
+  className,
 }: {
   content: string;
   children: ReactElement;
+  /** Extra classes for the wrapper span (e.g. flex self-alignment). */
+  className?: string;
 }) {
   const id = useId();
   const [open, setOpen] = useState(false);
@@ -26,7 +30,7 @@ export function Tooltip({
 
   return (
     <span
-      className="relative inline-flex"
+      className={cn("relative inline-flex", className)}
       onMouseEnter={show}
       onMouseLeave={hide}
       onFocus={show}

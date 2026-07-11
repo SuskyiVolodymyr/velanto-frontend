@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
+import { Tooltip } from "@/src/shared/components/Tooltip";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { messageFromError } from "@/src/shared/lib/messageFromError";
 import type { FeedbackComment } from "@/src/shared/types/feedback";
@@ -16,7 +17,9 @@ import {
 
 export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
   const t = useTranslations("feedback");
+  const tAuth = useTranslations("authGate");
   const { status } = useAuth();
+  const blocked = status === "unauthenticated";
   const [draft, setDraft] = useState("");
 
   const commentsQuery = useFeedbackComments(feedbackId);
@@ -57,6 +60,7 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
     : "";
 
   function handlePost() {
+    if (status !== "authenticated") return;
     const body = draft.trim();
     if (!body) return;
     addComment.mutate(body, { onSuccess: () => setDraft("") });
@@ -72,7 +76,7 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
         {t("commentsHeading", { count: total })}
       </Text>
 
-      {status === "authenticated" && (
+      {status !== "loading" && (
         <div className="mb-6 flex flex-col gap-2">
           <textarea
             value={draft}
@@ -80,30 +84,33 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
             placeholder={t("commentPlaceholder")}
             aria-label={t("commentAria")}
             rows={2}
-            disabled={posting}
+            disabled={posting || blocked}
             className="rounded-[10px] border border-border bg-surface px-3.5 py-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-acc disabled:opacity-45"
           />
           {postError && (
             <Text className="text-sm text-[#ff6b6b]">{postError}</Text>
           )}
-          <Button
-            className="self-end"
-            disabled={!draft.trim() || posting}
-            onClick={handlePost}
-          >
-            {t("postComment")}
-          </Button>
-        </div>
-      )}
-      {status === "unauthenticated" && (
-        <div className="mb-6 rounded-xl border border-dashed border-border-strong px-4 py-4 text-sm text-foreground-secondary">
-          {t.rich("loginToComment", {
-            link: (chunks) => (
-              <Link href="/auth" className="text-acc">
-                {chunks}
-              </Link>
-            ),
-          })}
+          {blocked ? (
+            // Signed-out viewers see a dimmed Post that explains the reason on
+            // hover/focus, instead of a separate log-in prompt box.
+            <Tooltip content={tAuth("logInToComment")} className="self-end">
+              <Button
+                aria-disabled
+                className="cursor-not-allowed opacity-45"
+                onClick={handlePost}
+              >
+                {t("postComment")}
+              </Button>
+            </Tooltip>
+          ) : (
+            <Button
+              className="self-end"
+              disabled={!draft.trim() || posting}
+              onClick={handlePost}
+            >
+              {t("postComment")}
+            </Button>
+          )}
         </div>
       )}
 
