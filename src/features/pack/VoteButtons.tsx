@@ -1,10 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter, usePathname } from "next/navigation";
-import { useAuth } from "@/src/shared/lib/auth-context";
 import { packsClient } from "@/src/shared/lib/packs-client";
+import { useVoteMutation } from "@/src/shared/api/vote.mutations";
 import { cn } from "@/src/shared/lib/cn";
 
 function Arrow({ direction }: { direction: "up" | "down" }) {
@@ -42,37 +40,19 @@ export function VoteButtons({
   initialDislikes: number;
   initialMyVote: 1 | -1 | null;
 }) {
-  const { status: authStatus } = useAuth();
   const t = useTranslations("pack");
-  const router = useRouter();
-  const pathname = usePathname();
+  const vote = useVoteMutation((value) => packsClient.vote(packId, value));
 
-  const [likes, setLikes] = useState(initialLikes);
-  const [dislikes, setDislikes] = useState(initialDislikes);
-  const [myVote, setMyVote] = useState(initialMyVote);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
-
+  // Once the viewer has voted, show the server tally wholesale; before that, the
+  // initial props. (`myVote` can be null after a toggle-off, so use the tally's
+  // presence rather than `??`.)
+  const tally = vote.result;
+  const likes = tally ? tally.likes : initialLikes;
+  const dislikes = tally ? tally.dislikes : initialDislikes;
+  const myVote = tally ? tally.myVote : initialMyVote;
   const score = likes - dislikes;
-
-  async function handleVote(value: 1 | -1) {
-    if (authStatus !== "authenticated") {
-      router.push(`/auth?next=${encodeURIComponent(pathname)}`);
-      return;
-    }
-    setBusy(true);
-    setError("");
-    try {
-      const result = await packsClient.vote(packId, value);
-      setLikes(result.likes);
-      setDislikes(result.dislikes);
-      setMyVote(result.myVote);
-    } catch {
-      setError(t("voteError"));
-    } finally {
-      setBusy(false);
-    }
-  }
+  const busy = vote.isPending;
+  const error = vote.isError ? t("voteError") : "";
 
   return (
     <div className="flex flex-col items-start gap-1.5">
@@ -82,7 +62,7 @@ export function VoteButtons({
           aria-label={t("upvote")}
           aria-pressed={myVote === 1}
           disabled={busy}
-          onClick={() => void handleVote(1)}
+          onClick={() => vote.cast(1)}
           className={cn(
             "flex h-8 w-8 items-center justify-center rounded-[7px] transition-colors disabled:opacity-50",
             myVote === 1
@@ -109,7 +89,7 @@ export function VoteButtons({
           aria-label={t("downvote")}
           aria-pressed={myVote === -1}
           disabled={busy}
-          onClick={() => void handleVote(-1)}
+          onClick={() => vote.cast(-1)}
           className={cn(
             "flex h-8 w-8 items-center justify-center rounded-[7px] transition-colors disabled:opacity-50",
             myVote === -1

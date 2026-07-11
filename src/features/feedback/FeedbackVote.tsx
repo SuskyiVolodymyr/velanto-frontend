@@ -1,10 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/src/shared/lib/auth-context";
 import { feedbackClient } from "@/src/shared/lib/feedback-client";
+import { useVoteMutation } from "@/src/shared/api/vote.mutations";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 
@@ -22,36 +20,18 @@ export function FeedbackVote({
   initialMyVote: 1 | -1 | null;
 }) {
   const t = useTranslations("feedback");
-  const { status: authStatus } = useAuth();
-  const router = useRouter();
-  const pathname = usePathname();
+  const vote = useVoteMutation((value) => feedbackClient.vote(feedbackId, value));
 
-  const [score, setScore] = useState(initialScore);
-  const [likes, setLikes] = useState(initialLikes);
-  const [dislikes, setDislikes] = useState(initialDislikes);
-  const [myVote, setMyVote] = useState(initialMyVote);
-  const [busy, setBusy] = useState(false);
-  const [error, setError] = useState("");
-
-  async function handleVote(value: 1 | -1) {
-    if (authStatus !== "authenticated") {
-      router.push(`/auth?next=${encodeURIComponent(pathname)}`);
-      return;
-    }
-    setBusy(true);
-    setError("");
-    try {
-      const result = await feedbackClient.vote(feedbackId, value);
-      setScore(result.score);
-      setLikes(result.likes);
-      setDislikes(result.dislikes);
-      setMyVote(result.myVote);
-    } catch {
-      setError(t("voteError"));
-    } finally {
-      setBusy(false);
-    }
-  }
+  // Once the viewer has voted, show the server tally wholesale; before that, the
+  // initial props. (`myVote` can be null after a toggle-off, so use the tally's
+  // presence rather than `??`.)
+  const tally = vote.result;
+  const score = tally ? tally.score : initialScore;
+  const likes = tally ? tally.likes : initialLikes;
+  const dislikes = tally ? tally.dislikes : initialDislikes;
+  const myVote = tally ? tally.myVote : initialMyVote;
+  const busy = vote.isPending;
+  const error = vote.isError ? t("voteError") : "";
 
   return (
     <div className="flex items-center gap-3">
@@ -64,14 +44,14 @@ export function FeedbackVote({
       <Button
         variant={myVote === 1 ? "primary" : "secondary"}
         disabled={busy}
-        onClick={() => void handleVote(1)}
+        onClick={() => vote.cast(1)}
       >
         {t("like")} <span>{likes}</span>
       </Button>
       <Button
         variant={myVote === -1 ? "primary" : "secondary"}
         disabled={busy}
-        onClick={() => void handleVote(-1)}
+        onClick={() => vote.cast(-1)}
       >
         {t("dislike")} <span>{dislikes}</span>
       </Button>
