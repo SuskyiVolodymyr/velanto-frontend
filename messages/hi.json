@@ -65,6 +65,8 @@
     "email": "ईमेल",
     "password": "पासवर्ड",
     "confirmPassword": "पासवर्ड की पुष्टि करें",
+    "showPassword": "पासवर्ड दिखाएँ",
+    "hidePassword": "पासवर्ड छिपाएँ",
     "invalidCredentials": "अमान्य क्रेडेंशियल।",
     "pleaseWait": "कृपया प्रतीक्षा करें…",
     "createAccount": "खाता बनाएँ",

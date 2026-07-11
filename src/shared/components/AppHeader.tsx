@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { buttonClassName } from "@/src/shared/components/Button";
@@ -11,6 +12,7 @@ import { NotificationsBell } from "@/src/shared/components/NotificationsBell";
 export function AppHeader() {
   const { user, status, logout } = useAuth();
   const t = useTranslations("header");
+  const pathname = usePathname();
 
   return (
     <header className="sticky top-0 z-40 flex items-center justify-between border-b border-border bg-background/70 px-7 py-6 backdrop-blur-[6px]">
@@ -48,7 +50,7 @@ export function AppHeader() {
         </div>
       )}
 
-      {status === "unauthenticated" && (
+      {status === "unauthenticated" && pathname !== "/auth" && (
         <Link href="/auth" className={buttonClassName("secondary")}>
           {t("logIn")}
         </Link>

@@ -65,6 +65,8 @@
     "email": "ای میل",
     "password": "پاس ورڈ",
     "confirmPassword": "پاس ورڈ کی تصدیق کریں",
+    "showPassword": "پاس ورڈ دکھائیں",
+    "hidePassword": "پاس ورڈ چھپائیں",
     "invalidCredentials": "غلط تفصیلات۔",
     "pleaseWait": "براہ کرم انتظار کریں…",
     "createAccount": "اکاؤنٹ بنائیں",

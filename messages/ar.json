@@ -65,6 +65,8 @@
     "email": "البريد الإلكتروني",
     "password": "كلمة المرور",
     "confirmPassword": "تأكيد كلمة المرور",
+    "showPassword": "إظهار كلمة المرور",
+    "hidePassword": "إخفاء كلمة المرور",
     "invalidCredentials": "بيانات الدخول غير صحيحة.",
     "pleaseWait": "يرجى الانتظار…",
     "createAccount": "إنشاء حساب",

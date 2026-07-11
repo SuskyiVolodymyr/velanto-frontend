@@ -65,6 +65,8 @@
     "email": "Эл. почта",
     "password": "Пароль",
     "confirmPassword": "Подтвердите пароль",
+    "showPassword": "Показать пароль",
+    "hidePassword": "Скрыть пароль",
     "invalidCredentials": "Неверные данные для входа.",
     "pleaseWait": "Подожди…",
     "createAccount": "Создать аккаунт",

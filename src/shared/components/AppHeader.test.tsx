@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -10,6 +10,11 @@ import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { ApiError } from "@/src/shared/lib/api-client";
 import { notificationsClient } from "@/src/shared/lib/notifications-client";
+
+let pathname = "/";
+vi.mock("next/navigation", () => ({
+  usePathname: () => pathname,
+}));
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
   authClient: {
@@ -48,6 +53,7 @@ function renderHeader() {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  pathname = "/";
   vi.mocked(notificationsClient.unreadCount).mockResolvedValue({ count: 0 });
 });
 
@@ -74,6 +80,22 @@ describe("AppHeader", () => {
 
     const link = await screen.findByRole("link", { name: "Log in" });
     expect(link).toHaveAttribute("href", "/auth");
+  });
+
+  it("hides the Log in link on the auth page itself", async () => {
+    pathname = "/auth";
+    vi.mocked(authClient.refresh).mockRejectedValue(
+      new ApiError(401, "Unauthorized", null),
+    );
+    renderHeader();
+
+    // Give the refresh-on-mount rejection time to settle to "unauthenticated".
+    await waitFor(() =>
+      expect(authClient.refresh).toHaveBeenCalled(),
+    );
+    expect(
+      screen.queryByRole("link", { name: "Log in" }),
+    ).not.toBeInTheDocument();
   });
 
   it("shows the username and a Log out control when authenticated", async () => {

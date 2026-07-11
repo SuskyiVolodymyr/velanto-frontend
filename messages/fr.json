@@ -65,6 +65,8 @@
     "email": "E-mail",
     "password": "Mot de passe",
     "confirmPassword": "Confirmer le mot de passe",
+    "showPassword": "Afficher le mot de passe",
+    "hidePassword": "Masquer le mot de passe",
     "invalidCredentials": "Identifiants invalides.",
     "pleaseWait": "Veuillez patienter…",
     "createAccount": "Créer un compte",

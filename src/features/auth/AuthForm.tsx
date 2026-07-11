@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
@@ -10,6 +10,7 @@ import { messageFromError } from "@/src/shared/lib/messageFromError";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { TextField } from "@/src/shared/components/form/TextField";
+import { PasswordField } from "@/src/shared/components/form/PasswordField";
 import { cn } from "@/src/shared/lib/cn";
 import { sanitizeNextPath } from "@/src/shared/lib/safe-redirect";
 import {
@@ -30,15 +31,18 @@ export function AuthForm() {
   const t = useTranslations("auth");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login, register } = useAuth();
+  const { status, login, register } = useAuth();
   const [mode, setMode] = useState<Mode>("login");
   const [shake, setShake] = useState(false);
 
   const isRegister = mode === "register";
 
   // react-hook-form re-reads the resolver each render, so swapping schemas on a
-  // mode change is enough — no need to recreate the form.
+  // mode change is enough — no need to recreate the form. `onTouched` validates
+  // a field once it's been blurred and then live on every keystroke, so errors
+  // surface in real time without nagging fields the user hasn't reached yet.
   const methods = useForm<AuthFormValues>({
+    mode: "onTouched",
     resolver: zodResolver(isRegister ? registerSchema : loginSchema),
     defaultValues: {
       identifier: "",
@@ -51,10 +55,19 @@ export function AuthForm() {
   });
   const {
     handleSubmit,
-    clearErrors,
+    reset,
     setError,
     formState: { isSubmitting, errors },
   } = methods;
+
+  // An already-signed-in visitor has no business on the auth screen; send them
+  // where they were headed (or home). Covers landing here directly and the case
+  // where a session is restored while the form is open.
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.replace(sanitizeNextPath(searchParams.get("next")));
+    }
+  }, [status, router, searchParams]);
 
   function triggerShake() {
     setShake(true);
@@ -63,7 +76,10 @@ export function AuthForm() {
 
   function switchMode(next: Mode) {
     setMode(next);
-    clearErrors();
+    // Full reset (not just clearErrors) so the new mode starts with a clean
+    // slate: no carried-over values, touched, or submitted state that would
+    // otherwise make the other mode's fields show errors before they're touched.
+    reset();
   }
 
   async function onValid(values: AuthFormValues) {
@@ -81,7 +97,8 @@ export function AuthForm() {
           password: values.password,
         });
       }
-      router.push(sanitizeNextPath(searchParams.get("next")));
+      // Success flips auth status to "authenticated"; the effect above performs
+      // the redirect (single source of truth for leaving the auth screen).
     } catch (err) {
       setError("root", {
         message: messageFromError(err, {
@@ -149,13 +166,14 @@ export function AuthForm() {
           ) : (
             <LoginFields disabled={isSubmitting} />
           )}
-          <TextField
+          <PasswordField
             name="password"
             label={t("password")}
             srOnlyLabel
-            type="password"
             placeholder={t("password")}
             autoComplete={isRegister ? "new-password" : "current-password"}
+            showLabel={t("showPassword")}
+            hideLabel={t("hidePassword")}
             disabled={isSubmitting}
           />
 

@@ -65,6 +65,8 @@
     "email": "Email",
     "password": "Пароль",
     "confirmPassword": "Підтвердьте пароль",
+    "showPassword": "Показати пароль",
+    "hidePassword": "Приховати пароль",
     "invalidCredentials": "Неправильний логін або пароль.",
     "pleaseWait": "Зачекай…",
     "createAccount": "Створити обліковий запис",

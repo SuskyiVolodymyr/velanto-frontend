@@ -65,6 +65,8 @@
     "email": "Email",
     "password": "Senha",
     "confirmPassword": "Confirmar senha",
+    "showPassword": "Mostrar senha",
+    "hidePassword": "Ocultar senha",
     "invalidCredentials": "Credenciais inválidas.",
     "pleaseWait": "Aguarde…",
     "createAccount": "Criar conta",

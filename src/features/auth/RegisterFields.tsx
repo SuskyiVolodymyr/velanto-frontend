@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { TextField } from "@/src/shared/components/form/TextField";
+import { PasswordField } from "@/src/shared/components/form/PasswordField";
 import { CheckboxField } from "@/src/shared/components/form/CheckboxField";
 
 /**
@@ -44,13 +45,14 @@ export function RegisterFields({ disabled }: { disabled: boolean }) {
 export function ConfirmPasswordField({ disabled }: { disabled: boolean }) {
   const t = useTranslations("auth");
   return (
-    <TextField
+    <PasswordField
       name="confirmPassword"
       label={t("confirmPassword")}
       srOnlyLabel
-      type="password"
       placeholder={t("confirmPassword")}
       autoComplete="new-password"
+      showLabel={t("showPassword")}
+      hideLabel={t("hidePassword")}
       disabled={disabled}
     />
   );
