@@ -1,7 +1,6 @@
 "use client";
 
 import { useMutation, useQueryClient, type QueryKey } from "@tanstack/react-query";
-import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { usersClient } from "@/src/shared/lib/users-client";
 import type { PublicUserProfile } from "@/src/shared/types/user";
@@ -11,6 +10,8 @@ export interface UseFollowMutationResult {
   toggle: (currentlyFollowing: boolean) => void;
   isPending: boolean;
   isError: boolean;
+  /** True when the viewer isn't signed in — the control should render blocked. */
+  blocked: boolean;
 }
 
 /**
@@ -18,8 +19,9 @@ export interface UseFollowMutationResult {
  * control (pack creator card, author page, …). Generic over the cache it
  * patches: pass the query key of any cache shaped `{ profile: PublicUserProfile }`
  * and its cached profile is updated in place on success (new follow state +
- * follower count, no refetch). Anonymous viewers are redirected to sign in
- * instead of mutating.
+ * follower count, no refetch). Anonymous viewers are `blocked`: `toggle` no-ops
+ * so the caller can render the control disabled with a reason tooltip rather
+ * than firing a surprise redirect.
  */
 export function useFollowMutation<T extends { profile: PublicUserProfile }>(
   authorId: string,
@@ -27,8 +29,7 @@ export function useFollowMutation<T extends { profile: PublicUserProfile }>(
 ): UseFollowMutationResult {
   const queryClient = useQueryClient();
   const { status } = useAuth();
-  const router = useRouter();
-  const pathname = usePathname();
+  const blocked = status !== "authenticated";
 
   const mutation = useMutation({
     mutationFn: (currentlyFollowing: boolean) =>
@@ -53,13 +54,11 @@ export function useFollowMutation<T extends { profile: PublicUserProfile }>(
 
   return {
     toggle: (currentlyFollowing) => {
-      if (status !== "authenticated") {
-        router.push(`/auth?next=${encodeURIComponent(pathname)}`);
-        return;
-      }
+      if (blocked) return;
       mutation.mutate(currentlyFollowing);
     },
     isPending: mutation.isPending,
     isError: mutation.isError,
+    blocked,
   };
 }

@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
+import { Tooltip } from "@/src/shared/components/Tooltip";
 import type { PublicUserProfile } from "@/src/shared/types/user";
 
 /**
@@ -22,6 +23,7 @@ export function AuthorHoverCard({
   packsTotal,
   isOwnProfile,
   followBusy,
+  followBlocked,
   followError,
   onFollowToggle,
 }: {
@@ -31,12 +33,28 @@ export function AuthorHoverCard({
   packsTotal: number;
   isOwnProfile: boolean;
   followBusy: boolean;
+  followBlocked: boolean;
   followError: string;
   onFollowToggle: () => void;
 }) {
   const t = useTranslations("profile");
+  const tAuth = useTranslations("authGate");
   const isFollowing = profile.isFollowedByMe ?? false;
   const initial = profile.username.slice(0, 1).toUpperCase();
+
+  // Signed-out viewers get a dimmed, non-functional follow button with the
+  // reason on hover/focus instead of a surprise sign-in redirect.
+  const followButton = (
+    <Button
+      variant={isFollowing ? "secondary" : "primary"}
+      aria-disabled={followBlocked || undefined}
+      disabled={followBusy}
+      className={followBlocked ? "cursor-not-allowed opacity-45" : undefined}
+      onClick={onFollowToggle}
+    >
+      {isFollowing ? t("following") : t("follow")}
+    </Button>
+  );
 
   return (
     <div
@@ -77,13 +95,11 @@ export function AuthorHoverCard({
 
       {!isOwnProfile && (
         <div className="mt-3.5 flex flex-col gap-1">
-          <Button
-            variant={isFollowing ? "secondary" : "primary"}
-            disabled={followBusy}
-            onClick={onFollowToggle}
-          >
-            {isFollowing ? t("following") : t("follow")}
-          </Button>
+          {followBlocked ? (
+            <Tooltip content={tAuth("logInToFollow")}>{followButton}</Tooltip>
+          ) : (
+            followButton
+          )}
           {followError && (
             <Text className="text-xs text-[#ff6b6b]">{followError}</Text>
           )}

@@ -203,17 +203,20 @@ describe("PackCreatorCard", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("redirects an unauthenticated viewer to sign in when following", async () => {
+  it("blocks an unauthenticated viewer with a reason tooltip instead of redirecting", async () => {
     mockAuth(null);
     renderCard(<PackCreatorCard pack={makePack()} />);
     const handle = await screen.findByText("@quizmaster");
     await userEvent.hover(handle);
     const followButton = await screen.findByRole("button", { name: "Follow" });
+    expect(followButton).toHaveAttribute("aria-disabled", "true");
+
+    await userEvent.hover(followButton);
+    expect(screen.getByRole("tooltip")).toHaveTextContent("Log in to follow");
 
     await userEvent.click(followButton);
-
     expect(mockedUsersClient.follow).not.toHaveBeenCalled();
-    expect(push).toHaveBeenCalledWith("/auth?next=%2Fpacks%2Fpack-1");
+    expect(push).not.toHaveBeenCalled();
   });
 
   it("omits the follow button on the viewer's own pack", async () => {

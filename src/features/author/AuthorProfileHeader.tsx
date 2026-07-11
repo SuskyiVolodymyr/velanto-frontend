@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
+import { Tooltip } from "@/src/shared/components/Tooltip";
 import type { PublicUserProfile } from "@/src/shared/types/user";
 
 /**
@@ -18,6 +19,7 @@ export function AuthorProfileHeader({
   packsTotal,
   isOwnProfile,
   followBusy,
+  followBlocked,
   followError,
   onFollowToggle,
 }: {
@@ -26,11 +28,28 @@ export function AuthorProfileHeader({
   packsTotal: number;
   isOwnProfile: boolean;
   followBusy: boolean;
+  followBlocked: boolean;
   followError: string;
   onFollowToggle: () => void;
 }) {
   const t = useTranslations("profile");
+  const tAuth = useTranslations("authGate");
   const initial = profile.username.slice(0, 1).toUpperCase();
+
+  // A signed-out viewer sees the follow button dimmed and non-functional, with
+  // the reason on hover/focus — not the real `disabled` attribute (which would
+  // suppress the Tooltip) and not a surprise sign-in redirect.
+  const followButton = (
+    <Button
+      variant={profile.isFollowedByMe ? "secondary" : "primary"}
+      aria-disabled={followBlocked || undefined}
+      disabled={followBusy}
+      className={followBlocked ? "cursor-not-allowed opacity-45" : undefined}
+      onClick={onFollowToggle}
+    >
+      {profile.isFollowedByMe ? t("following") : t("follow")}
+    </Button>
+  );
 
   return (
     <>
@@ -57,13 +76,11 @@ export function AuthorProfileHeader({
         </div>
         {!isOwnProfile && (
           <div className="flex flex-col items-end gap-1">
-            <Button
-              variant={profile.isFollowedByMe ? "secondary" : "primary"}
-              disabled={followBusy}
-              onClick={onFollowToggle}
-            >
-              {profile.isFollowedByMe ? t("following") : t("follow")}
-            </Button>
+            {followBlocked ? (
+              <Tooltip content={tAuth("logInToFollow")}>{followButton}</Tooltip>
+            ) : (
+              followButton
+            )}
             {followError && (
               <Text className="text-xs text-[#ff6b6b]">{followError}</Text>
             )}

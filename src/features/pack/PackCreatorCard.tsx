@@ -128,6 +128,7 @@ export function PackCreatorCard({ pack }: { pack: Pack }) {
           packsTotal={summary.packsTotal}
           isOwnProfile={isOwnProfile}
           followBusy={follow.isPending}
+          followBlocked={follow.blocked}
           followError={follow.isError ? tProfile("followError") : ""}
           onFollowToggle={() =>
             follow.toggle(summary.profile.isFollowedByMe ?? false)

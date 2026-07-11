@@ -17,7 +17,7 @@ export function Tooltip({
   children,
 }: {
   content: string;
-  children: ReactElement<{ "aria-describedby"?: string }>;
+  children: ReactElement;
 }) {
   const id = useId();
   const [open, setOpen] = useState(false);
@@ -32,7 +32,9 @@ export function Tooltip({
       onFocus={show}
       onBlur={hide}
     >
-      {cloneElement(children, { "aria-describedby": open ? id : undefined })}
+      {cloneElement(children as ReactElement<{ "aria-describedby"?: string }>, {
+        "aria-describedby": open ? id : undefined,
+      })}
       {open && (
         <span
           role="tooltip"

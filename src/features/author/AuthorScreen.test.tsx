@@ -176,16 +176,22 @@ describe("AuthorScreen", () => {
     expect(screen.getByRole("button", { name: "Follow" })).toBeInTheDocument();
   });
 
-  it("redirects an anonymous viewer to /auth on Follow click instead of calling the API", async () => {
+  it("blocks an anonymous viewer with a reason tooltip instead of redirecting on Follow", async () => {
     mockAuth({ user: null, status: "unauthenticated" });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() =>
       expect(screen.getByText("quizmaster")).toBeInTheDocument(),
     );
-    await userEvent.click(screen.getByRole("button", { name: "Follow" }));
+    const followButton = screen.getByRole("button", { name: "Follow" });
+    expect(followButton).toHaveAttribute("aria-disabled", "true");
+
+    await userEvent.hover(followButton);
+    expect(screen.getByRole("tooltip")).toHaveTextContent("Log in to follow");
+
+    await userEvent.click(followButton);
     expect(mockedUsersClient.follow).not.toHaveBeenCalled();
-    expect(push).toHaveBeenCalledWith("/auth?next=%2Fusers%2Fauthor-1");
+    expect(push).not.toHaveBeenCalled();
   });
 
   it("renders the author's approved packs in a grid without status badges", async () => {

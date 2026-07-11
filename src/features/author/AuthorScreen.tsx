@@ -84,6 +84,7 @@ export function AuthorScreen({
         packsTotal={packsTotal}
         isOwnProfile={isOwnProfile}
         followBusy={follow.isPending}
+        followBlocked={follow.blocked}
         followError={follow.isError ? t("followError") : ""}
         onFollowToggle={() => follow.toggle(profile.isFollowedByMe ?? false)}
       />
