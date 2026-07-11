@@ -1,4 +1,9 @@
 {
+  "authGate": {
+    "logInToVote": "登录后投票",
+    "logInToFollow": "登录后关注",
+    "logInToComment": "登录后评论"
+  },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
     "logIn": "登录",

@@ -1,4 +1,9 @@
 {
+  "authGate": {
+    "logInToVote": "Log in to vote",
+    "logInToFollow": "Log in to follow",
+    "logInToComment": "Log in to comment"
+  },
   "header": {
     "logIn": "Log in",
     "logOut": "Log out",

@@ -1,4 +1,9 @@
 {
+  "authGate": {
+    "logInToVote": "Увійдіть, щоб голосувати",
+    "logInToFollow": "Увійдіть, щоб стежити",
+    "logInToComment": "Увійдіть, щоб коментувати"
+  },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
     "logIn": "Увійти",

@@ -1,4 +1,9 @@
 {
+  "authGate": {
+    "logInToVote": "Faça login para votar",
+    "logInToFollow": "Faça login para seguir",
+    "logInToComment": "Faça login para comentar"
+  },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
     "logIn": "Entrar",

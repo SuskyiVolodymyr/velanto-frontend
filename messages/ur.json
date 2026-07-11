@@ -1,4 +1,9 @@
 {
+  "authGate": {
+    "logInToVote": "ووٹ دینے کے لیے لاگ ان کریں",
+    "logInToFollow": "فالو کرنے کے لیے لاگ ان کریں",
+    "logInToComment": "تبصرہ کرنے کے لیے لاگ ان کریں"
+  },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
     "logIn": "لاگ اِن کریں",
