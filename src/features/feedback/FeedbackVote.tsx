@@ -23,7 +23,9 @@ export function FeedbackVote({
 }) {
   const t = useTranslations("feedback");
   const tAuth = useTranslations("authGate");
-  const vote = useVoteMutation((value) => feedbackClient.vote(feedbackId, value));
+  const vote = useVoteMutation((value) =>
+    feedbackClient.vote(feedbackId, value),
+  );
 
   // Once the viewer has voted, show the server tally wholesale; before that, the
   // initial props. (`myVote` can be null after a toggle-off, so use the tally's
