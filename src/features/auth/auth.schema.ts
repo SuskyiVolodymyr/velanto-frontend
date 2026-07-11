@@ -12,8 +12,9 @@ const authFields = z.object({
   username: z.string(),
   email: z.string(),
   password: z.string(),
-  // Only meaningful in register mode; login ignores it. Kept on the shared
+  // Only meaningful in register mode; login ignores these. Kept on the shared
   // shape so the react-hook-form values type stays stable across the toggle.
+  confirmPassword: z.string(),
   acceptedRules: z.boolean(),
 });
 
@@ -62,6 +63,14 @@ export const registerSchema = authFields
         code: "custom",
         message: `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`,
         path: ["password"],
+      });
+      return;
+    }
+    if (data.password !== data.confirmPassword) {
+      ctx.addIssue({
+        code: "custom",
+        message: "Passwords do not match.",
+        path: ["confirmPassword"],
       });
     }
   });

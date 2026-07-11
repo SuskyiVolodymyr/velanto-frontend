@@ -64,6 +64,7 @@
     "username": "Ім'я користувача",
     "email": "Email",
     "password": "Пароль",
+    "confirmPassword": "Підтвердьте пароль",
     "invalidCredentials": "Неправильний логін або пароль.",
     "pleaseWait": "Зачекай…",
     "createAccount": "Створити обліковий запис",

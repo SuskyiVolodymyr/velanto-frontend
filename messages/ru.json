@@ -64,6 +64,7 @@
     "username": "Имя пользователя",
     "email": "Эл. почта",
     "password": "Пароль",
+    "confirmPassword": "Подтвердите пароль",
     "invalidCredentials": "Неверные данные для входа.",
     "pleaseWait": "Подожди…",
     "createAccount": "Создать аккаунт",

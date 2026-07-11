@@ -15,14 +15,21 @@ import {
 function values(overrides: Partial<AuthFormValues>): AuthFormValues {
   // acceptedRules defaults to true so field-rule cases exercise the username/
   // password refinements; the acceptance rule is covered by its own case.
-  return {
+  const base: AuthFormValues = {
     identifier: "",
     username: "",
     email: "",
     password: "",
+    confirmPassword: "",
     acceptedRules: true,
     ...overrides,
   };
+  // Default confirmPassword to match password unless a case sets it explicitly,
+  // so field-rule cases exercise the username/password rules, not the match rule.
+  if (!("confirmPassword" in overrides)) {
+    base.confirmPassword = base.password;
+  }
+  return base;
 }
 
 function firstError(result: {
@@ -104,6 +111,43 @@ describe("registerSchema", () => {
   it("rejects a password shorter than 8 characters", () => {
     const r = registerSchema.safeParse(
       values({ username: "alice", email: "a@example.com", password: "short" }),
+    );
+    expect(firstError(r)).toBe("Password must be at least 8 characters.");
+  });
+
+  it("accepts a submission when the two passwords match", () => {
+    expect(
+      registerSchema.safeParse(
+        values({
+          username: "alice",
+          email: "a@example.com",
+          password: "password123",
+          confirmPassword: "password123",
+        }),
+      ).success,
+    ).toBe(true);
+  });
+
+  it("rejects a submission when the two passwords differ", () => {
+    const r = registerSchema.safeParse(
+      values({
+        username: "alice",
+        email: "a@example.com",
+        password: "password123",
+        confirmPassword: "password124",
+      }),
+    );
+    expect(firstError(r)).toBe("Passwords do not match.");
+  });
+
+  it("reports the password-length message before the mismatch message", () => {
+    const r = registerSchema.safeParse(
+      values({
+        username: "alice",
+        email: "a@example.com",
+        password: "short",
+        confirmPassword: "different",
+      }),
     );
     expect(firstError(r)).toBe("Password must be at least 8 characters.");
   });

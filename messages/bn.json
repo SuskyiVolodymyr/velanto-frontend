@@ -64,6 +64,7 @@
     "username": "ব্যবহারকারীর নাম",
     "email": "ইমেইল",
     "password": "পাসওয়ার্ড",
+    "confirmPassword": "পাসওয়ার্ড নিশ্চিত করুন",
     "invalidCredentials": "লগইন তথ্য সঠিক নয়।",
     "pleaseWait": "একটু অপেক্ষা করুন…",
     "createAccount": "অ্যাকাউন্ট তৈরি করুন",

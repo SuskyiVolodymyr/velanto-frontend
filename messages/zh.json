@@ -64,6 +64,7 @@
     "username": "用户名",
     "email": "邮箱",
     "password": "密码",
+    "confirmPassword": "确认密码",
     "invalidCredentials": "账号或密码错误。",
     "pleaseWait": "请稍候…",
     "createAccount": "创建账号",

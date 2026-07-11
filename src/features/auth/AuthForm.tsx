@@ -20,6 +20,7 @@ import {
 import { LoginFields } from "@/src/features/auth/LoginFields";
 import {
   RegisterFields,
+  ConfirmPasswordField,
   AcceptRulesField,
 } from "@/src/features/auth/RegisterFields";
 
@@ -44,6 +45,7 @@ export function AuthForm() {
       username: "",
       email: "",
       password: "",
+      confirmPassword: "",
       acceptedRules: false,
     },
   });
@@ -156,6 +158,8 @@ export function AuthForm() {
             autoComplete={isRegister ? "new-password" : "current-password"}
             disabled={isSubmitting}
           />
+
+          {isRegister && <ConfirmPasswordField disabled={isSubmitting} />}
 
           {isRegister && <AcceptRulesField disabled={isSubmitting} />}
 

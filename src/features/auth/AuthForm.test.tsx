@@ -254,6 +254,22 @@ describe("AuthForm", () => {
     expect(authClient.register).not.toHaveBeenCalled();
   });
 
+  it("rejects registration when the two passwords do not match", async () => {
+    const user = userEvent.setup();
+    renderAuthForm();
+    await user.click(screen.getByRole("tab", { name: "Sign up" }));
+
+    await user.type(screen.getByLabelText("Username"), "alice");
+    await user.type(screen.getByLabelText("Email"), "a@example.com");
+    await user.type(screen.getByLabelText("Password"), "password123");
+    await user.type(screen.getByLabelText("Confirm password"), "password124");
+    await user.click(screen.getByRole("checkbox"));
+    await user.click(screen.getByRole("button", { name: "Create account" }));
+
+    expect(screen.getByText("Passwords do not match.")).toBeInTheDocument();
+    expect(authClient.register).not.toHaveBeenCalled();
+  });
+
   it("registers with acceptedRules:true once the box is checked", async () => {
     const user = userEvent.setup();
     vi.mocked(authClient.register).mockResolvedValue({
@@ -272,6 +288,7 @@ describe("AuthForm", () => {
     await user.type(screen.getByLabelText("Username"), "  alice  ");
     await user.type(screen.getByLabelText("Email"), "  a@example.com  ");
     await user.type(screen.getByLabelText("Password"), "password123");
+    await user.type(screen.getByLabelText("Confirm password"), "password123");
     await user.click(screen.getByRole("checkbox"));
     await user.click(screen.getByRole("button", { name: "Create account" }));
 

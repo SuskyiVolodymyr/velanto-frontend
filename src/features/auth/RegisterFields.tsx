@@ -36,6 +36,27 @@ export function RegisterFields({ disabled }: { disabled: boolean }) {
 }
 
 /**
+ * Register-only confirm-password input that sits directly below the shared
+ * password field. Kept separate from RegisterFields because the shared password
+ * field renders between them in the DOM. The match is enforced by
+ * `registerSchema`, which reports a mismatch on this field.
+ */
+export function ConfirmPasswordField({ disabled }: { disabled: boolean }) {
+  const t = useTranslations("auth");
+  return (
+    <TextField
+      name="confirmPassword"
+      label={t("confirmPassword")}
+      srOnlyLabel
+      type="password"
+      placeholder={t("confirmPassword")}
+      autoComplete="new-password"
+      disabled={disabled}
+    />
+  );
+}
+
+/**
  * Register-only accept-rules checkbox that sits below the shared password field.
  * Kept a separate component from RegisterFields because the shared password
  * field renders between them in the DOM.

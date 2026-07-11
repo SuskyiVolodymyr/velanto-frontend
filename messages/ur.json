@@ -64,6 +64,7 @@
     "username": "صارف نام",
     "email": "ای میل",
     "password": "پاس ورڈ",
+    "confirmPassword": "پاس ورڈ کی تصدیق کریں",
     "invalidCredentials": "غلط تفصیلات۔",
     "pleaseWait": "براہ کرم انتظار کریں…",
     "createAccount": "اکاؤنٹ بنائیں",

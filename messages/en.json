@@ -63,6 +63,7 @@
     "username": "Username",
     "email": "Email",
     "password": "Password",
+    "confirmPassword": "Confirm password",
     "invalidCredentials": "Invalid credentials.",
     "pleaseWait": "Please wait…",
     "createAccount": "Create account",

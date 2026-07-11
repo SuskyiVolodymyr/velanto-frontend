@@ -64,6 +64,7 @@
     "username": "Nombre de usuario",
     "email": "Correo electrónico",
     "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
     "invalidCredentials": "Credenciales no válidas.",
     "pleaseWait": "Espera un momento…",
     "createAccount": "Crear cuenta",
