@@ -9,7 +9,6 @@ import { useAuth } from "@/src/shared/lib/auth-context";
 import { messageFromError } from "@/src/shared/lib/messageFromError";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
-import { TextField } from "@/src/shared/components/form/TextField";
 import { PasswordField } from "@/src/shared/components/form/PasswordField";
 import { cn } from "@/src/shared/lib/cn";
 import { sanitizeNextPath } from "@/src/shared/lib/safe-redirect";
