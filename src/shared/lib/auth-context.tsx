@@ -14,6 +14,7 @@ import {
   authClient,
   type LoginInput,
   type RegisterInput,
+  type EmailCodeResult,
 } from "@/src/shared/lib/auth-client";
 import type { User } from "@/src/shared/types/user";
 
@@ -22,6 +23,7 @@ type AuthStatus = "loading" | "authenticated" | "unauthenticated";
 interface AuthContextValue {
   user: User | null;
   status: AuthStatus;
+  requestEmailCode: (email: string) => Promise<EmailCodeResult>;
   register: (input: RegisterInput) => Promise<void>;
   login: (input: LoginInput) => Promise<void>;
   logout: () => Promise<void>;
@@ -54,6 +56,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  const requestEmailCode = useCallback(
+    (email: string) => authClient.requestEmailCode(email),
+    [],
+  );
+
   const register = useCallback(async (input: RegisterInput) => {
     const result = await authClient.register(input);
     setAccessToken(result.accessToken);
@@ -76,8 +83,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(
-    () => ({ user, status, register, login, logout }),
-    [user, status, register, login, logout],
+    () => ({ user, status, requestEmailCode, register, login, logout }),
+    [user, status, requestEmailCode, register, login, logout],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

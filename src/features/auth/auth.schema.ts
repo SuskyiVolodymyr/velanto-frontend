@@ -20,6 +20,7 @@ export const AUTH_MESSAGES = {
   passwordDigit: "Password must include a number.",
   passwordsMismatch: "Passwords do not match.",
   acceptRules: "You must accept the Community Rules to register.",
+  code: "Enter the 6-digit code sent to your email.",
 } as const;
 
 // Both modes share one object shape (all fields always registered on the form)
@@ -31,6 +32,8 @@ const authFields = z.object({
   email: z.string(),
   password: z.string(),
   confirmPassword: z.string(),
+  // Entered on the OTP step; only register mode validates it (6 digits).
+  code: z.string(),
   acceptedRules: z.boolean(),
 });
 
@@ -63,6 +66,7 @@ export const registerSchema = authFields
       .regex(/[a-z]/, AUTH_MESSAGES.passwordLower)
       .regex(/[A-Z]/, AUTH_MESSAGES.passwordUpper)
       .regex(/[0-9]/, AUTH_MESSAGES.passwordDigit),
+    code: z.string().regex(/^\d{6}$/, AUTH_MESSAGES.code),
     acceptedRules: z.literal(true, { message: AUTH_MESSAGES.acceptRules }),
   })
   .superRefine((data, ctx) => {

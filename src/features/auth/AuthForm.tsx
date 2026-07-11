@@ -23,15 +23,35 @@ import {
   ConfirmPasswordField,
   AcceptRulesField,
 } from "@/src/features/auth/RegisterFields";
+import { OtpStep } from "@/src/features/auth/OtpStep";
+import {
+  markCodeSent,
+  getResendCooldownRemaining,
+} from "@/src/features/auth/otp-cooldown";
 
 type Mode = "login" | "register";
+// Register is two steps: fill the form, then enter the emailed code.
+type Step = "form" | "otp";
+
+// Fields validated before leaving the register form for the OTP step (the
+// `code` isn't entered yet, so it's excluded here).
+const FORM_STEP_FIELDS = [
+  "username",
+  "email",
+  "password",
+  "confirmPassword",
+  "acceptedRules",
+] as const;
 
 export function AuthForm() {
   const t = useTranslations("auth");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { status, login, register } = useAuth();
+  const { status, requestEmailCode, login, register } = useAuth();
   const [mode, setMode] = useState<Mode>("login");
+  const [step, setStep] = useState<Step>("form");
+  const [devCode, setDevCode] = useState<string | undefined>(undefined);
+  const [sending, setSending] = useState(false);
   const [shake, setShake] = useState(false);
 
   const isRegister = mode === "register";
@@ -49,12 +69,16 @@ export function AuthForm() {
       email: "",
       password: "",
       confirmPassword: "",
+      code: "",
       acceptedRules: false,
     },
   });
   const {
     handleSubmit,
     reset,
+    trigger,
+    getValues,
+    setValue,
     setError,
     formState: { isSubmitting, errors },
   } = methods;
@@ -75,10 +99,46 @@ export function AuthForm() {
 
   function switchMode(next: Mode) {
     setMode(next);
+    setStep("form");
+    setDevCode(undefined);
     // Full reset (not just clearErrors) so the new mode starts with a clean
     // slate: no carried-over values, touched, or submitted state that would
     // otherwise make the other mode's fields show errors before they're touched.
     reset();
+  }
+
+  // Send a code unless one was sent recently (cooldown persists across refresh),
+  // so re-entering the form for the same email reuses the still-valid code
+  // instead of tripping the backend's resend throttle.
+  async function sendCode(email: string) {
+    if (getResendCooldownRemaining(email) > 0) return;
+    const { devCode: dev } = await requestEmailCode(email);
+    markCodeSent(email);
+    setDevCode(dev);
+  }
+
+  async function handleContinue() {
+    const ok = await trigger(FORM_STEP_FIELDS);
+    if (!ok) {
+      // Continue is a submit-like action, so reveal every blocking error — even
+      // on fields the user never focused (e.g. an unchecked rules box), which
+      // the touched-gated display would otherwise keep hidden.
+      for (const name of FORM_STEP_FIELDS) {
+        setValue(name, getValues(name), { shouldTouch: true });
+      }
+      return;
+    }
+    const email = getValues("email").trim();
+    setSending(true);
+    try {
+      await sendCode(email);
+      setStep("otp");
+    } catch (err) {
+      setError("root", { message: messageFromError(err) });
+      triggerShake();
+    } finally {
+      setSending(false);
+    }
   }
 
   async function onValid(values: AuthFormValues) {
@@ -89,6 +149,7 @@ export function AuthForm() {
           username: values.username.trim(),
           password: values.password,
           acceptedRules: true,
+          code: values.code,
         });
       } else {
         await login({
@@ -153,32 +214,65 @@ export function AuthForm() {
 
       <FormProvider {...methods}>
         <form
-          onSubmit={handleSubmit(onValid, triggerShake)}
+          // In the register form step, submit (button or Enter) advances to the
+          // OTP step rather than registering — the code isn't entered yet.
+          onSubmit={
+            isRegister && step === "form"
+              ? (e) => {
+                  e.preventDefault();
+                  void handleContinue();
+                }
+              : handleSubmit(onValid, triggerShake)
+          }
           noValidate
           className={cn(
             "flex flex-col gap-3",
             shake && "animate-[shake_0.4s_ease-in-out]",
           )}
         >
-          {isRegister ? (
-            <RegisterFields disabled={isSubmitting} />
-          ) : (
-            <LoginFields disabled={isSubmitting} />
+          {!isRegister && (
+            <>
+              <LoginFields disabled={isSubmitting} />
+              <PasswordField
+                name="password"
+                label={t("password")}
+                srOnlyLabel
+                placeholder={t("password")}
+                autoComplete="current-password"
+                showLabel={t("showPassword")}
+                hideLabel={t("hidePassword")}
+                disabled={isSubmitting}
+              />
+            </>
           )}
-          <PasswordField
-            name="password"
-            label={t("password")}
-            srOnlyLabel
-            placeholder={t("password")}
-            autoComplete={isRegister ? "new-password" : "current-password"}
-            showLabel={t("showPassword")}
-            hideLabel={t("hidePassword")}
-            disabled={isSubmitting}
-          />
 
-          {isRegister && <ConfirmPasswordField disabled={isSubmitting} />}
+          {isRegister && step === "form" && (
+            <>
+              <RegisterFields disabled={sending} />
+              <PasswordField
+                name="password"
+                label={t("password")}
+                srOnlyLabel
+                placeholder={t("password")}
+                autoComplete="new-password"
+                showLabel={t("showPassword")}
+                hideLabel={t("hidePassword")}
+                disabled={sending}
+              />
+              <ConfirmPasswordField disabled={sending} />
+              <AcceptRulesField disabled={sending} />
+            </>
+          )}
 
-          {isRegister && <AcceptRulesField disabled={isSubmitting} />}
+          {isRegister && step === "otp" && (
+            <OtpStep
+              email={getValues("email").trim()}
+              onResend={() => sendCode(getValues("email").trim())}
+              onChangeEmail={() => setStep("form")}
+              disabled={isSubmitting}
+              devCode={devCode}
+            />
+          )}
 
           {errors.root?.message && (
             <Text role="alert" className="text-sm text-[#ff6b6b]">
@@ -188,14 +282,16 @@ export function AuthForm() {
 
           <Button
             type="submit"
-            disabled={isSubmitting}
+            disabled={isSubmitting || sending}
             className="w-full h-[50px] mt-2"
           >
-            {isSubmitting
+            {isSubmitting || sending
               ? t("pleaseWait")
-              : isRegister
-                ? t("createAccount")
-                : t("logIn")}
+              : !isRegister
+                ? t("logIn")
+                : step === "form"
+                  ? t("continueStep")
+                  : t("createAccount")}
           </Button>
         </form>
       </FormProvider>

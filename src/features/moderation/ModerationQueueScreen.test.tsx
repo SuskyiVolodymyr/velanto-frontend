@@ -50,6 +50,7 @@ function mockAuth(role: Role | null) {
       : null,
     status: role ? "authenticated" : "unauthenticated",
     login: vi.fn(),
+    requestEmailCode: vi.fn(),
     register: vi.fn(),
     logout: vi.fn(),
   } as ReturnType<typeof useAuth>);

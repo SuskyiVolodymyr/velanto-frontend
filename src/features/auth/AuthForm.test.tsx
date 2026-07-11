@@ -19,6 +19,7 @@ vi.mock("next/navigation", () => ({
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
   authClient: {
+    requestEmailCode: vi.fn(),
     register: vi.fn(),
     login: vi.fn(),
     logout: vi.fn(),
@@ -38,6 +39,7 @@ function renderAuthForm() {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  localStorage.clear();
   searchParams = new URLSearchParams();
   // Silent refresh-on-mount finds no session by default — most tests don't care.
   vi.mocked(authClient.refresh).mockRejectedValue(
@@ -45,7 +47,23 @@ beforeEach(() => {
       message: "Refresh token invalid or expired",
     }),
   );
+  // Register is verify-before-create: fill the form → "Continue" requests a
+  // code (mocked here) → OTP step → "Create account". Default: code sent.
+  vi.mocked(authClient.requestEmailCode).mockResolvedValue({
+    sent: true,
+    devCode: "123456",
+  });
 });
+
+/** Fills a valid register form (does not submit). */
+async function fillRegisterForm(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(screen.getByRole("tab", { name: "Sign up" }));
+  await user.type(screen.getByLabelText("Username"), "alice");
+  await user.type(screen.getByLabelText("Email"), "alice@example.com");
+  await user.type(screen.getByLabelText("Password"), "Password123");
+  await user.type(screen.getByLabelText("Confirm password"), "Password123");
+  await user.click(screen.getByRole("checkbox"));
+}
 
 describe("AuthForm", () => {
   it("defaults to the login tab with an identifier + password field", () => {
@@ -67,9 +85,57 @@ describe("AuthForm", () => {
 
     expect(screen.getByLabelText("Username")).toBeInTheDocument();
     expect(screen.getByLabelText("Email")).toBeInTheDocument();
+    // Step 1 advances with "Continue"; the code is entered on the next step.
     expect(
-      screen.getByRole("button", { name: "Create account" }),
+      screen.getByRole("button", { name: "Continue" }),
     ).toBeInTheDocument();
+  });
+
+  it("requests a code and moves to the OTP step on Continue", async () => {
+    const user = userEvent.setup();
+    renderAuthForm();
+    await fillRegisterForm(user);
+
+    await user.click(screen.getByRole("button", { name: "Continue" }));
+
+    expect(authClient.requestEmailCode).toHaveBeenCalledWith(
+      "alice@example.com",
+    );
+    expect(
+      await screen.findByText(/one-time password was sent to alice@example.com/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/check your spam folder/i)).toBeInTheDocument();
+    expect(screen.getByLabelText("Verification code")).toBeInTheDocument();
+    expect(authClient.register).not.toHaveBeenCalled();
+  });
+
+  it("registers with the entered code and redirects on success", async () => {
+    const user = userEvent.setup();
+    vi.mocked(authClient.register).mockResolvedValue({
+      accessToken: "access-token",
+      user: {
+        id: "u1",
+        email: "alice@example.com",
+        username: "alice",
+        role: "user",
+        createdAt: "2026-01-01T00:00:00.000Z",
+      },
+    });
+    renderAuthForm();
+    await fillRegisterForm(user);
+    await user.click(screen.getByRole("button", { name: "Continue" }));
+
+    await user.type(await screen.findByLabelText("Verification code"), "123456");
+    await user.click(screen.getByRole("button", { name: "Create account" }));
+
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/"));
+    expect(authClient.register).toHaveBeenCalledWith({
+      email: "alice@example.com",
+      username: "alice",
+      password: "Password123",
+      acceptedRules: true,
+      code: "123456",
+    });
   });
 
   it("redirects an already-signed-in visitor away from the auth screen", async () => {
@@ -126,14 +192,14 @@ describe("AuthForm", () => {
     await user.type(screen.getByLabelText("Email"), "a@example.com");
     await user.type(screen.getByLabelText("Password"), "Password123");
     await user.click(screen.getByRole("checkbox"));
-    await user.click(screen.getByRole("button", { name: "Create account" }));
+    await user.click(screen.getByRole("button", { name: "Continue" }));
 
     expect(
       screen.getByText(
         "Username must be 2-16 characters: letters and numbers only.",
       ),
     ).toBeInTheDocument();
-    expect(authClient.register).not.toHaveBeenCalled();
+    expect(authClient.requestEmailCode).not.toHaveBeenCalled();
   });
 
   it("rejects a password shorter than 8 characters without calling the API", async () => {
@@ -145,12 +211,12 @@ describe("AuthForm", () => {
     await user.type(screen.getByLabelText("Email"), "a@example.com");
     await user.type(screen.getByLabelText("Password"), "short");
     await user.click(screen.getByRole("checkbox"));
-    await user.click(screen.getByRole("button", { name: "Create account" }));
+    await user.click(screen.getByRole("button", { name: "Continue" }));
 
     expect(
       screen.getByText("Password must be at least 8 characters."),
     ).toBeInTheDocument();
-    expect(authClient.register).not.toHaveBeenCalled();
+    expect(authClient.requestEmailCode).not.toHaveBeenCalled();
   });
 
   it("wires the validation error to its field inline (aria-invalid + describedby)", async () => {
@@ -162,7 +228,7 @@ describe("AuthForm", () => {
     await user.type(screen.getByLabelText("Email"), "a@example.com");
     await user.type(screen.getByLabelText("Password"), "short");
     await user.click(screen.getByRole("checkbox"));
-    await user.click(screen.getByRole("button", { name: "Create account" }));
+    await user.click(screen.getByRole("button", { name: "Continue" }));
 
     const password = screen.getByLabelText("Password");
     expect(password).toHaveAttribute("aria-invalid", "true");
@@ -281,12 +347,12 @@ describe("AuthForm", () => {
     await user.type(screen.getByLabelText("Email"), "a@example.com");
     await user.type(screen.getByLabelText("Password"), "Password123");
     await user.type(screen.getByLabelText("Confirm password"), "Password123");
-    await user.click(screen.getByRole("button", { name: "Create account" }));
+    await user.click(screen.getByRole("button", { name: "Continue" }));
 
     expect(
       screen.getByText("You must accept the Community Rules to register."),
     ).toBeInTheDocument();
-    expect(authClient.register).not.toHaveBeenCalled();
+    expect(authClient.requestEmailCode).not.toHaveBeenCalled();
   });
 
   it("rejects registration when the two passwords do not match", async () => {
@@ -299,41 +365,10 @@ describe("AuthForm", () => {
     await user.type(screen.getByLabelText("Password"), "Password123");
     await user.type(screen.getByLabelText("Confirm password"), "Password124");
     await user.click(screen.getByRole("checkbox"));
-    await user.click(screen.getByRole("button", { name: "Create account" }));
+    await user.click(screen.getByRole("button", { name: "Continue" }));
 
     expect(screen.getByText("Passwords do not match.")).toBeInTheDocument();
-    expect(authClient.register).not.toHaveBeenCalled();
-  });
-
-  it("registers with acceptedRules:true once the box is checked", async () => {
-    const user = userEvent.setup();
-    vi.mocked(authClient.register).mockResolvedValue({
-      accessToken: "access-token",
-      user: {
-        id: "u1",
-        email: "a@example.com",
-        username: "alice",
-        role: "user",
-        createdAt: "2026-01-01T00:00:00.000Z",
-      },
-    });
-    renderAuthForm();
-    await user.click(screen.getByRole("tab", { name: "Sign up" }));
-
-    await user.type(screen.getByLabelText("Username"), "  alice  ");
-    await user.type(screen.getByLabelText("Email"), "  a@example.com  ");
-    await user.type(screen.getByLabelText("Password"), "Password123");
-    await user.type(screen.getByLabelText("Confirm password"), "Password123");
-    await user.click(screen.getByRole("checkbox"));
-    await user.click(screen.getByRole("button", { name: "Create account" }));
-
-    await waitFor(() => expect(replace).toHaveBeenCalledWith("/"));
-    expect(authClient.register).toHaveBeenCalledWith({
-      username: "alice",
-      email: "a@example.com",
-      password: "Password123",
-      acceptedRules: true,
-    });
+    expect(authClient.requestEmailCode).not.toHaveBeenCalled();
   });
 
   it("disables the submit button while a request is pending, preventing a double submit", async () => {
