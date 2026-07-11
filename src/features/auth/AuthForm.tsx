@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -204,7 +205,28 @@ export function AuthForm() {
         variant="tertiary"
         className="text-center text-xs mt-5 leading-relaxed"
       >
-        {t("terms")}
+        {t.rich("terms", {
+          terms: (chunks) => (
+            <Link
+              href="/terms"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-acc underline hover:no-underline"
+            >
+              {chunks}
+            </Link>
+          ),
+          privacy: (chunks) => (
+            <Link
+              href="/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-acc underline hover:no-underline"
+            >
+              {chunks}
+            </Link>
+          ),
+        })}
       </Text>
     </div>
   );

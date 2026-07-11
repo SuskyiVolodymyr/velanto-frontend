@@ -105,6 +105,17 @@ describe("AuthForm", () => {
     await waitFor(() => expect(replace).toHaveBeenCalledWith("/create"));
   });
 
+  it("links the footer Terms and Privacy Policy to their pages", () => {
+    renderAuthForm();
+    expect(screen.getByRole("link", { name: "Terms" })).toHaveAttribute(
+      "href",
+      "/terms",
+    );
+    expect(
+      screen.getByRole("link", { name: "Privacy Policy" }),
+    ).toHaveAttribute("href", "/privacy");
+  });
+
   it("rejects an empty login submission without calling the API", async () => {
     const user = userEvent.setup();
     renderAuthForm();

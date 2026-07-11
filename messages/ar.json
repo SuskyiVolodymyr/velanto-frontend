@@ -70,7 +70,7 @@
     "invalidCredentials": "بيانات الدخول غير صحيحة.",
     "pleaseWait": "يرجى الانتظار…",
     "createAccount": "إنشاء حساب",
-    "terms": "بمتابعتك فإنك توافق على شروط Velanto وسياسة الخصوصية."
+    "terms": "بمتابعتك فإنك توافق على <terms>شروط</terms> Velanto و<privacy>سياسة الخصوصية</privacy>."
   },
   "rules": {
     "metaTitle": "قواعد المجتمع — Velanto",
@@ -188,6 +188,20 @@
         }
       }
     }
+  },
+  "terms": {
+    "metaTitle": "شروط الخدمة — Velanto",
+    "metaDescription": "الشروط التي تحكم استخدامك لـ Velanto.",
+    "heading": "شروط الخدمة",
+    "intro": "تحكم هذه الشروط وصولك إلى Velanto واستخدامك له.",
+    "draftNotice": "هذه مسودة عمل قيد المراجعة القانونية — سيتم نشر شروط الخدمة النهائية هنا."
+  },
+  "privacy": {
+    "metaTitle": "سياسة الخصوصية — Velanto",
+    "metaDescription": "كيف تجمع Velanto بياناتك وتستخدمها وتحميها.",
+    "heading": "سياسة الخصوصية",
+    "intro": "توضح هذه السياسة البيانات التي تجمعها Velanto وكيفية استخدامها.",
+    "draftNotice": "هذه مسودة عمل قيد المراجعة القانونية — سيتم نشر سياسة الخصوصية النهائية هنا."
   },
   "banReason": {
     "label": "السبب",

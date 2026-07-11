@@ -70,7 +70,7 @@
     "invalidCredentials": "账号或密码错误。",
     "pleaseWait": "请稍候…",
     "createAccount": "创建账号",
-    "terms": "继续即表示你同意 Velanto 的服务条款和隐私政策。"
+    "terms": "继续即表示你同意 Velanto 的<terms>服务条款</terms>和<privacy>隐私政策</privacy>。"
   },
   "rules": {
     "metaTitle": "社区规则 — Velanto",
@@ -188,6 +188,20 @@
         }
       }
     }
+  },
+  "terms": {
+    "metaTitle": "服务条款 — Velanto",
+    "metaDescription": "规范您使用 Velanto 的条款。",
+    "heading": "服务条款",
+    "intro": "本条款规范您对 Velanto 的访问和使用。",
+    "draftNotice": "这是一份正在等待法律审查的工作草稿——最终版服务条款将在此处发布。"
+  },
+  "privacy": {
+    "metaTitle": "隐私政策 — Velanto",
+    "metaDescription": "Velanto 如何收集、使用和保护您的数据。",
+    "heading": "隐私政策",
+    "intro": "本政策说明 Velanto 收集哪些数据以及如何使用这些数据。",
+    "draftNotice": "这是一份正在等待法律审查的工作草稿——最终版隐私政策将在此处发布。"
   },
   "banReason": {
     "label": "原因",
