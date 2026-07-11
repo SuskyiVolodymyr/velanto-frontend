@@ -2,24 +2,16 @@
 
 import Link from "next/link";
 import { useId, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { useStreamerModeOrDefault } from "@/src/shared/lib/streamer-mode-context";
-import { useClientData } from "@/src/shared/hooks/useClientData";
-import { useFollowAction } from "@/src/shared/hooks/useFollowAction";
-import { usersClient } from "@/src/shared/lib/users-client";
-import { packsClient } from "@/src/shared/lib/packs-client";
+import { usePackAuthor } from "./api/pack-author.queries";
+import { useFollowMutation } from "./api/follow.mutations";
 import { AuthorHoverCard } from "./AuthorHoverCard";
 import type { Pack } from "@/src/shared/types/pack";
-import type { PublicUserProfile } from "@/src/shared/types/user";
-
-interface AuthorSummary {
-  profile: PublicUserProfile;
-  /** The author's total (approved) pack count — for the hover card's stat line. */
-  packsTotal: number;
-}
 
 // Deterministic date formatting (fixed locale) so the server and the client
 // fallback render identical markup and don't trip a hydration mismatch.
@@ -48,41 +40,30 @@ function formatPublished(iso: string): string {
  */
 export function PackCreatorCard({ pack }: { pack: Pack }) {
   const t = useTranslations("pack");
-  const { user } = useAuth();
+  const tProfile = useTranslations("profile");
+  const { user, status: authStatus } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
   const { enabled: streamerEnabled } = useStreamerModeOrDefault();
   const published = formatPublished(pack.createdAt);
   const cardId = useId();
 
-  const authorQuery = useClientData<AuthorSummary>(
-    async () => {
-      const [profile, packs] = await Promise.all([
-        usersClient.getProfile(pack.authorId),
-        packsClient.list({ authorId: pack.authorId, limit: 1 }),
-      ]);
-      return { profile, packsTotal: packs.total };
-    },
-    [pack.authorId],
-  );
+  const { data: summary } = usePackAuthor(pack.authorId);
+  const followMutation = useFollowMutation(pack.authorId);
 
-  const follow = useFollowAction(pack.authorId, (result, nowFollowing) =>
-    authorQuery.setData((prev) =>
-      prev
-        ? {
-            ...prev,
-            profile: {
-              ...prev.profile,
-              isFollowedByMe: nowFollowing,
-              followerCount: result.followerCount,
-            },
-          }
-        : prev,
-    ),
-  );
+  // The mutation assumes an authenticated caller; anonymous viewers are sent to
+  // sign in (and back) instead.
+  function handleFollowToggle(currentlyFollowing: boolean) {
+    if (authStatus !== "authenticated") {
+      router.push(`/auth?next=${encodeURIComponent(pathname)}`);
+      return;
+    }
+    followMutation.mutate(currentlyFollowing);
+  }
 
-  const summary = authorQuery.data;
   const isOwnProfile = user?.id === pack.authorId;
   const [open, setOpen] = useState(false);
-  const showCard = open && !streamerEnabled && summary !== null;
+  const showCard = open && !streamerEnabled && summary !== undefined;
 
   return (
     <div
@@ -155,10 +136,10 @@ export function PackCreatorCard({ pack }: { pack: Pack }) {
           profile={summary.profile}
           packsTotal={summary.packsTotal}
           isOwnProfile={isOwnProfile}
-          followBusy={follow.busy}
-          followError={follow.error}
+          followBusy={followMutation.isPending}
+          followError={followMutation.isError ? tProfile("followError") : ""}
           onFollowToggle={() =>
-            follow.toggle(summary.profile.isFollowedByMe ?? false)
+            handleFollowToggle(summary.profile.isFollowedByMe ?? false)
           }
         />
       )}

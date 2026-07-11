@@ -3,7 +3,9 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextIntlClientProvider } from "next-intl";
+import { QueryClientProvider } from "@tanstack/react-query";
 import messages from "@/messages/en.json";
+import { createTestQueryClient } from "@/src/shared/test/test-query-client";
 import {
   StreamerModeProvider,
   useStreamerMode,
@@ -74,9 +76,11 @@ function mockAuth(user: User | null) {
 
 function renderCard(ui: ReactElement) {
   return render(
-    <NextIntlClientProvider locale="en" messages={messages}>
-      {ui}
-    </NextIntlClientProvider>,
+    <QueryClientProvider client={createTestQueryClient()}>
+      <NextIntlClientProvider locale="en" messages={messages}>
+        {ui}
+      </NextIntlClientProvider>
+    </QueryClientProvider>,
   );
 }
 
@@ -242,13 +246,15 @@ describe("PackCreatorCard", () => {
       createdAt: "",
     });
     render(
-      <NextIntlClientProvider locale="en" messages={messages}>
-        <StreamerModeProvider>
-          <StreamerOn>
-            <PackCreatorCard pack={makePack()} />
-          </StreamerOn>
-        </StreamerModeProvider>
-      </NextIntlClientProvider>,
+      <QueryClientProvider client={createTestQueryClient()}>
+        <NextIntlClientProvider locale="en" messages={messages}>
+          <StreamerModeProvider>
+            <StreamerOn>
+              <PackCreatorCard pack={makePack()} />
+            </StreamerOn>
+          </StreamerModeProvider>
+        </NextIntlClientProvider>
+      </QueryClientProvider>,
     );
     // Wait for the author fetch to resolve, then hover the strip. The mini
     // card must stay suppressed even though the data is available.

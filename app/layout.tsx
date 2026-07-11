@@ -5,6 +5,7 @@ import { getLocale } from "next-intl/server";
 import { isRtl, type Locale } from "@/src/i18n/config";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
+import { QueryProvider } from "@/src/shared/lib/query-provider";
 import { AppHeader } from "@/src/shared/components/AppHeader";
 import { BannedBanner } from "@/src/shared/components/BannedBanner";
 import { getThemeInitScript } from "@/src/shared/lib/theme";
@@ -65,15 +66,17 @@ export default async function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col">
-        <NextIntlClientProvider>
-          <AuthProvider>
-            <StreamerModeProvider>
-              <AppHeader />
-              <BannedBanner />
-              {children}
-            </StreamerModeProvider>
-          </AuthProvider>
-        </NextIntlClientProvider>
+        <QueryProvider>
+          <NextIntlClientProvider>
+            <AuthProvider>
+              <StreamerModeProvider>
+                <AppHeader />
+                <BannedBanner />
+                {children}
+              </StreamerModeProvider>
+            </AuthProvider>
+          </NextIntlClientProvider>
+        </QueryProvider>
       </body>
     </html>
   );
