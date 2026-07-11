@@ -1,100 +1,63 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { useAuth } from "@/src/shared/lib/auth-context";
-import { commentsClient } from "@/src/shared/lib/comments-client";
 import { messageFromError } from "@/src/shared/lib/messageFromError";
 import type { Comment } from "@/src/shared/types/comment";
-
-const PAGE_SIZE = 10;
+import {
+  usePackComments,
+  useAddPackComment,
+} from "@/src/features/pack/api/pack-comments.queries";
 
 export function CommentSection({ packId }: { packId: string }) {
   const { status } = useAuth();
   const t = useTranslations("pack");
-  const [comments, setComments] = useState<Comment[]>([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [loadStatus, setLoadStatus] = useState<"loading" | "ready" | "error">(
-    "loading",
-  );
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [loadMoreError, setLoadMoreError] = useState("");
   const [draft, setDraft] = useState("");
-  const [posting, setPosting] = useState(false);
-  const [postError, setPostError] = useState("");
 
-  useEffect(() => {
-    let cancelled = false;
-    commentsClient
-      .list(packId, { page: 1, limit: PAGE_SIZE })
-      .then((result) => {
-        if (cancelled) return;
-        setComments(result.items);
-        setTotal(result.total);
-        setPage(1);
-        setLoadStatus("ready");
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setLoadStatus("error");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [packId]);
+  const commentsQuery = usePackComments(packId);
+  const addComment = useAddPackComment(packId);
 
-  async function handleLoadMore() {
-    setLoadingMore(true);
-    try {
-      const nextPage = page + 1;
-      const result = await commentsClient.list(packId, {
-        page: nextPage,
-        limit: PAGE_SIZE,
-      });
-      // A comment posted between page loads shifts every later comment's
-      // server-side offset by one, so the next page can re-return a comment
-      // already shown on a prior page — filter those out rather than
-      // trusting the offset math to stay aligned with local inserts.
-      setComments((prev) => {
-        const existingIds = new Set(prev.map((c) => c.id));
-        return [...prev, ...result.items.filter((c) => !existingIds.has(c.id))];
-      });
-      setTotal(result.total);
-      setPage(nextPage);
-      setLoadMoreError("");
-    } catch {
-      setLoadMoreError(t("loadMoreError"));
-    } finally {
-      setLoadingMore(false);
+  const comments = useMemo(() => {
+    const seen = new Set<string>();
+    const out: Comment[] = [];
+    for (const page of commentsQuery.data?.pages ?? []) {
+      for (const comment of page.items) {
+        if (!seen.has(comment.id)) {
+          seen.add(comment.id);
+          out.push(comment);
+        }
+      }
     }
-  }
+    return out;
+  }, [commentsQuery.data]);
 
-  async function handlePost() {
+  const total = commentsQuery.data?.pages.at(-1)?.total ?? 0;
+  const hasData = commentsQuery.data !== undefined;
+  const loadStatus: "loading" | "ready" | "error" = commentsQuery.isLoading
+    ? "loading"
+    : !hasData && commentsQuery.isError
+      ? "error"
+      : "ready";
+  const loadingMore = commentsQuery.isFetchingNextPage;
+  const loadMoreError =
+    hasData && (commentsQuery.isError || commentsQuery.isFetchNextPageError)
+      ? t("loadMoreError")
+      : "";
+
+  const posting = addComment.isPending;
+  const postError = addComment.isError
+    ? messageFromError(addComment.error, { fallback: t("postErrorFallback") })
+    : "";
+
+  function handlePost() {
     const body = draft.trim();
     if (!body) return;
-    setPosting(true);
-    try {
-      const created = await commentsClient.create(packId, { body });
-      setComments((prev) => [created, ...prev]);
-      setTotal((t) => t + 1);
-      setDraft("");
-      setPostError("");
-    } catch (err) {
-      // Surface the backend's specific validation message (e.g. the moderation
-      // blocked-term rejection) when present, falling back to generic copy.
-      setPostError(
-        messageFromError(err, {
-          fallback: t("postErrorFallback"),
-        }),
-      );
-    } finally {
-      setPosting(false);
-    }
+    addComment.mutate(body, { onSuccess: () => setDraft("") });
   }
 
   return (
@@ -178,7 +141,7 @@ export function CommentSection({ packId }: { packId: string }) {
           <Button
             variant="secondary"
             disabled={loadingMore}
-            onClick={handleLoadMore}
+            onClick={() => void commentsQuery.fetchNextPage()}
           >
             {loadingMore ? t("loadingMore") : t("loadMore")}
           </Button>

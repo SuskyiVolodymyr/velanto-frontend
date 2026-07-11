@@ -1,5 +1,6 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
+import { renderWithQueryClient as render } from "@/src/shared/test/render-with-query-client";
 import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
