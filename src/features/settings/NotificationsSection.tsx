@@ -1,16 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
 import { useAuth } from "@/src/shared/lib/auth-context";
-import { notificationsClient } from "@/src/shared/lib/notifications-client";
+import {
+  useNotificationPreferences,
+  useSetNotificationPreference,
+} from "@/src/features/settings/api/notifications.queries";
 import {
   NOTIFICATION_TYPES,
-  type NotificationPreferences,
   type NotificationType,
 } from "@/src/shared/types/notification";
 
@@ -25,45 +26,22 @@ const LABEL_KEYS: Record<NotificationType, string> = {
 export function NotificationsSection() {
   const t = useTranslations("settings");
   const { status } = useAuth();
-  const [prefs, setPrefs] = useState<NotificationPreferences | null>(null);
-  const [fetchError, setFetchError] = useState(false);
-  const [busy, setBusy] = useState<Record<string, boolean>>({});
-  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  useEffect(() => {
-    if (status !== "authenticated") return;
-    let cancelled = false;
-    notificationsClient
-      .getPreferences()
-      .then((result) => {
-        if (!cancelled) setPrefs(result);
-      })
-      .catch(() => {
-        if (!cancelled) setFetchError(true);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [status]);
+  const prefsQuery = useNotificationPreferences({
+    enabled: status === "authenticated",
+  });
+  const prefs = prefsQuery.data ?? null;
+  const fetchError = prefsQuery.isError;
 
-  async function handleToggle(type: NotificationType) {
+  const setPref = useSetNotificationPreference();
+  // A single mutation is in flight at a time; `variables.type` scopes the
+  // busy/error indicators to the row that was toggled.
+  const pendingType = setPref.isPending ? setPref.variables?.type : undefined;
+  const erroredType = setPref.isError ? setPref.variables?.type : undefined;
+
+  function handleToggle(type: NotificationType) {
     if (!prefs) return;
-    const nextValue = !prefs[type];
-    setBusy((prev) => ({ ...prev, [type]: true }));
-    setErrors((prev) => ({ ...prev, [type]: "" }));
-    try {
-      const updated = await notificationsClient.setPreferences({
-        [type]: nextValue,
-      });
-      setPrefs(updated);
-    } catch {
-      setErrors((prev) => ({
-        ...prev,
-        [type]: t("notificationUpdateError"),
-      }));
-    } finally {
-      setBusy((prev) => ({ ...prev, [type]: false }));
-    }
+    setPref.mutate({ type, value: !prefs[type] });
   }
 
   if (status === "loading") return null;
@@ -112,8 +90,8 @@ export function NotificationsSection() {
                   role="switch"
                   aria-checked={prefs[type]}
                   aria-label={t(LABEL_KEYS[type])}
-                  disabled={busy[type]}
-                  onClick={() => void handleToggle(type)}
+                  disabled={pendingType === type}
+                  onClick={() => handleToggle(type)}
                   className={cn(
                     "h-6 w-11 shrink-0 rounded-full border transition-colors",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
@@ -131,8 +109,10 @@ export function NotificationsSection() {
                   />
                 </button>
               </div>
-              {errors[type] && (
-                <Text className="text-xs text-[#ff6b6b]">{errors[type]}</Text>
+              {erroredType === type && (
+                <Text className="text-xs text-[#ff6b6b]">
+                  {t("notificationUpdateError")}
+                </Text>
               )}
             </Card>
           ))}
