@@ -1,8 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useClientData } from "@/src/shared/hooks/useClientData";
-import { rulesClient } from "@/src/shared/lib/rules-client";
+import { useRules } from "@/src/shared/api/rules.queries";
 import { Select, type SelectOption } from "@/src/shared/components/Select";
 import { Textarea } from "@/src/shared/components/Textarea";
 import { Text } from "@/src/shared/components/Text";
@@ -67,7 +66,7 @@ export function BanReasonPicker({
   idPrefix,
 }: BanReasonPickerProps) {
   const t = useTranslations("banReason");
-  const rules = useClientData(() => rulesClient.getRules(), []);
+  const rules = useRules();
 
   const detailId = `${idPrefix}-ban-reason-detail`;
   const showDetail = value.reason !== "";
@@ -94,7 +93,7 @@ export function BanReasonPicker({
           aria-label={t("label")}
           className="h-9"
           value={value.reason}
-          disabled={rules.loading}
+          disabled={rules.isLoading}
           options={options}
           onChange={(e) =>
             onChange({ ...value, reason: e.target.value as BanReason | "" })
@@ -102,7 +101,7 @@ export function BanReasonPicker({
         />
       </label>
 
-      {rules.error && (
+      {rules.isError && (
         <Text role="alert" className="text-xs text-[#ff6b6b]">
           {t("loadError")}
         </Text>
