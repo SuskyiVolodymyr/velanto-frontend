@@ -73,7 +73,117 @@
     "metaDescription": "The community rules for creating and playing packs on Velanto — read them before you register.",
     "heading": "Community Rules",
     "intro": "These rules keep Velanto safe and fair for everyone. By creating an account you agree to follow them.",
-    "loadError": "We couldn't load the rules right now. Please try again in a moment."
+    "loadError": "We couldn't load the rules right now. Please try again in a moment.",
+    "content": {
+      "hate_discrimination": {
+        "title": "Hate & Discrimination",
+        "items": {
+          "1": "Do not attack, dehumanize, demean, or promote hatred against any person or group based on race, ethnicity, national origin, religion, gender, sex, sexual orientation, gender identity, disability, serious medical condition, age, or any comparable protected characteristic. This applies to text, images, usernames, pack content, comments, and any other contribution.",
+          "2": "Do not use slurs, hateful symbols, or coded language intended to degrade a protected group, and do not post imagery that celebrates or endorses hateful ideologies.",
+          "3": "Do not advocate for, or express support for, discrimination, segregation, exclusion, or the denial of rights to people because of a protected characteristic.",
+          "4": "Do not create packs, questions, or answers whose premise ranks, mocks, or asserts the inferiority of a protected group. Legitimate factual or educational content about history, culture, or religion is permitted only when presented respectfully and without endorsing hatred."
+        }
+      },
+      "harassment_bullying": {
+        "title": "Harassment & Bullying",
+        "items": {
+          "1": "Do not target another person with insults, mockery, intimidation, or sustained unwanted contact, whether through packs, comments, usernames, or any other feature.",
+          "2": "Do not organize, encourage, or participate in coordinated harassment, brigading, or pile-ons against any individual or group.",
+          "3": "Do not post content designed to shame, humiliate, or provoke a specific person, including content referencing their appearance, identity, or personal circumstances.",
+          "4": "Respect requests to stop contact. Continuing to engage a user who has asked to be left alone, or evading a block to reach them, is prohibited."
+        }
+      },
+      "violence_harm": {
+        "title": "Violence & Harm",
+        "items": {
+          "1": "Do not threaten violence against, or wish serious harm upon, any person or group, and do not incite others to commit violence.",
+          "2": "Do not glorify, promote, or provide instructions for terrorism, mass violence, or violent extremism, and do not praise the perpetrators of such acts.",
+          "3": "Do not encourage, promote, or provide instructions for suicide, self-harm, or eating disorders. If you or someone you know is at risk, seek help from local emergency services or a crisis line.",
+          "4": "Do not post gratuitous gore, graphic depictions of death or serious injury, or imagery intended to shock or celebrate suffering.",
+          "5": "Do not use the platform to plan, coordinate, or recruit for acts of real-world violence."
+        }
+      },
+      "sexual_content": {
+        "title": "Sexual & Explicit Content",
+        "items": {
+          "1": "Do not post pornography, sexually explicit imagery, or depictions of sexual acts anywhere on the platform.",
+          "2": "Do not post nudity or sexualized content in packs, images, usernames, avatars, or comments. This is a general-audience platform.",
+          "3": "Do not use the platform to solicit sexual contact, distribute sexual content, or advertise sexual services.",
+          "4": "Do not share intimate or sexual images of any person without their explicit consent, including so-called \"revenge\" content."
+        }
+      },
+      "child_safety": {
+        "title": "Child Safety",
+        "items": {
+          "1": "We have ZERO tolerance for the sexualization of minors. Any content that sexualizes, exploits, or endangers a person under 18 — real, fictional, illustrated, or AI-generated — results in immediate permanent account termination and, where applicable, reporting to the National Center for Missing & Exploited Children (NCMEC) and relevant law enforcement.",
+          "2": "Do not upload, request, share, or link to child sexual abuse material (CSAM) or any sexualized depiction of a minor under any circumstances.",
+          "3": "Do not attempt to contact, groom, sexualize, or otherwise endanger a minor, and do not use the platform to facilitate such conduct.",
+          "4": "Report any suspected child endangerment immediately. We cooperate fully with authorities and preserve relevant evidence as required by law."
+        }
+      },
+      "illegal_content": {
+        "title": "Illegal Content & Activity",
+        "items": {
+          "1": "Do not use the platform to facilitate, promote, or coordinate activity that is illegal in your jurisdiction or the jurisdiction where the platform operates.",
+          "2": "Do not advertise, sell, or facilitate the trade of illegal goods or services, including illicit drugs, weapons, stolen data, or counterfeit items.",
+          "3": "Do not post instructions for producing weapons, explosives, drugs, or other materials whose primary purpose is to cause serious harm or commit a crime.",
+          "4": "Do not use the platform to launder money, run financial scams, or otherwise engage in fraud or theft."
+        }
+      },
+      "privacy_doxxing": {
+        "title": "Privacy & Doxxing",
+        "items": {
+          "1": "Do not publish another person's private or identifying information — such as home address, phone number, government ID, financial details, or private communications — without their explicit consent.",
+          "2": "Do not threaten to expose private information, and do not encourage or coordinate the exposure of anyone’s private information.",
+          "3": "Do not share information obtained through hacking, unauthorized access, or a breach of confidence.",
+          "4": "Only share information about yourself that you are comfortable being public. Take care not to reveal others’ personal details in packs, comments, or media."
+        }
+      },
+      "impersonation_deception": {
+        "title": "Impersonation & Deception",
+        "items": {
+          "1": "Do not impersonate another person, brand, organization, or Velanto staff, including through usernames, avatars, or profile details designed to mislead.",
+          "2": "Do not run scams, phishing schemes, or deceptive practices intended to trick users into giving up money, credentials, or personal information.",
+          "3": "Do not misrepresent your affiliation with, or endorsement by, any person or organization.",
+          "4": "Parody or fan content is permitted only when it is clearly labeled and could not reasonably be mistaken for the real person or entity."
+        }
+      },
+      "spam_manipulation": {
+        "title": "Spam & Manipulation",
+        "items": {
+          "1": "Do not post repetitive, unsolicited, or bulk content, and do not flood the platform with low-value packs, comments, or messages.",
+          "2": "Do not manipulate votes, ratings, popularity, or play counts through bots, alternate accounts, coordinated groups, or any artificial means.",
+          "3": "Do not use automated scripts, bots, or exploits to interact with the platform in ways that undermine fair use or distort metrics.",
+          "4": "Do not cheat, exploit scoring, or otherwise gain an unfair advantage in plays or competitions.",
+          "5": "Do not post deceptive links, redirect users to unexpected destinations, or advertise unrelated products and services."
+        }
+      },
+      "misinformation": {
+        "title": "Harmful Misinformation",
+        "items": {
+          "1": "Do not post false or misleading information that could cause real-world harm, such as dangerous health claims, fabricated safety guidance, or content that undermines public safety.",
+          "2": "Do not use the platform to spread coordinated disinformation, fabricated evidence, or manipulated media intended to deceive.",
+          "3": "Do not present false factual claims as verified answers in packs. Trivia should be accurate and, where relevant, sourced; opinion and satire should be clearly distinguishable from fact."
+        }
+      },
+      "intellectual_property": {
+        "title": "Intellectual Property",
+        "items": {
+          "1": "Do not upload, reproduce, or distribute text, images, audio, or other material that you do not own or have the right to use.",
+          "2": "Respect copyright, trademarks, and licensing terms. Give attribution where required and honor the conditions of any license you rely on.",
+          "3": "Do not post content that infringes another party’s intellectual property. We respond to valid takedown requests and may remove infringing content and penalize repeat infringers."
+        }
+      },
+      "platform_integrity": {
+        "title": "Platform Integrity",
+        "items": {
+          "1": "Do not evade bans, suspensions, or other enforcement actions by creating new accounts or using alternate identities.",
+          "2": "Do not probe for, exploit, or abuse bugs, vulnerabilities, or unintended behavior. Report security issues responsibly instead of exploiting them.",
+          "3": "Do not attempt to circumvent moderation, content filters, rate limits, or access controls.",
+          "4": "Do not interfere with the normal operation of the platform, including through denial-of-service attempts, scraping in violation of these rules, or unauthorized access to systems or data."
+        }
+      }
+    }
   },
   "banReason": {
     "label": "Reason",

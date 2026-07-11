@@ -74,7 +74,117 @@
     "metaDescription": "Las reglas de la comunidad para crear y jugar paquetes en Velanto: léelas antes de registrarte.",
     "heading": "Reglas de la comunidad",
     "intro": "Estas reglas mantienen Velanto seguro y justo para todos. Al crear una cuenta, aceptas cumplirlas.",
-    "loadError": "No pudimos cargar las reglas en este momento. Inténtalo de nuevo en un momento."
+    "loadError": "No pudimos cargar las reglas en este momento. Inténtalo de nuevo en un momento.",
+    "content": {
+      "hate_discrimination": {
+        "title": "Odio y discriminación",
+        "items": {
+          "1": "No ataques, deshumanices, degrades ni promuevas el odio contra ninguna persona o grupo por motivos de raza, etnia, origen nacional, religión, género, sexo, orientación sexual, identidad de género, discapacidad, enfermedad grave, edad o cualquier otra característica protegida comparable. Esto se aplica al texto, las imágenes, los nombres de usuario, el contenido de los paquetes, los comentarios y cualquier otra contribución.",
+          "2": "No utilices insultos discriminatorios, símbolos de odio ni lenguaje en clave destinado a degradar a un grupo protegido, y no publiques imágenes que celebren o respalden ideologías de odio.",
+          "3": "No promuevas ni expreses apoyo a la discriminación, la segregación, la exclusión o la negación de derechos a las personas por causa de una característica protegida.",
+          "4": "No crees paquetes, preguntas ni respuestas cuya premisa clasifique, ridiculice o afirme la inferioridad de un grupo protegido. El contenido fáctico o educativo legítimo sobre historia, cultura o religión solo se permite cuando se presenta de forma respetuosa y sin respaldar el odio."
+        }
+      },
+      "harassment_bullying": {
+        "title": "Acoso e intimidación",
+        "items": {
+          "1": "No hostigues a otra persona con insultos, burlas, intimidación o contacto no deseado y persistente, ya sea a través de paquetes, comentarios, nombres de usuario o cualquier otra función.",
+          "2": "No organices, fomentes ni participes en acoso coordinado, ataques en grupo o campañas de hostigamiento colectivo contra ninguna persona o grupo.",
+          "3": "No publiques contenido diseñado para avergonzar, humillar o provocar a una persona concreta, incluido el contenido que haga referencia a su apariencia, identidad o circunstancias personales.",
+          "4": "Respeta las solicitudes de cesar el contacto. Está prohibido seguir interactuando con un usuario que ha pedido que lo dejen en paz, o eludir un bloqueo para llegar a él."
+        }
+      },
+      "violence_harm": {
+        "title": "Violencia y daño",
+        "items": {
+          "1": "No amenaces con violencia ni desees un daño grave a ninguna persona o grupo, y no incites a otros a cometer actos de violencia.",
+          "2": "No glorifiques, promuevas ni proporciones instrucciones para el terrorismo, la violencia masiva o el extremismo violento, y no elogies a los autores de tales actos.",
+          "3": "No fomentes, promuevas ni proporciones instrucciones sobre el suicidio, la autolesión o los trastornos alimentarios. Si tú o alguien que conoces está en riesgo, busca ayuda en los servicios de emergencia locales o en una línea de atención en crisis.",
+          "4": "No publiques contenido sangriento gratuito, representaciones gráficas de muerte o lesiones graves, ni imágenes destinadas a impactar o a celebrar el sufrimiento.",
+          "5": "No utilices la plataforma para planificar, coordinar o reclutar para actos de violencia en el mundo real."
+        }
+      },
+      "sexual_content": {
+        "title": "Contenido sexual y explícito",
+        "items": {
+          "1": "No publiques pornografía, imágenes sexualmente explícitas ni representaciones de actos sexuales en ninguna parte de la plataforma.",
+          "2": "No publiques desnudos ni contenido sexualizado en paquetes, imágenes, nombres de usuario, avatares o comentarios. Esta es una plataforma para el público general.",
+          "3": "No utilices la plataforma para solicitar contacto sexual, distribuir contenido sexual o anunciar servicios sexuales.",
+          "4": "No compartas imágenes íntimas o sexuales de ninguna persona sin su consentimiento explícito, incluido el llamado contenido de \"venganza\"."
+        }
+      },
+      "child_safety": {
+        "title": "Seguridad infantil",
+        "items": {
+          "1": "Tenemos tolerancia CERO frente a la sexualización de menores. Cualquier contenido que sexualice, explote o ponga en peligro a una persona menor de 18 años —real, ficticia, ilustrada o generada por inteligencia artificial— conlleva la cancelación permanente e inmediata de la cuenta y, cuando corresponda, la denuncia ante el Centro Nacional para Menores Desaparecidos y Explotados (NCMEC) y las autoridades competentes.",
+          "2": "No subas, solicites, compartas ni enlaces material de abuso sexual infantil (CSAM) ni ninguna representación sexualizada de un menor bajo ninguna circunstancia.",
+          "3": "No intentes contactar, captar, sexualizar ni poner en peligro de ningún otro modo a un menor, y no utilices la plataforma para facilitar dicha conducta.",
+          "4": "Denuncia de inmediato cualquier sospecha de peligro para un menor. Cooperamos plenamente con las autoridades y conservamos las pruebas pertinentes según lo exija la ley."
+        }
+      },
+      "illegal_content": {
+        "title": "Contenido y actividad ilegales",
+        "items": {
+          "1": "No utilices la plataforma para facilitar, promover o coordinar actividades que sean ilegales en tu jurisdicción o en la jurisdicción donde opera la plataforma.",
+          "2": "No anuncies, vendas ni facilites el comercio de bienes o servicios ilegales, incluidos drogas ilícitas, armas, datos robados o artículos falsificados.",
+          "3": "No publiques instrucciones para producir armas, explosivos, drogas u otros materiales cuyo propósito principal sea causar un daño grave o cometer un delito.",
+          "4": "No utilices la plataforma para blanquear dinero, ejecutar estafas financieras o participar de cualquier otro modo en fraude o robo."
+        }
+      },
+      "privacy_doxxing": {
+        "title": "Privacidad y divulgación de datos personales",
+        "items": {
+          "1": "No publiques la información privada o identificativa de otra persona —como su domicilio, número de teléfono, documento de identidad, datos financieros o comunicaciones privadas— sin su consentimiento explícito.",
+          "2": "No amenaces con revelar información privada, y no fomentes ni coordines la divulgación de la información privada de nadie.",
+          "3": "No compartas información obtenida mediante piratería informática, acceso no autorizado o quebrantamiento de la confidencialidad.",
+          "4": "Comparte únicamente información sobre ti mismo que te sientas cómodo con que sea pública. Ten cuidado de no revelar datos personales de terceros en paquetes, comentarios o material multimedia."
+        }
+      },
+      "impersonation_deception": {
+        "title": "Suplantación de identidad y engaño",
+        "items": {
+          "1": "No suplantes a otra persona, marca, organización ni al personal de Velanto, incluido a través de nombres de usuario, avatares o datos de perfil diseñados para inducir a error.",
+          "2": "No ejecutes estafas, esquemas de phishing ni prácticas engañosas destinadas a inducir a los usuarios a entregar dinero, credenciales o información personal.",
+          "3": "No tergiverses tu afiliación con una persona u organización, ni su respaldo hacia ti.",
+          "4": "El contenido de parodia o de fans solo se permite cuando está claramente etiquetado y no podría confundirse razonablemente con la persona o entidad real."
+        }
+      },
+      "spam_manipulation": {
+        "title": "Spam y manipulación",
+        "items": {
+          "1": "No publiques contenido repetitivo, no solicitado o masivo, y no satures la plataforma con paquetes, comentarios o mensajes de escaso valor.",
+          "2": "No manipules votos, valoraciones, popularidad ni recuentos de partidas mediante bots, cuentas alternativas, grupos coordinados o cualquier otro medio artificial.",
+          "3": "No utilices scripts automatizados, bots ni exploits para interactuar con la plataforma de formas que socaven el uso justo o distorsionen las métricas.",
+          "4": "No hagas trampas, no explotes el sistema de puntuación ni obtengas de cualquier otro modo una ventaja injusta en las partidas o competiciones.",
+          "5": "No publiques enlaces engañosos, no redirijas a los usuarios a destinos inesperados ni anuncies productos y servicios no relacionados."
+        }
+      },
+      "misinformation": {
+        "title": "Desinformación dañina",
+        "items": {
+          "1": "No publiques información falsa o engañosa que pueda causar un daño en el mundo real, como afirmaciones peligrosas sobre salud, orientaciones de seguridad inventadas o contenido que socave la seguridad pública.",
+          "2": "No utilices la plataforma para difundir desinformación coordinada, pruebas fabricadas o material manipulado con la intención de engañar.",
+          "3": "No presentes afirmaciones fácticas falsas como respuestas verificadas en los paquetes. Las preguntas de trivia deben ser precisas y, cuando corresponda, contar con fuentes; la opinión y la sátira deben poder distinguirse claramente de los hechos."
+        }
+      },
+      "intellectual_property": {
+        "title": "Propiedad intelectual",
+        "items": {
+          "1": "No subas, reproduzcas ni distribuyas texto, imágenes, audio u otro material que no sea de tu propiedad o sobre el que no tengas derecho de uso.",
+          "2": "Respeta los derechos de autor, las marcas registradas y las condiciones de licencia. Otorga la atribución cuando sea necesario y cumple las condiciones de cualquier licencia en la que te bases.",
+          "3": "No publiques contenido que infrinja la propiedad intelectual de un tercero. Respondemos a las solicitudes de retirada válidas y podemos eliminar el contenido infractor y sancionar a los infractores reincidentes."
+        }
+      },
+      "platform_integrity": {
+        "title": "Integridad de la plataforma",
+        "items": {
+          "1": "No eludas prohibiciones, suspensiones u otras medidas de aplicación creando nuevas cuentas o utilizando identidades alternativas.",
+          "2": "No indagues, explotes ni abuses de errores, vulnerabilidades o comportamientos no previstos. Informa de los problemas de seguridad de forma responsable en lugar de explotarlos.",
+          "3": "No intentes eludir la moderación, los filtros de contenido, los límites de frecuencia ni los controles de acceso.",
+          "4": "No interfieras con el funcionamiento normal de la plataforma, incluido mediante intentos de denegación de servicio, extracción de datos en violación de estas normas o acceso no autorizado a sistemas o datos."
+        }
+      }
+    }
   },
   "banReason": {
     "label": "Motivo",
