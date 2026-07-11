@@ -1,9 +1,8 @@
 // This suite was the flaky canary of #78: AuthorScreen fired several chained
 // client fetches (profile+packs, then ban-history) each committing its own set
 // of setStates, so the many `waitFor`s below raced intermediate render states.
-// AuthorScreen now drives every fetch through `useClientData`, which aborts the
-// in-flight request on unmount / dep change and commits each result in one
-// reducer dispatch — so these assertions observe deterministic transitions.
+// AuthorScreen now drives every fetch through React Query, which commits each
+// result deterministically — so these assertions observe stable transitions.
 // Every original behavioral assertion is preserved.
 import type { ReactElement } from "react";
 import { render, screen, waitFor } from "@testing-library/react";

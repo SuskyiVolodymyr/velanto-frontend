@@ -25,8 +25,8 @@ export function useResultPicks(packId: string): {
 
   const [ownPicks, setOwnPicks] = useState<RecordedPick[] | null>(null);
   // This is a client-only sessionStorage read after mount (not an async fetch),
-  // so useClientData doesn't apply. The useHydratedValue helper doesn't fit
-  // either: readLastPlayPicks builds a fresh array each call, which violates the
+  // so a data-fetching query doesn't apply. The useHydratedValue helper doesn't
+  // fit either: readLastPlayPicks builds a fresh array each call, which violates the
   // Object.is-stable-snapshot contract useSyncExternalStore requires. A narrowly
   // scoped mounted-read with a cancel-free single setState is the simplest safe
   // shape, so the set-state-in-effect disable is kept deliberately here.
