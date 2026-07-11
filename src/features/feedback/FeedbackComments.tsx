@@ -8,6 +8,7 @@ import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { Tooltip } from "@/src/shared/components/Tooltip";
 import { useAuth } from "@/src/shared/lib/auth-context";
+import { cn } from "@/src/shared/lib/cn";
 import { messageFromError } from "@/src/shared/lib/messageFromError";
 import type { FeedbackComment } from "@/src/shared/types/feedback";
 import {
@@ -66,6 +67,39 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
     addComment.mutate(body, { onSuccess: () => setDraft("") });
   }
 
+  // A signed-out viewer sees the whole composer blocked: the textarea is
+  // read-only and shows the reason as its placeholder, the Post button is
+  // aria-disabled, and one tooltip covers the lot (so it's clear from the
+  // input — not just the button — why it's inert).
+  const composer = (
+    <div className="mb-6 flex flex-col gap-2">
+      <textarea
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+        placeholder={
+          blocked ? tAuth("logInToComment") : t("commentPlaceholder")
+        }
+        aria-label={t("commentAria")}
+        rows={2}
+        readOnly={blocked}
+        disabled={posting}
+        className={cn(
+          "rounded-[10px] border border-border bg-surface px-3.5 py-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-acc disabled:opacity-45",
+          blocked && "cursor-not-allowed opacity-60",
+        )}
+      />
+      {postError && <Text className="text-sm text-[#ff6b6b]">{postError}</Text>}
+      <Button
+        className={cn("self-end", blocked && "cursor-not-allowed opacity-45")}
+        aria-disabled={blocked || undefined}
+        disabled={blocked ? false : !draft.trim() || posting}
+        onClick={handlePost}
+      >
+        {t("postComment")}
+      </Button>
+    </div>
+  );
+
   return (
     <section>
       <Text
@@ -76,43 +110,14 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
         {t("commentsHeading", { count: total })}
       </Text>
 
-      {status !== "loading" && (
-        <div className="mb-6 flex flex-col gap-2">
-          <textarea
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            placeholder={t("commentPlaceholder")}
-            aria-label={t("commentAria")}
-            rows={2}
-            disabled={posting || blocked}
-            className="rounded-[10px] border border-border bg-surface px-3.5 py-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-acc disabled:opacity-45"
-          />
-          {postError && (
-            <Text className="text-sm text-[#ff6b6b]">{postError}</Text>
-          )}
-          {blocked ? (
-            // Signed-out viewers see a dimmed Post that explains the reason on
-            // hover/focus, instead of a separate log-in prompt box.
-            <Tooltip content={tAuth("logInToComment")} className="self-end">
-              <Button
-                aria-disabled
-                className="cursor-not-allowed opacity-45"
-                onClick={handlePost}
-              >
-                {t("postComment")}
-              </Button>
-            </Tooltip>
-          ) : (
-            <Button
-              className="self-end"
-              disabled={!draft.trim() || posting}
-              onClick={handlePost}
-            >
-              {t("postComment")}
-            </Button>
-          )}
-        </div>
-      )}
+      {status !== "loading" &&
+        (blocked ? (
+          <Tooltip content={tAuth("logInToComment")} block>
+            {composer}
+          </Tooltip>
+        ) : (
+          composer
+        ))}
 
       {loadStatus === "loading" && (
         <Text variant="secondary">{t("loadingComments")}</Text>

@@ -140,15 +140,17 @@ describe("CommentSection", () => {
     });
     renderAsUnauthenticated();
 
-    // The composer is shown but inert: the textarea is disabled and Post is
-    // blocked, explaining the reason on hover rather than posting.
+    // The composer is shown but inert: the textarea is read-only and shows the
+    // reason as its placeholder, Post is blocked, and hovering the *input*
+    // (not just the button) surfaces the reason. Nothing posts.
     const textarea = await screen.findByRole("textbox");
-    expect(textarea).toBeDisabled();
+    expect(textarea).toHaveAttribute("readonly");
+    expect(textarea).toHaveAttribute("placeholder", "Log in to comment");
 
     const post = screen.getByRole("button", { name: "Post" });
     expect(post).toHaveAttribute("aria-disabled", "true");
 
-    await userEvent.hover(post);
+    await userEvent.hover(textarea);
     expect(screen.getByRole("tooltip")).toHaveTextContent("Log in to comment");
 
     await userEvent.click(post);

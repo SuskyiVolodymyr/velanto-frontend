@@ -75,12 +75,13 @@ describe("FeedbackComments", () => {
     render(<FeedbackComments feedbackId="f1" />);
 
     const textarea = await screen.findByRole("textbox");
-    expect(textarea).toBeDisabled();
+    expect(textarea).toHaveAttribute("readonly");
+    expect(textarea).toHaveAttribute("placeholder", "Log in to comment");
 
     const post = screen.getByRole("button", { name: "Post" });
     expect(post).toHaveAttribute("aria-disabled", "true");
 
-    await userEvent.hover(post);
+    await userEvent.hover(textarea);
     expect(screen.getByRole("tooltip")).toHaveTextContent("Log in to comment");
 
     await userEvent.click(post);

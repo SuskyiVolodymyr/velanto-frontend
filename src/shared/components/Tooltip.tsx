@@ -17,11 +17,17 @@ export function Tooltip({
   content,
   children,
   className,
+  block = false,
 }: {
   content: string;
   children: ReactElement;
   /** Extra classes for the wrapper span (e.g. flex self-alignment). */
   className?: string;
+  /**
+   * Render the wrapper as a full-width block instead of inline-flex — use when
+   * wrapping a block-level child (e.g. a whole composer) so its layout is kept.
+   */
+  block?: boolean;
 }) {
   const id = useId();
   const [open, setOpen] = useState(false);
@@ -30,7 +36,10 @@ export function Tooltip({
 
   return (
     <span
-      className={cn("relative inline-flex", className)}
+      className={cn(
+        block ? "relative block" : "relative inline-flex",
+        className,
+      )}
       onMouseEnter={show}
       onMouseLeave={hide}
       onFocus={show}
