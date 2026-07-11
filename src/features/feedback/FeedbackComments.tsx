@@ -1,100 +1,65 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { useAuth } from "@/src/shared/lib/auth-context";
-import { feedbackClient } from "@/src/shared/lib/feedback-client";
 import { messageFromError } from "@/src/shared/lib/messageFromError";
 import type { FeedbackComment } from "@/src/shared/types/feedback";
-
-const PAGE_SIZE = 10;
+import {
+  useFeedbackComments,
+  useAddComment,
+} from "@/src/features/feedback/api/feedback-comments.queries";
 
 export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
   const t = useTranslations("feedback");
   const { status } = useAuth();
-  const [comments, setComments] = useState<FeedbackComment[]>([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [loadStatus, setLoadStatus] = useState<"loading" | "ready" | "error">(
-    "loading",
-  );
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [loadMoreError, setLoadMoreError] = useState("");
   const [draft, setDraft] = useState("");
-  const [posting, setPosting] = useState(false);
-  const [postError, setPostError] = useState("");
 
-  useEffect(() => {
-    let cancelled = false;
-    feedbackClient
-      .listComments(feedbackId, { page: 1, limit: PAGE_SIZE })
-      .then((result) => {
-        if (cancelled) return;
-        setComments(result.items);
-        setTotal(result.total);
-        setPage(1);
-        setLoadStatus("ready");
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setLoadStatus("error");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [feedbackId]);
+  const commentsQuery = useFeedbackComments(feedbackId);
+  const addComment = useAddComment(feedbackId);
 
-  async function handleLoadMore() {
-    setLoadingMore(true);
-    try {
-      const nextPage = page + 1;
-      const result = await feedbackClient.listComments(feedbackId, {
-        page: nextPage,
-        limit: PAGE_SIZE,
-      });
-      // A comment posted between page loads shifts every later comment's
-      // server-side offset by one, so the next page can re-return a comment
-      // already shown on a prior page — filter those out rather than trusting
-      // the offset math to stay aligned with local inserts.
-      setComments((prev) => {
-        const existingIds = new Set(prev.map((c) => c.id));
-        return [...prev, ...result.items.filter((c) => !existingIds.has(c.id))];
-      });
-      setTotal(result.total);
-      setPage(nextPage);
-      setLoadMoreError("");
-    } catch {
-      setLoadMoreError(t("loadMoreCommentsError"));
-    } finally {
-      setLoadingMore(false);
+  // Flatten the loaded pages, de-duping by id (a comment posted between page
+  // loads shifts server offsets, so a later page can re-return an earlier one).
+  const comments = useMemo(() => {
+    const seen = new Set<string>();
+    const out: FeedbackComment[] = [];
+    for (const page of commentsQuery.data?.pages ?? []) {
+      for (const comment of page.items) {
+        if (!seen.has(comment.id)) {
+          seen.add(comment.id);
+          out.push(comment);
+        }
+      }
     }
-  }
+    return out;
+  }, [commentsQuery.data]);
 
-  async function handlePost() {
+  const total = commentsQuery.data?.pages.at(-1)?.total ?? 0;
+  const hasData = commentsQuery.data !== undefined;
+  const loadStatus: "loading" | "ready" | "error" = commentsQuery.isLoading
+    ? "loading"
+    : !hasData && commentsQuery.isError
+      ? "error"
+      : "ready";
+  const loadingMore = commentsQuery.isFetchingNextPage;
+  const loadMoreError =
+    hasData && (commentsQuery.isError || commentsQuery.isFetchNextPageError)
+      ? t("loadMoreCommentsError")
+      : "";
+
+  const posting = addComment.isPending;
+  const postError = addComment.isError
+    ? messageFromError(addComment.error, { fallback: t("postError") })
+    : "";
+
+  function handlePost() {
     const body = draft.trim();
     if (!body) return;
-    setPosting(true);
-    try {
-      const created = await feedbackClient.addComment(feedbackId, { body });
-      setComments((prev) => [created, ...prev]);
-      setTotal((t) => t + 1);
-      setDraft("");
-      setPostError("");
-    } catch (err) {
-      // Surface the backend's specific validation message (e.g. the moderation
-      // blocked-term rejection) when present, falling back to generic copy.
-      setPostError(
-        messageFromError(err, {
-          fallback: t("postError"),
-        }),
-      );
-    } finally {
-      setPosting(false);
-    }
+    addComment.mutate(body, { onSuccess: () => setDraft("") });
   }
 
   return (
@@ -183,7 +148,7 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
           <Button
             variant="secondary"
             disabled={loadingMore}
-            onClick={handleLoadMore}
+            onClick={() => void commentsQuery.fetchNextPage()}
           >
             {loadingMore ? t("loadingMore") : t("loadMore")}
           </Button>

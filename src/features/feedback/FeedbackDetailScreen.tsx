@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
-import { feedbackClient } from "@/src/shared/lib/feedback-client";
-import { useClientData } from "@/src/shared/hooks/useClientData";
+import { useFeedback } from "@/src/features/feedback/api/feedback-detail.queries";
+import {
+  useSetFeedbackStatus,
+  useDeleteFeedback,
+} from "@/src/features/feedback/api/feedback-detail.mutations";
 import { ApiError } from "@/src/shared/lib/api-client";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
@@ -33,47 +35,32 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
   const { user } = useAuth();
   const router = useRouter();
 
-  const [statusBusy, setStatusBusy] = useState(false);
-  const [statusError, setStatusError] = useState("");
-  const [deleteError, setDeleteError] = useState("");
-
-  // postId can change without a remount (e.g. navigating between detail pages);
-  // useClientData resets to loading and aborts the previous fetch on change.
-  const postQuery = useClientData(
-    () => feedbackClient.getById(postId),
-    [postId],
-  );
+  const postQuery = useFeedback(postId);
   const post = postQuery.data;
   // A 404 covers both a deleted post and a hidden staff_only one the viewer
   // isn't allowed to see — surface a friendly not-found in either case.
   const isNotFound =
     postQuery.error instanceof ApiError && postQuery.error.status === 404;
 
-  async function handleStatusChange(next: FeedbackStatus) {
-    setStatusBusy(true);
-    setStatusError("");
-    try {
-      const updated = await feedbackClient.setStatus(postId, next);
-      postQuery.setData((prev) => (prev ? { ...prev, ...updated } : prev));
-    } catch {
-      setStatusError(t("statusUpdateError"));
-    } finally {
-      setStatusBusy(false);
-    }
+  const statusMutation = useSetFeedbackStatus(postId);
+  const statusBusy = statusMutation.isPending;
+  const statusError = statusMutation.isError ? t("statusUpdateError") : "";
+
+  const deleteMutation = useDeleteFeedback(postId);
+  const deleteError = deleteMutation.isError ? t("deleteError") : "";
+
+  function handleStatusChange(next: FeedbackStatus) {
+    statusMutation.mutate(next);
   }
 
-  async function handleDelete() {
+  function handleDelete() {
     if (!window.confirm(t("deleteConfirm"))) return;
-    setDeleteError("");
-    try {
-      await feedbackClient.remove(postId);
-      router.push("/feedback");
-    } catch {
-      setDeleteError(t("deleteError"));
-    }
+    deleteMutation.mutate(undefined, {
+      onSuccess: () => router.push("/feedback"),
+    });
   }
 
-  if (postQuery.loading) {
+  if (postQuery.isLoading) {
     return (
       <main className="mx-auto w-full max-w-2xl px-7 py-10">
         <Text variant="secondary">{t("loading")}</Text>
@@ -196,7 +183,7 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
                 value={post.status}
                 disabled={statusBusy}
                 onChange={(e) =>
-                  void handleStatusChange(e.target.value as FeedbackStatus)
+                  handleStatusChange(e.target.value as FeedbackStatus)
                 }
                 aria-label={t("statusSelectLabel")}
                 className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground disabled:opacity-45"
@@ -221,7 +208,7 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
             <Button
               variant="secondary"
               className="ml-auto"
-              onClick={() => void handleDelete()}
+              onClick={handleDelete}
             >
               {t("delete")}
             </Button>
