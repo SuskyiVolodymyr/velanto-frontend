@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { getRoundsCount } from "@/src/shared/lib/pack-display";
+import { PackBannerAuthor } from "./PackBannerAuthor";
 import type { Pack } from "@/src/shared/types/pack";
 
 // Hero banner for the pack page: tinted gradient with a faint diagonal weave,
@@ -46,17 +46,7 @@ export function PackCoverBanner({ pack }: { pack: Pack }) {
         <h1 className="mb-2.5 text-[clamp(28px,4vw,42px)] font-semibold leading-[1.05] tracking-[-0.02em] text-white">
           {pack.title}
         </h1>
-        <Link
-          href={`/users/${pack.authorId}`}
-          className="inline-flex items-center gap-2.5 text-sm text-white/75 transition-colors hover:text-white"
-        >
-          <span
-            aria-hidden
-            className="h-5 w-5 rounded-md border border-white/25"
-            style={{ background: pack.coverTone }}
-          />
-          {t("viewAuthor")}
-        </Link>
+        <PackBannerAuthor pack={pack} />
       </div>
     </div>
   );

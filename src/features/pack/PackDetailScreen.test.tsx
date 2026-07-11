@@ -21,6 +21,11 @@ vi.mock("@/src/features/pack/PackPlayButton", () => ({
     <a href={`/packs/${packId}/play`}>Play now</a>
   ),
 }));
+// The banner's author line is an auth-gated client island (own tests); stub it
+// so PackCoverBanner (which renders the asserted title) stays real.
+vi.mock("@/src/features/pack/PackBannerAuthor", () => ({
+  PackBannerAuthor: () => <div>PackBannerAuthor</div>,
+}));
 
 const BASE_PACK: Pack = {
   id: "p1",
