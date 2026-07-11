@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,7 +10,6 @@ import { useAuth } from "@/src/shared/lib/auth-context";
 import { messageFromError } from "@/src/shared/lib/messageFromError";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
-import { TextField } from "@/src/shared/components/form/TextField";
 import { PasswordField } from "@/src/shared/components/form/PasswordField";
 import { cn } from "@/src/shared/lib/cn";
 import { sanitizeNextPath } from "@/src/shared/lib/safe-redirect";
@@ -205,7 +205,28 @@ export function AuthForm() {
         variant="tertiary"
         className="text-center text-xs mt-5 leading-relaxed"
       >
-        {t("terms")}
+        {t.rich("terms", {
+          terms: (chunks) => (
+            <Link
+              href="/terms"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-acc underline hover:no-underline"
+            >
+              {chunks}
+            </Link>
+          ),
+          privacy: (chunks) => (
+            <Link
+              href="/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-acc underline hover:no-underline"
+            >
+              {chunks}
+            </Link>
+          ),
+        })}
       </Text>
     </div>
   );

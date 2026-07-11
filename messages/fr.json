@@ -70,7 +70,7 @@
     "invalidCredentials": "Identifiants invalides.",
     "pleaseWait": "Veuillez patienter…",
     "createAccount": "Créer un compte",
-    "terms": "En continuant, vous acceptez les Conditions d'utilisation et la Politique de confidentialité de Velanto."
+    "terms": "En continuant, vous acceptez les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy> de Velanto."
   },
   "rules": {
     "metaTitle": "Règles de la communauté — Velanto",
@@ -188,6 +188,20 @@
         }
       }
     }
+  },
+  "terms": {
+    "metaTitle": "Conditions d'utilisation — Velanto",
+    "metaDescription": "Les conditions qui régissent votre utilisation de Velanto.",
+    "heading": "Conditions d'utilisation",
+    "intro": "Ces conditions régissent votre accès à Velanto et votre utilisation de celui-ci.",
+    "draftNotice": "Il s'agit d'une version de travail en attente d'examen juridique — les conditions d'utilisation définitives seront publiées ici."
+  },
+  "privacy": {
+    "metaTitle": "Politique de confidentialité — Velanto",
+    "metaDescription": "Comment Velanto collecte, utilise et protège vos données.",
+    "heading": "Politique de confidentialité",
+    "intro": "Cette politique explique quelles données Velanto collecte et comment elles sont utilisées.",
+    "draftNotice": "Il s'agit d'une version de travail en attente d'examen juridique — la politique de confidentialité définitive sera publiée ici."
   },
   "banReason": {
     "label": "Motif",
