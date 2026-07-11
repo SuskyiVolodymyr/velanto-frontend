@@ -1,12 +1,33 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import {
+  infiniteQueryOptions,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { useAuth } from "@/src/shared/lib/auth-context";
-import { useClientData } from "@/src/shared/hooks/useClientData";
 import { notificationsClient } from "@/src/shared/lib/notifications-client";
 
 const POLL_INTERVAL_MS = 30_000;
 const PAGE_SIZE = 20;
+
+const UNREAD_KEY = ["notifications-unread"] as const;
+
+function notificationsListQueryOptions() {
+  return infiniteQueryOptions({
+    queryKey: ["notifications-list"] as const,
+    queryFn: ({ pageParam }) =>
+      notificationsClient.list({ page: pageParam, limit: PAGE_SIZE }),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      const loaded = allPages.reduce((count, page) => count + page.items.length, 0);
+      return loaded < lastPage.total ? allPages.length + 1 : undefined;
+    },
+  });
+}
 
 /**
  * Drives {@link NotificationsBell}: the polled unread count, the open/close
@@ -15,37 +36,31 @@ const PAGE_SIZE = 20;
  */
 export function useNotifications() {
   const { status } = useAuth();
-  const [unreadCount, setUnreadCount] = useState(0);
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [loadMoreError, setLoadMoreError] = useState("");
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
 
   const authenticated = status === "authenticated";
 
+  // Polled unread count. React Query's refetchInterval covers the 30s poll;
+  // its refetchOnWindowFocus keys off `visibilitychange`, so the explicit
+  // focus listener below covers a plain window focus too.
+  const unreadQuery = useQuery({
+    queryKey: UNREAD_KEY,
+    queryFn: () => notificationsClient.unreadCount(),
+    enabled: authenticated,
+    refetchInterval: authenticated ? POLL_INTERVAL_MS : false,
+  });
+  const unreadCount = unreadQuery.data?.count ?? 0;
+  const { refetch: refetchUnread } = unreadQuery;
+
   useEffect(() => {
     if (!authenticated) return;
-    let cancelled = false;
-    function poll() {
-      notificationsClient
-        .unreadCount()
-        .then((result) => {
-          if (!cancelled) setUnreadCount(result.count);
-        })
-        .catch(() => {
-          // Polling failure is silent — the dot just doesn't update this tick.
-        });
-    }
-    poll();
-    const interval = setInterval(poll, POLL_INTERVAL_MS);
-    window.addEventListener("focus", poll);
-    return () => {
-      cancelled = true;
-      clearInterval(interval);
-      window.removeEventListener("focus", poll);
-    };
-  }, [authenticated]);
+    const onFocus = () => void refetchUnread();
+    window.addEventListener("focus", onFocus);
+    return () => window.removeEventListener("focus", onFocus);
+  }, [authenticated, refetchUnread]);
 
   useEffect(() => {
     if (!open) return;
@@ -73,76 +88,35 @@ export function useNotifications() {
     };
   }, [open]);
 
-  // The drawer's list is fetched only while it's open (enabled: open) and its
-  // in-flight request is aborted if the drawer closes first. `page` is stored
-  // in the fetched data so it resets on each reopen.
-  const listQuery = useClientData(
-    async () => {
-      const result = await notificationsClient.list({
-        page: 1,
-        limit: PAGE_SIZE,
-      });
-      return { items: result.items, total: result.total, page: 1 };
-    },
-    [],
-    { enabled: open },
-  );
+  // The drawer's list is fetched only while it's open.
+  const listQuery = useInfiniteQuery({
+    ...notificationsListQueryOptions(),
+    enabled: open,
+  });
 
-  const notifications = listQuery.data?.items ?? [];
-  const total = listQuery.data?.total ?? 0;
-  const listLoaded = listQuery.data !== null;
-  const listReady =
-    listLoaded && !listQuery.loading && listQuery.error === null;
+  const seen = new Set<string>();
+  const notifications = (listQuery.data?.pages ?? [])
+    .flatMap((page) => page.items)
+    .filter((item) => {
+      if (seen.has(item.id)) return false;
+      seen.add(item.id);
+      return true;
+    });
+  const total = listQuery.data?.pages.at(-1)?.total ?? 0;
+  const listLoaded = listQuery.data !== undefined;
+  const listReady = listLoaded && !listQuery.isLoading;
+
+  const markAllRead = useMutation({
+    mutationFn: () => notificationsClient.markAllRead(),
+    onSuccess: () => queryClient.setQueryData(UNREAD_KEY, { count: 0 }),
+  });
+  const { mutate: markAllReadMutate } = markAllRead;
 
   // Once the open drawer's list has loaded, mark everything read and clear the
-  // bell's dot. markAllRead's setState lives in its async .then, so this is not
-  // the flagged synchronous set-state-in-effect pattern.
+  // bell's dot.
   useEffect(() => {
-    if (!open || !listLoaded) return;
-    let cancelled = false;
-    void notificationsClient
-      .markAllRead()
-      .then(() => {
-        if (!cancelled) setUnreadCount(0);
-      })
-      .catch(() => {
-        // Silent, matching the poll's own catch — a failed mark-all-read just
-        // means the dot clears on a later successful poll instead.
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [open, listLoaded]);
-
-  async function handleLoadMore() {
-    const current = listQuery.data;
-    if (!current) return;
-    setLoadingMore(true);
-    try {
-      const nextPage = current.page + 1;
-      const result = await notificationsClient.list({
-        page: nextPage,
-        limit: PAGE_SIZE,
-      });
-      listQuery.setData((prev) => {
-        if (!prev) return prev;
-        const existingIds = new Set(prev.items.map((n) => n.id));
-        return {
-          items: [
-            ...prev.items,
-            ...result.items.filter((n) => !existingIds.has(n.id)),
-          ],
-          total: result.total,
-          page: nextPage,
-        };
-      });
-      setLoadMoreError("");
-    } catch {
-      setLoadMoreError("Couldn't load more notifications. Try again.");
-    } finally {
-      setLoadingMore(false);
-    }
-  }
+    if (open && listLoaded) markAllReadMutate();
+  }, [open, listLoaded, markAllReadMutate]);
 
   return {
     authenticated,
@@ -153,11 +127,14 @@ export function useNotifications() {
     triggerRef,
     notifications,
     total,
-    listLoading: listQuery.loading,
-    listError: listQuery.error,
+    listLoading: listQuery.isLoading,
+    listError: !listLoaded && listQuery.isError ? (listQuery.error as Error) : null,
     listReady,
-    loadingMore,
-    loadMoreError,
-    handleLoadMore,
+    loadingMore: listQuery.isFetchingNextPage,
+    loadMoreError:
+      listLoaded && (listQuery.isError || listQuery.isFetchNextPageError)
+        ? "Couldn't load more notifications. Try again."
+        : "",
+    handleLoadMore: () => listQuery.fetchNextPage(),
   };
 }
