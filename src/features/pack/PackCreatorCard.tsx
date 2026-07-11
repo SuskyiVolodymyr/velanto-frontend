@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Hidden } from "@/src/shared/components/Hidden";
+import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { AuthorHoverTrigger } from "./AuthorHoverTrigger";
 import type { Pack } from "@/src/shared/types/pack";
 
@@ -41,14 +42,11 @@ export function PackCreatorCard({ pack }: { pack: Pack }) {
         >
           <div className="flex items-center gap-3.5">
             {summary ? (
-              <Hidden
-                kind="avatar"
-                id={pack.authorId}
-                className="h-11 w-11 flex-none"
-              >
-                <div className="flex h-11 w-11 items-center justify-center rounded-[12px] border border-border bg-surface text-base font-semibold text-foreground-secondary">
-                  {summary.profile.username.slice(0, 1).toUpperCase()}
-                </div>
+              <Hidden kind="avatar" id={pack.authorId} className="flex-none">
+                <UserAvatar
+                  username={summary.profile.username}
+                  className="h-11 w-11 rounded-[12px] border border-border bg-surface text-base text-foreground-secondary"
+                />
               </Hidden>
             ) : (
               <span

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Hidden } from "@/src/shared/components/Hidden";
+import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { AuthorHoverTrigger } from "./AuthorHoverTrigger";
 import type { Pack } from "@/src/shared/types/pack";
 
@@ -23,11 +24,20 @@ export function PackBannerAuthor({ pack }: { pack: Pack }) {
           {...triggerProps}
           className="inline-flex items-center gap-2.5 text-sm text-white/75 transition-colors hover:text-white"
         >
-          <span
-            aria-hidden
-            className="h-5 w-5 flex-none rounded-md border border-white/25"
-            style={{ background: pack.coverTone }}
-          />
+          {summary ? (
+            <Hidden kind="avatar" id={pack.authorId} className="flex-none">
+              <UserAvatar
+                username={summary.profile.username}
+                className="h-8 w-8 rounded-full border border-white/25 bg-black/30 text-xs text-white/90"
+              />
+            </Hidden>
+          ) : (
+            <span
+              aria-hidden
+              className="h-8 w-8 flex-none rounded-full border border-white/25"
+              style={{ background: pack.coverTone }}
+            />
+          )}
           {summary ? (
             <Hidden kind="name" id={pack.authorId}>
               {`@${summary.profile.username}`}

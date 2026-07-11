@@ -6,6 +6,7 @@ import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { Tooltip } from "@/src/shared/components/Tooltip";
+import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import type { PublicUserProfile } from "@/src/shared/types/user";
 
 /**
@@ -40,7 +41,6 @@ export function AuthorHoverCard({
   const t = useTranslations("profile");
   const tAuth = useTranslations("authGate");
   const isFollowing = profile.isFollowedByMe ?? false;
-  const initial = profile.username.slice(0, 1).toUpperCase();
 
   // Signed-out viewers get a dimmed, non-functional follow button with the
   // reason on hover/focus instead of a surprise sign-in redirect.
@@ -69,10 +69,11 @@ export function AuthorHoverCard({
         className="w-[280px] rounded-[14px] border border-border-strong bg-surface p-4 shadow-xl shadow-black/40"
       >
         <Link href={`/users/${authorId}`} className="flex items-center gap-3">
-          <Hidden kind="avatar" id={authorId} className="h-11 w-11 flex-none">
-            <div className="flex h-11 w-11 items-center justify-center rounded-full border border-border bg-surface text-base font-semibold text-foreground-secondary">
-              {initial}
-            </div>
+          <Hidden kind="avatar" id={authorId} className="flex-none">
+            <UserAvatar
+              username={profile.username}
+              className="h-11 w-11 rounded-full border border-border bg-surface text-base text-foreground-secondary"
+            />
           </Hidden>
           <div className="min-w-0">
             <Text className="truncate text-[15px] font-semibold">
