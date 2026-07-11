@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import type { Item } from "@/src/shared/types/pack";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
@@ -19,6 +20,7 @@ interface SideCardProps {
 }
 
 function SideCard({ side, revealedCount, selected, onSelect }: SideCardProps) {
+  const t = useTranslations("play");
   return (
     <div
       role="button"
@@ -35,7 +37,7 @@ function SideCard({ side, revealedCount, selected, onSelect }: SideCardProps) {
         event.preventDefault();
         onSelect();
       }}
-      aria-label={`Pick ${side.name}`}
+      aria-label={t("pick", { name: side.name })}
       className={cn(
         "flex flex-1 cursor-pointer flex-col gap-3 rounded-2xl border p-4 text-left transition-colors",
         selected

@@ -1,37 +1,20 @@
 "use client";
 
 import { useFormContext, useWatch } from "react-hook-form";
+import { useTranslations } from "next-intl";
 import type { PackFormat } from "@/src/shared/types/pack";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
 import { type CreatePackValues } from "@/src/features/create/create-pack.schema";
 
-const FORMAT_OPTIONS: { value: PackFormat; title: string; blurb: string }[] = [
-  {
-    value: "save_one",
-    title: "Save One",
-    blurb: "Show a group, keep one to advance.",
-  },
-  {
-    value: "sacrifice_one",
-    title: "Sacrifice One",
-    blurb: "Remove one at a time; a favorite remains.",
-  },
-  {
-    value: "nxn",
-    title: "NxN",
-    blurb: "Two categories compared side by side.",
-  },
-  {
-    value: "rank_blind",
-    title: "Rank Blind",
-    blurb: "Place each pick blind into a growing ranked list.",
-  },
-  {
-    value: "1v1",
-    title: "1v1",
-    blurb: "Pick a winner in each head-to-head matchup.",
-  },
+// Each option's display name comes from the shared `formats` namespace (keyed by
+// the format value); the blurb is a create-form-only key.
+const FORMAT_OPTIONS: { value: PackFormat; blurbKey: string }[] = [
+  { value: "save_one", blurbKey: "blurbSaveOne" },
+  { value: "sacrifice_one", blurbKey: "blurbSacrificeOne" },
+  { value: "nxn", blurbKey: "blurbNxn" },
+  { value: "rank_blind", blurbKey: "blurbRankBlind" },
+  { value: "1v1", blurbKey: "blurb1v1" },
 ];
 
 /**
@@ -40,13 +23,15 @@ const FORMAT_OPTIONS: { value: PackFormat; title: string; blurb: string }[] = [
  * body is shown by the parent form.
  */
 export function FormatSection() {
+  const t = useTranslations("create");
+  const tFormat = useTranslations("formats");
   const { control, setValue } = useFormContext<CreatePackValues>();
   const format = useWatch({ control, name: "format" });
 
   return (
     <section className="flex flex-col gap-3">
       <Text as="h2" variant="title" className="text-lg">
-        Format
+        {t("formatHeading")}
       </Text>
       <div className="flex gap-2">
         {FORMAT_OPTIONS.map((option) => (
@@ -62,9 +47,9 @@ export function FormatSection() {
                 : "border-border bg-white/[0.02]",
             )}
           >
-            <Text className="font-semibold">{option.title}</Text>
+            <Text className="font-semibold">{tFormat(option.value)}</Text>
             <Text variant="secondary" className="mt-1 text-xs">
-              {option.blurb}
+              {t(option.blurbKey)}
             </Text>
           </button>
         ))}

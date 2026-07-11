@@ -6,7 +6,10 @@ import { generateMetadata } from "./page";
 // with the real English catalog so assertions read the shipped copy.
 vi.mock("next-intl/server", () => ({
   getTranslations: vi.fn(async () => (key: string) => {
-    return (messages.rules as Record<string, string>)[key] ?? key;
+    // `rules` now holds a nested `content` object alongside flat string keys;
+    // generateMetadata only reads string keys, so coerce non-strings to the key.
+    const value = (messages.rules as Record<string, unknown>)[key];
+    return typeof value === "string" ? value : key;
   }),
 }));
 

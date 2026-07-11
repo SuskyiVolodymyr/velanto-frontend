@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { useResultPicks } from "@/src/features/result/use-result-picks";
@@ -15,18 +16,19 @@ export function RankResultScreen({
   pack: Pack;
   results: RankResults;
 }) {
+  const t = useTranslations("result");
   const { picks: ownPicks, shared } = useResultPicks(pack.id);
 
   return (
     <div className="mx-auto w-full max-w-2xl flex-1 px-7 py-10">
       <Text variant="tertiary" className="mb-2 text-xs uppercase tracking-wide">
-        Result
+        {t("label")}
       </Text>
       <Text as="h1" variant="title" className="mb-2 text-3xl">
         {pack.title}
       </Text>
       <Text variant="secondary" className="mb-8">
-        {results.totalPlays} play{results.totalPlays === 1 ? "" : "s"} recorded.
+        {t("playsRecorded", { count: results.totalPlays })}
       </Text>
 
       {shared && <SharedResultNote />}
@@ -64,8 +66,10 @@ export function RankResultScreen({
                           {item.itemTitle}
                         </Text>
                         <Text variant="tertiary" className="text-xs">
-                          avg {item.averagePosition} · ranked {item.timesRanked}
-                          x
+                          {t("rankCaption", {
+                            avg: item.averagePosition,
+                            count: item.timesRanked,
+                          })}
                         </Text>
                       </div>
                       <div className="mb-2 flex items-end gap-1 pl-10">
@@ -95,25 +99,18 @@ export function RankResultScreen({
                       </div>
                       {ownPick && ownPick.position !== undefined ? (
                         <Text className="pl-10 text-xs text-acc">
-                          {shared ? "Placed" : "You placed this"} #
-                          {ownPick.position + 1} ·{" "}
-                          {Math.max(
-                            (item.positionCounts[ownPick.position] ?? 0) - 1,
-                            0,
-                          )}{" "}
-                          other play
-                          {(item.positionCounts[ownPick.position] ?? 0) - 1 ===
-                          1
-                            ? ""
-                            : "s"}{" "}
-                          agreed
+                          {t(shared ? "placed" : "youPlaced", {
+                            position: ownPick.position + 1,
+                            count: Math.max(
+                              (item.positionCounts[ownPick.position] ?? 0) - 1,
+                              0,
+                            ),
+                          })}
                         </Text>
                       ) : (
                         playedThisRound && (
                           <Text variant="tertiary" className="pl-10 text-xs">
-                            {shared
-                              ? "Not in this play this round"
-                              : "Not in your play this round"}
+                            {t(shared ? "notInThisPlay" : "notInYourPlay")}
                           </Text>
                         )
                       )}

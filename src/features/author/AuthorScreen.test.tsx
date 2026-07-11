@@ -1,16 +1,17 @@
 // This suite was the flaky canary of #78: AuthorScreen fired several chained
 // client fetches (profile+packs, then ban-history) each committing its own set
 // of setStates, so the many `waitFor`s below raced intermediate render states.
-// AuthorScreen now drives every fetch through `useClientData`, which aborts the
-// in-flight request on unmount / dep change and commits each result in one
-// reducer dispatch — so these assertions observe deterministic transitions.
+// AuthorScreen now drives every fetch through React Query, which commits each
+// result deterministically — so these assertions observe stable transitions.
 // Every original behavioral assertion is preserved.
 import type { ReactElement } from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextIntlClientProvider } from "next-intl";
+import { QueryClientProvider } from "@tanstack/react-query";
 import messages from "@/messages/en.json";
+import { createTestQueryClient } from "@/src/shared/test/test-query-client";
 import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
 import { AuthorScreen } from "./AuthorScreen";
 import { usersClient } from "@/src/shared/lib/users-client";
@@ -37,9 +38,11 @@ const RULES: RulesDocument = {
 // The BanReasonPicker uses next-intl, so moderator ban flows need a provider.
 function renderScreen(ui: ReactElement) {
   return render(
-    <NextIntlClientProvider locale="en" messages={messages}>
-      {ui}
-    </NextIntlClientProvider>,
+    <QueryClientProvider client={createTestQueryClient()}>
+      <NextIntlClientProvider locale="en" messages={messages}>
+        {ui}
+      </NextIntlClientProvider>
+    </QueryClientProvider>,
   );
 }
 
@@ -173,16 +176,22 @@ describe("AuthorScreen", () => {
     expect(screen.getByRole("button", { name: "Follow" })).toBeInTheDocument();
   });
 
-  it("redirects an anonymous viewer to /auth on Follow click instead of calling the API", async () => {
+  it("blocks an anonymous viewer with a reason tooltip instead of redirecting on Follow", async () => {
     mockAuth({ user: null, status: "unauthenticated" });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() =>
       expect(screen.getByText("quizmaster")).toBeInTheDocument(),
     );
-    await userEvent.click(screen.getByRole("button", { name: "Follow" }));
+    const followButton = screen.getByRole("button", { name: "Follow" });
+    expect(followButton).toHaveAttribute("aria-disabled", "true");
+
+    await userEvent.hover(followButton);
+    expect(screen.getByRole("tooltip")).toHaveTextContent("Log in to follow");
+
+    await userEvent.click(followButton);
     expect(mockedUsersClient.follow).not.toHaveBeenCalled();
-    expect(push).toHaveBeenCalledWith("/auth?next=%2Fusers%2Fauthor-1");
+    expect(push).not.toHaveBeenCalled();
   });
 
   it("renders the author's approved packs in a grid without status badges", async () => {
@@ -591,11 +600,13 @@ describe("AuthorScreen", () => {
     mockAuth();
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     render(
-      <NextIntlClientProvider locale="en" messages={messages}>
-        <StreamerModeProvider>
-          <AuthorScreen authorId="author-1" />
-        </StreamerModeProvider>
-      </NextIntlClientProvider>,
+      <QueryClientProvider client={createTestQueryClient()}>
+        <NextIntlClientProvider locale="en" messages={messages}>
+          <StreamerModeProvider>
+            <AuthorScreen authorId="author-1" />
+          </StreamerModeProvider>
+        </NextIntlClientProvider>
+      </QueryClientProvider>,
     );
     // The non-identity stat line still renders, so the screen has loaded…
     await waitFor(() =>

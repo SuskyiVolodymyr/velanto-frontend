@@ -1,6 +1,7 @@
 // src/features/admin/OverviewTab.test.tsx
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import { renderWithQueryClient as render } from "@/src/shared/test/render-with-query-client";
 import { OverviewTab } from "./OverviewTab";
 import { adminClient } from "@/src/shared/lib/admin-client";
 

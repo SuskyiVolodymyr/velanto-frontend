@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { TextField } from "@/src/shared/components/form/TextField";
+import { PasswordField } from "@/src/shared/components/form/PasswordField";
 import { CheckboxField } from "@/src/shared/components/form/CheckboxField";
 
 /**
@@ -11,26 +12,49 @@ import { CheckboxField } from "@/src/shared/components/form/CheckboxField";
  * TextField's `name`.
  */
 export function RegisterFields({ disabled }: { disabled: boolean }) {
+  const t = useTranslations("auth");
   return (
     <>
       <TextField
         name="username"
-        label="Username"
+        label={t("username")}
         srOnlyLabel
-        placeholder="Username"
+        placeholder={t("username")}
         autoComplete="username"
         disabled={disabled}
       />
       <TextField
         name="email"
-        label="Email"
+        label={t("email")}
         srOnlyLabel
         type="email"
-        placeholder="Email"
+        placeholder={t("email")}
         autoComplete="email"
         disabled={disabled}
       />
     </>
+  );
+}
+
+/**
+ * Register-only confirm-password input that sits directly below the shared
+ * password field. Kept separate from RegisterFields because the shared password
+ * field renders between them in the DOM. The match is enforced by
+ * `registerSchema`, which reports a mismatch on this field.
+ */
+export function ConfirmPasswordField({ disabled }: { disabled: boolean }) {
+  const t = useTranslations("auth");
+  return (
+    <PasswordField
+      name="confirmPassword"
+      label={t("confirmPassword")}
+      srOnlyLabel
+      placeholder={t("confirmPassword")}
+      autoComplete="new-password"
+      showLabel={t("showPassword")}
+      hideLabel={t("hidePassword")}
+      disabled={disabled}
+    />
   );
 }
 

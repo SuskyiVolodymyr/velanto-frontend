@@ -8,12 +8,33 @@ export interface RulesScreenProps {
 }
 
 /**
+ * Localized rule text, keyed by the backend's stable category id. The backend
+ * (`GET /rules`) stays the canonical source of the taxonomy — category ids,
+ * order, and `version` — but the display *prose* is presentation content and
+ * lives in the next-intl catalogs (`rules.content`), like every other string in
+ * the app. Read raw (not through ICU) since the text has no placeholders and is
+ * full of apostrophes that MessageFormat would otherwise treat as escapes.
+ */
+type RulesContent = Record<
+  string,
+  { title?: string; items?: Record<string, string> }
+>;
+
+/**
  * Presentational (non-async) render of the Community Rules. Kept separate from
  * the route so it stays testable with React Testing Library. `null` rules
  * render a graceful error state instead of crashing the page.
+ *
+ * Each category's title and rule text prefers the localized catalog entry for
+ * its id, falling back to the backend-supplied English when the catalog has no
+ * translation for that id/number — so a category added on the backend degrades
+ * to English rather than breaking the page.
  */
 export function RulesScreen({ rules }: RulesScreenProps) {
   const t = useTranslations("rules");
+  const content: RulesContent = t.has("content")
+    ? (t.raw("content") as RulesContent)
+    : {};
 
   return (
     <main className="mx-auto w-full max-w-[760px] px-6 py-12">
@@ -41,7 +62,7 @@ export function RulesScreen({ rules }: RulesScreenProps) {
                 variant="title"
                 className="text-xl mb-4"
               >
-                {category.title}
+                {content[category.id]?.title ?? category.title}
               </Text>
               <ol className="flex flex-col gap-3">
                 {category.rules.map((rule) => (
@@ -56,7 +77,8 @@ export function RulesScreen({ rules }: RulesScreenProps) {
                       variant="body"
                       className="text-[15px] leading-relaxed"
                     >
-                      {rule.text}
+                      {content[category.id]?.items?.[String(rule.number)] ??
+                        rule.text}
                     </Text>
                   </li>
                 ))}

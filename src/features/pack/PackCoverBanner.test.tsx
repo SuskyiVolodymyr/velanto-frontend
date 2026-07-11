@@ -1,7 +1,14 @@
-import { describe, expect, it } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { screen } from "@testing-library/react";
+import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { PackCoverBanner } from "./PackCoverBanner";
 import type { Pack } from "@/src/shared/types/pack";
+
+// The author line is a client island with its own auth-gated hover-card fetch
+// and dedicated tests; stub it so these hero-layout assertions stay focused.
+vi.mock("./PackBannerAuthor", () => ({
+  PackBannerAuthor: () => <div>PackBannerAuthor</div>,
+}));
 
 const SAVE_ONE_PACK: Pack = {
   id: "pack-a",

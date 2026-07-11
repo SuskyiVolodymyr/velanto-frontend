@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { Group } from "@/src/shared/types/pack";
 import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
@@ -28,6 +29,7 @@ export function GroupEditor({
   onRemove,
   error,
 }: GroupEditorProps) {
+  const t = useTranslations("create");
   const draft = useGroupItemDraft(group, onChange);
   const { validating } = draft;
 
@@ -44,8 +46,8 @@ export function GroupEditor({
         <Input
           value={group.name}
           onChange={(e) => onChange({ ...group, name: e.target.value })}
-          placeholder={`Group ${index + 1} name`}
-          aria-label={`Group ${index + 1} name`}
+          placeholder={t("groupName", { index: index + 1 })}
+          aria-label={t("groupName", { index: index + 1 })}
           className="flex-1 min-w-[140px] font-semibold"
         />
         <div className="flex rounded-[9px] border border-border bg-white/[0.03] p-0.5">
@@ -60,7 +62,7 @@ export function GroupEditor({
                 : "text-foreground-secondary",
             )}
           >
-            Random
+            {t("random")}
           </button>
           <button
             type="button"
@@ -79,7 +81,7 @@ export function GroupEditor({
                 : "text-foreground-secondary",
             )}
           >
-            Manual
+            {t("manual")}
           </button>
         </div>
         {group.selectionMode === "random" && (
@@ -95,8 +97,8 @@ export function GroupEditor({
               })
             }
             disabled={validating}
-            aria-label={`Group ${index + 1} sample size`}
-            title="Items drawn per round"
+            aria-label={t("groupSampleSize", { index: index + 1 })}
+            title={t("itemsDrawnPerRound")}
             className="w-16 text-center"
           />
         )}
@@ -105,9 +107,9 @@ export function GroupEditor({
             variant="ghost"
             type="button"
             onClick={onRemove}
-            aria-label={`Remove group ${index + 1}`}
+            aria-label={t("removeGroup", { index: index + 1 })}
           >
-            Remove
+            {t("remove")}
           </Button>
         )}
       </div>
@@ -128,7 +130,7 @@ export function GroupEditor({
       />
 
       <Text variant="tertiary" className="text-xs">
-        {group.items.length} item{group.items.length === 1 ? "" : "s"}
+        {t("itemCount", { count: group.items.length })}
       </Text>
 
       {error && (

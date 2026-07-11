@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
 import { YouTubeCard } from "@/src/shared/components/YouTubeCard";
@@ -24,6 +25,7 @@ export function CandidateCard({
   selected,
   onSelect,
 }: CandidateCardProps) {
+  const t = useTranslations("play");
   const videoId = item.type === "youtube" ? extractYouTubeId(item.value) : null;
 
   if (videoId) {
@@ -38,7 +40,7 @@ export function CandidateCard({
         <button
           type="button"
           onClick={onSelect}
-          aria-label={`Pick ${item.title}`}
+          aria-label={t("pick", { name: item.title })}
           className="flex w-full items-center gap-2 p-4 text-left"
         >
           <span

@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import type { Item } from "@/src/shared/types/pack";
 
 interface GroupItemListProps {
@@ -9,6 +10,7 @@ interface GroupItemListProps {
 
 /** The chip list of already-added items, each with an inline remove control. */
 export function GroupItemList({ items, onRemove }: GroupItemListProps) {
+  const t = useTranslations("create");
   if (items.length === 0) return null;
 
   return (
@@ -22,7 +24,7 @@ export function GroupItemList({ items, onRemove }: GroupItemListProps) {
           <button
             type="button"
             onClick={() => onRemove(item.id)}
-            aria-label={`Remove ${item.title}`}
+            aria-label={t("removeItemAria", { title: item.title })}
             className="text-foreground-tertiary hover:text-[#ff6b6b]"
           >
             ×

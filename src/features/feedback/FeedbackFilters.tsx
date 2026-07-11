@@ -1,3 +1,4 @@
+import { useTranslations } from "next-intl";
 import { Input } from "@/src/shared/components/Input";
 import { cn } from "@/src/shared/lib/cn";
 import type {
@@ -6,25 +7,32 @@ import type {
   FeedbackTopic,
 } from "@/src/shared/types/feedback";
 
-const TOPIC_FILTERS: { value: FeedbackTopic | undefined; label: string }[] = [
-  { value: undefined, label: "All" },
-  { value: "bug", label: "Bug" },
-  { value: "feature", label: "Feature" },
-  { value: "translation", label: "Translation" },
-  { value: "other", label: "Other" },
+// value → translation key. `undefined` (the "All" chip) resolves to filterAll;
+// topic keys live in the `feedback` ns, status keys in the `status` ns.
+const TOPIC_FILTERS: { value: FeedbackTopic | undefined; key: string }[] = [
+  { value: undefined, key: "filterAll" },
+  { value: "bug", key: "topicBug" },
+  { value: "feature", key: "topicFeature" },
+  { value: "translation", key: "topicTranslation" },
+  { value: "other", key: "topicOther" },
 ];
 
-const STATUS_FILTERS: { value: FeedbackStatus | undefined; label: string }[] = [
-  { value: undefined, label: "All" },
-  { value: "new", label: "New" },
-  { value: "in_progress", label: "In progress" },
-  { value: "done", label: "Done" },
-  { value: "declined", label: "Declined" },
+// The "All" chip (undefined) resolves to feedback.filterAll; the rest use the
+// shared `status` ns keys (feedbackNew/…), so the labels match the badges.
+const STATUS_FILTERS: {
+  value: FeedbackStatus | undefined;
+  key: string | null;
+}[] = [
+  { value: undefined, key: null },
+  { value: "new", key: "feedbackNew" },
+  { value: "in_progress", key: "feedbackInProgress" },
+  { value: "done", key: "feedbackDone" },
+  { value: "declined", key: "feedbackDeclined" },
 ];
 
-const SORT_OPTIONS: { value: FeedbackSort; label: string }[] = [
-  { value: "top", label: "Top" },
-  { value: "new", label: "Newest" },
+const SORT_OPTIONS: { value: FeedbackSort; key: string }[] = [
+  { value: "top", key: "sortTop" },
+  { value: "new", key: "sortNewest" },
 ];
 
 const chipClass = (active: boolean) =>
@@ -56,13 +64,15 @@ export function FeedbackFilters({
   sort,
   onSortChange,
 }: FeedbackFiltersProps) {
+  const t = useTranslations("feedback");
+  const tStatus = useTranslations("status");
   return (
     <>
       <div className="max-w-sm">
         <Input
           type="search"
-          aria-label="Search feedback"
-          placeholder="Search feedback…"
+          aria-label={t("searchAria")}
+          placeholder={t("searchPlaceholder")}
           value={searchInput}
           onChange={(event) => onSearchInputChange(event.target.value)}
         />
@@ -71,13 +81,13 @@ export function FeedbackFilters({
       <div className="flex flex-wrap gap-2">
         {TOPIC_FILTERS.map((f) => (
           <button
-            key={f.label}
+            key={f.key}
             type="button"
             onClick={() => onTopicChange(f.value)}
             aria-pressed={topic === f.value}
             className={chipClass(topic === f.value)}
           >
-            {f.label}
+            {t(f.key)}
           </button>
         ))}
       </div>
@@ -85,13 +95,13 @@ export function FeedbackFilters({
       <div className="flex flex-wrap gap-2">
         {STATUS_FILTERS.map((f) => (
           <button
-            key={f.label}
+            key={f.value ?? "all"}
             type="button"
             onClick={() => onStatusChange(f.value)}
             aria-pressed={statusFilter === f.value}
             className={chipClass(statusFilter === f.value)}
           >
-            {f.label}
+            {f.key ? tStatus(f.key) : t("filterAll")}
           </button>
         ))}
       </div>
@@ -105,7 +115,7 @@ export function FeedbackFilters({
             aria-pressed={sort === option.value}
             className={chipClass(sort === option.value)}
           >
-            {option.label}
+            {t(option.key)}
           </button>
         ))}
       </div>

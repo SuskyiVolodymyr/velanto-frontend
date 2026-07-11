@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useForm, useWatch, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { feedbackClient } from "@/src/shared/lib/feedback-client";
 import { messageFromError } from "@/src/shared/lib/messageFromError";
@@ -13,7 +14,7 @@ import type {
   FeedbackTopic,
   FeedbackVisibility,
 } from "@/src/shared/types/feedback";
-import { TOPIC_LABELS } from "@/src/features/feedback/FeedbackCard";
+import { TOPIC_KEYS } from "@/src/features/feedback/FeedbackCard";
 import {
   newFeedbackSchema,
   type NewFeedbackValues,
@@ -27,25 +28,25 @@ import { SelectField } from "@/src/shared/components/form/SelectField";
 import { SegmentedField } from "@/src/shared/components/form/SegmentedField";
 
 const TOPIC_ORDER: FeedbackTopic[] = ["bug", "feature", "translation", "other"];
-
-const TOPIC_OPTIONS = TOPIC_ORDER.map((value) => ({
-  value,
-  label: TOPIC_LABELS[value],
-}));
-
-const VISIBILITY_OPTIONS: { value: FeedbackVisibility; label: string }[] = [
-  { value: "everyone", label: "Everyone" },
-  { value: "staff_only", label: "Staff-only" },
-];
-
-const LANGUAGE_OPTIONS = [
-  { value: "", label: "Choose a language…" },
-  ...LOCALES.map((code) => ({ value: code, label: LOCALE_NAMES[code] })),
-];
+const VISIBILITY_ORDER: FeedbackVisibility[] = ["everyone", "staff_only"];
 
 export function NewFeedbackForm() {
+  const t = useTranslations("feedback");
   const router = useRouter();
   const { status } = useAuth();
+
+  const topicOptions = TOPIC_ORDER.map((value) => ({
+    value,
+    label: t(TOPIC_KEYS[value]),
+  }));
+  const visibilityOptions = VISIBILITY_ORDER.map((value) => ({
+    value,
+    label: value === "everyone" ? t("visibilityEveryone") : t("visibilityStaffOnly"),
+  }));
+  const languageOptions = [
+    { value: "", label: t("chooseLanguage") },
+    ...LOCALES.map((code) => ({ value: code, label: LOCALE_NAMES[code] })),
+  ];
 
   const methods = useForm<NewFeedbackValues>({
     resolver: zodResolver(newFeedbackSchema),
@@ -102,7 +103,7 @@ export function NewFeedbackForm() {
   if (status === "loading") {
     return (
       <main className="mx-auto w-full max-w-2xl px-7 py-10">
-        <Text variant="secondary">Loading…</Text>
+        <Text variant="secondary">{t("loading")}</Text>
       </main>
     );
   }
@@ -112,7 +113,7 @@ export function NewFeedbackForm() {
   return (
     <main className="mx-auto w-full max-w-2xl px-7 py-10">
       <Text as="h1" variant="title" className="mb-6 text-2xl">
-        New feedback
+        {t("newFeedbackTitle")}
       </Text>
 
       <FormProvider {...methods}>
@@ -123,22 +124,22 @@ export function NewFeedbackForm() {
         >
           <SegmentedField<FeedbackTopic>
             name="topic"
-            label="Topic"
-            options={TOPIC_OPTIONS}
+            label={t("topicLabel")}
+            options={topicOptions}
           />
 
           <TextField
             name="title"
-            label="Title"
-            placeholder="A short summary"
+            label={t("titleLabel")}
+            placeholder={t("titlePlaceholder")}
             maxLength={TITLE_MAX}
             disabled={isSubmitting}
           />
 
           <TextareaField
             name="body"
-            label="Details"
-            placeholder="Describe your bug, idea, or suggestion"
+            label={t("detailsLabel")}
+            placeholder={t("detailsPlaceholder")}
             rows={5}
             disabled={isSubmitting}
           />
@@ -146,35 +147,35 @@ export function NewFeedbackForm() {
           <div className="flex flex-col gap-2">
             <SegmentedField<FeedbackVisibility>
               name="visibility"
-              label="Visibility"
-              options={VISIBILITY_OPTIONS}
+              label={t("visibilityLabel")}
+              options={visibilityOptions}
             />
             <Text variant="tertiary" className="text-xs">
-              Staff-only posts are visible only to you and the team.
+              {t("staffOnlyHint")}
             </Text>
           </div>
 
           {topic === "translation" && (
             <section className="flex flex-col gap-4 rounded-[15px] border border-border bg-white/[0.02] p-5">
               <Text className="text-sm font-semibold">
-                Translation suggestion
+                {t("translationSuggestionHeading")}
               </Text>
               <SelectField
                 name="locale"
-                label="Language"
-                options={LANGUAGE_OPTIONS}
+                label={t("languageFieldLabel")}
+                options={languageOptions}
                 disabled={isSubmitting}
               />
               <TextField
                 name="translationContext"
-                label="Which text / where you saw it (optional)"
-                placeholder="e.g. the Play button on the home screen"
+                label={t("contextFieldLabel")}
+                placeholder={t("contextPlaceholder")}
                 disabled={isSubmitting}
               />
               <TextareaField
                 name="translationSuggestion"
-                label="Your suggested wording"
-                placeholder="What it should say instead"
+                label={t("suggestionFieldLabel")}
+                placeholder={t("suggestionPlaceholder")}
                 rows={3}
                 disabled={isSubmitting}
               />
@@ -192,7 +193,7 @@ export function NewFeedbackForm() {
             disabled={isSubmitting}
             className="h-[50px] w-full"
           >
-            {isSubmitting ? "Posting…" : "Post feedback"}
+            {isSubmitting ? t("posting") : t("postFeedback")}
           </Button>
         </form>
       </FormProvider>

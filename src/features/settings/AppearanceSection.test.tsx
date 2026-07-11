@@ -1,5 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { AppearanceSection } from "./AppearanceSection";
 import * as theme from "@/src/shared/lib/theme";

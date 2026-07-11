@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { TextField } from "@/src/shared/components/form/TextField";
 
 /**
@@ -7,12 +8,13 @@ import { TextField } from "@/src/shared/components/form/TextField";
  * Presentational — reads RHF context via TextField's `name`.
  */
 export function LoginFields({ disabled }: { disabled: boolean }) {
+  const t = useTranslations("auth");
   return (
     <TextField
       name="identifier"
-      label="Email or username"
+      label={t("identifier")}
       srOnlyLabel
-      placeholder="Email or username"
+      placeholder={t("identifier")}
       autoComplete="username"
       disabled={disabled}
     />

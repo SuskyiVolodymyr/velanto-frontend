@@ -1,29 +1,27 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
-import { useClientData } from "@/src/shared/hooks/useClientData";
-import { reportsClient } from "@/src/shared/lib/reports-client";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { ReportDetailSummary } from "@/src/features/support/ReportDetailSummary";
 import { ReportQueueActions } from "@/src/features/support/ReportQueueActions";
 import { ReportModerationPanel } from "@/src/features/support/ReportModerationPanel";
 import { useReportModeration } from "@/src/features/support/use-report-moderation";
+import { useReport } from "@/src/features/support/api/report-detail.queries";
+import {
+  useReviewReport,
+  useCloseReport,
+} from "@/src/features/support/api/report-detail.mutations";
 
 export function SupportReportScreen({ reportId }: { reportId: string }) {
   const { user, status: authStatus } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
-  const [actionError, setActionError] = useState("");
-  const [actionBusy, setActionBusy] = useState(false);
-
   // Computed here (ahead of the `authStatus`/`status` early returns below)
-  // rather than alongside the JSX, per Rules of Hooks: the report-fetch
-  // effect below reads `allowed`, and hooks can't follow a conditional
-  // return — same discipline AuthorScreen.tsx had to apply.
+  // rather than alongside the JSX, per Rules of Hooks.
   const allowed =
     user?.role === "moderator" ||
     user?.role === "manager" ||
@@ -35,45 +33,19 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
     }
   }, [authStatus, allowed, router]);
 
-  // reportId can change without a remount (e.g. clicking a different report
-  // link while already on a report detail page); useClientData handles the
-  // reset-to-loading + abort of the previous fetch on that change.
-  const reportQuery = useClientData(
-    () => reportsClient.getById(reportId),
-    [reportId],
-    {
-      enabled: allowed,
-    },
-  );
+  const reportQuery = useReport(reportId, { enabled: allowed });
   const report = reportQuery.data;
 
-  const moderation = useReportModeration(report);
+  const moderation = useReportModeration(report ?? null);
 
-  async function handleReview() {
-    setActionBusy(true);
-    setActionError("");
-    try {
-      const updated = await reportsClient.review(reportId);
-      reportQuery.setData((prev) => (prev ? { ...prev, ...updated } : prev));
-    } catch {
-      setActionError("Couldn't mark this report as reviewing. Try again.");
-    } finally {
-      setActionBusy(false);
-    }
-  }
-
-  async function handleClose() {
-    setActionBusy(true);
-    setActionError("");
-    try {
-      const updated = await reportsClient.close(reportId);
-      reportQuery.setData((prev) => (prev ? { ...prev, ...updated } : prev));
-    } catch {
-      setActionError("Couldn't close this report. Try again.");
-    } finally {
-      setActionBusy(false);
-    }
-  }
+  const reviewMutation = useReviewReport(reportId);
+  const closeMutation = useCloseReport(reportId);
+  const actionBusy = reviewMutation.isPending || closeMutation.isPending;
+  const actionError = reviewMutation.isError
+    ? "Couldn't mark this report as reviewing. Try again."
+    : closeMutation.isError
+      ? "Couldn't close this report. Try again."
+      : "";
 
   if (authStatus === "loading") return null;
 
@@ -97,9 +69,9 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
 
   if (!allowed) return null;
 
-  if (reportQuery.loading) return null;
+  if (reportQuery.isLoading) return null;
 
-  if (reportQuery.error || !report) {
+  if (reportQuery.isError || !report) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
         <Text className="text-[#ff6b6b]">This report doesn&apos;t exist.</Text>
@@ -115,8 +87,8 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
         status={report.status}
         actionBusy={actionBusy}
         actionError={actionError}
-        onReview={() => void handleReview()}
-        onClose={() => void handleClose()}
+        onReview={() => reviewMutation.mutate()}
+        onClose={() => closeMutation.mutate()}
       />
 
       <ReportModerationPanel report={report} moderation={moderation} />

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { getPackServer } from "@/src/shared/lib/get-pack-server";
 import { getResultsServer } from "@/src/shared/lib/get-results-server";
 import { ResultScreen } from "@/src/features/result/ResultScreen";
@@ -10,16 +11,20 @@ export async function generateMetadata({
   params: Promise<{ id: string }>;
 }): Promise<Metadata> {
   const { id } = await params;
+  const t = await getTranslations("pages");
   const pack = await getPackServer(id);
   if (!pack)
-    return { title: "Pack not found", robots: { index: false, follow: false } };
+    return {
+      title: t("packNotFound"),
+      robots: { index: false, follow: false },
+    };
   // Canonicalize to the bare result path so the per-viewer `?p=<picks>` share
   // variants (see share-url.ts / #67) consolidate onto one indexable URL
   // instead of bloating the index with near-duplicates. Canonical alone —
   // deliberately no `noindex` on `?p=`, since Google treats canonical + noindex
   // on the same URL as contradictory signals. See #73.
   return {
-    title: `${pack.title} — Result`,
+    title: t("metaResult", { title: pack.title }),
     alternates: { canonical: `/packs/${id}/result` },
   };
 }

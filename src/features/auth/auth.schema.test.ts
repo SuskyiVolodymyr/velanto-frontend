@@ -1,35 +1,43 @@
 import { describe, expect, it } from "vitest";
 import {
+  AUTH_MESSAGES,
   loginSchema,
   registerSchema,
   type AuthFormValues,
 } from "./auth.schema";
 
 /**
- * These encode the EXACT rules + copy the old module-level `validate()` used,
- * so behavior is preserved 1:1 through the react-hook-form migration.
- *
- * Both schemas share one object shape (all four fields always registered on the
- * form), so every case fills the whole shape — mirroring how the form submits.
+ * Register mode validates each field independently (per-field messages) so the
+ * form can surface errors in real time as the user types. Every case fills a
+ * fully-valid payload and overrides the one field under test.
  */
 function values(overrides: Partial<AuthFormValues>): AuthFormValues {
-  // acceptedRules defaults to true so field-rule cases exercise the username/
-  // password refinements; the acceptance rule is covered by its own case.
-  return {
-    identifier: "",
-    username: "",
-    email: "",
-    password: "",
+  const base: AuthFormValues = {
+    identifier: "alice",
+    username: "alice",
+    email: "a@example.com",
+    password: "Password1",
+    confirmPassword: "Password1",
     acceptedRules: true,
     ...overrides,
   };
+  // Keep confirmPassword matching password unless a case sets it explicitly, so
+  // password-rule cases exercise the composition rules, not the match rule.
+  if (!("confirmPassword" in overrides)) {
+    base.confirmPassword = base.password;
+  }
+  return base;
 }
 
-function firstError(result: {
-  success: boolean;
-  error?: { issues: { message: string }[] };
-}) {
-  return result.success ? null : result.error!.issues[0].message;
+/** The message of the first issue attached to `field`, or null if none. */
+function errorFor(
+  schema: typeof registerSchema,
+  value: AuthFormValues,
+  field: keyof AuthFormValues,
+): string | null {
+  const r = schema.safeParse(value);
+  if (r.success) return null;
+  return r.error.issues.find((i) => i.path[0] === field)?.message ?? null;
 }
 
 describe("loginSchema", () => {
@@ -44,88 +52,102 @@ describe("loginSchema", () => {
     const r = loginSchema.safeParse(
       values({ identifier: "   ", password: "pw" }),
     );
-    expect(firstError(r)).toBe("Enter your email/username and password.");
+    expect(r.success ? null : r.error.issues[0].message).toBe(
+      AUTH_MESSAGES.loginRequired,
+    );
   });
 
   it("rejects an empty password with the combined message", () => {
     const r = loginSchema.safeParse(
       values({ identifier: "alice", password: "" }),
     );
-    expect(firstError(r)).toBe("Enter your email/username and password.");
+    expect(r.success ? null : r.error.issues[0].message).toBe(
+      AUTH_MESSAGES.loginRequired,
+    );
   });
 });
 
 describe("registerSchema", () => {
-  it("accepts a valid username + email + password", () => {
+  it("accepts a fully valid payload", () => {
+    expect(registerSchema.safeParse(values({})).success).toBe(true);
+  });
+
+  describe("username", () => {
+    it.each(["ab", "a1", "Alice", "user16charslong0"])(
+      "accepts %p",
+      (username) => {
+        expect(registerSchema.safeParse(values({ username })).success).toBe(
+          true,
+        );
+      },
+    );
+
+    it.each([
+      ["a", "too short"],
+      ["user17characterslong", "too long"],
+      ["has_underscore", "underscore"],
+      ["no spaces!", "space + symbol"],
+      ["dash-name", "dash"],
+    ])("rejects %p (%s) with the username message", (username) => {
+      expect(errorFor(registerSchema, values({ username }), "username")).toBe(
+        AUTH_MESSAGES.username,
+      );
+    });
+  });
+
+  it("rejects a malformed email with the email message", () => {
     expect(
-      registerSchema.safeParse(
-        values({
-          username: "alice",
-          email: "a@example.com",
-          password: "password123",
-        }),
-      ).success,
-    ).toBe(true);
+      errorFor(registerSchema, values({ email: "not-an-email" }), "email"),
+    ).toBe(AUTH_MESSAGES.email);
   });
 
-  it("rejects any empty required field with the combined message", () => {
-    const r = registerSchema.safeParse(
-      values({ username: "", email: "a@example.com", password: "password123" }),
-    );
-    expect(firstError(r)).toBe("Fill in your username, email, and password.");
+  describe("password", () => {
+    it("rejects one shorter than 8 with the length message", () => {
+      expect(
+        errorFor(registerSchema, values({ password: "Pass1" }), "password"),
+      ).toBe(AUTH_MESSAGES.passwordLength);
+    });
+
+    it("rejects one without an uppercase letter", () => {
+      expect(
+        errorFor(registerSchema, values({ password: "password1" }), "password"),
+      ).toBe(AUTH_MESSAGES.passwordUpper);
+    });
+
+    it("rejects one without a lowercase letter", () => {
+      expect(
+        errorFor(registerSchema, values({ password: "PASSWORD1" }), "password"),
+      ).toBe(AUTH_MESSAGES.passwordLower);
+    });
+
+    it("rejects one without a number", () => {
+      expect(
+        errorFor(
+          registerSchema,
+          values({ password: "Passwordxx" }),
+          "password",
+        ),
+      ).toBe(AUTH_MESSAGES.passwordDigit);
+    });
   });
 
-  it("rejects a username with invalid characters", () => {
-    const r = registerSchema.safeParse(
-      values({
-        username: "no spaces!",
-        email: "a@example.com",
-        password: "password123",
-      }),
-    );
-    expect(firstError(r)).toBe(
-      "Username must be 3-20 characters: letters, numbers, underscore only.",
-    );
+  it("rejects mismatched passwords on the confirmPassword field", () => {
+    expect(
+      errorFor(
+        registerSchema,
+        values({ password: "Password1", confirmPassword: "Password2" }),
+        "confirmPassword",
+      ),
+    ).toBe(AUTH_MESSAGES.passwordsMismatch);
   });
 
-  it("rejects a username that is too short", () => {
-    const r = registerSchema.safeParse(
-      values({
-        username: "ab",
-        email: "a@example.com",
-        password: "password123",
-      }),
-    );
-    expect(firstError(r)).toBe(
-      "Username must be 3-20 characters: letters, numbers, underscore only.",
-    );
-  });
-
-  it("rejects a password shorter than 8 characters", () => {
-    const r = registerSchema.safeParse(
-      values({ username: "alice", email: "a@example.com", password: "short" }),
-    );
-    expect(firstError(r)).toBe("Password must be at least 8 characters.");
-  });
-
-  it("rejects a valid submission when the Community Rules are not accepted", () => {
-    const r = registerSchema.safeParse(
-      values({
-        username: "alice",
-        email: "a@example.com",
-        password: "password123",
-        acceptedRules: false,
-      }),
-    );
-    expect(firstError(r)).toBe(
-      "You must accept the Community Rules to register.",
-    );
-  });
-
-  it("reports the empty-field message before the username-pattern message (matches old precedence)", () => {
-    const r = registerSchema.safeParse(
-      values({ username: "", email: "", password: "" }),
-    );
-    expect(firstError(r)).toBe("Fill in your username, email, and password.");
+  it("rejects a submission when the Community Rules are not accepted", () => {
+    expect(
+      errorFor(
+        registerSchema,
+        values({ acceptedRules: false }),
+        "acceptedRules",
+      ),
+    ).toBe(AUTH_MESSAGES.acceptRules);
   });
 });

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
+import { useTranslations } from "next-intl";
 import { COVER_TONES } from "@/src/shared/types/pack";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
@@ -20,6 +21,7 @@ import {
  * with the rest of the create form without prop drilling.
  */
 export function PackMetaFields() {
+  const t = useTranslations("create");
   const { control, setValue, formState } = useFormContext<CreatePackValues>();
   const { isSubmitting } = formState;
   const tags = useWatch({ control, name: "tags" });
@@ -29,26 +31,26 @@ export function PackMetaFields() {
   return (
     <section className="flex flex-col gap-3">
       <Text as="h2" variant="title" className="text-lg">
-        Basics
+        {t("basicsHeading")}
       </Text>
       <TextField
         name="title"
-        label="Pack title"
+        label={t("packTitle")}
         srOnlyLabel
-        placeholder="Pack title"
+        placeholder={t("packTitle")}
         disabled={isSubmitting}
       />
       <TextareaField
         name="description"
-        label="Pack description"
+        label={t("packDescription")}
         srOnlyLabel
-        placeholder="Short description"
+        placeholder={t("descriptionPlaceholder")}
         rows={2}
         disabled={isSubmitting}
       />
       <div className="flex flex-col gap-2">
         <Text variant="secondary" className="text-xs">
-          Cover tone
+          {t("coverTone")}
         </Text>
         <div className="flex gap-2">
           {COVER_TONES.map((tone) => (
@@ -56,7 +58,7 @@ export function PackMetaFields() {
               key={tone}
               type="button"
               onClick={() => setValue("coverTone", tone)}
-              aria-label={`Cover tone ${tone}`}
+              aria-label={t("coverToneSwatch", { tone })}
               aria-pressed={coverTone === tone}
               style={{ background: tone }}
               className={cn(
@@ -69,7 +71,7 @@ export function PackMetaFields() {
       </div>
       <div className="flex flex-col gap-2">
         <Text variant="secondary" className="text-xs">
-          Tags
+          {t("tags")}
         </Text>
         <Button
           type="button"
@@ -78,8 +80,8 @@ export function PackMetaFields() {
           className="self-start"
         >
           {tags.length === 0
-            ? "Select tags"
-            : `${tags.length} tag${tags.length === 1 ? "" : "s"} selected`}
+            ? t("selectTags")
+            : t("tagsSelected", { count: tags.length })}
         </Button>
         <TagPickerModal
           open={tagPickerOpen}

@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { ProfileScreen } from "@/src/features/profile/ProfileScreen";
 
-export const metadata: Metadata = {
-  title: "Profile",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("pages");
+  return { title: t("metaProfile") };
+}
 
 export default function ProfilePage() {
   return <ProfileScreen />;

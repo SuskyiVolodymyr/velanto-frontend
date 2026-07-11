@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
-import { feedbackClient } from "@/src/shared/lib/feedback-client";
-import { useClientData } from "@/src/shared/hooks/useClientData";
 import type {
+  Feedback,
   FeedbackSort,
   FeedbackStatus,
   FeedbackTopic,
@@ -15,11 +15,16 @@ import { Button } from "@/src/shared/components/Button";
 import { FeedbackFilters } from "@/src/features/feedback/FeedbackFilters";
 import { FeedbackList } from "@/src/features/feedback/FeedbackList";
 import { FeedbackTopSidebar } from "@/src/features/feedback/FeedbackTopSidebar";
+import {
+  useFeedbackList,
+  useTopFeedback,
+} from "@/src/features/feedback/api/feedback-list.queries";
+import type { FeedbackListFilters } from "@/src/features/feedback/api/feedback-list";
 
-const PAGE_SIZE = 20;
 const SEARCH_DEBOUNCE_MS = 300;
 
 export function FeedbackScreen() {
+  const t = useTranslations("feedback");
   const { user } = useAuth();
   const router = useRouter();
 
@@ -31,18 +36,7 @@ export function FeedbackScreen() {
   );
   const [sort, setSort] = useState<FeedbackSort>("new");
 
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [loadMoreError, setLoadMoreError] = useState("");
-
-  // Top-3 sidebar, fetched once on mount. Non-critical — a failed fetch just
-  // leaves `data` null, which renders the same "No feedback yet" empty state.
-  const top3Query = useClientData(
-    () => feedbackClient.list({ sort: "top", limit: 3 }),
-    [],
-  );
-  const top3 = top3Query.data?.items ?? [];
-
-  // Debounce the raw search input into `q` (setState lives in the async timeout
+  // Debounce the raw search input into `q` (setState in the async timeout
   // callback, so it isn't the flagged synchronous set-state-in-effect pattern).
   useEffect(() => {
     const timeout = setTimeout(
@@ -52,73 +46,48 @@ export function FeedbackScreen() {
     return () => clearTimeout(timeout);
   }, [searchInput]);
 
-  // Main list, refetched whenever a filter/search/sort changes. `page` is stored
-  // in the fetched data so it resets to 1 on every filter-driven refetch.
-  const listQuery = useClientData(async () => {
-    const result = await feedbackClient.list({
-      q: q || undefined,
-      topic,
-      status: statusFilter,
-      sort,
-      page: 1,
-      limit: PAGE_SIZE,
-    });
-    return { items: result.items, total: result.total, page: 1 };
-  }, [q, topic, statusFilter, sort]);
+  // Top-3 sidebar, fetched once. Non-critical — a failed fetch just leaves the
+  // list empty, which renders the same "No feedback yet" state.
+  const top3Query = useTopFeedback();
+  const top3 = top3Query.data?.items ?? [];
 
-  const items = listQuery.data?.items ?? [];
-  const total = listQuery.data?.total ?? 0;
-  // Gate the list/empty/load-more branches on a *settled* fetch (mirrors
-  // NotificationsBell): during a filter-triggered refetch `loading` is true while
-  // the previous data is still held, so without this the stale rows flash under
-  // the loading text. `listReady` shows the loading state instead.
-  const listReady =
-    listQuery.data !== null && !listQuery.loading && listQuery.error === null;
+  const filters = useMemo<FeedbackListFilters>(
+    () => ({ q: q || undefined, topic, status: statusFilter, sort }),
+    [q, topic, statusFilter, sort],
+  );
+  const listQuery = useFeedbackList(filters);
 
-  // Reset a stale load-more error whenever the active filter/search/sort changes.
-  // Done during render (React's "adjust state on a changed input" pattern) rather
-  // than in an effect, keeping clear of the set-state-in-effect rule this file
-  // otherwise avoids.
-  const filterKey = `${q} ${topic ?? ""} ${statusFilter ?? ""} ${sort}`;
-  const [prevFilterKey, setPrevFilterKey] = useState(filterKey);
-  if (prevFilterKey !== filterKey) {
-    setPrevFilterKey(filterKey);
-    setLoadMoreError("");
-  }
-
-  async function handleLoadMore() {
-    const current = listQuery.data;
-    if (!current) return;
-    setLoadingMore(true);
-    try {
-      const nextPage = current.page + 1;
-      const result = await feedbackClient.list({
-        q: q || undefined,
-        topic,
-        status: statusFilter,
-        sort,
-        page: nextPage,
-        limit: PAGE_SIZE,
-      });
-      listQuery.setData((prev) => {
-        if (!prev) return prev;
-        const existingIds = new Set(prev.items.map((p) => p.id));
-        return {
-          items: [
-            ...prev.items,
-            ...result.items.filter((p) => !existingIds.has(p.id)),
-          ],
-          total: result.total,
-          page: nextPage,
-        };
-      });
-      setLoadMoreError("");
-    } catch {
-      setLoadMoreError("Couldn't load more feedback. Try again.");
-    } finally {
-      setLoadingMore(false);
+  // Flatten the loaded pages, de-duping by id (a page boundary can repeat an
+  // item if the underlying list shifted between fetches).
+  const items = useMemo(() => {
+    const seen = new Set<string>();
+    const out: Feedback[] = [];
+    for (const page of listQuery.data?.pages ?? []) {
+      for (const item of page.items) {
+        if (!seen.has(item.id)) {
+          seen.add(item.id);
+          out.push(item);
+        }
+      }
     }
-  }
+    return out;
+  }, [listQuery.data]);
+
+  const total = listQuery.data?.pages.at(-1)?.total ?? 0;
+  const hasData = listQuery.data !== undefined;
+
+  // Gate the list/empty/load-more branches on a settled first page: during a
+  // filter-triggered refetch there's no data for the new key yet, so
+  // `listReady` is false and the loading state shows instead of stale rows.
+  const listReady = hasData && !listQuery.isLoading;
+
+  // First-load failure (no page loaded) vs a load-more failure (first page
+  // kept, an extra page failed) are distinguished by whether any data exists —
+  // a load-more error keeps the list visible and shows an inline message. Both
+  // reset when the filter key changes, so a stale load-more error clears itself.
+  const failed = listQuery.isError || listQuery.isFetchNextPageError;
+  const firstLoadError = !hasData && failed ? (listQuery.error as Error) : null;
+  const loadMoreError = hasData && failed ? t("loadMoreError") : "";
 
   function handleNewPost() {
     router.push(user ? "/feedback/new" : "/auth?next=/feedback");
@@ -128,10 +97,10 @@ export function FeedbackScreen() {
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-7 py-10">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Text as="h1" variant="title" className="text-3xl">
-          Feedback
+          {t("pageTitle")}
         </Text>
         <Button type="button" onClick={handleNewPost}>
-          New post
+          {t("newPost")}
         </Button>
       </div>
 
@@ -149,14 +118,14 @@ export function FeedbackScreen() {
           />
 
           <FeedbackList
-            loading={listQuery.loading}
-            error={listQuery.error}
+            loading={listQuery.isLoading}
+            error={firstLoadError}
             listReady={listReady}
             items={items}
             total={total}
-            loadingMore={loadingMore}
+            loadingMore={listQuery.isFetchingNextPage}
             loadMoreError={loadMoreError}
-            onLoadMore={() => void handleLoadMore()}
+            onLoadMore={() => void listQuery.fetchNextPage()}
           />
         </div>
 

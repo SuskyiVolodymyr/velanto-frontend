@@ -1,14 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { messageFromError } from "@/src/shared/lib/messageFromError";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
-import { TextField } from "@/src/shared/components/form/TextField";
+import { PasswordField } from "@/src/shared/components/form/PasswordField";
 import { cn } from "@/src/shared/lib/cn";
 import { sanitizeNextPath } from "@/src/shared/lib/safe-redirect";
 import {
@@ -19,38 +20,53 @@ import {
 import { LoginFields } from "@/src/features/auth/LoginFields";
 import {
   RegisterFields,
+  ConfirmPasswordField,
   AcceptRulesField,
 } from "@/src/features/auth/RegisterFields";
 
 type Mode = "login" | "register";
 
 export function AuthForm() {
+  const t = useTranslations("auth");
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { login, register } = useAuth();
+  const { status, login, register } = useAuth();
   const [mode, setMode] = useState<Mode>("login");
   const [shake, setShake] = useState(false);
 
   const isRegister = mode === "register";
 
   // react-hook-form re-reads the resolver each render, so swapping schemas on a
-  // mode change is enough — no need to recreate the form.
+  // mode change is enough — no need to recreate the form. `onTouched` validates
+  // a field once it's been blurred and then live on every keystroke, so errors
+  // surface in real time without nagging fields the user hasn't reached yet.
   const methods = useForm<AuthFormValues>({
+    mode: "onTouched",
     resolver: zodResolver(isRegister ? registerSchema : loginSchema),
     defaultValues: {
       identifier: "",
       username: "",
       email: "",
       password: "",
+      confirmPassword: "",
       acceptedRules: false,
     },
   });
   const {
     handleSubmit,
-    clearErrors,
+    reset,
     setError,
     formState: { isSubmitting, errors },
   } = methods;
+
+  // An already-signed-in visitor has no business on the auth screen; send them
+  // where they were headed (or home). Covers landing here directly and the case
+  // where a session is restored while the form is open.
+  useEffect(() => {
+    if (status === "authenticated") {
+      router.replace(sanitizeNextPath(searchParams.get("next")));
+    }
+  }, [status, router, searchParams]);
 
   function triggerShake() {
     setShake(true);
@@ -59,7 +75,10 @@ export function AuthForm() {
 
   function switchMode(next: Mode) {
     setMode(next);
-    clearErrors();
+    // Full reset (not just clearErrors) so the new mode starts with a clean
+    // slate: no carried-over values, touched, or submitted state that would
+    // otherwise make the other mode's fields show errors before they're touched.
+    reset();
   }
 
   async function onValid(values: AuthFormValues) {
@@ -77,11 +96,12 @@ export function AuthForm() {
           password: values.password,
         });
       }
-      router.push(sanitizeNextPath(searchParams.get("next")));
+      // Success flips auth status to "authenticated"; the effect above performs
+      // the redirect (single source of truth for leaving the auth screen).
     } catch (err) {
       setError("root", {
         message: messageFromError(err, {
-          statusFallbacks: { 401: "Invalid credentials." },
+          statusFallbacks: { 401: t("invalidCredentials") },
         }),
       });
       triggerShake();
@@ -106,7 +126,7 @@ export function AuthForm() {
               : "text-foreground-secondary",
           )}
         >
-          Log in
+          {t("logIn")}
         </button>
         <button
           type="button"
@@ -120,17 +140,15 @@ export function AuthForm() {
               : "text-foreground-secondary",
           )}
         >
-          Sign up
+          {t("tabSignup")}
         </button>
       </div>
 
       <Text as="h1" variant="title" className="text-2xl text-center mb-1.5">
-        {isRegister ? "Join Velanto" : "Log in to Velanto"}
+        {isRegister ? t("headingRegister") : t("headingLogin")}
       </Text>
       <Text variant="secondary" className="text-center text-sm mb-6">
-        {isRegister
-          ? "Create packs and play, save your results."
-          : "Sign in to build and play packs."}
+        {isRegister ? t("subtitleRegister") : t("subtitleLogin")}
       </Text>
 
       <FormProvider {...methods}>
@@ -147,15 +165,18 @@ export function AuthForm() {
           ) : (
             <LoginFields disabled={isSubmitting} />
           )}
-          <TextField
+          <PasswordField
             name="password"
-            label="Password"
+            label={t("password")}
             srOnlyLabel
-            type="password"
-            placeholder="Password"
+            placeholder={t("password")}
             autoComplete={isRegister ? "new-password" : "current-password"}
+            showLabel={t("showPassword")}
+            hideLabel={t("hidePassword")}
             disabled={isSubmitting}
           />
+
+          {isRegister && <ConfirmPasswordField disabled={isSubmitting} />}
 
           {isRegister && <AcceptRulesField disabled={isSubmitting} />}
 
@@ -171,10 +192,10 @@ export function AuthForm() {
             className="w-full h-[50px] mt-2"
           >
             {isSubmitting
-              ? "Please wait…"
+              ? t("pleaseWait")
               : isRegister
-                ? "Create account"
-                : "Log in"}
+                ? t("createAccount")
+                : t("logIn")}
           </Button>
         </form>
       </FormProvider>
@@ -183,7 +204,7 @@ export function AuthForm() {
         variant="tertiary"
         className="text-center text-xs mt-5 leading-relaxed"
       >
-        By continuing you agree to Velanto&apos;s Terms and Privacy Policy.
+        {t("terms")}
       </Text>
     </div>
   );

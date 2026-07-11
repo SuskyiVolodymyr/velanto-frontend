@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { getPackServer } from "@/src/shared/lib/get-pack-server";
 import { getResultsServer } from "@/src/shared/lib/get-results-server";
 import { PackDetailScreen } from "@/src/features/pack/PackDetailScreen";
@@ -11,8 +12,13 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { id } = await params;
   const pack = await getPackServer(id);
-  if (!pack)
-    return { title: "Pack not found", robots: { index: false, follow: false } };
+  if (!pack) {
+    const t = await getTranslations("pages");
+    return {
+      title: t("packNotFound"),
+      robots: { index: false, follow: false },
+    };
+  }
   return { title: pack.title };
 }
 

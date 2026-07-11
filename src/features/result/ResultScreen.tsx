@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { RankResultScreen } from "@/src/features/result/RankResultScreen";
@@ -29,18 +30,19 @@ function GroupResultScreen({
   pack: Pack;
   results: PackResults;
 }) {
+  const t = useTranslations("result");
   const { picks: ownPicks, shared } = useResultPicks(pack.id);
 
   return (
     <div className="mx-auto w-full max-w-2xl flex-1 px-7 py-10">
       <Text variant="tertiary" className="mb-2 text-xs uppercase tracking-wide">
-        Result
+        {t("label")}
       </Text>
       <Text as="h1" variant="title" className="mb-2 text-3xl">
         {pack.title}
       </Text>
       <Text variant="secondary" className="mb-8">
-        {results.totalPlays} play{results.totalPlays === 1 ? "" : "s"} recorded.
+        {t("playsRecorded", { count: results.totalPlays })}
       </Text>
 
       {shared && <SharedResultNote />}
@@ -63,7 +65,8 @@ function GroupResultScreen({
               {ownItem ? (
                 <div className="flex items-center justify-between gap-2">
                   <Text variant="secondary" className="text-sm">
-                    {shared ? "Pick" : "Your pick"}: {ownItem.itemTitle}
+                    {shared ? t("sharedPick") : t("yourPick")}:{" "}
+                    {ownItem.itemTitle}
                   </Text>
                   <Text className="text-sm font-semibold text-acc">
                     {ownItem.percentage}%

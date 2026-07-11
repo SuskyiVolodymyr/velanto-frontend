@@ -1,6 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { useState } from "react";
-import { render, screen, waitFor, fireEvent } from "@testing-library/react";
+import { screen, waitFor, fireEvent } from "@testing-library/react";
+import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { CategoryEditor } from "./CategoryEditor";
 import { fetchYouTubeOEmbed } from "@/src/shared/lib/youtube-oembed";

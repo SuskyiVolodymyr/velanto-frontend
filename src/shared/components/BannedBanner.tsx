@@ -1,8 +1,7 @@
 "use client";
 
 import { useAuth } from "@/src/shared/lib/auth-context";
-import { useClientData } from "@/src/shared/hooks/useClientData";
-import { rulesClient } from "@/src/shared/lib/rules-client";
+import { useRules } from "@/src/shared/api/rules.queries";
 import { isActiveBan } from "@/src/shared/lib/ban-display";
 import { BannedNotice } from "@/src/shared/components/BannedNotice";
 
@@ -16,9 +15,7 @@ import { BannedNotice } from "@/src/shared/components/BannedNotice";
 export function BannedBanner() {
   const { user } = useAuth();
   const banned = isActiveBan(user?.bannedUntil);
-  const rules = useClientData(() => rulesClient.getRules(), [], {
-    enabled: banned,
-  });
+  const rules = useRules({ enabled: banned });
 
   if (!user || !banned) return null;
 

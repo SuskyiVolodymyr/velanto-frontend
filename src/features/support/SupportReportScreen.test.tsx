@@ -3,7 +3,9 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextIntlClientProvider } from "next-intl";
+import { QueryClientProvider } from "@tanstack/react-query";
 import messages from "@/messages/en.json";
+import { createTestQueryClient } from "@/src/shared/test/test-query-client";
 import { SupportReportScreen } from "./SupportReportScreen";
 import { reportsClient } from "@/src/shared/lib/reports-client";
 import { packsClient } from "@/src/shared/lib/packs-client";
@@ -38,12 +40,14 @@ const RULES: RulesDocument = {
   ],
 };
 
-// The BanReasonPicker uses next-intl, so the ban flow needs a provider.
+// The BanReasonPicker uses next-intl + React Query, so the ban flow needs both.
 function renderScreen(ui: ReactElement) {
   return render(
-    <NextIntlClientProvider locale="en" messages={messages}>
-      {ui}
-    </NextIntlClientProvider>,
+    <QueryClientProvider client={createTestQueryClient()}>
+      <NextIntlClientProvider locale="en" messages={messages}>
+        {ui}
+      </NextIntlClientProvider>
+    </QueryClientProvider>,
   );
 }
 

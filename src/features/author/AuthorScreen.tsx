@@ -1,25 +1,22 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
-import { usersClient } from "@/src/shared/lib/users-client";
-import { packsClient } from "@/src/shared/lib/packs-client";
-import { rulesClient } from "@/src/shared/lib/rules-client";
-import { useClientData } from "@/src/shared/hooks/useClientData";
+import { useFollowMutation } from "@/src/shared/api/follow.mutations";
+import { useRules } from "@/src/shared/api/rules.queries";
 import { Text } from "@/src/shared/components/Text";
 import { AuthorProfileHeader } from "./AuthorProfileHeader";
 import { AuthorPackList } from "./AuthorPackList";
 import { AuthorModeratorPanel } from "./AuthorModeratorPanel";
 import { useAuthorModeration } from "./use-author-moderation";
-import type { PublicUserProfile } from "@/src/shared/types/user";
-import type { Pack } from "@/src/shared/types/pack";
+import {
+  useAuthor,
+  useAuthorBanHistory,
+  authorQueryOptions,
+} from "./api/author.queries";
+import type { AuthorData } from "./api/author";
 
-export interface AuthorData {
-  profile: PublicUserProfile;
-  packs: Pack[];
-  packsTotal: number;
-}
+export type { AuthorData };
 
 export function AuthorScreen({
   authorId,
@@ -34,24 +31,10 @@ export function AuthorScreen({
    */
   initialData?: AuthorData;
 }) {
+  const t = useTranslations("profile");
   const { user, status: authStatus } = useAuth();
-  const router = useRouter();
-  const pathname = usePathname();
 
-  // Loading/error/data for the profile+packs fetch is owned by useClientData,
-  // which aborts the in-flight request on unmount / authorId change — that
-  // determinism is what stabilises this screen's test (#78).
-  const authorQuery = useClientData<AuthorData>(
-    async () => {
-      const [profile, packs] = await Promise.all([
-        usersClient.getProfile(authorId),
-        packsClient.list({ authorId, limit: 50 }),
-      ]);
-      return { profile, packs: packs.items, packsTotal: packs.total };
-    },
-    [authorId],
-    { initialData },
-  );
+  const authorQuery = useAuthor(authorId, initialData);
 
   const isOwnProfile = authStatus === "authenticated" && user?.id === authorId;
   const isModeratorPlus =
@@ -62,62 +45,31 @@ export function AuthorScreen({
 
   // Ban history is a second, gated fetch: only for a moderator viewing someone
   // else's page, and only once the profile itself has loaded.
-  const banHistoryQuery = useClientData(
-    () => usersClient.banHistory(authorId, { page: 1, limit: 20 }),
-    [authorId],
-    { enabled: showModeratorTools && authorQuery.data !== null },
-  );
+  const banHistoryQuery = useAuthorBanHistory(authorId, {
+    enabled: showModeratorTools && authorQuery.data !== undefined,
+  });
 
   // Rule categories resolve each ban-history entry's reason id (e.g.
   // `spam_manipulation`) to its human title, shared with the ban picker below.
   // Gated to the moderator view so a plain visitor never triggers the fetch.
-  const rulesQuery = useClientData(() => rulesClient.getRules(), [], {
-    enabled: showModeratorTools,
-  });
+  const rulesQuery = useRules({ enabled: showModeratorTools });
   const ruleCategories = rulesQuery.data?.categories ?? [];
 
-  const [followBusy, setFollowBusy] = useState(false);
-  const [followError, setFollowError] = useState("");
   const moderation = useAuthorModeration(authorId);
 
-  async function handleFollowToggle() {
-    if (authStatus !== "authenticated") {
-      router.push(`/auth?next=${encodeURIComponent(pathname)}`);
-      return;
-    }
-    const profile = authorQuery.data?.profile;
-    if (!profile) return;
-    setFollowBusy(true);
-    setFollowError("");
-    try {
-      const result = profile.isFollowedByMe
-        ? await usersClient.unfollow(authorId)
-        : await usersClient.follow(authorId);
-      authorQuery.setData((prev) =>
-        prev
-          ? {
-              ...prev,
-              profile: {
-                ...prev.profile,
-                isFollowedByMe: !prev.profile.isFollowedByMe,
-                followerCount: result.followerCount,
-              },
-            }
-          : prev,
-      );
-    } catch {
-      setFollowError("Couldn't update follow status. Try again.");
-    } finally {
-      setFollowBusy(false);
-    }
-  }
+  // Follow state lives in the fetched author cache (patched by the mutation on
+  // success), so it survives an authorId-change refetch and popover churn.
+  const follow = useFollowMutation<AuthorData>(
+    authorId,
+    authorQueryOptions(authorId).queryKey,
+  );
 
-  if (authorQuery.loading) return null;
+  if (authorQuery.isLoading) return null;
 
-  if (authorQuery.error || !authorQuery.data) {
+  if (authorQuery.isError || !authorQuery.data) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text className="text-[#ff6b6b]">This user doesn&apos;t exist.</Text>
+        <Text className="text-[#ff6b6b]">{t("userNotFound")}</Text>
       </div>
     );
   }
@@ -131,9 +83,10 @@ export function AuthorScreen({
         profile={profile}
         packsTotal={packsTotal}
         isOwnProfile={isOwnProfile}
-        followBusy={followBusy}
-        followError={followError}
-        onFollowToggle={() => void handleFollowToggle()}
+        followBusy={follow.isPending}
+        followBlocked={follow.blocked}
+        followError={follow.isError ? t("followError") : ""}
+        onFollowToggle={() => follow.toggle(profile.isFollowedByMe ?? false)}
       />
 
       {showModeratorTools && (

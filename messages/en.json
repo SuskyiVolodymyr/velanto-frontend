@@ -1,4 +1,10 @@
 {
+  "authGate": {
+    "logInToVote": "Log in to vote",
+    "logInToFollow": "Log in to follow",
+    "logInToComment": "Log in to comment",
+    "logInToPlay": "Log in to play"
+  },
   "header": {
     "logIn": "Log in",
     "logOut": "Log out",
@@ -17,7 +23,23 @@
     "languageHeading": "Language",
     "languageLabel": "Interface language",
     "languageHint": "Changes the language of menus and buttons. Pack content stays in the language its creator wrote it.",
-    "languageSelectAria": "Interface language"
+    "languageSelectAria": "Interface language",
+    "accountHeading": "Account",
+    "signedInViaEmail": "Signed in via email",
+    "loginToViewAccount": "<link>Log in</link> to view account settings.",
+    "appearanceHeading": "Appearance",
+    "accentColor": "Accent color",
+    "accentColorHint": "Used for highlights, buttons, and progress bars.",
+    "accentColorSwatch": "Use accent color {color}",
+    "notificationsHeading": "Notifications",
+    "loginToManageNotifications": "<link>Log in</link> to manage notification preferences.",
+    "notificationsLoadError": "Couldn't load your notification preferences.",
+    "loading": "Loading…",
+    "notificationUpdateError": "Couldn't update this setting. Try again.",
+    "notifNewFollower": "New follower",
+    "notifNewPack": "New pack from someone you follow",
+    "notifNewComment": "New comment on your pack",
+    "notifPackDeleted": "Pack removed by a moderator"
   },
   "streamerMode": {
     "hiddenHint": "Hidden because of streamer mode",
@@ -30,14 +52,141 @@
     "off": "Off"
   },
   "auth": {
-    "acceptRules": "I have read and accept the <link>Community Rules</link>."
+    "acceptRules": "I have read and accept the <link>Community Rules</link>.",
+    "tabSignup": "Sign up",
+    "logIn": "Log in",
+    "headingLogin": "Log in to Velanto",
+    "headingRegister": "Join Velanto",
+    "subtitleLogin": "Sign in to build and play packs.",
+    "subtitleRegister": "Create packs and play, save your results.",
+    "identifier": "Email or username",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "invalidCredentials": "Invalid credentials.",
+    "pleaseWait": "Please wait…",
+    "createAccount": "Create account",
+    "terms": "By continuing you agree to Velanto's Terms and Privacy Policy."
   },
   "rules": {
     "metaTitle": "Community Rules — Velanto",
     "metaDescription": "The community rules for creating and playing packs on Velanto — read them before you register.",
     "heading": "Community Rules",
     "intro": "These rules keep Velanto safe and fair for everyone. By creating an account you agree to follow them.",
-    "loadError": "We couldn't load the rules right now. Please try again in a moment."
+    "loadError": "We couldn't load the rules right now. Please try again in a moment.",
+    "content": {
+      "hate_discrimination": {
+        "title": "Hate & Discrimination",
+        "items": {
+          "1": "Do not attack, dehumanize, demean, or promote hatred against any person or group based on race, ethnicity, national origin, religion, gender, sex, sexual orientation, gender identity, disability, serious medical condition, age, or any comparable protected characteristic. This applies to text, images, usernames, pack content, comments, and any other contribution.",
+          "2": "Do not use slurs, hateful symbols, or coded language intended to degrade a protected group, and do not post imagery that celebrates or endorses hateful ideologies.",
+          "3": "Do not advocate for, or express support for, discrimination, segregation, exclusion, or the denial of rights to people because of a protected characteristic.",
+          "4": "Do not create packs, questions, or answers whose premise ranks, mocks, or asserts the inferiority of a protected group. Legitimate factual or educational content about history, culture, or religion is permitted only when presented respectfully and without endorsing hatred."
+        }
+      },
+      "harassment_bullying": {
+        "title": "Harassment & Bullying",
+        "items": {
+          "1": "Do not target another person with insults, mockery, intimidation, or sustained unwanted contact, whether through packs, comments, usernames, or any other feature.",
+          "2": "Do not organize, encourage, or participate in coordinated harassment, brigading, or pile-ons against any individual or group.",
+          "3": "Do not post content designed to shame, humiliate, or provoke a specific person, including content referencing their appearance, identity, or personal circumstances.",
+          "4": "Respect requests to stop contact. Continuing to engage a user who has asked to be left alone, or evading a block to reach them, is prohibited."
+        }
+      },
+      "violence_harm": {
+        "title": "Violence & Harm",
+        "items": {
+          "1": "Do not threaten violence against, or wish serious harm upon, any person or group, and do not incite others to commit violence.",
+          "2": "Do not glorify, promote, or provide instructions for terrorism, mass violence, or violent extremism, and do not praise the perpetrators of such acts.",
+          "3": "Do not encourage, promote, or provide instructions for suicide, self-harm, or eating disorders. If you or someone you know is at risk, seek help from local emergency services or a crisis line.",
+          "4": "Do not post gratuitous gore, graphic depictions of death or serious injury, or imagery intended to shock or celebrate suffering.",
+          "5": "Do not use the platform to plan, coordinate, or recruit for acts of real-world violence."
+        }
+      },
+      "sexual_content": {
+        "title": "Sexual & Explicit Content",
+        "items": {
+          "1": "Do not post pornography, sexually explicit imagery, or depictions of sexual acts anywhere on the platform.",
+          "2": "Do not post nudity or sexualized content in packs, images, usernames, avatars, or comments. This is a general-audience platform.",
+          "3": "Do not use the platform to solicit sexual contact, distribute sexual content, or advertise sexual services.",
+          "4": "Do not share intimate or sexual images of any person without their explicit consent, including so-called \"revenge\" content."
+        }
+      },
+      "child_safety": {
+        "title": "Child Safety",
+        "items": {
+          "1": "We have ZERO tolerance for the sexualization of minors. Any content that sexualizes, exploits, or endangers a person under 18 — real, fictional, illustrated, or AI-generated — results in immediate permanent account termination and, where applicable, reporting to the National Center for Missing & Exploited Children (NCMEC) and relevant law enforcement.",
+          "2": "Do not upload, request, share, or link to child sexual abuse material (CSAM) or any sexualized depiction of a minor under any circumstances.",
+          "3": "Do not attempt to contact, groom, sexualize, or otherwise endanger a minor, and do not use the platform to facilitate such conduct.",
+          "4": "Report any suspected child endangerment immediately. We cooperate fully with authorities and preserve relevant evidence as required by law."
+        }
+      },
+      "illegal_content": {
+        "title": "Illegal Content & Activity",
+        "items": {
+          "1": "Do not use the platform to facilitate, promote, or coordinate activity that is illegal in your jurisdiction or the jurisdiction where the platform operates.",
+          "2": "Do not advertise, sell, or facilitate the trade of illegal goods or services, including illicit drugs, weapons, stolen data, or counterfeit items.",
+          "3": "Do not post instructions for producing weapons, explosives, drugs, or other materials whose primary purpose is to cause serious harm or commit a crime.",
+          "4": "Do not use the platform to launder money, run financial scams, or otherwise engage in fraud or theft."
+        }
+      },
+      "privacy_doxxing": {
+        "title": "Privacy & Doxxing",
+        "items": {
+          "1": "Do not publish another person's private or identifying information — such as home address, phone number, government ID, financial details, or private communications — without their explicit consent.",
+          "2": "Do not threaten to expose private information, and do not encourage or coordinate the exposure of anyone’s private information.",
+          "3": "Do not share information obtained through hacking, unauthorized access, or a breach of confidence.",
+          "4": "Only share information about yourself that you are comfortable being public. Take care not to reveal others’ personal details in packs, comments, or media."
+        }
+      },
+      "impersonation_deception": {
+        "title": "Impersonation & Deception",
+        "items": {
+          "1": "Do not impersonate another person, brand, organization, or Velanto staff, including through usernames, avatars, or profile details designed to mislead.",
+          "2": "Do not run scams, phishing schemes, or deceptive practices intended to trick users into giving up money, credentials, or personal information.",
+          "3": "Do not misrepresent your affiliation with, or endorsement by, any person or organization.",
+          "4": "Parody or fan content is permitted only when it is clearly labeled and could not reasonably be mistaken for the real person or entity."
+        }
+      },
+      "spam_manipulation": {
+        "title": "Spam & Manipulation",
+        "items": {
+          "1": "Do not post repetitive, unsolicited, or bulk content, and do not flood the platform with low-value packs, comments, or messages.",
+          "2": "Do not manipulate votes, ratings, popularity, or play counts through bots, alternate accounts, coordinated groups, or any artificial means.",
+          "3": "Do not use automated scripts, bots, or exploits to interact with the platform in ways that undermine fair use or distort metrics.",
+          "4": "Do not cheat, exploit scoring, or otherwise gain an unfair advantage in plays or competitions.",
+          "5": "Do not post deceptive links, redirect users to unexpected destinations, or advertise unrelated products and services."
+        }
+      },
+      "misinformation": {
+        "title": "Harmful Misinformation",
+        "items": {
+          "1": "Do not post false or misleading information that could cause real-world harm, such as dangerous health claims, fabricated safety guidance, or content that undermines public safety.",
+          "2": "Do not use the platform to spread coordinated disinformation, fabricated evidence, or manipulated media intended to deceive.",
+          "3": "Do not present false factual claims as verified answers in packs. Trivia should be accurate and, where relevant, sourced; opinion and satire should be clearly distinguishable from fact."
+        }
+      },
+      "intellectual_property": {
+        "title": "Intellectual Property",
+        "items": {
+          "1": "Do not upload, reproduce, or distribute text, images, audio, or other material that you do not own or have the right to use.",
+          "2": "Respect copyright, trademarks, and licensing terms. Give attribution where required and honor the conditions of any license you rely on.",
+          "3": "Do not post content that infringes another party’s intellectual property. We respond to valid takedown requests and may remove infringing content and penalize repeat infringers."
+        }
+      },
+      "platform_integrity": {
+        "title": "Platform Integrity",
+        "items": {
+          "1": "Do not evade bans, suspensions, or other enforcement actions by creating new accounts or using alternate identities.",
+          "2": "Do not probe for, exploit, or abuse bugs, vulnerabilities, or unintended behavior. Report security issues responsibly instead of exploiting them.",
+          "3": "Do not attempt to circumvent moderation, content filters, rate limits, or access controls.",
+          "4": "Do not interfere with the normal operation of the platform, including through denial-of-service attempts, scraping in violation of these rules, or unauthorized access to systems or data."
+        }
+      }
+    }
   },
   "banReason": {
     "label": "Reason",
@@ -57,5 +206,382 @@
     "permanent": "This ban is permanent.",
     "rulesLink": "Read the Community Rules",
     "other": "Other"
+  },
+  "home": {
+    "title": "Discover packs",
+    "subtitle": "Browse packs by format or tag, then play through one to see who comes out on top.",
+    "searchPlaceholder": "Search packs…",
+    "searchLabel": "Search packs",
+    "filters": "Filters",
+    "groupFormat": "Format",
+    "groupSort": "Sort by",
+    "groupTags": "Tags",
+    "all": "All",
+    "sortRelevance": "Relevance",
+    "sortPopular": "Popular",
+    "windowDay": "Day",
+    "windowWeek": "Week",
+    "windowMonth": "Month",
+    "windowYear": "Year",
+    "filterByTags": "Filter by tags",
+    "tagCount": "{count, plural, one {# tag} other {# tags}}",
+    "activeTagFilters": "Active tag filters",
+    "removeTagFilter": "Remove {tag} filter",
+    "loading": "Loading packs…",
+    "error": "Couldn't load packs. Try again later.",
+    "empty": "No packs match these filters yet."
+  },
+  "formats": {
+    "save_one": "Save One",
+    "sacrifice_one": "Sacrifice One",
+    "nxn": "NxN",
+    "rank_blind": "Rank Blind",
+    "1v1": "1v1"
+  },
+  "tagPicker": {
+    "title": "Select tags",
+    "selected": "{count} selected",
+    "selectedOfMax": "{count} selected / {max}",
+    "clear": "Clear",
+    "cancel": "Cancel",
+    "apply": "Apply"
+  },
+  "pack": {
+    "viewAuthor": "View author",
+    "viewProfile": "View profile",
+    "published": "Published {date}",
+    "playNow": "Play now",
+    "roundsCount": "{count, plural, one {# round} other {# rounds}}",
+    "itemsCount": "{count, plural, one {# item} other {# items}}",
+    "statPlays": "plays",
+    "statRoundsLabel": "rounds",
+    "statAgree": "top-pick agree",
+    "howItPlaysHeading": "How it plays — {format}",
+    "roundsHeading": "Rounds · one per {section}",
+    "sectionGroup": "group",
+    "sectionCategory": "category",
+    "playerStats": "Player stats",
+    "noPlays": "No plays yet — be the first!",
+    "statsPlays": "{count, plural, one {# play} other {# plays}}",
+    "topItemPct": "{item} — {pct}%",
+    "topItemAvg": "{item} — avg {pos}",
+    "howItPlays": {
+      "save_one": [
+        {
+          "title": "A group's pool appears",
+          "desc": "Each round shows a group's items — a random sample, or all of them if the creator arranged them manually."
+        },
+        {
+          "title": "You save one",
+          "desc": "Pick your single favorite; the rest are dropped for that round."
+        },
+        {
+          "title": "Next group, same deal",
+          "desc": "One save per group, across every round — no going back to change a pick."
+        }
+      ],
+      "sacrifice_one": [
+        {
+          "title": "A group's pool appears",
+          "desc": "Each round shows a group's items to choose between."
+        },
+        {
+          "title": "You sacrifice one",
+          "desc": "Cut the one you like least; the others move on."
+        },
+        {
+          "title": "Next group, same deal",
+          "desc": "One cut per round, across every group."
+        }
+      ],
+      "nxn": [
+        {
+          "title": "Two categories face off",
+          "desc": "Each round pits items from two categories head-to-head."
+        },
+        {
+          "title": "Pick a side",
+          "desc": "Choose the item you prefer in every matchup."
+        },
+        {
+          "title": "Picks tally up",
+          "desc": "Your choices add up across all rounds to a final result."
+        }
+      ],
+      "rank_blind": [
+        {
+          "title": "Items appear one at a time",
+          "desc": "You see each item blind, without knowing what comes next."
+        },
+        {
+          "title": "Place it in your ranking",
+          "desc": "Slot each item into your growing ranked list as you go."
+        },
+        {
+          "title": "No do-overs",
+          "desc": "Your ranking locks in once every item is placed."
+        }
+      ],
+      "1v1": [
+        {
+          "title": "Two items, head-to-head",
+          "desc": "Every round is a straight one-versus-one matchup."
+        },
+        {
+          "title": "Pick the winner",
+          "desc": "Choose your favorite of the two."
+        },
+        {
+          "title": "Winners tally up",
+          "desc": "Results add up across every matchup."
+        }
+      ]
+    },
+    "comments": "Comments · {count}",
+    "commentPlaceholder": "Share your thoughts on this pack…",
+    "commentLabel": "Comment",
+    "post": "Post",
+    "loginPrompt": "<link>Log in</link> to leave a comment.",
+    "loadingComments": "Loading comments…",
+    "loadCommentsError": "Couldn't load comments. Try again later.",
+    "noComments": "No comments yet.",
+    "loadMore": "Load more",
+    "loadingMore": "Loading…",
+    "loadMoreError": "Couldn't load more comments. Try again.",
+    "postErrorFallback": "Couldn't post your comment. Try again.",
+    "upvote": "Upvote",
+    "downvote": "Downvote",
+    "voteError": "Couldn't record your vote. Try again."
+  },
+  "share": {
+    "trigger": "Share",
+    "dialogLabel": "Share link",
+    "urlLabel": "Share URL",
+    "copy": "Copy",
+    "copied": "Copied!"
+  },
+  "play": {
+    "loginRequired": "You need to be logged in to play a pack.",
+    "logIn": "Log in",
+    "complete": "Complete",
+    "roundOf": "Round {current} of {total}",
+    "showingOf": "Showing {revealed} of {total}",
+    "showNext": "Show next",
+    "showAll": "Show all",
+    "pick": "Pick {name}",
+    "nextRound": "Next round →",
+    "seeResult": "See your result",
+    "instructionSave": "Pick the one you'd save. Check it below, then confirm.",
+    "instructionSacrifice": "Pick the one you'd sacrifice. Check it below, then confirm.",
+    "instructionNxn": "Pick the side you'd save. Check it below, then confirm.",
+    "savedSoFar": "Saved so far",
+    "sacrificedSoFar": "Sacrificed so far",
+    "finishedTitle": "All rounds done",
+    "finishedSave": "You saved {count, plural, one {# pick} other {# picks}}, one per round.",
+    "finishedSacrifice": "You sacrificed {count, plural, one {# pick} other {# picks}}, one per round.",
+    "finishedVersus": "You picked a side in {count, plural, one {# round} other {# rounds}} between {a} and {b}.",
+    "whichPrefer": "Which one do you prefer?",
+    "allMatchupsDone": "All matchups done",
+    "h2hSummary": "Here's who beat who across {count, plural, one {# head-to-head} other {# head-to-heads}}.",
+    "beat": "{winner} beat {loser}",
+    "rankInstruction": "Choose where this one goes — item {current} of {total}",
+    "placeHere": "Place here",
+    "rankSlotFilled": "Rank {rank}: {title}",
+    "rankSlotEmpty": "Place at rank {rank}",
+    "ranked": "{name} ranked",
+    "rankingDone": "Your ranking is done",
+    "rankingDoneSummary": "All {count, plural, one {# round} other {# rounds}} placed, blind."
+  },
+  "result": {
+    "label": "Result",
+    "playsRecorded": "{count, plural, one {# play recorded.} other {# plays recorded.}}",
+    "yourPick": "Your pick",
+    "sharedPick": "Pick",
+    "rankCaption": "avg {avg} · ranked {count}x",
+    "youPlaced": "You placed this #{position} · {count, plural, one {# other play agreed} other {# other plays agreed}}",
+    "placed": "Placed #{position} · {count, plural, one {# other play agreed} other {# other plays agreed}}",
+    "notInYourPlay": "Not in your play this round",
+    "notInThisPlay": "Not in this play this round",
+    "playAgain": "Play again",
+    "shareResult": "Share result",
+    "sharedNote": "You're viewing a shared result."
+  },
+  "create": {
+    "loginRequired": "You need to be logged in to create a pack.",
+    "logIn": "Log in",
+    "publish": "Publish",
+    "publishing": "Publishing…",
+    "basicsHeading": "Basics",
+    "packTitle": "Pack title",
+    "packDescription": "Pack description",
+    "descriptionPlaceholder": "Short description",
+    "coverTone": "Cover tone",
+    "coverToneSwatch": "Cover tone {tone}",
+    "tags": "Tags",
+    "selectTags": "Select tags",
+    "tagsSelected": "{count, plural, one {# tag selected} other {# tags selected}}",
+    "formatHeading": "Format",
+    "blurbSaveOne": "Show a group, keep one to advance.",
+    "blurbSacrificeOne": "Remove one at a time; a favorite remains.",
+    "blurbNxn": "Two categories compared side by side.",
+    "blurbRankBlind": "Place each pick blind into a growing ranked list.",
+    "blurb1v1": "Pick a winner in each head-to-head matchup.",
+    "groupsHeading": "Groups",
+    "addGroup": "+ Add group (one more round)",
+    "categoriesHeading": "Categories",
+    "rounds": "Rounds",
+    "itemsPerRound": "Items per round",
+    "groupName": "Group {index} name",
+    "random": "Random",
+    "manual": "Manual",
+    "groupSampleSize": "Group {index} sample size",
+    "itemsDrawnPerRound": "Items drawn per round",
+    "removeGroup": "Remove group {index}",
+    "remove": "Remove",
+    "itemCount": "{count, plural, one {# item} other {# items}}",
+    "text": "Text",
+    "link": "Link",
+    "add": "Add",
+    "checking": "Checking…",
+    "addItemPlaceholder": "Add an item…",
+    "itemTitlePlaceholder": "Title",
+    "youtubeLinkPlaceholder": "YouTube link…",
+    "notYoutubeLink": "That doesn't look like a YouTube link.",
+    "videoNotFound": "Couldn't find that video — check the link.",
+    "removeItemAria": "Remove {title}",
+    "untitled": "Untitled",
+    "groupNewItem": "Group {index} new item",
+    "groupNewItemTitle": "Group {index} new item title",
+    "groupNewItemLink": "Group {index} new item link",
+    "categoryName": "Category {index} name",
+    "categoryNewItem": "Category {index} new item",
+    "categoryNewItemTitle": "Category {index} new item title",
+    "categoryNewItemLink": "Category {index} new item link"
+  },
+  "profile": {
+    "loginRequiredView": "You need to be logged in to view your profile.",
+    "loginRequiredEdit": "You need to be logged in to edit your profile.",
+    "logIn": "Log in",
+    "loadProfileError": "Couldn't load your profile. Try again later.",
+    "loadBioError": "Couldn't load your current bio. Try again later.",
+    "followerCount": "{count, plural, one {# follower} other {# followers}}",
+    "editProfile": "Edit profile",
+    "addBioPrompt": "Add a bio to tell people what your packs are about.",
+    "myPacks": "My Packs",
+    "noPacksOwn": "No packs yet — create your first one!",
+    "bio": "Bio",
+    "bioPlaceholder": "Tell people what your packs are about.",
+    "saving": "Saving…",
+    "save": "Save",
+    "saveError": "Couldn't save your changes. Try again.",
+    "userNotFound": "This user doesn't exist.",
+    "followError": "Couldn't update follow status. Try again.",
+    "followerAndPackCount": "{followers, plural, one {# follower} other {# followers}} · {packs, plural, one {# pack} other {# packs}}",
+    "following": "Following",
+    "follow": "Follow",
+    "packs": "Packs",
+    "noPacks": "No packs yet."
+  },
+  "pages": {
+    "createTitle": "Create a pack",
+    "createSubtitle": "Pick an elimination format and build your rounds. Elements can be text or a YouTube link.",
+    "metaProfile": "Profile",
+    "metaEditProfile": "Edit profile",
+    "metaPlaying": "Playing {title}",
+    "metaResult": "{title} — Result",
+    "packNotFound": "Pack not found",
+    "userNotFound": "User not found",
+    "userNotFoundBody": "This profile doesn't exist or has been removed.",
+    "userMetaDescription": "{username}'s elimination-quiz packs on Velanto — play through one to see who comes out on top.",
+    "backToDiscover": "Back to discover",
+    "errorTitle": "Something went wrong",
+    "errorBody": "We couldn't load this profile. Please try again.",
+    "tryAgain": "Try again"
+  },
+  "status": {
+    "packPending": "Pending review",
+    "packApproved": "Approved",
+    "packRejected": "Rejected",
+    "feedbackNew": "New",
+    "feedbackInProgress": "In progress",
+    "feedbackDone": "Done",
+    "feedbackDeclined": "Declined",
+    "reportNew": "New",
+    "reportReviewing": "Reviewing",
+    "reportClosed": "Closed"
+  },
+  "feedback": {
+    "pageTitle": "Feedback",
+    "newPost": "New post",
+    "searchAria": "Search feedback",
+    "searchPlaceholder": "Search feedback…",
+    "filterAll": "All",
+    "topicBug": "Bug",
+    "topicFeature": "Feature",
+    "topicTranslation": "Translation",
+    "topicOther": "Other",
+    "sortTop": "Top",
+    "sortNewest": "Newest",
+    "loadMoreError": "Couldn't load more feedback. Try again.",
+    "topSidebarHeading": "Top feedback",
+    "noFeedbackYet": "No feedback yet.",
+    "scoreLabel": "score",
+    "by": "by",
+    "commentCount": "{count, plural, one {# comment} other {# comments}}",
+    "loadingList": "Loading feedback…",
+    "listError": "Couldn't load feedback. Try again.",
+    "noMatches": "No feedback matches these filters.",
+    "loadingMore": "Loading…",
+    "loadMore": "Load more",
+    "voteError": "Couldn't record your vote. Try again.",
+    "like": "Like",
+    "dislike": "Dislike",
+    "detailNotFound": "This feedback post doesn't exist or isn't visible to you.",
+    "backToFeedback": "Back to feedback",
+    "detailLoadError": "Couldn't load this feedback post. Try again.",
+    "loading": "Loading…",
+    "statusUpdateError": "Couldn't update the status. Try again.",
+    "deleteConfirm": "Delete this feedback post?",
+    "deleteError": "Couldn't delete this post. Try again.",
+    "translationHeading": "Translation",
+    "languageValueLabel": "Language:",
+    "contextValueLabel": "Context:",
+    "suggestionValueLabel": "Suggestion:",
+    "statusSelectLabel": "Status",
+    "saving": "Saving…",
+    "delete": "Delete",
+    "edited": "edited",
+    "commentsHeading": "Comments · {count}",
+    "commentPlaceholder": "Share your thoughts on this feedback…",
+    "commentAria": "Comment",
+    "postComment": "Post",
+    "loginToComment": "<link>Log in</link> to leave a comment.",
+    "postError": "Couldn't post your comment. Try again.",
+    "loadingComments": "Loading comments…",
+    "commentsLoadError": "Couldn't load comments. Try again later.",
+    "noComments": "No comments yet.",
+    "loadMoreCommentsError": "Couldn't load more comments. Try again.",
+    "newFeedbackTitle": "New feedback",
+    "topicLabel": "Topic",
+    "titleLabel": "Title",
+    "titlePlaceholder": "A short summary",
+    "detailsLabel": "Details",
+    "detailsPlaceholder": "Describe your bug, idea, or suggestion",
+    "visibilityLabel": "Visibility",
+    "visibilityEveryone": "Everyone",
+    "visibilityStaffOnly": "Staff-only",
+    "staffOnlyHint": "Staff-only posts are visible only to you and the team.",
+    "translationSuggestionHeading": "Translation suggestion",
+    "languageFieldLabel": "Language",
+    "chooseLanguage": "Choose a language…",
+    "contextFieldLabel": "Which text / where you saw it (optional)",
+    "contextPlaceholder": "e.g. the Play button on the home screen",
+    "suggestionFieldLabel": "Your suggested wording",
+    "suggestionPlaceholder": "What it should say instead",
+    "posting": "Posting…",
+    "postFeedback": "Post feedback",
+    "metaListTitle": "Feedback — Velanto",
+    "metaListDescription": "Report bugs, suggest features, and propose translation improvements.",
+    "metaNewTitle": "New feedback — Velanto"
   }
 }

@@ -1,5 +1,8 @@
 import { renderHook, waitFor } from "@testing-library/react";
+import { createElement, type ReactNode } from "react";
+import { QueryClientProvider } from "@tanstack/react-query";
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { createTestQueryClient } from "@/src/shared/test/test-query-client";
 import { usePackFallback } from "./use-pack-fallback";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { packsClient } from "@/src/shared/lib/packs-client";
@@ -55,12 +58,23 @@ const RESULTS: PackResults = {
 };
 
 describe("usePackFallback", () => {
-  beforeEach(() => vi.resetAllMocks());
+  // Fresh QueryClient per test so a query key (e.g. p1) isn't served from a
+  // prior test's cache.
+  let wrapper: ({ children }: { children: ReactNode }) => ReturnType<
+    typeof createElement
+  >;
+  beforeEach(() => {
+    vi.resetAllMocks();
+    const client = createTestQueryClient();
+    wrapper = ({ children }) =>
+      createElement(QueryClientProvider, { client }, children);
+  });
 
   it("stays loading and does not fetch while auth status is still loading", () => {
     mockAuthStatus("loading");
     const { result } = renderHook(() =>
       usePackFallback("p1", { needsResults: false }),
+      { wrapper },
     );
     expect(result.current).toEqual({ status: "loading" });
     expect(mockedPacksClient.getById).not.toHaveBeenCalled();
@@ -70,6 +84,7 @@ describe("usePackFallback", () => {
     mockAuthStatus("unauthenticated");
     const { result } = renderHook(() =>
       usePackFallback("p1", { needsResults: false }),
+      { wrapper },
     );
     await waitFor(() => expect(result.current).toEqual({ status: "notfound" }));
     expect(mockedPacksClient.getById).not.toHaveBeenCalled();
@@ -80,6 +95,7 @@ describe("usePackFallback", () => {
     mockedPacksClient.getById.mockResolvedValue(PACK);
     const { result } = renderHook(() =>
       usePackFallback("p1", { needsResults: false }),
+      { wrapper },
     );
     await waitFor(() =>
       expect(result.current).toEqual({
@@ -97,6 +113,7 @@ describe("usePackFallback", () => {
     mockedPlaysClient.getResults.mockResolvedValue(RESULTS);
     const { result } = renderHook(() =>
       usePackFallback("p1", { needsResults: true }),
+      { wrapper },
     );
     await waitFor(() =>
       expect(result.current).toEqual({
@@ -114,6 +131,7 @@ describe("usePackFallback", () => {
     );
     const { result } = renderHook(() =>
       usePackFallback("p1", { needsResults: false }),
+      { wrapper },
     );
     await waitFor(() => expect(result.current).toEqual({ status: "notfound" }));
   });
@@ -126,6 +144,7 @@ describe("usePackFallback", () => {
     );
     const { result } = renderHook(() =>
       usePackFallback("p1", { needsResults: true }),
+      { wrapper },
     );
     await waitFor(() => expect(result.current).toEqual({ status: "notfound" }));
   });
@@ -140,6 +159,7 @@ describe("usePackFallback", () => {
     );
     const { unmount } = renderHook(() =>
       usePackFallback("p1", { needsResults: false }),
+      { wrapper },
     );
     unmount();
     resolveGetById(PACK);

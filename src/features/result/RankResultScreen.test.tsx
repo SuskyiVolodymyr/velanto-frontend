@@ -1,5 +1,6 @@
 import { describe, expect, it, beforeEach, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { RankResultScreen } from "./RankResultScreen";
 import { encodePicks } from "@/src/shared/lib/share-url";
 import type { Pack } from "@/src/shared/types/pack";

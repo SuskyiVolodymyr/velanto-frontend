@@ -2,7 +2,7 @@ import type { InputHTMLAttributes } from "react";
 import { useFormContext } from "react-hook-form";
 import { Input } from "@/src/shared/components/Input";
 import { FormField } from "@/src/shared/components/form/FormField";
-import { getFieldError } from "@/src/shared/components/form/getFieldError";
+import { useFieldError } from "@/src/shared/components/form/useFieldError";
 
 export interface TextFieldProps extends Omit<
   InputHTMLAttributes<HTMLInputElement>,
@@ -28,12 +28,9 @@ export function TextField({
   "aria-describedby": ariaDescribedby,
   ...rest
 }: TextFieldProps) {
-  const {
-    register,
-    formState: { errors },
-  } = useFormContext();
+  const { register } = useFormContext();
   const fieldId = id ?? name;
-  const error = getFieldError(errors, name);
+  const error = useFieldError(name);
   // Merge the error association with any caller-supplied describedby (e.g. a
   // hint id) so neither clobbers the other.
   const describedBy =

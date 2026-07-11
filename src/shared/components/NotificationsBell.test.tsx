@@ -1,10 +1,29 @@
 // src/shared/components/NotificationsBell.test.tsx
-import { render, screen, waitFor, act } from "@testing-library/react";
+import type { ReactElement, ReactNode } from "react";
+import {
+  render as rtlRender,
+  screen,
+  waitFor,
+  act,
+} from "@testing-library/react";
+import { QueryClientProvider } from "@tanstack/react-query";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { createTestQueryClient } from "@/src/shared/test/test-query-client";
 import { NotificationsBell } from "./NotificationsBell";
 import { notificationsClient } from "@/src/shared/lib/notifications-client";
 import { useAuth } from "@/src/shared/lib/auth-context";
+
+// Fresh QueryClient per render so a query key isn't served from a prior test's
+// cache.
+function render(ui: ReactElement) {
+  const client = createTestQueryClient();
+  return rtlRender(ui, {
+    wrapper: ({ children }: { children: ReactNode }) => (
+      <QueryClientProvider client={client}>{children}</QueryClientProvider>
+    ),
+  });
+}
 
 vi.mock("@/src/shared/lib/notifications-client");
 vi.mock("@/src/shared/lib/auth-context");

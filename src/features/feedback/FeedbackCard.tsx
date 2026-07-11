@@ -1,14 +1,16 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Badge } from "@/src/shared/components/Badge";
 import { StatusBadge } from "@/src/shared/components/StatusBadge";
 import { Text } from "@/src/shared/components/Text";
 import type { Feedback, FeedbackTopic } from "@/src/shared/types/feedback";
 
-export const TOPIC_LABELS: Record<FeedbackTopic, string> = {
-  bug: "Bug",
-  feature: "Feature",
-  translation: "Translation",
-  other: "Other",
+// Feedback topic value → key in the `feedback` i18n namespace.
+export const TOPIC_KEYS: Record<FeedbackTopic, string> = {
+  bug: "topicBug",
+  feature: "topicFeature",
+  translation: "topicTranslation",
+  other: "topicOther",
 };
 
 export function FeedbackCard({
@@ -18,6 +20,7 @@ export function FeedbackCard({
   post: Feedback;
   compact?: boolean;
 }) {
+  const t = useTranslations("feedback");
   if (compact) {
     return (
       <Link
@@ -29,7 +32,7 @@ export function FeedbackCard({
         </span>
         <div className="flex min-w-0 flex-col gap-1">
           <Text className="truncate text-sm font-semibold">{post.title}</Text>
-          <Badge>{TOPIC_LABELS[post.topic]}</Badge>
+          <Badge>{t(TOPIC_KEYS[post.topic])}</Badge>
         </div>
       </Link>
     );
@@ -45,21 +48,21 @@ export function FeedbackCard({
           {post.score}
         </span>
         <span className="text-[10px] uppercase tracking-wide text-foreground-tertiary">
-          score
+          {t("scoreLabel")}
         </span>
       </span>
       <div className="flex min-w-0 flex-1 flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2">
-          <Badge>{TOPIC_LABELS[post.topic]}</Badge>
+          <Badge>{t(TOPIC_KEYS[post.topic])}</Badge>
           <StatusBadge kind="feedback" status={post.status} />
         </div>
         <Text className="font-semibold">{post.title}</Text>
         <div className="flex flex-wrap items-center gap-2">
           <Text variant="tertiary" className="text-xs">
-            by {post.authorUsername}
+            {t("by")} {post.authorUsername}
           </Text>
           <Text variant="tertiary" className="text-xs">
-            · {post.commentCount} comment{post.commentCount === 1 ? "" : "s"}
+            · {t("commentCount", { count: post.commentCount })}
           </Text>
         </div>
       </div>

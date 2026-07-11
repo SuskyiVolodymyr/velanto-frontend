@@ -1,7 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
+import { QueryClientProvider } from "@tanstack/react-query";
 import messages from "@/messages/en.json";
+import { createTestQueryClient } from "@/src/shared/test/test-query-client";
 import { SettingsScreen } from "./SettingsScreen";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
@@ -18,13 +20,15 @@ vi.mock("@/src/shared/lib/auth-client", () => ({
 describe("SettingsScreen", () => {
   it("renders the Preferences heading and both sections", async () => {
     render(
-      <NextIntlClientProvider locale="en" messages={messages}>
-        <AuthProvider>
-          <StreamerModeProvider>
-            <SettingsScreen />
-          </StreamerModeProvider>
-        </AuthProvider>
-      </NextIntlClientProvider>,
+      <QueryClientProvider client={createTestQueryClient()}>
+        <NextIntlClientProvider locale="en" messages={messages}>
+          <AuthProvider>
+            <StreamerModeProvider>
+              <SettingsScreen />
+            </StreamerModeProvider>
+          </AuthProvider>
+        </NextIntlClientProvider>
+      </QueryClientProvider>,
     );
 
     expect(

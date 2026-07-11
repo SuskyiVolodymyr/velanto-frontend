@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import type { Group, Item, ItemType } from "@/src/shared/types/pack";
 import { extractYouTubeId } from "@/src/shared/lib/youtube";
 import { fetchYouTubeOEmbed } from "@/src/shared/lib/youtube-oembed";
@@ -20,6 +21,7 @@ export function useGroupItemDraft(
   const [draftValue, setDraftValue] = useState("");
   const [validating, setValidating] = useState(false);
   const [addError, setAddError] = useState("");
+  const t = useTranslations("create");
 
   function selectType(type: ItemType) {
     setDraftType(type);
@@ -45,7 +47,7 @@ export function useGroupItemDraft(
 
     const videoId = extractYouTubeId(draftValue.trim());
     if (!videoId) {
-      setAddError("That doesn't look like a YouTube link.");
+      setAddError(t("notYoutubeLink"));
       return;
     }
 
@@ -53,14 +55,14 @@ export function useGroupItemDraft(
     try {
       const result = await fetchYouTubeOEmbed(draftValue.trim());
       if (!result) {
-        setAddError("Couldn't find that video — check the link.");
+        setAddError(t("videoNotFound"));
         return;
       }
 
       const item: Item = {
         id: crypto.randomUUID(),
         type: "youtube",
-        title: draftTitle.trim() || result.title || "Untitled",
+        title: draftTitle.trim() || result.title || t("untitled"),
         value: draftValue.trim(),
       };
       onChange({ ...group, items: [...group.items, item] });

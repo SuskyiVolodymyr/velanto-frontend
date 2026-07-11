@@ -9,10 +9,11 @@ import { authClient } from "@/src/shared/lib/auth-client";
 import { ApiError } from "@/src/shared/lib/api-client";
 
 const push = vi.fn();
+const replace = vi.fn();
 let searchParams = new URLSearchParams();
 
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push }),
+  useRouter: () => ({ push, replace }),
   useSearchParams: () => searchParams,
 }));
 
@@ -71,6 +72,39 @@ describe("AuthForm", () => {
     ).toBeInTheDocument();
   });
 
+  it("redirects an already-signed-in visitor away from the auth screen", async () => {
+    vi.mocked(authClient.refresh).mockResolvedValue({
+      accessToken: "access-token",
+      user: {
+        id: "u1",
+        email: "a@example.com",
+        username: "alice",
+        role: "user",
+        createdAt: "2026-01-01T00:00:00.000Z",
+      },
+    });
+    renderAuthForm();
+
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/"));
+  });
+
+  it("honors a sanitized ?next= when redirecting an already-signed-in visitor", async () => {
+    searchParams = new URLSearchParams({ next: "/create" });
+    vi.mocked(authClient.refresh).mockResolvedValue({
+      accessToken: "access-token",
+      user: {
+        id: "u1",
+        email: "a@example.com",
+        username: "alice",
+        role: "user",
+        createdAt: "2026-01-01T00:00:00.000Z",
+      },
+    });
+    renderAuthForm();
+
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/create"));
+  });
+
   it("rejects an empty login submission without calling the API", async () => {
     const user = userEvent.setup();
     renderAuthForm();
@@ -90,13 +124,13 @@ describe("AuthForm", () => {
 
     await user.type(screen.getByLabelText("Username"), "no spaces!");
     await user.type(screen.getByLabelText("Email"), "a@example.com");
-    await user.type(screen.getByLabelText("Password"), "password123");
+    await user.type(screen.getByLabelText("Password"), "Password123");
     await user.click(screen.getByRole("checkbox"));
     await user.click(screen.getByRole("button", { name: "Create account" }));
 
     expect(
       screen.getByText(
-        "Username must be 3-20 characters: letters, numbers, underscore only.",
+        "Username must be 2-16 characters: letters and numbers only.",
       ),
     ).toBeInTheDocument();
     expect(authClient.register).not.toHaveBeenCalled();
@@ -172,7 +206,7 @@ describe("AuthForm", () => {
     await user.type(screen.getByLabelText("Password"), "password123");
     await user.click(screen.getByRole("button", { name: "Log in" }));
 
-    await waitFor(() => expect(push).toHaveBeenCalledWith("/"));
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/"));
     expect(authClient.login).toHaveBeenCalledWith({
       identifier: "alice",
       password: "password123",
@@ -198,7 +232,7 @@ describe("AuthForm", () => {
     await user.type(screen.getByLabelText("Password"), "password123");
     await user.click(screen.getByRole("button", { name: "Log in" }));
 
-    await waitFor(() => expect(push).toHaveBeenCalledWith("/create"));
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/create"));
   });
 
   it("ignores an unsafe ?next= value and redirects home instead", async () => {
@@ -220,7 +254,7 @@ describe("AuthForm", () => {
     await user.type(screen.getByLabelText("Password"), "password123");
     await user.click(screen.getByRole("button", { name: "Log in" }));
 
-    await waitFor(() => expect(push).toHaveBeenCalledWith("/"));
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/"));
   });
 
   it("shows the server error message and does not redirect on invalid credentials", async () => {
@@ -235,7 +269,7 @@ describe("AuthForm", () => {
     await user.click(screen.getByRole("button", { name: "Log in" }));
 
     expect(await screen.findByText("Invalid credentials.")).toBeInTheDocument();
-    expect(push).not.toHaveBeenCalled();
+    expect(replace).not.toHaveBeenCalled();
   });
 
   it("rejects registration when the rules-acceptance box is unchecked", async () => {
@@ -245,12 +279,29 @@ describe("AuthForm", () => {
 
     await user.type(screen.getByLabelText("Username"), "alice");
     await user.type(screen.getByLabelText("Email"), "a@example.com");
-    await user.type(screen.getByLabelText("Password"), "password123");
+    await user.type(screen.getByLabelText("Password"), "Password123");
+    await user.type(screen.getByLabelText("Confirm password"), "Password123");
     await user.click(screen.getByRole("button", { name: "Create account" }));
 
     expect(
       screen.getByText("You must accept the Community Rules to register."),
     ).toBeInTheDocument();
+    expect(authClient.register).not.toHaveBeenCalled();
+  });
+
+  it("rejects registration when the two passwords do not match", async () => {
+    const user = userEvent.setup();
+    renderAuthForm();
+    await user.click(screen.getByRole("tab", { name: "Sign up" }));
+
+    await user.type(screen.getByLabelText("Username"), "alice");
+    await user.type(screen.getByLabelText("Email"), "a@example.com");
+    await user.type(screen.getByLabelText("Password"), "Password123");
+    await user.type(screen.getByLabelText("Confirm password"), "Password124");
+    await user.click(screen.getByRole("checkbox"));
+    await user.click(screen.getByRole("button", { name: "Create account" }));
+
+    expect(screen.getByText("Passwords do not match.")).toBeInTheDocument();
     expect(authClient.register).not.toHaveBeenCalled();
   });
 
@@ -271,15 +322,16 @@ describe("AuthForm", () => {
 
     await user.type(screen.getByLabelText("Username"), "  alice  ");
     await user.type(screen.getByLabelText("Email"), "  a@example.com  ");
-    await user.type(screen.getByLabelText("Password"), "password123");
+    await user.type(screen.getByLabelText("Password"), "Password123");
+    await user.type(screen.getByLabelText("Confirm password"), "Password123");
     await user.click(screen.getByRole("checkbox"));
     await user.click(screen.getByRole("button", { name: "Create account" }));
 
-    await waitFor(() => expect(push).toHaveBeenCalledWith("/"));
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/"));
     expect(authClient.register).toHaveBeenCalledWith({
       username: "alice",
       email: "a@example.com",
-      password: "password123",
+      password: "Password123",
       acceptedRules: true,
     });
   });
@@ -317,6 +369,6 @@ describe("AuthForm", () => {
         createdAt: "2026-01-01T00:00:00.000Z",
       },
     });
-    await waitFor(() => expect(push).toHaveBeenCalledWith("/"));
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/"));
   });
 });

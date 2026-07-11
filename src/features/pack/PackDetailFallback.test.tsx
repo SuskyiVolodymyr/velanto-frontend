@@ -1,4 +1,5 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { notFound } from "next/navigation";
 import { PackDetailFallback } from "./PackDetailFallback";
@@ -13,6 +14,15 @@ vi.mock("@/src/features/pack/VoteButtons", () => ({
 }));
 vi.mock("@/src/features/pack/CommentSection", () => ({
   CommentSection: () => <div>CommentSection</div>,
+}));
+vi.mock("@/src/features/pack/PackCreatorCard", () => ({
+  PackCreatorCard: () => <div>PackCreatorCard</div>,
+}));
+vi.mock("@/src/features/pack/PackPlayButton", () => ({
+  PackPlayButton: () => <div>PackPlayButton</div>,
+}));
+vi.mock("@/src/features/pack/PackBannerAuthor", () => ({
+  PackBannerAuthor: () => <div>PackBannerAuthor</div>,
 }));
 
 const mockedUsePackFallback = vi.mocked(usePackFallback);

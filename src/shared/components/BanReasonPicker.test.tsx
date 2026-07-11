@@ -3,7 +3,9 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
+import { QueryClientProvider } from "@tanstack/react-query";
 import messages from "@/messages/en.json";
+import { createTestQueryClient } from "@/src/shared/test/test-query-client";
 import {
   BanReasonPicker,
   isBanReasonValid,
@@ -36,9 +38,11 @@ function Harness({
   onChangeSpy?: (next: BanReasonState) => void;
 }) {
   return (
-    <NextIntlClientProvider locale="en" messages={messages}>
-      <ControlledPicker initial={initial} onChangeSpy={onChangeSpy} />
-    </NextIntlClientProvider>
+    <QueryClientProvider client={createTestQueryClient()}>
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <ControlledPicker initial={initial} onChangeSpy={onChangeSpy} />
+      </NextIntlClientProvider>
+    </QueryClientProvider>
   );
 }
 
@@ -76,6 +80,8 @@ describe("BanReasonPicker", () => {
   it("renders a category option per fetched rules category plus an 'Other' option", async () => {
     render(<Harness />);
     const select = await screen.findByLabelText("Reason");
+    // Wait for the rules query to resolve (Select is disabled while loading).
+    await waitFor(() => expect(select).toBeEnabled());
     // Two categories + 'Other' (+ the disabled placeholder).
     expect(
       within(select).getByRole("option", { name: "Hate & Discrimination" }),
@@ -104,6 +110,8 @@ describe("BanReasonPicker", () => {
     const onChangeSpy = vi.fn();
     render(<Harness onChangeSpy={onChangeSpy} />);
     const select = await screen.findByLabelText("Reason");
+    // Wait for the rules query to resolve (Select is disabled while loading).
+    await waitFor(() => expect(select).toBeEnabled());
     await userEvent.selectOptions(select, "spam_manipulation");
     expect(onChangeSpy).toHaveBeenCalledWith({
       reason: "spam_manipulation",
@@ -114,6 +122,8 @@ describe("BanReasonPicker", () => {
   it("is valid once a category is chosen (detail optional for categories)", async () => {
     render(<Harness />);
     const select = await screen.findByLabelText("Reason");
+    // Wait for the rules query to resolve (Select is disabled while loading).
+    await waitFor(() => expect(select).toBeEnabled());
     expect(screen.getByTestId("valid")).toHaveTextContent("false");
     await userEvent.selectOptions(select, "hate_discrimination");
     await waitFor(() =>
@@ -124,6 +134,8 @@ describe("BanReasonPicker", () => {
   it("requires non-empty detail when 'Other' is selected", async () => {
     render(<Harness />);
     const select = await screen.findByLabelText("Reason");
+    // Wait for the rules query to resolve (Select is disabled while loading).
+    await waitFor(() => expect(select).toBeEnabled());
     await userEvent.selectOptions(select, "other");
 
     // Detail textarea now required and visible; empty => invalid.
@@ -140,6 +152,8 @@ describe("BanReasonPicker", () => {
   it("caps the detail textarea at 500 characters", async () => {
     render(<Harness />);
     const select = await screen.findByLabelText("Reason");
+    // Wait for the rules query to resolve (Select is disabled while loading).
+    await waitFor(() => expect(select).toBeEnabled());
     await userEvent.selectOptions(select, "other");
     const detail = (await screen.findByLabelText(
       /details/i,

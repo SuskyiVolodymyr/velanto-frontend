@@ -1,4 +1,10 @@
 {
+  "authGate": {
+    "logInToVote": "Inicia sesión para votar",
+    "logInToFollow": "Inicia sesión para seguir",
+    "logInToComment": "Inicia sesión para comentar",
+    "logInToPlay": "Inicia sesión para jugar"
+  },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
     "logIn": "Iniciar sesión",
@@ -18,7 +24,23 @@
     "languageHeading": "Idioma",
     "languageLabel": "Idioma de la interfaz",
     "languageHint": "Cambia el idioma de los menús y los botones. El contenido del paquete se mantiene en el idioma en que lo escribió su creador.",
-    "languageSelectAria": "Idioma de la interfaz"
+    "languageSelectAria": "Idioma de la interfaz",
+    "accountHeading": "Cuenta",
+    "signedInViaEmail": "Sesión iniciada con correo electrónico",
+    "loginToViewAccount": "<link>Inicia sesión</link> para ver la configuración de la cuenta.",
+    "appearanceHeading": "Apariencia",
+    "accentColor": "Color de acento",
+    "accentColorHint": "Se usa para resaltados, botones y barras de progreso.",
+    "accentColorSwatch": "Usar el color de acento {color}",
+    "notificationsHeading": "Notificaciones",
+    "loginToManageNotifications": "<link>Inicia sesión</link> para gestionar tus preferencias de notificaciones.",
+    "notificationsLoadError": "No se pudieron cargar tus preferencias de notificaciones.",
+    "loading": "Cargando…",
+    "notificationUpdateError": "No se pudo actualizar esta opción. Inténtalo de nuevo.",
+    "notifNewFollower": "Nuevo seguidor",
+    "notifNewPack": "Nuevo pack de alguien que sigues",
+    "notifNewComment": "Nuevo comentario en tu pack",
+    "notifPackDeleted": "Pack eliminado por un moderador"
   },
   "streamerMode": {
     "hiddenHint": "Oculto por el modo streamer",
@@ -31,14 +53,141 @@
     "off": "Desactivado"
   },
   "auth": {
-    "acceptRules": "He leído y acepto las <link>Reglas de la comunidad</link>."
+    "acceptRules": "He leído y acepto las <link>Reglas de la comunidad</link>.",
+    "tabSignup": "Registrarse",
+    "logIn": "Iniciar sesión",
+    "headingLogin": "Inicia sesión en Velanto",
+    "headingRegister": "Únete a Velanto",
+    "subtitleLogin": "Inicia sesión para crear y jugar packs.",
+    "subtitleRegister": "Crea packs, juega y guarda tus resultados.",
+    "identifier": "Correo o nombre de usuario",
+    "username": "Nombre de usuario",
+    "email": "Correo electrónico",
+    "password": "Contraseña",
+    "confirmPassword": "Confirmar contraseña",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña",
+    "invalidCredentials": "Credenciales no válidas.",
+    "pleaseWait": "Espera un momento…",
+    "createAccount": "Crear cuenta",
+    "terms": "Al continuar, aceptas los Términos y la Política de Privacidad de Velanto."
   },
   "rules": {
     "metaTitle": "Reglas de la comunidad — Velanto",
     "metaDescription": "Las reglas de la comunidad para crear y jugar paquetes en Velanto: léelas antes de registrarte.",
     "heading": "Reglas de la comunidad",
     "intro": "Estas reglas mantienen Velanto seguro y justo para todos. Al crear una cuenta, aceptas cumplirlas.",
-    "loadError": "No pudimos cargar las reglas en este momento. Inténtalo de nuevo en un momento."
+    "loadError": "No pudimos cargar las reglas en este momento. Inténtalo de nuevo en un momento.",
+    "content": {
+      "hate_discrimination": {
+        "title": "Odio y discriminación",
+        "items": {
+          "1": "No ataques, deshumanices, degrades ni promuevas el odio contra ninguna persona o grupo por motivos de raza, etnia, origen nacional, religión, género, sexo, orientación sexual, identidad de género, discapacidad, enfermedad grave, edad o cualquier otra característica protegida comparable. Esto se aplica al texto, las imágenes, los nombres de usuario, el contenido de los paquetes, los comentarios y cualquier otra contribución.",
+          "2": "No utilices insultos discriminatorios, símbolos de odio ni lenguaje en clave destinado a degradar a un grupo protegido, y no publiques imágenes que celebren o respalden ideologías de odio.",
+          "3": "No promuevas ni expreses apoyo a la discriminación, la segregación, la exclusión o la negación de derechos a las personas por causa de una característica protegida.",
+          "4": "No crees paquetes, preguntas ni respuestas cuya premisa clasifique, ridiculice o afirme la inferioridad de un grupo protegido. El contenido fáctico o educativo legítimo sobre historia, cultura o religión solo se permite cuando se presenta de forma respetuosa y sin respaldar el odio."
+        }
+      },
+      "harassment_bullying": {
+        "title": "Acoso e intimidación",
+        "items": {
+          "1": "No hostigues a otra persona con insultos, burlas, intimidación o contacto no deseado y persistente, ya sea a través de paquetes, comentarios, nombres de usuario o cualquier otra función.",
+          "2": "No organices, fomentes ni participes en acoso coordinado, ataques en grupo o campañas de hostigamiento colectivo contra ninguna persona o grupo.",
+          "3": "No publiques contenido diseñado para avergonzar, humillar o provocar a una persona concreta, incluido el contenido que haga referencia a su apariencia, identidad o circunstancias personales.",
+          "4": "Respeta las solicitudes de cesar el contacto. Está prohibido seguir interactuando con un usuario que ha pedido que lo dejen en paz, o eludir un bloqueo para llegar a él."
+        }
+      },
+      "violence_harm": {
+        "title": "Violencia y daño",
+        "items": {
+          "1": "No amenaces con violencia ni desees un daño grave a ninguna persona o grupo, y no incites a otros a cometer actos de violencia.",
+          "2": "No glorifiques, promuevas ni proporciones instrucciones para el terrorismo, la violencia masiva o el extremismo violento, y no elogies a los autores de tales actos.",
+          "3": "No fomentes, promuevas ni proporciones instrucciones sobre el suicidio, la autolesión o los trastornos alimentarios. Si tú o alguien que conoces está en riesgo, busca ayuda en los servicios de emergencia locales o en una línea de atención en crisis.",
+          "4": "No publiques contenido sangriento gratuito, representaciones gráficas de muerte o lesiones graves, ni imágenes destinadas a impactar o a celebrar el sufrimiento.",
+          "5": "No utilices la plataforma para planificar, coordinar o reclutar para actos de violencia en el mundo real."
+        }
+      },
+      "sexual_content": {
+        "title": "Contenido sexual y explícito",
+        "items": {
+          "1": "No publiques pornografía, imágenes sexualmente explícitas ni representaciones de actos sexuales en ninguna parte de la plataforma.",
+          "2": "No publiques desnudos ni contenido sexualizado en paquetes, imágenes, nombres de usuario, avatares o comentarios. Esta es una plataforma para el público general.",
+          "3": "No utilices la plataforma para solicitar contacto sexual, distribuir contenido sexual o anunciar servicios sexuales.",
+          "4": "No compartas imágenes íntimas o sexuales de ninguna persona sin su consentimiento explícito, incluido el llamado contenido de \"venganza\"."
+        }
+      },
+      "child_safety": {
+        "title": "Seguridad infantil",
+        "items": {
+          "1": "Tenemos tolerancia CERO frente a la sexualización de menores. Cualquier contenido que sexualice, explote o ponga en peligro a una persona menor de 18 años —real, ficticia, ilustrada o generada por inteligencia artificial— conlleva la cancelación permanente e inmediata de la cuenta y, cuando corresponda, la denuncia ante el Centro Nacional para Menores Desaparecidos y Explotados (NCMEC) y las autoridades competentes.",
+          "2": "No subas, solicites, compartas ni enlaces material de abuso sexual infantil (CSAM) ni ninguna representación sexualizada de un menor bajo ninguna circunstancia.",
+          "3": "No intentes contactar, captar, sexualizar ni poner en peligro de ningún otro modo a un menor, y no utilices la plataforma para facilitar dicha conducta.",
+          "4": "Denuncia de inmediato cualquier sospecha de peligro para un menor. Cooperamos plenamente con las autoridades y conservamos las pruebas pertinentes según lo exija la ley."
+        }
+      },
+      "illegal_content": {
+        "title": "Contenido y actividad ilegales",
+        "items": {
+          "1": "No utilices la plataforma para facilitar, promover o coordinar actividades que sean ilegales en tu jurisdicción o en la jurisdicción donde opera la plataforma.",
+          "2": "No anuncies, vendas ni facilites el comercio de bienes o servicios ilegales, incluidos drogas ilícitas, armas, datos robados o artículos falsificados.",
+          "3": "No publiques instrucciones para producir armas, explosivos, drogas u otros materiales cuyo propósito principal sea causar un daño grave o cometer un delito.",
+          "4": "No utilices la plataforma para blanquear dinero, ejecutar estafas financieras o participar de cualquier otro modo en fraude o robo."
+        }
+      },
+      "privacy_doxxing": {
+        "title": "Privacidad y divulgación de datos personales",
+        "items": {
+          "1": "No publiques la información privada o identificativa de otra persona —como su domicilio, número de teléfono, documento de identidad, datos financieros o comunicaciones privadas— sin su consentimiento explícito.",
+          "2": "No amenaces con revelar información privada, y no fomentes ni coordines la divulgación de la información privada de nadie.",
+          "3": "No compartas información obtenida mediante piratería informática, acceso no autorizado o quebrantamiento de la confidencialidad.",
+          "4": "Comparte únicamente información sobre ti mismo que te sientas cómodo con que sea pública. Ten cuidado de no revelar datos personales de terceros en paquetes, comentarios o material multimedia."
+        }
+      },
+      "impersonation_deception": {
+        "title": "Suplantación de identidad y engaño",
+        "items": {
+          "1": "No suplantes a otra persona, marca, organización ni al personal de Velanto, incluido a través de nombres de usuario, avatares o datos de perfil diseñados para inducir a error.",
+          "2": "No ejecutes estafas, esquemas de phishing ni prácticas engañosas destinadas a inducir a los usuarios a entregar dinero, credenciales o información personal.",
+          "3": "No tergiverses tu afiliación con una persona u organización, ni su respaldo hacia ti.",
+          "4": "El contenido de parodia o de fans solo se permite cuando está claramente etiquetado y no podría confundirse razonablemente con la persona o entidad real."
+        }
+      },
+      "spam_manipulation": {
+        "title": "Spam y manipulación",
+        "items": {
+          "1": "No publiques contenido repetitivo, no solicitado o masivo, y no satures la plataforma con paquetes, comentarios o mensajes de escaso valor.",
+          "2": "No manipules votos, valoraciones, popularidad ni recuentos de partidas mediante bots, cuentas alternativas, grupos coordinados o cualquier otro medio artificial.",
+          "3": "No utilices scripts automatizados, bots ni exploits para interactuar con la plataforma de formas que socaven el uso justo o distorsionen las métricas.",
+          "4": "No hagas trampas, no explotes el sistema de puntuación ni obtengas de cualquier otro modo una ventaja injusta en las partidas o competiciones.",
+          "5": "No publiques enlaces engañosos, no redirijas a los usuarios a destinos inesperados ni anuncies productos y servicios no relacionados."
+        }
+      },
+      "misinformation": {
+        "title": "Desinformación dañina",
+        "items": {
+          "1": "No publiques información falsa o engañosa que pueda causar un daño en el mundo real, como afirmaciones peligrosas sobre salud, orientaciones de seguridad inventadas o contenido que socave la seguridad pública.",
+          "2": "No utilices la plataforma para difundir desinformación coordinada, pruebas fabricadas o material manipulado con la intención de engañar.",
+          "3": "No presentes afirmaciones fácticas falsas como respuestas verificadas en los paquetes. Las preguntas de trivia deben ser precisas y, cuando corresponda, contar con fuentes; la opinión y la sátira deben poder distinguirse claramente de los hechos."
+        }
+      },
+      "intellectual_property": {
+        "title": "Propiedad intelectual",
+        "items": {
+          "1": "No subas, reproduzcas ni distribuyas texto, imágenes, audio u otro material que no sea de tu propiedad o sobre el que no tengas derecho de uso.",
+          "2": "Respeta los derechos de autor, las marcas registradas y las condiciones de licencia. Otorga la atribución cuando sea necesario y cumple las condiciones de cualquier licencia en la que te bases.",
+          "3": "No publiques contenido que infrinja la propiedad intelectual de un tercero. Respondemos a las solicitudes de retirada válidas y podemos eliminar el contenido infractor y sancionar a los infractores reincidentes."
+        }
+      },
+      "platform_integrity": {
+        "title": "Integridad de la plataforma",
+        "items": {
+          "1": "No eludas prohibiciones, suspensiones u otras medidas de aplicación creando nuevas cuentas o utilizando identidades alternativas.",
+          "2": "No indagues, explotes ni abuses de errores, vulnerabilidades o comportamientos no previstos. Informa de los problemas de seguridad de forma responsable en lugar de explotarlos.",
+          "3": "No intentes eludir la moderación, los filtros de contenido, los límites de frecuencia ni los controles de acceso.",
+          "4": "No interfieras con el funcionamiento normal de la plataforma, incluido mediante intentos de denegación de servicio, extracción de datos en violación de estas normas o acceso no autorizado a sistemas o datos."
+        }
+      }
+    }
   },
   "banReason": {
     "label": "Motivo",
@@ -58,5 +207,382 @@
     "permanent": "Este bloqueo es permanente.",
     "rulesLink": "Leer las Reglas de la comunidad",
     "other": "Otro"
+  },
+  "home": {
+    "title": "Descubre packs",
+    "subtitle": "Explora packs por formato o etiqueta y juega uno para ver quién sale ganando.",
+    "searchPlaceholder": "Buscar packs…",
+    "searchLabel": "Buscar packs",
+    "filters": "Filtros",
+    "groupFormat": "Formato",
+    "groupSort": "Ordenar por",
+    "groupTags": "Etiquetas",
+    "all": "Todos",
+    "sortRelevance": "Relevancia",
+    "sortPopular": "Popular",
+    "windowDay": "Día",
+    "windowWeek": "Semana",
+    "windowMonth": "Mes",
+    "windowYear": "Año",
+    "filterByTags": "Filtrar por etiquetas",
+    "tagCount": "{count, plural, one {# etiqueta} other {# etiquetas}}",
+    "activeTagFilters": "Filtros de etiquetas activos",
+    "removeTagFilter": "Quitar el filtro {tag}",
+    "loading": "Cargando packs…",
+    "error": "No se pudieron cargar los packs. Inténtalo más tarde.",
+    "empty": "Todavía no hay packs que coincidan con estos filtros."
+  },
+  "formats": {
+    "save_one": "Salva a uno",
+    "sacrifice_one": "Sacrifica a uno",
+    "nxn": "NxN",
+    "rank_blind": "Clasifica a ciegas",
+    "1v1": "1v1"
+  },
+  "tagPicker": {
+    "title": "Seleccionar etiquetas",
+    "selected": "{count} seleccionadas",
+    "selectedOfMax": "{count} seleccionadas / {max}",
+    "clear": "Limpiar",
+    "cancel": "Cancelar",
+    "apply": "Aplicar"
+  },
+  "pack": {
+    "viewAuthor": "Ver autor",
+    "viewProfile": "Ver perfil",
+    "published": "Publicado el {date}",
+    "playNow": "Jugar ahora",
+    "roundsCount": "{count, plural, one {# ronda} other {# rondas}}",
+    "itemsCount": "{count, plural, one {# elemento} other {# elementos}}",
+    "statPlays": "partidas",
+    "statRoundsLabel": "rondas",
+    "statAgree": "coincidencia con la favorita",
+    "howItPlaysHeading": "Cómo se juega — {format}",
+    "roundsHeading": "Rondas · una por {section}",
+    "sectionGroup": "grupo",
+    "sectionCategory": "categoría",
+    "playerStats": "Estadísticas de jugadores",
+    "noPlays": "Aún no hay partidas, ¡sé el primero!",
+    "statsPlays": "{count, plural, one {# partida} other {# partidas}}",
+    "topItemPct": "{item} — {pct}%",
+    "topItemAvg": "{item} — prom. {pos}",
+    "howItPlays": {
+      "save_one": [
+        {
+          "title": "Aparece el grupo",
+          "desc": "Cada ronda muestra los elementos de un grupo: una muestra al azar, o todos si el creador los ordenó a mano."
+        },
+        {
+          "title": "Salvas a uno",
+          "desc": "Elige tu único favorito; el resto queda eliminado en esa ronda."
+        },
+        {
+          "title": "Siguiente grupo, igual",
+          "desc": "Un salvado por grupo, ronda tras ronda, sin poder volver atrás."
+        }
+      ],
+      "sacrifice_one": [
+        {
+          "title": "Aparece el grupo",
+          "desc": "Cada ronda muestra los elementos de un grupo para que elijas."
+        },
+        {
+          "title": "Sacrificas a uno",
+          "desc": "Elimina al que menos te guste; los demás avanzan."
+        },
+        {
+          "title": "Siguiente grupo, igual",
+          "desc": "Un descarte por ronda, grupo tras grupo."
+        }
+      ],
+      "nxn": [
+        {
+          "title": "Dos categorías se enfrentan",
+          "desc": "Cada ronda enfrenta elementos de dos categorías, mano a mano."
+        },
+        {
+          "title": "Elige un lado",
+          "desc": "Escoge el elemento que prefieras en cada duelo."
+        },
+        {
+          "title": "Se suman los votos",
+          "desc": "Tus elecciones se acumulan en todas las rondas hasta el resultado final."
+        }
+      ],
+      "rank_blind": [
+        {
+          "title": "Los elementos van llegando de uno en uno",
+          "desc": "Ves cada elemento a ciegas, sin saber qué viene después."
+        },
+        {
+          "title": "Colócalo en tu ranking",
+          "desc": "Ve encajando cada elemento en tu lista según avanzas."
+        },
+        {
+          "title": "Sin repeticiones",
+          "desc": "Tu ranking queda fijo en cuanto colocas el último elemento."
+        }
+      ],
+      "1v1": [
+        {
+          "title": "Dos elementos, cara a cara",
+          "desc": "Cada ronda es un duelo directo, uno contra uno."
+        },
+        {
+          "title": "Elige al ganador",
+          "desc": "Escoge tu favorito entre los dos."
+        },
+        {
+          "title": "Se suman las victorias",
+          "desc": "Los resultados se acumulan en cada duelo."
+        }
+      ]
+    },
+    "comments": "Comentarios · {count}",
+    "commentPlaceholder": "Comparte lo que piensas de este pack…",
+    "commentLabel": "Comentario",
+    "post": "Publicar",
+    "loginPrompt": "<link>Inicia sesión</link> para dejar un comentario.",
+    "loadingComments": "Cargando comentarios…",
+    "loadCommentsError": "No se pudieron cargar los comentarios. Inténtalo más tarde.",
+    "noComments": "Aún no hay comentarios.",
+    "loadMore": "Cargar más",
+    "loadingMore": "Cargando…",
+    "loadMoreError": "No se pudieron cargar más comentarios. Inténtalo de nuevo.",
+    "postErrorFallback": "No se pudo publicar tu comentario. Inténtalo de nuevo.",
+    "upvote": "Votar a favor",
+    "downvote": "Votar en contra",
+    "voteError": "No se pudo registrar tu voto. Inténtalo de nuevo."
+  },
+  "share": {
+    "trigger": "Compartir",
+    "dialogLabel": "Compartir enlace",
+    "urlLabel": "URL para compartir",
+    "copy": "Copiar",
+    "copied": "¡Copiado!"
+  },
+  "play": {
+    "loginRequired": "Tienes que iniciar sesión para jugar un pack.",
+    "logIn": "Iniciar sesión",
+    "complete": "Completado",
+    "roundOf": "Ronda {current} de {total}",
+    "showingOf": "Mostrando {revealed} de {total}",
+    "showNext": "Mostrar siguiente",
+    "showAll": "Mostrar todos",
+    "pick": "Elegir a {name}",
+    "nextRound": "Siguiente ronda →",
+    "seeResult": "Ver tu resultado",
+    "instructionSave": "Elige al que salvarías. Márcalo abajo y confirma.",
+    "instructionSacrifice": "Elige al que sacrificarías. Márcalo abajo y confirma.",
+    "instructionNxn": "Elige el lado que salvarías. Márcalo abajo y confirma.",
+    "savedSoFar": "Salvados hasta ahora",
+    "sacrificedSoFar": "Sacrificados hasta ahora",
+    "finishedTitle": "Rondas completadas",
+    "finishedSave": "Salvaste {count, plural, one {# elegido} other {# elegidos}}, uno por ronda.",
+    "finishedSacrifice": "Sacrificaste {count, plural, one {# elegido} other {# elegidos}}, uno por ronda.",
+    "finishedVersus": "Elegiste un lado en {count, plural, one {# ronda} other {# rondas}} entre {a} y {b}.",
+    "whichPrefer": "¿Cuál prefieres?",
+    "allMatchupsDone": "Duelos completados",
+    "h2hSummary": "Esto es quién ganó a quién en {count, plural, one {# duelo} other {# duelos}}.",
+    "beat": "{winner} ganó a {loser}",
+    "rankInstruction": "Elige dónde va este: elemento {current} de {total}",
+    "placeHere": "Colocar aquí",
+    "rankSlotFilled": "Puesto {rank}: {title}",
+    "rankSlotEmpty": "Colocar en el puesto {rank}",
+    "ranked": "{name} clasificado",
+    "rankingDone": "Tu ranking está listo",
+    "rankingDoneSummary": "Colocaste {count, plural, one {# ronda} other {# rondas}}, a ciegas."
+  },
+  "result": {
+    "label": "Resultado",
+    "playsRecorded": "{count, plural, one {# partida registrada.} other {# partidas registradas.}}",
+    "yourPick": "Tu elección",
+    "sharedPick": "Elección",
+    "rankCaption": "prom. {avg} · clasificado {count}x",
+    "youPlaced": "Lo colocaste en el #{position} · {count, plural, one {# otra partida coincidió} other {# otras partidas coincidieron}}",
+    "placed": "Colocado en el #{position} · {count, plural, one {# otra partida coincidió} other {# otras partidas coincidieron}}",
+    "notInYourPlay": "No estaba en tu partida esta ronda",
+    "notInThisPlay": "No estaba en esta partida esta ronda",
+    "playAgain": "Volver a jugar",
+    "shareResult": "Compartir resultado",
+    "sharedNote": "Estás viendo un resultado compartido."
+  },
+  "create": {
+    "loginRequired": "Tienes que iniciar sesión para crear un pack.",
+    "logIn": "Iniciar sesión",
+    "publish": "Publicar",
+    "publishing": "Publicando…",
+    "basicsHeading": "Información básica",
+    "packTitle": "Título del pack",
+    "packDescription": "Descripción del pack",
+    "descriptionPlaceholder": "Descripción breve",
+    "coverTone": "Tono de portada",
+    "coverToneSwatch": "Tono de portada {tone}",
+    "tags": "Etiquetas",
+    "selectTags": "Seleccionar etiquetas",
+    "tagsSelected": "{count, plural, one {# etiqueta seleccionada} other {# etiquetas seleccionadas}}",
+    "formatHeading": "Formato",
+    "blurbSaveOne": "Muestra un grupo y salva a uno para avanzar.",
+    "blurbSacrificeOne": "Elimina de uno en uno; queda un favorito.",
+    "blurbNxn": "Dos categorías comparadas cara a cara.",
+    "blurbRankBlind": "Coloca cada elección a ciegas en un ranking que va creciendo.",
+    "blurb1v1": "Elige un ganador en cada duelo directo.",
+    "groupsHeading": "Grupos",
+    "addGroup": "+ Añadir grupo (una ronda más)",
+    "categoriesHeading": "Categorías",
+    "rounds": "Rondas",
+    "itemsPerRound": "Elementos por ronda",
+    "groupName": "Nombre del grupo {index}",
+    "random": "Aleatorio",
+    "manual": "Manual",
+    "groupSampleSize": "Tamaño de muestra del grupo {index}",
+    "itemsDrawnPerRound": "Elementos extraídos por ronda",
+    "removeGroup": "Quitar el grupo {index}",
+    "remove": "Quitar",
+    "itemCount": "{count, plural, one {# elemento} other {# elementos}}",
+    "text": "Texto",
+    "link": "Enlace",
+    "add": "Añadir",
+    "checking": "Comprobando…",
+    "addItemPlaceholder": "Añadir un elemento…",
+    "itemTitlePlaceholder": "Título",
+    "youtubeLinkPlaceholder": "Enlace de YouTube…",
+    "notYoutubeLink": "Esto no parece un enlace de YouTube.",
+    "videoNotFound": "No se encontró ese vídeo — revisa el enlace.",
+    "removeItemAria": "Quitar {title}",
+    "untitled": "Sin título",
+    "groupNewItem": "Nuevo elemento del grupo {index}",
+    "groupNewItemTitle": "Título del nuevo elemento del grupo {index}",
+    "groupNewItemLink": "Enlace del nuevo elemento del grupo {index}",
+    "categoryName": "Nombre de la categoría {index}",
+    "categoryNewItem": "Nuevo elemento de la categoría {index}",
+    "categoryNewItemTitle": "Título del nuevo elemento de la categoría {index}",
+    "categoryNewItemLink": "Enlace del nuevo elemento de la categoría {index}"
+  },
+  "profile": {
+    "loginRequiredView": "Tienes que iniciar sesión para ver tu perfil.",
+    "loginRequiredEdit": "Tienes que iniciar sesión para editar tu perfil.",
+    "logIn": "Iniciar sesión",
+    "loadProfileError": "No se pudo cargar tu perfil. Inténtalo más tarde.",
+    "loadBioError": "No se pudo cargar tu biografía actual. Inténtalo más tarde.",
+    "followerCount": "{count, plural, one {# seguidor} other {# seguidores}}",
+    "editProfile": "Editar perfil",
+    "addBioPrompt": "Añade una biografía para contarle a la gente de qué tratan tus packs.",
+    "myPacks": "Mis packs",
+    "noPacksOwn": "Aún no tienes packs, ¡crea el primero!",
+    "bio": "Biografía",
+    "bioPlaceholder": "Cuéntale a la gente de qué tratan tus packs.",
+    "saving": "Guardando…",
+    "save": "Guardar",
+    "saveError": "No se pudieron guardar tus cambios. Inténtalo de nuevo.",
+    "userNotFound": "Este usuario no existe.",
+    "followError": "No se pudo actualizar el seguimiento. Inténtalo de nuevo.",
+    "followerAndPackCount": "{followers, plural, one {# seguidor} other {# seguidores}} · {packs, plural, one {# pack} other {# packs}}",
+    "following": "Siguiendo",
+    "follow": "Seguir",
+    "packs": "Packs",
+    "noPacks": "Aún no hay packs."
+  },
+  "pages": {
+    "createTitle": "Crear un pack",
+    "createSubtitle": "Elige un formato de eliminación y crea tus rondas. Los elementos pueden ser texto o un enlace de YouTube.",
+    "metaProfile": "Perfil",
+    "metaEditProfile": "Editar perfil",
+    "metaPlaying": "Jugando {title}",
+    "metaResult": "{title} — Resultado",
+    "packNotFound": "Pack no encontrado",
+    "userNotFound": "Usuario no encontrado",
+    "userNotFoundBody": "Este perfil no existe o ha sido eliminado.",
+    "userMetaDescription": "Los packs de quiz de eliminación de {username} en Velanto: juega uno para ver quién sale ganando.",
+    "backToDiscover": "Volver a descubrir",
+    "errorTitle": "Algo salió mal",
+    "errorBody": "No pudimos cargar este perfil. Inténtalo de nuevo.",
+    "tryAgain": "Inténtalo de nuevo"
+  },
+  "status": {
+    "packPending": "Pendiente",
+    "packApproved": "Aprobado",
+    "packRejected": "Rechazado",
+    "feedbackNew": "Nuevo",
+    "feedbackInProgress": "En curso",
+    "feedbackDone": "Resuelto",
+    "feedbackDeclined": "Descartado",
+    "reportNew": "Nuevo",
+    "reportReviewing": "En revisión",
+    "reportClosed": "Cerrado"
+  },
+  "feedback": {
+    "pageTitle": "Comentarios",
+    "newPost": "Nueva publicación",
+    "searchAria": "Buscar comentarios",
+    "searchPlaceholder": "Buscar comentarios…",
+    "filterAll": "Todos",
+    "topicBug": "Error",
+    "topicFeature": "Función",
+    "topicTranslation": "Traducción",
+    "topicOther": "Otro",
+    "sortTop": "Populares",
+    "sortNewest": "Más recientes",
+    "loadMoreError": "No se pudieron cargar más comentarios. Inténtalo de nuevo.",
+    "topSidebarHeading": "Comentarios destacados",
+    "noFeedbackYet": "Aún no hay comentarios.",
+    "scoreLabel": "puntos",
+    "by": "por",
+    "commentCount": "{count, plural, one {# comentario} other {# comentarios}}",
+    "loadingList": "Cargando comentarios…",
+    "listError": "No se pudieron cargar los comentarios. Inténtalo de nuevo.",
+    "noMatches": "Ningún comentario coincide con estos filtros.",
+    "loadingMore": "Cargando…",
+    "loadMore": "Cargar más",
+    "voteError": "No se pudo registrar tu voto. Inténtalo de nuevo.",
+    "like": "Me gusta",
+    "dislike": "No me gusta",
+    "detailNotFound": "Esta publicación no existe o no es visible para ti.",
+    "backToFeedback": "Volver a comentarios",
+    "detailLoadError": "No se pudo cargar esta publicación. Inténtalo de nuevo.",
+    "loading": "Cargando…",
+    "statusUpdateError": "No se pudo actualizar el estado. Inténtalo de nuevo.",
+    "deleteConfirm": "¿Eliminar esta publicación?",
+    "deleteError": "No se pudo eliminar esta publicación. Inténtalo de nuevo.",
+    "translationHeading": "Traducción",
+    "languageValueLabel": "Idioma:",
+    "contextValueLabel": "Contexto:",
+    "suggestionValueLabel": "Sugerencia:",
+    "statusSelectLabel": "Estado",
+    "saving": "Guardando…",
+    "delete": "Eliminar",
+    "edited": "editado",
+    "commentsHeading": "Comentarios · {count}",
+    "commentPlaceholder": "Comparte tu opinión sobre esta publicación…",
+    "commentAria": "Comentario",
+    "postComment": "Publicar",
+    "loginToComment": "<link>Inicia sesión</link> para dejar un comentario.",
+    "postError": "No se pudo publicar tu comentario. Inténtalo de nuevo.",
+    "loadingComments": "Cargando comentarios…",
+    "commentsLoadError": "No se pudieron cargar los comentarios. Inténtalo más tarde.",
+    "noComments": "Aún no hay comentarios.",
+    "loadMoreCommentsError": "No se pudieron cargar más comentarios. Inténtalo de nuevo.",
+    "newFeedbackTitle": "Nuevo comentario",
+    "topicLabel": "Tema",
+    "titleLabel": "Título",
+    "titlePlaceholder": "Un breve resumen",
+    "detailsLabel": "Detalles",
+    "detailsPlaceholder": "Describe tu error, idea o sugerencia",
+    "visibilityLabel": "Visibilidad",
+    "visibilityEveryone": "Todos",
+    "visibilityStaffOnly": "Solo el equipo",
+    "staffOnlyHint": "Las publicaciones solo para el equipo son visibles únicamente para ti y el equipo.",
+    "translationSuggestionHeading": "Sugerencia de traducción",
+    "languageFieldLabel": "Idioma",
+    "chooseLanguage": "Elige un idioma…",
+    "contextFieldLabel": "Qué texto / dónde lo viste (opcional)",
+    "contextPlaceholder": "p. ej. el botón Jugar en la pantalla de inicio",
+    "suggestionFieldLabel": "Tu redacción sugerida",
+    "suggestionPlaceholder": "Lo que debería decir en su lugar",
+    "posting": "Publicando…",
+    "postFeedback": "Publicar comentario",
+    "metaListTitle": "Comentarios — Velanto",
+    "metaListDescription": "Informa de errores, sugiere funciones y propón mejoras de traducción.",
+    "metaNewTitle": "Nuevo comentario — Velanto"
   }
 }

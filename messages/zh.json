@@ -1,4 +1,10 @@
 {
+  "authGate": {
+    "logInToVote": "登录后投票",
+    "logInToFollow": "登录后关注",
+    "logInToComment": "登录后评论",
+    "logInToPlay": "登录后游玩"
+  },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
     "logIn": "登录",
@@ -18,7 +24,23 @@
     "languageHeading": "语言",
     "languageLabel": "界面语言",
     "languageHint": "更改菜单和按钮的显示语言。题包内容会保持创作者编写时使用的语言。",
-    "languageSelectAria": "界面语言"
+    "languageSelectAria": "界面语言",
+    "accountHeading": "账户",
+    "signedInViaEmail": "已通过邮箱登录",
+    "loginToViewAccount": "<link>登录</link>后即可查看账户设置。",
+    "appearanceHeading": "外观",
+    "accentColor": "强调色",
+    "accentColorHint": "用于高亮、按钮和进度条。",
+    "accentColorSwatch": "使用强调色 {color}",
+    "notificationsHeading": "通知",
+    "loginToManageNotifications": "<link>登录</link>后即可管理通知偏好。",
+    "notificationsLoadError": "无法加载你的通知偏好。",
+    "loading": "加载中…",
+    "notificationUpdateError": "无法更新此设置，请重试。",
+    "notifNewFollower": "新增关注者",
+    "notifNewPack": "你关注的人发布了新题包",
+    "notifNewComment": "你的题包有新评论",
+    "notifPackDeleted": "题包被审核员移除"
   },
   "streamerMode": {
     "hiddenHint": "已因主播模式隐藏",
@@ -31,14 +53,141 @@
     "off": "关"
   },
   "auth": {
-    "acceptRules": "我已阅读并接受<link>社区规则</link>。"
+    "acceptRules": "我已阅读并接受<link>社区规则</link>。",
+    "tabSignup": "注册",
+    "logIn": "登录",
+    "headingLogin": "登录 Velanto",
+    "headingRegister": "加入 Velanto",
+    "subtitleLogin": "登录即可创建并游玩题包。",
+    "subtitleRegister": "创建题包、畅玩其中，还能保存你的结果。",
+    "identifier": "邮箱或用户名",
+    "username": "用户名",
+    "email": "邮箱",
+    "password": "密码",
+    "confirmPassword": "确认密码",
+    "showPassword": "显示密码",
+    "hidePassword": "隐藏密码",
+    "invalidCredentials": "账号或密码错误。",
+    "pleaseWait": "请稍候…",
+    "createAccount": "创建账号",
+    "terms": "继续即表示你同意 Velanto 的服务条款和隐私政策。"
   },
   "rules": {
     "metaTitle": "社区规则 — Velanto",
     "metaDescription": "在 Velanto 上创建和游玩卡包的社区规则——注册前请先阅读。",
     "heading": "社区规则",
     "intro": "这些规则让 Velanto 对每个人都安全、公平。创建账号即表示你同意遵守这些规则。",
-    "loadError": "目前无法加载规则。请稍后再试。"
+    "loadError": "目前无法加载规则。请稍后再试。",
+    "content": {
+      "hate_discrimination": {
+        "title": "仇恨与歧视",
+        "items": {
+          "1": "不得基于种族、族裔、国籍、宗教、性别、生理性别、性取向、性别认同、残疾、严重疾病、年龄或任何类似的受保护特征，攻击、贬低、侮辱任何个人或群体，或鼓吹针对他们的仇恨。此规定适用于文字、图像、用户名、题包内容、评论以及任何其他形式的贡献。",
+          "2": "不得使用侮辱性称谓、仇恨性符号，或旨在贬损受保护群体的暗语，也不得发布美化或支持仇恨意识形态的图像。",
+          "3": "不得因某人具有受保护特征而主张或表达支持对其进行歧视、隔离、排斥或剥夺权利。",
+          "4": "不得创建以贬低、嘲弄或断言某受保护群体低人一等为前提的题包、问题或答案。仅当以尊重的方式呈现且不助长仇恨时，方可发布关于历史、文化或宗教的正当事实性或教育性内容。"
+        }
+      },
+      "harassment_bullying": {
+        "title": "骚扰与欺凌",
+        "items": {
+          "1": "不得通过题包、评论、用户名或任何其他功能，以侮辱、嘲笑、恐吓或持续的不受欢迎的接触来针对他人。",
+          "2": "不得组织、鼓动或参与针对任何个人或群体的有组织骚扰、集体围攻或群起攻击。",
+          "3": "不得发布旨在羞辱、贬低或激怒特定个人的内容，包括涉及其外貌、身份或个人处境的内容。",
+          "4": "尊重停止接触的请求。继续纠缠已要求不被打扰的用户，或规避封锁以接触对方，均属禁止之列。"
+        }
+      },
+      "violence_harm": {
+        "title": "暴力与伤害",
+        "items": {
+          "1": "不得威胁对任何个人或群体施加暴力，或诅咒其遭受严重伤害，也不得煽动他人实施暴力。",
+          "2": "不得美化、宣扬或提供实施恐怖主义、大规模暴力或暴力极端主义的指导，也不得赞扬此类行为的实施者。",
+          "3": "不得鼓励、宣扬或提供关于自杀、自残或进食障碍的指导。如果您或您认识的人处于危险之中，请向当地紧急服务机构或危机干预热线寻求帮助。",
+          "4": "不得发布无端的血腥内容、对死亡或严重伤害的图像化描绘，或旨在制造惊吓或渲染苦难的图像。",
+          "5": "不得利用本平台策划、协调或招募人员从事现实世界中的暴力行为。"
+        }
+      },
+      "sexual_content": {
+        "title": "性与露骨内容",
+        "items": {
+          "1": "不得在平台任何位置发布色情作品、露骨的性图像或对性行为的描绘。",
+          "2": "不得在题包、图像、用户名、头像或评论中发布裸露或性化内容。本平台面向普通大众。",
+          "3": "不得利用本平台招揽性接触、传播性内容或宣传性服务。",
+          "4": "未经本人明确同意，不得分享任何人的私密或性相关图像，包括所谓的“报复性”内容。"
+        }
+      },
+      "child_safety": {
+        "title": "儿童安全",
+        "items": {
+          "1": "我们对将未成年人性化的行为采取零容忍政策。任何将不满18周岁者性化、剥削或使其陷入危险的内容——无论是真实、虚构、插画还是由人工智能生成——都将立即导致账户被永久终止，并在适用情况下向美国国家失踪与受剥削儿童中心（NCMEC）及相关执法部门举报。",
+          "2": "在任何情况下均不得上传、索取、分享或链接儿童性虐待材料（CSAM，即涉及未成年人的性虐待内容），或任何将未成年人性化的描绘。",
+          "3": "不得试图联系、诱骗、性化未成年人或以其他方式使其陷入危险，也不得利用本平台助长此类行为。",
+          "4": "如发现任何疑似危害儿童的情况，请立即举报。我们将全力配合有关部门，并依法保存相关证据。"
+        }
+      },
+      "illegal_content": {
+        "title": "非法内容与活动",
+        "items": {
+          "1": "不得利用本平台助长、宣扬或协调在您所在司法管辖区或本平台运营所在司法管辖区属于非法的活动。",
+          "2": "不得宣传、销售或协助交易非法商品或服务，包括违禁药物、武器、被盗数据或假冒物品。",
+          "3": "不得发布制造武器、爆炸物、毒品或其他主要用途为造成严重伤害或实施犯罪的材料的指导说明。",
+          "4": "不得利用本平台洗钱、实施金融诈骗，或以其他方式从事欺诈或盗窃行为。"
+        }
+      },
+      "privacy_doxxing": {
+        "title": "隐私与人肉搜索",
+        "items": {
+          "1": "未经本人明确同意，不得公布他人的私密或身份识别信息，例如家庭住址、电话号码、政府身份证件、财务详情或私人通信。",
+          "2": "不得威胁公开私人信息，也不得鼓励或协同实施对任何人私人信息的曝光。",
+          "3": "不得分享通过黑客攻击、未经授权的访问或违背保密义务所获取的信息。",
+          "4": "仅分享您愿意公开的关于自身的信息。请注意，切勿在题包、评论或媒体内容中泄露他人的个人详情。"
+        }
+      },
+      "impersonation_deception": {
+        "title": "冒充与欺骗",
+        "items": {
+          "1": "不得冒充他人、品牌、组织或 Velanto 工作人员，包括使用旨在误导他人的用户名、头像或个人资料详情。",
+          "2": "不得实施骗局、网络钓鱼或旨在诱骗用户交出金钱、凭据或个人信息的欺骗性手段。",
+          "3": "不得虚假陈述您与任何个人或组织的关联，或声称获得其认可。",
+          "4": "仅当明确标注且不会被合理地误认为真实人物或实体时，方可发布模仿或粉丝创作内容。"
+        }
+      },
+      "spam_manipulation": {
+        "title": "垃圾信息与操纵",
+        "items": {
+          "1": "不得发布重复、未经请求或批量的内容，也不得以低价值的题包、评论或消息刷屏平台。",
+          "2": "不得通过机器人、备用账户、协同群组或任何人为手段操纵投票、评分、热度或游玩次数。",
+          "3": "不得使用自动化脚本、机器人或漏洞利用手段，以损害公平使用或扭曲数据指标的方式与平台交互。",
+          "4": "不得作弊、利用计分漏洞，或以其他方式在游玩或竞赛中获取不公平的优势。",
+          "5": "不得发布欺骗性链接、将用户重定向至意料之外的目的地，或宣传无关的产品和服务。"
+        }
+      },
+      "misinformation": {
+        "title": "有害的错误信息",
+        "items": {
+          "1": "不得发布可能造成现实伤害的虚假或误导性信息，例如危险的健康主张、捏造的安全指导，或破坏公共安全的内容。",
+          "2": "不得利用本平台散布有组织的虚假信息、伪造的证据，或旨在欺骗的经篡改的媒体内容。",
+          "3": "不得在题包中将虚假的事实性主张作为经过核实的答案呈现。知识问答应准确无误，并在相关情况下注明出处；观点和讽刺内容应能与事实明确区分。"
+        }
+      },
+      "intellectual_property": {
+        "title": "知识产权",
+        "items": {
+          "1": "不得上传、复制或传播您不拥有或无权使用的文字、图像、音频或其他材料。",
+          "2": "尊重版权、商标和许可条款。在需要时注明出处，并遵守您所依赖的任何许可的各项条件。",
+          "3": "不得发布侵犯他方知识产权的内容。我们会响应有效的下架请求，并可能移除侵权内容及对屡次侵权者予以处罚。"
+        }
+      },
+      "platform_integrity": {
+        "title": "平台完整性",
+        "items": {
+          "1": "不得通过创建新账户或使用备用身份来规避封禁、停用或其他执法处置措施。",
+          "2": "不得探查、利用或滥用漏洞、安全缺陷或非预期行为。请负责任地报告安全问题，而非加以利用。",
+          "3": "不得试图规避内容审核、内容过滤器、速率限制或访问控制。",
+          "4": "不得干扰平台的正常运行，包括通过拒绝服务攻击、违反本规则的数据抓取，或对系统或数据的未经授权访问。"
+        }
+      }
+    }
   },
   "banReason": {
     "label": "原因",
@@ -58,5 +207,382 @@
     "permanent": "此封禁为永久封禁。",
     "rulesLink": "阅读社区规则",
     "other": "其他"
+  },
+  "home": {
+    "title": "发现题包",
+    "subtitle": "按玩法或标签浏览题包，挑一个玩上一局，看看谁能拔得头筹。",
+    "searchPlaceholder": "搜索题包…",
+    "searchLabel": "搜索题包",
+    "filters": "筛选",
+    "groupFormat": "玩法",
+    "groupSort": "排序",
+    "groupTags": "标签",
+    "all": "全部",
+    "sortRelevance": "相关度",
+    "sortPopular": "热门",
+    "windowDay": "日",
+    "windowWeek": "周",
+    "windowMonth": "月",
+    "windowYear": "年",
+    "filterByTags": "按标签筛选",
+    "tagCount": "{count, plural, other {# 个标签}}",
+    "activeTagFilters": "当前标签筛选",
+    "removeTagFilter": "移除 {tag} 筛选",
+    "loading": "正在加载题包…",
+    "error": "无法加载题包，请稍后再试。",
+    "empty": "暂无符合筛选条件的题包。"
+  },
+  "formats": {
+    "save_one": "留一个",
+    "sacrifice_one": "淘汰一个",
+    "nxn": "NxN",
+    "rank_blind": "盲排",
+    "1v1": "1v1"
+  },
+  "tagPicker": {
+    "title": "选择标签",
+    "selected": "已选 {count} 个",
+    "selectedOfMax": "已选 {count} / {max}",
+    "clear": "清除",
+    "cancel": "取消",
+    "apply": "应用"
+  },
+  "pack": {
+    "viewAuthor": "查看作者",
+    "viewProfile": "查看主页",
+    "published": "发布于 {date}",
+    "playNow": "立即开玩",
+    "roundsCount": "{count, plural, other {# 轮}}",
+    "itemsCount": "{count, plural, other {# 个选项}}",
+    "statPlays": "次游玩",
+    "statRoundsLabel": "轮",
+    "statAgree": "首选一致",
+    "howItPlaysHeading": "玩法介绍 — {format}",
+    "roundsHeading": "轮次 · 每{section}一轮",
+    "sectionGroup": "组",
+    "sectionCategory": "类别",
+    "playerStats": "玩家数据",
+    "noPlays": "还没有人玩过——快来当第一个！",
+    "statsPlays": "{count, plural, other {# 次游玩}}",
+    "topItemPct": "{item} — {pct}%",
+    "topItemAvg": "{item} — 平均 {pos}",
+    "howItPlays": {
+      "save_one": [
+        {
+          "title": "一组选项登场",
+          "desc": "每轮会亮出一组选项——可能是随机抽取的，也可能是创作者手动排好的全部选项。"
+        },
+        {
+          "title": "留下一个",
+          "desc": "选出你最爱的那一个，其余的本轮统统淘汰。"
+        },
+        {
+          "title": "下一组，规则照旧",
+          "desc": "每组只留一个，轮轮如此——选了就不能反悔。"
+        }
+      ],
+      "sacrifice_one": [
+        {
+          "title": "一组选项登场",
+          "desc": "每轮亮出一组选项供你抉择。"
+        },
+        {
+          "title": "淘汰一个",
+          "desc": "把你最不喜欢的那个划掉，其余晋级。"
+        },
+        {
+          "title": "下一组，规则照旧",
+          "desc": "每轮淘汰一个，组组如此。"
+        }
+      ],
+      "nxn": [
+        {
+          "title": "两大类别对决",
+          "desc": "每轮让两个类别的选项正面交锋。"
+        },
+        {
+          "title": "选边站队",
+          "desc": "在每场对决中选出你更中意的一方。"
+        },
+        {
+          "title": "选择累计",
+          "desc": "你的每次选择层层相加，得出最终结果。"
+        }
+      ],
+      "rank_blind": [
+        {
+          "title": "选项逐个登场",
+          "desc": "每个选项盲抽亮相，你无从得知下一个是什么。"
+        },
+        {
+          "title": "排进你的榜单",
+          "desc": "边玩边把每个选项塞进你逐渐成型的排名里。"
+        },
+        {
+          "title": "没有重来",
+          "desc": "所有选项排定后，你的榜单就此锁定。"
+        }
+      ],
+      "1v1": [
+        {
+          "title": "两两对决",
+          "desc": "每一轮都是一对一的正面较量。"
+        },
+        {
+          "title": "选出胜者",
+          "desc": "在两者之间选出你的最爱。"
+        },
+        {
+          "title": "胜者累计",
+          "desc": "每场对决的结果层层累加。"
+        }
+      ]
+    },
+    "comments": "评论 · {count}",
+    "commentPlaceholder": "说说你对这个题包的看法…",
+    "commentLabel": "评论",
+    "post": "发布",
+    "loginPrompt": "<link>登录</link>后即可发表评论。",
+    "loadingComments": "正在加载评论…",
+    "loadCommentsError": "无法加载评论，请稍后再试。",
+    "noComments": "还没有评论。",
+    "loadMore": "加载更多",
+    "loadingMore": "加载中…",
+    "loadMoreError": "无法加载更多评论，请重试。",
+    "postErrorFallback": "无法发布你的评论，请重试。",
+    "upvote": "顶",
+    "downvote": "踩",
+    "voteError": "无法记录你的投票，请重试。"
+  },
+  "share": {
+    "trigger": "分享",
+    "dialogLabel": "分享链接",
+    "urlLabel": "分享网址",
+    "copy": "复制",
+    "copied": "已复制！"
+  },
+  "play": {
+    "loginRequired": "你需要先登录才能玩这个题包。",
+    "logIn": "登录",
+    "complete": "完成",
+    "roundOf": "第 {current} / {total} 轮",
+    "showingOf": "已显示 {revealed} / {total}",
+    "showNext": "显示下一个",
+    "showAll": "全部显示",
+    "pick": "选择 {name}",
+    "nextRound": "下一轮 →",
+    "seeResult": "查看结果",
+    "instructionSave": "选出你要留下的那个，在下方勾选后确认。",
+    "instructionSacrifice": "选出你要淘汰的那个，在下方勾选后确认。",
+    "instructionNxn": "选出你要留下的那一方，在下方勾选后确认。",
+    "savedSoFar": "已留下",
+    "sacrificedSoFar": "已淘汰",
+    "finishedTitle": "所有轮次完成",
+    "finishedSave": "你共留下了 {count, plural, other {# 个}}，每轮一个。",
+    "finishedSacrifice": "你共淘汰了 {count, plural, other {# 个}}，每轮一个。",
+    "finishedVersus": "你在 {a} 与 {b} 之间共 {count, plural, other {# 轮}}做出了选边。",
+    "whichPrefer": "你更喜欢哪一个？",
+    "allMatchupsDone": "所有对决完成",
+    "h2hSummary": "以下是 {count, plural, other {# 场}}对决中谁胜谁负的战况。",
+    "beat": "{winner} 击败了 {loser}",
+    "rankInstruction": "决定它排在哪里——第 {current} / {total} 个",
+    "placeHere": "放这里",
+    "rankSlotFilled": "第 {rank} 名：{title}",
+    "rankSlotEmpty": "放到第 {rank} 名",
+    "ranked": "{name} 已排名",
+    "rankingDone": "你的排名完成了",
+    "rankingDoneSummary": "全部 {count, plural, other {# 轮}}盲排完毕。"
+  },
+  "result": {
+    "label": "结果",
+    "playsRecorded": "{count, plural, other {已记录 # 次游玩。}}",
+    "yourPick": "你的选择",
+    "sharedPick": "选择",
+    "rankCaption": "平均 {avg} · 排名 {count} 次",
+    "youPlaced": "你把它排在 #{position} · {count, plural, other {另有 # 次游玩与你一致}}",
+    "placed": "排在 #{position} · {count, plural, other {另有 # 次游玩与之一致}}",
+    "notInYourPlay": "本轮未出现在你的游玩中",
+    "notInThisPlay": "本轮未出现在这次游玩中",
+    "playAgain": "再玩一次",
+    "shareResult": "分享结果",
+    "sharedNote": "你正在查看一份分享的结果。"
+  },
+  "create": {
+    "loginRequired": "你需要先登录才能创建题包。",
+    "logIn": "登录",
+    "publish": "发布",
+    "publishing": "发布中…",
+    "basicsHeading": "基本信息",
+    "packTitle": "题包标题",
+    "packDescription": "题包简介",
+    "descriptionPlaceholder": "简短介绍",
+    "coverTone": "封面色调",
+    "coverToneSwatch": "封面色调 {tone}",
+    "tags": "标签",
+    "selectTags": "选择标签",
+    "tagsSelected": "{count, plural, other {已选择 # 个标签}}",
+    "formatHeading": "玩法",
+    "blurbSaveOne": "亮出一组，留一个晋级。",
+    "blurbSacrificeOne": "每次淘汰一个，最爱留到最后。",
+    "blurbNxn": "两个类别并肩对决。",
+    "blurbRankBlind": "盲抽逐个放入不断成型的排名。",
+    "blurb1v1": "每场一对一对决选出胜者。",
+    "groupsHeading": "分组",
+    "addGroup": "+ 添加分组（增加一轮）",
+    "categoriesHeading": "类别",
+    "rounds": "轮数",
+    "itemsPerRound": "每轮选项数",
+    "groupName": "第 {index} 组名称",
+    "random": "随机",
+    "manual": "手动",
+    "groupSampleSize": "第 {index} 组抽取数量",
+    "itemsDrawnPerRound": "每轮抽取的选项数",
+    "removeGroup": "移除第 {index} 组",
+    "remove": "移除",
+    "itemCount": "{count, plural, other {# 个选项}}",
+    "text": "文字",
+    "link": "链接",
+    "add": "添加",
+    "checking": "检查中…",
+    "addItemPlaceholder": "添加选项…",
+    "itemTitlePlaceholder": "标题",
+    "youtubeLinkPlaceholder": "YouTube 链接…",
+    "notYoutubeLink": "这看起来不是 YouTube 链接。",
+    "videoNotFound": "找不到该视频——请检查链接。",
+    "removeItemAria": "移除 {title}",
+    "untitled": "未命名",
+    "groupNewItem": "第 {index} 组新选项",
+    "groupNewItemTitle": "第 {index} 组新选项标题",
+    "groupNewItemLink": "第 {index} 组新选项链接",
+    "categoryName": "第 {index} 类名称",
+    "categoryNewItem": "第 {index} 类新选项",
+    "categoryNewItemTitle": "第 {index} 类新选项标题",
+    "categoryNewItemLink": "第 {index} 类新选项链接"
+  },
+  "profile": {
+    "loginRequiredView": "你需要先登录才能查看个人资料。",
+    "loginRequiredEdit": "你需要先登录才能编辑个人资料。",
+    "logIn": "登录",
+    "loadProfileError": "无法加载你的个人资料，请稍后再试。",
+    "loadBioError": "无法加载你当前的简介，请稍后再试。",
+    "followerCount": "{count, plural, other {# 位关注者}}",
+    "editProfile": "编辑个人资料",
+    "addBioPrompt": "添加简介，向大家介绍你的题包。",
+    "myPacks": "我的题包",
+    "noPacksOwn": "还没有题包——快来创建第一个吧！",
+    "bio": "简介",
+    "bioPlaceholder": "向大家介绍你的题包。",
+    "saving": "保存中…",
+    "save": "保存",
+    "saveError": "无法保存你的更改，请重试。",
+    "userNotFound": "该用户不存在。",
+    "followError": "无法更新关注状态，请重试。",
+    "followerAndPackCount": "{followers, plural, other {# 位关注者}} · {packs, plural, other {# 个题包}}",
+    "following": "已关注",
+    "follow": "关注",
+    "packs": "题包",
+    "noPacks": "还没有题包。"
+  },
+  "pages": {
+    "createTitle": "创建题包",
+    "createSubtitle": "选择一种淘汰玩法，搭建你的各轮内容。选项可以是文字，也可以是 YouTube 链接。",
+    "metaProfile": "个人资料",
+    "metaEditProfile": "编辑个人资料",
+    "metaPlaying": "正在玩 {title}",
+    "metaResult": "{title} — 结果",
+    "packNotFound": "未找到题包",
+    "userNotFound": "未找到用户",
+    "userNotFoundBody": "该个人资料不存在或已被移除。",
+    "userMetaDescription": "{username} 在 Velanto 上的淘汰问答题包——玩上一局，看看谁能拔得头筹。",
+    "backToDiscover": "返回发现",
+    "errorTitle": "出错了",
+    "errorBody": "无法加载该个人资料，请重试。",
+    "tryAgain": "重试"
+  },
+  "status": {
+    "packPending": "待审核",
+    "packApproved": "已通过",
+    "packRejected": "已拒绝",
+    "feedbackNew": "新",
+    "feedbackInProgress": "处理中",
+    "feedbackDone": "已完成",
+    "feedbackDeclined": "已婉拒",
+    "reportNew": "新",
+    "reportReviewing": "审核中",
+    "reportClosed": "已关闭"
+  },
+  "feedback": {
+    "pageTitle": "反馈",
+    "newPost": "发帖",
+    "searchAria": "搜索反馈",
+    "searchPlaceholder": "搜索反馈…",
+    "filterAll": "全部",
+    "topicBug": "问题",
+    "topicFeature": "功能",
+    "topicTranslation": "翻译",
+    "topicOther": "其他",
+    "sortTop": "热门",
+    "sortNewest": "最新",
+    "loadMoreError": "无法加载更多反馈，请重试。",
+    "topSidebarHeading": "热门反馈",
+    "noFeedbackYet": "还没有反馈。",
+    "scoreLabel": "得分",
+    "by": "作者",
+    "commentCount": "{count, plural, other {# 条评论}}",
+    "loadingList": "正在加载反馈…",
+    "listError": "无法加载反馈，请重试。",
+    "noMatches": "没有符合筛选条件的反馈。",
+    "loadingMore": "加载中…",
+    "loadMore": "加载更多",
+    "voteError": "无法记录你的投票，请重试。",
+    "like": "赞",
+    "dislike": "踩",
+    "detailNotFound": "该反馈帖不存在或对你不可见。",
+    "backToFeedback": "返回反馈",
+    "detailLoadError": "无法加载该反馈帖，请重试。",
+    "loading": "加载中…",
+    "statusUpdateError": "无法更新状态，请重试。",
+    "deleteConfirm": "确定删除该反馈帖吗？",
+    "deleteError": "无法删除该帖子，请重试。",
+    "translationHeading": "翻译",
+    "languageValueLabel": "语言：",
+    "contextValueLabel": "上下文：",
+    "suggestionValueLabel": "建议：",
+    "statusSelectLabel": "状态",
+    "saving": "保存中…",
+    "delete": "删除",
+    "edited": "编辑于",
+    "commentsHeading": "评论 · {count}",
+    "commentPlaceholder": "说说你对这条反馈的看法…",
+    "commentAria": "评论",
+    "postComment": "发布",
+    "loginToComment": "<link>登录</link>后即可发表评论。",
+    "postError": "无法发布你的评论，请重试。",
+    "loadingComments": "正在加载评论…",
+    "commentsLoadError": "无法加载评论，请稍后再试。",
+    "noComments": "还没有评论。",
+    "loadMoreCommentsError": "无法加载更多评论，请重试。",
+    "newFeedbackTitle": "新建反馈",
+    "topicLabel": "主题",
+    "titleLabel": "标题",
+    "titlePlaceholder": "简短概述",
+    "detailsLabel": "详情",
+    "detailsPlaceholder": "描述你遇到的问题、想法或建议",
+    "visibilityLabel": "可见性",
+    "visibilityEveryone": "所有人",
+    "visibilityStaffOnly": "仅工作人员",
+    "staffOnlyHint": "仅工作人员可见的帖子只有你和团队能看到。",
+    "translationSuggestionHeading": "翻译建议",
+    "languageFieldLabel": "语言",
+    "chooseLanguage": "选择语言…",
+    "contextFieldLabel": "哪段文字／在哪里看到的（选填）",
+    "contextPlaceholder": "例如：首页的“开玩”按钮",
+    "suggestionFieldLabel": "你建议的措辞",
+    "suggestionPlaceholder": "你觉得应该改成什么",
+    "posting": "发布中…",
+    "postFeedback": "提交反馈",
+    "metaListTitle": "反馈 — Velanto",
+    "metaListDescription": "报告问题、提出功能建议，并改进翻译。",
+    "metaNewTitle": "新建反馈 — Velanto"
   }
 }

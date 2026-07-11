@@ -1,5 +1,6 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
+import { renderWithQueryClient as render } from "@/src/shared/test/render-with-query-client";
 import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
@@ -51,18 +52,22 @@ function renderAsAuthenticated() {
     user: USER,
   });
   return render(
-    <AuthProvider>
-      <CommentSection packId="pack-1" />
-    </AuthProvider>,
+    <NextIntlClientProvider locale="en" messages={messages}>
+      <AuthProvider>
+        <CommentSection packId="pack-1" />
+      </AuthProvider>
+    </NextIntlClientProvider>,
   );
 }
 
 function renderAsUnauthenticated() {
   vi.mocked(authClient.refresh).mockRejectedValue(new Error("no session"));
   return render(
-    <AuthProvider>
-      <CommentSection packId="pack-1" />
-    </AuthProvider>,
+    <NextIntlClientProvider locale="en" messages={messages}>
+      <AuthProvider>
+        <CommentSection packId="pack-1" />
+      </AuthProvider>
+    </NextIntlClientProvider>,
   );
 }
 
@@ -126,7 +131,7 @@ describe("CommentSection", () => {
     expect(await screen.findByText("No comments yet.")).toBeInTheDocument();
   });
 
-  it("shows a log-in prompt instead of a compose form when unauthenticated", async () => {
+  it("shows a blocked composer with a reason tooltip when unauthenticated", async () => {
     vi.mocked(commentsClient.list).mockResolvedValue({
       items: [],
       total: 0,
@@ -135,8 +140,21 @@ describe("CommentSection", () => {
     });
     renderAsUnauthenticated();
 
-    expect(await screen.findByText(/log in/i)).toBeInTheDocument();
-    expect(screen.queryByRole("textbox")).not.toBeInTheDocument();
+    // The composer is shown but inert: the textarea is read-only and shows the
+    // reason as its placeholder, Post is blocked, and hovering the *input*
+    // (not just the button) surfaces the reason. Nothing posts.
+    const textarea = await screen.findByRole("textbox");
+    expect(textarea).toHaveAttribute("readonly");
+    expect(textarea).toHaveAttribute("placeholder", "Log in to comment");
+
+    const post = screen.getByRole("button", { name: "Post" });
+    expect(post).toHaveAttribute("aria-disabled", "true");
+
+    await userEvent.hover(textarea);
+    expect(screen.getByRole("tooltip")).toHaveTextContent("Log in to comment");
+
+    await userEvent.click(post);
+    expect(commentsClient.create).not.toHaveBeenCalled();
   });
 
   it("shows a compose form when authenticated", async () => {

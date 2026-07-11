@@ -1,7 +1,7 @@
 import type { InputHTMLAttributes, ReactNode } from "react";
 import { useFormContext } from "react-hook-form";
 import { Text } from "@/src/shared/components/Text";
-import { getFieldError } from "@/src/shared/components/form/getFieldError";
+import { useFieldError } from "@/src/shared/components/form/useFieldError";
 import { cn } from "@/src/shared/lib/cn";
 
 export interface CheckboxFieldProps extends Omit<
@@ -34,12 +34,9 @@ export function CheckboxField({
   "aria-describedby": ariaDescribedby,
   ...rest
 }: CheckboxFieldProps) {
-  const {
-    register,
-    formState: { errors },
-  } = useFormContext();
+  const { register } = useFormContext();
   const fieldId = id ?? name;
-  const error = getFieldError(errors, name);
+  const error = useFieldError(name);
   const describedBy =
     [error ? `${fieldId}-error` : undefined, ariaDescribedby]
       .filter(Boolean)

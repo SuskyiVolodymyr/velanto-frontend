@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { Text } from "@/src/shared/components/Text";
@@ -7,7 +8,10 @@ import { Button } from "@/src/shared/components/Button";
 import type { Pack } from "@/src/shared/types/pack";
 import { VersusRound } from "@/src/features/play/VersusRound";
 import { usePlaySession } from "@/src/features/play/use-play-session";
-import { FORMAT_COPY } from "@/src/features/play/play-format-copy";
+import {
+  INSTRUCTION_KEY,
+  PICKED_LABEL_KEY,
+} from "@/src/features/play/play-format-copy";
 import { PlayProgress } from "@/src/features/play/PlayProgress";
 import { RoundRevealControls } from "@/src/features/play/RoundRevealControls";
 import { CandidateCard } from "@/src/features/play/CandidateCard";
@@ -16,9 +20,9 @@ import { PicksSummary } from "@/src/features/play/PicksSummary";
 
 export function PlayScreen({ pack }: { pack: Pack }) {
   const { status } = useAuth();
+  const t = useTranslations("play");
   const router = useRouter();
   const pathname = usePathname();
-  const copy = FORMAT_COPY[pack.format];
   const session = usePlaySession(pack);
 
   if (status === "loading") return null;
@@ -26,16 +30,14 @@ export function PlayScreen({ pack }: { pack: Pack }) {
   if (status === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">
-          You need to be logged in to play a pack.
-        </Text>
+        <Text variant="secondary">{t("loginRequired")}</Text>
         <Button
           className="mt-4"
           onClick={() =>
             router.push(`/auth?next=${encodeURIComponent(pathname)}`)
           }
         >
-          Log in
+          {t("logIn")}
         </Button>
       </div>
     );
@@ -56,7 +58,7 @@ export function PlayScreen({ pack }: { pack: Pack }) {
             <Text as="h1" variant="title" className="mb-2 text-3xl">
               {session.roundTitle}
             </Text>
-            <Text variant="secondary">{copy.instruction}</Text>
+            <Text variant="secondary">{t(INSTRUCTION_KEY[pack.format])}</Text>
           </section>
 
           <RoundRevealControls
@@ -104,7 +106,7 @@ export function PlayScreen({ pack }: { pack: Pack }) {
               disabled={!session.canConfirm}
               onClick={session.confirmPick}
             >
-              Next round →
+              {t("nextRound")}
             </Button>
           </div>
         </>
@@ -115,14 +117,17 @@ export function PlayScreen({ pack }: { pack: Pack }) {
           isVersus={session.isVersus}
           pickCount={session.picks.length}
           packId={pack.id}
-          finishedVerb={copy.finishedVerb}
+          format={pack.format}
           categoryAName={session.categoryA?.name}
           categoryBName={session.categoryB?.name}
         />
       )}
 
       {session.picks.length > 0 && (
-        <PicksSummary label={copy.pickedLabel} picks={session.picks} />
+        <PicksSummary
+          label={t(PICKED_LABEL_KEY[pack.format])}
+          picks={session.picks}
+        />
       )}
     </div>
   );

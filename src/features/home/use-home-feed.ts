@@ -1,0 +1,93 @@
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
+import type { Pack, PackTag } from "@/src/shared/types/pack";
+import {
+  DEFAULT_POPULAR_WINDOW,
+  type FormatFilterValue,
+  type SortFilterValue,
+  type WindowFilterValue,
+} from "@/src/features/home/filter-options";
+import { usePacksFeed } from "@/src/features/home/api/packs-feed.queries";
+import type { PacksFeedFilters } from "@/src/features/home/api/packs-feed";
+
+// Avoids firing a request per keystroke.
+const SEARCH_DEBOUNCE_MS = 300;
+
+export type FeedStatus = "loading" | "ready" | "error";
+
+// Owns the home-feed filter state and derives the React Query request from it,
+// so HomeFeed stays a thin layout orchestrator and the filter sidebar/results
+// stay purely presentational. The fetch itself lives in `usePacksFeed`.
+export function useHomeFeed(initialPacks?: Pack[]) {
+  const [format, setFormat] = useState<FormatFilterValue>("all");
+  const [tags, setTags] = useState<PackTag[]>([]);
+  const [searchInput, setSearchInput] = useState("");
+  const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<SortFilterValue>("relevance");
+  const [window, setWindow] = useState<WindowFilterValue>(
+    DEFAULT_POPULAR_WINDOW,
+  );
+
+  useEffect(() => {
+    const timeout = setTimeout(
+      () => setQuery(searchInput.trim()),
+      SEARCH_DEBOUNCE_MS,
+    );
+    return () => clearTimeout(timeout);
+  }, [searchInput]);
+
+  // Resolve the UI filter state into the request/query key: the "all" format
+  // sentinel and empty search collapse to undefined, and sort/window only apply
+  // under the popular sort.
+  const filters = useMemo<PacksFeedFilters>(
+    () => ({
+      format: format === "all" ? undefined : format,
+      tags,
+      q: query || undefined,
+      sort: sort === "popular" ? "popular" : undefined,
+      window: sort === "popular" ? window : undefined,
+    }),
+    [format, tags, query, sort, window],
+  );
+
+  // Seed only the default-filters query with the server-rendered feed — other
+  // combinations fetch on demand.
+  const isDefaultFilters =
+    format === "all" && tags.length === 0 && !query && sort === "relevance";
+  const feedQuery = usePacksFeed(
+    filters,
+    isDefaultFilters ? initialPacks : undefined,
+  );
+
+  const packs = feedQuery.data ?? [];
+  const status: FeedStatus = feedQuery.isError
+    ? "error"
+    : feedQuery.isLoading
+      ? "loading"
+      : "ready";
+
+  // Reset to the default window every time Popular is (re)selected, rather than
+  // remembering the last-chosen window across a Relevance -> Popular round-trip
+  // — "week" is the expected starting point each time you opt into popularity
+  // sorting.
+  function selectSort(value: SortFilterValue) {
+    setSort(value);
+    if (value === "popular") setWindow(DEFAULT_POPULAR_WINDOW);
+  }
+
+  return {
+    format,
+    setFormat,
+    tags,
+    setTags,
+    searchInput,
+    setSearchInput,
+    packs,
+    status,
+    sort,
+    selectSort,
+    window,
+    setWindow,
+  };
+}

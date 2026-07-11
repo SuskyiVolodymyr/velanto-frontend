@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
@@ -13,6 +14,7 @@ import {
 } from "@/src/shared/lib/theme";
 
 export function AppearanceSection() {
+  const t = useTranslations("settings");
   // The persisted accent (localStorage) is a client-only read, hydrated via
   // useHydratedValue — no set-state-in-effect, no hydration mismatch. `selected`
   // layers the optimistic in-session choice on top of the stored value.
@@ -35,13 +37,13 @@ export function AppearanceSection() {
         variant="tertiary"
         className="text-xs uppercase tracking-wide"
       >
-        Appearance
+        {t("appearanceHeading")}
       </Text>
       <Card className="flex items-center justify-between gap-4 hover:translate-y-0 hover:shadow-none">
         <div>
-          <Text className="font-semibold">Accent color</Text>
+          <Text className="font-semibold">{t("accentColor")}</Text>
           <Text variant="secondary" className="text-sm">
-            Used for highlights, buttons, and progress bars.
+            {t("accentColorHint")}
           </Text>
         </div>
         <div className="flex gap-2">
@@ -49,7 +51,7 @@ export function AppearanceSection() {
             <button
               key={color}
               type="button"
-              aria-label={`Use accent color ${color}`}
+              aria-label={t("accentColorSwatch", { color })}
               aria-pressed={accent === color}
               onClick={() => handleSelect(color)}
               className={cn(

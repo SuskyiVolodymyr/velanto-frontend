@@ -1,5 +1,8 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import { renderWithQueryClient as render } from "@/src/shared/test/render-with-query-client";
+import { NextIntlClientProvider } from "next-intl";
+import messages from "@/messages/en.json";
 import { ProfileScreen } from "./ProfileScreen";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { authClient } from "@/src/shared/lib/auth-client";
@@ -38,9 +41,11 @@ const MOCK_USER = {
 
 function renderScreen() {
   return render(
-    <AuthProvider>
-      <ProfileScreen />
-    </AuthProvider>,
+    <NextIntlClientProvider locale="en" messages={messages}>
+      <AuthProvider>
+        <ProfileScreen />
+      </AuthProvider>
+    </NextIntlClientProvider>,
   );
 }
 

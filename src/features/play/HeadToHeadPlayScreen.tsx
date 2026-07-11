@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { Text } from "@/src/shared/components/Text";
@@ -20,6 +21,7 @@ interface MatchupResult {
 
 export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
   const { status } = useAuth();
+  const t = useTranslations("play");
   const router = useRouter();
   const pathname = usePathname();
   const groups = pack.groups ?? [];
@@ -69,16 +71,14 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
   if (status === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">
-          You need to be logged in to play a pack.
-        </Text>
+        <Text variant="secondary">{t("loginRequired")}</Text>
         <Button
           className="mt-4"
           onClick={() =>
             router.push(`/auth?next=${encodeURIComponent(pathname)}`)
           }
         >
-          Log in
+          {t("logIn")}
         </Button>
       </div>
     );
@@ -94,8 +94,8 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
         <div className="mb-2 flex items-center justify-between">
           <Text variant="tertiary" className="text-xs uppercase tracking-wide">
             {isFinished
-              ? "Complete"
-              : `Round ${roundIndex + 1} of ${totalRounds}`}
+              ? t("complete")
+              : t("roundOf", { current: roundIndex + 1, total: totalRounds })}
           </Text>
         </div>
         <div className="h-[3px] w-full rounded-full bg-white/[0.06]">
@@ -110,7 +110,7 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
         <>
           <section className="mb-6 text-center">
             <Text as="h1" variant="title" className="mb-2 text-3xl">
-              Which one do you prefer?
+              {t("whichPrefer")}
             </Text>
           </section>
           <div className="mb-10">
@@ -122,18 +122,20 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
       {isFinished && (
         <section className="mb-10 text-center">
           <Text as="h1" variant="title" className="mb-2 text-3xl">
-            All matchups done
+            {t("allMatchupsDone")}
           </Text>
           <Text variant="secondary" className="mb-6">
-            Here&apos;s who beat who across {history.length} head-to-head
-            {history.length === 1 ? "" : "s"}.
+            {t("h2hSummary", { count: history.length })}
           </Text>
           <div className="mb-8 flex flex-col gap-2 text-left">
             {history.map((entry, index) => (
               <div
                 key={index}
                 role="group"
-                aria-label={`${entry.winnerTitle} beat ${entry.loserTitle}`}
+                aria-label={t("beat", {
+                  winner: entry.winnerTitle,
+                  loser: entry.loserTitle,
+                })}
                 className="flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3"
               >
                 <Text className="font-semibold">{entry.winnerTitle}</Text>
@@ -150,7 +152,7 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
             href={`/packs/${pack.id}/result`}
             className={buttonClassName("primary", "w-fit")}
           >
-            See your result
+            {t("seeResult")}
           </Link>
         </section>
       )}

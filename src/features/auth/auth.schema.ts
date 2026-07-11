@@ -1,67 +1,79 @@
 import { z } from "zod";
 
-// Mirrors velanto-backend's registerSchema (src/modules/auth/dto/register.dto.ts).
-export const USERNAME_PATTERN = /^[a-zA-Z0-9_]{3,20}$/;
+// Mirrors velanto-backend's register.dto.ts (usernameSchema / passwordSchema).
+export const USERNAME_PATTERN = /^[a-zA-Z0-9]{2,16}$/;
 export const MIN_PASSWORD_LENGTH = 8;
+export const MAX_PASSWORD_LENGTH = 72;
 
-// Both modes share one object shape (all four fields always registered on the
-// form); each schema only refines the fields its mode uses. This keeps the
-// react-hook-form values type stable across the login/register toggle.
+// Validation copy is hardcoded English (matches the existing auth-schema
+// convention; the rest of the app's user-facing text is next-intl). Exported so
+// the form and tests reference one source of truth instead of duplicating
+// strings.
+export const AUTH_MESSAGES = {
+  loginRequired: "Enter your email/username and password.",
+  username: "Username must be 2-16 characters: letters and numbers only.",
+  email: "Enter a valid email address.",
+  passwordLength: `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`,
+  passwordMax: `Password must be at most ${MAX_PASSWORD_LENGTH} characters.`,
+  passwordLower: "Password must include a lowercase letter.",
+  passwordUpper: "Password must include an uppercase letter.",
+  passwordDigit: "Password must include a number.",
+  passwordsMismatch: "Passwords do not match.",
+  acceptRules: "You must accept the Community Rules to register.",
+} as const;
+
+// Both modes share one object shape (all fields always registered on the form)
+// so the react-hook-form values type stays stable across the login/register
+// toggle. Each schema only refines the fields its mode uses.
 const authFields = z.object({
   identifier: z.string(),
   username: z.string(),
   email: z.string(),
   password: z.string(),
-  // Only meaningful in register mode; login ignores it. Kept on the shared
-  // shape so the react-hook-form values type stays stable across the toggle.
+  confirmPassword: z.string(),
   acceptedRules: z.boolean(),
 });
 
 export type AuthFormValues = z.infer<typeof authFields>;
 
-// Login: both fields required. Single combined message (attached to the
-// identifier field) — same copy the old `validate()` returned.
+// Login: both fields required, one combined message on the identifier field.
 export const loginSchema = authFields.superRefine((data, ctx) => {
   if (!data.identifier.trim() || !data.password) {
     ctx.addIssue({
       code: "custom",
-      message: "Enter your email/username and password.",
+      message: AUTH_MESSAGES.loginRequired,
       path: ["identifier"],
     });
   }
 });
 
-// Register: same sequential rules + copy as the old `validate()`. At most one
-// issue is added, preserving the original first-failure precedence.
+// Register: per-field validation (each field carries its own message) so the
+// form can show errors in real time as the user types. The password-composition
+// checks run in order; zod surfaces the first unmet rule for that field.
 export const registerSchema = authFields
   .extend({
-    acceptedRules: z.literal(true, {
-      message: "You must accept the Community Rules to register.",
-    }),
+    // Trim first so accidental leading/trailing whitespace is tolerated; the
+    // regex still forbids spaces *within* the username ("no spaces allowed").
+    username: z.string().trim().regex(USERNAME_PATTERN, AUTH_MESSAGES.username),
+    email: z.string().trim().email(AUTH_MESSAGES.email),
+    password: z
+      .string()
+      .min(MIN_PASSWORD_LENGTH, AUTH_MESSAGES.passwordLength)
+      .max(MAX_PASSWORD_LENGTH, AUTH_MESSAGES.passwordMax)
+      .regex(/[a-z]/, AUTH_MESSAGES.passwordLower)
+      .regex(/[A-Z]/, AUTH_MESSAGES.passwordUpper)
+      .regex(/[0-9]/, AUTH_MESSAGES.passwordDigit),
+    acceptedRules: z.literal(true, { message: AUTH_MESSAGES.acceptRules }),
   })
   .superRefine((data, ctx) => {
-    if (!data.username.trim() || !data.email.trim() || !data.password) {
+    // Reported on confirmPassword so the error sits under that field. No length
+    // guard — an empty confirm still fails at submit; real-time display is gated
+    // per-field by touched state in the form, so it won't nag before you type.
+    if (data.password !== data.confirmPassword) {
       ctx.addIssue({
         code: "custom",
-        message: "Fill in your username, email, and password.",
-        path: ["username"],
-      });
-      return;
-    }
-    if (!USERNAME_PATTERN.test(data.username.trim())) {
-      ctx.addIssue({
-        code: "custom",
-        message:
-          "Username must be 3-20 characters: letters, numbers, underscore only.",
-        path: ["username"],
-      });
-      return;
-    }
-    if (data.password.length < MIN_PASSWORD_LENGTH) {
-      ctx.addIssue({
-        code: "custom",
-        message: `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`,
-        path: ["password"],
+        message: AUTH_MESSAGES.passwordsMismatch,
+        path: ["confirmPassword"],
       });
     }
   });

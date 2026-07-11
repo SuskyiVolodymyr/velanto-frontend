@@ -1,38 +1,24 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Text } from "@/src/shared/components/Text";
 import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
-import { adminClient } from "@/src/shared/lib/admin-client";
+import { useAdminLogs } from "@/src/features/admin/api/admin.queries";
+import type { AuditLogFilters } from "@/src/features/admin/api/admin";
 import type { AuditLogEntry } from "@/src/shared/types/admin";
 
-const PAGE_SIZE = 20;
 const FILTER_DEBOUNCE_MS = 300;
-
-interface Filters {
-  actor: string;
-  action: string;
-  target: string;
-}
 
 export function LogsTab() {
   const [actorInput, setActorInput] = useState("");
   const [actionInput, setActionInput] = useState("");
   const [targetInput, setTargetInput] = useState("");
-  const [filters, setFilters] = useState<Filters>({
+  const [filters, setFilters] = useState<AuditLogFilters>({
     actor: "",
     action: "",
     target: "",
   });
-  const [logs, setLogs] = useState<AuditLogEntry[]>([]);
-  const [total, setTotal] = useState(0);
-  const [page, setPage] = useState(1);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">(
-    "loading",
-  );
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [loadMoreError, setLoadMoreError] = useState("");
 
   useEffect(() => {
     const timeout = setTimeout(
@@ -47,56 +33,34 @@ export function LogsTab() {
     return () => clearTimeout(timeout);
   }, [actorInput, actionInput, targetInput]);
 
-  useEffect(() => {
-    let cancelled = false;
-    adminClient
-      .auditLogs({
-        actor: filters.actor || undefined,
-        action: filters.action || undefined,
-        target: filters.target || undefined,
-        page: 1,
-        limit: PAGE_SIZE,
-      })
-      .then((result) => {
-        if (cancelled) return;
-        setLogs(result.items);
-        setTotal(result.total);
-        setPage(1);
-        setStatus("ready");
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setStatus("error");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [filters]);
+  const logsQuery = useAdminLogs(filters);
 
-  async function handleLoadMore() {
-    setLoadingMore(true);
-    try {
-      const nextPage = page + 1;
-      const result = await adminClient.auditLogs({
-        actor: filters.actor || undefined,
-        action: filters.action || undefined,
-        target: filters.target || undefined,
-        page: nextPage,
-        limit: PAGE_SIZE,
-      });
-      setLogs((prev) => {
-        const existingIds = new Set(prev.map((l) => l.id));
-        return [...prev, ...result.items.filter((l) => !existingIds.has(l.id))];
-      });
-      setTotal(result.total);
-      setPage(nextPage);
-      setLoadMoreError("");
-    } catch {
-      setLoadMoreError("Couldn't load more logs. Try again.");
-    } finally {
-      setLoadingMore(false);
+  const logs = useMemo(() => {
+    const seen = new Set<string>();
+    const out: AuditLogEntry[] = [];
+    for (const page of logsQuery.data?.pages ?? []) {
+      for (const entry of page.items) {
+        if (!seen.has(entry.id)) {
+          seen.add(entry.id);
+          out.push(entry);
+        }
+      }
     }
-  }
+    return out;
+  }, [logsQuery.data]);
+
+  const total = logsQuery.data?.pages.at(-1)?.total ?? 0;
+  const hasData = logsQuery.data !== undefined;
+  const status = logsQuery.isLoading
+    ? "loading"
+    : !hasData && logsQuery.isError
+      ? "error"
+      : "ready";
+  const loadingMore = logsQuery.isFetchingNextPage;
+  const loadMoreError =
+    hasData && (logsQuery.isError || logsQuery.isFetchNextPageError)
+      ? "Couldn't load more logs. Try again."
+      : "";
 
   return (
     <div className="flex flex-col gap-6">
@@ -161,7 +125,7 @@ export function LogsTab() {
           <Button
             variant="secondary"
             disabled={loadingMore}
-            onClick={() => void handleLoadMore()}
+            onClick={() => void logsQuery.fetchNextPage()}
           >
             {loadingMore ? "Loading…" : "Load more"}
           </Button>

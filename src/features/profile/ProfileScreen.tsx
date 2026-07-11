@@ -1,72 +1,49 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/src/shared/lib/auth-context";
-import { usersClient } from "@/src/shared/lib/users-client";
-import { packsClient } from "@/src/shared/lib/packs-client";
+import { authorQueryOptions } from "@/src/features/author/api/author.queries";
 import { Text } from "@/src/shared/components/Text";
 import { buttonClassName } from "@/src/shared/components/Button";
 import { PackCard } from "@/src/features/home/PackCard";
-import type { PublicUserProfile } from "@/src/shared/types/user";
-import type { Pack } from "@/src/shared/types/pack";
 
 export function ProfileScreen() {
+  const t = useTranslations("profile");
   const { user, status: authStatus } = useAuth();
-  const [profile, setProfile] = useState<PublicUserProfile | null>(null);
-  const [packs, setPacks] = useState<Pack[]>([]);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">(
-    "loading",
-  );
 
-  useEffect(() => {
-    if (authStatus !== "authenticated" || !user) return;
-    let cancelled = false;
-    Promise.all([
-      usersClient.getProfile(user.id),
-      packsClient.list({ authorId: user.id, limit: 50 }),
-    ])
-      .then(([profileResult, packsResult]) => {
-        if (cancelled) return;
-        setProfile(profileResult);
-        setPacks(packsResult.items);
-        setStatus("ready");
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setStatus("error");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [authStatus, user]);
+  // The current user's own profile + packs is the same data as the author page,
+  // so it shares that query (and cache).
+  const profileQuery = useQuery({
+    ...authorQueryOptions(user?.id ?? ""),
+    enabled: authStatus === "authenticated" && !!user,
+  });
+  const profile = profileQuery.data?.profile ?? null;
+  const packs = profileQuery.data?.packs ?? [];
 
   if (authStatus === "loading") return null;
 
   if (authStatus === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">
-          You need to be logged in to view your profile.
-        </Text>
+        <Text variant="secondary">{t("loginRequiredView")}</Text>
         <Link
           href="/auth?next=%2Fprofile"
           className={buttonClassName("primary", "mt-4 w-fit")}
         >
-          Log in
+          {t("logIn")}
         </Link>
       </div>
     );
   }
 
-  if (status === "loading") return null;
+  if (profileQuery.isLoading) return null;
 
-  if (status === "error" || !profile) {
+  if (profileQuery.isError || !profile) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text className="text-[#ff6b6b]">
-          Couldn&apos;t load your profile. Try again later.
-        </Text>
+        <Text className="text-[#ff6b6b]">{t("loadProfileError")}</Text>
       </div>
     );
   }
@@ -85,8 +62,7 @@ export function ProfileScreen() {
               {profile.username}
             </Text>
             <Text variant="tertiary" className="text-sm">
-              {profile.followerCount} follower
-              {profile.followerCount === 1 ? "" : "s"}
+              {t("followerCount", { count: profile.followerCount })}
             </Text>
           </div>
         </div>
@@ -94,7 +70,7 @@ export function ProfileScreen() {
           href="/profile/edit"
           className={buttonClassName("secondary", "w-fit")}
         >
-          Edit profile
+          {t("editProfile")}
         </Link>
       </div>
 
@@ -104,17 +80,17 @@ export function ProfileScreen() {
         ) : (
           <Link href="/profile/edit">
             <Text variant="tertiary" className="italic">
-              Add a bio to tell people what your packs are about.
+              {t("addBioPrompt")}
             </Text>
           </Link>
         )}
       </div>
 
       <Text as="h2" variant="title" className="mb-4 text-lg">
-        My Packs
+        {t("myPacks")}
       </Text>
       {packs.length === 0 ? (
-        <Text variant="secondary">No packs yet — create your first one!</Text>
+        <Text variant="secondary">{t("noPacksOwn")}</Text>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {packs.map((pack) => (

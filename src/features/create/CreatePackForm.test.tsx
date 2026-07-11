@@ -1,5 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
+import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { CreatePackForm } from "./CreatePackForm";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
@@ -80,17 +81,15 @@ function renderForm() {
   );
 }
 
+// Titles/descriptions are kept short on purpose: every keystroke re-renders the
+// whole RHF form and re-runs the zod resolver, so long strings dominate this
+// suite's runtime. The schema only requires min length 1, and no test asserts
+// these exact values, so a few characters cover the same behaviour far faster.
 async function fillMinimalValidPack(user: ReturnType<typeof userEvent.setup>) {
-  await user.type(
-    await screen.findByLabelText("Pack title"),
-    "Best Anime Openings",
-  );
-  await user.type(
-    screen.getByLabelText("Pack description"),
-    "Pick your favorite each round.",
-  );
+  await user.type(await screen.findByLabelText("Pack title"), "Best");
+  await user.type(screen.getByLabelText("Pack description"), "Desc");
   await user.type(screen.getByLabelText("Group 1 name"), "2016");
-  await user.type(screen.getByLabelText("Group 1 new item"), "Guren no Yumiya");
+  await user.type(screen.getByLabelText("Group 1 new item"), "A");
   await user.click(screen.getByRole("button", { name: "Add" }));
 }
 
@@ -213,7 +212,7 @@ describe("CreatePackForm", () => {
     await user.click(screen.getByRole("button", { name: "Select tags" }));
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
     await user.click(screen.getByRole("checkbox", { name: "Music" }));
-    await user.click(screen.getByRole("button", { name: "Close" }));
+    await user.click(screen.getByRole("button", { name: "Apply" }));
 
     expect(
       screen.getByRole("button", { name: "2 tags selected" }),
@@ -242,11 +241,14 @@ describe("CreatePackForm", () => {
       await user.click(screen.getByRole("checkbox", { name: tag }));
     }
 
+    // The cap applies to the in-progress draft while the modal is still open.
+    const eleventh = screen.getByRole("checkbox", { name: "Comics" });
+    expect(eleventh).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: "Apply" }));
     expect(
       screen.getByRole("button", { name: "10 tags selected" }),
     ).toBeInTheDocument();
-    const eleventh = screen.getByRole("checkbox", { name: "Comics" });
-    expect(eleventh).toBeDisabled();
   });
 
   it("submits a valid pack and redirects to its detail page", async () => {
@@ -260,8 +262,8 @@ describe("CreatePackForm", () => {
     await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-1"));
     expect(packsClient.create).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: "Best Anime Openings",
-        description: "Pick your favorite each round.",
+        title: "Best",
+        description: "Desc",
         format: "save_one",
       }),
     );
@@ -282,7 +284,7 @@ describe("CreatePackForm", () => {
     await user.click(screen.getByRole("button", { name: "Select tags" }));
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
     await user.click(screen.getByRole("checkbox", { name: "Music" }));
-    await user.click(screen.getByRole("button", { name: "Close" }));
+    await user.click(screen.getByRole("button", { name: "Apply" }));
 
     await fillMinimalValidPack(user);
     await user.click(screen.getByRole("button", { name: "Publish" }));
@@ -404,14 +406,8 @@ describe("CreatePackForm", () => {
     it("rejects an nxn submission with a category that has no items", async () => {
       const user = userEvent.setup();
       renderForm();
-      await user.type(
-        await screen.findByLabelText("Pack title"),
-        "Boys vs Girls",
-      );
-      await user.type(
-        screen.getByLabelText("Pack description"),
-        "Pick a side.",
-      );
+      await user.type(await screen.findByLabelText("Pack title"), "T");
+      await user.type(screen.getByLabelText("Pack description"), "D");
       await switchToNxn(user);
       await user.type(screen.getByLabelText("Category 1 name"), "Boys");
       await user.type(screen.getByLabelText("Category 2 name"), "Girls");
@@ -427,14 +423,8 @@ describe("CreatePackForm", () => {
     it("rejects an nxn submission when versusN exceeds a category's item count", async () => {
       const user = userEvent.setup();
       renderForm();
-      await user.type(
-        await screen.findByLabelText("Pack title"),
-        "Boys vs Girls",
-      );
-      await user.type(
-        screen.getByLabelText("Pack description"),
-        "Pick a side.",
-      );
+      await user.type(await screen.findByLabelText("Pack title"), "T");
+      await user.type(screen.getByLabelText("Pack description"), "D");
       await switchToNxn(user);
       await user.type(screen.getByLabelText("Category 1 name"), "Boys");
       await user.type(screen.getByLabelText("Category 1 new item"), "Naruto");
@@ -466,14 +456,8 @@ describe("CreatePackForm", () => {
         }),
       );
       renderForm();
-      await user.type(
-        await screen.findByLabelText("Pack title"),
-        "Boys vs Girls",
-      );
-      await user.type(
-        screen.getByLabelText("Pack description"),
-        "Pick a side.",
-      );
+      await user.type(await screen.findByLabelText("Pack title"), "T");
+      await user.type(screen.getByLabelText("Pack description"), "D");
       await switchToNxn(user);
       await user.type(screen.getByLabelText("Category 1 name"), "Boys");
       await user.type(screen.getByLabelText("Category 1 new item"), "Naruto");

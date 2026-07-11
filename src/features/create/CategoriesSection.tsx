@@ -1,6 +1,7 @@
 "use client";
 
 import { useFormContext, useWatch, type FieldErrors } from "react-hook-form";
+import { useTranslations } from "next-intl";
 import { Input } from "@/src/shared/components/Input";
 import { Text } from "@/src/shared/components/Text";
 import { getFieldError } from "@/src/shared/components/form/getFieldError";
@@ -29,6 +30,7 @@ function firstCategoryError(
  * pack-level versusRounds / versusN inputs.
  */
 export function CategoriesSection() {
+  const t = useTranslations("create");
   const { control, setValue, formState } = useFormContext<CreatePackValues>();
   const { errors } = formState;
   const categories = useWatch({ control, name: "categories" });
@@ -42,7 +44,7 @@ export function CategoriesSection() {
   return (
     <section className="flex flex-col gap-3">
       <Text as="h2" variant="title" className="text-lg">
-        Categories
+        {t("categoriesHeading")}
       </Text>
       {categories.map((category, index) => (
         <CategoryEditor
@@ -79,8 +81,8 @@ export function CategoriesSection() {
                 },
               )
             }
-            placeholder="Rounds"
-            aria-label="Rounds"
+            placeholder={t("rounds")}
+            aria-label={t("rounds")}
           />
           {versusRoundsError && (
             <Text role="alert" className="text-sm text-[#ff6b6b]">
@@ -103,8 +105,8 @@ export function CategoriesSection() {
                 },
               )
             }
-            placeholder="Items per round"
-            aria-label="Items per round"
+            placeholder={t("itemsPerRound")}
+            aria-label={t("itemsPerRound")}
           />
           {versusNError && (
             <Text role="alert" className="text-sm text-[#ff6b6b]">
