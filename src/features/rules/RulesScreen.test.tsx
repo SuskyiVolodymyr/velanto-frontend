@@ -118,7 +118,8 @@ describe("RulesScreen", () => {
   });
 
   it("falls back to the backend text when the catalog has no rules.content at all", () => {
-    const { content: _omitted, ...rulesWithoutContent } = messages.rules;
+    const rulesWithoutContent: Record<string, unknown> = { ...messages.rules };
+    delete rulesWithoutContent.content;
     const messagesWithoutContent = {
       ...messages,
       rules: rulesWithoutContent,
