@@ -16,6 +16,7 @@ import type { AdminUserRow } from "@/src/shared/types/admin";
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
   authClient: {
+    requestEmailCode: vi.fn(),
     register: vi.fn(),
     login: vi.fn(),
     logout: vi.fn(),

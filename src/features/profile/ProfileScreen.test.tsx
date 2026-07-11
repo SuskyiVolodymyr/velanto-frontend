@@ -12,6 +12,7 @@ import { ApiError } from "@/src/shared/lib/api-client";
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
   authClient: {
+    requestEmailCode: vi.fn(),
     register: vi.fn(),
     login: vi.fn(),
     logout: vi.fn(),

@@ -83,6 +83,7 @@ function mockAuth(overrides: Partial<ReturnType<typeof useAuth>> = {}) {
     },
     status: "authenticated",
     login: vi.fn(),
+    requestEmailCode: vi.fn(),
     register: vi.fn(),
     logout: vi.fn(),
     ...overrides,

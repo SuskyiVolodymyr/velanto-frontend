@@ -18,6 +18,7 @@ import type { RulesDocument } from "@/src/shared/types/rules";
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
   authClient: {
+    requestEmailCode: vi.fn(),
     register: vi.fn(),
     login: vi.fn(),
     logout: vi.fn(),

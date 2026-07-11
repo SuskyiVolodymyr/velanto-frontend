@@ -8,6 +8,7 @@ import type { User } from "@/src/shared/types/user";
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
   authClient: {
+    requestEmailCode: vi.fn(),
     register: vi.fn(),
     login: vi.fn(),
     logout: vi.fn(),

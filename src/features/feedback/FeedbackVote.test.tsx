@@ -31,6 +31,7 @@ function mockAuth(authenticated: boolean) {
       : null,
     status: authenticated ? "authenticated" : "unauthenticated",
     login: vi.fn(),
+    requestEmailCode: vi.fn(),
     register: vi.fn(),
     logout: vi.fn(),
   } as ReturnType<typeof useAuth>);

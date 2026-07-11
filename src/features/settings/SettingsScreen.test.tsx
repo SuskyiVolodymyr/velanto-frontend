@@ -10,6 +10,7 @@ import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
   authClient: {
+    requestEmailCode: vi.fn(),
     register: vi.fn(),
     login: vi.fn(),
     logout: vi.fn(),

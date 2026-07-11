@@ -26,6 +26,7 @@ function mockAuthStatus(
     user: null,
     status,
     login: vi.fn(),
+    requestEmailCode: vi.fn(),
     register: vi.fn(),
     logout: vi.fn(),
   } as ReturnType<typeof useAuth>);

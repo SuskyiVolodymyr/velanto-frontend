@@ -18,6 +18,7 @@ function values(overrides: Partial<AuthFormValues>): AuthFormValues {
     email: "a@example.com",
     password: "Password1",
     confirmPassword: "Password1",
+    code: "123456",
     acceptedRules: true,
     ...overrides,
   };
@@ -129,6 +130,21 @@ describe("registerSchema", () => {
         ),
       ).toBe(AUTH_MESSAGES.passwordDigit);
     });
+  });
+
+  describe("code", () => {
+    it.each(["123456", "000000"])("accepts a 6-digit code %p", (code) => {
+      expect(registerSchema.safeParse(values({ code })).success).toBe(true);
+    });
+
+    it.each(["", "12345", "1234567", "abcdef"])(
+      "rejects a non-6-digit code %p with the code message",
+      (code) => {
+        expect(errorFor(registerSchema, values({ code }), "code")).toBe(
+          AUTH_MESSAGES.code,
+        );
+      },
+    );
   });
 
   it("rejects mismatched passwords on the confirmPassword field", () => {
