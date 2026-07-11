@@ -1,47 +1,26 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/src/shared/lib/auth-context";
-import { usersClient } from "@/src/shared/lib/users-client";
-import { packsClient } from "@/src/shared/lib/packs-client";
+import { authorQueryOptions } from "@/src/features/author/api/author.queries";
 import { Text } from "@/src/shared/components/Text";
 import { buttonClassName } from "@/src/shared/components/Button";
 import { PackCard } from "@/src/features/home/PackCard";
-import type { PublicUserProfile } from "@/src/shared/types/user";
-import type { Pack } from "@/src/shared/types/pack";
 
 export function ProfileScreen() {
   const t = useTranslations("profile");
   const { user, status: authStatus } = useAuth();
-  const [profile, setProfile] = useState<PublicUserProfile | null>(null);
-  const [packs, setPacks] = useState<Pack[]>([]);
-  const [status, setStatus] = useState<"loading" | "ready" | "error">(
-    "loading",
-  );
 
-  useEffect(() => {
-    if (authStatus !== "authenticated" || !user) return;
-    let cancelled = false;
-    Promise.all([
-      usersClient.getProfile(user.id),
-      packsClient.list({ authorId: user.id, limit: 50 }),
-    ])
-      .then(([profileResult, packsResult]) => {
-        if (cancelled) return;
-        setProfile(profileResult);
-        setPacks(packsResult.items);
-        setStatus("ready");
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setStatus("error");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [authStatus, user]);
+  // The current user's own profile + packs is the same data as the author page,
+  // so it shares that query (and cache).
+  const profileQuery = useQuery({
+    ...authorQueryOptions(user?.id ?? ""),
+    enabled: authStatus === "authenticated" && !!user,
+  });
+  const profile = profileQuery.data?.profile ?? null;
+  const packs = profileQuery.data?.packs ?? [];
 
   if (authStatus === "loading") return null;
 
@@ -59,9 +38,9 @@ export function ProfileScreen() {
     );
   }
 
-  if (status === "loading") return null;
+  if (profileQuery.isLoading) return null;
 
-  if (status === "error" || !profile) {
+  if (profileQuery.isError || !profile) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
         <Text className="text-[#ff6b6b]">{t("loadProfileError")}</Text>

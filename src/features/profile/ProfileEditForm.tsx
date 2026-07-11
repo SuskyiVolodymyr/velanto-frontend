@@ -1,10 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
-import { usersClient } from "@/src/shared/lib/users-client";
+import {
+  useMyProfile,
+  useUpdateBio,
+} from "@/src/features/profile/api/profile.queries";
 import { messageFromError } from "@/src/shared/lib/messageFromError";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
@@ -15,49 +18,24 @@ export function ProfileEditForm() {
   const t = useTranslations("profile");
   const { user, status: authStatus } = useAuth();
   const router = useRouter();
-  const [bio, setBio] = useState("");
-  const [loadStatus, setLoadStatus] = useState<"loading" | "ready" | "error">(
-    "loading",
-  );
-  const [pending, setPending] = useState(false);
-  const [saveError, setSaveError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (authStatus !== "authenticated" || !user) return;
-    let cancelled = false;
-    usersClient
-      .getProfile(user.id)
-      .then((profile) => {
-        if (cancelled) return;
-        setBio(profile.bio ?? "");
-        setLoadStatus("ready");
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setLoadStatus("error");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [authStatus, user]);
+  const profileQuery = useMyProfile(user?.id ?? "", {
+    enabled: authStatus === "authenticated" && !!user,
+  });
+  // `draft` is null until the user edits; the textarea shows the fetched bio
+  // until then (avoids seeding local state from the query in an effect).
+  const [draft, setDraft] = useState<string | null>(null);
+  const bio = draft ?? profileQuery.data?.bio ?? "";
 
-  async function handleSubmit(event: React.FormEvent) {
+  const saveMutation = useUpdateBio(user?.id ?? "");
+  const pending = saveMutation.isPending;
+  const saveError = saveMutation.isError
+    ? messageFromError(saveMutation.error, { fallback: t("saveError") })
+    : null;
+
+  function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    setPending(true);
-    setSaveError(null);
-    try {
-      await usersClient.updateProfile(bio);
-      router.push("/profile");
-    } catch (err) {
-      // Surface the backend's specific validation message (e.g. the moderation
-      // blocked-term rejection) when present, falling back to generic copy.
-      setSaveError(
-        messageFromError(err, {
-          fallback: t("saveError"),
-        }),
-      );
-      setPending(false);
-    }
+    saveMutation.mutate(bio, { onSuccess: () => router.push("/profile") });
   }
 
   if (authStatus === "loading") return null;
@@ -70,9 +48,9 @@ export function ProfileEditForm() {
     );
   }
 
-  if (loadStatus === "loading") return null;
+  if (profileQuery.isLoading) return null;
 
-  if (loadStatus === "error") {
+  if (profileQuery.isError) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
         <Text className="text-[#ff6b6b]">{t("loadBioError")}</Text>
@@ -99,7 +77,7 @@ export function ProfileEditForm() {
       </label>
       <textarea
         value={bio}
-        onChange={(event) => setBio(event.target.value.slice(0, BIO_MAX))}
+        onChange={(event) => setDraft(event.target.value.slice(0, BIO_MAX))}
         maxLength={BIO_MAX}
         rows={4}
         placeholder={t("bioPlaceholder")}
