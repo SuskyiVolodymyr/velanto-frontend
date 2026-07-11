@@ -9,7 +9,7 @@ import {
   isBanReasonValid,
 } from "@/src/shared/components/BanReasonPicker";
 import { resolveBanReasonTitle } from "@/src/shared/lib/ban-reason-title";
-import type { UseClientDataResult } from "@/src/shared/hooks/useClientData";
+import type { UseQueryResult } from "@tanstack/react-query";
 import type {
   BanHistoryPage,
   BanDuration,
@@ -32,7 +32,7 @@ export function AuthorModeratorPanel({
 }: {
   authorId: string;
   moderation: AuthorModeration;
-  banHistoryQuery: UseClientDataResult<BanHistoryPage>;
+  banHistoryQuery: UseQueryResult<BanHistoryPage>;
   ruleCategories: RuleCategory[];
 }) {
   const tBanReason = useTranslations("banReason");
@@ -104,7 +104,7 @@ export function AuthorModeratorPanel({
           )}
         </div>
       )}
-      {banHistoryQuery.loading && (
+      {banHistoryQuery.isLoading && (
         <Text variant="secondary">Loading ban history…</Text>
       )}
       {banHistoryQuery.error && (

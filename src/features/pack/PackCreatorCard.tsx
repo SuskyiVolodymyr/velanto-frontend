@@ -2,16 +2,16 @@
 
 import Link from "next/link";
 import { useId, useState } from "react";
-import { useRouter, usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { useStreamerModeOrDefault } from "@/src/shared/lib/streamer-mode-context";
-import { usePackAuthor } from "./api/pack-author.queries";
-import { useFollowMutation } from "./api/follow.mutations";
+import { useFollowMutation } from "@/src/shared/api/follow.mutations";
+import { usePackAuthor, packAuthorQueryOptions } from "./api/pack-author.queries";
 import { AuthorHoverCard } from "./AuthorHoverCard";
 import type { Pack } from "@/src/shared/types/pack";
+import type { PackAuthor } from "./api/pack-author";
 
 // Deterministic date formatting (fixed locale) so the server and the client
 // fallback render identical markup and don't trip a hydration mismatch.
@@ -34,32 +34,23 @@ function formatPublished(iso: string): string {
  * plain "view author" link. In streamer mode the hover card is suppressed and
  * the handle is redacted, leaving just the link.
  *
- * Follow state lives in the fetched `summary` (updated via `setData`) rather
- * than inside the popover, so it survives the popover unmounting on every
- * hover-out.
+ * Follow state lives in the pack-author query cache (patched by the shared
+ * follow mutation) rather than inside the popover, so it survives the popover
+ * unmounting on every hover-out.
  */
 export function PackCreatorCard({ pack }: { pack: Pack }) {
   const t = useTranslations("pack");
   const tProfile = useTranslations("profile");
-  const { user, status: authStatus } = useAuth();
-  const router = useRouter();
-  const pathname = usePathname();
+  const { user } = useAuth();
   const { enabled: streamerEnabled } = useStreamerModeOrDefault();
   const published = formatPublished(pack.createdAt);
   const cardId = useId();
 
   const { data: summary } = usePackAuthor(pack.authorId);
-  const followMutation = useFollowMutation(pack.authorId);
-
-  // The mutation assumes an authenticated caller; anonymous viewers are sent to
-  // sign in (and back) instead.
-  function handleFollowToggle(currentlyFollowing: boolean) {
-    if (authStatus !== "authenticated") {
-      router.push(`/auth?next=${encodeURIComponent(pathname)}`);
-      return;
-    }
-    followMutation.mutate(currentlyFollowing);
-  }
+  const follow = useFollowMutation<PackAuthor>(
+    pack.authorId,
+    packAuthorQueryOptions(pack.authorId).queryKey,
+  );
 
   const isOwnProfile = user?.id === pack.authorId;
   const [open, setOpen] = useState(false);
@@ -136,10 +127,10 @@ export function PackCreatorCard({ pack }: { pack: Pack }) {
           profile={summary.profile}
           packsTotal={summary.packsTotal}
           isOwnProfile={isOwnProfile}
-          followBusy={followMutation.isPending}
-          followError={followMutation.isError ? tProfile("followError") : ""}
+          followBusy={follow.isPending}
+          followError={follow.isError ? tProfile("followError") : ""}
           onFollowToggle={() =>
-            handleFollowToggle(summary.profile.isFollowedByMe ?? false)
+            follow.toggle(summary.profile.isFollowedByMe ?? false)
           }
         />
       )}

@@ -10,7 +10,9 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextIntlClientProvider } from "next-intl";
+import { QueryClientProvider } from "@tanstack/react-query";
 import messages from "@/messages/en.json";
+import { createTestQueryClient } from "@/src/shared/test/test-query-client";
 import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
 import { AuthorScreen } from "./AuthorScreen";
 import { usersClient } from "@/src/shared/lib/users-client";
@@ -37,9 +39,11 @@ const RULES: RulesDocument = {
 // The BanReasonPicker uses next-intl, so moderator ban flows need a provider.
 function renderScreen(ui: ReactElement) {
   return render(
-    <NextIntlClientProvider locale="en" messages={messages}>
-      {ui}
-    </NextIntlClientProvider>,
+    <QueryClientProvider client={createTestQueryClient()}>
+      <NextIntlClientProvider locale="en" messages={messages}>
+        {ui}
+      </NextIntlClientProvider>
+    </QueryClientProvider>,
   );
 }
 
@@ -591,11 +595,13 @@ describe("AuthorScreen", () => {
     mockAuth();
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     render(
-      <NextIntlClientProvider locale="en" messages={messages}>
-        <StreamerModeProvider>
-          <AuthorScreen authorId="author-1" />
-        </StreamerModeProvider>
-      </NextIntlClientProvider>,
+      <QueryClientProvider client={createTestQueryClient()}>
+        <NextIntlClientProvider locale="en" messages={messages}>
+          <StreamerModeProvider>
+            <AuthorScreen authorId="author-1" />
+          </StreamerModeProvider>
+        </NextIntlClientProvider>
+      </QueryClientProvider>,
     );
     // The non-identity stat line still renders, so the screen has loaded…
     await waitFor(() =>
