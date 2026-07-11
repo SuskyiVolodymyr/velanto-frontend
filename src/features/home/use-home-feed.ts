@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
-import { packsClient } from "@/src/shared/lib/packs-client";
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
 import type { Pack, PackTag } from "@/src/shared/types/pack";
 import {
   DEFAULT_POPULAR_WINDOW,
@@ -7,33 +8,22 @@ import {
   type SortFilterValue,
   type WindowFilterValue,
 } from "@/src/features/home/filter-options";
-
-// Backend caps `limit` at 50 — request that in one page since there's no
-// pagination UI yet; a real "Page N" control is future work if pack counts
-// grow past this.
-const PAGE_SIZE = 50;
+import { usePacksFeed } from "@/src/features/home/api/packs-feed.queries";
+import type { PacksFeedFilters } from "@/src/features/home/api/packs-feed";
 
 // Avoids firing a request per keystroke.
 const SEARCH_DEBOUNCE_MS = 300;
 
 export type FeedStatus = "loading" | "ready" | "error";
 
-// Owns all home-feed filter state and the debounced fetch that reacts to it,
-// so HomeFeed stays a thin layout orchestrator and the filter sidebar/child
-// components stay purely presentational.
+// Owns the home-feed filter state and derives the React Query request from it,
+// so HomeFeed stays a thin layout orchestrator and the filter sidebar/results
+// stay purely presentational. The fetch itself lives in `usePacksFeed`.
 export function useHomeFeed(initialPacks?: Pack[]) {
   const [format, setFormat] = useState<FormatFilterValue>("all");
   const [tags, setTags] = useState<PackTag[]>([]);
   const [searchInput, setSearchInput] = useState("");
   const [query, setQuery] = useState("");
-  // Seed from the server-rendered default feed when provided so the landing
-  // page has indexable content and doesn't flash a loading state on hydration.
-  // The mount effect below still refetches the default query once (filters may
-  // differ once the user interacts); seeded content stays visible meanwhile.
-  const [packs, setPacks] = useState<Pack[]>(initialPacks ?? []);
-  const [status, setStatus] = useState<FeedStatus>(
-    initialPacks ? "ready" : "loading",
-  );
   const [sort, setSort] = useState<SortFilterValue>("relevance");
   const [window, setWindow] = useState<WindowFilterValue>(
     DEFAULT_POPULAR_WINDOW,
@@ -47,30 +37,35 @@ export function useHomeFeed(initialPacks?: Pack[]) {
     return () => clearTimeout(timeout);
   }, [searchInput]);
 
-  useEffect(() => {
-    let cancelled = false;
-    packsClient
-      .list({
-        format: format === "all" ? undefined : format,
-        tags,
-        q: query || undefined,
-        limit: PAGE_SIZE,
-        sort: sort === "popular" ? "popular" : undefined,
-        window: sort === "popular" ? window : undefined,
-      })
-      .then((result) => {
-        if (cancelled) return;
-        setPacks(result.items);
-        setStatus("ready");
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setStatus("error");
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [format, tags, query, sort, window]);
+  // Resolve the UI filter state into the request/query key: the "all" format
+  // sentinel and empty search collapse to undefined, and sort/window only apply
+  // under the popular sort.
+  const filters = useMemo<PacksFeedFilters>(
+    () => ({
+      format: format === "all" ? undefined : format,
+      tags,
+      q: query || undefined,
+      sort: sort === "popular" ? "popular" : undefined,
+      window: sort === "popular" ? window : undefined,
+    }),
+    [format, tags, query, sort, window],
+  );
+
+  // Seed only the default-filters query with the server-rendered feed — other
+  // combinations fetch on demand.
+  const isDefaultFilters =
+    format === "all" && tags.length === 0 && !query && sort === "relevance";
+  const feedQuery = usePacksFeed(
+    filters,
+    isDefaultFilters ? initialPacks : undefined,
+  );
+
+  const packs = feedQuery.data ?? [];
+  const status: FeedStatus = feedQuery.isError
+    ? "error"
+    : feedQuery.isLoading
+      ? "loading"
+      : "ready";
 
   // Reset to the default window every time Popular is (re)selected, rather than
   // remembering the last-chosen window across a Relevance -> Popular round-trip
