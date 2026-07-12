@@ -481,6 +481,8 @@ describe("CommentSection", () => {
       await waitFor(() =>
         expect(screen.queryByText("Loved this pack.")).not.toBeInTheDocument(),
       );
+      // The header count reflects the drop (total decremented in the cache).
+      expect(screen.getByText("Comments · 0")).toBeInTheDocument();
       confirm.mockRestore();
     });
 

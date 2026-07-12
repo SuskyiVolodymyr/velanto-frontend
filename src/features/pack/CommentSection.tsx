@@ -184,7 +184,7 @@ export function CommentSection({
                     aria-label={t("deleteComment")}
                     disabled={deletingId === comment.id}
                     onClick={() => handleDelete(comment.id)}
-                    className="inline-flex h-7 w-7 items-center justify-center rounded-[7px] text-foreground-tertiary transition-colors hover:text-danger disabled:opacity-50"
+                    className="inline-flex h-7 w-7 items-center justify-center rounded-[7px] text-foreground-tertiary transition-colors hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50"
                   >
                     {deletingId === comment.id ? (
                       <Spinner size={14} />
