@@ -27,6 +27,7 @@ vi.mock("@/src/shared/lib/comments-client", () => ({
   commentsClient: {
     list: vi.fn(),
     create: vi.fn(),
+    vote: vi.fn(),
     delete: vi.fn(),
   },
 }));
@@ -108,6 +109,7 @@ describe("CommentSection", () => {
     expect(commentsClient.list).toHaveBeenCalledWith("pack-1", {
       page: 1,
       limit: 10,
+      sort: "top",
     });
   });
 
@@ -341,6 +343,7 @@ describe("CommentSection", () => {
     expect(commentsClient.list).toHaveBeenLastCalledWith("pack-1", {
       page: 2,
       limit: 10,
+      sort: "top",
     });
     expect(await screen.findByText("Second comment.")).toBeInTheDocument();
     expect(screen.getByText("Loved this pack.")).toBeInTheDocument();
@@ -684,6 +687,90 @@ describe("CommentSection", () => {
       expect(
         screen.queryByText("Couldn't post your comment. Try again."),
       ).not.toBeInTheDocument();
+    });
+  });
+
+  describe("voting and sort", () => {
+    it("re-fetches with sort=new when the New toggle is chosen", async () => {
+      const user = userEvent.setup();
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items: [COMMENT_A],
+        total: 1,
+        page: 1,
+        limit: 10,
+      });
+      renderAsUnauthenticated();
+
+      await screen.findByText("Loved this pack.");
+      await user.click(screen.getByRole("button", { name: "New" }));
+
+      await waitFor(() =>
+        expect(commentsClient.list).toHaveBeenLastCalledWith("pack-1", {
+          page: 1,
+          limit: 10,
+          sort: "new",
+        }),
+      );
+    });
+
+    it("renders a vote pill showing each comment's net score", async () => {
+      const scored: Comment = { ...COMMENT_A, likes: 5, dislikes: 2 };
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items: [scored],
+        total: 1,
+        page: 1,
+        limit: 10,
+      });
+      renderAsUnauthenticated();
+
+      await screen.findByText("Loved this pack.");
+      expect(
+        screen.getByRole("button", { name: "Upvote" }),
+      ).toBeInTheDocument();
+      expect(screen.getByText("3")).toBeInTheDocument(); // 5 − 2
+    });
+
+    it("casts an upvote on a comment and reflects the returned tally", async () => {
+      const user = userEvent.setup();
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items: [COMMENT_A],
+        total: 1,
+        page: 1,
+        limit: 10,
+      });
+      // Distinct likes/dislikes so the net score (6 − 2 = 4) is unambiguous —
+      // VoteControl renders the score and the raw counts as separate text.
+      vi.mocked(commentsClient.vote).mockResolvedValue({
+        score: 4,
+        likes: 6,
+        dislikes: 2,
+        myVote: 1,
+      });
+      renderAsAuthenticated();
+
+      await screen.findByText("Loved this pack.");
+      await user.click(screen.getByRole("button", { name: "Upvote" }));
+
+      await waitFor(() =>
+        expect(commentsClient.vote).toHaveBeenCalledWith("pack-1", "c1", 1),
+      );
+      expect(await screen.findByText("4")).toBeInTheDocument();
+    });
+
+    it("does not fire a vote for a signed-out viewer", async () => {
+      const user = userEvent.setup();
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items: [COMMENT_A],
+        total: 1,
+        page: 1,
+        limit: 10,
+      });
+      renderAsUnauthenticated();
+
+      await screen.findByText("Loved this pack.");
+      await user.click(screen.getByRole("button", { name: "Upvote" }));
+
+      expect(commentsClient.vote).not.toHaveBeenCalled();
     });
   });
 

@@ -382,7 +382,10 @@
     "replyPlaceholder": "Напишите ответ",
     "replyLabel": "Ответить на комментарий",
     "cancel": "Отмена",
-    "deleteCommentThreadConfirm": "Удалить этот комментарий и все ответы на него?"
+    "deleteCommentThreadConfirm": "Удалить этот комментарий и все ответы на него?",
+    "sortTop": "Популярные",
+    "sortNew": "Новые",
+    "sortLabel": "Сортировать комментарии"
   },
   "share": {
     "trigger": "Поделиться",

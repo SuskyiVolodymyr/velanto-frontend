@@ -382,7 +382,10 @@
     "replyPlaceholder": "جواب لکھیں",
     "replyLabel": "تبصرے کا جواب دیں",
     "cancel": "منسوخ کریں",
-    "deleteCommentThreadConfirm": "اس تبصرے اور اس کے تمام جوابات کو حذف کریں؟"
+    "deleteCommentThreadConfirm": "اس تبصرے اور اس کے تمام جوابات کو حذف کریں؟",
+    "sortTop": "مقبول",
+    "sortNew": "نئے",
+    "sortLabel": "تبصرے ترتیب دیں"
   },
   "share": {
     "trigger": "شیئر",

@@ -382,7 +382,10 @@
     "replyPlaceholder": "Escribe una respuesta",
     "replyLabel": "Responder al comentario",
     "cancel": "Cancelar",
-    "deleteCommentThreadConfirm": "¿Eliminar este comentario y todas sus respuestas?"
+    "deleteCommentThreadConfirm": "¿Eliminar este comentario y todas sus respuestas?",
+    "sortTop": "Populares",
+    "sortNew": "Nuevos",
+    "sortLabel": "Ordenar comentarios"
   },
   "share": {
     "trigger": "Compartir",

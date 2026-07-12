@@ -382,7 +382,10 @@
     "replyPlaceholder": "একটি উত্তর লিখুন",
     "replyLabel": "মন্তব্যের উত্তর দিন",
     "cancel": "বাতিল",
-    "deleteCommentThreadConfirm": "এই মন্তব্য এবং এর সমস্ত উত্তর মুছে ফেলবেন?"
+    "deleteCommentThreadConfirm": "এই মন্তব্য এবং এর সমস্ত উত্তর মুছে ফেলবেন?",
+    "sortTop": "শীর্ষ",
+    "sortNew": "নতুন",
+    "sortLabel": "মন্তব্য সাজান"
   },
   "share": {
     "trigger": "শেয়ার",
