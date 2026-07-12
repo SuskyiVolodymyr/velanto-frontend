@@ -376,7 +376,12 @@
     "voteError": "Couldn't record your vote. Try again.",
     "deleteComment": "Delete comment",
     "deleteCommentConfirm": "Delete this comment? This can't be undone.",
-    "deleteCommentError": "Couldn't delete the comment. Try again."
+    "deleteCommentError": "Couldn't delete the comment. Try again.",
+    "reply": "Reply",
+    "replyPlaceholder": "Write a reply",
+    "replyLabel": "Reply to comment",
+    "cancel": "Cancel",
+    "deleteCommentThreadConfirm": "Delete this comment and all its replies?"
   },
   "share": {
     "trigger": "Share",

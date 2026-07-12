@@ -19,8 +19,74 @@ import type { Comment } from "@/src/shared/types/comment";
 import {
   usePackComments,
   useAddPackComment,
+  useReplyToComment,
   useDeletePackComment,
 } from "@/src/features/pack/api/pack-comments.queries";
+
+/** A single comment's identity + body + row actions, shared by roots and
+ *  replies. The Reply affordance renders only when `onReply` is supplied. */
+function CommentView({
+  comment,
+  canDelete,
+  deleting,
+  onDelete,
+  onReply,
+}: {
+  comment: Comment;
+  canDelete: boolean;
+  deleting: boolean;
+  onDelete: () => void;
+  onReply?: () => void;
+}) {
+  const t = useTranslations("pack");
+  return (
+    <div>
+      <div className="flex items-center justify-between gap-2">
+        <Hidden kind="name" id={comment.authorId}>
+          <Link
+            href={`/users/${comment.authorId}`}
+            className="text-sm hover:underline"
+          >
+            <Username
+              username={comment.authorUsername}
+              role={comment.authorRole}
+              trusted={comment.authorTrusted}
+            />
+          </Link>
+        </Hidden>
+        {canDelete && (
+          <button
+            type="button"
+            aria-label={t("deleteComment")}
+            disabled={deleting}
+            onClick={onDelete}
+            className="inline-flex h-7 w-7 items-center justify-center rounded-[7px] text-foreground-tertiary transition-colors hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50"
+          >
+            {deleting ? (
+              <Spinner size={14} />
+            ) : (
+              <Trash2 aria-hidden className="h-4 w-4" />
+            )}
+          </button>
+        )}
+      </div>
+      <Hidden kind="comment" id={comment.id}>
+        <Text variant="secondary" className="text-sm">
+          {comment.body}
+        </Text>
+      </Hidden>
+      {onReply && (
+        <button
+          type="button"
+          onClick={onReply}
+          className="mt-1 text-xs font-medium text-foreground-tertiary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc rounded-[4px]"
+        >
+          {t("reply")}
+        </button>
+      )}
+    </div>
+  );
+}
 
 export function CommentSection({
   packId,
@@ -34,10 +100,15 @@ export function CommentSection({
   const t = useTranslations("pack");
   const tAuth = useTranslations("authGate");
   const blocked = status === "unauthenticated";
+  const authenticated = status === "authenticated";
   const [draft, setDraft] = useState("");
+  // The root whose inline reply composer is open (null = none), plus its text.
+  const [replyingToId, setReplyingToId] = useState<string | null>(null);
+  const [replyDraft, setReplyDraft] = useState("");
 
   const commentsQuery = usePackComments(packId);
   const addComment = useAddPackComment(packId);
+  const replyComment = useReplyToComment(packId);
   const deleteComment = useDeletePackComment(packId);
   const deletingId = deleteComment.isPending
     ? (deleteComment.variables ?? null)
@@ -52,12 +123,43 @@ export function CommentSection({
       user.id === packAuthorId ||
       isStaff(user.role));
 
-  function handleDelete(commentId: string) {
-    if (!window.confirm(t("deleteCommentConfirm"))) return;
-    deleteComment.mutate(commentId);
+  function handleDelete(comment: Comment) {
+    const hasReplies = (comment.replyCount ?? comment.replies?.length ?? 0) > 0;
+    const message = hasReplies
+      ? t("deleteCommentThreadConfirm")
+      : t("deleteCommentConfirm");
+    if (!window.confirm(message)) return;
+    deleteComment.mutate(comment.id);
   }
 
-  const comments = useMemo(() => {
+  // Opening a reply composer: on a root it starts empty; on a reply it
+  // pre-fills an @mention of the reply's author (the reply still attaches to
+  // the root — two-level threading).
+  function openReply(rootId: string, mentionUsername?: string) {
+    // Clear any error left over from a previous composer so a freshly-opened
+    // one doesn't surface a stale "couldn't post" before the user types.
+    replyComment.reset();
+    setReplyingToId(rootId);
+    setReplyDraft(mentionUsername ? `@${mentionUsername} ` : "");
+  }
+
+  function handlePostReply(rootId: string) {
+    const body = replyDraft.trim();
+    if (!body) return;
+    replyComment.mutate(
+      { body, parentId: rootId },
+      {
+        onSuccess: () => {
+          setReplyingToId(null);
+          setReplyDraft("");
+        },
+      },
+    );
+  }
+
+  // Dedup roots by id across pages (a post can shift server offsets so the next
+  // page re-returns an already-shown root).
+  const roots = useMemo(() => {
     const seen = new Set<string>();
     const out: Comment[] = [];
     for (const page of commentsQuery.data?.pages ?? []) {
@@ -88,9 +190,15 @@ export function CommentSection({
   const postError = addComment.isError
     ? messageFromError(addComment.error, { fallback: t("postErrorFallback") })
     : "";
+  const replyError =
+    replyComment.isError && replyingToId
+      ? messageFromError(replyComment.error, {
+          fallback: t("postErrorFallback"),
+        })
+      : "";
 
   function handlePost() {
-    if (status !== "authenticated") return;
+    if (!authenticated) return;
     const body = draft.trim();
     if (!body) return;
     addComment.mutate(body, { onSuccess: () => setDraft("") });
@@ -130,6 +238,47 @@ export function CommentSection({
     </div>
   );
 
+  const replyPending = (rootId: string) =>
+    replyComment.isPending && replyComment.variables?.parentId === rootId;
+
+  function renderReplyComposer(rootId: string) {
+    return (
+      <div className="mt-3 flex flex-col gap-2">
+        <textarea
+          value={replyDraft}
+          onChange={(e) => setReplyDraft(e.target.value)}
+          placeholder={t("replyPlaceholder")}
+          aria-label={t("replyLabel")}
+          rows={2}
+          autoFocus
+          disabled={replyPending(rootId)}
+          className="rounded-[10px] border border-border bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-acc disabled:opacity-45"
+        />
+        {replyError && (
+          <Text className="text-sm text-danger">{replyError}</Text>
+        )}
+        <div className="flex justify-end gap-2">
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setReplyingToId(null);
+              setReplyDraft("");
+            }}
+          >
+            {t("cancel")}
+          </Button>
+          <Button
+            disabled={!replyDraft.trim() || replyPending(rootId)}
+            loading={replyPending(rootId)}
+            onClick={() => handlePostReply(rootId)}
+          >
+            {t("post")}
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <section>
       <Text
@@ -155,56 +304,55 @@ export function CommentSection({
       {loadStatus === "error" && (
         <Text className="text-danger">{t("loadCommentsError")}</Text>
       )}
-      {loadStatus === "ready" && comments.length === 0 && (
+      {loadStatus === "ready" && roots.length === 0 && (
         <Text variant="secondary">{t("noComments")}</Text>
       )}
-      {loadStatus === "ready" && comments.length > 0 && (
+      {loadStatus === "ready" && roots.length > 0 && (
         <div className="flex flex-col gap-4">
           {deleteError && (
             <Text className="text-sm text-danger">{deleteError}</Text>
           )}
-          {comments.map((comment) => (
-            <div key={comment.id}>
-              <div className="flex items-center justify-between gap-2">
-                <Hidden kind="name" id={comment.authorId}>
-                  <Link
-                    href={`/users/${comment.authorId}`}
-                    className="text-sm hover:underline"
-                  >
-                    <Username
-                      username={comment.authorUsername}
-                      role={comment.authorRole}
-                      trusted={comment.authorTrusted}
-                    />
-                  </Link>
-                </Hidden>
-                {canDelete(comment) && (
-                  <button
-                    type="button"
-                    aria-label={t("deleteComment")}
-                    disabled={deletingId === comment.id}
-                    onClick={() => handleDelete(comment.id)}
-                    className="inline-flex h-7 w-7 items-center justify-center rounded-[7px] text-foreground-tertiary transition-colors hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50"
-                  >
-                    {deletingId === comment.id ? (
-                      <Spinner size={14} />
-                    ) : (
-                      <Trash2 aria-hidden className="h-4 w-4" />
-                    )}
-                  </button>
+          {roots.map((root) => {
+            const replies = root.replies ?? [];
+            return (
+              <div
+                key={root.id}
+                className="rounded-[12px] border border-border p-4"
+              >
+                <CommentView
+                  comment={root}
+                  canDelete={canDelete(root)}
+                  deleting={deletingId === root.id}
+                  onDelete={() => handleDelete(root)}
+                  onReply={authenticated ? () => openReply(root.id) : undefined}
+                />
+
+                {(replies.length > 0 || replyingToId === root.id) && (
+                  <div className="mt-4 flex flex-col gap-4 border-l border-border pl-3.5">
+                    {replies.map((reply) => (
+                      <CommentView
+                        key={reply.id}
+                        comment={reply}
+                        canDelete={canDelete(reply)}
+                        deleting={deletingId === reply.id}
+                        onDelete={() => handleDelete(reply)}
+                        onReply={
+                          authenticated
+                            ? () => openReply(root.id, reply.authorUsername)
+                            : undefined
+                        }
+                      />
+                    ))}
+                    {replyingToId === root.id && renderReplyComposer(root.id)}
+                  </div>
                 )}
               </div>
-              <Hidden kind="comment" id={comment.id}>
-                <Text variant="secondary" className="text-sm">
-                  {comment.body}
-                </Text>
-              </Hidden>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
-      {loadStatus === "ready" && comments.length < total && (
+      {loadStatus === "ready" && roots.length < total && (
         <div className="mt-4 flex flex-col gap-2">
           <Button
             variant="secondary"

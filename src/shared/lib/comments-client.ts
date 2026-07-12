@@ -3,6 +3,8 @@ import type { Comment } from "@/src/shared/types/comment";
 
 export interface CreateCommentInput {
   body: string;
+  /** When set, this comment is a reply to the given root comment. */
+  parentId?: string;
 }
 
 export interface ListCommentsFilters {
