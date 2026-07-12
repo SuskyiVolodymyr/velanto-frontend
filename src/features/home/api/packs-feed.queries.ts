@@ -1,4 +1,8 @@
-import { queryOptions, useQuery, keepPreviousData } from "@tanstack/react-query";
+import {
+  queryOptions,
+  useQuery,
+  keepPreviousData,
+} from "@tanstack/react-query";
 import type { Pack } from "@/src/shared/types/pack";
 import { getPacksFeed, type PacksFeedFilters } from "./packs-feed";
 

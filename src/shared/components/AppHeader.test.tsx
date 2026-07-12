@@ -91,9 +91,7 @@ describe("AppHeader", () => {
     renderHeader();
 
     // Give the refresh-on-mount rejection time to settle to "unauthenticated".
-    await waitFor(() =>
-      expect(authClient.refresh).toHaveBeenCalled(),
-    );
+    await waitFor(() => expect(authClient.refresh).toHaveBeenCalled());
     expect(
       screen.queryByRole("link", { name: "Log in" }),
     ).not.toBeInTheDocument();
@@ -120,7 +118,9 @@ describe("AppHeader", () => {
     );
     renderHeader();
 
-    expect(await screen.findByRole("link", { name: "Docs" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("link", { name: "Docs" }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Settings" })).toBeInTheDocument();
     expect(
       screen.queryByRole("link", { name: "Log in" }),

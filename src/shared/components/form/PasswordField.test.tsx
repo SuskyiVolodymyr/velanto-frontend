@@ -21,7 +21,10 @@ function Harness() {
 describe("PasswordField", () => {
   it("masks the input by default with a Show toggle", () => {
     render(<Harness />);
-    expect(screen.getByLabelText("Password")).toHaveAttribute("type", "password");
+    expect(screen.getByLabelText("Password")).toHaveAttribute(
+      "type",
+      "password",
+    );
     const toggle = screen.getByRole("button", { name: "Show password" });
     expect(toggle).toHaveAttribute("aria-pressed", "false");
     expect(toggle).toHaveAttribute("type", "button");
@@ -39,7 +42,10 @@ describe("PasswordField", () => {
     expect(toggle).toHaveAttribute("aria-pressed", "true");
 
     await user.click(toggle);
-    expect(screen.getByLabelText("Password")).toHaveAttribute("type", "password");
+    expect(screen.getByLabelText("Password")).toHaveAttribute(
+      "type",
+      "password",
+    );
     expect(
       screen.getByRole("button", { name: "Show password" }),
     ).toBeInTheDocument();

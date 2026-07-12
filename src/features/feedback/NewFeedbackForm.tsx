@@ -41,7 +41,8 @@ export function NewFeedbackForm() {
   }));
   const visibilityOptions = VISIBILITY_ORDER.map((value) => ({
     value,
-    label: value === "everyone" ? t("visibilityEveryone") : t("visibilityStaffOnly"),
+    label:
+      value === "everyone" ? t("visibilityEveryone") : t("visibilityStaffOnly"),
   }));
   const languageOptions = [
     { value: "", label: t("chooseLanguage") },

@@ -6,8 +6,10 @@ import { Input } from "@/src/shared/components/Input";
 import { FormField } from "@/src/shared/components/form/FormField";
 import { useFieldError } from "@/src/shared/components/form/useFieldError";
 
-export interface PasswordFieldProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "name" | "type"> {
+export interface PasswordFieldProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "name" | "type"
+> {
   /** Field name; must exist on the form's schema. */
   name: string;
   label: string;

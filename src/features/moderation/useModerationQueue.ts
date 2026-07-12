@@ -21,7 +21,10 @@ function moderationQueueQueryOptions() {
       packsClient.moderationQueue({ page: pageParam, limit: PAGE_SIZE }),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
-      const loaded = allPages.reduce((count, page) => count + page.items.length, 0);
+      const loaded = allPages.reduce(
+        (count, page) => count + page.items.length,
+        0,
+      );
       return loaded < lastPage.total ? allPages.length + 1 : undefined;
     },
   });
@@ -55,17 +58,19 @@ export function useModerationQueue({ enabled }: { enabled: boolean }) {
   const hasData = queueQuery.data !== undefined;
 
   function removeFromQueue(id: string) {
-    queryClient.setQueryData<InfiniteData<QueuePage, number>>(queryKey, (old) =>
-      old
-        ? {
-            ...old,
-            pages: old.pages.map((page) => ({
-              ...page,
-              items: page.items.filter((pack) => pack.id !== id),
-              total: page.total - 1,
-            })),
-          }
-        : old,
+    queryClient.setQueryData<InfiniteData<QueuePage, number>>(
+      queryKey,
+      (old) =>
+        old
+          ? {
+              ...old,
+              pages: old.pages.map((page) => ({
+                ...page,
+                items: page.items.filter((pack) => pack.id !== id),
+                total: page.total - 1,
+              })),
+            }
+          : old,
     );
   }
 
@@ -95,10 +100,12 @@ export function useModerationQueue({ enabled }: { enabled: boolean }) {
     rowBusy[rejectMutation.variables.id] = true;
   }
   if (approveMutation.isError && approveMutation.variables) {
-    rowError[approveMutation.variables] = "Couldn't approve this pack. Try again.";
+    rowError[approveMutation.variables] =
+      "Couldn't approve this pack. Try again.";
   }
   if (rejectMutation.isError && rejectMutation.variables) {
-    rowError[rejectMutation.variables.id] = "Couldn't reject this pack. Try again.";
+    rowError[rejectMutation.variables.id] =
+      "Couldn't reject this pack. Try again.";
   }
 
   return {

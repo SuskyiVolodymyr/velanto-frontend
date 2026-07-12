@@ -61,9 +61,11 @@ const RESULTS: PackResults = {
 describe("usePackFallback", () => {
   // Fresh QueryClient per test so a query key (e.g. p1) isn't served from a
   // prior test's cache.
-  let wrapper: ({ children }: { children: ReactNode }) => ReturnType<
-    typeof createElement
-  >;
+  let wrapper: ({
+    children,
+  }: {
+    children: ReactNode;
+  }) => ReturnType<typeof createElement>;
   beforeEach(() => {
     vi.resetAllMocks();
     const client = createTestQueryClient();
@@ -73,8 +75,8 @@ describe("usePackFallback", () => {
 
   it("stays loading and does not fetch while auth status is still loading", () => {
     mockAuthStatus("loading");
-    const { result } = renderHook(() =>
-      usePackFallback("p1", { needsResults: false }),
+    const { result } = renderHook(
+      () => usePackFallback("p1", { needsResults: false }),
       { wrapper },
     );
     expect(result.current).toEqual({ status: "loading" });
@@ -83,8 +85,8 @@ describe("usePackFallback", () => {
 
   it("resolves to notfound without fetching when the viewer is unauthenticated", async () => {
     mockAuthStatus("unauthenticated");
-    const { result } = renderHook(() =>
-      usePackFallback("p1", { needsResults: false }),
+    const { result } = renderHook(
+      () => usePackFallback("p1", { needsResults: false }),
       { wrapper },
     );
     await waitFor(() => expect(result.current).toEqual({ status: "notfound" }));
@@ -94,8 +96,8 @@ describe("usePackFallback", () => {
   it("resolves to ready with the pack when authenticated and needsResults is false", async () => {
     mockAuthStatus("authenticated");
     mockedPacksClient.getById.mockResolvedValue(PACK);
-    const { result } = renderHook(() =>
-      usePackFallback("p1", { needsResults: false }),
+    const { result } = renderHook(
+      () => usePackFallback("p1", { needsResults: false }),
       { wrapper },
     );
     await waitFor(() =>
@@ -112,8 +114,8 @@ describe("usePackFallback", () => {
     mockAuthStatus("authenticated");
     mockedPacksClient.getById.mockResolvedValue(PACK);
     mockedPlaysClient.getResults.mockResolvedValue(RESULTS);
-    const { result } = renderHook(() =>
-      usePackFallback("p1", { needsResults: true }),
+    const { result } = renderHook(
+      () => usePackFallback("p1", { needsResults: true }),
       { wrapper },
     );
     await waitFor(() =>
@@ -130,8 +132,8 @@ describe("usePackFallback", () => {
     mockedPacksClient.getById.mockRejectedValue(
       new ApiError(404, "Not Found", null),
     );
-    const { result } = renderHook(() =>
-      usePackFallback("p1", { needsResults: false }),
+    const { result } = renderHook(
+      () => usePackFallback("p1", { needsResults: false }),
       { wrapper },
     );
     await waitFor(() => expect(result.current).toEqual({ status: "notfound" }));
@@ -143,8 +145,8 @@ describe("usePackFallback", () => {
     mockedPlaysClient.getResults.mockRejectedValue(
       new ApiError(404, "Not Found", null),
     );
-    const { result } = renderHook(() =>
-      usePackFallback("p1", { needsResults: true }),
+    const { result } = renderHook(
+      () => usePackFallback("p1", { needsResults: true }),
       { wrapper },
     );
     await waitFor(() => expect(result.current).toEqual({ status: "notfound" }));
@@ -158,8 +160,8 @@ describe("usePackFallback", () => {
         resolveGetById = resolve;
       }),
     );
-    const { unmount } = renderHook(() =>
-      usePackFallback("p1", { needsResults: false }),
+    const { unmount } = renderHook(
+      () => usePackFallback("p1", { needsResults: false }),
       { wrapper },
     );
     unmount();

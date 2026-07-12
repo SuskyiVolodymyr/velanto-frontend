@@ -23,7 +23,10 @@ function notificationsListQueryOptions() {
       notificationsClient.list({ page: pageParam, limit: PAGE_SIZE }),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
-      const loaded = allPages.reduce((count, page) => count + page.items.length, 0);
+      const loaded = allPages.reduce(
+        (count, page) => count + page.items.length,
+        0,
+      );
       return loaded < lastPage.total ? allPages.length + 1 : undefined;
     },
   });
@@ -128,7 +131,8 @@ export function useNotifications() {
     notifications,
     total,
     listLoading: listQuery.isLoading,
-    listError: !listLoaded && listQuery.isError ? (listQuery.error as Error) : null,
+    listError:
+      !listLoaded && listQuery.isError ? (listQuery.error as Error) : null,
     listReady,
     loadingMore: listQuery.isFetchingNextPage,
     loadMoreError:

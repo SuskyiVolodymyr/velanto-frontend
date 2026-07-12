@@ -76,6 +76,9 @@ export function useAdminLogs(filters: AuditLogFilters) {
 
 export function useAdminOverview() {
   return useQuery(
-    queryOptions({ queryKey: ["admin-overview"] as const, queryFn: fetchOverview }),
+    queryOptions({
+      queryKey: ["admin-overview"] as const,
+      queryFn: fetchOverview,
+    }),
   );
 }

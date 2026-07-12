@@ -102,7 +102,9 @@ describe("AuthForm", () => {
       "alice@example.com",
     );
     expect(
-      await screen.findByText(/one-time password was sent to alice@example.com/i),
+      await screen.findByText(
+        /one-time password was sent to alice@example.com/i,
+      ),
     ).toBeInTheDocument();
     expect(screen.getByText(/check your spam folder/i)).toBeInTheDocument();
     expect(screen.getByLabelText("Verification code")).toBeInTheDocument();
@@ -125,7 +127,10 @@ describe("AuthForm", () => {
     await fillRegisterForm(user);
     await user.click(screen.getByRole("button", { name: "Continue" }));
 
-    await user.type(await screen.findByLabelText("Verification code"), "123456");
+    await user.type(
+      await screen.findByLabelText("Verification code"),
+      "123456",
+    );
     await user.click(screen.getByRole("button", { name: "Create account" }));
 
     await waitFor(() => expect(replace).toHaveBeenCalledWith("/"));
