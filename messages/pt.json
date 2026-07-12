@@ -374,7 +374,10 @@
     "postErrorFallback": "Não foi possível publicar seu comentário. Tente novamente.",
     "upvote": "Curtir",
     "downvote": "Descurtir",
-    "voteError": "Não foi possível registrar seu voto. Tente novamente."
+    "voteError": "Não foi possível registrar seu voto. Tente novamente.",
+    "deleteComment": "Excluir comentário",
+    "deleteCommentConfirm": "Excluir este comentário? Esta ação não pode ser desfeita.",
+    "deleteCommentError": "Não foi possível excluir o comentário. Tente novamente."
   },
   "share": {
     "trigger": "Compartilhar",

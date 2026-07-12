@@ -27,6 +27,7 @@ vi.mock("@/src/shared/lib/comments-client", () => ({
   commentsClient: {
     list: vi.fn(),
     create: vi.fn(),
+    delete: vi.fn(),
   },
 }));
 
@@ -67,6 +68,22 @@ function renderAsUnauthenticated() {
     <NextIntlClientProvider locale="en" messages={messages}>
       <AuthProvider>
         <CommentSection packId="pack-1" />
+      </AuthProvider>
+    </NextIntlClientProvider>,
+  );
+}
+
+// Render authenticated as a chosen user, with an explicit pack author id — used
+// by the delete-affordance tests to exercise the author/pack-author/staff paths.
+function renderAuthedAs(user: User, packAuthorId?: string) {
+  vi.mocked(authClient.refresh).mockResolvedValue({
+    accessToken: "token",
+    user,
+  });
+  return render(
+    <NextIntlClientProvider locale="en" messages={messages}>
+      <AuthProvider>
+        <CommentSection packId="pack-1" packAuthorId={packAuthorId} />
       </AuthProvider>
     </NextIntlClientProvider>,
   );
@@ -385,6 +402,122 @@ describe("CommentSection", () => {
     expect(
       await screen.findByText("Couldn't load more comments. Try again."),
     ).toBeInTheDocument();
+  });
+
+  describe("delete affordance", () => {
+    const MODERATOR: User = { ...USER, id: "mod-1", role: "moderator" };
+    const OWN_COMMENT: Comment = { ...COMMENT_A, id: "c-own", authorId: "u1" };
+
+    function listOnce(items: Comment[]) {
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items,
+        total: items.length,
+        page: 1,
+        limit: 10,
+      });
+    }
+
+    it("shows a delete button when the viewer is the pack author", async () => {
+      listOnce([COMMENT_A]); // authored by u2
+      renderAuthedAs(USER, "u1"); // u1 owns the pack
+
+      expect(
+        await screen.findByRole("button", { name: "Delete comment" }),
+      ).toBeInTheDocument();
+    });
+
+    it("shows a delete button on the viewer's own comment", async () => {
+      listOnce([OWN_COMMENT]); // authored by u1
+      renderAuthedAs(USER, "someone-else");
+
+      expect(
+        await screen.findByRole("button", { name: "Delete comment" }),
+      ).toBeInTheDocument();
+    });
+
+    it("shows a delete button for a staff viewer on anyone's comment", async () => {
+      listOnce([COMMENT_A]); // authored by u2
+      renderAuthedAs(MODERATOR, "someone-else");
+
+      expect(
+        await screen.findByRole("button", { name: "Delete comment" }),
+      ).toBeInTheDocument();
+    });
+
+    it("hides the delete button from a regular viewer who is neither author, pack author, nor staff", async () => {
+      listOnce([COMMENT_A]); // authored by u2
+      renderAuthedAs(USER, "someone-else"); // u1, plain user, not pack author
+
+      await screen.findByText("Loved this pack.");
+      expect(
+        screen.queryByRole("button", { name: "Delete comment" }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("hides the delete button when unauthenticated", async () => {
+      listOnce([COMMENT_A]);
+      renderAsUnauthenticated();
+
+      await screen.findByText("Loved this pack.");
+      expect(
+        screen.queryByRole("button", { name: "Delete comment" }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("deletes a comment on confirm and removes it from the list", async () => {
+      const user = userEvent.setup();
+      const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
+      listOnce([COMMENT_A]);
+      vi.mocked(commentsClient.delete).mockResolvedValue(undefined);
+      renderAuthedAs(MODERATOR, "someone-else");
+
+      await user.click(
+        await screen.findByRole("button", { name: "Delete comment" }),
+      );
+
+      await waitFor(() =>
+        expect(commentsClient.delete).toHaveBeenCalledWith("pack-1", "c1"),
+      );
+      await waitFor(() =>
+        expect(screen.queryByText("Loved this pack.")).not.toBeInTheDocument(),
+      );
+      // The header count reflects the drop (total decremented in the cache).
+      expect(screen.getByText("Comments · 0")).toBeInTheDocument();
+      confirm.mockRestore();
+    });
+
+    it("does not delete when the confirmation is cancelled", async () => {
+      const user = userEvent.setup();
+      const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
+      listOnce([COMMENT_A]);
+      renderAuthedAs(MODERATOR, "someone-else");
+
+      await user.click(
+        await screen.findByRole("button", { name: "Delete comment" }),
+      );
+
+      expect(commentsClient.delete).not.toHaveBeenCalled();
+      expect(screen.getByText("Loved this pack.")).toBeInTheDocument();
+      confirm.mockRestore();
+    });
+
+    it("shows an inline error when deletion fails and keeps the comment", async () => {
+      const user = userEvent.setup();
+      const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
+      listOnce([COMMENT_A]);
+      vi.mocked(commentsClient.delete).mockRejectedValue(new Error("boom"));
+      renderAuthedAs(MODERATOR, "someone-else");
+
+      await user.click(
+        await screen.findByRole("button", { name: "Delete comment" }),
+      );
+
+      expect(
+        await screen.findByText("Couldn't delete the comment. Try again."),
+      ).toBeInTheDocument();
+      expect(screen.getByText("Loved this pack.")).toBeInTheDocument();
+      confirm.mockRestore();
+    });
   });
 
   describe("streamer mode", () => {

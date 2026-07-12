@@ -105,7 +105,7 @@ export function PackDetailScreen({
 
         <PackCreatorCard pack={pack} />
 
-        <CommentSection packId={pack.id} />
+        <CommentSection packId={pack.id} packAuthorId={pack.authorId} />
       </div>
     </main>
   );

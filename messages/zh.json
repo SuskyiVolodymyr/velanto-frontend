@@ -374,7 +374,10 @@
     "postErrorFallback": "无法发布你的评论，请重试。",
     "upvote": "顶",
     "downvote": "踩",
-    "voteError": "无法记录你的投票，请重试。"
+    "voteError": "无法记录你的投票，请重试。",
+    "deleteComment": "删除评论",
+    "deleteCommentConfirm": "删除此评论？此操作无法撤销。",
+    "deleteCommentError": "无法删除评论。请重试。"
   },
   "share": {
     "trigger": "分享",

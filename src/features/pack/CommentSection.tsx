@@ -2,24 +2,35 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+import { Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { Button } from "@/src/shared/components/Button";
+import { Spinner } from "@/src/shared/components/Spinner";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { Username } from "@/src/shared/components/Username";
 import { Tooltip } from "@/src/shared/components/Tooltip";
 import { useAuth } from "@/src/shared/lib/auth-context";
+import { isStaff } from "@/src/shared/lib/user-role";
 import { cn } from "@/src/shared/lib/cn";
 import { messageFromError } from "@/src/shared/lib/messageFromError";
 import type { Comment } from "@/src/shared/types/comment";
 import {
   usePackComments,
   useAddPackComment,
+  useDeletePackComment,
 } from "@/src/features/pack/api/pack-comments.queries";
 
-export function CommentSection({ packId }: { packId: string }) {
-  const { status } = useAuth();
+export function CommentSection({
+  packId,
+  packAuthorId,
+}: {
+  packId: string;
+  /** The pack's author — allowed to delete any comment on their own pack. */
+  packAuthorId?: string;
+}) {
+  const { status, user } = useAuth();
   const t = useTranslations("pack");
   const tAuth = useTranslations("authGate");
   const blocked = status === "unauthenticated";
@@ -27,6 +38,24 @@ export function CommentSection({ packId }: { packId: string }) {
 
   const commentsQuery = usePackComments(packId);
   const addComment = useAddPackComment(packId);
+  const deleteComment = useDeletePackComment(packId);
+  const deletingId = deleteComment.isPending
+    ? (deleteComment.variables ?? null)
+    : null;
+  const deleteError = deleteComment.isError ? t("deleteCommentError") : "";
+
+  // A comment is deletable by its own author, the pack's author, or any staff
+  // (moderator+) — the backend enforces the same rule; this just gates the UI.
+  const canDelete = (comment: Comment) =>
+    !!user &&
+    (user.id === comment.authorId ||
+      user.id === packAuthorId ||
+      isStaff(user.role));
+
+  function handleDelete(commentId: string) {
+    if (!window.confirm(t("deleteCommentConfirm"))) return;
+    deleteComment.mutate(commentId);
+  }
 
   const comments = useMemo(() => {
     const seen = new Set<string>();
@@ -131,20 +160,40 @@ export function CommentSection({ packId }: { packId: string }) {
       )}
       {loadStatus === "ready" && comments.length > 0 && (
         <div className="flex flex-col gap-4">
+          {deleteError && (
+            <Text className="text-sm text-danger">{deleteError}</Text>
+          )}
           {comments.map((comment) => (
             <div key={comment.id}>
-              <Hidden kind="name" id={comment.authorId}>
-                <Link
-                  href={`/users/${comment.authorId}`}
-                  className="text-sm hover:underline"
-                >
-                  <Username
-                    username={comment.authorUsername}
-                    role={comment.authorRole}
-                    trusted={comment.authorTrusted}
-                  />
-                </Link>
-              </Hidden>
+              <div className="flex items-center justify-between gap-2">
+                <Hidden kind="name" id={comment.authorId}>
+                  <Link
+                    href={`/users/${comment.authorId}`}
+                    className="text-sm hover:underline"
+                  >
+                    <Username
+                      username={comment.authorUsername}
+                      role={comment.authorRole}
+                      trusted={comment.authorTrusted}
+                    />
+                  </Link>
+                </Hidden>
+                {canDelete(comment) && (
+                  <button
+                    type="button"
+                    aria-label={t("deleteComment")}
+                    disabled={deletingId === comment.id}
+                    onClick={() => handleDelete(comment.id)}
+                    className="inline-flex h-7 w-7 items-center justify-center rounded-[7px] text-foreground-tertiary transition-colors hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50"
+                  >
+                    {deletingId === comment.id ? (
+                      <Spinner size={14} />
+                    ) : (
+                      <Trash2 aria-hidden className="h-4 w-4" />
+                    )}
+                  </button>
+                )}
+              </div>
               <Hidden kind="comment" id={comment.id}>
                 <Text variant="secondary" className="text-sm">
                   {comment.body}
