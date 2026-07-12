@@ -41,7 +41,8 @@
     "notifNewFollower": "Nuevo seguidor",
     "notifNewPack": "Nuevo pack de alguien que sigues",
     "notifNewComment": "Nuevo comentario en tu pack",
-    "notifPackDeleted": "Pack eliminado por un moderador"
+    "notifPackDeleted": "Pack eliminado por un moderador",
+    "notifCommentMention": "Te mencionaron en un comentario"
   },
   "streamerMode": {
     "hiddenHint": "Oculto por el modo streamer",

@@ -75,12 +75,30 @@ describe("describeNotification", () => {
     });
   });
 
+  it("formats comment_mention with a link to the pack", () => {
+    const result = describeNotification(
+      makeNotification({
+        type: "comment_mention",
+        payload: {
+          packId: "p1",
+          packTitle: "Anime OSTs",
+          commentId: "c1",
+          mentionerUsername: "dave",
+        },
+      }),
+    );
+    expect(result).toEqual({
+      message: "dave mentioned you on Anime OSTs",
+      href: "/packs/p1",
+    });
+  });
+
   it("falls back to a generic row for an unknown notification type (forward-compat)", () => {
     const result = describeNotification(
       makeNotification({
         // A type this client doesn't know yet (e.g. a newer backend type). The
         // cast models a server sending a type outside the current union.
-        type: "comment_mention" as Notification["type"],
+        type: "some_future_type" as Notification["type"],
         payload: { packId: "p1" },
       }),
     );

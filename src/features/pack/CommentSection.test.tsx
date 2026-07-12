@@ -774,6 +774,21 @@ describe("CommentSection", () => {
     });
   });
 
+  it("highlights an @mention in a comment body", async () => {
+    const mentioning: Comment = { ...COMMENT_A, body: "great point @alice" };
+    vi.mocked(commentsClient.list).mockResolvedValue({
+      items: [mentioning],
+      total: 1,
+      page: 1,
+      limit: 10,
+    });
+    renderAsUnauthenticated();
+
+    const mention = await screen.findByText("@alice");
+    expect(mention.tagName).toBe("SPAN");
+    expect(mention).toHaveClass("text-acc");
+  });
+
   describe("streamer mode", () => {
     afterEach(() => localStorage.clear());
 

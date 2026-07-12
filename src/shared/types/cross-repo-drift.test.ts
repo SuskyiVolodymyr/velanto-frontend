@@ -222,6 +222,7 @@ describe("cross-repo mirrored constants (velanto-backend contract)", () => {
       "new_follower",
       "new_pack_from_followed",
       "new_comment",
+      "comment_mention",
       "pack_deleted_warning",
     ]);
   });

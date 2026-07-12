@@ -41,7 +41,8 @@
     "notifNewFollower": "Новий підписник",
     "notifNewPack": "Новий пак від того, за ким ти стежиш",
     "notifNewComment": "Новий коментар до твого пака",
-    "notifPackDeleted": "Пак видалено модератором"
+    "notifPackDeleted": "Пак видалено модератором",
+    "notifCommentMention": "Тебе згадали в коментарі"
   },
   "streamerMode": {
     "hiddenHint": "Приховано через режим стримера",

@@ -41,7 +41,8 @@
     "notifNewFollower": "नया फ़ॉलोअर",
     "notifNewPack": "आपके फ़ॉलो किए किसी व्यक्ति का नया पैक",
     "notifNewComment": "आपके पैक पर नई टिप्पणी",
-    "notifPackDeleted": "मॉडरेटर द्वारा हटाया गया पैक"
+    "notifPackDeleted": "मॉडरेटर द्वारा हटाया गया पैक",
+    "notifCommentMention": "एक टिप्पणी में आपका उल्लेख किया गया"
   },
   "streamerMode": {
     "hiddenHint": "स्ट्रीमर मोड के कारण छिपाया गया",

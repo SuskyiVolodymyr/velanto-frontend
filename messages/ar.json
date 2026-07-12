@@ -41,7 +41,8 @@
     "notifNewFollower": "متابِع جديد",
     "notifNewPack": "حزمة جديدة ممّن تتابعهم",
     "notifNewComment": "تعليق جديد على حزمتك",
-    "notifPackDeleted": "حزمة أزالها مشرف"
+    "notifPackDeleted": "حزمة أزالها مشرف",
+    "notifCommentMention": "تمت الإشارة إليك في تعليق"
   },
   "streamerMode": {
     "hiddenHint": "مخفي بسبب وضع البث",

@@ -41,7 +41,8 @@
     "notifNewFollower": "নতুন ফলোয়ার",
     "notifNewPack": "আপনি যাকে ফলো করেন তার নতুন প্যাক",
     "notifNewComment": "আপনার প্যাকে নতুন মন্তব্য",
-    "notifPackDeleted": "একজন মডারেটর প্যাকটি সরিয়ে দিয়েছেন"
+    "notifPackDeleted": "একজন মডারেটর প্যাকটি সরিয়ে দিয়েছেন",
+    "notifCommentMention": "একটি মন্তব্যে আপনাকে উল্লেখ করা হয়েছে"
   },
   "streamerMode": {
     "hiddenHint": "স্ট্রিমার মোডের কারণে লুকানো",
