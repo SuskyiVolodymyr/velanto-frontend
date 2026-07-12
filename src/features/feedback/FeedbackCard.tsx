@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import { Badge } from "@/src/shared/components/Badge";
 import { StatusBadge } from "@/src/shared/components/StatusBadge";
 import { Text } from "@/src/shared/components/Text";
+import { Username } from "@/src/shared/components/Username";
 import type { Feedback, FeedbackTopic } from "@/src/shared/types/feedback";
 
 // Feedback topic value → key in the `feedback` i18n namespace.
@@ -59,7 +60,12 @@ export function FeedbackCard({
         <Text className="font-semibold">{post.title}</Text>
         <div className="flex flex-wrap items-center gap-2">
           <Text variant="tertiary" className="text-xs">
-            {t("by")} {post.authorUsername}
+            {t("by")}{" "}
+            <Username
+              username={post.authorUsername}
+              role={post.authorRole}
+              trusted={post.authorTrusted}
+            />
           </Text>
           <Text variant="tertiary" className="text-xs">
             · {t("commentCount", { count: post.commentCount })}

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
+import { Username } from "@/src/shared/components/Username";
 import { Tooltip } from "@/src/shared/components/Tooltip";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { cn } from "@/src/shared/lib/cn";
@@ -133,9 +134,13 @@ export function CommentSection({ packId }: { packId: string }) {
               <Hidden kind="name" id={comment.authorId}>
                 <Link
                   href={`/users/${comment.authorId}`}
-                  className="text-sm font-semibold hover:underline"
+                  className="text-sm hover:underline"
                 >
-                  {comment.authorUsername}
+                  <Username
+                    username={comment.authorUsername}
+                    role={comment.authorRole}
+                    trusted={comment.authorTrusted}
+                  />
                 </Link>
               </Hidden>
               <Hidden kind="comment" id={comment.id}>

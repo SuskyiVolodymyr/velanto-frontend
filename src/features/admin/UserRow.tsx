@@ -1,6 +1,7 @@
 "use client";
 
 import { Text } from "@/src/shared/components/Text";
+import { Username } from "@/src/shared/components/Username";
 import { Button } from "@/src/shared/components/Button";
 import { Badge } from "@/src/shared/components/Badge";
 import { Hidden } from "@/src/shared/components/Hidden";
@@ -47,7 +48,11 @@ export function UserRow({
         <div>
           <Text className="font-semibold">
             <Hidden kind="name" id={row.id}>
-              {row.username}
+              <Username
+                username={row.username}
+                role={row.role}
+                trusted={row.trusted}
+              />
             </Hidden>
           </Text>
           <Text variant="tertiary" className="text-xs">

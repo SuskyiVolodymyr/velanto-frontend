@@ -11,6 +11,7 @@ import {
 } from "@/src/features/feedback/api/feedback-detail.mutations";
 import { ApiError } from "@/src/shared/lib/api-client";
 import { Text } from "@/src/shared/components/Text";
+import { Username } from "@/src/shared/components/Username";
 import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { Badge } from "@/src/shared/components/Badge";
@@ -117,7 +118,11 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
         <Text variant="tertiary" as="span">
           {t("by")}{" "}
           <Hidden kind="name" id={post.authorId}>
-            {post.authorUsername}
+            <Username
+              username={post.authorUsername}
+              role={post.authorRole}
+              trusted={post.authorTrusted}
+            />
           </Hidden>
         </Text>
         <Text variant="tertiary">

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Hidden } from "@/src/shared/components/Hidden";
+import { Username } from "@/src/shared/components/Username";
 import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { AuthorHoverTrigger } from "./AuthorHoverTrigger";
 import type { Pack } from "@/src/shared/types/pack";
@@ -40,7 +41,12 @@ export function PackBannerAuthor({ pack }: { pack: Pack }) {
           )}
           {summary ? (
             <Hidden kind="name" id={pack.authorId}>
-              {`@${summary.profile.username}`}
+              <Username
+                username={summary.profile.username}
+                role={summary.profile.role}
+                trusted={summary.profile.trusted}
+                at
+              />
             </Hidden>
           ) : (
             t("viewAuthor")

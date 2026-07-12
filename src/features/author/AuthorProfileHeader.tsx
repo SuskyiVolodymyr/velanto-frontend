@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
+import { Username } from "@/src/shared/components/Username";
 import { Tooltip } from "@/src/shared/components/Tooltip";
 import type { PublicUserProfile } from "@/src/shared/types/user";
 
@@ -63,7 +64,12 @@ export function AuthorProfileHeader({
           <div>
             <Text as="h1" variant="title" className="text-2xl">
               <Hidden kind="name" id={authorId}>
-                {profile.username}
+                <Username
+                  username={profile.username}
+                  role={profile.role}
+                  trusted={profile.trusted}
+                  showRole
+                />
               </Hidden>
             </Text>
             <Text variant="tertiary" className="text-sm">
