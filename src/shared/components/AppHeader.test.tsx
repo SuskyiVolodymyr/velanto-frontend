@@ -99,6 +99,58 @@ describe("AppHeader", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("exposes Docs and Settings links when signed out", async () => {
+    vi.mocked(authClient.refresh).mockRejectedValue(
+      new ApiError(401, "Unauthorized", null),
+    );
+    renderHeader();
+
+    const docs = await screen.findByRole("link", { name: "Docs" });
+    expect(docs).toHaveAttribute("href", "/docs");
+    expect(screen.getByRole("link", { name: "Settings" })).toHaveAttribute(
+      "href",
+      "/settings",
+    );
+  });
+
+  it("keeps Docs and Settings reachable on the auth page (only Log in is hidden)", async () => {
+    pathname = "/auth";
+    vi.mocked(authClient.refresh).mockRejectedValue(
+      new ApiError(401, "Unauthorized", null),
+    );
+    renderHeader();
+
+    expect(await screen.findByRole("link", { name: "Docs" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Settings" })).toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Log in" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not duplicate Docs and Settings in the header when authenticated (they live in the account menu)", async () => {
+    vi.mocked(authClient.refresh).mockResolvedValue({
+      accessToken: "access-token",
+      user: {
+        id: "u1",
+        email: "a@example.com",
+        username: "alice",
+        role: "user",
+        createdAt: "2026-01-01T00:00:00.000Z",
+      },
+    });
+    renderHeader();
+
+    // Wait for the authenticated chrome (account menu trigger) to render.
+    await screen.findByRole("button", { name: "Account menu" });
+    // The menu is collapsed, so its Docs/Settings items are not in the header.
+    expect(
+      screen.queryByRole("link", { name: "Docs" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Settings" }),
+    ).not.toBeInTheDocument();
+  });
+
   it("shows the username and a Log out control when authenticated", async () => {
     vi.mocked(authClient.refresh).mockResolvedValue({
       accessToken: "access-token",

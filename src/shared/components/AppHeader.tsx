@@ -50,10 +50,30 @@ export function AppHeader() {
         </div>
       )}
 
-      {status === "unauthenticated" && pathname !== "/auth" && (
-        <Link href="/auth" className={buttonClassName("secondary")}>
-          {t("logIn")}
-        </Link>
+      {status === "unauthenticated" && (
+        <div className="flex items-center gap-5">
+          {/* Docs and Settings live in the account menu when signed in; expose
+              them here for signed-out visitors (both pages render without a
+              session — Settings just shows "log in" prompts on account-scoped
+              sections). Kept visible on /auth too; only Log in hides there. */}
+          <Link
+            href="/docs"
+            className="text-sm text-foreground-secondary transition-colors hover:text-foreground"
+          >
+            {t("docs")}
+          </Link>
+          <Link
+            href="/settings"
+            className="text-sm text-foreground-secondary transition-colors hover:text-foreground"
+          >
+            {t("settings")}
+          </Link>
+          {pathname !== "/auth" && (
+            <Link href="/auth" className={buttonClassName("secondary")}>
+              {t("logIn")}
+            </Link>
+          )}
+        </div>
       )}
     </header>
   );
