@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { renderWithQueryClient as render } from "@/src/shared/test/render-with-query-client";
 import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
@@ -515,6 +515,146 @@ describe("CommentSection", () => {
       expect(
         await screen.findByText("Couldn't delete the comment. Try again."),
       ).toBeInTheDocument();
+      expect(screen.getByText("Loved this pack.")).toBeInTheDocument();
+      confirm.mockRestore();
+    });
+  });
+
+  describe("threading (replies)", () => {
+    const MODERATOR: User = { ...USER, id: "mod-1", role: "moderator" };
+    const REPLY: Comment = {
+      id: "reply-1",
+      packId: "pack-1",
+      authorId: "u3",
+      authorUsername: "carol",
+      body: "I agree with this.",
+      createdAt: "2026-01-02T00:00:00.000Z",
+      parentId: "c1",
+    };
+    // COMMENT_A (id c1, body "Loved this pack.") with one embedded reply.
+    const ROOT_WITH_REPLY: Comment = {
+      ...COMMENT_A,
+      replyCount: 1,
+      replies: [REPLY],
+    };
+
+    function listOnce(items: Comment[]) {
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items,
+        total: items.length,
+        page: 1,
+        limit: 10,
+      });
+    }
+
+    it("renders a root's replies nested beneath it", async () => {
+      listOnce([ROOT_WITH_REPLY]);
+      renderAsUnauthenticated();
+
+      expect(await screen.findByText("Loved this pack.")).toBeInTheDocument();
+      expect(screen.getByText("I agree with this.")).toBeInTheDocument();
+      expect(screen.getByText("carol")).toBeInTheDocument();
+    });
+
+    it("does not show Reply buttons when unauthenticated", async () => {
+      listOnce([ROOT_WITH_REPLY]);
+      renderAsUnauthenticated();
+
+      await screen.findByText("I agree with this.");
+      expect(
+        screen.queryByRole("button", { name: "Reply" }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("posts a reply with the parent id and appends it under the root", async () => {
+      const user = userEvent.setup();
+      listOnce([COMMENT_A]); // a root with no replies yet
+      const createdReply: Comment = {
+        id: "reply-2",
+        packId: "pack-1",
+        authorId: "u1",
+        authorUsername: "alice",
+        body: "My reply.",
+        createdAt: "2026-01-03T00:00:00.000Z",
+        parentId: "c1",
+      };
+      vi.mocked(commentsClient.create).mockResolvedValue(createdReply);
+      renderAsAuthenticated();
+
+      await user.click(await screen.findByRole("button", { name: "Reply" }));
+      const replyBox = screen.getByRole("textbox", {
+        name: "Reply to comment",
+      });
+      await user.type(replyBox, "My reply.");
+      const composer = replyBox.closest("div") as HTMLElement;
+      await user.click(within(composer).getByRole("button", { name: "Post" }));
+
+      await waitFor(() =>
+        expect(commentsClient.create).toHaveBeenCalledWith("pack-1", {
+          body: "My reply.",
+          parentId: "c1",
+        }),
+      );
+      expect(await screen.findByText("My reply.")).toBeInTheDocument();
+    });
+
+    it("pre-fills an @mention of the reply's author when replying to a reply", async () => {
+      const user = userEvent.setup();
+      listOnce([ROOT_WITH_REPLY]);
+      renderAsAuthenticated();
+
+      await screen.findByText("I agree with this.");
+      // Two Reply buttons — the root's, then the reply's.
+      const replyButtons = screen.getAllByRole("button", { name: "Reply" });
+      await user.click(replyButtons[1]);
+
+      const replyBox = screen.getByRole("textbox", {
+        name: "Reply to comment",
+      });
+      expect(replyBox).toHaveValue("@carol ");
+    });
+
+    it("confirms deleting the whole thread when a root has replies", async () => {
+      const user = userEvent.setup();
+      const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
+      listOnce([ROOT_WITH_REPLY]);
+      renderAuthedAs(MODERATOR, "someone-else");
+
+      const deleteButtons = await screen.findAllByRole("button", {
+        name: "Delete comment",
+      });
+      await user.click(deleteButtons[0]); // the root's delete
+
+      expect(confirm).toHaveBeenCalledWith(
+        "Delete this comment and all its replies?",
+      );
+      confirm.mockRestore();
+    });
+
+    it("deletes a reply and drops it from its root without touching the count", async () => {
+      const user = userEvent.setup();
+      const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
+      listOnce([ROOT_WITH_REPLY]);
+      vi.mocked(commentsClient.delete).mockResolvedValue(undefined);
+      renderAuthedAs(MODERATOR, "someone-else");
+
+      await screen.findByText("I agree with this.");
+      // Root delete is [0], reply delete is [1].
+      const deleteButtons = screen.getAllByRole("button", {
+        name: "Delete comment",
+      });
+      await user.click(deleteButtons[1]);
+
+      await waitFor(() =>
+        expect(commentsClient.delete).toHaveBeenCalledWith("pack-1", "reply-1"),
+      );
+      await waitFor(() =>
+        expect(
+          screen.queryByText("I agree with this."),
+        ).not.toBeInTheDocument(),
+      );
+      // Roots-only total is unchanged by a reply delete.
+      expect(screen.getByText("Comments · 1")).toBeInTheDocument();
       expect(screen.getByText("Loved this pack.")).toBeInTheDocument();
       confirm.mockRestore();
     });

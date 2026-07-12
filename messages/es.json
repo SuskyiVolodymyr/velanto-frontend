@@ -377,7 +377,12 @@
     "voteError": "No se pudo registrar tu voto. Inténtalo de nuevo.",
     "deleteComment": "Eliminar comentario",
     "deleteCommentConfirm": "¿Eliminar este comentario? Esta acción no se puede deshacer.",
-    "deleteCommentError": "No se pudo eliminar el comentario. Inténtalo de nuevo."
+    "deleteCommentError": "No se pudo eliminar el comentario. Inténtalo de nuevo.",
+    "reply": "Responder",
+    "replyPlaceholder": "Escribe una respuesta",
+    "replyLabel": "Responder al comentario",
+    "cancel": "Cancelar",
+    "deleteCommentThreadConfirm": "¿Eliminar este comentario y todas sus respuestas?"
   },
   "share": {
     "trigger": "Compartir",

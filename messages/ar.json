@@ -377,7 +377,12 @@
     "voteError": "تعذّر تسجيل تصويتك. حاول مرة أخرى.",
     "deleteComment": "حذف التعليق",
     "deleteCommentConfirm": "هل تريد حذف هذا التعليق؟ لا يمكن التراجع عن هذا الإجراء.",
-    "deleteCommentError": "تعذّر حذف التعليق. حاول مرة أخرى."
+    "deleteCommentError": "تعذّر حذف التعليق. حاول مرة أخرى.",
+    "reply": "رد",
+    "replyPlaceholder": "اكتب ردًا",
+    "replyLabel": "الرد على التعليق",
+    "cancel": "إلغاء",
+    "deleteCommentThreadConfirm": "حذف هذا التعليق وجميع الردود عليه؟"
   },
   "share": {
     "trigger": "مشاركة",

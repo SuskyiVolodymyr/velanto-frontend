@@ -377,7 +377,12 @@
     "voteError": "无法记录你的投票，请重试。",
     "deleteComment": "删除评论",
     "deleteCommentConfirm": "删除此评论？此操作无法撤销。",
-    "deleteCommentError": "无法删除评论。请重试。"
+    "deleteCommentError": "无法删除评论。请重试。",
+    "reply": "回复",
+    "replyPlaceholder": "写下回复",
+    "replyLabel": "回复评论",
+    "cancel": "取消",
+    "deleteCommentThreadConfirm": "删除此评论及其所有回复？"
   },
   "share": {
     "trigger": "分享",

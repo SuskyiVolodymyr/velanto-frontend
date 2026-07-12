@@ -377,7 +377,12 @@
     "voteError": "آپ کا ووٹ درج نہیں ہو سکا۔ دوبارہ کوشش کریں۔",
     "deleteComment": "تبصرہ حذف کریں",
     "deleteCommentConfirm": "یہ تبصرہ حذف کریں؟ اسے واپس نہیں کیا جا سکتا۔",
-    "deleteCommentError": "تبصرہ حذف نہیں ہو سکا۔ دوبارہ کوشش کریں۔"
+    "deleteCommentError": "تبصرہ حذف نہیں ہو سکا۔ دوبارہ کوشش کریں۔",
+    "reply": "جواب دیں",
+    "replyPlaceholder": "جواب لکھیں",
+    "replyLabel": "تبصرے کا جواب دیں",
+    "cancel": "منسوخ کریں",
+    "deleteCommentThreadConfirm": "اس تبصرے اور اس کے تمام جوابات کو حذف کریں؟"
   },
   "share": {
     "trigger": "شیئر",

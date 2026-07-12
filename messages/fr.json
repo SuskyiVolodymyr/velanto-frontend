@@ -377,7 +377,12 @@
     "voteError": "Impossible d'enregistrer ton vote. Réessaie.",
     "deleteComment": "Supprimer le commentaire",
     "deleteCommentConfirm": "Supprimer ce commentaire ? Cette action est irréversible.",
-    "deleteCommentError": "Impossible de supprimer le commentaire. Réessayez."
+    "deleteCommentError": "Impossible de supprimer le commentaire. Réessayez.",
+    "reply": "Répondre",
+    "replyPlaceholder": "Écrire une réponse",
+    "replyLabel": "Répondre au commentaire",
+    "cancel": "Annuler",
+    "deleteCommentThreadConfirm": "Supprimer ce commentaire et toutes ses réponses ?"
   },
   "share": {
     "trigger": "Partager",

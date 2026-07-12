@@ -377,7 +377,12 @@
     "voteError": "Não foi possível registrar seu voto. Tente novamente.",
     "deleteComment": "Excluir comentário",
     "deleteCommentConfirm": "Excluir este comentário? Esta ação não pode ser desfeita.",
-    "deleteCommentError": "Não foi possível excluir o comentário. Tente novamente."
+    "deleteCommentError": "Não foi possível excluir o comentário. Tente novamente.",
+    "reply": "Responder",
+    "replyPlaceholder": "Escreva uma resposta",
+    "replyLabel": "Responder ao comentário",
+    "cancel": "Cancelar",
+    "deleteCommentThreadConfirm": "Excluir este comentário e todas as suas respostas?"
   },
   "share": {
     "trigger": "Compartilhar",
