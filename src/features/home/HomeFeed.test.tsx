@@ -36,6 +36,9 @@ const PACK_A: Pack = {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  // The feed now persists filters to localStorage; clear it so each test starts
+  // from a clean slate and stored state never leaks between cases.
+  localStorage.clear();
 });
 
 describe("HomeFeed", () => {
@@ -426,6 +429,53 @@ describe("HomeFeed", () => {
         const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
         expect(lastCall?.sort).toBe("popular");
         expect(lastCall?.window).toBe("week");
+      });
+    });
+  });
+
+  describe("filter persistence", () => {
+    it("restores persisted filters from localStorage on mount", async () => {
+      localStorage.setItem(
+        "velanto:pack-filters",
+        JSON.stringify({
+          format: "save_one",
+          tags: ["Anime"],
+          sort: "relevance",
+          window: "week",
+        }),
+      );
+      vi.mocked(packsClient.list).mockResolvedValue({
+        items: [PACK_A],
+        total: 1,
+        page: 1,
+        limit: 50,
+      });
+      render(<HomeFeed />);
+
+      await waitFor(() => {
+        const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
+        expect(lastCall).toMatchObject({ format: "save_one", tags: ["Anime"] });
+      });
+    });
+
+    it("persists a filter change to localStorage", async () => {
+      const user = userEvent.setup();
+      vi.mocked(packsClient.list).mockResolvedValue({
+        items: [],
+        total: 0,
+        page: 1,
+        limit: 50,
+      });
+      render(<HomeFeed />);
+      await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
+
+      await user.click(screen.getByRole("button", { name: "Popular" }));
+
+      await waitFor(() => {
+        const stored = JSON.parse(
+          localStorage.getItem("velanto:pack-filters") ?? "{}",
+        );
+        expect(stored.sort).toBe("popular");
       });
     });
   });

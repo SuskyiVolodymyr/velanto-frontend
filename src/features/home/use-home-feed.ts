@@ -10,6 +10,10 @@ import {
 } from "@/src/features/home/filter-options";
 import { usePacksFeed } from "@/src/features/home/api/packs-feed.queries";
 import type { PacksFeedFilters } from "@/src/features/home/api/packs-feed";
+import {
+  readPackFilters,
+  writePackFilters,
+} from "@/src/features/home/pack-filters-storage";
 
 // Avoids firing a request per keystroke.
 const SEARCH_DEBOUNCE_MS = 300;
@@ -28,6 +32,36 @@ export function useHomeFeed(initialPacks?: Pack[]) {
   const [window, setWindow] = useState<WindowFilterValue>(
     DEFAULT_POPULAR_WINDOW,
   );
+  const [hydrated, setHydrated] = useState(false);
+
+  // Restore the last-used filters once, after mount rather than during render,
+  // so the server-rendered default feed hydrates without a mismatch. The search
+  // query is intentionally not persisted (see pack-filters-storage).
+  //
+  // useHydratedValue doesn't fit here — readPackFilters builds a fresh object
+  // each call, which breaks the Object.is-stable-snapshot contract
+  // useSyncExternalStore requires (same reasoning as use-result-picks). A
+  // narrowly scoped mounted read is the simplest safe shape, so the
+  // set-state-in-effect disable is kept deliberately.
+  useEffect(() => {
+    const stored = readPackFilters();
+    /* eslint-disable react-hooks/set-state-in-effect */
+    if (stored) {
+      setFormat(stored.format);
+      setTags(stored.tags);
+      setSort(stored.sort);
+      setWindow(stored.window);
+    }
+    setHydrated(true);
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, []);
+
+  // Persist filter changes — gated on `hydrated` so the initial defaults never
+  // clobber a stored selection before the restore above runs.
+  useEffect(() => {
+    if (!hydrated) return;
+    writePackFilters({ format, tags, sort, window });
+  }, [hydrated, format, tags, sort, window]);
 
   useEffect(() => {
     const timeout = setTimeout(
