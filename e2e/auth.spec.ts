@@ -27,9 +27,8 @@ test.describe("Auth screen", () => {
     // Register is two-step (verify-before-create): "Continue" emails a code,
     // then the OTP step calls /auth/register with that code. Both calls are
     // browser-issued, so page.route intercepts them.
-    await page.route(
-      `${API_BASE}/auth/email-verification/request`,
-      (route) => route.fulfill({ status: 201, json: { sent: true } }),
+    await page.route(`${API_BASE}/auth/email-verification/request`, (route) =>
+      route.fulfill({ status: 201, json: { sent: true } }),
     );
     await page.route(`${API_BASE}/auth/register`, (route) =>
       route.fulfill({
