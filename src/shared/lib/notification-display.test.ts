@@ -74,4 +74,19 @@ describe("describeNotification", () => {
       href: null,
     });
   });
+
+  it("falls back to a generic row for an unknown notification type (forward-compat)", () => {
+    const result = describeNotification(
+      makeNotification({
+        // A type this client doesn't know yet (e.g. a newer backend type). The
+        // cast models a server sending a type outside the current union.
+        type: "comment_mention" as Notification["type"],
+        payload: { packId: "p1" },
+      }),
+    );
+    expect(result).toEqual({
+      message: "You have a new notification",
+      href: null,
+    });
+  });
 });
