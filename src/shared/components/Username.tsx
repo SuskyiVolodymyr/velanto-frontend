@@ -51,11 +51,27 @@ export function Username({
 
   return (
     <span className="inline-flex items-center gap-1.5">
-      <span className={cn("font-semibold", gradient, className)}>{display}</span>
+      {/* `nickname-gradient` carries the animation/clip/glow; the role modifier
+          (`nickname-admin` …) only supplies the per-role colors — both are
+          required for the gradient to render. */}
+      <span
+        className={cn(
+          "font-semibold",
+          gradient && "nickname-gradient",
+          gradient,
+          className,
+        )}
+      >
+        {display}
+      </span>
 
       {verified && (
         <Tooltip content={TRUSTED_TOOLTIP}>
-          <span className="inline-flex text-acc" aria-label={TRUSTED_TOOLTIP}>
+          <span
+            role="img"
+            className="inline-flex text-acc"
+            aria-label={TRUSTED_TOOLTIP}
+          >
             <BadgeCheck size={16} aria-hidden />
           </span>
         </Tooltip>

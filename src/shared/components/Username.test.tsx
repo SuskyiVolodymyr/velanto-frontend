@@ -23,6 +23,22 @@ describe("Username", () => {
     expect(screen.getByText("k").className).toContain("nickname-moderator");
   });
 
+  it("also applies the base nickname-gradient class for staff so the gradient renders", () => {
+    // The per-role class only supplies colors; without the base class the
+    // gradient/animation/glow (defined on .nickname-gradient) never renders.
+    render(<Username username="admin_max" role="admin" />);
+    expect(screen.getByText("admin_max").className).toContain(
+      "nickname-gradient",
+    );
+  });
+
+  it("applies no gradient class to a normal user", () => {
+    render(<Username username="regular_sam" role="user" />);
+    expect(screen.getByText("regular_sam").className).not.toContain(
+      "nickname-gradient",
+    );
+  });
+
   it("shows the verified badge for staff (verified by default)", () => {
     render(<Username username="admin_max" role="admin" trusted={false} />);
     expect(screen.getByLabelText("Trusted user")).toBeInTheDocument();

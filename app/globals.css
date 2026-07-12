@@ -120,10 +120,14 @@ html[data-streamer-mode="on"]:not([data-streamer-hydrated])
 }
 
 @media (prefers-reduced-motion: reduce) {
+  /*
+   * Freeze the sweep with the secondary band resting mid-handle (rather than a
+   * two-stop primary→secondary gradient, which would leave a whole half in the
+   * primary color — unreadable for admin's near-black base). The glow still
+   * applies, keeping the handle legible without motion.
+   */
   .nickname-gradient {
     animation: none;
-    background-image: linear-gradient(100deg, var(--nick-p), var(--nick-s));
-    background-size: 100% 100%;
-    background-position: 0 0;
+    background-position: 50% 0;
   }
 }
