@@ -29,6 +29,13 @@ export function AppHeader() {
         </Link>
 
         <Link
+          href="/"
+          className="text-sm text-foreground-secondary transition-colors hover:text-foreground"
+        >
+          {t("browse")}
+        </Link>
+
+        <Link
           href="/feedback"
           className="text-sm text-foreground-secondary transition-colors hover:text-foreground"
         >

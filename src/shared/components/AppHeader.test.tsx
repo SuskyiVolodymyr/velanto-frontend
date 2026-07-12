@@ -73,6 +73,13 @@ describe("AppHeader", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("always shows a Browse link to the home feed", async () => {
+    renderHeader();
+
+    const browse = await screen.findByRole("link", { name: "Browse" });
+    expect(browse).toHaveAttribute("href", "/");
+  });
+
   it("shows a Log in link when there is no session", async () => {
     vi.mocked(authClient.refresh).mockRejectedValue(
       new ApiError(401, "Unauthorized", null),
