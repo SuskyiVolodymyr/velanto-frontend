@@ -32,7 +32,7 @@ export function ReportQueueActions({
         )}
       </div>
       {actionError && (
-        <Text className="text-sm text-[#ff6b6b]">{actionError}</Text>
+        <Text className="text-sm text-danger">{actionError}</Text>
       )}
     </>
   );

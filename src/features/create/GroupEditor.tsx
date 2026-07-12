@@ -134,7 +134,7 @@ export function GroupEditor({
       </Text>
 
       {error && (
-        <Text role="alert" className="text-sm text-[#ff6b6b]">
+        <Text role="alert" className="text-sm text-danger">
           {error}
         </Text>
       )}

@@ -139,7 +139,7 @@ export function UserMenu({
               closeAndRefocus();
               onLogout();
             }}
-            className="block w-full px-3.5 py-2.5 text-start text-sm text-[#ff6b6b] hover:bg-white/[0.06]"
+            className="block w-full px-3.5 py-2.5 text-start text-sm text-danger hover:bg-white/[0.06]"
           >
             {t("logOut")}
           </button>

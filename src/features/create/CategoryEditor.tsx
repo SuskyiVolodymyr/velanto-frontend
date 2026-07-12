@@ -106,7 +106,7 @@ export function CategoryEditor({
                 type="button"
                 onClick={() => removeItem(item.id)}
                 aria-label={t("removeItemAria", { title: item.title })}
-                className="text-foreground-tertiary hover:text-[#ff6b6b]"
+                className="text-foreground-tertiary hover:text-danger"
               >
                 ×
               </button>
@@ -194,7 +194,7 @@ export function CategoryEditor({
               </Button>
             </div>
             {addError && (
-              <Text className="text-xs text-[#ff6b6b]">{addError}</Text>
+              <Text className="text-xs text-danger">{addError}</Text>
             )}
           </div>
         )}
@@ -205,7 +205,7 @@ export function CategoryEditor({
       </Text>
 
       {error && (
-        <Text role="alert" className="text-sm text-[#ff6b6b]">
+        <Text role="alert" className="text-sm text-danger">
           {error}
         </Text>
       )}

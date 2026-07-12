@@ -48,10 +48,10 @@ export function BannedNotice({
   return (
     <div
       role="alert"
-      className="border-b border-[#ff6b6b]/40 bg-[#ff6b6b]/10 px-7 py-4"
+      className="border-b border-danger/40 bg-danger/10 px-7 py-4"
     >
       <div className="mx-auto flex max-w-4xl flex-col gap-1">
-        <Text as="h2" className="text-sm font-semibold text-[#ff6b6b]">
+        <Text as="h2" className="text-sm font-semibold text-danger">
           {t("heading")}
         </Text>
 

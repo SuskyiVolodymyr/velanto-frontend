@@ -21,7 +21,7 @@ export function OverviewTab() {
     return <Text variant="secondary">Loading overview…</Text>;
   if (overviewQuery.isError || !overview) {
     return (
-      <Text className="text-[#ff6b6b]">
+      <Text className="text-danger">
         Couldn&apos;t load overview. Try again later.
       </Text>
     );

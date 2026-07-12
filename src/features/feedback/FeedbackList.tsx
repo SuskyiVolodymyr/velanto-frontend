@@ -29,7 +29,7 @@ export function FeedbackList({
   return (
     <>
       {loading && <Text variant="secondary">{t("loadingList")}</Text>}
-      {error && <Text className="text-[#ff6b6b]">{t("listError")}</Text>}
+      {error && <Text className="text-danger">{t("listError")}</Text>}
       {listReady && items.length === 0 && (
         <Text variant="secondary">{t("noMatches")}</Text>
       )}
@@ -52,7 +52,7 @@ export function FeedbackList({
             {loadingMore ? t("loadingMore") : t("loadMore")}
           </Button>
           {loadMoreError && (
-            <Text className="text-sm text-[#ff6b6b]">{loadMoreError}</Text>
+            <Text className="text-sm text-danger">{loadMoreError}</Text>
           )}
         </div>
       )}

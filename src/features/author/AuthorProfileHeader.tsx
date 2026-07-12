@@ -88,7 +88,7 @@ export function AuthorProfileHeader({
               followButton
             )}
             {followError && (
-              <Text className="text-xs text-[#ff6b6b]">{followError}</Text>
+              <Text className="text-xs text-danger">{followError}</Text>
             )}
           </div>
         )}

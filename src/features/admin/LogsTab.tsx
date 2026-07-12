@@ -90,7 +90,7 @@ export function LogsTab() {
 
       {status === "loading" && <Text variant="secondary">Loading logs…</Text>}
       {status === "error" && (
-        <Text className="text-[#ff6b6b]">
+        <Text className="text-danger">
           Couldn&apos;t load logs. Try again later.
         </Text>
       )}
@@ -130,7 +130,7 @@ export function LogsTab() {
             {loadingMore ? "Loading…" : "Load more"}
           </Button>
           {loadMoreError && (
-            <Text className="text-sm text-[#ff6b6b]">{loadMoreError}</Text>
+            <Text className="text-sm text-danger">{loadMoreError}</Text>
           )}
         </div>
       )}

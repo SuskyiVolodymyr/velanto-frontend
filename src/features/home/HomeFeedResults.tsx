@@ -17,7 +17,7 @@ export function HomeFeedResults({
   if (status === "loading")
     return <Text variant="secondary">{t("loading")}</Text>;
   if (status === "error") {
-    return <Text className="text-[#ff6b6b]">{t("error")}</Text>;
+    return <Text className="text-danger">{t("error")}</Text>;
   }
   if (packs.length === 0) {
     return <Text variant="secondary">{t("empty")}</Text>;

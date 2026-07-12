@@ -39,7 +39,7 @@ export function NotificationList({
         </Text>
       )}
       {error && (
-        <Text className="px-2 py-4 text-sm text-[#ff6b6b]">
+        <Text className="px-2 py-4 text-sm text-danger">
           Couldn&apos;t load notifications.
         </Text>
       )}
@@ -71,7 +71,7 @@ export function NotificationList({
             {loadingMore ? "Loading…" : "Load more"}
           </Button>
           {loadMoreError && (
-            <Text className="text-xs text-[#ff6b6b]">{loadMoreError}</Text>
+            <Text className="text-xs text-danger">{loadMoreError}</Text>
           )}
         </div>
       )}

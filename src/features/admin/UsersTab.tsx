@@ -49,7 +49,7 @@ export function UsersTab() {
 
       {status === "loading" && <Text variant="secondary">Loading users…</Text>}
       {status === "error" && (
-        <Text className="text-[#ff6b6b]">
+        <Text className="text-danger">
           Couldn&apos;t load users. Try again later.
         </Text>
       )}
@@ -80,7 +80,7 @@ export function UsersTab() {
       )}
 
       {actionError && (
-        <Text className="text-sm text-[#ff6b6b]">{actionError}</Text>
+        <Text className="text-sm text-danger">{actionError}</Text>
       )}
 
       {status === "ready" && users.length < total && (

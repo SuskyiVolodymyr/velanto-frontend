@@ -6,6 +6,9 @@
  * dark values are the only values: no `prefers-color-scheme` branch.
  * --acc is the themeable accent color — reference it via `var(--acc)` /
  * the `acc` Tailwind color, never hardcode #00e5ff in a component.
+ * --danger is the error/destructive red (error text, active downvote,
+ * remove/ban affordances) — reference it via the `danger` Tailwind color
+ * (`text-danger`, `border-danger/40`), never hardcode #ff6b6b in a component.
  */
 :root {
   --background: #0a0b0e;
@@ -16,6 +19,7 @@
   --foreground-secondary: rgba(243, 245, 248, 0.65);
   --foreground-tertiary: rgba(243, 245, 248, 0.45);
   --acc: #00e5ff;
+  --danger: #ff6b6b;
 
   --radius-chip: 8px;
   --radius-control: 10px;
@@ -31,6 +35,7 @@
   --color-foreground-secondary: var(--foreground-secondary);
   --color-foreground-tertiary: var(--foreground-tertiary);
   --color-acc: var(--acc);
+  --color-danger: var(--danger);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

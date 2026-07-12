@@ -67,7 +67,7 @@ export function VoteControl({
     const active = myVote === (direction === "up" ? 1 : -1);
     const Icon = direction === "up" ? ArrowUp : ArrowDown;
     const count = direction === "up" ? likes : dislikes;
-    const activeColor = direction === "up" ? "text-acc" : "text-[#ff6b6b]";
+    const activeColor = direction === "up" ? "text-acc" : "text-danger";
     return (
       <div className="flex flex-col items-center gap-0.5">
         {withReason(
@@ -111,7 +111,7 @@ export function VoteControl({
             myVote === 1
               ? "text-acc"
               : myVote === -1
-                ? "text-[#ff6b6b]"
+                ? "text-danger"
                 : "text-foreground",
           )}
         >
@@ -119,7 +119,7 @@ export function VoteControl({
         </span>
         {arrow("down")}
       </div>
-      {error && <span className="text-xs text-[#ff6b6b]">{error}</span>}
+      {error && <span className="text-xs text-danger">{error}</span>}
     </div>
   );
 }

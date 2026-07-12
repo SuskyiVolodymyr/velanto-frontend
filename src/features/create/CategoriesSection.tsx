@@ -61,7 +61,7 @@ export function CategoriesSection() {
         />
       ))}
       {categoriesError && (
-        <Text role="alert" className="text-sm text-[#ff6b6b]">
+        <Text role="alert" className="text-sm text-danger">
           {categoriesError}
         </Text>
       )}
@@ -85,7 +85,7 @@ export function CategoriesSection() {
             aria-label={t("rounds")}
           />
           {versusRoundsError && (
-            <Text role="alert" className="text-sm text-[#ff6b6b]">
+            <Text role="alert" className="text-sm text-danger">
               {versusRoundsError}
             </Text>
           )}
@@ -109,7 +109,7 @@ export function CategoriesSection() {
             aria-label={t("itemsPerRound")}
           />
           {versusNError && (
-            <Text role="alert" className="text-sm text-[#ff6b6b]">
+            <Text role="alert" className="text-sm text-danger">
               {versusNError}
             </Text>
           )}
