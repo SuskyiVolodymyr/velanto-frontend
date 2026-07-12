@@ -2,6 +2,7 @@
 
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
+import { LoadingState } from "@/src/shared/components/LoadingState";
 import { useAdminOverview } from "@/src/features/admin/api/admin.queries";
 import type { AdminOverview } from "@/src/shared/types/admin";
 
@@ -18,7 +19,7 @@ export function OverviewTab() {
   const overview = overviewQuery.data;
 
   if (overviewQuery.isLoading)
-    return <Text variant="secondary">Loading overview…</Text>;
+    return <LoadingState label="Loading overview…" showLabel />;
   if (overviewQuery.isError || !overview) {
     return (
       <Text className="text-danger">

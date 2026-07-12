@@ -18,6 +18,9 @@ interface UserRowProps {
   banFormOpen: boolean;
   banDuration: BanDuration;
   banReason: BanReasonState;
+  trustPending: boolean;
+  unbanPending: boolean;
+  banPending: boolean;
   onSetTrusted: (id: string, trusted: boolean) => void;
   onUnban: (id: string) => void;
   onToggleBanForm: (id: string) => void;
@@ -35,6 +38,9 @@ export function UserRow({
   banFormOpen,
   banDuration,
   banReason,
+  trustPending,
+  unbanPending,
+  banPending,
   onSetTrusted,
   onUnban,
   onToggleBanForm,
@@ -69,12 +75,17 @@ export function UserRow({
           <div className="flex gap-2">
             <Button
               variant="secondary"
+              loading={trustPending}
               onClick={() => void onSetTrusted(row.id, !row.trusted)}
             >
               {row.trusted ? "Untrust" : "Trust"}
             </Button>
             {banned ? (
-              <Button variant="secondary" onClick={() => void onUnban(row.id)}>
+              <Button
+                variant="secondary"
+                loading={unbanPending}
+                onClick={() => void onUnban(row.id)}
+              >
                 Unban
               </Button>
             ) : (
@@ -93,6 +104,7 @@ export function UserRow({
           userId={row.id}
           banDuration={banDuration}
           banReason={banReason}
+          loading={banPending}
           onDurationChange={onBanDurationChange}
           onReasonChange={onBanReasonChange}
           onConfirm={() => void onConfirmBan(row.id)}

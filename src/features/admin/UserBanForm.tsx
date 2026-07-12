@@ -13,6 +13,7 @@ interface UserBanFormProps {
   userId: string;
   banDuration: BanDuration;
   banReason: BanReasonState;
+  loading?: boolean;
   onDurationChange: (duration: BanDuration) => void;
   onReasonChange: (reason: BanReasonState) => void;
   onConfirm: () => void;
@@ -23,6 +24,7 @@ export function UserBanForm({
   userId,
   banDuration,
   banReason,
+  loading = false,
   onDurationChange,
   onReasonChange,
   onConfirm,
@@ -57,6 +59,7 @@ export function UserBanForm({
         variant="primary"
         className="self-start"
         disabled={!isBanReasonValid(banReason)}
+        loading={loading}
         onClick={() => onConfirm()}
       >
         Confirm ban

@@ -21,12 +21,12 @@ export function ReportQueueActions({
     <>
       <div className="flex flex-wrap gap-2">
         {status === "new" && (
-          <Button disabled={actionBusy} onClick={onReview}>
+          <Button loading={actionBusy} onClick={onReview}>
             Review
           </Button>
         )}
         {status !== "closed" && (
-          <Button variant="secondary" disabled={actionBusy} onClick={onClose}>
+          <Button variant="secondary" loading={actionBusy} onClick={onClose}>
             Mark resolved
           </Button>
         )}

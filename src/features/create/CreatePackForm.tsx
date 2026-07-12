@@ -120,7 +120,7 @@ export function CreatePackForm() {
 
         <Button
           type="submit"
-          disabled={isSubmitting}
+          loading={isSubmitting}
           className="h-[50px] w-full"
         >
           {isSubmitting ? t("publishing") : t("publish")}

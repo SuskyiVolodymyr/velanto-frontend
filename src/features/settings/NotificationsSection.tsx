@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
+import { LoadingState } from "@/src/shared/components/LoadingState";
 import { cn } from "@/src/shared/lib/cn";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import {
@@ -72,9 +73,7 @@ export function NotificationsSection() {
         </Text>
       )}
       {status === "authenticated" && !fetchError && !prefs && (
-        <Text variant="secondary" className="text-sm">
-          {t("loading")}
-        </Text>
+        <LoadingState label={t("loading")} showLabel />
       )}
       {status === "authenticated" && prefs && (
         <div className="flex flex-col gap-2">

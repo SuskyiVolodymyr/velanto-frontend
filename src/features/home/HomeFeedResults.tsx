@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import type { Pack } from "@/src/shared/types/pack";
 import { Text } from "@/src/shared/components/Text";
+import { LoadingState } from "@/src/shared/components/LoadingState";
 import { PackCard } from "@/src/features/home/PackCard";
 
 export function HomeFeedResults({
@@ -15,7 +16,7 @@ export function HomeFeedResults({
   const t = useTranslations("home");
 
   if (status === "loading")
-    return <Text variant="secondary">{t("loading")}</Text>;
+    return <LoadingState label={t("loading")} showLabel />;
   if (status === "error") {
     return <Text className="text-danger">{t("error")}</Text>;
   }

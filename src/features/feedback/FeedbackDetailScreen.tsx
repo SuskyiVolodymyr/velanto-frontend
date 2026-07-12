@@ -11,6 +11,7 @@ import {
 } from "@/src/features/feedback/api/feedback-detail.mutations";
 import { ApiError } from "@/src/shared/lib/api-client";
 import { Text } from "@/src/shared/components/Text";
+import { LoadingState } from "@/src/shared/components/LoadingState";
 import { Username } from "@/src/shared/components/Username";
 import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
@@ -64,7 +65,7 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
   if (postQuery.isLoading) {
     return (
       <main className="mx-auto w-full max-w-2xl px-7 py-10">
-        <Text variant="secondary">{t("loading")}</Text>
+        <LoadingState label={t("loading")} showLabel />
       </main>
     );
   }
@@ -212,6 +213,7 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
             <Button
               variant="secondary"
               className="ml-auto"
+              loading={deleteMutation.isPending}
               onClick={handleDelete}
             >
               {t("delete")}

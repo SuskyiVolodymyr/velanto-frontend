@@ -41,10 +41,10 @@ export function ModerationQueueRow({
         >
           View
         </Link>
-        <Button variant="secondary" disabled={busy} onClick={onApprove}>
+        <Button variant="secondary" loading={busy} onClick={onApprove}>
           Approve
         </Button>
-        <Button variant="secondary" disabled={busy} onClick={onToggleReject}>
+        <Button variant="secondary" loading={busy} onClick={onToggleReject}>
           Reject
         </Button>
       </div>
@@ -62,7 +62,7 @@ export function ModerationQueueRow({
             className="min-h-16 rounded-[8px] border border-border bg-transparent p-2 text-sm text-foreground"
           />
           <div className="flex gap-2">
-            <Button disabled={busy} onClick={onReject}>
+            <Button loading={busy} onClick={onReject}>
               Confirm reject
             </Button>
             <Button variant="secondary" onClick={onCancelReject}>
