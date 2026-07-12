@@ -1,4 +1,4 @@
-import { screen, waitFor, within } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
@@ -6,14 +6,11 @@ import { FeedbackVote } from "./FeedbackVote";
 import { feedbackClient } from "@/src/shared/lib/feedback-client";
 import { useAuth } from "@/src/shared/lib/auth-context";
 
+// FeedbackVote is a thin wrapper over the shared VoteControl (see
+// VoteControl.test.tsx for the full tally/score/blocked behaviour). These tests
+// only cover the wiring: the feedback client, the feedback id, and the labels.
 vi.mock("@/src/shared/lib/feedback-client");
 vi.mock("@/src/shared/lib/auth-context");
-
-const push = vi.fn();
-vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push }),
-  usePathname: () => "/feedback/f1",
-}));
 
 const mockedFeedbackClient = vi.mocked(feedbackClient);
 const mockedUseAuth = vi.mocked(useAuth);
@@ -40,23 +37,22 @@ function mockAuth(authenticated: boolean) {
 describe("FeedbackVote", () => {
   beforeEach(() => vi.resetAllMocks());
 
-  it("renders score/like/dislike counts from the initial props", () => {
+  it("renders the net score and the like/dislike counts from the initial props", () => {
     mockAuth(true);
     render(
       <FeedbackVote
         feedbackId="f1"
-        initialScore={2}
         initialLikes={3}
         initialDislikes={1}
         initialMyVote={null}
       />,
     );
-    expect(screen.getByText("2")).toBeInTheDocument();
-    expect(screen.getByText("3")).toBeInTheDocument();
-    expect(screen.getByText("1")).toBeInTheDocument();
+    expect(screen.getByText("2")).toBeInTheDocument(); // net score
+    expect(screen.getByText("3")).toBeInTheDocument(); // likes
+    expect(screen.getByText("1")).toBeInTheDocument(); // dislikes
   });
 
-  it("clicking Like calls vote with value 1 and updates counts from the response", async () => {
+  it("votes on the feedback post via the feedback client when an arrow is clicked", async () => {
     mockAuth(true);
     mockedFeedbackClient.vote.mockResolvedValue({
       score: 1,
@@ -67,57 +63,34 @@ describe("FeedbackVote", () => {
     render(
       <FeedbackVote
         feedbackId="f1"
-        initialScore={0}
         initialLikes={0}
         initialDislikes={0}
         initialMyVote={null}
       />,
     );
-    await userEvent.click(screen.getByRole("button", { name: /^like/i }));
+    await userEvent.click(screen.getByRole("button", { name: /^like$/i }));
     expect(mockedFeedbackClient.vote).toHaveBeenCalledWith("f1", 1);
-    const likeButton = screen.getByRole("button", { name: /^like/i });
-    await waitFor(() =>
-      expect(within(likeButton).getByText("1")).toBeInTheDocument(),
-    );
+    await userEvent.click(screen.getByRole("button", { name: /^dislike$/i }));
+    expect(mockedFeedbackClient.vote).toHaveBeenCalledWith("f1", -1);
   });
 
-  it("blocks an anonymous viewer with a reason tooltip instead of voting or redirecting", async () => {
+  it("blocks an anonymous viewer with a reason tooltip instead of voting", async () => {
     mockAuth(false);
     render(
       <FeedbackVote
         feedbackId="f1"
-        initialScore={0}
         initialLikes={0}
         initialDislikes={0}
         initialMyVote={null}
       />,
     );
-    const likeButton = screen.getByRole("button", { name: /^like/i });
-    expect(likeButton).toHaveAttribute("aria-disabled", "true");
+    const like = screen.getByRole("button", { name: /^like$/i });
+    expect(like).toHaveAttribute("aria-disabled", "true");
 
-    await userEvent.hover(likeButton);
+    await userEvent.hover(like);
     expect(screen.getByRole("tooltip")).toHaveTextContent("Log in to vote");
 
-    await userEvent.click(likeButton);
+    await userEvent.click(like);
     expect(mockedFeedbackClient.vote).not.toHaveBeenCalled();
-    expect(push).not.toHaveBeenCalled();
-  });
-
-  it("shows an inline error when the vote call fails", async () => {
-    mockAuth(true);
-    mockedFeedbackClient.vote.mockRejectedValue(new Error("network"));
-    render(
-      <FeedbackVote
-        feedbackId="f1"
-        initialScore={0}
-        initialLikes={0}
-        initialDislikes={0}
-        initialMyVote={null}
-      />,
-    );
-    await userEvent.click(screen.getByRole("button", { name: /^like/i }));
-    await waitFor(() =>
-      expect(screen.getByText(/couldn't/i)).toBeInTheDocument(),
-    );
   });
 });

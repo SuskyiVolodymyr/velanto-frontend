@@ -173,7 +173,6 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
 
       <FeedbackVote
         feedbackId={post.id}
-        initialScore={post.score}
         initialLikes={post.likes}
         initialDislikes={post.dislikes}
         initialMyVote={post.myVote}
