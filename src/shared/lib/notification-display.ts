@@ -55,5 +55,11 @@ export function describeNotification(
         href: null,
       };
     }
+    default:
+      // A notification type this client version doesn't recognize yet — e.g. a
+      // newer backend type (comment_mention) shipped before this client adds
+      // its own case. Render a safe generic row instead of returning undefined
+      // and crashing the whole notifications list.
+      return { message: "You have a new notification", href: null };
   }
 }
