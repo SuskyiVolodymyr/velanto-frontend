@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Text } from "@/src/shared/components/Text";
+import { Username } from "@/src/shared/components/Username";
 import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
 import { Badge } from "@/src/shared/components/Badge";
@@ -119,7 +120,11 @@ export function StaffTab() {
                 <div>
                   <Text className="font-semibold">
                     <Hidden kind="name" id={row.id}>
-                      {row.username}
+                      <Username
+                        username={row.username}
+                        role={row.role}
+                        trusted={row.trusted}
+                      />
                     </Hidden>
                   </Text>
                   <Text variant="tertiary" className="text-xs">

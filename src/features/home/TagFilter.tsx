@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Tag, ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Button } from "@/src/shared/components/Button";
 import { TagPickerModal } from "@/src/shared/components/TagPickerModal";
@@ -29,41 +30,20 @@ export function TagFilter({
       >
         <span className="flex w-full items-center justify-between gap-2">
           <span className="flex items-center gap-2">
-            <svg
+            <Tag
               aria-hidden
-              viewBox="0 0 24 24"
               className="h-4 w-4 text-foreground-secondary"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.8"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M20.59 13.41 11 3.83A2 2 0 0 0 9.59 3H4a1 1 0 0 0-1 1v5.59A2 2 0 0 0 3.59 11l9.59 9.59a2 2 0 0 0 2.82 0l4.59-4.59a2 2 0 0 0 0-2.82Z" />
-              <circle
-                cx="7.5"
-                cy="7.5"
-                r="1.3"
-                fill="currentColor"
-                stroke="none"
-              />
-            </svg>
+              strokeWidth={1.8}
+            />
             {tags.length === 0
               ? t("filterByTags")
               : t("tagCount", { count: tags.length })}
           </span>
-          <svg
+          <ChevronDown
             aria-hidden
-            viewBox="0 0 24 24"
             className="h-4 w-4 text-foreground-secondary"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="m6 9 6 6 6-6" />
-          </svg>
+            strokeWidth={1.8}
+          />
         </span>
       </Button>
 

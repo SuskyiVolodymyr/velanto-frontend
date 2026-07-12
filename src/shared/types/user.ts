@@ -36,4 +36,12 @@ export interface PublicUserProfile {
   createdAt: string;
   followerCount: number;
   isFollowedByMe: boolean | null;
+  /**
+   * Role + trust flags for the animated-nickname / verified-badge treatment.
+   * Optional so the many pre-existing profile fixtures stay valid without a
+   * mass edit (same rationale as `User`'s ban fields); the live backend always
+   * sends them on the public profile.
+   */
+  role?: Role;
+  trusted?: boolean;
 }

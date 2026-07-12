@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { authorQueryOptions } from "@/src/features/author/api/author.queries";
 import { Text } from "@/src/shared/components/Text";
+import { Username } from "@/src/shared/components/Username";
 import { buttonClassName } from "@/src/shared/components/Button";
 import { PackCard } from "@/src/features/home/PackCard";
 
@@ -59,7 +60,12 @@ export function ProfileScreen() {
           </div>
           <div>
             <Text as="h1" variant="title" className="text-2xl">
-              {profile.username}
+              <Username
+                username={profile.username}
+                role={profile.role}
+                trusted={profile.trusted}
+                showRole
+              />
             </Text>
             <Text variant="tertiary" className="text-sm">
               {t("followerCount", { count: profile.followerCount })}

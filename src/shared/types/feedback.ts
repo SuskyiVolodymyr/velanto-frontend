@@ -1,6 +1,8 @@
 // Local re-declaration of the backend feedback API shapes. NOT imported from
 // the backend (the repos share no types package).
 
+import type { Role } from "@/src/shared/types/user";
+
 export const FEEDBACK_TOPICS = [
   "bug",
   "feature",
@@ -32,6 +34,8 @@ export interface Feedback {
   status: FeedbackStatus;
   authorId: string;
   authorUsername: string;
+  authorRole?: Role;
+  authorTrusted?: boolean;
   handledById: string | null;
   locale: string | null;
   translationContext: string | null;
@@ -57,6 +61,8 @@ export interface FeedbackComment {
   feedbackId: string;
   authorId: string;
   authorUsername: string;
+  authorRole?: Role;
+  authorTrusted?: boolean;
   body: string;
   createdAt: string;
 }

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { InputHTMLAttributes } from "react";
+import { Eye, EyeOff } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import { Input } from "@/src/shared/components/Input";
 import { FormField } from "@/src/shared/components/form/FormField";
@@ -69,49 +70,13 @@ export function PasswordField({
           tabIndex={rest.disabled ? -1 : 0}
           disabled={rest.disabled}
         >
-          {visible ? <EyeOffIcon /> : <EyeIcon />}
+          {visible ? (
+            <EyeOff size={18} aria-hidden />
+          ) : (
+            <Eye size={18} aria-hidden />
+          )}
         </button>
       </div>
     </FormField>
-  );
-}
-
-function EyeIcon() {
-  return (
-    <svg
-      aria-hidden
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  );
-}
-
-function EyeOffIcon() {
-  return (
-    <svg
-      aria-hidden
-      width="18"
-      height="18"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M9.9 4.24A9.1 9.1 0 0 1 12 4c6.5 0 10 7 10 7a13.2 13.2 0 0 1-2.16 3.19" />
-      <path d="M6.6 6.6A13.3 13.3 0 0 0 2 12s3.5 7 10 7a9.1 9.1 0 0 0 4.4-1.1" />
-      <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
-      <path d="m2 2 20 20" />
-    </svg>
   );
 }

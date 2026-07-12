@@ -1,5 +1,6 @@
 "use client";
 
+import { Bell } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
 import { useNotifications } from "@/src/shared/components/use-notifications";
 import { NotificationList } from "@/src/shared/components/NotificationList";
@@ -35,8 +36,9 @@ export function NotificationsBell() {
         onClick={() => setOpen((prev) => !prev)}
         className="relative flex h-10 w-10 items-center justify-center rounded-[11px] border border-border bg-surface transition-colors hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
-        <span
-          className="h-4 w-4 rounded-t-full border-[1.6px] border-b-0 border-foreground-secondary"
+        <Bell
+          className="h-[18px] w-[18px] text-foreground-secondary"
+          strokeWidth={1.8}
           aria-hidden
         />
         {unreadCount > 0 && (
