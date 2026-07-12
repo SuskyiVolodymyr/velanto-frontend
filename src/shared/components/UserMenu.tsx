@@ -73,11 +73,6 @@ export function UserMenu({
                 {user.username}
               </Hidden>
             </Text>
-            <Text variant="tertiary" className="text-xs">
-              <Hidden kind="name" id={user.id}>
-                {user.email}
-              </Hidden>
-            </Text>
           </div>
           <Link
             href="/profile"
