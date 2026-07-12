@@ -27,6 +27,7 @@ import {
   useReplyToComment,
   useDeletePackComment,
 } from "@/src/features/pack/api/pack-comments.queries";
+import { renderCommentBody } from "./mention-text";
 
 /** A single comment's identity + body + row actions, shared by roots and
  *  replies. The Reply affordance renders only when `onReply` is supplied. */
@@ -80,7 +81,7 @@ function CommentView({
       </div>
       <Hidden kind="comment" id={comment.id}>
         <Text variant="secondary" className="text-sm">
-          {comment.body}
+          {renderCommentBody(comment.body)}
         </Text>
       </Hidden>
       <div className="mt-2 flex items-center gap-3">

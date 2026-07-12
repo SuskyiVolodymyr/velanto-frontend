@@ -41,7 +41,8 @@
     "notifNewFollower": "نیا فالوور",
     "notifNewPack": "آپ کے فالو کردہ کسی شخص کا نیا پیک",
     "notifNewComment": "آپ کے پیک پر نیا تبصرہ",
-    "notifPackDeleted": "ماڈریٹر نے پیک ہٹا دیا"
+    "notifPackDeleted": "ماڈریٹر نے پیک ہٹا دیا",
+    "notifCommentMention": "ایک تبصرے میں آپ کا ذکر کیا گیا"
   },
   "streamerMode": {
     "hiddenHint": "اسٹریمر موڈ کی وجہ سے چھپایا گیا",

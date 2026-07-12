@@ -19,6 +19,12 @@ interface NewCommentPayload {
   packTitle: string;
   commenterUsername: string;
 }
+interface CommentMentionPayload {
+  packId: string;
+  packTitle: string;
+  commentId: string;
+  mentionerUsername: string;
+}
 interface PackDeletedWarningPayload {
   packTitle: string;
 }
@@ -45,6 +51,13 @@ export function describeNotification(
       const payload = notification.payload as NewCommentPayload;
       return {
         message: `${payload.commenterUsername} commented on your pack ${payload.packTitle}`,
+        href: `/packs/${payload.packId}`,
+      };
+    }
+    case "comment_mention": {
+      const payload = notification.payload as CommentMentionPayload;
+      return {
+        message: `${payload.mentionerUsername} mentioned you on ${payload.packTitle}`,
         href: `/packs/${payload.packId}`,
       };
     }

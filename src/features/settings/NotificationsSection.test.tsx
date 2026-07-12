@@ -16,6 +16,7 @@ const ALL_ON = {
   new_follower: true,
   new_pack_from_followed: true,
   new_comment: true,
+  comment_mention: true,
   pack_deleted_warning: true,
 };
 

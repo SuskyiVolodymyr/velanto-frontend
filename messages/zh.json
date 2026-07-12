@@ -41,7 +41,8 @@
     "notifNewFollower": "新增关注者",
     "notifNewPack": "你关注的人发布了新题包",
     "notifNewComment": "你的题包有新评论",
-    "notifPackDeleted": "题包被审核员移除"
+    "notifPackDeleted": "题包被审核员移除",
+    "notifCommentMention": "有人在评论中提到你"
   },
   "streamerMode": {
     "hiddenHint": "已因主播模式隐藏",
