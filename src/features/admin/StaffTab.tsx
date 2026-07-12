@@ -8,6 +8,7 @@ import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
 import { Badge } from "@/src/shared/components/Badge";
 import { Hidden } from "@/src/shared/components/Hidden";
+import { LoadingState } from "@/src/shared/components/LoadingState";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { useStreamerModeOrDefault } from "@/src/shared/lib/streamer-mode-context";
 import { usersClient } from "@/src/shared/lib/users-client";
@@ -96,7 +97,9 @@ export function StaffTab() {
         />
       </div>
 
-      {status === "loading" && <Text variant="secondary">Loading users…</Text>}
+      {status === "loading" && (
+        <LoadingState label="Loading users…" showLabel />
+      )}
       {status === "error" && (
         <Text className="text-danger">
           Couldn&apos;t load users. Try again later.
@@ -172,7 +175,7 @@ export function StaffTab() {
       {status === "ready" && users.length < total && (
         <Button
           variant="secondary"
-          disabled={loadingMore}
+          loading={loadingMore}
           onClick={() => void usersQuery.fetchNextPage()}
         >
           {loadingMore ? "Loading…" : "Load more"}

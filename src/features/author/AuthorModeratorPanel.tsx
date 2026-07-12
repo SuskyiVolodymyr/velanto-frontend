@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
+import { LoadingState } from "@/src/shared/components/LoadingState";
 import { BAN_DURATIONS } from "@/src/shared/lib/ban-durations";
 import {
   BanReasonPicker,
@@ -43,6 +44,7 @@ export function AuthorModeratorPanel({
     banReason,
     setBanReason,
     banActionError,
+    banSubmitting,
     bannedUntil,
     toggleBanForm,
     handleBanSubmit,
@@ -95,6 +97,7 @@ export function AuthorModeratorPanel({
             variant="primary"
             className="self-start"
             disabled={!isBanReasonValid(banReason)}
+            loading={banSubmitting}
             onClick={() => void handleBanSubmit()}
           >
             Confirm ban
@@ -105,7 +108,7 @@ export function AuthorModeratorPanel({
         </div>
       )}
       {banHistoryQuery.isLoading && (
-        <Text variant="secondary">Loading ban history…</Text>
+        <LoadingState label="Loading ban history…" showLabel />
       )}
       {banHistoryQuery.error && (
         <Text className="text-sm text-danger">

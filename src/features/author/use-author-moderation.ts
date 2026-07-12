@@ -16,6 +16,9 @@ export interface AuthorModeration {
   banReason: BanReasonState;
   setBanReason: (next: BanReasonState) => void;
   banActionError: string;
+  /** True while the ban request is in flight — drives the submit button's
+   * spinner and blocks a re-entrant double-ban. */
+  banSubmitting: boolean;
   bannedUntil: string | null;
   /** Toggles the inline ban form, resetting duration + reason when opening. */
   toggleBanForm: () => void;
@@ -37,6 +40,7 @@ export function useAuthorModeration(authorId: string): AuthorModeration {
     reasonDetail: "",
   });
   const [banActionError, setBanActionError] = useState("");
+  const [banSubmitting, setBanSubmitting] = useState(false);
   const [bannedUntil, setBannedUntil] = useState<string | null>(null);
 
   function toggleBanForm() {
@@ -51,8 +55,9 @@ export function useAuthorModeration(authorId: string): AuthorModeration {
   }
 
   async function handleBanSubmit() {
-    if (!isBanReasonValid(banReason)) return;
+    if (banSubmitting || !isBanReasonValid(banReason)) return;
     setBanActionError("");
+    setBanSubmitting(true);
     try {
       const result = await usersClient.ban(authorId, {
         duration: banDuration,
@@ -63,6 +68,8 @@ export function useAuthorModeration(authorId: string): AuthorModeration {
       setBanReason({ reason: "", reasonDetail: "" });
     } catch {
       setBanActionError("Couldn't ban this user. Try again.");
+    } finally {
+      setBanSubmitting(false);
     }
   }
 
@@ -73,6 +80,7 @@ export function useAuthorModeration(authorId: string): AuthorModeration {
     banReason,
     setBanReason,
     banActionError,
+    banSubmitting,
     bannedUntil,
     toggleBanForm,
     handleBanSubmit,

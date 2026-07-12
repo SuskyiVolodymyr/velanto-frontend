@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Text } from "@/src/shared/components/Text";
 import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
+import { LoadingState } from "@/src/shared/components/LoadingState";
 import { useAdminLogs } from "@/src/features/admin/api/admin.queries";
 import type { AuditLogFilters } from "@/src/features/admin/api/admin";
 import type { AuditLogEntry } from "@/src/shared/types/admin";
@@ -88,7 +89,7 @@ export function LogsTab() {
         />
       </div>
 
-      {status === "loading" && <Text variant="secondary">Loading logs…</Text>}
+      {status === "loading" && <LoadingState label="Loading logs…" showLabel />}
       {status === "error" && (
         <Text className="text-danger">
           Couldn&apos;t load logs. Try again later.
@@ -124,7 +125,7 @@ export function LogsTab() {
         <div className="flex flex-col gap-2">
           <Button
             variant="secondary"
-            disabled={loadingMore}
+            loading={loadingMore}
             onClick={() => void logsQuery.fetchNextPage()}
           >
             {loadingMore ? "Loading…" : "Load more"}

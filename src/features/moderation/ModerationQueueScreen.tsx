@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { Text } from "@/src/shared/components/Text";
+import { LoadingState } from "@/src/shared/components/LoadingState";
 import { Button } from "@/src/shared/components/Button";
 import { ModerationQueueRow } from "@/src/features/moderation/ModerationQueueRow";
 import { useModerationQueue } from "@/src/features/moderation/useModerationQueue";
@@ -54,7 +55,7 @@ export function ModerationQueueScreen() {
         Moderation queue
       </Text>
 
-      {queue.loading && <Text variant="secondary">Loading packs…</Text>}
+      {queue.loading && <LoadingState label="Loading packs…" showLabel />}
       {queue.error && (
         <Text className="text-danger">
           Couldn&apos;t load packs. Try again later.
@@ -88,7 +89,7 @@ export function ModerationQueueScreen() {
         <div className="flex flex-col gap-2">
           <Button
             variant="secondary"
-            disabled={queue.loadingMore}
+            loading={queue.loadingMore}
             onClick={() => void queue.handleLoadMore()}
           >
             {queue.loadingMore ? "Loading…" : "Load more"}

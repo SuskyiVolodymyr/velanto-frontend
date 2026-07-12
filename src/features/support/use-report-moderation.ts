@@ -19,6 +19,7 @@ import type { ReportWithReporter } from "@/src/shared/types/report";
  */
 export function useReportModeration(report: ReportWithReporter | null) {
   const [deleted, setDeleted] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState("");
   const [showBanForm, setShowBanForm] = useState(false);
   const [banDuration, setBanDuration] = useState<BanDuration>("week");
@@ -27,16 +28,20 @@ export function useReportModeration(report: ReportWithReporter | null) {
     reasonDetail: "",
   });
   const [banError, setBanError] = useState("");
+  const [banSubmitting, setBanSubmitting] = useState(false);
   const [banDone, setBanDone] = useState(false);
 
   async function handleDeletePack() {
-    if (!report) return;
+    if (!report || deleting) return;
     setDeleteError("");
+    setDeleting(true);
     try {
       await packsClient.delete(report.targetId);
       setDeleted(true);
     } catch {
       setDeleteError("Couldn't delete this pack. Try again.");
+    } finally {
+      setDeleting(false);
     }
   }
 
@@ -52,8 +57,9 @@ export function useReportModeration(report: ReportWithReporter | null) {
   }
 
   async function handleBanSubmit() {
-    if (!report || !isBanReasonValid(banReason)) return;
+    if (!report || banSubmitting || !isBanReasonValid(banReason)) return;
     setBanError("");
+    setBanSubmitting(true);
     try {
       await usersClient.ban(report.targetId, {
         duration: banDuration,
@@ -63,11 +69,14 @@ export function useReportModeration(report: ReportWithReporter | null) {
       setShowBanForm(false);
     } catch {
       setBanError("Couldn't ban this user. Try again.");
+    } finally {
+      setBanSubmitting(false);
     }
   }
 
   return {
     deleted,
+    deleting,
     deleteError,
     handleDeletePack,
     showBanForm,
@@ -77,6 +86,7 @@ export function useReportModeration(report: ReportWithReporter | null) {
     banReason,
     setBanReason,
     banError,
+    banSubmitting,
     banDone,
     handleBanSubmit,
   };

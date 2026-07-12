@@ -88,7 +88,7 @@ export function ProfileEditForm() {
         <Text className="mt-3 text-sm text-danger">{saveError}</Text>
       )}
 
-      <Button type="submit" disabled={pending} className="mt-6 w-fit">
+      <Button type="submit" loading={pending} className="mt-6 w-fit">
         {pending ? t("saving") : t("save")}
       </Button>
     </form>

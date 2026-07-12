@@ -22,6 +22,7 @@ import {
 } from "@/src/features/feedback/new-feedback.schema";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
+import { LoadingState } from "@/src/shared/components/LoadingState";
 import { TextField } from "@/src/shared/components/form/TextField";
 import { TextareaField } from "@/src/shared/components/form/TextareaField";
 import { SelectField } from "@/src/shared/components/form/SelectField";
@@ -104,7 +105,7 @@ export function NewFeedbackForm() {
   if (status === "loading") {
     return (
       <main className="mx-auto w-full max-w-2xl px-7 py-10">
-        <Text variant="secondary">{t("loading")}</Text>
+        <LoadingState label={t("loading")} showLabel />
       </main>
     );
   }
@@ -191,7 +192,7 @@ export function NewFeedbackForm() {
 
           <Button
             type="submit"
-            disabled={isSubmitting}
+            loading={isSubmitting}
             className="h-[50px] w-full"
           >
             {isSubmitting ? t("posting") : t("postFeedback")}

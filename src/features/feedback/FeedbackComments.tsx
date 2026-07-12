@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
+import { LoadingState } from "@/src/shared/components/LoadingState";
 import { Username } from "@/src/shared/components/Username";
 import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
@@ -94,6 +95,7 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
         className={cn("self-end", blocked && "cursor-not-allowed opacity-45")}
         aria-disabled={blocked || undefined}
         disabled={blocked ? false : !draft.trim() || posting}
+        loading={posting}
         onClick={handlePost}
       >
         {t("postComment")}
@@ -121,7 +123,7 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
         ))}
 
       {loadStatus === "loading" && (
-        <Text variant="secondary">{t("loadingComments")}</Text>
+        <LoadingState label={t("loadingComments")} showLabel />
       )}
       {loadStatus === "error" && (
         <Text className="text-danger">{t("commentsLoadError")}</Text>
@@ -164,7 +166,7 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
         <div className="mt-4 flex flex-col gap-2">
           <Button
             variant="secondary"
-            disabled={loadingMore}
+            loading={loadingMore}
             onClick={() => void commentsQuery.fetchNextPage()}
           >
             {loadingMore ? t("loadingMore") : t("loadMore")}

@@ -44,7 +44,7 @@ export function AuthorProfileHeader({
     <Button
       variant={profile.isFollowedByMe ? "secondary" : "primary"}
       aria-disabled={followBlocked || undefined}
-      disabled={followBusy}
+      loading={followBusy}
       className={followBlocked ? "cursor-not-allowed opacity-45" : undefined}
       onClick={onFollowToggle}
     >

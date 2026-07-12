@@ -283,7 +283,7 @@ export function AuthForm() {
 
           <Button
             type="submit"
-            disabled={isSubmitting || sending}
+            loading={isSubmitting || sending}
             className="w-full h-[50px] mt-2"
           >
             {isSubmitting || sending

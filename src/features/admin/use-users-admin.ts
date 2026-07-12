@@ -138,6 +138,15 @@ export function useUsersAdmin() {
     banReason,
     setBanReason,
     actionError,
+    // Per-action in-flight ids, so a row can spin only the button being used
+    // (and block a second click) rather than disabling the whole table.
+    banPending: banMutation.isPending,
+    trustPendingId: trustMutation.isPending
+      ? (trustMutation.variables?.id ?? null)
+      : null,
+    unbanPendingId: unbanMutation.isPending
+      ? (unbanMutation.variables ?? null)
+      : null,
     handleLoadMore: () => usersQuery.fetchNextPage(),
     handleBan,
     handleUnban: (id: string) => unbanMutation.mutate(id),

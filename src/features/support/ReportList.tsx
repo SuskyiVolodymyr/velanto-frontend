@@ -1,4 +1,5 @@
 import { Text } from "@/src/shared/components/Text";
+import { LoadingState } from "@/src/shared/components/LoadingState";
 import { Button } from "@/src/shared/components/Button";
 import { ReportRow } from "@/src/features/support/ReportRow";
 import type { ReportWithReporter } from "@/src/shared/types/report";
@@ -26,7 +27,7 @@ export function ReportList({
 }: ReportListProps) {
   return (
     <>
-      {loading && <Text variant="secondary">Loading reports…</Text>}
+      {loading && <LoadingState label="Loading reports…" showLabel />}
       {error && (
         <Text className="text-danger">
           Couldn&apos;t load reports. Try again later.
@@ -48,7 +49,7 @@ export function ReportList({
         <div className="flex flex-col gap-2">
           <Button
             variant="secondary"
-            disabled={loadingMore}
+            loading={loadingMore}
             onClick={onLoadMore}
           >
             {loadingMore ? "Loading…" : "Load more"}

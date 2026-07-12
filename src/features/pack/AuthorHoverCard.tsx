@@ -49,7 +49,7 @@ export function AuthorHoverCard({
     <Button
       variant={isFollowing ? "secondary" : "primary"}
       aria-disabled={followBlocked || undefined}
-      disabled={followBusy}
+      loading={followBusy}
       className={followBlocked ? "cursor-not-allowed opacity-45" : undefined}
       onClick={onFollowToggle}
     >

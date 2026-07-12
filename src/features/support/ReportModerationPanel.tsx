@@ -20,6 +20,7 @@ export function ReportModerationPanel({
 }: ReportModerationPanelProps) {
   const {
     deleted,
+    deleting,
     deleteError,
     handleDeletePack,
     showBanForm,
@@ -29,6 +30,7 @@ export function ReportModerationPanel({
     banReason,
     setBanReason,
     banError,
+    banSubmitting,
     banDone,
     handleBanSubmit,
   } = moderation;
@@ -43,6 +45,7 @@ export function ReportModerationPanel({
           <Button
             variant="secondary"
             disabled={deleted}
+            loading={deleting}
             onClick={() => void handleDeletePack()}
           >
             {deleted ? "Pack deleted ✓" : "Delete pack"}
@@ -92,6 +95,7 @@ export function ReportModerationPanel({
                 variant="primary"
                 className="self-start"
                 disabled={!isBanReasonValid(banReason)}
+                loading={banSubmitting}
                 onClick={() => void handleBanSubmit()}
               >
                 Confirm ban

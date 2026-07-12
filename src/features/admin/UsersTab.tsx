@@ -3,6 +3,7 @@
 import { Text } from "@/src/shared/components/Text";
 import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
+import { LoadingState } from "@/src/shared/components/LoadingState";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { canActOn } from "@/src/shared/lib/staff-permissions";
 import {
@@ -26,6 +27,9 @@ export function UsersTab() {
     banReason,
     setBanReason,
     actionError,
+    banPending,
+    trustPendingId,
+    unbanPendingId,
     handleLoadMore,
     handleBan,
     handleUnban,
@@ -47,7 +51,9 @@ export function UsersTab() {
         />
       </div>
 
-      {status === "loading" && <Text variant="secondary">Loading users…</Text>}
+      {status === "loading" && (
+        <LoadingState label="Loading users…" showLabel />
+      )}
       {status === "error" && (
         <Text className="text-danger">
           Couldn&apos;t load users. Try again later.
@@ -68,6 +74,9 @@ export function UsersTab() {
               banFormOpen={banTargetId === row.id}
               banDuration={banDuration}
               banReason={banReason}
+              trustPending={trustPendingId === row.id}
+              unbanPending={unbanPendingId === row.id}
+              banPending={banPending && banTargetId === row.id}
               onSetTrusted={handleSetTrusted}
               onUnban={handleUnban}
               onToggleBanForm={toggleBanForm}
@@ -86,7 +95,7 @@ export function UsersTab() {
       {status === "ready" && users.length < total && (
         <Button
           variant="secondary"
-          disabled={loadingMore}
+          loading={loadingMore}
           onClick={() => void handleLoadMore()}
         >
           {loadingMore ? "Loading…" : "Load more"}
