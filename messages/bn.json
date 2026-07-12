@@ -17,7 +17,7 @@
     "moderation": "মডারেশন",
     "admin": "অ্যাডমিন",
     "browse": "অন্বেষণ",
-    "feedback": "মতামত",
+    "feedback": "মতামত ও পরামর্শ",
     "rules": "নিয়মাবলী"
   },
   "settings": {
@@ -534,7 +534,7 @@
     "reportClosed": "বন্ধ"
   },
   "feedback": {
-    "pageTitle": "মতামত",
+    "pageTitle": "মতামত ও পরামর্শ",
     "newPost": "নতুন পোস্ট",
     "searchAria": "মতামত খুঁজুন",
     "searchPlaceholder": "মতামত খুঁজুন…",
@@ -603,7 +603,7 @@
     "suggestionPlaceholder": "এর পরিবর্তে কী থাকা উচিত",
     "posting": "পোস্ট হচ্ছে…",
     "postFeedback": "মতামত পোস্ট করুন",
-    "metaListTitle": "মতামত — Velanto",
+    "metaListTitle": "মতামত ও পরামর্শ — Velanto",
     "metaListDescription": "বাগ জানান, ফিচারের প্রস্তাব দিন এবং অনুবাদের উন্নতির পরামর্শ দিন।",
     "metaNewTitle": "নতুন মতামত — Velanto"
   }

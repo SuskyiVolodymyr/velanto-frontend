@@ -17,7 +17,7 @@
     "moderation": "मॉडरेशन",
     "admin": "एडमिन",
     "browse": "ब्राउज़ करें",
-    "feedback": "प्रतिक्रिया",
+    "feedback": "प्रतिक्रिया और सुझाव",
     "rules": "नियम"
   },
   "settings": {
@@ -534,7 +534,7 @@
     "reportClosed": "बंद"
   },
   "feedback": {
-    "pageTitle": "प्रतिक्रिया",
+    "pageTitle": "प्रतिक्रिया और सुझाव",
     "newPost": "नई पोस्ट",
     "searchAria": "प्रतिक्रिया खोजें",
     "searchPlaceholder": "प्रतिक्रिया खोजें…",
@@ -603,7 +603,7 @@
     "suggestionPlaceholder": "इसके बजाय क्या लिखा होना चाहिए",
     "posting": "पोस्ट हो रहा है…",
     "postFeedback": "प्रतिक्रिया पोस्ट करें",
-    "metaListTitle": "प्रतिक्रिया — Velanto",
+    "metaListTitle": "प्रतिक्रिया और सुझाव — Velanto",
     "metaListDescription": "बग रिपोर्ट करें, फ़ीचर सुझाएँ और अनुवाद सुधार प्रस्तावित करें।",
     "metaNewTitle": "नई प्रतिक्रिया — Velanto"
   }

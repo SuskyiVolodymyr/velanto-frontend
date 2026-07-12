@@ -17,7 +17,7 @@
     "moderation": "Модерація",
     "admin": "Адміністрування",
     "browse": "Огляд",
-    "feedback": "Відгуки",
+    "feedback": "Відгуки та пропозиції",
     "rules": "Правила"
   },
   "settings": {
@@ -534,7 +534,7 @@
     "reportClosed": "Закрито"
   },
   "feedback": {
-    "pageTitle": "Відгуки",
+    "pageTitle": "Відгуки та пропозиції",
     "newPost": "Новий допис",
     "searchAria": "Пошук відгуків",
     "searchPlaceholder": "Пошук відгуків…",
@@ -603,7 +603,7 @@
     "suggestionPlaceholder": "Як має бути натомість",
     "posting": "Публікація…",
     "postFeedback": "Опублікувати відгук",
-    "metaListTitle": "Відгуки — Velanto",
+    "metaListTitle": "Відгуки та пропозиції — Velanto",
     "metaListDescription": "Повідомляй про помилки, пропонуй функції та покращення перекладу.",
     "metaNewTitle": "Новий відгук — Velanto"
   }

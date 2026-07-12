@@ -17,7 +17,7 @@
     "moderation": "Модерация",
     "admin": "Администрирование",
     "browse": "Обзор",
-    "feedback": "Отзывы",
+    "feedback": "Отзывы и предложения",
     "rules": "Правила"
   },
   "settings": {
@@ -534,7 +534,7 @@
     "reportClosed": "Закрыта"
   },
   "feedback": {
-    "pageTitle": "Отзывы",
+    "pageTitle": "Отзывы и предложения",
     "newPost": "Новый пост",
     "searchAria": "Поиск по отзывам",
     "searchPlaceholder": "Поиск по отзывам…",
@@ -603,7 +603,7 @@
     "suggestionPlaceholder": "Как должно быть вместо этого",
     "posting": "Публикуем…",
     "postFeedback": "Опубликовать отзыв",
-    "metaListTitle": "Отзывы — Velanto",
+    "metaListTitle": "Отзывы и предложения — Velanto",
     "metaListDescription": "Сообщай о багах, предлагай функции и улучшения перевода.",
     "metaNewTitle": "Новый отзыв — Velanto"
   }

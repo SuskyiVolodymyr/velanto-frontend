@@ -16,7 +16,7 @@
     "moderation": "Moderation",
     "admin": "Admin",
     "browse": "Browse",
-    "feedback": "Feedback",
+    "feedback": "Feedback & suggestions",
     "rules": "Rules"
   },
   "settings": {
@@ -533,7 +533,7 @@
     "reportClosed": "Closed"
   },
   "feedback": {
-    "pageTitle": "Feedback",
+    "pageTitle": "Feedback & suggestions",
     "newPost": "New post",
     "searchAria": "Search feedback",
     "searchPlaceholder": "Search feedback…",
@@ -602,7 +602,7 @@
     "suggestionPlaceholder": "What it should say instead",
     "posting": "Posting…",
     "postFeedback": "Post feedback",
-    "metaListTitle": "Feedback — Velanto",
+    "metaListTitle": "Feedback & suggestions — Velanto",
     "metaListDescription": "Report bugs, suggest features, and propose translation improvements.",
     "metaNewTitle": "New feedback — Velanto"
   }
