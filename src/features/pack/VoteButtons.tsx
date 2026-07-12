@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactElement } from "react";
+import { ArrowUp, ArrowDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import { useVoteMutation } from "@/src/shared/api/vote.mutations";
@@ -8,24 +9,8 @@ import { Tooltip } from "@/src/shared/components/Tooltip";
 import { cn } from "@/src/shared/lib/cn";
 
 function Arrow({ direction }: { direction: "up" | "down" }) {
-  return (
-    <svg
-      aria-hidden
-      viewBox="0 0 24 24"
-      className="h-[18px] w-[18px]"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      {direction === "up" ? (
-        <path d="M12 19V5M6 11l6-6 6 6" />
-      ) : (
-        <path d="M12 5v14M6 13l6 6 6-6" />
-      )}
-    </svg>
-  );
+  const Icon = direction === "up" ? ArrowUp : ArrowDown;
+  return <Icon aria-hidden className="h-[18px] w-[18px]" strokeWidth={2.2} />;
 }
 
 // Compact up / score / down voter. The net score (likes − dislikes) sits
