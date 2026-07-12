@@ -49,6 +49,21 @@ describe("commentsClient", () => {
     );
   });
 
+  it("list() forwards the sort param", async () => {
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 10,
+    });
+
+    await commentsClient.list("pack-1", { sort: "new" });
+
+    expect(apiClient.get).toHaveBeenCalledWith(
+      "/packs/pack-1/comments?sort=new",
+    );
+  });
+
   it("create() posts a comment body for a pack", async () => {
     vi.mocked(apiClient.post).mockResolvedValue(COMMENT);
 
@@ -60,5 +75,29 @@ describe("commentsClient", () => {
       body: "Great pack!",
     });
     expect(result).toEqual(COMMENT);
+  });
+
+  it("create() forwards a parentId for a reply", async () => {
+    vi.mocked(apiClient.post).mockResolvedValue(COMMENT);
+
+    await commentsClient.create("pack-1", { body: "a reply", parentId: "c1" });
+
+    expect(apiClient.post).toHaveBeenCalledWith("/packs/pack-1/comments", {
+      body: "a reply",
+      parentId: "c1",
+    });
+  });
+
+  it("vote() posts the value to the comment vote endpoint", async () => {
+    const tally = { score: 1, likes: 1, dislikes: 0, myVote: 1 as const };
+    vi.mocked(apiClient.post).mockResolvedValue(tally);
+
+    const result = await commentsClient.vote("pack-1", "c1", 1);
+
+    expect(apiClient.post).toHaveBeenCalledWith(
+      "/packs/pack-1/comments/c1/vote",
+      { value: 1 },
+    );
+    expect(result).toEqual(tally);
   });
 });

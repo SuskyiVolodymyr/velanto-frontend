@@ -11,10 +11,15 @@ import { Spinner } from "@/src/shared/components/Spinner";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { Username } from "@/src/shared/components/Username";
 import { Tooltip } from "@/src/shared/components/Tooltip";
+import { VoteControl } from "@/src/shared/components/VoteControl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { isStaff } from "@/src/shared/lib/user-role";
 import { cn } from "@/src/shared/lib/cn";
 import { messageFromError } from "@/src/shared/lib/messageFromError";
+import {
+  commentsClient,
+  type CommentSort,
+} from "@/src/shared/lib/comments-client";
 import type { Comment } from "@/src/shared/types/comment";
 import {
   usePackComments,
@@ -26,12 +31,14 @@ import {
 /** A single comment's identity + body + row actions, shared by roots and
  *  replies. The Reply affordance renders only when `onReply` is supplied. */
 function CommentView({
+  packId,
   comment,
   canDelete,
   deleting,
   onDelete,
   onReply,
 }: {
+  packId: string;
   comment: Comment;
   canDelete: boolean;
   deleting: boolean;
@@ -39,6 +46,7 @@ function CommentView({
   onReply?: () => void;
 }) {
   const t = useTranslations("pack");
+  const tAuth = useTranslations("authGate");
   return (
     <div>
       <div className="flex items-center justify-between gap-2">
@@ -75,15 +83,27 @@ function CommentView({
           {comment.body}
         </Text>
       </Hidden>
-      {onReply && (
-        <button
-          type="button"
-          onClick={onReply}
-          className="mt-1 text-xs font-medium text-foreground-tertiary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc rounded-[4px]"
-        >
-          {t("reply")}
-        </button>
-      )}
+      <div className="mt-2 flex items-center gap-3">
+        <VoteControl
+          vote={(value) => commentsClient.vote(packId, comment.id, value)}
+          initialLikes={comment.likes ?? 0}
+          initialDislikes={comment.dislikes ?? 0}
+          initialMyVote={comment.myVote ?? null}
+          upvoteLabel={t("upvote")}
+          downvoteLabel={t("downvote")}
+          blockedReason={tAuth("logInToVote")}
+          errorLabel={t("voteError")}
+        />
+        {onReply && (
+          <button
+            type="button"
+            onClick={onReply}
+            className="text-xs font-medium text-foreground-tertiary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc rounded-[4px]"
+          >
+            {t("reply")}
+          </button>
+        )}
+      </div>
     </div>
   );
 }
@@ -102,14 +122,16 @@ export function CommentSection({
   const blocked = status === "unauthenticated";
   const authenticated = status === "authenticated";
   const [draft, setDraft] = useState("");
+  // Root ordering — Top (net score) by default, or New (newest first).
+  const [sort, setSort] = useState<CommentSort>("top");
   // The root whose inline reply composer is open (null = none), plus its text.
   const [replyingToId, setReplyingToId] = useState<string | null>(null);
   const [replyDraft, setReplyDraft] = useState("");
 
-  const commentsQuery = usePackComments(packId);
-  const addComment = useAddPackComment(packId);
-  const replyComment = useReplyToComment(packId);
-  const deleteComment = useDeletePackComment(packId);
+  const commentsQuery = usePackComments(packId, sort);
+  const addComment = useAddPackComment(packId, sort);
+  const replyComment = useReplyToComment(packId, sort);
+  const deleteComment = useDeletePackComment(packId, sort);
   const deletingId = deleteComment.isPending
     ? (deleteComment.variables ?? null)
     : null;
@@ -281,13 +303,39 @@ export function CommentSection({
 
   return (
     <section>
-      <Text
-        as="h2"
-        variant="tertiary"
-        className="mb-4 text-xs uppercase tracking-wide"
-      >
-        {t("comments", { count: total })}
-      </Text>
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <Text
+          as="h2"
+          variant="tertiary"
+          className="text-xs uppercase tracking-wide"
+        >
+          {t("comments", { count: total })}
+        </Text>
+        {loadStatus === "ready" && total > 0 && (
+          <div
+            role="group"
+            aria-label={t("sortLabel")}
+            className="inline-flex flex-none rounded-[8px] border border-border p-0.5"
+          >
+            {(["top", "new"] as const).map((option) => (
+              <button
+                key={option}
+                type="button"
+                aria-pressed={sort === option}
+                onClick={() => setSort(option)}
+                className={cn(
+                  "rounded-[6px] px-3 py-1 text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
+                  sort === option
+                    ? "bg-white/[0.06] text-foreground"
+                    : "text-foreground-tertiary hover:text-foreground",
+                )}
+              >
+                {option === "top" ? t("sortTop") : t("sortNew")}
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
 
       {status !== "loading" &&
         (blocked ? (
@@ -320,6 +368,7 @@ export function CommentSection({
                 className="rounded-[12px] border border-border p-4"
               >
                 <CommentView
+                  packId={packId}
                   comment={root}
                   canDelete={canDelete(root)}
                   deleting={deletingId === root.id}
@@ -332,6 +381,7 @@ export function CommentSection({
                     {replies.map((reply) => (
                       <CommentView
                         key={reply.id}
+                        packId={packId}
                         comment={reply}
                         canDelete={canDelete(reply)}
                         deleting={deletingId === reply.id}

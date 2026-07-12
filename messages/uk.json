@@ -382,7 +382,10 @@
     "replyPlaceholder": "Напишіть відповідь",
     "replyLabel": "Відповісти на коментар",
     "cancel": "Скасувати",
-    "deleteCommentThreadConfirm": "Видалити цей коментар і всі відповіді на нього?"
+    "deleteCommentThreadConfirm": "Видалити цей коментар і всі відповіді на нього?",
+    "sortTop": "Популярні",
+    "sortNew": "Нові",
+    "sortLabel": "Сортувати коментарі"
   },
   "share": {
     "trigger": "Поділитися",

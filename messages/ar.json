@@ -382,7 +382,10 @@
     "replyPlaceholder": "اكتب ردًا",
     "replyLabel": "الرد على التعليق",
     "cancel": "إلغاء",
-    "deleteCommentThreadConfirm": "حذف هذا التعليق وجميع الردود عليه؟"
+    "deleteCommentThreadConfirm": "حذف هذا التعليق وجميع الردود عليه؟",
+    "sortTop": "الأعلى",
+    "sortNew": "الأحدث",
+    "sortLabel": "ترتيب التعليقات"
   },
   "share": {
     "trigger": "مشاركة",

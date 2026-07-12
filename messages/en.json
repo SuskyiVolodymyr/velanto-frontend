@@ -381,7 +381,10 @@
     "replyPlaceholder": "Write a reply",
     "replyLabel": "Reply to comment",
     "cancel": "Cancel",
-    "deleteCommentThreadConfirm": "Delete this comment and all its replies?"
+    "deleteCommentThreadConfirm": "Delete this comment and all its replies?",
+    "sortTop": "Top",
+    "sortNew": "New",
+    "sortLabel": "Sort comments"
   },
   "share": {
     "trigger": "Share",

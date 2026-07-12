@@ -2,22 +2,31 @@
 
 import {
   infiniteQueryOptions,
+  keepPreviousData,
   useInfiniteQuery,
   useMutation,
   useQueryClient,
   type InfiniteData,
 } from "@tanstack/react-query";
-import { commentsClient } from "@/src/shared/lib/comments-client";
+import {
+  commentsClient,
+  type CommentSort,
+} from "@/src/shared/lib/comments-client";
 import type { Comment } from "@/src/shared/types/comment";
 import { fetchPackCommentsPage } from "./pack-comments";
 
 type PackCommentsPage = Awaited<ReturnType<typeof commentsClient.list>>;
 type PackCommentsData = InfiniteData<PackCommentsPage, number>;
 
-export function packCommentsQueryOptions(packId: string) {
+export function packCommentsQueryOptions(packId: string, sort: CommentSort) {
   return infiniteQueryOptions({
-    queryKey: ["pack-comments", packId] as const,
-    queryFn: ({ pageParam }) => fetchPackCommentsPage(packId, pageParam),
+    // The sort is part of the key: switching Top/New is a distinct query the
+    // mutations below must also target so they patch the visible list.
+    queryKey: ["pack-comments", packId, sort] as const,
+    queryFn: ({ pageParam }) => fetchPackCommentsPage(packId, pageParam, sort),
+    // Keep the current list (and the sort toggle) on screen while switching to
+    // an as-yet-uncached sort, instead of flashing the loading state.
+    placeholderData: keepPreviousData,
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
       const loaded = allPages.reduce(
@@ -29,17 +38,17 @@ export function packCommentsQueryOptions(packId: string) {
   });
 }
 
-export function usePackComments(packId: string) {
-  return useInfiniteQuery(packCommentsQueryOptions(packId));
+export function usePackComments(packId: string, sort: CommentSort) {
+  return useInfiniteQuery(packCommentsQueryOptions(packId, sort));
 }
 
 /**
  * Post a root comment; prepends the created comment into the first cached page
  * and bumps every page's total, so the thread updates without a refetch.
  */
-export function useAddPackComment(packId: string) {
+export function useAddPackComment(packId: string, sort: CommentSort) {
   const queryClient = useQueryClient();
-  const { queryKey } = packCommentsQueryOptions(packId);
+  const { queryKey } = packCommentsQueryOptions(packId, sort);
   return useMutation({
     mutationFn: (body: string) => commentsClient.create(packId, { body }),
     onSuccess: (created) => {
@@ -69,9 +78,9 @@ export function useAddPackComment(packId: string) {
  * of the backend order) and that root's `replyCount` is bumped; the roots-only
  * `total` is untouched.
  */
-export function useReplyToComment(packId: string) {
+export function useReplyToComment(packId: string, sort: CommentSort) {
   const queryClient = useQueryClient();
-  const { queryKey } = packCommentsQueryOptions(packId);
+  const { queryKey } = packCommentsQueryOptions(packId, sort);
   return useMutation({
     mutationFn: ({ body, parentId }: { body: string; parentId: string }) =>
       commentsClient.create(packId, { body, parentId }),
@@ -109,9 +118,9 @@ function appendReply(root: Comment, reply: Comment): Comment {
  * is the comment id, so callers can spin only the row being deleted via
  * `mutation.variables`.
  */
-export function useDeletePackComment(packId: string) {
+export function useDeletePackComment(packId: string, sort: CommentSort) {
   const queryClient = useQueryClient();
-  const { queryKey } = packCommentsQueryOptions(packId);
+  const { queryKey } = packCommentsQueryOptions(packId, sort);
   return useMutation({
     mutationFn: (commentId: string) => commentsClient.delete(packId, commentId),
     onSuccess: (_result, commentId) => {
