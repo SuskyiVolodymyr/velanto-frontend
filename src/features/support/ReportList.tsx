@@ -28,7 +28,7 @@ export function ReportList({
     <>
       {loading && <Text variant="secondary">Loading reports…</Text>}
       {error && (
-        <Text className="text-[#ff6b6b]">
+        <Text className="text-danger">
           Couldn&apos;t load reports. Try again later.
         </Text>
       )}
@@ -54,7 +54,7 @@ export function ReportList({
             {loadingMore ? "Loading…" : "Load more"}
           </Button>
           {loadMoreError && (
-            <Text className="text-sm text-[#ff6b6b]">{loadMoreError}</Text>
+            <Text className="text-sm text-danger">{loadMoreError}</Text>
           )}
         </div>
       )}

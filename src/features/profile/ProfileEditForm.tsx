@@ -53,7 +53,7 @@ export function ProfileEditForm() {
   if (profileQuery.isError) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text className="text-[#ff6b6b]">{t("loadBioError")}</Text>
+        <Text className="text-danger">{t("loadBioError")}</Text>
       </div>
     );
   }
@@ -85,7 +85,7 @@ export function ProfileEditForm() {
       />
 
       {saveError && (
-        <Text className="mt-3 text-sm text-[#ff6b6b]">{saveError}</Text>
+        <Text className="mt-3 text-sm text-danger">{saveError}</Text>
       )}
 
       <Button type="submit" disabled={pending} className="mt-6 w-fit">

@@ -184,7 +184,7 @@ export function NewFeedbackForm() {
           )}
 
           {errors.root?.message && (
-            <Text role="alert" className="text-sm text-[#ff6b6b]">
+            <Text role="alert" className="text-sm text-danger">
               {errors.root.message}
             </Text>
           )}

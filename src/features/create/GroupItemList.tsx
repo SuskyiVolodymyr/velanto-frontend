@@ -25,7 +25,7 @@ export function GroupItemList({ items, onRemove }: GroupItemListProps) {
             type="button"
             onClick={() => onRemove(item.id)}
             aria-label={t("removeItemAria", { title: item.title })}
-            className="text-foreground-tertiary hover:text-[#ff6b6b]"
+            className="text-foreground-tertiary hover:text-danger"
           >
             ×
           </button>

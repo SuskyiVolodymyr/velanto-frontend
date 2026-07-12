@@ -43,7 +43,7 @@ export function FormField({
         <Text
           id={`${htmlFor}-error`}
           role="alert"
-          className="text-sm text-[#ff6b6b]"
+          className="text-sm text-danger"
         >
           {error}
         </Text>

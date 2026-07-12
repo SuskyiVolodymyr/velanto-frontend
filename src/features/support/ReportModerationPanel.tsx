@@ -48,7 +48,7 @@ export function ReportModerationPanel({
             {deleted ? "Pack deleted ✓" : "Delete pack"}
           </Button>
           {deleteError && (
-            <Text className="mt-2 text-xs text-[#ff6b6b]">{deleteError}</Text>
+            <Text className="mt-2 text-xs text-danger">{deleteError}</Text>
           )}
         </div>
       )}
@@ -97,7 +97,7 @@ export function ReportModerationPanel({
                 Confirm ban
               </Button>
               {banError && (
-                <Text className="text-xs text-[#ff6b6b]">{banError}</Text>
+                <Text className="text-xs text-danger">{banError}</Text>
               )}
             </div>
           )}

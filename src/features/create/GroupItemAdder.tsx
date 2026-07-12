@@ -103,9 +103,7 @@ export function GroupItemAdder({
               {validating ? t("checking") : t("add")}
             </Button>
           </div>
-          {addError && (
-            <Text className="text-xs text-[#ff6b6b]">{addError}</Text>
-          )}
+          {addError && <Text className="text-xs text-danger">{addError}</Text>}
         </div>
       )}
     </div>

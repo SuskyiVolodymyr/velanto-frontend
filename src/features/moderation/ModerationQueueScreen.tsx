@@ -56,7 +56,7 @@ export function ModerationQueueScreen() {
 
       {queue.loading && <Text variant="secondary">Loading packs…</Text>}
       {queue.error && (
-        <Text className="text-[#ff6b6b]">
+        <Text className="text-danger">
           Couldn&apos;t load packs. Try again later.
         </Text>
       )}
@@ -94,9 +94,7 @@ export function ModerationQueueScreen() {
             {queue.loadingMore ? "Loading…" : "Load more"}
           </Button>
           {queue.loadMoreError && (
-            <Text className="text-sm text-[#ff6b6b]">
-              {queue.loadMoreError}
-            </Text>
+            <Text className="text-sm text-danger">{queue.loadMoreError}</Text>
           )}
         </div>
       )}

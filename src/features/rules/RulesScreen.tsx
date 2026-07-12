@@ -46,7 +46,7 @@ export function RulesScreen({ rules }: RulesScreenProps) {
       </Text>
 
       {rules === null ? (
-        <Text role="alert" className="text-sm text-[#ff6b6b]">
+        <Text role="alert" className="text-sm text-danger">
           {t("loadError")}
         </Text>
       ) : (

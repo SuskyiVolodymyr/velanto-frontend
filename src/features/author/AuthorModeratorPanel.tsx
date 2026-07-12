@@ -100,7 +100,7 @@ export function AuthorModeratorPanel({
             Confirm ban
           </Button>
           {banActionError && (
-            <Text className="text-xs text-[#ff6b6b]">{banActionError}</Text>
+            <Text className="text-xs text-danger">{banActionError}</Text>
           )}
         </div>
       )}
@@ -108,7 +108,7 @@ export function AuthorModeratorPanel({
         <Text variant="secondary">Loading ban history…</Text>
       )}
       {banHistoryQuery.error && (
-        <Text className="text-sm text-[#ff6b6b]">
+        <Text className="text-sm text-danger">
           Couldn&apos;t load ban history.
         </Text>
       )}

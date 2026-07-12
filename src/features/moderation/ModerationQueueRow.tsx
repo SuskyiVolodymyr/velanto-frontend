@@ -71,7 +71,7 @@ export function ModerationQueueRow({
           </div>
         </div>
       )}
-      {error && <Text className="text-sm text-[#ff6b6b]">{error}</Text>}
+      {error && <Text className="text-sm text-danger">{error}</Text>}
     </div>
   );
 }

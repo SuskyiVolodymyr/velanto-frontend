@@ -74,7 +74,7 @@ export function SupportReportScreen({ reportId }: { reportId: string }) {
   if (reportQuery.isError || !report) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text className="text-[#ff6b6b]">This report doesn&apos;t exist.</Text>
+        <Text className="text-danger">This report doesn&apos;t exist.</Text>
       </div>
     );
   }

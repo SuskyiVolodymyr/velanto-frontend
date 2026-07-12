@@ -67,7 +67,7 @@ export function NotificationsSection() {
         </div>
       )}
       {status === "authenticated" && fetchError && (
-        <Text className="text-sm text-[#ff6b6b]">
+        <Text className="text-sm text-danger">
           {t("notificationsLoadError")}
         </Text>
       )}
@@ -110,7 +110,7 @@ export function NotificationsSection() {
                 </button>
               </div>
               {erroredType === type && (
-                <Text className="text-xs text-[#ff6b6b]">
+                <Text className="text-xs text-danger">
                   {t("notificationUpdateError")}
                 </Text>
               )}

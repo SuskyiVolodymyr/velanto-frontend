@@ -44,7 +44,7 @@ export function ProfileScreen() {
   if (profileQuery.isError || !profile) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text className="text-[#ff6b6b]">{t("loadProfileError")}</Text>
+        <Text className="text-danger">{t("loadProfileError")}</Text>
       </div>
     );
   }

@@ -87,7 +87,7 @@ export function CommentSection({ packId }: { packId: string }) {
           blocked && "cursor-not-allowed opacity-60",
         )}
       />
-      {postError && <Text className="text-sm text-[#ff6b6b]">{postError}</Text>}
+      {postError && <Text className="text-sm text-danger">{postError}</Text>}
       <Button
         className={cn("self-end", blocked && "cursor-not-allowed opacity-45")}
         aria-disabled={blocked || undefined}
@@ -122,7 +122,7 @@ export function CommentSection({ packId }: { packId: string }) {
         <Text variant="secondary">{t("loadingComments")}</Text>
       )}
       {loadStatus === "error" && (
-        <Text className="text-[#ff6b6b]">{t("loadCommentsError")}</Text>
+        <Text className="text-danger">{t("loadCommentsError")}</Text>
       )}
       {loadStatus === "ready" && comments.length === 0 && (
         <Text variant="secondary">{t("noComments")}</Text>
@@ -163,7 +163,7 @@ export function CommentSection({ packId }: { packId: string }) {
             {loadingMore ? t("loadingMore") : t("loadMore")}
           </Button>
           {loadMoreError && (
-            <Text className="text-sm text-[#ff6b6b]">{loadMoreError}</Text>
+            <Text className="text-sm text-danger">{loadMoreError}</Text>
           )}
         </div>
       )}
