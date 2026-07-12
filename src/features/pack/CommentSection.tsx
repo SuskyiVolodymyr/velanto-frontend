@@ -124,7 +124,7 @@ export function CommentSection({
       isStaff(user.role));
 
   function handleDelete(comment: Comment) {
-    const hasReplies = (comment.replyCount ?? 0) > 0;
+    const hasReplies = (comment.replyCount ?? comment.replies?.length ?? 0) > 0;
     const message = hasReplies
       ? t("deleteCommentThreadConfirm")
       : t("deleteCommentConfirm");
@@ -136,6 +136,9 @@ export function CommentSection({
   // pre-fills an @mention of the reply's author (the reply still attaches to
   // the root — two-level threading).
   function openReply(rootId: string, mentionUsername?: string) {
+    // Clear any error left over from a previous composer so a freshly-opened
+    // one doesn't surface a stale "couldn't post" before the user types.
+    replyComment.reset();
     setReplyingToId(rootId);
     setReplyDraft(mentionUsername ? `@${mentionUsername} ` : "");
   }

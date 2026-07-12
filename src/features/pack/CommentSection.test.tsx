@@ -658,6 +658,33 @@ describe("CommentSection", () => {
       expect(screen.getByText("Loved this pack.")).toBeInTheDocument();
       confirm.mockRestore();
     });
+
+    it("clears a failed reply's error when the composer is reopened", async () => {
+      const user = userEvent.setup();
+      listOnce([COMMENT_A]);
+      vi.mocked(commentsClient.create).mockRejectedValueOnce(
+        new Error("network"),
+      );
+      renderAsAuthenticated();
+
+      await user.click(await screen.findByRole("button", { name: "Reply" }));
+      const box = screen.getByRole("textbox", { name: "Reply to comment" });
+      await user.type(box, "oops");
+      const composer = box.closest("div") as HTMLElement;
+      await user.click(within(composer).getByRole("button", { name: "Post" }));
+      expect(
+        await screen.findByText("Couldn't post your comment. Try again."),
+      ).toBeInTheDocument();
+
+      // Cancel, then reopen — the stale error must not carry over.
+      await user.click(
+        within(composer).getByRole("button", { name: "Cancel" }),
+      );
+      await user.click(screen.getByRole("button", { name: "Reply" }));
+      expect(
+        screen.queryByText("Couldn't post your comment. Try again."),
+      ).not.toBeInTheDocument();
+    });
   });
 
   describe("streamer mode", () => {
