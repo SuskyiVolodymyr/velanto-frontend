@@ -7,6 +7,7 @@ import {
   getAuthorPacksServer,
 } from "@/src/features/author/get-user-server";
 import { buildJsonLd, jsonLdScript } from "@/src/shared/lib/jsonld";
+import { BackButton } from "@/src/shared/components/BackButton";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://velanto.app";
 
@@ -98,6 +99,9 @@ export default async function AuthorPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }}
       />
+      <div className="mx-auto w-full max-w-4xl px-7 pt-6">
+        <BackButton fallbackHref="/" />
+      </div>
       <AuthorScreen authorId={id} initialData={initialData} />
     </>
   );

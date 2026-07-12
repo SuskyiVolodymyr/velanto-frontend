@@ -517,6 +517,7 @@
     "userNotFoundBody": "Ce profil n'existe pas ou a été supprimé.",
     "userMetaDescription": "Les packs de quiz à élimination de {username} sur Velanto — lancez-en un pour voir qui s'impose.",
     "backToDiscover": "Retour à la découverte",
+    "back": "Retour",
     "errorTitle": "Une erreur est survenue",
     "errorBody": "Impossible de charger ce profil. Veuillez réessayer.",
     "tryAgain": "Réessayer"

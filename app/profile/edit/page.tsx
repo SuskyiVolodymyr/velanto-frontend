@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { ProfileEditForm } from "@/src/features/profile/ProfileEditForm";
+import { BackButton } from "@/src/shared/components/BackButton";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("pages");
@@ -8,5 +9,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function ProfileEditPage() {
-  return <ProfileEditForm />;
+  return (
+    <>
+      <div className="mx-auto w-full max-w-md px-7 pt-6">
+        <BackButton fallbackHref="/profile" />
+      </div>
+      <ProfileEditForm />
+    </>
+  );
 }

@@ -517,6 +517,7 @@
     "userNotFoundBody": "该个人资料不存在或已被移除。",
     "userMetaDescription": "{username} 在 Velanto 上的淘汰问答题包——玩上一局，看看谁能拔得头筹。",
     "backToDiscover": "返回发现",
+    "back": "返回",
     "errorTitle": "出错了",
     "errorBody": "无法加载该个人资料，请重试。",
     "tryAgain": "重试"
