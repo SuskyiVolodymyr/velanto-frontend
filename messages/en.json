@@ -516,6 +516,7 @@
     "userNotFoundBody": "This profile doesn't exist or has been removed.",
     "userMetaDescription": "{username}'s elimination-quiz packs on Velanto — play through one to see who comes out on top.",
     "backToDiscover": "Back to discover",
+    "back": "Back",
     "errorTitle": "Something went wrong",
     "errorBody": "We couldn't load this profile. Please try again.",
     "tryAgain": "Try again"

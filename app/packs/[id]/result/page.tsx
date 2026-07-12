@@ -4,6 +4,7 @@ import { getPackServer } from "@/src/shared/lib/get-pack-server";
 import { getResultsServer } from "@/src/shared/lib/get-results-server";
 import { ResultScreen } from "@/src/features/result/ResultScreen";
 import { ResultFallback } from "@/src/features/result/ResultFallback";
+import { BackButton } from "@/src/shared/components/BackButton";
 
 export async function generateMetadata({
   params,
@@ -38,5 +39,12 @@ export default async function ResultPage({
   const pack = await getPackServer(id);
   if (!pack) return <ResultFallback packId={id} />;
   const results = await getResultsServer(id);
-  return <ResultScreen pack={pack} results={results} />;
+  return (
+    <>
+      <div className="mx-auto w-full max-w-2xl px-7 pt-6">
+        <BackButton fallbackHref={`/packs/${id}`} />
+      </div>
+      <ResultScreen pack={pack} results={results} />
+    </>
+  );
 }

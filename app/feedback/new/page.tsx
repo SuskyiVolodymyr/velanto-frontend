@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { NewFeedbackForm } from "@/src/features/feedback/NewFeedbackForm";
+import { BackButton } from "@/src/shared/components/BackButton";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("feedback");
@@ -8,5 +9,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function NewFeedbackPage() {
-  return <NewFeedbackForm />;
+  return (
+    <>
+      <div className="mx-auto w-full max-w-2xl px-7 pt-6">
+        <BackButton fallbackHref="/feedback" />
+      </div>
+      <NewFeedbackForm />
+    </>
+  );
 }

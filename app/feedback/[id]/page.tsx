@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { FeedbackDetailScreen } from "@/src/features/feedback/FeedbackDetailScreen";
+import { BackButton } from "@/src/shared/components/BackButton";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("feedback");
@@ -13,5 +14,12 @@ export default async function FeedbackDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  return <FeedbackDetailScreen postId={id} />;
+  return (
+    <>
+      <div className="mx-auto w-full max-w-2xl px-7 pt-6">
+        <BackButton fallbackHref="/feedback" />
+      </div>
+      <FeedbackDetailScreen postId={id} />
+    </>
+  );
 }
