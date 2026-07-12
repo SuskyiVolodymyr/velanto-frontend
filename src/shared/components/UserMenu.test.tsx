@@ -32,7 +32,7 @@ describe("UserMenu", () => {
     expect(screen.queryByRole("menu")).not.toBeInTheDocument();
   });
 
-  it("opens the menu on click, showing username/email and nav links", async () => {
+  it("opens the menu on click, showing the username (not the email) and nav links", async () => {
     const user = userEvent.setup();
     render(withIntl(<UserMenu user={USER} onLogout={vi.fn()} />));
 
@@ -40,7 +40,8 @@ describe("UserMenu", () => {
 
     expect(screen.getByRole("menu")).toBeInTheDocument();
     expect(screen.getByText("alice")).toBeInTheDocument();
-    expect(screen.getByText("alice@example.com")).toBeInTheDocument();
+    // Email is intentionally not surfaced in the account menu.
+    expect(screen.queryByText("alice@example.com")).not.toBeInTheDocument();
     expect(screen.getByRole("menuitem", { name: "Docs" })).toHaveAttribute(
       "href",
       "/docs",
