@@ -2,6 +2,7 @@
 
 import {
   infiniteQueryOptions,
+  keepPreviousData,
   useInfiniteQuery,
   useMutation,
   useQueryClient,
@@ -23,6 +24,9 @@ export function packCommentsQueryOptions(packId: string, sort: CommentSort) {
     // mutations below must also target so they patch the visible list.
     queryKey: ["pack-comments", packId, sort] as const,
     queryFn: ({ pageParam }) => fetchPackCommentsPage(packId, pageParam, sort),
+    // Keep the current list (and the sort toggle) on screen while switching to
+    // an as-yet-uncached sort, instead of flashing the loading state.
+    placeholderData: keepPreviousData,
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
       const loaded = allPages.reduce(
