@@ -1,10 +1,18 @@
 import { ButtonHTMLAttributes, forwardRef } from "react";
 import { cn } from "@/src/shared/lib/cn";
+import { Spinner } from "./Spinner";
 
 export type ButtonVariant = "primary" | "secondary" | "ghost";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
+  /**
+   * While true, prepends a spinner, disables the button, and marks it
+   * `aria-busy` — so a request in flight can't be fired twice by an impatient
+   * double-click. Keep the label as-is (or swap to a "…" verb); the spinner is
+   * the visual cue.
+   */
+  loading?: boolean;
 }
 
 const baseClasses =
@@ -30,14 +38,30 @@ export function buttonClassName(
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ variant = "primary", className, type = "button", ...props }, ref) => {
+  (
+    {
+      variant = "primary",
+      className,
+      type = "button",
+      loading = false,
+      disabled,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
     return (
       <button
         ref={ref}
         type={type}
+        disabled={disabled || loading}
+        aria-busy={loading || undefined}
         className={cn(baseClasses, variantClasses[variant], className)}
         {...props}
-      />
+      >
+        {loading && <Spinner size={16} />}
+        {children}
+      </button>
     );
   },
 );
