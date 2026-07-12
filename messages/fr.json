@@ -17,7 +17,7 @@
     "moderation": "Modération",
     "admin": "Administration",
     "browse": "Parcourir",
-    "feedback": "Retours",
+    "feedback": "Retours et suggestions",
     "rules": "Règles"
   },
   "settings": {
@@ -534,7 +534,7 @@
     "reportClosed": "Clôturé"
   },
   "feedback": {
-    "pageTitle": "Retours",
+    "pageTitle": "Retours et suggestions",
     "newPost": "Nouveau retour",
     "searchAria": "Rechercher dans les retours",
     "searchPlaceholder": "Rechercher dans les retours…",
@@ -603,7 +603,7 @@
     "suggestionPlaceholder": "Ce qu'il faudrait écrire à la place",
     "posting": "Publication…",
     "postFeedback": "Publier le retour",
-    "metaListTitle": "Retours — Velanto",
+    "metaListTitle": "Retours et suggestions — Velanto",
     "metaListDescription": "Signalez des bugs, proposez des fonctionnalités et suggérez des améliorations de traduction.",
     "metaNewTitle": "Nouveau retour — Velanto"
   }

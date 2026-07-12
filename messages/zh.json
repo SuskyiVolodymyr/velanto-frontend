@@ -17,7 +17,7 @@
     "moderation": "审核",
     "admin": "管理",
     "browse": "浏览",
-    "feedback": "反馈",
+    "feedback": "反馈与建议",
     "rules": "规则"
   },
   "settings": {
@@ -534,7 +534,7 @@
     "reportClosed": "已关闭"
   },
   "feedback": {
-    "pageTitle": "反馈",
+    "pageTitle": "反馈与建议",
     "newPost": "发帖",
     "searchAria": "搜索反馈",
     "searchPlaceholder": "搜索反馈…",
@@ -603,7 +603,7 @@
     "suggestionPlaceholder": "你觉得应该改成什么",
     "posting": "发布中…",
     "postFeedback": "提交反馈",
-    "metaListTitle": "反馈 — Velanto",
+    "metaListTitle": "反馈与建议 — Velanto",
     "metaListDescription": "报告问题、提出功能建议，并改进翻译。",
     "metaNewTitle": "新建反馈 — Velanto"
   }

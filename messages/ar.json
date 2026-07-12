@@ -17,7 +17,7 @@
     "moderation": "الإشراف",
     "admin": "الإدارة",
     "browse": "تصفح",
-    "feedback": "الملاحظات",
+    "feedback": "الملاحظات والاقتراحات",
     "rules": "القواعد"
   },
   "settings": {
@@ -534,7 +534,7 @@
     "reportClosed": "مغلق"
   },
   "feedback": {
-    "pageTitle": "الملاحظات",
+    "pageTitle": "الملاحظات والاقتراحات",
     "newPost": "منشور جديد",
     "searchAria": "بحث في الملاحظات",
     "searchPlaceholder": "ابحث في الملاحظات…",
@@ -603,7 +603,7 @@
     "suggestionPlaceholder": "ما الذي ينبغي أن يُكتب بدلاً منه",
     "posting": "جارٍ النشر…",
     "postFeedback": "نشر الملاحظة",
-    "metaListTitle": "الملاحظات — Velanto",
+    "metaListTitle": "الملاحظات والاقتراحات — Velanto",
     "metaListDescription": "أبلغ عن الأخطاء، واقترح الميزات، واقترح تحسينات على الترجمة.",
     "metaNewTitle": "ملاحظة جديدة — Velanto"
   }

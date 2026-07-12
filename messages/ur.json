@@ -17,7 +17,7 @@
     "moderation": "ماڈریشن",
     "admin": "ایڈمن",
     "browse": "براؤز کریں",
-    "feedback": "رائے",
+    "feedback": "رائے اور تجاویز",
     "rules": "قواعد"
   },
   "settings": {
@@ -534,7 +534,7 @@
     "reportClosed": "بند"
   },
   "feedback": {
-    "pageTitle": "رائے",
+    "pageTitle": "رائے اور تجاویز",
     "newPost": "نئی پوسٹ",
     "searchAria": "رائے تلاش کریں",
     "searchPlaceholder": "رائے تلاش کریں…",
@@ -603,7 +603,7 @@
     "suggestionPlaceholder": "اس کے بجائے کیا ہونا چاہیے",
     "posting": "پوسٹ ہو رہا ہے…",
     "postFeedback": "رائے پوسٹ کریں",
-    "metaListTitle": "رائے — Velanto",
+    "metaListTitle": "رائے اور تجاویز — Velanto",
     "metaListDescription": "خرابیاں رپورٹ کریں، خصوصیات تجویز کریں، اور ترجمے میں بہتری پیش کریں۔",
     "metaNewTitle": "نئی رائے — Velanto"
   }

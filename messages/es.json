@@ -17,7 +17,7 @@
     "moderation": "Moderación",
     "admin": "Administración",
     "browse": "Explorar",
-    "feedback": "Comentarios",
+    "feedback": "Comentarios y sugerencias",
     "rules": "Reglas"
   },
   "settings": {
@@ -534,7 +534,7 @@
     "reportClosed": "Cerrado"
   },
   "feedback": {
-    "pageTitle": "Comentarios",
+    "pageTitle": "Comentarios y sugerencias",
     "newPost": "Nueva publicación",
     "searchAria": "Buscar comentarios",
     "searchPlaceholder": "Buscar comentarios…",
@@ -603,7 +603,7 @@
     "suggestionPlaceholder": "Lo que debería decir en su lugar",
     "posting": "Publicando…",
     "postFeedback": "Publicar comentario",
-    "metaListTitle": "Comentarios — Velanto",
+    "metaListTitle": "Comentarios y sugerencias — Velanto",
     "metaListDescription": "Informa de errores, sugiere funciones y propón mejoras de traducción.",
     "metaNewTitle": "Nuevo comentario — Velanto"
   }
