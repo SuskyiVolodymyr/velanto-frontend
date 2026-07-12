@@ -24,6 +24,12 @@ test.describe("Auth screen", () => {
   test("registers a new account and lands on the home page", async ({
     page,
   }) => {
+    // Register is two-step (verify-before-create): "Continue" emails a code,
+    // then the OTP step calls /auth/register with that code. Both calls are
+    // browser-issued, so page.route intercepts them.
+    await page.route(`${API_BASE}/auth/email-verification/request`, (route) =>
+      route.fulfill({ status: 201, json: { sent: true } }),
+    );
     await page.route(`${API_BASE}/auth/register`, (route) =>
       route.fulfill({
         status: 201,
@@ -35,11 +41,20 @@ test.describe("Auth screen", () => {
     await page.getByRole("tab", { name: "Sign up" }).click();
     await page.getByLabel("Username").fill("alice");
     await page.getByLabel("Email").fill("alice@example.com");
-    await page.getByLabel("Password").fill("password123");
-    // Registration now requires accepting the community rules (acceptedRules:
-    // z.literal(true)); without ticking it the form fails client validation and
-    // never calls /auth/register.
+    // Password must satisfy the register complexity rules (lower + upper +
+    // digit) and match the confirm field. Exact labels because the show/hide
+    // toggle ("Show password") and the "Confirm password" field both contain
+    // the "Password" substring.
+    await page.getByLabel("Password", { exact: true }).fill("Password123");
+    await page
+      .getByLabel("Confirm password", { exact: true })
+      .fill("Password123");
+    // Registration requires accepting the community rules (acceptedRules:
+    // z.literal(true)); without ticking it the form fails client validation.
     await page.getByRole("checkbox").check();
+
+    await page.getByRole("button", { name: "Continue" }).click();
+    await page.getByLabel("Verification code").fill("123456");
     await page.getByRole("button", { name: "Create account" }).click();
 
     await page.waitForURL("/");
@@ -59,7 +74,7 @@ test.describe("Auth screen", () => {
 
     await page.goto("/auth");
     await page.getByLabel("Email or username").fill("alice@example.com");
-    await page.getByLabel("Password").fill("password123");
+    await page.getByLabel("Password", { exact: true }).fill("password123");
     await page.getByRole("button", { name: "Log in" }).click();
 
     await page.waitForURL("/");
@@ -78,7 +93,7 @@ test.describe("Auth screen", () => {
 
     await page.goto("/auth");
     await page.getByLabel("Email or username").fill("alice");
-    await page.getByLabel("Password").fill("wrong-password");
+    await page.getByLabel("Password", { exact: true }).fill("wrong-password");
     await page.getByRole("button", { name: "Log in" }).click();
 
     await expect(page.getByText("Invalid credentials")).toBeVisible();

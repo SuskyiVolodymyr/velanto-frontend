@@ -17,7 +17,10 @@ export function feedbackCommentsQueryOptions(feedbackId: string) {
     queryFn: ({ pageParam }) => fetchCommentsPage(feedbackId, pageParam),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
-      const loaded = allPages.reduce((count, page) => count + page.items.length, 0);
+      const loaded = allPages.reduce(
+        (count, page) => count + page.items.length,
+        0,
+      );
       return loaded < lastPage.total ? allPages.length + 1 : undefined;
     },
   });
@@ -36,7 +39,8 @@ export function useAddComment(feedbackId: string) {
   const queryClient = useQueryClient();
   const { queryKey } = feedbackCommentsQueryOptions(feedbackId);
   return useMutation({
-    mutationFn: (body: string) => feedbackClient.addComment(feedbackId, { body }),
+    mutationFn: (body: string) =>
+      feedbackClient.addComment(feedbackId, { body }),
     onSuccess: (created) => {
       queryClient.setQueryData<InfiniteData<FeedbackCommentList, number>>(
         queryKey,

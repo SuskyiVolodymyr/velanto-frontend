@@ -55,7 +55,9 @@ describe("Username", () => {
     render(<Username username="admin_max" role="admin" />);
     expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
     await user.hover(screen.getByLabelText("Trusted user"));
-    expect(await screen.findByRole("tooltip")).toHaveTextContent("Trusted user");
+    expect(await screen.findByRole("tooltip")).toHaveTextContent(
+      "Trusted user",
+    );
   });
 
   it("shows the role label only when showRole is set", () => {

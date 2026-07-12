@@ -13,12 +13,14 @@ vi.mock("@/src/features/author/get-user-server", () => ({
 // with the real English catalog (interpolating {args}) so titles/descriptions
 // read the shipped copy.
 vi.mock("next-intl/server", () => ({
-  getTranslations: vi.fn(async () => (key: string, vals?: Record<string, unknown>) => {
-    let out = (messages.pages as Record<string, string>)[key] ?? key;
-    for (const [k, v] of Object.entries(vals ?? {}))
-      out = out.replaceAll(`{${k}}`, String(v));
-    return out;
-  }),
+  getTranslations: vi.fn(
+    async () => (key: string, vals?: Record<string, unknown>) => {
+      let out = (messages.pages as Record<string, string>)[key] ?? key;
+      for (const [k, v] of Object.entries(vals ?? {}))
+        out = out.replaceAll(`{${k}}`, String(v));
+      return out;
+    },
+  ),
 }));
 
 const profile: PublicUserProfile = {

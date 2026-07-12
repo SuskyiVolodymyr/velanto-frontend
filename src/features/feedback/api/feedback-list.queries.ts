@@ -22,7 +22,10 @@ export function feedbackListQueryOptions(filters: FeedbackListFilters) {
     queryFn: ({ pageParam }) => fetchFeedbackPage(filters, pageParam),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
-      const loaded = allPages.reduce((count, page) => count + page.items.length, 0);
+      const loaded = allPages.reduce(
+        (count, page) => count + page.items.length,
+        0,
+      );
       return loaded < lastPage.total ? allPages.length + 1 : undefined;
     },
   });

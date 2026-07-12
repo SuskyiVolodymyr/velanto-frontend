@@ -1,8 +1,5 @@
 import { infiniteQueryOptions, useInfiniteQuery } from "@tanstack/react-query";
-import {
-  fetchReportsPage,
-  type ReportsListFilters,
-} from "./reports-list";
+import { fetchReportsPage, type ReportsListFilters } from "./reports-list";
 
 export function reportsListQueryOptions(filters: ReportsListFilters) {
   return infiniteQueryOptions({
@@ -10,7 +7,10 @@ export function reportsListQueryOptions(filters: ReportsListFilters) {
     queryFn: ({ pageParam }) => fetchReportsPage(filters, pageParam),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
-      const loaded = allPages.reduce((count, page) => count + page.items.length, 0);
+      const loaded = allPages.reduce(
+        (count, page) => count + page.items.length,
+        0,
+      );
       return loaded < lastPage.total ? allPages.length + 1 : undefined;
     },
   });

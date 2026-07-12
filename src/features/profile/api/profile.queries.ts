@@ -17,7 +17,10 @@ export function myProfileQueryOptions(userId: string) {
 }
 
 /** The current user's own public profile (for the edit form); gate with `enabled`. */
-export function useMyProfile(userId: string, { enabled }: { enabled: boolean }) {
+export function useMyProfile(
+  userId: string,
+  { enabled }: { enabled: boolean },
+) {
   return useQuery({ ...myProfileQueryOptions(userId), enabled });
 }
 

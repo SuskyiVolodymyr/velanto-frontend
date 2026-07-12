@@ -16,12 +16,10 @@ export function SupportScreen() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const [statusFilter, setStatusFilter] = useState<
-    ReportsListFilters["status"]
-  >(undefined);
-  const [typeFilter, setTypeFilter] = useState<ReportsListFilters["type"]>(
-    undefined,
-  );
+  const [statusFilter, setStatusFilter] =
+    useState<ReportsListFilters["status"]>(undefined);
+  const [typeFilter, setTypeFilter] =
+    useState<ReportsListFilters["type"]>(undefined);
 
   const allowed =
     user?.role === "moderator" ||
@@ -54,8 +52,7 @@ export function SupportScreen() {
   const firstLoadError =
     !hasData && reportsQuery.isError ? (reportsQuery.error as Error) : null;
   const loadMoreError =
-    hasData &&
-    (reportsQuery.isError || reportsQuery.isFetchNextPageError)
+    hasData && (reportsQuery.isError || reportsQuery.isFetchNextPageError)
       ? "Couldn't load more reports. Try again."
       : "";
 

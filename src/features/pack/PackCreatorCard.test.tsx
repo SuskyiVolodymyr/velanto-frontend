@@ -142,9 +142,7 @@ describe("PackCreatorCard", () => {
     );
     expect(screen.getByText(/12 followers/)).toBeInTheDocument();
     expect(screen.getByText(/5 packs/)).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Follow" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Follow" })).toBeInTheDocument();
   });
 
   it("follows the author optimistically when the follow button is clicked", async () => {
@@ -184,7 +182,9 @@ describe("PackCreatorCard", () => {
     const handle = await screen.findByText("@quizmaster");
 
     await userEvent.hover(handle);
-    await userEvent.click(await screen.findByRole("button", { name: "Follow" }));
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Follow" }),
+    );
     await screen.findByRole("button", { name: "Following" });
 
     // Close the card, then reopen it — the follow state must survive.

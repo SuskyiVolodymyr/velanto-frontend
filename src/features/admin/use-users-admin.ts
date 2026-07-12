@@ -76,7 +76,9 @@ export function useUsersAdmin() {
     mutationFn: ({ id, ...input }: { id: string } & BanUserInput) =>
       usersClient.ban(id, input),
     onSuccess: (result, { id }) => {
-      patchAdminUser(queryClient, query, id, { bannedUntil: result.bannedUntil });
+      patchAdminUser(queryClient, query, id, {
+        bannedUntil: result.bannedUntil,
+      });
       setBanTargetId(null);
       setBanReason({ reason: "", reasonDetail: "" });
     },
