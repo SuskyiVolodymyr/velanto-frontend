@@ -93,6 +93,37 @@ describe("VoteControl", () => {
     await waitFor(() => expect(screen.getByText("-2")).toBeInTheDocument());
   });
 
+  it("reflects a toggle-off tally (myVote becomes null) rather than falling back to the initial vote", async () => {
+    mockAuth(true);
+    // Re-clicking an active upvote toggles it off: the server returns myVote:
+    // null, which must be shown wholesale — not `?? initialMyVote`.
+    const vote = vi
+      .fn()
+      .mockResolvedValue({ score: 0, likes: 0, dislikes: 0, myVote: null });
+    render(
+      <VoteControl
+        vote={vote}
+        initialLikes={1}
+        initialDislikes={0}
+        initialMyVote={1}
+        {...labels}
+      />,
+    );
+    const up = screen.getByRole("button", { name: "Upvote" });
+    expect(up).toHaveAttribute("aria-pressed", "true");
+
+    await userEvent.click(up);
+
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Upvote" })).toHaveAttribute(
+        "aria-pressed",
+        "false",
+      ),
+    );
+    // score, likes and dislikes are all 0 after toggling off.
+    expect(screen.getAllByText("0").length).toBeGreaterThanOrEqual(1);
+  });
+
   it("blocks an anonymous viewer with a reason tooltip instead of voting", async () => {
     mockAuth(false);
     const vote = vi.fn();
