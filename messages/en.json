@@ -373,7 +373,10 @@
     "postErrorFallback": "Couldn't post your comment. Try again.",
     "upvote": "Upvote",
     "downvote": "Downvote",
-    "voteError": "Couldn't record your vote. Try again."
+    "voteError": "Couldn't record your vote. Try again.",
+    "deleteComment": "Delete comment",
+    "deleteCommentConfirm": "Delete this comment? This can't be undone.",
+    "deleteCommentError": "Couldn't delete the comment. Try again."
   },
   "share": {
     "trigger": "Share",

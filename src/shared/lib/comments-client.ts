@@ -32,4 +32,6 @@ export const commentsClient = {
     ),
   create: (packId: string, input: CreateCommentInput) =>
     apiClient.post<Comment>(`/packs/${packId}/comments`, input),
+  delete: (packId: string, commentId: string) =>
+    apiClient.delete<void>(`/packs/${packId}/comments/${commentId}`),
 };
