@@ -387,7 +387,8 @@
     "deleteCommentThreadConfirm": "اس تبصرے اور اس کے تمام جوابات کو حذف کریں؟",
     "sortTop": "مقبول",
     "sortNew": "نئے",
-    "sortLabel": "تبصرے ترتیب دیں"
+    "sortLabel": "تبصرے ترتیب دیں",
+    "roundHeading": "Round {index}"
   },
   "share": {
     "trigger": "شیئر",

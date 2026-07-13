@@ -387,7 +387,8 @@
     "deleteCommentThreadConfirm": "حذف هذا التعليق وجميع الردود عليه؟",
     "sortTop": "الأعلى",
     "sortNew": "الأحدث",
-    "sortLabel": "ترتيب التعليقات"
+    "sortLabel": "ترتيب التعليقات",
+    "roundHeading": "Round {index}"
   },
   "share": {
     "trigger": "مشاركة",

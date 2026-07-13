@@ -387,7 +387,8 @@
     "deleteCommentThreadConfirm": "এই মন্তব্য এবং এর সমস্ত উত্তর মুছে ফেলবেন?",
     "sortTop": "শীর্ষ",
     "sortNew": "নতুন",
-    "sortLabel": "মন্তব্য সাজান"
+    "sortLabel": "মন্তব্য সাজান",
+    "roundHeading": "Round {index}"
   },
   "share": {
     "trigger": "শেয়ার",

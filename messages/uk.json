@@ -387,7 +387,8 @@
     "deleteCommentThreadConfirm": "Видалити цей коментар і всі відповіді на нього?",
     "sortTop": "Популярні",
     "sortNew": "Нові",
-    "sortLabel": "Сортувати коментарі"
+    "sortLabel": "Сортувати коментарі",
+    "roundHeading": "Round {index}"
   },
   "share": {
     "trigger": "Поділитися",

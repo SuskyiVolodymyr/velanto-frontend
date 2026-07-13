@@ -386,7 +386,8 @@
     "deleteCommentThreadConfirm": "Delete this comment and all its replies?",
     "sortTop": "Top",
     "sortNew": "New",
-    "sortLabel": "Sort comments"
+    "sortLabel": "Sort comments",
+    "roundHeading": "Round {index}"
   },
   "share": {
     "trigger": "Share",

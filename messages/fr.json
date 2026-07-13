@@ -387,7 +387,8 @@
     "deleteCommentThreadConfirm": "Supprimer ce commentaire et toutes ses réponses ?",
     "sortTop": "Populaires",
     "sortNew": "Récents",
-    "sortLabel": "Trier les commentaires"
+    "sortLabel": "Trier les commentaires",
+    "roundHeading": "Round {index}"
   },
   "share": {
     "trigger": "Partager",

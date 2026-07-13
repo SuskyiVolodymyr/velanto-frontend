@@ -387,7 +387,8 @@
     "deleteCommentThreadConfirm": "इस टिप्पणी और इसके सभी उत्तरों को हटाएं?",
     "sortTop": "शीर्ष",
     "sortNew": "नए",
-    "sortLabel": "टिप्पणियाँ क्रमबद्ध करें"
+    "sortLabel": "टिप्पणियाँ क्रमबद्ध करें",
+    "roundHeading": "Round {index}"
   },
   "share": {
     "trigger": "शेयर",

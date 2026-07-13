@@ -64,8 +64,8 @@ export function PackStats({ results }: { results: PackResults | RankResults }) {
             );
             return (
               <StatRow
-                key={round.groupId}
-                name={round.groupName}
+                key={round.roundIndex}
+                name={t("roundHeading", { index: round.roundIndex + 1 })}
                 label={t("topItemAvg", {
                   item: topItem.itemTitle,
                   pos: topItem.averagePosition,
@@ -91,8 +91,8 @@ export function PackStats({ results }: { results: PackResults | RankResults }) {
           );
           return (
             <StatRow
-              key={round.groupId}
-              name={round.groupName}
+              key={round.roundIndex}
+              name={t("roundHeading", { index: round.roundIndex + 1 })}
               label={t("topItemPct", {
                 item: topItem.itemTitle,
                 pct: topItem.percentage,

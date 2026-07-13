@@ -387,7 +387,8 @@
     "deleteCommentThreadConfirm": "Удалить этот комментарий и все ответы на него?",
     "sortTop": "Популярные",
     "sortNew": "Новые",
-    "sortLabel": "Сортировать комментарии"
+    "sortLabel": "Сортировать комментарии",
+    "roundHeading": "Round {index}"
   },
   "share": {
     "trigger": "Поделиться",

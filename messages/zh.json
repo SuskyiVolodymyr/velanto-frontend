@@ -387,7 +387,8 @@
     "deleteCommentThreadConfirm": "删除此评论及其所有回复？",
     "sortTop": "热门",
     "sortNew": "最新",
-    "sortLabel": "评论排序"
+    "sortLabel": "评论排序",
+    "roundHeading": "Round {index}"
   },
   "share": {
     "trigger": "分享",
