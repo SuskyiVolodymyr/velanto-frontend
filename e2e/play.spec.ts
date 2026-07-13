@@ -176,11 +176,12 @@ test.describe("Play a pack", () => {
       ).toBeEnabled();
       await page.getByRole("button", { name: "Next round →" }).click();
 
-      // Round 2: single item, still gated on selection.
+      // Round 2 (the last round): single item, still gated on selection; the
+      // confirm button reads "see results" now.
       await expect(page.getByRole("heading", { name: "2020" })).toBeVisible();
       await expect(page.getByText("Round 2 of 2")).toBeVisible();
       await expect(
-        page.getByRole("button", { name: "Next round →" }),
+        page.getByRole("button", { name: "See results →" }),
       ).toBeDisabled();
       await page.getByText("Silhouette").click();
       await page.getByRole("button", { name: "See results →" }).click();
