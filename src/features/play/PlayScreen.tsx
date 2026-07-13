@@ -13,7 +13,6 @@ import {
   PICKED_LABEL_KEY,
 } from "@/src/features/play/play-format-copy";
 import { PlayProgress } from "@/src/features/play/PlayProgress";
-import { RoundRevealControls } from "@/src/features/play/RoundRevealControls";
 import { CandidateCard } from "@/src/features/play/CandidateCard";
 import { PlayFinished } from "@/src/features/play/PlayFinished";
 import { PicksSummary } from "@/src/features/play/PicksSummary";
@@ -61,14 +60,6 @@ export function PlayScreen({ pack }: { pack: Pack }) {
             <Text variant="secondary">{t(INSTRUCTION_KEY[pack.format])}</Text>
           </section>
 
-          <RoundRevealControls
-            revealedCount={session.revealedCount}
-            totalCount={session.totalCount}
-            canRevealMore={session.canRevealMore}
-            onRevealNext={session.revealNext}
-            onRevealAll={session.revealAll}
-          />
-
           {session.isVersus ? (
             <div className="mb-8">
               <VersusRound
@@ -80,24 +71,21 @@ export function PlayScreen({ pack }: { pack: Pack }) {
                   ...session.categoryB!,
                   items: session.versusCandidatesB,
                 }}
-                revealedCount={session.revealedCount}
                 selectedId={session.selectedId}
                 onSelect={session.setSelectedId}
               />
             </div>
           ) : (
             <div className="mb-8 flex flex-wrap gap-4">
-              {session.candidates
-                .slice(0, session.revealedCount)
-                .map((item, index) => (
-                  <CandidateCard
-                    key={item.id}
-                    item={item}
-                    index={index}
-                    selected={item.id === session.selectedId}
-                    onSelect={() => session.setSelectedId(item.id)}
-                  />
-                ))}
+              {session.candidates.map((item, index) => (
+                <CandidateCard
+                  key={item.id}
+                  item={item}
+                  index={index}
+                  selected={item.id === session.selectedId}
+                  onSelect={() => session.setSelectedId(item.id)}
+                />
+              ))}
             </div>
           )}
 

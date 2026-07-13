@@ -24,9 +24,7 @@ describe("VersusRound", () => {
     render(
       <VersusRound
         sideA={SIDE_A}
-        sideB={SIDE_B}
-        revealedCount={2}
-        selectedId={null}
+        sideB={SIDE_B}        selectedId={null}
         onSelect={vi.fn()}
       />,
     );
@@ -34,6 +32,9 @@ describe("VersusRound", () => {
     expect(screen.getByText("Boys")).toBeInTheDocument();
     expect(screen.getByText("Girls")).toBeInTheDocument();
     expect(screen.getByText("VS")).toBeInTheDocument();
+    // All of a side's items render at once (no reveal gating).
+    expect(screen.getByText("Naruto")).toBeInTheDocument();
+    expect(screen.getByText("Sasuke")).toBeInTheDocument();
   });
 
   it("calls onSelect with the side id when a side is clicked", async () => {
@@ -42,9 +43,7 @@ describe("VersusRound", () => {
     render(
       <VersusRound
         sideA={SIDE_A}
-        sideB={SIDE_B}
-        revealedCount={2}
-        selectedId={null}
+        sideB={SIDE_B}        selectedId={null}
         onSelect={onSelect}
       />,
     );
@@ -59,9 +58,7 @@ describe("VersusRound", () => {
     render(
       <VersusRound
         sideA={SIDE_A}
-        sideB={SIDE_B}
-        revealedCount={2}
-        selectedId={null}
+        sideB={SIDE_B}        selectedId={null}
         onSelect={onSelect}
       />,
     );
@@ -80,9 +77,7 @@ describe("VersusRound", () => {
     render(
       <VersusRound
         sideA={sideWithVideo}
-        sideB={SIDE_B}
-        revealedCount={1}
-        selectedId={null}
+        sideB={SIDE_B}        selectedId={null}
         onSelect={vi.fn()}
       />,
     );
@@ -103,9 +98,7 @@ describe("VersusRound", () => {
     render(
       <VersusRound
         sideA={sideWithVideo}
-        sideB={SIDE_B}
-        revealedCount={1}
-        selectedId={null}
+        sideB={SIDE_B}        selectedId={null}
         onSelect={onSelect}
       />,
     );
@@ -127,9 +120,7 @@ describe("VersusRound", () => {
     render(
       <VersusRound
         sideA={sideWithVideo}
-        sideB={SIDE_B}
-        revealedCount={1}
-        selectedId={null}
+        sideB={SIDE_B}        selectedId={null}
         onSelect={onSelect}
       />,
     );
@@ -145,9 +136,7 @@ describe("VersusRound", () => {
     render(
       <VersusRound
         sideA={SIDE_A}
-        sideB={SIDE_B}
-        revealedCount={2}
-        selectedId={null}
+        sideB={SIDE_B}        selectedId={null}
         onSelect={onSelect}
       />,
     );

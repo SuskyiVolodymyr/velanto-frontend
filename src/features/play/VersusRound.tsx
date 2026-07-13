@@ -14,12 +14,11 @@ interface VersusSide {
 
 interface SideCardProps {
   side: VersusSide;
-  revealedCount: number;
   selected: boolean;
   onSelect: () => void;
 }
 
-function SideCard({ side, revealedCount, selected, onSelect }: SideCardProps) {
+function SideCard({ side, selected, onSelect }: SideCardProps) {
   const t = useTranslations("play");
   return (
     <div
@@ -47,15 +46,18 @@ function SideCard({ side, revealedCount, selected, onSelect }: SideCardProps) {
     >
       <Text className="text-center font-semibold">{side.name}</Text>
       <div className="flex flex-col gap-2">
-        {side.items.slice(0, revealedCount).map((item) => {
+        {side.items.map((item, index) => {
           const videoId =
             item.type === "youtube" ? extractYouTubeId(item.value) : null;
+          // Cards fade in one-by-one; the delay staggers by position.
+          const appearDelay = { animationDelay: `${index * 80}ms` };
 
           if (videoId) {
             return (
               <div
                 key={item.id}
-                className="overflow-hidden rounded-xl border border-border bg-white/[0.03]"
+                style={appearDelay}
+                className="play-card-appear overflow-hidden rounded-xl border border-border bg-white/[0.03]"
               >
                 <YouTubeCard videoId={videoId} />
                 <Text className="p-3 text-sm font-medium">{item.title}</Text>
@@ -66,7 +68,8 @@ function SideCard({ side, revealedCount, selected, onSelect }: SideCardProps) {
           return (
             <div
               key={item.id}
-              className="rounded-xl border border-border bg-white/[0.03] p-3"
+              style={appearDelay}
+              className="play-card-appear rounded-xl border border-border bg-white/[0.03] p-3"
             >
               {item.type === "youtube" && (
                 <Badge className="mb-2">YouTube</Badge>
@@ -83,7 +86,6 @@ function SideCard({ side, revealedCount, selected, onSelect }: SideCardProps) {
 interface VersusRoundProps {
   sideA: VersusSide;
   sideB: VersusSide;
-  revealedCount: number;
   selectedId: string | null;
   onSelect: (id: string) => void;
 }
@@ -91,7 +93,6 @@ interface VersusRoundProps {
 export function VersusRound({
   sideA,
   sideB,
-  revealedCount,
   selectedId,
   onSelect,
 }: VersusRoundProps) {
@@ -99,7 +100,6 @@ export function VersusRound({
     <div className="flex items-start gap-4">
       <SideCard
         side={sideA}
-        revealedCount={revealedCount}
         selected={selectedId === sideA.id}
         onSelect={() => onSelect(sideA.id)}
       />
@@ -110,7 +110,6 @@ export function VersusRound({
       </div>
       <SideCard
         side={sideB}
-        revealedCount={revealedCount}
         selected={selectedId === sideB.id}
         onSelect={() => onSelect(sideB.id)}
       />
