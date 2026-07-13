@@ -52,6 +52,9 @@ export function AppHeader() {
 
       {status === "authenticated" && user && (
         <div className="flex items-center gap-3">
+          <Link href="/create" className={buttonClassName("primary")}>
+            {t("create")}
+          </Link>
           <NotificationsBell />
           <UserMenu user={user} onLogout={() => void logout()} />
         </div>

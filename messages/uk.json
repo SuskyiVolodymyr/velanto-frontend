@@ -7,6 +7,7 @@
   },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
+    "create": "Створити пак",
     "logIn": "Увійти",
     "logOut": "Вийти",
     "accountMenu": "Меню облікового запису",

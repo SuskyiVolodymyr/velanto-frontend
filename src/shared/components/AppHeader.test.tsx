@@ -208,6 +208,35 @@ describe("AppHeader", () => {
     ).toBeInTheDocument();
   });
 
+  it("shows a Create pack button linking to /create when authenticated", async () => {
+    vi.mocked(authClient.refresh).mockResolvedValue({
+      accessToken: "access-token",
+      user: {
+        id: "u1",
+        email: "a@example.com",
+        username: "alice",
+        role: "user",
+        createdAt: "2026-01-01T00:00:00.000Z",
+      },
+    });
+    renderHeader();
+
+    const link = await screen.findByRole("link", { name: "Create pack" });
+    expect(link).toHaveAttribute("href", "/create");
+  });
+
+  it("does not show the Create pack button when signed out", async () => {
+    vi.mocked(authClient.refresh).mockRejectedValue(
+      new ApiError(401, "Unauthorized", null),
+    );
+    renderHeader();
+
+    await screen.findByRole("link", { name: "Log in" });
+    expect(
+      screen.queryByRole("link", { name: "Create pack" }),
+    ).not.toBeInTheDocument();
+  });
+
   it("logging out clears the session and shows Log in again", async () => {
     const user = userEvent.setup();
     vi.mocked(authClient.refresh).mockResolvedValue({
