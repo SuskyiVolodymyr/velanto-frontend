@@ -41,7 +41,7 @@ export function FormatSection() {
             onClick={() => setValue("format", option.value)}
             aria-pressed={format === option.value}
             className={cn(
-              "flex-1 rounded-[12px] border px-4 py-3 text-left transition-colors",
+              "flex-1 cursor-pointer rounded-[12px] border px-4 py-3 text-left transition-colors",
               format === option.value
                 ? "border-acc/40 bg-acc/5"
                 : "border-border bg-white/[0.02]",

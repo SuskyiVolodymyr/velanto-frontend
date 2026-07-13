@@ -489,7 +489,9 @@
     "categoryName": "第 {index} 类名称",
     "categoryNewItem": "第 {index} 类新选项",
     "categoryNewItemTitle": "第 {index} 类新选项标题",
-    "categoryNewItemLink": "第 {index} 类新选项链接"
+    "categoryNewItemLink": "第 {index} 类新选项链接",
+    "linkTitleRequired": "为此链接添加标题。",
+    "removeTag": "移除 {tag}"
   },
   "profile": {
     "loginRequiredView": "你需要先登录才能查看个人资料。",

@@ -489,7 +489,9 @@
     "categoryName": "اسم الفئة {index}",
     "categoryNewItem": "عنصر جديد في الفئة {index}",
     "categoryNewItemTitle": "عنوان العنصر الجديد في الفئة {index}",
-    "categoryNewItemLink": "رابط العنصر الجديد في الفئة {index}"
+    "categoryNewItemLink": "رابط العنصر الجديد في الفئة {index}",
+    "linkTitleRequired": "أضف عنوانًا لهذا الرابط.",
+    "removeTag": "إزالة {tag}"
   },
   "profile": {
     "loginRequiredView": "يجب تسجيل الدخول لعرض ملفك الشخصي.",

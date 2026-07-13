@@ -51,8 +51,15 @@ export function useGroupItemDraft(
       return;
     }
 
+    if (!draftTitle.trim()) {
+      setAddError(t("linkTitleRequired"));
+      return;
+    }
+
     setValidating(true);
     try {
+      // Confirm the video actually exists; the title is the creator's own,
+      // required input (no oEmbed fallback).
       const result = await fetchYouTubeOEmbed(draftValue.trim());
       if (!result) {
         setAddError(t("videoNotFound"));
@@ -62,7 +69,7 @@ export function useGroupItemDraft(
       const item: Item = {
         id: crypto.randomUUID(),
         type: "youtube",
-        title: draftTitle.trim() || result.title || t("untitled"),
+        title: draftTitle.trim(),
         value: draftValue.trim(),
       };
       onChange({ ...group, items: [...group.items, item] });

@@ -489,7 +489,9 @@
     "categoryName": "Назва категорії {index}",
     "categoryNewItem": "Новий елемент категорії {index}",
     "categoryNewItemTitle": "Назва нового елемента категорії {index}",
-    "categoryNewItemLink": "Посилання нового елемента категорії {index}"
+    "categoryNewItemLink": "Посилання нового елемента категорії {index}",
+    "linkTitleRequired": "Додайте назву для цього посилання.",
+    "removeTag": "Видалити {tag}"
   },
   "profile": {
     "loginRequiredView": "Щоб переглянути свій профіль, спершу увійди.",

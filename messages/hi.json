@@ -489,7 +489,9 @@
     "categoryName": "श्रेणी {index} का नाम",
     "categoryNewItem": "श्रेणी {index} नया आइटम",
     "categoryNewItemTitle": "श्रेणी {index} नए आइटम का शीर्षक",
-    "categoryNewItemLink": "श्रेणी {index} नए आइटम का लिंक"
+    "categoryNewItemLink": "श्रेणी {index} नए आइटम का लिंक",
+    "linkTitleRequired": "इस लिंक के लिए एक शीर्षक जोड़ें।",
+    "removeTag": "{tag} हटाएँ"
   },
   "profile": {
     "loginRequiredView": "अपनी प्रोफ़ाइल देखने के लिए आपको लॉग इन करना होगा।",

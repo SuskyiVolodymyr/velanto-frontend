@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import type { ItemType } from "@/src/shared/types/pack";
+import { ITEM_TITLE_MAX } from "@/src/features/create/create-pack.schema";
 import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
@@ -84,6 +85,7 @@ export function GroupItemAdder({
             <Input
               value={draftTitle}
               onChange={(e) => onDraftTitleChange(e.target.value)}
+              maxLength={ITEM_TITLE_MAX}
               placeholder={t("itemTitlePlaceholder")}
               aria-label={t("groupNewItemTitle", { index: index + 1 })}
               className="flex-1 min-w-[100px]"

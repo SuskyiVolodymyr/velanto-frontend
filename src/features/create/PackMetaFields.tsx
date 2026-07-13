@@ -13,6 +13,8 @@ import { cn } from "@/src/shared/lib/cn";
 import {
   type CreatePackValues,
   MAX_TAGS,
+  TITLE_MAX,
+  DESCRIPTION_MAX,
 } from "@/src/features/create/create-pack.schema";
 
 /**
@@ -26,6 +28,8 @@ export function PackMetaFields() {
   const { isSubmitting } = formState;
   const tags = useWatch({ control, name: "tags" });
   const coverTone = useWatch({ control, name: "coverTone" });
+  const title = useWatch({ control, name: "title" }) ?? "";
+  const description = useWatch({ control, name: "description" }) ?? "";
   const [tagPickerOpen, setTagPickerOpen] = useState(false);
 
   return (
@@ -33,21 +37,41 @@ export function PackMetaFields() {
       <Text as="h2" variant="title" className="text-lg">
         {t("basicsHeading")}
       </Text>
-      <TextField
-        name="title"
-        label={t("packTitle")}
-        srOnlyLabel
-        placeholder={t("packTitle")}
-        disabled={isSubmitting}
-      />
-      <TextareaField
-        name="description"
-        label={t("packDescription")}
-        srOnlyLabel
-        placeholder={t("descriptionPlaceholder")}
-        rows={2}
-        disabled={isSubmitting}
-      />
+      <div className="flex flex-col gap-1">
+        <TextField
+          name="title"
+          label={t("packTitle")}
+          srOnlyLabel
+          placeholder={t("packTitle")}
+          maxLength={TITLE_MAX}
+          disabled={isSubmitting}
+        />
+        <Text
+          variant="tertiary"
+          className="self-end text-xs tabular-nums"
+          aria-hidden
+        >
+          {title.length}/{TITLE_MAX}
+        </Text>
+      </div>
+      <div className="flex flex-col gap-1">
+        <TextareaField
+          name="description"
+          label={t("packDescription")}
+          srOnlyLabel
+          placeholder={t("descriptionPlaceholder")}
+          rows={3}
+          maxLength={DESCRIPTION_MAX}
+          disabled={isSubmitting}
+        />
+        <Text
+          variant="tertiary"
+          className="self-end text-xs tabular-nums"
+          aria-hidden
+        >
+          {description.length}/{DESCRIPTION_MAX}
+        </Text>
+      </div>
       <div className="flex flex-col gap-2">
         <Text variant="secondary" className="text-xs">
           {t("coverTone")}
@@ -70,9 +94,35 @@ export function PackMetaFields() {
         </div>
       </div>
       <div className="flex flex-col gap-2">
-        <Text variant="secondary" className="text-xs">
-          {t("tags")}
-        </Text>
+        <div className="flex items-center justify-between gap-2">
+          <Text variant="secondary" className="text-xs">
+            {t("tags")}
+          </Text>
+          <Text variant="tertiary" className="text-xs tabular-nums">
+            {tags.length}/{MAX_TAGS}
+          </Text>
+        </div>
+        {tags.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <button
+                key={tag}
+                type="button"
+                onClick={() =>
+                  setValue(
+                    "tags",
+                    tags.filter((value) => value !== tag),
+                  )
+                }
+                aria-label={t("removeTag", { tag })}
+                className="inline-flex items-center gap-1 rounded-full border border-border bg-white/[0.04] px-3 py-1 text-xs text-foreground transition-colors hover:border-border-strong"
+              >
+                {tag}
+                <span aria-hidden>×</span>
+              </button>
+            ))}
+          </div>
+        )}
         <Button
           type="button"
           variant="secondary"

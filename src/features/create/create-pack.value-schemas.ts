@@ -15,6 +15,8 @@ import { PACK_FORMATS } from "@/src/shared/types/pack";
 export const TITLE_MAX = 100;
 export const DESCRIPTION_MAX = 500;
 export const MAX_TAGS = 10;
+// Per-item title cap — equals the backend's ITEM_TITLE_MAX (types/item.ts).
+export const ITEM_TITLE_MAX = 200;
 export const CATEGORY_COUNT = 2;
 export const MIN_VERSUS_ROUNDS = 1;
 export const MAX_VERSUS_ROUNDS = 30;
