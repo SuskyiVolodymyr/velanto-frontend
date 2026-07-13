@@ -15,7 +15,7 @@ beforeEach(() => {
 
 describe("useResultPicks", () => {
   it("returns the decoded shared picks when ?p= is a valid code", () => {
-    const shared = [{ groupId: "g1", itemId: "i1" }];
+    const shared = [{ roundIndex: 0, groupId: "g1", itemId: "i1" }];
     searchParams = new URLSearchParams({ p: encodePicks(shared) });
 
     const { result } = renderHook(() => useResultPicks("pack-1"));
@@ -26,13 +26,13 @@ describe("useResultPicks", () => {
 
   it("falls back to sessionStorage picks when there is no ?p=", () => {
     vi.mocked(readLastPlayPicks).mockReturnValue([
-      { groupId: "g1", itemId: "i2" },
+      { roundIndex: 0, groupId: "g1", itemId: "i2" },
     ]);
 
     const { result } = renderHook(() => useResultPicks("pack-1"));
 
     expect(result.current).toEqual({
-      picks: [{ groupId: "g1", itemId: "i2" }],
+      picks: [{ roundIndex: 0, groupId: "g1", itemId: "i2" }],
       shared: false,
     });
   });

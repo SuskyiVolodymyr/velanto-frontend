@@ -50,18 +50,27 @@ function GroupResultScreen({
       <div className="mb-8 flex flex-col gap-4">
         {results.rounds.map((round) => {
           const ownPick = ownPicks?.find(
-            (pick) => pick.groupId === round.groupId,
+            (pick) => pick.roundIndex === round.roundIndex,
           );
-          const ownItem = ownPick
-            ? round.items.find((item) => item.itemId === ownPick.itemId)
+          // Count formats key each round's items by item id; versus formats key
+          // them by the SIDE's group id (a versus pick carries no itemId), so
+          // fall back to the pick's groupId when there's no itemId.
+          const ownKey = ownPick
+            ? (ownPick.itemId ?? ownPick.groupId)
             : undefined;
+          const ownItem =
+            ownKey !== undefined
+              ? round.items.find((item) => item.itemId === ownKey)
+              : undefined;
 
           return (
             <Card
-              key={round.groupId}
+              key={round.roundIndex}
               className="hover:translate-y-0 hover:shadow-none"
             >
-              <Text className="mb-2 font-semibold">{round.groupName}</Text>
+              <Text className="mb-2 font-semibold">
+                {`Round ${round.roundIndex + 1}`}
+              </Text>
               {ownItem ? (
                 <div className="flex items-center justify-between gap-2">
                   <Text variant="secondary" className="text-sm">

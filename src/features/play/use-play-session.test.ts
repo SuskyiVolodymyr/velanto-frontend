@@ -14,10 +14,7 @@ function textItem(id: string, title: string) {
   return { id, type: "text" as const, title, value: title };
 }
 
-const BASE: Omit<
-  Pack,
-  "format" | "groups" | "categories" | "versusRounds" | "versusN"
-> = {
+const BASE: Omit<Pack, "format" | "groups" | "rounds"> = {
   id: "pack-a",
   title: "T",
   description: "D",
@@ -42,22 +39,20 @@ const GROUPS_PACK: Pack = {
     {
       id: "g1",
       name: "Round 1",
-      selectionMode: "manual",
       items: [textItem("1", "A"), textItem("2", "B")],
     },
-    {
-      id: "g2",
-      name: "Round 2",
-      selectionMode: "manual",
-      items: [textItem("3", "C")],
-    },
+    { id: "g2", name: "Round 2", items: [textItem("3", "C")] },
+  ],
+  rounds: [
+    { id: "r1", slots: [{ groupId: "g1", mode: "manual" }] },
+    { id: "r2", slots: [{ groupId: "g2", mode: "manual" }] },
   ],
 };
 
 const VERSUS_PACK: Pack = {
   ...BASE,
   format: "nxn",
-  categories: [
+  groups: [
     {
       id: "ca",
       name: "Boys",
@@ -69,8 +64,22 @@ const VERSUS_PACK: Pack = {
       items: [textItem("3", "Sakura"), textItem("4", "Hinata")],
     },
   ],
-  versusRounds: 2,
-  versusN: 2,
+  rounds: [
+    {
+      id: "r1",
+      slots: [
+        { groupId: "ca", mode: "manual" },
+        { groupId: "cb", mode: "manual" },
+      ],
+    },
+    {
+      id: "r2",
+      slots: [
+        { groupId: "ca", mode: "manual" },
+        { groupId: "cb", mode: "manual" },
+      ],
+    },
+  ],
 };
 
 beforeEach(() => {
@@ -94,7 +103,7 @@ describe("usePlaySession", () => {
     expect(result.current.canConfirm).toBe(true);
   });
 
-  it("advances the round, records the pick, and resets the selection on confirm", () => {
+  it("advances the round, records the pick with round index, and resets the selection on confirm", () => {
     const { result } = renderHook(() => usePlaySession(GROUPS_PACK));
 
     act(() => result.current.setSelectedId("2"));
@@ -103,18 +112,18 @@ describe("usePlaySession", () => {
     expect(result.current.roundIndex).toBe(1);
     expect(result.current.selectedId).toBe(null); // reset
     expect(result.current.picks).toEqual([
-      { groupId: "g1", itemId: "2", itemTitle: "B" },
+      { roundIndex: 0, groupId: "g1", itemId: "2", itemTitle: "B" },
     ]);
   });
 
-  it("resolves a versus pick as round-index groupId and category id/name", () => {
+  it("resolves a versus pick as the chosen side's group id, with no itemId", () => {
     const { result } = renderHook(() => usePlaySession(VERSUS_PACK));
 
     act(() => result.current.setSelectedId("ca"));
     act(() => result.current.confirmPick());
 
     expect(result.current.picks).toEqual([
-      { groupId: "0", itemId: "ca", itemTitle: "Boys" },
+      { roundIndex: 0, groupId: "ca", itemTitle: "Boys" },
     ]);
   });
 
@@ -138,8 +147,8 @@ describe("usePlaySession", () => {
     await waitFor(() => expect(playsClient.record).toHaveBeenCalledTimes(1));
     expect(playsClient.record).toHaveBeenCalledWith("pack-a", {
       picks: [
-        { groupId: "g1", itemId: "1" },
-        { groupId: "g2", itemId: "3" },
+        { roundIndex: 0, groupId: "g1", itemId: "1" },
+        { roundIndex: 1, groupId: "g2", itemId: "3" },
       ],
     });
     // Record still pending: nothing persisted yet.
@@ -152,8 +161,8 @@ describe("usePlaySession", () => {
       expect(
         JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
       ).toEqual([
-        { groupId: "g1", itemId: "1" },
-        { groupId: "g2", itemId: "3" },
+        { roundIndex: 0, groupId: "g1", itemId: "1" },
+        { roundIndex: 1, groupId: "g2", itemId: "3" },
       ]),
     );
     expect(playsClient.record).toHaveBeenCalledTimes(1);

@@ -10,7 +10,7 @@ import { Button, buttonClassName } from "@/src/shared/components/Button";
 import { cn } from "@/src/shared/lib/cn";
 import { playsClient } from "@/src/shared/lib/plays-client";
 import { writeLastPlayPicks } from "@/src/shared/lib/last-play-storage";
-import { resolveRoundCandidates } from "@/src/features/play/round-sampling";
+import { resolveRoundSelections } from "@/src/features/play/round-sampling";
 import type { Pack, Item } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
 
@@ -20,19 +20,27 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   const router = useRouter();
   const pathname = usePathname();
   const groups = pack.groups ?? [];
-  const totalRounds = groups.length;
+  const rounds = pack.rounds ?? [];
+  const totalRounds = rounds.length;
 
   const [roundIndex, setRoundIndex] = useState(0);
   const [placements, setPlacements] = useState<Record<number, Item>>({});
   const [allPicks, setAllPicks] = useState<RecordedPick[]>([]);
 
-  const group = roundIndex < totalRounds ? groups[roundIndex] : undefined;
-  // Re-sampled only when the round changes, not on every render — same
-  // rationale as PlayScreen's own `candidates` useMemo.
-  const candidates = useMemo(
-    () => (group ? resolveRoundCandidates(group) : []),
-    [group],
+  // Drawn items for every round, resolved once at mount (dedup spans rounds).
+  const selections = useMemo(
+    () => resolveRoundSelections(groups, rounds),
+    [groups, rounds],
   );
+  const groupNameById = useMemo(
+    () => new Map(groups.map((g) => [g.id, g.name])),
+    [groups],
+  );
+
+  const slot =
+    roundIndex < totalRounds ? selections[roundIndex]?.slots[0] : undefined;
+  const candidates = slot?.items ?? [];
+  const groupName = slot ? (groupNameById.get(slot.groupId) ?? "") : "";
   const slotCount = candidates.length;
   const placedCount = Object.keys(placements).length;
   const roundDone = slotCount > 0 && placedCount >= slotCount;
@@ -42,14 +50,15 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   const currentItem = !roundDone ? candidates[placedCount] : undefined;
 
   function place(slotIndex: number) {
-    if (!group || placements[slotIndex] || placedCount >= slotCount) return;
+    if (!slot || placements[slotIndex] || placedCount >= slotCount) return;
     const item = candidates[placedCount];
     const nextPlacements = { ...placements, [slotIndex]: item };
     setPlacements(nextPlacements);
     if (Object.keys(nextPlacements).length >= slotCount) {
       const roundPicks: RecordedPick[] = Object.entries(nextPlacements).map(
         ([position, placedItem]) => ({
-          groupId: group.id,
+          roundIndex,
+          groupId: slot.groupId,
           itemId: placedItem.id,
           position: Number(position),
         }),
@@ -115,11 +124,11 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
         </div>
       </div>
 
-      {group && !roundDone && (
+      {slot && !roundDone && (
         <>
           <section className="mb-6 text-center">
             <Text as="h1" variant="title" className="mb-2 text-3xl">
-              {group.name}
+              {groupName}
             </Text>
             <Text variant="secondary">
               {t("rankInstruction", {
@@ -179,10 +188,10 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
         </>
       )}
 
-      {isRoundComplete && group && (
+      {isRoundComplete && slot && (
         <section className="mb-10 text-center">
           <Text as="h1" variant="title" className="mb-2 text-3xl">
-            {t("ranked", { name: group.name })}
+            {t("ranked", { name: groupName })}
           </Text>
           <div className="mb-8 flex flex-col gap-2 text-left">
             {Array.from({ length: slotCount }, (_, slotIndex) => (

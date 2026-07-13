@@ -21,14 +21,17 @@ export function decodePicks(code: string): RecordedPick[] | null {
     const parsed: unknown = JSON.parse(atob(padded));
     if (!Array.isArray(parsed)) return null;
     for (const pick of parsed) {
+      if (typeof pick !== "object" || pick === null) return null;
+      const candidate = pick as RecordedPick;
+      // itemId is optional now — versus picks record only a side's groupId.
       if (
-        typeof pick !== "object" ||
-        pick === null ||
-        typeof (pick as RecordedPick).groupId !== "string" ||
-        typeof (pick as RecordedPick).itemId !== "string" ||
-        ((pick as RecordedPick).position !== undefined &&
-          (!Number.isInteger((pick as RecordedPick).position) ||
-            (pick as RecordedPick).position! < 0))
+        !Number.isInteger(candidate.roundIndex) ||
+        candidate.roundIndex < 0 ||
+        typeof candidate.groupId !== "string" ||
+        (candidate.itemId !== undefined &&
+          typeof candidate.itemId !== "string") ||
+        (candidate.position !== undefined &&
+          (!Number.isInteger(candidate.position) || candidate.position < 0))
       ) {
         return null;
       }

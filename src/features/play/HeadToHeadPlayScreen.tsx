@@ -9,7 +9,7 @@ import { Text } from "@/src/shared/components/Text";
 import { Button, buttonClassName } from "@/src/shared/components/Button";
 import { playsClient } from "@/src/shared/lib/plays-client";
 import { writeLastPlayPicks } from "@/src/shared/lib/last-play-storage";
-import { resolveRoundCandidates } from "@/src/features/play/round-sampling";
+import { resolveRoundSelections } from "@/src/features/play/round-sampling";
 import { HeadToHeadRound } from "@/src/features/play/HeadToHeadRound";
 import type { Pack } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
@@ -25,32 +25,37 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
   const router = useRouter();
   const pathname = usePathname();
   const groups = pack.groups ?? [];
-  const totalRounds = groups.length;
+  const rounds = pack.rounds ?? [];
+  const totalRounds = rounds.length;
 
   const [roundIndex, setRoundIndex] = useState(0);
   const [history, setHistory] = useState<MatchupResult[]>([]);
   const [allPicks, setAllPicks] = useState<RecordedPick[]>([]);
 
   const isFinished = totalRounds > 0 && roundIndex >= totalRounds;
-  const group = !isFinished ? groups[roundIndex] : undefined;
-  // Re-sampled only when the round changes, not on every render — same
-  // rationale as RankPlayScreen's own `candidates` useMemo. The backend
-  // guarantees every 1v1 group resolves to exactly 2 items.
-  const candidates = useMemo(
-    () => (group ? resolveRoundCandidates(group) : []),
-    [group],
+  // Drawn items for every round, resolved once at mount (dedup spans rounds).
+  // A 1v1 round has two slots (the two sides); each draws exactly one item, so
+  // the matchup is that pair and the pick records the winning side's group.
+  const selections = useMemo(
+    () => resolveRoundSelections(groups, rounds),
+    [groups, rounds],
   );
-  const [left, right] = candidates;
+  const slotA = !isFinished ? selections[roundIndex]?.slots[0] : undefined;
+  const slotB = !isFinished ? selections[roundIndex]?.slots[1] : undefined;
+  const left = slotA?.items[0];
+  const right = slotB?.items[0];
 
   function pick(winnerId: string) {
-    if (!group || !left || !right) return;
-    const winner = winnerId === left.id ? left : right;
-    const loser = winnerId === left.id ? right : left;
+    if (!slotA || !slotB || !left || !right) return;
+    const leftWon = winnerId === left.id;
+    const winner = leftWon ? left : right;
+    const loser = leftWon ? right : left;
+    const winnerGroupId = leftWon ? slotA.groupId : slotB.groupId;
     setHistory((prev) => [
       ...prev,
       { winnerTitle: winner.title, loserTitle: loser.title },
     ]);
-    setAllPicks((prev) => [...prev, { groupId: group.id, itemId: winner.id }]);
+    setAllPicks((prev) => [...prev, { roundIndex, groupId: winnerGroupId }]);
     setRoundIndex((prev) => prev + 1);
   }
 
@@ -106,7 +111,7 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
         </div>
       </div>
 
-      {group && left && right && (
+      {left && right && (
         <>
           <section className="mb-6 text-center">
             <Text as="h1" variant="title" className="mb-2 text-3xl">

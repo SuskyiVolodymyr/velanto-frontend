@@ -64,11 +64,13 @@ export function PlayScreen({ pack }: { pack: Pack }) {
             <div className="mb-8">
               <VersusRound
                 sideA={{
-                  ...session.categoryA!,
+                  id: session.sideA!.id,
+                  name: session.sideA!.name,
                   items: session.versusCandidatesA,
                 }}
                 sideB={{
-                  ...session.categoryB!,
+                  id: session.sideB!.id,
+                  name: session.sideB!.name,
                   items: session.versusCandidatesB,
                 }}
                 selectedId={session.selectedId}
@@ -106,8 +108,8 @@ export function PlayScreen({ pack }: { pack: Pack }) {
           pickCount={session.picks.length}
           packId={pack.id}
           format={pack.format}
-          categoryAName={session.categoryA?.name}
-          categoryBName={session.categoryB?.name}
+          sideAName={session.sideA?.name}
+          sideBName={session.sideB?.name}
         />
       )}
 

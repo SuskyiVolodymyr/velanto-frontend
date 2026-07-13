@@ -9,8 +9,8 @@ interface PlayFinishedProps {
   pickCount: number;
   packId: string;
   format: Pack["format"];
-  categoryAName?: string;
-  categoryBName?: string;
+  sideAName?: string;
+  sideBName?: string;
 }
 
 export function PlayFinished({
@@ -18,8 +18,8 @@ export function PlayFinished({
   pickCount,
   packId,
   format,
-  categoryAName,
-  categoryBName,
+  sideAName,
+  sideBName,
 }: PlayFinishedProps) {
   const t = useTranslations("play");
 
@@ -32,8 +32,8 @@ export function PlayFinished({
         {isVersus
           ? t("finishedVersus", {
               count: pickCount,
-              a: categoryAName ?? "",
-              b: categoryBName ?? "",
+              a: sideAName ?? "",
+              b: sideBName ?? "",
             })
           : t(
               format === "sacrifice_one" ? "finishedSacrifice" : "finishedSave",
