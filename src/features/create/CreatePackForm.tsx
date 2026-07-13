@@ -104,7 +104,7 @@ export function CreatePackForm() {
       <form
         onSubmit={handleSubmit(onValid)}
         noValidate
-        className="flex max-w-2xl flex-col gap-8"
+        className="flex flex-col gap-8"
       >
         <PackMetaFields />
 
