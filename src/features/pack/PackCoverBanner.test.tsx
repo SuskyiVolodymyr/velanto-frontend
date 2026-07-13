@@ -18,8 +18,12 @@ const SAVE_ONE_PACK: Pack = {
   format: "save_one",
   tags: [],
   groups: [
-    { id: "g1", name: "2016", selectionMode: "manual", items: [] },
-    { id: "g2", name: "2020", selectionMode: "manual", items: [] },
+    { id: "g1", name: "2016", items: [] },
+    { id: "g2", name: "2020", items: [] },
+  ],
+  rounds: [
+    { id: "r1", slots: [{ groupId: "g1", mode: "manual" }] },
+    { id: "r2", slots: [{ groupId: "g2", mode: "manual" }] },
   ],
   authorId: "u1",
   createdAt: "2026-01-01T00:00:00.000Z",
@@ -43,23 +47,27 @@ describe("PackCoverBanner", () => {
   });
 
   it("singularizes the round count for a single round", () => {
-    const pack: Pack = { ...SAVE_ONE_PACK, groups: [SAVE_ONE_PACK.groups![0]] };
+    const pack: Pack = { ...SAVE_ONE_PACK, rounds: [SAVE_ONE_PACK.rounds[0]] };
     render(<PackCoverBanner pack={pack} />);
 
     expect(screen.getByText("1 round")).toBeInTheDocument();
   });
 
-  it("uses versusRounds for an nxn pack", () => {
+  it("uses the rounds length for an nxn pack", () => {
     const pack: Pack = {
       ...SAVE_ONE_PACK,
       format: "nxn",
-      groups: undefined,
-      categories: [
-        { id: "ca", name: "Boys", items: [] },
-        { id: "cb", name: "Girls", items: [] },
+      groups: [
+        { id: "a", name: "Boys", items: [] },
+        { id: "b", name: "Girls", items: [] },
       ],
-      versusRounds: 8,
-      versusN: 1,
+      rounds: Array.from({ length: 8 }, (_, i) => ({
+        id: `r${i + 1}`,
+        slots: [
+          { groupId: "a", mode: "random" as const, count: 1 },
+          { groupId: "b", mode: "random" as const, count: 1 },
+        ],
+      })),
     };
     render(<PackCoverBanner pack={pack} />);
 

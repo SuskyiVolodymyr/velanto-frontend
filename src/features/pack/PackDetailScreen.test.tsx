@@ -38,12 +38,12 @@ const BASE_PACK: Pack = {
     {
       id: "g1",
       name: "2016",
-      selectionMode: "manual",
       items: [
         { id: "i1", type: "text", title: "Opening A", value: "Opening A" },
       ],
     },
   ],
+  rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "manual" }] }],
   authorId: "u1",
   createdAt: "2026-01-01T00:00:00.000Z",
   totalPlays: 0,
@@ -88,12 +88,20 @@ describe("PackDetailScreen", () => {
     const nxnPack: Pack = {
       ...BASE_PACK,
       format: "nxn",
-      groups: undefined,
-      categories: [
+      groups: [
         {
           id: "c1",
           name: "Category A",
           items: [{ id: "i2", type: "text", title: "Item X", value: "Item X" }],
+        },
+      ],
+      rounds: [
+        {
+          id: "r1",
+          slots: [
+            { groupId: "c1", mode: "random", count: 1 },
+            { groupId: "c1", mode: "random", count: 1 },
+          ],
         },
       ],
     };

@@ -69,7 +69,7 @@ describe("ShareButton", () => {
     render(
       <ShareButton
         path="/packs/p1/result"
-        picks={[{ groupId: "g1", itemId: "i1" }]}
+        picks={[{ roundIndex: 0, groupId: "g1", itemId: "i1" }]}
         label="Share result"
       />,
     );

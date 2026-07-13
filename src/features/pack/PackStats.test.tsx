@@ -26,8 +26,7 @@ describe("PackStats", () => {
       totalPlays: 10,
       rounds: [
         {
-          groupId: "g1",
-          groupName: "2016",
+          roundIndex: 0,
           items: [
             {
               itemId: "i1",
@@ -39,8 +38,7 @@ describe("PackStats", () => {
           ],
         },
         {
-          groupId: "g2",
-          groupName: "2020",
+          roundIndex: 1,
           items: [
             {
               itemId: "i3",
@@ -55,9 +53,9 @@ describe("PackStats", () => {
     render(<PackStats results={results} />);
 
     expect(screen.getByText("10 plays")).toBeInTheDocument();
-    expect(screen.getByText("2016")).toBeInTheDocument();
+    expect(screen.getByText("Round 1")).toBeInTheDocument();
     expect(screen.getByText("Guren no Yumiya — 70%")).toBeInTheDocument();
-    expect(screen.getByText("2020")).toBeInTheDocument();
+    expect(screen.getByText("Round 2")).toBeInTheDocument();
     expect(screen.getByText("Silhouette — 100%")).toBeInTheDocument();
     expect(screen.queryByText("Redo")).not.toBeInTheDocument();
   });
@@ -69,8 +67,7 @@ describe("PackStats", () => {
       totalPlays: 1,
       rounds: [
         {
-          groupId: "g1",
-          groupName: "2016",
+          roundIndex: 0,
           items: [
             {
               itemId: "i1",
@@ -94,8 +91,7 @@ describe("PackStats", () => {
       totalPlays: 4,
       rounds: [
         {
-          groupId: "g1",
-          groupName: "2016",
+          roundIndex: 0,
           items: [
             {
               itemId: "i1",
@@ -119,11 +115,11 @@ describe("PackStats", () => {
       packId: "pack-a",
       format: "save_one",
       totalPlays: 5,
-      rounds: [{ groupId: "g1", groupName: "Empty round", items: [] }],
+      rounds: [{ roundIndex: 0, items: [] }],
     };
 
     expect(() => render(<PackStats results={results} />)).not.toThrow();
-    expect(screen.queryByText("Empty round")).not.toBeInTheDocument();
+    expect(screen.queryByText("Round 1")).not.toBeInTheDocument();
   });
 
   it("shows the top-ranked item by lowest averagePosition for rank_blind results", () => {
@@ -133,8 +129,7 @@ describe("PackStats", () => {
       totalPlays: 6,
       rounds: [
         {
-          groupId: "g1",
-          groupName: "Openers",
+          roundIndex: 0,
           items: [
             {
               itemId: "i1",
@@ -157,7 +152,7 @@ describe("PackStats", () => {
     render(<PackStats results={results} />);
 
     expect(screen.getByText("6 plays")).toBeInTheDocument();
-    expect(screen.getByText("Openers")).toBeInTheDocument();
+    expect(screen.getByText("Round 1")).toBeInTheDocument();
     expect(screen.getByText("Kaikai Kitan — avg 0.5")).toBeInTheDocument();
     expect(screen.queryByText(/Redo/)).not.toBeInTheDocument();
   });
@@ -167,10 +162,10 @@ describe("PackStats", () => {
       packId: "pack-rank",
       format: "rank_blind",
       totalPlays: 2,
-      rounds: [{ groupId: "g1", groupName: "Empty round", items: [] }],
+      rounds: [{ roundIndex: 0, items: [] }],
     };
 
     expect(() => render(<PackStats results={results} />)).not.toThrow();
-    expect(screen.queryByText("Empty round")).not.toBeInTheDocument();
+    expect(screen.queryByText("Round 1")).not.toBeInTheDocument();
   });
 });

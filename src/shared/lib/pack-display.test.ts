@@ -34,54 +34,61 @@ describe("FORMAT_LABELS", () => {
 });
 
 describe("getRoundsCount", () => {
-  it("counts groups as rounds for save_one/sacrifice_one packs", () => {
+  it("counts rounds for save_one/sacrifice_one packs", () => {
     const pack: Pack = {
       ...BASE_PACK,
       format: "save_one",
       groups: [
-        { id: "g1", name: "2016", selectionMode: "manual", items: [] },
-        { id: "g2", name: "2020", selectionMode: "manual", items: [] },
+        { id: "g1", name: "2016", items: [] },
+        { id: "g2", name: "2020", items: [] },
+      ],
+      rounds: [
+        { id: "r1", slots: [{ groupId: "g1", mode: "manual" }] },
+        { id: "r2", slots: [{ groupId: "g2", mode: "manual" }] },
       ],
     };
 
     expect(getRoundsCount(pack)).toBe(2);
   });
 
-  it("uses versusRounds for nxn packs", () => {
+  it("uses the rounds length for nxn packs", () => {
     const pack: Pack = {
       ...BASE_PACK,
       format: "nxn",
-      categories: [
-        { id: "ca", name: "Boys", items: [] },
-        { id: "cb", name: "Girls", items: [] },
+      groups: [
+        { id: "a", name: "Boys", items: [] },
+        { id: "b", name: "Girls", items: [] },
       ],
-      versusRounds: 8,
-      versusN: 1,
+      rounds: Array.from({ length: 8 }, (_, i) => ({
+        id: `r${i + 1}`,
+        slots: [
+          { groupId: "a", mode: "random" as const, count: 1 },
+          { groupId: "b", mode: "random" as const, count: 1 },
+        ],
+      })),
     };
 
     expect(getRoundsCount(pack)).toBe(8);
   });
 
-  it("counts groups as rounds for rank_blind packs", () => {
+  it("counts rounds for rank_blind packs", () => {
     const pack: Pack = {
       ...BASE_PACK,
       format: "rank_blind",
       groups: [
-        { id: "g1", name: "Openers", selectionMode: "manual", items: [] },
-        {
-          id: "g2",
-          name: "Closers",
-          selectionMode: "random",
-          sampleSize: 2,
-          items: [],
-        },
+        { id: "g1", name: "Openers", items: [] },
+        { id: "g2", name: "Closers", items: [] },
+      ],
+      rounds: [
+        { id: "r1", slots: [{ groupId: "g1", mode: "manual" }] },
+        { id: "r2", slots: [{ groupId: "g2", mode: "random", count: 2 }] },
       ],
     };
 
     expect(getRoundsCount(pack)).toBe(2);
   });
 
-  it("counts groups.length as the rounds count for a 1v1 pack", () => {
+  it("counts rounds for a 1v1 pack", () => {
     const pack = {
       id: "p1",
       title: "t",
@@ -90,18 +97,12 @@ describe("getRoundsCount", () => {
       format: "1v1" as const,
       tags: [],
       groups: [
-        {
-          id: "g1",
-          name: "Round 1",
-          selectionMode: "manual" as const,
-          items: [],
-        },
-        {
-          id: "g2",
-          name: "Round 2",
-          selectionMode: "manual" as const,
-          items: [],
-        },
+        { id: "g1", name: "Round 1", items: [] },
+        { id: "g2", name: "Round 2", items: [] },
+      ],
+      rounds: [
+        { id: "r1", slots: [{ groupId: "g1", mode: "manual" as const }] },
+        { id: "r2", slots: [{ groupId: "g2", mode: "manual" as const }] },
       ],
       authorId: "u1",
       createdAt: "2026-01-01T00:00:00.000Z",
