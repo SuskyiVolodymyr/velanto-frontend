@@ -425,7 +425,8 @@
     "ranked": "{name} добавлен в рейтинг",
     "rankingDone": "Рейтинг готов",
     "rankingDoneSummary": "Ты расставил {count, plural, one {# элемент} few {# элемента} many {# элементов} other {# элемента}} вслепую.",
-    "loadingResult": "Загрузка результатов…"
+    "loadingResult": "Загрузка результатов…",
+    "finishRound": "Смотреть результаты →"
   },
   "result": {
     "label": "Результат",

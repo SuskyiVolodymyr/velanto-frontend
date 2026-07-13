@@ -34,6 +34,9 @@ export interface PlaySession {
   progressPct: number;
   showRound: boolean;
   roundTitle: string;
+  // True on the final round, so the confirm button can read "see results"
+  // instead of "next round".
+  isLastRound: boolean;
   canConfirm: boolean;
   selectedId: string | null;
   setSelectedId: (id: string | null) => void;
@@ -86,6 +89,7 @@ export function usePlaySession(pack: Pack): PlaySession {
   const [recordSettled, setRecordSettled] = useState(false);
 
   const isFinished = roundIndex >= totalRounds;
+  const isLastRound = !isFinished && roundIndex === totalRounds - 1;
   const currentRound = !isFinished ? selections[roundIndex] : undefined;
 
   // Versus sides are the same two pools every round — read them off the first
@@ -195,6 +199,7 @@ export function usePlaySession(pack: Pack): PlaySession {
     progressPct,
     showRound,
     roundTitle: round.title,
+    isLastRound,
     canConfirm,
     selectedId,
     setSelectedId,

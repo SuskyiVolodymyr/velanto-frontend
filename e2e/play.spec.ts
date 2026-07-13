@@ -183,7 +183,7 @@ test.describe("Play a pack", () => {
         page.getByRole("button", { name: "Next round →" }),
       ).toBeDisabled();
       await page.getByText("Silhouette").click();
-      await page.getByRole("button", { name: "Next round →" }).click();
+      await page.getByRole("button", { name: "See results →" }).click();
 
       // Finishing records the play (then it navigates straight to the result
       // page — no interstitial "all rounds done" screen; that redirect is
@@ -230,7 +230,7 @@ test.describe("Play a pack", () => {
     // Round 2.
     await expect(page.getByText("Round 2 of 2")).toBeVisible();
     await page.getByRole("button", { name: "Pick Girls" }).click();
-    await page.getByRole("button", { name: "Next round →" }).click();
+    await page.getByRole("button", { name: "See results →" }).click();
 
     // Finishing records the play, then navigates straight to the result page
     // (redirect covered by the PlayScreen unit tests).

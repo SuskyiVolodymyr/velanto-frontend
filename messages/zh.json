@@ -425,7 +425,8 @@
     "ranked": "{name} 已排名",
     "rankingDone": "你的排名完成了",
     "rankingDoneSummary": "全部 {count, plural, other {# 轮}}盲排完毕。",
-    "loadingResult": "正在加载结果…"
+    "loadingResult": "正在加载结果…",
+    "finishRound": "查看结果 →"
   },
   "result": {
     "label": "结果",

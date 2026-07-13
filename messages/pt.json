@@ -425,7 +425,8 @@
     "ranked": "{name} ranqueado",
     "rankingDone": "Seu ranking está pronto",
     "rankingDoneSummary": "{count, plural, one {# rodada colocada} other {# rodadas colocadas}}, às cegas.",
-    "loadingResult": "Carregando seus resultados…"
+    "loadingResult": "Carregando seus resultados…",
+    "finishRound": "Ver resultados →"
   },
   "result": {
     "label": "Resultado",

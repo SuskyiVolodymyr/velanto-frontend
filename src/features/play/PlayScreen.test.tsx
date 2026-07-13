@@ -215,7 +215,7 @@ describe("PlayScreen", () => {
 
     expect(await screen.findByText("Round 2 of 2")).toBeInTheDocument();
     await user.click(screen.getByRole("button", { name: "Pick Girls" }));
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "See results →" }));
 
     // No interstitial finished screen — it records and goes straight to results.
     await waitFor(() =>
@@ -279,7 +279,7 @@ describe("PlayScreen", () => {
     expect(await screen.findByText("Silhouette")).toBeInTheDocument();
     expect(screen.getByText("Round 2 of 2")).toBeInTheDocument();
     await user.click(screen.getByText("Silhouette"));
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "See results →" }));
 
     // No "all rounds done" screen — a loader shows while it records, then it
     // navigates straight to the result page.
@@ -313,7 +313,7 @@ describe("PlayScreen", () => {
     await user.click(screen.getByRole("button", { name: "Next round →" }));
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("Silhouette"));
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "See results →" }));
 
     await screen.findByRole("status");
     expect(playsClient.record).toHaveBeenCalledWith("pack-a", {
@@ -371,12 +371,15 @@ describe("PlayScreen", () => {
     await user.click(
       screen.getByRole("button", { name: "Play video preview" }),
     );
-    expect(screen.getByRole("button", { name: "Next round →" })).toBeDisabled();
+    // Single-round pack → the confirm button is the finish/"see results" one.
+    expect(
+      screen.getByRole("button", { name: "See results →" }),
+    ).toBeDisabled();
 
     await user.click(
       screen.getByRole("button", { name: "Pick Guren no Yumiya" }),
     );
-    expect(screen.getByRole("button", { name: "Next round →" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "See results →" })).toBeEnabled();
   });
 
   it("resets the selection when advancing to the next round", async () => {
@@ -387,9 +390,11 @@ describe("PlayScreen", () => {
     await user.click(screen.getByText("Redo"));
     await user.click(screen.getByRole("button", { name: "Next round →" }));
 
-    // Round 2 starts with nothing selected.
+    // Round 2 (the last round) starts with nothing selected.
     await screen.findByText("Silhouette");
-    expect(screen.getByRole("button", { name: "Next round →" })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "See results →" }),
+    ).toBeDisabled();
   });
 
   it("records the finished play exactly once", async () => {
@@ -401,7 +406,7 @@ describe("PlayScreen", () => {
     await user.click(screen.getByRole("button", { name: "Next round →" }));
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("Silhouette"));
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "See results →" }));
 
     await screen.findByRole("status");
     await waitFor(() => expect(playsClient.record).toHaveBeenCalledTimes(1));
@@ -425,7 +430,7 @@ describe("PlayScreen", () => {
     await user.click(screen.getByRole("button", { name: "Next round →" }));
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("Silhouette"));
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "See results →" }));
 
     await screen.findByRole("status");
     await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
@@ -453,7 +458,7 @@ describe("PlayScreen", () => {
     await user.click(screen.getByRole("button", { name: "Next round →" }));
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("Silhouette"));
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "See results →" }));
 
     await screen.findByRole("status");
     await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
