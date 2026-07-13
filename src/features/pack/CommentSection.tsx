@@ -85,6 +85,15 @@ function CommentView({
         </Text>
       </Hidden>
       <div className="mt-2 flex items-center gap-3">
+        {onReply && (
+          <button
+            type="button"
+            onClick={onReply}
+            className="text-xs font-medium text-foreground-tertiary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc rounded-[4px]"
+          >
+            {t("reply")}
+          </button>
+        )}
         <VoteControl
           vote={(value) => commentsClient.vote(packId, comment.id, value)}
           initialLikes={comment.likes ?? 0}
@@ -95,16 +104,8 @@ function CommentView({
           blockedReason={tAuth("logInToVote")}
           errorLabel={t("voteError")}
           size="sm"
+          className="ml-auto items-end"
         />
-        {onReply && (
-          <button
-            type="button"
-            onClick={onReply}
-            className="text-xs font-medium text-foreground-tertiary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc rounded-[4px]"
-          >
-            {t("reply")}
-          </button>
-        )}
       </div>
     </div>
   );
