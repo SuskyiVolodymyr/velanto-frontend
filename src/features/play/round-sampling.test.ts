@@ -11,7 +11,7 @@ function round(id: string, slots: Round["slots"]): Round {
 }
 
 describe("resolveRoundSelections", () => {
-  it("returns the whole pool in authored order for a manual slot", () => {
+  it("returns the pinned items in the author's chosen order for a manual slot", () => {
     const groups: Group[] = [
       {
         id: "g1",
@@ -19,11 +19,14 @@ describe("resolveRoundSelections", () => {
         items: [textItem("1", "A"), textItem("2", "B"), textItem("3", "C")],
       },
     ];
-    const rounds = [round("r1", [{ groupId: "g1", mode: "manual" }])];
+    const rounds = [
+      round("r1", [{ groupId: "g1", mode: "manual", itemIds: ["3", "1"] }]),
+    ];
 
     const result = resolveRoundSelections(groups, rounds);
 
-    expect(result[0].slots[0].items).toEqual(groups[0].items);
+    // Exactly the pinned items, in the pinned order (place 1 = item 3, etc.).
+    expect(result[0].slots[0].items.map((i) => i.id)).toEqual(["3", "1"]);
   });
 
   it("draws exactly `count` unique items from the pool for a random slot", () => {
@@ -81,18 +84,48 @@ describe("resolveRoundSelections", () => {
     expect(result[1].slots[0].items).toHaveLength(1);
   });
 
-  it("does not consume the used-set for manual slots (whole pool every round)", () => {
-    const items = [textItem("1", "A"), textItem("2", "B")];
+  it("reserves manual pins even when the random round comes first (order-independent)", () => {
+    const items = [
+      textItem("1", "A"),
+      textItem("2", "B"),
+      textItem("3", "C"),
+      textItem("4", "D"),
+    ];
     const groups: Group[] = [{ id: "g1", name: "Pool", items }];
     const rounds = [
-      round("r1", [{ groupId: "g1", mode: "manual" }]),
-      round("r2", [{ groupId: "g1", mode: "manual" }]),
+      round("r1", [{ groupId: "g1", mode: "random", count: 4 }]),
+      round("r2", [{ groupId: "g1", mode: "manual", itemIds: ["1"] }]),
     ];
 
     const result = resolveRoundSelections(groups, rounds);
 
-    expect(result[0].slots[0].items).toEqual(items);
-    expect(result[1].slots[0].items).toEqual(items);
+    // The random round runs first but still never draws the later-pinned item 1.
+    const drawn = result[0].slots[0].items.map((i) => i.id);
+    expect(drawn).toHaveLength(3);
+    expect(drawn).not.toContain("1");
+    expect(result[1].slots[0].items.map((i) => i.id)).toEqual(["1"]);
+  });
+
+  it("reserves manual-pinned items so a random slot never draws them", () => {
+    const items = [
+      textItem("1", "A"),
+      textItem("2", "B"),
+      textItem("3", "C"),
+      textItem("4", "D"),
+    ];
+    const groups: Group[] = [{ id: "g1", name: "Pool", items }];
+    const rounds = [
+      round("r1", [{ groupId: "g1", mode: "manual", itemIds: ["1"] }]),
+      round("r2", [{ groupId: "g1", mode: "random", count: 4 }]),
+    ];
+
+    const result = resolveRoundSelections(groups, rounds);
+
+    expect(result[0].slots[0].items.map((i) => i.id)).toEqual(["1"]);
+    // The random round sees only the 3 unpinned items — never item 1.
+    const drawn = result[1].slots[0].items.map((i) => i.id);
+    expect(drawn).toHaveLength(3);
+    expect(drawn).not.toContain("1");
   });
 
   it("draws each side of a two-slot (versus) round independently", () => {
@@ -102,8 +135,8 @@ describe("resolveRoundSelections", () => {
     ];
     const rounds = [
       round("r1", [
-        { groupId: "ca", mode: "manual" },
-        { groupId: "cb", mode: "manual" },
+        { groupId: "ca", mode: "random", count: 1 },
+        { groupId: "cb", mode: "random", count: 1 },
       ]),
     ];
 

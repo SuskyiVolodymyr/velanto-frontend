@@ -512,7 +512,14 @@
     "roundName": "Nom de la manche {index}",
     "saveChanges": "Enregistrer les modifications",
     "saving": "Enregistrement…",
-    "editOthersForbidden": "Vous ne pouvez modifier que vos propres packs."
+    "editOthersForbidden": "Vous ne pouvez modifier que vos propres packs.",
+    "roundGroup": "Groupe",
+    "roundPlaces": "Emplacements",
+    "placeLabel": "Emplacement {index}",
+    "placeItemLabel": "Élément pour l'emplacement {index}",
+    "addPlace": "Ajouter un emplacement",
+    "removePlace": "Retirer un emplacement",
+    "setCountAllLabel": "Définir le tirage de toutes les manches"
   },
   "profile": {
     "loginRequiredView": "Vous devez être connecté pour voir votre profil.",

@@ -512,7 +512,14 @@
     "roundName": "第 {index} 轮名称",
     "saveChanges": "保存更改",
     "saving": "保存中…",
-    "editOthersForbidden": "你只能编辑自己的题包。"
+    "editOthersForbidden": "你只能编辑自己的题包。",
+    "roundGroup": "分组",
+    "roundPlaces": "位置数",
+    "placeLabel": "位置 {index}",
+    "placeItemLabel": "位置 {index} 的项目",
+    "addPlace": "添加位置",
+    "removePlace": "删除位置",
+    "setCountAllLabel": "设置所有轮次抽取"
   },
   "profile": {
     "loginRequiredView": "你需要先登录才能查看个人资料。",

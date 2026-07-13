@@ -132,14 +132,127 @@ describe("createPackSchema — elimination (save_one / sacrifice_one / rank_blin
     });
   }
 
-  it("accepts a manual round drawing the whole pool", () => {
+  it("accepts a manual round that pins specific items", () => {
     expect(
       isValid(
         makeValues({
-          rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "manual" }] }],
+          rounds: [
+            {
+              id: "r1",
+              slots: [
+                { groupId: "g1", mode: "manual", itemIds: ["i-a", "i-b"] },
+              ],
+            },
+          ],
         }),
       ),
     ).toBe(true);
+  });
+
+  it("rejects a manual round pinning a single item (below the min-draw)", () => {
+    expect(
+      isValid(
+        makeValues({
+          rounds: [
+            {
+              id: "r1",
+              slots: [{ groupId: "g1", mode: "manual", itemIds: ["i-a"] }],
+            },
+          ],
+        }),
+      ),
+    ).toBe(false);
+  });
+
+  it("rejects a manual round pinning an item that is not in the group", () => {
+    expect(
+      isValid(
+        makeValues({
+          rounds: [
+            {
+              id: "r1",
+              slots: [
+                { groupId: "g1", mode: "manual", itemIds: ["i-a", "ghost"] },
+              ],
+            },
+          ],
+        }),
+      ),
+    ).toBe(false);
+  });
+
+  it("rejects the same item pinned in two manual rounds of one group", () => {
+    const fourItemGroup = {
+      id: "g1",
+      name: "Openings",
+      items: [textItem("a"), textItem("b"), textItem("c"), textItem("d")],
+    };
+    expect(
+      isValid(
+        makeValues({
+          groups: [fourItemGroup],
+          rounds: [
+            {
+              id: "r1",
+              slots: [
+                { groupId: "g1", mode: "manual", itemIds: ["i-a", "i-b"] },
+              ],
+            },
+            {
+              id: "r2",
+              slots: [
+                { groupId: "g1", mode: "manual", itemIds: ["i-b", "i-c"] },
+              ],
+            },
+          ],
+        }),
+      ),
+    ).toBe(false);
+  });
+
+  it("accepts a manual round reserving items alongside a still-feasible random round on the same group", () => {
+    const fourItemGroup = {
+      id: "g1",
+      name: "Openings",
+      items: [textItem("a"), textItem("b"), textItem("c"), textItem("d")],
+    };
+    expect(
+      isValid(
+        makeValues({
+          groups: [fourItemGroup],
+          rounds: [
+            {
+              id: "r1",
+              slots: [
+                { groupId: "g1", mode: "manual", itemIds: ["i-a", "i-b"] },
+              ],
+            },
+            // 2 items reserved by the manual round, 2 left → random draw of 2 fits.
+            { id: "r2", slots: [{ groupId: "g1", mode: "random", count: 2 }] },
+          ],
+        }),
+      ),
+    ).toBe(true);
+  });
+
+  it("rejects a random round left with nothing after a manual round reserved the whole pool", () => {
+    expect(
+      isValid(
+        makeValues({
+          // g1 has 2 items; the manual round pins both, so the random round
+          // would draw 0 — a hard feasibility error.
+          rounds: [
+            {
+              id: "r1",
+              slots: [
+                { groupId: "g1", mode: "manual", itemIds: ["i-a", "i-b"] },
+              ],
+            },
+            { id: "r2", slots: [{ groupId: "g1", mode: "random", count: 2 }] },
+          ],
+        }),
+      ),
+    ).toBe(false);
   });
 
   it("rejects a group with no name", () => {

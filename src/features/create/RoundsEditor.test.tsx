@@ -40,6 +40,7 @@ function RoundsReadout() {
           g: r.slots[0].groupId,
           m: r.slots[0].mode,
           c: r.slots[0].count,
+          items: r.slots[0].itemIds,
         })),
       )}
     </div>
@@ -88,16 +89,51 @@ describe("RoundsEditor", () => {
     ).toBeInTheDocument();
   });
 
-  it("hides the count input and draws the whole pool in manual mode", async () => {
+  it("switches to manual mode with per-place item dropdowns, seeding the minimum places", async () => {
     const user = userEvent.setup();
     render(<Harness />);
 
     await user.click(screen.getByLabelText("Round 1 manual"));
 
     expect(screen.queryByLabelText("Round 1 count")).not.toBeInTheDocument();
-    // Manual shows the whole 3-item pool.
+    // Seeds ELIMINATION_MIN_DRAW (2) places, each a dropdown, pinning a0/a1.
+    expect(screen.getByLabelText("Item for place 1")).toBeInTheDocument();
+    expect(screen.getByLabelText("Item for place 2")).toBeInTheDocument();
+    expect(screen.getByText("Draws 2 items")).toBeInTheDocument();
+    const slot = readRounds()[0];
+    expect(slot.m).toBe("manual");
+    expect(slot.items).toEqual(["a0", "a1"]);
+  });
+
+  it("adds a place, pinning the next available item", async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+    await user.click(screen.getByLabelText("Round 1 manual"));
+
+    await user.click(screen.getByRole("button", { name: "Add a place" }));
+    // Pool A has 3 items, so a 3rd place pins the remaining a2.
+    expect(readRounds()[0].items).toEqual(["a0", "a1", "a2"]);
     expect(screen.getByText("Draws 3 items")).toBeInTheDocument();
-    expect(readRounds()[0].m).toBe("manual");
+  });
+
+  it("lets a place re-point to a still-unpinned item", async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+    await user.click(screen.getByLabelText("Round 1 manual"));
+
+    // Two places seeded (a0, a1); a2 is still unpinned, so place 1 can take it.
+    await user.selectOptions(screen.getByLabelText("Item for place 1"), "a2");
+    expect(readRounds()[0].items).toEqual(["a2", "a1"]);
+  });
+
+  it("caps the number of places at the pool size", async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+    await user.click(screen.getByLabelText("Round 1 manual"));
+    await user.click(screen.getByRole("button", { name: "Add a place" }));
+
+    // Pool A has 3 items and 3 places are pinned — no more can be added.
+    expect(screen.getByRole("button", { name: "Add a place" })).toBeDisabled();
   });
 
   it("switches which pool a round draws from", async () => {

@@ -13,6 +13,11 @@ export function newSlot(groupId: string): Slot {
   return { groupId, mode: "random", count: 2 };
 }
 
+// A manual slot pinning the given ordered item ids (one per place).
+export function manualSlot(groupId: string, itemIds: string[]): Slot {
+  return { groupId, mode: "manual", itemIds };
+}
+
 export function newRound(groupId: string): Round {
   return { id: crypto.randomUUID(), name: "", slots: [newSlot(groupId)] };
 }

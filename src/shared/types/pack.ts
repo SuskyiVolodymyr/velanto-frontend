@@ -39,7 +39,12 @@ export type SlotMode = (typeof SLOT_MODES)[number];
 export interface Slot {
   groupId: string;
   mode: SlotMode;
+  // random: how many items to draw. manual: unused.
   count?: number;
+  // manual: the explicit, author-chosen ordered items to show. These are pinned
+  // — reserved out of the pool so no random slot draws them. Mirrors backend
+  // types/round.ts.
+  itemIds?: string[];
 }
 
 export interface Round {

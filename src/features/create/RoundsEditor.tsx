@@ -20,10 +20,11 @@ import {
 
 /**
  * The elimination-format body (save_one / sacrifice_one / rank_blind): an
- * ordered list of single-slot rounds, each drawing from one pool. A live
- * feasibility hint (via {@link resolveRoundDraws}) shows how many items each
- * round actually draws given the per-pool no-repeat dedup, warning softly when a
- * random round can't fill its configured count.
+ * ordered list of single-slot rounds, each drawing from one pool. A round is
+ * either `random` (draw N at random) or `manual` (the author pins a specific
+ * item to each place). Manual pins are reserved from the pool, so an item can be
+ * placed only once across the pack. A live feasibility hint (via
+ * {@link resolveRoundDraws}) shows how many items each round actually draws.
  */
 export function RoundsEditor() {
   const t = useTranslations("create");
@@ -41,10 +42,16 @@ export function RoundsEditor() {
   const firstGroupId = groups[0]?.id ?? "";
   const resolved = resolveRoundDraws(groups, rounds);
   const roundsError = getFieldError(errors, "rounds");
+  const groupById = new Map(groups.map((group) => [group.id, group]));
 
   function setSlot(
     roundIndex: number,
-    patch: { groupId?: string; mode?: SlotMode; count?: number | undefined },
+    patch: {
+      groupId?: string;
+      mode?: SlotMode;
+      count?: number | undefined;
+      itemIds?: string[] | undefined;
+    },
   ) {
     const current = rounds[roundIndex].slots[0];
     const next = { ...current, ...patch };
@@ -52,6 +59,100 @@ export function RoundsEditor() {
       shouldValidate: false,
       shouldDirty: true,
     });
+  }
+
+  // Item ids already pinned by a manual slot of the same group in OTHER rounds —
+  // they're reserved, so this round can't place them too.
+  function pinnedElsewhere(groupId: string, exceptRound: number): Set<string> {
+    const set = new Set<string>();
+    rounds.forEach((round, ri) => {
+      if (ri === exceptRound) return;
+      const slot = round.slots[0];
+      if (slot?.mode === "manual" && slot.groupId === groupId) {
+        (slot.itemIds ?? []).forEach((id) => set.add(id));
+      }
+    });
+    return set;
+  }
+
+  // The first `n` group items not already reserved by another round — the seed
+  // for a fresh manual slot and for newly added places.
+  function availableItemIds(
+    groupId: string,
+    exceptRound: number,
+    take: number,
+    exclude: Set<string> = new Set(),
+  ): string[] {
+    const items = groupById.get(groupId)?.items ?? [];
+    const taken = new Set([
+      ...pinnedElsewhere(groupId, exceptRound),
+      ...exclude,
+    ]);
+    const out: string[] = [];
+    for (const item of items) {
+      if (out.length >= take) break;
+      if (!taken.has(item.id)) out.push(item.id);
+    }
+    return out;
+  }
+
+  function switchMode(roundIndex: number, mode: SlotMode) {
+    const slot = rounds[roundIndex].slots[0];
+    if (mode === "manual") {
+      const seeded = availableItemIds(
+        slot.groupId,
+        roundIndex,
+        ELIMINATION_MIN_DRAW,
+      );
+      setSlot(roundIndex, { mode, itemIds: seeded, count: undefined });
+    } else {
+      setSlot(roundIndex, {
+        mode,
+        count: slot.count ?? ELIMINATION_MIN_DRAW,
+        itemIds: undefined,
+      });
+    }
+  }
+
+  function changeGroup(roundIndex: number, groupId: string) {
+    const slot = rounds[roundIndex].slots[0];
+    if (slot.mode === "manual") {
+      // The old pins belong to the old group — reseed from the new one.
+      const seeded = availableItemIds(
+        groupId,
+        roundIndex,
+        ELIMINATION_MIN_DRAW,
+      );
+      setSlot(roundIndex, { groupId, itemIds: seeded });
+    } else {
+      setSlot(roundIndex, { groupId });
+    }
+  }
+
+  function setPlaceCount(roundIndex: number, n: number) {
+    const slot = rounds[roundIndex].slots[0];
+    const current = slot.itemIds ?? [];
+    if (n <= current.length) {
+      setSlot(roundIndex, { itemIds: current.slice(0, Math.max(0, n)) });
+      return;
+    }
+    const extra = availableItemIds(
+      slot.groupId,
+      roundIndex,
+      n - current.length,
+      new Set(current),
+    );
+    setSlot(roundIndex, { itemIds: [...current, ...extra] });
+  }
+
+  function setPlaceItem(
+    roundIndex: number,
+    placeIndex: number,
+    itemId: string,
+  ) {
+    const current = [...(rounds[roundIndex].slots[0].itemIds ?? [])];
+    current[placeIndex] = itemId;
+    setSlot(roundIndex, { itemIds: current });
   }
 
   function applyBulkCount() {
@@ -72,6 +173,8 @@ export function RoundsEditor() {
 
       {rounds.map((round, index) => {
         const slot = round.slots[0];
+        const group = groupById.get(slot.groupId);
+        const groupItems = group?.items ?? [];
         const drawnCount = resolved[index]?.slots[0]?.drawnCount ?? 0;
         const underfilled =
           slot.mode === "random" &&
@@ -80,14 +183,36 @@ export function RoundsEditor() {
         const slotError =
           getFieldError(errors, `rounds.${index}.slots.0`) ??
           getFieldError(errors, `rounds.${index}.slots.0.groupId`) ??
-          getFieldError(errors, `rounds.${index}.slots.0.count`);
+          getFieldError(errors, `rounds.${index}.slots.0.count`) ??
+          getFieldError(errors, `rounds.${index}.slots.0.itemIds`);
+
+        const itemIds = slot.itemIds ?? [];
+        const reserved = pinnedElsewhere(slot.groupId, index);
+        const maxPlaces = groupItems.length - reserved.size;
 
         return (
           <Card
             key={round.id}
             className="flex flex-col gap-3 hover:translate-y-0 hover:shadow-none"
           >
-            <div className="flex flex-wrap items-center gap-2.5">
+            {/* Group leads — every place draws from it. */}
+            <div className="flex flex-col gap-1">
+              <Text variant="tertiary" className="text-xs">
+                {t("roundGroup")}
+              </Text>
+              <Select
+                value={slot.groupId}
+                onChange={(e) => changeGroup(index, e.target.value)}
+                aria-label={t("roundPool", { index: index + 1 })}
+                className="font-medium"
+                options={groups.map((g, gi) => ({
+                  value: g.id,
+                  label: g.name.trim() || t("groupName", { index: gi + 1 }),
+                }))}
+              />
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2.5 border-b border-border pb-3">
               <Input
                 value={round.name ?? ""}
                 onChange={(e) =>
@@ -100,26 +225,12 @@ export function RoundsEditor() {
                 placeholder={t("roundLabel", { index: index + 1 })}
                 className="min-w-[130px] flex-1"
               />
-              <Select
-                value={slot.groupId}
-                onChange={(e) => setSlot(index, { groupId: e.target.value })}
-                aria-label={t("roundPool", { index: index + 1 })}
-                className="flex-1 min-w-[140px]"
-                options={groups.map((group, gi) => ({
-                  value: group.id,
-                  label: group.name.trim() || t("groupName", { index: gi + 1 }),
-                }))}
-              />
               <div className="flex rounded-[9px] border border-border bg-white/[0.03] p-0.5">
                 <button
                   type="button"
-                  onClick={() =>
-                    setSlot(index, {
-                      mode: "random",
-                      count: slot.count ?? ELIMINATION_MIN_DRAW,
-                    })
-                  }
+                  onClick={() => switchMode(index, "random")}
                   aria-label={t("roundModeRandom", { index: index + 1 })}
+                  aria-pressed={slot.mode === "random"}
                   className={cn(
                     "rounded-[7px] px-3 py-1.5 text-xs font-medium transition-colors",
                     slot.mode === "random"
@@ -131,8 +242,9 @@ export function RoundsEditor() {
                 </button>
                 <button
                   type="button"
-                  onClick={() => setSlot(index, { mode: "manual" })}
+                  onClick={() => switchMode(index, "manual")}
                   aria-label={t("roundModeManual", { index: index + 1 })}
+                  aria-pressed={slot.mode === "manual"}
                   className={cn(
                     "rounded-[7px] px-3 py-1.5 text-xs font-medium transition-colors",
                     slot.mode === "manual"
@@ -143,7 +255,23 @@ export function RoundsEditor() {
                   {t("manual")}
                 </button>
               </div>
-              {slot.mode === "random" && (
+              {rounds.length > 1 && (
+                <Button
+                  variant="ghost"
+                  type="button"
+                  onClick={() => roundsArray.remove(index)}
+                  aria-label={t("removeRound", { index: index + 1 })}
+                >
+                  {t("remove")}
+                </Button>
+              )}
+            </div>
+
+            {slot.mode === "random" ? (
+              <div className="flex items-center gap-2.5">
+                <Text variant="secondary" className="text-sm">
+                  {t("roundCountLabel", { index: index + 1 })}
+                </Text>
                 <Input
                   type="number"
                   min={1}
@@ -159,18 +287,75 @@ export function RoundsEditor() {
                   aria-label={t("roundCountLabel", { index: index + 1 })}
                   className="w-16 text-center"
                 />
-              )}
-              {rounds.length > 1 && (
-                <Button
-                  variant="ghost"
-                  type="button"
-                  onClick={() => roundsArray.remove(index)}
-                  aria-label={t("removeRound", { index: index + 1 })}
-                >
-                  {t("remove")}
-                </Button>
-              )}
-            </div>
+              </div>
+            ) : (
+              <div className="flex flex-col gap-2.5">
+                <div className="flex items-center justify-between gap-2">
+                  <Text variant="secondary" className="text-sm">
+                    {t("roundPlaces")}
+                  </Text>
+                  <div className="flex items-center gap-3">
+                    <Button
+                      variant="secondary"
+                      type="button"
+                      disabled={itemIds.length <= 1}
+                      onClick={() => setPlaceCount(index, itemIds.length - 1)}
+                      aria-label={t("removePlace")}
+                      className="h-8 w-8 px-0"
+                    >
+                      −
+                    </Button>
+                    <Text className="min-w-[16px] text-center text-sm font-medium">
+                      {itemIds.length}
+                    </Text>
+                    <Button
+                      variant="secondary"
+                      type="button"
+                      disabled={itemIds.length >= maxPlaces}
+                      onClick={() => setPlaceCount(index, itemIds.length + 1)}
+                      aria-label={t("addPlace")}
+                      className="h-8 w-8 px-0"
+                    >
+                      +
+                    </Button>
+                  </div>
+                </div>
+
+                {itemIds.map((itemId, placeIndex) => {
+                  // A place may pick any group item not pinned elsewhere and not
+                  // used by another place in this round (its own value stays
+                  // available so it renders selected).
+                  const usedByOtherPlaces = new Set(
+                    itemIds.filter((_, pi) => pi !== placeIndex),
+                  );
+                  return (
+                    <div key={placeIndex} className="flex items-center gap-2.5">
+                      <Text variant="tertiary" className="min-w-[58px] text-xs">
+                        {t("placeLabel", { index: placeIndex + 1 })}
+                      </Text>
+                      <Select
+                        value={itemId}
+                        onChange={(e) =>
+                          setPlaceItem(index, placeIndex, e.target.value)
+                        }
+                        aria-label={t("placeItemLabel", {
+                          index: placeIndex + 1,
+                        })}
+                        className="flex-1"
+                        options={groupItems.map((item, ii) => ({
+                          value: item.id,
+                          label: item.title.trim() || `#${ii + 1}`,
+                          disabled:
+                            item.id !== itemId &&
+                            (reserved.has(item.id) ||
+                              usedByOtherPlaces.has(item.id)),
+                        }))}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            )}
 
             <Text variant="tertiary" className="text-xs">
               {t("roundDraws", { count: drawnCount })}
@@ -198,7 +383,7 @@ export function RoundsEditor() {
         </Text>
       )}
 
-      <div className="flex flex-wrap items-center gap-2.5">
+      <div className="flex flex-wrap items-center gap-3">
         <Button
           type="button"
           variant="secondary"
@@ -207,13 +392,16 @@ export function RoundsEditor() {
           {t("addRound")}
         </Button>
         <div className="flex items-center gap-2">
+          <Text variant="secondary" className="text-sm">
+            {t("setCountAllLabel")}
+          </Text>
           <Input
             type="number"
             min={1}
             value={bulkCount}
             onChange={(e) => setBulkCount(e.target.value)}
             aria-label={t("setCountAll")}
-            placeholder={t("setCountAll")}
+            placeholder="4"
             className="w-16 text-center"
           />
           <Button type="button" variant="secondary" onClick={applyBulkCount}>

@@ -91,6 +91,9 @@ function validateFeasibility(pack: PackDraft, ctx: z.RefinementCtx) {
 export function validateElimination(pack: PackDraft, ctx: z.RefinementCtx) {
   const groupsOk = validateGroupsAndRefs(pack, ctx);
   const groupById = new Map(pack.groups.map((group) => [group.id, group]));
+  // Manually-pinned item ids seen so far, per group — an item may be placed in
+  // only one slot across the whole pack (it's reserved out of the pool).
+  const pinnedByGroup = new Map<string, Set<string>>();
 
   pack.rounds.forEach((round, ri) => {
     if (round.slots.length !== 1) {
@@ -104,8 +107,40 @@ export function validateElimination(pack: PackDraft, ctx: z.RefinementCtx) {
     const slot = round.slots[0];
     const group = groupById.get(slot.groupId);
     if (!group) return;
-    const effective =
-      slot.mode === "random" ? (slot.count ?? 0) : group.items.length;
+
+    if (slot.mode === "manual") {
+      const itemIds = slot.itemIds ?? [];
+      const groupItemIds = new Set(group.items.map((item) => item.id));
+      const pinned = pinnedByGroup.get(slot.groupId) ?? new Set<string>();
+      itemIds.forEach((id, ii) => {
+        if (!groupItemIds.has(id)) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["rounds", ri, "slots", 0, "itemIds", ii],
+            message: "Pick an item for every place.",
+          });
+        } else if (pinned.has(id)) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["rounds", ri, "slots", 0, "itemIds", ii],
+            message: "This item is already placed in another round.",
+          });
+        } else {
+          pinned.add(id);
+        }
+      });
+      pinnedByGroup.set(slot.groupId, pinned);
+      if (itemIds.length < ELIMINATION_MIN_DRAW) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["rounds", ri, "slots", 0],
+          message: `Each round must show at least ${ELIMINATION_MIN_DRAW} items.`,
+        });
+      }
+      return;
+    }
+
+    const effective = slot.count ?? 0;
     if (effective < ELIMINATION_MIN_DRAW) {
       ctx.addIssue({
         code: "custom",

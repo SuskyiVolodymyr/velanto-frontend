@@ -512,7 +512,14 @@
     "roundName": "রাউন্ড {index} এর নাম",
     "saveChanges": "পরিবর্তন সংরক্ষণ করুন",
     "saving": "সংরক্ষণ করা হচ্ছে…",
-    "editOthersForbidden": "আপনি কেবল নিজের প্যাকই সম্পাদনা করতে পারেন।"
+    "editOthersForbidden": "আপনি কেবল নিজের প্যাকই সম্পাদনা করতে পারেন।",
+    "roundGroup": "গ্রুপ",
+    "roundPlaces": "স্থান",
+    "placeLabel": "স্থান {index}",
+    "placeItemLabel": "স্থান {index}-এর আইটেম",
+    "addPlace": "স্থান যোগ করুন",
+    "removePlace": "স্থান সরান",
+    "setCountAllLabel": "সব রাউন্ডের ড্র সেট করুন"
   },
   "profile": {
     "loginRequiredView": "আপনার প্রোফাইল দেখতে হলে আপনাকে লগ ইন করতে হবে।",

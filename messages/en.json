@@ -511,7 +511,14 @@
     "roundName": "Round {index} name",
     "saveChanges": "Save changes",
     "saving": "Saving…",
-    "editOthersForbidden": "You can only edit your own packs."
+    "editOthersForbidden": "You can only edit your own packs.",
+    "roundGroup": "Group",
+    "roundPlaces": "Places",
+    "placeLabel": "Place {index}",
+    "placeItemLabel": "Item for place {index}",
+    "addPlace": "Add a place",
+    "removePlace": "Remove a place",
+    "setCountAllLabel": "Set all rounds to draw"
   },
   "profile": {
     "loginRequiredView": "You need to be logged in to view your profile.",

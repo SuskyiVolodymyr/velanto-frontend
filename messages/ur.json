@@ -512,7 +512,14 @@
     "roundName": "راؤنڈ {index} کا نام",
     "saveChanges": "تبدیلیاں محفوظ کریں",
     "saving": "محفوظ ہو رہا ہے…",
-    "editOthersForbidden": "آپ صرف اپنے ہی پیک میں ترمیم کر سکتے ہیں۔"
+    "editOthersForbidden": "آپ صرف اپنے ہی پیک میں ترمیم کر سکتے ہیں۔",
+    "roundGroup": "گروپ",
+    "roundPlaces": "مقامات",
+    "placeLabel": "مقام {index}",
+    "placeItemLabel": "مقام {index} کے لیے آئٹم",
+    "addPlace": "مقام شامل کریں",
+    "removePlace": "مقام ہٹائیں",
+    "setCountAllLabel": "تمام راؤنڈز کے لیے ڈرا مقرر کریں"
   },
   "profile": {
     "loginRequiredView": "اپنی پروفائل دیکھنے کے لیے آپ کا لاگ اِن ہونا ضروری ہے۔",
