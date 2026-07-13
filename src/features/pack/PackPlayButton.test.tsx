@@ -1,6 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { PackPlayButton } from "./PackPlayButton";
 import { useAuth } from "@/src/shared/lib/auth-context";
@@ -41,17 +40,17 @@ describe("PackPlayButton", () => {
     );
   });
 
-  it("blocks a signed-out viewer with a reason tooltip instead of a link", async () => {
+  it("links to the play route for a signed-out viewer too (anon can play)", () => {
     mockStatus("unauthenticated");
     render(<PackPlayButton packId="p1" />);
 
-    // No navigable link — a blocked button that can't start a play.
-    expect(screen.queryByRole("link", { name: /play now/i })).toBeNull();
-    const button = screen.getByRole("button", { name: /play now/i });
-    expect(button).toHaveAttribute("aria-disabled", "true");
-
-    await userEvent.hover(button);
-    expect(screen.getByRole("tooltip")).toHaveTextContent("Log in to play");
+    // Anyone can play — signed-out plays just aren't recorded — so it's a link,
+    // not a blocked button.
+    expect(screen.getByRole("link", { name: /play now/i })).toHaveAttribute(
+      "href",
+      "/packs/p1/play",
+    );
+    expect(screen.queryByRole("button", { name: /play now/i })).toBeNull();
   });
 
   it("still links while auth is resolving (no login flash)", () => {

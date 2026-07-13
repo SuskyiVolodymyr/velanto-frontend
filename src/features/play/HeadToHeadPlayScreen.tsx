@@ -3,10 +3,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { Text } from "@/src/shared/components/Text";
-import { Button, buttonClassName } from "@/src/shared/components/Button";
+import { buttonClassName } from "@/src/shared/components/Button";
 import { playsClient } from "@/src/shared/lib/plays-client";
 import { writeLastPlayPicks } from "@/src/shared/lib/last-play-storage";
 import { resolveRoundSelections } from "@/src/features/play/round-sampling";
@@ -22,8 +21,6 @@ interface MatchupResult {
 export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
   const { status } = useAuth();
   const t = useTranslations("play");
-  const router = useRouter();
-  const pathname = usePathname();
   const groups = pack.groups ?? [];
   const rounds = pack.rounds ?? [];
   const totalRounds = rounds.length;
@@ -60,34 +57,23 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
   }
 
   // Fires once when the last matchup's pick is recorded — mirrors
-  // RankPlayScreen's recordedRef guard.
+  // RankPlayScreen's recordedRef guard. Signed-out plays aren't recorded (no
+  // stats for anon); we still stash the local picks so the result screen works.
   const recordedRef = useRef(false);
   useEffect(() => {
-    if (!isFinished || recordedRef.current) return;
+    if (!isFinished || status === "loading" || recordedRef.current) return;
     recordedRef.current = true;
+    if (status !== "authenticated") {
+      writeLastPlayPicks(pack.id, allPicks);
+      return;
+    }
     playsClient
       .record(pack.id, { picks: allPicks })
       .then(() => writeLastPlayPicks(pack.id, allPicks))
       .catch(() => undefined);
-  }, [isFinished, pack.id, allPicks]);
+  }, [isFinished, pack.id, allPicks, status]);
 
   if (status === "loading") return null;
-
-  if (status === "unauthenticated") {
-    return (
-      <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">{t("loginRequired")}</Text>
-        <Button
-          className="mt-4"
-          onClick={() =>
-            router.push(`/auth?next=${encodeURIComponent(pathname)}`)
-          }
-        >
-          {t("logIn")}
-        </Button>
-      </div>
-    );
-  }
 
   const progressPct = isFinished
     ? 100

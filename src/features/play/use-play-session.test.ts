@@ -2,6 +2,7 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { usePlaySession } from "./use-play-session";
 import { playsClient } from "@/src/shared/lib/plays-client";
+import { useAuth } from "@/src/shared/lib/auth-context";
 import type { Pack } from "@/src/shared/types/pack";
 
 vi.mock("@/src/shared/lib/plays-client", () => ({
@@ -9,6 +10,30 @@ vi.mock("@/src/shared/lib/plays-client", () => ({
     record: vi.fn().mockResolvedValue({ id: "play-1" }),
   },
 }));
+
+vi.mock("@/src/shared/lib/auth-context");
+
+const mockedUseAuth = vi.mocked(useAuth);
+
+function setAuth(status: "loading" | "authenticated" | "unauthenticated") {
+  mockedUseAuth.mockReturnValue({
+    user:
+      status === "authenticated"
+        ? {
+            id: "u1",
+            email: "a@x.com",
+            username: "a",
+            role: "user",
+            createdAt: "",
+          }
+        : null,
+    status,
+    login: vi.fn(),
+    requestEmailCode: vi.fn(),
+    register: vi.fn(),
+    logout: vi.fn(),
+  } as ReturnType<typeof useAuth>);
+}
 
 function textItem(id: string, title: string) {
   return { id, type: "text" as const, title, value: title };
@@ -88,6 +113,7 @@ const VERSUS_PACK: Pack = {
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(playsClient.record).mockResolvedValue({ id: "play-1" });
+  setAuth("authenticated");
   sessionStorage.clear();
 });
 
@@ -169,5 +195,27 @@ describe("usePlaySession", () => {
       ]),
     );
     expect(playsClient.record).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not record a signed-out play, but still stashes the local picks", async () => {
+    setAuth("unauthenticated");
+    const { result } = renderHook(() => usePlaySession(GROUPS_PACK));
+
+    act(() => result.current.setSelectedId("1"));
+    act(() => result.current.confirmPick());
+    act(() => result.current.setSelectedId("3"));
+    act(() => result.current.confirmPick());
+
+    expect(result.current.isFinished).toBe(true);
+    await waitFor(() => expect(result.current.recordSettled).toBe(true));
+    // No backend stats for anon…
+    expect(playsClient.record).not.toHaveBeenCalled();
+    // …but the local picks are stashed so the result screen still works.
+    expect(
+      JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
+    ).toEqual([
+      { roundIndex: 0, groupId: "g1", itemId: "1" },
+      { roundIndex: 1, groupId: "g2", itemId: "3" },
+    ]);
   });
 });

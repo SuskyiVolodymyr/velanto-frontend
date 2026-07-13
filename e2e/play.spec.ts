@@ -81,6 +81,35 @@ test.describe("Play a pack", () => {
     });
   }
 
+  test("lets a signed-out visitor play a pack without recording it", async ({
+    page,
+  }) => {
+    // Override the beforeEach's authenticated session with a signed-out one.
+    await page.route(`${API_BASE}/auth/refresh`, (route) =>
+      route.fulfill({ status: 401, json: { message: "Unauthorized" } }),
+    );
+    let recorded = false;
+    await page.route(`${API_BASE}/packs/pack-save/plays`, (route) => {
+      recorded = true;
+      return route.fulfill({ status: 201, json: { id: "play-1" } });
+    });
+
+    await page.goto("/packs/pack-save/play");
+
+    // No login wall — anon can play the whole session.
+    await expect(page.getByRole("heading", { name: "2016" })).toBeVisible();
+    await page.getByText("Guren no Yumiya").click();
+    await page.getByRole("button", { name: "Next round →" }).click();
+    await expect(page.getByRole("heading", { name: "2020" })).toBeVisible();
+    await page.getByText("Silhouette").click();
+    await page.getByRole("button", { name: "See results →" }).click();
+
+    // It reaches the result page…
+    await expect(page).toHaveURL(/\/packs\/pack-save\/result/);
+    // …without ever recording the play on the backend.
+    expect(recorded).toBe(false);
+  });
+
   test("plays a full nxn session with confirm-gating and records the side picks", async ({
     page,
   }) => {

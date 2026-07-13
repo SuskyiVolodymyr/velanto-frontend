@@ -2,8 +2,7 @@
 
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter, usePathname } from "next/navigation";
-import { useAuth } from "@/src/shared/lib/auth-context";
+import { useRouter } from "next/navigation";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { cn } from "@/src/shared/lib/cn";
@@ -40,10 +39,8 @@ function candidateGridCols(count: number): string {
 }
 
 export function PlayScreen({ pack }: { pack: Pack }) {
-  const { status } = useAuth();
   const t = useTranslations("play");
   const router = useRouter();
-  const pathname = usePathname();
   const session = usePlaySession(pack);
 
   // Once the finished play has been recorded (or the record failed), go straight
@@ -53,24 +50,6 @@ export function PlayScreen({ pack }: { pack: Pack }) {
       router.replace(`/packs/${pack.id}/result`);
     }
   }, [session.recordSettled, router, pack.id]);
-
-  if (status === "loading") return null;
-
-  if (status === "unauthenticated") {
-    return (
-      <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">{t("loginRequired")}</Text>
-        <Button
-          className="mt-4"
-          onClick={() =>
-            router.push(`/auth?next=${encodeURIComponent(pathname)}`)
-          }
-        >
-          {t("logIn")}
-        </Button>
-      </div>
-    );
-  }
 
   return (
     <div className="mx-auto w-full max-w-5xl flex-1 px-7 py-10">

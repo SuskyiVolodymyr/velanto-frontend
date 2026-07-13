@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useAuth } from "@/src/shared/lib/auth-context";
 import { playsClient } from "@/src/shared/lib/plays-client";
 import { writeLastPlayPicks } from "@/src/shared/lib/last-play-storage";
 import { resolveRoundSelections } from "@/src/features/play/round-sampling";
@@ -67,6 +68,7 @@ function toRecordedPick(pick: Pick): RecordedPick {
  * a flat interface so PlayScreen can stay a thin presentational shell.
  */
 export function usePlaySession(pack: Pack): PlaySession {
+  const { status } = useAuth();
   const isVersus = pack.format === "nxn";
   const groups = pack.groups ?? [];
   const rounds = pack.rounds ?? [];
@@ -170,18 +172,26 @@ export function usePlaySession(pack: Pack): PlaySession {
   // Fires once when the last round is confirmed: records the play, then stashes
   // the picks for the result page — only once we know the server actually
   // counted them, so "your pick" never shows a percentage that didn't include
-  // your own vote (e.g. after a failed request).
+  // your own vote (e.g. after a failed request). Signed-out plays are NOT
+  // recorded (no stats for anon); we still stash the local picks so the result
+  // screen can show "your pick" against the aggregate. Wait for auth to resolve
+  // before deciding, so a still-loading session doesn't record as anon.
   const recordedRef = useRef(false);
   useEffect(() => {
-    if (!isFinished || recordedRef.current) return;
+    if (!isFinished || status === "loading" || recordedRef.current) return;
     recordedRef.current = true;
     const recordedPicks = picks.map(toRecordedPick);
-    playsClient
-      .record(pack.id, { picks: recordedPicks })
+    // Anon plays skip the backend record (no stats saved) but still resolve, so
+    // the local picks get stashed and the result page is reached.
+    const recorded =
+      status === "authenticated"
+        ? playsClient.record(pack.id, { picks: recordedPicks })
+        : Promise.resolve();
+    recorded
       .then(() => writeLastPlayPicks(pack.id, recordedPicks))
       .catch(() => undefined)
       .finally(() => setRecordSettled(true));
-  }, [isFinished, pack.id, picks]);
+  }, [isFinished, pack.id, picks, status]);
 
   const progressPct = isFinished
     ? 100
