@@ -6,7 +6,17 @@ import { cn } from "@/src/shared/lib/cn";
 import { Badge } from "@/src/shared/components/Badge";
 import { youtubeThumbnailUrl } from "@/src/shared/lib/youtube";
 import { loadYouTubeIframeApi } from "@/src/shared/lib/youtube-iframe-api";
+import {
+  YT_STATE_PLAYING,
+  YT_STATE_BUFFERING,
+} from "@/src/shared/lib/youtube-iframe-api";
 import type { YouTubePlayer } from "@/src/shared/lib/youtube-iframe-api";
+
+// How long to wait, after commanding playback, for the video to actually reach
+// buffering/playing before we treat it as failed. YouTube's server-side "try
+// again later" throttle renders inside the player WITHOUT firing onError, so
+// this watchdog is the only signal we get for it.
+const PLAYBACK_WATCHDOG_MS = 4000;
 
 interface YouTubeCardProps {
   videoId: string;
@@ -16,6 +26,9 @@ interface YouTubeCardProps {
 export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
   const mountRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<YouTubePlayer | null>(null);
+  // Flips true once the player reports buffering/playing — proof that commanded
+  // playback actually took, so the watchdog below knows not to fall back.
+  const playbackStartedRef = useRef(false);
   const [hovered, setHovered] = useState(false);
   const [playerReady, setPlayerReady] = useState(false);
   // The video can't be played embedded (private/deleted/embed-disabled/region-
@@ -31,6 +44,7 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
     return () => {
       playerRef.current?.destroy();
       playerRef.current = null;
+      playbackStartedRef.current = false;
       setPlayerReady(false);
       setFailed(false);
     };
@@ -62,6 +76,16 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
               setPlayerReady(true);
             },
             onError: () => setFailed(true),
+            onStateChange: (event) => {
+              // Reaching buffering/playing means playback actually took — the
+              // watchdog must not then fall back.
+              if (
+                event.data === YT_STATE_PLAYING ||
+                event.data === YT_STATE_BUFFERING
+              ) {
+                playbackStartedRef.current = true;
+              }
+            },
           },
         });
       })
@@ -75,8 +99,18 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
 
   useEffect(() => {
     if (!playerRef.current || !playerReady || failed) return;
-    if (hovered) playerRef.current.playVideo();
-    else playerRef.current.pauseVideo();
+    if (!hovered) {
+      playerRef.current.pauseVideo();
+      return;
+    }
+    playerRef.current.playVideo();
+    // Watchdog for the throttle case (see PLAYBACK_WATCHDOG_MS): if playback
+    // hasn't reached buffering/playing by the deadline, give up and show the
+    // Open-on-YouTube fallback instead of YouTube's raw error box.
+    const watchdog = setTimeout(() => {
+      if (!playbackStartedRef.current) setFailed(true);
+    }, PLAYBACK_WATCHDOG_MS);
+    return () => clearTimeout(watchdog);
   }, [hovered, playerReady, failed]);
 
   return (
