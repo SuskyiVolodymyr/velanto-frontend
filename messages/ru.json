@@ -388,7 +388,14 @@
     "sortTop": "Популярные",
     "sortNew": "Новые",
     "sortLabel": "Сортировать комментарии",
-    "roundHeading": "Раунд {index}"
+    "roundHeading": "Раунд {index}",
+    "edit": "Редактировать",
+    "delete": "Удалить",
+    "deletePackTitle": "Удалить этот пак?",
+    "deletePackConfirm": "Это навсегда удалит пак и всё его содержимое. Отменить действие нельзя.",
+    "deletePackCta": "Удалить пак",
+    "deleting": "Удаление…",
+    "deletePackError": "Не удалось удалить пак. Попробуйте снова."
   },
   "share": {
     "trigger": "Поделиться",
@@ -502,7 +509,10 @@
     "versusRoundCount": "Раунды",
     "versusPerSide": "Элементов на сторону",
     "versusPerSideFixed": "1 на сторону",
-    "roundName": "Название раунда {index}"
+    "roundName": "Название раунда {index}",
+    "saveChanges": "Сохранить изменения",
+    "saving": "Сохранение…",
+    "editOthersForbidden": "Вы можете редактировать только свои паки."
   },
   "profile": {
     "loginRequiredView": "Чтобы посмотреть свой профиль, нужно войти в аккаунт.",
@@ -543,7 +553,9 @@
     "back": "Назад",
     "errorTitle": "Что-то пошло не так",
     "errorBody": "Не удалось загрузить профиль. Попробуй снова.",
-    "tryAgain": "Попробовать снова"
+    "tryAgain": "Попробовать снова",
+    "editTitle": "Редактировать пак",
+    "editSubtitle": "Обновите данные пака. После повторной публикации он снова пройдёт модерацию."
   },
   "status": {
     "packPending": "На модерации",

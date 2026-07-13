@@ -35,9 +35,32 @@ vi.mock("@/src/shared/lib/auth-client", () => ({
 vi.mock("@/src/shared/lib/packs-client", () => ({
   packsClient: {
     create: vi.fn(),
+    update: vi.fn(),
     getById: vi.fn(),
   },
 }));
+
+// A complete, valid set of edit-mode seed values (one pool with one item, a
+// single elimination round drawing the whole pool).
+const EDIT_VALUES = {
+  title: "Original Title",
+  description: "Original description",
+  coverTone: "#2b2a3a",
+  format: "save_one" as const,
+  tags: ["Anime" as const],
+  groups: [
+    {
+      id: "g1",
+      name: "2016",
+      // Two items so the save_one round's manual draw meets the min-draw of 2.
+      items: [
+        { id: "i1", type: "text" as const, title: "AoT", value: "Guren" },
+        { id: "i2", type: "text" as const, title: "Redo", value: "Redo" },
+      ],
+    },
+  ],
+  rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "manual" as const }] }],
+};
 
 const MOCK_USER = {
   id: "u1",
@@ -77,6 +100,14 @@ function renderForm() {
   return render(
     <AuthProvider>
       <CreatePackForm />
+    </AuthProvider>,
+  );
+}
+
+function renderEditForm() {
+  return render(
+    <AuthProvider>
+      <CreatePackForm mode="edit" packId="pack-1" initialValues={EDIT_VALUES} />
     </AuthProvider>,
   );
 }
@@ -290,6 +321,58 @@ describe("CreatePackForm", () => {
       ),
     ).toBeInTheDocument();
     expect(push).not.toHaveBeenCalled();
+  });
+
+  describe("edit mode", () => {
+    it("seeds the form from the pack and labels the submit button 'Save changes'", async () => {
+      renderEditForm();
+
+      expect(await screen.findByLabelText("Pack title")).toHaveValue(
+        "Original Title",
+      );
+      expect(screen.getByLabelText("Pack description")).toHaveValue(
+        "Original description",
+      );
+      expect(screen.getByLabelText("Pool 1 name")).toHaveValue("2016");
+      expect(
+        screen.getByRole("button", { name: "Save changes" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: "Publish" }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("PATCHes the pack and redirects to its detail page on save", async () => {
+      const user = userEvent.setup();
+      vi.mocked(packsClient.update).mockResolvedValue(makePack({ id: "pack-1" }));
+      renderEditForm();
+      const title = await screen.findByLabelText("Pack title");
+      await user.clear(title);
+      await user.type(title, "New Title");
+
+      await user.click(screen.getByRole("button", { name: "Save changes" }));
+
+      await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-1"));
+      expect(packsClient.update).toHaveBeenCalledWith(
+        "pack-1",
+        expect.objectContaining({ title: "New Title", format: "save_one" }),
+      );
+      expect(packsClient.create).not.toHaveBeenCalled();
+    });
+
+    it("shows the server error and does not navigate when the edit fails", async () => {
+      const user = userEvent.setup();
+      vi.mocked(packsClient.update).mockRejectedValue(
+        new ApiError(403, "Forbidden", { message: "Not allowed" }),
+      );
+      renderEditForm();
+      await screen.findByLabelText("Pack title");
+
+      await user.click(screen.getByRole("button", { name: "Save changes" }));
+
+      expect(await screen.findByText("Not allowed")).toBeInTheDocument();
+      expect(push).not.toHaveBeenCalled();
+    });
   });
 
   describe("elimination formats keep the Rounds editor", () => {

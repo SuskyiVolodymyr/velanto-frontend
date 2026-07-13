@@ -26,6 +26,18 @@ vi.mock("@/src/features/pack/PackPlayButton", () => ({
 vi.mock("@/src/features/pack/PackBannerAuthor", () => ({
   PackBannerAuthor: () => <div>PackBannerAuthor</div>,
 }));
+// Auth-gated owner/moderator actions (Edit/Delete) — own tests in
+// PackOwnerActions.test. Stub so it's not pulling in the auth context here, and
+// echo its props so we can assert the screen wires it to this pack.
+vi.mock("@/src/features/pack/PackOwnerActions", () => ({
+  PackOwnerActions: ({
+    packId,
+    packAuthorId,
+  }: {
+    packId: string;
+    packAuthorId: string;
+  }) => <div>{`PackOwnerActions:${packId}:${packAuthorId}`}</div>,
+}));
 
 const BASE_PACK: Pack = {
   id: "p1",
@@ -128,6 +140,13 @@ describe("PackDetailScreen", () => {
     // The raw group/category names and item titles are not listed.
     expect(screen.queryByText("Category A")).not.toBeInTheDocument();
     expect(screen.queryByText("Item X")).not.toBeInTheDocument();
+  });
+
+  it("wires the owner/moderator actions to this pack", () => {
+    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
+    expect(
+      screen.getByText("PackOwnerActions:p1:u1"),
+    ).toBeInTheDocument();
   });
 
   it("shows a Share button for an approved pack", () => {

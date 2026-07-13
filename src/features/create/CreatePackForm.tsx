@@ -35,15 +35,31 @@ function isVersusFormat(format: CreatePackValues["format"]): boolean {
   return format === "nxn" || format === "1v1";
 }
 
-export function CreatePackForm() {
+// Editing reuses this whole form: `initialValues` seeds it from an existing
+// pack and `packId` switches the submit to a PATCH. Omit both for the create
+// flow (the default).
+export interface CreatePackFormProps {
+  mode?: "create" | "edit";
+  packId?: string;
+  initialValues?: CreatePackValues;
+}
+
+export function CreatePackForm({
+  mode = "create",
+  packId,
+  initialValues,
+}: CreatePackFormProps = {}) {
   const t = useTranslations("create");
   const router = useRouter();
   const pathname = usePathname();
   const { status } = useAuth();
+  const isEdit = mode === "edit";
 
   // Seed one pool plus a matching elimination round drawing from it. Computed
   // once (lazy initializer) so the round's groupId keeps pointing at the pool.
+  // In edit mode the seed is the pack's current content instead.
   const [defaultValues] = useState<CreatePackValues>(() => {
+    if (initialValues) return initialValues;
     const group = newGroup();
     return {
       title: "",
@@ -125,8 +141,13 @@ export function CreatePackForm() {
     };
 
     try {
-      const pack = await packsClient.create(input);
-      router.push(`/packs/${pack.id}`);
+      if (isEdit && packId) {
+        await packsClient.update(packId, input);
+        router.push(`/packs/${packId}`);
+      } else {
+        const pack = await packsClient.create(input);
+        router.push(`/packs/${pack.id}`);
+      }
     } catch (err) {
       setError("root", { message: messageFromError(err) });
     }
@@ -176,7 +197,13 @@ export function CreatePackForm() {
           loading={isSubmitting}
           className="h-[50px] w-full"
         >
-          {isSubmitting ? t("publishing") : t("publish")}
+          {isSubmitting
+            ? isEdit
+              ? t("saving")
+              : t("publishing")
+            : isEdit
+              ? t("saveChanges")
+              : t("publish")}
         </Button>
       </form>
     </FormProvider>

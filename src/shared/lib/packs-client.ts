@@ -59,6 +59,8 @@ function buildListQuery(filters: ListPacksFilters): string {
 
 export const packsClient = {
   create: (input: CreatePackInput) => apiClient.post<Pack>("/packs", input),
+  update: (id: string, input: CreatePackInput) =>
+    apiClient.patch<Pack>(`/packs/${id}`, input),
   getById: (id: string) => apiClient.get<Pack>(`/packs/${id}`),
   list: (filters: ListPacksFilters = {}) =>
     apiClient.get<PackList>(`/packs${buildListQuery(filters)}`),

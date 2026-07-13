@@ -388,7 +388,14 @@
     "sortTop": "Популярні",
     "sortNew": "Нові",
     "sortLabel": "Сортувати коментарі",
-    "roundHeading": "Раунд {index}"
+    "roundHeading": "Раунд {index}",
+    "edit": "Редагувати",
+    "delete": "Видалити",
+    "deletePackTitle": "Видалити цей пак?",
+    "deletePackConfirm": "Це назавжди видалить пак і весь його вміст. Скасувати дію неможливо.",
+    "deletePackCta": "Видалити пак",
+    "deleting": "Видалення…",
+    "deletePackError": "Не вдалося видалити пак. Спробуйте ще раз."
   },
   "share": {
     "trigger": "Поділитися",
@@ -502,7 +509,10 @@
     "versusRoundCount": "Раунди",
     "versusPerSide": "Елементів на сторону",
     "versusPerSideFixed": "1 на сторону",
-    "roundName": "Назва раунду {index}"
+    "roundName": "Назва раунду {index}",
+    "saveChanges": "Зберегти зміни",
+    "saving": "Збереження…",
+    "editOthersForbidden": "Ви можете редагувати лише власні паки."
   },
   "profile": {
     "loginRequiredView": "Щоб переглянути свій профіль, спершу увійди.",
@@ -543,7 +553,9 @@
     "back": "Назад",
     "errorTitle": "Щось пішло не так",
     "errorBody": "Не вдалося завантажити цей профіль. Спробуй ще раз.",
-    "tryAgain": "Спробувати ще раз"
+    "tryAgain": "Спробувати ще раз",
+    "editTitle": "Редагувати пак",
+    "editSubtitle": "Оновіть дані пака. Після повторної публікації він знову пройде модерацію."
   },
   "status": {
     "packPending": "На розгляді",

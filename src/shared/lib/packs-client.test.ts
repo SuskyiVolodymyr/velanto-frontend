@@ -7,6 +7,7 @@ vi.mock("@/src/shared/lib/api-client", () => ({
   apiClient: {
     get: vi.fn(),
     post: vi.fn(),
+    patch: vi.fn(),
     delete: vi.fn(),
   },
 }));
@@ -189,6 +190,26 @@ describe("packsClient.delete", () => {
     const result = await packsClient.delete("pack-1");
     expect(deleteSpy).toHaveBeenCalledWith("/packs/pack-1");
     expect(result).toEqual({ deleted: true });
+  });
+});
+
+describe("packsClient.update", () => {
+  it("update() PATCHes /packs/:id with the new pack body", async () => {
+    const input = {
+      title: PACK_A.title,
+      description: PACK_A.description,
+      coverTone: PACK_A.coverTone,
+      format: PACK_A.format,
+      tags: PACK_A.tags,
+      groups: PACK_A.groups,
+      rounds: PACK_A.rounds,
+    };
+    const patchSpy = vi.spyOn(apiClient, "patch").mockResolvedValue(PACK_A);
+
+    const result = await packsClient.update("pack-a", input);
+
+    expect(patchSpy).toHaveBeenCalledWith("/packs/pack-a", input);
+    expect(result).toEqual(PACK_A);
   });
 });
 

@@ -388,7 +388,14 @@
     "sortTop": "الأعلى",
     "sortNew": "الأحدث",
     "sortLabel": "ترتيب التعليقات",
-    "roundHeading": "الجولة {index}"
+    "roundHeading": "الجولة {index}",
+    "edit": "تعديل",
+    "delete": "حذف",
+    "deletePackTitle": "حذف هذه الحزمة؟",
+    "deletePackConfirm": "يؤدي هذا إلى حذف الحزمة وكل ما فيها نهائيًا. لا يمكن التراجع عن ذلك.",
+    "deletePackCta": "حذف الحزمة",
+    "deleting": "جارٍ الحذف…",
+    "deletePackError": "تعذّر حذف الحزمة. حاول مرة أخرى."
   },
   "share": {
     "trigger": "مشاركة",
@@ -502,7 +509,10 @@
     "versusRoundCount": "الجولات",
     "versusPerSide": "عناصر لكل جانب",
     "versusPerSideFixed": "1 لكل جانب",
-    "roundName": "اسم الجولة {index}"
+    "roundName": "اسم الجولة {index}",
+    "saveChanges": "حفظ التغييرات",
+    "saving": "جارٍ الحفظ…",
+    "editOthersForbidden": "يمكنك تعديل حِزمك الخاصة فقط."
   },
   "profile": {
     "loginRequiredView": "يجب تسجيل الدخول لعرض ملفك الشخصي.",
@@ -543,7 +553,9 @@
     "back": "رجوع",
     "errorTitle": "حدث خطأ ما",
     "errorBody": "تعذّر تحميل هذا الملف الشخصي. حاول مرة أخرى.",
-    "tryAgain": "حاول مرة أخرى"
+    "tryAgain": "حاول مرة أخرى",
+    "editTitle": "تعديل الحزمة",
+    "editSubtitle": "حدّث تفاصيل حزمتك. تؤدي إعادة النشر إلى مرورها بالمراجعة من جديد."
   },
   "status": {
     "packPending": "قيد المراجعة",

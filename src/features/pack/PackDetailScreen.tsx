@@ -9,6 +9,7 @@ import { RoundChips } from "@/src/features/pack/RoundChips";
 import { PackStats } from "@/src/features/pack/PackStats";
 import { PackCreatorCard } from "@/src/features/pack/PackCreatorCard";
 import { PackPlayButton } from "@/src/features/pack/PackPlayButton";
+import { PackOwnerActions } from "@/src/features/pack/PackOwnerActions";
 import { CommentSection } from "@/src/features/pack/CommentSection";
 import { VoteButtons } from "@/src/features/pack/VoteButtons";
 import { ShareButton } from "@/src/features/share/ShareButton";
@@ -70,6 +71,10 @@ export function PackDetailScreen({
               {pack.status === "approved" && (
                 <ShareButton path={`/packs/${pack.id}`} />
               )}
+              <PackOwnerActions
+                packId={pack.id}
+                packAuthorId={pack.authorId}
+              />
             </div>
           </div>
 

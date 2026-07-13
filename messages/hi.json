@@ -388,7 +388,14 @@
     "sortTop": "शीर्ष",
     "sortNew": "नए",
     "sortLabel": "टिप्पणियाँ क्रमबद्ध करें",
-    "roundHeading": "राउंड {index}"
+    "roundHeading": "राउंड {index}",
+    "edit": "संपादित करें",
+    "delete": "हटाएँ",
+    "deletePackTitle": "यह पैक हटाएँ?",
+    "deletePackConfirm": "इससे पैक और उसमें मौजूद सब कुछ स्थायी रूप से हट जाएगा। इसे पूर्ववत नहीं किया जा सकता।",
+    "deletePackCta": "पैक हटाएँ",
+    "deleting": "हटाया जा रहा है…",
+    "deletePackError": "पैक हटाया नहीं जा सका। फिर से प्रयास करें।"
   },
   "share": {
     "trigger": "शेयर",
@@ -502,7 +509,10 @@
     "versusRoundCount": "राउंड",
     "versusPerSide": "प्रति पक्ष वस्तुएँ",
     "versusPerSideFixed": "प्रति पक्ष 1",
-    "roundName": "राउंड {index} का नाम"
+    "roundName": "राउंड {index} का नाम",
+    "saveChanges": "बदलाव सहेजें",
+    "saving": "सहेजा जा रहा है…",
+    "editOthersForbidden": "आप केवल अपने ही पैक संपादित कर सकते हैं।"
   },
   "profile": {
     "loginRequiredView": "अपनी प्रोफ़ाइल देखने के लिए आपको लॉग इन करना होगा।",
@@ -543,7 +553,9 @@
     "back": "वापস",
     "errorTitle": "कुछ गड़बड़ हो गई",
     "errorBody": "हम यह प्रोफ़ाइल लोड नहीं कर सके। कृपया फिर से प्रयास करें।",
-    "tryAgain": "फिर से प्रयास करें"
+    "tryAgain": "फिर से प्रयास करें",
+    "editTitle": "पैक संपादित करें",
+    "editSubtitle": "अपने पैक का विवरण अपडेट करें। दोबारा प्रकाशित करने पर यह फिर से मॉडरेशन से गुज़रेगा।"
   },
   "status": {
     "packPending": "समीक्षा लंबित",

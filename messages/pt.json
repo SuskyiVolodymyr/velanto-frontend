@@ -388,7 +388,14 @@
     "sortTop": "Populares",
     "sortNew": "Novos",
     "sortLabel": "Ordenar comentários",
-    "roundHeading": "Rodada {index}"
+    "roundHeading": "Rodada {index}",
+    "edit": "Editar",
+    "delete": "Excluir",
+    "deletePackTitle": "Excluir este pack?",
+    "deletePackConfirm": "Isso exclui permanentemente o pack e tudo o que há nele. Não é possível desfazer.",
+    "deletePackCta": "Excluir pack",
+    "deleting": "Excluindo…",
+    "deletePackError": "Não foi possível excluir o pack. Tente novamente."
   },
   "share": {
     "trigger": "Compartilhar",
@@ -502,7 +509,10 @@
     "versusRoundCount": "Rodadas",
     "versusPerSide": "Itens por lado",
     "versusPerSideFixed": "1 por lado",
-    "roundName": "Nome da rodada {index}"
+    "roundName": "Nome da rodada {index}",
+    "saveChanges": "Salvar alterações",
+    "saving": "Salvando…",
+    "editOthersForbidden": "Você só pode editar seus próprios packs."
   },
   "profile": {
     "loginRequiredView": "Você precisa estar logado para ver seu perfil.",
@@ -543,7 +553,9 @@
     "back": "Voltar",
     "errorTitle": "Algo deu errado",
     "errorBody": "Não foi possível carregar este perfil. Tente novamente.",
-    "tryAgain": "Tente novamente"
+    "tryAgain": "Tente novamente",
+    "editTitle": "Editar pack",
+    "editSubtitle": "Atualize os detalhes do seu pack. Republicar o envia novamente para moderação."
   },
   "status": {
     "packPending": "Em análise",
