@@ -22,22 +22,29 @@ export interface Item {
   value: string;
 }
 
-export type SelectionMode = "random" | "manual";
-
+// A group is a reusable POOL of items. Drawing is a per-round concern now (see
+// Slot/Round below) — groups no longer carry selectionMode/sampleSize.
 export interface Group {
   id: string;
   name: string;
-  selectionMode: SelectionMode;
-  sampleSize?: number;
   items: Item[];
 }
 
-// nxn categories are flat item pools sampled at play time (no selectionMode/
-// sampleSize — that's resolved per-round from the pack-level versusN).
-export interface Category {
+// A round's slot draws from one group. `random` draws `count` items (re-sampled
+// each play, never repeating across rounds sharing a group); `manual` shows the
+// whole pool in order (count ignored). Mirrors velanto-backend types/round.ts.
+export const SLOT_MODES = ["random", "manual"] as const;
+export type SlotMode = (typeof SLOT_MODES)[number];
+
+export interface Slot {
+  groupId: string;
+  mode: SlotMode;
+  count?: number;
+}
+
+export interface Round {
   id: string;
-  name: string;
-  items: Item[];
+  slots: Slot[];
 }
 
 // Fixed taxonomy, not free text — see .claude/docs/domain-rules.md. Kept in
@@ -100,10 +107,8 @@ export interface Pack {
   coverTone: string;
   format: PackFormat;
   tags: PackTag[];
-  groups?: Group[];
-  categories?: Category[];
-  versusRounds?: number;
-  versusN?: number;
+  groups: Group[];
+  rounds: Round[];
   authorId: string;
   createdAt: string;
   totalPlays: number;

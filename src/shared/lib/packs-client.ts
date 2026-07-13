@@ -4,7 +4,7 @@ import type {
   PackFormat,
   PackTag,
   Group,
-  Category,
+  Round,
 } from "@/src/shared/types/pack";
 
 export interface CreatePackInput {
@@ -13,10 +13,8 @@ export interface CreatePackInput {
   coverTone: string;
   format: PackFormat;
   tags: PackTag[];
-  groups?: Group[];
-  categories?: Category[];
-  versusRounds?: number;
-  versusN?: number;
+  groups: Group[];
+  rounds: Round[];
 }
 
 export interface ListPacksFilters {
