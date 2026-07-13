@@ -489,7 +489,9 @@
     "categoryName": "Nome da categoria {index}",
     "categoryNewItem": "Novo item da categoria {index}",
     "categoryNewItemTitle": "Título do novo item da categoria {index}",
-    "categoryNewItemLink": "Link do novo item da categoria {index}"
+    "categoryNewItemLink": "Link do novo item da categoria {index}",
+    "linkTitleRequired": "Adicione um título para este link.",
+    "removeTag": "Remover {tag}"
   },
   "profile": {
     "loginRequiredView": "Você precisa estar logado para ver seu perfil.",

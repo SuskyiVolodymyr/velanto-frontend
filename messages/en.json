@@ -488,7 +488,9 @@
     "categoryName": "Category {index} name",
     "categoryNewItem": "Category {index} new item",
     "categoryNewItemTitle": "Category {index} new item title",
-    "categoryNewItemLink": "Category {index} new item link"
+    "categoryNewItemLink": "Category {index} new item link",
+    "linkTitleRequired": "Add a title for this link.",
+    "removeTag": "Remove {tag}"
   },
   "profile": {
     "loginRequiredView": "You need to be logged in to view your profile.",

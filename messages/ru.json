@@ -489,7 +489,9 @@
     "categoryName": "Название категории {index}",
     "categoryNewItem": "Новый элемент категории {index}",
     "categoryNewItemTitle": "Название нового элемента категории {index}",
-    "categoryNewItemLink": "Ссылка нового элемента категории {index}"
+    "categoryNewItemLink": "Ссылка нового элемента категории {index}",
+    "linkTitleRequired": "Добавьте название для этой ссылки.",
+    "removeTag": "Удалить {tag}"
   },
   "profile": {
     "loginRequiredView": "Чтобы посмотреть свой профиль, нужно войти в аккаунт.",

@@ -489,7 +489,9 @@
     "categoryName": "کیٹیگری {index} کا نام",
     "categoryNewItem": "کیٹیگری {index} کا نیا آئٹم",
     "categoryNewItemTitle": "کیٹیگری {index} کے نئے آئٹم کا عنوان",
-    "categoryNewItemLink": "کیٹیگری {index} کے نئے آئٹم کا لنک"
+    "categoryNewItemLink": "کیٹیگری {index} کے نئے آئٹم کا لنک",
+    "linkTitleRequired": "اس لنک کے لیے ایک عنوان شامل کریں۔",
+    "removeTag": "{tag} ہٹائیں"
   },
   "profile": {
     "loginRequiredView": "اپنی پروفائل دیکھنے کے لیے آپ کا لاگ اِن ہونا ضروری ہے۔",

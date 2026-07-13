@@ -489,7 +489,9 @@
     "categoryName": "ক্যাটেগরি {index}-এর নাম",
     "categoryNewItem": "ক্যাটেগরি {index}-এর নতুন আইটেম",
     "categoryNewItemTitle": "ক্যাটেগরি {index}-এর নতুন আইটেমের শিরোনাম",
-    "categoryNewItemLink": "ক্যাটেগরি {index}-এর নতুন আইটেমের লিঙ্ক"
+    "categoryNewItemLink": "ক্যাটেগরি {index}-এর নতুন আইটেমের লিঙ্ক",
+    "linkTitleRequired": "এই লিঙ্কের জন্য একটি শিরোনাম যোগ করুন।",
+    "removeTag": "{tag} সরান"
   },
   "profile": {
     "loginRequiredView": "আপনার প্রোফাইল দেখতে হলে আপনাকে লগ ইন করতে হবে।",

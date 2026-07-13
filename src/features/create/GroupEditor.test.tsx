@@ -61,10 +61,7 @@ describe("GroupEditor", () => {
     );
   });
 
-  it("falls back to the oEmbed video title when no title was typed", async () => {
-    vi.mocked(fetchYouTubeOEmbed).mockResolvedValue({
-      title: "Guren no Yumiya (Official)",
-    });
+  it("requires a title for a link item, erroring (without calling oEmbed) when none is typed", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(
@@ -84,15 +81,11 @@ describe("GroupEditor", () => {
     );
     await user.click(screen.getByRole("button", { name: "Add" }));
 
-    await waitFor(() =>
-      expect(onChange).toHaveBeenCalledWith(
-        expect.objectContaining({
-          items: [
-            expect.objectContaining({ title: "Guren no Yumiya (Official)" }),
-          ],
-        }),
-      ),
-    );
+    expect(
+      await screen.findByText("Add a title for this link."),
+    ).toBeInTheDocument();
+    expect(fetchYouTubeOEmbed).not.toHaveBeenCalled();
+    expect(onChange).not.toHaveBeenCalled();
   });
 
   it("shows an error and does not add when the video can't be found", async () => {
@@ -110,6 +103,10 @@ describe("GroupEditor", () => {
     );
 
     await user.click(screen.getByRole("button", { name: "Link" }));
+    await user.type(
+      screen.getByLabelText("Group 1 new item title"),
+      "My title",
+    );
     await user.type(
       screen.getByLabelText("Group 1 new item link"),
       "https://youtu.be/doesnotexist",
@@ -169,6 +166,10 @@ describe("GroupEditor", () => {
     );
 
     await user.click(screen.getByRole("button", { name: "Link" }));
+    await user.type(
+      screen.getByLabelText("Group 1 new item title"),
+      "My title",
+    );
     const link = screen.getByLabelText("Group 1 new item link");
     await user.type(link, "https://youtu.be/KsF_hdjWJjo");
 
@@ -181,9 +182,7 @@ describe("GroupEditor", () => {
     await waitFor(() => expect(onChange).toHaveBeenCalledTimes(1));
     expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({
-        items: [
-          expect.objectContaining({ title: "Guren no Yumiya (Official)" }),
-        ],
+        items: [expect.objectContaining({ title: "My title" })],
       }),
     );
   });
@@ -226,6 +225,10 @@ describe("GroupEditor", () => {
     );
 
     await user.click(screen.getByRole("button", { name: "Link" }));
+    await user.type(
+      screen.getByLabelText("Group 1 new item title"),
+      "My title",
+    );
     await user.type(
       screen.getByLabelText("Group 1 new item link"),
       "https://youtu.be/KsF_hdjWJjo",
