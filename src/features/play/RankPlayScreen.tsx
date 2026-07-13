@@ -146,7 +146,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
 
           <div className="mb-8 flex justify-center">
             {currentVideoId ? (
-              <div className="w-full max-w-sm overflow-hidden rounded-2xl border border-acc bg-surface">
+              <div className="w-full max-w-xl overflow-hidden rounded-2xl border border-acc bg-surface">
                 <YouTubeCard videoId={currentVideoId} />
                 <Text className="line-clamp-2 p-4 text-center font-semibold">
                   {currentItem?.title}
