@@ -2,17 +2,13 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { Play } from "lucide-react";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { buttonClassName } from "@/src/shared/components/Button";
 import { Tooltip } from "@/src/shared/components/Tooltip";
 
 function PlayGlyph() {
-  return (
-    <span
-      aria-hidden
-      className="border-y-[6px] border-l-[9px] border-y-transparent border-l-current"
-    />
-  );
+  return <Play size={16} aria-hidden className="fill-current" />;
 }
 
 /**
