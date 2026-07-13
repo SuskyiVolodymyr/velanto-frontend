@@ -24,7 +24,8 @@ describe("VersusRound", () => {
     render(
       <VersusRound
         sideA={SIDE_A}
-        sideB={SIDE_B}        selectedId={null}
+        sideB={SIDE_B}
+        selectedId={null}
         onSelect={vi.fn()}
       />,
     );
@@ -43,7 +44,8 @@ describe("VersusRound", () => {
     render(
       <VersusRound
         sideA={SIDE_A}
-        sideB={SIDE_B}        selectedId={null}
+        sideB={SIDE_B}
+        selectedId={null}
         onSelect={onSelect}
       />,
     );
@@ -58,7 +60,8 @@ describe("VersusRound", () => {
     render(
       <VersusRound
         sideA={SIDE_A}
-        sideB={SIDE_B}        selectedId={null}
+        sideB={SIDE_B}
+        selectedId={null}
         onSelect={onSelect}
       />,
     );
@@ -77,7 +80,8 @@ describe("VersusRound", () => {
     render(
       <VersusRound
         sideA={sideWithVideo}
-        sideB={SIDE_B}        selectedId={null}
+        sideB={SIDE_B}
+        selectedId={null}
         onSelect={vi.fn()}
       />,
     );
@@ -98,7 +102,8 @@ describe("VersusRound", () => {
     render(
       <VersusRound
         sideA={sideWithVideo}
-        sideB={SIDE_B}        selectedId={null}
+        sideB={SIDE_B}
+        selectedId={null}
         onSelect={onSelect}
       />,
     );
@@ -120,7 +125,8 @@ describe("VersusRound", () => {
     render(
       <VersusRound
         sideA={sideWithVideo}
-        sideB={SIDE_B}        selectedId={null}
+        sideB={SIDE_B}
+        selectedId={null}
         onSelect={onSelect}
       />,
     );
@@ -136,7 +142,8 @@ describe("VersusRound", () => {
     render(
       <VersusRound
         sideA={SIDE_A}
-        sideB={SIDE_B}        selectedId={null}
+        sideB={SIDE_B}
+        selectedId={null}
         onSelect={onSelect}
       />,
     );
