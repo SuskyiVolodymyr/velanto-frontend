@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
+import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
 import { VersusRound } from "@/src/features/play/VersusRound";
 import { usePlaySession } from "@/src/features/play/use-play-session";
@@ -16,6 +17,26 @@ import { PlayProgress } from "@/src/features/play/PlayProgress";
 import { CandidateCard } from "@/src/features/play/CandidateCard";
 import { PlayFinished } from "@/src/features/play/PlayFinished";
 import { PicksSummary } from "@/src/features/play/PicksSummary";
+
+// How many columns a groups-format round lays its candidates out in, chosen by
+// candidate count so they fill the row instead of leaving fixed-width gaps: up
+// to 4 sit in one row; more split across two balanced rows (6→3, 8→4). Drops to
+// two columns below `lg` so cards stay legible on narrow viewports. Keys are the
+// resolved column target (1–6); values are literal classes so Tailwind emits them.
+const CANDIDATE_GRID_COLS: Record<number, string> = {
+  1: "grid-cols-1",
+  2: "grid-cols-2",
+  3: "grid-cols-2 lg:grid-cols-3",
+  4: "grid-cols-2 lg:grid-cols-4",
+  5: "grid-cols-2 lg:grid-cols-5",
+  6: "grid-cols-2 lg:grid-cols-6",
+};
+
+function candidateGridCols(count: number): string {
+  const target =
+    count <= 1 ? 1 : count <= 4 ? count : Math.min(6, Math.ceil(count / 2));
+  return CANDIDATE_GRID_COLS[target];
+}
 
 export function PlayScreen({ pack }: { pack: Pack }) {
   const { status } = useAuth();
@@ -43,7 +64,7 @@ export function PlayScreen({ pack }: { pack: Pack }) {
   }
 
   return (
-    <div className="mx-auto w-full max-w-2xl flex-1 px-7 py-10">
+    <div className="mx-auto w-full max-w-5xl flex-1 px-7 py-10">
       <PlayProgress
         isFinished={session.isFinished}
         roundIndex={session.roundIndex}
@@ -78,7 +99,13 @@ export function PlayScreen({ pack }: { pack: Pack }) {
               />
             </div>
           ) : (
-            <div className="mb-8 flex flex-wrap gap-4">
+            <div
+              data-testid="candidate-grid"
+              className={cn(
+                "mb-8 grid gap-4",
+                candidateGridCols(session.candidates.length),
+              )}
+            >
               {session.candidates.map((item, index) => (
                 <CandidateCard
                   key={item.id}

@@ -68,7 +68,10 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
   return (
     <div
       data-testid="youtube-card"
-      className={cn("relative h-[150px] overflow-hidden bg-black", className)}
+      className={cn(
+        "relative aspect-video overflow-hidden bg-black",
+        className,
+      )}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >

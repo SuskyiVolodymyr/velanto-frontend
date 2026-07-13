@@ -35,7 +35,7 @@ export function CandidateCard({
       <div
         style={appearDelay}
         className={cn(
-          "play-card-appear w-[200px] flex-none overflow-hidden rounded-2xl border transition-colors",
+          "play-card-appear w-full overflow-hidden rounded-2xl border transition-colors",
           selected ? "border-acc bg-acc/10" : "border-border bg-surface",
         )}
       >
@@ -68,7 +68,7 @@ export function CandidateCard({
       onClick={onSelect}
       style={appearDelay}
       className={cn(
-        "play-card-appear w-[200px] flex-none rounded-2xl border p-4 text-left transition-colors",
+        "play-card-appear w-full rounded-2xl border p-4 text-left transition-colors",
         selected
           ? "border-acc bg-acc/10"
           : "border-border bg-surface hover:border-border-strong",
