@@ -76,7 +76,7 @@ describe("PackDetailScreen", () => {
     );
   });
 
-  it("lists each group as a chip with its item count for a non-nxn pack", () => {
+  it("lists each round as a chip, falling back to the group name when unnamed", () => {
     render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
     expect(screen.getByText("2016")).toBeInTheDocument();
     expect(screen.getByText("1 item")).toBeInTheDocument();
@@ -84,7 +84,24 @@ describe("PackDetailScreen", () => {
     expect(screen.queryByText("Opening A")).not.toBeInTheDocument();
   });
 
-  it("lists categories (not groups) as chips for an nxn pack", () => {
+  it("shows the round's own name when it has one", () => {
+    const named: Pack = {
+      ...BASE_PACK,
+      rounds: [
+        {
+          id: "r1",
+          name: "Semifinals",
+          slots: [{ groupId: "g1", mode: "manual" }],
+        },
+      ],
+    };
+    render(<PackDetailScreen pack={named} results={RESULTS} />);
+    expect(screen.getByText("Semifinals")).toBeInTheDocument();
+    // The round name replaces the group-name fallback.
+    expect(screen.queryByText("2016")).not.toBeInTheDocument();
+  });
+
+  it("lists rounds (not raw groups) as chips for a versus pack", () => {
     const nxnPack: Pack = {
       ...BASE_PACK,
       format: "nxn",
@@ -106,10 +123,11 @@ describe("PackDetailScreen", () => {
       ],
     };
     render(<PackDetailScreen pack={nxnPack} results={RESULTS} />);
-    expect(screen.getByText("Category A")).toBeInTheDocument();
-    expect(screen.getByText("1 item")).toBeInTheDocument();
+    // A multi-slot (versus) round with no name falls back to "Round N".
+    expect(screen.getByText("Round 1")).toBeInTheDocument();
+    // The raw group/category names and item titles are not listed.
+    expect(screen.queryByText("Category A")).not.toBeInTheDocument();
     expect(screen.queryByText("Item X")).not.toBeInTheDocument();
-    expect(screen.queryByText("2016")).not.toBeInTheDocument();
   });
 
   it("shows a Share button for an approved pack", () => {

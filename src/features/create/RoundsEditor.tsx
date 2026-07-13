@@ -88,9 +88,18 @@ export function RoundsEditor() {
             className="flex flex-col gap-3 hover:translate-y-0 hover:shadow-none"
           >
             <div className="flex flex-wrap items-center gap-2.5">
-              <Text className="min-w-[70px] font-semibold">
-                {t("roundLabel", { index: index + 1 })}
-              </Text>
+              <Input
+                value={round.name ?? ""}
+                onChange={(e) =>
+                  setValue(`rounds.${index}.name`, e.target.value, {
+                    shouldValidate: false,
+                    shouldDirty: true,
+                  })
+                }
+                aria-label={t("roundName", { index: index + 1 })}
+                placeholder={t("roundLabel", { index: index + 1 })}
+                className="min-w-[130px] flex-1"
+              />
               <Select
                 value={slot.groupId}
                 onChange={(e) => setSlot(index, { groupId: e.target.value })}

@@ -66,7 +66,7 @@ describe("RoundsEditor", () => {
   it("renders a round with pool select, mode toggle, count input and a draw hint", () => {
     render(<Harness />);
 
-    expect(screen.getByText("Round 1")).toBeInTheDocument();
+    expect(screen.getByLabelText("Round 1 name")).toBeInTheDocument();
     expect(screen.getByLabelText("Round 1 pool")).toBeInTheDocument();
     expect(screen.getByLabelText("Round 1 count")).toHaveValue(2);
     // Random draw of 2 from a 3-item pool → draws 2.
@@ -115,7 +115,7 @@ describe("RoundsEditor", () => {
 
     await user.click(screen.getByRole("button", { name: "+ Add round" }));
 
-    expect(screen.getByText("Round 2")).toBeInTheDocument();
+    expect(screen.getByLabelText("Round 2 name")).toBeInTheDocument();
     const rounds = readRounds();
     expect(rounds).toHaveLength(2);
     expect(rounds[1]).toMatchObject({ g: "a", m: "random", c: 2 });
@@ -128,7 +128,7 @@ describe("RoundsEditor", () => {
 
     await user.click(screen.getByRole("button", { name: "Remove round 2" }));
 
-    expect(screen.queryByText("Round 2")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Round 2 name")).not.toBeInTheDocument();
     expect(readRounds()).toHaveLength(1);
   });
 

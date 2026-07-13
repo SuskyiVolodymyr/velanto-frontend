@@ -51,6 +51,7 @@ export const slotValueSchema = z.object({
 
 export const roundValueSchema = z.object({
   id: z.string(),
+  name: z.string().optional(),
   slots: z.array(slotValueSchema),
 });
 

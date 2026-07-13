@@ -14,7 +14,7 @@ export function newSlot(groupId: string): Slot {
 }
 
 export function newRound(groupId: string): Round {
-  return { id: crypto.randomUUID(), slots: [newSlot(groupId)] };
+  return { id: crypto.randomUUID(), name: "", slots: [newSlot(groupId)] };
 }
 
 // Versus (nxn/1v1): expand a two-group pick + round count into that many

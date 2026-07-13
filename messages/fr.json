@@ -499,7 +499,8 @@
     "versusSideB": "Côté B",
     "versusRoundCount": "Manches",
     "versusPerSide": "Éléments par côté",
-    "versusPerSideFixed": "1 par côté"
+    "versusPerSideFixed": "1 par côté",
+    "roundName": "Nom de la manche {index}"
   },
   "profile": {
     "loginRequiredView": "Vous devez être connecté pour voir votre profil.",
