@@ -10,6 +10,8 @@ import { Button, buttonClassName } from "@/src/shared/components/Button";
 import { cn } from "@/src/shared/lib/cn";
 import { playsClient } from "@/src/shared/lib/plays-client";
 import { writeLastPlayPicks } from "@/src/shared/lib/last-play-storage";
+import { YouTubeCard } from "@/src/shared/components/YouTubeCard";
+import { extractYouTubeId } from "@/src/shared/lib/youtube";
 import { resolveRoundSelections } from "@/src/features/play/round-sampling";
 import type { Pack, Item } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
@@ -48,6 +50,10 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   const isFinished = totalRounds > 0 && isLastRound && roundDone;
   const isRoundComplete = roundDone && !isFinished;
   const currentItem = !roundDone ? candidates[placedCount] : undefined;
+  const currentVideoId =
+    currentItem?.type === "youtube"
+      ? extractYouTubeId(currentItem.value)
+      : null;
 
   function place(slotIndex: number) {
     if (!slot || placements[slotIndex] || placedCount >= slotCount) return;
@@ -139,11 +145,20 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
           </section>
 
           <div className="mb-8 flex justify-center">
-            <div className="flex h-[100px] w-[230px] items-center justify-center rounded-2xl border border-acc bg-surface p-4 text-center">
-              <Text className="line-clamp-2 font-semibold">
-                {currentItem?.title}
-              </Text>
-            </div>
+            {currentVideoId ? (
+              <div className="w-full max-w-sm overflow-hidden rounded-2xl border border-acc bg-surface">
+                <YouTubeCard videoId={currentVideoId} />
+                <Text className="line-clamp-2 p-4 text-center font-semibold">
+                  {currentItem?.title}
+                </Text>
+              </div>
+            ) : (
+              <div className="flex h-[100px] w-[230px] items-center justify-center rounded-2xl border border-acc bg-surface p-4 text-center">
+                <Text className="line-clamp-2 font-semibold">
+                  {currentItem?.title}
+                </Text>
+              </div>
+            )}
           </div>
 
           <div className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-3">
