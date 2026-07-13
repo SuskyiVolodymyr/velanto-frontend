@@ -101,19 +101,41 @@ beforeEach(() => {
 });
 
 describe("RankPlayScreen", () => {
-  it("prompts to log in when there is no session", async () => {
+  it("lets a signed-out visitor play, without recording the play", async () => {
     vi.mocked(authClient.refresh).mockRejectedValue(
       new ApiError(401, "Unauthorized", null),
     );
     const user = userEvent.setup();
     renderScreen(RANK_BLIND_PACK);
 
+    // No login wall — the ranking UI renders for anon.
+    await screen.findByText("Kaikai Kitan");
     expect(
-      await screen.findByText("You need to be logged in to play a pack."),
-    ).toBeInTheDocument();
+      screen.queryByText("You need to be logged in to play a pack."),
+    ).toBeNull();
 
-    await user.click(screen.getByRole("button", { name: "Log in" }));
-    expect(push).toHaveBeenCalledWith("/auth?next=%2Fpacks%2Fpack-rank%2Fplay");
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await user.click(
+      await screen.findByRole("button", { name: "Next round →" }),
+    );
+    await screen.findByText("Silhouette");
+    await user.click(screen.getByText("#1"));
+
+    expect(await screen.findByText("Your ranking is done")).toBeInTheDocument();
+    // Anon play is never recorded on the backend…
+    expect(playsClient.record).not.toHaveBeenCalled();
+    // …but the local picks are stashed for the result screen.
+    await waitFor(() =>
+      expect(
+        JSON.parse(sessionStorage.getItem("velanto:last-play:pack-rank")!),
+      ).toEqual([
+        { roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 },
+        { roundIndex: 0, groupId: "g1", itemId: "i2", position: 1 },
+        { roundIndex: 1, groupId: "g2", itemId: "i3", position: 0 },
+      ]),
+    );
   });
 
   it("shows the first item and one empty numbered slot per item in a manual-mode round", async () => {

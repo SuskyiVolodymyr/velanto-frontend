@@ -135,19 +135,37 @@ beforeEach(() => {
 });
 
 describe("PlayScreen", () => {
-  it("prompts to log in when there is no session", async () => {
+  it("lets a signed-out visitor play, without recording the play", async () => {
     vi.mocked(authClient.refresh).mockRejectedValue(
       new ApiError(401, "Unauthorized", null),
     );
     const user = userEvent.setup();
     renderScreen(SAVE_ONE_PACK);
 
+    // No login wall — the play UI renders for anon.
+    await screen.findByText("Guren no Yumiya");
     expect(
-      await screen.findByText("You need to be logged in to play a pack."),
-    ).toBeInTheDocument();
+      screen.queryByText("You need to be logged in to play a pack."),
+    ).toBeNull();
 
-    await user.click(screen.getByRole("button", { name: "Log in" }));
-    expect(push).toHaveBeenCalledWith("/auth?next=%2Fpacks%2Fpack-a%2Fplay");
+    await user.click(screen.getByText("Redo"));
+    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await screen.findByText("Silhouette");
+    await user.click(screen.getByText("Silhouette"));
+    await user.click(screen.getByRole("button", { name: "See results →" }));
+
+    // Anon play still advances to the result page and stashes local picks…
+    await waitFor(() =>
+      expect(replace).toHaveBeenCalledWith("/packs/pack-a/result"),
+    );
+    expect(
+      JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
+    ).toEqual([
+      { roundIndex: 0, groupId: "g1", itemId: "2" },
+      { roundIndex: 1, groupId: "g2", itemId: "3" },
+    ]);
+    // …but is never recorded on the backend.
+    expect(playsClient.record).not.toHaveBeenCalled();
   });
 
   const NXN_PACK: Pack = {

@@ -117,19 +117,35 @@ beforeEach(() => {
 });
 
 describe("HeadToHeadPlayScreen", () => {
-  it("prompts to log in when there is no session", async () => {
+  it("lets a signed-out visitor play, without recording the play", async () => {
     vi.mocked(authClient.refresh).mockRejectedValue(
       new ApiError(401, "Unauthorized", null),
     );
     const user = userEvent.setup();
     renderScreen(HEAD_TO_HEAD_PACK);
 
+    // No login wall — the matchup UI renders for anon.
+    await screen.findByText("Goku");
     expect(
-      await screen.findByText("You need to be logged in to play a pack."),
-    ).toBeInTheDocument();
+      screen.queryByText("You need to be logged in to play a pack."),
+    ).toBeNull();
 
-    await user.click(screen.getByRole("button", { name: "Log in" }));
-    expect(push).toHaveBeenCalledWith("/auth?next=%2Fpacks%2Fpack-1v1%2Fplay");
+    await user.click(screen.getByRole("button", { name: "Pick Goku" }));
+    await screen.findByText("Naruto");
+    await user.click(screen.getByRole("button", { name: "Pick Sasuke" }));
+
+    expect(await screen.findByText(/All matchups done/i)).toBeInTheDocument();
+    // Anon play is never recorded on the backend…
+    expect(playsClient.record).not.toHaveBeenCalled();
+    // …but the local picks are stashed for the result screen.
+    await waitFor(() =>
+      expect(
+        JSON.parse(sessionStorage.getItem("velanto:last-play:pack-1v1")!),
+      ).toEqual([
+        { roundIndex: 0, groupId: "gl" },
+        { roundIndex: 1, groupId: "gr" },
+      ]),
+    );
   });
 
   it("shows both items of the first matchup immediately", async () => {
