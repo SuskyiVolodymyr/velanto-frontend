@@ -29,6 +29,7 @@ export {
   MAX_TAGS,
   ITEM_TITLE_MAX,
   ELIMINATION_MIN_DRAW,
+  ELIMINATION_MAX_DRAW,
   NXN_SIDE_COUNT_MIN,
   NXN_SIDE_COUNT_MAX,
 } from "@/src/features/create/create-pack.value-schemas";

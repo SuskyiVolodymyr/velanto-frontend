@@ -16,11 +16,13 @@ export const TITLE_MAX = 100;
 export const DESCRIPTION_MAX = 500;
 export const MAX_TAGS = 10;
 export const ITEM_TITLE_MAX = 200;
-// Elimination rounds must draw at least this many items to be a real choice.
+// Elimination rounds must draw at least this many items to be a real choice,
+// and at most this many so a single round stays playable.
 export const ELIMINATION_MIN_DRAW = 2;
-// nxn draws 1–6 per side; 1v1 is fixed at exactly 1.
+export const ELIMINATION_MAX_DRAW = 8;
+// nxn draws 1–8 per side; 1v1 is fixed at exactly 1.
 export const NXN_SIDE_COUNT_MIN = 1;
-export const NXN_SIDE_COUNT_MAX = 6;
+export const NXN_SIDE_COUNT_MAX = 8;
 
 const ITEM_TYPES = ["text", "youtube"] as const;
 
