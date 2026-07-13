@@ -7,6 +7,7 @@
   },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
+    "create": "创建题包",
     "logIn": "登录",
     "logOut": "退出登录",
     "accountMenu": "账户菜单",

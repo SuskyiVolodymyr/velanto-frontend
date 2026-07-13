@@ -6,6 +6,7 @@
     "logInToPlay": "Log in to play"
   },
   "header": {
+    "create": "Create pack",
     "logIn": "Log in",
     "logOut": "Log out",
     "accountMenu": "Account menu",
