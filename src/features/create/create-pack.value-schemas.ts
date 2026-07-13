@@ -24,7 +24,7 @@ export const ELIMINATION_MAX_DRAW = 8;
 export const NXN_SIDE_COUNT_MIN = 1;
 export const NXN_SIDE_COUNT_MAX = 8;
 
-const ITEM_TYPES = ["text", "youtube"] as const;
+const ITEM_TYPES = ["text", "youtube", "image"] as const;
 
 // Leaf/collection schemas are STRUCTURAL only (no min/business rules): all
 // business validation lives in the per-format superRefine (see

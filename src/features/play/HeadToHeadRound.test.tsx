@@ -1,8 +1,12 @@
-import { describe, expect, it, vi } from "vitest";
+import { describe, expect, it, vi, afterEach } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { HeadToHeadRound } from "./HeadToHeadRound";
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+});
 
 const LEFT = { id: "i1", type: "text" as const, title: "Goku", value: "Goku" };
 const RIGHT = {
@@ -67,5 +71,26 @@ describe("HeadToHeadRound", () => {
       screen.getByRole("button", { name: "Pick Opening theme" }),
     );
     expect(onPick).toHaveBeenCalledWith("v1");
+  });
+
+  it("renders an image item, resolved from its key, and calls onPick via its pick control", async () => {
+    vi.stubEnv("NEXT_PUBLIC_MEDIA_BASE_URL", "https://cdn.example.com");
+    const user = userEvent.setup();
+    const onPick = vi.fn();
+    const imageItem = {
+      id: "im1",
+      type: "image" as const,
+      title: "Poster",
+      value: "media/item/poster.webp",
+    };
+    render(<HeadToHeadRound left={imageItem} right={RIGHT} onPick={onPick} />);
+
+    expect(screen.getByRole("img", { name: "Poster" })).toHaveAttribute(
+      "src",
+      "https://cdn.example.com/media/item/poster.webp",
+    );
+
+    await user.click(screen.getByRole("button", { name: "Pick Poster" }));
+    expect(onPick).toHaveBeenCalledWith("im1");
   });
 });

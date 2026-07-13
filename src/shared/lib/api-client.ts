@@ -68,9 +68,43 @@ async function request<T>(
   return (await response.json()) as T;
 }
 
+/**
+ * Multipart POST for file uploads (e.g. media). Deliberately does NOT set a
+ * Content-Type header — the browser sets `multipart/form-data` with the boundary
+ * itself. Auth/credentials are attached exactly like {@link request}.
+ */
+async function requestForm<T>(path: string, formData: FormData): Promise<T> {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method: "POST",
+    credentials: "include",
+    headers: {
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+    },
+    body: formData,
+  });
+
+  if (!response.ok) {
+    let parsedBody: unknown = null;
+    try {
+      parsedBody = await response.json();
+    } catch {
+      // response had no JSON body — leave parsedBody as null
+    }
+    throw new ApiError(response.status, response.statusText, parsedBody);
+  }
+
+  if (response.status === 204) {
+    return undefined as T;
+  }
+
+  return (await response.json()) as T;
+}
+
 export const apiClient = {
   get: <T>(path: string, options?: ApiRequestOptions) =>
     request<T>(path, { ...options, method: "GET" }),
+  postForm: <T>(path: string, formData: FormData) =>
+    requestForm<T>(path, formData),
   post: <T>(path: string, body?: unknown, options?: ApiRequestOptions) =>
     request<T>(path, { ...options, method: "POST", body }),
   put: <T>(path: string, body?: unknown, options?: ApiRequestOptions) =>

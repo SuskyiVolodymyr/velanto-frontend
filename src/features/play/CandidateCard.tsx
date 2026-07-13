@@ -2,7 +2,9 @@ import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
 import { YouTubeCard } from "@/src/shared/components/YouTubeCard";
+import { ImageCard } from "@/src/shared/components/ImageCard";
 import { extractYouTubeId } from "@/src/shared/lib/youtube";
+import { mediaUrl } from "@/src/shared/lib/media-url";
 import { cn } from "@/src/shared/lib/cn";
 import type { Item } from "@/src/shared/types/pack";
 
@@ -59,6 +61,38 @@ export function CandidateCard({
           </Text>
         </button>
       </div>
+    );
+  }
+
+  if (item.type === "image") {
+    return (
+      <button
+        type="button"
+        onClick={onSelect}
+        style={appearDelay}
+        aria-label={t("pick", { name: item.title })}
+        className={cn(
+          "play-card-appear w-full overflow-hidden rounded-2xl border text-left transition-colors",
+          selected
+            ? "border-acc bg-acc/10"
+            : "border-border bg-surface hover:border-border-strong",
+        )}
+      >
+        <ImageCard src={mediaUrl(item.value)} alt={item.title} />
+        <div className="flex items-center gap-2 p-4">
+          <span
+            aria-hidden
+            className={cn(
+              "h-4 w-4 flex-none rounded border",
+              selected ? "border-acc bg-acc" : "border-border-strong",
+            )}
+          />
+          <Text className="flex-1 font-semibold">{item.title}</Text>
+          <Text variant="tertiary" className="text-xs">
+            {String(index + 1).padStart(2, "0")}
+          </Text>
+        </div>
+      </button>
     );
   }
 

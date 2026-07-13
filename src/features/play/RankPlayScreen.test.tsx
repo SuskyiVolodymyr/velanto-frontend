@@ -101,6 +101,45 @@ beforeEach(() => {
 });
 
 describe("RankPlayScreen", () => {
+  it("renders the current pick as an image when it is an image item", async () => {
+    vi.stubEnv("NEXT_PUBLIC_MEDIA_BASE_URL", "https://cdn.example.com");
+    vi.mocked(authClient.refresh).mockRejectedValue(
+      new ApiError(401, "Unauthorized", null),
+    );
+    const imagePack: Pack = {
+      ...RANK_BLIND_PACK,
+      groups: [
+        {
+          id: "g1",
+          name: "Openers",
+          items: [
+            {
+              id: "i1",
+              type: "image",
+              title: "Poster",
+              value: "media/item/p.webp",
+            },
+            textItem("i2", "Redo"),
+          ],
+        },
+      ],
+      rounds: [
+        {
+          id: "r1",
+          slots: [{ groupId: "g1", mode: "manual", itemIds: ["i1", "i2"] }],
+        },
+      ],
+    };
+    renderScreen(imagePack);
+
+    const img = await screen.findByRole("img", { name: "Poster" });
+    expect(img).toHaveAttribute(
+      "src",
+      "https://cdn.example.com/media/item/p.webp",
+    );
+    vi.unstubAllEnvs();
+  });
+
   it("lets a signed-out visitor play, without recording the play", async () => {
     vi.mocked(authClient.refresh).mockRejectedValue(
       new ApiError(401, "Unauthorized", null),

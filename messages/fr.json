@@ -519,7 +519,16 @@
     "placeItemLabel": "Élément pour l'emplacement {index}",
     "addPlace": "Ajouter un emplacement",
     "removePlace": "Retirer un emplacement",
-    "setCountAllLabel": "Définir le tirage de toutes les manches"
+    "setCountAllLabel": "Définir le tirage de toutes les manches",
+    "image": "Image",
+    "chooseImage": "Choisir une image",
+    "uploading": "Téléversement…",
+    "groupNewItemImage": "Nouvelle image du groupe {index}",
+    "notAnImage": "Choisissez un fichier image.",
+    "imageTooLarge": "L'image doit faire 1 Mo ou moins.",
+    "imageUploadFailed": "Échec de l'envoi. Réessayez.",
+    "imageTitleRequired": "Ajoutez un titre pour cette image.",
+    "imageRequired": "Choisissez d'abord une image."
   },
   "profile": {
     "loginRequiredView": "Vous devez être connecté pour voir votre profil.",

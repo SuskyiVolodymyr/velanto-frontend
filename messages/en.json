@@ -518,7 +518,16 @@
     "placeItemLabel": "Item for place {index}",
     "addPlace": "Add a place",
     "removePlace": "Remove a place",
-    "setCountAllLabel": "Set all rounds to draw"
+    "setCountAllLabel": "Set all rounds to draw",
+    "image": "Image",
+    "chooseImage": "Choose image",
+    "uploading": "Uploading…",
+    "groupNewItemImage": "Pool {index} new image",
+    "notAnImage": "Choose an image file.",
+    "imageTooLarge": "Image must be 1 MB or smaller.",
+    "imageUploadFailed": "Upload failed. Try again.",
+    "imageTitleRequired": "Add a title for this image.",
+    "imageRequired": "Choose an image first."
   },
   "profile": {
     "loginRequiredView": "You need to be logged in to view your profile.",

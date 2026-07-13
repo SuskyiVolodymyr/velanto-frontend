@@ -519,7 +519,16 @@
     "placeItemLabel": "Item para a posição {index}",
     "addPlace": "Adicionar posição",
     "removePlace": "Remover posição",
-    "setCountAllLabel": "Definir o sorteio de todas as rodadas"
+    "setCountAllLabel": "Definir o sorteio de todas as rodadas",
+    "image": "Imagem",
+    "chooseImage": "Escolher imagem",
+    "uploading": "Enviando…",
+    "groupNewItemImage": "Nova imagem do grupo {index}",
+    "notAnImage": "Escolha um arquivo de imagem.",
+    "imageTooLarge": "A imagem deve ter 1 MB ou menos.",
+    "imageUploadFailed": "Falha no envio. Tente novamente.",
+    "imageTitleRequired": "Adicione um título para esta imagem.",
+    "imageRequired": "Escolha uma imagem primeiro."
   },
   "profile": {
     "loginRequiredView": "Você precisa estar logado para ver seu perfil.",

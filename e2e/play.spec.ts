@@ -110,6 +110,23 @@ test.describe("Play a pack", () => {
     expect(recorded).toBe(false);
   });
 
+  test("renders image-item candidates with the title as alt text during play", async ({
+    page,
+  }) => {
+    await page.goto("/packs/pack-image/play");
+
+    await expect(page.getByRole("heading", { name: "Posters" })).toBeVisible();
+    // Each image item renders as an <img> with its title as accessible name.
+    await expect(page.getByRole("img", { name: "Poster A" })).toBeVisible();
+    await expect(page.getByRole("img", { name: "Poster B" })).toBeVisible();
+
+    // The whole image card is selectable (single round → confirm reads results).
+    await page.getByRole("button", { name: "Pick Poster A" }).click();
+    await expect(
+      page.getByRole("button", { name: "See results →" }),
+    ).toBeEnabled();
+  });
+
   test("plays a full nxn session with confirm-gating and records the side picks", async ({
     page,
   }) => {

@@ -12,6 +12,10 @@ function youtubeItem(id: string, title: string, value: string) {
   return { id, type: "youtube" as const, title, value };
 }
 
+function imageItem(id: string, title: string, key: string) {
+  return { id, type: "image" as const, title, value: key };
+}
+
 const SIDE_A = {
   id: "ca",
   name: "Boys",
@@ -89,6 +93,33 @@ describe("VersusRound", () => {
     expect(
       screen.getByRole("img", { name: "YouTube video thumbnail" }),
     ).toBeInTheDocument();
+  });
+
+  it("renders an image item within a side and still selects the side on click", async () => {
+    vi.stubEnv("NEXT_PUBLIC_MEDIA_BASE_URL", "https://cdn.example.com");
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    const sideWithImage = {
+      id: "ca",
+      name: "Boys",
+      items: [imageItem("i1", "Naruto", "media/item/naruto.webp")],
+    };
+    render(
+      <VersusRound
+        sideA={sideWithImage}
+        sideB={SIDE_B}
+        selectedId={null}
+        onSelect={onSelect}
+      />,
+    );
+
+    expect(screen.getByRole("img", { name: "Naruto" })).toHaveAttribute(
+      "src",
+      "https://cdn.example.com/media/item/naruto.webp",
+    );
+    await user.click(screen.getByRole("button", { name: "Pick Boys" }));
+    expect(onSelect).toHaveBeenCalledWith("ca");
+    vi.unstubAllEnvs();
   });
 
   it("does not select the side when clicking the video's own play button", async () => {

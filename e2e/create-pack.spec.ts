@@ -155,6 +155,73 @@ test.describe("Create pack", () => {
     expect(captured.body).not.toHaveProperty("versusN");
   });
 
+  test("uploads an image item and publishes it storing the returned media key", async ({
+    page,
+  }) => {
+    // The browser-issued POST /media is interceptable by page.route (unlike the
+    // Server-Component pack fetch). Return a stub key + url.
+    await page.route(`${API_BASE}/media`, (route) =>
+      route.fulfill({
+        status: 201,
+        json: {
+          key: "media/item/uploaded.webp",
+          url: "https://cdn.example.com/media/item/uploaded.webp",
+          byteSize: 4242,
+        },
+      }),
+    );
+    const captured = await stubCreate(page, {
+      id: "pack-img",
+      title: "Best Posters",
+      description: "Pick your favorite each round.",
+      coverTone: "#2b2a3a",
+      format: "save_one",
+      tags: [],
+      groups: [],
+      rounds: [],
+      authorId: "u1",
+      createdAt: "2026-01-01T00:00:00.000Z",
+    });
+
+    await page.goto("/create");
+    await page.getByLabel("Pack title").fill("Best Posters");
+    await page
+      .getByLabel("Pack description")
+      .fill("Pick your favorite each round.");
+    await page.getByLabel("Pool 1 name").fill("Posters");
+
+    // Switch the item adder to Image, upload a tiny PNG, name it, and add it.
+    await page.getByRole("button", { name: "Image", exact: true }).click();
+    await page.getByLabel("Pool 1 new item title").fill("Poster One");
+    await page.getByLabel("Pool 1 new image").setInputFiles({
+      name: "poster.png",
+      mimeType: "image/png",
+      buffer: Buffer.from(
+        "89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000a49444154789c6360000002000154a24f9d0000000049454e44ae426082",
+        "hex",
+      ),
+    });
+    // The preview appears once the upload resolves.
+    await expect(
+      page.locator(
+        'img[src="https://cdn.example.com/media/item/uploaded.webp"]',
+      ),
+    ).toBeVisible();
+    await page.getByRole("button", { name: "Add", exact: true }).click();
+
+    await page.getByRole("button", { name: "Publish" }).click();
+
+    await page.waitForURL("**/packs/pack-img");
+    const groups = captured.body?.groups as Array<{
+      items: Array<Record<string, unknown>>;
+    }>;
+    expect(groups[0].items[0]).toMatchObject({
+      type: "image",
+      title: "Poster One",
+      value: "media/item/uploaded.webp",
+    });
+  });
+
   test("shows a validation error and does not call the API for an empty submission", async ({
     page,
   }) => {
