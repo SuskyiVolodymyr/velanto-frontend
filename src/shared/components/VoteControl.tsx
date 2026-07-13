@@ -23,6 +23,8 @@ export interface VoteControlProps {
   blockedReason: string;
   /** Inline message shown when a vote request fails. */
   errorLabel: string;
+  /** Visual density. "sm" is a tighter pill for comment threads; default "md". */
+  size?: "sm" | "md";
   className?: string;
 }
 
@@ -44,9 +46,11 @@ export function VoteControl({
   downvoteLabel,
   blockedReason,
   errorLabel,
+  size = "md",
   className,
 }: VoteControlProps) {
   const voter = useVoteMutation(vote);
+  const sm = size === "sm";
 
   // Once the viewer has voted, show the server tally wholesale; before that,
   // the initial props. (`myVote` can be null after a toggle-off, so key off the
@@ -79,14 +83,19 @@ export function VoteControl({
             disabled={busy}
             onClick={() => voter.cast(direction === "up" ? 1 : -1)}
             className={cn(
-              "flex h-7 w-8 items-center justify-center rounded-[7px] transition-colors disabled:opacity-50",
+              "flex items-center justify-center rounded-[7px] transition-colors disabled:opacity-50",
+              sm ? "h-6 w-7" : "h-7 w-8",
               blocked && "cursor-not-allowed opacity-50",
               active
                 ? activeColor
                 : "text-foreground-tertiary hover:bg-white/[0.05] hover:text-foreground",
             )}
           >
-            <Icon aria-hidden className="h-[18px] w-[18px]" strokeWidth={2.2} />
+            <Icon
+              aria-hidden
+              className={sm ? "h-[15px] w-[15px]" : "h-[18px] w-[18px]"}
+              strokeWidth={2.2}
+            />
           </button>,
         )}
         <span
@@ -103,11 +112,17 @@ export function VoteControl({
 
   return (
     <div className={cn("flex flex-col items-start gap-1.5", className)}>
-      <div className="inline-flex items-center gap-1.5 rounded-[10px] border border-border bg-white/[0.03] px-1.5 py-1">
+      <div
+        className={cn(
+          "inline-flex items-center rounded-[10px] border border-border bg-white/[0.03]",
+          sm ? "gap-1 px-1 py-0.5" : "gap-1.5 px-1.5 py-1",
+        )}
+      >
         {arrow("up")}
         <span
           className={cn(
-            "min-w-[1.75rem] text-center text-sm font-semibold tabular-nums",
+            "text-center font-semibold tabular-nums",
+            sm ? "min-w-[1.5rem] text-xs" : "min-w-[1.75rem] text-sm",
             myVote === 1
               ? "text-acc"
               : myVote === -1
