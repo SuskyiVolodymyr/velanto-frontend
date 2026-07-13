@@ -519,7 +519,16 @@
     "placeItemLabel": "Элемент для позиции {index}",
     "addPlace": "Добавить позицию",
     "removePlace": "Убрать позицию",
-    "setCountAllLabel": "Задать розыгрыш для всех раундов"
+    "setCountAllLabel": "Задать розыгрыш для всех раундов",
+    "image": "Изображение",
+    "chooseImage": "Выбрать изображение",
+    "uploading": "Загрузка…",
+    "groupNewItemImage": "Новое изображение группы {index}",
+    "notAnImage": "Выберите файл изображения.",
+    "imageTooLarge": "Изображение должно быть не больше 1 МБ.",
+    "imageUploadFailed": "Не удалось загрузить. Попробуйте снова.",
+    "imageTitleRequired": "Добавьте название для этого изображения.",
+    "imageRequired": "Сначала выберите изображение."
   },
   "profile": {
     "loginRequiredView": "Чтобы посмотреть свой профиль, нужно войти в аккаунт.",

@@ -519,7 +519,16 @@
     "placeItemLabel": "स्थान {index} के लिए आइटम",
     "addPlace": "स्थान जोड़ें",
     "removePlace": "स्थान हटाएँ",
-    "setCountAllLabel": "सभी राउंड के लिए ड्रा सेट करें"
+    "setCountAllLabel": "सभी राउंड के लिए ड्रा सेट करें",
+    "image": "छवि",
+    "chooseImage": "छवि चुनें",
+    "uploading": "अपलोड हो रहा है…",
+    "groupNewItemImage": "पूल {index} नई छवि",
+    "notAnImage": "एक छवि फ़ाइल चुनें।",
+    "imageTooLarge": "छवि 1 MB या उससे छोटी होनी चाहिए।",
+    "imageUploadFailed": "अपलोड विफल। पुनः प्रयास करें।",
+    "imageTitleRequired": "इस छवि के लिए एक शीर्षक जोड़ें।",
+    "imageRequired": "पहले एक छवि चुनें।"
   },
   "profile": {
     "loginRequiredView": "अपनी प्रोफ़ाइल देखने के लिए आपको लॉग इन करना होगा।",

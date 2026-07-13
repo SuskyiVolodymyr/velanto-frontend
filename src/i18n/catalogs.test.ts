@@ -52,6 +52,8 @@ const IDENTICAL_ALLOWED = new Set([
   "create.tags",
   "create.manual",
   "create.link",
+  // "Image" is the same word in fr.
+  "create.image",
   // profile loanwords: "Bio" is the same word in most Latin-script locales, and
   // "Packs" stays untranslated where the catalog keeps the borrowed "pack".
   "profile.bio",

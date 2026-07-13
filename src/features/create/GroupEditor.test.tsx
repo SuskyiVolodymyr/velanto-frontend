@@ -5,6 +5,7 @@ import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { GroupEditor } from "./GroupEditor";
 import { fetchYouTubeOEmbed } from "@/src/shared/lib/youtube-oembed";
+import { uploadMedia } from "@/src/shared/lib/media-client";
 import type { Group } from "@/src/shared/types/pack";
 
 // GroupEditor's name input is controlled by the `group` prop, so a rename only
@@ -36,13 +37,28 @@ vi.mock("@/src/shared/lib/youtube-oembed", () => ({
   fetchYouTubeOEmbed: vi.fn(),
 }));
 
+vi.mock("@/src/shared/lib/media-client", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@/src/shared/lib/media-client")>();
+  return { ...actual, uploadMedia: vi.fn() };
+});
+
 function emptyGroup(): Group {
   return { id: "g1", name: "", items: [] };
 }
 
 beforeEach(() => {
   vi.mocked(fetchYouTubeOEmbed).mockReset();
+  vi.mocked(uploadMedia).mockReset();
 });
+
+function imageFile(name = "poster.png", type = "image/png", size = 1000) {
+  const file = new File(["x"], name, { type });
+  // File.size is read-only; jsdom derives it from the blob parts, so override it
+  // to exercise the client-side size cap without allocating a real 1MB+ buffer.
+  Object.defineProperty(file, "size", { value: size });
+  return file;
+}
 
 describe("GroupEditor (pool)", () => {
   it("has no selection-mode or sample-size controls (those moved to rounds)", () => {
@@ -278,6 +294,158 @@ describe("GroupEditor (pool)", () => {
     expect(screen.getByRole("alert")).toHaveTextContent(
       'Group "R1" needs at least one item.',
     );
+  });
+
+  it("uploads a picked image, previews it, and adds an item storing the returned key", async () => {
+    vi.mocked(uploadMedia).mockResolvedValue({
+      key: "media/item/abc.webp",
+      url: "https://cdn.example.com/media/item/abc.webp",
+      byteSize: 900,
+    });
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <GroupEditor
+        group={emptyGroup()}
+        index={0}
+        removable={false}
+        onChange={onChange}
+        onRemove={vi.fn()}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Image" }));
+    await user.type(
+      screen.getByLabelText("Pool 1 new item title"),
+      "Attack on Titan",
+    );
+    await user.upload(screen.getByLabelText("Pool 1 new image"), imageFile());
+
+    // Preview appears once the upload resolves (empty alt — decorative next to
+    // the title field).
+    await waitFor(() =>
+      expect(
+        document.querySelector(
+          'img[src="https://cdn.example.com/media/item/abc.webp"]',
+        ),
+      ).toBeInTheDocument(),
+    );
+    expect(uploadMedia).toHaveBeenCalledWith(expect.any(File), "item");
+
+    await user.click(screen.getByRole("button", { name: "Add" }));
+
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({
+        items: [
+          expect.objectContaining({
+            type: "image",
+            title: "Attack on Titan",
+            value: "media/item/abc.webp",
+          }),
+        ],
+      }),
+    );
+  });
+
+  it("rejects a non-image file without uploading", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <GroupEditor
+        group={emptyGroup()}
+        index={0}
+        removable={false}
+        onChange={onChange}
+        onRemove={vi.fn()}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Image" }));
+    // fireEvent.change (not userEvent.upload) so the non-image file bypasses the
+    // input's accept="image/*" pre-filter — we're asserting the component's OWN
+    // type guard, not the browser's.
+    fireEvent.change(screen.getByLabelText("Pool 1 new image"), {
+      target: { files: [imageFile("notes.txt", "text/plain")] },
+    });
+
+    expect(
+      await screen.findByText("Choose an image file."),
+    ).toBeInTheDocument();
+    expect(uploadMedia).not.toHaveBeenCalled();
+  });
+
+  it("rejects an image over 1MB without uploading", async () => {
+    const user = userEvent.setup();
+    render(
+      <GroupEditor
+        group={emptyGroup()}
+        index={0}
+        removable={false}
+        onChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Image" }));
+    await user.upload(
+      screen.getByLabelText("Pool 1 new image"),
+      imageFile("huge.png", "image/png", 1024 * 1024 + 1),
+    );
+
+    expect(
+      await screen.findByText("Image must be 1 MB or smaller."),
+    ).toBeInTheDocument();
+    expect(uploadMedia).not.toHaveBeenCalled();
+  });
+
+  it("requires a title before an uploaded image can be added", async () => {
+    vi.mocked(uploadMedia).mockResolvedValue({
+      key: "media/item/abc.webp",
+      url: "https://cdn.example.com/media/item/abc.webp",
+      byteSize: 900,
+    });
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(
+      <GroupEditor
+        group={emptyGroup()}
+        index={0}
+        removable={false}
+        onChange={onChange}
+        onRemove={vi.fn()}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Image" }));
+    await user.upload(screen.getByLabelText("Pool 1 new image"), imageFile());
+    await waitFor(() => expect(uploadMedia).toHaveBeenCalled());
+    await user.click(screen.getByRole("button", { name: "Add" }));
+
+    expect(
+      await screen.findByText("Add a title for this image."),
+    ).toBeInTheDocument();
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it("shows an error when the upload fails", async () => {
+    vi.mocked(uploadMedia).mockRejectedValue(new Error("network"));
+    const user = userEvent.setup();
+    render(
+      <GroupEditor
+        group={emptyGroup()}
+        index={0}
+        removable={false}
+        onChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Image" }));
+    await user.upload(screen.getByLabelText("Pool 1 new image"), imageFile());
+
+    expect(
+      await screen.findByText("Upload failed. Try again."),
+    ).toBeInTheDocument();
   });
 
   it("calls onRemove from the remove control when removable", async () => {

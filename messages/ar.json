@@ -519,7 +519,16 @@
     "placeItemLabel": "عنصر الموضع {index}",
     "addPlace": "إضافة موضع",
     "removePlace": "إزالة موضع",
-    "setCountAllLabel": "تحديد سحب كل الجولات"
+    "setCountAllLabel": "تحديد سحب كل الجولات",
+    "image": "صورة",
+    "chooseImage": "اختر صورة",
+    "uploading": "جارٍ الرفع…",
+    "groupNewItemImage": "صورة جديدة للمجموعة {index}",
+    "notAnImage": "اختر ملف صورة.",
+    "imageTooLarge": "يجب ألا يتجاوز حجم الصورة 1 ميغابايت.",
+    "imageUploadFailed": "فشل الرفع. حاول مرة أخرى.",
+    "imageTitleRequired": "أضف عنوانًا لهذه الصورة.",
+    "imageRequired": "اختر صورة أولاً."
   },
   "profile": {
     "loginRequiredView": "يجب تسجيل الدخول لعرض ملفك الشخصي.",

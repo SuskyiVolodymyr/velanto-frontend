@@ -519,7 +519,16 @@
     "placeItemLabel": "স্থান {index}-এর আইটেম",
     "addPlace": "স্থান যোগ করুন",
     "removePlace": "স্থান সরান",
-    "setCountAllLabel": "সব রাউন্ডের ড্র সেট করুন"
+    "setCountAllLabel": "সব রাউন্ডের ড্র সেট করুন",
+    "image": "ছবি",
+    "chooseImage": "ছবি নির্বাচন করুন",
+    "uploading": "আপলোড হচ্ছে…",
+    "groupNewItemImage": "গ্রুপ {index} এর নতুন ছবি",
+    "notAnImage": "একটি ছবি ফাইল নির্বাচন করুন।",
+    "imageTooLarge": "ছবি 1 MB বা তার কম হতে হবে।",
+    "imageUploadFailed": "আপলোড ব্যর্থ। আবার চেষ্টা করুন।",
+    "imageTitleRequired": "এই ছবির জন্য একটি শিরোনাম যোগ করুন।",
+    "imageRequired": "প্রথমে একটি ছবি নির্বাচন করুন।"
   },
   "profile": {
     "loginRequiredView": "আপনার প্রোফাইল দেখতে হলে আপনাকে লগ ইন করতে হবে।",

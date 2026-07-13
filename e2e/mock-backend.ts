@@ -15,6 +15,12 @@ function textItem(id: string, title: string) {
   return { id, type: "text", title, value: title };
 }
 
+// image items store the media KEY as their value; the app resolves it to a URL
+// via mediaUrl (NEXT_PUBLIC_MEDIA_BASE_URL, unset under test → root-relative).
+function imageItem(id: string, title: string, key: string) {
+  return { id, type: "image", title, value: key };
+}
+
 const BASE_PACK = {
   coverTone: "#2b2a3a",
   tags: ["Anime"],
@@ -104,6 +110,25 @@ export const PACKS: Record<string, Record<string, unknown>> = {
       },
     ],
     rounds: [versusRound("r1"), versusRound("r2")],
+  },
+  // play.spec.ts image-rendering fixture: a save_one round of two image items.
+  "pack-image": {
+    ...BASE_PACK,
+    id: "pack-image",
+    title: "Image Pack",
+    description: "Pick the poster you'd save.",
+    format: "save_one",
+    groups: [
+      {
+        id: "g1",
+        name: "Posters",
+        items: [
+          imageItem("1", "Poster A", "media/item/a.webp"),
+          imageItem("2", "Poster B", "media/item/b.webp"),
+        ],
+      },
+    ],
+    rounds: [groupsRound("r1", "g1", ["1", "2"])],
   },
   // edit-pack.spec.ts fixture — an approved pack owned by u1. Two items so the
   // save_one round's manual draw meets the min-draw of 2, keeping the seeded

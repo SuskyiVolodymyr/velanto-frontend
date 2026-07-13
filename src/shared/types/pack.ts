@@ -12,8 +12,9 @@ export const PACK_FORMATS = [
 
 export type PackFormat = (typeof PACK_FORMATS)[number];
 
-// 'image' is intentionally omitted — no storage backend yet (backend issue #3).
-export type ItemType = "text" | "youtube";
+// 'image' items store the S3 media KEY (e.g. "media/item/<uuid>.webp") as their
+// value; the render URL is built from it via shared/lib/media-url.
+export type ItemType = "text" | "youtube" | "image";
 
 export interface Item {
   id: string;

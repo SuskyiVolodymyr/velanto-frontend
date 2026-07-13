@@ -519,7 +519,16 @@
     "placeItemLabel": "Елемент для позиції {index}",
     "addPlace": "Додати позицію",
     "removePlace": "Прибрати позицію",
-    "setCountAllLabel": "Задати розіграш для всіх раундів"
+    "setCountAllLabel": "Задати розіграш для всіх раундів",
+    "image": "Зображення",
+    "chooseImage": "Вибрати зображення",
+    "uploading": "Завантаження…",
+    "groupNewItemImage": "Нове зображення групи {index}",
+    "notAnImage": "Виберіть файл зображення.",
+    "imageTooLarge": "Зображення має бути не більше 1 МБ.",
+    "imageUploadFailed": "Не вдалося завантажити. Спробуйте ще раз.",
+    "imageTitleRequired": "Додайте назву для цього зображення.",
+    "imageRequired": "Спершу виберіть зображення."
   },
   "profile": {
     "loginRequiredView": "Щоб переглянути свій профіль, спершу увійди.",

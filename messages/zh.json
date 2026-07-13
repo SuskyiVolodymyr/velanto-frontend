@@ -519,7 +519,16 @@
     "placeItemLabel": "位置 {index} 的项目",
     "addPlace": "添加位置",
     "removePlace": "删除位置",
-    "setCountAllLabel": "设置所有轮次抽取"
+    "setCountAllLabel": "设置所有轮次抽取",
+    "image": "图片",
+    "chooseImage": "选择图片",
+    "uploading": "上传中…",
+    "groupNewItemImage": "池 {index} 新图片",
+    "notAnImage": "请选择图片文件。",
+    "imageTooLarge": "图片不得超过 1 MB。",
+    "imageUploadFailed": "上传失败，请重试。",
+    "imageTitleRequired": "为此图片添加标题。",
+    "imageRequired": "请先选择图片。"
   },
   "profile": {
     "loginRequiredView": "你需要先登录才能查看个人资料。",

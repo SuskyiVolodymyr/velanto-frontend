@@ -519,7 +519,16 @@
     "placeItemLabel": "مقام {index} کے لیے آئٹم",
     "addPlace": "مقام شامل کریں",
     "removePlace": "مقام ہٹائیں",
-    "setCountAllLabel": "تمام راؤنڈز کے لیے ڈرا مقرر کریں"
+    "setCountAllLabel": "تمام راؤنڈز کے لیے ڈرا مقرر کریں",
+    "image": "تصویر",
+    "chooseImage": "تصویر منتخب کریں",
+    "uploading": "اپ لوڈ ہو رہا ہے…",
+    "groupNewItemImage": "گروپ {index} نئی تصویر",
+    "notAnImage": "ایک تصویر فائل منتخب کریں۔",
+    "imageTooLarge": "تصویر 1 MB یا اس سے کم ہونی چاہیے۔",
+    "imageUploadFailed": "اپ لوڈ ناکام۔ دوبارہ کوشش کریں۔",
+    "imageTitleRequired": "اس تصویر کے لیے ایک عنوان شامل کریں۔",
+    "imageRequired": "پہلے ایک تصویر منتخب کریں۔"
   },
   "profile": {
     "loginRequiredView": "اپنی پروفائل دیکھنے کے لیے آپ کا لاگ اِن ہونا ضروری ہے۔",

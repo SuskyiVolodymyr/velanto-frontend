@@ -10,7 +10,9 @@ import { cn } from "@/src/shared/lib/cn";
 import { playsClient } from "@/src/shared/lib/plays-client";
 import { writeLastPlayPicks } from "@/src/shared/lib/last-play-storage";
 import { YouTubeCard } from "@/src/shared/components/YouTubeCard";
+import { ImageCard } from "@/src/shared/components/ImageCard";
 import { extractYouTubeId } from "@/src/shared/lib/youtube";
+import { mediaUrl } from "@/src/shared/lib/media-url";
 import { resolveRoundSelections } from "@/src/features/play/round-sampling";
 import type { Pack, Item } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
@@ -51,6 +53,8 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
     currentItem?.type === "youtube"
       ? extractYouTubeId(currentItem.value)
       : null;
+  const currentImageSrc =
+    currentItem?.type === "image" ? mediaUrl(currentItem.value) : null;
 
   function place(slotIndex: number) {
     if (!slot || placements[slotIndex] || placedCount >= slotCount) return;
@@ -131,7 +135,17 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
           </section>
 
           <div className="mb-8 flex justify-center">
-            {currentVideoId ? (
+            {currentImageSrc ? (
+              <div className="w-full max-w-xl overflow-hidden rounded-2xl border border-acc bg-surface">
+                <ImageCard
+                  src={currentImageSrc}
+                  alt={currentItem?.title ?? ""}
+                />
+                <Text className="line-clamp-2 p-4 text-center font-semibold">
+                  {currentItem?.title}
+                </Text>
+              </div>
+            ) : currentVideoId ? (
               <div className="w-full max-w-xl overflow-hidden rounded-2xl border border-acc bg-surface">
                 <YouTubeCard videoId={currentVideoId} />
                 <Text className="line-clamp-2 p-4 text-center font-semibold">
