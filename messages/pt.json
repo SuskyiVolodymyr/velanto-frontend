@@ -424,7 +424,8 @@
     "rankSlotEmpty": "Colocar na posição {rank}",
     "ranked": "{name} ranqueado",
     "rankingDone": "Seu ranking está pronto",
-    "rankingDoneSummary": "{count, plural, one {# rodada colocada} other {# rodadas colocadas}}, às cegas."
+    "rankingDoneSummary": "{count, plural, one {# rodada colocada} other {# rodadas colocadas}}, às cegas.",
+    "loadingResult": "Carregando seus resultados…"
   },
   "result": {
     "label": "Resultado",

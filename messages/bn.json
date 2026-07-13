@@ -424,7 +424,8 @@
     "rankSlotEmpty": "র‍্যাঙ্ক {rank}-এ বসান",
     "ranked": "{name} র‍্যাঙ্ক করা হয়েছে",
     "rankingDone": "আপনার র‍্যাঙ্কিং শেষ",
-    "rankingDoneSummary": "সব {count, plural, one {# রাউন্ড} other {# রাউন্ড}} না দেখেই বসানো হয়েছে।"
+    "rankingDoneSummary": "সব {count, plural, one {# রাউন্ড} other {# রাউন্ড}} না দেখেই বসানো হয়েছে।",
+    "loadingResult": "আপনার ফলাফল লোড হচ্ছে…"
   },
   "result": {
     "label": "ফলাফল",

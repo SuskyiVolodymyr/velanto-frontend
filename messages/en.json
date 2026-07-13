@@ -423,7 +423,8 @@
     "rankSlotEmpty": "Place at rank {rank}",
     "ranked": "{name} ranked",
     "rankingDone": "Your ranking is done",
-    "rankingDoneSummary": "All {count, plural, one {# round} other {# rounds}} placed, blind."
+    "rankingDoneSummary": "All {count, plural, one {# round} other {# rounds}} placed, blind.",
+    "loadingResult": "Loading your results…"
   },
   "result": {
     "label": "Result",

@@ -424,7 +424,8 @@
     "rankSlotEmpty": "رینک {rank} پر رکھیں",
     "ranked": "{name} کو درجہ دیا گیا",
     "rankingDone": "آپ کی رینکنگ مکمل ہو گئی",
-    "rankingDoneSummary": "تمام {count, plural, one {# راؤنڈ} other {# راؤنڈز}} بغیر دیکھے رکھ دیے گئے۔"
+    "rankingDoneSummary": "تمام {count, plural, one {# راؤنڈ} other {# راؤنڈز}} بغیر دیکھے رکھ دیے گئے۔",
+    "loadingResult": "آپ کے نتائج لوڈ ہو رہے ہیں…"
   },
   "result": {
     "label": "نتیجہ",

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
@@ -15,8 +16,8 @@ import {
 } from "@/src/features/play/play-format-copy";
 import { PlayProgress } from "@/src/features/play/PlayProgress";
 import { CandidateCard } from "@/src/features/play/CandidateCard";
-import { PlayFinished } from "@/src/features/play/PlayFinished";
 import { PicksSummary } from "@/src/features/play/PicksSummary";
+import { LoadingState } from "@/src/shared/components/LoadingState";
 
 // How many columns a groups-format round lays its candidates out in, chosen by
 // candidate count so they fill the row instead of leaving fixed-width gaps: up
@@ -44,6 +45,14 @@ export function PlayScreen({ pack }: { pack: Pack }) {
   const router = useRouter();
   const pathname = usePathname();
   const session = usePlaySession(pack);
+
+  // Once the finished play has been recorded (or the record failed), go straight
+  // to the result page — no interstitial "all rounds done" step.
+  useEffect(() => {
+    if (session.recordSettled) {
+      router.replace(`/packs/${pack.id}/result`);
+    }
+  }, [session.recordSettled, router, pack.id]);
 
   if (status === "loading") return null;
 
@@ -129,16 +138,7 @@ export function PlayScreen({ pack }: { pack: Pack }) {
         </>
       )}
 
-      {session.isFinished && (
-        <PlayFinished
-          isVersus={session.isVersus}
-          pickCount={session.picks.length}
-          packId={pack.id}
-          format={pack.format}
-          sideAName={session.sideA?.name}
-          sideBName={session.sideB?.name}
-        />
-      )}
+      {session.isFinished && <LoadingState label={t("loadingResult")} />}
 
       {session.picks.length > 0 && (
         <PicksSummary

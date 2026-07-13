@@ -27,6 +27,10 @@ export interface PlaySession {
   roundIndex: number;
   totalRounds: number;
   isFinished: boolean;
+  // True once the finish record has settled (resolved or failed); PlayScreen
+  // navigates straight to the result page on this, so there's no interstitial
+  // "all rounds done" step.
+  recordSettled: boolean;
   progressPct: number;
   showRound: boolean;
   roundTitle: string;
@@ -79,6 +83,7 @@ export function usePlaySession(pack: Pack): PlaySession {
   const [roundIndex, setRoundIndex] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [picks, setPicks] = useState<Pick[]>([]);
+  const [recordSettled, setRecordSettled] = useState(false);
 
   const isFinished = roundIndex >= totalRounds;
   const currentRound = !isFinished ? selections[roundIndex] : undefined;
@@ -170,7 +175,8 @@ export function usePlaySession(pack: Pack): PlaySession {
     playsClient
       .record(pack.id, { picks: recordedPicks })
       .then(() => writeLastPlayPicks(pack.id, recordedPicks))
-      .catch(() => undefined);
+      .catch(() => undefined)
+      .finally(() => setRecordSettled(true));
   }, [isFinished, pack.id, picks]);
 
   const progressPct = isFinished
@@ -185,6 +191,7 @@ export function usePlaySession(pack: Pack): PlaySession {
     roundIndex,
     totalRounds,
     isFinished,
+    recordSettled,
     progressPct,
     showRound,
     roundTitle: round.title,

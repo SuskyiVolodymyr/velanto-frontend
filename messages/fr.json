@@ -424,7 +424,8 @@
     "rankSlotEmpty": "Placer au rang {rank}",
     "ranked": "{name} classé",
     "rankingDone": "Ton classement est bouclé",
-    "rankingDoneSummary": "{count, plural, one {# manche placée} other {# manches placées}}, à l'aveugle."
+    "rankingDoneSummary": "{count, plural, one {# manche placée} other {# manches placées}}, à l'aveugle.",
+    "loadingResult": "Chargement de tes résultats…"
   },
   "result": {
     "label": "Résultat",
