@@ -191,6 +191,39 @@ describe("RankPlayScreen", () => {
     ).toHaveAttribute("href", "/packs/pack-rank/result");
   });
 
+  it("embeds the video for the current item when it is a youtube item", async () => {
+    const videoPack: Pack = {
+      ...RANK_BLIND_PACK,
+      groups: [
+        {
+          id: "g1",
+          name: "Openers",
+          items: [
+            {
+              id: "i1",
+              type: "youtube" as const,
+              title: "Kaikai Kitan",
+              value: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            },
+            textItem("i2", "Redo"),
+          ],
+        },
+      ],
+      rounds: [
+        {
+          id: "r1",
+          slots: [{ groupId: "g1", mode: "manual", itemIds: ["i1", "i2"] }],
+        },
+      ],
+    };
+    renderScreen(videoPack);
+
+    // The current item is the youtube one — its video must be embedded, not
+    // shown as bare title text.
+    expect(await screen.findByTestId("youtube-card")).toBeInTheDocument();
+    expect(screen.getByText("Kaikai Kitan")).toBeInTheDocument();
+  });
+
   it("sizes a random-mode round's slots to the slot's draw count, not the full pool", async () => {
     const randomPack: Pack = {
       ...RANK_BLIND_PACK,
