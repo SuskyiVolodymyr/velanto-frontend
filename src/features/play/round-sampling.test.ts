@@ -84,6 +84,28 @@ describe("resolveRoundSelections", () => {
     expect(result[1].slots[0].items).toHaveLength(1);
   });
 
+  it("reserves manual pins even when the random round comes first (order-independent)", () => {
+    const items = [
+      textItem("1", "A"),
+      textItem("2", "B"),
+      textItem("3", "C"),
+      textItem("4", "D"),
+    ];
+    const groups: Group[] = [{ id: "g1", name: "Pool", items }];
+    const rounds = [
+      round("r1", [{ groupId: "g1", mode: "random", count: 4 }]),
+      round("r2", [{ groupId: "g1", mode: "manual", itemIds: ["1"] }]),
+    ];
+
+    const result = resolveRoundSelections(groups, rounds);
+
+    // The random round runs first but still never draws the later-pinned item 1.
+    const drawn = result[0].slots[0].items.map((i) => i.id);
+    expect(drawn).toHaveLength(3);
+    expect(drawn).not.toContain("1");
+    expect(result[1].slots[0].items.map((i) => i.id)).toEqual(["1"]);
+  });
+
   it("reserves manual-pinned items so a random slot never draws them", () => {
     const items = [
       textItem("1", "A"),

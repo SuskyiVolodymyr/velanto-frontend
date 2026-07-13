@@ -230,6 +230,7 @@ export function RoundsEditor() {
                   type="button"
                   onClick={() => switchMode(index, "random")}
                   aria-label={t("roundModeRandom", { index: index + 1 })}
+                  aria-pressed={slot.mode === "random"}
                   className={cn(
                     "rounded-[7px] px-3 py-1.5 text-xs font-medium transition-colors",
                     slot.mode === "random"
@@ -243,6 +244,7 @@ export function RoundsEditor() {
                   type="button"
                   onClick={() => switchMode(index, "manual")}
                   aria-label={t("roundModeManual", { index: index + 1 })}
+                  aria-pressed={slot.mode === "manual"}
                   className={cn(
                     "rounded-[7px] px-3 py-1.5 text-xs font-medium transition-colors",
                     slot.mode === "manual"
