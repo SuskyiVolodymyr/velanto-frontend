@@ -425,7 +425,8 @@
     "ranked": "{name} रैंक हुआ",
     "rankingDone": "आपकी रैंकिंग पूरी हुई",
     "rankingDoneSummary": "सभी {count, plural, one {# राउंड} other {# राउंड}} बिना देखे रखे गए।",
-    "loadingResult": "आपके परिणाम लोड हो रहे हैं…"
+    "loadingResult": "आपके परिणाम लोड हो रहे हैं…",
+    "finishRound": "परिणाम देखें →"
   },
   "result": {
     "label": "नतीजा",

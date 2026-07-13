@@ -69,18 +69,25 @@ html[data-streamer-mode="on"]:not([data-streamer-hydrated])
  * rate so the motion fills the whole second and the next card picks up just as
  * this one lands — no perceived gap (an ease-out finishes visibly early and
  * reads as a pause before the next). `both` fill-mode holds the card hidden
- * through its delay, so nothing flashes before its turn. prefers-reduced-motion
- * below shows them all immediately, no animation. Applied by CandidateCard /
- * VersusRound.
+ * through its delay, so nothing flashes before its turn. The card is also
+ * `pointer-events: none` until the animation finishes, so a mouse resting where
+ * a not-yet-revealed (opacity:0) card sits can't hover-start its preloaded
+ * video before the card is actually visible. prefers-reduced-motion below shows
+ * them all immediately, no animation. Applied by CandidateCard / VersusRound.
  */
 @keyframes play-card-fade-in {
-  from {
+  0% {
     opacity: 0;
     transform: scale(0.7);
+    pointer-events: none;
   }
-  to {
+  99% {
+    pointer-events: none;
+  }
+  100% {
     opacity: 1;
     transform: scale(1);
+    pointer-events: auto;
   }
 }
 .play-card-appear {

@@ -425,7 +425,8 @@
     "ranked": "{name} clasificado",
     "rankingDone": "Tu ranking está listo",
     "rankingDoneSummary": "Colocaste {count, plural, one {# ronda} other {# rondas}}, a ciegas.",
-    "loadingResult": "Cargando tus resultados…"
+    "loadingResult": "Cargando tus resultados…",
+    "finishRound": "Ver resultados →"
   },
   "result": {
     "label": "Resultado",

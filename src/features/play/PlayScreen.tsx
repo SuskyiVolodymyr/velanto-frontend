@@ -132,7 +132,7 @@ export function PlayScreen({ pack }: { pack: Pack }) {
               disabled={!session.canConfirm}
               onClick={session.confirmPick}
             >
-              {t("nextRound")}
+              {session.isLastRound ? t("finishRound") : t("nextRound")}
             </Button>
           </div>
         </>
