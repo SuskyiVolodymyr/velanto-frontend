@@ -49,8 +49,8 @@ function SideCard({ side, selected, onSelect }: SideCardProps) {
         {side.items.map((item, index) => {
           const videoId =
             item.type === "youtube" ? extractYouTubeId(item.value) : null;
-          // Cards fade in one-by-one; the delay staggers by position.
-          const appearDelay = { animationDelay: `${index * 80}ms` };
+          // Cards fade in one-by-one, half a second apart, staggered by position.
+          const appearDelay = { animationDelay: `${index * 500}ms` };
 
           if (videoId) {
             return (

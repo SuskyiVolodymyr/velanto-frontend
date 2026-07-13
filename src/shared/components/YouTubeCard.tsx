@@ -90,8 +90,10 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
           it from React's tree. mountRef is that sacrificial node; this wrapper
           is what React actually reconciles against, so a re-render (e.g. the
           thumbnail reappearing after videoId changes) never has to touch — or
-          insertBefore relative to — a node YouTube has already ripped out. */}
-      <div className="absolute inset-0">
+          insertBefore relative to — a node YouTube has already ripped out.
+          YT sizes the iframe 640×360 by default; force it to fill the box so
+          the video isn't clipped and its controls stay on-screen. */}
+      <div className="absolute inset-0 [&_iframe]:h-full [&_iframe]:w-full">
         <div ref={mountRef} />
       </div>
       {!hovered && (

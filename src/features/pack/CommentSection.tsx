@@ -94,6 +94,7 @@ function CommentView({
           downvoteLabel={t("downvote")}
           blockedReason={tAuth("logInToVote")}
           errorLabel={t("voteError")}
+          size="sm"
         />
         {onReply && (
           <button
