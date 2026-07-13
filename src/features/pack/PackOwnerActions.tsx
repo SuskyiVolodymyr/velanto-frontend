@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { Pencil, Trash2 } from "lucide-react";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { isStaff } from "@/src/shared/lib/user-role";
 import { packsClient } from "@/src/shared/lib/packs-client";
@@ -57,20 +58,22 @@ export function PackOwnerActions({
       {canEdit && (
         <Link
           href={`/packs/${packId}/edit`}
-          className={buttonClassName("secondary")}
+          className={buttonClassName("secondary", "gap-2")}
         >
+          <Pencil size={16} aria-hidden />
           {t("edit")}
         </Link>
       )}
       {canDelete && (
         <Button
-          variant="secondary"
-          className="text-danger hover:border-danger/60"
+          variant="danger"
+          className="gap-2"
           onClick={() => {
             setError(null);
             setConfirmOpen(true);
           }}
         >
+          <Trash2 size={16} aria-hidden />
           {t("delete")}
         </Button>
       )}

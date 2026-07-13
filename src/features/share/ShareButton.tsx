@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
+import { Share2 } from "lucide-react";
 import { Button } from "@/src/shared/components/Button";
 import { Input } from "@/src/shared/components/Input";
 import { buildShareUrl } from "@/src/shared/lib/share-url";
@@ -89,6 +90,7 @@ export function ShareButton({
         aria-expanded={open}
         onClick={() => (open ? close() : setOpen(true))}
       >
+        <Share2 size={16} aria-hidden />
         {triggerLabel}
       </Button>
       {open && (
