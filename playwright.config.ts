@@ -9,6 +9,10 @@ const BASE_URL = `http://localhost:${PORT}`;
  */
 export default defineConfig({
   testDir: "./e2e",
+  // Starts one shared mock backend on :3001 for the whole run (see
+  // e2e/global-setup.ts), so port-dependent specs don't race to bind it under
+  // parallel workers.
+  globalSetup: "./e2e/global-setup.ts",
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,

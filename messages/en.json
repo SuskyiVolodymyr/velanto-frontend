@@ -387,7 +387,14 @@
     "sortTop": "Top",
     "sortNew": "New",
     "sortLabel": "Sort comments",
-    "roundHeading": "Round {index}"
+    "roundHeading": "Round {index}",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deletePackTitle": "Delete this pack?",
+    "deletePackConfirm": "This permanently deletes the pack and everything in it. This can't be undone.",
+    "deletePackCta": "Delete pack",
+    "deleting": "Deleting…",
+    "deletePackError": "Couldn't delete the pack. Try again."
   },
   "share": {
     "trigger": "Share",
@@ -501,7 +508,10 @@
     "versusRoundCount": "Rounds",
     "versusPerSide": "Items per side",
     "versusPerSideFixed": "1 per side",
-    "roundName": "Round {index} name"
+    "roundName": "Round {index} name",
+    "saveChanges": "Save changes",
+    "saving": "Saving…",
+    "editOthersForbidden": "You can only edit your own packs."
   },
   "profile": {
     "loginRequiredView": "You need to be logged in to view your profile.",
@@ -542,7 +552,9 @@
     "back": "Back",
     "errorTitle": "Something went wrong",
     "errorBody": "We couldn't load this profile. Please try again.",
-    "tryAgain": "Try again"
+    "tryAgain": "Try again",
+    "editTitle": "Edit pack",
+    "editSubtitle": "Update your pack's details. Republishing sends it back through moderation."
   },
   "status": {
     "packPending": "Pending review",

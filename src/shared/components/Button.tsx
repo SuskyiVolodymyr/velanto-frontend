@@ -2,7 +2,7 @@ import { ButtonHTMLAttributes, forwardRef } from "react";
 import { cn } from "@/src/shared/lib/cn";
 import { Spinner } from "./Spinner";
 
-export type ButtonVariant = "primary" | "secondary" | "ghost";
+export type ButtonVariant = "primary" | "secondary" | "ghost" | "danger";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
@@ -27,6 +27,10 @@ const variantClasses: Record<ButtonVariant, string> = {
   secondary:
     "bg-surface text-foreground border border-border hover:border-border-strong",
   ghost: "bg-transparent text-foreground-secondary hover:text-foreground",
+  // Filled destructive action (delete/remove confirmations). A dedicated
+  // variant rather than a `bg-danger` className over `primary`, so the danger
+  // colour doesn't depend on CSS source order winning against `bg-acc`.
+  danger: "bg-danger text-white hover:brightness-110",
 };
 
 /** For non-`<button>` elements (e.g. a `Link`) that need to look like a Button. */

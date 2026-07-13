@@ -388,7 +388,14 @@
     "sortTop": "Populaires",
     "sortNew": "Récents",
     "sortLabel": "Trier les commentaires",
-    "roundHeading": "Manche {index}"
+    "roundHeading": "Manche {index}",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "deletePackTitle": "Supprimer ce pack ?",
+    "deletePackConfirm": "Cela supprime définitivement le pack et tout son contenu. Cette action est irréversible.",
+    "deletePackCta": "Supprimer le pack",
+    "deleting": "Suppression…",
+    "deletePackError": "Impossible de supprimer le pack. Réessayez."
   },
   "share": {
     "trigger": "Partager",
@@ -502,7 +509,10 @@
     "versusRoundCount": "Manches",
     "versusPerSide": "Éléments par côté",
     "versusPerSideFixed": "1 par côté",
-    "roundName": "Nom de la manche {index}"
+    "roundName": "Nom de la manche {index}",
+    "saveChanges": "Enregistrer les modifications",
+    "saving": "Enregistrement…",
+    "editOthersForbidden": "Vous ne pouvez modifier que vos propres packs."
   },
   "profile": {
     "loginRequiredView": "Vous devez être connecté pour voir votre profil.",
@@ -543,7 +553,9 @@
     "back": "Retour",
     "errorTitle": "Une erreur est survenue",
     "errorBody": "Impossible de charger ce profil. Veuillez réessayer.",
-    "tryAgain": "Réessayer"
+    "tryAgain": "Réessayer",
+    "editTitle": "Modifier le pack",
+    "editSubtitle": "Mettez à jour les détails de votre pack. La republication le soumet à nouveau à la modération."
   },
   "status": {
     "packPending": "En attente de vérification",

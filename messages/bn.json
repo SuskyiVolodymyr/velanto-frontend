@@ -388,7 +388,14 @@
     "sortTop": "শীর্ষ",
     "sortNew": "নতুন",
     "sortLabel": "মন্তব্য সাজান",
-    "roundHeading": "রাউন্ড {index}"
+    "roundHeading": "রাউন্ড {index}",
+    "edit": "সম্পাদনা",
+    "delete": "মুছুন",
+    "deletePackTitle": "এই প্যাকটি মুছবেন?",
+    "deletePackConfirm": "এটি প্যাক এবং এর ভেতরের সবকিছু স্থায়ীভাবে মুছে ফেলবে। এটি আর ফেরানো যাবে না।",
+    "deletePackCta": "প্যাক মুছুন",
+    "deleting": "মুছে ফেলা হচ্ছে…",
+    "deletePackError": "প্যাকটি মোছা যায়নি। আবার চেষ্টা করুন।"
   },
   "share": {
     "trigger": "শেয়ার",
@@ -502,7 +509,10 @@
     "versusRoundCount": "রাউন্ড",
     "versusPerSide": "প্রতি পক্ষে আইটেম",
     "versusPerSideFixed": "প্রতি পক্ষে ১",
-    "roundName": "রাউন্ড {index} এর নাম"
+    "roundName": "রাউন্ড {index} এর নাম",
+    "saveChanges": "পরিবর্তন সংরক্ষণ করুন",
+    "saving": "সংরক্ষণ করা হচ্ছে…",
+    "editOthersForbidden": "আপনি কেবল নিজের প্যাকই সম্পাদনা করতে পারেন।"
   },
   "profile": {
     "loginRequiredView": "আপনার প্রোফাইল দেখতে হলে আপনাকে লগ ইন করতে হবে।",
@@ -543,7 +553,9 @@
     "back": "পিছনে",
     "errorTitle": "কিছু একটা ভুল হয়েছে",
     "errorBody": "আমরা এই প্রোফাইল লোড করতে পারিনি। অনুগ্রহ করে আবার চেষ্টা করুন।",
-    "tryAgain": "আবার চেষ্টা করুন"
+    "tryAgain": "আবার চেষ্টা করুন",
+    "editTitle": "প্যাক সম্পাদনা করুন",
+    "editSubtitle": "আপনার প্যাকের বিবরণ আপডেট করুন। পুনরায় প্রকাশ করলে এটি আবার মডারেশনে যাবে।"
   },
   "status": {
     "packPending": "পর্যালোচনার অপেক্ষায়",

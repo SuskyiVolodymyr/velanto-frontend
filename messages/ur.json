@@ -388,7 +388,14 @@
     "sortTop": "مقبول",
     "sortNew": "نئے",
     "sortLabel": "تبصرے ترتیب دیں",
-    "roundHeading": "راؤنڈ {index}"
+    "roundHeading": "راؤنڈ {index}",
+    "edit": "ترمیم",
+    "delete": "حذف کریں",
+    "deletePackTitle": "یہ پیک حذف کریں؟",
+    "deletePackConfirm": "اس سے پیک اور اس میں موجود ہر چیز مستقل طور پر حذف ہو جائے گی۔ اسے واپس نہیں کیا جا سکتا۔",
+    "deletePackCta": "پیک حذف کریں",
+    "deleting": "حذف ہو رہا ہے…",
+    "deletePackError": "پیک حذف نہیں ہو سکا۔ دوبارہ کوشش کریں۔"
   },
   "share": {
     "trigger": "شیئر",
@@ -502,7 +509,10 @@
     "versusRoundCount": "راؤنڈز",
     "versusPerSide": "فی طرف آئٹمز",
     "versusPerSideFixed": "فی طرف 1",
-    "roundName": "راؤنڈ {index} کا نام"
+    "roundName": "راؤنڈ {index} کا نام",
+    "saveChanges": "تبدیلیاں محفوظ کریں",
+    "saving": "محفوظ ہو رہا ہے…",
+    "editOthersForbidden": "آپ صرف اپنے ہی پیک میں ترمیم کر سکتے ہیں۔"
   },
   "profile": {
     "loginRequiredView": "اپنی پروفائل دیکھنے کے لیے آپ کا لاگ اِن ہونا ضروری ہے۔",
@@ -543,7 +553,9 @@
     "back": "واپس",
     "errorTitle": "کچھ غلط ہو گیا",
     "errorBody": "ہم یہ پروفائل لوڈ نہیں کر سکے۔ براہ کرم دوبارہ کوشش کریں۔",
-    "tryAgain": "دوبارہ کوشش کریں"
+    "tryAgain": "دوبارہ کوشش کریں",
+    "editTitle": "پیک میں ترمیم کریں",
+    "editSubtitle": "اپنے پیک کی تفصیلات اپ ڈیٹ کریں۔ دوبارہ شائع کرنے پر یہ دوبارہ نظرثانی سے گزرے گا۔"
   },
   "status": {
     "packPending": "زیرِ جائزہ",

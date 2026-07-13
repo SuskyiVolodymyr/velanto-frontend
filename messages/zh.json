@@ -388,7 +388,14 @@
     "sortTop": "热门",
     "sortNew": "最新",
     "sortLabel": "评论排序",
-    "roundHeading": "第 {index} 轮"
+    "roundHeading": "第 {index} 轮",
+    "edit": "编辑",
+    "delete": "删除",
+    "deletePackTitle": "删除此题包？",
+    "deletePackConfirm": "这将永久删除该题包及其全部内容，且无法撤销。",
+    "deletePackCta": "删除题包",
+    "deleting": "删除中…",
+    "deletePackError": "无法删除题包，请重试。"
   },
   "share": {
     "trigger": "分享",
@@ -502,7 +509,10 @@
     "versusRoundCount": "轮次",
     "versusPerSide": "每方条目数",
     "versusPerSideFixed": "每方 1 项",
-    "roundName": "第 {index} 轮名称"
+    "roundName": "第 {index} 轮名称",
+    "saveChanges": "保存更改",
+    "saving": "保存中…",
+    "editOthersForbidden": "你只能编辑自己的题包。"
   },
   "profile": {
     "loginRequiredView": "你需要先登录才能查看个人资料。",
@@ -543,7 +553,9 @@
     "back": "返回",
     "errorTitle": "出错了",
     "errorBody": "无法加载该个人资料，请重试。",
-    "tryAgain": "重试"
+    "tryAgain": "重试",
+    "editTitle": "编辑题包",
+    "editSubtitle": "更新题包信息。重新发布后需再次经过审核。"
   },
   "status": {
     "packPending": "待审核",

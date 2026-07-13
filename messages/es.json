@@ -388,7 +388,14 @@
     "sortTop": "Populares",
     "sortNew": "Nuevos",
     "sortLabel": "Ordenar comentarios",
-    "roundHeading": "Ronda {index}"
+    "roundHeading": "Ronda {index}",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "deletePackTitle": "¿Eliminar este pack?",
+    "deletePackConfirm": "Esto elimina de forma permanente el pack y todo su contenido. No se puede deshacer.",
+    "deletePackCta": "Eliminar pack",
+    "deleting": "Eliminando…",
+    "deletePackError": "No se pudo eliminar el pack. Inténtalo de nuevo."
   },
   "share": {
     "trigger": "Compartir",
@@ -502,7 +509,10 @@
     "versusRoundCount": "Rondas",
     "versusPerSide": "Elementos por lado",
     "versusPerSideFixed": "1 por lado",
-    "roundName": "Nombre de la ronda {index}"
+    "roundName": "Nombre de la ronda {index}",
+    "saveChanges": "Guardar cambios",
+    "saving": "Guardando…",
+    "editOthersForbidden": "Solo puedes editar tus propios packs."
   },
   "profile": {
     "loginRequiredView": "Tienes que iniciar sesión para ver tu perfil.",
@@ -543,7 +553,9 @@
     "back": "Atrás",
     "errorTitle": "Algo salió mal",
     "errorBody": "No pudimos cargar este perfil. Inténtalo de nuevo.",
-    "tryAgain": "Inténtalo de nuevo"
+    "tryAgain": "Inténtalo de nuevo",
+    "editTitle": "Editar pack",
+    "editSubtitle": "Actualiza los detalles de tu pack. Al volver a publicarlo pasará de nuevo por moderación."
   },
   "status": {
     "packPending": "Pendiente",

@@ -24,6 +24,9 @@ vi.mock("@/src/features/pack/PackPlayButton", () => ({
 vi.mock("@/src/features/pack/PackBannerAuthor", () => ({
   PackBannerAuthor: () => <div>PackBannerAuthor</div>,
 }));
+vi.mock("@/src/features/pack/PackOwnerActions", () => ({
+  PackOwnerActions: () => <div>PackOwnerActions</div>,
+}));
 
 const mockedUsePackFallback = vi.mocked(usePackFallback);
 const mockedNotFound = vi.mocked(notFound);
