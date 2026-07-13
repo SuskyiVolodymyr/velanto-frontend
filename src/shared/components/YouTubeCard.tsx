@@ -44,8 +44,11 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
           videoId,
           playerVars: { autoplay: 1 },
           events: {
-            onReady: (event) => {
-              event.target.playVideo();
+            onReady: () => {
+              // Controls (play/pause) only become callable once the player is
+              // ready; the hover effect below drives playback off `playerReady`,
+              // so play-on-ready is handled there — and a hover that ended
+              // before ready never touches a not-yet-a-function control.
               setPlayerReady(true);
             },
           },
@@ -60,10 +63,10 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
   }, [hovered, videoId]);
 
   useEffect(() => {
-    if (!playerRef.current) return;
+    if (!playerRef.current || !playerReady) return;
     if (hovered) playerRef.current.playVideo();
     else playerRef.current.pauseVideo();
-  }, [hovered]);
+  }, [hovered, playerReady]);
 
   return (
     <div

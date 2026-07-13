@@ -145,6 +145,42 @@ describe("YouTubeCard", () => {
     expect(ancestorClick).not.toHaveBeenCalled();
   });
 
+  it("does not call player controls until the player is ready", async () => {
+    // The real IFrame API returns from `new YT.Player()` before playVideo /
+    // pauseVideo are callable — they only arrive once `onReady` fires. Driving
+    // them in that window crashes with "pauseVideo is not a function". Here the
+    // fake defers onReady, so hovering in and back out happens while not ready.
+    const player = makeFakePlayer();
+    let fireReady = () => {};
+    const api: YouTubeIframeApi = {
+      Player: vi.fn().mockImplementation(function (
+        _el: unknown,
+        options: {
+          events: { onReady: (e: { target: YouTubePlayer }) => void };
+        },
+      ) {
+        fireReady = () => options.events.onReady({ target: player });
+        return player;
+      }) as unknown as YouTubeIframeApi["Player"],
+    };
+    mockedLoad.mockResolvedValue(api);
+
+    render(<YouTubeCard videoId="abc123" />);
+    const card = screen.getByTestId("youtube-card");
+    fireEvent.mouseEnter(card);
+    await waitFor(() => expect(api.Player).toHaveBeenCalledTimes(1));
+
+    // Player constructed but not ready: a hover that ends now must not poke
+    // controls that don't exist yet.
+    fireEvent.mouseLeave(card);
+    expect(player.pauseVideo).not.toHaveBeenCalled();
+    expect(player.playVideo).not.toHaveBeenCalled();
+
+    // Once ready while unhovered, the effect syncs state and pauses.
+    fireReady();
+    await waitFor(() => expect(player.pauseVideo).toHaveBeenCalledTimes(1));
+  });
+
   it("destroys the old player and falls back to the new thumbnail when videoId changes", async () => {
     const fakePlayer = makeFakePlayer();
     const fakeApi = makeFakeApi(fakePlayer);
