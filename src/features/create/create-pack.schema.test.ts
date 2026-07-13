@@ -4,8 +4,7 @@ import {
   type CreatePackValues,
   TITLE_MAX,
   DESCRIPTION_MAX,
-  MAX_VERSUS_ROUNDS,
-  MAX_VERSUS_N,
+  NXN_SIDE_COUNT_MAX,
 } from "./create-pack.schema";
 import type { Item } from "@/src/shared/types/pack";
 
@@ -13,26 +12,7 @@ function textItem(title: string): Item {
   return { id: `i-${title}`, type: "text", title, value: title };
 }
 
-function makeGroup(
-  overrides: Partial<CreatePackValues["groups"][number]> = {},
-): CreatePackValues["groups"][number] {
-  return {
-    id: "g1",
-    name: "Round 1",
-    selectionMode: "manual",
-    items: [textItem("a")],
-    ...overrides,
-  };
-}
-
-function makeCategory(
-  overrides: Partial<CreatePackValues["categories"][number]> = {},
-): CreatePackValues["categories"][number] {
-  return { id: "c1", name: "Boys", items: [textItem("Naruto")], ...overrides };
-}
-
-// A base draft valid for the group formats. Categories default to the two empty
-// factory categories the form carries but never sends for group formats.
+// A base elimination draft: one pool of 2 items, one round drawing both.
 function makeValues(
   overrides: Partial<CreatePackValues> = {},
 ): CreatePackValues {
@@ -42,15 +22,45 @@ function makeValues(
     coverTone: "#2b2a3a",
     format: "save_one",
     tags: [],
-    groups: [makeGroup()],
-    categories: [
-      { id: "c1", name: "", items: [] },
-      { id: "c2", name: "", items: [] },
+    groups: [
+      { id: "g1", name: "Openings", items: [textItem("a"), textItem("b")] },
     ],
-    versusRounds: undefined,
-    versusN: undefined,
+    rounds: [
+      { id: "r1", slots: [{ groupId: "g1", mode: "random", count: 2 }] },
+    ],
     ...overrides,
   };
+}
+
+// A base versus draft: two distinct pools, one 2-slot round.
+function versusValues(
+  overrides: Partial<CreatePackValues> = {},
+): CreatePackValues {
+  return makeValues({
+    format: "nxn",
+    groups: [
+      {
+        id: "boys",
+        name: "Boys",
+        items: [textItem("Naruto"), textItem("Sasuke")],
+      },
+      {
+        id: "girls",
+        name: "Girls",
+        items: [textItem("Sakura"), textItem("Hinata")],
+      },
+    ],
+    rounds: [
+      {
+        id: "r1",
+        slots: [
+          { groupId: "boys", mode: "random", count: 1 },
+          { groupId: "girls", mode: "random", count: 1 },
+        ],
+      },
+    ],
+    ...overrides,
+  });
 }
 
 function messageAt(values: CreatePackValues, path: string): string | undefined {
@@ -69,7 +79,7 @@ describe("createPackSchema — common fields", () => {
     expect(isValid(makeValues())).toBe(true);
   });
 
-  it("rejects a blank title with the original message", () => {
+  it("rejects a blank title", () => {
     expect(messageAt(makeValues({ title: "   " }), "title")).toBe(
       "Give your pack a title.",
     );
@@ -81,7 +91,7 @@ describe("createPackSchema — common fields", () => {
     ).toBe(`Title must be ${TITLE_MAX} characters or fewer.`);
   });
 
-  it("rejects a blank description with the original message", () => {
+  it("rejects a blank description", () => {
     expect(messageAt(makeValues({ description: "  " }), "description")).toBe(
       "Add a short description.",
     );
@@ -115,17 +125,31 @@ describe("createPackSchema — common fields", () => {
   });
 });
 
-describe("createPackSchema — save_one / sacrifice_one / rank_blind (group formats)", () => {
+describe("createPackSchema — elimination (save_one / sacrifice_one / rank_blind)", () => {
   for (const format of ["save_one", "sacrifice_one", "rank_blind"] as const) {
     it(`accepts a valid ${format} pack`, () => {
       expect(isValid(makeValues({ format }))).toBe(true);
     });
   }
 
+  it("accepts a manual round drawing the whole pool", () => {
+    expect(
+      isValid(
+        makeValues({
+          rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "manual" }] }],
+        }),
+      ),
+    ).toBe(true);
+  });
+
   it("rejects a group with no name", () => {
     expect(
       messageAt(
-        makeValues({ groups: [makeGroup({ name: " " })] }),
+        makeValues({
+          groups: [
+            { id: "g1", name: " ", items: [textItem("a"), textItem("b")] },
+          ],
+        }),
         "groups.0.name",
       ),
     ).toBe("Every group needs a name.");
@@ -134,323 +158,188 @@ describe("createPackSchema — save_one / sacrifice_one / rank_blind (group form
   it("rejects a group with no items", () => {
     expect(
       messageAt(
-        makeValues({ groups: [makeGroup({ name: "R1", items: [] })] }),
+        makeValues({ groups: [{ id: "g1", name: "R1", items: [] }] }),
         "groups.0.items",
       ),
     ).toBe('Group "R1" needs at least one item.');
   });
 
-  it("rejects a random group with no sample size", () => {
+  it("rejects a round drawing fewer than 2 items", () => {
     expect(
       messageAt(
         makeValues({
-          groups: [
-            makeGroup({
-              name: "R1",
-              selectionMode: "random",
-              sampleSize: undefined,
-            }),
+          rounds: [
+            { id: "r1", slots: [{ groupId: "g1", mode: "random", count: 1 }] },
           ],
         }),
-        "groups.0.sampleSize",
+        "rounds.0.slots.0",
       ),
-    ).toBe('Group "R1" needs a sample size.');
+    ).toBe("Each round must show at least 2 items.");
   });
 
-  it("rejects a random group whose sample size exceeds its item count", () => {
+  it("rejects a round whose slot references an unknown group", () => {
     expect(
       messageAt(
         makeValues({
-          groups: [
-            makeGroup({
-              name: "R1",
-              selectionMode: "random",
-              sampleSize: 5,
-              items: [textItem("a")],
-            }),
+          rounds: [
+            {
+              id: "r1",
+              slots: [{ groupId: "ghost", mode: "random", count: 2 }],
+            },
           ],
         }),
-        "groups.0.sampleSize",
+        "rounds.0.slots.0.groupId",
       ),
-    ).toBe("Group \"R1\"'s sample size can't exceed its 1 item(s).");
+    ).toBe("Pick a group for this round.");
   });
 
-  it("accepts a random group whose sample size equals its item count (boundary)", () => {
+  it("rejects a later round left with 0 items to draw (dedup)", () => {
+    // g1 has 2 items; two rounds each draw 2 → round 2 has nothing left.
     expect(
       isValid(
         makeValues({
-          groups: [
-            makeGroup({
-              selectionMode: "random",
-              sampleSize: 2,
-              items: [textItem("a"), textItem("b")],
-            }),
+          rounds: [
+            { id: "r1", slots: [{ groupId: "g1", mode: "random", count: 2 }] },
+            { id: "r2", slots: [{ groupId: "g1", mode: "random", count: 2 }] },
           ],
         }),
       ),
-    ).toBe(true);
+    ).toBe(false);
   });
 
-  it("ignores categories/versus fields for group formats", () => {
-    // Empty default categories + unset versus must not fail a group format.
-    expect(isValid(makeValues({ format: "sacrifice_one" }))).toBe(true);
+  it("rejects an empty round list", () => {
+    expect(messageAt(makeValues({ rounds: [] }), "rounds")).toBe(
+      "Add at least one round.",
+    );
   });
 });
 
-describe("createPackSchema — nxn", () => {
-  function nxnValues(
-    overrides: Partial<CreatePackValues> = {},
-  ): CreatePackValues {
-    return makeValues({
-      format: "nxn",
-      groups: [],
-      categories: [
-        makeCategory({ id: "c1", name: "Boys" }),
-        makeCategory({ id: "c2", name: "Girls" }),
-      ],
-      versusRounds: 8,
-      versusN: 1,
-      ...overrides,
-    });
-  }
-
+describe("createPackSchema — versus (nxn / 1v1)", () => {
   it("accepts a valid nxn pack", () => {
-    expect(isValid(nxnValues())).toBe(true);
+    expect(isValid(versusValues())).toBe(true);
   });
 
-  it("rejects a category count other than 2", () => {
-    expect(
-      messageAt(
-        nxnValues({
-          categories: [makeCategory(), makeCategory(), makeCategory()],
-        }),
-        "categories",
-      ),
-    ).toBe("NxN packs need exactly 2 categories.");
+  it("accepts a valid 1v1 pack", () => {
+    expect(isValid(versusValues({ format: "1v1" }))).toBe(true);
   });
 
-  it("rejects a nameless category", () => {
+  it("rejects a versus round without exactly two slots", () => {
     expect(
       messageAt(
-        nxnValues({
-          categories: [
-            makeCategory({ name: " " }),
-            makeCategory({ id: "c2", name: "Girls" }),
+        versusValues({
+          rounds: [
+            {
+              id: "r1",
+              slots: [{ groupId: "boys", mode: "random", count: 1 }],
+            },
           ],
         }),
-        "categories.0.name",
+        "rounds.0.slots",
       ),
-    ).toBe("Every category needs a name.");
+    ).toBe("Versus rounds need exactly two groups.");
   });
 
-  it("rejects a category with no items", () => {
+  it("rejects a versus round using the same group on both sides", () => {
     expect(
       messageAt(
-        nxnValues({
-          categories: [
-            makeCategory({ name: "Boys", items: [] }),
-            makeCategory({ id: "c2", name: "Girls" }),
+        versusValues({
+          rounds: [
+            {
+              id: "r1",
+              slots: [
+                { groupId: "boys", mode: "random", count: 1 },
+                { groupId: "boys", mode: "random", count: 1 },
+              ],
+            },
           ],
         }),
-        "categories.0.items",
+        "rounds.0.slots",
       ),
-    ).toBe('Category "Boys" needs at least one item.');
+    ).toBe("Pick two different groups.");
   });
 
-  it("requires versusRounds", () => {
-    expect(
-      messageAt(nxnValues({ versusRounds: undefined }), "versusRounds"),
-    ).toBe("Set how many rounds to play.");
-  });
-
-  it("rejects versusRounds above the max (boundary)", () => {
+  it("rejects an nxn per-side count above the max", () => {
     expect(
       messageAt(
-        nxnValues({ versusRounds: MAX_VERSUS_ROUNDS + 1 }),
-        "versusRounds",
-      ),
-    ).toBe(`Rounds can't exceed ${MAX_VERSUS_ROUNDS}.`);
-  });
-
-  it("accepts versusRounds at the max (boundary)", () => {
-    expect(isValid(nxnValues({ versusRounds: MAX_VERSUS_ROUNDS }))).toBe(true);
-  });
-
-  it("requires versusN", () => {
-    expect(messageAt(nxnValues({ versusN: undefined }), "versusN")).toBe(
-      "Set how many items to show per side.",
-    );
-  });
-
-  it("rejects versusN above the max (boundary)", () => {
-    expect(
-      messageAt(
-        nxnValues({
-          versusN: MAX_VERSUS_N + 1,
-          categories: [
-            makeCategory({
-              id: "c1",
+        versusValues({
+          groups: [
+            {
+              id: "boys",
               name: "Boys",
-              items: Array.from({ length: 10 }, (_, i) => textItem(`b${i}`)),
-            }),
-            makeCategory({
-              id: "c2",
+              items: Array.from({ length: 8 }, (_, i) => textItem(`b${i}`)),
+            },
+            {
+              id: "girls",
               name: "Girls",
-              items: Array.from({ length: 10 }, (_, i) => textItem(`g${i}`)),
-            }),
+              items: Array.from({ length: 8 }, (_, i) => textItem(`g${i}`)),
+            },
+          ],
+          rounds: [
+            {
+              id: "r1",
+              slots: [
+                {
+                  groupId: "boys",
+                  mode: "random",
+                  count: NXN_SIDE_COUNT_MAX + 1,
+                },
+                {
+                  groupId: "girls",
+                  mode: "random",
+                  count: NXN_SIDE_COUNT_MAX + 1,
+                },
+              ],
+            },
           ],
         }),
-        "versusN",
+        "rounds.0.slots.0.count",
       ),
-    ).toBe(`Items per round can't exceed ${MAX_VERSUS_N}.`);
+    ).toBe(`Show 1–${NXN_SIDE_COUNT_MAX} items per side.`);
   });
 
-  it("rejects a category with fewer items than versusN", () => {
+  it("rejects a 1v1 per-side count other than 1", () => {
     expect(
       messageAt(
-        nxnValues({
-          versusN: 5,
-          categories: [
-            makeCategory({ id: "c1", name: "Boys" }),
-            makeCategory({ id: "c2", name: "Girls" }),
+        versusValues({
+          format: "1v1",
+          rounds: [
+            {
+              id: "r1",
+              slots: [
+                { groupId: "boys", mode: "random", count: 2 },
+                { groupId: "girls", mode: "random", count: 2 },
+              ],
+            },
           ],
         }),
-        "categories.0.items",
+        "rounds.0.slots.0.count",
       ),
-    ).toBe('Category "Boys" needs at least 5 item(s).');
+    ).toBe("1v1 shows exactly one item per side.");
   });
 
-  it("accepts categories with exactly versusN items (boundary)", () => {
-    expect(
-      isValid(
-        nxnValues({
-          versusN: 2,
-          categories: [
-            makeCategory({
-              id: "c1",
-              name: "Boys",
-              items: [textItem("a"), textItem("b")],
-            }),
-            makeCategory({
-              id: "c2",
-              name: "Girls",
-              items: [textItem("c"), textItem("d")],
-            }),
-          ],
-        }),
-      ),
-    ).toBe(true);
-  });
-});
-
-describe("createPackSchema — 1v1 (head to head)", () => {
-  function h2hValues(
-    overrides: Partial<CreatePackValues> = {},
-  ): CreatePackValues {
-    return makeValues({
-      format: "1v1",
-      groups: [
-        makeGroup({
-          name: "Round 1",
-          items: [textItem("Goku"), textItem("Vegeta")],
-        }),
-      ],
-      ...overrides,
-    });
-  }
-
-  it("accepts a valid 1v1 pack with exactly 2 manual items (boundary)", () => {
-    expect(isValid(h2hValues())).toBe(true);
-  });
-
-  it("rejects a 1v1 group with only 1 item", () => {
+  it("rejects rounds that don't all use the same two groups", () => {
     expect(
       messageAt(
-        h2hValues({
-          groups: [makeGroup({ name: "Round 1", items: [textItem("Goku")] })],
-        }),
-        "groups.0",
-      ),
-    ).toBe('Group "Round 1" needs exactly 2 items for a 1v1 matchup.');
-  });
-
-  it("rejects a 1v1 group with 3 items", () => {
-    expect(
-      messageAt(
-        h2hValues({
-          groups: [
-            makeGroup({
-              name: "Round 1",
-              items: [textItem("a"), textItem("b"), textItem("c")],
-            }),
+        versusValues({
+          rounds: [
+            {
+              id: "r1",
+              slots: [
+                { groupId: "boys", mode: "random", count: 1 },
+                { groupId: "girls", mode: "random", count: 1 },
+              ],
+            },
+            {
+              id: "r2",
+              slots: [
+                { groupId: "girls", mode: "random", count: 1 },
+                { groupId: "boys", mode: "random", count: 1 },
+              ],
+            },
           ],
         }),
-        "groups.0",
+        "rounds.1.slots",
       ),
-    ).toBe('Group "Round 1" needs exactly 2 items for a 1v1 matchup.');
-  });
-
-  it("rejects a random-mode 1v1 group whose sampleSize is not 2", () => {
-    expect(
-      messageAt(
-        h2hValues({
-          groups: [
-            makeGroup({
-              name: "Round 1",
-              selectionMode: "random",
-              sampleSize: 3,
-              items: [textItem("a"), textItem("b"), textItem("c")],
-            }),
-          ],
-        }),
-        "groups.0",
-      ),
-    ).toBe(
-      'Group "Round 1" needs a sample size of exactly 2 for a 1v1 matchup.',
-    );
-  });
-
-  it("accepts a random-mode 1v1 group with sampleSize 2 and >=2 items", () => {
-    expect(
-      isValid(
-        h2hValues({
-          groups: [
-            makeGroup({
-              name: "Round 1",
-              selectionMode: "random",
-              sampleSize: 2,
-              items: [textItem("a"), textItem("b"), textItem("c")],
-            }),
-          ],
-        }),
-      ),
-    ).toBe(true);
-  });
-
-  it("rejects a random-mode 1v1 group whose sampleSize is 2 but has only 1 item (backend parity)", () => {
-    // roundSize === 2 passes the head-to-head check, but the backend groupSchema
-    // still rejects sampleSize > items.length — the old validate() let this
-    // through.
-    expect(
-      messageAt(
-        h2hValues({
-          groups: [
-            makeGroup({
-              name: "Round 1",
-              selectionMode: "random",
-              sampleSize: 2,
-              items: [textItem("a")],
-            }),
-          ],
-        }),
-        "groups.0.sampleSize",
-      ),
-    ).toBe("Group \"Round 1\"'s sample size can't exceed its 1 item(s).");
-  });
-
-  it("rejects an empty group list", () => {
-    expect(messageAt(h2hValues({ groups: [] }), "groups")).toBe(
-      "Add at least one group.",
-    );
+    ).toBe("Every round must use the same two groups.");
   });
 });
