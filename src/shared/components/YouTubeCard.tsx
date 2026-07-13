@@ -29,52 +29,51 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
   // Flips true once the player reports buffering/playing — proof that commanded
   // playback actually took, so the watchdog below knows not to fall back.
   const playbackStartedRef = useRef(false);
+  // The card is a thumbnail facade until the viewer engages with it (hover or
+  // the play button). Only THEN do we build a real YouTube player. This is the
+  // whole point: a round with N videos loads N cheap thumbnails, not N embedded
+  // players, so it never trips YouTube's "too many embeds → try again later"
+  // throttle on mount — the player is built on demand, for the one you watch.
+  const [activated, setActivated] = useState(false);
   const [hovered, setHovered] = useState(false);
   const [playerReady, setPlayerReady] = useState(false);
   // The video can't be played embedded (private/deleted/embed-disabled/region-
-  // or age-restricted). We fall back to the thumbnail + an "open on YouTube"
-  // link instead of leaving YouTube's red error box in the card.
+  // or age-restricted, or the server throttle). We fall back to the thumbnail +
+  // an "open on YouTube" link instead of leaving YouTube's error box in the card.
   const [failed, setFailed] = useState(false);
 
-  // Tears down any player built for a previous videoId so a re-render with a
-  // new video (rather than a fresh mount) doesn't leave the old one playing
-  // behind a stale "ready" state, and falls back to the new video's own
-  // thumbnail instead of staying hidden behind the destroyed player.
-  useEffect(() => {
-    return () => {
-      playerRef.current?.destroy();
-      playerRef.current = null;
-      playbackStartedRef.current = false;
-      setPlayerReady(false);
-      setFailed(false);
-    };
-  }, [videoId]);
+  // When the video changes (e.g. rank_blind advancing to the next item) reset
+  // back to the un-activated thumbnail, synchronously during render (React's
+  // "adjusting state on a prop change" pattern), so the new video also loads
+  // lazily instead of eagerly building a player the viewer may never watch.
+  const [renderedVideoId, setRenderedVideoId] = useState(videoId);
+  if (videoId !== renderedVideoId) {
+    setRenderedVideoId(videoId);
+    setActivated(false);
+    setHovered(false);
+    setPlayerReady(false);
+    setFailed(false);
+  }
 
-  // Preloads the API and constructs the player as soon as the card mounts (the
-  // whole round's videos load up front, so hover-to-play is instant) — but with
-  // autoplay:0, so nothing plays until the hover effect below says so. A failed
-  // load (e.g. blocked by an ad-blocker) is swallowed: the card just stays on
-  // the thumbnail.
+  // Build the player only once activated (autoplay:0 — the hover effect below is
+  // the only thing that starts playback); tear it down on deactivation/unmount.
+  // A failed API load (e.g. blocked by an ad-blocker) is swallowed: the card
+  // just stays on the thumbnail.
   useEffect(() => {
-    if (playerRef.current) return;
+    if (!activated) return;
+    // Fresh player for this video — it hasn't started playing yet.
+    playbackStartedRef.current = false;
     let cancelled = false;
     loadYouTubeIframeApi()
       .then((YT) => {
         if (cancelled || !mountRef.current) return;
         playerRef.current = new YT.Player(mountRef.current, {
           videoId,
-          // autoplay:0 — the hover effect below is the ONLY thing that starts
-          // playback, so a video never plays on its own, and we don't trip
-          // YouTube's autoplay throttling ("try again later").
           playerVars: { autoplay: 0 },
           events: {
-            onReady: () => {
-              // Controls (play/pause) only become callable once the player is
-              // ready; the hover effect below drives playback off `playerReady`,
-              // so a hover that ended before ready never touches a
-              // not-yet-a-function control.
-              setPlayerReady(true);
-            },
+            // Controls (play/pause) only become callable once the player is
+            // ready; the hover effect below drives playback off `playerReady`.
+            onReady: () => setPlayerReady(true),
             onError: () => setFailed(true),
             onStateChange: (event) => {
               // Reaching buffering/playing means playback actually took — the
@@ -94,8 +93,10 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
       });
     return () => {
       cancelled = true;
+      playerRef.current?.destroy();
+      playerRef.current = null;
     };
-  }, [videoId]);
+  }, [videoId, activated]);
 
   useEffect(() => {
     if (!playerRef.current || !playerReady || failed) return;
@@ -113,6 +114,12 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
     return () => clearTimeout(watchdog);
   }, [hovered, playerReady, failed]);
 
+  // Engaging the card builds the player (if not already) and plays it.
+  function activate() {
+    setActivated(true);
+    setHovered(true);
+  }
+
   return (
     <div
       data-testid="youtube-card"
@@ -120,7 +127,7 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
         "relative aspect-video overflow-hidden bg-black",
         className,
       )}
-      onMouseEnter={() => setHovered(true)}
+      onMouseEnter={activate}
       onMouseLeave={() => setHovered(false)}
     >
       {!playerReady && (
@@ -157,7 +164,7 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
             // pickable side card) — starting the preview must never also
             // trigger that ancestor's own click handler.
             event.stopPropagation();
-            setHovered(true);
+            activate();
           }}
           aria-label="Play video preview"
           className="absolute inset-0 flex items-center justify-center"
