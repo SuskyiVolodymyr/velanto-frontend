@@ -1,35 +1,33 @@
 import { z } from "zod";
-import { PACK_FORMATS } from "@/src/shared/types/pack";
+import { PACK_FORMATS, SLOT_MODES } from "@/src/shared/types/pack";
 
 /**
  * Field-limit constants and structural leaf/collection schemas for the
  * create-pack form. Split out of `create-pack.schema.ts` so the assembled
- * schema stays a thin composition; behavior is unchanged.
+ * schema stays a thin composition.
  *
- * Numeric/length constants are the single source of truth for the form too
- * (imported by CreatePackForm via the schema barrel) and equal the backend's:
+ * Numeric/length constants are the single source of truth for the form too and
+ * equal the backend's:
  *   - title/description/tags caps: create-pack.dto.ts (100 / 500 / 10)
- *   - CATEGORY_COUNT / MIN|MAX_VERSUS_ROUNDS / MIN|MAX_VERSUS_N: types/nxn.ts
- *   - HEAD_TO_HEAD_ROUND_SIZE: types/head-to-head.ts
+ *   - ITEM_TITLE_MAX: types/item.ts
+ *   - ELIMINATION_MIN_DRAW / NXN_SIDE_COUNT_MIN|MAX: create-pack.dto.ts
  */
 export const TITLE_MAX = 100;
 export const DESCRIPTION_MAX = 500;
 export const MAX_TAGS = 10;
-// Per-item title cap — equals the backend's ITEM_TITLE_MAX (types/item.ts).
 export const ITEM_TITLE_MAX = 200;
-export const CATEGORY_COUNT = 2;
-export const MIN_VERSUS_ROUNDS = 1;
-export const MAX_VERSUS_ROUNDS = 30;
-export const MIN_VERSUS_N = 1;
-export const MAX_VERSUS_N = 6;
-export const HEAD_TO_HEAD_ROUND_SIZE = 2;
+// Elimination rounds must draw at least this many items to be a real choice.
+export const ELIMINATION_MIN_DRAW = 2;
+// nxn draws 1–6 per side; 1v1 is fixed at exactly 1.
+export const NXN_SIDE_COUNT_MIN = 1;
+export const NXN_SIDE_COUNT_MAX = 6;
 
 const ITEM_TYPES = ["text", "youtube"] as const;
 
-// Leaf/collection schemas are STRUCTURAL only (no min/business rules): which
-// collection is validated depends on `format`, so all business validation lives
-// in the per-format superRefine (see create-pack.refinements.ts). This keeps the
-// inactive collection's default-but-empty entries from failing.
+// Leaf/collection schemas are STRUCTURAL only (no min/business rules): all
+// business validation lives in the per-format superRefine (see
+// create-pack.refinements.ts), so the inactive collection's empty defaults
+// don't fail before a format is chosen.
 export const itemValueSchema = z.object({
   id: z.string(),
   type: z.enum(ITEM_TYPES),
@@ -37,24 +35,27 @@ export const itemValueSchema = z.object({
   value: z.string(),
 });
 
+// A group is a reusable POOL — no selectionMode/sampleSize (drawing is a
+// per-round slot concern now).
 export const groupValueSchema = z.object({
   id: z.string(),
   name: z.string(),
-  selectionMode: z.enum(["random", "manual"]),
-  sampleSize: z.number().optional(),
   items: z.array(itemValueSchema),
 });
 
-export const categoryValueSchema = z.object({
+export const slotValueSchema = z.object({
+  groupId: z.string(),
+  mode: z.enum(SLOT_MODES),
+  count: z.number().optional(),
+});
+
+export const roundValueSchema = z.object({
   id: z.string(),
-  name: z.string(),
-  items: z.array(itemValueSchema),
+  slots: z.array(slotValueSchema),
 });
 
 export type PackDraft = {
   format: (typeof PACK_FORMATS)[number];
   groups: z.infer<typeof groupValueSchema>[];
-  categories: z.infer<typeof categoryValueSchema>[];
-  versusRounds?: number;
-  versusN?: number;
+  rounds: z.infer<typeof roundValueSchema>[];
 };

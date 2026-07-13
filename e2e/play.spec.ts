@@ -35,9 +35,21 @@ const BASE_PACK = {
   myVote: null,
 };
 
-// Manual selection mode keeps candidates in authored order, so the play-through
-// is deterministic. For nxn, versusN equals the category size, so every item is
-// always shown (order shuffles, count doesn't) — the side we pick is stable.
+// Manual slots keep candidates in authored order, so the play-through is
+// deterministic. For nxn, both sides are manual pools shown whole every round
+// (manual doesn't consume the used-set), so the side we pick is stable.
+const groupsRound = (id: string, groupId: string) => ({
+  id,
+  slots: [{ groupId, mode: "manual" }],
+});
+const versusRound = (id: string) => ({
+  id,
+  slots: [
+    { groupId: "ca", mode: "manual" },
+    { groupId: "cb", mode: "manual" },
+  ],
+});
+
 const PACKS: Record<string, unknown> = {
   "pack-save": {
     ...BASE_PACK,
@@ -49,16 +61,11 @@ const PACKS: Record<string, unknown> = {
       {
         id: "g1",
         name: "2016",
-        selectionMode: "manual",
         items: [textItem("1", "Guren no Yumiya"), textItem("2", "Redo")],
       },
-      {
-        id: "g2",
-        name: "2020",
-        selectionMode: "manual",
-        items: [textItem("3", "Silhouette")],
-      },
+      { id: "g2", name: "2020", items: [textItem("3", "Silhouette")] },
     ],
+    rounds: [groupsRound("r1", "g1"), groupsRound("r2", "g2")],
   },
   "pack-sacrifice": {
     ...BASE_PACK,
@@ -70,16 +77,11 @@ const PACKS: Record<string, unknown> = {
       {
         id: "g1",
         name: "2016",
-        selectionMode: "manual",
         items: [textItem("1", "Guren no Yumiya"), textItem("2", "Redo")],
       },
-      {
-        id: "g2",
-        name: "2020",
-        selectionMode: "manual",
-        items: [textItem("3", "Silhouette")],
-      },
+      { id: "g2", name: "2020", items: [textItem("3", "Silhouette")] },
     ],
+    rounds: [groupsRound("r1", "g1"), groupsRound("r2", "g2")],
   },
   "pack-nxn": {
     ...BASE_PACK,
@@ -87,7 +89,7 @@ const PACKS: Record<string, unknown> = {
     title: "Boys vs Girls",
     description: "Pick a side each round.",
     format: "nxn",
-    categories: [
+    groups: [
       {
         id: "ca",
         name: "Boys",
@@ -99,8 +101,7 @@ const PACKS: Record<string, unknown> = {
         items: [textItem("3", "Sakura"), textItem("4", "Hinata")],
       },
     ],
-    versusRounds: 2,
-    versusN: 2,
+    rounds: [versusRound("r1"), versusRound("r2")],
   },
 };
 
@@ -197,8 +198,8 @@ test.describe("Play a pack", () => {
         .poll(() => recordBody)
         .toEqual({
           picks: [
-            { groupId: "g1", itemId: "1" },
-            { groupId: "g2", itemId: "3" },
+            { roundIndex: 0, groupId: "g1", itemId: "1" },
+            { roundIndex: 1, groupId: "g2", itemId: "3" },
           ],
         });
     });
@@ -249,8 +250,8 @@ test.describe("Play a pack", () => {
       .poll(() => recordBody)
       .toEqual({
         picks: [
-          { groupId: "0", itemId: "ca" },
-          { groupId: "1", itemId: "cb" },
+          { roundIndex: 0, groupId: "ca" },
+          { roundIndex: 1, groupId: "cb" },
         ],
       });
   });

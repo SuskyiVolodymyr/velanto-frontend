@@ -14,10 +14,9 @@ import { GroupEditor } from "@/src/features/create/GroupEditor";
 import { newGroup } from "@/src/features/create/create-pack.defaults";
 import { type CreatePackValues } from "@/src/features/create/create-pack.schema";
 
-// A group's validation error can attach to its name, its round-size (an
-// index-level issue used by the 1v1 format), its item list, or its sample size.
-// Surface the first in that priority order — matching the old validate()'s
-// short-circuit ordering.
+// A pool's validation error can attach to its name, an index-level issue, or its
+// item list. Surface the first in that priority order — matching the
+// refinements' short-circuit ordering.
 function firstGroupError(
   errors: FieldErrors<CreatePackValues>,
   index: number,
@@ -25,14 +24,13 @@ function firstGroupError(
   return (
     getFieldError(errors, `groups.${index}.name`) ??
     getFieldError(errors, `groups.${index}`) ??
-    getFieldError(errors, `groups.${index}.items`) ??
-    getFieldError(errors, `groups.${index}.sampleSize`)
+    getFieldError(errors, `groups.${index}.items`)
   );
 }
 
 /**
- * The per-round Groups editor used by every non-nxn format (save_one /
- * sacrifice_one / rank_blind / 1v1).
+ * The Pools editor: the reusable item pools that rounds draw from. Always
+ * rendered (every format composes rounds over these pools).
  *
  * The groups field array owns add/remove; rendering iterates the `useWatch`ed
  * value array (below) keyed by each entry's stable domain `id` — NOT `fields` —
@@ -41,7 +39,7 @@ function firstGroupError(
  * edits go back through `setValue` (which does NOT remount the child the way
  * useFieldArray's `update` does — that would drop focus mid-keystroke).
  */
-export function GroupsSection() {
+export function PoolsSection() {
   const t = useTranslations("create");
   const { control, setValue, formState } = useFormContext<CreatePackValues>();
   const { errors } = formState;
@@ -56,7 +54,7 @@ export function GroupsSection() {
   return (
     <section className="flex flex-col gap-3">
       <Text as="h2" variant="title" className="text-lg">
-        {t("groupsHeading")}
+        {t("poolsHeading")}
       </Text>
       {groups.map((group, index) => (
         <GroupEditor
@@ -84,7 +82,7 @@ export function GroupsSection() {
         variant="secondary"
         onClick={() => groupsArray.append(newGroup())}
       >
-        {t("addGroup")}
+        {t("addPool")}
       </Button>
     </section>
   );

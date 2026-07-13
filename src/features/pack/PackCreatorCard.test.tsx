@@ -50,6 +50,7 @@ function makePack(overrides: Partial<Pack> = {}): Pack {
     format: "save_one",
     tags: [],
     groups: [],
+    rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "manual" }] }],
     authorId: "author-1",
     createdAt: "2026-02-01T00:00:00.000Z",
     totalPlays: 0,

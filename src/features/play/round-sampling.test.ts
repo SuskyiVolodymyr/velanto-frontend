@@ -1,134 +1,116 @@
 import { describe, expect, it } from "vitest";
-import {
-  resolveRoundCandidates,
-  resolveVersusRoundCandidates,
-} from "./round-sampling";
-import type { Category, Group } from "@/src/shared/types/pack";
+import { resolveRoundSelections } from "./round-sampling";
+import type { Group, Round } from "@/src/shared/types/pack";
 
 function textItem(id: string, title: string) {
   return { id, type: "text" as const, title, value: title };
 }
 
-describe("resolveRoundCandidates", () => {
-  it("returns all items in authored order for manual selection", () => {
-    const group: Group = {
-      id: "g1",
-      name: "Round 1",
-      selectionMode: "manual",
-      items: [textItem("1", "A"), textItem("2", "B"), textItem("3", "C")],
-    };
+function round(id: string, slots: Round["slots"]): Round {
+  return { id, slots };
+}
 
-    expect(resolveRoundCandidates(group)).toEqual(group.items);
+describe("resolveRoundSelections", () => {
+  it("returns the whole pool in authored order for a manual slot", () => {
+    const groups: Group[] = [
+      {
+        id: "g1",
+        name: "Pool",
+        items: [textItem("1", "A"), textItem("2", "B"), textItem("3", "C")],
+      },
+    ];
+    const rounds = [round("r1", [{ groupId: "g1", mode: "manual" }])];
+
+    const result = resolveRoundSelections(groups, rounds);
+
+    expect(result[0].slots[0].items).toEqual(groups[0].items);
   });
 
-  it("ignores sampleSize for manual selection even if set", () => {
-    const group: Group = {
-      id: "g1",
-      name: "Round 1",
-      selectionMode: "manual",
-      sampleSize: 1,
-      items: [textItem("1", "A"), textItem("2", "B")],
-    };
-
-    expect(resolveRoundCandidates(group)).toHaveLength(2);
-  });
-
-  it("samples exactly sampleSize unique items from the group for random selection", () => {
+  it("draws exactly `count` unique items from the pool for a random slot", () => {
     const items = [
       textItem("1", "A"),
       textItem("2", "B"),
       textItem("3", "C"),
       textItem("4", "D"),
     ];
-    const group: Group = {
-      id: "g1",
-      name: "Round 1",
-      selectionMode: "random",
-      sampleSize: 2,
-      items,
-    };
+    const groups: Group[] = [{ id: "g1", name: "Pool", items }];
+    const rounds = [round("r1", [{ groupId: "g1", mode: "random", count: 2 }])];
 
-    const result = resolveRoundCandidates(group);
+    const drawn = resolveRoundSelections(groups, rounds)[0].slots[0].items;
 
-    expect(result).toHaveLength(2);
-    const ids = result.map((item) => item.id);
-    expect(new Set(ids).size).toBe(2);
-    for (const item of result) {
-      expect(items).toContainEqual(item);
-    }
+    expect(drawn).toHaveLength(2);
+    expect(new Set(drawn.map((i) => i.id)).size).toBe(2);
+    for (const item of drawn) expect(items).toContainEqual(item);
   });
 
-  it("falls back to all items when sampleSize is missing for random selection", () => {
-    const items = [textItem("1", "A"), textItem("2", "B")];
-    const group: Group = {
-      id: "g1",
-      name: "Round 1",
-      selectionMode: "random",
-      items,
-    };
-
-    expect(resolveRoundCandidates(group)).toHaveLength(2);
-  });
-
-  it("re-samples randomly rather than always returning the same order", () => {
-    const items = Array.from({ length: 20 }, (_, i) =>
-      textItem(String(i), `Item ${i}`),
-    );
-    const group: Group = {
-      id: "g1",
-      name: "Round 1",
-      selectionMode: "random",
-      sampleSize: 20,
-      items,
-    };
-
-    const first = resolveRoundCandidates(group).map((item) => item.id);
-    const second = resolveRoundCandidates(group).map((item) => item.id);
-
-    expect(first).not.toEqual(second);
-  });
-});
-
-describe("resolveVersusRoundCandidates", () => {
-  it("samples exactly versusN unique items from the category", () => {
+  it("never repeats items across random slots that share a group (dedup)", () => {
     const items = [
       textItem("1", "A"),
       textItem("2", "B"),
       textItem("3", "C"),
       textItem("4", "D"),
     ];
-    const category: Category = { id: "ca", name: "Boys", items };
+    const groups: Group[] = [{ id: "g1", name: "Pool", items }];
+    const rounds = [
+      round("r1", [{ groupId: "g1", mode: "random", count: 2 }]),
+      round("r2", [{ groupId: "g1", mode: "random", count: 2 }]),
+    ];
 
-    const result = resolveVersusRoundCandidates(category, 2);
+    const result = resolveRoundSelections(groups, rounds);
+    const first = result[0].slots[0].items.map((i) => i.id);
+    const second = result[1].slots[0].items.map((i) => i.id);
 
-    expect(result).toHaveLength(2);
-    const ids = result.map((item) => item.id);
-    expect(new Set(ids).size).toBe(2);
-    for (const item of result) {
-      expect(items).toContainEqual(item);
-    }
+    expect(first).toHaveLength(2);
+    expect(second).toHaveLength(2);
+    // Every item appears once across both rounds — no overlap.
+    expect(new Set([...first, ...second]).size).toBe(4);
   });
 
-  it("returns all items when versusN equals the category's item count", () => {
+  it("caps a random draw at the pool's remaining items", () => {
+    const items = [textItem("1", "A"), textItem("2", "B"), textItem("3", "C")];
+    const groups: Group[] = [{ id: "g1", name: "Pool", items }];
+    const rounds = [
+      round("r1", [{ groupId: "g1", mode: "random", count: 2 }]),
+      round("r2", [{ groupId: "g1", mode: "random", count: 2 }]),
+    ];
+
+    const result = resolveRoundSelections(groups, rounds);
+
+    // Round 1 consumes 2 of 3; round 2 can only draw the remaining 1.
+    expect(result[0].slots[0].items).toHaveLength(2);
+    expect(result[1].slots[0].items).toHaveLength(1);
+  });
+
+  it("does not consume the used-set for manual slots (whole pool every round)", () => {
     const items = [textItem("1", "A"), textItem("2", "B")];
-    const category: Category = { id: "ca", name: "Boys", items };
+    const groups: Group[] = [{ id: "g1", name: "Pool", items }];
+    const rounds = [
+      round("r1", [{ groupId: "g1", mode: "manual" }]),
+      round("r2", [{ groupId: "g1", mode: "manual" }]),
+    ];
 
-    expect(resolveVersusRoundCandidates(category, 2)).toHaveLength(2);
+    const result = resolveRoundSelections(groups, rounds);
+
+    expect(result[0].slots[0].items).toEqual(items);
+    expect(result[1].slots[0].items).toEqual(items);
   });
 
-  it("re-samples randomly across calls", () => {
-    const items = Array.from({ length: 20 }, (_, i) =>
-      textItem(String(i), `Item ${i}`),
-    );
-    const category: Category = { id: "ca", name: "Boys", items };
+  it("draws each side of a two-slot (versus) round independently", () => {
+    const groups: Group[] = [
+      { id: "ca", name: "Boys", items: [textItem("1", "Naruto")] },
+      { id: "cb", name: "Girls", items: [textItem("2", "Sakura")] },
+    ];
+    const rounds = [
+      round("r1", [
+        { groupId: "ca", mode: "manual" },
+        { groupId: "cb", mode: "manual" },
+      ]),
+    ];
 
-    const first = resolveVersusRoundCandidates(category, 20).map(
-      (item) => item.id,
-    );
-    const second = resolveVersusRoundCandidates(category, 20).map(
-      (item) => item.id,
-    );
+    const result = resolveRoundSelections(groups, rounds);
 
-    expect(first).not.toEqual(second);
+    expect(result[0].slots).toHaveLength(2);
+    expect(result[0].slots[0].groupId).toBe("ca");
+    expect(result[0].slots[1].groupId).toBe("cb");
   });
 });

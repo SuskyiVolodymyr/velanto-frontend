@@ -59,15 +59,17 @@ const SAVE_ONE_PACK: Pack = {
     {
       id: "g1",
       name: "2016",
-      selectionMode: "manual",
       items: [textItem("1", "Guren no Yumiya"), textItem("2", "Redo")],
     },
     {
       id: "g2",
       name: "2020",
-      selectionMode: "manual",
       items: [textItem("3", "Silhouette")],
     },
+  ],
+  rounds: [
+    { id: "r1", slots: [{ groupId: "g1", mode: "manual" }] },
+    { id: "r2", slots: [{ groupId: "g2", mode: "manual" }] },
   ],
   authorId: "u1",
   createdAt: "2026-01-01T00:00:00.000Z",
@@ -122,7 +124,7 @@ describe("PlayScreen", () => {
     coverTone: "#2b2a3a",
     format: "nxn",
     tags: ["Anime"],
-    categories: [
+    groups: [
       {
         id: "ca",
         name: "Boys",
@@ -134,8 +136,22 @@ describe("PlayScreen", () => {
         items: [textItem("3", "Sakura"), textItem("4", "Hinata")],
       },
     ],
-    versusRounds: 2,
-    versusN: 2,
+    rounds: [
+      {
+        id: "r1",
+        slots: [
+          { groupId: "ca", mode: "manual" },
+          { groupId: "cb", mode: "manual" },
+        ],
+      },
+      {
+        id: "r2",
+        slots: [
+          { groupId: "ca", mode: "manual" },
+          { groupId: "cb", mode: "manual" },
+        ],
+      },
+    ],
     authorId: "u1",
     createdAt: "2026-01-01T00:00:00.000Z",
     totalPlays: 0,
@@ -170,7 +186,7 @@ describe("PlayScreen", () => {
     expect(screen.getByRole("button", { name: "Next round →" })).toBeEnabled();
   });
 
-  it("advances through nxn rounds and records picks with round index as groupId, category id as itemId", async () => {
+  it("advances through nxn rounds and records the chosen side's group id per round, with no itemId", async () => {
     const user = userEvent.setup();
     renderScreen(NXN_PACK);
     await screen.findByRole("button", { name: "Pick Boys" });
@@ -188,8 +204,8 @@ describe("PlayScreen", () => {
     ).toBeInTheDocument();
     expect(playsClient.record).toHaveBeenCalledWith("pack-nxn", {
       picks: [
-        { groupId: "0", itemId: "ca" },
-        { groupId: "1", itemId: "cb" },
+        { roundIndex: 0, groupId: "ca" },
+        { roundIndex: 1, groupId: "cb" },
       ],
     });
   });
@@ -259,16 +275,16 @@ describe("PlayScreen", () => {
     await screen.findByText("All rounds done");
     expect(playsClient.record).toHaveBeenCalledWith("pack-a", {
       picks: [
-        { groupId: "g1", itemId: "2" },
-        { groupId: "g2", itemId: "3" },
+        { roundIndex: 0, groupId: "g1", itemId: "2" },
+        { roundIndex: 1, groupId: "g2", itemId: "3" },
       ],
     });
     await waitFor(() =>
       expect(
         JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
       ).toEqual([
-        { groupId: "g1", itemId: "2" },
-        { groupId: "g2", itemId: "3" },
+        { roundIndex: 0, groupId: "g1", itemId: "2" },
+        { roundIndex: 1, groupId: "g2", itemId: "3" },
       ]),
     );
     expect(
@@ -284,7 +300,6 @@ describe("PlayScreen", () => {
         {
           id: "g1",
           name: "2016",
-          selectionMode: "manual",
           items: [
             youtubeItem(
               "v1",
@@ -295,6 +310,7 @@ describe("PlayScreen", () => {
           ],
         },
       ],
+      rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "manual" }] }],
     };
     renderScreen(packWithVideo);
     await screen.findByText("Guren no Yumiya");
@@ -377,8 +393,8 @@ describe("PlayScreen", () => {
       expect(
         JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
       ).toEqual([
-        { groupId: "g1", itemId: "2" },
-        { groupId: "g2", itemId: "3" },
+        { roundIndex: 0, groupId: "g1", itemId: "2" },
+        { roundIndex: 1, groupId: "g2", itemId: "3" },
       ]),
     );
   });

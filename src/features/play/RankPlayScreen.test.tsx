@@ -55,15 +55,17 @@ const RANK_BLIND_PACK: Pack = {
     {
       id: "g1",
       name: "Openers",
-      selectionMode: "manual",
       items: [textItem("i1", "Kaikai Kitan"), textItem("i2", "Redo")],
     },
     {
       id: "g2",
       name: "Closers",
-      selectionMode: "manual",
       items: [textItem("i3", "Silhouette")],
     },
+  ],
+  rounds: [
+    { id: "r1", slots: [{ groupId: "g1", mode: "manual" }] },
+    { id: "r2", slots: [{ groupId: "g2", mode: "manual" }] },
   ],
   authorId: "u1",
   createdAt: "2026-01-01T00:00:00.000Z",
@@ -167,18 +169,18 @@ describe("RankPlayScreen", () => {
     expect(playsClient.record).toHaveBeenCalledTimes(1);
     expect(playsClient.record).toHaveBeenCalledWith("pack-rank", {
       picks: [
-        { groupId: "g1", itemId: "i1", position: 0 },
-        { groupId: "g1", itemId: "i2", position: 1 },
-        { groupId: "g2", itemId: "i3", position: 0 },
+        { roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 },
+        { roundIndex: 0, groupId: "g1", itemId: "i2", position: 1 },
+        { roundIndex: 1, groupId: "g2", itemId: "i3", position: 0 },
       ],
     });
     await waitFor(() =>
       expect(
         JSON.parse(sessionStorage.getItem("velanto:last-play:pack-rank")!),
       ).toEqual([
-        { groupId: "g1", itemId: "i1", position: 0 },
-        { groupId: "g1", itemId: "i2", position: 1 },
-        { groupId: "g2", itemId: "i3", position: 0 },
+        { roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 },
+        { roundIndex: 0, groupId: "g1", itemId: "i2", position: 1 },
+        { roundIndex: 1, groupId: "g2", itemId: "i3", position: 0 },
       ]),
     );
     expect(
@@ -186,21 +188,22 @@ describe("RankPlayScreen", () => {
     ).toHaveAttribute("href", "/packs/pack-rank/result");
   });
 
-  it("sizes a random-mode round's slots to sampleSize, not the full item count", async () => {
+  it("sizes a random-mode round's slots to the slot's draw count, not the full pool", async () => {
     const randomPack: Pack = {
       ...RANK_BLIND_PACK,
       groups: [
         {
           id: "g1",
           name: "Closers",
-          selectionMode: "random",
-          sampleSize: 2,
           items: [
             textItem("i1", "A"),
             textItem("i2", "B"),
             textItem("i3", "C"),
           ],
         },
+      ],
+      rounds: [
+        { id: "r1", slots: [{ groupId: "g1", mode: "random", count: 2 }] },
       ],
     };
     renderScreen(randomPack);

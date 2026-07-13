@@ -20,7 +20,6 @@ const RANK_PACK: Pack = {
     {
       id: "g1",
       name: "Openers",
-      selectionMode: "manual",
       items: [
         {
           id: "i1",
@@ -32,6 +31,7 @@ const RANK_PACK: Pack = {
       ],
     },
   ],
+  rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "manual" }] }],
   authorId: "u1",
   createdAt: "2026-01-01T00:00:00.000Z",
   totalPlays: 0,
@@ -50,8 +50,7 @@ const RANK_RESULTS: RankResults = {
   totalPlays: 2,
   rounds: [
     {
-      groupId: "g1",
-      groupName: "Openers",
+      roundIndex: 0,
       items: [
         {
           itemId: "i1",
@@ -92,7 +91,9 @@ describe("RankResultScreen", () => {
   it("highlights the player's own placement and shows an agreement count", () => {
     sessionStorage.setItem(
       "velanto:last-play:pack-rank",
-      JSON.stringify([{ groupId: "g1", itemId: "i1", position: 0 }]),
+      JSON.stringify([
+        { roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 },
+      ]),
     );
 
     render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
@@ -105,7 +106,9 @@ describe("RankResultScreen", () => {
   it("shows a neutral note for an item that wasn't in the player's own play", () => {
     sessionStorage.setItem(
       "velanto:last-play:pack-rank",
-      JSON.stringify([{ groupId: "g1", itemId: "i1", position: 0 }]),
+      JSON.stringify([
+        { roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 },
+      ]),
     );
 
     render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
@@ -129,8 +132,7 @@ describe("RankResultScreen", () => {
       totalPlays: 0,
       rounds: [
         {
-          groupId: "g1",
-          groupName: "Openers",
+          roundIndex: 0,
           items: [
             {
               itemId: "i1",
@@ -177,7 +179,9 @@ describe("RankResultScreen", () => {
 
   it("shows the shared-result note when opened via a ?p= link", async () => {
     searchParams = new URLSearchParams({
-      p: encodePicks([{ groupId: "g1", itemId: "i1", position: 0 }]),
+      p: encodePicks([
+        { roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 },
+      ]),
     });
     render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
     expect(

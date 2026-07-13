@@ -10,6 +10,10 @@ const BASE_PACK = {
   description: "Pick your favorite each round.",
   coverTone: "#2b2a3a",
   tags: ["Anime"] as Pack["tags"],
+  groups: [{ id: "g1", name: "2016", items: [] }] as Pack["groups"],
+  rounds: [
+    { id: "r1", slots: [{ groupId: "g1", mode: "manual" }] },
+  ] as Pack["rounds"],
   authorId: "u1",
   createdAt: "2026-01-01T00:00:00.000Z",
   totalPlays: 0,
@@ -23,13 +27,17 @@ const BASE_PACK = {
 };
 
 describe("PackCard", () => {
-  it("counts groups as rounds for a save_one pack", () => {
+  it("counts rounds for a save_one pack", () => {
     const pack: Pack = {
       ...BASE_PACK,
       format: "save_one",
       groups: [
-        { id: "g1", name: "2016", selectionMode: "manual", items: [] },
-        { id: "g2", name: "2020", selectionMode: "manual", items: [] },
+        { id: "g1", name: "2016", items: [] },
+        { id: "g2", name: "2020", items: [] },
+      ],
+      rounds: [
+        { id: "r1", slots: [{ groupId: "g1", mode: "manual" }] },
+        { id: "r2", slots: [{ groupId: "g2", mode: "manual" }] },
       ],
     };
     render(<PackCard pack={pack} />);
@@ -38,16 +46,21 @@ describe("PackCard", () => {
     expect(screen.getByText("Save One")).toBeInTheDocument();
   });
 
-  it("uses versusRounds as the round count for an nxn pack", () => {
+  it("uses the rounds length as the round count for an nxn pack", () => {
     const pack: Pack = {
       ...BASE_PACK,
       format: "nxn",
-      categories: [
-        { id: "ca", name: "Boys", items: [] },
-        { id: "cb", name: "Girls", items: [] },
+      groups: [
+        { id: "a", name: "Boys", items: [] },
+        { id: "b", name: "Girls", items: [] },
       ],
-      versusRounds: 8,
-      versusN: 1,
+      rounds: Array.from({ length: 8 }, (_, i) => ({
+        id: `r${i + 1}`,
+        slots: [
+          { groupId: "a", mode: "random" as const, count: 1 },
+          { groupId: "b", mode: "random" as const, count: 1 },
+        ],
+      })),
     };
     render(<PackCard pack={pack} />);
 
@@ -59,7 +72,7 @@ describe("PackCard", () => {
     const pack: Pack = {
       ...BASE_PACK,
       format: "save_one",
-      groups: [{ id: "g1", name: "2016", selectionMode: "manual", items: [] }],
+      groups: [{ id: "g1", name: "2016", items: [] }],
       totalPlays: 0,
       avgAgreementPercent: 0,
     };
@@ -72,7 +85,7 @@ describe("PackCard", () => {
     const pack: Pack = {
       ...BASE_PACK,
       format: "save_one",
-      groups: [{ id: "g1", name: "2016", selectionMode: "manual", items: [] }],
+      groups: [{ id: "g1", name: "2016", items: [] }],
       totalPlays: 1,
       avgAgreementPercent: 75,
     };
@@ -85,7 +98,7 @@ describe("PackCard", () => {
     const pack: Pack = {
       ...BASE_PACK,
       format: "save_one",
-      groups: [{ id: "g1", name: "2016", selectionMode: "manual", items: [] }],
+      groups: [{ id: "g1", name: "2016", items: [] }],
       totalPlays: 124,
       avgAgreementPercent: 68,
     };
@@ -98,7 +111,7 @@ describe("PackCard", () => {
     const pack: Pack = {
       ...BASE_PACK,
       format: "save_one",
-      groups: [{ id: "g1", name: "2016", selectionMode: "manual", items: [] }],
+      groups: [{ id: "g1", name: "2016", items: [] }],
       totalPlays: 3,
       avgAgreementPercent: 33.3,
     };

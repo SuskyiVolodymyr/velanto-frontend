@@ -20,6 +20,8 @@ const BASE_PACK: Pack = {
   coverTone: "#000",
   format: "save_one",
   tags: [],
+  groups: [],
+  rounds: [],
   authorId: "u1",
   createdAt: "2026-01-01T00:00:00.000Z",
   totalPlays: 0,

@@ -44,6 +44,10 @@ function textItem(id: string, title: string) {
   return { id, type: "text" as const, title, value: title };
 }
 
+// 1v1 is now a two-slot "pick a side" format: two pools (sides) held constant
+// across rounds, each drawing one item per round. Math.random is pinned to an
+// identity shuffle in beforeEach, so random draws take items in authored order:
+// round 1 is Goku vs Vegeta, round 2 is Naruto vs Sasuke.
 const HEAD_TO_HEAD_PACK: Pack = {
   id: "pack-1v1",
   title: "Anime Face-Offs",
@@ -53,16 +57,30 @@ const HEAD_TO_HEAD_PACK: Pack = {
   tags: ["Anime"],
   groups: [
     {
-      id: "g1",
-      name: "Round 1",
-      selectionMode: "manual",
-      items: [textItem("i1", "Goku"), textItem("i2", "Vegeta")],
+      id: "gl",
+      name: "Left",
+      items: [textItem("i1", "Goku"), textItem("i3", "Naruto")],
     },
     {
-      id: "g2",
-      name: "Round 2",
-      selectionMode: "manual",
-      items: [textItem("i3", "Naruto"), textItem("i4", "Sasuke")],
+      id: "gr",
+      name: "Right",
+      items: [textItem("i2", "Vegeta"), textItem("i4", "Sasuke")],
+    },
+  ],
+  rounds: [
+    {
+      id: "r1",
+      slots: [
+        { groupId: "gl", mode: "random", count: 1 },
+        { groupId: "gr", mode: "random", count: 1 },
+      ],
+    },
+    {
+      id: "r2",
+      slots: [
+        { groupId: "gl", mode: "random", count: 1 },
+        { groupId: "gr", mode: "random", count: 1 },
+      ],
     },
   ],
   authorId: "u1",
@@ -87,6 +105,9 @@ function renderScreen(pack: Pack) {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  // Pin the draw shuffle to identity so random-slot draws come out in authored
+  // order — makes the per-round matchups deterministic.
+  vi.spyOn(Math, "random").mockReturnValue(0.999999);
   vi.mocked(authClient.refresh).mockResolvedValue({
     accessToken: "t",
     user: MOCK_USER,
@@ -149,8 +170,8 @@ describe("HeadToHeadPlayScreen", () => {
     await waitFor(() =>
       expect(playsClient.record).toHaveBeenCalledWith("pack-1v1", {
         picks: [
-          { groupId: "g1", itemId: "i1" },
-          { groupId: "g2", itemId: "i4" },
+          { roundIndex: 0, groupId: "gl" },
+          { roundIndex: 1, groupId: "gr" },
         ],
       }),
     );

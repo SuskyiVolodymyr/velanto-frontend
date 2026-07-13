@@ -9,7 +9,8 @@ export const FORMAT_LABELS: Record<Pack["format"], string> = {
 };
 
 export function getRoundsCount(pack: Pack): number {
-  return pack.format === "nxn"
-    ? (pack.versusRounds ?? 0)
-    : (pack.groups?.length ?? 0);
+  // Every format now stores its rounds uniformly as `rounds` (pools-and-rounds),
+  // so the round count is simply that array's length. Guard against a missing
+  // array so a malformed/partial pack can't crash a list card's render.
+  return pack.rounds?.length ?? 0;
 }

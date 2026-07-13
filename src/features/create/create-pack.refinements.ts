@@ -1,100 +1,30 @@
 import { z } from "zod";
+import { resolveRoundDraws } from "@/src/shared/lib/round-draw";
 import {
-  CATEGORY_COUNT,
-  HEAD_TO_HEAD_ROUND_SIZE,
-  MAX_VERSUS_N,
-  MAX_VERSUS_ROUNDS,
-  MIN_VERSUS_N,
-  MIN_VERSUS_ROUNDS,
+  ELIMINATION_MIN_DRAW,
+  NXN_SIDE_COUNT_MAX,
+  NXN_SIDE_COUNT_MIN,
   type PackDraft,
 } from "@/src/features/create/create-pack.value-schemas";
 
-// nxn: exactly CATEGORY_COUNT named, non-empty categories; versusRounds/versusN
-// in range; each category must hold at least versusN items. Groups are ignored.
-export function validateNxn(pack: PackDraft, ctx: z.RefinementCtx) {
-  if (pack.categories.length !== CATEGORY_COUNT) {
-    ctx.addIssue({
-      code: "custom",
-      path: ["categories"],
-      message: `NxN packs need exactly ${CATEGORY_COUNT} categories.`,
-    });
-    return;
-  }
+// Mirrors velanto-backend create-pack.dto.ts `.superRefine()`: the client
+// rejects exactly the packs the API rejects. Groups are reusable pools; rounds
+// draw from them with per-group dedup. Soft under-fill warnings (a round drawing
+// fewer than its configured count) are a UI concern shown inline by RoundsEditor
+// via resolveRoundDraws — NOT a blocking error here. Only a 0-draw round blocks.
 
-  pack.categories.forEach((category, index) => {
-    if (!category.name.trim()) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["categories", index, "name"],
-        message: "Every category needs a name.",
-      });
-    }
-    if (category.items.length === 0) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["categories", index, "items"],
-        message: `Category "${category.name}" needs at least one item.`,
-      });
-    }
-  });
-
-  if (
-    pack.versusRounds === undefined ||
-    pack.versusRounds < MIN_VERSUS_ROUNDS
-  ) {
-    ctx.addIssue({
-      code: "custom",
-      path: ["versusRounds"],
-      message: "Set how many rounds to play.",
-    });
-  } else if (pack.versusRounds > MAX_VERSUS_ROUNDS) {
-    ctx.addIssue({
-      code: "custom",
-      path: ["versusRounds"],
-      message: `Rounds can't exceed ${MAX_VERSUS_ROUNDS}.`,
-    });
-  }
-
-  if (pack.versusN === undefined || pack.versusN < MIN_VERSUS_N) {
-    ctx.addIssue({
-      code: "custom",
-      path: ["versusN"],
-      message: "Set how many items to show per side.",
-    });
-  } else if (pack.versusN > MAX_VERSUS_N) {
-    ctx.addIssue({
-      code: "custom",
-      path: ["versusN"],
-      message: `Items per round can't exceed ${MAX_VERSUS_N}.`,
-    });
-  } else {
-    // versusN is present and in range: every category needs at least that many
-    // items to sample per round.
-    pack.categories.forEach((category, index) => {
-      if (pack.versusN! > category.items.length) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["categories", index, "items"],
-          message: `Category "${category.name}" needs at least ${pack.versusN} item(s).`,
-        });
-      }
-    });
-  }
-}
-
-// 1v1: at least one named group; each group's round size (sampleSize when
-// random, else item count) must be exactly HEAD_TO_HEAD_ROUND_SIZE. Categories
-// / versus fields are ignored.
-export function validateHeadToHead(pack: PackDraft, ctx: z.RefinementCtx) {
+// Shared across all formats: at least one named group with items, at least one
+// round, and every slot must reference an existing group.
+function validateGroupsAndRefs(pack: PackDraft, ctx: z.RefinementCtx): boolean {
+  let ok = true;
   if (pack.groups.length === 0) {
     ctx.addIssue({
       code: "custom",
       path: ["groups"],
       message: "Add at least one group.",
     });
-    return;
+    ok = false;
   }
-
   pack.groups.forEach((group, index) => {
     if (!group.name.trim()) {
       ctx.addIssue({
@@ -102,56 +32,7 @@ export function validateHeadToHead(pack: PackDraft, ctx: z.RefinementCtx) {
         path: ["groups", index, "name"],
         message: "Every group needs a name.",
       });
-    }
-
-    const roundSize =
-      group.selectionMode === "random" ? group.sampleSize : group.items.length;
-    if (roundSize !== HEAD_TO_HEAD_ROUND_SIZE) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["groups", index],
-        message:
-          group.selectionMode === "random"
-            ? `Group "${group.name}" needs a sample size of exactly ${HEAD_TO_HEAD_ROUND_SIZE} for a 1v1 matchup.`
-            : `Group "${group.name}" needs exactly ${HEAD_TO_HEAD_ROUND_SIZE} items for a 1v1 matchup.`,
-      });
-    } else if (
-      group.selectionMode === "random" &&
-      group.sampleSize !== undefined &&
-      group.sampleSize > group.items.length
-    ) {
-      // Backend groupSchema parity: a random group's sampleSize may never
-      // exceed its item count. The old validate() missed this for 1v1 (a
-      // sampleSize of 2 passed the round-size check even with only 1 item),
-      // so the client would let through a pack the API rejects. Closed here.
-      ctx.addIssue({
-        code: "custom",
-        path: ["groups", index, "sampleSize"],
-        message: `Group "${group.name}"'s sample size can't exceed its ${group.items.length} item(s).`,
-      });
-    }
-  });
-}
-
-// save_one / sacrifice_one / rank_blind: at least one named group, each with at
-// least one item; random groups need a sampleSize in [1, items.length].
-export function validateGroups(pack: PackDraft, ctx: z.RefinementCtx) {
-  if (pack.groups.length === 0) {
-    ctx.addIssue({
-      code: "custom",
-      path: ["groups"],
-      message: "Add at least one group.",
-    });
-    return;
-  }
-
-  pack.groups.forEach((group, index) => {
-    if (!group.name.trim()) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["groups", index, "name"],
-        message: "Every group needs a name.",
-      });
+      ok = false;
     }
     if (group.items.length === 0) {
       ctx.addIssue({
@@ -159,21 +40,141 @@ export function validateGroups(pack: PackDraft, ctx: z.RefinementCtx) {
         path: ["groups", index, "items"],
         message: `Group "${group.name}" needs at least one item.`,
       });
-    }
-    if (group.selectionMode === "random") {
-      if (group.sampleSize === undefined || group.sampleSize < 1) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["groups", index, "sampleSize"],
-          message: `Group "${group.name}" needs a sample size.`,
-        });
-      } else if (group.sampleSize > group.items.length) {
-        ctx.addIssue({
-          code: "custom",
-          path: ["groups", index, "sampleSize"],
-          message: `Group "${group.name}"'s sample size can't exceed its ${group.items.length} item(s).`,
-        });
-      }
+      ok = false;
     }
   });
+
+  if (pack.rounds.length === 0) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["rounds"],
+      message: "Add at least one round.",
+    });
+    ok = false;
+  }
+
+  const groupIds = new Set(pack.groups.map((group) => group.id));
+  pack.rounds.forEach((round, ri) => {
+    round.slots.forEach((slot, si) => {
+      if (!groupIds.has(slot.groupId)) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["rounds", ri, "slots", si, "groupId"],
+          message: "Pick a group for this round.",
+        });
+        ok = false;
+      }
+    });
+  });
+  return ok;
+}
+
+// A 0-draw round (all its items consumed by earlier rounds sharing the group)
+// is a hard error in both repos; under-fill is only a soft UI warning.
+function validateFeasibility(pack: PackDraft, ctx: z.RefinementCtx) {
+  const resolved = resolveRoundDraws(pack.groups, pack.rounds);
+  resolved.forEach((round, ri) => {
+    round.slots.forEach((slot, si) => {
+      if (slot.mode === "random" && slot.drawnCount <= 0) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["rounds", ri, "slots", si],
+          message: "This round has no items left to draw.",
+        });
+      }
+    });
+  });
+}
+
+// save_one / sacrifice_one / rank_blind: every round is a single-slot draw whose
+// effective count (random → count, manual → group item count) is at least 2.
+export function validateElimination(pack: PackDraft, ctx: z.RefinementCtx) {
+  const groupsOk = validateGroupsAndRefs(pack, ctx);
+  const groupById = new Map(pack.groups.map((group) => [group.id, group]));
+
+  pack.rounds.forEach((round, ri) => {
+    if (round.slots.length !== 1) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["rounds", ri, "slots"],
+        message: "This round needs exactly one group.",
+      });
+      return;
+    }
+    const slot = round.slots[0];
+    const group = groupById.get(slot.groupId);
+    if (!group) return;
+    const effective =
+      slot.mode === "random" ? (slot.count ?? 0) : group.items.length;
+    if (effective < ELIMINATION_MIN_DRAW) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["rounds", ri, "slots", 0],
+        message: `Each round must show at least ${ELIMINATION_MIN_DRAW} items.`,
+      });
+    }
+  });
+
+  if (groupsOk) validateFeasibility(pack, ctx);
+}
+
+// nxn / 1v1: every round pits two DISTINCT groups (held constant across rounds)
+// against each other, both drawn randomly. nxn draws 1–6 per side; 1v1 draws 1.
+export function validateVersus(pack: PackDraft, ctx: z.RefinementCtx) {
+  const groupsOk = validateGroupsAndRefs(pack, ctx);
+  const isHeadToHead = pack.format === "1v1";
+  const perSideMin = isHeadToHead ? 1 : NXN_SIDE_COUNT_MIN;
+  const perSideMax = isHeadToHead ? 1 : NXN_SIDE_COUNT_MAX;
+  let expectedPair: [string, string] | undefined;
+
+  pack.rounds.forEach((round, ri) => {
+    if (round.slots.length !== 2) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["rounds", ri, "slots"],
+        message: "Versus rounds need exactly two groups.",
+      });
+      return;
+    }
+    round.slots.forEach((slot, si) => {
+      if (slot.mode !== "random") {
+        ctx.addIssue({
+          code: "custom",
+          path: ["rounds", ri, "slots", si, "mode"],
+          message: "Versus sides are drawn randomly.",
+        });
+        return;
+      }
+      const count = slot.count ?? 0;
+      if (count < perSideMin || count > perSideMax) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["rounds", ri, "slots", si, "count"],
+          message: isHeadToHead
+            ? "1v1 shows exactly one item per side."
+            : `Show ${NXN_SIDE_COUNT_MIN}–${NXN_SIDE_COUNT_MAX} items per side.`,
+        });
+      }
+    });
+
+    const [a, b] = [round.slots[0].groupId, round.slots[1].groupId];
+    if (a === b) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["rounds", ri, "slots"],
+        message: "Pick two different groups.",
+      });
+    }
+    if (expectedPair === undefined) {
+      expectedPair = [a, b];
+    } else if (a !== expectedPair[0] || b !== expectedPair[1]) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["rounds", ri, "slots"],
+        message: "Every round must use the same two groups.",
+      });
+    }
+  });
+
+  if (groupsOk) validateFeasibility(pack, ctx);
 }

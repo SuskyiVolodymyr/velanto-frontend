@@ -1,14 +1,22 @@
 import type { PackFormat } from "@/src/shared/types/pack";
 
 export interface RecordedPick {
+  // Which round of the pack this pick belongs to (0-indexed). Rounds — not
+  // groups — are the unit of aggregation now, since several rounds can draw
+  // from the same pool (group), so groupId alone no longer identifies a round.
+  roundIndex: number;
+  // The pool the pick came from. For versus formats (nxn/1v1) this is the
+  // chosen SIDE's group id and there is no itemId (you pick a side, not an item).
   groupId: string;
-  itemId: string;
-  // rank_blind only: the 0-indexed slot this item was placed into within
-  // its group's ranking. Absent for save_one/sacrifice_one/nxn picks.
+  // save_one/sacrifice_one/rank_blind only: the specific item chosen/placed.
+  itemId?: string;
+  // rank_blind only: the 0-indexed slot this item was placed into within the
+  // round's ranking. Absent for the other formats.
   position?: number;
 }
 
 export interface RoundResultItem {
+  // For versus formats this is the SIDE's group id; otherwise an item id.
   itemId: string;
   itemTitle: string;
   count: number;
@@ -16,8 +24,7 @@ export interface RoundResultItem {
 }
 
 export interface RoundResult {
-  groupId: string;
-  groupName: string;
+  roundIndex: number;
   items: RoundResultItem[];
 }
 
@@ -35,22 +42,21 @@ export interface PackResults {
 export interface RankResultItem {
   itemId: string;
   itemTitle: string;
-  // How many recorded plays included this item in this group's ranking at
-  // all — a group's ranking can sample fewer than all of its items
-  // (selectionMode: "random"), so an item may not appear in every play.
+  // How many recorded plays included this item in this round's ranking at
+  // all — a round can sample fewer than all of a pool's items (random slot),
+  // so an item may not appear in every play.
   timesRanked: number;
   // Mean 0-indexed placement across the plays that included this item.
   // Lower is better (0 = always placed first). 0 when timesRanked is 0.
   averagePosition: number;
   // Histogram of this item's placements: positionCounts[i] = how many
   // recorded plays placed this item at 0-indexed position i. Length equals
-  // the group's slot count.
+  // the round's slot count.
   positionCounts: number[];
 }
 
 export interface RankRoundResult {
-  groupId: string;
-  groupName: string;
+  roundIndex: number;
   items: RankResultItem[];
 }
 

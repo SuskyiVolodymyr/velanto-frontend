@@ -3,16 +3,23 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { playsClient } from "@/src/shared/lib/plays-client";
 import { writeLastPlayPicks } from "@/src/shared/lib/last-play-storage";
-import {
-  resolveRoundCandidates,
-  resolveVersusRoundCandidates,
-} from "@/src/features/play/round-sampling";
-import type { Category, Item, Pack } from "@/src/shared/types/pack";
+import { resolveRoundSelections } from "@/src/features/play/round-sampling";
+import type { Item, Pack } from "@/src/shared/types/pack";
+import type { RecordedPick } from "@/src/shared/types/play-results";
 
 export interface Pick {
+  roundIndex: number;
   groupId: string;
-  itemId: string;
+  // Absent for versus picks (a side is chosen, not an item).
+  itemId?: string;
+  // Display label: the item title, or the side name for versus picks.
   itemTitle: string;
+}
+
+// A versus side is a pool held constant across every round of the play.
+export interface VersusSide {
+  id: string;
+  name: string;
 }
 
 export interface PlaySession {
@@ -28,87 +35,107 @@ export interface PlaySession {
   setSelectedId: (id: string | null) => void;
   picks: Pick[];
   confirmPick: () => void;
-  // Groups format: the sampled candidates for the current round.
+  // Groups format: the drawn candidates for the current round's single slot.
   candidates: Item[];
-  // Versus (nxn) format: the two fixed categories and their per-round samples.
-  categoryA?: Category;
-  categoryB?: Category;
+  // Versus (nxn) format: the two fixed sides and their per-round drawn items.
+  sideA?: VersusSide;
+  sideB?: VersusSide;
   versusCandidatesA: Item[];
   versusCandidatesB: Item[];
 }
 
+function toRecordedPick(pick: Pick): RecordedPick {
+  return {
+    roundIndex: pick.roundIndex,
+    groupId: pick.groupId,
+    ...(pick.itemId !== undefined ? { itemId: pick.itemId } : {}),
+  };
+}
+
 /**
- * Owns the save_one/sacrifice_one/nxn play state machine: the round cursor,
- * per-round reveal/selection, the unified round model that abstracts over the
- * versus (nxn) and groups formats, and the idempotent record-on-finish effect.
- * Returns a flat interface so PlayScreen can stay a thin presentational shell.
+ * Owns the save_one/sacrifice_one/nxn play state machine over the pools-and-
+ * rounds model: it draws the whole session's items once (dedup spans rounds),
+ * tracks the round cursor and per-round selection, unifies the versus (nxn) and
+ * groups formats behind one shape, and records the play once on finish. Returns
+ * a flat interface so PlayScreen can stay a thin presentational shell.
  */
 export function usePlaySession(pack: Pack): PlaySession {
   const isVersus = pack.format === "nxn";
   const groups = pack.groups ?? [];
-  const categories = pack.categories ?? [];
-  const versusN = pack.versusN ?? 0;
-  const [categoryA, categoryB] = categories;
-  const totalRounds = isVersus ? (pack.versusRounds ?? 0) : groups.length;
+  const rounds = pack.rounds ?? [];
+  const totalRounds = rounds.length;
+
+  // Drawn items for every round, resolved once at mount — the per-group dedup
+  // spans rounds, so the whole walk has to happen together (not per-round).
+  const selections = useMemo(
+    () => resolveRoundSelections(groups, rounds),
+    [groups, rounds],
+  );
+  const groupNameById = useMemo(
+    () => new Map(groups.map((group) => [group.id, group.name])),
+    [groups],
+  );
 
   const [roundIndex, setRoundIndex] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [picks, setPicks] = useState<Pick[]>([]);
 
   const isFinished = roundIndex >= totalRounds;
-  const group = !isVersus && !isFinished ? groups[roundIndex] : null;
+  const currentRound = !isFinished ? selections[roundIndex] : undefined;
 
-  // Re-sampled only when the round changes, not on every render.
-  const candidates = useMemo(
-    () => (group ? resolveRoundCandidates(group) : []),
-    [group],
-  );
-  // categoryA/categoryB are the same 2 categories for the whole play session
-  // (unlike `group`, which changes reference every round) — roundIndex is
-  // the only thing that actually changes when a new round starts, so it
-  // must stay in the deps to force a fresh sample each round even though
-  // the callback itself never reads it.
-  const versusCandidatesA = useMemo(
-    () =>
-      isVersus && !isFinished && categoryA
-        ? resolveVersusRoundCandidates(categoryA, versusN)
-        : [],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isVersus, isFinished, categoryA, versusN, roundIndex],
-  );
-  const versusCandidatesB = useMemo(
-    () =>
-      isVersus && !isFinished && categoryB
-        ? resolveVersusRoundCandidates(categoryB, versusN)
-        : [],
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isVersus, isFinished, categoryB, versusN, roundIndex],
-  );
+  // Versus sides are the same two pools every round — read them off the first
+  // round's two slots so the finished summary still has them once play is over.
+  const firstSlots = rounds[0]?.slots ?? [];
+  const sideA: VersusSide | undefined =
+    isVersus && firstSlots[0]
+      ? {
+          id: firstSlots[0].groupId,
+          name: groupNameById.get(firstSlots[0].groupId) ?? "",
+        }
+      : undefined;
+  const sideB: VersusSide | undefined =
+    isVersus && firstSlots[1]
+      ? {
+          id: firstSlots[1].groupId,
+          name: groupNameById.get(firstSlots[1].groupId) ?? "",
+        }
+      : undefined;
 
-  // A single per-round model unifies the two formats so the rest of the
-  // component reads one shape instead of branching on `isVersus` at every
-  // site. `title` drives the UI; `resolvePick` turns the current `selectedId`
-  // into the Pick to record (or null if invalid).
+  const candidates = !isVersus ? (currentRound?.slots[0]?.items ?? []) : [];
+  const versusCandidatesA = isVersus
+    ? (currentRound?.slots[0]?.items ?? [])
+    : [];
+  const versusCandidatesB = isVersus
+    ? (currentRound?.slots[1]?.items ?? [])
+    : [];
+
+  // A single per-round model unifies the two formats so the rest of the code
+  // reads one shape. `title` drives the UI; `resolvePick` turns the current
+  // `selectedId` into the Pick to record (or null if invalid).
   const round = isVersus
     ? {
         title: `Round ${roundIndex + 1}`,
         resolvePick(id: string): Pick | null {
-          const category = categories.find((c) => c.id === id);
-          if (!category) return null;
-          return {
-            groupId: String(roundIndex),
-            itemId: category.id,
-            itemTitle: category.name,
-          };
+          const side =
+            id === sideA?.id ? sideA : id === sideB?.id ? sideB : null;
+          if (!side) return null;
+          return { roundIndex, groupId: side.id, itemTitle: side.name };
         },
       }
     : {
-        title: group?.name ?? "",
+        title: currentRound
+          ? (groupNameById.get(currentRound.slots[0]?.groupId ?? "") ?? "")
+          : "",
         resolvePick(id: string): Pick | null {
-          if (!group) return null;
+          const slot = currentRound?.slots[0];
           const item = candidates.find((candidate) => candidate.id === id);
-          if (!item) return null;
-          return { groupId: group.id, itemId: item.id, itemTitle: item.title };
+          if (!slot || !item) return null;
+          return {
+            roundIndex,
+            groupId: slot.groupId,
+            itemId: item.id,
+            itemTitle: item.title,
+          };
         },
       };
 
@@ -125,18 +152,15 @@ export function usePlaySession(pack: Pack): PlaySession {
     setSelectedId(null);
   }
 
-  // Fires once when the last round is confirmed: records the play, then
-  // stashes the picks for the result page — only once we know the server
-  // actually counted them, so "your pick" never shows a percentage that
-  // didn't include your own vote (e.g. after a failed request).
+  // Fires once when the last round is confirmed: records the play, then stashes
+  // the picks for the result page — only once we know the server actually
+  // counted them, so "your pick" never shows a percentage that didn't include
+  // your own vote (e.g. after a failed request).
   const recordedRef = useRef(false);
   useEffect(() => {
     if (!isFinished || recordedRef.current) return;
     recordedRef.current = true;
-    const recordedPicks = picks.map(({ groupId, itemId }) => ({
-      groupId,
-      itemId,
-    }));
+    const recordedPicks = picks.map(toRecordedPick);
     playsClient
       .record(pack.id, { picks: recordedPicks })
       .then(() => writeLastPlayPicks(pack.id, recordedPicks))
@@ -145,10 +169,10 @@ export function usePlaySession(pack: Pack): PlaySession {
 
   const progressPct = isFinished
     ? 100
-    : Math.round((roundIndex / totalRounds) * 100);
+    : Math.round((roundIndex / Math.max(totalRounds, 1)) * 100);
   const showRound = isVersus
-    ? Boolean(!isFinished && categoryA && categoryB)
-    : Boolean(group);
+    ? Boolean(currentRound && sideA && sideB)
+    : Boolean(currentRound);
 
   return {
     isVersus,
@@ -164,8 +188,8 @@ export function usePlaySession(pack: Pack): PlaySession {
     picks,
     confirmPick,
     candidates,
-    categoryA,
-    categoryB,
+    sideA,
+    sideB,
     versusCandidatesA,
     versusCandidatesB,
   };

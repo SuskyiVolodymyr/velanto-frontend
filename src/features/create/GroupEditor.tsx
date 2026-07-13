@@ -6,7 +6,6 @@ import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { Card } from "@/src/shared/components/Card";
-import { cn } from "@/src/shared/lib/cn";
 import { useGroupItemDraft } from "@/src/features/create/use-group-item-draft";
 import { GroupItemList } from "@/src/features/create/GroupItemList";
 import { GroupItemAdder } from "@/src/features/create/GroupItemAdder";
@@ -17,10 +16,16 @@ interface GroupEditorProps {
   removable: boolean;
   onChange: (group: Group) => void;
   onRemove: () => void;
-  /** Validation error for this group, surfaced by the parent form on submit. */
+  /** Validation error for this pool, surfaced by the parent form on submit. */
   error?: string;
 }
 
+/**
+ * Editor for a single reusable POOL of items: a name plus its item list. Drawing
+ * (random/manual + count) is a per-round concern now, so this editor no longer
+ * carries a selection-mode toggle or sample-size input — those live in
+ * {@link RoundsEditor} / {@link VersusEditor}.
+ */
 export function GroupEditor({
   group,
   index,
@@ -31,7 +36,6 @@ export function GroupEditor({
 }: GroupEditorProps) {
   const t = useTranslations("create");
   const draft = useGroupItemDraft(group, onChange);
-  const { validating } = draft;
 
   function removeItem(itemId: string) {
     onChange({
@@ -50,58 +54,6 @@ export function GroupEditor({
           aria-label={t("groupName", { index: index + 1 })}
           className="flex-1 min-w-[140px] font-semibold"
         />
-        <div className="flex rounded-[9px] border border-border bg-white/[0.03] p-0.5">
-          <button
-            type="button"
-            onClick={() => onChange({ ...group, selectionMode: "random" })}
-            disabled={validating}
-            className={cn(
-              "rounded-[7px] px-3 py-1.5 text-xs font-medium transition-colors",
-              group.selectionMode === "random"
-                ? "bg-white/[0.12] text-foreground"
-                : "text-foreground-secondary",
-            )}
-          >
-            {t("random")}
-          </button>
-          <button
-            type="button"
-            onClick={() =>
-              onChange({
-                ...group,
-                selectionMode: "manual",
-                sampleSize: undefined,
-              })
-            }
-            disabled={validating}
-            className={cn(
-              "rounded-[7px] px-3 py-1.5 text-xs font-medium transition-colors",
-              group.selectionMode === "manual"
-                ? "bg-white/[0.12] text-foreground"
-                : "text-foreground-secondary",
-            )}
-          >
-            {t("manual")}
-          </button>
-        </div>
-        {group.selectionMode === "random" && (
-          <Input
-            type="number"
-            min={1}
-            value={group.sampleSize ?? ""}
-            onChange={(e) =>
-              onChange({
-                ...group,
-                sampleSize:
-                  e.target.value === "" ? undefined : Number(e.target.value),
-              })
-            }
-            disabled={validating}
-            aria-label={t("groupSampleSize", { index: index + 1 })}
-            title={t("itemsDrawnPerRound")}
-            className="w-16 text-center"
-          />
-        )}
         {removable && (
           <Button
             variant="ghost"

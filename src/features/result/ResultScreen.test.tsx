@@ -20,7 +20,6 @@ const PACK: Pack = {
     {
       id: "g1",
       name: "2016",
-      selectionMode: "manual",
       items: [
         {
           id: "i1",
@@ -32,6 +31,7 @@ const PACK: Pack = {
       ],
     },
   ],
+  rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "manual" }] }],
   authorId: "u1",
   createdAt: "2026-01-01T00:00:00.000Z",
   totalPlays: 0,
@@ -50,8 +50,7 @@ const RESULTS: PackResults = {
   totalPlays: 4,
   rounds: [
     {
-      groupId: "g1",
-      groupName: "2016",
+      roundIndex: 0,
       items: [
         {
           itemId: "i1",
@@ -74,7 +73,7 @@ describe("ResultScreen", () => {
   it("shows the player's own pick and its community agreement % per round", async () => {
     sessionStorage.setItem(
       "velanto:last-play:pack-1",
-      JSON.stringify([{ groupId: "g1", itemId: "i1" }]),
+      JSON.stringify([{ roundIndex: 0, groupId: "g1", itemId: "i1" }]),
     );
 
     render(<ResultScreen pack={PACK} results={RESULTS} />);
@@ -106,7 +105,9 @@ describe("ResultScreen", () => {
   it("falls back to the aggregate breakdown when the recorded pick's item isn't in this round's results", async () => {
     sessionStorage.setItem(
       "velanto:last-play:pack-1",
-      JSON.stringify([{ groupId: "g1", itemId: "does-not-exist" }]),
+      JSON.stringify([
+        { roundIndex: 0, groupId: "g1", itemId: "does-not-exist" },
+      ]),
     );
 
     render(<ResultScreen pack={PACK} results={RESULTS} />);
@@ -123,8 +124,7 @@ describe("ResultScreen", () => {
       totalPlays: 0,
       rounds: [
         {
-          groupId: "g1",
-          groupName: "2016",
+          roundIndex: 0,
           items: [
             {
               itemId: "i1",
@@ -152,8 +152,7 @@ describe("ResultScreen", () => {
       totalPlays: 1,
       rounds: [
         {
-          groupId: "g1",
-          groupName: "2016",
+          roundIndex: 0,
           items: [
             {
               itemId: "i1",
@@ -190,7 +189,7 @@ describe("ResultScreen", () => {
 
   it("renders the sharer's picks and a shared-result note when opened via a ?p= link", async () => {
     searchParams = new URLSearchParams({
-      p: encodePicks([{ groupId: "g1", itemId: "i1" }]),
+      p: encodePicks([{ roundIndex: 0, groupId: "g1", itemId: "i1" }]),
     });
 
     render(<ResultScreen pack={PACK} results={RESULTS} />);

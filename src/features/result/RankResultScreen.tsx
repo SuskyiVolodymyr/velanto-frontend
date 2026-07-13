@@ -39,16 +39,19 @@ export function RankResultScreen({
             (a, b) => a.averagePosition - b.averagePosition,
           );
           const playedThisRound =
-            ownPicks?.some((pick) => pick.groupId === round.groupId) ?? false;
+            ownPicks?.some((pick) => pick.roundIndex === round.roundIndex) ??
+            false;
 
           return (
-            <div key={round.groupId}>
-              <Text className="mb-3 font-semibold">{round.groupName}</Text>
+            <div key={round.roundIndex}>
+              <Text className="mb-3 font-semibold">
+                {`Round ${round.roundIndex + 1}`}
+              </Text>
               <div className="flex flex-col gap-3">
                 {sortedItems.map((item, index) => {
                   const ownPick = ownPicks?.find(
                     (pick) =>
-                      pick.groupId === round.groupId &&
+                      pick.roundIndex === round.roundIndex &&
                       pick.itemId === item.itemId,
                   );
                   const maxCount = Math.max(...item.positionCounts, 1);

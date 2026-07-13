@@ -25,9 +25,7 @@ test.describe("Create pack", () => {
   });
 
   // Capture the JSON body the client POSTs to /packs while fulfilling the
-  // create request with a stub pack. Mirrors the mock style of the auth stub
-  // above; returns a getter for the captured payload so each test can assert
-  // the exact shape it sent per format.
+  // create request with a stub pack. Returns a getter for the captured payload.
   async function stubCreate(
     page: import("@playwright/test").Page,
     pack: Record<string, unknown>,
@@ -40,7 +38,7 @@ test.describe("Create pack", () => {
     return captured;
   }
 
-  test("publishes a valid save_one pack and redirects with a groups payload", async ({
+  test("publishes a valid save_one pack and redirects with a groups+rounds payload", async ({
     page,
   }) => {
     const captured = await stubCreate(page, {
@@ -51,6 +49,7 @@ test.describe("Create pack", () => {
       format: "save_one",
       tags: [],
       groups: [],
+      rounds: [],
       authorId: "u1",
       createdAt: "2026-01-01T00:00:00.000Z",
     });
@@ -60,18 +59,22 @@ test.describe("Create pack", () => {
     await page
       .getByLabel("Pack description")
       .fill("Pick your favorite each round.");
-    await page.getByLabel("Group 1 name").fill("2016");
-    await page.getByLabel("Group 1 new item").fill("Guren no Yumiya");
+    // Default: one pool + one elimination round drawing 2 (under-fill of a
+    // single-item pool is only a soft hint, so the pack is still valid).
+    await page.getByLabel("Pool 1 name").fill("2016");
+    await page.getByLabel("Pool 1 new item").fill("Guren no Yumiya");
     await page.getByRole("button", { name: "Add", exact: true }).click();
     await page.getByRole("button", { name: "Publish" }).click();
 
     await page.waitForURL("**/packs/pack-1");
     expect(captured.body).toMatchObject({ format: "save_one" });
     expect(captured.body?.groups).toBeDefined();
+    expect(captured.body?.rounds).toBeDefined();
     expect(captured.body).not.toHaveProperty("categories");
+    expect(captured.body).not.toHaveProperty("versusRounds");
   });
 
-  test("publishes a valid sacrifice_one pack and redirects with a groups payload", async ({
+  test("publishes a valid sacrifice_one pack and redirects with a groups+rounds payload", async ({
     page,
   }) => {
     const captured = await stubCreate(page, {
@@ -82,6 +85,7 @@ test.describe("Create pack", () => {
       format: "sacrifice_one",
       tags: [],
       groups: [],
+      rounds: [],
       authorId: "u1",
       createdAt: "2026-01-01T00:00:00.000Z",
     });
@@ -90,18 +94,18 @@ test.describe("Create pack", () => {
     await page.getByRole("button", { name: /^Sacrifice One/ }).click();
     await page.getByLabel("Pack title").fill("Worst Endings");
     await page.getByLabel("Pack description").fill("Cut them one by one.");
-    await page.getByLabel("Group 1 name").fill("Finales");
-    await page.getByLabel("Group 1 new item").fill("Lost");
+    await page.getByLabel("Pool 1 name").fill("Finales");
+    await page.getByLabel("Pool 1 new item").fill("Lost");
     await page.getByRole("button", { name: "Add", exact: true }).click();
     await page.getByRole("button", { name: "Publish" }).click();
 
     await page.waitForURL("**/packs/pack-sac");
     expect(captured.body).toMatchObject({ format: "sacrifice_one" });
-    expect(captured.body?.groups).toBeDefined();
+    expect(captured.body?.rounds).toBeDefined();
     expect(captured.body).not.toHaveProperty("categories");
   });
 
-  test("publishes a valid nxn pack and redirects with a categories payload", async ({
+  test("publishes a valid nxn pack from two pools with generated two-slot rounds", async ({
     page,
   }) => {
     const captured = await stubCreate(page, {
@@ -111,35 +115,44 @@ test.describe("Create pack", () => {
       coverTone: "#2b2a3a",
       format: "nxn",
       tags: [],
-      categories: [],
-      versusRounds: 8,
-      versusN: 1,
+      groups: [],
+      rounds: [],
       authorId: "u1",
       createdAt: "2026-01-01T00:00:00.000Z",
     });
 
     await page.goto("/create");
-    await page.getByRole("button", { name: /^NxN/ }).click();
     await page.getByLabel("Pack title").fill("Boys vs Girls");
     await page.getByLabel("Pack description").fill("Pick a side.");
-    await page.getByLabel("Category 1 name").fill("Boys");
-    await page.getByLabel("Category 1 new item").fill("Naruto");
-    await page.getByRole("button", { name: "Add", exact: true }).nth(0).click();
-    await page.getByLabel("Category 2 name").fill("Girls");
-    await page.getByLabel("Category 2 new item").fill("Sakura");
+
+    // Two distinct pools, each with one item, built before switching so the
+    // versus format generates rounds over both.
+    await page.getByLabel("Pool 1 name").fill("Boys");
+    await page.getByLabel("Pool 1 new item").fill("Naruto");
+    await page
+      .getByRole("button", { name: "Add", exact: true })
+      .first()
+      .click();
+    await page.getByRole("button", { name: "+ Add pool" }).click();
+    await page.getByLabel("Pool 2 name").fill("Girls");
+    await page.getByLabel("Pool 2 new item").fill("Sakura");
     await page.getByRole("button", { name: "Add", exact: true }).nth(1).click();
-    await page.getByLabel("Rounds").fill("8");
-    await page.getByLabel("Items per round").fill("1");
+
+    await page.getByRole("button", { name: /^NxN/ }).click();
+
+    // One round keeps the single-item pools feasible (per-side 1, no dedup
+    // exhaustion).
+    const rounds = page.getByLabel("Rounds", { exact: true });
+    await rounds.fill("1");
+
     await page.getByRole("button", { name: "Publish" }).click();
 
     await page.waitForURL("**/packs/pack-nxn");
-    expect(captured.body).toMatchObject({
-      format: "nxn",
-      versusRounds: 8,
-      versusN: 1,
-    });
-    expect(captured.body?.categories).toBeDefined();
-    expect(captured.body).not.toHaveProperty("groups");
+    expect(captured.body).toMatchObject({ format: "nxn" });
+    expect(captured.body?.groups).toBeDefined();
+    expect(captured.body?.rounds).toBeDefined();
+    expect(captured.body).not.toHaveProperty("categories");
+    expect(captured.body).not.toHaveProperty("versusN");
   });
 
   test("shows a validation error and does not call the API for an empty submission", async ({

@@ -29,6 +29,7 @@ import {
   PACK_FORMATS,
   PACK_STATUSES,
   PACK_TAGS,
+  SLOT_MODES,
 } from "@/src/shared/types/pack";
 import {
   FEEDBACK_TOPICS,
@@ -59,6 +60,11 @@ describe("cross-repo mirrored constants (velanto-backend contract)", () => {
       "rank_blind",
       "1v1",
     ]);
+  });
+
+  // SLOT_MODES — MIRRORED in velanto-backend src/modules/packs/types/round.ts.
+  it("SLOT_MODES", () => {
+    expect([...SLOT_MODES]).toEqual(["random", "manual"]);
   });
 
   // PACK_STATUSES — MIRRORED in velanto-backend

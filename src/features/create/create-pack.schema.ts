@@ -4,50 +4,33 @@ import {
   DESCRIPTION_MAX,
   MAX_TAGS,
   TITLE_MAX,
-  categoryValueSchema,
   groupValueSchema,
+  roundValueSchema,
 } from "@/src/features/create/create-pack.value-schemas";
 import {
-  validateGroups,
-  validateHeadToHead,
-  validateNxn,
+  validateElimination,
+  validateVersus,
 } from "@/src/features/create/create-pack.refinements";
 
 /**
  * Client-side validation for the create-pack form. Mirrors velanto-backend's
- * per-format rules (create-pack.dto.ts `.superRefine()` + types/item.ts
- * `groupSchema` + types/nxn.ts `categorySchema`) so the client rejects exactly
- * what the API rejects and accepts exactly what it accepts.
+ * per-format rules (create-pack.dto.ts `.superRefine()`) so the client rejects
+ * exactly what the API rejects and accepts exactly what it accepts.
  *
- * This file is the thin assembler: field-limit constants and the structural
- * leaf/collection schemas live in `create-pack.value-schemas.ts`, and the three
- * per-format refinement validators live in `create-pack.refinements.ts`.
- *
- * Two deliberate differences from the backend DTO, both wire-safe:
- *  1. `groups` and `categories` are BOTH always present in form state (the UI
- *     keeps a Groups editor and a Categories editor and swaps which is shown by
- *     `format`). The backend rejects a pack that *sends* the wrong collection
- *     for its format; the client never sends the inactive one (the submit step
- *     strips it), so we validate only the active collection per format instead
- *     of enforcing the backend's mutual-exclusion issues. Net wire effect is
- *     identical. This matches the old module-level `validate()` exactly.
- *  2. Strings are trimmed here (title/description), so the resolved values feed
- *     the create payload directly — the old form trimmed at submit time.
+ * Groups (pools) and rounds are BOTH always present in form state. Elimination
+ * formats compose an ordered list of single-slot rounds; versus formats compose
+ * two-slot rounds over the same two groups (the VersusEditor generates them).
+ * Soft under-fill warnings are shown inline by RoundsEditor, not enforced here.
  */
 
-// Re-export the field-limit constants so importers continue to resolve them from
-// this module (the schema is their canonical barrel).
 export {
   TITLE_MAX,
   DESCRIPTION_MAX,
   MAX_TAGS,
   ITEM_TITLE_MAX,
-  CATEGORY_COUNT,
-  MIN_VERSUS_ROUNDS,
-  MAX_VERSUS_ROUNDS,
-  MIN_VERSUS_N,
-  MAX_VERSUS_N,
-  HEAD_TO_HEAD_ROUND_SIZE,
+  ELIMINATION_MIN_DRAW,
+  NXN_SIDE_COUNT_MIN,
+  NXN_SIDE_COUNT_MAX,
 } from "@/src/features/create/create-pack.value-schemas";
 
 export const createPackSchema = z
@@ -71,20 +54,14 @@ export const createPackSchema = z
       .array(z.enum(PACK_TAGS))
       .max(MAX_TAGS, `Choose at most ${MAX_TAGS} tags.`),
     groups: z.array(groupValueSchema),
-    categories: z.array(categoryValueSchema),
-    versusRounds: z.number().optional(),
-    versusN: z.number().optional(),
+    rounds: z.array(roundValueSchema),
   })
   .superRefine((pack, ctx) => {
-    if (pack.format === "nxn") {
-      validateNxn(pack, ctx);
+    if (pack.format === "nxn" || pack.format === "1v1") {
+      validateVersus(pack, ctx);
       return;
     }
-    if (pack.format === "1v1") {
-      validateHeadToHead(pack, ctx);
-      return;
-    }
-    validateGroups(pack, ctx);
+    validateElimination(pack, ctx);
   });
 
 export type CreatePackValues = z.infer<typeof createPackSchema>;
