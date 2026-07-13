@@ -2,6 +2,7 @@ import { z } from "zod";
 import { resolveRoundDraws } from "@/src/shared/lib/round-draw";
 import {
   ELIMINATION_MIN_DRAW,
+  ELIMINATION_MAX_DRAW,
   NXN_SIDE_COUNT_MAX,
   NXN_SIDE_COUNT_MIN,
   type PackDraft,
@@ -136,6 +137,12 @@ export function validateElimination(pack: PackDraft, ctx: z.RefinementCtx) {
           path: ["rounds", ri, "slots", 0],
           message: `Each round must show at least ${ELIMINATION_MIN_DRAW} items.`,
         });
+      } else if (itemIds.length > ELIMINATION_MAX_DRAW) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["rounds", ri, "slots", 0],
+          message: `Each round must show at most ${ELIMINATION_MAX_DRAW} items.`,
+        });
       }
       return;
     }
@@ -146,6 +153,12 @@ export function validateElimination(pack: PackDraft, ctx: z.RefinementCtx) {
         code: "custom",
         path: ["rounds", ri, "slots", 0],
         message: `Each round must show at least ${ELIMINATION_MIN_DRAW} items.`,
+      });
+    } else if (effective > ELIMINATION_MAX_DRAW) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["rounds", ri, "slots", 0],
+        message: `Each round must show at most ${ELIMINATION_MAX_DRAW} items.`,
       });
     }
   });

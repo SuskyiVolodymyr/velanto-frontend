@@ -16,6 +16,7 @@ import { newRound } from "@/src/features/create/create-pack.defaults";
 import {
   type CreatePackValues,
   ELIMINATION_MIN_DRAW,
+  ELIMINATION_MAX_DRAW,
 } from "@/src/features/create/create-pack.schema";
 
 /**
@@ -188,7 +189,11 @@ export function RoundsEditor() {
 
         const itemIds = slot.itemIds ?? [];
         const reserved = pinnedElsewhere(slot.groupId, index);
-        const maxPlaces = groupItems.length - reserved.size;
+        // Cap places at the pool's unreserved items AND the elimination max.
+        const maxPlaces = Math.min(
+          groupItems.length - reserved.size,
+          ELIMINATION_MAX_DRAW,
+        );
 
         return (
           <Card
@@ -275,6 +280,7 @@ export function RoundsEditor() {
                 <Input
                   type="number"
                   min={1}
+                  max={ELIMINATION_MAX_DRAW}
                   value={slot.count ?? ""}
                   onChange={(e) =>
                     setSlot(index, {
@@ -398,6 +404,7 @@ export function RoundsEditor() {
           <Input
             type="number"
             min={1}
+            max={ELIMINATION_MAX_DRAW}
             value={bulkCount}
             onChange={(e) => setBulkCount(e.target.value)}
             aria-label={t("setCountAll")}

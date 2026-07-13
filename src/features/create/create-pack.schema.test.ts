@@ -4,6 +4,7 @@ import {
   type CreatePackValues,
   TITLE_MAX,
   DESCRIPTION_MAX,
+  ELIMINATION_MAX_DRAW,
   NXN_SIDE_COUNT_MAX,
 } from "./create-pack.schema";
 import type { Item } from "@/src/shared/types/pack";
@@ -290,6 +291,70 @@ describe("createPackSchema — elimination (save_one / sacrifice_one / rank_blin
     ).toBe("Each round must show at least 2 items.");
   });
 
+  it("rejects a round drawing more than the max items", () => {
+    expect(
+      messageAt(
+        makeValues({
+          rounds: [
+            {
+              id: "r1",
+              slots: [
+                {
+                  groupId: "g1",
+                  mode: "random",
+                  count: ELIMINATION_MAX_DRAW + 1,
+                },
+              ],
+            },
+          ],
+        }),
+        "rounds.0.slots.0",
+      ),
+    ).toBe(`Each round must show at most ${ELIMINATION_MAX_DRAW} items.`);
+  });
+
+  it("accepts a round drawing exactly the max items", () => {
+    expect(
+      isValid(
+        makeValues({
+          rounds: [
+            {
+              id: "r1",
+              slots: [
+                { groupId: "g1", mode: "random", count: ELIMINATION_MAX_DRAW },
+              ],
+            },
+          ],
+        }),
+      ),
+    ).toBe(true);
+  });
+
+  it("rejects a manual round pinning more than the max items", () => {
+    const nineItems = Array.from({ length: ELIMINATION_MAX_DRAW + 1 }, (_, i) =>
+      textItem(`m${i}`),
+    );
+    expect(
+      isValid(
+        makeValues({
+          groups: [{ id: "g1", name: "Openings", items: nineItems }],
+          rounds: [
+            {
+              id: "r1",
+              slots: [
+                {
+                  groupId: "g1",
+                  mode: "manual",
+                  itemIds: nineItems.map((it) => it.id),
+                },
+              ],
+            },
+          ],
+        }),
+      ),
+    ).toBe(false);
+  });
+
   it("rejects a round whose slot references an unknown group", () => {
     expect(
       messageAt(
@@ -369,6 +434,40 @@ describe("createPackSchema — versus (nxn / 1v1)", () => {
         "rounds.0.slots",
       ),
     ).toBe("Pick two different groups.");
+  });
+
+  it("accepts an nxn per-side count of exactly the max", () => {
+    expect(
+      isValid(
+        versusValues({
+          groups: [
+            {
+              id: "boys",
+              name: "Boys",
+              items: Array.from({ length: NXN_SIDE_COUNT_MAX }, (_, i) =>
+                textItem(`b${i}`),
+              ),
+            },
+            {
+              id: "girls",
+              name: "Girls",
+              items: Array.from({ length: NXN_SIDE_COUNT_MAX }, (_, i) =>
+                textItem(`g${i}`),
+              ),
+            },
+          ],
+          rounds: [
+            {
+              id: "r1",
+              slots: [
+                { groupId: "boys", mode: "random", count: NXN_SIDE_COUNT_MAX },
+                { groupId: "girls", mode: "random", count: NXN_SIDE_COUNT_MAX },
+              ],
+            },
+          ],
+        }),
+      ),
+    ).toBe(true);
   });
 
   it("rejects an nxn per-side count above the max", () => {
