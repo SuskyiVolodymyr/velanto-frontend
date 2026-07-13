@@ -50,22 +50,28 @@ describe("YouTubeCard", () => {
     vi.clearAllMocks();
   });
 
-  it("preloads the API on mount and shows the thumbnail until the player is ready", () => {
+  it("shows the thumbnail and builds NO player on mount (lazy)", () => {
     mockedLoad.mockReturnValue(new Promise(() => {}));
     render(<YouTubeCard videoId="abc123" />);
 
     expect(
       screen.getByRole("img", { name: "YouTube video thumbnail" }),
     ).toHaveAttribute("src", "https://img.youtube.com/vi/abc123/mqdefault.jpg");
-    expect(mockedLoad).toHaveBeenCalledTimes(1);
+    // The whole point of the facade: nothing is loaded from YouTube on mount, so
+    // a round of N videos builds N thumbnails, not N embeds (no throttle).
+    expect(mockedLoad).not.toHaveBeenCalled();
   });
 
-  it("constructs the player on mount with autoplay off, and does not play on its own", async () => {
+  it("constructs the player only once the card is hovered, with autoplay off", async () => {
     const fakePlayer = makeFakePlayer();
     const fakeApi = makeFakeApi(fakePlayer);
     mockedLoad.mockResolvedValue(fakeApi);
 
     render(<YouTubeCard videoId="abc123" />);
+    // Not built until engaged.
+    expect(mockedLoad).not.toHaveBeenCalled();
+
+    fireEvent.mouseEnter(screen.getByTestId("youtube-card"));
 
     await waitFor(() => expect(fakeApi.Player).toHaveBeenCalledTimes(1));
     expect(vi.mocked(fakeApi.Player).mock.calls[0][1]).toEqual(
@@ -74,8 +80,6 @@ describe("YouTubeCard", () => {
         playerVars: { autoplay: 0 },
       }),
     );
-    // Preloaded but not hovered → it never starts playing by itself.
-    expect(fakePlayer.playVideo).not.toHaveBeenCalled();
   });
 
   it("reuses the existing player on subsequent hovers instead of reloading the API", async () => {
@@ -193,11 +197,13 @@ describe("YouTubeCard", () => {
       mockedLoad.mockResolvedValue(api);
 
       render(<YouTubeCard videoId="abc123" />);
-      // Flush the resolved API promise so the player is constructed and ready.
-      await vi.advanceTimersByTimeAsync(0);
-      expect(api.Player).toHaveBeenCalledTimes(1);
-
+      // Hover activates the card; flush the resolved API promise so the player
+      // is constructed, ready, and commanded to play.
       fireEvent.mouseEnter(screen.getByTestId("youtube-card"));
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(0);
+      });
+      expect(api.Player).toHaveBeenCalledTimes(1);
       expect(player.playVideo).toHaveBeenCalled();
 
       // Playback never reports buffering/playing (throttled). Past the watchdog
@@ -244,8 +250,8 @@ describe("YouTubeCard", () => {
       mockedLoad.mockResolvedValue(api);
 
       render(<YouTubeCard videoId="abc123" />);
-      await vi.advanceTimersByTimeAsync(0);
       fireEvent.mouseEnter(screen.getByTestId("youtube-card"));
+      await vi.advanceTimersByTimeAsync(0);
 
       // Playback starts buffering (YT_STATE_BUFFERING = 3) before the watchdog.
       fireStateChange(3);
