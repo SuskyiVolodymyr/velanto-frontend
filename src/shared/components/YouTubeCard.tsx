@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { ExternalLink } from "lucide-react";
 import { cn } from "@/src/shared/lib/cn";
 import { Badge } from "@/src/shared/components/Badge";
 import { youtubeThumbnailUrl } from "@/src/shared/lib/youtube";
@@ -17,6 +18,10 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
   const playerRef = useRef<YouTubePlayer | null>(null);
   const [hovered, setHovered] = useState(false);
   const [playerReady, setPlayerReady] = useState(false);
+  // The video can't be played embedded (private/deleted/embed-disabled/region-
+  // or age-restricted). We fall back to the thumbnail + an "open on YouTube"
+  // link instead of leaving YouTube's red error box in the card.
+  const [failed, setFailed] = useState(false);
 
   // Tears down any player built for a previous videoId so a re-render with a
   // new video (rather than a fresh mount) doesn't leave the old one playing
@@ -27,6 +32,7 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
       playerRef.current?.destroy();
       playerRef.current = null;
       setPlayerReady(false);
+      setFailed(false);
     };
   }, [videoId]);
 
@@ -42,15 +48,19 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
         if (cancelled || !mountRef.current) return;
         playerRef.current = new YT.Player(mountRef.current, {
           videoId,
-          playerVars: { autoplay: 1 },
+          // autoplay:0 — the hover effect below is the ONLY thing that starts
+          // playback, so a video never plays on its own, and we don't trip
+          // YouTube's autoplay throttling ("try again later").
+          playerVars: { autoplay: 0 },
           events: {
             onReady: () => {
               // Controls (play/pause) only become callable once the player is
               // ready; the hover effect below drives playback off `playerReady`,
-              // so play-on-ready is handled there — and a hover that ended
-              // before ready never touches a not-yet-a-function control.
+              // so a hover that ended before ready never touches a
+              // not-yet-a-function control.
               setPlayerReady(true);
             },
+            onError: () => setFailed(true),
           },
         });
       })
@@ -63,10 +73,10 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
   }, [hovered, videoId]);
 
   useEffect(() => {
-    if (!playerRef.current || !playerReady) return;
+    if (!playerRef.current || !playerReady || failed) return;
     if (hovered) playerRef.current.playVideo();
     else playerRef.current.pauseVideo();
-  }, [hovered, playerReady]);
+  }, [hovered, playerReady, failed]);
 
   return (
     <div
@@ -93,13 +103,18 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
           insertBefore relative to — a node YouTube has already ripped out.
           YT sizes the iframe 640×360 by default; force it to fill the box so
           the video isn't clipped and its controls stay on-screen. */}
-      <div className="absolute inset-0 [&_iframe]:h-full [&_iframe]:w-full">
+      <div
+        className={cn(
+          "absolute inset-0 [&_iframe]:h-full [&_iframe]:w-full",
+          failed && "invisible",
+        )}
+      >
         <div ref={mountRef} />
       </div>
-      {!hovered && (
-        // Mouse users get autoplay via onMouseEnter above; this button is the
-        // equivalent trigger for touch and keyboard users, who can never fire
-        // a hover event.
+      {!hovered && !failed && (
+        // Mouse users start the preview by hovering (the effect above plays it);
+        // this button is the equivalent trigger for touch and keyboard users,
+        // who can never fire a hover event.
         <button
           type="button"
           onClick={(event) => {
@@ -116,6 +131,26 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
             <span className="ml-0.5 h-0 w-0 border-y-8 border-l-[12px] border-y-transparent border-l-white" />
           </span>
         </button>
+      )}
+      {failed && (
+        // The video won't embed — offer to open it on YouTube instead of
+        // showing YouTube's red error box. stopPropagation so opening it doesn't
+        // also trigger a surrounding pickable card.
+        <a
+          href={`https://www.youtube.com/watch?v=${videoId}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={(event) => event.stopPropagation()}
+          className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 bg-black/70 px-3 text-center"
+        >
+          <span className="text-[11px] text-white/70">
+            This video can’t play here
+          </span>
+          <span className="inline-flex items-center gap-1 text-xs font-semibold text-white">
+            Open on YouTube
+            <ExternalLink aria-hidden className="h-3.5 w-3.5" />
+          </span>
+        </a>
       )}
       <Badge className="absolute left-2 top-2">YouTube</Badge>
     </div>

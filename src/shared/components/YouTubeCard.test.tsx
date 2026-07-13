@@ -61,7 +61,7 @@ describe("YouTubeCard", () => {
     expect(vi.mocked(fakeApi.Player).mock.calls[0][1]).toEqual(
       expect.objectContaining({
         videoId: "abc123",
-        playerVars: { autoplay: 1 },
+        playerVars: { autoplay: 0 },
       }),
     );
     expect(fakePlayer.playVideo).toHaveBeenCalled();
@@ -143,6 +143,35 @@ describe("YouTubeCard", () => {
     );
 
     expect(ancestorClick).not.toHaveBeenCalled();
+  });
+
+  it("falls back to an Open-on-YouTube link when the video can't be embedded", async () => {
+    const player = makeFakePlayer();
+    const api: YouTubeIframeApi = {
+      Player: vi.fn().mockImplementation(function (
+        _el: unknown,
+        options: {
+          events: { onError: (e: { target: YouTubePlayer }) => void };
+        },
+      ) {
+        options.events.onError({ target: player });
+        return player;
+      }) as unknown as YouTubeIframeApi["Player"],
+    };
+    mockedLoad.mockResolvedValue(api);
+
+    render(<YouTubeCard videoId="abc123" />);
+    fireEvent.mouseEnter(screen.getByTestId("youtube-card"));
+
+    const link = await screen.findByRole("link", { name: /open on youtube/i });
+    expect(link).toHaveAttribute(
+      "href",
+      "https://www.youtube.com/watch?v=abc123",
+    );
+    // The play-preview button is gone once the video has failed.
+    expect(
+      screen.queryByRole("button", { name: "Play video preview" }),
+    ).toBeNull();
   });
 
   it("does not call player controls until the player is ready", async () => {

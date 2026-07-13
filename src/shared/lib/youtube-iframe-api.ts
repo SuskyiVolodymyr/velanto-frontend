@@ -13,6 +13,9 @@ export interface YouTubePlayerOptions {
   playerVars?: { autoplay?: 0 | 1 };
   events?: {
     onReady?: (event: YouTubePlayerEvent) => void;
+    // Fires when the video can't be played embedded (private, deleted, embed
+    // disabled, region/age restricted) or the player hits a playback error.
+    onError?: (event: YouTubePlayerEvent) => void;
   };
 }
 
