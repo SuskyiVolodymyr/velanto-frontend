@@ -512,7 +512,14 @@
     "roundName": "Название раунда {index}",
     "saveChanges": "Сохранить изменения",
     "saving": "Сохранение…",
-    "editOthersForbidden": "Вы можете редактировать только свои паки."
+    "editOthersForbidden": "Вы можете редактировать только свои паки.",
+    "roundGroup": "Группа",
+    "roundPlaces": "Позиции",
+    "placeLabel": "Позиция {index}",
+    "placeItemLabel": "Элемент для позиции {index}",
+    "addPlace": "Добавить позицию",
+    "removePlace": "Убрать позицию",
+    "setCountAllLabel": "Задать розыгрыш для всех раундов"
   },
   "profile": {
     "loginRequiredView": "Чтобы посмотреть свой профиль, нужно войти в аккаунт.",

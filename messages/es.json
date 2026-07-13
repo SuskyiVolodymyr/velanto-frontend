@@ -512,7 +512,14 @@
     "roundName": "Nombre de la ronda {index}",
     "saveChanges": "Guardar cambios",
     "saving": "Guardando…",
-    "editOthersForbidden": "Solo puedes editar tus propios packs."
+    "editOthersForbidden": "Solo puedes editar tus propios packs.",
+    "roundGroup": "Grupo",
+    "roundPlaces": "Posiciones",
+    "placeLabel": "Posición {index}",
+    "placeItemLabel": "Elemento para la posición {index}",
+    "addPlace": "Añadir posición",
+    "removePlace": "Quitar posición",
+    "setCountAllLabel": "Fijar el sorteo de todas las rondas"
   },
   "profile": {
     "loginRequiredView": "Tienes que iniciar sesión para ver tu perfil.",

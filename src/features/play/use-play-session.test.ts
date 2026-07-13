@@ -44,8 +44,11 @@ const GROUPS_PACK: Pack = {
     { id: "g2", name: "Round 2", items: [textItem("3", "C")] },
   ],
   rounds: [
-    { id: "r1", slots: [{ groupId: "g1", mode: "manual" }] },
-    { id: "r2", slots: [{ groupId: "g2", mode: "manual" }] },
+    {
+      id: "r1",
+      slots: [{ groupId: "g1", mode: "manual", itemIds: ["1", "2"] }],
+    },
+    { id: "r2", slots: [{ groupId: "g2", mode: "manual", itemIds: ["3"] }] },
   ],
 };
 
@@ -68,15 +71,15 @@ const VERSUS_PACK: Pack = {
     {
       id: "r1",
       slots: [
-        { groupId: "ca", mode: "manual" },
-        { groupId: "cb", mode: "manual" },
+        { groupId: "ca", mode: "manual", itemIds: ["1", "2"] },
+        { groupId: "cb", mode: "manual", itemIds: ["3", "4"] },
       ],
     },
     {
       id: "r2",
       slots: [
-        { groupId: "ca", mode: "manual" },
-        { groupId: "cb", mode: "manual" },
+        { groupId: "ca", mode: "manual", itemIds: ["1", "2"] },
+        { groupId: "cb", mode: "manual", itemIds: ["3", "4"] },
       ],
     },
   ],

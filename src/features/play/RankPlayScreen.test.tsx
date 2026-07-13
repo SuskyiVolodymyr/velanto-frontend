@@ -64,8 +64,11 @@ const RANK_BLIND_PACK: Pack = {
     },
   ],
   rounds: [
-    { id: "r1", slots: [{ groupId: "g1", mode: "manual" }] },
-    { id: "r2", slots: [{ groupId: "g2", mode: "manual" }] },
+    {
+      id: "r1",
+      slots: [{ groupId: "g1", mode: "manual", itemIds: ["i1", "i2"] }],
+    },
+    { id: "r2", slots: [{ groupId: "g2", mode: "manual", itemIds: ["i3"] }] },
   ],
   authorId: "u1",
   createdAt: "2026-01-01T00:00:00.000Z",

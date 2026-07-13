@@ -47,6 +47,9 @@ export const slotValueSchema = z.object({
   groupId: z.string(),
   mode: z.enum(SLOT_MODES),
   count: z.number().optional(),
+  // manual: the explicit ordered items pinned to each place. Structural only —
+  // membership/distinctness/min-count live in the per-format refinements.
+  itemIds: z.array(z.string()).optional(),
 });
 
 export const roundValueSchema = z.object({

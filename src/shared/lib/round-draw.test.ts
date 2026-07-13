@@ -27,16 +27,38 @@ describe("resolveRoundDraws", () => {
     expect(resolved[0].slots[0].drawnCount).toBe(2);
   });
 
-  it("draws the whole pool for a manual slot and does not consume it", () => {
+  it("draws exactly the pinned items for a manual slot", () => {
+    const resolved = resolveRoundDraws(
+      [group("g", 5)],
+      [{ slots: [{ groupId: "g", mode: "manual", itemIds: ["g-0", "g-2"] }] }],
+    );
+    expect(resolved[0].slots[0].drawnCount).toBe(2);
+  });
+
+  it("reserves manual-pinned items so a random slot cannot draw them", () => {
     const resolved = resolveRoundDraws(
       [group("g", 4)],
       [
-        { slots: [{ groupId: "g", mode: "manual" }] },
         { slots: [{ groupId: "g", mode: "random", count: 4 }] },
+        { slots: [{ groupId: "g", mode: "manual", itemIds: ["g-0"] }] },
       ],
     );
-    expect(resolved[0].slots[0].drawnCount).toBe(4);
-    expect(resolved[1].slots[0].drawnCount).toBe(4);
+    expect(resolved[0].slots[0].drawnCount).toBe(3);
+    expect(resolved[1].slots[0].drawnCount).toBe(1);
+  });
+
+  it("random slots dedup among themselves after manual reservation", () => {
+    const resolved = resolveRoundDraws(
+      [group("g", 5)],
+      [
+        { slots: [{ groupId: "g", mode: "manual", itemIds: ["g-0"] }] },
+        { slots: [{ groupId: "g", mode: "random", count: 3 }] },
+        { slots: [{ groupId: "g", mode: "random", count: 3 }] },
+      ],
+    );
+    expect(resolved[0].slots[0].drawnCount).toBe(1);
+    expect(resolved[1].slots[0].drawnCount).toBe(3);
+    expect(resolved[2].slots[0].drawnCount).toBe(1);
   });
 
   it("never repeats items across random rounds sharing a group (dedup)", () => {

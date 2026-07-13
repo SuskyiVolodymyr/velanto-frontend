@@ -30,17 +30,18 @@ const BASE_PACK = {
   myVote: null,
 };
 
-// Manual slots keep candidates in authored order, so the play-through is
-// deterministic (see play.spec.ts).
-const groupsRound = (id: string, groupId: string) => ({
+// Manual slots pin their items in authored order, so the play-through is
+// deterministic (see play.spec.ts). A manual slot always shows exactly its
+// pinned items.
+const groupsRound = (id: string, groupId: string, itemIds: string[]) => ({
   id,
-  slots: [{ groupId, mode: "manual" }],
+  slots: [{ groupId, mode: "manual", itemIds }],
 });
 const versusRound = (id: string) => ({
   id,
   slots: [
-    { groupId: "ca", mode: "manual" },
-    { groupId: "cb", mode: "manual" },
+    { groupId: "ca", mode: "manual", itemIds: ["1", "2"] },
+    { groupId: "cb", mode: "manual", itemIds: ["3", "4"] },
   ],
 });
 
@@ -60,7 +61,10 @@ export const PACKS: Record<string, Record<string, unknown>> = {
       },
       { id: "g2", name: "2020", items: [textItem("3", "Silhouette")] },
     ],
-    rounds: [groupsRound("r1", "g1"), groupsRound("r2", "g2")],
+    rounds: [
+      groupsRound("r1", "g1", ["1", "2"]),
+      groupsRound("r2", "g2", ["3"]),
+    ],
   },
   "pack-sacrifice": {
     ...BASE_PACK,
@@ -76,7 +80,10 @@ export const PACKS: Record<string, Record<string, unknown>> = {
       },
       { id: "g2", name: "2020", items: [textItem("3", "Silhouette")] },
     ],
-    rounds: [groupsRound("r1", "g1"), groupsRound("r2", "g2")],
+    rounds: [
+      groupsRound("r1", "g1", ["1", "2"]),
+      groupsRound("r2", "g2", ["3"]),
+    ],
   },
   "pack-nxn": {
     ...BASE_PACK,
@@ -114,7 +121,7 @@ export const PACKS: Record<string, Record<string, unknown>> = {
         items: [textItem("i1", "AoT"), textItem("i2", "Redo")],
       },
     ],
-    rounds: [groupsRound("r1", "g1")],
+    rounds: [groupsRound("r1", "g1", ["i1", "i2"])],
   },
 };
 

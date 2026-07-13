@@ -59,7 +59,14 @@ const EDIT_VALUES = {
       ],
     },
   ],
-  rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "manual" as const }] }],
+  rounds: [
+    {
+      id: "r1",
+      slots: [
+        { groupId: "g1", mode: "manual" as const, itemIds: ["i1", "i2"] },
+      ],
+    },
+  ],
 };
 
 const MOCK_USER = {

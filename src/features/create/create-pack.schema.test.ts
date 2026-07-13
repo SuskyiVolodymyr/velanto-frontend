@@ -132,14 +132,36 @@ describe("createPackSchema — elimination (save_one / sacrifice_one / rank_blin
     });
   }
 
-  it("accepts a manual round drawing the whole pool", () => {
+  it("accepts a manual round that pins specific items", () => {
     expect(
       isValid(
         makeValues({
-          rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "manual" }] }],
+          rounds: [
+            {
+              id: "r1",
+              slots: [
+                { groupId: "g1", mode: "manual", itemIds: ["i-a", "i-b"] },
+              ],
+            },
+          ],
         }),
       ),
     ).toBe(true);
+  });
+
+  it("rejects a manual round pinning a single item (below the min-draw)", () => {
+    expect(
+      isValid(
+        makeValues({
+          rounds: [
+            {
+              id: "r1",
+              slots: [{ groupId: "g1", mode: "manual", itemIds: ["i-a"] }],
+            },
+          ],
+        }),
+      ),
+    ).toBe(false);
   });
 
   it("rejects a group with no name", () => {

@@ -512,7 +512,14 @@
     "roundName": "Nome da rodada {index}",
     "saveChanges": "Salvar alterações",
     "saving": "Salvando…",
-    "editOthersForbidden": "Você só pode editar seus próprios packs."
+    "editOthersForbidden": "Você só pode editar seus próprios packs.",
+    "roundGroup": "Grupo",
+    "roundPlaces": "Posições",
+    "placeLabel": "Posição {index}",
+    "placeItemLabel": "Item para a posição {index}",
+    "addPlace": "Adicionar posição",
+    "removePlace": "Remover posição",
+    "setCountAllLabel": "Definir o sorteio de todas as rodadas"
   },
   "profile": {
     "loginRequiredView": "Você precisa estar logado para ver seu perfil.",

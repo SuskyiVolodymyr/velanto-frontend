@@ -55,7 +55,9 @@ const BASE_PACK: Pack = {
       ],
     },
   ],
-  rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "manual" }] }],
+  rounds: [
+    { id: "r1", slots: [{ groupId: "g1", mode: "manual", itemIds: ["i1"] }] },
+  ],
   authorId: "u1",
   createdAt: "2026-01-01T00:00:00.000Z",
   totalPlays: 0,
@@ -103,7 +105,7 @@ describe("PackDetailScreen", () => {
         {
           id: "r1",
           name: "Semifinals",
-          slots: [{ groupId: "g1", mode: "manual" }],
+          slots: [{ groupId: "g1", mode: "manual", itemIds: ["i1"] }],
         },
       ],
     };

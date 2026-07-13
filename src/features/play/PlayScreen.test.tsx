@@ -63,7 +63,18 @@ function packWithItemCount(count: number): Pack {
         ),
       },
     ],
-    rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "manual" }] }],
+    rounds: [
+      {
+        id: "r1",
+        slots: [
+          {
+            groupId: "g1",
+            mode: "manual",
+            itemIds: Array.from({ length: count }, (_, i) => String(i + 1)),
+          },
+        ],
+      },
+    ],
   };
 }
 
@@ -87,8 +98,11 @@ const SAVE_ONE_PACK: Pack = {
     },
   ],
   rounds: [
-    { id: "r1", slots: [{ groupId: "g1", mode: "manual" }] },
-    { id: "r2", slots: [{ groupId: "g2", mode: "manual" }] },
+    {
+      id: "r1",
+      slots: [{ groupId: "g1", mode: "manual", itemIds: ["1", "2"] }],
+    },
+    { id: "r2", slots: [{ groupId: "g2", mode: "manual", itemIds: ["3"] }] },
   ],
   authorId: "u1",
   createdAt: "2026-01-01T00:00:00.000Z",
@@ -159,15 +173,15 @@ describe("PlayScreen", () => {
       {
         id: "r1",
         slots: [
-          { groupId: "ca", mode: "manual" },
-          { groupId: "cb", mode: "manual" },
+          { groupId: "ca", mode: "manual", itemIds: ["1", "2"] },
+          { groupId: "cb", mode: "manual", itemIds: ["3", "4"] },
         ],
       },
       {
         id: "r2",
         slots: [
-          { groupId: "ca", mode: "manual" },
-          { groupId: "cb", mode: "manual" },
+          { groupId: "ca", mode: "manual", itemIds: ["1", "2"] },
+          { groupId: "cb", mode: "manual", itemIds: ["3", "4"] },
         ],
       },
     ],
@@ -354,7 +368,12 @@ describe("PlayScreen", () => {
           ],
         },
       ],
-      rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "manual" }] }],
+      rounds: [
+        {
+          id: "r1",
+          slots: [{ groupId: "g1", mode: "manual", itemIds: ["v1", "2"] }],
+        },
+      ],
     };
     renderScreen(packWithVideo);
     await screen.findByText("Guren no Yumiya");

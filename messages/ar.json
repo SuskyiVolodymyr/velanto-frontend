@@ -512,7 +512,14 @@
     "roundName": "اسم الجولة {index}",
     "saveChanges": "حفظ التغييرات",
     "saving": "جارٍ الحفظ…",
-    "editOthersForbidden": "يمكنك تعديل حِزمك الخاصة فقط."
+    "editOthersForbidden": "يمكنك تعديل حِزمك الخاصة فقط.",
+    "roundGroup": "المجموعة",
+    "roundPlaces": "المواضع",
+    "placeLabel": "الموضع {index}",
+    "placeItemLabel": "عنصر الموضع {index}",
+    "addPlace": "إضافة موضع",
+    "removePlace": "إزالة موضع",
+    "setCountAllLabel": "تحديد سحب كل الجولات"
   },
   "profile": {
     "loginRequiredView": "يجب تسجيل الدخول لعرض ملفك الشخصي.",
