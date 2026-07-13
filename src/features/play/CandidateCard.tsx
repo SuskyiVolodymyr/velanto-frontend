@@ -27,12 +27,15 @@ export function CandidateCard({
 }: CandidateCardProps) {
   const t = useTranslations("play");
   const videoId = item.type === "youtube" ? extractYouTubeId(item.value) : null;
+  // Cards fade in one-by-one; the delay staggers by position in the round.
+  const appearDelay = { animationDelay: `${index * 80}ms` };
 
   if (videoId) {
     return (
       <div
+        style={appearDelay}
         className={cn(
-          "w-[200px] flex-none overflow-hidden rounded-2xl border transition-colors",
+          "play-card-appear w-[200px] flex-none overflow-hidden rounded-2xl border transition-colors",
           selected ? "border-acc bg-acc/10" : "border-border bg-surface",
         )}
       >
@@ -63,8 +66,9 @@ export function CandidateCard({
     <button
       type="button"
       onClick={onSelect}
+      style={appearDelay}
       className={cn(
-        "w-[200px] flex-none rounded-2xl border p-4 text-left transition-colors",
+        "play-card-appear w-[200px] flex-none rounded-2xl border p-4 text-left transition-colors",
         selected
           ? "border-acc bg-acc/10"
           : "border-border bg-surface hover:border-border-strong",

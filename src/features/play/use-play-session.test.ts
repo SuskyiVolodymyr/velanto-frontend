@@ -80,36 +80,27 @@ beforeEach(() => {
 });
 
 describe("usePlaySession", () => {
-  it("starts on round 0 with one item revealed and confirm gated", () => {
+  it("starts on round 0 with confirm gated until a selection", () => {
     const { result } = renderHook(() => usePlaySession(GROUPS_PACK));
     expect(result.current.roundIndex).toBe(0);
-    expect(result.current.revealedCount).toBe(1);
-    expect(result.current.totalCount).toBe(2);
-    expect(result.current.canRevealMore).toBe(true);
     expect(result.current.canConfirm).toBe(false);
   });
 
-  it("gates confirm until everything is revealed AND something is selected", () => {
+  it("gates confirm until something is selected", () => {
     const { result } = renderHook(() => usePlaySession(GROUPS_PACK));
 
-    act(() => result.current.setSelectedId("1"));
-    // Selected, but not everything revealed yet.
     expect(result.current.canConfirm).toBe(false);
-
-    act(() => result.current.revealAll());
-    expect(result.current.revealedCount).toBe(2);
+    act(() => result.current.setSelectedId("1"));
     expect(result.current.canConfirm).toBe(true);
   });
 
-  it("advances the round, records the pick, and resets reveal/selection on confirm", () => {
+  it("advances the round, records the pick, and resets the selection on confirm", () => {
     const { result } = renderHook(() => usePlaySession(GROUPS_PACK));
 
-    act(() => result.current.revealAll());
     act(() => result.current.setSelectedId("2"));
     act(() => result.current.confirmPick());
 
     expect(result.current.roundIndex).toBe(1);
-    expect(result.current.revealedCount).toBe(1); // reset
     expect(result.current.selectedId).toBe(null); // reset
     expect(result.current.picks).toEqual([
       { groupId: "g1", itemId: "2", itemTitle: "B" },
@@ -119,30 +110,12 @@ describe("usePlaySession", () => {
   it("resolves a versus pick as round-index groupId and category id/name", () => {
     const { result } = renderHook(() => usePlaySession(VERSUS_PACK));
 
-    act(() => result.current.revealAll());
     act(() => result.current.setSelectedId("ca"));
     act(() => result.current.confirmPick());
 
     expect(result.current.picks).toEqual([
       { groupId: "0", itemId: "ca", itemTitle: "Boys" },
     ]);
-  });
-
-  it("clamps totalCount to the smaller sampled side for a malformed versus pack", () => {
-    const shortPack: Pack = {
-      ...VERSUS_PACK,
-      categories: [
-        { id: "ca", name: "Boys", items: [textItem("1", "Naruto")] },
-        {
-          id: "cb",
-          name: "Girls",
-          items: [textItem("3", "Sakura"), textItem("4", "Hinata")],
-        },
-      ],
-    };
-    const { result } = renderHook(() => usePlaySession(shortPack));
-    expect(result.current.totalCount).toBe(1);
-    expect(result.current.canRevealMore).toBe(false);
   });
 
   it("records exactly once on finish and writes last-play only after the record resolves", async () => {
@@ -155,7 +128,6 @@ describe("usePlaySession", () => {
     const { result } = renderHook(() => usePlaySession(GROUPS_PACK));
 
     // Round 1.
-    act(() => result.current.revealAll());
     act(() => result.current.setSelectedId("1"));
     act(() => result.current.confirmPick());
     // Round 2 (single item).

@@ -23,16 +23,11 @@ export interface PlaySession {
   progressPct: number;
   showRound: boolean;
   roundTitle: string;
-  totalCount: number;
-  revealedCount: number;
-  canRevealMore: boolean;
   canConfirm: boolean;
   selectedId: string | null;
   setSelectedId: (id: string | null) => void;
   picks: Pick[];
   confirmPick: () => void;
-  revealNext: () => void;
-  revealAll: () => void;
   // Groups format: the sampled candidates for the current round.
   candidates: Item[];
   // Versus (nxn) format: the two fixed categories and their per-round samples.
@@ -57,7 +52,6 @@ export function usePlaySession(pack: Pack): PlaySession {
   const totalRounds = isVersus ? (pack.versusRounds ?? 0) : groups.length;
 
   const [roundIndex, setRoundIndex] = useState(0);
-  const [revealed, setRevealed] = useState(1);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [picks, setPicks] = useState<Pick[]>([]);
 
@@ -93,21 +87,11 @@ export function usePlaySession(pack: Pack): PlaySession {
 
   // A single per-round model unifies the two formats so the rest of the
   // component reads one shape instead of branching on `isVersus` at every
-  // site. `title` and `totalCount` drive the UI; `resolvePick` turns the
-  // current `selectedId` into the Pick to record (or null if invalid).
-  //
-  // totalCount is derived from the actual sampled candidates, not the
-  // pack-level versusN directly — a malformed pack with fewer items than
-  // versusN in a category would otherwise make "Showing X of Y" over-report
-  // and leave "Show next" stuck past the last real card. Backend create-flow
-  // validation guarantees this can't happen today, but TS can't express it.
+  // site. `title` drives the UI; `resolvePick` turns the current `selectedId`
+  // into the Pick to record (or null if invalid).
   const round = isVersus
     ? {
         title: `Round ${roundIndex + 1}`,
-        totalCount: Math.min(
-          versusCandidatesA.length,
-          versusCandidatesB.length,
-        ),
         resolvePick(id: string): Pick | null {
           const category = categories.find((c) => c.id === id);
           if (!category) return null;
@@ -120,7 +104,6 @@ export function usePlaySession(pack: Pack): PlaySession {
       }
     : {
         title: group?.name ?? "",
-        totalCount: candidates.length,
         resolvePick(id: string): Pick | null {
           if (!group) return null;
           const item = candidates.find((candidate) => candidate.id === id);
@@ -129,10 +112,9 @@ export function usePlaySession(pack: Pack): PlaySession {
         },
       };
 
-  const totalCount = round.totalCount;
-  const revealedCount = Math.min(revealed, totalCount);
-  const canRevealMore = revealedCount < totalCount;
-  const canConfirm = selectedId !== null && revealedCount >= totalCount;
+  // Every candidate is shown at once (they fade in staggered in the UI), so a
+  // pick is confirmable as soon as something is selected.
+  const canConfirm = selectedId !== null;
 
   function confirmPick() {
     if (!canConfirm || selectedId === null) return;
@@ -141,15 +123,6 @@ export function usePlaySession(pack: Pack): PlaySession {
     setPicks((prev) => [...prev, pick]);
     setRoundIndex((prev) => prev + 1);
     setSelectedId(null);
-    setRevealed(1);
-  }
-
-  function revealNext() {
-    setRevealed((prev) => Math.min(prev + 1, totalCount));
-  }
-
-  function revealAll() {
-    setRevealed(totalCount);
   }
 
   // Fires once when the last round is confirmed: records the play, then
@@ -185,16 +158,11 @@ export function usePlaySession(pack: Pack): PlaySession {
     progressPct,
     showRound,
     roundTitle: round.title,
-    totalCount,
-    revealedCount,
-    canRevealMore,
     canConfirm,
     selectedId,
     setSelectedId,
     picks,
     confirmPick,
-    revealNext,
-    revealAll,
     candidates,
     categoryA,
     categoryB,

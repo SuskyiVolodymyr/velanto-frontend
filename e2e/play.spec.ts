@@ -159,16 +159,12 @@ test.describe("Play a pack", () => {
 
       await page.goto(`/packs/${format}/play`);
 
-      // Round 1: gated until everything revealed AND something selected.
+      // Round 1: all candidates shown at once; gated until something is selected.
       await expect(page.getByRole("heading", { name: "2016" })).toBeVisible();
       await expect(page.getByText("Round 1 of 2")).toBeVisible();
-      await expect(page.getByText("Showing 1 of 2")).toBeVisible();
-      await expect(
-        page.getByRole("button", { name: "Next round →" }),
-      ).toBeDisabled();
-
-      await page.getByRole("button", { name: "Show all" }).click();
-      await expect(page.getByText("Showing 2 of 2")).toBeVisible();
+      await expect(page.getByRole("button", { name: "Show all" })).toHaveCount(
+        0,
+      );
       await expect(
         page.getByRole("button", { name: "Next round →" }),
       ).toBeDisabled();
@@ -182,7 +178,6 @@ test.describe("Play a pack", () => {
       // Round 2: single item, still gated on selection.
       await expect(page.getByRole("heading", { name: "2020" })).toBeVisible();
       await expect(page.getByText("Round 2 of 2")).toBeVisible();
-      await expect(page.getByText("Showing 1 of 1")).toBeVisible();
       await expect(
         page.getByRole("button", { name: "Next round →" }),
       ).toBeDisabled();
@@ -220,19 +215,17 @@ test.describe("Play a pack", () => {
 
     await page.goto("/packs/pack-nxn/play");
 
-    // Round 1: two sides with a VS divider, gated until both revealed + a pick.
+    // Round 1: two sides with a VS divider, gated until a side is picked.
     await expect(page.getByRole("button", { name: "Pick Boys" })).toBeVisible();
     await expect(
       page.getByRole("button", { name: "Pick Girls" }),
     ).toBeVisible();
     await expect(page.getByText("VS")).toBeVisible();
-    await expect(page.getByText("Showing 1 of 2")).toBeVisible();
+    await expect(page.getByRole("button", { name: "Show all" })).toHaveCount(0);
     await expect(
       page.getByRole("button", { name: "Next round →" }),
     ).toBeDisabled();
 
-    await page.getByRole("button", { name: "Show all" }).click();
-    await expect(page.getByText("Showing 2 of 2")).toBeVisible();
     await page.getByRole("button", { name: "Pick Boys" }).click();
     await expect(
       page.getByRole("button", { name: "Next round →" }),
@@ -241,7 +234,6 @@ test.describe("Play a pack", () => {
 
     // Round 2.
     await expect(page.getByText("Round 2 of 2")).toBeVisible();
-    await page.getByRole("button", { name: "Show all" }).click();
     await page.getByRole("button", { name: "Pick Girls" }).click();
     await page.getByRole("button", { name: "Next round →" }).click();
 

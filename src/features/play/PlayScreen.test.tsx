@@ -148,27 +148,6 @@ describe("PlayScreen", () => {
     myVote: null,
   };
 
-  it("derives the reveal count from the actual sampled items, not a possibly-stale versusN", async () => {
-    const user = userEvent.setup();
-    const shortPack: Pack = {
-      ...NXN_PACK,
-      categories: [
-        { id: "ca", name: "Boys", items: [textItem("1", "Naruto")] },
-        {
-          id: "cb",
-          name: "Girls",
-          items: [textItem("3", "Sakura"), textItem("4", "Hinata")],
-        },
-      ],
-    };
-    renderScreen(shortPack);
-    await screen.findByRole("button", { name: "Pick Boys" });
-
-    expect(screen.getByText("Showing 1 of 1")).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Pick Boys" }));
-    expect(screen.getByRole("button", { name: "Next round →" })).toBeEnabled();
-  });
-
   it("renders nxn rounds as two side-by-side categories with a VS divider", async () => {
     renderScreen(NXN_PACK);
 
@@ -179,19 +158,15 @@ describe("PlayScreen", () => {
       screen.getByRole("button", { name: "Pick Girls" }),
     ).toBeInTheDocument();
     expect(screen.getByText("VS")).toBeInTheDocument();
-    expect(screen.getByText("Showing 1 of 2")).toBeInTheDocument();
   });
 
-  it("keeps nxn's Next round disabled until both sides are revealed and a side is picked", async () => {
+  it("keeps nxn's Next round disabled until a side is picked", async () => {
     const user = userEvent.setup();
     renderScreen(NXN_PACK);
     await screen.findByRole("button", { name: "Pick Boys" });
 
-    await user.click(screen.getByRole("button", { name: "Pick Boys" }));
     expect(screen.getByRole("button", { name: "Next round →" })).toBeDisabled();
-
-    await user.click(screen.getByRole("button", { name: "Show all" }));
-    expect(screen.getByText("Showing 2 of 2")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Pick Boys" }));
     expect(screen.getByRole("button", { name: "Next round →" })).toBeEnabled();
   });
 
@@ -200,12 +175,10 @@ describe("PlayScreen", () => {
     renderScreen(NXN_PACK);
     await screen.findByRole("button", { name: "Pick Boys" });
 
-    await user.click(screen.getByRole("button", { name: "Show all" }));
     await user.click(screen.getByRole("button", { name: "Pick Boys" }));
     await user.click(screen.getByRole("button", { name: "Next round →" }));
 
     expect(await screen.findByText("Round 2 of 2")).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Show all" }));
     await user.click(screen.getByRole("button", { name: "Pick Girls" }));
     await user.click(screen.getByRole("button", { name: "Next round →" }));
 
@@ -221,26 +194,21 @@ describe("PlayScreen", () => {
     });
   });
 
-  it("keeps Next round disabled until every item in the round is revealed", async () => {
-    const user = userEvent.setup();
+  it("shows all of the round's candidates at once, with no reveal controls", async () => {
     renderScreen(SAVE_ONE_PACK);
     await screen.findByText("Guren no Yumiya");
 
-    expect(screen.getByText("Showing 1 of 2")).toBeInTheDocument();
-    await user.click(screen.getByText("Guren no Yumiya"));
-    expect(screen.getByRole("button", { name: "Next round →" })).toBeDisabled();
-
-    await user.click(screen.getByRole("button", { name: "Show all" }));
-    expect(screen.getByText("Showing 2 of 2")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Next round →" })).toBeEnabled();
+    // Both items of round 1 are present immediately — no Show next/Show all step.
+    expect(screen.getByText("Redo")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Show next" })).toBeNull();
+    expect(screen.queryByRole("button", { name: "Show all" })).toBeNull();
+    expect(screen.queryByText(/Showing/)).toBeNull();
   });
 
-  it("requires a selection before confirming, even once everything is revealed", async () => {
-    const user = userEvent.setup();
+  it("requires a selection before confirming", async () => {
     renderScreen(SAVE_ONE_PACK);
     await screen.findByText("Guren no Yumiya");
 
-    await user.click(screen.getByRole("button", { name: "Show all" }));
     expect(screen.getByRole("button", { name: "Next round →" })).toBeDisabled();
   });
 
@@ -249,7 +217,6 @@ describe("PlayScreen", () => {
     renderScreen(SAVE_ONE_PACK);
     await screen.findByText("Guren no Yumiya");
 
-    await user.click(screen.getByRole("button", { name: "Show all" }));
     await user.click(screen.getByText("Redo"));
     await user.click(screen.getByRole("button", { name: "Next round →" }));
 
@@ -283,7 +250,6 @@ describe("PlayScreen", () => {
     renderScreen(SAVE_ONE_PACK);
     await screen.findByText("Guren no Yumiya");
 
-    await user.click(screen.getByRole("button", { name: "Show all" }));
     await user.click(screen.getByText("Redo"));
     await user.click(screen.getByRole("button", { name: "Next round →" }));
     await screen.findByText("Silhouette");
@@ -345,7 +311,6 @@ describe("PlayScreen", () => {
     await user.click(
       screen.getByRole("button", { name: "Play video preview" }),
     );
-    await user.click(screen.getByRole("button", { name: "Show all" }));
     expect(screen.getByRole("button", { name: "Next round →" })).toBeDisabled();
 
     await user.click(
@@ -354,19 +319,16 @@ describe("PlayScreen", () => {
     expect(screen.getByRole("button", { name: "Next round →" })).toBeEnabled();
   });
 
-  it("resets the reveal count and selection when advancing to the next round", async () => {
+  it("resets the selection when advancing to the next round", async () => {
     const user = userEvent.setup();
     renderScreen(SAVE_ONE_PACK);
     await screen.findByText("Guren no Yumiya");
 
-    await user.click(screen.getByRole("button", { name: "Show all" }));
-    expect(screen.getByText("Showing 2 of 2")).toBeInTheDocument();
     await user.click(screen.getByText("Redo"));
     await user.click(screen.getByRole("button", { name: "Next round →" }));
 
-    // Round 2 starts collapsed again (reveal reset to 1) with nothing selected.
+    // Round 2 starts with nothing selected.
     await screen.findByText("Silhouette");
-    expect(screen.getByText("Showing 1 of 1")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Next round →" })).toBeDisabled();
   });
 
@@ -375,7 +337,6 @@ describe("PlayScreen", () => {
     renderScreen(SAVE_ONE_PACK);
     await screen.findByText("Guren no Yumiya");
 
-    await user.click(screen.getByRole("button", { name: "Show all" }));
     await user.click(screen.getByText("Redo"));
     await user.click(screen.getByRole("button", { name: "Next round →" }));
     await screen.findByText("Silhouette");
@@ -400,7 +361,6 @@ describe("PlayScreen", () => {
     renderScreen(SAVE_ONE_PACK);
     await screen.findByText("Guren no Yumiya");
 
-    await user.click(screen.getByRole("button", { name: "Show all" }));
     await user.click(screen.getByText("Redo"));
     await user.click(screen.getByRole("button", { name: "Next round →" }));
     await screen.findByText("Silhouette");
@@ -429,7 +389,6 @@ describe("PlayScreen", () => {
     renderScreen(SAVE_ONE_PACK);
     await screen.findByText("Guren no Yumiya");
 
-    await user.click(screen.getByRole("button", { name: "Show all" }));
     await user.click(screen.getByText("Redo"));
     await user.click(screen.getByRole("button", { name: "Next round →" }));
     await screen.findByText("Silhouette");

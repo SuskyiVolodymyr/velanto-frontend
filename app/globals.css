@@ -61,6 +61,25 @@ html[data-streamer-mode="on"]:not([data-streamer-hydrated])
   visibility: hidden !important;
 }
 
+/*
+ * Play-round candidate reveal — every candidate renders at once, then fades in
+ * together, staggered one-by-one via a per-card `animation-delay` (set inline
+ * from the card's index). `both` fill-mode holds the card at opacity 0 through
+ * its delay, so nothing flashes before its turn. prefers-reduced-motion below
+ * shows them all immediately, no fade. Applied by CandidateCard / VersusRound.
+ */
+@keyframes play-card-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.play-card-appear {
+  animation: play-card-fade-in 200ms ease-out both;
+}
+
 /* Form-error micro-interaction — see design-tokens.md's motion section. */
 @keyframes shake {
   0%,
@@ -134,5 +153,10 @@ html[data-streamer-mode="on"]:not([data-streamer-hydrated])
   .nickname-gradient {
     animation: none;
     background-position: 50% 0;
+  }
+
+  /* Show every candidate immediately — no staggered fade. */
+  .play-card-appear {
+    animation: none;
   }
 }
