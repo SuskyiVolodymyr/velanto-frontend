@@ -36,12 +36,13 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
     };
   }, [videoId]);
 
-  // Lazily loads the API and constructs the player on first hover only —
-  // repeated hovers reuse the same instance via the effect below. A failed
-  // load (e.g. blocked by an ad-blocker) is swallowed: the card just stays
-  // on the thumbnail, same as if the user never hovered.
+  // Preloads the API and constructs the player as soon as the card mounts (the
+  // whole round's videos load up front, so hover-to-play is instant) — but with
+  // autoplay:0, so nothing plays until the hover effect below says so. A failed
+  // load (e.g. blocked by an ad-blocker) is swallowed: the card just stays on
+  // the thumbnail.
   useEffect(() => {
-    if (!hovered || playerRef.current) return;
+    if (playerRef.current) return;
     let cancelled = false;
     loadYouTubeIframeApi()
       .then((YT) => {
@@ -70,7 +71,7 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
     return () => {
       cancelled = true;
     };
-  }, [hovered, videoId]);
+  }, [videoId]);
 
   useEffect(() => {
     if (!playerRef.current || !playerReady || failed) return;

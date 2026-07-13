@@ -39,23 +39,22 @@ describe("YouTubeCard", () => {
     vi.clearAllMocks();
   });
 
-  it("shows the thumbnail before any hover, without loading the API", () => {
+  it("preloads the API on mount and shows the thumbnail until the player is ready", () => {
     mockedLoad.mockReturnValue(new Promise(() => {}));
     render(<YouTubeCard videoId="abc123" />);
 
     expect(
       screen.getByRole("img", { name: "YouTube video thumbnail" }),
     ).toHaveAttribute("src", "https://img.youtube.com/vi/abc123/mqdefault.jpg");
-    expect(mockedLoad).not.toHaveBeenCalled();
+    expect(mockedLoad).toHaveBeenCalledTimes(1);
   });
 
-  it("loads the API and constructs a player on first hover", async () => {
+  it("constructs the player on mount with autoplay off, and does not play on its own", async () => {
     const fakePlayer = makeFakePlayer();
     const fakeApi = makeFakeApi(fakePlayer);
     mockedLoad.mockResolvedValue(fakeApi);
 
     render(<YouTubeCard videoId="abc123" />);
-    fireEvent.mouseEnter(screen.getByTestId("youtube-card"));
 
     await waitFor(() => expect(fakeApi.Player).toHaveBeenCalledTimes(1));
     expect(vi.mocked(fakeApi.Player).mock.calls[0][1]).toEqual(
@@ -64,7 +63,8 @@ describe("YouTubeCard", () => {
         playerVars: { autoplay: 0 },
       }),
     );
-    expect(fakePlayer.playVideo).toHaveBeenCalled();
+    // Preloaded but not hovered → it never starts playing by itself.
+    expect(fakePlayer.playVideo).not.toHaveBeenCalled();
   });
 
   it("reuses the existing player on subsequent hovers instead of reloading the API", async () => {
