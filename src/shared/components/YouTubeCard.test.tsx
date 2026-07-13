@@ -1,5 +1,11 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { YouTubeCard } from "./YouTubeCard";
 import { loadYouTubeIframeApi } from "@/src/shared/lib/youtube-iframe-api";
@@ -8,7 +14,12 @@ import type {
   YouTubePlayer,
 } from "@/src/shared/lib/youtube-iframe-api";
 
-vi.mock("@/src/shared/lib/youtube-iframe-api", () => ({
+// Only loadYouTubeIframeApi is mocked; the YT_STATE_* constants stay real so the
+// component's state-change comparison uses the true values.
+vi.mock("@/src/shared/lib/youtube-iframe-api", async (importActual) => ({
+  ...(await importActual<
+    typeof import("@/src/shared/lib/youtube-iframe-api")
+  >()),
   loadYouTubeIframeApi: vi.fn(),
 }));
 
@@ -172,6 +183,80 @@ describe("YouTubeCard", () => {
     expect(
       screen.queryByRole("button", { name: "Play video preview" }),
     ).toBeNull();
+  });
+
+  it("falls back to Open-on-YouTube when commanded playback never starts (server throttle)", async () => {
+    vi.useFakeTimers();
+    try {
+      const player = makeFakePlayer();
+      const api = makeFakeApi(player); // onReady fires immediately; no onStateChange
+      mockedLoad.mockResolvedValue(api);
+
+      render(<YouTubeCard videoId="abc123" />);
+      // Flush the resolved API promise so the player is constructed and ready.
+      await vi.advanceTimersByTimeAsync(0);
+      expect(api.Player).toHaveBeenCalledTimes(1);
+
+      fireEvent.mouseEnter(screen.getByTestId("youtube-card"));
+      expect(player.playVideo).toHaveBeenCalled();
+
+      // Playback never reports buffering/playing (throttled). Past the watchdog
+      // window, the card gives up and shows our fallback instead of YouTube's
+      // raw error box.
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(5000);
+      });
+
+      const link = screen.getByRole("link", { name: /open on youtube/i });
+      expect(link).toHaveAttribute(
+        "href",
+        "https://www.youtube.com/watch?v=abc123",
+      );
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("does not fall back when playback reaches buffering/playing after hovering", async () => {
+    vi.useFakeTimers();
+    try {
+      const player = makeFakePlayer();
+      let fireStateChange: (state: number) => void = () => {};
+      const api: YouTubeIframeApi = {
+        Player: vi.fn().mockImplementation(function (
+          _el: unknown,
+          options: {
+            events: {
+              onReady: (e: { target: YouTubePlayer }) => void;
+              onStateChange?: (e: {
+                target: YouTubePlayer;
+                data: number;
+              }) => void;
+            };
+          },
+        ) {
+          options.events.onReady({ target: player });
+          fireStateChange = (state: number) =>
+            options.events.onStateChange?.({ target: player, data: state });
+          return player;
+        }) as unknown as YouTubeIframeApi["Player"],
+      };
+      mockedLoad.mockResolvedValue(api);
+
+      render(<YouTubeCard videoId="abc123" />);
+      await vi.advanceTimersByTimeAsync(0);
+      fireEvent.mouseEnter(screen.getByTestId("youtube-card"));
+
+      // Playback starts buffering (YT_STATE_BUFFERING = 3) before the watchdog.
+      fireStateChange(3);
+      await vi.advanceTimersByTimeAsync(5000);
+
+      expect(
+        screen.queryByRole("link", { name: /open on youtube/i }),
+      ).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it("does not call player controls until the player is ready", async () => {

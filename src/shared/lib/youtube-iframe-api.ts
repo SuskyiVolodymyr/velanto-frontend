@@ -1,5 +1,7 @@
 export interface YouTubePlayerEvent {
   target: YouTubePlayer;
+  // Present on onStateChange events: the new YT.PlayerState value.
+  data?: number;
 }
 
 export interface YouTubePlayer {
@@ -7,6 +9,11 @@ export interface YouTubePlayer {
   pauseVideo(): void;
   destroy(): void;
 }
+
+// YT.PlayerState values we care about — a video that reaches either of these
+// after we command playback has actually started (i.e. wasn't throttled).
+export const YT_STATE_PLAYING = 1;
+export const YT_STATE_BUFFERING = 3;
 
 export interface YouTubePlayerOptions {
   videoId: string;
@@ -16,6 +23,8 @@ export interface YouTubePlayerOptions {
     // Fires when the video can't be played embedded (private, deleted, embed
     // disabled, region/age restricted) or the player hits a playback error.
     onError?: (event: YouTubePlayerEvent) => void;
+    // Fires on every playback-state transition (unstarted/buffering/playing…).
+    onStateChange?: (event: YouTubePlayerEvent) => void;
   };
 }
 
