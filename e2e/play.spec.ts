@@ -1,12 +1,6 @@
 import { test, expect } from "@playwright/test";
-import { createServer, type Server } from "node:http";
 
 const API_BASE = "http://localhost:3001";
-const API_PORT = 3001;
-
-// Serial so a single worker owns the :3001 mock backend for the whole file —
-// under fullyParallel, multiple workers would otherwise each try to bind it.
-test.describe.configure({ mode: "serial" });
 
 const MOCK_USER = {
   id: "u1",
@@ -16,126 +10,13 @@ const MOCK_USER = {
   createdAt: "2026-01-01T00:00:00.000Z",
 };
 
-function textItem(id: string, title: string) {
-  return { id, type: "text", title, value: title };
-}
-
-const BASE_PACK = {
-  coverTone: "#2b2a3a",
-  tags: ["Anime"],
-  authorId: "u1",
-  createdAt: "2026-01-01T00:00:00.000Z",
-  totalPlays: 0,
-  avgAgreementPercent: 0,
-  status: "approved",
-  rejectionReason: null,
-  score: 0,
-  likes: 0,
-  dislikes: 0,
-  myVote: null,
-};
-
-// Manual slots keep candidates in authored order, so the play-through is
-// deterministic. For nxn, both sides are manual pools shown whole every round
-// (manual doesn't consume the used-set), so the side we pick is stable.
-const groupsRound = (id: string, groupId: string) => ({
-  id,
-  slots: [{ groupId, mode: "manual" }],
-});
-const versusRound = (id: string) => ({
-  id,
-  slots: [
-    { groupId: "ca", mode: "manual" },
-    { groupId: "cb", mode: "manual" },
-  ],
-});
-
-const PACKS: Record<string, unknown> = {
-  "pack-save": {
-    ...BASE_PACK,
-    id: "pack-save",
-    title: "Save One Pack",
-    description: "Pick the one you'd save.",
-    format: "save_one",
-    groups: [
-      {
-        id: "g1",
-        name: "2016",
-        items: [textItem("1", "Guren no Yumiya"), textItem("2", "Redo")],
-      },
-      { id: "g2", name: "2020", items: [textItem("3", "Silhouette")] },
-    ],
-    rounds: [groupsRound("r1", "g1"), groupsRound("r2", "g2")],
-  },
-  "pack-sacrifice": {
-    ...BASE_PACK,
-    id: "pack-sacrifice",
-    title: "Sacrifice One Pack",
-    description: "Pick the one you'd sacrifice.",
-    format: "sacrifice_one",
-    groups: [
-      {
-        id: "g1",
-        name: "2016",
-        items: [textItem("1", "Guren no Yumiya"), textItem("2", "Redo")],
-      },
-      { id: "g2", name: "2020", items: [textItem("3", "Silhouette")] },
-    ],
-    rounds: [groupsRound("r1", "g1"), groupsRound("r2", "g2")],
-  },
-  "pack-nxn": {
-    ...BASE_PACK,
-    id: "pack-nxn",
-    title: "Boys vs Girls",
-    description: "Pick a side each round.",
-    format: "nxn",
-    groups: [
-      {
-        id: "ca",
-        name: "Boys",
-        items: [textItem("1", "Naruto"), textItem("2", "Sasuke")],
-      },
-      {
-        id: "cb",
-        name: "Girls",
-        items: [textItem("3", "Sakura"), textItem("4", "Hinata")],
-      },
-    ],
-    rounds: [versusRound("r1"), versusRound("r2")],
-  },
-};
-
 // The play page loads its pack in a Server Component (getPackServer), whose
 // fetch originates from the Next server process — page.route only sees
-// browser-issued requests, so it can't intercept it. A tiny real backend on
-// :3001 serves those server-side GET /packs/:id calls. Browser-issued calls
-// (/auth/refresh, POST plays) are still handled by page.route below.
-let server: Server;
-
-test.beforeAll(async () => {
-  server = createServer((req, res) => {
-    const match = /^\/packs\/([^/]+)$/.exec(req.url ?? "");
-    if (req.method === "GET" && match) {
-      const pack = PACKS[match[1]];
-      if (pack) {
-        res.writeHead(200, { "Content-Type": "application/json" });
-        res.end(JSON.stringify(pack));
-        return;
-      }
-      res.writeHead(404, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ message: "Not found" }));
-      return;
-    }
-    res.writeHead(404).end();
-  });
-  await new Promise<void>((resolve) => server.listen(API_PORT, resolve));
-});
-
-test.afterAll(async () => {
-  await new Promise<void>((resolve, reject) =>
-    server.close((err) => (err ? reject(err) : resolve())),
-  );
-});
+// browser-issued requests, so it can't intercept it. The shared mock backend on
+// :3001 (e2e/mock-backend.ts, started by global-setup) serves those server-side
+// GET /packs/:id calls (fixtures pack-save / pack-sacrifice / pack-nxn).
+// Browser-issued calls (/auth/refresh, POST plays) are handled by page.route
+// below.
 
 test.describe("Play a pack", () => {
   test.beforeEach(async ({ page }) => {

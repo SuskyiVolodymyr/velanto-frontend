@@ -3,7 +3,9 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ConfirmModal } from "@/src/shared/components/ConfirmModal";
 
-function setup(overrides: Partial<React.ComponentProps<typeof ConfirmModal>> = {}) {
+function setup(
+  overrides: Partial<React.ComponentProps<typeof ConfirmModal>> = {},
+) {
   const onClose = vi.fn();
   const onConfirm = vi.fn();
   render(

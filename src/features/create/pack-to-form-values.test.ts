@@ -16,7 +16,9 @@ const PACK: Pack = {
       items: [{ id: "i1", type: "text", title: "AoT", value: "Guren" }],
     },
   ],
-  rounds: [{ id: "r1", name: "Round 1", slots: [{ groupId: "g1", mode: "manual" }] }],
+  rounds: [
+    { id: "r1", name: "Round 1", slots: [{ groupId: "g1", mode: "manual" }] },
+  ],
   authorId: "u1",
   createdAt: "2026-01-01T00:00:00.000Z",
   totalPlays: 0,

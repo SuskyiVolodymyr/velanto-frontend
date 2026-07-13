@@ -1,11 +1,7 @@
 import { test, expect } from "@playwright/test";
-import { createServer, type Server } from "node:http";
+import { PACKS } from "./mock-backend";
 
 const API_BASE = "http://localhost:3001";
-const API_PORT = 3001;
-
-// Serial so a single worker owns the :3001 mock backend for the whole file.
-test.describe.configure({ mode: "serial" });
 
 const MOCK_USER = {
   id: "u1",
@@ -15,81 +11,11 @@ const MOCK_USER = {
   createdAt: "2026-01-01T00:00:00.000Z",
 };
 
-// An approved pack owned by u1. Two items so the save_one round's manual draw
-// meets the min-draw of 2, keeping the seeded edit form valid on submit.
-const PACK = {
-  id: "pack-1",
-  title: "Original Title",
-  description: "Pick your favorite each round.",
-  coverTone: "#2b2a3a",
-  format: "save_one",
-  tags: ["Anime"],
-  groups: [
-    {
-      id: "g1",
-      name: "2016",
-      items: [
-        { id: "i1", type: "text", title: "AoT", value: "Guren" },
-        { id: "i2", type: "text", title: "Redo", value: "Redo" },
-      ],
-    },
-  ],
-  rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "manual" }] }],
-  authorId: "u1",
-  createdAt: "2026-01-01T00:00:00.000Z",
-  totalPlays: 0,
-  avgAgreementPercent: 0,
-  status: "approved",
-  rejectionReason: null,
-  score: 0,
-  likes: 0,
-  dislikes: 0,
-  myVote: null,
-};
-
-const RESULTS = {
-  packId: "pack-1",
-  format: "save_one",
-  totalPlays: 0,
-  rounds: [],
-};
-
 // The edit and detail pages load their pack in a Server Component
-// (getPackServer / getResultsServer), whose fetch originates from the Next
-// server process — page.route only sees browser-issued requests. A tiny real
-// backend on :3001 serves those server-side GETs; browser-issued calls
-// (/auth/refresh, PATCH, DELETE) are handled by page.route in each test.
-let server: Server;
-
-test.beforeAll(async () => {
-  server = createServer((req, res) => {
-    const url = req.url ?? "";
-    if (req.method === "GET" && /^\/packs\/pack-1\/results$/.test(url)) {
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify(RESULTS));
-      return;
-    }
-    if (req.method === "GET" && /^\/packs\/pack-1$/.test(url)) {
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify(PACK));
-      return;
-    }
-    if (req.method === "GET" && /^\/packs(\?|$)/.test(url)) {
-      // Home feed after a delete redirect — an empty envelope keeps it happy.
-      res.writeHead(200, { "Content-Type": "application/json" });
-      res.end(JSON.stringify({ items: [], total: 0, page: 1, limit: 20 }));
-      return;
-    }
-    res.writeHead(404).end();
-  });
-  await new Promise<void>((resolve) => server.listen(API_PORT, resolve));
-});
-
-test.afterAll(async () => {
-  await new Promise<void>((resolve, reject) =>
-    server.close((err) => (err ? reject(err) : resolve())),
-  );
-});
+// (getPackServer / getResultsServer) — the shared mock backend on :3001
+// (e2e/mock-backend.ts) serves those server-side GETs for fixture "pack-1", an
+// approved pack owned by u1. Browser-issued calls (/auth/refresh, PATCH,
+// DELETE) are handled by page.route in each test.
 
 test.describe("Edit & delete pack", () => {
   test.beforeEach(async ({ page }) => {
@@ -110,7 +36,11 @@ test.describe("Edit & delete pack", () => {
         captured.body = route.request().postDataJSON();
         return route.fulfill({
           status: 200,
-          json: { ...PACK, title: "Edited Title", status: "pending" },
+          json: {
+            ...PACKS["pack-1"],
+            title: "Edited Title",
+            status: "pending",
+          },
         });
       }
       return route.fallback();

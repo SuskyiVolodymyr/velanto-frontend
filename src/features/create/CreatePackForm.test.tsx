@@ -344,7 +344,9 @@ describe("CreatePackForm", () => {
 
     it("PATCHes the pack and redirects to its detail page on save", async () => {
       const user = userEvent.setup();
-      vi.mocked(packsClient.update).mockResolvedValue(makePack({ id: "pack-1" }));
+      vi.mocked(packsClient.update).mockResolvedValue(
+        makePack({ id: "pack-1" }),
+      );
       renderEditForm();
       const title = await screen.findByLabelText("Pack title");
       await user.clear(title);

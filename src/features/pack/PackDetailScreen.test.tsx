@@ -144,9 +144,7 @@ describe("PackDetailScreen", () => {
 
   it("wires the owner/moderator actions to this pack", () => {
     render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
-    expect(
-      screen.getByText("PackOwnerActions:p1:u1"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("PackOwnerActions:p1:u1")).toBeInTheDocument();
   });
 
   it("shows a Share button for an approved pack", () => {
