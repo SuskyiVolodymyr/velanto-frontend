@@ -6,7 +6,7 @@ import type { Pack } from "@/src/shared/types/pack";
 // old full item-list cards. Uniform across formats now (pools-and-rounds).
 export function RoundChips({ pack }: { pack: Pack }) {
   const t = useTranslations("pack");
-  const sections = pack.groups;
+  const sections = pack.groups ?? [];
 
   if (sections.length === 0) return null;
 
