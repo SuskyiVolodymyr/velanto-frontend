@@ -499,7 +499,8 @@
     "versusSideB": "Lado B",
     "versusRoundCount": "Rodadas",
     "versusPerSide": "Itens por lado",
-    "versusPerSideFixed": "1 por lado"
+    "versusPerSideFixed": "1 por lado",
+    "roundName": "Nome da rodada {index}"
   },
   "profile": {
     "loginRequiredView": "Você precisa estar logado para ver seu perfil.",

@@ -498,7 +498,8 @@
     "versusSideB": "Side B",
     "versusRoundCount": "Rounds",
     "versusPerSide": "Items per side",
-    "versusPerSideFixed": "1 per side"
+    "versusPerSideFixed": "1 per side",
+    "roundName": "Round {index} name"
   },
   "profile": {
     "loginRequiredView": "You need to be logged in to view your profile.",

@@ -499,7 +499,8 @@
     "versusSideB": "طرف B",
     "versusRoundCount": "راؤنڈز",
     "versusPerSide": "فی طرف آئٹمز",
-    "versusPerSideFixed": "فی طرف 1"
+    "versusPerSideFixed": "فی طرف 1",
+    "roundName": "راؤنڈ {index} کا نام"
   },
   "profile": {
     "loginRequiredView": "اپنی پروفائل دیکھنے کے لیے آپ کا لاگ اِن ہونا ضروری ہے۔",

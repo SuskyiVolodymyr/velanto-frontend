@@ -499,7 +499,8 @@
     "versusSideB": "الجانب B",
     "versusRoundCount": "الجولات",
     "versusPerSide": "عناصر لكل جانب",
-    "versusPerSideFixed": "1 لكل جانب"
+    "versusPerSideFixed": "1 لكل جانب",
+    "roundName": "اسم الجولة {index}"
   },
   "profile": {
     "loginRequiredView": "يجب تسجيل الدخول لعرض ملفك الشخصي.",

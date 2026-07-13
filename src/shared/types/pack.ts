@@ -44,6 +44,10 @@ export interface Slot {
 
 export interface Round {
   id: string;
+  // Optional author-given label (e.g. "Semifinals"). When blank/absent the UI
+  // falls back to the round's group name (or "Round N"). Mirrors backend
+  // types/round.ts.
+  name?: string;
   slots: Slot[];
 }
 

@@ -499,7 +499,8 @@
     "versusSideB": "Сторона B",
     "versusRoundCount": "Раунди",
     "versusPerSide": "Елементів на сторону",
-    "versusPerSideFixed": "1 на сторону"
+    "versusPerSideFixed": "1 на сторону",
+    "roundName": "Назва раунду {index}"
   },
   "profile": {
     "loginRequiredView": "Щоб переглянути свій профіль, спершу увійди.",

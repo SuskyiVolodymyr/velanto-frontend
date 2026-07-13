@@ -112,9 +112,13 @@ export function usePlaySession(pack: Pack): PlaySession {
   // A single per-round model unifies the two formats so the rest of the code
   // reads one shape. `title` drives the UI; `resolvePick` turns the current
   // `selectedId` into the Pick to record (or null if invalid).
+  // The author-given round name drives the heading when set; otherwise the
+  // round falls back to its group's name (elimination) or "Round N" (versus).
+  const roundName = rounds[roundIndex]?.name?.trim() ?? "";
+
   const round = isVersus
     ? {
-        title: `Round ${roundIndex + 1}`,
+        title: roundName || `Round ${roundIndex + 1}`,
         resolvePick(id: string): Pick | null {
           const side =
             id === sideA?.id ? sideA : id === sideB?.id ? sideB : null;
@@ -123,9 +127,11 @@ export function usePlaySession(pack: Pack): PlaySession {
         },
       }
     : {
-        title: currentRound
-          ? (groupNameById.get(currentRound.slots[0]?.groupId ?? "") ?? "")
-          : "",
+        title:
+          roundName ||
+          (currentRound
+            ? (groupNameById.get(currentRound.slots[0]?.groupId ?? "") ?? "")
+            : ""),
         resolvePick(id: string): Pick | null {
           const slot = currentRound?.slots[0];
           const item = candidates.find((candidate) => candidate.id === id);

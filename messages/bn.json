@@ -499,7 +499,8 @@
     "versusSideB": "পক্ষ B",
     "versusRoundCount": "রাউন্ড",
     "versusPerSide": "প্রতি পক্ষে আইটেম",
-    "versusPerSideFixed": "প্রতি পক্ষে ১"
+    "versusPerSideFixed": "প্রতি পক্ষে ১",
+    "roundName": "রাউন্ড {index} এর নাম"
   },
   "profile": {
     "loginRequiredView": "আপনার প্রোফাইল দেখতে হলে আপনাকে লগ ইন করতে হবে।",

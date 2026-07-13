@@ -499,7 +499,8 @@
     "versusSideB": "पक्ष B",
     "versusRoundCount": "राउंड",
     "versusPerSide": "प्रति पक्ष वस्तुएँ",
-    "versusPerSideFixed": "प्रति पक्ष 1"
+    "versusPerSideFixed": "प्रति पक्ष 1",
+    "roundName": "राउंड {index} का नाम"
   },
   "profile": {
     "loginRequiredView": "अपनी प्रोफ़ाइल देखने के लिए आपको लॉग इन करना होगा।",

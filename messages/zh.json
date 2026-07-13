@@ -499,7 +499,8 @@
     "versusSideB": "B 方",
     "versusRoundCount": "轮次",
     "versusPerSide": "每方条目数",
-    "versusPerSideFixed": "每方 1 项"
+    "versusPerSideFixed": "每方 1 项",
+    "roundName": "第 {index} 轮名称"
   },
   "profile": {
     "loginRequiredView": "你需要先登录才能查看个人资料。",
