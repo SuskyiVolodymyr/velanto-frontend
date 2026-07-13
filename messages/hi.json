@@ -424,7 +424,8 @@
     "rankSlotEmpty": "रैंक {rank} पर रखें",
     "ranked": "{name} रैंक हुआ",
     "rankingDone": "आपकी रैंकिंग पूरी हुई",
-    "rankingDoneSummary": "सभी {count, plural, one {# राउंड} other {# राउंड}} बिना देखे रखे गए।"
+    "rankingDoneSummary": "सभी {count, plural, one {# राउंड} other {# राउंड}} बिना देखे रखे गए।",
+    "loadingResult": "आपके परिणाम लोड हो रहे हैं…"
   },
   "result": {
     "label": "नतीजा",

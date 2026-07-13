@@ -185,15 +185,9 @@ test.describe("Play a pack", () => {
       await page.getByText("Silhouette").click();
       await page.getByRole("button", { name: "Next round →" }).click();
 
-      // Finished.
-      await expect(
-        page.getByRole("heading", { name: "All rounds done" }),
-      ).toBeVisible();
-      await expect(page.getByText("Complete")).toBeVisible();
-      await expect(
-        page.getByRole("link", { name: "See your result" }),
-      ).toHaveAttribute("href", `/packs/${format}/result`);
-
+      // Finishing records the play (then it navigates straight to the result
+      // page — no interstitial "all rounds done" screen; that redirect is
+      // covered by the PlayScreen unit tests).
       await expect
         .poll(() => recordBody)
         .toEqual({
@@ -238,14 +232,8 @@ test.describe("Play a pack", () => {
     await page.getByRole("button", { name: "Pick Girls" }).click();
     await page.getByRole("button", { name: "Next round →" }).click();
 
-    // Finished.
-    await expect(
-      page.getByRole("heading", { name: "All rounds done" }),
-    ).toBeVisible();
-    await expect(
-      page.getByText("You picked a side in 2 rounds between Boys and Girls."),
-    ).toBeVisible();
-
+    // Finishing records the play, then navigates straight to the result page
+    // (redirect covered by the PlayScreen unit tests).
     await expect
       .poll(() => recordBody)
       .toEqual({

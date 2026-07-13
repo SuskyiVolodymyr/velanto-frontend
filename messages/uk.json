@@ -424,7 +424,8 @@
     "rankSlotEmpty": "Поставити на місце {rank}",
     "ranked": "{name} у рейтингу",
     "rankingDone": "Твій рейтинг готовий",
-    "rankingDoneSummary": "Усі {count, plural, one {# раунд} few {# раунди} many {# раундів} other {# раунду}} розставлено наосліп."
+    "rankingDoneSummary": "Усі {count, plural, one {# раунд} few {# раунди} many {# раундів} other {# раунду}} розставлено наосліп.",
+    "loadingResult": "Завантаження результатів…"
   },
   "result": {
     "label": "Результат",

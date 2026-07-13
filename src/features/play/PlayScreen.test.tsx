@@ -10,9 +10,10 @@ import { ApiError } from "@/src/shared/lib/api-client";
 import type { Pack } from "@/src/shared/types/pack";
 
 const push = vi.fn();
+const replace = vi.fn();
 
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push }),
+  useRouter: () => ({ push, replace }),
   usePathname: () => "/packs/pack-a/play",
 }));
 
@@ -216,10 +217,10 @@ describe("PlayScreen", () => {
     await user.click(screen.getByRole("button", { name: "Pick Girls" }));
     await user.click(screen.getByRole("button", { name: "Next round →" }));
 
-    expect(await screen.findByText("All rounds done")).toBeInTheDocument();
-    expect(
-      screen.getByText("You picked a side in 2 rounds between Boys and Girls."),
-    ).toBeInTheDocument();
+    // No interstitial finished screen — it records and goes straight to results.
+    await waitFor(() =>
+      expect(replace).toHaveBeenCalledWith("/packs/pack-nxn/result"),
+    );
     expect(playsClient.record).toHaveBeenCalledWith("pack-nxn", {
       picks: [
         { roundIndex: 0, groupId: "ca" },
@@ -267,7 +268,7 @@ describe("PlayScreen", () => {
     expect(screen.getByTestId("candidate-grid")).toHaveClass("lg:grid-cols-4");
   });
 
-  it("advances through every round and shows the finished state with picks recorded", async () => {
+  it("records every pick and navigates to the result page when finished", async () => {
     const user = userEvent.setup();
     renderScreen(SAVE_ONE_PACK);
     await screen.findByText("Guren no Yumiya");
@@ -280,10 +281,13 @@ describe("PlayScreen", () => {
     await user.click(screen.getByText("Silhouette"));
     await user.click(screen.getByRole("button", { name: "Next round →" }));
 
-    expect(await screen.findByText("All rounds done")).toBeInTheDocument();
-    expect(
-      screen.getByText("You saved 2 picks, one per round."),
-    ).toBeInTheDocument();
+    // No "all rounds done" screen — a loader shows while it records, then it
+    // navigates straight to the result page.
+    expect(await screen.findByRole("status")).toBeInTheDocument();
+    await waitFor(() =>
+      expect(replace).toHaveBeenCalledWith("/packs/pack-a/result"),
+    );
+    // The running picks summary still lists the round picks.
     expect(screen.getByText("Saved so far")).toBeInTheDocument();
     expect(screen.getByText("Redo")).toBeInTheDocument();
     expect(screen.getByText("Silhouette")).toBeInTheDocument();
@@ -311,7 +315,7 @@ describe("PlayScreen", () => {
     await user.click(screen.getByText("Silhouette"));
     await user.click(screen.getByRole("button", { name: "Next round →" }));
 
-    await screen.findByText("All rounds done");
+    await screen.findByRole("status");
     expect(playsClient.record).toHaveBeenCalledWith("pack-a", {
       picks: [
         { roundIndex: 0, groupId: "g1", itemId: "2" },
@@ -326,9 +330,10 @@ describe("PlayScreen", () => {
         { roundIndex: 1, groupId: "g2", itemId: "3" },
       ]),
     );
-    expect(
-      screen.getByRole("link", { name: "See your result" }),
-    ).toHaveAttribute("href", "/packs/pack-a/result");
+    // Then it navigates straight to the result page.
+    await waitFor(() =>
+      expect(replace).toHaveBeenCalledWith("/packs/pack-a/result"),
+    );
   });
 
   it("shows a real YouTube player for a youtube-type item and selects it via its own pick control, not the video area", async () => {
@@ -398,7 +403,7 @@ describe("PlayScreen", () => {
     await user.click(screen.getByText("Silhouette"));
     await user.click(screen.getByRole("button", { name: "Next round →" }));
 
-    await screen.findByText("All rounds done");
+    await screen.findByRole("status");
     await waitFor(() => expect(playsClient.record).toHaveBeenCalledTimes(1));
     // Re-render must not trigger a second record (recordedRef guards it).
     await user.click(screen.getByText("Redo"));
@@ -422,7 +427,7 @@ describe("PlayScreen", () => {
     await user.click(screen.getByText("Silhouette"));
     await user.click(screen.getByRole("button", { name: "Next round →" }));
 
-    await screen.findByText("All rounds done");
+    await screen.findByRole("status");
     await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
     // Record is still pending: nothing may be persisted yet.
     expect(sessionStorage.getItem("velanto:last-play:pack-a")).toBeNull();
@@ -450,7 +455,7 @@ describe("PlayScreen", () => {
     await user.click(screen.getByText("Silhouette"));
     await user.click(screen.getByRole("button", { name: "Next round →" }));
 
-    await screen.findByText("All rounds done");
+    await screen.findByRole("status");
     await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
     expect(sessionStorage.getItem("velanto:last-play:pack-a")).toBeNull();
   });

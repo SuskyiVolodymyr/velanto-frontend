@@ -424,7 +424,8 @@
     "rankSlotEmpty": "Поставить на место {rank}",
     "ranked": "{name} добавлен в рейтинг",
     "rankingDone": "Рейтинг готов",
-    "rankingDoneSummary": "Ты расставил {count, plural, one {# элемент} few {# элемента} many {# элементов} other {# элемента}} вслепую."
+    "rankingDoneSummary": "Ты расставил {count, plural, one {# элемент} few {# элемента} many {# элементов} other {# элемента}} вслепую.",
+    "loadingResult": "Загрузка результатов…"
   },
   "result": {
     "label": "Результат",

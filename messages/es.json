@@ -424,7 +424,8 @@
     "rankSlotEmpty": "Colocar en el puesto {rank}",
     "ranked": "{name} clasificado",
     "rankingDone": "Tu ranking está listo",
-    "rankingDoneSummary": "Colocaste {count, plural, one {# ronda} other {# rondas}}, a ciegas."
+    "rankingDoneSummary": "Colocaste {count, plural, one {# ronda} other {# rondas}}, a ciegas.",
+    "loadingResult": "Cargando tus resultados…"
   },
   "result": {
     "label": "Resultado",

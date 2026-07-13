@@ -424,7 +424,8 @@
     "rankSlotEmpty": "ضعه في المرتبة {rank}",
     "ranked": "تم ترتيب {name}",
     "rankingDone": "اكتمل ترتيبك",
-    "rankingDoneSummary": "وُضعت كل {count, plural, zero {# جولة} one {جولة واحدة} two {جولتان} few {# جولات} many {# جولة} other {# جولة}} دون رؤية."
+    "rankingDoneSummary": "وُضعت كل {count, plural, zero {# جولة} one {جولة واحدة} two {جولتان} few {# جولات} many {# جولة} other {# جولة}} دون رؤية.",
+    "loadingResult": "جارٍ تحميل نتائجك…"
   },
   "result": {
     "label": "النتيجة",
