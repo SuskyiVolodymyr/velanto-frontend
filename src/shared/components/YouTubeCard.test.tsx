@@ -1,5 +1,11 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor, act } from "@testing-library/react";
+import {
+  render,
+  screen,
+  fireEvent,
+  waitFor,
+  act,
+} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { YouTubeCard } from "./YouTubeCard";
 import { loadYouTubeIframeApi } from "@/src/shared/lib/youtube-iframe-api";
@@ -222,7 +228,10 @@ describe("YouTubeCard", () => {
           options: {
             events: {
               onReady: (e: { target: YouTubePlayer }) => void;
-              onStateChange?: (e: { target: YouTubePlayer; data: number }) => void;
+              onStateChange?: (e: {
+                target: YouTubePlayer;
+                data: number;
+              }) => void;
             };
           },
         ) {
