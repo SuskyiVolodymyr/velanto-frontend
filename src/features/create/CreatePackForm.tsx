@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useForm, useWatch, FormProvider } from "react-hook-form";
@@ -13,16 +14,26 @@ import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { PackMetaFields } from "@/src/features/create/PackMetaFields";
 import { FormatSection } from "@/src/features/create/FormatSection";
-import { GroupsSection } from "@/src/features/create/GroupsSection";
-import { CategoriesSection } from "@/src/features/create/CategoriesSection";
+import { PoolsSection } from "@/src/features/create/PoolsSection";
+import { RoundsEditor } from "@/src/features/create/RoundsEditor";
+import { VersusEditor } from "@/src/features/create/VersusEditor";
 import {
   newGroup,
-  newCategory,
+  newRound,
+  versusRounds,
 } from "@/src/features/create/create-pack.defaults";
 import {
   createPackSchema,
   type CreatePackValues,
 } from "@/src/features/create/create-pack.schema";
+
+// A fresh versus draft defaults to this many rounds; the author tunes it in the
+// VersusEditor. Per-side count starts at 1 for both nxn and 1v1.
+const DEFAULT_VERSUS_ROUNDS = 5;
+
+function isVersusFormat(format: CreatePackValues["format"]): boolean {
+  return format === "nxn" || format === "1v1";
+}
 
 export function CreatePackForm() {
   const t = useTranslations("create");
@@ -30,48 +41,88 @@ export function CreatePackForm() {
   const pathname = usePathname();
   const { status } = useAuth();
 
-  const methods = useForm<CreatePackValues>({
-    resolver: zodResolver(createPackSchema),
-    defaultValues: {
+  // Seed one pool plus a matching elimination round drawing from it. Computed
+  // once (lazy initializer) so the round's groupId keeps pointing at the pool.
+  const [defaultValues] = useState<CreatePackValues>(() => {
+    const group = newGroup();
+    return {
       title: "",
       description: "",
       coverTone: COVER_TONES[0],
       tags: [],
       format: "save_one",
-      groups: [newGroup()],
-      categories: [newCategory(), newCategory()],
-      versusRounds: undefined,
-      versusN: undefined,
-    },
+      groups: [group],
+      rounds: [newRound(group.id)],
+    };
+  });
+
+  const methods = useForm<CreatePackValues>({
+    resolver: zodResolver(createPackSchema),
+    defaultValues,
   });
   const {
     control,
     handleSubmit,
     setError,
+    setValue,
+    getValues,
     formState: { isSubmitting, errors },
   } = methods;
 
-  // The one subscription the orchestrator needs itself: which body (Groups vs
-  // Categories) to render. Each section subscribes to its own slices internally.
+  // The one subscription the orchestrator needs itself: which body (Rounds vs
+  // Versus) to render. Each section subscribes to its own slices internally.
   const format = useWatch({ control, name: "format" });
 
+  // Reshape `rounds` when the format changes between the elimination family
+  // (single-slot rounds) and the versus family (two-slot rounds). Keyed on
+  // `format` and reading via getValues so it fires only on an actual switch,
+  // never on every keystroke.
+  useEffect(() => {
+    const groups = getValues("groups");
+    const rounds = getValues("rounds");
+    const roundsAreVersus = rounds[0]?.slots.length === 2;
+
+    if (isVersusFormat(format)) {
+      if (!roundsAreVersus) {
+        const aId = groups[0]?.id ?? "";
+        const bId = groups[1]?.id ?? groups[0]?.id ?? "";
+        setValue("rounds", versusRounds(aId, bId, DEFAULT_VERSUS_ROUNDS, 1), {
+          shouldDirty: true,
+        });
+      } else if (
+        format === "1v1" &&
+        rounds.some((round) => (round.slots[0]?.count ?? 1) !== 1)
+      ) {
+        // nxn → 1v1: keep the pair and round count but re-pin per-side to 1.
+        setValue(
+          "rounds",
+          versusRounds(
+            rounds[0].slots[0].groupId,
+            rounds[0].slots[1].groupId,
+            rounds.length,
+            1,
+          ),
+          { shouldDirty: true },
+        );
+      }
+    } else if (roundsAreVersus) {
+      // versus → elimination: collapse back to a single-slot round.
+      setValue("rounds", [newRound(groups[0]?.id ?? "")], {
+        shouldDirty: true,
+      });
+    }
+  }, [format, getValues, setValue]);
+
   async function onValid(values: CreatePackValues) {
-    const base = {
+    const input: CreatePackInput = {
       title: values.title,
       description: values.description,
       coverTone: values.coverTone,
       format: values.format,
       tags: values.tags,
+      groups: values.groups,
+      rounds: values.rounds,
     };
-    const input: CreatePackInput =
-      values.format === "nxn"
-        ? {
-            ...base,
-            categories: values.categories,
-            versusRounds: values.versusRounds,
-            versusN: values.versusN,
-          }
-        : { ...base, groups: values.groups };
 
     try {
       const pack = await packsClient.create(input);
@@ -110,7 +161,9 @@ export function CreatePackForm() {
 
         <FormatSection />
 
-        {format === "nxn" ? <CategoriesSection /> : <GroupsSection />}
+        <PoolsSection />
+
+        {isVersusFormat(format) ? <VersusEditor /> : <RoundsEditor />}
 
         {errors.root?.message && (
           <Text role="alert" className="text-sm text-danger">
