@@ -27,8 +27,8 @@ export function CandidateCard({
 }: CandidateCardProps) {
   const t = useTranslations("play");
   const videoId = item.type === "youtube" ? extractYouTubeId(item.value) : null;
-  // Cards fade in one-by-one, half a second apart, staggered by position.
-  const appearDelay = { animationDelay: `${index * 500}ms` };
+  // Cards grow in one-by-one, 1.5 seconds apart, staggered by position.
+  const appearDelay = { animationDelay: `${index * 1500}ms` };
 
   if (videoId) {
     return (

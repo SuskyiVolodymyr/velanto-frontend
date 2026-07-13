@@ -62,18 +62,18 @@ html[data-streamer-mode="on"]:not([data-streamer-hydrated])
 }
 
 /*
- * Play-round candidate reveal — every candidate renders at once, then fades in
- * one-by-one, each half a second after the previous, via a per-card
- * `animation-delay` (set inline from the card's index). Each card fades in while
- * scaling from slightly larger down to its normal size. `both` fill-mode holds
- * the card hidden through its delay, so nothing flashes before its turn.
- * prefers-reduced-motion below shows them all immediately, no fade. Applied by
- * CandidateCard / VersusRound.
+ * Play-round candidate reveal — every candidate renders at once, then grows in
+ * one-by-one, each 1.5 seconds after the previous, via a per-card
+ * `animation-delay` (set inline from the card's index). Each card scales up from
+ * smaller (0.7) to its normal size while fading in, on a soft decelerating ease.
+ * `both` fill-mode holds the card hidden through its delay, so nothing flashes
+ * before its turn. prefers-reduced-motion below shows them all immediately, no
+ * animation. Applied by CandidateCard / VersusRound.
  */
 @keyframes play-card-fade-in {
   from {
     opacity: 0;
-    transform: scale(1.08);
+    transform: scale(0.7);
   }
   to {
     opacity: 1;
@@ -81,7 +81,7 @@ html[data-streamer-mode="on"]:not([data-streamer-hydrated])
   }
 }
 .play-card-appear {
-  animation: play-card-fade-in 450ms ease-out both;
+  animation: play-card-fade-in 700ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 /* Form-error micro-interaction — see design-tokens.md's motion section. */
