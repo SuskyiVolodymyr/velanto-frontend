@@ -48,6 +48,24 @@ function youtubeItem(id: string, title: string, value: string) {
   return { id, type: "youtube" as const, title, value };
 }
 
+// A save_one pack whose single round shows exactly `count` candidates (one
+// group, one manual slot), for asserting the candidate grid's column layout.
+function packWithItemCount(count: number): Pack {
+  return {
+    ...SAVE_ONE_PACK,
+    groups: [
+      {
+        id: "g1",
+        name: "R1",
+        items: Array.from({ length: count }, (_, i) =>
+          textItem(String(i + 1), `Item ${i + 1}`),
+        ),
+      },
+    ],
+    rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "manual" }] }],
+  };
+}
+
 const SAVE_ONE_PACK: Pack = {
   id: "pack-a",
   title: "Best Anime Openings",
@@ -210,6 +228,27 @@ describe("PlayScreen", () => {
     await screen.findByText("Guren no Yumiya");
 
     expect(screen.getByRole("button", { name: "Next round →" })).toBeDisabled();
+  });
+
+  it("lays 4-or-fewer candidates out in a single row on wide screens", async () => {
+    renderScreen(packWithItemCount(4));
+    await screen.findByText("Item 1");
+
+    expect(screen.getByTestId("candidate-grid")).toHaveClass("lg:grid-cols-4");
+  });
+
+  it("splits 6 candidates into two rows of three", async () => {
+    renderScreen(packWithItemCount(6));
+    await screen.findByText("Item 1");
+
+    expect(screen.getByTestId("candidate-grid")).toHaveClass("lg:grid-cols-3");
+  });
+
+  it("splits 8 candidates into two rows of four", async () => {
+    renderScreen(packWithItemCount(8));
+    await screen.findByText("Item 1");
+
+    expect(screen.getByTestId("candidate-grid")).toHaveClass("lg:grid-cols-4");
   });
 
   it("advances through every round and shows the finished state with picks recorded", async () => {
