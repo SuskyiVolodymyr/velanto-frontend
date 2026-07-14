@@ -10,18 +10,17 @@ import { cropImage } from "./crop-image";
 // real cropper.
 vi.mock("react-easy-crop", async () => {
   const React = await import("react");
-  return {
-    default: ({
-      onCropComplete,
-    }: {
-      onCropComplete: (a: unknown, pixels: unknown) => void;
-    }) => {
-      React.useEffect(() => {
-        onCropComplete({}, { x: 5, y: 5, width: 200, height: 200 });
-      }, [onCropComplete]);
-      return React.createElement("div", { "data-testid": "cropper" });
-    },
-  };
+  function CropperStub({
+    onCropComplete,
+  }: {
+    onCropComplete: (a: unknown, pixels: unknown) => void;
+  }) {
+    React.useEffect(() => {
+      onCropComplete({}, { x: 5, y: 5, width: 200, height: 200 });
+    }, [onCropComplete]);
+    return React.createElement("div", { "data-testid": "cropper" });
+  }
+  return { default: CropperStub };
 });
 
 vi.mock("./crop-image", () => ({

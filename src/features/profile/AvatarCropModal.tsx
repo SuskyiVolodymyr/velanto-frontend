@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Cropper from "react-easy-crop";
 import { useTranslations } from "next-intl";
 import { Modal } from "@/src/shared/components/Modal";
@@ -27,24 +27,22 @@ export function AvatarCropModal({
   onCropped: (cropped: File) => void;
 }) {
   const t = useTranslations("profile");
-  const [imageUrl, setImageUrl] = useState("");
   const [crop, setCrop] = useState({ x: 0, y: 0 });
   const [zoom, setZoom] = useState(1);
   const [area, setArea] = useState<CropArea | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
-  // Preview the picked file via an object URL, revoked when the modal closes or
-  // the file changes so we never leak it.
+  // Preview the picked file via an object URL; revoked when it changes or the
+  // modal unmounts so we never leak it.
+  const imageUrl = useMemo(
+    () => (open ? URL.createObjectURL(file) : ""),
+    [open, file],
+  );
   useEffect(() => {
-    if (!open) return;
-    const url = URL.createObjectURL(file);
-    setImageUrl(url);
-    return () => {
-      URL.revokeObjectURL(url);
-      setImageUrl("");
-    };
-  }, [open, file]);
+    if (!imageUrl) return;
+    return () => URL.revokeObjectURL(imageUrl);
+  }, [imageUrl]);
 
   // Stable so react-easy-crop's effect deps don't churn every render.
   const handleCropComplete = useCallback(

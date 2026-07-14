@@ -18,7 +18,7 @@ export function AvatarLightbox({
   className,
 }: {
   username: string;
-  avatarKey: string | null;
+  avatarKey?: string | null;
   className?: string;
 }) {
   const t = useTranslations("profile");
