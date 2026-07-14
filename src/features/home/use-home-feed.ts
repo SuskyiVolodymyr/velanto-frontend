@@ -3,7 +3,9 @@
 import { useEffect, useMemo, useState } from "react";
 import type { PackTag } from "@/src/shared/types/pack";
 import {
+  DEFAULT_DATE_ORDER,
   DEFAULT_POPULAR_WINDOW,
+  type DateOrderValue,
   type FormatFilterValue,
   type SortFilterValue,
   type WindowFilterValue,
@@ -39,6 +41,8 @@ export function useHomeFeed(initialFeed?: PacksFeedResult) {
   const [window, setWindow] = useState<WindowFilterValue>(
     DEFAULT_POPULAR_WINDOW,
   );
+  const [dateOrder, setDateOrder] =
+    useState<DateOrderValue>(DEFAULT_DATE_ORDER);
   const [hydrated, setHydrated] = useState(false);
 
   // Restore the last-used filters once, after mount rather than during render,
@@ -58,6 +62,7 @@ export function useHomeFeed(initialFeed?: PacksFeedResult) {
       setTags(stored.tags);
       setSort(stored.sort);
       setWindow(stored.window);
+      setDateOrder(stored.dateOrder);
     }
     setHydrated(true);
     /* eslint-enable react-hooks/set-state-in-effect */
@@ -67,8 +72,8 @@ export function useHomeFeed(initialFeed?: PacksFeedResult) {
   // clobber a stored selection before the restore above runs.
   useEffect(() => {
     if (!hydrated) return;
-    writePackFilters({ format, tags, sort, window });
-  }, [hydrated, format, tags, sort, window]);
+    writePackFilters({ format, tags, sort, window, dateOrder });
+  }, [hydrated, format, tags, sort, window, dateOrder]);
 
   useEffect(() => {
     const timeout = setTimeout(
@@ -91,21 +96,28 @@ export function useHomeFeed(initialFeed?: PacksFeedResult) {
   useEffect(() => {
     /* eslint-disable-next-line react-hooks/set-state-in-effect */
     setPage(1);
-  }, [format, tags, query, sort, window]);
+  }, [format, tags, query, sort, window, dateOrder]);
 
   // Resolve the UI filter state into the request/query key: the "all" format
-  // sentinel and empty search collapse to undefined, and sort/window only apply
-  // under the popular sort.
+  // sentinel and empty search collapse to undefined; the "date" sort flattens
+  // into the backend's newest/oldest wire values; and `window` only rides along
+  // under the popular sort. "relevance" sends no sort at all (the backend's
+  // default ordering).
   const filters = useMemo<PacksFeedFilters>(
     () => ({
       format: format === "all" ? undefined : format,
       tags,
       q: query || undefined,
       page,
-      sort: sort === "popular" ? "popular" : undefined,
+      sort:
+        sort === "popular"
+          ? "popular"
+          : sort === "date"
+            ? dateOrder
+            : undefined,
       window: sort === "popular" ? window : undefined,
     }),
-    [format, tags, query, page, sort, window],
+    [format, tags, query, page, sort, window, dateOrder],
   );
 
   // Seed only the default-filters query with the server-rendered feed — other
@@ -132,13 +144,13 @@ export function useHomeFeed(initialFeed?: PacksFeedResult) {
       ? "loading"
       : "ready";
 
-  // Reset to DEFAULT_POPULAR_WINDOW every time Popular is (re)selected, rather
-  // than remembering the last-chosen window across a Relevance -> Popular
-  // round-trip — that window is the expected starting point each time you opt
-  // into popularity sorting.
+  // Reset the sub-choice every time its parent sort is (re)selected, rather than
+  // remembering the last-chosen one across a round-trip through another sort —
+  // the default is the expected starting point each time you opt back in.
   function selectSort(value: SortFilterValue) {
     setSort(value);
     if (value === "popular") setWindow(DEFAULT_POPULAR_WINDOW);
+    if (value === "date") setDateOrder(DEFAULT_DATE_ORDER);
   }
 
   return {
@@ -154,6 +166,8 @@ export function useHomeFeed(initialFeed?: PacksFeedResult) {
     selectSort,
     window,
     setWindow,
+    dateOrder,
+    setDateOrder,
     page,
     totalPages,
     setPage,

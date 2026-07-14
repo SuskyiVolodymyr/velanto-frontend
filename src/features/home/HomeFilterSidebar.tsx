@@ -10,6 +10,7 @@ import { FormatFilter } from "@/src/features/home/FormatFilter";
 import { SortFilter } from "@/src/features/home/SortFilter";
 import { TagFilter } from "@/src/features/home/TagFilter";
 import type {
+  DateOrderValue,
   FormatFilterValue,
   SortFilterValue,
   WindowFilterValue,
@@ -49,6 +50,8 @@ export function HomeFilterSidebar({
   onSortChange,
   window,
   onWindowChange,
+  dateOrder,
+  onDateOrderChange,
   tags,
   onTagsChange,
 }: {
@@ -61,6 +64,8 @@ export function HomeFilterSidebar({
   onSortChange: (value: SortFilterValue) => void;
   window: WindowFilterValue;
   onWindowChange: (value: WindowFilterValue) => void;
+  dateOrder: DateOrderValue;
+  onDateOrderChange: (value: DateOrderValue) => void;
   tags: PackTag[];
   onTagsChange: (tags: PackTag[]) => void;
 }) {
@@ -89,6 +94,8 @@ export function HomeFilterSidebar({
             onSortChange={onSortChange}
             window={window}
             onWindowChange={onWindowChange}
+            dateOrder={dateOrder}
+            onDateOrderChange={onDateOrderChange}
           />
         </FilterGroup>
 

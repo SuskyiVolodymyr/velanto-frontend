@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Badge } from "@/src/shared/components/Badge";
 import { StatusBadge } from "@/src/shared/components/StatusBadge";
 import { CoverImage } from "@/src/shared/components/CoverImage";
@@ -9,6 +9,7 @@ import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { Username } from "@/src/shared/components/Username";
 import { Text } from "@/src/shared/components/Text";
 import { getRoundsCount } from "@/src/shared/lib/pack-display";
+import { formatRelativeTimeIntl } from "@/src/shared/lib/relative-time";
 import type { Pack } from "@/src/shared/types/pack";
 
 export function PackCard({
@@ -19,7 +20,9 @@ export function PackCard({
   showStatus?: boolean;
 }) {
   const tFormat = useTranslations("formats");
+  const locale = useLocale();
   const roundsCount = getRoundsCount(pack);
+  const createdLabel = formatRelativeTimeIntl(pack.createdAt, locale);
   const statsLabel =
     pack.totalPlays === 0
       ? "No plays yet"
@@ -46,22 +49,36 @@ export function PackCard({
           <Text variant="secondary" className="line-clamp-2 text-sm">
             {pack.description}
           </Text>
-          {pack.author && (
-            <div className="flex items-center gap-1.5">
-              <UserAvatar
-                username={pack.author.username}
-                avatarKey={pack.author.avatarKey}
-                className="h-5 w-5 shrink-0 rounded-full border border-border bg-surface text-[10px] font-semibold text-foreground-secondary"
-              />
-              <Username
-                username={pack.author.username}
-                role={pack.author.role}
-                trusted={pack.author.trusted}
-                at
-                className="truncate text-xs text-foreground-secondary"
-              />
-            </div>
-          )}
+          <div className="flex items-center gap-1.5">
+            {pack.author && (
+              <>
+                <UserAvatar
+                  username={pack.author.username}
+                  avatarKey={pack.author.avatarKey}
+                  className="h-5 w-5 shrink-0 rounded-full border border-border bg-surface text-[10px] font-semibold text-foreground-secondary"
+                />
+                <Username
+                  username={pack.author.username}
+                  role={pack.author.role}
+                  trusted={pack.author.trusted}
+                  at
+                  className="truncate text-xs text-foreground-secondary"
+                />
+              </>
+            )}
+            {/* The relative label is computed from `now`, so the server and the
+                hydrating client can legitimately render different text (they
+                render seconds apart). suppressHydrationWarning keeps the server
+                copy on hydration and lets later renders refresh it; the exact
+                instant stays machine-readable in `dateTime` regardless. */}
+            {createdLabel && (
+              <Text variant="tertiary" className="ml-auto shrink-0 text-xs">
+                <time dateTime={pack.createdAt} suppressHydrationWarning>
+                  {createdLabel}
+                </time>
+              </Text>
+            )}
+          </div>
           <div className="mt-auto flex items-center justify-between gap-2">
             <Text variant="tertiary" className="shrink-0 text-xs">
               {roundsCount} round{roundsCount === 1 ? "" : "s"}

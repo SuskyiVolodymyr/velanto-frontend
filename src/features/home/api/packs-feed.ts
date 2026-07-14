@@ -17,7 +17,12 @@ export interface PacksFeedFilters {
   tags: PackTag[];
   q?: string;
   page?: number;
-  sort?: "popular";
+  /**
+   * The backend sort. The UI's "date" sort is already flattened into
+   * "newest"/"oldest" here (see useHomeFeed); "relevance" collapses to
+   * undefined, the backend's default ordering.
+   */
+  sort?: "popular" | "newest" | "oldest";
   /** Popularity window; only meaningful when `sort` is "popular". */
   window?: WindowFilterValue;
 }

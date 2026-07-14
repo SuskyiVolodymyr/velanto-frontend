@@ -109,6 +109,74 @@ describe("HomeFeed", () => {
     );
   });
 
+  describe("date sort", () => {
+    async function renderAndPickDate() {
+      const user = userEvent.setup();
+      vi.mocked(packsClient.list).mockResolvedValue({
+        items: [PACK_A],
+        total: 1,
+        page: 1,
+        limit: 25,
+      });
+      render(<HomeFeed />);
+      await screen.findByText("Best Anime Openings");
+      await user.selectOptions(
+        screen.getByRole("combobox", { name: "Sort by" }),
+        "date",
+      );
+      return user;
+    }
+
+    it("fetches newest-first (and drops the popularity window) when Date is picked", async () => {
+      await renderAndPickDate();
+
+      await waitFor(() =>
+        expect(packsClient.list).toHaveBeenLastCalledWith({
+          format: undefined,
+          tags: [],
+          sort: "newest",
+          window: undefined,
+          limit: 25,
+        }),
+      );
+    });
+
+    it("fetches oldest-first when Oldest first is picked", async () => {
+      const user = await renderAndPickDate();
+
+      await user.click(screen.getByRole("button", { name: "Oldest first" }));
+
+      await waitFor(() =>
+        expect(packsClient.list).toHaveBeenLastCalledWith({
+          format: undefined,
+          tags: [],
+          sort: "oldest",
+          window: undefined,
+          limit: 25,
+        }),
+      );
+    });
+
+    it("resets to newest-first when Date is re-selected after Oldest first", async () => {
+      const user = await renderAndPickDate();
+      await user.click(screen.getByRole("button", { name: "Oldest first" }));
+
+      const select = screen.getByRole("combobox", { name: "Sort by" });
+      await user.selectOptions(select, "popular");
+      await user.selectOptions(select, "date");
+
+      await waitFor(() =>
+        expect(packsClient.list).toHaveBeenLastCalledWith({
+          format: undefined,
+          tags: [],
+          sort: "newest",
+          window: undefined,
+          limit: 25,
+        }),
+      );
+    });
+  });
+
   it("applies the drafted tags to the fetch only when Apply is clicked", async () => {
     const user = userEvent.setup();
     vi.mocked(packsClient.list).mockResolvedValue({
@@ -340,8 +408,14 @@ describe("HomeFeed", () => {
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
 
-      await user.click(screen.getByRole("button", { name: "Relevance" }));
-      await user.click(screen.getByRole("button", { name: "Popular" }));
+      await user.selectOptions(
+        screen.getByRole("combobox", { name: "Sort by" }),
+        "relevance",
+      );
+      await user.selectOptions(
+        screen.getByRole("combobox", { name: "Sort by" }),
+        "popular",
+      );
 
       await waitFor(() => {
         const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
@@ -364,12 +438,18 @@ describe("HomeFeed", () => {
       // Popular is the default, so the window picker is visible on mount.
       expect(screen.getByRole("button", { name: "Month" })).toBeInTheDocument();
 
-      await user.click(screen.getByRole("button", { name: "Relevance" }));
+      await user.selectOptions(
+        screen.getByRole("combobox", { name: "Sort by" }),
+        "relevance",
+      );
       expect(
         screen.queryByRole("button", { name: "Month" }),
       ).not.toBeInTheDocument();
 
-      await user.click(screen.getByRole("button", { name: "Popular" }));
+      await user.selectOptions(
+        screen.getByRole("combobox", { name: "Sort by" }),
+        "popular",
+      );
       expect(screen.getByRole("button", { name: "Month" })).toBeInTheDocument();
     });
 
@@ -404,13 +484,19 @@ describe("HomeFeed", () => {
       });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
-      await user.click(screen.getByRole("button", { name: "Popular" }));
+      await user.selectOptions(
+        screen.getByRole("combobox", { name: "Sort by" }),
+        "popular",
+      );
       await waitFor(() => {
         const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
         expect(lastCall?.sort).toBe("popular");
       });
 
-      await user.click(screen.getByRole("button", { name: "Relevance" }));
+      await user.selectOptions(
+        screen.getByRole("combobox", { name: "Sort by" }),
+        "relevance",
+      );
 
       await waitFor(() => {
         const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
@@ -437,8 +523,14 @@ describe("HomeFeed", () => {
         expect(lastCall?.window).toBe("week");
       });
 
-      await user.click(screen.getByRole("button", { name: "Relevance" }));
-      await user.click(screen.getByRole("button", { name: "Popular" }));
+      await user.selectOptions(
+        screen.getByRole("combobox", { name: "Sort by" }),
+        "relevance",
+      );
+      await user.selectOptions(
+        screen.getByRole("combobox", { name: "Sort by" }),
+        "popular",
+      );
 
       await waitFor(() => {
         const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
@@ -484,7 +576,10 @@ describe("HomeFeed", () => {
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
 
-      await user.click(screen.getByRole("button", { name: "Popular" }));
+      await user.selectOptions(
+        screen.getByRole("combobox", { name: "Sort by" }),
+        "popular",
+      );
 
       await waitFor(() => {
         const stored = JSON.parse(

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { PackCard } from "./PackCard";
@@ -68,6 +68,62 @@ describe("PackCard", () => {
     render(<PackCard pack={pack} />);
 
     expect(screen.queryByText(/^@/)).not.toBeInTheDocument();
+  });
+
+  describe("created time", () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    function renderAgedPack(createdAt: string, now: string) {
+      vi.setSystemTime(new Date(now));
+      render(
+        <PackCard pack={{ ...BASE_PACK, format: "save_one", createdAt }} />,
+      );
+    }
+
+    it("shows how long ago the pack was created", () => {
+      renderAgedPack("2026-01-01T00:00:00.000Z", "2026-05-01T00:00:00.000Z");
+
+      expect(screen.getByText("120 days ago")).toBeInTheDocument();
+    });
+
+    it("shows minutes for a freshly created pack", () => {
+      renderAgedPack("2026-01-01T00:00:00.000Z", "2026-01-01T00:02:00.000Z");
+
+      expect(screen.getByText("2 minutes ago")).toBeInTheDocument();
+    });
+
+    // Day-capped on purpose: even a year-old pack still reads in days.
+    it("never escalates past days for a very old pack", () => {
+      renderAgedPack("2025-01-01T00:00:00.000Z", "2026-01-01T00:00:00.000Z");
+
+      expect(screen.getByText("365 days ago")).toBeInTheDocument();
+    });
+
+    // Intl.RelativeTimeFormat throws a RangeError on NaN, so an unparseable
+    // createdAt must not be allowed to take the whole card down.
+    it("renders the card without a timestamp when createdAt is unusable", () => {
+      vi.setSystemTime(new Date("2026-05-01T00:00:00.000Z"));
+      render(
+        <PackCard pack={{ ...BASE_PACK, format: "save_one", createdAt: "" }} />,
+      );
+
+      expect(screen.getByText(BASE_PACK.title)).toBeInTheDocument();
+      expect(document.querySelector("time")).not.toBeInTheDocument();
+    });
+
+    it("exposes the exact instant in a machine-readable dateTime attribute", () => {
+      renderAgedPack("2026-01-01T00:00:00.000Z", "2026-05-01T00:00:00.000Z");
+
+      expect(screen.getByText("120 days ago").closest("time")).toHaveAttribute(
+        "dateTime",
+        "2026-01-01T00:00:00.000Z",
+      );
+    });
   });
 
   it("uses the rounds length as the round count for an nxn pack", () => {

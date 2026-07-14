@@ -5,8 +5,15 @@ import type { PackFormat } from "@/src/shared/types/pack";
 // labels are resolved from the i18n catalogs at render time (see FormatFilter /
 // SortFilter), so only the values live here.
 export type FormatFilterValue = "all" | PackFormat;
-export type SortFilterValue = "relevance" | "popular";
+export type SortFilterValue = "relevance" | "popular" | "date";
 export type WindowFilterValue = "day" | "week" | "month" | "year" | "all";
+/**
+ * Direction of the "date" sort. Kept separate from SortFilterValue so Date is
+ * one chip with a newest/oldest sub-row (mirroring how Popular owns the time
+ * window), rather than two sibling top-level sorts. The fetch layer flattens
+ * `date` + this into the backend's `sort=newest|oldest`.
+ */
+export type DateOrderValue = "newest" | "oldest";
 
 export const FORMAT_FILTER_VALUES: FormatFilterValue[] = [
   "all",
@@ -17,7 +24,21 @@ export const FORMAT_FILTER_VALUES: FormatFilterValue[] = [
   "1v1",
 ];
 
-export const SORT_VALUES: SortFilterValue[] = ["relevance", "popular"];
+export const SORT_VALUES: SortFilterValue[] = ["relevance", "popular", "date"];
+
+export const DATE_ORDER_VALUES: DateOrderValue[] = ["newest", "oldest"];
+
+// Maps each sort / date-order value to its key in the `home` message namespace.
+export const SORT_LABEL_KEYS: Record<SortFilterValue, string> = {
+  relevance: "sortRelevance",
+  popular: "sortPopular",
+  date: "sortDate",
+};
+
+export const DATE_ORDER_LABEL_KEYS: Record<DateOrderValue, string> = {
+  newest: "dateNewest",
+  oldest: "dateOldest",
+};
 
 export const WINDOW_VALUES: WindowFilterValue[] = [
   "day",
@@ -40,3 +61,7 @@ export const WINDOW_LABEL_KEYS: Record<WindowFilterValue, string> = {
 // "month" is broad enough to surface a healthy set on a young catalog while
 // still meaning "recently popular".
 export const DEFAULT_POPULAR_WINDOW: WindowFilterValue = "month";
+
+// The direction the feed starts on (and returns to) each time Date is selected
+// — "what's new" is the overwhelmingly common reason to sort by date.
+export const DEFAULT_DATE_ORDER: DateOrderValue = "newest";
