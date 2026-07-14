@@ -160,7 +160,7 @@ export function PackApprovalsTab() {
                   <DataTableRow columns={COLUMNS}>
                     <Link
                       href={`/packs/${pack.id}`}
-                      className="truncate text-[13px] font-semibold text-foreground hover:text-acc"
+                      className="block truncate text-[13px] font-semibold text-foreground hover:text-acc"
                     >
                       {pack.title}
                     </Link>

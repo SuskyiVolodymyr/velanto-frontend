@@ -261,7 +261,7 @@ export function StaffTab() {
                     onClick={() =>
                       changeRole.mutate({ id: row.id, role: "user" })
                     }
-                    className="w-fit justify-self-start rounded-md bg-danger/10 px-2.5 py-1.5 text-[12.5px] font-medium text-danger transition-colors hover:bg-danger/20"
+                    className="w-fit rounded-md bg-danger/10 px-2.5 py-1.5 text-[12.5px] font-medium text-danger transition-colors hover:bg-danger/20"
                   >
                     Remove
                   </button>

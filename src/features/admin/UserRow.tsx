@@ -95,7 +95,7 @@ export function UserRow({
         </span>
 
         {canAct ? (
-          <div className="flex flex-wrap gap-1.5 justify-self-start">
+          <div className="flex flex-wrap gap-1.5">
             <RowAction
               label={row.trusted ? "Untrust" : "Trust"}
               pending={trustPending}
