@@ -150,7 +150,12 @@ export function GroupItemAdder({
                 accept="image/*"
                 disabled={uploading}
                 aria-label={t("groupNewItemImage", { index: index + 1 })}
-                onChange={(e) => onSelectImage(e.target.files?.[0] ?? null)}
+                onChange={(e) => {
+                  onSelectImage(e.target.files?.[0] ?? null);
+                  // Clear the value so re-selecting the SAME file after a failed
+                  // upload still fires onChange (the value would be unchanged).
+                  e.target.value = "";
+                }}
                 className="sr-only"
               />
             </label>

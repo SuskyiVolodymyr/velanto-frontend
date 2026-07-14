@@ -27,6 +27,14 @@ export interface User {
   bannedUntil?: string | null;
   banReason?: BanReason | null;
   banReasonDetail?: string | null;
+  /**
+   * Storage key of the signed-in user's avatar (null/absent = initials
+   * placeholder). Optional because the auth endpoints (`/auth/refresh` etc.)
+   * that seed this user don't currently include it — the header falls back to
+   * the initial until it's known, and {@link AuthProvider}'s `setAvatarKey`
+   * patches it live when the user changes their own avatar.
+   */
+  avatarKey?: string | null;
 }
 
 export interface PublicUserProfile {
@@ -44,4 +52,11 @@ export interface PublicUserProfile {
    */
   role?: Role;
   trusted?: boolean;
+  /**
+   * Storage key of the user's avatar, or null for the initials placeholder.
+   * Resolved to a render URL via `mediaUrl`. Optional so the many pre-existing
+   * profile fixtures stay valid without a mass edit (same rationale as `role`/
+   * `trusted`); the live backend always sends it on the public profile.
+   */
+  avatarKey?: string | null;
 }

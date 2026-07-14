@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import type { Group, Item, ItemType } from "@/src/shared/types/pack";
 import { extractYouTubeId } from "@/src/shared/lib/youtube";
@@ -31,8 +31,14 @@ export function useGroupItemDraft(
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
   const [addError, setAddError] = useState("");
   const t = useTranslations("create");
+  // Monotonic token, bumped whenever the draft type changes or a new image is
+  // picked. A slow upload that resolves after the user has moved on is compared
+  // against the current token and discarded, so its storage key never leaks
+  // into an unrelated (text/youtube) draft value.
+  const uploadToken = useRef(0);
 
   function selectType(type: ItemType) {
+    uploadToken.current += 1;
     setDraftType(type);
     setAddError("");
     // Switching item type discards any staged draft value/preview so a youtube
@@ -51,6 +57,7 @@ export function useGroupItemDraft(
 
   async function selectImageFile(file: File | null) {
     if (!file || uploading) return;
+    const token = (uploadToken.current += 1);
     setAddError("");
     setImagePreviewUrl("");
     setDraftValue("");
@@ -65,9 +72,13 @@ export function useGroupItemDraft(
     setUploading(true);
     try {
       const { key, url } = await uploadMedia(file, "item");
+      // Discard a result the user has moved on from (type switched, or another
+      // image picked) — writing its key now would corrupt the current draft.
+      if (token !== uploadToken.current) return;
       setDraftValue(key);
       setImagePreviewUrl(url);
     } catch {
+      if (token !== uploadToken.current) return;
       setAddError(t("imageUploadFailed"));
     } finally {
       setUploading(false);

@@ -48,6 +48,7 @@ function mockAuth(status: "authenticated" | "unauthenticated" | "loading") {
     requestEmailCode: vi.fn(),
     register: vi.fn(),
     logout: vi.fn(),
+    setAvatarKey: vi.fn(),
   } as ReturnType<typeof useAuth>);
 }
 

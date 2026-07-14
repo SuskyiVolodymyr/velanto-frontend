@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { Text } from "@/src/shared/components/Text";
 import { Hidden } from "@/src/shared/components/Hidden";
+import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import type { User } from "@/src/shared/types/user";
 
 export function UserMenu({
@@ -47,8 +48,6 @@ export function UserMenu({
     };
   }, [open]);
 
-  const initial = user.username.slice(0, 1).toUpperCase();
-
   return (
     <div ref={containerRef} className="relative">
       <button
@@ -58,9 +57,13 @@ export function UserMenu({
         aria-expanded={open}
         aria-label={t("accountMenu")}
         onClick={() => setOpen((prev) => !prev)}
-        className="flex h-10 w-10 items-center justify-center rounded-[11px] border border-border bg-surface text-sm font-semibold text-foreground-secondary transition-colors hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-[11px] border border-border bg-surface text-sm font-semibold text-foreground-secondary transition-colors hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
-        {initial}
+        <UserAvatar
+          username={user.username}
+          avatarKey={user.avatarKey}
+          className="h-full w-full rounded-[10px] text-sm"
+        />
       </button>
       {open && (
         <div

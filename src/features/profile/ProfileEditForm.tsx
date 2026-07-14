@@ -11,6 +11,7 @@ import {
 import { messageFromError } from "@/src/shared/lib/messageFromError";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
+import { AvatarSection } from "@/src/features/profile/AvatarSection";
 
 const BIO_MAX = 280;
 
@@ -66,6 +67,14 @@ export function ProfileEditForm() {
       <Text as="h1" variant="title" className="mb-6 text-2xl">
         {t("editProfile")}
       </Text>
+
+      {profileQuery.data && (
+        <AvatarSection
+          userId={user?.id ?? ""}
+          username={profileQuery.data.username}
+          avatarKey={profileQuery.data.avatarKey ?? null}
+        />
+      )}
 
       <label className="mb-2 flex items-center justify-between">
         <Text variant="secondary" className="text-xs">

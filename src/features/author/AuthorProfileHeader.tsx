@@ -6,6 +6,7 @@ import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { Username } from "@/src/shared/components/Username";
 import { Tooltip } from "@/src/shared/components/Tooltip";
+import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import type { PublicUserProfile } from "@/src/shared/types/user";
 
 /**
@@ -35,7 +36,6 @@ export function AuthorProfileHeader({
 }) {
   const t = useTranslations("profile");
   const tAuth = useTranslations("authGate");
-  const initial = profile.username.slice(0, 1).toUpperCase();
 
   // A signed-out viewer sees the follow button dimmed and non-functional, with
   // the reason on hover/focus — not the real `disabled` attribute (which would
@@ -57,9 +57,11 @@ export function AuthorProfileHeader({
       <div className="mb-8 flex items-start justify-between gap-4">
         <div className="flex items-center gap-4">
           <Hidden kind="avatar" id={authorId} className="h-16 w-16">
-            <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border bg-surface text-xl font-semibold text-foreground-secondary">
-              {initial}
-            </div>
+            <UserAvatar
+              username={profile.username}
+              avatarKey={profile.avatarKey}
+              className="h-16 w-16 rounded-full border border-border bg-surface text-xl text-foreground-secondary"
+            />
           </Hidden>
           <div>
             <Text as="h1" variant="title" className="text-2xl">

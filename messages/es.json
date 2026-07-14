@@ -552,7 +552,12 @@
     "following": "Siguiendo",
     "follow": "Seguir",
     "packs": "Packs",
-    "noPacks": "Aún no hay packs."
+    "noPacks": "Aún no hay packs.",
+    "avatarHeading": "Foto de perfil",
+    "avatarChange": "Cambiar foto",
+    "avatarRemove": "Quitar foto",
+    "avatarHint": "PNG o JPG, hasta 1 MB.",
+    "avatarRemoveError": "No se pudo quitar tu foto. Inténtalo de nuevo."
   },
   "pages": {
     "createTitle": "Crear un pack",

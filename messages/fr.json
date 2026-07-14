@@ -552,7 +552,12 @@
     "following": "Abonné",
     "follow": "Suivre",
     "packs": "Packs",
-    "noPacks": "Aucun pack pour l'instant."
+    "noPacks": "Aucun pack pour l'instant.",
+    "avatarHeading": "Photo de profil",
+    "avatarChange": "Changer la photo",
+    "avatarRemove": "Supprimer la photo",
+    "avatarHint": "PNG ou JPG, jusqu'à 1 Mo.",
+    "avatarRemoveError": "Impossible de supprimer votre photo. Réessayez."
   },
   "pages": {
     "createTitle": "Créer un pack",

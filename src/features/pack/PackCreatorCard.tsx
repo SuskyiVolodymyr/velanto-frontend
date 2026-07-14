@@ -46,6 +46,7 @@ export function PackCreatorCard({ pack }: { pack: Pack }) {
               <Hidden kind="avatar" id={pack.authorId} className="flex-none">
                 <UserAvatar
                   username={summary.profile.username}
+                  avatarKey={summary.profile.avatarKey}
                   className="h-11 w-11 rounded-[12px] border border-border bg-surface text-base text-foreground-secondary"
                 />
               </Hidden>

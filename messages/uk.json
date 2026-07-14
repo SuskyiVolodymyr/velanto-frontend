@@ -552,7 +552,12 @@
     "following": "Ви стежите",
     "follow": "Стежити",
     "packs": "Паки",
-    "noPacks": "Паків поки немає."
+    "noPacks": "Паків поки немає.",
+    "avatarHeading": "Фото профілю",
+    "avatarChange": "Змінити фото",
+    "avatarRemove": "Видалити фото",
+    "avatarHint": "PNG або JPG, до 1 МБ.",
+    "avatarRemoveError": "Не вдалося видалити ваше фото. Спробуйте ще раз."
   },
   "pages": {
     "createTitle": "Створити пак",

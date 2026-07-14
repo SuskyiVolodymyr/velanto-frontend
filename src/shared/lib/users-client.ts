@@ -57,6 +57,14 @@ export const usersClient = {
   getProfile: (id: string) => apiClient.get<PublicUserProfile>(`/users/${id}`),
   updateProfile: (bio: string) =>
     apiClient.patch<{ id: string; bio: string }>("/users/me", { bio }),
+  /** Set the caller's avatar to an already-uploaded media key. */
+  setAvatar: (key: string) =>
+    apiClient.patch<{ id: string; avatarKey: string }>("/users/me/avatar", {
+      key,
+    }),
+  /** Clear the caller's avatar back to the initials placeholder. */
+  removeAvatar: () =>
+    apiClient.delete<{ id: string; avatarKey: null }>("/users/me/avatar"),
   follow: (id: string) =>
     apiClient.post<{ followerCount: number }>(`/users/${id}/follow`),
   unfollow: (id: string) =>
