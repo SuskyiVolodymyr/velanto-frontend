@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Badge } from "@/src/shared/components/Badge";
 import { StatusBadge } from "@/src/shared/components/StatusBadge";
+import { CoverImage } from "@/src/shared/components/CoverImage";
 import { Text } from "@/src/shared/components/Text";
 import { getRoundsCount } from "@/src/shared/lib/pack-display";
 import type { Pack } from "@/src/shared/types/pack";
@@ -27,11 +28,14 @@ export function PackCard({
     <Link href={`/packs/${pack.id}`} className="block">
       <div className="flex h-full flex-col overflow-hidden rounded-[15px] border border-border bg-surface transition-transform duration-200 ease-[cubic-bezier(0.2,0.7,0.3,1)] hover:-translate-y-1 hover:shadow-[0_14px_34px_rgba(0,0,0,0.42)]">
         <div
-          className="flex aspect-[4/3] items-end justify-between p-4"
+          className="relative isolate flex aspect-[4/3] items-end justify-between p-4"
           style={{
             background: `linear-gradient(150deg, ${pack.coverTone}, #0b0c0f)`,
           }}
         >
+          {pack.coverImageKey && (
+            <CoverImage coverKey={pack.coverImageKey} className="-z-10" />
+          )}
           <Badge>{tFormat(pack.format)}</Badge>
           {showStatusBadge && <StatusBadge kind="pack" status={pack.status} />}
         </div>

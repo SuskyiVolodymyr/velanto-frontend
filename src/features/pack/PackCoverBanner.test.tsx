@@ -53,6 +53,25 @@ describe("PackCoverBanner", () => {
     expect(screen.getByText("1 round")).toBeInTheDocument();
   });
 
+  it("renders the custom cover image when a coverImageKey is set", () => {
+    const { container } = render(
+      <PackCoverBanner
+        pack={{ ...SAVE_ONE_PACK, coverImageKey: "media/cover/hero.webp" }}
+      />,
+    );
+
+    const img = container.querySelector("img");
+    expect(img).not.toBeNull();
+    expect(img?.getAttribute("src")).toContain("media/cover/hero.webp");
+    // The title/format still render over the cover.
+    expect(screen.getByText("Best Anime Openings")).toBeInTheDocument();
+  });
+
+  it("renders no cover image (gradient only) when coverImageKey is absent", () => {
+    const { container } = render(<PackCoverBanner pack={SAVE_ONE_PACK} />);
+    expect(container.querySelector("img")).toBeNull();
+  });
+
   it("uses the rounds length for an nxn pack", () => {
     const pack: Pack = {
       ...SAVE_ONE_PACK,

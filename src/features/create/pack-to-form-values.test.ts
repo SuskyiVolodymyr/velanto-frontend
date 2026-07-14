@@ -44,6 +44,19 @@ describe("packToFormValues", () => {
     });
   });
 
+  it("seeds an existing cover image key", () => {
+    expect(
+      packToFormValues({ ...PACK, coverImageKey: "media/cover/x.webp" })
+        .coverImageKey,
+    ).toBe("media/cover/x.webp");
+  });
+
+  it("maps a null cover (gradient-only pack) to undefined so the optional field stays valid", () => {
+    expect(
+      packToFormValues({ ...PACK, coverImageKey: null }).coverImageKey,
+    ).toBeUndefined();
+  });
+
   it("drops server-only fields (id, authorId, status, stats) that the form doesn't own", () => {
     const values = packToFormValues(PACK);
     expect(values).not.toHaveProperty("id");

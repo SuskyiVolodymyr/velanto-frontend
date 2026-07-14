@@ -115,6 +115,12 @@ export interface Pack {
   title: string;
   description: string;
   coverTone: string;
+  // Optional custom cover: the S3 media KEY of an uploaded image (resolved to a
+  // URL via shared/lib/media-url). When present it renders instead of the
+  // `coverTone` gradient; null/absent falls back to the gradient. The backend
+  // always sends `string | null`; kept optional here so the many inline Pack
+  // fixtures that predate covers stay valid.
+  coverImageKey?: string | null;
   format: PackFormat;
   tags: PackTag[];
   groups: Group[];
