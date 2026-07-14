@@ -3,8 +3,8 @@ import type {
   ReportWithReporter,
 } from "@/src/shared/types/report";
 
-// Shared between SupportScreen (queue) and SupportReportScreen (detail) so
-// both surfaces render report status/target consistently.
+// Shared between the moderation panel's Reports tab (queue) and the report
+// detail screen so both surfaces render report status/target consistently.
 export const REPORT_STATUS_BADGE_CLASS: Record<ReportStatus, string> = {
   new: "border-acc/30 bg-acc/10 text-acc",
   reviewing: "border-yellow-500/30 bg-yellow-500/10 text-yellow-400",

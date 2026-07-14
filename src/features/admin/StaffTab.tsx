@@ -14,7 +14,7 @@ import { useStreamerModeOrDefault } from "@/src/shared/lib/streamer-mode-context
 import { usersClient } from "@/src/shared/lib/users-client";
 import { adminClient } from "@/src/shared/lib/admin-client";
 import { useAdminStaff } from "@/src/features/admin/api/admin.queries";
-import { AdminTable, AdminTableRow } from "@/src/features/admin/AdminTable";
+import { DataTable, DataTableRow } from "@/src/shared/components/DataTable";
 import {
   assignableRolesFor,
   type AssignableRole,
@@ -183,7 +183,7 @@ export function StaffTab() {
       )}
 
       {status === "ready" && (
-        <AdminTable
+        <DataTable
           columns={COLUMNS}
           headers={["Member", "Role", "Added by", "Since", ""]}
           empty="No staff members yet."
@@ -196,7 +196,7 @@ export function StaffTab() {
             );
             const canRemove = grantable.includes("user");
             return (
-              <AdminTableRow key={row.id} columns={COLUMNS}>
+              <DataTableRow key={row.id} columns={COLUMNS}>
                 <div className="min-w-0">
                   <Text className="truncate text-[13.5px] font-semibold">
                     <Hidden kind="name" id={row.id}>
@@ -268,10 +268,10 @@ export function StaffTab() {
                 ) : (
                   <span />
                 )}
-              </AdminTableRow>
+              </DataTableRow>
             );
           })}
-        </AdminTable>
+        </DataTable>
       )}
 
       {actionError && (

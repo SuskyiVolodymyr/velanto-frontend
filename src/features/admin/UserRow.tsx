@@ -9,7 +9,7 @@ import { type BanDuration } from "@/src/shared/lib/users-client";
 import { type BanReasonState } from "@/src/shared/components/BanReasonPicker";
 import type { AdminUserRow } from "@/src/shared/types/admin";
 import { UserBanForm } from "@/src/features/admin/UserBanForm";
-import { AdminTableRow } from "@/src/features/admin/AdminTable";
+import { DataTableRow } from "@/src/shared/components/DataTable";
 
 interface UserRowProps {
   row: AdminUserRow;
@@ -56,7 +56,7 @@ export function UserRow({
 }: UserRowProps) {
   return (
     <>
-      <AdminTableRow columns={columns}>
+      <DataTableRow columns={columns}>
         <div className="min-w-0">
           <Link
             href={`/users/${row.id}`}
@@ -119,7 +119,7 @@ export function UserRow({
         ) : (
           <span />
         )}
-      </AdminTableRow>
+      </DataTableRow>
 
       {banFormOpen && (
         <div className="border-t border-white/[0.05] px-[18px] py-3">

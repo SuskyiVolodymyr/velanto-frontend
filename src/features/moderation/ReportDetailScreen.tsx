@@ -5,17 +5,17 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
-import { ReportDetailSummary } from "@/src/features/support/ReportDetailSummary";
-import { ReportQueueActions } from "@/src/features/support/ReportQueueActions";
-import { ReportModerationPanel } from "@/src/features/support/ReportModerationPanel";
-import { useReportModeration } from "@/src/features/support/use-report-moderation";
-import { useReport } from "@/src/features/support/api/report-detail.queries";
+import { ReportDetailSummary } from "@/src/features/moderation/ReportDetailSummary";
+import { ReportQueueActions } from "@/src/features/moderation/ReportQueueActions";
+import { ReportModerationPanel } from "@/src/features/moderation/ReportModerationPanel";
+import { useReportModeration } from "@/src/features/moderation/use-report-moderation";
+import { useReport } from "@/src/features/moderation/api/report-detail.queries";
 import {
   useReviewReport,
   useCloseReport,
-} from "@/src/features/support/api/report-detail.mutations";
+} from "@/src/features/moderation/api/report-detail.mutations";
 
-export function SupportReportScreen({ reportId }: { reportId: string }) {
+export function ReportDetailScreen({ reportId }: { reportId: string }) {
   const { user, status: authStatus } = useAuth();
   const router = useRouter();
   const pathname = usePathname();

@@ -8,11 +8,12 @@ import { Select } from "@/src/shared/components/Select";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { useAdminLogs } from "@/src/features/admin/api/admin.queries";
 import {
+  ADMIN_PAGE_SIZE,
   EMPTY_AUDIT_FILTERS,
   type AuditLogFilters,
 } from "@/src/features/admin/api/admin";
-import { AdminTable, AdminTableRow } from "@/src/features/admin/AdminTable";
-import { AdminPagination } from "@/src/features/admin/AdminPagination";
+import { DataTable, DataTableRow } from "@/src/shared/components/DataTable";
+import { TablePagination } from "@/src/shared/components/TablePagination";
 import {
   AUDIT_ACTIONS,
   auditActionStyle,
@@ -65,28 +66,33 @@ export function LogsTab() {
 
   return (
     <div className="flex flex-col gap-4">
+      {/* Sizing lives on wrapper divs: Input and Select are w-full primitives
+          and `cn` is a plain joiner, so a `flex-1`/`w-auto` className loses to
+          their own w-full and each control claims a full row. */}
       <div className="flex flex-wrap items-center gap-2.5">
-        <Input
-          type="search"
-          aria-label="Search actor, target, details"
-          placeholder="Search actor, target, details"
-          value={searchInput}
-          onChange={(event) => setSearchInput(event.target.value)}
-          className="min-w-[200px] flex-1"
-        />
-        <Select
-          aria-label="Filter by action"
-          value={filters.action}
-          onChange={(event) => patch({ action: event.target.value })}
-          className="h-10 w-auto"
-          options={[
-            { value: "", label: "All actions" },
-            ...Object.entries(AUDIT_ACTIONS).map(([value, { label }]) => ({
-              value,
-              label,
-            })),
-          ]}
-        />
+        <div className="min-w-[200px] flex-1">
+          <Input
+            type="search"
+            aria-label="Search actor, target, details"
+            placeholder="Search actor, target, details"
+            value={searchInput}
+            onChange={(event) => setSearchInput(event.target.value)}
+          />
+        </div>
+        <div className="w-[190px]">
+          <Select
+            aria-label="Filter by action"
+            value={filters.action}
+            onChange={(event) => patch({ action: event.target.value })}
+            options={[
+              { value: "", label: "All actions" },
+              ...Object.entries(AUDIT_ACTIONS).map(([value, { label }]) => ({
+                value,
+                label,
+              })),
+            ]}
+          />
+        </div>
         <div className="flex items-center gap-1.5">
           <Text variant="tertiary" className="text-[11.5px]">
             From
@@ -96,7 +102,7 @@ export function LogsTab() {
             aria-label="From date"
             value={filters.from}
             onChange={(event) => patch({ from: event.target.value })}
-            className="h-10 rounded-[9px] border border-border bg-white/[0.05] px-2.5 text-[13px] text-foreground"
+            className="h-11 rounded-[10px] border border-border bg-white/[0.05] px-2.5 text-[13px] text-foreground"
           />
           <Text variant="tertiary" className="text-[11.5px]">
             to
@@ -106,7 +112,7 @@ export function LogsTab() {
             aria-label="To date"
             value={filters.to}
             onChange={(event) => patch({ to: event.target.value })}
-            className="h-10 rounded-[9px] border border-border bg-white/[0.05] px-2.5 text-[13px] text-foreground"
+            className="h-11 rounded-[10px] border border-border bg-white/[0.05] px-2.5 text-[13px] text-foreground"
           />
         </div>
         <button
@@ -114,7 +120,7 @@ export function LogsTab() {
           onClick={() =>
             patch({ sort: filters.sort === "newest" ? "oldest" : "newest" })
           }
-          className="h-10 rounded-[9px] border border-border bg-white/[0.05] px-3.5 text-[13px] font-medium text-foreground-secondary transition-colors hover:bg-white/[0.08]"
+          className="h-11 rounded-[10px] border border-border bg-white/[0.05] px-3.5 text-[13px] font-medium text-foreground-secondary transition-colors hover:bg-white/[0.08]"
         >
           Sort: {filters.sort === "newest" ? "Newest" : "Oldest"}
         </button>
@@ -129,7 +135,7 @@ export function LogsTab() {
 
       {!logsQuery.isLoading && !logsQuery.isError && (
         <>
-          <AdminTable
+          <DataTable
             columns={COLUMNS}
             headers={["Time", "Actor", "Action", "Target", "Details"]}
             empty="No log entries match these filters."
@@ -138,7 +144,7 @@ export function LogsTab() {
             {logs.map((log) => {
               const action = auditActionStyle(log.action);
               return (
-                <AdminTableRow key={log.id} columns={COLUMNS}>
+                <DataTableRow key={log.id} columns={COLUMNS}>
                   <Text
                     variant="tertiary"
                     className="text-[12.5px] tabular-nums"
@@ -162,12 +168,17 @@ export function LogsTab() {
                   <Text variant="tertiary" className="truncate text-[12.5px]">
                     {formatMeta(log.meta)}
                   </Text>
-                </AdminTableRow>
+                </DataTableRow>
               );
             })}
-          </AdminTable>
+          </DataTable>
 
-          <AdminPagination page={page} total={total} onPageChange={setPage} />
+          <TablePagination
+            page={page}
+            total={total}
+            pageSize={ADMIN_PAGE_SIZE}
+            onPageChange={setPage}
+          />
         </>
       )}
     </div>

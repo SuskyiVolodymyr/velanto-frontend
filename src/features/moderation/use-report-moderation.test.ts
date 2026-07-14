@@ -1,5 +1,8 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { act, renderHook, waitFor } from "@testing-library/react";
+import { createElement, type ReactNode } from "react";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { createTestQueryClient } from "@/src/shared/test/test-query-client";
 import { useReportModeration } from "./use-report-moderation";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import { usersClient } from "@/src/shared/lib/users-client";
@@ -24,13 +27,25 @@ function deferred<T>() {
   return { promise, resolve };
 }
 
+// The hook invalidates the panel's queues after a delete, so it needs a query
+// client in scope, like the panel itself has.
+function withQueryClient() {
+  const client = createTestQueryClient();
+  function Wrapper({ children }: { children: ReactNode }) {
+    return createElement(QueryClientProvider, { client }, children);
+  }
+  return Wrapper;
+}
+
 describe("useReportModeration", () => {
   beforeEach(() => vi.resetAllMocks());
 
   it("marks deleting while the pack-delete is in flight and blocks a re-fire", async () => {
     const d = deferred<{ deleted: true }>();
     mockedDelete.mockReturnValue(d.promise);
-    const { result } = renderHook(() => useReportModeration(REPORT));
+    const { result } = renderHook(() => useReportModeration(REPORT), {
+      wrapper: withQueryClient(),
+    });
 
     expect(result.current.deleting).toBe(false);
     act(() => {
@@ -50,7 +65,9 @@ describe("useReportModeration", () => {
   it("marks banSubmitting while the ban is in flight and blocks a re-fire", async () => {
     const d = deferred<{ id: string; bannedUntil: string }>();
     mockedBan.mockReturnValue(d.promise);
-    const { result } = renderHook(() => useReportModeration(REPORT));
+    const { result } = renderHook(() => useReportModeration(REPORT), {
+      wrapper: withQueryClient(),
+    });
     act(() => result.current.toggleBanForm());
     act(() =>
       result.current.setBanReason({

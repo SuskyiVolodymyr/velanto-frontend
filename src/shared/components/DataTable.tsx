@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { Text } from "@/src/shared/components/Text";
 
 /**
- * The bordered, header-topped table shell the Staff / Users / Logs tabs share.
+ * The bordered, header-topped table shell the admin and moderation panels share.
  *
  * A CSS grid rather than a real <table>: the design gives each tab its own
  * fixed column track sizes (e.g. "1.3fr 130px 1fr 110px 90px") and rows whose
@@ -15,7 +15,7 @@ import { Text } from "@/src/shared/components/Text";
  * `columns` is the grid-template-columns track list; `headers` must have the
  * same length (pass "" for an action column with no heading).
  */
-export function AdminTable({
+export function DataTable({
   columns,
   headers,
   children,
@@ -61,8 +61,8 @@ export function AdminTable({
   );
 }
 
-/** One row of an {@link AdminTable}. `columns` must match the table's track list. */
-export function AdminTableRow({
+/** One row of a {@link DataTable}. `columns` must match the table's track list. */
+export function DataTableRow({
   columns,
   children,
 }: {
