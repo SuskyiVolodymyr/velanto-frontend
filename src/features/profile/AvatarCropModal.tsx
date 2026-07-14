@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Cropper from "react-easy-crop";
 import { useTranslations } from "next-intl";
 import { Modal } from "@/src/shared/components/Modal";
@@ -33,16 +33,11 @@ export function AvatarCropModal({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
-  // Preview the picked file via an object URL; revoked when it changes or the
-  // modal unmounts so we never leak it.
-  const imageUrl = useMemo(
-    () => (open ? URL.createObjectURL(file) : ""),
-    [open, file],
-  );
-  useEffect(() => {
-    if (!imageUrl) return;
-    return () => URL.revokeObjectURL(imageUrl);
-  }, [imageUrl]);
+  // Preview URL for the picked file. Created once (the modal is mounted fresh
+  // per pick, so `file` is stable for its lifetime) and revoked on unmount — the
+  // same effect owns both create and revoke, so it can never leak.
+  const [imageUrl] = useState(() => URL.createObjectURL(file));
+  useEffect(() => () => URL.revokeObjectURL(imageUrl), [imageUrl]);
 
   // Stable so react-easy-crop's effect deps don't churn every render.
   const handleCropComplete = useCallback(
@@ -63,10 +58,17 @@ export function AvatarCropModal({
     }
   }
 
+  // Block every dismissal path (Escape / backdrop / ✕ / Cancel) while a crop is
+  // encoding, so an in-flight crop can't be silently cancelled after Save —
+  // otherwise the modal unmounts but the pending crop still resolves and uploads.
+  function handleClose() {
+    if (!busy) onCancel();
+  }
+
   return (
     <Modal
       open={open}
-      onClose={onCancel}
+      onClose={handleClose}
       title={t("avatarCropTitle")}
       className="max-w-lg"
     >
@@ -110,7 +112,7 @@ export function AvatarCropModal({
           <Button
             type="button"
             variant="secondary"
-            onClick={onCancel}
+            onClick={handleClose}
             disabled={busy}
           >
             {t("avatarCropCancel")}

@@ -85,6 +85,37 @@ describe("AvatarCropModal", () => {
     expect(cropImage).not.toHaveBeenCalled();
   });
 
+  it("blocks dismissal while a crop is encoding, then completes", async () => {
+    let resolveCrop!: (f: File) => void;
+    vi.mocked(cropImage).mockReturnValue(
+      new Promise((res) => {
+        resolveCrop = res;
+      }),
+    );
+    const onCancel = vi.fn();
+    const onCropped = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <AvatarCropModal
+        file={srcFile()}
+        open
+        onCancel={onCancel}
+        onCropped={onCropped}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Save" }));
+    // Crop is in flight (busy) — Escape must not cancel it out from under us.
+    await user.keyboard("{Escape}");
+    expect(onCancel).not.toHaveBeenCalled();
+
+    const cropped = new File([new Uint8Array([9])], "avatar.webp", {
+      type: "image/webp",
+    });
+    resolveCrop(cropped);
+    await waitFor(() => expect(onCropped).toHaveBeenCalledWith(cropped));
+  });
+
   it("surfaces a crop failure without calling onCropped", async () => {
     vi.mocked(cropImage).mockRejectedValue(new Error("canvas"));
     const onCropped = vi.fn();

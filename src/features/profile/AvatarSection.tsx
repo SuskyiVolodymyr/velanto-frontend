@@ -50,6 +50,9 @@ export function AvatarSection({
   function handleFile(file: File | null) {
     setValidationError("");
     updateAvatar.reset();
+    // Clear a prior failed-remove error too, so it doesn't linger over a fresh
+    // upload (both feed the shared `mutationError`).
+    removeAvatar.reset();
     if (!file) return;
     if (!file.type.startsWith("image/")) {
       setValidationError(tCreate("notAnImage"));
