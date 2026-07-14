@@ -446,8 +446,6 @@
     "rankCaption": "اوسط {avg} · {count}× درجہ",
     "youPlaced": "آپ نے اسے #{position} پر رکھا · {count, plural, one {# دیگر کھیل متفق ہوا} other {# دیگر کھیل متفق ہوئے}}",
     "placed": "#{position} پر رکھا گیا · {count, plural, one {# دیگر کھیل متفق ہوا} other {# دیگر کھیل متفق ہوئے}}",
-    "notInYourPlay": "اس راؤنڈ میں آپ کے کھیل میں شامل نہیں",
-    "notInThisPlay": "اس راؤنڈ میں اس کھیل میں شامل نہیں",
     "playAgain": "دوبارہ کھیلیں",
     "shareResult": "نتیجہ شیئر کریں",
     "sharedNote": "آپ ایک شیئر کیا گیا نتیجہ دیکھ رہے ہیں۔"
