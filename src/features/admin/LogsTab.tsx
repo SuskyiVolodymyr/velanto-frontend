@@ -1,139 +1,159 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Text } from "@/src/shared/components/Text";
 import { Input } from "@/src/shared/components/Input";
-import { Button } from "@/src/shared/components/Button";
+import { Select } from "@/src/shared/components/Select";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { useAdminLogs } from "@/src/features/admin/api/admin.queries";
-import type { AuditLogFilters } from "@/src/features/admin/api/admin";
-import type { AuditLogEntry } from "@/src/shared/types/admin";
+import {
+  EMPTY_AUDIT_FILTERS,
+  type AuditLogFilters,
+} from "@/src/features/admin/api/admin";
+import { AdminTable, AdminTableRow } from "@/src/features/admin/AdminTable";
+import { AdminPagination } from "@/src/features/admin/AdminPagination";
+import { ACTION_LABELS } from "@/src/features/admin/audit-actions";
 
 const FILTER_DEBOUNCE_MS = 300;
+const COLUMNS = "150px 1.1fr 150px 1fr 1.2fr";
+
+/** Audit `meta` is an arbitrary JSON blob; render it as a compact one-liner. */
+function formatMeta(meta: unknown): string {
+  if (meta === null || meta === undefined) return "—";
+  if (typeof meta === "string") return meta;
+  return JSON.stringify(meta);
+}
 
 export function LogsTab() {
-  const [actorInput, setActorInput] = useState("");
-  const [actionInput, setActionInput] = useState("");
-  const [targetInput, setTargetInput] = useState("");
-  const [filters, setFilters] = useState<AuditLogFilters>({
-    actor: "",
-    action: "",
-    target: "",
-  });
+  const [searchInput, setSearchInput] = useState("");
+  const [filters, setFilters] = useState<AuditLogFilters>(EMPTY_AUDIT_FILTERS);
+  const [page, setPage] = useState(1);
 
+  // Only the free-text box is debounced; the selects and date pickers commit
+  // immediately (each changes in one discrete step, not per keystroke).
+  //
+  // Returning `prev` unchanged when the term is identical is load-bearing, not a
+  // micro-optimisation: `filters` identity is what the reset-to-page-1 effect
+  // below watches, so minting a new object on every debounce tick would knock
+  // the user back to page 1 ~300ms after they paged forward.
   useEffect(() => {
-    const timeout = setTimeout(
-      () =>
-        setFilters({
-          actor: actorInput.trim(),
-          action: actionInput.trim(),
-          target: targetInput.trim(),
-        }),
-      FILTER_DEBOUNCE_MS,
-    );
+    const timeout = setTimeout(() => {
+      const q = searchInput.trim();
+      setFilters((prev) => (prev.q === q ? prev : { ...prev, q }));
+    }, FILTER_DEBOUNCE_MS);
     return () => clearTimeout(timeout);
-  }, [actorInput, actionInput, targetInput]);
+  }, [searchInput]);
 
-  const logsQuery = useAdminLogs(filters);
+  // Any filter change re-scopes the list, so a page number carried over from the
+  // old result set would be meaningless (and can be past the end).
+  useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
+    setPage(1);
+  }, [filters]);
 
-  const logs = useMemo(() => {
-    const seen = new Set<string>();
-    const out: AuditLogEntry[] = [];
-    for (const page of logsQuery.data?.pages ?? []) {
-      for (const entry of page.items) {
-        if (!seen.has(entry.id)) {
-          seen.add(entry.id);
-          out.push(entry);
-        }
-      }
-    }
-    return out;
-  }, [logsQuery.data]);
+  const logsQuery = useAdminLogs(filters, page);
+  const logs = logsQuery.data?.items ?? [];
+  const total = logsQuery.data?.total ?? 0;
 
-  const total = logsQuery.data?.pages.at(-1)?.total ?? 0;
-  const hasData = logsQuery.data !== undefined;
-  const status = logsQuery.isLoading
-    ? "loading"
-    : !hasData && logsQuery.isError
-      ? "error"
-      : "ready";
-  const loadingMore = logsQuery.isFetchingNextPage;
-  const loadMoreError =
-    hasData && (logsQuery.isError || logsQuery.isFetchNextPageError)
-      ? "Couldn't load more logs. Try again."
-      : "";
+  function patch(next: Partial<AuditLogFilters>) {
+    setFilters((prev) => ({ ...prev, ...next }));
+  }
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap gap-2">
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-wrap items-center gap-2.5">
         <Input
-          aria-label="Filter by actor"
-          placeholder="Actor ID"
-          value={actorInput}
-          onChange={(e) => setActorInput(e.target.value)}
-          className="max-w-[200px]"
+          type="search"
+          aria-label="Search actor, target, details"
+          placeholder="Search actor, target, details"
+          value={searchInput}
+          onChange={(event) => setSearchInput(event.target.value)}
+          className="min-w-[200px] flex-1"
         />
-        <Input
+        <Select
           aria-label="Filter by action"
-          placeholder="Action"
-          value={actionInput}
-          onChange={(e) => setActionInput(e.target.value)}
-          className="max-w-[200px]"
+          value={filters.action}
+          onChange={(event) => patch({ action: event.target.value })}
+          className="h-10 w-auto"
+          options={[
+            { value: "", label: "All actions" },
+            ...Object.entries(ACTION_LABELS).map(([value, label]) => ({
+              value,
+              label,
+            })),
+          ]}
         />
-        <Input
-          aria-label="Filter by target"
-          placeholder="Target"
-          value={targetInput}
-          onChange={(e) => setTargetInput(e.target.value)}
-          className="max-w-[200px]"
-        />
+        <div className="flex items-center gap-1.5">
+          <Text variant="tertiary" className="text-[11.5px]">
+            From
+          </Text>
+          <input
+            type="date"
+            aria-label="From date"
+            value={filters.from}
+            onChange={(event) => patch({ from: event.target.value })}
+            className="h-10 rounded-[9px] border border-border bg-white/[0.05] px-2.5 text-[13px] text-foreground"
+          />
+          <Text variant="tertiary" className="text-[11.5px]">
+            to
+          </Text>
+          <input
+            type="date"
+            aria-label="To date"
+            value={filters.to}
+            onChange={(event) => patch({ to: event.target.value })}
+            className="h-10 rounded-[9px] border border-border bg-white/[0.05] px-2.5 text-[13px] text-foreground"
+          />
+        </div>
+        <button
+          type="button"
+          onClick={() =>
+            patch({ sort: filters.sort === "newest" ? "oldest" : "newest" })
+          }
+          className="h-10 rounded-[9px] border border-border bg-white/[0.05] px-3.5 text-[13px] font-medium text-foreground-secondary transition-colors hover:bg-white/[0.08]"
+        >
+          Sort: {filters.sort === "newest" ? "Newest" : "Oldest"}
+        </button>
       </div>
 
-      {status === "loading" && <LoadingState label="Loading logs…" showLabel />}
-      {status === "error" && (
+      {logsQuery.isLoading && <LoadingState label="Loading logs…" showLabel />}
+      {logsQuery.isError && (
         <Text className="text-danger">
           Couldn&apos;t load logs. Try again later.
         </Text>
       )}
-      {status === "ready" && logs.length === 0 && (
-        <Text variant="secondary">
-          No audit log entries match these filters.
-        </Text>
-      )}
 
-      {status === "ready" && logs.length > 0 && (
-        <div className="flex flex-col gap-2">
-          {logs.map((log) => (
-            <div
-              key={log.id}
-              className="rounded-[12px] border border-border bg-surface p-3 text-sm"
-            >
-              <Text variant="tertiary" className="text-xs">
-                {new Date(log.createdAt).toLocaleString()}
-              </Text>
-              <Text>
-                <span className="font-semibold">{log.actorUsername}</span> ·{" "}
-                {log.action} ·{" "}
-                <span className="text-foreground-secondary">{log.target}</span>
-              </Text>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {status === "ready" && logs.length < total && (
-        <div className="flex flex-col gap-2">
-          <Button
-            variant="secondary"
-            loading={loadingMore}
-            onClick={() => void logsQuery.fetchNextPage()}
+      {!logsQuery.isLoading && !logsQuery.isError && (
+        <>
+          <AdminTable
+            columns={COLUMNS}
+            headers={["Time", "Actor", "Action", "Target", "Details"]}
+            empty="No log entries match these filters."
+            isEmpty={logs.length === 0}
           >
-            {loadingMore ? "Loading…" : "Load more"}
-          </Button>
-          {loadMoreError && (
-            <Text className="text-sm text-danger">{loadMoreError}</Text>
-          )}
-        </div>
+            {logs.map((log) => (
+              <AdminTableRow key={log.id} columns={COLUMNS}>
+                <Text variant="tertiary" className="text-[12.5px] tabular-nums">
+                  {new Date(log.createdAt).toLocaleString()}
+                </Text>
+                <Text className="truncate text-[13px] font-semibold">
+                  {log.actorUsername}
+                </Text>
+                <span className="w-fit rounded-md bg-acc/15 px-2 py-1 text-[11.5px] font-semibold tracking-[0.03em] text-acc">
+                  {ACTION_LABELS[log.action] ?? log.action}
+                </span>
+                <Text variant="secondary" className="truncate text-[13px]">
+                  {log.target}
+                </Text>
+                <Text variant="tertiary" className="truncate text-[12.5px]">
+                  {formatMeta(log.meta)}
+                </Text>
+              </AdminTableRow>
+            ))}
+          </AdminTable>
+
+          <AdminPagination page={page} total={total} onPageChange={setPage} />
+        </>
       )}
     </div>
   );

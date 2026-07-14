@@ -11,6 +11,9 @@ import {
   isCurrentlyBanned,
 } from "@/src/features/admin/use-users-admin";
 import { UserRow } from "@/src/features/admin/UserRow";
+import { AdminTable } from "@/src/features/admin/AdminTable";
+
+const COLUMNS = "1.3fr 100px 100px 110px 130px";
 
 export function UsersTab() {
   const { user } = useAuth();
@@ -59,16 +62,19 @@ export function UsersTab() {
           Couldn&apos;t load users. Try again later.
         </Text>
       )}
-      {status === "ready" && users.length === 0 && (
-        <Text variant="secondary">No users match this search.</Text>
-      )}
 
-      {status === "ready" && users.length > 0 && (
-        <div className="flex flex-col gap-3">
+      {status === "ready" && (
+        <AdminTable
+          columns={COLUMNS}
+          headers={["User", "Packs", "Plays", "Status", ""]}
+          empty="No users match this search."
+          isEmpty={users.length === 0}
+        >
           {users.map((row) => (
             <UserRow
               key={row.id}
               row={row}
+              columns={COLUMNS}
               canAct={canActOn(user.role, row.role)}
               banned={isCurrentlyBanned(row.bannedUntil)}
               banFormOpen={banTargetId === row.id}
@@ -85,7 +91,7 @@ export function UsersTab() {
               onConfirmBan={handleBan}
             />
           ))}
-        </div>
+        </AdminTable>
       )}
 
       {actionError && (

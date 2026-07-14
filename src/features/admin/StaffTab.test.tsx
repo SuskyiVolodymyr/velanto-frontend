@@ -38,6 +38,14 @@ const MANAGER: User = {
   createdAt: "2026-01-01T00:00:00.000Z",
 };
 
+const ADMIN: User = {
+  id: "a1",
+  email: "admin@example.com",
+  username: "admin1",
+  role: "admin",
+  createdAt: "2026-01-01T00:00:00.000Z",
+};
+
 const TARGET: AdminUserRow = {
   id: "u2",
   username: "bob",
@@ -46,12 +54,25 @@ const TARGET: AdminUserRow = {
   createdAt: "2026-01-01T00:00:00.000Z",
   bannedUntil: null,
   trusted: false,
+  packs: 3,
+  plays: 9,
+  staffAddedBy: "admin1",
+  staffSince: "2026-03-01T00:00:00.000Z",
 };
 
-function renderAsManager() {
+function mockStaff(items: AdminUserRow[]) {
+  vi.mocked(adminClient.listUsers).mockResolvedValue({
+    items,
+    total: items.length,
+    page: 1,
+    limit: 20,
+  });
+}
+
+function renderAs(actor: User) {
   vi.mocked(authClient.refresh).mockResolvedValue({
     accessToken: "token",
-    user: MANAGER,
+    user: actor,
   });
   return render(
     <AuthProvider>
@@ -65,103 +86,193 @@ beforeEach(() => {
 });
 
 describe("StaffTab", () => {
-  it("fetches page 1 and renders matching users with a role select", async () => {
-    vi.mocked(adminClient.listUsers).mockResolvedValue({
-      items: [TARGET],
-      total: 1,
-      page: 1,
-      limit: 20,
-    });
-    renderAsManager();
+  it("asks the backend for staff only, not every user", async () => {
+    mockStaff([TARGET]);
+    renderAs(ADMIN);
 
-    expect(await screen.findByText("bob")).toBeInTheDocument();
-    expect(screen.getByLabelText("Change role for bob")).toBeInTheDocument();
+    await screen.findByText("bob");
+    expect(adminClient.listUsers).toHaveBeenCalledWith(
+      expect.objectContaining({ staff: true }),
+    );
   });
 
-  it("does not offer 'manager' as an option for a manager actor (cannot grant own rank)", async () => {
-    vi.mocked(adminClient.listUsers).mockResolvedValue({
-      items: [TARGET],
-      total: 1,
-      page: 1,
-      limit: 20,
-    });
-    renderAsManager();
+  it("shows each member's ADDED BY and SINCE provenance", async () => {
+    mockStaff([TARGET]);
+    renderAs(ADMIN);
+
+    await screen.findByText("bob");
+    expect(screen.getByText("admin1")).toBeInTheDocument();
+    expect(
+      screen.getByText(new Date(TARGET.staffSince!).toLocaleDateString()),
+    ).toBeInTheDocument();
+  });
+
+  // Staff promoted before the backend recorded provenance have none — an em dash
+  // is honest; a fabricated date would not be.
+  it("renders an em dash for a member with no recorded provenance", async () => {
+    mockStaff([{ ...TARGET, staffAddedBy: null, staffSince: null }]);
+    renderAs(ADMIN);
+
+    await screen.findByText("bob");
+    expect(screen.getAllByText("—").length).toBeGreaterThanOrEqual(2);
+  });
+
+  it("offers an admin the staff roles above the member's, but never 'user'", async () => {
+    mockStaff([TARGET]);
+    renderAs(ADMIN);
 
     await screen.findByText("bob");
     const select = screen.getByLabelText("Change role for bob");
-    const optionValues = Array.from(select.querySelectorAll("option")).map(
-      (o) => o.getAttribute("value"),
+    const values = Array.from(select.querySelectorAll("option")).map((o) =>
+      o.getAttribute("value"),
     );
-    expect(optionValues).not.toContain("manager");
+    // 'user' is the Remove button's job, not a dropdown entry.
+    expect(values).not.toContain("user");
+    expect(values).toContain("manager");
   });
 
-  it("changes a user's role via the select", async () => {
-    vi.mocked(adminClient.listUsers).mockResolvedValue({
-      items: [TARGET],
-      total: 1,
-      page: 1,
-      limit: 20,
+  // A manager cannot grant its own rank, and demotion lives on Remove — so there
+  // is no role left to offer, and the role renders as a static badge.
+  it("shows no role dropdown for a manager acting on a moderator", async () => {
+    mockStaff([TARGET]);
+    renderAs(MANAGER);
+
+    await screen.findByText("bob");
+    expect(
+      screen.queryByLabelText("Change role for bob"),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Remove" })).toBeInTheDocument();
+  });
+
+  it("changes a member's role via the select", async () => {
+    mockStaff([TARGET]);
+    vi.mocked(usersClient.changeRole).mockResolvedValue({
+      id: "u2",
+      role: "manager",
     });
+    const user = userEvent.setup();
+    renderAs(ADMIN);
+
+    await screen.findByText("bob");
+    await user.selectOptions(
+      screen.getByLabelText("Change role for bob"),
+      "manager",
+    );
+
+    await waitFor(() =>
+      expect(usersClient.changeRole).toHaveBeenCalledWith("u2", "manager"),
+    );
+  });
+
+  it("Remove demotes the member back to a plain user", async () => {
+    mockStaff([TARGET]);
     vi.mocked(usersClient.changeRole).mockResolvedValue({
       id: "u2",
       role: "user",
     });
     const user = userEvent.setup();
-    renderAsManager();
+    renderAs(ADMIN);
 
     await screen.findByText("bob");
-    await user.selectOptions(
-      screen.getByLabelText("Change role for bob"),
-      "user",
-    );
+    await user.click(screen.getByRole("button", { name: "Remove" }));
 
     await waitFor(() =>
       expect(usersClient.changeRole).toHaveBeenCalledWith("u2", "user"),
     );
   });
 
-  it("shows an error and keeps the original role when the role change is rejected", async () => {
-    vi.mocked(adminClient.listUsers).mockResolvedValue({
-      items: [TARGET],
-      total: 1,
-      page: 1,
-      limit: 20,
-    });
+  it("shows an error when the role change is rejected", async () => {
+    mockStaff([TARGET]);
     vi.mocked(usersClient.changeRole).mockRejectedValue(new Error("forbidden"));
     const user = userEvent.setup();
-    renderAsManager();
+    renderAs(ADMIN);
 
     await screen.findByText("bob");
-    await user.selectOptions(
-      screen.getByLabelText("Change role for bob"),
-      "user",
-    );
+    await user.click(screen.getByRole("button", { name: "Remove" }));
 
     expect(
-      await screen.findByText("Couldn't change this user's role. Try again."),
+      await screen.findByText("Couldn't change this member's role. Try again."),
     ).toBeInTheDocument();
-    expect(screen.getByText("moderator")).toBeInTheDocument();
   });
 
-  it("hides the role select for a target the actor cannot act on", async () => {
-    const peerManager: AdminUserRow = {
-      ...TARGET,
-      id: "u3",
-      username: "peer",
-      role: "manager",
-    };
-    vi.mocked(adminClient.listUsers).mockResolvedValue({
-      items: [peerManager],
-      total: 1,
-      page: 1,
-      limit: 20,
-    });
-    renderAsManager();
+  it("shows the empty state when there are no staff members", async () => {
+    mockStaff([]);
+    renderAs(ADMIN);
+
+    expect(
+      await screen.findByText("No staff members yet."),
+    ).toBeInTheDocument();
+  });
+
+  it("gives a manager no controls at all over a peer manager", async () => {
+    mockStaff([{ ...TARGET, id: "u3", username: "peer", role: "manager" }]);
+    renderAs(MANAGER);
 
     await screen.findByText("peer");
     expect(
       screen.queryByLabelText("Change role for peer"),
     ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Remove" }),
+    ).not.toBeInTheDocument();
+  });
+
+  describe("add staff", () => {
+    it("resolves the email to a user id, then grants the role", async () => {
+      mockStaff([]);
+      vi.mocked(usersClient.changeRole).mockResolvedValue({
+        id: "u9",
+        role: "moderator",
+      });
+      const user = userEvent.setup();
+      renderAs(ADMIN);
+      await screen.findByText("No staff members yet.");
+
+      // The lookup that resolves the typed email.
+      vi.mocked(adminClient.listUsers).mockResolvedValueOnce({
+        items: [{ ...TARGET, id: "u9", email: "new@example.com" }],
+        total: 1,
+        page: 1,
+        limit: 50,
+      });
+
+      await user.type(
+        screen.getByLabelText("Email of the user to add as staff"),
+        "new@example.com",
+      );
+      await user.click(screen.getByRole("button", { name: "+ Add staff" }));
+
+      await waitFor(() =>
+        expect(usersClient.changeRole).toHaveBeenCalledWith("u9", "moderator"),
+      );
+    });
+
+    // `q` is a SUBSTRING search, so the top hit may be a different account —
+    // only an exact email match may be promoted.
+    it("refuses to promote when no row matches the email exactly", async () => {
+      mockStaff([]);
+      const user = userEvent.setup();
+      renderAs(ADMIN);
+      await screen.findByText("No staff members yet.");
+
+      vi.mocked(adminClient.listUsers).mockResolvedValueOnce({
+        items: [{ ...TARGET, id: "u9", email: "other@example.com" }],
+        total: 1,
+        page: 1,
+        limit: 50,
+      });
+
+      await user.type(
+        screen.getByLabelText("Email of the user to add as staff"),
+        "new@example.com",
+      );
+      await user.click(screen.getByRole("button", { name: "+ Add staff" }));
+
+      expect(
+        await screen.findByText("No user with that email."),
+      ).toBeInTheDocument();
+      expect(usersClient.changeRole).not.toHaveBeenCalled();
+    });
   });
 
   describe("streamer mode", () => {
@@ -170,7 +281,7 @@ describe("StaffTab", () => {
     function renderWithStreamerMode() {
       vi.mocked(authClient.refresh).mockResolvedValue({
         accessToken: "token",
-        user: MANAGER,
+        user: ADMIN,
       });
       return render(
         <NextIntlClientProvider locale="en" messages={messages}>
@@ -183,46 +294,34 @@ describe("StaffTab", () => {
       );
     }
 
-    it("masks a user's username and email but keeps role and controls visible", async () => {
+    it("masks a member's username and email but keeps role and controls visible", async () => {
       localStorage.setItem("velanto:streamer-mode", "on");
-      vi.mocked(adminClient.listUsers).mockResolvedValue({
-        items: [TARGET],
-        total: 1,
-        page: 1,
-        limit: 20,
-      });
+      mockStaff([TARGET]);
       renderWithStreamerMode();
 
-      // Wait for the fetch to resolve — the role select is a stable, non-identity
-      // anchor that renders once the row is present. Its aria-label is the
-      // name-free generic form so a screen reader doesn't leak the identity.
-      await screen.findByLabelText("Change role for this user");
+      // The role select is a stable, non-identity anchor that renders once the
+      // row is present. Its aria-label is the name-free generic form so a screen
+      // reader doesn't leak the identity.
+      await screen.findByLabelText("Change role for this member");
 
-      // Identity is redacted, in the a11y tree as well as visually…
       expect(screen.queryByText("bob")).not.toBeInTheDocument();
       expect(screen.queryByText("bob@example.com")).not.toBeInTheDocument();
       expect(
         screen.queryByLabelText("Change role for bob"),
       ).not.toBeInTheDocument();
-      // …but role and the moderator's action control stay usable.
-      expect(screen.getByText("moderator")).toBeInTheDocument();
+      // …but the moderator's action controls stay usable.
       expect(
-        screen.getByLabelText("Change role for this user"),
+        screen.getByRole("button", { name: "Remove" }),
       ).toBeInTheDocument();
     });
 
     it("reveals the username and email when the row is revealed", async () => {
       const user = userEvent.setup();
       localStorage.setItem("velanto:streamer-mode", "on");
-      vi.mocked(adminClient.listUsers).mockResolvedValue({
-        items: [TARGET],
-        total: 1,
-        page: 1,
-        limit: 20,
-      });
+      mockStaff([TARGET]);
       renderWithStreamerMode();
 
-      await screen.findByLabelText("Change role for this user");
+      await screen.findByLabelText("Change role for this member");
       const revealButtons = screen.getAllByRole("button", { name: /reveal/i });
       // One reveal control per masked identity field (username + email).
       expect(revealButtons).toHaveLength(2);
@@ -235,12 +334,7 @@ describe("StaffTab", () => {
     });
 
     it("shows identity normally when streamer mode is off", async () => {
-      vi.mocked(adminClient.listUsers).mockResolvedValue({
-        items: [TARGET],
-        total: 1,
-        page: 1,
-        limit: 20,
-      });
+      mockStaff([TARGET]);
       renderWithStreamerMode();
 
       expect(await screen.findByText("bob")).toBeInTheDocument();

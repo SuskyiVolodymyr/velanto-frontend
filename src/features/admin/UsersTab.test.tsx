@@ -59,6 +59,10 @@ const TARGET: AdminUserRow = {
   createdAt: "2026-01-01T00:00:00.000Z",
   bannedUntil: null,
   trusted: false,
+  packs: 0,
+  plays: 0,
+  staffAddedBy: null,
+  staffSince: null,
 };
 
 function renderAsAdmin() {
@@ -283,7 +287,7 @@ describe("UsersTab", () => {
       );
     }
 
-    it("masks a user's username and email but keeps role, ban status, and controls visible", async () => {
+    it("masks a user's username and email but keeps ban status and controls visible", async () => {
       localStorage.setItem("velanto:streamer-mode", "on");
       vi.mocked(adminClient.listUsers).mockResolvedValue({
         items: [TARGET],
@@ -299,8 +303,10 @@ describe("UsersTab", () => {
       // Identity is redacted…
       expect(screen.queryByText("bob")).not.toBeInTheDocument();
       expect(screen.queryByText("bob@example.com")).not.toBeInTheDocument();
-      // …but role and the moderator's controls stay usable.
-      expect(screen.getByText("user")).toBeInTheDocument();
+      // …but the ban status and the moderator's controls stay usable. (The
+      // Users table has no ROLE column — per the design, role lives on the
+      // Staff tab.)
+      expect(screen.getByText("Not banned")).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "Ban" })).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "Trust" })).toBeInTheDocument();
     });

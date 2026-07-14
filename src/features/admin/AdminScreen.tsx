@@ -57,23 +57,31 @@ export function AdminScreen() {
   if (!allowed) return null;
 
   return (
-    <main className="mx-auto flex w-full max-w-4xl flex-1 flex-col gap-8 px-7 py-10">
-      <Text as="h1" variant="title" className="text-3xl">
-        Admin
-      </Text>
+    <main className="mx-auto flex w-full max-w-[1180px] flex-1 flex-col gap-7 px-7 py-11">
+      <section>
+        <div className="mb-2.5 flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.14em] text-foreground-tertiary">
+          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-acc" />
+          Admin panel
+        </div>
+        <Text as="h1" variant="title" className="text-[32px]">
+          Platform overview
+        </Text>
+      </section>
 
-      <div className="flex flex-wrap gap-2">
+      {/* Underline tabs, per the design — not the pill/chip row used elsewhere. */}
+      <div role="tablist" className="flex gap-2 border-b border-border">
         {TABS.map((t) => (
           <button
             key={t.value}
             type="button"
+            role="tab"
+            aria-selected={tab === t.value}
             onClick={() => setTab(t.value)}
-            aria-pressed={tab === t.value}
             className={cn(
-              "rounded-[9px] border px-3 py-1.5 text-sm font-medium transition-colors",
+              "mr-[22px] border-b-2 px-1 py-2.5 text-sm font-semibold transition-colors",
               tab === t.value
-                ? "border-acc/30 bg-acc/10 text-acc"
-                : "border-border bg-white/[0.03] text-foreground-secondary",
+                ? "border-acc text-foreground"
+                : "border-transparent text-foreground-tertiary hover:text-foreground-secondary",
             )}
           >
             {t.label}

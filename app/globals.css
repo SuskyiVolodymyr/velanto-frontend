@@ -9,6 +9,9 @@
  * --danger is the error/destructive red (error text, active downvote,
  * remove/ban affordances) — reference it via the `danger` Tailwind color
  * (`text-danger`, `border-danger/40`), never hardcode #ff6b6b in a component.
+ * --success is the positive/live green (the admin overview's "live" metric
+ * dot) — reference it via the `success` Tailwind color, never hardcode
+ * #39d98a in a component.
  */
 :root {
   --background: #0a0b0e;
@@ -20,6 +23,7 @@
   --foreground-tertiary: rgba(243, 245, 248, 0.45);
   --acc: #00e5ff;
   --danger: #ff6b6b;
+  --success: #39d98a;
 
   --radius-chip: 8px;
   --radius-control: 10px;
@@ -36,6 +40,7 @@
   --color-foreground-tertiary: var(--foreground-tertiary);
   --color-acc: var(--acc);
   --color-danger: var(--danger);
+  --color-success: var(--success);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

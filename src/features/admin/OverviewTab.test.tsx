@@ -27,6 +27,11 @@ describe("OverviewTab", () => {
       plays: 130,
       onlineUsers: null,
       pendingReports: 4,
+      newUsersThisWeek: 0,
+      newPacksThisWeek: 0,
+      playsThisWeek: 0,
+      playsLast7Days: [],
+      topPacksToday: [],
     });
 
     render(<OverviewTab />);
