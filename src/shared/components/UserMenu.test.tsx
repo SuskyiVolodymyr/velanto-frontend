@@ -62,6 +62,22 @@ describe("UserMenu", () => {
     );
   });
 
+  it("renders a decorative icon on each menu item", async () => {
+    const user = userEvent.setup();
+    render(withIntl(<UserMenu user={USER} onLogout={vi.fn()} />));
+    await user.click(screen.getByRole("button", { name: "Account menu" }));
+
+    // Profile, Docs, Settings, Log out for a plain user — each leads with an
+    // aria-hidden lucide <svg>, so the accessible name (asserted elsewhere)
+    // stays the label alone.
+    for (const name of ["Profile", "Docs", "Settings", "Log out"]) {
+      const item = screen.getByRole("menuitem", { name });
+      const icon = item.querySelector("svg");
+      expect(icon, `${name} should have an icon`).not.toBeNull();
+      expect(icon).toHaveAttribute("aria-hidden");
+    }
+  });
+
   it("shows an Admin link for a manager/admin role but not for a plain user", async () => {
     const user = userEvent.setup();
     const { rerender } = render(

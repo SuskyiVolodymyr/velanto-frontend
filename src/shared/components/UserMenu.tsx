@@ -3,10 +3,24 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import {
+  User as UserIcon,
+  BookOpen,
+  Settings as SettingsIcon,
+  ShieldCheck,
+  LayoutDashboard,
+  LogOut,
+} from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import type { User } from "@/src/shared/types/user";
+
+// Shared layout for every row in the menu: a leading icon and the label, so the
+// links and the log-out button line up on the same grid.
+const MENU_ITEM_CLASS =
+  "flex items-center gap-2.5 px-3.5 py-2.5 text-sm hover:bg-white/[0.06]";
+const MENU_ICON_CLASS = "h-4 w-4 shrink-0";
 
 export function UserMenu({
   user,
@@ -81,24 +95,27 @@ export function UserMenu({
             href="/profile"
             role="menuitem"
             onClick={() => setOpen(false)}
-            className="block px-3.5 py-2.5 text-sm text-foreground hover:bg-white/[0.06]"
+            className={`${MENU_ITEM_CLASS} text-foreground`}
           >
+            <UserIcon className={MENU_ICON_CLASS} aria-hidden />
             {t("profile")}
           </Link>
           <Link
             href="/docs"
             role="menuitem"
             onClick={() => setOpen(false)}
-            className="block px-3.5 py-2.5 text-sm text-foreground hover:bg-white/[0.06]"
+            className={`${MENU_ITEM_CLASS} text-foreground`}
           >
+            <BookOpen className={MENU_ICON_CLASS} aria-hidden />
             {t("docs")}
           </Link>
           <Link
             href="/settings"
             role="menuitem"
             onClick={() => setOpen(false)}
-            className="block px-3.5 py-2.5 text-sm text-foreground hover:bg-white/[0.06]"
+            className={`${MENU_ITEM_CLASS} text-foreground`}
           >
+            <SettingsIcon className={MENU_ICON_CLASS} aria-hidden />
             {t("settings")}
           </Link>
           {/* One staff link, not two: reports and pack approvals are tabs of a
@@ -110,8 +127,9 @@ export function UserMenu({
               href="/moderation"
               role="menuitem"
               onClick={() => setOpen(false)}
-              className="block px-3.5 py-2.5 text-sm text-foreground hover:bg-white/[0.06]"
+              className={`${MENU_ITEM_CLASS} text-foreground`}
             >
+              <ShieldCheck className={MENU_ICON_CLASS} aria-hidden />
               {t("moderation")}
             </Link>
           )}
@@ -120,8 +138,9 @@ export function UserMenu({
               href="/admin"
               role="menuitem"
               onClick={() => setOpen(false)}
-              className="block px-3.5 py-2.5 text-sm text-foreground hover:bg-white/[0.06]"
+              className={`${MENU_ITEM_CLASS} text-foreground`}
             >
+              <LayoutDashboard className={MENU_ICON_CLASS} aria-hidden />
               {t("admin")}
             </Link>
           )}
@@ -132,8 +151,9 @@ export function UserMenu({
               closeAndRefocus();
               onLogout();
             }}
-            className="block w-full px-3.5 py-2.5 text-start text-sm text-danger hover:bg-white/[0.06]"
+            className={`${MENU_ITEM_CLASS} w-full text-start text-danger`}
           >
+            <LogOut className={MENU_ICON_CLASS} aria-hidden />
             {t("logOut")}
           </button>
         </div>
