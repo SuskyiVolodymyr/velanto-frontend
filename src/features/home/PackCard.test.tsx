@@ -46,6 +46,30 @@ describe("PackCard", () => {
     expect(screen.getByText("Save One")).toBeInTheDocument();
   });
 
+  it("shows the author @handle when the feed includes author info", () => {
+    const pack: Pack = {
+      ...BASE_PACK,
+      format: "save_one",
+      author: {
+        id: "u1",
+        username: "alice",
+        avatarKey: null,
+        role: "user",
+        trusted: false,
+      },
+    };
+    render(<PackCard pack={pack} />);
+
+    expect(screen.getByText("@alice")).toBeInTheDocument();
+  });
+
+  it("omits the author line when the pack has no author summary", () => {
+    const pack: Pack = { ...BASE_PACK, format: "save_one" };
+    render(<PackCard pack={pack} />);
+
+    expect(screen.queryByText(/^@/)).not.toBeInTheDocument();
+  });
+
   it("uses the rounds length as the round count for an nxn pack", () => {
     const pack: Pack = {
       ...BASE_PACK,

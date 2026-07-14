@@ -44,8 +44,8 @@ describe("pack-filters-storage", () => {
     expect(readPackFilters()).toEqual({
       format: "all",
       tags: [],
-      sort: "relevance",
-      window: "week",
+      sort: "popular",
+      window: "month",
     });
   });
 

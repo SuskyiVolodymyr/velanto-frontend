@@ -1,7 +1,7 @@
 import { HTMLAttributes } from "react";
 import { cn } from "@/src/shared/lib/cn";
 
-export type BadgeVariant = "default" | "accent";
+export type BadgeVariant = "default" | "accent" | "overlay";
 
 export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   variant?: BadgeVariant;
@@ -10,6 +10,9 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
 const variantClasses: Record<BadgeVariant, string> = {
   default: "bg-white/[0.04] text-foreground-secondary border border-border",
   accent: "bg-acc/10 text-acc border border-acc/30",
+  // Readable over any cover image (light or dark): dark scrim + blur + white
+  // text. Used for badges overlaid on pack cover art.
+  overlay: "bg-black/50 text-white/95 border border-white/20 backdrop-blur-sm",
 };
 
 export function Badge({

@@ -5,6 +5,8 @@ import { useTranslations } from "next-intl";
 import { Badge } from "@/src/shared/components/Badge";
 import { StatusBadge } from "@/src/shared/components/StatusBadge";
 import { CoverImage } from "@/src/shared/components/CoverImage";
+import { UserAvatar } from "@/src/shared/components/UserAvatar";
+import { Username } from "@/src/shared/components/Username";
 import { Text } from "@/src/shared/components/Text";
 import { getRoundsCount } from "@/src/shared/lib/pack-display";
 import type { Pack } from "@/src/shared/types/pack";
@@ -36,7 +38,7 @@ export function PackCard({
           {pack.coverImageKey && (
             <CoverImage coverKey={pack.coverImageKey} className="-z-10" />
           )}
-          <Badge>{tFormat(pack.format)}</Badge>
+          <Badge variant="overlay">{tFormat(pack.format)}</Badge>
           {showStatusBadge && <StatusBadge kind="pack" status={pack.status} />}
         </div>
         <div className="flex flex-1 flex-col gap-2 p-4">
@@ -44,6 +46,22 @@ export function PackCard({
           <Text variant="secondary" className="line-clamp-2 text-sm">
             {pack.description}
           </Text>
+          {pack.author && (
+            <div className="flex items-center gap-1.5">
+              <UserAvatar
+                username={pack.author.username}
+                avatarKey={pack.author.avatarKey}
+                className="h-5 w-5 shrink-0 rounded-full border border-border bg-surface text-[10px] font-semibold text-foreground-secondary"
+              />
+              <Username
+                username={pack.author.username}
+                role={pack.author.role}
+                trusted={pack.author.trusted}
+                at
+                className="truncate text-xs text-foreground-secondary"
+              />
+            </div>
+          )}
           <div className="mt-auto flex items-center justify-between gap-2">
             <Text variant="tertiary" className="shrink-0 text-xs">
               {roundsCount} round{roundsCount === 1 ? "" : "s"}

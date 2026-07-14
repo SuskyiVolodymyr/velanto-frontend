@@ -64,7 +64,7 @@ export function readPackFilters(): StoredPackFilters | null {
     return {
       format: oneOf(FORMAT_FILTER_VALUES, parsed.format, "all"),
       tags,
-      sort: oneOf(SORT_VALUES, parsed.sort, "relevance"),
+      sort: oneOf(SORT_VALUES, parsed.sort, "popular"),
       window: oneOf(WINDOW_VALUES, parsed.window, DEFAULT_POPULAR_WINDOW),
     };
   } catch {

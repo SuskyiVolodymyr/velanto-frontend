@@ -36,4 +36,7 @@ export const WINDOW_LABEL_KEYS: Record<WindowFilterValue, string> = {
   all: "all",
 };
 
-export const DEFAULT_POPULAR_WINDOW: WindowFilterValue = "week";
+// The window the feed starts on (and returns to each time Popular is selected).
+// "month" is broad enough to surface a healthy set on a young catalog while
+// still meaning "recently popular".
+export const DEFAULT_POPULAR_WINDOW: WindowFilterValue = "month";
