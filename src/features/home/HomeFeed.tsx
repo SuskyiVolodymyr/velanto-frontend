@@ -41,6 +41,8 @@ export function HomeFeed({ initialFeed }: { initialFeed?: PacksFeedResult }) {
         onSortChange={feed.selectSort}
         window={feed.window}
         onWindowChange={feed.setWindow}
+        dateOrder={feed.dateOrder}
+        onDateOrderChange={feed.setDateOrder}
         tags={feed.tags}
         onTagsChange={feed.setTags}
       />

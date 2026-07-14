@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { PackCard } from "./PackCard";
@@ -68,6 +68,43 @@ describe("PackCard", () => {
     render(<PackCard pack={pack} />);
 
     expect(screen.queryByText(/^@/)).not.toBeInTheDocument();
+  });
+
+  describe("created time", () => {
+    beforeEach(() => {
+      vi.useFakeTimers();
+    });
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    function renderAgedPack(createdAt: string, now: string) {
+      vi.setSystemTime(new Date(now));
+      render(
+        <PackCard pack={{ ...BASE_PACK, format: "save_one", createdAt }} />,
+      );
+    }
+
+    it("shows how long ago the pack was created", () => {
+      renderAgedPack("2026-01-01T00:00:00.000Z", "2026-05-01T00:00:00.000Z");
+
+      expect(screen.getByText("120d ago")).toBeInTheDocument();
+    });
+
+    it("shows minutes for a freshly created pack", () => {
+      renderAgedPack("2026-01-01T00:00:00.000Z", "2026-01-01T00:02:00.000Z");
+
+      expect(screen.getByText("2m ago")).toBeInTheDocument();
+    });
+
+    it("exposes the exact instant in a machine-readable dateTime attribute", () => {
+      renderAgedPack("2026-01-01T00:00:00.000Z", "2026-05-01T00:00:00.000Z");
+
+      expect(screen.getByText("120d ago").closest("time")).toHaveAttribute(
+        "dateTime",
+        "2026-01-01T00:00:00.000Z",
+      );
+    });
   });
 
   it("uses the rounds length as the round count for an nxn pack", () => {

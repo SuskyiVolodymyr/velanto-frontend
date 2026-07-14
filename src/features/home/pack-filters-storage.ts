@@ -1,9 +1,12 @@
 import { PACK_TAGS, type PackTag } from "@/src/shared/types/pack";
 import {
+  DATE_ORDER_VALUES,
+  DEFAULT_DATE_ORDER,
   DEFAULT_POPULAR_WINDOW,
   FORMAT_FILTER_VALUES,
   SORT_VALUES,
   WINDOW_VALUES,
+  type DateOrderValue,
   type FormatFilterValue,
   type SortFilterValue,
   type WindowFilterValue,
@@ -21,6 +24,7 @@ export interface StoredPackFilters {
   tags: PackTag[];
   sort: SortFilterValue;
   window: WindowFilterValue;
+  dateOrder: DateOrderValue;
 }
 
 export function writePackFilters(filters: StoredPackFilters): void {
@@ -66,6 +70,7 @@ export function readPackFilters(): StoredPackFilters | null {
       tags,
       sort: oneOf(SORT_VALUES, parsed.sort, "popular"),
       window: oneOf(WINDOW_VALUES, parsed.window, DEFAULT_POPULAR_WINDOW),
+      dateOrder: oneOf(DATE_ORDER_VALUES, parsed.dateOrder, DEFAULT_DATE_ORDER),
     };
   } catch {
     return null;

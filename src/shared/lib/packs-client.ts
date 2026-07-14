@@ -27,7 +27,8 @@ export interface ListPacksFilters {
   page?: number;
   limit?: number;
   authorId?: string;
-  sort?: "popular";
+  /** Mirrors the backend's PACK_SORTS. Omitted behaves as "newest". */
+  sort?: "popular" | "newest" | "oldest";
   window?: "day" | "week" | "month" | "year" | "all";
 }
 
