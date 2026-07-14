@@ -134,6 +134,7 @@ export function CreatePackForm({
       title: values.title,
       description: values.description,
       coverTone: values.coverTone,
+      coverImageKey: values.coverImageKey,
       format: values.format,
       tags: values.tags,
       groups: values.groups,

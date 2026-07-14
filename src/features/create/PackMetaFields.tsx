@@ -9,6 +9,7 @@ import { Text } from "@/src/shared/components/Text";
 import { TagPickerModal } from "@/src/shared/components/TagPickerModal";
 import { TextField } from "@/src/shared/components/form/TextField";
 import { TextareaField } from "@/src/shared/components/form/TextareaField";
+import { CoverImageField } from "@/src/features/create/CoverImageField";
 import { cn } from "@/src/shared/lib/cn";
 import {
   type CreatePackValues,
@@ -93,6 +94,7 @@ export function PackMetaFields() {
           ))}
         </div>
       </div>
+      <CoverImageField />
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between gap-2">
           <Text variant="secondary" className="text-xs">

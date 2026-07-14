@@ -1,5 +1,6 @@
 import { useTranslations } from "next-intl";
 import { getRoundsCount } from "@/src/shared/lib/pack-display";
+import { CoverImage } from "@/src/shared/components/CoverImage";
 import { PackBannerAuthor } from "./PackBannerAuthor";
 import type { Pack } from "@/src/shared/types/pack";
 
@@ -18,6 +19,9 @@ export function PackCoverBanner({ pack }: { pack: Pack }) {
         background: `linear-gradient(158deg, ${pack.coverTone}, #0b0c0f 78%)`,
       }}
     >
+      {/* A custom cover renders first, beneath the weave + bottom-fade overlays
+          (which keep the title legible over any photo) and the badges/title. */}
+      {pack.coverImageKey && <CoverImage coverKey={pack.coverImageKey} />}
       <div
         aria-hidden
         className="pointer-events-none absolute inset-0"

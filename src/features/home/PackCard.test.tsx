@@ -159,4 +159,28 @@ describe("PackCard", () => {
     );
     expect(screen.queryByText("Pending review")).not.toBeInTheDocument();
   });
+
+  it("renders the custom cover image when a coverImageKey is set", () => {
+    const { container } = render(
+      <PackCard
+        pack={{
+          ...BASE_PACK,
+          format: "save_one",
+          coverImageKey: "media/cover/x.webp",
+        }}
+      />,
+    );
+
+    const img = container.querySelector("img");
+    expect(img).not.toBeNull();
+    expect(img?.getAttribute("src")).toContain("media/cover/x.webp");
+  });
+
+  it("renders no cover image (gradient only) when coverImageKey is absent", () => {
+    const { container } = render(
+      <PackCard pack={{ ...BASE_PACK, format: "save_one" }} />,
+    );
+
+    expect(container.querySelector("img")).toBeNull();
+  });
 });

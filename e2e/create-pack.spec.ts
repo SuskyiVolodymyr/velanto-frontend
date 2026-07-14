@@ -222,6 +222,62 @@ test.describe("Create pack", () => {
     });
   });
 
+  test("uploads a cover image and publishes it storing the returned media key", async ({
+    page,
+  }) => {
+    await page.route(`${API_BASE}/media`, (route) =>
+      route.fulfill({
+        status: 201,
+        json: {
+          key: "media/cover/uploaded.webp",
+          url: "https://cdn.example.com/media/cover/uploaded.webp",
+          byteSize: 4242,
+        },
+      }),
+    );
+    const captured = await stubCreate(page, {
+      id: "pack-cover",
+      title: "Cover Pack",
+      description: "Pick your favorite each round.",
+      coverTone: "#2b2a3a",
+      coverImageKey: "media/cover/uploaded.webp",
+      format: "save_one",
+      tags: [],
+      groups: [],
+      rounds: [],
+      authorId: "u1",
+      createdAt: "2026-01-01T00:00:00.000Z",
+    });
+
+    await page.goto("/create");
+    await page.getByLabel("Pack title").fill("Cover Pack");
+    await page
+      .getByLabel("Pack description")
+      .fill("Pick your favorite each round.");
+
+    // Upload a tiny PNG as the pack cover; the remove control appears once the
+    // upload resolves and the key is staged.
+    await page.getByLabel("Cover image").setInputFiles({
+      name: "cover.png",
+      mimeType: "image/png",
+      buffer: Buffer.from(
+        "89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c4890000000a49444154789c6360000002000154a24f9d0000000049454e44ae426082",
+        "hex",
+      ),
+    });
+    await expect(
+      page.getByRole("button", { name: "Remove cover image" }),
+    ).toBeVisible();
+
+    await page.getByLabel("Pool 1 name").fill("2016");
+    await page.getByLabel("Pool 1 new item").fill("Guren no Yumiya");
+    await page.getByRole("button", { name: "Add", exact: true }).click();
+    await page.getByRole("button", { name: "Publish" }).click();
+
+    await page.waitForURL("**/packs/pack-cover");
+    expect(captured.body?.coverImageKey).toBe("media/cover/uploaded.webp");
+  });
+
   test("shows a validation error and does not call the API for an empty submission", async ({
     page,
   }) => {

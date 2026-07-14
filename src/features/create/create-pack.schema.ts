@@ -50,6 +50,8 @@ export const createPackSchema = z
         `Description must be ${DESCRIPTION_MAX} characters or fewer.`,
       ),
     coverTone: z.string().min(1),
+    // Optional storage key of an uploaded cover image; absent keeps the tone.
+    coverImageKey: z.string().optional(),
     format: z.enum(PACK_FORMATS),
     tags: z
       .array(z.enum(PACK_TAGS))

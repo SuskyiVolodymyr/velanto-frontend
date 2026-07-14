@@ -11,6 +11,9 @@ export interface CreatePackInput {
   title: string;
   description: string;
   coverTone: string;
+  // The storage KEY of an uploaded cover image (from POST /media, kind "cover").
+  // Optional — omit or send nothing to keep the gradient `coverTone`.
+  coverImageKey?: string;
   format: PackFormat;
   tags: PackTag[];
   groups: Group[];
