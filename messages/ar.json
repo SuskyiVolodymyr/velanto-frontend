@@ -573,7 +573,10 @@
     "avatarCropZoom": "تكبير",
     "avatarCropCancel": "إلغاء",
     "avatarViewTitle": "الصورة الرمزية لـ {username}",
-    "avatarCropError": "تعذّر قص الصورة. حاول مرة أخرى."
+    "avatarCropError": "تعذّر قص الصورة. حاول مرة أخرى.",
+    "loadMore": "تحميل المزيد",
+    "loadingMore": "جارٍ التحميل…",
+    "loadMoreError": "تعذّر تحميل المزيد من الحزم. حاول مرة أخرى."
   },
   "pages": {
     "createTitle": "أنشئ حزمة",

@@ -572,7 +572,10 @@
     "avatarCropZoom": "Zoom",
     "avatarCropCancel": "Cancel",
     "avatarViewTitle": "{username}'s avatar",
-    "avatarCropError": "Couldn't crop the image. Try again."
+    "avatarCropError": "Couldn't crop the image. Try again.",
+    "loadMore": "Load more",
+    "loadingMore": "Loading more…",
+    "loadMoreError": "Couldn't load more packs. Try again."
   },
   "pages": {
     "createTitle": "Create a pack",

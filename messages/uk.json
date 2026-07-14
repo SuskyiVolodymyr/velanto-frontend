@@ -573,7 +573,10 @@
     "avatarCropZoom": "Масштаб",
     "avatarCropCancel": "Скасувати",
     "avatarViewTitle": "Аватар {username}",
-    "avatarCropError": "Не вдалося обрізати зображення. Спробуйте ще раз."
+    "avatarCropError": "Не вдалося обрізати зображення. Спробуйте ще раз.",
+    "loadMore": "Завантажити ще",
+    "loadingMore": "Завантаження…",
+    "loadMoreError": "Не вдалося завантажити ще паки. Спробуйте ще раз."
   },
   "pages": {
     "createTitle": "Створити пак",

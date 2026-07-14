@@ -573,7 +573,10 @@
     "avatarCropZoom": "জুম",
     "avatarCropCancel": "বাতিল",
     "avatarViewTitle": "{username} এর অবতার",
-    "avatarCropError": "ছবি ক্রপ করা যায়নি। আবার চেষ্টা করুন।"
+    "avatarCropError": "ছবি ক্রপ করা যায়নি। আবার চেষ্টা করুন।",
+    "loadMore": "আরও লোড করুন",
+    "loadingMore": "লোড হচ্ছে…",
+    "loadMoreError": "আরও প্যাক লোড করা যায়নি। আবার চেষ্টা করুন।"
   },
   "pages": {
     "createTitle": "প্যাক তৈরি করুন",

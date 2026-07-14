@@ -573,7 +573,10 @@
     "avatarCropZoom": "Ampliar",
     "avatarCropCancel": "Cancelar",
     "avatarViewTitle": "Avatar de {username}",
-    "avatarCropError": "No se pudo recortar la imagen. Inténtalo de nuevo."
+    "avatarCropError": "No se pudo recortar la imagen. Inténtalo de nuevo.",
+    "loadMore": "Cargar más",
+    "loadingMore": "Cargando más…",
+    "loadMoreError": "No se pudieron cargar más packs. Inténtalo de nuevo."
   },
   "pages": {
     "createTitle": "Crear un pack",

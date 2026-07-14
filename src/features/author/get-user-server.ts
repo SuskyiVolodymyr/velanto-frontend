@@ -1,11 +1,12 @@
 import type { PublicUserProfile } from "@/src/shared/types/user";
 import type { Pack } from "@/src/shared/types/pack";
+import { AUTHOR_PACKS_PAGE_SIZE } from "./api/author-packs";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
-// Mirrors HomeFeed/AuthorScreen: the backend caps `limit` at 50 and there's no
-// pagination UI yet, so seed the first (and, for most authors, only) page.
-const AUTHOR_PACKS_LIMIT = 50;
+// Seed exactly the first "Load more" page (AuthorPackList's infinite query is
+// seeded from this and reveals the rest on demand).
+const AUTHOR_PACKS_LIMIT = AUTHOR_PACKS_PAGE_SIZE;
 
 export interface AuthorPacksPage {
   items: Pack[];
