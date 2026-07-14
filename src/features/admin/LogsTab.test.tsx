@@ -1,6 +1,6 @@
 // src/features/admin/LogsTab.test.tsx
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { renderWithQueryClient as render } from "@/src/shared/test/render-with-query-client";
 import userEvent from "@testing-library/user-event";
 import { LogsTab } from "./LogsTab";
@@ -21,110 +21,169 @@ const LOG: AuditLogEntry = {
   createdAt: "2026-01-01T00:00:00.000Z",
 };
 
+/** The request the tab makes with nothing filtered. */
+const BASE_REQUEST = {
+  q: undefined,
+  action: undefined,
+  from: undefined,
+  to: undefined,
+  sort: "newest",
+  page: 1,
+  limit: 20,
+};
+
+function mockLogs(items: AuditLogEntry[], total = items.length) {
+  vi.mocked(adminClient.auditLogs).mockResolvedValue({
+    items,
+    total,
+    page: 1,
+    limit: 20,
+  });
+}
+
 beforeEach(() => {
   vi.clearAllMocks();
 });
 
 describe("LogsTab", () => {
   it("fetches page 1 with no filters and renders log rows", async () => {
-    vi.mocked(adminClient.auditLogs).mockResolvedValue({
-      items: [LOG],
-      total: 1,
-      page: 1,
-      limit: 20,
-    });
+    mockLogs([LOG]);
     render(<LogsTab />);
 
     expect(await screen.findByText(/admin1/)).toBeInTheDocument();
-    expect(screen.getByText(/ban_user/)).toBeInTheDocument();
-    expect(adminClient.auditLogs).toHaveBeenCalledWith({
-      actor: undefined,
-      action: undefined,
-      target: undefined,
-      page: 1,
-      limit: 20,
-    });
+    // The raw action code renders through its human label. Scoped to the table —
+    // "Ban user" is also an option in the action filter dropdown.
+    const table = screen.getByRole("table");
+    expect(within(table).getByText("Ban user")).toBeInTheDocument();
+    expect(adminClient.auditLogs).toHaveBeenCalledWith(BASE_REQUEST);
   });
 
-  it("re-fetches with an action filter after debounce", async () => {
-    // shouldAdvanceTime: true lets real wall-clock time keep advancing fake
-    // timers in the background. Without it, @testing-library/user-event's
-    // internal wait() (dist/cjs/utils/misc/wait.js) races a real setTimeout
-    // against config.advanceTimers — under a plain vi.useFakeTimers(), the
-    // real setTimeout side of that race is itself faked and never fires,
-    // deadlocking user.type(). Confirmed by isolating user.type() alone
-    // (hangs) vs with this option (resolves); the component/debounce logic
-    // is unaffected either way — vi.advanceTimersByTime(300) below still
-    // deterministically fires the actual filter-debounce timer.
-    vi.useFakeTimers({ shouldAdvanceTime: true });
-    vi.mocked(adminClient.auditLogs).mockResolvedValue({
-      items: [],
-      total: 0,
-      page: 1,
-      limit: 20,
-    });
-    const user = userEvent.setup({ delay: null });
+  it("re-fetches with an action filter", async () => {
+    mockLogs([]);
+    const user = userEvent.setup();
     render(<LogsTab />);
+    await screen.findByText("No log entries match these filters.");
 
-    await user.type(screen.getByLabelText("Filter by action"), "ban_user");
-    vi.advanceTimersByTime(300);
+    await user.selectOptions(
+      screen.getByLabelText("Filter by action"),
+      "ban_user",
+    );
 
     await waitFor(() =>
       expect(adminClient.auditLogs).toHaveBeenLastCalledWith({
-        actor: undefined,
+        ...BASE_REQUEST,
         action: "ban_user",
-        target: undefined,
-        page: 1,
-        limit: 20,
       }),
     );
-    vi.useRealTimers();
+  });
+
+  it("re-fetches with a from/to date range", async () => {
+    mockLogs([]);
+    const user = userEvent.setup();
+    render(<LogsTab />);
+    await screen.findByText("No log entries match these filters.");
+
+    await user.type(screen.getByLabelText("From date"), "2026-07-01");
+    await user.type(screen.getByLabelText("To date"), "2026-07-08");
+
+    await waitFor(() =>
+      expect(adminClient.auditLogs).toHaveBeenLastCalledWith({
+        ...BASE_REQUEST,
+        from: "2026-07-01",
+        to: "2026-07-08",
+      }),
+    );
+  });
+
+  it("toggles the sort between newest and oldest", async () => {
+    mockLogs([]);
+    const user = userEvent.setup();
+    render(<LogsTab />);
+    await screen.findByText("No log entries match these filters.");
+
+    await user.click(screen.getByRole("button", { name: /Sort: Newest/ }));
+
+    await waitFor(() =>
+      expect(adminClient.auditLogs).toHaveBeenLastCalledWith({
+        ...BASE_REQUEST,
+        sort: "oldest",
+      }),
+    );
+  });
+
+  it("pages forward with Next and back with Prev", async () => {
+    // 25 total over a 20-row page → exactly two pages.
+    mockLogs([LOG], 25);
+    const user = userEvent.setup();
+    render(<LogsTab />);
+    await screen.findByText(/admin1/);
+
+    // On page 1 there is nowhere back to go.
+    expect(screen.getByRole("button", { name: "Prev" })).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: "Next" }));
+    await waitFor(() =>
+      expect(adminClient.auditLogs).toHaveBeenLastCalledWith({
+        ...BASE_REQUEST,
+        page: 2,
+      }),
+    );
+
+    // Going back doesn't refetch — page 1 is already in the React Query cache —
+    // so assert the resulting state rather than another request.
+    await user.click(screen.getByRole("button", { name: "Prev" }));
+    await waitFor(() =>
+      expect(screen.getByRole("button", { name: "Prev" })).toBeDisabled(),
+    );
+    expect(screen.getByText(/Showing 1–20 of 25/)).toBeInTheDocument();
+  });
+
+  // Otherwise a page number from the previous, wider result set could point past
+  // the end of the newly filtered one.
+  it("returns to page 1 when a filter changes", async () => {
+    mockLogs([LOG], 25);
+    const user = userEvent.setup();
+    render(<LogsTab />);
+    await screen.findByText(/admin1/);
+
+    await user.click(screen.getByRole("button", { name: "Next" }));
+    await waitFor(() =>
+      expect(adminClient.auditLogs).toHaveBeenLastCalledWith(
+        expect.objectContaining({ page: 2 }),
+      ),
+    );
+
+    await user.selectOptions(
+      screen.getByLabelText("Filter by action"),
+      "ban_user",
+    );
+
+    await waitFor(() =>
+      expect(adminClient.auditLogs).toHaveBeenLastCalledWith({
+        ...BASE_REQUEST,
+        action: "ban_user",
+        page: 1,
+      }),
+    );
   });
 
   it("shows an empty state when no logs match", async () => {
-    vi.mocked(adminClient.auditLogs).mockResolvedValue({
-      items: [],
-      total: 0,
-      page: 1,
-      limit: 20,
-    });
+    mockLogs([]);
     render(<LogsTab />);
+
     expect(
-      await screen.findByText("No audit log entries match these filters."),
+      await screen.findByText("No log entries match these filters."),
     ).toBeInTheDocument();
   });
 
-  it("shows an error state when the initial fetch rejects", async () => {
+  it("shows an error state when the fetch rejects", async () => {
     vi.mocked(adminClient.auditLogs).mockRejectedValue(
       new Error("network error"),
     );
     render(<LogsTab />);
+
     expect(
       await screen.findByText("Couldn't load logs. Try again later."),
     ).toBeInTheDocument();
-  });
-
-  it("shows a load-more error and re-enables the button when loading more rejects", async () => {
-    vi.mocked(adminClient.auditLogs).mockResolvedValueOnce({
-      items: [LOG],
-      total: 2,
-      page: 1,
-      limit: 20,
-    });
-    const user = userEvent.setup();
-    render(<LogsTab />);
-
-    await screen.findByText(/admin1/);
-    vi.mocked(adminClient.auditLogs).mockRejectedValueOnce(
-      new Error("network error"),
-    );
-    await user.click(screen.getByRole("button", { name: "Load more" }));
-
-    expect(
-      await screen.findByText("Couldn't load more logs. Try again."),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Load more" }),
-    ).not.toBeDisabled();
   });
 });

@@ -1,5 +1,19 @@
 import type { Role } from "@/src/shared/types/user";
 
+/** One bar of the overview's "plays — last 7 days" chart. */
+export interface PlaysDayBucket {
+  /** Calendar day, YYYY-MM-DD. */
+  date: string;
+  plays: number;
+}
+
+/** One row of the overview's "top packs today" list. */
+export interface TopPackToday {
+  id: string;
+  title: string;
+  plays: number;
+}
+
 export interface AdminOverview {
   registeredUsers: number;
   packs: number;
@@ -9,6 +23,13 @@ export interface AdminOverview {
   // Real count of open (unresolved) reports. Was null before the report
   // feature shipped — see velanto-backend#71.
   pendingReports: number;
+  // Trailing-7-day deltas behind each metric card's sub-line.
+  newUsersThisWeek: number;
+  newPacksThisWeek: number;
+  playsThisWeek: number;
+  /** Always 7 buckets, oldest first, zero-filled by the backend. */
+  playsLast7Days: PlaysDayBucket[];
+  topPacksToday: TopPackToday[];
 }
 
 export interface AdminUserRow {
@@ -19,6 +40,16 @@ export interface AdminUserRow {
   createdAt: string;
   bannedUntil: string | null;
   trusted: boolean;
+  /** Packs authored / plays recorded — the Users table's PACKS and PLAYS columns. */
+  packs: number;
+  plays: number;
+  /**
+   * Staff tab's ADDED BY / SINCE. Null for non-staff, and for staff promoted
+   * before the backend started recording it — rendered as an em dash rather
+   * than a fabricated value.
+   */
+  staffAddedBy: string | null;
+  staffSince: string | null;
 }
 
 export interface AdminUserList {

@@ -1,18 +1,19 @@
 "use client";
 
+import Link from "next/link";
 import { Text } from "@/src/shared/components/Text";
 import { Username } from "@/src/shared/components/Username";
-import { Button } from "@/src/shared/components/Button";
-import { Badge } from "@/src/shared/components/Badge";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { formatBanStatus } from "@/src/shared/lib/ban-display";
 import { type BanDuration } from "@/src/shared/lib/users-client";
 import { type BanReasonState } from "@/src/shared/components/BanReasonPicker";
 import type { AdminUserRow } from "@/src/shared/types/admin";
 import { UserBanForm } from "@/src/features/admin/UserBanForm";
+import { AdminTableRow } from "@/src/features/admin/AdminTable";
 
 interface UserRowProps {
   row: AdminUserRow;
+  columns: string;
   canAct: boolean;
   banned: boolean;
   banFormOpen: boolean;
@@ -29,10 +30,15 @@ interface UserRowProps {
   onConfirmBan: (id: string) => void;
 }
 
-/** One admin user row: identity (streamer-masked), role/ban status, and the
- * moderator's trust/ban controls plus the inline ban form when open. */
+/**
+ * One row of the admin Users table: identity (streamer-masked), the design's
+ * PACKS / PLAYS / STATUS columns, and the moderator's trust/ban controls. The
+ * ban form expands underneath the row rather than inside the action cell — the
+ * API requires a duration AND a reason, which don't fit in a table cell.
+ */
 export function UserRow({
   row,
+  columns,
   canAct,
   banned,
   banFormOpen,
@@ -49,10 +55,13 @@ export function UserRow({
   onConfirmBan,
 }: UserRowProps) {
   return (
-    <div className="rounded-[15px] border border-border bg-surface p-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <Text className="font-semibold">
+    <>
+      <AdminTableRow columns={columns}>
+        <div className="min-w-0">
+          <Link
+            href={`/users/${row.id}`}
+            className="truncate text-[13.5px] font-semibold text-foreground hover:text-acc"
+          >
             <Hidden kind="name" id={row.id}>
               <Username
                 username={row.username}
@@ -60,56 +69,98 @@ export function UserRow({
                 trusted={row.trusted}
               />
             </Hidden>
-          </Text>
-          <Text variant="tertiary" className="text-xs">
+          </Link>
+          <Text variant="tertiary" className="truncate text-xs">
             <Hidden kind="name" id={row.id}>
               {row.email}
-            </Hidden>{" "}
-            · <Badge>{row.role}</Badge>
-          </Text>
-          <Text variant="secondary" className="text-xs">
-            {formatBanStatus(row.bannedUntil)}
+            </Hidden>
           </Text>
         </div>
-        {canAct && (
-          <div className="flex gap-2">
-            <Button
-              variant="secondary"
-              loading={trustPending}
-              onClick={() => void onSetTrusted(row.id, !row.trusted)}
-            >
-              {row.trusted ? "Untrust" : "Trust"}
-            </Button>
+
+        <Text variant="secondary" className="text-[13px] tabular-nums">
+          {row.packs}
+        </Text>
+        <Text variant="secondary" className="text-[13px] tabular-nums">
+          {row.plays}
+        </Text>
+
+        <span
+          className={
+            banned
+              ? "w-fit rounded-md bg-danger/10 px-2 py-1 text-[11px] font-bold uppercase tracking-[0.05em] text-danger"
+              : "w-fit rounded-md bg-white/[0.06] px-2 py-1 text-[11px] font-bold uppercase tracking-[0.05em] text-foreground-secondary"
+          }
+        >
+          {formatBanStatus(row.bannedUntil)}
+        </span>
+
+        {canAct ? (
+          <div className="flex flex-wrap gap-1.5 justify-self-start">
+            <RowAction
+              label={row.trusted ? "Untrust" : "Trust"}
+              pending={trustPending}
+              onClick={() => onSetTrusted(row.id, !row.trusted)}
+            />
             {banned ? (
-              <Button
-                variant="secondary"
-                loading={unbanPending}
-                onClick={() => void onUnban(row.id)}
-              >
-                Unban
-              </Button>
+              <RowAction
+                label="Unban"
+                pending={unbanPending}
+                onClick={() => onUnban(row.id)}
+              />
             ) : (
-              <Button
-                variant="secondary"
+              <RowAction
+                label="Ban"
+                danger
+                pending={false}
                 onClick={() => onToggleBanForm(row.id)}
-              >
-                Ban
-              </Button>
+              />
             )}
           </div>
+        ) : (
+          <span />
         )}
-      </div>
+      </AdminTableRow>
+
       {banFormOpen && (
-        <UserBanForm
-          userId={row.id}
-          banDuration={banDuration}
-          banReason={banReason}
-          loading={banPending}
-          onDurationChange={onBanDurationChange}
-          onReasonChange={onBanReasonChange}
-          onConfirm={() => void onConfirmBan(row.id)}
-        />
+        <div className="border-t border-white/[0.05] px-[18px] py-3">
+          <UserBanForm
+            userId={row.id}
+            banDuration={banDuration}
+            banReason={banReason}
+            loading={banPending}
+            onDurationChange={onBanDurationChange}
+            onReasonChange={onBanReasonChange}
+            onConfirm={() => onConfirmBan(row.id)}
+          />
+        </div>
       )}
-    </div>
+    </>
+  );
+}
+
+function RowAction({
+  label,
+  pending,
+  danger,
+  onClick,
+}: {
+  label: string;
+  pending: boolean;
+  danger?: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      disabled={pending}
+      className={
+        danger
+          ? "rounded-md bg-danger/10 px-2.5 py-1.5 text-[12.5px] font-medium text-danger transition-colors hover:bg-danger/20 disabled:opacity-50"
+          : "rounded-md bg-white/[0.06] px-2.5 py-1.5 text-[12.5px] font-medium text-foreground-secondary transition-colors hover:bg-white/[0.1] hover:text-foreground disabled:opacity-50"
+      }
+    >
+      {pending ? "…" : label}
+    </button>
   );
 }

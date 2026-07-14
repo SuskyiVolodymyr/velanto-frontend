@@ -52,6 +52,11 @@ beforeEach(() => {
     plays: 0,
     onlineUsers: null,
     pendingReports: 0,
+    newUsersThisWeek: 0,
+    newPacksThisWeek: 0,
+    playsThisWeek: 0,
+    playsLast7Days: [],
+    topPacksToday: [],
   });
 });
 
@@ -89,9 +94,11 @@ describe("AdminScreen", () => {
     );
 
     await screen.findByText("Registered users");
-    await user.click(screen.getByRole("button", { name: "Logs" }));
+    await user.click(screen.getByRole("tab", { name: "Logs" }));
 
-    expect(await screen.findByLabelText("Filter by actor")).toBeInTheDocument();
+    expect(
+      await screen.findByLabelText("Search actor, target, details"),
+    ).toBeInTheDocument();
   });
 
   it("redirects home for an authenticated user without admin/manager role", async () => {
@@ -110,7 +117,7 @@ describe("AdminScreen", () => {
     // must never render for a disallowed role, not even for a frame before
     // the redirect fires.
     expect(
-      screen.queryByRole("button", { name: "Overview" }),
+      screen.queryByRole("tab", { name: "Overview" }),
     ).not.toBeInTheDocument();
   });
 
