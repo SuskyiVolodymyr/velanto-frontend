@@ -1,12 +1,12 @@
 /**
- * Client-side avatar cropping. `react-easy-crop` reports the chosen region in
- * natural-image pixels (`croppedAreaPixels`); we draw exactly that square onto a
- * canvas and export a small WebP `File` that flows through the normal
- * `uploadMedia(file, "avatar")` path. The backend still re-encodes to a 256²
- * WebP — cropping only decides *which* square it keeps.
+ * Client-side image cropping (avatars and pack covers). `react-easy-crop`
+ * reports the chosen region in natural-image pixels (`croppedAreaPixels`); we
+ * draw exactly that region onto a canvas and export a small WebP `File` that
+ * flows through the normal `uploadMedia` path. The backend still re-encodes and
+ * resizes per kind — cropping only decides *which* region (and aspect) it keeps.
  */
 
-/** A square region of the source image, in natural pixels (from react-easy-crop). */
+/** A region of the source image, in natural pixels (from react-easy-crop). */
 export interface CropArea {
   x: number;
   y: number;
