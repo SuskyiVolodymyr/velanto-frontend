@@ -58,13 +58,29 @@ describe("pack-filters-storage", () => {
       "velanto:pack-filters",
       JSON.stringify({
         format: "all",
-        sort: "relevance",
+        sort: "popular",
         window: "week",
         tags: [],
       }),
     );
 
     expect(readPackFilters()?.dateOrder).toBe("newest");
+  });
+
+  // The Relevance sort was removed; a blob that still has it selected must
+  // sanitize to the current default rather than feed an unknown sort to the feed.
+  it("migrates a stored 'relevance' sort to the default (popular)", () => {
+    localStorage.setItem(
+      "velanto:pack-filters",
+      JSON.stringify({
+        format: "all",
+        sort: "relevance",
+        window: "week",
+        tags: [],
+      }),
+    );
+
+    expect(readPackFilters()?.sort).toBe("popular");
   });
 
   it("round-trips the date sort with an oldest-first order", () => {
@@ -84,7 +100,7 @@ describe("pack-filters-storage", () => {
       "velanto:pack-filters",
       JSON.stringify({
         format: "all",
-        sort: "relevance",
+        sort: "popular",
         window: "week",
         tags: ["Movies", "NotARealTag", 42],
       }),

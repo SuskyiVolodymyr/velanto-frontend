@@ -12,7 +12,7 @@ function renderSidebar(
     onSearchChange: vi.fn(),
     format: "all" as const,
     onFormatChange: vi.fn(),
-    sort: "relevance" as const,
+    sort: "popular" as const,
     onSortChange: vi.fn(),
     window: "week" as const,
     onWindowChange: vi.fn(),
@@ -45,7 +45,7 @@ describe("HomeFilterSidebar", () => {
   });
 
   it("hides the popularity window row unless Popular is the active sort", () => {
-    renderSidebar({ sort: "relevance" });
+    renderSidebar({ sort: "date" });
     expect(
       screen.queryByRole("button", { name: "Month" }),
     ).not.toBeInTheDocument();
@@ -56,13 +56,13 @@ describe("HomeFilterSidebar", () => {
     expect(screen.getByRole("button", { name: "Month" })).toBeInTheDocument();
   });
 
-  it("offers exactly the three top-level sorts in a dropdown", () => {
+  it("offers exactly the two top-level sorts in a dropdown (no Relevance)", () => {
     renderSidebar();
 
     const select = screen.getByRole("combobox", { name: "Sort by" });
     expect(
       [...select.querySelectorAll("option")].map((o) => o.textContent),
-    ).toEqual(["Relevance", "Popular", "Date"]);
+    ).toEqual(["Popular", "Date"]);
   });
 
   it("lifts a sort change from the dropdown to the parent", async () => {
