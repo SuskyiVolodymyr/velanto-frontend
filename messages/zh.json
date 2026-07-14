@@ -552,7 +552,12 @@
     "following": "已关注",
     "follow": "关注",
     "packs": "题包",
-    "noPacks": "还没有题包。"
+    "noPacks": "还没有题包。",
+    "avatarHeading": "头像",
+    "avatarChange": "更换照片",
+    "avatarRemove": "移除照片",
+    "avatarHint": "PNG 或 JPG，最大 1 MB。",
+    "avatarRemoveError": "无法移除您的照片。请重试。"
   },
   "pages": {
     "createTitle": "创建题包",

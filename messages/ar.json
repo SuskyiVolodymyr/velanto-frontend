@@ -552,7 +552,12 @@
     "following": "متابَع",
     "follow": "متابعة",
     "packs": "الحِزَم",
-    "noPacks": "لا توجد حزم بعد."
+    "noPacks": "لا توجد حزم بعد.",
+    "avatarHeading": "صورة الملف الشخصي",
+    "avatarChange": "تغيير الصورة",
+    "avatarRemove": "إزالة الصورة",
+    "avatarHint": "PNG أو JPG، بحد أقصى 1 ميغابايت.",
+    "avatarRemoveError": "تعذّر إزالة صورتك. حاول مرة أخرى."
   },
   "pages": {
     "createTitle": "أنشئ حزمة",

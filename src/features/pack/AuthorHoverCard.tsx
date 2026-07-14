@@ -73,6 +73,7 @@ export function AuthorHoverCard({
           <Hidden kind="avatar" id={authorId} className="flex-none">
             <UserAvatar
               username={profile.username}
+              avatarKey={profile.avatarKey}
               className="h-11 w-11 rounded-full border border-border bg-surface text-base text-foreground-secondary"
             />
           </Hidden>

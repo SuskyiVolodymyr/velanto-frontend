@@ -29,6 +29,7 @@ export function PackBannerAuthor({ pack }: { pack: Pack }) {
             <Hidden kind="avatar" id={pack.authorId} className="flex-none">
               <UserAvatar
                 username={summary.profile.username}
+                avatarKey={summary.profile.avatarKey}
                 className="h-8 w-8 rounded-full border border-white/25 bg-black/30 text-xs text-white/90"
               />
             </Hidden>

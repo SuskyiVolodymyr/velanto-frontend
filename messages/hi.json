@@ -552,7 +552,12 @@
     "following": "फ़ॉलो कर रहे हैं",
     "follow": "फ़ॉलो करें",
     "packs": "पैक",
-    "noPacks": "अभी तक कोई पैक नहीं।"
+    "noPacks": "अभी तक कोई पैक नहीं।",
+    "avatarHeading": "प्रोफ़ाइल फ़ोटो",
+    "avatarChange": "फ़ोटो बदलें",
+    "avatarRemove": "फ़ोटो हटाएं",
+    "avatarHint": "PNG या JPG, अधिकतम 1 MB।",
+    "avatarRemoveError": "आपकी फ़ोटो नहीं हटाई जा सकी। पुनः प्रयास करें।"
   },
   "pages": {
     "createTitle": "पैक बनाएँ",

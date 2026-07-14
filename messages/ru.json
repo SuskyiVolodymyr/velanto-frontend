@@ -552,7 +552,12 @@
     "following": "Вы подписаны",
     "follow": "Подписаться",
     "packs": "Паки",
-    "noPacks": "Пока нет паков."
+    "noPacks": "Пока нет паков.",
+    "avatarHeading": "Фото профиля",
+    "avatarChange": "Изменить фото",
+    "avatarRemove": "Удалить фото",
+    "avatarHint": "PNG или JPG, до 1 МБ.",
+    "avatarRemoveError": "Не удалось удалить ваше фото. Попробуйте ещё раз."
   },
   "pages": {
     "createTitle": "Создать пак",

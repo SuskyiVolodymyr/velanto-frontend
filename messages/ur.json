@@ -552,7 +552,12 @@
     "following": "فالو کر رہے ہیں",
     "follow": "فالو کریں",
     "packs": "پیکس",
-    "noPacks": "ابھی کوئی پیک نہیں۔"
+    "noPacks": "ابھی کوئی پیک نہیں۔",
+    "avatarHeading": "پروفائل تصویر",
+    "avatarChange": "تصویر تبدیل کریں",
+    "avatarRemove": "تصویر ہٹائیں",
+    "avatarHint": "PNG یا JPG، زیادہ سے زیادہ 1 MB۔",
+    "avatarRemoveError": "آپ کی تصویر ہٹائی نہیں جا سکی۔ دوبارہ کوشش کریں۔"
   },
   "pages": {
     "createTitle": "پیک بنائیں",

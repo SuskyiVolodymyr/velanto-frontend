@@ -27,6 +27,12 @@ interface AuthContextValue {
   register: (input: RegisterInput) => Promise<void>;
   login: (input: LoginInput) => Promise<void>;
   logout: () => Promise<void>;
+  /**
+   * Patch the signed-in user's `avatarKey` in place (e.g. after they upload or
+   * remove their own avatar) so header chrome that shows it updates live,
+   * without a full session refresh.
+   */
+  setAvatarKey: (avatarKey: string | null) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -82,9 +88,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setStatus("unauthenticated");
   }, []);
 
+  const setAvatarKey = useCallback((avatarKey: string | null) => {
+    setUser((prev) => (prev ? { ...prev, avatarKey } : prev));
+  }, []);
+
   const value = useMemo(
-    () => ({ user, status, requestEmailCode, register, login, logout }),
-    [user, status, requestEmailCode, register, login, logout],
+    () => ({
+      user,
+      status,
+      requestEmailCode,
+      register,
+      login,
+      logout,
+      setAvatarKey,
+    }),
+    [user, status, requestEmailCode, register, login, logout, setAvatarKey],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
