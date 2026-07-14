@@ -227,7 +227,7 @@ describe("AuthorScreen", () => {
     );
     expect(mockedPacksClient.list).toHaveBeenCalledWith({
       authorId: "author-1",
-      limit: 50,
+      limit: 6,
     });
   });
 

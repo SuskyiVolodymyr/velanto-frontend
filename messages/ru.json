@@ -573,7 +573,10 @@
     "avatarCropZoom": "Масштаб",
     "avatarCropCancel": "Отмена",
     "avatarViewTitle": "Аватар {username}",
-    "avatarCropError": "Не удалось обрезать изображение. Попробуйте ещё раз."
+    "avatarCropError": "Не удалось обрезать изображение. Попробуйте ещё раз.",
+    "loadMore": "Загрузить ещё",
+    "loadingMore": "Загрузка…",
+    "loadMoreError": "Не удалось загрузить ещё паки. Попробуйте снова."
   },
   "pages": {
     "createTitle": "Создать пак",

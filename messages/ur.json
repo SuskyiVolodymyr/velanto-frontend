@@ -573,7 +573,10 @@
     "avatarCropZoom": "زوم",
     "avatarCropCancel": "منسوخ کریں",
     "avatarViewTitle": "{username} کا اوتار",
-    "avatarCropError": "تصویر کاٹی نہ جا سکی۔ دوبارہ کوشش کریں۔"
+    "avatarCropError": "تصویر کاٹی نہ جا سکی۔ دوبارہ کوشش کریں۔",
+    "loadMore": "مزید لوڈ کریں",
+    "loadingMore": "لوڈ ہو رہا ہے…",
+    "loadMoreError": "مزید پیک لوڈ نہیں ہو سکے۔ دوبارہ کوشش کریں۔"
   },
   "pages": {
     "createTitle": "پیک بنائیں",

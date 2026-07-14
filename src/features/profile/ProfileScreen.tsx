@@ -9,7 +9,7 @@ import { Text } from "@/src/shared/components/Text";
 import { Username } from "@/src/shared/components/Username";
 import { AvatarLightbox } from "@/src/shared/components/AvatarLightbox";
 import { buttonClassName } from "@/src/shared/components/Button";
-import { PackCard } from "@/src/features/home/PackCard";
+import { AuthorPackList } from "@/src/features/author/AuthorPackList";
 
 export function ProfileScreen() {
   const t = useTranslations("profile");
@@ -23,6 +23,7 @@ export function ProfileScreen() {
   });
   const profile = profileQuery.data?.profile ?? null;
   const packs = profileQuery.data?.packs ?? [];
+  const packsTotal = profileQuery.data?.packsTotal ?? 0;
 
   if (authStatus === "loading") return null;
 
@@ -93,18 +94,12 @@ export function ProfileScreen() {
         )}
       </div>
 
-      <Text as="h2" variant="title" className="mb-4 text-lg">
-        {t("myPacks")}
-      </Text>
-      {packs.length === 0 ? (
-        <Text variant="secondary">{t("noPacksOwn")}</Text>
-      ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {packs.map((pack) => (
-            <PackCard key={pack.id} pack={pack} showStatus />
-          ))}
-        </div>
-      )}
+      <AuthorPackList
+        authorId={profile.id}
+        initialPacks={packs}
+        initialTotal={packsTotal}
+        own
+      />
     </div>
   );
 }

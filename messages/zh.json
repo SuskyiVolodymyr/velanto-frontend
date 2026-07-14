@@ -573,7 +573,10 @@
     "avatarCropZoom": "缩放",
     "avatarCropCancel": "取消",
     "avatarViewTitle": "{username} 的头像",
-    "avatarCropError": "无法裁剪图片。请重试。"
+    "avatarCropError": "无法裁剪图片。请重试。",
+    "loadMore": "加载更多",
+    "loadingMore": "加载中…",
+    "loadMoreError": "无法加载更多卡包，请重试。"
   },
   "pages": {
     "createTitle": "创建题包",

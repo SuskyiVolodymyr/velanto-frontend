@@ -573,7 +573,10 @@
     "avatarCropZoom": "Agrandir",
     "avatarCropCancel": "Annuler",
     "avatarViewTitle": "Avatar de {username}",
-    "avatarCropError": "Impossible de recadrer l'image. Réessayez."
+    "avatarCropError": "Impossible de recadrer l'image. Réessayez.",
+    "loadMore": "Charger plus",
+    "loadingMore": "Chargement…",
+    "loadMoreError": "Impossible de charger plus de packs. Réessayez."
   },
   "pages": {
     "createTitle": "Créer un pack",

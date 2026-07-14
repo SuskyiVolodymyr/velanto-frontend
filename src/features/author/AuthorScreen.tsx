@@ -98,7 +98,11 @@ export function AuthorScreen({
         />
       )}
 
-      <AuthorPackList packs={packs} />
+      <AuthorPackList
+        authorId={authorId}
+        initialPacks={packs}
+        initialTotal={packsTotal}
+      />
     </div>
   );
 }
