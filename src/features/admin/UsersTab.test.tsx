@@ -95,8 +95,10 @@ describe("UsersTab", () => {
     renderAsAdmin();
 
     expect(await screen.findByText("bob")).toBeInTheDocument();
+    // staff:false — staff are managed on the Staff tab, not listed here too.
     expect(adminClient.listUsers).toHaveBeenCalledWith({
       q: undefined,
+      staff: false,
       page: 1,
       limit: 20,
     });

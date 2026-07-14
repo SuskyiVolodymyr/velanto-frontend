@@ -107,14 +107,14 @@ describe("StaffTab", () => {
     ).toBeInTheDocument();
   });
 
-  // Staff promoted before the backend recorded provenance have none — an em dash
-  // is honest; a fabricated date would not be.
-  it("renders an em dash for a member with no recorded provenance", async () => {
-    mockStaff([{ ...TARGET, staffAddedBy: null, staffSince: null }]);
+  // Seeded/legacy staff have no promoter — nobody in the User table put them
+  // there — so they read as "System" rather than a blank cell or a made-up name.
+  it("renders 'System' as the promoter for a member with no recorded promoter", async () => {
+    mockStaff([{ ...TARGET, staffAddedBy: null }]);
     renderAs(ADMIN);
 
     await screen.findByText("bob");
-    expect(screen.getAllByText("—").length).toBeGreaterThanOrEqual(2);
+    expect(screen.getByText("System")).toBeInTheDocument();
   });
 
   it("offers an admin the staff roles above the member's, but never 'user'", async () => {

@@ -34,24 +34,30 @@ export function PlaysChart({ buckets }: { buckets: PlaysDayBucket[] }) {
         {buckets.map((bucket) => (
           <div
             key={bucket.date}
-            className="flex h-full flex-1 flex-col items-center justify-end gap-2"
+            // `group` + `relative` so the bar's count can surface on hover of
+            // anywhere in the column, not just the (possibly 2px-tall) bar.
+            className="group relative flex h-full flex-1 flex-col items-center justify-end gap-2"
           >
-            <div
-              className="w-full max-w-[34px] rounded-t-md bg-gradient-to-b from-acc to-acc/40"
+            {/* The exact count, revealed on hover/focus. Pointer-events-none so
+                it can never swallow the hover that summoned it. */}
+            <div className="pointer-events-none absolute -top-1 left-1/2 z-10 -translate-x-1/2 rounded-md border border-border bg-surface px-2 py-1 text-[11px] font-semibold tabular-nums text-foreground opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
+              {bucket.plays}
+            </div>
+            <button
+              type="button"
+              // Focusable so the count is reachable by keyboard too, not just a
+              // mouse. The accessible name carries the same fact as the tooltip.
+              aria-label={`${bucket.plays} plays on ${bucket.date}`}
+              className="w-full max-w-[34px] rounded-t-md bg-gradient-to-b from-acc to-acc/40 transition-opacity hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
               // Percentage of the tallest bar, with a 2px floor so a zero day is
               // still a visible baseline tick rather than nothing at all.
               style={{
                 height: `${Math.max((bucket.plays / peak) * 100, 2)}%`,
               }}
-              // The bar itself is decorative; the number lives in the label.
-              aria-hidden
             />
             <Text variant="tertiary" className="text-[10.5px]">
               {dayLabel(bucket.date)}
             </Text>
-            <span className="sr-only">
-              {bucket.plays} plays on {bucket.date}
-            </span>
           </div>
         ))}
       </div>

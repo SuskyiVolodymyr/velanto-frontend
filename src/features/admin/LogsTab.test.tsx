@@ -167,6 +167,34 @@ describe("LogsTab", () => {
     );
   });
 
+  // Actions are colour-coded by what they do, so a log page is scannable at a
+  // glance: punitive red, restorative green, privilege violet.
+  it("colours each action chip by its kind, and falls back for an unknown code", async () => {
+    mockLogs([
+      { ...LOG, id: "l1", action: "ban_user" },
+      { ...LOG, id: "l2", action: "unban_user" },
+      { ...LOG, id: "l3", action: "role_change" },
+      { ...LOG, id: "l4", action: "brand_new_action" },
+    ]);
+    render(<LogsTab />);
+    await screen.findByText("brand_new_action");
+
+    const table = screen.getByRole("table");
+    const ban = within(table).getByText("Ban user");
+    const unban = within(table).getByText("Unban user");
+    const role = within(table).getByText("Change role");
+
+    expect(ban.className).toContain("text-danger");
+    expect(unban.className).toContain("text-success");
+    expect(role.className).toContain("violet");
+    // The three kinds must actually differ, not just all be "some colour".
+    expect(ban.className).not.toBe(unban.className);
+    expect(unban.className).not.toBe(role.className);
+
+    // An action the map has never heard of still renders — as its raw code.
+    expect(within(table).getByText("brand_new_action")).toBeInTheDocument();
+  });
+
   it("shows an empty state when no logs match", async () => {
     mockLogs([]);
     render(<LogsTab />);
