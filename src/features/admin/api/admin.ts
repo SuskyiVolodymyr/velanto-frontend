@@ -2,9 +2,15 @@ import { adminClient, type AuditLogSort } from "@/src/shared/lib/admin-client";
 
 export const ADMIN_PAGE_SIZE = 20;
 
+/**
+ * The Users tab lists NON-staff only — staff are managed on their own tab, and
+ * showing them in both was just noise (and invited acting on a colleague from
+ * the wrong screen).
+ */
 export function fetchUsersPage(q: string, page: number) {
   return adminClient.listUsers({
     q: q || undefined,
+    staff: false,
     page,
     limit: ADMIN_PAGE_SIZE,
   });

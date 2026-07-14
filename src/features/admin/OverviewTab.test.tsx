@@ -13,6 +13,45 @@ beforeEach(() => {
   vi.clearAllMocks();
 });
 
+describe("OverviewTab — plays chart", () => {
+  // Each bar exposes its exact count, so hovering (or tabbing to) a bar tells
+  // you the number instead of leaving you to eyeball the height.
+  it("gives every bar a focusable control naming its exact play count", async () => {
+    vi.mocked(adminClient.overview).mockResolvedValue({
+      registeredUsers: 0,
+      packs: 0,
+      plays: 0,
+      onlineUsers: null,
+      pendingReports: 0,
+      newUsersThisWeek: 0,
+      newPacksThisWeek: 0,
+      playsThisWeek: 5,
+      playsLast7Days: [
+        { date: "2026-07-08", plays: 0 },
+        { date: "2026-07-09", plays: 0 },
+        { date: "2026-07-10", plays: 2 },
+        { date: "2026-07-11", plays: 0 },
+        { date: "2026-07-12", plays: 0 },
+        { date: "2026-07-13", plays: 0 },
+        { date: "2026-07-14", plays: 3 },
+      ],
+      topPacksToday: [],
+    });
+    render(<OverviewTab />);
+
+    expect(
+      await screen.findByRole("button", { name: "2 plays on 2026-07-10" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "3 plays on 2026-07-14" }),
+    ).toBeInTheDocument();
+    // A zero day still gets its own bar and label — the week is never collapsed.
+    expect(
+      screen.getByRole("button", { name: "0 plays on 2026-07-11" }),
+    ).toBeInTheDocument();
+  });
+});
+
 describe("OverviewTab", () => {
   it("shows a loading state before the fetch resolves", () => {
     vi.mocked(adminClient.overview).mockReturnValue(new Promise(() => {}));

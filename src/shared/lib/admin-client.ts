@@ -33,9 +33,12 @@ export interface ListAuditLogsFilters {
 function buildUsersQuery(filters: ListAdminUsersFilters): string {
   const params = new URLSearchParams();
   if (filters.q) params.set("q", filters.q);
-  // Only sent when true — the backend rejects an unknown value, and omitting it
-  // means "no staff constraint".
-  if (filters.staff) params.set("staff", "true");
+  // Tri-state: `true` = staff only (Staff tab), `false` = everyone EXCEPT staff
+  // (Users tab), omitted = no constraint. So check for undefined, not
+  // truthiness — `if (filters.staff)` would silently drop `false`.
+  if (filters.staff !== undefined) {
+    params.set("staff", String(filters.staff));
+  }
   if (filters.page !== undefined) params.set("page", String(filters.page));
   if (filters.limit !== undefined) params.set("limit", String(filters.limit));
   const query = params.toString();

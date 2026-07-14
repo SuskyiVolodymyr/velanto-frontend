@@ -25,10 +25,18 @@ const SEARCH_DEBOUNCE_MS = 300;
 const COLUMNS = "1.3fr 130px 1fr 110px 90px";
 
 function formatSince(since: string | null): string {
-  // Staff promoted before the backend recorded provenance have none — show an
-  // em dash rather than inventing a date.
   if (!since) return "—";
   return new Date(since).toLocaleDateString();
+}
+
+/**
+ * Members promoted before provenance was recorded (seeded, or promoted straight
+ * in the DB) have no promoter — nobody in the User table put them there. They
+ * read as "System" rather than a blank cell or a fabricated name. Their `since`
+ * was backfilled to their account-creation date.
+ */
+function formatAddedBy(addedBy: string | null): string {
+  return addedBy ?? "System";
 }
 
 export function StaffTab() {
@@ -241,7 +249,7 @@ export function StaffTab() {
                 )}
 
                 <Text variant="secondary" className="truncate text-[13px]">
-                  {row.staffAddedBy ?? "—"}
+                  {formatAddedBy(row.staffAddedBy)}
                 </Text>
                 <Text variant="tertiary" className="text-[12.5px]">
                   {formatSince(row.staffSince)}

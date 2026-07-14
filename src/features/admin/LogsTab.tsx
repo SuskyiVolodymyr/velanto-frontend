@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { cn } from "@/src/shared/lib/cn";
 import { Text } from "@/src/shared/components/Text";
 import { Input } from "@/src/shared/components/Input";
 import { Select } from "@/src/shared/components/Select";
@@ -12,7 +13,10 @@ import {
 } from "@/src/features/admin/api/admin";
 import { AdminTable, AdminTableRow } from "@/src/features/admin/AdminTable";
 import { AdminPagination } from "@/src/features/admin/AdminPagination";
-import { ACTION_LABELS } from "@/src/features/admin/audit-actions";
+import {
+  AUDIT_ACTIONS,
+  auditActionStyle,
+} from "@/src/features/admin/audit-actions";
 
 const FILTER_DEBOUNCE_MS = 300;
 const COLUMNS = "150px 1.1fr 150px 1fr 1.2fr";
@@ -77,7 +81,7 @@ export function LogsTab() {
           className="h-10 w-auto"
           options={[
             { value: "", label: "All actions" },
-            ...Object.entries(ACTION_LABELS).map(([value, label]) => ({
+            ...Object.entries(AUDIT_ACTIONS).map(([value, { label }]) => ({
               value,
               label,
             })),
@@ -131,25 +135,36 @@ export function LogsTab() {
             empty="No log entries match these filters."
             isEmpty={logs.length === 0}
           >
-            {logs.map((log) => (
-              <AdminTableRow key={log.id} columns={COLUMNS}>
-                <Text variant="tertiary" className="text-[12.5px] tabular-nums">
-                  {new Date(log.createdAt).toLocaleString()}
-                </Text>
-                <Text className="truncate text-[13px] font-semibold">
-                  {log.actorUsername}
-                </Text>
-                <span className="w-fit rounded-md bg-acc/15 px-2 py-1 text-[11.5px] font-semibold tracking-[0.03em] text-acc">
-                  {ACTION_LABELS[log.action] ?? log.action}
-                </span>
-                <Text variant="secondary" className="truncate text-[13px]">
-                  {log.target}
-                </Text>
-                <Text variant="tertiary" className="truncate text-[12.5px]">
-                  {formatMeta(log.meta)}
-                </Text>
-              </AdminTableRow>
-            ))}
+            {logs.map((log) => {
+              const action = auditActionStyle(log.action);
+              return (
+                <AdminTableRow key={log.id} columns={COLUMNS}>
+                  <Text
+                    variant="tertiary"
+                    className="text-[12.5px] tabular-nums"
+                  >
+                    {new Date(log.createdAt).toLocaleString()}
+                  </Text>
+                  <Text className="truncate text-[13px] font-semibold">
+                    {log.actorUsername}
+                  </Text>
+                  <span
+                    className={cn(
+                      "w-fit rounded-md px-2 py-1 text-[11.5px] font-semibold tracking-[0.03em]",
+                      action.className,
+                    )}
+                  >
+                    {action.label}
+                  </span>
+                  <Text variant="secondary" className="truncate text-[13px]">
+                    {log.target}
+                  </Text>
+                  <Text variant="tertiary" className="truncate text-[12.5px]">
+                    {formatMeta(log.meta)}
+                  </Text>
+                </AdminTableRow>
+              );
+            })}
           </AdminTable>
 
           <AdminPagination page={page} total={total} onPageChange={setPage} />
