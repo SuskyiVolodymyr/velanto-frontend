@@ -28,7 +28,9 @@ export function useHomeFeed(initialPacks?: Pack[]) {
   const [tags, setTags] = useState<PackTag[]>([]);
   const [searchInput, setSearchInput] = useState("");
   const [query, setQuery] = useState("");
-  const [sort, setSort] = useState<SortFilterValue>("relevance");
+  // Default to Popular / this month so the landing feed leads with what people
+  // are actually playing, not the newest upload.
+  const [sort, setSort] = useState<SortFilterValue>("popular");
   const [window, setWindow] = useState<WindowFilterValue>(
     DEFAULT_POPULAR_WINDOW,
   );
@@ -86,9 +88,14 @@ export function useHomeFeed(initialPacks?: Pack[]) {
   );
 
   // Seed only the default-filters query with the server-rendered feed — other
-  // combinations fetch on demand.
+  // combinations fetch on demand. The default is Popular / DEFAULT_POPULAR_WINDOW
+  // (see the sort state above and getHomeFeedServer, which must fetch the same).
   const isDefaultFilters =
-    format === "all" && tags.length === 0 && !query && sort === "relevance";
+    format === "all" &&
+    tags.length === 0 &&
+    !query &&
+    sort === "popular" &&
+    window === DEFAULT_POPULAR_WINDOW;
   const feedQuery = usePacksFeed(
     filters,
     isDefaultFilters ? initialPacks : undefined,
@@ -101,10 +108,10 @@ export function useHomeFeed(initialPacks?: Pack[]) {
       ? "loading"
       : "ready";
 
-  // Reset to the default window every time Popular is (re)selected, rather than
-  // remembering the last-chosen window across a Relevance -> Popular round-trip
-  // — "week" is the expected starting point each time you opt into popularity
-  // sorting.
+  // Reset to DEFAULT_POPULAR_WINDOW every time Popular is (re)selected, rather
+  // than remembering the last-chosen window across a Relevance -> Popular
+  // round-trip — that window is the expected starting point each time you opt
+  // into popularity sorting.
   function selectSort(value: SortFilterValue) {
     setSort(value);
     if (value === "popular") setWindow(DEFAULT_POPULAR_WINDOW);

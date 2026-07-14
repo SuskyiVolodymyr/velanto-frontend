@@ -2,9 +2,11 @@ import type { Pack } from "@/src/shared/types/pack";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
-// Mirrors HomeFeed's default (unfiltered) view: approved packs, relevance
-// order, one page. Kept in sync with HomeFeed's PAGE_SIZE.
+// Mirrors HomeFeed's default (unfiltered) view: approved packs, Popular / this
+// month, one page. Must stay in sync with useHomeFeed's default sort/window and
+// PAGE_SIZE, or the client refetches instead of using this seed.
 const PAGE_SIZE = 50;
+const DEFAULT_FEED_QUERY = `limit=${PAGE_SIZE}&sort=popular&window=month`;
 
 /**
  * Server Component-only fetch of the default public feed, used to seed
@@ -15,7 +17,7 @@ const PAGE_SIZE = 50;
  */
 export async function getHomeFeedServer(): Promise<Pack[] | null> {
   try {
-    const res = await fetch(`${API_BASE_URL}/packs?limit=${PAGE_SIZE}`, {
+    const res = await fetch(`${API_BASE_URL}/packs?${DEFAULT_FEED_QUERY}`, {
       cache: "no-store",
     });
     if (!res.ok) return null;

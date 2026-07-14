@@ -70,7 +70,9 @@ export function HomeFilterSidebar({
     <aside
       aria-label={t("filters")}
       className={cn(
-        "lg:sticky lg:top-6 lg:max-h-[calc(100vh-3rem)] lg:w-72 lg:shrink-0 lg:overflow-y-auto",
+        // top-24 clears the sticky header (top-0, ~88px tall) so the panel
+        // parks below it instead of scrolling underneath it.
+        "lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:w-72 lg:shrink-0 lg:overflow-y-auto",
         className,
       )}
     >

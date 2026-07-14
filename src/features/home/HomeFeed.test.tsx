@@ -56,6 +56,8 @@ describe("HomeFeed", () => {
     expect(packsClient.list).toHaveBeenCalledWith({
       format: undefined,
       tags: [],
+      sort: "popular",
+      window: "month",
       limit: 50,
     });
   });
@@ -100,6 +102,8 @@ describe("HomeFeed", () => {
       expect(packsClient.list).toHaveBeenLastCalledWith({
         format: "sacrifice_one",
         tags: [],
+        sort: "popular",
+        window: "month",
         limit: 50,
       }),
     );
@@ -129,6 +133,8 @@ describe("HomeFeed", () => {
       expect(packsClient.list).toHaveBeenLastCalledWith({
         format: undefined,
         tags: ["Anime", "Music"],
+        sort: "popular",
+        window: "month",
         limit: 50,
       }),
     );
@@ -154,6 +160,8 @@ describe("HomeFeed", () => {
       expect(packsClient.list).toHaveBeenLastCalledWith({
         format: undefined,
         tags: ["Anime", "Music"],
+        sort: "popular",
+        window: "month",
         limit: 50,
       }),
     );
@@ -165,6 +173,8 @@ describe("HomeFeed", () => {
       expect(packsClient.list).toHaveBeenLastCalledWith({
         format: undefined,
         tags: ["Music"],
+        sort: "popular",
+        window: "month",
         limit: 50,
       }),
     );
@@ -227,6 +237,8 @@ describe("HomeFeed", () => {
             format: undefined,
             tags: [],
             q: "anime",
+            sort: "popular",
+            window: "month",
             limit: 50,
           }),
         { timeout: 1000 },
@@ -252,6 +264,8 @@ describe("HomeFeed", () => {
             format: undefined,
             tags: [],
             q: "anime",
+            sort: "popular",
+            window: "month",
             limit: 50,
           }),
         { timeout: 1000 },
@@ -277,6 +291,8 @@ describe("HomeFeed", () => {
             format: undefined,
             tags: [],
             q: "anime",
+            sort: "popular",
+            window: "month",
             limit: 50,
           }),
         { timeout: 1000 },
@@ -289,6 +305,8 @@ describe("HomeFeed", () => {
             format: undefined,
             tags: [],
             q: undefined,
+            sort: "popular",
+            window: "month",
             limit: 50,
           }),
         { timeout: 1000 },
@@ -297,7 +315,7 @@ describe("HomeFeed", () => {
   });
 
   describe("popularity sort", () => {
-    it("does not send sort/window by default", async () => {
+    it("sends sort=popular and window=month by default", async () => {
       vi.mocked(packsClient.list).mockResolvedValue({
         items: [],
         total: 0,
@@ -307,11 +325,11 @@ describe("HomeFeed", () => {
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
       const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
-      expect(lastCall?.sort).toBeUndefined();
-      expect(lastCall?.window).toBeUndefined();
+      expect(lastCall?.sort).toBe("popular");
+      expect(lastCall?.window).toBe("month");
     });
 
-    it("sends sort=popular and window=week (default) when Popular is clicked", async () => {
+    it("re-selecting Popular after Relevance sends popular/month", async () => {
       const user = userEvent.setup();
       vi.mocked(packsClient.list).mockResolvedValue({
         items: [],
@@ -322,12 +340,13 @@ describe("HomeFeed", () => {
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
 
+      await user.click(screen.getByRole("button", { name: "Relevance" }));
       await user.click(screen.getByRole("button", { name: "Popular" }));
 
       await waitFor(() => {
         const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
         expect(lastCall?.sort).toBe("popular");
-        expect(lastCall?.window).toBe("week");
+        expect(lastCall?.window).toBe("month");
       });
     });
 
@@ -342,17 +361,16 @@ describe("HomeFeed", () => {
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
 
-      expect(
-        screen.queryByRole("button", { name: "Month" }),
-      ).not.toBeInTheDocument();
-
-      await user.click(screen.getByRole("button", { name: "Popular" }));
+      // Popular is the default, so the window picker is visible on mount.
       expect(screen.getByRole("button", { name: "Month" })).toBeInTheDocument();
 
       await user.click(screen.getByRole("button", { name: "Relevance" }));
       expect(
         screen.queryByRole("button", { name: "Month" }),
       ).not.toBeInTheDocument();
+
+      await user.click(screen.getByRole("button", { name: "Popular" }));
+      expect(screen.getByRole("button", { name: "Month" })).toBeInTheDocument();
     });
 
     it("changing the window while Popular is active sends the new window", async () => {
@@ -365,18 +383,14 @@ describe("HomeFeed", () => {
       });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
-      await user.click(screen.getByRole("button", { name: "Popular" }));
-      await waitFor(() => {
-        const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
-        expect(lastCall?.window).toBe("week");
-      });
 
-      await user.click(screen.getByRole("button", { name: "Month" }));
+      // Default is month; switch to a different window and confirm it's sent.
+      await user.click(screen.getByRole("button", { name: "Week" }));
 
       await waitFor(() => {
         const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
         expect(lastCall?.sort).toBe("popular");
-        expect(lastCall?.window).toBe("month");
+        expect(lastCall?.window).toBe("week");
       });
     });
 
@@ -416,11 +430,11 @@ describe("HomeFeed", () => {
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
 
-      await user.click(screen.getByRole("button", { name: "Popular" }));
-      await user.click(screen.getByRole("button", { name: "Month" }));
+      // Move off the default window, then leave Popular and return to it.
+      await user.click(screen.getByRole("button", { name: "Week" }));
       await waitFor(() => {
         const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
-        expect(lastCall?.window).toBe("month");
+        expect(lastCall?.window).toBe("week");
       });
 
       await user.click(screen.getByRole("button", { name: "Relevance" }));
@@ -429,7 +443,7 @@ describe("HomeFeed", () => {
       await waitFor(() => {
         const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
         expect(lastCall?.sort).toBe("popular");
-        expect(lastCall?.window).toBe("week");
+        expect(lastCall?.window).toBe("month");
       });
     });
   });

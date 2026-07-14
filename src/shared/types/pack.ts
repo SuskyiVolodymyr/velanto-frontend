@@ -2,6 +2,8 @@
  * Local, independent type definitions (this repo does not import types from
  * velanto-backend — see coding-conventions.md).
  */
+import type { Role } from "@/src/shared/types/user";
+
 export const PACK_FORMATS = [
   "save_one",
   "sacrifice_one",
@@ -110,6 +112,17 @@ export const COVER_TONES = [
   "#312a24",
 ] as const;
 
+// Lightweight author info the feed attaches to each pack (see backend
+// PackQueryService.list) so discovery cards can show the creator without a
+// per-card fetch. Absent on single-pack responses.
+export interface PackAuthorSummary {
+  id: string;
+  username: string;
+  avatarKey: string | null;
+  role: Role;
+  trusted: boolean;
+}
+
 export interface Pack {
   id: string;
   title: string;
@@ -126,6 +139,7 @@ export interface Pack {
   groups: Group[];
   rounds: Round[];
   authorId: string;
+  author?: PackAuthorSummary;
   createdAt: string;
   totalPlays: number;
   avgAgreementPercent: number;
