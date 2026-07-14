@@ -23,7 +23,11 @@ import {
  * writes the shared react-hook-form state through context, so it stays in sync
  * with the rest of the create form without prop drilling.
  */
-export function PackMetaFields() {
+export function PackMetaFields({
+  onCoverUploadingChange,
+}: {
+  onCoverUploadingChange?: (uploading: boolean) => void;
+}) {
   const t = useTranslations("create");
   const { control, setValue, formState } = useFormContext<CreatePackValues>();
   const { isSubmitting } = formState;
@@ -94,7 +98,7 @@ export function PackMetaFields() {
           ))}
         </div>
       </div>
-      <CoverImageField />
+      <CoverImageField onUploadingChange={onCoverUploadingChange} />
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between gap-2">
           <Text variant="secondary" className="text-xs">

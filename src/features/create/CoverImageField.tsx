@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import { uploadMedia, MEDIA_MAX_BYTES } from "@/src/shared/lib/media-client";
@@ -18,7 +18,14 @@ import type { CreatePackValues } from "@/src/features/create/create-pack.schema"
  * with the tone swatches — a set cover takes visual precedence in the preview and
  * everywhere the pack renders.
  */
-export function CoverImageField() {
+export function CoverImageField({
+  onUploadingChange,
+}: {
+  // Lifts the in-flight upload state so the form's submit button can wait for a
+  // pending cover — otherwise submitting mid-upload silently drops the chosen
+  // cover (its setValue lands after the form has already navigated away).
+  onUploadingChange?: (uploading: boolean) => void;
+}) {
   const t = useTranslations("create");
   const { control, setValue, formState } = useFormContext<CreatePackValues>();
   const { isSubmitting } = formState;
@@ -26,6 +33,10 @@ export function CoverImageField() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+
+  useEffect(() => {
+    onUploadingChange?.(uploading);
+  }, [uploading, onUploadingChange]);
   // Discards a slow upload the author has moved on from (removed or replaced),
   // so its key never lands after they cleared the field.
   const uploadToken = useRef(0);
@@ -120,7 +131,11 @@ export function CoverImageField() {
       <Text variant="tertiary" className="text-xs">
         {t("coverImageHint")}
       </Text>
-      {error && <Text className="text-sm text-danger">{error}</Text>}
+      {error && (
+        <Text role="alert" className="text-sm text-danger">
+          {error}
+        </Text>
+      )}
     </div>
   );
 }

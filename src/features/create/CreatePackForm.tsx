@@ -54,6 +54,9 @@ export function CreatePackForm({
   const pathname = usePathname();
   const { status } = useAuth();
   const isEdit = mode === "edit";
+  // True while a cover image is uploading; blocks submit so a pending cover
+  // isn't silently dropped (see CoverImageField).
+  const [coverUploading, setCoverUploading] = useState(false);
 
   // Seed one pool plus a matching elimination round drawing from it. Computed
   // once (lazy initializer) so the round's groupId keeps pointing at the pool.
@@ -179,7 +182,7 @@ export function CreatePackForm({
         noValidate
         className="flex flex-col gap-8"
       >
-        <PackMetaFields />
+        <PackMetaFields onCoverUploadingChange={setCoverUploading} />
 
         <FormatSection />
 
@@ -196,6 +199,7 @@ export function CreatePackForm({
         <Button
           type="submit"
           loading={isSubmitting}
+          disabled={coverUploading}
           className="h-[50px] w-full"
         >
           {isSubmitting

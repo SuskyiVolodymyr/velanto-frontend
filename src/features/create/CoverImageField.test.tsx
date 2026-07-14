@@ -12,13 +12,19 @@ vi.mock("@/src/shared/lib/media-client", () => ({
   MEDIA_MAX_BYTES: 1024 * 1024,
 }));
 
-function Harness({ initialKey }: { initialKey?: string } = {}) {
+function Harness({
+  initialKey,
+  onUploadingChange,
+}: {
+  initialKey?: string;
+  onUploadingChange?: (uploading: boolean) => void;
+} = {}) {
   const methods = useForm<CreatePackValues>({
     defaultValues: { coverImageKey: initialKey } as CreatePackValues,
   });
   return (
     <FormProvider {...methods}>
-      <CoverImageField />
+      <CoverImageField onUploadingChange={onUploadingChange} />
     </FormProvider>
   );
 }
@@ -107,6 +113,30 @@ describe("CoverImageField", () => {
       await screen.findByText("Image must be 1 MB or smaller."),
     ).toBeInTheDocument();
     expect(uploadMedia).not.toHaveBeenCalled();
+  });
+
+  it("reports the in-flight upload to the parent so the form can gate submit", async () => {
+    let resolveUpload!: (v: {
+      key: string;
+      url: string;
+      byteSize: number;
+    }) => void;
+    vi.mocked(uploadMedia).mockReturnValue(
+      new Promise((res) => {
+        resolveUpload = res;
+      }),
+    );
+    const onUploadingChange = vi.fn();
+    const user = userEvent.setup();
+    render(<Harness onUploadingChange={onUploadingChange} />);
+
+    await user.upload(screen.getByLabelText("Cover image"), pngFile());
+    await waitFor(() => expect(onUploadingChange).toHaveBeenCalledWith(true));
+
+    resolveUpload({ key: "media/cover/x.webp", url: "u", byteSize: 8 });
+    await waitFor(() =>
+      expect(onUploadingChange).toHaveBeenLastCalledWith(false),
+    );
   });
 
   it("surfaces an upload failure and keeps no cover set", async () => {
