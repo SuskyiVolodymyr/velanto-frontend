@@ -531,7 +531,12 @@
     "imageTooLarge": "ছবি 1 MB বা তার কম হতে হবে।",
     "imageUploadFailed": "আপলোড ব্যর্থ। আবার চেষ্টা করুন।",
     "imageTitleRequired": "এই ছবির জন্য একটি শিরোনাম যোগ করুন।",
-    "imageRequired": "প্রথমে একটি ছবি নির্বাচন করুন।"
+    "imageRequired": "প্রথমে একটি ছবি নির্বাচন করুন।",
+    "coverCropTitle": "আপনার কভার ক্রপ করুন",
+    "coverCropZoom": "জুম",
+    "coverCropCancel": "বাতিল",
+    "coverCropSave": "সংরক্ষণ",
+    "coverCropError": "ছবি ক্রপ করা যায়নি। আবার চেষ্টা করুন।"
   },
   "profile": {
     "loginRequiredView": "আপনার প্রোফাইল দেখতে হলে আপনাকে লগ ইন করতে হবে।",

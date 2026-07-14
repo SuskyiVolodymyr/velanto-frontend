@@ -531,7 +531,12 @@
     "imageTooLarge": "Зображення має бути не більше 1 МБ.",
     "imageUploadFailed": "Не вдалося завантажити. Спробуйте ще раз.",
     "imageTitleRequired": "Додайте назву для цього зображення.",
-    "imageRequired": "Спершу виберіть зображення."
+    "imageRequired": "Спершу виберіть зображення.",
+    "coverCropTitle": "Обріжте обкладинку",
+    "coverCropZoom": "Масштаб",
+    "coverCropCancel": "Скасувати",
+    "coverCropSave": "Зберегти",
+    "coverCropError": "Не вдалося обрізати зображення. Спробуйте ще раз."
   },
   "profile": {
     "loginRequiredView": "Щоб переглянути свій профіль, спершу увійди.",

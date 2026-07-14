@@ -8,6 +8,7 @@ import { mediaUrl } from "@/src/shared/lib/media-url";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
+import { CoverCropModal } from "@/src/features/create/CoverCropModal";
 import type { CreatePackValues } from "@/src/features/create/create-pack.schema";
 
 /**
@@ -33,6 +34,9 @@ export function CoverImageField({
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+  // The picked file awaiting crop; non-null opens the crop modal. Upload starts
+  // only after the author confirms a crop.
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
 
   useEffect(() => {
     onUploadingChange?.(uploading);
@@ -45,10 +49,9 @@ export function CoverImageField({
     if (inputRef.current) inputRef.current.value = "";
   }
 
-  async function handleFile(file: File | null) {
+  function handleFile(file: File | null) {
     setError("");
     if (!file || uploading) return;
-    const token = (uploadToken.current += 1);
     if (!file.type.startsWith("image/")) {
       setError(t("notAnImage"));
       clearInput();
@@ -59,9 +62,16 @@ export function CoverImageField({
       clearInput();
       return;
     }
+    setPendingFile(file);
+    clearInput();
+  }
+
+  async function handleCropped(cropped: File) {
+    setPendingFile(null);
+    const token = (uploadToken.current += 1);
     setUploading(true);
     try {
-      const { key } = await uploadMedia(file, "cover");
+      const { key } = await uploadMedia(cropped, "cover");
       if (token !== uploadToken.current) return;
       setValue("coverImageKey", key, { shouldDirty: true });
     } catch {
@@ -69,7 +79,6 @@ export function CoverImageField({
       setError(t("imageUploadFailed"));
     } finally {
       if (token === uploadToken.current) setUploading(false);
-      clearInput();
     }
   }
 
@@ -135,6 +144,14 @@ export function CoverImageField({
         <Text role="alert" className="text-sm text-danger">
           {error}
         </Text>
+      )}
+      {pendingFile && (
+        <CoverCropModal
+          file={pendingFile}
+          open
+          onCancel={() => setPendingFile(null)}
+          onCropped={handleCropped}
+        />
       )}
     </div>
   );

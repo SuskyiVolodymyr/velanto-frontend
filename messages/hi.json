@@ -531,7 +531,12 @@
     "imageTooLarge": "छवि 1 MB या उससे छोटी होनी चाहिए।",
     "imageUploadFailed": "अपलोड विफल। पुनः प्रयास करें।",
     "imageTitleRequired": "इस छवि के लिए एक शीर्षक जोड़ें।",
-    "imageRequired": "पहले एक छवि चुनें।"
+    "imageRequired": "पहले एक छवि चुनें।",
+    "coverCropTitle": "अपना कवर क्रॉप करें",
+    "coverCropZoom": "ज़ूम",
+    "coverCropCancel": "रद्द करें",
+    "coverCropSave": "सहेजें",
+    "coverCropError": "छवि क्रॉप नहीं हो सकी। पुनः प्रयास करें।"
   },
   "profile": {
     "loginRequiredView": "अपनी प्रोफ़ाइल देखने के लिए आपको लॉग इन करना होगा।",

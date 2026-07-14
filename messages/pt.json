@@ -531,7 +531,12 @@
     "imageTooLarge": "A imagem deve ter 1 MB ou menos.",
     "imageUploadFailed": "Falha no envio. Tente novamente.",
     "imageTitleRequired": "Adicione um título para esta imagem.",
-    "imageRequired": "Escolha uma imagem primeiro."
+    "imageRequired": "Escolha uma imagem primeiro.",
+    "coverCropTitle": "Recorte sua capa",
+    "coverCropZoom": "Ampliar",
+    "coverCropCancel": "Cancelar",
+    "coverCropSave": "Salvar",
+    "coverCropError": "Não foi possível recortar a imagem. Tente novamente."
   },
   "profile": {
     "loginRequiredView": "Você precisa estar logado para ver seu perfil.",

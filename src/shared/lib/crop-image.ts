@@ -17,8 +17,10 @@ export interface CropArea {
 export interface CropPlan {
   /** Whole-pixel source rectangle to read from the image. */
   source: CropArea;
-  /** Output canvas edge length (square), capped so the file stays small. */
-  size: number;
+  /** Output canvas width (px), scaled so the long edge fits the cap. */
+  width: number;
+  /** Output canvas height (px); preserves the crop's aspect ratio. */
+  height: number;
 }
 
 /**
@@ -28,9 +30,17 @@ export interface CropPlan {
 export const MAX_AVATAR_CROP = 512;
 
 /**
+ * Cap the exported cover at 1200 px on its long edge — matches the backend's
+ * cover target so cropping doesn't throw away resolution, still well under 1 MB
+ * as WebP.
+ */
+export const MAX_COVER_CROP = 1200;
+
+/**
  * Turn a crop area into a concrete draw plan: whole-pixel source rectangle plus
- * the (capped) output size. Pure — the geometry is the part worth testing; the
- * canvas draw in {@link cropImage} is browser-only glue.
+ * the output dimensions, scaled so the long edge fits `max` (never upscaling)
+ * while preserving the crop's aspect ratio. Pure — the geometry is the part
+ * worth testing; the canvas draw in {@link cropImage} is browser-only glue.
  */
 export function computeCrop(area: CropArea, max = MAX_AVATAR_CROP): CropPlan {
   const source = {
@@ -39,7 +49,13 @@ export function computeCrop(area: CropArea, max = MAX_AVATAR_CROP): CropPlan {
     width: Math.round(area.width),
     height: Math.round(area.height),
   };
-  return { source, size: Math.min(source.width, max) };
+  const longEdge = Math.max(source.width, source.height);
+  const scale = longEdge > max ? max / longEdge : 1;
+  return {
+    source,
+    width: Math.round(source.width * scale),
+    height: Math.round(source.height * scale),
+  };
 }
 
 function loadImage(src: string): Promise<HTMLImageElement> {
@@ -63,18 +79,23 @@ function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
 }
 
 /**
- * Crop `file` to the square `area` and return a new WebP `File` ("avatar.webp").
- * Loads the file via an object URL, draws the source rectangle onto a capped
- * square canvas, and exports it. Always revokes the object URL.
+ * Crop `file` to `area` and return a new WebP `File` ("crop.webp"). Loads the
+ * file via an object URL, draws the source rectangle onto a canvas capped at
+ * `maxDimension` on the long edge, and exports it. Always revokes the object
+ * URL. `area` may be any aspect (square for avatars, 4:3 for covers).
  */
-export async function cropImage(file: File, area: CropArea): Promise<File> {
-  const { source, size } = computeCrop(area);
+export async function cropImage(
+  file: File,
+  area: CropArea,
+  maxDimension = MAX_AVATAR_CROP,
+): Promise<File> {
+  const { source, width, height } = computeCrop(area, maxDimension);
   const url = URL.createObjectURL(file);
   try {
     const img = await loadImage(url);
     const canvas = document.createElement("canvas");
-    canvas.width = size;
-    canvas.height = size;
+    canvas.width = width;
+    canvas.height = height;
     const ctx = canvas.getContext("2d");
     if (!ctx) throw new Error("Canvas 2D context unavailable");
     ctx.drawImage(
@@ -85,11 +106,11 @@ export async function cropImage(file: File, area: CropArea): Promise<File> {
       source.height,
       0,
       0,
-      size,
-      size,
+      width,
+      height,
     );
     const blob = await canvasToBlob(canvas);
-    return new File([blob], "avatar.webp", { type: "image/webp" });
+    return new File([blob], "crop.webp", { type: "image/webp" });
   } finally {
     URL.revokeObjectURL(url);
   }

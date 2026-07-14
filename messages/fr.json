@@ -531,7 +531,12 @@
     "imageTooLarge": "L'image doit faire 1 Mo ou moins.",
     "imageUploadFailed": "Échec de l'envoi. Réessayez.",
     "imageTitleRequired": "Ajoutez un titre pour cette image.",
-    "imageRequired": "Choisissez d'abord une image."
+    "imageRequired": "Choisissez d'abord une image.",
+    "coverCropTitle": "Recadrez votre couverture",
+    "coverCropZoom": "Agrandir",
+    "coverCropCancel": "Annuler",
+    "coverCropSave": "Enregistrer",
+    "coverCropError": "Impossible de recadrer l'image. Réessayez."
   },
   "profile": {
     "loginRequiredView": "Vous devez être connecté pour voir votre profil.",

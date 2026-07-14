@@ -531,7 +531,12 @@
     "imageTooLarge": "يجب ألا يتجاوز حجم الصورة 1 ميغابايت.",
     "imageUploadFailed": "فشل الرفع. حاول مرة أخرى.",
     "imageTitleRequired": "أضف عنوانًا لهذه الصورة.",
-    "imageRequired": "اختر صورة أولاً."
+    "imageRequired": "اختر صورة أولاً.",
+    "coverCropTitle": "قص الغلاف",
+    "coverCropZoom": "تكبير",
+    "coverCropCancel": "إلغاء",
+    "coverCropSave": "حفظ",
+    "coverCropError": "تعذّر قص الصورة. حاول مرة أخرى."
   },
   "profile": {
     "loginRequiredView": "يجب تسجيل الدخول لعرض ملفك الشخصي.",

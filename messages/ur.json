@@ -531,7 +531,12 @@
     "imageTooLarge": "تصویر 1 MB یا اس سے کم ہونی چاہیے۔",
     "imageUploadFailed": "اپ لوڈ ناکام۔ دوبارہ کوشش کریں۔",
     "imageTitleRequired": "اس تصویر کے لیے ایک عنوان شامل کریں۔",
-    "imageRequired": "پہلے ایک تصویر منتخب کریں۔"
+    "imageRequired": "پہلے ایک تصویر منتخب کریں۔",
+    "coverCropTitle": "اپنا سرورق کاٹیں",
+    "coverCropZoom": "زوم",
+    "coverCropCancel": "منسوخ کریں",
+    "coverCropSave": "محفوظ کریں",
+    "coverCropError": "تصویر کاٹی نہ جا سکی۔ دوبارہ کوشش کریں۔"
   },
   "profile": {
     "loginRequiredView": "اپنی پروفائل دیکھنے کے لیے آپ کا لاگ اِن ہونا ضروری ہے۔",

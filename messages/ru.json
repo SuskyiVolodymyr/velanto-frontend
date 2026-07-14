@@ -531,7 +531,12 @@
     "imageTooLarge": "Изображение должно быть не больше 1 МБ.",
     "imageUploadFailed": "Не удалось загрузить. Попробуйте снова.",
     "imageTitleRequired": "Добавьте название для этого изображения.",
-    "imageRequired": "Сначала выберите изображение."
+    "imageRequired": "Сначала выберите изображение.",
+    "coverCropTitle": "Обрежьте обложку",
+    "coverCropZoom": "Масштаб",
+    "coverCropCancel": "Отмена",
+    "coverCropSave": "Сохранить",
+    "coverCropError": "Не удалось обрезать изображение. Попробуйте ещё раз."
   },
   "profile": {
     "loginRequiredView": "Чтобы посмотреть свой профиль, нужно войти в аккаунт.",

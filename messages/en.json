@@ -530,7 +530,12 @@
     "imageTooLarge": "Image must be 1 MB or smaller.",
     "imageUploadFailed": "Upload failed. Try again.",
     "imageTitleRequired": "Add a title for this image.",
-    "imageRequired": "Choose an image first."
+    "imageRequired": "Choose an image first.",
+    "coverCropTitle": "Crop your cover",
+    "coverCropZoom": "Zoom",
+    "coverCropCancel": "Cancel",
+    "coverCropSave": "Save",
+    "coverCropError": "Couldn't crop the image. Try again."
   },
   "profile": {
     "loginRequiredView": "You need to be logged in to view your profile.",
