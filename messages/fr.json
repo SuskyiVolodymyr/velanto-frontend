@@ -446,8 +446,6 @@
     "rankCaption": "moy. {avg} · classé {count}x",
     "youPlaced": "Tu l'as placé #{position} · {count, plural, one {# autre partie d'accord} other {# autres parties d'accord}}",
     "placed": "Placé #{position} · {count, plural, one {# autre partie d'accord} other {# autres parties d'accord}}",
-    "notInYourPlay": "Absent de ta partie cette manche",
-    "notInThisPlay": "Absent de cette partie cette manche",
     "playAgain": "Rejouer",
     "shareResult": "Partager le résultat",
     "sharedNote": "Tu consultes un résultat partagé."

@@ -446,8 +446,6 @@
     "rankCaption": "औसत {avg} · {count}x रैंक",
     "youPlaced": "आपने इसे #{position} रखा · {count, plural, one {# और प्ले सहमत रहा} other {# और प्ले सहमत रहे}}",
     "placed": "#{position} पर रखा गया · {count, plural, one {# और प्ले सहमत रहा} other {# और प्ले सहमत रहे}}",
-    "notInYourPlay": "इस राउंड में आपके प्ले में नहीं था",
-    "notInThisPlay": "इस राउंड में इस प्ले में नहीं था",
     "playAgain": "फिर से खेलें",
     "shareResult": "नतीजा शेयर करें",
     "sharedNote": "आप एक शेयर किया गया नतीजा देख रहे हैं।"

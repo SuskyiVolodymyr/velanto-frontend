@@ -103,7 +103,7 @@ describe("RankResultScreen", () => {
     ).toBeInTheDocument();
   });
 
-  it("shows a neutral note for an item that wasn't in the player's own play", () => {
+  it("hides items that weren't in the player's own play for a round they played", () => {
     sessionStorage.setItem(
       "velanto:last-play:pack-rank",
       JSON.stringify([
@@ -113,16 +113,20 @@ describe("RankResultScreen", () => {
 
     render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
 
-    expect(screen.getByText("Not in your play this round")).toBeInTheDocument();
+    // The player ranked i1 but never saw i2 in their play — i2 is dropped
+    // rather than shown with a "not in your play" note.
+    expect(screen.getByText("Kaikai Kitan")).toBeInTheDocument();
+    expect(screen.queryByText("Redo")).not.toBeInTheDocument();
   });
 
-  it("shows no personal annotations when the player never played this pack", () => {
+  it("shows the full pool for a round the player never played", () => {
     render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
 
+    // No recorded play for this pack → fall back to the aggregate pool so the
+    // round isn't blank.
+    expect(screen.getByText("Kaikai Kitan")).toBeInTheDocument();
+    expect(screen.getByText("Redo")).toBeInTheDocument();
     expect(screen.queryByText(/You placed this/)).not.toBeInTheDocument();
-    expect(
-      screen.queryByText("Not in your play this round"),
-    ).not.toBeInTheDocument();
   });
 
   it("renders without crashing when there are no recorded plays yet", () => {

@@ -445,8 +445,6 @@
     "rankCaption": "avg {avg} · ranked {count}x",
     "youPlaced": "You placed this #{position} · {count, plural, one {# other play agreed} other {# other plays agreed}}",
     "placed": "Placed #{position} · {count, plural, one {# other play agreed} other {# other plays agreed}}",
-    "notInYourPlay": "Not in your play this round",
-    "notInThisPlay": "Not in this play this round",
     "playAgain": "Play again",
     "shareResult": "Share result",
     "sharedNote": "You're viewing a shared result."

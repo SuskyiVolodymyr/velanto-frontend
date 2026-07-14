@@ -35,12 +35,26 @@ export function RankResultScreen({
 
       <div className="mb-8 flex flex-col gap-6">
         {results.rounds.map((round) => {
-          const sortedItems = [...round.items].sort(
-            (a, b) => a.averagePosition - b.averagePosition,
-          );
           const playedThisRound =
             ownPicks?.some((pick) => pick.roundIndex === round.roundIndex) ??
             false;
+          // A round can sample a random subset of its pool, so the aggregate
+          // includes items this player never saw. When they played the round,
+          // show only the items that were in THEIR play; otherwise (viewing
+          // aggregate-only, no recorded play) fall back to the full pool so the
+          // round isn't blank.
+          const visibleItems = playedThisRound
+            ? round.items.filter((item) =>
+                ownPicks?.some(
+                  (pick) =>
+                    pick.roundIndex === round.roundIndex &&
+                    pick.itemId === item.itemId,
+                ),
+              )
+            : round.items;
+          const sortedItems = [...visibleItems].sort(
+            (a, b) => a.averagePosition - b.averagePosition,
+          );
 
           return (
             <div key={round.roundIndex}>
@@ -100,7 +114,7 @@ export function RankResultScreen({
                           );
                         })}
                       </div>
-                      {ownPick && ownPick.position !== undefined ? (
+                      {ownPick && ownPick.position !== undefined && (
                         <Text className="pl-10 text-xs text-acc">
                           {t(shared ? "placed" : "youPlaced", {
                             position: ownPick.position + 1,
@@ -110,12 +124,6 @@ export function RankResultScreen({
                             ),
                           })}
                         </Text>
-                      ) : (
-                        playedThisRound && (
-                          <Text variant="tertiary" className="pl-10 text-xs">
-                            {t(shared ? "notInThisPlay" : "notInYourPlay")}
-                          </Text>
-                        )
                       )}
                     </Card>
                   );
