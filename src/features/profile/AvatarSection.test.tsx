@@ -20,6 +20,29 @@ vi.mock("@/src/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
 vi.mock("@/src/shared/lib/media-url", () => ({
   mediaUrl: (key: string) => `https://cdn.test/${key}`,
 }));
+// Stub the crop modal: expose a "confirm crop" button that hands back the
+// original file, and a "cancel" button. Keeps these tests focused on
+// AvatarSection's orchestration, not the cropper internals (covered separately).
+vi.mock("./AvatarCropModal", () => ({
+  AvatarCropModal: ({
+    file,
+    onCropped,
+    onCancel,
+  }: {
+    file: File;
+    onCropped: (f: File) => void;
+    onCancel: () => void;
+  }) => (
+    <div data-testid="crop-modal">
+      <button type="button" onClick={() => onCropped(file)}>
+        confirm-crop
+      </button>
+      <button type="button" onClick={onCancel}>
+        cancel-crop
+      </button>
+    </div>
+  ),
+}));
 
 const setAvatarKey = vi.fn();
 
@@ -55,6 +78,8 @@ describe("AvatarSection", () => {
     renderSection(null);
 
     await user.upload(screen.getByLabelText("Change photo"), pngFile());
+    // Picking a file opens the crop modal; upload runs on crop-confirm.
+    await user.click(screen.getByText("confirm-crop"));
 
     await waitFor(() =>
       expect(uploadMedia).toHaveBeenCalledWith(expect.any(File), "avatar"),
@@ -63,6 +88,27 @@ describe("AvatarSection", () => {
     await waitFor(() =>
       expect(setAvatarKey).toHaveBeenCalledWith("media/avatar/new.webp"),
     );
+  });
+
+  it("opens the crop modal on a valid pick and doesn't upload until confirmed", async () => {
+    const user = userEvent.setup();
+    renderSection(null);
+
+    await user.upload(screen.getByLabelText("Change photo"), pngFile());
+
+    expect(screen.getByTestId("crop-modal")).toBeInTheDocument();
+    expect(uploadMedia).not.toHaveBeenCalled();
+  });
+
+  it("cancelling the crop closes the modal without uploading", async () => {
+    const user = userEvent.setup();
+    renderSection(null);
+
+    await user.upload(screen.getByLabelText("Change photo"), pngFile());
+    await user.click(screen.getByText("cancel-crop"));
+
+    expect(screen.queryByTestId("crop-modal")).not.toBeInTheDocument();
+    expect(uploadMedia).not.toHaveBeenCalled();
   });
 
   it("rejects a non-image without uploading", async () => {
@@ -104,6 +150,7 @@ describe("AvatarSection", () => {
     renderSection(null);
 
     await user.upload(screen.getByLabelText("Change photo"), pngFile());
+    await user.click(screen.getByText("confirm-crop"));
 
     expect(
       await screen.findByText("Upload failed. Try again."),

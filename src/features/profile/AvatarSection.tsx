@@ -10,6 +10,7 @@ import { Button } from "@/src/shared/components/Button";
 import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { cn } from "@/src/shared/lib/cn";
 import { useUpdateAvatar, useRemoveAvatar } from "./api/avatar.mutations";
+import { AvatarCropModal } from "./AvatarCropModal";
 
 /**
  * The signed-in user's avatar manager on the profile-edit page: shows the
@@ -32,6 +33,9 @@ export function AvatarSection({
   const { setAvatarKey } = useAuth();
   const inputRef = useRef<HTMLInputElement>(null);
   const [validationError, setValidationError] = useState("");
+  // The picked file awaiting crop; non-null opens the crop modal. Upload doesn't
+  // start until the user confirms a crop.
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
 
   const updateAvatar = useUpdateAvatar(userId);
   const removeAvatar = useRemoveAvatar(userId);
@@ -57,10 +61,15 @@ export function AvatarSection({
       clearInput();
       return;
     }
-    updateAvatar.mutate(file, {
+    setPendingFile(file);
+    clearInput();
+  }
+
+  function handleCropped(cropped: File) {
+    setPendingFile(null);
+    updateAvatar.mutate(cropped, {
       onSuccess: (result) => setAvatarKey(result.avatarKey),
     });
-    clearInput();
   }
 
   function handleRemove() {
@@ -127,6 +136,14 @@ export function AvatarSection({
         </div>
       </div>
       {error && <Text className="mt-3 text-sm text-danger">{error}</Text>}
+      {pendingFile && (
+        <AvatarCropModal
+          file={pendingFile}
+          open
+          onCancel={() => setPendingFile(null)}
+          onCropped={handleCropped}
+        />
+      )}
     </section>
   );
 }
