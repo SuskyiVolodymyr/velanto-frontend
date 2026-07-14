@@ -254,7 +254,10 @@
     "removeTagFilter": "Quitar el filtro {tag}",
     "loading": "Cargando packs…",
     "error": "No se pudieron cargar los packs. Inténtalo más tarde.",
-    "empty": "Todavía no hay packs que coincidan con estos filtros."
+    "empty": "Todavía no hay packs que coincidan con estos filtros.",
+    "pagination": "Paginación",
+    "paginationPrevious": "Anterior",
+    "paginationNext": "Siguiente"
   },
   "formats": {
     "save_one": "Salva a uno",

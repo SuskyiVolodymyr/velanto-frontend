@@ -253,7 +253,10 @@
     "removeTagFilter": "Remove {tag} filter",
     "loading": "Loading packs…",
     "error": "Couldn't load packs. Try again later.",
-    "empty": "No packs match these filters yet."
+    "empty": "No packs match these filters yet.",
+    "pagination": "Pagination",
+    "paginationPrevious": "Previous",
+    "paginationNext": "Next"
   },
   "formats": {
     "save_one": "Save One",

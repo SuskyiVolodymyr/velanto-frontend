@@ -48,7 +48,7 @@ describe("HomeFeed", () => {
       items: [PACK_A],
       total: 1,
       page: 1,
-      limit: 50,
+      limit: 25,
     });
     render(<HomeFeed />);
 
@@ -58,7 +58,7 @@ describe("HomeFeed", () => {
       tags: [],
       sort: "popular",
       window: "month",
-      limit: 50,
+      limit: 25,
     });
   });
 
@@ -67,7 +67,7 @@ describe("HomeFeed", () => {
       items: [],
       total: 0,
       page: 1,
-      limit: 50,
+      limit: 25,
     });
     render(<HomeFeed />);
 
@@ -91,7 +91,7 @@ describe("HomeFeed", () => {
       items: [PACK_A],
       total: 1,
       page: 1,
-      limit: 50,
+      limit: 25,
     });
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
@@ -104,7 +104,7 @@ describe("HomeFeed", () => {
         tags: [],
         sort: "popular",
         window: "month",
-        limit: 50,
+        limit: 25,
       }),
     );
   });
@@ -115,7 +115,7 @@ describe("HomeFeed", () => {
       items: [PACK_A],
       total: 1,
       page: 1,
-      limit: 50,
+      limit: 25,
     });
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
@@ -135,7 +135,7 @@ describe("HomeFeed", () => {
         tags: ["Anime", "Music"],
         sort: "popular",
         window: "month",
-        limit: 50,
+        limit: 25,
       }),
     );
     expect(screen.getByRole("button", { name: "2 tags" })).toBeInTheDocument();
@@ -147,7 +147,7 @@ describe("HomeFeed", () => {
       items: [PACK_A],
       total: 1,
       page: 1,
-      limit: 50,
+      limit: 25,
     });
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
@@ -162,7 +162,7 @@ describe("HomeFeed", () => {
         tags: ["Anime", "Music"],
         sort: "popular",
         window: "month",
-        limit: 50,
+        limit: 25,
       }),
     );
 
@@ -175,7 +175,7 @@ describe("HomeFeed", () => {
         tags: ["Music"],
         sort: "popular",
         window: "month",
-        limit: 50,
+        limit: 25,
       }),
     );
     expect(screen.getByRole("button", { name: "1 tag" })).toBeInTheDocument();
@@ -187,7 +187,7 @@ describe("HomeFeed", () => {
       items: [PACK_A],
       total: 1,
       page: 1,
-      limit: 50,
+      limit: 25,
     });
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
@@ -208,7 +208,7 @@ describe("HomeFeed", () => {
       items: [],
       total: 0,
       page: 1,
-      limit: 50,
+      limit: 25,
     });
     render(<HomeFeed />);
     expect(
@@ -223,7 +223,7 @@ describe("HomeFeed", () => {
         items: [PACK_A],
         total: 1,
         page: 1,
-        limit: 50,
+        limit: 25,
       });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
@@ -239,7 +239,7 @@ describe("HomeFeed", () => {
             q: "anime",
             sort: "popular",
             window: "month",
-            limit: 50,
+            limit: 25,
           }),
         { timeout: 1000 },
       );
@@ -251,7 +251,7 @@ describe("HomeFeed", () => {
         items: [PACK_A],
         total: 1,
         page: 1,
-        limit: 50,
+        limit: 25,
       });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
@@ -266,7 +266,7 @@ describe("HomeFeed", () => {
             q: "anime",
             sort: "popular",
             window: "month",
-            limit: 50,
+            limit: 25,
           }),
         { timeout: 1000 },
       );
@@ -278,7 +278,7 @@ describe("HomeFeed", () => {
         items: [PACK_A],
         total: 1,
         page: 1,
-        limit: 50,
+        limit: 25,
       });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
@@ -293,7 +293,7 @@ describe("HomeFeed", () => {
             q: "anime",
             sort: "popular",
             window: "month",
-            limit: 50,
+            limit: 25,
           }),
         { timeout: 1000 },
       );
@@ -307,7 +307,7 @@ describe("HomeFeed", () => {
             q: undefined,
             sort: "popular",
             window: "month",
-            limit: 50,
+            limit: 25,
           }),
         { timeout: 1000 },
       );
@@ -320,7 +320,7 @@ describe("HomeFeed", () => {
         items: [],
         total: 0,
         page: 1,
-        limit: 50,
+        limit: 25,
       });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
@@ -335,7 +335,7 @@ describe("HomeFeed", () => {
         items: [],
         total: 0,
         page: 1,
-        limit: 50,
+        limit: 25,
       });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
@@ -356,7 +356,7 @@ describe("HomeFeed", () => {
         items: [],
         total: 0,
         page: 1,
-        limit: 50,
+        limit: 25,
       });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
@@ -379,7 +379,7 @@ describe("HomeFeed", () => {
         items: [],
         total: 0,
         page: 1,
-        limit: 50,
+        limit: 25,
       });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
@@ -400,7 +400,7 @@ describe("HomeFeed", () => {
         items: [],
         total: 0,
         page: 1,
-        limit: 50,
+        limit: 25,
       });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
@@ -425,7 +425,7 @@ describe("HomeFeed", () => {
         items: [],
         total: 0,
         page: 1,
-        limit: 50,
+        limit: 25,
       });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
@@ -463,7 +463,7 @@ describe("HomeFeed", () => {
         items: [PACK_A],
         total: 1,
         page: 1,
-        limit: 50,
+        limit: 25,
       });
       render(<HomeFeed />);
 
@@ -479,7 +479,7 @@ describe("HomeFeed", () => {
         items: [],
         total: 0,
         page: 1,
-        limit: 50,
+        limit: 25,
       });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
@@ -491,6 +491,76 @@ describe("HomeFeed", () => {
           localStorage.getItem("velanto:pack-filters") ?? "{}",
         );
         expect(stored.sort).toBe("popular");
+      });
+    });
+  });
+
+  describe("pagination", () => {
+    beforeEach(() => {
+      // goToPage smooth-scrolls to top; jsdom has no scroll implementation.
+      window.scrollTo = vi.fn();
+    });
+
+    it("hides the pager when a single page covers every result", async () => {
+      vi.mocked(packsClient.list).mockResolvedValue({
+        items: [PACK_A],
+        total: 1,
+        page: 1,
+        limit: 25,
+      });
+      render(<HomeFeed />);
+      await screen.findByText("Best Anime Openings");
+
+      expect(
+        screen.queryByRole("navigation", { name: "Pagination" }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("requests the chosen page when a page button is clicked", async () => {
+      const user = userEvent.setup();
+      vi.mocked(packsClient.list).mockResolvedValue({
+        items: [PACK_A],
+        total: 60,
+        page: 1,
+        limit: 25,
+      });
+      render(<HomeFeed />);
+      await screen.findByText("Best Anime Openings");
+      await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
+
+      await user.click(screen.getByRole("button", { name: "2" }));
+
+      await waitFor(() =>
+        expect(packsClient.list).toHaveBeenLastCalledWith(
+          expect.objectContaining({ page: 2 }),
+        ),
+      );
+    });
+
+    it("snaps back to page 1 when a filter changes", async () => {
+      const user = userEvent.setup();
+      vi.mocked(packsClient.list).mockResolvedValue({
+        items: [PACK_A],
+        total: 60,
+        page: 1,
+        limit: 25,
+      });
+      render(<HomeFeed />);
+      await screen.findByText("Best Anime Openings");
+
+      await user.click(screen.getByRole("button", { name: "2" }));
+      await waitFor(() =>
+        expect(packsClient.list).toHaveBeenLastCalledWith(
+          expect.objectContaining({ page: 2 }),
+        ),
+      );
+
+      await user.click(screen.getByRole("button", { name: "Sacrifice One" }));
+
+      await waitFor(() => {
+        const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
+        expect(lastCall?.format).toBe("sacrifice_one");
+        expect(lastCall?.page).toBeUndefined();
       });
     });
   });

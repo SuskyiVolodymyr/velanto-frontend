@@ -77,4 +77,36 @@ test.describe("Home feed", () => {
       )
       .toBe(true);
   });
+
+  test("paginates when the backend reports more than one page of results", async ({
+    page,
+  }) => {
+    const requestedUrls: string[] = [];
+    await page.route(`${API_BASE}/packs*`, (route) => {
+      requestedUrls.push(route.request().url());
+      // 60 total over a 25-per-page feed → 3 pages, so the pager renders.
+      return route.fulfill({
+        status: 200,
+        json: { items: [PACK_A], total: 60, page: 1, limit: 25 },
+      });
+    });
+
+    await page.goto("/");
+    await page.getByText("Best Anime Openings").waitFor();
+
+    const pager = page.getByRole("navigation", { name: "Pagination" });
+    await expect(pager).toBeVisible();
+    await expect(
+      pager.getByRole("button", { name: "Previous" }),
+    ).toBeDisabled();
+
+    await pager.getByRole("button", { name: "2", exact: true }).click();
+
+    await expect
+      .poll(() => requestedUrls.some((url) => url.includes("page=2")))
+      .toBe(true);
+    await expect(
+      pager.getByRole("button", { name: "2", exact: true }),
+    ).toHaveAttribute("aria-current", "page");
+  });
 });
