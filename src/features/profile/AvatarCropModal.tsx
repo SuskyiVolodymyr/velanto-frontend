@@ -33,11 +33,19 @@ export function AvatarCropModal({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
 
-  // Preview URL for the picked file. Created once (the modal is mounted fresh
-  // per pick, so `file` is stable for its lifetime) and revoked on unmount — the
-  // same effect owns both create and revoke, so it can never leak.
-  const [imageUrl] = useState(() => URL.createObjectURL(file));
-  useEffect(() => () => URL.revokeObjectURL(imageUrl), [imageUrl]);
+  // Preview URL for the picked file. Create AND revoke inside one effect: this
+  // is leak-free and, crucially, StrictMode-safe. React's dev double-mount runs
+  // the cleanup (revoking the URL) then re-runs the effect to mint a fresh, live
+  // one. Deriving the URL during render (useMemo / lazy state) instead leaves
+  // state pointing at a URL the double-mount cleanup already revoked, so the
+  // cropper image never loads.
+  const [imageUrl, setImageUrl] = useState("");
+  useEffect(() => {
+    const url = URL.createObjectURL(file);
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- external-resource sync: an object URL must be created and revoked in the same effect (the canonical leak-free, StrictMode-safe pattern); deriving it in render breaks under StrictMode.
+    setImageUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
 
   // Stable so react-easy-crop's effect deps don't churn every render.
   const handleCropComplete = useCallback(
