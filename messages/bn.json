@@ -560,7 +560,12 @@
     "avatarChange": "ছবি পরিবর্তন করুন",
     "avatarRemove": "ছবি সরান",
     "avatarHint": "PNG বা JPG, সর্বোচ্চ ১ MB।",
-    "avatarRemoveError": "আপনার ছবি সরানো যায়নি। আবার চেষ্টা করুন।"
+    "avatarRemoveError": "আপনার ছবি সরানো যায়নি। আবার চেষ্টা করুন।",
+    "avatarCropTitle": "আপনার অবতার ক্রপ করুন",
+    "avatarCropZoom": "জুম",
+    "avatarCropCancel": "বাতিল",
+    "avatarViewTitle": "{username} এর অবতার",
+    "avatarCropError": "ছবি ক্রপ করা যায়নি। আবার চেষ্টা করুন।"
   },
   "pages": {
     "createTitle": "প্যাক তৈরি করুন",

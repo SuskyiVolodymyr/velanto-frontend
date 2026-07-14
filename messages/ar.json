@@ -560,7 +560,12 @@
     "avatarChange": "تغيير الصورة",
     "avatarRemove": "إزالة الصورة",
     "avatarHint": "PNG أو JPG، بحد أقصى 1 ميغابايت.",
-    "avatarRemoveError": "تعذّر إزالة صورتك. حاول مرة أخرى."
+    "avatarRemoveError": "تعذّر إزالة صورتك. حاول مرة أخرى.",
+    "avatarCropTitle": "قص صورتك الرمزية",
+    "avatarCropZoom": "تكبير",
+    "avatarCropCancel": "إلغاء",
+    "avatarViewTitle": "الصورة الرمزية لـ {username}",
+    "avatarCropError": "تعذّر قص الصورة. حاول مرة أخرى."
   },
   "pages": {
     "createTitle": "أنشئ حزمة",

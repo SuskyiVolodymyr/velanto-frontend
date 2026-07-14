@@ -560,7 +560,12 @@
     "avatarChange": "更换照片",
     "avatarRemove": "移除照片",
     "avatarHint": "PNG 或 JPG，最大 1 MB。",
-    "avatarRemoveError": "无法移除您的照片。请重试。"
+    "avatarRemoveError": "无法移除您的照片。请重试。",
+    "avatarCropTitle": "裁剪你的头像",
+    "avatarCropZoom": "缩放",
+    "avatarCropCancel": "取消",
+    "avatarViewTitle": "{username} 的头像",
+    "avatarCropError": "无法裁剪图片。请重试。"
   },
   "pages": {
     "createTitle": "创建题包",

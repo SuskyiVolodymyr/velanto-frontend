@@ -560,7 +560,12 @@
     "avatarChange": "Cambiar foto",
     "avatarRemove": "Quitar foto",
     "avatarHint": "PNG o JPG, hasta 1 MB.",
-    "avatarRemoveError": "No se pudo quitar tu foto. Inténtalo de nuevo."
+    "avatarRemoveError": "No se pudo quitar tu foto. Inténtalo de nuevo.",
+    "avatarCropTitle": "Recorta tu avatar",
+    "avatarCropZoom": "Ampliar",
+    "avatarCropCancel": "Cancelar",
+    "avatarViewTitle": "Avatar de {username}",
+    "avatarCropError": "No se pudo recortar la imagen. Inténtalo de nuevo."
   },
   "pages": {
     "createTitle": "Crear un pack",

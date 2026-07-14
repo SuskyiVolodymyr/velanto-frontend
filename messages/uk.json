@@ -560,7 +560,12 @@
     "avatarChange": "Змінити фото",
     "avatarRemove": "Видалити фото",
     "avatarHint": "PNG або JPG, до 1 МБ.",
-    "avatarRemoveError": "Не вдалося видалити ваше фото. Спробуйте ще раз."
+    "avatarRemoveError": "Не вдалося видалити ваше фото. Спробуйте ще раз.",
+    "avatarCropTitle": "Обріжте аватар",
+    "avatarCropZoom": "Масштаб",
+    "avatarCropCancel": "Скасувати",
+    "avatarViewTitle": "Аватар {username}",
+    "avatarCropError": "Не вдалося обрізати зображення. Спробуйте ще раз."
   },
   "pages": {
     "createTitle": "Створити пак",
