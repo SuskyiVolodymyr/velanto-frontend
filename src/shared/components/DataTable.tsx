@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { Children, type ReactNode } from "react";
 import { Text } from "@/src/shared/components/Text";
 
 /**
@@ -51,9 +51,15 @@ export function DataTable({
         ))}
       </div>
       {isEmpty ? (
-        <Text variant="tertiary" className="p-10 text-center text-sm">
-          {empty}
-        </Text>
+        <div role="row">
+          <Text
+            role="cell"
+            variant="tertiary"
+            className="p-10 text-center text-sm"
+          >
+            {empty}
+          </Text>
+        </div>
       ) : (
         children
       )}
@@ -61,7 +67,14 @@ export function DataTable({
   );
 }
 
-/** One row of a {@link DataTable}. `columns` must match the table's track list. */
+/**
+ * One row of a {@link DataTable}. `columns` must match the table's track list.
+ *
+ * Each child becomes one cell. Callers pass the cell *contents* — the row wraps
+ * them, so a row's children are its columns, in order. The wrapper carries
+ * `min-w-0` because a grid item defaults to `min-width: auto`, which refuses to
+ * shrink below its content and so defeats `truncate` on anything inside it.
+ */
 export function DataTableRow({
   columns,
   children,
@@ -75,7 +88,20 @@ export function DataTableRow({
       className="grid items-center gap-3 border-t border-white/[0.05] px-[18px] py-[13px]"
       style={{ gridTemplateColumns: columns }}
     >
-      {children}
+      {/* toArray, not Children.map: it drops children that render nothing, so a
+          TRAILING `{cond && <X/>}` cell can't leave an empty cell behind. But
+          that also means a conditional cell in a MIDDLE position must not be a
+          bare `&&` — dropping it would shift every later cell one track to the
+          left. Give such a cell a `<span />` fallback (as the ban/remove
+          columns do) so the cell count stays fixed. Each cell wraps its child
+          in `min-w-0` so `truncate` works, but a `display:inline` child (a bare
+          <a>/<Link>) still needs its own `block`/`inline-block` — it is no
+          longer a grid item, so the grid won't blockify it for us. */}
+      {Children.toArray(children).map((child, index) => (
+        <div role="cell" className="min-w-0" key={index}>
+          {child}
+        </div>
+      ))}
     </div>
   );
 }

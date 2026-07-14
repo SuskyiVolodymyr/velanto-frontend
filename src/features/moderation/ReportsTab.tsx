@@ -74,7 +74,7 @@ export function ReportsTab() {
                       grid of cells keeps the table semantics intact. */}
                   <Link
                     href={`/moderation/reports/${report.id}`}
-                    className="truncate text-[13px] font-semibold text-foreground hover:text-acc"
+                    className="block truncate text-[13px] font-semibold text-foreground hover:text-acc"
                   >
                     {target.text}
                   </Link>
