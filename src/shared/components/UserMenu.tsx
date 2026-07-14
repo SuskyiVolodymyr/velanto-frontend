@@ -101,18 +101,8 @@ export function UserMenu({
           >
             {t("settings")}
           </Link>
-          {(user.role === "moderator" ||
-            user.role === "manager" ||
-            user.role === "admin") && (
-            <Link
-              href="/support"
-              role="menuitem"
-              onClick={() => setOpen(false)}
-              className="block px-3.5 py-2.5 text-sm text-foreground hover:bg-white/[0.06]"
-            >
-              {t("support")}
-            </Link>
-          )}
+          {/* One staff link, not two: reports and pack approvals are tabs of a
+              single panel now. */}
           {(user.role === "moderator" ||
             user.role === "manager" ||
             user.role === "admin") && (

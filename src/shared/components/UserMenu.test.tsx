@@ -81,20 +81,18 @@ describe("UserMenu", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("shows a Support link for moderator+ but not for a plain user", async () => {
+  // Reports and pack approvals are tabs of one panel now, so the menu offers a
+  // single Moderation link — a lingering Support link would be a second door
+  // into the same room.
+  it("no longer offers a separate Support link", async () => {
     const user = userEvent.setup();
-    const { rerender } = render(
+    render(
       withIntl(
         <UserMenu user={{ ...USER, role: "moderator" }} onLogout={vi.fn()} />,
       ),
     );
     await user.click(screen.getByRole("button", { name: "Account menu" }));
-    expect(screen.getByRole("menuitem", { name: "Support" })).toHaveAttribute(
-      "href",
-      "/support",
-    );
 
-    rerender(withIntl(<UserMenu user={USER} onLogout={vi.fn()} />));
     expect(
       screen.queryByRole("menuitem", { name: "Support" }),
     ).not.toBeInTheDocument();

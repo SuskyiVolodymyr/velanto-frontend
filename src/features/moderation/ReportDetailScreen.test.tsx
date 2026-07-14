@@ -6,7 +6,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { QueryClientProvider } from "@tanstack/react-query";
 import messages from "@/messages/en.json";
 import { createTestQueryClient } from "@/src/shared/test/test-query-client";
-import { SupportReportScreen } from "./SupportReportScreen";
+import { ReportDetailScreen } from "./ReportDetailScreen";
 import { reportsClient } from "@/src/shared/lib/reports-client";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import { usersClient } from "@/src/shared/lib/users-client";
@@ -92,7 +92,7 @@ function mockAuth() {
   } as ReturnType<typeof useAuth>);
 }
 
-describe("SupportReportScreen", () => {
+describe("ReportDetailScreen", () => {
   beforeEach(() => {
     vi.resetAllMocks();
     mockedRulesClient.getRules.mockResolvedValue(RULES);
@@ -101,7 +101,7 @@ describe("SupportReportScreen", () => {
   it("shows a not-found message when the report doesn't exist", async () => {
     mockAuth();
     mockedReportsClient.getById.mockRejectedValue(new Error("404"));
-    renderScreen(<SupportReportScreen reportId="missing" />);
+    renderScreen(<ReportDetailScreen reportId="missing" />);
     await waitFor(() =>
       expect(screen.getByText(/doesn't exist/i)).toBeInTheDocument(),
     );
@@ -114,7 +114,7 @@ describe("SupportReportScreen", () => {
       ...packReport,
       status: "reviewing",
     });
-    renderScreen(<SupportReportScreen reportId="r1" />);
+    renderScreen(<ReportDetailScreen reportId="r1" />);
     await waitFor(() =>
       expect(
         screen.getByRole("button", { name: "Review" }),
@@ -133,7 +133,7 @@ describe("SupportReportScreen", () => {
       ...packReport,
       status: "closed",
     });
-    renderScreen(<SupportReportScreen reportId="r1" />);
+    renderScreen(<ReportDetailScreen reportId="r1" />);
     await waitFor(() =>
       expect(
         screen.getByRole("button", { name: /mark resolved/i }),
@@ -153,7 +153,7 @@ describe("SupportReportScreen", () => {
       ...packReport,
       status: "closed",
     });
-    renderScreen(<SupportReportScreen reportId="r1" />);
+    renderScreen(<ReportDetailScreen reportId="r1" />);
     await waitFor(() =>
       expect(screen.getByText("looks fake")).toBeInTheDocument(),
     );
@@ -169,7 +169,7 @@ describe("SupportReportScreen", () => {
     mockAuth();
     mockedReportsClient.getById.mockResolvedValue(packReport);
     mockedPacksClient.delete.mockResolvedValue({ deleted: true });
-    renderScreen(<SupportReportScreen reportId="r1" />);
+    renderScreen(<ReportDetailScreen reportId="r1" />);
     await waitFor(() =>
       expect(
         screen.getByRole("button", { name: /delete pack/i }),
@@ -193,7 +193,7 @@ describe("SupportReportScreen", () => {
       ...packReport,
       status: "reviewing",
     });
-    renderScreen(<SupportReportScreen reportId="r1" />);
+    renderScreen(<ReportDetailScreen reportId="r1" />);
     await waitFor(() =>
       expect(
         screen.getByRole("button", { name: /mark resolved/i }),
@@ -211,7 +211,7 @@ describe("SupportReportScreen", () => {
       id: "user-1",
       bannedUntil: "2027-01-01T00:00:00.000Z",
     });
-    renderScreen(<SupportReportScreen reportId="r2" />);
+    renderScreen(<ReportDetailScreen reportId="r2" />);
     await waitFor(() =>
       expect(
         screen.getByRole("button", { name: /^ban user$/i }),
@@ -239,7 +239,7 @@ describe("SupportReportScreen", () => {
     mockAuth();
     mockedReportsClient.getById.mockResolvedValue(packReport);
     mockedReportsClient.review.mockRejectedValue(new Error("network"));
-    renderScreen(<SupportReportScreen reportId="r1" />);
+    renderScreen(<ReportDetailScreen reportId="r1" />);
     await waitFor(() =>
       expect(
         screen.getByRole("button", { name: "Review" }),
@@ -256,7 +256,7 @@ describe("SupportReportScreen", () => {
     mockAuth();
     mockedReportsClient.getById.mockResolvedValue(packReport);
     mockedPacksClient.delete.mockRejectedValue(new Error("network"));
-    renderScreen(<SupportReportScreen reportId="r1" />);
+    renderScreen(<ReportDetailScreen reportId="r1" />);
     await waitFor(() =>
       expect(
         screen.getByRole("button", { name: /delete pack/i }),
@@ -281,7 +281,7 @@ describe("SupportReportScreen", () => {
     mockAuth();
     mockedReportsClient.getById.mockResolvedValue(userReport);
     mockedUsersClient.ban.mockRejectedValue(new Error("network"));
-    renderScreen(<SupportReportScreen reportId="r2" />);
+    renderScreen(<ReportDetailScreen reportId="r2" />);
     await waitFor(() =>
       expect(
         screen.getByRole("button", { name: /^ban user$/i }),

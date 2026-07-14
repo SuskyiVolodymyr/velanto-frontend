@@ -141,6 +141,11 @@ export interface Pack {
   authorId: string;
   author?: PackAuthorSummary;
   createdAt: string;
+  // When the pack last entered the moderation queue — equal to createdAt until
+  // an edit re-submits it, which is why the queue orders and labels rows by this
+  // rather than by createdAt. Optional here only so the many Pack fixtures that
+  // predate the column stay valid; the backend always sends it.
+  submittedAt?: string;
   totalPlays: number;
   avgAgreementPercent: number;
   status: PackStatus;

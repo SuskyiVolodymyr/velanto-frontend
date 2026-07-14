@@ -32,6 +32,20 @@ export interface ListPacksFilters {
   window?: "day" | "week" | "month" | "year" | "all";
 }
 
+/**
+ * The pending-pack queue's filters. A subset of ListPacksFilters — a pending
+ * pack has no plays or votes, so "popular" is meaningless and the backend
+ * rejects it. The queue defaults to "oldest" (FIFO), not "newest" like the
+ * public feed does.
+ */
+export interface ModerationQueueFilters {
+  q?: string;
+  format?: PackFormat;
+  sort?: "oldest" | "newest";
+  page?: number;
+  limit?: number;
+}
+
 export interface PackList {
   items: Pack[];
   total: number;
@@ -72,7 +86,7 @@ export const packsClient = {
   vote: (id: string, value: 1 | -1) =>
     apiClient.post<VoteResult>(`/packs/${id}/vote`, { value }),
   unvote: (id: string) => apiClient.delete<VoteResult>(`/packs/${id}/vote`),
-  moderationQueue: (filters: { page?: number; limit?: number } = {}) =>
+  moderationQueue: (filters: ModerationQueueFilters = {}) =>
     apiClient.get<PackList>(
       `/packs/moderation-queue${buildListQuery(filters)}`,
     ),
