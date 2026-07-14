@@ -46,6 +46,8 @@ const IDENTICAL_ALLOWED = new Set([
   "home.groupFormat",
   "home.groupTags",
   "home.tagCount",
+  // "Pagination" is the identical word in French.
+  "home.pagination",
   // create-form loanwords: "Format" (fr), "Tags" (fr/pt), "Manual" (es/pt),
   // "Link" (pt) are the same word in those locales.
   "create.formatHeading",

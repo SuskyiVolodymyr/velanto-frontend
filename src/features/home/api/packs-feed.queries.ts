@@ -3,8 +3,11 @@ import {
   useQuery,
   keepPreviousData,
 } from "@tanstack/react-query";
-import type { Pack } from "@/src/shared/types/pack";
-import { getPacksFeed, type PacksFeedFilters } from "./packs-feed";
+import {
+  getPacksFeed,
+  type PacksFeedFilters,
+  type PacksFeedResult,
+} from "./packs-feed";
 
 export function packsFeedQueryOptions(filters: PacksFeedFilters) {
   return queryOptions({
@@ -21,7 +24,10 @@ export function packsFeedQueryOptions(filters: PacksFeedFilters) {
  * Window-focus refetches are disabled to match the old behavior. The
  * default-filters query is seeded from the SSR feed via `initialData`.
  */
-export function usePacksFeed(filters: PacksFeedFilters, initialData?: Pack[]) {
+export function usePacksFeed(
+  filters: PacksFeedFilters,
+  initialData?: PacksFeedResult,
+) {
   return useQuery({
     ...packsFeedQueryOptions(filters),
     initialData,

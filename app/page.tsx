@@ -7,7 +7,7 @@ export default async function Home() {
   const t = await getTranslations("home");
   // Seed the default feed server-side for indexable landing content; null on
   // failure falls back to HomeFeed's own client fetch.
-  const initialPacks = await getHomeFeedServer();
+  const initialFeed = await getHomeFeedServer();
 
   return (
     <main className="flex-1 px-7 py-10">
@@ -17,7 +17,7 @@ export default async function Home() {
       <Text variant="secondary" className="mb-8 max-w-lg">
         {t("subtitle")}
       </Text>
-      <HomeFeed initialPacks={initialPacks ?? undefined} />
+      <HomeFeed initialFeed={initialFeed ?? undefined} />
     </main>
   );
 }

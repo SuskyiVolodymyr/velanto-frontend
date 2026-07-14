@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import type { Pack, PackTag } from "@/src/shared/types/pack";
+import type { PackTag } from "@/src/shared/types/pack";
 import {
   DEFAULT_POPULAR_WINDOW,
   type FormatFilterValue,
@@ -9,7 +9,11 @@ import {
   type WindowFilterValue,
 } from "@/src/features/home/filter-options";
 import { usePacksFeed } from "@/src/features/home/api/packs-feed.queries";
-import type { PacksFeedFilters } from "@/src/features/home/api/packs-feed";
+import {
+  PACKS_FEED_PAGE_SIZE,
+  type PacksFeedFilters,
+  type PacksFeedResult,
+} from "@/src/features/home/api/packs-feed";
 import {
   readPackFilters,
   writePackFilters,
@@ -23,11 +27,12 @@ export type FeedStatus = "loading" | "ready" | "error";
 // Owns the home-feed filter state and derives the React Query request from it,
 // so HomeFeed stays a thin layout orchestrator and the filter sidebar/results
 // stay purely presentational. The fetch itself lives in `usePacksFeed`.
-export function useHomeFeed(initialPacks?: Pack[]) {
+export function useHomeFeed(initialFeed?: PacksFeedResult) {
   const [format, setFormat] = useState<FormatFilterValue>("all");
   const [tags, setTags] = useState<PackTag[]>([]);
   const [searchInput, setSearchInput] = useState("");
   const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
   // Default to Popular / this month so the landing feed leads with what people
   // are actually playing, not the newest upload.
   const [sort, setSort] = useState<SortFilterValue>("popular");
@@ -73,6 +78,21 @@ export function useHomeFeed(initialPacks?: Pack[]) {
     return () => clearTimeout(timeout);
   }, [searchInput]);
 
+  // Snap back to the first page whenever the active filters change, so
+  // narrowing the results while deep in the list doesn't leave the user on a
+  // now-out-of-range page. Done as an effect (not wrapped setters) to keep the
+  // reset in one place. Trade-off: when the filters change while on page > 1,
+  // the render commits with the new filter + old page for one tick, so a single
+  // extra fetch for that (never-shown) combination fires before the reset lands
+  // — `keepPreviousData` hides it and the final state is correct. On page 1
+  // (the common case) React bails on the identical setState, so no extra fetch.
+  // Note this only covers filter changes, not a same-filter refetch whose total
+  // shrank below the current page.
+  useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
+    setPage(1);
+  }, [format, tags, query, sort, window]);
+
   // Resolve the UI filter state into the request/query key: the "all" format
   // sentinel and empty search collapse to undefined, and sort/window only apply
   // under the popular sort.
@@ -81,10 +101,11 @@ export function useHomeFeed(initialPacks?: Pack[]) {
       format: format === "all" ? undefined : format,
       tags,
       q: query || undefined,
+      page,
       sort: sort === "popular" ? "popular" : undefined,
       window: sort === "popular" ? window : undefined,
     }),
-    [format, tags, query, sort, window],
+    [format, tags, query, page, sort, window],
   );
 
   // Seed only the default-filters query with the server-rendered feed — other
@@ -94,14 +115,17 @@ export function useHomeFeed(initialPacks?: Pack[]) {
     format === "all" &&
     tags.length === 0 &&
     !query &&
+    page === 1 &&
     sort === "popular" &&
     window === DEFAULT_POPULAR_WINDOW;
   const feedQuery = usePacksFeed(
     filters,
-    isDefaultFilters ? initialPacks : undefined,
+    isDefaultFilters ? initialFeed : undefined,
   );
 
-  const packs = feedQuery.data ?? [];
+  const packs = feedQuery.data?.items ?? [];
+  const total = feedQuery.data?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / PACKS_FEED_PAGE_SIZE));
   const status: FeedStatus = feedQuery.isError
     ? "error"
     : feedQuery.isLoading
@@ -130,5 +154,8 @@ export function useHomeFeed(initialPacks?: Pack[]) {
     selectSort,
     window,
     setWindow,
+    page,
+    totalPages,
+    setPage,
   };
 }

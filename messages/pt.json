@@ -254,7 +254,10 @@
     "removeTagFilter": "Remover filtro {tag}",
     "loading": "Carregando packs…",
     "error": "Não foi possível carregar os packs. Tente novamente mais tarde.",
-    "empty": "Nenhum pack com esses filtros ainda."
+    "empty": "Nenhum pack com esses filtros ainda.",
+    "pagination": "Paginação",
+    "paginationPrevious": "Anterior",
+    "paginationNext": "Próximo"
   },
   "formats": {
     "save_one": "Salve um",

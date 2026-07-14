@@ -254,7 +254,10 @@
     "removeTagFilter": "Retirer le filtre {tag}",
     "loading": "Chargement des packs…",
     "error": "Impossible de charger les packs. Réessayez plus tard.",
-    "empty": "Aucun pack ne correspond à ces filtres pour l'instant."
+    "empty": "Aucun pack ne correspond à ces filtres pour l'instant.",
+    "pagination": "Pagination",
+    "paginationPrevious": "Précédent",
+    "paginationNext": "Suivant"
   },
   "formats": {
     "save_one": "Sauve-en un",

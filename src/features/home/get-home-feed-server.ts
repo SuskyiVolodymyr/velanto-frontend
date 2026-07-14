@@ -1,12 +1,12 @@
-import type { Pack } from "@/src/shared/types/pack";
+import type { PacksFeedResult } from "@/src/features/home/api/packs-feed";
+import { PACKS_FEED_PAGE_SIZE } from "@/src/features/home/api/packs-feed";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 // Mirrors HomeFeed's default (unfiltered) view: approved packs, Popular / this
-// month, one page. Must stay in sync with useHomeFeed's default sort/window and
-// PAGE_SIZE, or the client refetches instead of using this seed.
-const PAGE_SIZE = 50;
-const DEFAULT_FEED_QUERY = `limit=${PAGE_SIZE}&sort=popular&window=month`;
+// month, first page. Must stay in sync with useHomeFeed's default sort/window
+// and PACKS_FEED_PAGE_SIZE, or the client refetches instead of using this seed.
+const DEFAULT_FEED_QUERY = `page=1&limit=${PACKS_FEED_PAGE_SIZE}&sort=popular&window=month`;
 
 /**
  * Server Component-only fetch of the default public feed, used to seed
@@ -15,14 +15,17 @@ const DEFAULT_FEED_QUERY = `limit=${PAGE_SIZE}&sort=popular&window=month`;
  * packs only. Returns null on any failure so the caller can fall back to the
  * client-only fetch path rather than crash the home route at build/request time.
  */
-export async function getHomeFeedServer(): Promise<Pack[] | null> {
+export async function getHomeFeedServer(): Promise<PacksFeedResult | null> {
   try {
     const res = await fetch(`${API_BASE_URL}/packs?${DEFAULT_FEED_QUERY}`, {
       cache: "no-store",
     });
     if (!res.ok) return null;
-    const data = (await res.json()) as { items?: Pack[] };
-    return data.items ?? [];
+    const data = (await res.json()) as {
+      items?: PacksFeedResult["items"];
+      total?: number;
+    };
+    return { items: data.items ?? [], total: data.total ?? 0 };
   } catch {
     return null;
   }
