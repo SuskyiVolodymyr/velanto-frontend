@@ -52,6 +52,21 @@ describe("pack-filters-storage", () => {
     });
   });
 
+  // A blob written before the date sort shipped has no `dateOrder` key at all.
+  it("reads a legacy blob with no dateOrder back as the default", () => {
+    localStorage.setItem(
+      "velanto:pack-filters",
+      JSON.stringify({
+        format: "all",
+        sort: "relevance",
+        window: "week",
+        tags: [],
+      }),
+    );
+
+    expect(readPackFilters()?.dateOrder).toBe("newest");
+  });
+
   it("round-trips the date sort with an oldest-first order", () => {
     const filters: StoredPackFilters = {
       format: "all",

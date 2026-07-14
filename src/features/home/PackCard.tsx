@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Badge } from "@/src/shared/components/Badge";
 import { StatusBadge } from "@/src/shared/components/StatusBadge";
 import { CoverImage } from "@/src/shared/components/CoverImage";
@@ -9,7 +9,7 @@ import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { Username } from "@/src/shared/components/Username";
 import { Text } from "@/src/shared/components/Text";
 import { getRoundsCount } from "@/src/shared/lib/pack-display";
-import { formatRelativeTime } from "@/src/shared/lib/relative-time";
+import { formatRelativeTimeIntl } from "@/src/shared/lib/relative-time";
 import type { Pack } from "@/src/shared/types/pack";
 
 export function PackCard({
@@ -20,7 +20,9 @@ export function PackCard({
   showStatus?: boolean;
 }) {
   const tFormat = useTranslations("formats");
+  const locale = useLocale();
   const roundsCount = getRoundsCount(pack);
+  const createdLabel = formatRelativeTimeIntl(pack.createdAt, locale);
   const statsLabel =
     pack.totalPlays === 0
       ? "No plays yet"
@@ -69,11 +71,13 @@ export function PackCard({
                 render seconds apart). suppressHydrationWarning keeps the server
                 copy on hydration and lets later renders refresh it; the exact
                 instant stays machine-readable in `dateTime` regardless. */}
-            <Text variant="tertiary" className="ml-auto shrink-0 text-xs">
-              <time dateTime={pack.createdAt} suppressHydrationWarning>
-                {formatRelativeTime(pack.createdAt)}
-              </time>
-            </Text>
+            {createdLabel && (
+              <Text variant="tertiary" className="ml-auto shrink-0 text-xs">
+                <time dateTime={pack.createdAt} suppressHydrationWarning>
+                  {createdLabel}
+                </time>
+              </Text>
+            )}
           </div>
           <div className="mt-auto flex items-center justify-between gap-2">
             <Text variant="tertiary" className="shrink-0 text-xs">

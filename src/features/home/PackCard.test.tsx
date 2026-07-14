@@ -88,19 +88,38 @@ describe("PackCard", () => {
     it("shows how long ago the pack was created", () => {
       renderAgedPack("2026-01-01T00:00:00.000Z", "2026-05-01T00:00:00.000Z");
 
-      expect(screen.getByText("120d ago")).toBeInTheDocument();
+      expect(screen.getByText("120 days ago")).toBeInTheDocument();
     });
 
     it("shows minutes for a freshly created pack", () => {
       renderAgedPack("2026-01-01T00:00:00.000Z", "2026-01-01T00:02:00.000Z");
 
-      expect(screen.getByText("2m ago")).toBeInTheDocument();
+      expect(screen.getByText("2 minutes ago")).toBeInTheDocument();
+    });
+
+    // Day-capped on purpose: even a year-old pack still reads in days.
+    it("never escalates past days for a very old pack", () => {
+      renderAgedPack("2025-01-01T00:00:00.000Z", "2026-01-01T00:00:00.000Z");
+
+      expect(screen.getByText("365 days ago")).toBeInTheDocument();
+    });
+
+    // Intl.RelativeTimeFormat throws a RangeError on NaN, so an unparseable
+    // createdAt must not be allowed to take the whole card down.
+    it("renders the card without a timestamp when createdAt is unusable", () => {
+      vi.setSystemTime(new Date("2026-05-01T00:00:00.000Z"));
+      render(
+        <PackCard pack={{ ...BASE_PACK, format: "save_one", createdAt: "" }} />,
+      );
+
+      expect(screen.getByText(BASE_PACK.title)).toBeInTheDocument();
+      expect(document.querySelector("time")).not.toBeInTheDocument();
     });
 
     it("exposes the exact instant in a machine-readable dateTime attribute", () => {
       renderAgedPack("2026-01-01T00:00:00.000Z", "2026-05-01T00:00:00.000Z");
 
-      expect(screen.getByText("120d ago").closest("time")).toHaveAttribute(
+      expect(screen.getByText("120 days ago").closest("time")).toHaveAttribute(
         "dateTime",
         "2026-01-01T00:00:00.000Z",
       );
