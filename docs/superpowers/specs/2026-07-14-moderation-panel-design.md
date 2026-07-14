@@ -1,15 +1,24 @@
 # Moderation panel — combine /support + /moderation into one tabbed panel
 
-**Status:** APPROVED by the user 2026-07-14 — not started. Build straight from this doc.
+**Status:** ✅ SHIPPED 2026-07-15 — velanto-backend #132 + #133, velanto-frontend #173, all merged
+to `develop`. This doc is now a record of what was decided and why, not a plan.
 **Repos:** velanto-frontend (bulk) + velanto-backend (filters, counts).
 
-**Explicitly approved:** the FIFO flip (pack queue → oldest-first + sort toggle), the new
-`GET /moderation/counts` endpoint for tab badges, and URL-driven tab state (`?tab=`).
-Everything in Decisions below is signed off; don't re-litigate it, just build it.
+**Built as designed**, with two additions the design didn't foresee:
 
-**Suggested build order:** backend first (queue filters + FIFO + counts endpoint), then the
-`shared/` table promotion, then the panel shell + Reports tab, then Pack approvals, then the
-`/support` redirects + header nav. One PR per repo, or split the FE if it gets large.
+- **`Pack.submittedAt` (new column).** Ordering the FIFO queue by `createdAt` was wrong: an edit
+  re-moderates a pack, so an old pack edited today would re-enter the queue at the very FRONT,
+  ahead of everything genuinely waiting. `submittedAt` is stamped on create and re-stamped by any
+  edit that returns the pack to the queue; the queue orders (and labels its SUBMITTED column) by
+  it. Ordering also carries an `id` tiebreak so a page boundary can't show one pack twice and skip
+  another.
+- **Queue rows carry the author summary.** The design assumed `PublicPack` already had it — it
+  didn't; only the discovery feed attached it. `attachAuthors` moved out of `PackQueryService` into
+  a shared `PackAuthorsService`.
+
+Also note: every action that resolves queued work (approve, reject, review, close, delete-pack-
+from-a-report) must invalidate the lists AND `["moderation-counts"]`. `staleTime` is 30s, so
+patching only the open report leaves its row reading "New" and the badge still counting it.
 
 ## Problem
 
