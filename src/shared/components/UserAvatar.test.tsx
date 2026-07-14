@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { UserAvatar } from "./UserAvatar";
 
 vi.mock("@/src/shared/lib/media-url", () => ({
@@ -47,6 +47,17 @@ describe("UserAvatar", () => {
 
   it("falls back to the initial when avatarKey is null", () => {
     render(<UserAvatar username="quinn" avatarKey={null} />);
+    expect(screen.getByText("Q")).toBeInTheDocument();
+    expect(document.querySelector("img")).toBeNull();
+  });
+
+  it("degrades to the initial when the avatar image fails to load (e.g. a 404 key)", () => {
+    render(<UserAvatar username="quinn" avatarKey="media/avatar/gone.webp" />);
+    const img = document.querySelector("img");
+    expect(img).not.toBeNull();
+
+    fireEvent.error(img!);
+
     expect(screen.getByText("Q")).toBeInTheDocument();
     expect(document.querySelector("img")).toBeNull();
   });

@@ -1,5 +1,6 @@
 import { cn } from "@/src/shared/lib/cn";
 import { mediaUrl } from "@/src/shared/lib/media-url";
+import { AvatarImage } from "./AvatarImage";
 
 /**
  * User avatar. Renders the user's uploaded photo (resolved from its storage
@@ -22,19 +23,20 @@ export function UserAvatar({
   avatarKey?: string | null;
   className?: string;
 }) {
+  const initial = username.trim().slice(0, 1).toUpperCase() || "?";
   if (avatarKey) {
+    // `key` on the resolved URL so a changed avatar resets AvatarImage's
+    // load-error state (a fresh key gets a fresh attempt).
     return (
-      // eslint-disable-next-line @next/next/no-img-element -- CDN-resolved avatar; Next <Image> needs remote-loader config and adds no value for this small, already-processed thumbnail
-      <img
+      <AvatarImage
+        key={avatarKey}
         src={mediaUrl(avatarKey)}
-        alt=""
-        aria-hidden
-        className={cn("object-cover", className)}
+        initial={initial}
+        className={className}
       />
     );
   }
 
-  const initial = username.trim().slice(0, 1).toUpperCase() || "?";
   return (
     <span
       aria-hidden
