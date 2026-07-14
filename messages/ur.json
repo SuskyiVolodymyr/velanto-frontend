@@ -560,7 +560,12 @@
     "avatarChange": "تصویر تبدیل کریں",
     "avatarRemove": "تصویر ہٹائیں",
     "avatarHint": "PNG یا JPG، زیادہ سے زیادہ 1 MB۔",
-    "avatarRemoveError": "آپ کی تصویر ہٹائی نہیں جا سکی۔ دوبارہ کوشش کریں۔"
+    "avatarRemoveError": "آپ کی تصویر ہٹائی نہیں جا سکی۔ دوبارہ کوشش کریں۔",
+    "avatarCropTitle": "اپنا اوتار کاٹیں",
+    "avatarCropZoom": "زوم",
+    "avatarCropCancel": "منسوخ کریں",
+    "avatarViewTitle": "{username} کا اوتار",
+    "avatarCropError": "تصویر کاٹی نہ جا سکی۔ دوبارہ کوشش کریں۔"
   },
   "pages": {
     "createTitle": "پیک بنائیں",
