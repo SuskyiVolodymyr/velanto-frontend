@@ -397,7 +397,7 @@ describe("HomeFeed", () => {
       expect(lastCall?.window).toBe("month");
     });
 
-    it("re-selecting Popular after Relevance sends popular/month", async () => {
+    it("re-selecting Popular after Date sends popular/month", async () => {
       const user = userEvent.setup();
       vi.mocked(packsClient.list).mockResolvedValue({
         items: [],
@@ -410,7 +410,7 @@ describe("HomeFeed", () => {
 
       await user.selectOptions(
         screen.getByRole("combobox", { name: "Sort by" }),
-        "relevance",
+        "date",
       );
       await user.selectOptions(
         screen.getByRole("combobox", { name: "Sort by" }),
@@ -440,7 +440,7 @@ describe("HomeFeed", () => {
 
       await user.selectOptions(
         screen.getByRole("combobox", { name: "Sort by" }),
-        "relevance",
+        "date",
       );
       expect(
         screen.queryByRole("button", { name: "Month" }),
@@ -474,7 +474,7 @@ describe("HomeFeed", () => {
       });
     });
 
-    it("switching back to Relevance omits sort and window from the next request", async () => {
+    it("sends newest/oldest (not a bare sort) when Date is active", async () => {
       const user = userEvent.setup();
       vi.mocked(packsClient.list).mockResolvedValue({
         items: [],
@@ -484,23 +484,16 @@ describe("HomeFeed", () => {
       });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
-      await user.selectOptions(
-        screen.getByRole("combobox", { name: "Sort by" }),
-        "popular",
-      );
-      await waitFor(() => {
-        const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
-        expect(lastCall?.sort).toBe("popular");
-      });
 
       await user.selectOptions(
         screen.getByRole("combobox", { name: "Sort by" }),
-        "relevance",
+        "date",
       );
 
       await waitFor(() => {
         const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
-        expect(lastCall?.sort).toBeUndefined();
+        // Date flattens to the default newest-first order; the window drops out.
+        expect(lastCall?.sort).toBe("newest");
         expect(lastCall?.window).toBeUndefined();
       });
     });
@@ -525,7 +518,7 @@ describe("HomeFeed", () => {
 
       await user.selectOptions(
         screen.getByRole("combobox", { name: "Sort by" }),
-        "relevance",
+        "date",
       );
       await user.selectOptions(
         screen.getByRole("combobox", { name: "Sort by" }),
@@ -547,7 +540,7 @@ describe("HomeFeed", () => {
         JSON.stringify({
           format: "save_one",
           tags: ["Anime"],
-          sort: "relevance",
+          sort: "popular",
           window: "week",
         }),
       );

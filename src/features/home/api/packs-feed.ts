@@ -19,8 +19,9 @@ export interface PacksFeedFilters {
   page?: number;
   /**
    * The backend sort. The UI's "date" sort is already flattened into
-   * "newest"/"oldest" here (see useHomeFeed); "relevance" collapses to
-   * undefined, the backend's default ordering.
+   * "newest"/"oldest" here (see useHomeFeed). Omitting it would fall back to the
+   * backend's default (relevance) ordering, but the UI always sends one of these
+   * now that the Relevance sort option is gone.
    */
   sort?: "popular" | "newest" | "oldest";
   /** Popularity window; only meaningful when `sort` is "popular". */

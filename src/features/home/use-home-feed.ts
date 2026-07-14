@@ -101,20 +101,14 @@ export function useHomeFeed(initialFeed?: PacksFeedResult) {
   // Resolve the UI filter state into the request/query key: the "all" format
   // sentinel and empty search collapse to undefined; the "date" sort flattens
   // into the backend's newest/oldest wire values; and `window` only rides along
-  // under the popular sort. "relevance" sends no sort at all (the backend's
-  // default ordering).
+  // under the popular sort.
   const filters = useMemo<PacksFeedFilters>(
     () => ({
       format: format === "all" ? undefined : format,
       tags,
       q: query || undefined,
       page,
-      sort:
-        sort === "popular"
-          ? "popular"
-          : sort === "date"
-            ? dateOrder
-            : undefined,
+      sort: sort === "popular" ? "popular" : dateOrder,
       window: sort === "popular" ? window : undefined,
     }),
     [format, tags, query, page, sort, window, dateOrder],
