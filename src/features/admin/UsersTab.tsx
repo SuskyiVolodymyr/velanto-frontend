@@ -11,7 +11,7 @@ import {
   isCurrentlyBanned,
 } from "@/src/features/admin/use-users-admin";
 import { UserRow } from "@/src/features/admin/UserRow";
-import { AdminTable } from "@/src/features/admin/AdminTable";
+import { DataTable } from "@/src/shared/components/DataTable";
 
 const COLUMNS = "1.3fr 100px 100px 110px 130px";
 
@@ -64,7 +64,7 @@ export function UsersTab() {
       )}
 
       {status === "ready" && (
-        <AdminTable
+        <DataTable
           columns={COLUMNS}
           headers={["User", "Packs", "Plays", "Status", ""]}
           empty="No users match this search."
@@ -91,7 +91,7 @@ export function UsersTab() {
               onConfirmBan={handleBan}
             />
           ))}
-        </AdminTable>
+        </DataTable>
       )}
 
       {actionError && (

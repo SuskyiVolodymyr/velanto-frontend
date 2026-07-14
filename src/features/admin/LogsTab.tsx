@@ -8,11 +8,12 @@ import { Select } from "@/src/shared/components/Select";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { useAdminLogs } from "@/src/features/admin/api/admin.queries";
 import {
+  ADMIN_PAGE_SIZE,
   EMPTY_AUDIT_FILTERS,
   type AuditLogFilters,
 } from "@/src/features/admin/api/admin";
-import { AdminTable, AdminTableRow } from "@/src/features/admin/AdminTable";
-import { AdminPagination } from "@/src/features/admin/AdminPagination";
+import { DataTable, DataTableRow } from "@/src/shared/components/DataTable";
+import { TablePagination } from "@/src/shared/components/TablePagination";
 import {
   AUDIT_ACTIONS,
   auditActionStyle,
@@ -129,7 +130,7 @@ export function LogsTab() {
 
       {!logsQuery.isLoading && !logsQuery.isError && (
         <>
-          <AdminTable
+          <DataTable
             columns={COLUMNS}
             headers={["Time", "Actor", "Action", "Target", "Details"]}
             empty="No log entries match these filters."
@@ -138,7 +139,7 @@ export function LogsTab() {
             {logs.map((log) => {
               const action = auditActionStyle(log.action);
               return (
-                <AdminTableRow key={log.id} columns={COLUMNS}>
+                <DataTableRow key={log.id} columns={COLUMNS}>
                   <Text
                     variant="tertiary"
                     className="text-[12.5px] tabular-nums"
@@ -162,12 +163,17 @@ export function LogsTab() {
                   <Text variant="tertiary" className="truncate text-[12.5px]">
                     {formatMeta(log.meta)}
                   </Text>
-                </AdminTableRow>
+                </DataTableRow>
               );
             })}
-          </AdminTable>
+          </DataTable>
 
-          <AdminPagination page={page} total={total} onPageChange={setPage} />
+          <TablePagination
+            page={page}
+            total={total}
+            pageSize={ADMIN_PAGE_SIZE}
+            onPageChange={setPage}
+          />
         </>
       )}
     </div>

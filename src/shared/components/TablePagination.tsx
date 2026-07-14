@@ -1,27 +1,30 @@
 "use client";
 
 import { Text } from "@/src/shared/components/Text";
-import { ADMIN_PAGE_SIZE } from "@/src/features/admin/api/admin";
 
 /**
  * "Showing 1–20 of 132" plus Prev/Next, per the design. A simple two-button
- * pager (not the home feed's numbered one) — admin lists are scanned and
- * filtered, not browsed page-by-page.
+ * pager (not the home feed's numbered one) — staff lists are scanned and
+ * filtered, not browsed page-by-page. `pageSize` is a prop rather than a shared
+ * constant: it belongs to whichever list is being paged, and shared/ can't
+ * reach into a feature to read it.
  */
-export function AdminPagination({
+export function TablePagination({
   page,
   total,
+  pageSize,
   onPageChange,
 }: {
   page: number;
   total: number;
+  pageSize: number;
   onPageChange: (page: number) => void;
 }) {
-  const totalPages = Math.max(1, Math.ceil(total / ADMIN_PAGE_SIZE));
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
   if (total === 0) return null;
 
-  const first = (page - 1) * ADMIN_PAGE_SIZE + 1;
-  const last = Math.min(page * ADMIN_PAGE_SIZE, total);
+  const first = (page - 1) * pageSize + 1;
+  const last = Math.min(page * pageSize, total);
 
   return (
     <div className="flex items-center justify-between gap-3">
