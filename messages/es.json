@@ -531,7 +531,12 @@
     "imageTooLarge": "La imagen debe pesar 1 MB o menos.",
     "imageUploadFailed": "Error al subir. Inténtalo de nuevo.",
     "imageTitleRequired": "Añade un título para esta imagen.",
-    "imageRequired": "Primero elige una imagen."
+    "imageRequired": "Primero elige una imagen.",
+    "coverCropTitle": "Recorta tu portada",
+    "coverCropZoom": "Ampliar",
+    "coverCropCancel": "Cancelar",
+    "coverCropSave": "Guardar",
+    "coverCropError": "No se pudo recortar la imagen. Inténtalo de nuevo."
   },
   "profile": {
     "loginRequiredView": "Tienes que iniciar sesión para ver tu perfil.",

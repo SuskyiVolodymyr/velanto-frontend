@@ -255,8 +255,7 @@ test.describe("Create pack", () => {
       .getByLabel("Pack description")
       .fill("Pick your favorite each round.");
 
-    // Upload a tiny PNG as the pack cover; the remove control appears once the
-    // upload resolves and the key is staged.
+    // Upload a tiny PNG as the pack cover; picking it opens the crop modal.
     await page.getByLabel("Cover image").setInputFiles({
       name: "cover.png",
       mimeType: "image/png",
@@ -265,6 +264,14 @@ test.describe("Create pack", () => {
         "hex",
       ),
     });
+    // Confirm the crop; the upload runs on Save and the remove control appears
+    // once the key is staged. Scope to the dialog so "Save" doesn't match the
+    // "Save One" format button.
+    const cropDialog = page.getByRole("dialog");
+    await expect(
+      cropDialog.getByRole("heading", { name: "Crop your cover" }),
+    ).toBeVisible();
+    await cropDialog.getByRole("button", { name: "Save" }).click();
     await expect(
       page.getByRole("button", { name: "Remove cover image" }),
     ).toBeVisible();

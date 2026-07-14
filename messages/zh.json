@@ -531,7 +531,12 @@
     "imageTooLarge": "图片不得超过 1 MB。",
     "imageUploadFailed": "上传失败，请重试。",
     "imageTitleRequired": "为此图片添加标题。",
-    "imageRequired": "请先选择图片。"
+    "imageRequired": "请先选择图片。",
+    "coverCropTitle": "裁剪封面",
+    "coverCropZoom": "缩放",
+    "coverCropCancel": "取消",
+    "coverCropSave": "保存",
+    "coverCropError": "无法裁剪图片。请重试。"
   },
   "profile": {
     "loginRequiredView": "你需要先登录才能查看个人资料。",

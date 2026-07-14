@@ -11,6 +11,29 @@ vi.mock("@/src/shared/lib/media-client", () => ({
   uploadMedia: vi.fn(),
   MEDIA_MAX_BYTES: 1024 * 1024,
 }));
+// Stub the crop modal: a "confirm crop" button that hands back the original
+// file, and a "cancel" button. Keeps these tests on CoverImageField's
+// orchestration; the cropper itself is covered by ImageCropModal's tests.
+vi.mock("./CoverCropModal", () => ({
+  CoverCropModal: ({
+    file,
+    onCropped,
+    onCancel,
+  }: {
+    file: File;
+    onCropped: (f: File) => void;
+    onCancel: () => void;
+  }) => (
+    <div data-testid="cover-crop-modal">
+      <button type="button" onClick={() => onCropped(file)}>
+        confirm-crop
+      </button>
+      <button type="button" onClick={onCancel}>
+        cancel-crop
+      </button>
+    </div>
+  ),
+}));
 
 function Harness({
   initialKey,
@@ -59,6 +82,8 @@ describe("CoverImageField", () => {
     const { container } = render(<Harness />);
 
     await user.upload(screen.getByLabelText("Cover image"), pngFile());
+    // Picking a file opens the crop modal; upload runs on crop-confirm.
+    await user.click(screen.getByText("confirm-crop"));
 
     await waitFor(() =>
       expect(uploadMedia).toHaveBeenCalledWith(expect.any(File), "cover"),
@@ -70,6 +95,27 @@ describe("CoverImageField", () => {
     expect(
       screen.getByRole("button", { name: "Remove cover image" }),
     ).toBeInTheDocument();
+  });
+
+  it("opens the crop modal on a valid pick and doesn't upload until confirmed", async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+
+    await user.upload(screen.getByLabelText("Cover image"), pngFile());
+
+    expect(screen.getByTestId("cover-crop-modal")).toBeInTheDocument();
+    expect(uploadMedia).not.toHaveBeenCalled();
+  });
+
+  it("cancelling the crop closes the modal without uploading", async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+
+    await user.upload(screen.getByLabelText("Cover image"), pngFile());
+    await user.click(screen.getByText("cancel-crop"));
+
+    expect(screen.queryByTestId("cover-crop-modal")).not.toBeInTheDocument();
+    expect(uploadMedia).not.toHaveBeenCalled();
   });
 
   it("removes the cover, clearing the preview back to the gradient", async () => {
@@ -131,6 +177,7 @@ describe("CoverImageField", () => {
     render(<Harness onUploadingChange={onUploadingChange} />);
 
     await user.upload(screen.getByLabelText("Cover image"), pngFile());
+    await user.click(screen.getByText("confirm-crop"));
     await waitFor(() => expect(onUploadingChange).toHaveBeenCalledWith(true));
 
     resolveUpload({ key: "media/cover/x.webp", url: "u", byteSize: 8 });
@@ -145,6 +192,7 @@ describe("CoverImageField", () => {
     const { container } = render(<Harness />);
 
     await user.upload(screen.getByLabelText("Cover image"), pngFile());
+    await user.click(screen.getByText("confirm-crop"));
 
     expect(
       await screen.findByText("Upload failed. Try again."),
