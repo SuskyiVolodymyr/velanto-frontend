@@ -7,7 +7,7 @@ import { useAuth } from "@/src/shared/lib/auth-context";
 import { authorQueryOptions } from "@/src/features/author/api/author.queries";
 import { Text } from "@/src/shared/components/Text";
 import { Username } from "@/src/shared/components/Username";
-import { UserAvatar } from "@/src/shared/components/UserAvatar";
+import { AvatarLightbox } from "@/src/shared/components/AvatarLightbox";
 import { buttonClassName } from "@/src/shared/components/Button";
 import { PackCard } from "@/src/features/home/PackCard";
 
@@ -54,7 +54,7 @@ export function ProfileScreen() {
     <div className="mx-auto w-full max-w-4xl px-7 py-10">
       <div className="mb-8 flex items-start justify-between gap-4">
         <div className="flex items-center gap-4">
-          <UserAvatar
+          <AvatarLightbox
             username={profile.username}
             avatarKey={profile.avatarKey}
             className="h-16 w-16 rounded-full border border-border bg-surface text-xl text-foreground-secondary"

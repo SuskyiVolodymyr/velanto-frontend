@@ -6,7 +6,7 @@ import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { Username } from "@/src/shared/components/Username";
 import { Tooltip } from "@/src/shared/components/Tooltip";
-import { UserAvatar } from "@/src/shared/components/UserAvatar";
+import { AvatarLightbox } from "@/src/shared/components/AvatarLightbox";
 import type { PublicUserProfile } from "@/src/shared/types/user";
 
 /**
@@ -57,7 +57,7 @@ export function AuthorProfileHeader({
       <div className="mb-8 flex items-start justify-between gap-4">
         <div className="flex items-center gap-4">
           <Hidden kind="avatar" id={authorId} className="h-16 w-16">
-            <UserAvatar
+            <AvatarLightbox
               username={profile.username}
               avatarKey={profile.avatarKey}
               className="h-16 w-16 rounded-full border border-border bg-surface text-xl text-foreground-secondary"
