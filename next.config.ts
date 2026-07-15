@@ -1,5 +1,6 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { withSentryConfig } from "@sentry/nextjs";
 import { securityHeaders } from "./src/shared/lib/security-headers";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
@@ -32,4 +33,16 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withNextIntl(nextConfig);
+const config = withNextIntl(nextConfig);
+
+// Only wrap with Sentry's build plugin when a DSN is configured, so the default
+// build (CI/dev without Sentry env) is byte-for-byte unaffected and can't be
+// broken by the plugin. Source maps upload only when SENTRY_ORG / SENTRY_PROJECT
+// / SENTRY_AUTH_TOKEN are also present (set in the production build env).
+export default process.env.NEXT_PUBLIC_SENTRY_DSN
+  ? withSentryConfig(config, {
+      org: process.env.SENTRY_ORG,
+      project: process.env.SENTRY_PROJECT,
+      silent: !process.env.CI,
+    })
+  : config;
