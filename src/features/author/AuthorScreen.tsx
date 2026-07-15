@@ -7,6 +7,7 @@ import { useRules } from "@/src/shared/api/rules.queries";
 import { Text } from "@/src/shared/components/Text";
 import { AuthorProfileHeader } from "./AuthorProfileHeader";
 import { AuthorPackList } from "./AuthorPackList";
+import { RecentlyPlayedSection } from "./RecentlyPlayedSection";
 import { AuthorModeratorPanel } from "./AuthorModeratorPanel";
 import { useAuthorModeration } from "./use-author-moderation";
 import {
@@ -102,6 +103,16 @@ export function AuthorScreen({
         authorId={authorId}
         initialPacks={packs}
         initialTotal={packsTotal}
+      />
+
+      {/* Play history is public unless the user opted out; the owner and staff
+          can always see it. `showPlayHistory` may be undefined on older
+          fixtures — treat only an explicit `false` as opted out. */}
+      <RecentlyPlayedSection
+        userId={authorId}
+        visible={
+          profile.showPlayHistory !== false || isOwnProfile || isModeratorPlus
+        }
       />
     </div>
   );

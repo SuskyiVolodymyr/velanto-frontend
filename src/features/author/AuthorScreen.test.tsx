@@ -101,6 +101,15 @@ describe("AuthorScreen", () => {
       page: 1,
       limit: 50,
     });
+    // The screen now renders the recently-played rail, which fetches through
+    // this client; default it to empty so these (profile-focused) tests don't
+    // exercise it.
+    mockedUsersClient.recentlyPlayed.mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 8,
+    });
     mockedRulesClient.getRules.mockResolvedValue(RULES);
   });
 
