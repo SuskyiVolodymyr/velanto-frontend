@@ -396,15 +396,119 @@
     "metaTitle": "Términos del Servicio — Velanto",
     "metaDescription": "Los términos que rigen tu uso de Velanto.",
     "heading": "Términos del Servicio",
-    "intro": "Estos términos rigen tu acceso y uso de Velanto.",
-    "draftNotice": "Este es un borrador de trabajo pendiente de revisión legal: los Términos del Servicio definitivos se publicarán aquí."
+    "intro": "Estos Términos rigen tu acceso a Velanto y el uso que hagas de él. Te rogamos que los leas atentamente.",
+    "lastUpdatedLabel": "Última actualización",
+    "sections": [
+      {
+        "title": "Aceptación de estos Términos",
+        "body": "Al crear una cuenta o utilizar Velanto de cualquier otra forma, aceptas estos Términos del Servicio. Si no estás de acuerdo, te rogamos que no utilices el servicio. Estos Términos constituyen un acuerdo vinculante entre tú y Velanto."
+      },
+      {
+        "title": "Requisitos de edad",
+        "body": "Debes tener al menos 13 años, o la edad mínima de consentimiento digital en tu país, para utilizar Velanto. Al usar el servicio confirmas que cumples este requisito y que la información que proporcionas es exacta."
+      },
+      {
+        "title": "Tu cuenta",
+        "body": "Eres responsable de mantener seguras tus credenciales de acceso y de toda la actividad que se realice bajo tu cuenta. Es posible que debas verificar tu dirección de correo electrónico para desbloquear determinadas funciones. Te rogamos que nos notifiques con prontitud si crees que tu cuenta ha sido comprometida."
+      },
+      {
+        "title": "Tu contenido y la licencia",
+        "body": "Conservas la titularidad de los packs, comentarios y demás contenido que crees. Al publicar contenido en Velanto nos concedes una licencia no exclusiva y de alcance mundial para alojarlo, almacenarlo, mostrarlo y distribuirlo con el fin de operar el servicio. Eres responsable del contenido que publicas y confirmas que dispones de los derechos para compartirlo."
+      },
+      {
+        "title": "Uso aceptable",
+        "body": "Te comprometes a no publicar contenido que sea ilícito, que incite al odio, que resulte acosador o infractor, o que de otro modo esté prohibido por nuestras reglas. El filtrado automatizado y la moderación humana contribuyen a hacer cumplir esta norma. No podrás abusar del servicio ni perturbarlo, ni intentar obtener acceso no autorizado a este o a las cuentas de otros usuarios."
+      },
+      {
+        "title": "Moderación y cumplimiento",
+        "body": "Los packs pueden ser revisados antes o después de su publicación. Podemos retirar contenido, restringir funciones, o suspender o vetar cuentas que infrinjan estos Términos o nuestras reglas. Procuramos actuar de forma proporcionada, si bien podemos actuar de inmediato cuando sea necesario para proteger a los usuarios o al servicio."
+      },
+      {
+        "title": "Propiedad intelectual",
+        "body": "Velanto y su nombre, logotipo, diseño y software están protegidos por las leyes de propiedad intelectual. No podrás copiarlos ni reutilizarlos sin autorización. Si crees que algún contenido en Velanto infringe tus derechos, ponte en contacto con nosotros y revisaremos la notificación."
+      },
+      {
+        "title": "Contenido y enlaces de terceros",
+        "body": "Los packs pueden incorporar contenido multimedia de terceros, como vídeos de YouTube, o enlazar a sitios externos. No controlamos dicho contenido ni somos responsables de él. El uso que hagas de servicios de terceros se rige por sus propios términos."
+      },
+      {
+        "title": "Renuncias de garantías",
+        "body": "Velanto se ofrece «tal cual» y «según disponibilidad», sin garantías de ningún tipo. No garantizamos que el servicio vaya a ser ininterrumpido, libre de errores o seguro, ni que el contenido vaya a ser siempre exacto."
+      },
+      {
+        "title": "Limitación de responsabilidad",
+        "body": "En la máxima medida permitida por la ley, Velanto no será responsable de ningún daño indirecto, incidental o consecuente derivado de tu uso del servicio."
+      },
+      {
+        "title": "Suspensión y terminación",
+        "body": "Puedes dejar de usar Velanto en cualquier momento. Podemos suspender o cancelar tu acceso si incumples estos Términos o nuestras reglas, o cuando sea necesario para proteger el servicio o a otros usuarios."
+      },
+      {
+        "title": "Cambios en estos Términos",
+        "body": "Podemos actualizar estos Términos de vez en cuando. Cuando introduzcamos cambios sustanciales, actualizaremos la fecha indicada arriba y, cuando proceda, te lo notificaremos. Seguir utilizando Velanto después de que los cambios entren en vigor implica que aceptas los Términos actualizados."
+      },
+      {
+        "title": "Contacto",
+        "body": "¿Tienes preguntas sobre estos Términos? Escríbenos a admin@playvelanto.com."
+      }
+    ]
   },
   "privacy": {
     "metaTitle": "Política de Privacidad — Velanto",
-    "metaDescription": "Cómo Velanto recopila, usa y protege tus datos.",
+    "metaDescription": "Cómo Velanto recopila, utiliza y protege tus datos.",
     "heading": "Política de Privacidad",
-    "intro": "Esta política explica qué datos recopila Velanto y cómo se utilizan.",
-    "draftNotice": "Este es un borrador de trabajo pendiente de revisión legal: la Política de Privacidad definitiva se publicará aquí."
+    "intro": "Esta Política de Privacidad explica qué información recopila Velanto, cómo la utilizamos y las opciones de las que dispones.",
+    "lastUpdatedLabel": "Última actualización",
+    "sections": [
+      {
+        "title": "Resumen general",
+        "body": "Esta política se aplica al uso que hagas del sitio web y del servicio de Velanto. Describe la información que recopilamos y cómo la tratamos."
+      },
+      {
+        "title": "Información que recopilamos",
+        "body": "Recopilamos la información de cuenta que proporcionas, como tu dirección de correo electrónico, tu nombre de usuario y una contraseña cifrada de forma segura mediante hash; los datos de perfil que añades, como una biografía o un avatar; el contenido que creas, como packs y comentarios; y los registros de los packs que juegas. También recopilamos información técnica limitada necesaria para operar el servicio, como datos de sesión y registros del servidor."
+      },
+      {
+        "title": "Cómo utilizamos tu información",
+        "body": "Utilizamos tu información para prestar y mejorar el servicio, para autenticarte, para mostrar tu perfil y contenido públicos, para moderar el contenido y mantener la comunidad segura, y para comunicarnos contigo acerca de tu cuenta."
+      },
+      {
+        "title": "Cookies y sesiones",
+        "body": "Utilizamos cookies y tecnologías similares para mantener tu sesión iniciada y protegida, incluida una cookie de sesión para la autenticación. No las utilizamos para rastrearte a través de otros sitios web."
+      },
+      {
+        "title": "Cómo compartimos la información",
+        "body": "Tu perfil, packs y comentarios públicos son visibles para otras personas por diseño. Compartimos información con los proveedores de servicios que alojan y operan Velanto, como nuestros proveedores de alojamiento y de almacenamiento de contenido multimedia, únicamente en la medida necesaria para prestar el servicio, y podemos divulgar información cuando así lo exija la ley."
+      },
+      {
+        "title": "Contenido multimedia y servicios de terceros",
+        "body": "Las imágenes y demás contenido multimedia que subas se almacenan con nuestro proveedor de contenido multimedia. Los packs pueden incorporar contenido de terceros, como vídeos de YouTube; la interacción con dicho contenido está sujeta a las propias prácticas de privacidad del tercero."
+      },
+      {
+        "title": "Conservación de los datos",
+        "body": "Conservamos tu información mientras tu cuenta esté activa o durante el tiempo necesario para prestar el servicio, cumplir con obligaciones legales, resolver controversias y hacer cumplir nuestros acuerdos."
+      },
+      {
+        "title": "Tus derechos y opciones",
+        "body": "Puedes consultar y actualizar buena parte de tu información desde los ajustes de tu cuenta, incluido tu perfil y la visibilidad de tu historial de juego. Puedes solicitar el acceso a tus datos personales o su eliminación poniéndote en contacto con nosotros, con sujeción a cualquier obligación legal que tengamos de conservarlos."
+      },
+      {
+        "title": "Seguridad de los datos",
+        "body": "Adoptamos medidas técnicas y organizativas razonables para proteger tu información, incluidos el cifrado de contraseñas mediante hash y la protección de las sesiones. No obstante, ningún método de transmisión o almacenamiento es completamente seguro, por lo que no podemos garantizar una seguridad absoluta."
+      },
+      {
+        "title": "Privacidad de los menores",
+        "body": "Velanto no está destinado a menores de 13 años, o de la edad mínima de consentimiento digital en tu país. No recopilamos de forma consciente información personal de menores por debajo de esa edad."
+      },
+      {
+        "title": "Cambios en esta política",
+        "body": "Podemos actualizar esta Política de Privacidad de vez en cuando. Cuando introduzcamos cambios sustanciales, actualizaremos la fecha indicada arriba y, cuando proceda, te lo notificaremos."
+      },
+      {
+        "title": "Contacto",
+        "body": "¿Tienes preguntas sobre esta política o sobre tus datos? Escríbenos a admin@playvelanto.com."
+      }
+    ]
   },
   "banReason": {
     "label": "Motivo",

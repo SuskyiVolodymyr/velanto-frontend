@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { LegalScreen } from "@/src/features/legal/LegalScreen";
+import {
+  LegalScreen,
+  type LegalSection,
+} from "@/src/features/legal/LegalScreen";
+import { LEGAL_LAST_UPDATED } from "@/src/features/legal/legal-meta";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://velanto.app";
 
@@ -23,7 +27,9 @@ export default async function PrivacyPage() {
     <LegalScreen
       heading={t("heading")}
       intro={t("intro")}
-      draftNotice={t("draftNotice")}
+      lastUpdatedLabel={t("lastUpdatedLabel")}
+      lastUpdated={LEGAL_LAST_UPDATED}
+      sections={t.raw("sections") as LegalSection[]}
     />
   );
 }
