@@ -14,6 +14,7 @@ import {
   fetchLogsPage,
   fetchOverview,
   fetchStaffPage,
+  fetchUserDetail,
   fetchUsersPage,
   type AuditLogFilters,
   type UsersPageFilters,
@@ -122,4 +123,15 @@ export function useAdminOverview() {
       queryFn: fetchOverview,
     }),
   );
+}
+
+export function adminUserDetailQueryOptions(id: string) {
+  return queryOptions({
+    queryKey: ["admin-user-detail", id] as const,
+    queryFn: () => fetchUserDetail(id),
+  });
+}
+
+export function useAdminUserDetail(id: string) {
+  return useQuery(adminUserDetailQueryOptions(id));
 }

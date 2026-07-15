@@ -1,6 +1,7 @@
 import { apiClient } from "@/src/shared/lib/api-client";
 import type {
   AdminOverview,
+  AdminUserDetail,
   AdminUserList,
   AuditLogList,
 } from "@/src/shared/types/admin";
@@ -77,6 +78,8 @@ export const adminClient = {
   overview: () => apiClient.get<AdminOverview>("/admin/overview"),
   listUsers: (filters: ListAdminUsersFilters = {}) =>
     apiClient.get<AdminUserList>(`/admin/users${buildUsersQuery(filters)}`),
+  userDetail: (id: string) =>
+    apiClient.get<AdminUserDetail>(`/admin/users/${id}`),
   auditLogs: (filters: ListAuditLogsFilters = {}) =>
     apiClient.get<AuditLogList>(`/admin/audit-logs${buildAuditQuery(filters)}`),
 };

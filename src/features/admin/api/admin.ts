@@ -77,3 +77,7 @@ export function fetchLogsPage(filters: AuditLogFilters, page: number) {
 export function fetchOverview() {
   return adminClient.overview();
 }
+
+export function fetchUserDetail(id: string) {
+  return adminClient.userDetail(id);
+}
