@@ -162,6 +162,18 @@ html[data-streamer-mode="on"]:not([data-streamer-hydrated])
   --nick-glow: 230, 32, 32;
 }
 
+/*
+ * Hide the native scrollbar on a horizontally-scrolled row (e.g. the
+ * recently-played rail) that provides its own arrow controls instead.
+ */
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   /*
    * Freeze the sweep with the secondary band resting mid-handle (rather than a

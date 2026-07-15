@@ -39,6 +39,14 @@ describe("RecentlyPlayedSection", () => {
     expect(screen.getByText("Second pack")).toBeInTheDocument();
   });
 
+  it("renders both scroll-arrow controls with accessible labels", () => {
+    mockPages([pack("p1", "First pack"), pack("p2", "Second pack")]);
+    render(<RecentlyPlayedSection userId="u1" visible />);
+
+    expect(screen.getByRole("button", { name: "Prev" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Next" })).toBeInTheDocument();
+  });
+
   it("renders nothing when the viewer may not see the history", () => {
     mockPages([pack("p1", "First pack")]);
     const { container } = render(

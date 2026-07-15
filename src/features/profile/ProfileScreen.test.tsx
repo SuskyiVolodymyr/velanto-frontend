@@ -26,6 +26,7 @@ vi.mock("@/src/shared/lib/users-client", () => ({
     ban: vi.fn(),
     unban: vi.fn(),
     changeRole: vi.fn(),
+    recentlyPlayed: vi.fn(),
   },
 }));
 vi.mock("@/src/shared/lib/packs-client", () => ({
@@ -69,6 +70,12 @@ beforeEach(() => {
     total: 0,
     page: 1,
     limit: 20,
+  });
+  vi.mocked(usersClient.recentlyPlayed).mockResolvedValue({
+    items: [],
+    total: 0,
+    page: 1,
+    limit: 8,
   });
 });
 
@@ -160,5 +167,43 @@ describe("ProfileScreen", () => {
     renderScreen();
     expect(await screen.findByText("My Pack")).toBeInTheDocument();
     expect(screen.getByText("Pending review")).toBeInTheDocument();
+  });
+
+  it("shows the recently-played rail with the viewer's own play history", async () => {
+    vi.mocked(usersClient.recentlyPlayed).mockResolvedValue({
+      items: [
+        {
+          id: "rp1",
+          title: "Rank Blind Anime Openings",
+          description: "desc",
+          coverTone: "#111",
+          format: "rank_blind",
+          tags: [],
+          groups: [],
+          rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "manual" }] }],
+          authorId: "u1",
+          createdAt: "2026-01-01T00:00:00.000Z",
+          totalPlays: 1,
+          avgAgreementPercent: 100,
+          status: "approved",
+          rejectionReason: null,
+          score: 0,
+          likes: 0,
+          dislikes: 0,
+          myVote: null,
+        },
+      ],
+      total: 1,
+      page: 1,
+      limit: 8,
+    });
+    renderScreen();
+    expect(await screen.findByText("Recently played")).toBeInTheDocument();
+    expect(screen.getByText("Rank Blind Anime Openings")).toBeInTheDocument();
+    // The owner always sees their own history, so the request is for their id.
+    expect(usersClient.recentlyPlayed).toHaveBeenCalledWith(
+      "u1",
+      expect.objectContaining({ page: 1 }),
+    );
   });
 });
