@@ -270,7 +270,20 @@
     "passwordChanged": "Mot de passe modifié.",
     "changePasswordError": "Impossible de modifier votre mot de passe. Veuillez réessayer.",
     "currentPasswordWrong": "Votre mot de passe actuel est incorrect.",
-    "loginToChangePassword": "Connectez-vous pour modifier votre mot de passe."
+    "loginToChangePassword": "Connectez-vous pour modifier votre mot de passe.",
+    "dangerHeading": "Zone de danger",
+    "exportDataButton": "Télécharger mes données",
+    "exportDataDescription": "Téléchargez une copie de toutes les données que Velanto conserve à votre sujet dans un fichier JSON.",
+    "exportDataError": "Impossible d’exporter vos données. Veuillez réessayer.",
+    "deleteAccountButton": "Supprimer le compte",
+    "deleteAccountDescription": "Supprimez définitivement votre compte. Vous aurez 30 jours pour changer d’avis en vous reconnectant.",
+    "deleteAccountModalTitle": "Supprimer votre compte ?",
+    "deleteAccountModalWarning": "Cela désactive votre compte et vous déconnecte partout. Au bout de 30 jours, il est définitivement supprimé : vos packs sont retirés et vos commentaires sont anonymisés. Si vous vous reconnectez avant ce délai, il est restauré.",
+    "deleteAccountPasswordLabel": "Confirmez votre mot de passe",
+    "deleteAccountConfirm": "Supprimer le compte",
+    "deleteAccountCancel": "Annuler",
+    "deleteAccountWrongPassword": "Ce mot de passe est incorrect.",
+    "deleteAccountError": "Impossible de supprimer votre compte. Veuillez réessayer."
   },
   "streamerMode": {
     "hiddenHint": "Masqué par le mode streamer",

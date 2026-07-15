@@ -270,7 +270,20 @@
     "passwordChanged": "Пароль изменён.",
     "changePasswordError": "Не удалось изменить пароль. Попробуйте ещё раз.",
     "currentPasswordWrong": "Текущий пароль указан неверно.",
-    "loginToChangePassword": "Войдите, чтобы изменить пароль."
+    "loginToChangePassword": "Войдите, чтобы изменить пароль.",
+    "dangerHeading": "Опасная зона",
+    "exportDataButton": "Скачать мои данные",
+    "exportDataDescription": "Скачайте копию всех данных, которые Velanto хранит о вас, в виде файла JSON.",
+    "exportDataError": "Не удалось выгрузить ваши данные. Пожалуйста, попробуйте ещё раз.",
+    "deleteAccountButton": "Удалить аккаунт",
+    "deleteAccountDescription": "Безвозвратно удалите свой аккаунт. У вас будет 30 дней, чтобы передумать, — просто войдите снова.",
+    "deleteAccountModalTitle": "Удалить ваш аккаунт?",
+    "deleteAccountModalWarning": "Это деактивирует ваш аккаунт и завершит сеансы на всех устройствах. Через 30 дней он будет удалён навсегда: ваши паки будут стёрты, а комментарии обезличены. Если войти снова до истечения этого срока, аккаунт восстановится.",
+    "deleteAccountPasswordLabel": "Подтвердите пароль",
+    "deleteAccountConfirm": "Удалить аккаунт",
+    "deleteAccountCancel": "Отмена",
+    "deleteAccountWrongPassword": "Неверный пароль.",
+    "deleteAccountError": "Не удалось удалить ваш аккаунт. Пожалуйста, попробуйте ещё раз."
   },
   "streamerMode": {
     "hiddenHint": "Скрыто из-за режима стримера",

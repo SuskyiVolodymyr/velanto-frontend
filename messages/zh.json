@@ -270,7 +270,20 @@
     "passwordChanged": "密码已修改。",
     "changePasswordError": "无法修改密码，请重试。",
     "currentPasswordWrong": "当前密码不正确。",
-    "loginToChangePassword": "请登录以修改密码。"
+    "loginToChangePassword": "请登录以修改密码。",
+    "dangerHeading": "危险区域",
+    "exportDataButton": "下载我的数据",
+    "exportDataDescription": "以 JSON 文件的形式下载 Velanto 存储的关于你的全部数据的副本。",
+    "exportDataError": "无法导出你的数据，请重试。",
+    "deleteAccountButton": "删除账户",
+    "deleteAccountDescription": "永久删除你的账户。你有 30 天的时间重新登录以撤销此操作。",
+    "deleteAccountModalTitle": "要删除你的账户吗？",
+    "deleteAccountModalWarning": "此操作会停用你的账户并在所有设备上退出登录。30 天后账户将被永久删除：你的题包会被移除，你的评论会被匿名化。在此之前重新登录即可恢复账户。",
+    "deleteAccountPasswordLabel": "确认你的密码",
+    "deleteAccountConfirm": "删除账户",
+    "deleteAccountCancel": "取消",
+    "deleteAccountWrongPassword": "密码不正确。",
+    "deleteAccountError": "无法删除你的账户，请重试。"
   },
   "streamerMode": {
     "hiddenHint": "已因主播模式隐藏",
