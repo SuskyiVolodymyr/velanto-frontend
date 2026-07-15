@@ -29,7 +29,7 @@ export const metadata: Metadata = {
   // into absolute production URLs. Mirrors robots.ts's SITE_URL fallback; without
   // it Next defaults to http://localhost:3000 and emits localhost canonicals.
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://velanto.app",
+    process.env.NEXT_PUBLIC_SITE_URL ?? "https://playvelanto.com",
   ),
   title: {
     default: "Velanto",

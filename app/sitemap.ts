@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import type { Pack } from "@/src/shared/types/pack";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://velanto.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://playvelanto.com";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 // The backend caps `limit` at 50 and there's no sitemap-index/pagination here
