@@ -9,23 +9,41 @@ describe("resolveSentryConfig", () => {
     expect(resolveSentryConfig({ dsn: "" })).toBeNull();
   });
 
-  it("is enabled by default when a DSN is present", () => {
-    expect(resolveSentryConfig({ dsn: DSN })?.enabled).toBe(true);
-  });
-
-  it("is disabled when the enabled flag is the string 'false'", () => {
+  it("is disabled by default in development", () => {
     expect(
-      resolveSentryConfig({ dsn: DSN, enabledFlag: "false" })?.enabled,
+      resolveSentryConfig({ dsn: DSN, nodeEnv: "development" })?.enabled,
     ).toBe(false);
+    // No environment info at all also falls through to 'development'.
+    expect(resolveSentryConfig({ dsn: DSN })?.enabled).toBe(false);
   });
 
-  it("stays enabled for any other flag value", () => {
+  it("is enabled by default outside development (prod/staging)", () => {
     expect(
-      resolveSentryConfig({ dsn: DSN, enabledFlag: "true" })?.enabled,
+      resolveSentryConfig({ dsn: DSN, nodeEnv: "production" })?.enabled,
     ).toBe(true);
-    expect(resolveSentryConfig({ dsn: DSN, enabledFlag: "" })?.enabled).toBe(
-      true,
-    );
+    expect(
+      resolveSentryConfig({ dsn: DSN, environment: "staging" })?.enabled,
+    ).toBe(true);
+  });
+
+  it("lets an explicit flag opt in to Sentry in development", () => {
+    expect(
+      resolveSentryConfig({
+        dsn: DSN,
+        nodeEnv: "development",
+        enabledFlag: "true",
+      })?.enabled,
+    ).toBe(true);
+  });
+
+  it("is disabled when the enabled flag is the string 'false' (any env)", () => {
+    expect(
+      resolveSentryConfig({
+        dsn: DSN,
+        nodeEnv: "production",
+        enabledFlag: "false",
+      })?.enabled,
+    ).toBe(false);
   });
 
   it("uses an explicit environment override", () => {

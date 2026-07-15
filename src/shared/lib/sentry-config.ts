@@ -10,8 +10,10 @@
  * - `environment` tags events dev vs prod in one project, so issues can be
  *   filtered by environment in Sentry. Explicit override wins, else `NODE_ENV`,
  *   else `"development"`.
- * - `enabled` defaults on; set the enabled flag to the string `"false"` to
- *   silence Sentry (e.g. in local dev) without removing the DSN.
+ * - `enabled` defaults on everywhere EXCEPT `development`, so Sentry stays quiet
+ *   locally (no dev noise in the project, no wasted quota) without removing the
+ *   DSN. Set the enabled flag to `"true"` to opt in for local testing, or to
+ *   `"false"` to force it off in any environment.
  * - `tracesSampleRate` defaults to full sampling outside production and 10% in
  *   production, and can be overridden explicitly.
  */
@@ -45,6 +47,15 @@ function parseRate(raw: string | undefined, fallback: number): number {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
+// Off by default in development, on elsewhere; an explicit flag overrides both.
+function resolveEnabled(
+  flag: string | undefined,
+  environment: string,
+): boolean {
+  if (flag === undefined || flag === "") return environment !== "development";
+  return flag !== "false";
+}
+
 export function resolveSentryConfig(
   env: SentryEnv,
 ): ResolvedSentryConfig | null {
@@ -60,7 +71,7 @@ export function resolveSentryConfig(
 
   return {
     dsn: env.dsn,
-    enabled: env.enabledFlag !== "false",
+    enabled: resolveEnabled(env.enabledFlag, environment),
     environment,
     tracesSampleRate: parseRate(env.tracesSampleRate, defaultRate),
   };

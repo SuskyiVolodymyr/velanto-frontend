@@ -46,8 +46,11 @@ export function captureApiError(
   ctx: ApiErrorContext,
 ): void {
   if (!isUnexpectedApiStatus(status)) return;
+  // statusText is empty over HTTP/2 (no reason phrase), so include it only when
+  // present to avoid a double space / dangling phrase in the message.
+  const label = statusText ? `${status} ${statusText}` : `${status}`;
   Sentry.captureException(
-    new Error(`API ${status} ${statusText} on ${ctx.method} ${ctx.path}`),
+    new Error(`API ${label} on ${ctx.method} ${ctx.path}`),
     { tags: { kind: "api", status: String(status) }, extra: { ...ctx } },
   );
 }
