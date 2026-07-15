@@ -7,6 +7,7 @@ import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
 import { QueryProvider } from "@/src/shared/lib/query-provider";
 import { AppHeader } from "@/src/shared/components/AppHeader";
+import { MobileBottomNav } from "@/src/shared/components/MobileBottomNav";
 import { SiteFooter } from "@/src/shared/components/SiteFooter";
 import { BannedBanner } from "@/src/shared/components/BannedBanner";
 import { getThemeInitScript } from "@/src/shared/lib/theme";
@@ -66,7 +67,9 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: getStreamerModeInitScript() }}
         />
       </head>
-      <body className="min-h-full flex flex-col">
+      {/* Bottom padding on phones so the fixed MobileBottomNav never covers the
+          last of the content or the footer; the nav itself is md:hidden. */}
+      <body className="flex min-h-full flex-col pb-16 md:pb-0">
         <QueryProvider>
           <NextIntlClientProvider>
             <AuthProvider>
@@ -75,6 +78,7 @@ export default async function RootLayout({
                 <BannedBanner />
                 {children}
                 <SiteFooter />
+                <MobileBottomNav />
               </StreamerModeProvider>
             </AuthProvider>
           </NextIntlClientProvider>

@@ -1,4 +1,12 @@
 {
+  "bottomNav": {
+    "label": "Главное",
+    "discovery": "Обзор",
+    "feedback": "Отзывы",
+    "create": "Создать",
+    "notifications": "Уведомления",
+    "profile": "Профиль"
+  },
   "authGate": {
     "logInToVote": "Войдите, чтобы голосовать",
     "logInToFollow": "Войдите, чтобы подписаться",

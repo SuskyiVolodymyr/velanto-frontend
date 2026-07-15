@@ -1,4 +1,12 @@
 {
+  "bottomNav": {
+    "label": "প্রধান",
+    "discovery": "আবিষ্কার",
+    "feedback": "মতামত",
+    "create": "তৈরি",
+    "notifications": "বিজ্ঞপ্তি",
+    "profile": "প্রোফাইল"
+  },
   "authGate": {
     "logInToVote": "ভোট দিতে লগ ইন করুন",
     "logInToFollow": "ফলো করতে লগ ইন করুন",

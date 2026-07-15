@@ -1,4 +1,12 @@
 {
+  "bottomNav": {
+    "label": "بنیادی",
+    "discovery": "دریافت",
+    "feedback": "رائے",
+    "create": "بنائیں",
+    "notifications": "اطلاعات",
+    "profile": "پروفائل"
+  },
   "authGate": {
     "logInToVote": "ووٹ دینے کے لیے لاگ ان کریں",
     "logInToFollow": "فالو کرنے کے لیے لاگ ان کریں",

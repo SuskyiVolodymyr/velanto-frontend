@@ -1,4 +1,12 @@
 {
+  "bottomNav": {
+    "label": "رئيسي",
+    "discovery": "استكشاف",
+    "feedback": "ملاحظات",
+    "create": "إنشاء",
+    "notifications": "تنبيهات",
+    "profile": "حسابي"
+  },
   "authGate": {
     "logInToVote": "سجّل الدخول للتصويت",
     "logInToFollow": "سجّل الدخول للمتابعة",
