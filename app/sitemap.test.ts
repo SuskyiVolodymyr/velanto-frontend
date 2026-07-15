@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import sitemap from "./sitemap";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://velanto.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://playvelanto.com";
 
 function pack(id: string, authorId: string) {
   return {

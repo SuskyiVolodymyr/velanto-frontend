@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { RulesScreen } from "@/src/features/rules/RulesScreen";
 import { getRulesServer } from "@/src/features/rules/get-rules-server";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://velanto.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://playvelanto.com";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("rules");

@@ -6,7 +6,7 @@ import {
 } from "@/src/features/legal/LegalScreen";
 import { LEGAL_LAST_UPDATED } from "@/src/features/legal/legal-meta";
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://velanto.app";
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://playvelanto.com";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("privacy");
