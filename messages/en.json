@@ -307,7 +307,20 @@
     "passwordChanged": "Password changed.",
     "changePasswordError": "Couldn’t change your password. Please try again.",
     "currentPasswordWrong": "Your current password is incorrect.",
-    "loginToChangePassword": "Log in to change your password."
+    "loginToChangePassword": "Log in to change your password.",
+    "dangerHeading": "Danger zone",
+    "exportDataButton": "Download my data",
+    "exportDataDescription": "Download a copy of everything Velanto stores about you as a JSON file.",
+    "exportDataError": "Couldn’t export your data. Please try again.",
+    "deleteAccountButton": "Delete account",
+    "deleteAccountDescription": "Permanently delete your account. You’ll have 30 days to change your mind by logging back in.",
+    "deleteAccountModalTitle": "Delete your account?",
+    "deleteAccountModalWarning": "This deactivates your account and logs you out everywhere. After 30 days it’s permanently deleted: your packs are removed and your comments are anonymized. Logging back in before then restores it.",
+    "deleteAccountPasswordLabel": "Confirm your password",
+    "deleteAccountConfirm": "Delete account",
+    "deleteAccountCancel": "Cancel",
+    "deleteAccountWrongPassword": "That password is incorrect.",
+    "deleteAccountError": "Couldn’t delete your account. Please try again."
   },
   "streamerMode": {
     "hiddenHint": "Hidden because of streamer mode",

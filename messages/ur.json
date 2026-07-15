@@ -270,7 +270,20 @@
     "passwordChanged": "پاس ورڈ تبدیل ہو گیا۔",
     "changePasswordError": "آپ کا پاس ورڈ تبدیل نہیں ہو سکا۔ براہ کرم دوبارہ کوشش کریں۔",
     "currentPasswordWrong": "آپ کا موجودہ پاس ورڈ غلط ہے۔",
-    "loginToChangePassword": "اپنا پاس ورڈ تبدیل کرنے کے لیے لاگ ان کریں۔"
+    "loginToChangePassword": "اپنا پاس ورڈ تبدیل کرنے کے لیے لاگ ان کریں۔",
+    "dangerHeading": "خطرے کا زون",
+    "exportDataButton": "میرا ڈیٹا ڈاؤن لوڈ کریں",
+    "exportDataDescription": "Velanto آپ کے بارے میں جو کچھ محفوظ کرتا ہے اس کی ایک نقل JSON فائل کے طور پر ڈاؤن لوڈ کریں۔",
+    "exportDataError": "آپ کا ڈیٹا برآمد نہیں کیا جا سکا۔ براہِ کرم دوبارہ کوشش کریں۔",
+    "deleteAccountButton": "اکاؤنٹ حذف کریں",
+    "deleteAccountDescription": "اپنا اکاؤنٹ مستقل طور پر حذف کریں۔ دوبارہ لاگ اِن کر کے اپنا ارادہ بدلنے کے لیے آپ کے پاس تیس دن ہوں گے۔",
+    "deleteAccountModalTitle": "کیا آپ اپنا اکاؤنٹ حذف کرنا چاہتے ہیں؟",
+    "deleteAccountModalWarning": "اس سے آپ کا اکاؤنٹ غیر فعال ہو جائے گا اور آپ ہر جگہ سے لاگ آؤٹ ہو جائیں گے۔ تیس دن کے بعد یہ مستقل طور پر حذف ہو جائے گا: آپ کے پیک ہٹا دیے جائیں گے اور آپ کے تبصرے گمنام کر دیے جائیں گے۔ اس سے پہلے دوبارہ لاگ اِن کرنے پر یہ بحال ہو جائے گا۔",
+    "deleteAccountPasswordLabel": "اپنے پاس ورڈ کی تصدیق کریں",
+    "deleteAccountConfirm": "اکاؤنٹ حذف کریں",
+    "deleteAccountCancel": "منسوخ کریں",
+    "deleteAccountWrongPassword": "یہ پاس ورڈ غلط ہے۔",
+    "deleteAccountError": "آپ کا اکاؤنٹ حذف نہیں کیا جا سکا۔ براہِ کرم دوبارہ کوشش کریں۔"
   },
   "streamerMode": {
     "hiddenHint": "اسٹریمر موڈ کی وجہ سے چھپایا گیا",

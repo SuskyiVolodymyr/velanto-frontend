@@ -270,7 +270,20 @@
     "passwordChanged": "تم تغيير كلمة المرور.",
     "changePasswordError": "تعذّر تغيير كلمة المرور. يرجى المحاولة مرة أخرى.",
     "currentPasswordWrong": "كلمة المرور الحالية غير صحيحة.",
-    "loginToChangePassword": "سجّل الدخول لتغيير كلمة المرور."
+    "loginToChangePassword": "سجّل الدخول لتغيير كلمة المرور.",
+    "dangerHeading": "منطقة الخطر",
+    "exportDataButton": "تنزيل بياناتي",
+    "exportDataDescription": "نزّل نسخة من كل ما تخزّنه Velanto عنك في صورة ملف JSON.",
+    "exportDataError": "تعذّر تصدير بياناتك. يُرجى المحاولة مرة أخرى.",
+    "deleteAccountButton": "حذف الحساب",
+    "deleteAccountDescription": "احذف حسابك نهائيًا. ستتاح لك مهلة ثلاثين يومًا للعدول عن قرارك عبر تسجيل الدخول من جديد.",
+    "deleteAccountModalTitle": "هل تريد حذف حسابك؟",
+    "deleteAccountModalWarning": "سيؤدي هذا إلى تعطيل حسابك وتسجيل خروجك من كل الأجهزة. وبعد ثلاثين يومًا يُحذف نهائيًا: تُزال حزمك وتصبح تعليقاتك مجهولة الهوية. أما إذا سجّلت الدخول قبل انقضاء المهلة فسيُستعاد حسابك.",
+    "deleteAccountPasswordLabel": "أكّد كلمة المرور",
+    "deleteAccountConfirm": "حذف الحساب",
+    "deleteAccountCancel": "إلغاء",
+    "deleteAccountWrongPassword": "كلمة المرور غير صحيحة.",
+    "deleteAccountError": "تعذّر حذف حسابك. يُرجى المحاولة مرة أخرى."
   },
   "streamerMode": {
     "hiddenHint": "مخفي بسبب وضع البث",

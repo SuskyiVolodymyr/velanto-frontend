@@ -270,7 +270,20 @@
     "passwordChanged": "Palavra-passe alterada.",
     "changePasswordError": "Não foi possível alterar a sua palavra-passe. Tente novamente.",
     "currentPasswordWrong": "A sua palavra-passe atual está incorreta.",
-    "loginToChangePassword": "Inicie sessão para alterar a sua palavra-passe."
+    "loginToChangePassword": "Inicie sessão para alterar a sua palavra-passe.",
+    "dangerHeading": "Zona de perigo",
+    "exportDataButton": "Baixar meus dados",
+    "exportDataDescription": "Baixe uma cópia de tudo o que a Velanto armazena sobre você em um arquivo JSON.",
+    "exportDataError": "Não foi possível exportar seus dados. Tente novamente.",
+    "deleteAccountButton": "Excluir conta",
+    "deleteAccountDescription": "Exclua sua conta permanentemente. Você terá 30 dias para mudar de ideia fazendo login novamente.",
+    "deleteAccountModalTitle": "Excluir sua conta?",
+    "deleteAccountModalWarning": "Isso desativa sua conta e encerra sua sessão em todos os lugares. Após 30 dias, ela é excluída permanentemente: seus packs são removidos e seus comentários são anonimizados. Se você fizer login novamente antes desse prazo, ela é restaurada.",
+    "deleteAccountPasswordLabel": "Confirme sua senha",
+    "deleteAccountConfirm": "Excluir conta",
+    "deleteAccountCancel": "Cancelar",
+    "deleteAccountWrongPassword": "Essa senha está incorreta.",
+    "deleteAccountError": "Não foi possível excluir sua conta. Tente novamente."
   },
   "streamerMode": {
     "hiddenHint": "Oculto pelo modo streamer",

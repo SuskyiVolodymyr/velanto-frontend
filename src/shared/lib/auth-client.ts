@@ -61,4 +61,16 @@ export const authClient = {
   /** Change password while signed in (requires the current password). */
   changePassword: (input: ChangePasswordInput) =>
     apiClient.patch<{ changed: true }>("/auth/password", input),
+  /**
+   * Soft-delete (deactivate) the signed-in account. Requires the current
+   * password; starts the 30-day grace period and revokes every session. Logging
+   * back in within the window reactivates the account.
+   */
+  deleteAccount: (currentPassword: string) =>
+    apiClient.delete<{ deactivated: true }>("/auth/account", {
+      body: { currentPassword },
+    }),
+  /** GDPR data export: the caller's full data ("download my data"). */
+  exportMyData: () =>
+    apiClient.get<Record<string, unknown>>("/users/me/export"),
 };
