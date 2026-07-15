@@ -1,4 +1,12 @@
 {
+  "bottomNav": {
+    "label": "मुख्य",
+    "discovery": "खोज",
+    "feedback": "प्रतिक्रिया",
+    "create": "बनाएँ",
+    "notifications": "सूचनाएँ",
+    "profile": "प्रोफ़ाइल"
+  },
   "authGate": {
     "logInToVote": "वोट करने के लिए लॉग इन करें",
     "logInToFollow": "फ़ॉलो करने के लिए लॉग इन करें",

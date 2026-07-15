@@ -1,4 +1,12 @@
 {
+  "bottomNav": {
+    "label": "Primary",
+    "discovery": "Discovery",
+    "feedback": "Feedback",
+    "create": "Create",
+    "notifications": "Alerts",
+    "profile": "Profile"
+  },
   "authGate": {
     "logInToVote": "Log in to vote",
     "logInToFollow": "Log in to follow",

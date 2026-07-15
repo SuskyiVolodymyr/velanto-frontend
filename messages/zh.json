@@ -1,4 +1,12 @@
 {
+  "bottomNav": {
+    "label": "主导航",
+    "discovery": "发现",
+    "feedback": "反馈",
+    "create": "创建",
+    "notifications": "提醒",
+    "profile": "我的"
+  },
   "authGate": {
     "logInToVote": "登录后投票",
     "logInToFollow": "登录后关注",

@@ -15,7 +15,7 @@ export function AppHeader() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-40 flex items-center justify-between border-b border-border bg-background/70 px-7 py-6 backdrop-blur-[6px]">
+    <header className="sticky top-0 z-40 hidden items-center justify-between border-b border-border bg-background/70 px-7 py-6 backdrop-blur-[6px] md:flex">
       <div className="flex items-center gap-7">
         <Link href="/" className="flex items-center gap-2.5">
           <span className="h-3 w-3 rotate-45 rounded-sm bg-acc" aria-hidden />

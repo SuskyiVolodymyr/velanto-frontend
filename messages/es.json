@@ -1,4 +1,12 @@
 {
+  "bottomNav": {
+    "label": "Principal",
+    "discovery": "Descubrir",
+    "feedback": "Opiniones",
+    "create": "Crear",
+    "notifications": "Alertas",
+    "profile": "Perfil"
+  },
   "authGate": {
     "logInToVote": "Inicia sesión para votar",
     "logInToFollow": "Inicia sesión para seguir",

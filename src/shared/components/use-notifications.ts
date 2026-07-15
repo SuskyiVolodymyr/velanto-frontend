@@ -36,8 +36,12 @@ function notificationsListQueryOptions() {
  * Drives {@link NotificationsBell}: the polled unread count, the open/close
  * lifecycle (outside-click + Escape), the drawer's paged list (fetched only
  * while open), and the mark-all-read that clears the dot once the list loads.
+ *
+ * `alwaysOpen` is for the full-page mobile notifications screen, which has no
+ * drawer to open: it fetches the list (and marks read) unconditionally, as if
+ * the drawer were permanently open.
  */
-export function useNotifications() {
+export function useNotifications({ alwaysOpen = false } = {}) {
   const { status } = useAuth();
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
@@ -91,10 +95,11 @@ export function useNotifications() {
     };
   }, [open]);
 
-  // The drawer's list is fetched only while it's open.
+  // Fetched while the drawer is open, or always for the full-page consumer.
+  const active = open || alwaysOpen;
   const listQuery = useInfiniteQuery({
     ...notificationsListQueryOptions(),
-    enabled: open,
+    enabled: authenticated && active,
   });
 
   const seen = new Set<string>();
@@ -115,11 +120,11 @@ export function useNotifications() {
   });
   const { mutate: markAllReadMutate } = markAllRead;
 
-  // Once the open drawer's list has loaded, mark everything read and clear the
-  // bell's dot.
+  // Once the list has loaded (drawer open, or the full page), mark everything
+  // read and clear the bell's dot.
   useEffect(() => {
-    if (open && listLoaded) markAllReadMutate();
-  }, [open, listLoaded, markAllReadMutate]);
+    if (active && listLoaded) markAllReadMutate();
+  }, [active, listLoaded, markAllReadMutate]);
 
   return {
     authenticated,
