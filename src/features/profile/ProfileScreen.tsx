@@ -10,6 +10,7 @@ import { Username } from "@/src/shared/components/Username";
 import { AvatarLightbox } from "@/src/shared/components/AvatarLightbox";
 import { buttonClassName } from "@/src/shared/components/Button";
 import { AuthorPackList } from "@/src/features/author/AuthorPackList";
+import { RecentlyPlayedSection } from "@/src/features/author/RecentlyPlayedSection";
 
 export function ProfileScreen() {
   const t = useTranslations("profile");
@@ -100,6 +101,11 @@ export function ProfileScreen() {
         initialTotal={packsTotal}
         own
       />
+
+      {/* The owner always sees their own play history regardless of the
+          public opt-out, so this is unconditionally visible; the section
+          self-collapses when there are no plays. */}
+      <RecentlyPlayedSection userId={profile.id} visible />
     </div>
   );
 }
