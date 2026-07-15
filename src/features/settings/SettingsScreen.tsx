@@ -7,6 +7,7 @@ import { AppearanceSection } from "@/src/features/settings/AppearanceSection";
 import { PrivacySection } from "@/src/features/settings/PrivacySection";
 import { NotificationsSection } from "@/src/features/settings/NotificationsSection";
 import { AccountSection } from "@/src/features/settings/AccountSection";
+import { PasswordSection } from "@/src/features/settings/PasswordSection";
 
 export function SettingsScreen() {
   const t = useTranslations("settings");
@@ -20,6 +21,7 @@ export function SettingsScreen() {
       <PrivacySection />
       <NotificationsSection />
       <AccountSection />
+      <PasswordSection />
     </main>
   );
 }

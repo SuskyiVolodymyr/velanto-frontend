@@ -261,7 +261,16 @@
     "notifNewPack": "Новый пак от того, на кого ты подписан",
     "notifNewComment": "Новый комментарий к твоему паку",
     "notifPackDeleted": "Пак удалён модератором",
-    "notifCommentMention": "Вас упомянули в комментарии"
+    "notifCommentMention": "Вас упомянули в комментарии",
+    "passwordHeading": "Пароль",
+    "currentPassword": "Текущий пароль",
+    "newPassword": "Новый пароль",
+    "confirmNewPassword": "Подтвердите новый пароль",
+    "changePasswordButton": "Изменить пароль",
+    "passwordChanged": "Пароль изменён.",
+    "changePasswordError": "Не удалось изменить пароль. Попробуйте ещё раз.",
+    "currentPasswordWrong": "Текущий пароль указан неверно.",
+    "loginToChangePassword": "Войдите, чтобы изменить пароль."
   },
   "streamerMode": {
     "hiddenHint": "Скрыто из-за режима стримера",
@@ -298,7 +307,19 @@
     "invalidCredentials": "Неверные данные для входа.",
     "pleaseWait": "Подожди…",
     "createAccount": "Создать аккаунт",
-    "terms": "Продолжая, ты соглашаешься с <terms>Условиями</terms> и <privacy>Политикой конфиденциальности</privacy> Velanto."
+    "terms": "Продолжая, ты соглашаешься с <terms>Условиями</terms> и <privacy>Политикой конфиденциальности</privacy> Velanto.",
+    "forgotPassword": "Забыли пароль?",
+    "resetHeading": "Сброс пароля",
+    "resetIntro": "Укажите свой email, и мы отправим код для сброса.",
+    "sendResetCode": "Отправить код",
+    "resetCodeSent": "Если аккаунт с таким email существует, код уже в пути. Введите его ниже вместе с новым паролем.",
+    "resetEnterCode": "Код сброса",
+    "resetNewPassword": "Новый пароль",
+    "resetConfirmPassword": "Подтвердите новый пароль",
+    "resetSubmit": "Сбросить пароль",
+    "resetSuccess": "Пароль сброшен. Теперь вы можете войти.",
+    "backToLogin": "Вернуться ко входу",
+    "resetError": "Не удалось сбросить пароль. Проверьте код и попробуйте снова."
   },
   "rules": {
     "metaTitle": "Правила сообщества — Velanto",

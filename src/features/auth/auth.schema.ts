@@ -21,7 +21,63 @@ export const AUTH_MESSAGES = {
   passwordsMismatch: "Passwords do not match.",
   acceptRules: "You must accept the Community Rules to register.",
   code: "Enter the 6-digit code sent to your email.",
+  currentPasswordRequired: "Enter your current password.",
+  emailRequired: "Enter a valid email address.",
 } as const;
+
+// The password-composition rules, shared by every place a NEW password is set
+// (register, reset, change) so they can't drift apart. Order matters — zod
+// surfaces the first unmet rule.
+export const newPasswordSchema = z
+  .string()
+  .min(MIN_PASSWORD_LENGTH, AUTH_MESSAGES.passwordLength)
+  .max(MAX_PASSWORD_LENGTH, AUTH_MESSAGES.passwordMax)
+  .regex(/[a-z]/, AUTH_MESSAGES.passwordLower)
+  .regex(/[A-Z]/, AUTH_MESSAGES.passwordUpper)
+  .regex(/[0-9]/, AUTH_MESSAGES.passwordDigit);
+
+// Reported on confirmPassword so the mismatch error sits under that field.
+function confirmMatches(
+  data: { newPassword: string; confirmPassword: string },
+  ctx: z.RefinementCtx,
+) {
+  if (data.newPassword !== data.confirmPassword) {
+    ctx.addIssue({
+      code: "custom",
+      message: AUTH_MESSAGES.passwordsMismatch,
+      path: ["confirmPassword"],
+    });
+  }
+}
+
+// Change password (signed in): current password only has to be present — the
+// server checks it — while the new one must satisfy the composition rules.
+export const changePasswordSchema = z
+  .object({
+    currentPassword: z.string().min(1, AUTH_MESSAGES.currentPasswordRequired),
+    newPassword: newPasswordSchema,
+    confirmPassword: z.string(),
+  })
+  .superRefine(confirmMatches);
+
+export type ChangePasswordValues = z.infer<typeof changePasswordSchema>;
+
+// Reset password (forgot flow): email + 6-digit code + a new password.
+export const resetPasswordSchema = z
+  .object({
+    email: z.string().trim().email(AUTH_MESSAGES.email),
+    code: z.string().regex(/^\d{6}$/, AUTH_MESSAGES.code),
+    newPassword: newPasswordSchema,
+    confirmPassword: z.string(),
+  })
+  .superRefine(confirmMatches);
+
+export type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
+
+// Just the email step of the reset flow (request a code).
+export const requestResetSchema = z.object({
+  email: z.string().trim().email(AUTH_MESSAGES.email),
+});
 
 // Both modes share one object shape (all fields always registered on the form)
 // so the react-hook-form values type stays stable across the login/register

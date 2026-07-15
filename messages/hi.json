@@ -261,7 +261,16 @@
     "notifNewPack": "आपके फ़ॉलो किए किसी व्यक्ति का नया पैक",
     "notifNewComment": "आपके पैक पर नई टिप्पणी",
     "notifPackDeleted": "मॉडरेटर द्वारा हटाया गया पैक",
-    "notifCommentMention": "एक टिप्पणी में आपका उल्लेख किया गया"
+    "notifCommentMention": "एक टिप्पणी में आपका उल्लेख किया गया",
+    "passwordHeading": "पासवर्ड",
+    "currentPassword": "वर्तमान पासवर्ड",
+    "newPassword": "नया पासवर्ड",
+    "confirmNewPassword": "नए पासवर्ड की पुष्टि करें",
+    "changePasswordButton": "पासवर्ड बदलें",
+    "passwordChanged": "पासवर्ड बदल दिया गया।",
+    "changePasswordError": "आपका पासवर्ड नहीं बदला जा सका। कृपया पुनः प्रयास करें।",
+    "currentPasswordWrong": "आपका वर्तमान पासवर्ड गलत है।",
+    "loginToChangePassword": "पासवर्ड बदलने के लिए लॉग इन करें।"
   },
   "streamerMode": {
     "hiddenHint": "स्ट्रीमर मोड के कारण छिपाया गया",
@@ -298,7 +307,19 @@
     "invalidCredentials": "अमान्य क्रेडेंशियल।",
     "pleaseWait": "कृपया प्रतीक्षा करें…",
     "createAccount": "खाता बनाएँ",
-    "terms": "जारी रखकर आप Velanto की <terms>सेवा शर्तों</terms> और <privacy>गोपनीयता नीति</privacy> से सहमत होते हैं।"
+    "terms": "जारी रखकर आप Velanto की <terms>सेवा शर्तों</terms> और <privacy>गोपनीयता नीति</privacy> से सहमत होते हैं।",
+    "forgotPassword": "पासवर्ड भूल गए?",
+    "resetHeading": "अपना पासवर्ड रीसेट करें",
+    "resetIntro": "अपना ईमेल दर्ज करें और हम आपको एक रीसेट कोड भेजेंगे।",
+    "sendResetCode": "रीसेट कोड भेजें",
+    "resetCodeSent": "यदि उस ईमेल का कोई खाता है, तो रीसेट कोड भेजा जा रहा है। इसे अपने नए पासवर्ड के साथ नीचे दर्ज करें।",
+    "resetEnterCode": "रीसेट कोड",
+    "resetNewPassword": "नया पासवर्ड",
+    "resetConfirmPassword": "नए पासवर्ड की पुष्टि करें",
+    "resetSubmit": "पासवर्ड रीसेट करें",
+    "resetSuccess": "आपका पासवर्ड रीसेट हो गया है। अब आप लॉग इन कर सकते हैं।",
+    "backToLogin": "लॉग इन पर वापस जाएँ",
+    "resetError": "आपका पासवर्ड रीसेट नहीं हो सका। कोड जाँचें और पुनः प्रयास करें।"
   },
   "rules": {
     "metaTitle": "समुदाय नियम — Velanto",

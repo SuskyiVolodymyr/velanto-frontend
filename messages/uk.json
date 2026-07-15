@@ -261,7 +261,16 @@
     "notifNewPack": "Новий пак від того, за ким ти стежиш",
     "notifNewComment": "Новий коментар до твого пака",
     "notifPackDeleted": "Пак видалено модератором",
-    "notifCommentMention": "Тебе згадали в коментарі"
+    "notifCommentMention": "Тебе згадали в коментарі",
+    "passwordHeading": "Пароль",
+    "currentPassword": "Поточний пароль",
+    "newPassword": "Новий пароль",
+    "confirmNewPassword": "Підтвердьте новий пароль",
+    "changePasswordButton": "Змінити пароль",
+    "passwordChanged": "Пароль змінено.",
+    "changePasswordError": "Не вдалося змінити пароль. Спробуйте ще раз.",
+    "currentPasswordWrong": "Поточний пароль указано неправильно.",
+    "loginToChangePassword": "Увійдіть, щоб змінити пароль."
   },
   "streamerMode": {
     "hiddenHint": "Приховано через режим стримера",
@@ -298,7 +307,19 @@
     "invalidCredentials": "Неправильний логін або пароль.",
     "pleaseWait": "Зачекай…",
     "createAccount": "Створити обліковий запис",
-    "terms": "Продовжуючи, ти погоджуєшся з <terms>Умовами</terms> та <privacy>Політикою конфіденційності</privacy> Velanto."
+    "terms": "Продовжуючи, ти погоджуєшся з <terms>Умовами</terms> та <privacy>Політикою конфіденційності</privacy> Velanto.",
+    "forgotPassword": "Забули пароль?",
+    "resetHeading": "Скидання пароля",
+    "resetIntro": "Укажіть свій email, і ми надішлемо код для скидання.",
+    "sendResetCode": "Надіслати код",
+    "resetCodeSent": "Якщо обліковий запис із таким email існує, код уже в дорозі. Введіть його нижче разом із новим паролем.",
+    "resetEnterCode": "Код скидання",
+    "resetNewPassword": "Новий пароль",
+    "resetConfirmPassword": "Підтвердьте новий пароль",
+    "resetSubmit": "Скинути пароль",
+    "resetSuccess": "Пароль скинуто. Тепер ви можете увійти.",
+    "backToLogin": "Повернутися до входу",
+    "resetError": "Не вдалося скинути пароль. Перевірте код і спробуйте знову."
   },
   "rules": {
     "metaTitle": "Правила спільноти — Velanto",

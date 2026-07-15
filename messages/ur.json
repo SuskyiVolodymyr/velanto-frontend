@@ -261,7 +261,16 @@
     "notifNewPack": "آپ کے فالو کردہ کسی شخص کا نیا پیک",
     "notifNewComment": "آپ کے پیک پر نیا تبصرہ",
     "notifPackDeleted": "ماڈریٹر نے پیک ہٹا دیا",
-    "notifCommentMention": "ایک تبصرے میں آپ کا ذکر کیا گیا"
+    "notifCommentMention": "ایک تبصرے میں آپ کا ذکر کیا گیا",
+    "passwordHeading": "پاس ورڈ",
+    "currentPassword": "موجودہ پاس ورڈ",
+    "newPassword": "نیا پاس ورڈ",
+    "confirmNewPassword": "نئے پاس ورڈ کی تصدیق کریں",
+    "changePasswordButton": "پاس ورڈ تبدیل کریں",
+    "passwordChanged": "پاس ورڈ تبدیل ہو گیا۔",
+    "changePasswordError": "آپ کا پاس ورڈ تبدیل نہیں ہو سکا۔ براہ کرم دوبارہ کوشش کریں۔",
+    "currentPasswordWrong": "آپ کا موجودہ پاس ورڈ غلط ہے۔",
+    "loginToChangePassword": "اپنا پاس ورڈ تبدیل کرنے کے لیے لاگ ان کریں۔"
   },
   "streamerMode": {
     "hiddenHint": "اسٹریمر موڈ کی وجہ سے چھپایا گیا",
@@ -298,7 +307,19 @@
     "invalidCredentials": "غلط تفصیلات۔",
     "pleaseWait": "براہ کرم انتظار کریں…",
     "createAccount": "اکاؤنٹ بنائیں",
-    "terms": "جاری رکھ کر آپ Velanto کی <terms>شرائط</terms> اور <privacy>رازداری کی پالیسی</privacy> سے اتفاق کرتے ہیں۔"
+    "terms": "جاری رکھ کر آپ Velanto کی <terms>شرائط</terms> اور <privacy>رازداری کی پالیسی</privacy> سے اتفاق کرتے ہیں۔",
+    "forgotPassword": "پاس ورڈ بھول گئے؟",
+    "resetHeading": "اپنا پاس ورڈ دوبارہ ترتیب دیں",
+    "resetIntro": "اپنا ای میل درج کریں اور ہم آپ کو ری سیٹ کوڈ بھیجیں گے۔",
+    "sendResetCode": "ری سیٹ کوڈ بھیجیں",
+    "resetCodeSent": "اگر اس ای میل کا کوئی اکاؤنٹ ہے تو ری سیٹ کوڈ آپ کی طرف آ رہا ہے۔ اسے اپنے نئے پاس ورڈ کے ساتھ نیچے درج کریں۔",
+    "resetEnterCode": "ری سیٹ کوڈ",
+    "resetNewPassword": "نیا پاس ورڈ",
+    "resetConfirmPassword": "نئے پاس ورڈ کی تصدیق کریں",
+    "resetSubmit": "پاس ورڈ دوبارہ ترتیب دیں",
+    "resetSuccess": "آپ کا پاس ورڈ دوبارہ ترتیب دے دیا گیا ہے۔ اب آپ لاگ ان کر سکتے ہیں۔",
+    "backToLogin": "لاگ ان پر واپس جائیں",
+    "resetError": "آپ کا پاس ورڈ دوبارہ ترتیب نہیں دیا جا سکا۔ کوڈ چیک کریں اور دوبارہ کوشش کریں۔"
   },
   "rules": {
     "metaTitle": "کمیونٹی قواعد — Velanto",

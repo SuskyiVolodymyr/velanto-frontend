@@ -261,7 +261,16 @@
     "notifNewPack": "Nouveau pack d'une personne que vous suivez",
     "notifNewComment": "Nouveau commentaire sur votre pack",
     "notifPackDeleted": "Pack supprimé par un modérateur",
-    "notifCommentMention": "Vous avez été mentionné dans un commentaire"
+    "notifCommentMention": "Vous avez été mentionné dans un commentaire",
+    "passwordHeading": "Mot de passe",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "confirmNewPassword": "Confirmer le nouveau mot de passe",
+    "changePasswordButton": "Modifier le mot de passe",
+    "passwordChanged": "Mot de passe modifié.",
+    "changePasswordError": "Impossible de modifier votre mot de passe. Veuillez réessayer.",
+    "currentPasswordWrong": "Votre mot de passe actuel est incorrect.",
+    "loginToChangePassword": "Connectez-vous pour modifier votre mot de passe."
   },
   "streamerMode": {
     "hiddenHint": "Masqué par le mode streamer",
@@ -298,7 +307,19 @@
     "invalidCredentials": "Identifiants invalides.",
     "pleaseWait": "Veuillez patienter…",
     "createAccount": "Créer un compte",
-    "terms": "En continuant, vous acceptez les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy> de Velanto."
+    "terms": "En continuant, vous acceptez les <terms>Conditions d'utilisation</terms> et la <privacy>Politique de confidentialité</privacy> de Velanto.",
+    "forgotPassword": "Mot de passe oublié ?",
+    "resetHeading": "Réinitialiser votre mot de passe",
+    "resetIntro": "Saisissez votre e-mail et nous vous enverrons un code de réinitialisation.",
+    "sendResetCode": "Envoyer le code",
+    "resetCodeSent": "Si un compte est associé à cet e-mail, un code de réinitialisation arrive. Saisissez-le ci-dessous avec votre nouveau mot de passe.",
+    "resetEnterCode": "Code de réinitialisation",
+    "resetNewPassword": "Nouveau mot de passe",
+    "resetConfirmPassword": "Confirmer le nouveau mot de passe",
+    "resetSubmit": "Réinitialiser le mot de passe",
+    "resetSuccess": "Votre mot de passe a été réinitialisé. Vous pouvez maintenant vous connecter.",
+    "backToLogin": "Retour à la connexion",
+    "resetError": "Impossible de réinitialiser votre mot de passe. Vérifiez le code et réessayez."
   },
   "rules": {
     "metaTitle": "Règles de la communauté — Velanto",

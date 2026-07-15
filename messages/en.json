@@ -298,7 +298,16 @@
     "notifNewPack": "New pack from someone you follow",
     "notifNewComment": "New comment on your pack",
     "notifPackDeleted": "Pack removed by a moderator",
-    "notifCommentMention": "You were mentioned in a comment"
+    "notifCommentMention": "You were mentioned in a comment",
+    "passwordHeading": "Password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmNewPassword": "Confirm new password",
+    "changePasswordButton": "Change password",
+    "passwordChanged": "Password changed.",
+    "changePasswordError": "Couldn’t change your password. Please try again.",
+    "currentPasswordWrong": "Your current password is incorrect.",
+    "loginToChangePassword": "Log in to change your password."
   },
   "streamerMode": {
     "hiddenHint": "Hidden because of streamer mode",
@@ -335,7 +344,19 @@
     "invalidCredentials": "Invalid credentials.",
     "pleaseWait": "Please wait…",
     "createAccount": "Create account",
-    "terms": "By continuing you agree to Velanto's <terms>Terms</terms> and <privacy>Privacy Policy</privacy>."
+    "terms": "By continuing you agree to Velanto's <terms>Terms</terms> and <privacy>Privacy Policy</privacy>.",
+    "forgotPassword": "Forgot password?",
+    "resetHeading": "Reset your password",
+    "resetIntro": "Enter your email and we’ll send you a reset code.",
+    "sendResetCode": "Send reset code",
+    "resetCodeSent": "If that email has an account, a reset code is on its way. Enter it below with your new password.",
+    "resetEnterCode": "Reset code",
+    "resetNewPassword": "New password",
+    "resetConfirmPassword": "Confirm new password",
+    "resetSubmit": "Reset password",
+    "resetSuccess": "Your password has been reset. You can now log in.",
+    "backToLogin": "Back to log in",
+    "resetError": "Couldn’t reset your password. Check the code and try again."
   },
   "rules": {
     "metaTitle": "Community Rules — Velanto",

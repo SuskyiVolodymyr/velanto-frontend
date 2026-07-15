@@ -27,6 +27,18 @@ export interface EmailCodeResult {
   devCode?: string;
 }
 
+export interface ResetPasswordInput {
+  email: string;
+  /** 6-digit code from POST /auth/password-reset/request. */
+  code: string;
+  newPassword: string;
+}
+
+export interface ChangePasswordInput {
+  currentPassword: string;
+  newPassword: string;
+}
+
 export const authClient = {
   /** Sends a verification code to `email` for the register flow. */
   requestEmailCode: (email: string) =>
@@ -39,4 +51,14 @@ export const authClient = {
     apiClient.post<AuthResult>("/auth/login", input),
   refresh: () => apiClient.post<AuthResult>("/auth/refresh"),
   logout: () => apiClient.post<{ success: true }>("/auth/logout"),
+  /** Forgot-password: request a reset code. Always reports `sent` (the backend
+   * won't say whether the email is registered); `devCode` only in non-prod. */
+  requestPasswordReset: (email: string) =>
+    apiClient.post<EmailCodeResult>("/auth/password-reset/request", { email }),
+  /** Forgot-password: prove the code and set a new password. */
+  resetPassword: (input: ResetPasswordInput) =>
+    apiClient.post<{ reset: true }>("/auth/password-reset/confirm", input),
+  /** Change password while signed in (requires the current password). */
+  changePassword: (input: ChangePasswordInput) =>
+    apiClient.patch<{ changed: true }>("/auth/password", input),
 };
