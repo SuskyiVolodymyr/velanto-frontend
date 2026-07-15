@@ -261,7 +261,16 @@
     "notifNewPack": "你关注的人发布了新题包",
     "notifNewComment": "你的题包有新评论",
     "notifPackDeleted": "题包被审核员移除",
-    "notifCommentMention": "有人在评论中提到你"
+    "notifCommentMention": "有人在评论中提到你",
+    "passwordHeading": "密码",
+    "currentPassword": "当前密码",
+    "newPassword": "新密码",
+    "confirmNewPassword": "确认新密码",
+    "changePasswordButton": "修改密码",
+    "passwordChanged": "密码已修改。",
+    "changePasswordError": "无法修改密码，请重试。",
+    "currentPasswordWrong": "当前密码不正确。",
+    "loginToChangePassword": "请登录以修改密码。"
   },
   "streamerMode": {
     "hiddenHint": "已因主播模式隐藏",
@@ -298,7 +307,19 @@
     "invalidCredentials": "账号或密码错误。",
     "pleaseWait": "请稍候…",
     "createAccount": "创建账号",
-    "terms": "继续即表示你同意 Velanto 的<terms>服务条款</terms>和<privacy>隐私政策</privacy>。"
+    "terms": "继续即表示你同意 Velanto 的<terms>服务条款</terms>和<privacy>隐私政策</privacy>。",
+    "forgotPassword": "忘记密码？",
+    "resetHeading": "重置密码",
+    "resetIntro": "输入您的邮箱，我们将向您发送重置验证码。",
+    "sendResetCode": "发送重置验证码",
+    "resetCodeSent": "如果该邮箱已注册账户，重置验证码即将送达。请在下方输入验证码和新密码。",
+    "resetEnterCode": "重置验证码",
+    "resetNewPassword": "新密码",
+    "resetConfirmPassword": "确认新密码",
+    "resetSubmit": "重置密码",
+    "resetSuccess": "您的密码已重置，现在可以登录。",
+    "backToLogin": "返回登录",
+    "resetError": "无法重置密码，请检查验证码后重试。"
   },
   "rules": {
     "metaTitle": "社区规则 — Velanto",

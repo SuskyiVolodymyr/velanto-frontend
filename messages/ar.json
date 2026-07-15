@@ -261,7 +261,16 @@
     "notifNewPack": "حزمة جديدة ممّن تتابعهم",
     "notifNewComment": "تعليق جديد على حزمتك",
     "notifPackDeleted": "حزمة أزالها مشرف",
-    "notifCommentMention": "تمت الإشارة إليك في تعليق"
+    "notifCommentMention": "تمت الإشارة إليك في تعليق",
+    "passwordHeading": "كلمة المرور",
+    "currentPassword": "كلمة المرور الحالية",
+    "newPassword": "كلمة المرور الجديدة",
+    "confirmNewPassword": "تأكيد كلمة المرور الجديدة",
+    "changePasswordButton": "تغيير كلمة المرور",
+    "passwordChanged": "تم تغيير كلمة المرور.",
+    "changePasswordError": "تعذّر تغيير كلمة المرور. يرجى المحاولة مرة أخرى.",
+    "currentPasswordWrong": "كلمة المرور الحالية غير صحيحة.",
+    "loginToChangePassword": "سجّل الدخول لتغيير كلمة المرور."
   },
   "streamerMode": {
     "hiddenHint": "مخفي بسبب وضع البث",
@@ -298,7 +307,19 @@
     "invalidCredentials": "بيانات الدخول غير صحيحة.",
     "pleaseWait": "يرجى الانتظار…",
     "createAccount": "إنشاء حساب",
-    "terms": "بمتابعتك فإنك توافق على <terms>شروط</terms> Velanto و<privacy>سياسة الخصوصية</privacy>."
+    "terms": "بمتابعتك فإنك توافق على <terms>شروط</terms> Velanto و<privacy>سياسة الخصوصية</privacy>.",
+    "forgotPassword": "هل نسيت كلمة المرور؟",
+    "resetHeading": "إعادة تعيين كلمة المرور",
+    "resetIntro": "أدخل بريدك الإلكتروني وسنرسل إليك رمز إعادة التعيين.",
+    "sendResetCode": "إرسال رمز إعادة التعيين",
+    "resetCodeSent": "إذا كان لهذا البريد حساب، فإن رمز إعادة التعيين في طريقه إليك. أدخله أدناه مع كلمة المرور الجديدة.",
+    "resetEnterCode": "رمز إعادة التعيين",
+    "resetNewPassword": "كلمة المرور الجديدة",
+    "resetConfirmPassword": "تأكيد كلمة المرور الجديدة",
+    "resetSubmit": "إعادة تعيين كلمة المرور",
+    "resetSuccess": "تمت إعادة تعيين كلمة المرور. يمكنك الآن تسجيل الدخول.",
+    "backToLogin": "العودة إلى تسجيل الدخول",
+    "resetError": "تعذّر إعادة تعيين كلمة المرور. تحقّق من الرمز وحاول مرة أخرى."
   },
   "rules": {
     "metaTitle": "قواعد المجتمع — Velanto",

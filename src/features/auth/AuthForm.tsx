@@ -25,6 +25,7 @@ import {
   AcceptRulesField,
 } from "@/src/features/auth/RegisterFields";
 import { OtpStep } from "@/src/features/auth/OtpStep";
+import { ForgotPasswordForm } from "@/src/features/auth/ForgotPasswordForm";
 import {
   markCodeSent,
   getResendCooldownRemaining,
@@ -54,6 +55,8 @@ export function AuthForm() {
   const [devCode, setDevCode] = useState<string | undefined>(undefined);
   const [sending, setSending] = useState(false);
   const [shake, setShake] = useState(false);
+  // The forgot-password flow replaces the login/register card when active.
+  const [forgot, setForgot] = useState(false);
 
   const isRegister = mode === "register";
 
@@ -170,6 +173,17 @@ export function AuthForm() {
     }
   }
 
+  if (forgot) {
+    return (
+      <div className="w-full max-w-[400px]">
+        <ForgotPasswordForm
+          initialEmail={getValues("identifier").trim()}
+          onBackToLogin={() => setForgot(false)}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full max-w-[400px]">
       <div
@@ -244,6 +258,13 @@ export function AuthForm() {
                 hideLabel={t("hidePassword")}
                 disabled={isSubmitting}
               />
+              <button
+                type="button"
+                onClick={() => setForgot(true)}
+                className="-mt-1 self-end text-xs text-foreground-secondary transition-colors hover:text-foreground"
+              >
+                {t("forgotPassword")}
+              </button>
             </>
           )}
 

@@ -261,7 +261,16 @@
     "notifNewPack": "Nuevo pack de alguien que sigues",
     "notifNewComment": "Nuevo comentario en tu pack",
     "notifPackDeleted": "Pack eliminado por un moderador",
-    "notifCommentMention": "Te mencionaron en un comentario"
+    "notifCommentMention": "Te mencionaron en un comentario",
+    "passwordHeading": "Contraseña",
+    "currentPassword": "Contraseña actual",
+    "newPassword": "Nueva contraseña",
+    "confirmNewPassword": "Confirmar la nueva contraseña",
+    "changePasswordButton": "Cambiar contraseña",
+    "passwordChanged": "Contraseña actualizada.",
+    "changePasswordError": "No se pudo cambiar tu contraseña. Inténtalo de nuevo.",
+    "currentPasswordWrong": "Tu contraseña actual no es correcta.",
+    "loginToChangePassword": "Inicia sesión para cambiar tu contraseña."
   },
   "streamerMode": {
     "hiddenHint": "Oculto por el modo streamer",
@@ -298,7 +307,19 @@
     "invalidCredentials": "Credenciales no válidas.",
     "pleaseWait": "Espera un momento…",
     "createAccount": "Crear cuenta",
-    "terms": "Al continuar, aceptas los <terms>Términos</terms> y la <privacy>Política de Privacidad</privacy> de Velanto."
+    "terms": "Al continuar, aceptas los <terms>Términos</terms> y la <privacy>Política de Privacidad</privacy> de Velanto.",
+    "forgotPassword": "¿Olvidaste tu contraseña?",
+    "resetHeading": "Restablece tu contraseña",
+    "resetIntro": "Introduce tu correo y te enviaremos un código de restablecimiento.",
+    "sendResetCode": "Enviar código",
+    "resetCodeSent": "Si esa cuenta existe, el código de restablecimiento está en camino. Introdúcelo abajo junto con tu nueva contraseña.",
+    "resetEnterCode": "Código de restablecimiento",
+    "resetNewPassword": "Nueva contraseña",
+    "resetConfirmPassword": "Confirmar la nueva contraseña",
+    "resetSubmit": "Restablecer contraseña",
+    "resetSuccess": "Tu contraseña se ha restablecido. Ya puedes iniciar sesión.",
+    "backToLogin": "Volver al inicio de sesión",
+    "resetError": "No se pudo restablecer tu contraseña. Revisa el código e inténtalo de nuevo."
   },
   "rules": {
     "metaTitle": "Reglas de la comunidad — Velanto",

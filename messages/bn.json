@@ -261,7 +261,16 @@
     "notifNewPack": "আপনি যাকে ফলো করেন তার নতুন প্যাক",
     "notifNewComment": "আপনার প্যাকে নতুন মন্তব্য",
     "notifPackDeleted": "একজন মডারেটর প্যাকটি সরিয়ে দিয়েছেন",
-    "notifCommentMention": "একটি মন্তব্যে আপনাকে উল্লেখ করা হয়েছে"
+    "notifCommentMention": "একটি মন্তব্যে আপনাকে উল্লেখ করা হয়েছে",
+    "passwordHeading": "পাসওয়ার্ড",
+    "currentPassword": "বর্তমান পাসওয়ার্ড",
+    "newPassword": "নতুন পাসওয়ার্ড",
+    "confirmNewPassword": "নতুন পাসওয়ার্ড নিশ্চিত করুন",
+    "changePasswordButton": "পাসওয়ার্ড পরিবর্তন করুন",
+    "passwordChanged": "পাসওয়ার্ড পরিবর্তন করা হয়েছে।",
+    "changePasswordError": "আপনার পাসওয়ার্ড পরিবর্তন করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।",
+    "currentPasswordWrong": "আপনার বর্তমান পাসওয়ার্ড ভুল।",
+    "loginToChangePassword": "পাসওয়ার্ড পরিবর্তন করতে লগ ইন করুন।"
   },
   "streamerMode": {
     "hiddenHint": "স্ট্রিমার মোডের কারণে লুকানো",
@@ -298,7 +307,19 @@
     "invalidCredentials": "লগইন তথ্য সঠিক নয়।",
     "pleaseWait": "একটু অপেক্ষা করুন…",
     "createAccount": "অ্যাকাউন্ট তৈরি করুন",
-    "terms": "চালিয়ে গেলে আপনি Velanto-র <terms>শর্তাবলী</terms> ও <privacy>গোপনীয়তা নীতি</privacy>তে সম্মত হচ্ছেন।"
+    "terms": "চালিয়ে গেলে আপনি Velanto-র <terms>শর্তাবলী</terms> ও <privacy>গোপনীয়তা নীতি</privacy>তে সম্মত হচ্ছেন।",
+    "forgotPassword": "পাসওয়ার্ড ভুলে গেছেন?",
+    "resetHeading": "আপনার পাসওয়ার্ড রিসেট করুন",
+    "resetIntro": "আপনার ইমেল দিন, আমরা আপনাকে একটি রিসেট কোড পাঠাব।",
+    "sendResetCode": "রিসেট কোড পাঠান",
+    "resetCodeSent": "সেই ইমেলে যদি কোনো অ্যাকাউন্ট থাকে, তবে একটি রিসেট কোড পথে আছে। এটি আপনার নতুন পাসওয়ার্ডসহ নিচে লিখুন।",
+    "resetEnterCode": "রিসেট কোড",
+    "resetNewPassword": "নতুন পাসওয়ার্ড",
+    "resetConfirmPassword": "নতুন পাসওয়ার্ড নিশ্চিত করুন",
+    "resetSubmit": "পাসওয়ার্ড রিসেট করুন",
+    "resetSuccess": "আপনার পাসওয়ার্ড রিসেট করা হয়েছে। আপনি এখন লগ ইন করতে পারেন।",
+    "backToLogin": "লগ ইন-এ ফিরে যান",
+    "resetError": "আপনার পাসওয়ার্ড রিসেট করা যায়নি। কোডটি যাচাই করে আবার চেষ্টা করুন।"
   },
   "rules": {
     "metaTitle": "কমিউনিটি নিয়মাবলী — Velanto",

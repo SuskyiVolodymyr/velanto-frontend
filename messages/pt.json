@@ -261,7 +261,16 @@
     "notifNewPack": "Novo pack de alguém que você segue",
     "notifNewComment": "Novo comentário no seu pack",
     "notifPackDeleted": "Pack removido por um moderador",
-    "notifCommentMention": "Você foi mencionado em um comentário"
+    "notifCommentMention": "Você foi mencionado em um comentário",
+    "passwordHeading": "Palavra-passe",
+    "currentPassword": "Palavra-passe atual",
+    "newPassword": "Nova palavra-passe",
+    "confirmNewPassword": "Confirmar a nova palavra-passe",
+    "changePasswordButton": "Alterar palavra-passe",
+    "passwordChanged": "Palavra-passe alterada.",
+    "changePasswordError": "Não foi possível alterar a sua palavra-passe. Tente novamente.",
+    "currentPasswordWrong": "A sua palavra-passe atual está incorreta.",
+    "loginToChangePassword": "Inicie sessão para alterar a sua palavra-passe."
   },
   "streamerMode": {
     "hiddenHint": "Oculto pelo modo streamer",
@@ -298,7 +307,19 @@
     "invalidCredentials": "Credenciais inválidas.",
     "pleaseWait": "Aguarde…",
     "createAccount": "Criar conta",
-    "terms": "Ao continuar, você concorda com os <terms>Termos</terms> e a <privacy>Política de Privacidade</privacy> do Velanto."
+    "terms": "Ao continuar, você concorda com os <terms>Termos</terms> e a <privacy>Política de Privacidade</privacy> do Velanto.",
+    "forgotPassword": "Esqueceu-se da palavra-passe?",
+    "resetHeading": "Redefinir a sua palavra-passe",
+    "resetIntro": "Introduza o seu e-mail e enviaremos um código de redefinição.",
+    "sendResetCode": "Enviar código",
+    "resetCodeSent": "Se essa conta existir, o código de redefinição está a caminho. Introduza-o abaixo com a sua nova palavra-passe.",
+    "resetEnterCode": "Código de redefinição",
+    "resetNewPassword": "Nova palavra-passe",
+    "resetConfirmPassword": "Confirmar a nova palavra-passe",
+    "resetSubmit": "Redefinir palavra-passe",
+    "resetSuccess": "A sua palavra-passe foi redefinida. Já pode iniciar sessão.",
+    "backToLogin": "Voltar ao início de sessão",
+    "resetError": "Não foi possível redefinir a sua palavra-passe. Verifique o código e tente novamente."
   },
   "rules": {
     "metaTitle": "Regras da comunidade — Velanto",
