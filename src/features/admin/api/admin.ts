@@ -1,16 +1,31 @@
-import { adminClient, type AuditLogSort } from "@/src/shared/lib/admin-client";
+import {
+  adminClient,
+  type AdminUserSort,
+  type AuditLogSort,
+} from "@/src/shared/lib/admin-client";
 
 export const ADMIN_PAGE_SIZE = 20;
+
+/** The Users tab's filter state (beyond pagination). */
+export interface UsersPageFilters {
+  q: string;
+  /** Registration-date order. */
+  sort: AdminUserSort;
+  /** undefined = all, true = only banned, false = only not banned. */
+  banned?: boolean;
+}
 
 /**
  * The Users tab lists NON-staff only — staff are managed on their own tab, and
  * showing them in both was just noise (and invited acting on a colleague from
  * the wrong screen).
  */
-export function fetchUsersPage(q: string, page: number) {
+export function fetchUsersPage(filters: UsersPageFilters, page: number) {
   return adminClient.listUsers({
-    q: q || undefined,
+    q: filters.q || undefined,
     staff: false,
+    banned: filters.banned,
+    sort: filters.sort,
     page,
     limit: ADMIN_PAGE_SIZE,
   });

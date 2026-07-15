@@ -8,10 +8,17 @@ import type {
 /** Newest-first is the backend default; the Logs tab can flip it. */
 export type AuditLogSort = "newest" | "oldest";
 
+/** Registration-date order for the Users tab. */
+export type AdminUserSort = "newest" | "oldest";
+
 export interface ListAdminUsersFilters {
   q?: string;
   /** Staff tab: restrict to moderator/admin/manager. */
   staff?: boolean;
+  /** Users tab filter: true = only banned, false = only not banned. */
+  banned?: boolean;
+  /** Order by registration date; newest-first is the backend default. */
+  sort?: AdminUserSort;
   page?: number;
   limit?: number;
 }
@@ -39,6 +46,12 @@ function buildUsersQuery(filters: ListAdminUsersFilters): string {
   if (filters.staff !== undefined) {
     params.set("staff", String(filters.staff));
   }
+  // Same tri-state reasoning as `staff`: `false` is a real filter (only
+  // not-banned), so check for undefined rather than truthiness.
+  if (filters.banned !== undefined) {
+    params.set("banned", String(filters.banned));
+  }
+  if (filters.sort) params.set("sort", filters.sort);
   if (filters.page !== undefined) params.set("page", String(filters.page));
   if (filters.limit !== undefined) params.set("limit", String(filters.limit));
   const query = params.toString();

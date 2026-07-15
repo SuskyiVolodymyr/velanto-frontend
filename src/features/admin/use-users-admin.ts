@@ -16,9 +16,18 @@ import {
   useAdminUsers,
   patchAdminUser,
 } from "@/src/features/admin/api/admin.queries";
+import type { UsersPageFilters } from "@/src/features/admin/api/admin";
 import type { AdminUserRow } from "@/src/shared/types/admin";
+import type { AdminUserSort } from "@/src/shared/lib/admin-client";
 
 const SEARCH_DEBOUNCE_MS = 300;
+
+/** The banned-filter's three states as a single select value. */
+export type BannedFilter = "all" | "banned" | "active";
+
+function bannedFlag(filter: BannedFilter): boolean | undefined {
+  return filter === "all" ? undefined : filter === "banned";
+}
 
 export function isCurrentlyBanned(bannedUntil: string | null): boolean {
   return bannedUntil !== null && new Date(bannedUntil).getTime() > Date.now();
@@ -33,6 +42,8 @@ export function useUsersAdmin() {
   const queryClient = useQueryClient();
   const [searchInput, setSearchInput] = useState("");
   const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<AdminUserSort>("newest");
+  const [bannedFilter, setBannedFilter] = useState<BannedFilter>("all");
   const [banTargetId, setBanTargetId] = useState<string | null>(null);
   const [banDuration, setBanDuration] = useState<BanDuration>("week");
   const [banReason, setBanReason] = useState<BanReasonState>({
@@ -48,7 +59,11 @@ export function useUsersAdmin() {
     return () => clearTimeout(timeout);
   }, [searchInput]);
 
-  const usersQuery = useAdminUsers(query);
+  const filters: UsersPageFilters = useMemo(
+    () => ({ q: query, sort, banned: bannedFlag(bannedFilter) }),
+    [query, sort, bannedFilter],
+  );
+  const usersQuery = useAdminUsers(filters);
 
   const users = useMemo(() => {
     const seen = new Set<string>();
@@ -76,7 +91,7 @@ export function useUsersAdmin() {
     mutationFn: ({ id, ...input }: { id: string } & BanUserInput) =>
       usersClient.ban(id, input),
     onSuccess: (result, { id }) => {
-      patchAdminUser(queryClient, query, id, {
+      patchAdminUser(queryClient, filters, id, {
         bannedUntil: result.bannedUntil,
       });
       setBanTargetId(null);
@@ -87,14 +102,14 @@ export function useUsersAdmin() {
   const unbanMutation = useMutation({
     mutationFn: (id: string) => usersClient.unban(id),
     onSuccess: (_result, id) =>
-      patchAdminUser(queryClient, query, id, { bannedUntil: null }),
+      patchAdminUser(queryClient, filters, id, { bannedUntil: null }),
   });
 
   const trustMutation = useMutation({
     mutationFn: ({ id, trusted }: { id: string; trusted: boolean }) =>
       usersClient.setTrusted(id, trusted),
     onSuccess: (_result, { id, trusted }) =>
-      patchAdminUser(queryClient, query, id, { trusted }),
+      patchAdminUser(queryClient, filters, id, { trusted }),
   });
 
   const actionError = banMutation.isError
@@ -128,6 +143,10 @@ export function useUsersAdmin() {
   return {
     searchInput,
     setSearchInput,
+    sort,
+    setSort,
+    bannedFilter,
+    setBannedFilter,
     users,
     total,
     status,
