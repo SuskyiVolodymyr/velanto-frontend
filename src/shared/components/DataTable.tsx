@@ -21,6 +21,7 @@ export function DataTable({
   children,
   empty,
   isEmpty,
+  minWidth = "42rem",
 }: {
   columns: string;
   headers: string[];
@@ -28,41 +29,52 @@ export function DataTable({
   /** Shown instead of the rows when there are none. */
   empty: string;
   isEmpty: boolean;
+  /**
+   * Floor width for the table's fixed-px columns. Below it (e.g. a phone) the
+   * outer wrapper scrolls horizontally instead of clipping the right-hand
+   * columns; above it the table just fills its container, so desktop is
+   * unchanged. The scroll wrapper sits OUTSIDE role="table" so the table still
+   * owns its role="row" children directly (valid ARIA).
+   */
+  minWidth?: string;
 }) {
   return (
-    <div
-      role="table"
-      className="overflow-hidden rounded-[16px] border border-border"
-    >
+    <div className="overflow-x-auto">
       <div
-        role="row"
-        className="grid gap-3 bg-white/[0.03] px-[18px] py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground-tertiary"
-        style={{ gridTemplateColumns: columns }}
+        role="table"
+        className="overflow-hidden rounded-[16px] border border-border"
+        style={{ minWidth }}
       >
-        {headers.map((header, index) => (
-          <span
-            role="columnheader"
-            // Headers are a fixed, ordered list per table, so the index is a
-            // stable key — and blank action columns would otherwise collide.
-            key={index}
-          >
-            {header}
-          </span>
-        ))}
-      </div>
-      {isEmpty ? (
-        <div role="row">
-          <Text
-            role="cell"
-            variant="tertiary"
-            className="p-10 text-center text-sm"
-          >
-            {empty}
-          </Text>
+        <div
+          role="row"
+          className="grid gap-3 bg-white/[0.03] px-[18px] py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground-tertiary"
+          style={{ gridTemplateColumns: columns }}
+        >
+          {headers.map((header, index) => (
+            <span
+              role="columnheader"
+              // Headers are a fixed, ordered list per table, so the index is a
+              // stable key — and blank action columns would otherwise collide.
+              key={index}
+            >
+              {header}
+            </span>
+          ))}
         </div>
-      ) : (
-        children
-      )}
+        {isEmpty ? (
+          <div role="row">
+            <Text
+              role="cell"
+              variant="tertiary"
+              className="p-10 text-center text-sm"
+            >
+              {empty}
+            </Text>
+          </div>
+        ) : (
+          children
+        )}
+      </div>
     </div>
   );
 }

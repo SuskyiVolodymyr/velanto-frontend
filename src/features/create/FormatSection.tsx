@@ -33,7 +33,9 @@ export function FormatSection() {
       <Text as="h2" variant="title" className="text-lg">
         {t("formatHeading")}
       </Text>
-      <div className="flex gap-2">
+      {/* 5-across on desktop; wraps to 2 (then 3) columns on smaller screens so
+          the cards never overflow the viewport on a phone. */}
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5">
         {FORMAT_OPTIONS.map((option) => (
           <button
             key={option.value}
@@ -41,7 +43,7 @@ export function FormatSection() {
             onClick={() => setValue("format", option.value)}
             aria-pressed={format === option.value}
             className={cn(
-              "flex-1 cursor-pointer rounded-[12px] border px-4 py-3 text-left transition-colors",
+              "cursor-pointer rounded-[12px] border px-4 py-3 text-left transition-colors",
               format === option.value
                 ? "border-acc/40 bg-acc/5"
                 : "border-border bg-white/[0.02]",
