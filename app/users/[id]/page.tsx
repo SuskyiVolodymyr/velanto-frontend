@@ -8,8 +8,7 @@ import {
 } from "@/src/features/author/get-user-server";
 import { buildJsonLd, jsonLdScript } from "@/src/shared/lib/jsonld";
 import { BackButton } from "@/src/shared/components/BackButton";
-
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://playvelanto.com";
+import { SITE_URL } from "@/src/shared/lib/site-url";
 
 export async function generateMetadata({
   params,

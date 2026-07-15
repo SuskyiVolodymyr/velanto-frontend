@@ -12,6 +12,7 @@ import { SiteFooter } from "@/src/shared/components/SiteFooter";
 import { BannedBanner } from "@/src/shared/components/BannedBanner";
 import { getThemeInitScript } from "@/src/shared/lib/theme";
 import { getStreamerModeInitScript } from "@/src/shared/lib/streamer-mode";
+import { SITE_URL } from "@/src/shared/lib/site-url";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -26,11 +27,9 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   // Base for resolving relative metadata URLs (e.g. per-page `alternates.canonical`)
-  // into absolute production URLs. Mirrors robots.ts's SITE_URL fallback; without
-  // it Next defaults to http://localhost:3000 and emits localhost canonicals.
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL ?? "https://playvelanto.com",
-  ),
+  // into absolute production URLs. Without it Next defaults to
+  // http://localhost:3000 and emits localhost canonicals.
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "Velanto",
     template: "%s | Velanto",
