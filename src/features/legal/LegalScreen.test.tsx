@@ -9,7 +9,10 @@ describe("LegalScreen", () => {
     lastUpdatedLabel: "Last updated",
     lastUpdated: "2026-07-15",
     sections: [
-      { title: "Acceptance", body: "By using Velanto you agree to these Terms." },
+      {
+        title: "Acceptance",
+        body: "By using Velanto you agree to these Terms.",
+      },
       { title: "Contact", body: "Reach us at admin@playvelanto.com." },
     ],
   };
