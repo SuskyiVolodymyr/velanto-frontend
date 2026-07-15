@@ -7,6 +7,7 @@ import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
 import { QueryProvider } from "@/src/shared/lib/query-provider";
 import { AppHeader } from "@/src/shared/components/AppHeader";
+import { SiteFooter } from "@/src/shared/components/SiteFooter";
 import { BannedBanner } from "@/src/shared/components/BannedBanner";
 import { getThemeInitScript } from "@/src/shared/lib/theme";
 import { getStreamerModeInitScript } from "@/src/shared/lib/streamer-mode";
@@ -73,6 +74,7 @@ export default async function RootLayout({
                 <AppHeader />
                 <BannedBanner />
                 {children}
+                <SiteFooter />
               </StreamerModeProvider>
             </AuthProvider>
           </NextIntlClientProvider>

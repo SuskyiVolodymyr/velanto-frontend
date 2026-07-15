@@ -594,7 +594,17 @@
     "errorBody": "Não foi possível carregar este perfil. Tente novamente.",
     "tryAgain": "Tente novamente",
     "editTitle": "Editar pack",
-    "editSubtitle": "Atualize os detalhes do seu pack. Republicar o envia novamente para moderação."
+    "editSubtitle": "Atualize os detalhes do seu pack. Republicar o envia novamente para moderação.",
+    "notFoundTitle": "Página não encontrada",
+    "notFoundBody": "A página que você procura não existe ou foi movida.",
+    "appErrorBody": "Ocorreu um erro inesperado. Você pode tentar novamente."
+  },
+  "footer": {
+    "tagline": "Crie packs de quiz por eliminação, jogue-os e veja quem fica de pé.",
+    "navLabel": "Rodapé",
+    "privacy": "Privacidade",
+    "terms": "Termos",
+    "copyright": "© {year} Velanto. Todos os direitos reservados."
   },
   "status": {
     "packPending": "Em análise",
