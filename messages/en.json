@@ -231,7 +231,8 @@
     "playingIntro": "Open any pack and press Play. You'll go round by round following the logic of its format — save one, rank blind, eliminate — with no visibility into how anyone else played. At the end you get a personal artifact: a final ranking, a favorite, or a saved set, depending on the format.",
     "playingOutro": "You can replay any pack as many times as you like — tag pools resample randomly each run, so the experience isn't identical twice.",
     "statsTitle": "Stats & comparisons",
-    "statsBody": "Stats stay locked while you're playing so nobody's choices are influenced by the crowd. Once you finish, you'll see popular picks, percent agreement, and how rare or common your result was among everyone who's played that pack."
+    "statsBody": "Stats stay locked while you're playing so nobody's choices are influenced by the crowd. Once you finish, you'll see popular picks, percent agreement, and how rare or common your result was among everyone who's played that pack.",
+    "jumpTo": "Jump to topic"
   },
   "notifications": {
     "title": "Notifications",

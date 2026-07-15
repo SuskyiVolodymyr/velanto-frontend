@@ -1051,7 +1051,8 @@
     "playingIntro": "Abre cualquier pack y pulsa Jugar. Avanzarás ronda por ronda siguiendo la lógica de su formato (salvar uno, clasificar a ciegas, eliminar) sin ninguna visibilidad de cómo jugaron los demás. Al final obtienes un resultado personal: una clasificación final, un favorito o un conjunto salvado, según el formato.",
     "playingOutro": "Puedes volver a jugar cualquier pack tantas veces como quieras: los grupos de etiquetas vuelven a muestrearse al azar en cada partida, así que la experiencia nunca es idéntica dos veces.",
     "statsTitle": "Estadísticas y comparaciones",
-    "statsBody": "Las estadísticas permanecen bloqueadas mientras juegas para que las elecciones de nadie se vean influidas por la multitud. Cuando termines, verás las opciones populares, el porcentaje de coincidencia y lo raro o común que fue tu resultado entre todos los que han jugado ese pack."
+    "statsBody": "Las estadísticas permanecen bloqueadas mientras juegas para que las elecciones de nadie se vean influidas por la multitud. Cuando termines, verás las opciones populares, el porcentaje de coincidencia y lo raro o común que fue tu resultado entre todos los que han jugado ese pack.",
+    "jumpTo": "Ir al tema"
   },
   "media": {
     "playPreview": "Reproducir vista previa del video",
