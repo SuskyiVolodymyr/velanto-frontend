@@ -923,5 +923,10 @@
     "playingOutro": "Vous pouvez rejouer n'importe quel pack autant de fois que vous le souhaitez : les pools d'étiquettes sont rééchantillonnés au hasard à chaque partie, si bien que l'expérience n'est jamais identique deux fois.",
     "statsTitle": "Statistiques et comparaisons",
     "statsBody": "Les statistiques restent verrouillées pendant que vous jouez, afin que les choix de personne ne soient influencés par la foule. Une fois terminé, vous verrez les choix populaires, le pourcentage d'accord et à quel point votre résultat était rare ou courant parmi tous ceux qui ont joué ce pack."
+  },
+  "media": {
+    "playPreview": "Lire l’aperçu de la vidéo",
+    "embedFailed": "Cette vidéo ne peut pas être lue ici",
+    "openOnYouTube": "Ouvrir sur YouTube"
   }
 }

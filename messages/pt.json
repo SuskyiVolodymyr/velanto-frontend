@@ -923,5 +923,10 @@
     "playingOutro": "Você pode rejogar qualquer pack quantas vezes quiser — os grupos de etiquetas são reamostrados aleatoriamente a cada jogada, então a experiência nunca é idêntica duas vezes.",
     "statsTitle": "Estatísticas e comparações",
     "statsBody": "As estatísticas permanecem bloqueadas enquanto você joga, para que as escolhas de ninguém sejam influenciadas pela multidão. Quando terminar, você verá as escolhas populares, a porcentagem de concordância e o quão raro ou comum foi o seu resultado entre todos os que jogaram esse pack."
+  },
+  "media": {
+    "playPreview": "Reproduzir a pré-visualização do vídeo",
+    "embedFailed": "Este vídeo não pode ser reproduzido aqui",
+    "openOnYouTube": "Abrir no YouTube"
   }
 }

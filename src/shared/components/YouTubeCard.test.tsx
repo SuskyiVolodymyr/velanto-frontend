@@ -1,12 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  act,
-} from "@testing-library/react";
+import { screen, fireEvent, waitFor, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { YouTubeCard } from "./YouTubeCard";
 import { loadYouTubeIframeApi } from "@/src/shared/lib/youtube-iframe-api";
 import type {

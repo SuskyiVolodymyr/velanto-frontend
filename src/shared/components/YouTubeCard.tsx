@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { useTranslations } from "next-intl";
 import { ExternalLink } from "lucide-react";
 import { cn } from "@/src/shared/lib/cn";
 import { Badge } from "@/src/shared/components/Badge";
@@ -24,6 +25,7 @@ interface YouTubeCardProps {
 }
 
 export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
+  const t = useTranslations("media");
   const mountRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<YouTubePlayer | null>(null);
   // Flips true once the player reports buffering/playing — proof that commanded
@@ -166,7 +168,7 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
             event.stopPropagation();
             activate();
           }}
-          aria-label="Play video preview"
+          aria-label={t("playPreview")}
           className="absolute inset-0 flex items-center justify-center"
         >
           <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-black/50">
@@ -185,11 +187,9 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
           onClick={(event) => event.stopPropagation()}
           className="absolute inset-0 flex flex-col items-center justify-center gap-1.5 bg-black/70 px-3 text-center"
         >
-          <span className="text-[11px] text-white/70">
-            This video can’t play here
-          </span>
+          <span className="text-[11px] text-white/70">{t("embedFailed")}</span>
           <span className="inline-flex items-center gap-1 text-xs font-semibold text-white">
-            Open on YouTube
+            {t("openOnYouTube")}
             <ExternalLink aria-hidden className="h-3.5 w-3.5" />
           </span>
         </a>

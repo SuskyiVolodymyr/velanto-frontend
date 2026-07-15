@@ -923,5 +923,10 @@
     "playingOutro": "Puedes volver a jugar cualquier pack tantas veces como quieras: los grupos de etiquetas vuelven a muestrearse al azar en cada partida, así que la experiencia nunca es idéntica dos veces.",
     "statsTitle": "Estadísticas y comparaciones",
     "statsBody": "Las estadísticas permanecen bloqueadas mientras juegas para que las elecciones de nadie se vean influidas por la multitud. Cuando termines, verás las opciones populares, el porcentaje de coincidencia y lo raro o común que fue tu resultado entre todos los que han jugado ese pack."
+  },
+  "media": {
+    "playPreview": "Reproducir vista previa del video",
+    "embedFailed": "Este video no se puede reproducir aquí",
+    "openOnYouTube": "Abrir en YouTube"
   }
 }

@@ -922,5 +922,10 @@
     "metaListTitle": "Feedback & suggestions — Velanto",
     "metaListDescription": "Report bugs, suggest features, and propose translation improvements.",
     "metaNewTitle": "New feedback — Velanto"
+  },
+  "media": {
+    "playPreview": "Play video preview",
+    "embedFailed": "This video can’t play here",
+    "openOnYouTube": "Open on YouTube"
   }
 }
