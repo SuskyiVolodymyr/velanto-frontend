@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Username } from "@/src/shared/components/Username";
 import { Hidden } from "@/src/shared/components/Hidden";
@@ -54,6 +55,7 @@ export function UserRow({
   onBanReasonChange,
   onConfirmBan,
 }: UserRowProps) {
+  const t = useTranslations("admin");
   return (
     <>
       <DataTableRow columns={columns}>
@@ -100,19 +102,19 @@ export function UserRow({
         {canAct ? (
           <div className="flex flex-wrap gap-1.5">
             <RowAction
-              label={row.trusted ? "Untrust" : "Trust"}
+              label={row.trusted ? t("untrust") : t("trust")}
               pending={trustPending}
               onClick={() => onSetTrusted(row.id, !row.trusted)}
             />
             {banned ? (
               <RowAction
-                label="Unban"
+                label={t("unban")}
                 pending={unbanPending}
                 onClick={() => onUnban(row.id)}
               />
             ) : (
               <RowAction
-                label="Ban"
+                label={t("ban")}
                 danger
                 pending={false}
                 onClick={() => onToggleBanForm(row.id)}

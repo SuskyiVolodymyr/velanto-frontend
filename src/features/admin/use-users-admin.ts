@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   usersClient,
@@ -39,6 +40,7 @@ export function isCurrentlyBanned(bannedUntil: string | null): boolean {
  * patch the cached list. The view is a thin renderer over this.
  */
 export function useUsersAdmin() {
+  const t = useTranslations("admin");
   const queryClient = useQueryClient();
   const [searchInput, setSearchInput] = useState("");
   const [query, setQuery] = useState("");
@@ -113,13 +115,15 @@ export function useUsersAdmin() {
   });
 
   const actionError = banMutation.isError
-    ? "Couldn't ban this user. Try again."
+    ? t("banUserError")
     : unbanMutation.isError
-      ? "Couldn't unban this user. Try again."
+      ? t("unbanUserError")
       : trustMutation.isError
-        ? `Couldn't ${trustMutation.variables?.trusted ? "trust" : "untrust"} this user. Try again.`
+        ? trustMutation.variables?.trusted
+          ? t("trustError")
+          : t("untrustError")
         : usersQuery.isFetchNextPageError
-          ? "Couldn't load more users. Try again."
+          ? t("loadMoreUsersError")
           : "";
 
   function handleBan(id: string) {

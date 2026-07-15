@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Input } from "@/src/shared/components/Input";
 import { Select } from "@/src/shared/components/Select";
@@ -19,6 +20,8 @@ import { DataTable } from "@/src/shared/components/DataTable";
 const COLUMNS = "1.3fr 80px 80px 100px 110px 130px";
 
 export function UsersTab() {
+  const t = useTranslations("admin");
+  const tCommon = useTranslations("common");
   const { user } = useAuth();
   const {
     searchInput,
@@ -57,53 +60,58 @@ export function UsersTab() {
         <div className="min-w-[220px] flex-1">
           <Input
             type="search"
-            aria-label="Search users by username or email"
-            placeholder="Search by username or email…"
+            aria-label={t("searchUsersAria")}
+            placeholder={t("searchUsersPlaceholder")}
             value={searchInput}
             onChange={(event) => setSearchInput(event.target.value)}
           />
         </div>
         <div className="w-[150px]">
           <Select
-            aria-label="Filter by ban status"
+            aria-label={t("filterBanAria")}
             value={bannedFilter}
             onChange={(event) =>
               setBannedFilter(event.target.value as BannedFilter)
             }
             options={[
-              { value: "all", label: "All users" },
-              { value: "banned", label: "Banned" },
-              { value: "active", label: "Not banned" },
+              { value: "all", label: t("banAll") },
+              { value: "banned", label: t("banBanned") },
+              { value: "active", label: t("banActive") },
             ]}
           />
         </div>
         <div className="w-[160px]">
           <Select
-            aria-label="Sort by registration date"
+            aria-label={t("sortRegAria")}
             value={sort}
             onChange={(event) => setSort(event.target.value as AdminUserSort)}
             options={[
-              { value: "newest", label: "Newest first" },
-              { value: "oldest", label: "Oldest first" },
+              { value: "newest", label: t("sortNewest") },
+              { value: "oldest", label: t("sortOldest") },
             ]}
           />
         </div>
       </div>
 
       {status === "loading" && (
-        <LoadingState label="Loading users…" showLabel />
+        <LoadingState label={t("loadingUsers")} showLabel />
       )}
       {status === "error" && (
-        <Text className="text-danger">
-          Couldn&apos;t load users. Try again later.
-        </Text>
+        <Text className="text-danger">{t("usersError")}</Text>
       )}
 
       {status === "ready" && (
         <DataTable
           columns={COLUMNS}
-          headers={["User", "Packs", "Plays", "Registered", "Status", ""]}
-          empty="No users match this search."
+          headers={[
+            t("hUser"),
+            t("hPacks"),
+            t("hPlays"),
+            t("hRegistered"),
+            t("hStatus"),
+            "",
+          ]}
+          empty={t("noUsers")}
           isEmpty={users.length === 0}
         >
           {users.map((row) => (
@@ -140,7 +148,7 @@ export function UsersTab() {
           loading={loadingMore}
           onClick={() => void handleLoadMore()}
         >
-          {loadingMore ? "Loading…" : "Load more"}
+          {loadingMore ? tCommon("loading") : tCommon("loadMore")}
         </Button>
       )}
     </div>

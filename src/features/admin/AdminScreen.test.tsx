@@ -1,7 +1,7 @@
 // src/features/admin/AdminScreen.test.tsx
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
-import { renderWithQueryClient as render } from "@/src/shared/test/render-with-query-client";
+import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { AdminScreen } from "./AdminScreen";
 import { AuthProvider } from "@/src/shared/lib/auth-context";

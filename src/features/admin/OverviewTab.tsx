@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { useAdminOverview } from "@/src/features/admin/api/admin.queries";
@@ -16,61 +17,56 @@ interface Metric {
   live?: boolean;
 }
 
-function plural(count: number, noun: string): string {
-  return `${count} ${noun}${count === 1 ? "" : "s"}`;
-}
+type AdminTranslator = ReturnType<typeof useTranslations<"admin">>;
 
-function buildMetrics(overview: AdminOverview): Metric[] {
+function buildMetrics(overview: AdminOverview, t: AdminTranslator): Metric[] {
   return [
     {
-      label: "Registered users",
+      label: t("metricRegisteredUsers"),
       value: overview.registeredUsers,
-      sub: `+${plural(overview.newUsersThisWeek, "new")} this week`,
+      sub: t("newThisWeek", { count: overview.newUsersThisWeek }),
     },
     {
-      label: "Packs",
+      label: t("metricPacks"),
       value: overview.packs,
-      sub: `+${plural(overview.newPacksThisWeek, "new")} this week`,
+      sub: t("newThisWeek", { count: overview.newPacksThisWeek }),
     },
     {
-      label: "Plays",
+      label: t("metricPlays"),
       value: overview.plays,
-      sub: `+${plural(overview.playsThisWeek, "play")} this week`,
+      sub: t("playsThisWeek", { count: overview.playsThisWeek }),
     },
     {
-      label: "Online users",
+      label: t("metricOnlineUsers"),
       value: overview.onlineUsers,
       // Deliberately honest: onlineUsers is always null (no presence tracking
       // exists), so say so rather than letting the "—" look like a load failure.
-      sub: "Not tracked yet",
+      sub: t("notTracked"),
       live: true,
     },
     {
-      label: "Pending reports",
+      label: t("metricPendingReports"),
       value: overview.pendingReports,
-      sub: "Awaiting review",
+      sub: t("awaitingReview"),
     },
   ];
 }
 
 export function OverviewTab() {
+  const t = useTranslations("admin");
   const overviewQuery = useAdminOverview();
   const overview = overviewQuery.data;
 
   if (overviewQuery.isLoading)
-    return <LoadingState label="Loading overview…" showLabel />;
+    return <LoadingState label={t("loadingOverview")} showLabel />;
   if (overviewQuery.isError || !overview) {
-    return (
-      <Text className="text-danger">
-        Couldn&apos;t load overview. Try again later.
-      </Text>
-    );
+    return <Text className="text-danger">{t("overviewError")}</Text>;
   }
 
   return (
     <div className="flex flex-col gap-4">
       <section className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-3.5">
-        {buildMetrics(overview).map((metric) => (
+        {buildMetrics(overview, t).map((metric) => (
           <div
             key={metric.label}
             className="rounded-[14px] border border-border bg-white/[0.02] px-5 py-[18px]"
