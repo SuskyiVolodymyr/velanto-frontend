@@ -16,12 +16,15 @@ import {
   fetchStaffPage,
   fetchUsersPage,
   type AuditLogFilters,
+  type UsersPageFilters,
 } from "./admin";
 
-export function adminUsersQueryOptions(q: string) {
+export function adminUsersQueryOptions(filters: UsersPageFilters) {
   return infiniteQueryOptions({
-    queryKey: ["admin-users", q] as const,
-    queryFn: ({ pageParam }) => fetchUsersPage(q, pageParam),
+    // The whole filter object is part of the key, so each q/sort/banned combo
+    // caches (and refetches) independently.
+    queryKey: ["admin-users", filters] as const,
+    queryFn: ({ pageParam }) => fetchUsersPage(filters, pageParam),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
       const loaded = allPages.reduce((n, page) => n + page.items.length, 0);
@@ -30,8 +33,8 @@ export function adminUsersQueryOptions(q: string) {
   });
 }
 
-export function useAdminUsers(q: string) {
-  return useInfiniteQuery(adminUsersQueryOptions(q));
+export function useAdminUsers(filters: UsersPageFilters) {
+  return useInfiniteQuery(adminUsersQueryOptions(filters));
 }
 
 /** Same endpoint, narrowed to staff — backs the Staff tab. */
@@ -52,7 +55,8 @@ export function useAdminStaff(q: string) {
 }
 
 type UsersPage = Awaited<ReturnType<typeof fetchUsersPage>>;
-type UsersQueryKey = readonly [string, string];
+type UsersQueryKey =
+  readonly ["admin-users", UsersPageFilters] | readonly ["admin-staff", string];
 
 /**
  * Patch one row of a cached admin user list (after a ban/role/trust action).
@@ -82,13 +86,13 @@ function patchAdminUserList(
 
 export function patchAdminUser(
   queryClient: QueryClient,
-  q: string,
+  filters: UsersPageFilters,
   id: string,
   patch: Partial<AdminUserRow>,
 ) {
   patchAdminUserList(
     queryClient,
-    adminUsersQueryOptions(q).queryKey,
+    adminUsersQueryOptions(filters).queryKey,
     id,
     patch,
   );

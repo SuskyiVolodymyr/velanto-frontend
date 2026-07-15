@@ -96,11 +96,40 @@ describe("UsersTab", () => {
 
     expect(await screen.findByText("bob")).toBeInTheDocument();
     // staff:false — staff are managed on the Staff tab, not listed here too.
+    // Defaults: no ban filter (undefined) and newest-registered first.
     expect(adminClient.listUsers).toHaveBeenCalledWith({
       q: undefined,
       staff: false,
+      banned: undefined,
+      sort: "newest",
       page: 1,
       limit: 20,
+    });
+  });
+
+  it("re-queries with banned=true and sort=oldest when the filters change", async () => {
+    const user = userEvent.setup();
+    vi.mocked(adminClient.listUsers).mockResolvedValue({
+      items: [TARGET],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
+    renderAsAdmin();
+    await screen.findByText("bob");
+
+    await user.selectOptions(
+      screen.getByRole("combobox", { name: "Filter by ban status" }),
+      "banned",
+    );
+    await user.selectOptions(
+      screen.getByRole("combobox", { name: "Sort by registration date" }),
+      "oldest",
+    );
+
+    await waitFor(() => {
+      const last = vi.mocked(adminClient.listUsers).mock.calls.at(-1)?.[0];
+      expect(last).toMatchObject({ banned: true, sort: "oldest" });
     });
   });
 
@@ -307,8 +336,11 @@ describe("UsersTab", () => {
       expect(screen.queryByText("bob@example.com")).not.toBeInTheDocument();
       // …but the ban status and the moderator's controls stay usable. (The
       // Users table has no ROLE column — per the design, role lives on the
-      // Staff tab.)
-      expect(screen.getByText("Not banned")).toBeInTheDocument();
+      // Staff tab.) Ignore the filter dropdown's "Not banned" <option>, which
+      // shares the label — the assertion is about the row's status cell.
+      expect(
+        screen.getByText("Not banned", { ignore: "option" }),
+      ).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "Ban" })).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "Trust" })).toBeInTheDocument();
     });

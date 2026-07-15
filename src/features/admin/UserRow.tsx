@@ -83,6 +83,9 @@ export function UserRow({
         <Text variant="secondary" className="text-[13px] tabular-nums">
           {row.plays}
         </Text>
+        <Text variant="tertiary" className="text-[12.5px] tabular-nums">
+          {new Date(row.createdAt).toLocaleDateString()}
+        </Text>
 
         <span
           className={
