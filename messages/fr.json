@@ -594,7 +594,17 @@
     "errorBody": "Impossible de charger ce profil. Veuillez réessayer.",
     "tryAgain": "Réessayer",
     "editTitle": "Modifier le pack",
-    "editSubtitle": "Mettez à jour les détails de votre pack. La republication le soumet à nouveau à la modération."
+    "editSubtitle": "Mettez à jour les détails de votre pack. La republication le soumet à nouveau à la modération.",
+    "notFoundTitle": "Page introuvable",
+    "notFoundBody": "La page que vous recherchez n'existe pas ou a été déplacée.",
+    "appErrorBody": "Une erreur inattendue s'est produite. Vous pouvez réessayer."
+  },
+  "footer": {
+    "tagline": "Créez des packs de quiz à élimination, jouez-y et voyez qui reste en lice.",
+    "navLabel": "Pied de page",
+    "privacy": "Confidentialité",
+    "terms": "Conditions",
+    "copyright": "© {year} Velanto. Tous droits réservés."
   },
   "status": {
     "packPending": "En attente de vérification",

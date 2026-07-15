@@ -593,7 +593,17 @@
     "errorBody": "We couldn't load this profile. Please try again.",
     "tryAgain": "Try again",
     "editTitle": "Edit pack",
-    "editSubtitle": "Update your pack's details. Republishing sends it back through moderation."
+    "editSubtitle": "Update your pack's details. Republishing sends it back through moderation.",
+    "notFoundTitle": "Page not found",
+    "notFoundBody": "The page you're looking for doesn't exist or has moved.",
+    "appErrorBody": "An unexpected error occurred. You can try again."
+  },
+  "footer": {
+    "tagline": "Build elimination-quiz packs, play them, and see who's left standing.",
+    "navLabel": "Footer",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "copyright": "© {year} Velanto. All rights reserved."
   },
   "status": {
     "packPending": "Pending review",

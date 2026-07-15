@@ -594,7 +594,17 @@
     "errorBody": "No pudimos cargar este perfil. Inténtalo de nuevo.",
     "tryAgain": "Inténtalo de nuevo",
     "editTitle": "Editar pack",
-    "editSubtitle": "Actualiza los detalles de tu pack. Al volver a publicarlo pasará de nuevo por moderación."
+    "editSubtitle": "Actualiza los detalles de tu pack. Al volver a publicarlo pasará de nuevo por moderación.",
+    "notFoundTitle": "Página no encontrada",
+    "notFoundBody": "La página que buscas no existe o se ha movido.",
+    "appErrorBody": "Se produjo un error inesperado. Puedes intentarlo de nuevo."
+  },
+  "footer": {
+    "tagline": "Crea packs de preguntas por eliminación, juégalos y descubre quién queda en pie.",
+    "navLabel": "Pie de página",
+    "privacy": "Privacidad",
+    "terms": "Términos",
+    "copyright": "© {year} Velanto. Todos los derechos reservados."
   },
   "status": {
     "packPending": "Pendiente",
