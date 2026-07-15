@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
@@ -28,6 +29,9 @@ function tabFromParam(value: string | null): Tab {
  * has to land back on the same one.
  */
 export function ModerationPanel() {
+  const t = useTranslations("moderation");
+  const tCommon = useTranslations("common");
+  const tHeader = useTranslations("header");
   const { user, status } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -52,16 +56,14 @@ export function ModerationPanel() {
   if (status === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">
-          You need to be logged in to view this page.
-        </Text>
+        <Text variant="secondary">{tCommon("loginRequired")}</Text>
         <Button
           className="mt-4"
           onClick={() =>
             router.push(`/auth?next=${encodeURIComponent(pathname)}`)
           }
         >
-          Log in
+          {tHeader("logIn")}
         </Button>
       </div>
     );
@@ -74,8 +76,8 @@ export function ModerationPanel() {
     packs: countsQuery.data?.pendingPacks,
   };
   const labels: Record<Tab, string> = {
-    reports: "Reports",
-    packs: "Pack approvals",
+    reports: t("tabReports"),
+    packs: t("tabPacks"),
   };
 
   // `replace`, not `push`: flipping tabs isn't a navigation step a moderator
@@ -89,12 +91,12 @@ export function ModerationPanel() {
       <section>
         <div className="mb-2.5 flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.14em] text-foreground-tertiary">
           <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-acc" />
-          Moderation panel
+          {t("panelEyebrow")}
         </div>
         {/* The mock's heading was "Support queue", but that named a
             reports-only screen; this panel also holds pack approvals. */}
         <Text as="h1" variant="title" className="text-[32px]">
-          Moderation queue
+          {t("queueHeading")}
         </Text>
       </section>
 

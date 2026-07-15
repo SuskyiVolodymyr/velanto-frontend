@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { reportReasonLabel } from "@/src/shared/lib/report-reasons";
 import { reportTargetLabel } from "@/src/shared/lib/report-display";
 import { Text } from "@/src/shared/components/Text";
@@ -10,6 +13,7 @@ export function ReportDetailSummary({
 }: {
   report: ReportWithReporter;
 }) {
+  const t = useTranslations("moderation");
   const target = reportTargetLabel(report);
   return (
     <>
@@ -22,11 +26,10 @@ export function ReportDetailSummary({
 
       <div className="flex flex-col gap-2 text-sm">
         <Text variant="secondary">
-          Reported by{" "}
-          <span className="font-semibold text-foreground">
-            {report.reporterUsername}
-          </span>{" "}
-          on {new Date(report.createdAt).toLocaleString()}
+          {t("reportedBy", {
+            reporter: report.reporterUsername,
+            date: new Date(report.createdAt).toLocaleString(),
+          })}
         </Text>
         <span className="text-xs font-semibold uppercase text-foreground-secondary">
           {report.type}

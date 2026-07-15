@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { Text } from "@/src/shared/components/Text";
 import { LoadingState } from "@/src/shared/components/LoadingState";
@@ -17,6 +18,7 @@ import type { ReportsListFilters } from "@/src/features/moderation/api/reports-l
 const COLUMNS = "70px 1.4fr 1.1fr 1fr 100px 110px";
 
 export function ReportsTab() {
+  const t = useTranslations("moderation");
   const [status, setStatus] = useState<ReportsListFilters["status"]>(undefined);
   const [type, setType] = useState<ReportsListFilters["type"]>(undefined);
   const [page, setPage] = useState(1);
@@ -47,20 +49,25 @@ export function ReportsTab() {
       />
 
       {reportsQuery.isLoading && (
-        <LoadingState label="Loading reports…" showLabel />
+        <LoadingState label={t("loadingReports")} showLabel />
       )}
       {reportsQuery.isError && (
-        <Text className="text-danger">
-          Couldn&apos;t load reports. Try again later.
-        </Text>
+        <Text className="text-danger">{t("reportsError")}</Text>
       )}
 
       {!reportsQuery.isLoading && !reportsQuery.isError && (
         <>
           <DataTable
             columns={COLUMNS}
-            headers={["Type", "Target", "Reason", "Reporter", "Date", "Status"]}
-            empty="No reports match these filters."
+            headers={[
+              t("hType"),
+              t("hTarget"),
+              t("hReason"),
+              t("hReporter"),
+              t("hDate"),
+              t("hStatus"),
+            ]}
+            empty={t("noReports")}
             isEmpty={reports.length === 0}
           >
             {reports.map((report) => {

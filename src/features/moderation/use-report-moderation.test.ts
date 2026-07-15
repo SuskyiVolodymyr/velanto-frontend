@@ -2,6 +2,8 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { NextIntlClientProvider } from "next-intl";
+import messages from "@/messages/en.json";
 import { createTestQueryClient } from "@/src/shared/test/test-query-client";
 import { useReportModeration } from "./use-report-moderation";
 import { packsClient } from "@/src/shared/lib/packs-client";
@@ -32,7 +34,21 @@ function deferred<T>() {
 function withQueryClient() {
   const client = createTestQueryClient();
   function Wrapper({ children }: { children: ReactNode }) {
-    return createElement(QueryClientProvider, { client }, children);
+    // The hook now localizes its error strings, so it needs the intl provider
+    // in scope alongside the query client.
+    return createElement(
+      QueryClientProvider,
+      { client },
+      // createElement here (a .ts file, no JSX): NextIntlClientProvider types
+      // `children` as a required prop, so it must go in the props object rather
+      // than as a positional arg — hence the rule exception.
+      // eslint-disable-next-line react/no-children-prop
+      createElement(NextIntlClientProvider, {
+        locale: "en",
+        messages,
+        children,
+      }),
+    );
   }
   return Wrapper;
 }

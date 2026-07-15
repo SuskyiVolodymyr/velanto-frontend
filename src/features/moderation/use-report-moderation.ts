@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import { usersClient, type BanDuration } from "@/src/shared/lib/users-client";
 import { useModerationInvalidation } from "@/src/features/moderation/api/moderation.queries";
@@ -19,6 +20,7 @@ import type { ReportWithReporter } from "@/src/shared/types/report";
  * because they patch the report query's cached data.
  */
 export function useReportModeration(report: ReportWithReporter | null) {
+  const t = useTranslations("moderation");
   const invalidateQueues = useModerationInvalidation();
   const [deleted, setDeleted] = useState(false);
   const [deleting, setDeleting] = useState(false);
@@ -45,7 +47,7 @@ export function useReportModeration(report: ReportWithReporter | null) {
       // goes back to a queue offering them a pack that no longer exists.
       await invalidateQueues();
     } catch {
-      setDeleteError("Couldn't delete this pack. Try again.");
+      setDeleteError(t("deletePackError"));
     } finally {
       setDeleting(false);
     }
@@ -74,7 +76,7 @@ export function useReportModeration(report: ReportWithReporter | null) {
       setBanDone(true);
       setShowBanForm(false);
     } catch {
-      setBanError("Couldn't ban this user. Try again.");
+      setBanError(t("banUserError"));
     } finally {
       setBanSubmitting(false);
     }
