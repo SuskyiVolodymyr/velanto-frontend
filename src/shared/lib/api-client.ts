@@ -4,6 +4,11 @@
  * directly from components/pages.
  */
 
+import {
+  captureApiError,
+  captureNetworkError,
+} from "@/src/shared/lib/sentry-reporting";
+
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 // Held in memory only (never localStorage) — see .claude/docs/security-checklist.md.
@@ -34,22 +39,31 @@ async function request<T>(
   options: ApiRequestOptions = {},
 ): Promise<T> {
   const { body, headers, ...rest } = options;
+  const method = rest.method ?? "GET";
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...rest,
-    // Required so the httpOnly refresh-token cookie is sent/received on
-    // cross-origin requests to the backend.
-    credentials: "include",
-    headers: {
-      // Fastify's JSON body parser rejects a request that declares
-      // application/json but sends no body (FST_ERR_CTP_EMPTY_JSON_BODY) —
-      // only set this header when there's actually a body to send.
-      ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
-      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-      ...headers,
-    },
-    body: body === undefined ? undefined : JSON.stringify(body),
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      ...rest,
+      // Required so the httpOnly refresh-token cookie is sent/received on
+      // cross-origin requests to the backend.
+      credentials: "include",
+      headers: {
+        // Fastify's JSON body parser rejects a request that declares
+        // application/json but sends no body (FST_ERR_CTP_EMPTY_JSON_BODY) —
+        // only set this header when there's actually a body to send.
+        ...(body !== undefined ? { "Content-Type": "application/json" } : {}),
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+        ...headers,
+      },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+  } catch (networkError) {
+    // fetch rejects only when the request never got a response (offline, DNS,
+    // CORS, timeout) — always unexpected, so report it.
+    captureNetworkError(networkError, { method, path });
+    throw networkError;
+  }
 
   if (!response.ok) {
     let parsedBody: unknown = null;
@@ -58,6 +72,8 @@ async function request<T>(
     } catch {
       // response had no JSON body — leave parsedBody as null
     }
+    // Only 5xx is reported; routine 4xx are expected and skipped inside.
+    captureApiError(response.status, response.statusText, { method, path });
     throw new ApiError(response.status, response.statusText, parsedBody);
   }
 
@@ -74,14 +90,20 @@ async function request<T>(
  * itself. Auth/credentials are attached exactly like {@link request}.
  */
 async function requestForm<T>(path: string, formData: FormData): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
-    },
-    body: formData,
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+      },
+      body: formData,
+    });
+  } catch (networkError) {
+    captureNetworkError(networkError, { method: "POST", path });
+    throw networkError;
+  }
 
   if (!response.ok) {
     let parsedBody: unknown = null;
@@ -90,6 +112,10 @@ async function requestForm<T>(path: string, formData: FormData): Promise<T> {
     } catch {
       // response had no JSON body — leave parsedBody as null
     }
+    captureApiError(response.status, response.statusText, {
+      method: "POST",
+      path,
+    });
     throw new ApiError(response.status, response.statusText, parsedBody);
   }
 

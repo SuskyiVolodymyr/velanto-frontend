@@ -10,6 +10,7 @@ import {
 } from "react";
 import type { ReactNode } from "react";
 import { setAccessToken } from "@/src/shared/lib/api-client";
+import { setSentryUser } from "@/src/shared/lib/sentry-reporting";
 import {
   authClient,
   type LoginInput,
@@ -61,6 +62,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       cancelled = true;
     };
   }, []);
+
+  // Keep Sentry's user context in sync with auth state so errors show which
+  // account was affected (id + username only — never email; see
+  // sentry-reporting.ts). Runs on login, logout, and initial refresh.
+  useEffect(() => {
+    setSentryUser(user);
+  }, [user]);
 
   const requestEmailCode = useCallback(
     (email: string) => authClient.requestEmailCode(email),
