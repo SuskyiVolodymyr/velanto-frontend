@@ -96,7 +96,10 @@ export function RecentlyPlayedSection({
   const scrollByPage = (direction: 1 | -1) => {
     const el = scrollerRef.current;
     if (!el) return;
-    el.scrollBy({ left: direction * el.clientWidth * 0.85, behavior: "smooth" });
+    el.scrollBy({
+      left: direction * el.clientWidth * 0.85,
+      behavior: "smooth",
+    });
   };
 
   return (
