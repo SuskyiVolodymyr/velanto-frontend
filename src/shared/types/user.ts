@@ -59,4 +59,23 @@ export interface PublicUserProfile {
    * `trusted`); the live backend always sends it on the public profile.
    */
   avatarKey?: string | null;
+  /**
+   * Whether this user exposes their "recently played" list publicly. Optional
+   * so existing profile fixtures stay valid (same rationale as `role`/`trusted`);
+   * the live backend always sends it. The profile uses it to decide whether to
+   * render the recently-played section.
+   */
+  showPlayHistory?: boolean;
+}
+
+/**
+ * The caller's own profile (GET /users/me) — a superset of the public profile.
+ * Only the fields the client actually consumes are typed; the backend also
+ * returns ban-state and rules-acceptance fields not modeled here yet.
+ */
+export interface MyProfile {
+  id: string;
+  username: string;
+  email: string;
+  showPlayHistory: boolean;
 }

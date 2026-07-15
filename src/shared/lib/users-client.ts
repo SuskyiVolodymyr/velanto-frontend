@@ -1,6 +1,7 @@
 import { apiClient } from "@/src/shared/lib/api-client";
+import type { PackList } from "@/src/shared/lib/packs-client";
 import type { AssignableRole } from "@/src/shared/lib/staff-permissions";
-import type { PublicUserProfile } from "@/src/shared/types/user";
+import type { MyProfile, PublicUserProfile } from "@/src/shared/types/user";
 import type { BanReason } from "@/src/shared/types/rules";
 
 export type BanDuration = "week" | "month" | "year" | "forever";
@@ -55,8 +56,15 @@ export const usersClient = {
   setTrusted: (id: string, trusted: boolean) =>
     apiClient.patch<SetTrustedResult>(`/users/${id}/trusted`, { trusted }),
   getProfile: (id: string) => apiClient.get<PublicUserProfile>(`/users/${id}`),
+  /** The caller's own profile (auth required). */
+  getMe: () => apiClient.get<MyProfile>("/users/me"),
   updateProfile: (bio: string) =>
     apiClient.patch<{ id: string; bio: string }>("/users/me", { bio }),
+  /** Toggle the caller's play-history privacy preference. */
+  updatePreferences: (showPlayHistory: boolean) =>
+    apiClient.patch<{ showPlayHistory: boolean }>("/users/me/preferences", {
+      showPlayHistory,
+    }),
   /** Set the caller's avatar to an already-uploaded media key. */
   setAvatar: (key: string) =>
     apiClient.patch<{ id: string; avatarKey: string }>("/users/me/avatar", {
@@ -65,6 +73,19 @@ export const usersClient = {
   /** Clear the caller's avatar back to the initials placeholder. */
   removeAvatar: () =>
     apiClient.delete<{ id: string; avatarKey: null }>("/users/me/avatar"),
+  /** A user's public "recently played" packs (paginated, newest play first). */
+  recentlyPlayed: (
+    id: string,
+    params: { page?: number; limit?: number } = {},
+  ) => {
+    const query = new URLSearchParams();
+    if (params.page !== undefined) query.set("page", String(params.page));
+    if (params.limit !== undefined) query.set("limit", String(params.limit));
+    const qs = query.toString();
+    return apiClient.get<PackList>(
+      `/users/${id}/recently-played${qs ? `?${qs}` : ""}`,
+    );
+  },
   follow: (id: string) =>
     apiClient.post<{ followerCount: number }>(`/users/${id}/follow`),
   unfollow: (id: string) =>
