@@ -22,7 +22,8 @@ describe("describeNotification", () => {
       }),
     );
     expect(result).toEqual({
-      message: "alice started following you",
+      messageKey: "newFollower",
+      values: { username: "alice" },
       href: "/users/u1",
     });
   });
@@ -39,7 +40,8 @@ describe("describeNotification", () => {
       }),
     );
     expect(result).toEqual({
-      message: "bob published a new pack: Anime OSTs",
+      messageKey: "newPack",
+      values: { username: "bob", packTitle: "Anime OSTs" },
       href: "/packs/p1",
     });
   });
@@ -57,7 +59,8 @@ describe("describeNotification", () => {
       }),
     );
     expect(result).toEqual({
-      message: "carol commented on your pack Anime OSTs",
+      messageKey: "newComment",
+      values: { username: "carol", packTitle: "Anime OSTs" },
       href: "/packs/p1",
     });
   });
@@ -70,7 +73,8 @@ describe("describeNotification", () => {
       }),
     );
     expect(result).toEqual({
-      message: 'Your pack "Old Pack" was removed by a moderator',
+      messageKey: "packDeleted",
+      values: { packTitle: "Old Pack" },
       href: null,
     });
   });
@@ -88,7 +92,8 @@ describe("describeNotification", () => {
       }),
     );
     expect(result).toEqual({
-      message: "dave mentioned you on Anime OSTs",
+      messageKey: "commentMention",
+      values: { username: "dave", packTitle: "Anime OSTs" },
       href: "/packs/p1",
     });
   });
@@ -103,7 +108,8 @@ describe("describeNotification", () => {
       }),
     );
     expect(result).toEqual({
-      message: "You have a new notification",
+      messageKey: "generic",
+      values: {},
       href: null,
     });
   });

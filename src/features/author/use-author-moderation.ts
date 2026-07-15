@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { usersClient } from "@/src/shared/lib/users-client";
 import {
   isBanReasonValid,
@@ -33,6 +34,7 @@ export interface AuthorModeration {
  * did before this screen was decomposed.
  */
 export function useAuthorModeration(authorId: string): AuthorModeration {
+  const tBan = useTranslations("ban");
   const [showBanForm, setShowBanForm] = useState(false);
   const [banDuration, setBanDuration] = useState<BanDuration>("week");
   const [banReason, setBanReason] = useState<BanReasonState>({
@@ -67,7 +69,7 @@ export function useAuthorModeration(authorId: string): AuthorModeration {
       setShowBanForm(false);
       setBanReason({ reason: "", reasonDetail: "" });
     } catch {
-      setBanActionError("Couldn't ban this user. Try again.");
+      setBanActionError(tBan("banError"));
     } finally {
       setBanSubmitting(false);
     }

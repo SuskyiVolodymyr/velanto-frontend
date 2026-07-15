@@ -37,6 +37,8 @@ export function AuthorModeratorPanel({
   ruleCategories: RuleCategory[];
 }) {
   const tBanReason = useTranslations("banReason");
+  const tHeader = useTranslations("header");
+  const tBan = useTranslations("ban");
   const {
     showBanForm,
     banDuration,
@@ -54,28 +56,30 @@ export function AuthorModeratorPanel({
     <div className="mb-10 rounded-[15px] border border-border bg-surface p-4">
       <div className="mb-3 flex items-center justify-between">
         <Text as="h2" variant="title" className="text-lg">
-          Moderation
+          {tHeader("moderation")}
         </Text>
         {!bannedUntil && (
           <Button variant="secondary" onClick={toggleBanForm}>
-            Ban
+            {tBan("ban")}
           </Button>
         )}
       </div>
       {bannedUntil && (
         <Text variant="secondary" className="mb-3 text-sm">
-          Banned until {new Date(bannedUntil).toLocaleDateString()}.
+          {tBan("bannedUntil", {
+            date: new Date(bannedUntil).toLocaleDateString(),
+          })}
         </Text>
       )}
       {showBanForm && (
         <div className="mb-4 flex flex-col gap-3 border-b border-border pb-4">
           <div className="flex flex-wrap items-start gap-3">
             <label className="flex flex-col gap-1 text-xs text-foreground-secondary">
-              Duration
+              {tBan("duration")}
               <select
                 value={banDuration}
                 onChange={(e) => setBanDuration(e.target.value as BanDuration)}
-                aria-label="Ban duration"
+                aria-label={tBan("durationAria")}
                 className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground"
               >
                 {BAN_DURATIONS.map((d) => (
@@ -100,7 +104,7 @@ export function AuthorModeratorPanel({
             loading={banSubmitting}
             onClick={() => void handleBanSubmit()}
           >
-            Confirm ban
+            {tBan("confirm")}
           </Button>
           {banActionError && (
             <Text className="text-xs text-danger">{banActionError}</Text>
@@ -108,15 +112,13 @@ export function AuthorModeratorPanel({
         </div>
       )}
       {banHistoryQuery.isLoading && (
-        <LoadingState label="Loading ban history…" showLabel />
+        <LoadingState label={tBan("loadingHistory")} showLabel />
       )}
       {banHistoryQuery.error && (
-        <Text className="text-sm text-danger">
-          Couldn&apos;t load ban history.
-        </Text>
+        <Text className="text-sm text-danger">{tBan("historyError")}</Text>
       )}
       {banHistoryQuery.data && banHistoryQuery.data.items.length === 0 && (
-        <Text variant="secondary">No ban history for this user.</Text>
+        <Text variant="secondary">{tBan("noHistory")}</Text>
       )}
       {banHistoryQuery.data && banHistoryQuery.data.items.length > 0 && (
         <div className="flex flex-col gap-2">

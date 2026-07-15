@@ -14,7 +14,13 @@
     "durationAria": "Durée du bannissement",
     "confirm": "Confirmer le bannissement",
     "banUser": "Bannir l'utilisateur",
-    "userBanned": "Utilisateur banni."
+    "userBanned": "Utilisateur banni.",
+    "ban": "Bannir",
+    "bannedUntil": "Banni jusqu'au {date}.",
+    "loadingHistory": "Chargement de l'historique des bannissements…",
+    "historyError": "Impossible de charger l'historique des bannissements.",
+    "noHistory": "Aucun historique de bannissement pour cet utilisateur.",
+    "banError": "Impossible de bannir cet utilisateur. Réessayez."
   },
   "moderation": {
     "panelEyebrow": "Panneau de modération",
@@ -880,5 +886,47 @@
     "metaListTitle": "Retours et suggestions — Velanto",
     "metaListDescription": "Signalez des bugs, proposez des fonctionnalités et suggérez des améliorations de traduction.",
     "metaNewTitle": "Nouveau retour — Velanto"
+  },
+  "docs": {
+    "secOverview": "PRÉSENTATION",
+    "secCreators": "CRÉATEURS",
+    "secPlayers": "JOUEURS",
+    "topStart": "Premiers pas",
+    "topCreating": "Créer un pack",
+    "topFormats": "Les formats expliqués",
+    "topPlaying": "Jouer aux packs",
+    "topStats": "Statistiques et comparaisons",
+    "whatIsTitle": "Qu'est-ce que Velanto ?",
+    "whatIsIntro1": "Velanto est un outil de création de quiz à élimination, appelés packs. Un créateur choisit un thème et l'un des cinq formats d'élimination, ajoute des éléments, puis publie. Chacun peut jouer un pack autant de fois qu'il le souhaite : chaque partie tire un nouvel échantillon, si bien qu'aucune partie ne se ressemble vraiment.",
+    "whatIsIntro2": "Le jeu se déroule toujours à l'aveugle : vous ne voyez jamais les choix des autres avant d'avoir terminé. Une fois la partie finie, les statistiques se débloquent : les choix populaires, les taux d'accord et la façon dont votre résultat se compare à celui de tous les autres joueurs.",
+    "buildCardTitle": "Créez un pack",
+    "buildCardBody": "Choisissez un format, ajoutez des éléments ou des pools d'étiquettes, définissez les manches.",
+    "playCardTitle": "Jouez à l'aveugle",
+    "playCardBody": "Aucune influence des choix des autres joueurs.",
+    "compareCardTitle": "Comparez ensuite",
+    "compareCardBody": "Les statistiques ne se débloquent qu'une fois la partie terminée.",
+    "creatingTitle": "Créer un pack",
+    "creatingIntro": "Chaque pack associe un thème à un seul format d'élimination. Les éléments peuvent être ajoutés de deux façons, et vous pouvez librement mélanger les deux au sein d'un même pack :",
+    "creatingFixedName": "Éléments fixes",
+    "creatingFixedDesc": " — des entrées précises qui apparaissent toujours.",
+    "creatingTagName": "Pools d'étiquettes",
+    "creatingTagDesc": " — étiquetez les éléments (année, genre, peu importe) et une manche tire N éléments aléatoires partageant cette étiquette.",
+    "creatingOutro": "Les éléments peuvent être du texte, une image téléversée ou un lien YouTube — chacun avec un titre. Une fois vos éléments et vos manches définis, publiez.",
+    "formatsTitle": "Les cinq formats",
+    "formatSaveOneDesc": "Un ensemble d'éléments apparaît ; vous en sauvez exactement un et le reste est écarté pour cette manche.",
+    "formatSacrificeOneDesc": "L'inverse du précédent : retirez un élément à la fois d'un groupe jusqu'à ce qu'il ne reste qu'un seul favori.",
+    "formatRankBlindDesc": "Les éléments apparaissent un par un dans un ordre inconnu ; vous placez chacun dans un classement en cours au fur et à mesure de son apparition.",
+    "formatNxnDesc": "Deux catégories ou plus sont présentées côte à côte ; vous choisissez un camp entier pour avancer, manche après manche.",
+    "format1v1Desc": "Des comparaisons directes deux par deux, un match à la fois — pas de tableau, juste une série de face-à-face.",
+    "playingTitle": "Jouer un pack",
+    "playingIntro": "Ouvrez n'importe quel pack et appuyez sur Jouer. Vous avancerez manche par manche en suivant la logique de son format — sauver un, classer à l'aveugle, éliminer — sans aucune visibilité sur la façon dont les autres ont joué. À la fin, vous obtenez un résultat personnel : un classement final, un favori ou un ensemble sauvegardé, selon le format.",
+    "playingOutro": "Vous pouvez rejouer n'importe quel pack autant de fois que vous le souhaitez : les pools d'étiquettes sont rééchantillonnés au hasard à chaque partie, si bien que l'expérience n'est jamais identique deux fois.",
+    "statsTitle": "Statistiques et comparaisons",
+    "statsBody": "Les statistiques restent verrouillées pendant que vous jouez, afin que les choix de personne ne soient influencés par la foule. Une fois terminé, vous verrez les choix populaires, le pourcentage d'accord et à quel point votre résultat était rare ou courant parmi tous ceux qui ont joué ce pack."
+  },
+  "media": {
+    "playPreview": "Lire l’aperçu de la vidéo",
+    "embedFailed": "Cette vidéo ne peut pas être lue ici",
+    "openOnYouTube": "Ouvrir sur YouTube"
   }
 }

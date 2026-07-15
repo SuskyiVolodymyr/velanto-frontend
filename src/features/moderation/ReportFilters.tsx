@@ -3,12 +3,13 @@
 import { useTranslations } from "next-intl";
 import type { ReportStatus, ReportType } from "@/src/shared/types/report";
 
-const STATUS_FILTERS: { value: ReportStatus | undefined; labelKey: string }[] = [
-  { value: undefined, labelKey: "filterAll" },
-  { value: "new", labelKey: "filterNew" },
-  { value: "reviewing", labelKey: "filterReviewing" },
-  { value: "closed", labelKey: "filterClosed" },
-];
+const STATUS_FILTERS: { value: ReportStatus | undefined; labelKey: string }[] =
+  [
+    { value: undefined, labelKey: "filterAll" },
+    { value: "new", labelKey: "filterNew" },
+    { value: "reviewing", labelKey: "filterReviewing" },
+    { value: "closed", labelKey: "filterClosed" },
+  ];
 
 const TYPE_FILTERS: { value: ReportType | undefined; labelKey: string }[] = [
   { value: undefined, labelKey: "filterAllTypes" },

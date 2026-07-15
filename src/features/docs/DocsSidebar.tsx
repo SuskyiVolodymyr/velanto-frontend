@@ -1,29 +1,33 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
 
 export type TopicId = "start" | "creating" | "formats" | "playing" | "stats";
 
 interface NavSection {
-  label: string;
-  topics: { id: TopicId; label: string }[];
+  labelKey: string;
+  topics: { id: TopicId; labelKey: string }[];
 }
 
 const NAV: NavSection[] = [
-  { label: "OVERVIEW", topics: [{ id: "start", label: "Getting started" }] },
   {
-    label: "CREATORS",
+    labelKey: "secOverview",
+    topics: [{ id: "start", labelKey: "topStart" }],
+  },
+  {
+    labelKey: "secCreators",
     topics: [
-      { id: "creating", label: "Creating a pack" },
-      { id: "formats", label: "Formats explained" },
+      { id: "creating", labelKey: "topCreating" },
+      { id: "formats", labelKey: "topFormats" },
     ],
   },
   {
-    label: "PLAYERS",
+    labelKey: "secPlayers",
     topics: [
-      { id: "playing", label: "Playing packs" },
-      { id: "stats", label: "Stats & comparisons" },
+      { id: "playing", labelKey: "topPlaying" },
+      { id: "stats", labelKey: "topStats" },
     ],
   },
 ];
@@ -35,15 +39,16 @@ export function DocsSidebar({
   activeTopic: TopicId;
   onSelect: (id: TopicId) => void;
 }) {
+  const t = useTranslations("docs");
   return (
     <nav className="flex w-full flex-col gap-6 md:sticky md:top-[80px] md:w-[220px] md:flex-none">
       {NAV.map((section) => (
-        <div key={section.label}>
+        <div key={section.labelKey}>
           <Text
             variant="tertiary"
             className="mb-2 pl-3 text-[11px] font-semibold tracking-[0.12em]"
           >
-            {section.label}
+            {t(section.labelKey)}
           </Text>
           <div className="flex flex-col gap-0.5">
             {section.topics.map((topic) => {
@@ -61,7 +66,7 @@ export function DocsSidebar({
                       : "text-foreground-secondary",
                   )}
                 >
-                  {topic.label}
+                  {t(topic.labelKey)}
                 </button>
               );
             })}

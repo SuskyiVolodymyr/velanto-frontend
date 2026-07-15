@@ -14,7 +14,13 @@
     "durationAria": "Duración del baneo",
     "confirm": "Confirmar baneo",
     "banUser": "Banear usuario",
-    "userBanned": "Usuario baneado."
+    "userBanned": "Usuario baneado.",
+    "ban": "Banear",
+    "bannedUntil": "Baneado hasta {date}.",
+    "loadingHistory": "Cargando historial de baneos…",
+    "historyError": "No se pudo cargar el historial de baneos.",
+    "noHistory": "Este usuario no tiene historial de baneos.",
+    "banError": "No se pudo banear a este usuario. Inténtalo de nuevo."
   },
   "moderation": {
     "panelEyebrow": "Panel de moderación",
@@ -880,5 +886,47 @@
     "metaListTitle": "Comentarios y sugerencias — Velanto",
     "metaListDescription": "Informa de errores, sugiere funciones y propón mejoras de traducción.",
     "metaNewTitle": "Nuevo comentario — Velanto"
+  },
+  "docs": {
+    "secOverview": "INTRODUCCIÓN",
+    "secCreators": "CREADORES",
+    "secPlayers": "JUGADORES",
+    "topStart": "Primeros pasos",
+    "topCreating": "Crear un pack",
+    "topFormats": "Formatos explicados",
+    "topPlaying": "Jugar packs",
+    "topStats": "Estadísticas y comparaciones",
+    "whatIsTitle": "¿Qué es Velanto?",
+    "whatIsIntro1": "Velanto es un creador de cuestionarios de eliminación, llamados packs. El creador elige un tema y uno de los cinco formatos de eliminación, añade elementos y publica. Cualquiera puede jugar un pack tantas veces como quiera: cada partida extrae una muestra nueva, así que no hay dos partidas iguales.",
+    "whatIsIntro2": "El juego siempre es a ciegas: nunca ves cómo eligieron los demás hasta que terminas. Una vez que acabas, se desbloquean las estadísticas: las opciones más populares, los índices de coincidencia y cómo se compara tu resultado con el de todos los demás que han jugado.",
+    "buildCardTitle": "Crea un pack",
+    "buildCardBody": "Elige un formato, añade elementos o grupos de etiquetas, define las rondas.",
+    "playCardTitle": "Juega a ciegas",
+    "playCardBody": "Sin influencia de las elecciones de otros jugadores.",
+    "compareCardTitle": "Compara después",
+    "compareCardBody": "Las estadísticas solo se desbloquean cuando has terminado.",
+    "creatingTitle": "Crear un pack",
+    "creatingIntro": "Cada pack combina un tema con exactamente un formato de eliminación. Los elementos se pueden añadir de dos maneras, y puedes mezclar ambas libremente dentro del mismo pack:",
+    "creatingFixedName": "Elementos fijos",
+    "creatingFixedDesc": " — entradas concretas que siempre aparecen.",
+    "creatingTagName": "Grupos de etiquetas",
+    "creatingTagDesc": " — etiqueta los elementos (año, género, lo que sea) y una ronda extrae N elementos aleatorios que compartan esa etiqueta.",
+    "creatingOutro": "Los elementos pueden ser texto, una imagen subida o un enlace de YouTube, cada uno con su título. Una vez definidos tus elementos y rondas, publica.",
+    "formatsTitle": "Los cinco formatos",
+    "formatSaveOneDesc": "Aparece un grupo de elementos; salvas exactamente uno y el resto se descarta en esa ronda.",
+    "formatSacrificeOneDesc": "Lo contrario del anterior: eliminas un elemento a la vez de un grupo hasta que queda un único favorito.",
+    "formatRankBlindDesc": "Los elementos aparecen de uno en uno en un orden desconocido; colocas cada uno en una lista clasificada en curso a medida que aparece.",
+    "formatNxnDesc": "Se muestran dos o más categorías una al lado de la otra; eliges un lado entero para avanzar, ronda tras ronda.",
+    "format1v1Desc": "Comparaciones directas por parejas, un enfrentamiento a la vez: sin cuadro, solo una secuencia de duelos cara a cara.",
+    "playingTitle": "Jugar un pack",
+    "playingIntro": "Abre cualquier pack y pulsa Jugar. Avanzarás ronda por ronda siguiendo la lógica de su formato (salvar uno, clasificar a ciegas, eliminar) sin ninguna visibilidad de cómo jugaron los demás. Al final obtienes un resultado personal: una clasificación final, un favorito o un conjunto salvado, según el formato.",
+    "playingOutro": "Puedes volver a jugar cualquier pack tantas veces como quieras: los grupos de etiquetas vuelven a muestrearse al azar en cada partida, así que la experiencia nunca es idéntica dos veces.",
+    "statsTitle": "Estadísticas y comparaciones",
+    "statsBody": "Las estadísticas permanecen bloqueadas mientras juegas para que las elecciones de nadie se vean influidas por la multitud. Cuando termines, verás las opciones populares, el porcentaje de coincidencia y lo raro o común que fue tu resultado entre todos los que han jugado ese pack."
+  },
+  "media": {
+    "playPreview": "Reproducir vista previa del video",
+    "embedFailed": "Este video no se puede reproducir aquí",
+    "openOnYouTube": "Abrir en YouTube"
   }
 }

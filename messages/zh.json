@@ -14,7 +14,13 @@
     "durationAria": "封禁时长",
     "confirm": "确认封禁",
     "banUser": "封禁用户",
-    "userBanned": "用户已封禁。"
+    "userBanned": "用户已封禁。",
+    "ban": "封禁",
+    "bannedUntil": "封禁至 {date}。",
+    "loadingHistory": "正在加载封禁记录…",
+    "historyError": "无法加载封禁记录。",
+    "noHistory": "该用户没有封禁记录。",
+    "banError": "无法封禁该用户。请重试。"
   },
   "moderation": {
     "panelEyebrow": "审核面板",
@@ -880,5 +886,47 @@
     "metaListTitle": "反馈与建议 — Velanto",
     "metaListDescription": "报告问题、提出功能建议，并改进翻译。",
     "metaNewTitle": "新建反馈 — Velanto"
+  },
+  "docs": {
+    "secOverview": "概述",
+    "secCreators": "创作者",
+    "secPlayers": "玩家",
+    "topStart": "快速上手",
+    "topCreating": "创建题包",
+    "topFormats": "赛制详解",
+    "topPlaying": "游玩题包",
+    "topStats": "统计与对比",
+    "whatIsTitle": "什么是 Velanto？",
+    "whatIsIntro1": "Velanto 是一款用于制作淘汰类问答的工具，这类问答称为“题包”。创作者选定一个主题和五种淘汰赛制之一，添加条目后即可发布。任何人都可以无限次游玩同一个题包——每次游玩都会抽取全新的样本，因此没有两次体验是完全相同的。",
+    "whatIsIntro2": "游玩过程始终是盲选的：在你完成之前，永远看不到别人是怎么选的。一旦完成，统计数据便会解锁——热门选择、认同率，以及你的结果与其他所有玩家相比如何。",
+    "buildCardTitle": "搭建题包",
+    "buildCardBody": "选择赛制，添加条目或标签池，设置轮次。",
+    "playCardTitle": "盲选游玩",
+    "playCardBody": "不受其他玩家选择的影响。",
+    "compareCardTitle": "完成后对比",
+    "compareCardBody": "统计数据只有在你完成后才会解锁。",
+    "creatingTitle": "创建题包",
+    "creatingIntro": "每个题包都将一个主题与恰好一种淘汰赛制配对。条目可以通过两种方式添加，你也可以在同一个题包中自由混用这两种方式：",
+    "creatingFixedName": "固定条目",
+    "creatingFixedDesc": " —— 始终会出现的特定条目。",
+    "creatingTagName": "标签池",
+    "creatingTagDesc": " —— 为条目打上标签（年份、类型等等），每一轮会随机抽取 N 个共享该标签的条目。",
+    "creatingOutro": "条目可以是文字、上传的图片或 YouTube 链接——每一项都带有标题。设置好条目和轮次后即可发布。",
+    "formatsTitle": "五种赛制",
+    "formatSaveOneDesc": "出现一组条目；你恰好保留其中一个，其余的在该轮被淘汰。",
+    "formatSacrificeOneDesc": "与“保留其一”相反——从一组中每次移除一个条目，直到只剩下唯一的最爱。",
+    "formatRankBlindDesc": "条目以未知的顺序逐个出现；每出现一个，你就把它插入到一个不断更新的排名列表中。",
+    "formatNxnDesc": "两个或更多类别并排展示；你选择整整一侧晋级，一轮接一轮。",
+    "format1v1Desc": "直接的两两对比，一次一场对决——没有淘汰赛图，只是一连串的一对一较量。",
+    "playingTitle": "游玩题包",
+    "playingIntro": "打开任意题包，点击“开始”。你将按照其赛制的逻辑一轮轮进行——保留其一、盲选排名、逐个淘汰——完全看不到其他人是怎么玩的。结束时你会得到一份专属成果：一份最终排名、一个最爱，或一组保留下来的条目，具体取决于赛制。",
+    "playingOutro": "你可以任意次数地重玩任何题包——标签池每次都会随机重新抽样，因此两次体验不会完全相同。",
+    "statsTitle": "统计与对比",
+    "statsBody": "在你游玩期间统计数据始终保持锁定，这样就没有人的选择会受到大众影响。完成后，你将看到热门选择、认同百分比，以及在所有玩过该题包的人中，你的结果有多罕见或多常见。"
+  },
+  "media": {
+    "playPreview": "播放视频预览",
+    "embedFailed": "此视频无法在此处播放",
+    "openOnYouTube": "在 YouTube 上打开"
   }
 }

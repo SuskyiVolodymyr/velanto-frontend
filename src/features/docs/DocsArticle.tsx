@@ -1,75 +1,56 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Card } from "@/src/shared/components/Card";
 import type { TopicId } from "./DocsSidebar";
 
 const FORMAT_DOCS = [
-  {
-    name: "Save One",
-    desc: "A pool of items appears; you save exactly one and the rest are dropped for that round.",
-  },
-  {
-    name: "Sacrifice One",
-    desc: "The reverse of Save One — remove one item at a time from a group until a single favorite remains.",
-  },
-  {
-    name: "Rank Blind",
-    desc: "Items appear one at a time in an unknown order; you slot each into a running ranked list as it appears.",
-  },
-  {
-    name: "NxN",
-    desc: "Two or more categories are shown side by side; you pick a whole side to advance, round after round.",
-  },
-  {
-    name: "1v1",
-    desc: "Straight pairwise comparisons, one match at a time — no bracket, just a sequence of head-to-heads.",
-  },
+  { nameKey: "save_one", descKey: "formatSaveOneDesc" },
+  { nameKey: "sacrifice_one", descKey: "formatSacrificeOneDesc" },
+  { nameKey: "rank_blind", descKey: "formatRankBlindDesc" },
+  { nameKey: "nxn", descKey: "formatNxnDesc" },
+  { nameKey: "1v1", descKey: "format1v1Desc" },
 ];
 
 export function DocsArticle({ activeTopic }: { activeTopic: TopicId }) {
+  const t = useTranslations("docs");
+  const tFormats = useTranslations("formats");
   return (
     <article className="min-w-0 max-w-2xl flex-1">
       {activeTopic === "start" && (
         <>
           <Text as="h1" variant="title" className="mb-3 text-3xl">
-            What is Velanto?
+            {t("whatIsTitle")}
           </Text>
           <Text variant="secondary" className="mb-4 leading-7">
-            Velanto is a builder for elimination-style quizzes, called packs. A
-            creator picks a topic and one of five elimination formats, adds
-            items, and publishes. Anyone can play a pack as many times as they
-            like — every playthrough draws a fresh sample, so no two runs are
-            quite the same.
+            {t("whatIsIntro1")}
           </Text>
           <Text variant="secondary" className="mb-7 leading-7">
-            Play is always blind: you never see how anyone else picked until you
-            finish. Once you&apos;re done, stats unlock — popular choices,
-            agreement rates, and how your result compares to everyone else
-            who&apos;s played.
+            {t("whatIsIntro2")}
           </Text>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
             {[
               {
-                title: "Build a pack",
-                body: "Pick a format, add items or tag pools, set rounds.",
+                titleKey: "buildCardTitle",
+                bodyKey: "buildCardBody",
               },
               {
-                title: "Play blind",
-                body: "No influence from other players' choices.",
+                titleKey: "playCardTitle",
+                bodyKey: "playCardBody",
               },
               {
-                title: "Compare after",
-                body: "Stats unlock only once you've finished.",
+                titleKey: "compareCardTitle",
+                bodyKey: "compareCardBody",
               },
             ].map((card) => (
               <Card
-                key={card.title}
+                key={card.titleKey}
                 className="hover:translate-y-0 hover:shadow-none"
               >
-                <Text className="mb-1.5 font-semibold">{card.title}</Text>
+                <Text className="mb-1.5 font-semibold">{t(card.titleKey)}</Text>
                 <Text variant="tertiary" className="text-sm leading-6">
-                  {card.body}
+                  {t(card.bodyKey)}
                 </Text>
               </Card>
             ))}
@@ -80,37 +61,31 @@ export function DocsArticle({ activeTopic }: { activeTopic: TopicId }) {
       {activeTopic === "creating" && (
         <>
           <Text as="h1" variant="title" className="mb-3 text-3xl">
-            Creating a pack
+            {t("creatingTitle")}
           </Text>
           <Text variant="secondary" className="mb-4 leading-7">
-            Every pack pairs a topic with exactly one elimination format. Items
-            can be added two ways, and you can freely mix both inside the same
-            pack:
+            {t("creatingIntro")}
           </Text>
           <ul className="mb-4 list-disc pl-5">
             <li className="mb-2">
               <Text as="span" className="font-semibold">
-                Fixed items
+                {t("creatingFixedName")}
               </Text>
               <Text as="span" variant="secondary">
-                {" "}
-                — specific entries that always show up.
+                {t("creatingFixedDesc")}
               </Text>
             </li>
             <li>
               <Text as="span" className="font-semibold">
-                Tag pools
+                {t("creatingTagName")}
               </Text>
               <Text as="span" variant="secondary">
-                {" "}
-                — tag items (year, genre, whatever) and a round pulls N random
-                items sharing that tag.
+                {t("creatingTagDesc")}
               </Text>
             </li>
           </ul>
           <Text variant="secondary" className="leading-7">
-            Items can be text, an image upload, or a YouTube link — each with a
-            title. Once your items and rounds are set, publish.
+            {t("creatingOutro")}
           </Text>
         </>
       )}
@@ -118,17 +93,19 @@ export function DocsArticle({ activeTopic }: { activeTopic: TopicId }) {
       {activeTopic === "formats" && (
         <>
           <Text as="h1" variant="title" className="mb-5 text-3xl">
-            The five formats
+            {t("formatsTitle")}
           </Text>
           <div className="flex flex-col gap-3">
             {FORMAT_DOCS.map((format) => (
               <Card
-                key={format.name}
+                key={format.nameKey}
                 className="hover:translate-y-0 hover:shadow-none"
               >
-                <Text className="mb-1.5 font-semibold">{format.name}</Text>
+                <Text className="mb-1.5 font-semibold">
+                  {tFormats(format.nameKey)}
+                </Text>
                 <Text variant="secondary" className="text-sm leading-6">
-                  {format.desc}
+                  {t(format.descKey)}
                 </Text>
               </Card>
             ))}
@@ -139,19 +116,13 @@ export function DocsArticle({ activeTopic }: { activeTopic: TopicId }) {
       {activeTopic === "playing" && (
         <>
           <Text as="h1" variant="title" className="mb-3 text-3xl">
-            Playing a pack
+            {t("playingTitle")}
           </Text>
           <Text variant="secondary" className="mb-4 leading-7">
-            Open any pack and press Play. You&apos;ll go round by round
-            following the logic of its format — save one, rank blind, eliminate
-            — with no visibility into how anyone else played. At the end you get
-            a personal artifact: a final ranking, a favorite, or a saved set,
-            depending on the format.
+            {t("playingIntro")}
           </Text>
           <Text variant="secondary" className="leading-7">
-            You can replay any pack as many times as you like — tag pools
-            resample randomly each run, so the experience isn&apos;t identical
-            twice.
+            {t("playingOutro")}
           </Text>
         </>
       )}
@@ -159,13 +130,10 @@ export function DocsArticle({ activeTopic }: { activeTopic: TopicId }) {
       {activeTopic === "stats" && (
         <>
           <Text as="h1" variant="title" className="mb-3 text-3xl">
-            Stats &amp; comparisons
+            {t("statsTitle")}
           </Text>
           <Text variant="secondary" className="leading-7">
-            Stats stay locked while you&apos;re playing so nobody&apos;s choices
-            are influenced by the crowd. Once you finish, you&apos;ll see
-            popular picks, percent agreement, and how rare or common your result
-            was among everyone who&apos;s played that pack.
+            {t("statsBody")}
           </Text>
         </>
       )}
