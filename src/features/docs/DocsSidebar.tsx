@@ -36,7 +36,7 @@ export function DocsSidebar({
   onSelect: (id: TopicId) => void;
 }) {
   return (
-    <nav className="sticky top-[80px] flex w-[220px] flex-none flex-col gap-6">
+    <nav className="flex w-full flex-col gap-6 md:sticky md:top-[80px] md:w-[220px] md:flex-none">
       {NAV.map((section) => (
         <div key={section.label}>
           <Text

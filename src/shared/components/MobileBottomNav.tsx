@@ -73,7 +73,10 @@ export function MobileBottomNav() {
             href={href}
             aria-current={active ? "page" : undefined}
             className={cn(
-              "relative flex flex-1 flex-col items-center justify-center gap-1 py-2 text-[10px] font-medium transition-colors",
+              // min-w-0 lets the flex-1 tabs actually shrink below their content
+              // width; without it a long localized label (e.g. uk "Сповіщення")
+              // pushes the whole 5-tab bar past the viewport.
+              "relative flex min-w-0 flex-1 flex-col items-center justify-center gap-1 py-2 text-[10px] font-medium transition-colors",
               active
                 ? "text-acc"
                 : "text-foreground-tertiary hover:text-foreground",
@@ -91,7 +94,7 @@ export function MobileBottomNav() {
                 <span className="absolute right-[22%] top-1 h-2 w-2 rounded-full border-2 border-background bg-acc" />
               )}
             </span>
-            <span>{t(tab.key)}</span>
+            <span className="max-w-full truncate">{t(tab.key)}</span>
           </Link>
         );
       })}
