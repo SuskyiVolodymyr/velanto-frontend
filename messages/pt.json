@@ -394,17 +394,121 @@
   },
   "terms": {
     "metaTitle": "Termos de Serviço — Velanto",
-    "metaDescription": "Os termos que regem o seu uso do Velanto.",
+    "metaDescription": "Os termos que regem a sua utilização do Velanto.",
     "heading": "Termos de Serviço",
-    "intro": "Estes termos regem o seu acesso e uso do Velanto.",
-    "draftNotice": "Este é um rascunho de trabalho pendente de revisão jurídica — os Termos de Serviço definitivos serão publicados aqui."
+    "intro": "Estes Termos regem o seu acesso ao Velanto e a sua utilização do mesmo. Pedimos que os leia com atenção.",
+    "lastUpdatedLabel": "Última atualização",
+    "sections": [
+      {
+        "title": "Aceitação destes Termos",
+        "body": "Ao criar uma conta ou utilizar o Velanto de qualquer outra forma, o utilizador aceita estes Termos de Serviço. Caso não concorde, pedimos que não utilize o serviço. Estes Termos constituem um acordo vinculativo entre o utilizador e o Velanto."
+      },
+      {
+        "title": "Requisitos de elegibilidade",
+        "body": "O utilizador deve ter, no mínimo, 13 anos de idade, ou a idade mínima de consentimento digital no seu país, para utilizar o Velanto. Ao utilizar o serviço, o utilizador confirma que cumpre este requisito e que as informações que fornece são exatas."
+      },
+      {
+        "title": "A sua conta",
+        "body": "O utilizador é responsável por manter em segurança as suas credenciais de acesso e por toda a atividade realizada na sua conta. Poderá ser necessário verificar o seu endereço de correio eletrónico para desbloquear determinadas funcionalidades. Pedimos que nos notifique com prontidão caso considere que a sua conta foi comprometida."
+      },
+      {
+        "title": "O seu conteúdo e a licença",
+        "body": "O utilizador mantém a titularidade dos packs, comentários e demais conteúdos que criar. Ao publicar conteúdo no Velanto, o utilizador concede-nos uma licença não exclusiva e de âmbito mundial para o alojar, armazenar, exibir e distribuir com o propósito de operar o serviço. O utilizador é responsável pelo conteúdo que publica e confirma que dispõe dos direitos para o partilhar."
+      },
+      {
+        "title": "Utilização aceitável",
+        "body": "O utilizador compromete-se a não publicar conteúdo que seja ilícito, de incitação ao ódio, de assédio, infrator ou de outra forma proibido pelas nossas regras. A filtragem automatizada e a moderação humana ajudam a fazer cumprir esta obrigação. O utilizador não pode abusar do serviço nem perturbá-lo, nem tentar obter acesso não autorizado ao mesmo ou às contas de outros utilizadores."
+      },
+      {
+        "title": "Moderação e aplicação",
+        "body": "Os packs podem ser revistos antes ou depois da sua publicação. Podemos remover conteúdo, restringir funcionalidades, ou suspender ou banir contas que violem estes Termos ou as nossas regras. Procuramos agir de forma proporcionada, mas podemos atuar de imediato sempre que necessário para proteger os utilizadores ou o serviço."
+      },
+      {
+        "title": "Propriedade intelectual",
+        "body": "O Velanto e o seu nome, logótipo, design e software estão protegidos pelas leis de propriedade intelectual. O utilizador não pode copiá-los nem reutilizá-los sem autorização. Se considerar que algum conteúdo no Velanto viola os seus direitos, contacte-nos e analisaremos a denúncia."
+      },
+      {
+        "title": "Conteúdos e ligações de terceiros",
+        "body": "Os packs podem incorporar conteúdos multimédia de terceiros, tais como vídeos do YouTube, ou remeter para sites externos. Não controlamos esse conteúdo nem somos responsáveis por ele. A utilização que o utilizador fizer de serviços de terceiros rege-se pelos termos próprios desses serviços."
+      },
+      {
+        "title": "Exclusões de garantia",
+        "body": "O Velanto é fornecido «no estado em que se encontra» e «conforme disponibilidade», sem garantias de qualquer tipo. Não garantimos que o serviço será ininterrupto, isento de erros ou seguro, nem que o conteúdo será sempre exato."
+      },
+      {
+        "title": "Limitação de responsabilidade",
+        "body": "Na máxima medida permitida por lei, o Velanto não será responsável por quaisquer danos indiretos, incidentais ou consequenciais decorrentes da sua utilização do serviço."
+      },
+      {
+        "title": "Suspensão e cessação",
+        "body": "O utilizador pode deixar de utilizar o Velanto a qualquer momento. Podemos suspender ou cessar o seu acesso caso viole estes Termos ou as nossas regras, ou quando tal for necessário para proteger o serviço ou outros utilizadores."
+      },
+      {
+        "title": "Alterações a estes Termos",
+        "body": "Podemos atualizar estes Termos periodicamente. Quando efetuarmos alterações substanciais, atualizaremos a data indicada acima e, quando adequado, iremos notificá-lo. A continuação da utilização do Velanto após a entrada em vigor das alterações significa que o utilizador aceita os Termos atualizados."
+      },
+      {
+        "title": "Contacto",
+        "body": "Tem questões sobre estes Termos? Contacte-nos através de admin@playvelanto.com."
+      }
+    ]
   },
   "privacy": {
     "metaTitle": "Política de Privacidade — Velanto",
-    "metaDescription": "Como o Velanto coleta, usa e protege os seus dados.",
+    "metaDescription": "Como o Velanto recolhe, utiliza e protege os seus dados.",
     "heading": "Política de Privacidade",
-    "intro": "Esta política explica quais dados o Velanto coleta e como eles são usados.",
-    "draftNotice": "Este é um rascunho de trabalho pendente de revisão jurídica — a Política de Privacidade definitiva será publicada aqui."
+    "intro": "Esta Política de Privacidade explica que informações o Velanto recolhe, como as utilizamos e as opções de que o utilizador dispõe.",
+    "lastUpdatedLabel": "Última atualização",
+    "sections": [
+      {
+        "title": "Visão geral",
+        "body": "Esta política aplica-se à sua utilização do site e do serviço Velanto. Descreve as informações que recolhemos e a forma como as tratamos."
+      },
+      {
+        "title": "Informações que recolhemos",
+        "body": "Recolhemos as informações de conta que o utilizador fornece, tais como o seu endereço de correio eletrónico, o seu nome de utilizador e uma palavra-passe protegida de forma segura por hash; os dados de perfil que adiciona, tais como uma biografia ou um avatar; o conteúdo que cria, tais como packs e comentários; e os registos dos packs a que joga. Recolhemos igualmente informações técnicas limitadas necessárias à operação do serviço, tais como dados de sessão e registos do servidor."
+      },
+      {
+        "title": "Como utilizamos as suas informações",
+        "body": "Utilizamos as suas informações para prestar e melhorar o serviço, para o autenticar, para exibir o seu perfil e conteúdo públicos, para moderar o conteúdo e manter a comunidade segura, e para comunicar consigo acerca da sua conta."
+      },
+      {
+        "title": "Cookies e sessões",
+        "body": "Utilizamos cookies e tecnologias semelhantes para o manter com sessão iniciada e para manter a sua sessão segura, incluindo um cookie de sessão para autenticação. Não os utilizamos para o rastrear noutros sites."
+      },
+      {
+        "title": "Como partilhamos as informações",
+        "body": "O seu perfil, packs e comentários públicos são visíveis para outras pessoas por conceção. Partilhamos informações com os prestadores de serviços que alojam e operam o Velanto, tais como os nossos prestadores de alojamento e de armazenamento de conteúdos multimédia, apenas na medida necessária ao funcionamento do serviço, e podemos divulgar informações quando exigido por lei."
+      },
+      {
+        "title": "Conteúdos multimédia e serviços de terceiros",
+        "body": "As imagens e outros conteúdos multimédia que o utilizador carrega são armazenados junto do nosso prestador de conteúdos multimédia. Os packs podem incorporar conteúdos de terceiros, tais como vídeos do YouTube; a interação com esse conteúdo está sujeita às práticas de privacidade próprias do terceiro."
+      },
+      {
+        "title": "Conservação dos dados",
+        "body": "Conservamos as suas informações enquanto a sua conta estiver ativa ou pelo tempo necessário para prestar o serviço, cumprir obrigações legais, resolver litígios e fazer cumprir os nossos acordos."
+      },
+      {
+        "title": "Os seus direitos e opções",
+        "body": "O utilizador pode consultar e atualizar grande parte das suas informações a partir das definições da sua conta, incluindo o seu perfil e a visibilidade do seu histórico de jogo. Pode solicitar o acesso aos seus dados pessoais ou a sua eliminação contactando-nos, sem prejuízo de quaisquer obrigações legais de conservação que sobre nós recaiam."
+      },
+      {
+        "title": "Segurança dos dados",
+        "body": "Adotamos medidas técnicas e organizativas razoáveis para proteger as suas informações, incluindo a proteção de palavras-passe por hash e a segurança das sessões. Contudo, nenhum método de transmissão ou de armazenamento é totalmente seguro, pelo que não podemos garantir uma segurança absoluta."
+      },
+      {
+        "title": "Privacidade das crianças",
+        "body": "O Velanto não se destina a crianças com menos de 13 anos, ou abaixo da idade mínima de consentimento digital no seu país. Não recolhemos de forma consciente informações pessoais de crianças com idade inferior a essa."
+      },
+      {
+        "title": "Alterações a esta política",
+        "body": "Podemos atualizar esta Política de Privacidade periodicamente. Quando efetuarmos alterações substanciais, atualizaremos a data indicada acima e, quando adequado, iremos notificá-lo."
+      },
+      {
+        "title": "Contacto",
+        "body": "Tem questões sobre esta política ou sobre os seus dados? Contacte-nos através de admin@playvelanto.com."
+      }
+    ]
   },
   "banReason": {
     "label": "Motivo",
