@@ -1,9 +1,15 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { securityHeaders } from "./src/shared/lib/security-headers";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
+  async headers() {
+    // Apply the hardening headers to every route. Kept in one shared list so a
+    // test can assert them and they can't silently drift.
+    return [{ source: "/:path*", headers: securityHeaders }];
+  },
   async redirects() {
     // The report queue and its detail screen moved into the merged moderation
     // panel. Server-side redirects rather than client pages, so an old bookmark
