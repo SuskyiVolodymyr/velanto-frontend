@@ -145,10 +145,7 @@ export function AdminUserDetailScreen({ userId }: { userId: string }) {
         {t("detailSecActivity")}
       </Text>
       <StatGrid>
-        <Stat
-          label={t("detailComments")}
-          value={user.activity.commentsCount}
-        />
+        <Stat label={t("detailComments")} value={user.activity.commentsCount} />
         <Stat
           label={t("detailPacksPlayed")}
           value={user.activity.playsRecorded}

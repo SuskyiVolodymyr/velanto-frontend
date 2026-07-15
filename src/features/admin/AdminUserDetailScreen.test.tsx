@@ -87,8 +87,6 @@ describe("AdminUserDetailScreen", () => {
   it("shows the error state when the detail query fails", () => {
     mockAll({ data: undefined, isError: true });
     render(<AdminUserDetailScreen userId="u1" />);
-    expect(
-      screen.getByText("Couldn’t load this user."),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Couldn’t load this user.")).toBeInTheDocument();
   });
 });
