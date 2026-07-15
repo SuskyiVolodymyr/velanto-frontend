@@ -61,7 +61,7 @@ export function UserRow({
       <DataTableRow columns={columns}>
         <div className="min-w-0">
           <Link
-            href={`/users/${row.id}`}
+            href={`/admin/users/${row.id}`}
             className="truncate text-[13.5px] font-semibold text-foreground hover:text-acc"
           >
             <Hidden kind="name" id={row.id}>

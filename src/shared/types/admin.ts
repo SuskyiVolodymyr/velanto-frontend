@@ -32,6 +32,38 @@ export interface AdminOverview {
   topPacksToday: TopPackToday[];
 }
 
+/** Aggregate per-user stats for the admin user-detail page (GET /admin/users/:id). */
+export interface AdminUserDetail {
+  id: string;
+  username: string;
+  email: string;
+  role: Role;
+  trusted: boolean;
+  createdAt: string;
+  bannedUntil: string | null;
+  banReason: string | null;
+  content: {
+    packsTotal: number;
+    packsApproved: number;
+    packsPending: number;
+    packsRejected: number;
+    totalPlaysOnPacks: number;
+    likesOnPacks: number;
+  };
+  activity: {
+    commentsCount: number;
+    playsRecorded: number;
+  };
+  social: {
+    followers: number;
+    following: number;
+  };
+  moderation: {
+    reportsAgainst: number;
+    reportsFiled: number;
+  };
+}
+
 export interface AdminUserRow {
   id: string;
   username: string;
