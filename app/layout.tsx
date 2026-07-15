@@ -68,8 +68,10 @@ export default async function RootLayout({
         />
       </head>
       {/* Bottom padding on phones so the fixed MobileBottomNav never covers the
-          last of the content or the footer; the nav itself is md:hidden. */}
-      <body className="flex min-h-full flex-col pb-16 md:pb-0">
+          last of the content or the footer; must clear the nav's full height
+          (its emphasized Create button makes it ~4.5rem) plus the device's
+          safe-area inset. The nav itself is md:hidden. */}
+      <body className="flex min-h-full flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0">
         <QueryProvider>
           <NextIntlClientProvider>
             <AuthProvider>

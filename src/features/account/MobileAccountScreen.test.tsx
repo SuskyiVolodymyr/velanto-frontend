@@ -100,4 +100,11 @@ describe("MobileAccountScreen", () => {
     expect(replace).toHaveBeenCalledWith("/auth");
     expect(container).toBeEmptyDOMElement();
   });
+
+  it("renders nothing and does NOT redirect while auth is still loading", () => {
+    mockAuth("loading", null);
+    const { container } = render(<MobileAccountScreen />);
+    expect(container).toBeEmptyDOMElement();
+    expect(replace).not.toHaveBeenCalled();
+  });
 });

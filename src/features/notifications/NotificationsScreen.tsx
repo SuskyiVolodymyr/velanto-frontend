@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { useNotifications } from "@/src/shared/components/use-notifications";
@@ -22,7 +23,8 @@ export function NotificationsScreen() {
     loadingMore,
     loadMoreError,
     handleLoadMore,
-  } = useNotifications();
+  } = useNotifications({ alwaysOpen: true });
+  const t = useTranslations("settings");
   // Key the redirect on the auth machine's own status, not the notifications
   // hook's `authenticated` (which is false while auth is still loading and would
   // bounce a signed-in user to /auth on first paint).
@@ -38,7 +40,7 @@ export function NotificationsScreen() {
   return (
     <main className="mx-auto flex w-full max-w-xl flex-1 flex-col gap-5 px-5 py-8">
       <Text as="h1" variant="title" className="text-2xl">
-        Notifications
+        {t("notificationsHeading")}
       </Text>
       <div className="overflow-hidden rounded-2xl border border-border bg-surface">
         <NotificationList
