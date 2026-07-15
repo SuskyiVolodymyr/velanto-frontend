@@ -1,17 +1,20 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import type { ReportStatus, ReportType } from "@/src/shared/types/report";
 
-const STATUS_FILTERS: { value: ReportStatus | undefined; label: string }[] = [
-  { value: undefined, label: "All" },
-  { value: "new", label: "New" },
-  { value: "reviewing", label: "Reviewing" },
-  { value: "closed", label: "Closed" },
+const STATUS_FILTERS: { value: ReportStatus | undefined; labelKey: string }[] = [
+  { value: undefined, labelKey: "filterAll" },
+  { value: "new", labelKey: "filterNew" },
+  { value: "reviewing", labelKey: "filterReviewing" },
+  { value: "closed", labelKey: "filterClosed" },
 ];
 
-const TYPE_FILTERS: { value: ReportType | undefined; label: string }[] = [
-  { value: undefined, label: "All types" },
-  { value: "pack", label: "Packs" },
-  { value: "user", label: "Users" },
-  { value: "round", label: "Rounds" },
+const TYPE_FILTERS: { value: ReportType | undefined; labelKey: string }[] = [
+  { value: undefined, labelKey: "filterAllTypes" },
+  { value: "pack", labelKey: "filterPacks" },
+  { value: "user", labelKey: "filterUsers" },
+  { value: "round", labelKey: "filterRounds" },
 ];
 
 interface ReportFiltersProps {
@@ -27,11 +30,12 @@ export function ReportFilters({
   typeFilter,
   onTypeChange,
 }: ReportFiltersProps) {
+  const t = useTranslations("moderation");
   return (
     <div className="flex flex-wrap items-center gap-2">
       {STATUS_FILTERS.map((f) => (
         <button
-          key={f.label}
+          key={f.labelKey}
           type="button"
           onClick={() => onStatusChange(f.value)}
           aria-pressed={statusFilter === f.value}
@@ -41,13 +45,13 @@ export function ReportFilters({
               : "border-border bg-white/[0.02] text-foreground-secondary"
           }`}
         >
-          {f.label}
+          {t(f.labelKey)}
         </button>
       ))}
       <div className="flex-1" />
       {TYPE_FILTERS.map((f) => (
         <button
-          key={f.label}
+          key={f.labelKey}
           type="button"
           onClick={() => onTypeChange(f.value)}
           aria-pressed={typeFilter === f.value}
@@ -57,7 +61,7 @@ export function ReportFilters({
               : "border-border bg-white/[0.02] text-foreground-secondary"
           }`}
         >
-          {f.label}
+          {t(f.labelKey)}
         </button>
       ))}
     </div>

@@ -2,7 +2,7 @@
 
 import { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Input } from "@/src/shared/components/Input";
 import { Select } from "@/src/shared/components/Select";
@@ -28,6 +28,8 @@ const FILTER_DEBOUNCE_MS = 300;
 const COLUMNS = "1.5fr 1fr 120px 130px 200px";
 
 export function PackApprovalsTab() {
+  const t = useTranslations("moderation");
+  const tCommon = useTranslations("common");
   const locale = useLocale();
   const [searchInput, setSearchInput] = useState("");
   const [filters, setFilters] = useState<PackQueueFilters>(
@@ -83,15 +85,15 @@ export function PackApprovalsTab() {
         <div className="min-w-[200px] flex-1">
           <Input
             type="search"
-            aria-label="Search pack titles"
-            placeholder="Search pack titles"
+            aria-label={t("searchPacks")}
+            placeholder={t("searchPacks")}
             value={searchInput}
             onChange={(event) => setSearchInput(event.target.value)}
           />
         </div>
         <div className="w-[190px]">
           <Select
-            aria-label="Filter by format"
+            aria-label={t("filterFormat")}
             value={filters.format}
             onChange={(event) =>
               setFilters((prev) => ({
@@ -100,7 +102,7 @@ export function PackApprovalsTab() {
               }))
             }
             options={[
-              { value: "", label: "All formats" },
+              { value: "", label: t("allFormats") },
               ...PACK_FORMATS.map((format) => ({
                 value: format,
                 label: FORMAT_LABELS[format],
@@ -120,25 +122,30 @@ export function PackApprovalsTab() {
           }
           className="h-11 rounded-[10px] border border-border bg-white/[0.05] px-3.5 text-[13px] font-medium text-foreground-secondary transition-colors hover:bg-white/[0.08]"
         >
-          Sort: {filters.sort === "oldest" ? "Oldest first" : "Newest first"}
+          {t("sortLabel")}{" "}
+          {filters.sort === "oldest" ? t("sortOldest") : t("sortNewest")}
         </button>
       </div>
 
       {queueQuery.isLoading && (
-        <LoadingState label="Loading packs…" showLabel />
+        <LoadingState label={t("loadingPacks")} showLabel />
       )}
       {queueQuery.isError && (
-        <Text className="text-danger">
-          Couldn&apos;t load packs. Try again later.
-        </Text>
+        <Text className="text-danger">{t("packsError")}</Text>
       )}
 
       {!queueQuery.isLoading && !queueQuery.isError && (
         <>
           <DataTable
             columns={COLUMNS}
-            headers={["Pack", "Author", "Format", "Submitted", ""]}
-            empty="No packs waiting for review."
+            headers={[
+              t("hPack"),
+              t("hAuthor"),
+              t("hFormat"),
+              t("hSubmitted"),
+              "",
+            ]}
+            empty={t("noPacks")}
             isEmpty={packs.length === 0}
           >
             {packs.map((pack) => {
@@ -180,7 +187,7 @@ export function PackApprovalsTab() {
                         onClick={() => approve.mutate(pack.id)}
                         className="h-[34px] rounded-lg border border-success/40 bg-success/10 px-3.5 text-[13px] font-medium text-success transition-colors hover:bg-success/20 disabled:opacity-40"
                       >
-                        Approve
+                        {t("approve")}
                       </button>
                       <button
                         type="button"
@@ -192,7 +199,7 @@ export function PackApprovalsTab() {
                         }
                         className="h-[34px] rounded-lg border border-danger/40 bg-danger/10 px-3.5 text-[13px] font-medium text-danger transition-colors hover:bg-danger/20 disabled:opacity-40"
                       >
-                        Reject
+                        {t("reject")}
                       </button>
                     </div>
                   </DataTableRow>
@@ -204,8 +211,10 @@ export function PackApprovalsTab() {
                     <div className="flex items-center gap-2 border-t border-white/[0.05] bg-white/[0.02] px-[18px] py-3">
                       <div className="flex-1">
                         <Input
-                          aria-label={`Rejection reason for ${pack.title}`}
-                          placeholder="Why is this pack being rejected?"
+                          aria-label={t("rejectReasonAria", {
+                            title: pack.title,
+                          })}
+                          placeholder={t("rejectPlaceholder")}
                           value={rejectReason}
                           onChange={(event) =>
                             setRejectReason(event.target.value)
@@ -218,21 +227,21 @@ export function PackApprovalsTab() {
                         onClick={() => submitReject(pack.id)}
                         className="h-10 rounded-lg border border-danger/40 bg-danger/10 px-3.5 text-[13px] font-medium text-danger transition-colors hover:bg-danger/20 disabled:cursor-not-allowed disabled:opacity-40"
                       >
-                        Confirm reject
+                        {t("confirmReject")}
                       </button>
                       <button
                         type="button"
                         onClick={closeRejectForm}
                         className="h-10 rounded-lg border border-border bg-white/[0.05] px-3.5 text-[13px] font-medium text-foreground-secondary transition-colors hover:bg-white/[0.08]"
                       >
-                        Cancel
+                        {tCommon("cancel")}
                       </button>
                     </div>
                   )}
 
                   {failed && (
                     <Text className="border-t border-white/[0.05] px-[18px] py-2 text-[12.5px] text-danger">
-                      Couldn&apos;t update this pack. Try again.
+                      {t("updatePackError")}
                     </Text>
                   )}
                 </Fragment>

@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { BAN_DURATIONS } from "@/src/shared/lib/ban-durations";
@@ -18,6 +21,8 @@ export function ReportModerationPanel({
   report,
   moderation,
 }: ReportModerationPanelProps) {
+  const t = useTranslations("moderation");
+  const tBan = useTranslations("ban");
   const {
     deleted,
     deleting,
@@ -38,7 +43,7 @@ export function ReportModerationPanel({
   return (
     <div className="flex flex-col gap-3 rounded-[15px] border border-red-500/20 bg-red-500/[0.03] p-5">
       <Text className="text-xs font-semibold tracking-wide text-red-400">
-        MODERATION ACTIONS
+        {t("actionsHeading")}
       </Text>
       {(report.type === "pack" || report.type === "round") && (
         <div>
@@ -48,7 +53,7 @@ export function ReportModerationPanel({
             loading={deleting}
             onClick={() => void handleDeletePack()}
           >
-            {deleted ? "Pack deleted ✓" : "Delete pack"}
+            {deleted ? `${t("packDeleted")} ✓` : t("deletePack")}
           </Button>
           {deleteError && (
             <Text className="mt-2 text-xs text-danger">{deleteError}</Text>
@@ -59,21 +64,21 @@ export function ReportModerationPanel({
         <div>
           {!banDone && (
             <Button variant="secondary" onClick={toggleBanForm}>
-              Ban user
+              {tBan("banUser")}
             </Button>
           )}
-          {banDone && <Text variant="secondary">User banned.</Text>}
+          {banDone && <Text variant="secondary">{tBan("userBanned")}</Text>}
           {showBanForm && (
             <div className="mt-3 flex flex-col gap-3 border-t border-border pt-3">
               <div className="flex flex-wrap items-start gap-3">
                 <label className="flex flex-col gap-1 text-xs text-foreground-secondary">
-                  Duration
+                  {tBan("duration")}
                   <select
                     value={banDuration}
                     onChange={(e) =>
                       setBanDuration(e.target.value as BanDuration)
                     }
-                    aria-label="Ban duration"
+                    aria-label={tBan("durationAria")}
                     className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground"
                   >
                     {BAN_DURATIONS.map((d) => (
@@ -98,7 +103,7 @@ export function ReportModerationPanel({
                 loading={banSubmitting}
                 onClick={() => void handleBanSubmit()}
               >
-                Confirm ban
+                {tBan("confirm")}
               </Button>
               {banError && (
                 <Text className="text-xs text-danger">{banError}</Text>

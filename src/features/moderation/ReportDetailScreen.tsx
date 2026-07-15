@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { Text } from "@/src/shared/components/Text";
@@ -16,6 +17,9 @@ import {
 } from "@/src/features/moderation/api/report-detail.mutations";
 
 export function ReportDetailScreen({ reportId }: { reportId: string }) {
+  const t = useTranslations("moderation");
+  const tCommon = useTranslations("common");
+  const tHeader = useTranslations("header");
   const { user, status: authStatus } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
@@ -42,9 +46,9 @@ export function ReportDetailScreen({ reportId }: { reportId: string }) {
   const closeMutation = useCloseReport(reportId);
   const actionBusy = reviewMutation.isPending || closeMutation.isPending;
   const actionError = reviewMutation.isError
-    ? "Couldn't mark this report as reviewing. Try again."
+    ? t("reviewError")
     : closeMutation.isError
-      ? "Couldn't close this report. Try again."
+      ? t("closeError")
       : "";
 
   if (authStatus === "loading") return null;
@@ -52,16 +56,14 @@ export function ReportDetailScreen({ reportId }: { reportId: string }) {
   if (authStatus === "unauthenticated") {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">
-          You need to be logged in to view this page.
-        </Text>
+        <Text variant="secondary">{tCommon("loginRequired")}</Text>
         <Button
           className="mt-4"
           onClick={() =>
             router.push(`/auth?next=${encodeURIComponent(pathname)}`)
           }
         >
-          Log in
+          {tHeader("logIn")}
         </Button>
       </div>
     );
@@ -74,7 +76,7 @@ export function ReportDetailScreen({ reportId }: { reportId: string }) {
   if (reportQuery.isError || !report) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text className="text-danger">This report doesn&apos;t exist.</Text>
+        <Text className="text-danger">{t("reportNotFound")}</Text>
       </div>
     );
   }

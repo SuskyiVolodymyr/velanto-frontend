@@ -1,3 +1,6 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import type { ReportStatus } from "@/src/shared/types/report";
@@ -17,17 +20,18 @@ export function ReportQueueActions({
   onReview,
   onClose,
 }: ReportQueueActionsProps) {
+  const t = useTranslations("moderation");
   return (
     <>
       <div className="flex flex-wrap gap-2">
         {status === "new" && (
           <Button loading={actionBusy} onClick={onReview}>
-            Review
+            {t("review")}
           </Button>
         )}
         {status !== "closed" && (
           <Button variant="secondary" loading={actionBusy} onClick={onClose}>
-            Mark resolved
+            {t("markResolved")}
           </Button>
         )}
       </div>
