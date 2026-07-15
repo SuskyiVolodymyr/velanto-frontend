@@ -1,4 +1,24 @@
 {
+  "common": {
+    "loading": "Завантаження…",
+    "loadMore": "Завантажити ще",
+    "close": "Закрити",
+    "prev": "Назад",
+    "next": "Далі",
+    "showing": "Показано {first}–{last} з {total}"
+  },
+  "notifications": {
+    "title": "Сповіщення",
+    "empty": "Сповіщень поки немає.",
+    "loadError": "Не вдалося завантажити сповіщення.",
+    "loadMoreError": "Не вдалося завантажити більше сповіщень. Спробуйте ще раз.",
+    "newFollower": "{username} почав стежити за вами",
+    "newPack": "{username} опублікував новий пак: {packTitle}",
+    "newComment": "{username} прокоментував ваш пак {packTitle}",
+    "commentMention": "{username} згадав вас у {packTitle}",
+    "packDeleted": "Ваш пак «{packTitle}» видалено модератором",
+    "generic": "У вас нове сповіщення"
+  },
   "bottomNav": {
     "label": "Головна",
     "discovery": "Огляд",

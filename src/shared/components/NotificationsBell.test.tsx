@@ -7,20 +7,26 @@ import {
   act,
 } from "@testing-library/react";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { NextIntlClientProvider } from "next-intl";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { createTestQueryClient } from "@/src/shared/test/test-query-client";
+import messages from "@/messages/en.json";
 import { NotificationsBell } from "./NotificationsBell";
 import { notificationsClient } from "@/src/shared/lib/notifications-client";
 import { useAuth } from "@/src/shared/lib/auth-context";
 
 // Fresh QueryClient per render so a query key isn't served from a prior test's
-// cache.
+// cache; wrapped in the intl provider since the bell now localizes its labels.
 function render(ui: ReactElement) {
   const client = createTestQueryClient();
   return rtlRender(ui, {
     wrapper: ({ children }: { children: ReactNode }) => (
-      <QueryClientProvider client={client}>{children}</QueryClientProvider>
+      <QueryClientProvider client={client}>
+        <NextIntlClientProvider locale="en" messages={messages}>
+          {children}
+        </NextIntlClientProvider>
+      </QueryClientProvider>
     ),
   });
 }

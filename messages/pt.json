@@ -1,4 +1,24 @@
 {
+  "common": {
+    "loading": "Carregando…",
+    "loadMore": "Carregar mais",
+    "close": "Fechar",
+    "prev": "Ant.",
+    "next": "Próx.",
+    "showing": "Mostrando {first}–{last} de {total}"
+  },
+  "notifications": {
+    "title": "Notificações",
+    "empty": "Ainda não há notificações.",
+    "loadError": "Não foi possível carregar as notificações.",
+    "loadMoreError": "Não foi possível carregar mais notificações. Tente novamente.",
+    "newFollower": "{username} começou a seguir você",
+    "newPack": "{username} publicou um novo pack: {packTitle}",
+    "newComment": "{username} comentou no seu pack {packTitle}",
+    "commentMention": "{username} mencionou você em {packTitle}",
+    "packDeleted": "Seu pack \"{packTitle}\" foi removido por um moderador",
+    "generic": "Você tem uma nova notificação"
+  },
   "bottomNav": {
     "label": "Principal",
     "discovery": "Descobrir",

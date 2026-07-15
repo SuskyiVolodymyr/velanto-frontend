@@ -1,4 +1,24 @@
 {
+  "common": {
+    "loading": "लोड हो रहा है…",
+    "loadMore": "और लोड करें",
+    "close": "बंद करें",
+    "prev": "पिछला",
+    "next": "अगला",
+    "showing": "{total} में से {first}–{last} दिखाए जा रहे हैं"
+  },
+  "notifications": {
+    "title": "सूचनाएँ",
+    "empty": "अभी तक कोई सूचना नहीं।",
+    "loadError": "सूचनाएँ लोड नहीं हो सकीं।",
+    "loadMoreError": "और सूचनाएँ लोड नहीं हो सकीं। पुनः प्रयास करें।",
+    "newFollower": "{username} ने आपको फ़ॉलो करना शुरू किया",
+    "newPack": "{username} ने एक नया पैक प्रकाशित किया: {packTitle}",
+    "newComment": "{username} ने आपके पैक {packTitle} पर टिप्पणी की",
+    "commentMention": "{username} ने {packTitle} पर आपका उल्लेख किया",
+    "packDeleted": "आपका पैक \"{packTitle}\" मॉडरेटर द्वारा हटा दिया गया",
+    "generic": "आपके पास एक नई सूचना है"
+  },
   "bottomNav": {
     "label": "मुख्य",
     "discovery": "खोज",

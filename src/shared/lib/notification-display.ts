@@ -1,7 +1,15 @@
 import type { Notification } from "@/src/shared/types/notification";
 
+/**
+ * A notification resolved to a translation KEY (in the `notifications`
+ * namespace) plus its interpolation values and a link, rather than a pre-built
+ * English string — so the rendering component (NotificationItem) can localize
+ * it. This file is a pure, non-React mapper, so it can't call `useTranslations`
+ * itself.
+ */
 export interface NotificationDisplay {
-  message: string;
+  messageKey: string;
+  values: Record<string, string>;
   href: string | null;
 }
 
@@ -36,43 +44,56 @@ export function describeNotification(
     case "new_follower": {
       const payload = notification.payload as NewFollowerPayload;
       return {
-        message: `${payload.followerUsername} started following you`,
+        messageKey: "newFollower",
+        values: { username: payload.followerUsername },
         href: `/users/${payload.followerId}`,
       };
     }
     case "new_pack_from_followed": {
       const payload = notification.payload as NewPackFromFollowedPayload;
       return {
-        message: `${payload.authorUsername} published a new pack: ${payload.packTitle}`,
+        messageKey: "newPack",
+        values: {
+          username: payload.authorUsername,
+          packTitle: payload.packTitle,
+        },
         href: `/packs/${payload.packId}`,
       };
     }
     case "new_comment": {
       const payload = notification.payload as NewCommentPayload;
       return {
-        message: `${payload.commenterUsername} commented on your pack ${payload.packTitle}`,
+        messageKey: "newComment",
+        values: {
+          username: payload.commenterUsername,
+          packTitle: payload.packTitle,
+        },
         href: `/packs/${payload.packId}`,
       };
     }
     case "comment_mention": {
       const payload = notification.payload as CommentMentionPayload;
       return {
-        message: `${payload.mentionerUsername} mentioned you on ${payload.packTitle}`,
+        messageKey: "commentMention",
+        values: {
+          username: payload.mentionerUsername,
+          packTitle: payload.packTitle,
+        },
         href: `/packs/${payload.packId}`,
       };
     }
     case "pack_deleted_warning": {
       const payload = notification.payload as PackDeletedWarningPayload;
       return {
-        message: `Your pack "${payload.packTitle}" was removed by a moderator`,
+        messageKey: "packDeleted",
+        values: { packTitle: payload.packTitle },
         href: null,
       };
     }
     default:
       // A notification type this client version doesn't recognize yet — e.g. a
-      // newer backend type (comment_mention) shipped before this client adds
-      // its own case. Render a safe generic row instead of returning undefined
-      // and crashing the whole notifications list.
-      return { message: "You have a new notification", href: null };
+      // newer backend type shipped before this client adds its own case. Render
+      // a safe generic row instead of returning undefined and crashing the list.
+      return { messageKey: "generic", values: {}, href: null };
   }
 }

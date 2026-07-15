@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Spinner } from "@/src/shared/components/Spinner";
 import { Button } from "@/src/shared/components/Button";
@@ -32,6 +33,8 @@ export function NotificationList({
   onLoadMore,
   onNavigate,
 }: NotificationListProps) {
+  const t = useTranslations("common");
+  const tn = useTranslations("notifications");
   return (
     <div className="flex-1 overflow-y-auto p-2">
       {loading && (
@@ -40,17 +43,15 @@ export function NotificationList({
           className="flex items-center gap-2 px-2 py-4 text-sm text-foreground-secondary"
         >
           <Spinner size={16} />
-          <span>Loading…</span>
+          <span>{t("loading")}</span>
         </div>
       )}
       {error && (
-        <Text className="px-2 py-4 text-sm text-danger">
-          Couldn&apos;t load notifications.
-        </Text>
+        <Text className="px-2 py-4 text-sm text-danger">{tn("loadError")}</Text>
       )}
       {listReady && notifications.length === 0 && (
         <Text variant="secondary" className="px-2 py-4 text-sm">
-          No notifications yet.
+          {tn("empty")}
         </Text>
       )}
       {listReady && notifications.length > 0 && (
@@ -73,7 +74,7 @@ export function NotificationList({
             onClick={() => void onLoadMore()}
             className="w-full"
           >
-            {loadingMore ? "Loading…" : "Load more"}
+            {loadingMore ? t("loading") : t("loadMore")}
           </Button>
           {loadMoreError && (
             <Text className="text-xs text-danger">{loadMoreError}</Text>

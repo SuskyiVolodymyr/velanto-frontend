@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 
 /**
@@ -20,6 +21,7 @@ export function TablePagination({
   pageSize: number;
   onPageChange: (page: number) => void;
 }) {
+  const t = useTranslations("common");
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
   if (total === 0) return null;
 
@@ -29,16 +31,16 @@ export function TablePagination({
   return (
     <div className="flex items-center justify-between gap-3">
       <Text variant="tertiary" className="text-xs">
-        Showing {first}–{last} of {total}
+        {t("showing", { first, last, total })}
       </Text>
       <div className="flex gap-2">
         <PagerButton
-          label="Prev"
+          label={t("prev")}
           disabled={page <= 1}
           onClick={() => onPageChange(page - 1)}
         />
         <PagerButton
-          label="Next"
+          label={t("next")}
           disabled={page >= totalPages}
           onClick={() => onPageChange(page + 1)}
         />

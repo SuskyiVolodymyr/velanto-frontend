@@ -1,4 +1,24 @@
 {
+  "common": {
+    "loading": "加载中…",
+    "loadMore": "加载更多",
+    "close": "关闭",
+    "prev": "上一页",
+    "next": "下一页",
+    "showing": "显示第 {first}–{last} 项，共 {total} 项"
+  },
+  "notifications": {
+    "title": "通知",
+    "empty": "暂无通知。",
+    "loadError": "无法加载通知。",
+    "loadMoreError": "无法加载更多通知，请重试。",
+    "newFollower": "{username} 开始关注了你",
+    "newPack": "{username} 发布了新题包：{packTitle}",
+    "newComment": "{username} 评论了你的题包 {packTitle}",
+    "commentMention": "{username} 在 {packTitle} 中提到了你",
+    "packDeleted": "你的题包“{packTitle}”已被版主移除",
+    "generic": "你有一条新通知"
+  },
   "bottomNav": {
     "label": "主导航",
     "discovery": "发现",
