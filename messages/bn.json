@@ -1,4 +1,24 @@
 {
+  "common": {
+    "loading": "লোড হচ্ছে…",
+    "loadMore": "আরও লোড করুন",
+    "close": "বন্ধ করুন",
+    "prev": "আগের",
+    "next": "পরের",
+    "showing": "{total}টির মধ্যে {first}–{last} দেখানো হচ্ছে"
+  },
+  "notifications": {
+    "title": "বিজ্ঞপ্তি",
+    "empty": "এখনও কোনো বিজ্ঞপ্তি নেই।",
+    "loadError": "বিজ্ঞপ্তি লোড করা যায়নি।",
+    "loadMoreError": "আরও বিজ্ঞপ্তি লোড করা যায়নি। আবার চেষ্টা করুন।",
+    "newFollower": "{username} আপনাকে অনুসরণ করা শুরু করেছেন",
+    "newPack": "{username} একটি নতুন প্যাক প্রকাশ করেছেন: {packTitle}",
+    "newComment": "{username} আপনার প্যাক {packTitle}-এ মন্তব্য করেছেন",
+    "commentMention": "{username} {packTitle}-এ আপনাকে উল্লেখ করেছেন",
+    "packDeleted": "আপনার প্যাক \"{packTitle}\" একজন মডারেটর সরিয়ে দিয়েছেন",
+    "generic": "আপনার একটি নতুন বিজ্ঞপ্তি আছে"
+  },
   "bottomNav": {
     "label": "প্রধান",
     "discovery": "আবিষ্কার",

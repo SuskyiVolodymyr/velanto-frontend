@@ -1,4 +1,24 @@
 {
+  "common": {
+    "loading": "لوڈ ہو رہا ہے…",
+    "loadMore": "مزید لوڈ کریں",
+    "close": "بند کریں",
+    "prev": "پچھلا",
+    "next": "اگلا",
+    "showing": "{total} میں سے {first}–{last} دکھائے جا رہے ہیں"
+  },
+  "notifications": {
+    "title": "اطلاعات",
+    "empty": "ابھی تک کوئی اطلاع نہیں۔",
+    "loadError": "اطلاعات لوڈ نہیں ہو سکیں۔",
+    "loadMoreError": "مزید اطلاعات لوڈ نہیں ہو سکیں۔ دوبارہ کوشش کریں۔",
+    "newFollower": "{username} نے آپ کو فالو کرنا شروع کیا",
+    "newPack": "{username} نے ایک نیا پیک شائع کیا: {packTitle}",
+    "newComment": "{username} نے آپ کے پیک {packTitle} پر تبصرہ کیا",
+    "commentMention": "{username} نے {packTitle} پر آپ کا ذکر کیا",
+    "packDeleted": "آپ کا پیک \"{packTitle}\" ایک موڈریٹر نے ہٹا دیا",
+    "generic": "آپ کے پاس ایک نئی اطلاع ہے"
+  },
   "bottomNav": {
     "label": "بنیادی",
     "discovery": "دریافت",

@@ -1,6 +1,7 @@
 "use client";
 
 import { Bell } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { useNotifications } from "@/src/shared/components/use-notifications";
 import { NotificationList } from "@/src/shared/components/NotificationList";
@@ -22,6 +23,7 @@ export function NotificationsBell() {
     loadMoreError,
     handleLoadMore,
   } = useNotifications();
+  const t = useTranslations("notifications");
 
   if (!authenticated) return null;
 
@@ -30,7 +32,7 @@ export function NotificationsBell() {
       <button
         ref={triggerRef}
         type="button"
-        aria-label="Notifications"
+        aria-label={t("title")}
         aria-haspopup="dialog"
         aria-expanded={open}
         onClick={() => setOpen((prev) => !prev)}
@@ -61,11 +63,11 @@ export function NotificationsBell() {
           />
           <div
             role="dialog"
-            aria-label="Notifications"
+            aria-label={t("title")}
             className="absolute right-0 top-12 z-10 flex max-h-[70vh] w-[360px] flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-[0_16px_40px_rgba(0,0,0,0.5)]"
           >
             <div className="border-b border-border px-4 py-3">
-              <Text className="font-semibold">Notifications</Text>
+              <Text className="font-semibold">{t("title")}</Text>
             </div>
             <NotificationList
               notifications={notifications}

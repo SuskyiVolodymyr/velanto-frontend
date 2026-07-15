@@ -1,4 +1,24 @@
 {
+  "common": {
+    "loading": "جارٍ التحميل…",
+    "loadMore": "تحميل المزيد",
+    "close": "إغلاق",
+    "prev": "السابق",
+    "next": "التالي",
+    "showing": "عرض {first}–{last} من {total}"
+  },
+  "notifications": {
+    "title": "الإشعارات",
+    "empty": "لا توجد إشعارات بعد.",
+    "loadError": "تعذّر تحميل الإشعارات.",
+    "loadMoreError": "تعذّر تحميل المزيد من الإشعارات. حاول مرة أخرى.",
+    "newFollower": "بدأ {username} بمتابعتك",
+    "newPack": "نشر {username} حزمة جديدة: {packTitle}",
+    "newComment": "علّق {username} على حزمتك {packTitle}",
+    "commentMention": "أشار إليك {username} في {packTitle}",
+    "packDeleted": "تمت إزالة حزمتك \"{packTitle}\" بواسطة أحد المشرفين",
+    "generic": "لديك إشعار جديد"
+  },
   "bottomNav": {
     "label": "رئيسي",
     "discovery": "استكشاف",

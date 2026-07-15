@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { describeNotification } from "@/src/shared/lib/notification-display";
 import { formatRelativeTime } from "@/src/shared/lib/relative-time";
 import { Text } from "@/src/shared/components/Text";
@@ -18,7 +19,9 @@ export function NotificationItem({
   notification,
   onNavigate,
 }: NotificationItemProps) {
-  const { message, href } = describeNotification(notification);
+  const t = useTranslations("notifications");
+  const { messageKey, values, href } = describeNotification(notification);
+  const message = t(messageKey, values);
   const row = (
     <div className="flex flex-col gap-0.5 rounded-lg px-2 py-2 hover:bg-white/[0.04]">
       <Text className="text-sm">{message}</Text>

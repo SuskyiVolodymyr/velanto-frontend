@@ -8,6 +8,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
+import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { notificationsClient } from "@/src/shared/lib/notifications-client";
 
@@ -43,6 +44,7 @@ function notificationsListQueryOptions() {
  */
 export function useNotifications({ alwaysOpen = false } = {}) {
   const { status } = useAuth();
+  const t = useTranslations("notifications");
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -142,7 +144,7 @@ export function useNotifications({ alwaysOpen = false } = {}) {
     loadingMore: listQuery.isFetchingNextPage,
     loadMoreError:
       listLoaded && (listQuery.isError || listQuery.isFetchNextPageError)
-        ? "Couldn't load more notifications. Try again."
+        ? t("loadMoreError")
         : "",
     handleLoadMore: () => listQuery.fetchNextPage(),
   };

@@ -1,4 +1,24 @@
 {
+  "common": {
+    "loading": "Загрузка…",
+    "loadMore": "Загрузить ещё",
+    "close": "Закрыть",
+    "prev": "Назад",
+    "next": "Далее",
+    "showing": "Показаны {first}–{last} из {total}"
+  },
+  "notifications": {
+    "title": "Уведомления",
+    "empty": "Уведомлений пока нет.",
+    "loadError": "Не удалось загрузить уведомления.",
+    "loadMoreError": "Не удалось загрузить больше уведомлений. Попробуйте снова.",
+    "newFollower": "{username} подписался на вас",
+    "newPack": "{username} опубликовал новый пак: {packTitle}",
+    "newComment": "{username} прокомментировал ваш пак {packTitle}",
+    "commentMention": "{username} упомянул вас в {packTitle}",
+    "packDeleted": "Ваш пак «{packTitle}» удалён модератором",
+    "generic": "У вас новое уведомление"
+  },
   "bottomNav": {
     "label": "Главное",
     "discovery": "Обзор",

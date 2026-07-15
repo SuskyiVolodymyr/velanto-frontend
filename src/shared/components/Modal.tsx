@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, type ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/src/shared/lib/cn";
 import { Text } from "@/src/shared/components/Text";
 
@@ -19,6 +20,7 @@ export function Modal({
   children,
   className,
 }: ModalProps) {
+  const t = useTranslations("common");
   // Unique per instance so aria-labelledby stays correct if two Modals
   // ever render concurrently — a hardcoded id would silently collide.
   const titleId = useId();
@@ -57,7 +59,7 @@ export function Modal({
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close"
+            aria-label={t("close")}
             className="rounded-[9px] px-2 py-1 text-foreground-secondary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
           >
             ✕

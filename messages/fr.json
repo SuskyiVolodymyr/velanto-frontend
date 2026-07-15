@@ -1,4 +1,24 @@
 {
+  "common": {
+    "loading": "Chargement…",
+    "loadMore": "Charger plus",
+    "close": "Fermer",
+    "prev": "Préc.",
+    "next": "Suiv.",
+    "showing": "Affichage de {first}–{last} sur {total}"
+  },
+  "notifications": {
+    "title": "Mes notifications",
+    "empty": "Aucune notification pour le moment.",
+    "loadError": "Impossible de charger les notifications.",
+    "loadMoreError": "Impossible de charger plus de notifications. Réessayez.",
+    "newFollower": "{username} a commencé à vous suivre",
+    "newPack": "{username} a publié un nouveau pack : {packTitle}",
+    "newComment": "{username} a commenté votre pack {packTitle}",
+    "commentMention": "{username} vous a mentionné sur {packTitle}",
+    "packDeleted": "Votre pack « {packTitle} » a été supprimé par un modérateur",
+    "generic": "Vous avez une nouvelle notification"
+  },
   "bottomNav": {
     "label": "Principale",
     "discovery": "Découvrir",

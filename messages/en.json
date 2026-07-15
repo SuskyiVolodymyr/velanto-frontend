@@ -1,4 +1,24 @@
 {
+  "common": {
+    "loading": "Loading…",
+    "loadMore": "Load more",
+    "close": "Close",
+    "prev": "Prev",
+    "next": "Next",
+    "showing": "Showing {first}–{last} of {total}"
+  },
+  "notifications": {
+    "title": "Notifications",
+    "empty": "No notifications yet.",
+    "loadError": "Couldn't load notifications.",
+    "loadMoreError": "Couldn't load more notifications. Try again.",
+    "newFollower": "{username} started following you",
+    "newPack": "{username} published a new pack: {packTitle}",
+    "newComment": "{username} commented on your pack {packTitle}",
+    "commentMention": "{username} mentioned you on {packTitle}",
+    "packDeleted": "Your pack \"{packTitle}\" was removed by a moderator",
+    "generic": "You have a new notification"
+  },
   "bottomNav": {
     "label": "Primary",
     "discovery": "Discovery",
