@@ -1051,7 +1051,8 @@
     "playingIntro": "Abra qualquer pack e pressione Jogar. Você avançará rodada por rodada seguindo a lógica do formato — salvar um, classificar às cegas, eliminar — sem nenhuma visibilidade de como os outros jogaram. No final, você recebe um resultado pessoal: uma classificação final, um favorito ou um conjunto salvo, dependendo do formato.",
     "playingOutro": "Você pode rejogar qualquer pack quantas vezes quiser — os grupos de etiquetas são reamostrados aleatoriamente a cada jogada, então a experiência nunca é idêntica duas vezes.",
     "statsTitle": "Estatísticas e comparações",
-    "statsBody": "As estatísticas permanecem bloqueadas enquanto você joga, para que as escolhas de ninguém sejam influenciadas pela multidão. Quando terminar, você verá as escolhas populares, a porcentagem de concordância e o quão raro ou comum foi o seu resultado entre todos os que jogaram esse pack."
+    "statsBody": "As estatísticas permanecem bloqueadas enquanto você joga, para que as escolhas de ninguém sejam influenciadas pela multidão. Quando terminar, você verá as escolhas populares, a porcentagem de concordância e o quão raro ou comum foi o seu resultado entre todos os que jogaram esse pack.",
+    "jumpTo": "Ir para o tópico"
   },
   "media": {
     "playPreview": "Reproduzir a pré-visualização do vídeo",

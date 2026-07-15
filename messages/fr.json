@@ -1051,7 +1051,8 @@
     "playingIntro": "Ouvrez n'importe quel pack et appuyez sur Jouer. Vous avancerez manche par manche en suivant la logique de son format — sauver un, classer à l'aveugle, éliminer — sans aucune visibilité sur la façon dont les autres ont joué. À la fin, vous obtenez un résultat personnel : un classement final, un favori ou un ensemble sauvegardé, selon le format.",
     "playingOutro": "Vous pouvez rejouer n'importe quel pack autant de fois que vous le souhaitez : les pools d'étiquettes sont rééchantillonnés au hasard à chaque partie, si bien que l'expérience n'est jamais identique deux fois.",
     "statsTitle": "Statistiques et comparaisons",
-    "statsBody": "Les statistiques restent verrouillées pendant que vous jouez, afin que les choix de personne ne soient influencés par la foule. Une fois terminé, vous verrez les choix populaires, le pourcentage d'accord et à quel point votre résultat était rare ou courant parmi tous ceux qui ont joué ce pack."
+    "statsBody": "Les statistiques restent verrouillées pendant que vous jouez, afin que les choix de personne ne soient influencés par la foule. Une fois terminé, vous verrez les choix populaires, le pourcentage d'accord et à quel point votre résultat était rare ou courant parmi tous ceux qui ont joué ce pack.",
+    "jumpTo": "Aller au sujet"
   },
   "media": {
     "playPreview": "Lire l’aperçu de la vidéo",

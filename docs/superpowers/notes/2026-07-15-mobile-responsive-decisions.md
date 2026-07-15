@@ -24,27 +24,19 @@ so nothing is left broken, but these could be done differently).
 Every other route (home, pack detail, play, result, settings, profile, feedback,
 rules, report detail, account, notifications) had **no** horizontal overflow.
 
-## Decisions to confirm
+## Decisions — RESOLVED (2026-07-15, with the user)
 
-1. **Admin/moderation tables on mobile — scroll vs card reflow.**
-   I shipped **horizontal scroll** (the safe, data-preserving default — nothing
-   is hidden, and it fixed all five tables at once via the shared component).
-   The nicer-but-bigger alternative is to **reflow each row into a stacked card**
-   on phones (label: value pairs), which reads better but is a per-table
-   redesign. Want me to do the card reflow, or is horizontal scroll fine?
+1. **Admin/moderation tables on mobile → keep HORIZONTAL SCROLL.** ✅ Confirmed;
+   already shipped. No card reflow.
 
-2. **Docs sidebar on mobile.**
-   I stacked it as a **full-width list above the article**. It works but is a
-   tall block to scroll past. Alternatives: collapse it into a dropdown/accordion
-   ("Jump to…"), or hide it on mobile and rely on scrolling the article. Keep the
-   stacked list, or switch to a dropdown?
+2. **Docs sidebar on mobile → DROPDOWN.** ✅ Done. `DocsSidebar` now renders a
+   grouped native `<select>` (optgroups per section) on phones and the sticky
+   sidebar list on `md+`. New `docs.jumpTo` aria-label key, translated to all
+   locales.
 
-3. **Truncated nav labels in long-label locales.**
-   Tab labels now ellipsize if too long (e.g. "Сповіщення" → "Спов…" on very
-   narrow screens). Acceptable, or should I shorten those specific catalog
-   labels (e.g. a dedicated short "Alerts"-equivalent per locale)?
+3. **Truncated nav labels → keep as-is.** ✅ Confirmed ("okay"). Labels ellipsize
+   on very narrow screens; no per-locale short labels.
 
-4. **Auth form — not verified.**
-   I was signed in during the audit, so `/auth` redirected to home and I
-   couldn't check the login/register form at 375px. It uses a standard centered
-   card (low risk), but worth a manual look, or I can verify it signed-out.
+4. **Auth form → VERIFIED, no fix needed.** ✅ Checked `/auth` signed-out at
+   375px (both Log in and Register tabs): centered card, 0px overflow. It was
+   only ever a verification gap, not a design issue.
