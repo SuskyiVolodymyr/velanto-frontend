@@ -33,7 +33,11 @@ export function PasswordSection() {
   const methods = useForm<ChangePasswordValues>({
     mode: "onTouched",
     resolver: zodResolver(changePasswordSchema),
-    defaultValues: { currentPassword: "", newPassword: "", confirmPassword: "" },
+    defaultValues: {
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    },
   });
   const { isSubmitting } = methods.formState;
 

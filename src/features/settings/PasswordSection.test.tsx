@@ -37,9 +37,7 @@ describe("PasswordSection", () => {
     expect(
       screen.getByText(/log in to change your password/i),
     ).toBeInTheDocument();
-    expect(
-      screen.queryByLabelText("Current password"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Current password")).not.toBeInTheDocument();
   });
 
   it("changes the password and confirms success", async () => {
