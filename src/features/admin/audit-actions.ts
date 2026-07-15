@@ -16,7 +16,12 @@
  * in full — a template like `bg-${hue}/15` would be purged from the CSS.
  */
 interface AuditActionStyle {
-  label: string;
+  /**
+   * next-intl key (in the `admin` namespace) for this action's human label. For
+   * an unknown code the fallback carries the raw action string here instead, so
+   * the caller must resolve it defensively (`t.has(labelKey) ? t(...) : ...`).
+   */
+  labelKey: string;
   /** Full Tailwind classes for the row's action chip. */
   className: string;
 }
@@ -28,23 +33,23 @@ const TRIAGE = "bg-amber-400/15 text-amber-300";
 const NEUTRAL = "bg-acc/15 text-acc";
 
 export const AUDIT_ACTIONS: Record<string, AuditActionStyle> = {
-  ban_user: { label: "Ban user", className: PUNITIVE },
-  delete_pack: { label: "Delete pack", className: PUNITIVE },
-  reject_pack: { label: "Reject pack", className: PUNITIVE },
+  ban_user: { labelKey: "actionBanUser", className: PUNITIVE },
+  delete_pack: { labelKey: "actionDeletePack", className: PUNITIVE },
+  reject_pack: { labelKey: "actionRejectPack", className: PUNITIVE },
 
-  unban_user: { label: "Unban user", className: RESTORATIVE },
-  approve_pack: { label: "Approve pack", className: RESTORATIVE },
-  set_trusted: { label: "Set trusted", className: RESTORATIVE },
+  unban_user: { labelKey: "actionUnbanUser", className: RESTORATIVE },
+  approve_pack: { labelKey: "actionApprovePack", className: RESTORATIVE },
+  set_trusted: { labelKey: "actionSetTrusted", className: RESTORATIVE },
 
-  role_change: { label: "Change role", className: PRIVILEGE },
+  role_change: { labelKey: "actionChangeRole", className: PRIVILEGE },
 
-  review_report: { label: "Review report", className: TRIAGE },
-  close_report: { label: "Close report", className: TRIAGE },
+  review_report: { labelKey: "actionReviewReport", className: TRIAGE },
+  close_report: { labelKey: "actionCloseReport", className: TRIAGE },
 
-  update_pack: { label: "Update pack", className: NEUTRAL },
+  update_pack: { labelKey: "actionUpdatePack", className: NEUTRAL },
 };
 
-/** Label + colour for an action code, falling back gracefully for unknown ones. */
+/** Label key + colour for an action code, falling back gracefully for unknown ones. */
 export function auditActionStyle(action: string): AuditActionStyle {
-  return AUDIT_ACTIONS[action] ?? { label: action, className: NEUTRAL };
+  return AUDIT_ACTIONS[action] ?? { labelKey: action, className: NEUTRAL };
 }

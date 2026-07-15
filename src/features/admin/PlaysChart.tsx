@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import type { PlaysDayBucket } from "@/src/shared/types/admin";
 
@@ -18,6 +19,7 @@ function dayLabel(date: string): string {
  * buckets, so the chart renders a full, evenly spaced week even on a quiet one.
  */
 export function PlaysChart({ buckets }: { buckets: PlaysDayBucket[] }) {
+  const t = useTranslations("admin");
   // Scale to the busiest day. `|| 1` guards an all-zero week — without it every
   // bar would divide by zero; with it they all render at the 2px floor instead.
   const peak = Math.max(...buckets.map((b) => b.plays), 0) || 1;
@@ -28,7 +30,7 @@ export function PlaysChart({ buckets }: { buckets: PlaysDayBucket[] }) {
         variant="tertiary"
         className="mb-[18px] text-xs font-semibold uppercase tracking-[0.1em]"
       >
-        Plays — last 7 days
+        {t("playsChartTitle")}
       </Text>
       <div className="flex h-[120px] items-end gap-2.5">
         {buckets.map((bucket) => (

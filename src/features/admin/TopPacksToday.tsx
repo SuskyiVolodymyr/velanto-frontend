@@ -1,22 +1,24 @@
 "use client";
 
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import type { TopPackToday } from "@/src/shared/types/admin";
 
 /** The overview's "top packs today" ranked list. */
 export function TopPacksToday({ packs }: { packs: TopPackToday[] }) {
+  const t = useTranslations("admin");
   return (
     <div className="flex flex-col gap-3 rounded-[16px] border border-border bg-white/[0.02] px-[22px] py-5">
       <Text
         variant="tertiary"
         className="text-xs font-semibold uppercase tracking-[0.1em]"
       >
-        Top packs today
+        {t("topPacksHeading")}
       </Text>
       {packs.length === 0 ? (
         <Text variant="tertiary" className="py-4 text-sm">
-          No plays yet today.
+          {t("noPlaysToday")}
         </Text>
       ) : (
         packs.map((pack, index) => (

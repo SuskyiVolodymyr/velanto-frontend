@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/src/shared/lib/cn";
 import { Text } from "@/src/shared/components/Text";
 import { Input } from "@/src/shared/components/Input";
@@ -30,6 +31,7 @@ function formatMeta(meta: unknown): string {
 }
 
 export function LogsTab() {
+  const t = useTranslations("admin");
   const [searchInput, setSearchInput] = useState("");
   const [filters, setFilters] = useState<AuditLogFilters>(EMPTY_AUDIT_FILTERS);
   const [page, setPage] = useState(1);
@@ -73,43 +75,43 @@ export function LogsTab() {
         <div className="min-w-[200px] flex-1">
           <Input
             type="search"
-            aria-label="Search actor, target, details"
-            placeholder="Search actor, target, details"
+            aria-label={t("searchLogsAria")}
+            placeholder={t("searchLogsAria")}
             value={searchInput}
             onChange={(event) => setSearchInput(event.target.value)}
           />
         </div>
         <div className="w-[190px]">
           <Select
-            aria-label="Filter by action"
+            aria-label={t("filterActionAria")}
             value={filters.action}
             onChange={(event) => patch({ action: event.target.value })}
             options={[
-              { value: "", label: "All actions" },
-              ...Object.entries(AUDIT_ACTIONS).map(([value, { label }]) => ({
+              { value: "", label: t("allActions") },
+              ...Object.entries(AUDIT_ACTIONS).map(([value, { labelKey }]) => ({
                 value,
-                label,
+                label: t(labelKey),
               })),
             ]}
           />
         </div>
         <div className="flex items-center gap-1.5">
           <Text variant="tertiary" className="text-[11.5px]">
-            From
+            {t("from")}
           </Text>
           <input
             type="date"
-            aria-label="From date"
+            aria-label={t("fromDateAria")}
             value={filters.from}
             onChange={(event) => patch({ from: event.target.value })}
             className="h-11 rounded-[10px] border border-border bg-white/[0.05] px-2.5 text-[13px] text-foreground"
           />
           <Text variant="tertiary" className="text-[11.5px]">
-            to
+            {t("toWord")}
           </Text>
           <input
             type="date"
-            aria-label="To date"
+            aria-label={t("toDateAria")}
             value={filters.to}
             onChange={(event) => patch({ to: event.target.value })}
             className="h-11 rounded-[10px] border border-border bg-white/[0.05] px-2.5 text-[13px] text-foreground"
@@ -122,23 +124,32 @@ export function LogsTab() {
           }
           className="h-11 rounded-[10px] border border-border bg-white/[0.05] px-3.5 text-[13px] font-medium text-foreground-secondary transition-colors hover:bg-white/[0.08]"
         >
-          Sort: {filters.sort === "newest" ? "Newest" : "Oldest"}
+          {t("sortLabel")}{" "}
+          {filters.sort === "newest"
+            ? t("sortNewestShort")
+            : t("sortOldestShort")}
         </button>
       </div>
 
-      {logsQuery.isLoading && <LoadingState label="Loading logs…" showLabel />}
+      {logsQuery.isLoading && (
+        <LoadingState label={t("loadingLogs")} showLabel />
+      )}
       {logsQuery.isError && (
-        <Text className="text-danger">
-          Couldn&apos;t load logs. Try again later.
-        </Text>
+        <Text className="text-danger">{t("logsError")}</Text>
       )}
 
       {!logsQuery.isLoading && !logsQuery.isError && (
         <>
           <DataTable
             columns={COLUMNS}
-            headers={["Time", "Actor", "Action", "Target", "Details"]}
-            empty="No log entries match these filters."
+            headers={[
+              t("hTime"),
+              t("hActor"),
+              t("hAction"),
+              t("hTarget"),
+              t("hDetails"),
+            ]}
+            empty={t("noLogs")}
             isEmpty={logs.length === 0}
           >
             {logs.map((log) => {
@@ -160,7 +171,9 @@ export function LogsTab() {
                       action.className,
                     )}
                   >
-                    {action.label}
+                    {t.has(action.labelKey)
+                      ? t(action.labelKey)
+                      : action.labelKey}
                   </span>
                   <Text variant="secondary" className="truncate text-[13px]">
                     {log.target}

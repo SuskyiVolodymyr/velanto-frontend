@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import { Button } from "@/src/shared/components/Button";
 import { type BanDuration } from "@/src/shared/lib/users-client";
 import { BAN_DURATIONS } from "@/src/shared/lib/ban-durations";
@@ -29,15 +30,16 @@ export function UserBanForm({
   onReasonChange,
   onConfirm,
 }: UserBanFormProps) {
+  const t = useTranslations("ban");
   return (
     <div className="mt-3 flex flex-col gap-3 border-t border-border pt-3">
       <div className="flex flex-wrap items-start gap-3">
         <label className="flex flex-col gap-1 text-xs text-foreground-secondary">
-          Duration
+          {t("duration")}
           <select
             value={banDuration}
             onChange={(e) => onDurationChange(e.target.value as BanDuration)}
-            aria-label="Ban duration"
+            aria-label={t("durationAria")}
             className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground"
           >
             {BAN_DURATIONS.map((d) => (
@@ -62,7 +64,7 @@ export function UserBanForm({
         loading={loading}
         onClick={() => onConfirm()}
       >
-        Confirm ban
+        {t("confirm")}
       </Button>
     </div>
   );

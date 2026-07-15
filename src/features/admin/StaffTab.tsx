@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Text } from "@/src/shared/components/Text";
 import { Username } from "@/src/shared/components/Username";
@@ -35,11 +36,13 @@ function formatSince(since: string | null): string {
  * read as "System" rather than a blank cell or a fabricated name. Their `since`
  * was backfilled to their account-creation date.
  */
-function formatAddedBy(addedBy: string | null): string {
-  return addedBy ?? "System";
+function formatAddedBy(addedBy: string | null, systemLabel: string): string {
+  return addedBy ?? systemLabel;
 }
 
 export function StaffTab() {
+  const t = useTranslations("admin");
+  const tCommon = useTranslations("common");
   const { user } = useAuth();
   // Streamer mode masks identity visually; also keep it out of the role-select
   // aria-label so a screen reader on a shared screen doesn't announce the name.
@@ -109,7 +112,7 @@ export function StaffTab() {
       const match = found.items.find(
         (row) => row.email.toLowerCase() === email.toLowerCase(),
       );
-      if (!match) throw new Error("No user with that email.");
+      if (!match) throw new Error(t("noUserEmailError"));
       return usersClient.changeRole(match.id, role);
     },
     onSuccess: () => {
@@ -119,11 +122,11 @@ export function StaffTab() {
   });
 
   const actionError = changeRole.isError
-    ? "Couldn't change this member's role. Try again."
+    ? t("changeRoleError")
     : addStaff.isError
       ? addStaff.error.message
       : staffQuery.isFetchNextPageError
-        ? "Couldn't load more staff. Try again."
+        ? t("loadMoreStaffError")
         : "";
 
   if (!user) return null;
@@ -139,14 +142,14 @@ export function StaffTab() {
       <div className="flex flex-wrap items-center gap-2.5 rounded-[14px] border border-border bg-white/[0.02] px-[18px] py-4">
         <Input
           type="email"
-          aria-label="Email of the user to add as staff"
-          placeholder="name@email.com"
+          aria-label={t("addStaffEmailAria")}
+          placeholder={t("addStaffEmailPlaceholder")}
           value={addEmail}
           onChange={(event) => setAddEmail(event.target.value)}
           className="min-w-[180px] flex-1"
         />
         <Select
-          aria-label="Role to grant"
+          aria-label={t("roleToGrantAria")}
           value={addRole}
           onChange={(event) => setAddRole(event.target.value as AssignableRole)}
           options={addableRoles.map((role) => ({ value: role, label: role }))}
@@ -159,34 +162,32 @@ export function StaffTab() {
             addStaff.mutate({ email: addEmail.trim(), role: addRole })
           }
         >
-          + Add staff
+          {t("addStaff")}
         </Button>
       </div>
 
       <div className="max-w-sm">
         <Input
           type="search"
-          aria-label="Search staff by username or email"
-          placeholder="Search staff…"
+          aria-label={t("searchStaffAria")}
+          placeholder={t("searchStaffPlaceholder")}
           value={searchInput}
           onChange={(event) => setSearchInput(event.target.value)}
         />
       </div>
 
       {status === "loading" && (
-        <LoadingState label="Loading staff…" showLabel />
+        <LoadingState label={t("loadingStaff")} showLabel />
       )}
       {status === "error" && (
-        <Text className="text-danger">
-          Couldn&apos;t load staff. Try again later.
-        </Text>
+        <Text className="text-danger">{t("staffError")}</Text>
       )}
 
       {status === "ready" && (
         <DataTable
           columns={COLUMNS}
-          headers={["Member", "Role", "Added by", "Since", ""]}
-          empty="No staff members yet."
+          headers={[t("hMember"), t("hRole"), t("hAddedBy"), t("hSince"), ""]}
+          empty={t("noStaff")}
           isEmpty={staff.length === 0}
         >
           {staff.map((row) => {
@@ -225,8 +226,8 @@ export function StaffTab() {
                     }
                     aria-label={
                       streamerMode
-                        ? "Change role for this member"
-                        : `Change role for ${row.username}`
+                        ? t("changeRoleGenericAria")
+                        : t("changeRoleNamedAria", { username: row.username })
                     }
                     className="h-8 w-fit rounded-lg border border-border bg-white/[0.05] px-2 text-[12.5px] text-foreground"
                   >
@@ -249,7 +250,7 @@ export function StaffTab() {
                 )}
 
                 <Text variant="secondary" className="truncate text-[13px]">
-                  {formatAddedBy(row.staffAddedBy)}
+                  {formatAddedBy(row.staffAddedBy, t("system"))}
                 </Text>
                 <Text variant="tertiary" className="text-[12.5px]">
                   {formatSince(row.staffSince)}
@@ -263,7 +264,7 @@ export function StaffTab() {
                     }
                     className="w-fit rounded-md bg-danger/10 px-2.5 py-1.5 text-[12.5px] font-medium text-danger transition-colors hover:bg-danger/20"
                   >
-                    Remove
+                    {t("remove")}
                   </button>
                 ) : (
                   <span />
@@ -286,7 +287,9 @@ export function StaffTab() {
           loading={staffQuery.isFetchingNextPage}
           onClick={() => void staffQuery.fetchNextPage()}
         >
-          {staffQuery.isFetchingNextPage ? "Loading…" : "Load more"}
+          {staffQuery.isFetchingNextPage
+            ? tCommon("loading")
+            : tCommon("loadMore")}
         </Button>
       )}
     </div>
