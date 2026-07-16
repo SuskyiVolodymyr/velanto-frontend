@@ -46,8 +46,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Claude Code project config — this repo is public/open-source; internal
-# agent/workflow/security docs stay local-only, never pushed. (Not applied
-# to velanto-backend, which is private.)
+# Claude Code project config — internal agent/workflow docs stay local-only.
+# Originally because this repo was public; it's private since 2026-07-16, but
+# these stay ignored anyway: they're per-developer tooling config, not project
+# source. (velanto-backend does the same.)
 .claude/
 .superpowers/
