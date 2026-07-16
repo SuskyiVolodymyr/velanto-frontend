@@ -418,7 +418,7 @@
     "invalidCredentials": "Invalid credentials.",
     "pleaseWait": "Please wait…",
     "createAccount": "Create account",
-    "terms": "By continuing you agree to Velanto's <terms>Terms</terms> and <privacy>Privacy Policy</privacy>.",
+    "terms": "By continuing you agree to Velanto's <terms>Terms</terms>. We also explain what we do with your data in our <privacy>Privacy Policy</privacy>.",
     "forgotPassword": "Forgot password?",
     "resetHeading": "Reset your password",
     "resetIntro": "Enter your email and we’ll send you a reset code.",
@@ -600,7 +600,7 @@
       },
       {
         "title": "Other people's content",
-        "body": "Packs are written by users, not by us. They can embed third-party media, such as YouTube videos, or link to other sites. We do not control any of that and we are not responsible for it, and your use of a third-party service is governed by that service's own terms. If something on Velanto infringes your rights, tell us and we will look at it."
+        "body": "Packs are written by users, not by us. They can embed YouTube videos or link to other sites. We do not control any of that and we are not responsible for it, and your use of a third-party service is governed by that service's own terms. If something on Velanto infringes your rights, tell us and we will look at it."
       },
       {
         "title": "What Velanto is, and what it is not",
@@ -608,7 +608,7 @@
       },
       {
         "title": "Our responsibility to you",
-        "body": "Nothing in these Terms limits or excludes our liability for intent, gross negligence, death or personal injury, or any other liability that cannot be limited or excluded under the law that applies to you. That sentence outranks everything else in this section. Beyond it: we are not liable for damage caused by ordinary carelessness, except where your national law does not allow that to be excluded. We do not promise that the service will be uninterrupted, error-free or secure, and we do not warrant that user-written packs are accurate — other users wrote them, not us. If you are a consumer, you keep every mandatory right your own law gives you, and nothing here takes any of them away."
+        "body": "Nothing in these Terms limits or excludes our liability for intent, gross negligence, death or personal injury, or any other liability that cannot be limited or excluded under the law that applies to you. That sentence outranks everything else in this section. Beyond it: we are not liable for damage caused by ordinary carelessness, except where your national law does not allow that to be excluded. We also do not warrant that user-written packs are accurate — other users wrote them, not us. If you are a consumer, you keep every mandatory right your own law gives you, and nothing here takes any of them away."
       },
       {
         "title": "Ending this agreement",
@@ -647,7 +647,7 @@
           "No ads, no analytics, no tracking, no profiling. Nothing is sold to anyone.",
           "We do not store your IP address.",
           "If you are not logged in, playing a pack leaves no record of you at all.",
-          "You can export everything, or delete your account, yourself — buttons in settings, no request needed.",
+          "You can export your data, or delete your account, yourself — buttons in settings, no request needed.",
           "Deleting your account does not erase everything you ever wrote. What survives, and in what form, is listed below."
         ]
       },
@@ -663,9 +663,9 @@
           "Profile — your bio and avatar, if you add them.",
           "What you make — packs, comments, votes, reports and feedback.",
           "Plays — which packs you played and what you picked. Only when you are logged in.",
-          "Follows and notifications.",
-          "The version of the Community Rules you accepted when you registered.",
-          "Technical — a login session, and a crash report if something breaks."
+          "Follows, notifications, and any API tokens you create — for a token we keep its name, the scopes you gave it, when it expires and when it was last used, never the token itself.",
+          "The version of the Community Rules you accepted when you registered, and any moderation flags on your account — whether we have marked you trusted, and whether you are banned and why.",
+          "Technical — a login session, a crash report if something breaks, and a line in our server log each time we email you a code, which contains your email address."
         ]
       },
       {
@@ -682,7 +682,7 @@
       },
       {
         "title": "If you are not logged in, we do not know you were here",
-        "body": "You can browse and play packs without an account. If you do, the play is not recorded — no play record, no server-side trace, nothing tied to you in any way. The pack's counters go up. That is the whole of it. Play records exist only for logged-in users, and you can hide your play history from other people in your settings."
+        "body": "You can browse and play packs without an account. If you do, the play is not recorded — no play record, no server-side trace, nothing tied to you in any way. Nothing is counted either: a pack's play count counts only signed-in plays. Play records exist only for logged-in users, and you can hide your play history from other people in your settings."
       },
       {
         "title": "What we do not do",
@@ -692,13 +692,13 @@
           "No analytics. Not Google Analytics, not a privacy-friendly alternative, not anything. We do not measure you.",
           "No profiling and no personalized feed. What is popular is popular for everyone, calculated the same way for every viewer.",
           "No special-category data. We never ask your date of birth, gender, location, politics, religion, or health, and there is nowhere to put them.",
-          "No IP address stored. The server does not log requests and there is no IP column in the database. Rate limiting holds an address in memory for sixty seconds and then forgets it.",
+          "No IP address stored. Our server does not log requests and there is no IP column in the database. Rate limiting holds an address in memory for sixty seconds and then forgets it. Cloudflare, which passes traffic to the site, does see visitors' addresses — see the list of processors below.",
           "Fonts are served from our own server, so loading a Velanto page tells Google nothing."
         ]
       },
       {
         "title": "Cookies and what is stored in your browser",
-        "body": "There is no cookie banner, because there is nothing here to consent to: everything stored is either needed to make the site work or is a setting you chose. None of it follows you to other websites. Here is the complete list:",
+        "body": "There is no cookie banner. Everything stored is either needed to make the site work or is a setting you chose, and none of it follows you to other websites — so there is nothing here we would ask you to opt into. One honest note before the list: the login cookie lasts 30 days rather than clearing when you close the browser, and reasonable people think a cookie that persistent should be your choice rather than our default. We think so too, and a \"keep me signed in\" option is on our list. Here is the complete list:",
         "bullets": [
           "Your login cookie — this is what keeps you signed in. It lasts 30 days and it survives closing your browser, so on a shared computer, log out rather than just closing the tab. JavaScript cannot read it.",
           "NEXT_LOCALE — your interface language. One year.",
@@ -710,11 +710,11 @@
       },
       {
         "title": "YouTube embeds — the one place a third party sees you",
-        "body": "Packs can embed YouTube videos. We do not load the player until you click it: until then there is only a still image. But that still image is fetched from YouTube's servers, so YouTube can see a request when a pack containing a video is displayed — and once you click, YouTube receives your request directly and can set its own cookies. What happens after that is governed by Google's privacy policy, not ours. This is the only part of Velanto where another company can observe you."
+        "body": "Packs can embed YouTube videos, and we keep YouTube at arm's length as far as we can — no player is built when the page loads, only a still image. Three things are still worth knowing. That still image is fetched from YouTube's servers, so YouTube sees a request whenever a pack containing a video is displayed. The player then loads as soon as your pointer passes over the video — you do not have to click, though tapping does the same on a phone — and from that moment YouTube receives your request directly and can set its own cookies. And if you paste a YouTube link while making a pack, your browser asks YouTube for the video's title. What YouTube does with any of that is governed by Google's privacy policy, not ours. This is the only part of Velanto where another company can observe you."
       },
       {
         "title": "Images you upload",
-        "body": "Uploaded images pass through our server to Amazon S3 in Frankfurt, and are delivered through CloudFront. Two things are worth knowing:",
+        "body": "Uploaded images pass through our server to Amazon S3 in Frankfurt, and are delivered through CloudFront. Three things are worth knowing:",
         "bullets": [
           "We strip metadata. Your camera model and any GPS coordinates in the original file are removed when we re-encode the image — they never reach storage.",
           "The URL is public. Anyone with the link can open the image without logging in, including before a moderator has seen it. The link is unguessable, but it is not secret. Treat anything you upload as public.",
@@ -727,13 +727,13 @@
         "bullets": [
           "Amazon Web Services (S3 and CloudFront) — stores and delivers uploaded images. Frankfurt, in the EU.",
           "Amazon SES — sends the only two emails we send. Each contains a six-digit code and nothing else: no username, no link, no IP address.",
-          "Sentry — receives a report when something crashes. Germany, in the EU. It gets your user id and username. It never gets your email address, your IP, your cookies, or the contents of your requests, and there is no session recording.",
-          "Cloudflare — DNS and traffic to the site."
+          "Sentry — receives a report when something crashes. Germany, in the EU. A report carries your user id and username, plus a short trail of what you had just done: the pages you visited, what you clicked, and which addresses the app called (some of which name a pack). It does not carry your email address, your cookies, or what you typed, and there is no video-style session recording. One limit on that promise: like any server your browser talks to, Sentry's sees the connection itself, so it can observe the address you connect from even though we never put it in the report.",
+          "Cloudflare — DNS, and the traffic to the site passes through it. Like any provider sitting in front of a website, it sees the address every visitor connects from. We do not receive it and we do not store it, but we will not pretend it is invisible to everyone."
         ]
       },
       {
         "title": "Where your data is",
-        "body": "Storage and error reporting are in the EU: S3 in Frankfurt, Sentry in Germany. CloudFront and Cloudflare deliver from locations around the world, which is how any website loads quickly. The person who runs Velanto is in Ukraine and can access the data — that is unavoidable when one person runs a service, and you should know it rather than guess it."
+        "body": "Storage and error reporting are in the EU: S3 in Frankfurt, Sentry in Germany. CloudFront and Cloudflare deliver from locations around the world, which is how any website loads quickly, so a copy of a page or an image can sit briefly on a server outside the EU. Those two run on their providers' standard data-protection terms, which is the safeguard we rely on for it. The person who runs Velanto is in Ukraine and can access the data — that is unavoidable when one person runs a service, and you should know it rather than guess it."
       },
       {
         "title": "How long we keep things",
@@ -745,9 +745,10 @@
           "Your feedback posts — the same: kept, detached from you.",
           "Your votes — kept as numbers with no name attached, so that pack scores stay correct.",
           "Your play records — kept, detached from you.",
-          "The staff audit log — kept indefinitely, and it survives your account being deleted. Recording what staff did is the entire point of it, so it cannot be unwound by the person a staff action concerned.",
+          "The staff audit log — kept indefinitely, and it survives your account being deleted: recording what staff did is the entire point of it, so being the subject of a moderation action does not let you erase the record of it. If you were staff, deleting your account takes your name off the entries you made, but not the entries themselves.",
           "Verification and password-reset codes — these should vanish with your account, and a bug currently means a code still in flight can leave your email address behind. We are fixing it, and we would rather tell you than let you assume otherwise.",
           "Expired login sessions — they stop working on their own, but we do not currently delete the rows. We are fixing that too.",
+          "The server log line recording that we emailed you a code — it contains your address, and we do not currently prune it. We are fixing that.",
           "In one line: deleting your account removes you from Velanto and unlinks your name from what you left behind. It does not erase everything you ever wrote."
         ]
       },
@@ -763,7 +764,7 @@
       },
       {
         "title": "Moderation, reports, and the audit log",
-        "body": "When staff act — approving a pack, banning someone, resolving a report — we record who did it and what they did, and we keep that indefinitely. Two parts of this deserve to be said out loud rather than buried:",
+        "body": "When staff act — approving a pack, banning someone, resolving a report — we record who did it and what they did, and we keep it (see how long, above). Two parts of this deserve to be said out loud rather than buried:",
         "bullets": [
           "Reports are not anonymous to moderators. If you report a pack or a person, the moderator handling it sees your username. The person you reported does not.",
           "The audit log currently stores the entire content of a pack every time it is edited, forever, and staff can search that text. That is more than the log needs in order to do its job, and we are narrowing it."
@@ -773,13 +774,13 @@
         "title": "Your rights",
         "body": "You have all of these, wherever you live, and you do not have to email us to use the first four:",
         "bullets": [
-          "See your data — settings has an export button. It produces a file immediately. No request, no waiting, no identity check.",
+          "See your data — settings has an export button. It produces a file immediately: your account, profile, comments, votes, plays, feedback, follows, the reports you filed, and your notifications and their settings. No request, no waiting, no identity check.",
           "Correct it — edit your profile and your content directly.",
           "Delete it — settings has a delete-account button, described above.",
-          "Take it elsewhere — that is the same export.",
-          "Restrict or object to what we do — see the next section, which is about objecting specifically.",
+          "Take it elsewhere — that is the same export, as a JSON file.",
+          "Ask us to pause — if you think our data about you is wrong, or you have objected and we are still thinking about it, you can ask us to stop using it in the meantime while leaving it in place. Write to admin@playvelanto.com.",
           "Complain — see below.",
-          "One limit worth naming: the export covers your account, profile, packs, comments, votes, plays, feedback and follows. It does not currently include your API tokens, your login sessions, or moderation flags on your account. Ask and we will send those too.",
+          "Two limits worth naming. Your packs appear in the export only as a list — title, format and date — not the questions inside them, so you cannot rebuild a pack from it. And it leaves out your API tokens, your login sessions, and any moderation flags on your account. Both are on our list to fix; until then, ask us and we will send you what is missing.",
           "If you want something the buttons do not do, write to admin@playvelanto.com. We answer within 30 days."
         ]
       },
