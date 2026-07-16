@@ -3,6 +3,14 @@ import { Text } from "@/src/shared/components/Text";
 export interface LegalSection {
   title: string;
   body: string;
+  /**
+   * Optional list rendered under {@link body}. Used where a section is an
+   * enumeration rather than an argument — retention periods per data category,
+   * the rights list, the processors. Splitting those out of the prose is what
+   * keeps the documents readable by a 16-year-old, which GDPR Art. 12(1)
+   * requires of a service that states a minimum age of 16.
+   */
+  bullets?: string[];
 }
 
 export interface LegalScreenProps {
@@ -48,6 +56,20 @@ export function LegalScreen({
             <Text variant="secondary" className="text-base leading-relaxed">
               {section.body}
             </Text>
+            {section.bullets && (
+              <ul className="mt-3 flex list-disc flex-col gap-2 ps-6">
+                {section.bullets.map((bullet, bulletIndex) => (
+                  <li key={bulletIndex}>
+                    <Text
+                      variant="secondary"
+                      className="text-base leading-relaxed"
+                    >
+                      {bullet}
+                    </Text>
+                  </li>
+                ))}
+              </ul>
+            )}
           </section>
         ))}
       </div>

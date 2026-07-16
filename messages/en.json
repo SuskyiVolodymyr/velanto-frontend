@@ -394,7 +394,7 @@
     "off": "Off"
   },
   "auth": {
-    "acceptRules": "I have read and accept the <link>Community Rules</link>.",
+    "acceptRules": "I am 16 or older, and I have read and accept the <link>Community Rules</link>.",
     "tabSignup": "Sign up",
     "logIn": "Log in",
     "headingLogin": "Log in to Velanto",
@@ -418,7 +418,7 @@
     "invalidCredentials": "Invalid credentials.",
     "pleaseWait": "Please wait…",
     "createAccount": "Create account",
-    "terms": "By continuing you agree to Velanto's <terms>Terms</terms> and <privacy>Privacy Policy</privacy>.",
+    "terms": "By continuing you agree to Velanto's <terms>Terms</terms>. We also explain what we do with your data in our <privacy>Privacy Policy</privacy>.",
     "forgotPassword": "Forgot password?",
     "resetHeading": "Reset your password",
     "resetIntro": "Enter your email and we’ll send you a reset code.",
@@ -553,117 +553,264 @@
     "metaTitle": "Terms of Service — Velanto",
     "metaDescription": "The terms that govern your use of Velanto.",
     "heading": "Terms of Service",
-    "intro": "These Terms govern your access to and use of Velanto. Please read them carefully.",
+    "intro": "This is the agreement between you and the person who runs Velanto. It is written to be read, not to be skipped — it is short, and it says what you can expect from us and what we expect from you.",
     "lastUpdatedLabel": "Last updated",
     "sections": [
       {
-        "title": "Acceptance of these Terms",
-        "body": "By creating an account or otherwise using Velanto, you agree to these Terms of Service. If you do not agree, please do not use the service. These Terms form a binding agreement between you and Velanto."
+        "title": "Who we are",
+        "body": "Velanto is a free platform for making and playing elimination quiz packs. It is run by one independent developer based in Ukraine, in their own time. It is not a company. When these Terms say “we”, that is who they mean. You can reach us at admin@playvelanto.com — one person reads that inbox."
       },
       {
-        "title": "Eligibility",
-        "body": "You must be at least 13 years old, or the minimum age of digital consent in your country, to use Velanto. By using the service you confirm that you meet this requirement and that the information you provide is accurate."
+        "title": "Who may use Velanto",
+        "body": "You must be 16 or older to have an account. When you register, you confirm that you are. We take your word for it: we do not ask for proof and we do not collect your date of birth. If we learn that an account belongs to someone under 16, we close it. We do not go looking."
       },
       {
         "title": "Your account",
-        "body": "You are responsible for keeping your login credentials secure and for all activity under your account. You may need to verify your email address to unlock certain features. Please notify us promptly if you believe your account has been compromised."
+        "body": "You register with an email address, a username and a password. We send a six-digit code to that address, and you must enter it before the account is created — there is no such thing as an unverified Velanto account. Keep your password to yourself; you are responsible for what happens under your account. If you think someone else has got into it, change your password and tell us."
       },
       {
-        "title": "Your content and licence",
-        "body": "You keep ownership of the packs, comments, and other content you create. By publishing content on Velanto you grant us a non-exclusive, worldwide licence to host, store, display, and distribute it for the purpose of operating the service. You are responsible for the content you post and confirm that you have the rights to share it."
+        "title": "Your content stays yours",
+        "body": "You own every pack, comment and vote you make. So that the site can show your content to other people, you give us a non-exclusive, worldwide licence to host, store, display and distribute it — for the purpose of running Velanto, and for nothing else. We do not sell it, license it onward, or use it to advertise. You are responsible for what you post, and you confirm you have the right to post it."
       },
       {
-        "title": "Acceptable use",
-        "body": "You agree not to post content that is unlawful, hateful, harassing, infringing, or otherwise prohibited by our rules. Automated filtering and human moderation help enforce this. You may not abuse or disrupt the service, or attempt to gain unauthorised access to it or to other users' accounts."
+        "title": "What you may not post",
+        "body": "The Community Rules are part of this agreement and they have the detail. In short: nothing illegal, nothing hateful, nothing that harasses another person, nothing that infringes someone else's rights, and nothing that abuses or disrupts the service or other people's accounts."
       },
       {
-        "title": "Moderation and enforcement",
-        "body": "Packs may be reviewed before or after publication. We may remove content, restrict features, or suspend or ban accounts that violate these Terms or our rules. We aim to act proportionately, but we may act immediately where needed to protect users or the service."
+        "title": "How moderation actually works",
+        "body": "Two things stand between a submission and the site, and it is worth knowing exactly what each does:",
+        "bullets": [
+          "A word filter runs the moment you submit. It blocks the submission outright — blocked content never reaches our database at all. It does not flag you, report you, or ban you. It only says no.",
+          "A person reviews packs before they appear. Every pack from an ordinary account is reviewed before publication. Accounts we have marked as trusted, and staff accounts, skip that review and publish immediately.",
+          "Every ban is a decision made by a person. Nothing on Velanto bans you automatically."
+        ]
       },
       {
-        "title": "Intellectual property",
-        "body": "Velanto and its name, logo, design, and software are protected by intellectual-property laws. You may not copy or reuse them without permission. If you believe content on Velanto infringes your rights, contact us and we will review the report."
+        "title": "When we remove things or close accounts",
+        "body": "We remove content, restrict features, or suspend or close an account when there is a serious reason to: a breach of these Terms or the Community Rules, or a real risk to other users or to the service. We try to match what we do to how serious the problem is, and we act immediately only where waiting would cause harm. We do not close accounts arbitrarily, and if we end your access for a reason that is not a breach — if we stop running Velanto, for instance — we give you reasonable notice first. If you think we got it wrong, write to admin@playvelanto.com and a person will look again."
       },
       {
-        "title": "Third-party content and links",
-        "body": "Packs may embed third-party media, such as YouTube videos, or link to external sites. We do not control that content and are not responsible for it. Your use of third-party services is governed by their own terms."
+        "title": "API tokens and AI agents",
+        "body": "You can create API tokens on the documentation page and give them to software you choose, including AI agents. A token acts as you, within the scopes you pick when you create it — and some of those scopes can create, change and delete your packs.",
+        "bullets": [
+          "Anything done with your token is your responsibility, the same as if you had done it yourself.",
+          "Whatever software you give the token to can see everything that token is allowed to read. Only give one to software you trust.",
+          "A token never expires unless you set an expiry. Delete the ones you are not using."
+        ]
       },
       {
-        "title": "Disclaimers",
-        "body": "Velanto is provided on an “as is” and “as available” basis, without warranties of any kind. We do not guarantee that the service will be uninterrupted, error-free, or secure, or that content will always be accurate."
+        "title": "Other people's content",
+        "body": "Packs are written by users, not by us. They can embed YouTube videos or link to other sites. We do not control any of that and we are not responsible for it, and your use of a third-party service is governed by that service's own terms. If something on Velanto infringes your rights, tell us and we will look at it."
       },
       {
-        "title": "Limitation of liability",
-        "body": "To the fullest extent permitted by law, Velanto will not be liable for any indirect, incidental, or consequential damages arising from your use of the service."
+        "title": "What Velanto is, and what it is not",
+        "body": "Velanto is a free project run by one person in their spare time. There is no company behind it, no support desk, no uptime guarantee and no service-level agreement. It can go down, lose data, change, or stop existing. Please do not rely on it for anything that matters — it is a place to make quizzes. We say this plainly because it is the honest description of the service, and because what you can fairly expect from Velanto is measured against what Velanto actually is."
       },
       {
-        "title": "Suspension and termination",
-        "body": "You may stop using Velanto at any time. We may suspend or terminate your access if you breach these Terms or our rules, or where necessary to protect the service or other users."
+        "title": "Our responsibility to you",
+        "body": "Nothing in these Terms limits or excludes our liability for intent, gross negligence, death or personal injury, or any other liability that cannot be limited or excluded under the law that applies to you. That sentence outranks everything else in this section. Beyond it: we are not liable for damage caused by ordinary carelessness, except where your national law does not allow that to be excluded. We also do not warrant that user-written packs are accurate — other users wrote them, not us. If you are a consumer, you keep every mandatory right your own law gives you, and nothing here takes any of them away."
+      },
+      {
+        "title": "Ending this agreement",
+        "body": "You can delete your account whenever you like, from your settings. You do not need a reason and you do not need to ask us. It costs nothing. We can end it as described above, and our Privacy Policy explains exactly what happens to your data when an account goes."
       },
       {
         "title": "Changes to these Terms",
-        "body": "We may update these Terms from time to time. When we make material changes we will update the date shown above and, where appropriate, notify you. Continuing to use Velanto after changes take effect means you accept the updated Terms."
+        "body": "Velanto changes, so these Terms will change too. When we make a change that actually affects you, we will tell you before it takes effect and give you reasonable notice. If you do not want to accept the new Terms, delete your account — that is free, immediate and always available to you. Corrections that do not affect your rights we simply make, and update the date at the top."
+      },
+      {
+        "title": "Which law applies",
+        "body": "These Terms are governed by the law of Ukraine, where Velanto is run. If you are a consumer, that choice does not strip you of anything: you keep the mandatory protections of the country you live in, and you can bring a claim in your own country's courts. Where your national law says something different from these Terms, your national law wins."
+      },
+      {
+        "title": "Language",
+        "body": "These Terms were written in English, and the English version is the one that governs. The other translations are machine-made and offered to help you read them. If a translation and the English disagree, the English text is the agreement."
       },
       {
         "title": "Contact",
-        "body": "Questions about these Terms? Contact us at admin@playvelanto.com."
+        "body": "Questions about these Terms? Write to admin@playvelanto.com."
       }
     ]
   },
   "privacy": {
     "metaTitle": "Privacy Policy — Velanto",
-    "metaDescription": "How Velanto collects, uses, and protects your data.",
+    "metaDescription": "What Velanto collects, why, how long it keeps it, and what you can do about it.",
     "heading": "Privacy Policy",
-    "intro": "This Privacy Policy explains what information Velanto collects, how we use it, and the choices you have.",
+    "intro": "This explains what Velanto collects, why, who else sees it, and how long it stays. It is more detailed than most policies because the honest answers are more interesting than the usual ones.",
     "lastUpdatedLabel": "Last updated",
     "sections": [
       {
-        "title": "Overview",
-        "body": "This policy applies to your use of the Velanto website and service. It describes the information we collect and how we handle it."
+        "title": "The short version",
+        "body": "The detail is below, but if you read only this much:",
+        "bullets": [
+          "We collect what you give us and what the site needs to work. Nothing else.",
+          "No ads, no analytics, no tracking, no profiling. Nothing is sold to anyone.",
+          "We do not store your IP address.",
+          "If you are not logged in, playing a pack leaves no record of you at all.",
+          "You can export your data, or delete your account, yourself — buttons in settings, no request needed.",
+          "Deleting your account does not erase everything you ever wrote. What survives, and in what form, is listed below."
+        ]
       },
       {
-        "title": "Information we collect",
-        "body": "We collect the account information you provide, such as your email address, username, and a securely hashed password; profile details you add, such as a bio or avatar; the content you create, such as packs and comments; and records of the packs you play. We also collect limited technical information needed to operate the service, such as session data and server logs."
+        "title": "Who is responsible for your data",
+        "body": "Velanto is run by one independent developer based in Ukraine. That person decides what is collected and why, which makes them the data controller. There is no company, no data protection officer, and no team — just an inbox: admin@playvelanto.com. The rights described in this policy are given to everyone who uses Velanto, wherever you live. We do not check your country first and we do not give some users fewer rights than others."
       },
       {
-        "title": "How we use your information",
-        "body": "We use your information to provide and improve the service, to authenticate you, to display your public profile and content, to moderate content and keep the community safe, and to communicate with you about your account."
+        "title": "What we collect",
+        "body": "Almost all of it is something you typed:",
+        "bullets": [
+          "Account — your email address, username, and password. The password is hashed with argon2, which means we cannot read it and it is never included in an export.",
+          "Profile — your bio and avatar, if you add them.",
+          "What you make — packs, comments, votes, reports and feedback.",
+          "Plays — which packs you played and what you picked. Only when you are logged in.",
+          "Follows, notifications, and any API tokens you create — for a token we keep its name, the scopes you gave it, when it expires and when it was last used, never the token itself.",
+          "The version of the Community Rules you accepted when you registered, and any moderation flags on your account — whether we have marked you trusted, and whether you are banned and why.",
+          "Technical — a login session, a crash report if something breaks, and a line in our server log each time we email you a code, which contains your email address."
+        ]
       },
       {
-        "title": "Cookies and sessions",
-        "body": "We use cookies and similar technologies to keep you signed in and to keep your session secure, including a session cookie for authentication. We do not use them to track you across other websites."
+        "title": "Why we use it, and our legal basis",
+        "body": "Every use has a reason and a legal basis. We are naming them because a policy that does not is hiding something:",
+        "bullets": [
+          "Running your account, showing your content, and letting you play — because that is our agreement with you (performance of a contract, GDPR Art. 6(1)(b)). Without this data there is no account.",
+          "Sending your verification code and any password-reset code — the same reason. You asked for the account; it cannot work otherwise.",
+          "Moderating content, handling reports, keeping the service secure, and logging what staff do — because we, and everyone else using Velanto, have a legitimate interest in a service that is not abused (Art. 6(1)(f)).",
+          "Receiving crash reports — a legitimate interest in a service that works (Art. 6(1)(f)).",
+          "Keeping something because a law requires it (Art. 6(1)(c)).",
+          "We do not ask your consent for any of this, and you should be suspicious of us if we did: consent is not what we rely on. Your account is a contract, and everything else rests on legitimate interests — which you can object to at any time, as described further down."
+        ]
       },
       {
-        "title": "How we share information",
-        "body": "Your public profile, packs, and comments are visible to others by design. We share information with the service providers that host and operate Velanto, such as our hosting and media-storage providers, only as needed to run the service, and we may disclose information where required by law."
+        "title": "If you are not logged in, we do not know you were here",
+        "body": "You can browse and play packs without an account. If you do, the play is not recorded — no play record, no server-side trace, nothing tied to you in any way. Nothing is counted either: a pack's play count counts only signed-in plays. Play records exist only for logged-in users, and you can hide your play history from other people in your settings."
       },
       {
-        "title": "Media and third-party services",
-        "body": "Images and other media you upload are stored with our media provider. Packs may embed third-party content such as YouTube videos; interacting with that content is subject to the third party's own privacy practices."
+        "title": "What we do not do",
+        "body": "This list is as much a part of the policy as the rest:",
+        "bullets": [
+          "No advertising, and no ad networks.",
+          "No analytics. Not Google Analytics, not a privacy-friendly alternative, not anything. We do not measure you.",
+          "No profiling and no personalized feed. What is popular is popular for everyone, calculated the same way for every viewer.",
+          "No special-category data. We never ask your date of birth, gender, location, politics, religion, or health, and there is nowhere to put them.",
+          "No IP address stored. Our server does not log requests and there is no IP column in the database. Rate limiting holds an address in memory for sixty seconds and then forgets it. Cloudflare, which passes traffic to the site, does see visitors' addresses — see the list of processors below.",
+          "Fonts are served from our own server, so loading a Velanto page tells Google nothing."
+        ]
       },
       {
-        "title": "Data retention",
-        "body": "We keep your information for as long as your account is active or as needed to provide the service, comply with legal obligations, resolve disputes, and enforce our agreements."
+        "title": "Cookies and what is stored in your browser",
+        "body": "There is no cookie banner. Everything stored is either needed to make the site work or is a setting you chose, and none of it follows you to other websites — so there is nothing here we would ask you to opt into. One honest note before the list: the login cookie lasts 30 days rather than clearing when you close the browser, and reasonable people think a cookie that persistent should be your choice rather than our default. We think so too, and a \"keep me signed in\" option is on our list. Here is the complete list:",
+        "bullets": [
+          "Your login cookie — this is what keeps you signed in. It lasts 30 days and it survives closing your browser, so on a shared computer, log out rather than just closing the tab. JavaScript cannot read it.",
+          "NEXT_LOCALE — your interface language. One year.",
+          "velanto:accent, velanto:streamer-mode, velanto:pack-filters — display settings you chose. They never leave your browser.",
+          "velanto:last-play — your picks from the pack you just played, so the result screen can show them. Cleared when you close the tab.",
+          "velanto:otp-sent — a sixty-second timer that stops you requesting another code too quickly. It has a flaw we should name: your email address forms part of the key, and it is currently never cleaned up, so it stays in the browser after you log out. On a shared computer it is left behind. We are fixing this.",
+          "Your access token is kept in memory only. It is never written to disk."
+        ]
       },
       {
-        "title": "Your rights and choices",
-        "body": "You can view and update much of your information from your account settings, including your profile and your play-history visibility. You may request access to or deletion of your personal data by contacting us, subject to any legal obligations we have to retain it."
+        "title": "YouTube embeds — the one place a third party sees you",
+        "body": "Packs can embed YouTube videos, and we keep YouTube at arm's length as far as we can — no player is built when the page loads, only a still image. Three things are still worth knowing. That still image is fetched from YouTube's servers, so YouTube sees a request whenever a pack containing a video is displayed. The player then loads as soon as your pointer passes over the video — you do not have to click, though tapping does the same on a phone — and from that moment YouTube receives your request directly and can set its own cookies. And if you paste a YouTube link while making a pack, your browser asks YouTube for the video's title. What YouTube does with any of that is governed by Google's privacy policy, not ours. This is the only part of Velanto where another company can observe you."
       },
       {
-        "title": "Data security",
-        "body": "We take reasonable technical and organisational measures to protect your information, including hashing passwords and securing sessions. No method of transmission or storage is completely secure, however, and we cannot guarantee absolute security."
+        "title": "Images you upload",
+        "body": "Uploaded images pass through our server to Amazon S3 in Frankfurt, and are delivered through CloudFront. Three things are worth knowing:",
+        "bullets": [
+          "We strip metadata. Your camera model and any GPS coordinates in the original file are removed when we re-encode the image — they never reach storage.",
+          "The URL is public. Anyone with the link can open the image without logging in, including before a moderator has seen it. The link is unguessable, but it is not secret. Treat anything you upload as public.",
+          "We do not scan images automatically for malware or adult content. A person reviews them as part of pack moderation."
+        ]
       },
       {
-        "title": "Children's privacy",
-        "body": "Velanto is not intended for children under 13, or the minimum age of digital consent in your country. We do not knowingly collect personal information from children below that age."
+        "title": "Who else touches your data",
+        "body": "Four companies, each doing one job. This is the complete list — nobody else receives anything:",
+        "bullets": [
+          "Amazon Web Services (S3 and CloudFront) — stores and delivers uploaded images. Frankfurt, in the EU.",
+          "Amazon SES — sends the only two emails we send. Each contains a six-digit code and nothing else: no username, no link, no IP address.",
+          "Sentry — receives a report when something crashes. Germany, in the EU. A report carries your user id and username, plus a short trail of what you had just done: the pages you visited, what you clicked, and which addresses the app called (some of which name a pack). It does not carry your email address, your cookies, or what you typed, and there is no video-style session recording. One limit on that promise: like any server your browser talks to, Sentry's sees the connection itself, so it can observe the address you connect from even though we never put it in the report.",
+          "Cloudflare — DNS, and the traffic to the site passes through it. Like any provider sitting in front of a website, it sees the address every visitor connects from. We do not receive it and we do not store it, but we will not pretend it is invisible to everyone."
+        ]
+      },
+      {
+        "title": "Where your data is",
+        "body": "Storage and error reporting are in the EU: S3 in Frankfurt, Sentry in Germany. CloudFront and Cloudflare deliver from locations around the world, which is how any website loads quickly, so a copy of a page or an image can sit briefly on a server outside the EU. Those two run on their providers' standard data-protection terms, which is the safeguard we rely on for it. The person who runs Velanto is in Ukraine and can access the data — that is unavoidable when one person runs a service, and you should know it rather than guess it."
+      },
+      {
+        "title": "How long we keep things",
+        "body": "This is the section most policies get wrong, so read it. Most of your data does not disappear when you leave — it is detached from your name instead, so that the site still makes sense to everyone else. Precisely:",
+        "bullets": [
+          "Your account, profile and avatar — until you delete the account. Then 30 days. Then gone.",
+          "Your packs — deleted with your account. Be aware this also deletes other people's comments, votes and plays on them.",
+          "Your comments — kept, with your name removed. The text stays so that conversations still make sense to the people who were in them.",
+          "Your feedback posts — the same: kept, detached from you.",
+          "Your votes — kept as numbers with no name attached, so that pack scores stay correct.",
+          "Your play records — kept, detached from you.",
+          "The staff audit log — kept indefinitely, and it survives your account being deleted: recording what staff did is the entire point of it, so being the subject of a moderation action does not let you erase the record of it. If you were staff, deleting your account takes your name off the entries you made, but not the entries themselves.",
+          "Verification and password-reset codes — these should vanish with your account, and a bug currently means a code still in flight can leave your email address behind. We are fixing it, and we would rather tell you than let you assume otherwise.",
+          "Expired login sessions — they stop working on their own, but we do not currently delete the rows. We are fixing that too.",
+          "The server log line recording that we emailed you a code — it contains your address, and we do not currently prune it. We are fixing that.",
+          "In one line: deleting your account removes you from Velanto and unlinks your name from what you left behind. It does not erase everything you ever wrote."
+        ]
+      },
+      {
+        "title": "Deleting your account",
+        "body": "It is a button in your settings, and you need your current password to use it. Then:",
+        "bullets": [
+          "Your account stops working straight away.",
+          "For 30 days you can undo it — just log in again and it comes back. This is deliberate: it protects you from a bad moment, or from someone else getting into your account and deleting it.",
+          "After 30 days a nightly job destroys it for good, following the list above.",
+          "Two honest caveats: deleting your account does not clear the login cookie from your browser the way logging out does (it stops working, but it is still sitting there), and an access token already issued keeps working for up to fifteen minutes. Both are on our list to fix."
+        ]
+      },
+      {
+        "title": "Moderation, reports, and the audit log",
+        "body": "When staff act — approving a pack, banning someone, resolving a report — we record who did it and what they did, and we keep it (see how long, above). Two parts of this deserve to be said out loud rather than buried:",
+        "bullets": [
+          "Reports are not anonymous to moderators. If you report a pack or a person, the moderator handling it sees your username. The person you reported does not.",
+          "The audit log currently stores the entire content of a pack every time it is edited, forever, and staff can search that text. That is more than the log needs in order to do its job, and we are narrowing it."
+        ]
+      },
+      {
+        "title": "Your rights",
+        "body": "You have all of these, wherever you live, and you do not have to email us to use the first four:",
+        "bullets": [
+          "See your data — settings has an export button. It produces a file immediately: your account, profile, comments, votes, plays, feedback, follows, the reports you filed, and your notifications and their settings. No request, no waiting, no identity check.",
+          "Correct it — edit your profile and your content directly.",
+          "Delete it — settings has a delete-account button, described above.",
+          "Take it elsewhere — that is the same export, as a JSON file.",
+          "Ask us to pause — if you think our data about you is wrong, or you have objected and we are still thinking about it, you can ask us to stop using it in the meantime while leaving it in place. Write to admin@playvelanto.com.",
+          "Complain — see below.",
+          "Two limits worth naming. Your packs appear in the export only as a list — title, format and date — not the questions inside them, so you cannot rebuild a pack from it. And it leaves out your API tokens, your login sessions, and any moderation flags on your account. Both are on our list to fix; until then, ask us and we will send you what is missing.",
+          "If you want something the buttons do not do, write to admin@playvelanto.com. We answer within 30 days."
+        ]
+      },
+      {
+        "title": "Your right to object",
+        "body": "You have the right to object, at any time, to any use of your data that rests on our legitimate interests — that means the moderation, the security measures, the audit log and the crash reporting described above. Write to admin@playvelanto.com. You do not need to give a reason and it costs nothing. If you object, we stop, unless we can demonstrate compelling legitimate grounds that override your interests, rights and freedoms. This right is separate from everything else in this policy, which is why it has its own section."
+      },
+      {
+        "title": "Complaining about us",
+        "body": "Tell us first — admin@playvelanto.com — and we will genuinely try to put it right. You do not have to, though. You can complain directly to a data protection authority: in the EU or EEA, that is the authority where you live, where you work, or where you think the problem happened, and the list is at edpb.europa.eu. In Ukraine, it is the Ukrainian Parliament Commissioner for Human Rights."
+      },
+      {
+        "title": "If you are under 16",
+        "body": "You need to be 16 to have a Velanto account, and you confirm that you are when you register. We take your word for it: we do not ask for proof, we do not collect your date of birth, and we do not try to guess your age from anything. If we find out an account belongs to someone under 16, we close it and delete it. If you are a parent and you think your child has an account here, write to admin@playvelanto.com and we will remove it."
+      },
+      {
+        "title": "Security",
+        "body": "Passwords are hashed with argon2 — we cannot read yours, and it is never exported. Login sessions use single-use tokens: each time one is used it is revoked and replaced, so a stolen token has a short life. The site sets standard security headers, and one that switches off the browser's advertising-topics API. No system is perfectly secure and we will not pretend otherwise. Velanto is run by one person, and you should weigh that when deciding what to put here."
       },
       {
         "title": "Changes to this policy",
-        "body": "We may update this Privacy Policy from time to time. When we make material changes we will update the date shown above and, where appropriate, notify you."
+        "body": "We will update this as Velanto changes. When a change matters to you, we will tell you before it takes effect and update the date at the top. If you do not like a change, you can delete your account at any time, for free."
+      },
+      {
+        "title": "Language",
+        "body": "This policy was written in English, and the English version is the one that governs. The other translations are machine-made and offered to help you read it. If a translation and the English disagree, the English text is the one that counts."
       },
       {
         "title": "Contact",
-        "body": "Questions about this policy or your data? Contact us at admin@playvelanto.com."
+        "body": "Anything in this policy, including every right listed above: admin@playvelanto.com. One person reads that inbox, and they wrote this page."
       }
     ]
   },

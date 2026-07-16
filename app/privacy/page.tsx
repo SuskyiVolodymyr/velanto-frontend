@@ -16,7 +16,18 @@ export async function generateMetadata(): Promise<Metadata> {
     title: { absolute: title },
     description,
     alternates: { canonical: url },
-    openGraph: { title, description, url, type: "website" },
+    // `images` is explicit because declaring an `openGraph` object at all stops
+    // Next inheriting the file-based `app/opengraph-image.tsx`. Without this the
+    // page previews as a bare title card everywhere OG is used (Facebook,
+    // LinkedIn, Discord, Slack, iMessage) while still looking right on Twitter,
+    // which reads the separately-inherited `app/twitter-image.tsx`.
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "website",
+      images: ["/opengraph-image"],
+    },
   };
 }
 

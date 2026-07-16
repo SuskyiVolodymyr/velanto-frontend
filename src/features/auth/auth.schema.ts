@@ -19,7 +19,8 @@ export const AUTH_MESSAGES = {
   passwordUpper: "Password must include an uppercase letter.",
   passwordDigit: "Password must include a number.",
   passwordsMismatch: "Passwords do not match.",
-  acceptRules: "You must accept the Community Rules to register.",
+  acceptRules:
+    "You must be 16 or older and accept the Community Rules to register.",
   code: "Enter the 6-digit code sent to your email.",
   currentPasswordRequired: "Enter your current password.",
   emailRequired: "Enter a valid email address.",

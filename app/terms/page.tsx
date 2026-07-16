@@ -16,7 +16,16 @@ export async function generateMetadata(): Promise<Metadata> {
     title: { absolute: title },
     description,
     alternates: { canonical: url },
-    openGraph: { title, description, url, type: "website" },
+    // `images` is explicit because declaring an `openGraph` object at all stops
+    // Next inheriting the file-based `app/opengraph-image.tsx`. See the same
+    // note in app/privacy/page.tsx.
+    openGraph: {
+      title,
+      description,
+      url,
+      type: "website",
+      images: ["/opengraph-image"],
+    },
   };
 }
 

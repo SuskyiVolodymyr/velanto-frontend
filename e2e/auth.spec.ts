@@ -49,8 +49,10 @@ test.describe("Auth screen", () => {
     await page
       .getByLabel("Confirm password", { exact: true })
       .fill("Password123");
-    // Registration requires accepting the community rules (acceptedRules:
-    // z.literal(true)); without ticking it the form fails client validation.
+    // The one required checkbox (acceptedRules: z.literal(true)) carries both
+    // the Community Rules acceptance and the 16+ age self-declaration; without
+    // ticking it the form fails client validation. Selected by role rather than
+    // by name so the legal copy can change without breaking this flow.
     await page.getByRole("checkbox").check();
 
     await page.getByRole("button", { name: "Continue" }).click();
