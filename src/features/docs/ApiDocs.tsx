@@ -107,11 +107,8 @@ export function ApiDocs() {
           </li>
         ))}
       </ul>
-      <Text variant="secondary" className="mb-4 leading-7">
-        {t("apiMcpScopeNote")}
-      </Text>
       <Text variant="secondary" className="mb-8 leading-7">
-        {t("apiMcpFormatsNote")}
+        {t("apiMcpScopeNote")}
       </Text>
 
       <Text as="h2" className="mb-2 text-xl font-semibold">

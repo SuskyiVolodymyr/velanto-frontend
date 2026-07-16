@@ -1145,8 +1145,7 @@
     "apiMcpScopeNote": "Cada herramienta necesita el permiso correspondiente en tu token, así que un asistente solo alcanza lo que hayas autorizado. Los packs que cree pasan por moderación como cualquier otro.",
     "apiDirectTitle": "Llamar a la API directamente",
     "apiDirectIntro": "Envía tu token como token bearer en cualquier petición:",
-    "apiDirectNote": "Un token no puede crear ni revocar tokens: eso siempre exige un inicio de sesión real, así que un token filtrado no puede ampliarse a sí mismo.",
-    "apiMcpFormatsNote": "Crear packs a través de un asistente cubre por ahora los formatos de eliminación: Salva a uno, Sacrifica a uno y Clasifica a ciegas. Los formatos de enfrentamiento (NxN y 1v1) todavía hay que montarlos en el editor."
+    "apiDirectNote": "Un token no puede crear ni revocar tokens: eso siempre exige un inicio de sesión real, así que un token filtrado no puede ampliarse a sí mismo."
   },
   "media": {
     "playPreview": "Reproducir vista previa del video",

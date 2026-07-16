@@ -289,8 +289,7 @@
     "apiMcpScopeNote": "Each tool needs the matching scope on your token, so an assistant can only reach what you allowed. Packs it creates enter moderation like any other.",
     "apiDirectTitle": "Calling the API directly",
     "apiDirectIntro": "Send your token as a bearer token on any request:",
-    "apiDirectNote": "A token can't create or revoke tokens — that always needs a real sign-in, so a leaked token can't extend itself.",
-    "apiMcpFormatsNote": "Creating packs through an assistant currently covers the elimination formats — Save One, Sacrifice One and Rank Blind. The versus formats (NxN and 1v1) have to be built in the editor for now."
+    "apiDirectNote": "A token can't create or revoke tokens — that always needs a real sign-in, so a leaked token can't extend itself."
   },
   "notifications": {
     "title": "Notifications",

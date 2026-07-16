@@ -1145,8 +1145,7 @@
     "apiMcpScopeNote": "Chaque outil exige l'autorisation correspondante sur votre jeton : un assistant n'atteint donc que ce que vous lui avez permis. Les packs qu'il crée passent en modération comme tous les autres.",
     "apiDirectTitle": "Appeler l'API directement",
     "apiDirectIntro": "Transmettez votre jeton comme jeton bearer sur chaque requête :",
-    "apiDirectNote": "Un jeton ne peut ni créer ni révoquer de jetons — cela exige toujours une véritable connexion, si bien qu'un jeton divulgué ne peut pas étendre ses propres droits.",
-    "apiMcpFormatsNote": "La création de packs via un assistant couvre pour l'instant les formats à élimination — Sauve-en un, Sacrifie-en un et Classe à l'aveugle. Les formats d'affrontement (NxN et 1v1) doivent encore être construits dans l'éditeur."
+    "apiDirectNote": "Un jeton ne peut ni créer ni révoquer de jetons — cela exige toujours une véritable connexion, si bien qu'un jeton divulgué ne peut pas étendre ses propres droits."
   },
   "media": {
     "playPreview": "Lire l’aperçu de la vidéo",

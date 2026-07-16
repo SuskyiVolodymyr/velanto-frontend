@@ -1143,7 +1143,6 @@
     "apiMcpIntro": "O servidor velanto-mcp liga qualquer assistente compatível com MCP à sua conta. Crie um token acima e depois adicione isto à configuração MCP do seu assistente:",
     "apiMcpToolsIntro": "Isso dá ao assistente as seguintes ferramentas:",
     "apiMcpScopeNote": "Cada ferramenta precisa do escopo correspondente no seu token, então um assistente só alcança aquilo que você permitiu. Os packs que ele criar entram na moderação como qualquer outro.",
-    "apiMcpFormatsNote": "A criação de packs por meio de um assistente cobre atualmente os formatos de eliminação — Salve um, Sacrifique um e Ranqueie às cegas. Os formatos de confronto (NxN e 1v1) ainda precisam ser montados no editor.",
     "apiDirectTitle": "Chamar a API diretamente",
     "apiDirectIntro": "Envie seu token como bearer token em qualquer requisição:",
     "apiDirectNote": "Um token não pode criar nem revogar tokens — isso sempre exige um login real, então um token vazado não consegue se estender."
