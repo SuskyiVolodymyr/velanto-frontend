@@ -1,12 +1,14 @@
 # Translations (`messages/`)
 
-One JSON catalog per locale, loaded by next-intl. `en.json` is the **source of truth** — add keys there first. The other 10 are **AI-translated** (no human translators on this project) and refined for natural phrasing; treat them as final but improvable. Report wording problems on [velanto-frontend#44](https://github.com/SuskyiVolodymyr/velanto-frontend/issues/44).
+One JSON catalog per locale, loaded by next-intl. `en.json` is the **source of truth** — add keys there first. The other 7 are **AI-translated** (no human translators on this project) and refined for natural phrasing; treat them as final but improvable. Report wording problems on [velanto-frontend#44](https://github.com/SuskyiVolodymyr/velanto-frontend/issues/44).
 
 ## Locales
 
-`en` English (source) · `zh` 中文 (Simplified) · `hi` हिन्दी · `es` Español · `fr` Français · `ar` العربية (RTL) · `bn` বাংলা · `pt` Português · `ru` Русский · `ur` اردو (RTL) · `uk` Українська
+`en` English (source) · `zh` 中文 (Simplified) · `hi` हिन्दी · `ar` العربية (RTL) · `bn` বাংলা · `ru` Русский · `ur` اردو (RTL) · `uk` Українська
 
 `ar` and `ur` are right-to-left — the app sets `<html dir="rtl">` for them (see `src/i18n/config.ts` `RTL_LOCALES`). Values are RTL script; JSON keys/structure stay LTR. Never embed directional-control characters.
+
+**Spanish, French and Portuguese were removed** ([#226](https://github.com/SuskyiVolodymyr/velanto-frontend/issues/226)). Not a translation-quality decision: shipping the interface in an EU language is the evidence that a Ukraine-established operator targets EU data subjects (GDPR Recital 23), which triggers GDPR + the DSA and their two paid representative requirements. The catalogs are preserved in git history and can be restored in minutes — this is a "re-add when it's affordable" decision, not a permanent one. A pack's **content** language is unaffected: all 11 remain selectable, since user-generated metadata carries no targeting signal.
 
 ## How to add strings (later phases)
 

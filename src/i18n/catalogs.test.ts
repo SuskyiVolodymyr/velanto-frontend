@@ -3,11 +3,8 @@ import { LOCALES, DEFAULT_LOCALE, type Locale } from "./config";
 import en from "@/messages/en.json";
 import zh from "@/messages/zh.json";
 import hi from "@/messages/hi.json";
-import es from "@/messages/es.json";
-import fr from "@/messages/fr.json";
 import ar from "@/messages/ar.json";
 import bn from "@/messages/bn.json";
-import pt from "@/messages/pt.json";
 import ru from "@/messages/ru.json";
 import ur from "@/messages/ur.json";
 import uk from "@/messages/uk.json";
@@ -18,11 +15,8 @@ const CATALOGS: Record<Locale, Catalog> = {
   en,
   zh,
   hi,
-  es,
-  fr,
   ar,
   bn,
-  pt,
   ru,
   ur,
   uk,
@@ -34,6 +28,12 @@ const META_KEYS = new Set(["_note"]);
 /**
  * Keys whose value is deliberately identical across every locale (notation /
  * proper nouns that are not translated), exempt from the untranslated check.
+ *
+ * This list shrank from 18 entries to 4 when es/fr/pt were dropped (#226): most
+ * of it existed for Latin-script cognates ("Format", "Tags", "Manual",
+ * "Pagination"). Every remaining non-English locale uses a non-Latin script, so
+ * a string identical to English is now almost always a real bug. Keep this list
+ * minimal — each entry is a hole in the check.
  */
 const IDENTICAL_ALLOWED = new Set([
   // Notation — never translated.
@@ -41,36 +41,8 @@ const IDENTICAL_ALLOWED = new Set([
   "formats.1v1",
   // Pure placeholder/punctuation, no translatable words: "{item} — {pct}%".
   "pack.topItemPct",
-  // Cognates / loanwords that are genuinely the same word in some locales.
-  "home.sortPopular",
-  "home.groupFormat",
-  "home.groupTags",
-  "home.tagCount",
-  // "Pagination" is the identical word in French.
-  "home.pagination",
-  // "Date" is the identical word in French.
-  "home.sortDate",
-  // create-form loanwords: "Format" (fr), "Tags" (fr/pt), "Manual" (es/pt),
-  // "Link" (pt) are the same word in those locales.
-  "create.formatHeading",
-  "create.tags",
-  "create.manual",
-  "create.link",
-  // "Image" is the same word in fr.
-  "create.image",
-  // profile loanwords: "Bio" is the same word in most Latin-script locales, and
-  // "Packs" stays untranslated where the catalog keeps the borrowed "pack".
-  "profile.bio",
-  "profile.packs",
-  // auth loanword: "Email" is the same word (borrowed) in several locales.
+  // Loanword: "Email" is borrowed as-is in some locales.
   "auth.email",
-  // settings loanword: "Notifications" is identical in fr (and other locales).
-  "settings.notificationsHeading",
-  // feedback loanwords: "score", "Status", "Bug" are borrowed as-is in some
-  // Latin-script locales.
-  "feedback.scoreLabel",
-  "feedback.statusSelectLabel",
-  "feedback.topicBug",
 ]);
 
 /**

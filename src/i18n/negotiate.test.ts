@@ -14,8 +14,16 @@ describe("negotiateLocale", () => {
   });
 
   it("matches on the base subtag (region ignored)", () => {
-    expect(negotiateLocale("pt-BR")).toBe("pt");
+    expect(negotiateLocale("ru-UA")).toBe("ru");
     expect(negotiateLocale("zh-Hans-CN")).toBe("zh");
+  });
+
+  // es/fr/pt were dropped from the interface (#226) — a browser asking for them
+  // must fall through to English, not 404 or throw.
+  it("falls back to en for a dropped EU locale", () => {
+    expect(negotiateLocale("es-ES")).toBe("en");
+    expect(negotiateLocale("fr")).toBe("en");
+    expect(negotiateLocale("pt-BR")).toBe("en");
   });
 
   it("respects q-value ordering, picking the highest supported", () => {
