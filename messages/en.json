@@ -860,7 +860,9 @@
     "empty": "No packs match these filters yet.",
     "pagination": "Pagination",
     "paginationPrevious": "Previous",
-    "paginationNext": "Next"
+    "paginationNext": "Next",
+    "groupLanguage": "Language",
+    "filterByLanguage": "Filter by language"
   },
   "formats": {
     "save_one": "Save One",

@@ -766,7 +766,9 @@
     "empty": "لا توجد حزم تطابق هذه التصفية بعد.",
     "pagination": "ترقيم الصفحات",
     "paginationPrevious": "السابق",
-    "paginationNext": "التالي"
+    "paginationNext": "التالي",
+    "groupLanguage": "اللغة",
+    "filterByLanguage": "التصفية حسب اللغة"
   },
   "formats": {
     "save_one": "أنقذ واحدًا",

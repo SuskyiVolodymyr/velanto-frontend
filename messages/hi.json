@@ -766,7 +766,9 @@
     "empty": "इन फ़िल्टर से मेल खाता कोई पैक अभी नहीं है।",
     "pagination": "पृष्ठांकन",
     "paginationPrevious": "पिछला",
-    "paginationNext": "अगला"
+    "paginationNext": "अगला",
+    "groupLanguage": "भाषा",
+    "filterByLanguage": "भाषा के अनुसार फ़िल्टर करें"
   },
   "formats": {
     "save_one": "एक बचाओ",

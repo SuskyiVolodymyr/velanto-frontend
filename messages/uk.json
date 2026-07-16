@@ -766,7 +766,9 @@
     "empty": "Немає паків за цими фільтрами.",
     "pagination": "Посторінкова навігація",
     "paginationPrevious": "Попередня",
-    "paginationNext": "Наступна"
+    "paginationNext": "Наступна",
+    "groupLanguage": "Мова",
+    "filterByLanguage": "Фільтрувати за мовою"
   },
   "formats": {
     "save_one": "Врятуй одного",

@@ -766,7 +766,9 @@
     "empty": "Под эти фильтры пока нет паков.",
     "pagination": "Постраничная навигация",
     "paginationPrevious": "Назад",
-    "paginationNext": "Вперёд"
+    "paginationNext": "Вперёд",
+    "groupLanguage": "Язык",
+    "filterByLanguage": "Фильтровать по языку"
   },
   "formats": {
     "save_one": "Спаси одного",

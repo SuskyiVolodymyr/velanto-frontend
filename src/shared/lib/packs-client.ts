@@ -27,6 +27,8 @@ export interface CreatePackInput {
 export interface ListPacksFilters {
   format?: PackFormat;
   tags?: PackTag[];
+  /** Multi-select: packs written in ANY of these. Empty/absent = no filter. */
+  languages?: PackLanguage[];
   q?: string;
   page?: number;
   limit?: number;
@@ -69,6 +71,10 @@ function buildListQuery(filters: ListPacksFilters): string {
   if (filters.format) params.set("format", filters.format);
   if (filters.tags && filters.tags.length > 0)
     params.set("tags", filters.tags.join(","));
+  // Omitted entirely when empty — an empty `?languages=` is a 400, and "no
+  // language selected" means no filter, not "match nothing".
+  if (filters.languages && filters.languages.length > 0)
+    params.set("languages", filters.languages.join(","));
   if (filters.q) params.set("q", filters.q);
   if (filters.page !== undefined) params.set("page", String(filters.page));
   if (filters.limit !== undefined) params.set("limit", String(filters.limit));

@@ -57,6 +57,7 @@ describe("HomeFeed", () => {
     expect(packsClient.list).toHaveBeenCalledWith({
       format: undefined,
       tags: [],
+      languages: [],
       sort: "popular",
       window: "month",
       limit: 25,
@@ -86,6 +87,56 @@ describe("HomeFeed", () => {
     ).toBeInTheDocument();
   });
 
+  // Regression test for the bug the browser caught and the unit tests didn't:
+  // `languages` reached the QUERY KEY (so a refetch fired) but not the request,
+  // because PacksFeedFilters/getPacksFeed never forwarded it. The chips looked
+  // like they worked — the refetch just sent an identical URL.
+  it("re-fetches with the selected languages when language chips are clicked", async () => {
+    const user = userEvent.setup();
+    vi.mocked(packsClient.list).mockResolvedValue({
+      items: [PACK_A],
+      total: 1,
+      page: 1,
+      limit: 25,
+    });
+    render(<HomeFeed />);
+    await screen.findByText("Best Anime Openings");
+
+    await user.click(screen.getByRole("checkbox", { name: "Українська" }));
+    await user.click(screen.getByRole("checkbox", { name: "Español" }));
+
+    await waitFor(() =>
+      expect(packsClient.list).toHaveBeenLastCalledWith(
+        expect.objectContaining({ languages: ["uk", "es"] }),
+      ),
+    );
+  });
+
+  it("stops filtering by language when the last chip is deselected", async () => {
+    const user = userEvent.setup();
+    vi.mocked(packsClient.list).mockResolvedValue({
+      items: [PACK_A],
+      total: 1,
+      page: 1,
+      limit: 25,
+    });
+    render(<HomeFeed />);
+    await screen.findByText("Best Anime Openings");
+
+    const uk = screen.getByRole("checkbox", { name: "Українська" });
+    await user.click(uk);
+    await user.click(uk);
+
+    // Empty, not absent-and-forgotten: the client omits the param entirely at
+    // this point, because `?languages=` would be a 400 and "none selected"
+    // means "every language", not "no languages".
+    await waitFor(() =>
+      expect(packsClient.list).toHaveBeenLastCalledWith(
+        expect.objectContaining({ languages: [] }),
+      ),
+    );
+  });
+
   it("re-fetches with the selected format when a format chip is clicked", async () => {
     const user = userEvent.setup();
     vi.mocked(packsClient.list).mockResolvedValue({
@@ -103,6 +154,7 @@ describe("HomeFeed", () => {
       expect(packsClient.list).toHaveBeenLastCalledWith({
         format: "sacrifice_one",
         tags: [],
+        languages: [],
         sort: "popular",
         window: "month",
         limit: 25,
@@ -135,6 +187,7 @@ describe("HomeFeed", () => {
         expect(packsClient.list).toHaveBeenLastCalledWith({
           format: undefined,
           tags: [],
+          languages: [],
           sort: "newest",
           window: undefined,
           limit: 25,
@@ -151,6 +204,7 @@ describe("HomeFeed", () => {
         expect(packsClient.list).toHaveBeenLastCalledWith({
           format: undefined,
           tags: [],
+          languages: [],
           sort: "oldest",
           window: undefined,
           limit: 25,
@@ -170,6 +224,7 @@ describe("HomeFeed", () => {
         expect(packsClient.list).toHaveBeenLastCalledWith({
           format: undefined,
           tags: [],
+          languages: [],
           sort: "newest",
           window: undefined,
           limit: 25,
@@ -202,6 +257,7 @@ describe("HomeFeed", () => {
       expect(packsClient.list).toHaveBeenLastCalledWith({
         format: undefined,
         tags: ["Anime", "Music"],
+        languages: [],
         sort: "popular",
         window: "month",
         limit: 25,
@@ -229,6 +285,7 @@ describe("HomeFeed", () => {
       expect(packsClient.list).toHaveBeenLastCalledWith({
         format: undefined,
         tags: ["Anime", "Music"],
+        languages: [],
         sort: "popular",
         window: "month",
         limit: 25,
@@ -242,6 +299,7 @@ describe("HomeFeed", () => {
       expect(packsClient.list).toHaveBeenLastCalledWith({
         format: undefined,
         tags: ["Music"],
+        languages: [],
         sort: "popular",
         window: "month",
         limit: 25,
@@ -305,6 +363,7 @@ describe("HomeFeed", () => {
           expect(packsClient.list).toHaveBeenLastCalledWith({
             format: undefined,
             tags: [],
+            languages: [],
             q: "anime",
             sort: "popular",
             window: "month",
@@ -332,6 +391,7 @@ describe("HomeFeed", () => {
           expect(packsClient.list).toHaveBeenLastCalledWith({
             format: undefined,
             tags: [],
+            languages: [],
             q: "anime",
             sort: "popular",
             window: "month",
@@ -359,6 +419,7 @@ describe("HomeFeed", () => {
           expect(packsClient.list).toHaveBeenLastCalledWith({
             format: undefined,
             tags: [],
+            languages: [],
             q: "anime",
             sort: "popular",
             window: "month",
@@ -373,6 +434,7 @@ describe("HomeFeed", () => {
           expect(packsClient.list).toHaveBeenLastCalledWith({
             format: undefined,
             tags: [],
+            languages: [],
             q: undefined,
             sort: "popular",
             window: "month",

@@ -1,5 +1,6 @@
 import { packsClient } from "@/src/shared/lib/packs-client";
 import type { Pack, PackFormat, PackTag } from "@/src/shared/types/pack";
+import type { PackLanguage } from "@/src/shared/types/pack-language";
 import type { WindowFilterValue } from "@/src/features/home/filter-options";
 
 // One page of the discovery feed. The backend caps `limit` at 50; 25 keeps each
@@ -15,6 +16,8 @@ export const PACKS_FEED_PAGE_SIZE = 25;
 export interface PacksFeedFilters {
   format?: PackFormat;
   tags: PackTag[];
+  /** Multi-select over pack CONTENT language. Empty = no filter. */
+  languages: PackLanguage[];
   q?: string;
   page?: number;
   /**
@@ -40,6 +43,7 @@ export async function getPacksFeed(
   const result = await packsClient.list({
     format: filters.format,
     tags: filters.tags,
+    languages: filters.languages,
     q: filters.q,
     // Page 1 is the backend default, so omit it — the default/first-page
     // request then stays byte-identical to the SSR seed and to the pre-pager

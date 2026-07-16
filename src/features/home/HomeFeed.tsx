@@ -45,6 +45,8 @@ export function HomeFeed({ initialFeed }: { initialFeed?: PacksFeedResult }) {
         onDateOrderChange={feed.setDateOrder}
         tags={feed.tags}
         onTagsChange={feed.setTags}
+        languages={feed.languages}
+        onLanguagesChange={feed.setLanguages}
       />
     </div>
   );
