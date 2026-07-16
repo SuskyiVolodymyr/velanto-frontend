@@ -20,6 +20,7 @@ const PACK: Pack = {
   title: "Pending Pack",
   description: "",
   coverTone: "#000",
+  language: "en",
   format: "save_one",
   tags: [],
   groups: [],

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { PACK_FORMATS, PACK_TAGS } from "@/src/shared/types/pack";
+import { PACK_LANGUAGES } from "@/src/shared/types/pack-language";
 import {
   DESCRIPTION_MAX,
   MAX_TAGS,
@@ -53,6 +54,10 @@ export const createPackSchema = z
     // Optional storage key of an uploaded cover image; absent keeps the tone.
     coverImageKey: z.string().optional(),
     format: z.enum(PACK_FORMATS),
+    // The pack CONTENT's language — not the UI's. Defaulted to the author's
+    // interface locale by the form, but freely changeable: PACK_LANGUAGES is a
+    // superset of LOCALES precisely so an English UI can label a pack Spanish.
+    language: z.enum(PACK_LANGUAGES),
     tags: z
       .array(z.enum(PACK_TAGS))
       .max(MAX_TAGS, `Choose at most ${MAX_TAGS} tags.`),

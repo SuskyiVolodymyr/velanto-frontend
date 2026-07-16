@@ -39,6 +39,7 @@ const PACK: Pack = {
   description: "",
   coverTone: "#000",
   format: "save_one",
+  language: "en",
   tags: [],
   groups: [],
   rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "manual" }] }],

@@ -17,6 +17,7 @@ function pack(overrides: Partial<Pack> = {}): Pack {
     description: "…",
     coverTone: "violet",
     format: "save_one",
+    language: "en",
     tags: ["Anime"],
     groups: [],
     rounds: [],

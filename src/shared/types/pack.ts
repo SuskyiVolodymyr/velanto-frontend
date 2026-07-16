@@ -1,3 +1,4 @@
+import type { PackLanguage } from "@/src/shared/types/pack-language";
 /**
  * Local, independent type definitions (this repo does not import types from
  * velanto-backend — see coding-conventions.md).
@@ -135,6 +136,8 @@ export interface Pack {
   // fixtures that predate covers stay valid.
   coverImageKey?: string | null;
   format: PackFormat;
+  /** The language the pack CONTENT is in — not the viewer's interface locale. */
+  language: PackLanguage;
   tags: PackTag[];
   groups: Group[];
   rounds: Round[];

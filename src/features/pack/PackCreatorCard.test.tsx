@@ -48,6 +48,7 @@ function makePack(overrides: Partial<Pack> = {}): Pack {
     description: "A great pack",
     coverTone: "#2b2a3a",
     format: "save_one",
+    language: "en",
     tags: [],
     groups: [],
     rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "manual" }] }],

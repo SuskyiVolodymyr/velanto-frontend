@@ -49,6 +49,7 @@ const RANK_BLIND_PACK: Pack = {
   title: "Anime Openers, Ranked",
   description: "Place each pick blind into a growing ranked list.",
   coverTone: "#2b2a3a",
+  language: "en",
   format: "rank_blind",
   tags: ["Anime"],
   groups: [

@@ -43,6 +43,11 @@ import { BAN_REASONS } from "@/src/shared/types/rules";
 import { BAN_DURATIONS } from "@/src/shared/lib/ban-durations";
 import { NOTIFICATION_TYPES } from "@/src/shared/types/notification";
 import { LOCALES, DEFAULT_LOCALE } from "@/src/i18n/config";
+import {
+  PACK_LANGUAGES,
+  DEFAULT_PACK_LANGUAGE,
+  PACK_LANGUAGE_NAMES,
+} from "@/src/shared/types/pack-language";
 
 describe("cross-repo mirrored constants (velanto-backend contract)", () => {
   // ROLES — MIRRORED in velanto-backend src/modules/users/role.ts (ROLES).
@@ -108,6 +113,29 @@ describe("cross-repo mirrored constants (velanto-backend contract)", () => {
       "K-pop",
       "Memes",
     ]);
+  });
+
+  // PACK_LANGUAGES — MIRRORED in velanto-backend
+  // src/modules/packs/types/language.ts. A pack's CONTENT language, which is a
+  // different concept from the interface LOCALES below — see that comment.
+  it("PACK_LANGUAGES", () => {
+    expect([...PACK_LANGUAGES]).toEqual([
+      "en",
+      "zh",
+      "hi",
+      "es",
+      "fr",
+      "ar",
+      "bn",
+      "pt",
+      "ru",
+      "ur",
+      "uk",
+    ]);
+  });
+
+  it('DEFAULT_PACK_LANGUAGE is "en" (mirrors BE DEFAULT_PACK_LANGUAGE)', () => {
+    expect(DEFAULT_PACK_LANGUAGE).toBe("en");
   });
 
   // LOCALES — the INTERFACE languages. Related to velanto-backend's
@@ -262,26 +290,23 @@ describe("locale <-> message-catalog consistency (in-repo invariant)", () => {
   });
 
   // The subset invariant, asserted from this side. LOCALES ⊆ PACK_LANGUAGES:
-  // a pack defaults to its author's interface language, so an interface locale
-  // the backend would reject as a pack language breaks pack creation. The
-  // backend's own drift spec holds the PACK_LANGUAGES snapshot; this list is
-  // the frontend's copy of it, and BOTH must be updated together.
-  it("every LOCALE is a legal backend PACK_LANGUAGE", () => {
-    const backendPackLanguages = [
-      "en",
-      "zh",
-      "hi",
-      "es",
-      "fr",
-      "ar",
-      "bn",
-      "pt",
-      "ru",
-      "ur",
-      "uk",
-    ];
+  // the pack-language picker defaults to the author's interface language, so an
+  // interface locale the backend would reject as a pack language breaks pack
+  // creation. This now reads the real PACK_LANGUAGES constant rather than an
+  // inline copy of it — the constant is itself snapshotted above, so the
+  // backend contract is still pinned, just in one place instead of two.
+  it("every LOCALE is a legal PACK_LANGUAGE", () => {
     for (const locale of LOCALES) {
-      expect(backendPackLanguages).toContain(locale);
+      expect([...PACK_LANGUAGES]).toContain(locale);
+    }
+  });
+
+  it("every PACK_LANGUAGE has a native display name", () => {
+    expect(Object.keys(PACK_LANGUAGE_NAMES).sort()).toEqual(
+      [...PACK_LANGUAGES].sort(),
+    );
+    for (const name of Object.values(PACK_LANGUAGE_NAMES)) {
+      expect(name.trim().length).toBeGreaterThan(0);
     }
   });
 

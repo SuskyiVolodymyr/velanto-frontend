@@ -1044,7 +1044,9 @@
     "coverCropZoom": "缩放",
     "coverCropCancel": "取消",
     "coverCropSave": "保存",
-    "coverCropError": "无法裁剪图片。请重试。"
+    "coverCropError": "无法裁剪图片。请重试。",
+    "languageLabel": "题包语言",
+    "languageHint": "这个题包的内容是什么语言？"
   },
   "profile": {
     "loginRequiredView": "你需要先登录才能查看个人资料。",

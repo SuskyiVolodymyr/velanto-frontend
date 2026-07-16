@@ -1044,7 +1044,9 @@
     "coverCropZoom": "জুম",
     "coverCropCancel": "বাতিল",
     "coverCropSave": "সংরক্ষণ",
-    "coverCropError": "ছবি ক্রপ করা যায়নি। আবার চেষ্টা করুন।"
+    "coverCropError": "ছবি ক্রপ করা যায়নি। আবার চেষ্টা করুন।",
+    "languageLabel": "প্যাকের ভাষা",
+    "languageHint": "এই প্যাকের বিষয়বস্তু কোন ভাষায়?"
   },
   "profile": {
     "loginRequiredView": "আপনার প্রোফাইল দেখতে হলে আপনাকে লগ ইন করতে হবে।",

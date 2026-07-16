@@ -18,6 +18,7 @@ const BASE_PACK: Pack = {
   title: "Test",
   description: "",
   coverTone: "#000",
+  language: "en",
   format: "save_one",
   tags: [],
   groups: [],

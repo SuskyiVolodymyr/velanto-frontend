@@ -8,6 +8,7 @@ const PACK: Pack = {
   description: "Pick your favorite each round.",
   coverTone: "#2b2a3a",
   format: "save_one",
+  language: "en",
   tags: ["Anime", "Music"],
   groups: [
     {
@@ -38,6 +39,7 @@ describe("packToFormValues", () => {
       description: "Pick your favorite each round.",
       coverTone: "#2b2a3a",
       format: "save_one",
+      language: "en",
       tags: ["Anime", "Music"],
       groups: PACK.groups,
       rounds: PACK.rounds,

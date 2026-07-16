@@ -4,11 +4,16 @@ import { useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import { COVER_TONES } from "@/src/shared/types/pack";
+import {
+  PACK_LANGUAGES,
+  PACK_LANGUAGE_NAMES,
+} from "@/src/shared/types/pack-language";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { TagPickerModal } from "@/src/shared/components/TagPickerModal";
 import { TextField } from "@/src/shared/components/form/TextField";
 import { TextareaField } from "@/src/shared/components/form/TextareaField";
+import { SelectField } from "@/src/shared/components/form/SelectField";
 import { CoverImageField } from "@/src/features/create/CoverImageField";
 import { cn } from "@/src/shared/lib/cn";
 import {
@@ -41,6 +46,29 @@ export function PackMetaFields({
     <section className="flex flex-col gap-3">
       <Text as="h2" variant="title" className="text-lg">
         {t("basicsHeading")}
+      </Text>
+      {/*
+        The pack CONTENT's language — what the pack is written in, not what the
+        UI is in. Offers all 11 PACK_LANGUAGES, which is a deliberate superset
+        of the 8 interface LOCALES: es/fr/pt have no catalog and can ONLY be
+        reached here, because a pack's content language carries no GDPR
+        targeting signal while the interface's does (see pack-language.ts).
+      */}
+      <SelectField
+        name="language"
+        label={t("languageLabel")}
+        aria-describedby="pack-language-hint"
+        options={PACK_LANGUAGES.map((code) => ({
+          value: code,
+          label: PACK_LANGUAGE_NAMES[code],
+        }))}
+      />
+      <Text
+        id="pack-language-hint"
+        variant="tertiary"
+        className="-mt-1 text-xs"
+      >
+        {t("languageHint")}
       </Text>
       <div className="flex flex-col gap-1">
         <TextField

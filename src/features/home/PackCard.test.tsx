@@ -9,6 +9,7 @@ const BASE_PACK = {
   title: "Best Anime Openings",
   description: "Pick your favorite each round.",
   coverTone: "#2b2a3a",
+  language: "en" as Pack["language"],
   tags: ["Anime"] as Pack["tags"],
   groups: [{ id: "g1", name: "2016", items: [] }] as Pack["groups"],
   rounds: [

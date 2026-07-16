@@ -1044,7 +1044,9 @@
     "coverCropZoom": "Масштаб",
     "coverCropCancel": "Скасувати",
     "coverCropSave": "Зберегти",
-    "coverCropError": "Не вдалося обрізати зображення. Спробуйте ще раз."
+    "coverCropError": "Не вдалося обрізати зображення. Спробуйте ще раз.",
+    "languageLabel": "Мова паку",
+    "languageHint": "Якою мовою вміст цього паку?"
   },
   "profile": {
     "loginRequiredView": "Щоб переглянути свій профіль, спершу увійди.",

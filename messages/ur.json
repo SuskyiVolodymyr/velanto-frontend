@@ -1044,7 +1044,9 @@
     "coverCropZoom": "زوم",
     "coverCropCancel": "منسوخ کریں",
     "coverCropSave": "محفوظ کریں",
-    "coverCropError": "تصویر کاٹی نہ جا سکی۔ دوبارہ کوشش کریں۔"
+    "coverCropError": "تصویر کاٹی نہ جا سکی۔ دوبارہ کوشش کریں۔",
+    "languageLabel": "پیک کی زبان",
+    "languageHint": "اس پیک کا مواد کس زبان میں ہے؟"
   },
   "profile": {
     "loginRequiredView": "اپنی پروفائل دیکھنے کے لیے آپ کا لاگ اِن ہونا ضروری ہے۔",

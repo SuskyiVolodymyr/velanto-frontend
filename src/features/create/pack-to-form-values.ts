@@ -1,5 +1,6 @@
 import type { Pack } from "@/src/shared/types/pack";
 import type { CreatePackValues } from "@/src/features/create/create-pack.schema";
+import { DEFAULT_PACK_LANGUAGE } from "@/src/shared/types/pack-language";
 
 /**
  * Project a fetched {@link Pack} onto the create-form's value shape so the same
@@ -17,6 +18,10 @@ export function packToFormValues(pack: Pack): CreatePackValues {
     // optional-string form field stays valid.
     coverImageKey: pack.coverImageKey ?? undefined,
     format: pack.format,
+    // Keep the pack's own content language on edit — never re-derive it from the
+    // editor's interface locale, which would silently relabel a Spanish pack as
+    // English just because a moderator or the author viewed it in English.
+    language: pack.language ?? DEFAULT_PACK_LANGUAGE,
     tags: pack.tags,
     groups: pack.groups,
     rounds: pack.rounds,

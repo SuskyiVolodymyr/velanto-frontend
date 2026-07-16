@@ -53,6 +53,7 @@ const HEAD_TO_HEAD_PACK: Pack = {
   title: "Anime Face-Offs",
   description: "Pick a winner each round.",
   coverTone: "#2b2a3a",
+  language: "en",
   format: "1v1",
   tags: ["Anime"],
   groups: [

@@ -14,6 +14,7 @@ const PACK: Pack = {
   title: "Best Anime Openings",
   description: "Pick your favorite each round.",
   coverTone: "#2b2a3a",
+  language: "en",
   format: "save_one",
   tags: [],
   groups: [

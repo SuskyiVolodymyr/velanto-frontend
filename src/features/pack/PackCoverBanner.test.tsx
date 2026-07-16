@@ -16,6 +16,7 @@ const SAVE_ONE_PACK: Pack = {
   description: "Pick your favorite each round.",
   coverTone: "#2b2a3a",
   format: "save_one",
+  language: "en",
   tags: [],
   groups: [
     { id: "g1", name: "2016", items: [] },

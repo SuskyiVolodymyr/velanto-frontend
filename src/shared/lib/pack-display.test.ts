@@ -7,6 +7,7 @@ const BASE_PACK = {
   title: "Best Anime Openings",
   description: "Pick your favorite each round.",
   coverTone: "#2b2a3a",
+  language: "en" as Pack["language"],
   tags: [] as Pack["tags"],
   authorId: "u1",
   createdAt: "2026-01-01T00:00:00.000Z",
@@ -94,6 +95,7 @@ describe("getRoundsCount", () => {
       title: "t",
       description: "d",
       coverTone: "#000",
+      language: "en" as Pack["language"],
       format: "1v1" as const,
       tags: [],
       groups: [
