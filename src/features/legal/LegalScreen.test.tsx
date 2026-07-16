@@ -13,7 +13,7 @@ describe("LegalScreen", () => {
         title: "Acceptance",
         body: "By using Velanto you agree to these Terms.",
       },
-      { title: "Contact", body: "Reach us at admin@playvelanto.com." },
+      { title: "Contact", body: "Reach us at support@playvelanto.com." },
     ],
   };
 
@@ -54,7 +54,7 @@ describe("LegalScreen", () => {
       screen.getByRole("heading", { level: 2, name: "Contact" }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Reach us at admin@playvelanto.com."),
+      screen.getByText("Reach us at support@playvelanto.com."),
     ).toBeInTheDocument();
   });
 
