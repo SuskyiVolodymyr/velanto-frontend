@@ -34,6 +34,8 @@ describe("sitemap", () => {
     expect(urls).toContain(`${SITE_URL}/`); // home
     expect(urls).toContain(`${SITE_URL}/docs`);
     expect(urls).toContain(`${SITE_URL}/feedback`);
+    expect(urls).toContain(`${SITE_URL}/terms`);
+    expect(urls).toContain(`${SITE_URL}/privacy`);
     expect(urls).toContain(`${SITE_URL}/packs/p1`);
     expect(urls).toContain(`${SITE_URL}/packs/p3`);
     expect(urls).toContain(`${SITE_URL}/users/u1`);
@@ -51,6 +53,8 @@ describe("sitemap", () => {
     expect(urls).toContain(`${SITE_URL}/`);
     expect(urls).toContain(`${SITE_URL}/docs`);
     expect(urls).toContain(`${SITE_URL}/feedback`);
+    expect(urls).toContain(`${SITE_URL}/terms`);
+    expect(urls).toContain(`${SITE_URL}/privacy`);
     // No pack/user routes when the fetch fails.
     expect(urls.some((u) => u.includes("/packs/"))).toBe(false);
     expect(urls.some((u) => u.includes("/users/"))).toBe(false);
