@@ -167,7 +167,8 @@ export function validateElimination(pack: PackDraft, ctx: z.RefinementCtx) {
 }
 
 // nxn / 1v1: every round pits two DISTINCT groups (held constant across rounds)
-// against each other, both drawn randomly. nxn draws 1–6 per side; 1v1 draws 1.
+// against each other, both drawn randomly. Per-side draw counts come from
+// NXN_SIDE_COUNT_MIN/MAX; 1v1 is locked to exactly 1.
 export function validateVersus(pack: PackDraft, ctx: z.RefinementCtx) {
   const groupsOk = validateGroupsAndRefs(pack, ctx);
   const isHeadToHead = pack.format === "1v1";

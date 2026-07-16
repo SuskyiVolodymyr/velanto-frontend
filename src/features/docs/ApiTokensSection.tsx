@@ -9,6 +9,7 @@ import { Input } from "@/src/shared/components/Input";
 import { Select } from "@/src/shared/components/Select";
 import { Modal } from "@/src/shared/components/Modal";
 import { ConfirmModal } from "@/src/shared/components/ConfirmModal";
+import { Tooltip } from "@/src/shared/components/Tooltip";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { isStaff } from "@/src/shared/lib/user-role";
 import {
@@ -17,11 +18,12 @@ import {
   type ApiToken,
   type CreatedApiToken,
 } from "@/src/shared/lib/tokens-client";
+import { SCOPE_KEY } from "./scope-keys";
 import {
   useApiTokens,
   useCreateToken,
   useRevokeToken,
-} from "@/src/features/settings/api/tokens.queries";
+} from "@/src/features/docs/api/tokens.queries";
 
 /** Expiry presets offered in the create form; "never" maps to null days. */
 const EXPIRY_CHOICES = ["30", "90", "365", "never"] as const;
@@ -32,27 +34,27 @@ function expiryToDays(choice: ExpiryChoice): number | null {
   return choice === "never" ? null : Number(choice);
 }
 
-/** Scope → i18n key fragment (avoids colons in translation keys). */
-const SCOPE_KEY: Record<PatScope, string> = {
-  "packs:read": "packsRead",
-  "packs:write": "packsWrite",
-  "packs:delete": "packsDelete",
-  moderation: "moderation",
-  "profile:read": "profileRead",
-};
-
 /**
- * "API tokens" on /settings: mint, list, and revoke Personal Access Tokens so
- * an external agent (an MCP client / AI) can call the API on the user's behalf.
- * A minted token's secret is shown exactly once. Session-gated (hidden when
- * signed out); the `moderation` scope is offered only to staff, since a
- * non-staff token could never exercise it.
+ * The token manager embedded in the API docs topic: mint, list, and revoke
+ * Personal Access Tokens so an external agent (an MCP client / AI) can call the
+ * API on the user's behalf. A minted token's secret is shown exactly once.
+ *
+ * Lives on the public docs page, so a signed-out reader still sees the form —
+ * blocked with a reason on the submit button, never hidden and never a surprise
+ * redirect. Only the token list (which needs an account to mean anything) is
+ * withheld. The `moderation` scope is offered only to staff, since a non-staff
+ * token could never exercise it.
  */
 export function ApiTokensSection() {
-  const t = useTranslations("settings");
+  const t = useTranslations("docs");
+  const tAuth = useTranslations("authGate");
   const format = useFormatter();
   const { status, user } = useAuth();
   const authed = status === "authenticated";
+  // Only a KNOWN signed-out viewer is "blocked". While the session is still
+  // resolving, `authed` is false but we don't yet know why — claiming "log in to
+  // create API tokens" then would be a lie to someone who is in fact logged in.
+  const blocked = status === "unauthenticated";
 
   const tokensQuery = useApiTokens({ enabled: authed });
   const createMutation = useCreateToken();
@@ -77,9 +79,7 @@ export function ApiTokensSection() {
     [user?.role],
   );
 
-  if (!authed) return null;
-
-  const canSubmit = name.trim().length > 0 && scopes.size > 0;
+  const canSubmit = authed && name.trim().length > 0 && scopes.size > 0;
 
   const toggleScope = (scope: PatScope) => {
     setScopes((prev) => {
@@ -91,6 +91,8 @@ export function ApiTokensSection() {
   };
 
   const handleCreate = async () => {
+    // Also guards the blocked (signed-out) button, which is only aria-disabled
+    // and therefore still clickable.
     if (!canSubmit) return;
     setCreateError(false);
     try {
@@ -133,6 +135,24 @@ export function ApiTokensSection() {
 
   const tokens = tokensQuery.data ?? [];
 
+  // Signed out: dimmed and non-functional with the reason on hover/focus — not
+  // the real `disabled` attribute, which would suppress the Tooltip.
+  const createButton = (
+    <Button
+      onClick={handleCreate}
+      loading={createMutation.isPending}
+      aria-disabled={blocked || undefined}
+      disabled={blocked ? undefined : !canSubmit}
+      className={blocked ? "cursor-not-allowed opacity-45" : undefined}
+    >
+      {t("tokenCreateButton")}
+    </Button>
+  );
+
+  const createButtonWithReason = (
+    <Tooltip content={tAuth("logInToCreateTokens")}>{createButton}</Tooltip>
+  );
+
   return (
     <section className="flex flex-col gap-4">
       <Text
@@ -144,9 +164,8 @@ export function ApiTokensSection() {
       </Text>
 
       <Card className="flex flex-col gap-6 hover:translate-y-0 hover:shadow-none">
-        <Text variant="secondary" className="text-sm leading-relaxed">
-          {t("tokensDescription")}
-        </Text>
+        {/* No blurb here: the surrounding docs topic already introduces what a
+            token is and what each scope grants. */}
 
         {/* Create form */}
         <div className="flex flex-col gap-4">
@@ -169,22 +188,22 @@ export function ApiTokensSection() {
             </Text>
             <div className="flex flex-col gap-2">
               {availableScopes.map((scope) => (
-                <label key={scope} className="flex items-start gap-2.5">
+                <label key={scope} className="flex items-center gap-2.5">
                   <input
                     type="checkbox"
-                    className="mt-1 h-4 w-4 accent-acc"
+                    className="h-4 w-4 accent-acc"
                     checked={scopes.has(scope)}
                     onChange={() => toggleScope(scope)}
                     disabled={createMutation.isPending}
                   />
-                  <span className="flex flex-col">
-                    <Text className="text-sm font-medium">
-                      {t(`scopeLabel_${SCOPE_KEY[scope]}`)}
-                    </Text>
-                    <Text variant="secondary" className="text-xs">
-                      {t(`scopeDesc_${SCOPE_KEY[scope]}`)}
-                    </Text>
-                  </span>
+                  {/* Label only — each scope is described in full just above,
+                      so repeating it per checkbox is noise. */}
+                  <Text className="text-sm font-medium">
+                    {t(`scopeLabel_${SCOPE_KEY[scope]}`)}
+                  </Text>
+                  <code className="text-xs text-foreground-secondary">
+                    {scope}
+                  </code>
                 </label>
               ))}
             </div>
@@ -205,15 +224,7 @@ export function ApiTokensSection() {
             />
           </label>
 
-          <div>
-            <Button
-              onClick={handleCreate}
-              loading={createMutation.isPending}
-              disabled={!canSubmit}
-            >
-              {t("tokenCreateButton")}
-            </Button>
-          </div>
+          <div>{blocked ? createButtonWithReason : createButton}</div>
           {createError && (
             <Text role="alert" className="text-sm text-danger">
               {t("tokenCreateError")}
@@ -221,70 +232,75 @@ export function ApiTokensSection() {
           )}
         </div>
 
-        <div className="h-px w-full bg-border" />
-
-        {/* Existing tokens */}
-        <div className="flex flex-col gap-3">
-          <Text className="font-semibold">{t("tokenListHeading")}</Text>
-          {tokensQuery.isLoading ? (
-            <Text variant="secondary" className="text-sm">
-              {t("loading")}
-            </Text>
-          ) : tokens.length === 0 ? (
-            <Text variant="secondary" className="text-sm">
-              {t("tokenListEmpty")}
-            </Text>
-          ) : (
-            <ul className="flex flex-col divide-y divide-border">
-              {tokens.map((token) => (
-                <li
-                  key={token.id}
-                  className="flex items-start justify-between gap-4 py-3"
-                >
-                  <div className="flex min-w-0 flex-col gap-1">
-                    <Text className="truncate font-medium">{token.name}</Text>
-                    <div className="flex flex-wrap gap-1.5">
-                      {token.scopes.map((scope) => (
-                        <span
-                          key={scope}
-                          className="rounded border border-border bg-surface px-1.5 py-0.5 text-[11px] text-secondary"
-                        >
-                          {scope}
-                        </span>
-                      ))}
-                    </div>
-                    <Text variant="secondary" className="text-xs">
-                      {token.lastUsedAt
-                        ? t("tokenLastUsed", {
-                            date: format.dateTime(new Date(token.lastUsedAt), {
-                              dateStyle: "medium",
-                            }),
-                          })
-                        : t("tokenNeverUsed")}
-                      {" · "}
-                      {token.expiresAt
-                        ? t("tokenExpiresOn", {
-                            date: format.dateTime(new Date(token.expiresAt), {
-                              dateStyle: "medium",
-                            }),
-                          })
-                        : t("tokenNeverExpires")}
-                    </Text>
-                  </div>
-                  <Button
-                    variant="secondary"
-                    onClick={() => {
-                      setRevokeError(false);
-                      setToRevoke(token);
-                    }}
+        {/* Existing tokens — withheld while signed out, where the list would
+            always be empty and the heading just noise. */}
+        {authed && <div className="h-px w-full bg-border" />}
+        {authed && (
+          <div className="flex flex-col gap-3">
+            <Text className="font-semibold">{t("tokenListHeading")}</Text>
+            {tokensQuery.isLoading ? (
+              <Text variant="secondary" className="text-sm">
+                {t("loading")}
+              </Text>
+            ) : tokens.length === 0 ? (
+              <Text variant="secondary" className="text-sm">
+                {t("tokenListEmpty")}
+              </Text>
+            ) : (
+              <ul className="flex flex-col divide-y divide-border">
+                {tokens.map((token) => (
+                  <li
+                    key={token.id}
+                    className="flex items-start justify-between gap-4 py-3"
                   >
-                    {t("tokenRevokeButton")}
-                  </Button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+                    <div className="flex min-w-0 flex-col gap-1">
+                      <Text className="truncate font-medium">{token.name}</Text>
+                      <div className="flex flex-wrap gap-1.5">
+                        {token.scopes.map((scope) => (
+                          <span
+                            key={scope}
+                            className="rounded border border-border bg-surface px-1.5 py-0.5 text-[11px] text-secondary"
+                          >
+                            {scope}
+                          </span>
+                        ))}
+                      </div>
+                      <Text variant="secondary" className="text-xs">
+                        {token.lastUsedAt
+                          ? t("tokenLastUsed", {
+                              date: format.dateTime(
+                                new Date(token.lastUsedAt),
+                                {
+                                  dateStyle: "medium",
+                                },
+                              ),
+                            })
+                          : t("tokenNeverUsed")}
+                        {" · "}
+                        {token.expiresAt
+                          ? t("tokenExpiresOn", {
+                              date: format.dateTime(new Date(token.expiresAt), {
+                                dateStyle: "medium",
+                              }),
+                            })
+                          : t("tokenNeverExpires")}
+                      </Text>
+                    </div>
+                    <Button
+                      variant="secondary"
+                      onClick={() => {
+                        setRevokeError(false);
+                        setToRevoke(token);
+                      }}
+                    >
+                      {t("tokenRevokeButton")}
+                    </Button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
       </Card>
 
       {/* Once-shown secret */}

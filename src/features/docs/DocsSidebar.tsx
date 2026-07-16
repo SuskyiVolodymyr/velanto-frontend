@@ -5,7 +5,8 @@ import { Text } from "@/src/shared/components/Text";
 import { Select } from "@/src/shared/components/Select";
 import { cn } from "@/src/shared/lib/cn";
 
-export type TopicId = "start" | "creating" | "formats" | "playing" | "stats";
+export type TopicId =
+  "start" | "creating" | "formats" | "playing" | "stats" | "api";
 
 interface NavSection {
   labelKey: string;
@@ -31,7 +32,18 @@ const NAV: NavSection[] = [
       { id: "stats", labelKey: "topStats" },
     ],
   },
+  {
+    labelKey: "secDevelopers",
+    topics: [{ id: "api", labelKey: "topApi" }],
+  },
 ];
+
+/** Every topic id, in sidebar order — the source of truth for URL validation. */
+export const TOPICS: TopicId[] = NAV.flatMap((section) =>
+  section.topics.map((topic) => topic.id),
+);
+
+export const DEFAULT_TOPIC: TopicId = "start";
 
 export function DocsSidebar({
   activeTopic,

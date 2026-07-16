@@ -8,11 +8,11 @@ import {
   useApiTokens,
   useCreateToken,
   useRevokeToken,
-} from "@/src/features/settings/api/tokens.queries";
+} from "@/src/features/docs/api/tokens.queries";
 import type { ApiToken } from "@/src/shared/lib/tokens-client";
 
 vi.mock("@/src/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
-vi.mock("@/src/features/settings/api/tokens.queries", () => ({
+vi.mock("@/src/features/docs/api/tokens.queries", () => ({
   useApiTokens: vi.fn(),
   useCreateToken: vi.fn(),
   useRevokeToken: vi.fn(),
@@ -22,7 +22,7 @@ const createMutate = vi.fn();
 const revokeMutate = vi.fn();
 
 function authAs(
-  status: "authenticated" | "unauthenticated",
+  status: "authenticated" | "unauthenticated" | "loading",
   role: string = "user",
 ) {
   vi.mocked(useAuth).mockReturnValue({
@@ -52,10 +52,70 @@ describe("ApiTokensSection", () => {
     } as unknown as ReturnType<typeof useRevokeToken>);
   });
 
-  it("renders nothing when signed out", () => {
+  // The docs page is public, so a signed-out reader still sees the manager —
+  // blocked with a reason rather than hidden or redirected (anon-gate rule).
+  it("blocks the create button when signed out, instead of hiding the manager", () => {
     authAs("unauthenticated");
-    const { container } = render(<ApiTokensSection />);
-    expect(container).toBeEmptyDOMElement();
+    render(<ApiTokensSection />);
+
+    const createBtn = screen.getByRole("button", { name: /create token/i });
+    expect(createBtn).toBeInTheDocument();
+    expect(createBtn).toHaveAttribute("aria-disabled", "true");
+    // aria-disabled, not `disabled` — a disabled button fires neither hover nor
+    // focus, which would suppress the reason tooltip entirely.
+    expect(createBtn).not.toBeDisabled();
+  });
+
+  it("explains why the create button is blocked when signed out", async () => {
+    authAs("unauthenticated");
+    const user = userEvent.setup();
+    render(<ApiTokensSection />);
+
+    await user.hover(screen.getByRole("button", { name: /create token/i }));
+
+    expect(await screen.findByRole("tooltip")).toHaveTextContent(
+      /log in to create api tokens/i,
+    );
+  });
+
+  // Fills the form completely first, so `authed` is the ONLY thing left that can
+  // stop the submit. Clicking an empty form would pass even without the guard.
+  it("does not create a token when a signed-out visitor completes the form and clicks create", async () => {
+    authAs("unauthenticated");
+    const user = userEvent.setup();
+    render(<ApiTokensSection />);
+
+    await user.type(screen.getByPlaceholderText(/claude desktop/i), "My token");
+    await user.click(screen.getByLabelText(/create and edit packs/i));
+    await user.click(screen.getByRole("button", { name: /create token/i }));
+
+    expect(createMutate).not.toHaveBeenCalled();
+  });
+
+  it("does not fetch tokens when signed out", () => {
+    authAs("unauthenticated");
+    render(<ApiTokensSection />);
+    expect(vi.mocked(useApiTokens)).toHaveBeenCalledWith({ enabled: false });
+  });
+
+  it("does not render the token list when signed out", () => {
+    authAs("unauthenticated");
+    render(<ApiTokensSection />);
+    expect(screen.queryByText(/your tokens/i)).not.toBeInTheDocument();
+  });
+
+  // While the session is still resolving we don't yet know the viewer is signed
+  // out, so claiming "log in to create API tokens" would be a lie to someone who
+  // IS logged in. Blocked means unauthenticated, never merely not-yet-known.
+  it("does not claim the viewer is signed out while the session is still loading", () => {
+    authAs("loading");
+    render(<ApiTokensSection />);
+
+    const createBtn = screen.getByRole("button", { name: /create token/i });
+    expect(createBtn).not.toHaveAttribute("aria-disabled");
+    expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
+    // Nothing to submit yet either way — but plainly disabled, not "blocked".
+    expect(createBtn).toBeDisabled();
   });
 
   it("hides the moderation scope from non-staff and shows it to staff", () => {

@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Card } from "@/src/shared/components/Card";
+import { ApiDocs } from "./ApiDocs";
 import type { TopicId } from "./DocsSidebar";
 
 const FORMAT_DOCS = [
@@ -69,23 +70,32 @@ export function DocsArticle({ activeTopic }: { activeTopic: TopicId }) {
           <ul className="mb-4 list-disc pl-5">
             <li className="mb-2">
               <Text as="span" className="font-semibold">
-                {t("creatingFixedName")}
+                {t("creatingPoolName")}
               </Text>
               <Text as="span" variant="secondary">
-                {t("creatingFixedDesc")}
+                {t("creatingPoolDesc")}
               </Text>
             </li>
             <li>
               <Text as="span" className="font-semibold">
-                {t("creatingTagName")}
+                {t("creatingRoundName")}
               </Text>
               <Text as="span" variant="secondary">
-                {t("creatingTagDesc")}
+                {t("creatingRoundDesc")}
               </Text>
             </li>
           </ul>
+          <Text variant="secondary" className="mb-4 leading-7">
+            {t("creatingModesPara")}
+          </Text>
+          <Text variant="secondary" className="mb-4 leading-7">
+            {t("creatingLimitsPara")}
+          </Text>
+          <Text variant="secondary" className="mb-4 leading-7">
+            {t("creatingItemsPara")}
+          </Text>
           <Text variant="secondary" className="leading-7">
-            {t("creatingOutro")}
+            {t("creatingPublishPara")}
           </Text>
         </>
       )}
@@ -121,8 +131,11 @@ export function DocsArticle({ activeTopic }: { activeTopic: TopicId }) {
           <Text variant="secondary" className="mb-4 leading-7">
             {t("playingIntro")}
           </Text>
-          <Text variant="secondary" className="leading-7">
+          <Text variant="secondary" className="mb-4 leading-7">
             {t("playingOutro")}
+          </Text>
+          <Text variant="secondary" className="leading-7">
+            {t("statsAnonNote")}
           </Text>
         </>
       )}
@@ -132,11 +145,16 @@ export function DocsArticle({ activeTopic }: { activeTopic: TopicId }) {
           <Text as="h1" variant="title" className="mb-3 text-3xl">
             {t("statsTitle")}
           </Text>
-          <Text variant="secondary" className="leading-7">
+          <Text variant="secondary" className="mb-4 leading-7">
             {t("statsBody")}
+          </Text>
+          <Text variant="secondary" className="leading-7">
+            {t("statsAnonNote")}
           </Text>
         </>
       )}
+
+      {activeTopic === "api" && <ApiDocs />}
     </article>
   );
 }

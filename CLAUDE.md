@@ -13,28 +13,32 @@ Read this before spawning an Explore agent for orientation — it should cover "
 
 ```
 app/                            routes (Server Components, thin — fetch + render a feature component)
-  page.tsx                      home feed
-  auth/page.tsx
-  create/page.tsx
+  page.tsx                      home feed          admin/, moderation/     staff panels
+  auth/  create/  settings/     account/  profile/  notifications/  docs/  rules/
+  feedback/  users/[id]/        terms/  privacy/
   packs/[id]/page.tsx            pack detail (uses getPackServer)
+  packs/[id]/edit/page.tsx       author edit (re-moderates on save)
   packs/[id]/play/page.tsx       play screen (uses getPackServer)
   packs/[id]/result/page.tsx     result screen (uses getPackServer + getResultsServer)
 src/
-  features/
-    auth/AuthForm.tsx
-    create/CreatePackForm.tsx    format toggle (currently save_one/sacrifice_one ONLY — no nxn yet), owns groups state
-    create/GroupEditor.tsx       group name/selectionMode/sampleSize/items editor, used by CreatePackForm
-    home/HomeFeed.tsx, PackCard.tsx
-    play/PlayScreen.tsx          gameplay state machine (roundIndex/revealed/selectedId/picks), round-sampling.ts (manual vs random-shuffle candidate resolution)
-    result/ResultScreen.tsx      reads sessionStorage (via last-play-storage.ts) in a useEffect for "your pick" vs aggregate fallback
+  features/                     one dir per surface: account admin auth author create docs feedback
+                                home legal moderation notifications pack play profile result rules
+                                settings share support
+    create/CreatePackForm.tsx    owns pools+rounds state; FormatSection, PoolsSection,
+                                 RoundsEditor, VersusEditor, GroupEditor split out of it
+    create/create-pack.schema.ts  + .refinements.ts / .value-schemas.ts — the create contract and its limits
+    docs/DocsScreen.tsx          topic list + article; topic lives in the URL (?topic=)
+    docs/ApiTokensSection.tsx    PAT manager (embedded in the API docs topic, not settings)
+    play/round-sampling.ts       slot draw engine (manual pins vs random shuffle, cross-round dedup)
+    result/ResultScreen.tsx      reads sessionStorage (via last-play-storage.ts) for "your pick" vs aggregate fallback
   shared/
     lib/
-      api-client.ts, auth-client.ts, packs-client.ts, plays-client.ts   fetch wrappers to the backend
-      get-pack-server.ts, get-results-server.ts                        Server-Component-only fetches (cache: "no-store")
+      api-client.ts + *-client.ts   fetch wrappers to the backend (one per domain)
+      get-pack-server.ts, get-results-server.ts   Server-Component-only fetches (cache: "no-store")
       last-play-storage.ts        sessionStorage read/write for recorded picks, keyed `velanto:last-play:${packId}`
-      cn.ts, jsonld.ts
+      auth-context.tsx, query-client.ts, query-provider.tsx
     types/
-      pack.ts       PackFormat = "save_one" | "sacrifice_one" — does NOT include "nxn" yet; Group interface only, no Category/versusRounds/versusN types
+      pack.ts       PACK_FORMATS (all five), Group (= a Pool), Round, Slot; PACK_STATUSES, PACK_TAGS
       play-results.ts, user.ts, index.ts
 ```
 
@@ -42,15 +46,16 @@ src/
 
 `npm run dev` · `npm test` (vitest) · `npm run test:e2e` (playwright) · `npm run typecheck` · `npm run lint`
 
-## Known gaps (as of NxN backend landing, pre-frontend-support)
+## Domain model: pools and rounds
 
-Backend already supports the `nxn` format fully (categories/versusRounds/versusN, see `velanto-backend/CLAUDE.md`). Frontend does NOT yet:
+All five formats are supported end to end. The pre-redesign vocabulary ("categories", item tags, `selectionMode`/`sampleSize` on a group) is **gone** — don't reintroduce it:
 
-- include `"nxn"` in `PackFormat` (`src/shared/types/pack.ts`)
-- model `Category`/`versusRounds`/`versusN` types
-- send those fields from `CreatePackInput` (`src/shared/lib/packs-client.ts`)
-- render a Categories editor or conditionally swap Groups↔Categories UI in `CreatePackForm.tsx` (format toggle currently just changes state, doesn't change rendered fields)
-- support nxn in Play/Result screens (backend also rejects nxn there — out of scope until backend adds it)
+- **Pool** (`Group` in code, "Pool" in the UI) — a named bag of items, nothing more. It does not decide how many items appear or when.
+- **Round** — an ordered list of **slots** plus an optional label. Slot count is fixed per format: 1 for `save_one`/`sacrifice_one`/`rank_blind`, exactly 2 for `nxn`/`1v1` (the same two distinct pools in every round).
+- **Slot** — points at one pool via `groupId` with a `mode`: `random` draws `count` items and reshuffles each play; `manual` shows exactly the author's ordered `itemIds`, which are pinned globally (no random slot anywhere can draw them). Random slots sharing a pool never repeat an item across rounds.
+- Limits live in `create-pack.value-schemas.ts`: elimination draws 2–8, nxn 1–8 per side, 1v1 locked to 1.
+
+Publishing is not instant: a new or edited pack enters moderation as `pending` unless the author is trusted/staff. Anonymous visitors can play, but their plays are **not** recorded.
 
 ## Canonical const homes (MIRRORED in velanto-backend — no shared package)
 
