@@ -32,11 +32,21 @@ describe("mediaUrl", () => {
     expect(mediaUrl("")).toBe("");
   });
 
-  it("returns an already-absolute key unchanged", () => {
+  // Defence in depth for velanto-backend#169. The API now refuses to store a
+  // remote URL as an image item's value, but this function is the last step
+  // before <img src> — so it refuses to emit one regardless of what it is
+  // handed. A broken image is strictly better than silently fetching from a
+  // host we do not control: that leaks every viewer's IP to a pack author's
+  // chosen server, and lets approved content be swapped after moderation.
+  // There is no legitimate absolute key — every image on Velanto is one we
+  // issued and serve ourselves.
+  it.each([
+    "https://other.example.com/x.webp",
+    "http://other.example.com/x.webp",
+    "HTTPS://Other.Example.com/x.webp",
+  ])("refuses to emit the absolute URL %s", (key) => {
     vi.stubEnv("NEXT_PUBLIC_MEDIA_BASE_URL", "https://cdn.example.com");
-    expect(mediaUrl("https://other.example.com/x.webp")).toBe(
-      "https://other.example.com/x.webp",
-    );
+    expect(mediaUrl(key)).toBe("");
   });
 
   it("falls back to a root-relative path when the base env var is unset", () => {
