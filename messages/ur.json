@@ -766,7 +766,9 @@
     "empty": "ان فلٹرز سے ابھی کوئی پیک نہیں ملا۔",
     "pagination": "صفحہ بندی",
     "paginationPrevious": "پچھلا",
-    "paginationNext": "اگلا"
+    "paginationNext": "اگلا",
+    "groupLanguage": "زبان",
+    "filterByLanguage": "زبان کے مطابق فلٹر کریں"
   },
   "formats": {
     "save_one": "ایک بچاؤ",

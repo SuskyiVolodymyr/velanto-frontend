@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import type { PackTag } from "@/src/shared/types/pack";
+import type { PackLanguage } from "@/src/shared/types/pack-language";
 import {
   DEFAULT_DATE_ORDER,
   DEFAULT_POPULAR_WINDOW,
@@ -32,6 +33,7 @@ export type FeedStatus = "loading" | "ready" | "error";
 export function useHomeFeed(initialFeed?: PacksFeedResult) {
   const [format, setFormat] = useState<FormatFilterValue>("all");
   const [tags, setTags] = useState<PackTag[]>([]);
+  const [languages, setLanguages] = useState<PackLanguage[]>([]);
   const [searchInput, setSearchInput] = useState("");
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
@@ -60,6 +62,7 @@ export function useHomeFeed(initialFeed?: PacksFeedResult) {
     if (stored) {
       setFormat(stored.format);
       setTags(stored.tags);
+      setLanguages(stored.languages);
       setSort(stored.sort);
       setWindow(stored.window);
       setDateOrder(stored.dateOrder);
@@ -72,8 +75,8 @@ export function useHomeFeed(initialFeed?: PacksFeedResult) {
   // clobber a stored selection before the restore above runs.
   useEffect(() => {
     if (!hydrated) return;
-    writePackFilters({ format, tags, sort, window, dateOrder });
-  }, [hydrated, format, tags, sort, window, dateOrder]);
+    writePackFilters({ format, tags, languages, sort, window, dateOrder });
+  }, [hydrated, format, tags, languages, sort, window, dateOrder]);
 
   useEffect(() => {
     const timeout = setTimeout(
@@ -96,7 +99,7 @@ export function useHomeFeed(initialFeed?: PacksFeedResult) {
   useEffect(() => {
     /* eslint-disable-next-line react-hooks/set-state-in-effect */
     setPage(1);
-  }, [format, tags, query, sort, window, dateOrder]);
+  }, [format, tags, languages, query, sort, window, dateOrder]);
 
   // Resolve the UI filter state into the request/query key: the "all" format
   // sentinel and empty search collapse to undefined; the "date" sort flattens
@@ -106,12 +109,13 @@ export function useHomeFeed(initialFeed?: PacksFeedResult) {
     () => ({
       format: format === "all" ? undefined : format,
       tags,
+      languages,
       q: query || undefined,
       page,
       sort: sort === "popular" ? "popular" : dateOrder,
       window: sort === "popular" ? window : undefined,
     }),
-    [format, tags, query, page, sort, window, dateOrder],
+    [format, tags, languages, query, page, sort, window, dateOrder],
   );
 
   // Seed only the default-filters query with the server-rendered feed — other
@@ -120,6 +124,7 @@ export function useHomeFeed(initialFeed?: PacksFeedResult) {
   const isDefaultFilters =
     format === "all" &&
     tags.length === 0 &&
+    languages.length === 0 &&
     !query &&
     page === 1 &&
     sort === "popular" &&
@@ -152,6 +157,8 @@ export function useHomeFeed(initialFeed?: PacksFeedResult) {
     setFormat,
     tags,
     setTags,
+    languages,
+    setLanguages,
     searchInput,
     setSearchInput,
     packs,

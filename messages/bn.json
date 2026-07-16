@@ -766,7 +766,9 @@
     "empty": "এই ফিল্টারে মেলে এমন কোনো প্যাক এখনও নেই।",
     "pagination": "পৃষ্ঠা বিন্যাস",
     "paginationPrevious": "পূর্ববর্তী",
-    "paginationNext": "পরবর্তী"
+    "paginationNext": "পরবর্তী",
+    "groupLanguage": "ভাষা",
+    "filterByLanguage": "ভাষা অনুসারে ফিল্টার করুন"
   },
   "formats": {
     "save_one": "একজনকে বাঁচাও",

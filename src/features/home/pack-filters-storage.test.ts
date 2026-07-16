@@ -8,6 +8,7 @@ import {
 const SAMPLE: StoredPackFilters = {
   format: "save_one",
   tags: ["Movies", "Music"],
+  languages: ["uk", "es"],
   sort: "popular",
   window: "month",
   dateOrder: "newest",
@@ -46,6 +47,7 @@ describe("pack-filters-storage", () => {
     expect(readPackFilters()).toEqual({
       format: "all",
       tags: [],
+      languages: [],
       sort: "popular",
       window: "month",
       dateOrder: "newest",
@@ -83,10 +85,39 @@ describe("pack-filters-storage", () => {
     expect(readPackFilters()?.sort).toBe("popular");
   });
 
+  // The API 400s on an unknown language code, so a stale or hand-edited blob
+  // must never reach the wire — otherwise a taxonomy change would break the
+  // feed for anyone whose stored filters predate it, with no way to recover
+  // but clearing localStorage.
+  it("drops unknown language codes from a stored blob", () => {
+    localStorage.setItem(
+      "velanto:pack-filters",
+      JSON.stringify({
+        format: "all",
+        tags: [],
+        languages: ["uk", "klingon", "es"],
+        sort: "popular",
+        window: "month",
+        dateOrder: "newest",
+      }),
+    );
+
+    expect(readPackFilters()?.languages).toEqual(["uk", "es"]);
+  });
+
+  it("defaults languages to empty when the key is absent or not an array", () => {
+    localStorage.setItem(
+      "velanto:pack-filters",
+      JSON.stringify({ format: "all", tags: [], languages: "uk" }),
+    );
+    expect(readPackFilters()?.languages).toEqual([]);
+  });
+
   it("round-trips the date sort with an oldest-first order", () => {
     const filters: StoredPackFilters = {
       format: "all",
       tags: [],
+      languages: [],
       sort: "date",
       window: "month",
       dateOrder: "oldest",

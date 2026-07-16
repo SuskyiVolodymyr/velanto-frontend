@@ -5,10 +5,12 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/src/shared/lib/cn";
 import { Text } from "@/src/shared/components/Text";
 import type { PackTag } from "@/src/shared/types/pack";
+import type { PackLanguage } from "@/src/shared/types/pack-language";
 import { PackSearchField } from "@/src/features/home/PackSearchField";
 import { FormatFilter } from "@/src/features/home/FormatFilter";
 import { SortFilter } from "@/src/features/home/SortFilter";
 import { TagFilter } from "@/src/features/home/TagFilter";
+import { LanguageFilter } from "@/src/features/home/LanguageFilter";
 import type {
   DateOrderValue,
   FormatFilterValue,
@@ -54,6 +56,8 @@ export function HomeFilterSidebar({
   onDateOrderChange,
   tags,
   onTagsChange,
+  languages,
+  onLanguagesChange,
 }: {
   className?: string;
   search: string;
@@ -68,6 +72,8 @@ export function HomeFilterSidebar({
   onDateOrderChange: (value: DateOrderValue) => void;
   tags: PackTag[];
   onTagsChange: (tags: PackTag[]) => void;
+  languages: PackLanguage[];
+  onLanguagesChange: (languages: PackLanguage[]) => void;
 }) {
   const t = useTranslations("home");
 
@@ -101,6 +107,10 @@ export function HomeFilterSidebar({
 
         <FilterGroup label={t("groupTags")}>
           <TagFilter tags={tags} onChange={onTagsChange} />
+        </FilterGroup>
+
+        <FilterGroup label={t("groupLanguage")}>
+          <LanguageFilter languages={languages} onChange={onLanguagesChange} />
         </FilterGroup>
       </div>
     </aside>

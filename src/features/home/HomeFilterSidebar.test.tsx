@@ -20,6 +20,8 @@ function renderSidebar(
     onDateOrderChange: vi.fn(),
     tags: [],
     onTagsChange: vi.fn(),
+    languages: [],
+    onLanguagesChange: vi.fn(),
     ...overrides,
   };
   render(<HomeFilterSidebar {...props} />);
