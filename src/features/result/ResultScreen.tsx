@@ -4,12 +4,23 @@ import { useTranslations } from "next-intl";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { RankResultScreen } from "@/src/features/result/RankResultScreen";
+import { ResultLocked } from "@/src/features/result/ResultLocked";
 import { useResultPicks } from "@/src/features/result/use-result-picks";
 import { SharedResultNote } from "@/src/features/result/SharedResultNote";
 import { ResultActions } from "@/src/features/result/ResultActions";
 import type { Pack } from "@/src/shared/types/pack";
 import type { PackResults, RankResults } from "@/src/shared/types/play-results";
 
+/**
+ * #222: the community breakdown is gated on evidence that you finished this
+ * pack — otherwise the promise that "stats unlock after you finish" was just
+ * copy, and any /result URL spoiled the crowd's picks before you played.
+ *
+ * Evidence is a local record of your play, or a `?p=` share code (someone
+ * handing you their result on purpose — gating that would break sharing).
+ * Both come from useResultPicks, so this is the same signal the "your pick"
+ * highlight already used; it is now load-bearing rather than decorative.
+ */
 export function ResultScreen({
   pack,
   results,
@@ -17,6 +28,13 @@ export function ResultScreen({
   pack: Pack;
   results: PackResults | RankResults;
 }) {
+  const { picks, ready } = useResultPicks(pack.id);
+
+  // Not "no play" — the sessionStorage read hasn't happened yet. Rendering the
+  // locked state here would flash it at every player before their own results.
+  if (!ready) return null;
+  if (!picks) return <ResultLocked packId={pack.id} title={pack.title} />;
+
   if (results.format === "rank_blind") {
     return <RankResultScreen pack={pack} results={results} />;
   }

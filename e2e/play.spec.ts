@@ -81,7 +81,8 @@ test.describe("Play a pack", () => {
     });
   }
 
-  test("lets a signed-out visitor play a pack without recording it", async ({
+  // #221: this asserted the opposite until anonymous plays started counting.
+  test("lets a signed-out visitor play a pack and records it", async ({
     page,
   }) => {
     // Override the beforeEach's authenticated session with a signed-out one.
@@ -106,8 +107,8 @@ test.describe("Play a pack", () => {
 
     // It reaches the result page…
     await expect(page).toHaveURL(/\/packs\/pack-save\/result/);
-    // …without ever recording the play on the backend.
-    expect(recorded).toBe(false);
+    // …and the play was recorded on the backend, with no auth of its own.
+    expect(recorded).toBe(true);
   });
 
   test("renders image-item candidates with the title as alt text during play", async ({

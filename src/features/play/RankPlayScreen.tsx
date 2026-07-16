@@ -80,20 +80,21 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   }
 
   // Fires once when the last round's last item is placed — mirrors
-  // PlayScreen's recordedRef guard. Signed-out plays aren't recorded (no stats
-  // for anon); we still stash the local picks so the result screen works.
+  // PlayScreen's recordedRef guard. Anonymous plays ARE recorded (#221): the
+  // endpoint takes an optional JWT and stores a null player. Still waits for
+  // auth to resolve, so a signed-in player's run isn't attributed to nobody.
+  //
+  // Picks are stashed FIRST, not in .then(): this screen renders its "see
+  // result" link in the same commit that fires this effect, with nothing
+  // gating it on the request. Since #222 gates the result screen on these
+  // picks, writing them after the round-trip means a player who clicks
+  // promptly arrives at a LOCKED screen having just finished the pack.
   const recordedRef = useRef(false);
   useEffect(() => {
     if (!isFinished || status === "loading" || recordedRef.current) return;
     recordedRef.current = true;
-    if (status !== "authenticated") {
-      writeLastPlayPicks(pack.id, allPicks);
-      return;
-    }
-    playsClient
-      .record(pack.id, { picks: allPicks })
-      .then(() => writeLastPlayPicks(pack.id, allPicks))
-      .catch(() => undefined);
+    writeLastPlayPicks(pack.id, allPicks);
+    playsClient.record(pack.id, { picks: allPicks }).catch(() => undefined);
   }, [isFinished, pack.id, allPicks, status]);
 
   if (status === "loading") return null;
