@@ -158,7 +158,11 @@ describe("usePlaySession", () => {
     ]);
   });
 
-  it("records exactly once on finish and writes last-play only after the record resolves", async () => {
+  // The "only after the record resolves" half of this used to be the contract;
+  // it is now the bug (#222 gates the result screen on these picks, so a
+  // pending request meant a locked screen). What still matters and is asserted
+  // here: the record fires EXACTLY once, with the right payload.
+  it("records exactly once on finish, with the picks stashed immediately", async () => {
     let resolveRecord!: (value: { id: string }) => void;
     vi.mocked(playsClient.record).mockReturnValue(
       new Promise<{ id: string }>((resolve) => {
@@ -182,24 +186,32 @@ describe("usePlaySession", () => {
         { roundIndex: 1, groupId: "g2", itemId: "3" },
       ],
     });
-    // Record still pending: nothing persisted yet.
-    expect(sessionStorage.getItem("velanto:last-play:pack-a")).toBeNull();
+    // Record still pending, picks already persisted — the player can click
+    // through to the result screen without waiting on the round-trip.
+    expect(
+      JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
+    ).toEqual([
+      { roundIndex: 0, groupId: "g1", itemId: "1" },
+      { roundIndex: 1, groupId: "g2", itemId: "3" },
+    ]);
+    expect(result.current.recordSettled).toBe(false);
 
     await act(async () => {
       resolveRecord({ id: "play-1" });
     });
-    await waitFor(() =>
-      expect(
-        JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
-      ).toEqual([
-        { roundIndex: 0, groupId: "g1", itemId: "1" },
-        { roundIndex: 1, groupId: "g2", itemId: "3" },
-      ]),
-    );
+    await waitFor(() => expect(result.current.recordSettled).toBe(true));
+    // Resolving must not re-fire it, nor disturb what was stashed.
     expect(playsClient.record).toHaveBeenCalledTimes(1);
+    expect(
+      JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
+    ).toHaveLength(2);
   });
 
-  it("does not record a signed-out play, but still stashes the local picks", async () => {
+  // #221: this used to assert that a signed-out play was NOT recorded — the
+  // bug. A signed-out visitor can play any pack, so silently dropping their run
+  // made the pack's stats a lie and told the player nothing. The backend now
+  // takes an optional JWT and stores a null player (backend#176).
+  it("records a signed-out play and stashes the local picks", async () => {
     setAuth("unauthenticated");
     const { result } = renderHook(() => usePlaySession(GROUPS_PACK));
 
@@ -210,14 +222,71 @@ describe("usePlaySession", () => {
 
     expect(result.current.isFinished).toBe(true);
     await waitFor(() => expect(result.current.recordSettled).toBe(true));
-    // No backend stats for anon…
-    expect(playsClient.record).not.toHaveBeenCalled();
-    // …but the local picks are stashed so the result screen still works.
+
+    const picks = [
+      { roundIndex: 0, groupId: "g1", itemId: "1" },
+      { roundIndex: 1, groupId: "g2", itemId: "3" },
+    ];
+    expect(playsClient.record).toHaveBeenCalledWith("pack-a", { picks });
+    expect(
+      JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
+    ).toEqual(picks);
+  });
+
+  // The result screen is GATED on these picks (#222), so writing them only
+  // after the record request resolved locked out the player who just finished:
+  // RankPlayScreen/HeadToHeadPlayScreen render their "see result" link in the
+  // same commit that fires the request, so a prompt click beats the round-trip.
+  it("stashes the picks before the record request resolves", async () => {
+    setAuth("unauthenticated");
+    // A request that never settles — the state during the whole in-flight window.
+    vi.mocked(playsClient.record).mockReturnValue(new Promise(() => {}));
+    const { result } = renderHook(() => usePlaySession(GROUPS_PACK));
+
+    act(() => result.current.setSelectedId("1"));
+    act(() => result.current.confirmPick());
+    act(() => result.current.setSelectedId("3"));
+    act(() => result.current.confirmPick());
+
+    expect(result.current.isFinished).toBe(true);
+    expect(result.current.recordSettled).toBe(false);
+    // Already stashed, with the request still in flight.
     expect(
       JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
     ).toEqual([
       { roundIndex: 0, groupId: "g1", itemId: "1" },
       { roundIndex: 1, groupId: "g2", itemId: "3" },
     ]);
+  });
+
+  it("stashes the picks even when the record request fails", async () => {
+    setAuth("unauthenticated");
+    vi.mocked(playsClient.record).mockRejectedValue(new Error("network"));
+    const { result } = renderHook(() => usePlaySession(GROUPS_PACK));
+
+    act(() => result.current.setSelectedId("1"));
+    act(() => result.current.confirmPick());
+    act(() => result.current.setSelectedId("3"));
+    act(() => result.current.confirmPick());
+
+    await waitFor(() => expect(result.current.recordSettled).toBe(true));
+    // A failed request costs the pack a stat, not the player their result.
+    expect(sessionStorage.getItem("velanto:last-play:pack-a")).not.toBeNull();
+  });
+
+  // The wait-for-auth guard is what keeps a signed-in player's run from being
+  // attributed to nobody: recording before the token resolves would send it
+  // anonymously and lose it from their history.
+  it("does not record until auth has resolved", async () => {
+    setAuth("loading");
+    const { result } = renderHook(() => usePlaySession(GROUPS_PACK));
+
+    act(() => result.current.setSelectedId("1"));
+    act(() => result.current.confirmPick());
+    act(() => result.current.setSelectedId("3"));
+    act(() => result.current.confirmPick());
+
+    expect(result.current.isFinished).toBe(true);
+    expect(playsClient.record).not.toHaveBeenCalled();
   });
 });

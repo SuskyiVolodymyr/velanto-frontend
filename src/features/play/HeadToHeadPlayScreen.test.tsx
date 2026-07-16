@@ -118,7 +118,10 @@ beforeEach(() => {
 });
 
 describe("HeadToHeadPlayScreen", () => {
-  it("lets a signed-out visitor play, without recording the play", async () => {
+  // #221: this used to assert the play was NOT recorded. A signed-out visitor
+  // can play any pack, so dropping their run silently made the pack's stats a
+  // lie. The backend now takes an optional JWT and stores a null player.
+  it("lets a signed-out visitor play and records the play", async () => {
     vi.mocked(authClient.refresh).mockRejectedValue(
       new ApiError(401, "Unauthorized", null),
     );
@@ -136,9 +139,10 @@ describe("HeadToHeadPlayScreen", () => {
     await user.click(screen.getByRole("button", { name: "Pick Sasuke" }));
 
     expect(await screen.findByText(/All matchups done/i)).toBeInTheDocument();
-    // Anon play is never recorded on the backend…
-    expect(playsClient.record).not.toHaveBeenCalled();
-    // …but the local picks are stashed for the result screen.
+    // Anon play is recorded on the backend…
+    await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
+    expect(vi.mocked(playsClient.record).mock.calls[0][0]).toBe("pack-1v1");
+    // …and the local picks are stashed for the result screen.
     await waitFor(() =>
       expect(
         JSON.parse(sessionStorage.getItem("velanto:last-play:pack-1v1")!),

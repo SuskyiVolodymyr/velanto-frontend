@@ -55,7 +55,7 @@ All five formats are supported end to end. The pre-redesign vocabulary ("categor
 - **Slot** — points at one pool via `groupId` with a `mode`: `random` draws `count` items and reshuffles each play; `manual` shows exactly the author's ordered `itemIds`, which are pinned globally (no random slot anywhere can draw them). Random slots sharing a pool never repeat an item across rounds.
 - Limits live in `create-pack.value-schemas.ts`: elimination draws 2–8, nxn 1–8 per side, 1v1 locked to 1.
 
-Publishing is not instant: a new or edited pack enters moderation as `pending` unless the author is trusted/staff. Anonymous visitors can play, but their plays are **not** recorded.
+Publishing is not instant: a new or edited pack enters moderation as `pending` unless the author is trusted/staff. Anonymous visitors can play, and their plays **are** recorded — stored with a null player, so they count toward the pack's stats but belong to no one's history ([#221](https://github.com/SuskyiVolodymyr/velanto-frontend/issues/221)). The community breakdown on `/result` is gated on evidence that you finished the pack — a local record of your play, or a `?p=` share code ([#222](https://github.com/SuskyiVolodymyr/velanto-frontend/issues/222)).
 
 ## Canonical const homes (MIRRORED in velanto-backend — no shared package)
 

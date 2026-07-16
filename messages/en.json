@@ -646,7 +646,7 @@
           "We collect what you give us and what the site needs to work. Nothing else.",
           "No ads, no analytics, no tracking, no profiling. Nothing is sold to anyone.",
           "We do not store your IP address.",
-          "If you are not logged in, playing a pack leaves no record of you at all.",
+          "If you are not logged in, your play is still counted, but it is saved with nothing that links it to you.",
           "You can export your data, or delete your account, yourself — buttons in settings, no request needed.",
           "Deleting your account does not erase everything you ever wrote. What survives, and in what form, is listed below."
         ]
@@ -662,7 +662,7 @@
           "Account — your email address, username, and password. The password is hashed with argon2, which means we cannot read it and it is never included in an export.",
           "Profile — your bio and avatar, if you add them.",
           "What you make — packs, comments, votes, reports and feedback.",
-          "Plays — which packs you played and what you picked. Only when you are logged in.",
+          "Plays — which packs were played and what was picked. Tied to your account only when you are logged in; a signed-out play is saved with no player attached to it.",
           "Follows, notifications, and any API tokens you create — for a token we keep its name, the scopes you gave it, when it expires and when it was last used, never the token itself.",
           "The version of the Community Rules you accepted when you registered, and any moderation flags on your account — whether we have marked you trusted, and whether you are banned and why.",
           "Technical — a login session, and a crash report if something breaks."
@@ -681,8 +681,8 @@
         ]
       },
       {
-        "title": "If you are not logged in, we do not know you were here",
-        "body": "You can browse and play packs without an account. If you do, the play is not recorded — no play record, no server-side trace, nothing tied to you in any way. Nothing is counted either: a pack's play count counts only signed-in plays. Play records exist only for logged-in users, and you can hide your play history from other people in your settings."
+        "title": "If you are not logged in, we do not know who you are",
+        "body": "You can browse and play packs without an account. Your play does count toward the pack’s public stats, but it is saved with no player attached: no account, no name, nothing that links it back to you. It never appears in anyone’s play history, because there is nothing to attach it to. If you are signed in, your play is saved with your account instead, and you can hide your play history from other people in your settings."
       },
       {
         "title": "What we do not do",
@@ -763,10 +763,9 @@
       },
       {
         "title": "Moderation, reports, and the audit log",
-        "body": "We record actions on the site — staff ones like approving a pack, banning someone or resolving a report, and your own edits and deletions too — noting who did it and what they did, and we keep it (see how long, above). Three parts of this deserve to be said out loud rather than buried:",
+        "body": "We record actions on the site — staff ones like approving a pack, banning someone or resolving a report, and your own edits and deletions too — noting who did it and what they did, and we keep it (see how long, above). Two parts of this deserve to be said out loud rather than buried:",
         "bullets": [
           "Reports are not anonymous to moderators. If you report a pack or a person, the moderator handling it sees your username. The person you reported does not.",
-          "The action log currently stores the entire content of a pack every time it is edited, forever, and staff can search that text. That is far more than the log needs in order to do its job, and we are narrowing it.",
           "Your own edits sit in the same log as staff decisions. We think those are two different things with two different reasons for being kept, and we are separating them."
         ]
       },
@@ -1044,6 +1043,9 @@
   "result": {
     "label": "Result",
     "playsRecorded": "{count, plural, one {# play recorded.} other {# plays recorded.}}",
+    "lockedTitle": "Finish the pack to see the results",
+    "lockedBody": "Stats stay hidden while you play, so your picks are your own and not the crowd’s.",
+    "lockedCta": "Play this pack",
     "yourPick": "Your pick",
     "sharedPick": "Pick",
     "rankCaption": "avg {avg} · ranked {count}x",

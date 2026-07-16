@@ -70,6 +70,13 @@ beforeEach(() => {
   searchParams = new URLSearchParams();
 });
 
+// #222 gates the breakdown on evidence that you played this pack. Tests about
+// what the breakdown RENDERS have to establish that precondition first —
+// otherwise they assert against the locked state and pass for the wrong reason.
+function seedOwnPlay(picks = [{ roundIndex: 0, groupId: "g1", itemId: "i1" }]) {
+  sessionStorage.setItem("velanto:last-play:pack-1", JSON.stringify(picks));
+}
+
 describe("ResultScreen", () => {
   it("shows the player's own pick and its community agreement % per round", async () => {
     sessionStorage.setItem(
@@ -86,66 +93,22 @@ describe("ResultScreen", () => {
     expect(screen.getByText(/4 plays recorded/)).toBeInTheDocument();
   });
 
-  it("falls back to the aggregate breakdown when there is no recorded play for this pack", () => {
+  // #222: the product promise is that stats stay locked until you finish, so
+  // nobody is influenced by the crowd. This used to assert the OPPOSITE — that
+  // the aggregate showed to anyone who reached the URL — which is the bug.
+  it("hides the community breakdown until you have played this pack", async () => {
     render(<ResultScreen pack={PACK} results={RESULTS} />);
 
-    expect(screen.queryByText("Your pick")).not.toBeInTheDocument();
-    expect(screen.getByText("75%")).toBeInTheDocument();
-    expect(screen.getByText("25%")).toBeInTheDocument();
+    expect(await screen.findByText(/Finish the pack/)).toBeInTheDocument();
+    expect(screen.queryByText("75%")).not.toBeInTheDocument();
+    expect(screen.queryByText("25%")).not.toBeInTheDocument();
+    expect(screen.queryByText("Guren no Yumiya")).not.toBeInTheDocument();
   });
 
-  it("links back to play the pack again", () => {
-    render(<ResultScreen pack={PACK} results={RESULTS} />);
-
-    expect(screen.getByRole("link", { name: "Play again" })).toHaveAttribute(
-      "href",
-      "/packs/pack-1/play",
-    );
-  });
-
-  it("falls back to the aggregate breakdown when the recorded pick's item isn't in this round's results", async () => {
-    sessionStorage.setItem(
-      "velanto:last-play:pack-1",
-      JSON.stringify([
-        { roundIndex: 0, groupId: "g1", itemId: "does-not-exist" },
-      ]),
-    );
-
-    render(<ResultScreen pack={PACK} results={RESULTS} />);
-
-    expect(await screen.findByText("75%")).toBeInTheDocument();
-    expect(screen.getByText("25%")).toBeInTheDocument();
-    expect(screen.queryByText(/Your pick/)).not.toBeInTheDocument();
-  });
-
-  it("renders without crashing when the pack has no recorded plays yet", () => {
-    const emptyResults: PackResults = {
-      packId: "pack-1",
-      format: "save_one",
-      totalPlays: 0,
-      rounds: [
-        {
-          roundIndex: 0,
-          items: [
-            {
-              itemId: "i1",
-              itemTitle: "Guren no Yumiya",
-              count: 0,
-              percentage: 0,
-            },
-            { itemId: "i2", itemTitle: "Redo", count: 0, percentage: 0 },
-          ],
-        },
-      ],
-    };
-
-    render(<ResultScreen pack={PACK} results={emptyResults} />);
-
-    expect(screen.getByText(/0 plays recorded/)).toBeInTheDocument();
-    expect(screen.getAllByText("0%")).toHaveLength(2);
-  });
-
-  it("delegates to RankResultScreen for rank_blind results", () => {
+  // The gate sits above the format branch, so it covers rank_blind too. Pinned
+  // because that is a property of where the check lives, not of the check —
+  // moving it below the branch would silently unlock one of the five formats.
+  it("hides a rank_blind breakdown until you have played this pack", async () => {
     const rankPack: Pack = { ...PACK, format: "rank_blind" };
     const rankResults: RankResults = {
       packId: "pack-1",
@@ -169,20 +132,134 @@ describe("ResultScreen", () => {
 
     render(<ResultScreen pack={rankPack} results={rankResults} />);
 
-    expect(screen.getByText(/avg 0.*ranked 1x/)).toBeInTheDocument();
+    expect(await screen.findByText(/Finish the pack/)).toBeInTheDocument();
+    expect(screen.queryByText(/ranked 1x/)).not.toBeInTheDocument();
   });
 
-  it("shows a Share result button for an approved pack", () => {
+  it("offers a way to play from the locked state", async () => {
+    render(<ResultScreen pack={PACK} results={RESULTS} />);
+
+    expect(await screen.findByRole("link", { name: /Play/ })).toHaveAttribute(
+      "href",
+      "/packs/pack-1/play",
+    );
+  });
+
+  // A shared result (?p=) is someone handing you their picks on purpose — the
+  // gate must not break sharing, which is a deliberate feature.
+  it("shows the breakdown for a shared result even though you have not played", async () => {
+    searchParams = new URLSearchParams({
+      p: encodePicks([{ roundIndex: 0, groupId: "g1", itemId: "i1" }]),
+    });
+
+    render(<ResultScreen pack={PACK} results={RESULTS} />);
+
+    expect(await screen.findByText("75%")).toBeInTheDocument();
+  });
+
+  it("links back to play the pack again once you have played", async () => {
+    sessionStorage.setItem(
+      "velanto:last-play:pack-1",
+      JSON.stringify([{ roundIndex: 0, groupId: "g1", itemId: "i1" }]),
+    );
+
+    render(<ResultScreen pack={PACK} results={RESULTS} />);
+
+    expect(
+      await screen.findByRole("link", { name: "Play again" }),
+    ).toHaveAttribute("href", "/packs/pack-1/play");
+  });
+
+  it("falls back to the aggregate breakdown when the recorded pick's item isn't in this round's results", async () => {
+    sessionStorage.setItem(
+      "velanto:last-play:pack-1",
+      JSON.stringify([
+        { roundIndex: 0, groupId: "g1", itemId: "does-not-exist" },
+      ]),
+    );
+
+    render(<ResultScreen pack={PACK} results={RESULTS} />);
+
+    expect(await screen.findByText("75%")).toBeInTheDocument();
+    expect(screen.getByText("25%")).toBeInTheDocument();
+    expect(screen.queryByText(/Your pick/)).not.toBeInTheDocument();
+  });
+
+  it("renders without crashing when the pack has no recorded plays yet", async () => {
+    const emptyResults: PackResults = {
+      packId: "pack-1",
+      format: "save_one",
+      totalPlays: 0,
+      rounds: [
+        {
+          roundIndex: 0,
+          items: [
+            {
+              itemId: "i1",
+              itemTitle: "Guren no Yumiya",
+              count: 0,
+              percentage: 0,
+            },
+            { itemId: "i2", itemTitle: "Redo", count: 0, percentage: 0 },
+          ],
+        },
+      ],
+    };
+
+    // Unlock the gate without switching the round into "your pick" mode — this
+    // test is about the aggregate list rendering when nobody has played.
+    seedOwnPlay([{ roundIndex: 0, groupId: "g1", itemId: "not-in-results" }]);
+    render(<ResultScreen pack={PACK} results={emptyResults} />);
+
+    expect(await screen.findByText(/0 plays recorded/)).toBeInTheDocument();
+    expect(screen.getAllByText("0%")).toHaveLength(2);
+  });
+
+  it("delegates to RankResultScreen for rank_blind results", async () => {
+    const rankPack: Pack = { ...PACK, format: "rank_blind" };
+    const rankResults: RankResults = {
+      packId: "pack-1",
+      format: "rank_blind",
+      totalPlays: 1,
+      rounds: [
+        {
+          roundIndex: 0,
+          items: [
+            {
+              itemId: "i1",
+              itemTitle: "Guren no Yumiya",
+              timesRanked: 1,
+              averagePosition: 0,
+              positionCounts: [1],
+            },
+          ],
+        },
+      ],
+    };
+
+    seedOwnPlay();
+    render(<ResultScreen pack={rankPack} results={rankResults} />);
+
+    expect(await screen.findByText(/avg 0.*ranked 1x/)).toBeInTheDocument();
+  });
+
+  it("shows a Share result button for an approved pack", async () => {
+    seedOwnPlay();
     render(<ResultScreen pack={PACK} results={RESULTS} />);
     expect(
-      screen.getByRole("button", { name: "Share result" }),
+      await screen.findByRole("button", { name: "Share result" }),
     ).toBeInTheDocument();
   });
 
-  it("hides the Share result button for a non-approved pack", () => {
+  it("hides the Share result button for a non-approved pack", async () => {
+    seedOwnPlay();
     render(
       <ResultScreen pack={{ ...PACK, status: "pending" }} results={RESULTS} />,
     );
+
+    // Prove the screen is unlocked first: without a seeded play this assertion
+    // passes against the locked state, which is not what it claims to test.
+    expect(await screen.findByText("75%")).toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: "Share result" }),
     ).not.toBeInTheDocument();

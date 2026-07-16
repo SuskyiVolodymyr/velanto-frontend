@@ -20,7 +20,11 @@ describe("useResultPicks", () => {
 
     const { result } = renderHook(() => useResultPicks("pack-1"));
 
-    expect(result.current).toEqual({ picks: shared, shared: true });
+    expect(result.current).toEqual({
+      picks: shared,
+      shared: true,
+      ready: true,
+    });
     expect(readLastPlayPicks).not.toHaveBeenCalled();
   });
 
@@ -34,6 +38,7 @@ describe("useResultPicks", () => {
     expect(result.current).toEqual({
       picks: [{ roundIndex: 0, groupId: "g1", itemId: "i2" }],
       shared: false,
+      ready: true,
     });
   });
 
@@ -43,6 +48,6 @@ describe("useResultPicks", () => {
 
     const { result } = renderHook(() => useResultPicks("pack-1"));
 
-    expect(result.current).toEqual({ picks: null, shared: false });
+    expect(result.current).toEqual({ picks: null, shared: false, ready: true });
   });
 });

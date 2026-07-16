@@ -136,7 +136,10 @@ beforeEach(() => {
 });
 
 describe("PlayScreen", () => {
-  it("lets a signed-out visitor play, without recording the play", async () => {
+  // #221: this used to assert the play was NOT recorded. A signed-out visitor
+  // can play any pack, so dropping their run silently made the pack's stats a
+  // lie. The backend now takes an optional JWT and stores a null player.
+  it("lets a signed-out visitor play and records the play", async () => {
     vi.mocked(authClient.refresh).mockRejectedValue(
       new ApiError(401, "Unauthorized", null),
     );
@@ -155,7 +158,7 @@ describe("PlayScreen", () => {
     await user.click(screen.getByText("Silhouette"));
     await user.click(screen.getByRole("button", { name: "See results →" }));
 
-    // Anon play still advances to the result page and stashes local picks…
+    // Anon play advances to the result page and stashes local picks…
     await waitFor(() =>
       expect(replace).toHaveBeenCalledWith("/packs/pack-a/result"),
     );
@@ -165,8 +168,13 @@ describe("PlayScreen", () => {
       { roundIndex: 0, groupId: "g1", itemId: "2" },
       { roundIndex: 1, groupId: "g2", itemId: "3" },
     ]);
-    // …but is never recorded on the backend.
-    expect(playsClient.record).not.toHaveBeenCalled();
+    // …and is recorded on the backend, with no auth header of its own.
+    expect(playsClient.record).toHaveBeenCalledWith("pack-a", {
+      picks: [
+        { roundIndex: 0, groupId: "g1", itemId: "2" },
+        { roundIndex: 1, groupId: "g2", itemId: "3" },
+      ],
+    });
   });
 
   const NXN_PACK: Pack = {
@@ -454,7 +462,10 @@ describe("PlayScreen", () => {
     expect(playsClient.record).toHaveBeenCalledTimes(1);
   });
 
-  it("writes the last-play picks only after the record request resolves", async () => {
+  // #222 made these picks the result screen's gate, so "only after the request
+  // resolves" turned from a cosmetic guarantee into a lockout: the player who
+  // just finished would reach a locked screen while the request was in flight.
+  it("writes the last-play picks without waiting for the record request", async () => {
     let resolveRecord!: (value: { id: string }) => void;
     vi.mocked(playsClient.record).mockReturnValue(
       new Promise<{ id: string }>((resolve) => {
@@ -473,21 +484,27 @@ describe("PlayScreen", () => {
 
     await screen.findByRole("status");
     await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
-    // Record is still pending: nothing may be persisted yet.
-    expect(sessionStorage.getItem("velanto:last-play:pack-a")).toBeNull();
+    // Record still pending, picks already persisted.
+    expect(
+      JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
+    ).toEqual([
+      { roundIndex: 0, groupId: "g1", itemId: "2" },
+      { roundIndex: 1, groupId: "g2", itemId: "3" },
+    ]);
 
     resolveRecord({ id: "play-1" });
+    // Resolving leaves them alone; it only releases the redirect.
     await waitFor(() =>
       expect(
         JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
-      ).toEqual([
-        { roundIndex: 0, groupId: "g1", itemId: "2" },
-        { roundIndex: 1, groupId: "g2", itemId: "3" },
-      ]),
+      ).toHaveLength(2),
     );
   });
 
-  it("does not persist picks for the result page when recording the play fails", async () => {
+  // A failed record costs the pack a stat. Since #222 it must not also cost the
+  // player their result screen — the picks are local evidence, independent of
+  // whether the server accepted the play.
+  it("still persists picks for the result page when recording the play fails", async () => {
     vi.mocked(playsClient.record).mockRejectedValue(new Error("network error"));
     const user = userEvent.setup();
     renderScreen(SAVE_ONE_PACK);
@@ -501,6 +518,11 @@ describe("PlayScreen", () => {
 
     await screen.findByRole("status");
     await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
-    expect(sessionStorage.getItem("velanto:last-play:pack-a")).toBeNull();
+    expect(
+      JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
+    ).toEqual([
+      { roundIndex: 0, groupId: "g1", itemId: "2" },
+      { roundIndex: 1, groupId: "g2", itemId: "3" },
+    ]);
   });
 });

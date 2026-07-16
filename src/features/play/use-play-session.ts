@@ -169,26 +169,28 @@ export function usePlaySession(pack: Pack): PlaySession {
     setSelectedId(null);
   }
 
-  // Fires once when the last round is confirmed: records the play, then stashes
-  // the picks for the result page — only once we know the server actually
-  // counted them, so "your pick" never shows a percentage that didn't include
-  // your own vote (e.g. after a failed request). Signed-out plays are NOT
-  // recorded (no stats for anon); we still stash the local picks so the result
-  // screen can show "your pick" against the aggregate. Wait for auth to resolve
-  // before deciding, so a still-loading session doesn't record as anon.
+  // Fires once when the last round is confirmed. Anonymous plays ARE recorded
+  // (velanto-frontend#221 / backend#176) — the endpoint takes an optional JWT
+  // and stores a null player. We still wait for auth to resolve first: sending
+  // before the token is available would record a signed-in player's run as
+  // anonymous, losing it from their history.
+  //
+  // The picks are stashed FIRST, and never conditionally on the request. They
+  // used to be written in .then() so "your pick" could never show a percentage
+  // that excluded your own vote — a cosmetic guarantee that stopped being worth
+  // its cost once #222 gated the result screen on these picks: a slow or failed
+  // request would lock out the player who just finished the pack. The redirect
+  // below still waits for recordSettled, so the aggregate normally does include
+  // your vote; if the request fails, a slightly stale percentage beats no
+  // result screen at all.
   const recordedRef = useRef(false);
   useEffect(() => {
     if (!isFinished || status === "loading" || recordedRef.current) return;
     recordedRef.current = true;
     const recordedPicks = picks.map(toRecordedPick);
-    // Anon plays skip the backend record (no stats saved) but still resolve, so
-    // the local picks get stashed and the result page is reached.
-    const recorded =
-      status === "authenticated"
-        ? playsClient.record(pack.id, { picks: recordedPicks })
-        : Promise.resolve();
-    recorded
-      .then(() => writeLastPlayPicks(pack.id, recordedPicks))
+    writeLastPlayPicks(pack.id, recordedPicks);
+    playsClient
+      .record(pack.id, { picks: recordedPicks })
       .catch(() => undefined)
       .finally(() => setRecordSettled(true));
   }, [isFinished, pack.id, picks, status]);
