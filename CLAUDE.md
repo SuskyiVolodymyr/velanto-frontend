@@ -67,7 +67,7 @@ Several closed-set wire-contract constants are hand-mirrored in both repos (deli
 | `PACK_FORMATS`                                                                       | `src/shared/types/pack.ts`                                           | `SUPPORTED_FORMATS` — `src/modules/packs/types/format.ts`                     |
 | `PACK_STATUSES`                                                                      | `src/shared/types/pack.ts`                                           | `PACK_MODERATION_STATUSES` — `src/modules/packs/types/moderation-status.ts`   |
 | `PACK_TAGS`                                                                          | `src/shared/types/pack.ts`                                           | `PACK_TAGS` — `src/modules/packs/types/tags.ts`                               |
-| `LOCALES`                                                                            | `src/i18n/config.ts` (+ `messages/*.json` basenames)                 | `PACK_LANGUAGES` — `src/modules/packs/types/language.ts`                      |
+| `LOCALES` — **subset, not a mirror** (see below)                                     | `src/i18n/config.ts` (+ `messages/*.json` basenames)                 | `PACK_LANGUAGES` — `src/modules/packs/types/language.ts`                      |
 | `FEEDBACK_TOPICS` / `FEEDBACK_VISIBILITIES` / `FEEDBACK_STATUSES` / `FEEDBACK_SORTS` | `src/shared/types/feedback.ts`                                       | same names — `src/modules/feedback/types/feedback.ts`                         |
 | `REPORT_TYPES`                                                                       | `src/shared/types/report.ts`                                         | `REPORT_TYPES` — `src/modules/reports/types/reasons.ts`                       |
 | `REPORT_STATUSES`                                                                    | `src/shared/types/report.ts`                                         | `REPORT_STATUSES` — `src/modules/reports/types/status.ts`                     |
@@ -77,6 +77,16 @@ Several closed-set wire-contract constants are hand-mirrored in both repos (deli
 | `NOTIFICATION_TYPES`                                                                 | `src/shared/types/notification.ts`                                   | `NOTIFICATION_TYPES` — `src/modules/notifications/types/notification-type.ts` |
 
 FE-only (not mirrored, no BE counterpart): `COVER_TONES`, `RTL_LOCALES`/`LOCALE_NAMES` (display concerns), `REPORT_REASON_LABELS` label _text_ (only the ids are the contract).
+
+**`LOCALES` is the one exception to "mirror".** It is a **subset** of the backend's `PACK_LANGUAGES`, not equal to it:
+
+```
+LOCALES (8: en zh hi ar bn ru ur uk)  ⊆  PACK_LANGUAGES (11: + es fr pt)
+```
+
+They're different things that were identical until [#226](https://github.com/SuskyiVolodymyr/velanto-frontend/issues/226): `LOCALES` = languages the **interface** is translated into; `PACK_LANGUAGES` = the language a user's **pack content** is in. Shipping the UI in an EU language is what makes a Ukraine-established operator "target" EU data subjects (GDPR Recital 23), so es/fr/pt were dropped from the interface — but a pack may still be _labelled_ Spanish, because user-generated metadata carries no targeting signal. See `docs/superpowers/specs/2026-07-16-legal-docs-research.md`.
+
+**The subset direction is load-bearing**: a new pack defaults to its author's interface language, so every `LOCALE` must be a legal `PACK_LANGUAGE`. The reverse need not hold. Both repos assert this from their own side. Restoring a locale means restoring its `messages/*.json` from git history _and_ re-adding it here — it's a ~10-minute job, deliberately.
 
 ## Workflow (established discipline)
 

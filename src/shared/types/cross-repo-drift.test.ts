@@ -110,18 +110,28 @@ describe("cross-repo mirrored constants (velanto-backend contract)", () => {
     ]);
   });
 
-  // LOCALES — MIRRORED in velanto-backend src/modules/packs/types/language.ts
-  // (PACK_LANGUAGES, which also absorbed FEEDBACK_LOCALES).
+  // LOCALES — the INTERFACE languages. Related to velanto-backend's
+  // PACK_LANGUAGES (src/modules/packs/types/language.ts) but no longer equal to
+  // it: LOCALES must be a SUBSET of PACK_LANGUAGES, not a mirror.
+  //
+  // The two were identical until es/fr/pt were dropped from the interface (#226)
+  // — shipping the UI in EU languages is the evidence that a Ukraine-established
+  // operator targets EU data subjects (GDPR Recital 23), which triggers GDPR and
+  // the DSA and their two representative requirements. A pack's *content*
+  // language is user-generated metadata and carries no such signal, so
+  // PACK_LANGUAGES deliberately keeps all 11: the UI is English, but a user may
+  // still label their pack Spanish.
+  //
+  // The subset direction is what actually matters at runtime: a new pack
+  // defaults to the author's interface language, so every LOCALE must be a legal
+  // PACK_LANGUAGE. The reverse need not hold.
   it("LOCALES", () => {
     expect([...LOCALES]).toEqual([
       "en",
       "zh",
       "hi",
-      "es",
-      "fr",
       "ar",
       "bn",
-      "pt",
       "ru",
       "ur",
       "uk",
@@ -249,6 +259,30 @@ describe("locale <-> message-catalog consistency (in-repo invariant)", () => {
 
   it("LOCALES has no duplicate codes", () => {
     expect(new Set(LOCALES).size).toBe(LOCALES.length);
+  });
+
+  // The subset invariant, asserted from this side. LOCALES ⊆ PACK_LANGUAGES:
+  // a pack defaults to its author's interface language, so an interface locale
+  // the backend would reject as a pack language breaks pack creation. The
+  // backend's own drift spec holds the PACK_LANGUAGES snapshot; this list is
+  // the frontend's copy of it, and BOTH must be updated together.
+  it("every LOCALE is a legal backend PACK_LANGUAGE", () => {
+    const backendPackLanguages = [
+      "en",
+      "zh",
+      "hi",
+      "es",
+      "fr",
+      "ar",
+      "bn",
+      "pt",
+      "ru",
+      "ur",
+      "uk",
+    ];
+    for (const locale of LOCALES) {
+      expect(backendPackLanguages).toContain(locale);
+    }
   });
 
   it("DEFAULT_LOCALE is itself a member of LOCALES", () => {

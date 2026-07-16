@@ -5,6 +5,7 @@ import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { LanguageSelector } from "./LanguageSelector";
 import { setUserLocale } from "@/src/i18n/locale";
+import { LOCALES } from "@/src/i18n/config";
 
 vi.mock("@/src/i18n/locale", () => ({ setUserLocale: vi.fn() }));
 
@@ -27,7 +28,7 @@ describe("LanguageSelector", () => {
       screen.getByRole("option", { name: "Українська" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "العربية" })).toBeInTheDocument();
-    expect(screen.getAllByRole("option")).toHaveLength(11);
+    expect(screen.getAllByRole("option")).toHaveLength(LOCALES.length);
   });
 
   it("calls setUserLocale with the chosen locale on change", async () => {
@@ -35,8 +36,16 @@ describe("LanguageSelector", () => {
     renderSelector("en");
     await user.selectOptions(
       screen.getByRole("combobox", { name: "Interface language" }),
-      "es",
+      "uk",
     );
-    expect(setUserLocale).toHaveBeenCalledWith("es");
+    expect(setUserLocale).toHaveBeenCalledWith("uk");
+  });
+
+  // Dropped from the interface in #226 — the picker must not offer them.
+  it("does not offer the dropped EU locales", () => {
+    renderSelector("en");
+    for (const name of ["Español", "Français", "Português"]) {
+      expect(screen.queryByRole("option", { name })).not.toBeInTheDocument();
+    }
   });
 });
