@@ -22,7 +22,7 @@ const createMutate = vi.fn();
 const revokeMutate = vi.fn();
 
 function authAs(
-  status: "authenticated" | "unauthenticated",
+  status: "authenticated" | "unauthenticated" | "loading",
   role: string = "user",
 ) {
   vi.mocked(useAuth).mockReturnValue({
@@ -78,11 +78,15 @@ describe("ApiTokensSection", () => {
     );
   });
 
-  it("does not create a token when a signed-out visitor clicks create", async () => {
+  // Fills the form completely first, so `authed` is the ONLY thing left that can
+  // stop the submit. Clicking an empty form would pass even without the guard.
+  it("does not create a token when a signed-out visitor completes the form and clicks create", async () => {
     authAs("unauthenticated");
     const user = userEvent.setup();
     render(<ApiTokensSection />);
 
+    await user.type(screen.getByPlaceholderText(/claude desktop/i), "My token");
+    await user.click(screen.getByLabelText(/create and edit packs/i));
     await user.click(screen.getByRole("button", { name: /create token/i }));
 
     expect(createMutate).not.toHaveBeenCalled();
@@ -100,16 +104,18 @@ describe("ApiTokensSection", () => {
     expect(screen.queryByText(/your tokens/i)).not.toBeInTheDocument();
   });
 
-  it("does not fetch tokens when signed out", () => {
-    authAs("unauthenticated");
+  // While the session is still resolving we don't yet know the viewer is signed
+  // out, so claiming "log in to create API tokens" would be a lie to someone who
+  // IS logged in. Blocked means unauthenticated, never merely not-yet-known.
+  it("does not claim the viewer is signed out while the session is still loading", () => {
+    authAs("loading");
     render(<ApiTokensSection />);
-    expect(vi.mocked(useApiTokens)).toHaveBeenCalledWith({ enabled: false });
-  });
 
-  it("does not render the token list when signed out", () => {
-    authAs("unauthenticated");
-    render(<ApiTokensSection />);
-    expect(screen.queryByText(/your tokens/i)).not.toBeInTheDocument();
+    const createBtn = screen.getByRole("button", { name: /create token/i });
+    expect(createBtn).not.toHaveAttribute("aria-disabled");
+    expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
+    // Nothing to submit yet either way — but plainly disabled, not "blocked".
+    expect(createBtn).toBeDisabled();
   });
 
   it("hides the moderation scope from non-staff and shows it to staff", () => {

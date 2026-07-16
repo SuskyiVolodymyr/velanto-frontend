@@ -51,7 +51,10 @@ export function ApiTokensSection() {
   const format = useFormatter();
   const { status, user } = useAuth();
   const authed = status === "authenticated";
-  const blocked = !authed;
+  // Only a KNOWN signed-out viewer is "blocked". While the session is still
+  // resolving, `authed` is false but we don't yet know why — claiming "log in to
+  // create API tokens" then would be a lie to someone who is in fact logged in.
+  const blocked = status === "unauthenticated";
 
   const tokensQuery = useApiTokens({ enabled: authed });
   const createMutation = useCreateToken();
