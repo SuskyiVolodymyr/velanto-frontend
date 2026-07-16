@@ -354,6 +354,21 @@ describe("AuthForm", () => {
     expect(replace).not.toHaveBeenCalled();
   });
 
+  // The 16+ minimum is declared here and nowhere else: `acceptedRules` is the
+  // only gate registration already enforces, so folding the age statement into
+  // it is what turns the Terms' age claim into something the product actually
+  // asks. A stated age the product never asks for is worse than no claim
+  // (EDPB Guidelines 05/2020 §130) — see docs/superpowers/specs/2026-07-16-*.
+  it("states the 16+ minimum age on the rules checkbox", async () => {
+    const user = userEvent.setup();
+    renderAuthForm();
+    await user.click(screen.getByRole("tab", { name: "Sign up" }));
+
+    expect(
+      screen.getByRole("checkbox", { name: /I am 16 or older/i }),
+    ).toBeInTheDocument();
+  });
+
   it("rejects registration when the rules-acceptance box is unchecked", async () => {
     const user = userEvent.setup();
     renderAuthForm();
@@ -366,7 +381,9 @@ describe("AuthForm", () => {
     await user.click(screen.getByRole("button", { name: "Continue" }));
 
     expect(
-      screen.getByText("You must accept the Community Rules to register."),
+      screen.getByText(
+        "You must be 16 or older and accept the Community Rules to register.",
+      ),
     ).toBeInTheDocument();
     expect(authClient.requestEmailCode).not.toHaveBeenCalled();
   });
