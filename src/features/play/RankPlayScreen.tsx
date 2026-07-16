@@ -179,7 +179,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
                       : t("rankSlotEmpty", { rank: slotIndex + 1 })
                   }
                   className={cn(
-                    "flex h-[100px] flex-col justify-between rounded-2xl border p-3 text-left transition-colors",
+                    "flex h-[100px] flex-col justify-between rounded-2xl border p-3 text-start transition-colors",
                     filled
                       ? "border-border bg-surface"
                       : "border-dashed border-border-strong bg-white/[0.02] hover:border-acc/40",
@@ -208,7 +208,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
           <Text as="h1" variant="title" className="mb-2 text-3xl">
             {t("ranked", { name: groupName })}
           </Text>
-          <div className="mb-8 flex flex-col gap-2 text-left">
+          <div className="mb-8 flex flex-col gap-2 text-start">
             {Array.from({ length: slotCount }, (_, slotIndex) => (
               <div
                 key={slotIndex}

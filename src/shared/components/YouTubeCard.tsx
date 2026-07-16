@@ -172,6 +172,15 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
           className="absolute inset-0 flex items-center justify-center"
         >
           <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-black/50">
+            {/*
+              The play triangle: a zero-size box whose left border IS the shape.
+              `border-l` and `ml-0.5` are physical on purpose and must stay that
+              way — the border draws the glyph rather than framing it, so a
+              logical `border-s` would flip the triangle to point backwards
+              under RTL, and `ml-0.5` is optical centering for a shape whose
+              visual mass sits left of its box. Play controls don't mirror
+              (YouTube's own player doesn't), so there is nothing to flip here.
+            */}
             <span className="ml-0.5 h-0 w-0 border-y-8 border-l-[12px] border-y-transparent border-l-white" />
           </span>
         </button>

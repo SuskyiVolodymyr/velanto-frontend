@@ -46,7 +46,7 @@ export function CandidateCard({
           type="button"
           onClick={onSelect}
           aria-label={t("pick", { name: item.title })}
-          className="flex w-full items-center gap-2 p-4 text-left"
+          className="flex w-full items-center gap-2 p-4 text-start"
         >
           <span
             aria-hidden
@@ -72,7 +72,7 @@ export function CandidateCard({
         style={appearDelay}
         aria-label={t("pick", { name: item.title })}
         className={cn(
-          "play-card-appear w-full overflow-hidden rounded-2xl border text-left transition-colors",
+          "play-card-appear w-full overflow-hidden rounded-2xl border text-start transition-colors",
           selected
             ? "border-acc bg-acc/10"
             : "border-border bg-surface hover:border-border-strong",
@@ -102,7 +102,7 @@ export function CandidateCard({
       onClick={onSelect}
       style={appearDelay}
       className={cn(
-        "play-card-appear w-full rounded-2xl border p-4 text-left transition-colors",
+        "play-card-appear w-full rounded-2xl border p-4 text-start transition-colors",
         selected
           ? "border-acc bg-acc/10"
           : "border-border bg-surface hover:border-border-strong",

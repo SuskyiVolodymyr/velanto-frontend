@@ -58,7 +58,10 @@ export function PasswordField({
           id={fieldId}
           type={visible ? "text" : "password"}
           aria-invalid={error ? true : undefined}
-          className="pr-11"
+          // Reserves room for the show/hide toggle. Logical, and it has to stay
+          // in step with the toggle's own `end-1` below — if one flips under
+          // RTL and the other doesn't, the button sits on top of the text.
+          className="pe-11"
           {...rest}
           {...register(name)}
           aria-describedby={describedBy}
@@ -68,7 +71,7 @@ export function PasswordField({
           onClick={() => setVisible((v) => !v)}
           aria-label={visible ? hideLabel : showLabel}
           aria-pressed={visible}
-          className="absolute inset-y-1 right-1 flex items-center rounded-[8px] px-2.5 text-foreground-tertiary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:text-foreground"
+          className="absolute inset-y-1 end-1 flex items-center rounded-[8px] px-2.5 text-foreground-tertiary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:text-foreground"
           tabIndex={rest.disabled ? -1 : 0}
           disabled={rest.disabled}
         >

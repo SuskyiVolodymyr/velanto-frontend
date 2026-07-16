@@ -40,7 +40,7 @@ function SideCard({ side, selected, onSelect }: SideCardProps) {
       }}
       aria-label={t("pick", { name: side.name })}
       className={cn(
-        "flex flex-1 cursor-pointer flex-col gap-3 rounded-2xl border p-4 text-left transition-colors",
+        "flex flex-1 cursor-pointer flex-col gap-3 rounded-2xl border p-4 text-start transition-colors",
         selected
           ? "border-acc bg-acc/10"
           : "border-border bg-surface hover:border-border-strong",
