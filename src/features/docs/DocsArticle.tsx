@@ -67,7 +67,7 @@ export function DocsArticle({ activeTopic }: { activeTopic: TopicId }) {
           <Text variant="secondary" className="mb-4 leading-7">
             {t("creatingIntro")}
           </Text>
-          <ul className="mb-4 list-disc pl-5">
+          <ul className="mb-4 list-disc ps-5">
             <li className="mb-2">
               <Text as="span" className="font-semibold">
                 {t("creatingPoolName")}

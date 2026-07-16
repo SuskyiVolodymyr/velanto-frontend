@@ -380,7 +380,7 @@ export function CommentSection({
                 />
 
                 {(replies.length > 0 || replyingToId === root.id) && (
-                  <div className="mt-4 flex flex-col gap-4 border-l border-border pl-3.5">
+                  <div className="mt-4 flex flex-col gap-4 border-s border-border ps-3.5">
                     {replies.map((reply) => (
                       <CommentView
                         key={reply.id}

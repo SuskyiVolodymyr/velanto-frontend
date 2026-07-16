@@ -118,7 +118,7 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
           <Text variant="secondary" className="mb-6">
             {t("h2hSummary", { count: history.length })}
           </Text>
-          <div className="mb-8 flex flex-col gap-2 text-left">
+          <div className="mb-8 flex flex-col gap-2 text-start">
             {history.map((entry, index) => (
               <div
                 key={index}

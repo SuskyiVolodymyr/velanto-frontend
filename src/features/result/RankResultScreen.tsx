@@ -89,7 +89,7 @@ export function RankResultScreen({
                           })}
                         </Text>
                       </div>
-                      <div className="mb-2 flex items-end gap-1 pl-10">
+                      <div className="mb-2 flex items-end gap-1 ps-10">
                         {item.positionCounts.map((count, position) => {
                           const isOwn = ownPick?.position === position;
                           return (
@@ -115,7 +115,7 @@ export function RankResultScreen({
                         })}
                       </div>
                       {ownPick && ownPick.position !== undefined && (
-                        <Text className="pl-10 text-xs text-acc">
+                        <Text className="ps-10 text-xs text-acc">
                           {t(shared ? "placed" : "youPlaced", {
                             position: ownPick.position + 1,
                             count: Math.max(

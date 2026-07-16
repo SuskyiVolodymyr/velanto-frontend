@@ -81,7 +81,7 @@ export function DocsSidebar({
           <div key={section.labelKey}>
             <Text
               variant="tertiary"
-              className="mb-2 pl-3 text-[11px] font-semibold tracking-[0.12em]"
+              className="mb-2 ps-3 text-[11px] font-semibold tracking-[0.12em]"
             >
               {t(section.labelKey)}
             </Text>
@@ -95,7 +95,7 @@ export function DocsSidebar({
                     onClick={() => onSelect(topic.id)}
                     aria-pressed={active}
                     className={cn(
-                      "rounded-lg px-3 py-2 text-left text-sm font-medium transition-colors",
+                      "rounded-lg px-3 py-2 text-start text-sm font-medium transition-colors",
                       active
                         ? "bg-white/[0.12] text-foreground"
                         : "text-foreground-secondary",
