@@ -15,6 +15,7 @@ const RANK_PACK: Pack = {
   description: "Place each pick blind into a growing ranked list.",
   coverTone: "#2b2a3a",
   format: "rank_blind",
+  language: "en",
   tags: [],
   groups: [
     {

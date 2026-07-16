@@ -21,6 +21,7 @@ function baseValues(): CreatePackValues {
     title: "",
     description: "",
     coverTone: "#2b2a3a",
+    language: "en",
     format: "save_one",
     tags: [],
     groups: [

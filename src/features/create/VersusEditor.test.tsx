@@ -22,6 +22,7 @@ function baseValues(format: PackFormat, perSide: number): CreatePackValues {
     title: "",
     description: "",
     coverTone: "#2b2a3a",
+    language: "en",
     format,
     tags: [],
     groups: [

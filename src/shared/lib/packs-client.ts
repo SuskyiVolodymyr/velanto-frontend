@@ -6,6 +6,7 @@ import type {
   Group,
   Round,
 } from "@/src/shared/types/pack";
+import type { PackLanguage } from "@/src/shared/types/pack-language";
 
 export interface CreatePackInput {
   title: string;
@@ -15,6 +16,9 @@ export interface CreatePackInput {
   // Optional — omit or send nothing to keep the gradient `coverTone`.
   coverImageKey?: string;
   format: PackFormat;
+  /** The pack CONTENT's language. The API defaults it to English if omitted,
+   * and preserves the existing value on update — but the form always sends it. */
+  language: PackLanguage;
   tags: PackTag[];
   groups: Group[];
   rounds: Round[];

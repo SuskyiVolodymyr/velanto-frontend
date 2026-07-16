@@ -45,6 +45,7 @@ const BASE: Omit<Pack, "format" | "groups" | "rounds"> = {
   title: "T",
   description: "D",
   coverTone: "#2b2a3a",
+  language: "en",
   tags: [],
   authorId: "u1",
   createdAt: "2026-01-01T00:00:00.000Z",

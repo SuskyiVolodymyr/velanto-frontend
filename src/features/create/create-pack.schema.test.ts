@@ -21,6 +21,7 @@ function makeValues(
     title: "My pack",
     description: "A short description.",
     coverTone: "#2b2a3a",
+    language: "en",
     format: "save_one",
     tags: [],
     groups: [

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { CreatePackForm } from "./CreatePackForm";
@@ -8,6 +8,13 @@ import { authClient } from "@/src/shared/lib/auth-client";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import { ApiError } from "@/src/shared/lib/api-client";
 import type { Pack } from "@/src/shared/types/pack";
+import {
+  PACK_LANGUAGES,
+  PACK_LANGUAGE_NAMES,
+} from "@/src/shared/types/pack-language";
+import { NextIntlClientProvider } from "next-intl";
+import messages from "@/messages/en.json";
+import ukMessages from "@/messages/uk.json";
 
 // This is a heavy component suite: the format-switch tests drive many sequential
 // userEvent interactions each, and every keystroke re-renders the whole RHF
@@ -47,6 +54,10 @@ const EDIT_VALUES = {
   description: "Original description",
   coverTone: "#2b2a3a",
   format: "save_one" as const,
+  // Not "en": edit mode must seed the pack's OWN language, never re-derive it
+  // from the editor's interface locale — otherwise viewing a Spanish pack in an
+  // English UI would silently relabel it on save.
+  language: "es" as const,
   tags: ["Anime" as const],
   groups: [
     {
@@ -86,6 +97,7 @@ function makePack(overrides: Partial<Pack> = {}): Pack {
     description: "Pick your favorite each round.",
     coverTone: "#2b2a3a",
     format: "save_one",
+    language: "en",
     tags: [],
     groups: [],
     rounds: [],
@@ -232,6 +244,78 @@ describe("CreatePackForm", () => {
     expect(
       screen.getByRole("button", { name: "2 tags selected" }),
     ).toBeInTheDocument();
+  });
+
+  // #239: nothing could set Pack.language, so every pack was 'en' regardless of
+  // its content — and the backend's language filter had nothing to filter on.
+  it("offers every pack language, defaulting to the interface language", async () => {
+    renderForm();
+
+    const select = await screen.findByLabelText("Pack language");
+    // Scoped to this select: the form has other selects (round pool, slot mode)
+    // whose options a page-wide query would sweep up.
+    const options = within(select).getAllByRole("option");
+
+    // All 11 — es/fr/pt included, which is the point of PACK_LANGUAGES being a
+    // superset of LOCALES: an English UI must still be able to label a pack
+    // Spanish. Those three have no interface catalog, so this picker is the
+    // ONLY place they can be reached.
+    expect(options).toHaveLength(PACK_LANGUAGES.length);
+    expect(options.map((o) => o.textContent)).toEqual(
+      PACK_LANGUAGES.map((code) => PACK_LANGUAGE_NAMES[code]),
+    );
+    // The harness renders under locale="en".
+    expect(select).toHaveValue("en");
+  });
+
+  it("defaults the language to the author's interface language, not English", async () => {
+    // Rendered outside the shared helper on purpose: it pins locale="en", and
+    // "defaults to en under an en UI" would pass even if the default were
+    // hardcoded. A non-English UI is the only render that proves the wiring.
+    render(
+      <NextIntlClientProvider locale="uk" messages={ukMessages}>
+        <AuthProvider>
+          <CreatePackForm />
+        </AuthProvider>
+      </NextIntlClientProvider>,
+    );
+
+    expect(await screen.findByLabelText("Мова паку")).toHaveValue("uk");
+  });
+
+  // The failure this guards against is silent and destructive: open a Spanish
+  // pack in an English UI, change the title, save — and the pack is now
+  // labelled English. EDIT_VALUES is deliberately 'es' while the harness
+  // renders under locale="en", so a default-from-locale bug fails here.
+  it("keeps the pack's own language on edit rather than the editor's locale", async () => {
+    const user = userEvent.setup();
+    vi.mocked(packsClient.update).mockResolvedValue(makePack({ id: "pack-1" }));
+    renderEditForm();
+
+    expect(await screen.findByLabelText("Pack language")).toHaveValue("es");
+
+    await user.click(screen.getByRole("button", { name: "Save changes" }));
+
+    await waitFor(() => expect(packsClient.update).toHaveBeenCalled());
+    expect(packsClient.update).toHaveBeenCalledWith(
+      "pack-1",
+      expect.objectContaining({ language: "es" }),
+    );
+  });
+
+  it("sends the chosen language when publishing", async () => {
+    const user = userEvent.setup();
+    vi.mocked(packsClient.create).mockResolvedValue(makePack({ id: "pack-1" }));
+    renderForm();
+    await fillMinimalValidPack(user);
+
+    await user.selectOptions(screen.getByLabelText("Pack language"), "es");
+    await user.click(screen.getByRole("button", { name: "Publish" }));
+
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-1"));
+    expect(packsClient.create).toHaveBeenCalledWith(
+      expect.objectContaining({ language: "es" }),
+    );
   });
 
   it("submits a valid pack with groups and rounds, and redirects to its detail page", async () => {

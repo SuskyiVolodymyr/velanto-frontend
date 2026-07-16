@@ -1044,7 +1044,9 @@
     "coverCropZoom": "تكبير",
     "coverCropCancel": "إلغاء",
     "coverCropSave": "حفظ",
-    "coverCropError": "تعذّر قص الصورة. حاول مرة أخرى."
+    "coverCropError": "تعذّر قص الصورة. حاول مرة أخرى.",
+    "languageLabel": "لغة الحزمة",
+    "languageHint": "ما لغة محتوى هذه الحزمة؟"
   },
   "profile": {
     "loginRequiredView": "يجب تسجيل الدخول لعرض ملفك الشخصي.",

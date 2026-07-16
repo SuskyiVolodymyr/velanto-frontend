@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { useForm, useWatch, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/src/shared/lib/auth-context";
@@ -10,6 +10,11 @@ import { packsClient } from "@/src/shared/lib/packs-client";
 import type { CreatePackInput } from "@/src/shared/lib/packs-client";
 import { messageFromError } from "@/src/shared/lib/messageFromError";
 import { COVER_TONES } from "@/src/shared/types/pack";
+import {
+  DEFAULT_PACK_LANGUAGE,
+  isPackLanguage,
+  type PackLanguage,
+} from "@/src/shared/types/pack-language";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { PackMetaFields } from "@/src/features/create/PackMetaFields";
@@ -54,6 +59,15 @@ export function CreatePackForm({
   const pathname = usePathname();
   const { status } = useAuth();
   const isEdit = mode === "edit";
+  // The author's interface language, used as the initial guess for the pack's
+  // CONTENT language. Narrowed rather than cast: LOCALES ⊆ PACK_LANGUAGES holds
+  // (asserted in cross-repo-drift.test.ts), so this is always true — the guard
+  // is here so a future locale added without its PACK_LANGUAGES counterpart
+  // degrades to English instead of sending a value the API rejects.
+  const locale = useLocale();
+  const defaultLanguage: PackLanguage = isPackLanguage(locale)
+    ? locale
+    : DEFAULT_PACK_LANGUAGE;
   // True while a cover image is uploading; blocks submit so a pending cover
   // isn't silently dropped (see CoverImageField).
   const [coverUploading, setCoverUploading] = useState(false);
@@ -68,6 +82,11 @@ export function CreatePackForm({
       title: "",
       description: "",
       coverTone: COVER_TONES[0],
+      // Default the CONTENT language to the author's interface language — the
+      // best available guess, and the behaviour create-pack.dto.ts already
+      // documented but nothing implemented (#239). LOCALES ⊆ PACK_LANGUAGES is
+      // what makes this always a legal value.
+      language: defaultLanguage,
       tags: [],
       format: "save_one",
       groups: [group],
@@ -139,6 +158,7 @@ export function CreatePackForm({
       coverTone: values.coverTone,
       coverImageKey: values.coverImageKey,
       format: values.format,
+      language: values.language,
       tags: values.tags,
       groups: values.groups,
       rounds: values.rounds,

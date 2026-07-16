@@ -31,6 +31,7 @@ const PACK: Pack = {
   title: "Original Title",
   description: "Original description",
   coverTone: "#2b2a3a",
+  language: "en",
   format: "save_one",
   tags: ["Anime"],
   groups: [

@@ -83,6 +83,7 @@ const SAVE_ONE_PACK: Pack = {
   title: "Best Anime Openings",
   description: "Pick your favorite each round.",
   coverTone: "#2b2a3a",
+  language: "en",
   format: "save_one",
   tags: ["Anime"],
   groups: [
@@ -173,6 +174,7 @@ describe("PlayScreen", () => {
     title: "Boys vs Girls",
     description: "Pick a side each round.",
     coverTone: "#2b2a3a",
+    language: "en",
     format: "nxn",
     tags: ["Anime"],
     groups: [

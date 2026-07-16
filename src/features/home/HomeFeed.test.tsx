@@ -20,6 +20,7 @@ const PACK_A: Pack = {
   description: "Pick your favorite each round.",
   coverTone: "#2b2a3a",
   format: "save_one",
+  language: "en",
   tags: ["Anime", "Music"],
   groups: [{ id: "g1", name: "2016", items: [] }],
   rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "manual" }] }],

@@ -1044,7 +1044,9 @@
     "coverCropZoom": "Масштаб",
     "coverCropCancel": "Отмена",
     "coverCropSave": "Сохранить",
-    "coverCropError": "Не удалось обрезать изображение. Попробуйте ещё раз."
+    "coverCropError": "Не удалось обрезать изображение. Попробуйте ещё раз.",
+    "languageLabel": "Язык пака",
+    "languageHint": "На каком языке содержимое этого пака?"
   },
   "profile": {
     "loginRequiredView": "Чтобы посмотреть свой профиль, нужно войти в аккаунт.",

@@ -20,6 +20,7 @@ function pack(
     title,
     description: "d",
     coverTone: "#111",
+    language: "en",
     format: "save_one",
     tags: [],
     groups: [],
