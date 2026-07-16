@@ -28,4 +28,15 @@ describe("SiteFooter", () => {
     expect(links["/privacy"]).toBe("Privacy");
     expect(links["/terms"]).toBe("Terms");
   });
+
+  // The support address is the only contact route on the platform, and both
+  // legal documents point at it — so it needs to be reachable from any page,
+  // not only from inside those documents.
+  it("offers the support address as a mailto link", () => {
+    render(<SiteFooter />);
+    const contact = screen.getByRole("link", {
+      name: "support@playvelanto.com",
+    });
+    expect(contact).toHaveAttribute("href", "mailto:support@playvelanto.com");
+  });
 });

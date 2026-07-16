@@ -558,7 +558,7 @@
     "sections": [
       {
         "title": "Who we are",
-        "body": "Velanto is a free platform for making and playing elimination quiz packs. It is run by one independent developer based in Ukraine, in their own time. It is not a company. When these Terms say “we”, that is who they mean. You can reach us at admin@playvelanto.com — one person reads that inbox."
+        "body": "Velanto is a free platform for making and playing elimination quiz packs. It is run by one independent developer based in Ukraine, in their own time. It is not a company. When these Terms say “we”, that is who they mean. You can reach us at support@playvelanto.com — one person reads that inbox."
       },
       {
         "title": "Who may use Velanto",
@@ -587,7 +587,7 @@
       },
       {
         "title": "When we remove things or close accounts",
-        "body": "We remove content, restrict features, or suspend or close an account when there is a serious reason to: a breach of these Terms or the Community Rules, or a real risk to other users or to the service. We try to match what we do to how serious the problem is, and we act immediately only where waiting would cause harm. We do not close accounts arbitrarily, and if we end your access for a reason that is not a breach — if we stop running Velanto, for instance — we give you reasonable notice first. If you think we got it wrong, write to admin@playvelanto.com and a person will look again."
+        "body": "We remove content, restrict features, or suspend or close an account when there is a serious reason to: a breach of these Terms or the Community Rules, or a real risk to other users or to the service. We try to match what we do to how serious the problem is, and we act immediately only where waiting would cause harm. We do not close accounts arbitrarily, and if we end your access for a reason that is not a breach — if we stop running Velanto, for instance — we give you reasonable notice first. If you think we got it wrong, write to support@playvelanto.com and a person will look again."
       },
       {
         "title": "API tokens and AI agents",
@@ -628,7 +628,7 @@
       },
       {
         "title": "Contact",
-        "body": "Questions about these Terms? Write to admin@playvelanto.com."
+        "body": "Questions about these Terms? Write to support@playvelanto.com."
       }
     ]
   },
@@ -653,7 +653,7 @@
       },
       {
         "title": "Who is responsible for your data",
-        "body": "Velanto is run by one independent developer based in Ukraine. That person decides what is collected and why, which makes them the data controller. There is no company, no data protection officer, and no team — just an inbox: admin@playvelanto.com. The rights described in this policy are given to everyone who uses Velanto, wherever you live. We do not check your country first and we do not give some users fewer rights than others."
+        "body": "Velanto is run by one independent developer based in Ukraine. That person decides what is collected and why, which makes them the data controller. There is no company, no data protection officer, and no team — just an inbox: support@playvelanto.com. The rights described in this policy are given to everyone who uses Velanto, wherever you live. We do not check your country first and we do not give some users fewer rights than others."
       },
       {
         "title": "What we collect",
@@ -665,7 +665,7 @@
           "Plays — which packs you played and what you picked. Only when you are logged in.",
           "Follows, notifications, and any API tokens you create — for a token we keep its name, the scopes you gave it, when it expires and when it was last used, never the token itself.",
           "The version of the Community Rules you accepted when you registered, and any moderation flags on your account — whether we have marked you trusted, and whether you are banned and why.",
-          "Technical — a login session, a crash report if something breaks, and a line in our server log each time we email you a code, which contains your email address."
+          "Technical — a login session, and a crash report if something breaks."
         ]
       },
       {
@@ -745,10 +745,9 @@
           "Your feedback posts — the same: kept, detached from you.",
           "Your votes — kept as numbers with no name attached, so that pack scores stay correct.",
           "Your play records — kept, detached from you.",
-          "The staff audit log — kept indefinitely, and it survives your account being deleted: recording what staff did is the entire point of it, so being the subject of a moderation action does not let you erase the record of it. If you were staff, deleting your account takes your name off the entries you made, but not the entries themselves.",
-          "Verification and password-reset codes — these should vanish with your account, and a bug currently means a code still in flight can leave your email address behind. We are fixing it, and we would rather tell you than let you assume otherwise.",
-          "Expired login sessions — they stop working on their own, but we do not currently delete the rows. We are fixing that too.",
-          "The server log line recording that we emailed you a code — it contains your address, and we do not currently prune it. We are fixing that.",
+          "The action log — kept indefinitely, and it survives your account being deleted. It records staff decisions like bans and pack approvals, and also your own edits and deletions. Keeping staff entries is the entire point of it: being the subject of a moderation action does not let you erase the record of it. If you were staff, deleting your account takes your name off the entries you made, but not the entries themselves.",
+          "Verification and password-reset codes — deleted the moment they are used, an hour after they expire if you never use them, and with your account if one is still in flight when you leave.",
+          "Login sessions — they stop working when they expire, and we delete the expired ones within the hour.",
           "In one line: deleting your account removes you from Velanto and unlinks your name from what you left behind. It does not erase everything you ever wrote."
         ]
       },
@@ -759,42 +758,43 @@
           "Your account stops working straight away.",
           "For 30 days you can undo it — just log in again and it comes back. This is deliberate: it protects you from a bad moment, or from someone else getting into your account and deleting it.",
           "After 30 days a nightly job destroys it for good, following the list above.",
-          "Two honest caveats: deleting your account does not clear the login cookie from your browser the way logging out does (it stops working, but it is still sitting there), and an access token already issued keeps working for up to fifteen minutes. Both are on our list to fix."
+          "One thing worth knowing: for up to fifteen minutes after you delete your account, a sign-in token already issued to your browser still works. That is how the technology works rather than an oversight — the token is a signed note with an expiry, not a key we can reach out and break. Everything else stops immediately."
         ]
       },
       {
         "title": "Moderation, reports, and the audit log",
-        "body": "When staff act — approving a pack, banning someone, resolving a report — we record who did it and what they did, and we keep it (see how long, above). Two parts of this deserve to be said out loud rather than buried:",
+        "body": "We record actions on the site — staff ones like approving a pack, banning someone or resolving a report, and your own edits and deletions too — noting who did it and what they did, and we keep it (see how long, above). Three parts of this deserve to be said out loud rather than buried:",
         "bullets": [
           "Reports are not anonymous to moderators. If you report a pack or a person, the moderator handling it sees your username. The person you reported does not.",
-          "The audit log currently stores the entire content of a pack every time it is edited, forever, and staff can search that text. That is more than the log needs in order to do its job, and we are narrowing it."
+          "The action log currently stores the entire content of a pack every time it is edited, forever, and staff can search that text. That is far more than the log needs in order to do its job, and we are narrowing it.",
+          "Your own edits sit in the same log as staff decisions. We think those are two different things with two different reasons for being kept, and we are separating them."
         ]
       },
       {
         "title": "Your rights",
         "body": "You have all of these, wherever you live, and you do not have to email us to use the first four:",
         "bullets": [
-          "See your data — settings has an export button. It produces a file immediately: your account, profile, comments, votes, plays, feedback, follows, the reports you filed, and your notifications and their settings. No request, no waiting, no identity check.",
+          "See your data — settings has an export button. It produces a file immediately: your account and profile, your packs in full (every pool, item and round, so you can rebuild them elsewhere), your comments, votes, plays, feedback, follows, the reports you filed, your notifications and their settings, your API tokens, your sign-in sessions, and any moderation flags on your account. No request, no waiting, no identity check.",
           "Correct it — edit your profile and your content directly.",
           "Delete it — settings has a delete-account button, described above.",
           "Take it elsewhere — that is the same export, as a JSON file.",
-          "Ask us to pause — if you think our data about you is wrong, or you have objected and we are still thinking about it, you can ask us to stop using it in the meantime while leaving it in place. Write to admin@playvelanto.com.",
+          "Ask us to pause — if you think our data about you is wrong, or you have objected and we are still thinking about it, you can ask us to stop using it in the meantime while leaving it in place. Write to support@playvelanto.com.",
           "Complain — see below.",
-          "Two limits worth naming. Your packs appear in the export only as a list — title, format and date — not the questions inside them, so you cannot rebuild a pack from it. And it leaves out your API tokens, your login sessions, and any moderation flags on your account. Both are on our list to fix; until then, ask us and we will send you what is missing.",
-          "If you want something the buttons do not do, write to admin@playvelanto.com. We answer within 30 days."
+          "Two things the export deliberately leaves out, and always will: your password and the secret half of any API token. We cannot include them because we do not have them — both are stored only as hashes we cannot reverse. Everything else we hold about you is in the file.",
+          "If you want something the buttons do not do, write to support@playvelanto.com. We answer within 30 days."
         ]
       },
       {
         "title": "Your right to object",
-        "body": "You have the right to object, at any time, to any use of your data that rests on our legitimate interests — that means the moderation, the security measures, the audit log and the crash reporting described above. Write to admin@playvelanto.com. You do not need to give a reason and it costs nothing. If you object, we stop, unless we can demonstrate compelling legitimate grounds that override your interests, rights and freedoms. This right is separate from everything else in this policy, which is why it has its own section."
+        "body": "You have the right to object, at any time, to any use of your data that rests on our legitimate interests — that means the moderation, the security measures, the audit log and the crash reporting described above. Write to support@playvelanto.com. You do not need to give a reason and it costs nothing. If you object, we stop, unless we can demonstrate compelling legitimate grounds that override your interests, rights and freedoms. This right is separate from everything else in this policy, which is why it has its own section."
       },
       {
         "title": "Complaining about us",
-        "body": "Tell us first — admin@playvelanto.com — and we will genuinely try to put it right. You do not have to, though. You can complain directly to a data protection authority: in the EU or EEA, that is the authority where you live, where you work, or where you think the problem happened, and the list is at edpb.europa.eu. In Ukraine, it is the Ukrainian Parliament Commissioner for Human Rights."
+        "body": "Tell us first — support@playvelanto.com — and we will genuinely try to put it right. You do not have to, though. You can complain directly to a data protection authority: in the EU or EEA, that is the authority where you live, where you work, or where you think the problem happened, and the list is at edpb.europa.eu. In Ukraine, it is the Ukrainian Parliament Commissioner for Human Rights."
       },
       {
         "title": "If you are under 16",
-        "body": "You need to be 16 to have a Velanto account, and you confirm that you are when you register. We take your word for it: we do not ask for proof, we do not collect your date of birth, and we do not try to guess your age from anything. If we find out an account belongs to someone under 16, we close it and delete it. If you are a parent and you think your child has an account here, write to admin@playvelanto.com and we will remove it."
+        "body": "You need to be 16 to have a Velanto account, and you confirm that you are when you register. We take your word for it: we do not ask for proof, we do not collect your date of birth, and we do not try to guess your age from anything. If we find out an account belongs to someone under 16, we close it and delete it. If you are a parent and you think your child has an account here, write to support@playvelanto.com and we will remove it."
       },
       {
         "title": "Security",
@@ -810,7 +810,7 @@
       },
       {
         "title": "Contact",
-        "body": "Anything in this policy, including every right listed above: admin@playvelanto.com. One person reads that inbox, and they wrote this page."
+        "body": "Anything in this policy, including every right listed above: support@playvelanto.com. One person reads that inbox, and they wrote this page."
       }
     ]
   },
@@ -1205,7 +1205,8 @@
     "navLabel": "Footer",
     "privacy": "Privacy",
     "terms": "Terms",
-    "copyright": "© {year} Velanto. All rights reserved."
+    "copyright": "© {year} Velanto. All rights reserved.",
+    "contactLabel": "Questions?"
   },
   "status": {
     "packPending": "Pending review",

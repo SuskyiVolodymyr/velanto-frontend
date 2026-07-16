@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
+import { SUPPORT_EMAIL } from "@/src/shared/lib/contact";
 
 // Reuses the header's nav labels so the two never drift; only the footer-only
 // bits (tagline, copyright, legal links) come from the `footer` namespace.
@@ -36,6 +37,21 @@ export function SiteFooter() {
           </Link>
           <Text variant="tertiary" className="mt-3 text-sm">
             {tFooter("tagline")}
+          </Text>
+          {/*
+            The only contact route on the platform, and what both legal
+            documents point at — so it has to be reachable from any page, not
+            just from inside those documents. Not a nav link: it's an address,
+            and the address is the information.
+          */}
+          <Text variant="tertiary" className="mt-3 text-sm">
+            {tFooter("contactLabel")}{" "}
+            <a
+              href={`mailto:${SUPPORT_EMAIL}`}
+              className="text-foreground-secondary underline transition-colors hover:text-foreground"
+            >
+              {SUPPORT_EMAIL}
+            </a>
           </Text>
         </div>
 
