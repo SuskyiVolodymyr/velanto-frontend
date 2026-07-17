@@ -277,7 +277,7 @@
     "creatingLimitsPara": "Elimination rounds draw between 2 and 8 items. Versus formats use exactly two pools, the same two in every round: NxN shows up to 8 items per side, and 1v1 is locked to one per side.",
     "creatingItemsPara": "Items can be text, an image upload, or a YouTube link — each with a title.",
     "creatingPublishPara": "Publishing sends your pack to moderation rather than straight to the feed. It goes live once a moderator approves it, and you'll see the reason if it's rejected. Editing a pack that's already approved sends it back through moderation. Trusted and staff accounts skip the queue.",
-    "statsAnonNote": "Only plays from signed-in accounts are recorded. You can play signed out and you'll still get your result, but it won't count toward a pack's stats.",
+    "statsAnonNote": "You can play signed out, and your play still counts toward the pack's stats. It just isn't tied to your account, so it won't appear in your recently played.",
     "apiTitle": "API & tokens",
     "apiIntro": "Velanto has a REST API you can drive with a personal access token. The same token connects an AI assistant to your account over MCP, so it can draft and manage packs for you. Tokens belong to you alone — treat one like a password.",
     "apiScopesTitle": "Scopes",
