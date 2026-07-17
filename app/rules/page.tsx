@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { RulesScreen } from "@/src/features/rules/RulesScreen";
 import { getRulesServer } from "@/src/features/rules/get-rules-server";
+import { buildOpenGraph } from "@/src/shared/lib/open-graph";
 import { SITE_URL } from "@/src/shared/lib/site-url";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -15,7 +16,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: { absolute: title },
     description,
     alternates: { canonical: url },
-    openGraph: { title, description, url, type: "website" },
+    openGraph: buildOpenGraph({ title, description, url }),
   };
 }
 

@@ -1,5 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import messages from "@/messages/en.json";
+import { OG_IMAGE_PATH } from "@/src/shared/lib/open-graph";
 import { generateMetadata } from "./page";
 
 // getTranslations needs a request context we don't have in unit tests; back it
@@ -25,5 +26,14 @@ describe("rules generateMetadata", () => {
     expect(meta.description).toBe(messages.rules.metaDescription);
     expect(meta.alternates?.canonical).toMatch(/\/rules$/);
     expect(meta.openGraph?.url).toMatch(/\/rules$/);
+  });
+
+  // #235: declaring `openGraph` at all disinherits app/opengraph-image.tsx, so
+  // the card has to be named here or the page previews blank everywhere OG is
+  // read. The assertion above passed throughout the bug — it never looked.
+  it("names the social card image explicitly", async () => {
+    const meta = await generateMetadata();
+
+    expect(meta.openGraph?.images).toEqual([OG_IMAGE_PATH]);
   });
 });
