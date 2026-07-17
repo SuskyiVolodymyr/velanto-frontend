@@ -8,6 +8,7 @@ import {
 } from "@/src/features/author/get-user-server";
 import { buildJsonLd, jsonLdScript } from "@/src/shared/lib/jsonld";
 import { BackButton } from "@/src/shared/components/BackButton";
+import { buildOpenGraph } from "@/src/shared/lib/open-graph";
 import { SITE_URL } from "@/src/shared/lib/site-url";
 
 export async function generateMetadata({
@@ -43,7 +44,7 @@ export async function generateMetadata({
     title,
     description,
     alternates: { canonical: url },
-    openGraph: { title, description, url, type: "profile" },
+    openGraph: buildOpenGraph({ title, description, url, type: "profile" }),
   };
 }
 

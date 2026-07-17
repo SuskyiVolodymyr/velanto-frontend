@@ -1,13 +1,22 @@
 import { ImageResponse } from "next/og";
+import {
+  OG_CARD_ALT,
+  OG_CARD_CONTENT_TYPE,
+  OG_CARD_SIZE,
+} from "@/src/shared/lib/open-graph";
 
 // Static default social-share card for the whole site (Open Graph + Twitter).
 // Rendered by Satori from the JSX below — no binary asset to maintain. Per-page
 // dynamic cards (e.g. a pack's own title/cover) can be added later by dropping
 // an opengraph-image.tsx into that route segment.
 
-export const alt = "Velanto — create and play elimination quiz packs";
-export const size = { width: 1200, height: 630 };
-export const contentType = "image/png";
+// Next requires these as named exports from this file, but routes that declare
+// their own `openGraph` have to describe the card themselves (see
+// buildOpenGraph). Both read the same constants so the description and the
+// image can't drift apart.
+export const alt = OG_CARD_ALT;
+export const size = OG_CARD_SIZE;
+export const contentType = OG_CARD_CONTENT_TYPE;
 
 // Brand tokens, inlined because Satori resolves neither CSS variables nor
 // external stylesheets (mirror of app/globals.css --background / --acc).

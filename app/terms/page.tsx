@@ -5,6 +5,7 @@ import {
   type LegalSection,
 } from "@/src/features/legal/LegalScreen";
 import { LEGAL_LAST_UPDATED } from "@/src/features/legal/legal-meta";
+import { buildOpenGraph } from "@/src/shared/lib/open-graph";
 import { SITE_URL } from "@/src/shared/lib/site-url";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -16,16 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
     title: { absolute: title },
     description,
     alternates: { canonical: url },
-    // `images` is explicit because declaring an `openGraph` object at all stops
-    // Next inheriting the file-based `app/opengraph-image.tsx`. See the same
-    // note in app/privacy/page.tsx.
-    openGraph: {
-      title,
-      description,
-      url,
-      type: "website",
-      images: ["/opengraph-image"],
-    },
+    openGraph: buildOpenGraph({ title, description, url }),
   };
 }
 
