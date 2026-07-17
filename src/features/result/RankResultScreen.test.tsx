@@ -2,11 +2,10 @@ import { describe, expect, it, beforeEach, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { RankResultScreen } from "./RankResultScreen";
-import { encodePicks } from "@/src/shared/lib/share-url";
 import type { Pack } from "@/src/shared/types/pack";
 import type { RankResults } from "@/src/shared/types/play-results";
 
-let searchParams = new URLSearchParams();
+const searchParams = new URLSearchParams();
 vi.mock("next/navigation", () => ({ useSearchParams: () => searchParams }));
 
 const RANK_PACK: Pack = {
@@ -72,14 +71,23 @@ const RANK_RESULTS: RankResults = {
   ],
 };
 
+// The screen takes ownPicks/shared as props since #243, so it reads neither
+// sessionStorage nor the ?p= param. The next/navigation mock stays because
+// ShareButton still reaches for the router.
 beforeEach(() => {
   sessionStorage.clear();
-  searchParams = new URLSearchParams();
 });
 
 describe("RankResultScreen", () => {
   it("sorts items by averagePosition (best first) and shows avg/timesRanked captions", () => {
-    render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        ownPicks={null}
+        shared={false}
+      />,
+    );
 
     const titles = screen
       .getAllByText(/Kaikai Kitan|Redo/)
@@ -90,14 +98,14 @@ describe("RankResultScreen", () => {
   });
 
   it("highlights the player's own placement and shows an agreement count", () => {
-    sessionStorage.setItem(
-      "velanto:last-play:pack-rank",
-      JSON.stringify([
-        { roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 },
-      ]),
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        ownPicks={[{ roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 }]}
+        shared={false}
+      />,
     );
-
-    render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
 
     expect(
       screen.getByText(/You placed this #1.*1 other play agreed/),
@@ -105,14 +113,14 @@ describe("RankResultScreen", () => {
   });
 
   it("hides items that weren't in the player's own play for a round they played", () => {
-    sessionStorage.setItem(
-      "velanto:last-play:pack-rank",
-      JSON.stringify([
-        { roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 },
-      ]),
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        ownPicks={[{ roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 }]}
+        shared={false}
+      />,
     );
-
-    render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
 
     // The player ranked i1 but never saw i2 in their play — i2 is dropped
     // rather than shown with a "not in your play" note.
@@ -121,7 +129,14 @@ describe("RankResultScreen", () => {
   });
 
   it("shows the full pool for a round the player never played", () => {
-    render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        ownPicks={null}
+        shared={false}
+      />,
+    );
 
     // No recorded play for this pack → fall back to the aggregate pool so the
     // round isn't blank.
@@ -158,13 +173,27 @@ describe("RankResultScreen", () => {
       ],
     };
 
-    render(<RankResultScreen pack={RANK_PACK} results={emptyResults} />);
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={emptyResults}
+        ownPicks={null}
+        shared={false}
+      />,
+    );
 
     expect(screen.getByText(/0 plays recorded/)).toBeInTheDocument();
   });
 
   it("shows a Share result button for an approved pack", () => {
-    render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        ownPicks={null}
+        shared={false}
+      />,
+    );
     expect(
       screen.getByRole("button", { name: "Share result" }),
     ).toBeInTheDocument();
@@ -175,6 +204,8 @@ describe("RankResultScreen", () => {
       <RankResultScreen
         pack={{ ...RANK_PACK, status: "pending" }}
         results={RANK_RESULTS}
+        ownPicks={null}
+        shared={false}
       />,
     );
     expect(
@@ -183,12 +214,14 @@ describe("RankResultScreen", () => {
   });
 
   it("shows the shared-result note when opened via a ?p= link", async () => {
-    searchParams = new URLSearchParams({
-      p: encodePicks([
-        { roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 },
-      ]),
-    });
-    render(<RankResultScreen pack={RANK_PACK} results={RANK_RESULTS} />);
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        ownPicks={[{ roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 }]}
+        shared
+      />,
+    );
     expect(
       await screen.findByText(/viewing a shared result/i),
     ).toBeInTheDocument();

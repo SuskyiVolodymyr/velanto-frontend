@@ -33,23 +33,41 @@ describe("result page generateMetadata", () => {
     vi.clearAllMocks();
   });
 
-  it("sets a canonical pointing at the bare result path so all ?p= share variants consolidate", async () => {
+  // #243 reverses #67/#73 here. The canonical existed to consolidate the
+  // per-viewer ?p= share variants onto "one indexable URL" — but #222 gated
+  // this page on having played, so that URL now renders "Finish the pack to
+  // see the results" to every crawler, permanently. Pointing an index entry at
+  // a page that can never serve a search visitor is worse than having none.
+  it("noindexes the result page — it shows nothing to anyone who has not played", async () => {
     vi.mocked(getPackServer).mockResolvedValue(approvedPack);
 
     const meta = await generateMetadata(args("abc123"));
 
-    // Bare path (no ?p=). Next resolves it against metadataBase into an
-    // absolute production URL; the metadata object holds the relative form.
-    expect(meta.alternates?.canonical).toBe("/packs/abc123/result");
+    expect(meta.robots).toEqual({ index: false, follow: true });
     expect(meta.title).toBe("Best Movies — Result");
   });
 
-  it("does not noindex a found result page — canonical alone dedupes ?p= (mixing noindex + canonical is contradictory)", async () => {
+  // follow: true is not incidental. The page links to the pack and its author,
+  // and those are worth crawling — it is this URL that should not be a search
+  // result, not the things it points at.
+  it("still lets crawlers follow the links out", async () => {
     vi.mocked(getPackServer).mockResolvedValue(approvedPack);
 
     const meta = await generateMetadata(args("abc123"));
 
-    expect(meta.robots).toBeUndefined();
+    expect(meta.robots).toMatchObject({ follow: true });
+  });
+
+  // noindex does the ?p= de-duplication the canonical was there for, and does
+  // it without the contradiction #73 was avoiding: Google treats noindex +
+  // canonical on one URL as conflicting signals, so the canonical is dropped
+  // rather than paired with it.
+  it("sets no canonical, so noindex is not paired with a conflicting signal", async () => {
+    vi.mocked(getPackServer).mockResolvedValue(approvedPack);
+
+    const meta = await generateMetadata(args("abc123"));
+
+    expect(meta.alternates?.canonical).toBeUndefined();
   });
 
   it("marks a missing pack noindex and sets no canonical", async () => {

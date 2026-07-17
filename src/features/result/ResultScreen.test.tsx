@@ -3,11 +3,21 @@ import { screen } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { ResultScreen } from "./ResultScreen";
 import { encodePicks } from "@/src/shared/lib/share-url";
+import { playsClient } from "@/src/shared/lib/plays-client";
 import type { Pack } from "@/src/shared/types/pack";
 import type { PackResults, RankResults } from "@/src/shared/types/play-results";
 
 let searchParams = new URLSearchParams();
 vi.mock("next/navigation", () => ({ useSearchParams: () => searchParams }));
+
+// #243: ResultScreen fetches the results itself now, so they arrive through
+// the client rather than as a prop. Mocking playsClient is what lets these
+// tests keep asserting on a known aggregate — and it is also what proves the
+// gate works: `expect(playsClient.getResults).not.toHaveBeenCalled()` is only
+// meaningful because the fetch is reachable from here.
+vi.mock("@/src/shared/lib/plays-client", () => ({
+  playsClient: { getResults: vi.fn(), record: vi.fn() },
+}));
 
 const PACK: Pack = {
   id: "pack-1",
@@ -65,9 +75,20 @@ const RESULTS: PackResults = {
   ],
 };
 
+/** Makes the client return `results` for the screen's own query. */
+function seedResults(results: PackResults | RankResults) {
+  vi.mocked(playsClient.getResults).mockResolvedValue(results);
+}
+
 beforeEach(() => {
   sessionStorage.clear();
   searchParams = new URLSearchParams();
+  vi.mocked(playsClient.getResults).mockReset();
+  // Default: reject loudly. A test that reaches the network without
+  // seeding is asserting against results it never defined.
+  vi.mocked(playsClient.getResults).mockRejectedValue(
+    new Error("getResults called without seedResults()"),
+  );
 });
 
 // #222 gates the breakdown on evidence that you played this pack. Tests about
@@ -84,7 +105,8 @@ describe("ResultScreen", () => {
       JSON.stringify([{ roundIndex: 0, groupId: "g1", itemId: "i1" }]),
     );
 
-    render(<ResultScreen pack={PACK} results={RESULTS} />);
+    seedResults(RESULTS);
+    render(<ResultScreen pack={PACK} />);
 
     expect(
       await screen.findByText(/Your pick:\s*Guren no Yumiya/),
@@ -97,7 +119,8 @@ describe("ResultScreen", () => {
   // nobody is influenced by the crowd. This used to assert the OPPOSITE — that
   // the aggregate showed to anyone who reached the URL — which is the bug.
   it("hides the community breakdown until you have played this pack", async () => {
-    render(<ResultScreen pack={PACK} results={RESULTS} />);
+    seedResults(RESULTS);
+    render(<ResultScreen pack={PACK} />);
 
     expect(await screen.findByText(/Finish the pack/)).toBeInTheDocument();
     expect(screen.queryByText("75%")).not.toBeInTheDocument();
@@ -130,14 +153,16 @@ describe("ResultScreen", () => {
       ],
     };
 
-    render(<ResultScreen pack={rankPack} results={rankResults} />);
+    seedResults(rankResults);
+    render(<ResultScreen pack={rankPack} />);
 
     expect(await screen.findByText(/Finish the pack/)).toBeInTheDocument();
     expect(screen.queryByText(/ranked 1x/)).not.toBeInTheDocument();
   });
 
   it("offers a way to play from the locked state", async () => {
-    render(<ResultScreen pack={PACK} results={RESULTS} />);
+    seedResults(RESULTS);
+    render(<ResultScreen pack={PACK} />);
 
     expect(await screen.findByRole("link", { name: /Play/ })).toHaveAttribute(
       "href",
@@ -152,7 +177,8 @@ describe("ResultScreen", () => {
       p: encodePicks([{ roundIndex: 0, groupId: "g1", itemId: "i1" }]),
     });
 
-    render(<ResultScreen pack={PACK} results={RESULTS} />);
+    seedResults(RESULTS);
+    render(<ResultScreen pack={PACK} />);
 
     expect(await screen.findByText("75%")).toBeInTheDocument();
   });
@@ -163,7 +189,8 @@ describe("ResultScreen", () => {
       JSON.stringify([{ roundIndex: 0, groupId: "g1", itemId: "i1" }]),
     );
 
-    render(<ResultScreen pack={PACK} results={RESULTS} />);
+    seedResults(RESULTS);
+    render(<ResultScreen pack={PACK} />);
 
     expect(
       await screen.findByRole("link", { name: "Play again" }),
@@ -178,7 +205,8 @@ describe("ResultScreen", () => {
       ]),
     );
 
-    render(<ResultScreen pack={PACK} results={RESULTS} />);
+    seedResults(RESULTS);
+    render(<ResultScreen pack={PACK} />);
 
     expect(await screen.findByText("75%")).toBeInTheDocument();
     expect(screen.getByText("25%")).toBeInTheDocument();
@@ -209,7 +237,8 @@ describe("ResultScreen", () => {
     // Unlock the gate without switching the round into "your pick" mode — this
     // test is about the aggregate list rendering when nobody has played.
     seedOwnPlay([{ roundIndex: 0, groupId: "g1", itemId: "not-in-results" }]);
-    render(<ResultScreen pack={PACK} results={emptyResults} />);
+    seedResults(emptyResults);
+    render(<ResultScreen pack={PACK} />);
 
     expect(await screen.findByText(/0 plays recorded/)).toBeInTheDocument();
     expect(screen.getAllByText("0%")).toHaveLength(2);
@@ -238,14 +267,16 @@ describe("ResultScreen", () => {
     };
 
     seedOwnPlay();
-    render(<ResultScreen pack={rankPack} results={rankResults} />);
+    seedResults(rankResults);
+    render(<ResultScreen pack={rankPack} />);
 
     expect(await screen.findByText(/avg 0.*ranked 1x/)).toBeInTheDocument();
   });
 
   it("shows a Share result button for an approved pack", async () => {
     seedOwnPlay();
-    render(<ResultScreen pack={PACK} results={RESULTS} />);
+    seedResults(RESULTS);
+    render(<ResultScreen pack={PACK} />);
     expect(
       await screen.findByRole("button", { name: "Share result" }),
     ).toBeInTheDocument();
@@ -253,9 +284,8 @@ describe("ResultScreen", () => {
 
   it("hides the Share result button for a non-approved pack", async () => {
     seedOwnPlay();
-    render(
-      <ResultScreen pack={{ ...PACK, status: "pending" }} results={RESULTS} />,
-    );
+    seedResults(RESULTS);
+    render(<ResultScreen pack={{ ...PACK, status: "pending" }} />);
 
     // Prove the screen is unlocked first: without a seeded play this assertion
     // passes against the locked state, which is not what it claims to test.
@@ -270,7 +300,8 @@ describe("ResultScreen", () => {
       p: encodePicks([{ roundIndex: 0, groupId: "g1", itemId: "i1" }]),
     });
 
-    render(<ResultScreen pack={PACK} results={RESULTS} />);
+    seedResults(RESULTS);
+    render(<ResultScreen pack={PACK} />);
 
     expect(
       await screen.findByText(/viewing a shared result/i),
