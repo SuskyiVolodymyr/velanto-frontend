@@ -1067,7 +1067,9 @@
     "placed": "Placed #{position} · {count, plural, one {# other play agreed} other {# other plays agreed}}",
     "playAgain": "Play again",
     "shareResult": "Share result",
-    "sharedNote": "You're viewing a shared result."
+    "sharedNote": "You're viewing a shared result.",
+    "loading": "Loading results…",
+    "loadError": "We could not load the results. Refresh the page to try again."
   },
   "create": {
     "loginRequired": "You need to be logged in to create a pack.",

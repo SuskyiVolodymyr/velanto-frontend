@@ -3,21 +3,32 @@
 import { useTranslations } from "next-intl";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
-import { useResultPicks } from "@/src/features/result/use-result-picks";
 import { SharedResultNote } from "@/src/features/result/SharedResultNote";
 import { ResultActions } from "@/src/features/result/ResultActions";
 import type { Pack } from "@/src/shared/types/pack";
-import type { RankResults } from "@/src/shared/types/play-results";
+import type {
+  RankResults,
+  RecordedPick,
+} from "@/src/shared/types/play-results";
 
+/**
+ * `ownPicks`/`shared` come from ResultScreen rather than a second
+ * useResultPicks call here (#243). Re-reading gave this screen its own copy of
+ * the hook's after-mount state, so it rendered once without the picks and
+ * again with them — a flash of the full pool before the viewer's own ranking.
+ */
 export function RankResultScreen({
   pack,
   results,
+  ownPicks,
+  shared,
 }: {
   pack: Pack;
   results: RankResults;
+  ownPicks: RecordedPick[] | null;
+  shared: boolean;
 }) {
   const t = useTranslations("result");
-  const { picks: ownPicks, shared } = useResultPicks(pack.id);
 
   return (
     <div className="mx-auto w-full max-w-2xl flex-1 px-7 py-10">
