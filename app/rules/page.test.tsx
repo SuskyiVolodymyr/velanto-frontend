@@ -33,7 +33,12 @@ describe("rules generateMetadata", () => {
   // read. The assertion above passed throughout the bug — it never looked.
   it("names the social card image explicitly", async () => {
     const meta = await generateMetadata();
+    const images = meta.openGraph?.images as { url: string; width: number }[];
 
-    expect(meta.openGraph?.images).toEqual([OG_IMAGE_PATH]);
+    expect(images).toHaveLength(1);
+    expect(images[0].url).toBe(OG_IMAGE_PATH);
+    // Dimensions must survive to the route: Facebook and LinkedIn size the
+    // card from them on first scrape.
+    expect(images[0].width).toBe(1200);
   });
 });

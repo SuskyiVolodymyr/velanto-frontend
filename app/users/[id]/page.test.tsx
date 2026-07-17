@@ -61,7 +61,10 @@ describe("users/[id] generateMetadata", () => {
       params: Promise.resolve({ id: "author-1" }),
     });
 
-    expect(meta.openGraph?.images).toEqual([OG_IMAGE_PATH]);
+    const images = meta.openGraph?.images as { url: string; width: number }[];
+    expect(images).toHaveLength(1);
+    expect(images[0].url).toBe(OG_IMAGE_PATH);
+    expect(images[0].width).toBe(1200);
   });
 
   it("falls back to a generic description when the profile has no bio", async () => {
