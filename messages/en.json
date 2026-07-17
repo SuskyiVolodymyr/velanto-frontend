@@ -704,7 +704,7 @@
           "NEXT_LOCALE — your interface language. One year.",
           "velanto:accent, velanto:streamer-mode, velanto:pack-filters — display settings you chose. They never leave your browser.",
           "velanto:last-play — your picks from the pack you just played, so the result screen can show them. Cleared when you close the tab.",
-          "velanto:otp-sent — a sixty-second timer that stops you requesting another code too quickly. It has a flaw we should name: your email address forms part of the key, and it is currently never cleaned up, so it stays in the browser after you log out. On a shared computer it is left behind. We are fixing this.",
+          "velanto:otp-sent — a sixty-second timer that stops you requesting another code too quickly. It holds a scrambled fingerprint of the address rather than the address itself, and expired entries are dropped the next time the page reads or writes the timer.",
           "Your access token is kept in memory only. It is never written to disk."
         ]
       },
