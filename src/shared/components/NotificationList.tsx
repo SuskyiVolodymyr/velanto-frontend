@@ -47,7 +47,9 @@ export function NotificationList({
         </div>
       )}
       {error && (
-        <Text className="px-2 py-4 text-sm text-danger">{tn("loadError")}</Text>
+        <Text variant="danger" className="px-2 py-4 text-sm">
+          {tn("loadError")}
+        </Text>
       )}
       {listReady && notifications.length === 0 && (
         <Text variant="secondary" className="px-2 py-4 text-sm">
@@ -77,7 +79,9 @@ export function NotificationList({
             {loadingMore ? t("loading") : t("loadMore")}
           </Button>
           {loadMoreError && (
-            <Text className="text-xs text-danger">{loadMoreError}</Text>
+            <Text variant="danger" className="text-xs">
+              {loadMoreError}
+            </Text>
           )}
         </div>
       )}

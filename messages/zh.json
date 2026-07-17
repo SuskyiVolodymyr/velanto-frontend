@@ -336,7 +336,22 @@
     "resetSubmit": "重置密码",
     "resetSuccess": "您的密码已重置，现在可以登录。",
     "backToLogin": "返回登录",
-    "resetError": "无法重置密码，请检查验证码后重试。"
+    "resetError": "无法重置密码，请检查验证码后重试。",
+    "errors": {
+      "loginRequired": "请输入你的邮箱／用户名和密码。",
+      "username": "用户名必须为 2 到 16 个字符，且只能包含字母和数字。",
+      "email": "请输入有效的电子邮箱地址。",
+      "passwordLength": "密码至少需要 8 个字符。",
+      "passwordMax": "密码最多 72 个字符。",
+      "passwordLower": "密码必须包含一个小写字母。",
+      "passwordUpper": "密码必须包含一个大写字母。",
+      "passwordDigit": "密码必须包含一个数字。",
+      "passwordsMismatch": "两次输入的密码不一致。",
+      "acceptRules": "你必须年满 16 周岁并接受《社区规则》才能注册。",
+      "code": "请输入发送到你邮箱的六位验证码。",
+      "currentPasswordRequired": "请输入你当前的密码。",
+      "emailRequired": "请输入有效的电子邮箱地址。"
+    }
   },
   "rules": {
     "metaTitle": "社区规则 — Velanto",

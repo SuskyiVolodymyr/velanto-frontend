@@ -375,7 +375,7 @@ export function RoundsEditor() {
               </Text>
             )}
             {slotError && (
-              <Text role="alert" className="text-sm text-danger">
+              <Text variant="danger" role="alert" className="text-sm">
                 {slotError}
               </Text>
             )}
@@ -384,7 +384,7 @@ export function RoundsEditor() {
       })}
 
       {roundsError && (
-        <Text role="alert" className="text-sm text-danger">
+        <Text variant="danger" role="alert" className="text-sm">
           {roundsError}
         </Text>
       )}

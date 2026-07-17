@@ -96,9 +96,7 @@ export function UsersTab() {
       {status === "loading" && (
         <LoadingState label={t("loadingUsers")} showLabel />
       )}
-      {status === "error" && (
-        <Text className="text-danger">{t("usersError")}</Text>
-      )}
+      {status === "error" && <Text variant="danger">{t("usersError")}</Text>}
 
       {status === "ready" && (
         <DataTable
@@ -139,7 +137,9 @@ export function UsersTab() {
       )}
 
       {actionError && (
-        <Text className="text-sm text-danger">{actionError}</Text>
+        <Text variant="danger" className="text-sm">
+          {actionError}
+        </Text>
       )}
 
       {status === "ready" && users.length < total && (

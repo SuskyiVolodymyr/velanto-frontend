@@ -115,7 +115,9 @@ export function AuthorHoverCard({
               followButton
             )}
             {followError && (
-              <Text className="text-xs text-danger">{followError}</Text>
+              <Text variant="danger" className="text-xs">
+                {followError}
+              </Text>
             )}
           </div>
         )}

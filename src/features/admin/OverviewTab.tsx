@@ -60,7 +60,7 @@ export function OverviewTab() {
   if (overviewQuery.isLoading)
     return <LoadingState label={t("loadingOverview")} showLabel />;
   if (overviewQuery.isError || !overview) {
-    return <Text className="text-danger">{t("overviewError")}</Text>;
+    return <Text variant="danger">{t("overviewError")}</Text>;
   }
 
   return (

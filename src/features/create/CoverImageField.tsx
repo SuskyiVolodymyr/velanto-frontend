@@ -141,7 +141,7 @@ export function CoverImageField({
         {t("coverImageHint")}
       </Text>
       {error && (
-        <Text role="alert" className="text-sm text-danger">
+        <Text variant="danger" role="alert" className="text-sm">
           {error}
         </Text>
       )}

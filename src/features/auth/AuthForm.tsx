@@ -297,7 +297,7 @@ export function AuthForm() {
           )}
 
           {errors.root?.message && (
-            <Text role="alert" className="text-sm text-danger">
+            <Text variant="danger" role="alert" className="text-sm">
               {errors.root.message}
             </Text>
           )}

@@ -81,10 +81,15 @@ export function DangerZoneSection() {
 
   return (
     <section className="flex flex-col gap-4">
+      {/*
+        `variant="danger"`, not tertiary + a text-danger className: cn() appends
+        rather than merges, so the colour in className never won and this
+        heading has been rendering dim grey instead of red (#236).
+      */}
       <Text
         as="h2"
-        variant="tertiary"
-        className="text-xs uppercase tracking-wide text-danger"
+        variant="danger"
+        className="text-xs uppercase tracking-wide"
       >
         {t("dangerHeading")}
       </Text>
@@ -106,7 +111,7 @@ export function DangerZoneSection() {
             </Button>
           </div>
           {exportError && (
-            <Text className="text-sm text-danger" role="alert">
+            <Text variant="danger" className="text-sm" role="alert">
               {t("exportDataError")}
             </Text>
           )}
@@ -151,7 +156,7 @@ export function DangerZoneSection() {
         </label>
 
         {deleteError && (
-          <Text role="alert" className="mt-3 text-sm text-danger">
+          <Text variant="danger" role="alert" className="mt-3 text-sm">
             {deleteError}
           </Text>
         )}

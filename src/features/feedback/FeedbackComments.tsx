@@ -90,7 +90,11 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
           blocked && "cursor-not-allowed opacity-60",
         )}
       />
-      {postError && <Text className="text-sm text-danger">{postError}</Text>}
+      {postError && (
+        <Text variant="danger" className="text-sm">
+          {postError}
+        </Text>
+      )}
       <Button
         className={cn("self-end", blocked && "cursor-not-allowed opacity-45")}
         aria-disabled={blocked || undefined}
@@ -126,7 +130,7 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
         <LoadingState label={t("loadingComments")} showLabel />
       )}
       {loadStatus === "error" && (
-        <Text className="text-danger">{t("commentsLoadError")}</Text>
+        <Text variant="danger">{t("commentsLoadError")}</Text>
       )}
       {loadStatus === "ready" && comments.length === 0 && (
         <Text variant="secondary">{t("noComments")}</Text>
@@ -172,7 +176,9 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
             {loadingMore ? t("loadingMore") : t("loadMore")}
           </Button>
           {loadMoreError && (
-            <Text className="text-sm text-danger">{loadMoreError}</Text>
+            <Text variant="danger" className="text-sm">
+              {loadMoreError}
+            </Text>
           )}
         </div>
       )}

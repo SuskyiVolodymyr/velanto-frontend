@@ -18,7 +18,7 @@ export function HomeFeedResults({
   if (status === "loading")
     return <LoadingState label={t("loading")} showLabel />;
   if (status === "error") {
-    return <Text className="text-danger">{t("error")}</Text>;
+    return <Text variant="danger">{t("error")}</Text>;
   }
   if (packs.length === 0) {
     return <Text variant="secondary">{t("empty")}</Text>;

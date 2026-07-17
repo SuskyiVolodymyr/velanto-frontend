@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { Text } from "@/src/shared/components/Text";
+import { FieldError } from "@/src/shared/components/form/FieldError";
 import { cn } from "@/src/shared/lib/cn";
 
 export interface FormFieldProps {
@@ -39,15 +39,7 @@ export function FormField({
         {label}
       </label>
       {children}
-      {error && (
-        <Text
-          id={`${htmlFor}-error`}
-          role="alert"
-          className="text-sm text-danger"
-        >
-          {error}
-        </Text>
-      )}
+      {error && <FieldError id={`${htmlFor}-error`}>{error}</FieldError>}
     </div>
   );
 }

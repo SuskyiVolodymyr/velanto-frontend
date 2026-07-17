@@ -1,10 +1,20 @@
 import { describe, expect, it } from "vitest";
 import {
   AUTH_MESSAGES,
+  MAX_PASSWORD_LENGTH,
+  MIN_PASSWORD_LENGTH,
   loginSchema,
   registerSchema,
   type AuthFormValues,
 } from "./auth.schema";
+import en from "@/messages/en.json";
+import zh from "@/messages/zh.json";
+import hi from "@/messages/hi.json";
+import ar from "@/messages/ar.json";
+import bn from "@/messages/bn.json";
+import ru from "@/messages/ru.json";
+import ur from "@/messages/ur.json";
+import uk from "@/messages/uk.json";
 
 /**
  * Register mode validates each field independently (per-field messages) so the
@@ -166,4 +176,48 @@ describe("registerSchema", () => {
       ),
     ).toBe(AUTH_MESSAGES.acceptRules);
   });
+});
+
+// #236. Two guarantees that the rest of this file cannot give, because it
+// asserts messages against AUTH_MESSAGES — which now holds keys, so it would
+// stay green against a key that no catalog defines.
+describe("auth.errors catalog wiring", () => {
+  const catalogs = { en, zh, hi, ar, bn, ru, ur, uk };
+
+  it.each(Object.keys(catalogs))(
+    "%s defines every key the schema names",
+    (locale) => {
+      const errors = (
+        catalogs[locale as keyof typeof catalogs].auth as {
+          errors: Record<string, string>;
+        }
+      ).errors;
+
+      const missing = Object.values(AUTH_MESSAGES)
+        .map((key) => key.replace("auth.errors.", ""))
+        .filter((key) => !errors[key]);
+
+      expect(missing).toEqual([]);
+    },
+  );
+
+  // The password bounds are spelled out in the copy rather than passed as ICU
+  // arguments — useFieldError has one string and no values to give, and
+  // next-intl renders an unfilled placeholder as the raw key path. That makes
+  // the numbers duplicated data, so pin them: changing MIN/MAX_PASSWORD_LENGTH
+  // must fail here until all 8 catalogs are updated. Latin digits are used for
+  // these two strings in every locale so this check is meaningful everywhere.
+  it.each(Object.keys(catalogs))(
+    "%s states the password bounds the schema actually enforces",
+    (locale) => {
+      const errors = (
+        catalogs[locale as keyof typeof catalogs].auth as {
+          errors: Record<string, string>;
+        }
+      ).errors;
+
+      expect(errors.passwordLength).toContain(String(MIN_PASSWORD_LENGTH));
+      expect(errors.passwordMax).toContain(String(MAX_PASSWORD_LENGTH));
+    },
+  );
 });

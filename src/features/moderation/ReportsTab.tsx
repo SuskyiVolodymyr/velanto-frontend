@@ -52,7 +52,7 @@ export function ReportsTab() {
         <LoadingState label={t("loadingReports")} showLabel />
       )}
       {reportsQuery.isError && (
-        <Text className="text-danger">{t("reportsError")}</Text>
+        <Text variant="danger">{t("reportsError")}</Text>
       )}
 
       {!reportsQuery.isLoading && !reportsQuery.isError && (

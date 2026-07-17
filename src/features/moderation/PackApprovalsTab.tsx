@@ -130,9 +130,7 @@ export function PackApprovalsTab() {
       {queueQuery.isLoading && (
         <LoadingState label={t("loadingPacks")} showLabel />
       )}
-      {queueQuery.isError && (
-        <Text className="text-danger">{t("packsError")}</Text>
-      )}
+      {queueQuery.isError && <Text variant="danger">{t("packsError")}</Text>}
 
       {!queueQuery.isLoading && !queueQuery.isError && (
         <>
@@ -240,7 +238,10 @@ export function PackApprovalsTab() {
                   )}
 
                   {failed && (
-                    <Text className="border-t border-white/[0.05] px-[18px] py-2 text-[12.5px] text-danger">
+                    <Text
+                      variant="danger"
+                      className="border-t border-white/[0.05] px-[18px] py-2 text-[12.5px]"
+                    >
                       {t("updatePackError")}
                     </Text>
                   )}

@@ -134,9 +134,7 @@ export function LogsTab() {
       {logsQuery.isLoading && (
         <LoadingState label={t("loadingLogs")} showLabel />
       )}
-      {logsQuery.isError && (
-        <Text className="text-danger">{t("logsError")}</Text>
-      )}
+      {logsQuery.isError && <Text variant="danger">{t("logsError")}</Text>}
 
       {!logsQuery.isLoading && !logsQuery.isError && (
         <>

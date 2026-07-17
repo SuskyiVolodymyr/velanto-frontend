@@ -124,7 +124,11 @@ export function GroupItemAdder({
               {validating ? t("checking") : t("add")}
             </Button>
           </div>
-          {addError && <Text className="text-xs text-danger">{addError}</Text>}
+          {addError && (
+            <Text variant="danger" className="text-xs">
+              {addError}
+            </Text>
+          )}
         </div>
       )}
       {draftType === "image" && (
@@ -171,7 +175,11 @@ export function GroupItemAdder({
               className="h-24 w-24 rounded-lg border border-border object-cover"
             />
           )}
-          {addError && <Text className="text-xs text-danger">{addError}</Text>}
+          {addError && (
+            <Text variant="danger" className="text-xs">
+              {addError}
+            </Text>
+          )}
         </div>
       )}
     </div>

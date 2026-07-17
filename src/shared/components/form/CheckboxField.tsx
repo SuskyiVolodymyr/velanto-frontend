@@ -1,6 +1,6 @@
 import type { InputHTMLAttributes, ReactNode } from "react";
 import { useFormContext } from "react-hook-form";
-import { Text } from "@/src/shared/components/Text";
+import { FieldError } from "@/src/shared/components/form/FieldError";
 import { useFieldError } from "@/src/shared/components/form/useFieldError";
 import { cn } from "@/src/shared/lib/cn";
 
@@ -66,15 +66,7 @@ export function CheckboxField({
           {label}
         </label>
       </div>
-      {error && (
-        <Text
-          id={`${fieldId}-error`}
-          role="alert"
-          className="text-sm text-danger"
-        >
-          {error}
-        </Text>
-      )}
+      {error && <FieldError id={`${fieldId}-error`}>{error}</FieldError>}
     </div>
   );
 }

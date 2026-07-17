@@ -85,7 +85,7 @@ export function AdminUserDetailScreen({ userId }: { userId: string }) {
     return (
       <div className="mx-auto w-full max-w-5xl px-6 py-8">
         {backLink}
-        <Text className="text-danger">{t("detailError")}</Text>
+        <Text variant="danger">{t("detailError")}</Text>
       </div>
     );
   }

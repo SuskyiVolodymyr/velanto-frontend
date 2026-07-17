@@ -226,7 +226,7 @@ export function ApiTokensSection() {
 
           <div>{blocked ? createButtonWithReason : createButton}</div>
           {createError && (
-            <Text role="alert" className="text-sm text-danger">
+            <Text variant="danger" role="alert" className="text-sm">
               {t("tokenCreateError")}
             </Text>
           )}

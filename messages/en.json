@@ -430,7 +430,22 @@
     "resetSubmit": "Reset password",
     "resetSuccess": "Your password has been reset. You can now log in.",
     "backToLogin": "Back to log in",
-    "resetError": "Couldn’t reset your password. Check the code and try again."
+    "resetError": "Couldn’t reset your password. Check the code and try again.",
+    "errors": {
+      "loginRequired": "Enter your email/username and password.",
+      "username": "Username must be 2-16 characters: letters and numbers only.",
+      "email": "Enter a valid email address.",
+      "passwordLength": "Password must be at least 8 characters.",
+      "passwordMax": "Password must be at most 72 characters.",
+      "passwordLower": "Password must include a lowercase letter.",
+      "passwordUpper": "Password must include an uppercase letter.",
+      "passwordDigit": "Password must include a number.",
+      "passwordsMismatch": "Passwords do not match.",
+      "acceptRules": "You must be 16 or older and accept the Community Rules to register.",
+      "code": "Enter the 6-digit code sent to your email.",
+      "currentPasswordRequired": "Enter your current password.",
+      "emailRequired": "Enter a valid email address."
+    }
   },
   "rules": {
     "metaTitle": "Community Rules — Velanto",

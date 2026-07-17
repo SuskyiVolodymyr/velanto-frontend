@@ -179,9 +179,7 @@ export function StaffTab() {
       {status === "loading" && (
         <LoadingState label={t("loadingStaff")} showLabel />
       )}
-      {status === "error" && (
-        <Text className="text-danger">{t("staffError")}</Text>
-      )}
+      {status === "error" && <Text variant="danger">{t("staffError")}</Text>}
 
       {status === "ready" && (
         <DataTable
@@ -276,7 +274,7 @@ export function StaffTab() {
       )}
 
       {actionError && (
-        <Text className="text-sm text-danger" role="alert">
+        <Text variant="danger" className="text-sm" role="alert">
           {actionError}
         </Text>
       )}

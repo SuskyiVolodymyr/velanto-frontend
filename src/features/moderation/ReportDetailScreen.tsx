@@ -76,7 +76,7 @@ export function ReportDetailScreen({ reportId }: { reportId: string }) {
   if (reportQuery.isError || !report) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text className="text-danger">{t("reportNotFound")}</Text>
+        <Text variant="danger">{t("reportNotFound")}</Text>
       </div>
     );
   }

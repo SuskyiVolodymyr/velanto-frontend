@@ -250,7 +250,11 @@ export function CommentSection({
           blocked && "cursor-not-allowed opacity-60",
         )}
       />
-      {postError && <Text className="text-sm text-danger">{postError}</Text>}
+      {postError && (
+        <Text variant="danger" className="text-sm">
+          {postError}
+        </Text>
+      )}
       <Button
         className={cn("self-end", blocked && "cursor-not-allowed opacity-45")}
         aria-disabled={blocked || undefined}
@@ -280,7 +284,9 @@ export function CommentSection({
           className="rounded-[10px] border border-border bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-acc disabled:opacity-45"
         />
         {replyError && (
-          <Text className="text-sm text-danger">{replyError}</Text>
+          <Text variant="danger" className="text-sm">
+            {replyError}
+          </Text>
         )}
         <div className="flex justify-end gap-2">
           <Button
@@ -353,7 +359,7 @@ export function CommentSection({
         <LoadingState label={t("loadingComments")} showLabel />
       )}
       {loadStatus === "error" && (
-        <Text className="text-danger">{t("loadCommentsError")}</Text>
+        <Text variant="danger">{t("loadCommentsError")}</Text>
       )}
       {loadStatus === "ready" && roots.length === 0 && (
         <Text variant="secondary">{t("noComments")}</Text>
@@ -361,7 +367,9 @@ export function CommentSection({
       {loadStatus === "ready" && roots.length > 0 && (
         <div className="flex flex-col gap-4">
           {deleteError && (
-            <Text className="text-sm text-danger">{deleteError}</Text>
+            <Text variant="danger" className="text-sm">
+              {deleteError}
+            </Text>
           )}
           {roots.map((root) => {
             const replies = root.replies ?? [];
@@ -415,7 +423,9 @@ export function CommentSection({
             {loadingMore ? t("loadingMore") : t("loadMore")}
           </Button>
           {loadMoreError && (
-            <Text className="text-sm text-danger">{loadMoreError}</Text>
+            <Text variant="danger" className="text-sm">
+              {loadMoreError}
+            </Text>
           )}
         </div>
       )}

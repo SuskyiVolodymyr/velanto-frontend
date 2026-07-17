@@ -107,7 +107,9 @@ export function AuthorModeratorPanel({
             {tBan("confirm")}
           </Button>
           {banActionError && (
-            <Text className="text-xs text-danger">{banActionError}</Text>
+            <Text variant="danger" className="text-xs">
+              {banActionError}
+            </Text>
           )}
         </div>
       )}
@@ -115,7 +117,9 @@ export function AuthorModeratorPanel({
         <LoadingState label={tBan("loadingHistory")} showLabel />
       )}
       {banHistoryQuery.error && (
-        <Text className="text-sm text-danger">{tBan("historyError")}</Text>
+        <Text variant="danger" className="text-sm">
+          {tBan("historyError")}
+        </Text>
       )}
       {banHistoryQuery.data && banHistoryQuery.data.items.length === 0 && (
         <Text variant="secondary">{tBan("noHistory")}</Text>
