@@ -30,7 +30,9 @@ describe("FieldError", () => {
   // If the icon ever leaked a name, the user would hear it before the message.
   it("announces only the message text", () => {
     render(<FieldError id="email-error">Email is required.</FieldError>);
-    expect(screen.getByRole("alert")).toHaveTextContent(/^Email is required\.$/);
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      /^Email is required\.$/,
+    );
   });
 
   /**
@@ -47,7 +49,9 @@ describe("FieldError", () => {
     const colors = screen
       .getByRole("alert")
       .className.split(/\s+/)
-      .filter((c) => c.startsWith("text-") && !/^text-(sm|xs|base|lg)$/.test(c));
+      .filter(
+        (c) => c.startsWith("text-") && !/^text-(sm|xs|base|lg)$/.test(c),
+      );
 
     expect(colors).toEqual(["text-danger"]);
   });
