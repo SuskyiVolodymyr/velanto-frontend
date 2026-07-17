@@ -20,7 +20,7 @@ import { useFormContext } from "react-hook-form";
  *
  * A message that isn't a known key passes through verbatim. That is deliberate
  * rather than lax: `create-pack` and `new-feedback` still carry English
- * literals (velanto-frontend#248), so they keep working untouched and can
+ * literals (velanto-frontend#249), so they keep working untouched and can
  * migrate one at a time. It also means a missing or mistyped key renders as
  * itself rather than throwing — ugly, but the user still learns the field is
  * wrong, which beats a blank error or a crashed form.
