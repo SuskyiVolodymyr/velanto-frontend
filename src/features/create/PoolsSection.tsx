@@ -73,7 +73,7 @@ export function PoolsSection() {
         />
       ))}
       {groupsError && (
-        <Text role="alert" className="text-sm text-danger">
+        <Text variant="danger" role="alert" className="text-sm">
           {groupsError}
         </Text>
       )}

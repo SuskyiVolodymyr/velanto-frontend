@@ -56,7 +56,9 @@ export function ReportModerationPanel({
             {deleted ? `${t("packDeleted")} ✓` : t("deletePack")}
           </Button>
           {deleteError && (
-            <Text className="mt-2 text-xs text-danger">{deleteError}</Text>
+            <Text variant="danger" className="mt-2 text-xs">
+              {deleteError}
+            </Text>
           )}
         </div>
       )}
@@ -106,7 +108,9 @@ export function ReportModerationPanel({
                 {tBan("confirm")}
               </Button>
               {banError && (
-                <Text className="text-xs text-danger">{banError}</Text>
+                <Text variant="danger" className="text-xs">
+                  {banError}
+                </Text>
               )}
             </div>
           )}

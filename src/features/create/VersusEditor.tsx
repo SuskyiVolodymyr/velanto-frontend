@@ -151,12 +151,12 @@ export function VersusEditor() {
       </div>
 
       {slotError && (
-        <Text role="alert" className="text-sm text-danger">
+        <Text variant="danger" role="alert" className="text-sm">
           {slotError}
         </Text>
       )}
       {roundsError && (
-        <Text role="alert" className="text-sm text-danger">
+        <Text variant="danger" role="alert" className="text-sm">
           {roundsError}
         </Text>
       )}

@@ -5,25 +5,46 @@ export const USERNAME_PATTERN = /^[a-zA-Z0-9]{2,16}$/;
 export const MIN_PASSWORD_LENGTH = 8;
 export const MAX_PASSWORD_LENGTH = 72;
 
-// Validation copy is hardcoded English (matches the existing auth-schema
-// convention; the rest of the app's user-facing text is next-intl). Exported so
-// the form and tests reference one source of truth instead of duplicating
-// strings.
+/**
+ * Catalog KEYS, not copy (velanto-frontend#236).
+ *
+ * A zod schema is a module, not a component, so it cannot call useTranslations
+ * — which is why every message here used to be a hardcoded English literal and
+ * why the platform-wide i18n sweep missed them: the sweep localized rendered
+ * strings, and these live in schema definitions. A Ukrainian user who mistyped
+ * a password got "Password must include an uppercase letter." on an otherwise
+ * fully-translated form.
+ *
+ * So the schema names a key and `useFieldError` resolves it at render, inside
+ * the provider. Same shape as notification-display.ts -> NotificationItem.
+ *
+ * Keys are full paths because useFieldError translates from the ROOT namespace
+ * (it is shared with every other form and cannot know which feature it is
+ * rendering for).
+ *
+ * NOTE: the copy behind `passwordLength`/`passwordMax` spells the numbers out
+ * rather than taking them as ICU arguments. That is forced, not lazy —
+ * useFieldError has one string and no values to pass, and next-intl renders a
+ * message with an unfilled placeholder as the RAW KEY PATH, so the user would
+ * read "auth.errors.passwordLength". `auth.schema.test.ts` pins the catalog
+ * numbers to the constants below so they cannot drift apart silently.
+ *
+ * Still exported so the form and the tests reference one source of truth.
+ */
 export const AUTH_MESSAGES = {
-  loginRequired: "Enter your email/username and password.",
-  username: "Username must be 2-16 characters: letters and numbers only.",
-  email: "Enter a valid email address.",
-  passwordLength: `Password must be at least ${MIN_PASSWORD_LENGTH} characters.`,
-  passwordMax: `Password must be at most ${MAX_PASSWORD_LENGTH} characters.`,
-  passwordLower: "Password must include a lowercase letter.",
-  passwordUpper: "Password must include an uppercase letter.",
-  passwordDigit: "Password must include a number.",
-  passwordsMismatch: "Passwords do not match.",
-  acceptRules:
-    "You must be 16 or older and accept the Community Rules to register.",
-  code: "Enter the 6-digit code sent to your email.",
-  currentPasswordRequired: "Enter your current password.",
-  emailRequired: "Enter a valid email address.",
+  loginRequired: "auth.errors.loginRequired",
+  username: "auth.errors.username",
+  email: "auth.errors.email",
+  passwordLength: "auth.errors.passwordLength",
+  passwordMax: "auth.errors.passwordMax",
+  passwordLower: "auth.errors.passwordLower",
+  passwordUpper: "auth.errors.passwordUpper",
+  passwordDigit: "auth.errors.passwordDigit",
+  passwordsMismatch: "auth.errors.passwordsMismatch",
+  acceptRules: "auth.errors.acceptRules",
+  code: "auth.errors.code",
+  currentPasswordRequired: "auth.errors.currentPasswordRequired",
+  emailRequired: "auth.errors.emailRequired",
 } as const;
 
 // The password-composition rules, shared by every place a NEW password is set

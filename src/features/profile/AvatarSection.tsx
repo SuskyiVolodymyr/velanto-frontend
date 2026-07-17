@@ -138,7 +138,11 @@ export function AvatarSection({
           </Text>
         </div>
       </div>
-      {error && <Text className="mt-3 text-sm text-danger">{error}</Text>}
+      {error && (
+        <Text variant="danger" className="mt-3 text-sm">
+          {error}
+        </Text>
+      )}
       {pendingFile && (
         <AvatarCropModal
           file={pendingFile}

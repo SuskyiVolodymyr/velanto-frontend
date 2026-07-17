@@ -109,7 +109,9 @@ export function PasswordSection() {
           />
 
           {submitError && (
-            <Text className="text-sm text-danger">{submitError}</Text>
+            <Text variant="danger" className="text-sm">
+              {submitError}
+            </Text>
           )}
           {done && (
             <Text className="text-sm text-success" role="status">

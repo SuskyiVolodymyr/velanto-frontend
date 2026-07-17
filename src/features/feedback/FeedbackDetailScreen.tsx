@@ -87,7 +87,7 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
   if (postQuery.error || !post) {
     return (
       <main className="mx-auto max-w-md py-16 text-center">
-        <Text className="text-danger">{t("detailLoadError")}</Text>
+        <Text variant="danger">{t("detailLoadError")}</Text>
         <Link
           href="/feedback"
           className="mt-4 inline-block text-acc hover:underline"
@@ -207,7 +207,9 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
             </Text>
           )}
           {statusError && (
-            <Text className="text-xs text-danger">{statusError}</Text>
+            <Text variant="danger" className="text-xs">
+              {statusError}
+            </Text>
           )}
           {canDelete && (
             <Button
@@ -220,7 +222,9 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
             </Button>
           )}
           {deleteError && (
-            <Text className="text-xs text-danger">{deleteError}</Text>
+            <Text variant="danger" className="text-xs">
+              {deleteError}
+            </Text>
           )}
         </div>
       )}

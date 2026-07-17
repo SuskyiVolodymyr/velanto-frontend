@@ -64,7 +64,7 @@ export function AuthorPackList({
                 {query.isFetchingNextPage ? t("loadingMore") : t("loadMore")}
               </Button>
               {query.isError && (
-                <Text className="text-sm text-danger">
+                <Text variant="danger" className="text-sm">
                   {t("loadMoreError")}
                 </Text>
               )}

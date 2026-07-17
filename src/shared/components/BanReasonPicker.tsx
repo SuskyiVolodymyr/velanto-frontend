@@ -102,7 +102,7 @@ export function BanReasonPicker({
       </label>
 
       {rules.isError && (
-        <Text role="alert" className="text-xs text-danger">
+        <Text variant="danger" role="alert" className="text-xs">
           {t("loadError")}
         </Text>
       )}
@@ -129,7 +129,7 @@ export function BanReasonPicker({
       )}
 
       {detailMissing && (
-        <Text id={`${detailId}-error`} className="text-xs text-danger">
+        <Text variant="danger" id={`${detailId}-error`} className="text-xs">
           {t("detailRequired")}
         </Text>
       )}

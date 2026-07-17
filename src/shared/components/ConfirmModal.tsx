@@ -43,7 +43,7 @@ export function ConfirmModal({
       </Text>
 
       {error && (
-        <Text role="alert" className="mt-3 text-sm text-danger">
+        <Text variant="danger" role="alert" className="mt-3 text-sm">
           {error}
         </Text>
       )}

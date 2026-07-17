@@ -152,7 +152,9 @@ export function ForgotPasswordForm({
           )}
 
           {submitError && (
-            <Text className="text-sm text-danger">{submitError}</Text>
+            <Text variant="danger" className="text-sm">
+              {submitError}
+            </Text>
           )}
 
           <Button

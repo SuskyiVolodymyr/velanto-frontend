@@ -70,7 +70,7 @@ export function AuthorScreen({
   if (authorQuery.isError || !authorQuery.data) {
     return (
       <div className="mx-auto max-w-md py-16 text-center">
-        <Text className="text-danger">{t("userNotFound")}</Text>
+        <Text variant="danger">{t("userNotFound")}</Text>
       </div>
     );
   }

@@ -51,7 +51,7 @@ export function BannedNotice({
       className="border-b border-danger/40 bg-danger/10 px-7 py-4"
     >
       <div className="mx-auto flex max-w-4xl flex-col gap-1">
-        <Text as="h2" className="text-sm font-semibold text-danger">
+        <Text variant="danger" as="h2" className="text-sm font-semibold">
           {t("heading")}
         </Text>
 

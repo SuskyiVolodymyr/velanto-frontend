@@ -36,7 +36,9 @@ export function ReportQueueActions({
         )}
       </div>
       {actionError && (
-        <Text className="text-sm text-danger">{actionError}</Text>
+        <Text variant="danger" className="text-sm">
+          {actionError}
+        </Text>
       )}
     </>
   );
