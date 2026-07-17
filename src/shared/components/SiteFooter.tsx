@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
+import { BrandMark } from "@/src/shared/components/BrandMark";
 import { SUPPORT_EMAIL } from "@/src/shared/lib/contact";
 
 // Reuses the header's nav labels so the two never drift; only the footer-only
@@ -26,7 +27,7 @@ export function SiteFooter() {
       <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-6 px-7 py-10 sm:flex-row sm:items-start sm:justify-between">
         <div className="max-w-xs">
           <Link href="/" className="flex items-center gap-2.5">
-            <span className="h-3 w-3 rotate-45 rounded-sm bg-acc" aria-hidden />
+            <BrandMark className="h-5 w-5" />
             <Text
               as="span"
               variant="title"

@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { buttonClassName } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
+import { BrandMark } from "@/src/shared/components/BrandMark";
 import { UserMenu } from "@/src/shared/components/UserMenu";
 import { NotificationsBell } from "@/src/shared/components/NotificationsBell";
 
@@ -18,7 +19,7 @@ export function AppHeader() {
     <header className="sticky top-0 z-40 hidden items-center justify-between border-b border-border bg-background/70 px-7 py-6 backdrop-blur-[6px] md:flex">
       <div className="flex items-center gap-7">
         <Link href="/" className="flex items-center gap-2.5">
-          <span className="h-3 w-3 rotate-45 rounded-sm bg-acc" aria-hidden />
+          <BrandMark className="h-[22px] w-[22px]" />
           <Text
             as="span"
             variant="title"
