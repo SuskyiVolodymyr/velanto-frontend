@@ -394,7 +394,7 @@
     "off": "Off"
   },
   "auth": {
-    "acceptRules": "I am 16 or older, and I have read and accept the <link>Community Rules</link>.",
+    "acceptRules": "I have read and accept the <link>Community Rules</link>.",
     "tabSignup": "Sign up",
     "logIn": "Log in",
     "headingLogin": "Log in to Velanto",
@@ -441,7 +441,7 @@
       "passwordUpper": "Password must include an uppercase letter.",
       "passwordDigit": "Password must include a number.",
       "passwordsMismatch": "Passwords do not match.",
-      "acceptRules": "You must be 16 or older and accept the Community Rules to register.",
+      "acceptRules": "You must accept the Community Rules to register.",
       "code": "Enter the 6-digit code sent to your email.",
       "currentPasswordRequired": "Enter your current password.",
       "emailRequired": "Enter a valid email address."

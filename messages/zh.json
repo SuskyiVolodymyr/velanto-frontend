@@ -300,7 +300,7 @@
     "off": "关"
   },
   "auth": {
-    "acceptRules": "我已年满 16 岁，并且已阅读并接受<link>社区规则</link>。",
+    "acceptRules": "我已阅读并接受<link>社区规则</link>。",
     "tabSignup": "注册",
     "logIn": "登录",
     "headingLogin": "登录 Velanto",
@@ -347,7 +347,7 @@
       "passwordUpper": "密码必须包含一个大写字母。",
       "passwordDigit": "密码必须包含一个数字。",
       "passwordsMismatch": "两次输入的密码不一致。",
-      "acceptRules": "你必须年满 16 周岁并接受《社区规则》才能注册。",
+      "acceptRules": "你必须接受《社区规则》才能注册。",
       "code": "请输入发送到你邮箱的六位验证码。",
       "currentPasswordRequired": "请输入你当前的密码。",
       "emailRequired": "请输入有效的电子邮箱地址。"

@@ -354,19 +354,28 @@ describe("AuthForm", () => {
     expect(replace).not.toHaveBeenCalled();
   });
 
-  // The 16+ minimum is declared here and nowhere else: `acceptedRules` is the
-  // only gate registration already enforces, so folding the age statement into
-  // it is what turns the Terms' age claim into something the product actually
-  // asks. A stated age the product never asks for is worse than no claim
-  // (EDPB Guidelines 05/2020 §130) — see docs/superpowers/specs/2026-07-16-*.
-  it("states the 16+ minimum age on the rules checkbox", async () => {
+  // The 16+ minimum lives in the Terms and the Privacy Policy, NOT here
+  // (velanto-frontend#251). The checkbox asks one thing: do you accept the
+  // Community Rules.
+  //
+  // This test asserted the opposite until #251, on the strength of a decision
+  // recorded in #229 that was never actually taken — the user's "if it in terms
+  // and privacy thats fine with me" was read as assent to folding the age in,
+  // when it meant the documents were enough. Pinned so the age doesn't drift
+  // back in from the issue history, which still reads the other way.
+  //
+  // The declaration still exists: `auth.terms` says "By continuing you agree to
+  // Velanto's Terms", and the Terms state the minimum. It is passive rather
+  // than an affirmative tick, and it leaves no per-user record, which was the
+  // trade-off accepted here.
+  it("does not put an age declaration on the rules checkbox", async () => {
     const user = userEvent.setup();
     renderAuthForm();
     await user.click(screen.getByRole("tab", { name: "Sign up" }));
 
-    expect(
-      screen.getByRole("checkbox", { name: /I am 16 or older/i }),
-    ).toBeInTheDocument();
+    const box = screen.getByRole("checkbox");
+    expect(box).toHaveAccessibleName(/Community Rules/i);
+    expect(box).not.toHaveAccessibleName(/16/);
   });
 
   it("rejects registration when the rules-acceptance box is unchecked", async () => {
@@ -381,9 +390,7 @@ describe("AuthForm", () => {
     await user.click(screen.getByRole("button", { name: "Continue" }));
 
     expect(
-      screen.getByText(
-        "You must be 16 or older and accept the Community Rules to register.",
-      ),
+      screen.getByText("You must accept the Community Rules to register."),
     ).toBeInTheDocument();
     expect(authClient.requestEmailCode).not.toHaveBeenCalled();
   });
