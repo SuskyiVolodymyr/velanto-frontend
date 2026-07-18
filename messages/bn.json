@@ -1163,7 +1163,8 @@
     "privacy": "গোপনীয়তা",
     "terms": "শর্তাবলি",
     "copyright": "© {year} Velanto. সর্বস্বত্ব সংরক্ষিত।",
-    "contactLabel": "প্রশ্ন আছে?"
+    "contactLabel": "প্রশ্ন আছে?",
+    "updates": "আপডেট"
   },
   "status": {
     "packPending": "পর্যালোচনার অপেক্ষায়",
@@ -1350,5 +1351,12 @@
     "playPreview": "ভিডিও প্রিভিউ চালান",
     "embedFailed": "এই ভিডিওটি এখানে চালানো যাবে না",
     "openOnYouTube": "YouTube-এ খুলুন"
+  },
+  "updates": {
+    "metaTitle": "আপডেট — Velanto",
+    "metaDescription": "Velanto-তে নতুন কী — সাম্প্রতিক ফিচার, উন্নতি এবং সংশোধন।",
+    "heading": "নতুন কী",
+    "intro": "Velanto-তে সাম্প্রতিক ফিচার, উন্নতি এবং সংশোধন।",
+    "empty": "এখনও কোনো আপডেট নেই — শীঘ্রই আবার দেখুন।"
   }
 }

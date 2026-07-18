@@ -1257,7 +1257,8 @@
     "privacy": "Privacy",
     "terms": "Terms",
     "copyright": "© {year} Velanto. All rights reserved.",
-    "contactLabel": "Questions?"
+    "contactLabel": "Questions?",
+    "updates": "Updates"
   },
   "status": {
     "packPending": "Pending review",
@@ -1349,5 +1350,12 @@
     "playPreview": "Play video preview",
     "embedFailed": "This video can’t play here",
     "openOnYouTube": "Open on YouTube"
+  },
+  "updates": {
+    "metaTitle": "Updates — Velanto",
+    "metaDescription": "What's new on Velanto — the latest features, improvements, and fixes.",
+    "heading": "What's new",
+    "intro": "The latest features, improvements, and fixes on Velanto.",
+    "empty": "No updates yet — check back soon."
   }
 }

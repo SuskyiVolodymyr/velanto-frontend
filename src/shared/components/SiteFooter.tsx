@@ -11,6 +11,7 @@ const NAV_LINKS: { href: string; ns: "header" | "footer"; key: string }[] = [
   { href: "/feedback", ns: "header", key: "feedback" },
   { href: "/rules", ns: "header", key: "rules" },
   { href: "/docs", ns: "header", key: "docs" },
+  { href: "/updates", ns: "footer", key: "updates" },
   { href: "/privacy", ns: "footer", key: "privacy" },
   { href: "/terms", ns: "footer", key: "terms" },
 ];

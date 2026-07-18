@@ -1163,7 +1163,8 @@
     "privacy": "رازداری",
     "terms": "شرائط",
     "copyright": "© {year} Velanto. جملہ حقوق محفوظ ہیں۔",
-    "contactLabel": "سوالات؟"
+    "contactLabel": "سوالات؟",
+    "updates": "اپ ڈیٹس"
   },
   "status": {
     "packPending": "زیرِ جائزہ",
@@ -1350,5 +1351,12 @@
     "playPreview": "ویڈیو کا پیش منظر چلائیں",
     "embedFailed": "یہ ویڈیو یہاں نہیں چل سکتی",
     "openOnYouTube": "YouTube پر کھولیں"
+  },
+  "updates": {
+    "metaTitle": "اپ ڈیٹس — Velanto",
+    "metaDescription": "Velanto پر نیا کیا ہے — تازہ ترین خصوصیات، بہتریاں اور اصلاحات۔",
+    "heading": "نیا کیا ہے",
+    "intro": "Velanto پر تازہ ترین خصوصیات، بہتریاں اور اصلاحات۔",
+    "empty": "ابھی کوئی اپ ڈیٹ نہیں — جلد دوبارہ دیکھیں۔"
   }
 }

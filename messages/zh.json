@@ -1163,7 +1163,8 @@
     "privacy": "隐私",
     "terms": "条款",
     "copyright": "© {year} Velanto. 保留所有权利。",
-    "contactLabel": "有疑问？"
+    "contactLabel": "有疑问？",
+    "updates": "更新"
   },
   "status": {
     "packPending": "待审核",
@@ -1350,5 +1351,12 @@
     "playPreview": "播放视频预览",
     "embedFailed": "此视频无法在此处播放",
     "openOnYouTube": "在 YouTube 上打开"
+  },
+  "updates": {
+    "metaTitle": "更新 — Velanto",
+    "metaDescription": "Velanto 的最新动态——最新功能、改进和修复。",
+    "heading": "最新动态",
+    "intro": "Velanto 上的最新功能、改进和修复。",
+    "empty": "暂无更新，敬请期待。"
   }
 }

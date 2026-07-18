@@ -1163,7 +1163,8 @@
     "privacy": "Конфиденциальность",
     "terms": "Условия",
     "copyright": "© {year} Velanto. Все права защищены.",
-    "contactLabel": "Вопросы?"
+    "contactLabel": "Вопросы?",
+    "updates": "Обновления"
   },
   "status": {
     "packPending": "На модерации",
@@ -1350,5 +1351,12 @@
     "playPreview": "Воспроизвести предпросмотр видео",
     "embedFailed": "Это видео нельзя воспроизвести здесь",
     "openOnYouTube": "Открыть на YouTube"
+  },
+  "updates": {
+    "metaTitle": "Обновления — Velanto",
+    "metaDescription": "Что нового в Velanto — последние функции, улучшения и исправления.",
+    "heading": "Что нового",
+    "intro": "Последние функции, улучшения и исправления в Velanto.",
+    "empty": "Обновлений пока нет — загляните позже."
   }
 }
