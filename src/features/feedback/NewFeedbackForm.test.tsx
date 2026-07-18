@@ -39,6 +39,7 @@ function mockAuth(status: "authenticated" | "unauthenticated" | "loading") {
     register: vi.fn(),
     logout: vi.fn(),
     setAvatarKey: vi.fn(),
+    patchUser: vi.fn(),
   } as ReturnType<typeof useAuth>);
 }
 

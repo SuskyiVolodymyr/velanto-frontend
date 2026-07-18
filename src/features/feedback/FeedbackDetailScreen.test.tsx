@@ -64,6 +64,7 @@ function mockAuth(user: { id: string; role: Role } | null) {
     register: vi.fn(),
     logout: vi.fn(),
     setAvatarKey: vi.fn(),
+    patchUser: vi.fn(),
   } as ReturnType<typeof useAuth>);
 }
 

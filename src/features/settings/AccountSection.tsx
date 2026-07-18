@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { useAuth } from "@/src/shared/lib/auth-context";
+import { AddEmailForm } from "@/src/features/settings/AddEmailForm";
 
 export function AccountSection() {
   const t = useTranslations("settings");
@@ -23,10 +24,22 @@ export function AccountSection() {
       </Text>
       {status === "authenticated" && user && (
         <Card className="hover:translate-y-0 hover:shadow-none">
-          <Text className="font-semibold">{user.email}</Text>
-          <Text variant="secondary" className="text-sm">
-            {t("signedInViaEmail")}
-          </Text>
+          {user.email ? (
+            <>
+              <Text className="font-semibold">{user.email}</Text>
+              <Text variant="secondary" className="text-sm">
+                {t("accountEmailLabel")}
+              </Text>
+            </>
+          ) : (
+            <>
+              <Text className="font-semibold">{t("noEmailHeading")}</Text>
+              <Text variant="secondary" className="mb-4 text-sm">
+                {t("noEmailDescription")}
+              </Text>
+              <AddEmailForm />
+            </>
+          )}
         </Card>
       )}
       {status === "unauthenticated" && (

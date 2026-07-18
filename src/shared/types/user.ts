@@ -12,10 +12,21 @@ export type Role = (typeof ROLES)[number];
 
 export interface User {
   id: string;
-  email: string;
+  /**
+   * Null for an OAuth account (e.g. Discord) that has no verified email yet, until
+   * the user adds one from Settings. Optional so pre-OAuth fixtures stay valid.
+   */
+  email: string | null;
   username: string;
   role: Role;
   createdAt: string;
+  /**
+   * Whether the account has a password set. OAuth-only accounts start without
+   * one; Settings shows "set a password" vs "change password" accordingly.
+   * Optional so the many pre-existing `User` fixtures stay valid; treat an
+   * absent value as "has a password" (the pre-OAuth default).
+   */
+  hasPassword?: boolean;
   /**
    * Ban surface for the *current* user, from the `/me`-style payload. Present
    * (as `null` when not banned) on the live backend; kept optional here so the
@@ -76,6 +87,7 @@ export interface PublicUserProfile {
 export interface MyProfile {
   id: string;
   username: string;
-  email: string;
+  email: string | null;
+  hasPassword: boolean;
   showPlayHistory: boolean;
 }

@@ -9,7 +9,7 @@ import { ApiError } from "@/src/shared/lib/api-client";
 
 vi.mock("@/src/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
 vi.mock("@/src/shared/lib/auth-client", () => ({
-  authClient: { changePassword: vi.fn() },
+  authClient: { changePassword: vi.fn(), setPassword: vi.fn() },
 }));
 
 const mockedChange = vi.mocked(authClient.changePassword);
@@ -36,6 +36,20 @@ describe("PasswordSection", () => {
     render(<PasswordSection />);
     expect(
       screen.getByText(/log in to change your password/i),
+    ).toBeInTheDocument();
+    expect(screen.queryByLabelText("Current password")).not.toBeInTheDocument();
+  });
+
+  it("renders the set-password variant when the account has no password", () => {
+    vi.mocked(useAuth).mockReturnValue({
+      status: "authenticated",
+      user: { hasPassword: false },
+      patchUser: vi.fn(),
+    } as unknown as ReturnType<typeof useAuth>);
+    render(<PasswordSection />);
+
+    expect(
+      screen.getByRole("heading", { name: "Set a password" }),
     ).toBeInTheDocument();
     expect(screen.queryByLabelText("Current password")).not.toBeInTheDocument();
   });
