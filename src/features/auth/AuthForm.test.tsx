@@ -24,6 +24,7 @@ vi.mock("@/src/shared/lib/auth-client", () => ({
     login: vi.fn(),
     logout: vi.fn(),
     refresh: vi.fn(),
+    oauthProviders: vi.fn(),
   },
 }));
 
@@ -52,6 +53,12 @@ beforeEach(() => {
   vi.mocked(authClient.requestEmailCode).mockResolvedValue({
     sent: true,
     devCode: "123456",
+  });
+  // No OAuth providers configured by default → OAuthButtons renders nothing,
+  // leaving these tests focused on the email/password form.
+  vi.mocked(authClient.oauthProviders).mockResolvedValue({
+    google: false,
+    discord: false,
   });
 });
 

@@ -11,6 +11,7 @@ import { PasswordField } from "@/src/shared/components/form/PasswordField";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { ApiError } from "@/src/shared/lib/api-client";
+import { SetPasswordSection } from "@/src/features/settings/SetPasswordSection";
 import {
   changePasswordSchema,
   type ChangePasswordValues,
@@ -26,7 +27,7 @@ import {
 export function PasswordSection() {
   const t = useTranslations("settings");
   const tAuth = useTranslations("auth");
-  const { status } = useAuth();
+  const { status, user } = useAuth();
   const [done, setDone] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
@@ -52,6 +53,12 @@ export function PasswordSection() {
         </Text>
       </Card>
     );
+  }
+
+  // OAuth-only accounts have no current password to confirm — offer to set a
+  // first one instead of the change-password form.
+  if (user?.hasPassword === false) {
+    return <SetPasswordSection />;
   }
 
   const onSubmit = async (values: ChangePasswordValues) => {

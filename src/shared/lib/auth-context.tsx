@@ -37,6 +37,12 @@ interface AuthContextValue {
    * without a full session refresh.
    */
   setAvatarKey: (avatarKey: string | null) => void;
+  /**
+   * Patch arbitrary fields of the signed-in user in place — e.g. after setting a
+   * first password (`hasPassword`) or adding an email (`email`) from Settings, so
+   * the UI reflects it without a full refresh.
+   */
+  patchUser: (partial: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -122,6 +128,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser((prev) => (prev ? { ...prev, avatarKey } : prev));
   }, []);
 
+  const patchUser = useCallback((partial: Partial<User>) => {
+    setUser((prev) => (prev ? { ...prev, ...partial } : prev));
+  }, []);
+
   const value = useMemo(
     () => ({
       user,
@@ -131,8 +141,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       login,
       logout,
       setAvatarKey,
+      patchUser,
     }),
-    [user, status, requestEmailCode, register, login, logout, setAvatarKey],
+    [
+      user,
+      status,
+      requestEmailCode,
+      register,
+      login,
+      logout,
+      setAvatarKey,
+      patchUser,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

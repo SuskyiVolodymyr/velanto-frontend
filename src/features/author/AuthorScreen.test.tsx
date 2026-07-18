@@ -87,6 +87,7 @@ function mockAuth(overrides: Partial<ReturnType<typeof useAuth>> = {}) {
     register: vi.fn(),
     logout: vi.fn(),
     setAvatarKey: vi.fn(),
+    patchUser: vi.fn(),
     ...overrides,
   } as ReturnType<typeof useAuth>);
 }

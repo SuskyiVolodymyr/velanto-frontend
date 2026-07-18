@@ -25,6 +25,7 @@ import {
   AcceptRulesField,
 } from "@/src/features/auth/RegisterFields";
 import { OtpStep } from "@/src/features/auth/OtpStep";
+import { OAuthButtons } from "@/src/features/auth/OAuthButtons";
 import { ForgotPasswordForm } from "@/src/features/auth/ForgotPasswordForm";
 import {
   markCodeSent,
@@ -317,6 +318,10 @@ export function AuthForm() {
           </Button>
         </form>
       </FormProvider>
+
+      {/* OAuth is an alternative to the form above, so it's hidden once the
+          register flow has advanced to entering the emailed code. */}
+      {step === "form" && <OAuthButtons />}
 
       <Text
         variant="tertiary"

@@ -50,15 +50,15 @@ beforeEach(() => {
 });
 
 describe("AccountSection", () => {
-  it("shows the user's email and a static provider line when authenticated", async () => {
+  it("shows the user's email and the account-email label when authenticated", async () => {
     renderAsAuthenticated();
     expect(await screen.findByText("alice@example.com")).toBeInTheDocument();
-    expect(screen.getByText("Signed in via email")).toBeInTheDocument();
+    expect(screen.getByText("Your account email")).toBeInTheDocument();
   });
 
   it("shows a log-in prompt when unauthenticated", async () => {
     renderAsUnauthenticated();
     expect(await screen.findByText(/log in/i)).toBeInTheDocument();
-    expect(screen.queryByText("Signed in via email")).not.toBeInTheDocument();
+    expect(screen.queryByText("Your account email")).not.toBeInTheDocument();
   });
 });
