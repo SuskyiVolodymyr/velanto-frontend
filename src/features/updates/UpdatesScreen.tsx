@@ -1,5 +1,6 @@
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
+import { formatDate } from "@/src/shared/lib/format-date";
 import type { UpdateEntry } from "./updates-data";
 
 export interface UpdatesScreenProps {
@@ -46,7 +47,7 @@ export function UpdatesScreen({
               <div className="mb-2 flex items-center gap-3">
                 <Badge variant="accent">v{entry.version}</Badge>
                 <Text as="span" variant="tertiary" className="text-sm">
-                  {entry.date}
+                  {formatDate(entry.date)}
                 </Text>
               </div>
               <Text as="h2" variant="title" className="mb-3 text-xl">

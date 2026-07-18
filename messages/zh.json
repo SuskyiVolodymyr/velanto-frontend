@@ -194,7 +194,11 @@
     "detailCreatedPacks": "创建的题包",
     "detailBanHistory": "封禁记录",
     "detailNoBanHistory": "无封禁记录。",
-    "detailPublicProfile": "查看公开资料"
+    "detailPublicProfile": "查看公开资料",
+    "filterStaffAria": "按员工状态筛选",
+    "staffAll": "全部",
+    "staffOnly": "员工",
+    "staffNonStaff": "非员工"
   },
   "notifications": {
     "title": "通知",
@@ -1171,7 +1175,8 @@
     "privacy": "隐私",
     "terms": "条款",
     "copyright": "© {year} Velanto. 保留所有权利。",
-    "contactLabel": "有疑问？"
+    "contactLabel": "有疑问？",
+    "updates": "更新"
   },
   "status": {
     "packPending": "待审核",
@@ -1358,5 +1363,12 @@
     "playPreview": "播放视频预览",
     "embedFailed": "此视频无法在此处播放",
     "openOnYouTube": "在 YouTube 上打开"
+  },
+  "updates": {
+    "metaTitle": "更新 — Velanto",
+    "metaDescription": "Velanto 的新功能、修复和改进。",
+    "heading": "最新动态",
+    "intro": "最新的功能、修复和改进——最新的排在前面。",
+    "empty": "暂无更新，敬请期待。"
   }
 }

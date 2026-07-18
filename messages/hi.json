@@ -194,7 +194,11 @@
     "detailCreatedPacks": "बनाए गए पैक",
     "detailBanHistory": "प्रतिबंध इतिहास",
     "detailNoBanHistory": "कोई प्रतिबंध इतिहास नहीं।",
-    "detailPublicProfile": "सार्वजनिक प्रोफ़ाइल देखें"
+    "detailPublicProfile": "सार्वजनिक प्रोफ़ाइल देखें",
+    "filterStaffAria": "स्टाफ़ स्थिति के अनुसार फ़िल्टर करें",
+    "staffAll": "सभी",
+    "staffOnly": "स्टाफ़",
+    "staffNonStaff": "गैर-स्टाफ़"
   },
   "notifications": {
     "title": "सूचनाएँ",
@@ -1171,7 +1175,8 @@
     "privacy": "गोपनीयता",
     "terms": "शर्तें",
     "copyright": "© {year} Velanto. सर्वाधिकार सुरक्षित।",
-    "contactLabel": "सवाल?"
+    "contactLabel": "सवाल?",
+    "updates": "अपडेट"
   },
   "status": {
     "packPending": "समीक्षा लंबित",
@@ -1358,5 +1363,12 @@
     "playPreview": "वीडियो पूर्वावलोकन चलाएं",
     "embedFailed": "यह वीडियो यहां नहीं चल सकता",
     "openOnYouTube": "YouTube पर खोलें"
+  },
+  "updates": {
+    "metaTitle": "अपडेट — Velanto",
+    "metaDescription": "Velanto पर नई सुविधाएँ, सुधार और बेहतरी।",
+    "heading": "नया क्या है",
+    "intro": "नवीनतम सुविधाएँ, सुधार और बेहतरी — नवीनतम पहले।",
+    "empty": "अभी तक कोई अपडेट नहीं — जल्द ही फिर देखें।"
   }
 }

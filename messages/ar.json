@@ -194,7 +194,11 @@
     "detailCreatedPacks": "الحزم المُنشأة",
     "detailBanHistory": "سجل الحظر",
     "detailNoBanHistory": "لا يوجد سجل حظر.",
-    "detailPublicProfile": "عرض الملف العام"
+    "detailPublicProfile": "عرض الملف العام",
+    "filterStaffAria": "التصفية حسب حالة الطاقم",
+    "staffAll": "الكل",
+    "staffOnly": "الطاقم",
+    "staffNonStaff": "غير الطاقم"
   },
   "notifications": {
     "title": "الإشعارات",
@@ -1171,7 +1175,8 @@
     "privacy": "الخصوصية",
     "terms": "الشروط",
     "copyright": "© {year} Velanto. جميع الحقوق محفوظة.",
-    "contactLabel": "أسئلة؟"
+    "contactLabel": "أسئلة؟",
+    "updates": "التحديثات"
   },
   "status": {
     "packPending": "قيد المراجعة",
@@ -1358,5 +1363,12 @@
     "playPreview": "تشغيل معاينة الفيديو",
     "embedFailed": "لا يمكن تشغيل هذا الفيديو هنا",
     "openOnYouTube": "افتح على YouTube"
+  },
+  "updates": {
+    "metaTitle": "التحديثات — Velanto",
+    "metaDescription": "ميزات جديدة وإصلاحات وتحسينات في Velanto.",
+    "heading": "ما الجديد",
+    "intro": "أحدث الميزات والإصلاحات والتحسينات — الأحدث أولًا.",
+    "empty": "لا توجد تحديثات بعد — عُد قريبًا."
   }
 }

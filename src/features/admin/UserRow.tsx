@@ -1,4 +1,5 @@
 "use client";
+import { formatDate } from "@/src/shared/lib/format-date";
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -111,7 +112,7 @@ export function UserRow({
           {row.plays}
         </Text>
         <Text variant="tertiary" className="text-[12.5px] tabular-nums">
-          {new Date(row.createdAt).toLocaleDateString()}
+          {formatDate(row.createdAt)}
         </Text>
 
         <span

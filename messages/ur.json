@@ -194,7 +194,11 @@
     "detailCreatedPacks": "بنائے گئے پیکس",
     "detailBanHistory": "پابندی کی تاریخ",
     "detailNoBanHistory": "کوئی پابندی کی تاریخ نہیں۔",
-    "detailPublicProfile": "عوامی پروفائل دیکھیں"
+    "detailPublicProfile": "عوامی پروفائل دیکھیں",
+    "filterStaffAria": "اسٹاف اسٹیٹس کے لحاظ سے فلٹر کریں",
+    "staffAll": "سب",
+    "staffOnly": "اسٹاف",
+    "staffNonStaff": "غیر اسٹاف"
   },
   "notifications": {
     "title": "اطلاعات",
@@ -1171,7 +1175,8 @@
     "privacy": "رازداری",
     "terms": "شرائط",
     "copyright": "© {year} Velanto. جملہ حقوق محفوظ ہیں۔",
-    "contactLabel": "سوالات؟"
+    "contactLabel": "سوالات؟",
+    "updates": "اپڈیٹس"
   },
   "status": {
     "packPending": "زیرِ جائزہ",
@@ -1358,5 +1363,12 @@
     "playPreview": "ویڈیو کا پیش منظر چلائیں",
     "embedFailed": "یہ ویڈیو یہاں نہیں چل سکتی",
     "openOnYouTube": "YouTube پر کھولیں"
+  },
+  "updates": {
+    "metaTitle": "اپڈیٹس — Velanto",
+    "metaDescription": "Velanto پر نئی خصوصیات، اصلاحات اور بہتری۔",
+    "heading": "نیا کیا ہے",
+    "intro": "تازہ ترین خصوصیات، اصلاحات اور بہتری — نئی پہلے۔",
+    "empty": "ابھی تک کوئی اپڈیٹ نہیں — جلد دوبارہ دیکھیں۔"
   }
 }

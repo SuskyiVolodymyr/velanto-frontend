@@ -1,4 +1,5 @@
 "use client";
+import { formatDateTime } from "@/src/shared/lib/format-date";
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -158,7 +159,7 @@ export function LogsTab() {
                     variant="tertiary"
                     className="text-[12.5px] tabular-nums"
                   >
-                    {new Date(log.createdAt).toLocaleString()}
+                    {formatDateTime(log.createdAt)}
                   </Text>
                   <Text className="truncate text-[13px] font-semibold">
                     {log.actorUsername}
