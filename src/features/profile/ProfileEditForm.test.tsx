@@ -206,9 +206,7 @@ describe("ProfileEditForm", () => {
     await user.click(screen.getByRole("button", { name: /save/i }));
 
     await waitFor(() =>
-      expect(
-        screen.getByText(/2-16 characters/i),
-      ).toBeInTheDocument(),
+      expect(screen.getByText(/2-16 characters/i)).toBeInTheDocument(),
     );
     expect(usersClient.changeUsername).not.toHaveBeenCalled();
     expect(push).not.toHaveBeenCalled();

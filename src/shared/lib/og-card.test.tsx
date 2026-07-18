@@ -59,7 +59,9 @@ describe("profileOgCard", () => {
   });
 
   it("falls back to the initial (no img) when there is no avatar", () => {
-    const { text, imgSrcs } = inspect(profileOgCard({ username: "quizmaster" }));
+    const { text, imgSrcs } = inspect(
+      profileOgCard({ username: "quizmaster" }),
+    );
     expect(text).toContain("quizmaster");
     // The uppercase initial stands in for the avatar.
     expect(text).toContain("Q");

@@ -6,8 +6,7 @@ const API_ORIGIN = new URL(
 
 export type OAuthProvider = "google" | "discord";
 export type OAuthPopupResult =
-  | { ok: true }
-  | { ok: false; error: "blocked" | "closed" | "oauth" };
+  { ok: true } | { ok: false; error: "blocked" | "closed" | "oauth" };
 
 /**
  * Runs a provider's OAuth flow in a popup and resolves when the backend callback

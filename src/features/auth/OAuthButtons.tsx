@@ -9,7 +9,10 @@ import {
   OAuthProviderIcon,
   OAUTH_BRAND_CLASS,
 } from "@/src/shared/components/oauth-branding";
-import { openOAuthPopup, type OAuthProvider } from "@/src/shared/lib/oauth-popup";
+import {
+  openOAuthPopup,
+  type OAuthProvider,
+} from "@/src/shared/lib/oauth-popup";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { cn } from "@/src/shared/lib/cn";
 

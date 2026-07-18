@@ -146,7 +146,11 @@ async function sendWithRefresh(
   // the token is visibly expired, renew it before sending. buildInit reads the
   // token at call time, so it picks up the fresh one; a failed refresh nulls the
   // token and the request just proceeds anonymously (graceful, no error).
-  if (accessToken !== null && !isRefreshEndpoint(path) && accessTokenIsStale()) {
+  if (
+    accessToken !== null &&
+    !isRefreshEndpoint(path) &&
+    accessTokenIsStale()
+  ) {
     await refreshAccessToken();
   }
 

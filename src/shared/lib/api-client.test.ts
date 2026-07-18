@@ -231,9 +231,9 @@ describe("apiClient proactive refresh of an expired token", () => {
     });
     vi.stubGlobal("fetch", fetchMock);
 
-    await expect(apiClient.post("/packs/x/plays", { picks: [] })).resolves.toEqual(
-      { id: "p1", seen: `Bearer ${fresh}` },
-    );
+    await expect(
+      apiClient.post("/packs/x/plays", { picks: [] }),
+    ).resolves.toEqual({ id: "p1", seen: `Bearer ${fresh}` });
     expect(fetchMock).toHaveBeenCalledWith(
       expect.stringContaining("/auth/refresh"),
       expect.anything(),
@@ -248,7 +248,9 @@ describe("apiClient proactive refresh of an expired token", () => {
 
     const fetchMock = vi.fn((url: string, init?: RequestInit) => {
       if (url.endsWith("/auth/refresh")) {
-        return Promise.resolve(jsonResponse(401, { message: "refresh expired" }));
+        return Promise.resolve(
+          jsonResponse(401, { message: "refresh expired" }),
+        );
       }
       return Promise.resolve(
         jsonResponse(200, { id: "p1", seen: authHeader(init) ?? null }),
@@ -256,15 +258,17 @@ describe("apiClient proactive refresh of an expired token", () => {
     });
     vi.stubGlobal("fetch", fetchMock);
 
-    await expect(apiClient.post("/packs/x/plays", { picks: [] })).resolves.toEqual(
-      { id: "p1", seen: null },
-    );
+    await expect(
+      apiClient.post("/packs/x/plays", { picks: [] }),
+    ).resolves.toEqual({ id: "p1", seen: null });
     expect(onLost).toHaveBeenCalled();
   });
 
   it("does not refresh a still-valid token", async () => {
     setAccessToken(fakeJwt(nowSeconds() + 3600));
-    const fetchMock = vi.fn().mockResolvedValue(jsonResponse(200, { id: "p1" }));
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(jsonResponse(200, { id: "p1" }));
     vi.stubGlobal("fetch", fetchMock);
 
     await apiClient.post("/packs/x/plays", { picks: [] });
