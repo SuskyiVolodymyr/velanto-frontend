@@ -210,6 +210,24 @@ describe("AuthorScreen", () => {
     expect(push).not.toHaveBeenCalled();
   });
 
+  it("hides the follow button while auth is still loading (no self-follow flash on your own page)", async () => {
+    // During the initial auth refresh the viewer is unknown, so we can't yet
+    // tell whether this is their own page. The follow control must stay hidden
+    // until auth settles rather than flashing a Follow button — on your own
+    // page that button was aimable at yourself before it flipped to Edit.
+    mockAuth({ user: null, status: "loading" });
+    mockedUsersClient.getProfile.mockResolvedValue(profile);
+    renderScreen(<AuthorScreen authorId="author-1" />);
+    await waitFor(() =>
+      expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+    );
+
+    expect(
+      screen.queryByRole("button", { name: /follow/i }),
+    ).not.toBeInTheDocument();
+    expect(mockedUsersClient.follow).not.toHaveBeenCalled();
+  });
+
   it("renders the author's approved packs in a grid without status badges", async () => {
     mockAuth();
     mockedUsersClient.getProfile.mockResolvedValue(profile);
