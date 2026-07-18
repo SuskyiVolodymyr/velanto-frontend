@@ -15,9 +15,41 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 // Held in memory only (never localStorage) — see .claude/docs/security-checklist.md.
 // Set by AuthProvider after login/register/refresh; cleared on logout.
 let accessToken: string | null = null;
+// The token's `exp`, in ms, decoded when the token is assigned — so we can renew
+// it *before* sending rather than only reacting to a 401 (see sendWithRefresh).
+let accessTokenExpMs: number | null = null;
+
+function assignAccessToken(token: string | null): void {
+  accessToken = token;
+  accessTokenExpMs = token ? decodeJwtExpMs(token) : null;
+}
 
 export function setAccessToken(token: string | null): void {
-  accessToken = token;
+  assignAccessToken(token);
+}
+
+/** Read a JWT's `exp` (ms) without verifying it; null for an opaque/bad token. */
+function decodeJwtExpMs(token: string): number | null {
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return null;
+    let b64 = payload.replace(/-/g, "+").replace(/_/g, "/");
+    b64 += "=".repeat((4 - (b64.length % 4)) % 4);
+    const claims = JSON.parse(atob(b64)) as { exp?: number };
+    return typeof claims.exp === "number" ? claims.exp * 1000 : null;
+  } catch {
+    return null; // not a JWT we can read — proactive refresh simply won't apply
+  }
+}
+
+// A few seconds of slack so a token expiring mid-flight is renewed too.
+const TOKEN_STALE_SKEW_MS = 10_000;
+
+function accessTokenIsStale(): boolean {
+  return (
+    accessTokenExpMs !== null &&
+    Date.now() >= accessTokenExpMs - TOKEN_STALE_SKEW_MS
+  );
 }
 
 // Shape of POST /auth/refresh — a fresh access token plus the current user.
@@ -60,12 +92,12 @@ function refreshAccessToken(): Promise<string | null> {
       if (!response.ok) throw new Error(`refresh failed: ${response.status}`);
       const { accessToken: fresh, user } =
         (await response.json()) as RefreshResult;
-      accessToken = fresh;
+      assignAccessToken(fresh);
       sessionCallbacks?.onRefreshed(user);
       return fresh;
     } catch {
       // Refresh cookie is gone (expired/revoked) — the session is truly over.
-      accessToken = null;
+      assignAccessToken(null);
       sessionCallbacks?.onLost();
       return null;
     } finally {
@@ -107,6 +139,17 @@ async function sendWithRefresh(
   path: string,
   buildInit: () => RequestInit,
 ): Promise<Response> {
+  // Optional-auth endpoints (e.g. POST /packs/:id/plays) accept an expired token
+  // as "anonymous" and answer 200, so the reactive 401-refresh below never fires
+  // and the request silently loses its identity — a signed-in play would be
+  // recorded anonymously and vanish from the player's history. Pre-empt that: if
+  // the token is visibly expired, renew it before sending. buildInit reads the
+  // token at call time, so it picks up the fresh one; a failed refresh nulls the
+  // token and the request just proceeds anonymously (graceful, no error).
+  if (accessToken !== null && !isRefreshEndpoint(path) && accessTokenIsStale()) {
+    await refreshAccessToken();
+  }
+
   // Whether *this* request was authenticated. An anonymous request's 401 is
   // expected, so don't burn a refresh round-trip on it.
   const hadToken = accessToken !== null;
