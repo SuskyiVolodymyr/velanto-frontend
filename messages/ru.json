@@ -194,7 +194,11 @@
     "detailCreatedPacks": "Созданные паки",
     "detailBanHistory": "История блокировок",
     "detailNoBanHistory": "Блокировок нет.",
-    "detailPublicProfile": "Открыть профиль"
+    "detailPublicProfile": "Открыть профиль",
+    "filterStaffAria": "Фильтр по статусу персонала",
+    "staffAll": "Все",
+    "staffOnly": "Персонал",
+    "staffNonStaff": "Не персонал"
   },
   "notifications": {
     "title": "Уведомления",
@@ -1171,7 +1175,8 @@
     "privacy": "Конфиденциальность",
     "terms": "Условия",
     "copyright": "© {year} Velanto. Все права защищены.",
-    "contactLabel": "Вопросы?"
+    "contactLabel": "Вопросы?",
+    "updates": "Обновления"
   },
   "status": {
     "packPending": "На модерации",
@@ -1358,5 +1363,12 @@
     "playPreview": "Воспроизвести предпросмотр видео",
     "embedFailed": "Это видео нельзя воспроизвести здесь",
     "openOnYouTube": "Открыть на YouTube"
+  },
+  "updates": {
+    "metaTitle": "Обновления — Velanto",
+    "metaDescription": "Новые возможности, исправления и улучшения в Velanto.",
+    "heading": "Что нового",
+    "intro": "Последние возможности, исправления и улучшения — сначала новые.",
+    "empty": "Пока обновлений нет — загляните позже."
   }
 }

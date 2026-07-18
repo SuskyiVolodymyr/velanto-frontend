@@ -1,6 +1,7 @@
 // src/shared/lib/ban-display.test.ts
 import { describe, expect, it, vi, afterEach } from "vitest";
 import { formatBanStatus } from "./ban-display";
+import { formatDate } from "./format-date";
 
 describe("formatBanStatus", () => {
   afterEach(() => {
@@ -19,9 +20,7 @@ describe("formatBanStatus", () => {
     vi.useFakeTimers();
     vi.setSystemTime(new Date("2026-01-01T00:00:00.000Z"));
     const until = "2026-01-08T00:00:00.000Z";
-    expect(formatBanStatus(until)).toBe(
-      `Banned until ${new Date(until).toLocaleDateString()}`,
-    );
+    expect(formatBanStatus(until)).toBe(`Banned until ${formatDate(until)}`);
   });
 
   it("returns 'Permanently banned' for a ban more than 20 years out", () => {

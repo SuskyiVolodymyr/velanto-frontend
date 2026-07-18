@@ -52,7 +52,8 @@ describe("UpdatesScreen", () => {
       }),
     ).toBeInTheDocument();
     expect(screen.getByText("v1.1.0")).toBeInTheDocument();
-    expect(screen.getByText("2026-07-18")).toBeInTheDocument();
+    // Rendered dd-mm-yyyy via formatDate, not the raw ISO date.
+    expect(screen.getByText("18-07-2026")).toBeInTheDocument();
     expect(
       screen.getByText("Change your username any time from Settings."),
     ).toBeInTheDocument();

@@ -1,4 +1,5 @@
 "use client";
+import { formatDateTime } from "@/src/shared/lib/format-date";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -153,7 +154,7 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
                   </Link>
                 </Hidden>
                 <span className="text-xs text-foreground-tertiary">
-                  {new Date(comment.createdAt).toLocaleString()}
+                  {formatDateTime(comment.createdAt)}
                 </span>
               </div>
               <Hidden kind="comment" id={comment.id}>

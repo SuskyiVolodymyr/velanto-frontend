@@ -194,7 +194,11 @@
     "detailCreatedPacks": "Створені паки",
     "detailBanHistory": "Історія блокувань",
     "detailNoBanHistory": "Блокувань немає.",
-    "detailPublicProfile": "Відкрити профіль"
+    "detailPublicProfile": "Відкрити профіль",
+    "filterStaffAria": "Фільтр за статусом персоналу",
+    "staffAll": "Усі",
+    "staffOnly": "Персонал",
+    "staffNonStaff": "Не персонал"
   },
   "notifications": {
     "title": "Сповіщення",
@@ -1171,7 +1175,8 @@
     "privacy": "Конфіденційність",
     "terms": "Умови",
     "copyright": "© {year} Velanto. Усі права захищені.",
-    "contactLabel": "Питання?"
+    "contactLabel": "Питання?",
+    "updates": "Оновлення"
   },
   "status": {
     "packPending": "На розгляді",
@@ -1358,5 +1363,12 @@
     "playPreview": "Відтворити попередній перегляд відео",
     "embedFailed": "Це відео не можна відтворити тут",
     "openOnYouTube": "Відкрити на YouTube"
+  },
+  "updates": {
+    "metaTitle": "Оновлення — Velanto",
+    "metaDescription": "Нові можливості, виправлення та покращення у Velanto.",
+    "heading": "Що нового",
+    "intro": "Найновіші можливості, виправлення та покращення — спершу нові.",
+    "empty": "Оновлень поки немає — завітайте пізніше."
   }
 }

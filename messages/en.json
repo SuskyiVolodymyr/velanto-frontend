@@ -194,7 +194,11 @@
     "detailCreatedPacks": "Created packs",
     "detailBanHistory": "Ban history",
     "detailNoBanHistory": "No ban history.",
-    "detailPublicProfile": "View public profile"
+    "detailPublicProfile": "View public profile",
+    "filterStaffAria": "Filter by staff status",
+    "staffAll": "All",
+    "staffOnly": "Staff",
+    "staffNonStaff": "Non-staff"
   },
   "docs": {
     "secOverview": "OVERVIEW",
@@ -1265,7 +1269,8 @@
     "privacy": "Privacy",
     "terms": "Terms",
     "copyright": "© {year} Velanto. All rights reserved.",
-    "contactLabel": "Questions?"
+    "contactLabel": "Questions?",
+    "updates": "Updates"
   },
   "status": {
     "packPending": "Pending review",
@@ -1357,5 +1362,12 @@
     "playPreview": "Play video preview",
     "embedFailed": "This video can’t play here",
     "openOnYouTube": "Open on YouTube"
+  },
+  "updates": {
+    "metaTitle": "Updates — Velanto",
+    "metaDescription": "New features, fixes, and improvements on Velanto.",
+    "heading": "What's new",
+    "intro": "The latest features, fixes, and improvements — newest first.",
+    "empty": "No updates yet — check back soon."
   }
 }

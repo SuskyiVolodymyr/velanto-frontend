@@ -1,4 +1,5 @@
 "use client";
+import { formatDate } from "@/src/shared/lib/format-date";
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -92,7 +93,7 @@ export function ReportsTab() {
                     {report.reporterUsername}
                   </Text>
                   <Text variant="tertiary" className="text-[12.5px]">
-                    {new Date(report.createdAt).toLocaleDateString()}
+                    {formatDate(report.createdAt)}
                   </Text>
                   <StatusBadge kind="report" status={report.status} />
                 </DataTableRow>

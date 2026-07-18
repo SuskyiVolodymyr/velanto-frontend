@@ -21,11 +21,24 @@ export interface UpdateEntry {
  */
 export const UPDATES: UpdateEntry[] = [
   {
+    date: "2026-07-19",
+    version: "1.2.0",
+    title: "Follow people and faster sign-up",
+    bullets: [
+      "See who follows you and who you follow — follower and following lists open right from any profile.",
+      "Sign up in one step with just an email, a username, and a password.",
+      "Comment sections now load with a placeholder instead of a spinner.",
+      "Fixed the preview cards shown when you share a pack or a profile link.",
+      "Added this Updates page so you can keep track of what's new.",
+    ],
+  },
+  {
     date: "2026-07-18",
     version: "1.1.0",
     title: "Sign in with Discord and Google",
     bullets: [
       "One-tap sign-in with your Discord or Google account — no password to remember.",
+      "Link Discord or Google to an existing account from Settings.",
       "Change your username any time from Settings.",
     ],
   },
@@ -34,8 +47,10 @@ export const UPDATES: UpdateEntry[] = [
     version: "1.0.0",
     title: "Velanto is live",
     bullets: [
-      "Build elimination-quiz packs in five formats and play them with the community.",
+      "Build elimination-quiz packs in five formats and play them head-to-head with the community.",
       "Discover packs by search, tags, and popularity, and follow the authors you like.",
+      "Comment on packs, vote, and report anything that breaks the community rules.",
+      "Available in eleven languages.",
     ],
   },
 ];

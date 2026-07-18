@@ -7,6 +7,7 @@ import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { UsersTab } from "./UsersTab";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
+import { formatDate } from "@/src/shared/lib/format-date";
 import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { adminClient } from "@/src/shared/lib/admin-client";
@@ -240,9 +241,7 @@ describe("UsersTab", () => {
       }),
     );
     expect(
-      await screen.findByText(
-        `Banned until ${new Date(bannedUntil).toLocaleDateString()}`,
-      ),
+      await screen.findByText(`Banned until ${formatDate(bannedUntil)}`),
     ).toBeInTheDocument();
   });
 
