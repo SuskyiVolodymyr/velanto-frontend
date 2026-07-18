@@ -91,4 +91,25 @@ describe("buildOpenGraph", () => {
 
     expect(og.type).toBe("profile");
   });
+
+  // A per-page dynamic card (pack cover+title / avatar+name) replaces the
+  // static site card's URL/alt but keeps it a full descriptor with the same
+  // 1200×630 dimensions and type — still named explicitly, never inherited, so
+  // the #235 disinherit trap can't recur.
+  it("names a per-page dynamic card when one is given", () => {
+    const og = buildOpenGraph({
+      title: "T",
+      description: "D",
+      url: "/packs/p1",
+      image: { path: "/packs/p1/social-card", alt: "My Pack" },
+    });
+    const image = og.images[0];
+
+    expect(og.images).toHaveLength(1);
+    expect(image.url).toBe("/packs/p1/social-card");
+    expect(image.alt).toBe("My Pack");
+    expect(image.width).toBe(1200);
+    expect(image.height).toBe(630);
+    expect(image.type).toBe("image/png");
+  });
 });
