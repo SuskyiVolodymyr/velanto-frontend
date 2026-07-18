@@ -1111,6 +1111,7 @@
     "saving": "Збереження…",
     "save": "Зберегти",
     "saveError": "Не вдалося зберегти зміни. Спробуй ще раз.",
+    "usernameTaken": "Це ім'я користувача вже зайняте.",
     "userNotFound": "Такого користувача не існує.",
     "followError": "Не вдалося оновити стеження. Спробуй ще раз.",
     "followerAndPackCount": "{followers, plural, one {# підписник} few {# підписники} many {# підписників} other {# підписника}} · {packs, plural, one {# пак} few {# паки} many {# паків} other {# пака}}",

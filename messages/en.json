@@ -1205,6 +1205,7 @@
     "saving": "Saving…",
     "save": "Save",
     "saveError": "Couldn't save your changes. Try again.",
+    "usernameTaken": "That username is already taken.",
     "userNotFound": "This user doesn't exist.",
     "followError": "Couldn't update follow status. Try again.",
     "followerAndPackCount": "{followers, plural, one {# follower} other {# followers}} · {packs, plural, one {# pack} other {# packs}}",

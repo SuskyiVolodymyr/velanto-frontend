@@ -1111,6 +1111,7 @@
     "saving": "保存中…",
     "save": "保存",
     "saveError": "无法保存你的更改，请重试。",
+    "usernameTaken": "该用户名已被占用。",
     "userNotFound": "该用户不存在。",
     "followError": "无法更新关注状态，请重试。",
     "followerAndPackCount": "{followers, plural, other {# 位关注者}} · {packs, plural, other {# 个题包}}",

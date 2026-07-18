@@ -1111,6 +1111,7 @@
     "saving": "جارٍ الحفظ…",
     "save": "حفظ",
     "saveError": "تعذّر حفظ تغييراتك. حاول مرة أخرى.",
+    "usernameTaken": "اسم المستخدم هذا مُستخدَم بالفعل.",
     "userNotFound": "هذا المستخدم غير موجود.",
     "followError": "تعذّر تحديث حالة المتابعة. حاول مرة أخرى.",
     "followerAndPackCount": "{followers, plural, zero {# متابِع} one {متابِع واحد} two {متابِعان} few {# متابِعين} many {# متابِعًا} other {# متابِع}} · {packs, plural, zero {# حزمة} one {حزمة واحدة} two {حزمتان} few {# حزم} many {# حزمة} other {# حزمة}}",
