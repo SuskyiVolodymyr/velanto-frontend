@@ -62,6 +62,7 @@ export interface PublicUserProfile {
   bio: string | null;
   createdAt: string;
   followerCount: number;
+  followingCount: number;
   isFollowedByMe: boolean | null;
   /**
    * Role + trust flags for the animated-nickname / verified-badge treatment.

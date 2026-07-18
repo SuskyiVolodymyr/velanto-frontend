@@ -29,6 +29,7 @@ const profile: PublicUserProfile = {
   bio: "I make packs",
   createdAt: "2026-01-01T00:00:00.000Z",
   followerCount: 3,
+  followingCount: 1,
   isFollowedByMe: null,
 };
 
