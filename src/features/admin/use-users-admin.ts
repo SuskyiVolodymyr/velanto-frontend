@@ -8,6 +8,7 @@ import {
   type BanDuration,
   type BanUserInput,
 } from "@/src/shared/lib/users-client";
+import type { AssignableRole } from "@/src/shared/lib/staff-permissions";
 import {
   isBanReasonValid,
   buildBanReasonPayload,
@@ -30,6 +31,13 @@ function bannedFlag(filter: BannedFilter): boolean | undefined {
   return filter === "all" ? undefined : filter === "banned";
 }
 
+/** The staff-filter's three states as a single select value. */
+export type StaffFilter = "all" | "staff" | "nonstaff";
+
+function staffFlag(filter: StaffFilter): boolean | undefined {
+  return filter === "all" ? undefined : filter === "staff";
+}
+
 export function isCurrentlyBanned(bannedUntil: string | null): boolean {
   return bannedUntil !== null && new Date(bannedUntil).getTime() > Date.now();
 }
@@ -46,6 +54,7 @@ export function useUsersAdmin() {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<AdminUserSort>("newest");
   const [bannedFilter, setBannedFilter] = useState<BannedFilter>("all");
+  const [staffFilter, setStaffFilter] = useState<StaffFilter>("all");
   const [banTargetId, setBanTargetId] = useState<string | null>(null);
   const [banDuration, setBanDuration] = useState<BanDuration>("week");
   const [banReason, setBanReason] = useState<BanReasonState>({
@@ -62,8 +71,13 @@ export function useUsersAdmin() {
   }, [searchInput]);
 
   const filters: UsersPageFilters = useMemo(
-    () => ({ q: query, sort, banned: bannedFlag(bannedFilter) }),
-    [query, sort, bannedFilter],
+    () => ({
+      q: query,
+      sort,
+      banned: bannedFlag(bannedFilter),
+      staff: staffFlag(staffFilter),
+    }),
+    [query, sort, bannedFilter, staffFilter],
   );
   const usersQuery = useAdminUsers(filters);
 
@@ -114,6 +128,20 @@ export function useUsersAdmin() {
       patchAdminUser(queryClient, filters, id, { trusted }),
   });
 
+  // A role change can move a row into or out of the current staff filter, so
+  // refetch the list rather than patching a row that may no longer belong in it
+  // (mirrors the Staff tab's own change-role handling). It also changes staff
+  // membership, so invalidate the Staff tab's list too — otherwise a just-
+  // promoted/demoted member shows stale there until its staleTime lapses.
+  const roleMutation = useMutation({
+    mutationFn: ({ id, role }: { id: string; role: AssignableRole }) =>
+      usersClient.changeRole(id, role),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      void queryClient.invalidateQueries({ queryKey: ["admin-staff"] });
+    },
+  });
+
   const actionError = banMutation.isError
     ? t("banUserError")
     : unbanMutation.isError
@@ -122,9 +150,11 @@ export function useUsersAdmin() {
         ? trustMutation.variables?.trusted
           ? t("trustError")
           : t("untrustError")
-        : usersQuery.isFetchNextPageError
-          ? t("loadMoreUsersError")
-          : "";
+        : roleMutation.isError
+          ? t("changeRoleError")
+          : usersQuery.isFetchNextPageError
+            ? t("loadMoreUsersError")
+            : "";
 
   function handleBan(id: string) {
     if (!isBanReasonValid(banReason)) return;
@@ -151,6 +181,8 @@ export function useUsersAdmin() {
     setSort,
     bannedFilter,
     setBannedFilter,
+    staffFilter,
+    setStaffFilter,
     users,
     total,
     status,
@@ -170,11 +202,16 @@ export function useUsersAdmin() {
     unbanPendingId: unbanMutation.isPending
       ? (unbanMutation.variables ?? null)
       : null,
+    roleChangePendingId: roleMutation.isPending
+      ? (roleMutation.variables?.id ?? null)
+      : null,
     handleLoadMore: () => usersQuery.fetchNextPage(),
     handleBan,
     handleUnban: (id: string) => unbanMutation.mutate(id),
     handleSetTrusted: (id: string, trusted: boolean) =>
       trustMutation.mutate({ id, trusted }),
+    handleChangeRole: (id: string, role: AssignableRole) =>
+      roleMutation.mutate({ id, role }),
     toggleBanForm,
   };
 }
