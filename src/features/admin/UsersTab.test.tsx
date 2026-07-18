@@ -416,6 +416,14 @@ describe("UsersTab", () => {
       ).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "Ban" })).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "Trust" })).toBeInTheDocument();
+      // The role dropdown must not carry the username in its accessible name —
+      // a screen reader on a shared screen would otherwise announce it.
+      expect(
+        screen.queryByRole("combobox", { name: "Change role for bob" }),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.getByRole("combobox", { name: "Change role for this member" }),
+      ).toBeInTheDocument();
     });
 
     it("reveals the username and email when the row is revealed", async () => {

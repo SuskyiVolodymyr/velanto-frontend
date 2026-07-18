@@ -130,12 +130,16 @@ export function useUsersAdmin() {
 
   // A role change can move a row into or out of the current staff filter, so
   // refetch the list rather than patching a row that may no longer belong in it
-  // (mirrors the Staff tab's own change-role handling).
+  // (mirrors the Staff tab's own change-role handling). It also changes staff
+  // membership, so invalidate the Staff tab's list too — otherwise a just-
+  // promoted/demoted member shows stale there until its staleTime lapses.
   const roleMutation = useMutation({
     mutationFn: ({ id, role }: { id: string; role: AssignableRole }) =>
       usersClient.changeRole(id, role),
-    onSuccess: () =>
-      queryClient.invalidateQueries({ queryKey: ["admin-users"] }),
+    onSuccess: () => {
+      void queryClient.invalidateQueries({ queryKey: ["admin-users"] });
+      void queryClient.invalidateQueries({ queryKey: ["admin-staff"] });
+    },
   });
 
   const actionError = banMutation.isError
