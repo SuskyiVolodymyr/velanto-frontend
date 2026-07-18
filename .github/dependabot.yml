@@ -4,3 +4,18 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
+    open-pull-requests-limit: 5
+    # Collapse all safe minor/patch bumps into ONE weekly PR instead of a flood
+    # of one-per-package PRs.
+    groups:
+      npm-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+    # Never auto-propose major upgrades. The TypeScript and @types/node majors
+    # break the build (TS7 native compiler, Node-types ahead of the runtime).
+    # Bump majors by hand, intentionally.
+    ignore:
+      - dependency-name: "*"
+        update-types:
+          - "version-update:semver-major"
