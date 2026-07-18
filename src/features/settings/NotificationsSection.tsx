@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
-import { LoadingState } from "@/src/shared/components/LoadingState";
+import { Skeleton } from "@/src/shared/components/Skeleton";
 import { cn } from "@/src/shared/lib/cn";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import {
@@ -74,7 +74,16 @@ export function NotificationsSection() {
         </Text>
       )}
       {status === "authenticated" && !fetchError && !prefs && (
-        <LoadingState label={t("loading")} showLabel />
+        <div className="flex flex-col gap-2" aria-hidden>
+          {NOTIFICATION_TYPES.map((type) => (
+            <Card key={type} className="hover:translate-y-0 hover:shadow-none">
+              <div className="flex items-center justify-between gap-4">
+                <Skeleton className="h-5 w-44" />
+                <Skeleton className="h-6 w-11 shrink-0 rounded-full" />
+              </div>
+            </Card>
+          ))}
+        </div>
       )}
       {status === "authenticated" && prefs && (
         <div className="flex flex-col gap-2">

@@ -381,7 +381,27 @@
     "deleteAccountError": "Couldn’t delete your account. Please try again.",
     "tokensHeading": "API tokens",
     "tokensMovedDescription": "API tokens now live in the docs, next to the guide explaining what each scope grants and how to connect an AI assistant.",
-    "tokensMovedLink": "Manage API tokens"
+    "tokensMovedLink": "Manage API tokens",
+    "accountEmailLabel": "Your account email",
+    "connectedAccountsHeading": "Connected accounts",
+    "connectedAccountsDescription": "Sign in with Google or Discord too. Connecting one just adds a way to log in — it doesn’t change your email or password.",
+    "providerConnected": "Connected",
+    "connectProvider": "Connect",
+    "linkAccountError": "That account is already connected to another Velanto account.",
+    "setPasswordHeading": "Set a password",
+    "setPasswordDescription": "Your account signs in with a connected provider. Add a password so you can also log in with your username.",
+    "setPasswordButton": "Set password",
+    "setPasswordError": "Couldn’t set your password. Please try again.",
+    "noEmailHeading": "No email address",
+    "noEmailDescription": "Your account has no email yet. Add one so you can recover your account and get notifications.",
+    "addEmailLabel": "Email address",
+    "addEmailSendButton": "Send code",
+    "addEmailSendError": "Couldn’t send a code to that address. Please try again.",
+    "addEmailCodeSent": "Enter the 6-digit code we sent to {email}.",
+    "addEmailCodeLabel": "Verification code",
+    "addEmailConfirmButton": "Add email",
+    "addEmailTaken": "That email is already used by another account.",
+    "addEmailError": "Couldn’t add that email. Please try again."
   },
   "streamerMode": {
     "hiddenHint": "Hidden because of streamer mode",
@@ -395,6 +415,9 @@
   },
   "auth": {
     "acceptRules": "I have read and accept the <link>Community Rules</link>.",
+    "orContinueWith": "or continue with",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithDiscord": "Continue with Discord",
     "tabSignup": "Sign up",
     "logIn": "Log in",
     "headingLogin": "Log in to Velanto",
@@ -615,7 +638,7 @@
       },
       {
         "title": "Other people's content",
-        "body": "Packs are written by users, not by us. A pack can embed a YouTube video — that is the only way another company can be reached from Velanto, and the only thing a pack can point at that we do not host ourselves. We do not control what is on YouTube and are not responsible for it, and watching it there is governed by Google’s terms, not ours. If something on Velanto infringes your rights, tell us and we will look at it."
+        "body": "Packs are written by users, not by us. A pack can embed a YouTube video — that is the only way another company can be reached through a pack, and the only thing a pack can point at that we do not host ourselves. We do not control what is on YouTube and are not responsible for it, and watching it there is governed by Google’s terms, not ours. If something on Velanto infringes your rights, tell us and we will look at it."
       },
       {
         "title": "What Velanto is, and what it is not",
@@ -724,8 +747,8 @@
         ]
       },
       {
-        "title": "YouTube embeds — the one place a third party sees you",
-        "body": "Packs can embed YouTube videos, and we keep YouTube at arm's length as far as we can — no player is built when the page loads, only a still image. Three things are still worth knowing. That still image is fetched from YouTube's servers, so YouTube sees a request whenever a pack containing a video is displayed. The player then loads as soon as your pointer passes over the video — you do not have to click, though tapping does the same on a phone — and from that moment YouTube receives your request directly and can set its own cookies. And if you paste a YouTube link while making a pack, your browser asks YouTube for the video's title. What YouTube does with any of that is governed by Google's privacy policy, not ours. This is the only part of Velanto where another company can observe you."
+        "title": "YouTube embeds — where a third party sees you",
+        "body": "Packs can embed YouTube videos, and we keep YouTube at arm's length as far as we can — no player is built when the page loads, only a still image. Three things are still worth knowing. That still image is fetched from YouTube's servers, so YouTube sees a request whenever a pack containing a video is displayed. The player then loads as soon as your pointer passes over the video — you do not have to click, though tapping does the same on a phone — and from that moment YouTube receives your request directly and can set its own cookies. And if you paste a YouTube link while making a pack, your browser asks YouTube for the video's title. What YouTube does with any of that is governed by Google's privacy policy, not ours. Apart from choosing to sign in with Google or Discord, this is the only part of Velanto where another company can observe you."
       },
       {
         "title": "Images you upload",
@@ -738,17 +761,19 @@
       },
       {
         "title": "Who else touches your data",
-        "body": "Four companies, each doing one job. This is the complete list — nobody else receives anything:",
+        "body": "A few companies, each doing one job. This is the complete list — nobody else receives anything. The last two only come into it if you choose to sign in with them:",
         "bullets": [
           "Amazon Web Services (S3 and CloudFront) — stores and delivers uploaded images. Frankfurt, in the EU.",
           "Amazon SES — sends the only two emails we send. Each contains a six-digit code and nothing else: no username, no link, no IP address.",
           "Sentry — receives a report when something crashes. Germany, in the EU. A report carries your user id and username, plus a short trail of what you had just done: the pages you visited, what you clicked, and which addresses the app called (some of which name a pack). It does not carry your email address, your cookies, or what you typed, and there is no video-style session recording. One limit on that promise: like any server your browser talks to, Sentry's sees the connection itself, so it can observe the address you connect from even though we never put it in the report.",
-          "Cloudflare — DNS, and the traffic to the site passes through it. Like any provider sitting in front of a website, it sees the address every visitor connects from. We do not receive it and we do not store it, but we will not pretend it is invisible to everyone."
+          "Cloudflare — DNS, and the traffic to the site passes through it. Like any provider sitting in front of a website, it sees the address every visitor connects from. We do not receive it and we do not store it, but we will not pretend it is invisible to everyone.",
+          "Google — only if you choose “Continue with Google”. During that sign-in Google sees that you are logging into Velanto and confirms your email address to us, so we can create or find your account; we receive nothing else about you. What Google does with the sign-in is governed by Google's privacy policy.",
+          "Discord — only if you choose “Continue with Discord”. During that sign-in Discord sees that you are logging into Velanto and confirms your account — and your email address, if you have granted Discord one — so we can create or find your account; we receive nothing else about you. Governed by Discord's privacy policy."
         ]
       },
       {
         "title": "Where your data is",
-        "body": "Storage and error reporting are in the EU: S3 in Frankfurt, Sentry in Germany. CloudFront and Cloudflare deliver from locations around the world, which is how any website loads quickly, so a copy of a page or an image can sit briefly on a server outside the EU. Those two run on their providers' standard data-protection terms, which is the safeguard we rely on for it. The person who runs Velanto is in Ukraine and can access the data — that is unavoidable when one person runs a service, and you should know it rather than guess it."
+        "body": "Storage and error reporting are in the EU: S3 in Frankfurt, Sentry in Germany. CloudFront and Cloudflare deliver from locations around the world, which is how any website loads quickly, so a copy of a page or an image can sit briefly on a server outside the EU. Those two run on their providers' standard data-protection terms, which is the safeguard we rely on for it. The person who runs Velanto is in Ukraine and can access the data — that is unavoidable when one person runs a service, and you should know it rather than guess it. If you sign in with Google or Discord, that sign-in happens with those companies' servers, which are outside the EU."
       },
       {
         "title": "How long we keep things",

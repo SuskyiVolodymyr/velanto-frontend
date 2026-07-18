@@ -97,6 +97,35 @@ describe("RankResultScreen", () => {
     expect(screen.getByText(/avg 1.*ranked 2x/)).toBeInTheDocument();
   });
 
+  it("labels the round with its pool name, not 'Round N', when unnamed", () => {
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        ownPicks={null}
+        shared={false}
+      />,
+    );
+    expect(screen.getByText("Openers")).toBeInTheDocument();
+    expect(screen.queryByText("Round 1")).not.toBeInTheDocument();
+  });
+
+  it("uses the author-given round name when the round has one", () => {
+    const named: Pack = {
+      ...RANK_PACK,
+      rounds: [{ ...RANK_PACK.rounds[0], name: "Semifinals" }],
+    };
+    render(
+      <RankResultScreen
+        pack={named}
+        results={RANK_RESULTS}
+        ownPicks={null}
+        shared={false}
+      />,
+    );
+    expect(screen.getByText("Semifinals")).toBeInTheDocument();
+  });
+
   it("highlights the player's own placement and shows an agreement count", () => {
     render(
       <RankResultScreen

@@ -39,6 +39,12 @@ export interface ChangePasswordInput {
   newPassword: string;
 }
 
+/** Which OAuth providers the backend has configured (GET /auth/providers). */
+export interface OAuthProviders {
+  google: boolean;
+  discord: boolean;
+}
+
 export const authClient = {
   /** Sends a verification code to `email` for the register flow. */
   requestEmailCode: (email: string) =>
@@ -61,6 +67,22 @@ export const authClient = {
   /** Change password while signed in (requires the current password). */
   changePassword: (input: ChangePasswordInput) =>
     apiClient.patch<{ changed: true }>("/auth/password", input),
+  /** Set a first password on an OAuth-only account (no current password). */
+  setPassword: (newPassword: string) =>
+    apiClient.post<{ set: true }>("/auth/set-password", { newPassword }),
+  /** Attach a verified email to an account that has none (code proves ownership). */
+  addEmail: (email: string, code: string) =>
+    apiClient.post<{ email: string }>("/auth/email", { email, code }),
+  /** Which OAuth providers are enabled — the auth screen only shows working buttons. */
+  oauthProviders: () => apiClient.get<OAuthProviders>("/auth/providers"),
+  /**
+   * Start connecting `provider` to the signed-in account: drops the server's
+   * one-shot link cookie. The caller then top-level-navigates to
+   * `${API_BASE}/auth/${provider}` so that cookie rides the OAuth round-trip
+   * and the provider is linked (not logged in as a new account).
+   */
+  startOAuthLink: (provider: "google" | "discord") =>
+    apiClient.post<{ started: true }>("/auth/oauth-link/start", { provider }),
   /**
    * Soft-delete (deactivate) the signed-in account. Requires the current
    * password; starts the 30-day grace period and revokes every session. Logging

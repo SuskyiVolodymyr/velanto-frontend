@@ -36,7 +36,11 @@ export function ProfileEditForm() {
 
   function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    saveMutation.mutate(bio, { onSuccess: () => router.push("/profile") });
+    // Straight to the merged profile page (/users/[id]); falls back to /profile
+    // (which redirects there anyway) if the id somehow isn't loaded yet.
+    saveMutation.mutate(bio, {
+      onSuccess: () => router.push(user ? `/users/${user.id}` : "/profile"),
+    });
   }
 
   if (authStatus === "loading") return null;
@@ -62,7 +66,7 @@ export function ProfileEditForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto w-full max-w-md px-7 py-10"
+      className="mx-auto w-full max-w-2xl px-7 py-10"
     >
       <Text as="h1" variant="title" className="mb-6 text-2xl">
         {t("editProfile")}

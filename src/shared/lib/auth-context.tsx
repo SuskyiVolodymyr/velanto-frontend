@@ -9,7 +9,10 @@ import {
   useState,
 } from "react";
 import type { ReactNode } from "react";
-import { setAccessToken } from "@/src/shared/lib/api-client";
+import {
+  setAccessToken,
+  setSessionCallbacks,
+} from "@/src/shared/lib/api-client";
 import { setSentryUser } from "@/src/shared/lib/sentry-reporting";
 import {
   authClient,
@@ -34,6 +37,12 @@ interface AuthContextValue {
    * without a full session refresh.
    */
   setAvatarKey: (avatarKey: string | null) => void;
+  /**
+   * Patch arbitrary fields of the signed-in user in place — e.g. after setting a
+   * first password (`hasPassword`) or adding an email (`email`) from Settings, so
+   * the UI reflects it without a full refresh.
+   */
+  patchUser: (partial: Partial<User>) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -61,6 +70,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
+  }, []);
+
+  // Let the api-client keep React auth state in sync when it silently renews an
+  // expired access token on a 401 (see api-client's sendWithRefresh). Without
+  // this, a background token renewal would refresh the token but leave the
+  // cached user stale, and a dead session (refresh cookie gone) would keep the
+  // UI showing "signed in" while every request 401s.
+  useEffect(() => {
+    setSessionCallbacks({
+      onRefreshed: (refreshedUser) => {
+        setUser(refreshedUser);
+        setStatus("authenticated");
+      },
+      onLost: () => {
+        setUser(null);
+        setStatus("unauthenticated");
+      },
+    });
+    return () => setSessionCallbacks(null);
   }, []);
 
   // Keep Sentry's user context in sync with auth state so errors show which
@@ -100,6 +128,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser((prev) => (prev ? { ...prev, avatarKey } : prev));
   }, []);
 
+  const patchUser = useCallback((partial: Partial<User>) => {
+    setUser((prev) => (prev ? { ...prev, ...partial } : prev));
+  }, []);
+
   const value = useMemo(
     () => ({
       user,
@@ -109,8 +141,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       login,
       logout,
       setAvatarKey,
+      patchUser,
     }),
-    [user, status, requestEmailCode, register, login, logout, setAvatarKey],
+    [
+      user,
+      status,
+      requestEmailCode,
+      register,
+      login,
+      logout,
+      setAvatarKey,
+      patchUser,
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

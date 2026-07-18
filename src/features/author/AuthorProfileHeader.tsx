@@ -1,8 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
+import { Button, buttonClassName } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { Username } from "@/src/shared/components/Username";
 import { Tooltip } from "@/src/shared/components/Tooltip";
@@ -82,7 +83,15 @@ export function AuthorProfileHeader({
             </Text>
           </div>
         </div>
-        {!isOwnProfile && (
+        {isOwnProfile ? (
+          // Your own page is the merged /profile view: manage instead of follow.
+          <Link
+            href="/profile/edit"
+            className={buttonClassName("secondary", "w-fit")}
+          >
+            {t("editProfile")}
+          </Link>
+        ) : (
           <div className="flex flex-col items-end gap-1">
             {followBlocked ? (
               <Tooltip content={tAuth("logInToFollow")}>{followButton}</Tooltip>
@@ -98,10 +107,21 @@ export function AuthorProfileHeader({
         )}
       </div>
 
-      {profile.bio && (
+      {profile.bio ? (
         <div className="mb-10">
           <Text variant="secondary">{profile.bio}</Text>
         </div>
+      ) : (
+        // Only the owner is nudged to add a bio; a visitor just sees no bio.
+        isOwnProfile && (
+          <div className="mb-10">
+            <Link href="/profile/edit">
+              <Text variant="tertiary" className="italic">
+                {t("addBioPrompt")}
+              </Text>
+            </Link>
+          </div>
+        )
       )}
     </>
   );

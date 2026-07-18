@@ -84,6 +84,26 @@ export const changePasswordSchema = z
 
 export type ChangePasswordValues = z.infer<typeof changePasswordSchema>;
 
+// Set a FIRST password on an OAuth-only account — no current password to confirm
+// (there isn't one). Same composition + match rules as change/reset.
+export const setPasswordSchema = z
+  .object({
+    newPassword: newPasswordSchema,
+    confirmPassword: z.string(),
+  })
+  .superRefine(confirmMatches);
+
+export type SetPasswordValues = z.infer<typeof setPasswordSchema>;
+
+// Add an email to an account that has none: the address plus the 6-digit code
+// that proves the user owns it (requested via the same endpoint register uses).
+export const addEmailSchema = z.object({
+  email: z.string().trim().email(AUTH_MESSAGES.email),
+  code: z.string().regex(/^\d{6}$/, AUTH_MESSAGES.code),
+});
+
+export type AddEmailValues = z.infer<typeof addEmailSchema>;
+
 // Reset password (forgot flow): email + 6-digit code + a new password.
 export const resetPasswordSchema = z
   .object({

@@ -33,6 +33,7 @@ function setAuth(status: "loading" | "authenticated" | "unauthenticated") {
     register: vi.fn(),
     logout: vi.fn(),
     setAvatarKey: vi.fn(),
+    patchUser: vi.fn(),
   } as ReturnType<typeof useAuth>);
 }
 

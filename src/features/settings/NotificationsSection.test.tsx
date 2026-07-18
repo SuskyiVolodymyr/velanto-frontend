@@ -38,6 +38,7 @@ function mockAuth(status: "authenticated" | "unauthenticated" | "loading") {
     register: vi.fn(),
     logout: vi.fn(),
     setAvatarKey: vi.fn(),
+    patchUser: vi.fn(),
   } as ReturnType<typeof useAuth>);
 }
 
@@ -67,6 +68,18 @@ describe("NotificationsSection", () => {
         screen.getByText(/couldn't load your notification preferences/i),
       ).toBeInTheDocument(),
     );
+  });
+
+  it("shows skeleton rows while preferences are loading", () => {
+    // A never-resolving fetch keeps the query in its loading state.
+    mockedClient.getPreferences.mockReturnValue(new Promise<never>(() => {}));
+    const { container } = render(<NotificationsSection />);
+
+    expect(container.querySelectorAll(".animate-pulse").length).toBeGreaterThan(
+      0,
+    );
+    // No toggles yet — the skeletons stand in for them.
+    expect(screen.queryByRole("switch")).not.toBeInTheDocument();
   });
 
   it("renders all four toggles in their fetched state", async () => {
