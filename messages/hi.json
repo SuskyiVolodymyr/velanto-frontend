@@ -1117,6 +1117,7 @@
     "packs": "पैक",
     "noPacks": "अभी तक कोई पैक नहीं।",
     "recentlyPlayed": "हाल ही में खेले गए",
+    "recentlyPlayedEmpty": "आपने अभी तक कोई पैक नहीं खेला है।",
     "avatarHeading": "प्रोफ़ाइल फ़ोटो",
     "avatarChange": "फ़ोटो बदलें",
     "avatarRemove": "फ़ोटो हटाएं",

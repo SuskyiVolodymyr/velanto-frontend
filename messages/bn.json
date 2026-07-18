@@ -1117,6 +1117,7 @@
     "packs": "প্যাক",
     "noPacks": "এখনও কোনো প্যাক নেই।",
     "recentlyPlayed": "সম্প্রতি খেলা হয়েছে",
+    "recentlyPlayedEmpty": "আপনি এখনও কোনো প্যাক খেলেননি।",
     "avatarHeading": "প্রোফাইল ছবি",
     "avatarChange": "ছবি পরিবর্তন করুন",
     "avatarRemove": "ছবি সরান",

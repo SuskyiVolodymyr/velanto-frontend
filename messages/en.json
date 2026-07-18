@@ -1211,6 +1211,7 @@
     "packs": "Packs",
     "noPacks": "No packs yet.",
     "recentlyPlayed": "Recently played",
+    "recentlyPlayedEmpty": "You haven't played any packs yet.",
     "avatarHeading": "Profile photo",
     "avatarChange": "Change photo",
     "avatarRemove": "Remove photo",

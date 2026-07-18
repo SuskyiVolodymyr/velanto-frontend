@@ -1117,6 +1117,7 @@
     "packs": "题包",
     "noPacks": "还没有题包。",
     "recentlyPlayed": "最近玩过",
+    "recentlyPlayedEmpty": "你还没有玩过任何合集。",
     "avatarHeading": "头像",
     "avatarChange": "更换照片",
     "avatarRemove": "移除照片",

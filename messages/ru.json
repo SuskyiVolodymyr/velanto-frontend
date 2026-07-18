@@ -1117,6 +1117,7 @@
     "packs": "Паки",
     "noPacks": "Пока нет паков.",
     "recentlyPlayed": "Недавно сыгранные",
+    "recentlyPlayedEmpty": "Вы ещё не сыграли ни в один пак.",
     "avatarHeading": "Фото профиля",
     "avatarChange": "Изменить фото",
     "avatarRemove": "Удалить фото",

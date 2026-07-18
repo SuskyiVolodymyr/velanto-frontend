@@ -116,6 +116,9 @@ export function AuthorScreen({
         visible={
           profile.showPlayHistory !== false || isOwnProfile || isModeratorPlus
         }
+        // On your own profile, show an empty-state placeholder instead of
+        // collapsing, so the section is discoverable before you've played.
+        showEmptyState={isOwnProfile}
       />
     </div>
   );

@@ -1117,6 +1117,7 @@
     "packs": "الحِزَم",
     "noPacks": "لا توجد حزم بعد.",
     "recentlyPlayed": "لُعبت مؤخراً",
+    "recentlyPlayedEmpty": "لم تلعب أي حزمة بعد.",
     "avatarHeading": "صورة الملف الشخصي",
     "avatarChange": "تغيير الصورة",
     "avatarRemove": "إزالة الصورة",
