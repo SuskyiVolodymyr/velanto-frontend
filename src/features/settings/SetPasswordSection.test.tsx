@@ -17,10 +17,7 @@ const patchUser = vi.fn();
 async function fillAndSubmit() {
   const user = userEvent.setup();
   await user.type(screen.getByLabelText("New password"), "NewPassw0rd");
-  await user.type(
-    screen.getByLabelText("Confirm new password"),
-    "NewPassw0rd",
-  );
+  await user.type(screen.getByLabelText("Confirm new password"), "NewPassw0rd");
   await user.click(screen.getByRole("button", { name: "Set password" }));
 }
 
@@ -38,9 +35,7 @@ describe("SetPasswordSection", () => {
 
     await fillAndSubmit();
 
-    await waitFor(() =>
-      expect(mockedSet).toHaveBeenCalledWith("NewPassw0rd"),
-    );
+    await waitFor(() => expect(mockedSet).toHaveBeenCalledWith("NewPassw0rd"));
     expect(patchUser).toHaveBeenCalledWith({ hasPassword: true });
   });
 

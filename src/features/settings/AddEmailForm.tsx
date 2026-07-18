@@ -112,7 +112,11 @@ export function AddEmailForm() {
           </Text>
         )}
 
-        <Button type="submit" loading={isSubmitting || sending} className="w-fit">
+        <Button
+          type="submit"
+          loading={isSubmitting || sending}
+          className="w-fit"
+        >
           {step === "email"
             ? t("addEmailSendButton")
             : t("addEmailConfirmButton")}

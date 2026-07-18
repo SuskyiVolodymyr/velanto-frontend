@@ -75,9 +75,7 @@ describe("AddEmailForm", () => {
     await user.click(screen.getByRole("button", { name: "Add email" }));
 
     expect(
-      await screen.findByText(
-        "That email is already used by another account.",
-      ),
+      await screen.findByText("That email is already used by another account."),
     ).toBeInTheDocument();
   });
 });

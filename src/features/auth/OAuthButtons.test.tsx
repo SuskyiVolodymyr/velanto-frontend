@@ -20,10 +20,7 @@ describe("OAuthButtons", () => {
     const google = await screen.findByRole("link", {
       name: "Continue with Google",
     });
-    expect(google).toHaveAttribute(
-      "href",
-      "http://localhost:3001/auth/google",
-    );
+    expect(google).toHaveAttribute("href", "http://localhost:3001/auth/google");
 
     const discord = await screen.findByRole("link", {
       name: "Continue with Discord",
@@ -56,10 +53,7 @@ describe("OAuthButtons", () => {
     const google = await screen.findByRole("link", {
       name: "Continue with Google",
     });
-    expect(google).toHaveAttribute(
-      "href",
-      "http://localhost:3001/auth/google",
-    );
+    expect(google).toHaveAttribute("href", "http://localhost:3001/auth/google");
     expect(
       screen.queryByRole("link", { name: "Continue with Discord" }),
     ).toBeNull();
