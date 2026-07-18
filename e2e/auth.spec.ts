@@ -24,11 +24,14 @@ test.describe("Auth screen", () => {
   test("registers a new account and lands on the home page", async ({
     page,
   }) => {
-    // Register is two-step (verify-before-create): "Continue" emails a code,
-    // then the OTP step calls /auth/register with that code. Both calls are
-    // browser-issued, so page.route intercepts them.
-    await page.route(`${API_BASE}/auth/email-verification/request`, (route) =>
-      route.fulfill({ status: 201, json: { sent: true } }),
+    // Email verification is env-gated on the backend and off by default, so
+    // register is ONE step: fill the form and submit straight to /auth/register
+    // (no emailed code). GET /auth/providers reports the flag; off here.
+    await page.route(`${API_BASE}/auth/providers`, (route) =>
+      route.fulfill({
+        status: 200,
+        json: { google: false, discord: false, emailVerification: false },
+      }),
     );
     await page.route(`${API_BASE}/auth/register`, (route) =>
       route.fulfill({
@@ -55,8 +58,7 @@ test.describe("Auth screen", () => {
     // by name so the legal copy can change without breaking this flow.
     await page.getByRole("checkbox").check();
 
-    await page.getByRole("button", { name: "Continue" }).click();
-    await page.getByLabel("Verification code").fill("123456");
+    // One-step: no "Continue"/OTP — the primary button registers directly.
     await page.getByRole("button", { name: "Create account" }).click();
 
     await page.waitForURL("/");

@@ -55,10 +55,13 @@ beforeEach(() => {
     devCode: "123456",
   });
   // No OAuth providers configured by default → OAuthButtons renders nothing,
-  // leaving these tests focused on the email/password form.
+  // leaving these tests focused on the email/password form. emailVerification
+  // defaults to TRUE here so the existing two-step (Continue → OTP) tests below
+  // exercise the code flow; the one-step tests override it to false.
   vi.mocked(authClient.oauthProviders).mockResolvedValue({
     google: false,
     discord: false,
+    emailVerification: true,
   });
 });
 
@@ -147,6 +150,48 @@ describe("AuthForm", () => {
       password: "Password123",
       acceptedRules: true,
       code: "123456",
+    });
+  });
+
+  // Email verification is env-gated on the backend and off by default; when it
+  // reports off, register is one step — no "Continue", no emailed code.
+  it("registers in one step without a code when email verification is off", async () => {
+    const user = userEvent.setup();
+    vi.mocked(authClient.oauthProviders).mockResolvedValue({
+      google: false,
+      discord: false,
+      emailVerification: false,
+    });
+    vi.mocked(authClient.register).mockResolvedValue({
+      accessToken: "access-token",
+      user: {
+        id: "u1",
+        email: "alice@example.com",
+        username: "alice",
+        role: "user",
+        createdAt: "2026-01-01T00:00:00.000Z",
+      },
+    });
+    renderAuthForm();
+    await fillRegisterForm(user);
+
+    // The primary button creates the account directly — there is no Continue step.
+    expect(
+      screen.queryByRole("button", { name: "Continue" }),
+    ).not.toBeInTheDocument();
+    await user.click(
+      await screen.findByRole("button", { name: "Create account" }),
+    );
+
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/"));
+    expect(authClient.requestEmailCode).not.toHaveBeenCalled();
+    // No `code` key at all — the backend rejects an empty string against its
+    // 6-digit rule, so it must be omitted, not sent blank.
+    expect(authClient.register).toHaveBeenCalledWith({
+      email: "alice@example.com",
+      username: "alice",
+      password: "Password123",
+      acceptedRules: true,
     });
   });
 
