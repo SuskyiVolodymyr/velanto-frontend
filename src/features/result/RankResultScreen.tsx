@@ -5,6 +5,7 @@ import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { SharedResultNote } from "@/src/features/result/SharedResultNote";
 import { ResultActions } from "@/src/features/result/ResultActions";
+import { roundHeading } from "@/src/shared/lib/round-heading";
 import type { Pack } from "@/src/shared/types/pack";
 import type {
   RankResults,
@@ -70,7 +71,7 @@ export function RankResultScreen({
           return (
             <div key={round.roundIndex}>
               <Text className="mb-3 font-semibold">
-                {`Round ${round.roundIndex + 1}`}
+                {roundHeading(pack, round.roundIndex)}
               </Text>
               <div className="flex flex-col gap-3">
                 {sortedItems.map((item, index) => {

@@ -142,6 +142,9 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
           </div>
           <Link
             href={`/packs/${pack.id}/result`}
+            // Replace so Back from the result screen returns to the pack page,
+            // not into the finished play session.
+            replace
             className={buttonClassName("primary", "w-fit")}
           >
             {t("seeResult")}
