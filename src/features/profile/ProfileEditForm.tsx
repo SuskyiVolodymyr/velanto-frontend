@@ -62,7 +62,7 @@ export function ProfileEditForm() {
   return (
     <form
       onSubmit={handleSubmit}
-      className="mx-auto w-full max-w-md px-7 py-10"
+      className="mx-auto w-full max-w-2xl px-7 py-10"
     >
       <Text as="h1" variant="title" className="mb-6 text-2xl">
         {t("editProfile")}
