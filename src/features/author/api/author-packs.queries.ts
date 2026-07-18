@@ -5,6 +5,7 @@ import {
 } from "@tanstack/react-query";
 import type { Pack } from "@/src/shared/types/pack";
 import type { PackList } from "@/src/shared/lib/packs-client";
+import { useRefetchOnSignIn } from "@/src/shared/lib/use-refetch-on-sign-in";
 import { AUTHOR_PACKS_PAGE_SIZE, fetchAuthorPacksPage } from "./author-packs";
 
 /**
@@ -55,8 +56,13 @@ export function useAuthorPacks(
       }
     : undefined;
 
-  return useInfiniteQuery({
+  const query = useInfiniteQuery({
     ...authorPacksInfiniteQueryOptions(authorId),
     initialData,
   });
+  // Seeded from an anonymous SSR fetch, so when you view your own page your
+  // pending/rejected packs are missing until the list is refetched as you;
+  // refetch once the session resolves (see useRefetchOnSignIn).
+  useRefetchOnSignIn(query.refetch);
+  return query;
 }

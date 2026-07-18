@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { ProfileScreen } from "@/src/features/profile/ProfileScreen";
+import { ProfileRedirect } from "@/src/features/profile/ProfileRedirect";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("pages");
-  return { title: t("metaProfile") };
+  // Not indexable — it only bounces the signed-in owner to their /users/[id]
+  // page (the canonical, shareable profile URL).
+  return { title: t("metaProfile"), robots: { index: false, follow: false } };
 }
 
 export default function ProfilePage() {
-  return <ProfileScreen />;
+  return <ProfileRedirect />;
 }

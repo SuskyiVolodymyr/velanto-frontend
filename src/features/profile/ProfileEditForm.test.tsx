@@ -72,7 +72,7 @@ describe("ProfileEditForm", () => {
     expect(await screen.findByDisplayValue("Old bio")).toBeInTheDocument();
   });
 
-  it("saves the new bio and redirects to /profile on success", async () => {
+  it("saves the new bio and redirects to the profile page on success", async () => {
     const user = userEvent.setup();
     renderForm();
     const textarea = await screen.findByDisplayValue("Old bio");
@@ -83,7 +83,7 @@ describe("ProfileEditForm", () => {
     await waitFor(() =>
       expect(usersClient.updateProfile).toHaveBeenCalledWith("New bio"),
     );
-    await waitFor(() => expect(push).toHaveBeenCalledWith("/profile"));
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/users/u1"));
   });
 
   it("shows a character count against the 280 limit", async () => {

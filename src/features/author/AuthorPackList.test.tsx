@@ -10,6 +10,12 @@ vi.mock("@/src/shared/lib/packs-client", () => ({
   packsClient: { list: vi.fn() },
 }));
 
+// useAuthorPacks now reads auth (to refetch as the viewer on sign-in); a stable
+// signed-out session keeps these list-rendering tests focused and refetch-free.
+vi.mock("@/src/shared/lib/auth-context", () => ({
+  useAuth: () => ({ status: "unauthenticated", user: null }),
+}));
+
 function pack(
   id: string,
   title: string,
