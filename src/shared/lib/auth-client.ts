@@ -76,6 +76,14 @@ export const authClient = {
   /** Which OAuth providers are enabled — the auth screen only shows working buttons. */
   oauthProviders: () => apiClient.get<OAuthProviders>("/auth/providers"),
   /**
+   * Start connecting `provider` to the signed-in account: drops the server's
+   * one-shot link cookie. The caller then top-level-navigates to
+   * `${API_BASE}/auth/${provider}` so that cookie rides the OAuth round-trip
+   * and the provider is linked (not logged in as a new account).
+   */
+  startOAuthLink: (provider: "google" | "discord") =>
+    apiClient.post<{ started: true }>("/auth/oauth-link/start", { provider }),
+  /**
    * Soft-delete (deactivate) the signed-in account. Requires the current
    * password; starts the 30-day grace period and revokes every session. Logging
    * back in within the window reactivates the account.

@@ -28,6 +28,14 @@ export interface User {
    */
   hasPassword?: boolean;
   /**
+   * Which OAuth providers are connected to this account. Drives the Settings
+   * "Connected accounts" section (connect the missing one) and is what lets a
+   * Google-created user also sign in with Discord once linked. Optional so
+   * fixtures / a backend that predates the field stay valid — treat an absent
+   * value as nothing connected.
+   */
+  linkedProviders?: { google: boolean; discord: boolean };
+  /**
    * Ban surface for the *current* user, from the `/me`-style payload. Present
    * (as `null` when not banned) on the live backend; kept optional here so the
    * many existing `User` fixtures that predate this field stay valid without a
