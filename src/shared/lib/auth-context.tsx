@@ -14,6 +14,7 @@ import {
   setSessionCallbacks,
 } from "@/src/shared/lib/api-client";
 import { setSentryUser } from "@/src/shared/lib/sentry-reporting";
+import { setSessionHint } from "@/src/shared/lib/session-hint";
 import {
   authClient,
   type LoginInput,
@@ -103,6 +104,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setSentryUser(user);
   }, [user]);
+
+  // Mirror a lightweight "signed in" hint onto a frontend-origin cookie so
+  // middleware can redirect signed-in visitors away from /auth without a client
+  // flash. Only flip on a settled status — during "loading" a returning user's
+  // hint must persist so the server redirect fires on the very first paint.
+  useEffect(() => {
+    if (status === "authenticated") setSessionHint(true);
+    else if (status === "unauthenticated") setSessionHint(false);
+  }, [status]);
 
   const requestEmailCode = useCallback(
     (email: string) => authClient.requestEmailCode(email),
