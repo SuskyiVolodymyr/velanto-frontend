@@ -10,6 +10,7 @@ import { usePackResults } from "@/src/features/result/api/results.queries";
 import { useResultPicks } from "@/src/features/result/use-result-picks";
 import { SharedResultNote } from "@/src/features/result/SharedResultNote";
 import { ResultActions } from "@/src/features/result/ResultActions";
+import { roundHeading } from "@/src/shared/lib/round-heading";
 import type { Pack } from "@/src/shared/types/pack";
 import type {
   PackResults,
@@ -140,7 +141,7 @@ function GroupResultScreen({
               className="hover:translate-y-0 hover:shadow-none"
             >
               <Text className="mb-2 font-semibold">
-                {`Round ${round.roundIndex + 1}`}
+                {roundHeading(pack, round.roundIndex)}
               </Text>
               {ownItem ? (
                 <div className="flex items-center justify-between gap-2">
