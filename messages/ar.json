@@ -290,7 +290,7 @@
     "tokensMovedLink": "إدارة رموز API",
     "accountEmailLabel": "البريد الإلكتروني لحسابك",
     "connectedAccountsHeading": "الحسابات المتصلة",
-    "connectedAccountsDescription": "اربط Google أو Discord لتسجيل الدخول بأيٍّ منهما.",
+    "connectedAccountsDescription": "سجّل الدخول أيضًا باستخدام Google أو Discord. ربط أحدها يضيف فقط طريقة لتسجيل الدخول — ولا يغيّر بريدك الإلكتروني أو كلمة مرورك.",
     "providerConnected": "متصل",
     "connectProvider": "ربط",
     "linkAccountError": "هذا الحساب مرتبط بالفعل بحساب Velanto آخر.",

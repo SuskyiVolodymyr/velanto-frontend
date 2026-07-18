@@ -290,7 +290,7 @@
     "tokensMovedLink": "管理 API 令牌",
     "accountEmailLabel": "您的账户邮箱",
     "connectedAccountsHeading": "已连接的账户",
-    "connectedAccountsDescription": "连接 Google 或 Discord，即可使用任一账户登录。",
+    "connectedAccountsDescription": "也可以使用 Google 或 Discord 登录。连接其中一个只是增加一种登录方式，不会更改您的邮箱或密码。",
     "providerConnected": "已连接",
     "connectProvider": "连接",
     "linkAccountError": "该账户已连接到另一个 Velanto 账户。",

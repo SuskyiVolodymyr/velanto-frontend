@@ -290,7 +290,7 @@
     "tokensMovedLink": "API टोकन प्रबंधित करें",
     "accountEmailLabel": "आपके खाते का ईमेल",
     "connectedAccountsHeading": "कनेक्ट किए गए खाते",
-    "connectedAccountsDescription": "किसी से भी साइन इन करने के लिए Google या Discord कनेक्ट करें।",
+    "connectedAccountsDescription": "Google या Discord से भी साइन इन करें। किसी एक को कनेक्ट करना बस लॉग इन करने का एक और तरीका जोड़ता है — इससे आपका ईमेल या पासवर्ड नहीं बदलता।",
     "providerConnected": "कनेक्ट किया गया",
     "connectProvider": "कनेक्ट करें",
     "linkAccountError": "वह खाता पहले से ही किसी अन्य Velanto खाते से कनेक्ट है।",

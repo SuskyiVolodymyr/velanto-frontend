@@ -290,7 +290,7 @@
     "tokensMovedLink": "API ٹوکنز کا انتظام کریں",
     "accountEmailLabel": "آپ کے اکاؤنٹ کا ای میل",
     "connectedAccountsHeading": "منسلک اکاؤنٹس",
-    "connectedAccountsDescription": "کسی بھی ایک سے سائن اِن کرنے کے لیے Google یا Discord منسلک کریں۔",
+    "connectedAccountsDescription": "Google یا Discord کے ذریعے بھی سائن اِن کریں۔ کسی ایک کو منسلک کرنے سے صرف لاگ اِن کرنے کا ایک اور طریقہ شامل ہوتا ہے — اس سے آپ کا ای میل یا پاس ورڈ تبدیل نہیں ہوتا۔",
     "providerConnected": "منسلک",
     "connectProvider": "منسلک کریں",
     "linkAccountError": "وہ اکاؤنٹ پہلے سے ہی کسی دوسرے Velanto اکاؤنٹ سے منسلک ہے۔",

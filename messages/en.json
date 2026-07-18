@@ -384,7 +384,7 @@
     "tokensMovedLink": "Manage API tokens",
     "accountEmailLabel": "Your account email",
     "connectedAccountsHeading": "Connected accounts",
-    "connectedAccountsDescription": "Connect Google or Discord to sign in with either.",
+    "connectedAccountsDescription": "Sign in with Google or Discord too. Connecting one just adds a way to log in — it doesn’t change your email or password.",
     "providerConnected": "Connected",
     "connectProvider": "Connect",
     "linkAccountError": "That account is already connected to another Velanto account.",
