@@ -3,8 +3,28 @@ name: CI
 on:
   pull_request:
     branches: [develop, main]
+    # Docs/config-only changes can't break the build — don't spend CI minutes on
+    # them. A PR that touches ANY non-ignored path still runs the full suite.
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+      - ".claude/**"
+      - "LICENSE"
+  # Only main: the develop post-merge run just re-tested an already-green PR.
+  # main stays covered as a release-verification signal.
   push:
-    branches: [develop, main]
+    branches: [main]
+    paths-ignore:
+      - "**/*.md"
+      - "docs/**"
+      - ".claude/**"
+      - "LICENSE"
+
+# Cancel superseded in-progress runs on the same ref (e.g. rapid pushes to a PR
+# branch) instead of paying for every one to finish.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build-and-test:
@@ -37,8 +57,10 @@ jobs:
       - name: Build
         run: npm run build
 
+  # The slow Playwright suite. Run it only as the release gate on PRs into main,
+  # not on every develop PR — develop PRs stay fast (vitest/build above).
   e2e:
-    if: github.event_name == 'pull_request' && (github.base_ref == 'develop' || github.base_ref == 'main')
+    if: github.event_name == 'pull_request' && github.base_ref == 'main'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -53,8 +75,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Playwright browsers
+      # Cache the browser binaries across runs; only the OS libs need re-installing
+      # on a cache hit, which is much faster than a full download.
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+
+      - name: Install Playwright (browsers + OS deps)
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright OS deps (cached browsers)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
 
       - name: E2E tests
         run: npm run test:e2e
