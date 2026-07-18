@@ -89,9 +89,9 @@ describe("HomeFeed", () => {
 
   // Regression test for the bug the browser caught and the unit tests didn't:
   // `languages` reached the QUERY KEY (so a refetch fired) but not the request,
-  // because PacksFeedFilters/getPacksFeed never forwarded it. The chips looked
-  // like they worked — the refetch just sent an identical URL.
-  it("re-fetches with the selected languages when language chips are clicked", async () => {
+  // because PacksFeedFilters/getPacksFeed never forwarded it. The dropdown
+  // looked like it worked — the refetch just sent an identical URL.
+  it("re-fetches with the selected language when one is chosen", async () => {
     const user = userEvent.setup();
     vi.mocked(packsClient.list).mockResolvedValue({
       items: [PACK_A],
@@ -102,17 +102,19 @@ describe("HomeFeed", () => {
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
 
-    await user.click(screen.getByRole("checkbox", { name: "Українська" }));
-    await user.click(screen.getByRole("checkbox", { name: "Español" }));
+    await user.selectOptions(
+      screen.getByRole("combobox", { name: /filter by language/i }),
+      "Українська",
+    );
 
     await waitFor(() =>
       expect(packsClient.list).toHaveBeenLastCalledWith(
-        expect.objectContaining({ languages: ["uk", "es"] }),
+        expect.objectContaining({ languages: ["uk"] }),
       ),
     );
   });
 
-  it("stops filtering by language when the last chip is deselected", async () => {
+  it("stops filtering by language when 'All' is selected", async () => {
     const user = userEvent.setup();
     vi.mocked(packsClient.list).mockResolvedValue({
       items: [PACK_A],
@@ -123,9 +125,11 @@ describe("HomeFeed", () => {
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
 
-    const uk = screen.getByRole("checkbox", { name: "Українська" });
-    await user.click(uk);
-    await user.click(uk);
+    const language = screen.getByRole("combobox", {
+      name: /filter by language/i,
+    });
+    await user.selectOptions(language, "Українська");
+    await user.selectOptions(language, "All");
 
     // Empty, not absent-and-forgotten: the client omits the param entirely at
     // this point, because `?languages=` would be a 400 and "none selected"

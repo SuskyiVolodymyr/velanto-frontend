@@ -1,25 +1,27 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { ChipMultiSelect } from "@/src/shared/components/ChipMultiSelect";
+import { Select } from "@/src/shared/components/Select";
 import {
   PACK_LANGUAGES,
   PACK_LANGUAGE_NAMES,
   type PackLanguage,
 } from "@/src/shared/types/pack-language";
 
+const ALL = "all";
+
 /**
- * Multi-select filter over a pack's CONTENT language — what the pack is
- * written in, not what the interface is in. Selecting none means no filter
- * ("every language"), not "no languages".
+ * Filter over a pack's CONTENT language — what the pack is written in, not what
+ * the interface is in. A single-select dropdown (matching the Sort filter); the
+ * leading "All" option means no filter.
  *
- * Inline chips rather than a modal like `TagFilter`: there are 11 languages
- * against 31 tags, so they fit the sidebar without the extra click and the
- * bulk-edit Apply flow a long list needs.
+ * The `languages` prop stays an array for wire compatibility with the feed API
+ * (which filters on a set), but the control picks one at a time: the selected
+ * value is the first entry, and "All" clears it.
  *
- * Labels are the NATIVE names and are deliberately NOT translated — a Ukrainian
- * speaker looks for "Українська", not for whatever their current interface
- * calls Ukrainian. Same reasoning as the settings language picker.
+ * Language labels are the NATIVE names and are deliberately NOT translated — a
+ * Ukrainian speaker looks for "Українська", not for whatever their current
+ * interface calls Ukrainian. Same reasoning as the settings language picker.
  */
 export function LanguageFilter({
   languages,
@@ -30,15 +32,23 @@ export function LanguageFilter({
 }) {
   const t = useTranslations("home");
 
+  const options = [
+    { value: ALL, label: t("all") },
+    ...PACK_LANGUAGES.map((code) => ({
+      value: code,
+      label: PACK_LANGUAGE_NAMES[code],
+    })),
+  ];
+
   return (
-    <ChipMultiSelect
-      groupLabel={t("filterByLanguage")}
-      options={PACK_LANGUAGES.map((code) => ({
-        value: code,
-        label: PACK_LANGUAGE_NAMES[code],
-      }))}
-      selected={languages}
-      onChange={onChange}
+    <Select
+      aria-label={t("filterByLanguage")}
+      options={options}
+      value={languages[0] ?? ALL}
+      onChange={(event) => {
+        const value = event.target.value;
+        onChange(value === ALL ? [] : [value as PackLanguage]);
+      }}
     />
   );
 }
