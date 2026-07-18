@@ -374,7 +374,9 @@
     },
     "orContinueWith": "یا اس کے ساتھ جاری رکھیں",
     "continueWithGoogle": "Google کے ساتھ جاری رکھیں",
-    "continueWithDiscord": "Discord کے ساتھ جاری رکھیں"
+    "continueWithDiscord": "Discord کے ساتھ جاری رکھیں",
+    "oauthError": "اس فراہم کنندہ کے ذریعے سائن اِن نہیں ہو سکا۔ دوبارہ کوشش کریں۔",
+    "oauthPopupBlocked": "جاری رکھنے کے لیے اس سائٹ کے پاپ اپ کی اجازت دیں۔"
   },
   "rules": {
     "metaTitle": "کمیونٹی قواعد — Velanto",

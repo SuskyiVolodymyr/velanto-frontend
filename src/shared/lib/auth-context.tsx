@@ -43,6 +43,12 @@ interface AuthContextValue {
    * the UI reflects it without a full refresh.
    */
   patchUser: (partial: Partial<User>) => void;
+  /**
+   * Re-establish auth state from the refresh cookie — used after an OAuth popup
+   * completes (the popup set the cookie; this turns it into a live session for
+   * login, or picks up the freshly linked provider for connect).
+   */
+  revalidate: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -132,6 +138,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser((prev) => (prev ? { ...prev, ...partial } : prev));
   }, []);
 
+  const revalidate = useCallback(async () => {
+    try {
+      const result = await authClient.refresh();
+      setAccessToken(result.accessToken);
+      setUser(result.user);
+      setStatus("authenticated");
+    } catch {
+      setAccessToken(null);
+      setUser(null);
+      setStatus("unauthenticated");
+    }
+  }, []);
+
   const value = useMemo(
     () => ({
       user,
@@ -142,6 +161,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       logout,
       setAvatarKey,
       patchUser,
+      revalidate,
     }),
     [
       user,
@@ -152,6 +172,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       logout,
       setAvatarKey,
       patchUser,
+      revalidate,
     ],
   );
 

@@ -374,7 +374,9 @@
     },
     "orContinueWith": "أو تابع باستخدام",
     "continueWithGoogle": "المتابعة باستخدام Google",
-    "continueWithDiscord": "المتابعة باستخدام Discord"
+    "continueWithDiscord": "المتابعة باستخدام Discord",
+    "oauthError": "تعذّر تسجيل الدخول عبر هذا المزوّد. حاول مرة أخرى.",
+    "oauthPopupBlocked": "اسمح بالنوافذ المنبثقة لهذا الموقع للمتابعة."
   },
   "rules": {
     "metaTitle": "قواعد المجتمع — Velanto",

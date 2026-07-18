@@ -67,6 +67,7 @@ beforeEach(() => {
     logout: vi.fn(),
     setAvatarKey: vi.fn(),
     patchUser: vi.fn(),
+    revalidate: vi.fn(),
   } as ReturnType<typeof useAuth>);
   mockedUsersClient.getProfile.mockResolvedValue({
     id: "author-1",

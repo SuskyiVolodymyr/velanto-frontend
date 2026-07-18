@@ -1,21 +1,22 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { ConnectedAccountsSection } from "./ConnectedAccountsSection";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { authClient } from "@/src/shared/lib/auth-client";
+import { openOAuthPopup } from "@/src/shared/lib/oauth-popup";
 
 vi.mock("@/src/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
 vi.mock("@/src/shared/lib/auth-client", () => ({
   authClient: { oauthProviders: vi.fn(), startOAuthLink: vi.fn() },
 }));
-
-let params = new URLSearchParams();
-vi.mock("next/navigation", () => ({ useSearchParams: () => params }));
+vi.mock("@/src/shared/lib/oauth-popup", () => ({ openOAuthPopup: vi.fn() }));
 
 const mockedUseAuth = vi.mocked(useAuth);
 const mockedClient = vi.mocked(authClient);
+const mockedPopup = vi.mocked(openOAuthPopup);
+const revalidate = vi.fn();
 
 function authAs(
   status: "authenticated" | "unauthenticated" | "loading",
@@ -24,20 +25,16 @@ function authAs(
   mockedUseAuth.mockReturnValue({
     status,
     user: status === "authenticated" ? { id: "u1", linkedProviders } : null,
+    revalidate,
   } as unknown as ReturnType<typeof useAuth>);
 }
 
 beforeEach(() => {
   vi.clearAllMocks();
-  params = new URLSearchParams();
   mockedClient.oauthProviders.mockResolvedValue({
     google: true,
     discord: true,
   });
-});
-
-afterEach(() => {
-  vi.unstubAllGlobals();
 });
 
 describe("ConnectedAccountsSection", () => {
@@ -54,7 +51,6 @@ describe("ConnectedAccountsSection", () => {
       discord: false,
     });
     const { container } = render(<ConnectedAccountsSection />);
-    // Give the providers fetch a tick to resolve to "none".
     await waitFor(() => expect(mockedClient.oauthProviders).toHaveBeenCalled());
     expect(container).toBeEmptyDOMElement();
   });
@@ -65,18 +61,16 @@ describe("ConnectedAccountsSection", () => {
 
     expect(await screen.findByText("Google")).toBeInTheDocument();
     expect(screen.getByText("Discord")).toBeInTheDocument();
-    // Google linked → status text; Discord not → a Connect button.
     expect(screen.getByText("Connected")).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /connect/i }),
     ).toBeInTheDocument();
   });
 
-  it("arms the link then navigates to the provider on Connect", async () => {
+  it("arms the link, opens the popup, and revalidates on success", async () => {
     authAs("authenticated", { google: true, discord: false });
     mockedClient.startOAuthLink.mockResolvedValue({ started: true });
-    const assign = vi.fn();
-    vi.stubGlobal("location", { assign } as unknown as Location);
+    mockedPopup.mockResolvedValue({ ok: true });
 
     const user = userEvent.setup();
     render(<ConnectedAccountsSection />);
@@ -85,18 +79,37 @@ describe("ConnectedAccountsSection", () => {
     await waitFor(() =>
       expect(mockedClient.startOAuthLink).toHaveBeenCalledWith("discord"),
     );
-    await waitFor(() =>
-      expect(assign).toHaveBeenCalledWith("http://localhost:3001/auth/discord"),
-    );
+    await waitFor(() => expect(mockedPopup).toHaveBeenCalledWith("discord"));
+    await waitFor(() => expect(revalidate).toHaveBeenCalled());
   });
 
-  it("shows an error when the OAuth link round-trip failed (?linkError=1)", async () => {
-    params = new URLSearchParams("linkError=1");
-    authAs("authenticated", { google: false, discord: false });
+  it("shows an error when the popup reports a failed link", async () => {
+    authAs("authenticated", { google: true, discord: false });
+    mockedClient.startOAuthLink.mockResolvedValue({ started: true });
+    mockedPopup.mockResolvedValue({ ok: false, error: "oauth" });
+
+    const user = userEvent.setup();
     render(<ConnectedAccountsSection />);
+    await user.click(await screen.findByRole("button", { name: /connect/i }));
 
     expect(
       await screen.findByText(/already connected to another/i),
     ).toBeInTheDocument();
+    expect(revalidate).not.toHaveBeenCalled();
+  });
+
+  it("does not error when the user just closes the popup", async () => {
+    authAs("authenticated", { google: true, discord: false });
+    mockedClient.startOAuthLink.mockResolvedValue({ started: true });
+    mockedPopup.mockResolvedValue({ ok: false, error: "closed" });
+
+    const user = userEvent.setup();
+    render(<ConnectedAccountsSection />);
+    await user.click(await screen.findByRole("button", { name: /connect/i }));
+
+    await waitFor(() => expect(mockedPopup).toHaveBeenCalled());
+    expect(
+      screen.queryByText(/already connected to another/i),
+    ).not.toBeInTheDocument();
   });
 });

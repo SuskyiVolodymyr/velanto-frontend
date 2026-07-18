@@ -374,7 +374,9 @@
     },
     "orContinueWith": "অথবা এর মাধ্যমে চালিয়ে যান",
     "continueWithGoogle": "Google দিয়ে চালিয়ে যান",
-    "continueWithDiscord": "Discord দিয়ে চালিয়ে যান"
+    "continueWithDiscord": "Discord দিয়ে চালিয়ে যান",
+    "oauthError": "সেই প্রদানকারীর মাধ্যমে সাইন ইন করা যায়নি। আবার চেষ্টা করুন।",
+    "oauthPopupBlocked": "চালিয়ে যেতে এই সাইটের জন্য পপ-আপ অনুমতি দিন।"
   },
   "rules": {
     "metaTitle": "কমিউনিটি নিয়মাবলী — Velanto",

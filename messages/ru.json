@@ -374,7 +374,9 @@
     },
     "orContinueWith": "или продолжите через",
     "continueWithGoogle": "Продолжить через Google",
-    "continueWithDiscord": "Продолжить через Discord"
+    "continueWithDiscord": "Продолжить через Discord",
+    "oauthError": "Не удалось войти через этот сервис. Попробуйте ещё раз.",
+    "oauthPopupBlocked": "Разрешите всплывающие окна для этого сайта, чтобы продолжить."
   },
   "rules": {
     "metaTitle": "Правила сообщества — Velanto",

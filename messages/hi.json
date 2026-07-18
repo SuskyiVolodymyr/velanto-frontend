@@ -374,7 +374,9 @@
     },
     "orContinueWith": "या इसके साथ जारी रखें",
     "continueWithGoogle": "Google के साथ जारी रखें",
-    "continueWithDiscord": "Discord के साथ जारी रखें"
+    "continueWithDiscord": "Discord के साथ जारी रखें",
+    "oauthError": "उस प्रदाता से साइन इन नहीं हो सका। कृपया पुनः प्रयास करें।",
+    "oauthPopupBlocked": "जारी रखने के लिए इस साइट के लिए पॉप-अप की अनुमति दें।"
   },
   "rules": {
     "metaTitle": "समुदाय नियम — Velanto",

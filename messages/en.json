@@ -418,6 +418,8 @@
     "orContinueWith": "or continue with",
     "continueWithGoogle": "Continue with Google",
     "continueWithDiscord": "Continue with Discord",
+    "oauthError": "Couldn't sign in with that provider. Please try again.",
+    "oauthPopupBlocked": "Allow pop-ups for this site to continue.",
     "tabSignup": "Sign up",
     "logIn": "Log in",
     "headingLogin": "Log in to Velanto",
