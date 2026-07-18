@@ -10,6 +10,7 @@ import { Select } from "@/src/shared/components/Select";
 import { Modal } from "@/src/shared/components/Modal";
 import { ConfirmModal } from "@/src/shared/components/ConfirmModal";
 import { Tooltip } from "@/src/shared/components/Tooltip";
+import { Skeleton } from "@/src/shared/components/Skeleton";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { isStaff } from "@/src/shared/lib/user-role";
 import {
@@ -24,6 +25,22 @@ import {
   useCreateToken,
   useRevokeToken,
 } from "@/src/features/docs/api/tokens.queries";
+
+/**
+ * Order the scope checkboxes are shown in — safest/most common first
+ * (`profile:read`), most powerful last (`moderation`, staff-only). This is a UI
+ * concern only and is deliberately separate from PAT_SCOPES (the wire taxonomy,
+ * whose order the stored scopes preserve). Any scope not listed here still
+ * renders, appended after these — so a newly-added scope can never silently
+ * vanish from the form.
+ */
+const SCOPE_DISPLAY_ORDER: PatScope[] = [
+  "profile:read",
+  "packs:read",
+  "packs:write",
+  "packs:delete",
+  "moderation",
+];
 
 /** Expiry presets offered in the create form; "never" maps to null days. */
 const EXPIRY_CHOICES = ["30", "90", "365", "never"] as const;
@@ -78,6 +95,19 @@ export function ApiTokensSection() {
       ),
     [user?.role],
   );
+
+  // Same set as availableScopes, ordered for the checkbox list (see
+  // SCOPE_DISPLAY_ORDER). Any scope missing from that order is appended, so it
+  // never disappears from the form.
+  const displayScopes = useMemo(() => {
+    const ordered = SCOPE_DISPLAY_ORDER.filter((scope) =>
+      availableScopes.includes(scope),
+    );
+    const rest = availableScopes.filter(
+      (scope) => !SCOPE_DISPLAY_ORDER.includes(scope),
+    );
+    return [...ordered, ...rest];
+  }, [availableScopes]);
 
   const canSubmit = authed && name.trim().length > 0 && scopes.size > 0;
 
@@ -187,7 +217,7 @@ export function ApiTokensSection() {
               {t("tokenScopesLabel")}
             </Text>
             <div className="flex flex-col gap-2">
-              {availableScopes.map((scope) => (
+              {displayScopes.map((scope) => (
                 <label key={scope} className="flex items-center gap-2.5">
                   <input
                     type="checkbox"
@@ -239,9 +269,21 @@ export function ApiTokensSection() {
           <div className="flex flex-col gap-3">
             <Text className="font-semibold">{t("tokenListHeading")}</Text>
             {tokensQuery.isLoading ? (
-              <Text variant="secondary" className="text-sm">
-                {t("loading")}
-              </Text>
+              <ul className="flex flex-col divide-y divide-border" aria-hidden>
+                {[0, 1].map((row) => (
+                  <li
+                    key={row}
+                    className="flex items-start justify-between gap-4 py-3"
+                  >
+                    <div className="flex min-w-0 flex-1 flex-col gap-2">
+                      <Skeleton className="h-4 w-32" />
+                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className="h-3 w-44" />
+                    </div>
+                    <Skeleton className="h-9 w-20 shrink-0" />
+                  </li>
+                ))}
+              </ul>
             ) : tokens.length === 0 ? (
               <Text variant="secondary" className="text-sm">
                 {t("tokenListEmpty")}
