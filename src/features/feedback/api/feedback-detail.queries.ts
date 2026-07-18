@@ -1,5 +1,6 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import { getFeedback } from "./feedback-detail";
+import { useRefetchOnSignIn } from "@/src/shared/lib/use-refetch-on-sign-in";
 
 export function feedbackQueryOptions(id: string) {
   return queryOptions({
@@ -14,5 +15,9 @@ export function feedbackQueryOptions(id: string) {
  * showing the not-found state.
  */
 export function useFeedback(id: string) {
-  return useQuery({ ...feedbackQueryOptions(id), retry: false });
+  const query = useQuery({ ...feedbackQueryOptions(id), retry: false });
+  // Restore the viewer's own vote colour after a hard refresh fetched the post
+  // anonymously (see useRefetchOnSignIn).
+  useRefetchOnSignIn(query.refetch);
+  return query;
 }
