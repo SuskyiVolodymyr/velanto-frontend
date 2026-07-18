@@ -8,13 +8,19 @@ import { Hidden } from "@/src/shared/components/Hidden";
 import { formatBanStatus } from "@/src/shared/lib/ban-display";
 import { type BanDuration } from "@/src/shared/lib/users-client";
 import { type BanReasonState } from "@/src/shared/components/BanReasonPicker";
+import { type AssignableRole } from "@/src/shared/lib/staff-permissions";
+import { useStreamerModeOrDefault } from "@/src/shared/lib/streamer-mode-context";
+import type { Role } from "@/src/shared/types/user";
 import type { AdminUserRow } from "@/src/shared/types/admin";
 import { UserBanForm } from "@/src/features/admin/UserBanForm";
+import { RoleSelect } from "@/src/features/admin/RoleSelect";
 import { DataTableRow } from "@/src/shared/components/DataTable";
 
 interface UserRowProps {
   row: AdminUserRow;
   columns: string;
+  /** The acting admin/manager's role — gates trust/ban and role controls. */
+  actorRole: Role;
   canAct: boolean;
   banned: boolean;
   banFormOpen: boolean;
@@ -23,12 +29,14 @@ interface UserRowProps {
   trustPending: boolean;
   unbanPending: boolean;
   banPending: boolean;
+  roleChangePending: boolean;
   onSetTrusted: (id: string, trusted: boolean) => void;
   onUnban: (id: string) => void;
   onToggleBanForm: (id: string) => void;
   onBanDurationChange: (duration: BanDuration) => void;
   onBanReasonChange: (reason: BanReasonState) => void;
   onConfirmBan: (id: string) => void;
+  onChangeRole: (id: string, role: AssignableRole) => void;
 }
 
 /**
@@ -40,6 +48,7 @@ interface UserRowProps {
 export function UserRow({
   row,
   columns,
+  actorRole,
   canAct,
   banned,
   banFormOpen,
@@ -48,14 +57,22 @@ export function UserRow({
   trustPending,
   unbanPending,
   banPending,
+  roleChangePending,
   onSetTrusted,
   onUnban,
   onToggleBanForm,
   onBanDurationChange,
   onBanReasonChange,
   onConfirmBan,
+  onChangeRole,
 }: UserRowProps) {
   const t = useTranslations("admin");
+  // Keep the target's name out of the role control's accessible name when
+  // streamer mode is on, so a screen reader on a shared screen doesn't leak it.
+  const { enabled: streamerMode } = useStreamerModeOrDefault();
+  const roleAria = streamerMode
+    ? t("changeRoleGenericAria")
+    : t("changeRoleNamedAria", { username: row.username });
   return (
     <>
       <DataTableRow columns={columns}>
@@ -78,6 +95,14 @@ export function UserRow({
             </Hidden>
           </Text>
         </div>
+
+        <RoleSelect
+          actorRole={actorRole}
+          targetRole={row.role}
+          ariaLabel={roleAria}
+          pending={roleChangePending}
+          onChange={(role) => onChangeRole(row.id, role)}
+        />
 
         <Text variant="secondary" className="text-[13px] tabular-nums">
           {row.packs}
