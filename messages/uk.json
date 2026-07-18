@@ -1163,7 +1163,8 @@
     "privacy": "Конфіденційність",
     "terms": "Умови",
     "copyright": "© {year} Velanto. Усі права захищені.",
-    "contactLabel": "Питання?"
+    "contactLabel": "Питання?",
+    "updates": "Оновлення"
   },
   "status": {
     "packPending": "На розгляді",
@@ -1350,5 +1351,12 @@
     "playPreview": "Відтворити попередній перегляд відео",
     "embedFailed": "Це відео не можна відтворити тут",
     "openOnYouTube": "Відкрити на YouTube"
+  },
+  "updates": {
+    "metaTitle": "Оновлення — Velanto",
+    "metaDescription": "Що нового у Velanto — останні функції, покращення та виправлення.",
+    "heading": "Що нового",
+    "intro": "Останні функції, покращення та виправлення у Velanto.",
+    "empty": "Оновлень поки немає — завітайте пізніше."
   }
 }

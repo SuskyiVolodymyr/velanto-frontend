@@ -1163,7 +1163,8 @@
     "privacy": "गोपनीयता",
     "terms": "शर्तें",
     "copyright": "© {year} Velanto. सर्वाधिकार सुरक्षित।",
-    "contactLabel": "सवाल?"
+    "contactLabel": "सवाल?",
+    "updates": "अपडेट"
   },
   "status": {
     "packPending": "समीक्षा लंबित",
@@ -1350,5 +1351,12 @@
     "playPreview": "वीडियो पूर्वावलोकन चलाएं",
     "embedFailed": "यह वीडियो यहां नहीं चल सकता",
     "openOnYouTube": "YouTube पर खोलें"
+  },
+  "updates": {
+    "metaTitle": "अपडेट — Velanto",
+    "metaDescription": "Velanto पर नया क्या है — नवीनतम सुविधाएँ, सुधार और समाधान।",
+    "heading": "नया क्या है",
+    "intro": "Velanto पर नवीनतम सुविधाएँ, सुधार और समाधान।",
+    "empty": "अभी कोई अपडेट नहीं — जल्द ही फिर देखें।"
   }
 }

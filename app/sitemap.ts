@@ -11,7 +11,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 const PACK_CAP = 50;
 
 // Public, indexable app routes that always exist regardless of API state.
-const STATIC_PATHS = ["/", "/docs", "/feedback"] as const;
+const STATIC_PATHS = ["/", "/docs", "/feedback", "/updates"] as const;
 
 // Same, but they change about once a year rather than weekly, so they carry a
 // lower priority and changeFrequency than the paths above.
