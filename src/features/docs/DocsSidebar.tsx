@@ -95,10 +95,10 @@ export function DocsSidebar({
                     onClick={() => onSelect(topic.id)}
                     aria-pressed={active}
                     className={cn(
-                      "rounded-lg px-3 py-2 text-start text-sm font-medium transition-colors",
+                      "cursor-pointer rounded-lg px-3 py-2 text-start text-sm font-medium transition-colors",
                       active
                         ? "bg-white/[0.12] text-foreground"
-                        : "text-foreground-secondary",
+                        : "text-foreground-secondary hover:text-foreground",
                     )}
                   >
                     {t(topic.labelKey)}
