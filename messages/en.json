@@ -102,10 +102,6 @@
     "banAll": "All users",
     "banBanned": "Banned",
     "banActive": "Not banned",
-    "filterStaffAria": "Filter by staff status",
-    "staffAll": "All roles",
-    "staffOnly": "Staff only",
-    "staffNonStaff": "Non-staff",
     "sortRegAria": "Sort by registration date",
     "sortNewest": "Newest first",
     "sortOldest": "Oldest first",
@@ -610,7 +606,7 @@
       },
       {
         "title": "Your account",
-        "body": "You register with an email address, a username and a password. Keep your password to yourself; you are responsible for what happens under your account. If you think someone else has got into it, change your password and tell us."
+        "body": "You register with an email address, a username and a password. We send a six-digit code to that address, and you must enter it before the account is created — there is no such thing as an unverified Velanto account. Keep your password to yourself; you are responsible for what happens under your account. If you think someone else has got into it, change your password and tell us."
       },
       {
         "title": "Your content stays yours",
@@ -1231,7 +1227,15 @@
     "avatarCropError": "Couldn't crop the image. Try again.",
     "loadMore": "Load more",
     "loadingMore": "Loading more…",
-    "loadMoreError": "Couldn't load more packs. Try again."
+    "loadMoreError": "Couldn't load more packs. Try again.",
+    "followers": "Followers",
+    "noFollowers": "No followers yet.",
+    "noFollowing": "Not following anyone yet.",
+    "followsLoadMore": "Load more",
+    "followsError": "Couldn't load this list. Try again.",
+    "followsLoading": "Loading…",
+    "packCount": "{count, plural, one {# pack} other {# packs}}",
+    "followingCount": "{count, plural, one {# following} other {# following}}"
   },
   "pages": {
     "createTitle": "Create a pack",
@@ -1261,8 +1265,7 @@
     "privacy": "Privacy",
     "terms": "Terms",
     "copyright": "© {year} Velanto. All rights reserved.",
-    "contactLabel": "Questions?",
-    "updates": "Updates"
+    "contactLabel": "Questions?"
   },
   "status": {
     "packPending": "Pending review",
@@ -1354,12 +1357,5 @@
     "playPreview": "Play video preview",
     "embedFailed": "This video can’t play here",
     "openOnYouTube": "Open on YouTube"
-  },
-  "updates": {
-    "metaTitle": "Updates — Velanto",
-    "metaDescription": "What's new on Velanto — the latest features, improvements, and fixes.",
-    "heading": "What's new",
-    "intro": "The latest features, improvements, and fixes on Velanto.",
-    "empty": "No updates yet — check back soon."
   }
 }

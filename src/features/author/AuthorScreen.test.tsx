@@ -69,6 +69,7 @@ const profile = {
   bio: "I make packs",
   createdAt: "2026-01-01T00:00:00.000Z",
   followerCount: 3,
+  followingCount: 2,
   isFollowedByMe: false,
 };
 
@@ -154,7 +155,9 @@ describe("AuthorScreen", () => {
     );
     // Merged /profile view: manage your own page instead of following it.
     expect(
-      screen.queryByRole("button", { name: /follow/i }),
+      // Anchored to the Follow/Following action button — not the "N followers"
+      // count button, which is always present and opens the followers list.
+      screen.queryByRole("button", { name: /^follow(ing)?$/i }),
     ).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: /edit profile/i })).toHaveAttribute(
       "href",
@@ -204,7 +207,9 @@ describe("AuthorScreen", () => {
 
     // Signed out: the follow control is hidden entirely, not rendered blocked.
     expect(
-      screen.queryByRole("button", { name: /follow/i }),
+      // Anchored to the Follow/Following action button — not the "N followers"
+      // count button, which is always present and opens the followers list.
+      screen.queryByRole("button", { name: /^follow(ing)?$/i }),
     ).not.toBeInTheDocument();
     expect(mockedUsersClient.follow).not.toHaveBeenCalled();
     expect(push).not.toHaveBeenCalled();
@@ -223,7 +228,9 @@ describe("AuthorScreen", () => {
     );
 
     expect(
-      screen.queryByRole("button", { name: /follow/i }),
+      // Anchored to the Follow/Following action button — not the "N followers"
+      // count button, which is always present and opens the followers list.
+      screen.queryByRole("button", { name: /^follow(ing)?$/i }),
     ).not.toBeInTheDocument();
     expect(mockedUsersClient.follow).not.toHaveBeenCalled();
   });

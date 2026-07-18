@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button, buttonClassName } from "@/src/shared/components/Button";
@@ -8,6 +9,13 @@ import { Hidden } from "@/src/shared/components/Hidden";
 import { Username } from "@/src/shared/components/Username";
 import { AvatarLightbox } from "@/src/shared/components/AvatarLightbox";
 import type { PublicUserProfile } from "@/src/shared/types/user";
+import { FollowListModal } from "./FollowListModal";
+import type { FollowListKind } from "./api/follow-list.queries";
+
+// The follower / following counts are buttons that open the list modal; they
+// read as inline stat text until hovered.
+const countButtonClass =
+  "rounded-[4px] transition-colors hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc";
 
 /**
  * Author identity block: avatar/name/stat line, the follow toggle (hidden on
@@ -35,6 +43,9 @@ export function AuthorProfileHeader({
   onFollowToggle: () => void;
 }) {
   const t = useTranslations("profile");
+  // Which follow list (if any) is open in the modal. Conditionally rendered, so
+  // the modal remounts per open and its tab resets to this.
+  const [followList, setFollowList] = useState<FollowListKind | null>(null);
 
   // The follow control is only for signed-in viewers: a signed-out visitor
   // sees no follow button at all (not a dimmed/blocked one). `followBlocked`
@@ -72,10 +83,23 @@ export function AuthorProfileHeader({
               </Hidden>
             </Text>
             <Text variant="tertiary" className="text-sm">
-              {t("followerAndPackCount", {
-                followers: profile.followerCount,
-                packs: packsTotal,
-              })}
+              <button
+                type="button"
+                onClick={() => setFollowList("followers")}
+                className={countButtonClass}
+              >
+                {t("followerCount", { count: profile.followerCount })}
+              </button>
+              {" · "}
+              <button
+                type="button"
+                onClick={() => setFollowList("following")}
+                className={countButtonClass}
+              >
+                {t("followingCount", { count: profile.followingCount })}
+              </button>
+              {" · "}
+              {t("packCount", { count: packsTotal })}
             </Text>
           </div>
         </div>
@@ -114,6 +138,14 @@ export function AuthorProfileHeader({
             </Link>
           </div>
         )
+      )}
+
+      {followList && (
+        <FollowListModal
+          authorId={authorId}
+          initialTab={followList}
+          onClose={() => setFollowList(null)}
+        />
       )}
     </>
   );

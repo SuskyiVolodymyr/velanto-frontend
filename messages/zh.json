@@ -102,10 +102,6 @@
     "banAll": "所有用户",
     "banBanned": "已封禁",
     "banActive": "未封禁",
-    "filterStaffAria": "按员工身份筛选",
-    "staffAll": "所有角色",
-    "staffOnly": "仅限员工",
-    "staffNonStaff": "非员工",
     "sortRegAria": "按注册日期排序",
     "sortNewest": "最新优先",
     "sortOldest": "最早优先",
@@ -516,7 +512,7 @@
       },
       {
         "title": "你的账户",
-        "body": "你用一个电子邮箱地址、一个用户名和一个密码注册。请把密码只留给自己；在你的账户下发生的事情由你负责。如果你认为有别人进入了你的账户，请修改密码并告诉我们。"
+        "body": "你用一个电子邮箱地址、一个用户名和一个密码注册。我们会向该邮箱发送一个六位数字验证码，你必须输入它，账户才会被创建——Velanto 不存在未验证的账户。请把密码只留给自己；在你的账户下发生的事情由你负责。如果你认为有别人进入了你的账户，请修改密码并告诉我们。"
       },
       {
         "title": "你的内容仍归你所有",
@@ -1137,7 +1133,15 @@
     "avatarCropError": "无法裁剪图片。请重试。",
     "loadMore": "加载更多",
     "loadingMore": "加载中…",
-    "loadMoreError": "无法加载更多卡包，请重试。"
+    "loadMoreError": "无法加载更多卡包，请重试。",
+    "followers": "关注者",
+    "noFollowers": "还没有关注者。",
+    "noFollowing": "还没有关注任何人。",
+    "followsLoadMore": "加载更多",
+    "followsError": "无法加载此列表。请重试。",
+    "followsLoading": "加载中…",
+    "packCount": "{count, plural, other {# 个题包}}",
+    "followingCount": "{count, plural, other {# 个关注}}"
   },
   "pages": {
     "createTitle": "创建题包",
@@ -1167,8 +1171,7 @@
     "privacy": "隐私",
     "terms": "条款",
     "copyright": "© {year} Velanto. 保留所有权利。",
-    "contactLabel": "有疑问？",
-    "updates": "更新"
+    "contactLabel": "有疑问？"
   },
   "status": {
     "packPending": "待审核",
@@ -1355,12 +1358,5 @@
     "playPreview": "播放视频预览",
     "embedFailed": "此视频无法在此处播放",
     "openOnYouTube": "在 YouTube 上打开"
-  },
-  "updates": {
-    "metaTitle": "更新 — Velanto",
-    "metaDescription": "Velanto 的最新动态——最新功能、改进和修复。",
-    "heading": "最新动态",
-    "intro": "Velanto 上的最新功能、改进和修复。",
-    "empty": "暂无更新，敬请期待。"
   }
 }
