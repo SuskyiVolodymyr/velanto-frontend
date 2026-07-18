@@ -92,7 +92,7 @@ export function UserMenu({
             </Text>
           </div>
           <Link
-            href="/profile"
+            href={`/users/${user.id}`}
             role="menuitem"
             onClick={() => setOpen(false)}
             className={`${MENU_ITEM_CLASS} text-foreground`}

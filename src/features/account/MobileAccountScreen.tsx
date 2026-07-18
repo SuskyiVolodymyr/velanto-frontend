@@ -44,7 +44,7 @@ export function MobileAccountScreen() {
   if (status !== "authenticated" || !user) return null;
 
   const rows: Row[] = [
-    { key: "profile", href: "/profile", icon: UserIcon },
+    { key: "profile", href: `/users/${user.id}`, icon: UserIcon },
     { key: "rules", href: "/rules", icon: ScrollText },
     { key: "docs", href: "/docs", icon: BookOpen },
     { key: "settings", href: "/settings", icon: SettingsIcon },
