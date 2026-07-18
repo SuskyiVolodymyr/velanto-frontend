@@ -8,6 +8,7 @@ import { PrivacySection } from "@/src/features/settings/PrivacySection";
 import { NotificationsSection } from "@/src/features/settings/NotificationsSection";
 import { AccountSection } from "@/src/features/settings/AccountSection";
 import { PasswordSection } from "@/src/features/settings/PasswordSection";
+import { ConnectedAccountsSection } from "@/src/features/settings/ConnectedAccountsSection";
 import { ApiTokensPointer } from "@/src/features/settings/ApiTokensPointer";
 import { DangerZoneSection } from "@/src/features/settings/DangerZoneSection";
 
@@ -24,6 +25,7 @@ export function SettingsScreen() {
       <NotificationsSection />
       <AccountSection />
       <PasswordSection />
+      <ConnectedAccountsSection />
       <ApiTokensPointer />
       <DangerZoneSection />
     </main>
