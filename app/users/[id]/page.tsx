@@ -49,7 +49,8 @@ export async function generateMetadata({
       description,
       url,
       type: "profile",
-      image: { path: `/users/${id}/social-card`, alt: title },
+      // The avatar+name card is co-located at app/users/[id]/opengraph-image.tsx.
+      deferImageToRoute: true,
     }),
   };
 }
