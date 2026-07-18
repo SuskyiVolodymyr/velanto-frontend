@@ -26,6 +26,18 @@ function authHeader(init?: RequestInit): string | undefined {
   return (init?.headers as Record<string, string> | undefined)?.Authorization;
 }
 
+// A minimal (unsigned) JWT carrying just an `exp` claim, so the client can read
+// expiry the way it does for real access tokens.
+function fakeJwt(expSeconds: number): string {
+  const seg = (o: object) =>
+    btoa(JSON.stringify(o))
+      .replace(/\+/g, "-")
+      .replace(/\//g, "_")
+      .replace(/=+$/, "");
+  return `${seg({ alg: "HS256", typ: "JWT" })}.${seg({ sub: "u1", exp: expSeconds })}.sig`;
+}
+const nowSeconds = () => Math.floor(Date.now() / 1000);
+
 beforeEach(() => {
   captureApiError.mockClear();
   captureNetworkError.mockClear();
@@ -195,5 +207,74 @@ describe("apiClient silent token refresh on 401", () => {
       ApiError,
     );
     expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe("apiClient proactive refresh of an expired token", () => {
+  it("renews an expired token before sending so an optional-auth request keeps its identity", async () => {
+    setAccessToken(fakeJwt(nowSeconds() - 60)); // already expired
+    const onRefreshed = vi.fn();
+    setSessionCallbacks({ onRefreshed, onLost: vi.fn() });
+    const fresh = fakeJwt(nowSeconds() + 3600);
+
+    const fetchMock = vi.fn((url: string, init?: RequestInit) => {
+      if (url.endsWith("/auth/refresh")) {
+        return Promise.resolve(
+          jsonResponse(200, { accessToken: fresh, user: { id: "u1" } }),
+        );
+      }
+      // Optional-auth endpoint: 200 for anyone. Echo who it saw so the test can
+      // assert the play was attributed, not recorded anonymously.
+      return Promise.resolve(
+        jsonResponse(200, { id: "p1", seen: authHeader(init) ?? null }),
+      );
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(
+      apiClient.post("/packs/x/plays", { picks: [] }),
+    ).resolves.toEqual({ id: "p1", seen: `Bearer ${fresh}` });
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining("/auth/refresh"),
+      expect.anything(),
+    );
+    expect(onRefreshed).toHaveBeenCalledWith({ id: "u1" });
+  });
+
+  it("proceeds anonymously when the pre-emptive refresh fails", async () => {
+    setAccessToken(fakeJwt(nowSeconds() - 60));
+    const onLost = vi.fn();
+    setSessionCallbacks({ onRefreshed: vi.fn(), onLost });
+
+    const fetchMock = vi.fn((url: string, init?: RequestInit) => {
+      if (url.endsWith("/auth/refresh")) {
+        return Promise.resolve(
+          jsonResponse(401, { message: "refresh expired" }),
+        );
+      }
+      return Promise.resolve(
+        jsonResponse(200, { id: "p1", seen: authHeader(init) ?? null }),
+      );
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(
+      apiClient.post("/packs/x/plays", { picks: [] }),
+    ).resolves.toEqual({ id: "p1", seen: null });
+    expect(onLost).toHaveBeenCalled();
+  });
+
+  it("does not refresh a still-valid token", async () => {
+    setAccessToken(fakeJwt(nowSeconds() + 3600));
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(jsonResponse(200, { id: "p1" }));
+    vi.stubGlobal("fetch", fetchMock);
+
+    await apiClient.post("/packs/x/plays", { picks: [] });
+    expect(fetchMock).not.toHaveBeenCalledWith(
+      expect.stringContaining("/auth/refresh"),
+      expect.anything(),
+    );
   });
 });

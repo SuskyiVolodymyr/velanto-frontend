@@ -27,6 +27,14 @@ export interface BuildOpenGraphOptions {
   url: string;
   /** Defaults to "website"; profiles pass "profile". */
   type?: "website" | "profile";
+  /**
+   * A per-page dynamic social card to name INSTEAD of the static site card —
+   * e.g. a pack's cover+title or a user's avatar+name, served by a
+   * `social-card` route handler. `path` is root-relative (resolved against
+   * `metadataBase`, like the default); dimensions reuse OG_CARD_SIZE since every
+   * card renders at 1200×630. Omit for the static brand card.
+   */
+  image?: { path: string; alt: string };
 }
 
 /**
@@ -85,7 +93,14 @@ export function buildOpenGraph({
   description,
   url,
   type = "website",
+  image,
 }: BuildOpenGraphOptions): SiteOpenGraph {
+  // A per-page dynamic card still goes through here (named explicitly, never
+  // inherited) so the #233/#235 disinherit failure mode can't recur — the image
+  // is always present in the emitted metadata, only its URL varies.
+  const card = image
+    ? { url: image.path, alt: image.alt }
+    : { url: OG_IMAGE_PATH, alt: OG_CARD_ALT };
   return {
     title,
     description,
@@ -93,10 +108,10 @@ export function buildOpenGraph({
     type,
     images: [
       {
-        url: OG_IMAGE_PATH,
+        url: card.url,
         width: OG_CARD_SIZE.width,
         height: OG_CARD_SIZE.height,
-        alt: OG_CARD_ALT,
+        alt: card.alt,
         type: OG_CARD_CONTENT_TYPE,
       },
     ],

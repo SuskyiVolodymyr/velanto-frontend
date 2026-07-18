@@ -374,7 +374,9 @@
     },
     "orContinueWith": "或使用以下方式继续",
     "continueWithGoogle": "使用 Google 继续",
-    "continueWithDiscord": "使用 Discord 继续"
+    "continueWithDiscord": "使用 Discord 继续",
+    "oauthError": "无法通过该服务登录。请重试。",
+    "oauthPopupBlocked": "请允许本站弹出窗口以继续。"
   },
   "rules": {
     "metaTitle": "社区规则 — Velanto",
@@ -674,7 +676,7 @@
           "Sentry——出现崩溃时接收一份报告。德国，在欧盟境内。报告中含有你的用户 id 和用户名，还有一小段你刚刚做过什么的轨迹：你访问过的页面、你点击了什么，以及应用调用过哪些地址（其中有些会带上某个题包的名字）。报告中不含你的电子邮箱地址，不含你的 Cookie，也不含你输入的内容，并且没有录像式的会话录制。这个承诺有一处界限：和你的浏览器所连接的任何服务器一样，Sentry 的服务器能看到连接本身，所以即使我们从不把它写进报告，它也能观察到你正在从哪个地址连接。",
           "Cloudflare——DNS，以及到达网站的流量会经过它。和任何位于网站前面的服务商一样，它能看到每一个访客连接时所用的地址。我们不会收到它，也不会存储它，但我们不会假装它对谁都不可见。",
           "Google——仅当你选择“使用 Google 继续”时。在那次登录中，Google 会看到你正在登录 Velanto，并向我们确认你的电子邮件地址，以便我们创建或找到你的账户；除此之外，我们不会收到关于你的任何信息。Google 拿这次登录做什么，受 Google 的隐私政策约束。",
-          "Discord——仅当你选择“使用 Discord 继续”时。在那次登录中，Discord 会看到你正在登录 Velanto，并确认你的账户——以及你的电子邮件地址（如果你曾授予 Discord 一个）——以便我们创建或找到你的账户；除此之外，我们不会收到关于你的任何信息。受 Discord 的隐私政策约束。"
+          "Discord——仅当你选择“使用 Discord 继续”时。在那次登录中，Discord 会看到你正在登录 Velanto，并确认你的身份，以便我们创建或找到你的账户。我们不会向 Discord 索取你的电子邮件地址或关于你的任何其他信息——只获取足以识别该账户的内容。受 Discord 的隐私政策约束。"
         ]
       },
       {
@@ -1109,6 +1111,7 @@
     "saving": "保存中…",
     "save": "保存",
     "saveError": "无法保存你的更改，请重试。",
+    "usernameTaken": "该用户名已被占用。",
     "userNotFound": "该用户不存在。",
     "followError": "无法更新关注状态，请重试。",
     "followerAndPackCount": "{followers, plural, other {# 位关注者}} · {packs, plural, other {# 个题包}}",
@@ -1117,6 +1120,7 @@
     "packs": "题包",
     "noPacks": "还没有题包。",
     "recentlyPlayed": "最近玩过",
+    "recentlyPlayedEmpty": "你还没有玩过任何合集。",
     "avatarHeading": "头像",
     "avatarChange": "更换照片",
     "avatarRemove": "移除照片",

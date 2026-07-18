@@ -71,7 +71,7 @@ export function UserMenu({
         aria-expanded={open}
         aria-label={t("accountMenu")}
         onClick={() => setOpen((prev) => !prev)}
-        className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-[11px] border border-border bg-surface text-sm font-semibold text-foreground-secondary transition-colors hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-[11px] border border-border bg-surface text-sm font-semibold text-foreground-secondary transition-colors hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         <UserAvatar
           username={user.username}
@@ -92,7 +92,7 @@ export function UserMenu({
             </Text>
           </div>
           <Link
-            href="/profile"
+            href={`/users/${user.id}`}
             role="menuitem"
             onClick={() => setOpen(false)}
             className={`${MENU_ITEM_CLASS} text-foreground`}

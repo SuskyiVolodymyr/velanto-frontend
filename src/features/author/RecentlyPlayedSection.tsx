@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { PackCard } from "@/src/features/home/PackCard";
 import { PackScrollRail } from "@/src/shared/components/PackScrollRail";
+import { Text } from "@/src/shared/components/Text";
 import { useRecentlyPlayed } from "./api/recently-played.queries";
 
 /**
@@ -10,15 +11,22 @@ import { useRecentlyPlayed } from "./api/recently-played.queries";
  *
  * `visible` is the caller's privacy decision — render (and fetch) only when the
  * viewer is allowed to see this history (the profile is public, or the viewer
- * is the owner / staff). When there's nothing to show the whole section
- * collapses, so a fresh account's profile isn't cluttered with an empty rail.
+ * is the owner / staff).
+ *
+ * When there's nothing to show, other people's profiles collapse the section so
+ * a fresh account isn't cluttered with an empty rail. On your OWN profile
+ * (`showEmptyState`) we instead render a placeholder once the query settles, so
+ * the section is discoverable before you've played anything — otherwise it just
+ * looks like the feature is missing.
  */
 export function RecentlyPlayedSection({
   userId,
   visible,
+  showEmptyState = false,
 }: {
   userId: string;
   visible: boolean;
+  showEmptyState?: boolean;
 }) {
   const t = useTranslations("profile");
   const query = useRecentlyPlayed(userId, visible);
@@ -26,8 +34,23 @@ export function RecentlyPlayedSection({
   if (!visible) return null;
 
   const packs = query.data?.pages.flatMap((page) => page.items) ?? [];
-  // Nothing to show (and not still loading the first page) → collapse entirely.
-  if (packs.length === 0) return null;
+  if (packs.length === 0) {
+    // Settled-empty on your own profile → show a placeholder; elsewhere (or
+    // while the first page is still loading) collapse entirely.
+    if (showEmptyState && !query.isLoading) {
+      return (
+        <section className="flex flex-col">
+          <Text as="h2" variant="title" className="mb-4 text-lg">
+            {t("recentlyPlayed")}
+          </Text>
+          <Text variant="secondary" className="text-sm">
+            {t("recentlyPlayedEmpty")}
+          </Text>
+        </section>
+      );
+    }
+    return null;
+  }
 
   return (
     <PackScrollRail

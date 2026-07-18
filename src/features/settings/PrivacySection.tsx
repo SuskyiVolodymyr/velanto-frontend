@@ -3,6 +3,7 @@
 import { useId } from "react";
 import { useTranslations } from "next-intl";
 import { Card } from "@/src/shared/components/Card";
+import { SettingsSectionSkeleton } from "@/src/features/settings/SettingsSectionSkeleton";
 import { Text } from "@/src/shared/components/Text";
 import { SegmentedControl } from "@/src/shared/components/SegmentedControl";
 import { useStreamerMode } from "@/src/shared/lib/streamer-mode-context";
@@ -30,6 +31,8 @@ export function PrivacySection() {
   const showPlayHistory = setPlayHistory.isPending
     ? setPlayHistory.variables
     : profileQuery.data?.showPlayHistory;
+
+  if (status === "loading") return <SettingsSectionSkeleton />;
 
   return (
     <section className="flex flex-col gap-4">

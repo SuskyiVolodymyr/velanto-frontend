@@ -45,6 +45,7 @@ describe("PasswordSection", () => {
       status: "authenticated",
       user: { hasPassword: false },
       patchUser: vi.fn(),
+      revalidate: vi.fn(),
     } as unknown as ReturnType<typeof useAuth>);
     render(<PasswordSection />);
 

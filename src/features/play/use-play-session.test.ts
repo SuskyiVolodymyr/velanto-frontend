@@ -34,6 +34,7 @@ function setAuth(status: "loading" | "authenticated" | "unauthenticated") {
     logout: vi.fn(),
     setAvatarKey: vi.fn(),
     patchUser: vi.fn(),
+    revalidate: vi.fn(),
   } as ReturnType<typeof useAuth>);
 }
 

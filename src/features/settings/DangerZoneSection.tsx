@@ -11,6 +11,7 @@ import { Modal } from "@/src/shared/components/Modal";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { ApiError } from "@/src/shared/lib/api-client";
+import { SettingsSectionSkeleton } from "@/src/features/settings/SettingsSectionSkeleton";
 
 /**
  * "Danger zone" on /settings: export ("download my data") and account deletion.
@@ -31,6 +32,7 @@ export function DangerZoneSection() {
   const [deleting, setDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
+  if (status === "loading") return <SettingsSectionSkeleton />;
   if (status !== "authenticated") return null;
 
   const handleExport = async () => {
