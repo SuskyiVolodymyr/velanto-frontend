@@ -194,20 +194,18 @@ describe("AuthorScreen", () => {
     expect(screen.getByRole("button", { name: "Follow" })).toBeInTheDocument();
   });
 
-  it("blocks an anonymous viewer with a reason tooltip instead of redirecting on Follow", async () => {
+  it("shows no follow button at all to a signed-out viewer", async () => {
     mockAuth({ user: null, status: "unauthenticated" });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() =>
       expect(screen.getByText("quizmaster")).toBeInTheDocument(),
     );
-    const followButton = screen.getByRole("button", { name: "Follow" });
-    expect(followButton).toHaveAttribute("aria-disabled", "true");
 
-    await userEvent.hover(followButton);
-    expect(screen.getByRole("tooltip")).toHaveTextContent("Log in to follow");
-
-    await userEvent.click(followButton);
+    // Signed out: the follow control is hidden entirely, not rendered blocked.
+    expect(
+      screen.queryByRole("button", { name: /follow/i }),
+    ).not.toBeInTheDocument();
     expect(mockedUsersClient.follow).not.toHaveBeenCalled();
     expect(push).not.toHaveBeenCalled();
   });
