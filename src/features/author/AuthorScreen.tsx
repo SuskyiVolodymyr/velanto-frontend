@@ -99,14 +99,19 @@ export function AuthorScreen({
         />
       )}
 
-      <AuthorPackList
-        authorId={authorId}
-        initialPacks={packs}
-        initialTotal={packsTotal}
-        // Your own page shows your pending/rejected packs with status badges,
-        // just like the old /profile did.
-        own={isOwnProfile}
-      />
+      {/* Own the bottom spacing here: AuthorPackList is a fragment with no root
+          to margin, so without this the packs list sits flush against the
+          play-history section below (most visible when both are empty). */}
+      <div className="mb-10">
+        <AuthorPackList
+          authorId={authorId}
+          initialPacks={packs}
+          initialTotal={packsTotal}
+          // Your own page shows your pending/rejected packs with status badges,
+          // just like the old /profile did.
+          own={isOwnProfile}
+        />
+      </div>
 
       {/* Play history is public unless the user opted out; the owner and staff
           can always see it. `showPlayHistory` may be undefined on older
