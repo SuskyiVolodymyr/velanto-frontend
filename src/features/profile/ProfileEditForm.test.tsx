@@ -24,6 +24,7 @@ vi.mock("@/src/shared/lib/users-client", () => ({
   usersClient: {
     getProfile: vi.fn(),
     updateProfile: vi.fn(),
+    changeUsername: vi.fn(),
     ban: vi.fn(),
     unban: vi.fn(),
     changeRole: vi.fn(),
@@ -63,6 +64,10 @@ beforeEach(() => {
   vi.mocked(usersClient.updateProfile).mockResolvedValue({
     id: "u1",
     bio: "New bio",
+  });
+  vi.mocked(usersClient.changeUsername).mockResolvedValue({
+    id: "u1",
+    username: "alice2",
   });
 });
 
@@ -132,6 +137,80 @@ describe("ProfileEditForm", () => {
         "This text contains language that isn't allowed on Velanto.",
       ),
     ).toBeInTheDocument();
+    expect(push).not.toHaveBeenCalled();
+  });
+
+  it("pre-fills the username field with the current username", async () => {
+    renderForm();
+    expect(
+      await screen.findByRole("textbox", { name: "Username" }),
+    ).toHaveValue("alice");
+  });
+
+  it("changes the username (then saves bio) and redirects on success", async () => {
+    const user = userEvent.setup();
+    renderForm();
+    const usernameInput = await screen.findByRole("textbox", {
+      name: "Username",
+    });
+    await user.clear(usernameInput);
+    await user.type(usernameInput, "alice2");
+    await user.click(screen.getByRole("button", { name: /save/i }));
+
+    await waitFor(() =>
+      expect(usersClient.changeUsername).toHaveBeenCalledWith("alice2"),
+    );
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/users/u1"));
+  });
+
+  it("does not call the username endpoint when the username is unchanged", async () => {
+    const user = userEvent.setup();
+    renderForm();
+    const textarea = await screen.findByDisplayValue("Old bio");
+    await user.clear(textarea);
+    await user.type(textarea, "New bio");
+    await user.click(screen.getByRole("button", { name: /save/i }));
+
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/users/u1"));
+    expect(usersClient.changeUsername).not.toHaveBeenCalled();
+  });
+
+  it("shows a taken error on 409 and does not save or navigate", async () => {
+    vi.mocked(usersClient.changeUsername).mockRejectedValue(
+      new ApiError(409, "Conflict", { message: "taken" }),
+    );
+    const user = userEvent.setup();
+    renderForm();
+    const usernameInput = await screen.findByRole("textbox", {
+      name: "Username",
+    });
+    await user.clear(usernameInput);
+    await user.type(usernameInput, "taken1");
+    await user.click(screen.getByRole("button", { name: /save/i }));
+
+    expect(
+      await screen.findByText("That username is already taken."),
+    ).toBeInTheDocument();
+    expect(usersClient.updateProfile).not.toHaveBeenCalled();
+    expect(push).not.toHaveBeenCalled();
+  });
+
+  it("rejects an invalid username format without calling the backend", async () => {
+    const user = userEvent.setup();
+    renderForm();
+    const usernameInput = await screen.findByRole("textbox", {
+      name: "Username",
+    });
+    await user.clear(usernameInput);
+    await user.type(usernameInput, "a");
+    await user.click(screen.getByRole("button", { name: /save/i }));
+
+    await waitFor(() =>
+      expect(
+        screen.getByText(/2-16 characters/i),
+      ).toBeInTheDocument(),
+    );
+    expect(usersClient.changeUsername).not.toHaveBeenCalled();
     expect(push).not.toHaveBeenCalled();
   });
 

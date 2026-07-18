@@ -43,3 +43,23 @@ export function useUpdateBio(userId: string) {
     },
   });
 }
+
+/**
+ * Change the current user's username. Invalidates the same profile/author
+ * caches as a bio save so every view of this user picks up the new handle. A
+ * 409 (username taken) propagates to the caller to surface inline.
+ */
+export function useChangeUsername(userId: string) {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (username: string) => usersClient.changeUsername(username),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: myProfileQueryOptions(userId).queryKey,
+      });
+      queryClient.invalidateQueries({
+        queryKey: authorQueryOptions(userId).queryKey,
+      });
+    },
+  });
+}

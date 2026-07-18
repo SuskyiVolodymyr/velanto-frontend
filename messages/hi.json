@@ -1111,6 +1111,7 @@
     "saving": "सहेजा जा रहा है…",
     "save": "सहेजें",
     "saveError": "आपके बदलाव सहेजे नहीं जा सके। फिर से प्रयास करें।",
+    "usernameTaken": "यह उपयोगकर्ता नाम पहले से लिया जा चुका है।",
     "userNotFound": "यह उपयोगकर्ता मौजूद नहीं है।",
     "followError": "फ़ॉलो स्थिति अपडेट नहीं हो सकी। फिर से प्रयास करें।",
     "followerAndPackCount": "{followers, plural, one {# फ़ॉलोअर} other {# फ़ॉलोअर}} · {packs, plural, one {# पैक} other {# पैक}}",

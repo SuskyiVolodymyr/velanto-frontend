@@ -1111,6 +1111,7 @@
     "saving": "محفوظ ہو رہا ہے…",
     "save": "محفوظ کریں",
     "saveError": "آپ کی تبدیلیاں محفوظ نہیں ہو سکیں۔ دوبارہ کوشش کریں۔",
+    "usernameTaken": "یہ صارف نام پہلے سے لیا جا چکا ہے۔",
     "userNotFound": "یہ صارف موجود نہیں ہے۔",
     "followError": "فالو کی حالت اپ ڈیٹ نہیں ہو سکی۔ دوبارہ کوشش کریں۔",
     "followerAndPackCount": "{followers, plural, one {# فالوور} other {# فالوورز}} · {packs, plural, one {# پیک} other {# پیکس}}",
