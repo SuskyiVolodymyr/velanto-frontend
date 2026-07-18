@@ -10,6 +10,7 @@ import {
 import { feedbackClient } from "@/src/shared/lib/feedback-client";
 import type { FeedbackCommentList } from "@/src/shared/types/feedback";
 import { fetchCommentsPage } from "./feedback-comments";
+import { useRefetchOnSignIn } from "@/src/shared/lib/use-refetch-on-sign-in";
 
 export function feedbackCommentsQueryOptions(feedbackId: string) {
   return infiniteQueryOptions({
@@ -27,7 +28,11 @@ export function feedbackCommentsQueryOptions(feedbackId: string) {
 }
 
 export function useFeedbackComments(feedbackId: string) {
-  return useInfiniteQuery(feedbackCommentsQueryOptions(feedbackId));
+  const query = useInfiniteQuery(feedbackCommentsQueryOptions(feedbackId));
+  // Restore each comment's own-vote colour after an anonymous hard-refresh
+  // fetch (see useRefetchOnSignIn).
+  useRefetchOnSignIn(query.refetch);
+  return query;
 }
 
 /**
