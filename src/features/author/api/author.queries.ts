@@ -1,5 +1,6 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import { usersClient } from "@/src/shared/lib/users-client";
+import { useRefetchOnSignIn } from "@/src/shared/lib/use-refetch-on-sign-in";
 import { getAuthor, type AuthorData } from "./author";
 
 export function authorQueryOptions(authorId: string) {
@@ -15,7 +16,13 @@ export function authorQueryOptions(authorId: string) {
  * this same cache, so follow state survives without a refetch.
  */
 export function useAuthor(authorId: string, initialData?: AuthorData) {
-  return useQuery({ ...authorQueryOptions(authorId), initialData });
+  const query = useQuery({ ...authorQueryOptions(authorId), initialData });
+  // The SSR seed is fetched anonymously, so viewer-specific fields come back
+  // empty on a hard refresh: `isFollowedByMe` is false and — when you're viewing
+  // your OWN page — your pending/rejected packs are absent. Refetch as the
+  // viewer once signed in so both are correct (see useRefetchOnSignIn).
+  useRefetchOnSignIn(query.refetch);
+  return query;
 }
 
 export function authorBanHistoryQueryOptions(authorId: string) {

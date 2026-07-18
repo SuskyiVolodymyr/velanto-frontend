@@ -46,11 +46,11 @@ function renderScreen(ui: ReactElement) {
   );
 }
 
-// This repo's other feature tests mock `authClient.refresh` and wrap components
-// in the real `AuthProvider` instead of mocking `auth-context` directly (see
-// ProfileScreen.test.tsx). AuthorScreen needs many auth permutations (own
-// profile / other viewer / anonymous / moderator) per test, so mocking
-// `useAuth` directly here is deliberate and less repetitive than orchestrating
+// Some feature tests mock `authClient.refresh` and wrap components in the real
+// `AuthProvider` instead of mocking `auth-context` directly. AuthorScreen needs
+// many auth permutations (own profile / other viewer / anonymous / moderator)
+// per test, so mocking `useAuth` directly here is deliberate and less
+// repetitive than orchestrating
 // `authClient.refresh` for every case.
 const push = vi.fn();
 vi.mock("next/navigation", () => ({
@@ -135,7 +135,7 @@ describe("AuthorScreen", () => {
     );
   });
 
-  it("hides the Follow button when viewing your own author page", async () => {
+  it("shows Edit profile (not Follow) when viewing your own author page", async () => {
     mockAuth({
       user: {
         id: "author-1",
@@ -150,9 +150,14 @@ describe("AuthorScreen", () => {
     await waitFor(() =>
       expect(screen.getByText("quizmaster")).toBeInTheDocument(),
     );
+    // Merged /profile view: manage your own page instead of following it.
     expect(
       screen.queryByRole("button", { name: /follow/i }),
     ).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /edit profile/i })).toHaveAttribute(
+      "href",
+      "/profile/edit",
+    );
   });
 
   it("toggles Follow to Following and updates the follower count on click", async () => {

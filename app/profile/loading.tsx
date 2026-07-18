@@ -1,7 +1,8 @@
 import { Skeleton } from "@/src/shared/components/Skeleton";
 
-/** Route-level skeleton shown while the profile page streams in. Mirrors
- * ProfileScreen's max-w-4xl layout: avatar + identity header, bio, packs grid. */
+/** Route-level skeleton shown while /profile resolves and redirects the owner
+ * to /users/[id]. Mirrors that page's max-w-4xl layout: avatar + identity
+ * header, bio, packs grid. */
 export default function ProfileLoading() {
   return (
     <div className="mx-auto w-full max-w-4xl px-7 py-10">
