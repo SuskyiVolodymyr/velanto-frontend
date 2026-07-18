@@ -44,7 +44,13 @@ export async function generateMetadata({
     title,
     description,
     alternates: { canonical: url },
-    openGraph: buildOpenGraph({ title, description, url, type: "profile" }),
+    openGraph: buildOpenGraph({
+      title,
+      description,
+      url,
+      type: "profile",
+      image: { path: `/users/${id}/social-card`, alt: title },
+    }),
   };
 }
 

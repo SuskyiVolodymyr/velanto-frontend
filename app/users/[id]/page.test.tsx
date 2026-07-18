@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import messages from "@/messages/en.json";
-import { OG_IMAGE_PATH } from "@/src/shared/lib/open-graph";
 import { generateMetadata } from "./page";
 import { getUserServer } from "@/src/features/author/get-user-server";
 import type { PublicUserProfile } from "@/src/shared/types/user";
@@ -56,14 +55,16 @@ describe("users/[id] generateMetadata", () => {
   // #235: the highest-stakes instance of the disinherit bug — profile links are
   // the most-shared URLs on the platform, and they previewed blank on every OG
   // consumer while looking correct on Twitter (which reads twitter-image.tsx).
-  it("names the social card image explicitly", async () => {
+  // The image is still named EXPLICITLY (never inherited); it's now the profile's
+  // own dynamic avatar+name card served by app/users/[id]/social-card.
+  it("names the profile's dynamic social card image explicitly", async () => {
     const meta = await generateMetadata({
       params: Promise.resolve({ id: "author-1" }),
     });
 
     const images = meta.openGraph?.images as { url: string; width: number }[];
     expect(images).toHaveLength(1);
-    expect(images[0].url).toBe(OG_IMAGE_PATH);
+    expect(images[0].url).toBe("/users/author-1/social-card");
     expect(images[0].width).toBe(1200);
   });
 
