@@ -6,7 +6,6 @@ import { Text } from "@/src/shared/components/Text";
 import { Button, buttonClassName } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { Username } from "@/src/shared/components/Username";
-import { Tooltip } from "@/src/shared/components/Tooltip";
 import { AvatarLightbox } from "@/src/shared/components/AvatarLightbox";
 import type { PublicUserProfile } from "@/src/shared/types/user";
 
@@ -36,17 +35,14 @@ export function AuthorProfileHeader({
   onFollowToggle: () => void;
 }) {
   const t = useTranslations("profile");
-  const tAuth = useTranslations("authGate");
 
-  // A signed-out viewer sees the follow button dimmed and non-functional, with
-  // the reason on hover/focus — not the real `disabled` attribute (which would
-  // suppress the Tooltip) and not a surprise sign-in redirect.
+  // The follow control is only for signed-in viewers: a signed-out visitor
+  // sees no follow button at all (not a dimmed/blocked one). `followBlocked`
+  // is true exactly when the viewer isn't signed in, so it gates rendering.
   const followButton = (
     <Button
       variant={profile.isFollowedByMe ? "secondary" : "primary"}
-      aria-disabled={followBlocked || undefined}
       loading={followBusy}
-      className={followBlocked ? "cursor-not-allowed opacity-45" : undefined}
       onClick={onFollowToggle}
     >
       {profile.isFollowedByMe ? t("following") : t("follow")}
@@ -91,13 +87,9 @@ export function AuthorProfileHeader({
           >
             {t("editProfile")}
           </Link>
-        ) : (
+        ) : followBlocked ? null : (
           <div className="flex flex-col items-end gap-1">
-            {followBlocked ? (
-              <Tooltip content={tAuth("logInToFollow")}>{followButton}</Tooltip>
-            ) : (
-              followButton
-            )}
+            {followButton}
             {followError && (
               <Text variant="danger" className="text-xs">
                 {followError}
