@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
@@ -11,11 +10,9 @@ import {
 } from "@/src/shared/components/oauth-branding";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { authClient, type OAuthProviders } from "@/src/shared/lib/auth-client";
+import { openOAuthPopup } from "@/src/shared/lib/oauth-popup";
 import { cn } from "@/src/shared/lib/cn";
-
-// Baked in at build time (mirrors OAuthButtons/api-client). Connecting needs a
-// top-level navigation to the backend, so the base URL is used directly.
-const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+import { SettingsSectionSkeleton } from "@/src/features/settings/SettingsSectionSkeleton";
 
 const PROVIDERS = [
   { key: "google", label: "Google" },
@@ -30,16 +27,16 @@ type Provider = (typeof PROVIDERS)[number]["key"];
  * signed up with one provider can then sign in with the other. Only providers
  * the backend actually has configured (GET /auth/providers) are shown, so the
  * whole section is invisible until OAuth is enabled. Connecting drops the
- * server's one-shot link cookie (authClient.startOAuthLink), then hands off to a
- * top-level OAuth navigation; the backend links and returns to /settings.
+ * server's one-shot link cookie (authClient.startOAuthLink), runs OAuth in a
+ * popup, then revalidates the user so the freshly linked provider shows as
+ * connected — all without leaving Settings.
  */
 export function ConnectedAccountsSection() {
   const t = useTranslations("settings");
-  const { status, user } = useAuth();
+  const { status, user, revalidate } = useAuth();
   const [enabled, setEnabled] = useState<OAuthProviders | null>(null);
   const [pending, setPending] = useState<Provider | null>(null);
-  const searchParams = useSearchParams();
-  const linkError = searchParams.get("linkError") === "1";
+  const [linkError, setLinkError] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -58,6 +55,7 @@ export function ConnectedAccountsSection() {
 
   // Only meaningful for a signed-in viewer; hidden entirely until we know which
   // providers are configured and at least one is.
+  if (status === "loading") return <SettingsSectionSkeleton />;
   if (status !== "authenticated" || !enabled) return null;
   const visible = PROVIDERS.filter((provider) => enabled[provider.key]);
   if (visible.length === 0) return null;
@@ -65,13 +63,22 @@ export function ConnectedAccountsSection() {
   const linked = user?.linkedProviders;
 
   async function connect(provider: Provider) {
+    setLinkError(false);
     setPending(provider);
     try {
-      // Sets the link cookie, then a top-level nav carries it through OAuth.
+      // Arm the one-shot link cookie, then run OAuth in a popup.
       await authClient.startOAuthLink(provider);
-      window.location.assign(`${API_BASE}/auth/${provider}`);
+      const result = await openOAuthPopup(provider);
+      if (result.ok) {
+        // Refetch the user so the newly linked provider flips to "connected".
+        await revalidate();
+      } else if (result.error !== "closed") {
+        setLinkError(true);
+      }
     } catch {
-      // Couldn't arm the link (e.g. session expired) — let the user retry.
+      // Couldn't arm the link (e.g. session expired) — surface a retryable error.
+      setLinkError(true);
+    } finally {
       setPending(null);
     }
   }

@@ -5,6 +5,8 @@ import { getResultsServer } from "@/src/shared/lib/get-results-server";
 import { PackDetailScreen } from "@/src/features/pack/PackDetailScreen";
 import { PackDetailFallback } from "@/src/features/pack/PackDetailFallback";
 import { BackButton } from "@/src/shared/components/BackButton";
+import { buildOpenGraph } from "@/src/shared/lib/open-graph";
+import { SITE_URL } from "@/src/shared/lib/site-url";
 
 export async function generateMetadata({
   params,
@@ -20,7 +22,19 @@ export async function generateMetadata({
       robots: { index: false, follow: false },
     };
   }
-  return { title: pack.title };
+  const url = `${SITE_URL}/packs/${id}`;
+  const description = pack.description.trim();
+  return {
+    title: pack.title,
+    description,
+    alternates: { canonical: url },
+    openGraph: buildOpenGraph({
+      title: pack.title,
+      description,
+      url,
+      image: { path: `/packs/${id}/social-card`, alt: pack.title },
+    }),
+  };
 }
 
 export default async function PackPage({

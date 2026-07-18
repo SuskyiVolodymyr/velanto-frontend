@@ -418,6 +418,8 @@
     "orContinueWith": "or continue with",
     "continueWithGoogle": "Continue with Google",
     "continueWithDiscord": "Continue with Discord",
+    "oauthError": "Couldn't sign in with that provider. Please try again.",
+    "oauthPopupBlocked": "Allow pop-ups for this site to continue.",
     "tabSignup": "Sign up",
     "logIn": "Log in",
     "headingLogin": "Log in to Velanto",
@@ -768,7 +770,7 @@
           "Sentry — receives a report when something crashes. Germany, in the EU. A report carries your user id and username, plus a short trail of what you had just done: the pages you visited, what you clicked, and which addresses the app called (some of which name a pack). It does not carry your email address, your cookies, or what you typed, and there is no video-style session recording. One limit on that promise: like any server your browser talks to, Sentry's sees the connection itself, so it can observe the address you connect from even though we never put it in the report.",
           "Cloudflare — DNS, and the traffic to the site passes through it. Like any provider sitting in front of a website, it sees the address every visitor connects from. We do not receive it and we do not store it, but we will not pretend it is invisible to everyone.",
           "Google — only if you choose “Continue with Google”. During that sign-in Google sees that you are logging into Velanto and confirms your email address to us, so we can create or find your account; we receive nothing else about you. What Google does with the sign-in is governed by Google's privacy policy.",
-          "Discord — only if you choose “Continue with Discord”. During that sign-in Discord sees that you are logging into Velanto and confirms your account — and your email address, if you have granted Discord one — so we can create or find your account; we receive nothing else about you. Governed by Discord's privacy policy."
+          "Discord — only if you choose “Continue with Discord”. During that sign-in Discord sees that you are logging into Velanto and confirms who you are, so we can create or find your account. We do not ask Discord for your email or anything else about you — only enough to identify the account. Governed by Discord's privacy policy."
         ]
       },
       {
@@ -1203,6 +1205,7 @@
     "saving": "Saving…",
     "save": "Save",
     "saveError": "Couldn't save your changes. Try again.",
+    "usernameTaken": "That username is already taken.",
     "userNotFound": "This user doesn't exist.",
     "followError": "Couldn't update follow status. Try again.",
     "followerAndPackCount": "{followers, plural, one {# follower} other {# followers}} · {packs, plural, one {# pack} other {# packs}}",
@@ -1211,6 +1214,7 @@
     "packs": "Packs",
     "noPacks": "No packs yet.",
     "recentlyPlayed": "Recently played",
+    "recentlyPlayedEmpty": "You haven't played any packs yet.",
     "avatarHeading": "Profile photo",
     "avatarChange": "Change photo",
     "avatarRemove": "Remove photo",

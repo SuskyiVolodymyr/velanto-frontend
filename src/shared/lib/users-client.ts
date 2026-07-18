@@ -60,6 +60,11 @@ export const usersClient = {
   getMe: () => apiClient.get<MyProfile>("/users/me"),
   updateProfile: (bio: string) =>
     apiClient.patch<{ id: string; bio: string }>("/users/me", { bio }),
+  /** Change the caller's username (2-16 alphanumeric). 409 if already taken. */
+  changeUsername: (username: string) =>
+    apiClient.patch<{ id: string; username: string }>("/users/me/username", {
+      username,
+    }),
   /** Toggle the caller's play-history privacy preference. */
   updatePreferences: (showPlayHistory: boolean) =>
     apiClient.patch<{ showPlayHistory: boolean }>("/users/me/preferences", {

@@ -52,6 +52,28 @@ body {
 }
 
 /*
+ * Interactive pointer affordance. Tailwind v4's Preflight no longer forces a
+ * pointer on buttons (it defers to the browser default, which is the arrow), so
+ * enabled buttons, selects, and role-based controls otherwise read as
+ * non-clickable. Restore the pointer once, centrally, instead of scattering
+ * `cursor-pointer` across every call site. Scoped to enabled controls, and kept
+ * in `@layer base` so an explicit `cursor-*` utility (e.g. a `cursor-not-allowed`
+ * override) still wins.
+ */
+@layer base {
+  button:not(:disabled),
+  select:not(:disabled),
+  summary,
+  label:has(> input[type="checkbox"]:not(:disabled)),
+  [role="button"]:not([aria-disabled="true"]),
+  [role="radio"]:not([aria-disabled="true"]),
+  [role="switch"]:not([aria-disabled="true"]),
+  [role="tab"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+}
+
+/*
  * Streamer mode pre-hydration guard. The init script in <head> stamps
  * data-streamer-mode="on" before first paint; the StreamerModeProvider stamps
  * data-streamer-hydrated once React controls rendering. In the window between

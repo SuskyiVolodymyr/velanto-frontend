@@ -56,9 +56,11 @@ describe("UserMenu", () => {
     const user = userEvent.setup();
     render(withIntl(<UserMenu user={USER} onLogout={vi.fn()} />));
     await user.click(screen.getByRole("button", { name: "Account menu" }));
+    // Straight to the merged profile route (/users/[id]), not the /profile
+    // redirect hop.
     expect(screen.getByRole("menuitem", { name: "Profile" })).toHaveAttribute(
       "href",
-      "/profile",
+      "/users/u1",
     );
   });
 
