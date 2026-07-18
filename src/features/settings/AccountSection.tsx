@@ -6,12 +6,13 @@ import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { AddEmailForm } from "@/src/features/settings/AddEmailForm";
+import { SettingsSectionSkeleton } from "@/src/features/settings/SettingsSectionSkeleton";
 
 export function AccountSection() {
   const t = useTranslations("settings");
   const { status, user } = useAuth();
 
-  if (status === "loading") return null;
+  if (status === "loading") return <SettingsSectionSkeleton />;
 
   return (
     <section className="flex flex-col gap-4">

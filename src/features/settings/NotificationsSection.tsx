@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { Skeleton } from "@/src/shared/components/Skeleton";
+import { SettingsSectionSkeleton } from "@/src/features/settings/SettingsSectionSkeleton";
 import { cn } from "@/src/shared/lib/cn";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import {
@@ -46,7 +47,7 @@ export function NotificationsSection() {
     setPref.mutate({ type, value: !prefs[type] });
   }
 
-  if (status === "loading") return null;
+  if (status === "loading") return <SettingsSectionSkeleton />;
 
   return (
     <section className="flex flex-col gap-4">

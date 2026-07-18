@@ -12,6 +12,7 @@ import {
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { authClient, type OAuthProviders } from "@/src/shared/lib/auth-client";
 import { cn } from "@/src/shared/lib/cn";
+import { SettingsSectionSkeleton } from "@/src/features/settings/SettingsSectionSkeleton";
 
 // Baked in at build time (mirrors OAuthButtons/api-client). Connecting needs a
 // top-level navigation to the backend, so the base URL is used directly.
@@ -58,6 +59,7 @@ export function ConnectedAccountsSection() {
 
   // Only meaningful for a signed-in viewer; hidden entirely until we know which
   // providers are configured and at least one is.
+  if (status === "loading") return <SettingsSectionSkeleton />;
   if (status !== "authenticated" || !enabled) return null;
   const visible = PROVIDERS.filter((provider) => enabled[provider.key]);
   if (visible.length === 0) return null;

@@ -9,6 +9,7 @@ import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { PasswordField } from "@/src/shared/components/form/PasswordField";
 import { useAuth } from "@/src/shared/lib/auth-context";
+import { SettingsSectionSkeleton } from "@/src/features/settings/SettingsSectionSkeleton";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { ApiError } from "@/src/shared/lib/api-client";
 import { SetPasswordSection } from "@/src/features/settings/SetPasswordSection";
@@ -42,6 +43,7 @@ export function PasswordSection() {
   });
   const { isSubmitting } = methods.formState;
 
+  if (status === "loading") return <SettingsSectionSkeleton />;
   if (status !== "authenticated") {
     return (
       <Card>
