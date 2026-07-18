@@ -128,6 +128,44 @@ describe("ApiTokensSection", () => {
     expect(screen.getByText(/^Moderation$/)).toBeInTheDocument();
   });
 
+  it("orders the scope checkboxes safest-first (profile:read) and moderation last", () => {
+    authAs("authenticated", "moderator");
+    render(<ApiTokensSection />);
+
+    // The raw scope id renders in a <code> beside each checkbox label; their
+    // DOM order is the checkbox order.
+    const scopeCodes = screen
+      .getAllByText(
+        /^(profile:read|packs:read|packs:write|packs:delete|moderation)$/,
+      )
+      .map((el) => el.textContent);
+
+    expect(scopeCodes).toEqual([
+      "profile:read",
+      "packs:read",
+      "packs:write",
+      "packs:delete",
+      "moderation",
+    ]);
+  });
+
+  it("shows loading skeletons (not the empty-state text) while tokens load", () => {
+    authAs("authenticated");
+    vi.mocked(useApiTokens).mockReturnValue({
+      data: undefined,
+      isLoading: true,
+    } as unknown as ReturnType<typeof useApiTokens>);
+
+    const { container } = render(<ApiTokensSection />);
+
+    expect(
+      screen.queryByText(/haven.t created any tokens/i),
+    ).not.toBeInTheDocument();
+    expect(container.querySelectorAll(".animate-pulse").length).toBeGreaterThan(
+      0,
+    );
+  });
+
   it("requires a name and at least one scope before creating", async () => {
     authAs("authenticated");
     const user = userEvent.setup();

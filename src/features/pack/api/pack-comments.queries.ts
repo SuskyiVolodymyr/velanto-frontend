@@ -14,6 +14,7 @@ import {
 } from "@/src/shared/lib/comments-client";
 import type { Comment } from "@/src/shared/types/comment";
 import { fetchPackCommentsPage } from "./pack-comments";
+import { useRefetchOnSignIn } from "@/src/shared/lib/use-refetch-on-sign-in";
 
 type PackCommentsPage = Awaited<ReturnType<typeof commentsClient.list>>;
 type PackCommentsData = InfiniteData<PackCommentsPage, number>;
@@ -39,7 +40,12 @@ export function packCommentsQueryOptions(packId: string, sort: CommentSort) {
 }
 
 export function usePackComments(packId: string, sort: CommentSort) {
-  return useInfiniteQuery(packCommentsQueryOptions(packId, sort));
+  const query = useInfiniteQuery(packCommentsQueryOptions(packId, sort));
+  // A hard refresh fetches comments before the token is restored, so each
+  // comment's `myVote` is null and the viewer's own votes render grey; refetch
+  // as the viewer once signed in (see useRefetchOnSignIn).
+  useRefetchOnSignIn(query.refetch);
+  return query;
 }
 
 /**

@@ -9,7 +9,10 @@ import {
   useState,
 } from "react";
 import type { ReactNode } from "react";
-import { setAccessToken } from "@/src/shared/lib/api-client";
+import {
+  setAccessToken,
+  setSessionCallbacks,
+} from "@/src/shared/lib/api-client";
 import { setSentryUser } from "@/src/shared/lib/sentry-reporting";
 import {
   authClient,
@@ -67,6 +70,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       cancelled = true;
     };
+  }, []);
+
+  // Let the api-client keep React auth state in sync when it silently renews an
+  // expired access token on a 401 (see api-client's sendWithRefresh). Without
+  // this, a background token renewal would refresh the token but leave the
+  // cached user stale, and a dead session (refresh cookie gone) would keep the
+  // UI showing "signed in" while every request 401s.
+  useEffect(() => {
+    setSessionCallbacks({
+      onRefreshed: (refreshedUser) => {
+        setUser(refreshedUser);
+        setStatus("authenticated");
+      },
+      onLost: () => {
+        setUser(null);
+        setStatus("unauthenticated");
+      },
+    });
+    return () => setSessionCallbacks(null);
   }, []);
 
   // Keep Sentry's user context in sync with auth state so errors show which

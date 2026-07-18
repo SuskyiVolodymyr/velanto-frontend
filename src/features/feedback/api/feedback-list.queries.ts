@@ -9,6 +9,7 @@ import {
   fetchTopFeedback,
   type FeedbackListFilters,
 } from "./feedback-list";
+import { useRefetchOnSignIn } from "@/src/shared/lib/use-refetch-on-sign-in";
 
 /**
  * The paginated board list, keyed on the active filters. Each page appends via
@@ -32,7 +33,12 @@ export function feedbackListQueryOptions(filters: FeedbackListFilters) {
 }
 
 export function useFeedbackList(filters: FeedbackListFilters) {
-  return useInfiniteQuery(feedbackListQueryOptions(filters));
+  const query = useInfiniteQuery(feedbackListQueryOptions(filters));
+  // A hard refresh fetches the list before the token is restored, so every
+  // item's `myVote` comes back null; refetch as the viewer once signed in so
+  // their own likes/dislikes light up again (velanto-frontend#8-batch).
+  useRefetchOnSignIn(query.refetch);
+  return query;
 }
 
 export function topFeedbackQueryOptions() {
@@ -43,5 +49,7 @@ export function topFeedbackQueryOptions() {
 }
 
 export function useTopFeedback() {
-  return useQuery(topFeedbackQueryOptions());
+  const query = useQuery(topFeedbackQueryOptions());
+  useRefetchOnSignIn(query.refetch);
+  return query;
 }

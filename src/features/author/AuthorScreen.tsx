@@ -103,6 +103,9 @@ export function AuthorScreen({
         authorId={authorId}
         initialPacks={packs}
         initialTotal={packsTotal}
+        // Your own page shows your pending/rejected packs with status badges,
+        // just like the old /profile did.
+        own={isOwnProfile}
       />
 
       {/* Play history is public unless the user opted out; the owner and staff
