@@ -290,7 +290,7 @@
     "tokensMovedLink": "Керувати токенами API",
     "accountEmailLabel": "Електронна пошта вашого облікового запису",
     "connectedAccountsHeading": "Підключені акаунти",
-    "connectedAccountsDescription": "Підключіть Google або Discord, щоб входити через будь-який із них.",
+    "connectedAccountsDescription": "Входьте також через Google або Discord. Підключення одного з них лише додає спосіб входу — воно не змінює вашу пошту чи пароль.",
     "providerConnected": "Підключено",
     "connectProvider": "Підключити",
     "linkAccountError": "Цей акаунт уже підключений до іншого акаунта Velanto.",

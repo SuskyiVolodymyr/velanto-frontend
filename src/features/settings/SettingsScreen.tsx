@@ -21,11 +21,11 @@ export function SettingsScreen() {
       </Text>
       <LanguageSection />
       <AppearanceSection />
+      <ConnectedAccountsSection />
       <PrivacySection />
       <NotificationsSection />
       <AccountSection />
       <PasswordSection />
-      <ConnectedAccountsSection />
       <ApiTokensPointer />
       <DangerZoneSection />
     </main>

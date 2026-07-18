@@ -5,9 +5,13 @@ import { useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
+import {
+  OAuthProviderIcon,
+  OAUTH_BRAND_CLASS,
+} from "@/src/shared/components/oauth-branding";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { authClient, type OAuthProviders } from "@/src/shared/lib/auth-client";
+import { cn } from "@/src/shared/lib/cn";
 
 // Baked in at build time (mirrors OAuthButtons/api-client). Connecting needs a
 // top-level navigation to the backend, so the base URL is used directly.
@@ -98,20 +102,34 @@ export function ConnectedAccountsSection() {
                 key={provider.key}
                 className="flex items-center justify-between gap-4"
               >
-                <Text className="font-medium">{provider.label}</Text>
+                <div className="flex items-center gap-2.5">
+                  {/* Discord's mark uses currentColor, so tint it to blurple
+                      where it stands on the card (Google's "G" is self-coloured). */}
+                  <span
+                    className={
+                      provider.key === "discord" ? "text-[#5865f2]" : undefined
+                    }
+                  >
+                    <OAuthProviderIcon provider={provider.key} />
+                  </span>
+                  <Text className="font-medium">{provider.label}</Text>
+                </div>
                 {isLinked ? (
                   <Text className="text-sm font-medium text-success">
                     {t("providerConnected")}
                   </Text>
                 ) : (
-                  <Button
-                    variant="secondary"
-                    loading={pending === provider.key}
+                  <button
+                    type="button"
                     onClick={() => void connect(provider.key)}
-                    className="w-fit"
+                    disabled={pending !== null}
+                    className={cn(
+                      "h-9 shrink-0 cursor-pointer rounded-lg px-4 text-sm font-medium transition-colors disabled:opacity-60",
+                      OAUTH_BRAND_CLASS[provider.key],
+                    )}
                   >
                     {t("connectProvider")}
-                  </Button>
+                  </button>
                 )}
               </div>
             );
