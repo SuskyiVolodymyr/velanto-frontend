@@ -1,3 +1,5 @@
+import { readFileSync, readdirSync } from "node:fs";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { LOCALES, DEFAULT_LOCALE, type Locale } from "./config";
 import en from "@/messages/en.json";
@@ -112,5 +114,79 @@ describe("message catalogs", () => {
       );
       expect(untranslated, `untranslated keys in ${locale}`).toEqual([]);
     });
+  });
+});
+
+/** Resolve a dotted `ns.key` path in the nested English catalog. Returns the
+ *  value (string/object/array) or undefined if any segment is absent. Traverses
+ *  the nested object rather than the flattened leaves so a `t.raw("parent")`
+ *  that pulls a whole sub-tree/array still counts as present. */
+function resolveKey(dotted: string): unknown {
+  let node: unknown = en;
+  for (const part of dotted.split(".")) {
+    if (node == null || typeof node !== "object") return undefined;
+    node = (node as Record<string, unknown>)[part];
+  }
+  return node;
+}
+
+function sourceFiles(dir: string): string[] {
+  const out: string[] = [];
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const full = join(dir, entry.name);
+    if (entry.isDirectory()) out.push(...sourceFiles(full));
+    else if (
+      /\.tsx?$/.test(entry.name) &&
+      !/\.(test|spec)\./.test(entry.name)
+    ) {
+      out.push(full);
+    }
+  }
+  return out;
+}
+
+/**
+ * Guards against the failure that shipped twice (Fork A #287, Fork B #286): a
+ * component references a catalog key that does not exist, so next-intl renders
+ * the raw key path ("updates.heading", "footer.updates"). The parity checks
+ * above can't catch it — a key missing from ALL locales passes parity — so this
+ * checks the OTHER direction: every key a component asks for must exist.
+ *
+ * Deliberately conservative to avoid false positives: it only inspects files
+ * that use a SINGLE translation namespace (via use/getTranslations), so each
+ * `t("literal")` maps unambiguously to that namespace, and it only checks
+ * string-literal keys (dynamic `t(variable)` is skipped).
+ */
+describe("i18n key references resolve", () => {
+  const root = process.cwd();
+  const files = [
+    ...sourceFiles(join(root, "src")),
+    ...sourceFiles(join(root, "app")),
+  ];
+
+  const missing: string[] = [];
+  for (const file of files) {
+    const src = readFileSync(file, "utf8");
+    const namespaces = [
+      ...src.matchAll(
+        /(?:use|get)Translations\(\s*["'`]([a-zA-Z0-9_.]+)["'`]\s*\)/g,
+      ),
+    ].map((match) => match[1]);
+    const unique = [...new Set(namespaces)];
+    if (unique.length !== 1) continue; // 0 = no i18n; >1 = ambiguous, skip
+
+    const namespace = unique[0];
+    for (const match of src.matchAll(
+      /\bt(?:\.rich|\.raw)?\(\s*["'`]([a-zA-Z0-9_.]+)["'`]/g,
+    )) {
+      const dotted = `${namespace}.${match[1]}`;
+      if (resolveKey(dotted) === undefined) {
+        missing.push(`${dotted}  (${file.slice(root.length + 1)})`);
+      }
+    }
+  }
+
+  it("finds no component referencing a nonexistent catalog key", () => {
+    expect([...new Set(missing)]).toEqual([]);
   });
 });
