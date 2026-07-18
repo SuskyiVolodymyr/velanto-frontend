@@ -95,6 +95,33 @@ beforeEach(() => {
 });
 
 describe("CommentSection", () => {
+  it("shows a comment skeleton while comments load, then clears it, keeping the busy announcement", async () => {
+    // Hold the fetch open so the section stays in its loading state.
+    let resolve: (v: {
+      items: Comment[];
+      total: number;
+      page: number;
+      limit: number;
+    }) => void = () => {};
+    vi.mocked(commentsClient.list).mockReturnValue(
+      new Promise((r) => {
+        resolve = r;
+      }),
+    );
+    renderAsUnauthenticated();
+
+    // A pulsing placeholder stands in for the list (not a spinner), and the
+    // busy state is still announced to screen readers.
+    expect(await screen.findByTestId("comments-skeleton")).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent(/loading comments/i);
+
+    resolve({ items: [], total: 0, page: 1, limit: 10 });
+
+    await waitFor(() =>
+      expect(screen.queryByTestId("comments-skeleton")).not.toBeInTheDocument(),
+    );
+  });
+
   it("fetches page 1 with limit 10 and renders existing comments", async () => {
     vi.mocked(commentsClient.list).mockResolvedValue({
       items: [COMMENT_A],
