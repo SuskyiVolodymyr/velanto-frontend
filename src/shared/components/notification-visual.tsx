@@ -20,19 +20,28 @@ export interface NotificationVisual {
   actor: boolean;
 }
 
+// Tones must be raw hex: NotificationItem builds translucent fills by
+// alpha-suffixing them (`${tone}14`), which a CSS var()/Tailwind token can't do
+// via string concat. ACCENT/DANGER mirror the --acc/--danger design tokens
+// (app/globals.css) — kept as named consts so the literals aren't re-typed
+// inline (the two hues a component is told never to hardcode). The other three
+// hues have no token equivalent.
+const ACCENT = "#00e5ff"; // mirrors --acc
+const DANGER = "#ff6b6b"; // mirrors --danger
+
 const VISUALS: Record<NotificationType, NotificationVisual> = {
-  new_follower: { tone: "#00e5ff", Icon: UserPlus, actor: true },
+  new_follower: { tone: ACCENT, Icon: UserPlus, actor: true },
   new_pack_from_followed: { tone: "#a78bfa", Icon: Package, actor: true },
   new_comment: { tone: "#38bdf8", Icon: MessageCircle, actor: true },
   comment_mention: { tone: "#fbbf24", Icon: AtSign, actor: true },
-  pack_deleted_warning: { tone: "#ff6b6b", Icon: AlertTriangle, actor: false },
+  pack_deleted_warning: { tone: DANGER, Icon: AlertTriangle, actor: false },
 };
 
 // A type this client version doesn't recognise yet (newer backend) still gets a
 // neutral, actor-less tile rather than crashing — mirrors describeNotification's
-// generic fallback.
+// generic fallback. Must be hex (not rgba()) so the alpha-suffix stays valid CSS.
 const FALLBACK: NotificationVisual = {
-  tone: "rgba(243,245,248,0.55)",
+  tone: "#8b8f96",
   Icon: Bell,
   actor: false,
 };

@@ -85,4 +85,33 @@ describe("NotificationItem", () => {
     expect(screen.queryByTestId("notification-avatar")).not.toBeInTheDocument();
     expect(screen.queryByRole("link")).not.toBeInTheDocument();
   });
+
+  it("renders a comment notification with the commenter's avatar and a link to the pack", () => {
+    const notification = {
+      ...base,
+      type: "new_comment",
+      payload: { packId: "p1", packTitle: "My Pack", commenterUsername: "sam" },
+    } as Notification;
+    renderItem(
+      <NotificationItem notification={notification} onNavigate={() => {}} />,
+    );
+
+    expect(screen.getByTestId("notification-avatar")).toHaveTextContent("S");
+    expect(screen.getByRole("link")).toHaveAttribute("href", "/packs/p1");
+  });
+
+  it("renders an unrecognised (future) type as a neutral icon tile without crashing", () => {
+    const notification = {
+      ...base,
+      type: "some_future_type",
+      payload: {},
+    } as unknown as Notification;
+    renderItem(
+      <NotificationItem notification={notification} onNavigate={() => {}} />,
+    );
+
+    expect(screen.getByText("You have a new notification")).toBeInTheDocument();
+    expect(screen.getByTestId("notification-icon")).toBeInTheDocument();
+    expect(screen.queryByTestId("notification-avatar")).not.toBeInTheDocument();
+  });
 });

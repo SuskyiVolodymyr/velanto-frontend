@@ -59,6 +59,7 @@ export function NotificationItem({
         {showAvatar ? (
           <span
             data-testid="notification-avatar"
+            aria-hidden
             className="grid h-11 w-11 place-items-center rounded-full text-base font-semibold text-[#0a0b0e]"
             style={{ background: avatarGradient(actorName) }}
           >
