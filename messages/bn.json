@@ -1126,7 +1126,11 @@
     "versusSetAll": "সবের জন্য সেট করুন",
     "versusSetAllLabel": "প্রতি পক্ষে আইটেম, সব রাউন্ড",
     "itemCropTitle": "ছবির ক্রপ সমন্বয় করুন",
-    "adjustImageCrop": "ক্রপ সমন্বয় করুন"
+    "adjustImageCrop": "ক্রপ সমন্বয় করুন",
+    "itemTextRequired": "এই আইটেমটি খালি হতে পারে না।",
+    "editItemAria": "{title} সম্পাদনা করুন",
+    "saveItem": "সংরক্ষণ করুন",
+    "cancelEdit": "বাতিল"
   },
   "profile": {
     "loginRequiredView": "আপনার প্রোফাইল দেখতে হলে আপনাকে লগ ইন করতে হবে।",

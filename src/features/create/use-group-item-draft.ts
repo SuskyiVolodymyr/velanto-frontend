@@ -6,6 +6,7 @@ import type { Group, Item, ItemType } from "@/src/shared/types/pack";
 import { extractYouTubeId } from "@/src/shared/lib/youtube";
 import { fetchYouTubeOEmbed } from "@/src/shared/lib/youtube-oembed";
 import { uploadMedia, MEDIA_MAX_BYTES } from "@/src/shared/lib/media-client";
+import { mediaUrl } from "@/src/shared/lib/media-url";
 
 /**
  * Owns the "add an item" draft state for a single {@link GroupEditor} — the
@@ -34,6 +35,11 @@ export function useGroupItemDraft(
   // previous crop). Null when there's no staged image.
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [addError, setAddError] = useState("");
+  // Id of the already-added item being edited, or null when composing a new one.
+  // The item deliberately STAYS in `group.items` while it's edited — the chip is
+  // only hidden — so abandoning the edit (switching to another chip, or just
+  // submitting the form) leaves the original intact instead of dropping it.
+  const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const t = useTranslations("create");
   // Monotonic token, bumped whenever the draft type changes or a new image is
   // picked. A slow upload that resolves after the user has moved on is compared
@@ -42,23 +48,90 @@ export function useGroupItemDraft(
   const uploadToken = useRef(0);
 
   function selectType(type: ItemType) {
+    if (type === draftType) return;
     uploadToken.current += 1;
-    setDraftType(type);
     setAddError("");
-    // Switching item type discards any staged draft value/preview so a youtube
-    // URL never leaks into an image item (or a staged image key into a text one).
-    setDraftValue("");
+
+    // Carry whatever the author has typed across the switch, so changing your
+    // mind about the format doesn't throw the words away. A text item has no
+    // separate title (title === value), so its body IS the title of a titled
+    // type, and vice versa. The staged VALUE never carries — a youtube URL must
+    // not leak into an image item, nor a staged image key into a text one.
+    if (draftType === "text") {
+      // text -> titled: the body becomes the title, unless a title was already
+      // set deliberately (someone touring the format buttons keeps theirs).
+      if (draftValue.trim() && !draftTitle.trim()) setDraftTitle(draftValue);
+      setDraftValue("");
+    } else if (type === "text") {
+      // titled -> text: the title becomes the body.
+      setDraftValue(draftTitle);
+      setDraftTitle("");
+    } else {
+      // image <-> youtube: both are titled, so only the value is dropped.
+      setDraftValue("");
+    }
+
+    setDraftType(type);
     setImagePreviewUrl("");
     setImageFile(null);
   }
 
-  function pushItem(fields: Omit<Item, "id">) {
-    const item: Item = { id: crypto.randomUUID(), ...fields };
-    onChange({ ...group, items: [...group.items, item] });
+  function resetDraft() {
     setDraftTitle("");
     setDraftValue("");
     setImagePreviewUrl("");
     setImageFile(null);
+    setEditingItemId(null);
+  }
+
+  /**
+   * Commit the draft: replace the item being edited in place (keeping its id and
+   * its position in the list), or append a new one.
+   */
+  function pushItem(fields: Omit<Item, "id">) {
+    if (editingItemId) {
+      onChange({
+        ...group,
+        items: group.items.map((existing) =>
+          existing.id === editingItemId
+            ? { id: editingItemId, ...fields }
+            : existing,
+        ),
+      });
+    } else {
+      onChange({
+        ...group,
+        items: [...group.items, { id: crypto.randomUUID(), ...fields }],
+      });
+    }
+    resetDraft();
+  }
+
+  /**
+   * Lift an already-added item back into the form row for editing. Switching
+   * straight from one item to another abandons the first with no change to it,
+   * which is why nothing is written to the group here.
+   */
+  function beginEdit(item: Item) {
+    uploadToken.current += 1;
+    setAddError("");
+    setEditingItemId(item.id);
+    setDraftType(item.type);
+    // A text item carries its body in `value` and has no separate title.
+    setDraftTitle(item.type === "text" ? "" : item.title);
+    setDraftValue(item.value);
+    setImagePreviewUrl(item.type === "image" ? mediaUrl(item.value) : "");
+    // No source file for a stored image — re-cropping needs a fresh pick, which
+    // is what the Replace control is for.
+    setImageFile(null);
+  }
+
+  /** Abandon an in-progress edit, leaving the stored item exactly as it was. */
+  function cancelEdit() {
+    uploadToken.current += 1;
+    setAddError("");
+    setDraftType("text");
+    resetDraft();
   }
 
   async function selectImageFile(file: File | null) {
@@ -136,7 +209,13 @@ export function useGroupItemDraft(
       return;
     }
 
-    if (!draftValue.trim()) return;
+    // Empty is a silent no-op when composing (the author just hasn't typed yet),
+    // but a real error when editing: they cleared an item that already exists,
+    // and saying nothing would look like the save had worked.
+    if (!draftValue.trim()) {
+      if (editingItemId) setAddError(t("itemTextRequired"));
+      return;
+    }
 
     if (draftType === "text") {
       pushItem({
@@ -187,11 +266,14 @@ export function useGroupItemDraft(
     imagePreviewUrl,
     imageFile,
     addError,
+    editingItemId,
     selectType,
     setDraftTitle,
     setDraftValue,
     selectImageFile,
     applyCroppedImage,
     addItem,
+    beginEdit,
+    cancelEdit,
   };
 }

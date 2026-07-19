@@ -1126,7 +1126,11 @@
     "versusSetAll": "Задати для всіх",
     "versusSetAllLabel": "Елементів на сторону, усі раунди",
     "itemCropTitle": "Налаштування обрізки",
-    "adjustImageCrop": "Налаштувати обрізку"
+    "adjustImageCrop": "Налаштувати обрізку",
+    "itemTextRequired": "Цей елемент не може бути порожнім.",
+    "editItemAria": "Редагувати {title}",
+    "saveItem": "Зберегти",
+    "cancelEdit": "Скасувати"
   },
   "profile": {
     "loginRequiredView": "Щоб переглянути свій профіль, спершу увійди.",

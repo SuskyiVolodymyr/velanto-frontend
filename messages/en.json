@@ -1220,7 +1220,11 @@
     "versusSetAll": "Set for all",
     "versusSetAllLabel": "Items per side, all rounds",
     "itemCropTitle": "Adjust image crop",
-    "adjustImageCrop": "Adjust crop"
+    "adjustImageCrop": "Adjust crop",
+    "itemTextRequired": "This item can't be empty.",
+    "editItemAria": "Edit {title}",
+    "saveItem": "Save",
+    "cancelEdit": "Cancel"
   },
   "profile": {
     "loginRequiredView": "You need to be logged in to view your profile.",

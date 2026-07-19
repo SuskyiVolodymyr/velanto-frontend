@@ -38,6 +38,9 @@ export function GroupEditor({
   const draft = useGroupItemDraft(group, onChange);
 
   function removeItem(itemId: string) {
+    // Removing the item currently lifted into the form row would leave the row
+    // editing something that no longer exists, so drop back to composing.
+    if (itemId === draft.editingItemId) draft.cancelEdit();
     onChange({
       ...group,
       items: group.items.filter((item) => item.id !== itemId),
@@ -66,7 +69,12 @@ export function GroupEditor({
         )}
       </div>
 
-      <GroupItemList items={group.items} onRemove={removeItem} />
+      <GroupItemList
+        items={group.items}
+        editingItemId={draft.editingItemId}
+        onEdit={draft.beginEdit}
+        onRemove={removeItem}
+      />
 
       <GroupItemAdder
         index={index}
@@ -84,6 +92,8 @@ export function GroupEditor({
         onSelectImage={(file) => void draft.selectImageFile(file)}
         onApplyCrop={(cropped) => void draft.applyCroppedImage(cropped)}
         onAdd={() => void draft.addItem()}
+        editing={draft.editingItemId !== null}
+        onCancelEdit={draft.cancelEdit}
       />
 
       <Text variant="tertiary" className="text-xs">
