@@ -132,6 +132,9 @@ export function adminUserDetailQueryOptions(id: string) {
   });
 }
 
-export function useAdminUserDetail(id: string) {
-  return useQuery(adminUserDetailQueryOptions(id));
+export function useAdminUserDetail(
+  id: string,
+  { enabled }: { enabled?: boolean } = {},
+) {
+  return useQuery({ ...adminUserDetailQueryOptions(id), enabled });
 }

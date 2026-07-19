@@ -89,4 +89,35 @@ describe("AdminUserDetailScreen", () => {
     render(<AdminUserDetailScreen userId="u1" />);
     expect(screen.getByText("Couldn’t load this user.")).toBeInTheDocument();
   });
+
+  it("keeps both queries disabled until auth resolves (avoids the tokenless-401 race)", () => {
+    // While auth is still loading there is no access token yet; firing the
+    // admin requests now yields a 401 the api-client won't retry (no token was
+    // sent), so the screen must not enable them until authenticated.
+    vi.mocked(useAuth).mockReturnValue({
+      user: null,
+      status: "loading",
+    } as unknown as ReturnType<typeof useAuth>);
+    vi.mocked(useAdminUserDetail).mockReturnValue({
+      data: undefined,
+      isLoading: true,
+      isError: false,
+    } as unknown as ReturnType<typeof useAdminUserDetail>);
+    vi.mocked(useAuthorBanHistory).mockReturnValue({
+      data: undefined,
+    } as unknown as ReturnType<typeof useAuthorBanHistory>);
+
+    render(<AdminUserDetailScreen userId="u1" />);
+
+    expect(useAdminUserDetail).toHaveBeenCalledWith("u1", { enabled: false });
+    expect(useAuthorBanHistory).toHaveBeenCalledWith("u1", { enabled: false });
+  });
+
+  it("enables both queries once authenticated as staff", () => {
+    mockAll(); // authenticated admin
+    render(<AdminUserDetailScreen userId="u1" />);
+
+    expect(useAdminUserDetail).toHaveBeenCalledWith("u1", { enabled: true });
+    expect(useAuthorBanHistory).toHaveBeenCalledWith("u1", { enabled: true });
+  });
 });
