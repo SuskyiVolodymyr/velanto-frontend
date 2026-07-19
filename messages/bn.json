@@ -1112,7 +1112,9 @@
     "versusDrawHint": "{a} বনাম {b} নেয়",
     "versusSamePoolNote": "উভয় পক্ষ একই পুল ব্যবহার করে — আইটেম পুনরাবৃত্তি হবে না।",
     "versusSetAll": "সবের জন্য সেট করুন",
-    "versusSetAllLabel": "প্রতি পক্ষে আইটেম, সব রাউন্ড"
+    "versusSetAllLabel": "প্রতি পক্ষে আইটেম, সব রাউন্ড",
+    "itemCropTitle": "ছবির ক্রপ সমন্বয় করুন",
+    "adjustImageCrop": "ক্রপ সমন্বয় করুন"
   },
   "profile": {
     "loginRequiredView": "আপনার প্রোফাইল দেখতে হলে আপনাকে লগ ইন করতে হবে।",

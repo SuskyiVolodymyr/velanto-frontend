@@ -1112,7 +1112,9 @@
     "versusDrawHint": "Бере {a} проти {b}",
     "versusSamePoolNote": "Обидві сторони використовують один пул — елементи не повторюються.",
     "versusSetAll": "Задати для всіх",
-    "versusSetAllLabel": "Елементів на сторону, усі раунди"
+    "versusSetAllLabel": "Елементів на сторону, усі раунди",
+    "itemCropTitle": "Налаштування обрізки",
+    "adjustImageCrop": "Налаштувати обрізку"
   },
   "profile": {
     "loginRequiredView": "Щоб переглянути свій профіль, спершу увійди.",

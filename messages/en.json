@@ -1206,7 +1206,9 @@
     "versusDrawHint": "Draws {a} vs {b}",
     "versusSamePoolNote": "Both sides use the same pool — items won't repeat.",
     "versusSetAll": "Set for all",
-    "versusSetAllLabel": "Items per side, all rounds"
+    "versusSetAllLabel": "Items per side, all rounds",
+    "itemCropTitle": "Adjust image crop",
+    "adjustImageCrop": "Adjust crop"
   },
   "profile": {
     "loginRequiredView": "You need to be logged in to view your profile.",

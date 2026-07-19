@@ -76,11 +76,13 @@ export function GroupEditor({
         validating={draft.validating}
         uploading={draft.uploading}
         imagePreviewUrl={draft.imagePreviewUrl}
+        imageFile={draft.imageFile}
         addError={draft.addError}
         onSelectType={draft.selectType}
         onDraftTitleChange={draft.setDraftTitle}
         onDraftValueChange={draft.setDraftValue}
         onSelectImage={(file) => void draft.selectImageFile(file)}
+        onApplyCrop={(cropped) => void draft.applyCroppedImage(cropped)}
         onAdd={() => void draft.addItem()}
       />
 

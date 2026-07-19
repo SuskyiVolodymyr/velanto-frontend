@@ -1112,7 +1112,9 @@
     "versusDrawHint": "{a} बनाम {b} चुनता है",
     "versusSamePoolNote": "दोनों पक्ष एक ही पूल का उपयोग करते हैं — वस्तुएँ दोहराई नहीं जाएँगी।",
     "versusSetAll": "सभी के लिए सेट करें",
-    "versusSetAllLabel": "प्रति पक्ष वस्तुएँ, सभी राउंड"
+    "versusSetAllLabel": "प्रति पक्ष वस्तुएँ, सभी राउंड",
+    "itemCropTitle": "छवि क्रॉप समायोजित करें",
+    "adjustImageCrop": "क्रॉप समायोजित करें"
   },
   "profile": {
     "loginRequiredView": "अपनी प्रोफ़ाइल देखने के लिए आपको लॉग इन करना होगा।",
