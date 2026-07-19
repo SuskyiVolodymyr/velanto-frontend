@@ -14,6 +14,9 @@ import {
   setAccessToken,
   setSessionCallbacks,
 } from "@/src/shared/lib/api-client";
+// Imported to prove the auth-client's refresh shares the same single-flight
+// promise as the api-client's own 401 renewal (see the regression test below).
+import { authClient } from "@/src/shared/lib/auth-client";
 
 function jsonResponse(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), {
@@ -194,6 +197,79 @@ describe("apiClient silent token refresh on 401", () => {
       apiClient.get("/notifications/unread-count"),
     ).rejects.toMatchObject({ status: 401 });
     expect(onLost).toHaveBeenCalled();
+  });
+
+  // Regression guard for the frequent-logout bug: authClient.refresh() (used by
+  // AuthProvider on every mount, and by revalidate) used to POST /auth/refresh
+  // directly, bypassing the single-flight mutex. It could then run in parallel
+  // with a 401-triggered renewal — two refreshes, same cookie — and the server's
+  // single-use rotation 401'd the loser, logging the user out at random.
+  it("collapses a concurrent authClient.refresh() and a 401 renewal into one rotation", async () => {
+    setAccessToken("stale");
+    setSessionCallbacks({ onRefreshed: vi.fn(), onLost: vi.fn() });
+
+    let refreshCalls = 0;
+    const fetchMock = vi.fn((url: string) => {
+      if (url.endsWith("/auth/refresh")) {
+        refreshCalls += 1;
+        return Promise.resolve(
+          jsonResponse(200, {
+            accessToken: "fresh",
+            user: { id: "u1", username: "vova" },
+          }),
+        );
+      }
+      return Promise.resolve(jsonResponse(401, { message: "jwt expired" }));
+    });
+    vi.stubGlobal("fetch", fetchMock);
+
+    await Promise.all([
+      authClient.refresh(),
+      apiClient.get("/notifications/unread-count").catch(() => undefined),
+    ]);
+
+    expect(refreshCalls).toBe(1);
+  });
+
+  // Only a 401 proves the refresh cookie is gone. A 429 from the refresh
+  // throttle, a 5xx, or a backend restart mid-deploy is transient — tearing the
+  // session down there logged every active user out during an outage.
+  it("keeps the session when the refresh fails transiently (5xx) instead of logging out", async () => {
+    setAccessToken("stale");
+    const onLost = vi.fn();
+    setSessionCallbacks({ onRefreshed: vi.fn(), onLost });
+
+    const fetchMock = vi.fn((url: string) =>
+      Promise.resolve(
+        url.endsWith("/auth/refresh")
+          ? jsonResponse(503, { message: "backend restarting" })
+          : jsonResponse(401, { message: "jwt expired" }),
+      ),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(
+      apiClient.get("/notifications/unread-count"),
+    ).rejects.toMatchObject({ status: 401 });
+    expect(onLost).not.toHaveBeenCalled();
+  });
+
+  it("keeps the session when the refresh fails with a network error", async () => {
+    setAccessToken("stale");
+    const onLost = vi.fn();
+    setSessionCallbacks({ onRefreshed: vi.fn(), onLost });
+
+    const fetchMock = vi.fn((url: string) =>
+      url.endsWith("/auth/refresh")
+        ? Promise.reject(new TypeError("Failed to fetch"))
+        : Promise.resolve(jsonResponse(401, { message: "jwt expired" })),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+
+    await expect(
+      apiClient.get("/notifications/unread-count"),
+    ).rejects.toMatchObject({ status: 401 });
+    expect(onLost).not.toHaveBeenCalled();
   });
 
   it("does not recurse when /auth/refresh itself is the 401ing request", async () => {
