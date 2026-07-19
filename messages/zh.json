@@ -1016,6 +1016,8 @@
   "create": {
     "loginRequired": "你需要先登录才能创建题包。",
     "logIn": "登录",
+    "saveDraft": "保存草稿",
+    "savingDraft": "正在保存草稿…",
     "publish": "发布",
     "publishing": "发布中…",
     "basicsHeading": "基本信息",
@@ -1192,6 +1194,7 @@
     "updates": "更新"
   },
   "status": {
+    "packDraft": "草稿",
     "packPending": "待审核",
     "packApproved": "已通过",
     "packRejected": "已拒绝",

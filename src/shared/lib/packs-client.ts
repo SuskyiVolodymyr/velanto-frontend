@@ -22,6 +22,9 @@ export interface CreatePackInput {
   tags: PackTag[];
   groups: Group[];
   rounds: Round[];
+  /** Save-as-draft intent. true → stored as an author-only draft (skips
+   *  moderation); false/omitted → publish (goes to pending/approved). */
+  draft?: boolean;
 }
 
 export interface ListPacksFilters {

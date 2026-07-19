@@ -1016,6 +1016,8 @@
   "create": {
     "loginRequired": "প্যাক তৈরি করতে হলে আপনাকে লগ ইন করতে হবে।",
     "logIn": "লগ ইন করুন",
+    "saveDraft": "খসড়া সংরক্ষণ করুন",
+    "savingDraft": "খসড়া সংরক্ষণ হচ্ছে…",
     "publish": "প্রকাশ করুন",
     "publishing": "প্রকাশ হচ্ছে…",
     "basicsHeading": "মূল তথ্য",
@@ -1192,6 +1194,7 @@
     "updates": "আপডেট"
   },
   "status": {
+    "packDraft": "খসড়া",
     "packPending": "পর্যালোচনার অপেক্ষায়",
     "packApproved": "অনুমোদিত",
     "packRejected": "প্রত্যাখ্যাত",

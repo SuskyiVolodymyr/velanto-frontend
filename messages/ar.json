@@ -1016,6 +1016,8 @@
   "create": {
     "loginRequired": "يجب تسجيل الدخول لإنشاء حزمة.",
     "logIn": "تسجيل الدخول",
+    "saveDraft": "حفظ كمسودة",
+    "savingDraft": "جارٍ حفظ المسودة…",
     "publish": "نشر",
     "publishing": "جارٍ النشر…",
     "basicsHeading": "الأساسيات",
@@ -1192,6 +1194,7 @@
     "updates": "التحديثات"
   },
   "status": {
+    "packDraft": "مسودة",
     "packPending": "قيد المراجعة",
     "packApproved": "مقبولة",
     "packRejected": "مرفوضة",
