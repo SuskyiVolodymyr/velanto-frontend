@@ -151,7 +151,7 @@ describe("ResultScreen", () => {
               itemId: "i1",
               itemTitle: "Guren no Yumiya",
               timesRanked: 1,
-              averagePosition: 0,
+              averagePosition: 1,
               positionCounts: [1],
             },
           ],
@@ -264,7 +264,7 @@ describe("ResultScreen", () => {
               itemId: "i1",
               itemTitle: "Guren no Yumiya",
               timesRanked: 1,
-              averagePosition: 0,
+              averagePosition: 1,
               positionCounts: [1],
             },
           ],
@@ -276,7 +276,7 @@ describe("ResultScreen", () => {
     seedResults(rankResults);
     render(<ResultScreen pack={rankPack} />);
 
-    expect(await screen.findByText(/avg 0.*ranked 1x/)).toBeInTheDocument();
+    expect(await screen.findByText(/avg 1.*ranked 1x/)).toBeInTheDocument();
   });
 
   it("shows a Share result button for an approved pack", async () => {

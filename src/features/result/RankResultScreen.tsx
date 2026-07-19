@@ -64,9 +64,12 @@ export function RankResultScreen({
                 ),
               )
             : round.items;
-          const sortedItems = [...visibleItems].sort(
-            (a, b) => a.averagePosition - b.averagePosition,
-          );
+          // Drop never-ranked items (averagePosition 0 sentinel). In the
+          // aggregate fallback the full pool can include items nobody ranked,
+          // whose 0 would otherwise sort them above genuine first places.
+          const sortedItems = [...visibleItems]
+            .filter((item) => item.timesRanked > 0)
+            .sort((a, b) => a.averagePosition - b.averagePosition);
 
           return (
             <div key={round.roundIndex}>
