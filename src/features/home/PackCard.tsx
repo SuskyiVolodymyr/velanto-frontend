@@ -49,7 +49,12 @@ export function PackCard({
           <Text variant="secondary" className="line-clamp-2 text-sm">
             {pack.description}
           </Text>
-          <div className="flex items-center gap-1.5">
+          {/* mt-auto lives HERE, not on the stats row below: it absorbs the
+              free space left by a short title/description so the author line and
+              the stats line stay pinned to the bottom as one block. With it on
+              the stats row instead, a one-line card floated its author row up
+              and left a gap above the stats. */}
+          <div className="mt-auto flex items-center gap-1.5">
             {pack.author && (
               <>
                 <UserAvatar
@@ -79,7 +84,7 @@ export function PackCard({
               </Text>
             )}
           </div>
-          <div className="mt-auto flex items-center justify-between gap-2">
+          <div className="flex items-center justify-between gap-2">
             <Text variant="tertiary" className="shrink-0 text-xs">
               {roundsCount} round{roundsCount === 1 ? "" : "s"}
             </Text>
