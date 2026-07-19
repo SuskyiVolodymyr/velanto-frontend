@@ -164,4 +164,32 @@ describe("usersClient.banHistory", () => {
     await usersClient.banHistory("user-1");
     expect(getSpy).toHaveBeenCalledWith("/users/user-1/ban-history");
   });
+
+  it("search() gets /users/search with the query and pagination", async () => {
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 2,
+      limit: 20,
+    });
+
+    await usersClient.search("alice", { page: 2, limit: 20 });
+
+    expect(apiClient.get).toHaveBeenCalledWith(
+      "/users/search?q=alice&page=2&limit=20",
+    );
+  });
+
+  it("search() omits pagination params when not provided", async () => {
+    vi.mocked(apiClient.get).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
+
+    await usersClient.search("bob");
+
+    expect(apiClient.get).toHaveBeenCalledWith("/users/search?q=bob");
+  });
 });

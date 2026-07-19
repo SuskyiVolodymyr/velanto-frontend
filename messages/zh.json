@@ -1396,5 +1396,14 @@
     "empty": "你还没有创建任何题包。",
     "emptyFiltered": "没有符合此筛选条件的题包。",
     "all": "全部"
+  },
+  "people": {
+    "tab": "用户",
+    "searchLabel": "搜索用户",
+    "searchPlaceholder": "按用户名搜索",
+    "hint": "请输入至少 2 个字符进行搜索。",
+    "loading": "正在搜索…",
+    "error": "搜索用户失败，请重试。",
+    "empty": "未找到用户。"
   }
 }

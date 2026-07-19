@@ -6,23 +6,26 @@ import { cn } from "@/src/shared/lib/cn";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { HomeFeed } from "@/src/features/home/HomeFeed";
 import { MyPacksFeed } from "@/src/features/home/MyPacksFeed";
+import { PeopleFeed } from "@/src/features/home/PeopleFeed";
 import type { PacksFeedResult } from "@/src/features/home/api/packs-feed";
 
-type Tab = "packs" | "mine";
+type Tab = "packs" | "people" | "mine";
 
 /**
- * Top-level Browse switcher: the public discovery feed ("Packs") and the
- * signed-in user's own packs ("My packs"). The "My packs" tab only appears once
- * auth has settled as signed-in — it's hidden while loading (no flicker) and for
- * signed-out visitors. If the user signs out while on it, we fall back to the
- * public feed so the view can never be stranded on a tab that no longer exists.
+ * Top-level Browse switcher: the public discovery feed ("Packs"), public user
+ * search ("People"), and the signed-in user's own packs ("My packs"). Packs and
+ * People are public; "My packs" only appears once auth has settled as signed-in
+ * — hidden while loading (no flicker) and for signed-out visitors. If the user
+ * signs out while on it, we fall back to the public feed so the view can never
+ * be stranded on a tab that no longer exists.
  *
  * Implements the full WAI-ARIA tabs pattern: each tab controls the shared
  * tabpanel, and Left/Right/Home/End move (and activate) between tabs with a
- * roving tabindex. The People tab is a separate, later piece of work.
+ * roving tabindex.
  */
 export function BrowseTabs({ initialFeed }: { initialFeed?: PacksFeedResult }) {
   const t = useTranslations("myPacks");
+  const tPeople = useTranslations("people");
   const { status } = useAuth();
   const signedIn = status === "authenticated";
   const [tab, setTab] = useState<Tab>("packs");
@@ -31,6 +34,7 @@ export function BrowseTabs({ initialFeed }: { initialFeed?: PacksFeedResult }) {
 
   const tabs: { value: Tab; label: string }[] = [
     { value: "packs", label: t("packsTab") },
+    { value: "people", label: tPeople("tab") },
     ...(signedIn ? [{ value: "mine" as const, label: t("mineTab") }] : []),
   ];
 
@@ -100,7 +104,9 @@ export function BrowseTabs({ initialFeed }: { initialFeed?: PacksFeedResult }) {
       </div>
 
       <div role="tabpanel" id={panelId} aria-labelledby={tabId(activeTab)}>
-        {activeTab === "mine" ? (
+        {activeTab === "people" ? (
+          <PeopleFeed />
+        ) : activeTab === "mine" ? (
           <MyPacksFeed />
         ) : (
           <HomeFeed initialFeed={initialFeed} />
