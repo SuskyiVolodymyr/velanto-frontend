@@ -6,6 +6,32 @@ import { securityHeaders } from "./src/shared/lib/security-headers";
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
+  // sharp is a native module used by the dynamic OG cards (opengraph-image /
+  // twitter-image) to transcode WebP media to a PNG next/og can rasterise. Left
+  // to Next's default bundling it gets webpack-bundled into the serverless
+  // function and its native binary fails to load at runtime — the route 500s in
+  // production while working locally. Marking it external stops the bundling and
+  // loads it from node_modules, and tracing it into those specific routes makes
+  // sure Vercel ships the binary in their lambdas. (velanto-frontend OG fix.)
+  serverExternalPackages: ["sharp"],
+  outputFileTracingIncludes: {
+    "/packs/[id]/opengraph-image": [
+      "./node_modules/@img/**",
+      "./node_modules/sharp/**",
+    ],
+    "/packs/[id]/twitter-image": [
+      "./node_modules/@img/**",
+      "./node_modules/sharp/**",
+    ],
+    "/users/[id]/opengraph-image": [
+      "./node_modules/@img/**",
+      "./node_modules/sharp/**",
+    ],
+    "/users/[id]/twitter-image": [
+      "./node_modules/@img/**",
+      "./node_modules/sharp/**",
+    ],
+  },
   async headers() {
     // Apply the hardening headers to every route. Kept in one shared list so a
     // test can assert them and they can't silently drift.
