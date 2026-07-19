@@ -1058,7 +1058,10 @@
     "deletePackConfirm": "This permanently deletes the pack and everything in it. This can't be undone.",
     "deletePackCta": "Delete pack",
     "deleting": "Deleting…",
-    "deletePackError": "Couldn't delete the pack. Try again."
+    "deletePackError": "Couldn't delete the pack. Try again.",
+    "submitPack": "Submit for review",
+    "submittingPack": "Submitting…",
+    "submitPackError": "Couldn't submit this pack. Please try again."
   },
   "share": {
     "trigger": "Share",

@@ -964,7 +964,10 @@
     "deletePackConfirm": "这将永久删除该题包及其全部内容，且无法撤销。",
     "deletePackCta": "删除题包",
     "deleting": "删除中…",
-    "deletePackError": "无法删除题包，请重试。"
+    "deletePackError": "无法删除题包，请重试。",
+    "submitPack": "提交审核",
+    "submittingPack": "提交中…",
+    "submitPackError": "无法提交该合集，请重试。"
   },
   "share": {
     "trigger": "分享",
