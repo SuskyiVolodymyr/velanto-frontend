@@ -84,6 +84,12 @@ export function useFollowListRowMutation() {
               }
             : data,
       );
+      // The follow-list patch above only fixes the modal's own rows. The target
+      // user's profile reads its follow state from the ["author", id] query, so
+      // invalidate it too — otherwise navigating to that profile shows a stale
+      // "Follow" until a hard refresh (the SSR seed is anonymous and only the
+      // sign-in refetch corrects it, which doesn't fire on client-side nav).
+      queryClient.invalidateQueries({ queryKey: ["author", userId] });
     },
   });
 }
