@@ -28,6 +28,23 @@ export interface UpdateEntry {
 export const UPDATES: UpdateEntry[] = [
   {
     date: "2026-07-19",
+    version: "1.3.0",
+    title: "Drafts, My packs, and finding friends",
+    bullets: [
+      "Save a pack as a private draft and keep working on it — drafts skip review and stay visible only to you until you choose to publish.",
+      "A new My packs tab gathers everything you've made — drafts, pending, published, and rejected — with a filter for each, and your pack's status now shows on its page.",
+      "Find people by username with the new People tab, and follow them right from the results.",
+      "When you add an image to a pack, you now preview it in the exact 16:9 frame the game uses — and can adjust the crop to reframe it if you don't like the fit.",
+      "Result-share links are now short and tidy, no matter how big the pack.",
+      "Notifications got a cleaner look with clearer grouping of what's new.",
+      "Following someone back now updates instantly, without needing a refresh.",
+      "Comment authors now show their avatar next to their name.",
+      "Pack and profile link previews now show their image when shared in Telegram, Discord, and other apps.",
+      "Fixed average-position stats on ranked packs, which could read low or show zero.",
+    ],
+  },
+  {
+    date: "2026-07-19",
     version: "1.2.0",
     title: "Follow people and faster sign-up",
     bullets: [
