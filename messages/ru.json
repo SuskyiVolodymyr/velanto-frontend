@@ -201,6 +201,8 @@
     "staffNonStaff": "Не персонал"
   },
   "notifications": {
+    "groupNew": "Новые",
+    "groupEarlier": "Ранее",
     "title": "Уведомления",
     "empty": "Уведомлений пока нет.",
     "loadError": "Не удалось загрузить уведомления.",

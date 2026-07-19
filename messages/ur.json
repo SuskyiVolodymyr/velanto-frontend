@@ -201,6 +201,8 @@
     "staffNonStaff": "غیر اسٹاف"
   },
   "notifications": {
+    "groupNew": "نیا",
+    "groupEarlier": "پرانا",
     "title": "اطلاعات",
     "empty": "ابھی تک کوئی اطلاع نہیں۔",
     "loadError": "اطلاعات لوڈ نہیں ہو سکیں۔",

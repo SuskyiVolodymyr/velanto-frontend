@@ -201,6 +201,8 @@
     "staffNonStaff": "নন-স্টাফ"
   },
   "notifications": {
+    "groupNew": "নতুন",
+    "groupEarlier": "আগের",
     "title": "বিজ্ঞপ্তি",
     "empty": "এখনও কোনো বিজ্ঞপ্তি নেই।",
     "loadError": "বিজ্ঞপ্তি লোড করা যায়নি।",

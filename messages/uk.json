@@ -201,6 +201,8 @@
     "staffNonStaff": "Не персонал"
   },
   "notifications": {
+    "groupNew": "Нові",
+    "groupEarlier": "Раніше",
     "title": "Сповіщення",
     "empty": "Сповіщень поки немає.",
     "loadError": "Не вдалося завантажити сповіщення.",
