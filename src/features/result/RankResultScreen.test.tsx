@@ -56,14 +56,14 @@ const RANK_RESULTS: RankResults = {
           itemId: "i1",
           itemTitle: "Kaikai Kitan",
           timesRanked: 2,
-          averagePosition: 0,
+          averagePosition: 1,
           positionCounts: [2, 0],
         },
         {
           itemId: "i2",
           itemTitle: "Redo",
           timesRanked: 2,
-          averagePosition: 1,
+          averagePosition: 2,
           positionCounts: [0, 2],
         },
       ],
@@ -93,8 +93,8 @@ describe("RankResultScreen", () => {
       .getAllByText(/Kaikai Kitan|Redo/)
       .map((el) => el.textContent);
     expect(titles).toEqual(["Kaikai Kitan", "Redo"]);
-    expect(screen.getByText(/avg 0.*ranked 2x/)).toBeInTheDocument();
     expect(screen.getByText(/avg 1.*ranked 2x/)).toBeInTheDocument();
+    expect(screen.getByText(/avg 2.*ranked 2x/)).toBeInTheDocument();
   });
 
   it("labels the round with its pool name, not 'Round N', when unnamed", () => {
