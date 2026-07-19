@@ -1126,7 +1126,11 @@
     "versusSetAll": "सभी के लिए सेट करें",
     "versusSetAllLabel": "प्रति पक्ष वस्तुएँ, सभी राउंड",
     "itemCropTitle": "छवि क्रॉप समायोजित करें",
-    "adjustImageCrop": "क्रॉप समायोजित करें"
+    "adjustImageCrop": "क्रॉप समायोजित करें",
+    "itemTextRequired": "यह आइटम खाली नहीं हो सकता।",
+    "editItemAria": "{title} संपादित करें",
+    "saveItem": "सहेजें",
+    "cancelEdit": "रद्द करें"
   },
   "profile": {
     "loginRequiredView": "अपनी प्रोफ़ाइल देखने के लिए आपको लॉग इन करना होगा।",

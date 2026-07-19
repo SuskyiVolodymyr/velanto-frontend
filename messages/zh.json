@@ -1126,7 +1126,11 @@
     "versusSetAll": "应用到全部",
     "versusSetAllLabel": "每方条目数，所有轮次",
     "itemCropTitle": "调整图片裁剪",
-    "adjustImageCrop": "调整裁剪"
+    "adjustImageCrop": "调整裁剪",
+    "itemTextRequired": "此项目不能为空。",
+    "editItemAria": "编辑 {title}",
+    "saveItem": "保存",
+    "cancelEdit": "取消"
   },
   "profile": {
     "loginRequiredView": "你需要先登录才能查看个人资料。",

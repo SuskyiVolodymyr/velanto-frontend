@@ -1126,7 +1126,11 @@
     "versusSetAll": "سب کے لیے سیٹ کریں",
     "versusSetAllLabel": "فی طرف آئٹمز، تمام راؤنڈز",
     "itemCropTitle": "تصویر کی کٹائی ایڈجسٹ کریں",
-    "adjustImageCrop": "کٹائی ایڈجسٹ کریں"
+    "adjustImageCrop": "کٹائی ایڈجسٹ کریں",
+    "itemTextRequired": "یہ آئٹم خالی نہیں ہو سکتا۔",
+    "editItemAria": "{title} میں ترمیم کریں",
+    "saveItem": "محفوظ کریں",
+    "cancelEdit": "منسوخ"
   },
   "profile": {
     "loginRequiredView": "اپنی پروفائل دیکھنے کے لیے آپ کا لاگ اِن ہونا ضروری ہے۔",

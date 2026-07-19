@@ -1126,7 +1126,11 @@
     "versusSetAll": "تطبيق على الكل",
     "versusSetAllLabel": "عناصر لكل جانب، لكل الجولات",
     "itemCropTitle": "ضبط اقتصاص الصورة",
-    "adjustImageCrop": "ضبط الاقتصاص"
+    "adjustImageCrop": "ضبط الاقتصاص",
+    "itemTextRequired": "لا يمكن أن يكون هذا العنصر فارغًا.",
+    "editItemAria": "تحرير {title}",
+    "saveItem": "حفظ",
+    "cancelEdit": "إلغاء"
   },
   "profile": {
     "loginRequiredView": "يجب تسجيل الدخول لعرض ملفك الشخصي.",
