@@ -201,6 +201,8 @@
     "staffNonStaff": "गैर-स्टाफ़"
   },
   "notifications": {
+    "groupNew": "नया",
+    "groupEarlier": "पुराना",
     "title": "सूचनाएँ",
     "empty": "अभी तक कोई सूचना नहीं।",
     "loadError": "सूचनाएँ लोड नहीं हो सकीं।",

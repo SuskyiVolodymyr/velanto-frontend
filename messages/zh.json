@@ -201,6 +201,8 @@
     "staffNonStaff": "非员工"
   },
   "notifications": {
+    "groupNew": "最新",
+    "groupEarlier": "更早",
     "title": "通知",
     "empty": "暂无通知。",
     "loadError": "无法加载通知。",

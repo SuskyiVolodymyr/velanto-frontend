@@ -296,6 +296,8 @@
     "apiDirectNote": "A token can't create or revoke tokens — that always needs a real sign-in, so a leaked token can't extend itself."
   },
   "notifications": {
+    "groupNew": "New",
+    "groupEarlier": "Earlier",
     "title": "Notifications",
     "empty": "No notifications yet.",
     "loadError": "Couldn't load notifications.",

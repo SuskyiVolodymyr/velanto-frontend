@@ -201,6 +201,8 @@
     "staffNonStaff": "غير الطاقم"
   },
   "notifications": {
+    "groupNew": "جديد",
+    "groupEarlier": "أقدم",
     "title": "الإشعارات",
     "empty": "لا توجد إشعارات بعد.",
     "loadError": "تعذّر تحميل الإشعارات.",
