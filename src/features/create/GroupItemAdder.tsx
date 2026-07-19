@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import type { ItemType } from "@/src/shared/types/pack";
 import { ITEM_TITLE_MAX } from "@/src/features/create/create-pack.schema";
@@ -7,6 +8,7 @@ import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
+import { ItemImageCropModal } from "@/src/features/create/ItemImageCropModal";
 
 interface GroupItemAdderProps {
   index: number;
@@ -16,11 +18,14 @@ interface GroupItemAdderProps {
   validating: boolean;
   uploading: boolean;
   imagePreviewUrl: string;
+  /** The source file behind the preview, for the optional 16:9 crop. */
+  imageFile: File | null;
   addError: string;
   onSelectType: (type: ItemType) => void;
   onDraftTitleChange: (value: string) => void;
   onDraftValueChange: (value: string) => void;
   onSelectImage: (file: File | null) => void;
+  onApplyCrop: (cropped: File) => void;
   onAdd: () => void;
 }
 
@@ -33,14 +38,17 @@ export function GroupItemAdder({
   validating,
   uploading,
   imagePreviewUrl,
+  imageFile,
   addError,
   onSelectType,
   onDraftTitleChange,
   onDraftValueChange,
   onSelectImage,
+  onApplyCrop,
   onAdd,
 }: GroupItemAdderProps) {
   const t = useTranslations("create");
+  const [cropOpen, setCropOpen] = useState(false);
   return (
     <div className="flex flex-col gap-2">
       <div className="flex w-fit rounded-[9px] border border-border bg-white/[0.03] p-0.5">
@@ -168,17 +176,45 @@ export function GroupItemAdder({
             </Button>
           </div>
           {imagePreviewUrl && (
-            // eslint-disable-next-line @next/next/no-img-element -- local upload preview (object/CDN URL); Next <Image> adds no value for a transient thumbnail
-            <img
-              src={imagePreviewUrl}
-              alt=""
-              className="h-24 w-24 rounded-lg border border-border object-cover"
-            />
+            <div className="flex flex-col items-start gap-1.5">
+              {/* Preview at the SAME 16:9 the round crops to, so the author sees
+                  exactly how it will be framed in play (no square-vs-16:9
+                  surprise). */}
+              <div className="relative aspect-video w-44 overflow-hidden rounded-lg border border-border bg-black">
+                {/* eslint-disable-next-line @next/next/no-img-element -- local upload preview (object/CDN URL); Next <Image> adds no value for a transient thumbnail */}
+                <img
+                  src={imagePreviewUrl}
+                  alt=""
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              </div>
+              {imageFile && (
+                <button
+                  type="button"
+                  onClick={() => setCropOpen(true)}
+                  disabled={uploading}
+                  className="text-xs font-medium text-acc hover:underline disabled:opacity-60"
+                >
+                  {t("adjustImageCrop")}
+                </button>
+              )}
+            </div>
           )}
           {addError && (
             <Text variant="danger" className="text-xs">
               {addError}
             </Text>
+          )}
+          {cropOpen && imageFile && (
+            <ItemImageCropModal
+              file={imageFile}
+              open
+              onCancel={() => setCropOpen(false)}
+              onCropped={(cropped) => {
+                setCropOpen(false);
+                onApplyCrop(cropped);
+              }}
+            />
           )}
         </div>
       )}

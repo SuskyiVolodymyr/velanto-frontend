@@ -1112,7 +1112,9 @@
     "versusDrawHint": "يسحب {a} مقابل {b}",
     "versusSamePoolNote": "يستخدم الجانبان المجموعة نفسها — لن تتكرر العناصر.",
     "versusSetAll": "تطبيق على الكل",
-    "versusSetAllLabel": "عناصر لكل جانب، لكل الجولات"
+    "versusSetAllLabel": "عناصر لكل جانب، لكل الجولات",
+    "itemCropTitle": "ضبط اقتصاص الصورة",
+    "adjustImageCrop": "ضبط الاقتصاص"
   },
   "profile": {
     "loginRequiredView": "يجب تسجيل الدخول لعرض ملفك الشخصي.",

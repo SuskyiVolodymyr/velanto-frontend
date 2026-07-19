@@ -1112,7 +1112,9 @@
     "versusDrawHint": "抽取 {a} 对 {b}",
     "versusSamePoolNote": "两方使用同一池——条目不会重复。",
     "versusSetAll": "应用到全部",
-    "versusSetAllLabel": "每方条目数，所有轮次"
+    "versusSetAllLabel": "每方条目数，所有轮次",
+    "itemCropTitle": "调整图片裁剪",
+    "adjustImageCrop": "调整裁剪"
   },
   "profile": {
     "loginRequiredView": "你需要先登录才能查看个人资料。",

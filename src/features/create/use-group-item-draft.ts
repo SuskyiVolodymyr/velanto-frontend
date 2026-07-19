@@ -29,6 +29,10 @@ export function useGroupItemDraft(
   const [validating, setValidating] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [imagePreviewUrl, setImagePreviewUrl] = useState("");
+  // The original picked file, kept after upload so the author can re-open the
+  // 16:9 cropper and re-frame it (always cropping from the source, never a
+  // previous crop). Null when there's no staged image.
+  const [imageFile, setImageFile] = useState<File | null>(null);
   const [addError, setAddError] = useState("");
   const t = useTranslations("create");
   // Monotonic token, bumped whenever the draft type changes or a new image is
@@ -45,6 +49,7 @@ export function useGroupItemDraft(
     // URL never leaks into an image item (or a staged image key into a text one).
     setDraftValue("");
     setImagePreviewUrl("");
+    setImageFile(null);
   }
 
   function pushItem(fields: Omit<Item, "id">) {
@@ -53,6 +58,7 @@ export function useGroupItemDraft(
     setDraftTitle("");
     setDraftValue("");
     setImagePreviewUrl("");
+    setImageFile(null);
   }
 
   async function selectImageFile(file: File | null) {
@@ -61,6 +67,7 @@ export function useGroupItemDraft(
     setAddError("");
     setImagePreviewUrl("");
     setDraftValue("");
+    setImageFile(null);
     if (!file.type.startsWith("image/")) {
       setAddError(t("notAnImage"));
       return;
@@ -69,11 +76,38 @@ export function useGroupItemDraft(
       setAddError(t("imageTooLarge"));
       return;
     }
+    // Retain the source file for the optional 16:9 cropper (see applyCroppedImage).
+    setImageFile(file);
     setUploading(true);
     try {
       const { key, url } = await uploadMedia(file, "item");
       // Discard a result the user has moved on from (type switched, or another
       // image picked) — writing its key now would corrupt the current draft.
+      if (token !== uploadToken.current) return;
+      setDraftValue(key);
+      setImagePreviewUrl(url);
+    } catch {
+      if (token !== uploadToken.current) return;
+      setAddError(t("imageUploadFailed"));
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  /**
+   * Replace the staged image with an author-cropped (16:9) version: uploads the
+   * cropped file and swaps in its key + preview. The default center-crop already
+   * works, so this is opt-in — used by the "Adjust crop" control. The source
+   * `imageFile` is left in place so the cropper can be re-opened from the
+   * original. Guarded by the same token as selectImageFile so a slow crop upload
+   * the author has moved on from is discarded.
+   */
+  async function applyCroppedImage(cropped: File) {
+    const token = (uploadToken.current += 1);
+    setAddError("");
+    setUploading(true);
+    try {
+      const { key, url } = await uploadMedia(cropped, "item");
       if (token !== uploadToken.current) return;
       setDraftValue(key);
       setImagePreviewUrl(url);
@@ -151,11 +185,13 @@ export function useGroupItemDraft(
     validating,
     uploading,
     imagePreviewUrl,
+    imageFile,
     addError,
     selectType,
     setDraftTitle,
     setDraftValue,
     selectImageFile,
+    applyCroppedImage,
     addItem,
   };
 }

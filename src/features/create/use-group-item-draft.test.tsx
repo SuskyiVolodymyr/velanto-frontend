@@ -99,3 +99,66 @@ describe("useGroupItemDraft image upload", () => {
     expect(result.current.imagePreviewUrl).toBe("https://cdn/ok.webp");
   });
 });
+
+describe("useGroupItemDraft crop adjust", () => {
+  it("keeps the picked file and re-uploads a cropped replacement", async () => {
+    vi.mocked(uploadMedia)
+      .mockResolvedValueOnce({
+        key: "k1",
+        url: "https://cdn/k1.webp",
+        byteSize: 1,
+      })
+      .mockResolvedValueOnce({
+        key: "k2",
+        url: "https://cdn/k2.webp",
+        byteSize: 1,
+      });
+
+    const { result } = renderHook(() => useGroupItemDraft(GROUP, vi.fn()), {
+      wrapper,
+    });
+
+    act(() => result.current.selectType("image"));
+    const original = imageFile();
+    await act(async () => {
+      await result.current.selectImageFile(original);
+    });
+    expect(result.current.draftValue).toBe("k1");
+    // The original file is retained so the author can re-open the cropper.
+    expect(result.current.imageFile).toBe(original);
+
+    const cropped = new File([new Uint8Array(4)], "pic.webp", {
+      type: "image/webp",
+    });
+    await act(async () => {
+      await result.current.applyCroppedImage(cropped);
+    });
+
+    expect(vi.mocked(uploadMedia)).toHaveBeenLastCalledWith(cropped, "item");
+    expect(result.current.draftValue).toBe("k2");
+    expect(result.current.imagePreviewUrl).toBe("https://cdn/k2.webp");
+    // Original kept for re-cropping (crop again from the source, not the crop).
+    expect(result.current.imageFile).toBe(original);
+  });
+
+  it("clears the picked file when the item type changes", async () => {
+    vi.mocked(uploadMedia).mockResolvedValue({
+      key: "k1",
+      url: "https://cdn/k1.webp",
+      byteSize: 1,
+    });
+
+    const { result } = renderHook(() => useGroupItemDraft(GROUP, vi.fn()), {
+      wrapper,
+    });
+
+    act(() => result.current.selectType("image"));
+    await act(async () => {
+      await result.current.selectImageFile(imageFile());
+    });
+    expect(result.current.imageFile).not.toBeNull();
+
+    act(() => result.current.selectType("text"));
+    expect(result.current.imageFile).toBeNull();
+  });
+});
