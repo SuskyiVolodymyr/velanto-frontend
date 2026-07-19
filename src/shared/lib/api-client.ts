@@ -75,36 +75,71 @@ export function setSessionCallbacks(callbacks: SessionCallbacks | null): void {
   sessionCallbacks = callbacks;
 }
 
+/** The outcome of one refresh attempt. */
+export interface RefreshOutcome {
+  /** The renewed token + user, or null when the refresh didn't succeed. */
+  result: RefreshResult | null;
+  /** True ONLY when the server definitively ended the session (a 401). */
+  sessionEnded: boolean;
+}
+
 // Access tokens expire (24h). Rather than surface that to the user as a wall of
 // 401s until they reload, a single request transparently renews the token and
-// retries. Concurrent 401s (e.g. the notification poller firing alongside a
-// page load) must not each hit /auth/refresh, so the in-flight refresh is
-// shared: the first 401 starts it, the rest await the same promise.
-let refreshInFlight: Promise<string | null> | null = null;
+// retries. Concurrent refreshes must not each hit /auth/refresh: rotation is
+// single-use server-side, so two parallel calls carrying the same cookie make
+// one of them lose the race. Everything therefore funnels through this one
+// in-flight promise — the first caller starts it, the rest await it.
+let refreshInFlight: Promise<RefreshOutcome> | null = null;
 
-function refreshAccessToken(): Promise<string | null> {
+function runRefresh(): Promise<RefreshOutcome> {
   refreshInFlight ??= (async () => {
     try {
       const response = await fetch(`${API_BASE_URL}/auth/refresh`, {
         method: "POST",
         credentials: "include",
       });
-      if (!response.ok) throw new Error(`refresh failed: ${response.status}`);
-      const { accessToken: fresh, user } =
-        (await response.json()) as RefreshResult;
-      assignAccessToken(fresh);
-      sessionCallbacks?.onRefreshed(user);
-      return fresh;
+      if (response.ok) {
+        const result = (await response.json()) as RefreshResult;
+        assignAccessToken(result.accessToken);
+        sessionCallbacks?.onRefreshed(result.user);
+        return { result, sessionEnded: false };
+      }
+      // ONLY a 401 proves the refresh cookie is gone (expired/revoked) — that
+      // is the single case where the session is genuinely over. Anything else
+      // (a 429 from the refresh throttle, a 5xx, a backend restart mid-deploy)
+      // is transient, and ending the session there logged EVERY active user out
+      // during an outage. Leave it intact; the next request retries naturally.
+      if (response.status === 401) {
+        assignAccessToken(null);
+        sessionCallbacks?.onLost();
+        return { result: null, sessionEnded: true };
+      }
+      return { result: null, sessionEnded: false };
     } catch {
-      // Refresh cookie is gone (expired/revoked) — the session is truly over.
-      assignAccessToken(null);
-      sessionCallbacks?.onLost();
-      return null;
+      // Network blip — transient, same reasoning as above. Keep the session.
+      return { result: null, sessionEnded: false };
     } finally {
       refreshInFlight = null;
     }
   })();
   return refreshInFlight;
+}
+
+function refreshAccessToken(): Promise<string | null> {
+  return runRefresh().then(({ result }) => result?.accessToken ?? null);
+}
+
+/**
+ * Single-flight session refresh, shared with AuthProvider.
+ *
+ * EVERYTHING that refreshes must go through this. AuthProvider used to call
+ * POST /auth/refresh directly (on mount, and in revalidate), bypassing the
+ * mutex above — so a mount-time bootstrap could run in parallel with a
+ * 401-triggered renewal, both presenting the same cookie, and whichever lost
+ * the server's single-use rotation got a 401 and logged the user out.
+ */
+export function refreshSession(): Promise<RefreshOutcome> {
+  return runRefresh();
 }
 
 // The refresh endpoint itself must never trigger a nested refresh-retry (it

@@ -27,6 +27,9 @@ interface GroupItemAdderProps {
   onSelectImage: (file: File | null) => void;
   onApplyCrop: (cropped: File) => void;
   onAdd: () => void;
+  /** Set when an existing item is lifted in for editing (Add becomes Save). */
+  editing?: boolean;
+  onCancelEdit?: () => void;
 }
 
 /** The text/YouTube/image toggle plus the draft inputs for adding a new item. */
@@ -46,64 +49,101 @@ export function GroupItemAdder({
   onSelectImage,
   onApplyCrop,
   onAdd,
+  editing = false,
+  onCancelEdit,
 }: GroupItemAdderProps) {
   const t = useTranslations("create");
   const [cropOpen, setCropOpen] = useState(false);
+  // Same control, different promise: Add appends, Save replaces the item the
+  // author clicked. Labelling both "Add" would read as creating a duplicate.
+  const commitLabel = editing ? t("saveItem") : t("add");
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex w-fit rounded-[9px] border border-border bg-white/[0.03] p-0.5">
-        <button
-          type="button"
-          onClick={() => onSelectType("text")}
-          className={cn(
-            "rounded-[7px] px-3 py-1.5 text-xs font-medium",
-            draftType === "text"
-              ? "bg-white/[0.12] text-foreground"
-              : "text-foreground-secondary",
-          )}
-        >
-          {t("text")}
-        </button>
-        <button
-          type="button"
-          onClick={() => onSelectType("youtube")}
-          className={cn(
-            "rounded-[7px] px-3 py-1.5 text-xs font-medium",
-            draftType === "youtube"
-              ? "bg-white/[0.12] text-foreground"
-              : "text-foreground-secondary",
-          )}
-        >
-          {t("link")}
-        </button>
-        <button
-          type="button"
-          onClick={() => onSelectType("image")}
-          className={cn(
-            "rounded-[7px] px-3 py-1.5 text-xs font-medium",
-            draftType === "image"
-              ? "bg-white/[0.12] text-foreground"
-              : "text-foreground-secondary",
-          )}
-        >
-          {t("image")}
-        </button>
+    <div
+      className="flex flex-col gap-2"
+      // Escape backs out of an edit from anywhere in the row — the author's
+      // hands are already on the keyboard, and the alternative is hunting for
+      // Cancel. Harmless when not editing.
+      onKeyDown={(e) => {
+        if (e.key === "Escape" && editing && onCancelEdit) {
+          e.stopPropagation();
+          onCancelEdit();
+        }
+      }}
+    >
+      <div className="flex flex-wrap items-center gap-2">
+        <div className="flex w-fit rounded-[9px] border border-border bg-white/[0.03] p-0.5">
+          <button
+            type="button"
+            onClick={() => onSelectType("text")}
+            className={cn(
+              "rounded-[7px] px-3 py-1.5 text-xs font-medium",
+              draftType === "text"
+                ? "bg-white/[0.12] text-foreground"
+                : "text-foreground-secondary",
+            )}
+          >
+            {t("text")}
+          </button>
+          <button
+            type="button"
+            onClick={() => onSelectType("youtube")}
+            className={cn(
+              "rounded-[7px] px-3 py-1.5 text-xs font-medium",
+              draftType === "youtube"
+                ? "bg-white/[0.12] text-foreground"
+                : "text-foreground-secondary",
+            )}
+          >
+            {t("link")}
+          </button>
+          <button
+            type="button"
+            onClick={() => onSelectType("image")}
+            className={cn(
+              "rounded-[7px] px-3 py-1.5 text-xs font-medium",
+              draftType === "image"
+                ? "bg-white/[0.12] text-foreground"
+                : "text-foreground-secondary",
+            )}
+          >
+            {t("image")}
+          </button>
+        </div>
+        {editing && onCancelEdit && (
+          <button
+            type="button"
+            onClick={onCancelEdit}
+            className="text-xs font-medium text-foreground-tertiary hover:text-foreground"
+          >
+            {t("cancelEdit")}
+          </button>
+        )}
       </div>
       {draftType === "text" && (
-        <div className="flex gap-2">
-          <Input
-            value={draftValue}
-            onChange={(e) => onDraftValueChange(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") onAdd();
-            }}
-            placeholder={t("addItemPlaceholder")}
-            aria-label={t("groupNewItem", { index: index + 1 })}
-            className="flex-1"
-          />
-          <Button type="button" onClick={() => onAdd()}>
-            {t("add")}
-          </Button>
+        <div className="flex flex-col gap-2">
+          <div className="flex gap-2">
+            <Input
+              value={draftValue}
+              onChange={(e) => onDraftValueChange(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") onAdd();
+              }}
+              placeholder={t("addItemPlaceholder")}
+              aria-label={t("groupNewItem", { index: index + 1 })}
+              className="flex-1"
+            />
+            <Button type="button" onClick={() => onAdd()}>
+              {commitLabel}
+            </Button>
+          </div>
+          {/* The text branch had no error slot at all — an empty Add was simply
+              a no-op, which was fine when the only outcome was "nothing added",
+              but silently swallowed the "you emptied an existing item" case. */}
+          {addError && (
+            <Text variant="danger" className="text-xs">
+              {addError}
+            </Text>
+          )}
         </div>
       )}
       {draftType === "youtube" && (
@@ -129,7 +169,7 @@ export function GroupItemAdder({
               className="flex-[2] min-w-[140px]"
             />
             <Button type="button" onClick={() => onAdd()} disabled={validating}>
-              {validating ? t("checking") : t("add")}
+              {validating ? t("checking") : commitLabel}
             </Button>
           </div>
           {addError && (
@@ -172,7 +212,7 @@ export function GroupItemAdder({
               />
             </label>
             <Button type="button" onClick={() => onAdd()} disabled={uploading}>
-              {t("add")}
+              {commitLabel}
             </Button>
           </div>
           {imagePreviewUrl && (

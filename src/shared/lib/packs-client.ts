@@ -101,6 +101,10 @@ export const packsClient = {
   create: (input: CreatePackInput) => apiClient.post<Pack>("/packs", input),
   update: (id: string, input: CreatePackInput) =>
     apiClient.patch<Pack>(`/packs/${id}`, input),
+  /** Publish a draft (author-only). A dedicated endpoint rather than a PATCH:
+   *  update is a full replacement, so submitting through it would mean
+   *  re-sending the whole pack just to change its status. */
+  submit: (id: string) => apiClient.post<Pack>(`/packs/${id}/submit`),
   getById: (id: string) => apiClient.get<Pack>(`/packs/${id}`),
   list: (filters: ListPacksFilters = {}) =>
     apiClient.get<PackList>(`/packs${buildListQuery(filters)}`),

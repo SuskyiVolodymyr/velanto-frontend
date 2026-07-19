@@ -964,7 +964,10 @@
     "deletePackConfirm": "يؤدي هذا إلى حذف الحزمة وكل ما فيها نهائيًا. لا يمكن التراجع عن ذلك.",
     "deletePackCta": "حذف الحزمة",
     "deleting": "جارٍ الحذف…",
-    "deletePackError": "تعذّر حذف الحزمة. حاول مرة أخرى."
+    "deletePackError": "تعذّر حذف الحزمة. حاول مرة أخرى.",
+    "submitPack": "إرسال للمراجعة",
+    "submittingPack": "جارٍ الإرسال…",
+    "submitPackError": "تعذّر إرسال هذه الحزمة. حاول مرة أخرى."
   },
   "share": {
     "trigger": "مشاركة",
@@ -1123,7 +1126,11 @@
     "versusSetAll": "تطبيق على الكل",
     "versusSetAllLabel": "عناصر لكل جانب، لكل الجولات",
     "itemCropTitle": "ضبط اقتصاص الصورة",
-    "adjustImageCrop": "ضبط الاقتصاص"
+    "adjustImageCrop": "ضبط الاقتصاص",
+    "itemTextRequired": "لا يمكن أن يكون هذا العنصر فارغًا.",
+    "editItemAria": "تحرير {title}",
+    "saveItem": "حفظ",
+    "cancelEdit": "إلغاء"
   },
   "profile": {
     "loginRequiredView": "يجب تسجيل الدخول لعرض ملفك الشخصي.",

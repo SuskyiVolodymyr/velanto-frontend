@@ -964,7 +964,10 @@
     "deletePackConfirm": "Это навсегда удалит пак и всё его содержимое. Отменить действие нельзя.",
     "deletePackCta": "Удалить пак",
     "deleting": "Удаление…",
-    "deletePackError": "Не удалось удалить пак. Попробуйте снова."
+    "deletePackError": "Не удалось удалить пак. Попробуйте снова.",
+    "submitPack": "Отправить на проверку",
+    "submittingPack": "Отправка…",
+    "submitPackError": "Не удалось отправить пак. Попробуйте ещё раз."
   },
   "share": {
     "trigger": "Поделиться",
@@ -1123,7 +1126,11 @@
     "versusSetAll": "Задать для всех",
     "versusSetAllLabel": "Элементов на сторону, все раунды",
     "itemCropTitle": "Настройка обрезки",
-    "adjustImageCrop": "Настроить обрезку"
+    "adjustImageCrop": "Настроить обрезку",
+    "itemTextRequired": "Этот элемент не может быть пустым.",
+    "editItemAria": "Изменить {title}",
+    "saveItem": "Сохранить",
+    "cancelEdit": "Отмена"
   },
   "profile": {
     "loginRequiredView": "Чтобы посмотреть свой профиль, нужно войти в аккаунт.",

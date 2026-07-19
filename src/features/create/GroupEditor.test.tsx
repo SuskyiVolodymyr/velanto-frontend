@@ -465,3 +465,134 @@ describe("GroupEditor (pool)", () => {
     expect(onRemove).toHaveBeenCalledTimes(1);
   });
 });
+
+// Clicking a chip lifts that item back into the form row so it can be corrected
+// in place, rather than forcing a delete-and-retype.
+describe("GroupEditor editing an added item", () => {
+  function withItems(): Group {
+    return {
+      id: "g1",
+      name: "Pool",
+      items: [
+        { id: "i1", type: "text", title: "Alpha", value: "Alpha" },
+        { id: "i2", type: "text", title: "Beta", value: "Beta" },
+      ],
+    };
+  }
+
+  it("loads the clicked item into the input and renames the action to Save", async () => {
+    const user = userEvent.setup();
+    render(<StatefulGroupEditor initial={withItems()} onChange={vi.fn()} />);
+
+    await user.click(screen.getByRole("button", { name: "Edit Alpha" }));
+
+    expect(screen.getByLabelText("Pool 1 new item")).toHaveValue("Alpha");
+    expect(screen.getByRole("button", { name: "Save" })).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Add" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("replaces the item in place instead of appending a duplicate", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<StatefulGroupEditor initial={withItems()} onChange={onChange} />);
+
+    await user.click(screen.getByRole("button", { name: "Edit Alpha" }));
+    const input = screen.getByLabelText("Pool 1 new item");
+    await user.clear(input);
+    await user.type(input, "Alpha v2");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => {
+      const next = onChange.mock.calls.at(-1)?.[0] as Group;
+      expect(next.items).toHaveLength(2);
+      expect(next.items[0].title).toBe("Alpha v2");
+      expect(next.items[0].id).toBe("i1");
+      expect(next.items[1].title).toBe("Beta");
+    });
+  });
+
+  it("returns to Add once the edit is saved", async () => {
+    const user = userEvent.setup();
+    render(<StatefulGroupEditor initial={withItems()} onChange={vi.fn()} />);
+
+    await user.click(screen.getByRole("button", { name: "Edit Alpha" }));
+    await user.type(screen.getByLabelText("Pool 1 new item"), "!");
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(
+      await screen.findByRole("button", { name: "Add" }),
+    ).toBeInTheDocument();
+  });
+
+  it("refuses to save an emptied item and says why", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<StatefulGroupEditor initial={withItems()} onChange={onChange} />);
+
+    await user.click(screen.getByRole("button", { name: "Edit Alpha" }));
+    await user.clear(screen.getByLabelText("Pool 1 new item"));
+    await user.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(await screen.findByText("This item can't be empty.")).toBeVisible();
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  it("leaves the item untouched when the edit is cancelled", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<StatefulGroupEditor initial={withItems()} onChange={onChange} />);
+
+    await user.click(screen.getByRole("button", { name: "Edit Alpha" }));
+    const input = screen.getByLabelText("Pool 1 new item");
+    await user.clear(input);
+    await user.type(input, "discarded");
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+
+    expect(onChange).not.toHaveBeenCalled();
+    expect(screen.getByRole("button", { name: "Edit Alpha" })).toBeVisible();
+  });
+
+  it("cancels with Escape", async () => {
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<StatefulGroupEditor initial={withItems()} onChange={onChange} />);
+
+    await user.click(screen.getByRole("button", { name: "Edit Alpha" }));
+    await user.type(screen.getByLabelText("Pool 1 new item"), "{Escape}");
+
+    expect(
+      await screen.findByRole("button", { name: "Add" }),
+    ).toBeInTheDocument();
+    expect(onChange).not.toHaveBeenCalled();
+  });
+
+  // Removing the item being edited must not leave the row bound to a ghost.
+  it("drops out of edit mode when the edited item is removed", async () => {
+    const user = userEvent.setup();
+    render(<StatefulGroupEditor initial={withItems()} onChange={vi.fn()} />);
+
+    await user.click(screen.getByRole("button", { name: "Edit Alpha" }));
+    await user.click(screen.getByRole("button", { name: "Remove Alpha" }));
+
+    expect(
+      await screen.findByRole("button", { name: "Add" }),
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText("Pool 1 new item")).toHaveValue("");
+  });
+
+  // Text typed as a plain item becomes the TITLE of a titled format, so changing
+  // your mind about the format doesn't throw the words away.
+  it("carries typed text into the title when switching to image", async () => {
+    const user = userEvent.setup();
+    render(<StatefulGroupEditor initial={emptyGroup()} onChange={vi.fn()} />);
+
+    await user.type(screen.getByLabelText("Pool 1 new item"), "Carried");
+    await user.click(screen.getByRole("button", { name: "Image" }));
+
+    expect(screen.getByLabelText("Pool 1 new item title")).toHaveValue(
+      "Carried",
+    );
+  });
+});

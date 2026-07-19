@@ -964,7 +964,10 @@
     "deletePackConfirm": "এটি প্যাক এবং এর ভেতরের সবকিছু স্থায়ীভাবে মুছে ফেলবে। এটি আর ফেরানো যাবে না।",
     "deletePackCta": "প্যাক মুছুন",
     "deleting": "মুছে ফেলা হচ্ছে…",
-    "deletePackError": "প্যাকটি মোছা যায়নি। আবার চেষ্টা করুন।"
+    "deletePackError": "প্যাকটি মোছা যায়নি। আবার চেষ্টা করুন।",
+    "submitPack": "পর্যালোচনার জন্য পাঠান",
+    "submittingPack": "পাঠানো হচ্ছে…",
+    "submitPackError": "এই প্যাকটি পাঠানো যায়নি। আবার চেষ্টা করুন।"
   },
   "share": {
     "trigger": "শেয়ার",
@@ -1123,7 +1126,11 @@
     "versusSetAll": "সবের জন্য সেট করুন",
     "versusSetAllLabel": "প্রতি পক্ষে আইটেম, সব রাউন্ড",
     "itemCropTitle": "ছবির ক্রপ সমন্বয় করুন",
-    "adjustImageCrop": "ক্রপ সমন্বয় করুন"
+    "adjustImageCrop": "ক্রপ সমন্বয় করুন",
+    "itemTextRequired": "এই আইটেমটি খালি হতে পারে না।",
+    "editItemAria": "{title} সম্পাদনা করুন",
+    "saveItem": "সংরক্ষণ করুন",
+    "cancelEdit": "বাতিল"
   },
   "profile": {
     "loginRequiredView": "আপনার প্রোফাইল দেখতে হলে আপনাকে লগ ইন করতে হবে।",
