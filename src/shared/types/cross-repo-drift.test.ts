@@ -75,7 +75,12 @@ describe("cross-repo mirrored constants (velanto-backend contract)", () => {
   // PACK_STATUSES — MIRRORED in velanto-backend
   // src/modules/packs/types/moderation-status.ts (PACK_MODERATION_STATUSES).
   it("PACK_STATUSES", () => {
-    expect([...PACK_STATUSES]).toEqual(["pending", "approved", "rejected"]);
+    expect([...PACK_STATUSES]).toEqual([
+      "draft",
+      "pending",
+      "approved",
+      "rejected",
+    ]);
   });
 
   // PACK_TAGS — MIRRORED in velanto-backend src/modules/packs/types/tags.ts.

@@ -296,6 +296,8 @@
     "apiDirectNote": "A token can't create or revoke tokens — that always needs a real sign-in, so a leaked token can't extend itself."
   },
   "notifications": {
+    "groupNew": "New",
+    "groupEarlier": "Earlier",
     "title": "Notifications",
     "empty": "No notifications yet.",
     "loadError": "Couldn't load notifications.",
@@ -1108,6 +1110,8 @@
   "create": {
     "loginRequired": "You need to be logged in to create a pack.",
     "logIn": "Log in",
+    "saveDraft": "Save as draft",
+    "savingDraft": "Saving draft…",
     "publish": "Publish",
     "publishing": "Publishing…",
     "basicsHeading": "Basics",
@@ -1202,7 +1206,9 @@
     "versusDrawHint": "Draws {a} vs {b}",
     "versusSamePoolNote": "Both sides use the same pool — items won't repeat.",
     "versusSetAll": "Set for all",
-    "versusSetAllLabel": "Items per side, all rounds"
+    "versusSetAllLabel": "Items per side, all rounds",
+    "itemCropTitle": "Adjust image crop",
+    "adjustImageCrop": "Adjust crop"
   },
   "profile": {
     "loginRequiredView": "You need to be logged in to view your profile.",
@@ -1284,6 +1290,7 @@
     "updates": "Updates"
   },
   "status": {
+    "packDraft": "Draft",
     "packPending": "Pending review",
     "packApproved": "Approved",
     "packRejected": "Rejected",
@@ -1380,5 +1387,24 @@
     "heading": "What's new",
     "intro": "The latest features, fixes, and improvements — newest first.",
     "empty": "No updates yet — check back soon."
+  },
+  "myPacks": {
+    "packsTab": "Packs",
+    "mineTab": "My packs",
+    "loginRequired": "Log in to see your packs.",
+    "loading": "Loading your packs…",
+    "error": "Couldn't load your packs.",
+    "empty": "You haven't created any packs yet.",
+    "emptyFiltered": "No packs match this filter.",
+    "all": "All"
+  },
+  "people": {
+    "tab": "People",
+    "searchLabel": "Search people",
+    "searchPlaceholder": "Search by username",
+    "hint": "Type at least 2 characters to search.",
+    "loading": "Searching…",
+    "error": "Couldn't search for people. Try again.",
+    "empty": "No people found."
   }
 }

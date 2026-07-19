@@ -135,14 +135,14 @@ describe("PackStats", () => {
               itemId: "i1",
               itemTitle: "Kaikai Kitan",
               timesRanked: 6,
-              averagePosition: 0.5,
+              averagePosition: 1.5,
               positionCounts: [3, 3],
             },
             {
               itemId: "i2",
               itemTitle: "Redo",
               timesRanked: 6,
-              averagePosition: 1.5,
+              averagePosition: 2.5,
               positionCounts: [0, 3],
             },
           ],
@@ -153,8 +153,43 @@ describe("PackStats", () => {
 
     expect(screen.getByText("6 plays")).toBeInTheDocument();
     expect(screen.getByText("Round 1")).toBeInTheDocument();
-    expect(screen.getByText("Kaikai Kitan — avg 0.5")).toBeInTheDocument();
+    expect(screen.getByText("Kaikai Kitan — avg 1.5")).toBeInTheDocument();
     expect(screen.queryByText(/Redo/)).not.toBeInTheDocument();
+  });
+
+  it("ignores never-ranked items when picking a rank_blind round's top item", () => {
+    const results: RankResults = {
+      packId: "pack-rank",
+      format: "rank_blind",
+      totalPlays: 3,
+      rounds: [
+        {
+          roundIndex: 0,
+          items: [
+            // Nobody ranked this one — averagePosition 0 is the sentinel, which
+            // would win the lowest-average reduce if it weren't filtered out.
+            {
+              itemId: "i0",
+              itemTitle: "Never Seen",
+              timesRanked: 0,
+              averagePosition: 0,
+              positionCounts: [0, 0],
+            },
+            {
+              itemId: "i1",
+              itemTitle: "Kaikai Kitan",
+              timesRanked: 3,
+              averagePosition: 1.3,
+              positionCounts: [2, 1],
+            },
+          ],
+        },
+      ],
+    };
+    render(<PackStats results={results} />);
+
+    expect(screen.getByText("Kaikai Kitan — avg 1.3")).toBeInTheDocument();
+    expect(screen.queryByText(/Never Seen/)).not.toBeInTheDocument();
   });
 
   it("skips a rank_blind round with no items rather than crashing", () => {

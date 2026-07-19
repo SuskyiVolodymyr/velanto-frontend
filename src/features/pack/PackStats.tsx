@@ -58,8 +58,13 @@ export function PackStats({ results }: { results: PackResults | RankResults }) {
         </Text>
         <div className="flex flex-col gap-3">
           {results.rounds.map((round) => {
-            if (round.items.length === 0) return null;
-            const topItem = round.items.reduce((top, item) =>
+            // Only items that were actually ranked. A never-ranked item has
+            // averagePosition 0 (the "never ranked" sentinel) — below any real
+            // 1-indexed rank — so without this filter it would wrongly win the
+            // lowest-average reduce.
+            const ranked = round.items.filter((item) => item.timesRanked > 0);
+            if (ranked.length === 0) return null;
+            const topItem = ranked.reduce((top, item) =>
               top.averagePosition <= item.averagePosition ? top : item,
             );
             return (

@@ -22,6 +22,12 @@ function notificationsListQueryOptions() {
     queryKey: ["notifications-list"] as const,
     queryFn: ({ pageParam }) =>
       notificationsClient.list({ page: pageParam, limit: PAGE_SIZE }),
+    // Don't refetch the open drawer on window focus: the fetched rows carry the
+    // `readAt` they had when opened (drives the New/Earlier split + unread
+    // styling), and a focus refetch would return them now-read and collapse
+    // everything into "Earlier" mid-view. The unread *count* still polls
+    // separately, so a freshly-arrived notification is reflected on reopen.
+    refetchOnWindowFocus: false,
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
       const loaded = allPages.reduce(

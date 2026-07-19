@@ -57,8 +57,14 @@ export function AdminUserDetailScreen({ userId }: { userId: string }) {
     if (status === "authenticated" && !allowed) router.replace("/");
   }, [status, allowed, router]);
 
-  const query = useAdminUserDetail(userId);
-  const banHistory = useAuthorBanHistory(userId, { enabled: true });
+  // Only fetch once we're a signed-in staff viewer. Auth sets the access token
+  // and `status` together, so before "authenticated" there is no token — firing
+  // now would send a tokenless request that 401s, and the api-client only
+  // transparently refreshes a 401 that *carried* a token, so it would surface as
+  // an error until a manual reload. Gating on auth-readiness closes that race.
+  const active = status === "authenticated" && allowed;
+  const query = useAdminUserDetail(userId, { enabled: active });
+  const banHistory = useAuthorBanHistory(userId, { enabled: active });
 
   if (status === "loading") return null;
   if (status === "unauthenticated" || !allowed) return null;

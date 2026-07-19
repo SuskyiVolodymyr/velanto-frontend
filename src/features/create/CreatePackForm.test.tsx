@@ -318,6 +318,34 @@ describe("CreatePackForm", () => {
     );
   });
 
+  it("saves as a draft (draft:true) when Save as draft is clicked", async () => {
+    const user = userEvent.setup();
+    vi.mocked(packsClient.create).mockResolvedValue(makePack({ id: "pack-1" }));
+    renderForm();
+    await fillMinimalValidPack(user);
+
+    await user.click(screen.getByRole("button", { name: "Save as draft" }));
+
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-1"));
+    expect(packsClient.create).toHaveBeenCalledWith(
+      expect.objectContaining({ draft: true }),
+    );
+  });
+
+  it("publishes with draft:false when Publish is clicked", async () => {
+    const user = userEvent.setup();
+    vi.mocked(packsClient.create).mockResolvedValue(makePack({ id: "pack-1" }));
+    renderForm();
+    await fillMinimalValidPack(user);
+
+    await user.click(screen.getByRole("button", { name: "Publish" }));
+
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-1"));
+    expect(packsClient.create).toHaveBeenCalledWith(
+      expect.objectContaining({ draft: false }),
+    );
+  });
+
   it("submits a valid pack with groups and rounds, and redirects to its detail page", async () => {
     const user = userEvent.setup();
     vi.mocked(packsClient.create).mockResolvedValue(makePack({ id: "pack-1" }));

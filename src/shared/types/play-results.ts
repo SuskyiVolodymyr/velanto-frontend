@@ -50,8 +50,10 @@ export interface RankResultItem {
   // all — a round can sample fewer than all of a pool's items (random slot),
   // so an item may not appear in every play.
   timesRanked: number;
-  // Mean 0-indexed placement across the plays that included this item.
-  // Lower is better (0 = always placed first). 0 when timesRanked is 0.
+  // Mean 1-indexed placement across the plays that included this item
+  // (1 = always placed first). Lower is better. 0 is the "never ranked"
+  // sentinel (timesRanked === 0) — below any real rank, so filter
+  // timesRanked > 0 before ranking items by averagePosition.
   averagePosition: number;
   // Histogram of this item's placements: positionCounts[i] = how many
   // recorded plays placed this item at 0-indexed position i. Length equals

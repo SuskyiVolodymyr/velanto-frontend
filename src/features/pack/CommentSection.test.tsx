@@ -95,6 +95,19 @@ beforeEach(() => {
 });
 
 describe("CommentSection", () => {
+  it("renders the comment author's avatar image when they have one", async () => {
+    vi.mocked(commentsClient.list).mockResolvedValue({
+      items: [{ ...COMMENT_A, authorAvatarKey: "media/avatar/bob.webp" }],
+      total: 1,
+      page: 1,
+      limit: 10,
+    });
+    const { container } = renderAsUnauthenticated();
+
+    await screen.findByText("Loved this pack.");
+    expect(container.querySelector('img[src*="bob.webp"]')).toBeInTheDocument();
+  });
+
   it("shows a comment skeleton while comments load, then clears it, keeping the busy announcement", async () => {
     // Hold the fetch open so the section stays in its loading state.
     let resolve: (v: {
@@ -850,7 +863,7 @@ describe("CommentSection", () => {
       expect(screen.queryByText("Loved this pack.")).not.toBeInTheDocument();
 
       const revealButtons = screen.getAllByRole("button", { name: /reveal/i });
-      expect(revealButtons).toHaveLength(2); // one for the name, one for the body
+      expect(revealButtons).toHaveLength(2); // one for the identity, one for the body
 
       await user.click(revealButtons[0]);
       await user.click(screen.getAllByRole("button", { name: /reveal/i })[0]);
