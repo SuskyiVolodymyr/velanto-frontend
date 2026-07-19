@@ -1016,6 +1016,8 @@
   "create": {
     "loginRequired": "Щоб створити пак, спершу увійди.",
     "logIn": "Увійти",
+    "saveDraft": "Зберегти чернетку",
+    "savingDraft": "Збереження чернетки…",
     "publish": "Опублікувати",
     "publishing": "Публікація…",
     "basicsHeading": "Основне",
@@ -1192,6 +1194,7 @@
     "updates": "Оновлення"
   },
   "status": {
+    "packDraft": "Чернетка",
     "packPending": "На розгляді",
     "packApproved": "Схвалено",
     "packRejected": "Відхилено",

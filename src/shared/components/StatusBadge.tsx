@@ -10,10 +10,12 @@ const ACCENT = "border-acc/30 bg-acc/10 text-acc";
 const WARNING = "border-yellow-500/30 bg-yellow-500/10 text-yellow-400";
 const SUCCESS = "border-green-500/30 bg-green-500/10 text-green-400";
 const DANGER = "border-red-500/30 bg-red-500/10 text-red-400";
+const NEUTRAL = "border-white/15 bg-white/[0.06] text-foreground-secondary";
 
 // Tone classes per status value; the human label comes from the `status` i18n
 // namespace (keyed `<kind><StatusValue>`, e.g. `packPending`, `feedbackNew`).
 const PACK_TONE: Record<PackStatus, string> = {
+  draft: NEUTRAL,
   pending: WARNING,
   approved: SUCCESS,
   rejected: DANGER,
@@ -25,6 +27,7 @@ const FEEDBACK_TONE: Record<FeedbackStatus, string> = {
   declined: DANGER,
 };
 const PACK_KEY: Record<PackStatus, string> = {
+  draft: "packDraft",
   pending: "packPending",
   approved: "packApproved",
   rejected: "packRejected",

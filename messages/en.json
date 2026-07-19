@@ -1110,6 +1110,8 @@
   "create": {
     "loginRequired": "You need to be logged in to create a pack.",
     "logIn": "Log in",
+    "saveDraft": "Save as draft",
+    "savingDraft": "Saving draft…",
     "publish": "Publish",
     "publishing": "Publishing…",
     "basicsHeading": "Basics",
@@ -1286,6 +1288,7 @@
     "updates": "Updates"
   },
   "status": {
+    "packDraft": "Draft",
     "packPending": "Pending review",
     "packApproved": "Approved",
     "packRejected": "Rejected",

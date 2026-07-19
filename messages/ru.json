@@ -1016,6 +1016,8 @@
   "create": {
     "loginRequired": "Чтобы создать пак, нужно войти в аккаунт.",
     "logIn": "Войти",
+    "saveDraft": "Сохранить черновик",
+    "savingDraft": "Сохранение черновика…",
     "publish": "Опубликовать",
     "publishing": "Публикуем…",
     "basicsHeading": "Основное",
@@ -1192,6 +1194,7 @@
     "updates": "Обновления"
   },
   "status": {
+    "packDraft": "Черновик",
     "packPending": "На модерации",
     "packApproved": "Одобрен",
     "packRejected": "Отклонён",

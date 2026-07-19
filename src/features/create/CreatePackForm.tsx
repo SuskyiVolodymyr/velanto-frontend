@@ -74,6 +74,9 @@ export function CreatePackForm({
   // True while a cover image is uploading; blocks submit so a pending cover
   // isn't silently dropped (see CoverImageField).
   const [coverUploading, setCoverUploading] = useState(false);
+  // Which button initiated the in-flight submit, so only that one shows its
+  // spinner/label (both actions run the same validation + mutation).
+  const [submitMode, setSubmitMode] = useState<"publish" | "draft">("publish");
 
   // Seed one pool plus a matching elimination round drawing from it. Computed
   // once (lazy initializer) so the round's groupId keeps pointing at the pool.
@@ -155,7 +158,7 @@ export function CreatePackForm({
     }
   }, [format, getValues, setValue]);
 
-  async function onValid(values: CreatePackValues) {
+  async function onValid(values: CreatePackValues, draft: boolean) {
     const input: CreatePackInput = {
       title: values.title,
       description: values.description,
@@ -166,6 +169,7 @@ export function CreatePackForm({
       tags: values.tags,
       groups: values.groups,
       rounds: values.rounds,
+      draft,
     };
 
     try {
@@ -202,7 +206,7 @@ export function CreatePackForm({
   return (
     <FormProvider {...methods}>
       <form
-        onSubmit={handleSubmit(onValid)}
+        onSubmit={handleSubmit((values) => onValid(values, false))}
         noValidate
         className="flex flex-col gap-8"
       >
@@ -220,20 +224,38 @@ export function CreatePackForm({
           </Text>
         )}
 
-        <Button
-          type="submit"
-          loading={isSubmitting}
-          disabled={coverUploading}
-          className="h-[50px] w-full"
-        >
-          {isSubmitting
-            ? isEdit
-              ? t("saving")
-              : t("publishing")
-            : isEdit
-              ? t("saveChanges")
-              : t("publish")}
-        </Button>
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <Button
+            type="button"
+            variant="secondary"
+            loading={isSubmitting && submitMode === "draft"}
+            disabled={coverUploading || isSubmitting}
+            onClick={() => {
+              setSubmitMode("draft");
+              void handleSubmit((values) => onValid(values, true))();
+            }}
+            className="h-[50px] sm:flex-1"
+          >
+            {isSubmitting && submitMode === "draft"
+              ? t("savingDraft")
+              : t("saveDraft")}
+          </Button>
+          <Button
+            type="submit"
+            loading={isSubmitting && submitMode === "publish"}
+            disabled={coverUploading || isSubmitting}
+            onClick={() => setSubmitMode("publish")}
+            className="h-[50px] sm:flex-[2]"
+          >
+            {isSubmitting && submitMode === "publish"
+              ? isEdit
+                ? t("saving")
+                : t("publishing")
+              : isEdit
+                ? t("saveChanges")
+                : t("publish")}
+          </Button>
+        </div>
       </form>
     </FormProvider>
   );
