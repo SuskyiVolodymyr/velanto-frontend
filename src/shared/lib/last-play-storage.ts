@@ -16,6 +16,36 @@ function lastPlayStorageKey(packId: string): string {
  * reload loses it, which is the honest limit of a client-side gate.
  */
 const memoryFallback = new Map<string, RecordedPick[]>();
+const playIdMemoryFallback = new Map<string, string>();
+
+function lastPlayIdStorageKey(packId: string): string {
+  return `velanto:last-play-id:${packId}`;
+}
+
+/**
+ * Records the server-persisted id of this browser's last play of `packId`,
+ * stored once its record request resolves (the picks are stored immediately;
+ * see writeLastPlayPicks). Lets the result screen build a short `?play=<id>`
+ * share link instead of encoding the whole picks payload.
+ */
+export function writeLastPlayId(packId: string, playId: string): void {
+  playIdMemoryFallback.set(packId, playId);
+  try {
+    sessionStorage.setItem(lastPlayIdStorageKey(packId), playId);
+  } catch {
+    // Storage blocked/full — the in-memory copy still serves this session.
+  }
+}
+
+export function readLastPlayId(packId: string): string | null {
+  try {
+    const raw = sessionStorage.getItem(lastPlayIdStorageKey(packId));
+    if (raw) return raw;
+  } catch {
+    // fall through to the in-memory copy
+  }
+  return playIdMemoryFallback.get(packId) ?? null;
+}
 
 /**
  * Records that this browser just finished `packId`. Called as soon as the play

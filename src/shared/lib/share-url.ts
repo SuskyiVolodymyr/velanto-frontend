@@ -43,14 +43,19 @@ export function decodePicks(code: string): RecordedPick[] | null {
 }
 
 /**
- * Builds an absolute share URL from the current origin, appending encoded picks
- * when present. Reads `window.location.origin`, so this is client-only — it must
- * not be called from a Server Component.
+ * Builds an absolute share URL from the current origin. Prefers a short
+ * `?play=<id>` reference to the server-persisted play (constant length,
+ * regardless of pack size); falls back to the legacy `?p=<encoded picks>` when
+ * the play id isn't known yet (its record request hasn't resolved). Reads
+ * `window.location.origin`, so this is client-only — it must not be called from
+ * a Server Component.
  */
 export function buildShareUrl(
   path: string,
   picks?: RecordedPick[] | null,
+  playId?: string | null,
 ): string {
   const base = `${window.location.origin}${path}`;
+  if (playId) return `${base}?play=${encodeURIComponent(playId)}`;
   return picks && picks.length > 0 ? `${base}?p=${encodePicks(picks)}` : base;
 }
