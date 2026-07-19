@@ -7,10 +7,14 @@ import {
   useMutation,
   useQuery,
   useQueryClient,
+  type InfiniteData,
 } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { notificationsClient } from "@/src/shared/lib/notifications-client";
+import type { NotificationList } from "@/src/shared/types/notification";
+
+const LIST_KEY = ["notifications-list"] as const;
 
 const POLL_INTERVAL_MS = 30_000;
 const PAGE_SIZE = 20;
@@ -19,7 +23,7 @@ const UNREAD_KEY = ["notifications-unread"] as const;
 
 function notificationsListQueryOptions() {
   return infiniteQueryOptions({
-    queryKey: ["notifications-list"] as const,
+    queryKey: LIST_KEY,
     queryFn: ({ pageParam }) =>
       notificationsClient.list({ page: pageParam, limit: PAGE_SIZE }),
     // Don't refetch the open drawer on window focus: the fetched rows carry the
@@ -129,10 +133,35 @@ export function useNotifications({ alwaysOpen = false } = {}) {
   const { mutate: markAllReadMutate } = markAllRead;
 
   // Once the list has loaded (drawer open, or the full page), mark everything
-  // read and clear the bell's dot.
+  // read and clear the bell's dot. This clears the SERVER state + the polled
+  // count, but deliberately leaves the fetched rows' `readAt` untouched so the
+  // "New" group stays visible for this view (you can still see what just came in).
   useEffect(() => {
     if (active && listLoaded) markAllReadMutate();
   }, [active, listLoaded, markAllReadMutate]);
+
+  // The explicit "Mark all read" control: server mark + clear the dot, AND
+  // collapse the New group in this view by patching the fetched rows' readAt, so
+  // clicking it visibly moves everything into "Earlier".
+  const markAllReadNow = () => {
+    markAllReadMutate();
+    const now = new Date().toISOString();
+    queryClient.setQueryData<InfiniteData<NotificationList, number>>(
+      LIST_KEY,
+      (data) =>
+        data
+          ? {
+              ...data,
+              pages: data.pages.map((page) => ({
+                ...page,
+                items: page.items.map((item) =>
+                  item.readAt ? item : { ...item, readAt: now },
+                ),
+              })),
+            }
+          : data,
+    );
+  };
 
   return {
     authenticated,
@@ -143,6 +172,9 @@ export function useNotifications({ alwaysOpen = false } = {}) {
     triggerRef,
     notifications,
     total,
+    /** Unread rows still shown in the "New" group (drives the header pill). */
+    newCount: notifications.filter((item) => item.readAt === null).length,
+    markAllRead: markAllReadNow,
     listLoading: listQuery.isLoading,
     listError:
       !listLoaded && listQuery.isError ? (listQuery.error as Error) : null,

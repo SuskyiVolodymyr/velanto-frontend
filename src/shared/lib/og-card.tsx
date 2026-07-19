@@ -48,7 +48,12 @@ export function packOgCard({
         width: "100%",
         height: "100%",
         background: BG,
-        backgroundImage: imageSrc ? undefined : ACCENT_GLOW,
+        // Always a concrete value — NEVER `undefined`. Satori calls `.trim()` on
+        // every style value, so a key that is present-but-undefined 500s the
+        // whole card (Sentry VELANTO-FRONTEND-B). The glow is harmless under a
+        // cover: the cover's own full-bleed <img> sits on top, so it only ever
+        // shows on the text-only card.
+        backgroundImage: ACCENT_GLOW,
       }}
     >
       {imageSrc ? (
