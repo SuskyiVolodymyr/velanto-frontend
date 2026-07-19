@@ -13,6 +13,8 @@ export interface Comment {
    */
   authorRole?: Role;
   authorTrusted?: boolean;
+  /** Author avatar storage key for the mini-avatar; null/absent → initial. */
+  authorAvatarKey?: string | null;
   /**
    * Two-level threading: `null`/absent = a root comment, a string = a reply to
    * that root. Roots carry their replies (oldest-first) and a `replyCount`;
