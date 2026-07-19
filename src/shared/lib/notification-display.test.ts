@@ -23,7 +23,9 @@ describe("describeNotification", () => {
     );
     expect(result).toEqual({
       messageKey: "newFollower",
+      kindKey: "kindFollower",
       values: { username: "alice" },
+      excerpt: null,
       href: "/users/u1",
     });
   });
@@ -41,7 +43,9 @@ describe("describeNotification", () => {
     );
     expect(result).toEqual({
       messageKey: "newPack",
+      kindKey: "kindNewPack",
       values: { username: "bob", packTitle: "Anime OSTs" },
+      excerpt: null,
       href: "/packs/p1",
     });
   });
@@ -60,9 +64,41 @@ describe("describeNotification", () => {
     );
     expect(result).toEqual({
       messageKey: "newComment",
+      kindKey: "kindComment",
       values: { username: "carol", packTitle: "Anime OSTs" },
+      excerpt: null,
       href: "/packs/p1",
     });
+  });
+
+  it("carries a trimmed comment body as the excerpt when present", () => {
+    const result = describeNotification(
+      makeNotification({
+        type: "new_comment",
+        payload: {
+          packId: "p1",
+          packTitle: "Anime OSTs",
+          commenterUsername: "carol",
+          excerpt: "  this tier order is perfect  ",
+        },
+      }),
+    );
+    expect(result.excerpt).toBe("this tier order is perfect");
+  });
+
+  it("null-outs a blank/whitespace-only excerpt so no empty quote renders", () => {
+    const result = describeNotification(
+      makeNotification({
+        type: "new_comment",
+        payload: {
+          packId: "p1",
+          packTitle: "Anime OSTs",
+          commenterUsername: "carol",
+          excerpt: "   ",
+        },
+      }),
+    );
+    expect(result.excerpt).toBeNull();
   });
 
   it("formats pack_deleted_warning with no link", () => {
@@ -74,7 +110,9 @@ describe("describeNotification", () => {
     );
     expect(result).toEqual({
       messageKey: "packDeleted",
+      kindKey: "kindModeration",
       values: { packTitle: "Old Pack" },
+      excerpt: null,
       href: null,
     });
   });
@@ -93,7 +131,9 @@ describe("describeNotification", () => {
     );
     expect(result).toEqual({
       messageKey: "commentMention",
+      kindKey: "kindMention",
       values: { username: "dave", packTitle: "Anime OSTs" },
+      excerpt: null,
       href: "/packs/p1",
     });
   });
@@ -109,7 +149,9 @@ describe("describeNotification", () => {
     );
     expect(result).toEqual({
       messageKey: "generic",
+      kindKey: "kindGeneric",
       values: {},
+      excerpt: null,
       href: null,
     });
   });

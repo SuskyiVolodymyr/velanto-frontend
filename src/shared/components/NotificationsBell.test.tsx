@@ -125,9 +125,7 @@ describe("NotificationsBell", () => {
     await userEvent.click(
       screen.getByRole("button", { name: /notifications/i }),
     );
-    await waitFor(() =>
-      expect(screen.getByText("bob started following you")).toBeInTheDocument(),
-    );
+    await waitFor(() => expect(screen.getByText("@bob")).toBeInTheDocument());
     await waitFor(() => expect(mockedClient.markAllRead).toHaveBeenCalled());
   });
 
@@ -211,16 +209,10 @@ describe("NotificationsBell", () => {
     await userEvent.click(
       screen.getByRole("button", { name: /notifications/i }),
     );
-    await waitFor(() =>
-      expect(screen.getByText("bob started following you")).toBeInTheDocument(),
-    );
-    await userEvent.click(screen.getByRole("button", { name: /load more/i }));
-    await waitFor(() =>
-      expect(
-        screen.getByText("carol started following you"),
-      ).toBeInTheDocument(),
-    );
-    expect(screen.getByText("bob started following you")).toBeInTheDocument();
+    await waitFor(() => expect(screen.getByText("@bob")).toBeInTheDocument());
+    await userEvent.click(screen.getByRole("button", { name: /load older/i }));
+    await waitFor(() => expect(screen.getByText("@carol")).toBeInTheDocument());
+    expect(screen.getByText("@bob")).toBeInTheDocument();
   });
 
   it("does not duplicate a row the next page re-returns", async () => {
@@ -248,16 +240,10 @@ describe("NotificationsBell", () => {
     await userEvent.click(
       screen.getByRole("button", { name: /notifications/i }),
     );
-    await waitFor(() =>
-      expect(screen.getByText("bob started following you")).toBeInTheDocument(),
-    );
-    await userEvent.click(screen.getByRole("button", { name: /load more/i }));
-    await waitFor(() =>
-      expect(
-        screen.getByText("carol started following you"),
-      ).toBeInTheDocument(),
-    );
-    expect(screen.getAllByText("bob started following you")).toHaveLength(1);
+    await waitFor(() => expect(screen.getByText("@bob")).toBeInTheDocument());
+    await userEvent.click(screen.getByRole("button", { name: /load older/i }));
+    await waitFor(() => expect(screen.getByText("@carol")).toBeInTheDocument());
+    expect(screen.getAllByText("@bob")).toHaveLength(1);
   });
 
   it("shows a load-more error and re-enables the button on failure, without losing the loaded rows", async () => {
@@ -274,18 +260,16 @@ describe("NotificationsBell", () => {
     await userEvent.click(
       screen.getByRole("button", { name: /notifications/i }),
     );
-    await waitFor(() =>
-      expect(screen.getByText("bob started following you")).toBeInTheDocument(),
-    );
-    await userEvent.click(screen.getByRole("button", { name: /load more/i }));
+    await waitFor(() => expect(screen.getByText("@bob")).toBeInTheDocument());
+    await userEvent.click(screen.getByRole("button", { name: /load older/i }));
     await waitFor(() =>
       expect(
         screen.getByText(/couldn't load more notifications/i),
       ).toBeInTheDocument(),
     );
-    expect(screen.getByText("bob started following you")).toBeInTheDocument();
+    expect(screen.getByText("@bob")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /load more/i }),
+      screen.getByRole("button", { name: /load older/i }),
     ).not.toBeDisabled();
   });
 

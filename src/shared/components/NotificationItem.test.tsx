@@ -31,7 +31,7 @@ describe("NotificationItem", () => {
       <NotificationItem notification={notification} onNavigate={() => {}} />,
     );
 
-    expect(screen.getByText("bob started following you")).toBeInTheDocument();
+    expect(screen.getByText("@bob")).toBeInTheDocument();
     expect(screen.getByTestId("notification-avatar")).toHaveTextContent("B");
     expect(screen.getByTestId("notification-unread")).toBeInTheDocument();
     expect(screen.getByRole("link")).toHaveAttribute("href", "/users/u2");
@@ -98,6 +98,41 @@ describe("NotificationItem", () => {
 
     expect(screen.getByTestId("notification-avatar")).toHaveTextContent("S");
     expect(screen.getByRole("link")).toHaveAttribute("href", "/packs/p1");
+  });
+
+  it("shows the comment excerpt as a snippet, the tone-coloured pack, and a type label", () => {
+    const notification = {
+      ...base,
+      type: "new_comment",
+      payload: {
+        packId: "p1",
+        packTitle: "My Pack",
+        commenterUsername: "sam",
+        excerpt: "this tier order is perfect",
+      },
+    } as Notification;
+    renderItem(
+      <NotificationItem notification={notification} onNavigate={() => {}} />,
+    );
+
+    expect(screen.getByText(/this tier order is perfect/)).toBeInTheDocument();
+    // The pack title is rendered (tone-coloured), and the "Comment" kind label.
+    expect(screen.getByText("My Pack")).toBeInTheDocument();
+    expect(screen.getByText("Comment")).toBeInTheDocument();
+  });
+
+  it("renders no snippet when a comment notification carries no excerpt", () => {
+    const notification = {
+      ...base,
+      type: "new_comment",
+      payload: { packId: "p1", packTitle: "My Pack", commenterUsername: "sam" },
+    } as Notification;
+    renderItem(
+      <NotificationItem notification={notification} onNavigate={() => {}} />,
+    );
+
+    // Only the message + meta; no quoted snippet text present.
+    expect(screen.queryByText(/“|”/)).not.toBeInTheDocument();
   });
 
   it("renders an unrecognised (future) type as a neutral icon tile without crashing", () => {
