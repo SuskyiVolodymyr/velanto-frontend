@@ -78,4 +78,19 @@ describe("BrowseTabs", () => {
     expect(screen.getByText("MY_PACKS_PANEL")).toBeInTheDocument();
     expect(screen.queryByText("PACKS_PANEL")).not.toBeInTheDocument();
   });
+
+  it("moves between tabs with the arrow keys and exposes a labelled tabpanel", async () => {
+    mockSignedIn();
+    renderTabs();
+
+    const packsTab = await screen.findByRole("tab", { name: "Packs" });
+    packsTab.focus();
+    await userEvent.keyboard("{ArrowRight}");
+
+    const mineTab = screen.getByRole("tab", { name: "My packs" });
+    expect(mineTab).toHaveAttribute("aria-selected", "true");
+    const panel = screen.getByRole("tabpanel");
+    expect(panel).toHaveAttribute("aria-labelledby", mineTab.id);
+    expect(screen.getByText("MY_PACKS_PANEL")).toBeInTheDocument();
+  });
 });
