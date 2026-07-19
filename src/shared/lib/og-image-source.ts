@@ -1,4 +1,3 @@
-import sharp from "sharp";
 import { mediaUrl } from "@/src/shared/lib/media-url";
 
 /** The card background (`BG` in og-card.tsx), as channels sharp can flatten to. */
@@ -46,11 +45,25 @@ export interface OgImageFit {
  * alpha; a transparent avatar then reads as sitting directly on the card instead
  * of inside the black box a naive JPEG conversion would leave.
  *
+ * 🔒 sharp is imported LAZILY, inside the try, and MUST stay that way. It's a
+ * native module and its top-level import failed to load inside the bundled OG
+ * serverless function on Vercel — and a failed module import 500s the route
+ * before any try/catch can run (the throw is at module-eval, not at the call).
+ * Deferring the import into the guarded block means a sharp that can't load
+ * degrades to the text-only card (undefined) instead of 500'ing the whole route.
+ *
+ * This pairs with the `serverExternalPackages` + route tracing in
+ * next.config.ts — don't remove one without the other. Both landed as
+ * production hotfixes straight to main, so a branch cut before them will look
+ * "cleaner" with a static import and will reintroduce the 500. This rewrite hit
+ * exactly that: the develop→main merge conflicted here, which is the only
+ * reason it was caught before deploying.
+ *
  * Returns undefined (→ render without the image) when there's no key, when the
  * media base URL isn't configured so `mediaUrl` yields a non-absolute path
- * Satori couldn't load anyway, when the fetch fails or is non-OK, or when the
- * bytes can't be decoded — every failure degrades to the text-only card, never a
- * 500.
+ * Satori couldn't load anyway, when the fetch fails or is non-OK, when sharp
+ * can't load, or when the bytes can't be decoded — every failure degrades to the
+ * text-only card, never a 500.
  */
 export async function ogImageSourceFromKey(
   key: string | null | undefined,
@@ -63,6 +76,10 @@ export async function ogImageSourceFromKey(
     const res = await fetch(url);
     if (!res.ok) return undefined;
     const input = Buffer.from(await res.arrayBuffer());
+    // Lazy import from the production hotfix, kept: a top-level `import sharp`
+    // throws at module-eval inside the bundled OG lambda, before this try/catch
+    // can run, and 500s the route.
+    const { default: sharp } = await import("sharp");
     const jpeg = await sharp(input)
       .resize(fit.width, fit.height, {
         fit: "cover",
