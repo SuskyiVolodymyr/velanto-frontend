@@ -10,6 +10,7 @@ import { PackStats } from "@/src/features/pack/PackStats";
 import { PackCreatorCard } from "@/src/features/pack/PackCreatorCard";
 import { PackPlayButton } from "@/src/features/pack/PackPlayButton";
 import { PackOwnerActions } from "@/src/features/pack/PackOwnerActions";
+import { PackOwnerStatusBadge } from "@/src/features/pack/PackOwnerStatusBadge";
 import { CommentSection } from "@/src/features/pack/CommentSection";
 import { VoteButtons } from "@/src/features/pack/VoteButtons";
 import { ShareButton } from "@/src/features/share/ShareButton";
@@ -49,6 +50,11 @@ export function PackDetailScreen({
             (secondary) vote control on the right. */}
         <section className="flex flex-wrap gap-10">
           <div className="flex min-w-[280px] flex-1 basis-[420px] flex-col gap-5">
+            <PackOwnerStatusBadge
+              packAuthorId={pack.authorId}
+              status={pack.status}
+            />
+
             {pack.description && (
               <Text
                 variant="secondary"
