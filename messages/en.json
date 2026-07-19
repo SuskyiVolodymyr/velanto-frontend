@@ -1395,5 +1395,14 @@
     "empty": "You haven't created any packs yet.",
     "emptyFiltered": "No packs match this filter.",
     "all": "All"
+  },
+  "people": {
+    "tab": "People",
+    "searchLabel": "Search people",
+    "searchPlaceholder": "Search by username",
+    "hint": "Type at least 2 characters to search.",
+    "loading": "Searching…",
+    "error": "Couldn't search for people. Try again.",
+    "empty": "No people found."
   }
 }

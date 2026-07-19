@@ -9,6 +9,7 @@ import {
 } from "@tanstack/react-query";
 import {
   usersClient,
+  type FollowUser,
   type FollowUserPage,
 } from "@/src/shared/lib/users-client";
 
@@ -48,10 +49,11 @@ export function useFollowList(authorId: string, kind: FollowListKind) {
 }
 
 /**
- * Follow/unfollow a user shown in a follow list. On success it patches that
- * user's `isFollowedByMe` across every cached follow-list (both tabs), so the
- * row's button reflects the new state without a refetch. One instance per row,
- * so each row has its own pending state.
+ * Follow/unfollow a user shown in a follow list OR the people-search results.
+ * On success it patches that user's `isFollowedByMe` in every cached
+ * follow-list (infinite, both tabs) AND every cached user-search page (flat), so
+ * the row's button reflects the new state without a refetch. One instance per
+ * row, so each row has its own pending state. Reused by `FollowUserRow`.
  */
 export function useFollowListRowMutation() {
   const queryClient = useQueryClient();
@@ -67,6 +69,13 @@ export function useFollowListRowMutation() {
         ? usersClient.unfollow(userId)
         : usersClient.follow(userId),
     onSuccess: (_result, { userId, currentlyFollowing }) => {
+      const nextFollowed = !currentlyFollowing;
+      const patchItems = (items: FollowUser[]) =>
+        items.map((item) =>
+          item.id === userId ? { ...item, isFollowedByMe: nextFollowed } : item,
+        );
+
+      // Follow lists are infinite (paged) queries.
       queryClient.setQueriesData<InfiniteData<FollowUserPage, number>>(
         { queryKey: ["follow-list"] },
         (data) =>
@@ -75,16 +84,17 @@ export function useFollowListRowMutation() {
                 ...data,
                 pages: data.pages.map((page) => ({
                   ...page,
-                  items: page.items.map((item) =>
-                    item.id === userId
-                      ? { ...item, isFollowedByMe: !currentlyFollowing }
-                      : item,
-                  ),
+                  items: patchItems(page.items),
                 })),
               }
             : data,
       );
-      // The follow-list patch above only fixes the modal's own rows. The target
+      // People search is a flat single-page query keyed ["user-search", q, page].
+      queryClient.setQueriesData<FollowUserPage>(
+        { queryKey: ["user-search"] },
+        (data) => (data ? { ...data, items: patchItems(data.items) } : data),
+      );
+      // The cache patches above only fix rows already on screen. The target
       // user's profile reads its follow state from the ["author", id] query, so
       // invalidate it too — otherwise navigating to that profile shows a stale
       // "Follow" until a hard refresh (the SSR seed is anonymous and only the

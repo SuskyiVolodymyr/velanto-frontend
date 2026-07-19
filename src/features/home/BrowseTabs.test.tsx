@@ -16,12 +16,15 @@ vi.mock("@/src/shared/lib/auth-client", () => ({
   },
 }));
 
-// Stub the two panels so the tab test doesn't drag in their data fetching.
+// Stub the panels so the tab test doesn't drag in their data fetching.
 vi.mock("@/src/features/home/HomeFeed", () => ({
   HomeFeed: () => <div>PACKS_PANEL</div>,
 }));
 vi.mock("@/src/features/home/MyPacksFeed", () => ({
   MyPacksFeed: () => <div>MY_PACKS_PANEL</div>,
+}));
+vi.mock("@/src/features/home/PeopleFeed", () => ({
+  PeopleFeed: () => <div>PEOPLE_PANEL</div>,
 }));
 
 function mockSignedIn() {
@@ -54,16 +57,28 @@ beforeEach(() => {
 });
 
 describe("BrowseTabs", () => {
-  it("hides the My packs tab from signed-out visitors and shows the packs panel", async () => {
+  it("shows Packs and People to signed-out visitors but hides My packs", async () => {
     mockSignedOut();
     renderTabs();
 
     await waitFor(() => expect(authClient.refresh).toHaveBeenCalled());
     expect(screen.getByRole("tab", { name: "Packs" })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: "People" })).toBeInTheDocument();
     expect(
       screen.queryByRole("tab", { name: "My packs" }),
     ).not.toBeInTheDocument();
     expect(screen.getByText("PACKS_PANEL")).toBeInTheDocument();
+  });
+
+  it("switches to the People search panel on click", async () => {
+    mockSignedOut();
+    renderTabs();
+
+    const peopleTab = await screen.findByRole("tab", { name: "People" });
+    await userEvent.click(peopleTab);
+
+    expect(screen.getByText("PEOPLE_PANEL")).toBeInTheDocument();
+    expect(screen.queryByText("PACKS_PANEL")).not.toBeInTheDocument();
   });
 
   it("shows the My packs tab to a signed-in user and switches to it on click", async () => {
@@ -87,10 +102,10 @@ describe("BrowseTabs", () => {
     packsTab.focus();
     await userEvent.keyboard("{ArrowRight}");
 
-    const mineTab = screen.getByRole("tab", { name: "My packs" });
-    expect(mineTab).toHaveAttribute("aria-selected", "true");
+    const peopleTab = screen.getByRole("tab", { name: "People" });
+    expect(peopleTab).toHaveAttribute("aria-selected", "true");
     const panel = screen.getByRole("tabpanel");
-    expect(panel).toHaveAttribute("aria-labelledby", mineTab.id);
-    expect(screen.getByText("MY_PACKS_PANEL")).toBeInTheDocument();
+    expect(panel).toHaveAttribute("aria-labelledby", peopleTab.id);
+    expect(screen.getByText("PEOPLE_PANEL")).toBeInTheDocument();
   });
 });
