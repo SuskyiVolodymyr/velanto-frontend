@@ -1,5 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { readLastPlayPicks, writeLastPlayPicks } from "./last-play-storage";
+import {
+  readLastPlayPicks,
+  writeLastPlayPicks,
+  readLastPlayId,
+  writeLastPlayId,
+} from "./last-play-storage";
 
 const PICKS = [{ roundIndex: 0, groupId: "g1", itemId: "i1" }];
 
@@ -57,6 +62,26 @@ describe("last-play storage", () => {
 
       writeLastPlayPicks("pack-a", PICKS);
       expect(readLastPlayPicks("pack-b")).toBeNull();
+    });
+  });
+
+  describe("last-play id", () => {
+    it("round-trips the play id through sessionStorage", () => {
+      writeLastPlayId("pack-id-1", "play-abc");
+      expect(readLastPlayId("pack-id-1")).toBe("play-abc");
+    });
+
+    it("returns null for a pack with no recorded play id", () => {
+      expect(readLastPlayId("pack-id-none")).toBeNull();
+    });
+
+    it("falls back to memory when sessionStorage write throws", () => {
+      vi.spyOn(Storage.prototype, "setItem").mockImplementation(() => {
+        throw new DOMException("QuotaExceededError");
+      });
+
+      writeLastPlayId("pack-id-mem", "play-xyz");
+      expect(readLastPlayId("pack-id-mem")).toBe("play-xyz");
     });
   });
 });

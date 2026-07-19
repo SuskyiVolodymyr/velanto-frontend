@@ -25,7 +25,12 @@ describe("domain const arrays", () => {
   });
 
   it("PACK_STATUSES", () => {
-    expect([...PACK_STATUSES]).toEqual(["pending", "approved", "rejected"]);
+    expect([...PACK_STATUSES]).toEqual([
+      "draft",
+      "pending",
+      "approved",
+      "rejected",
+    ]);
   });
 
   it("FEEDBACK_TOPICS", () => {

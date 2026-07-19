@@ -201,6 +201,8 @@
     "staffNonStaff": "غير الطاقم"
   },
   "notifications": {
+    "groupNew": "جديد",
+    "groupEarlier": "أقدم",
     "title": "الإشعارات",
     "empty": "لا توجد إشعارات بعد.",
     "loadError": "تعذّر تحميل الإشعارات.",
@@ -1014,6 +1016,8 @@
   "create": {
     "loginRequired": "يجب تسجيل الدخول لإنشاء حزمة.",
     "logIn": "تسجيل الدخول",
+    "saveDraft": "حفظ كمسودة",
+    "savingDraft": "جارٍ حفظ المسودة…",
     "publish": "نشر",
     "publishing": "جارٍ النشر…",
     "basicsHeading": "الأساسيات",
@@ -1108,7 +1112,9 @@
     "versusDrawHint": "يسحب {a} مقابل {b}",
     "versusSamePoolNote": "يستخدم الجانبان المجموعة نفسها — لن تتكرر العناصر.",
     "versusSetAll": "تطبيق على الكل",
-    "versusSetAllLabel": "عناصر لكل جانب، لكل الجولات"
+    "versusSetAllLabel": "عناصر لكل جانب، لكل الجولات",
+    "itemCropTitle": "ضبط اقتصاص الصورة",
+    "adjustImageCrop": "ضبط الاقتصاص"
   },
   "profile": {
     "loginRequiredView": "يجب تسجيل الدخول لعرض ملفك الشخصي.",
@@ -1190,6 +1196,7 @@
     "updates": "التحديثات"
   },
   "status": {
+    "packDraft": "مسودة",
     "packPending": "قيد المراجعة",
     "packApproved": "مقبولة",
     "packRejected": "مرفوضة",
@@ -1381,5 +1388,24 @@
     "heading": "ما الجديد",
     "intro": "أحدث الميزات والإصلاحات والتحسينات — الأحدث أولًا.",
     "empty": "لا توجد تحديثات بعد — عُد قريبًا."
+  },
+  "myPacks": {
+    "packsTab": "الحِزَم",
+    "mineTab": "حِزَمي",
+    "loginRequired": "سجّل الدخول لرؤية حزمك.",
+    "loading": "جارٍ تحميل حزمك…",
+    "error": "تعذّر تحميل حزمك.",
+    "empty": "لم تُنشئ أي حزمة بعد.",
+    "emptyFiltered": "لا توجد حزم تطابق هذا المرشّح.",
+    "all": "الكل"
+  },
+  "people": {
+    "tab": "الأشخاص",
+    "searchLabel": "البحث عن أشخاص",
+    "searchPlaceholder": "ابحث باسم المستخدم",
+    "hint": "اكتب حرفين على الأقل للبحث.",
+    "loading": "جارٍ البحث…",
+    "error": "تعذّر البحث عن أشخاص. حاول مرة أخرى.",
+    "empty": "لم يُعثر على أحد."
   }
 }

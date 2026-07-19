@@ -10,6 +10,7 @@ import { Button } from "@/src/shared/components/Button";
 import { Spinner } from "@/src/shared/components/Spinner";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { Username } from "@/src/shared/components/Username";
+import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { Tooltip } from "@/src/shared/components/Tooltip";
 import { VoteControl } from "@/src/shared/components/VoteControl";
 import { useAuth } from "@/src/shared/lib/auth-context";
@@ -58,12 +59,20 @@ function CommentView({
           prefetch={false}
         >
           {({ triggerProps }) => (
+            // One identity Hidden wraps the whole avatar+name block so streamer
+            // mode redacts them together behind a single reveal (not two
+            // buttons crammed onto a compact comment row).
             <Hidden kind="name" id={comment.authorId}>
               <Link
                 href={`/users/${comment.authorId}`}
                 {...triggerProps}
-                className="text-sm hover:underline"
+                className="flex items-center gap-2 text-sm hover:underline"
               >
+                <UserAvatar
+                  username={comment.authorUsername}
+                  avatarKey={comment.authorAvatarKey}
+                  className="h-7 w-7 flex-none rounded-full border border-border bg-surface text-[11px] text-foreground-secondary"
+                />
                 <Username
                   username={comment.authorUsername}
                   role={comment.authorRole}
@@ -139,7 +148,10 @@ function CommentsSkeleton({ label }: { label: string }) {
           aria-hidden
           className="rounded-[12px] border border-border p-4"
         >
-          <Skeleton className="h-4 w-28" />
+          <div className="flex items-center gap-2">
+            <Skeleton className="h-7 w-7 rounded-full" />
+            <Skeleton className="h-4 w-28" />
+          </div>
           <div className="mt-2.5 flex flex-col gap-1.5">
             <Skeleton className="h-3 w-full" />
             <Skeleton className="h-3 w-4/5" />

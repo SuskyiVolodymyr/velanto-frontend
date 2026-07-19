@@ -27,6 +27,11 @@ vi.mock("@/src/features/pack/PackBannerAuthor", () => ({
 vi.mock("@/src/features/pack/PackOwnerActions", () => ({
   PackOwnerActions: () => <div>PackOwnerActions</div>,
 }));
+// Auth-context client island (see PackOwnerStatusBadge.test); stub so this
+// fallback test doesn't need an AuthProvider.
+vi.mock("@/src/features/pack/PackOwnerStatusBadge", () => ({
+  PackOwnerStatusBadge: () => null,
+}));
 
 const mockedUsePackFallback = vi.mocked(usePackFallback);
 const mockedNotFound = vi.mocked(notFound);

@@ -39,6 +39,12 @@ vi.mock("@/src/features/pack/PackOwnerActions", () => ({
   }) => <div>{`PackOwnerActions:${packId}:${packAuthorId}`}</div>,
 }));
 
+// Also an auth-context client island (see PackOwnerStatusBadge.test); stub it so
+// this screen test doesn't need an AuthProvider.
+vi.mock("@/src/features/pack/PackOwnerStatusBadge", () => ({
+  PackOwnerStatusBadge: () => null,
+}));
+
 const BASE_PACK: Pack = {
   id: "p1",
   title: "Best Anime Openings",

@@ -107,4 +107,16 @@ describe("share-url", () => {
     expect(buildShareUrl("/packs/p1", null)).not.toContain("?p=");
     expect(buildShareUrl("/packs/p1")).not.toContain("?p=");
   });
+
+  it("buildShareUrl prefers a short ?play= link over the ?p= payload", () => {
+    const picks = [{ roundIndex: 0, groupId: "g1", itemId: "i1" }];
+    const url = buildShareUrl("/packs/p1/result", picks, "play-123");
+    expect(url).toContain("/packs/p1/result?play=play-123");
+    expect(url).not.toContain("?p=");
+  });
+
+  it("buildShareUrl falls back to ?p= when no play id is given", () => {
+    const picks = [{ roundIndex: 0, groupId: "g1", itemId: "i1" }];
+    expect(buildShareUrl("/packs/p1/result", picks, null)).toContain("?p=");
+  });
 });

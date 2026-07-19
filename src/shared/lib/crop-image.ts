@@ -37,6 +37,13 @@ export const MAX_AVATAR_CROP = 512;
 export const MAX_COVER_CROP = 1200;
 
 /**
+ * Cap an author-cropped pack item image at 1280 px on its long edge — a 16:9
+ * crop then exports at up to 1280×720, plenty for the play-time `ImageCard`
+ * while staying well under 1 MB as WebP.
+ */
+export const MAX_ITEM_CROP = 1280;
+
+/**
  * Turn a crop area into a concrete draw plan: whole-pixel source rectangle plus
  * the output dimensions, scaled so the long edge fits `max` (never upscaling)
  * while preserving the crop's aspect ratio. Pure — the geometry is the part

@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Text } from "@/src/shared/components/Text";
-import { HomeFeed } from "@/src/features/home/HomeFeed";
+import { BrowseTabs } from "@/src/features/home/BrowseTabs";
 import { getHomeFeedServer } from "@/src/features/home/get-home-feed-server";
 
 export default async function Home() {
@@ -17,7 +17,7 @@ export default async function Home() {
       <Text variant="secondary" className="mb-8 max-w-lg">
         {t("subtitle")}
       </Text>
-      <HomeFeed initialFeed={initialFeed ?? undefined} />
+      <BrowseTabs initialFeed={initialFeed ?? undefined} />
     </main>
   );
 }

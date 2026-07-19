@@ -100,7 +100,12 @@ export const PACK_TAGS = [
 
 export type PackTag = (typeof PACK_TAGS)[number];
 
-export const PACK_STATUSES = ["pending", "approved", "rejected"] as const;
+export const PACK_STATUSES = [
+  "draft",
+  "pending",
+  "approved",
+  "rejected",
+] as const;
 
 export type PackStatus = (typeof PACK_STATUSES)[number];
 

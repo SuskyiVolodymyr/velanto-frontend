@@ -3,7 +3,10 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { playsClient } from "@/src/shared/lib/plays-client";
-import { writeLastPlayPicks } from "@/src/shared/lib/last-play-storage";
+import {
+  writeLastPlayPicks,
+  writeLastPlayId,
+} from "@/src/shared/lib/last-play-storage";
 import { resolveRoundSelections } from "@/src/features/play/round-sampling";
 import type { Item, Pack } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
@@ -234,6 +237,11 @@ export function usePlaySession(pack: Pack): PlaySession {
     writeLastPlayPicks(pack.id, recordedPicks);
     playsClient
       .record(pack.id, { picks: recordedPicks })
+      // Stash the play id so the result screen can build a short `?play=` share
+      // link. Best-effort: a failed record just falls back to the `?p=` payload.
+      .then(({ id }) => {
+        if (id) writeLastPlayId(pack.id, id);
+      })
       .catch(() => undefined)
       .finally(() => setRecordSettled(true));
   }, [isFinished, pack.id, picks, status]);

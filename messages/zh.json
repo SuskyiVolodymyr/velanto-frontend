@@ -201,6 +201,8 @@
     "staffNonStaff": "非员工"
   },
   "notifications": {
+    "groupNew": "最新",
+    "groupEarlier": "更早",
     "title": "通知",
     "empty": "暂无通知。",
     "loadError": "无法加载通知。",
@@ -1014,6 +1016,8 @@
   "create": {
     "loginRequired": "你需要先登录才能创建题包。",
     "logIn": "登录",
+    "saveDraft": "保存草稿",
+    "savingDraft": "正在保存草稿…",
     "publish": "发布",
     "publishing": "发布中…",
     "basicsHeading": "基本信息",
@@ -1108,7 +1112,9 @@
     "versusDrawHint": "抽取 {a} 对 {b}",
     "versusSamePoolNote": "两方使用同一池——条目不会重复。",
     "versusSetAll": "应用到全部",
-    "versusSetAllLabel": "每方条目数，所有轮次"
+    "versusSetAllLabel": "每方条目数，所有轮次",
+    "itemCropTitle": "调整图片裁剪",
+    "adjustImageCrop": "调整裁剪"
   },
   "profile": {
     "loginRequiredView": "你需要先登录才能查看个人资料。",
@@ -1190,6 +1196,7 @@
     "updates": "更新"
   },
   "status": {
+    "packDraft": "草稿",
     "packPending": "待审核",
     "packApproved": "已通过",
     "packRejected": "已拒绝",
@@ -1381,5 +1388,24 @@
     "heading": "最新动态",
     "intro": "最新的功能、修复和改进——最新的排在前面。",
     "empty": "暂无更新，敬请期待。"
+  },
+  "myPacks": {
+    "packsTab": "题包",
+    "mineTab": "我的题包",
+    "loginRequired": "登录后即可查看你的题包。",
+    "loading": "正在加载你的题包…",
+    "error": "无法加载你的题包。",
+    "empty": "你还没有创建任何题包。",
+    "emptyFiltered": "没有符合此筛选条件的题包。",
+    "all": "全部"
+  },
+  "people": {
+    "tab": "用户",
+    "searchLabel": "搜索用户",
+    "searchPlaceholder": "按用户名搜索",
+    "hint": "请输入至少 2 个字符进行搜索。",
+    "loading": "正在搜索…",
+    "error": "搜索用户失败，请重试。",
+    "empty": "未找到用户。"
   }
 }
