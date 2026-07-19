@@ -27,6 +27,19 @@ export interface UpdateEntry {
  */
 export const UPDATES: UpdateEntry[] = [
   {
+    date: "2026-07-20",
+    version: "1.4.0",
+    title: "Edit your items, and a much faster Velanto",
+    bullets: [
+      "Click any item you've added to a pool to edit it in place — fix a typo, swap the image, or change its format without deleting and starting over. What you've typed carries across if you switch between text, link, and image.",
+      "Publish a draft straight from its page with a new Submit for review button, instead of opening the editor first.",
+      "Velanto is dramatically faster to sign in and browse — pages that used to strain the server now load in a fraction of the time.",
+      "Fixed being logged out at random, especially with several tabs open.",
+      "Images you upload while building a pack are now kept for a day instead of two hours, so an interrupted evening's work doesn't lose them.",
+      "Pack and profile link previews now load their image reliably when shared, instead of sometimes falling back to a plain card.",
+    ],
+  },
+  {
     date: "2026-07-19",
     version: "1.3.0",
     title: "Drafts, My packs, and finding friends",
