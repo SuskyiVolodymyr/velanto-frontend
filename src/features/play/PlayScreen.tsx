@@ -73,17 +73,25 @@ export function PlayScreen({ pack }: { pack: Pack }) {
             <div className="mb-8">
               <VersusRound
                 sideA={{
-                  id: session.sideA!.id,
-                  name: session.sideA!.name,
+                  // A single-pool round's two sides share a pool name, so label
+                  // them generically ("Side A"/"Side B") instead.
+                  name: session.versusSinglePool
+                    ? t("versusSideA")
+                    : session.sideA!.name,
                   items: session.versusCandidatesA,
                 }}
                 sideB={{
-                  id: session.sideB!.id,
-                  name: session.sideB!.name,
+                  name: session.versusSinglePool
+                    ? t("versusSideB")
+                    : session.sideB!.name,
                   items: session.versusCandidatesB,
                 }}
-                selectedId={session.selectedId}
-                onSelect={session.setSelectedId}
+                selectedSide={
+                  session.selectedId === null
+                    ? null
+                    : Number(session.selectedId)
+                }
+                onSelect={(side) => session.setSelectedId(String(side))}
               />
             </div>
           ) : (
@@ -119,10 +127,10 @@ export function PlayScreen({ pack }: { pack: Pack }) {
 
       {session.isFinished && <LoadingState label={t("loadingResult")} />}
 
-      {session.picks.length > 0 && (
+      {session.displayPicks.length > 0 && (
         <PicksSummary
           label={t(PICKED_LABEL_KEY[pack.format])}
-          picks={session.picks}
+          picks={session.displayPicks}
         />
       )}
     </div>

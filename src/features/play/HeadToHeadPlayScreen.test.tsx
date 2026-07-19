@@ -153,6 +153,45 @@ describe("HeadToHeadPlayScreen", () => {
     );
   });
 
+  it("records a single-pool matchup per item, chosen on the winner", async () => {
+    // Both sides from ONE pool; identity shuffle draws i1 (Goku) on side A and
+    // i2 (Vegeta) on side B. The winner can't be recorded as a group (both
+    // sides share 'pool'), so it's recorded per item with a `chosen` flag.
+    const singlePool: Pack = {
+      ...HEAD_TO_HEAD_PACK,
+      groups: [
+        {
+          id: "pool",
+          name: "Anime",
+          items: [textItem("i1", "Goku"), textItem("i2", "Vegeta")],
+        },
+      ],
+      rounds: [
+        {
+          id: "r1",
+          slots: [
+            { groupId: "pool", mode: "random", count: 1 },
+            { groupId: "pool", mode: "random", count: 1 },
+          ],
+        },
+      ],
+    };
+    const user = userEvent.setup();
+    renderScreen(singlePool);
+    await screen.findByText("Goku");
+
+    await user.click(screen.getByRole("button", { name: "Pick Goku" }));
+
+    await waitFor(() =>
+      expect(playsClient.record).toHaveBeenCalledWith("pack-1v1", {
+        picks: [
+          { roundIndex: 0, groupId: "pool", itemId: "i1", chosen: true },
+          { roundIndex: 0, groupId: "pool", itemId: "i2", chosen: false },
+        ],
+      }),
+    );
+  });
+
   it("shows both items of the first matchup immediately", async () => {
     renderScreen(HEAD_TO_HEAD_PACK);
 

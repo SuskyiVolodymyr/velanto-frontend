@@ -309,4 +309,68 @@ describe("ResultScreen", () => {
     expect(screen.getByText(/^Pick:\s*Guren no Yumiya/)).toBeInTheDocument();
     expect(screen.queryByText(/Your pick/)).not.toBeInTheDocument();
   });
+
+  describe("single-pool versus round", () => {
+    const SP_PACK: Pack = {
+      ...PACK,
+      format: "nxn",
+      groups: [
+        {
+          id: "pool",
+          name: "Anime",
+          items: [
+            { id: "p1", type: "text", title: "Naruto", value: "Naruto" },
+            { id: "p2", type: "text", title: "Luffy", value: "Luffy" },
+            { id: "p3", type: "text", title: "Goku", value: "Goku" },
+            { id: "p4", type: "text", title: "Ichigo", value: "Ichigo" },
+          ],
+        },
+      ],
+      rounds: [
+        {
+          id: "r1",
+          slots: [
+            { groupId: "pool", mode: "random", count: 2 },
+            { groupId: "pool", mode: "random", count: 2 },
+          ],
+        },
+      ],
+    };
+
+    const SP_RESULTS: PackResults = {
+      packId: "pack-1",
+      format: "nxn",
+      totalPlays: 3,
+      rounds: [
+        {
+          roundIndex: 0,
+          items: [
+            { itemId: "p1", itemTitle: "Naruto", count: 2, percentage: 66.7 },
+            { itemId: "p2", itemTitle: "Luffy", count: 1, percentage: 50 },
+            { itemId: "p3", itemTitle: "Goku", count: 1, percentage: 50 },
+            { itemId: "p4", itemTitle: "Ichigo", count: 0, percentage: 0 },
+          ],
+        },
+      ],
+    };
+
+    it("ranks per item and marks the viewer's chosen side", async () => {
+      // The viewer chose p1/p2 (a side); p3/p4 were the other side.
+      seedOwnPlay([
+        { roundIndex: 0, groupId: "pool", itemId: "p1", chosen: true },
+        { roundIndex: 0, groupId: "pool", itemId: "p2", chosen: true },
+        { roundIndex: 0, groupId: "pool", itemId: "p3", chosen: false },
+        { roundIndex: 0, groupId: "pool", itemId: "p4", chosen: false },
+      ]);
+      seedResults(SP_RESULTS);
+      render(<ResultScreen pack={SP_PACK} />);
+
+      // The full per-item ranking is shown (not a two-side split).
+      expect(await screen.findByText("Naruto")).toBeInTheDocument();
+      expect(screen.getByText("Ichigo")).toBeInTheDocument();
+      expect(screen.getByText("66.7%")).toBeInTheDocument();
+      // Both of the viewer's chosen items carry a "Your pick" marker.
+      expect(screen.getAllByText("Your pick")).toHaveLength(2);
+    });
+  });
 });

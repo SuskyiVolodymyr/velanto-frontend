@@ -989,7 +989,9 @@
     "rankingDone": "আপনার র‍্যাঙ্কিং শেষ",
     "rankingDoneSummary": "সব {count, plural, one {# রাউন্ড} other {# রাউন্ড}} না দেখেই বসানো হয়েছে।",
     "loadingResult": "আপনার ফলাফল লোড হচ্ছে…",
-    "finishRound": "ফলাফল দেখুন →"
+    "finishRound": "ফলাফল দেখুন →",
+    "versusSideA": "পক্ষ A",
+    "versusSideB": "পক্ষ B"
   },
   "result": {
     "label": "ফলাফল",
@@ -1006,7 +1008,8 @@
     "shareResult": "ফলাফল শেয়ার করুন",
     "sharedNote": "আপনি একটি শেয়ার করা ফলাফল দেখছেন।",
     "loading": "ফলাফল লোড হচ্ছে…",
-    "loadError": "আমরা ফলাফল লোড করতে পারিনি। আবার চেষ্টা করতে পৃষ্ঠাটি রিফ্রেশ করুন।"
+    "loadError": "আমরা ফলাফল লোড করতে পারিনি। আবার চেষ্টা করতে পৃষ্ঠাটি রিফ্রেশ করুন।",
+    "noRoundData": "এই রাউন্ডের জন্য এখনও কোনো নির্বাচন রেকর্ড হয়নি।"
   },
   "create": {
     "loginRequired": "প্যাক তৈরি করতে হলে আপনাকে লগ ইন করতে হবে।",
@@ -1097,7 +1100,15 @@
     "coverCropSave": "সংরক্ষণ",
     "coverCropError": "ছবি ক্রপ করা যায়নি। আবার চেষ্টা করুন।",
     "languageLabel": "প্যাকের ভাষা",
-    "languageHint": "এই প্যাকের বিষয়বস্তু কোন ভাষায়?"
+    "languageHint": "এই প্যাকের বিষয়বস্তু কোন ভাষায়?",
+    "versusSideARound": "রাউন্ড {index}-এর জন্য পক্ষ A",
+    "versusSideBRound": "রাউন্ড {index}-এর জন্য পক্ষ B",
+    "versusPerSideRound": "রাউন্ড {index}-এর জন্য প্রতি পক্ষে আইটেম",
+    "versusRoundNamePlaceholder": "লেবেল (ঐচ্ছিক)",
+    "versusDrawHint": "{a} বনাম {b} নেয়",
+    "versusSamePoolNote": "উভয় পক্ষ একই পুল ব্যবহার করে — আইটেম পুনরাবৃত্তি হবে না।",
+    "versusSetAll": "সবের জন্য সেট করুন",
+    "versusSetAllLabel": "প্রতি পক্ষে আইটেম, সব রাউন্ড"
   },
   "profile": {
     "loginRequiredView": "আপনার প্রোফাইল দেখতে হলে আপনাকে লগ ইন করতে হবে।",

@@ -52,7 +52,30 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
       ...prev,
       { winnerTitle: winner.title, loserTitle: loser.title },
     ]);
-    setAllPicks((prev) => [...prev, { roundIndex, groupId: winnerGroupId }]);
+    // A SINGLE-POOL matchup (both contenders from one pool) can't be recorded as
+    // "which group won" — both sides share a group id. Record it per item, with
+    // `chosen` marking the winner, so results aggregate per item (see backend
+    // play-results). A TWO-POOL matchup keeps the group-level pick.
+    const singlePool = slotA.groupId === slotB.groupId;
+    setAllPicks((prev) => [
+      ...prev,
+      ...(singlePool
+        ? [
+            {
+              roundIndex,
+              groupId: winnerGroupId,
+              itemId: winner.id,
+              chosen: true,
+            },
+            {
+              roundIndex,
+              groupId: winnerGroupId,
+              itemId: loser.id,
+              chosen: false,
+            },
+          ]
+        : [{ roundIndex, groupId: winnerGroupId }]),
+    ]);
     setRoundIndex((prev) => prev + 1);
   }
 

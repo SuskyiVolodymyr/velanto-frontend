@@ -989,7 +989,9 @@
     "rankingDone": "اكتمل ترتيبك",
     "rankingDoneSummary": "وُضعت كل {count, plural, zero {# جولة} one {جولة واحدة} two {جولتان} few {# جولات} many {# جولة} other {# جولة}} دون رؤية.",
     "loadingResult": "جارٍ تحميل نتائجك…",
-    "finishRound": "عرض النتائج →"
+    "finishRound": "عرض النتائج →",
+    "versusSideA": "الجانب A",
+    "versusSideB": "الجانب B"
   },
   "result": {
     "label": "النتيجة",
@@ -1006,7 +1008,8 @@
     "shareResult": "شارك النتيجة",
     "sharedNote": "أنت تشاهد نتيجة مُشارَكة.",
     "loading": "جارٍ تحميل النتائج…",
-    "loadError": "تعذّر تحميل النتائج. حدّث الصفحة للمحاولة مرة أخرى."
+    "loadError": "تعذّر تحميل النتائج. حدّث الصفحة للمحاولة مرة أخرى.",
+    "noRoundData": "لا توجد اختيارات مسجَّلة لهذه الجولة بعد."
   },
   "create": {
     "loginRequired": "يجب تسجيل الدخول لإنشاء حزمة.",
@@ -1097,7 +1100,15 @@
     "coverCropSave": "حفظ",
     "coverCropError": "تعذّر قص الصورة. حاول مرة أخرى.",
     "languageLabel": "لغة الحزمة",
-    "languageHint": "ما لغة محتوى هذه الحزمة؟"
+    "languageHint": "ما لغة محتوى هذه الحزمة؟",
+    "versusSideARound": "الجانب A للجولة {index}",
+    "versusSideBRound": "الجانب B للجولة {index}",
+    "versusPerSideRound": "عناصر لكل جانب للجولة {index}",
+    "versusRoundNamePlaceholder": "تسمية (اختياري)",
+    "versusDrawHint": "يسحب {a} مقابل {b}",
+    "versusSamePoolNote": "يستخدم الجانبان المجموعة نفسها — لن تتكرر العناصر.",
+    "versusSetAll": "تطبيق على الكل",
+    "versusSetAllLabel": "عناصر لكل جانب، لكل الجولات"
   },
   "profile": {
     "loginRequiredView": "يجب تسجيل الدخول لعرض ملفك الشخصي.",

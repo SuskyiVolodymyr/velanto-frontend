@@ -989,7 +989,9 @@
     "rankingDone": "آپ کی رینکنگ مکمل ہو گئی",
     "rankingDoneSummary": "تمام {count, plural, one {# راؤنڈ} other {# راؤنڈز}} بغیر دیکھے رکھ دیے گئے۔",
     "loadingResult": "آپ کے نتائج لوڈ ہو رہے ہیں…",
-    "finishRound": "نتائج دیکھیں →"
+    "finishRound": "نتائج دیکھیں →",
+    "versusSideA": "طرف A",
+    "versusSideB": "طرف B"
   },
   "result": {
     "label": "نتیجہ",
@@ -1006,7 +1008,8 @@
     "shareResult": "نتیجہ شیئر کریں",
     "sharedNote": "آپ ایک شیئر کیا گیا نتیجہ دیکھ رہے ہیں۔",
     "loading": "نتائج لوڈ ہو رہے ہیں…",
-    "loadError": "ہم نتائج لوڈ نہیں کر سکے۔ دوبارہ کوشش کرنے کے لیے صفحہ ریفریش کریں۔"
+    "loadError": "ہم نتائج لوڈ نہیں کر سکے۔ دوبارہ کوشش کرنے کے لیے صفحہ ریفریش کریں۔",
+    "noRoundData": "اس راؤنڈ کے لیے ابھی تک کوئی انتخاب ریکارڈ نہیں ہوا۔"
   },
   "create": {
     "loginRequired": "پیک بنانے کے لیے آپ کا لاگ اِن ہونا ضروری ہے۔",
@@ -1097,7 +1100,15 @@
     "coverCropSave": "محفوظ کریں",
     "coverCropError": "تصویر کاٹی نہ جا سکی۔ دوبارہ کوشش کریں۔",
     "languageLabel": "پیک کی زبان",
-    "languageHint": "اس پیک کا مواد کس زبان میں ہے؟"
+    "languageHint": "اس پیک کا مواد کس زبان میں ہے؟",
+    "versusSideARound": "راؤنڈ {index} کے لیے طرف A",
+    "versusSideBRound": "راؤنڈ {index} کے لیے طرف B",
+    "versusPerSideRound": "راؤنڈ {index} کے لیے فی طرف آئٹمز",
+    "versusRoundNamePlaceholder": "لیبل (اختیاری)",
+    "versusDrawHint": "{a} بمقابلہ {b} نکالتا ہے",
+    "versusSamePoolNote": "دونوں اطراف ایک ہی پول استعمال کرتے ہیں — آئٹمز نہیں دہرائیں گے۔",
+    "versusSetAll": "سب کے لیے سیٹ کریں",
+    "versusSetAllLabel": "فی طرف آئٹمز، تمام راؤنڈز"
   },
   "profile": {
     "loginRequiredView": "اپنی پروفائل دیکھنے کے لیے آپ کا لاگ اِن ہونا ضروری ہے۔",

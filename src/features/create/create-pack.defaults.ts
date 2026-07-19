@@ -22,19 +22,34 @@ export function newRound(groupId: string): Round {
   return { id: crypto.randomUUID(), name: "", slots: [newSlot(groupId)] };
 }
 
-// Versus (nxn/1v1): expand a two-group pick + round count into that many
-// 2-slot rounds over the same two groups. 1v1 pins the per-side count to 1.
+// Versus (nxn/1v1): a single 2-slot matchup round. Side A draws from `groupAId`,
+// Side B from `groupBId` — which MAY be the same pool (a single-pool matchup).
+// Both sides share the per-side draw count; 1v1 pins it to 1.
+export function newVersusRound(
+  groupAId: string,
+  groupBId: string,
+  perSideCount: number,
+): Round {
+  return {
+    id: crypto.randomUUID(),
+    name: "",
+    slots: [
+      { groupId: groupAId, mode: "random", count: perSideCount },
+      { groupId: groupBId, mode: "random", count: perSideCount },
+    ],
+  };
+}
+
+// Seed a fresh versus pack: `roundCount` independent matchups, each defaulting
+// to the same starting pair (the author then edits each round). Kept for the
+// format switch; per-round editing happens via {@link newVersusRound}.
 export function versusRounds(
   groupAId: string,
   groupBId: string,
   roundCount: number,
   perSideCount: number,
 ): Round[] {
-  return Array.from({ length: roundCount }, () => ({
-    id: crypto.randomUUID(),
-    slots: [
-      { groupId: groupAId, mode: "random" as const, count: perSideCount },
-      { groupId: groupBId, mode: "random" as const, count: perSideCount },
-    ],
-  }));
+  return Array.from({ length: roundCount }, () =>
+    newVersusRound(groupAId, groupBId, perSideCount),
+  );
 }

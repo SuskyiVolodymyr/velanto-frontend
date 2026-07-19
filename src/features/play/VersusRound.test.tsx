@@ -17,11 +17,10 @@ function imageItem(id: string, title: string, key: string) {
 }
 
 const SIDE_A = {
-  id: "ca",
   name: "Boys",
   items: [textItem("1", "Naruto"), textItem("2", "Sasuke")],
 };
-const SIDE_B = { id: "cb", name: "Girls", items: [textItem("3", "Sakura")] };
+const SIDE_B = { name: "Girls", items: [textItem("3", "Sakura")] };
 
 describe("VersusRound", () => {
   it("renders both sides with a VS divider", () => {
@@ -29,7 +28,7 @@ describe("VersusRound", () => {
       <VersusRound
         sideA={SIDE_A}
         sideB={SIDE_B}
-        selectedId={null}
+        selectedSide={null}
         onSelect={vi.fn()}
       />,
     );
@@ -42,20 +41,22 @@ describe("VersusRound", () => {
     expect(screen.getByText("Sasuke")).toBeInTheDocument();
   });
 
-  it("calls onSelect with the side id when a side is clicked", async () => {
+  it("calls onSelect with the side INDEX when a side is clicked", async () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();
     render(
       <VersusRound
         sideA={SIDE_A}
         sideB={SIDE_B}
-        selectedId={null}
+        selectedSide={null}
         onSelect={onSelect}
       />,
     );
 
     await user.click(screen.getByRole("button", { name: "Pick Boys" }));
-    expect(onSelect).toHaveBeenCalledWith("ca");
+    expect(onSelect).toHaveBeenCalledWith(0);
+    await user.click(screen.getByRole("button", { name: "Pick Girls" }));
+    expect(onSelect).toHaveBeenCalledWith(1);
   });
 
   it("selects a side via the keyboard (Enter)", async () => {
@@ -65,19 +66,36 @@ describe("VersusRound", () => {
       <VersusRound
         sideA={SIDE_A}
         sideB={SIDE_B}
-        selectedId={null}
+        selectedSide={null}
         onSelect={onSelect}
       />,
     );
 
     screen.getByRole("button", { name: "Pick Girls" }).focus();
     await user.keyboard("{Enter}");
-    expect(onSelect).toHaveBeenCalledWith("cb");
+    expect(onSelect).toHaveBeenCalledWith(1);
+  });
+
+  it("distinguishes two same-named sides (single-pool) by index", async () => {
+    // A single-pool round labels both sides generically; selection must still
+    // resolve to the correct index even though the names collide.
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    render(
+      <VersusRound
+        sideA={{ name: "Side A", items: [textItem("1", "Naruto")] }}
+        sideB={{ name: "Side B", items: [textItem("2", "Luffy")] }}
+        selectedSide={0}
+        onSelect={onSelect}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: "Pick Side B" }));
+    expect(onSelect).toHaveBeenCalledWith(1);
   });
 
   it("shows a real YouTube player for a youtube-type item within a side", () => {
     const sideWithVideo = {
-      id: "ca",
       name: "Boys",
       items: [youtubeItem("v1", "Opening", "https://youtu.be/KsF_hdjWJjo")],
     };
@@ -85,7 +103,7 @@ describe("VersusRound", () => {
       <VersusRound
         sideA={sideWithVideo}
         sideB={SIDE_B}
-        selectedId={null}
+        selectedSide={null}
         onSelect={vi.fn()}
       />,
     );
@@ -100,7 +118,6 @@ describe("VersusRound", () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();
     const sideWithImage = {
-      id: "ca",
       name: "Boys",
       items: [imageItem("i1", "Naruto", "media/item/naruto.webp")],
     };
@@ -108,7 +125,7 @@ describe("VersusRound", () => {
       <VersusRound
         sideA={sideWithImage}
         sideB={SIDE_B}
-        selectedId={null}
+        selectedSide={null}
         onSelect={onSelect}
       />,
     );
@@ -118,7 +135,7 @@ describe("VersusRound", () => {
       "https://cdn.example.com/media/item/naruto.webp",
     );
     await user.click(screen.getByRole("button", { name: "Pick Boys" }));
-    expect(onSelect).toHaveBeenCalledWith("ca");
+    expect(onSelect).toHaveBeenCalledWith(0);
     vi.unstubAllEnvs();
   });
 
@@ -126,7 +143,6 @@ describe("VersusRound", () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();
     const sideWithVideo = {
-      id: "ca",
       name: "Boys",
       items: [youtubeItem("v1", "Opening", "https://youtu.be/KsF_hdjWJjo")],
     };
@@ -134,7 +150,7 @@ describe("VersusRound", () => {
       <VersusRound
         sideA={sideWithVideo}
         sideB={SIDE_B}
-        selectedId={null}
+        selectedSide={null}
         onSelect={onSelect}
       />,
     );
@@ -149,7 +165,6 @@ describe("VersusRound", () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();
     const sideWithVideo = {
-      id: "ca",
       name: "Boys",
       items: [youtubeItem("v1", "Opening", "https://youtu.be/KsF_hdjWJjo")],
     };
@@ -157,7 +172,7 @@ describe("VersusRound", () => {
       <VersusRound
         sideA={sideWithVideo}
         sideB={SIDE_B}
-        selectedId={null}
+        selectedSide={null}
         onSelect={onSelect}
       />,
     );
@@ -174,13 +189,13 @@ describe("VersusRound", () => {
       <VersusRound
         sideA={SIDE_A}
         sideB={SIDE_B}
-        selectedId={null}
+        selectedSide={null}
         onSelect={onSelect}
       />,
     );
 
     screen.getByRole("button", { name: "Pick Boys" }).focus();
     await user.keyboard(" ");
-    expect(onSelect).toHaveBeenCalledWith("ca");
+    expect(onSelect).toHaveBeenCalledWith(0);
   });
 });

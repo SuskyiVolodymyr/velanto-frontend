@@ -989,7 +989,9 @@
     "rankingDone": "आपकी रैंकिंग पूरी हुई",
     "rankingDoneSummary": "सभी {count, plural, one {# राउंड} other {# राउंड}} बिना देखे रखे गए।",
     "loadingResult": "आपके परिणाम लोड हो रहे हैं…",
-    "finishRound": "परिणाम देखें →"
+    "finishRound": "परिणाम देखें →",
+    "versusSideA": "पक्ष A",
+    "versusSideB": "पक्ष B"
   },
   "result": {
     "label": "नतीजा",
@@ -1006,7 +1008,8 @@
     "shareResult": "नतीजा शेयर करें",
     "sharedNote": "आप एक शेयर किया गया नतीजा देख रहे हैं।",
     "loading": "परिणाम लोड हो रहे हैं…",
-    "loadError": "हम परिणाम लोड नहीं कर सके। दोबारा कोशिश करने के लिए पेज रीफ़्रेश करें।"
+    "loadError": "हम परिणाम लोड नहीं कर सके। दोबारा कोशिश करने के लिए पेज रीफ़्रेश करें।",
+    "noRoundData": "इस राउंड के लिए अभी तक कोई चयन दर्ज नहीं हुआ।"
   },
   "create": {
     "loginRequired": "पैक बनाने के लिए आपको लॉग इन करना होगा।",
@@ -1097,7 +1100,15 @@
     "coverCropSave": "सहेजें",
     "coverCropError": "छवि क्रॉप नहीं हो सकी। पुनः प्रयास करें।",
     "languageLabel": "पैक की भाषा",
-    "languageHint": "इस पैक की सामग्री किस भाषा में है?"
+    "languageHint": "इस पैक की सामग्री किस भाषा में है?",
+    "versusSideARound": "राउंड {index} के लिए पक्ष A",
+    "versusSideBRound": "राउंड {index} के लिए पक्ष B",
+    "versusPerSideRound": "राउंड {index} के लिए प्रति पक्ष वस्तुएँ",
+    "versusRoundNamePlaceholder": "लेबल (वैकल्पिक)",
+    "versusDrawHint": "{a} बनाम {b} चुनता है",
+    "versusSamePoolNote": "दोनों पक्ष एक ही पूल का उपयोग करते हैं — वस्तुएँ दोहराई नहीं जाएँगी।",
+    "versusSetAll": "सभी के लिए सेट करें",
+    "versusSetAllLabel": "प्रति पक्ष वस्तुएँ, सभी राउंड"
   },
   "profile": {
     "loginRequiredView": "अपनी प्रोफ़ाइल देखने के लिए आपको लॉग इन करना होगा।",

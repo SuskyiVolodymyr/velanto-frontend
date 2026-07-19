@@ -5,14 +5,18 @@ export interface RecordedPick {
   // groups — are the unit of aggregation now, since several rounds can draw
   // from the same pool (group), so groupId alone no longer identifies a round.
   roundIndex: number;
-  // The pool the pick came from. For versus formats (nxn/1v1) this is the
-  // chosen SIDE's group id and there is no itemId (you pick a side, not an item).
+  // The pool the pick came from. For a TWO-POOL versus round this is the chosen
+  // SIDE's group id (no itemId — you pick a side). For a SINGLE-POOL versus
+  // round it is the shared pool, with one pick per drawn item (see `chosen`).
   groupId: string;
-  // save_one/sacrifice_one/rank_blind only: the specific item chosen/placed.
+  // save_one/sacrifice_one/rank_blind, and single-pool versus: the specific
+  // item chosen/placed/drawn.
   itemId?: string;
   // rank_blind only: the 0-indexed slot this item was placed into within the
   // round's ranking. Absent for the other formats.
   position?: number;
+  // Single-pool versus only: whether this drawn item was on the chosen side.
+  chosen?: boolean;
 }
 
 export interface RoundResultItem {

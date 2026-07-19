@@ -1083,7 +1083,9 @@
     "rankingDone": "Your ranking is done",
     "rankingDoneSummary": "All {count, plural, one {# round} other {# rounds}} placed, blind.",
     "loadingResult": "Loading your results…",
-    "finishRound": "See results →"
+    "finishRound": "See results →",
+    "versusSideA": "Side A",
+    "versusSideB": "Side B"
   },
   "result": {
     "label": "Result",
@@ -1100,7 +1102,8 @@
     "shareResult": "Share result",
     "sharedNote": "You're viewing a shared result.",
     "loading": "Loading results…",
-    "loadError": "We could not load the results. Refresh the page to try again."
+    "loadError": "We could not load the results. Refresh the page to try again.",
+    "noRoundData": "No picks recorded for this round yet."
   },
   "create": {
     "loginRequired": "You need to be logged in to create a pack.",
@@ -1191,7 +1194,15 @@
     "coverCropSave": "Save",
     "coverCropError": "Couldn't crop the image. Try again.",
     "languageLabel": "Pack language",
-    "languageHint": "What language is this pack's content in?"
+    "languageHint": "What language is this pack's content in?",
+    "versusSideARound": "Side A for round {index}",
+    "versusSideBRound": "Side B for round {index}",
+    "versusPerSideRound": "Items per side for round {index}",
+    "versusRoundNamePlaceholder": "Label (optional)",
+    "versusDrawHint": "Draws {a} vs {b}",
+    "versusSamePoolNote": "Both sides use the same pool — items won't repeat.",
+    "versusSetAll": "Set for all",
+    "versusSetAllLabel": "Items per side, all rounds"
   },
   "profile": {
     "loginRequiredView": "You need to be logged in to view your profile.",
