@@ -35,6 +35,7 @@ export const UPDATES: UpdateEntry[] = [
       "Sign up in one step with just an email, a username, and a password.",
       "Versus packs can now change the matchup every round — pit two different pools, or run a single pool against itself so the same set faces off in fresh, no-repeat head-to-heads.",
       "Comment sections now load with a placeholder instead of a spinner.",
+      "Hover a commenter's name to peek at their mini-profile and follow them without leaving the page.",
       "Fixed the preview cards shown when you share a pack or a profile link.",
       "Added this Updates page so you can keep track of what's new.",
     ],
