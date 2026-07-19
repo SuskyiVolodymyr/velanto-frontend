@@ -20,6 +20,29 @@ export const OG_CARD_SIZE = { width: 1200, height: 630 } as const;
 export const OG_CARD_ALT = "Velanto — create and play elimination quiz packs";
 export const OG_CARD_CONTENT_TYPE = "image/png";
 
+/**
+ * Cache policy for the DYNAMIC cards (a pack's cover, a profile's avatar).
+ *
+ * Without this the routes answer `max-age=0, must-revalidate` and every request
+ * is a CDN MISS, so each unfurl cold-starts a lambda, fetches the pack from the
+ * API, fetches the image from the CDN and re-rasterises the whole card. That's
+ * ~1.5s when the platform is idle and 6-35s when it isn't — and crawlers give a
+ * preview only a few seconds before falling back to the generic card, which is
+ * why previews "randomly" lost their image under load. It also means every
+ * unfurl is another request against the backend API.
+ *
+ * `max-age=0` keeps browsers revalidating (a visitor never sees a stale card),
+ * while `s-maxage` lets the CDN serve one rendered image to every crawler.
+ * `stale-while-revalidate` means the first request after expiry is still served
+ * instantly from cache and the re-render happens behind it, so no crawler ever
+ * waits for Satori.
+ *
+ * An hour is short relative to how long social platforms cache a scraped image
+ * anyway (days), so it doesn't meaningfully delay a changed cover showing up.
+ */
+export const OG_CARD_CACHE_CONTROL =
+  "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400";
+
 export interface BuildOpenGraphOptions {
   title: string;
   description: string;
