@@ -42,11 +42,19 @@ export interface AuthorHoverState {
 export function AuthorHoverTrigger({
   authorId,
   className,
+  prefetch = true,
   children,
 }: {
   authorId: string;
   /** Extra classes for the relative wrapper (e.g. width/flex). */
   className?: string;
+  /**
+   * Fetch the author eagerly on mount (default) so the trigger can render from
+   * `summary` before any hover — as the pack creator card does. Pass `false` in
+   * LIST contexts (comment threads) where only the hover card needs the data, to
+   * avoid one profile fetch per row on mount; it then loads on first hover.
+   */
+  prefetch?: boolean;
   children: (state: AuthorHoverState) => ReactNode;
 }) {
   const tProfile = useTranslations("profile");
@@ -54,7 +62,12 @@ export function AuthorHoverTrigger({
   const { enabled: streamerEnabled } = useStreamerModeOrDefault();
   const cardId = useId();
 
-  const { data: summary } = usePackAuthor(authorId);
+  // Once the user first opens the card, keep the query enabled so it stays
+  // cached across subsequent hovers (rather than toggling off on hover-out).
+  const [opened, setOpened] = useState(false);
+  const { data: summary } = usePackAuthor(authorId, {
+    enabled: prefetch || opened,
+  });
   const follow = useFollowMutation<PackAuthor>(
     authorId,
     packAuthorQueryOptions(authorId).queryKey,
@@ -63,6 +76,12 @@ export function AuthorHoverTrigger({
   const isOwnProfile = user?.id === authorId;
   const [open, setOpen] = useState(false);
   const showCard = open && !streamerEnabled && summary !== undefined;
+
+  // Open the card and (for lazy triggers) trip the one-way fetch gate.
+  function openCard() {
+    setOpen(true);
+    if (!opened) setOpened(true);
+  }
 
   const triggerProps: AuthorTriggerProps = {
     "aria-haspopup": summary ? "dialog" : undefined,
@@ -73,9 +92,9 @@ export function AuthorHoverTrigger({
   return (
     <div
       className={cn("relative", className)}
-      onMouseEnter={() => setOpen(true)}
+      onMouseEnter={openCard}
       onMouseLeave={() => setOpen(false)}
-      onFocus={() => setOpen(true)}
+      onFocus={openCard}
       onBlur={(event) => {
         if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
           setOpen(false);

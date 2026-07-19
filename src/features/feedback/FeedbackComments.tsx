@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { Username } from "@/src/shared/components/Username";
+import { AuthorHoverTrigger } from "@/src/features/pack/AuthorHoverTrigger";
 import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { Tooltip } from "@/src/shared/components/Tooltip";
@@ -141,18 +142,27 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
           {comments.map((comment) => (
             <div key={comment.id}>
               <div className="flex items-baseline gap-2">
-                <Hidden kind="name" id={comment.authorId}>
-                  <Link
-                    href={`/users/${comment.authorId}`}
-                    className="text-sm hover:underline"
-                  >
-                    <Username
-                      username={comment.authorUsername}
-                      role={comment.authorRole}
-                      trusted={comment.authorTrusted}
-                    />
-                  </Link>
-                </Hidden>
+                <AuthorHoverTrigger
+                  authorId={comment.authorId}
+                  className="w-fit"
+                  prefetch={false}
+                >
+                  {({ triggerProps }) => (
+                    <Hidden kind="name" id={comment.authorId}>
+                      <Link
+                        href={`/users/${comment.authorId}`}
+                        {...triggerProps}
+                        className="text-sm hover:underline"
+                      >
+                        <Username
+                          username={comment.authorUsername}
+                          role={comment.authorRole}
+                          trusted={comment.authorTrusted}
+                        />
+                      </Link>
+                    </Hidden>
+                  )}
+                </AuthorHoverTrigger>
                 <span className="text-xs text-foreground-tertiary">
                   {formatDateTime(comment.createdAt)}
                 </span>

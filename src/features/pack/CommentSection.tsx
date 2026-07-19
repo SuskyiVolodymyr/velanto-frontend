@@ -27,6 +27,7 @@ import {
   useReplyToComment,
   useDeletePackComment,
 } from "@/src/features/pack/api/pack-comments.queries";
+import { AuthorHoverTrigger } from "./AuthorHoverTrigger";
 import { renderCommentBody } from "./mention-text";
 
 /** A single comment's identity + body + row actions, shared by roots and
@@ -51,18 +52,27 @@ function CommentView({
   return (
     <div>
       <div className="flex items-center justify-between gap-2">
-        <Hidden kind="name" id={comment.authorId}>
-          <Link
-            href={`/users/${comment.authorId}`}
-            className="text-sm hover:underline"
-          >
-            <Username
-              username={comment.authorUsername}
-              role={comment.authorRole}
-              trusted={comment.authorTrusted}
-            />
-          </Link>
-        </Hidden>
+        <AuthorHoverTrigger
+          authorId={comment.authorId}
+          className="w-fit"
+          prefetch={false}
+        >
+          {({ triggerProps }) => (
+            <Hidden kind="name" id={comment.authorId}>
+              <Link
+                href={`/users/${comment.authorId}`}
+                {...triggerProps}
+                className="text-sm hover:underline"
+              >
+                <Username
+                  username={comment.authorUsername}
+                  role={comment.authorRole}
+                  trusted={comment.authorTrusted}
+                />
+              </Link>
+            </Hidden>
+          )}
+        </AuthorHoverTrigger>
         {canDelete && (
           <button
             type="button"
