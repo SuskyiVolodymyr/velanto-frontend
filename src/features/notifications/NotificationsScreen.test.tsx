@@ -60,7 +60,7 @@ describe("NotificationsScreen", () => {
       total: 1,
     });
     render(<NotificationsScreen />);
-    expect(screen.getByText(/bob started following you/)).toBeInTheDocument();
+    expect(screen.getByText("@bob")).toBeInTheDocument();
   });
 
   it("renders nothing and does NOT redirect while auth is still loading", () => {

@@ -2,14 +2,16 @@
 
 import { Bell } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
 import { useNotifications } from "@/src/shared/components/use-notifications";
 import { NotificationList } from "@/src/shared/components/NotificationList";
+import { NotificationsPanelHeader } from "@/src/shared/components/NotificationsPanelHeader";
 
 export function NotificationsBell() {
   const {
     authenticated,
     unreadCount,
+    newCount,
+    markAllRead,
     open,
     setOpen,
     containerRef,
@@ -64,11 +66,12 @@ export function NotificationsBell() {
           <div
             role="dialog"
             aria-label={t("title")}
-            className="absolute right-0 top-12 z-10 flex max-h-[70vh] w-[360px] flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-[0_16px_40px_rgba(0,0,0,0.5)]"
+            className="absolute right-0 top-12 z-10 flex max-h-[70vh] w-[380px] flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-[0_24px_60px_rgba(0,0,0,0.55)]"
           >
-            <div className="border-b border-border px-4 py-3">
-              <Text className="font-semibold">{t("title")}</Text>
-            </div>
+            <NotificationsPanelHeader
+              newCount={newCount}
+              onMarkAllRead={markAllRead}
+            />
             <NotificationList
               notifications={notifications}
               total={total}
