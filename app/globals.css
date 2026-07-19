@@ -14,6 +14,11 @@
  * #39d98a in a component.
  */
 :root {
+  /* Dark-only product: tell the browser so native controls (the OS-rendered
+   * <select> option popup, scrollbars, form controls) use dark chrome instead
+   * of the default light theme. Without this the role/ban <select> dropdowns
+   * open as white OS menus against the dark UI. */
+  color-scheme: dark;
   --background: #0a0b0e;
   --surface: #111318;
   --border: rgba(255, 255, 255, 0.07);
