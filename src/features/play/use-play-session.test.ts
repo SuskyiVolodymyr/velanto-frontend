@@ -114,6 +114,34 @@ const VERSUS_PACK: Pack = {
   ],
 };
 
+// Single-pool versus: both sides draw from ONE pool. Manual slots pin disjoint
+// items per side so the draw is deterministic (side A = p1/p2, side B = p3/p4).
+const SINGLE_POOL_PACK: Pack = {
+  ...BASE,
+  format: "nxn",
+  groups: [
+    {
+      id: "pool",
+      name: "Anime",
+      items: [
+        textItem("p1", "P1"),
+        textItem("p2", "P2"),
+        textItem("p3", "P3"),
+        textItem("p4", "P4"),
+      ],
+    },
+  ],
+  rounds: [
+    {
+      id: "r1",
+      slots: [
+        { groupId: "pool", mode: "manual", itemIds: ["p1", "p2"] },
+        { groupId: "pool", mode: "manual", itemIds: ["p3", "p4"] },
+      ],
+    },
+  ],
+};
+
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(playsClient.record).mockResolvedValue({ id: "play-1" });
@@ -149,15 +177,80 @@ describe("usePlaySession", () => {
     ]);
   });
 
-  it("resolves a versus pick as the chosen side's group id, with no itemId", () => {
+  it("resolves a two-pool versus pick as the chosen side's group id, no itemId", () => {
     const { result } = renderHook(() => usePlaySession(VERSUS_PACK));
 
-    act(() => result.current.setSelectedId("ca"));
+    // Selection is by SIDE INDEX now ("0" = side A = ca).
+    act(() => result.current.setSelectedId("0"));
     act(() => result.current.confirmPick());
 
     expect(result.current.picks).toEqual([
       { roundIndex: 0, groupId: "ca", itemTitle: "Boys" },
     ]);
+  });
+
+  it("records a single-pool versus pick per drawn item, chosen on the picked side", () => {
+    const { result } = renderHook(() => usePlaySession(SINGLE_POOL_PACK));
+
+    expect(result.current.versusSinglePool).toBe(true);
+    // Pick side A (slot 0).
+    act(() => result.current.setSelectedId("0"));
+    act(() => result.current.confirmPick());
+
+    // One pick per drawn item across both sides; chosen marks side A's items.
+    // (Side A's manual slot pins p1/p2; side B's pins p3/p4.)
+    expect(result.current.picks).toEqual([
+      {
+        roundIndex: 0,
+        groupId: "pool",
+        itemId: "p1",
+        itemTitle: "P1",
+        chosen: true,
+      },
+      {
+        roundIndex: 0,
+        groupId: "pool",
+        itemId: "p2",
+        itemTitle: "P2",
+        chosen: true,
+      },
+      {
+        roundIndex: 0,
+        groupId: "pool",
+        itemId: "p3",
+        itemTitle: "P3",
+        chosen: false,
+      },
+      {
+        roundIndex: 0,
+        groupId: "pool",
+        itemId: "p4",
+        itemTitle: "P4",
+        chosen: false,
+      },
+    ]);
+    // The "your picks" summary shows only the chosen side.
+    expect(result.current.displayPicks.map((p) => p.itemId)).toEqual([
+      "p1",
+      "p2",
+    ]);
+  });
+
+  it("records the single-pool play with chosen flags on finish", async () => {
+    const { result } = renderHook(() => usePlaySession(SINGLE_POOL_PACK));
+
+    act(() => result.current.setSelectedId("1")); // pick side B (p3/p4)
+    act(() => result.current.confirmPick());
+
+    await waitFor(() => expect(playsClient.record).toHaveBeenCalledTimes(1));
+    expect(playsClient.record).toHaveBeenCalledWith("pack-a", {
+      picks: [
+        { roundIndex: 0, groupId: "pool", itemId: "p3", chosen: true },
+        { roundIndex: 0, groupId: "pool", itemId: "p4", chosen: true },
+        { roundIndex: 0, groupId: "pool", itemId: "p1", chosen: false },
+        { roundIndex: 0, groupId: "pool", itemId: "p2", chosen: false },
+      ],
+    });
   });
 
   // The "only after the record resolves" half of this used to be the contract;

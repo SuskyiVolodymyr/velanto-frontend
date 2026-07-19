@@ -1,8 +1,31 @@
 import { apiClient } from "@/src/shared/lib/api-client";
 import type { PackList } from "@/src/shared/lib/packs-client";
 import type { AssignableRole } from "@/src/shared/lib/staff-permissions";
-import type { MyProfile, PublicUserProfile } from "@/src/shared/types/user";
+import type {
+  MyProfile,
+  PublicUserProfile,
+  Role,
+} from "@/src/shared/types/user";
 import type { BanReason } from "@/src/shared/types/rules";
+
+/** A compact user row in a followers / following list. */
+export interface FollowUser {
+  id: string;
+  username: string;
+  avatarKey: string | null;
+  role: Role;
+  trusted: boolean;
+  // Whether the viewer follows THIS user. null = no viewer (anonymous) or the
+  // row is the viewer themselves — no follow button in either case.
+  isFollowedByMe: boolean | null;
+}
+
+export interface FollowUserPage {
+  items: FollowUser[];
+  total: number;
+  page: number;
+  limit: number;
+}
 
 export type BanDuration = "week" | "month" | "year" | "forever";
 
@@ -45,6 +68,15 @@ export interface BanHistoryPage {
   total: number;
   page: number;
   limit: number;
+}
+
+/** `?page=&limit=` for the follow lists, omitting either when unset. */
+function followsQuery(params: { page?: number; limit?: number }): string {
+  const query = new URLSearchParams();
+  if (params.page !== undefined) query.set("page", String(params.page));
+  if (params.limit !== undefined) query.set("limit", String(params.limit));
+  const qs = query.toString();
+  return qs ? `?${qs}` : "";
 }
 
 export const usersClient = {
@@ -95,6 +127,16 @@ export const usersClient = {
     apiClient.post<{ followerCount: number }>(`/users/${id}/follow`),
   unfollow: (id: string) =>
     apiClient.post<{ followerCount: number }>(`/users/${id}/unfollow`),
+  /** Users who follow `id` (paginated, newest follow first). */
+  followers: (id: string, params: { page?: number; limit?: number } = {}) =>
+    apiClient.get<FollowUserPage>(
+      `/users/${id}/followers${followsQuery(params)}`,
+    ),
+  /** Users `id` follows (paginated, newest follow first). */
+  following: (id: string, params: { page?: number; limit?: number } = {}) =>
+    apiClient.get<FollowUserPage>(
+      `/users/${id}/following${followsQuery(params)}`,
+    ),
   banHistory: (id: string, params: { page?: number; limit?: number } = {}) => {
     const query = new URLSearchParams();
     if (params.page !== undefined) query.set("page", String(params.page));

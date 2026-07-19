@@ -28,13 +28,15 @@ export interface BuildOpenGraphOptions {
   /** Defaults to "website"; profiles pass "profile". */
   type?: "website" | "profile";
   /**
-   * A per-page dynamic social card to name INSTEAD of the static site card —
-   * e.g. a pack's cover+title or a user's avatar+name, served by a
-   * `social-card` route handler. `path` is root-relative (resolved against
-   * `metadataBase`, like the default); dimensions reuse OG_CARD_SIZE since every
-   * card renders at 1200×630. Omit for the static brand card.
+   * Set for a route that CO-LOCATES its own dynamic card via the metadata file
+   * convention (`opengraph-image.tsx` / `twitter-image.tsx`) — e.g. a pack's
+   * cover+title or a user's avatar+name. When true we emit NO `images`, so Next
+   * merges the co-located card (with its content hash) instead of us naming the
+   * static site card, which would override it. Only set this on a route that
+   * actually has a co-located file, or the page previews as a bare title card
+   * (the #233/#235 disinherit failure).
    */
-  image?: { path: string; alt: string };
+  deferImageToRoute?: boolean;
 }
 
 /**
@@ -48,7 +50,9 @@ export interface SiteOpenGraph {
   description: string;
   url: string;
   type: "website" | "profile";
-  images: {
+  // Omitted when the route defers to a co-located opengraph-image file, so Next
+  // supplies the (hashed) image itself. Present (length 1) otherwise.
+  images?: {
     url: string;
     width: number;
     height: number;
@@ -83,37 +87,39 @@ export interface SiteOpenGraph {
  * reached production twice.
  *
  * Known gap: Next appends a content hash (`?<hash>`) to the *inherited* image
- * URL, which busts social-platform caches when the art changes. A path named
- * here can't reproduce that hash, so editing `app/opengraph-image.tsx` will not
- * invalidate Facebook's or LinkedIn's cached copy for these routes. Accepted:
- * the card is static brand art, and the platforms' own re-scrape tools clear it.
+ * URL, which busts social-platform caches when the art changes. A statically
+ * named path can't reproduce that hash. Routes that co-locate a dynamic card
+ * (`deferImageToRoute`) DO get the hash, since Next names the image itself; the
+ * static site-card path is the one exception without it.
  */
 export function buildOpenGraph({
   title,
   description,
   url,
   type = "website",
-  image,
+  deferImageToRoute = false,
 }: BuildOpenGraphOptions): SiteOpenGraph {
-  // A per-page dynamic card still goes through here (named explicitly, never
-  // inherited) so the #233/#235 disinherit failure mode can't recur — the image
-  // is always present in the emitted metadata, only its URL varies.
-  const card = image
-    ? { url: image.path, alt: image.alt }
-    : { url: OG_IMAGE_PATH, alt: OG_CARD_ALT };
+  // deferImageToRoute: the route co-locates its own opengraph-image file, so we
+  // emit NO images and let Next merge the co-located (hashed) card. Every OTHER
+  // route MUST carry the explicit site-card image, or it hits the #233/#235
+  // disinherit failure — the image is present exactly when there's no route file.
   return {
     title,
     description,
     url,
     type,
-    images: [
-      {
-        url: card.url,
-        width: OG_CARD_SIZE.width,
-        height: OG_CARD_SIZE.height,
-        alt: card.alt,
-        type: OG_CARD_CONTENT_TYPE,
-      },
-    ],
+    ...(deferImageToRoute
+      ? {}
+      : {
+          images: [
+            {
+              url: OG_IMAGE_PATH,
+              width: OG_CARD_SIZE.width,
+              height: OG_CARD_SIZE.height,
+              alt: OG_CARD_ALT,
+              type: OG_CARD_CONTENT_TYPE,
+            },
+          ],
+        }),
   } satisfies Metadata["openGraph"];
 }

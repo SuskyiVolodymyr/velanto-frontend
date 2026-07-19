@@ -13,11 +13,12 @@ import {
   useUsersAdmin,
   isCurrentlyBanned,
   type BannedFilter,
+  type StaffFilter,
 } from "@/src/features/admin/use-users-admin";
 import { UserRow } from "@/src/features/admin/UserRow";
 import { DataTable } from "@/src/shared/components/DataTable";
 
-const COLUMNS = "1.3fr 80px 80px 100px 110px 130px";
+const COLUMNS = "1.3fr 110px 80px 80px 100px 110px 130px";
 
 export function UsersTab() {
   const t = useTranslations("admin");
@@ -30,6 +31,8 @@ export function UsersTab() {
     setSort,
     bannedFilter,
     setBannedFilter,
+    staffFilter,
+    setStaffFilter,
     users,
     total,
     status,
@@ -43,10 +46,12 @@ export function UsersTab() {
     banPending,
     trustPendingId,
     unbanPendingId,
+    roleChangePendingId,
     handleLoadMore,
     handleBan,
     handleUnban,
     handleSetTrusted,
+    handleChangeRole,
     toggleBanForm,
   } = useUsersAdmin();
 
@@ -64,6 +69,20 @@ export function UsersTab() {
             placeholder={t("searchUsersPlaceholder")}
             value={searchInput}
             onChange={(event) => setSearchInput(event.target.value)}
+          />
+        </div>
+        <div className="w-[150px]">
+          <Select
+            aria-label={t("filterStaffAria")}
+            value={staffFilter}
+            onChange={(event) =>
+              setStaffFilter(event.target.value as StaffFilter)
+            }
+            options={[
+              { value: "all", label: t("staffAll") },
+              { value: "staff", label: t("staffOnly") },
+              { value: "nonstaff", label: t("staffNonStaff") },
+            ]}
           />
         </div>
         <div className="w-[150px]">
@@ -103,6 +122,7 @@ export function UsersTab() {
           columns={COLUMNS}
           headers={[
             t("hUser"),
+            t("hRole"),
             t("hPacks"),
             t("hPlays"),
             t("hRegistered"),
@@ -117,6 +137,7 @@ export function UsersTab() {
               key={row.id}
               row={row}
               columns={COLUMNS}
+              actorRole={user.role}
               canAct={canActOn(user.role, row.role)}
               banned={isCurrentlyBanned(row.bannedUntil)}
               banFormOpen={banTargetId === row.id}
@@ -125,12 +146,14 @@ export function UsersTab() {
               trustPending={trustPendingId === row.id}
               unbanPending={unbanPendingId === row.id}
               banPending={banPending && banTargetId === row.id}
+              roleChangePending={roleChangePendingId === row.id}
               onSetTrusted={handleSetTrusted}
               onUnban={handleUnban}
               onToggleBanForm={toggleBanForm}
               onBanDurationChange={setBanDuration}
               onBanReasonChange={setBanReason}
               onConfirmBan={handleBan}
+              onChangeRole={handleChangeRole}
             />
           ))}
         </DataTable>

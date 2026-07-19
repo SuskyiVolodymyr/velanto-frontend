@@ -194,7 +194,11 @@
     "detailCreatedPacks": "الحزم المُنشأة",
     "detailBanHistory": "سجل الحظر",
     "detailNoBanHistory": "لا يوجد سجل حظر.",
-    "detailPublicProfile": "عرض الملف العام"
+    "detailPublicProfile": "عرض الملف العام",
+    "filterStaffAria": "التصفية حسب حالة الطاقم",
+    "staffAll": "الكل",
+    "staffOnly": "الطاقم",
+    "staffNonStaff": "غير الطاقم"
   },
   "notifications": {
     "title": "الإشعارات",
@@ -985,7 +989,9 @@
     "rankingDone": "اكتمل ترتيبك",
     "rankingDoneSummary": "وُضعت كل {count, plural, zero {# جولة} one {جولة واحدة} two {جولتان} few {# جولات} many {# جولة} other {# جولة}} دون رؤية.",
     "loadingResult": "جارٍ تحميل نتائجك…",
-    "finishRound": "عرض النتائج →"
+    "finishRound": "عرض النتائج →",
+    "versusSideA": "الجانب A",
+    "versusSideB": "الجانب B"
   },
   "result": {
     "label": "النتيجة",
@@ -1002,7 +1008,8 @@
     "shareResult": "شارك النتيجة",
     "sharedNote": "أنت تشاهد نتيجة مُشارَكة.",
     "loading": "جارٍ تحميل النتائج…",
-    "loadError": "تعذّر تحميل النتائج. حدّث الصفحة للمحاولة مرة أخرى."
+    "loadError": "تعذّر تحميل النتائج. حدّث الصفحة للمحاولة مرة أخرى.",
+    "noRoundData": "لا توجد اختيارات مسجَّلة لهذه الجولة بعد."
   },
   "create": {
     "loginRequired": "يجب تسجيل الدخول لإنشاء حزمة.",
@@ -1093,7 +1100,15 @@
     "coverCropSave": "حفظ",
     "coverCropError": "تعذّر قص الصورة. حاول مرة أخرى.",
     "languageLabel": "لغة الحزمة",
-    "languageHint": "ما لغة محتوى هذه الحزمة؟"
+    "languageHint": "ما لغة محتوى هذه الحزمة؟",
+    "versusSideARound": "الجانب A للجولة {index}",
+    "versusSideBRound": "الجانب B للجولة {index}",
+    "versusPerSideRound": "عناصر لكل جانب للجولة {index}",
+    "versusRoundNamePlaceholder": "تسمية (اختياري)",
+    "versusDrawHint": "يسحب {a} مقابل {b}",
+    "versusSamePoolNote": "يستخدم الجانبان المجموعة نفسها — لن تتكرر العناصر.",
+    "versusSetAll": "تطبيق على الكل",
+    "versusSetAllLabel": "عناصر لكل جانب، لكل الجولات"
   },
   "profile": {
     "loginRequiredView": "يجب تسجيل الدخول لعرض ملفك الشخصي.",
@@ -1133,7 +1148,15 @@
     "avatarCropError": "تعذّر قص الصورة. حاول مرة أخرى.",
     "loadMore": "تحميل المزيد",
     "loadingMore": "جارٍ التحميل…",
-    "loadMoreError": "تعذّر تحميل المزيد من الحزم. حاول مرة أخرى."
+    "loadMoreError": "تعذّر تحميل المزيد من الحزم. حاول مرة أخرى.",
+    "followers": "المتابِعون",
+    "noFollowers": "لا يوجد متابِعون بعد.",
+    "noFollowing": "لا يتابِع أحدًا بعد.",
+    "followsLoadMore": "تحميل المزيد",
+    "followsError": "تعذّر تحميل هذه القائمة. حاول مرة أخرى.",
+    "followsLoading": "جارٍ التحميل…",
+    "packCount": "{count, plural, zero {# حزمة} one {حزمة واحدة} two {حزمتان} few {# حزم} many {# حزمة} other {# حزمة}}",
+    "followingCount": "{count, plural, zero {# متابَع} one {متابَع واحد} two {متابَعان} few {# متابَعين} many {# متابَعًا} other {# متابَع}}"
   },
   "pages": {
     "createTitle": "أنشئ حزمة",
@@ -1163,7 +1186,8 @@
     "privacy": "الخصوصية",
     "terms": "الشروط",
     "copyright": "© {year} Velanto. جميع الحقوق محفوظة.",
-    "contactLabel": "أسئلة؟"
+    "contactLabel": "أسئلة؟",
+    "updates": "التحديثات"
   },
   "status": {
     "packPending": "قيد المراجعة",
@@ -1350,5 +1374,12 @@
     "playPreview": "تشغيل معاينة الفيديو",
     "embedFailed": "لا يمكن تشغيل هذا الفيديو هنا",
     "openOnYouTube": "افتح على YouTube"
+  },
+  "updates": {
+    "metaTitle": "التحديثات — Velanto",
+    "metaDescription": "ميزات جديدة وإصلاحات وتحسينات في Velanto.",
+    "heading": "ما الجديد",
+    "intro": "أحدث الميزات والإصلاحات والتحسينات — الأحدث أولًا.",
+    "empty": "لا توجد تحديثات بعد — عُد قريبًا."
   }
 }

@@ -7,6 +7,7 @@ import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { UsersTab } from "./UsersTab";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
+import { formatDate } from "@/src/shared/lib/format-date";
 import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { adminClient } from "@/src/shared/lib/admin-client";
@@ -29,7 +30,12 @@ vi.mock("@/src/shared/lib/admin-client", () => ({
   adminClient: { listUsers: vi.fn() },
 }));
 vi.mock("@/src/shared/lib/users-client", () => ({
-  usersClient: { ban: vi.fn(), unban: vi.fn(), setTrusted: vi.fn() },
+  usersClient: {
+    ban: vi.fn(),
+    unban: vi.fn(),
+    setTrusted: vi.fn(),
+    changeRole: vi.fn(),
+  },
 }));
 vi.mock("@/src/shared/lib/rules-client", () => ({
   rulesClient: { getRules: vi.fn() },
@@ -95,16 +101,85 @@ describe("UsersTab", () => {
     renderAsAdmin();
 
     expect(await screen.findByText("bob")).toBeInTheDocument();
-    // staff:false — staff are managed on the Staff tab, not listed here too.
-    // Defaults: no ban filter (undefined) and newest-registered first.
+    // Defaults: staff undefined (the Users tab now lists everyone, staff
+    // included, and offers a staff filter), no ban filter, newest-first.
     expect(adminClient.listUsers).toHaveBeenCalledWith({
       q: undefined,
-      staff: false,
+      staff: undefined,
       banned: undefined,
       sort: "newest",
       page: 1,
       limit: 20,
     });
+  });
+
+  it("re-queries with staff=true when the staff filter is set to staff-only", async () => {
+    const user = userEvent.setup();
+    vi.mocked(adminClient.listUsers).mockResolvedValue({
+      items: [TARGET],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
+    renderAsAdmin();
+    await screen.findByText("bob");
+
+    await user.selectOptions(
+      screen.getByRole("combobox", { name: "Filter by staff status" }),
+      "staff",
+    );
+
+    await waitFor(() => {
+      const last = vi.mocked(adminClient.listUsers).mock.calls.at(-1)?.[0];
+      expect(last).toMatchObject({ staff: true });
+    });
+  });
+
+  it("re-queries with staff=false when the staff filter is set to non-staff", async () => {
+    const user = userEvent.setup();
+    vi.mocked(adminClient.listUsers).mockResolvedValue({
+      items: [TARGET],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
+    renderAsAdmin();
+    await screen.findByText("bob");
+
+    await user.selectOptions(
+      screen.getByRole("combobox", { name: "Filter by staff status" }),
+      "nonstaff",
+    );
+
+    await waitFor(() => {
+      const last = vi.mocked(adminClient.listUsers).mock.calls.at(-1)?.[0];
+      expect(last).toMatchObject({ staff: false });
+    });
+  });
+
+  it("changes a user's role via the inline role dropdown", async () => {
+    vi.mocked(adminClient.listUsers).mockResolvedValue({
+      items: [TARGET],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
+    vi.mocked(usersClient.changeRole).mockResolvedValue({
+      id: "u2",
+      role: "moderator",
+    });
+    const user = userEvent.setup();
+    renderAsAdmin();
+
+    await screen.findByText("bob");
+    await user.selectOptions(
+      screen.getByRole("combobox", { name: "Change role for bob" }),
+      "moderator",
+    );
+
+    await waitFor(() =>
+      expect(usersClient.changeRole).toHaveBeenCalledWith("u2", "moderator"),
+    );
   });
 
   it("re-queries with banned=true and sort=oldest when the filters change", async () => {
@@ -166,9 +241,7 @@ describe("UsersTab", () => {
       }),
     );
     expect(
-      await screen.findByText(
-        `Banned until ${new Date(bannedUntil).toLocaleDateString()}`,
-      ),
+      await screen.findByText(`Banned until ${formatDate(bannedUntil)}`),
     ).toBeInTheDocument();
   });
 
@@ -334,15 +407,22 @@ describe("UsersTab", () => {
       // Identity is redacted…
       expect(screen.queryByText("bob")).not.toBeInTheDocument();
       expect(screen.queryByText("bob@example.com")).not.toBeInTheDocument();
-      // …but the ban status and the moderator's controls stay usable. (The
-      // Users table has no ROLE column — per the design, role lives on the
-      // Staff tab.) Ignore the filter dropdown's "Not banned" <option>, which
-      // shares the label — the assertion is about the row's status cell.
+      // …but the ban status and the moderator's controls stay usable. Ignore
+      // the filter dropdown's "Not banned" <option>, which shares the label —
+      // the assertion is about the row's status cell.
       expect(
         screen.getByText("Not banned", { ignore: "option" }),
       ).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "Ban" })).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "Trust" })).toBeInTheDocument();
+      // The role dropdown must not carry the username in its accessible name —
+      // a screen reader on a shared screen would otherwise announce it.
+      expect(
+        screen.queryByRole("combobox", { name: "Change role for bob" }),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.getByRole("combobox", { name: "Change role for this member" }),
+      ).toBeInTheDocument();
     });
 
     it("reveals the username and email when the row is revealed", async () => {

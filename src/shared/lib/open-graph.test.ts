@@ -19,7 +19,7 @@ describe("buildOpenGraph", () => {
     });
 
     expect(og.images).toHaveLength(1);
-    expect(og.images[0].url).toBe(OG_IMAGE_PATH);
+    expect(og.images![0].url).toBe(OG_IMAGE_PATH);
   });
 
   // The path is asserted against a literal, not against OG_IMAGE_PATH: every
@@ -40,7 +40,7 @@ describe("buildOpenGraph", () => {
   // descriptor, not a string.
   it("declares the card's dimensions, alt and type", () => {
     const og = buildOpenGraph({ title: "T", description: "D", url: "/x" });
-    const image = og.images[0];
+    const image = og.images![0];
 
     expect(image.width).toBe(1200);
     expect(image.height).toBe(630);
@@ -53,7 +53,7 @@ describe("buildOpenGraph", () => {
   // wiring: if the card is resized and the metadata isn't, it fails here.
   it("describes the card that app/opengraph-image.tsx actually renders", () => {
     const image = buildOpenGraph({ title: "T", description: "D", url: "/x" })
-      .images[0];
+      .images![0];
 
     expect(image.width).toBe(cardSize.width);
     expect(image.height).toBe(cardSize.height);
@@ -92,24 +92,21 @@ describe("buildOpenGraph", () => {
     expect(og.type).toBe("profile");
   });
 
-  // A per-page dynamic card (pack cover+title / avatar+name) replaces the
-  // static site card's URL/alt but keeps it a full descriptor with the same
-  // 1200×630 dimensions and type — still named explicitly, never inherited, so
-  // the #235 disinherit trap can't recur.
-  it("names a per-page dynamic card when one is given", () => {
+  // A route that co-locates its own dynamic card (pack cover+title, profile
+  // avatar+name) via the `opengraph-image.tsx` file convention passes
+  // deferImageToRoute. We then emit NO images, so Next merges the co-located,
+  // content-hashed card instead of us naming the static site card — which would
+  // override it and reintroduce the #233/#235 disinherit failure. This replaced
+  // a route-handler ImageResponse (`social-card/route.tsx`) that 500'd on Vercel
+  // because next/og's font/wasm weren't traced into the route-handler bundle.
+  it("omits images when the route defers to a co-located opengraph-image file", () => {
     const og = buildOpenGraph({
       title: "T",
       description: "D",
       url: "/packs/p1",
-      image: { path: "/packs/p1/social-card", alt: "My Pack" },
+      deferImageToRoute: true,
     });
-    const image = og.images[0];
 
-    expect(og.images).toHaveLength(1);
-    expect(image.url).toBe("/packs/p1/social-card");
-    expect(image.alt).toBe("My Pack");
-    expect(image.width).toBe(1200);
-    expect(image.height).toBe(630);
-    expect(image.type).toBe("image/png");
+    expect(og.images).toBeUndefined();
   });
 });

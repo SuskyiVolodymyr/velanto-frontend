@@ -150,32 +150,48 @@ export const loginSchema = authFields.superRefine((data, ctx) => {
 
 // Register: per-field validation (each field carries its own message) so the
 // form can show errors in real time as the user types. The password-composition
-// checks run in order; zod surfaces the first unmet rule for that field.
-export const registerSchema = authFields
-  .extend({
-    // Trim first so accidental leading/trailing whitespace is tolerated; the
-    // regex still forbids spaces *within* the username ("no spaces allowed").
-    username: z.string().trim().regex(USERNAME_PATTERN, AUTH_MESSAGES.username),
-    email: z.string().trim().email(AUTH_MESSAGES.email),
-    password: z
-      .string()
-      .min(MIN_PASSWORD_LENGTH, AUTH_MESSAGES.passwordLength)
-      .max(MAX_PASSWORD_LENGTH, AUTH_MESSAGES.passwordMax)
-      .regex(/[a-z]/, AUTH_MESSAGES.passwordLower)
-      .regex(/[A-Z]/, AUTH_MESSAGES.passwordUpper)
-      .regex(/[0-9]/, AUTH_MESSAGES.passwordDigit),
-    code: z.string().regex(/^\d{6}$/, AUTH_MESSAGES.code),
-    acceptedRules: z.literal(true, { message: AUTH_MESSAGES.acceptRules }),
-  })
-  .superRefine((data, ctx) => {
-    // Reported on confirmPassword so the error sits under that field. No length
-    // guard — an empty confirm still fails at submit; real-time display is gated
-    // per-field by touched state in the form, so it won't nag before you type.
-    if (data.password !== data.confirmPassword) {
-      ctx.addIssue({
-        code: "custom",
-        message: AUTH_MESSAGES.passwordsMismatch,
-        path: ["confirmPassword"],
-      });
-    }
-  });
+// checks run in order; zod surfaces the first unmet rule for that field. Split
+// into a shared base + two variants so the one-step (email verification off) and
+// two-step (on) flows validate the same fields but differ only on `code`.
+const registerBase = authFields.extend({
+  // Trim first so accidental leading/trailing whitespace is tolerated; the
+  // regex still forbids spaces *within* the username ("no spaces allowed").
+  username: z.string().trim().regex(USERNAME_PATTERN, AUTH_MESSAGES.username),
+  email: z.string().trim().email(AUTH_MESSAGES.email),
+  password: z
+    .string()
+    .min(MIN_PASSWORD_LENGTH, AUTH_MESSAGES.passwordLength)
+    .max(MAX_PASSWORD_LENGTH, AUTH_MESSAGES.passwordMax)
+    .regex(/[a-z]/, AUTH_MESSAGES.passwordLower)
+    .regex(/[A-Z]/, AUTH_MESSAGES.passwordUpper)
+    .regex(/[0-9]/, AUTH_MESSAGES.passwordDigit),
+  acceptedRules: z.literal(true, { message: AUTH_MESSAGES.acceptRules }),
+});
+
+// Reported on confirmPassword so the error sits under that field. No length
+// guard — an empty confirm still fails at submit; real-time display is gated
+// per-field by touched state in the form, so it won't nag before you type.
+function passwordsMatch(
+  data: { password: string; confirmPassword: string },
+  ctx: z.RefinementCtx,
+) {
+  if (data.password !== data.confirmPassword) {
+    ctx.addIssue({
+      code: "custom",
+      message: AUTH_MESSAGES.passwordsMismatch,
+      path: ["confirmPassword"],
+    });
+  }
+}
+
+// Two-step register (email verification ON): the emailed 6-digit code is proven
+// on the final submit.
+export const registerSchema = registerBase
+  .extend({ code: z.string().regex(/^\d{6}$/, AUTH_MESSAGES.code) })
+  .superRefine(passwordsMatch);
+
+// One-step register (email verification OFF — the current default): no code, the
+// account is created straight from the form. The two schemas mirror the two
+// backend states (EMAIL_VERIFICATION_ENABLED); the backend enforces the code
+// only when its gate is on, so a code-less submit is exactly what it expects.
+export const registerSchemaNoCode = registerBase.superRefine(passwordsMatch);

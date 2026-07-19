@@ -11,6 +11,7 @@ import { useResultPicks } from "@/src/features/result/use-result-picks";
 import { SharedResultNote } from "@/src/features/result/SharedResultNote";
 import { ResultActions } from "@/src/features/result/ResultActions";
 import { roundHeading } from "@/src/shared/lib/round-heading";
+import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
 import type {
   PackResults,
@@ -121,12 +122,78 @@ function GroupResultScreen({
 
       <div className="mb-8 flex flex-col gap-4">
         {results.rounds.map((round) => {
+          const packRound = pack.rounds[round.roundIndex];
+          // A single-pool versus round (both sides one pool) reports PER ITEM —
+          // a popularity ranking — not a two-side split. The viewer may have
+          // chosen several items (a whole side), so highlight them all.
+          const singlePool =
+            (pack.format === "nxn" || pack.format === "1v1") &&
+            packRound !== undefined &&
+            packRound.slots[0]?.groupId === packRound.slots[1]?.groupId;
+
+          if (singlePool) {
+            const chosenIds = new Set(
+              ownPicks
+                ?.filter(
+                  (pick) => pick.roundIndex === round.roundIndex && pick.chosen,
+                )
+                .map((pick) => pick.itemId),
+            );
+            return (
+              <Card
+                key={round.roundIndex}
+                className="hover:translate-y-0 hover:shadow-none"
+              >
+                <Text className="mb-2 font-semibold">
+                  {roundHeading(pack, round.roundIndex)}
+                </Text>
+                <ul className="flex flex-col gap-1">
+                  {round.items.map((item) => {
+                    const mine = chosenIds.has(item.itemId);
+                    return (
+                      <li
+                        key={item.itemId}
+                        className="flex items-center justify-between gap-2"
+                      >
+                        <Text
+                          variant={mine ? undefined : "secondary"}
+                          className={cn("text-sm", mine && "font-semibold")}
+                        >
+                          {item.itemTitle}
+                          {mine && (
+                            <span className="ml-2 text-xs text-acc">
+                              {shared ? t("sharedPick") : t("yourPick")}
+                            </span>
+                          )}
+                        </Text>
+                        <Text
+                          variant={mine ? undefined : "tertiary"}
+                          className={cn(
+                            "text-sm",
+                            mine && "font-semibold text-acc",
+                          )}
+                        >
+                          {item.percentage}%
+                        </Text>
+                      </li>
+                    );
+                  })}
+                  {round.items.length === 0 && (
+                    <Text variant="tertiary" className="text-sm">
+                      {t("noRoundData")}
+                    </Text>
+                  )}
+                </ul>
+              </Card>
+            );
+          }
+
           const ownPick = ownPicks?.find(
             (pick) => pick.roundIndex === round.roundIndex,
           );
-          // Count formats key each round's items by item id; versus formats key
-          // them by the SIDE's group id (a versus pick carries no itemId), so
-          // fall back to the pick's groupId when there's no itemId.
+          // Count formats key each round's items by item id; two-pool versus
+          // formats key them by the SIDE's group id (that pick carries no
+          // itemId), so fall back to the pick's groupId when there's no itemId.
           const ownKey = ownPick
             ? (ownPick.itemId ?? ownPick.groupId)
             : undefined;

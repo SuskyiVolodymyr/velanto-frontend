@@ -34,7 +34,10 @@ import {
 
 // A fresh versus draft defaults to this many rounds; the author tunes it in the
 // VersusEditor. Per-side count starts at 1 for both nxn and 1v1.
-const DEFAULT_VERSUS_ROUNDS = 5;
+// A fresh versus pack starts with ONE matchup; the per-round VersusEditor adds
+// more (like RoundsEditor). Starting at 1 also keeps a single-item-pool draft
+// feasible until the author shapes it.
+const DEFAULT_VERSUS_ROUNDS = 1;
 
 function isVersusFormat(format: CreatePackValues["format"]): boolean {
   return format === "nxn" || format === "1v1";
@@ -129,17 +132,18 @@ export function CreatePackForm({
         });
       } else if (
         format === "1v1" &&
-        rounds.some((round) => (round.slots[0]?.count ?? 1) !== 1)
+        rounds.some((round) =>
+          round.slots.some((slot) => (slot.count ?? 1) !== 1),
+        )
       ) {
-        // nxn → 1v1: keep the pair and round count but re-pin per-side to 1.
+        // nxn → 1v1: keep each round's own pair (matchups may vary per round)
+        // but re-pin every side's per-side count to exactly 1.
         setValue(
           "rounds",
-          versusRounds(
-            rounds[0].slots[0].groupId,
-            rounds[0].slots[1].groupId,
-            rounds.length,
-            1,
-          ),
+          rounds.map((round) => ({
+            ...round,
+            slots: round.slots.map((slot) => ({ ...slot, count: 1 })),
+          })),
           { shouldDirty: true },
         );
       }

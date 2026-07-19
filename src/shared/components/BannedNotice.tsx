@@ -1,4 +1,5 @@
 "use client";
+import { formatDate } from "@/src/shared/lib/format-date";
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -43,7 +44,7 @@ export function BannedNotice({
 
   const expiry = isPermanentBan(bannedUntil)
     ? t("permanent")
-    : t("expiresOn", { date: new Date(bannedUntil).toLocaleDateString() });
+    : t("expiresOn", { date: formatDate(bannedUntil) });
 
   return (
     <div

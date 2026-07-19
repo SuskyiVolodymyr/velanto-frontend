@@ -194,7 +194,11 @@
     "detailCreatedPacks": "Созданные паки",
     "detailBanHistory": "История блокировок",
     "detailNoBanHistory": "Блокировок нет.",
-    "detailPublicProfile": "Открыть профиль"
+    "detailPublicProfile": "Открыть профиль",
+    "filterStaffAria": "Фильтр по статусу персонала",
+    "staffAll": "Все",
+    "staffOnly": "Персонал",
+    "staffNonStaff": "Не персонал"
   },
   "notifications": {
     "title": "Уведомления",
@@ -985,7 +989,9 @@
     "rankingDone": "Рейтинг готов",
     "rankingDoneSummary": "Ты расставил {count, plural, one {# элемент} few {# элемента} many {# элементов} other {# элемента}} вслепую.",
     "loadingResult": "Загрузка результатов…",
-    "finishRound": "Смотреть результаты →"
+    "finishRound": "Смотреть результаты →",
+    "versusSideA": "Сторона A",
+    "versusSideB": "Сторона B"
   },
   "result": {
     "label": "Результат",
@@ -1002,7 +1008,8 @@
     "shareResult": "Поделиться результатом",
     "sharedNote": "Ты смотришь результат, которым поделились.",
     "loading": "Загружаем результаты…",
-    "loadError": "Не удалось загрузить результаты. Обновите страницу, чтобы попробовать снова."
+    "loadError": "Не удалось загрузить результаты. Обновите страницу, чтобы попробовать снова.",
+    "noRoundData": "Для этого раунда пока нет записанных выборов."
   },
   "create": {
     "loginRequired": "Чтобы создать пак, нужно войти в аккаунт.",
@@ -1093,7 +1100,15 @@
     "coverCropSave": "Сохранить",
     "coverCropError": "Не удалось обрезать изображение. Попробуйте ещё раз.",
     "languageLabel": "Язык пака",
-    "languageHint": "На каком языке содержимое этого пака?"
+    "languageHint": "На каком языке содержимое этого пака?",
+    "versusSideARound": "Сторона A для раунда {index}",
+    "versusSideBRound": "Сторона B для раунда {index}",
+    "versusPerSideRound": "Элементов на сторону для раунда {index}",
+    "versusRoundNamePlaceholder": "Метка (необязательно)",
+    "versusDrawHint": "Берёт {a} против {b}",
+    "versusSamePoolNote": "Обе стороны используют один пул — элементы не повторяются.",
+    "versusSetAll": "Задать для всех",
+    "versusSetAllLabel": "Элементов на сторону, все раунды"
   },
   "profile": {
     "loginRequiredView": "Чтобы посмотреть свой профиль, нужно войти в аккаунт.",
@@ -1133,7 +1148,15 @@
     "avatarCropError": "Не удалось обрезать изображение. Попробуйте ещё раз.",
     "loadMore": "Загрузить ещё",
     "loadingMore": "Загрузка…",
-    "loadMoreError": "Не удалось загрузить ещё паки. Попробуйте снова."
+    "loadMoreError": "Не удалось загрузить ещё паки. Попробуйте снова.",
+    "followers": "Подписчики",
+    "noFollowers": "Пока нет подписчиков.",
+    "noFollowing": "Пока ни на кого не подписан.",
+    "followsLoadMore": "Показать ещё",
+    "followsError": "Не удалось загрузить список. Попробуйте ещё раз.",
+    "followsLoading": "Загрузка…",
+    "packCount": "{count, plural, one {# пак} few {# пака} many {# паков} other {# пака}}",
+    "followingCount": "{count, plural, one {# подписка} few {# подписки} many {# подписок} other {# подписки}}"
   },
   "pages": {
     "createTitle": "Создать пак",
@@ -1163,7 +1186,8 @@
     "privacy": "Конфиденциальность",
     "terms": "Условия",
     "copyright": "© {year} Velanto. Все права защищены.",
-    "contactLabel": "Вопросы?"
+    "contactLabel": "Вопросы?",
+    "updates": "Обновления"
   },
   "status": {
     "packPending": "На модерации",
@@ -1350,5 +1374,12 @@
     "playPreview": "Воспроизвести предпросмотр видео",
     "embedFailed": "Это видео нельзя воспроизвести здесь",
     "openOnYouTube": "Открыть на YouTube"
+  },
+  "updates": {
+    "metaTitle": "Обновления — Velanto",
+    "metaDescription": "Новые возможности, исправления и улучшения в Velanto.",
+    "heading": "Что нового",
+    "intro": "Последние возможности, исправления и улучшения — сначала новые.",
+    "empty": "Пока обновлений нет — загляните позже."
   }
 }

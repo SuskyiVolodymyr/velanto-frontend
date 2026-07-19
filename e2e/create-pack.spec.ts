@@ -140,11 +140,8 @@ test.describe("Create pack", () => {
 
     await page.getByRole("button", { name: /^NxN/ }).click();
 
-    // One round keeps the single-item pools feasible (per-side 1, no dedup
-    // exhaustion).
-    const rounds = page.getByLabel("Rounds", { exact: true });
-    await rounds.fill("1");
-
+    // The versus editor seeds one matchup, which keeps the single-item pools
+    // feasible (per-side 1, no dedup exhaustion).
     await page.getByRole("button", { name: "Publish" }).click();
 
     await page.waitForURL("**/packs/pack-nxn");

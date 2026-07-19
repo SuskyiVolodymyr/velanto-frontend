@@ -1,4 +1,5 @@
 "use client";
+import { formatDateTime } from "@/src/shared/lib/format-date";
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -126,12 +127,10 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
             />
           </Hidden>
         </Text>
-        <Text variant="tertiary">
-          · {new Date(post.createdAt).toLocaleString()}
-        </Text>
+        <Text variant="tertiary">· {formatDateTime(post.createdAt)}</Text>
         {post.updatedAt !== post.createdAt && (
           <Text variant="tertiary">
-            · {t("edited")} {new Date(post.updatedAt).toLocaleString()}
+            · {t("edited")} {formatDateTime(post.updatedAt)}
           </Text>
         )}
       </div>

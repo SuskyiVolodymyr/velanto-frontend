@@ -25,6 +25,7 @@ describe("SiteFooter", () => {
     expect(links["/feedback"]).toBe("Feedback & suggestions");
     expect(links["/rules"]).toBe("Rules");
     expect(links["/docs"]).toBe("Docs");
+    expect(links["/updates"]).toBe("Updates");
     expect(links["/privacy"]).toBe("Privacy");
     expect(links["/terms"]).toBe("Terms");
   });

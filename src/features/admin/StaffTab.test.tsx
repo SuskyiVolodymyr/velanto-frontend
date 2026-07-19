@@ -7,6 +7,7 @@ import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { StaffTab } from "./StaffTab";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
+import { formatDate } from "@/src/shared/lib/format-date";
 import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { adminClient } from "@/src/shared/lib/admin-client";
@@ -103,7 +104,7 @@ describe("StaffTab", () => {
     await screen.findByText("bob");
     expect(screen.getByText("admin1")).toBeInTheDocument();
     expect(
-      screen.getByText(new Date(TARGET.staffSince!).toLocaleDateString()),
+      screen.getByText(formatDate(TARGET.staffSince!)),
     ).toBeInTheDocument();
   });
 

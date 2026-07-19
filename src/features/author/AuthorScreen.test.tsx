@@ -69,6 +69,7 @@ const profile = {
   bio: "I make packs",
   createdAt: "2026-01-01T00:00:00.000Z",
   followerCount: 3,
+  followingCount: 2,
   isFollowedByMe: false,
 };
 
@@ -154,7 +155,9 @@ describe("AuthorScreen", () => {
     );
     // Merged /profile view: manage your own page instead of following it.
     expect(
-      screen.queryByRole("button", { name: /follow/i }),
+      // Anchored to the Follow/Following action button — not the "N followers"
+      // count button, which is always present and opens the followers list.
+      screen.queryByRole("button", { name: /^follow(ing)?$/i }),
     ).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: /edit profile/i })).toHaveAttribute(
       "href",
@@ -194,22 +197,42 @@ describe("AuthorScreen", () => {
     expect(screen.getByRole("button", { name: "Follow" })).toBeInTheDocument();
   });
 
-  it("blocks an anonymous viewer with a reason tooltip instead of redirecting on Follow", async () => {
+  it("shows no follow button at all to a signed-out viewer", async () => {
     mockAuth({ user: null, status: "unauthenticated" });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() =>
       expect(screen.getByText("quizmaster")).toBeInTheDocument(),
     );
-    const followButton = screen.getByRole("button", { name: "Follow" });
-    expect(followButton).toHaveAttribute("aria-disabled", "true");
 
-    await userEvent.hover(followButton);
-    expect(screen.getByRole("tooltip")).toHaveTextContent("Log in to follow");
-
-    await userEvent.click(followButton);
+    // Signed out: the follow control is hidden entirely, not rendered blocked.
+    expect(
+      // Anchored to the Follow/Following action button — not the "N followers"
+      // count button, which is always present and opens the followers list.
+      screen.queryByRole("button", { name: /^follow(ing)?$/i }),
+    ).not.toBeInTheDocument();
     expect(mockedUsersClient.follow).not.toHaveBeenCalled();
     expect(push).not.toHaveBeenCalled();
+  });
+
+  it("hides the follow button while auth is still loading (no self-follow flash on your own page)", async () => {
+    // During the initial auth refresh the viewer is unknown, so we can't yet
+    // tell whether this is their own page. The follow control must stay hidden
+    // until auth settles rather than flashing a Follow button — on your own
+    // page that button was aimable at yourself before it flipped to Edit.
+    mockAuth({ user: null, status: "loading" });
+    mockedUsersClient.getProfile.mockResolvedValue(profile);
+    renderScreen(<AuthorScreen authorId="author-1" />);
+    await waitFor(() =>
+      expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+    );
+
+    expect(
+      // Anchored to the Follow/Following action button — not the "N followers"
+      // count button, which is always present and opens the followers list.
+      screen.queryByRole("button", { name: /^follow(ing)?$/i }),
+    ).not.toBeInTheDocument();
+    expect(mockedUsersClient.follow).not.toHaveBeenCalled();
   });
 
   it("renders the author's approved packs in a grid without status badges", async () => {

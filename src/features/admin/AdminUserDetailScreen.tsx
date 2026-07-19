@@ -1,4 +1,5 @@
 "use client";
+import { formatDate, formatDateTime } from "@/src/shared/lib/format-date";
 
 import { useEffect } from "react";
 import Link from "next/link";
@@ -110,7 +111,7 @@ export function AdminUserDetailScreen({ userId }: { userId: string }) {
           </Text>
           <Text variant="tertiary" className="mt-1 text-sm">
             {t("detailEmail")}: {user.email} · {t("hRegistered")}:{" "}
-            {new Date(user.createdAt).toLocaleDateString()}
+            {formatDate(user.createdAt)}
           </Text>
           <Link
             href={`/users/${userId}`}
@@ -184,7 +185,7 @@ export function AdminUserDetailScreen({ userId }: { userId: string }) {
             {banHistory.data.items.map((entry, index) => (
               <div key={index} className="text-sm">
                 <Text variant="tertiary" className="text-xs">
-                  {new Date(entry.createdAt).toLocaleString()}
+                  {formatDateTime(entry.createdAt)}
                 </Text>
                 <Text>
                   <span className="font-semibold">{entry.actorUsername}</span> ·{" "}
