@@ -77,7 +77,11 @@ export function PackDetailScreen({
               {pack.status === "approved" && (
                 <ShareButton path={`/packs/${pack.id}`} />
               )}
-              <PackOwnerActions packId={pack.id} packAuthorId={pack.authorId} />
+              <PackOwnerActions
+                packId={pack.id}
+                packAuthorId={pack.authorId}
+                packStatus={pack.status}
+              />
             </div>
           </div>
 
