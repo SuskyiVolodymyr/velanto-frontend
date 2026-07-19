@@ -418,9 +418,10 @@ describe("createPackSchema — versus (nxn / 1v1)", () => {
     ).toBe("Versus rounds need exactly two groups.");
   });
 
-  it("rejects a versus round using the same group on both sides", () => {
+  it("accepts a single-pool versus round (the same pool on both sides)", () => {
+    // 'boys' has 2 items; one 1-per-side round draws both (disjoint sides).
     expect(
-      messageAt(
+      isValid(
         versusValues({
           rounds: [
             {
@@ -432,9 +433,35 @@ describe("createPackSchema — versus (nxn / 1v1)", () => {
             },
           ],
         }),
-        "rounds.0.slots",
       ),
-    ).toBe("Pick two different groups.");
+    ).toBe(true);
+  });
+
+  it("rejects a single-pool round beyond the pool's capacity (0-draw)", () => {
+    // 'boys' has 2 items; round 1 consumes both, so a second single-pool round
+    // has nothing left to draw — the zero-draw feasibility check rejects it.
+    expect(
+      isValid(
+        versusValues({
+          rounds: [
+            {
+              id: "r1",
+              slots: [
+                { groupId: "boys", mode: "random", count: 1 },
+                { groupId: "boys", mode: "random", count: 1 },
+              ],
+            },
+            {
+              id: "r2",
+              slots: [
+                { groupId: "boys", mode: "random", count: 1 },
+                { groupId: "boys", mode: "random", count: 1 },
+              ],
+            },
+          ],
+        }),
+      ),
+    ).toBe(false);
   });
 
   it("accepts an nxn per-side count of exactly the max", () => {
@@ -530,9 +557,10 @@ describe("createPackSchema — versus (nxn / 1v1)", () => {
     ).toBe("1v1 shows exactly one item per side.");
   });
 
-  it("rejects rounds that don't all use the same two groups", () => {
+  it("accepts rounds that vary the pair (each round is its own matchup)", () => {
+    // Varied matchups: round 2 may use a different pair/order than round 1.
     expect(
-      messageAt(
+      isValid(
         versusValues({
           rounds: [
             {
@@ -551,8 +579,7 @@ describe("createPackSchema — versus (nxn / 1v1)", () => {
             },
           ],
         }),
-        "rounds.1.slots",
       ),
-    ).toBe("Every round must use the same two groups.");
+    ).toBe(true);
   });
 });

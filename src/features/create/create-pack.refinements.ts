@@ -166,15 +166,17 @@ export function validateElimination(pack: PackDraft, ctx: z.RefinementCtx) {
   if (groupsOk) validateFeasibility(pack, ctx);
 }
 
-// nxn / 1v1: every round pits two DISTINCT groups (held constant across rounds)
-// against each other, both drawn randomly. Per-side draw counts come from
-// NXN_SIDE_COUNT_MIN/MAX; 1v1 is locked to exactly 1.
+// nxn / 1v1: every round is its own 2-slot matchup, both sides drawn randomly.
+// The two sides may be two different pools (a classic A-vs-B matchup) or the
+// SAME pool (a single-pool matchup — the draw engine hands each side disjoint
+// items, so the pool size caps how many rounds it can feed; the zero-draw
+// feasibility check enforces that). Pairs may vary freely across rounds.
+// Per-side draw counts come from NXN_SIDE_COUNT_MIN/MAX; 1v1 is locked to 1.
 export function validateVersus(pack: PackDraft, ctx: z.RefinementCtx) {
   const groupsOk = validateGroupsAndRefs(pack, ctx);
   const isHeadToHead = pack.format === "1v1";
   const perSideMin = isHeadToHead ? 1 : NXN_SIDE_COUNT_MIN;
   const perSideMax = isHeadToHead ? 1 : NXN_SIDE_COUNT_MAX;
-  let expectedPair: [string, string] | undefined;
 
   pack.rounds.forEach((round, ri) => {
     if (round.slots.length !== 2) {
@@ -205,24 +207,6 @@ export function validateVersus(pack: PackDraft, ctx: z.RefinementCtx) {
         });
       }
     });
-
-    const [a, b] = [round.slots[0].groupId, round.slots[1].groupId];
-    if (a === b) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["rounds", ri, "slots"],
-        message: "Pick two different groups.",
-      });
-    }
-    if (expectedPair === undefined) {
-      expectedPair = [a, b];
-    } else if (a !== expectedPair[0] || b !== expectedPair[1]) {
-      ctx.addIssue({
-        code: "custom",
-        path: ["rounds", ri, "slots"],
-        message: "Every round must use the same two groups.",
-      });
-    }
   });
 
   if (groupsOk) validateFeasibility(pack, ctx);

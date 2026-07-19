@@ -502,17 +502,20 @@ describe("CreatePackForm", () => {
   });
 
   describe("versus formats swap in the Versus editor", () => {
-    it("switches from Rounds to Versus when NxN is selected", async () => {
+    it("switches from Rounds to the per-round Versus editor when NxN is selected", async () => {
       const user = userEvent.setup();
       renderForm();
       await user.click(await screen.findByRole("button", { name: /^NxN/ }));
 
-      expect(screen.getByLabelText("Side A")).toBeInTheDocument();
-      expect(screen.getByLabelText("Side B")).toBeInTheDocument();
-      expect(screen.getByLabelText("Items per side")).toBeInTheDocument();
+      expect(screen.getByLabelText("Side A for round 1")).toBeInTheDocument();
+      expect(screen.getByLabelText("Side B for round 1")).toBeInTheDocument();
       expect(
-        screen.queryByRole("button", { name: "+ Add round" }),
-      ).not.toBeInTheDocument();
+        screen.getByLabelText("Items per side for round 1"),
+      ).toBeInTheDocument();
+      // The per-round editor has its own add-round control.
+      expect(
+        screen.getByRole("button", { name: "+ Add round" }),
+      ).toBeInTheDocument();
     });
 
     it("pins per-side to 1 (no input) when 1v1 is selected", async () => {
@@ -520,9 +523,11 @@ describe("CreatePackForm", () => {
       renderForm();
       await user.click(await screen.findByRole("button", { name: /^1v1/ }));
 
-      expect(screen.getByLabelText("Side A")).toBeInTheDocument();
+      expect(screen.getByLabelText("Side A for round 1")).toBeInTheDocument();
       expect(screen.getByText("1 per side")).toBeInTheDocument();
-      expect(screen.queryByLabelText("Items per side")).not.toBeInTheDocument();
+      expect(
+        screen.queryByLabelText("Items per side for round 1"),
+      ).not.toBeInTheDocument();
     });
 
     it("submits a valid nxn pack with two pools and generated two-slot rounds", async () => {
@@ -546,12 +551,8 @@ describe("CreatePackForm", () => {
 
       await user.click(screen.getByRole("button", { name: /^NxN/ }));
 
-      // A single round keeps the 1-item pools feasible (per-side 1, no dedup
-      // exhaustion).
-      const roundCount = screen.getByLabelText("Rounds");
-      await user.clear(roundCount);
-      await user.type(roundCount, "1");
-
+      // The versus editor seeds a single matchup, which keeps the 1-item pools
+      // feasible (per-side 1, no dedup exhaustion).
       await user.click(screen.getByRole("button", { name: "Publish" }));
 
       await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-nxn"));
@@ -582,10 +583,7 @@ describe("CreatePackForm", () => {
 
       await user.click(screen.getByRole("button", { name: /^1v1/ }));
 
-      const roundCount = screen.getByLabelText("Rounds");
-      await user.clear(roundCount);
-      await user.type(roundCount, "1");
-
+      // The versus editor seeds a single matchup — feasible for the 1-item pools.
       await user.click(screen.getByRole("button", { name: "Publish" }));
 
       await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-1v1"));
