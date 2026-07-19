@@ -1385,5 +1385,15 @@
     "heading": "What's new",
     "intro": "The latest features, fixes, and improvements — newest first.",
     "empty": "No updates yet — check back soon."
+  },
+  "myPacks": {
+    "packsTab": "Packs",
+    "mineTab": "My packs",
+    "loginRequired": "Log in to see your packs.",
+    "loading": "Loading your packs…",
+    "error": "Couldn't load your packs.",
+    "empty": "You haven't created any packs yet.",
+    "emptyFiltered": "No packs match this filter.",
+    "all": "All"
   }
 }

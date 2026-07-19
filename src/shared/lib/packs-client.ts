@@ -2,6 +2,7 @@ import { apiClient } from "@/src/shared/lib/api-client";
 import type {
   Pack,
   PackFormat,
+  PackStatus,
   PackTag,
   Group,
   Round,
@@ -36,6 +37,13 @@ export interface ListPacksFilters {
   page?: number;
   limit?: number;
   authorId?: string;
+  /**
+   * Filter to one moderation status. The backend only honours this for a
+   * self-author view (`authorId` = the signed-in user); for anyone else the
+   * list is already forced to approved-only, so a `status` there is ignored.
+   * Used by the "My packs" tab.
+   */
+  status?: PackStatus;
   /** Mirrors the backend's PACK_SORTS. Omitted behaves as "newest". */
   sort?: "popular" | "newest" | "oldest";
   window?: "day" | "week" | "month" | "year" | "all";
@@ -82,6 +90,7 @@ function buildListQuery(filters: ListPacksFilters): string {
   if (filters.page !== undefined) params.set("page", String(filters.page));
   if (filters.limit !== undefined) params.set("limit", String(filters.limit));
   if (filters.authorId) params.set("authorId", filters.authorId);
+  if (filters.status) params.set("status", filters.status);
   if (filters.sort) params.set("sort", filters.sort);
   if (filters.window) params.set("window", filters.window);
   const query = params.toString();
