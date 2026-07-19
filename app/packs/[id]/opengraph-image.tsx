@@ -1,10 +1,14 @@
 import { ImageResponse } from "next/og";
 import { getPackServer } from "@/src/shared/lib/get-pack-server";
-import { ogImageSourceFromKey } from "@/src/shared/lib/og-image-source";
+import {
+  ogImageSourceFromKey,
+  OG_COVER_FIT,
+} from "@/src/shared/lib/og-image-source";
 import { packOgCard } from "@/src/shared/lib/og-card";
 import {
   OG_CARD_SIZE,
   OG_CARD_CONTENT_TYPE,
+  OG_CARD_CACHE_CONTROL,
 } from "@/src/shared/lib/open-graph";
 
 // Node runtime: the card fetches the cover from our CDN and base64-encodes it
@@ -36,9 +40,15 @@ export default async function Image({
   const { id } = await params;
   const pack = await getPackServer(id).catch(() => null);
   const title = (pack?.title ?? "Velanto").slice(0, TITLE_MAX);
+  // Fitted to the box the card actually paints. Handing Satori the full-size
+  // source made a 56KB cover into a 794KB payload it had to decode on every
+  // uncached request.
   const imageSrc = pack
-    ? await ogImageSourceFromKey(pack.coverImageKey)
+    ? await ogImageSourceFromKey(pack.coverImageKey, OG_COVER_FIT)
     : undefined;
 
-  return new ImageResponse(packOgCard({ title, imageSrc }), { ...size });
+  return new ImageResponse(packOgCard({ title, imageSrc }), {
+    ...size,
+    headers: { "cache-control": OG_CARD_CACHE_CONTROL },
+  });
 }
