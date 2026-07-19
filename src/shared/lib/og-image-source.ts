@@ -1,4 +1,3 @@
-import sharp from "sharp";
 import { mediaUrl } from "@/src/shared/lib/media-url";
 
 /**
@@ -17,11 +16,18 @@ import { mediaUrl } from "@/src/shared/lib/media-url";
  * image). sharp decodes WebP/AVIF/JPEG/PNG and re-encodes to PNG, a format Satori
  * handles, so the card always gets bytes it can rasterise.
  *
+ * sharp is imported LAZILY, inside the try. It's a native module and its
+ * top-level import failed to load inside the bundled OG serverless function on
+ * Vercel — and a failed module import 500s the route before any try/catch can
+ * run (the throw is at module-eval, not at the call). Deferring the import into
+ * the guarded block means a sharp that can't load degrades to the text-only card
+ * (undefined) instead of 500'ing the whole route.
+ *
  * Returns undefined (→ render without the image) when there's no key, when the
  * media base URL isn't configured so `mediaUrl` yields a non-absolute path
- * Satori couldn't load anyway, when the fetch fails or is non-OK, or when the
- * bytes can't be decoded — every failure degrades to the text-only card, never a
- * 500.
+ * Satori couldn't load anyway, when the fetch fails or is non-OK, when sharp
+ * can't load, or when the bytes can't be decoded — every failure degrades to the
+ * text-only card, never a 500.
  */
 export async function ogImageSourceFromKey(
   key: string | null | undefined,
@@ -33,6 +39,7 @@ export async function ogImageSourceFromKey(
     const res = await fetch(url);
     if (!res.ok) return undefined;
     const input = Buffer.from(await res.arrayBuffer());
+    const { default: sharp } = await import("sharp");
     const png = await sharp(input).png().toBuffer();
     return `data:image/png;base64,${png.toString("base64")}`;
   } catch {
