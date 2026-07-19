@@ -5,6 +5,7 @@ import {
   MIN_PASSWORD_LENGTH,
   loginSchema,
   registerSchema,
+  registerSchemaNoCode,
   type AuthFormValues,
 } from "./auth.schema";
 import en from "@/messages/en.json";
@@ -175,6 +176,46 @@ describe("registerSchema", () => {
         "acceptedRules",
       ),
     ).toBe(AUTH_MESSAGES.acceptRules);
+  });
+});
+
+// One-step register used when the backend reports email verification off. Same
+// field rules as registerSchema minus the 6-digit code check — the form still
+// supplies a (blank) code, it's just never validated or sent.
+describe("registerSchemaNoCode", () => {
+  it.each(["", "nope", "12", "1234567"])(
+    "accepts any code value %p without a format complaint",
+    (code) => {
+      expect(registerSchemaNoCode.safeParse(values({ code })).success).toBe(
+        true,
+      );
+    },
+  );
+
+  it("still rejects a malformed email", () => {
+    expect(
+      registerSchemaNoCode.safeParse(values({ email: "not-an-email" })).success,
+    ).toBe(false);
+  });
+
+  it("still rejects a weak password", () => {
+    expect(
+      registerSchemaNoCode.safeParse(values({ password: "short" })).success,
+    ).toBe(false);
+  });
+
+  it("still rejects mismatched passwords", () => {
+    expect(
+      registerSchemaNoCode.safeParse(
+        values({ password: "Password1", confirmPassword: "Password2" }),
+      ).success,
+    ).toBe(false);
+  });
+
+  it("still requires the Community Rules to be accepted", () => {
+    expect(
+      registerSchemaNoCode.safeParse(values({ acceptedRules: false })).success,
+    ).toBe(false);
   });
 });
 

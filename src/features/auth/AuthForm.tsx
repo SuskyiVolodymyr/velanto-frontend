@@ -7,6 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
+import { authClient } from "@/src/shared/lib/auth-client";
 import { messageFromError } from "@/src/shared/lib/messageFromError";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
@@ -16,6 +17,7 @@ import { sanitizeNextPath } from "@/src/shared/lib/safe-redirect";
 import {
   loginSchema,
   registerSchema,
+  registerSchemaNoCode,
   type AuthFormValues,
 } from "@/src/features/auth/auth.schema";
 import { LoginFields } from "@/src/features/auth/LoginFields";
@@ -58,8 +60,31 @@ export function AuthForm() {
   const [shake, setShake] = useState(false);
   // The forgot-password flow replaces the login/register card when active.
   const [forgot, setForgot] = useState(false);
+  // Whether register uses the two-step email-ownership code. Reported by the
+  // backend (GET /auth/providers) and off by default, so we start in the
+  // one-step state — matching production — and never flash the code step for the
+  // common case. Only flips to two-step if the backend says the gate is on.
+  const [emailVerification, setEmailVerification] = useState(false);
 
   const isRegister = mode === "register";
+  // Register is two-step (fill form → emailed code) only when the backend
+  // requires it; otherwise a single submit creates the account.
+  const twoStep = isRegister && emailVerification;
+
+  useEffect(() => {
+    let cancelled = false;
+    authClient
+      .oauthProviders()
+      .then((p) => {
+        if (!cancelled) setEmailVerification(p.emailVerification ?? false);
+      })
+      // Unreachable/older backend → leave the one-step default; the backend
+      // enforces the code itself if its gate is actually on.
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   // react-hook-form re-reads the resolver each render, so swapping schemas on a
   // mode change is enough — no need to recreate the form. `onTouched` validates
@@ -67,7 +92,13 @@ export function AuthForm() {
   // surface in real time without nagging fields the user hasn't reached yet.
   const methods = useForm<AuthFormValues>({
     mode: "onTouched",
-    resolver: zodResolver(isRegister ? registerSchema : loginSchema),
+    resolver: zodResolver(
+      isRegister
+        ? emailVerification
+          ? registerSchema
+          : registerSchemaNoCode
+        : loginSchema,
+    ),
     defaultValues: {
       identifier: "",
       username: "",
@@ -154,7 +185,9 @@ export function AuthForm() {
           username: values.username.trim(),
           password: values.password,
           acceptedRules: true,
-          code: values.code,
+          // Only sent in the two-step flow; omitted when verification is off so
+          // the backend doesn't reject an empty code against its 6-digit rule.
+          ...(emailVerification ? { code: values.code } : {}),
         });
       } else {
         await login({
@@ -230,10 +263,11 @@ export function AuthForm() {
 
       <FormProvider {...methods}>
         <form
-          // In the register form step, submit (button or Enter) advances to the
-          // OTP step rather than registering — the code isn't entered yet.
+          // In the two-step register form step, submit (button or Enter) advances
+          // to the OTP step rather than registering — the code isn't entered yet.
+          // One-step register (verification off) submits straight through.
           onSubmit={
-            isRegister && step === "form"
+            twoStep && step === "form"
               ? (e) => {
                   e.preventDefault();
                   void handleContinue();
@@ -312,7 +346,7 @@ export function AuthForm() {
               ? t("pleaseWait")
               : !isRegister
                 ? t("logIn")
-                : step === "form"
+                : twoStep && step === "form"
                   ? t("continueStep")
                   : t("createAccount")}
           </Button>

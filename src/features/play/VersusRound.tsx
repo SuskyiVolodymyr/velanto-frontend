@@ -9,7 +9,6 @@ import { mediaUrl } from "@/src/shared/lib/media-url";
 import { cn } from "@/src/shared/lib/cn";
 
 interface VersusSide {
-  id: string;
   name: string;
   items: Item[];
 }
@@ -101,22 +100,24 @@ function SideCard({ side, selected, onSelect }: SideCardProps) {
 interface VersusRoundProps {
   sideA: VersusSide;
   sideB: VersusSide;
-  selectedId: string | null;
-  onSelect: (id: string) => void;
+  // The chosen side's slot index (0 = A, 1 = B), or null. Selection is by
+  // POSITION, not group id, so a single-pool round's two sides stay distinct.
+  selectedSide: number | null;
+  onSelect: (side: number) => void;
 }
 
 export function VersusRound({
   sideA,
   sideB,
-  selectedId,
+  selectedSide,
   onSelect,
 }: VersusRoundProps) {
   return (
     <div className="flex items-start gap-4">
       <SideCard
         side={sideA}
-        selected={selectedId === sideA.id}
-        onSelect={() => onSelect(sideA.id)}
+        selected={selectedSide === 0}
+        onSelect={() => onSelect(0)}
       />
       <div className="flex items-center justify-center pt-14">
         <span className="flex h-11 w-11 flex-none items-center justify-center rounded-full border border-border bg-white/[0.04] text-xs font-semibold text-foreground-secondary">
@@ -125,8 +126,8 @@ export function VersusRound({
       </div>
       <SideCard
         side={sideB}
-        selected={selectedId === sideB.id}
-        onSelect={() => onSelect(sideB.id)}
+        selected={selectedSide === 1}
+        onSelect={() => onSelect(1)}
       />
     </div>
   );

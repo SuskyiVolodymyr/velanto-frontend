@@ -11,13 +11,16 @@ import type { RecordedPick } from "@/src/shared/types/play-results";
 export interface Pick {
   roundIndex: number;
   groupId: string;
-  // Absent for versus picks (a side is chosen, not an item).
+  // Two-pool versus picks carry no itemId (a side is chosen). Elimination and
+  // single-pool versus picks carry the chosen/drawn item.
   itemId?: string;
-  // Display label: the item title, or the side name for versus picks.
+  // Display label: the item title, or the side name for two-pool versus picks.
   itemTitle: string;
+  // Single-pool versus only: whether this drawn item was on the chosen side.
+  chosen?: boolean;
 }
 
-// A versus side is a pool held constant across every round of the play.
+// A versus side, derived per round from the current round's two slots.
 export interface VersusSide {
   id: string;
   name: string;
@@ -38,18 +41,27 @@ export interface PlaySession {
   // True on the final round, so the confirm button can read "see results"
   // instead of "next round".
   isLastRound: boolean;
+  // Versus selection is the chosen SIDE index ("0" | "1") — not a group id, so
+  // the two sides stay distinguishable even when they draw from one pool.
   canConfirm: boolean;
   selectedId: string | null;
   setSelectedId: (id: string | null) => void;
+  // Every recorded pick (single-pool versus records one per drawn item on both
+  // sides). Fed to the record request and the local stash.
   picks: Pick[];
+  // What to SHOW as "your picks" — the chosen items only (single-pool versus
+  // records the unchosen side too, which shouldn't appear in the summary).
+  displayPicks: Pick[];
   confirmPick: () => void;
   // Groups format: the drawn candidates for the current round's single slot.
   candidates: Item[];
-  // Versus (nxn) format: the two fixed sides and their per-round drawn items.
+  // Versus (nxn/1v1): the current round's two sides and their drawn items.
   sideA?: VersusSide;
   sideB?: VersusSide;
   versusCandidatesA: Item[];
   versusCandidatesB: Item[];
+  // True when the current versus round draws both sides from one pool.
+  versusSinglePool: boolean;
 }
 
 function toRecordedPick(pick: Pick): RecordedPick {
@@ -57,6 +69,7 @@ function toRecordedPick(pick: Pick): RecordedPick {
     roundIndex: pick.roundIndex,
     groupId: pick.groupId,
     ...(pick.itemId !== undefined ? { itemId: pick.itemId } : {}),
+    ...(pick.chosen !== undefined ? { chosen: pick.chosen } : {}),
   };
 }
 
@@ -69,6 +82,8 @@ function toRecordedPick(pick: Pick): RecordedPick {
  */
 export function usePlaySession(pack: Pack): PlaySession {
   const { status } = useAuth();
+  // 1v1 has its own head-to-head screen (HeadToHeadPlayScreen); this hook drives
+  // the nxn versus path and the elimination formats.
   const isVersus = pack.format === "nxn";
   const groups = pack.groups ?? [];
   const rounds = pack.rounds ?? [];
@@ -94,47 +109,73 @@ export function usePlaySession(pack: Pack): PlaySession {
   const isLastRound = !isFinished && roundIndex === totalRounds - 1;
   const currentRound = !isFinished ? selections[roundIndex] : undefined;
 
-  // Versus sides are the same two pools every round — read them off the first
-  // round's two slots so the finished summary still has them once play is over.
-  const firstSlots = rounds[0]?.slots ?? [];
+  // Versus sides are per ROUND now (matchups may vary) — read them off the
+  // CURRENT round's two slots. Undefined once play is finished (no round).
+  const currentSlots = currentRound?.slots ?? [];
   const sideA: VersusSide | undefined =
-    isVersus && firstSlots[0]
+    isVersus && currentSlots[0]
       ? {
-          id: firstSlots[0].groupId,
-          name: groupNameById.get(firstSlots[0].groupId) ?? "",
+          id: currentSlots[0].groupId,
+          name: groupNameById.get(currentSlots[0].groupId) ?? "",
         }
       : undefined;
   const sideB: VersusSide | undefined =
-    isVersus && firstSlots[1]
+    isVersus && currentSlots[1]
       ? {
-          id: firstSlots[1].groupId,
-          name: groupNameById.get(firstSlots[1].groupId) ?? "",
+          id: currentSlots[1].groupId,
+          name: groupNameById.get(currentSlots[1].groupId) ?? "",
         }
       : undefined;
+  // Both sides drawing from one pool → a single-pool matchup, recorded per item.
+  const versusSinglePool = Boolean(
+    isVersus && sideA && sideB && sideA.id === sideB.id,
+  );
 
   const candidates = !isVersus ? (currentRound?.slots[0]?.items ?? []) : [];
-  const versusCandidatesA = isVersus
-    ? (currentRound?.slots[0]?.items ?? [])
-    : [];
-  const versusCandidatesB = isVersus
-    ? (currentRound?.slots[1]?.items ?? [])
-    : [];
+  const versusCandidatesA = isVersus ? (currentSlots[0]?.items ?? []) : [];
+  const versusCandidatesB = isVersus ? (currentSlots[1]?.items ?? []) : [];
 
-  // A single per-round model unifies the two formats so the rest of the code
-  // reads one shape. `title` drives the UI; `resolvePick` turns the current
-  // `selectedId` into the Pick to record (or null if invalid).
-  // The author-given round name drives the heading when set; otherwise the
-  // round falls back to its group's name (elimination) or "Round N" (versus).
+  // A single per-round model unifies the formats so the rest of the code reads
+  // one shape. `title` drives the heading; `resolvePicks` turns the current
+  // `selectedId` into the pick(s) to record (empty if invalid). The author-given
+  // round name wins; otherwise the round falls back to its group's name
+  // (elimination) or "Round N" (versus).
   const roundName = rounds[roundIndex]?.name?.trim() ?? "";
 
   const round = isVersus
     ? {
         title: roundName || `Round ${roundIndex + 1}`,
-        resolvePick(id: string): Pick | null {
-          const side =
-            id === sideA?.id ? sideA : id === sideB?.id ? sideB : null;
-          if (!side) return null;
-          return { roundIndex, groupId: side.id, itemTitle: side.name };
+        // Versus selection is the chosen SIDE INDEX ("0" | "1"). A two-pool
+        // round records one pick (the chosen side's group). A single-pool round
+        // records one pick per drawn item on BOTH sides, `chosen` marking the
+        // picked side — the two sides share a group id, so per-side counting is
+        // meaningless; the backend aggregates per item.
+        resolvePicks(id: string): Pick[] {
+          const sideIndex = id === "0" ? 0 : id === "1" ? 1 : -1;
+          const slot = currentSlots[sideIndex];
+          if (!slot) return [];
+          if (!versusSinglePool) {
+            const name = groupNameById.get(slot.groupId) ?? "";
+            return [{ roundIndex, groupId: slot.groupId, itemTitle: name }];
+          }
+          const chosenItems = currentSlots[sideIndex]?.items ?? [];
+          const otherItems = currentSlots[1 - sideIndex]?.items ?? [];
+          return [
+            ...chosenItems.map((item) => ({
+              roundIndex,
+              groupId: slot.groupId,
+              itemId: item.id,
+              itemTitle: item.title,
+              chosen: true,
+            })),
+            ...otherItems.map((item) => ({
+              roundIndex,
+              groupId: slot.groupId,
+              itemId: item.id,
+              itemTitle: item.title,
+              chosen: false,
+            })),
+          ];
         },
       }
     : {
@@ -143,16 +184,18 @@ export function usePlaySession(pack: Pack): PlaySession {
           (currentRound
             ? (groupNameById.get(currentRound.slots[0]?.groupId ?? "") ?? "")
             : ""),
-        resolvePick(id: string): Pick | null {
+        resolvePicks(id: string): Pick[] {
           const slot = currentRound?.slots[0];
           const item = candidates.find((candidate) => candidate.id === id);
-          if (!slot || !item) return null;
-          return {
-            roundIndex,
-            groupId: slot.groupId,
-            itemId: item.id,
-            itemTitle: item.title,
-          };
+          if (!slot || !item) return [];
+          return [
+            {
+              roundIndex,
+              groupId: slot.groupId,
+              itemId: item.id,
+              itemTitle: item.title,
+            },
+          ];
         },
       };
 
@@ -162,9 +205,9 @@ export function usePlaySession(pack: Pack): PlaySession {
 
   function confirmPick() {
     if (!canConfirm || selectedId === null) return;
-    const pick = round.resolvePick(selectedId);
-    if (!pick) return;
-    setPicks((prev) => [...prev, pick]);
+    const roundPicks = round.resolvePicks(selectedId);
+    if (roundPicks.length === 0) return;
+    setPicks((prev) => [...prev, ...roundPicks]);
     setRoundIndex((prev) => prev + 1);
     setSelectedId(null);
   }
@@ -216,11 +259,14 @@ export function usePlaySession(pack: Pack): PlaySession {
     selectedId,
     setSelectedId,
     picks,
+    // Hide the unchosen side of a single-pool round from the "your picks" list.
+    displayPicks: picks.filter((pick) => pick.chosen !== false),
     confirmPick,
     candidates,
     sideA,
     sideB,
     versusCandidatesA,
     versusCandidatesB,
+    versusSinglePool,
   };
 }

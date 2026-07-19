@@ -14,7 +14,11 @@ export interface UseFollowMutationResult {
   toggle: (currentlyFollowing: boolean) => void;
   isPending: boolean;
   isError: boolean;
-  /** True when the viewer isn't signed in — the control should render blocked. */
+  /**
+   * True when the viewer is not a confirmed signed-in user — signed out OR auth
+   * not yet settled. The follow control should stay hidden until this is false,
+   * so it never flashes during the initial auth refresh (see below).
+   */
   blocked: boolean;
 }
 
@@ -23,9 +27,10 @@ export interface UseFollowMutationResult {
  * control (pack creator card, author page, …). Generic over the cache it
  * patches: pass the query key of any cache shaped `{ profile: PublicUserProfile }`
  * and its cached profile is updated in place on success (new follow state +
- * follower count, no refetch). Anonymous viewers are `blocked`: `toggle` no-ops
- * so the caller can render the control disabled with a reason tooltip rather
- * than firing a surprise redirect.
+ * follower count, no refetch). Viewers who aren't confirmed signed-in (signed
+ * out, or auth still settling) are `blocked`: `toggle` no-ops, and callers keep
+ * the control hidden until auth settles rather than flashing it or firing a
+ * surprise redirect.
  */
 export function useFollowMutation<T extends { profile: PublicUserProfile }>(
   authorId: string,
@@ -33,9 +38,14 @@ export function useFollowMutation<T extends { profile: PublicUserProfile }>(
 ): UseFollowMutationResult {
   const queryClient = useQueryClient();
   const { status } = useAuth();
-  // Only a *known* signed-out viewer is blocked; during the initial auth
-  // refresh (status "loading") we don't yet flash the login reason.
-  const blocked = status === "unauthenticated";
+  // Blocked until the viewer is a *confirmed* signed-in user — i.e. also during
+  // the initial auth refresh ("loading"), not just when signed out. Consumers
+  // hide the follow control while blocked, which is what stops a Follow button
+  // from flashing on your OWN page during the load window (isOwnProfile is still
+  // false until auth settles, so without this it would render — and it was
+  // aimable at yourself before flipping to Edit). `toggle` already no-ops unless
+  // authenticated, so this only changes what renders, never what can fire.
+  const blocked = status !== "authenticated";
 
   const mutation = useMutation({
     mutationFn: (currentlyFollowing: boolean) =>

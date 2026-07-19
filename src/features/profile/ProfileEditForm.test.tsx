@@ -59,6 +59,7 @@ beforeEach(() => {
     bio: "Old bio",
     createdAt: "2026-01-01T00:00:00.000Z",
     followerCount: 0,
+    followingCount: 0,
     isFollowedByMe: null,
   });
   vi.mocked(usersClient.updateProfile).mockResolvedValue({

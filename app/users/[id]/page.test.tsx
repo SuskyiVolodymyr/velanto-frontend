@@ -29,6 +29,7 @@ const profile: PublicUserProfile = {
   bio: "I make packs",
   createdAt: "2026-01-01T00:00:00.000Z",
   followerCount: 3,
+  followingCount: 1,
   isFollowedByMe: null,
 };
 
@@ -52,20 +53,22 @@ describe("users/[id] generateMetadata", () => {
     expect(meta.openGraph?.url).toContain("/users/author-1");
   });
 
-  // #235: the highest-stakes instance of the disinherit bug — profile links are
-  // the most-shared URLs on the platform, and they previewed blank on every OG
-  // consumer while looking correct on Twitter (which reads twitter-image.tsx).
-  // The image is still named EXPLICITLY (never inherited); it's now the profile's
-  // own dynamic avatar+name card served by app/users/[id]/social-card.
-  it("names the profile's dynamic social card image explicitly", async () => {
-    const meta = await generateMetadata({
-      params: Promise.resolve({ id: "author-1" }),
-    });
+  // #235 + the Vercel-500 fix: profile links are the most-shared URLs on the
+  // platform, and they previewed blank on every OG consumer while looking correct
+  // on Twitter (which reads twitter-image.tsx). The card is now co-located at
+  // app/users/[id]/opengraph-image.tsx (the metadata file convention), so the
+  // page emits NO explicit og:image and lets Next merge the hashed card. The old
+  // route-handler ImageResponse at /users/[id]/social-card 500'd on Vercel.
+  // Asserting the ABSENCE of images is what proves we deferred to that route
+  // rather than re-inheriting the wrong static site card — the disinherit trap.
+  it("defers the og:image to the co-located opengraph-image route", async () => {
+    vi.mocked(getUserServer).mockResolvedValue(profile);
 
-    const images = meta.openGraph?.images as { url: string; width: number }[];
-    expect(images).toHaveLength(1);
-    expect(images[0].url).toBe("/users/author-1/social-card");
-    expect(images[0].width).toBe(1200);
+    const meta = await generateMetadata(args("author-1"));
+
+    expect(meta.openGraph?.images).toBeUndefined();
+    // The rest of the OG block is still emitted — only the image is deferred.
+    expect(meta.openGraph?.url).toContain("/users/author-1");
   });
 
   it("falls back to a generic description when the profile has no bio", async () => {

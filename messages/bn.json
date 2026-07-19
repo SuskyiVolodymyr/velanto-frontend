@@ -194,7 +194,11 @@
     "detailCreatedPacks": "তৈরি করা প্যাক",
     "detailBanHistory": "নিষেধাজ্ঞার ইতিহাস",
     "detailNoBanHistory": "কোনো নিষেধাজ্ঞার ইতিহাস নেই।",
-    "detailPublicProfile": "সর্বজনীন প্রোফাইল দেখুন"
+    "detailPublicProfile": "সর্বজনীন প্রোফাইল দেখুন",
+    "filterStaffAria": "স্টাফ স্ট্যাটাস অনুসারে ফিল্টার করুন",
+    "staffAll": "সব",
+    "staffOnly": "স্টাফ",
+    "staffNonStaff": "নন-স্টাফ"
   },
   "notifications": {
     "title": "বিজ্ঞপ্তি",
@@ -985,7 +989,9 @@
     "rankingDone": "আপনার র‍্যাঙ্কিং শেষ",
     "rankingDoneSummary": "সব {count, plural, one {# রাউন্ড} other {# রাউন্ড}} না দেখেই বসানো হয়েছে।",
     "loadingResult": "আপনার ফলাফল লোড হচ্ছে…",
-    "finishRound": "ফলাফল দেখুন →"
+    "finishRound": "ফলাফল দেখুন →",
+    "versusSideA": "পক্ষ A",
+    "versusSideB": "পক্ষ B"
   },
   "result": {
     "label": "ফলাফল",
@@ -1002,7 +1008,8 @@
     "shareResult": "ফলাফল শেয়ার করুন",
     "sharedNote": "আপনি একটি শেয়ার করা ফলাফল দেখছেন।",
     "loading": "ফলাফল লোড হচ্ছে…",
-    "loadError": "আমরা ফলাফল লোড করতে পারিনি। আবার চেষ্টা করতে পৃষ্ঠাটি রিফ্রেশ করুন।"
+    "loadError": "আমরা ফলাফল লোড করতে পারিনি। আবার চেষ্টা করতে পৃষ্ঠাটি রিফ্রেশ করুন।",
+    "noRoundData": "এই রাউন্ডের জন্য এখনও কোনো নির্বাচন রেকর্ড হয়নি।"
   },
   "create": {
     "loginRequired": "প্যাক তৈরি করতে হলে আপনাকে লগ ইন করতে হবে।",
@@ -1093,7 +1100,15 @@
     "coverCropSave": "সংরক্ষণ",
     "coverCropError": "ছবি ক্রপ করা যায়নি। আবার চেষ্টা করুন।",
     "languageLabel": "প্যাকের ভাষা",
-    "languageHint": "এই প্যাকের বিষয়বস্তু কোন ভাষায়?"
+    "languageHint": "এই প্যাকের বিষয়বস্তু কোন ভাষায়?",
+    "versusSideARound": "রাউন্ড {index}-এর জন্য পক্ষ A",
+    "versusSideBRound": "রাউন্ড {index}-এর জন্য পক্ষ B",
+    "versusPerSideRound": "রাউন্ড {index}-এর জন্য প্রতি পক্ষে আইটেম",
+    "versusRoundNamePlaceholder": "লেবেল (ঐচ্ছিক)",
+    "versusDrawHint": "{a} বনাম {b} নেয়",
+    "versusSamePoolNote": "উভয় পক্ষ একই পুল ব্যবহার করে — আইটেম পুনরাবৃত্তি হবে না।",
+    "versusSetAll": "সবের জন্য সেট করুন",
+    "versusSetAllLabel": "প্রতি পক্ষে আইটেম, সব রাউন্ড"
   },
   "profile": {
     "loginRequiredView": "আপনার প্রোফাইল দেখতে হলে আপনাকে লগ ইন করতে হবে।",
@@ -1133,7 +1148,15 @@
     "avatarCropError": "ছবি ক্রপ করা যায়নি। আবার চেষ্টা করুন।",
     "loadMore": "আরও লোড করুন",
     "loadingMore": "লোড হচ্ছে…",
-    "loadMoreError": "আরও প্যাক লোড করা যায়নি। আবার চেষ্টা করুন।"
+    "loadMoreError": "আরও প্যাক লোড করা যায়নি। আবার চেষ্টা করুন।",
+    "followers": "ফলোয়ার",
+    "noFollowers": "এখনও কোনও ফলোয়ার নেই।",
+    "noFollowing": "এখনও কাউকে ফলো করছে না।",
+    "followsLoadMore": "আরও লোড করুন",
+    "followsError": "এই তালিকা লোড করা যায়নি। আবার চেষ্টা করুন।",
+    "followsLoading": "লোড হচ্ছে…",
+    "packCount": "{count, plural, one {# টি প্যাক} other {# টি প্যাক}}",
+    "followingCount": "{count, plural, one {# ফলোয়িং} other {# ফলোয়িং}}"
   },
   "pages": {
     "createTitle": "প্যাক তৈরি করুন",
@@ -1163,7 +1186,8 @@
     "privacy": "গোপনীয়তা",
     "terms": "শর্তাবলি",
     "copyright": "© {year} Velanto. সর্বস্বত্ব সংরক্ষিত।",
-    "contactLabel": "প্রশ্ন আছে?"
+    "contactLabel": "প্রশ্ন আছে?",
+    "updates": "আপডেট"
   },
   "status": {
     "packPending": "পর্যালোচনার অপেক্ষায়",
@@ -1350,5 +1374,12 @@
     "playPreview": "ভিডিও প্রিভিউ চালান",
     "embedFailed": "এই ভিডিওটি এখানে চালানো যাবে না",
     "openOnYouTube": "YouTube-এ খুলুন"
+  },
+  "updates": {
+    "metaTitle": "আপডেট — Velanto",
+    "metaDescription": "Velanto-তে নতুন ফিচার, সংশোধন ও উন্নতি।",
+    "heading": "নতুন কী আছে",
+    "intro": "সর্বশেষ ফিচার, সংশোধন ও উন্নতি — নতুনগুলো আগে।",
+    "empty": "এখনও কোনও আপডেট নেই — শীঘ্রই আবার দেখুন।"
   }
 }

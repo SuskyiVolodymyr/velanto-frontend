@@ -1,4 +1,5 @@
 "use client";
+import { formatDate } from "@/src/shared/lib/format-date";
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -27,7 +28,7 @@ const COLUMNS = "1.3fr 130px 1fr 110px 90px";
 
 function formatSince(since: string | null): string {
   if (!since) return "—";
-  return new Date(since).toLocaleDateString();
+  return formatDate(since);
 }
 
 /**

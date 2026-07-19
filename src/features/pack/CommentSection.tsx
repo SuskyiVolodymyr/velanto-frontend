@@ -5,7 +5,7 @@ import { useMemo, useState } from "react";
 import { Trash2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
-import { LoadingState } from "@/src/shared/components/LoadingState";
+import { Skeleton } from "@/src/shared/components/Skeleton";
 import { Button } from "@/src/shared/components/Button";
 import { Spinner } from "@/src/shared/components/Spinner";
 import { Hidden } from "@/src/shared/components/Hidden";
@@ -27,6 +27,7 @@ import {
   useReplyToComment,
   useDeletePackComment,
 } from "@/src/features/pack/api/pack-comments.queries";
+import { AuthorHoverTrigger } from "./AuthorHoverTrigger";
 import { renderCommentBody } from "./mention-text";
 
 /** A single comment's identity + body + row actions, shared by roots and
@@ -51,18 +52,27 @@ function CommentView({
   return (
     <div>
       <div className="flex items-center justify-between gap-2">
-        <Hidden kind="name" id={comment.authorId}>
-          <Link
-            href={`/users/${comment.authorId}`}
-            className="text-sm hover:underline"
-          >
-            <Username
-              username={comment.authorUsername}
-              role={comment.authorRole}
-              trusted={comment.authorTrusted}
-            />
-          </Link>
-        </Hidden>
+        <AuthorHoverTrigger
+          authorId={comment.authorId}
+          className="w-fit"
+          prefetch={false}
+        >
+          {({ triggerProps }) => (
+            <Hidden kind="name" id={comment.authorId}>
+              <Link
+                href={`/users/${comment.authorId}`}
+                {...triggerProps}
+                className="text-sm hover:underline"
+              >
+                <Username
+                  username={comment.authorUsername}
+                  role={comment.authorRole}
+                  trusted={comment.authorTrusted}
+                />
+              </Link>
+            </Hidden>
+          )}
+        </AuthorHoverTrigger>
         {canDelete && (
           <button
             type="button"
@@ -107,6 +117,39 @@ function CommentView({
           className="ml-auto items-end"
         />
       </div>
+    </div>
+  );
+}
+
+/**
+ * Pulsing placeholders for the comment list while it loads, so the section
+ * holds its shape instead of flashing a spinner. Decorative (each card is
+ * `aria-hidden`); a single sr-only `role="status"` carries the busy
+ * announcement the {@link LoadingState} spinner used to.
+ */
+function CommentsSkeleton({ label }: { label: string }) {
+  return (
+    <div className="flex flex-col gap-4" data-testid="comments-skeleton">
+      <span role="status" className="sr-only">
+        {label}
+      </span>
+      {[0, 1, 2].map((row) => (
+        <div
+          key={row}
+          aria-hidden
+          className="rounded-[12px] border border-border p-4"
+        >
+          <Skeleton className="h-4 w-28" />
+          <div className="mt-2.5 flex flex-col gap-1.5">
+            <Skeleton className="h-3 w-full" />
+            <Skeleton className="h-3 w-4/5" />
+          </div>
+          <div className="mt-3 flex items-center gap-3">
+            <Skeleton className="h-3 w-10" />
+            <Skeleton className="ml-auto h-6 w-16" />
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
@@ -356,7 +399,7 @@ export function CommentSection({
         ))}
 
       {loadStatus === "loading" && (
-        <LoadingState label={t("loadingComments")} showLabel />
+        <CommentsSkeleton label={t("loadingComments")} />
       )}
       {loadStatus === "error" && (
         <Text variant="danger">{t("loadCommentsError")}</Text>

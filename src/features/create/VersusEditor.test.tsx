@@ -29,7 +29,7 @@ function baseValues(format: PackFormat, perSide: number): CreatePackValues {
       { id: "boys", name: "Boys", items: items(6, "boy") },
       { id: "girls", name: "Girls", items: items(6, "girl") },
     ],
-    rounds: versusRounds("boys", "girls", 3, perSide),
+    rounds: versusRounds("boys", "girls", 2, perSide),
   };
 }
 
@@ -41,7 +41,8 @@ function RoundsReadout() {
         rounds.map((r) => ({
           a: r.slots[0]?.groupId,
           b: r.slots[1]?.groupId,
-          c: r.slots[0]?.count,
+          ca: r.slots[0]?.count,
+          cb: r.slots[1]?.count,
         })),
       )}
     </div>
@@ -71,68 +72,93 @@ function readRounds() {
 }
 
 describe("VersusEditor", () => {
-  it("derives its controls from the current rounds (nxn)", () => {
+  it("renders a matchup per round with both side selects", () => {
     render(<Harness format="nxn" perSide={2} />);
 
-    expect(screen.getByLabelText("Side A")).toHaveValue("boys");
-    expect(screen.getByLabelText("Side B")).toHaveValue("girls");
-    expect(screen.getByLabelText("Rounds")).toHaveValue(3);
-    expect(screen.getByLabelText("Items per side")).toHaveValue(2);
+    expect(screen.getByLabelText("Side A for round 1")).toHaveValue("boys");
+    expect(screen.getByLabelText("Side B for round 1")).toHaveValue("girls");
+    expect(screen.getByLabelText("Side A for round 2")).toHaveValue("boys");
+    expect(screen.getByLabelText("Items per side for round 1")).toHaveValue(2);
   });
 
-  it("regenerates the rounds when the round count changes", async () => {
+  it("changes only the edited round's side", async () => {
     const user = userEvent.setup();
     render(<Harness format="nxn" perSide={1} />);
 
-    const roundCount = screen.getByLabelText("Rounds");
-    await user.clear(roundCount);
-    await user.type(roundCount, "5");
+    await user.selectOptions(
+      screen.getByLabelText("Side B for round 1"),
+      "boys",
+    );
 
     const rounds = readRounds();
-    expect(rounds).toHaveLength(5);
+    expect(rounds[0].b).toBe("boys");
+    expect(rounds[1].b).toBe("girls"); // round 2 untouched
+  });
+
+  it("allows the same pool on both sides and shows the single-pool note", async () => {
+    const user = userEvent.setup();
+    render(<Harness format="nxn" perSide={1} />);
+
+    await user.selectOptions(
+      screen.getByLabelText("Side B for round 1"),
+      "boys",
+    );
+
+    expect(readRounds()[0]).toMatchObject({ a: "boys", b: "boys" });
     expect(
-      rounds.every(
-        (r: { a: string; b: string }) => r.a === "boys" && r.b === "girls",
-      ),
+      screen.getByText("Both sides use the same pool — items won't repeat."),
+    ).toBeInTheDocument();
+  });
+
+  it("sets both slots' count when the per-side count changes", async () => {
+    const user = userEvent.setup();
+    render(<Harness format="nxn" perSide={1} />);
+
+    const input = screen.getByLabelText("Items per side for round 1");
+    await user.clear(input);
+    await user.type(input, "4");
+
+    expect(readRounds()[0]).toMatchObject({ ca: 4, cb: 4 });
+  });
+
+  it("adds a matchup round", async () => {
+    const user = userEvent.setup();
+    render(<Harness format="nxn" perSide={1} />);
+
+    await user.click(screen.getByRole("button", { name: "+ Add round" }));
+
+    expect(readRounds()).toHaveLength(3);
+  });
+
+  it("removes a round", async () => {
+    const user = userEvent.setup();
+    render(<Harness format="nxn" perSide={1} />);
+
+    await user.click(screen.getByLabelText("Remove round 1"));
+
+    expect(readRounds()).toHaveLength(1);
+  });
+
+  it("applies the bulk per-side count to every round", async () => {
+    const user = userEvent.setup();
+    render(<Harness format="nxn" perSide={1} />);
+
+    const bulk = screen.getByLabelText("Items per side, all rounds");
+    await user.type(bulk, "3");
+    await user.click(screen.getByRole("button", { name: "Set for all" }));
+
+    const rounds = readRounds();
+    expect(
+      rounds.every((r: { ca: number; cb: number }) => r.ca === 3 && r.cb === 3),
     ).toBe(true);
   });
 
-  it("regenerates the rounds when the per-side count changes (nxn)", async () => {
-    const user = userEvent.setup();
-    render(<Harness format="nxn" perSide={1} />);
-
-    const perSide = screen.getByLabelText("Items per side");
-    await user.clear(perSide);
-    await user.type(perSide, "4");
-
-    const rounds = readRounds();
-    expect(rounds).toHaveLength(3);
-    expect(rounds.every((r: { c: number }) => r.c === 4)).toBe(true);
-  });
-
-  it("regenerates the rounds when a side changes", async () => {
-    const user = userEvent.setup();
-    render(<Harness format="nxn" perSide={1} />);
-
-    await user.selectOptions(screen.getByLabelText("Side B"), "boys");
-
-    expect(readRounds()[0].b).toBe("boys");
-  });
-
-  it("pins per-side to 1 with no input for 1v1", async () => {
-    const user = userEvent.setup();
+  it("pins per-side to 1 with no input for 1v1", () => {
     render(<Harness format="1v1" perSide={1} />);
 
-    expect(screen.queryByLabelText("Items per side")).not.toBeInTheDocument();
+    expect(
+      screen.queryByLabelText("Items per side for round 1"),
+    ).not.toBeInTheDocument();
     expect(screen.getByText("1 per side")).toBeInTheDocument();
-
-    // Changing the round count keeps every per-side count at 1.
-    const roundCount = screen.getByLabelText("Rounds");
-    await user.clear(roundCount);
-    await user.type(roundCount, "4");
-
-    const rounds = readRounds();
-    expect(rounds).toHaveLength(4);
-    expect(rounds.every((r: { c: number }) => r.c === 1)).toBe(true);
   });
 });

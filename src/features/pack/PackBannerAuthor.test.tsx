@@ -75,6 +75,7 @@ beforeEach(() => {
     bio: "I make brutal anime elimination packs",
     createdAt: "2026-01-01T00:00:00.000Z",
     followerCount: 12,
+    followingCount: 5,
     isFollowedByMe: null,
   });
   mockedPacksClient.list.mockResolvedValue({

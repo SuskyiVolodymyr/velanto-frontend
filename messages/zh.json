@@ -194,7 +194,11 @@
     "detailCreatedPacks": "创建的题包",
     "detailBanHistory": "封禁记录",
     "detailNoBanHistory": "无封禁记录。",
-    "detailPublicProfile": "查看公开资料"
+    "detailPublicProfile": "查看公开资料",
+    "filterStaffAria": "按员工状态筛选",
+    "staffAll": "全部",
+    "staffOnly": "员工",
+    "staffNonStaff": "非员工"
   },
   "notifications": {
     "title": "通知",
@@ -985,7 +989,9 @@
     "rankingDone": "你的排名完成了",
     "rankingDoneSummary": "全部 {count, plural, other {# 轮}}盲排完毕。",
     "loadingResult": "正在加载结果…",
-    "finishRound": "查看结果 →"
+    "finishRound": "查看结果 →",
+    "versusSideA": "A 方",
+    "versusSideB": "B 方"
   },
   "result": {
     "label": "结果",
@@ -1002,7 +1008,8 @@
     "shareResult": "分享结果",
     "sharedNote": "你正在查看一份分享的结果。",
     "loading": "正在加载结果……",
-    "loadError": "无法加载结果。请刷新页面重试。"
+    "loadError": "无法加载结果。请刷新页面重试。",
+    "noRoundData": "本轮尚无记录的选择。"
   },
   "create": {
     "loginRequired": "你需要先登录才能创建题包。",
@@ -1093,7 +1100,15 @@
     "coverCropSave": "保存",
     "coverCropError": "无法裁剪图片。请重试。",
     "languageLabel": "题包语言",
-    "languageHint": "这个题包的内容是什么语言？"
+    "languageHint": "这个题包的内容是什么语言？",
+    "versusSideARound": "第 {index} 轮的 A 方",
+    "versusSideBRound": "第 {index} 轮的 B 方",
+    "versusPerSideRound": "第 {index} 轮每方条目数",
+    "versusRoundNamePlaceholder": "标签（可选）",
+    "versusDrawHint": "抽取 {a} 对 {b}",
+    "versusSamePoolNote": "两方使用同一池——条目不会重复。",
+    "versusSetAll": "应用到全部",
+    "versusSetAllLabel": "每方条目数，所有轮次"
   },
   "profile": {
     "loginRequiredView": "你需要先登录才能查看个人资料。",
@@ -1133,7 +1148,15 @@
     "avatarCropError": "无法裁剪图片。请重试。",
     "loadMore": "加载更多",
     "loadingMore": "加载中…",
-    "loadMoreError": "无法加载更多卡包，请重试。"
+    "loadMoreError": "无法加载更多卡包，请重试。",
+    "followers": "关注者",
+    "noFollowers": "还没有关注者。",
+    "noFollowing": "还没有关注任何人。",
+    "followsLoadMore": "加载更多",
+    "followsError": "无法加载此列表。请重试。",
+    "followsLoading": "加载中…",
+    "packCount": "{count, plural, other {# 个题包}}",
+    "followingCount": "{count, plural, other {# 个关注}}"
   },
   "pages": {
     "createTitle": "创建题包",
@@ -1163,7 +1186,8 @@
     "privacy": "隐私",
     "terms": "条款",
     "copyright": "© {year} Velanto. 保留所有权利。",
-    "contactLabel": "有疑问？"
+    "contactLabel": "有疑问？",
+    "updates": "更新"
   },
   "status": {
     "packPending": "待审核",
@@ -1350,5 +1374,12 @@
     "playPreview": "播放视频预览",
     "embedFailed": "此视频无法在此处播放",
     "openOnYouTube": "在 YouTube 上打开"
+  },
+  "updates": {
+    "metaTitle": "更新 — Velanto",
+    "metaDescription": "Velanto 的新功能、修复和改进。",
+    "heading": "最新动态",
+    "intro": "最新的功能、修复和改进——最新的排在前面。",
+    "empty": "暂无更新，敬请期待。"
   }
 }

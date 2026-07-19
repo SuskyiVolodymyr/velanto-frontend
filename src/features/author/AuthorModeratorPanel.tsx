@@ -1,4 +1,5 @@
 "use client";
+import { formatDate, formatDateTime } from "@/src/shared/lib/format-date";
 
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
@@ -67,7 +68,7 @@ export function AuthorModeratorPanel({
       {bannedUntil && (
         <Text variant="secondary" className="mb-3 text-sm">
           {tBan("bannedUntil", {
-            date: new Date(bannedUntil).toLocaleDateString(),
+            date: formatDate(bannedUntil),
           })}
         </Text>
       )}
@@ -129,7 +130,7 @@ export function AuthorModeratorPanel({
           {banHistoryQuery.data.items.map((entry, i) => (
             <div key={i} className="text-sm">
               <Text variant="tertiary" className="text-xs">
-                {new Date(entry.createdAt).toLocaleString()}
+                {formatDateTime(entry.createdAt)}
               </Text>
               <Text>
                 <span className="font-semibold">{entry.actorUsername}</span> ·{" "}

@@ -3,6 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { BannedNotice } from "./BannedNotice";
+import { formatDate } from "@/src/shared/lib/format-date";
 import type { RuleCategory } from "@/src/shared/types/rules";
 
 const CATEGORIES: RuleCategory[] = [
@@ -71,7 +72,7 @@ describe("BannedNotice", () => {
   it("shows a dated expiry for a time-limited ban", () => {
     renderNotice({ bannedUntil: inFuture, banReason: "spam_manipulation" });
     expect(
-      screen.getByText(new RegExp(new Date(inFuture).toLocaleDateString())),
+      screen.getByText(new RegExp(formatDate(inFuture))),
     ).toBeInTheDocument();
   });
 
@@ -79,7 +80,7 @@ describe("BannedNotice", () => {
     renderNotice({ bannedUntil: farFuture, banReason: "spam_manipulation" });
     expect(screen.getByText(/permanent/i)).toBeInTheDocument();
     expect(
-      screen.queryByText(new RegExp(new Date(farFuture).toLocaleDateString())),
+      screen.queryByText(new RegExp(formatDate(farFuture))),
     ).not.toBeInTheDocument();
   });
 

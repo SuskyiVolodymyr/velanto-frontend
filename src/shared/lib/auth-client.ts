@@ -12,8 +12,13 @@ export interface RegisterInput {
   password: string;
   /** Backend requires an explicit acceptance of the Community Rules. */
   acceptedRules: true;
-  /** 6-digit code from POST /auth/email-verification/request (verify-before-create). */
-  code: string;
+  /**
+   * 6-digit code from POST /auth/email-verification/request. Optional because the
+   * verify-before-create challenge is env-gated on the backend
+   * (EMAIL_VERIFICATION_ENABLED) and off by default — omitted for one-step
+   * register, present only when GET /auth/providers reports it's required.
+   */
+  code?: string;
 }
 
 export interface LoginInput {
@@ -39,10 +44,17 @@ export interface ChangePasswordInput {
   newPassword: string;
 }
 
-/** Which OAuth providers the backend has configured (GET /auth/providers). */
+/** Auth-screen config the backend reports (GET /auth/providers). */
 export interface OAuthProviders {
   google: boolean;
   discord: boolean;
+  /**
+   * Whether register requires the two-step email-ownership code. Off by default
+   * (see the backend's EMAIL_VERIFICATION_ENABLED) — when false/absent the form
+   * registers in one step. Optional so an older backend that omits it reads as
+   * off rather than failing the type.
+   */
+  emailVerification?: boolean;
 }
 
 export const authClient = {

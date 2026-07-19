@@ -14,6 +14,16 @@ export function packAuthorQueryOptions(authorId: string) {
   });
 }
 
-export function usePackAuthor(authorId: string) {
-  return useQuery(packAuthorQueryOptions(authorId));
+export function usePackAuthor(
+  authorId: string,
+  options?: { enabled?: boolean },
+) {
+  return useQuery({
+    ...packAuthorQueryOptions(authorId),
+    enabled: options?.enabled ?? true,
+    // The identity rarely changes within a session, and the follow toggle
+    // patches the cache directly — so a hovered author (in a long comment list)
+    // isn't re-fetched on every hover-in.
+    staleTime: 5 * 60 * 1000,
+  });
 }

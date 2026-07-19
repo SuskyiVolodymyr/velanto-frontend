@@ -32,7 +32,8 @@ export async function generateMetadata({
       title: pack.title,
       description,
       url,
-      image: { path: `/packs/${id}/social-card`, alt: pack.title },
+      // The cover+title card is co-located at app/packs/[id]/opengraph-image.tsx.
+      deferImageToRoute: true,
     }),
   };
 }

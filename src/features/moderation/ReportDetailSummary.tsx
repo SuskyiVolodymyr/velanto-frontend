@@ -1,4 +1,5 @@
 "use client";
+import { formatDateTime } from "@/src/shared/lib/format-date";
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
@@ -28,7 +29,7 @@ export function ReportDetailSummary({
         <Text variant="secondary">
           {t("reportedBy", {
             reporter: report.reporterUsername,
-            date: new Date(report.createdAt).toLocaleString(),
+            date: formatDateTime(report.createdAt),
           })}
         </Text>
         <span className="text-xs font-semibold uppercase text-foreground-secondary">

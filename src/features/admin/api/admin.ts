@@ -13,17 +13,20 @@ export interface UsersPageFilters {
   sort: AdminUserSort;
   /** undefined = all, true = only banned, false = only not banned. */
   banned?: boolean;
+  /** undefined = all roles, true = staff only, false = non-staff only. */
+  staff?: boolean;
 }
 
 /**
- * The Users tab lists NON-staff only — staff are managed on their own tab, and
- * showing them in both was just noise (and invited acting on a colleague from
- * the wrong screen).
+ * The Users tab lists everyone, staff included, and exposes role + a staff
+ * filter (staff can also be managed here, by id). Its `staff` tri-state maps
+ * straight to the endpoint's: undefined = all, true = staff only, false =
+ * non-staff only. The Staff tab remains the provenance-oriented view.
  */
 export function fetchUsersPage(filters: UsersPageFilters, page: number) {
   return adminClient.listUsers({
     q: filters.q || undefined,
-    staff: false,
+    staff: filters.staff,
     banned: filters.banned,
     sort: filters.sort,
     page,
