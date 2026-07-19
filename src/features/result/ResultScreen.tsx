@@ -128,7 +128,8 @@ function GroupResultScreen({
           // chosen several items (a whole side), so highlight them all.
           const singlePool =
             (pack.format === "nxn" || pack.format === "1v1") &&
-            packRound?.slots[0]?.groupId === packRound?.slots[1]?.groupId;
+            packRound !== undefined &&
+            packRound.slots[0]?.groupId === packRound.slots[1]?.groupId;
 
           if (singlePool) {
             const chosenIds = new Set(

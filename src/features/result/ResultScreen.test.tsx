@@ -5,7 +5,11 @@ import { ResultScreen } from "./ResultScreen";
 import { encodePicks } from "@/src/shared/lib/share-url";
 import { playsClient } from "@/src/shared/lib/plays-client";
 import type { Pack } from "@/src/shared/types/pack";
-import type { PackResults, RankResults } from "@/src/shared/types/play-results";
+import type {
+  PackResults,
+  RankResults,
+  RecordedPick,
+} from "@/src/shared/types/play-results";
 
 let searchParams = new URLSearchParams();
 vi.mock("next/navigation", () => ({ useSearchParams: () => searchParams }));
@@ -94,7 +98,9 @@ beforeEach(() => {
 // #222 gates the breakdown on evidence that you played this pack. Tests about
 // what the breakdown RENDERS have to establish that precondition first —
 // otherwise they assert against the locked state and pass for the wrong reason.
-function seedOwnPlay(picks = [{ roundIndex: 0, groupId: "g1", itemId: "i1" }]) {
+function seedOwnPlay(
+  picks: RecordedPick[] = [{ roundIndex: 0, groupId: "g1", itemId: "i1" }],
+) {
   sessionStorage.setItem("velanto:last-play:pack-1", JSON.stringify(picks));
 }
 
