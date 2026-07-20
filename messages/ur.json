@@ -964,7 +964,10 @@
     "deletePackConfirm": "اس سے پیک اور اس میں موجود ہر چیز مستقل طور پر حذف ہو جائے گی۔ اسے واپس نہیں کیا جا سکتا۔",
     "deletePackCta": "پیک حذف کریں",
     "deleting": "حذف ہو رہا ہے…",
-    "deletePackError": "پیک حذف نہیں ہو سکا۔ دوبارہ کوشش کریں۔"
+    "deletePackError": "پیک حذف نہیں ہو سکا۔ دوبارہ کوشش کریں۔",
+    "submitPack": "جائزے کے لیے بھیجیں",
+    "submittingPack": "بھیجا جا رہا ہے…",
+    "submitPackError": "یہ پیک بھیجا نہیں جا سکا۔ دوبارہ کوشش کریں۔"
   },
   "share": {
     "trigger": "شیئر",
@@ -1123,7 +1126,11 @@
     "versusSetAll": "سب کے لیے سیٹ کریں",
     "versusSetAllLabel": "فی طرف آئٹمز، تمام راؤنڈز",
     "itemCropTitle": "تصویر کی کٹائی ایڈجسٹ کریں",
-    "adjustImageCrop": "کٹائی ایڈجسٹ کریں"
+    "adjustImageCrop": "کٹائی ایڈجسٹ کریں",
+    "itemTextRequired": "یہ آئٹم خالی نہیں ہو سکتا۔",
+    "editItemAria": "{title} میں ترمیم کریں",
+    "saveItem": "محفوظ کریں",
+    "cancelEdit": "منسوخ"
   },
   "profile": {
     "loginRequiredView": "اپنی پروفائل دیکھنے کے لیے آپ کا لاگ اِن ہونا ضروری ہے۔",

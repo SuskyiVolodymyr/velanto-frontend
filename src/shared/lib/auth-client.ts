@@ -1,4 +1,4 @@
-import { apiClient } from "@/src/shared/lib/api-client";
+import { apiClient, refreshSession } from "@/src/shared/lib/api-client";
 import type { User } from "@/src/shared/types/user";
 
 export interface AuthResult {
@@ -67,7 +67,22 @@ export const authClient = {
     apiClient.post<AuthResult>("/auth/register", input),
   login: (input: LoginInput) =>
     apiClient.post<AuthResult>("/auth/login", input),
-  refresh: () => apiClient.post<AuthResult>("/auth/refresh"),
+  /**
+   * Renew the session from the refresh cookie.
+   *
+   * Deliberately delegates to api-client's SINGLE-FLIGHT refreshSession instead
+   * of POSTing /auth/refresh itself. Refresh-token rotation is single-use on the
+   * server, so two refreshes in flight with the same cookie make one of them
+   * lose the race and 401 — and this call site is exactly where that happened:
+   * AuthProvider refreshes on every mount, which could run in parallel with the
+   * api-client's own 401-triggered renewal (or another tab's mount). Sharing one
+   * in-flight promise collapses them into a single rotation.
+   */
+  refresh: async (): Promise<AuthResult> => {
+    const { result } = await refreshSession();
+    if (!result) throw new Error("Session refresh failed");
+    return result;
+  },
   logout: () => apiClient.post<{ success: true }>("/auth/logout"),
   /** Forgot-password: request a reset code. Always reports `sent` (the backend
    * won't say whether the email is registered); `devCode` only in non-prod. */

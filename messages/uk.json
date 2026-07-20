@@ -964,7 +964,10 @@
     "deletePackConfirm": "Це назавжди видалить пак і весь його вміст. Скасувати дію неможливо.",
     "deletePackCta": "Видалити пак",
     "deleting": "Видалення…",
-    "deletePackError": "Не вдалося видалити пак. Спробуйте ще раз."
+    "deletePackError": "Не вдалося видалити пак. Спробуйте ще раз.",
+    "submitPack": "Надіслати на перевірку",
+    "submittingPack": "Надсилання…",
+    "submitPackError": "Не вдалося надіслати пак. Спробуйте ще раз."
   },
   "share": {
     "trigger": "Поділитися",
@@ -1123,7 +1126,11 @@
     "versusSetAll": "Задати для всіх",
     "versusSetAllLabel": "Елементів на сторону, усі раунди",
     "itemCropTitle": "Налаштування обрізки",
-    "adjustImageCrop": "Налаштувати обрізку"
+    "adjustImageCrop": "Налаштувати обрізку",
+    "itemTextRequired": "Цей елемент не може бути порожнім.",
+    "editItemAria": "Редагувати {title}",
+    "saveItem": "Зберегти",
+    "cancelEdit": "Скасувати"
   },
   "profile": {
     "loginRequiredView": "Щоб переглянути свій профіль, спершу увійди.",

@@ -27,7 +27,7 @@ vi.mock("@/src/shared/lib/auth-client", () => ({
 }));
 
 vi.mock("@/src/shared/lib/packs-client", () => ({
-  packsClient: { delete: vi.fn() },
+  packsClient: { delete: vi.fn(), submit: vi.fn() },
 }));
 
 function mockSession(id: string, role: Role) {
@@ -51,8 +51,76 @@ function renderActions(packAuthorId = "u1") {
   );
 }
 
+function renderWithStatus(status: "draft" | "approved", authorId = "u1") {
+  return render(
+    <AuthProvider>
+      <PackOwnerActions
+        packId="pack-1"
+        packAuthorId={authorId}
+        packStatus={status}
+      />
+    </AuthProvider>,
+  );
+}
+
 beforeEach(() => {
   vi.clearAllMocks();
+});
+
+// Publishing a draft is author-only and draft-only; it posts to the dedicated
+// submit endpoint rather than re-sending the whole pack through PATCH.
+describe("PackOwnerActions submit (draft)", () => {
+  it("submits a draft and refreshes so the new status is picked up", async () => {
+    mockSession("u1", "user");
+    vi.mocked(packsClient.submit).mockResolvedValue({} as never);
+    renderWithStatus("draft");
+
+    const button = await screen.findByRole("button", {
+      name: /submit for review/i,
+    });
+    await userEvent.click(button);
+
+    await waitFor(() =>
+      expect(packsClient.submit).toHaveBeenCalledWith("pack-1"),
+    );
+    await waitFor(() => expect(refresh).toHaveBeenCalled());
+  });
+
+  it("shows an error and does not refresh when submitting fails", async () => {
+    mockSession("u1", "user");
+    vi.mocked(packsClient.submit).mockRejectedValue(
+      new ApiError(500, "Server Error", {}),
+    );
+    renderWithStatus("draft");
+
+    await userEvent.click(
+      await screen.findByRole("button", { name: /submit for review/i }),
+    );
+
+    expect(await screen.findByText(/couldn't submit/i)).toBeInTheDocument();
+    expect(refresh).not.toHaveBeenCalled();
+  });
+
+  it("offers no submit action once the pack is out of draft", async () => {
+    mockSession("u1", "user");
+    renderWithStatus("approved");
+
+    await screen.findByRole("link", { name: /edit/i });
+    expect(
+      screen.queryByRole("button", { name: /submit for review/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("offers no submit action to someone who isn't the author", async () => {
+    mockSession("someone-else", "moderator");
+    renderWithStatus("draft");
+
+    await waitFor(() =>
+      expect(
+        screen.queryByRole("button", { name: /submit for review/i }),
+      ).not.toBeInTheDocument(),
+    );
+  });
 });
 
 describe("PackOwnerActions", () => {

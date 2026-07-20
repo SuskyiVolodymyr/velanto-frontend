@@ -964,7 +964,10 @@
     "deletePackConfirm": "这将永久删除该题包及其全部内容，且无法撤销。",
     "deletePackCta": "删除题包",
     "deleting": "删除中…",
-    "deletePackError": "无法删除题包，请重试。"
+    "deletePackError": "无法删除题包，请重试。",
+    "submitPack": "提交审核",
+    "submittingPack": "提交中…",
+    "submitPackError": "无法提交该合集，请重试。"
   },
   "share": {
     "trigger": "分享",
@@ -1123,7 +1126,11 @@
     "versusSetAll": "应用到全部",
     "versusSetAllLabel": "每方条目数，所有轮次",
     "itemCropTitle": "调整图片裁剪",
-    "adjustImageCrop": "调整裁剪"
+    "adjustImageCrop": "调整裁剪",
+    "itemTextRequired": "此项目不能为空。",
+    "editItemAria": "编辑 {title}",
+    "saveItem": "保存",
+    "cancelEdit": "取消"
   },
   "profile": {
     "loginRequiredView": "你需要先登录才能查看个人资料。",

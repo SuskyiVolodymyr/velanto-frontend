@@ -11,9 +11,12 @@ import type { User } from "@/src/shared/types/user";
 
 const push = vi.fn();
 const replace = vi.fn();
+// The active tab is derived from ?tab=, so tests drive it through this.
+let searchParams = new URLSearchParams();
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push, replace }),
   usePathname: () => "/admin",
+  useSearchParams: () => searchParams,
 }));
 
 vi.mock("@/src/shared/lib/auth-client", () => ({
@@ -46,6 +49,7 @@ const PLAIN_USER: User = {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  searchParams = new URLSearchParams();
   vi.mocked(adminClient.overview).mockResolvedValue({
     registeredUsers: 0,
     packs: 0,
@@ -75,16 +79,12 @@ describe("AdminScreen", () => {
     expect(await screen.findByText("Registered users")).toBeInTheDocument();
   });
 
-  it("switches to the Logs tab on click", async () => {
+  // The tab is derived from the URL, so a click writes ?tab= rather than
+  // flipping local state; the render then follows from the new param.
+  it("puts the clicked tab in the URL", async () => {
     vi.mocked(authClient.refresh).mockResolvedValue({
       accessToken: "token",
       user: MANAGER,
-    });
-    vi.mocked(adminClient.auditLogs).mockResolvedValue({
-      items: [],
-      total: 0,
-      page: 1,
-      limit: 20,
     });
     const user = userEvent.setup();
     render(
@@ -96,9 +96,47 @@ describe("AdminScreen", () => {
     await screen.findByText("Registered users");
     await user.click(screen.getByRole("tab", { name: "Logs" }));
 
+    expect(replace).toHaveBeenCalledWith("/admin?tab=logs", { scroll: false });
+  });
+
+  // Regression guard: the tab used to live in component state, so /admin?tab=users
+  // opened on Overview and a refresh threw you back to Overview every time.
+  it("opens on the tab named in ?tab= instead of falling back to Overview", async () => {
+    searchParams = new URLSearchParams("tab=logs");
+    vi.mocked(authClient.refresh).mockResolvedValue({
+      accessToken: "token",
+      user: MANAGER,
+    });
+    vi.mocked(adminClient.auditLogs).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
+    render(
+      <AuthProvider>
+        <AdminScreen />
+      </AuthProvider>,
+    );
+
     expect(
       await screen.findByLabelText("Search actor, target, details"),
     ).toBeInTheDocument();
+  });
+
+  it("falls back to Overview for an unknown ?tab= value", async () => {
+    searchParams = new URLSearchParams("tab=not-a-tab");
+    vi.mocked(authClient.refresh).mockResolvedValue({
+      accessToken: "token",
+      user: MANAGER,
+    });
+    render(
+      <AuthProvider>
+        <AdminScreen />
+      </AuthProvider>,
+    );
+
+    expect(await screen.findByText("Registered users")).toBeInTheDocument();
   });
 
   it("redirects home for an authenticated user without admin/manager role", async () => {

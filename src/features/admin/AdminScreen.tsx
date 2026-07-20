@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useTranslations } from "next-intl";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { useAuth } from "@/src/shared/lib/auth-context";
@@ -21,6 +21,11 @@ const TABS: { value: Tab; labelKey: string }[] = [
   { value: "logs", labelKey: "tabLogs" },
 ];
 
+/** Unknown or missing `?tab=` falls back to the first tab. */
+function tabFromParam(value: string | null): Tab {
+  return TABS.some((tab) => tab.value === value) ? (value as Tab) : "overview";
+}
+
 export function AdminScreen() {
   const t = useTranslations("admin");
   const tCommon = useTranslations("common");
@@ -28,7 +33,13 @@ export function AdminScreen() {
   const { user, status } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
-  const [tab, setTab] = useState<Tab>("overview");
+  const searchParams = useSearchParams();
+  // The active tab lives in the URL, not component state, so /admin?tab=users
+  // opens on Users and a refresh or a shared link lands back on the same tab
+  // (it used to reset to Overview). `replace`, not `push`: switching tabs isn't
+  // a navigation step worth a back-button entry. Mirrors the docs reader's
+  // ?topic= handling.
+  const tab = tabFromParam(searchParams.get("tab"));
 
   const allowed = user?.role === "admin" || user?.role === "manager";
 
@@ -78,7 +89,11 @@ export function AdminScreen() {
             type="button"
             role="tab"
             aria-selected={tab === tabItem.value}
-            onClick={() => setTab(tabItem.value)}
+            onClick={() =>
+              router.replace(`${pathname}?tab=${tabItem.value}`, {
+                scroll: false,
+              })
+            }
             className={cn(
               "mr-[22px] border-b-2 px-1 py-2.5 text-sm font-semibold transition-colors",
               tab === tabItem.value
