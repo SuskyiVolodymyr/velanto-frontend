@@ -3,7 +3,10 @@ import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
 import { YouTubeCard } from "@/src/shared/components/YouTubeCard";
 import { ImageCard } from "@/src/shared/components/ImageCard";
-import { extractYouTubeId } from "@/src/shared/lib/youtube";
+import {
+  extractYouTubeId,
+  extractYouTubeStart,
+} from "@/src/shared/lib/youtube";
 import { mediaUrl } from "@/src/shared/lib/media-url";
 import { cn } from "@/src/shared/lib/cn";
 import type { Item } from "@/src/shared/types/pack";
@@ -29,6 +32,8 @@ export function CandidateCard({
 }: CandidateCardProps) {
   const t = useTranslations("play");
   const videoId = item.type === "youtube" ? extractYouTubeId(item.value) : null;
+  const startSeconds =
+    item.type === "youtube" ? extractYouTubeStart(item.value) : null;
   // Cards grow in one-by-one, 900ms apart, staggered by position.
   const appearDelay = { animationDelay: `${index * 900}ms` };
 
@@ -41,7 +46,7 @@ export function CandidateCard({
           selected ? "border-acc bg-acc/10" : "border-border bg-surface",
         )}
       >
-        <YouTubeCard videoId={videoId} />
+        <YouTubeCard videoId={videoId} startSeconds={startSeconds} />
         <button
           type="button"
           onClick={onSelect}
