@@ -21,10 +21,19 @@ const PLAYBACK_WATCHDOG_MS = 4000;
 
 interface YouTubeCardProps {
   videoId: string;
+  /**
+   * Whole seconds to begin playback at, from a `t=`/`start=` on the author's
+   * pasted link. Null/absent plays from the beginning.
+   */
+  startSeconds?: number | null;
   className?: string;
 }
 
-export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
+export function YouTubeCard({
+  videoId,
+  startSeconds,
+  className,
+}: YouTubeCardProps) {
   const t = useTranslations("media");
   const mountRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<YouTubePlayer | null>(null);
@@ -71,7 +80,13 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
         if (cancelled || !mountRef.current) return;
         playerRef.current = new YT.Player(mountRef.current, {
           videoId,
-          playerVars: { autoplay: 0 },
+          // `start` is spread in rather than set to 0 when absent: the IFrame
+          // API treats the key's presence as meaningful, and there is no
+          // difference to express between "no timecode" and "start at 0".
+          playerVars: {
+            autoplay: 0,
+            ...(startSeconds ? { start: startSeconds } : {}),
+          },
           events: {
             // Controls (play/pause) only become callable once the player is
             // ready; the hover effect below drives playback off `playerReady`.
@@ -98,7 +113,11 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
       playerRef.current?.destroy();
       playerRef.current = null;
     };
-  }, [videoId, activated]);
+    // startSeconds is a dependency because `start` is only read when the player
+    // is CONSTRUCTED — a changed offset has no effect on a live player, so the
+    // player has to be rebuilt. In practice it moves in lockstep with videoId
+    // (both are derived from the same item.value), so this rarely fires alone.
+  }, [videoId, startSeconds, activated]);
 
   useEffect(() => {
     if (!playerRef.current || !playerReady || failed) return;
@@ -190,7 +209,12 @@ export function YouTubeCard({ videoId, className }: YouTubeCardProps) {
         // showing YouTube's red error box. stopPropagation so opening it doesn't
         // also trigger a surrounding pickable card.
         <a
-          href={`https://www.youtube.com/watch?v=${videoId}`}
+          // Carry the timecode here too — this is the escape hatch for a video
+          // that won't embed, and sending the viewer to 0:00 of a two-hour
+          // upload the author meant to clip is the same bug, just relocated.
+          href={`https://www.youtube.com/watch?v=${videoId}${
+            startSeconds ? `&t=${startSeconds}` : ""
+          }`}
           target="_blank"
           rel="noopener noreferrer"
           onClick={(event) => event.stopPropagation()}

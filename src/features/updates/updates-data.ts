@@ -31,6 +31,7 @@ export const UPDATES: UpdateEntry[] = [
     version: "1.4.0",
     title: "Edit your items, and a much faster Velanto",
     bullets: [
+      "Paste a YouTube link with a timecode and the video starts right there, so you can point at the exact moment instead of the whole upload.",
       "Click any item you've added to a pool to edit it in place — fix a typo, swap the image, or change its format without deleting and starting over. What you've typed carries across if you switch between text, link, and image.",
       "Publish a draft straight from its page with a new Submit for review button, instead of opening the editor first.",
       "Velanto is dramatically faster to sign in and browse — pages that used to strain the server now load in a fraction of the time.",

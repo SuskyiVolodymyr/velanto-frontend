@@ -17,7 +17,9 @@ export const YT_STATE_BUFFERING = 3;
 
 export interface YouTubePlayerOptions {
   videoId: string;
-  playerVars?: { autoplay?: 0 | 1 };
+  // `start` is whole seconds to begin playback at; omitted entirely (not 0)
+  // when there's no timecode, so the option object stays minimal.
+  playerVars?: { autoplay?: 0 | 1; start?: number };
   events?: {
     onReady?: (event: YouTubePlayerEvent) => void;
     // Fires when the video can't be played embedded (private, deleted, embed
