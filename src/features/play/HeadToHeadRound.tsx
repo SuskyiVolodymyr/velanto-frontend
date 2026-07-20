@@ -4,7 +4,10 @@ import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
 import { YouTubeCard } from "@/src/shared/components/YouTubeCard";
 import { ImageCard } from "@/src/shared/components/ImageCard";
-import { extractYouTubeId } from "@/src/shared/lib/youtube";
+import {
+  extractYouTubeId,
+  extractYouTubeStart,
+} from "@/src/shared/lib/youtube";
 import { mediaUrl } from "@/src/shared/lib/media-url";
 
 interface HeadToHeadCardProps {
@@ -15,11 +18,13 @@ interface HeadToHeadCardProps {
 function HeadToHeadCard({ item, onPick }: HeadToHeadCardProps) {
   const t = useTranslations("play");
   const videoId = item.type === "youtube" ? extractYouTubeId(item.value) : null;
+  const startSeconds =
+    item.type === "youtube" ? extractYouTubeStart(item.value) : null;
 
   if (videoId) {
     return (
       <div className="flex flex-1 flex-col overflow-hidden rounded-2xl border border-border bg-surface transition-colors">
-        <YouTubeCard videoId={videoId} />
+        <YouTubeCard videoId={videoId} startSeconds={startSeconds} />
         <button
           type="button"
           onClick={onPick}

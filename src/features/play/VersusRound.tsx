@@ -4,7 +4,10 @@ import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
 import { YouTubeCard } from "@/src/shared/components/YouTubeCard";
 import { ImageCard } from "@/src/shared/components/ImageCard";
-import { extractYouTubeId } from "@/src/shared/lib/youtube";
+import {
+  extractYouTubeId,
+  extractYouTubeStart,
+} from "@/src/shared/lib/youtube";
 import { mediaUrl } from "@/src/shared/lib/media-url";
 import { cn } from "@/src/shared/lib/cn";
 
@@ -50,6 +53,8 @@ function SideCard({ side, selected, onSelect }: SideCardProps) {
         {side.items.map((item, index) => {
           const videoId =
             item.type === "youtube" ? extractYouTubeId(item.value) : null;
+          const startSeconds =
+            item.type === "youtube" ? extractYouTubeStart(item.value) : null;
           // Cards grow in one-by-one, 900ms apart, staggered by position.
           const appearDelay = { animationDelay: `${index * 900}ms` };
 
@@ -60,7 +65,7 @@ function SideCard({ side, selected, onSelect }: SideCardProps) {
                 style={appearDelay}
                 className="play-card-appear overflow-hidden rounded-xl border border-border bg-white/[0.03]"
               >
-                <YouTubeCard videoId={videoId} />
+                <YouTubeCard videoId={videoId} startSeconds={startSeconds} />
                 <Text className="p-3 text-sm font-medium">{item.title}</Text>
               </div>
             );

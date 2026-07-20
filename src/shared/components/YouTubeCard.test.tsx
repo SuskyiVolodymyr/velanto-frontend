@@ -77,6 +77,24 @@ describe("YouTubeCard", () => {
     );
   });
 
+  // A pack author who pasted a link with a timecode meant the clip, not the
+  // whole video — most of the point of allowing a timecode at all.
+  it("starts at the given offset when the author's link carried a timecode", async () => {
+    const fakePlayer = makeFakePlayer();
+    const fakeApi = makeFakeApi(fakePlayer);
+    mockedLoad.mockResolvedValue(fakeApi);
+
+    render(<YouTubeCard videoId="abc123" startSeconds={90} />);
+    fireEvent.mouseEnter(screen.getByTestId("youtube-card"));
+
+    await waitFor(() => expect(fakeApi.Player).toHaveBeenCalledTimes(1));
+    expect(vi.mocked(fakeApi.Player).mock.calls[0][1]).toEqual(
+      expect.objectContaining({
+        playerVars: { autoplay: 0, start: 90 },
+      }),
+    );
+  });
+
   it("reuses the existing player on subsequent hovers instead of reloading the API", async () => {
     const fakePlayer = makeFakePlayer();
     const fakeApi = makeFakeApi(fakePlayer);
@@ -153,6 +171,33 @@ describe("YouTubeCard", () => {
     );
 
     expect(ancestorClick).not.toHaveBeenCalled();
+  });
+
+  // The fallback is where a viewer lands when the embed is blocked — dropping
+  // the timecode there sends them to 0:00 of a video the author meant to clip.
+  it("keeps the timecode on the Open-on-YouTube fallback link", async () => {
+    const player = makeFakePlayer();
+    const api: YouTubeIframeApi = {
+      Player: vi.fn().mockImplementation(function (
+        _el: unknown,
+        options: {
+          events: { onError: (e: { target: YouTubePlayer }) => void };
+        },
+      ) {
+        options.events.onError({ target: player });
+        return player;
+      }) as unknown as YouTubeIframeApi["Player"],
+    };
+    mockedLoad.mockResolvedValue(api);
+
+    render(<YouTubeCard videoId="abc123" startSeconds={90} />);
+    fireEvent.mouseEnter(screen.getByTestId("youtube-card"));
+
+    const link = await screen.findByRole("link", { name: /open on youtube/i });
+    expect(link).toHaveAttribute(
+      "href",
+      "https://www.youtube.com/watch?v=abc123&t=90",
+    );
   });
 
   it("falls back to an Open-on-YouTube link when the video can't be embedded", async () => {

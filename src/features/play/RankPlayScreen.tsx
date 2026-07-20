@@ -11,7 +11,10 @@ import { playsClient } from "@/src/shared/lib/plays-client";
 import { writeLastPlayPicks } from "@/src/shared/lib/last-play-storage";
 import { YouTubeCard } from "@/src/shared/components/YouTubeCard";
 import { ImageCard } from "@/src/shared/components/ImageCard";
-import { extractYouTubeId } from "@/src/shared/lib/youtube";
+import {
+  extractYouTubeId,
+  extractYouTubeStart,
+} from "@/src/shared/lib/youtube";
 import { mediaUrl } from "@/src/shared/lib/media-url";
 import { resolveRoundSelections } from "@/src/features/play/round-sampling";
 import type { Pack, Item } from "@/src/shared/types/pack";
@@ -52,6 +55,10 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   const currentVideoId =
     currentItem?.type === "youtube"
       ? extractYouTubeId(currentItem.value)
+      : null;
+  const currentStartSeconds =
+    currentItem?.type === "youtube"
+      ? extractYouTubeStart(currentItem.value)
       : null;
   const currentImageSrc =
     currentItem?.type === "image" ? mediaUrl(currentItem.value) : null;
@@ -148,7 +155,10 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
               </div>
             ) : currentVideoId ? (
               <div className="w-full max-w-xl overflow-hidden rounded-2xl border border-acc bg-surface">
-                <YouTubeCard videoId={currentVideoId} />
+                <YouTubeCard
+                  videoId={currentVideoId}
+                  startSeconds={currentStartSeconds}
+                />
                 <Text className="line-clamp-2 p-4 text-center font-semibold">
                   {currentItem?.title}
                 </Text>
