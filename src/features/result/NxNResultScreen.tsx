@@ -7,6 +7,7 @@ import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { SharedResultNote } from "@/src/features/result/SharedResultNote";
 import { ResultActions } from "@/src/features/result/ResultActions";
+import { TopPickedTable } from "@/src/features/result/TopPickedTable";
 import { roundHeading } from "@/src/shared/lib/round-heading";
 import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
@@ -113,6 +114,7 @@ export function NxNResultScreen({
     () => playedRounds(ownPicks, titleById),
     [ownPicks, titleById],
   );
+  const topItems = results.topItems ?? [];
 
   return (
     <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
@@ -154,6 +156,22 @@ export function NxNResultScreen({
           </Text>
         </Card>
       )}
+
+      {/* The one aggregate nxn CAN state honestly: per ITEM, not per pairing.
+          An item's win rate is a share of the rounds it appeared in, which
+          saturates immediately — unlike a set-vs-set pairing, which almost
+          never repeats. */}
+      {topItems.length > 0 && (
+        <section className="mb-8">
+          <Text as="h2" variant="title" className="mb-1 text-lg">
+            {t("topPickedHeading")}
+          </Text>
+          <Text variant="secondary" className="mb-4 text-sm">
+            {t("topPickedSubtitle")}
+          </Text>
+          <TopPickedTable items={topItems} />
+        </section>
+      )}
     </div>
   );
 }
@@ -177,7 +195,10 @@ function RoundRow({
         heading,
         picked: (round.left.picked ? round.left : round.right).titles.join(", "),
       })}
-      className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-[1fr_auto_1fr]"
+      // The centre column is a FIXED width, not `auto`: sized to its content it
+      // grew with the round's name, so a long name shrank both cards and every
+      // row ended up a different width.
+      className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-[minmax(0,1fr)_9rem_minmax(0,1fr)]"
     >
       <SideCard side={round.left} position="left" />
       <div className="flex flex-col items-center justify-center gap-1 text-center">

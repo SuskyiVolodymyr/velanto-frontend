@@ -8,6 +8,7 @@ import {
   writeLastPlayId,
 } from "@/src/shared/lib/last-play-storage";
 import { useRoundSelections } from "@/src/features/play/use-round-selections";
+import { scrollToRoundTop } from "@/src/features/play/scroll-to-round-top";
 import type { Item, Pack } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
 
@@ -204,6 +205,7 @@ export function usePlaySession(pack: Pack): PlaySession {
     if (roundPicks.length === 0) return;
     setPicks((prev) => [...prev, ...roundPicks]);
     setRoundIndex((prev) => prev + 1);
+    scrollToRoundTop();
     setSelectedId(null);
   }
 

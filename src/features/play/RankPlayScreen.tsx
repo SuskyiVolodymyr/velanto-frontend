@@ -17,6 +17,7 @@ import {
 } from "@/src/shared/lib/youtube";
 import { mediaUrl } from "@/src/shared/lib/media-url";
 import { useRoundSelections } from "@/src/features/play/use-round-selections";
+import { scrollToRoundTop } from "@/src/features/play/scroll-to-round-top";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import type { Pack, Item } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
@@ -83,6 +84,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
 
   function goToNextRound() {
     setRoundIndex((prev) => prev + 1);
+    scrollToRoundTop();
     setPlacements({});
   }
 

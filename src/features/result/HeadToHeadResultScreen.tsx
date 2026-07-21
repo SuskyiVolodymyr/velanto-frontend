@@ -235,7 +235,10 @@ function MatchupRow({
       })}
       // `items-stretch`, so both cards take the centre column's full height
       // rather than floating as two thin bars beside a three-line stack.
-      className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-[1fr_auto_1fr]"
+      // The centre column is a FIXED width, not `auto`: sized to its content it
+      // grew with the round's name, so a long name shrank both cards and every
+      // row ended up a different width.
+      className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-[minmax(0,1fr)_9rem_minmax(0,1fr)]"
     >
       <ContenderCard contender={matchup.left} side="left" />
       <div className="flex flex-col items-center justify-center gap-1 text-center">

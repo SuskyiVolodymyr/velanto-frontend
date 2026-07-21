@@ -12,6 +12,7 @@ import {
   writeLastPlayPicks,
 } from "@/src/shared/lib/last-play-storage";
 import { useRoundSelections } from "@/src/features/play/use-round-selections";
+import { scrollToRoundTop } from "@/src/features/play/scroll-to-round-top";
 import { HeadToHeadRound } from "@/src/features/play/HeadToHeadRound";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
@@ -72,6 +73,7 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
     ]);
     setSelectedId(null);
     setRoundIndex((prev) => prev + 1);
+    scrollToRoundTop();
   }
 
   // Fires once when the last matchup's pick is recorded. Anonymous plays ARE
