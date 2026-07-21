@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { cn } from "@/src/shared/lib/cn";
 import { useTranslations } from "next-intl";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
@@ -27,7 +29,7 @@ export function ResultLocked({
   const t = useTranslations("result");
 
   return (
-    <div className="mx-auto w-full max-w-2xl flex-1 px-7 py-10">
+    <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
       <Text variant="tertiary" className="mb-2 text-xs uppercase tracking-wide">
         {t("label")}
       </Text>
