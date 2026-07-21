@@ -205,7 +205,10 @@ export function usePlaySession(pack: Pack): PlaySession {
     if (roundPicks.length === 0) return;
     setPicks((prev) => [...prev, ...roundPicks]);
     setRoundIndex((prev) => prev + 1);
-    scrollToRoundTop();
+    // nxn only. Its rounds are the tall ones — two sides of up to eight items
+    // each — so confirming from the bottom of one lands you in the middle of
+    // the next. An elimination round fits on a screen and doesn't need it.
+    if (isVersus) scrollToRoundTop();
     setSelectedId(null);
   }
 
