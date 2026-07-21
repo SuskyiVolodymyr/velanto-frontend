@@ -104,6 +104,24 @@ function renderScreen(pack: Pack) {
   );
 }
 
+/**
+ * Choose a contender and commit it — 1v1 is select-then-confirm, like every
+ * other format. `last` picks the confirm label, which reads as finishing the
+ * pack on the final round.
+ */
+async function pickAndConfirm(
+  user: ReturnType<typeof userEvent.setup>,
+  name: string,
+  { last = false }: { last?: boolean } = {},
+) {
+  await user.click(screen.getByRole("button", { name: `Pick ${name}` }));
+  await user.click(
+    screen.getByRole("button", {
+      name: last ? "See results →" : "Next round →",
+    }),
+  );
+}
+
 beforeEach(() => {
   vi.clearAllMocks();
   // Pin the draw shuffle to identity so random-slot draws come out in authored
@@ -134,9 +152,9 @@ describe("HeadToHeadPlayScreen", () => {
       screen.queryByText("You need to be logged in to play a pack."),
     ).toBeNull();
 
-    await user.click(screen.getByRole("button", { name: "Pick Goku" }));
+    await pickAndConfirm(user, "Goku");
     await screen.findByText("Naruto");
-    await user.click(screen.getByRole("button", { name: "Pick Sasuke" }));
+    await pickAndConfirm(user, "Sasuke", { last: true });
 
     expect(await screen.findByText(/All matchups done/i)).toBeInTheDocument();
     // Anon play is recorded on the backend…
@@ -180,7 +198,7 @@ describe("HeadToHeadPlayScreen", () => {
     renderScreen(singlePool);
     await screen.findByText("Goku");
 
-    await user.click(screen.getByRole("button", { name: "Pick Goku" }));
+    await pickAndConfirm(user, "Goku", { last: true });
 
     await waitFor(() =>
       expect(playsClient.record).toHaveBeenCalledWith("pack-1v1", {
@@ -192,6 +210,60 @@ describe("HeadToHeadPlayScreen", () => {
     );
   });
 
+  it("selects on click and only advances once the pick is confirmed", async () => {
+    const user = userEvent.setup();
+    renderScreen(HEAD_TO_HEAD_PACK);
+    await screen.findByText("Goku");
+
+    // Every other format selects first and commits with a button; 1v1 used to
+    // advance on the click itself, so a misclick was unrecoverable.
+    const confirm = screen.getByRole("button", { name: "Next round →" });
+    expect(confirm).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: "Pick Goku" }));
+    expect(screen.getByRole("button", { name: "Pick Goku" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    // Still on round 1 — the click chose a side, it did not commit it.
+    expect(screen.getByText("Round 1 of 2")).toBeInTheDocument();
+
+    // A pick is changeable right up until it's confirmed.
+    await user.click(screen.getByRole("button", { name: "Pick Vegeta" }));
+    expect(screen.getByRole("button", { name: "Pick Goku" })).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
+
+    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    // Absorbed from the retired "advances immediately after picking" test: the
+    // next matchup's own contenders are on screen, not the previous round's.
+    expect(await screen.findByText("Naruto")).toBeInTheDocument();
+    expect(screen.getByText("Sasuke")).toBeInTheDocument();
+    expect(screen.getByText("Round 2 of 2")).toBeInTheDocument();
+    // The new matchup starts unselected, so the button can't be double-fired.
+    // Round 2 of 2 is the last, so the confirm reads as finishing the pack.
+    expect(screen.getByRole("button", { name: "See results →" })).toBeDisabled();
+  });
+
+  it("labels the last matchup's confirm as finishing the pack", async () => {
+    const user = userEvent.setup();
+    renderScreen(HEAD_TO_HEAD_PACK);
+    await screen.findByText("Goku");
+
+    await user.click(screen.getByRole("button", { name: "Pick Goku" }));
+    expect(
+      screen.getByRole("button", { name: "Next round →" }),
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await screen.findByText("Naruto");
+
+    await user.click(screen.getByRole("button", { name: "Pick Sasuke" }));
+    await user.click(screen.getByRole("button", { name: "See results →" }));
+
+    expect(await screen.findByText(/All matchups done/i)).toBeInTheDocument();
+  });
+
   it("shows both items of the first matchup immediately", async () => {
     renderScreen(HEAD_TO_HEAD_PACK);
 
@@ -200,25 +272,13 @@ describe("HeadToHeadPlayScreen", () => {
     expect(screen.getByText("Round 1 of 2")).toBeInTheDocument();
   });
 
-  it("advances to the next matchup immediately after picking a winner", async () => {
-    const user = userEvent.setup();
-    renderScreen(HEAD_TO_HEAD_PACK);
-    await screen.findByText("Goku");
-
-    await user.click(screen.getByRole("button", { name: "Pick Goku" }));
-
-    expect(await screen.findByText("Naruto")).toBeInTheDocument();
-    expect(screen.getByText("Sasuke")).toBeInTheDocument();
-    expect(screen.getByText("Round 2 of 2")).toBeInTheDocument();
-  });
-
   it("shows the finished state with matchup history after the last pick, and records the play once", async () => {
     const user = userEvent.setup();
     renderScreen(HEAD_TO_HEAD_PACK);
     await screen.findByText("Goku");
-    await user.click(screen.getByRole("button", { name: "Pick Goku" }));
+    await pickAndConfirm(user, "Goku");
     await screen.findByText("Naruto");
-    await user.click(screen.getByRole("button", { name: "Pick Sasuke" }));
+    await pickAndConfirm(user, "Sasuke", { last: true });
 
     expect(await screen.findByText(/All matchups done/i)).toBeInTheDocument();
     expect(screen.getByText("Goku")).toBeInTheDocument();

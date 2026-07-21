@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { Text } from "@/src/shared/components/Text";
-import { buttonClassName } from "@/src/shared/components/Button";
+import { Button, buttonClassName } from "@/src/shared/components/Button";
 import { playsClient } from "@/src/shared/lib/plays-client";
 import { writeLastPlayPicks } from "@/src/shared/lib/last-play-storage";
 import { resolveRoundSelections } from "@/src/features/play/round-sampling";
@@ -30,6 +30,10 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
   const [roundIndex, setRoundIndex] = useState(0);
   const [history, setHistory] = useState<MatchupResult[]>([]);
   const [allPicks, setAllPicks] = useState<RecordedPick[]>([]);
+  // The contender chosen but NOT yet committed. Cleared on every advance, so a
+  // new matchup always starts unselected and the confirm button can't re-fire
+  // the previous round's pick.
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const isFinished = totalRounds > 0 && roundIndex >= totalRounds;
   // Drawn items for every round, resolved once at mount (dedup spans rounds).
@@ -44,9 +48,9 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
   const left = slotA?.items[0];
   const right = slotB?.items[0];
 
-  function pick(winnerId: string) {
-    if (!slotA || !slotB || !left || !right) return;
-    const leftWon = winnerId === left.id;
+  function confirmPick() {
+    if (!selectedId || !slotA || !slotB || !left || !right) return;
+    const leftWon = selectedId === left.id;
     const winner = leftWon ? left : right;
     const loser = leftWon ? right : left;
     const winnerGroupId = leftWon ? slotA.groupId : slotB.groupId;
@@ -78,6 +82,7 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
           ]
         : [{ roundIndex, groupId: winnerGroupId }]),
     ]);
+    setSelectedId(null);
     setRoundIndex((prev) => prev + 1);
   }
 
@@ -130,8 +135,21 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
               {t("whichPrefer")}
             </Text>
           </section>
-          <div className="mb-10">
-            <HeadToHeadRound left={left} right={right} onPick={pick} />
+          <div className="mb-8">
+            <HeadToHeadRound
+              left={left}
+              right={right}
+              selectedId={selectedId}
+              onSelect={setSelectedId}
+            />
+          </div>
+          {/* Same placement and copy as the elimination formats' confirm. */}
+          <div className="mb-10 flex justify-end">
+            <Button disabled={!selectedId} onClick={confirmPick}>
+              {roundIndex === totalRounds - 1
+                ? t("finishRound")
+                : t("nextRound")}
+            </Button>
           </div>
         </>
       )}
