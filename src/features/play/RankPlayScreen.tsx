@@ -17,6 +17,7 @@ import {
 } from "@/src/shared/lib/youtube";
 import { mediaUrl } from "@/src/shared/lib/media-url";
 import { resolveRoundSelections } from "@/src/features/play/round-sampling";
+import { PLAY_CONTAINER } from "@/src/features/play/play-container";
 import type { Pack, Item } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
 
@@ -111,7 +112,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
     : Math.round((roundIndex / Math.max(totalRounds, 1)) * 100);
 
   return (
-    <div className="mx-auto w-full max-w-2xl flex-1 px-7 py-10">
+    <div className={cn(PLAY_CONTAINER, "flex-1 py-10")}>
       <div className="mb-8">
         <div className="mb-2 flex items-center justify-between">
           <Text variant="tertiary" className="text-xs uppercase tracking-wide">

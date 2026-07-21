@@ -14,6 +14,7 @@ import {
   PICKED_LABEL_KEY,
 } from "@/src/features/play/play-format-copy";
 import { PlayProgress } from "@/src/features/play/PlayProgress";
+import { PLAY_CONTAINER } from "@/src/features/play/play-container";
 import { CandidateCard } from "@/src/features/play/CandidateCard";
 import { PicksSummary } from "@/src/features/play/PicksSummary";
 import { LoadingState } from "@/src/shared/components/LoadingState";
@@ -52,7 +53,7 @@ export function PlayScreen({ pack }: { pack: Pack }) {
   }, [session.recordSettled, router, pack.id]);
 
   return (
-    <div className="mx-auto w-full max-w-5xl flex-1 px-7 py-10">
+    <div className={cn(PLAY_CONTAINER, "flex-1 py-10")}>
       <PlayProgress
         isFinished={session.isFinished}
         roundIndex={session.roundIndex}
