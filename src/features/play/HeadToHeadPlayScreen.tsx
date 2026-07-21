@@ -11,7 +11,7 @@ import {
   writeLastPlayId,
   writeLastPlayPicks,
 } from "@/src/shared/lib/last-play-storage";
-import { resolveRoundSelections } from "@/src/features/play/round-sampling";
+import { useRoundSelections } from "@/src/features/play/use-round-selections";
 import { HeadToHeadRound } from "@/src/features/play/HeadToHeadRound";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
@@ -39,10 +39,8 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
   // Drawn items for every round, resolved once at mount (dedup spans rounds).
   // A 1v1 round has two slots (the two sides); each draws exactly one item, so
   // the matchup is that pair and the pick records the winning side's group.
-  const selections = useMemo(
-    () => resolveRoundSelections(groups, rounds),
-    [groups, rounds],
-  );
+  const resolved = useRoundSelections(groups, rounds);
+  const selections = resolved ?? [];
   const slotA = !isFinished ? selections[roundIndex]?.slots[0] : undefined;
   const slotB = !isFinished ? selections[roundIndex]?.slots[1] : undefined;
   const left = slotA?.items[0];

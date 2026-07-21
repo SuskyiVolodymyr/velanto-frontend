@@ -7,7 +7,7 @@ import {
   writeLastPlayPicks,
   writeLastPlayId,
 } from "@/src/shared/lib/last-play-storage";
-import { resolveRoundSelections } from "@/src/features/play/round-sampling";
+import { useRoundSelections } from "@/src/features/play/use-round-selections";
 import type { Item, Pack } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
 
@@ -92,12 +92,11 @@ export function usePlaySession(pack: Pack): PlaySession {
   const rounds = pack.rounds ?? [];
   const totalRounds = rounds.length;
 
-  // Drawn items for every round, resolved once at mount — the per-group dedup
-  // spans rounds, so the whole walk has to happen together (not per-round).
-  const selections = useMemo(
-    () => resolveRoundSelections(groups, rounds),
-    [groups, rounds],
-  );
+  // Drawn items for every round, resolved once after mount — the per-group
+  // dedup spans rounds, so the whole walk has to happen together (not
+  // per-round). Null until the client has drawn; see useRoundSelections.
+  const resolved = useRoundSelections(groups, rounds);
+  const selections = resolved ?? [];
   const groupNameById = useMemo(
     () => new Map(groups.map((group) => [group.id, group.name])),
     [groups],

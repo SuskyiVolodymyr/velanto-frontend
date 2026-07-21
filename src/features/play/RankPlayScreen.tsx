@@ -16,7 +16,7 @@ import {
   extractYouTubeStart,
 } from "@/src/shared/lib/youtube";
 import { mediaUrl } from "@/src/shared/lib/media-url";
-import { resolveRoundSelections } from "@/src/features/play/round-sampling";
+import { useRoundSelections } from "@/src/features/play/use-round-selections";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import type { Pack, Item } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
@@ -32,11 +32,10 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   const [placements, setPlacements] = useState<Record<number, Item>>({});
   const [allPicks, setAllPicks] = useState<RecordedPick[]>([]);
 
-  // Drawn items for every round, resolved once at mount (dedup spans rounds).
-  const selections = useMemo(
-    () => resolveRoundSelections(groups, rounds),
-    [groups, rounds],
-  );
+  // Drawn items for every round, resolved once after mount (dedup spans
+  // rounds). Null until the client has drawn; see useRoundSelections.
+  const resolved = useRoundSelections(groups, rounds);
+  const selections = resolved ?? [];
   const groupNameById = useMemo(
     () => new Map(groups.map((g) => [g.id, g.name])),
     [groups],
