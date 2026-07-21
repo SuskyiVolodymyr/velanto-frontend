@@ -257,6 +257,11 @@ describe("HeadToHeadResultScreen", () => {
     expect(rows[0].querySelector("td")).toHaveClass("border-medal-gold");
     expect(rows[1].querySelector("td")).toHaveClass("border-medal-gold");
     expect(rows[2].querySelector("td")).toHaveClass("border-medal-bronze");
+    // Fill as well as outline, and it REPLACES bg-surface rather than joining
+    // it — cn() is a plain join, so two background classes would leave the
+    // cascade to pick by stylesheet order.
+    expect(rows[0].querySelector("td")).toHaveClass("bg-medal-gold/10");
+    expect(rows[0].querySelector("td")).not.toHaveClass("bg-surface");
   });
 
   it("names contenders from the pack, not from the aggregate", () => {

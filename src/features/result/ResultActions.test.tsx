@@ -23,6 +23,11 @@ describe("ResultActions", () => {
       screen.getByRole("link", { name: "Try it yourself" }),
     ).toHaveAttribute("href", "/packs/p1/play");
     expect(screen.queryByRole("link", { name: "Play again" })).toBeNull();
+    // Nothing here is theirs to share: the picks on screen belong to whoever
+    // sent the link, so offering Share back invites passing off their run.
+    expect(
+      screen.queryByRole("button", { name: "Share result" }),
+    ).toBeNull();
   });
 
   it("hides the Share result button for a non-approved pack", () => {

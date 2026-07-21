@@ -49,7 +49,10 @@ export function ResultActions({
       >
         {shared ? t("tryItYourself") : t("playAgain")}
       </Link>
-      {status === "approved" && (
+      {/* No Share on a shared result: the picks on screen are someone else's,
+          so the only thing there is to share is the link the reader arrived
+          on — offering it back invites passing off another player's run. */}
+      {status === "approved" && !shared && (
         <ShareButton
           path={`/packs/${packId}/result`}
           picks={picks}

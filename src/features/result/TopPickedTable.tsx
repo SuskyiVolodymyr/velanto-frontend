@@ -10,12 +10,22 @@ import type { ItemTally } from "@/src/shared/types/play-results";
 /** How many rows a press of "Load more" adds. */
 const PAGE = 10;
 
-/** Outline for each podium place; anything past third gets the plain border. */
-const MEDAL_BORDER: Record<number, string> = {
-  1: "border-medal-gold",
-  2: "border-medal-silver",
-  3: "border-medal-bronze",
+/**
+ * Outline and fill for each podium place; anything past third keeps the plain
+ * border and surface.
+ *
+ * The two are chosen TOGETHER rather than layered, because `cn()` is a plain
+ * join: appending `bg-medal-gold/10` to `bg-surface` leaves both classes on the
+ * element and the cascade picks by stylesheet order, not class order (see
+ * Text.tsx). Each place therefore names its own complete pair.
+ */
+const MEDAL_STYLES: Record<number, { border: string; background: string }> = {
+  1: { border: "border-medal-gold", background: "bg-medal-gold/10" },
+  2: { border: "border-medal-silver", background: "bg-medal-silver/10" },
+  3: { border: "border-medal-bronze", background: "bg-medal-bronze/10" },
 };
+
+const PLAIN_STYLES = { border: "border-border", background: "bg-surface" };
 
 interface RankedTally extends ItemTally {
   /**
@@ -77,10 +87,10 @@ export function TopPickedTable({ items }: { items: ItemTally[] }) {
               // Keyed on RANK, not row order: tied firsts are both gold and the
               // next row is third, so it takes bronze and silver goes
               // unawarded — which is the point of sharing a place.
-              const medal = MEDAL_BORDER[item.rank];
+              const style = MEDAL_STYLES[item.rank] ?? PLAIN_STYLES;
               return (
                 <tr key={item.itemId} data-rank={item.rank}>
-                  <RankCell medal={medal} first>
+                  <RankCell style={style} first>
                     <Text
                       as="span"
                       className="text-sm font-semibold tabular-nums"
@@ -88,12 +98,12 @@ export function TopPickedTable({ items }: { items: ItemTally[] }) {
                       {item.rank}
                     </Text>
                   </RankCell>
-                  <RankCell medal={medal}>
+                  <RankCell style={style}>
                     <Text as="span" className="text-sm font-semibold">
                       {item.itemTitle}
                     </Text>
                   </RankCell>
-                  <RankCell medal={medal} align="end">
+                  <RankCell style={style} align="end">
                     <Text as="span" variant="tertiary" className="text-xs">
                       {t("pickedOfAppeared", {
                         picked: item.picked,
@@ -101,7 +111,7 @@ export function TopPickedTable({ items }: { items: ItemTally[] }) {
                       })}
                     </Text>
                   </RankCell>
-                  <RankCell medal={medal} align="end" last>
+                  <RankCell style={style} align="end" last>
                     <Text
                       as="span"
                       className="text-sm font-semibold tabular-nums text-acc"
@@ -163,13 +173,13 @@ function ColumnHeading({
  */
 function RankCell({
   children,
-  medal,
+  style,
   align = "start",
   first = false,
   last = false,
 }: {
   children: React.ReactNode;
-  medal: string | undefined;
+  style: { border: string; background: string };
   align?: "start" | "end";
   first?: boolean;
   last?: boolean;
@@ -177,11 +187,12 @@ function RankCell({
   return (
     <td
       className={cn(
-        "border-y bg-surface px-3 py-3",
-        medal ?? "border-border",
+        "border-y px-3 py-3",
+        style.border,
+        style.background,
         align === "end" ? "text-end" : "text-start",
-        first && cn("rounded-s-xl border-s", medal ?? "border-border"),
-        last && cn("rounded-e-xl border-e", medal ?? "border-border"),
+        first && cn("rounded-s-xl border-s", style.border),
+        last && cn("rounded-e-xl border-e", style.border),
       )}
     >
       {children}
