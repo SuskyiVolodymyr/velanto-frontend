@@ -247,7 +247,7 @@ describe("PlayScreen", () => {
     expect(screen.getByRole("button", { name: "Next round →" })).toBeEnabled();
   });
 
-  it("advances through nxn rounds and records the chosen side's group id per round, with no itemId", async () => {
+  it("advances through nxn rounds and records both sides' drawn items per round", async () => {
     const user = userEvent.setup();
     renderScreen(NXN_PACK);
     await screen.findByRole("button", { name: "Pick Boys" });
@@ -263,10 +263,19 @@ describe("PlayScreen", () => {
     await waitFor(() =>
       expect(replace).toHaveBeenCalledWith("/packs/pack-nxn/result"),
     );
+    // Every drawn item on both sides, in slot order, `chosen` marking the side
+    // the player took. Recording only the winning pool named the side but not
+    // what was on it, so the result could never replay the matchup.
     expect(playsClient.record).toHaveBeenCalledWith("pack-nxn", {
       picks: [
-        { roundIndex: 0, groupId: "ca" },
-        { roundIndex: 1, groupId: "cb" },
+        { roundIndex: 0, groupId: "ca", itemId: "1", chosen: true },
+        { roundIndex: 0, groupId: "ca", itemId: "2", chosen: true },
+        { roundIndex: 0, groupId: "cb", itemId: "3", chosen: false },
+        { roundIndex: 0, groupId: "cb", itemId: "4", chosen: false },
+        { roundIndex: 1, groupId: "ca", itemId: "1", chosen: false },
+        { roundIndex: 1, groupId: "ca", itemId: "2", chosen: false },
+        { roundIndex: 1, groupId: "cb", itemId: "3", chosen: true },
+        { roundIndex: 1, groupId: "cb", itemId: "4", chosen: true },
       ],
     });
   });

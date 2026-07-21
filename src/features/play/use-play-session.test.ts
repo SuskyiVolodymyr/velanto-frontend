@@ -177,15 +177,45 @@ describe("usePlaySession", () => {
     ]);
   });
 
-  it("resolves a two-pool versus pick as the chosen side's group id, no itemId", () => {
+  it("resolves a two-pool versus pick per drawn item, in slot order", () => {
     const { result } = renderHook(() => usePlaySession(VERSUS_PACK));
 
     // Selection is by SIDE INDEX now ("0" = side A = ca).
     act(() => result.current.setSelectedId("0"));
     act(() => result.current.confirmPick());
 
+    // Both sides' items, each under the pool it was drawn from. Recording only
+    // the winning pool named the side but not what was on it, so the result
+    // screen could never show the matchup the player was looking at.
     expect(result.current.picks).toEqual([
-      { roundIndex: 0, groupId: "ca", itemTitle: "Boys" },
+      {
+        roundIndex: 0,
+        groupId: "ca",
+        itemId: "1",
+        itemTitle: "Naruto",
+        chosen: true,
+      },
+      {
+        roundIndex: 0,
+        groupId: "ca",
+        itemId: "2",
+        itemTitle: "Sasuke",
+        chosen: true,
+      },
+      {
+        roundIndex: 0,
+        groupId: "cb",
+        itemId: "3",
+        itemTitle: "Sakura",
+        chosen: false,
+      },
+      {
+        roundIndex: 0,
+        groupId: "cb",
+        itemId: "4",
+        itemTitle: "Hinata",
+        chosen: false,
+      },
     ]);
   });
 
@@ -243,12 +273,15 @@ describe("usePlaySession", () => {
     act(() => result.current.confirmPick());
 
     await waitFor(() => expect(playsClient.record).toHaveBeenCalledTimes(1));
+    // Slot order, not chosen-first: side A's drawn items then side B's. The
+    // array order is what tells the result screen which side each item was on,
+    // and for a single-pool round the group ids cannot.
     expect(playsClient.record).toHaveBeenCalledWith("pack-a", {
       picks: [
-        { roundIndex: 0, groupId: "pool", itemId: "p3", chosen: true },
-        { roundIndex: 0, groupId: "pool", itemId: "p4", chosen: true },
         { roundIndex: 0, groupId: "pool", itemId: "p1", chosen: false },
         { roundIndex: 0, groupId: "pool", itemId: "p2", chosen: false },
+        { roundIndex: 0, groupId: "pool", itemId: "p3", chosen: true },
+        { roundIndex: 0, groupId: "pool", itemId: "p4", chosen: true },
       ],
     });
   });

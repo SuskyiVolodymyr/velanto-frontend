@@ -42,8 +42,12 @@ export function PackDetailScreen({
   const tFormat = useTranslations("formats");
   const t = useTranslations("pack");
   const tResult = useTranslations("result");
-  // 1v1 only — the backend sends topItems for no other format.
-  const topItems = results.format === "1v1" ? (results.topItems ?? []) : [];
+  // Both versus formats: the backend computes topItems for nxn and 1v1 alike,
+  // and "which item wins most" is the statistic for either.
+  const topItems =
+    results.format === "1v1" || results.format === "nxn"
+      ? (results.topItems ?? [])
+      : [];
   const sectionLabel =
     pack.format === "nxn" ? t("sectionCategory") : t("sectionGroup");
 

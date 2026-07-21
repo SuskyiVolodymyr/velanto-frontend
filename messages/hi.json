@@ -1023,6 +1023,7 @@
     "loadError": "हम परिणाम लोड नहीं कर सके। दोबारा कोशिश करने के लिए पेज रीफ़्रेश करें।",
     "noRoundData": "इस राउंड के लिए अभी तक कोई चयन दर्ज नहीं हुआ।",
     "matchupLabel": "{heading} मुकाबला: {loser} पर {winner}",
+    "nxnRoundLabel": "{heading}: चुना गया {picked}",
     "matchupSeen": "{count, plural, one {# प्ले ने यह देखा} other {# प्ले ने यह देखा}}",
     "noMatchupBreakdown": "इस प्ले का मुकाबला विवरण नहीं है — यह तब दर्ज हुआ था जब Velanto यह नहीं रखता था कि कौन-से दो आइटम आमने-सामने आए।",
     "topPickedHeading": "सबसे ज़्यादा चुने गए",
