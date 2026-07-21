@@ -21,7 +21,7 @@ describe("OverviewTab — plays chart", () => {
       registeredUsers: 0,
       packs: 0,
       plays: 0,
-      onlineUsers: null,
+      onlineUsers: 0,
       pendingReports: 0,
       newUsersThisWeek: 0,
       newPacksThisWeek: 0,
@@ -59,12 +59,12 @@ describe("OverviewTab", () => {
     expect(screen.getByText("Loading overview…")).toBeInTheDocument();
   });
 
-  it("renders real counts, including pendingReports, and a dash only for the null metric", async () => {
+  it("renders every metric as a real count, with no dash left", async () => {
     vi.mocked(adminClient.overview).mockResolvedValue({
       registeredUsers: 42,
       packs: 7,
       plays: 130,
-      onlineUsers: null,
+      onlineUsers: 9,
       pendingReports: 4,
       newUsersThisWeek: 0,
       newPacksThisWeek: 0,
@@ -79,8 +79,10 @@ describe("OverviewTab", () => {
     expect(screen.getByText("7")).toBeInTheDocument();
     expect(screen.getByText("130")).toBeInTheDocument();
     expect(screen.getByText("4")).toBeInTheDocument();
-    // Only onlineUsers is still null ("—"); pendingReports now shows a count.
-    expect(screen.getAllByText("—")).toHaveLength(1);
+    expect(screen.getByText("9")).toBeInTheDocument();
+    // onlineUsers was the last null metric. With presence tracking shipped every
+    // card carries a real number, so a dash now means a genuine load problem.
+    expect(screen.queryByText("—")).not.toBeInTheDocument();
   });
 
   it("shows an error message when the fetch rejects", async () => {

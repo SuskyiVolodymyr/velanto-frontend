@@ -87,7 +87,7 @@
     "metricPlays": "खेल",
     "metricOnlineUsers": "ऑनलाइन उपयोगकर्ता",
     "metricPendingReports": "लंबित रिपोर्ट",
-    "notTracked": "अभी ट्रैक नहीं किया गया",
+    "activeRecently": "हाल ही में सक्रिय",
     "awaitingReview": "समीक्षा की प्रतीक्षा में",
     "newThisWeek": "+{count} इस सप्ताह नए",
     "playsThisWeek": "+{count} इस सप्ताह खेले गए",

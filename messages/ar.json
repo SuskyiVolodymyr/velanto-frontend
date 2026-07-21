@@ -87,7 +87,7 @@
     "metricPlays": "مرات اللعب",
     "metricOnlineUsers": "المستخدمون المتصلون",
     "metricPendingReports": "بلاغات معلّقة",
-    "notTracked": "لم يُتتبَّع بعد",
+    "activeRecently": "نشطون مؤخرًا",
     "awaitingReview": "بانتظار المراجعة",
     "newThisWeek": "+{count} جديد هذا الأسبوع",
     "playsThisWeek": "+{count} لعبة هذا الأسبوع",

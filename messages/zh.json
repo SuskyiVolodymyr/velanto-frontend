@@ -87,7 +87,7 @@
     "metricPlays": "游玩次数",
     "metricOnlineUsers": "在线用户",
     "metricPendingReports": "待处理举报",
-    "notTracked": "尚未统计",
+    "activeRecently": "最近活跃",
     "awaitingReview": "等待审核",
     "newThisWeek": "本周新增 +{count}",
     "playsThisWeek": "本周游玩 +{count}",

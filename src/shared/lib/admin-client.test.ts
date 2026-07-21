@@ -22,7 +22,7 @@ describe("adminClient", () => {
       registeredUsers: 10,
       packs: 5,
       plays: 20,
-      onlineUsers: null,
+      onlineUsers: 5,
       pendingReports: 3,
       newUsersThisWeek: 0,
       newPacksThisWeek: 0,
