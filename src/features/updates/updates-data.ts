@@ -29,11 +29,15 @@ export const UPDATES: UpdateEntry[] = [
   {
     date: "2026-07-21",
     version: "1.5.0",
-    title: "Draft limit and form fixes",
+    title: "Draft limits, faster browsing, and sign-in fixes",
     bullets: [
       "You can keep up to three drafts at a time. Publish or delete one to start another — drafts are private and never expire, so this keeps them from piling up unseen.",
+      "Browsing packs is quicker: the home feed now loads only the page you're looking at instead of every pack behind it, so search and filtering stay fast as the library grows.",
+      "Finishing a play saves faster on popular packs, which used to get slower with every play they collected.",
+      "Fixed Discord and Google sign-in leaving you on the sign-in page even though it had worked — if the pop-up closes before handing the session back, we now pick it up on the next check instead of dropping it.",
       "Fixed a pack's results page failing to load after its author changed the pack's format.",
       "Form fields across the site are now properly labelled for your browser, so autofill and password managers work with them.",
+      "Editing a pack through the API or an MCP client now accepts just the fields you're changing, instead of requiring the whole pack on every edit.",
     ],
   },
   {
