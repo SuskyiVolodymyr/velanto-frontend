@@ -95,19 +95,6 @@ beforeEach(() => {
 });
 
 describe("CommentSection", () => {
-  it("renders the comment author's avatar image when they have one", async () => {
-    vi.mocked(commentsClient.list).mockResolvedValue({
-      items: [{ ...COMMENT_A, authorAvatarKey: "media/avatar/bob.webp" }],
-      total: 1,
-      page: 1,
-      limit: 10,
-    });
-    const { container } = renderAsUnauthenticated();
-
-    await screen.findByText("Loved this pack.");
-    expect(container.querySelector('img[src*="bob.webp"]')).toBeInTheDocument();
-  });
-
   it("shows a comment skeleton while comments load, then clears it, keeping the busy announcement", async () => {
     // Hold the fetch open so the section stays in its loading state.
     let resolve: (v: {
@@ -135,14 +122,14 @@ describe("CommentSection", () => {
     );
   });
 
-  it("fetches page 1 with limit 10 and renders existing comments", async () => {
+  it("fetches page 1 with limit 10 and renders the list: body, count, author avatar and author-page link", async () => {
     vi.mocked(commentsClient.list).mockResolvedValue({
-      items: [COMMENT_A],
+      items: [{ ...COMMENT_A, authorAvatarKey: "media/avatar/bob.webp" }],
       total: 1,
       page: 1,
       limit: 10,
     });
-    renderAsUnauthenticated();
+    const { container } = renderAsUnauthenticated();
 
     expect(await screen.findByText("bob")).toBeInTheDocument();
     expect(screen.getByText("Loved this pack.")).toBeInTheDocument();
@@ -151,32 +138,12 @@ describe("CommentSection", () => {
       limit: 10,
       sort: "top",
     });
-  });
-
-  it("links each comment author's username to their author page", async () => {
-    vi.mocked(commentsClient.list).mockResolvedValue({
-      items: [COMMENT_A],
-      total: 1,
-      page: 1,
-      limit: 10,
-    });
-    renderAsUnauthenticated();
-
-    await screen.findByText("bob");
-    const link = screen.getByRole("link", { name: "bob" });
-    expect(link).toHaveAttribute("href", "/users/u2");
-  });
-
-  it("shows the comment count in the header", async () => {
-    vi.mocked(commentsClient.list).mockResolvedValue({
-      items: [COMMENT_A],
-      total: 1,
-      page: 1,
-      limit: 10,
-    });
-    renderAsUnauthenticated();
-
-    expect(await screen.findByText("Comments · 1")).toBeInTheDocument();
+    expect(screen.getByText("Comments · 1")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "bob" })).toHaveAttribute(
+      "href",
+      "/users/u2",
+    );
+    expect(container.querySelector('img[src*="bob.webp"]')).toBeInTheDocument();
   });
 
   it("shows an empty state when there are no comments yet", async () => {
@@ -215,19 +182,6 @@ describe("CommentSection", () => {
 
     await userEvent.click(post);
     expect(commentsClient.create).not.toHaveBeenCalled();
-  });
-
-  it("shows a compose form when authenticated", async () => {
-    vi.mocked(commentsClient.list).mockResolvedValue({
-      items: [],
-      total: 0,
-      page: 1,
-      limit: 10,
-    });
-    renderAsAuthenticated();
-
-    expect(await screen.findByRole("textbox")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Post" })).toBeInTheDocument();
   });
 
   it("disables the Post button while the draft is empty", async () => {

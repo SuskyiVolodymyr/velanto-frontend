@@ -389,7 +389,7 @@ describe("AuthorScreen", () => {
     expect(screen.queryByText("spam_manipulation")).not.toBeInTheDocument();
   });
 
-  it("shows an empty-state message when the author has no ban history", async () => {
+  it("shows a loading indicator while ban history fetches, then the empty state when it has no entries", async () => {
     mockAuth({
       user: {
         id: "mod-1",
@@ -400,13 +400,23 @@ describe("AuthorScreen", () => {
       },
     });
     mockedUsersClient.getProfile.mockResolvedValue(profile);
-    mockedUsersClient.banHistory.mockResolvedValue({
-      items: [],
-      total: 0,
-      page: 1,
-      limit: 20,
-    });
+    let resolveBanHistory: (value: {
+      items: never[];
+      total: number;
+      page: number;
+      limit: number;
+    }) => void = () => {};
+    mockedUsersClient.banHistory.mockReturnValue(
+      new Promise((resolve) => {
+        resolveBanHistory = resolve;
+      }),
+    );
     renderScreen(<AuthorScreen authorId="author-1" />);
+    await waitFor(() =>
+      expect(screen.getByText(/loading ban history/i)).toBeInTheDocument(),
+    );
+
+    resolveBanHistory({ items: [], total: 0, page: 1, limit: 20 });
     await waitFor(() =>
       expect(screen.getByText(/no ban history/i)).toBeInTheDocument(),
     );
@@ -433,7 +443,7 @@ describe("AuthorScreen", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("submits a ban via the inline form and shows the updated status", async () => {
+  it("keeps the form open with an error when the ban fails, then submits it on retry", async () => {
     mockAuth({
       user: {
         id: "mod-1",
@@ -450,6 +460,7 @@ describe("AuthorScreen", () => {
       page: 1,
       limit: 20,
     });
+    mockedUsersClient.ban.mockRejectedValueOnce(new Error("boom"));
     mockedUsersClient.ban.mockResolvedValue({
       id: "author-1",
       bannedUntil: "2027-01-01T00:00:00.000Z",
@@ -468,79 +479,22 @@ describe("AuthorScreen", () => {
       "spam_manipulation",
     );
     await userEvent.click(screen.getByRole("button", { name: /confirm ban/i }));
+
+    // First attempt rejects: the error shows and the form stays open (the
+    // reason picker is still on screen).
     await waitFor(() =>
-      expect(mockedUsersClient.ban).toHaveBeenCalledWith("author-1", {
+      expect(screen.getByText(/couldn't ban/i)).toBeInTheDocument(),
+    );
+    expect(screen.getByLabelText("Reason")).toBeInTheDocument();
+
+    // Retrying from the still-open form submits the payload.
+    await userEvent.click(screen.getByRole("button", { name: /confirm ban/i }));
+    await waitFor(() =>
+      expect(mockedUsersClient.ban).toHaveBeenLastCalledWith("author-1", {
         duration: "week",
         reason: "spam_manipulation",
       }),
     );
-  });
-
-  it("shows an error and keeps the form open when the ban request fails", async () => {
-    mockAuth({
-      user: {
-        id: "mod-1",
-        email: "m@x.com",
-        username: "mod",
-        role: "moderator",
-        createdAt: "",
-      },
-    });
-    mockedUsersClient.getProfile.mockResolvedValue(profile);
-    mockedUsersClient.banHistory.mockResolvedValue({
-      items: [],
-      total: 0,
-      page: 1,
-      limit: 20,
-    });
-    mockedUsersClient.ban.mockRejectedValue(new Error("boom"));
-    renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() =>
-      expect(
-        screen.getByRole("button", { name: /^ban$/i }),
-      ).toBeInTheDocument(),
-    );
-    await userEvent.click(screen.getByRole("button", { name: /^ban$/i }));
-    await screen.findByRole("option", { name: "Spam & Manipulation" });
-    await userEvent.selectOptions(
-      screen.getByLabelText("Reason"),
-      "spam_manipulation",
-    );
-    await userEvent.click(screen.getByRole("button", { name: /confirm ban/i }));
-    await waitFor(() =>
-      expect(screen.getByText(/couldn't ban/i)).toBeInTheDocument(),
-    );
-    // The form stays open (the reason picker is still on screen).
-    expect(screen.getByLabelText("Reason")).toBeInTheDocument();
-  });
-
-  it("shows a loading indicator while ban history is being fetched", async () => {
-    mockAuth({
-      user: {
-        id: "mod-1",
-        email: "m@x.com",
-        username: "mod",
-        role: "moderator",
-        createdAt: "",
-      },
-    });
-    mockedUsersClient.getProfile.mockResolvedValue(profile);
-    let resolveBanHistory: (value: {
-      items: never[];
-      total: number;
-      page: number;
-      limit: number;
-    }) => void = () => {};
-    mockedUsersClient.banHistory.mockReturnValue(
-      new Promise((resolve) => {
-        resolveBanHistory = resolve;
-      }),
-    );
-    renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() =>
-      expect(screen.getByText(/loading ban history/i)).toBeInTheDocument(),
-    );
-    resolveBanHistory({ items: [], total: 0, page: 1, limit: 20 });
   });
 
   it("shows an error message when the ban history fetch fails", async () => {
@@ -565,9 +519,10 @@ describe("AuthorScreen", () => {
 
   // --- Characterization tests added alongside the F6 decomposition. These lock
   // behaviors that moved into extracted sub-components so the split provably
-  // changes nothing: the optimistic unfollow path (AuthorProfileHeader), the ban
-  // payload with an "other" reasonDetail (AuthorModeratorPanel + BanReasonPicker),
-  // and streamer-mode name redaction (the <Hidden> usage in AuthorProfileHeader).
+  // changes nothing: the optimistic unfollow path (AuthorProfileHeader) and
+  // streamer-mode name redaction (the <Hidden> usage in AuthorProfileHeader).
+  // (The "other"-reason ban payload lives with its owners now: trimming in
+  // BanReasonPicker.test, the wiring payload in UsersTab.test.)
 
   it("toggles Following to Follow and updates the count via unfollow when already followed", async () => {
     mockAuth();
@@ -592,50 +547,6 @@ describe("AuthorScreen", () => {
     expect(mockedUsersClient.unfollow).toHaveBeenCalledWith("author-1");
     expect(mockedUsersClient.follow).not.toHaveBeenCalled();
     expect(screen.getByText(/2 followers/)).toBeInTheDocument();
-  });
-
-  it("submits a ban with a trimmed reasonDetail when the reason is 'other'", async () => {
-    mockAuth({
-      user: {
-        id: "mod-1",
-        email: "m@x.com",
-        username: "mod",
-        role: "moderator",
-        createdAt: "",
-      },
-    });
-    mockedUsersClient.getProfile.mockResolvedValue(profile);
-    mockedUsersClient.banHistory.mockResolvedValue({
-      items: [],
-      total: 0,
-      page: 1,
-      limit: 20,
-    });
-    mockedUsersClient.ban.mockResolvedValue({
-      id: "author-1",
-      bannedUntil: "2027-01-01T00:00:00.000Z",
-    });
-    renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() =>
-      expect(
-        screen.getByRole("button", { name: /^ban$/i }),
-      ).toBeInTheDocument(),
-    );
-    await userEvent.click(screen.getByRole("button", { name: /^ban$/i }));
-    await screen.findByRole("option", { name: "Other" });
-    await userEvent.selectOptions(screen.getByLabelText("Reason"), "other");
-    await userEvent.type(
-      screen.getByLabelText("Details (required)"),
-      "  posting scam links  ",
-    );
-    await userEvent.click(screen.getByRole("button", { name: /confirm ban/i }));
-    await waitFor(() =>
-      expect(mockedUsersClient.ban).toHaveBeenCalledWith("author-1", {
-        duration: "week",
-        reason: "other",
-        reasonDetail: "posting scam links",
-      }),
-    );
   });
 
   it("redacts the author name behind a Reveal control when streamer mode is on", async () => {

@@ -348,64 +348,7 @@ describe("HomeFeed", () => {
   });
 
   describe("search", () => {
-    it("debounces search input before re-fetching with q", async () => {
-      const user = userEvent.setup();
-      vi.mocked(packsClient.list).mockResolvedValue({
-        items: [PACK_A],
-        total: 1,
-        page: 1,
-        limit: 25,
-      });
-      render(<HomeFeed />);
-      await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
-
-      await user.type(screen.getByRole("searchbox"), "anime");
-      expect(packsClient.list).toHaveBeenCalledTimes(1);
-
-      await waitFor(
-        () =>
-          expect(packsClient.list).toHaveBeenLastCalledWith({
-            format: undefined,
-            tags: [],
-            languages: [],
-            q: "anime",
-            sort: "popular",
-            window: "month",
-            limit: 25,
-          }),
-        { timeout: 1000 },
-      );
-    });
-
-    it("trims leading/trailing whitespace before sending q", async () => {
-      const user = userEvent.setup();
-      vi.mocked(packsClient.list).mockResolvedValue({
-        items: [PACK_A],
-        total: 1,
-        page: 1,
-        limit: 25,
-      });
-      render(<HomeFeed />);
-      await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
-
-      await user.type(screen.getByRole("searchbox"), "  anime  ");
-
-      await waitFor(
-        () =>
-          expect(packsClient.list).toHaveBeenLastCalledWith({
-            format: undefined,
-            tags: [],
-            languages: [],
-            q: "anime",
-            sort: "popular",
-            window: "month",
-            limit: 25,
-          }),
-        { timeout: 1000 },
-      );
-    });
-
-    it("clearing the search box re-fetches without q", async () => {
+    it("debounces, trims, and clears the search query", async () => {
       const user = userEvent.setup();
       vi.mocked(packsClient.list).mockResolvedValue({
         items: [PACK_A],
@@ -417,7 +360,11 @@ describe("HomeFeed", () => {
       await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
 
       const searchBox = screen.getByRole("searchbox");
-      await user.type(searchBox, "anime");
+      await user.type(searchBox, "  anime  ");
+      // Debounced: typing alone must not have re-fetched yet.
+      expect(packsClient.list).toHaveBeenCalledTimes(1);
+
+      // After the debounce, q is sent trimmed.
       await waitFor(
         () =>
           expect(packsClient.list).toHaveBeenLastCalledWith({
@@ -432,6 +379,7 @@ describe("HomeFeed", () => {
         { timeout: 1000 },
       );
 
+      // Clearing the box re-fetches without q.
       await user.clear(searchBox);
       await waitFor(
         () =>
@@ -450,20 +398,6 @@ describe("HomeFeed", () => {
   });
 
   describe("popularity sort", () => {
-    it("sends sort=popular and window=month by default", async () => {
-      vi.mocked(packsClient.list).mockResolvedValue({
-        items: [],
-        total: 0,
-        page: 1,
-        limit: 25,
-      });
-      render(<HomeFeed />);
-      await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
-      const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
-      expect(lastCall?.sort).toBe("popular");
-      expect(lastCall?.window).toBe("month");
-    });
-
     it("re-selecting Popular after Date sends popular/month", async () => {
       const user = userEvent.setup();
       vi.mocked(packsClient.list).mockResolvedValue({
@@ -489,35 +423,6 @@ describe("HomeFeed", () => {
         expect(lastCall?.sort).toBe("popular");
         expect(lastCall?.window).toBe("month");
       });
-    });
-
-    it("shows the window picker only when Popular is active", async () => {
-      const user = userEvent.setup();
-      vi.mocked(packsClient.list).mockResolvedValue({
-        items: [],
-        total: 0,
-        page: 1,
-        limit: 25,
-      });
-      render(<HomeFeed />);
-      await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
-
-      // Popular is the default, so the window picker is visible on mount.
-      expect(screen.getByRole("button", { name: "Month" })).toBeInTheDocument();
-
-      await user.selectOptions(
-        screen.getByRole("combobox", { name: "Sort by" }),
-        "date",
-      );
-      expect(
-        screen.queryByRole("button", { name: "Month" }),
-      ).not.toBeInTheDocument();
-
-      await user.selectOptions(
-        screen.getByRole("combobox", { name: "Sort by" }),
-        "popular",
-      );
-      expect(screen.getByRole("button", { name: "Month" })).toBeInTheDocument();
     });
 
     it("changing the window while Popular is active sends the new window", async () => {

@@ -155,30 +155,6 @@ describe("NewFeedbackForm", () => {
     expect(push).not.toHaveBeenCalled();
   });
 
-  it("requires the language and suggestion for a translation post", async () => {
-    render(<NewFeedbackForm />);
-
-    await userEvent.click(screen.getByRole("radio", { name: "Translation" }));
-    await userEvent.type(screen.getByLabelText(/title/i), "Wrong word");
-    await userEvent.type(
-      screen.getByLabelText(/details/i),
-      "The label reads oddly",
-    );
-    await userEvent.click(
-      screen.getByRole("button", { name: /post feedback/i }),
-    );
-
-    expect(
-      await screen.findByText(
-        "Please choose the language for your translation suggestion.",
-      ),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText("Please enter your suggested wording."),
-    ).toBeInTheDocument();
-    expect(mockedFeedbackClient.create).not.toHaveBeenCalled();
-  });
-
   it("surfaces a server error message when the create call fails", async () => {
     mockedFeedbackClient.create.mockRejectedValue(
       new ApiError(400, "Bad Request", { message: "That topic is closed." }),

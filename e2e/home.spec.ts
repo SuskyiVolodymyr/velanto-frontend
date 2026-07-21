@@ -35,49 +35,16 @@ test.describe("Home feed", () => {
 
     await page.goto("/");
 
+    // Absorbed from the retired homepage.spec.ts (the original scaffold smoke).
+    await expect(page).toHaveTitle("Velanto");
+
     await expect(page.getByText("Best Anime Openings")).toBeVisible();
   });
 
-  test("shows the empty state when the backend returns no packs", async ({
-    page,
-  }) => {
-    await page.route(`${API_BASE}/packs*`, (route) =>
-      route.fulfill({
-        status: 200,
-        json: { items: [], total: 0, page: 1, limit: 20 },
-      }),
-    );
-
-    await page.goto("/");
-
-    await expect(
-      page.getByText("No packs match these filters yet."),
-    ).toBeVisible();
-  });
-
-  test("re-requests with the selected format when a chip is clicked", async ({
-    page,
-  }) => {
-    const requestedUrls: string[] = [];
-    await page.route(`${API_BASE}/packs*`, (route) => {
-      requestedUrls.push(route.request().url());
-      return route.fulfill({
-        status: 200,
-        json: { items: [PACK_A], total: 1, page: 1, limit: 20 },
-      });
-    });
-
-    await page.goto("/");
-    await page.getByText("Best Anime Openings").waitFor();
-    await page.getByRole("button", { name: "Sacrifice One" }).click();
-
-    await expect
-      .poll(() =>
-        requestedUrls.some((url) => url.includes("format=sacrifice_one")),
-      )
-      .toBe(true);
-  });
-
+  // Trimmed (audit 2026-07-21): the empty-state and format-chip cases were
+  // re-proofs of HomeFeed.test.tsx / packs-client.test.ts at ~100x the cost.
+  // This spec keeps what only a real browser proves: the live query strings
+  // and the pager in a real DOM.
   test("paginates when the backend reports more than one page of results", async ({
     page,
   }) => {

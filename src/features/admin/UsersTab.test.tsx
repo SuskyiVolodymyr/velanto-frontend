@@ -113,7 +113,7 @@ describe("UsersTab", () => {
     });
   });
 
-  it("re-queries with staff=true when the staff filter is set to staff-only", async () => {
+  it("re-queries with staff=true for staff-only and staff=false for non-staff", async () => {
     const user = userEvent.setup();
     vi.mocked(adminClient.listUsers).mockResolvedValue({
       items: [TARGET],
@@ -124,33 +124,16 @@ describe("UsersTab", () => {
     renderAsAdmin();
     await screen.findByText("bob");
 
-    await user.selectOptions(
-      screen.getByRole("combobox", { name: "Filter by staff status" }),
-      "staff",
-    );
-
+    const staffFilter = screen.getByRole("combobox", {
+      name: "Filter by staff status",
+    });
+    await user.selectOptions(staffFilter, "staff");
     await waitFor(() => {
       const last = vi.mocked(adminClient.listUsers).mock.calls.at(-1)?.[0];
       expect(last).toMatchObject({ staff: true });
     });
-  });
 
-  it("re-queries with staff=false when the staff filter is set to non-staff", async () => {
-    const user = userEvent.setup();
-    vi.mocked(adminClient.listUsers).mockResolvedValue({
-      items: [TARGET],
-      total: 1,
-      page: 1,
-      limit: 20,
-    });
-    renderAsAdmin();
-    await screen.findByText("bob");
-
-    await user.selectOptions(
-      screen.getByRole("combobox", { name: "Filter by staff status" }),
-      "nonstaff",
-    );
-
+    await user.selectOptions(staffFilter, "nonstaff");
     await waitFor(() => {
       const last = vi.mocked(adminClient.listUsers).mock.calls.at(-1)?.[0];
       expect(last).toMatchObject({ staff: false });
@@ -391,7 +374,8 @@ describe("UsersTab", () => {
       );
     }
 
-    it("masks a user's username and email but keeps ban status and controls visible", async () => {
+    it("masks the identity (with a name-free role-dropdown label) until the row is revealed", async () => {
+      const user = userEvent.setup();
       localStorage.setItem("velanto:streamer-mode", "on");
       vi.mocked(adminClient.listUsers).mockResolvedValue({
         items: [TARGET],
@@ -413,7 +397,6 @@ describe("UsersTab", () => {
       expect(
         screen.getByText("Not banned", { ignore: "option" }),
       ).toBeInTheDocument();
-      expect(screen.getByRole("button", { name: "Ban" })).toBeInTheDocument();
       expect(screen.getByRole("button", { name: "Trust" })).toBeInTheDocument();
       // The role dropdown must not carry the username in its accessible name —
       // a screen reader on a shared screen would otherwise announce it.
@@ -423,22 +406,9 @@ describe("UsersTab", () => {
       expect(
         screen.getByRole("combobox", { name: "Change role for this member" }),
       ).toBeInTheDocument();
-    });
 
-    it("reveals the username and email when the row is revealed", async () => {
-      const user = userEvent.setup();
-      localStorage.setItem("velanto:streamer-mode", "on");
-      vi.mocked(adminClient.listUsers).mockResolvedValue({
-        items: [TARGET],
-        total: 1,
-        page: 1,
-        limit: 20,
-      });
-      renderWithStreamerMode();
-
-      await screen.findByRole("button", { name: "Ban" });
-      const revealButtons = screen.getAllByRole("button", { name: /reveal/i });
       // One reveal control per masked identity field (username + email).
+      const revealButtons = screen.getAllByRole("button", { name: /reveal/i });
       expect(revealButtons).toHaveLength(2);
 
       // Both fields share the row id, so a single reveal unmasks the identity.

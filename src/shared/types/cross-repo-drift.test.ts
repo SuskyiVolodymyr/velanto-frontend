@@ -234,6 +234,14 @@ describe("cross-repo mirrored constants (velanto-backend contract)", () => {
   });
 
   // BAN_REASONS — MIRRORED in velanto-backend src/modules/rules/types/rules.ts.
+  // Absorbed from the retired rules.test.ts: uniqueness and the 'other'
+  // catch-all position are asserted in the same place as the literal, so one
+  // file owns everything about this list.
+  it("BAN_REASONS has no duplicates and ends with the 'other' catch-all", () => {
+    expect(new Set(BAN_REASONS).size).toBe(BAN_REASONS.length);
+    expect(BAN_REASONS[BAN_REASONS.length - 1]).toBe("other");
+  });
+
   it("BAN_REASONS", () => {
     expect([...BAN_REASONS]).toEqual([
       "hate_discrimination",
