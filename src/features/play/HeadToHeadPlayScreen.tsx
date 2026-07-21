@@ -48,32 +48,26 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
   function confirmPick() {
     if (!selectedId || !slotA || !slotB || !left || !right) return;
     const leftWon = selectedId === left.id;
-    const winner = leftWon ? left : right;
-    const loser = leftWon ? right : left;
-    const winnerGroupId = leftWon ? slotA.groupId : slotB.groupId;
-    // A SINGLE-POOL matchup (both contenders from one pool) can't be recorded as
-    // "which group won" — both sides share a group id. Record it per item, with
-    // `chosen` marking the winner, so results aggregate per item (see backend
-    // play-results). A TWO-POOL matchup keeps the group-level pick.
-    const singlePool = slotA.groupId === slotB.groupId;
+    // BOTH contenders, each under the pool it was drawn from, with `chosen` on
+    // the winner. A two-pool matchup used to record just the winning pool
+    // (velanto-frontend#333), which named the side but not the pairing — so
+    // per-matchup results were impossible, and still are for plays recorded
+    // that way. Single-pool always recorded per item; this is now the one
+    // shape, and it is what the backend counts a side by.
     setAllPicks((prev) => [
       ...prev,
-      ...(singlePool
-        ? [
-            {
-              roundIndex,
-              groupId: winnerGroupId,
-              itemId: winner.id,
-              chosen: true,
-            },
-            {
-              roundIndex,
-              groupId: winnerGroupId,
-              itemId: loser.id,
-              chosen: false,
-            },
-          ]
-        : [{ roundIndex, groupId: winnerGroupId }]),
+      {
+        roundIndex,
+        groupId: slotA.groupId,
+        itemId: left.id,
+        chosen: leftWon,
+      },
+      {
+        roundIndex,
+        groupId: slotB.groupId,
+        itemId: right.id,
+        chosen: !leftWon,
+      },
     ]);
     setSelectedId(null);
     setRoundIndex((prev) => prev + 1);

@@ -165,9 +165,36 @@ describe("HeadToHeadPlayScreen", () => {
       expect(
         JSON.parse(sessionStorage.getItem("velanto:last-play:pack-1v1")!),
       ).toEqual([
-        { roundIndex: 0, groupId: "gl" },
-        { roundIndex: 1, groupId: "gr" },
+        { roundIndex: 0, groupId: "gl", itemId: "i1", chosen: true },
+        { roundIndex: 0, groupId: "gr", itemId: "i2", chosen: false },
+        { roundIndex: 1, groupId: "gl", itemId: "i3", chosen: false },
+        { roundIndex: 1, groupId: "gr", itemId: "i4", chosen: true },
       ]),
+    );
+  });
+
+  it("records both contenders of a two-pool matchup, each under its own pool", async () => {
+    // velanto-frontend#333: this used to record only the winning pool, so
+    // which two items met was unrecoverable and per-matchup results were
+    // impossible. Each contender carries the group it was DRAWN from — the
+    // backend counts a side by its own group id plus `chosen`.
+    const user = userEvent.setup();
+    renderScreen(HEAD_TO_HEAD_PACK);
+    await screen.findByText("Goku");
+
+    await pickAndConfirm(user, "Vegeta");
+    await screen.findByText("Naruto");
+    await pickAndConfirm(user, "Naruto", { last: true });
+
+    await waitFor(() =>
+      expect(playsClient.record).toHaveBeenCalledWith("pack-1v1", {
+        picks: [
+          { roundIndex: 0, groupId: "gl", itemId: "i1", chosen: false },
+          { roundIndex: 0, groupId: "gr", itemId: "i2", chosen: true },
+          { roundIndex: 1, groupId: "gl", itemId: "i3", chosen: true },
+          { roundIndex: 1, groupId: "gr", itemId: "i4", chosen: false },
+        ],
+      }),
     );
   });
 
@@ -285,8 +312,10 @@ describe("HeadToHeadPlayScreen", () => {
     await waitFor(() =>
       expect(playsClient.record).toHaveBeenCalledWith("pack-1v1", {
         picks: [
-          { roundIndex: 0, groupId: "gl" },
-          { roundIndex: 1, groupId: "gr" },
+          { roundIndex: 0, groupId: "gl", itemId: "i1", chosen: true },
+          { roundIndex: 0, groupId: "gr", itemId: "i2", chosen: false },
+          { roundIndex: 1, groupId: "gl", itemId: "i3", chosen: false },
+          { roundIndex: 1, groupId: "gr", itemId: "i4", chosen: true },
         ],
       }),
     );
