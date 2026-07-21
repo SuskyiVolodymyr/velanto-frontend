@@ -32,6 +32,39 @@ export interface RoundResult {
   items: RoundResultItem[];
 }
 
+/**
+ * One 1v1 pairing that has actually been played. Mirrors the backend's
+ * MatchupResult (velanto-frontend#333).
+ *
+ * Keyed on the item pair with the two ids sorted, so the same two items meeting
+ * with the sides swapped is one entry, not a mirrored duplicate — read `aWins`
+ * as "itemA won", not "the left card won".
+ */
+export interface MatchupResult {
+  itemAId: string;
+  itemATitle: string;
+  itemBId: string;
+  itemBTitle: string;
+  aWins: number;
+  bWins: number;
+  /**
+   * Plays that saw this exact pairing. Usually small — a pack can produce far
+   * more pairings than it has plays — so it must be shown next to the split,
+   * which is otherwise read as a verdict rather than one person's opinion.
+   */
+  seen: number;
+}
+
+/** Pack-wide "top picked" entry: how often an item won the matchups it was in. */
+export interface ItemTally {
+  itemId: string;
+  itemTitle: string;
+  picked: number;
+  appeared: number;
+  /** Share of `appeared`, not of total plays. */
+  percentage: number;
+}
+
 export interface PackResults {
   packId: string;
   // Already sent by the backend for every non-rank_blind pack; typed now so
@@ -41,6 +74,14 @@ export interface PackResults {
   format: Exclude<PackFormat, "rank_blind">;
   totalPlays: number;
   rounds: RoundResult[];
+  /**
+   * 1v1 only. Empty when every recorded play predates matchups carrying item
+   * ids — those name only the winning pool, so their pairings are gone for
+   * good.
+   */
+  matchups?: MatchupResult[];
+  /** 1v1 only — the pack-wide "top picked" ranking, most-picked first. */
+  topItems?: ItemTally[];
 }
 
 export interface RankResultItem {

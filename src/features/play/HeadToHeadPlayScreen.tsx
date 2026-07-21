@@ -7,7 +7,10 @@ import { useAuth } from "@/src/shared/lib/auth-context";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { playsClient } from "@/src/shared/lib/plays-client";
-import { writeLastPlayPicks } from "@/src/shared/lib/last-play-storage";
+import {
+  writeLastPlayId,
+  writeLastPlayPicks,
+} from "@/src/shared/lib/last-play-storage";
 import { resolveRoundSelections } from "@/src/features/play/round-sampling";
 import { HeadToHeadRound } from "@/src/features/play/HeadToHeadRound";
 import { LoadingState } from "@/src/shared/components/LoadingState";
@@ -88,6 +91,12 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
     writeLastPlayPicks(pack.id, allPicks);
     playsClient
       .record(pack.id, { picks: allPicks })
+      // Stash the play id so the result screen can build a short `?play=` share
+      // link instead of encoding every pick into `?p=`. Best-effort: a failed
+      // record just falls back to the payload form.
+      .then(({ id }) => {
+        if (id) writeLastPlayId(pack.id, id);
+      })
       .catch(() => undefined)
       .finally(() => setRecordSettled(true));
   }, [isFinished, pack.id, allPicks, status]);
