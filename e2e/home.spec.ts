@@ -35,6 +35,9 @@ test.describe("Home feed", () => {
 
     await page.goto("/");
 
+    // Absorbed from the retired homepage.spec.ts (the original scaffold smoke).
+    await expect(page).toHaveTitle("Velanto");
+
     await expect(page.getByText("Best Anime Openings")).toBeVisible();
   });
 
