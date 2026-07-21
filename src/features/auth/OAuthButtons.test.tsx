@@ -9,7 +9,7 @@ import { openOAuthPopup } from "@/src/shared/lib/oauth-popup";
 const push = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
 
-const revalidate = vi.fn();
+const revalidate = vi.fn().mockResolvedValue(null);
 vi.mock("@/src/shared/lib/auth-context", () => ({
   useAuth: () => ({ revalidate }),
 }));
@@ -80,6 +80,44 @@ describe("OAuthButtons", () => {
     await waitFor(() => expect(mockedPopup).toHaveBeenCalledWith("google"));
     await waitFor(() => expect(revalidate).toHaveBeenCalled());
     expect(push).toHaveBeenCalledWith("/");
+  });
+
+  // A closed popup is ambiguous: the user may have cancelled, OR the flow may
+  // have completed and its postMessage been lost (an extension, a bfcache quirk,
+  // the window closing a beat early). In the second case the refresh cookie is
+  // ALREADY set, so treating "closed" as certain cancellation strands a user who
+  // did in fact sign in — the reported "OAuth doesn't log me in" symptom. Ask the
+  // server which it was instead of guessing.
+  it("still signs in when the popup closed but the session is actually live", async () => {
+    mockedProviders.mockResolvedValue({ google: true, discord: false });
+    mockedPopup.mockResolvedValue({ ok: false, error: "closed" });
+    revalidate.mockResolvedValue({ id: "u1", username: "vol" });
+    const user = userEvent.setup();
+    render(<OAuthButtons />);
+
+    await user.click(
+      await screen.findByRole("button", { name: "Continue with Google" }),
+    );
+
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/"));
+    expect(screen.queryByRole("alert")).toBeNull();
+  });
+
+  it("treats a closed popup with no session as a plain cancellation", async () => {
+    mockedProviders.mockResolvedValue({ google: true, discord: false });
+    mockedPopup.mockResolvedValue({ ok: false, error: "closed" });
+    revalidate.mockResolvedValue(null);
+    const user = userEvent.setup();
+    render(<OAuthButtons />);
+
+    await user.click(
+      await screen.findByRole("button", { name: "Continue with Google" }),
+    );
+
+    await waitFor(() => expect(revalidate).toHaveBeenCalled());
+    expect(push).not.toHaveBeenCalled();
+    // Cancelling is not an error — no alert for a user who changed their mind.
+    expect(screen.queryByRole("alert")).toBeNull();
   });
 
   it("surfaces an error and does not navigate when the popup is blocked", async () => {

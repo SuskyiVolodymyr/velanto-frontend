@@ -87,7 +87,7 @@
     "metricPlays": "Plays",
     "metricOnlineUsers": "Online users",
     "metricPendingReports": "Pending reports",
-    "notTracked": "Not tracked yet",
+    "activeRecently": "Signed in recently",
     "awaitingReview": "Awaiting review",
     "newThisWeek": "+{count} new this week",
     "playsThisWeek": "+{count} plays this week",

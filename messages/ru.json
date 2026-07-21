@@ -87,7 +87,7 @@
     "metricPlays": "Игры",
     "metricOnlineUsers": "Пользователи онлайн",
     "metricPendingReports": "Жалобы в ожидании",
-    "notTracked": "Пока не отслеживается",
+    "activeRecently": "Недавно заходили",
     "awaitingReview": "Ожидает проверки",
     "newThisWeek": "+{count} новых за неделю",
     "playsThisWeek": "+{count} игр за неделю",

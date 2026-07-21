@@ -1,4 +1,5 @@
 import { SelectHTMLAttributes, forwardRef } from "react";
+import { useFieldIdentity } from "@/src/shared/lib/use-field-identity";
 import { ChevronDown } from "lucide-react";
 import { cn } from "@/src/shared/lib/cn";
 
@@ -28,11 +29,14 @@ export interface SelectProps extends SelectHTMLAttributes<HTMLSelectElement> {
 // `md:hidden`); the `<select>` fills it. Logical properties (`pe-*`, `end-0`,
 // `border-s`) keep the arrow on the correct side under RTL locales.
 export const Select = forwardRef<HTMLSelectElement, SelectProps>(
-  ({ className, options, children, ...props }, ref) => {
+  ({ className, options, children, id, name, ...props }, ref) => {
+    const fieldId = useFieldIdentity(id, name);
     return (
       <div className={cn("relative w-full", className)}>
         <select
           ref={ref}
+          id={fieldId}
+          name={name}
           className={cn(
             "h-11 w-full appearance-none rounded-[10px] border border-border bg-surface",
             // Extra inline-end padding clears the arrow box so long option text

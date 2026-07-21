@@ -27,6 +27,16 @@ export interface UpdateEntry {
  */
 export const UPDATES: UpdateEntry[] = [
   {
+    date: "2026-07-21",
+    version: "1.5.0",
+    title: "Draft limit and form fixes",
+    bullets: [
+      "You can keep up to three drafts at a time. Publish or delete one to start another — drafts are private and never expire, so this keeps them from piling up unseen.",
+      "Fixed a pack's results page failing to load after its author changed the pack's format.",
+      "Form fields across the site are now properly labelled for your browser, so autofill and password managers work with them.",
+    ],
+  },
+  {
     date: "2026-07-20",
     version: "1.4.0",
     title: "Edit your items, and a much faster Velanto",

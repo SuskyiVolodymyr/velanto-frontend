@@ -18,8 +18,11 @@ export interface AdminOverview {
   registeredUsers: number;
   packs: number;
   plays: number;
-  // Always null — no presence tracking yet; rendered as "—" (see OverviewTab).
-  onlineUsers: null;
+  // Signed-in users seen on an authenticated request recently (the backend owns
+  // the window). NOT total traffic: anonymous visitors can browse and play but
+  // have no account to attribute, so they never appear here. Was `null` until
+  // presence tracking shipped in velanto-backend release/1.5.0.
+  onlineUsers: number;
   // Real count of open (unresolved) reports. Was null before the report
   // feature shipped — see velanto-backend#71.
   pendingReports: number;
