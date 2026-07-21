@@ -1,10 +1,12 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { RankResultScreen } from "@/src/features/result/RankResultScreen";
+import { HeadToHeadResultScreen } from "@/src/features/result/HeadToHeadResultScreen";
 import { ResultLocked } from "@/src/features/result/ResultLocked";
 import { usePackResults } from "@/src/features/result/api/results.queries";
 import { useResultPicks } from "@/src/features/result/use-result-picks";
@@ -67,6 +69,19 @@ export function ResultScreen({ pack }: { pack: Pack }) {
       />
     );
   }
+  // 1v1's result is a different object: the head-to-heads you played, each with
+  // the crowd's split for that exact pairing. GroupResultScreen's per-round
+  // tally of a shared candidate list can't express that.
+  if (results.format === "1v1") {
+    return (
+      <HeadToHeadResultScreen
+        pack={pack}
+        results={results}
+        ownPicks={picks}
+        shared={shared}
+      />
+    );
+  }
   return (
     <GroupResultScreen
       pack={pack}
@@ -85,7 +100,7 @@ export function ResultScreen({ pack }: { pack: Pack }) {
 function ResultLoadError() {
   const t = useTranslations("result");
   return (
-    <div className="mx-auto w-full max-w-2xl flex-1 px-7 py-10">
+    <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
       <Card className="py-10 text-center hover:translate-y-0 hover:shadow-none">
         <Text variant="danger">{t("loadError")}</Text>
       </Card>
@@ -107,7 +122,7 @@ function GroupResultScreen({
   const t = useTranslations("result");
 
   return (
-    <div className="mx-auto w-full max-w-2xl flex-1 px-7 py-10">
+    <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
       <Text variant="tertiary" className="mb-2 text-xs uppercase tracking-wide">
         {t("label")}
       </Text>
@@ -242,7 +257,12 @@ function GroupResultScreen({
         })}
       </div>
 
-      <ResultActions packId={pack.id} status={pack.status} picks={ownPicks} />
+      <ResultActions
+        packId={pack.id}
+        status={pack.status}
+        picks={ownPicks}
+        shared={shared}
+      />
     </div>
   );
 }

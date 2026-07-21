@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { cn } from "@/src/shared/lib/cn";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
@@ -7,6 +9,7 @@ import { PackHeroStats } from "@/src/features/pack/PackHeroStats";
 import { PackHowItPlays } from "@/src/features/pack/PackHowItPlays";
 import { RoundChips } from "@/src/features/pack/RoundChips";
 import { PackStats } from "@/src/features/pack/PackStats";
+import { TopPickedTable } from "@/src/features/result/TopPickedTable";
 import { PackCreatorCard } from "@/src/features/pack/PackCreatorCard";
 import { PackPlayButton } from "@/src/features/pack/PackPlayButton";
 import { PackOwnerActions } from "@/src/features/pack/PackOwnerActions";
@@ -38,11 +41,14 @@ export function PackDetailScreen({
 }) {
   const tFormat = useTranslations("formats");
   const t = useTranslations("pack");
+  const tResult = useTranslations("result");
+  // 1v1 only — the backend sends topItems for no other format.
+  const topItems = results.format === "1v1" ? (results.topItems ?? []) : [];
   const sectionLabel =
     pack.format === "nxn" ? t("sectionCategory") : t("sectionGroup");
 
   return (
-    <main className="mx-auto w-full max-w-[1120px] flex-1 px-7 py-10">
+    <main className={cn(PACK_CONTAINER, "flex-1 py-10")}>
       <div className="flex flex-col gap-11">
         <PackCoverBanner pack={pack} />
 
@@ -110,10 +116,20 @@ export function PackDetailScreen({
           <RoundChips pack={pack} />
         </section>
 
-        <section>
-          <SectionHeading>{t("playerStats")}</SectionHeading>
-          <PackStats results={results} />
-        </section>
+        {/* For a head-to-head pack, "which item wins most" IS the statistic —
+            the generic per-round breakdown says far less about it, and the
+            rounds are randomly drawn matchups rather than a fixed list. */}
+        {topItems.length > 0 ? (
+          <section>
+            <SectionHeading>{tResult("topPickedHeading")}</SectionHeading>
+            <TopPickedTable items={topItems} />
+          </section>
+        ) : (
+          <section>
+            <SectionHeading>{t("playerStats")}</SectionHeading>
+            <PackStats results={results} />
+          </section>
+        )}
 
         <PackCreatorCard pack={pack} />
 

@@ -280,6 +280,11 @@ describe("PlayScreen", () => {
     expect(screen.queryByRole("button", { name: "Show next" })).toBeNull();
     expect(screen.queryByRole("button", { name: "Show all" })).toBeNull();
     expect(screen.queryByText(/Showing/)).toBeNull();
+
+    // The round heading is an h2: PlayHeader owns the page's only h1 (the pack
+    // title), and a second h1 here would flatten that hierarchy.
+    expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("2016");
+    expect(screen.queryByRole("heading", { level: 1 })).toBeNull();
   });
 
   it("requires a selection before confirming", async () => {
