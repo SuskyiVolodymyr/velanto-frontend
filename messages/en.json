@@ -1120,6 +1120,10 @@
     "noMatchupBreakdown": "No matchup breakdown for this play — it was recorded before Velanto kept track of which two items met.",
     "topPickedHeading": "Top picked",
     "topPickedSubtitle": "How often each item won the matchups it turned up in, across every play of this pack.",
+    "topPickedRankColumn": "#",
+    "topPickedItemColumn": "Item",
+    "topPickedPickedColumn": "Picked",
+    "topPickedShareColumn": "Share",
     "pickedOfAppeared": "{picked} of {appeared}",
     "loadMore": "Load more"
   },

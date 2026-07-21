@@ -1026,6 +1026,10 @@
     "noMatchupBreakdown": "Для цієї гри немає розбору поєдинків — її записано ще до того, як Velanto почав запам'ятовувати, які саме два елементи зустрілися.",
     "topPickedHeading": "Найчастіший вибір",
     "topPickedSubtitle": "Як часто кожен елемент перемагав у поєдинках, до яких потрапляв, за всіма іграми цього паку.",
+    "topPickedRankColumn": "№",
+    "topPickedItemColumn": "Елемент",
+    "topPickedPickedColumn": "Обрано",
+    "topPickedShareColumn": "Частка",
     "pickedOfAppeared": "{picked} з {appeared}",
     "loadMore": "Показати ще"
   },

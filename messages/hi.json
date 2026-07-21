@@ -1026,6 +1026,10 @@
     "noMatchupBreakdown": "इस प्ले का मुकाबला विवरण नहीं है — यह तब दर्ज हुआ था जब Velanto यह नहीं रखता था कि कौन-से दो आइटम आमने-सामने आए।",
     "topPickedHeading": "सबसे ज़्यादा चुने गए",
     "topPickedSubtitle": "इस पैक के हर प्ले में, हर आइटम जिन मुकाबलों में आया उनमें कितनी बार जीता।",
+    "topPickedRankColumn": "क्रम",
+    "topPickedItemColumn": "आइटम",
+    "topPickedPickedColumn": "चुना गया",
+    "topPickedShareColumn": "हिस्सा",
     "pickedOfAppeared": "{appeared} में से {picked}",
     "loadMore": "और लोड करें"
   },

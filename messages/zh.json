@@ -1026,6 +1026,10 @@
     "noMatchupBreakdown": "本次游玩没有对决明细——它记录于 Velanto 开始记录哪两个条目相遇之前。",
     "topPickedHeading": "最常被选中",
     "topPickedSubtitle": "在本合集的所有游玩中，每个条目在其出现的对决里获胜的频率。",
+    "topPickedRankColumn": "排名",
+    "topPickedItemColumn": "条目",
+    "topPickedPickedColumn": "被选中",
+    "topPickedShareColumn": "占比",
     "pickedOfAppeared": "{appeared} 次中的 {picked} 次",
     "loadMore": "加载更多"
   },

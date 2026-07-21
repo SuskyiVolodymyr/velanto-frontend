@@ -1026,6 +1026,10 @@
     "noMatchupBreakdown": "এই খেলার লড়াইয়ের বিশ্লেষণ নেই — Velanto কোন দুটি আইটেম মুখোমুখি হয়েছিল তা রাখা শুরু করার আগেই এটি রেকর্ড হয়েছিল।",
     "topPickedHeading": "সবচেয়ে বেশি বাছাই",
     "topPickedSubtitle": "এই প্যাকের প্রতিটি খেলায়, প্রতিটি আইটেম যেসব লড়াইয়ে এসেছে তাতে কতবার জিতেছে।",
+    "topPickedRankColumn": "ক্রম",
+    "topPickedItemColumn": "আইটেম",
+    "topPickedPickedColumn": "বাছাই",
+    "topPickedShareColumn": "অংশ",
     "pickedOfAppeared": "{appeared}-এর মধ্যে {picked}",
     "loadMore": "আরও দেখুন"
   },

@@ -1026,6 +1026,10 @@
     "noMatchupBreakdown": "Для этого прохождения нет разбора поединков — оно записано до того, как Velanto стал запоминать, какие именно два элемента встретились.",
     "topPickedHeading": "Чаще всего выбирают",
     "topPickedSubtitle": "Как часто каждый элемент побеждал в поединках, куда попадал, по всем прохождениям этого пака.",
+    "topPickedRankColumn": "№",
+    "topPickedItemColumn": "Элемент",
+    "topPickedPickedColumn": "Выбран",
+    "topPickedShareColumn": "Доля",
     "pickedOfAppeared": "{picked} из {appeared}",
     "loadMore": "Показать ещё"
   },

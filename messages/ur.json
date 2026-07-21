@@ -1026,6 +1026,10 @@
     "noMatchupBreakdown": "اس کھیل کے مقابلوں کی تفصیل موجود نہیں — یہ اُس وقت درج ہوا جب Velanto یہ محفوظ نہیں کرتا تھا کہ کون سی دو اشیاء آمنے سامنے آئیں۔",
     "topPickedHeading": "سب سے زیادہ منتخب",
     "topPickedSubtitle": "اس پیک کے ہر کھیل میں، ہر آئٹم اُن مقابلوں میں کتنی بار جیتا جن میں وہ آیا۔",
+    "topPickedRankColumn": "نمبر",
+    "topPickedItemColumn": "آئٹم",
+    "topPickedPickedColumn": "منتخب",
+    "topPickedShareColumn": "حصہ",
     "pickedOfAppeared": "{appeared} میں سے {picked}",
     "loadMore": "مزید دکھائیں"
   },

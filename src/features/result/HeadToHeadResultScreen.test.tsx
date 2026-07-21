@@ -165,18 +165,77 @@ describe("HeadToHeadResultScreen", () => {
     const user = userEvent.setup();
     renderScreen();
 
-    const list = screen.getByRole("list", { name: /top picked/i });
-    expect(within(list).getAllByRole("listitem")).toHaveLength(10);
-    expect(within(list).getByText("Item 1")).toBeInTheDocument();
-    expect(within(list).queryByText("Item 11")).toBeNull();
+    const table = screen.getByRole("table", { name: /top picked/i });
+    const bodyRows = () =>
+      within(table).getAllByRole("row").slice(1); // drop the header row
+    expect(bodyRows()).toHaveLength(10);
+    expect(within(table).getByText("Item 1")).toBeInTheDocument();
+    expect(within(table).queryByText("Item 11")).toBeNull();
 
     await user.click(screen.getByRole("button", { name: /load more/i }));
-    expect(within(list).getAllByRole("listitem")).toHaveLength(20);
+    expect(bodyRows()).toHaveLength(20);
 
     // 25 entries: the last press exhausts the list and the button goes away.
     await user.click(screen.getByRole("button", { name: /load more/i }));
-    expect(within(list).getAllByRole("listitem")).toHaveLength(25);
+    expect(bodyRows()).toHaveLength(25);
     expect(screen.queryByRole("button", { name: /load more/i })).toBeNull();
+  });
+
+  it("shares a place between equal scores and skips the one they consumed", () => {
+    // Two items on 90% off 27 picks tie for first, so the next is THIRD —
+    // second is not awarded. A third item matches the percentage but not the
+    // pick count, which is a different result and ranks on its own.
+    const tie: ItemTally[] = [
+      { itemId: "a", itemTitle: "Alpha", picked: 27, appeared: 30, percentage: 90 },
+      { itemId: "b", itemTitle: "Beta", picked: 27, appeared: 30, percentage: 90 },
+      { itemId: "c", itemTitle: "Gamma", picked: 9, appeared: 10, percentage: 90 },
+      { itemId: "d", itemTitle: "Delta", picked: 1, appeared: 10, percentage: 10 },
+    ];
+    renderScreen({ topItems: tie });
+
+    const rows = within(
+      screen.getByRole("table", { name: /top picked/i }),
+    )
+      .getAllByRole("row")
+      .slice(1);
+    expect(rows.map((row) => row.getAttribute("data-rank"))).toEqual([
+      "1",
+      "1",
+      "3",
+      "4",
+    ]);
+  });
+
+  it("gives the top three podium outlines, following rank rather than row order", () => {
+    const tie: ItemTally[] = [
+      { itemId: "a", itemTitle: "Alpha", picked: 9, appeared: 10, percentage: 90 },
+      { itemId: "b", itemTitle: "Beta", picked: 9, appeared: 10, percentage: 90 },
+      { itemId: "c", itemTitle: "Gamma", picked: 5, appeared: 10, percentage: 50 },
+    ];
+    renderScreen({ topItems: tie });
+
+    const rows = within(
+      screen.getByRole("table", { name: /top picked/i }),
+    )
+      .getAllByRole("row")
+      .slice(1);
+    // Both firsts are gold; the next row is third, so it takes BRONZE and
+    // silver goes unawarded — the medal follows the place, not the position.
+    expect(rows[0].querySelector("td")).toHaveClass("border-medal-gold");
+    expect(rows[1].querySelector("td")).toHaveClass("border-medal-gold");
+    expect(rows[2].querySelector("td")).toHaveClass("border-medal-bronze");
+  });
+
+  it("names contenders from the pack, not from the aggregate", () => {
+    // The aggregate only knows a pairing once a play has been counted into it,
+    // so a result fetched before this play landed has no row to read a title
+    // from — which put raw item ids on screen.
+    renderScreen({ matchups: [] });
+
+    const first = within(screen.getAllByRole("group", { name: /matchup/i })[0]);
+    expect(first.getByTestId("winner")).toHaveTextContent("Goku");
+    expect(first.getByTestId("loser")).toHaveTextContent("Vegeta");
+    expect(screen.queryByText("i1")).toBeNull();
   });
 
   it("explains the gap rather than rendering nothing when a play predates matchups", () => {

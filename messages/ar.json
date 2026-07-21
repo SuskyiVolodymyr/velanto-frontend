@@ -1026,6 +1026,10 @@
     "noMatchupBreakdown": "لا يوجد تفصيل للمواجهات في هذه اللعبة — فقد سُجّلت قبل أن يتتبّع Velanto أي عنصرين تقابلا.",
     "topPickedHeading": "الأكثر اختيارًا",
     "topPickedSubtitle": "كم مرة فاز كل عنصر في المواجهات التي ظهر فيها، عبر كل ألعاب هذه الحزمة.",
+    "topPickedRankColumn": "الترتيب",
+    "topPickedItemColumn": "العنصر",
+    "topPickedPickedColumn": "اختير",
+    "topPickedShareColumn": "النسبة",
     "pickedOfAppeared": "{picked} من {appeared}",
     "loadMore": "تحميل المزيد"
   },
