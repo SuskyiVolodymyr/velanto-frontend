@@ -127,12 +127,13 @@ describe("NotificationItem", () => {
       type: "new_comment",
       payload: { packId: "p1", packTitle: "My Pack", commenterUsername: "sam" },
     } as Notification;
-    renderItem(
+    const { container } = renderItem(
       <NotificationItem notification={notification} onNavigate={() => {}} />,
     );
 
-    // Only the message + meta; no quoted snippet text present.
-    expect(screen.queryByText(/“|”/)).not.toBeInTheDocument();
+    // Only the message + meta; the quote-bar excerpt element (its border-l-2
+    // left rule) is not rendered at all.
+    expect(container.querySelector('[class*="border-l-2"]')).toBeNull();
   });
 
   it("renders an unrecognised (future) type as a neutral icon tile without crashing", () => {

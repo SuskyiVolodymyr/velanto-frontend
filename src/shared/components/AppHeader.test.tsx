@@ -73,14 +73,7 @@ describe("AppHeader", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("always shows a Browse link to the home feed", async () => {
-    renderHeader();
-
-    const browse = await screen.findByRole("link", { name: "Browse" });
-    expect(browse).toHaveAttribute("href", "/");
-  });
-
-  it("shows a Log in link when there is no session", async () => {
+  it("renders the signed-out chrome: Browse, Log in, Docs and Settings; no bell or Create pack", async () => {
     vi.mocked(authClient.refresh).mockRejectedValue(
       new ApiError(401, "Unauthorized", null),
     );
@@ -88,9 +81,27 @@ describe("AppHeader", () => {
 
     const link = await screen.findByRole("link", { name: "Log in" });
     expect(link).toHaveAttribute("href", "/auth");
+    expect(screen.getByRole("link", { name: "Browse" })).toHaveAttribute(
+      "href",
+      "/",
+    );
+    expect(screen.getByRole("link", { name: "Docs" })).toHaveAttribute(
+      "href",
+      "/docs",
+    );
+    expect(screen.getByRole("link", { name: "Settings" })).toHaveAttribute(
+      "href",
+      "/settings",
+    );
+    expect(
+      screen.queryByRole("button", { name: /notifications/i }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Create pack" }),
+    ).not.toBeInTheDocument();
   });
 
-  it("hides the Log in link on the auth page itself", async () => {
+  it("hides only the Log in link on the auth page itself (Docs and Settings stay reachable)", async () => {
     pathname = "/auth";
     vi.mocked(authClient.refresh).mockRejectedValue(
       new ApiError(401, "Unauthorized", null),
@@ -100,32 +111,6 @@ describe("AppHeader", () => {
     // Give the refresh-on-mount rejection time to settle to "unauthenticated".
     await waitFor(() => expect(authClient.refresh).toHaveBeenCalled());
     expect(
-      screen.queryByRole("link", { name: "Log in" }),
-    ).not.toBeInTheDocument();
-  });
-
-  it("exposes Docs and Settings links when signed out", async () => {
-    vi.mocked(authClient.refresh).mockRejectedValue(
-      new ApiError(401, "Unauthorized", null),
-    );
-    renderHeader();
-
-    const docs = await screen.findByRole("link", { name: "Docs" });
-    expect(docs).toHaveAttribute("href", "/docs");
-    expect(screen.getByRole("link", { name: "Settings" })).toHaveAttribute(
-      "href",
-      "/settings",
-    );
-  });
-
-  it("keeps Docs and Settings reachable on the auth page (only Log in is hidden)", async () => {
-    pathname = "/auth";
-    vi.mocked(authClient.refresh).mockRejectedValue(
-      new ApiError(401, "Unauthorized", null),
-    );
-    renderHeader();
-
-    expect(
       await screen.findByRole("link", { name: "Docs" }),
     ).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Settings" })).toBeInTheDocument();
@@ -134,31 +119,7 @@ describe("AppHeader", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("does not duplicate Docs and Settings in the header when authenticated (they live in the account menu)", async () => {
-    vi.mocked(authClient.refresh).mockResolvedValue({
-      accessToken: "access-token",
-      user: {
-        id: "u1",
-        email: "a@example.com",
-        username: "alice",
-        role: "user",
-        createdAt: "2026-01-01T00:00:00.000Z",
-      },
-    });
-    renderHeader();
-
-    // Wait for the authenticated chrome (account menu trigger) to render.
-    await screen.findByRole("button", { name: "Account menu" });
-    // The menu is collapsed, so its Docs/Settings items are not in the header.
-    expect(
-      screen.queryByRole("link", { name: "Docs" }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("link", { name: "Settings" }),
-    ).not.toBeInTheDocument();
-  });
-
-  it("shows the username and a Log out control when authenticated", async () => {
+  it("renders the signed-in chrome: account menu with initial, bell, Create pack; no Log in or top-level Docs/Settings", async () => {
     vi.mocked(authClient.refresh).mockResolvedValue({
       accessToken: "access-token",
       user: {
@@ -174,66 +135,21 @@ describe("AppHeader", () => {
     const trigger = await screen.findByRole("button", { name: "Account menu" });
     expect(trigger).toHaveTextContent("A");
     expect(
+      screen.getByRole("button", { name: /notifications/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Create pack" })).toHaveAttribute(
+      "href",
+      "/create",
+    );
+    expect(
       screen.queryByRole("link", { name: "Log in" }),
     ).not.toBeInTheDocument();
-  });
-
-  it("renders the notifications bell only when authenticated", async () => {
-    vi.mocked(authClient.refresh).mockRejectedValue(
-      new ApiError(401, "Unauthorized", null),
-    );
-    renderHeader();
-
-    await screen.findByRole("link", { name: "Log in" });
+    // The menu is collapsed, so its Docs/Settings items are not in the header.
     expect(
-      screen.queryByRole("button", { name: /notifications/i }),
+      screen.queryByRole("link", { name: "Docs" }),
     ).not.toBeInTheDocument();
-  });
-
-  it("renders the notifications bell when authenticated", async () => {
-    vi.mocked(authClient.refresh).mockResolvedValue({
-      accessToken: "access-token",
-      user: {
-        id: "u1",
-        email: "a@example.com",
-        username: "alice",
-        role: "user",
-        createdAt: "2026-01-01T00:00:00.000Z",
-      },
-    });
-    renderHeader();
-
     expect(
-      await screen.findByRole("button", { name: /notifications/i }),
-    ).toBeInTheDocument();
-  });
-
-  it("shows a Create pack button linking to /create when authenticated", async () => {
-    vi.mocked(authClient.refresh).mockResolvedValue({
-      accessToken: "access-token",
-      user: {
-        id: "u1",
-        email: "a@example.com",
-        username: "alice",
-        role: "user",
-        createdAt: "2026-01-01T00:00:00.000Z",
-      },
-    });
-    renderHeader();
-
-    const link = await screen.findByRole("link", { name: "Create pack" });
-    expect(link).toHaveAttribute("href", "/create");
-  });
-
-  it("does not show the Create pack button when signed out", async () => {
-    vi.mocked(authClient.refresh).mockRejectedValue(
-      new ApiError(401, "Unauthorized", null),
-    );
-    renderHeader();
-
-    await screen.findByRole("link", { name: "Log in" });
-    expect(
-      screen.queryByRole("link", { name: "Create pack" }),
+      screen.queryByRole("link", { name: "Settings" }),
     ).not.toBeInTheDocument();
   });
 

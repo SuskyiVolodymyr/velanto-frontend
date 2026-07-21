@@ -214,33 +214,7 @@ describe("RankResultScreen", () => {
     expect(screen.getByText(/0 plays recorded/)).toBeInTheDocument();
   });
 
-  it("shows a Share result button for an approved pack", () => {
-    render(
-      <RankResultScreen
-        pack={RANK_PACK}
-        results={RANK_RESULTS}
-        ownPicks={null}
-        shared={false}
-      />,
-    );
-    expect(
-      screen.getByRole("button", { name: "Share result" }),
-    ).toBeInTheDocument();
-  });
-
-  it("hides the Share result button for a non-approved pack", () => {
-    render(
-      <RankResultScreen
-        pack={{ ...RANK_PACK, status: "pending" }}
-        results={RANK_RESULTS}
-        ownPicks={null}
-        shared={false}
-      />,
-    );
-    expect(
-      screen.queryByRole("button", { name: "Share result" }),
-    ).not.toBeInTheDocument();
-  });
+  // The approved/non-approved Share-button rule is owned by ResultActions.test.
 
   it("shows the shared-result note when opened via a ?p= link", async () => {
     render(

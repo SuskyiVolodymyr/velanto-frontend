@@ -279,27 +279,7 @@ describe("ResultScreen", () => {
     expect(await screen.findByText(/avg 1.*ranked 1x/)).toBeInTheDocument();
   });
 
-  it("shows a Share result button for an approved pack", async () => {
-    seedOwnPlay();
-    seedResults(RESULTS);
-    render(<ResultScreen pack={PACK} />);
-    expect(
-      await screen.findByRole("button", { name: "Share result" }),
-    ).toBeInTheDocument();
-  });
-
-  it("hides the Share result button for a non-approved pack", async () => {
-    seedOwnPlay();
-    seedResults(RESULTS);
-    render(<ResultScreen pack={{ ...PACK, status: "pending" }} />);
-
-    // Prove the screen is unlocked first: without a seeded play this assertion
-    // passes against the locked state, which is not what it claims to test.
-    expect(await screen.findByText("75%")).toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Share result" }),
-    ).not.toBeInTheDocument();
-  });
+  // The approved/non-approved Share-button rule is owned by ResultActions.test.
 
   it("renders the sharer's picks and a shared-result note when opened via a ?p= link", async () => {
     searchParams = new URLSearchParams({

@@ -289,28 +289,23 @@ describe("PlayScreen", () => {
     expect(screen.getByRole("button", { name: "Next round →" })).toBeDisabled();
   });
 
-  it("lays 4-or-fewer candidates out in a single row on wide screens", async () => {
-    renderScreen(packWithItemCount(4));
-    await screen.findByText("Item 1");
+  // The count→columns mapping is real layout logic: ≤4 in one row, 6 as two
+  // rows of three, 8 as two rows of four.
+  it.each([
+    [4, "lg:grid-cols-4"],
+    [6, "lg:grid-cols-3"],
+    [8, "lg:grid-cols-4"],
+  ])(
+    "lays %i candidates out with the %s grid on wide screens",
+    async (count, gridClass) => {
+      renderScreen(packWithItemCount(count));
+      await screen.findByText("Item 1");
 
-    expect(screen.getByTestId("candidate-grid")).toHaveClass("lg:grid-cols-4");
-  });
+      expect(screen.getByTestId("candidate-grid")).toHaveClass(gridClass);
+    },
+  );
 
-  it("splits 6 candidates into two rows of three", async () => {
-    renderScreen(packWithItemCount(6));
-    await screen.findByText("Item 1");
-
-    expect(screen.getByTestId("candidate-grid")).toHaveClass("lg:grid-cols-3");
-  });
-
-  it("splits 8 candidates into two rows of four", async () => {
-    renderScreen(packWithItemCount(8));
-    await screen.findByText("Item 1");
-
-    expect(screen.getByTestId("candidate-grid")).toHaveClass("lg:grid-cols-4");
-  });
-
-  it("records every pick and navigates to the result page when finished", async () => {
+  it("records every pick, stores them for the result page, and navigates when finished", async () => {
     const user = userEvent.setup();
     renderScreen(SAVE_ONE_PACK);
     await screen.findByText("Guren no Yumiya");
@@ -326,6 +321,20 @@ describe("PlayScreen", () => {
     // No "all rounds done" screen — a loader shows while it records, then it
     // navigates straight to the result page.
     expect(await screen.findByRole("status")).toBeInTheDocument();
+    expect(playsClient.record).toHaveBeenCalledWith("pack-a", {
+      picks: [
+        { roundIndex: 0, groupId: "g1", itemId: "2" },
+        { roundIndex: 1, groupId: "g2", itemId: "3" },
+      ],
+    });
+    await waitFor(() =>
+      expect(
+        JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
+      ).toEqual([
+        { roundIndex: 0, groupId: "g1", itemId: "2" },
+        { roundIndex: 1, groupId: "g2", itemId: "3" },
+      ]),
+    );
     await waitFor(() =>
       expect(replace).toHaveBeenCalledWith("/packs/pack-a/result"),
     );
@@ -344,38 +353,6 @@ describe("PlayScreen", () => {
         "Pick the one you'd sacrifice. Check it below, then confirm.",
       ),
     ).toBeInTheDocument();
-  });
-
-  it("records the finished play and stores the picks for the result page", async () => {
-    const user = userEvent.setup();
-    renderScreen(SAVE_ONE_PACK);
-    await screen.findByText("Guren no Yumiya");
-
-    await user.click(screen.getByText("Redo"));
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
-    await screen.findByText("Silhouette");
-    await user.click(screen.getByText("Silhouette"));
-    await user.click(screen.getByRole("button", { name: "See results →" }));
-
-    await screen.findByRole("status");
-    expect(playsClient.record).toHaveBeenCalledWith("pack-a", {
-      picks: [
-        { roundIndex: 0, groupId: "g1", itemId: "2" },
-        { roundIndex: 1, groupId: "g2", itemId: "3" },
-      ],
-    });
-    await waitFor(() =>
-      expect(
-        JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
-      ).toEqual([
-        { roundIndex: 0, groupId: "g1", itemId: "2" },
-        { roundIndex: 1, groupId: "g2", itemId: "3" },
-      ]),
-    );
-    // Then it navigates straight to the result page.
-    await waitFor(() =>
-      expect(replace).toHaveBeenCalledWith("/packs/pack-a/result"),
-    );
   });
 
   it("shows a real YouTube player for a youtube-type item and selects it via its own pick control, not the video area", async () => {

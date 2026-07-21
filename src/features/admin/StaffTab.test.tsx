@@ -295,7 +295,8 @@ describe("StaffTab", () => {
       );
     }
 
-    it("masks a member's username and email but keeps role and controls visible", async () => {
+    it("masks the identity (with a name-free role-select label) until the row is revealed", async () => {
+      const user = userEvent.setup();
       localStorage.setItem("velanto:streamer-mode", "on");
       mockStaff([TARGET]);
       renderWithStreamerMode();
@@ -314,17 +315,9 @@ describe("StaffTab", () => {
       expect(
         screen.getByRole("button", { name: "Remove" }),
       ).toBeInTheDocument();
-    });
 
-    it("reveals the username and email when the row is revealed", async () => {
-      const user = userEvent.setup();
-      localStorage.setItem("velanto:streamer-mode", "on");
-      mockStaff([TARGET]);
-      renderWithStreamerMode();
-
-      await screen.findByLabelText("Change role for this member");
-      const revealButtons = screen.getAllByRole("button", { name: /reveal/i });
       // One reveal control per masked identity field (username + email).
+      const revealButtons = screen.getAllByRole("button", { name: /reveal/i });
       expect(revealButtons).toHaveLength(2);
 
       // Both fields share the row id, so a single reveal unmasks the identity.
