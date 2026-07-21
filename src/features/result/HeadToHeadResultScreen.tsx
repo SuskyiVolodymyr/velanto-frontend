@@ -28,13 +28,18 @@ const MEDAL_BORDER: Record<number, string> = {
   3: "border-medal-bronze",
 };
 
+interface Contender {
+  title: string;
+  /** Share of the plays that saw this pairing and picked this contender. */
+  percentage: number;
+  won: boolean;
+}
+
 interface PlayedMatchup {
   roundIndex: number;
-  winnerTitle: string;
-  loserTitle: string;
-  /** Share of the plays that saw this pairing and picked the same contender. */
-  winnerPercentage: number;
-  loserPercentage: number;
+  /** Left and right as they were drawn, NOT winner-first — see playedMatchups. */
+  left: Contender;
+  right: Contender;
   seen: number;
 }
 
@@ -70,6 +75,11 @@ function rankTallies(items: ItemTally[]): RankedTally[] {
  * plays recorded before matchups named their contenders, and nothing can
  * recover the pairing (velanto-frontend#333).
  *
+ * Contenders keep the SIDES they were drawn on rather than being reordered
+ * winner-first: the picks are recorded left-then-right, so the array order is
+ * the layout the player actually saw, and rebuilding the row from it is what
+ * makes the result recognisable as the matchup they played.
+ *
  * Titles come from the PACK, never from the aggregate. The aggregate only
  * knows a pairing once some play has been counted into it, so a result fetched
  * before this play landed has no row to read a title from — which rendered raw
@@ -97,29 +107,40 @@ function playedMatchups(
     (a, b) => a[0] - b[0],
   )) {
     if (picks.length !== 2) continue;
-    const winner = picks.find((pick) => pick.chosen);
-    const loser = picks.find((pick) => !pick.chosen);
-    if (!winner?.itemId || !loser?.itemId) continue;
+    const [leftPick, rightPick] = picks;
+    if (!leftPick.itemId || !rightPick.itemId) continue;
+    if (leftPick.chosen === rightPick.chosen) continue;
 
     // The aggregate keys a pairing by its two ids sorted, so look it up that
-    // way rather than by who won — `aWins` is itemA's, not the winner's.
-    const [lowId, highId] = [winner.itemId, loser.itemId].sort();
+    // way rather than by side — `aWins` is itemA's, not the left card's.
+    const [lowId, highId] = [leftPick.itemId, rightPick.itemId].sort();
     const pair = byPair.get(`${lowId}|${highId}`);
-    const seen = pair?.seen ?? 0;
-    const winnerWins = !pair
-      ? 0
-      : pair.itemAId === winner.itemId
+
+    // No row in the aggregate means nothing has been counted for this pairing
+    // — a play whose record never landed, or an aggregate fetched before it
+    // did. The viewer's own play is still one observation of it, so fall back
+    // to that. Treating "unknown" as zero rendered 0% on BOTH sides, which is
+    // arithmetically impossible for a matchup someone just finished.
+    const seen = pair?.seen ?? 1;
+    const leftWins = !pair
+      ? Number(leftPick.chosen)
+      : pair.itemAId === leftPick.itemId
         ? pair.aWins
         : pair.bWins;
-    const winnerPercentage =
-      seen === 0 ? 0 : Math.round((winnerWins / seen) * 100);
+    const leftPercentage = Math.round((leftWins / seen) * 100);
 
     played.push({
       roundIndex,
-      winnerTitle: titleById.get(winner.itemId) ?? winner.itemId,
-      loserTitle: titleById.get(loser.itemId) ?? loser.itemId,
-      winnerPercentage,
-      loserPercentage: seen === 0 ? 0 : 100 - winnerPercentage,
+      left: {
+        title: titleById.get(leftPick.itemId) ?? leftPick.itemId,
+        percentage: leftPercentage,
+        won: Boolean(leftPick.chosen),
+      },
+      right: {
+        title: titleById.get(rightPick.itemId) ?? rightPick.itemId,
+        percentage: 100 - leftPercentage,
+        won: Boolean(rightPick.chosen),
+      },
       seen,
     });
   }
@@ -374,17 +395,15 @@ function MatchupRow({
       role="group"
       aria-label={t("matchupLabel", {
         heading,
-        winner: matchup.winnerTitle,
-        loser: matchup.loserTitle,
+        winner: (matchup.left.won ? matchup.left : matchup.right).title,
+        loser: (matchup.left.won ? matchup.right : matchup.left).title,
       })}
-      className="grid grid-cols-1 items-center gap-3 sm:grid-cols-[1fr_auto_1fr]"
+      // `items-stretch`, so both cards take the centre column's full height
+      // rather than floating as two thin bars beside a three-line stack.
+      className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-[1fr_auto_1fr]"
     >
-      <ContenderCard
-        title={matchup.winnerTitle}
-        percentage={matchup.winnerPercentage}
-        outcome="winner"
-      />
-      <div className="flex flex-col items-center gap-1 text-center">
+      <ContenderCard contender={matchup.left} side="left" />
+      <div className="flex flex-col items-center justify-center gap-1 text-center">
         <Text variant="tertiary" className="text-xs uppercase tracking-wide">
           {heading}
         </Text>
@@ -397,59 +416,55 @@ function MatchupRow({
           {t("matchupSeen", { count: matchup.seen })}
         </Text>
       </div>
-      <ContenderCard
-        title={matchup.loserTitle}
-        percentage={matchup.loserPercentage}
-        outcome="loser"
-      />
+      <ContenderCard contender={matchup.right} side="right" />
     </div>
   );
 }
 
 /**
- * One side of a played matchup — outline only, no fill. Green is the contender
- * the VIEWER picked and red the one they dropped, so a card stays green even
- * when most players disagreed with it.
+ * One side of a played matchup, on the side it was DRAWN on — green when the
+ * viewer picked it and red when they didn't, so a card stays green even where
+ * most players disagreed. Green is therefore not always on the left.
  *
- * The loser's contents are reversed so both percentages land on the inner
+ * The right card's contents are reversed so both percentages land on the inner
  * edge, either side of the VS, and read as one split rather than two unrelated
  * stats.
  */
 function ContenderCard({
-  title,
-  percentage,
-  outcome,
+  contender,
+  side,
 }: {
-  title: string;
-  percentage: number;
-  outcome: "winner" | "loser";
+  contender: Contender;
+  side: "left" | "right";
 }) {
-  const winner = outcome === "winner";
+  const { won } = contender;
   return (
     <div
-      data-testid={outcome}
+      data-testid={won ? "winner" : "loser"}
+      data-side={side}
       className={cn(
         "flex min-w-0 items-center gap-3 rounded-xl border px-4 py-3",
-        winner
-          ? "border-success/60 flex-row"
-          : "border-danger/60 flex-row-reverse",
+        won
+          ? "border-success/60 bg-success/5"
+          : "border-danger/60 bg-danger/5",
+        side === "left" ? "flex-row" : "flex-row-reverse",
       )}
     >
       <Text
         className={cn(
           "min-w-0 flex-1 text-sm font-semibold",
-          winner ? "text-start" : "text-end",
+          side === "left" ? "text-start" : "text-end",
         )}
       >
-        {title}
+        {contender.title}
       </Text>
       <Text
         className={cn(
           "flex-none text-sm font-semibold tabular-nums",
-          winner ? "text-success" : "text-danger",
+          won ? "text-success" : "text-danger",
         )}
       >
-        {percentage}%
+        {contender.percentage}%
       </Text>
     </div>
   );

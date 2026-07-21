@@ -152,6 +152,39 @@ describe("HeadToHeadResultScreen", () => {
     expect(second.getByTestId("loser")).toHaveTextContent("Naruto");
   });
 
+  it("keeps each contender on the side it was drawn on", () => {
+    renderScreen();
+
+    const matchups = screen.getAllByRole("group", { name: /matchup/i });
+    // Round 1 was won by the LEFT contender, round 2 by the RIGHT one. Sorting
+    // winner-first would put green on the left in both, and the row would stop
+    // matching the matchup the player actually saw.
+    expect(within(matchups[0]).getByTestId("winner")).toHaveAttribute(
+      "data-side",
+      "left",
+    );
+    expect(within(matchups[1]).getByTestId("winner")).toHaveAttribute(
+      "data-side",
+      "right",
+    );
+    // Left card is Naruto in round 2 even though Naruto lost.
+    const secondRow = within(matchups[1]);
+    expect(secondRow.getByTestId("loser")).toHaveTextContent("Naruto");
+    expect(secondRow.getByTestId("loser")).toHaveAttribute("data-side", "left");
+  });
+
+  it("counts your own play when the aggregate has nothing for a pairing", () => {
+    // Nothing counted for these pairings — a play whose record never landed,
+    // or an aggregate fetched before it did. Treating that as zero rendered 0%
+    // on BOTH sides, which cannot be true of a matchup someone just finished.
+    renderScreen({ matchups: [] });
+
+    const first = within(screen.getAllByRole("group", { name: /matchup/i })[0]);
+    expect(first.getByTestId("winner")).toHaveTextContent("100%");
+    expect(first.getByTestId("loser")).toHaveTextContent("0%");
+    expect(first.getByText(/1 play/i)).toBeInTheDocument();
+  });
+
   it("says how many plays saw a pairing, so a lone 100% is not read as a verdict", () => {
     renderScreen();
 
