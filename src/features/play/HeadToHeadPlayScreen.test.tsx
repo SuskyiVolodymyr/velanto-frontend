@@ -10,9 +10,10 @@ import { ApiError } from "@/src/shared/lib/api-client";
 import type { Pack } from "@/src/shared/types/pack";
 
 const push = vi.fn();
+const replace = vi.fn();
 
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push }),
+  useRouter: () => ({ push, replace }),
   usePathname: () => "/packs/pack-1v1/play",
 }));
 
@@ -156,7 +157,6 @@ describe("HeadToHeadPlayScreen", () => {
     await screen.findByText("Naruto");
     await pickAndConfirm(user, "Sasuke", { last: true });
 
-    expect(await screen.findByText(/All matchups done/i)).toBeInTheDocument();
     // Anon play is recorded on the backend…
     await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
     expect(vi.mocked(playsClient.record).mock.calls[0][0]).toBe("pack-1v1");
@@ -261,7 +261,9 @@ describe("HeadToHeadPlayScreen", () => {
     await user.click(screen.getByRole("button", { name: "Pick Sasuke" }));
     await user.click(screen.getByRole("button", { name: "See results →" }));
 
-    expect(await screen.findByText(/All matchups done/i)).toBeInTheDocument();
+    // The label is the claim under test; that it actually finishes the pack is
+    // proved by the redirect the two tests below assert.
+    await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
   });
 
   it("shows both items of the first matchup immediately", async () => {
@@ -280,13 +282,6 @@ describe("HeadToHeadPlayScreen", () => {
     await screen.findByText("Naruto");
     await pickAndConfirm(user, "Sasuke", { last: true });
 
-    expect(await screen.findByText(/All matchups done/i)).toBeInTheDocument();
-    expect(screen.getByText("Goku")).toBeInTheDocument();
-    expect(screen.getByText(/beat/i)).toBeInTheDocument();
-    expect(screen.getByText("Vegeta")).toBeInTheDocument();
-    expect(screen.getByText("Sasuke")).toBeInTheDocument();
-    expect(screen.getByText("Naruto")).toBeInTheDocument();
-
     await waitFor(() =>
       expect(playsClient.record).toHaveBeenCalledWith("pack-1v1", {
         picks: [
@@ -296,5 +291,48 @@ describe("HeadToHeadPlayScreen", () => {
       }),
     );
     expect(playsClient.record).toHaveBeenCalledTimes(1);
+  });
+
+  it("goes straight to the result screen once the last pick is recorded", async () => {
+    const user = userEvent.setup();
+    renderScreen(HEAD_TO_HEAD_PACK);
+    await screen.findByText("Goku");
+    await pickAndConfirm(user, "Goku");
+    await screen.findByText("Naruto");
+    await pickAndConfirm(user, "Sasuke", { last: true });
+
+    // No interstitial "All matchups done" recap — the result screen already
+    // shows the run, so the recap was a page in the way. Matches the
+    // elimination formats, which have always redirected on finishing.
+    expect(screen.queryByText(/All matchups done/i)).toBeNull();
+    await waitFor(() =>
+      expect(replace).toHaveBeenCalledWith("/packs/pack-1v1/result"),
+    );
+  });
+
+  it("waits for the record to settle before redirecting", async () => {
+    // #222 gates the result screen on the stashed picks; leaving the play
+    // screen before the request settles is what used to land a fast player on
+    // a locked result.
+    let settle: (value: { id: string }) => void = () => undefined;
+    vi.mocked(playsClient.record).mockReturnValue(
+      new Promise((resolve) => {
+        settle = resolve;
+      }),
+    );
+    const user = userEvent.setup();
+    renderScreen(HEAD_TO_HEAD_PACK);
+    await screen.findByText("Goku");
+    await pickAndConfirm(user, "Goku");
+    await screen.findByText("Naruto");
+    await pickAndConfirm(user, "Sasuke", { last: true });
+
+    await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
+    expect(replace).not.toHaveBeenCalled();
+
+    settle({ id: "play-1" });
+    await waitFor(() =>
+      expect(replace).toHaveBeenCalledWith("/packs/pack-1v1/result"),
+    );
   });
 });
