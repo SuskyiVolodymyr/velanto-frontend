@@ -27,10 +27,17 @@ export interface UpdateEntry {
  */
 export const UPDATES: UpdateEntry[] = [
   {
-    date: "2026-07-21",
+    date: "2026-07-22",
     version: "1.5.0",
-    title: "Draft limits, faster browsing, and sign-in fixes",
+    title: "1v1 rebuilt, draft limits, and faster browsing",
     bullets: [
+      "1v1 results are rebuilt around the matchups you actually played: every pairing side by side, the one you picked in green and the one you dropped in red, with the share of players who picked each — for that exact pairing, not the pack as a whole. Each row also says how many players have seen that pairing, because most are decided by a handful of people and a lone 100% shouldn't read as a verdict.",
+      "A Top picked table now ranks a 1v1 pack's items by how often they win the matchups they turn up in, with the podium marked out. It's on the result screen and on the pack's own page.",
+      "1v1 asks you to confirm a pick before moving on, like every other format — a misclick no longer decides the matchup for you, and you can change your mind while comparing.",
+      "Finishing a 1v1 pack goes straight to your result instead of stopping at a summary page first.",
+      "Every play screen now shows which pack you're playing at the top, so a shared link tells you what you've opened.",
+      "Sharing a 1v1 result produces a short link, as the other formats already did.",
+      "Fixed play screens occasionally rebuilding themselves on load, which could briefly show one set of items and then swap to another.",
       "You can keep up to three drafts at a time. Publish or delete one to start another — drafts are private and never expire, so this keeps them from piling up unseen.",
       "Browsing packs is quicker: the home feed now loads only the page you're looking at instead of every pack behind it, so search and filtering stay fast as the library grows.",
       "Finishing a play saves faster on popular packs, which used to get slower with every play they collected.",
