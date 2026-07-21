@@ -1,7 +1,7 @@
 import { Text } from "@/src/shared/components/Text";
 import { BackButton } from "@/src/shared/components/BackButton";
 import { cn } from "@/src/shared/lib/cn";
-import { PLAY_CONTAINER } from "@/src/features/play/play-container";
+import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 
 export interface PlayHeaderProps {
   /** The pack being played — where "Back" goes when there's no history to pop. */
@@ -37,7 +37,7 @@ export function PlayHeader({ packId, title }: PlayHeaderProps) {
   return (
     <div
       className={cn(
-        PLAY_CONTAINER,
+        PACK_CONTAINER,
         "pt-6 sm:grid sm:grid-cols-[1fr_auto_1fr] sm:items-center sm:gap-3",
       )}
     >

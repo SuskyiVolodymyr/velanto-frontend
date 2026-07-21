@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { cn } from "@/src/shared/lib/cn";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
@@ -42,7 +44,7 @@ export function PackDetailScreen({
     pack.format === "nxn" ? t("sectionCategory") : t("sectionGroup");
 
   return (
-    <main className="mx-auto w-full max-w-[1120px] flex-1 px-7 py-10">
+    <main className={cn(PACK_CONTAINER, "flex-1 py-10")}>
       <div className="flex flex-col gap-11">
         <PackCoverBanner pack={pack} />
 
