@@ -49,7 +49,16 @@ interface AuthContextValue {
    * completes (the popup set the cookie; this turns it into a live session for
    * login, or picks up the freshly linked provider for connect).
    */
-  revalidate: () => Promise<void>;
+  /**
+   * Re-ask the server who we are, and RETURN the answer.
+   *
+   * Returns the user on success and null when there is no live session. The
+   * return value matters because React state updates are not visible to the
+   * caller synchronously, so a caller that needs to branch on the outcome — the
+   * OAuth popup deciding whether a closed window was a cancellation or a
+   * completed sign-in whose message got lost — cannot read it off `user`.
+   */
+  revalidate: () => Promise<User | null>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
@@ -148,16 +157,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser((prev) => (prev ? { ...prev, ...partial } : prev));
   }, []);
 
-  const revalidate = useCallback(async () => {
+  const revalidate = useCallback(async (): Promise<User | null> => {
     try {
       const result = await authClient.refresh();
       setAccessToken(result.accessToken);
       setUser(result.user);
       setStatus("authenticated");
+      return result.user;
     } catch {
       setAccessToken(null);
       setUser(null);
       setStatus("unauthenticated");
+      return null;
     }
   }, []);
 
