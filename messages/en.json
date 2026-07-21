@@ -1117,6 +1117,7 @@
     "loadError": "We could not load the results. Refresh the page to try again.",
     "noRoundData": "No picks recorded for this round yet.",
     "matchupLabel": "{heading} matchup: {winner} over {loser}",
+    "nxnRoundLabel": "{heading}: picked {picked}",
     "matchupSeen": "{count, plural, one {# play saw this} other {# plays saw this}}",
     "noMatchupBreakdown": "No matchup breakdown for this play — it was recorded before Velanto kept track of which two items met.",
     "topPickedHeading": "Top picked",

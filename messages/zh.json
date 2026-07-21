@@ -1023,6 +1023,7 @@
     "loadError": "无法加载结果。请刷新页面重试。",
     "noRoundData": "本轮尚无记录的选择。",
     "matchupLabel": "{heading} 对决：{winner} 胜过 {loser}",
+    "nxnRoundLabel": "{heading}：已选 {picked}",
     "matchupSeen": "{count, plural, other {# 次游玩见过此对决}}",
     "noMatchupBreakdown": "本次游玩没有对决明细——它记录于 Velanto 开始记录哪两个条目相遇之前。",
     "topPickedHeading": "最常被选中",

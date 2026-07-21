@@ -147,37 +147,30 @@ export function usePlaySession(pack: Pack): PlaySession {
   const round = isVersus
     ? {
         title: roundName || `Round ${roundIndex + 1}`,
-        // Versus selection is the chosen SIDE INDEX ("0" | "1"). A two-pool
-        // round records one pick (the chosen side's group). A single-pool round
-        // records one pick per drawn item on BOTH sides, `chosen` marking the
-        // picked side — the two sides share a group id, so per-side counting is
-        // meaningless; the backend aggregates per item.
+        // Versus selection is the chosen SIDE INDEX ("0" | "1"), recorded as one
+        // pick per DRAWN ITEM across both sides — each under the pool it was
+        // drawn from, `chosen` marking the picked side.
+        //
+        // Two-pool rounds used to record only the winning pool. That named the
+        // side but not what was on it, so a result could never show the player
+        // the matchup they were looking at; single-pool always recorded per
+        // item because both sides share a group id. This is now the one shape.
+        //
+        // Emitted in SLOT order (side A then side B), not chosen-first: the
+        // array order is what tells the result screen which side each item was
+        // on, and for a single-pool round the group ids can't.
         resolvePicks(id: string): Pick[] {
           const sideIndex = id === "0" ? 0 : id === "1" ? 1 : -1;
-          const slot = currentSlots[sideIndex];
-          if (!slot) return [];
-          if (!versusSinglePool) {
-            const name = groupNameById.get(slot.groupId) ?? "";
-            return [{ roundIndex, groupId: slot.groupId, itemTitle: name }];
-          }
-          const chosenItems = currentSlots[sideIndex]?.items ?? [];
-          const otherItems = currentSlots[1 - sideIndex]?.items ?? [];
-          return [
-            ...chosenItems.map((item) => ({
+          if (!currentSlots[sideIndex]) return [];
+          return currentSlots.flatMap((slot, side) =>
+            slot.items.map((item) => ({
               roundIndex,
               groupId: slot.groupId,
               itemId: item.id,
               itemTitle: item.title,
-              chosen: true,
+              chosen: side === sideIndex,
             })),
-            ...otherItems.map((item) => ({
-              roundIndex,
-              groupId: slot.groupId,
-              itemId: item.id,
-              itemTitle: item.title,
-              chosen: false,
-            })),
-          ];
+          );
         },
       }
     : {

@@ -340,7 +340,7 @@ describe("ResultScreen", () => {
       ],
     };
 
-    it("ranks per item and marks the viewer's chosen side", async () => {
+    it("replays the two sides the viewer was shown, without percentages", async () => {
       // The viewer chose p1/p2 (a side); p3/p4 were the other side.
       seedOwnPlay([
         { roundIndex: 0, groupId: "pool", itemId: "p1", chosen: true },
@@ -351,12 +351,15 @@ describe("ResultScreen", () => {
       seedResults(SP_RESULTS);
       render(<ResultScreen pack={SP_PACK} />);
 
-      // The full per-item ranking is shown (not a two-side split).
+      // nxn routes to NxNResultScreen now: a recap of the round you played,
+      // both sides with their items, the one you took marked. The per-item
+      // ranking this used to show is gone along with every other percentage —
+      // an nxn matchup is a set against a set, so a per-pairing share would be
+      // off one play forever (see NxNResultScreen).
       expect(await screen.findByText("Naruto")).toBeInTheDocument();
-      expect(screen.getByText("Ichigo")).toBeInTheDocument();
-      expect(screen.getByText("66.7%")).toBeInTheDocument();
-      // Both of the viewer's chosen items carry a "Your pick" marker.
-      expect(screen.getAllByText("Your pick")).toHaveLength(2);
+      expect(screen.getByTestId("picked")).toHaveTextContent("Naruto");
+      expect(screen.getByTestId("dropped")).toHaveTextContent("Goku");
+      expect(screen.queryByText(/%/)).toBeNull();
     });
   });
 });

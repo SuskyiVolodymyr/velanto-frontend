@@ -1023,6 +1023,7 @@
     "loadError": "আমরা ফলাফল লোড করতে পারিনি। আবার চেষ্টা করতে পৃষ্ঠাটি রিফ্রেশ করুন।",
     "noRoundData": "এই রাউন্ডের জন্য এখনও কোনো নির্বাচন রেকর্ড হয়নি।",
     "matchupLabel": "{heading} লড়াই: {loser}-এর উপরে {winner}",
+    "nxnRoundLabel": "{heading}: বাছাই {picked}",
     "matchupSeen": "{count, plural, one {# টি খেলা এটি দেখেছে} other {# টি খেলা এটি দেখেছে}}",
     "noMatchupBreakdown": "এই খেলার লড়াইয়ের বিশ্লেষণ নেই — Velanto কোন দুটি আইটেম মুখোমুখি হয়েছিল তা রাখা শুরু করার আগেই এটি রেকর্ড হয়েছিল।",
     "topPickedHeading": "সবচেয়ে বেশি বাছাই",
