@@ -63,7 +63,7 @@ export function PlayScreen({ pack }: { pack: Pack }) {
       {session.showRound && (
         <>
           <section className="mb-6">
-            <Text as="h1" variant="title" className="mb-2 text-3xl">
+            <Text as="h2" variant="title" className="mb-2 text-3xl">
               {session.roundTitle}
             </Text>
             <Text variant="secondary">{t(INSTRUCTION_KEY[pack.format])}</Text>

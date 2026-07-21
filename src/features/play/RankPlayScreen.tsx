@@ -131,7 +131,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
       {slot && !roundDone && (
         <>
           <section className="mb-6 text-center">
-            <Text as="h1" variant="title" className="mb-2 text-3xl">
+            <Text as="h2" variant="title" className="mb-2 text-3xl">
               {groupName}
             </Text>
             <Text variant="secondary">
@@ -216,7 +216,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
 
       {isRoundComplete && slot && (
         <section className="mb-10 text-center">
-          <Text as="h1" variant="title" className="mb-2 text-3xl">
+          <Text as="h2" variant="title" className="mb-2 text-3xl">
             {t("ranked", { name: groupName })}
           </Text>
           <div className="mb-8 flex flex-col gap-2 text-start">
@@ -240,7 +240,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
 
       {isFinished && (
         <section className="mb-10 text-center">
-          <Text as="h1" variant="title" className="mb-2 text-3xl">
+          <Text as="h2" variant="title" className="mb-2 text-3xl">
             {t("rankingDone")}
           </Text>
           <Text variant="secondary" className="mb-4">

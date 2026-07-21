@@ -124,7 +124,7 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
       {left && right && (
         <>
           <section className="mb-6 text-center">
-            <Text as="h1" variant="title" className="mb-2 text-3xl">
+            <Text as="h2" variant="title" className="mb-2 text-3xl">
               {t("whichPrefer")}
             </Text>
           </section>
@@ -136,7 +136,7 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
 
       {isFinished && (
         <section className="mb-10 text-center">
-          <Text as="h1" variant="title" className="mb-2 text-3xl">
+          <Text as="h2" variant="title" className="mb-2 text-3xl">
             {t("allMatchupsDone")}
           </Text>
           <Text variant="secondary" className="mb-6">
