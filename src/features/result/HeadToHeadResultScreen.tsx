@@ -1,32 +1,21 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
 import { SharedResultNote } from "@/src/features/result/SharedResultNote";
 import { ResultActions } from "@/src/features/result/ResultActions";
+import { TopPickedTable } from "@/src/features/result/TopPickedTable";
 import { roundHeading } from "@/src/shared/lib/round-heading";
 import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
 import type {
-  ItemTally,
   MatchupResult,
   PackResults,
   RecordedPick,
 } from "@/src/shared/types/play-results";
-
-/** How many top-picked rows a press of "Load more" adds. */
-const TOP_PICKED_PAGE = 10;
-
-/** Outline for each podium place; anything past third gets the plain border. */
-const MEDAL_BORDER: Record<number, string> = {
-  1: "border-medal-gold",
-  2: "border-medal-silver",
-  3: "border-medal-bronze",
-};
 
 interface Contender {
   title: string;
@@ -41,28 +30,6 @@ interface PlayedMatchup {
   left: Contender;
   right: Contender;
   seen: number;
-}
-
-interface RankedTally extends ItemTally {
-  /**
-   * Competition rank: equal scores share a place and the next one skips
-   * accordingly (1, 1, 3). Two items tie only when BOTH their share and their
-   * pick count match — the same percentage off a different number of matchups
-   * is not the same result.
-   */
-  rank: number;
-}
-
-function rankTallies(items: ItemTally[]): RankedTally[] {
-  let previousKey: string | null = null;
-  let previousRank = 0;
-  return items.map((item, index) => {
-    const key = `${item.percentage}|${item.picked}`;
-    const rank = key === previousKey ? previousRank : index + 1;
-    previousKey = key;
-    previousRank = rank;
-    return { ...item, rank };
-  });
 }
 
 /**
@@ -166,8 +133,6 @@ export function HeadToHeadResultScreen({
   shared: boolean;
 }) {
   const t = useTranslations("result");
-  const [shownTopItems, setShownTopItems] = useState(TOP_PICKED_PAGE);
-
   const titleById = useMemo(
     () =>
       new Map(
@@ -181,11 +146,7 @@ export function HeadToHeadResultScreen({
     () => playedMatchups(ownPicks, results.matchups ?? [], titleById),
     [ownPicks, results.matchups, titleById],
   );
-  const ranked = useMemo(
-    () => rankTallies(results.topItems ?? []),
-    [results.topItems],
-  );
-  const visible = ranked.slice(0, shownTopItems);
+  const topItems = results.topItems ?? [];
 
   return (
     <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
@@ -201,14 +162,29 @@ export function HeadToHeadResultScreen({
 
       {shared && <SharedResultNote />}
 
+      {/* Above the matchups, not below them: a 1v1 pack can run to dozens of
+          rows, and burying Share under all of them meant scrolling past the
+          whole result to find it. */}
+      <ResultActions
+        packId={pack.id}
+        status={pack.status}
+        picks={ownPicks}
+        shared={shared}
+        className="mb-6 justify-end"
+      />
+
       {matchups.length > 0 ? (
-        <div className="mb-10 flex flex-col gap-6">
+        // `divide-y` rather than a gap: a hairline between matchups keeps a
+        // long list readable as separate comparisons. Border, not background —
+        // it reads as one shade up from the page behind it.
+        <div className="mb-10 flex flex-col divide-y divide-border">
           {matchups.map((matchup) => (
-            <MatchupRow
-              key={matchup.roundIndex}
-              matchup={matchup}
-              heading={roundHeading(pack, matchup.roundIndex)}
-            />
+            <div key={matchup.roundIndex} className="py-4 first:pt-0 last:pb-0">
+              <MatchupRow
+                matchup={matchup}
+                heading={roundHeading(pack, matchup.roundIndex)}
+              />
+            </div>
           ))}
         </div>
       ) : (
@@ -219,7 +195,7 @@ export function HeadToHeadResultScreen({
         </Card>
       )}
 
-      {ranked.length > 0 && (
+      {topItems.length > 0 && (
         <section className="mb-8">
           <Text as="h2" variant="title" className="mb-1 text-lg">
             {t("topPickedHeading")}
@@ -227,151 +203,10 @@ export function HeadToHeadResultScreen({
           <Text variant="secondary" className="mb-4 text-sm">
             {t("topPickedSubtitle")}
           </Text>
-          <div className="overflow-x-auto">
-            <table
-              aria-label={t("topPickedHeading")}
-              className="w-full border-separate border-spacing-y-2"
-            >
-              <thead>
-                <tr>
-                  <th scope="col" className="w-12 px-3 text-start">
-                    <Text
-                      variant="tertiary"
-                      as="span"
-                      className="text-xs uppercase tracking-wide"
-                    >
-                      {t("topPickedRankColumn")}
-                    </Text>
-                  </th>
-                  <th scope="col" className="px-3 text-start">
-                    <Text
-                      variant="tertiary"
-                      as="span"
-                      className="text-xs uppercase tracking-wide"
-                    >
-                      {t("topPickedItemColumn")}
-                    </Text>
-                  </th>
-                  <th scope="col" className="px-3 text-end">
-                    <Text
-                      variant="tertiary"
-                      as="span"
-                      className="text-xs uppercase tracking-wide"
-                    >
-                      {t("topPickedPickedColumn")}
-                    </Text>
-                  </th>
-                  <th scope="col" className="w-20 px-3 text-end">
-                    <Text
-                      variant="tertiary"
-                      as="span"
-                      className="text-xs uppercase tracking-wide"
-                    >
-                      {t("topPickedShareColumn")}
-                    </Text>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {visible.map((item) => {
-                  // Keyed on RANK, not row order: tied firsts are both gold and
-                  // the next row is third, so it takes bronze and silver goes
-                  // unawarded — which is the point of sharing a place.
-                  const medal = MEDAL_BORDER[item.rank];
-                  return (
-                    <tr key={item.itemId} data-rank={item.rank}>
-                      <RankCell medal={medal} first>
-                        <Text
-                          as="span"
-                          className={cn(
-                            "text-sm font-semibold tabular-nums",
-                            medal && "text-foreground",
-                          )}
-                        >
-                          {item.rank}
-                        </Text>
-                      </RankCell>
-                      <RankCell medal={medal}>
-                        <Text
-                          as="span"
-                          className="text-sm font-semibold"
-                        >
-                          {item.itemTitle}
-                        </Text>
-                      </RankCell>
-                      <RankCell medal={medal} align="end">
-                        <Text as="span" variant="tertiary" className="text-xs">
-                          {t("pickedOfAppeared", {
-                            picked: item.picked,
-                            appeared: item.appeared,
-                          })}
-                        </Text>
-                      </RankCell>
-                      <RankCell medal={medal} align="end" last>
-                        <Text
-                          as="span"
-                          className="text-sm font-semibold tabular-nums text-acc"
-                        >
-                          {item.percentage}%
-                        </Text>
-                      </RankCell>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-          {visible.length < ranked.length && (
-            <div className="mt-4 flex justify-center">
-              <Button
-                variant="ghost"
-                onClick={() =>
-                  setShownTopItems((shown) => shown + TOP_PICKED_PAGE)
-                }
-              >
-                {t("loadMore")}
-              </Button>
-            </div>
-          )}
+          <TopPickedTable items={topItems} />
         </section>
       )}
-
-      <ResultActions packId={pack.id} status={pack.status} picks={ownPicks} />
     </div>
-  );
-}
-
-/**
- * A cell of the top-picked table. The row's outline is drawn per CELL rather
- * than on the `tr`, because a border on a table row doesn't render with
- * `border-collapse: separate` — the rounded ends come from the first and last
- * cell dropping their inner edge.
- */
-function RankCell({
-  children,
-  medal,
-  align = "start",
-  first = false,
-  last = false,
-}: {
-  children: React.ReactNode;
-  medal: string | undefined;
-  align?: "start" | "end";
-  first?: boolean;
-  last?: boolean;
-}) {
-  return (
-    <td
-      className={cn(
-        "border-y bg-surface px-3 py-3",
-        medal ?? "border-border",
-        align === "end" ? "text-end" : "text-start",
-        first && cn("rounded-s-xl border-s", medal ?? "border-border"),
-        last && cn("rounded-e-xl border-e", medal ?? "border-border"),
-      )}
-    >
-      {children}
-    </td>
   );
 }
 

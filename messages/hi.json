@@ -1016,6 +1016,7 @@
     "youPlaced": "आपने इसे #{position} रखा · {count, plural, one {# और प्ले सहमत रहा} other {# और प्ले सहमत रहे}}",
     "placed": "#{position} पर रखा गया · {count, plural, one {# और प्ले सहमत रहा} other {# और प्ले सहमत रहे}}",
     "playAgain": "फिर से खेलें",
+    "tryItYourself": "खुद आज़माएँ",
     "shareResult": "नतीजा शेयर करें",
     "sharedNote": "आप एक शेयर किया गया नतीजा देख रहे हैं।",
     "loading": "परिणाम लोड हो रहे हैं…",

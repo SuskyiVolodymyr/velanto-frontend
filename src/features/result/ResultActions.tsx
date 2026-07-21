@@ -6,21 +6,30 @@ import { useTranslations } from "next-intl";
 import { buttonClassName } from "@/src/shared/components/Button";
 import { ShareButton } from "@/src/features/share/ShareButton";
 import { readLastPlayId } from "@/src/shared/lib/last-play-storage";
+import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
 
-/** Bottom action row shared by both result screens: a "Play again" link plus,
- *  for approved packs, a "Share result" button. Prefers a short `?play=<id>`
- *  link (from this browser's just-recorded play) and falls back to encoding the
- *  picks into `?p=` when the play id isn't known yet. */
+/** Action row shared by the result screens: a link into the pack plus, for
+ *  approved packs, a "Share result" button. Prefers a short `?play=<id>` link
+ *  (from this browser's just-recorded play) and falls back to encoding the
+ *  picks into `?p=` when the play id isn't known yet.
+ *
+ *  On a SHARED result the link reads "Try it yourself" instead of "Play again":
+ *  the reader is looking at someone else's run and has not played at all, so
+ *  "again" was telling them to repeat something they never did. */
 export function ResultActions({
   packId,
   status,
   picks,
+  shared = false,
+  className,
 }: {
   packId: string;
   status: Pack["status"];
   picks: RecordedPick[] | null;
+  shared?: boolean;
+  className?: string;
 }) {
   const t = useTranslations("result");
   // The play id is written after the record request resolves (post-mount), so
@@ -33,12 +42,12 @@ export function ResultActions({
     setPlayId(readLastPlayId(packId));
   }, [packId]);
   return (
-    <div className="flex items-center gap-3">
+    <div className={cn("flex items-center gap-3", className)}>
       <Link
         href={`/packs/${packId}/play`}
         className={buttonClassName("primary", "w-fit")}
       >
-        {t("playAgain")}
+        {shared ? t("tryItYourself") : t("playAgain")}
       </Link>
       {status === "approved" && (
         <ShareButton

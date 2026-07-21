@@ -1016,6 +1016,7 @@
     "youPlaced": "你把它排在 #{position} · {count, plural, other {另有 # 次游玩与你一致}}",
     "placed": "排在 #{position} · {count, plural, other {另有 # 次游玩与之一致}}",
     "playAgain": "再玩一次",
+    "tryItYourself": "自己来试试",
     "shareResult": "分享结果",
     "sharedNote": "你正在查看一份分享的结果。",
     "loading": "正在加载结果……",

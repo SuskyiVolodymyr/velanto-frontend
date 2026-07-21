@@ -1110,6 +1110,7 @@
     "youPlaced": "You placed this #{position} · {count, plural, one {# other play agreed} other {# other plays agreed}}",
     "placed": "Placed #{position} · {count, plural, one {# other play agreed} other {# other plays agreed}}",
     "playAgain": "Play again",
+    "tryItYourself": "Try it yourself",
     "shareResult": "Share result",
     "sharedNote": "You're viewing a shared result.",
     "loading": "Loading results…",

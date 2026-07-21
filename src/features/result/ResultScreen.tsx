@@ -257,7 +257,12 @@ function GroupResultScreen({
         })}
       </div>
 
-      <ResultActions packId={pack.id} status={pack.status} picks={ownPicks} />
+      <ResultActions
+        packId={pack.id}
+        status={pack.status}
+        picks={ownPicks}
+        shared={shared}
+      />
     </div>
   );
 }

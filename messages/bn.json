@@ -1016,6 +1016,7 @@
     "youPlaced": "আপনি এটিকে #{position} নম্বরে বসিয়েছেন · {count, plural, one {আরও # টি খেলায় মিল} other {আরও # টি খেলায় মিল}}",
     "placed": "#{position} নম্বরে বসানো হয়েছে · {count, plural, one {আরও # টি খেলায় মিল} other {আরও # টি খেলায় মিল}}",
     "playAgain": "আবার খেলুন",
+    "tryItYourself": "নিজে চেষ্টা করুন",
     "shareResult": "ফলাফল শেয়ার করুন",
     "sharedNote": "আপনি একটি শেয়ার করা ফলাফল দেখছেন।",
     "loading": "ফলাফল লোড হচ্ছে…",
