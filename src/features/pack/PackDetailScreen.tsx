@@ -42,12 +42,18 @@ export function PackDetailScreen({
   const tFormat = useTranslations("formats");
   const t = useTranslations("pack");
   const tResult = useTranslations("result");
-  // Both versus formats: the backend computes topItems for nxn and 1v1 alike,
-  // and "which item wins most" is the statistic for either.
+  // Every format except rank_blind, whose results are placements rather than
+  // picks. "What wins most" is the statistic for all of them, and each round is
+  // a random draw rather than a fixed list, so a per-round breakdown says less.
   const topItems =
-    results.format === "1v1" || results.format === "nxn"
-      ? (results.topItems ?? [])
-      : [];
+    results.format === "rank_blind" ? [] : (results.topItems ?? []);
+  // Same number under the verb the player actually performed.
+  const topHeading =
+    pack.format === "save_one"
+      ? "topSavedHeading"
+      : pack.format === "sacrifice_one"
+        ? "topSacrificedHeading"
+        : "topPickedHeading";
   const sectionLabel =
     pack.format === "nxn" ? t("sectionCategory") : t("sectionGroup");
 
@@ -120,13 +126,14 @@ export function PackDetailScreen({
           <RoundChips pack={pack} />
         </section>
 
-        {/* For a head-to-head pack, "which item wins most" IS the statistic —
-            the generic per-round breakdown says far less about it, and the
-            rounds are randomly drawn matchups rather than a fixed list. */}
+        {/* "Which item wins most" IS the statistic here — the generic per-round
+            breakdown says far less about it, and divides by every play of the
+            pack rather than by the rounds an item actually appeared in. Falls
+            back to that breakdown only when there is nothing to rank yet. */}
         {topItems.length > 0 ? (
           <section>
-            <SectionHeading>{tResult("topPickedHeading")}</SectionHeading>
-            <TopPickedTable items={topItems} />
+            <SectionHeading>{tResult(topHeading)}</SectionHeading>
+            <TopPickedTable items={topItems} label={tResult(topHeading)} />
           </section>
         ) : (
           <section>

@@ -1033,7 +1033,13 @@
     "topPickedPickedColumn": "被选中",
     "topPickedShareColumn": "占比",
     "pickedOfAppeared": "{appeared} 次中的 {picked} 次",
-    "loadMore": "加载更多"
+    "loadMore": "加载更多",
+    "eliminationRoundLabel": "{heading}：已选 {picked}",
+    "noRoundBreakdown": "本次游玩没有回合明细——没有任何记录。",
+    "topSavedHeading": "最常被保留",
+    "topSavedSubtitle": "在本合集的所有游玩中，每个条目在其出现的回合里被保留的频率。",
+    "topSacrificedHeading": "最常被牺牲",
+    "topSacrificedSubtitle": "在本合集的所有游玩中，每个条目在其出现的回合里被牺牲的频率。"
   },
   "create": {
     "loginRequired": "你需要先登录才能创建题包。",

@@ -151,6 +151,59 @@ describe("PackDetailScreen", () => {
     expect(screen.queryByText("Item X")).not.toBeInTheDocument();
   });
 
+  // #336: the elimination formats get the same ranking the versus ones do, in
+  // place of the per-round breakdown — which divided by every play of the pack
+  // rather than by the rounds an item was actually drawn into.
+  it("ranks the items of an elimination pack instead of the per-round stats", () => {
+    render(
+      <PackDetailScreen
+        pack={BASE_PACK}
+        results={{
+          ...RESULTS,
+          topItems: [
+            {
+              itemId: "i1",
+              itemTitle: "Opening A",
+              picked: 3,
+              appeared: 4,
+              percentage: 75,
+            },
+          ],
+        }}
+      />,
+    );
+
+    expect(
+      screen.getByRole("table", { name: "Most saved" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Player stats")).not.toBeInTheDocument();
+  });
+
+  it("names the ranking for what a sacrifice_one player actually did", () => {
+    render(
+      <PackDetailScreen
+        pack={{ ...BASE_PACK, format: "sacrifice_one" }}
+        results={{
+          ...RESULTS,
+          format: "sacrifice_one",
+          topItems: [
+            {
+              itemId: "i1",
+              itemTitle: "Opening A",
+              picked: 3,
+              appeared: 4,
+              percentage: 75,
+            },
+          ],
+        }}
+      />,
+    );
+
+    expect(
+      screen.getByRole("table", { name: "Most sacrificed" }),
+    ).toBeInTheDocument();
+  });
+
   it("wires the owner/moderator actions to this pack", () => {
     render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
     expect(screen.getByText("PackOwnerActions:p1:u1")).toBeInTheDocument();

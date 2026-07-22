@@ -180,18 +180,26 @@ export function usePlaySession(pack: Pack): PlaySession {
           (currentRound
             ? (groupNameById.get(currentRound.slots[0]?.groupId ?? "") ?? "")
             : ""),
+        // One pick per DRAWN item, in draw order, `chosen` marking the one
+        // saved (save_one) or sacrificed (sacrifice_one) — the same shape the
+        // versus rounds record.
+        //
+        // Recording only the chosen item named the pick but not what it was
+        // chosen from, so the result screen could never show the slate the
+        // player was looking at. It can't be recovered from the pack either: a
+        // random slot draws a different subset every play.
         resolvePicks(id: string): Pick[] {
           const slot = currentRound?.slots[0];
-          const item = candidates.find((candidate) => candidate.id === id);
-          if (!slot || !item) return [];
-          return [
-            {
-              roundIndex,
-              groupId: slot.groupId,
-              itemId: item.id,
-              itemTitle: item.title,
-            },
-          ];
+          if (!slot || !candidates.some((candidate) => candidate.id === id)) {
+            return [];
+          }
+          return candidates.map((item) => ({
+            roundIndex,
+            groupId: slot.groupId,
+            itemId: item.id,
+            itemTitle: item.title,
+            chosen: item.id === id,
+          }));
         },
       };
 

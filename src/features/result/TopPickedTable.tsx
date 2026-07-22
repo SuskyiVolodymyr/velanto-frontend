@@ -50,13 +50,24 @@ export function rankTallies(items: ItemTally[]): RankedTally[] {
 }
 
 /**
- * The pack-wide "top picked" ranking: how often each item won the matchups it
- * turned up in. Shown on the 1v1 result screen and on a 1v1 pack's detail page,
- * where it replaces the generic per-round stats — for a head-to-head pack, "who
- * wins most" IS the interesting statistic.
+ * The pack-wide "top picked" ranking: how often each item was picked of the
+ * rounds it turned up in. Shown on every versus and elimination result screen
+ * and on those packs' detail pages, where it replaces the generic per-round
+ * stats — "what wins most" IS the interesting statistic for all of them.
+ *
+ * `label` names the table for assistive tech; the elimination screens pass
+ * their own ("Most saved" / "Most sacrificed"), which is the same number under
+ * a verb that matches what the player actually did.
  */
-export function TopPickedTable({ items }: { items: ItemTally[] }) {
+export function TopPickedTable({
+  items,
+  label,
+}: {
+  items: ItemTally[];
+  label?: string;
+}) {
   const t = useTranslations("result");
+  const tableLabel = label ?? t("topPickedHeading");
   const [shown, setShown] = useState(PAGE);
   const ranked = useMemo(() => rankTallies(items), [items]);
   const visible = ranked.slice(0, shown);
@@ -65,7 +76,7 @@ export function TopPickedTable({ items }: { items: ItemTally[] }) {
     <>
       <div className="overflow-x-auto">
         <table
-          aria-label={t("topPickedHeading")}
+          aria-label={tableLabel}
           className="w-full border-separate border-spacing-y-2"
         >
           <thead>

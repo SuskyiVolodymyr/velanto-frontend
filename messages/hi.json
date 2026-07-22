@@ -1033,7 +1033,13 @@
     "topPickedPickedColumn": "चुना गया",
     "topPickedShareColumn": "हिस्सा",
     "pickedOfAppeared": "{appeared} में से {picked}",
-    "loadMore": "और लोड करें"
+    "loadMore": "और लोड करें",
+    "eliminationRoundLabel": "{heading}: चुना गया {picked}",
+    "noRoundBreakdown": "इस प्ले का राउंड विवरण नहीं है — इसके लिए कुछ भी दर्ज नहीं हुआ।",
+    "topSavedHeading": "सबसे ज़्यादा बचाए गए",
+    "topSavedSubtitle": "इस पैक के हर प्ले में, हर आइटम जिन राउंड में आया उनमें कितनी बार बचाया गया।",
+    "topSacrificedHeading": "सबसे ज़्यादा क़ुर्बान किए गए",
+    "topSacrificedSubtitle": "इस पैक के हर प्ले में, हर आइटम जिन राउंड में आया उनमें कितनी बार क़ुर्बान किया गया।"
   },
   "create": {
     "loginRequired": "पैक बनाने के लिए आपको लॉग इन करना होगा।",

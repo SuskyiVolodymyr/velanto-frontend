@@ -165,14 +165,16 @@ describe("PlayScreen", () => {
     expect(
       JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
     ).toEqual([
-      { roundIndex: 0, groupId: "g1", itemId: "2" },
-      { roundIndex: 1, groupId: "g2", itemId: "3" },
+      { roundIndex: 0, groupId: "g1", itemId: "1", chosen: false },
+      { roundIndex: 0, groupId: "g1", itemId: "2", chosen: true },
+      { roundIndex: 1, groupId: "g2", itemId: "3", chosen: true },
     ]);
     // …and is recorded on the backend, with no auth header of its own.
     expect(playsClient.record).toHaveBeenCalledWith("pack-a", {
       picks: [
-        { roundIndex: 0, groupId: "g1", itemId: "2" },
-        { roundIndex: 1, groupId: "g2", itemId: "3" },
+        { roundIndex: 0, groupId: "g1", itemId: "1", chosen: false },
+        { roundIndex: 0, groupId: "g1", itemId: "2", chosen: true },
+        { roundIndex: 1, groupId: "g2", itemId: "3", chosen: true },
       ],
     });
   });
@@ -337,16 +339,18 @@ describe("PlayScreen", () => {
     expect(await screen.findByRole("status")).toBeInTheDocument();
     expect(playsClient.record).toHaveBeenCalledWith("pack-a", {
       picks: [
-        { roundIndex: 0, groupId: "g1", itemId: "2" },
-        { roundIndex: 1, groupId: "g2", itemId: "3" },
+        { roundIndex: 0, groupId: "g1", itemId: "1", chosen: false },
+        { roundIndex: 0, groupId: "g1", itemId: "2", chosen: true },
+        { roundIndex: 1, groupId: "g2", itemId: "3", chosen: true },
       ],
     });
     await waitFor(() =>
       expect(
         JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
       ).toEqual([
-        { roundIndex: 0, groupId: "g1", itemId: "2" },
-        { roundIndex: 1, groupId: "g2", itemId: "3" },
+        { roundIndex: 0, groupId: "g1", itemId: "1", chosen: false },
+        { roundIndex: 0, groupId: "g1", itemId: "2", chosen: true },
+        { roundIndex: 1, groupId: "g2", itemId: "3", chosen: true },
       ]),
     );
     await waitFor(() =>
@@ -479,8 +483,9 @@ describe("PlayScreen", () => {
     expect(
       JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
     ).toEqual([
-      { roundIndex: 0, groupId: "g1", itemId: "2" },
-      { roundIndex: 1, groupId: "g2", itemId: "3" },
+      { roundIndex: 0, groupId: "g1", itemId: "1", chosen: false },
+      { roundIndex: 0, groupId: "g1", itemId: "2", chosen: true },
+      { roundIndex: 1, groupId: "g2", itemId: "3", chosen: true },
     ]);
 
     resolveRecord({ id: "play-1" });
@@ -488,7 +493,7 @@ describe("PlayScreen", () => {
     await waitFor(() =>
       expect(
         JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
-      ).toHaveLength(2),
+      ).toHaveLength(3),
     );
   });
 
@@ -512,8 +517,9 @@ describe("PlayScreen", () => {
     expect(
       JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
     ).toEqual([
-      { roundIndex: 0, groupId: "g1", itemId: "2" },
-      { roundIndex: 1, groupId: "g2", itemId: "3" },
+      { roundIndex: 0, groupId: "g1", itemId: "1", chosen: false },
+      { roundIndex: 0, groupId: "g1", itemId: "2", chosen: true },
+      { roundIndex: 1, groupId: "g2", itemId: "3", chosen: true },
     ]);
   });
 });

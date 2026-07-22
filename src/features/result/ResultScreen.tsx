@@ -8,18 +8,12 @@ import { LoadingState } from "@/src/shared/components/LoadingState";
 import { RankResultScreen } from "@/src/features/result/RankResultScreen";
 import { HeadToHeadResultScreen } from "@/src/features/result/HeadToHeadResultScreen";
 import { NxNResultScreen } from "@/src/features/result/NxNResultScreen";
+import { EliminationResultScreen } from "@/src/features/result/EliminationResultScreen";
 import { ResultLocked } from "@/src/features/result/ResultLocked";
 import { usePackResults } from "@/src/features/result/api/results.queries";
 import { useResultPicks } from "@/src/features/result/use-result-picks";
-import { SharedResultNote } from "@/src/features/result/SharedResultNote";
-import { ResultActions } from "@/src/features/result/ResultActions";
-import { roundHeading } from "@/src/shared/lib/round-heading";
 import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
-import type {
-  PackResults,
-  RecordedPick,
-} from "@/src/shared/types/play-results";
 
 /**
  * #222: the community breakdown is gated on evidence that you finished this
@@ -95,8 +89,10 @@ export function ResultScreen({ pack }: { pack: Pack }) {
       />
     );
   }
+  // save_one / sacrifice_one. Same recap shape as the versus screens: the
+  // rounds you played, each as the slate it drew, with your pick marked.
   return (
-    <GroupResultScreen
+    <EliminationResultScreen
       pack={pack}
       results={results}
       ownPicks={picks}
@@ -117,165 +113,6 @@ function ResultLoadError() {
       <Card className="py-10 text-center hover:translate-y-0 hover:shadow-none">
         <Text variant="danger">{t("loadError")}</Text>
       </Card>
-    </div>
-  );
-}
-
-function GroupResultScreen({
-  pack,
-  results,
-  ownPicks,
-  shared,
-}: {
-  pack: Pack;
-  results: PackResults;
-  ownPicks: RecordedPick[] | null;
-  shared: boolean;
-}) {
-  const t = useTranslations("result");
-
-  return (
-    <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
-      <Text variant="tertiary" className="mb-2 text-xs uppercase tracking-wide">
-        {t("label")}
-      </Text>
-      <Text as="h1" variant="title" className="mb-2 text-3xl">
-        {pack.title}
-      </Text>
-      <Text variant="secondary" className="mb-8">
-        {t("playsRecorded", { count: results.totalPlays })}
-      </Text>
-
-      {shared && <SharedResultNote />}
-
-      <div className="mb-8 flex flex-col gap-4">
-        {results.rounds.map((round) => {
-          const packRound = pack.rounds[round.roundIndex];
-          // A single-pool versus round (both sides one pool) reports PER ITEM —
-          // a popularity ranking — not a two-side split. The viewer may have
-          // chosen several items (a whole side), so highlight them all.
-          const singlePool =
-            (pack.format === "nxn" || pack.format === "1v1") &&
-            packRound !== undefined &&
-            packRound.slots[0]?.groupId === packRound.slots[1]?.groupId;
-
-          if (singlePool) {
-            const chosenIds = new Set(
-              ownPicks
-                ?.filter(
-                  (pick) => pick.roundIndex === round.roundIndex && pick.chosen,
-                )
-                .map((pick) => pick.itemId),
-            );
-            return (
-              <Card
-                key={round.roundIndex}
-                className="hover:translate-y-0 hover:shadow-none"
-              >
-                <Text className="mb-2 font-semibold">
-                  {roundHeading(pack, round.roundIndex)}
-                </Text>
-                <ul className="flex flex-col gap-1">
-                  {round.items.map((item) => {
-                    const mine = chosenIds.has(item.itemId);
-                    return (
-                      <li
-                        key={item.itemId}
-                        className="flex items-center justify-between gap-2"
-                      >
-                        <Text
-                          variant={mine ? undefined : "secondary"}
-                          className={cn("text-sm", mine && "font-semibold")}
-                        >
-                          {item.itemTitle}
-                          {mine && (
-                            <span className="ml-2 text-xs text-acc">
-                              {shared ? t("sharedPick") : t("yourPick")}
-                            </span>
-                          )}
-                        </Text>
-                        <Text
-                          variant={mine ? undefined : "tertiary"}
-                          className={cn(
-                            "text-sm",
-                            mine && "font-semibold text-acc",
-                          )}
-                        >
-                          {item.percentage}%
-                        </Text>
-                      </li>
-                    );
-                  })}
-                  {round.items.length === 0 && (
-                    <Text variant="tertiary" className="text-sm">
-                      {t("noRoundData")}
-                    </Text>
-                  )}
-                </ul>
-              </Card>
-            );
-          }
-
-          const ownPick = ownPicks?.find(
-            (pick) => pick.roundIndex === round.roundIndex,
-          );
-          // Count formats key each round's items by item id; two-pool versus
-          // formats key them by the SIDE's group id (that pick carries no
-          // itemId), so fall back to the pick's groupId when there's no itemId.
-          const ownKey = ownPick
-            ? (ownPick.itemId ?? ownPick.groupId)
-            : undefined;
-          const ownItem =
-            ownKey !== undefined
-              ? round.items.find((item) => item.itemId === ownKey)
-              : undefined;
-
-          return (
-            <Card
-              key={round.roundIndex}
-              className="hover:translate-y-0 hover:shadow-none"
-            >
-              <Text className="mb-2 font-semibold">
-                {roundHeading(pack, round.roundIndex)}
-              </Text>
-              {ownItem ? (
-                <div className="flex items-center justify-between gap-2">
-                  <Text variant="secondary" className="text-sm">
-                    {shared ? t("sharedPick") : t("yourPick")}:{" "}
-                    {ownItem.itemTitle}
-                  </Text>
-                  <Text className="text-sm font-semibold text-acc">
-                    {ownItem.percentage}%
-                  </Text>
-                </div>
-              ) : (
-                <ul className="flex flex-col gap-1">
-                  {round.items.map((item) => (
-                    <li
-                      key={item.itemId}
-                      className="flex items-center justify-between gap-2"
-                    >
-                      <Text variant="secondary" className="text-sm">
-                        {item.itemTitle}
-                      </Text>
-                      <Text variant="tertiary" className="text-sm">
-                        {item.percentage}%
-                      </Text>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </Card>
-          );
-        })}
-      </div>
-
-      <ResultActions
-        packId={pack.id}
-        status={pack.status}
-        picks={ownPicks}
-        shared={shared}
-      />
     </div>
   );
 }

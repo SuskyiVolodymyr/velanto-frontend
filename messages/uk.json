@@ -1033,7 +1033,13 @@
     "topPickedPickedColumn": "Обрано",
     "topPickedShareColumn": "Частка",
     "pickedOfAppeared": "{picked} з {appeared}",
-    "loadMore": "Показати ще"
+    "loadMore": "Показати ще",
+    "eliminationRoundLabel": "{heading}: обрано {picked}",
+    "noRoundBreakdown": "Для цієї гри немає розбору раундів — по ній нічого не записано.",
+    "topSavedHeading": "Найчастіше рятують",
+    "topSavedSubtitle": "Як часто кожен елемент рятували в раундах, до яких він потрапляв, за всіма іграми цього паку.",
+    "topSacrificedHeading": "Найчастіше жертвують",
+    "topSacrificedSubtitle": "Як часто кожним елементом жертвували в раундах, до яких він потрапляв, за всіма іграми цього паку."
   },
   "create": {
     "loginRequired": "Щоб створити пак, спершу увійди.",
