@@ -25,6 +25,15 @@ export interface VoteControlProps {
   errorLabel: string;
   /** Visual density. "sm" is a tighter pill for comment threads; default "md". */
   size?: "sm" | "md";
+  /**
+   * Shape. "stacked" (default) is the boxed pill — arrows above their own
+   * counts, framed by a border. "inline" is the chrome-free row used in the
+   * comment thread: arrow, net score, arrow on one line with no box and no
+   * per-direction counts, so it can sit beside "Reply" without reading as a
+   * second container. Opt in explicitly; "stacked" stays the default so the
+   * pack and feedback voters are untouched.
+   */
+  layout?: "stacked" | "inline";
   className?: string;
 }
 
@@ -35,7 +44,13 @@ export interface VoteControlProps {
  * beneath it. The arrow (and its count) light up in the accent colour for your
  * upvote / red for your downvote. Anonymous viewers see it disabled with a
  * reason tooltip rather than a surprise sign-in redirect — the vote itself is a
- * no-op via {@link useVoteMutation}.
+ * no-op via {@link useVoteMutation}. `layout="inline"` swaps the pill for a bare
+ * horizontal row (see {@link VoteControlProps.layout}).
+ *
+ * Note for maintainers: `cn` here is a plain joiner, **not** tailwind-merge, so
+ * a later class does not beat an earlier one. Every property that differs
+ * between the two layouts is therefore chosen by a branch that emits exactly one
+ * value — never by appending an override.
  */
 export function VoteControl({
   vote,
@@ -47,10 +62,12 @@ export function VoteControl({
   blockedReason,
   errorLabel,
   size = "md",
+  layout = "stacked",
   className,
 }: VoteControlProps) {
   const voter = useVoteMutation(vote);
   const sm = size === "sm";
+  const inline = layout === "inline";
 
   // Once the viewer has voted, show the server tally wholesale; before that,
   // the initial props. (`myVote` can be null after a toggle-off, so key off the
@@ -72,32 +89,40 @@ export function VoteControl({
     const Icon = direction === "up" ? ArrowUp : ArrowDown;
     const count = direction === "up" ? likes : dislikes;
     const activeColor = direction === "up" ? "text-acc" : "text-danger";
+    const button = withReason(
+      <button
+        type="button"
+        aria-label={direction === "up" ? upvoteLabel : downvoteLabel}
+        aria-pressed={active}
+        aria-disabled={blocked || undefined}
+        disabled={busy}
+        onClick={() => voter.cast(direction === "up" ? 1 : -1)}
+        className={cn(
+          "flex items-center justify-center rounded-[7px] transition-colors disabled:opacity-50",
+          inline ? "h-6 w-6" : sm ? "h-6 w-7" : "h-7 w-8",
+          blocked && "cursor-not-allowed opacity-50",
+          active
+            ? activeColor
+            : inline
+              ? // No hover tint inline: a filled square behind a bare arrow
+                // would reinstate the box this layout exists to remove.
+                "text-foreground-tertiary hover:text-acc"
+              : "text-foreground-tertiary hover:bg-white/[0.05] hover:text-foreground",
+        )}
+      >
+        <Icon
+          aria-hidden
+          className={inline || sm ? "h-[15px] w-[15px]" : "h-[18px] w-[18px]"}
+          strokeWidth={2.2}
+        />
+      </button>,
+    );
+    // Inline shows one number for the whole control (the net score), so an
+    // arrow is just the arrow — no column, no per-direction count.
+    if (inline) return button;
     return (
       <div className="flex flex-col items-center gap-0.5">
-        {withReason(
-          <button
-            type="button"
-            aria-label={direction === "up" ? upvoteLabel : downvoteLabel}
-            aria-pressed={active}
-            aria-disabled={blocked || undefined}
-            disabled={busy}
-            onClick={() => voter.cast(direction === "up" ? 1 : -1)}
-            className={cn(
-              "flex items-center justify-center rounded-[7px] transition-colors disabled:opacity-50",
-              sm ? "h-6 w-7" : "h-7 w-8",
-              blocked && "cursor-not-allowed opacity-50",
-              active
-                ? activeColor
-                : "text-foreground-tertiary hover:bg-white/[0.05] hover:text-foreground",
-            )}
-          >
-            <Icon
-              aria-hidden
-              className={sm ? "h-[15px] w-[15px]" : "h-[18px] w-[18px]"}
-              strokeWidth={2.2}
-            />
-          </button>,
-        )}
+        {button}
         <span
           className={cn(
             "text-[10px] leading-none tabular-nums",
@@ -106,6 +131,41 @@ export function VoteControl({
         >
           {count}
         </span>
+      </div>
+    );
+  }
+
+  // Sign, not stance. The number is the COMMENT's standing, so it has to read
+  // the same for everyone looking at it; which way *you* voted is carried by
+  // the arrow tint and by aria-pressed, which is where a personal state
+  // belongs. Colouring it by myVote conflated the two: a score of 0 you had
+  // downvoted looked identical to a score of 0 that was genuinely negative,
+  // and a -4 read as neutral until you happened to vote on it.
+  const scoreColor =
+    score > 0
+      ? "text-acc"
+      : score < 0
+        ? "text-danger"
+        : "text-foreground-secondary";
+
+  if (inline) {
+    return (
+      <div className={cn("flex flex-col items-start gap-1", className)}>
+        <div className="inline-flex items-center gap-0.5">
+          {arrow("up")}
+          {/* The net hides its own composition: 0 from 1↑/1↓ looks identical
+              to 0 from nobody voting. The stacked pill shows both counts
+              beside their arrows; inline has no room, so the breakdown lives
+              in the title instead of being lost. */}
+          <span
+            title={`${likes} up · ${dislikes} down`}
+            className={cn("text-xs font-semibold tabular-nums", scoreColor)}
+          >
+            {score}
+          </span>
+          {arrow("down")}
+        </div>
+        {error && <span className="text-xs text-danger">{error}</span>}
       </div>
     );
   }

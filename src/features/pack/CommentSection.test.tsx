@@ -768,6 +768,179 @@ describe("CommentSection", () => {
     });
   });
 
+  describe("posted-at timestamp", () => {
+    // Freeze the clock so the relative label is deterministic: COMMENT_A was
+    // posted 2026-01-01T00:00:00Z, "now" is three hours later.
+    beforeEach(() => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+      vi.setSystemTime(new Date("2026-01-01T03:00:00.000Z"));
+    });
+    afterEach(() => vi.useRealTimers());
+
+    it("renders each comment's posted-at as a relative <time> carrying the exact ISO instant", async () => {
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items: [COMMENT_A],
+        total: 1,
+        page: 1,
+        limit: 10,
+      });
+      const { container } = renderAsUnauthenticated();
+
+      await screen.findByText("Loved this pack.");
+      const posted = container.querySelector("time");
+      expect(posted).not.toBeNull();
+      // Machine-readable instant is the raw ISO string, not the label.
+      expect(posted).toHaveAttribute("datetime", COMMENT_A.createdAt);
+      expect(posted).toHaveTextContent("3 hours ago");
+    });
+
+    it("renders a timestamp for a reply as well as for its root", async () => {
+      const reply: Comment = {
+        id: "reply-1",
+        packId: "pack-1",
+        authorId: "u3",
+        authorUsername: "carol",
+        body: "I agree with this.",
+        // One hour after the root, i.e. two hours before "now".
+        createdAt: "2026-01-01T01:00:00.000Z",
+        parentId: "c1",
+      };
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items: [{ ...COMMENT_A, replyCount: 1, replies: [reply] }],
+        total: 1,
+        page: 1,
+        limit: 10,
+      });
+      const { container } = renderAsUnauthenticated();
+
+      await screen.findByText("I agree with this.");
+      const times = [...container.querySelectorAll("time")];
+      expect(times.map((el) => el.getAttribute("datetime"))).toEqual([
+        COMMENT_A.createdAt,
+        reply.createdAt,
+      ]);
+      expect(times[1]).toHaveTextContent("2 hours ago");
+    });
+
+    it("renders the comment without a <time> when the timestamp is unusable", async () => {
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items: [{ ...COMMENT_A, createdAt: "not-a-date" }],
+        total: 1,
+        page: 1,
+        limit: 10,
+      });
+      const { container } = renderAsUnauthenticated();
+
+      // The comment still renders — a bad timestamp must not take the entry
+      // down (Intl.RelativeTimeFormat throws a RangeError on NaN).
+      expect(await screen.findByText("Loved this pack.")).toBeInTheDocument();
+      expect(container.querySelector("time")).toBeNull();
+    });
+  });
+
+  // The rule: a separator sits *between top-level threads only*. Never inside
+  // one — not between a root and its replies, not between two replies — and
+  // never leading or trailing at the card's edge. So the count of separators is
+  // exactly `roots − 1`, whatever the replies do. Each fixture below pins one
+  // way an implementation could get that wrong.
+  describe("thread separators", () => {
+    const REPLY_ONE: Comment = {
+      id: "reply-1",
+      packId: "pack-1",
+      authorId: "u3",
+      authorUsername: "carol",
+      body: "First reply.",
+      createdAt: "2026-01-02T00:00:00.000Z",
+      parentId: "c1",
+    };
+    const REPLY_TWO: Comment = {
+      ...REPLY_ONE,
+      id: "reply-2",
+      authorId: "u4",
+      authorUsername: "dave",
+      body: "Second reply.",
+      createdAt: "2026-01-03T00:00:00.000Z",
+    };
+    const SECOND_ROOT: Comment = {
+      id: "c2",
+      packId: "pack-1",
+      authorId: "u5",
+      authorUsername: "erin",
+      body: "A separate thread.",
+      createdAt: "2026-01-04T00:00:00.000Z",
+    };
+
+    function listOnce(items: Comment[]) {
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items,
+        total: items.length,
+        page: 1,
+        limit: 10,
+      });
+    }
+
+    // `separator` is the accessible role of an <hr>; querying by role rather
+    // than by tag or class keeps this about the observable structure.
+    const separators = () => screen.queryAllByRole("separator");
+
+    it("draws no separator for a single thread — nothing to separate it from", async () => {
+      listOnce([COMMENT_A]);
+      renderAsUnauthenticated();
+
+      await screen.findByText("Loved this pack.");
+      expect(separators()).toHaveLength(0);
+    });
+
+    it("draws exactly one separator between two top-level threads, and none at the card's edges", async () => {
+      listOnce([COMMENT_A, SECOND_ROOT]);
+      renderAsUnauthenticated();
+
+      await screen.findByText("A separate thread.");
+      // Two threads → one rule. Two would mean a trailing (or leading) rule
+      // against the card's own edge.
+      expect(separators()).toHaveLength(1);
+    });
+
+    it("draws no separator inside a thread, however many replies it has", async () => {
+      listOnce([
+        { ...COMMENT_A, replyCount: 2, replies: [REPLY_ONE, REPLY_TWO] },
+      ]);
+      renderAsUnauthenticated();
+
+      await screen.findByText("Second reply.");
+      // The old design ruled off the root from its replies and each reply from
+      // the next — that would be two rules here. A thread is now unbroken.
+      expect(separators()).toHaveLength(0);
+    });
+
+    it("counts separators by thread, not by entry, when threads and replies are mixed", async () => {
+      listOnce([
+        { ...COMMENT_A, replyCount: 2, replies: [REPLY_ONE, REPLY_TWO] },
+        SECOND_ROOT,
+      ]);
+      renderAsUnauthenticated();
+
+      await screen.findByText("A separate thread.");
+      // Four entries, two threads → one rule. A per-entry implementation would
+      // draw three.
+      expect(separators()).toHaveLength(1);
+    });
+
+    it("keeps the whole list in one card rather than a card per thread", async () => {
+      listOnce([COMMENT_A, SECOND_ROOT]);
+      renderAsUnauthenticated();
+
+      const first = await screen.findByText("Loved this pack.");
+      const second = screen.getByText("A separate thread.");
+      // The separator between them is a sibling of both threads inside a single
+      // shared container — with a card per thread it could not be.
+      const rule = screen.getByRole("separator");
+      const card = rule.parentElement as HTMLElement;
+      expect(card.contains(first)).toBe(true);
+      expect(card.contains(second)).toBe(true);
+    });
+  });
+
   it("highlights an @mention in a comment body", async () => {
     const mentioning: Comment = { ...COMMENT_A, body: "great point @alice" };
     vi.mocked(commentsClient.list).mockResolvedValue({
