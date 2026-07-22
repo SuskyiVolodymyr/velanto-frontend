@@ -281,7 +281,7 @@ describe("ResultScreen", () => {
     seedResults(rankResults);
     render(<ResultScreen pack={rankPack} />);
 
-    expect(await screen.findByText(/avg 1.*ranked 1x/)).toBeInTheDocument();
+    expect(await screen.findByText("Guren no Yumiya")).toBeInTheDocument();
   });
 
   // The approved/non-approved Share-button rule is owned by ResultActions.test.

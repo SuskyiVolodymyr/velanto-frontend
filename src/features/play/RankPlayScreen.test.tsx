@@ -200,6 +200,56 @@ describe("RankPlayScreen", () => {
     );
   });
 
+  // The last format still sharing its result as the whole `?p=` picks payload:
+  // a rank_blind play records every drawn item with its placement AND its draw
+  // index, so that URL is the longest of the five. ResultActions prefers a
+  // short `?play=<id>` link whenever this id is stashed.
+  it("stashes the recorded play id for a short share link", async () => {
+    const user = userEvent.setup();
+    renderScreen(RANK_BLIND_PACK);
+    await screen.findByText("Kaikai Kitan");
+
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await user.click(
+      await screen.findByRole("button", { name: "Next round →" }),
+    );
+    await screen.findByText("Silhouette");
+    await user.click(screen.getByText("#1"));
+
+    await waitFor(() =>
+      expect(sessionStorage.getItem("velanto:last-play-id:pack-rank")).toBe(
+        "play-1",
+      ),
+    );
+  });
+
+  // The id is a nicety; the play still counts without it. A failed request must
+  // not take the result screen down with it (#222 gates that screen on the
+  // picks, which are stashed before the request goes out).
+  it("survives a record request that never returns an id", async () => {
+    vi.mocked(playsClient.record).mockRejectedValue(new Error("network"));
+    const user = userEvent.setup();
+    renderScreen(RANK_BLIND_PACK);
+    await screen.findByText("Kaikai Kitan");
+
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await user.click(
+      await screen.findByRole("button", { name: "Next round →" }),
+    );
+    await screen.findByText("Silhouette");
+    await user.click(screen.getByText("#1"));
+
+    expect(await screen.findByText("Your ranking is done")).toBeInTheDocument();
+    expect(
+      JSON.parse(sessionStorage.getItem("velanto:last-play:pack-rank")!),
+    ).toHaveLength(3);
+    expect(sessionStorage.getItem("velanto:last-play-id:pack-rank")).toBeNull();
+  });
+
   it("shows the first item and one empty numbered slot per item in a manual-mode round", async () => {
     renderScreen(RANK_BLIND_PACK);
 

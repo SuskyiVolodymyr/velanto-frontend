@@ -24,7 +24,7 @@ interface RankedTally extends ItemTally {
  * share and their pick count match — the same percentage off a different number
  * of rounds is not the same result.
  */
-export function rankTallies(items: ItemTally[]): RankedTally[] {
+function rankTallies(items: ItemTally[]): RankedTally[] {
   return withCompetitionRanks(
     items,
     (item) => `${item.percentage}|${item.picked}`,

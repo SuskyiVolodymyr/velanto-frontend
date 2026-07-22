@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { buttonClassName } from "@/src/shared/components/Button";
@@ -32,15 +31,6 @@ export function ResultActions({
   className?: string;
 }) {
   const t = useTranslations("result");
-  // The play id is written after the record request resolves (post-mount), so
-  // read it after mount too. Falls back to the ?p= payload until it's known.
-  const [playId, setPlayId] = useState<string | null>(null);
-  useEffect(() => {
-    // Mounted read of a client-only value (sessionStorage), not a fetch — the
-    // canonical safe shape here (same as useResultPicks' own read).
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setPlayId(readLastPlayId(packId));
-  }, [packId]);
   return (
     <div className={cn("flex items-center gap-3", className)}>
       <Link
@@ -56,7 +46,12 @@ export function ResultActions({
         <ShareButton
           path={`/packs/${packId}/result`}
           picks={picks}
-          playId={playId}
+          // Read when the popover opens, not at mount: the id is written when
+          // the play's record request resolves, which for rank_blind can be
+          // after this row is already on screen (its result link doesn't wait
+          // for the record). A mount-time read caught null and pinned the
+          // share to the long ?p= payload for the rest of the visit.
+          resolvePlayId={() => readLastPlayId(packId)}
           label={t("shareResult")}
         />
       )}

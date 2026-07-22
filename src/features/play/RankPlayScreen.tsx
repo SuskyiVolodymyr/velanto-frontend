@@ -8,7 +8,10 @@ import { Text } from "@/src/shared/components/Text";
 import { Button, buttonClassName } from "@/src/shared/components/Button";
 import { cn } from "@/src/shared/lib/cn";
 import { playsClient } from "@/src/shared/lib/plays-client";
-import { writeLastPlayPicks } from "@/src/shared/lib/last-play-storage";
+import {
+  writeLastPlayPicks,
+  writeLastPlayId,
+} from "@/src/shared/lib/last-play-storage";
 import { YouTubeCard } from "@/src/shared/components/YouTubeCard";
 import { ImageCard } from "@/src/shared/components/ImageCard";
 import {
@@ -108,7 +111,16 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
     if (!isFinished || status === "loading" || recordedRef.current) return;
     recordedRef.current = true;
     writeLastPlayPicks(pack.id, allPicks);
-    playsClient.record(pack.id, { picks: allPicks }).catch(() => undefined);
+    playsClient
+      .record(pack.id, { picks: allPicks })
+      // Stash the play id so the result screen can build a short `?play=` share
+      // link. Best-effort: without it the share falls back to encoding every
+      // pick into `?p=`, which for rank_blind is the longest payload of the
+      // five formats — every drawn item, its placement and its draw index.
+      .then(({ id }) => {
+        if (id) writeLastPlayId(pack.id, id);
+      })
+      .catch(() => undefined);
   }, [isFinished, pack.id, allPicks, status]);
 
   if (status === "loading") return null;

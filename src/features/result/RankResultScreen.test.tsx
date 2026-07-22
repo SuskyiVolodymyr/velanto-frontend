@@ -79,7 +79,9 @@ beforeEach(() => {
 });
 
 describe("RankResultScreen", () => {
-  it("sorts items by averagePosition (best first) and shows avg/timesRanked captions", () => {
+  // The fallback list, shown when there is no play to replay: the crowd's
+  // average is the only order available there.
+  it("sorts an unplayed round by averagePosition, best first", () => {
     render(
       <RankResultScreen
         pack={RANK_PACK}
@@ -93,8 +95,24 @@ describe("RankResultScreen", () => {
       .getAllByText(/Kaikai Kitan|Redo/)
       .map((el) => el.textContent);
     expect(titles).toEqual(["Kaikai Kitan", "Redo"]);
-    expect(screen.getByText(/avg 1.*ranked 2x/)).toBeInTheDocument();
-    expect(screen.getByText(/avg 2.*ranked 2x/)).toBeInTheDocument();
+  });
+
+  // The round is a recap of YOUR ranking. The crowd's average placement, the
+  // per-item histogram and the "N other plays agreed" line all went with the
+  // rework — the podium table below is where the crowd lives now.
+  it("shows no crowd figures beside the items", () => {
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        ownPicks={[{ roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 }]}
+        shared={false}
+      />,
+    );
+
+    expect(screen.queryByText(/avg/)).toBeNull();
+    expect(screen.queryByText(/agreed/)).toBeNull();
+    expect(screen.queryByText(/ranked 2x/)).toBeNull();
   });
 
   it("labels the round with its pool name, not 'Round N', when unnamed", () => {
@@ -124,21 +142,6 @@ describe("RankResultScreen", () => {
       />,
     );
     expect(screen.getByText("Semifinals")).toBeInTheDocument();
-  });
-
-  it("highlights the player's own placement and shows an agreement count", () => {
-    render(
-      <RankResultScreen
-        pack={RANK_PACK}
-        results={RANK_RESULTS}
-        ownPicks={[{ roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 }]}
-        shared={false}
-      />,
-    );
-
-    expect(
-      screen.getByText(/You placed this #1.*1 other play agreed/),
-    ).toBeInTheDocument();
   });
 
   // #338: a round you played reads as YOUR ranking, first place to last. The
@@ -343,7 +346,6 @@ describe("RankResultScreen", () => {
     expect(
       await screen.findByText(/viewing a shared result/i),
     ).toBeInTheDocument();
-    expect(screen.getByText(/Placed #1/)).toBeInTheDocument();
-    expect(screen.queryByText(/You placed this/)).not.toBeInTheDocument();
+    expect(screen.getByText("Kaikai Kitan")).toBeInTheDocument();
   });
 });
