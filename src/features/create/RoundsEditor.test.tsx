@@ -174,7 +174,9 @@ describe("RoundsEditor", () => {
     render(<Harness />);
     await user.click(screen.getByRole("button", { name: "+ Add round" }));
 
-    const bulk = screen.getByLabelText("Set count for all rounds");
+    // The field is named by the text beside it, not by the apply button — the
+    // two used to share one accessible name (#359).
+    const bulk = screen.getByLabelText("Set all rounds to draw");
     await user.type(bulk, "3");
     await user.click(
       screen.getByRole("button", { name: "Set count for all rounds" }),

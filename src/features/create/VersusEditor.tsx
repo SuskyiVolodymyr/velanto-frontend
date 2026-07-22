@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useFormContext, useWatch, useFieldArray } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import { resolveRoundDraws } from "@/src/shared/lib/round-draw";
@@ -14,6 +13,7 @@ import {
 } from "@/src/features/create/random-pool-option";
 import { Input } from "@/src/shared/components/Input";
 import { Select } from "@/src/shared/components/Select";
+import { RoundsToolbar } from "@/src/features/create/RoundsToolbar";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { Card } from "@/src/shared/components/Card";
@@ -45,7 +45,6 @@ export function VersusEditor() {
   const format = useWatch({ control, name: "format" });
   const groups = useWatch({ control, name: "groups" });
   const rounds = useWatch({ control, name: "rounds" });
-  const [bulkCount, setBulkCount] = useState("");
 
   const isHeadToHead = format === "1v1";
   const resolved = resolveRoundDraws(groups, rounds);
@@ -111,12 +110,6 @@ export function VersusEditor() {
     const a = groups[0]?.id ?? "";
     const b = groups[1]?.id ?? groups[0]?.id ?? "";
     roundsArray.append(newVersusRound(a, b, isHeadToHead ? 1 : currentPerSide));
-  }
-
-  function applyBulkCount() {
-    const value = Number(bulkCount);
-    if (bulkCount === "" || Number.isNaN(value)) return;
-    rounds.forEach((_, index) => setPerSide(index, value));
   }
 
   return (
@@ -251,35 +244,24 @@ export function VersusEditor() {
         </Text>
       )}
 
-      <div className="flex flex-wrap items-center gap-3">
-        <Button type="button" variant="secondary" onClick={addRound}>
-          {t("addRound")}
-        </Button>
-        {isHeadToHead ? (
-          <Text variant="secondary" className="text-sm">
-            {t("versusPerSideFixed")}
-          </Text>
-        ) : (
-          <div className="flex items-center gap-2">
-            <Text variant="secondary" className="text-sm">
-              {t("versusSetAllLabel")}
-            </Text>
-            <Input
-              type="number"
-              min={NXN_SIDE_COUNT_MIN}
-              max={NXN_SIDE_COUNT_MAX}
-              value={bulkCount}
-              onChange={(e) => setBulkCount(e.target.value)}
-              aria-label={t("versusSetAllLabel")}
-              placeholder="3"
-              className="w-16 text-center"
-            />
-            <Button type="button" variant="secondary" onClick={applyBulkCount}>
-              {t("versusSetAll")}
-            </Button>
-          </div>
-        )}
-      </div>
+      <RoundsToolbar
+        addLabel={t("addRound")}
+        onAddRound={addRound}
+        bulk={
+          isHeadToHead
+            ? undefined
+            : {
+                label: t("versusSetAllLabel"),
+                applyLabel: t("versusSetAll"),
+                min: NXN_SIDE_COUNT_MIN,
+                max: NXN_SIDE_COUNT_MAX,
+                placeholder: "3",
+                onApply: (value) =>
+                  rounds.forEach((_, index) => setPerSide(index, value)),
+              }
+        }
+        note={isHeadToHead ? t("versusPerSideFixed") : undefined}
+      />
     </section>
   );
 }

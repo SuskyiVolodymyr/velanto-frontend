@@ -1,5 +1,11 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { screen, waitFor, within } from "@testing-library/react";
+import {
+  screen,
+  waitFor,
+  within,
+  fireEvent,
+  createEvent,
+} from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { CreatePackForm } from "./CreatePackForm";
@@ -594,5 +600,61 @@ describe("CreatePackForm", () => {
       expect(payload.rounds[0].slots).toHaveLength(2);
       expect(payload.rounds[0].slots.every((s) => s.count === 1)).toBe(true);
     });
+  });
+
+  // #361: the form's submit handler publishes / submits for review, and a
+  // browser's implicit submission fires it from any single-line field — so
+  // editing a draft's title and pressing Enter out of habit sent it to
+  // moderation.
+  //
+  // jsdom does NOT implement implicit submission, so this can't be asserted by
+  // "did the API get called" — that passes against the bug. What IS observable
+  // here is the keydown being cancelled, which is exactly what stops a browser
+  // submitting. The real end-to-end behaviour is covered in e2e/create-pack.
+  it("cancels Enter in a text field, so a browser cannot implicitly submit", async () => {
+    renderForm();
+    const title = await screen.findByLabelText("Pack title");
+
+    const event = createEvent.keyDown(title, { key: "Enter" });
+    fireEvent(title, event);
+
+    expect(event.defaultPrevented).toBe(true);
+  });
+
+  // A textarea's Enter is a newline, not a submit — leave it alone.
+  it("leaves Enter alone in a textarea", async () => {
+    renderForm();
+    await screen.findByLabelText("Pack title");
+    const description = screen.getByLabelText("Pack description");
+
+    const event = createEvent.keyDown(description, { key: "Enter" });
+    fireEvent(description, event);
+
+    expect(event.defaultPrevented).toBe(false);
+  });
+
+  // Enter there adds the item; the add must still happen.
+  it("still adds a pool item on Enter", async () => {
+    const user = userEvent.setup();
+    renderForm();
+    await screen.findByLabelText("Pack title");
+
+    await user.type(screen.getByLabelText("Pool 1 new item"), "Naruto{Enter}");
+
+    expect(screen.getByText("Naruto")).toBeInTheDocument();
+    expect(packsClient.create).not.toHaveBeenCalled();
+  });
+
+  // The buttons are the deliberate action and keep working.
+  it("still submits from the Publish button", async () => {
+    const user = userEvent.setup();
+    renderForm();
+    await screen.findByLabelText("Pack title");
+
+    await user.click(screen.getByRole("button", { name: "Publish" }));
+
+    expect(
+      await screen.findByText("Give your pack a title."),
+    ).toBeInTheDocument();
   });
 });
