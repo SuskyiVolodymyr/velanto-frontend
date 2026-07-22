@@ -494,7 +494,12 @@ export function CommentSection({
                     <div className="mt-4">
                       <CommentDivider />
                     </div>
-                    <div className="mt-4 flex flex-col gap-4 border-s border-border ps-3.5">
+                    {/* ps-9 = the avatar's h-7 plus the gap-2 beside it, so a
+                        reply's avatar starts exactly under the root's username.
+                        Indentation alone marks the nesting — there was a
+                        border-s rule here too, but one vertical line plus the
+                        horizontal dividers made a thread read as a grid. */}
+                    <div className="mt-4 flex flex-col gap-4 ps-9">
                       {replies.map((reply, index) => (
                         <Fragment key={reply.id}>
                           <CommentView
