@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { Text } from "@/src/shared/components/Text";
-import { Button, buttonClassName } from "@/src/shared/components/Button";
+import { Button } from "@/src/shared/components/Button";
+import { LoadingState } from "@/src/shared/components/LoadingState";
 import { cn } from "@/src/shared/lib/cn";
 import { playsClient } from "@/src/shared/lib/plays-client";
 import {
@@ -20,12 +21,14 @@ import {
 } from "@/src/shared/lib/youtube";
 import { mediaUrl } from "@/src/shared/lib/media-url";
 import { useRoundSelections } from "@/src/features/play/use-round-selections";
+import { RankedList, type RankedRow } from "@/src/shared/components/RankedList";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import type { Pack, Item } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
 
 export function RankPlayScreen({ pack }: { pack: Pack }) {
   const { status } = useAuth();
+  const router = useRouter();
   const t = useTranslations("play");
   const groups = pack.groups ?? [];
   const rounds = pack.rounds ?? [];
@@ -34,6 +37,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   const [roundIndex, setRoundIndex] = useState(0);
   const [placements, setPlacements] = useState<Record<number, Item>>({});
   const [allPicks, setAllPicks] = useState<RecordedPick[]>([]);
+  const [recordSettled, setRecordSettled] = useState(false);
 
   // Drawn items for every round, resolved once after mount (dedup spans
   // rounds). Null until the client has drawn; see useRoundSelections.
@@ -47,7 +51,9 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   const slot =
     roundIndex < totalRounds ? selections[roundIndex]?.slots[0] : undefined;
   const candidates = slot?.items ?? [];
-  const groupName = slot ? (groupNameById.get(slot.groupId) ?? "") : "";
+  const groupName = slot?.groupId
+    ? (groupNameById.get(slot.groupId) ?? "")
+    : "";
   const slotCount = candidates.length;
   const placedCount = Object.keys(placements).length;
   const roundDone = slotCount > 0 && placedCount >= slotCount;
@@ -65,9 +71,24 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
       : null;
   const currentImageSrc =
     currentItem?.type === "image" ? mediaUrl(currentItem.value) : null;
+  // The finished round in the shape the result screen renders it: slot order is
+  // the ranking, and each row carries where the item came in the draw.
+  const rankedRows: RankedRow[] = Array.from(
+    { length: slotCount },
+    (_, slotIndex) => placements[slotIndex],
+  )
+    .filter((item) => item !== undefined)
+    .map((item) => ({
+      id: item.id,
+      title: item.title,
+      drawIndex: candidates.findIndex((candidate) => candidate.id === item.id),
+    }));
 
   function place(slotIndex: number) {
-    if (!slot || placements[slotIndex] || placedCount >= slotCount) return;
+    // `slot.groupId` is what the API keys a pick by; a random slot that found no
+    // free pool has none, and also no items, so there is nothing to place.
+    if (!slot?.groupId || placements[slotIndex] || placedCount >= slotCount)
+      return;
     const item = candidates[placedCount];
     const nextPlacements = { ...placements, [slotIndex]: item };
     setPlacements(nextPlacements);
@@ -75,7 +96,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
       const roundPicks: RecordedPick[] = Object.entries(nextPlacements).map(
         ([position, placedItem]) => ({
           roundIndex,
-          groupId: slot.groupId,
+          groupId: slot.groupId!,
           itemId: placedItem.id,
           position: Number(position),
           // Where the item came in the DRAW — items are shown in `candidates`
@@ -101,11 +122,9 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   // endpoint takes an optional JWT and stores a null player. Still waits for
   // auth to resolve, so a signed-in player's run isn't attributed to nobody.
   //
-  // Picks are stashed FIRST, not in .then(): this screen renders its "see
-  // result" link in the same commit that fires this effect, with nothing
-  // gating it on the request. Since #222 gates the result screen on these
-  // picks, writing them after the round-trip means a player who clicks
-  // promptly arrives at a LOCKED screen having just finished the pack.
+  // Picks are stashed FIRST, not in .then(): #222 gates the result screen on
+  // them, so writing them after the round-trip would send a player who just
+  // finished the pack to a LOCKED screen.
   const recordedRef = useRef(false);
   useEffect(() => {
     if (!isFinished || status === "loading" || recordedRef.current) return;
@@ -120,8 +139,18 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
       .then(({ id }) => {
         if (id) writeLastPlayId(pack.id, id);
       })
-      .catch(() => undefined);
+      .catch(() => undefined)
+      // Settled, not succeeded: a failed record must not strand the player on
+      // a finished play screen. The picks above are already stashed, so the
+      // result screen opens either way.
+      .finally(() => setRecordSettled(true));
   }, [isFinished, pack.id, allPicks, status]);
+
+  // Once the record has settled, go straight to the result — no interstitial
+  // "all rounds done" step, same as the other four formats.
+  useEffect(() => {
+    if (recordSettled) router.replace(`/packs/${pack.id}/result`);
+  }, [recordSettled, router, pack.id]);
 
   if (status === "loading") return null;
 
@@ -238,44 +267,18 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
           <Text as="h2" variant="title" className="mb-2 text-3xl">
             {t("ranked", { name: groupName })}
           </Text>
-          <div className="mb-8 flex flex-col gap-2 text-start">
-            {Array.from({ length: slotCount }, (_, slotIndex) => (
-              <div
-                key={slotIndex}
-                className="flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3"
-              >
-                <Text variant="tertiary" className="text-xs font-semibold">
-                  #{slotIndex + 1}
-                </Text>
-                <Text className="font-semibold">
-                  {placements[slotIndex]?.title}
-                </Text>
-              </div>
-            ))}
+          {/* The same list the result screen shows, so the recap and the
+              result a player ends up with read as one thing. */}
+          <div className="mb-8 text-start">
+            <RankedList rows={rankedRows} />
           </div>
-          <Button onClick={goToNextRound}>{t("nextRound")}</Button>
+          <Button onClick={goToNextRound} className="w-full">
+            {t("nextRound")}
+          </Button>
         </section>
       )}
 
-      {isFinished && (
-        <section className="mb-10 text-center">
-          <Text as="h2" variant="title" className="mb-2 text-3xl">
-            {t("rankingDone")}
-          </Text>
-          <Text variant="secondary" className="mb-4">
-            {t("rankingDoneSummary", { count: totalRounds })}
-          </Text>
-          <Link
-            href={`/packs/${pack.id}/result`}
-            // Replace so Back from the result screen returns to the pack page,
-            // not into the finished play session.
-            replace
-            className={buttonClassName("primary", "w-fit")}
-          >
-            {t("seeResult")}
-          </Link>
-        </section>
-      )}
+      {isFinished && <LoadingState label={t("loadingResult")} />}
     </div>
   );
 }

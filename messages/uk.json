@@ -967,7 +967,8 @@
     "deletePackError": "Не вдалося видалити пак. Спробуйте ще раз.",
     "submitPack": "Надіслати на перевірку",
     "submittingPack": "Надсилання…",
-    "submitPackError": "Не вдалося надіслати пак. Спробуйте ще раз."
+    "submitPackError": "Не вдалося надіслати пак. Спробуйте ще раз.",
+    "randomPoolLabel": "Випадковий пул"
   },
   "share": {
     "trigger": "Поділитися",
@@ -981,7 +982,6 @@
     "roundOf": "Раунд {current} з {total}",
     "pick": "Обрати {name}",
     "nextRound": "Наступний раунд →",
-    "seeResult": "Дивитись результат",
     "instructionSave": "Обери того, кого врятуєш. Познач нижче й підтверди.",
     "instructionSacrifice": "Обери того, ким пожертвуєш. Познач нижче й підтверди.",
     "instructionNxn": "Обери бік, який врятуєш. Познач нижче й підтверди.",
@@ -997,8 +997,6 @@
     "rankSlotFilled": "Місце {rank}: {title}",
     "rankSlotEmpty": "Поставити на місце {rank}",
     "ranked": "{name} у рейтингу",
-    "rankingDone": "Твій рейтинг готовий",
-    "rankingDoneSummary": "Усі {count, plural, one {# раунд} few {# раунди} many {# раундів} other {# раунду}} розставлено наосліп.",
     "loadingResult": "Завантаження результатів…",
     "finishRound": "Переглянути результати →",
     "versusSideA": "Сторона A",
@@ -1149,7 +1147,8 @@
     "itemTextRequired": "Цей елемент не може бути порожнім.",
     "editItemAria": "Редагувати {title}",
     "saveItem": "Зберегти",
-    "cancelEdit": "Скасувати"
+    "cancelEdit": "Скасувати",
+    "randomPoolOption": "Випадковий пул (доступно: {count})"
   },
   "profile": {
     "loginRequiredView": "Щоб переглянути свій профіль, спершу увійди.",

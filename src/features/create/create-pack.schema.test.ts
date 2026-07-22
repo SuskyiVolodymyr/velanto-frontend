@@ -583,3 +583,70 @@ describe("createPackSchema — versus (nxn / 1v1)", () => {
     ).toBe(true);
   });
 });
+
+// #355: a slot can ask for a pool instead of naming one. A random pool is
+// CONSUMED once drawn and a pinned pool is never drawn, so a pack can only
+// afford as many random slots as it has pools left over after pinning.
+describe("random pool capacity", () => {
+  const pool = (id: string) => ({
+    id,
+    name: id,
+    items: [
+      { id: `${id}-a`, type: "text" as const, title: "A", value: "A" },
+      { id: `${id}-b`, type: "text" as const, title: "B", value: "B" },
+    ],
+  });
+  const nxnDraft = (
+    rounds: Array<Array<Record<string, unknown>>>,
+    poolCount = 3,
+  ) => ({
+    title: "Bands",
+    description: "Band vs band, drawn fresh every play.",
+    coverTone: "#2b2a3a",
+    language: "en" as const,
+    format: "nxn" as const,
+    tags: ["Music" as const],
+    groups: Array.from({ length: poolCount }, (_, i) => pool(`p${i + 1}`)),
+    rounds: rounds.map((slots, ri) => ({
+      id: `r${ri}`,
+      slots: slots.map((slot) => ({ mode: "random", count: 1, ...slot })),
+    })),
+  });
+  const messages = (result: { error?: { issues: { message: string }[] } }) =>
+    (result.error?.issues ?? []).map((issue) => issue.message);
+
+  it("rejects more random slots than there are unpinned pools", () => {
+    const result = createPackSchema.safeParse(
+      nxnDraft([
+        [{ groupId: "p1" }, { groupId: "p2" }],
+        [{ groupMode: "random" }, { groupMode: "random" }],
+      ]),
+    );
+    expect(result.success).toBe(false);
+    expect(messages(result)).toContain(
+      "This pack needs 2 random pools but only 1 is available.",
+    );
+  });
+
+  // The boundary: 4 pools, one pinned, three random — 3 <= 4 - 1.
+  it("accepts exactly as many random slots as available pools", () => {
+    const result = createPackSchema.safeParse(
+      nxnDraft(
+        [
+          [{ groupMode: "random" }, { groupMode: "random" }],
+          [{ groupMode: "random" }, { groupId: "p1" }],
+        ],
+        4,
+      ),
+    );
+    expect(messages(result)).toEqual([]);
+    expect(result.success).toBe(true);
+  });
+
+  it("does not ask a random slot to pick a group", () => {
+    const result = createPackSchema.safeParse(
+      nxnDraft([[{ groupMode: "random" }, { groupId: "p1" }]]),
+    );
+    expect(messages(result)).not.toContain("Pick a group for this round.");
+  });
+});

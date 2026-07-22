@@ -13,7 +13,7 @@ export default async function CreatePage() {
   const t = await getTranslations("pages");
   return (
     <main className="mx-auto w-full max-w-5xl flex-1 px-7 py-10">
-      <BackButton fallbackHref="/" className="mb-6" />
+      <BackButton href="/" className="mb-6" />
       <Text as="h1" variant="title" className="mb-2 text-3xl">
         {t("createTitle")}
       </Text>

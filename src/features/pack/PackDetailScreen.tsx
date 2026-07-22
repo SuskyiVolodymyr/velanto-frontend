@@ -10,6 +10,7 @@ import { PackHowItPlays } from "@/src/features/pack/PackHowItPlays";
 import { RoundChips } from "@/src/features/pack/RoundChips";
 import { PackStats } from "@/src/features/pack/PackStats";
 import { TopPickedTable } from "@/src/features/result/TopPickedTable";
+import { PodiumTable } from "@/src/features/result/PodiumTable";
 import { PackCreatorCard } from "@/src/features/pack/PackCreatorCard";
 import { PackPlayButton } from "@/src/features/pack/PackPlayButton";
 import { PackOwnerActions } from "@/src/features/pack/PackOwnerActions";
@@ -42,18 +43,37 @@ export function PackDetailScreen({
   const tFormat = useTranslations("formats");
   const t = useTranslations("pack");
   const tResult = useTranslations("result");
-  // Every format except rank_blind, whose results are placements rather than
-  // picks. "What wins most" is the statistic for all of them, and each round is
-  // a random draw rather than a fixed list, so a per-round breakdown says less.
-  const topItems =
-    results.format === "rank_blind" ? [] : (results.topItems ?? []);
-  // Same number under the verb the player actually performed.
-  const topHeading =
-    pack.format === "save_one"
-      ? "topSavedHeading"
-      : pack.format === "sacrifice_one"
-        ? "topSacrificedHeading"
-        : "topPickedHeading";
+  // The pack-wide ranking, in whichever shape this format has one: "which item
+  // wins most" for the four pick formats, "how often each item reached the
+  // podium" for rank_blind, whose results are placements rather than picks.
+  // Null until there is something to rank — that is when the generic per-round
+  // breakdown below stands in.
+  let ranking: { heading: string; table: ReactNode } | null = null;
+  if (results.format === "rank_blind") {
+    const podium = results.podium ?? [];
+    if (podium.length > 0) {
+      ranking = {
+        heading: tResult("podiumHeading"),
+        table: <PodiumTable items={podium} />,
+      };
+    }
+  } else {
+    const topItems = results.topItems ?? [];
+    if (topItems.length > 0) {
+      // Same number under the verb the player actually performed.
+      const heading = tResult(
+        pack.format === "save_one"
+          ? "topSavedHeading"
+          : pack.format === "sacrifice_one"
+            ? "topSacrificedHeading"
+            : "topPickedHeading",
+      );
+      ranking = {
+        heading,
+        table: <TopPickedTable items={topItems} label={heading} />,
+      };
+    }
+  }
   const sectionLabel =
     pack.format === "nxn" ? t("sectionCategory") : t("sectionGroup");
 
@@ -126,14 +146,14 @@ export function PackDetailScreen({
           <RoundChips pack={pack} />
         </section>
 
-        {/* "Which item wins most" IS the statistic here — the generic per-round
+        {/* The pack-wide ranking IS the statistic here — the generic per-round
             breakdown says far less about it, and divides by every play of the
             pack rather than by the rounds an item actually appeared in. Falls
             back to that breakdown only when there is nothing to rank yet. */}
-        {topItems.length > 0 ? (
+        {ranking ? (
           <section>
-            <SectionHeading>{tResult(topHeading)}</SectionHeading>
-            <TopPickedTable items={topItems} label={tResult(topHeading)} />
+            <SectionHeading>{ranking.heading}</SectionHeading>
+            {ranking.table}
           </section>
         ) : (
           <section>

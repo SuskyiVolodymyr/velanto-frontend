@@ -967,7 +967,8 @@
     "deletePackError": "প্যাকটি মোছা যায়নি। আবার চেষ্টা করুন।",
     "submitPack": "পর্যালোচনার জন্য পাঠান",
     "submittingPack": "পাঠানো হচ্ছে…",
-    "submitPackError": "এই প্যাকটি পাঠানো যায়নি। আবার চেষ্টা করুন।"
+    "submitPackError": "এই প্যাকটি পাঠানো যায়নি। আবার চেষ্টা করুন।",
+    "randomPoolLabel": "এলোমেলো পুল"
   },
   "share": {
     "trigger": "শেয়ার",
@@ -981,7 +982,6 @@
     "roundOf": "রাউন্ড {current} / {total}",
     "pick": "{name} বেছে নিন",
     "nextRound": "পরের রাউন্ড →",
-    "seeResult": "আপনার ফলাফল দেখুন",
     "instructionSave": "যাকে বাঁচাবেন তাকে বেছে নিন। নিচে টিক দিয়ে নিশ্চিত করুন।",
     "instructionSacrifice": "যাকে বাদ দেবেন তাকে বেছে নিন। নিচে টিক দিয়ে নিশ্চিত করুন।",
     "instructionNxn": "যে পক্ষকে বাঁচাবেন সেটি বেছে নিন। নিচে টিক দিয়ে নিশ্চিত করুন।",
@@ -997,8 +997,6 @@
     "rankSlotFilled": "র‍্যাঙ্ক {rank}: {title}",
     "rankSlotEmpty": "র‍্যাঙ্ক {rank}-এ বসান",
     "ranked": "{name} র‍্যাঙ্ক করা হয়েছে",
-    "rankingDone": "আপনার র‍্যাঙ্কিং শেষ",
-    "rankingDoneSummary": "সব {count, plural, one {# রাউন্ড} other {# রাউন্ড}} না দেখেই বসানো হয়েছে।",
     "loadingResult": "আপনার ফলাফল লোড হচ্ছে…",
     "finishRound": "ফলাফল দেখুন →",
     "versusSideA": "পক্ষ A",
@@ -1149,7 +1147,8 @@
     "itemTextRequired": "এই আইটেমটি খালি হতে পারে না।",
     "editItemAria": "{title} সম্পাদনা করুন",
     "saveItem": "সংরক্ষণ করুন",
-    "cancelEdit": "বাতিল"
+    "cancelEdit": "বাতিল",
+    "randomPoolOption": "এলোমেলো পুল ({count}টি উপলব্ধ)"
   },
   "profile": {
     "loginRequiredView": "আপনার প্রোফাইল দেখতে হলে আপনাকে লগ ইন করতে হবে।",

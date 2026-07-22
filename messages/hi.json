@@ -967,7 +967,8 @@
     "deletePackError": "पैक हटाया नहीं जा सका। फिर से प्रयास करें।",
     "submitPack": "समीक्षा के लिए भेजें",
     "submittingPack": "भेजा जा रहा है…",
-    "submitPackError": "यह पैक सबमिट नहीं हो सका। कृपया पुनः प्रयास करें।"
+    "submitPackError": "यह पैक सबमिट नहीं हो सका। कृपया पुनः प्रयास करें।",
+    "randomPoolLabel": "यादृच्छिक पूल"
   },
   "share": {
     "trigger": "शेयर",
@@ -981,7 +982,6 @@
     "roundOf": "राउंड {current} / {total}",
     "pick": "{name} चुनें",
     "nextRound": "अगला राउंड →",
-    "seeResult": "अपना नतीजा देखें",
     "instructionSave": "जिसे बचाना चाहें उसे चुनें। नीचे उस पर निशान लगाएँ, फिर पक्का करें।",
     "instructionSacrifice": "जिसे हटाना चाहें उसे चुनें। नीचे उस पर निशान लगाएँ, फिर पक्का करें।",
     "instructionNxn": "जिस पक्ष को बचाना चाहें उसे चुनें। नीचे उस पर निशान लगाएँ, फिर पक्का करें।",
@@ -997,8 +997,6 @@
     "rankSlotFilled": "रैंक {rank}: {title}",
     "rankSlotEmpty": "रैंक {rank} पर रखें",
     "ranked": "{name} रैंक हुआ",
-    "rankingDone": "आपकी रैंकिंग पूरी हुई",
-    "rankingDoneSummary": "सभी {count, plural, one {# राउंड} other {# राउंड}} बिना देखे रखे गए।",
     "loadingResult": "आपके परिणाम लोड हो रहे हैं…",
     "finishRound": "परिणाम देखें →",
     "versusSideA": "पक्ष A",
@@ -1149,7 +1147,8 @@
     "itemTextRequired": "यह आइटम खाली नहीं हो सकता।",
     "editItemAria": "{title} संपादित करें",
     "saveItem": "सहेजें",
-    "cancelEdit": "रद्द करें"
+    "cancelEdit": "रद्द करें",
+    "randomPoolOption": "यादृच्छिक पूल ({count} उपलब्ध)"
   },
   "profile": {
     "loginRequiredView": "अपनी प्रोफ़ाइल देखने के लिए आपको लॉग इन करना होगा।",

@@ -4,7 +4,14 @@ import { useState } from "react";
 import { useFormContext, useWatch, useFieldArray } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import { resolveRoundDraws } from "@/src/shared/lib/round-draw";
-import { newVersusRound } from "@/src/features/create/create-pack.defaults";
+import {
+  newVersusRound,
+  randomSlot,
+} from "@/src/features/create/create-pack.defaults";
+import {
+  RANDOM_POOL_VALUE,
+  availablePoolCount,
+} from "@/src/features/create/random-pool-option";
 import { Input } from "@/src/shared/components/Input";
 import { Select } from "@/src/shared/components/Select";
 import { Button } from "@/src/shared/components/Button";
@@ -54,12 +61,41 @@ export function VersusEditor() {
     ? 1
     : (rounds[0]?.slots[0]?.count ?? NXN_SIDE_COUNT_MIN);
 
-  function setSide(roundIndex: number, sideIndex: number, groupId: string) {
-    setValue(`rounds.${roundIndex}.slots.${sideIndex}.groupId`, groupId, {
-      shouldValidate: false,
-      shouldDirty: true,
-    });
+  // A side either names a pool or asks for one at play time — two different
+  // slot shapes, so the whole slot is replaced rather than one field patched,
+  // which would leave a stale groupId beside groupMode: "random".
+  function setSide(roundIndex: number, sideIndex: number, value: string) {
+    const path = `rounds.${roundIndex}.slots.${sideIndex}` as const;
+    const count = rounds[roundIndex]?.slots[sideIndex]?.count ?? currentPerSide;
+    setValue(
+      path,
+      value === RANDOM_POOL_VALUE
+        ? randomSlot(count)
+        : { groupId: value, mode: "random", count },
+      { shouldValidate: false, shouldDirty: true },
+    );
   }
+
+  // Every pool, plus "draw me one" — its label carries how many are still free,
+  // so the capacity rule reads as a countdown rather than an error at submit.
+  function optionsForSide(roundIndex: number, slotIndex: number) {
+    const available = Math.max(
+      0,
+      availablePoolCount(groups, rounds, { roundIndex, slotIndex }),
+    );
+    return [
+      {
+        value: RANDOM_POOL_VALUE,
+        label: t("randomPoolOption", { count: available }),
+      },
+      ...poolOptions,
+    ];
+  }
+
+  const sideValue = (
+    slot: { groupId?: string; groupMode?: string } | undefined,
+  ) =>
+    slot?.groupMode === "random" ? RANDOM_POOL_VALUE : (slot?.groupId ?? "");
 
   // Both sides of a versus round share one per-side draw count.
   function setPerSide(roundIndex: number, count: number | undefined) {
@@ -92,8 +128,15 @@ export function VersusEditor() {
       {rounds.map((round, index) => {
         const slotA = round.slots[0];
         const slotB = round.slots[1];
+        // Two random sides consume different pools by construction, and a
+        // random side never draws a pool this round pins — only two NAMED sides
+        // can be the same pool.
         const singlePool = Boolean(
-          slotA && slotB && slotA.groupId === slotB.groupId,
+          slotA &&
+          slotB &&
+          slotA.groupMode !== "random" &&
+          slotB.groupMode !== "random" &&
+          slotA.groupId === slotB.groupId,
         );
         const drawA = resolved[index]?.slots[0]?.drawnCount ?? 0;
         const drawB = resolved[index]?.slots[1]?.drawnCount ?? 0;
@@ -143,10 +186,10 @@ export function VersusEditor() {
                   {t("versusSideA")}
                 </Text>
                 <Select
-                  value={slotA?.groupId ?? ""}
+                  value={sideValue(slotA)}
                   onChange={(e) => setSide(index, 0, e.target.value)}
                   aria-label={t("versusSideARound", { index: index + 1 })}
-                  options={poolOptions}
+                  options={optionsForSide(index, 0)}
                 />
               </div>
               <div className="flex min-w-[130px] flex-1 flex-col gap-1">
@@ -154,10 +197,10 @@ export function VersusEditor() {
                   {t("versusSideB")}
                 </Text>
                 <Select
-                  value={slotB?.groupId ?? ""}
+                  value={sideValue(slotB)}
                   onChange={(e) => setSide(index, 1, e.target.value)}
                   aria-label={t("versusSideBRound", { index: index + 1 })}
-                  options={poolOptions}
+                  options={optionsForSide(index, 1)}
                 />
               </div>
               {!isHeadToHead && (

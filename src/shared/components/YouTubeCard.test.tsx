@@ -229,6 +229,112 @@ describe("YouTubeCard", () => {
     ).toBeNull();
   });
 
+  // #349: the fallback says "this video can't play here". Painting that over a
+  // player that IS playing is simply false, whatever error code arrived — and
+  // YouTube fires onError mid-playback often enough that almost every video in
+  // a pack could end up behind it.
+  it("keeps a playing video when an error arrives after playback started", async () => {
+    vi.useFakeTimers();
+    try {
+      const player = makeFakePlayer();
+      let fire: {
+        state: (s: number) => void;
+        error: () => void;
+      } = { state: () => {}, error: () => {} };
+      const api: YouTubeIframeApi = {
+        Player: vi.fn().mockImplementation(function (
+          _el: unknown,
+          options: {
+            events: {
+              onReady: (e: { target: YouTubePlayer }) => void;
+              onError: (e: { target: YouTubePlayer }) => void;
+              onStateChange?: (e: {
+                target: YouTubePlayer;
+                data: number;
+              }) => void;
+            };
+          },
+        ) {
+          options.events.onReady({ target: player });
+          fire = {
+            state: (s) =>
+              options.events.onStateChange?.({ target: player, data: s }),
+            error: () => options.events.onError({ target: player }),
+          };
+          return player;
+        }) as unknown as YouTubeIframeApi["Player"],
+      };
+      mockedLoad.mockResolvedValue(api);
+
+      render(<YouTubeCard videoId="abc123" />);
+      fireEvent.mouseEnter(screen.getByTestId("youtube-card"));
+      await vi.advanceTimersByTimeAsync(0);
+
+      act(() => fire.state(1)); // PLAYING
+      act(() => fire.error());
+      // Still playing right after the error — YouTube reports more playback.
+      act(() => fire.state(1));
+      await vi.advanceTimersByTimeAsync(5000);
+
+      expect(
+        screen.queryByRole("link", { name: /open on youtube/i }),
+      ).toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  // The other half of the same rule: an error that really does stop playback
+  // still reaches the fallback, just after a grace window rather than instantly.
+  it("falls back when a mid-playback error is followed by no more playback", async () => {
+    vi.useFakeTimers();
+    try {
+      const player = makeFakePlayer();
+      let fire: {
+        state: (s: number) => void;
+        error: () => void;
+      } = { state: () => {}, error: () => {} };
+      const api: YouTubeIframeApi = {
+        Player: vi.fn().mockImplementation(function (
+          _el: unknown,
+          options: {
+            events: {
+              onReady: (e: { target: YouTubePlayer }) => void;
+              onError: (e: { target: YouTubePlayer }) => void;
+              onStateChange?: (e: {
+                target: YouTubePlayer;
+                data: number;
+              }) => void;
+            };
+          },
+        ) {
+          options.events.onReady({ target: player });
+          fire = {
+            state: (s) =>
+              options.events.onStateChange?.({ target: player, data: s }),
+            error: () => options.events.onError({ target: player }),
+          };
+          return player;
+        }) as unknown as YouTubeIframeApi["Player"],
+      };
+      mockedLoad.mockResolvedValue(api);
+
+      render(<YouTubeCard videoId="abc123" />);
+      fireEvent.mouseEnter(screen.getByTestId("youtube-card"));
+      await vi.advanceTimersByTimeAsync(0);
+
+      act(() => fire.state(1)); // PLAYING
+      act(() => fire.error()); // …and it never plays again
+      await vi.advanceTimersByTimeAsync(5000);
+
+      expect(
+        screen.queryByRole("link", { name: /open on youtube/i }),
+      ).not.toBeNull();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("falls back to Open-on-YouTube when commanded playback never starts (server throttle)", async () => {
     vi.useFakeTimers();
     try {
