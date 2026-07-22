@@ -967,7 +967,8 @@
     "deletePackError": "پیک حذف نہیں ہو سکا۔ دوبارہ کوشش کریں۔",
     "submitPack": "جائزے کے لیے بھیجیں",
     "submittingPack": "بھیجا جا رہا ہے…",
-    "submitPackError": "یہ پیک بھیجا نہیں جا سکا۔ دوبارہ کوشش کریں۔"
+    "submitPackError": "یہ پیک بھیجا نہیں جا سکا۔ دوبارہ کوشش کریں۔",
+    "randomPoolLabel": "بے ترتیب پول"
   },
   "share": {
     "trigger": "شیئر",

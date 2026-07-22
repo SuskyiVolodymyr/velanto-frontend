@@ -253,6 +253,27 @@ describe("PackDetailScreen", () => {
     expect(screen.queryByRole("table")).toBeNull();
   });
 
+  // #355: a round whose pool is drawn at play time has no pool name to put on
+  // its chip, and no author name either — so it says what it is.
+  it("labels a random-pool round on its chip", () => {
+    render(
+      <PackDetailScreen
+        pack={{
+          ...BASE_PACK,
+          rounds: [
+            {
+              id: "r1",
+              slots: [{ groupMode: "random", mode: "random", count: 2 }],
+            },
+          ],
+        }}
+        results={RESULTS}
+      />,
+    );
+
+    expect(screen.getByText("Random pool")).toBeInTheDocument();
+  });
+
   it("wires the owner/moderator actions to this pack", () => {
     render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
     expect(screen.getByText("PackOwnerActions:p1:u1")).toBeInTheDocument();

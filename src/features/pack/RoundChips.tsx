@@ -4,8 +4,10 @@ import { resolveRoundDraws } from "@/src/shared/lib/round-draw";
 
 // Compact overview of the pack's ordered rounds as chips, each showing the
 // round's name and how many items it draws. An unnamed round falls back to its
-// group's name (elimination, one slot) or "Round N" (versus). The drawn count
-// comes from the shared resolveRoundDraws engine so it matches play/creation.
+// pool's name (elimination, one slot) or "Round N" (versus) — and to "Random
+// pool" when the pool is drawn at play time and so has no name to show here.
+// The drawn count comes from the shared resolveRoundDraws engine so it matches
+// play/creation.
 export function RoundChips({ pack }: { pack: Pack }) {
   const t = useTranslations("pack");
   const rounds = pack.rounds ?? [];
@@ -25,10 +27,12 @@ export function RoundChips({ pack }: { pack: Pack }) {
             0,
           ) ?? 0;
         const heading = t("roundHeading", { index: index + 1 });
-        const fallback =
-          round.slots.length === 1
-            ? (groupNameById.get(round.slots[0]?.groupId ?? "") ?? heading)
-            : heading;
+        const soleSlot = round.slots.length === 1 ? round.slots[0] : undefined;
+        const fallback = !soleSlot
+          ? heading
+          : soleSlot.groupMode === "random"
+            ? t("randomPoolLabel")
+            : (groupNameById.get(soleSlot.groupId ?? "") ?? heading);
         const label = round.name?.trim() || fallback;
 
         return (

@@ -967,7 +967,8 @@
     "deletePackError": "প্যাকটি মোছা যায়নি। আবার চেষ্টা করুন।",
     "submitPack": "পর্যালোচনার জন্য পাঠান",
     "submittingPack": "পাঠানো হচ্ছে…",
-    "submitPackError": "এই প্যাকটি পাঠানো যায়নি। আবার চেষ্টা করুন।"
+    "submitPackError": "এই প্যাকটি পাঠানো যায়নি। আবার চেষ্টা করুন।",
+    "randomPoolLabel": "এলোমেলো পুল"
   },
   "share": {
     "trigger": "শেয়ার",

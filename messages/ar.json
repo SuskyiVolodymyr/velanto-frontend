@@ -967,7 +967,8 @@
     "deletePackError": "تعذّر حذف الحزمة. حاول مرة أخرى.",
     "submitPack": "إرسال للمراجعة",
     "submittingPack": "جارٍ الإرسال…",
-    "submitPackError": "تعذّر إرسال هذه الحزمة. حاول مرة أخرى."
+    "submitPackError": "تعذّر إرسال هذه الحزمة. حاول مرة أخرى.",
+    "randomPoolLabel": "مجموعة عشوائية"
   },
   "share": {
     "trigger": "مشاركة",

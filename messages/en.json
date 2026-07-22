@@ -1061,7 +1061,8 @@
     "deletePackError": "Couldn't delete the pack. Try again.",
     "submitPack": "Submit for review",
     "submittingPack": "Submitting…",
-    "submitPackError": "Couldn't submit this pack. Please try again."
+    "submitPackError": "Couldn't submit this pack. Please try again.",
+    "randomPoolLabel": "Random pool"
   },
   "share": {
     "trigger": "Share",
