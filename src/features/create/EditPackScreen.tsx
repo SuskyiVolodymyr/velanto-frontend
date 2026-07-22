@@ -42,6 +42,10 @@ export function EditPackScreen({ pack }: { pack: Pack }) {
   }
 
   return (
-    <CreatePackForm mode="edit" packId={pack.id} initialValues={initialValues} />
+    <CreatePackForm
+      mode="edit"
+      packId={pack.id}
+      initialValues={initialValues}
+    />
   );
 }

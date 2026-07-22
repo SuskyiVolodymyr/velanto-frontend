@@ -94,6 +94,8 @@ describe("packToFormValues", () => {
   // then rendered with no option selected and Save failed schema validation
   // against a control the author could not see failing.
   it("returns null for a format the creator has no UI for, instead of casting it through", () => {
-    expect(packToFormValues({ ...PACK, format: "save_one_friends" })).toBeNull();
+    expect(
+      packToFormValues({ ...PACK, format: "save_one_friends" }),
+    ).toBeNull();
   });
 });

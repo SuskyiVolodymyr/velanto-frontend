@@ -12,7 +12,11 @@ const notFound = vi.hoisted(() =>
 
 vi.mock("next/navigation", () => ({ notFound }));
 vi.mock("@/src/shared/lib/plays-client", () => ({
-  playsClient: { record: vi.fn(), getResults: vi.fn(), getSharedPicks: vi.fn() },
+  playsClient: {
+    record: vi.fn(),
+    getResults: vi.fn(),
+    getSharedPicks: vi.fn(),
+  },
 }));
 vi.mock("@/src/features/play/PlayScreen", () => ({
   PlayScreen: () => <div>PlayScreen</div>,

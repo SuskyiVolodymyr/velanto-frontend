@@ -112,7 +112,9 @@ export function PackDetailScreen({
               {/* UI-EXCLUDED:save_one_friends (velanto-frontend#368) — don't
                   offer Play for a format with no play path: /play 404s for it
                   (see PlayRouter), so the CTA would be a dead end. */}
-              {isUiPackFormat(pack.format) && <PackPlayButton packId={pack.id} />}
+              {isUiPackFormat(pack.format) && (
+                <PackPlayButton packId={pack.id} />
+              )}
               {pack.status === "approved" && (
                 <ShareButton path={`/packs/${pack.id}`} />
               )}

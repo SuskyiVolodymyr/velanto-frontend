@@ -28,7 +28,13 @@ describe("formatLabel", () => {
   // known-label branch and returned Object.prototype METHODS typed as `string`.
   // A pack format comes off the wire, so an attacker-chosen value can reach
   // here; React would then try to render a function.
-  it.each(["constructor", "toString", "valueOf", "__proto__", "hasOwnProperty"])(
+  it.each([
+    "constructor",
+    "toString",
+    "valueOf",
+    "__proto__",
+    "hasOwnProperty",
+  ])(
     "does not return an inherited Object.prototype member for the wire value %s",
     (hostile) => {
       const label = formatLabel(hostile as (typeof PACK_FORMATS)[number]);
