@@ -1039,7 +1039,14 @@
     "topSavedHeading": "الأكثر إنقاذًا",
     "topSavedSubtitle": "كم مرة نجا كل عنصر في الجولات التي ظهر فيها، عبر كل ألعاب هذه الحزمة.",
     "topSacrificedHeading": "الأكثر تضحيةً به",
-    "topSacrificedSubtitle": "كم مرة ضُحّي بكل عنصر في الجولات التي ظهر فيها، عبر كل ألعاب هذه الحزمة."
+    "topSacrificedSubtitle": "كم مرة ضُحّي بكل عنصر في الجولات التي ظهر فيها، عبر كل ألعاب هذه الحزمة.",
+    "shownAt": "ظهر #{n}",
+    "podiumHeading": "مراكز المنصة",
+    "podiumSubtitle": "كم مرة وُضع كل عنصر أولًا أو ثانيًا أو ثالثًا عبر كل ألعاب هذه الحزمة، مرتَّبة بمجموع الثلاثة.",
+    "podiumFirstColumn": "الأول",
+    "podiumSecondColumn": "الثاني",
+    "podiumThirdColumn": "الثالث",
+    "podiumTotalColumn": "المجموع"
   },
   "create": {
     "loginRequired": "يجب تسجيل الدخول لإنشاء حزمة.",

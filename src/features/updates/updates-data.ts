@@ -37,6 +37,8 @@ export const UPDATES: UpdateEntry[] = [
       "NxN scrolls back to the top of the next round when you confirm, so a tall matchup no longer drops you into the middle of the following one.",
       "Save One and Sacrifice One results now show each round as the full set of items you were shown, with the one you kept in green — or the one you gave up in red. Before, a result only remembered your pick and not what you chose it from.",
       "The Top picked table now covers those two formats as well, as Most saved or Most sacrificed. It counts how often an item survived the rounds it actually appeared in, rather than dividing by every play of the pack, so an item the shuffle rarely deals is no longer punished for turning up less often.",
+      "Rank Blind results now read as your ranking, first place to last, and each item carries where it came in the draw — the order things were shown to you is half the story when you are ranking blind, and until now nothing recorded it.",
+      "Rank Blind packs get a Podium finishes table: how often each item landed first, second or third across every play, ranked by the three combined. An item that is reliably near the top says more about a pack than one that wins occasionally and is forgotten the rest of the time.",
       "1v1 asks you to confirm a pick before moving on, like every other format — a misclick no longer decides the matchup for you, and you can change your mind while comparing.",
       "Finishing a 1v1 pack goes straight to your result instead of stopping at a summary page first.",
       "Every play screen now shows which pack you're playing at the top, so a shared link tells you what you've opened.",

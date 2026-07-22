@@ -10,55 +10,41 @@ import {
   styleForRank,
   withCompetitionRanks,
 } from "@/src/features/result/result-table";
-import type { ItemTally } from "@/src/shared/types/play-results";
+import type { PodiumTally } from "@/src/shared/types/play-results";
 
 /** How many rows a press of "Load more" adds. */
 const PAGE = 10;
 
-interface RankedTally extends ItemTally {
-  rank: number;
-}
-
 /**
- * The table's rows in competition order. Two items tie only when BOTH their
- * share and their pick count match — the same percentage off a different number
- * of rounds is not the same result.
- */
-export function rankTallies(items: ItemTally[]): RankedTally[] {
-  return withCompetitionRanks(
-    items,
-    (item) => `${item.percentage}|${item.picked}`,
-  );
-}
-
-/**
- * The pack-wide "top picked" ranking: how often each item was picked of the
- * rounds it turned up in. Shown on every versus and elimination result screen
- * and on those packs' detail pages, where it replaces the generic per-round
- * stats — "what wins most" IS the interesting statistic for all of them.
+ * rank_blind's pack-wide ranking: how often each item was placed first, second
+ * or third, ordered by the three combined.
  *
- * `label` names the table for assistive tech; the elimination screens pass
- * their own ("Most saved" / "Most sacrificed"), which is the same number under
- * a verb that matches what the player actually did.
+ * The sum ranks rather than the firsts alone because a rank_blind round is a
+ * whole ordering, not a single pick — an item reliably near the top says more
+ * about a pack than one that occasionally wins and is mid-table otherwise. The
+ * three counts stay visible beside it, so a reader can see which kind of item
+ * they're looking at instead of taking the sum on trust.
  */
-export function TopPickedTable({
-  items,
-  label,
-}: {
-  items: ItemTally[];
-  label?: string;
-}) {
+export function PodiumTable({ items }: { items: PodiumTally[] }) {
   const t = useTranslations("result");
-  const tableLabel = label ?? t("topPickedHeading");
   const [shown, setShown] = useState(PAGE);
-  const ranked = useMemo(() => rankTallies(items), [items]);
+  // A tie needs all three counts to match, not just the total: 3/0/0 and 1/1/1
+  // both total 3 and are not the same result.
+  const ranked = useMemo(
+    () =>
+      withCompetitionRanks(
+        items,
+        (item) => `${item.first}|${item.second}|${item.third}`,
+      ),
+    [items],
+  );
   const visible = ranked.slice(0, shown);
 
   return (
     <>
       <div className="overflow-x-auto">
         <table
-          aria-label={tableLabel}
+          aria-label={t("podiumHeading")}
           className="w-full border-separate border-spacing-y-2"
         >
           <thead>
@@ -67,11 +53,17 @@ export function TopPickedTable({
                 {t("topPickedRankColumn")}
               </ColumnHeading>
               <ColumnHeading>{t("topPickedItemColumn")}</ColumnHeading>
-              <ColumnHeading align="end">
-                {t("topPickedPickedColumn")}
+              <ColumnHeading align="end" className="w-14">
+                {t("podiumFirstColumn")}
               </ColumnHeading>
-              <ColumnHeading align="end" className="w-20">
-                {t("topPickedShareColumn")}
+              <ColumnHeading align="end" className="w-14">
+                {t("podiumSecondColumn")}
+              </ColumnHeading>
+              <ColumnHeading align="end" className="w-14">
+                {t("podiumThirdColumn")}
+              </ColumnHeading>
+              <ColumnHeading align="end" className="w-16">
+                {t("podiumTotalColumn")}
               </ColumnHeading>
             </tr>
           </thead>
@@ -93,20 +85,15 @@ export function TopPickedTable({
                       {item.itemTitle}
                     </Text>
                   </RankCell>
-                  <RankCell style={style} align="end">
-                    <Text as="span" variant="tertiary" className="text-xs">
-                      {t("pickedOfAppeared", {
-                        picked: item.picked,
-                        appeared: item.appeared,
-                      })}
-                    </Text>
-                  </RankCell>
+                  <PlacementCell style={style} count={item.first} />
+                  <PlacementCell style={style} count={item.second} />
+                  <PlacementCell style={style} count={item.third} />
                   <RankCell style={style} align="end" last>
                     <Text
                       as="span"
                       className="text-sm font-semibold tabular-nums text-acc"
                     >
-                      {item.percentage}%
+                      {item.total}
                     </Text>
                   </RankCell>
                 </tr>
@@ -123,5 +110,29 @@ export function TopPickedTable({
         </div>
       )}
     </>
+  );
+}
+
+/**
+ * One placement count. A zero is dimmed rather than blank: the columns line up
+ * as a shape you can read across, which an empty cell breaks.
+ */
+function PlacementCell({
+  style,
+  count,
+}: {
+  style: { border: string; background: string };
+  count: number;
+}) {
+  return (
+    <RankCell style={style} align="end">
+      <Text
+        as="span"
+        variant={count === 0 ? "tertiary" : undefined}
+        className="text-sm tabular-nums"
+      >
+        {count}
+      </Text>
+    </RankCell>
   );
 }

@@ -1133,7 +1133,14 @@
     "topSavedHeading": "Most saved",
     "topSavedSubtitle": "How often each item was saved, of the rounds it turned up in, across every play of this pack.",
     "topSacrificedHeading": "Most sacrificed",
-    "topSacrificedSubtitle": "How often each item was sacrificed, of the rounds it turned up in, across every play of this pack."
+    "topSacrificedSubtitle": "How often each item was sacrificed, of the rounds it turned up in, across every play of this pack.",
+    "shownAt": "Shown #{n}",
+    "podiumHeading": "Podium finishes",
+    "podiumSubtitle": "How often each item was placed first, second or third across every play of this pack, ranked by the three combined.",
+    "podiumFirstColumn": "1st",
+    "podiumSecondColumn": "2nd",
+    "podiumThirdColumn": "3rd",
+    "podiumTotalColumn": "Total"
   },
   "create": {
     "loginRequired": "You need to be logged in to create a pack.",

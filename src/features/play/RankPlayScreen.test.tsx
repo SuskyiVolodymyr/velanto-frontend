@@ -175,9 +175,27 @@ describe("RankPlayScreen", () => {
       expect(
         JSON.parse(sessionStorage.getItem("velanto:last-play:pack-rank")!),
       ).toEqual([
-        { roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 },
-        { roundIndex: 0, groupId: "g1", itemId: "i2", position: 1 },
-        { roundIndex: 1, groupId: "g2", itemId: "i3", position: 0 },
+        {
+          roundIndex: 0,
+          groupId: "g1",
+          itemId: "i1",
+          position: 0,
+          drawIndex: 0,
+        },
+        {
+          roundIndex: 0,
+          groupId: "g1",
+          itemId: "i2",
+          position: 1,
+          drawIndex: 1,
+        },
+        {
+          roundIndex: 1,
+          groupId: "g2",
+          itemId: "i3",
+          position: 0,
+          drawIndex: 0,
+        },
       ]),
     );
   });
@@ -201,6 +219,54 @@ describe("RankPlayScreen", () => {
     expect(screen.getByText("Redo")).toBeInTheDocument(); // now showing the 2nd item
     const slot2 = screen.getByText("#2").closest("button")!;
     expect(slot2).toHaveTextContent("Kaikai Kitan");
+  });
+
+  // #338: the result screen replays the order items came at you, which is the
+  // whole point of ranking blind. `position` cannot carry it — it says where an
+  // item ended up — so the draw order is recorded separately.
+  it("records where each item came in the draw, not just where it was placed", async () => {
+    const user = userEvent.setup();
+    renderScreen(RANK_BLIND_PACK);
+    await screen.findByText("Kaikai Kitan");
+
+    // First item shown goes LAST; second goes first.
+    await user.click(screen.getByText("#2"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#1"));
+    await user.click(
+      await screen.findByRole("button", { name: "Next round →" }),
+    );
+    await screen.findByText("Silhouette");
+    await user.click(screen.getByText("#1"));
+
+    await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
+    expect(playsClient.record).toHaveBeenCalledWith("pack-rank", {
+      picks: [
+        // Placement order, as before — but i2 (shown second) took first place
+        // and i1 (shown first) took second, which only drawIndex records.
+        {
+          roundIndex: 0,
+          groupId: "g1",
+          itemId: "i2",
+          position: 0,
+          drawIndex: 1,
+        },
+        {
+          roundIndex: 0,
+          groupId: "g1",
+          itemId: "i1",
+          position: 1,
+          drawIndex: 0,
+        },
+        {
+          roundIndex: 1,
+          groupId: "g2",
+          itemId: "i3",
+          position: 0,
+          drawIndex: 0,
+        },
+      ],
+    });
   });
 
   it("shows a round-complete summary and advances to the next round", async () => {
@@ -238,18 +304,54 @@ describe("RankPlayScreen", () => {
     expect(playsClient.record).toHaveBeenCalledTimes(1);
     expect(playsClient.record).toHaveBeenCalledWith("pack-rank", {
       picks: [
-        { roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 },
-        { roundIndex: 0, groupId: "g1", itemId: "i2", position: 1 },
-        { roundIndex: 1, groupId: "g2", itemId: "i3", position: 0 },
+        {
+          roundIndex: 0,
+          groupId: "g1",
+          itemId: "i1",
+          position: 0,
+          drawIndex: 0,
+        },
+        {
+          roundIndex: 0,
+          groupId: "g1",
+          itemId: "i2",
+          position: 1,
+          drawIndex: 1,
+        },
+        {
+          roundIndex: 1,
+          groupId: "g2",
+          itemId: "i3",
+          position: 0,
+          drawIndex: 0,
+        },
       ],
     });
     await waitFor(() =>
       expect(
         JSON.parse(sessionStorage.getItem("velanto:last-play:pack-rank")!),
       ).toEqual([
-        { roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 },
-        { roundIndex: 0, groupId: "g1", itemId: "i2", position: 1 },
-        { roundIndex: 1, groupId: "g2", itemId: "i3", position: 0 },
+        {
+          roundIndex: 0,
+          groupId: "g1",
+          itemId: "i1",
+          position: 0,
+          drawIndex: 0,
+        },
+        {
+          roundIndex: 0,
+          groupId: "g1",
+          itemId: "i2",
+          position: 1,
+          drawIndex: 1,
+        },
+        {
+          roundIndex: 1,
+          groupId: "g2",
+          itemId: "i3",
+          position: 0,
+          drawIndex: 0,
+        },
       ]),
     );
     expect(

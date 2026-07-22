@@ -1039,7 +1039,14 @@
     "topSavedHeading": "سب سے زیادہ بچائے گئے",
     "topSavedSubtitle": "اس پیک کے ہر کھیل میں، ہر آئٹم اُن راؤنڈز میں کتنی بار بچا جن میں وہ آیا۔",
     "topSacrificedHeading": "سب سے زیادہ قربان کیے گئے",
-    "topSacrificedSubtitle": "اس پیک کے ہر کھیل میں، ہر آئٹم اُن راؤنڈز میں کتنی بار قربان ہوا جن میں وہ آیا۔"
+    "topSacrificedSubtitle": "اس پیک کے ہر کھیل میں، ہر آئٹم اُن راؤنڈز میں کتنی بار قربان ہوا جن میں وہ آیا۔",
+    "shownAt": "دکھایا گیا #{n}",
+    "podiumHeading": "پہلے تین مقامات",
+    "podiumSubtitle": "اس پیک کے ہر کھیل میں، ہر آئٹم کتنی بار پہلے، دوسرے یا تیسرے نمبر پر رکھا گیا — تینوں کے مجموعے کے حساب سے۔",
+    "podiumFirstColumn": "پہلا",
+    "podiumSecondColumn": "دوسرا",
+    "podiumThirdColumn": "تیسرا",
+    "podiumTotalColumn": "کل"
   },
   "create": {
     "loginRequired": "پیک بنانے کے لیے آپ کا لاگ اِن ہونا ضروری ہے۔",
