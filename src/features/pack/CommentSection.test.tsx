@@ -838,7 +838,12 @@ describe("CommentSection", () => {
     });
   });
 
-  describe("thread dividers", () => {
+  // The rule: a separator sits *between top-level threads only*. Never inside
+  // one — not between a root and its replies, not between two replies — and
+  // never leading or trailing at the card's edge. So the count of separators is
+  // exactly `roots − 1`, whatever the replies do. Each fixture below pins one
+  // way an implementation could get that wrong.
+  describe("thread separators", () => {
     const REPLY_ONE: Comment = {
       id: "reply-1",
       packId: "pack-1",
@@ -856,6 +861,14 @@ describe("CommentSection", () => {
       body: "Second reply.",
       createdAt: "2026-01-03T00:00:00.000Z",
     };
+    const SECOND_ROOT: Comment = {
+      id: "c2",
+      packId: "pack-1",
+      authorId: "u5",
+      authorUsername: "erin",
+      body: "A separate thread.",
+      createdAt: "2026-01-04T00:00:00.000Z",
+    };
 
     function listOnce(items: Comment[]) {
       vi.mocked(commentsClient.list).mockResolvedValue({
@@ -866,33 +879,65 @@ describe("CommentSection", () => {
       });
     }
 
-    it("draws no divider on a root with no replies", async () => {
+    // `separator` is the accessible role of an <hr>; querying by role rather
+    // than by tag or class keeps this about the observable structure.
+    const separators = () => screen.queryAllByRole("separator");
+
+    it("draws no separator for a single thread — nothing to separate it from", async () => {
       listOnce([COMMENT_A]);
-      const { container } = renderAsUnauthenticated();
+      renderAsUnauthenticated();
 
       await screen.findByText("Loved this pack.");
-      expect(container.querySelectorAll("hr")).toHaveLength(0);
+      expect(separators()).toHaveLength(0);
     });
 
-    it("draws one divider between a root and its single reply, and none after the last reply", async () => {
-      listOnce([{ ...COMMENT_A, replyCount: 1, replies: [REPLY_ONE] }]);
-      const { container } = renderAsUnauthenticated();
+    it("draws exactly one separator between two top-level threads, and none at the card's edges", async () => {
+      listOnce([COMMENT_A, SECOND_ROOT]);
+      renderAsUnauthenticated();
 
-      await screen.findByText("First reply.");
-      // Root → reply only. A trailing rule under the last reply would sit on
-      // the card's own edge.
-      expect(container.querySelectorAll("hr")).toHaveLength(1);
+      await screen.findByText("A separate thread.");
+      // Two threads → one rule. Two would mean a trailing (or leading) rule
+      // against the card's own edge.
+      expect(separators()).toHaveLength(1);
     });
 
-    it("draws a divider between every pair of entries in a longer thread but not after the last", async () => {
+    it("draws no separator inside a thread, however many replies it has", async () => {
       listOnce([
         { ...COMMENT_A, replyCount: 2, replies: [REPLY_ONE, REPLY_TWO] },
       ]);
-      const { container } = renderAsUnauthenticated();
+      renderAsUnauthenticated();
 
       await screen.findByText("Second reply.");
-      // Three entries → two rules.
-      expect(container.querySelectorAll("hr")).toHaveLength(2);
+      // The old design ruled off the root from its replies and each reply from
+      // the next — that would be two rules here. A thread is now unbroken.
+      expect(separators()).toHaveLength(0);
+    });
+
+    it("counts separators by thread, not by entry, when threads and replies are mixed", async () => {
+      listOnce([
+        { ...COMMENT_A, replyCount: 2, replies: [REPLY_ONE, REPLY_TWO] },
+        SECOND_ROOT,
+      ]);
+      renderAsUnauthenticated();
+
+      await screen.findByText("A separate thread.");
+      // Four entries, two threads → one rule. A per-entry implementation would
+      // draw three.
+      expect(separators()).toHaveLength(1);
+    });
+
+    it("keeps the whole list in one card rather than a card per thread", async () => {
+      listOnce([COMMENT_A, SECOND_ROOT]);
+      renderAsUnauthenticated();
+
+      const first = await screen.findByText("Loved this pack.");
+      const second = screen.getByText("A separate thread.");
+      // The separator between them is a sibling of both threads inside a single
+      // shared container — with a card per thread it could not be.
+      const rule = screen.getByRole("separator");
+      const card = rule.parentElement as HTMLElement;
+      expect(card.contains(first)).toBe(true);
+      expect(card.contains(second)).toBe(true);
     });
   });
 

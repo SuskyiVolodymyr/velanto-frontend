@@ -57,10 +57,10 @@ function CommentView({
   const createdLabel = formatRelativeTimeIntl(comment.createdAt, locale);
   return (
     <div>
-      {/* items-start, not items-center: the right-hand action cluster (vote
-          pill + trash) is taller than the identity row, and centring it would
-          drag the username down off the top of the entry. */}
-      <div className="flex items-start justify-between gap-2">
+      {/* items-center now that the vote moved to the footer: the only thing on
+          the right is the trash button, which is the same height as the avatar
+          beside the username. */}
+      <div className="flex items-center justify-between gap-2">
         <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
           <AuthorHoverTrigger
             authorId={comment.authorId}
@@ -98,42 +98,30 @@ function CommentView({
               instant stays machine-readable in `dateTime` regardless. */}
           {createdLabel && (
             <Text variant="tertiary" className="shrink-0 text-xs">
+              {/* Decorative separator between the username and the time — read
+                  aloud it would only add noise. */}
+              <span aria-hidden>· </span>
               <time dateTime={comment.createdAt} suppressHydrationWarning>
                 {createdLabel}
               </time>
             </Text>
           )}
         </div>
-        {/* Vote pill and delete share one row so the score sits on the same
-            horizontal level as the trash icon instead of a line of its own. */}
-        <div className="flex flex-none items-center gap-1">
-          <VoteControl
-            vote={(value) => commentsClient.vote(packId, comment.id, value)}
-            initialLikes={comment.likes ?? 0}
-            initialDislikes={comment.dislikes ?? 0}
-            initialMyVote={comment.myVote ?? null}
-            upvoteLabel={t("upvote")}
-            downvoteLabel={t("downvote")}
-            blockedReason={tAuth("logInToVote")}
-            errorLabel={t("voteError")}
-            size="sm"
-          />
-          {canDelete && (
-            <button
-              type="button"
-              aria-label={t("deleteComment")}
-              disabled={deleting}
-              onClick={onDelete}
-              className="inline-flex h-7 w-7 items-center justify-center rounded-[7px] text-foreground-tertiary transition-colors hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50"
-            >
-              {deleting ? (
-                <Spinner size={14} />
-              ) : (
-                <Trash2 aria-hidden className="h-4 w-4" />
-              )}
-            </button>
-          )}
-        </div>
+        {canDelete && (
+          <button
+            type="button"
+            aria-label={t("deleteComment")}
+            disabled={deleting}
+            onClick={onDelete}
+            className="inline-flex h-7 w-7 flex-none items-center justify-center rounded-[7px] text-foreground-tertiary transition-colors hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50"
+          >
+            {deleting ? (
+              <Spinner size={14} />
+            ) : (
+              <Trash2 aria-hidden className="h-4 w-4" />
+            )}
+          </button>
+        )}
       </div>
       {/* mt-2.5 on the Hidden wrapper (not on the Text) so the gap survives
           streamer mode, where the body is swapped for a reveal placeholder.
@@ -143,8 +131,23 @@ function CommentView({
           {renderCommentBody(comment.body)}
         </Text>
       </Hidden>
-      {onReply && (
-        <div className="mt-2 flex items-center gap-3">
+      {/* Footer: the vote sits beside Reply as a bare arrow/score/arrow row.
+          It is unboxed on purpose — see VoteControl's `layout` prop. The row
+          renders even for a signed-out viewer (who gets no Reply), because the
+          score is still worth reading. */}
+      <div className="mt-2.5 flex items-center gap-4">
+        <VoteControl
+          vote={(value) => commentsClient.vote(packId, comment.id, value)}
+          initialLikes={comment.likes ?? 0}
+          initialDislikes={comment.dislikes ?? 0}
+          initialMyVote={comment.myVote ?? null}
+          upvoteLabel={t("upvote")}
+          downvoteLabel={t("downvote")}
+          blockedReason={tAuth("logInToVote")}
+          errorLabel={t("voteError")}
+          layout="inline"
+        />
+        {onReply && (
           <button
             type="button"
             onClick={onReply}
@@ -152,60 +155,69 @@ function CommentView({
           >
             {t("reply")}
           </button>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }
 
 /**
- * The rule that closes off one comment entry. Rendered by the caller (never by
- * {@link CommentView} itself) so it can be omitted after the last entry — a
- * trailing rule against the card's edge reads as a mistake — and so it inherits
- * the width of whatever container it sits in: full card width under a root,
- * the narrower indented width under a reply.
+ * The hairline between two top-level threads — the only rule left in the list.
+ * There is none between a root and its replies, none between replies, and none
+ * before the first thread or after the last, so a single conversation reads as
+ * one uninterrupted block and the lines mark only where one thread ends and the
+ * next begins.
+ *
+ * A real `<hr>` rather than a `border-t` utility on the thread: a thematic break
+ * between two unrelated conversations is exactly what the element means, and it
+ * keeps the rule observable in tests without asserting on class strings.
  */
-function CommentDivider() {
-  // border-strong, not border: the entry sits on `bg-surface` now, and the
-  // 0.07-alpha `border` token that reads fine against the darker page
-  // background all but disappears when both sides of the line are the surface.
-  // Same reasoning as AuthorHoverCard/Tooltip, which are also on bg-surface.
-  return <hr className="border-t border-border-strong" />;
+function ThreadDivider() {
+  return <hr className="border-t border-border" />;
 }
 
 /**
+ * One card holds the whole list. Its 6px of vertical padding plus each thread's
+ * own 16px gives the first and last entry the breathing room the mockup has,
+ * while a rule between two threads still gets a clean 16px on either side.
+ */
+const THREAD_CARD =
+  "rounded-[14px] border border-border bg-surface px-4 py-1.5";
+const THREAD_ENTRY = "py-4";
+
+/**
  * Pulsing placeholders for the comment list while it loads, so the section
- * holds its shape instead of flashing a spinner. Decorative (each card is
+ * holds its shape instead of flashing a spinner. Mirrors the real list: one
+ * card, three entries, a rule between them. Decorative (each row is
  * `aria-hidden`); a single sr-only `role="status"` carries the busy
  * announcement the {@link LoadingState} spinner used to.
  */
 function CommentsSkeleton({ label }: { label: string }) {
   return (
-    <div className="flex flex-col gap-4" data-testid="comments-skeleton">
+    <div className={THREAD_CARD} data-testid="comments-skeleton">
       <span role="status" className="sr-only">
         {label}
       </span>
       {[0, 1, 2].map((row) => (
-        <div
-          key={row}
-          aria-hidden
-          className="rounded-[12px] border border-border bg-surface p-4"
-        >
-          <div className="flex items-start justify-between gap-2">
+        <Fragment key={row}>
+          {row > 0 && <ThreadDivider />}
+          <div aria-hidden className={THREAD_ENTRY}>
             <div className="flex items-center gap-2">
               <Skeleton className="h-7 w-7 rounded-full" />
               <Skeleton className="h-4 w-28" />
               <Skeleton className="h-3 w-16" />
             </div>
-            <Skeleton className="h-9 w-16 flex-none" />
+            <div className="mt-2.5 flex flex-col gap-1.5">
+              <Skeleton className="h-3 w-full" />
+              <Skeleton className="h-3 w-4/5" />
+            </div>
+            {/* The footer row: the unboxed vote, then Reply. */}
+            <div className="mt-2.5 flex items-center gap-4">
+              <Skeleton className="h-4 w-14" />
+              <Skeleton className="h-4 w-8" />
+            </div>
           </div>
-          <div className="mt-2.5 flex flex-col gap-1.5">
-            <Skeleton className="h-3 w-full" />
-            <Skeleton className="h-3 w-4/5" />
-          </div>
-          {/* The Reply affordance — the vote pill moved up to the header row. */}
-          <Skeleton className="mt-3 h-3 w-10" />
-        </div>
+        </Fragment>
       ))}
     </div>
   );
@@ -371,8 +383,10 @@ export function CommentSection({
     replyComment.isPending && replyComment.variables?.parentId === rootId;
 
   function renderReplyComposer(rootId: string) {
+    // No margin of its own: it is one more child of the indented reply column,
+    // so that column's gap already spaces it from whatever precedes it.
     return (
-      <div className="mt-3 flex flex-col gap-2">
+      <div className="flex flex-col gap-2">
         <textarea
           value={replyDraft}
           onChange={(e) => setReplyDraft(e.target.value)}
@@ -471,38 +485,37 @@ export function CommentSection({
               {deleteError}
             </Text>
           )}
-          {roots.map((root) => {
-            const replies = root.replies ?? [];
-            return (
-              <div
-                key={root.id}
-                className="rounded-[12px] border border-border bg-surface p-4"
-              >
-                <CommentView
-                  packId={packId}
-                  comment={root}
-                  canDelete={canDelete(root)}
-                  deleting={deletingId === root.id}
-                  onDelete={() => handleDelete(root)}
-                  onReply={authenticated ? () => openReply(root.id) : undefined}
-                />
+          {/* One card for the whole list, not one per thread. Nesting and
+              spacing carry the structure inside it; the only rule is between
+              two top-level threads. */}
+          <div className={THREAD_CARD}>
+            {roots.map((root, rootIndex) => {
+              const replies = root.replies ?? [];
+              return (
+                <Fragment key={root.id}>
+                  {rootIndex > 0 && <ThreadDivider />}
+                  <div className={THREAD_ENTRY}>
+                    <CommentView
+                      packId={packId}
+                      comment={root}
+                      canDelete={canDelete(root)}
+                      deleting={deletingId === root.id}
+                      onDelete={() => handleDelete(root)}
+                      onReply={
+                        authenticated ? () => openReply(root.id) : undefined
+                      }
+                    />
 
-                {(replies.length > 0 || replyingToId === root.id) && (
-                  <>
-                    {/* Closes off the root entry. Only rendered when something
-                        follows it inside the card. */}
-                    <div className="mt-4">
-                      <CommentDivider />
-                    </div>
-                    {/* ps-9 = the avatar's h-7 plus the gap-2 beside it, so a
-                        reply's avatar starts exactly under the root's username.
-                        Indentation alone marks the nesting — there was a
-                        border-s rule here too, but one vertical line plus the
-                        horizontal dividers made a thread read as a grid. */}
-                    <div className="mt-4 flex flex-col gap-4 ps-9">
-                      {replies.map((reply, index) => (
-                        <Fragment key={reply.id}>
+                    {(replies.length > 0 || replyingToId === root.id) && (
+                      // ps-9 = the avatar's h-7 plus the gap-2 beside it, so a
+                      // reply's avatar starts exactly under the root's
+                      // username. Indentation alone marks the nesting: no rule
+                      // above the replies, none between them — within one
+                      // thread there are no lines at all.
+                      <div className="mt-3.5 flex flex-col gap-3.5 ps-9">
+                        {replies.map((reply) => (
                           <CommentView
+                            key={reply.id}
                             packId={packId}
                             comment={reply}
                             canDelete={canDelete(reply)}
@@ -514,18 +527,16 @@ export function CommentSection({
                                 : undefined
                             }
                           />
-                          {/* No rule after the last reply — it would sit against
-                              the card's own edge and read as a mistake. */}
-                          {index < replies.length - 1 && <CommentDivider />}
-                        </Fragment>
-                      ))}
-                      {replyingToId === root.id && renderReplyComposer(root.id)}
-                    </div>
-                  </>
-                )}
-              </div>
-            );
-          })}
+                        ))}
+                        {replyingToId === root.id &&
+                          renderReplyComposer(root.id)}
+                      </div>
+                    )}
+                  </div>
+                </Fragment>
+              );
+            })}
+          </div>
         </div>
       )}
 
