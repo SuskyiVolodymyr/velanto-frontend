@@ -28,6 +28,14 @@ export interface UpdateEntry {
 export const UPDATES: UpdateEntry[] = [
   {
     date: "2026-07-22",
+    version: "1.6.0",
+    title: "Podium finishes on Rank Blind pack pages",
+    bullets: [
+      "A Rank Blind pack's own page now shows its Podium finishes table, the way the other four formats show their Top picked one. It was only on the result screen, so you had to play a pack to see how its items had been placed.",
+    ],
+  },
+  {
+    date: "2026-07-22",
     version: "1.5.0",
     title: "Every result screen rebuilt, draft limits, and faster browsing",
     bullets: [
