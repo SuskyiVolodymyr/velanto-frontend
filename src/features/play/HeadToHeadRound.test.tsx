@@ -18,7 +18,14 @@ const RIGHT = {
 
 describe("HeadToHeadRound", () => {
   it("renders both items in full immediately, with no reveal control", () => {
-    render(<HeadToHeadRound left={LEFT} right={RIGHT} selectedId={null} onSelect={vi.fn()} />);
+    render(
+      <HeadToHeadRound
+        left={LEFT}
+        right={RIGHT}
+        selectedId={null}
+        onSelect={vi.fn()}
+      />,
+    );
 
     expect(screen.getByText("Goku")).toBeInTheDocument();
     expect(screen.getByText("Vegeta")).toBeInTheDocument();
@@ -30,7 +37,14 @@ describe("HeadToHeadRound", () => {
   it("calls onSelect with the left item's id when the left card is clicked", async () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();
-    render(<HeadToHeadRound left={LEFT} right={RIGHT} selectedId={null} onSelect={onSelect} />);
+    render(
+      <HeadToHeadRound
+        left={LEFT}
+        right={RIGHT}
+        selectedId={null}
+        onSelect={onSelect}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Pick Goku" }));
 
@@ -40,7 +54,14 @@ describe("HeadToHeadRound", () => {
   it("calls onSelect with the right item's id when the right card is clicked", async () => {
     const user = userEvent.setup();
     const onSelect = vi.fn();
-    render(<HeadToHeadRound left={LEFT} right={RIGHT} selectedId={null} onSelect={onSelect} />);
+    render(
+      <HeadToHeadRound
+        left={LEFT}
+        right={RIGHT}
+        selectedId={null}
+        onSelect={onSelect}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Pick Vegeta" }));
 
@@ -56,7 +77,14 @@ describe("HeadToHeadRound", () => {
       title: "Opening theme",
       value: "https://youtu.be/KsF_hdjWJjo",
     };
-    render(<HeadToHeadRound left={videoItem} right={RIGHT} selectedId={null} onSelect={onSelect} />);
+    render(
+      <HeadToHeadRound
+        left={videoItem}
+        right={RIGHT}
+        selectedId={null}
+        onSelect={onSelect}
+      />,
+    );
 
     expect(
       screen.getByRole("img", { name: "YouTube video thumbnail" }),
@@ -83,7 +111,14 @@ describe("HeadToHeadRound", () => {
       title: "Poster",
       value: "media/item/poster.webp",
     };
-    render(<HeadToHeadRound left={imageItem} right={RIGHT} selectedId={null} onSelect={onSelect} />);
+    render(
+      <HeadToHeadRound
+        left={imageItem}
+        right={RIGHT}
+        selectedId={null}
+        onSelect={onSelect}
+      />,
+    );
 
     expect(screen.getByRole("img", { name: "Poster" })).toHaveAttribute(
       "src",

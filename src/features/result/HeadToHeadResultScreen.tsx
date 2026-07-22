@@ -282,9 +282,7 @@ function ContenderCard({
       data-side={side}
       className={cn(
         "flex min-w-0 items-center gap-3 rounded-xl border px-4 py-3",
-        won
-          ? "border-success/60 bg-success/5"
-          : "border-danger/60 bg-danger/5",
+        won ? "border-success/60 bg-success/5" : "border-danger/60 bg-danger/5",
         side === "left" ? "flex-row" : "flex-row-reverse",
       )}
     >
