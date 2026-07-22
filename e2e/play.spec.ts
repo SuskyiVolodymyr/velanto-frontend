@@ -148,7 +148,9 @@ test.describe("Play a pack", () => {
     await expect(
       page.getByRole("button", { name: "Pick Girls" }),
     ).toBeVisible();
-    await expect(page.getByText("VS")).toBeVisible();
+    // Exact, because the pack title in the header ("Boys vs Girls") is also a
+    // substring match for the default, case-insensitive getByText.
+    await expect(page.getByText("VS", { exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "Show all" })).toHaveCount(0);
     await expect(
       page.getByRole("button", { name: "Next round →" }),
