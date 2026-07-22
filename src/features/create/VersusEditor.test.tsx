@@ -183,8 +183,14 @@ describe("VersusEditor", () => {
       render(<Harness format="nxn" perSide={2} />);
 
       // Free both pools by making side A of each round random…
-      await user.selectOptions(screen.getByLabelText("Side A for round 1"), "__random__");
-      await user.selectOptions(screen.getByLabelText("Side A for round 2"), "__random__");
+      await user.selectOptions(
+        screen.getByLabelText("Side A for round 1"),
+        "__random__",
+      );
+      await user.selectOptions(
+        screen.getByLabelText("Side A for round 2"),
+        "__random__",
+      );
       // …now side B of round 1 sees: 2 pools, 1 still pinned (round 2's B),
       // minus the 2 random slots already declared.
       const optionB = screen

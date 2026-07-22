@@ -198,7 +198,10 @@ describe("random pool assignment", () => {
   // Pinning consumes nothing — the existing behaviour, asserted here so the new
   // consumption rule can't leak into it.
   it("lets a pinned pool back every round", () => {
-    const rounds = [1, 2, 3].map((n) => ({ id: `r${n}`, slots: [pinned("g1")] }));
+    const rounds = [1, 2, 3].map((n) => ({
+      id: `r${n}`,
+      slots: [pinned("g1")],
+    }));
     const drawn = resolveRoundSelections(pools, rounds).map(
       (round) => round.slots[0].groupId,
     );
@@ -207,7 +210,10 @@ describe("random pool assignment", () => {
 
   it("resolves to no pool rather than throwing when pools run out", () => {
     const rounds = [
-      { id: "r1", slots: [randomSlot(), randomSlot(), randomSlot(), randomSlot()] },
+      {
+        id: "r1",
+        slots: [randomSlot(), randomSlot(), randomSlot(), randomSlot()],
+      },
     ];
     const [round] = resolveRoundSelections(pools, rounds);
     expect(round.slots[3].groupId).toBeUndefined();

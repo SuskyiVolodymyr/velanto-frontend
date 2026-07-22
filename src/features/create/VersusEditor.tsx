@@ -92,7 +92,9 @@ export function VersusEditor() {
     ];
   }
 
-  const sideValue = (slot: { groupId?: string; groupMode?: string } | undefined) =>
+  const sideValue = (
+    slot: { groupId?: string; groupMode?: string } | undefined,
+  ) =>
     slot?.groupMode === "random" ? RANDOM_POOL_VALUE : (slot?.groupId ?? "");
 
   // Both sides of a versus round share one per-side draw count.
@@ -131,10 +133,10 @@ export function VersusEditor() {
         // can be the same pool.
         const singlePool = Boolean(
           slotA &&
-            slotB &&
-            slotA.groupMode !== "random" &&
-            slotB.groupMode !== "random" &&
-            slotA.groupId === slotB.groupId,
+          slotB &&
+          slotA.groupMode !== "random" &&
+          slotB.groupMode !== "random" &&
+          slotA.groupId === slotB.groupId,
         );
         const drawA = resolved[index]?.slots[0]?.drawnCount ?? 0;
         const drawB = resolved[index]?.slots[1]?.drawnCount ?? 0;

@@ -51,7 +51,9 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   const slot =
     roundIndex < totalRounds ? selections[roundIndex]?.slots[0] : undefined;
   const candidates = slot?.items ?? [];
-  const groupName = slot?.groupId ? (groupNameById.get(slot.groupId) ?? "") : "";
+  const groupName = slot?.groupId
+    ? (groupNameById.get(slot.groupId) ?? "")
+    : "";
   const slotCount = candidates.length;
   const placedCount = Object.keys(placements).length;
   const roundDone = slotCount > 0 && placedCount >= slotCount;
