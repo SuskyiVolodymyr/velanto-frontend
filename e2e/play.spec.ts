@@ -169,12 +169,21 @@ test.describe("Play a pack", () => {
 
     // Finishing records the play, then navigates straight to the result page
     // (redirect covered by the PlayScreen unit tests).
+    // Every drawn item of BOTH sides, in slot order, `chosen` marking the side
+    // taken (#333). Recording only the winning pool named the side but not
+    // what was on it, so a result could never replay the matchup.
     await expect
       .poll(() => recordBody)
       .toEqual({
         picks: [
-          { roundIndex: 0, groupId: "ca" },
-          { roundIndex: 1, groupId: "cb" },
+          { roundIndex: 0, groupId: "ca", itemId: "1", chosen: true },
+          { roundIndex: 0, groupId: "ca", itemId: "2", chosen: true },
+          { roundIndex: 0, groupId: "cb", itemId: "3", chosen: false },
+          { roundIndex: 0, groupId: "cb", itemId: "4", chosen: false },
+          { roundIndex: 1, groupId: "ca", itemId: "1", chosen: false },
+          { roundIndex: 1, groupId: "ca", itemId: "2", chosen: false },
+          { roundIndex: 1, groupId: "cb", itemId: "3", chosen: true },
+          { roundIndex: 1, groupId: "cb", itemId: "4", chosen: true },
         ],
       });
   });
