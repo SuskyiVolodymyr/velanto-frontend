@@ -836,7 +836,8 @@
     "sacrifice_one": "ضحِّ بواحد",
     "nxn": "NxN",
     "rank_blind": "رتّب بلا رؤية",
-    "1v1": "1v1"
+    "1v1": "1v1",
+    "save_one_friends": "أنقذ واحدًا (مع الأصدقاء)"
   },
   "tagPicker": {
     "title": "اختر الوسوم",
@@ -1117,6 +1118,7 @@
     "saveChanges": "حفظ التغييرات",
     "saving": "جارٍ الحفظ…",
     "editOthersForbidden": "يمكنك تعديل حِزمك الخاصة فقط.",
+    "editFormatUnsupported": "تستخدم هذه الحزمة صيغة لا يدعمها المحرّر بعد، لذا لا يمكن تعديلها هنا.",
     "roundGroup": "المجموعة",
     "roundPlaces": "المواضع",
     "placeLabel": "الموضع {index}",

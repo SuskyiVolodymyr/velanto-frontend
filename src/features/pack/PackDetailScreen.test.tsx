@@ -295,4 +295,38 @@ describe("PackDetailScreen", () => {
       screen.queryByRole("button", { name: "Share" }),
     ).not.toBeInTheDocument();
   });
+
+  // UI-EXCLUDED:save_one_friends (velanto-frontend#368). /packs/[id]/play 404s
+  // for this format (see PlayRouter), so a "Play now" CTA would be a dead end.
+  // The rest of the page must still render: the pack exists and is public.
+  it("does not offer Play for a format with no play path, but still renders the page", () => {
+    render(
+      <PackDetailScreen
+        pack={{ ...BASE_PACK, format: "save_one_friends" }}
+        results={RESULTS}
+      />,
+    );
+
+    expect(
+      screen.queryByRole("link", { name: "Play now" }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText("Best Anime Openings")).toBeInTheDocument();
+  });
+
+  // The format label must resolve from the `formats` namespace rather than
+  // rendering the literal key path "formats.save_one_friends" (and logging a
+  // console.error per render, which reaches Sentry).
+  it("labels a save_one_friends pack from the catalog, not as a raw key path", () => {
+    render(
+      <PackDetailScreen
+        pack={{ ...BASE_PACK, format: "save_one_friends" }}
+        results={RESULTS}
+      />,
+    );
+
+    expect(
+      screen.queryByText(/formats\.save_one_friends/),
+    ).not.toBeInTheDocument();
+    expect(screen.getAllByText("Save One (Friends)").length).toBeGreaterThan(0);
+  });
 });
