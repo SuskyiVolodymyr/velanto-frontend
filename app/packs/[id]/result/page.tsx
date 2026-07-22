@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { cn } from "@/src/shared/lib/cn";
 import { getTranslations } from "next-intl/server";
 import { getPackServer } from "@/src/shared/lib/get-pack-server";
 import { ResultScreen } from "@/src/features/result/ResultScreen";
@@ -56,7 +58,7 @@ export default async function ResultPage({
   // (#243).
   return (
     <>
-      <div className="mx-auto w-full max-w-2xl px-7 pt-6">
+      <div className={cn(PACK_CONTAINER, "pt-6")}>
         <BackButton fallbackHref={`/packs/${id}`} />
       </div>
       <ResultScreen pack={pack} />

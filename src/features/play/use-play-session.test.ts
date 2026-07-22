@@ -142,6 +142,15 @@ const SINGLE_POOL_PACK: Pack = {
   ],
 };
 
+// GROUPS_PACK played through: round 0 picks item 1 of the two it drew, round 1
+// has a single candidate. Recorded picks carry no itemTitle — that is display
+// state, not part of the wire shape.
+const FINISHED_PICKS = [
+  { roundIndex: 0, groupId: "g1", itemId: "1", chosen: true },
+  { roundIndex: 0, groupId: "g1", itemId: "2", chosen: false },
+  { roundIndex: 1, groupId: "g2", itemId: "3", chosen: true },
+];
+
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(playsClient.record).mockResolvedValue({ id: "play-1" });
@@ -172,20 +181,67 @@ describe("usePlaySession", () => {
 
     expect(result.current.roundIndex).toBe(1);
     expect(result.current.selectedId).toBe(null); // reset
+    // Every item the round DREW, in draw order, `chosen` marking the one
+    // picked — the shape the versus formats already record. The others are
+    // what the result screen shows the pick against, and a random slot draws a
+    // different subset each play, so nothing else can recover them.
     expect(result.current.picks).toEqual([
-      { roundIndex: 0, groupId: "g1", itemId: "2", itemTitle: "B" },
+      {
+        roundIndex: 0,
+        groupId: "g1",
+        itemId: "1",
+        itemTitle: "A",
+        chosen: false,
+      },
+      {
+        roundIndex: 0,
+        groupId: "g1",
+        itemId: "2",
+        itemTitle: "B",
+        chosen: true,
+      },
     ]);
   });
 
-  it("resolves a two-pool versus pick as the chosen side's group id, no itemId", () => {
+  it("resolves a two-pool versus pick per drawn item, in slot order", () => {
     const { result } = renderHook(() => usePlaySession(VERSUS_PACK));
 
     // Selection is by SIDE INDEX now ("0" = side A = ca).
     act(() => result.current.setSelectedId("0"));
     act(() => result.current.confirmPick());
 
+    // Both sides' items, each under the pool it was drawn from. Recording only
+    // the winning pool named the side but not what was on it, so the result
+    // screen could never show the matchup the player was looking at.
     expect(result.current.picks).toEqual([
-      { roundIndex: 0, groupId: "ca", itemTitle: "Boys" },
+      {
+        roundIndex: 0,
+        groupId: "ca",
+        itemId: "1",
+        itemTitle: "Naruto",
+        chosen: true,
+      },
+      {
+        roundIndex: 0,
+        groupId: "ca",
+        itemId: "2",
+        itemTitle: "Sasuke",
+        chosen: true,
+      },
+      {
+        roundIndex: 0,
+        groupId: "cb",
+        itemId: "3",
+        itemTitle: "Sakura",
+        chosen: false,
+      },
+      {
+        roundIndex: 0,
+        groupId: "cb",
+        itemId: "4",
+        itemTitle: "Hinata",
+        chosen: false,
+      },
     ]);
   });
 
@@ -243,12 +299,15 @@ describe("usePlaySession", () => {
     act(() => result.current.confirmPick());
 
     await waitFor(() => expect(playsClient.record).toHaveBeenCalledTimes(1));
+    // Slot order, not chosen-first: side A's drawn items then side B's. The
+    // array order is what tells the result screen which side each item was on,
+    // and for a single-pool round the group ids cannot.
     expect(playsClient.record).toHaveBeenCalledWith("pack-a", {
       picks: [
-        { roundIndex: 0, groupId: "pool", itemId: "p3", chosen: true },
-        { roundIndex: 0, groupId: "pool", itemId: "p4", chosen: true },
         { roundIndex: 0, groupId: "pool", itemId: "p1", chosen: false },
         { roundIndex: 0, groupId: "pool", itemId: "p2", chosen: false },
+        { roundIndex: 0, groupId: "pool", itemId: "p3", chosen: true },
+        { roundIndex: 0, groupId: "pool", itemId: "p4", chosen: true },
       ],
     });
   });
@@ -276,19 +335,13 @@ describe("usePlaySession", () => {
     expect(result.current.isFinished).toBe(true);
     await waitFor(() => expect(playsClient.record).toHaveBeenCalledTimes(1));
     expect(playsClient.record).toHaveBeenCalledWith("pack-a", {
-      picks: [
-        { roundIndex: 0, groupId: "g1", itemId: "1" },
-        { roundIndex: 1, groupId: "g2", itemId: "3" },
-      ],
+      picks: FINISHED_PICKS,
     });
     // Record still pending, picks already persisted — the player can click
     // through to the result screen without waiting on the round-trip.
     expect(
       JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
-    ).toEqual([
-      { roundIndex: 0, groupId: "g1", itemId: "1" },
-      { roundIndex: 1, groupId: "g2", itemId: "3" },
-    ]);
+    ).toEqual(FINISHED_PICKS);
     expect(result.current.recordSettled).toBe(false);
 
     await act(async () => {
@@ -299,7 +352,7 @@ describe("usePlaySession", () => {
     expect(playsClient.record).toHaveBeenCalledTimes(1);
     expect(
       JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
-    ).toHaveLength(2);
+    ).toHaveLength(FINISHED_PICKS.length);
   });
 
   // #221: this used to assert that a signed-out play was NOT recorded — the
@@ -318,14 +371,12 @@ describe("usePlaySession", () => {
     expect(result.current.isFinished).toBe(true);
     await waitFor(() => expect(result.current.recordSettled).toBe(true));
 
-    const picks = [
-      { roundIndex: 0, groupId: "g1", itemId: "1" },
-      { roundIndex: 1, groupId: "g2", itemId: "3" },
-    ];
-    expect(playsClient.record).toHaveBeenCalledWith("pack-a", { picks });
+    expect(playsClient.record).toHaveBeenCalledWith("pack-a", {
+      picks: FINISHED_PICKS,
+    });
     expect(
       JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
-    ).toEqual(picks);
+    ).toEqual(FINISHED_PICKS);
   });
 
   // The result screen is GATED on these picks (#222), so writing them only
@@ -348,10 +399,7 @@ describe("usePlaySession", () => {
     // Already stashed, with the request still in flight.
     expect(
       JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
-    ).toEqual([
-      { roundIndex: 0, groupId: "g1", itemId: "1" },
-      { roundIndex: 1, groupId: "g2", itemId: "3" },
-    ]);
+    ).toEqual(FINISHED_PICKS);
   });
 
   it("stashes the picks even when the record request fails", async () => {

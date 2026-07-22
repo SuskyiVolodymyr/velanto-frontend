@@ -70,12 +70,16 @@ test.describe("Play a pack", () => {
       // Finishing records the play (then it navigates straight to the result
       // page — no interstitial "all rounds done" screen; that redirect is
       // covered by the PlayScreen unit tests).
+      // Every DRAWN item, in draw order, `chosen` on the one picked (#336) —
+      // the round's other candidates are what the result screen shows the pick
+      // against, and a random slot draws a different subset every play.
       await expect
         .poll(() => recordBody)
         .toEqual({
           picks: [
-            { roundIndex: 0, groupId: "g1", itemId: "1" },
-            { roundIndex: 1, groupId: "g2", itemId: "3" },
+            { roundIndex: 0, groupId: "g1", itemId: "1", chosen: true },
+            { roundIndex: 0, groupId: "g1", itemId: "2", chosen: false },
+            { roundIndex: 1, groupId: "g2", itemId: "3", chosen: true },
           ],
         });
     });
@@ -144,7 +148,9 @@ test.describe("Play a pack", () => {
     await expect(
       page.getByRole("button", { name: "Pick Girls" }),
     ).toBeVisible();
-    await expect(page.getByText("VS")).toBeVisible();
+    // Exact, because the pack title in the header ("Boys vs Girls") is also a
+    // substring match for the default, case-insensitive getByText.
+    await expect(page.getByText("VS", { exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "Show all" })).toHaveCount(0);
     await expect(
       page.getByRole("button", { name: "Next round →" }),
@@ -163,12 +169,21 @@ test.describe("Play a pack", () => {
 
     // Finishing records the play, then navigates straight to the result page
     // (redirect covered by the PlayScreen unit tests).
+    // Every drawn item of BOTH sides, in slot order, `chosen` marking the side
+    // taken (#333). Recording only the winning pool named the side but not
+    // what was on it, so a result could never replay the matchup.
     await expect
       .poll(() => recordBody)
       .toEqual({
         picks: [
-          { roundIndex: 0, groupId: "ca" },
-          { roundIndex: 1, groupId: "cb" },
+          { roundIndex: 0, groupId: "ca", itemId: "1", chosen: true },
+          { roundIndex: 0, groupId: "ca", itemId: "2", chosen: true },
+          { roundIndex: 0, groupId: "cb", itemId: "3", chosen: false },
+          { roundIndex: 0, groupId: "cb", itemId: "4", chosen: false },
+          { roundIndex: 1, groupId: "ca", itemId: "1", chosen: false },
+          { roundIndex: 1, groupId: "ca", itemId: "2", chosen: false },
+          { roundIndex: 1, groupId: "cb", itemId: "3", chosen: true },
+          { roundIndex: 1, groupId: "cb", itemId: "4", chosen: true },
         ],
       });
   });

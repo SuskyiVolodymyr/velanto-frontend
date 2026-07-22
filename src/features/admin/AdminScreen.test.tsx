@@ -54,7 +54,7 @@ beforeEach(() => {
     registeredUsers: 0,
     packs: 0,
     plays: 0,
-    onlineUsers: null,
+    onlineUsers: 3,
     pendingReports: 0,
     newUsersThisWeek: 0,
     newPacksThisWeek: 0,

@@ -1,4 +1,6 @@
 import type { ReactNode } from "react";
+import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { cn } from "@/src/shared/lib/cn";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
@@ -7,6 +9,7 @@ import { PackHeroStats } from "@/src/features/pack/PackHeroStats";
 import { PackHowItPlays } from "@/src/features/pack/PackHowItPlays";
 import { RoundChips } from "@/src/features/pack/RoundChips";
 import { PackStats } from "@/src/features/pack/PackStats";
+import { TopPickedTable } from "@/src/features/result/TopPickedTable";
 import { PackCreatorCard } from "@/src/features/pack/PackCreatorCard";
 import { PackPlayButton } from "@/src/features/pack/PackPlayButton";
 import { PackOwnerActions } from "@/src/features/pack/PackOwnerActions";
@@ -38,11 +41,24 @@ export function PackDetailScreen({
 }) {
   const tFormat = useTranslations("formats");
   const t = useTranslations("pack");
+  const tResult = useTranslations("result");
+  // Every format except rank_blind, whose results are placements rather than
+  // picks. "What wins most" is the statistic for all of them, and each round is
+  // a random draw rather than a fixed list, so a per-round breakdown says less.
+  const topItems =
+    results.format === "rank_blind" ? [] : (results.topItems ?? []);
+  // Same number under the verb the player actually performed.
+  const topHeading =
+    pack.format === "save_one"
+      ? "topSavedHeading"
+      : pack.format === "sacrifice_one"
+        ? "topSacrificedHeading"
+        : "topPickedHeading";
   const sectionLabel =
     pack.format === "nxn" ? t("sectionCategory") : t("sectionGroup");
 
   return (
-    <main className="mx-auto w-full max-w-[1120px] flex-1 px-7 py-10">
+    <main className={cn(PACK_CONTAINER, "flex-1 py-10")}>
       <div className="flex flex-col gap-11">
         <PackCoverBanner pack={pack} />
 
@@ -110,10 +126,21 @@ export function PackDetailScreen({
           <RoundChips pack={pack} />
         </section>
 
-        <section>
-          <SectionHeading>{t("playerStats")}</SectionHeading>
-          <PackStats results={results} />
-        </section>
+        {/* "Which item wins most" IS the statistic here — the generic per-round
+            breakdown says far less about it, and divides by every play of the
+            pack rather than by the rounds an item actually appeared in. Falls
+            back to that breakdown only when there is nothing to rank yet. */}
+        {topItems.length > 0 ? (
+          <section>
+            <SectionHeading>{tResult(topHeading)}</SectionHeading>
+            <TopPickedTable items={topItems} label={tResult(topHeading)} />
+          </section>
+        ) : (
+          <section>
+            <SectionHeading>{t("playerStats")}</SectionHeading>
+            <PackStats results={results} />
+          </section>
+        )}
 
         <PackCreatorCard pack={pack} />
 

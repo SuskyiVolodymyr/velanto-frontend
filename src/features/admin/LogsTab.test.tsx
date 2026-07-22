@@ -58,7 +58,7 @@ describe("LogsTab", () => {
     expect(adminClient.auditLogs).toHaveBeenCalledWith(BASE_REQUEST);
   });
 
-  it("re-fetches with an action filter", async () => {
+  it("re-fetches with the action filter, from/to date range, and toggled sort", async () => {
     mockLogs([]);
     const user = userEvent.setup();
     render(<LogsTab />);
@@ -68,44 +68,31 @@ describe("LogsTab", () => {
       screen.getByLabelText("Filter by action"),
       "ban_user",
     );
-
     await waitFor(() =>
       expect(adminClient.auditLogs).toHaveBeenLastCalledWith({
         ...BASE_REQUEST,
         action: "ban_user",
       }),
     );
-  });
-
-  it("re-fetches with a from/to date range", async () => {
-    mockLogs([]);
-    const user = userEvent.setup();
-    render(<LogsTab />);
-    await screen.findByText("No log entries match these filters.");
 
     await user.type(screen.getByLabelText("From date"), "2026-07-01");
     await user.type(screen.getByLabelText("To date"), "2026-07-08");
-
     await waitFor(() =>
       expect(adminClient.auditLogs).toHaveBeenLastCalledWith({
         ...BASE_REQUEST,
+        action: "ban_user",
         from: "2026-07-01",
         to: "2026-07-08",
       }),
     );
-  });
-
-  it("toggles the sort between newest and oldest", async () => {
-    mockLogs([]);
-    const user = userEvent.setup();
-    render(<LogsTab />);
-    await screen.findByText("No log entries match these filters.");
 
     await user.click(screen.getByRole("button", { name: /Sort: Newest/ }));
-
     await waitFor(() =>
       expect(adminClient.auditLogs).toHaveBeenLastCalledWith({
         ...BASE_REQUEST,
+        action: "ban_user",
+        from: "2026-07-01",
+        to: "2026-07-08",
         sort: "oldest",
       }),
     );

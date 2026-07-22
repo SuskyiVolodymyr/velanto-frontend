@@ -158,22 +158,9 @@ describe("usePackFallback", () => {
     await waitFor(() => expect(result.current).toEqual({ status: "notfound" }));
   });
 
-  it("does not update state after unmounting before the fetch resolves", async () => {
-    mockAuthStatus("authenticated");
-    let resolveGetById!: (pack: Pack) => void;
-    mockedPacksClient.getById.mockReturnValue(
-      new Promise((resolve) => {
-        resolveGetById = resolve;
-      }),
-    );
-    const { unmount } = renderHook(
-      () => usePackFallback("p1", { needsResults: false }),
-      { wrapper },
-    );
-    unmount();
-    resolveGetById(PACK);
-    // If the cancelled-guard were missing, resolving after unmount would
-    // trigger a React "state update on an unmounted component" violation.
-    await new Promise((r) => setTimeout(r, 0));
-  });
+  // NOTE deleted test (audit 2026-07-21): "does not update state after
+  // unmounting" ended with no assertion — its safety net was the React
+  // "state update on unmounted component" warning, which React 18 removed.
+  // It passed against any implementation, including one with the
+  // cancelled-guard deleted, so it proved nothing.
 });

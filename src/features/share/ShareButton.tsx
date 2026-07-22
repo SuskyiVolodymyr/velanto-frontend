@@ -11,13 +11,19 @@ import type { RecordedPick } from "@/src/shared/types/play-results";
 export function ShareButton({
   path,
   picks,
-  playId,
+  resolvePlayId,
   label,
 }: {
   path: string;
   picks?: RecordedPick[] | null;
-  /** Prefer a short `?play=<id>` link over encoding `picks` into `?p=`. */
-  playId?: string | null;
+  /**
+   * Looked up when the popover opens, to prefer a short `?play=<id>` link over
+   * encoding `picks` into `?p=`. A getter rather than a value because the id
+   * arrives when the play's record request resolves, which can be after the
+   * caller mounted — and because reading it touches sessionStorage, which a
+   * render on the server cannot do.
+   */
+  resolvePlayId?: () => string | null;
   label?: string;
 }) {
   const t = useTranslations("share");
@@ -31,8 +37,8 @@ export function ShareButton({
 
   // Built lazily on open: buildShareUrl reads window.location.origin, which only
   // exists client-side, and the input only renders after a click — so no SSR/
-  // hydration concern.
-  const url = open ? buildShareUrl(path, picks, playId) : "";
+  // hydration concern. resolvePlayId is called here for the same reason.
+  const url = open ? buildShareUrl(path, picks, resolvePlayId?.()) : "";
 
   const close = useCallback(() => {
     setOpen(false);

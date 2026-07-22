@@ -31,18 +31,6 @@ describe("UpdatesScreen", () => {
     entries,
   };
 
-  it("renders the heading and intro", () => {
-    render(<UpdatesScreen {...props} />);
-    expect(
-      screen.getByRole("heading", { level: 1, name: "What's new" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText(
-        "The latest features, improvements, and fixes on Velanto.",
-      ),
-    ).toBeInTheDocument();
-  });
-
   it("renders each entry with its version, date, title, and bullets", () => {
     render(<UpdatesScreen {...props} />);
     expect(

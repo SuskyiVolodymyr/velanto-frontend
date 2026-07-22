@@ -8,7 +8,10 @@ import { Text } from "@/src/shared/components/Text";
 import { Button, buttonClassName } from "@/src/shared/components/Button";
 import { cn } from "@/src/shared/lib/cn";
 import { playsClient } from "@/src/shared/lib/plays-client";
-import { writeLastPlayPicks } from "@/src/shared/lib/last-play-storage";
+import {
+  writeLastPlayPicks,
+  writeLastPlayId,
+} from "@/src/shared/lib/last-play-storage";
 import { YouTubeCard } from "@/src/shared/components/YouTubeCard";
 import { ImageCard } from "@/src/shared/components/ImageCard";
 import {
@@ -16,7 +19,8 @@ import {
   extractYouTubeStart,
 } from "@/src/shared/lib/youtube";
 import { mediaUrl } from "@/src/shared/lib/media-url";
-import { resolveRoundSelections } from "@/src/features/play/round-sampling";
+import { useRoundSelections } from "@/src/features/play/use-round-selections";
+import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import type { Pack, Item } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
 
@@ -31,11 +35,10 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   const [placements, setPlacements] = useState<Record<number, Item>>({});
   const [allPicks, setAllPicks] = useState<RecordedPick[]>([]);
 
-  // Drawn items for every round, resolved once at mount (dedup spans rounds).
-  const selections = useMemo(
-    () => resolveRoundSelections(groups, rounds),
-    [groups, rounds],
-  );
+  // Drawn items for every round, resolved once after mount (dedup spans
+  // rounds). Null until the client has drawn; see useRoundSelections.
+  const resolved = useRoundSelections(groups, rounds);
+  const selections = resolved ?? [];
   const groupNameById = useMemo(
     () => new Map(groups.map((g) => [g.id, g.name])),
     [groups],
@@ -75,6 +78,13 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
           groupId: slot.groupId,
           itemId: placedItem.id,
           position: Number(position),
+          // Where the item came in the DRAW — items are shown in `candidates`
+          // order, one at a time. Ranking blind means that order is what the
+          // player was reacting to, and `position` can't carry it: these picks
+          // are keyed by the slot each item landed in (#338).
+          drawIndex: candidates.findIndex(
+            (candidate) => candidate.id === placedItem.id,
+          ),
         }),
       );
       setAllPicks((prev) => [...prev, ...roundPicks]);
@@ -101,7 +111,16 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
     if (!isFinished || status === "loading" || recordedRef.current) return;
     recordedRef.current = true;
     writeLastPlayPicks(pack.id, allPicks);
-    playsClient.record(pack.id, { picks: allPicks }).catch(() => undefined);
+    playsClient
+      .record(pack.id, { picks: allPicks })
+      // Stash the play id so the result screen can build a short `?play=` share
+      // link. Best-effort: without it the share falls back to encoding every
+      // pick into `?p=`, which for rank_blind is the longest payload of the
+      // five formats — every drawn item, its placement and its draw index.
+      .then(({ id }) => {
+        if (id) writeLastPlayId(pack.id, id);
+      })
+      .catch(() => undefined);
   }, [isFinished, pack.id, allPicks, status]);
 
   if (status === "loading") return null;
@@ -111,7 +130,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
     : Math.round((roundIndex / Math.max(totalRounds, 1)) * 100);
 
   return (
-    <div className="mx-auto w-full max-w-2xl flex-1 px-7 py-10">
+    <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
       <div className="mb-8">
         <div className="mb-2 flex items-center justify-between">
           <Text variant="tertiary" className="text-xs uppercase tracking-wide">
@@ -131,7 +150,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
       {slot && !roundDone && (
         <>
           <section className="mb-6 text-center">
-            <Text as="h1" variant="title" className="mb-2 text-3xl">
+            <Text as="h2" variant="title" className="mb-2 text-3xl">
               {groupName}
             </Text>
             <Text variant="secondary">
@@ -216,7 +235,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
 
       {isRoundComplete && slot && (
         <section className="mb-10 text-center">
-          <Text as="h1" variant="title" className="mb-2 text-3xl">
+          <Text as="h2" variant="title" className="mb-2 text-3xl">
             {t("ranked", { name: groupName })}
           </Text>
           <div className="mb-8 flex flex-col gap-2 text-start">
@@ -240,7 +259,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
 
       {isFinished && (
         <section className="mb-10 text-center">
-          <Text as="h1" variant="title" className="mb-2 text-3xl">
+          <Text as="h2" variant="title" className="mb-2 text-3xl">
             {t("rankingDone")}
           </Text>
           <Text variant="secondary" className="mb-4">

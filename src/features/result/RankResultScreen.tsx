@@ -1,18 +1,24 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Card } from "@/src/shared/components/Card";
+import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { cn } from "@/src/shared/lib/cn";
 import { Text } from "@/src/shared/components/Text";
 import { SharedResultNote } from "@/src/features/result/SharedResultNote";
 import { ResultActions } from "@/src/features/result/ResultActions";
+import { PodiumTable } from "@/src/features/result/PodiumTable";
 import { roundHeading } from "@/src/shared/lib/round-heading";
 import type { Pack } from "@/src/shared/types/pack";
 import type {
   RankResults,
+  RankResultItem,
   RecordedPick,
 } from "@/src/shared/types/play-results";
 
 /**
+ * The rank_blind result: each round you played as one card, your ranking from
+ * first place to last, with where each item came in the draw.
+ *
  * `ownPicks`/`shared` come from ResultScreen rather than a second
  * useResultPicks call here (#243). Re-reading gave this screen its own copy of
  * the hook's after-mount state, so it rendered once without the picks and
@@ -30,9 +36,10 @@ export function RankResultScreen({
   shared: boolean;
 }) {
   const t = useTranslations("result");
+  const podium = results.podium ?? [];
 
   return (
-    <div className="mx-auto w-full max-w-2xl flex-1 px-7 py-10">
+    <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
       <Text variant="tertiary" className="mb-2 text-xs uppercase tracking-wide">
         {t("label")}
       </Text>
@@ -45,11 +52,20 @@ export function RankResultScreen({
 
       {shared && <SharedResultNote />}
 
-      <div className="mb-8 flex flex-col gap-6">
+      <ResultActions
+        packId={pack.id}
+        status={pack.status}
+        picks={ownPicks}
+        shared={shared}
+        className="mb-6 justify-end"
+      />
+
+      <div className="mb-10 flex flex-col divide-y divide-border">
         {results.rounds.map((round) => {
-          const playedThisRound =
-            ownPicks?.some((pick) => pick.roundIndex === round.roundIndex) ??
-            false;
+          const roundPicks =
+            ownPicks?.filter((pick) => pick.roundIndex === round.roundIndex) ??
+            [];
+          const playedThisRound = roundPicks.length > 0;
           // A round can sample a random subset of its pool, so the aggregate
           // includes items this player never saw. When they played the round,
           // show only the items that were in THEIR play; otherwise (viewing
@@ -57,99 +73,85 @@ export function RankResultScreen({
           // round isn't blank.
           const visibleItems = playedThisRound
             ? round.items.filter((item) =>
-                ownPicks?.some(
-                  (pick) =>
-                    pick.roundIndex === round.roundIndex &&
-                    pick.itemId === item.itemId,
-                ),
+                roundPicks.some((pick) => pick.itemId === item.itemId),
               )
             : round.items;
           // Drop never-ranked items (averagePosition 0 sentinel). In the
           // aggregate fallback the full pool can include items nobody ranked,
           // whose 0 would otherwise sort them above genuine first places.
-          const sortedItems = [...visibleItems]
-            .filter((item) => item.timesRanked > 0)
-            .sort((a, b) => a.averagePosition - b.averagePosition);
+          const rankable = visibleItems.filter((item) => item.timesRanked > 0);
+          const pickFor = (item: RankResultItem) =>
+            roundPicks.find((pick) => pick.itemId === item.itemId);
+          // A round you played is YOUR ranking, first place to last (#338).
+          // The crowd's average only orders the fallback, where there is no
+          // "your ranking" to show.
+          const sortedItems = playedThisRound
+            ? [...rankable].sort(
+                (a, b) =>
+                  (pickFor(a)?.position ?? Number.MAX_SAFE_INTEGER) -
+                  (pickFor(b)?.position ?? Number.MAX_SAFE_INTEGER),
+              )
+            : [...rankable].sort(
+                (a, b) => a.averagePosition - b.averagePosition,
+              );
+
+          if (sortedItems.length === 0) return null;
 
           return (
-            <div key={round.roundIndex}>
-              <Text className="mb-3 font-semibold">
+            <div key={round.roundIndex} className="py-4 first:pt-0 last:pb-0">
+              <Text
+                variant="tertiary"
+                className="mb-2 text-xs uppercase tracking-wide"
+              >
                 {roundHeading(pack, round.roundIndex)}
               </Text>
-              <div className="flex flex-col gap-3">
+              <ul className="flex flex-col gap-2 rounded-xl border border-border p-3">
                 {sortedItems.map((item, index) => {
-                  const ownPick = ownPicks?.find(
-                    (pick) =>
-                      pick.roundIndex === round.roundIndex &&
-                      pick.itemId === item.itemId,
-                  );
-                  const maxCount = Math.max(...item.positionCounts, 1);
-
+                  const drawIndex = pickFor(item)?.drawIndex;
                   return (
-                    <Card
+                    <li
                       key={item.itemId}
-                      className="hover:translate-y-0 hover:shadow-none"
+                      className="flex min-w-0 items-center gap-3 rounded-lg border border-white/[0.06] bg-white/[0.03] px-3 py-2"
                     >
-                      <div className="mb-2 flex items-center gap-3">
-                        <span className="flex h-7 w-7 flex-none items-center justify-center rounded-lg bg-white/[0.06] text-xs font-bold">
-                          {index + 1}
-                        </span>
-                        <Text className="flex-1 font-semibold">
-                          {item.itemTitle}
-                        </Text>
-                        <Text variant="tertiary" className="text-xs">
-                          {t("rankCaption", {
-                            avg: item.averagePosition,
-                            count: item.timesRanked,
-                          })}
-                        </Text>
-                      </div>
-                      <div className="mb-2 flex items-end gap-1 ps-10">
-                        {item.positionCounts.map((count, position) => {
-                          const isOwn = ownPick?.position === position;
-                          return (
-                            <div
-                              key={position}
-                              className="flex flex-col items-center gap-1"
-                            >
-                              <div
-                                className={
-                                  isOwn
-                                    ? "w-[18px] rounded-sm bg-acc ring-2 ring-foreground"
-                                    : "w-[18px] rounded-sm bg-acc/30"
-                                }
-                                style={{
-                                  height: `${Math.max((count / maxCount) * 32, 2)}px`,
-                                }}
-                              />
-                              <Text variant="tertiary" className="text-[10px]">
-                                #{position + 1}
-                              </Text>
-                            </div>
-                          );
-                        })}
-                      </div>
-                      {ownPick && ownPick.position !== undefined && (
-                        <Text className="ps-10 text-xs text-acc">
-                          {t(shared ? "placed" : "youPlaced", {
-                            position: ownPick.position + 1,
-                            count: Math.max(
-                              (item.positionCounts[ownPick.position] ?? 0) - 1,
-                              0,
-                            ),
-                          })}
+                      <span className="flex h-7 w-7 flex-none items-center justify-center rounded-lg bg-white/[0.06] text-xs font-bold tabular-nums">
+                        {index + 1}
+                      </span>
+                      <Text className="flex-1 truncate text-sm font-semibold">
+                        {item.itemTitle}
+                      </Text>
+                      {/* Where it came in the DRAW. Ranking blind means the
+                          order items arrived in is what you were reacting to,
+                          and this list is sorted by where they ended up — so
+                          without it the run can't be read back. Absent on
+                          plays recorded before #338. */}
+                      {drawIndex !== undefined && (
+                        <Text
+                          variant="tertiary"
+                          className="flex-none text-xs tabular-nums"
+                        >
+                          {t("shownAt", { n: drawIndex + 1 })}
                         </Text>
                       )}
-                    </Card>
+                    </li>
                   );
                 })}
-              </div>
+              </ul>
             </div>
           );
         })}
       </div>
 
-      <ResultActions packId={pack.id} status={pack.status} picks={ownPicks} />
+      {podium.length > 0 && (
+        <section className="mb-8">
+          <Text as="h2" variant="title" className="mb-1 text-lg">
+            {t("podiumHeading")}
+          </Text>
+          <Text variant="secondary" className="mb-4 text-sm">
+            {t("podiumSubtitle")}
+          </Text>
+          <PodiumTable items={podium} />
+        </section>
+      )}
     </div>
   );
 }

@@ -18,7 +18,14 @@ const RIGHT = {
 
 describe("HeadToHeadRound", () => {
   it("renders both items in full immediately, with no reveal control", () => {
-    render(<HeadToHeadRound left={LEFT} right={RIGHT} onPick={vi.fn()} />);
+    render(
+      <HeadToHeadRound
+        left={LEFT}
+        right={RIGHT}
+        selectedId={null}
+        onSelect={vi.fn()}
+      />,
+    );
 
     expect(screen.getByText("Goku")).toBeInTheDocument();
     expect(screen.getByText("Vegeta")).toBeInTheDocument();
@@ -27,36 +34,57 @@ describe("HeadToHeadRound", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("calls onPick with the left item's id when the left card is clicked", async () => {
+  it("calls onSelect with the left item's id when the left card is clicked", async () => {
     const user = userEvent.setup();
-    const onPick = vi.fn();
-    render(<HeadToHeadRound left={LEFT} right={RIGHT} onPick={onPick} />);
+    const onSelect = vi.fn();
+    render(
+      <HeadToHeadRound
+        left={LEFT}
+        right={RIGHT}
+        selectedId={null}
+        onSelect={onSelect}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Pick Goku" }));
 
-    expect(onPick).toHaveBeenCalledWith("i1");
+    expect(onSelect).toHaveBeenCalledWith("i1");
   });
 
-  it("calls onPick with the right item's id when the right card is clicked", async () => {
+  it("calls onSelect with the right item's id when the right card is clicked", async () => {
     const user = userEvent.setup();
-    const onPick = vi.fn();
-    render(<HeadToHeadRound left={LEFT} right={RIGHT} onPick={onPick} />);
+    const onSelect = vi.fn();
+    render(
+      <HeadToHeadRound
+        left={LEFT}
+        right={RIGHT}
+        selectedId={null}
+        onSelect={onSelect}
+      />,
+    );
 
     await user.click(screen.getByRole("button", { name: "Pick Vegeta" }));
 
-    expect(onPick).toHaveBeenCalledWith("i2");
+    expect(onSelect).toHaveBeenCalledWith("i2");
   });
 
-  it("shows a real YouTube player for a youtube item and still calls onPick via its own pick control", async () => {
+  it("shows a real YouTube player for a youtube item and still calls onSelect via its own pick control", async () => {
     const user = userEvent.setup();
-    const onPick = vi.fn();
+    const onSelect = vi.fn();
     const videoItem = {
       id: "v1",
       type: "youtube" as const,
       title: "Opening theme",
       value: "https://youtu.be/KsF_hdjWJjo",
     };
-    render(<HeadToHeadRound left={videoItem} right={RIGHT} onPick={onPick} />);
+    render(
+      <HeadToHeadRound
+        left={videoItem}
+        right={RIGHT}
+        selectedId={null}
+        onSelect={onSelect}
+      />,
+    );
 
     expect(
       screen.getByRole("img", { name: "YouTube video thumbnail" }),
@@ -65,25 +93,32 @@ describe("HeadToHeadRound", () => {
     await user.click(
       screen.getByRole("button", { name: "Play video preview" }),
     );
-    expect(onPick).not.toHaveBeenCalled();
+    expect(onSelect).not.toHaveBeenCalled();
 
     await user.click(
       screen.getByRole("button", { name: "Pick Opening theme" }),
     );
-    expect(onPick).toHaveBeenCalledWith("v1");
+    expect(onSelect).toHaveBeenCalledWith("v1");
   });
 
-  it("renders an image item, resolved from its key, and calls onPick via its pick control", async () => {
+  it("renders an image item, resolved from its key, and calls onSelect via its pick control", async () => {
     vi.stubEnv("NEXT_PUBLIC_MEDIA_BASE_URL", "https://cdn.example.com");
     const user = userEvent.setup();
-    const onPick = vi.fn();
+    const onSelect = vi.fn();
     const imageItem = {
       id: "im1",
       type: "image" as const,
       title: "Poster",
       value: "media/item/poster.webp",
     };
-    render(<HeadToHeadRound left={imageItem} right={RIGHT} onPick={onPick} />);
+    render(
+      <HeadToHeadRound
+        left={imageItem}
+        right={RIGHT}
+        selectedId={null}
+        onSelect={onSelect}
+      />,
+    );
 
     expect(screen.getByRole("img", { name: "Poster" })).toHaveAttribute(
       "src",
@@ -91,6 +126,28 @@ describe("HeadToHeadRound", () => {
     );
 
     await user.click(screen.getByRole("button", { name: "Pick Poster" }));
-    expect(onPick).toHaveBeenCalledWith("im1");
+    expect(onSelect).toHaveBeenCalledWith("im1");
+  });
+
+  it("marks only the selected contender as pressed", () => {
+    render(
+      <HeadToHeadRound
+        left={LEFT}
+        right={RIGHT}
+        selectedId="i2"
+        onSelect={vi.fn()}
+      />,
+    );
+
+    // These are toggles now, not commit controls — the pressed state is the
+    // only thing telling a screen-reader user which side they have chosen.
+    expect(screen.getByRole("button", { name: "Pick Goku" })).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
+    expect(screen.getByRole("button", { name: "Pick Vegeta" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
   });
 });

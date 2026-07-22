@@ -251,43 +251,11 @@ describe("AuthForm", () => {
     expect(authClient.login).not.toHaveBeenCalled();
   });
 
-  it("rejects a username with invalid characters without calling the API", async () => {
-    const user = userEvent.setup();
-    renderAuthForm();
-    await user.click(screen.getByRole("tab", { name: "Sign up" }));
-
-    await user.type(screen.getByLabelText("Username"), "no spaces!");
-    await user.type(screen.getByLabelText("Email"), "a@example.com");
-    await user.type(screen.getByLabelText("Password"), "Password123");
-    await user.click(screen.getByRole("checkbox"));
-    await user.click(screen.getByRole("button", { name: "Continue" }));
-
-    expect(
-      screen.getByText(
-        "Username must be 2-16 characters: letters and numbers only.",
-      ),
-    ).toBeInTheDocument();
-    expect(authClient.requestEmailCode).not.toHaveBeenCalled();
-  });
-
-  it("rejects a password shorter than 8 characters without calling the API", async () => {
-    const user = userEvent.setup();
-    renderAuthForm();
-    await user.click(screen.getByRole("tab", { name: "Sign up" }));
-
-    await user.type(screen.getByLabelText("Username"), "alice");
-    await user.type(screen.getByLabelText("Email"), "a@example.com");
-    await user.type(screen.getByLabelText("Password"), "short");
-    await user.click(screen.getByRole("checkbox"));
-    await user.click(screen.getByRole("button", { name: "Continue" }));
-
-    expect(
-      screen.getByText("Password must be at least 8 characters."),
-    ).toBeInTheDocument();
-    expect(authClient.requestEmailCode).not.toHaveBeenCalled();
-  });
-
-  it("wires the validation error to its field inline (aria-invalid + describedby)", async () => {
+  // Individual register-validation messages (username charset, password rules,
+  // mismatch, rules unchecked) are the schema's contract — auth.schema.test
+  // owns them. This proves the form wires a schema failure to the field inline
+  // and never reaches the API.
+  it("wires the validation error to its field inline (aria-invalid + describedby) without calling the API", async () => {
     const user = userEvent.setup();
     renderAuthForm();
     await user.click(screen.getByRole("tab", { name: "Sign up" }));
@@ -305,6 +273,7 @@ describe("AuthForm", () => {
     expect(document.getElementById(errorId!)).toHaveTextContent(
       "Password must be at least 8 characters.",
     );
+    expect(authClient.requestEmailCode).not.toHaveBeenCalled();
   });
 
   it("switching tabs clears a previously shown error", async () => {
@@ -428,39 +397,6 @@ describe("AuthForm", () => {
     const box = screen.getByRole("checkbox");
     expect(box).toHaveAccessibleName(/Community Rules/i);
     expect(box).not.toHaveAccessibleName(/16/);
-  });
-
-  it("rejects registration when the rules-acceptance box is unchecked", async () => {
-    const user = userEvent.setup();
-    renderAuthForm();
-    await user.click(screen.getByRole("tab", { name: "Sign up" }));
-
-    await user.type(screen.getByLabelText("Username"), "alice");
-    await user.type(screen.getByLabelText("Email"), "a@example.com");
-    await user.type(screen.getByLabelText("Password"), "Password123");
-    await user.type(screen.getByLabelText("Confirm password"), "Password123");
-    await user.click(screen.getByRole("button", { name: "Continue" }));
-
-    expect(
-      screen.getByText("You must accept the Community Rules to register."),
-    ).toBeInTheDocument();
-    expect(authClient.requestEmailCode).not.toHaveBeenCalled();
-  });
-
-  it("rejects registration when the two passwords do not match", async () => {
-    const user = userEvent.setup();
-    renderAuthForm();
-    await user.click(screen.getByRole("tab", { name: "Sign up" }));
-
-    await user.type(screen.getByLabelText("Username"), "alice");
-    await user.type(screen.getByLabelText("Email"), "a@example.com");
-    await user.type(screen.getByLabelText("Password"), "Password123");
-    await user.type(screen.getByLabelText("Confirm password"), "Password124");
-    await user.click(screen.getByRole("checkbox"));
-    await user.click(screen.getByRole("button", { name: "Continue" }));
-
-    expect(screen.getByText("Passwords do not match.")).toBeInTheDocument();
-    expect(authClient.requestEmailCode).not.toHaveBeenCalled();
   });
 
   it("disables the submit button while a request is pending, preventing a double submit", async () => {

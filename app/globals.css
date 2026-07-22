@@ -29,6 +29,15 @@
   --acc: #00e5ff;
   --danger: #ff6b6b;
   --success: #39d98a;
+  /*
+   * Podium colours for a top-three ranking (the 1v1 result's "top picked"
+   * table). Deliberately desaturated against the reference metals so they read
+   * as an accent on a dark surface rather than as warning colours — a literal
+   * #ffd700 next to --danger looks like two alerts.
+   */
+  --medal-gold: #e8c26a;
+  --medal-silver: #c2c9d1;
+  --medal-bronze: #cd8f5a;
 
   --radius-chip: 8px;
   --radius-control: 10px;
@@ -46,6 +55,9 @@
   --color-acc: var(--acc);
   --color-danger: var(--danger);
   --color-success: var(--success);
+  --color-medal-gold: var(--medal-gold);
+  --color-medal-silver: var(--medal-silver);
+  --color-medal-bronze: var(--medal-bronze);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

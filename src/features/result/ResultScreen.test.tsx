@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach, vi } from "vitest";
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { ResultScreen } from "./ResultScreen";
 import { encodePicks } from "@/src/shared/lib/share-url";
@@ -77,6 +77,16 @@ const RESULTS: PackResults = {
       ],
     },
   ],
+  topItems: [
+    {
+      itemId: "i1",
+      itemTitle: "Guren no Yumiya",
+      picked: 3,
+      appeared: 4,
+      percentage: 75,
+    },
+    { itemId: "i2", itemTitle: "Redo", picked: 1, appeared: 4, percentage: 25 },
+  ],
 };
 
 /** Makes the client return `results` for the screen's own query. */
@@ -105,19 +115,28 @@ function seedOwnPlay(
 }
 
 describe("ResultScreen", () => {
-  it("shows the player's own pick and its community agreement % per round", async () => {
+  // #336: the round is a recap of the slate you were shown, not a per-item
+  // percentage list. The crowd figure moved to the ranking below it, where the
+  // denominator is appearances rather than every play of the pack.
+  it("shows the round you played with your pick marked", async () => {
     sessionStorage.setItem(
       "velanto:last-play:pack-1",
-      JSON.stringify([{ roundIndex: 0, groupId: "g1", itemId: "i1" }]),
+      JSON.stringify([
+        { roundIndex: 0, groupId: "g1", itemId: "i1", chosen: true },
+        { roundIndex: 0, groupId: "g1", itemId: "i2", chosen: false },
+      ]),
     );
 
     seedResults(RESULTS);
     render(<ResultScreen pack={PACK} />);
 
-    expect(
-      await screen.findByText(/Your pick:\s*Guren no Yumiya/),
-    ).toBeInTheDocument();
-    expect(screen.getByText("75%")).toBeInTheDocument();
+    expect(await screen.findByTestId("picked")).toHaveTextContent(
+      "Guren no Yumiya",
+    );
+    // The item you passed over is shown too — that is the point of the rework.
+    // Scoped to the round: the ranking below lists it as well.
+    const round = screen.getByRole("group", { name: /2016/ });
+    expect(within(round).getByText("Redo")).toBeInTheDocument();
     expect(screen.getByText(/4 plays recorded/)).toBeInTheDocument();
   });
 
@@ -186,6 +205,7 @@ describe("ResultScreen", () => {
     seedResults(RESULTS);
     render(<ResultScreen pack={PACK} />);
 
+    // 75% comes from the pack-wide ranking, which a shared result also gets.
     expect(await screen.findByText("75%")).toBeInTheDocument();
   });
 
@@ -201,22 +221,6 @@ describe("ResultScreen", () => {
     expect(
       await screen.findByRole("link", { name: "Play again" }),
     ).toHaveAttribute("href", "/packs/pack-1/play");
-  });
-
-  it("falls back to the aggregate breakdown when the recorded pick's item isn't in this round's results", async () => {
-    sessionStorage.setItem(
-      "velanto:last-play:pack-1",
-      JSON.stringify([
-        { roundIndex: 0, groupId: "g1", itemId: "does-not-exist" },
-      ]),
-    );
-
-    seedResults(RESULTS);
-    render(<ResultScreen pack={PACK} />);
-
-    expect(await screen.findByText("75%")).toBeInTheDocument();
-    expect(screen.getByText("25%")).toBeInTheDocument();
-    expect(screen.queryByText(/Your pick/)).not.toBeInTheDocument();
   });
 
   it("renders without crashing when the pack has no recorded plays yet", async () => {
@@ -240,14 +244,15 @@ describe("ResultScreen", () => {
       ],
     };
 
-    // Unlock the gate without switching the round into "your pick" mode — this
-    // test is about the aggregate list rendering when nobody has played.
-    seedOwnPlay([{ roundIndex: 0, groupId: "g1", itemId: "not-in-results" }]);
+    seedOwnPlay();
     seedResults(emptyResults);
     render(<ResultScreen pack={PACK} />);
 
     expect(await screen.findByText(/0 plays recorded/)).toBeInTheDocument();
-    expect(screen.getAllByText("0%")).toHaveLength(2);
+    // Your own round still renders — it comes from your picks, not the
+    // aggregate — and there is no ranking to show yet.
+    expect(screen.getByTestId("picked")).toHaveTextContent("Guren no Yumiya");
+    expect(screen.queryByRole("table")).toBeNull();
   });
 
   it("delegates to RankResultScreen for rank_blind results", async () => {
@@ -276,30 +281,10 @@ describe("ResultScreen", () => {
     seedResults(rankResults);
     render(<ResultScreen pack={rankPack} />);
 
-    expect(await screen.findByText(/avg 1.*ranked 1x/)).toBeInTheDocument();
+    expect(await screen.findByText("Guren no Yumiya")).toBeInTheDocument();
   });
 
-  it("shows a Share result button for an approved pack", async () => {
-    seedOwnPlay();
-    seedResults(RESULTS);
-    render(<ResultScreen pack={PACK} />);
-    expect(
-      await screen.findByRole("button", { name: "Share result" }),
-    ).toBeInTheDocument();
-  });
-
-  it("hides the Share result button for a non-approved pack", async () => {
-    seedOwnPlay();
-    seedResults(RESULTS);
-    render(<ResultScreen pack={{ ...PACK, status: "pending" }} />);
-
-    // Prove the screen is unlocked first: without a seeded play this assertion
-    // passes against the locked state, which is not what it claims to test.
-    expect(await screen.findByText("75%")).toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Share result" }),
-    ).not.toBeInTheDocument();
-  });
+  // The approved/non-approved Share-button rule is owned by ResultActions.test.
 
   it("renders the sharer's picks and a shared-result note when opened via a ?p= link", async () => {
     searchParams = new URLSearchParams({
@@ -312,8 +297,10 @@ describe("ResultScreen", () => {
     expect(
       await screen.findByText(/viewing a shared result/i),
     ).toBeInTheDocument();
-    expect(screen.getByText(/^Pick:\s*Guren no Yumiya/)).toBeInTheDocument();
-    expect(screen.queryByText(/Your pick/)).not.toBeInTheDocument();
+    // The sharer's pick is labelled "Pick", not "Your pick" — it isn't yours.
+    expect(screen.getByTestId("picked")).toHaveTextContent("Guren no Yumiya");
+    expect(screen.getByText("Pick")).toBeInTheDocument();
+    expect(screen.queryByText("Your pick")).not.toBeInTheDocument();
   });
 
   describe("single-pool versus round", () => {
@@ -360,7 +347,7 @@ describe("ResultScreen", () => {
       ],
     };
 
-    it("ranks per item and marks the viewer's chosen side", async () => {
+    it("replays the two sides the viewer was shown, without percentages", async () => {
       // The viewer chose p1/p2 (a side); p3/p4 were the other side.
       seedOwnPlay([
         { roundIndex: 0, groupId: "pool", itemId: "p1", chosen: true },
@@ -371,12 +358,15 @@ describe("ResultScreen", () => {
       seedResults(SP_RESULTS);
       render(<ResultScreen pack={SP_PACK} />);
 
-      // The full per-item ranking is shown (not a two-side split).
+      // nxn routes to NxNResultScreen now: a recap of the round you played,
+      // both sides with their items, the one you took marked. The per-item
+      // ranking this used to show is gone along with every other percentage —
+      // an nxn matchup is a set against a set, so a per-pairing share would be
+      // off one play forever (see NxNResultScreen).
       expect(await screen.findByText("Naruto")).toBeInTheDocument();
-      expect(screen.getByText("Ichigo")).toBeInTheDocument();
-      expect(screen.getByText("66.7%")).toBeInTheDocument();
-      // Both of the viewer's chosen items carry a "Your pick" marker.
-      expect(screen.getAllByText("Your pick")).toHaveLength(2);
+      expect(screen.getByTestId("picked")).toHaveTextContent("Naruto");
+      expect(screen.getByTestId("dropped")).toHaveTextContent("Goku");
+      expect(screen.queryByText(/%/)).toBeNull();
     });
   });
 });

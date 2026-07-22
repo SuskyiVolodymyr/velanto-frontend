@@ -39,9 +39,10 @@ function buildMetrics(overview: AdminOverview, t: AdminTranslator): Metric[] {
     {
       label: t("metricOnlineUsers"),
       value: overview.onlineUsers,
-      // Deliberately honest: onlineUsers is always null (no presence tracking
-      // exists), so say so rather than letting the "—" look like a load failure.
-      sub: t("notTracked"),
+      // The sub-line names WHO is counted, not how many minutes: the window is
+      // the backend's constant, and restating it here would be a number that
+      // silently goes stale the moment that constant moves.
+      sub: t("activeRecently"),
       live: true,
     },
     {

@@ -61,10 +61,23 @@ export function OAuthButtons() {
       router.push("/");
       return;
     }
+    // A closed popup is AMBIGUOUS. The popup posts its result and then closes
+    // itself; if that message is lost (an extension, the window closing a beat
+    // early) we land here even though the flow completed and the refresh cookie
+    // is already set. Treating that as cancellation strands a user who did sign
+    // in — the reported "OAuth doesn't log me in" symptom. Ask the server which
+    // it was rather than inferring it from the window.
+    if (result.error === "closed") {
+      const signedIn = await revalidate();
+      if (signedIn) {
+        router.push("/");
+        return;
+      }
+    }
     setPending(null);
     if (result.error === "blocked") setError(t("oauthPopupBlocked"));
     else if (result.error === "oauth") setError(t("oauthError"));
-    // "closed" → the user dismissed the popup; not an error.
+    // "closed" with no session → the user really did dismiss it; not an error.
   }
 
   return (

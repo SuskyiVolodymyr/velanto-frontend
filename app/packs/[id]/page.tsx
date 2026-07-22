@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { cn } from "@/src/shared/lib/cn";
 import { getTranslations } from "next-intl/server";
 import { getPackServer } from "@/src/shared/lib/get-pack-server";
 import { getResultsServer } from "@/src/shared/lib/get-results-server";
@@ -49,7 +51,7 @@ export default async function PackPage({
   const results = await getResultsServer(id);
   return (
     <>
-      <div className="mx-auto w-full max-w-[1120px] px-7 pt-6">
+      <div className={cn(PACK_CONTAINER, "pt-6")}>
         <BackButton fallbackHref="/" />
       </div>
       <PackDetailScreen pack={pack} results={results} />

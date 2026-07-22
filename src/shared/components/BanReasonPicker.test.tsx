@@ -84,7 +84,9 @@ describe("BanReasonPicker", () => {
     await waitFor(() => expect(select).toBeEnabled());
     // Two categories + 'Other' (+ the disabled placeholder).
     expect(
-      within(select).getByRole("option", { name: "Hate & Discrimination" }),
+      await within(select).findByRole("option", {
+        name: "Hate & Discrimination",
+      }),
     ).toBeInTheDocument();
     expect(
       within(select).getByRole("option", { name: "Spam & Manipulation" }),
@@ -92,11 +94,11 @@ describe("BanReasonPicker", () => {
     expect(
       within(select).getByRole("option", { name: "Other" }),
     ).toBeInTheDocument();
-  });
-
-  it("does not fetch category titles from anything but the rules endpoint (single source of truth)", async () => {
-    render(<Harness />);
-    await screen.findByLabelText("Reason");
+    // Folded from the retired "single source of truth" test: those titles are
+    // the mock's distinctive strings (proving they came from the endpoint),
+    // and exactly one fetch happened. The retired test asserted ONLY the
+    // call-count, which detected a duplicate fetch — not a hardcoded-labels
+    // implementation, which passed it (audit, 2026-07-21).
     expect(mockedRulesClient.getRules).toHaveBeenCalledTimes(1);
   });
 

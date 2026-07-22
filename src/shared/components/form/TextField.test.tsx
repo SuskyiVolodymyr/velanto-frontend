@@ -52,11 +52,11 @@ describe("TextField", () => {
     const onValid = vi.fn();
     render(<Harness onValid={onValid} />);
 
-    await user.type(screen.getByLabelText("Email"), "a@example.com");
+    await user.type(screen.getByLabelText("Email"), "a@b.co");
     await user.click(screen.getByRole("button", { name: "Save" }));
 
     expect(onValid).toHaveBeenCalledWith(
-      expect.objectContaining({ email: "a@example.com" }),
+      expect.objectContaining({ email: "a@b.co" }),
       expect.anything(),
     );
   });
