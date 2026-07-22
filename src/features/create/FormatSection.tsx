@@ -2,14 +2,19 @@
 
 import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslations } from "next-intl";
-import type { PackFormat } from "@/src/shared/types/pack";
+import type { UiPackFormat } from "@/src/shared/types/pack";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
 import { type CreatePackValues } from "@/src/features/create/create-pack.schema";
 
 // Each option's display name comes from the shared `formats` namespace (keyed by
 // the format value); the blurb is a create-form-only key.
-const FORMAT_OPTIONS: { value: PackFormat; blurbKey: string }[] = [
+//
+// Typed UiPackFormat, not PackFormat, so the compiler forbids listing a format
+// the UI has no copy for: `save_one_friends` is mirrored in PACK_FORMATS as a
+// wire-contract constant only (velanto-backend#258) and is deliberately absent
+// here until the dedicated frontend PR adds its creator body and translations.
+const FORMAT_OPTIONS: { value: UiPackFormat; blurbKey: string }[] = [
   { value: "save_one", blurbKey: "blurbSaveOne" },
   { value: "sacrifice_one", blurbKey: "blurbSacrificeOne" },
   { value: "nxn", blurbKey: "blurbNxn" },

@@ -11,9 +11,22 @@ export const PACK_FORMATS = [
   "nxn",
   "rank_blind",
   "1v1",
+  // Room-based multiplayer: 2-4 friends play one pack together in real time,
+  // each round showing players+1 items of which exactly one survives unclaimed.
+  // Wire contract only for now — the creator, play path and UI copy land in a
+  // dedicated frontend PR. See velanto-backend#258.
+  "save_one_friends",
 ] as const;
 
 export type PackFormat = (typeof PACK_FORMATS)[number];
+
+// The formats the frontend UI actually ships: PACK_FORMATS minus
+// `save_one_friends`, which is mirrored above as a WIRE CONTRACT constant only.
+// It has no creator entry, play path, label or translations yet, so pickers,
+// filters and label maps key off this narrower union — otherwise a nameless
+// option would surface to users. The dedicated frontend PR that adds the
+// creator and play path folds it back in. See velanto-backend#258.
+export type UiPackFormat = Exclude<PackFormat, "save_one_friends">;
 
 // 'image' items store the S3 media KEY (e.g. "media/item/<uuid>.webp") as their
 // value; the render URL is built from it via shared/lib/media-url.

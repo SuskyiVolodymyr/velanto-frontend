@@ -9,7 +9,7 @@ import { Select } from "@/src/shared/components/Select";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { DataTable, DataTableRow } from "@/src/shared/components/DataTable";
 import { TablePagination } from "@/src/shared/components/TablePagination";
-import { FORMAT_LABELS } from "@/src/shared/lib/pack-display";
+import { FORMAT_LABELS, formatLabel } from "@/src/shared/lib/pack-display";
 import { formatRelativeTimeIntl } from "@/src/shared/lib/relative-time";
 import { PACK_FORMATS } from "@/src/shared/types/pack";
 import {
@@ -22,7 +22,7 @@ import {
   MODERATION_PAGE_SIZE,
   type PackQueueFilters,
 } from "@/src/features/moderation/api/moderation";
-import type { PackFormat } from "@/src/shared/types/pack";
+import type { PackFormat, UiPackFormat } from "@/src/shared/types/pack";
 
 const FILTER_DEBOUNCE_MS = 300;
 const COLUMNS = "1.5fr 1fr 120px 130px 200px";
@@ -103,7 +103,15 @@ export function PackApprovalsTab() {
             }
             options={[
               { value: "", label: t("allFormats") },
-              ...PACK_FORMATS.map((format) => ({
+              // save_one_friends is excluded: it is mirrored in PACK_FORMATS as
+              // a wire-contract constant only (velanto-backend#258) and has no
+              // label yet, so listing it would render a nameless filter option.
+              // The dedicated frontend PR that adds the creator and play path
+              // adds it here too.
+              ...PACK_FORMATS.filter(
+                (format): format is UiPackFormat =>
+                  format !== "save_one_friends",
+              ).map((format) => ({
                 value: format,
                 label: FORMAT_LABELS[format],
               })),
@@ -173,7 +181,7 @@ export function PackApprovalsTab() {
                       {pack.author?.username ?? "—"}
                     </Text>
                     <Text variant="tertiary" className="text-[12.5px]">
-                      {FORMAT_LABELS[pack.format]}
+                      {formatLabel(pack.format)}
                     </Text>
                     <Text variant="tertiary" className="text-[12.5px]">
                       {submitted ?? "—"}

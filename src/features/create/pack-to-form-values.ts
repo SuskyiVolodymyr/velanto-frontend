@@ -1,4 +1,4 @@
-import type { Pack } from "@/src/shared/types/pack";
+import type { Pack, UiPackFormat } from "@/src/shared/types/pack";
 import type { CreatePackValues } from "@/src/features/create/create-pack.schema";
 import { DEFAULT_PACK_LANGUAGE } from "@/src/shared/types/pack-language";
 
@@ -17,7 +17,12 @@ export function packToFormValues(pack: Pack): CreatePackValues {
     // Seed the existing cover; null (gradient-only) maps to undefined so the
     // optional-string form field stays valid.
     coverImageKey: pack.coverImageKey ?? undefined,
-    format: pack.format,
+    // Narrowed, not widened: the form's `format` excludes save_one_friends,
+    // which has no creator support in this repo yet (velanto-backend#258 is
+    // mirrored as a wire-contract constant only). No such pack can exist to be
+    // edited here — the dedicated frontend PR that builds the creator removes
+    // this cast along with the exclusion in create-pack.schema.ts.
+    format: pack.format as UiPackFormat,
     // Keep the pack's own content language on edit — never re-derive it from the
     // editor's interface locale, which would silently relabel a Spanish pack as
     // English just because a moderator or the author viewed it in English.
