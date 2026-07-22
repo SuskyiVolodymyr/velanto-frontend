@@ -28,11 +28,20 @@ export function EditPackScreen({ pack }: { pack: Pack }) {
     );
   }
 
+  // UI-EXCLUDED:save_one_friends (velanto-frontend#368) — null means the pack's
+  // format has no creator UI. Say so plainly: seeding the form anyway leaves the
+  // format picker with nothing selected and Save silently failing validation
+  // against a control the author cannot see.
+  const initialValues = packToFormValues(pack);
+  if (!initialValues) {
+    return (
+      <Text variant="secondary" className="py-10 text-center">
+        {t("editFormatUnsupported")}
+      </Text>
+    );
+  }
+
   return (
-    <CreatePackForm
-      mode="edit"
-      packId={pack.id}
-      initialValues={packToFormValues(pack)}
-    />
+    <CreatePackForm mode="edit" packId={pack.id} initialValues={initialValues} />
   );
 }

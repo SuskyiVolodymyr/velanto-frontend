@@ -10,10 +10,11 @@ import { type CreatePackValues } from "@/src/features/create/create-pack.schema"
 // Each option's display name comes from the shared `formats` namespace (keyed by
 // the format value); the blurb is a create-form-only key.
 //
+// UI-EXCLUDED:save_one_friends (velanto-frontend#368)
 // Typed UiPackFormat, not PackFormat, so the compiler forbids listing a format
-// the UI has no copy for: `save_one_friends` is mirrored in PACK_FORMATS as a
-// wire-contract constant only (velanto-backend#258) and is deliberately absent
-// here until the dedicated frontend PR adds its creator body and translations.
+// the UI has no creator body or blurb for. Editing an existing pack of such a
+// format is refused upstream (see EditPackScreen) rather than rendering this
+// picker with nothing selected.
 const FORMAT_OPTIONS: { value: UiPackFormat; blurbKey: string }[] = [
   { value: "save_one", blurbKey: "blurbSaveOne" },
   { value: "sacrifice_one", blurbKey: "blurbSacrificeOne" },

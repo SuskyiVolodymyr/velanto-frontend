@@ -11,7 +11,7 @@ import { DataTable, DataTableRow } from "@/src/shared/components/DataTable";
 import { TablePagination } from "@/src/shared/components/TablePagination";
 import { FORMAT_LABELS, formatLabel } from "@/src/shared/lib/pack-display";
 import { formatRelativeTimeIntl } from "@/src/shared/lib/relative-time";
-import { PACK_FORMATS } from "@/src/shared/types/pack";
+import { PACK_FORMATS, isUiPackFormat } from "@/src/shared/types/pack";
 import {
   usePackQueue,
   useApprovePack,
@@ -22,7 +22,7 @@ import {
   MODERATION_PAGE_SIZE,
   type PackQueueFilters,
 } from "@/src/features/moderation/api/moderation";
-import type { PackFormat, UiPackFormat } from "@/src/shared/types/pack";
+import type { PackFormat } from "@/src/shared/types/pack";
 
 const FILTER_DEBOUNCE_MS = 300;
 const COLUMNS = "1.5fr 1fr 120px 130px 200px";
@@ -103,15 +103,13 @@ export function PackApprovalsTab() {
             }
             options={[
               { value: "", label: t("allFormats") },
-              // save_one_friends is excluded: it is mirrored in PACK_FORMATS as
-              // a wire-contract constant only (velanto-backend#258) and has no
-              // label yet, so listing it would render a nameless filter option.
-              // The dedicated frontend PR that adds the creator and play path
-              // adds it here too.
-              ...PACK_FORMATS.filter(
-                (format): format is UiPackFormat =>
-                  format !== "save_one_friends",
-              ).map((format) => ({
+              // UI-EXCLUDED:save_one_friends (velanto-frontend#368) — it has no
+              // FORMAT_LABELS entry, so listing it would render a nameless
+              // filter option. Queue ROWS still show it (via formatLabel, which
+              // falls back to the raw wire value) — a save_one_friends pack can
+              // reach moderation today, and hiding it from the queue would be
+              // worse than an unfamiliar label.
+              ...PACK_FORMATS.filter(isUiPackFormat).map((format) => ({
                 value: format,
                 label: FORMAT_LABELS[format],
               })),

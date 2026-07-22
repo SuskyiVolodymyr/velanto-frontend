@@ -49,13 +49,13 @@ describe("packToFormValues", () => {
   it("seeds an existing cover image key", () => {
     expect(
       packToFormValues({ ...PACK, coverImageKey: "media/cover/x.webp" })
-        .coverImageKey,
+        ?.coverImageKey,
     ).toBe("media/cover/x.webp");
   });
 
   it("maps a null cover (gradient-only pack) to undefined so the optional field stays valid", () => {
     expect(
-      packToFormValues({ ...PACK, coverImageKey: null }).coverImageKey,
+      packToFormValues({ ...PACK, coverImageKey: null })?.coverImageKey,
     ).toBeUndefined();
   });
 
@@ -80,10 +80,20 @@ describe("packToFormValues", () => {
       ],
     });
 
-    expect(values.rounds[0].slots[0]).toEqual({
+    expect(values?.rounds[0].slots[0]).toEqual({
       groupMode: "random",
       mode: "random",
       count: 2,
     });
+  });
+
+  // UI-EXCLUDED:save_one_friends (velanto-frontend#368). /packs/[id]/edit
+  // fetches ANY pack by id, and such a pack can already exist — packs are
+  // authored over the API (velanto-pack-creator via the MCP), not only through
+  // this form. The old `as UiPackFormat` cast succeeded silently: FormatSection
+  // then rendered with no option selected and Save failed schema validation
+  // against a control the author could not see failing.
+  it("returns null for a format the creator has no UI for, instead of casting it through", () => {
+    expect(packToFormValues({ ...PACK, format: "save_one_friends" })).toBeNull();
   });
 });
