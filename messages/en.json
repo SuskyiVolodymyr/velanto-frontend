@@ -1127,7 +1127,13 @@
     "topPickedPickedColumn": "Picked",
     "topPickedShareColumn": "Share",
     "pickedOfAppeared": "{picked} of {appeared}",
-    "loadMore": "Load more"
+    "loadMore": "Load more",
+    "eliminationRoundLabel": "{heading}: picked {picked}",
+    "noRoundBreakdown": "No round breakdown for this play — nothing was recorded for it.",
+    "topSavedHeading": "Most saved",
+    "topSavedSubtitle": "How often each item was saved, of the rounds it turned up in, across every play of this pack.",
+    "topSacrificedHeading": "Most sacrificed",
+    "topSacrificedSubtitle": "How often each item was sacrificed, of the rounds it turned up in, across every play of this pack."
   },
   "create": {
     "loginRequired": "You need to be logged in to create a pack.",

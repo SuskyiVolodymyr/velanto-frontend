@@ -1033,7 +1033,13 @@
     "topPickedPickedColumn": "اختير",
     "topPickedShareColumn": "النسبة",
     "pickedOfAppeared": "{picked} من {appeared}",
-    "loadMore": "تحميل المزيد"
+    "loadMore": "تحميل المزيد",
+    "eliminationRoundLabel": "{heading}: تم اختيار {picked}",
+    "noRoundBreakdown": "لا يوجد تفصيل للجولات في هذه اللعبة — لم يُسجَّل لها شيء.",
+    "topSavedHeading": "الأكثر إنقاذًا",
+    "topSavedSubtitle": "كم مرة نجا كل عنصر في الجولات التي ظهر فيها، عبر كل ألعاب هذه الحزمة.",
+    "topSacrificedHeading": "الأكثر تضحيةً به",
+    "topSacrificedSubtitle": "كم مرة ضُحّي بكل عنصر في الجولات التي ظهر فيها، عبر كل ألعاب هذه الحزمة."
   },
   "create": {
     "loginRequired": "يجب تسجيل الدخول لإنشاء حزمة.",

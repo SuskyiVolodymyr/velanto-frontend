@@ -1033,7 +1033,13 @@
     "topPickedPickedColumn": "বাছাই",
     "topPickedShareColumn": "অংশ",
     "pickedOfAppeared": "{appeared}-এর মধ্যে {picked}",
-    "loadMore": "আরও দেখুন"
+    "loadMore": "আরও দেখুন",
+    "eliminationRoundLabel": "{heading}: বাছাই {picked}",
+    "noRoundBreakdown": "এই খেলার রাউন্ড বিশ্লেষণ নেই — এর জন্য কিছুই রেকর্ড হয়নি।",
+    "topSavedHeading": "সবচেয়ে বেশি রক্ষা করা",
+    "topSavedSubtitle": "এই প্যাকের প্রতিটি খেলায়, প্রতিটি আইটেম যেসব রাউন্ডে এসেছে তাতে কতবার রক্ষা পেয়েছে।",
+    "topSacrificedHeading": "সবচেয়ে বেশি বিসর্জন দেওয়া",
+    "topSacrificedSubtitle": "এই প্যাকের প্রতিটি খেলায়, প্রতিটি আইটেম যেসব রাউন্ডে এসেছে তাতে কতবার বিসর্জন দেওয়া হয়েছে।"
   },
   "create": {
     "loginRequired": "প্যাক তৈরি করতে হলে আপনাকে লগ ইন করতে হবে।",

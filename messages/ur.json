@@ -1033,7 +1033,13 @@
     "topPickedPickedColumn": "منتخب",
     "topPickedShareColumn": "حصہ",
     "pickedOfAppeared": "{appeared} میں سے {picked}",
-    "loadMore": "مزید دکھائیں"
+    "loadMore": "مزید دکھائیں",
+    "eliminationRoundLabel": "{heading}: منتخب {picked}",
+    "noRoundBreakdown": "اس کھیل کے راؤنڈز کی تفصیل موجود نہیں — اس کے لیے کچھ درج نہیں ہوا۔",
+    "topSavedHeading": "سب سے زیادہ بچائے گئے",
+    "topSavedSubtitle": "اس پیک کے ہر کھیل میں، ہر آئٹم اُن راؤنڈز میں کتنی بار بچا جن میں وہ آیا۔",
+    "topSacrificedHeading": "سب سے زیادہ قربان کیے گئے",
+    "topSacrificedSubtitle": "اس پیک کے ہر کھیل میں، ہر آئٹم اُن راؤنڈز میں کتنی بار قربان ہوا جن میں وہ آیا۔"
   },
   "create": {
     "loginRequired": "پیک بنانے کے لیے آپ کا لاگ اِن ہونا ضروری ہے۔",

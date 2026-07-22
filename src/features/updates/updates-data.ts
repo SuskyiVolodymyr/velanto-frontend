@@ -29,12 +29,14 @@ export const UPDATES: UpdateEntry[] = [
   {
     date: "2026-07-22",
     version: "1.5.0",
-    title: "Versus results rebuilt, draft limits, and faster browsing",
+    title: "Every result screen rebuilt, draft limits, and faster browsing",
     bullets: [
       "1v1 results are rebuilt around the matchups you actually played: every pairing side by side, the one you picked in green and the one you dropped in red, with the share of players who picked each — for that exact pairing, not the pack as a whole. Each row also says how many players have seen that pairing, because most are decided by a handful of people and a lone 100% shouldn't read as a verdict.",
       "A Top picked table now ranks a versus pack's items by how often they win the matchups they turn up in, with the podium marked out. It's on the result screen and on the pack's own page, for both 1v1 and NxN.",
       "NxN results now replay the rounds you played: both sides with every item that was on them, the side you took in green and the one you dropped in red. There are no crowd percentages per matchup here on purpose — a side of eight against another side of eight almost never comes up twice, so any share would be one person's opinion dressed up as a statistic. The Top picked table is the honest version of that number.",
       "NxN scrolls back to the top of the next round when you confirm, so a tall matchup no longer drops you into the middle of the following one.",
+      "Save One and Sacrifice One results now show each round as the full set of items you were shown, with the one you kept in green — or the one you gave up in red. Before, a result only remembered your pick and not what you chose it from.",
+      "The Top picked table now covers those two formats as well, as Most saved or Most sacrificed. It counts how often an item survived the rounds it actually appeared in, rather than dividing by every play of the pack, so an item the shuffle rarely deals is no longer punished for turning up less often.",
       "1v1 asks you to confirm a pick before moving on, like every other format — a misclick no longer decides the matchup for you, and you can change your mind while comparing.",
       "Finishing a 1v1 pack goes straight to your result instead of stopping at a summary page first.",
       "Every play screen now shows which pack you're playing at the top, so a shared link tells you what you've opened.",
