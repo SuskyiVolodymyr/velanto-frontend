@@ -20,6 +20,7 @@ import {
 } from "@/src/shared/lib/youtube";
 import { mediaUrl } from "@/src/shared/lib/media-url";
 import { useRoundSelections } from "@/src/features/play/use-round-selections";
+import { RankedList, type RankedRow } from "@/src/shared/components/RankedList";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import type { Pack, Item } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
@@ -65,6 +66,18 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
       : null;
   const currentImageSrc =
     currentItem?.type === "image" ? mediaUrl(currentItem.value) : null;
+  // The finished round in the shape the result screen renders it: slot order is
+  // the ranking, and each row carries where the item came in the draw.
+  const rankedRows: RankedRow[] = Array.from(
+    { length: slotCount },
+    (_, slotIndex) => placements[slotIndex],
+  )
+    .filter((item) => item !== undefined)
+    .map((item) => ({
+      id: item.id,
+      title: item.title,
+      drawIndex: candidates.findIndex((candidate) => candidate.id === item.id),
+    }));
 
   function place(slotIndex: number) {
     if (!slot || placements[slotIndex] || placedCount >= slotCount) return;
@@ -238,20 +251,10 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
           <Text as="h2" variant="title" className="mb-2 text-3xl">
             {t("ranked", { name: groupName })}
           </Text>
-          <div className="mb-8 flex flex-col gap-2 text-start">
-            {Array.from({ length: slotCount }, (_, slotIndex) => (
-              <div
-                key={slotIndex}
-                className="flex items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3"
-              >
-                <Text variant="tertiary" className="text-xs font-semibold">
-                  #{slotIndex + 1}
-                </Text>
-                <Text className="font-semibold">
-                  {placements[slotIndex]?.title}
-                </Text>
-              </div>
-            ))}
+          {/* The same list the result screen shows, so the recap and the
+              result a player ends up with read as one thing. */}
+          <div className="mb-8 text-start">
+            <RankedList rows={rankedRows} />
           </div>
           <Button onClick={goToNextRound}>{t("nextRound")}</Button>
         </section>

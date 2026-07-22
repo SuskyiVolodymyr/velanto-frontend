@@ -335,6 +335,27 @@ describe("RankPlayScreen", () => {
     expect(screen.getByText("Round 2 of 2")).toBeInTheDocument();
   });
 
+  // The recap between rounds is the same list the result screen shows, so what
+  // a player reads mid-play matches what they get at the end — including where
+  // each item came in the draw, which is the whole point of ranking blind.
+  it("recaps the finished round with each item's draw position", async () => {
+    const user = userEvent.setup();
+    renderScreen(RANK_BLIND_PACK);
+    await screen.findByText("Kaikai Kitan");
+
+    await user.click(screen.getByText("#2")); // shown first, placed second
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#1")); // shown second, placed first
+
+    await screen.findByText("Openers ranked");
+    const rows = screen.getAllByRole("listitem");
+    expect(rows).toHaveLength(2);
+    expect(rows[0]).toHaveTextContent("Redo");
+    expect(rows[0]).toHaveTextContent("Shown #2");
+    expect(rows[1]).toHaveTextContent("Kaikai Kitan");
+    expect(rows[1]).toHaveTextContent("Shown #1");
+  });
+
   it("records the accumulated picks once, after the last round, then shows the finished state", async () => {
     const user = userEvent.setup();
     renderScreen(RANK_BLIND_PACK);

@@ -29,9 +29,10 @@ export const UPDATES: UpdateEntry[] = [
   {
     date: "2026-07-22",
     version: "1.6.0",
-    title: "Podium finishes on Rank Blind pack pages",
+    title: "Rank Blind polish",
     bullets: [
       "A Rank Blind pack's own page now shows its Podium finishes table, the way the other four formats show their Top picked one. It was only on the result screen, so you had to play a pack to see how its items had been placed.",
+      "The recap you get between Rank Blind rounds is now the same card your result is made of, down to where each item came in the draw — so what you read mid-play matches what you keep at the end.",
     ],
   },
   {

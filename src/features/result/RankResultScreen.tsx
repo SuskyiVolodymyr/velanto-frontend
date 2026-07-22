@@ -7,6 +7,7 @@ import { Text } from "@/src/shared/components/Text";
 import { SharedResultNote } from "@/src/features/result/SharedResultNote";
 import { ResultActions } from "@/src/features/result/ResultActions";
 import { PodiumTable } from "@/src/features/result/PodiumTable";
+import { RankedList } from "@/src/shared/components/RankedList";
 import { roundHeading } from "@/src/shared/lib/round-heading";
 import type { Pack } from "@/src/shared/types/pack";
 import type {
@@ -105,37 +106,13 @@ export function RankResultScreen({
               >
                 {roundHeading(pack, round.roundIndex)}
               </Text>
-              <ul className="flex flex-col gap-2 rounded-xl border border-border p-3">
-                {sortedItems.map((item, index) => {
-                  const drawIndex = pickFor(item)?.drawIndex;
-                  return (
-                    <li
-                      key={item.itemId}
-                      className="flex min-w-0 items-center gap-3 rounded-lg border border-white/[0.06] bg-white/[0.03] px-3 py-2"
-                    >
-                      <span className="flex h-7 w-7 flex-none items-center justify-center rounded-lg bg-white/[0.06] text-xs font-bold tabular-nums">
-                        {index + 1}
-                      </span>
-                      <Text className="flex-1 truncate text-sm font-semibold">
-                        {item.itemTitle}
-                      </Text>
-                      {/* Where it came in the DRAW. Ranking blind means the
-                          order items arrived in is what you were reacting to,
-                          and this list is sorted by where they ended up — so
-                          without it the run can't be read back. Absent on
-                          plays recorded before #338. */}
-                      {drawIndex !== undefined && (
-                        <Text
-                          variant="tertiary"
-                          className="flex-none text-xs tabular-nums"
-                        >
-                          {t("shownAt", { n: drawIndex + 1 })}
-                        </Text>
-                      )}
-                    </li>
-                  );
-                })}
-              </ul>
+              <RankedList
+                rows={sortedItems.map((item) => ({
+                  id: item.itemId,
+                  title: item.itemTitle,
+                  drawIndex: pickFor(item)?.drawIndex,
+                }))}
+              />
             </div>
           );
         })}
