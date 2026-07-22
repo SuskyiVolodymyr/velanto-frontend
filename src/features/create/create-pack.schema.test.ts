@@ -650,3 +650,35 @@ describe("random pool capacity", () => {
     expect(messages(result)).not.toContain("Pick a group for this round.");
   });
 });
+
+// UI-EXCLUDED:save_one_friends (velanto-frontend#368). Without this, deleting
+// `.exclude(["save_one_friends"])` from create-pack.schema.ts leaves the whole
+// suite green — the rule would not be tested at all. When the creator gains a
+// room-based body, THIS test is the one to delete, deliberately.
+describe("format", () => {
+  it.each(["save_one", "sacrifice_one", "nxn", "rank_blind", "1v1"] as const)(
+    "accepts the shipped format %s",
+    (format) => {
+      // rank_blind/1v1 have their own round shapes; only the format field is
+      // under test here, so assert no issue names `format`.
+      const result = createPackSchema.safeParse(makeValues({ format }));
+      const paths = (result.error?.issues ?? []).map((issue) =>
+        issue.path.join("."),
+      );
+      expect(paths).not.toContain("format");
+    },
+  );
+
+  it("rejects save_one_friends, which the creator has no body for", () => {
+    const result = createPackSchema.safeParse(
+      makeValues({
+        format: "save_one_friends",
+      } as unknown as Partial<CreatePackValues>),
+    );
+
+    expect(result.success).toBe(false);
+    expect(
+      (result.error?.issues ?? []).map((issue) => issue.path.join(".")),
+    ).toContain("format");
+  });
+});
