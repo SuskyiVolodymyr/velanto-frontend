@@ -52,7 +52,7 @@ export default async function PackPage({
   return (
     <>
       <div className={cn(PACK_CONTAINER, "pt-6")}>
-        <BackButton fallbackHref="/" />
+        <BackButton href="/" />
       </div>
       <PackDetailScreen pack={pack} results={results} />
     </>
