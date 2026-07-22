@@ -394,11 +394,18 @@ export function RoundsEditor() {
           type="button"
           variant="secondary"
           onClick={() => roundsArray.append(newRound(firstGroupId))}
+          className="whitespace-nowrap"
         >
           {t("addRound")}
         </Button>
-        <div className="flex items-center gap-2">
-          <Text variant="secondary" className="text-sm">
+        {/* shrink-0 + nowrap children: as one flex item this group's min-content
+            width is tiny, because its own label and button will happily wrap
+            mid-phrase. That let it squeeze into whatever space was left instead
+            of moving to the next line, shredding "Set count for all rounds"
+            into three lines with room to spare beside it. Now it either fits on
+            this line or the parent's flex-wrap takes it to its own. */}
+        <div className="flex shrink-0 items-center gap-2">
+          <Text variant="secondary" className="whitespace-nowrap text-sm">
             {t("setCountAllLabel")}
           </Text>
           <Input
@@ -411,7 +418,12 @@ export function RoundsEditor() {
             placeholder="4"
             className="w-16 text-center"
           />
-          <Button type="button" variant="secondary" onClick={applyBulkCount}>
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={applyBulkCount}
+            className="whitespace-nowrap"
+          >
             {t("setCountAll")}
           </Button>
         </div>
