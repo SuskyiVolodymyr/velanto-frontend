@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach, vi } from "vitest";
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { RankResultScreen } from "./RankResultScreen";
 import type { Pack } from "@/src/shared/types/pack";
@@ -79,7 +79,9 @@ beforeEach(() => {
 });
 
 describe("RankResultScreen", () => {
-  it("sorts items by averagePosition (best first) and shows avg/timesRanked captions", () => {
+  // The fallback list, shown when there is no play to replay: the crowd's
+  // average is the only order available there.
+  it("sorts an unplayed round by averagePosition, best first", () => {
     render(
       <RankResultScreen
         pack={RANK_PACK}
@@ -93,8 +95,24 @@ describe("RankResultScreen", () => {
       .getAllByText(/Kaikai Kitan|Redo/)
       .map((el) => el.textContent);
     expect(titles).toEqual(["Kaikai Kitan", "Redo"]);
-    expect(screen.getByText(/avg 1.*ranked 2x/)).toBeInTheDocument();
-    expect(screen.getByText(/avg 2.*ranked 2x/)).toBeInTheDocument();
+  });
+
+  // The round is a recap of YOUR ranking. The crowd's average placement, the
+  // per-item histogram and the "N other plays agreed" line all went with the
+  // rework — the podium table below is where the crowd lives now.
+  it("shows no crowd figures beside the items", () => {
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        ownPicks={[{ roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 }]}
+        shared={false}
+      />,
+    );
+
+    expect(screen.queryByText(/avg/)).toBeNull();
+    expect(screen.queryByText(/agreed/)).toBeNull();
+    expect(screen.queryByText(/ranked 2x/)).toBeNull();
   });
 
   it("labels the round with its pool name, not 'Round N', when unnamed", () => {
@@ -126,7 +144,58 @@ describe("RankResultScreen", () => {
     expect(screen.getByText("Semifinals")).toBeInTheDocument();
   });
 
-  it("highlights the player's own placement and shows an agreement count", () => {
+  // #338: a round you played reads as YOUR ranking, first place to last. The
+  // crowd's average orders the fallback below, but it is not your result.
+  it("orders a played round by the viewer's own placement", () => {
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        // The crowd puts Kaikai Kitan first; this player put Redo there.
+        ownPicks={[
+          { roundIndex: 0, groupId: "g1", itemId: "i1", position: 1 },
+          { roundIndex: 0, groupId: "g1", itemId: "i2", position: 0 },
+        ]}
+        shared={false}
+      />,
+    );
+
+    expect(
+      screen.getAllByText(/Kaikai Kitan|Redo/).map((el) => el.textContent),
+    ).toEqual(["Redo", "Kaikai Kitan"]);
+  });
+
+  it("shows where each item came in the draw", () => {
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        ownPicks={[
+          // Shown second, ranked first — the pairing the marker exists for.
+          {
+            roundIndex: 0,
+            groupId: "g1",
+            itemId: "i2",
+            position: 0,
+            drawIndex: 1,
+          },
+          {
+            roundIndex: 0,
+            groupId: "g1",
+            itemId: "i1",
+            position: 1,
+            drawIndex: 0,
+          },
+        ]}
+        shared={false}
+      />,
+    );
+
+    expect(screen.getByText("Shown #2")).toBeInTheDocument();
+    expect(screen.getByText("Shown #1")).toBeInTheDocument();
+  });
+
+  it("says nothing about the draw for a play that never recorded it", () => {
     render(
       <RankResultScreen
         pack={RANK_PACK}
@@ -136,9 +205,58 @@ describe("RankResultScreen", () => {
       />,
     );
 
-    expect(
-      screen.getByText(/You placed this #1.*1 other play agreed/),
-    ).toBeInTheDocument();
+    expect(screen.queryByText(/Shown #/)).toBeNull();
+  });
+
+  it("ranks the pack's podium finishes by first, second and third combined", () => {
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={{
+          ...RANK_RESULTS,
+          podium: [
+            {
+              itemId: "i1",
+              itemTitle: "Kaikai Kitan",
+              first: 2,
+              second: 1,
+              third: 0,
+              total: 3,
+            },
+            {
+              itemId: "i2",
+              itemTitle: "Redo",
+              first: 0,
+              second: 1,
+              third: 1,
+              total: 2,
+            },
+          ],
+        }}
+        ownPicks={null}
+        shared={false}
+      />,
+    );
+
+    const table = screen.getByRole("table");
+    const rows = within(table).getAllByRole("row").slice(1); // drop the header
+    expect(rows[0]).toHaveTextContent("Kaikai Kitan");
+    expect(rows[0]).toHaveAttribute("data-rank", "1");
+    expect(rows[1]).toHaveTextContent("Redo");
+    expect(rows[1]).toHaveAttribute("data-rank", "2");
+  });
+
+  it("shows no podium table before anyone has reached one", () => {
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={{ ...RANK_RESULTS, podium: [] }}
+        ownPicks={null}
+        shared={false}
+      />,
+    );
+
+    expect(screen.queryByRole("table")).toBeNull();
   });
 
   it("hides items that weren't in the player's own play for a round they played", () => {
@@ -214,33 +332,7 @@ describe("RankResultScreen", () => {
     expect(screen.getByText(/0 plays recorded/)).toBeInTheDocument();
   });
 
-  it("shows a Share result button for an approved pack", () => {
-    render(
-      <RankResultScreen
-        pack={RANK_PACK}
-        results={RANK_RESULTS}
-        ownPicks={null}
-        shared={false}
-      />,
-    );
-    expect(
-      screen.getByRole("button", { name: "Share result" }),
-    ).toBeInTheDocument();
-  });
-
-  it("hides the Share result button for a non-approved pack", () => {
-    render(
-      <RankResultScreen
-        pack={{ ...RANK_PACK, status: "pending" }}
-        results={RANK_RESULTS}
-        ownPicks={null}
-        shared={false}
-      />,
-    );
-    expect(
-      screen.queryByRole("button", { name: "Share result" }),
-    ).not.toBeInTheDocument();
-  });
+  // The approved/non-approved Share-button rule is owned by ResultActions.test.
 
   it("shows the shared-result note when opened via a ?p= link", async () => {
     render(
@@ -254,7 +346,6 @@ describe("RankResultScreen", () => {
     expect(
       await screen.findByText(/viewing a shared result/i),
     ).toBeInTheDocument();
-    expect(screen.getByText(/Placed #1/)).toBeInTheDocument();
-    expect(screen.queryByText(/You placed this/)).not.toBeInTheDocument();
+    expect(screen.getByText("Kaikai Kitan")).toBeInTheDocument();
   });
 });

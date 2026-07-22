@@ -70,12 +70,16 @@ test.describe("Play a pack", () => {
       // Finishing records the play (then it navigates straight to the result
       // page — no interstitial "all rounds done" screen; that redirect is
       // covered by the PlayScreen unit tests).
+      // Every DRAWN item, in draw order, `chosen` on the one picked (#336) —
+      // the round's other candidates are what the result screen shows the pick
+      // against, and a random slot draws a different subset every play.
       await expect
         .poll(() => recordBody)
         .toEqual({
           picks: [
-            { roundIndex: 0, groupId: "g1", itemId: "1" },
-            { roundIndex: 1, groupId: "g2", itemId: "3" },
+            { roundIndex: 0, groupId: "g1", itemId: "1", chosen: true },
+            { roundIndex: 0, groupId: "g1", itemId: "2", chosen: false },
+            { roundIndex: 1, groupId: "g2", itemId: "3", chosen: true },
           ],
         });
     });

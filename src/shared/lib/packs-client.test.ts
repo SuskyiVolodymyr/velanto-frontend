@@ -1,6 +1,9 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { apiClient } from "@/src/shared/lib/api-client";
-import { packsClient } from "@/src/shared/lib/packs-client";
+import {
+  packsClient,
+  type ListPacksFilters,
+} from "@/src/shared/lib/packs-client";
 import type { Pack } from "@/src/shared/types/pack";
 
 vi.mock("@/src/shared/lib/api-client", () => ({
@@ -48,154 +51,44 @@ describe("packsClient.list", () => {
     expect(result).toEqual(envelope);
   });
 
-  it("requests with no query params when no filters are given", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({
-      items: [],
-      total: 0,
-      page: 1,
-      limit: 20,
-    });
-
-    await packsClient.list();
-
-    expect(apiClient.get).toHaveBeenCalledWith("/packs");
-  });
-
-  it("forwards format and tags in the query string", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({
-      items: [],
-      total: 0,
-      page: 1,
-      limit: 20,
-    });
-
-    await packsClient.list({ format: "save_one", tags: ["Anime", "Music"] });
-
-    expect(apiClient.get).toHaveBeenCalledWith(
+  it.each([
+    ["no filters (also omits sort and window)", undefined, "/packs"],
+    [
+      "format and tags",
+      { format: "save_one", tags: ["Anime", "Music"] },
       "/packs?format=save_one&tags=Anime%2CMusic",
-    );
-  });
-
-  it("forwards page and limit in the query string", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({
-      items: [],
-      total: 0,
-      page: 2,
-      limit: 50,
-    });
-
-    await packsClient.list({ page: 2, limit: 50 });
-
-    expect(apiClient.get).toHaveBeenCalledWith("/packs?page=2&limit=50");
-  });
-
-  it("forwards q in the query string", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({
-      items: [],
-      total: 0,
-      page: 1,
-      limit: 20,
-    });
-
-    await packsClient.list({ q: "anime" });
-
-    expect(apiClient.get).toHaveBeenCalledWith("/packs?q=anime");
-  });
-
-  it("omits q from the query string when it is an empty string", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({
-      items: [],
-      total: 0,
-      page: 1,
-      limit: 20,
-    });
-
-    await packsClient.list({ q: "" });
-
-    expect(apiClient.get).toHaveBeenCalledWith("/packs");
-  });
-
-  it("includes authorId in the query string when provided", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({
-      items: [],
-      total: 0,
-      page: 1,
-      limit: 20,
-    });
-
-    await packsClient.list({ authorId: "user-1" });
-
-    expect(apiClient.get).toHaveBeenCalledWith("/packs?authorId=user-1");
-  });
-
-  it("includes status in the query string when provided", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({
-      items: [],
-      total: 0,
-      page: 1,
-      limit: 20,
-    });
-
-    await packsClient.list({ authorId: "user-1", status: "draft" });
-
-    expect(apiClient.get).toHaveBeenCalledWith(
+    ],
+    ["page and limit", { page: 2, limit: 50 }, "/packs?page=2&limit=50"],
+    ["q", { q: "anime" }, "/packs?q=anime"],
+    ["empty q omitted", { q: "" }, "/packs"],
+    ["authorId", { authorId: "user-1" }, "/packs?authorId=user-1"],
+    [
+      "authorId and status",
+      { authorId: "user-1", status: "draft" },
       "/packs?authorId=user-1&status=draft",
-    );
-  });
-
-  it("omits sort and window from the query string when not provided", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({
-      items: [],
-      total: 0,
-      page: 1,
-      limit: 20,
-    });
-
-    await packsClient.list();
-
-    expect(apiClient.get).toHaveBeenCalledWith("/packs");
-  });
-
-  it("includes sort in the query string when provided", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({
-      items: [],
-      total: 0,
-      page: 1,
-      limit: 20,
-    });
-
-    await packsClient.list({ sort: "popular" });
-
-    expect(apiClient.get).toHaveBeenCalledWith("/packs?sort=popular");
-  });
-
-  it("includes window in the query string when provided", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({
-      items: [],
-      total: 0,
-      page: 1,
-      limit: 20,
-    });
-
-    await packsClient.list({ window: "week" });
-
-    expect(apiClient.get).toHaveBeenCalledWith("/packs?window=week");
-  });
-
-  it("includes both sort and window in the query string when provided together", async () => {
-    vi.mocked(apiClient.get).mockResolvedValue({
-      items: [],
-      total: 0,
-      page: 1,
-      limit: 20,
-    });
-
-    await packsClient.list({ sort: "popular", window: "month" });
-
-    expect(apiClient.get).toHaveBeenCalledWith(
+    ],
+    ["sort", { sort: "popular" }, "/packs?sort=popular"],
+    ["window", { window: "week" }, "/packs?window=week"],
+    [
+      "sort and window together",
+      { sort: "popular", window: "month" },
       "/packs?sort=popular&window=month",
-    );
-  });
+    ],
+  ] satisfies [string, ListPacksFilters | undefined, string][])(
+    "serializes the query string: %s",
+    async (_label, filters, expectedUrl) => {
+      vi.mocked(apiClient.get).mockResolvedValue({
+        items: [],
+        total: 0,
+        page: 1,
+        limit: 20,
+      });
+
+      await packsClient.list(filters);
+
+      expect(apiClient.get).toHaveBeenCalledWith(expectedUrl);
+    },
+  );
 });
 
 describe("packsClient.delete", () => {

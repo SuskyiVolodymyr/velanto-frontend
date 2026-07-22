@@ -7,7 +7,8 @@ import {
   writeLastPlayPicks,
   writeLastPlayId,
 } from "@/src/shared/lib/last-play-storage";
-import { resolveRoundSelections } from "@/src/features/play/round-sampling";
+import { useRoundSelections } from "@/src/features/play/use-round-selections";
+import { scrollToRoundTop } from "@/src/features/play/scroll-to-round-top";
 import type { Item, Pack } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
 
@@ -92,12 +93,11 @@ export function usePlaySession(pack: Pack): PlaySession {
   const rounds = pack.rounds ?? [];
   const totalRounds = rounds.length;
 
-  // Drawn items for every round, resolved once at mount — the per-group dedup
-  // spans rounds, so the whole walk has to happen together (not per-round).
-  const selections = useMemo(
-    () => resolveRoundSelections(groups, rounds),
-    [groups, rounds],
-  );
+  // Drawn items for every round, resolved once after mount — the per-group
+  // dedup spans rounds, so the whole walk has to happen together (not
+  // per-round). Null until the client has drawn; see useRoundSelections.
+  const resolved = useRoundSelections(groups, rounds);
+  const selections = resolved ?? [];
   const groupNameById = useMemo(
     () => new Map(groups.map((group) => [group.id, group.name])),
     [groups],
@@ -148,37 +148,30 @@ export function usePlaySession(pack: Pack): PlaySession {
   const round = isVersus
     ? {
         title: roundName || `Round ${roundIndex + 1}`,
-        // Versus selection is the chosen SIDE INDEX ("0" | "1"). A two-pool
-        // round records one pick (the chosen side's group). A single-pool round
-        // records one pick per drawn item on BOTH sides, `chosen` marking the
-        // picked side — the two sides share a group id, so per-side counting is
-        // meaningless; the backend aggregates per item.
+        // Versus selection is the chosen SIDE INDEX ("0" | "1"), recorded as one
+        // pick per DRAWN ITEM across both sides — each under the pool it was
+        // drawn from, `chosen` marking the picked side.
+        //
+        // Two-pool rounds used to record only the winning pool. That named the
+        // side but not what was on it, so a result could never show the player
+        // the matchup they were looking at; single-pool always recorded per
+        // item because both sides share a group id. This is now the one shape.
+        //
+        // Emitted in SLOT order (side A then side B), not chosen-first: the
+        // array order is what tells the result screen which side each item was
+        // on, and for a single-pool round the group ids can't.
         resolvePicks(id: string): Pick[] {
           const sideIndex = id === "0" ? 0 : id === "1" ? 1 : -1;
-          const slot = currentSlots[sideIndex];
-          if (!slot) return [];
-          if (!versusSinglePool) {
-            const name = groupNameById.get(slot.groupId) ?? "";
-            return [{ roundIndex, groupId: slot.groupId, itemTitle: name }];
-          }
-          const chosenItems = currentSlots[sideIndex]?.items ?? [];
-          const otherItems = currentSlots[1 - sideIndex]?.items ?? [];
-          return [
-            ...chosenItems.map((item) => ({
+          if (!currentSlots[sideIndex]) return [];
+          return currentSlots.flatMap((slot, side) =>
+            slot.items.map((item) => ({
               roundIndex,
               groupId: slot.groupId,
               itemId: item.id,
               itemTitle: item.title,
-              chosen: true,
+              chosen: side === sideIndex,
             })),
-            ...otherItems.map((item) => ({
-              roundIndex,
-              groupId: slot.groupId,
-              itemId: item.id,
-              itemTitle: item.title,
-              chosen: false,
-            })),
-          ];
+          );
         },
       }
     : {
@@ -187,18 +180,26 @@ export function usePlaySession(pack: Pack): PlaySession {
           (currentRound
             ? (groupNameById.get(currentRound.slots[0]?.groupId ?? "") ?? "")
             : ""),
+        // One pick per DRAWN item, in draw order, `chosen` marking the one
+        // saved (save_one) or sacrificed (sacrifice_one) — the same shape the
+        // versus rounds record.
+        //
+        // Recording only the chosen item named the pick but not what it was
+        // chosen from, so the result screen could never show the slate the
+        // player was looking at. It can't be recovered from the pack either: a
+        // random slot draws a different subset every play.
         resolvePicks(id: string): Pick[] {
           const slot = currentRound?.slots[0];
-          const item = candidates.find((candidate) => candidate.id === id);
-          if (!slot || !item) return [];
-          return [
-            {
-              roundIndex,
-              groupId: slot.groupId,
-              itemId: item.id,
-              itemTitle: item.title,
-            },
-          ];
+          if (!slot || !candidates.some((candidate) => candidate.id === id)) {
+            return [];
+          }
+          return candidates.map((item) => ({
+            roundIndex,
+            groupId: slot.groupId,
+            itemId: item.id,
+            itemTitle: item.title,
+            chosen: item.id === id,
+          }));
         },
       };
 
@@ -212,6 +213,10 @@ export function usePlaySession(pack: Pack): PlaySession {
     if (roundPicks.length === 0) return;
     setPicks((prev) => [...prev, ...roundPicks]);
     setRoundIndex((prev) => prev + 1);
+    // nxn only. Its rounds are the tall ones — two sides of up to eight items
+    // each — so confirming from the bottom of one lands you in the middle of
+    // the next. An elimination round fits on a screen and doesn't need it.
+    if (isVersus) scrollToRoundTop();
     setSelectedId(null);
   }
 

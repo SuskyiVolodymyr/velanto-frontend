@@ -38,7 +38,7 @@ describe("PasswordField", () => {
     const user = userEvent.setup();
     render(<Harness />);
 
-    await user.type(screen.getByLabelText("Password"), "secret");
+    await user.type(screen.getByLabelText("Password"), "pw");
     await user.click(screen.getByRole("button", { name: "Show password" }));
 
     expect(screen.getByLabelText("Password")).toHaveAttribute("type", "text");

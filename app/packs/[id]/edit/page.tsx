@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { cn } from "@/src/shared/lib/cn";
 import { getTranslations } from "next-intl/server";
 import { getPackServer } from "@/src/shared/lib/get-pack-server";
 import { EditPackScreen } from "@/src/features/create/EditPackScreen";
@@ -25,7 +27,7 @@ export default async function EditPackPage({
   const pack = await getPackServer(id);
 
   return (
-    <main className="mx-auto w-full max-w-5xl flex-1 px-7 py-10">
+    <main className={cn(PACK_CONTAINER, "flex-1 py-10")}>
       <BackButton fallbackHref={`/packs/${id}`} className="mb-6" />
       <Text as="h1" variant="title" className="mb-2 text-3xl">
         {t("editTitle")}

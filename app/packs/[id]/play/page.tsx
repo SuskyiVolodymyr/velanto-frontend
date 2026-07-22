@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { getPackServer } from "@/src/shared/lib/get-pack-server";
 import { PlayRouter } from "@/src/features/play/PlayRouter";
 import { PlayFallback } from "@/src/features/play/PlayFallback";
-import { BackButton } from "@/src/shared/components/BackButton";
+import { PlayHeader } from "@/src/features/play/PlayHeader";
 
 export async function generateMetadata({
   params,
@@ -31,9 +31,7 @@ export default async function PlayPage({
   if (!pack) return <PlayFallback packId={id} />;
   return (
     <>
-      <div className="mx-auto w-full max-w-5xl px-7 pt-6">
-        <BackButton fallbackHref={`/packs/${id}`} />
-      </div>
+      <PlayHeader packId={id} title={pack.title} />
       <PlayRouter pack={pack} />
     </>
   );

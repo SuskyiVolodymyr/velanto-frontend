@@ -121,44 +121,35 @@ describe("FeedbackScreen", () => {
     );
   });
 
-  it("clicking a topic chip filters by topic", async () => {
+  it("topic chip, status chip, and sort toggle each feed the list call", async () => {
     mockList([makePost()]);
     render(<FeedbackScreen />);
     await waitFor(() => expect(mockedFeedbackClient.list).toHaveBeenCalled());
 
     await userEvent.click(screen.getByRole("button", { name: "Feature" }));
-
     await waitFor(() =>
       expect(mockedFeedbackClient.list).toHaveBeenCalledWith(
         expect.objectContaining({ topic: "feature" }),
       ),
     );
-  });
-
-  it("clicking a status chip filters by status", async () => {
-    mockList([makePost()]);
-    render(<FeedbackScreen />);
-    await waitFor(() => expect(mockedFeedbackClient.list).toHaveBeenCalled());
 
     await userEvent.click(screen.getByRole("button", { name: "In progress" }));
-
     await waitFor(() =>
       expect(mockedFeedbackClient.list).toHaveBeenCalledWith(
-        expect.objectContaining({ status: "in_progress" }),
+        expect.objectContaining({ topic: "feature", status: "in_progress" }),
       ),
     );
-  });
-
-  it("toggling sort to Top changes the sort in the list call", async () => {
-    mockList([makePost()]);
-    render(<FeedbackScreen />);
-    await waitFor(() => expect(mockedFeedbackClient.list).toHaveBeenCalled());
 
     await userEvent.click(screen.getByRole("button", { name: "Top" }));
-
     await waitFor(() =>
       expect(mockedFeedbackClient.list).toHaveBeenCalledWith(
-        expect.objectContaining({ sort: "top", page: 1, limit: 20 }),
+        expect.objectContaining({
+          topic: "feature",
+          status: "in_progress",
+          sort: "top",
+          page: 1,
+          limit: 20,
+        }),
       ),
     );
   });

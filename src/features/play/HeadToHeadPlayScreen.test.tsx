@@ -10,9 +10,10 @@ import { ApiError } from "@/src/shared/lib/api-client";
 import type { Pack } from "@/src/shared/types/pack";
 
 const push = vi.fn();
+const replace = vi.fn();
 
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push }),
+  useRouter: () => ({ push, replace }),
   usePathname: () => "/packs/pack-1v1/play",
 }));
 
@@ -104,6 +105,24 @@ function renderScreen(pack: Pack) {
   );
 }
 
+/**
+ * Choose a contender and commit it — 1v1 is select-then-confirm, like every
+ * other format. `last` picks the confirm label, which reads as finishing the
+ * pack on the final round.
+ */
+async function pickAndConfirm(
+  user: ReturnType<typeof userEvent.setup>,
+  name: string,
+  { last = false }: { last?: boolean } = {},
+) {
+  await user.click(screen.getByRole("button", { name: `Pick ${name}` }));
+  await user.click(
+    screen.getByRole("button", {
+      name: last ? "See results →" : "Next round →",
+    }),
+  );
+}
+
 beforeEach(() => {
   vi.clearAllMocks();
   // Pin the draw shuffle to identity so random-slot draws come out in authored
@@ -134,11 +153,10 @@ describe("HeadToHeadPlayScreen", () => {
       screen.queryByText("You need to be logged in to play a pack."),
     ).toBeNull();
 
-    await user.click(screen.getByRole("button", { name: "Pick Goku" }));
+    await pickAndConfirm(user, "Goku");
     await screen.findByText("Naruto");
-    await user.click(screen.getByRole("button", { name: "Pick Sasuke" }));
+    await pickAndConfirm(user, "Sasuke", { last: true });
 
-    expect(await screen.findByText(/All matchups done/i)).toBeInTheDocument();
     // Anon play is recorded on the backend…
     await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
     expect(vi.mocked(playsClient.record).mock.calls[0][0]).toBe("pack-1v1");
@@ -147,9 +165,36 @@ describe("HeadToHeadPlayScreen", () => {
       expect(
         JSON.parse(sessionStorage.getItem("velanto:last-play:pack-1v1")!),
       ).toEqual([
-        { roundIndex: 0, groupId: "gl" },
-        { roundIndex: 1, groupId: "gr" },
+        { roundIndex: 0, groupId: "gl", itemId: "i1", chosen: true },
+        { roundIndex: 0, groupId: "gr", itemId: "i2", chosen: false },
+        { roundIndex: 1, groupId: "gl", itemId: "i3", chosen: false },
+        { roundIndex: 1, groupId: "gr", itemId: "i4", chosen: true },
       ]),
+    );
+  });
+
+  it("records both contenders of a two-pool matchup, each under its own pool", async () => {
+    // velanto-frontend#333: this used to record only the winning pool, so
+    // which two items met was unrecoverable and per-matchup results were
+    // impossible. Each contender carries the group it was DRAWN from — the
+    // backend counts a side by its own group id plus `chosen`.
+    const user = userEvent.setup();
+    renderScreen(HEAD_TO_HEAD_PACK);
+    await screen.findByText("Goku");
+
+    await pickAndConfirm(user, "Vegeta");
+    await screen.findByText("Naruto");
+    await pickAndConfirm(user, "Naruto", { last: true });
+
+    await waitFor(() =>
+      expect(playsClient.record).toHaveBeenCalledWith("pack-1v1", {
+        picks: [
+          { roundIndex: 0, groupId: "gl", itemId: "i1", chosen: false },
+          { roundIndex: 0, groupId: "gr", itemId: "i2", chosen: true },
+          { roundIndex: 1, groupId: "gl", itemId: "i3", chosen: true },
+          { roundIndex: 1, groupId: "gr", itemId: "i4", chosen: false },
+        ],
+      }),
     );
   });
 
@@ -180,7 +225,7 @@ describe("HeadToHeadPlayScreen", () => {
     renderScreen(singlePool);
     await screen.findByText("Goku");
 
-    await user.click(screen.getByRole("button", { name: "Pick Goku" }));
+    await pickAndConfirm(user, "Goku", { last: true });
 
     await waitFor(() =>
       expect(playsClient.record).toHaveBeenCalledWith("pack-1v1", {
@@ -192,6 +237,64 @@ describe("HeadToHeadPlayScreen", () => {
     );
   });
 
+  it("selects on click and only advances once the pick is confirmed", async () => {
+    const user = userEvent.setup();
+    renderScreen(HEAD_TO_HEAD_PACK);
+    await screen.findByText("Goku");
+
+    // Every other format selects first and commits with a button; 1v1 used to
+    // advance on the click itself, so a misclick was unrecoverable.
+    const confirm = screen.getByRole("button", { name: "Next round →" });
+    expect(confirm).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: "Pick Goku" }));
+    expect(screen.getByRole("button", { name: "Pick Goku" })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
+    // Still on round 1 — the click chose a side, it did not commit it.
+    expect(screen.getByText("Round 1 of 2")).toBeInTheDocument();
+
+    // A pick is changeable right up until it's confirmed.
+    await user.click(screen.getByRole("button", { name: "Pick Vegeta" }));
+    expect(screen.getByRole("button", { name: "Pick Goku" })).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
+
+    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    // Absorbed from the retired "advances immediately after picking" test: the
+    // next matchup's own contenders are on screen, not the previous round's.
+    expect(await screen.findByText("Naruto")).toBeInTheDocument();
+    expect(screen.getByText("Sasuke")).toBeInTheDocument();
+    expect(screen.getByText("Round 2 of 2")).toBeInTheDocument();
+    // The new matchup starts unselected, so the button can't be double-fired.
+    // Round 2 of 2 is the last, so the confirm reads as finishing the pack.
+    expect(
+      screen.getByRole("button", { name: "See results →" }),
+    ).toBeDisabled();
+  });
+
+  it("labels the last matchup's confirm as finishing the pack", async () => {
+    const user = userEvent.setup();
+    renderScreen(HEAD_TO_HEAD_PACK);
+    await screen.findByText("Goku");
+
+    await user.click(screen.getByRole("button", { name: "Pick Goku" }));
+    expect(
+      screen.getByRole("button", { name: "Next round →" }),
+    ).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await screen.findByText("Naruto");
+
+    await user.click(screen.getByRole("button", { name: "Pick Sasuke" }));
+    await user.click(screen.getByRole("button", { name: "See results →" }));
+
+    // The label is the claim under test; that it actually finishes the pack is
+    // proved by the redirect the two tests below assert.
+    await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
+  });
+
   it("shows both items of the first matchup immediately", async () => {
     renderScreen(HEAD_TO_HEAD_PACK);
 
@@ -200,41 +303,67 @@ describe("HeadToHeadPlayScreen", () => {
     expect(screen.getByText("Round 1 of 2")).toBeInTheDocument();
   });
 
-  it("advances to the next matchup immediately after picking a winner", async () => {
-    const user = userEvent.setup();
-    renderScreen(HEAD_TO_HEAD_PACK);
-    await screen.findByText("Goku");
-
-    await user.click(screen.getByRole("button", { name: "Pick Goku" }));
-
-    expect(await screen.findByText("Naruto")).toBeInTheDocument();
-    expect(screen.getByText("Sasuke")).toBeInTheDocument();
-    expect(screen.getByText("Round 2 of 2")).toBeInTheDocument();
-  });
-
   it("shows the finished state with matchup history after the last pick, and records the play once", async () => {
     const user = userEvent.setup();
     renderScreen(HEAD_TO_HEAD_PACK);
     await screen.findByText("Goku");
-    await user.click(screen.getByRole("button", { name: "Pick Goku" }));
+    await pickAndConfirm(user, "Goku");
     await screen.findByText("Naruto");
-    await user.click(screen.getByRole("button", { name: "Pick Sasuke" }));
-
-    expect(await screen.findByText(/All matchups done/i)).toBeInTheDocument();
-    expect(screen.getByText("Goku")).toBeInTheDocument();
-    expect(screen.getByText(/beat/i)).toBeInTheDocument();
-    expect(screen.getByText("Vegeta")).toBeInTheDocument();
-    expect(screen.getByText("Sasuke")).toBeInTheDocument();
-    expect(screen.getByText("Naruto")).toBeInTheDocument();
+    await pickAndConfirm(user, "Sasuke", { last: true });
 
     await waitFor(() =>
       expect(playsClient.record).toHaveBeenCalledWith("pack-1v1", {
         picks: [
-          { roundIndex: 0, groupId: "gl" },
-          { roundIndex: 1, groupId: "gr" },
+          { roundIndex: 0, groupId: "gl", itemId: "i1", chosen: true },
+          { roundIndex: 0, groupId: "gr", itemId: "i2", chosen: false },
+          { roundIndex: 1, groupId: "gl", itemId: "i3", chosen: false },
+          { roundIndex: 1, groupId: "gr", itemId: "i4", chosen: true },
         ],
       }),
     );
     expect(playsClient.record).toHaveBeenCalledTimes(1);
+  });
+
+  it("goes straight to the result screen once the last pick is recorded", async () => {
+    const user = userEvent.setup();
+    renderScreen(HEAD_TO_HEAD_PACK);
+    await screen.findByText("Goku");
+    await pickAndConfirm(user, "Goku");
+    await screen.findByText("Naruto");
+    await pickAndConfirm(user, "Sasuke", { last: true });
+
+    // No interstitial "All matchups done" recap — the result screen already
+    // shows the run, so the recap was a page in the way. Matches the
+    // elimination formats, which have always redirected on finishing.
+    expect(screen.queryByText(/All matchups done/i)).toBeNull();
+    await waitFor(() =>
+      expect(replace).toHaveBeenCalledWith("/packs/pack-1v1/result"),
+    );
+  });
+
+  it("waits for the record to settle before redirecting", async () => {
+    // #222 gates the result screen on the stashed picks; leaving the play
+    // screen before the request settles is what used to land a fast player on
+    // a locked result.
+    let settle: (value: { id: string }) => void = () => undefined;
+    vi.mocked(playsClient.record).mockReturnValue(
+      new Promise((resolve) => {
+        settle = resolve;
+      }),
+    );
+    const user = userEvent.setup();
+    renderScreen(HEAD_TO_HEAD_PACK);
+    await screen.findByText("Goku");
+    await pickAndConfirm(user, "Goku");
+    await screen.findByText("Naruto");
+    await pickAndConfirm(user, "Sasuke", { last: true });
+
+    await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
+    expect(replace).not.toHaveBeenCalled();
+
+    settle({ id: "play-1" });
+    await waitFor(() =>
+      expect(replace).toHaveBeenCalledWith("/packs/pack-1v1/result"),
+    );
   });
 });

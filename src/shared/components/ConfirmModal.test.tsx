@@ -25,37 +25,23 @@ function setup(
 }
 
 describe("ConfirmModal", () => {
-  it("renders the title, message, and both actions when open", () => {
-    setup();
+  // Open/close rendering and dismissal behavior belong to Modal.test — this
+  // file only proves ConfirmModal's own wiring on top of it.
+  it("renders the title, message, and both actions, wiring confirm to onConfirm and cancel to onClose", async () => {
+    const user = userEvent.setup();
+    const { onClose, onConfirm } = setup();
     expect(
       screen.getByRole("heading", { name: "Delete this pack?" }),
     ).toBeInTheDocument();
     expect(screen.getByText("This can't be undone.")).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Delete pack" }),
-    ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Cancel" })).toBeInTheDocument();
-  });
 
-  it("renders nothing when closed", () => {
-    setup({ open: false });
-    expect(
-      screen.queryByRole("heading", { name: "Delete this pack?" }),
-    ).not.toBeInTheDocument();
-  });
-
-  it("calls onConfirm when the confirm action is clicked", async () => {
-    const user = userEvent.setup();
-    const { onConfirm } = setup();
     await user.click(screen.getByRole("button", { name: "Delete pack" }));
     expect(onConfirm).toHaveBeenCalledTimes(1);
-  });
+    expect(onClose).not.toHaveBeenCalled();
 
-  it("calls onClose when the cancel action is clicked", async () => {
-    const user = userEvent.setup();
-    const { onClose } = setup();
     await user.click(screen.getByRole("button", { name: "Cancel" }));
     expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onConfirm).toHaveBeenCalledTimes(1);
   });
 
   it("shows an error message when one is given", () => {
