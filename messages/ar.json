@@ -198,7 +198,13 @@
     "filterStaffAria": "التصفية حسب حالة الطاقم",
     "staffAll": "الكل",
     "staffOnly": "الطاقم",
-    "staffNonStaff": "غير الطاقم"
+    "staffNonStaff": "غير الطاقم",
+    "detailSecStorage": "التخزين",
+    "detailStorageUsed": "المستخدم حاليًا",
+    "detailStorageLimit": "الحد",
+    "storageUnlimited": "غير محدود",
+    "metricStorage": "التخزين",
+    "storageOfCeiling": "من {total}"
   },
   "notifications": {
     "groupNew": "جديد",

@@ -28,6 +28,15 @@ export interface UpdateEntry {
 export const UPDATES: UpdateEntry[] = [
   {
     date: "2026-07-22",
+    version: "1.7.0",
+    title: "A safer pack editor",
+    bullets: [
+      "Pressing Enter while editing a pack no longer publishes it. It used to submit the whole form from any field, so typing a title and hitting Enter out of habit sent a draft to review with no warning — and adding an item by keyboard did the same thing. Enter now does nothing in a single-line field; Publish and Save draft are the buttons that publish.",
+      "Fixed the controls under a pack's rounds breaking across three lines and spilling out of their buttons when there was plenty of room beside them.",
+    ],
+  },
+  {
+    date: "2026-07-22",
     version: "1.6.0",
     title: "Random pools, Rank Blind polish, and a Back button that means it",
     bullets: [
