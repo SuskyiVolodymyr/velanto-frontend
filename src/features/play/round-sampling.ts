@@ -1,4 +1,10 @@
-import type { Group, Item, Round, SlotMode } from "@/src/shared/types/pack";
+import type {
+  Group,
+  Item,
+  Round,
+  Slot,
+  SlotMode,
+} from "@/src/shared/types/pack";
 
 function shuffle<T>(items: readonly T[]): T[] {
   const result = [...items];
@@ -10,7 +16,9 @@ function shuffle<T>(items: readonly T[]): T[] {
 }
 
 export interface SelectedSlot {
-  groupId: string;
+  // Absent only when a random-pool slot found no free pool — see the pool pass
+  // in resolveRoundSelections. Create-time validation makes that unreachable.
+  groupId?: string;
   mode: SlotMode;
   items: Item[];
 }
@@ -35,11 +43,42 @@ export function resolveRoundSelections(
 ): SelectedRound[] {
   const groupById = new Map(groups.map((group) => [group.id, group]));
 
+  // POOLS FIRST, items second. A random-pool slot is handed a pool no other
+  // random slot took and that no slot pins: pinning consumes nothing, so a
+  // pinned pool can back every round, while randomness consumes everything it
+  // touches. Create-time validation (create-pack.refinements.ts, mirrored in
+  // the backend DTO) makes running out unreachable; if it happens anyway the
+  // slot resolves to no pool and draws nothing, because a play screen that
+  // throws is worse than a short round.
+  const takenGroupIds = new Set<string>();
+  for (const round of rounds) {
+    for (const slot of round.slots) {
+      if (slot.groupMode !== "random" && slot.groupId) {
+        takenGroupIds.add(slot.groupId);
+      }
+    }
+  }
+  // Keyed on the slot object: `rounds` is the caller's array and every slot in
+  // it is a distinct object, so identity is a safe key here.
+  const randomPoolBySlot = new Map<Slot, string>();
+  for (const round of rounds) {
+    for (const slot of round.slots) {
+      if (slot.groupMode !== "random") continue;
+      const free = groups.filter((group) => !takenGroupIds.has(group.id));
+      if (free.length === 0) continue;
+      const picked = shuffle(free)[0];
+      takenGroupIds.add(picked.id);
+      randomPoolBySlot.set(slot, picked.id);
+    }
+  }
+  const poolIdFor = (slot: Slot) =>
+    slot.groupMode === "random" ? randomPoolBySlot.get(slot) : slot.groupId;
+
   // Reserve every manually-pinned item id (that exists in its group), globally.
   const reservedByGroup = new Map<string, Set<string>>();
   for (const round of rounds) {
     for (const slot of round.slots) {
-      if (slot.mode !== "manual" || !slot.itemIds) continue;
+      if (slot.mode !== "manual" || !slot.itemIds || !slot.groupId) continue;
       const group = groupById.get(slot.groupId);
       if (!group) continue;
       const groupItemIds = new Set(group.items.map((it) => it.id));
@@ -52,7 +91,8 @@ export function resolveRoundSelections(
   const randomUsedByGroup = new Map<string, Set<string>>();
   return rounds.map((round) => ({
     slots: round.slots.map((slot) => {
-      const group = groupById.get(slot.groupId);
+      const groupId = poolIdFor(slot);
+      const group = groupId ? groupById.get(groupId) : undefined;
       const items = group?.items ?? [];
 
       if (slot.mode === "manual") {
@@ -61,11 +101,11 @@ export function resolveRoundSelections(
         const pinned = (slot.itemIds ?? [])
           .map((id) => byId.get(id))
           .filter((it): it is Item => it !== undefined);
-        return { groupId: slot.groupId, mode: slot.mode, items: pinned };
+        return { groupId, mode: slot.mode, items: pinned };
       }
 
-      const reserved = reservedByGroup.get(slot.groupId) ?? new Set<string>();
-      const used = randomUsedByGroup.get(slot.groupId) ?? new Set<string>();
+      const reserved = reservedByGroup.get(groupId ?? "") ?? new Set<string>();
+      const used = randomUsedByGroup.get(groupId ?? "") ?? new Set<string>();
       const available = items.filter(
         (item) => !reserved.has(item.id) && !used.has(item.id),
       );
@@ -75,8 +115,8 @@ export function resolveRoundSelections(
       );
       const drawn = shuffle(available).slice(0, drawnCount);
       for (const item of drawn) used.add(item.id);
-      randomUsedByGroup.set(slot.groupId, used);
-      return { groupId: slot.groupId, mode: slot.mode, items: drawn };
+      randomUsedByGroup.set(groupId ?? "", used);
+      return { groupId, mode: slot.mode, items: drawn };
     }),
   }));
 }

@@ -59,7 +59,7 @@ export default async function ResultPage({
   return (
     <>
       <div className={cn(PACK_CONTAINER, "pt-6")}>
-        <BackButton fallbackHref={`/packs/${id}`} />
+        <BackButton href={`/packs/${id}`} />
       </div>
       <ResultScreen pack={pack} />
     </>

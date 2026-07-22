@@ -13,6 +13,12 @@ export function newSlot(groupId: string): Slot {
   return { groupId, mode: "random", count: 2 };
 }
 
+// A slot handed its pool at play time. `mode` is always "random": pinning items
+// needs a known pool, so a random-pool slot can never be manual.
+export function randomSlot(count: number): Slot {
+  return { groupMode: "random", mode: "random", count };
+}
+
 // A manual slot pinning the given ordered item ids (one per place).
 export function manualSlot(groupId: string, itemIds: string[]): Slot {
   return { groupId, mode: "manual", itemIds };

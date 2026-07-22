@@ -19,6 +19,14 @@ import type { YouTubePlayer } from "@/src/shared/lib/youtube-iframe-api";
 // this watchdog is the only signal we get for it.
 const PLAYBACK_WATCHDOG_MS = 4000;
 
+// How long a video that WAS playing gets to recover after an onError before we
+// give up on it (#349). YouTube fires onError mid-playback on videos that carry
+// right on playing; treating that as fatal painted "this video can't play here"
+// over a video the viewer was watching. Shorter than the watchdog above: this
+// one runs while YouTube's own error box is on screen, so it's a visible pause,
+// where the watchdog runs over our thumbnail.
+const ERROR_RECOVERY_MS = 1500;
+
 interface YouTubeCardProps {
   videoId: string;
   /**
@@ -40,6 +48,8 @@ export function YouTubeCard({
   // Flips true once the player reports buffering/playing — proof that commanded
   // playback actually took, so the watchdog below knows not to fall back.
   const playbackStartedRef = useRef(false);
+  // Pending "did it recover?" check from an onError raised mid-playback.
+  const errorRecoveryRef = useRef<ReturnType<typeof setTimeout>>(undefined);
   // The card is a thumbnail facade until the viewer engages with it (hover or
   // the play button). Only THEN do we build a real YouTube player. This is the
   // whole point: a round with N videos loads N cheap thumbnails, not N embedded
@@ -91,7 +101,23 @@ export function YouTubeCard({
             // Controls (play/pause) only become callable once the player is
             // ready; the hover effect below drives playback off `playerReady`.
             onReady: () => setPlayerReady(true),
-            onError: () => setFailed(true),
+            // A video that has never played can't be embedded — fall back at
+            // once. One that HAS played is a different claim: "can't play here"
+            // over a running video is simply false, and YouTube raises errors
+            // mid-playback that the player recovers from on its own. So clear
+            // the started flag and give it a moment: any further buffering or
+            // playing sets the flag again and this timer finds nothing to do.
+            onError: () => {
+              if (!playbackStartedRef.current) {
+                setFailed(true);
+                return;
+              }
+              playbackStartedRef.current = false;
+              clearTimeout(errorRecoveryRef.current);
+              errorRecoveryRef.current = setTimeout(() => {
+                if (!playbackStartedRef.current) setFailed(true);
+              }, ERROR_RECOVERY_MS);
+            },
             onStateChange: (event) => {
               // Reaching buffering/playing means playback actually took — the
               // watchdog must not then fall back.
@@ -110,6 +136,7 @@ export function YouTubeCard({
       });
     return () => {
       cancelled = true;
+      clearTimeout(errorRecoveryRef.current);
       playerRef.current?.destroy();
       playerRef.current = null;
     };
@@ -122,6 +149,10 @@ export function YouTubeCard({
   useEffect(() => {
     if (!playerRef.current || !playerReady || failed) return;
     if (!hovered) {
+      // Drop any pending recovery check with it: our own pause is about to look
+      // exactly like "it never recovered", and a viewer who has moved on isn't
+      // owed a verdict. Re-hovering re-arms the watchdog below anyway.
+      clearTimeout(errorRecoveryRef.current);
       playerRef.current.pauseVideo();
       return;
     }

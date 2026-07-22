@@ -115,7 +115,10 @@ describe("RankResultScreen", () => {
     expect(screen.queryByText(/ranked 2x/)).toBeNull();
   });
 
-  it("labels the round with its pool name, not 'Round N', when unnamed", () => {
+  // #355 reversed this: an unnamed round is numbered, not named after its pool.
+  // A random-pool round has no pool name to borrow, and naming half a pack's
+  // rounds while numbering the rest read as a bug.
+  it("numbers an unnamed round instead of naming it after its pool", () => {
     render(
       <RankResultScreen
         pack={RANK_PACK}
@@ -124,8 +127,8 @@ describe("RankResultScreen", () => {
         shared={false}
       />,
     );
-    expect(screen.getByText("Openers")).toBeInTheDocument();
-    expect(screen.queryByText("Round 1")).not.toBeInTheDocument();
+    expect(screen.getByText("Round 1")).toBeInTheDocument();
+    expect(screen.queryByText("Openers")).not.toBeInTheDocument();
   });
 
   it("uses the author-given round name when the round has one", () => {

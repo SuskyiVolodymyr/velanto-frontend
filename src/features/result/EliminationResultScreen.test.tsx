@@ -102,7 +102,7 @@ describe("EliminationResultScreen", () => {
   it("shows every element the round drew, not only the one picked", () => {
     renderScreen();
 
-    const round = within(screen.getByRole("group", { name: /2016/ }));
+    const round = within(screen.getByRole("group", { name: /Round 1/ }));
     expect(round.getByText("Guren no Yumiya")).toBeInTheDocument();
     expect(round.getByText("Redo")).toBeInTheDocument();
     expect(round.getByText("Silhouette")).toBeInTheDocument();
@@ -111,7 +111,7 @@ describe("EliminationResultScreen", () => {
   it("keeps the elements in the order they were drawn", () => {
     renderScreen();
 
-    const round = within(screen.getByRole("group", { name: /2016/ }));
+    const round = within(screen.getByRole("group", { name: /Round 1/ }));
     expect(round.getAllByRole("listitem").map((li) => li.textContent)).toEqual([
       expect.stringContaining("Guren no Yumiya"),
       expect.stringContaining("Redo"),
@@ -156,7 +156,7 @@ describe("EliminationResultScreen", () => {
     // The per-round figure was a share of ALL plays over ALL the pool's items,
     // so a rarely-drawn item was capped by how often the draw surfaced it. The
     // crowd stat lives in the top table, where the denominator is appearances.
-    const round = screen.getByRole("group", { name: /2016/ });
+    const round = screen.getByRole("group", { name: /Round 1/ });
     expect(within(round).queryByText(/%/)).toBeNull();
   });
 
@@ -176,7 +176,7 @@ describe("EliminationResultScreen", () => {
       picks: [{ roundIndex: 0, groupId: "g1", itemId: "2" }],
     });
 
-    const round = within(screen.getByRole("group", { name: /2016/ }));
+    const round = within(screen.getByRole("group", { name: /Round 1/ }));
     expect(round.getAllByRole("listitem")).toHaveLength(1);
     expect(screen.getByTestId("picked")).toHaveTextContent("Redo");
   });

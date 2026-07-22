@@ -4,7 +4,7 @@ import { cn } from "@/src/shared/lib/cn";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 
 export interface PlayHeaderProps {
-  /** The pack being played — where "Back" goes when there's no history to pop. */
+  /** The pack being played — where "Back" returns to. */
   packId: string;
   title: string;
 }
@@ -42,7 +42,7 @@ export function PlayHeader({ packId, title }: PlayHeaderProps) {
       )}
     >
       <div className="sm:justify-self-start">
-        <BackButton fallbackHref={`/packs/${packId}`} />
+        <BackButton href={`/packs/${packId}`} />
       </div>
       <Text
         as="h1"

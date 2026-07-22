@@ -28,6 +28,20 @@ export interface UpdateEntry {
 export const UPDATES: UpdateEntry[] = [
   {
     date: "2026-07-22",
+    version: "1.6.0",
+    title: "Random pools, Rank Blind polish, and a Back button that means it",
+    bullets: [
+      "A round can now draw its pool at random instead of you picking one. Choose Random pool on either side of a matchup and every play pairs different pools — a pack of 26 bands gives each player a different set of 13 matchups. A random pool is used once per play, never lands against itself, and the dropdown counts down how many you have left as you add rounds.",
+      'Rounds you haven\'t named now read "Round 1", "Round 2" and so on, instead of borrowing the name of the pool they draw from. A round that picks its pool at random has no name to borrow, and naming half a pack\'s rounds while numbering the rest looked like a bug. Give a round its own name any time you want one.',
+      "A Rank Blind pack's own page now shows its Podium finishes table, the way the other four formats show their Top picked one. It was only on the result screen, so you had to play a pack to see how its items had been placed.",
+      "The recap you get between Rank Blind rounds is now the same card your result is made of, down to where each item came in the draw — so what you read mid-play matches what you keep at the end.",
+      "Placing the last item in a Rank Blind pack takes you straight to your result, instead of stopping at a page telling you that you finished. The other four formats already did this.",
+      'Fixed a video preview being replaced by "this video can\'t play here" seconds after it had started playing. YouTube reports errors on videos that then carry on playing fine, and we were taking every one of them at face value.',
+      "Back now goes to one predictable place on every page — a result and a play screen return to the pack, a pack returns to the feed — instead of retracing however you happened to arrive. You can also middle-click it or open it in a new tab now, like any other link.",
+    ],
+  },
+  {
+    date: "2026-07-22",
     version: "1.5.0",
     title: "Every result screen rebuilt, draft limits, and faster browsing",
     bullets: [

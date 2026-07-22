@@ -18,7 +18,10 @@ describe("PlayHeader", () => {
     expect(
       screen.getByRole("heading", { level: 1, name: "Best Anime Openings" }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /back/i })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /back/i })).toHaveAttribute(
+      "href",
+      "/packs/pack-a",
+    );
   });
 
   it("truncates a long title beside the back button, but wraps it below sm", () => {

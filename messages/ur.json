@@ -967,7 +967,8 @@
     "deletePackError": "پیک حذف نہیں ہو سکا۔ دوبارہ کوشش کریں۔",
     "submitPack": "جائزے کے لیے بھیجیں",
     "submittingPack": "بھیجا جا رہا ہے…",
-    "submitPackError": "یہ پیک بھیجا نہیں جا سکا۔ دوبارہ کوشش کریں۔"
+    "submitPackError": "یہ پیک بھیجا نہیں جا سکا۔ دوبارہ کوشش کریں۔",
+    "randomPoolLabel": "بے ترتیب پول"
   },
   "share": {
     "trigger": "شیئر",
@@ -981,7 +982,6 @@
     "roundOf": "{total} میں سے راؤنڈ {current}",
     "pick": "{name} چنیں",
     "nextRound": "اگلا راؤنڈ →",
-    "seeResult": "اپنا نتیجہ دیکھیں",
     "instructionSave": "جسے آپ بچانا چاہیں اسے چنیں۔ نیچے اسے چیک کریں، پھر تصدیق کریں۔",
     "instructionSacrifice": "جسے آپ قربان کرنا چاہیں اسے چنیں۔ نیچے اسے چیک کریں، پھر تصدیق کریں۔",
     "instructionNxn": "جس طرف کو آپ بچانا چاہیں اسے چنیں۔ نیچے اسے چیک کریں، پھر تصدیق کریں۔",
@@ -997,8 +997,6 @@
     "rankSlotFilled": "رینک {rank}: {title}",
     "rankSlotEmpty": "رینک {rank} پر رکھیں",
     "ranked": "{name} کو درجہ دیا گیا",
-    "rankingDone": "آپ کی رینکنگ مکمل ہو گئی",
-    "rankingDoneSummary": "تمام {count, plural, one {# راؤنڈ} other {# راؤنڈز}} بغیر دیکھے رکھ دیے گئے۔",
     "loadingResult": "آپ کے نتائج لوڈ ہو رہے ہیں…",
     "finishRound": "نتائج دیکھیں →",
     "versusSideA": "طرف A",
@@ -1149,7 +1147,8 @@
     "itemTextRequired": "یہ آئٹم خالی نہیں ہو سکتا۔",
     "editItemAria": "{title} میں ترمیم کریں",
     "saveItem": "محفوظ کریں",
-    "cancelEdit": "منسوخ"
+    "cancelEdit": "منسوخ",
+    "randomPoolOption": "بے ترتیب پول ({count} دستیاب)"
   },
   "profile": {
     "loginRequiredView": "اپنی پروفائل دیکھنے کے لیے آپ کا لاگ اِن ہونا ضروری ہے۔",

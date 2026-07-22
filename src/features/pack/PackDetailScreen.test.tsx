@@ -204,6 +204,76 @@ describe("PackDetailScreen", () => {
     ).toBeInTheDocument();
   });
 
+  // #345: rank_blind has no topItems — its pack-wide ranking is the podium, and
+  // the page fell through to the per-round stats forever without it.
+  it("ranks a rank_blind pack by its podium finishes", () => {
+    render(
+      <PackDetailScreen
+        pack={{ ...BASE_PACK, format: "rank_blind" }}
+        results={{
+          packId: "p1",
+          format: "rank_blind",
+          totalPlays: 2,
+          rounds: [],
+          podium: [
+            {
+              itemId: "i1",
+              itemTitle: "Opening A",
+              first: 2,
+              second: 1,
+              third: 0,
+              total: 3,
+            },
+          ],
+        }}
+      />,
+    );
+
+    expect(
+      screen.getByRole("table", { name: "Podium finishes" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Player stats")).not.toBeInTheDocument();
+  });
+
+  it("falls back to the per-round stats until a rank_blind pack has a podium", () => {
+    render(
+      <PackDetailScreen
+        pack={{ ...BASE_PACK, format: "rank_blind" }}
+        results={{
+          packId: "p1",
+          format: "rank_blind",
+          totalPlays: 0,
+          rounds: [],
+          podium: [],
+        }}
+      />,
+    );
+
+    expect(screen.getByText("Player stats")).toBeInTheDocument();
+    expect(screen.queryByRole("table")).toBeNull();
+  });
+
+  // #355: a round whose pool is drawn at play time has no pool name to put on
+  // its chip, and no author name either — so it says what it is.
+  it("labels a random-pool round on its chip", () => {
+    render(
+      <PackDetailScreen
+        pack={{
+          ...BASE_PACK,
+          rounds: [
+            {
+              id: "r1",
+              slots: [{ groupMode: "random", mode: "random", count: 2 }],
+            },
+          ],
+        }}
+        results={RESULTS}
+      />,
+    );
+
+    expect(screen.getByText("Random pool")).toBeInTheDocument();
+  });
+
   it("wires the owner/moderator actions to this pack", () => {
     render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
     expect(screen.getByText("PackOwnerActions:p1:u1")).toBeInTheDocument();

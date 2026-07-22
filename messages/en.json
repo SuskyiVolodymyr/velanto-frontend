@@ -1061,7 +1061,8 @@
     "deletePackError": "Couldn't delete the pack. Try again.",
     "submitPack": "Submit for review",
     "submittingPack": "Submitting…",
-    "submitPackError": "Couldn't submit this pack. Please try again."
+    "submitPackError": "Couldn't submit this pack. Please try again.",
+    "randomPoolLabel": "Random pool"
   },
   "share": {
     "trigger": "Share",
@@ -1075,7 +1076,6 @@
     "roundOf": "Round {current} of {total}",
     "pick": "Pick {name}",
     "nextRound": "Next round →",
-    "seeResult": "See your result",
     "instructionSave": "Pick the one you'd save. Check it below, then confirm.",
     "instructionSacrifice": "Pick the one you'd sacrifice. Check it below, then confirm.",
     "instructionNxn": "Pick the side you'd save. Check it below, then confirm.",
@@ -1091,8 +1091,6 @@
     "rankSlotFilled": "Rank {rank}: {title}",
     "rankSlotEmpty": "Place at rank {rank}",
     "ranked": "{name} ranked",
-    "rankingDone": "Your ranking is done",
-    "rankingDoneSummary": "All {count, plural, one {# round} other {# rounds}} placed, blind.",
     "loadingResult": "Loading your results…",
     "finishRound": "See results →",
     "versusSideA": "Side A",
@@ -1243,7 +1241,8 @@
     "itemTextRequired": "This item can't be empty.",
     "editItemAria": "Edit {title}",
     "saveItem": "Save",
-    "cancelEdit": "Cancel"
+    "cancelEdit": "Cancel",
+    "randomPoolOption": "Random pool ({count} available)"
   },
   "profile": {
     "loginRequiredView": "You need to be logged in to view your profile.",

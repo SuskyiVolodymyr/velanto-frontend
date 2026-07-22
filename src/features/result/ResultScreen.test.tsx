@@ -135,7 +135,7 @@ describe("ResultScreen", () => {
     );
     // The item you passed over is shown too — that is the point of the rework.
     // Scoped to the round: the ranking below lists it as well.
-    const round = screen.getByRole("group", { name: /2016/ });
+    const round = screen.getByRole("group", { name: /Round 1/ });
     expect(within(round).getByText("Redo")).toBeInTheDocument();
     expect(screen.getByText(/4 plays recorded/)).toBeInTheDocument();
   });

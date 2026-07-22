@@ -66,4 +66,24 @@ describe("packToFormValues", () => {
     expect(values).not.toHaveProperty("status");
     expect(values).not.toHaveProperty("likes");
   });
+
+  // #355: a random-pool slot has no groupId, and the edit form must not invent
+  // one — re-saving would silently pin a pool the author never chose.
+  it("round-trips a random-pool slot untouched", () => {
+    const values = packToFormValues({
+      ...PACK,
+      rounds: [
+        {
+          id: "r1",
+          slots: [{ groupMode: "random", mode: "random", count: 2 }],
+        },
+      ],
+    });
+
+    expect(values.rounds[0].slots[0]).toEqual({
+      groupMode: "random",
+      mode: "random",
+      count: 2,
+    });
+  });
 });
