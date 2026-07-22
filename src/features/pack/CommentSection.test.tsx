@@ -768,6 +768,134 @@ describe("CommentSection", () => {
     });
   });
 
+  describe("posted-at timestamp", () => {
+    // Freeze the clock so the relative label is deterministic: COMMENT_A was
+    // posted 2026-01-01T00:00:00Z, "now" is three hours later.
+    beforeEach(() => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+      vi.setSystemTime(new Date("2026-01-01T03:00:00.000Z"));
+    });
+    afterEach(() => vi.useRealTimers());
+
+    it("renders each comment's posted-at as a relative <time> carrying the exact ISO instant", async () => {
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items: [COMMENT_A],
+        total: 1,
+        page: 1,
+        limit: 10,
+      });
+      const { container } = renderAsUnauthenticated();
+
+      await screen.findByText("Loved this pack.");
+      const posted = container.querySelector("time");
+      expect(posted).not.toBeNull();
+      // Machine-readable instant is the raw ISO string, not the label.
+      expect(posted).toHaveAttribute("datetime", COMMENT_A.createdAt);
+      expect(posted).toHaveTextContent("3 hours ago");
+    });
+
+    it("renders a timestamp for a reply as well as for its root", async () => {
+      const reply: Comment = {
+        id: "reply-1",
+        packId: "pack-1",
+        authorId: "u3",
+        authorUsername: "carol",
+        body: "I agree with this.",
+        // One hour after the root, i.e. two hours before "now".
+        createdAt: "2026-01-01T01:00:00.000Z",
+        parentId: "c1",
+      };
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items: [{ ...COMMENT_A, replyCount: 1, replies: [reply] }],
+        total: 1,
+        page: 1,
+        limit: 10,
+      });
+      const { container } = renderAsUnauthenticated();
+
+      await screen.findByText("I agree with this.");
+      const times = [...container.querySelectorAll("time")];
+      expect(times.map((el) => el.getAttribute("datetime"))).toEqual([
+        COMMENT_A.createdAt,
+        reply.createdAt,
+      ]);
+      expect(times[1]).toHaveTextContent("2 hours ago");
+    });
+
+    it("renders the comment without a <time> when the timestamp is unusable", async () => {
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items: [{ ...COMMENT_A, createdAt: "not-a-date" }],
+        total: 1,
+        page: 1,
+        limit: 10,
+      });
+      const { container } = renderAsUnauthenticated();
+
+      // The comment still renders — a bad timestamp must not take the entry
+      // down (Intl.RelativeTimeFormat throws a RangeError on NaN).
+      expect(await screen.findByText("Loved this pack.")).toBeInTheDocument();
+      expect(container.querySelector("time")).toBeNull();
+    });
+  });
+
+  describe("thread dividers", () => {
+    const REPLY_ONE: Comment = {
+      id: "reply-1",
+      packId: "pack-1",
+      authorId: "u3",
+      authorUsername: "carol",
+      body: "First reply.",
+      createdAt: "2026-01-02T00:00:00.000Z",
+      parentId: "c1",
+    };
+    const REPLY_TWO: Comment = {
+      ...REPLY_ONE,
+      id: "reply-2",
+      authorId: "u4",
+      authorUsername: "dave",
+      body: "Second reply.",
+      createdAt: "2026-01-03T00:00:00.000Z",
+    };
+
+    function listOnce(items: Comment[]) {
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items,
+        total: items.length,
+        page: 1,
+        limit: 10,
+      });
+    }
+
+    it("draws no divider on a root with no replies", async () => {
+      listOnce([COMMENT_A]);
+      const { container } = renderAsUnauthenticated();
+
+      await screen.findByText("Loved this pack.");
+      expect(container.querySelectorAll("hr")).toHaveLength(0);
+    });
+
+    it("draws one divider between a root and its single reply, and none after the last reply", async () => {
+      listOnce([{ ...COMMENT_A, replyCount: 1, replies: [REPLY_ONE] }]);
+      const { container } = renderAsUnauthenticated();
+
+      await screen.findByText("First reply.");
+      // Root → reply only. A trailing rule under the last reply would sit on
+      // the card's own edge.
+      expect(container.querySelectorAll("hr")).toHaveLength(1);
+    });
+
+    it("draws a divider between every pair of entries in a longer thread but not after the last", async () => {
+      listOnce([
+        { ...COMMENT_A, replyCount: 2, replies: [REPLY_ONE, REPLY_TWO] },
+      ]);
+      const { container } = renderAsUnauthenticated();
+
+      await screen.findByText("Second reply.");
+      // Three entries → two rules.
+      expect(container.querySelectorAll("hr")).toHaveLength(2);
+    });
+  });
+
   it("highlights an @mention in a comment body", async () => {
     const mentioning: Comment = { ...COMMENT_A, body: "great point @alice" };
     vi.mocked(commentsClient.list).mockResolvedValue({
