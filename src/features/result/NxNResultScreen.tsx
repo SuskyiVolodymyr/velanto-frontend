@@ -59,9 +59,7 @@ function playedRounds(
   for (const [roundIndex, picks] of [...byRound.entries()].sort(
     (a, b) => a[0] - b[0],
   )) {
-    const boundary = picks.findIndex(
-      (pick) => pick.chosen !== picks[0].chosen,
-    );
+    const boundary = picks.findIndex((pick) => pick.chosen !== picks[0].chosen);
     // Every item on one side means only one side was recorded — not a matchup.
     if (boundary <= 0) continue;
 
@@ -180,20 +178,16 @@ export function NxNResultScreen({
  * One played round: the two sides either side of a centre column carrying the
  * round's name. Below `sm` the three stack, each on its own row.
  */
-function RoundRow({
-  round,
-  heading,
-}: {
-  round: PlayedRound;
-  heading: string;
-}) {
+function RoundRow({ round, heading }: { round: PlayedRound; heading: string }) {
   const t = useTranslations("result");
   return (
     <div
       role="group"
       aria-label={t("nxnRoundLabel", {
         heading,
-        picked: (round.left.picked ? round.left : round.right).titles.join(", "),
+        picked: (round.left.picked ? round.left : round.right).titles.join(
+          ", ",
+        ),
       })}
       // The centre column is a FIXED width, not `auto`: sized to its content it
       // grew with the round's name, so a long name shrank both cards and every

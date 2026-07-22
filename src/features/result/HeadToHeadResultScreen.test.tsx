@@ -199,8 +199,7 @@ describe("HeadToHeadResultScreen", () => {
     renderScreen();
 
     const table = screen.getByRole("table", { name: /top picked/i });
-    const bodyRows = () =>
-      within(table).getAllByRole("row").slice(1); // drop the header row
+    const bodyRows = () => within(table).getAllByRole("row").slice(1); // drop the header row
     expect(bodyRows()).toHaveLength(10);
     expect(within(table).getByText("Item 1")).toBeInTheDocument();
     expect(within(table).queryByText("Item 11")).toBeNull();
@@ -219,16 +218,38 @@ describe("HeadToHeadResultScreen", () => {
     // second is not awarded. A third item matches the percentage but not the
     // pick count, which is a different result and ranks on its own.
     const tie: ItemTally[] = [
-      { itemId: "a", itemTitle: "Alpha", picked: 27, appeared: 30, percentage: 90 },
-      { itemId: "b", itemTitle: "Beta", picked: 27, appeared: 30, percentage: 90 },
-      { itemId: "c", itemTitle: "Gamma", picked: 9, appeared: 10, percentage: 90 },
-      { itemId: "d", itemTitle: "Delta", picked: 1, appeared: 10, percentage: 10 },
+      {
+        itemId: "a",
+        itemTitle: "Alpha",
+        picked: 27,
+        appeared: 30,
+        percentage: 90,
+      },
+      {
+        itemId: "b",
+        itemTitle: "Beta",
+        picked: 27,
+        appeared: 30,
+        percentage: 90,
+      },
+      {
+        itemId: "c",
+        itemTitle: "Gamma",
+        picked: 9,
+        appeared: 10,
+        percentage: 90,
+      },
+      {
+        itemId: "d",
+        itemTitle: "Delta",
+        picked: 1,
+        appeared: 10,
+        percentage: 10,
+      },
     ];
     renderScreen({ topItems: tie });
 
-    const rows = within(
-      screen.getByRole("table", { name: /top picked/i }),
-    )
+    const rows = within(screen.getByRole("table", { name: /top picked/i }))
       .getAllByRole("row")
       .slice(1);
     expect(rows.map((row) => row.getAttribute("data-rank"))).toEqual([
@@ -241,15 +262,31 @@ describe("HeadToHeadResultScreen", () => {
 
   it("gives the top three podium outlines, following rank rather than row order", () => {
     const tie: ItemTally[] = [
-      { itemId: "a", itemTitle: "Alpha", picked: 9, appeared: 10, percentage: 90 },
-      { itemId: "b", itemTitle: "Beta", picked: 9, appeared: 10, percentage: 90 },
-      { itemId: "c", itemTitle: "Gamma", picked: 5, appeared: 10, percentage: 50 },
+      {
+        itemId: "a",
+        itemTitle: "Alpha",
+        picked: 9,
+        appeared: 10,
+        percentage: 90,
+      },
+      {
+        itemId: "b",
+        itemTitle: "Beta",
+        picked: 9,
+        appeared: 10,
+        percentage: 90,
+      },
+      {
+        itemId: "c",
+        itemTitle: "Gamma",
+        picked: 5,
+        appeared: 10,
+        percentage: 50,
+      },
     ];
     renderScreen({ topItems: tie });
 
-    const rows = within(
-      screen.getByRole("table", { name: /top picked/i }),
-    )
+    const rows = within(screen.getByRole("table", { name: /top picked/i }))
       .getAllByRole("row")
       .slice(1);
     // Both firsts are gold; the next row is third, so it takes BRONZE and
