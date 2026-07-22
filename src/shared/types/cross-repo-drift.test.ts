@@ -30,6 +30,7 @@ import {
   PACK_STATUSES,
   PACK_TAGS,
   SLOT_MODES,
+  GROUP_MODES,
 } from "@/src/shared/types/pack";
 import {
   FEEDBACK_TOPICS,
@@ -70,6 +71,13 @@ describe("cross-repo mirrored constants (velanto-backend contract)", () => {
   // SLOT_MODES — MIRRORED in velanto-backend src/modules/packs/types/round.ts.
   it("SLOT_MODES", () => {
     expect([...SLOT_MODES]).toEqual(["random", "manual"]);
+  });
+
+  // GROUP_MODES — MIRRORED in velanto-backend src/modules/packs/types/round.ts.
+  // How a slot gets its POOL, as opposed to SLOT_MODES' how it gets its ITEMS.
+  // Absent on a slot means "fixed", which is why every stored pack survives.
+  it("GROUP_MODES", () => {
+    expect([...GROUP_MODES]).toEqual(["fixed", "random"]);
   });
 
   // PACK_STATUSES — MIRRORED in velanto-backend

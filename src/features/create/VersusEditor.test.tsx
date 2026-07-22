@@ -41,6 +41,8 @@ function RoundsReadout() {
         rounds.map((r) => ({
           a: r.slots[0]?.groupId,
           b: r.slots[1]?.groupId,
+          ma: r.slots[0]?.groupMode,
+          mb: r.slots[1]?.groupMode,
           ca: r.slots[0]?.count,
           cb: r.slots[1]?.count,
         })),
@@ -160,5 +162,64 @@ describe("VersusEditor", () => {
       screen.queryByLabelText("Items per side for round 1"),
     ).not.toBeInTheDocument();
     expect(screen.getByText("1 per side")).toBeInTheDocument();
+  });
+
+  // #355: a side can ask for a pool instead of naming one. The option's label
+  // carries how many are still free, so the capacity rule reads as a countdown
+  // in the dropdown rather than an error at submit.
+  describe("random pool", () => {
+    it("offers Random pool first, counting the pools still free", () => {
+      render(<Harness format="nxn" perSide={2} />);
+
+      const sideA = screen.getByLabelText("Side A for round 1");
+      const [first] = Array.from(sideA.querySelectorAll("option"));
+      // Both pools are pinned across the two rounds, so none are free.
+      expect(first).toHaveTextContent("Random pool (0 available)");
+      expect(first).toHaveValue("__random__");
+    });
+
+    it("counts the other side of the same round against what is free", async () => {
+      const user = userEvent.setup();
+      render(<Harness format="nxn" perSide={2} />);
+
+      // Free both pools by making side A of each round random…
+      await user.selectOptions(screen.getByLabelText("Side A for round 1"), "__random__");
+      await user.selectOptions(screen.getByLabelText("Side A for round 2"), "__random__");
+      // …now side B of round 1 sees: 2 pools, 1 still pinned (round 2's B),
+      // minus the 2 random slots already declared.
+      const optionB = screen
+        .getByLabelText("Side B for round 1")
+        .querySelector("option")!;
+      expect(optionB).toHaveTextContent("Random pool (0 available)");
+    });
+
+    it("replaces the slot rather than leaving a stale group id beside it", async () => {
+      const user = userEvent.setup();
+      render(<Harness format="nxn" perSide={2} />);
+
+      await user.selectOptions(
+        screen.getByLabelText("Side A for round 1"),
+        "__random__",
+      );
+
+      const [round1] = readRounds();
+      expect(round1.a).toBeUndefined();
+      expect(round1.ma).toBe("random");
+      // The per-side draw count survives the switch.
+      expect(round1.ca).toBe(2);
+    });
+
+    it("goes back to a named pool cleanly", async () => {
+      const user = userEvent.setup();
+      render(<Harness format="nxn" perSide={2} />);
+      const sideA = screen.getByLabelText("Side A for round 1");
+
+      await user.selectOptions(sideA, "__random__");
+      await user.selectOptions(sideA, "girls");
+
+      const [round1] = readRounds();
+      expect(round1.a).toBe("girls");
+      expect(round1.ma).toBeUndefined();
+    });
   });
 });

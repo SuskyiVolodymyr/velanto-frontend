@@ -1061,7 +1061,8 @@
     "deletePackError": "Couldn't delete the pack. Try again.",
     "submitPack": "Submit for review",
     "submittingPack": "Submitting…",
-    "submitPackError": "Couldn't submit this pack. Please try again."
+    "submitPackError": "Couldn't submit this pack. Please try again.",
+    "randomPoolLabel": "Random pool"
   },
   "share": {
     "trigger": "Share",
@@ -1240,7 +1241,8 @@
     "itemTextRequired": "This item can't be empty.",
     "editItemAria": "Edit {title}",
     "saveItem": "Save",
-    "cancelEdit": "Cancel"
+    "cancelEdit": "Cancel",
+    "randomPoolOption": "Random pool ({count} available)"
   },
   "profile": {
     "loginRequiredView": "You need to be logged in to view your profile.",

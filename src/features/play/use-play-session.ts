@@ -115,15 +115,19 @@ export function usePlaySession(pack: Pack): PlaySession {
   // Versus sides are per ROUND now (matchups may vary) — read them off the
   // CURRENT round's two slots. Undefined once play is finished (no round).
   const currentSlots = currentRound?.slots ?? [];
+  // A resolved slot has no pool only when a random one found none free, which
+  // create-time validation makes unreachable — but the side is then genuinely
+  // unknown, so it is left undefined rather than faked with an empty id that
+  // would be recorded and rejected by the API.
   const sideA: VersusSide | undefined =
-    isVersus && currentSlots[0]
+    isVersus && currentSlots[0]?.groupId
       ? {
           id: currentSlots[0].groupId,
           name: groupNameById.get(currentSlots[0].groupId) ?? "",
         }
       : undefined;
   const sideB: VersusSide | undefined =
-    isVersus && currentSlots[1]
+    isVersus && currentSlots[1]?.groupId
       ? {
           id: currentSlots[1].groupId,
           name: groupNameById.get(currentSlots[1].groupId) ?? "",
@@ -163,10 +167,15 @@ export function usePlaySession(pack: Pack): PlaySession {
         resolvePicks(id: string): Pick[] {
           const sideIndex = id === "0" ? 0 : id === "1" ? 1 : -1;
           if (!currentSlots[sideIndex]) return [];
+          // A side with no resolved pool can't be recorded — its group id is
+          // what the API counts the side by. Unreachable in practice (see the
+          // sides above); dropping the round beats sending a pick the API will
+          // reject and silently lose the whole play.
+          if (currentSlots.some((slot) => !slot.groupId)) return [];
           return currentSlots.flatMap((slot, side) =>
             slot.items.map((item) => ({
               roundIndex,
-              groupId: slot.groupId,
+              groupId: slot.groupId!,
               itemId: item.id,
               itemTitle: item.title,
               chosen: side === sideIndex,
@@ -193,9 +202,11 @@ export function usePlaySession(pack: Pack): PlaySession {
           if (!slot || !candidates.some((candidate) => candidate.id === id)) {
             return [];
           }
+          if (!slot.groupId) return [];
+          const groupId = slot.groupId;
           return candidates.map((item) => ({
             roundIndex,
-            groupId: slot.groupId,
+            groupId,
             itemId: item.id,
             itemTitle: item.title,
             chosen: item.id === id,

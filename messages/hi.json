@@ -967,7 +967,8 @@
     "deletePackError": "पैक हटाया नहीं जा सका। फिर से प्रयास करें।",
     "submitPack": "समीक्षा के लिए भेजें",
     "submittingPack": "भेजा जा रहा है…",
-    "submitPackError": "यह पैक सबमिट नहीं हो सका। कृपया पुनः प्रयास करें।"
+    "submitPackError": "यह पैक सबमिट नहीं हो सका। कृपया पुनः प्रयास करें।",
+    "randomPoolLabel": "यादृच्छिक पूल"
   },
   "share": {
     "trigger": "शेयर",
@@ -1146,7 +1147,8 @@
     "itemTextRequired": "यह आइटम खाली नहीं हो सकता।",
     "editItemAria": "{title} संपादित करें",
     "saveItem": "सहेजें",
-    "cancelEdit": "रद्द करें"
+    "cancelEdit": "रद्द करें",
+    "randomPoolOption": "यादृच्छिक पूल ({count} उपलब्ध)"
   },
   "profile": {
     "loginRequiredView": "अपनी प्रोफ़ाइल देखने के लिए आपको लॉग इन करना होगा।",

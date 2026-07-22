@@ -967,7 +967,8 @@
     "deletePackError": "Не удалось удалить пак. Попробуйте снова.",
     "submitPack": "Отправить на проверку",
     "submittingPack": "Отправка…",
-    "submitPackError": "Не удалось отправить пак. Попробуйте ещё раз."
+    "submitPackError": "Не удалось отправить пак. Попробуйте ещё раз.",
+    "randomPoolLabel": "Случайный пул"
   },
   "share": {
     "trigger": "Поделиться",
@@ -1146,7 +1147,8 @@
     "itemTextRequired": "Этот элемент не может быть пустым.",
     "editItemAria": "Изменить {title}",
     "saveItem": "Сохранить",
-    "cancelEdit": "Отмена"
+    "cancelEdit": "Отмена",
+    "randomPoolOption": "Случайный пул (доступно: {count})"
   },
   "profile": {
     "loginRequiredView": "Чтобы посмотреть свой профиль, нужно войти в аккаунт.",

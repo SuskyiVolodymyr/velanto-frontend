@@ -967,7 +967,8 @@
     "deletePackError": "Не вдалося видалити пак. Спробуйте ще раз.",
     "submitPack": "Надіслати на перевірку",
     "submittingPack": "Надсилання…",
-    "submitPackError": "Не вдалося надіслати пак. Спробуйте ще раз."
+    "submitPackError": "Не вдалося надіслати пак. Спробуйте ще раз.",
+    "randomPoolLabel": "Випадковий пул"
   },
   "share": {
     "trigger": "Поділитися",
@@ -1146,7 +1147,8 @@
     "itemTextRequired": "Цей елемент не може бути порожнім.",
     "editItemAria": "Редагувати {title}",
     "saveItem": "Зберегти",
-    "cancelEdit": "Скасувати"
+    "cancelEdit": "Скасувати",
+    "randomPoolOption": "Випадковий пул (доступно: {count})"
   },
   "profile": {
     "loginRequiredView": "Щоб переглянути свій профіль, спершу увійди.",

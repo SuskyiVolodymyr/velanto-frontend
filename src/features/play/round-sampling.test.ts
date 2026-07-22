@@ -147,3 +147,77 @@ describe("resolveRoundSelections", () => {
     expect(result[0].slots[1].groupId).toBe("cb");
   });
 });
+
+// #355: a slot can leave its pool unnamed and be handed one at play time. A
+// random pool is CONSUMED — gone for every other random slot in the pack — while
+// a pinned pool is never drawn and never consumed.
+describe("random pool assignment", () => {
+  const pools = ["g1", "g2", "g3"].map((id) => ({
+    id,
+    name: id,
+    items: [
+      { id: `${id}-a`, type: "text" as const, title: "A", value: "A" },
+      { id: `${id}-b`, type: "text" as const, title: "B", value: "B" },
+    ],
+  }));
+  const randomSlot = () => ({
+    groupMode: "random" as const,
+    mode: "random" as const,
+    count: 1,
+  });
+  const pinned = (groupId: string) => ({
+    groupId,
+    mode: "random" as const,
+    count: 1,
+  });
+
+  it("never gives two random slots the same pool", () => {
+    const rounds = [
+      { id: "r1", slots: [randomSlot(), randomSlot()] },
+      { id: "r2", slots: [randomSlot()] },
+    ];
+    const drawn = resolveRoundSelections(pools, rounds).flatMap((round) =>
+      round.slots.map((slot) => slot.groupId),
+    );
+    expect(new Set(drawn).size).toBe(3);
+  });
+
+  it("never draws a pool that a fixed slot pins", () => {
+    const rounds = [
+      { id: "r1", slots: [pinned("g1")] },
+      { id: "r2", slots: [randomSlot()] },
+      { id: "r3", slots: [randomSlot()] },
+    ];
+    const drawn = resolveRoundSelections(pools, rounds)
+      .slice(1)
+      .map((round) => round.slots[0].groupId);
+    expect(drawn).not.toContain("g1");
+    expect(new Set(drawn)).toEqual(new Set(["g2", "g3"]));
+  });
+
+  // Pinning consumes nothing — the existing behaviour, asserted here so the new
+  // consumption rule can't leak into it.
+  it("lets a pinned pool back every round", () => {
+    const rounds = [1, 2, 3].map((n) => ({ id: `r${n}`, slots: [pinned("g1")] }));
+    const drawn = resolveRoundSelections(pools, rounds).map(
+      (round) => round.slots[0].groupId,
+    );
+    expect(drawn).toEqual(["g1", "g1", "g1"]);
+  });
+
+  it("resolves to no pool rather than throwing when pools run out", () => {
+    const rounds = [
+      { id: "r1", slots: [randomSlot(), randomSlot(), randomSlot(), randomSlot()] },
+    ];
+    const [round] = resolveRoundSelections(pools, rounds);
+    expect(round.slots[3].groupId).toBeUndefined();
+    expect(round.slots[3].items).toEqual([]);
+  });
+
+  it("draws items from the pool it was given", () => {
+    const rounds = [{ id: "r1", slots: [randomSlot()] }];
+    const [round] = resolveRoundSelections(pools, rounds);
+    const pool = pools.find((p) => p.id === round.slots[0].groupId)!;
+    expect(pool.items.map((i) => i.id)).toContain(round.slots[0].items[0].id);
+  });
+});

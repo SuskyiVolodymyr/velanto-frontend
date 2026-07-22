@@ -967,7 +967,8 @@
     "deletePackError": "تعذّر حذف الحزمة. حاول مرة أخرى.",
     "submitPack": "إرسال للمراجعة",
     "submittingPack": "جارٍ الإرسال…",
-    "submitPackError": "تعذّر إرسال هذه الحزمة. حاول مرة أخرى."
+    "submitPackError": "تعذّر إرسال هذه الحزمة. حاول مرة أخرى.",
+    "randomPoolLabel": "مجموعة عشوائية"
   },
   "share": {
     "trigger": "مشاركة",
@@ -1146,7 +1147,8 @@
     "itemTextRequired": "لا يمكن أن يكون هذا العنصر فارغًا.",
     "editItemAria": "تحرير {title}",
     "saveItem": "حفظ",
-    "cancelEdit": "إلغاء"
+    "cancelEdit": "إلغاء",
+    "randomPoolOption": "مجموعة عشوائية ({count} متاحة)"
   },
   "profile": {
     "loginRequiredView": "يجب تسجيل الدخول لعرض ملفك الشخصي.",

@@ -55,9 +55,17 @@ function validateGroupsAndRefs(pack: PackDraft, ctx: z.RefinementCtx): boolean {
   }
 
   const groupIds = new Set(pack.groups.map((group) => group.id));
+  const pinnedGroupIds = new Set<string>();
+  let randomSlotCount = 0;
   pack.rounds.forEach((round, ri) => {
     round.slots.forEach((slot, si) => {
-      if (!groupIds.has(slot.groupId)) {
+      // A random-pool slot names no group by design — nothing to pick.
+      if (slot.groupMode === "random") {
+        randomSlotCount += 1;
+        return;
+      }
+      if (slot.groupId) pinnedGroupIds.add(slot.groupId);
+      if (!slot.groupId || !groupIds.has(slot.groupId)) {
         ctx.addIssue({
           code: "custom",
           path: ["rounds", ri, "slots", si, "groupId"],
@@ -67,6 +75,20 @@ function validateGroupsAndRefs(pack: PackDraft, ctx: z.RefinementCtx): boolean {
       }
     });
   });
+
+  // A random pool is consumed once drawn — gone for every other random slot in
+  // the pack — and a pinned pool is never drawn at all. So the pack can only
+  // afford as many random slots as it has pools left over after pinning.
+  // Mirrors velanto-backend create-pack.dto.ts.
+  const availablePools = pack.groups.length - pinnedGroupIds.size;
+  if (randomSlotCount > availablePools) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["rounds"],
+      message: `This pack needs ${randomSlotCount} random pools but only ${availablePools} ${availablePools === 1 ? "is" : "are"} available.`,
+    });
+    ok = false;
+  }
   return ok;
 }
 
@@ -106,13 +128,18 @@ export function validateElimination(pack: PackDraft, ctx: z.RefinementCtx) {
       return;
     }
     const slot = round.slots[0];
-    const group = groupById.get(slot.groupId);
-    if (!group) return;
+    const group =
+      slot.groupMode === "random" ? undefined : groupById.get(slot.groupId!);
+    // A fixed slot with no group already reported a dangling ref above; a
+    // random one legitimately has none, and its count is still checked below.
+    if (!group && slot.groupMode !== "random") return;
 
-    if (slot.mode === "manual") {
+    // `group` is defined here: a random-pool slot can't be manual — pinning
+    // item ids needs a known pool.
+    if (slot.mode === "manual" && group) {
       const itemIds = slot.itemIds ?? [];
       const groupItemIds = new Set(group.items.map((item) => item.id));
-      const pinned = pinnedByGroup.get(slot.groupId) ?? new Set<string>();
+      const pinned = pinnedByGroup.get(slot.groupId!) ?? new Set<string>();
       itemIds.forEach((id, ii) => {
         if (!groupItemIds.has(id)) {
           ctx.addIssue({
@@ -130,7 +157,7 @@ export function validateElimination(pack: PackDraft, ctx: z.RefinementCtx) {
           pinned.add(id);
         }
       });
-      pinnedByGroup.set(slot.groupId, pinned);
+      pinnedByGroup.set(slot.groupId!, pinned);
       if (itemIds.length < ELIMINATION_MIN_DRAW) {
         ctx.addIssue({
           code: "custom",

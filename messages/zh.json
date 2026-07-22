@@ -967,7 +967,8 @@
     "deletePackError": "无法删除题包，请重试。",
     "submitPack": "提交审核",
     "submittingPack": "提交中…",
-    "submitPackError": "无法提交该合集，请重试。"
+    "submitPackError": "无法提交该合集，请重试。",
+    "randomPoolLabel": "随机池"
   },
   "share": {
     "trigger": "分享",
@@ -1146,7 +1147,8 @@
     "itemTextRequired": "此项目不能为空。",
     "editItemAria": "编辑 {title}",
     "saveItem": "保存",
-    "cancelEdit": "取消"
+    "cancelEdit": "取消",
+    "randomPoolOption": "随机池（可用 {count} 个）"
   },
   "profile": {
     "loginRequiredView": "你需要先登录才能查看个人资料。",
