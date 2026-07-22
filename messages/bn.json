@@ -1146,7 +1146,8 @@
     "itemTextRequired": "এই আইটেমটি খালি হতে পারে না।",
     "editItemAria": "{title} সম্পাদনা করুন",
     "saveItem": "সংরক্ষণ করুন",
-    "cancelEdit": "বাতিল"
+    "cancelEdit": "বাতিল",
+    "randomPoolOption": "এলোমেলো পুল ({count}টি উপলব্ধ)"
   },
   "profile": {
     "loginRequiredView": "আপনার প্রোফাইল দেখতে হলে আপনাকে লগ ইন করতে হবে।",

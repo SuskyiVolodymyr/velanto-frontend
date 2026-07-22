@@ -1240,7 +1240,8 @@
     "itemTextRequired": "This item can't be empty.",
     "editItemAria": "Edit {title}",
     "saveItem": "Save",
-    "cancelEdit": "Cancel"
+    "cancelEdit": "Cancel",
+    "randomPoolOption": "Random pool ({count} available)"
   },
   "profile": {
     "loginRequiredView": "You need to be logged in to view your profile.",

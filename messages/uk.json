@@ -1146,7 +1146,8 @@
     "itemTextRequired": "Цей елемент не може бути порожнім.",
     "editItemAria": "Редагувати {title}",
     "saveItem": "Зберегти",
-    "cancelEdit": "Скасувати"
+    "cancelEdit": "Скасувати",
+    "randomPoolOption": "Випадковий пул (доступно: {count})"
   },
   "profile": {
     "loginRequiredView": "Щоб переглянути свій профіль, спершу увійди.",

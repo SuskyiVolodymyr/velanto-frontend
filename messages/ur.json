@@ -1146,7 +1146,8 @@
     "itemTextRequired": "یہ آئٹم خالی نہیں ہو سکتا۔",
     "editItemAria": "{title} میں ترمیم کریں",
     "saveItem": "محفوظ کریں",
-    "cancelEdit": "منسوخ"
+    "cancelEdit": "منسوخ",
+    "randomPoolOption": "بے ترتیب پول ({count} دستیاب)"
   },
   "profile": {
     "loginRequiredView": "اپنی پروفائل دیکھنے کے لیے آپ کا لاگ اِن ہونا ضروری ہے۔",

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useFormContext, useWatch, useFieldArray } from "react-hook-form";
 import { useTranslations } from "next-intl";
-import type { SlotMode } from "@/src/shared/types/pack";
+import type { GroupMode, SlotMode } from "@/src/shared/types/pack";
 import { resolveRoundDraws } from "@/src/shared/lib/round-draw";
 import { Input } from "@/src/shared/components/Input";
 import { Select } from "@/src/shared/components/Select";
@@ -12,7 +12,14 @@ import { Text } from "@/src/shared/components/Text";
 import { Card } from "@/src/shared/components/Card";
 import { getFieldError } from "@/src/shared/components/form/getFieldError";
 import { cn } from "@/src/shared/lib/cn";
-import { newRound } from "@/src/features/create/create-pack.defaults";
+import {
+  newRound,
+  randomSlot,
+} from "@/src/features/create/create-pack.defaults";
+import {
+  RANDOM_POOL_VALUE,
+  availablePoolCount,
+} from "@/src/features/create/random-pool-option";
 import {
   type CreatePackValues,
   ELIMINATION_MIN_DRAW,
@@ -49,6 +56,8 @@ export function RoundsEditor() {
     roundIndex: number,
     patch: {
       groupId?: string;
+      // Cleared when a round switches from a random pool back to a named one.
+      groupMode?: GroupMode;
       mode?: SlotMode;
       count?: number | undefined;
       itemIds?: string[] | undefined;
@@ -99,7 +108,9 @@ export function RoundsEditor() {
 
   function switchMode(roundIndex: number, mode: SlotMode) {
     const slot = rounds[roundIndex].slots[0];
-    if (mode === "manual") {
+    // The manual/random item toggle isn't rendered for a random pool — pinning
+    // item ids needs a known pool — so there is always a group id here.
+    if (mode === "manual" && slot.groupId) {
       const seeded = availableItemIds(
         slot.groupId,
         roundIndex,
@@ -115,8 +126,19 @@ export function RoundsEditor() {
     }
   }
 
+  // A round either names a pool or asks for one at play time. Choosing "random"
+  // replaces the whole slot: a stale groupId or pinned itemIds beside
+  // groupMode: "random" would be a contradiction the API rejects.
   function changeGroup(roundIndex: number, groupId: string) {
     const slot = rounds[roundIndex].slots[0];
+    if (groupId === RANDOM_POOL_VALUE) {
+      setValue(
+        `rounds.${roundIndex}.slots.0`,
+        randomSlot(slot.count ?? ELIMINATION_MIN_DRAW),
+        { shouldValidate: false, shouldDirty: true },
+      );
+      return;
+    }
     if (slot.mode === "manual") {
       // The old pins belong to the old group — reseed from the new one.
       const seeded = availableItemIds(
@@ -124,9 +146,9 @@ export function RoundsEditor() {
         roundIndex,
         ELIMINATION_MIN_DRAW,
       );
-      setSlot(roundIndex, { groupId, itemIds: seeded });
+      setSlot(roundIndex, { groupId, groupMode: undefined, itemIds: seeded });
     } else {
-      setSlot(roundIndex, { groupId });
+      setSlot(roundIndex, { groupId, groupMode: undefined });
     }
   }
 
@@ -138,7 +160,7 @@ export function RoundsEditor() {
       return;
     }
     const extra = availableItemIds(
-      slot.groupId,
+      slot.groupId ?? "",
       roundIndex,
       n - current.length,
       new Set(current),
@@ -174,7 +196,10 @@ export function RoundsEditor() {
 
       {rounds.map((round, index) => {
         const slot = round.slots[0];
-        const group = groupById.get(slot.groupId);
+        const randomPool = slot.groupMode === "random";
+        const group = randomPool
+          ? undefined
+          : groupById.get(slot.groupId ?? "");
         const groupItems = group?.items ?? [];
         const drawnCount = resolved[index]?.slots[0]?.drawnCount ?? 0;
         const underfilled =
@@ -188,7 +213,7 @@ export function RoundsEditor() {
           getFieldError(errors, `rounds.${index}.slots.0.itemIds`);
 
         const itemIds = slot.itemIds ?? [];
-        const reserved = pinnedElsewhere(slot.groupId, index);
+        const reserved = pinnedElsewhere(slot.groupId ?? "", index);
         // Cap places at the pool's unreserved items AND the elimination max.
         const maxPlaces = Math.min(
           groupItems.length - reserved.size,
@@ -206,14 +231,28 @@ export function RoundsEditor() {
                 {t("roundGroup")}
               </Text>
               <Select
-                value={slot.groupId}
+                value={randomPool ? RANDOM_POOL_VALUE : (slot.groupId ?? "")}
                 onChange={(e) => changeGroup(index, e.target.value)}
                 aria-label={t("roundPool", { index: index + 1 })}
                 className="font-medium"
-                options={groups.map((g, gi) => ({
-                  value: g.id,
-                  label: g.name.trim() || t("groupName", { index: gi + 1 }),
-                }))}
+                options={[
+                  {
+                    value: RANDOM_POOL_VALUE,
+                    label: t("randomPoolOption", {
+                      count: Math.max(
+                        0,
+                        availablePoolCount(groups, rounds, {
+                          roundIndex: index,
+                          slotIndex: 0,
+                        }),
+                      ),
+                    }),
+                  },
+                  ...groups.map((g, gi) => ({
+                    value: g.id,
+                    label: g.name.trim() || t("groupName", { index: gi + 1 }),
+                  })),
+                ]}
               />
             </div>
 
@@ -230,36 +269,41 @@ export function RoundsEditor() {
                 placeholder={t("roundLabel", { index: index + 1 })}
                 className="min-w-[130px] flex-1"
               />
-              <div className="flex rounded-[9px] border border-border bg-white/[0.03] p-0.5">
-                <button
-                  type="button"
-                  onClick={() => switchMode(index, "random")}
-                  aria-label={t("roundModeRandom", { index: index + 1 })}
-                  aria-pressed={slot.mode === "random"}
-                  className={cn(
-                    "rounded-[7px] px-3 py-1.5 text-xs font-medium transition-colors",
-                    slot.mode === "random"
-                      ? "bg-white/[0.12] text-foreground"
-                      : "text-foreground-secondary",
-                  )}
-                >
-                  {t("random")}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => switchMode(index, "manual")}
-                  aria-label={t("roundModeManual", { index: index + 1 })}
-                  aria-pressed={slot.mode === "manual"}
-                  className={cn(
-                    "rounded-[7px] px-3 py-1.5 text-xs font-medium transition-colors",
-                    slot.mode === "manual"
-                      ? "bg-white/[0.12] text-foreground"
-                      : "text-foreground-secondary",
-                  )}
-                >
-                  {t("manual")}
-                </button>
-              </div>
+              {/* Pinning items needs a known pool, so a random-pool round has
+                  no manual option to offer — the toggle goes with it rather
+                  than sitting there disabled. */}
+              {!randomPool && (
+                <div className="flex rounded-[9px] border border-border bg-white/[0.03] p-0.5">
+                  <button
+                    type="button"
+                    onClick={() => switchMode(index, "random")}
+                    aria-label={t("roundModeRandom", { index: index + 1 })}
+                    aria-pressed={slot.mode === "random"}
+                    className={cn(
+                      "rounded-[7px] px-3 py-1.5 text-xs font-medium transition-colors",
+                      slot.mode === "random"
+                        ? "bg-white/[0.12] text-foreground"
+                        : "text-foreground-secondary",
+                    )}
+                  >
+                    {t("random")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => switchMode(index, "manual")}
+                    aria-label={t("roundModeManual", { index: index + 1 })}
+                    aria-pressed={slot.mode === "manual"}
+                    className={cn(
+                      "rounded-[7px] px-3 py-1.5 text-xs font-medium transition-colors",
+                      slot.mode === "manual"
+                        ? "bg-white/[0.12] text-foreground"
+                        : "text-foreground-secondary",
+                    )}
+                  >
+                    {t("manual")}
+                  </button>
+                </div>
+              )}
               {rounds.length > 1 && (
                 <Button
                   variant="ghost"

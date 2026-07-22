@@ -1146,7 +1146,8 @@
     "itemTextRequired": "لا يمكن أن يكون هذا العنصر فارغًا.",
     "editItemAria": "تحرير {title}",
     "saveItem": "حفظ",
-    "cancelEdit": "إلغاء"
+    "cancelEdit": "إلغاء",
+    "randomPoolOption": "مجموعة عشوائية ({count} متاحة)"
   },
   "profile": {
     "loginRequiredView": "يجب تسجيل الدخول لعرض ملفك الشخصي.",
