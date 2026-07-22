@@ -75,6 +75,13 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
           groupId: slot.groupId,
           itemId: placedItem.id,
           position: Number(position),
+          // Where the item came in the DRAW — items are shown in `candidates`
+          // order, one at a time. Ranking blind means that order is what the
+          // player was reacting to, and `position` can't carry it: these picks
+          // are keyed by the slot each item landed in (#338).
+          drawIndex: candidates.findIndex(
+            (candidate) => candidate.id === placedItem.id,
+          ),
         }),
       );
       setAllPicks((prev) => [...prev, ...roundPicks]);

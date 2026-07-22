@@ -1039,7 +1039,14 @@
     "topSavedHeading": "सबसे ज़्यादा बचाए गए",
     "topSavedSubtitle": "इस पैक के हर प्ले में, हर आइटम जिन राउंड में आया उनमें कितनी बार बचाया गया।",
     "topSacrificedHeading": "सबसे ज़्यादा क़ुर्बान किए गए",
-    "topSacrificedSubtitle": "इस पैक के हर प्ले में, हर आइटम जिन राउंड में आया उनमें कितनी बार क़ुर्बान किया गया।"
+    "topSacrificedSubtitle": "इस पैक के हर प्ले में, हर आइटम जिन राउंड में आया उनमें कितनी बार क़ुर्बान किया गया।",
+    "shownAt": "दिखाया गया #{n}",
+    "podiumHeading": "शीर्ष तीन में जगह",
+    "podiumSubtitle": "इस पैक के हर प्ले में, हर आइटम कितनी बार पहले, दूसरे या तीसरे स्थान पर रखा गया — तीनों के योग से क्रम।",
+    "podiumFirstColumn": "पहला",
+    "podiumSecondColumn": "दूसरा",
+    "podiumThirdColumn": "तीसरा",
+    "podiumTotalColumn": "कुल"
   },
   "create": {
     "loginRequired": "पैक बनाने के लिए आपको लॉग इन करना होगा।",

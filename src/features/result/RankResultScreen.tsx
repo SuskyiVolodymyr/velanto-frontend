@@ -7,6 +7,7 @@ import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { SharedResultNote } from "@/src/features/result/SharedResultNote";
 import { ResultActions } from "@/src/features/result/ResultActions";
+import { PodiumTable } from "@/src/features/result/PodiumTable";
 import { roundHeading } from "@/src/shared/lib/round-heading";
 import type { Pack } from "@/src/shared/types/pack";
 import type {
@@ -32,6 +33,7 @@ export function RankResultScreen({
   shared: boolean;
 }) {
   const t = useTranslations("result");
+  const podium = results.podium ?? [];
 
   return (
     <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
@@ -69,9 +71,24 @@ export function RankResultScreen({
           // Drop never-ranked items (averagePosition 0 sentinel). In the
           // aggregate fallback the full pool can include items nobody ranked,
           // whose 0 would otherwise sort them above genuine first places.
-          const sortedItems = [...visibleItems]
-            .filter((item) => item.timesRanked > 0)
-            .sort((a, b) => a.averagePosition - b.averagePosition);
+          const rankable = visibleItems.filter((item) => item.timesRanked > 0);
+          // A round you played is YOUR ranking, first place to last (#338).
+          // The crowd's average only orders the fallback, where there is no
+          // "your ranking" to show.
+          const ownPosition = (itemId: string) =>
+            ownPicks?.find(
+              (pick) =>
+                pick.roundIndex === round.roundIndex && pick.itemId === itemId,
+            )?.position;
+          const sortedItems = playedThisRound
+            ? [...rankable].sort(
+                (a, b) =>
+                  (ownPosition(a.itemId) ?? Number.MAX_SAFE_INTEGER) -
+                  (ownPosition(b.itemId) ?? Number.MAX_SAFE_INTEGER),
+              )
+            : [...rankable].sort(
+                (a, b) => a.averagePosition - b.averagePosition,
+              );
 
           return (
             <div key={round.roundIndex}>
@@ -99,6 +116,19 @@ export function RankResultScreen({
                         <Text className="flex-1 font-semibold">
                           {item.itemTitle}
                         </Text>
+                        {/* Where it came in the DRAW. Ranking blind means the
+                            order items arrived in is what you were reacting
+                            to, and the list above is sorted by where they
+                            ended up — so without this the run can't be read
+                            back. Absent on plays recorded before #338. */}
+                        {ownPick?.drawIndex !== undefined && (
+                          <Text
+                            variant="tertiary"
+                            className="flex-none rounded-md border border-border px-2 py-1 text-xs"
+                          >
+                            {t("shownAt", { n: ownPick.drawIndex + 1 })}
+                          </Text>
+                        )}
                         <Text variant="tertiary" className="text-xs">
                           {t("rankCaption", {
                             avg: item.averagePosition,
@@ -150,6 +180,18 @@ export function RankResultScreen({
           );
         })}
       </div>
+
+      {podium.length > 0 && (
+        <section className="mb-8">
+          <Text as="h2" variant="title" className="mb-1 text-lg">
+            {t("podiumHeading")}
+          </Text>
+          <Text variant="secondary" className="mb-4 text-sm">
+            {t("podiumSubtitle")}
+          </Text>
+          <PodiumTable items={podium} />
+        </section>
+      )}
 
       <ResultActions
         packId={pack.id}

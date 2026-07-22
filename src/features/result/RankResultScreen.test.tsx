@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach, vi } from "vitest";
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { RankResultScreen } from "./RankResultScreen";
 import type { Pack } from "@/src/shared/types/pack";
@@ -139,6 +139,121 @@ describe("RankResultScreen", () => {
     expect(
       screen.getByText(/You placed this #1.*1 other play agreed/),
     ).toBeInTheDocument();
+  });
+
+  // #338: a round you played reads as YOUR ranking, first place to last. The
+  // crowd's average orders the fallback below, but it is not your result.
+  it("orders a played round by the viewer's own placement", () => {
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        // The crowd puts Kaikai Kitan first; this player put Redo there.
+        ownPicks={[
+          { roundIndex: 0, groupId: "g1", itemId: "i1", position: 1 },
+          { roundIndex: 0, groupId: "g1", itemId: "i2", position: 0 },
+        ]}
+        shared={false}
+      />,
+    );
+
+    expect(
+      screen.getAllByText(/Kaikai Kitan|Redo/).map((el) => el.textContent),
+    ).toEqual(["Redo", "Kaikai Kitan"]);
+  });
+
+  it("shows where each item came in the draw", () => {
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        ownPicks={[
+          // Shown second, ranked first — the pairing the marker exists for.
+          {
+            roundIndex: 0,
+            groupId: "g1",
+            itemId: "i2",
+            position: 0,
+            drawIndex: 1,
+          },
+          {
+            roundIndex: 0,
+            groupId: "g1",
+            itemId: "i1",
+            position: 1,
+            drawIndex: 0,
+          },
+        ]}
+        shared={false}
+      />,
+    );
+
+    expect(screen.getByText("Shown #2")).toBeInTheDocument();
+    expect(screen.getByText("Shown #1")).toBeInTheDocument();
+  });
+
+  it("says nothing about the draw for a play that never recorded it", () => {
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        ownPicks={[{ roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 }]}
+        shared={false}
+      />,
+    );
+
+    expect(screen.queryByText(/Shown #/)).toBeNull();
+  });
+
+  it("ranks the pack's podium finishes by first, second and third combined", () => {
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={{
+          ...RANK_RESULTS,
+          podium: [
+            {
+              itemId: "i1",
+              itemTitle: "Kaikai Kitan",
+              first: 2,
+              second: 1,
+              third: 0,
+              total: 3,
+            },
+            {
+              itemId: "i2",
+              itemTitle: "Redo",
+              first: 0,
+              second: 1,
+              third: 1,
+              total: 2,
+            },
+          ],
+        }}
+        ownPicks={null}
+        shared={false}
+      />,
+    );
+
+    const table = screen.getByRole("table");
+    const rows = within(table).getAllByRole("row").slice(1); // drop the header
+    expect(rows[0]).toHaveTextContent("Kaikai Kitan");
+    expect(rows[0]).toHaveAttribute("data-rank", "1");
+    expect(rows[1]).toHaveTextContent("Redo");
+    expect(rows[1]).toHaveAttribute("data-rank", "2");
+  });
+
+  it("shows no podium table before anyone has reached one", () => {
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={{ ...RANK_RESULTS, podium: [] }}
+        ownPicks={null}
+        shared={false}
+      />,
+    );
+
+    expect(screen.queryByRole("table")).toBeNull();
   });
 
   it("hides items that weren't in the player's own play for a round they played", () => {
