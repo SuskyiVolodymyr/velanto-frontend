@@ -61,6 +61,7 @@ beforeEach(() => {
     playsThisWeek: 0,
     playsLast7Days: [],
     topPacksToday: [],
+    storage: { usedBytes: 0, ceilingBytes: 5 * 1024 * 1024 * 1024 },
   });
 });
 

@@ -198,7 +198,13 @@
     "filterStaffAria": "اسٹاف اسٹیٹس کے لحاظ سے فلٹر کریں",
     "staffAll": "سب",
     "staffOnly": "اسٹاف",
-    "staffNonStaff": "غیر اسٹاف"
+    "staffNonStaff": "غیر اسٹاف",
+    "detailSecStorage": "اسٹوریج",
+    "detailStorageUsed": "ابھی استعمال شدہ",
+    "detailStorageLimit": "حد",
+    "storageUnlimited": "لامحدود",
+    "metricStorage": "اسٹوریج",
+    "storageOfCeiling": "{total} میں سے"
   },
   "notifications": {
     "groupNew": "نیا",

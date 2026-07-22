@@ -207,6 +207,22 @@ export function CreatePackForm({
     <FormProvider {...methods}>
       <form
         onSubmit={handleSubmit((values) => onValid(values, false))}
+        // A browser implicitly submits a form when Enter is pressed in a
+        // single-line field, and this form's submit PUBLISHES — or sends a
+        // draft to moderation. Typing a title and pressing Enter out of habit
+        // was one keystroke from an irreversible-feeling action, with no
+        // confirmation. Nothing here wants implicit submission: the pool item
+        // adder has its own Enter handler (which still runs — this only stops
+        // the default), and Publish / Save draft are explicit buttons.
+        //
+        // A textarea keeps Enter, where it means a newline. A focused button
+        // keeps it, because activating a button IS the deliberate action.
+        onKeyDown={(event) => {
+          if (event.key !== "Enter") return;
+          const tag = (event.target as HTMLElement).tagName;
+          if (tag === "TEXTAREA" || tag === "BUTTON") return;
+          event.preventDefault();
+        }}
         noValidate
         className="flex flex-col gap-8"
       >

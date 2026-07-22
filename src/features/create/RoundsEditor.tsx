@@ -1,12 +1,12 @@
 "use client";
 
-import { useState } from "react";
 import { useFormContext, useWatch, useFieldArray } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import type { GroupMode, SlotMode } from "@/src/shared/types/pack";
 import { resolveRoundDraws } from "@/src/shared/lib/round-draw";
 import { Input } from "@/src/shared/components/Input";
 import { Select } from "@/src/shared/components/Select";
+import { RoundsToolbar } from "@/src/features/create/RoundsToolbar";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { Card } from "@/src/shared/components/Card";
@@ -45,7 +45,6 @@ export function RoundsEditor() {
   });
   const groups = useWatch({ control, name: "groups" });
   const rounds = useWatch({ control, name: "rounds" });
-  const [bulkCount, setBulkCount] = useState("");
 
   const firstGroupId = groups[0]?.id ?? "";
   const resolved = resolveRoundDraws(groups, rounds);
@@ -176,16 +175,6 @@ export function RoundsEditor() {
     const current = [...(rounds[roundIndex].slots[0].itemIds ?? [])];
     current[placeIndex] = itemId;
     setSlot(roundIndex, { itemIds: current });
-  }
-
-  function applyBulkCount() {
-    const value = Number(bulkCount);
-    if (bulkCount === "" || Number.isNaN(value)) return;
-    rounds.forEach((round, index) => {
-      if (round.slots[0]?.mode === "random") {
-        setSlot(index, { count: value });
-      }
-    });
   }
 
   return (
@@ -433,45 +422,25 @@ export function RoundsEditor() {
         </Text>
       )}
 
-      <div className="flex flex-wrap items-center gap-3">
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={() => roundsArray.append(newRound(firstGroupId))}
-          className="whitespace-nowrap"
-        >
-          {t("addRound")}
-        </Button>
-        {/* shrink-0 + nowrap children: as one flex item this group's min-content
-            width is tiny, because its own label and button will happily wrap
-            mid-phrase. That let it squeeze into whatever space was left instead
-            of moving to the next line, shredding "Set count for all rounds"
-            into three lines with room to spare beside it. Now it either fits on
-            this line or the parent's flex-wrap takes it to its own. */}
-        <div className="flex shrink-0 items-center gap-2">
-          <Text variant="secondary" className="whitespace-nowrap text-sm">
-            {t("setCountAllLabel")}
-          </Text>
-          <Input
-            type="number"
-            min={1}
-            max={ELIMINATION_MAX_DRAW}
-            value={bulkCount}
-            onChange={(e) => setBulkCount(e.target.value)}
-            aria-label={t("setCountAll")}
-            placeholder="4"
-            className="w-16 text-center"
-          />
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={applyBulkCount}
-            className="whitespace-nowrap"
-          >
-            {t("setCountAll")}
-          </Button>
-        </div>
-      </div>
+      <RoundsToolbar
+        addLabel={t("addRound")}
+        onAddRound={() => roundsArray.append(newRound(firstGroupId))}
+        bulk={{
+          label: t("setCountAllLabel"),
+          applyLabel: t("setCountAll"),
+          min: 1,
+          max: ELIMINATION_MAX_DRAW,
+          placeholder: "4",
+          onApply: (value) =>
+            rounds.forEach((round, index) => {
+              // Only a random draw has a count to set; a manual round shows
+              // exactly the items its author pinned.
+              if (round.slots[0]?.mode === "random") {
+                setSlot(index, { count: value });
+              }
+            }),
+        }}
+      />
     </section>
   );
 }

@@ -198,7 +198,13 @@
     "filterStaffAria": "स्टाफ़ स्थिति के अनुसार फ़िल्टर करें",
     "staffAll": "सभी",
     "staffOnly": "स्टाफ़",
-    "staffNonStaff": "गैर-स्टाफ़"
+    "staffNonStaff": "गैर-स्टाफ़",
+    "detailSecStorage": "स्टोरेज",
+    "detailStorageUsed": "अभी उपयोग में",
+    "detailStorageLimit": "सीमा",
+    "storageUnlimited": "असीमित",
+    "metricStorage": "स्टोरेज",
+    "storageOfCeiling": "{total} में से"
   },
   "notifications": {
     "groupNew": "नया",
