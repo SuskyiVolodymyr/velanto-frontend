@@ -70,10 +70,10 @@ function mockSession(id: string, role: Role = "user") {
   });
 }
 
-function renderScreen() {
+function renderScreen(pack: Pack = PACK) {
   return render(
     <AuthProvider>
-      <EditPackScreen pack={PACK} />
+      <EditPackScreen pack={pack} />
     </AuthProvider>,
   );
 }
@@ -122,6 +122,26 @@ describe("EditPackScreen", () => {
     expect(screen.queryByLabelText("Pack title")).not.toBeInTheDocument();
     expect(
       screen.queryByText("You can only edit your own packs."),
+    ).not.toBeInTheDocument();
+  });
+
+  // UI-EXCLUDED:save_one_friends (velanto-frontend#368). The author owns the
+  // pack, so none of the gates above fire — without an explicit branch they got
+  // the real form with the format picker showing nothing selected, and Save
+  // failed schema validation with no visibly failing control. Such a pack can
+  // exist already: packs are authored over the API, not only through this form.
+  it("tells the author the format is unsupported instead of rendering a form that cannot save", async () => {
+    mockSession("u1");
+    renderScreen({ ...PACK, format: "save_one_friends" });
+
+    expect(
+      await screen.findByText(
+        "This pack uses a format the editor doesn't support yet, so it can't be edited here.",
+      ),
+    ).toBeInTheDocument();
+    expect(screen.queryByLabelText("Pack title")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Save changes" }),
     ).not.toBeInTheDocument();
   });
 });

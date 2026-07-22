@@ -836,7 +836,8 @@
     "sacrifice_one": "淘汰一个",
     "nxn": "NxN",
     "rank_blind": "盲排",
-    "1v1": "1v1"
+    "1v1": "1v1",
+    "save_one_friends": "留一个（好友同玩）"
   },
   "tagPicker": {
     "title": "选择标签",
@@ -1117,6 +1118,7 @@
     "saveChanges": "保存更改",
     "saving": "保存中…",
     "editOthersForbidden": "你只能编辑自己的题包。",
+    "editFormatUnsupported": "该题包使用的玩法编辑器暂不支持，因此无法在此编辑。",
     "roundGroup": "分组",
     "roundPlaces": "位置数",
     "placeLabel": "位置 {index}",

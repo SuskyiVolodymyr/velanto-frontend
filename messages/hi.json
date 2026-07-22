@@ -836,7 +836,8 @@
     "sacrifice_one": "एक हटाओ",
     "nxn": "NxN",
     "rank_blind": "बिना देखे रैंक करो",
-    "1v1": "1v1"
+    "1v1": "1v1",
+    "save_one_friends": "एक बचाओ (दोस्तों के साथ)"
   },
   "tagPicker": {
     "title": "टैग चुनें",
@@ -1117,6 +1118,7 @@
     "saveChanges": "बदलाव सहेजें",
     "saving": "सहेजा जा रहा है…",
     "editOthersForbidden": "आप केवल अपने ही पैक संपादित कर सकते हैं।",
+    "editFormatUnsupported": "यह पैक ऐसा फ़ॉर्मैट उपयोग करता है जिसे संपादक अभी समर्थन नहीं करता, इसलिए इसे यहाँ संपादित नहीं किया जा सकता।",
     "roundGroup": "समूह",
     "roundPlaces": "स्थान",
     "placeLabel": "स्थान {index}",

@@ -18,7 +18,7 @@ import { PackOwnerStatusBadge } from "@/src/features/pack/PackOwnerStatusBadge";
 import { CommentSection } from "@/src/features/pack/CommentSection";
 import { VoteButtons } from "@/src/features/pack/VoteButtons";
 import { ShareButton } from "@/src/features/share/ShareButton";
-import type { Pack } from "@/src/shared/types/pack";
+import { isUiPackFormat, type Pack } from "@/src/shared/types/pack";
 import type { PackResults, RankResults } from "@/src/shared/types/play-results";
 
 function SectionHeading({ children }: { children: ReactNode }) {
@@ -109,7 +109,12 @@ export function PackDetailScreen({
             )}
 
             <div className="flex flex-wrap items-center gap-3.5">
-              <PackPlayButton packId={pack.id} />
+              {/* UI-EXCLUDED:save_one_friends (velanto-frontend#368) — don't
+                  offer Play for a format with no play path: /play 404s for it
+                  (see PlayRouter), so the CTA would be a dead end. */}
+              {isUiPackFormat(pack.format) && (
+                <PackPlayButton packId={pack.id} />
+              )}
               {pack.status === "approved" && (
                 <ShareButton path={`/packs/${pack.id}`} />
               )}

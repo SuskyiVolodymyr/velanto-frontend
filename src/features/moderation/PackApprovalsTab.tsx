@@ -9,9 +9,9 @@ import { Select } from "@/src/shared/components/Select";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { DataTable, DataTableRow } from "@/src/shared/components/DataTable";
 import { TablePagination } from "@/src/shared/components/TablePagination";
-import { FORMAT_LABELS } from "@/src/shared/lib/pack-display";
+import { FORMAT_LABELS, formatLabel } from "@/src/shared/lib/pack-display";
 import { formatRelativeTimeIntl } from "@/src/shared/lib/relative-time";
-import { PACK_FORMATS } from "@/src/shared/types/pack";
+import { PACK_FORMATS, isUiPackFormat } from "@/src/shared/types/pack";
 import {
   usePackQueue,
   useApprovePack,
@@ -103,7 +103,13 @@ export function PackApprovalsTab() {
             }
             options={[
               { value: "", label: t("allFormats") },
-              ...PACK_FORMATS.map((format) => ({
+              // UI-EXCLUDED:save_one_friends (velanto-frontend#368) — it has no
+              // FORMAT_LABELS entry, so listing it would render a nameless
+              // filter option. Queue ROWS still show it (via formatLabel, which
+              // falls back to the raw wire value) — a save_one_friends pack can
+              // reach moderation today, and hiding it from the queue would be
+              // worse than an unfamiliar label.
+              ...PACK_FORMATS.filter(isUiPackFormat).map((format) => ({
                 value: format,
                 label: FORMAT_LABELS[format],
               })),
@@ -173,7 +179,7 @@ export function PackApprovalsTab() {
                       {pack.author?.username ?? "—"}
                     </Text>
                     <Text variant="tertiary" className="text-[12.5px]">
-                      {FORMAT_LABELS[pack.format]}
+                      {formatLabel(pack.format)}
                     </Text>
                     <Text variant="tertiary" className="text-[12.5px]">
                       {submitted ?? "—"}

@@ -53,7 +53,11 @@ export const createPackSchema = z
     coverTone: z.string().min(1),
     // Optional storage key of an uploaded cover image; absent keeps the tone.
     coverImageKey: z.string().optional(),
-    format: z.enum(PACK_FORMATS),
+    // UI-EXCLUDED:save_one_friends (velanto-frontend#368) — the creator has no
+    // body for this format (no round shape, no player-count control), so the
+    // form must not accept it even if a value reaches the schema some other way.
+    // Pinned by create-pack.schema.test.ts.
+    format: z.enum(PACK_FORMATS).exclude(["save_one_friends"]),
     // The pack CONTENT's language — not the UI's. Defaulted to the author's
     // interface locale by the form, but freely changeable: PACK_LANGUAGES is a
     // superset of LOCALES precisely so an English UI can label a pack Spanish.

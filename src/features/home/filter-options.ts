@@ -1,10 +1,17 @@
-import type { PackFormat } from "@/src/shared/types/pack";
+import {
+  PACK_FORMATS,
+  isUiPackFormat,
+  type UiPackFormat,
+} from "@/src/shared/types/pack";
 
 // Filter value unions for the home feed. "all" is the sentinel meaning "no
 // format constraint"; the fetch layer maps it to `undefined`. Human-readable
 // labels are resolved from the i18n catalogs at render time (see FormatFilter /
 // SortFilter), so only the values live here.
-export type FormatFilterValue = "all" | PackFormat;
+//
+// UI-EXCLUDED:save_one_friends (velanto-frontend#368) — deliberately keyed off
+// UiPackFormat, not PackFormat: the feed only offers formats the UI can name.
+export type FormatFilterValue = "all" | UiPackFormat;
 export type SortFilterValue = "popular" | "date";
 export type WindowFilterValue = "day" | "week" | "month" | "year" | "all";
 /**
@@ -15,13 +22,17 @@ export type WindowFilterValue = "day" | "week" | "month" | "year" | "all";
  */
 export type DateOrderValue = "newest" | "oldest";
 
+// DERIVED from PACK_FORMATS rather than hand-listed, so this row can never
+// silently drift from the format list again — it was forgotten for rank_blind
+// and nearly for 1v1 (docs/superpowers/specs/2026-07-07-1v1-frontend-design.md).
+// A hand-written list would NOT have caught that: adding a member to a union
+// does not invalidate an array that omits it, so there would be no compile
+// error to trip over. Deriving removes the chance entirely — when
+// UI-EXCLUDED:save_one_friends (velanto-frontend#368) is lifted from
+// `isUiPackFormat`, the chip appears here with no edit to this file.
 export const FORMAT_FILTER_VALUES: FormatFilterValue[] = [
   "all",
-  "save_one",
-  "sacrifice_one",
-  "nxn",
-  "rank_blind",
-  "1v1",
+  ...PACK_FORMATS.filter(isUiPackFormat),
 ];
 
 export const SORT_VALUES: SortFilterValue[] = ["popular", "date"];

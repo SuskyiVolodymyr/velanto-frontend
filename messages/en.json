@@ -930,7 +930,9 @@
     "sacrifice_one": "Sacrifice One",
     "nxn": "NxN",
     "rank_blind": "Rank Blind",
-    "1v1": "1v1"
+    "1v1": "1v1",
+    "_note": "UI-EXCLUDED:save_one_friends (velanto-frontend#368) — save_one_friends has a LABEL in every locale but nothing else: no creator option, no howItPlays steps, no play copy. The label is defensive, because such a pack can already arrive from the API (packs are authored over the API too) and every card/banner would otherwise render the raw key path 'formats.save_one_friends' and log a console.error per render.",
+    "save_one_friends": "Save One (Friends)"
   },
   "tagPicker": {
     "title": "Select tags",
@@ -1211,6 +1213,7 @@
     "saveChanges": "Save changes",
     "saving": "Saving…",
     "editOthersForbidden": "You can only edit your own packs.",
+    "editFormatUnsupported": "This pack uses a format the editor doesn't support yet, so it can't be edited here.",
     "roundGroup": "Group",
     "roundPlaces": "Places",
     "placeLabel": "Place {index}",
