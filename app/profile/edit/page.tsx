@@ -12,7 +12,7 @@ export default function ProfileEditPage() {
   return (
     <>
       <div className="mx-auto w-full max-w-md px-7 pt-6">
-        <BackButton fallbackHref="/profile" />
+        <BackButton href="/profile" />
       </div>
       <ProfileEditForm />
     </>

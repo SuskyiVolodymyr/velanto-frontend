@@ -12,7 +12,7 @@ export default function NewFeedbackPage() {
   return (
     <>
       <div className="mx-auto w-full max-w-2xl px-7 pt-6">
-        <BackButton fallbackHref="/feedback" />
+        <BackButton href="/feedback" />
       </div>
       <NewFeedbackForm />
     </>

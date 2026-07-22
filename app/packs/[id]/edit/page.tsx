@@ -28,7 +28,7 @@ export default async function EditPackPage({
 
   return (
     <main className={cn(PACK_CONTAINER, "flex-1 py-10")}>
-      <BackButton fallbackHref={`/packs/${id}`} className="mb-6" />
+      <BackButton href={`/packs/${id}`} className="mb-6" />
       <Text as="h1" variant="title" className="mb-2 text-3xl">
         {t("editTitle")}
       </Text>

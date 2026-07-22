@@ -107,7 +107,7 @@ export default async function AuthorPage({
         dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }}
       />
       <div className="mx-auto w-full max-w-4xl px-7 pt-6">
-        <BackButton fallbackHref="/" />
+        <BackButton href="/" />
       </div>
       <AuthorScreen authorId={id} initialData={initialData} />
     </>

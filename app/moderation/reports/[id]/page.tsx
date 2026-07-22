@@ -16,7 +16,7 @@ export default async function ReportDetailPage({
   return (
     <>
       <div className="mx-auto w-full max-w-2xl px-7 pt-6">
-        <BackButton fallbackHref="/moderation" />
+        <BackButton href="/moderation" />
       </div>
       <ReportDetailScreen reportId={id} />
     </>
