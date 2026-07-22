@@ -40,8 +40,20 @@ export interface Group {
 export const SLOT_MODES = ["random", "manual"] as const;
 export type SlotMode = (typeof SLOT_MODES)[number];
 
+// How a slot gets its POOL, as distinct from `mode` above, which is how it gets
+// its ITEMS. `fixed` — the default when absent, so every stored pack keeps its
+// meaning — names a pool via groupId, and may back any number of rounds:
+// pinning consumes nothing. `random` leaves groupId out and is handed a pool at
+// play time, one no other random slot took and no slot pins; randomness DOES
+// consume, so a pack can only afford as many random slots as it has pools left
+// after pinning. Mirrors velanto-backend types/round.ts.
+export const GROUP_MODES = ["fixed", "random"] as const;
+export type GroupMode = (typeof GROUP_MODES)[number];
+
 export interface Slot {
-  groupId: string;
+  // Absent on a random-pool slot, which has no pool to name until play time.
+  groupId?: string;
+  groupMode?: GroupMode;
   mode: SlotMode;
   // random: how many items to draw. manual: unused.
   count?: number;
