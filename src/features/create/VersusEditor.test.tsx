@@ -17,7 +17,12 @@ function items(n: number, prefix: string): Item[] {
   }));
 }
 
-function baseValues(format: PackFormat, perSide: number): CreatePackValues {
+function baseValues(
+  format: PackFormat,
+  perSide: number,
+  roundCount = 2,
+  poolCount = 2,
+): CreatePackValues {
   return {
     title: "",
     description: "",
@@ -28,8 +33,13 @@ function baseValues(format: PackFormat, perSide: number): CreatePackValues {
     groups: [
       { id: "boys", name: "Boys", items: items(6, "boy") },
       { id: "girls", name: "Girls", items: items(6, "girl") },
+      ...Array.from({ length: poolCount - 2 }, (_, i) => ({
+        id: `p${i + 3}`,
+        name: `Pool ${i + 3}`,
+        items: items(6, `p${i + 3}`),
+      })),
     ],
-    rounds: versusRounds("boys", "girls", 2, perSide),
+    rounds: versusRounds("boys", "girls", roundCount, perSide),
   };
 }
 
@@ -54,12 +64,16 @@ function RoundsReadout() {
 function Harness({
   format = "nxn",
   perSide = 1,
+  rounds = 2,
+  pools = 2,
 }: {
   format?: PackFormat;
   perSide?: number;
+  rounds?: number;
+  pools?: number;
 }) {
   const methods = useForm<CreatePackValues>({
-    defaultValues: baseValues(format, perSide),
+    defaultValues: baseValues(format, perSide, rounds, pools),
   });
   return (
     <FormProvider {...methods}>
@@ -178,25 +192,44 @@ describe("VersusEditor", () => {
       expect(first).toHaveValue("__random__");
     });
 
-    it("counts the other side of the same round against what is free", async () => {
+    // #362: the count must fall the moment another side becomes random. The
+    // version of this test it replaces used a 2-pool pack where the stale and
+    // the correct number were both 0, so it passed against the bug — hence four
+    // pools here, where the two differ.
+    it("recounts as soon as another side becomes random", async () => {
       const user = userEvent.setup();
-      render(<Harness format="nxn" perSide={2} />);
+      render(<Harness format="nxn" perSide={2} rounds={1} pools={4} />);
+      const firstOption = (label: string) =>
+        screen.getByLabelText(label).querySelector("option")!;
 
-      // Free both pools by making side A of each round random…
+      // 4 pools; side A pins "boys" and side B pins "girls". Side B excludes
+      // itself, so it sees 4 - 1 pinned = 3.
+      expect(firstOption("Side B for round 1")).toHaveTextContent(
+        "Random pool (3 available)",
+      );
+
       await user.selectOptions(
         screen.getByLabelText("Side A for round 1"),
         "__random__",
       );
+
+      // Unchanged, and correctly so: side A released "boys" from the pinned set
+      // and took a random pool instead, so what side B could be handed is the
+      // same 3 pools. The number only moves when the pack's demand does.
+      expect(firstOption("Side B for round 1")).toHaveTextContent(
+        "Random pool (3 available)",
+      );
+
       await user.selectOptions(
-        screen.getByLabelText("Side A for round 2"),
+        screen.getByLabelText("Side B for round 1"),
         "__random__",
       );
-      // …now side B of round 1 sees: 2 pools, 1 still pinned (round 2's B),
-      // minus the 2 random slots already declared.
-      const optionB = screen
-        .getByLabelText("Side B for round 1")
-        .querySelector("option")!;
-      expect(optionB).toHaveTextContent("Random pool (0 available)");
+
+      // Now nothing is pinned and two slots are random, so a third random slot
+      // would have 2 pools to choose from.
+      expect(firstOption("Side A for round 1")).toHaveTextContent(
+        "Random pool (3 available)",
+      );
     });
 
     it("replaces the slot rather than leaving a stale group id beside it", async () => {

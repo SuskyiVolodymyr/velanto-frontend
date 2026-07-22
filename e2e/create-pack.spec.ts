@@ -298,4 +298,46 @@ test.describe("Create pack", () => {
     expect(called).toBe(false);
     expect(page.url()).toContain("/create");
   });
+
+  // #361: a real browser implicitly submits a form when Enter is pressed in a
+  // single-line field, and this form's submit publishes. jsdom doesn't do
+  // implicit submission at all, so the unit test can only assert the keydown is
+  // cancelled — this is the only place the actual behaviour can be observed.
+  test("pressing Enter in a field does not publish the pack", async ({
+    page,
+  }) => {
+    const captured = await stubCreate(page, {
+      id: "pack-1",
+      title: "Enter Probe",
+      description: "Should not be published by a keystroke.",
+      coverTone: "#2b2a3a",
+      format: "save_one",
+      tags: [],
+      groups: [],
+      rounds: [],
+      authorId: "u1",
+      createdAt: "2026-01-01T00:00:00.000Z",
+    });
+
+    await page.goto("/create");
+    await page.getByLabel("Pack title").fill("Enter Probe");
+    await page
+      .getByLabel("Pack description")
+      .fill("Should not be published by a keystroke.");
+    await page.getByLabel("Pool 1 name").fill("2016");
+    await page.getByLabel("Pool 1 new item").fill("Guren no Yumiya");
+    await page.getByRole("button", { name: "Add", exact: true }).click();
+
+    // A complete, valid pack — so nothing but the Enter guard is stopping it.
+    await page.getByLabel("Pack title").press("Enter");
+    await page.getByLabel("Pool 1 name").press("Enter");
+
+    await expect(page).toHaveURL(/\/create$/);
+    expect(captured.body).toBeNull();
+
+    // …and the button still works, so the guard didn't break publishing.
+    await page.getByRole("button", { name: "Publish" }).click();
+    await page.waitForURL("**/packs/pack-1");
+    expect(captured.body).toMatchObject({ title: "Enter Probe" });
+  });
 });
