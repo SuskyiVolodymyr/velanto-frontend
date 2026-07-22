@@ -198,7 +198,13 @@
     "filterStaffAria": "Filter by staff status",
     "staffAll": "All",
     "staffOnly": "Staff",
-    "staffNonStaff": "Non-staff"
+    "staffNonStaff": "Non-staff",
+    "detailSecStorage": "Storage",
+    "detailStorageUsed": "Used now",
+    "detailStorageLimit": "Budget",
+    "storageUnlimited": "Unlimited",
+    "metricStorage": "Storage",
+    "storageOfCeiling": "of {total}"
   },
   "docs": {
     "secOverview": "OVERVIEW",

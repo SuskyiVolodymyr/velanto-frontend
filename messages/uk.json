@@ -198,7 +198,13 @@
     "filterStaffAria": "Фільтр за статусом персоналу",
     "staffAll": "Усі",
     "staffOnly": "Персонал",
-    "staffNonStaff": "Не персонал"
+    "staffNonStaff": "Не персонал",
+    "detailSecStorage": "Сховище",
+    "detailStorageUsed": "Зайнято зараз",
+    "detailStorageLimit": "Ліміт",
+    "storageUnlimited": "Без обмежень",
+    "metricStorage": "Сховище",
+    "storageOfCeiling": "з {total}"
   },
   "notifications": {
     "groupNew": "Нові",

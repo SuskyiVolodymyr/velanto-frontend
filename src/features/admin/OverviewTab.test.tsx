@@ -36,6 +36,7 @@ describe("OverviewTab — plays chart", () => {
         { date: "2026-07-14", plays: 3 },
       ],
       topPacksToday: [],
+      storage: { usedBytes: 0, ceilingBytes: 5 * 1024 * 1024 * 1024 },
     });
     render(<OverviewTab />);
 
@@ -71,6 +72,7 @@ describe("OverviewTab", () => {
       playsThisWeek: 0,
       playsLast7Days: [],
       topPacksToday: [],
+      storage: { usedBytes: 0, ceilingBytes: 5 * 1024 * 1024 * 1024 },
     });
 
     render(<OverviewTab />);
@@ -93,5 +95,33 @@ describe("OverviewTab", () => {
     expect(
       await screen.findByText(/Couldn't load overview/),
     ).toBeInTheDocument();
+  });
+});
+
+// #254: nothing showed storage, so the only way to know whether the global
+// ceiling was close was to query the database.
+describe("OverviewTab — storage", () => {
+  it("shows what is stored now against the ceiling", async () => {
+    vi.mocked(adminClient.overview).mockResolvedValue({
+      registeredUsers: 0,
+      packs: 0,
+      plays: 0,
+      onlineUsers: 0,
+      pendingReports: 0,
+      newUsersThisWeek: 0,
+      newPacksThisWeek: 0,
+      playsThisWeek: 0,
+      playsLast7Days: [],
+      topPacksToday: [],
+      storage: {
+        usedBytes: 1_500_000_000,
+        ceilingBytes: 5 * 1024 * 1024 * 1024,
+      },
+    });
+
+    render(<OverviewTab />);
+
+    expect(await screen.findByText("1.4 GB")).toBeInTheDocument();
+    expect(screen.getByText("of 5 GB")).toBeInTheDocument();
   });
 });

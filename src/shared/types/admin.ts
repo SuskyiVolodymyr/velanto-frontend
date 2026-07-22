@@ -33,6 +33,29 @@ export interface AdminOverview {
   /** Always 7 buckets, oldest first, zero-filled by the backend. */
   playsLast7Days: PlaysDayBucket[];
   topPacksToday: TopPackToday[];
+  storage: GlobalStorage;
+}
+
+/**
+ * Storage held RIGHT NOW, against the wall it is measured by. There is no
+ * all-time or per-month figure and there cannot be one from this data: media
+ * rows are hard-deleted with their S3 object, so nothing records what a user
+ * used to store (velanto-backend#254).
+ */
+export interface GlobalStorage {
+  /** Sum of every user's live counter — what uploads are enforced against. */
+  usedBytes: number;
+  /** MEDIA_GLOBAL_CEILING_BYTES on the backend, or its 5 GB default. */
+  ceilingBytes: number;
+}
+
+export interface UserStorage {
+  usedBytes: number;
+  /**
+   * The user's budget, or null for staff — whose budget is unlimited. Null
+   * rather than a huge number or Infinity, which JSON cannot carry anyway.
+   */
+  limitBytes: number | null;
 }
 
 /** Aggregate per-user stats for the admin user-detail page (GET /admin/users/:id). */
@@ -57,6 +80,7 @@ export interface AdminUserDetail {
     commentsCount: number;
     playsRecorded: number;
   };
+  storage: UserStorage;
   social: {
     followers: number;
     following: number;
