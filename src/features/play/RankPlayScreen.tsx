@@ -51,7 +51,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   const slot =
     roundIndex < totalRounds ? selections[roundIndex]?.slots[0] : undefined;
   const candidates = slot?.items ?? [];
-  const groupName = slot ? (groupNameById.get(slot.groupId) ?? "") : "";
+  const groupName = slot?.groupId ? (groupNameById.get(slot.groupId) ?? "") : "";
   const slotCount = candidates.length;
   const placedCount = Object.keys(placements).length;
   const roundDone = slotCount > 0 && placedCount >= slotCount;
@@ -83,7 +83,10 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
     }));
 
   function place(slotIndex: number) {
-    if (!slot || placements[slotIndex] || placedCount >= slotCount) return;
+    // `slot.groupId` is what the API keys a pick by; a random slot that found no
+    // free pool has none, and also no items, so there is nothing to place.
+    if (!slot?.groupId || placements[slotIndex] || placedCount >= slotCount)
+      return;
     const item = candidates[placedCount];
     const nextPlacements = { ...placements, [slotIndex]: item };
     setPlacements(nextPlacements);
@@ -91,7 +94,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
       const roundPicks: RecordedPick[] = Object.entries(nextPlacements).map(
         ([position, placedItem]) => ({
           roundIndex,
-          groupId: slot.groupId,
+          groupId: slot.groupId!,
           itemId: placedItem.id,
           position: Number(position),
           // Where the item came in the DRAW — items are shown in `candidates`

@@ -16,7 +16,9 @@ interface DrawGroupLike {
 }
 
 interface DrawSlotLike {
-  groupId: string;
+  // Absent on a random-pool slot, whose pool isn't known until play time.
+  groupId?: string;
+  groupMode?: string;
   mode: SlotMode;
   count?: number;
   itemIds?: readonly string[];
@@ -27,7 +29,8 @@ interface DrawRoundLike {
 }
 
 export interface ResolvedSlot {
-  groupId: string;
+  // Absent for a random-pool slot — see resolveRoundDraws.
+  groupId?: string;
   mode: SlotMode;
   drawnCount: number;
 }
@@ -49,11 +52,11 @@ export function resolveRoundDraws(
   for (const round of rounds) {
     for (const slot of round.slots) {
       if (slot.mode !== "manual" || !slot.itemIds) continue;
-      const groupItems = itemIdsByGroup.get(slot.groupId);
+      const groupItems = itemIdsByGroup.get(slot.groupId!);
       if (!groupItems) continue;
-      const reserved = reservedByGroup.get(slot.groupId) ?? new Set<string>();
+      const reserved = reservedByGroup.get(slot.groupId!) ?? new Set<string>();
       for (const id of slot.itemIds) if (groupItems.has(id)) reserved.add(id);
-      reservedByGroup.set(slot.groupId, reserved);
+      reservedByGroup.set(slot.groupId!, reserved);
     }
   }
 
@@ -61,21 +64,29 @@ export function resolveRoundDraws(
   const randomUsedByGroup = new Map<string, number>();
   return rounds.map((round) => ({
     slots: round.slots.map((slot) => {
-      const groupItems = itemIdsByGroup.get(slot.groupId) ?? new Set<string>();
+      // A random-pool slot draws from a pool nothing else touches — it consumes
+      // the whole pool, so per-group dedup has nothing to subtract and there is
+      // no group to name. Which pool it lands on isn't known here; under-filling
+      // is a soft warning for fixed slots too, so reporting the requested count
+      // is the consistent answer. Mirrors velanto-backend round-draw.ts.
+      if (slot.groupMode === "random") {
+        return { mode: slot.mode, drawnCount: slot.count ?? 0 };
+      }
+      const groupItems = itemIdsByGroup.get(slot.groupId!) ?? new Set<string>();
 
       if (slot.mode === "manual") {
         const drawnCount = (slot.itemIds ?? []).filter((id) =>
           groupItems.has(id),
         ).length;
-        return { groupId: slot.groupId, mode: slot.mode, drawnCount };
+        return { groupId: slot.groupId!, mode: slot.mode, drawnCount };
       }
 
-      const reserved = reservedByGroup.get(slot.groupId)?.size ?? 0;
-      const usedRandom = randomUsedByGroup.get(slot.groupId) ?? 0;
+      const reserved = reservedByGroup.get(slot.groupId!)?.size ?? 0;
+      const usedRandom = randomUsedByGroup.get(slot.groupId!) ?? 0;
       const remaining = groupItems.size - reserved - usedRandom;
       const drawnCount = Math.max(0, Math.min(slot.count ?? 0, remaining));
-      randomUsedByGroup.set(slot.groupId, usedRandom + drawnCount);
-      return { groupId: slot.groupId, mode: slot.mode, drawnCount };
+      randomUsedByGroup.set(slot.groupId!, usedRandom + drawnCount);
+      return { groupId: slot.groupId!, mode: slot.mode, drawnCount };
     }),
   }));
 }

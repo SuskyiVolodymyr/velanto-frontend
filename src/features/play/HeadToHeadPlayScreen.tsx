@@ -48,6 +48,13 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
 
   function confirmPick() {
     if (!selectedId || !slotA || !slotB || !left || !right) return;
+    // A pool only exists once resolved; a random slot that found none leaves it
+    // undefined, and the API counts a side by that id. Unreachable in practice
+    // — create-time validation guarantees a free pool — but a pick with no
+    // group is rejected, which silently loses the whole play.
+    const groupIdA = slotA.groupId;
+    const groupIdB = slotB.groupId;
+    if (!groupIdA || !groupIdB) return;
     const leftWon = selectedId === left.id;
     // BOTH contenders, each under the pool it was drawn from, with `chosen` on
     // the winner. A two-pool matchup used to record just the winning pool
@@ -59,13 +66,13 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
       ...prev,
       {
         roundIndex,
-        groupId: slotA.groupId,
+        groupId: groupIdA,
         itemId: left.id,
         chosen: leftWon,
       },
       {
         roundIndex,
-        groupId: slotB.groupId,
+        groupId: groupIdB,
         itemId: right.id,
         chosen: !leftWon,
       },

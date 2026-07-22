@@ -1,5 +1,9 @@
 import { z } from "zod";
-import { PACK_FORMATS, SLOT_MODES } from "@/src/shared/types/pack";
+import {
+  GROUP_MODES,
+  PACK_FORMATS,
+  SLOT_MODES,
+} from "@/src/shared/types/pack";
 
 /**
  * Field-limit constants and structural leaf/collection schemas for the
@@ -46,7 +50,11 @@ export const groupValueSchema = z.object({
 });
 
 export const slotValueSchema = z.object({
-  groupId: z.string(),
+  // Absent on a random-pool slot, which is handed a pool at play time. Which of
+  // the two shapes is legal lives in the refinements, beside the capacity rule
+  // that makes the choice affordable — this stays structural.
+  groupId: z.string().optional(),
+  groupMode: z.enum(GROUP_MODES).optional(),
   mode: z.enum(SLOT_MODES),
   count: z.number().optional(),
   // manual: the explicit ordered items pinned to each place. Structural only —
