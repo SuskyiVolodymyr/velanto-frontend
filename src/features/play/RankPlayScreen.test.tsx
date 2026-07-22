@@ -10,9 +10,10 @@ import { ApiError } from "@/src/shared/lib/api-client";
 import type { Pack } from "@/src/shared/types/pack";
 
 const push = vi.fn();
+const replace = vi.fn();
 
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push }),
+  useRouter: () => ({ push, replace }),
   usePathname: () => "/packs/pack-rank/play",
 }));
 
@@ -166,7 +167,6 @@ describe("RankPlayScreen", () => {
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("#1"));
 
-    expect(await screen.findByText("Your ranking is done")).toBeInTheDocument();
     // Anon play is recorded on the backend…
     await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
     expect(vi.mocked(playsClient.record).mock.calls[0][0]).toBe("pack-rank");
@@ -243,7 +243,11 @@ describe("RankPlayScreen", () => {
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("#1"));
 
-    expect(await screen.findByText("Your ranking is done")).toBeInTheDocument();
+    // A failed record must not strand the player on the play screen — the
+    // redirect waits for the request to settle, not to succeed.
+    await waitFor(() =>
+      expect(replace).toHaveBeenCalledWith("/packs/pack-rank/result"),
+    );
     expect(
       JSON.parse(sessionStorage.getItem("velanto:last-play:pack-rank")!),
     ).toHaveLength(3);
@@ -356,7 +360,7 @@ describe("RankPlayScreen", () => {
     expect(rows[1]).toHaveTextContent("Shown #1");
   });
 
-  it("records the accumulated picks once, after the last round, then shows the finished state", async () => {
+  it("records the accumulated picks once, after the last round, then goes to the result", async () => {
     const user = userEvent.setup();
     renderScreen(RANK_BLIND_PACK);
     await screen.findByText("Kaikai Kitan");
@@ -371,8 +375,7 @@ describe("RankPlayScreen", () => {
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("#1"));
 
-    expect(await screen.findByText("Your ranking is done")).toBeInTheDocument();
-    expect(playsClient.record).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(playsClient.record).toHaveBeenCalledTimes(1));
     expect(playsClient.record).toHaveBeenCalledWith("pack-rank", {
       picks: [
         {
@@ -425,9 +428,13 @@ describe("RankPlayScreen", () => {
         },
       ]),
     );
-    expect(
-      screen.getByRole("link", { name: "See your result" }),
-    ).toHaveAttribute("href", "/packs/pack-rank/result");
+    // Placing the last item ends the play — there is no interstitial step
+    // asking the player to click through to their own result.
+    await waitFor(() =>
+      expect(replace).toHaveBeenCalledWith("/packs/pack-rank/result"),
+    );
+    expect(screen.queryByRole("link", { name: /result/i })).toBeNull();
+    expect(screen.getByText("Loading your results…")).toBeInTheDocument();
   });
 
   it("embeds the video for the current item when it is a youtube item", async () => {

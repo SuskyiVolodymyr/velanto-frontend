@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { Text } from "@/src/shared/components/Text";
-import { Button, buttonClassName } from "@/src/shared/components/Button";
+import { Button } from "@/src/shared/components/Button";
+import { LoadingState } from "@/src/shared/components/LoadingState";
 import { cn } from "@/src/shared/lib/cn";
 import { playsClient } from "@/src/shared/lib/plays-client";
 import {
@@ -27,6 +28,7 @@ import type { RecordedPick } from "@/src/shared/types/play-results";
 
 export function RankPlayScreen({ pack }: { pack: Pack }) {
   const { status } = useAuth();
+  const router = useRouter();
   const t = useTranslations("play");
   const groups = pack.groups ?? [];
   const rounds = pack.rounds ?? [];
@@ -35,6 +37,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   const [roundIndex, setRoundIndex] = useState(0);
   const [placements, setPlacements] = useState<Record<number, Item>>({});
   const [allPicks, setAllPicks] = useState<RecordedPick[]>([]);
+  const [recordSettled, setRecordSettled] = useState(false);
 
   // Drawn items for every round, resolved once after mount (dedup spans
   // rounds). Null until the client has drawn; see useRoundSelections.
@@ -114,11 +117,9 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   // endpoint takes an optional JWT and stores a null player. Still waits for
   // auth to resolve, so a signed-in player's run isn't attributed to nobody.
   //
-  // Picks are stashed FIRST, not in .then(): this screen renders its "see
-  // result" link in the same commit that fires this effect, with nothing
-  // gating it on the request. Since #222 gates the result screen on these
-  // picks, writing them after the round-trip means a player who clicks
-  // promptly arrives at a LOCKED screen having just finished the pack.
+  // Picks are stashed FIRST, not in .then(): #222 gates the result screen on
+  // them, so writing them after the round-trip would send a player who just
+  // finished the pack to a LOCKED screen.
   const recordedRef = useRef(false);
   useEffect(() => {
     if (!isFinished || status === "loading" || recordedRef.current) return;
@@ -133,8 +134,18 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
       .then(({ id }) => {
         if (id) writeLastPlayId(pack.id, id);
       })
-      .catch(() => undefined);
+      .catch(() => undefined)
+      // Settled, not succeeded: a failed record must not strand the player on
+      // a finished play screen. The picks above are already stashed, so the
+      // result screen opens either way.
+      .finally(() => setRecordSettled(true));
   }, [isFinished, pack.id, allPicks, status]);
+
+  // Once the record has settled, go straight to the result — no interstitial
+  // "all rounds done" step, same as the other four formats.
+  useEffect(() => {
+    if (recordSettled) router.replace(`/packs/${pack.id}/result`);
+  }, [recordSettled, router, pack.id]);
 
   if (status === "loading") return null;
 
@@ -256,29 +267,13 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
           <div className="mb-8 text-start">
             <RankedList rows={rankedRows} />
           </div>
-          <Button onClick={goToNextRound}>{t("nextRound")}</Button>
+          <Button onClick={goToNextRound} className="w-full">
+            {t("nextRound")}
+          </Button>
         </section>
       )}
 
-      {isFinished && (
-        <section className="mb-10 text-center">
-          <Text as="h2" variant="title" className="mb-2 text-3xl">
-            {t("rankingDone")}
-          </Text>
-          <Text variant="secondary" className="mb-4">
-            {t("rankingDoneSummary", { count: totalRounds })}
-          </Text>
-          <Link
-            href={`/packs/${pack.id}/result`}
-            // Replace so Back from the result screen returns to the pack page,
-            // not into the finished play session.
-            replace
-            className={buttonClassName("primary", "w-fit")}
-          >
-            {t("seeResult")}
-          </Link>
-        </section>
-      )}
+      {isFinished && <LoadingState label={t("loadingResult")} />}
     </div>
   );
 }
