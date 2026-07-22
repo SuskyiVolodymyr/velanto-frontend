@@ -11,22 +11,37 @@ export const PACK_FORMATS = [
   "nxn",
   "rank_blind",
   "1v1",
+  // UI-EXCLUDED:save_one_friends (velanto-frontend#368)
   // Room-based multiplayer: 2-4 friends play one pack together in real time,
   // each round showing players+1 items of which exactly one survives unclaimed.
   // Wire contract only for now — the creator, play path and UI copy land in a
-  // dedicated frontend PR. See velanto-backend#258.
+  // dedicated frontend PR (velanto-frontend#368). See velanto-backend#258 for
+  // the server side.
   "save_one_friends",
 ] as const;
 
 export type PackFormat = (typeof PACK_FORMATS)[number];
 
+// UI-EXCLUDED:save_one_friends (velanto-frontend#368)
 // The formats the frontend UI actually ships: PACK_FORMATS minus
 // `save_one_friends`, which is mirrored above as a WIRE CONTRACT constant only.
-// It has no creator entry, play path, label or translations yet, so pickers,
-// filters and label maps key off this narrower union — otherwise a nameless
-// option would surface to users. The dedicated frontend PR that adds the
-// creator and play path folds it back in. See velanto-backend#258.
+// It has no creator entry and no play path yet, so pickers, filters and the
+// creator's schema key off this narrower union.
+//
+// IMPORTANT: this is a WRITE-side narrowing only. `Pack.format` stays the full
+// PackFormat because such a pack CAN already arrive from the API — packs are
+// authored over the API (velanto-pack-creator via the MCP), not only through
+// this form. Every READ path must therefore handle the format at runtime rather
+// than assume it away; see `isUiPackFormat` below.
 export type UiPackFormat = Exclude<PackFormat, "save_one_friends">;
+
+// UI-EXCLUDED:save_one_friends (velanto-frontend#368)
+// Runtime narrowing for API-sourced formats. Use this instead of a cast at any
+// boundary that needs a UiPackFormat: a cast would silently hand a
+// `save_one_friends` pack to a picker/form that has no option for it.
+export function isUiPackFormat(f: PackFormat): f is UiPackFormat {
+  return f !== "save_one_friends";
+}
 
 // 'image' items store the S3 media KEY (e.g. "media/item/<uuid>.webp") as their
 // value; the render URL is built from it via shared/lib/media-url.
