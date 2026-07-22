@@ -198,7 +198,13 @@
     "filterStaffAria": "স্টাফ স্ট্যাটাস অনুসারে ফিল্টার করুন",
     "staffAll": "সব",
     "staffOnly": "স্টাফ",
-    "staffNonStaff": "নন-স্টাফ"
+    "staffNonStaff": "নন-স্টাফ",
+    "detailSecStorage": "স্টোরেজ",
+    "detailStorageUsed": "এখন ব্যবহৃত",
+    "detailStorageLimit": "সীমা",
+    "storageUnlimited": "সীমাহীন",
+    "metricStorage": "স্টোরেজ",
+    "storageOfCeiling": "{total} এর মধ্যে"
   },
   "notifications": {
     "groupNew": "নতুন",

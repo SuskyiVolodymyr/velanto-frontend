@@ -7,10 +7,15 @@ import { useAdminOverview } from "@/src/features/admin/api/admin.queries";
 import { PlaysChart } from "@/src/features/admin/PlaysChart";
 import { TopPacksToday } from "@/src/features/admin/TopPacksToday";
 import type { AdminOverview } from "@/src/shared/types/admin";
+import { formatBytes } from "@/src/shared/lib/format-bytes";
 
 interface Metric {
   label: string;
-  value: number | null;
+  /**
+   * A count, a preformatted string (storage reads as "1.4 GB"), or null for a
+   * metric with no figure yet — rendered as an em dash.
+   */
+  value: number | string | null;
   /** The small line under the value. */
   sub: string;
   /** Renders the green "live" dot the design puts on a realtime metric. */
@@ -49,6 +54,17 @@ function buildMetrics(overview: AdminOverview, t: AdminTranslator): Metric[] {
       label: t("metricPendingReports"),
       value: overview.pendingReports,
       sub: t("awaitingReview"),
+    },
+    {
+      label: t("metricStorage"),
+      // What every user is holding right now, summed — the same number uploads
+      // are enforced against, so this card can never disagree with the wall a
+      // user hits. There is no all-time figure and cannot be one from this
+      // data: media rows are hard-deleted with their object.
+      value: formatBytes(overview.storage.usedBytes),
+      sub: t("storageOfCeiling", {
+        total: formatBytes(overview.storage.ceilingBytes),
+      }),
     },
   ];
 }

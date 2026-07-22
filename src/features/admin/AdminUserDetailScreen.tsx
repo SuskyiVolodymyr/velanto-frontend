@@ -17,9 +17,13 @@ import { RecentlyPlayedSection } from "@/src/features/author/RecentlyPlayedSecti
 import { useAuthorBanHistory } from "@/src/features/author/api/author.queries";
 import { useAdminUserDetail } from "@/src/features/admin/api/admin.queries";
 import { isCurrentlyBanned } from "@/src/features/admin/use-users-admin";
+import { formatBytes } from "@/src/shared/lib/format-bytes";
 
 /** A single labelled number tile in the stats grid. */
-function Stat({ label, value }: { label: string; value: number }) {
+// `value` is a ReactNode, not a number: storage reads as a formatted size
+// ("500 MB") or the word "Unlimited", and forcing those through a number type
+// would mean a second near-identical card component.
+function Stat({ label, value }: { label: string; value: React.ReactNode }) {
   return (
     <Card className="hover:translate-y-0 hover:shadow-none">
       <Text variant="tertiary" className="text-xs">
@@ -156,6 +160,28 @@ export function AdminUserDetailScreen({ userId }: { userId: string }) {
         <Stat
           label={t("detailPacksPlayed")}
           value={user.activity.playsRecorded}
+        />
+      </StatGrid>
+
+      {/* Storage — what they are holding NOW, beside the budget it is judged
+          against. No all-time or per-month figure exists: media rows are
+          hard-deleted with their object, so nothing records what a user used to
+          store (velanto-backend#254). */}
+      <Text as="h2" variant="title" className="mb-3 mt-8 text-lg">
+        {t("detailSecStorage")}
+      </Text>
+      <StatGrid>
+        <Stat
+          label={t("detailStorageUsed")}
+          value={formatBytes(user.storage.usedBytes)}
+        />
+        <Stat
+          label={t("detailStorageLimit")}
+          value={
+            user.storage.limitBytes === null
+              ? t("storageUnlimited")
+              : formatBytes(user.storage.limitBytes)
+          }
         />
       </StatGrid>
 

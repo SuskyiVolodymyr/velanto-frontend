@@ -198,7 +198,13 @@
     "filterStaffAria": "按员工状态筛选",
     "staffAll": "全部",
     "staffOnly": "员工",
-    "staffNonStaff": "非员工"
+    "staffNonStaff": "非员工",
+    "detailSecStorage": "存储",
+    "detailStorageUsed": "当前占用",
+    "detailStorageLimit": "配额",
+    "storageUnlimited": "无限制",
+    "metricStorage": "存储",
+    "storageOfCeiling": "共 {total}"
   },
   "notifications": {
     "groupNew": "最新",

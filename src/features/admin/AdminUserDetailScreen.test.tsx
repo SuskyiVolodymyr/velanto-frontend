@@ -44,6 +44,7 @@ const DETAIL: AdminUserDetail = {
   activity: { commentsCount: 4, playsRecorded: 12 },
   social: { followers: 30, following: 5 },
   moderation: { reportsAgainst: 2, reportsFiled: 1 },
+  storage: { usedBytes: 500 * 1024 * 1024, limitBytes: 1024 * 1024 * 1024 },
 };
 
 function mockAll(detail: Partial<ReturnType<typeof useAdminUserDetail>> = {}) {
@@ -119,5 +120,33 @@ describe("AdminUserDetailScreen", () => {
 
     expect(useAdminUserDetail).toHaveBeenCalledWith("u1", { enabled: true });
     expect(useAuthorBanHistory).toHaveBeenCalledWith("u1", { enabled: true });
+  });
+
+  // #254: what a user is holding right now, beside the budget it is judged
+  // against. There is no all-time figure — deleted media leaves no record.
+  describe("storage", () => {
+    it("shows what the user holds against the budget their trust earns", () => {
+      mockAll();
+      render(<AdminUserDetailScreen userId="u1" />);
+
+      expect(screen.getByText("500 MB")).toBeInTheDocument();
+      expect(screen.getByText("1 GB")).toBeInTheDocument();
+    });
+
+    // Staff budgets are unlimited, which the API sends as null rather than a
+    // number. Rendering that as "0 B" or blank would read as "no space left".
+    it("says unlimited for a staff account rather than showing nothing", () => {
+      mockAll({
+        data: {
+          ...DETAIL,
+          role: "moderator",
+          storage: { usedBytes: 2048, limitBytes: null },
+        },
+      });
+      render(<AdminUserDetailScreen userId="u1" />);
+
+      expect(screen.getByText("2 KB")).toBeInTheDocument();
+      expect(screen.getByText("Unlimited")).toBeInTheDocument();
+    });
   });
 });
