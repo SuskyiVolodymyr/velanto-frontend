@@ -227,7 +227,9 @@
     "kindGeneric": "বিজ্ঞপ্তি",
     "markAllRead": "সব পঠিত চিহ্নিত করুন",
     "newCount": "{count} নতুন",
-    "loadOlder": "পুরোনো বিজ্ঞপ্তি লোড করুন"
+    "loadOlder": "পুরোনো বিজ্ঞপ্তি লোড করুন",
+    "commentReply": "<user>@{username}</user> <muted>আপনার মন্তব্যে উত্তর দিয়েছেন</muted> <obj>{packTitle}</obj>",
+    "kindReply": "উত্তর"
   },
   "bottomNav": {
     "label": "প্রধান",
@@ -328,7 +330,8 @@
     "addEmailCodeLabel": "যাচাইকরণ কোড",
     "addEmailConfirmButton": "ইমেল যোগ করুন",
     "addEmailTaken": "ওই ইমেলটি ইতিমধ্যে অন্য একটি অ্যাকাউন্ট ব্যবহার করছে।",
-    "addEmailError": "ওই ইমেলটি যোগ করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।"
+    "addEmailError": "ওই ইমেলটি যোগ করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।",
+    "notifCommentReply": "কেউ আপনার মন্তব্যে উত্তর দিয়েছেন"
   },
   "streamerMode": {
     "hiddenHint": "স্ট্রিমার মোডের কারণে লুকানো",

@@ -322,7 +322,9 @@
     "kindGeneric": "Notification",
     "markAllRead": "Mark all read",
     "newCount": "{count} new",
-    "loadOlder": "Load older notifications"
+    "loadOlder": "Load older notifications",
+    "commentReply": "<user>@{username}</user> <muted>replied to your comment on</muted> <obj>{packTitle}</obj>",
+    "kindReply": "Reply"
   },
   "bottomNav": {
     "label": "Primary",
@@ -422,7 +424,8 @@
     "addEmailCodeLabel": "Verification code",
     "addEmailConfirmButton": "Add email",
     "addEmailTaken": "That email is already used by another account.",
-    "addEmailError": "Couldn’t add that email. Please try again."
+    "addEmailError": "Couldn’t add that email. Please try again.",
+    "notifCommentReply": "Someone replied to your comment"
   },
   "streamerMode": {
     "hiddenHint": "Hidden because of streamer mode",

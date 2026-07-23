@@ -4,6 +4,7 @@ import {
   Bell,
   MessageCircle,
   Package,
+  Reply,
   UserPlus,
   type LucideIcon,
 } from "lucide-react";
@@ -34,6 +35,7 @@ const VISUALS: Record<NotificationType, NotificationVisual> = {
   new_pack_from_followed: { tone: "#a78bfa", Icon: Package, actor: true },
   new_comment: { tone: "#38bdf8", Icon: MessageCircle, actor: true },
   comment_mention: { tone: "#fbbf24", Icon: AtSign, actor: true },
+  comment_reply: { tone: "#2dd4bf", Icon: Reply, actor: true },
   pack_deleted_warning: { tone: DANGER, Icon: AlertTriangle, actor: false },
 };
 

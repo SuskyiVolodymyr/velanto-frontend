@@ -227,7 +227,9 @@
     "kindGeneric": "सूचना",
     "markAllRead": "सभी पढ़ा चिह्नित करें",
     "newCount": "{count} नई",
-    "loadOlder": "पुरानी सूचनाएँ लोड करें"
+    "loadOlder": "पुरानी सूचनाएँ लोड करें",
+    "commentReply": "<user>@{username}</user> <muted>ने आपकी टिप्पणी का उत्तर दिया</muted> <obj>{packTitle}</obj>",
+    "kindReply": "उत्तर"
   },
   "bottomNav": {
     "label": "मुख्य",
@@ -328,7 +330,8 @@
     "addEmailCodeLabel": "सत्यापन कोड",
     "addEmailConfirmButton": "ईमेल जोड़ें",
     "addEmailTaken": "वह ईमेल पहले से किसी अन्य खाते द्वारा उपयोग किया जा रहा है।",
-    "addEmailError": "वह ईमेल जोड़ा नहीं जा सका। कृपया पुनः प्रयास करें।"
+    "addEmailError": "वह ईमेल जोड़ा नहीं जा सका। कृपया पुनः प्रयास करें।",
+    "notifCommentReply": "किसी ने आपकी टिप्पणी का उत्तर दिया"
   },
   "streamerMode": {
     "hiddenHint": "स्ट्रीमर मोड के कारण छिपाया गया",

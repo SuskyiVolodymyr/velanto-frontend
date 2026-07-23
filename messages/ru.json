@@ -227,7 +227,9 @@
     "kindGeneric": "Уведомление",
     "markAllRead": "Отметить все",
     "newCount": "{count} новых",
-    "loadOlder": "Загрузить старые"
+    "loadOlder": "Загрузить старые",
+    "commentReply": "<user>@{username}</user> <muted>ответил на ваш комментарий в</muted> <obj>{packTitle}</obj>",
+    "kindReply": "Ответ"
   },
   "bottomNav": {
     "label": "Главное",
@@ -328,7 +330,8 @@
     "addEmailCodeLabel": "Код подтверждения",
     "addEmailConfirmButton": "Добавить почту",
     "addEmailTaken": "Эта почта уже используется другим аккаунтом.",
-    "addEmailError": "Не удалось добавить эту почту. Пожалуйста, попробуйте ещё раз."
+    "addEmailError": "Не удалось добавить эту почту. Пожалуйста, попробуйте ещё раз.",
+    "notifCommentReply": "Кто-то ответил на ваш комментарий"
   },
   "streamerMode": {
     "hiddenHint": "Скрыто из-за режима стримера",

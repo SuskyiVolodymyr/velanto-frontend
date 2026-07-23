@@ -43,6 +43,13 @@ interface CommentMentionPayload {
   mentionerUsername: string;
   excerpt?: string;
 }
+interface CommentReplyPayload {
+  packId: string;
+  packTitle: string;
+  commentId: string;
+  replierUsername: string;
+  excerpt?: string;
+}
 interface PackDeletedWarningPayload {
   packTitle: string;
 }
@@ -101,6 +108,19 @@ export function describeNotification(
         kindKey: "kindMention",
         values: {
           username: payload.mentionerUsername,
+          packTitle: payload.packTitle,
+        },
+        excerpt: snippet(payload.excerpt),
+        href: `/packs/${payload.packId}`,
+      };
+    }
+    case "comment_reply": {
+      const payload = notification.payload as CommentReplyPayload;
+      return {
+        messageKey: "commentReply",
+        kindKey: "kindReply",
+        values: {
+          username: payload.replierUsername,
           packTitle: payload.packTitle,
         },
         excerpt: snippet(payload.excerpt),
