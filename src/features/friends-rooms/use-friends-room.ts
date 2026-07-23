@@ -76,7 +76,20 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
 
       socket.on("connect", () => setConnection("open"));
       socket.io.on("reconnect_attempt", () => setConnection("connecting"));
-      socket.on("disconnect", () => setConnection("connecting"));
+      socket.on("disconnect", (reason: string) => {
+        // "io server disconnect" is the server deliberately dropping us — the
+        // gateway kicks a handshake for a room that doesn't exist or one we
+        // hold no seat in, and it also closes every socket when a room is torn
+        // down. socket.io does NOT auto-reconnect a server-initiated close, so
+        // treating it as transient left the screen stuck on "loading" forever
+        // when you returned to a room that had been swept or never existed.
+        // Any other reason (transport close, ping timeout) is a network blip
+        // socket.io will retry — stay "connecting" and keep the last board up.
+        setConnection(
+          reason === "io server disconnect" ? "closed" : "connecting",
+        );
+      });
+      socket.on("connect_error", () => setConnection("connecting"));
 
       // The full snapshot: on join and on every reconnect. Wholesale replace.
       socket.on(ROOM_EVENTS.state, (next: RoomState) => {

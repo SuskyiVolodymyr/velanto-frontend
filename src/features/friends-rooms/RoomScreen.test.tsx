@@ -4,11 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { RoomScreen } from "./RoomScreen";
 import type { FriendsRoom, RoomConnection } from "./use-friends-room";
-import type {
-  ClaimRejection,
-  RoomPlayerState,
-  RoomState,
-} from "./room-types";
+import type { ClaimRejection, RoomPlayerState, RoomState } from "./room-types";
 import type { Item } from "@/src/shared/types/pack";
 import type { User } from "@/src/shared/types/user";
 
@@ -143,9 +139,7 @@ describe("RoomScreen — lobby", () => {
 
     // The code is masked until deliberately revealed.
     expect(screen.queryByText("ABC123")).not.toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Reveal" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Reveal" })).toBeInTheDocument();
   });
 
   it("reveals the code only after the host clicks Reveal", async () => {
@@ -371,5 +365,32 @@ describe("RoomScreen — connection", () => {
     expect(screen.getByText("Reconnecting…")).toBeInTheDocument();
     // The lobby is still on screen underneath the banner.
     expect(screen.getByText("Alice")).toBeInTheDocument();
+  });
+
+  // Teardown closes every socket the instant a game ends, which arrives as
+  // connection "closed". The results must survive that — they render from the
+  // final snapshot we already hold, not from a live socket. If the closed check
+  // came first, the results would flash and be replaced by "this room ended".
+  it("shows results for a finished game even after the socket closes", () => {
+    setRoom(
+      baseState({
+        status: "finished",
+        phase: "finished",
+        totalRounds: 1,
+        results: [
+          {
+            index: 0,
+            items: [textItem("a1", "Apple"), textItem("a2", "Banana")],
+            claims: { host: "a1" },
+            survivorItemId: "a2",
+          },
+        ],
+      }),
+      "closed",
+    );
+    render(<RoomScreen roomId="room-1" />);
+
+    expect(screen.getByRole("region", { name: "Round 1" })).toBeInTheDocument();
+    expect(screen.queryByText("This room has ended")).not.toBeInTheDocument();
   });
 });

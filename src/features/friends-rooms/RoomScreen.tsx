@@ -28,6 +28,18 @@ export function RoomScreen({ roomId }: { roomId: string }) {
     useFriendsRoom(roomId);
   const userId = user?.id ?? null;
 
+  // A finished game shows its results even after the server tears the socket
+  // down (teardown closes every socket, which arrives as connection "closed").
+  // This must come before the closed check, or the results would flash and be
+  // replaced by "this room has ended" the instant the room is evicted.
+  if (state?.phase === "finished") {
+    return (
+      <Shell>
+        <RoomResults state={state} />
+      </Shell>
+    );
+  }
+
   if (connection === "closed") {
     return (
       <Shell>
@@ -65,7 +77,11 @@ export function RoomScreen({ roomId }: { roomId: string }) {
           role="status"
           className="mb-6 flex items-center gap-2 rounded-[10px] border border-border-strong bg-surface px-4 py-2.5"
         >
-          <WifiOff size={16} aria-hidden className="text-foreground-secondary" />
+          <WifiOff
+            size={16}
+            aria-hidden
+            className="text-foreground-secondary"
+          />
           <Text variant="secondary" className="text-sm">
             {t("reconnecting")}
           </Text>
@@ -91,7 +107,8 @@ export function RoomScreen({ roomId }: { roomId: string }) {
       {state.phase === "between" && (
         <RoomBetween state={state} currentUserId={userId} onNext={next} />
       )}
-      {state.phase === "finished" && <RoomResults state={state} />}
+      {/* phase "finished" is handled above, before the connection checks, so a
+          torn-down socket still shows results. */}
     </Shell>
   );
 }

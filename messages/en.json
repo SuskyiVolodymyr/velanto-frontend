@@ -1531,7 +1531,7 @@
     },
     "ended": {
       "heading": "This room has ended",
-      "description": "The room was closed or everyone left. Start a new one from the pack page."
+      "description": "This room is no longer available. Start a new one from the pack page."
     }
   }
 }
