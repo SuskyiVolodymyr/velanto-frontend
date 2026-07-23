@@ -194,6 +194,12 @@ export interface Pack {
   // rather than by createdAt. Optional here only so the many Pack fixtures that
   // predate the column stay valid; the backend always sends it.
   submittedAt?: string;
+  // When the pack FIRST went public, or null if it never has (a draft, or a
+  // legacy pack from before the backend column existed). This is the honest
+  // "published" date — createdAt is only the fallback, since a pack can sit as a
+  // draft or wait in moderation before going live. Optional here only so Pack
+  // fixtures that predate it stay valid; the backend always sends it.
+  firstPublishedAt?: string | null;
   totalPlays: number;
   avgAgreementPercent: number;
   status: PackStatus;
