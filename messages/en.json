@@ -1449,5 +1449,60 @@
     "loading": "Searching…",
     "error": "Couldn't search for people. Try again.",
     "empty": "No people found."
+  },
+  "room": {
+    "loading": "Loading room…",
+    "reconnecting": "Reconnecting…",
+    "lobby": {
+      "heading": "Lobby",
+      "roster": "Players",
+      "emptySeat": "Empty seat",
+      "you": "You",
+      "host": "Host",
+      "ready": "Ready",
+      "notReady": "Not ready",
+      "away": "Away",
+      "readyUp": "Ready up",
+      "readyCancel": "Ready",
+      "waitingForPlayers": "Waiting for {count} more to join",
+      "waitingForReady": "Waiting for everyone to ready up",
+      "starting": "Everyone's ready — starting…",
+      "inviteHeading": "Invite friends",
+      "streamSafeNote": "Your join code stays hidden so you can share your screen safely. Copy it straight into Discord, or reveal it only when you need to read it aloud.",
+      "copyCode": "Copy code",
+      "copied": "Copied",
+      "revealCode": "Reveal",
+      "hideCode": "Hide",
+      "codeUnavailable": "This room is no longer accepting new players.",
+      "lock": "Lock room",
+      "unlock": "Unlock room",
+      "lockedNote": "Locked — closed to new players.",
+      "unlockedNote": "Open — friends with the code can join."
+    },
+    "round": {
+      "heading": "Round {index} of {total}",
+      "instruction": "Claim one item to sacrifice. The item nobody claims survives.",
+      "claim": "Sacrifice {name}",
+      "taken": "Taken",
+      "sacrificedBy": "Sacrificed by {name}",
+      "survivor": "Survivor",
+      "chosen": "{count} of {total} have chosen"
+    },
+    "between": {
+      "survivorHeading": "Survivor",
+      "survivorNote": "This item survived the round.",
+      "boardHeading": "This round's sacrifices",
+      "next": "Next",
+      "pressNextPrompt": "Press Next when you're ready for the next round.",
+      "waitingForNext": "Waiting for {count} to press Next…"
+    },
+    "results": {
+      "heading": "Results",
+      "roundLabel": "Round {index}"
+    },
+    "ended": {
+      "heading": "This room has ended",
+      "description": "The room was closed or everyone left. Start a new one from the pack page."
+    }
   }
 }

@@ -1449,5 +1449,60 @@
     "loading": "正在搜索…",
     "error": "搜索用户失败，请重试。",
     "empty": "未找到用户。"
+  },
+  "room": {
+    "loading": "正在加载房间…",
+    "reconnecting": "正在重新连接…",
+    "lobby": {
+      "heading": "房间大厅",
+      "roster": "玩家",
+      "emptySeat": "空座位",
+      "you": "你",
+      "host": "房主",
+      "ready": "已准备",
+      "notReady": "未准备",
+      "away": "离开",
+      "readyUp": "准备",
+      "readyCancel": "已准备",
+      "waitingForPlayers": "还需 {count} 名玩家加入",
+      "waitingForReady": "等待所有人准备就绪",
+      "starting": "所有人已准备——即将开始…",
+      "inviteHeading": "邀请好友",
+      "streamSafeNote": "加入码默认隐藏，方便你安全地共享屏幕。可直接复制到 Discord，只有在需要念出来时才显示它。",
+      "copyCode": "复制加入码",
+      "copied": "已复制",
+      "revealCode": "显示",
+      "hideCode": "隐藏",
+      "codeUnavailable": "该房间已不再接受新玩家。",
+      "lock": "锁定房间",
+      "unlock": "解锁房间",
+      "lockedNote": "已锁定——不接受新玩家。",
+      "unlockedNote": "开放——拥有加入码的好友可以加入。"
+    },
+    "round": {
+      "heading": "第 {index} 轮，共 {total} 轮",
+      "instruction": "认领一项进行淘汰。无人认领的那一项将存活。",
+      "claim": "淘汰 {name}",
+      "taken": "已被认领",
+      "sacrificedBy": "由 {name} 淘汰",
+      "survivor": "存活",
+      "chosen": "已有 {count}/{total} 人选择"
+    },
+    "between": {
+      "survivorHeading": "存活项",
+      "survivorNote": "此项在本轮中存活。",
+      "boardHeading": "本轮的淘汰",
+      "next": "下一步",
+      "pressNextPrompt": "准备好进入下一轮时请按“下一步”。",
+      "waitingForNext": "等待 {count} 人按下“下一步”…"
+    },
+    "results": {
+      "heading": "结果",
+      "roundLabel": "第 {index} 轮"
+    },
+    "ended": {
+      "heading": "该房间已结束",
+      "description": "房间已关闭或所有人已离开。可从卡包页面开启新房间。"
+    }
   }
 }
