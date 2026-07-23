@@ -28,6 +28,23 @@ export function newRound(groupId: string): Round {
   return { id: crypto.randomUUID(), name: "", slots: [newSlot(groupId)] };
 }
 
+// save_one_friends: a single random slot naming a pool, with NO count — the room
+// shows one item per player plus one, a size fixed only when it fills. There is
+// no manual mode (the room draws at play time) and no authored count.
+export function friendsSlot(groupId: string): Slot {
+  return { groupId, mode: "random" };
+}
+
+// A friends slot handed its pool at play time (groupMode "random"), still with
+// no count for the same reason.
+export function friendsRandomPoolSlot(): Slot {
+  return { groupMode: "random", mode: "random" };
+}
+
+export function newFriendsRound(groupId: string): Round {
+  return { id: crypto.randomUUID(), name: "", slots: [friendsSlot(groupId)] };
+}
+
 // Versus (nxn/1v1): a single 2-slot matchup round. Side A draws from `groupAId`,
 // Side B from `groupBId` — which MAY be the same pool (a single-pool matchup).
 // Both sides share the per-side draw count; 1v1 pins it to 1.

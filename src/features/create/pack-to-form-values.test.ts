@@ -49,13 +49,13 @@ describe("packToFormValues", () => {
   it("seeds an existing cover image key", () => {
     expect(
       packToFormValues({ ...PACK, coverImageKey: "media/cover/x.webp" })
-        .coverImageKey,
+        ?.coverImageKey,
     ).toBe("media/cover/x.webp");
   });
 
   it("maps a null cover (gradient-only pack) to undefined so the optional field stays valid", () => {
     expect(
-      packToFormValues({ ...PACK, coverImageKey: null }).coverImageKey,
+      packToFormValues({ ...PACK, coverImageKey: null })?.coverImageKey,
     ).toBeUndefined();
   });
 
@@ -80,10 +80,36 @@ describe("packToFormValues", () => {
       ],
     });
 
-    expect(values.rounds[0].slots[0]).toEqual({
+    expect(values?.rounds[0].slots[0]).toEqual({
       groupMode: "random",
       mode: "random",
       count: 2,
     });
+  });
+
+  // save_one_friends is a first-class editable format now — its rounds are
+  // single-slot random draws with no count, which the friends editor renders.
+  it("seeds the form for a save_one_friends pack", () => {
+    const friendsPack: Pack = {
+      ...PACK,
+      format: "save_one_friends",
+      rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "random" }] }],
+    };
+    const values = packToFormValues(friendsPack);
+
+    expect(values).not.toBeNull();
+    expect(values?.format).toBe("save_one_friends");
+    expect(values?.rounds).toEqual(friendsPack.rounds);
+  });
+
+  // The null path is the defensive guard for a genuinely unknown wire format (a
+  // backend deployed ahead of this build), NOT for any shipped format.
+  it("returns null for a format this build does not know", () => {
+    expect(
+      packToFormValues({
+        ...PACK,
+        format: "telepathy" as Pack["format"],
+      }),
+    ).toBeNull();
   });
 });

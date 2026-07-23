@@ -23,6 +23,7 @@ const LABEL_KEYS: Record<NotificationType, string> = {
   new_pack_from_followed: "notifNewPack",
   new_comment: "notifNewComment",
   comment_mention: "notifCommentMention",
+  comment_reply: "notifCommentReply",
   pack_deleted_warning: "notifPackDeleted",
 };
 

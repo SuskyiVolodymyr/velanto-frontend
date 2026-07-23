@@ -22,7 +22,11 @@ export function PackCard({
   const tFormat = useTranslations("formats");
   const locale = useLocale();
   const roundsCount = getRoundsCount(pack);
-  const createdLabel = formatRelativeTimeIntl(pack.createdAt, locale);
+  // Date the pack by when it went public, not when the row was made — a pack can
+  // sit as a draft or wait in moderation. createdAt is the fallback for drafts
+  // and legacy packs the backend sends with a null firstPublishedAt.
+  const publishedAt = pack.firstPublishedAt ?? pack.createdAt;
+  const publishedLabel = formatRelativeTimeIntl(publishedAt, locale);
   const statsLabel =
     pack.totalPlays === 0
       ? "No plays yet"
@@ -76,10 +80,10 @@ export function PackCard({
                 render seconds apart). suppressHydrationWarning keeps the server
                 copy on hydration and lets later renders refresh it; the exact
                 instant stays machine-readable in `dateTime` regardless. */}
-            {createdLabel && (
+            {publishedLabel && (
               <Text variant="tertiary" className="ml-auto shrink-0 text-xs">
-                <time dateTime={pack.createdAt} suppressHydrationWarning>
-                  {createdLabel}
+                <time dateTime={publishedAt} suppressHydrationWarning>
+                  {publishedLabel}
                 </time>
               </Text>
             )}

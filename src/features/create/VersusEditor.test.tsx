@@ -6,7 +6,7 @@ import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { VersusEditor } from "./VersusEditor";
 import { versusRounds } from "./create-pack.defaults";
 import type { CreatePackValues } from "./create-pack.schema";
-import type { Item, PackFormat } from "@/src/shared/types/pack";
+import type { Item, UiPackFormat } from "@/src/shared/types/pack";
 
 function items(n: number, prefix: string): Item[] {
   return Array.from({ length: n }, (_, i) => ({
@@ -18,7 +18,7 @@ function items(n: number, prefix: string): Item[] {
 }
 
 function baseValues(
-  format: PackFormat,
+  format: UiPackFormat,
   perSide: number,
   roundCount = 2,
   poolCount = 2,
@@ -67,7 +67,7 @@ function Harness({
   rounds = 2,
   pools = 2,
 }: {
-  format?: PackFormat;
+  format?: UiPackFormat;
   perSide?: number;
   rounds?: number;
   pools?: number;

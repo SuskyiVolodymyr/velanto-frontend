@@ -113,6 +113,49 @@ describe("PackCard", () => {
       expect(screen.getByText(BASE_PACK.title)).toBeInTheDocument();
       expect(document.querySelector("time")).not.toBeInTheDocument();
     });
+
+    // The card dates the pack by when it went PUBLIC, not when the row was made.
+    // A pack can sit as a draft or wait in moderation, so firstPublishedAt is the
+    // honest "published X ago"; createdAt is only the fallback.
+    it("prefers firstPublishedAt over createdAt for the timestamp", () => {
+      vi.setSystemTime(new Date("2026-05-01T00:00:00.000Z"));
+      render(
+        <PackCard
+          pack={{
+            ...BASE_PACK,
+            format: "save_one",
+            createdAt: "2026-01-01T00:00:00.000Z",
+            firstPublishedAt: "2026-04-01T00:00:00.000Z",
+          }}
+        />,
+      );
+
+      // 30 days since publication (Apr 1 → May 1), not 120 since creation.
+      expect(screen.getByText("30 days ago").closest("time")).toHaveAttribute(
+        "dateTime",
+        "2026-04-01T00:00:00.000Z",
+      );
+      expect(screen.queryByText("120 days ago")).not.toBeInTheDocument();
+    });
+
+    it("falls back to createdAt when firstPublishedAt is null", () => {
+      vi.setSystemTime(new Date("2026-05-01T00:00:00.000Z"));
+      render(
+        <PackCard
+          pack={{
+            ...BASE_PACK,
+            format: "save_one",
+            createdAt: "2026-01-01T00:00:00.000Z",
+            firstPublishedAt: null,
+          }}
+        />,
+      );
+
+      expect(screen.getByText("120 days ago").closest("time")).toHaveAttribute(
+        "dateTime",
+        "2026-01-01T00:00:00.000Z",
+      );
+    });
   });
 
   it("uses the rounds length as the round count for an nxn pack", () => {

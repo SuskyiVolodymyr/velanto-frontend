@@ -9,7 +9,7 @@ import { Select } from "@/src/shared/components/Select";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { DataTable, DataTableRow } from "@/src/shared/components/DataTable";
 import { TablePagination } from "@/src/shared/components/TablePagination";
-import { FORMAT_LABELS } from "@/src/shared/lib/pack-display";
+import { FORMAT_LABELS, formatLabel } from "@/src/shared/lib/pack-display";
 import { formatRelativeTimeIntl } from "@/src/shared/lib/relative-time";
 import { PACK_FORMATS } from "@/src/shared/types/pack";
 import {
@@ -103,6 +103,8 @@ export function PackApprovalsTab() {
             }
             options={[
               { value: "", label: t("allFormats") },
+              // Every format is a filterable option now, each with a
+              // FORMAT_LABELS entry (save_one_friends included).
               ...PACK_FORMATS.map((format) => ({
                 value: format,
                 label: FORMAT_LABELS[format],
@@ -173,7 +175,7 @@ export function PackApprovalsTab() {
                       {pack.author?.username ?? "—"}
                     </Text>
                     <Text variant="tertiary" className="text-[12.5px]">
-                      {FORMAT_LABELS[pack.format]}
+                      {formatLabel(pack.format)}
                     </Text>
                     <Text variant="tertiary" className="text-[12.5px]">
                       {submitted ?? "—"}

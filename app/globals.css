@@ -153,6 +153,25 @@ html[data-streamer-mode="on"]:not([data-streamer-hydrated])
 }
 
 /*
+ * Friends-room claim contention — flashes an item's frame red when someone
+ * claimed it a beat before you did (a rejected claim). Applied by
+ * <RoomItemCard> (src/features/friends-rooms/RoomItemCard.tsx) off lastRejection.
+ */
+@keyframes room-item-flash {
+  0%,
+  100% {
+    border-color: var(--border);
+  }
+  30%,
+  60% {
+    border-color: var(--danger);
+  }
+}
+.room-item-flash {
+  animation: room-item-flash 700ms ease-in-out 2;
+}
+
+/*
  * Staff nicknames — admin/manager/moderator handles render as an animated
  * gradient: a narrow secondary-color band sweeps left→right across a
  * primary-color base, with a soft glow in the role's secondary color. Colors
@@ -228,5 +247,11 @@ html[data-streamer-mode="on"]:not([data-streamer-hydrated])
   /* Show every candidate immediately — no staggered fade. */
   .play-card-appear {
     animation: none;
+  }
+
+  /* Keep the contended-item cue as a static red frame, no pulse. */
+  .room-item-flash {
+    animation: none;
+    border-color: var(--danger);
   }
 }

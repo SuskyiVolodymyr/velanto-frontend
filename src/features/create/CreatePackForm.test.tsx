@@ -509,6 +509,63 @@ describe("CreatePackForm", () => {
     }
   });
 
+  describe("save_one_friends swaps in the friends editor", () => {
+    it("shows the friends body — no count input, not versus — when selected", async () => {
+      const user = userEvent.setup();
+      renderForm();
+      await user.click(
+        await screen.findByRole("button", { name: /^Save One \(Friends\)/ }),
+      );
+
+      // The friends explainer is unique to that body; it has its own add-round
+      // control but no Side A/B (not versus) and no per-round count input.
+      expect(
+        screen.getByText(/one item per player plus one/i),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "+ Add round" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByLabelText("Side A for round 1"),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByLabelText("Items to draw for round 1"),
+      ).not.toBeInTheDocument();
+    });
+
+    it("submits a friends pack: one pool of five, a single random round with no count", async () => {
+      const user = userEvent.setup();
+      vi.mocked(packsClient.create).mockResolvedValue(
+        makePack({ id: "pack-friends", format: "save_one_friends" }),
+      );
+      renderForm();
+      await user.type(await screen.findByLabelText("Pack title"), "T");
+      await user.type(screen.getByLabelText("Pack description"), "D");
+      await user.type(screen.getByLabelText("Pool 1 name"), "Songs");
+      // A friends pool needs at least five items (one per player plus one).
+      for (const name of ["a", "b", "c", "d", "e"]) {
+        await user.type(screen.getByLabelText("Pool 1 new item"), name);
+        await user.click(screen.getByRole("button", { name: "Add" }));
+      }
+
+      await user.click(
+        screen.getByRole("button", { name: /^Save One \(Friends\)/ }),
+      );
+      await user.click(screen.getByRole("button", { name: "Publish" }));
+
+      await waitFor(() =>
+        expect(push).toHaveBeenCalledWith("/packs/pack-friends"),
+      );
+      const input = vi.mocked(packsClient.create).mock.calls[0][0];
+      expect(input.format).toBe("save_one_friends");
+      expect(input.rounds).toHaveLength(1);
+      expect(input.rounds[0].slots).toHaveLength(1);
+      expect(input.rounds[0].slots[0].mode).toBe("random");
+      // The room fixes the board size, so no count is ever sent.
+      expect(input.rounds[0].slots[0].count).toBeUndefined();
+    });
+  });
+
   describe("versus formats swap in the Versus editor", () => {
     it("switches from Rounds to the per-round Versus editor when NxN is selected", async () => {
       const user = userEvent.setup();

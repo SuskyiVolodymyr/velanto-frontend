@@ -3,6 +3,7 @@ import { resolveRoundDraws } from "@/src/shared/lib/round-draw";
 import {
   ELIMINATION_MIN_DRAW,
   ELIMINATION_MAX_DRAW,
+  FRIENDS_ROUND_DRAW,
   NXN_SIDE_COUNT_MAX,
   NXN_SIDE_COUNT_MIN,
   type PackDraft,
@@ -191,6 +192,98 @@ export function validateElimination(pack: PackDraft, ctx: z.RefinementCtx) {
   });
 
   if (groupsOk) validateFeasibility(pack, ctx);
+}
+
+// save_one_friends: save_one played live by 2–4 friends in a room. Every round
+// is a SINGLE random slot with NO count and NO pinned items — the room shows one
+// item per player plus one (the survivor), a size fixed only when the room
+// fills. Because the count is fixed at play time, every pool must hold a full
+// board (FRIENDS_ROUND_DRAW), and under-fill is FATAL here (unlike other formats
+// where only a 0-draw round blocks): a friends round that can't seat the max is
+// unplayable. Mirrors velanto-backend create-pack.dto.ts (friends branch +
+// friends feasibility).
+export function validateFriends(pack: PackDraft, ctx: z.RefinementCtx) {
+  const groupsOk = validateGroupsAndRefs(pack, ctx);
+
+  // Every pool — including one no slot names, since a random-pool slot is handed
+  // a pool at play time — must be able to fill a full 4-player board plus the
+  // survivor.
+  pack.groups.forEach((group, gi) => {
+    if (group.items.length < FRIENDS_ROUND_DRAW) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["groups", gi, "items"],
+        message: `Each pool needs at least ${FRIENDS_ROUND_DRAW} items (one per player plus the survivor).`,
+      });
+    }
+  });
+
+  pack.rounds.forEach((round, ri) => {
+    if (round.slots.length !== 1) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["rounds", ri, "slots"],
+        message: "This round needs exactly one group.",
+      });
+      return;
+    }
+    const slot = round.slots[0];
+    if (slot.mode !== "random") {
+      ctx.addIssue({
+        code: "custom",
+        path: ["rounds", ri, "slots", 0, "mode"],
+        message: "Friends rounds are drawn randomly.",
+      });
+    }
+    // The room shows one item per player plus one, so an authored count or a
+    // pinned item list is always wrong — rejected, not ignored, to match the API.
+    if (slot.count !== undefined) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["rounds", ri, "slots", 0, "count"],
+        message:
+          "Friends rounds don't take a size — the room shows one item per player plus one.",
+      });
+    }
+    if (slot.itemIds !== undefined) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["rounds", ri, "slots", 0, "itemIds"],
+        message:
+          "Friends rounds don't pin items — the room draws them when it fills.",
+      });
+    }
+  });
+
+  if (groupsOk) validateFriendsFeasibility(pack, ctx);
+}
+
+// Friends packs author no count, so hand the draw engine the size the room will
+// use (FRIENDS_ROUND_DRAW) and require every round to reach it — items never
+// repeat across rounds sharing a pool, so a shared pool caps how many full
+// boards it can feed. Under-fill is fatal (see validateFriends).
+function validateFriendsFeasibility(pack: PackDraft, ctx: z.RefinementCtx) {
+  const drawRounds = pack.rounds.map((round) => ({
+    ...round,
+    slots: round.slots.map((slot) => ({ ...slot, count: FRIENDS_ROUND_DRAW })),
+  }));
+  const resolved = resolveRoundDraws(pack.groups, drawRounds);
+  const groupIds = new Set(pack.groups.map((group) => group.id));
+  resolved.forEach((round, ri) => {
+    round.slots.forEach((slot, si) => {
+      if (slot.mode !== "random") return;
+      // A random-pool slot has no shared pool to be used up by; a dangling ref
+      // was already reported by validateGroupsAndRefs.
+      if (!slot.groupId || !groupIds.has(slot.groupId)) return;
+      if (slot.drawnCount < FRIENDS_ROUND_DRAW) {
+        ctx.addIssue({
+          code: "custom",
+          path: ["rounds", ri, "slots", si],
+          message: `This round can only draw ${slot.drawnCount} of the ${FRIENDS_ROUND_DRAW} items a friends round needs — earlier rounds don't reuse items.`,
+        });
+      }
+    });
+  });
 }
 
 // nxn / 1v1: every round is its own 2-slot matchup, both sides drawn randomly.

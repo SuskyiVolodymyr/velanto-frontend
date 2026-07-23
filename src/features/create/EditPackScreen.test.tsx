@@ -70,10 +70,10 @@ function mockSession(id: string, role: Role = "user") {
   });
 }
 
-function renderScreen() {
+function renderScreen(pack: Pack = PACK) {
   return render(
     <AuthProvider>
-      <EditPackScreen pack={PACK} />
+      <EditPackScreen pack={pack} />
     </AuthProvider>,
   );
 }
@@ -122,6 +122,27 @@ describe("EditPackScreen", () => {
     expect(screen.queryByLabelText("Pack title")).not.toBeInTheDocument();
     expect(
       screen.queryByText("You can only edit your own packs."),
+    ).not.toBeInTheDocument();
+  });
+
+  // save_one_friends is a first-class editable format now — the author gets the
+  // real form (with the friends body), not an unsupported message.
+  it("edits a save_one_friends pack in the friends body", async () => {
+    mockSession("u1");
+    renderScreen({
+      ...PACK,
+      format: "save_one_friends",
+      rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "random" }] }],
+    });
+
+    expect(await screen.findByLabelText("Pack title")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Save changes" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(
+        "This pack uses a format the editor doesn't support yet, so it can't be edited here.",
+      ),
     ).not.toBeInTheDocument();
   });
 });

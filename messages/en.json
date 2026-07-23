@@ -322,7 +322,9 @@
     "kindGeneric": "Notification",
     "markAllRead": "Mark all read",
     "newCount": "{count} new",
-    "loadOlder": "Load older notifications"
+    "loadOlder": "Load older notifications",
+    "commentReply": "<user>@{username}</user> <muted>replied to your comment on</muted> <obj>{packTitle}</obj>",
+    "kindReply": "Reply"
   },
   "bottomNav": {
     "label": "Primary",
@@ -422,7 +424,8 @@
     "addEmailCodeLabel": "Verification code",
     "addEmailConfirmButton": "Add email",
     "addEmailTaken": "That email is already used by another account.",
-    "addEmailError": "Couldn’t add that email. Please try again."
+    "addEmailError": "Couldn’t add that email. Please try again.",
+    "notifCommentReply": "Someone replied to your comment"
   },
   "streamerMode": {
     "hiddenHint": "Hidden because of streamer mode",
@@ -930,7 +933,9 @@
     "sacrifice_one": "Sacrifice One",
     "nxn": "NxN",
     "rank_blind": "Rank Blind",
-    "1v1": "1v1"
+    "1v1": "1v1",
+    "_note": "save_one_friends is a full format now: a label here, a creator option (create.blurbSaveOneFriends), and howItPlays steps (pack.howItPlays.save_one_friends), all in every locale. It has NO single-player play copy (play.instruction*/pickedLabel map it to \"\") because it is played live in a room, not on the /play path — see PlayRouter, which 404s that route for it.",
+    "save_one_friends": "Save One (Friends)"
   },
   "tagPicker": {
     "title": "Select tags",
@@ -986,6 +991,20 @@
         {
           "title": "Next group, same deal",
           "desc": "One cut per round, across every group."
+        }
+      ],
+      "save_one_friends": [
+        {
+          "title": "Gather 2-4 friends",
+          "desc": "Everyone joins one room together — each round shows one item per player, plus one extra."
+        },
+        {
+          "title": "Claim who to sacrifice",
+          "desc": "You each take one item to cut; two players can't claim the same one, so you watch the picks race in."
+        },
+        {
+          "title": "One survives",
+          "desc": "The single item nobody claimed is saved — play through every round together."
         }
       ],
       "nxn": [
@@ -1211,6 +1230,7 @@
     "saveChanges": "Save changes",
     "saving": "Saving…",
     "editOthersForbidden": "You can only edit your own packs.",
+    "editFormatUnsupported": "This pack uses a format the editor doesn't support yet, so it can't be edited here.",
     "roundGroup": "Group",
     "roundPlaces": "Places",
     "placeLabel": "Place {index}",
@@ -1248,7 +1268,9 @@
     "editItemAria": "Edit {title}",
     "saveItem": "Save",
     "cancelEdit": "Cancel",
-    "randomPoolOption": "Random pool ({count} available)"
+    "randomPoolOption": "Random pool ({count} available)",
+    "blurbSaveOneFriends": "Save One, live with 2–4 friends in a room.",
+    "friendsHint": "Played live by 2–4 friends in a room. Each round shows one item per player plus one to survive (up to {count}), so every pool needs at least {count} items."
   },
   "profile": {
     "loginRequiredView": "You need to be logged in to view your profile.",
@@ -1305,6 +1327,8 @@
     "metaEditProfile": "Edit profile",
     "metaPlaying": "Playing {title}",
     "metaResult": "{title} — Result",
+    "metaRoom": "Live room",
+    "metaJoiningRoom": "Joining room",
     "packNotFound": "Pack not found",
     "userNotFound": "User not found",
     "userNotFoundBody": "This profile doesn't exist or has been removed.",
@@ -1446,5 +1470,107 @@
     "loading": "Searching…",
     "error": "Couldn't search for people. Try again.",
     "empty": "No people found."
+  },
+  "room": {
+    "loading": "Loading room…",
+    "reconnecting": "Reconnecting…",
+    "entry": {
+      "createRoom": "Create room",
+      "joinByCode": "Join by code",
+      "signInToPlay": "Log in to play with friends",
+      "createError": "Couldn't create the room. Try again.",
+      "joinTitle": "Join a room",
+      "codeLabel": "Room code",
+      "codePlaceholder": "Enter code",
+      "join": "Join",
+      "emptyCode": "Enter a room code.",
+      "errorNotFound": "No room with that code. Check it and try again.",
+      "errorUnavailable": "This room isn't taking new players — it may be full, locked, or already started.",
+      "errorGeneric": "Couldn't join the room. Try again."
+    },
+    "lobby": {
+      "heading": "Lobby",
+      "roster": "Players",
+      "emptySeat": "Empty seat",
+      "you": "You",
+      "host": "Host",
+      "ready": "Ready",
+      "notReady": "Not ready",
+      "away": "Away",
+      "readyUp": "Ready up",
+      "readyCancel": "Ready",
+      "waitingForPlayers": "Waiting for {count} more to join",
+      "waitingForReady": "Waiting for everyone to ready up",
+      "starting": "Everyone's ready — starting…",
+      "inviteHeading": "Invite friends",
+      "streamSafeNote": "Your join code and invite link stay hidden so you can share your screen safely. Copy either straight into Discord, and reveal the code only when you need to read it aloud.",
+      "copyInviteLink": "Copy invite link",
+      "copyCode": "Copy code",
+      "copied": "Copied",
+      "revealCode": "Reveal",
+      "hideCode": "Hide",
+      "codeUnavailable": "This room is no longer accepting new players.",
+      "lock": "Lock room",
+      "unlock": "Unlock room",
+      "lockedNote": "Locked — closed to new players.",
+      "unlockedNote": "Open — friends with the code can join."
+    },
+    "round": {
+      "heading": "Round {index} of {total}",
+      "instruction": "Claim one item to sacrifice. The item nobody claims survives.",
+      "claim": "Sacrifice {name}",
+      "taken": "Taken",
+      "sacrificedBy": "Sacrificed by {name}",
+      "survivor": "Survivor",
+      "chosen": "{count} of {total} have chosen"
+    },
+    "between": {
+      "survivorHeading": "Survivor",
+      "survivorNote": "This item survived the round.",
+      "boardHeading": "This round's sacrifices",
+      "next": "Next",
+      "ready": "{count} / {total} ready"
+    },
+    "results": {
+      "heading": "Results",
+      "roundLabel": "Round {index}"
+    },
+    "ended": {
+      "heading": "This room has ended",
+      "description": "This room is no longer available. Start a new one from the pack page."
+    },
+    "joinLink": {
+      "joining": "Joining room…",
+      "notFoundTitle": "Room not found",
+      "notFoundBody": "This invite link is no longer valid — the room may have ended, or the code is wrong.",
+      "unavailableTitle": "Room unavailable",
+      "unavailableBody": "This room isn't taking new players — it may be full, locked, or already started.",
+      "genericTitle": "Couldn't join the room",
+      "genericBody": "Something went wrong joining this room. Please try again.",
+      "browse": "Browse packs"
+    },
+    "leave": "Leave",
+    "leaveConfirm": {
+      "title": "Leave the game?",
+      "message": "Leaving mid-game restarts the round for everyone still playing. Are you sure you want to leave?",
+      "confirm": "Leave the game",
+      "cancel": "Stay"
+    },
+    "presence": {
+      "returnTo": "Return to {title}",
+      "label": "{count} / {max} in room"
+    },
+    "kick": {
+      "action": "Remove {name} from the room",
+      "title": "Remove player?",
+      "message": "Remove {name} from the room? They can rejoin with the code if the room is unlocked.",
+      "confirm": "Remove",
+      "cancel": "Cancel"
+    },
+    "kicked": {
+      "heading": "The host removed you from this room",
+      "description": "The host removed you from this room. You can join again with the code if they reopen it.",
+      "leave": "Back to home"
+    }
   }
 }

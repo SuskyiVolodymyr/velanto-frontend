@@ -3,6 +3,7 @@ export const NOTIFICATION_TYPES = [
   "new_pack_from_followed",
   "new_comment",
   "comment_mention",
+  "comment_reply",
   "pack_deleted_warning",
 ] as const;
 
