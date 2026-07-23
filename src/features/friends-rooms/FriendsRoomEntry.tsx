@@ -15,10 +15,7 @@ import { friendsRoomsClient } from "./friends-rooms-client";
 
 /** Which inline error to show under the join form. `null` = none. */
 type JoinErrorKey =
-  | "emptyCode"
-  | "errorNotFound"
-  | "errorUnavailable"
-  | "errorGeneric";
+  "emptyCode" | "errorNotFound" | "errorUnavailable" | "errorGeneric";
 
 /**
  * The play entry points for a `save_one_friends` pack, shown on the pack detail
@@ -117,7 +114,10 @@ export function FriendsRoomEntry({ packId }: { packId: string }) {
             onClick={handleCreate}
             loading={creating}
             aria-disabled={blocked || undefined}
-            className={cn("gap-2.5", blocked && "cursor-not-allowed opacity-45")}
+            className={cn(
+              "gap-2.5",
+              blocked && "cursor-not-allowed opacity-45",
+            )}
           >
             <Users size={16} aria-hidden />
             {t("entry.createRoom")}
@@ -128,7 +128,10 @@ export function FriendsRoomEntry({ packId }: { packId: string }) {
             variant="secondary"
             onClick={openJoin}
             aria-disabled={blocked || undefined}
-            className={cn("gap-2.5", blocked && "cursor-not-allowed opacity-45")}
+            className={cn(
+              "gap-2.5",
+              blocked && "cursor-not-allowed opacity-45",
+            )}
           >
             <Ticket size={16} aria-hidden />
             {t("entry.joinByCode")}
@@ -142,11 +145,7 @@ export function FriendsRoomEntry({ packId }: { packId: string }) {
         </Text>
       )}
 
-      <Modal
-        open={joinOpen}
-        onClose={closeJoin}
-        title={t("entry.joinTitle")}
-      >
+      <Modal open={joinOpen} onClose={closeJoin} title={t("entry.joinTitle")}>
         <form onSubmit={handleJoin} className="flex flex-col gap-3">
           <label className="flex flex-col gap-1.5">
             <Text variant="secondary" className="text-sm">

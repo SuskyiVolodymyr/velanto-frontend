@@ -100,7 +100,7 @@ Two types, and the difference still matters — but it's a READ-side split now, 
 
 **Creating one:** pick "Save One (Friends)" in the creator — its body (`FriendsRoundsEditor`) is single-slot random rounds with no count (the room shows players+1), and every pool needs ≥5 items. Backend rules are mirrored in `create-pack.refinements.ts` (`validateFriends`). Packs can also be authored over the API — `velanto-pack-creator` via the `velanto-mcp` server.
 
-**Playing one:** the pack detail page shows a room entry (`FriendsRoomEntry`) instead of a Play button; `/packs/[id]/play` 404s for it by design (see `PlayRouter`). It has a real label, "How it plays" steps, and a create blurb in every locale; it has no single-player play *instruction* copy (`play-format-copy.ts` maps it to `""`).
+**Playing one:** the pack detail page shows a room entry (`FriendsRoomEntry`) instead of a Play button; `/packs/[id]/play` 404s for it by design (see `PlayRouter`). It has a real label, "How it plays" steps, and a create blurb in every locale; it has no single-player play _instruction_ copy (`play-format-copy.ts` maps it to `""`).
 
 ## Workflow (established discipline)
 

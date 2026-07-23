@@ -41,9 +41,7 @@ describe("JoinCode — invite link", () => {
     stubClipboard();
     render(<JoinCode code="ABC123" />);
 
-    await user.click(
-      screen.getByRole("button", { name: "Copy invite link" }),
-    );
+    await user.click(screen.getByRole("button", { name: "Copy invite link" }));
 
     expect(writeText).toHaveBeenCalledTimes(1);
     expect(writeText).toHaveBeenCalledWith(

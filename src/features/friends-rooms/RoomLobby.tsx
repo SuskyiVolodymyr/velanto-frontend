@@ -10,7 +10,11 @@ import { ConfirmModal } from "@/src/shared/components/ConfirmModal";
 import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { Username } from "@/src/shared/components/Username";
 import { cn } from "@/src/shared/lib/cn";
-import { MIN_PLAYERS, type RoomPlayerState, type RoomState } from "./room-types";
+import {
+  MIN_PLAYERS,
+  type RoomPlayerState,
+  type RoomState,
+} from "./room-types";
 import { JoinCode } from "./JoinCode";
 
 interface RoomLobbyProps {
@@ -123,7 +127,11 @@ export function RoomLobby({
       {isHost && (
         <section className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-5">
           <div className="flex items-center gap-2">
-            <UserPlus size={16} aria-hidden className="text-foreground-secondary" />
+            <UserPlus
+              size={16}
+              aria-hidden
+              className="text-foreground-secondary"
+            />
             <Text variant="title" className="text-sm">
               {t("lobby.inviteHeading")}
             </Text>
@@ -195,7 +203,9 @@ function SeatCard({
     <div
       className={cn(
         "flex items-center gap-3 rounded-2xl border p-4",
-        player.connected ? "border-border bg-surface" : "border-border bg-surface/40",
+        player.connected
+          ? "border-border bg-surface"
+          : "border-border bg-surface/40",
       )}
     >
       <div className="relative flex-none">

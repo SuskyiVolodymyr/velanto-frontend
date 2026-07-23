@@ -340,9 +340,7 @@ describe("PackDetailScreen", () => {
   it("keeps the plain Play button (and no friends-room entry) for a normal pack", () => {
     render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
 
-    expect(
-      screen.getByRole("link", { name: "Play now" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Play now" })).toBeInTheDocument();
     expect(screen.queryByText("FriendsRoomEntry:p1")).not.toBeInTheDocument();
   });
 

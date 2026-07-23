@@ -68,9 +68,7 @@ describe("JoinByLink — signed in", () => {
     join.mockResolvedValue({ id: "room-9" });
     render(<JoinByLink code="ABC123" />);
 
-    await waitFor(() =>
-      expect(replace).toHaveBeenCalledWith("/rooms/room-9"),
-    );
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/rooms/room-9"));
     expect(join).toHaveBeenCalledWith("ABC123");
   });
 
