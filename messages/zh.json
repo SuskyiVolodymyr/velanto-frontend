@@ -1228,6 +1228,7 @@
     "metaPlaying": "正在玩 {title}",
     "metaResult": "{title} — 结果",
     "metaRoom": "实时房间",
+    "metaJoiningRoom": "正在加入房间",
     "packNotFound": "未找到题包",
     "userNotFound": "未找到用户",
     "userNotFoundBody": "该个人资料不存在或已被移除。",
@@ -1497,7 +1498,8 @@
       "waitingForReady": "等待所有人准备就绪",
       "starting": "所有人已准备——即将开始…",
       "inviteHeading": "邀请好友",
-      "streamSafeNote": "加入码默认隐藏，方便你安全地共享屏幕。可直接复制到 Discord，只有在需要念出来时才显示它。",
+      "streamSafeNote": "加入码和邀请链接都默认隐藏，方便你安全地共享屏幕。可将任一项直接复制到 Discord，只有在需要念出加入码时才显示它。",
+      "copyInviteLink": "复制邀请链接",
       "copyCode": "复制加入码",
       "copied": "已复制",
       "revealCode": "显示",
@@ -1532,6 +1534,16 @@
     "ended": {
       "heading": "该房间已结束",
       "description": "该房间已不可用。可从卡包页面开启新房间。"
+    },
+    "joinLink": {
+      "joining": "正在加入房间…",
+      "notFoundTitle": "未找到房间",
+      "notFoundBody": "此邀请链接已失效——房间可能已结束，或加入码有误。",
+      "unavailableTitle": "房间不可用",
+      "unavailableBody": "该房间暂不接受新玩家——可能已满、已锁定或已开始。",
+      "genericTitle": "无法加入房间",
+      "genericBody": "加入此房间时出错。请重试。",
+      "browse": "浏览卡包"
     }
   }
 }

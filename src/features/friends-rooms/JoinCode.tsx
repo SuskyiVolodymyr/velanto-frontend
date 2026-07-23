@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Copy, Check, Eye, EyeOff } from "lucide-react";
+import { Copy, Check, Eye, EyeOff, Link2 } from "lucide-react";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
@@ -14,19 +14,27 @@ import { cn } from "@/src/shared/lib/cn";
  * without revealing: the host copies the code and pastes it into Discord while
  * the screen still shows dots.
  *
+ * The primary action is **Copy invite link** — a `/rooms/join/<code>` URL that
+ * drops a friend straight into the room. The link CONTAINS the code, so it is
+ * strictly copy-only: it is never rendered on screen (that would defeat the
+ * masking) and, unlike the code, has no reveal — it goes clipboard → Discord.
+ *
  * This is a stronger guarantee than the streamer-mode <Hidden> primitive, which
  * only redacts while streamer mode is on; here the code is hidden for everyone
- * until an explicit reveal.
+ * until an explicit reveal, and the link is never shown at all.
  */
 export function JoinCode({ code }: { code: string }) {
   const t = useTranslations("room");
   const [revealed, setRevealed] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [linkCopied, setLinkCopied] = useState(false);
   const copyTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const linkTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     return () => {
       if (copyTimeout.current) clearTimeout(copyTimeout.current);
+      if (linkTimeout.current) clearTimeout(linkTimeout.current);
     };
   }, []);
 
@@ -43,9 +51,34 @@ export function JoinCode({ code }: { code: string }) {
     }
   }
 
+  async function handleCopyLink() {
+    // Built here (client-only) rather than passed in, so the code never appears
+    // in a server-rendered URL. window is safe: JoinCode is "use client" and
+    // this only runs on a click.
+    const url = `${window.location.origin}/rooms/join/${code}`;
+    try {
+      await navigator.clipboard.writeText(url);
+      setLinkCopied(true);
+      if (linkTimeout.current) clearTimeout(linkTimeout.current);
+      linkTimeout.current = setTimeout(() => setLinkCopied(false), 1600);
+    } catch {
+      // Clipboard blocked. Unlike the code, we deliberately do NOT fall back to
+      // revealing the link — it contains the code and must never be shown on a
+      // shared screen. The host can copy the code instead.
+    }
+  }
+
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-2">
+        <Button onClick={handleCopyLink}>
+          {linkCopied ? (
+            <Check size={16} aria-hidden />
+          ) : (
+            <Link2 size={16} aria-hidden />
+          )}
+          {linkCopied ? t("lobby.copied") : t("lobby.copyInviteLink")}
+        </Button>
         <span
           data-testid="join-code"
           className={cn(

@@ -1323,6 +1323,7 @@
     "metaPlaying": "Playing {title}",
     "metaResult": "{title} — Result",
     "metaRoom": "Live room",
+    "metaJoiningRoom": "Joining room",
     "packNotFound": "Pack not found",
     "userNotFound": "User not found",
     "userNotFoundBody": "This profile doesn't exist or has been removed.",
@@ -1497,7 +1498,8 @@
       "waitingForReady": "Waiting for everyone to ready up",
       "starting": "Everyone's ready — starting…",
       "inviteHeading": "Invite friends",
-      "streamSafeNote": "Your join code stays hidden so you can share your screen safely. Copy it straight into Discord, or reveal it only when you need to read it aloud.",
+      "streamSafeNote": "Your join code and invite link stay hidden so you can share your screen safely. Copy either straight into Discord, and reveal the code only when you need to read it aloud.",
+      "copyInviteLink": "Copy invite link",
       "copyCode": "Copy code",
       "copied": "Copied",
       "revealCode": "Reveal",
@@ -1532,6 +1534,16 @@
     "ended": {
       "heading": "This room has ended",
       "description": "This room is no longer available. Start a new one from the pack page."
+    },
+    "joinLink": {
+      "joining": "Joining room…",
+      "notFoundTitle": "Room not found",
+      "notFoundBody": "This invite link is no longer valid — the room may have ended, or the code is wrong.",
+      "unavailableTitle": "Room unavailable",
+      "unavailableBody": "This room isn't taking new players — it may be full, locked, or already started.",
+      "genericTitle": "Couldn't join the room",
+      "genericBody": "Something went wrong joining this room. Please try again.",
+      "browse": "Browse packs"
     }
   }
 }
