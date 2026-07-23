@@ -1553,7 +1553,8 @@
       "cancel": "থেকে যান"
     },
     "presence": {
-      "returnTo": "{title}-এ ফিরে যান"
+      "returnTo": "{title}-এ ফিরে যান",
+      "label": "রুমে {count} / {max}"
     },
     "kick": {
       "action": "{name}-কে রুম থেকে সরান",

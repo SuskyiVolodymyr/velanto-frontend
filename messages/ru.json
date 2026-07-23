@@ -1553,7 +1553,8 @@
       "cancel": "Остаться"
     },
     "presence": {
-      "returnTo": "Вернуться в {title}"
+      "returnTo": "Вернуться в {title}",
+      "label": "{count} / {max} в комнате"
     },
     "kick": {
       "action": "Удалить {name} из комнаты",

@@ -1553,7 +1553,8 @@
       "cancel": "البقاء"
     },
     "presence": {
-      "returnTo": "العودة إلى {title}"
+      "returnTo": "العودة إلى {title}",
+      "label": "{count} / {max} في الغرفة"
     },
     "kick": {
       "action": "إزالة {name} من الغرفة",

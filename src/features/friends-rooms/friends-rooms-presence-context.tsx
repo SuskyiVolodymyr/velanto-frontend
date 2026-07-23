@@ -9,6 +9,7 @@ import {
   useState,
 } from "react";
 import type { ReactNode } from "react";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { friendsRoomsClient } from "./friends-rooms-client";
 import type { MyRoomSummary } from "./room-types";
@@ -43,6 +44,7 @@ export function FriendsRoomsPresenceProvider({
   children: ReactNode;
 }) {
   const { user } = useAuth();
+  const pathname = usePathname();
   // The fetched list tagged with the user it belongs to, so a stale fetch from a
   // previous session is never shown after an account switch. State is only ever
   // written asynchronously (in the fetch's `.then`); the signed-out / empty case
@@ -64,12 +66,16 @@ export function FriendsRoomsPresenceProvider({
       .catch(() => undefined);
   }, [user]);
 
-  // Fetch when signed in and whenever the session changes (refresh closes over
-  // the current user). Signed out, refresh is a no-op and the derived list below
-  // is empty.
+  // Fetch when signed in, whenever the session changes (refresh closes over the
+  // current user), AND on every client-side navigation. The last is what makes
+  // leaving the room screen reveal the indicator immediately: without it the
+  // list only refreshed on focus, so a plain in-app navigate-away showed nothing
+  // until the tab was re-focused. Entering a room refetches too, which is
+  // harmless — the indicator hides the room you're currently on. /mine is a
+  // cheap signed-in-only GET.
   useEffect(() => {
     refresh();
-  }, [refresh]);
+  }, [refresh, pathname]);
 
   // Re-check on tab focus — the roster may have changed while the tab slept.
   useEffect(() => {

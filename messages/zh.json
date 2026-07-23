@@ -1553,7 +1553,8 @@
       "cancel": "留下"
     },
     "presence": {
-      "returnTo": "返回 {title}"
+      "returnTo": "返回 {title}",
+      "label": "房间内 {count} / {max}"
     },
     "kick": {
       "action": "将 {name} 移出房间",

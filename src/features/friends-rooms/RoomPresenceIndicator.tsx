@@ -5,10 +5,7 @@ import { useTranslations } from "next-intl";
 import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { useFriendsRoomsPresence } from "./friends-rooms-presence-context";
-import type { MyRoomSummary } from "./room-types";
-
-/** How many avatars we render before collapsing the rest into "+N". */
-const MAX_AVATARS = 4;
+import { MAX_PLAYERS, type MyRoomSummary } from "./room-types";
 
 /** Pull the room id out of a `/rooms/<id>` path, else null. */
 function currentRoomId(pathname: string | null): string | null {
@@ -65,33 +62,49 @@ function RoomChip({
   onClick: () => void;
 }) {
   const t = useTranslations("room");
-  const shown = room.players.slice(0, MAX_AVATARS);
-  const extra = room.players.length - shown.length;
+  // The format caps a room at MAX_PLAYERS, so filled seats never overflow —
+  // render every member as an avatar, then dashed empty circles for the seats
+  // still open, so the chip reads as "N of MAX are here" at a glance.
+  const emptySeats = Math.max(0, MAX_PLAYERS - room.players.length);
 
   return (
     <button
       type="button"
       onClick={onClick}
       aria-label={t("presence.returnTo", { title: room.packTitle })}
-      className="flex max-w-[15rem] items-center gap-2.5 rounded-full border border-border bg-surface py-1.5 pl-2 pr-3.5 shadow-[0_6px_20px_rgba(0,0,0,0.28)] transition-colors hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
+      className="group flex max-w-[19rem] items-center gap-3 rounded-2xl border border-acc/40 bg-surface py-2.5 pl-3 pr-4 shadow-[0_10px_30px_rgba(0,0,0,0.4)] ring-1 ring-acc/10 transition-colors hover:border-acc focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
     >
-      <span className="flex flex-none -space-x-2">
-        {shown.map((player) => (
+      <span className="flex flex-none -space-x-2.5">
+        {room.players.map((player) => (
           <UserAvatar
             key={player.userId}
             username={player.username}
             avatarKey={player.avatarKey}
-            className="h-7 w-7 rounded-full border-2 border-surface bg-background text-xs text-foreground-secondary"
+            className="h-9 w-9 rounded-full border-2 border-surface bg-background text-sm text-foreground-secondary"
           />
         ))}
-        {extra > 0 && (
-          <span className="inline-flex h-7 w-7 items-center justify-center rounded-full border-2 border-surface bg-background text-[11px] font-semibold text-foreground-secondary">
-            +{extra}
-          </span>
-        )}
+        {Array.from({ length: emptySeats }, (_, i) => (
+          <span
+            key={`empty-${i}`}
+            aria-hidden
+            className="h-9 w-9 rounded-full border-2 border-dashed border-border-strong bg-surface"
+          />
+        ))}
       </span>
-      <span className="min-w-0 truncate text-sm font-medium text-foreground">
-        {room.packTitle}
+      <span className="flex min-w-0 flex-col items-start">
+        <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-acc">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-acc/70" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-acc" />
+          </span>
+          {t("presence.label", {
+            count: room.players.length,
+            max: MAX_PLAYERS,
+          })}
+        </span>
+        <span className="min-w-0 max-w-[13rem] truncate text-[15px] font-semibold text-foreground">
+          {room.packTitle}
+        </span>
       </span>
     </button>
   );

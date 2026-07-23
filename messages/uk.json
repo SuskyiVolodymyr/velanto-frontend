@@ -1553,7 +1553,8 @@
       "cancel": "Залишитися"
     },
     "presence": {
-      "returnTo": "Повернутися до {title}"
+      "returnTo": "Повернутися до {title}",
+      "label": "{count} / {max} у кімнаті"
     },
     "kick": {
       "action": "Видалити {name} з кімнати",

@@ -67,6 +67,18 @@ describe("RoomPresenceIndicator", () => {
     expect(screen.getByText("B")).toBeInTheDocument();
   });
 
+  // A room caps at 4 seats; the chip fills the open ones with empty circles so
+  // it reads as "2 of 4 here". Two members ⇒ two empty seats.
+  it("shows an empty circle for each open seat and a count", () => {
+    rooms = [summary()]; // 2 players
+    const { container } = render(<RoomPresenceIndicator />);
+
+    expect(
+      container.querySelectorAll('[class*="border-dashed"]'),
+    ).toHaveLength(2);
+    expect(screen.getByText("2 / 4 in room")).toBeInTheDocument();
+  });
+
   it("navigates to the room on click", async () => {
     const user = userEvent.setup();
     rooms = [summary()];

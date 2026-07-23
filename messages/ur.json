@@ -1553,7 +1553,8 @@
       "cancel": "رکیں"
     },
     "presence": {
-      "returnTo": "{title} پر واپس جائیں"
+      "returnTo": "{title} پر واپس جائیں",
+      "label": "کمرے میں {count} / {max}"
     },
     "kick": {
       "action": "{name} کو کمرے سے نکالیں",

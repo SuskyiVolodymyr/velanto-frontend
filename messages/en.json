@@ -1553,7 +1553,8 @@
       "cancel": "Stay"
     },
     "presence": {
-      "returnTo": "Return to {title}"
+      "returnTo": "Return to {title}",
+      "label": "{count} / {max} in room"
     },
     "kick": {
       "action": "Remove {name} from the room",
