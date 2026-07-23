@@ -456,9 +456,7 @@ describe("RoomScreen — leave", () => {
     expect(leave).not.toHaveBeenCalled();
 
     // Confirming in the dialog performs the leave.
-    await user.click(
-      screen.getByRole("button", { name: "Leave the game" }),
-    );
+    await user.click(screen.getByRole("button", { name: "Leave the game" }));
     expect(leave).toHaveBeenCalledTimes(1);
     expect(push).toHaveBeenCalledWith("/packs/pack-1");
   });
@@ -513,8 +511,6 @@ describe("RoomScreen — kick", () => {
       screen.getByText("The host removed you from this room"),
     ).toBeInTheDocument();
     // Distinct from the neutral ended state.
-    expect(
-      screen.queryByText("This room has ended"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText("This room has ended")).not.toBeInTheDocument();
   });
 });

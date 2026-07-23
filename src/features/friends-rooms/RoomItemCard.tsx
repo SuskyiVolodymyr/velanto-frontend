@@ -110,7 +110,10 @@ export function RoomItemCard({
           )}
         />
       ) : (
-        <span aria-hidden className="text-xs font-semibold text-foreground-tertiary">
+        <span
+          aria-hidden
+          className="text-xs font-semibold text-foreground-tertiary"
+        >
           {number}
         </span>
       )}
