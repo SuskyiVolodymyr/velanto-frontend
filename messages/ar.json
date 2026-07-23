@@ -227,7 +227,9 @@
     "kindGeneric": "إشعار",
     "markAllRead": "تحديد الكل كمقروء",
     "newCount": "{count} جديد",
-    "loadOlder": "تحميل الإشعارات الأقدم"
+    "loadOlder": "تحميل الإشعارات الأقدم",
+    "commentReply": "<user>@{username}</user> <muted>ردّ على تعليقك في</muted> <obj>{packTitle}</obj>",
+    "kindReply": "ردّ"
   },
   "bottomNav": {
     "label": "رئيسي",
@@ -328,7 +330,8 @@
     "addEmailCodeLabel": "رمز التحقق",
     "addEmailConfirmButton": "إضافة البريد الإلكتروني",
     "addEmailTaken": "هذا البريد الإلكتروني مستخدم بالفعل من قبل حساب آخر.",
-    "addEmailError": "تعذّر إضافة هذا البريد الإلكتروني. يُرجى المحاولة مرة أخرى."
+    "addEmailError": "تعذّر إضافة هذا البريد الإلكتروني. يُرجى المحاولة مرة أخرى.",
+    "notifCommentReply": "ردّ أحدهم على تعليقك"
   },
   "streamerMode": {
     "hiddenHint": "مخفي بسبب وضع البث",

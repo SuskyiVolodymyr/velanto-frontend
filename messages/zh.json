@@ -227,7 +227,9 @@
     "kindGeneric": "通知",
     "markAllRead": "全部标记已读",
     "newCount": "{count} 条新",
-    "loadOlder": "加载更早的通知"
+    "loadOlder": "加载更早的通知",
+    "commentReply": "<user>@{username}</user> <muted>回复了你在题包中的评论：</muted> <obj>{packTitle}</obj>",
+    "kindReply": "回复"
   },
   "bottomNav": {
     "label": "主导航",
@@ -328,7 +330,8 @@
     "addEmailCodeLabel": "验证码",
     "addEmailConfirmButton": "添加邮箱",
     "addEmailTaken": "该邮箱已被其他账户使用。",
-    "addEmailError": "无法添加该邮箱。请重试。"
+    "addEmailError": "无法添加该邮箱。请重试。",
+    "notifCommentReply": "有人回复了你的评论"
   },
   "streamerMode": {
     "hiddenHint": "已因主播模式隐藏",

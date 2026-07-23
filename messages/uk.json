@@ -227,7 +227,9 @@
     "kindGeneric": "Сповіщення",
     "markAllRead": "Позначити всі",
     "newCount": "{count} нових",
-    "loadOlder": "Завантажити старіші"
+    "loadOlder": "Завантажити старіші",
+    "commentReply": "<user>@{username}</user> <muted>відповів на твій коментар у</muted> <obj>{packTitle}</obj>",
+    "kindReply": "Відповідь"
   },
   "bottomNav": {
     "label": "Головна",
@@ -328,7 +330,8 @@
     "addEmailCodeLabel": "Код підтвердження",
     "addEmailConfirmButton": "Додати пошту",
     "addEmailTaken": "Ця пошта вже використовується іншим обліковим записом.",
-    "addEmailError": "Не вдалося додати цю пошту. Будь ласка, спробуйте ще раз."
+    "addEmailError": "Не вдалося додати цю пошту. Будь ласка, спробуйте ще раз.",
+    "notifCommentReply": "Хтось відповів на твій коментар"
   },
   "streamerMode": {
     "hiddenHint": "Приховано через режим стримера",

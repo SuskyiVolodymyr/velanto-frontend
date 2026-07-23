@@ -227,7 +227,9 @@
     "kindGeneric": "اطلاع",
     "markAllRead": "سب کو پڑھا ہوا نشان زد کریں",
     "newCount": "{count} نئی",
-    "loadOlder": "پرانی اطلاعات لوڈ کریں"
+    "loadOlder": "پرانی اطلاعات لوڈ کریں",
+    "commentReply": "<user>@{username}</user> <muted>نے آپ کے تبصرے کا جواب دیا</muted> <obj>{packTitle}</obj>",
+    "kindReply": "جواب"
   },
   "bottomNav": {
     "label": "بنیادی",
@@ -328,7 +330,8 @@
     "addEmailCodeLabel": "تصدیقی کوڈ",
     "addEmailConfirmButton": "ای میل شامل کریں",
     "addEmailTaken": "وہ ای میل پہلے ہی کسی دوسرے اکاؤنٹ کے زیرِ استعمال ہے۔",
-    "addEmailError": "وہ ای میل شامل نہیں کیا جا سکا۔ براہ کرم دوبارہ کوشش کریں۔"
+    "addEmailError": "وہ ای میل شامل نہیں کیا جا سکا۔ براہ کرم دوبارہ کوشش کریں۔",
+    "notifCommentReply": "کسی نے آپ کے تبصرے کا جواب دیا"
   },
   "streamerMode": {
     "hiddenHint": "اسٹریمر موڈ کی وجہ سے چھپایا گیا",
