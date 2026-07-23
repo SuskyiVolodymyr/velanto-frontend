@@ -1213,6 +1213,7 @@
     "metaEditProfile": "تعديل الملف الشخصي",
     "metaPlaying": "جارٍ لعب {title}",
     "metaResult": "{title} — النتيجة",
+    "metaRoom": "غرفة مباشرة",
     "packNotFound": "الحزمة غير موجودة",
     "userNotFound": "المستخدم غير موجود",
     "userNotFoundBody": "هذا الملف الشخصي غير موجود أو تمّت إزالته.",
@@ -1453,6 +1454,20 @@
   "room": {
     "loading": "جارٍ تحميل الغرفة…",
     "reconnecting": "جارٍ إعادة الاتصال…",
+    "entry": {
+      "createRoom": "إنشاء غرفة",
+      "joinByCode": "الانضمام بالرمز",
+      "signInToPlay": "سجّل الدخول للعب مع الأصدقاء",
+      "createError": "تعذّر إنشاء الغرفة. حاول مرة أخرى.",
+      "joinTitle": "الانضمام إلى غرفة",
+      "codeLabel": "رمز الغرفة",
+      "codePlaceholder": "أدخل الرمز",
+      "join": "انضمام",
+      "emptyCode": "أدخل رمز الغرفة.",
+      "errorNotFound": "لا توجد غرفة بهذا الرمز. تحقق منه وحاول مرة أخرى.",
+      "errorUnavailable": "هذه الغرفة لا تقبل لاعبين جدد — قد تكون ممتلئة أو مقفلة أو بدأت بالفعل.",
+      "errorGeneric": "تعذّر الانضمام إلى الغرفة. حاول مرة أخرى."
+    },
     "lobby": {
       "heading": "الردهة",
       "roster": "اللاعبون",

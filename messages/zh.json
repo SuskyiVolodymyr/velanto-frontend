@@ -1213,6 +1213,7 @@
     "metaEditProfile": "编辑个人资料",
     "metaPlaying": "正在玩 {title}",
     "metaResult": "{title} — 结果",
+    "metaRoom": "实时房间",
     "packNotFound": "未找到题包",
     "userNotFound": "未找到用户",
     "userNotFoundBody": "该个人资料不存在或已被移除。",
@@ -1453,6 +1454,20 @@
   "room": {
     "loading": "正在加载房间…",
     "reconnecting": "正在重新连接…",
+    "entry": {
+      "createRoom": "创建房间",
+      "joinByCode": "输入代码加入",
+      "signInToPlay": "登录后与好友一起游玩",
+      "createError": "无法创建房间，请重试。",
+      "joinTitle": "加入房间",
+      "codeLabel": "房间代码",
+      "codePlaceholder": "输入代码",
+      "join": "加入",
+      "emptyCode": "请输入房间代码。",
+      "errorNotFound": "找不到该代码对应的房间。请检查后重试。",
+      "errorUnavailable": "该房间暂不接受新玩家——可能已满、已锁定或已开始。",
+      "errorGeneric": "无法加入房间，请重试。"
+    },
     "lobby": {
       "heading": "房间大厅",
       "roster": "玩家",

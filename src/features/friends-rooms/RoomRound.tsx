@@ -44,7 +44,12 @@ export function RoomRound({
   if (!round) return null;
 
   const chosen = Object.keys(round.claims).length;
-  const total = state.players.filter((p) => p.connected).length;
+  // Total SEATED players, not just the connected ones. A disconnected player
+  // keeps their seat and the round waits for them — the backend resolves only
+  // once every seated player has claimed, never skipping a dropped one. Counting
+  // connected players would imply the round can resolve while a seat is empty,
+  // which it can't.
+  const total = state.players.length;
 
   return (
     <div className="flex flex-col gap-6">

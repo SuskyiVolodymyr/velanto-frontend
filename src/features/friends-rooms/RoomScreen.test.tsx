@@ -229,6 +229,41 @@ describe("RoomScreen — round", () => {
 
     expect(screen.getByText("1 of 2 have chosen")).toBeInTheDocument();
   });
+
+  // A disconnected player keeps their seat and the round waits for them — the
+  // backend resolves only once every SEATED player has claimed, never skipping a
+  // dropped one. So the denominator is total players, not just the connected
+  // ones; counting connected would imply the round can resolve while a seat is
+  // still empty, which it can't.
+  it("counts every seated player, including a disconnected one, in the denominator", () => {
+    setRoom(
+      baseState({
+        status: "playing",
+        phase: "round",
+        players: [
+          player("host", "Alice", { seat: 0 }),
+          player("guest", "Bob", { seat: 1 }),
+          // Charlie dropped mid-round but still holds seat 2.
+          player("carol", "Charlie", { seat: 2, connected: false }),
+        ],
+        round: {
+          index: 0,
+          items: [
+            textItem("i1", "Apple"),
+            textItem("i2", "Banana"),
+            textItem("i3", "Cherry"),
+            textItem("i4", "Date"),
+          ],
+          claims: { guest: "i2" },
+          survivorItemId: null,
+        },
+      }),
+    );
+    render(<RoomScreen roomId="room-1" />);
+
+    expect(screen.getByText("1 of 3 have chosen")).toBeInTheDocument();
+    expect(screen.queryByText("1 of 2 have chosen")).not.toBeInTheDocument();
+  });
 });
 
 describe("RoomScreen — between", () => {

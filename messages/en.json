@@ -1308,6 +1308,7 @@
     "metaEditProfile": "Edit profile",
     "metaPlaying": "Playing {title}",
     "metaResult": "{title} — Result",
+    "metaRoom": "Live room",
     "packNotFound": "Pack not found",
     "userNotFound": "User not found",
     "userNotFoundBody": "This profile doesn't exist or has been removed.",
@@ -1453,6 +1454,20 @@
   "room": {
     "loading": "Loading room…",
     "reconnecting": "Reconnecting…",
+    "entry": {
+      "createRoom": "Create room",
+      "joinByCode": "Join by code",
+      "signInToPlay": "Log in to play with friends",
+      "createError": "Couldn't create the room. Try again.",
+      "joinTitle": "Join a room",
+      "codeLabel": "Room code",
+      "codePlaceholder": "Enter code",
+      "join": "Join",
+      "emptyCode": "Enter a room code.",
+      "errorNotFound": "No room with that code. Check it and try again.",
+      "errorUnavailable": "This room isn't taking new players — it may be full, locked, or already started.",
+      "errorGeneric": "Couldn't join the room. Try again."
+    },
     "lobby": {
       "heading": "Lobby",
       "roster": "Players",
