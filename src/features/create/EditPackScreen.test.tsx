@@ -125,23 +125,24 @@ describe("EditPackScreen", () => {
     ).not.toBeInTheDocument();
   });
 
-  // UI-EXCLUDED:save_one_friends (velanto-frontend#368). The author owns the
-  // pack, so none of the gates above fire — without an explicit branch they got
-  // the real form with the format picker showing nothing selected, and Save
-  // failed schema validation with no visibly failing control. Such a pack can
-  // exist already: packs are authored over the API, not only through this form.
-  it("tells the author the format is unsupported instead of rendering a form that cannot save", async () => {
+  // save_one_friends is a first-class editable format now — the author gets the
+  // real form (with the friends body), not an unsupported message.
+  it("edits a save_one_friends pack in the friends body", async () => {
     mockSession("u1");
-    renderScreen({ ...PACK, format: "save_one_friends" });
+    renderScreen({
+      ...PACK,
+      format: "save_one_friends",
+      rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "random" }] }],
+    });
 
+    expect(await screen.findByLabelText("Pack title")).toBeInTheDocument();
     expect(
-      await screen.findByText(
+      screen.getByRole("button", { name: "Save changes" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(
         "This pack uses a format the editor doesn't support yet, so it can't be edited here.",
       ),
-    ).toBeInTheDocument();
-    expect(screen.queryByLabelText("Pack title")).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: "Save changes" }),
     ).not.toBeInTheDocument();
   });
 });

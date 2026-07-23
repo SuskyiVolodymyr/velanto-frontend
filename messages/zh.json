@@ -1170,7 +1170,9 @@
     "editItemAria": "编辑 {title}",
     "saveItem": "保存",
     "cancelEdit": "取消",
-    "randomPoolOption": "随机池（可用 {count} 个）"
+    "randomPoolOption": "随机池（可用 {count} 个）",
+    "blurbSaveOneFriends": "与 2–4 位好友在房间里实时游玩「保留其一」。",
+    "friendsHint": "与 2–4 位好友在房间里实时游玩。每轮为每位玩家显示一个项目，再加一个幸存项（最多 {count} 个），因此每个池至少需要 {count} 个项目。"
   },
   "profile": {
     "loginRequiredView": "你需要先登录才能查看个人资料。",

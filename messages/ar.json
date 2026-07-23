@@ -1170,7 +1170,9 @@
     "editItemAria": "تحرير {title}",
     "saveItem": "حفظ",
     "cancelEdit": "إلغاء",
-    "randomPoolOption": "مجموعة عشوائية ({count} متاحة)"
+    "randomPoolOption": "مجموعة عشوائية ({count} متاحة)",
+    "blurbSaveOneFriends": "«احتفظ بواحد» مباشرةً مع 2–4 أصدقاء في غرفة.",
+    "friendsHint": "يُلعب مباشرةً مع 2–4 أصدقاء في غرفة. تعرض كل جولة عنصرًا لكل لاعب بالإضافة إلى عنصر ناجٍ (حتى {count})، لذا يحتاج كل تجمّع إلى {count} عناصر على الأقل."
   },
   "profile": {
     "loginRequiredView": "يجب تسجيل الدخول لعرض ملفك الشخصي.",

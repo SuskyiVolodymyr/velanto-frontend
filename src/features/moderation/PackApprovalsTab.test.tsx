@@ -197,19 +197,17 @@ describe("PackApprovalsTab", () => {
     ).toBeInTheDocument();
   });
 
-  // UI-EXCLUDED:save_one_friends (velanto-frontend#368). A nameless <option>
-  // (FORMAT_LABELS has no entry for it) would filter the queue to nothing a
-  // moderator could recognise. Counting the options is what makes deleting the
-  // filter in PackApprovalsTab.tsx fail — asserting only "1v1 is present" would
-  // stay green. When the format ships, this becomes 7.
-  it("offers only the five named formats in the filter, not save_one_friends", async () => {
+  // Every format is a named filter option, save_one_friends included. Counting
+  // the options is what makes dropping a format from the filter fail — asserting
+  // only "1v1 is present" would stay green.
+  it("offers every named format in the filter, including save_one_friends", async () => {
     render(<PackApprovalsTab />);
     await screen.findByText("Best Anime Openings");
 
     const select = screen.getByRole("combobox", { name: "Filter by format" });
     const options = within(select).getAllByRole("option");
 
-    expect(options).toHaveLength(6); // "All formats" + 5 named formats
+    expect(options).toHaveLength(7); // "All formats" + 6 named formats
     expect(options.map((option) => option.textContent)).toEqual([
       "All formats",
       "Save One",
@@ -217,17 +215,12 @@ describe("PackApprovalsTab", () => {
       "NxN",
       "Rank Blind",
       "1v1",
+      "Save One (Friends)",
     ]);
-    expect(
-      options.map((option) => (option as HTMLOptionElement).value),
-    ).not.toContain("save_one_friends");
   });
 
-  // The filter hides it; the QUEUE must not. Such a pack can already be
-  // submitted (packs are authored over the API too) and a moderator has to be
-  // able to see and act on it — with the raw wire value as its label until
-  // velanto-frontend#368 gives it a real one.
-  it("still lists a save_one_friends pack in the queue, labelled by its raw wire value", async () => {
+  // A save_one_friends pack appears in the queue with its real label.
+  it("lists a save_one_friends pack in the queue with its label", async () => {
     vi.mocked(packsClient.moderationQueue).mockResolvedValue(
       queuePage([pack({ format: "save_one_friends" })]),
     );
@@ -236,7 +229,7 @@ describe("PackApprovalsTab", () => {
     const row = await screen.findByText("Best Anime Openings");
     expect(
       within(row.closest('[role="row"]') as HTMLElement).getByText(
-        "save_one_friends",
+        "Save One (Friends)",
       ),
     ).toBeInTheDocument();
   });

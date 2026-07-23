@@ -1265,7 +1265,9 @@
     "editItemAria": "Edit {title}",
     "saveItem": "Save",
     "cancelEdit": "Cancel",
-    "randomPoolOption": "Random pool ({count} available)"
+    "randomPoolOption": "Random pool ({count} available)",
+    "blurbSaveOneFriends": "Save One, live with 2–4 friends in a room.",
+    "friendsHint": "Played live by 2–4 friends in a room. Each round shows one item per player plus one to survive (up to {count}), so every pool needs at least {count} items."
   },
   "profile": {
     "loginRequiredView": "You need to be logged in to view your profile.",

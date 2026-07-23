@@ -11,34 +11,30 @@ export const PACK_FORMATS = [
   "nxn",
   "rank_blind",
   "1v1",
-  // UI-EXCLUDED:save_one_friends (velanto-frontend#368)
   // Room-based multiplayer: 2-4 friends play one pack together in real time,
   // each round showing players+1 items of which exactly one survives unclaimed.
-  // Wire contract only for now — the creator, play path and UI copy land in a
-  // dedicated frontend PR (velanto-frontend#368). See velanto-backend#258 for
-  // the server side.
+  // Creatable/editable in the form and played in a room — it has NO single-
+  // player play path, so read/routing paths narrow with isUiPackFormat below.
+  // See velanto-backend#258 for the server side.
   "save_one_friends",
 ] as const;
 
 export type PackFormat = (typeof PACK_FORMATS)[number];
 
-// UI-EXCLUDED:save_one_friends (velanto-frontend#368)
-// The formats the frontend UI actually ships: PACK_FORMATS minus
-// `save_one_friends`, which is mirrored above as a WIRE CONTRACT constant only.
-// It has no creator entry and no play path yet, so pickers, filters and the
-// creator's schema key off this narrower union.
+// The formats with a SINGLE-PLAYER play path: PACK_FORMATS minus
+// `save_one_friends`, which is played only in a room (never at
+// /packs/[id]/play). READ/routing paths that pick a single-player play screen
+// key off this narrower union.
 //
-// IMPORTANT: this is a WRITE-side narrowing only. `Pack.format` stays the full
-// PackFormat because such a pack CAN already arrive from the API — packs are
-// authored over the API (velanto-pack-creator via the MCP), not only through
-// this form. Every READ path must therefore handle the format at runtime rather
-// than assume it away; see `isUiPackFormat` below.
+// This is a READ-side narrowing. The WRITE side (creator picker, create schema,
+// filters, labels) accepts all six formats — a friends pack is a real pack that
+// appears in feeds, moderation and the editor. `Pack.format` is the full
+// PackFormat accordingly.
 export type UiPackFormat = Exclude<PackFormat, "save_one_friends">;
 
-// UI-EXCLUDED:save_one_friends (velanto-frontend#368)
-// Runtime narrowing for API-sourced formats. Use this instead of a cast at any
-// boundary that needs a UiPackFormat: a cast would silently hand a
-// `save_one_friends` pack to a picker/form that has no option for it.
+// Runtime narrowing: does this format have a single-player play path? Use it at
+// a read/routing boundary (e.g. choosing the /play screen) instead of a cast —
+// save_one_friends is played in a room, not at /packs/[id]/play.
 export function isUiPackFormat(f: PackFormat): f is UiPackFormat {
   return f !== "save_one_friends";
 }
