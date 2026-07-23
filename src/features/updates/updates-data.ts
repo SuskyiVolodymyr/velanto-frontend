@@ -27,6 +27,16 @@ export interface UpdateEntry {
  */
 export const UPDATES: UpdateEntry[] = [
   {
+    date: "2026-07-23",
+    version: "1.8.0",
+    title: "Save One with Friends",
+    bullets: [
+      "You can now play Save One together, live, with 2–4 friends in a room. Open a Save One with Friends pack, start a room, and share the code — or send the invite link — to pull everyone in.",
+      "Every round shows one item per player plus one more, and each of you claims one to sacrifice. No two people can cut the same item, and the single item nobody sacrifices is the one that survives. There's no turn order and no timer — claim, change your mind, and argue it out in real time.",
+      "Between rounds you see exactly who sacrificed what, and a Next counter shows how many players are ready before the room moves on. Your join code stays hidden until you reveal it, so sharing your screen never leaks your room.",
+    ],
+  },
+  {
     date: "2026-07-22",
     version: "1.7.0",
     title: "A safer pack editor",
