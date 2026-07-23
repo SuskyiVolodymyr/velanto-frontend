@@ -15,6 +15,8 @@ const ready = vi.fn();
 const next = vi.fn();
 const lock = vi.fn();
 const leave = vi.fn();
+const kick = vi.fn();
+const push = vi.fn();
 
 let room: FriendsRoom;
 let currentUser: User | null;
@@ -25,6 +27,11 @@ vi.mock("./use-friends-room", () => ({
 
 vi.mock("@/src/shared/lib/auth-context", () => ({
   useAuth: () => ({ user: currentUser }),
+}));
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push }),
+  usePathname: () => "/rooms/room-1",
 }));
 
 function textItem(id: string, title: string): Item {
@@ -75,8 +82,20 @@ function setRoom(
   state: RoomState | null,
   connection: RoomConnection = "open",
   lastRejection: ClaimRejection | null = null,
+  kicked = false,
 ) {
-  room = { state, connection, lastRejection, claim, ready, next, lock, leave };
+  room = {
+    state,
+    connection,
+    lastRejection,
+    kicked,
+    claim,
+    ready,
+    next,
+    lock,
+    leave,
+    kick,
+  };
 }
 
 function asUser(id: string): User {
@@ -392,5 +411,100 @@ describe("RoomScreen — connection", () => {
 
     expect(screen.getByRole("region", { name: "Round 1" })).toBeInTheDocument();
     expect(screen.queryByText("This room has ended")).not.toBeInTheDocument();
+  });
+});
+
+describe("RoomScreen — leave", () => {
+  it("leaves straight away from the lobby and navigates to the pack", async () => {
+    const user = userEvent.setup();
+    setRoom(baseState());
+    render(<RoomScreen roomId="room-1" />);
+
+    await user.click(screen.getByRole("button", { name: "Leave" }));
+    expect(leave).toHaveBeenCalledTimes(1);
+    expect(push).toHaveBeenCalledWith("/packs/pack-1");
+  });
+
+  it("confirms before leaving mid-game", async () => {
+    const user = userEvent.setup();
+    setRoom(
+      baseState({
+        status: "playing",
+        phase: "round",
+        round: {
+          index: 0,
+          items: [textItem("i1", "Apple"), textItem("i2", "Banana")],
+          claims: {},
+          survivorItemId: null,
+        },
+      }),
+    );
+    render(<RoomScreen roomId="room-1" />);
+
+    // First click opens the confirm dialog — it must NOT leave yet.
+    await user.click(screen.getByRole("button", { name: "Leave" }));
+    expect(leave).not.toHaveBeenCalled();
+
+    // Confirming in the dialog performs the leave.
+    await user.click(
+      screen.getByRole("button", { name: "Leave the game" }),
+    );
+    expect(leave).toHaveBeenCalledTimes(1);
+    expect(push).toHaveBeenCalledWith("/packs/pack-1");
+  });
+});
+
+describe("RoomScreen — kick", () => {
+  it("shows the host a kick control beside a guest but not beside themselves", () => {
+    currentUser = asUser("host");
+    setRoom(baseState());
+    render(<RoomScreen roomId="room-1" />);
+
+    // Bob (guest) is kickable; Alice (host, self) is not.
+    expect(
+      screen.getByRole("button", { name: "Remove Bob from the room" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Remove Alice from the room" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows a guest no kick controls", () => {
+    currentUser = asUser("guest");
+    setRoom(baseState());
+    render(<RoomScreen roomId="room-1" />);
+
+    expect(
+      screen.queryByRole("button", { name: /Remove .* from the room/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("kicks a player by id after confirming", async () => {
+    const user = userEvent.setup();
+    currentUser = asUser("host");
+    setRoom(baseState());
+    render(<RoomScreen roomId="room-1" />);
+
+    await user.click(
+      screen.getByRole("button", { name: "Remove Bob from the room" }),
+    );
+    // Not until the confirm dialog is accepted.
+    expect(kick).not.toHaveBeenCalled();
+
+    await user.click(screen.getByRole("button", { name: "Remove" }));
+    expect(kick).toHaveBeenCalledWith("guest");
+  });
+
+  it("shows a removed-by-host state when the viewer is kicked", () => {
+    setRoom(baseState(), "open", null, true);
+    render(<RoomScreen roomId="room-1" />);
+
+    expect(
+      screen.getByText("The host removed you from this room"),
+    ).toBeInTheDocument();
+    // Distinct from the neutral ended state.
+    expect(
+      screen.queryByText("This room has ended"),
+    ).not.toBeInTheDocument();
   });
 });

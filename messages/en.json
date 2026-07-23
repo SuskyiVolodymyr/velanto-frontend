@@ -1544,6 +1544,28 @@
       "genericTitle": "Couldn't join the room",
       "genericBody": "Something went wrong joining this room. Please try again.",
       "browse": "Browse packs"
+    },
+    "leave": "Leave",
+    "leaveConfirm": {
+      "title": "Leave the game?",
+      "message": "Leaving mid-game restarts the round for everyone still playing. Are you sure you want to leave?",
+      "confirm": "Leave the game",
+      "cancel": "Stay"
+    },
+    "presence": {
+      "returnTo": "Return to {title}"
+    },
+    "kick": {
+      "action": "Remove {name} from the room",
+      "title": "Remove player?",
+      "message": "Remove {name} from the room? They can rejoin with the code if the room is unlocked.",
+      "confirm": "Remove",
+      "cancel": "Cancel"
+    },
+    "kicked": {
+      "heading": "The host removed you from this room",
+      "description": "The host removed you from this room. You can join again with the code if they reopen it.",
+      "leave": "Back to home"
     }
   }
 }

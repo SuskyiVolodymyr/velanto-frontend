@@ -1544,6 +1544,28 @@
       "genericTitle": "无法加入房间",
       "genericBody": "加入此房间时出错。请重试。",
       "browse": "浏览卡包"
+    },
+    "leave": "离开",
+    "leaveConfirm": {
+      "title": "离开游戏？",
+      "message": "中途离开会为其余仍在游戏的玩家重新开始本回合。确定要离开吗？",
+      "confirm": "离开游戏",
+      "cancel": "留下"
+    },
+    "presence": {
+      "returnTo": "返回 {title}"
+    },
+    "kick": {
+      "action": "将 {name} 移出房间",
+      "title": "移出玩家？",
+      "message": "将 {name} 移出房间？如果房间未锁定，该玩家可以用房间代码重新加入。",
+      "confirm": "移出",
+      "cancel": "取消"
+    },
+    "kicked": {
+      "heading": "房主已将你移出此房间",
+      "description": "房主已将你移出此房间。如果房主重新开放，你可以用房间代码再次加入。",
+      "leave": "返回首页"
     }
   }
 }

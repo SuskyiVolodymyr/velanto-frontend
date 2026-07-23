@@ -1,10 +1,12 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Check, Lock, LockOpen, UserPlus } from "lucide-react";
+import { Check, Lock, LockOpen, UserPlus, X } from "lucide-react";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
+import { ConfirmModal } from "@/src/shared/components/ConfirmModal";
 import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { Username } from "@/src/shared/components/Username";
 import { cn } from "@/src/shared/lib/cn";
@@ -16,6 +18,8 @@ interface RoomLobbyProps {
   currentUserId: string | null;
   onReady: () => void;
   onLock: (locked: boolean) => void;
+  /** Host-only: remove another player from the room. */
+  onKick: (userId: string) => void;
 }
 
 /**
@@ -29,10 +33,17 @@ export function RoomLobby({
   currentUserId,
   onReady,
   onLock,
+  onKick,
 }: RoomLobbyProps) {
   const t = useTranslations("room");
   const isHost = currentUserId === state.hostId;
   const me = state.players.find((p) => p.userId === currentUserId) ?? null;
+
+  // The player the host is about to kick, pending confirmation. Null = no
+  // dialog. Kicking is host-only and, for this first version, lobby-only — the
+  // button isn't rendered mid-game even though the server permits it, to keep
+  // the in-round UI simple.
+  const [kickTarget, setKickTarget] = useState<RoomPlayerState | null>(null);
 
   const present = state.players.filter((p) => p.connected);
   const missing = Math.max(0, MIN_PLAYERS - present.length);
@@ -67,6 +78,12 @@ export function RoomLobby({
               player={player}
               isHost={player.userId === state.hostId}
               isYou={player.userId === currentUserId}
+              // The host can kick anyone but themselves.
+              onKick={
+                isHost && player.userId !== currentUserId
+                  ? () => setKickTarget(player)
+                  : undefined
+              }
             />
           ))}
           {Array.from({ length: emptySeats }).map((_, i) => (
@@ -144,6 +161,19 @@ export function RoomLobby({
           </div>
         </section>
       )}
+
+      <ConfirmModal
+        open={kickTarget !== null}
+        onClose={() => setKickTarget(null)}
+        onConfirm={() => {
+          if (kickTarget) onKick(kickTarget.userId);
+          setKickTarget(null);
+        }}
+        title={t("kick.title")}
+        message={t("kick.message", { name: kickTarget?.username ?? "" })}
+        confirmLabel={t("kick.confirm")}
+        cancelLabel={t("kick.cancel")}
+      />
     </div>
   );
 }
@@ -152,10 +182,13 @@ function SeatCard({
   player,
   isHost,
   isYou,
+  onKick,
 }: {
   player: RoomPlayerState;
   isHost: boolean;
   isYou: boolean;
+  /** Host-only kick handler for another player's seat; absent otherwise. */
+  onKick?: () => void;
 }) {
   const t = useTranslations("room");
   return (
@@ -201,6 +234,16 @@ function SeatCard({
               : t("lobby.notReady")}
         </Text>
       </div>
+      {onKick && (
+        <button
+          type="button"
+          onClick={onKick}
+          aria-label={t("kick.action", { name: player.username })}
+          className="flex-none rounded-full p-1.5 text-foreground-tertiary transition-colors hover:bg-danger/10 hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
+        >
+          <X size={16} aria-hidden />
+        </button>
+      )}
     </div>
   );
 }

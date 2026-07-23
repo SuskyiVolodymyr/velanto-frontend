@@ -68,6 +68,24 @@ export interface RoomState {
   results: ResolvedRoundState[];
 }
 
+/**
+ * A room the signed-in user currently holds a seat in, as returned by
+ * `GET /friends-rooms/mine`. Includes rooms you have navigated away from — you
+ * remain a member until you explicitly Leave — so the persistent presence
+ * indicator can offer a way back. A lighter projection of {@link RoomState}:
+ * only what the indicator needs to show a chip and route back in.
+ */
+export interface MyRoomSummary {
+  id: string;
+  packTitle: string;
+  status: "lobby" | "playing";
+  players: {
+    userId: string;
+    username: string;
+    avatarKey: string | null;
+  }[];
+}
+
 export type ClaimRejectionReason =
   "taken" | "too_fast" | "not_in_round" | "round_not_active" | "not_a_player";
 
@@ -82,6 +100,8 @@ export const ROOM_EVENTS = {
   state: "room.state",
   playerJoined: "player.joined",
   playerLeft: "player.left",
+  hostChanged: "host.changed",
+  playerKicked: "player.kicked",
   playerReady: "player.ready",
   roomLocked: "room.locked",
   roundStarted: "round.started",
@@ -100,4 +120,5 @@ export const ROOM_COMMANDS = {
   next: "next",
   leave: "leave",
   lock: "lock",
+  kick: "kick",
 } as const;

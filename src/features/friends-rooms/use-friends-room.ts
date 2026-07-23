@@ -28,11 +28,18 @@ export interface FriendsRoom {
   connection: RoomConnection;
   /** The most recent rejected claim (e.g. an item taken first), for a nudge. */
   lastRejection: ClaimRejection | null;
+  /** True once the host has kicked us — the server drops the socket right after,
+   *  so this lets the UI show a "removed by the host" state distinct from the
+   *  generic "room ended" that a plain closed socket falls to. */
+  kicked: boolean;
   claim: (itemId: string) => void;
   ready: () => void;
   next: () => void;
   lock: (locked: boolean) => void;
   leave: () => void;
+  /** Host-only: remove another player by id. The server drops their socket and
+   *  broadcasts `player.left { seatKept: false }` to everyone else. */
+  kick: (userId: string) => void;
 }
 
 /**
@@ -56,6 +63,7 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
   const [lastRejection, setLastRejection] = useState<ClaimRejection | null>(
     null,
   );
+  const [kicked, setKicked] = useState(false);
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
@@ -92,9 +100,13 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
       socket.on("connect_error", () => setConnection("connecting"));
 
       // The full snapshot: on join and on every reconnect. Wholesale replace.
+      // A fresh snapshot means we're actively seated in a room again, so clear
+      // any stale `kicked` flag (this hook instance can be reused across a
+      // roomId change without remounting).
       socket.on(ROOM_EVENTS.state, (next: RoomState) => {
         setState(next);
         setLastRejection(null);
+        setKicked(false);
       });
 
       socket.on(
@@ -102,9 +114,25 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
         ({ player }: { player: RoomPlayerState }) =>
           patchPlayers(setState, (players) => upsertPlayer(players, player)),
       );
-      socket.on(ROOM_EVENTS.playerLeft, ({ userId }: { userId: string }) =>
-        patchPlayer(setState, userId, { connected: false }),
+      socket.on(
+        ROOM_EVENTS.playerLeft,
+        ({ userId, seatKept }: { userId: string; seatKept: boolean }) =>
+          // A disconnect (seatKept) keeps the seat and just marks it offline —
+          // the round still waits on that player. An explicit leave (!seatKept)
+          // removes the seat entirely, so they vanish from everyone's roster.
+          seatKept
+            ? patchPlayer(setState, userId, { connected: false })
+            : patchPlayers(setState, (players) =>
+                players.filter((p) => p.userId !== userId),
+              ),
       );
+      socket.on(ROOM_EVENTS.hostChanged, ({ hostId }: { hostId: string }) =>
+        setState((s) => (s ? { ...s, hostId } : s)),
+      );
+      // Sent to the kicked player's own socket, just before the server drops it.
+      // Flag it so the screen shows a "removed by the host" state rather than the
+      // generic "room ended" the ensuing socket close would otherwise land on.
+      socket.on(ROOM_EVENTS.playerKicked, () => setKicked(true));
       socket.on(
         ROOM_EVENTS.playerReady,
         ({ userId, ready }: { userId: string; ready: boolean }) =>
@@ -216,6 +244,7 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
     state,
     connection,
     lastRejection,
+    kicked,
     claim: useCallback(
       (itemId) => send(ROOM_COMMANDS.claim, { itemId }),
       [send],
@@ -224,6 +253,7 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
     next: useCallback(() => send(ROOM_COMMANDS.next), [send]),
     lock: useCallback((locked) => send(ROOM_COMMANDS.lock, { locked }), [send]),
     leave: useCallback(() => send(ROOM_COMMANDS.leave), [send]),
+    kick: useCallback((userId) => send(ROOM_COMMANDS.kick, { userId }), [send]),
   };
 }
 

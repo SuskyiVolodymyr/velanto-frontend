@@ -11,6 +11,8 @@ import { RoomLobby } from "./RoomLobby";
 import { RoomRound } from "./RoomRound";
 import { RoomBetween } from "./RoomBetween";
 import { RoomResults } from "./RoomResults";
+import { RoomLeaveButton } from "./RoomLeaveButton";
+import { RoomKicked } from "./RoomKicked";
 
 /**
  * The single entry point for a friends room. Subscribes to the live room over
@@ -24,8 +26,18 @@ import { RoomResults } from "./RoomResults";
 export function RoomScreen({ roomId }: { roomId: string }) {
   const t = useTranslations("room");
   const { user } = useAuth();
-  const { state, connection, lastRejection, claim, ready, next, lock } =
-    useFriendsRoom(roomId);
+  const {
+    state,
+    connection,
+    lastRejection,
+    kicked,
+    claim,
+    ready,
+    next,
+    lock,
+    leave,
+    kick,
+  } = useFriendsRoom(roomId);
   const userId = user?.id ?? null;
 
   // A finished game shows its results even after the server tears the socket
@@ -36,6 +48,18 @@ export function RoomScreen({ roomId }: { roomId: string }) {
     return (
       <Shell>
         <RoomResults state={state} />
+      </Shell>
+    );
+  }
+
+  // Being kicked must win over the generic "room ended" state: the server drops
+  // the socket right after `player.kicked`, which arrives as connection
+  // "closed", so this has to come before the closed check or the removed-by-host
+  // message would flash and be replaced by the neutral ended screen.
+  if (kicked) {
+    return (
+      <Shell>
+        <RoomKicked />
       </Shell>
     );
   }
@@ -72,6 +96,13 @@ export function RoomScreen({ roomId }: { roomId: string }) {
 
   return (
     <Shell>
+      {/* Leave is available in the lobby and mid-game alike — it confirms first
+          during a round (see RoomLeaveButton). Kept out of the finished/ended/
+          abandoned states above, where there is nothing left to leave. */}
+      <div className="mb-6 flex justify-end">
+        <RoomLeaveButton state={state} onLeave={leave} />
+      </div>
+
       {connection === "connecting" && (
         <div
           role="status"
@@ -94,6 +125,7 @@ export function RoomScreen({ roomId }: { roomId: string }) {
           currentUserId={userId}
           onReady={ready}
           onLock={lock}
+          onKick={kick}
         />
       )}
       {state.phase === "round" && (
