@@ -26,7 +26,9 @@ function formatPublished(iso: string): string {
  */
 export function PackCreatorCard({ pack }: { pack: Pack }) {
   const t = useTranslations("pack");
-  const published = formatPublished(pack.createdAt);
+  // The true publish moment, falling back to createdAt for drafts and legacy
+  // packs the backend sends with a null firstPublishedAt.
+  const published = formatPublished(pack.firstPublishedAt ?? pack.createdAt);
 
   return (
     <AuthorHoverTrigger authorId={pack.authorId}>

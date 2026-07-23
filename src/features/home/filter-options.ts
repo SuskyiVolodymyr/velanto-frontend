@@ -1,9 +1,12 @@
-import type { PackFormat } from "@/src/shared/types/pack";
+import { PACK_FORMATS, type PackFormat } from "@/src/shared/types/pack";
 
 // Filter value unions for the home feed. "all" is the sentinel meaning "no
 // format constraint"; the fetch layer maps it to `undefined`. Human-readable
 // labels are resolved from the i18n catalogs at render time (see FormatFilter /
 // SortFilter), so only the values live here.
+//
+// Every format is filterable, including save_one_friends: its cards lead to a
+// detail page with a room entry, so a chip is no dead end.
 export type FormatFilterValue = "all" | PackFormat;
 export type SortFilterValue = "popular" | "date";
 export type WindowFilterValue = "day" | "week" | "month" | "year" | "all";
@@ -15,13 +18,16 @@ export type WindowFilterValue = "day" | "week" | "month" | "year" | "all";
  */
 export type DateOrderValue = "newest" | "oldest";
 
+// DERIVED from PACK_FORMATS rather than hand-listed, so this row can never
+// silently drift from the format list again — it was forgotten for rank_blind
+// and nearly for 1v1 (docs/superpowers/specs/2026-07-07-1v1-frontend-design.md).
+// A hand-written list would NOT have caught that: adding a member to a union
+// does not invalidate an array that omits it, so there would be no compile
+// error to trip over. Deriving removes the chance entirely — a new format joins
+// the feed filter automatically.
 export const FORMAT_FILTER_VALUES: FormatFilterValue[] = [
   "all",
-  "save_one",
-  "sacrifice_one",
-  "nxn",
-  "rank_blind",
-  "1v1",
+  ...PACK_FORMATS,
 ];
 
 export const SORT_VALUES: SortFilterValue[] = ["popular", "date"];

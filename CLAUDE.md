@@ -38,7 +38,8 @@ src/
       last-play-storage.ts        sessionStorage read/write for recorded picks, keyed `velanto:last-play:${packId}`
       auth-context.tsx, query-client.ts, query-provider.tsx
     types/
-      pack.ts       PACK_FORMATS (all five), Group (= a Pool), Round, Slot; PACK_STATUSES, PACK_TAGS
+      pack.ts       PACK_FORMATS (six — five UI + save_one_friends), UiPackFormat/isUiPackFormat,
+                    Group (= a Pool), Round, Slot; PACK_STATUSES, PACK_TAGS
       play-results.ts, user.ts, index.ts
 ```
 
@@ -48,7 +49,7 @@ src/
 
 ## Domain model: pools and rounds
 
-All five formats are supported end to end. The pre-redesign vocabulary ("categories", item tags, `selectionMode`/`sampleSize` on a group) is **gone** — don't reintroduce it:
+Five of the six formats are supported end to end (see "The sixth format" below). The pre-redesign vocabulary ("categories", item tags, `selectionMode`/`sampleSize` on a group) is **gone** — don't reintroduce it:
 
 - **Pool** (`Group` in code, "Pool" in the UI) — a named bag of items, nothing more. It does not decide how many items appear or when.
 - **Round** — an ordered list of **slots** plus an optional label. Slot count is fixed per format: 1 for `save_one`/`sacrifice_one`/`rank_blind`, exactly 2 for `nxn`/`1v1` (the same two distinct pools in every round).
@@ -64,7 +65,7 @@ Several closed-set wire-contract constants are hand-mirrored in both repos (deli
 | Constant (this repo)                                                                 | Frontend home                                                        | Backend counterpart                                                           |
 | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | `ROLES`                                                                              | `src/shared/types/user.ts`                                           | `ROLES` — `src/modules/users/role.ts`                                         |
-| `PACK_FORMATS`                                                                       | `src/shared/types/pack.ts`                                           | `SUPPORTED_FORMATS` — `src/modules/packs/types/format.ts`                     |
+| `PACK_FORMATS` (six — **not** all UI-visible, see below)                             | `src/shared/types/pack.ts`                                           | `SUPPORTED_FORMATS` — `src/modules/packs/types/format.ts`                     |
 | `PACK_STATUSES`                                                                      | `src/shared/types/pack.ts`                                           | `PACK_MODERATION_STATUSES` — `src/modules/packs/types/moderation-status.ts`   |
 | `PACK_TAGS`                                                                          | `src/shared/types/pack.ts`                                           | `PACK_TAGS` — `src/modules/packs/types/tags.ts`                               |
 | `LOCALES` — **subset, not a mirror** (see below)                                     | `src/i18n/config.ts` (+ `messages/*.json` basenames)                 | `PACK_LANGUAGES` — `src/modules/packs/types/language.ts`                      |
@@ -87,6 +88,19 @@ LOCALES (8: en zh hi ar bn ru ur uk)  ⊆  PACK_LANGUAGES (11: + es fr pt)
 They're different things that were identical until [#226](https://github.com/SuskyiVolodymyr/velanto-frontend/issues/226): `LOCALES` = languages the **interface** is translated into; `PACK_LANGUAGES` = the language a user's **pack content** is in. Shipping the UI in an EU language is what makes a Ukraine-established operator "target" EU data subjects (GDPR Recital 23), so es/fr/pt were dropped from the interface — but a pack may still be _labelled_ Spanish, because user-generated metadata carries no targeting signal. See `docs/superpowers/specs/2026-07-16-legal-docs-research.md`.
 
 **The subset direction is load-bearing**: a new pack defaults to its author's interface language, so every `LOCALE` must be a legal `PACK_LANGUAGE`. The reverse need not hold. Both repos assert this from their own side. Restoring a locale means restoring its `messages/*.json` from git history _and_ re-adding it here — it's a ~10-minute job, deliberately.
+
+## The sixth format: `save_one_friends` is created like the rest, played only in a room
+
+`PACK_FORMATS` has **six** entries, all six now creatable/editable in the form. `save_one_friends` (room-based multiplayer, 2-4 friends — velanto-backend#258) is the one whose **play** happens in a live room, not on the single-player `/play` path (velanto-frontend#368).
+
+Two types, and the difference still matters — but it's a READ-side split now, not write-side:
+
+- `PackFormat` — the full wire union; `Pack.format` is this. The **write** side (creator picker, create schema, filter rows, label maps) accepts all six.
+- `UiPackFormat` = `Exclude<PackFormat, "save_one_friends">` — the formats with a **single-player play path**. Read/routing paths that pick a `/play` screen narrow with `isUiPackFormat()` from `src/shared/types/pack.ts` (never a cast); `save_one_friends` is routed to a room instead.
+
+**Creating one:** pick "Save One (Friends)" in the creator — its body (`FriendsRoundsEditor`) is single-slot random rounds with no count (the room shows players+1), and every pool needs ≥5 items. Backend rules are mirrored in `create-pack.refinements.ts` (`validateFriends`). Packs can also be authored over the API — `velanto-pack-creator` via the `velanto-mcp` server.
+
+**Playing one:** the pack detail page shows a room entry (`FriendsRoomEntry`) instead of a Play button; `/packs/[id]/play` 404s for it by design (see `PlayRouter`). It has a real label, "How it plays" steps, and a create blurb in every locale; it has no single-player play _instruction_ copy (`play-format-copy.ts` maps it to `""`).
 
 ## Workflow (established discipline)
 

@@ -65,6 +65,7 @@ describe("cross-repo mirrored constants (velanto-backend contract)", () => {
       "nxn",
       "rank_blind",
       "1v1",
+      "save_one_friends",
     ]);
   });
 
@@ -288,6 +289,7 @@ describe("cross-repo mirrored constants (velanto-backend contract)", () => {
       "new_pack_from_followed",
       "new_comment",
       "comment_mention",
+      "comment_reply",
       "pack_deleted_warning",
     ]);
   });

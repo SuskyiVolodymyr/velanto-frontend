@@ -196,4 +196,41 @@ describe("PackApprovalsTab", () => {
       within(row.closest('[role="row"]') as HTMLElement).getByText("—"),
     ).toBeInTheDocument();
   });
+
+  // Every format is a named filter option, save_one_friends included. Counting
+  // the options is what makes dropping a format from the filter fail — asserting
+  // only "1v1 is present" would stay green.
+  it("offers every named format in the filter, including save_one_friends", async () => {
+    render(<PackApprovalsTab />);
+    await screen.findByText("Best Anime Openings");
+
+    const select = screen.getByRole("combobox", { name: "Filter by format" });
+    const options = within(select).getAllByRole("option");
+
+    expect(options).toHaveLength(7); // "All formats" + 6 named formats
+    expect(options.map((option) => option.textContent)).toEqual([
+      "All formats",
+      "Save One",
+      "Sacrifice One",
+      "NxN",
+      "Rank Blind",
+      "1v1",
+      "Save One (Friends)",
+    ]);
+  });
+
+  // A save_one_friends pack appears in the queue with its real label.
+  it("lists a save_one_friends pack in the queue with its label", async () => {
+    vi.mocked(packsClient.moderationQueue).mockResolvedValue(
+      queuePage([pack({ format: "save_one_friends" })]),
+    );
+    render(<PackApprovalsTab />);
+
+    const row = await screen.findByText("Best Anime Openings");
+    expect(
+      within(row.closest('[role="row"]') as HTMLElement).getByText(
+        "Save One (Friends)",
+      ),
+    ).toBeInTheDocument();
+  });
 });

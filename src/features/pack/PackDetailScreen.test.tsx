@@ -21,6 +21,14 @@ vi.mock("@/src/features/pack/PackPlayButton", () => ({
     <a href={`/packs/${packId}/play`}>Play now</a>
   ),
 }));
+// The friends-room entry is its own client island (auth-gated create/join, own
+// tests). Stub it to echo the pack id so we can assert the screen offers it in
+// place of Play for a save_one_friends pack.
+vi.mock("@/src/features/friends-rooms/FriendsRoomEntry", () => ({
+  FriendsRoomEntry: ({ packId }: { packId: string }) => (
+    <div>{`FriendsRoomEntry:${packId}`}</div>
+  ),
+}));
 // The banner's author line is an auth-gated client island (own tests); stub it
 // so PackCoverBanner (which renders the asserted title) stays real.
 vi.mock("@/src/features/pack/PackBannerAuthor", () => ({
@@ -294,5 +302,62 @@ describe("PackDetailScreen", () => {
     expect(
       screen.queryByRole("button", { name: "Share" }),
     ).not.toBeInTheDocument();
+  });
+
+  // save_one_friends (velanto-backend#258) has no single-player /play path, so
+  // an approved one offers the room entry points (Create room / Join by code via
+  // FriendsRoomEntry) instead of the dead-end Play button.
+  it("offers the friends-room entry instead of Play for an approved save_one_friends pack", () => {
+    render(
+      <PackDetailScreen
+        pack={{ ...BASE_PACK, format: "save_one_friends" }}
+        results={RESULTS}
+      />,
+    );
+
+    expect(
+      screen.queryByRole("link", { name: "Play now" }),
+    ).not.toBeInTheDocument();
+    expect(screen.getByText("FriendsRoomEntry:p1")).toBeInTheDocument();
+    // The rest of the page still renders: the pack exists and is public.
+    expect(screen.getByText("Best Anime Openings")).toBeInTheDocument();
+  });
+
+  it("does not offer the friends-room entry until the pack is approved", () => {
+    render(
+      <PackDetailScreen
+        pack={{ ...BASE_PACK, format: "save_one_friends", status: "pending" }}
+        results={RESULTS}
+      />,
+    );
+
+    expect(screen.queryByText("FriendsRoomEntry:p1")).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("link", { name: "Play now" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("keeps the plain Play button (and no friends-room entry) for a normal pack", () => {
+    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
+
+    expect(screen.getByRole("link", { name: "Play now" })).toBeInTheDocument();
+    expect(screen.queryByText("FriendsRoomEntry:p1")).not.toBeInTheDocument();
+  });
+
+  // The format label must resolve from the `formats` namespace rather than
+  // rendering the literal key path "formats.save_one_friends" (and logging a
+  // console.error per render, which reaches Sentry).
+  it("labels a save_one_friends pack from the catalog, not as a raw key path", () => {
+    render(
+      <PackDetailScreen
+        pack={{ ...BASE_PACK, format: "save_one_friends" }}
+        results={RESULTS}
+      />,
+    );
+
+    expect(
+      screen.queryByText(/formats\.save_one_friends/),
+    ).not.toBeInTheDocument();
+    expect(screen.getAllByText("Save One (Friends)").length).toBeGreaterThan(0);
   });
 });

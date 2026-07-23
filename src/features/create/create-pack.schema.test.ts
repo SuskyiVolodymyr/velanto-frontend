@@ -650,3 +650,128 @@ describe("random pool capacity", () => {
     expect(messages(result)).not.toContain("Pick a group for this round.");
   });
 });
+
+describe("format", () => {
+  it.each([
+    "save_one",
+    "sacrifice_one",
+    "nxn",
+    "rank_blind",
+    "1v1",
+    "save_one_friends",
+  ] as const)("accepts the shipped format %s", (format) => {
+    // Each format has its own round shape; only the format FIELD is under test
+    // here (a friends-shaped body is exercised in its own describe below), so
+    // assert nothing rejects the format value itself.
+    const result = createPackSchema.safeParse(makeValues({ format }));
+    const paths = (result.error?.issues ?? []).map((issue) =>
+      issue.path.join("."),
+    );
+    expect(paths).not.toContain("format");
+  });
+});
+
+// A base save_one_friends draft: one pool of 5 items and one single-slot round
+// drawn at random with NO count — the room shows one item per player plus one,
+// decided when it fills. Mirrors velanto-backend create-pack.dto.ts.
+function friendsValues(
+  overrides: Partial<CreatePackValues> = {},
+): CreatePackValues {
+  return makeValues({
+    format: "save_one_friends",
+    groups: [
+      {
+        id: "g1",
+        name: "Songs",
+        items: [
+          textItem("a"),
+          textItem("b"),
+          textItem("c"),
+          textItem("d"),
+          textItem("e"),
+        ],
+      },
+    ],
+    rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "random" }] }],
+    ...overrides,
+  });
+}
+
+describe("createPackSchema — save_one_friends", () => {
+  it("accepts a single-slot random round over a pool of five", () => {
+    expect(isValid(friendsValues())).toBe(true);
+  });
+
+  it("rejects a pool with fewer than five items", () => {
+    const values = friendsValues({
+      groups: [
+        {
+          id: "g1",
+          name: "Songs",
+          items: [textItem("a"), textItem("b"), textItem("c"), textItem("d")],
+        },
+      ],
+    });
+    expect(messageAt(values, "groups.0.items")).toMatch(/at least 5 items/);
+  });
+
+  it("rejects an authored count — the room decides the board size", () => {
+    const values = friendsValues({
+      rounds: [
+        { id: "r1", slots: [{ groupId: "g1", mode: "random", count: 5 }] },
+      ],
+    });
+    expect(messageAt(values, "rounds.0.slots.0.count")).toBeTruthy();
+  });
+
+  it("rejects pinned items — the room draws them at play time", () => {
+    const values = friendsValues({
+      rounds: [
+        {
+          id: "r1",
+          slots: [{ groupId: "g1", mode: "random", itemIds: ["i-a"] }],
+        },
+      ],
+    });
+    expect(messageAt(values, "rounds.0.slots.0.itemIds")).toBeTruthy();
+  });
+
+  it("rejects a manual slot", () => {
+    const values = friendsValues({
+      rounds: [
+        {
+          id: "r1",
+          slots: [{ groupId: "g1", mode: "manual", itemIds: ["i-a", "i-b"] }],
+        },
+      ],
+    });
+    expect(messageAt(values, "rounds.0.slots.0.mode")).toBeTruthy();
+  });
+
+  it("rejects a round with more than one slot", () => {
+    const values = friendsValues({
+      rounds: [
+        {
+          id: "r1",
+          slots: [
+            { groupId: "g1", mode: "random" },
+            { groupId: "g1", mode: "random" },
+          ],
+        },
+      ],
+    });
+    expect(messageAt(values, "rounds.0.slots")).toBeTruthy();
+  });
+
+  it("rejects a later round that cannot draw a full board from a shared pool", () => {
+    // Five items, two rounds each needing five distinct ones — items never
+    // repeat across rounds, so the second round underfills. Fatal for friends.
+    const values = friendsValues({
+      rounds: [
+        { id: "r1", slots: [{ groupId: "g1", mode: "random" }] },
+        { id: "r2", slots: [{ groupId: "g1", mode: "random" }] },
+      ],
+    });
+    expect(messageAt(values, "rounds.1.slots.0")).toMatch(/only draw/);
+  });
+});

@@ -11,9 +11,33 @@ export const PACK_FORMATS = [
   "nxn",
   "rank_blind",
   "1v1",
+  // Room-based multiplayer: 2-4 friends play one pack together in real time,
+  // each round showing players+1 items of which exactly one survives unclaimed.
+  // Creatable/editable in the form and played in a room — it has NO single-
+  // player play path, so read/routing paths narrow with isUiPackFormat below.
+  // See velanto-backend#258 for the server side.
+  "save_one_friends",
 ] as const;
 
 export type PackFormat = (typeof PACK_FORMATS)[number];
+
+// The formats with a SINGLE-PLAYER play path: PACK_FORMATS minus
+// `save_one_friends`, which is played only in a room (never at
+// /packs/[id]/play). READ/routing paths that pick a single-player play screen
+// key off this narrower union.
+//
+// This is a READ-side narrowing. The WRITE side (creator picker, create schema,
+// filters, labels) accepts all six formats — a friends pack is a real pack that
+// appears in feeds, moderation and the editor. `Pack.format` is the full
+// PackFormat accordingly.
+export type UiPackFormat = Exclude<PackFormat, "save_one_friends">;
+
+// Runtime narrowing: does this format have a single-player play path? Use it at
+// a read/routing boundary (e.g. choosing the /play screen) instead of a cast —
+// save_one_friends is played in a room, not at /packs/[id]/play.
+export function isUiPackFormat(f: PackFormat): f is UiPackFormat {
+  return f !== "save_one_friends";
+}
 
 // 'image' items store the S3 media KEY (e.g. "media/item/<uuid>.webp") as their
 // value; the render URL is built from it via shared/lib/media-url.
@@ -166,6 +190,12 @@ export interface Pack {
   // rather than by createdAt. Optional here only so the many Pack fixtures that
   // predate the column stay valid; the backend always sends it.
   submittedAt?: string;
+  // When the pack FIRST went public, or null if it never has (a draft, or a
+  // legacy pack from before the backend column existed). This is the honest
+  // "published" date — createdAt is only the fallback, since a pack can sit as a
+  // draft or wait in moderation before going live. Optional here only so Pack
+  // fixtures that predate it stay valid; the backend always sends it.
+  firstPublishedAt?: string | null;
   totalPlays: number;
   avgAgreementPercent: number;
   status: PackStatus;

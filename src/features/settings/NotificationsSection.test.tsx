@@ -17,6 +17,7 @@ const ALL_ON = {
   new_pack_from_followed: true,
   new_comment: true,
   comment_mention: true,
+  comment_reply: true,
   pack_deleted_warning: true,
 };
 
@@ -83,7 +84,7 @@ describe("NotificationsSection", () => {
     expect(screen.queryByRole("switch")).not.toBeInTheDocument();
   });
 
-  it("renders all four toggles in their fetched state", async () => {
+  it("renders a toggle per notification type in its fetched state", async () => {
     render(<NotificationsSection />);
     await waitFor(() =>
       expect(
@@ -95,6 +96,9 @@ describe("NotificationsSection", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByRole("switch", { name: "New comment on your pack" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("switch", { name: "Someone replied to your comment" }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("switch", { name: "Pack removed by a moderator" }),

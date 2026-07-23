@@ -138,6 +138,27 @@ describe("describeNotification", () => {
     });
   });
 
+  it("formats comment_reply with a link to the pack", () => {
+    const result = describeNotification(
+      makeNotification({
+        type: "comment_reply",
+        payload: {
+          packId: "p1",
+          packTitle: "Anime OSTs",
+          commentId: "c1",
+          replierUsername: "erin",
+        },
+      }),
+    );
+    expect(result).toEqual({
+      messageKey: "commentReply",
+      kindKey: "kindReply",
+      values: { username: "erin", packTitle: "Anime OSTs" },
+      excerpt: null,
+      href: "/packs/p1",
+    });
+  });
+
   it("falls back to a generic row for an unknown notification type (forward-compat)", () => {
     const result = describeNotification(
       makeNotification({
