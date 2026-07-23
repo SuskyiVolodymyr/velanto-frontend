@@ -73,9 +73,9 @@ describe("RoomPresenceIndicator", () => {
     rooms = [summary()]; // 2 players
     const { container } = render(<RoomPresenceIndicator />);
 
-    expect(
-      container.querySelectorAll('[class*="border-dashed"]'),
-    ).toHaveLength(2);
+    expect(container.querySelectorAll('[class*="border-dashed"]')).toHaveLength(
+      2,
+    );
     expect(screen.getByText("2 / 4 in room")).toBeInTheDocument();
   });
 
@@ -105,7 +105,10 @@ describe("RoomPresenceIndicator", () => {
 
   it("hides the entry for the room you're currently viewing", () => {
     pathname = "/rooms/room-1";
-    rooms = [summary({ id: "room-1" }), summary({ id: "room-2", packTitle: "Top Songs" })];
+    rooms = [
+      summary({ id: "room-1" }),
+      summary({ id: "room-2", packTitle: "Top Songs" }),
+    ];
     render(<RoomPresenceIndicator />);
 
     // The room you're on is suppressed; the other still shows.
