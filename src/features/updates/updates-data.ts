@@ -34,6 +34,8 @@ export const UPDATES: UpdateEntry[] = [
       "You can now play Save One together, live, with 2–4 friends in a room. Open a Save One with Friends pack, start a room, and share the code — or send the invite link — to pull everyone in.",
       "Every round shows one item per player plus one more, and each of you claims one to sacrifice. No two people can cut the same item, and the single item nobody sacrifices is the one that survives. There's no turn order and no timer — claim, change your mind, and argue it out in real time.",
       "Between rounds you see exactly who sacrificed what, and a Next counter shows how many players are ready before the room moves on. Your join code stays hidden until you reveal it, so sharing your screen never leaks your room.",
+      "You can build your own Save One with Friends pack too — pick it in the creator like any other format. Each round draws a pool at random, and the room decides how many items to show, so there's no per-round count to set; every pool just needs at least five items.",
+      "You now get a notification when someone replies to your comment — not only when they @mention you. Toggle it in Settings like any other notification.",
     ],
   },
   {
