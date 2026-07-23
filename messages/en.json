@@ -990,6 +990,20 @@
           "desc": "One cut per round, across every group."
         }
       ],
+      "save_one_friends": [
+        {
+          "title": "Gather 2-4 friends",
+          "desc": "Everyone joins one room together — each round shows one item per player, plus one extra."
+        },
+        {
+          "title": "Claim who to sacrifice",
+          "desc": "You each take one item to cut; two players can't claim the same one, so you watch the picks race in."
+        },
+        {
+          "title": "One survives",
+          "desc": "The single item nobody claimed is saved — play through every round together."
+        }
+      ],
       "nxn": [
         {
           "title": "Two categories face off",
