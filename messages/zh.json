@@ -1524,8 +1524,7 @@
       "survivorNote": "此项在本轮中存活。",
       "boardHeading": "本轮的淘汰",
       "next": "下一步",
-      "pressNextPrompt": "准备好进入下一轮时请按“下一步”。",
-      "waitingForNext": "等待 {count} 人按下“下一步”…"
+      "ready": "{count}/{total} 已准备"
     },
     "results": {
       "heading": "结果",

@@ -1524,8 +1524,7 @@
       "survivorNote": "यह आइटम इस राउंड में बच गया।",
       "boardHeading": "इस राउंड के बलिदान",
       "next": "आगे",
-      "pressNextPrompt": "अगले राउंड के लिए तैयार होने पर “आगे” दबाएँ।",
-      "waitingForNext": "{count} के “आगे” दबाने की प्रतीक्षा है…"
+      "ready": "{count} / {total} तैयार"
     },
     "results": {
       "heading": "परिणाम",

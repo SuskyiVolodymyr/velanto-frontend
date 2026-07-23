@@ -1524,8 +1524,7 @@
       "survivorNote": "এই আইটেমটি এই রাউন্ডে টিকে গেছে।",
       "boardHeading": "এই রাউন্ডের উৎসর্গ",
       "next": "পরবর্তী",
-      "pressNextPrompt": "পরবর্তী রাউন্ডের জন্য প্রস্তুত হলে “পরবর্তী” চাপুন।",
-      "waitingForNext": "{count} জনের “পরবর্তী” চাপার অপেক্ষায়…"
+      "ready": "{count} / {total} প্রস্তুত"
     },
     "results": {
       "heading": "ফলাফল",

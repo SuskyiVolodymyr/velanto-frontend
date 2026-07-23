@@ -329,6 +329,16 @@ describe("RoomScreen — between", () => {
     await user.click(screen.getByRole("button", { name: "Next" }));
     expect(next).toHaveBeenCalledTimes(1);
   });
+
+  // Bob has pressed Next, Alice hasn't ⇒ 1 of the 2 seated players are ready.
+  // The gate waits for every seated player (advanceIfAllNext), so the
+  // denominator is the full roster, matching the round's "chosen" counter.
+  it("shows how many players have pressed Next", () => {
+    setRoom(betweenState());
+    render(<RoomScreen roomId="room-1" />);
+
+    expect(screen.getByText("1 / 2 ready")).toBeInTheDocument();
+  });
 });
 
 describe("RoomScreen — results", () => {

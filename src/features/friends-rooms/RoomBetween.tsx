@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
+import { cn } from "@/src/shared/lib/cn";
 import type { RoomPlayerState, RoomState } from "./room-types";
 import { RoomItemCard } from "./RoomItemCard";
 
@@ -46,8 +47,12 @@ export function RoomBetween({
   );
 
   const me = state.players.find((p) => p.userId === currentUserId) ?? null;
-  const present = state.players.filter((p) => p.connected);
-  const pending = present.filter((p) => !p.next).length;
+  // The room advances only once EVERY seated player has pressed Next
+  // (advanceIfAllNext waits on the full roster, not just connected players), so
+  // the denominator is the whole seated roster — same rule as the round's
+  // "chosen" counter.
+  const ready = state.players.filter((p) => p.next).length;
+  const total = state.players.length;
 
   return (
     <div className="flex flex-col gap-6">
@@ -91,10 +96,12 @@ export function RoomBetween({
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Text variant="secondary" aria-live="polite" className="text-sm">
-          {me?.next
-            ? t("between.waitingForNext", { count: pending })
-            : t("between.pressNextPrompt")}
+        <Text
+          variant="secondary"
+          aria-live="polite"
+          className={cn("text-sm", ready === total && "text-success")}
+        >
+          {t("between.ready", { count: ready, total })}
         </Text>
         <Button disabled={me?.next ?? false} onClick={onNext}>
           {t("between.next")}

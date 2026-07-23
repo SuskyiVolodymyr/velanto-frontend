@@ -1524,8 +1524,7 @@
       "survivorNote": "یہ آئٹم اس راؤنڈ میں بچ گیا۔",
       "boardHeading": "اس راؤنڈ کی قربانیاں",
       "next": "اگلا",
-      "pressNextPrompt": "اگلے راؤنڈ کے لیے تیار ہوں تو «اگلا» دبائیں۔",
-      "waitingForNext": "{count} کے «اگلا» دبانے کا انتظار ہے…"
+      "ready": "{count} / {total} تیار"
     },
     "results": {
       "heading": "نتائج",

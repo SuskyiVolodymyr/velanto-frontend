@@ -1524,8 +1524,7 @@
       "survivorNote": "نجا هذا العنصر في هذه الجولة.",
       "boardHeading": "تضحيات هذه الجولة",
       "next": "التالي",
-      "pressNextPrompt": "اضغط «التالي» عندما تكون مستعدًا للجولة القادمة.",
-      "waitingForNext": "في انتظار ضغط {count} على «التالي»…"
+      "ready": "{count} / {total} جاهزون"
     },
     "results": {
       "heading": "النتائج",

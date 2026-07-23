@@ -1524,8 +1524,7 @@
       "survivorNote": "This item survived the round.",
       "boardHeading": "This round's sacrifices",
       "next": "Next",
-      "pressNextPrompt": "Press Next when you're ready for the next round.",
-      "waitingForNext": "Waiting for {count} to press Next…"
+      "ready": "{count} / {total} ready"
     },
     "results": {
       "heading": "Results",
