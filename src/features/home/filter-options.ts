@@ -1,17 +1,13 @@
-import {
-  PACK_FORMATS,
-  isUiPackFormat,
-  type UiPackFormat,
-} from "@/src/shared/types/pack";
+import { PACK_FORMATS, type PackFormat } from "@/src/shared/types/pack";
 
 // Filter value unions for the home feed. "all" is the sentinel meaning "no
 // format constraint"; the fetch layer maps it to `undefined`. Human-readable
 // labels are resolved from the i18n catalogs at render time (see FormatFilter /
 // SortFilter), so only the values live here.
 //
-// UI-EXCLUDED:save_one_friends (velanto-frontend#368) — deliberately keyed off
-// UiPackFormat, not PackFormat: the feed only offers formats the UI can name.
-export type FormatFilterValue = "all" | UiPackFormat;
+// Every format is filterable, including save_one_friends: its cards lead to a
+// detail page with a room entry, so a chip is no dead end.
+export type FormatFilterValue = "all" | PackFormat;
 export type SortFilterValue = "popular" | "date";
 export type WindowFilterValue = "day" | "week" | "month" | "year" | "all";
 /**
@@ -27,12 +23,11 @@ export type DateOrderValue = "newest" | "oldest";
 // and nearly for 1v1 (docs/superpowers/specs/2026-07-07-1v1-frontend-design.md).
 // A hand-written list would NOT have caught that: adding a member to a union
 // does not invalidate an array that omits it, so there would be no compile
-// error to trip over. Deriving removes the chance entirely — when
-// UI-EXCLUDED:save_one_friends (velanto-frontend#368) is lifted from
-// `isUiPackFormat`, the chip appears here with no edit to this file.
+// error to trip over. Deriving removes the chance entirely — a new format joins
+// the feed filter automatically.
 export const FORMAT_FILTER_VALUES: FormatFilterValue[] = [
   "all",
-  ...PACK_FORMATS.filter(isUiPackFormat),
+  ...PACK_FORMATS,
 ];
 
 export const SORT_VALUES: SortFilterValue[] = ["popular", "date"];

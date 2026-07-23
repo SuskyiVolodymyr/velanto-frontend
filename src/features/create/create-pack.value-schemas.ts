@@ -23,6 +23,12 @@ export const ELIMINATION_MAX_DRAW = 8;
 // nxn draws 1–8 per side; 1v1 is fixed at exactly 1.
 export const NXN_SIDE_COUNT_MIN = 1;
 export const NXN_SIDE_COUNT_MAX = 8;
+// save_one_friends: the room seats up to 4 players and shows one item per player
+// plus the survivor, so every pool it draws from must hold at least this many —
+// and the count is never authored (the room fixes it when it fills). Equals the
+// backend's FRIENDS_MAX_PLAYERS + 1 (create-pack.dto.ts).
+export const FRIENDS_MAX_PLAYERS = 4;
+export const FRIENDS_ROUND_DRAW = FRIENDS_MAX_PLAYERS + 1;
 
 const ITEM_TYPES = ["text", "youtube", "image"] as const;
 

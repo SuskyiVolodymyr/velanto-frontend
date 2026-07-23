@@ -11,17 +11,18 @@ describe("formatLabel", () => {
     expect(formatLabel("nxn")).toBe("NxN");
     expect(formatLabel("rank_blind")).toBe("Rank Blind");
     expect(formatLabel("1v1")).toBe("1v1");
+    expect(formatLabel("save_one_friends")).toBe("Save One (Friends)");
   });
 
-  // UI-EXCLUDED:save_one_friends (velanto-frontend#368). This is the failure
-  // signal for the PR that ships the format: when it gains a real label, THIS
-  // expectation is what tells you to update it. Until then a moderation row
-  // carrying the format must show the raw wire value, not an empty cell — the
-  // pack exists (packs are authored over the API, not only via the form) and
-  // hiding its format from moderators is worse than an unfamiliar string.
-  it("falls back to the raw wire value for save_one_friends, which has no label", () => {
-    expect(formatLabel("save_one_friends")).toBe("save_one_friends");
-    expect(FORMAT_LABELS).not.toHaveProperty("save_one_friends");
+  // A format the wire names but this build has no label for still renders the
+  // raw value rather than an empty cell — a labelless format is a bug to notice,
+  // not to hide. (Every shipped format has a label; this guards a backend
+  // deployed ahead of the frontend.)
+  it("falls back to the raw wire value for an unknown format", () => {
+    expect(formatLabel("telepathy" as (typeof PACK_FORMATS)[number])).toBe(
+      "telepathy",
+    );
+    expect(FORMAT_LABELS).not.toHaveProperty("telepathy");
   });
 
   // `format in FORMAT_LABELS` walked the prototype chain, so these took the

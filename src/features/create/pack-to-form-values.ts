@@ -1,4 +1,4 @@
-import { isUiPackFormat, type Pack } from "@/src/shared/types/pack";
+import { PACK_FORMATS, type Pack } from "@/src/shared/types/pack";
 import type { CreatePackValues } from "@/src/features/create/create-pack.schema";
 import { DEFAULT_PACK_LANGUAGE } from "@/src/shared/types/pack-language";
 
@@ -9,18 +9,16 @@ import { DEFAULT_PACK_LANGUAGE } from "@/src/shared/types/pack-language";
  * dropped — the edit submits a full content replacement, and the backend keeps
  * ownership/status under its own control.
  *
- * Returns null when the pack's format has no creator UI — see the format field
- * below. Callers must render an unsupported state rather than a broken form.
+ * Every one of the six formats — save_one_friends included — has an editor body,
+ * so this returns values for all of them. The null path is a defensive guard for
+ * a genuinely unknown wire format (a backend deployed ahead of this build);
+ * callers render an unsupported state rather than a broken form.
  */
 export function packToFormValues(pack: Pack): CreatePackValues | null {
-  // UI-EXCLUDED:save_one_friends (velanto-frontend#368)
-  // A checked narrowing, not a cast. /packs/[id]/edit fetches ANY pack by id,
-  // and a save_one_friends pack can already exist — packs are authored over the
-  // API (velanto-pack-creator via the MCP), not only through this form. The old
-  // `as UiPackFormat` cast succeeded silently: FormatSection then rendered with
-  // no option selected and Save failed schema validation with no visibly
-  // failing control. Bail out instead and let the caller say so.
-  if (!isUiPackFormat(pack.format)) return null;
+  // /packs/[id]/edit fetches ANY pack by id, and `format` arrives as a raw
+  // string. Reject one this build doesn't know rather than seed a form with no
+  // matching option and fail Save with no visibly failing control.
+  if (!PACK_FORMATS.includes(pack.format)) return null;
 
   return {
     title: pack.title,
@@ -29,7 +27,6 @@ export function packToFormValues(pack: Pack): CreatePackValues | null {
     // Seed the existing cover; null (gradient-only) maps to undefined so the
     // optional-string form field stays valid.
     coverImageKey: pack.coverImageKey ?? undefined,
-    // Narrowed by the guard above, so this needs no cast.
     format: pack.format,
     // Keep the pack's own content language on edit — never re-derive it from the
     // editor's interface locale, which would silently relabel a Spanish pack as

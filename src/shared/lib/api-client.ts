@@ -28,6 +28,30 @@ export function setAccessToken(token: string | null): void {
   assignAccessToken(token);
 }
 
+/**
+ * The current in-memory access token, or null when signed out. Exposed for the
+ * ONE caller that can't go through `apiClient` — the friends-room socket, which
+ * authenticates its handshake with a Bearer token the way every fetch does, but
+ * over ws:// rather than an HTTP header. Everything else must use `apiClient`,
+ * which also renews the token before it expires; a socket reconnect re-reads
+ * this, so a fresh token is picked up on the next connect.
+ */
+export function getAccessToken(): string | null {
+  return accessToken;
+}
+
+/**
+ * Ensure the access token is fresh, renewing it if it is within the stale
+ * window, and return it. The socket calls this before (re)connecting so its
+ * handshake never carries an about-to-expire token. Returns null if signed out
+ * or the refresh fails.
+ */
+export async function ensureFreshAccessToken(): Promise<string | null> {
+  if (accessToken && !accessTokenIsStale()) return accessToken;
+  const { result } = await runRefresh();
+  return result?.accessToken ?? null;
+}
+
 /** Read a JWT's `exp` (ms) without verifying it; null for an opaque/bad token. */
 function decodeJwtExpMs(token: string): number | null {
   try {

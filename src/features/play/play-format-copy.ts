@@ -6,10 +6,10 @@ import type { Pack } from "@/src/shared/types/pack";
  * routed to sibling screens (see PlayRouter) and map to "" purely to satisfy
  * Record<PackFormat, ...>'s exhaustiveness.
  *
- * UI-EXCLUDED:save_one_friends (velanto-frontend#368) — maps to "" for the same
- * exhaustiveness reason. It is NOT safe to read: "" resolves to the literal
- * "play." at render time. PlayRouter 404s that format precisely so this map is
- * never consulted for it; do not relax that without giving it real copy.
+ * save_one_friends maps to "" too — it is played in a room, never on the
+ * single-player /play path, so it never reaches PlayScreen. The "" is NOT safe
+ * to read (it resolves to the literal "play." at render time); PlayRouter 404s
+ * that format precisely so this map is never consulted for it.
  */
 export const INSTRUCTION_KEY: Record<Pack["format"], string> = {
   save_one: "instructionSave",

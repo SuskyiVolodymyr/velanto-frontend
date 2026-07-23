@@ -12,24 +12,25 @@ describe("PackHowItPlays", () => {
     expect(screen.getByText("1")).toBeInTheDocument();
   });
 
-  // `t.raw` on a MISSING key returns next-intl's fallback STRING, not undefined,
-  // so `steps.map(...)` threw. PackDetailScreen is a Server Component that
-  // renders this unconditionally, so that threw the entire public pack page into
-  // a 500 — for anyone, not just the author.
-  //
-  // UI-EXCLUDED:save_one_friends (velanto-frontend#368) is the format that makes
-  // this reachable today (such a pack can arrive from the API), but the guard is
-  // deliberately shape-based so a plain catalog typo is covered too.
-  it("renders nothing instead of crashing when the format has no howItPlays entry", () => {
-    expect(() =>
-      render(<PackHowItPlays format={"save_one_friends" as PackFormat} />),
-    ).not.toThrow();
-    expect(screen.queryByText("1")).not.toBeInTheDocument();
+  // save_one_friends is now a shipping, user-facing format, so it has its own
+  // how-it-plays steps like every other. (It used to be the "no entry" fixture
+  // here — that role moved to the unknown-format test below when the multiplayer
+  // UI landed and the catalog gained this key.)
+  it("renders the steps for save_one_friends", () => {
+    render(<PackHowItPlays format={"save_one_friends" as PackFormat} />);
+    expect(screen.getByText("1")).toBeInTheDocument();
   });
 
-  it("renders nothing instead of crashing for a format the catalog has never heard of", () => {
+  // The real guard: `t.raw` on a MISSING key returns next-intl's fallback STRING,
+  // not undefined, so `steps.map(...)` would throw. PackDetailScreen is a Server
+  // Component that renders this unconditionally, so that would take the entire
+  // public pack page down with a 500 — for anyone, not just the author. The
+  // guard is shape-based, so a plain catalog typo is covered too, not only a
+  // format the UI has never heard of.
+  it("renders nothing instead of crashing for a format with no howItPlays entry", () => {
     expect(() =>
       render(<PackHowItPlays format={"telepathy" as PackFormat} />),
     ).not.toThrow();
+    expect(screen.queryByText("1")).not.toBeInTheDocument();
   });
 });

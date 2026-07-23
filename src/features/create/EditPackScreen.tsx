@@ -28,10 +28,10 @@ export function EditPackScreen({ pack }: { pack: Pack }) {
     );
   }
 
-  // UI-EXCLUDED:save_one_friends (velanto-frontend#368) — null means the pack's
-  // format has no creator UI. Say so plainly: seeding the form anyway leaves the
-  // format picker with nothing selected and Save silently failing validation
-  // against a control the author cannot see.
+  // null means the pack's format is one this build doesn't know (a backend
+  // deployed ahead of the frontend) — every shipped format, save_one_friends
+  // included, seeds the form. Say so plainly rather than seeding a form with no
+  // matching option and a Save that silently fails validation.
   const initialValues = packToFormValues(pack);
   if (!initialValues) {
     return (

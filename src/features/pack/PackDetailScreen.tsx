@@ -13,6 +13,7 @@ import { TopPickedTable } from "@/src/features/result/TopPickedTable";
 import { PodiumTable } from "@/src/features/result/PodiumTable";
 import { PackCreatorCard } from "@/src/features/pack/PackCreatorCard";
 import { PackPlayButton } from "@/src/features/pack/PackPlayButton";
+import { FriendsRoomEntry } from "@/src/features/friends-rooms/FriendsRoomEntry";
 import { PackOwnerActions } from "@/src/features/pack/PackOwnerActions";
 import { PackOwnerStatusBadge } from "@/src/features/pack/PackOwnerStatusBadge";
 import { CommentSection } from "@/src/features/pack/CommentSection";
@@ -109,12 +110,18 @@ export function PackDetailScreen({
             )}
 
             <div className="flex flex-wrap items-center gap-3.5">
-              {/* UI-EXCLUDED:save_one_friends (velanto-frontend#368) — don't
-                  offer Play for a format with no play path: /play 404s for it
-                  (see PlayRouter), so the CTA would be a dead end. */}
+              {/* save_one_friends (velanto-backend#258) is no longer excluded
+                  here: it has no single-player /play path (that still 404s), so
+                  instead of Play we offer the room entry points — Create room /
+                  Join by code — once the pack is approved. Every other UI format
+                  keeps the plain Play button. */}
               {isUiPackFormat(pack.format) && (
                 <PackPlayButton packId={pack.id} />
               )}
+              {pack.format === "save_one_friends" &&
+                pack.status === "approved" && (
+                  <FriendsRoomEntry packId={pack.id} />
+                )}
               {pack.status === "approved" && (
                 <ShareButton path={`/packs/${pack.id}`} />
               )}

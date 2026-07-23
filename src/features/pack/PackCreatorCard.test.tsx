@@ -128,6 +128,24 @@ describe("PackCreatorCard", () => {
     expect(screen.getByText(/Published/)).toBeInTheDocument();
   });
 
+  // The strip dates the pack by when it went public (firstPublishedAt), not when
+  // the row/draft was made (createdAt) — midday UTC keeps the dd-mm-yyyy stable
+  // across the runner's timezone.
+  it("dates the pack by firstPublishedAt, not createdAt", async () => {
+    renderCard(
+      <PackCreatorCard
+        pack={makePack({
+          createdAt: "2026-02-01T12:00:00.000Z",
+          firstPublishedAt: "2026-06-15T12:00:00.000Z",
+        })}
+      />,
+    );
+    await screen.findByText("@quizmaster");
+
+    expect(screen.getByText(/15-06-2026/)).toBeInTheDocument();
+    expect(screen.queryByText(/01-02-2026/)).not.toBeInTheDocument();
+  });
+
   it("reveals a mini profile with bio, counts and a follow button on hover", async () => {
     mockAuth({
       id: "viewer-1",

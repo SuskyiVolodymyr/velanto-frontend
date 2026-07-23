@@ -73,13 +73,12 @@ describe("PlayRouter", () => {
     },
   );
 
-  // UI-EXCLUDED:save_one_friends (velanto-frontend#368). THIS is the test the
-  // PR that ships room-based multiplayer has to change: replace the 404 with
-  // its real screen. Until then the pack must not reach PlayScreen — the wrong
-  // mechanic would run, the instruction copy would render as the literal
-  // "play." and the play would be RECORDED (anonymous plays count toward pack
-  // stats), which is data corruption, not a cosmetic bug.
-  describe("save_one_friends — no play path in this build", () => {
+  // save_one_friends is played in a ROOM, never on the single-player /play path,
+  // so this route 404s it by design. It must not reach PlayScreen — the wrong
+  // mechanic would run, the instruction copy would render as the literal "play."
+  // and the play would be RECORDED (anonymous plays count toward pack stats),
+  // which is data corruption, not a cosmetic bug.
+  describe("save_one_friends — played in a room, not on /play", () => {
     const friendsPack: Pack = { ...BASE_PACK, format: "save_one_friends" };
 
     it("does not render PlayScreen", () => {

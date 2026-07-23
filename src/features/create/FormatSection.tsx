@@ -2,22 +2,19 @@
 
 import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslations } from "next-intl";
-import type { UiPackFormat } from "@/src/shared/types/pack";
+import type { PackFormat } from "@/src/shared/types/pack";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
 import { type CreatePackValues } from "@/src/features/create/create-pack.schema";
 
 // Each option's display name comes from the shared `formats` namespace (keyed by
-// the format value); the blurb is a create-form-only key.
-//
-// UI-EXCLUDED:save_one_friends (velanto-frontend#368)
-// Typed UiPackFormat, not PackFormat, so the compiler forbids listing a format
-// the UI has no creator body or blurb for. Editing an existing pack of such a
-// format is refused upstream (see EditPackScreen) rather than rendering this
-// picker with nothing selected.
-const FORMAT_OPTIONS: { value: UiPackFormat; blurbKey: string }[] = [
+// the format value); the blurb is a create-form-only key. Every one of the six
+// formats is creatable, each with its own editor body (RoundsEditor /
+// FriendsRoundsEditor / VersusEditor) selected by the parent form.
+const FORMAT_OPTIONS: { value: PackFormat; blurbKey: string }[] = [
   { value: "save_one", blurbKey: "blurbSaveOne" },
   { value: "sacrifice_one", blurbKey: "blurbSacrificeOne" },
+  { value: "save_one_friends", blurbKey: "blurbSaveOneFriends" },
   { value: "nxn", blurbKey: "blurbNxn" },
   { value: "rank_blind", blurbKey: "blurbRankBlind" },
   { value: "1v1", blurbKey: "blurb1v1" },
@@ -39,9 +36,9 @@ export function FormatSection() {
       <Text as="h2" variant="title" className="text-lg">
         {t("formatHeading")}
       </Text>
-      {/* 5-across on desktop; wraps to 2 (then 3) columns on smaller screens so
-          the cards never overflow the viewport on a phone. */}
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-5">
+      {/* 3-across on desktop (six formats ⇒ two tidy rows); wraps to 2 columns
+          on a phone so the cards never overflow the viewport. */}
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
         {FORMAT_OPTIONS.map((option) => (
           <button
             key={option.value}

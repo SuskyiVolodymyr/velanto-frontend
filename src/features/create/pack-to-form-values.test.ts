@@ -87,15 +87,29 @@ describe("packToFormValues", () => {
     });
   });
 
-  // UI-EXCLUDED:save_one_friends (velanto-frontend#368). /packs/[id]/edit
-  // fetches ANY pack by id, and such a pack can already exist — packs are
-  // authored over the API (velanto-pack-creator via the MCP), not only through
-  // this form. The old `as UiPackFormat` cast succeeded silently: FormatSection
-  // then rendered with no option selected and Save failed schema validation
-  // against a control the author could not see failing.
-  it("returns null for a format the creator has no UI for, instead of casting it through", () => {
+  // save_one_friends is a first-class editable format now — its rounds are
+  // single-slot random draws with no count, which the friends editor renders.
+  it("seeds the form for a save_one_friends pack", () => {
+    const friendsPack: Pack = {
+      ...PACK,
+      format: "save_one_friends",
+      rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "random" }] }],
+    };
+    const values = packToFormValues(friendsPack);
+
+    expect(values).not.toBeNull();
+    expect(values?.format).toBe("save_one_friends");
+    expect(values?.rounds).toEqual(friendsPack.rounds);
+  });
+
+  // The null path is the defensive guard for a genuinely unknown wire format (a
+  // backend deployed ahead of this build), NOT for any shipped format.
+  it("returns null for a format this build does not know", () => {
     expect(
-      packToFormValues({ ...PACK, format: "save_one_friends" }),
+      packToFormValues({
+        ...PACK,
+        format: "telepathy" as Pack["format"],
+      }),
     ).toBeNull();
   });
 });

@@ -27,14 +27,11 @@ export function PlayRouter({ pack }: { pack: Pack }) {
       return <RankPlayScreen pack={pack} />;
     case "1v1":
       return <HeadToHeadPlayScreen pack={pack} />;
-    // UI-EXCLUDED:save_one_friends (velanto-frontend#368)
-    // Room-based multiplayer has no play path in this repo yet, and such a pack
-    // CAN reach here today: packs are authored over the API
-    // (velanto-pack-creator via the MCP), not only through this repo's form. It
-    // must not fall through to PlayScreen — that would run the wrong mechanic,
-    // render the instruction copy as the literal "play." (the "" key's
-    // fallback) and RECORD the play. 404 until velanto-frontend#368 builds the
-    // real screen.
+    // save_one_friends is played LIVE IN A ROOM (see FriendsRoomEntry on the
+    // pack page), never on the single-player /play path — there is no screen
+    // here by design. A stale or shared /play link for such a pack must 404
+    // rather than fall through to PlayScreen, which would run the wrong
+    // mechanic, render the "" instruction copy, and RECORD a single-player play.
     case "save_one_friends":
       return notFound();
     // The elimination screen — the only formats it has instruction copy for
