@@ -931,7 +931,7 @@
     "nxn": "NxN",
     "rank_blind": "Rank Blind",
     "1v1": "1v1",
-    "_note": "UI-EXCLUDED:save_one_friends (velanto-frontend#368) — save_one_friends has a LABEL in every locale but nothing else: no creator option, no howItPlays steps, no play copy. The label is defensive, because such a pack can already arrive from the API (packs are authored over the API too) and every card/banner would otherwise render the raw key path 'formats.save_one_friends' and log a console.error per render.",
+    "_note": "save_one_friends is a full format now: a label here, a creator option (create.blurbSaveOneFriends), and howItPlays steps (pack.howItPlays.save_one_friends), all in every locale. It has NO single-player play copy (play.instruction*/pickedLabel map it to \"\") because it is played live in a room, not on the /play path — see PlayRouter, which 404s that route for it.",
     "save_one_friends": "Save One (Friends)"
   },
   "tagPicker": {

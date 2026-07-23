@@ -89,20 +89,18 @@ They're different things that were identical until [#226](https://github.com/Sus
 
 **The subset direction is load-bearing**: a new pack defaults to its author's interface language, so every `LOCALE` must be a legal `PACK_LANGUAGE`. The reverse need not hold. Both repos assert this from their own side. Restoring a locale means restoring its `messages/*.json` from git history _and_ re-adding it here — it's a ~10-minute job, deliberately.
 
-## The sixth format: `save_one_friends` is UI-invisible on purpose
+## The sixth format: `save_one_friends` is created like the rest, played only in a room
 
-`PACK_FORMATS` has **six** entries; the UI ships **five**. `save_one_friends` (room-based multiplayer, 2-4 friends — velanto-backend#258) is mirrored as a wire-contract constant with **no creator entry and no play path** until [velanto-frontend#368](https://github.com/SuskyiVolodymyr/velanto-frontend/issues/368) builds them.
+`PACK_FORMATS` has **six** entries, all six now creatable/editable in the form. `save_one_friends` (room-based multiplayer, 2-4 friends — velanto-backend#258) is the one whose **play** happens in a live room, not on the single-player `/play` path (velanto-frontend#368).
 
-Two types, and the difference matters:
+Two types, and the difference still matters — but it's a READ-side split now, not write-side:
 
-- `PackFormat` — the full wire union. `Pack.format` is this, and stays this.
-- `UiPackFormat` = `Exclude<PackFormat, "save_one_friends">` — what the **write** side accepts (creator picker, create schema, filter rows, label maps).
+- `PackFormat` — the full wire union; `Pack.format` is this. The **write** side (creator picker, create schema, filter rows, label maps) accepts all six.
+- `UiPackFormat` = `Exclude<PackFormat, "save_one_friends">` — the formats with a **single-player play path**. Read/routing paths that pick a `/play` screen narrow with `isUiPackFormat()` from `src/shared/types/pack.ts` (never a cast); `save_one_friends` is routed to a room instead.
 
-**Do not assume such a pack cannot exist.** Packs are authored over the API — `velanto-pack-creator` writes them through the `velanto-mcp` server — so one can be served by the API without ever passing through this repo's form. Every **read** path must handle the format at runtime; narrow with `isUiPackFormat()` from `src/shared/types/pack.ts`, never with a cast.
+**Creating one:** pick "Save One (Friends)" in the creator — its body (`FriendsRoundsEditor`) is single-slot random rounds with no count (the room shows players+1), and every pool needs ≥5 items. Backend rules are mirrored in `create-pack.refinements.ts` (`validateFriends`). Packs can also be authored over the API — `velanto-pack-creator` via the `velanto-mcp` server.
 
-Current behaviour for such a pack: it appears in the feed and on its detail page with a real localized label, shows no "How it plays" steps and no Play button, 404s at `/packs/[id]/play`, refuses to open in the editor, and reaches moderation labelled with its raw wire value.
-
-Every deliberate exclusion site carries the literal comment `// UI-EXCLUDED:save_one_friends (velanto-frontend#368)` — `grep -rn "UI-EXCLUDED:save_one_friends"` finds all of them (including `messages/en.json`, whose `formats._note` carries the anchor since JSON takes no comments). Start there when you ship the format.
+**Playing one:** the pack detail page shows a room entry (`FriendsRoomEntry`) instead of a Play button; `/packs/[id]/play` 404s for it by design (see `PlayRouter`). It has a real label, "How it plays" steps, and a create blurb in every locale; it has no single-player play *instruction* copy (`play-format-copy.ts` maps it to `""`).
 
 ## Workflow (established discipline)
 
