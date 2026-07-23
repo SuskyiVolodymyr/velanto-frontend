@@ -145,11 +145,34 @@ export function RoomItemCard({
   );
 
   if (claimable) {
+    const claimLabel = t("round.claim", { name: item.title });
+    // A resolvable youtube item renders YouTubeCard's OWN play button. Wrapping
+    // the whole card in the claim <button> would nest a button inside a button —
+    // invalid HTML that breaks hydration. Mirror CandidateCard: the media sits
+    // as a plain sibling and the claim action is its own button below it, so the
+    // two interactive controls never nest.
+    if (videoId) {
+      return (
+        <div className={cn(frame, "hover:border-border-strong")}>
+          {media}
+          <button
+            type="button"
+            onClick={onClaim}
+            aria-label={claimLabel}
+            className="w-full text-start"
+          >
+            {body}
+          </button>
+        </div>
+      );
+    }
+    // Image and text items have no nested interactive element, so the whole card
+    // stays a single claim button.
     return (
       <button
         type="button"
         onClick={onClaim}
-        aria-label={t("round.claim", { name: item.title })}
+        aria-label={claimLabel}
         className={cn(frame, "hover:border-border-strong")}
       >
         {media}
