@@ -13,6 +13,7 @@ import { RoomBetween } from "./RoomBetween";
 import { RoomResults } from "./RoomResults";
 import { RoomLeaveButton } from "./RoomLeaveButton";
 import { RoomKicked } from "./RoomKicked";
+import { useExitToPack } from "./use-exit-to-pack";
 
 /**
  * The single entry point for a friends room. Subscribes to the live room over
@@ -59,7 +60,7 @@ export function RoomScreen({ roomId }: { roomId: string }) {
   if (kicked) {
     return (
       <Shell>
-        <RoomKicked />
+        <RoomKicked packId={state?.packId ?? null} />
       </Shell>
     );
   }
@@ -67,7 +68,7 @@ export function RoomScreen({ roomId }: { roomId: string }) {
   if (connection === "closed") {
     return (
       <Shell>
-        <RoomEnded />
+        <RoomEnded packId={state?.packId ?? null} />
       </Shell>
     );
   }
@@ -89,18 +90,39 @@ export function RoomScreen({ roomId }: { roomId: string }) {
   if (state.phase === "abandoned") {
     return (
       <Shell>
-        <RoomEnded />
+        <RoomEnded packId={state.packId} />
       </Shell>
     );
   }
 
   return (
     <Shell>
-      {/* Leave is available in the lobby and mid-game alike — it confirms first
-          during a round (see RoomLeaveButton). Kept out of the finished/ended/
-          abandoned states above, where there is nothing left to leave. */}
-      <div className="mb-6 flex justify-end">
-        <RoomLeaveButton state={state} onLeave={leave} />
+      {/* The pack's title, and the page's h1 for every live phase — the round
+          and survivor headings below are h2s beneath it.
+
+          Same reasoning as PlayHeader on the single-player screens: once a
+          round is up, nothing else on the page says WHICH pack you are in. The
+          round heading is the round's own name, so someone who joined from a
+          shared link had no on-page answer to "what are we playing?".
+
+          Leave sits opposite it — available in the lobby and mid-game alike, and
+          it confirms first during a round (see RoomLeaveButton). Both are kept
+          out of the finished/ended/abandoned states above, where there is
+          nothing left to leave and RoomResults heads itself. */}
+      <div className="mb-6 flex items-center justify-between gap-4">
+        <Text
+          as="h1"
+          variant="title"
+          // min-w-0 is what lets truncate work in a flex row: without it the
+          // item's automatic minimum size is its content, so a long title
+          // widens the row and pushes Leave off instead of clipping.
+          className="min-w-0 truncate text-xl sm:text-2xl"
+        >
+          {state.packTitle}
+        </Text>
+        <div className="flex-none">
+          <RoomLeaveButton state={state} onLeave={leave} />
+        </div>
       </div>
 
       {connection === "connecting" && (
@@ -149,8 +171,9 @@ function Shell({ children }: { children: React.ReactNode }) {
   return <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>{children}</div>;
 }
 
-function RoomEnded() {
+function RoomEnded({ packId }: { packId: string | null }) {
   const t = useTranslations("room");
+  useExitToPack(packId);
   return (
     <div className="flex flex-col items-center gap-3 py-20 text-center">
       <Text as="h1" variant="title" className="text-2xl">

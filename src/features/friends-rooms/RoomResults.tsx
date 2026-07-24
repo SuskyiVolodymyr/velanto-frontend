@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { BackButton } from "@/src/shared/components/BackButton";
 import { Text } from "@/src/shared/components/Text";
 import type { RoomPlayerState, RoomState } from "./room-types";
 import { RoomItemCard } from "./RoomItemCard";
@@ -36,14 +37,28 @@ export function RoomResults({ state }: { state: RoomState }) {
         </Text>
       </header>
 
+      {/* The only terminal state that does NOT leave on its own — a player
+          should get to read their own game summary at their own pace — so it
+          needs an explicit way out. A real link, so middle-click and
+          open-in-new-tab work. */}
+      <BackButton
+        href={`/packs/${state.packId}`}
+        label={t("results.backToPack")}
+      />
+
       {state.results.map((result) => (
         <section
           key={result.index}
           aria-label={t("results.roundLabel", { index: result.index + 1 })}
           className="flex flex-col gap-3 rounded-2xl border border-border bg-surface/40 p-5"
         >
+          {/* The round's own name when it had one — this screen is where a
+              player reviews the whole game, so numbering every block defeats
+              the point of naming them. The section's accessible name stays the
+              stable "Round N" so the landmark list reads as an ordered game. */}
           <Text variant="title" className="text-sm">
-            {t("results.roundLabel", { index: result.index + 1 })}
+            {result.name ||
+              t("results.roundLabel", { index: result.index + 1 })}
           </Text>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {result.items.map((item, index) => {
