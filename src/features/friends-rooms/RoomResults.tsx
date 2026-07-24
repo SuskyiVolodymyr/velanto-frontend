@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { BackButton } from "@/src/shared/components/BackButton";
 import { Text } from "@/src/shared/components/Text";
 import type { RoomPlayerState, RoomState } from "./room-types";
 import { RoomItemCard } from "./RoomItemCard";
@@ -35,6 +36,15 @@ export function RoomResults({ state }: { state: RoomState }) {
           {state.packTitle}
         </Text>
       </header>
+
+      {/* The only terminal state that does NOT leave on its own — a player
+          should get to read their own game summary at their own pace — so it
+          needs an explicit way out. A real link, so middle-click and
+          open-in-new-tab work. */}
+      <BackButton
+        href={`/packs/${state.packId}`}
+        label={t("results.backToPack")}
+      />
 
       {state.results.map((result) => (
         <section

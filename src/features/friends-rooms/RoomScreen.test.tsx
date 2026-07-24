@@ -511,6 +511,81 @@ describe("RoomScreen — results", () => {
   });
 });
 
+// A terminal room is a dead end: the socket is gone and there is nothing to
+// come back to. Rather than strand the player there, every one of these states
+// returns them to the pack they were playing — the results screen excepted,
+// which is the one terminal state with something worth reading.
+describe("RoomScreen — getting out", () => {
+  it("sends you back to the pack when the room has ended", () => {
+    vi.useFakeTimers();
+    try {
+      setRoom(baseState(), "closed");
+      render(<RoomScreen roomId="room-1" />);
+      expect(push).not.toHaveBeenCalled();
+
+      act(() => {
+        vi.advanceTimersByTime(10_000);
+      });
+      expect(push).toHaveBeenCalledWith("/packs/pack-1");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("sends you back to the pack after the host removes you", () => {
+    vi.useFakeTimers();
+    try {
+      setRoom(baseState(), "closed", null, true);
+      render(<RoomScreen roomId="room-1" />);
+      // The reason has to be readable before the screen moves.
+      expect(
+        screen.getByText("The host removed you from this room"),
+      ).toBeInTheDocument();
+      expect(push).not.toHaveBeenCalled();
+
+      act(() => {
+        vi.advanceTimersByTime(10_000);
+      });
+      expect(push).toHaveBeenCalledWith("/packs/pack-1");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  // The one terminal state worth staying on. Auto-navigating away from the
+  // game summary would undo the fix that made it render at all.
+  it("never navigates away from the results on its own", () => {
+    vi.useFakeTimers();
+    try {
+      setRoom(
+        { ...baseState(), status: "finished", phase: "finished" },
+        "closed",
+      );
+      render(<RoomScreen roomId="room-1" />);
+
+      act(() => {
+        vi.advanceTimersByTime(60_000);
+      });
+      expect(push).not.toHaveBeenCalled();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("offers a way back to the pack from the results", () => {
+    setRoom(
+      { ...baseState(), status: "finished", phase: "finished" },
+      "closed",
+    );
+    render(<RoomScreen roomId="room-1" />);
+
+    expect(screen.getByRole("link", { name: "Back to pack" })).toHaveAttribute(
+      "href",
+      "/packs/pack-1",
+    );
+  });
+});
+
 describe("RoomScreen — connection", () => {
   it("shows an ended state when the socket is closed", () => {
     setRoom(null, "closed");

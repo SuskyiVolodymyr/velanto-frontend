@@ -1534,7 +1534,8 @@
     },
     "results": {
       "heading": "Results",
-      "roundLabel": "Round {index}"
+      "roundLabel": "Round {index}",
+      "backToPack": "Back to pack"
     },
     "ended": {
       "heading": "This room has ended",
@@ -1571,7 +1572,7 @@
     "kicked": {
       "heading": "The host removed you from this room",
       "description": "The host removed you from this room. You can join again with the code if they reopen it.",
-      "leave": "Back to home"
+      "leave": "Back to pack"
     }
   }
 }

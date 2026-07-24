@@ -13,6 +13,7 @@ import { RoomBetween } from "./RoomBetween";
 import { RoomResults } from "./RoomResults";
 import { RoomLeaveButton } from "./RoomLeaveButton";
 import { RoomKicked } from "./RoomKicked";
+import { useExitToPack } from "./use-exit-to-pack";
 
 /**
  * The single entry point for a friends room. Subscribes to the live room over
@@ -59,7 +60,7 @@ export function RoomScreen({ roomId }: { roomId: string }) {
   if (kicked) {
     return (
       <Shell>
-        <RoomKicked />
+        <RoomKicked packId={state?.packId ?? null} />
       </Shell>
     );
   }
@@ -67,7 +68,7 @@ export function RoomScreen({ roomId }: { roomId: string }) {
   if (connection === "closed") {
     return (
       <Shell>
-        <RoomEnded />
+        <RoomEnded packId={state?.packId ?? null} />
       </Shell>
     );
   }
@@ -89,7 +90,7 @@ export function RoomScreen({ roomId }: { roomId: string }) {
   if (state.phase === "abandoned") {
     return (
       <Shell>
-        <RoomEnded />
+        <RoomEnded packId={state.packId} />
       </Shell>
     );
   }
@@ -170,8 +171,9 @@ function Shell({ children }: { children: React.ReactNode }) {
   return <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>{children}</div>;
 }
 
-function RoomEnded() {
+function RoomEnded({ packId }: { packId: string | null }) {
   const t = useTranslations("room");
+  useExitToPack(packId);
   return (
     <div className="flex flex-col items-center gap-3 py-20 text-center">
       <Text as="h1" variant="title" className="text-2xl">

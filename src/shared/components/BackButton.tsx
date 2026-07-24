@@ -10,6 +10,13 @@ export interface BackButtonProps {
    * replaced (#353).
    */
   href: string;
+  /**
+   * Overrides the default "Back". This control names a PLACE rather than a
+   * direction (see below), so a caller whose destination isn't obvious from
+   * context can say where it goes — "Back to pack" from a finished room, which
+   * is reached from a link and has no history worth implying.
+   */
+  label?: string;
   className?: string;
 }
 
@@ -26,7 +33,7 @@ export interface BackButtonProps {
  * at render, so middle-click, open-in-new-tab and the browser's own status-bar
  * preview should all work.
  */
-export function BackButton({ href, className }: BackButtonProps) {
+export function BackButton({ href, label, className }: BackButtonProps) {
   const t = useTranslations("pages");
 
   return (
@@ -38,7 +45,7 @@ export function BackButton({ href, className }: BackButtonProps) {
       )}
     >
       <ArrowLeft size={16} aria-hidden />
-      {t("back")}
+      {label ?? t("back")}
     </Link>
   );
 }
