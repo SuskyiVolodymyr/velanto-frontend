@@ -35,6 +35,12 @@ export interface RoomPlayerState {
 
 export interface RoundState {
   index: number;
+  /**
+   * What this round is called — the author's round name, or the drawn pool's
+   * name when they gave none. Resolved server-side; the client has no pack
+   * copy. Empty for rooms played before the server sent it.
+   */
+  name: string;
   items: Item[];
   /** { [userId]: itemId } as it stands right now. */
   claims: Record<string, string>;
@@ -44,6 +50,7 @@ export interface RoundState {
 
 export interface ResolvedRoundState {
   index: number;
+  name: string;
   items: Item[];
   claims: Record<string, string>;
   survivorItemId: string;
@@ -63,6 +70,12 @@ export interface RoomState {
   maxPlayers: number;
   totalRounds: number;
   roundIndex: number;
+  /**
+   * Epoch ms at which a resolved round advances itself without waiting for the
+   * stragglers, or null when nothing is pending. The server owns the deadline;
+   * this is only what the countdown is drawn from.
+   */
+  autoNextAt: number | null;
   players: RoomPlayerState[];
   round: RoundState | null;
   results: ResolvedRoundState[];

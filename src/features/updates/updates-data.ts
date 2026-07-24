@@ -27,6 +27,16 @@ export interface UpdateEntry {
  */
 export const UPDATES: UpdateEntry[] = [
   {
+    date: "2026-07-24",
+    version: "1.8.1",
+    title: "Rooms tell you where you are",
+    bullets: [
+      'Every round in a friends room now shows its name and counts itself against the game — "Round 3 of 16". The counter used to read "of 0" and no round carried a title, so one round looked exactly like the last and it was easy to think the room was serving the same one twice.',
+      "A room no longer stalls on one player who wandered off. Five seconds after a round resolves it moves on by itself, with a countdown so you can see it coming. Everyone pressing Next still advances the room immediately.",
+      'Fixed the end of a game showing "this room has ended" instead of your results. Every round of the game — who sacrificed what, and what survived — is there again when the last round finishes.',
+    ],
+  },
+  {
     date: "2026-07-23",
     version: "1.8.0",
     title: "Save One with Friends",

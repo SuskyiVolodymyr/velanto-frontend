@@ -1529,7 +1529,8 @@
       "survivorNote": "This item survived the round.",
       "boardHeading": "This round's sacrifices",
       "next": "Next",
-      "ready": "{count} / {total} ready"
+      "ready": "{count} / {total} ready",
+      "autoNext": "Next round in {seconds}s"
     },
     "results": {
       "heading": "Results",

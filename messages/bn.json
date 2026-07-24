@@ -1529,7 +1529,8 @@
       "survivorNote": "এই আইটেমটি এই রাউন্ডে টিকে গেছে।",
       "boardHeading": "এই রাউন্ডের উৎসর্গ",
       "next": "পরবর্তী",
-      "ready": "{count} / {total} প্রস্তুত"
+      "ready": "{count} / {total} প্রস্তুত",
+      "autoNext": "পরবর্তী রাউন্ড {seconds} সেকেন্ডে"
     },
     "results": {
       "heading": "ফলাফল",

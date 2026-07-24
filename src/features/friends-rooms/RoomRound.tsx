@@ -53,6 +53,10 @@ export function RoomRound({
 
   return (
     <div className="flex flex-col gap-6">
+      {/* The counter alone made every round look the same, which players read
+          as the rounds repeating. The author's round name (or its pool's) is
+          the title when there is one, and the instruction steps down a line;
+          with no name the instruction stays the heading as before. */}
       <header className="flex flex-col gap-2">
         <Text variant="tertiary" className="text-xs uppercase tracking-wide">
           {t("round.heading", {
@@ -61,8 +65,13 @@ export function RoomRound({
           })}
         </Text>
         <Text as="h1" variant="title" className="text-2xl">
-          {t("round.instruction")}
+          {round.name || t("round.instruction")}
         </Text>
+        {round.name && (
+          <Text variant="secondary" className="text-sm">
+            {t("round.instruction")}
+          </Text>
+        )}
       </header>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">

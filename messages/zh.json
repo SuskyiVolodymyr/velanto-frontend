@@ -1529,7 +1529,8 @@
       "survivorNote": "此项在本轮中存活。",
       "boardHeading": "本轮的淘汰",
       "next": "下一步",
-      "ready": "{count}/{total} 已准备"
+      "ready": "{count}/{total} 已准备",
+      "autoNext": "{seconds} 秒后进入下一轮"
     },
     "results": {
       "heading": "结果",

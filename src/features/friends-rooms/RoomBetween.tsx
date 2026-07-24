@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/src/shared/components/Button";
@@ -96,18 +96,54 @@ export function RoomBetween({
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Text
-          variant="secondary"
-          aria-live="polite"
-          className={cn("text-sm", ready === total && "text-success")}
-        >
-          {t("between.ready", { count: ready, total })}
-        </Text>
+        <div className="flex flex-col gap-1">
+          <Text
+            variant="secondary"
+            aria-live="polite"
+            className={cn("text-sm", ready === total && "text-success")}
+          >
+            {t("between.ready", { count: ready, total })}
+          </Text>
+          <AutoNextCountdown
+            key={state.autoNextAt ?? "none"}
+            at={state.autoNextAt}
+          />
+        </div>
         <Button disabled={me?.next ?? false} onClick={onNext}>
           {t("between.next")}
           <ArrowRight size={16} aria-hidden />
         </Button>
       </div>
     </div>
+  );
+}
+
+/**
+ * How long the room will wait before advancing itself.
+ *
+ * The deadline is the server's — this only counts down to it, so a client whose
+ * clock or tab has drifted still advances when the server says, and simply
+ * shows 0 in the meantime. Rendered as plain text rather than a progress ring
+ * because it is a reassurance ("the game isn't stuck"), not the main action.
+ */
+function AutoNextCountdown({ at }: { at: number | null }) {
+  const t = useTranslations("room");
+  // Keyed on the deadline by its caller, so a new round remounts this and the
+  // initializer re-reads the clock. That keeps the effect free of a synchronous
+  // setState — the interval is the only thing that ever writes.
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    if (at === null) return;
+    const id = setInterval(() => setNow(Date.now()), 250);
+    return () => clearInterval(id);
+  }, [at]);
+
+  if (at === null) return null;
+  const seconds = Math.max(0, Math.ceil((at - now) / 1000));
+  return (
+    <Text variant="tertiary" className="text-xs">
+      {t("between.autoNext", { seconds })}
+    </Text>
   );
 }
