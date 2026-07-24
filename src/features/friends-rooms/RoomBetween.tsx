@@ -121,21 +121,35 @@ export function RoomBetween({
 /**
  * How long the room will wait before advancing itself.
  *
- * The deadline is the server's — this only counts down to it, so a client whose
- * clock or tab has drifted still advances when the server says, and simply
- * shows 0 in the meantime. Rendered as plain text rather than a progress ring
- * because it is a reassurance ("the game isn't stuck"), not the main action.
+ * The deadline is the server's and only the server acts on it — this just draws
+ * it, so a client counting down early never advances anything. The two clocks
+ * can disagree in either direction: a client running ahead of the server sits
+ * on 0 until `round.started` lands, one running behind shows a number that
+ * jumps when it does. Neither is worth correcting for a five-second window.
+ *
+ * Plain text rather than a progress ring because it is a reassurance ("the game
+ * isn't stuck"), not the main action — and deliberately OUTSIDE the aria-live
+ * region beside it, since announcing a per-second tick would drown out the
+ * "N / M ready" updates that actually matter.
  */
 function AutoNextCountdown({ at }: { at: number | null }) {
   const t = useTranslations("room");
-  // Keyed on the deadline by its caller, so a new round remounts this and the
-  // initializer re-reads the clock. That keeps the effect free of a synchronous
-  // setState — the interval is the only thing that ever writes.
+  // The caller keys this on the deadline so a new round remounts it and the
+  // initializer re-reads the clock. Cosmetic — the [at] dependency below already
+  // restarts the interval; the remount just avoids one frame of a stale `now`.
   const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
     if (at === null) return;
-    const id = setInterval(() => setNow(Date.now()), 250);
+    const id = setInterval(() => {
+      const tick = Date.now();
+      setNow(tick);
+      // Stop at the deadline. Normally this component unmounts within seconds,
+      // but a socket that drops during `between` keeps the last board mounted
+      // under the reconnecting banner (see RoomScreen) — without this it would
+      // re-render 4x/s for as long as the tab stayed open, showing a frozen 0.
+      if (tick >= at) clearInterval(id);
+    }, 250);
     return () => clearInterval(id);
   }, [at]);
 

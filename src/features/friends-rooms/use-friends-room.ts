@@ -231,29 +231,38 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
         }) =>
           setState((s) => {
             if (!s) return s;
+            // Only the round we are actually holding can be assembled into a
+            // result. Without the index check a mismatched pair would build a
+            // result labelled with one round's index and another's items, and
+            // stamp a foreign survivor onto the live round — which renders
+            // every item as sacrificed. Without the null check the filter
+            // below would DELETE a result the snapshot already carried, since
+            // "filter then append nothing" is a removal, not a replacement.
             const round = s.round;
-            const finished: ResolvedRoundState[] = round
-              ? [
-                  {
+            const replacement: ResolvedRoundState | null =
+              round && round.index === resolved.index
+                ? {
                     index: resolved.index,
                     name: round.name,
                     items: round.items,
                     claims: resolved.claims,
                     survivorItemId: resolved.survivorItemId,
-                  },
-                ]
-              : [];
+                  }
+                : null;
             return {
               ...s,
               phase: "between",
               autoNextAt: resolved.autoNextAt ?? null,
-              round: round
-                ? { ...round, survivorItemId: resolved.survivorItemId }
-                : round,
-              results: [
-                ...s.results.filter((r) => r.index !== resolved.index),
-                ...finished,
-              ].sort((a, b) => a.index - b.index),
+              round:
+                round && round.index === resolved.index
+                  ? { ...round, survivorItemId: resolved.survivorItemId }
+                  : round,
+              results: replacement
+                ? [
+                    ...s.results.filter((r) => r.index !== replacement.index),
+                    replacement,
+                  ].sort((a, b) => a.index - b.index)
+                : s.results,
             };
           }),
       );

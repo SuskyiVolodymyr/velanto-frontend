@@ -204,6 +204,46 @@ describe("useFriendsRoom round events", () => {
 
     expect(result.current.state?.phase).toBe("between");
     expect(result.current.state?.autoNextAt).toBe(1_700_000_005_000);
+    // The whole point of assembling the result rather than storing the payload:
+    // round.resolved names the survivor and the claims but carries no board, so
+    // the name and items have to come from the round the client is holding.
+    expect(result.current.state?.results).toEqual([
+      {
+        index: 0,
+        name: "One",
+        items: [item("a"), item("b")],
+        claims: { host: "a" },
+        survivorItemId: "b",
+      },
+    ]);
+  });
+
+  // "Filter the old one out, append the new one" is a replacement only when
+  // there IS a new one. With no round held it degrades to a delete, silently
+  // dropping a result the snapshot already carried.
+  it("leaves existing results alone when it holds no matching round", async () => {
+    const { result } = await connected();
+    const existing = {
+      index: 0,
+      name: "One",
+      items: [item("a"), item("b")],
+      claims: { host: "a" },
+      survivorItemId: "b",
+    };
+    serverEmit("room.state", {
+      ...snapshot([player("host")]),
+      round: null,
+      results: [existing],
+    });
+
+    serverEmit("round.resolved", {
+      index: 0,
+      survivorItemId: "b",
+      claims: { host: "a" },
+      autoNextAt: null,
+    });
+
+    expect(result.current.state?.results).toEqual([existing]);
   });
 
   it("clears the deadline when the next round starts", async () => {
@@ -223,10 +263,13 @@ describe("useFriendsRoom round events", () => {
     expect(result.current.state?.autoNextAt).toBeNull();
   });
 
-  // game.finished used to ship a bare `{ results }`, which this handler folded
-  // in as a whole RoomState — leaving state with no `phase`, so RoomScreen's
-  // `phase === "finished"` check missed and the torn-down socket fell through
-  // to the generic "this room has ended". The results were never rendered.
+  // Pins the game.finished payload SHAPE this repo depends on: the handler
+  // folds it in as a whole RoomState, so a payload missing `phase` leaves
+  // RoomScreen's `phase === "finished"` check unmatched and the torn-down
+  // socket falls through to the generic "this room has ended" — which is
+  // exactly the bug that shipped. The guard against the server sending that
+  // again lives in the backend's friends-rooms.service.spec.ts; this one fails
+  // if someone changes the passthrough handler on this side.
   it("keeps a usable state when the game finishes", async () => {
     const { result } = await connected();
     serverEmit("room.state", snapshot([player("host"), player("guest")]));

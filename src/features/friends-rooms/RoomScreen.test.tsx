@@ -415,14 +415,14 @@ describe("RoomScreen — results", () => {
       results: [
         {
           index: 0,
-          name: "Round 1",
+          name: "Semifinals",
           items: [textItem("a1", "Apple"), textItem("a2", "Banana")],
           claims: { host: "a1" },
           survivorItemId: "a2",
         },
         {
           index: 1,
-          name: "Round 2",
+          name: "Final",
           items: [textItem("b1", "Cherry"), textItem("b2", "Date")],
           claims: { host: "b1" },
           survivorItemId: "b2",
@@ -435,6 +435,9 @@ describe("RoomScreen — results", () => {
     setRoom(finishedState());
     render(<RoomScreen roomId="room-1" />);
 
+    // The regions are named by results.roundLabel, NOT by the round's own name
+    // — the landmark list stays an ordered "Round 1, Round 2" even when the
+    // author named the rounds something else (see the titles asserted below).
     const round1 = screen.getByRole("region", { name: "Round 1" });
     const round2 = screen.getByRole("region", { name: "Round 2" });
 
@@ -443,6 +446,36 @@ describe("RoomScreen — results", () => {
     expect(within(round1).getByText("Survivor")).toBeInTheDocument();
     expect(within(round2).getByText("Date")).toBeInTheDocument();
     expect(within(round2).getByText("Survivor")).toBeInTheDocument();
+  });
+
+  // The end screen is where a player reviews the whole game, so a named round
+  // has to be titled by its name here too — not renumbered back to "Round N".
+  it("titles each block by the round's own name", () => {
+    setRoom(finishedState());
+    render(<RoomScreen roomId="room-1" />);
+
+    expect(
+      within(screen.getByRole("region", { name: "Round 1" })).getByText(
+        "Semifinals",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      within(screen.getByRole("region", { name: "Round 2" })).getByText(
+        "Final",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("falls back to the numbered label for an unnamed round", () => {
+    const state = finishedState();
+    setRoom({
+      ...state,
+      results: [{ ...state.results[0], name: "" }, state.results[1]],
+    });
+    render(<RoomScreen roomId="room-1" />);
+
+    const round1 = screen.getByRole("region", { name: "Round 1" });
+    expect(within(round1).getByText("Round 1")).toBeInTheDocument();
   });
 });
 
