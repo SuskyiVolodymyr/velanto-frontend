@@ -1529,7 +1529,8 @@
       "survivorNote": "نجا هذا العنصر في هذه الجولة.",
       "boardHeading": "تضحيات هذه الجولة",
       "next": "التالي",
-      "ready": "{count} / {total} جاهزون"
+      "ready": "{count} / {total} جاهزون",
+      "autoNext": "الجولة التالية خلال {seconds} ثانية"
     },
     "results": {
       "heading": "النتائج",

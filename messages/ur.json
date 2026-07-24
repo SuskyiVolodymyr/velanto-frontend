@@ -1529,7 +1529,8 @@
       "survivorNote": "یہ آئٹم اس راؤنڈ میں بچ گیا۔",
       "boardHeading": "اس راؤنڈ کی قربانیاں",
       "next": "اگلا",
-      "ready": "{count} / {total} تیار"
+      "ready": "{count} / {total} تیار",
+      "autoNext": "اگلا راؤنڈ {seconds} سیکنڈ میں"
     },
     "results": {
       "heading": "نتائج",

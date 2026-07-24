@@ -1529,7 +1529,8 @@
       "survivorNote": "Цей елемент пережив раунд.",
       "boardHeading": "Жертви цього раунду",
       "next": "Далі",
-      "ready": "{count} / {total} готові"
+      "ready": "{count} / {total} готові",
+      "autoNext": "Наступний раунд через {seconds} с"
     },
     "results": {
       "heading": "Результати",

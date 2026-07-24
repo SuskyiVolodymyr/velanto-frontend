@@ -1529,7 +1529,8 @@
       "survivorNote": "Этот предмет пережил раунд.",
       "boardHeading": "Жертвы этого раунда",
       "next": "Далее",
-      "ready": "{count} / {total} готовы"
+      "ready": "{count} / {total} готовы",
+      "autoNext": "Следующий раунд через {seconds} с"
     },
     "results": {
       "heading": "Результаты",

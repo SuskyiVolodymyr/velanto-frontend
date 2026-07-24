@@ -42,8 +42,13 @@ export function RoomResults({ state }: { state: RoomState }) {
           aria-label={t("results.roundLabel", { index: result.index + 1 })}
           className="flex flex-col gap-3 rounded-2xl border border-border bg-surface/40 p-5"
         >
+          {/* The round's own name when it had one — this screen is where a
+              player reviews the whole game, so numbering every block defeats
+              the point of naming them. The section's accessible name stays the
+              stable "Round N" so the landmark list reads as an ordered game. */}
           <Text variant="title" className="text-sm">
-            {t("results.roundLabel", { index: result.index + 1 })}
+            {result.name ||
+              t("results.roundLabel", { index: result.index + 1 })}
           </Text>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {result.items.map((item, index) => {

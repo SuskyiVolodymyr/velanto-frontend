@@ -142,17 +142,33 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
         setState((s) => (s ? { ...s, locked } : s)),
       );
 
+      // `totalRounds` rides this event because the room's only full snapshot
+      // arrives when the socket connects — in the LOBBY, before the server has
+      // drawn the plan, where it is 0. Without folding it in here the round
+      // header counts up against nothing ("Round 16 of 0") for the whole game.
       socket.on(
         ROOM_EVENTS.roundStarted,
-        ({ index, items }: Pick<RoundState, "index" | "items">) =>
+        ({
+          index,
+          name,
+          items,
+          totalRounds,
+        }: Pick<RoundState, "index" | "name" | "items"> & {
+          totalRounds: number;
+        }) =>
           setState((s) =>
             s
               ? {
                   ...s,
                   phase: "round",
                   roundIndex: index,
+                  totalRounds,
+                  // The previous round's deadline is spent the moment this one
+                  // starts; leaving it set would keep a countdown on screen.
+                  autoNextAt: null,
                   round: {
                     index,
+                    name,
                     items,
                     claims: {},
                     survivorItemId: null,
@@ -201,22 +217,54 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
         );
       });
 
-      socket.on(ROOM_EVENTS.roundResolved, (resolved: ResolvedRoundState) =>
-        setState((s) =>
-          s
-            ? {
-                ...s,
-                phase: "between",
-                round: s.round
-                  ? { ...s.round, survivorItemId: resolved.survivorItemId }
-                  : s.round,
-                results: [
-                  ...s.results.filter((r) => r.index !== resolved.index),
-                  resolved,
-                ].sort((a, b) => a.index - b.index),
-              }
-            : s,
-        ),
+      // The event names the survivor and the claims but not the board — the
+      // client already has that in `round`. So the result is assembled from
+      // both rather than storing the payload as-is, which would leave every
+      // entry in `results` without its items or its name.
+      socket.on(
+        ROOM_EVENTS.roundResolved,
+        (resolved: {
+          index: number;
+          survivorItemId: string;
+          claims: Record<string, string>;
+          autoNextAt: number | null;
+        }) =>
+          setState((s) => {
+            if (!s) return s;
+            // Only the round we are actually holding can be assembled into a
+            // result. Without the index check a mismatched pair would build a
+            // result labelled with one round's index and another's items, and
+            // stamp a foreign survivor onto the live round — which renders
+            // every item as sacrificed. Without the null check the filter
+            // below would DELETE a result the snapshot already carried, since
+            // "filter then append nothing" is a removal, not a replacement.
+            const round = s.round;
+            const replacement: ResolvedRoundState | null =
+              round && round.index === resolved.index
+                ? {
+                    index: resolved.index,
+                    name: round.name,
+                    items: round.items,
+                    claims: resolved.claims,
+                    survivorItemId: resolved.survivorItemId,
+                  }
+                : null;
+            return {
+              ...s,
+              phase: "between",
+              autoNextAt: resolved.autoNextAt ?? null,
+              round:
+                round && round.index === resolved.index
+                  ? { ...round, survivorItemId: resolved.survivorItemId }
+                  : round,
+              results: replacement
+                ? [
+                    ...s.results.filter((r) => r.index !== replacement.index),
+                    replacement,
+                  ].sort((a, b) => a.index - b.index)
+                : s.results,
+            };
+          }),
       );
 
       socket.on(ROOM_EVENTS.playerNext, ({ userId }: { userId: string }) =>

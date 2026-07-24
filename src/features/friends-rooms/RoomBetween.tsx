@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/src/shared/components/Button";
@@ -96,18 +96,68 @@ export function RoomBetween({
       </div>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Text
-          variant="secondary"
-          aria-live="polite"
-          className={cn("text-sm", ready === total && "text-success")}
-        >
-          {t("between.ready", { count: ready, total })}
-        </Text>
+        <div className="flex flex-col gap-1">
+          <Text
+            variant="secondary"
+            aria-live="polite"
+            className={cn("text-sm", ready === total && "text-success")}
+          >
+            {t("between.ready", { count: ready, total })}
+          </Text>
+          <AutoNextCountdown
+            key={state.autoNextAt ?? "none"}
+            at={state.autoNextAt}
+          />
+        </div>
         <Button disabled={me?.next ?? false} onClick={onNext}>
           {t("between.next")}
           <ArrowRight size={16} aria-hidden />
         </Button>
       </div>
     </div>
+  );
+}
+
+/**
+ * How long the room will wait before advancing itself.
+ *
+ * The deadline is the server's and only the server acts on it — this just draws
+ * it, so a client counting down early never advances anything. The two clocks
+ * can disagree in either direction: a client running ahead of the server sits
+ * on 0 until `round.started` lands, one running behind shows a number that
+ * jumps when it does. Neither is worth correcting for a five-second window.
+ *
+ * Plain text rather than a progress ring because it is a reassurance ("the game
+ * isn't stuck"), not the main action — and deliberately OUTSIDE the aria-live
+ * region beside it, since announcing a per-second tick would drown out the
+ * "N / M ready" updates that actually matter.
+ */
+function AutoNextCountdown({ at }: { at: number | null }) {
+  const t = useTranslations("room");
+  // The caller keys this on the deadline so a new round remounts it and the
+  // initializer re-reads the clock. Cosmetic — the [at] dependency below already
+  // restarts the interval; the remount just avoids one frame of a stale `now`.
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    if (at === null) return;
+    const id = setInterval(() => {
+      const tick = Date.now();
+      setNow(tick);
+      // Stop at the deadline. Normally this component unmounts within seconds,
+      // but a socket that drops during `between` keeps the last board mounted
+      // under the reconnecting banner (see RoomScreen) — without this it would
+      // re-render 4x/s for as long as the tab stayed open, showing a frozen 0.
+      if (tick >= at) clearInterval(id);
+    }, 250);
+    return () => clearInterval(id);
+  }, [at]);
+
+  if (at === null) return null;
+  const seconds = Math.max(0, Math.ceil((at - now) / 1000));
+  return (
+    <Text variant="tertiary" className="text-xs">
+      {t("between.autoNext", { seconds })}
+    </Text>
   );
 }

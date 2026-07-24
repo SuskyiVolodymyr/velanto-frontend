@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { screen, within } from "@testing-library/react";
+import { act, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { RoomScreen } from "./RoomScreen";
@@ -68,6 +68,7 @@ function baseState(overrides: Partial<RoomState> = {}): RoomState {
     maxPlayers: 4,
     totalRounds: 3,
     roundIndex: 0,
+    autoNextAt: null,
     players: [
       player("host", "Alice", { seat: 0 }),
       player("guest", "Bob", { seat: 1 }),
@@ -188,6 +189,7 @@ describe("RoomScreen — round", () => {
       phase: "round",
       round: {
         index: 0,
+        name: "Round 1",
         items: [
           textItem("i1", "Apple"),
           textItem("i2", "Banana"),
@@ -261,6 +263,7 @@ describe("RoomScreen — round", () => {
         ],
         round: {
           index: 0,
+          name: "Round 1",
           items: [
             textItem("i1", "Apple"),
             textItem("i2", "Banana"),
@@ -277,6 +280,40 @@ describe("RoomScreen — round", () => {
     expect(screen.getByText("1 of 3 have chosen")).toBeInTheDocument();
     expect(screen.queryByText("1 of 2 have chosen")).not.toBeInTheDocument();
   });
+
+  // Without a name, every round rendered an identical header — no title, and a
+  // counter that read "of 0" because totalRounds only ever arrived in the lobby
+  // snapshot. Players read that as the same round being served again.
+  it("titles the round by name and counts it against the game length", () => {
+    setRoom(roundState());
+    render(<RoomScreen roomId="room-1" />);
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Round 1" }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Round 1 of 3")).toBeInTheDocument();
+    // The instruction still shows — it steps down to a subheading, it isn't lost.
+    expect(
+      screen.getByText(
+        "Claim one item to sacrifice. The item nobody claims survives.",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  // A pack whose author named no rounds and whose pool name the server could
+  // not resolve falls back to the instruction as the heading, as before.
+  it("falls back to the instruction when the round has no name", () => {
+    const state = roundState();
+    setRoom({ ...state, round: { ...state.round!, name: "" } });
+    render(<RoomScreen roomId="room-1" />);
+
+    expect(
+      screen.getByRole("heading", {
+        level: 1,
+        name: "Claim one item to sacrifice. The item nobody claims survives.",
+      }),
+    ).toBeInTheDocument();
+  });
 });
 
 describe("RoomScreen — between", () => {
@@ -290,6 +327,7 @@ describe("RoomScreen — between", () => {
       ],
       round: {
         index: 0,
+        name: "Round 1",
         items: [
           textItem("i1", "Apple"),
           textItem("i2", "Banana"),
@@ -311,6 +349,33 @@ describe("RoomScreen — between", () => {
     ).toBeInTheDocument();
     // Cherry is the survivor; it appears in the survivor card and the board.
     expect(screen.getAllByText("Cherry").length).toBeGreaterThan(0);
+  });
+
+  // The room advances itself if a player forgets to press Next. The countdown
+  // is what stops that reading as the screen jumping on its own.
+  it("counts down to the automatic advance", () => {
+    vi.useFakeTimers();
+    try {
+      setRoom({ ...betweenState(), autoNextAt: Date.now() + 5_000 });
+      render(<RoomScreen roomId="room-1" />);
+      expect(screen.getByText("Next round in 5s")).toBeInTheDocument();
+
+      act(() => {
+        vi.advanceTimersByTime(2_000);
+      });
+      expect(screen.getByText("Next round in 3s")).toBeInTheDocument();
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  // Nothing pending — a room rebuilt from its rows, or one already advancing —
+  // must not render a stuck "in 0s".
+  it("shows no countdown when nothing is scheduled", () => {
+    setRoom({ ...betweenState(), autoNextAt: null });
+    render(<RoomScreen roomId="room-1" />);
+
+    expect(screen.queryByText(/Next round in/)).not.toBeInTheDocument();
   });
 
   it("labels eliminated items with who sacrificed them", () => {
@@ -350,12 +415,14 @@ describe("RoomScreen — results", () => {
       results: [
         {
           index: 0,
+          name: "Semifinals",
           items: [textItem("a1", "Apple"), textItem("a2", "Banana")],
           claims: { host: "a1" },
           survivorItemId: "a2",
         },
         {
           index: 1,
+          name: "Final",
           items: [textItem("b1", "Cherry"), textItem("b2", "Date")],
           claims: { host: "b1" },
           survivorItemId: "b2",
@@ -368,6 +435,9 @@ describe("RoomScreen — results", () => {
     setRoom(finishedState());
     render(<RoomScreen roomId="room-1" />);
 
+    // The regions are named by results.roundLabel, NOT by the round's own name
+    // — the landmark list stays an ordered "Round 1, Round 2" even when the
+    // author named the rounds something else (see the titles asserted below).
     const round1 = screen.getByRole("region", { name: "Round 1" });
     const round2 = screen.getByRole("region", { name: "Round 2" });
 
@@ -376,6 +446,36 @@ describe("RoomScreen — results", () => {
     expect(within(round1).getByText("Survivor")).toBeInTheDocument();
     expect(within(round2).getByText("Date")).toBeInTheDocument();
     expect(within(round2).getByText("Survivor")).toBeInTheDocument();
+  });
+
+  // The end screen is where a player reviews the whole game, so a named round
+  // has to be titled by its name here too — not renumbered back to "Round N".
+  it("titles each block by the round's own name", () => {
+    setRoom(finishedState());
+    render(<RoomScreen roomId="room-1" />);
+
+    expect(
+      within(screen.getByRole("region", { name: "Round 1" })).getByText(
+        "Semifinals",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      within(screen.getByRole("region", { name: "Round 2" })).getByText(
+        "Final",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("falls back to the numbered label for an unnamed round", () => {
+    const state = finishedState();
+    setRoom({
+      ...state,
+      results: [{ ...state.results[0], name: "" }, state.results[1]],
+    });
+    render(<RoomScreen roomId="room-1" />);
+
+    const round1 = screen.getByRole("region", { name: "Round 1" });
+    expect(within(round1).getByText("Round 1")).toBeInTheDocument();
   });
 });
 
@@ -409,6 +509,7 @@ describe("RoomScreen — connection", () => {
         results: [
           {
             index: 0,
+            name: "Round 1",
             items: [textItem("a1", "Apple"), textItem("a2", "Banana")],
             claims: { host: "a1" },
             survivorItemId: "a2",
@@ -443,6 +544,7 @@ describe("RoomScreen — leave", () => {
         phase: "round",
         round: {
           index: 0,
+          name: "Round 1",
           items: [textItem("i1", "Apple"), textItem("i2", "Banana")],
           claims: {},
           survivorItemId: null,

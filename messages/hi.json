@@ -1529,7 +1529,8 @@
       "survivorNote": "यह आइटम इस राउंड में बच गया।",
       "boardHeading": "इस राउंड के बलिदान",
       "next": "आगे",
-      "ready": "{count} / {total} तैयार"
+      "ready": "{count} / {total} तैयार",
+      "autoNext": "अगला राउंड {seconds} सेकंड में"
     },
     "results": {
       "heading": "परिणाम",
