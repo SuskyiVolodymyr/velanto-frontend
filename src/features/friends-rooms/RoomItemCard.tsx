@@ -96,9 +96,15 @@ export function RoomItemCard({
     <ImageCard src={mediaUrl(item.value)} alt={item.title} />
   ) : null;
 
+  // The corner badge overlays the media, so it only exists when there IS media.
+  // Without this split the claimant was drawn twice on a text item — once here
+  // and once by the badge, which fell onto this same row for want of anything
+  // to sit on.
+  const hasMedia = media !== null;
+
   const body = (
     <div className="flex items-center gap-2 p-4">
-      {claimant ? (
+      {claimant && !hasMedia ? (
         <UserAvatar
           username={claimant.username}
           avatarKey={claimant.avatarKey}
@@ -132,7 +138,7 @@ export function RoomItemCard({
     </div>
   );
 
-  const cornerAvatar = claimant && (
+  const cornerAvatar = claimant && hasMedia && (
     <span
       className={cn(
         "absolute right-2 top-2 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full border-2",

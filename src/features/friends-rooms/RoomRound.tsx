@@ -64,7 +64,7 @@ export function RoomRound({
             total: state.totalRounds,
           })}
         </Text>
-        <Text as="h1" variant="title" className="text-2xl">
+        <Text as="h2" variant="title" className="text-2xl">
           {round.name || t("round.instruction")}
         </Text>
         {round.name && (

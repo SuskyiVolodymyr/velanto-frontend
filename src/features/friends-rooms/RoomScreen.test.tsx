@@ -289,9 +289,13 @@ describe("RoomScreen — round", () => {
     render(<RoomScreen roomId="room-1" />);
 
     expect(
-      screen.getByRole("heading", { level: 1, name: "Round 1" }),
+      screen.getByRole("heading", { level: 2, name: "Round 1" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Round 1 of 3")).toBeInTheDocument();
+    // The pack is the page's h1; the round steps down beneath it.
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Best Movies" }),
+    ).toBeInTheDocument();
     // The instruction still shows — it steps down to a subheading, it isn't lost.
     expect(
       screen.getByText(
@@ -309,11 +313,39 @@ describe("RoomScreen — round", () => {
 
     expect(
       screen.getByRole("heading", {
-        level: 1,
+        level: 2,
         name: "Claim one item to sacrifice. The item nobody claims survives.",
       }),
     ).toBeInTheDocument();
   });
+});
+
+describe("RoomScreen — pack title", () => {
+  it.each([
+    ["lobby", () => baseState()],
+    ["round", () => roundStateForTitle()],
+  ])("heads the %s with the pack title", (_phase, build) => {
+    setRoom(build());
+    render(<RoomScreen roomId="room-1" />);
+
+    expect(
+      screen.getByRole("heading", { level: 1, name: "Best Movies" }),
+    ).toBeInTheDocument();
+  });
+
+  function roundStateForTitle() {
+    return baseState({
+      status: "playing",
+      phase: "round",
+      round: {
+        index: 0,
+        name: "Round 1",
+        items: [textItem("i1", "Apple"), textItem("i2", "Banana")],
+        claims: {},
+        survivorItemId: null,
+      },
+    });
+  }
 });
 
 describe("RoomScreen — between", () => {

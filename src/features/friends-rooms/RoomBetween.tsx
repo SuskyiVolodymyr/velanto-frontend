@@ -60,7 +60,7 @@ export function RoomBetween({
         <Text variant="tertiary" className="text-xs uppercase tracking-wide">
           {t("between.survivorHeading")}
         </Text>
-        <Text as="h1" variant="title" className="text-2xl text-success">
+        <Text as="h2" variant="title" className="text-2xl text-success">
           {t("between.survivorNote")}
         </Text>
       </header>
