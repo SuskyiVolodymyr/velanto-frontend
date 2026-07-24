@@ -1529,11 +1529,13 @@
       "survivorNote": "यह आइटम इस राउंड में बच गया।",
       "boardHeading": "इस राउंड के बलिदान",
       "next": "आगे",
-      "ready": "{count} / {total} तैयार"
+      "ready": "{count} / {total} तैयार",
+      "autoNext": "अगला राउंड {seconds} सेकंड में"
     },
     "results": {
       "heading": "परिणाम",
-      "roundLabel": "राउंड {index}"
+      "roundLabel": "राउंड {index}",
+      "backToPack": "पैक पर वापस"
     },
     "ended": {
       "heading": "यह कमरा समाप्त हो गया है",
@@ -1570,7 +1572,7 @@
     "kicked": {
       "heading": "होस्ट ने आपको इस कमरे से हटा दिया",
       "description": "होस्ट ने आपको इस कमरे से हटा दिया है। अगर वे इसे फिर से खोलते हैं तो आप कोड से दोबारा शामिल हो सकते हैं।",
-      "leave": "होम पर लौटें"
+      "leave": "पैक पर वापस"
     }
   }
 }

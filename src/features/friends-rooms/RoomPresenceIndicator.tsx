@@ -91,8 +91,11 @@ function RoomChip({
           />
         ))}
       </span>
-      <span className="flex min-w-0 flex-col items-start">
-        <span className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-acc">
+      {/* flex-1 + min-w-0 is what lets the title truncate: without them this
+          column is sized by its content, so a long pack title pushes straight
+          out of the chip instead of ellipsing inside it. */}
+      <span className="flex min-w-0 flex-1 flex-col items-start">
+        <span className="flex max-w-full items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wide text-acc">
           <span className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-acc/70" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-acc" />
@@ -102,7 +105,10 @@ function RoomChip({
             max: MAX_PLAYERS,
           })}
         </span>
-        <span className="min-w-0 max-w-[13rem] truncate text-[15px] font-semibold text-foreground">
+        {/* Truncates to whatever the chip has left after the avatars, rather
+            than to a fixed width that could be wider than that. The full title
+            is still on the button's aria-label. */}
+        <span className="w-full truncate text-[15px] font-semibold text-foreground">
           {room.packTitle}
         </span>
       </span>

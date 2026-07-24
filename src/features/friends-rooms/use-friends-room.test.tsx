@@ -99,10 +99,15 @@ function snapshot(players: RoomPlayerState[], hostId = "host"): RoomState {
     maxPlayers: 4,
     totalRounds: 3,
     roundIndex: 0,
+    autoNextAt: null,
     players,
     round: null,
     results: [],
   };
+}
+
+function item(id: string) {
+  return { id, type: "text" as const, title: id, value: id };
 }
 
 describe("useFriendsRoom roster events", () => {
@@ -156,5 +161,140 @@ describe("useFriendsRoom roster events", () => {
 
     serverEmit("player.kicked");
     expect(result.current.kicked).toBe(true);
+  });
+});
+
+describe("useFriendsRoom round events", () => {
+  // The room's only full snapshot arrives while it is still a LOBBY, where the
+  // server hasn't drawn the plan yet and reports totalRounds: 0. Folding the
+  // real total in from round.started is the only thing that stops the header
+  // reading "Round N of 0" for the whole game.
+  it("takes the round name and the game length from round.started", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", { ...snapshot([player("host")]), totalRounds: 0 });
+
+    serverEmit("round.started", {
+      index: 0,
+      name: "Semifinals",
+      items: [item("a"), item("b"), item("c")],
+      totalRounds: 16,
+    });
+
+    expect(result.current.state?.totalRounds).toBe(16);
+    expect(result.current.state?.round?.name).toBe("Semifinals");
+    expect(result.current.state?.phase).toBe("round");
+  });
+
+  it("carries the auto-advance deadline from round.resolved", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", snapshot([player("host")]));
+    serverEmit("round.started", {
+      index: 0,
+      name: "One",
+      items: [item("a"), item("b")],
+      totalRounds: 2,
+    });
+
+    serverEmit("round.resolved", {
+      index: 0,
+      survivorItemId: "b",
+      claims: { host: "a" },
+      autoNextAt: 1_700_000_005_000,
+    });
+
+    expect(result.current.state?.phase).toBe("between");
+    expect(result.current.state?.autoNextAt).toBe(1_700_000_005_000);
+    // The whole point of assembling the result rather than storing the payload:
+    // round.resolved names the survivor and the claims but carries no board, so
+    // the name and items have to come from the round the client is holding.
+    expect(result.current.state?.results).toEqual([
+      {
+        index: 0,
+        name: "One",
+        items: [item("a"), item("b")],
+        claims: { host: "a" },
+        survivorItemId: "b",
+      },
+    ]);
+  });
+
+  // "Filter the old one out, append the new one" is a replacement only when
+  // there IS a new one. With no round held it degrades to a delete, silently
+  // dropping a result the snapshot already carried.
+  it("leaves existing results alone when it holds no matching round", async () => {
+    const { result } = await connected();
+    const existing = {
+      index: 0,
+      name: "One",
+      items: [item("a"), item("b")],
+      claims: { host: "a" },
+      survivorItemId: "b",
+    };
+    serverEmit("room.state", {
+      ...snapshot([player("host")]),
+      round: null,
+      results: [existing],
+    });
+
+    serverEmit("round.resolved", {
+      index: 0,
+      survivorItemId: "b",
+      claims: { host: "a" },
+      autoNextAt: null,
+    });
+
+    expect(result.current.state?.results).toEqual([existing]);
+  });
+
+  it("clears the deadline when the next round starts", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", {
+      ...snapshot([player("host")]),
+      autoNextAt: 1_700_000_005_000,
+    });
+
+    serverEmit("round.started", {
+      index: 1,
+      name: "Two",
+      items: [item("c"), item("d")],
+      totalRounds: 2,
+    });
+
+    expect(result.current.state?.autoNextAt).toBeNull();
+  });
+
+  // Pins the game.finished payload SHAPE this repo depends on: the handler
+  // folds it in as a whole RoomState, so a payload missing `phase` leaves
+  // RoomScreen's `phase === "finished"` check unmatched and the torn-down
+  // socket falls through to the generic "this room has ended" — which is
+  // exactly the bug that shipped. The guard against the server sending that
+  // again lives in the backend's friends-rooms.service.spec.ts; this one fails
+  // if someone changes the passthrough handler on this side.
+  it("keeps a usable state when the game finishes", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", snapshot([player("host"), player("guest")]));
+
+    serverEmit("game.finished", {
+      ...snapshot([player("host"), player("guest")]),
+      code: null,
+      status: "finished",
+      phase: "finished",
+      results: [
+        {
+          index: 0,
+          name: "One",
+          items: [item("a"), item("b")],
+          claims: { host: "a" },
+          survivorItemId: "b",
+        },
+      ],
+    });
+
+    expect(result.current.state?.phase).toBe("finished");
+    expect(result.current.state?.results).toHaveLength(1);
+    // The screen renders the roster and pack title alongside the rounds, so a
+    // payload that dropped them would blank the results it was meant to show.
+    expect(result.current.state?.players).toHaveLength(2);
+    expect(result.current.state?.packTitle).toBe("Best Movies");
   });
 });
