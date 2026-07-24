@@ -1529,11 +1529,13 @@
       "survivorNote": "此项在本轮中存活。",
       "boardHeading": "本轮的淘汰",
       "next": "下一步",
-      "ready": "{count}/{total} 已准备"
+      "ready": "{count}/{total} 已准备",
+      "autoNext": "{seconds} 秒后进入下一轮"
     },
     "results": {
       "heading": "结果",
-      "roundLabel": "第 {index} 轮"
+      "roundLabel": "第 {index} 轮",
+      "backToPack": "返回卡包"
     },
     "ended": {
       "heading": "该房间已结束",
@@ -1570,7 +1572,7 @@
     "kicked": {
       "heading": "房主已将你移出此房间",
       "description": "房主已将你移出此房间。如果房主重新开放，你可以用房间代码再次加入。",
-      "leave": "返回首页"
+      "leave": "返回卡包"
     }
   }
 }

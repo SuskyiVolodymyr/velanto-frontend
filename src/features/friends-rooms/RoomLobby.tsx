@@ -69,9 +69,6 @@ export function RoomLobby({
         <Text variant="tertiary" className="text-xs uppercase tracking-wide">
           {t("lobby.heading")}
         </Text>
-        <Text as="h1" variant="title" className="text-2xl">
-          {state.packTitle}
-        </Text>
       </header>
 
       <section aria-label={t("lobby.roster")} className="flex flex-col gap-3">
