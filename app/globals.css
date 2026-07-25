@@ -265,52 +265,45 @@ html[data-streamer-mode="on"]:not([data-streamer-hydrated])
 }
 
 /*
- * Staff nicknames — admin/manager/moderator handles render as an animated
- * gradient: a narrow secondary-color band sweeps left→right across a
- * primary-color base, with a soft glow in the role's secondary color. Colors
- * are set per role via the --nick-* custom properties on the modifier classes.
- * Applied by <Username> (src/shared/components/Username.tsx).
- * prefers-reduced-motion freezes it to a calm static two-tone gradient.
+ * Staff & trusted nicknames — moderator/manager/admin and trusted users render
+ * their handle as an animated gradient: a lighter band sweeps left→right across
+ * the role's hue (moderator cyan, manager periwinkle, admin violet, trusted
+ * green). Each role sets its own gradient + sweep duration; the base class owns
+ * the text-clip and animation. Applied by <Username>
+ * (src/shared/components/Username.tsx). prefers-reduced-motion freezes it to a
+ * legible static frame (the lighter band resting mid-handle).
  */
-@keyframes nickname-sweep {
-  from {
-    background-position: 150% 0;
+@keyframes nicknamesweep {
+  0% {
+    background-position: 0% 50%;
   }
-  to {
-    background-position: -50% 0;
+  100% {
+    background-position: 200% 50%;
   }
 }
 .nickname-gradient {
-  background-image: linear-gradient(
-    100deg,
-    var(--nick-p) 0%,
-    var(--nick-p) 36%,
-    var(--nick-s) 50%,
-    var(--nick-p) 64%,
-    var(--nick-p) 100%
-  );
-  background-size: 220% 100%;
+  background-size: 200% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   -webkit-text-fill-color: transparent;
-  animation: nickname-sweep 2.4s linear infinite;
-  filter: drop-shadow(0 0 5px rgba(var(--nick-glow), 0.55));
-}
-.nickname-admin {
-  --nick-p: #050505;
-  --nick-s: #9a9aa5;
-  --nick-glow: 205, 205, 214;
-}
-.nickname-manager {
-  --nick-p: #6d28d9;
-  --nick-s: #ff5cc0;
-  --nick-glow: 255, 92, 192;
+  animation: nicknamesweep var(--nick-dur, 3.4s) linear infinite;
 }
 .nickname-moderator {
-  --nick-p: #e01d1d;
-  --nick-s: #ffd24a;
-  --nick-glow: 230, 32, 32;
+  background-image: linear-gradient(90deg, #00e5ff, #8cf3ff, #00e5ff);
+  --nick-dur: 3.4s;
+}
+.nickname-manager {
+  background-image: linear-gradient(90deg, #7c8cff, #c2cbff, #7c8cff);
+  --nick-dur: 3.4s;
+}
+.nickname-admin {
+  background-image: linear-gradient(90deg, #a855f7, #e9c7ff, #a855f7);
+  --nick-dur: 2.8s;
+}
+.nickname-trusted {
+  background-image: linear-gradient(90deg, #39d98a, #9cf3c6, #39d98a);
+  --nick-dur: 4.6s;
 }
 
 /*
@@ -327,14 +320,13 @@ html[data-streamer-mode="on"]:not([data-streamer-hydrated])
 
 @media (prefers-reduced-motion: reduce) {
   /*
-   * Freeze the sweep with the secondary band resting mid-handle (rather than a
-   * two-stop primary→secondary gradient, which would leave a whole half in the
-   * primary color — unreadable for admin's near-black base). The glow still
-   * applies, keeping the handle legible without motion.
+   * Freeze the sweep with the lighter band resting mid-handle, so every role
+   * stays legible without motion (each gradient is hue → lighter → hue, so the
+   * midpoint is the readable light tint rather than a dark edge).
    */
   .nickname-gradient {
     animation: none;
-    background-position: 50% 0;
+    background-position: 50% 50%;
   }
 
   /* Show every candidate immediately — no staggered fade. */

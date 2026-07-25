@@ -15,7 +15,7 @@ import { TextField } from "@/src/shared/components/form/TextField";
 import { TextareaField } from "@/src/shared/components/form/TextareaField";
 import { SelectField } from "@/src/shared/components/form/SelectField";
 import { CoverImageField } from "@/src/features/create/CoverImageField";
-import { cn } from "@/src/shared/lib/cn";
+import { SwatchPicker } from "@/src/shared/components/SwatchPicker";
 import {
   type CreatePackValues,
   MAX_TAGS,
@@ -109,22 +109,12 @@ export function PackMetaFields({
         <Text variant="secondary" className="text-xs">
           {t("coverTone")}
         </Text>
-        <div className="flex gap-2">
-          {COVER_TONES.map((tone) => (
-            <button
-              key={tone}
-              type="button"
-              onClick={() => setValue("coverTone", tone)}
-              aria-label={t("coverToneSwatch", { tone })}
-              aria-pressed={coverTone === tone}
-              style={{ background: tone }}
-              className={cn(
-                "h-9 w-9 rounded-[10px] border-2",
-                coverTone === tone ? "border-acc" : "border-transparent",
-              )}
-            />
-          ))}
-        </div>
+        <SwatchPicker
+          swatches={COVER_TONES}
+          value={coverTone}
+          onChange={(tone) => setValue("coverTone", tone)}
+          getLabel={(tone) => t("coverToneSwatch", { tone })}
+        />
       </div>
       <CoverImageField onUploadingChange={onCoverUploadingChange} />
       <div className="flex flex-col gap-2">

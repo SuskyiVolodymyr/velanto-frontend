@@ -1,15 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { Username } from "./Username";
 
 describe("Username", () => {
-  it("renders a plain handle for a normal user (no gradient, no badge, no role)", () => {
+  it("renders a plain handle for a normal user (no gradient, no pill)", () => {
     render(<Username username="regular_sam" role="user" trusted={false} />);
     const name = screen.getByText("regular_sam");
     expect(name.className).not.toMatch(/nickname-/);
-    expect(screen.queryByLabelText("Trusted user")).not.toBeInTheDocument();
-    expect(screen.queryByText("Admin")).not.toBeInTheDocument();
+    expect(screen.queryByText(/TRUSTED|ADMIN|MANAGER|MODERATOR/)).toBeNull();
   });
 
   it("applies the role gradient class for each staff role", () => {
@@ -25,54 +23,45 @@ describe("Username", () => {
 
   it("also applies the base nickname-gradient class for staff so the gradient renders", () => {
     // The per-role class only supplies colors; without the base class the
-    // gradient/animation/glow (defined on .nickname-gradient) never renders.
+    // gradient/animation (defined on .nickname-gradient) never renders.
     render(<Username username="admin_max" role="admin" />);
     expect(screen.getByText("admin_max").className).toContain(
       "nickname-gradient",
     );
   });
 
-  it("applies no gradient class to a normal user", () => {
-    render(<Username username="regular_sam" role="user" />);
+  it("gives a trusted non-staff user the green trusted gradient", () => {
+    render(<Username username="trusted_nova" role="user" trusted={true} />);
+    const name = screen.getByText("trusted_nova");
+    expect(name.className).toContain("nickname-trusted");
+    expect(name.className).toContain("nickname-gradient");
+  });
+
+  it("applies no gradient class to a normal, untrusted user", () => {
+    render(<Username username="regular_sam" role="user" trusted={false} />);
     expect(screen.getByText("regular_sam").className).not.toContain(
       "nickname-gradient",
     );
   });
 
-  it("shows the verified badge for staff (verified by default)", () => {
-    render(<Username username="admin_max" role="admin" trusted={false} />);
-    expect(screen.getByLabelText("Trusted user")).toBeInTheDocument();
-  });
-
-  it("shows the verified badge for a trusted non-staff user, without a gradient", () => {
-    render(<Username username="trusted_nova" role="user" trusted={true} />);
-    expect(screen.getByLabelText("Trusted user")).toBeInTheDocument();
-    expect(screen.getByText("trusted_nova").className).not.toMatch(/nickname-/);
-  });
-
-  it("reveals the trusted tooltip on hover", async () => {
-    const user = userEvent.setup();
-    render(<Username username="admin_max" role="admin" />);
-    expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
-    await user.hover(screen.getByLabelText("Trusted user"));
-    expect(await screen.findByRole("tooltip")).toHaveTextContent(
-      "Trusted user",
-    );
-  });
-
-  it("shows the role label only when showRole is set", () => {
+  it("shows the ALL-CAPS role pill only when showRole is set", () => {
     const { rerender } = render(<Username username="admin_max" role="admin" />);
-    expect(screen.queryByText("Admin")).not.toBeInTheDocument();
+    expect(screen.queryByText("ADMIN")).not.toBeInTheDocument();
 
     rerender(<Username username="admin_max" role="admin" showRole />);
-    expect(screen.getByText("Admin")).toBeInTheDocument();
+    expect(screen.getByText("ADMIN")).toBeInTheDocument();
   });
 
-  it("does not show a role label for non-staff even with showRole", () => {
+  it("shows a TRUSTED pill for a trusted non-staff user with showRole", () => {
+    render(<Username username="trusted_nova" role="user" trusted showRole />);
+    expect(screen.getByText("TRUSTED")).toBeInTheDocument();
+  });
+
+  it("shows no pill for a plain user even with showRole", () => {
     render(<Username username="regular_sam" role="user" showRole />);
-    expect(screen.queryByText("Admin")).not.toBeInTheDocument();
-    expect(screen.queryByText("Manager")).not.toBeInTheDocument();
-    expect(screen.queryByText("Moderator")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/TRUSTED|ADMIN|MANAGER|MODERATOR/),
+    ).not.toBeInTheDocument();
   });
 
   it("prepends @ when the at prop is set", () => {

@@ -2,7 +2,8 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { UserAvatar } from "@/src/shared/components/UserAvatar";
+import { AvatarStack } from "@/src/shared/components/AvatarStack";
+import { cn } from "@/src/shared/lib/cn";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { useFriendsRoomsPresence } from "./friends-rooms-presence-context";
 import { MAX_PLAYERS, type MyRoomSummary } from "./room-types";
@@ -74,20 +75,26 @@ function RoomChip({
       aria-label={t("presence.returnTo", { title: room.packTitle })}
       className="group flex max-w-[19rem] items-center gap-3 rounded-2xl border border-acc/40 bg-surface py-2.5 pl-3 pr-4 shadow-[0_10px_30px_rgba(0,0,0,0.4)] ring-1 ring-acc/10 transition-colors hover:border-acc focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
     >
-      <span className="flex flex-none -space-x-2.5">
-        {room.players.map((player) => (
-          <UserAvatar
-            key={player.userId}
-            username={player.username}
-            avatarKey={player.avatarKey}
-            className="h-9 w-9 rounded-full border-2 border-surface bg-background text-sm text-foreground-secondary"
-          />
-        ))}
+      {/* Filled seats reuse the shared AvatarStack (ring matches this chip's
+          surface); the still-open seats stay a room-specific dashed variant,
+          sized to match and overlapped onto the last avatar. */}
+      <span className="flex flex-none">
+        <AvatarStack
+          users={room.players.map((player) => ({
+            username: player.username,
+            avatarKey: player.avatarKey,
+          }))}
+          size="md"
+          ringClassName="border-surface"
+        />
         {Array.from({ length: emptySeats }, (_, i) => (
           <span
             key={`empty-${i}`}
             aria-hidden
-            className="h-9 w-9 rounded-full border-2 border-dashed border-border-strong bg-surface"
+            className={cn(
+              "h-[34px] w-[34px] flex-none rounded-full border-2 border-dashed border-border-strong bg-surface",
+              (room.players.length > 0 || i > 0) && "-ml-2",
+            )}
           />
         ))}
       </span>
