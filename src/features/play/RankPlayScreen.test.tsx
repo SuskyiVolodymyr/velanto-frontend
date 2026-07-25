@@ -3,6 +3,8 @@ import { screen, waitFor } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { RankPlayScreen } from "./RankPlayScreen";
+import { packStructureHash } from "./pack-structure-hash";
+import { readPlayResume } from "./play-resume-storage";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { playsClient } from "@/src/shared/lib/plays-client";
@@ -100,6 +102,11 @@ beforeEach(() => {
   });
   vi.mocked(playsClient.record).mockResolvedValue({ id: "play-1" });
   sessionStorage.clear();
+  // Resume records live in localStorage; clear so a test that advances a round
+  // doesn't leave a saved play that makes the next test resume mid-pack. The
+  // rank pack uses manual slots, so its draw is deterministic regardless of the
+  // seed — the real usePlayResume hook is exercised here.
+  localStorage.clear();
 });
 
 describe("RankPlayScreen", () => {
@@ -492,5 +499,52 @@ describe("RankPlayScreen", () => {
 
     await screen.findByText("Round 1 of 1");
     expect(screen.getAllByText("Place here")).toHaveLength(2);
+  });
+
+  it("saves progress on advancing a round and resumes there on a fresh mount", async () => {
+    const version = packStructureHash(RANK_BLIND_PACK);
+    const user = userEvent.setup();
+    const first = renderScreen(RANK_BLIND_PACK);
+
+    // Rank round 1, then advance — this saves progress at round 1.
+    await screen.findByText("Kaikai Kitan");
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await user.click(
+      await screen.findByRole("button", { name: "Next round →" }),
+    );
+    await screen.findByText("Silhouette");
+    expect(readPlayResume("pack-rank", version)?.roundIndex).toBe(1);
+
+    first.unmount();
+
+    // A fresh mount resumes on round 2 without replaying round 1.
+    renderScreen(RANK_BLIND_PACK);
+    await screen.findByText("Round 2 of 2");
+    expect(screen.queryByText("Kaikai Kitan")).toBeNull();
+    await screen.findByText("Silhouette");
+  });
+
+  it("clears the resume record when the play completes", async () => {
+    const version = packStructureHash(RANK_BLIND_PACK);
+    const user = userEvent.setup();
+    renderScreen(RANK_BLIND_PACK);
+
+    await screen.findByText("Kaikai Kitan");
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await user.click(
+      await screen.findByRole("button", { name: "Next round →" }),
+    );
+    expect(readPlayResume("pack-rank", version)).not.toBeNull();
+
+    // Finish the last round.
+    await screen.findByText("Silhouette");
+    await user.click(screen.getByText("#1"));
+    await waitFor(() =>
+      expect(readPlayResume("pack-rank", version)).toBeNull(),
+    );
   });
 });

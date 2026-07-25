@@ -133,6 +133,10 @@ beforeEach(() => {
   });
   vi.mocked(playsClient.record).mockResolvedValue({ id: "play-1" });
   sessionStorage.clear();
+  // Resume records live in localStorage now; clear it too so a test that
+  // advances a round in pack-a doesn't leave a saved play that makes the next
+  // test resume mid-pack instead of starting fresh.
+  localStorage.clear();
 });
 
 describe("PlayScreen", () => {

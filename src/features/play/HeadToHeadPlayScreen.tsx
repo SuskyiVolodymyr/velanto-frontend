@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
@@ -12,6 +12,7 @@ import {
   writeLastPlayPicks,
 } from "@/src/shared/lib/last-play-storage";
 import { useRoundSelections } from "@/src/features/play/use-round-selections";
+import { usePlayResume } from "@/src/features/play/use-play-resume";
 import { HeadToHeadRound } from "@/src/features/play/HeadToHeadRound";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
@@ -35,12 +36,34 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [recordSettled, setRecordSettled] = useState(false);
 
+  // Resume: seeded draw so a reload replays the same matchups, plus restore of
+  // the round cursor and picks. Read from storage after mount → `seed` is null
+  // until then, and the draw waits for it.
+  const resume = usePlayResume(pack);
+  // Destructured so the completion effect can depend on the stable
+  // `clearProgress` directly, not the freshly-built `resume` object each render.
+  const { saveProgress, clearProgress } = resume;
+
   const isFinished = totalRounds > 0 && roundIndex >= totalRounds;
   // Drawn items for every round, resolved once at mount (dedup spans rounds).
   // A 1v1 round has two slots (the two sides); each draws exactly one item, so
   // the matchup is that pair and the pick records the winning side's group.
-  const resolved = useRoundSelections(groups, rounds);
+  const resolved = useRoundSelections(groups, rounds, resume.seed);
   const selections = resolved ?? [];
+
+  // Restore a saved play ONCE, after the resume read settles. selectedId stays
+  // null so the resumed matchup opens unselected; initialChoices is allPicks.
+  const restoredRef = useRef(false);
+  useEffect(() => {
+    if (restoredRef.current || !resume.ready) return;
+    restoredRef.current = true;
+    if (resume.initialRoundIndex > 0 && Array.isArray(resume.initialChoices)) {
+      /* eslint-disable react-hooks/set-state-in-effect */
+      setRoundIndex(resume.initialRoundIndex);
+      setAllPicks(resume.initialChoices as RecordedPick[]);
+      /* eslint-enable react-hooks/set-state-in-effect */
+    }
+  }, [resume.ready, resume.initialRoundIndex, resume.initialChoices]);
   const slotA = !isFinished ? selections[roundIndex]?.slots[0] : undefined;
   const slotB = !isFinished ? selections[roundIndex]?.slots[1] : undefined;
   const left = slotA?.items[0];
@@ -62,8 +85,8 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
     // per-matchup results were impossible, and still are for plays recorded
     // that way. Single-pool always recorded per item; this is now the one
     // shape, and it is what the backend counts a side by.
-    setAllPicks((prev) => [
-      ...prev,
+    const nextAllPicks: RecordedPick[] = [
+      ...allPicks,
       {
         roundIndex,
         groupId: groupIdA,
@@ -76,9 +99,16 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
         itemId: right.id,
         chosen: !leftWon,
       },
-    ]);
+    ];
+    const nextRoundIndex = roundIndex + 1;
+    setAllPicks(nextAllPicks);
     setSelectedId(null);
-    setRoundIndex((prev) => prev + 1);
+    setRoundIndex(nextRoundIndex);
+    // Save progress after each finished matchup so a reload resumes here; the
+    // final matchup writes nothing — the completion effect clears the record.
+    if (nextRoundIndex < totalRounds) {
+      saveProgress(nextRoundIndex, nextAllPicks);
+    }
   }
 
   // Fires once when the last matchup's pick is recorded. Anonymous plays ARE
@@ -93,6 +123,8 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
   useEffect(() => {
     if (!isFinished || status === "loading" || recordedRef.current) return;
     recordedRef.current = true;
+    // Completed — drop the resume record so the pack leaves "Continue playing".
+    clearProgress();
     writeLastPlayPicks(pack.id, allPicks);
     playsClient
       .record(pack.id, { picks: allPicks })
@@ -104,7 +136,7 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
       })
       .catch(() => undefined)
       .finally(() => setRecordSettled(true));
-  }, [isFinished, pack.id, allPicks, status]);
+  }, [isFinished, pack.id, allPicks, status, clearProgress]);
 
   // Straight to the result once the play is recorded — no interstitial recap.
   // Waits for the record to SETTLE (not resolve) so the aggregate normally

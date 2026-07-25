@@ -5,6 +5,7 @@ import {
   resolveRoundSelections,
   type SelectedRound,
 } from "@/src/features/play/round-sampling";
+import { mulberry32 } from "@/src/features/play/seeded-rng";
 import type { Group, Round } from "@/src/shared/types/pack";
 
 /**
@@ -24,10 +25,18 @@ import type { Group, Round } from "@/src/shared/types/pack";
  * Resolved ONCE per pack, deliberately: `groups`/`rounds` are usually rebuilt
  * on each render (`pack.groups ?? []`), so a dependency on them would redraw
  * every render and swap items under the player mid-round.
+ *
+ * `seed` selects the randomness source. Omit it (`undefined`) for the original
+ * fresh-every-play behaviour (`Math.random`). Pass a number to draw with a
+ * seeded generator so the same play can be resumed with an identical draw (see
+ * usePlayResume). Pass `null` to signal "seed not resolved yet" — the draw waits
+ * until a real seed arrives, which is what keeps a resumed play deterministic
+ * (the seed is read from storage after mount, so it starts null).
  */
 export function useRoundSelections(
   groups: Group[],
   rounds: Round[],
+  seed?: number | null,
 ): SelectedRound[] | null {
   const [selections, setSelections] = useState<SelectedRound[] | null>(null);
   // Guarded the same way as the record-once effects on the play screens: the
@@ -36,10 +45,13 @@ export function useRoundSelections(
   const drawnRef = useRef(false);
 
   useEffect(() => {
-    if (drawnRef.current) return;
+    // null means the caller is still waiting on its seed — don't draw yet, and
+    // don't burn the one-shot guard, so the real seed can draw when it lands.
+    if (drawnRef.current || seed === null) return;
     drawnRef.current = true;
-    setSelections(resolveRoundSelections(groups, rounds));
-  }, [groups, rounds]);
+    const rng = seed === undefined ? Math.random : mulberry32(seed);
+    setSelections(resolveRoundSelections(groups, rounds, rng));
+  }, [groups, rounds, seed]);
 
   return selections;
 }

@@ -21,6 +21,7 @@ import {
 } from "@/src/shared/lib/youtube";
 import { mediaUrl } from "@/src/shared/lib/media-url";
 import { useRoundSelections } from "@/src/features/play/use-round-selections";
+import { usePlayResume } from "@/src/features/play/use-play-resume";
 import { RankedList, type RankedRow } from "@/src/shared/components/RankedList";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import type { Pack, Item } from "@/src/shared/types/pack";
@@ -39,10 +40,33 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   const [allPicks, setAllPicks] = useState<RecordedPick[]>([]);
   const [recordSettled, setRecordSettled] = useState(false);
 
+  // Resume: a seeded draw so a reload replays the same items, plus restore of
+  // the round cursor and picks so far. Read from storage after mount, so `seed`
+  // starts null and the draw waits for it.
+  const resume = usePlayResume(pack);
+  // Destructured so the completion effect can depend on the stable
+  // `clearProgress` directly, not the freshly-built `resume` object each render.
+  const { saveProgress, clearProgress } = resume;
+
   // Drawn items for every round, resolved once after mount (dedup spans
   // rounds). Null until the client has drawn; see useRoundSelections.
-  const resolved = useRoundSelections(groups, rounds);
+  const resolved = useRoundSelections(groups, rounds, resume.seed);
   const selections = resolved ?? [];
+
+  // Restore a saved play ONCE, after the resume read settles — placements reset
+  // to empty so the resumed round is ranked fresh (a record is only ever saved
+  // between rounds, never mid-round). initialChoices is the accumulated picks.
+  const restoredRef = useRef(false);
+  useEffect(() => {
+    if (restoredRef.current || !resume.ready) return;
+    restoredRef.current = true;
+    if (resume.initialRoundIndex > 0 && Array.isArray(resume.initialChoices)) {
+      /* eslint-disable react-hooks/set-state-in-effect */
+      setRoundIndex(resume.initialRoundIndex);
+      setAllPicks(resume.initialChoices as RecordedPick[]);
+      /* eslint-enable react-hooks/set-state-in-effect */
+    }
+  }, [resume.ready, resume.initialRoundIndex, resume.initialChoices]);
   const groupNameById = useMemo(
     () => new Map(groups.map((g) => [g.id, g.name])),
     [groups],
@@ -113,8 +137,13 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   }
 
   function goToNextRound() {
-    setRoundIndex((prev) => prev + 1);
+    const nextRoundIndex = roundIndex + 1;
+    setRoundIndex(nextRoundIndex);
     setPlacements({});
+    // Save progress on leaving a finished round — allPicks already holds this
+    // round's placements (added in `place` when the round filled). The final
+    // round never routes through here; the completion effect clears instead.
+    saveProgress(nextRoundIndex, allPicks);
   }
 
   // Fires once when the last round's last item is placed — mirrors
@@ -129,6 +158,8 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   useEffect(() => {
     if (!isFinished || status === "loading" || recordedRef.current) return;
     recordedRef.current = true;
+    // Completed — drop the resume record so the pack leaves "Continue playing".
+    clearProgress();
     writeLastPlayPicks(pack.id, allPicks);
     playsClient
       .record(pack.id, { picks: allPicks })
@@ -144,7 +175,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
       // a finished play screen. The picks above are already stashed, so the
       // result screen opens either way.
       .finally(() => setRecordSettled(true));
-  }, [isFinished, pack.id, allPicks, status]);
+  }, [isFinished, pack.id, allPicks, status, clearProgress]);
 
   // Once the record has settled, go straight to the result — no interstitial
   // "all rounds done" step, same as the other four formats.

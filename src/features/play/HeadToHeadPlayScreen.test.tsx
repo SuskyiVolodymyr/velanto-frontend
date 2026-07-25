@@ -3,6 +3,7 @@ import { screen, waitFor } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { HeadToHeadPlayScreen } from "./HeadToHeadPlayScreen";
+import { usePlayResume } from "./use-play-resume";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { playsClient } from "@/src/shared/lib/plays-client";
@@ -32,6 +33,14 @@ vi.mock("@/src/shared/lib/plays-client", () => ({
     record: vi.fn().mockResolvedValue({ id: "play-1" }),
   },
 }));
+
+// Resume is exercised end-to-end via usePlaySession + use-play-resume unit
+// tests. Here it's stubbed with `seed: undefined` so the draw keeps using the
+// Math.random identity shuffle these matchup assertions rely on, while the
+// save/clear spies let us assert the screen wires them at the right moments.
+vi.mock("./use-play-resume", () => ({ usePlayResume: vi.fn() }));
+const resumeSave = vi.fn();
+const resumeClear = vi.fn();
 
 const MOCK_USER = {
   id: "u1",
@@ -133,6 +142,16 @@ beforeEach(() => {
     user: MOCK_USER,
   });
   vi.mocked(playsClient.record).mockResolvedValue({ id: "play-1" });
+  vi.mocked(usePlayResume).mockReturnValue({
+    ready: true,
+    // undefined seed → useRoundSelections falls back to Math.random (mocked
+    // above to an identity shuffle), keeping the matchups deterministic.
+    seed: undefined as unknown as number,
+    initialRoundIndex: 0,
+    initialChoices: null,
+    saveProgress: resumeSave,
+    clearProgress: resumeClear,
+  });
   sessionStorage.clear();
 });
 
@@ -365,5 +384,21 @@ describe("HeadToHeadPlayScreen", () => {
     await waitFor(() =>
       expect(replace).toHaveBeenCalledWith("/packs/pack-1v1/result"),
     );
+  });
+
+  it("saves resume progress after a matchup and clears it on completion", async () => {
+    const user = userEvent.setup();
+    renderScreen(HEAD_TO_HEAD_PACK);
+    await screen.findByText("Goku");
+
+    // Finishing the first (non-final) matchup advances to round 1 and saves.
+    await pickAndConfirm(user, "Goku");
+    expect(resumeSave).toHaveBeenCalledWith(1, expect.any(Array));
+
+    // Finishing the last matchup clears the record instead of saving again.
+    await screen.findByText("Naruto");
+    await pickAndConfirm(user, "Naruto", { last: true });
+    await waitFor(() => expect(resumeClear).toHaveBeenCalled());
+    expect(resumeSave).toHaveBeenCalledTimes(1);
   });
 });
