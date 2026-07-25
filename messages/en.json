@@ -966,6 +966,11 @@
       "title": "Join a room",
       "subtitle": "Got a code from a friend? Drop it in — no pack hunting needed.",
       "codePlaceholder": "ABC-123"
+    },
+    "continue": {
+      "title": "Continue playing",
+      "progress": "Round {current} of {total}",
+      "resume": "Resume {title}"
     }
   },
   "formats": {

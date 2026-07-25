@@ -872,6 +872,11 @@
       "title": "रूम में शामिल हों",
       "subtitle": "किसी दोस्त से कोड मिला? उसे यहाँ डालें — पैक ढूँढ़ने की ज़रूरत नहीं।",
       "codePlaceholder": "ABC-123"
+    },
+    "continue": {
+      "title": "खेलना जारी रखें",
+      "progress": "राउंड {total} में से {current}",
+      "resume": "{title} जारी रखें"
     }
   },
   "formats": {

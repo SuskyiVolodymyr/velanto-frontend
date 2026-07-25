@@ -872,6 +872,11 @@
       "title": "একটি রুমে যোগ দিন",
       "subtitle": "বন্ধুর কাছ থেকে কোড পেয়েছেন? এখানে দিন — প্যাক খোঁজার দরকার নেই।",
       "codePlaceholder": "ABC-123"
+    },
+    "continue": {
+      "title": "খেলা চালিয়ে যান",
+      "progress": "রাউন্ড {total} এর মধ্যে {current}",
+      "resume": "{title} চালিয়ে যান"
     }
   },
   "formats": {

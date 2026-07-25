@@ -16,6 +16,7 @@ function record(over: Partial<PlayResumeRecord> = {}): PlayResumeRecord {
     packVersion: "v1",
     roundIndex: 2,
     choices: [{ roundIndex: 0, itemId: "x" }],
+    pack: { title: "Test Pack", coverTone: "#2b2a3a", totalRounds: 8 },
     // Fresh by default so the record isn't pruned by the TTL; tests that care
     // about ordering/expiry pass an explicit updatedAt.
     updatedAt: Date.now(),

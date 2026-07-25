@@ -872,6 +872,11 @@
       "title": "Приєднатися до кімнати",
       "subtitle": "Отримали код від друга? Введіть його — шукати пак не потрібно.",
       "codePlaceholder": "ABC-123"
+    },
+    "continue": {
+      "title": "Продовжити гру",
+      "progress": "Раунд {current} з {total}",
+      "resume": "Продовжити «{title}»"
     }
   },
   "formats": {

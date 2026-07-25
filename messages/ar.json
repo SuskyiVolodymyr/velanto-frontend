@@ -872,6 +872,11 @@
       "title": "الانضمام إلى غرفة",
       "subtitle": "حصلت على رمز من صديق؟ أدخله هنا — لا حاجة للبحث عن حزمة.",
       "codePlaceholder": "ABC-123"
+    },
+    "continue": {
+      "title": "متابعة اللعب",
+      "progress": "الجولة {current} من {total}",
+      "resume": "متابعة {title}"
     }
   },
   "formats": {

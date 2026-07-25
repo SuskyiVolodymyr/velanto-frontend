@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Text } from "@/src/shared/components/Text";
 import { HomeFeed } from "@/src/features/home/HomeFeed";
 import { JoinRoomCard } from "@/src/features/home/JoinRoomCard";
+import { ContinuePlayingRail } from "@/src/features/home/ContinuePlayingRail";
 import { getHomeFeedServer } from "@/src/features/home/get-home-feed-server";
 
 /** Reads a single `q` value from the (possibly repeated/absent) search param. */
@@ -46,6 +47,11 @@ export default async function Home({
       {/* Real join-by-code hero. The speculative "every pack plays with friends"
           promo from the mock is deferred until multiplayer-for-all is built. */}
       <JoinRoomCard />
+      {/* Personal, client-only resume rail — renders nothing on the server or
+          when the browser has no in-progress plays, so it never affects the
+          indexable home content. Sits between the hero and the browse grid,
+          matching the dashboard mock. */}
+      <ContinuePlayingRail />
       <HomeFeed
         key={query}
         initialFeed={initialFeed ?? undefined}

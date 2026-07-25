@@ -872,6 +872,11 @@
       "title": "روم میں شامل ہوں",
       "subtitle": "دوست سے کوڈ ملا؟ یہاں درج کریں — پیک تلاش کرنے کی ضرورت نہیں۔",
       "codePlaceholder": "ABC-123"
+    },
+    "continue": {
+      "title": "کھیل جاری رکھیں",
+      "progress": "راؤنڈ {current} از {total}",
+      "resume": "{title} جاری رکھیں"
     }
   },
   "formats": {

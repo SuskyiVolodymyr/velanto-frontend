@@ -872,6 +872,11 @@
       "title": "Присоединиться к комнате",
       "subtitle": "Есть код от друга? Введите его — искать пак не нужно.",
       "codePlaceholder": "ABC-123"
+    },
+    "continue": {
+      "title": "Продолжить игру",
+      "progress": "Раунд {current} из {total}",
+      "resume": "Продолжить «{title}»"
     }
   },
   "formats": {

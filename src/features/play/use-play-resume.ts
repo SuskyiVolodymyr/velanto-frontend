@@ -75,10 +75,17 @@ export function usePlayResume(pack: Pack): PlayResume {
         packVersion,
         roundIndex,
         choices,
+        // Snapshot the pack's display fields so the "Continue playing" rail can
+        // render this card without re-fetching the pack. Refreshed every save.
+        pack: {
+          title: pack.title,
+          coverTone: pack.coverTone,
+          totalRounds: (pack.rounds ?? []).length,
+        },
         updatedAt: Date.now(),
       });
     },
-    [seed, pack.id, packVersion],
+    [seed, pack.id, pack.title, pack.coverTone, pack.rounds, packVersion],
   );
 
   const clearProgress = useCallback(() => {

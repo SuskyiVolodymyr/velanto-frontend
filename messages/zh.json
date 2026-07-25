@@ -872,6 +872,11 @@
       "title": "加入房间",
       "subtitle": "有朋友给的代码？直接输入即可，无需再找题包。",
       "codePlaceholder": "ABC-123"
+    },
+    "continue": {
+      "title": "继续游戏",
+      "progress": "第 {current} 轮 / 共 {total} 轮",
+      "resume": "继续玩《{title}》"
     }
   },
   "formats": {

@@ -69,6 +69,7 @@ describe("usePlayResume", () => {
       packVersion: version,
       roundIndex: 1,
       choices: [{ roundIndex: 0, itemId: "1" }],
+      pack: { title: pack.title, coverTone: pack.coverTone, totalRounds: 2 },
       updatedAt: Date.now(),
     });
 
@@ -91,6 +92,7 @@ describe("usePlayResume", () => {
       packVersion: "stale-version",
       roundIndex: 1,
       choices: [{ roundIndex: 0, itemId: "1" }],
+      pack: { title: pack.title, coverTone: pack.coverTone, totalRounds: 2 },
       updatedAt: Date.now(),
     });
 
@@ -116,6 +118,12 @@ describe("usePlayResume", () => {
     expect(stored?.seed).toBe(seed);
     expect(stored?.roundIndex).toBe(1);
     expect(stored?.choices).toEqual([{ roundIndex: 0, itemId: "2" }]);
+    // The pack display snapshot is written for the Continue-playing rail.
+    expect(stored?.pack).toEqual({
+      title: "Test Pack",
+      coverTone: "#2b2a3a",
+      totalRounds: 2,
+    });
   });
 
   it("clearProgress deletes the saved record", async () => {

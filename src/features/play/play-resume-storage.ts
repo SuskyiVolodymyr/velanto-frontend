@@ -15,6 +15,18 @@
  * capped; a new one past the cap evicts the least-recently-played.
  */
 
+/**
+ * The bits of pack metadata the "Continue playing" rail needs to render a card,
+ * snapshotted into the record so the rail works offline and without a per-card
+ * fetch. Not part of the draw contract — refreshed on every save, and dropped
+ * along with the record on a packVersion mismatch, so it never goes stale.
+ */
+export interface PlayResumePackSummary {
+  title: string;
+  coverTone: string;
+  totalRounds: number;
+}
+
 export interface PlayResumeRecord {
   packId: string;
   /** Seed for the deterministic draw — replays the exact same rounds/items. */
@@ -28,6 +40,8 @@ export interface PlayResumeRecord {
    * never inspects it; each play screen owns its own serialisation.
    */
   choices: unknown;
+  /** Display snapshot for the "Continue playing" rail (see above). */
+  pack: PlayResumePackSummary;
   /** Epoch ms of the last save — drives both the TTL and LRU eviction. */
   updatedAt: number;
 }
@@ -61,7 +75,9 @@ function parse(raw: string | null): PlayResumeRecord | null {
       typeof value.seed !== "number" ||
       typeof value.updatedAt !== "number" ||
       typeof value.packVersion !== "string" ||
-      typeof value.roundIndex !== "number"
+      typeof value.roundIndex !== "number" ||
+      typeof value.pack?.title !== "string" ||
+      typeof value.pack.totalRounds !== "number"
     ) {
       return null;
     }
