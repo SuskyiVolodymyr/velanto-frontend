@@ -239,6 +239,24 @@
     "notifications": "Сповіщення",
     "profile": "Профіль"
   },
+  "shell": {
+    "nav": {
+      "label": "Основна навігація",
+      "browse": "Огляд",
+      "myPacks": "Мої паки",
+      "people": "Люди",
+      "history": "Історія",
+      "suggestions": "Пропозиції",
+      "rules": "Правила"
+    },
+    "soon": "Скоро",
+    "menuToggle": "Перемкнути меню",
+    "room": {
+      "inARoom": "У кімнаті",
+      "lobby": "Лобі · {count}/{max}",
+      "rejoin": "Повернутися"
+    }
+  },
   "authGate": {
     "logInToVote": "Увійдіть, щоб голосувати",
     "logInToFollow": "Увійдіть, щоб стежити",

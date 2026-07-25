@@ -239,6 +239,24 @@
     "notifications": "اطلاعات",
     "profile": "پروفائل"
   },
+  "shell": {
+    "nav": {
+      "label": "مرکزی نیویگیشن",
+      "browse": "براؤز کریں",
+      "myPacks": "میرے پیک",
+      "people": "لوگ",
+      "history": "تاریخ",
+      "suggestions": "تجاویز",
+      "rules": "قواعد"
+    },
+    "soon": "جلد",
+    "menuToggle": "مینو ٹوگل کریں",
+    "room": {
+      "inARoom": "ایک روم میں",
+      "lobby": "لابی · {count}/{max}",
+      "rejoin": "دوبارہ شامل ہوں"
+    }
+  },
   "authGate": {
     "logInToVote": "ووٹ دینے کے لیے لاگ ان کریں",
     "logInToFollow": "فالو کرنے کے لیے لاگ ان کریں",

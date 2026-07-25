@@ -239,6 +239,24 @@
     "notifications": "सूचनाएँ",
     "profile": "प्रोफ़ाइल"
   },
+  "shell": {
+    "nav": {
+      "label": "मुख्य नेविगेशन",
+      "browse": "ब्राउज़ करें",
+      "myPacks": "मेरे पैक",
+      "people": "लोग",
+      "history": "इतिहास",
+      "suggestions": "सुझाव",
+      "rules": "नियम"
+    },
+    "soon": "जल्द",
+    "menuToggle": "मेनू टॉगल करें",
+    "room": {
+      "inARoom": "एक रूम में",
+      "lobby": "लॉबी · {count}/{max}",
+      "rejoin": "फिर से जुड़ें"
+    }
+  },
   "authGate": {
     "logInToVote": "वोट करने के लिए लॉग इन करें",
     "logInToFollow": "फ़ॉलो करने के लिए लॉग इन करें",

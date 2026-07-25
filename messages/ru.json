@@ -239,6 +239,24 @@
     "notifications": "Уведомления",
     "profile": "Профиль"
   },
+  "shell": {
+    "nav": {
+      "label": "Основная навигация",
+      "browse": "Обзор",
+      "myPacks": "Мои паки",
+      "people": "Люди",
+      "history": "История",
+      "suggestions": "Предложения",
+      "rules": "Правила"
+    },
+    "soon": "Скоро",
+    "menuToggle": "Переключить меню",
+    "room": {
+      "inARoom": "В комнате",
+      "lobby": "Лобби · {count}/{max}",
+      "rejoin": "Вернуться"
+    }
+  },
   "authGate": {
     "logInToVote": "Войдите, чтобы голосовать",
     "logInToFollow": "Войдите, чтобы подписаться",

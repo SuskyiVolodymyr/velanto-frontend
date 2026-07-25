@@ -239,6 +239,24 @@
     "notifications": "تنبيهات",
     "profile": "حسابي"
   },
+  "shell": {
+    "nav": {
+      "label": "التنقل الرئيسي",
+      "browse": "تصفح",
+      "myPacks": "حِزَمي",
+      "people": "الأشخاص",
+      "history": "السجل",
+      "suggestions": "الاقتراحات",
+      "rules": "القواعد"
+    },
+    "soon": "قريباً",
+    "menuToggle": "تبديل القائمة",
+    "room": {
+      "inARoom": "في غرفة",
+      "lobby": "الردهة · {count}/{max}",
+      "rejoin": "إعادة الانضمام"
+    }
+  },
   "authGate": {
     "logInToVote": "سجّل الدخول للتصويت",
     "logInToFollow": "سجّل الدخول للمتابعة",
