@@ -290,7 +290,12 @@ html[data-streamer-mode="on"]:not([data-streamer-hydrated])
   animation: nicknamesweep var(--nick-dur, 3.4s) linear infinite;
 }
 .nickname-moderator {
-  background-image: linear-gradient(90deg, #00e5ff, #8cf3ff, #00e5ff);
+  background-image: linear-gradient(
+    90deg,
+    var(--acc),
+    var(--acc-hover),
+    var(--acc)
+  );
   --nick-dur: 3.4s;
 }
 .nickname-manager {

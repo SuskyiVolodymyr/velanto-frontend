@@ -61,9 +61,12 @@ export interface IdentityPill {
 }
 
 const IDENTITY_PILL: Record<IdentityKind, IdentityPill> = {
+  // Moderator's hue is the brand accent itself, so it tracks the --acc tokens
+  // (never hardcode #00e5ff — design-tokens.md). The other three identities have
+  // no token equivalent under the approved palette, so they stay literal hex.
   moderator: {
     label: "MODERATOR",
-    className: "bg-[rgba(0,229,255,0.16)] border-transparent text-[#8cf3ff]",
+    className: "bg-acc/[0.16] border-transparent text-acc-hover",
     iconPath: "M12 3l8 4v5c0 4.6-3.2 8.2-8 9-4.8-.8-8-4.4-8-9V7zM9.5 12l1.8 1.8L15 10",
   },
   manager: {

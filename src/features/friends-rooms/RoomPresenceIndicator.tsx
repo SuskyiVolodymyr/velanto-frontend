@@ -78,7 +78,7 @@ function RoomChip({
       {/* Filled seats reuse the shared AvatarStack (ring matches this chip's
           surface); the still-open seats stay a room-specific dashed variant,
           sized to match and overlapped onto the last avatar. */}
-      <span className="flex flex-none">
+      <div className="flex flex-none">
         <AvatarStack
           users={room.players.map((player) => ({
             username: player.username,
@@ -97,7 +97,7 @@ function RoomChip({
             )}
           />
         ))}
-      </span>
+      </div>
       {/* flex-1 + min-w-0 is what lets the title truncate: without them this
           column is sized by its content, so a long pack title pushes straight
           out of the chip instead of ellipsing inside it. */}

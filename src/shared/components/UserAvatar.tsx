@@ -17,9 +17,12 @@ export const AVATAR_SIZE_CLASS: Record<AvatarSize, string> = {
 /**
  * User avatar. Renders the user's uploaded photo (resolved from its storage
  * `avatarKey` via {@link mediaUrl}) when present, otherwise a tile with the
- * first letter of the username. Pass `size` for a canonical circular tile, or
- * supply your own size/shape/colour via `className`; the base only centres the
- * initial / covers the image.
+ * first letter of the username. Pass `size` for a canonical circular tile (it
+ * owns the dimensions), or omit `size` and size/shape it yourself via
+ * `className`. Don't combine `size` with a dimensional `className`: `cn()` here
+ * is a plain join, so conflicting `h/w/rounded` utilities resolve by stylesheet
+ * order, not by `className` winning. `className` is still the place for
+ * non-dimensional extras (a background tone, a ring).
  *
  * Decorative by design (`aria-hidden`, empty `alt`): every call site renders it
  * next to the user's @handle, which is the accessible identity — announcing the
@@ -39,8 +42,9 @@ export function UserAvatar({
   className?: string;
 }) {
   const initial = username.trim().slice(0, 1).toUpperCase() || "?";
-  // `size` bakes in the circle + fixed flex basis so the tile never deforms or
-  // shrinks in a flex row; a caller `className` still composes on top.
+  // `size` owns the circle + fixed flex basis so the tile never deforms or
+  // shrinks in a flex row; a `className` adds non-dimensional extras only (see
+  // the doc comment — it must not set a conflicting h/w under plain-join cn).
   const shape = size
     ? cn("flex-none rounded-full", AVATAR_SIZE_CLASS[size], className)
     : className;
