@@ -167,6 +167,7 @@ export function useHomeFeed(
     dateOrder,
     setDateOrder,
     page,
+    total,
     totalPages,
     setPage,
   };

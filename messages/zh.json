@@ -859,7 +859,20 @@
     "paginationPrevious": "上一页",
     "paginationNext": "下一页",
     "groupLanguage": "语言",
-    "filterByLanguage": "按语言筛选"
+    "filterByLanguage": "按语言筛选",
+    "allFormats": "所有格式",
+    "showingRange": "显示 {first}–{last}，共 {total, plural, other {# 个题包}}",
+    "card": {
+      "hot": "热门",
+      "roundsPlays": "{rounds, plural, other {# 轮}} · {plays, plural, other {# 次游玩}}",
+      "play": "开玩",
+      "playWithFriends": "与好友同玩"
+    },
+    "joinRoom": {
+      "title": "加入房间",
+      "subtitle": "有朋友给的代码？直接输入即可，无需再找题包。",
+      "codePlaceholder": "ABC-123"
+    }
   },
   "formats": {
     "save_one": "留一个",

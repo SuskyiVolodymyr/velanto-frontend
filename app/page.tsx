@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Text } from "@/src/shared/components/Text";
 import { HomeFeed } from "@/src/features/home/HomeFeed";
+import { JoinRoomCard } from "@/src/features/home/JoinRoomCard";
 import { getHomeFeedServer } from "@/src/features/home/get-home-feed-server";
 
 /** Reads a single `q` value from the (possibly repeated/absent) search param. */
@@ -33,13 +34,18 @@ export default async function Home({
   const initialFeed = await getHomeFeedServer(query || undefined);
 
   return (
-    <main className="flex-1 px-7 py-10">
-      <Text as="h1" variant="title" className="mb-2 text-3xl">
-        {t("title")}
-      </Text>
-      <Text variant="secondary" className="mb-8 max-w-lg">
-        {t("subtitle")}
-      </Text>
+    <main className="flex flex-1 flex-col gap-8 px-7 py-10">
+      <div>
+        <Text as="h1" variant="title" className="mb-2 text-3xl">
+          {t("title")}
+        </Text>
+        <Text variant="secondary" className="max-w-lg">
+          {t("subtitle")}
+        </Text>
+      </div>
+      {/* Real join-by-code hero. The speculative "every pack plays with friends"
+          promo from the mock is deferred until multiplayer-for-all is built. */}
+      <JoinRoomCard />
       <HomeFeed
         key={query}
         initialFeed={initialFeed ?? undefined}

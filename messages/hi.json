@@ -859,7 +859,20 @@
     "paginationPrevious": "पिछला",
     "paginationNext": "अगला",
     "groupLanguage": "भाषा",
-    "filterByLanguage": "भाषा के अनुसार फ़िल्टर करें"
+    "filterByLanguage": "भाषा के अनुसार फ़िल्टर करें",
+    "allFormats": "सभी फ़ॉर्मेट",
+    "showingRange": "{total, plural, one {# पैक} other {# पैक}} में से {first}–{last} दिखा रहे हैं",
+    "card": {
+      "hot": "HOT",
+      "roundsPlays": "{rounds, plural, one {# राउंड} other {# राउंड}} · {plays, plural, one {# बार खेला गया} other {# बार खेला गया}}",
+      "play": "खेलें",
+      "playWithFriends": "दोस्तों के साथ खेलें"
+    },
+    "joinRoom": {
+      "title": "रूम में शामिल हों",
+      "subtitle": "किसी दोस्त से कोड मिला? उसे यहाँ डालें — पैक ढूँढ़ने की ज़रूरत नहीं।",
+      "codePlaceholder": "ABC-123"
+    }
   },
   "formats": {
     "save_one": "एक बचाओ",

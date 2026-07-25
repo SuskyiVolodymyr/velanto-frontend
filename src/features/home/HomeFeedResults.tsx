@@ -24,7 +24,7 @@ export function HomeFeedResults({
     return <Text variant="secondary">{t("empty")}</Text>;
   }
   return (
-    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+    <div className="grid grid-cols-[repeat(auto-fill,minmax(262px,1fr))] gap-[18px]">
       {packs.map((pack) => (
         <PackCard key={pack.id} pack={pack} />
       ))}

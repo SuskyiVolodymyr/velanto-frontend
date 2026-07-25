@@ -859,7 +859,20 @@
     "paginationPrevious": "পূর্ববর্তী",
     "paginationNext": "পরবর্তী",
     "groupLanguage": "ভাষা",
-    "filterByLanguage": "ভাষা অনুসারে ফিল্টার করুন"
+    "filterByLanguage": "ভাষা অনুসারে ফিল্টার করুন",
+    "allFormats": "সব ফরম্যাট",
+    "showingRange": "{total, plural, one {# টি প্যাক} other {# টি প্যাক}} এর মধ্যে {first}–{last} দেখানো হচ্ছে",
+    "card": {
+      "hot": "HOT",
+      "roundsPlays": "{rounds, plural, one {# রাউন্ড} other {# রাউন্ড}} · {plays, plural, one {# বার খেলা হয়েছে} other {# বার খেলা হয়েছে}}",
+      "play": "খেলুন",
+      "playWithFriends": "বন্ধুদের সাথে খেলুন"
+    },
+    "joinRoom": {
+      "title": "একটি রুমে যোগ দিন",
+      "subtitle": "বন্ধুর কাছ থেকে কোড পেয়েছেন? এখানে দিন — প্যাক খোঁজার দরকার নেই।",
+      "codePlaceholder": "ABC-123"
+    }
   },
   "formats": {
     "save_one": "একজনকে বাঁচাও",

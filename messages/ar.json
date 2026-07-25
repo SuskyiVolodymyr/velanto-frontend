@@ -859,7 +859,20 @@
     "paginationPrevious": "السابق",
     "paginationNext": "التالي",
     "groupLanguage": "اللغة",
-    "filterByLanguage": "التصفية حسب اللغة"
+    "filterByLanguage": "التصفية حسب اللغة",
+    "allFormats": "كل الصيغ",
+    "showingRange": "عرض {first}–{last} من أصل {total, plural, zero {# حزمة} one {حزمة واحدة} two {حزمتان} few {# حزم} many {# حزمة} other {# حزمة}}",
+    "card": {
+      "hot": "رائج",
+      "roundsPlays": "{rounds, plural, zero {# جولة} one {جولة واحدة} two {جولتان} few {# جولات} many {# جولة} other {# جولة}} · {plays, plural, zero {# لعبة} one {لعبة واحدة} two {لعبتان} few {# ألعاب} many {# لعبة} other {# لعبة}}",
+      "play": "العب",
+      "playWithFriends": "العب مع الأصدقاء"
+    },
+    "joinRoom": {
+      "title": "الانضمام إلى غرفة",
+      "subtitle": "حصلت على رمز من صديق؟ أدخله هنا — لا حاجة للبحث عن حزمة.",
+      "codePlaceholder": "ABC-123"
+    }
   },
   "formats": {
     "save_one": "أنقذ واحدًا",

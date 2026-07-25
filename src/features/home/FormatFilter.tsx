@@ -22,8 +22,15 @@ export function FormatFilter({
 
   const options = FORMAT_FILTER_VALUES.map((format) => ({
     value: format,
-    label: format === "all" ? t("all") : tFormat(format),
+    label: format === "all" ? t("allFormats") : tFormat(format),
   }));
 
-  return <FilterChipRow options={options} value={value} onSelect={onSelect} />;
+  return (
+    <FilterChipRow
+      options={options}
+      value={value}
+      onSelect={onSelect}
+      variant="pill"
+    />
+  );
 }

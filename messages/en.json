@@ -953,7 +953,20 @@
     "paginationPrevious": "Previous",
     "paginationNext": "Next",
     "groupLanguage": "Language",
-    "filterByLanguage": "Filter by language"
+    "filterByLanguage": "Filter by language",
+    "allFormats": "All formats",
+    "showingRange": "Showing {first}–{last} of {total, plural, one {# pack} other {# packs}}",
+    "card": {
+      "hot": "HOT",
+      "roundsPlays": "{rounds, plural, one {# round} other {# rounds}} · {plays, plural, one {# play} other {# plays}}",
+      "play": "Play",
+      "playWithFriends": "Play with friends"
+    },
+    "joinRoom": {
+      "title": "Join a room",
+      "subtitle": "Got a code from a friend? Drop it in — no pack hunting needed.",
+      "codePlaceholder": "ABC-123"
+    }
   },
   "formats": {
     "save_one": "Save One",
