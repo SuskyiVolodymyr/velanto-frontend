@@ -315,6 +315,22 @@ html[data-streamer-mode="on"]:not([data-streamer-hydrated])
  * Hide the native scrollbar on a horizontally-scrolled row (e.g. the
  * recently-played rail) that provides its own arrow controls instead.
  */
+/*
+ * Browser autofill paints its own light background (and dark text) on filled
+ * inputs. Over the transparent input inside an icon "shell" that shows as a
+ * mismatched light box — the "light lines" a filled field would otherwise get.
+ * Keep the autofilled text on our foreground colour and stall the background
+ * repaint indefinitely so the field keeps its own surface.
+ */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--foreground);
+  caret-color: var(--foreground);
+  transition: background-color 100000s ease-in-out 0s;
+}
+
 @utility no-scrollbar {
   -ms-overflow-style: none;
   scrollbar-width: none;

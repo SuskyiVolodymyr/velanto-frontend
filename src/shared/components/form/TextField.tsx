@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes } from "react";
+import type { InputHTMLAttributes, ReactNode } from "react";
 import { useFormContext } from "react-hook-form";
 import { Input } from "@/src/shared/components/Input";
 import { FormField } from "@/src/shared/components/form/FormField";
@@ -13,6 +13,10 @@ export interface TextFieldProps extends Omit<
   label: string;
   /** Visually hide the label but keep it for a11y (placeholder-driven inputs). */
   srOnlyLabel?: boolean;
+  /** Optional leading icon — switches the input to the UI-kit v1 shell layout. */
+  icon?: ReactNode;
+  /** Field background surface (see {@link Input}). */
+  surface?: "base" | "card";
 }
 
 /**
@@ -24,6 +28,8 @@ export function TextField({
   name,
   label,
   srOnlyLabel,
+  icon,
+  surface,
   id,
   "aria-describedby": ariaDescribedby,
   ...rest
@@ -47,6 +53,8 @@ export function TextField({
     >
       <Input
         id={fieldId}
+        icon={icon}
+        surface={surface}
         aria-invalid={error ? true : undefined}
         {...rest}
         {...register(name)}
