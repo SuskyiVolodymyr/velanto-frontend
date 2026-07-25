@@ -98,8 +98,8 @@ export function VoteControl({
         disabled={busy}
         onClick={() => voter.cast(direction === "up" ? 1 : -1)}
         className={cn(
-          "flex items-center justify-center rounded-[7px] transition-colors disabled:opacity-50",
-          inline ? "h-6 w-6" : sm ? "h-6 w-7" : "h-7 w-8",
+          "flex items-center justify-center rounded-chip transition-colors disabled:opacity-50",
+          inline ? "h-6 w-6" : sm ? "h-6 w-7" : "h-[30px] w-[30px]",
           blocked && "cursor-not-allowed opacity-50",
           active
             ? activeColor
@@ -125,7 +125,7 @@ export function VoteControl({
         {button}
         <span
           className={cn(
-            "text-[10px] leading-none tabular-nums",
+            "font-mono text-[10px] leading-none tabular-nums",
             active ? activeColor : "text-foreground-tertiary",
           )}
         >
@@ -159,7 +159,10 @@ export function VoteControl({
               in the title instead of being lost. */}
           <span
             title={`${likes} up · ${dislikes} down`}
-            className={cn("text-xs font-semibold tabular-nums", scoreColor)}
+            className={cn(
+              "font-mono text-xs font-semibold tabular-nums",
+              scoreColor,
+            )}
           >
             {score}
           </span>
@@ -174,14 +177,14 @@ export function VoteControl({
     <div className={cn("flex flex-col items-start gap-1.5", className)}>
       <div
         className={cn(
-          "inline-flex items-center rounded-[10px] border border-border bg-white/[0.03]",
+          "inline-flex items-center rounded-[10px] border border-white/[0.09] bg-white/[0.03]",
           sm ? "gap-1 px-1 py-0.5" : "gap-1.5 px-1.5 py-1",
         )}
       >
         {arrow("up")}
         <span
           className={cn(
-            "text-center font-semibold tabular-nums",
+            "text-center font-mono font-[650] tabular-nums",
             sm ? "min-w-[1.5rem] text-xs" : "min-w-[1.75rem] text-sm",
             myVote === 1
               ? "text-acc"

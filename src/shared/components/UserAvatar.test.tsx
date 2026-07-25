@@ -61,4 +61,26 @@ describe("UserAvatar", () => {
     expect(screen.getByText("Q")).toBeInTheDocument();
     expect(document.querySelector("img")).toBeNull();
   });
+
+  it("applies the canonical circle + fixed-basis classes when size is set (initial variant)", () => {
+    render(<UserAvatar username="quinn" size="md" />);
+    expect(screen.getByText("Q")).toHaveClass(
+      "h-[34px]",
+      "w-[34px]",
+      "rounded-full",
+      "flex-none",
+    );
+  });
+
+  it("applies the size classes to the image variant too", () => {
+    render(
+      <UserAvatar username="quinn" avatarKey="media/avatar/abc.webp" size="sm" />,
+    );
+    expect(document.querySelector("img")).toHaveClass(
+      "h-[26px]",
+      "w-[26px]",
+      "rounded-full",
+      "object-cover",
+    );
+  });
 });
