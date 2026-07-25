@@ -43,7 +43,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
             // never runs underneath it.
             "ps-4 pe-12 text-sm text-foreground",
             "transition-colors duration-150",
-            "focus:outline-none focus:border-acc",
+            "focus:outline-none focus:border-acc focus-visible:ring-2 focus-visible:ring-acc/40",
             "disabled:pointer-events-none disabled:opacity-45",
           )}
           {...props}

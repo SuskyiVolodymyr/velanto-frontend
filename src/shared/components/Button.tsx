@@ -58,7 +58,7 @@ const variantClasses: Record<ButtonVariant, string> = {
 
 const iconOnlyClasses =
   "grid h-10 w-10 place-items-center rounded-control border border-white/[0.08] " +
-  "bg-[#181b23] text-foreground-secondary transition-colors duration-150 " +
+  "bg-surface-card text-foreground-secondary transition-colors duration-150 " +
   "hover:border-white/20 hover:text-foreground " +
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc " +
   "focus-visible:ring-offset-2 focus-visible:ring-offset-background " +

@@ -45,7 +45,7 @@ export function Toggle({
         aria-hidden
         className={cn(
           "absolute top-[3px] h-5 w-5 rounded-pill bg-white transition-[left] duration-[180ms] [transition-timing-function:var(--ease-signature)] motion-reduce:transition-none",
-          checked ? "left-[21px]" : "left-[3px]",
+          checked ? "start-[21px]" : "start-[3px]",
         )}
       />
     </button>

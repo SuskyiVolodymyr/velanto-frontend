@@ -16,7 +16,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
           "h-[46px] w-full rounded-control bg-background border border-white/10 px-4",
           "text-sm text-foreground placeholder:text-foreground-tertiary",
           "transition-colors duration-150",
-          "focus:outline-none focus:border-acc",
+          "focus:outline-none focus:border-acc focus-visible:ring-2 focus-visible:ring-acc/40",
           "disabled:opacity-45 disabled:pointer-events-none",
           className,
         )}

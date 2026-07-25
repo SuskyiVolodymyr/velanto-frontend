@@ -19,7 +19,7 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
       <div
         className={cn(
           "flex h-[42px] items-center gap-2.5 rounded-control border border-white/[0.08] bg-background px-[14px]",
-          "transition-colors duration-150 focus-within:border-acc",
+          "transition-colors duration-150 focus-within:border-acc focus-within:ring-2 focus-within:ring-acc/40",
           className,
         )}
       >
