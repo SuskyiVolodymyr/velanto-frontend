@@ -8,7 +8,7 @@
  * the `acc` Tailwind color, never hardcode #00e5ff in a component.
  * --danger is the error/destructive red (error text, active downvote,
  * remove/ban affordances) — reference it via the `danger` Tailwind color
- * (`text-danger`, `border-danger/40`), never hardcode #ff6b6b in a component.
+ * (`text-danger`, `border-danger/40`), never hardcode #ff5a5a in a component.
  * --success is the positive/live green (the admin overview's "live" metric
  * dot) — reference it via the `success` Tailwind color, never hardcode
  * #39d98a in a component.
