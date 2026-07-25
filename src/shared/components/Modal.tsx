@@ -40,7 +40,7 @@ export function Modal({
     <div
       data-testid="modal-backdrop"
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
     >
       <div
         role="dialog"
@@ -48,7 +48,7 @@ export function Modal({
         aria-labelledby={titleId}
         onClick={(event) => event.stopPropagation()}
         className={cn(
-          "flex max-h-[85vh] w-full max-w-md flex-col rounded-[15px] border border-border bg-surface p-5",
+          "flex max-h-[85vh] w-full max-w-md flex-col rounded-card border border-border bg-surface-card p-[18px]",
           className,
         )}
       >
@@ -60,7 +60,7 @@ export function Modal({
             type="button"
             onClick={onClose}
             aria-label={t("close")}
-            className="rounded-[9px] px-2 py-1 text-foreground-secondary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+            className="rounded-[9px] px-2 py-1 text-foreground-secondary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-surface-card"
           >
             ✕
           </button>
