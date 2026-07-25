@@ -386,6 +386,35 @@ describe("HeadToHeadPlayScreen", () => {
     );
   });
 
+  it("resumes on the saved matchup with earlier picks restored", async () => {
+    // A play saved after round 1: cursor at index 1, round 0's two picks kept.
+    const restoredPicks = [
+      { roundIndex: 0, groupId: "gl", itemId: "i1", chosen: true },
+      { roundIndex: 0, groupId: "gr", itemId: "i2", chosen: false },
+    ];
+    vi.mocked(usePlayResume).mockReturnValue({
+      ready: true,
+      seed: undefined as unknown as number,
+      initialRoundIndex: 1,
+      initialChoices: restoredPicks,
+      saveProgress: resumeSave,
+      clearProgress: resumeClear,
+    });
+    const user = userEvent.setup();
+    renderScreen(HEAD_TO_HEAD_PACK);
+
+    // Opens directly on round 2 (Naruto vs Sasuke) — round 1 is not replayed.
+    await screen.findByText("Naruto");
+    expect(screen.queryByText("Goku")).toBeNull();
+
+    // Finishing records all four picks: the two restored plus this matchup's.
+    await pickAndConfirm(user, "Naruto", { last: true });
+    await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
+    const [, body] = vi.mocked(playsClient.record).mock.calls[0];
+    expect(body.picks).toHaveLength(4);
+    expect(body.picks.slice(0, 2)).toEqual(restoredPicks);
+  });
+
   it("saves resume progress after a matchup and clears it on completion", async () => {
     const user = userEvent.setup();
     renderScreen(HEAD_TO_HEAD_PACK);

@@ -141,9 +141,13 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
     setRoundIndex(nextRoundIndex);
     setPlacements({});
     // Save progress on leaving a finished round — allPicks already holds this
-    // round's placements (added in `place` when the round filled). The final
-    // round never routes through here; the completion effect clears instead.
-    saveProgress(nextRoundIndex, allPicks);
+    // round's placements (added in `place` when the round filled). The guard
+    // mirrors the other two screens: the "Next round" button is already hidden
+    // on the final round (isRoundComplete is false when isFinished), so this is
+    // defence-in-depth against a completed play being saved as resumable.
+    if (nextRoundIndex < totalRounds) {
+      saveProgress(nextRoundIndex, allPicks);
+    }
   }
 
   // Fires once when the last round's last item is placed — mirrors
