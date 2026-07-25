@@ -70,14 +70,15 @@ function parse(raw: string | null): PlayResumeRecord | null {
     // especially load-bearing: a non-numeric value would make `isExpired`
     // compute NaN (never pruned) and poison the freshest-first sort, so a record
     // missing any of the fields the storage layer itself relies on is dropped.
+    // Only the resume-critical fields are validated here — a record with an
+    // intact seed/choices must still resume even if its cosmetic `pack` display
+    // snapshot is missing or malformed. The rail guards the snapshot itself.
     if (
       typeof value?.packId !== "string" ||
       typeof value.seed !== "number" ||
       typeof value.updatedAt !== "number" ||
       typeof value.packVersion !== "string" ||
-      typeof value.roundIndex !== "number" ||
-      typeof value.pack?.title !== "string" ||
-      typeof value.pack.totalRounds !== "number"
+      typeof value.roundIndex !== "number"
     ) {
       return null;
     }

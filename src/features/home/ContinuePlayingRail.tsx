@@ -35,7 +35,13 @@ export function ContinuePlayingRail() {
     setRecords(listPlayResumes());
   }, []);
 
-  if (!records || records.length === 0) return null;
+  // A resume record can survive with a missing/malformed display snapshot (the
+  // storage guard only protects the resume-critical fields), so the rail skips
+  // any it can't render — those packs are still resumable from their play page.
+  const renderable = records?.filter(
+    (record) => typeof record.pack?.title === "string",
+  );
+  if (!renderable || renderable.length === 0) return null;
 
   return (
     <section className="flex flex-col gap-3">
@@ -43,7 +49,7 @@ export function ContinuePlayingRail() {
         {t("title")}
       </Text>
       <ul className="grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-3">
-        {records.map((record) => (
+        {renderable.map((record) => (
           <ContinuePlayingCard key={record.packId} record={record} />
         ))}
       </ul>
@@ -53,7 +59,10 @@ export function ContinuePlayingRail() {
 
 function ContinuePlayingCard({ record }: { record: PlayResumeRecord }) {
   const t = useTranslations("home.continue");
-  const { title, coverTone, totalRounds } = record.pack;
+  const { title, totalRounds } = record.pack;
+  // coverTone is a required Pack field, but this is untrusted storage — fall
+  // back so a malformed snapshot never renders an invalid gradient.
+  const coverTone = record.pack.coverTone || "#2b2a3a";
   // roundIndex is completed rounds; the player resumes into the next one. The
   // record is only saved with roundIndex < totalRounds, so `current` is in range.
   const safeTotal = Math.max(totalRounds, 1);
@@ -77,7 +86,7 @@ function ContinuePlayingCard({ record }: { record: PlayResumeRecord }) {
           />
         </div>
         <Text variant="tertiary" className="text-[11.5px]">
-          {t("progress", { current, total: totalRounds })}
+          {t("progress", { current, total: safeTotal })}
         </Text>
       </div>
       <Link

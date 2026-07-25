@@ -56,6 +56,30 @@ describe("ContinuePlayingRail", () => {
     expect(titles).toEqual(["Newer pack", "Older pack"]);
   });
 
+  it("skips a record whose display snapshot is missing without crashing", async () => {
+    writePlayResume(
+      record({ packId: "ok", pack: { title: "Good pack", coverTone: "#2b2a3a", totalRounds: 4 } }),
+    );
+    // A resume-valid record with no display snapshot (storage keeps it so the
+    // pack still resumes, but the rail can't render a card for it).
+    localStorage.setItem(
+      "velanto:play-resume:snapshotless",
+      JSON.stringify({
+        packId: "snapshotless",
+        seed: 1,
+        packVersion: "v1",
+        roundIndex: 1,
+        choices: [],
+        updatedAt: Date.now(),
+      }),
+    );
+
+    render(<ContinuePlayingRail />);
+
+    await screen.findByText("Good pack");
+    expect(screen.getAllByRole("listitem")).toHaveLength(1);
+  });
+
   it("shows round progress and links each card to its play route to resume", async () => {
     writePlayResume(
       record({
