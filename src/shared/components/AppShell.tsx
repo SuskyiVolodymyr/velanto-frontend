@@ -31,7 +31,12 @@ export function AppShell({ children }: { children: ReactNode }) {
   }
 
   return (
-    <>
+    // Bottom padding on phones so the fixed MobileBottomNav never covers the
+    // last of the content or the footer; must clear the nav's full height (its
+    // emphasized Create button makes it ~4.5rem) plus the safe-area inset. The
+    // nav is md:hidden, so the padding drops from md up. It lives here (not on
+    // <body>) so full-screen routes without the nav don't reserve the space.
+    <div className="flex min-h-full flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0">
       <AppHeader />
       <BannedBanner />
       {children}
@@ -40,6 +45,6 @@ export function AppShell({ children }: { children: ReactNode }) {
       {/* Floating "you're in a room" affordance; renders nothing unless the
           signed-in user holds a room seat. */}
       <RoomPresenceIndicator />
-    </>
+    </div>
   );
 }

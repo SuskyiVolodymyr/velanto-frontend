@@ -64,11 +64,10 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: getStreamerModeInitScript() }}
         />
       </head>
-      {/* Bottom padding on phones so the fixed MobileBottomNav never covers the
-          last of the content or the footer; must clear the nav's full height
-          (its emphasized Create button makes it ~4.5rem) plus the device's
-          safe-area inset. The nav itself is md:hidden. */}
-      <body className="flex min-h-full flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0">
+      {/* The MobileBottomNav bottom-padding lives in AppShell's chrome branch
+          (only the chromed routes have that nav), so full-screen routes like
+          /auth don't reserve phantom space beneath their layout. */}
+      <body className="flex min-h-full flex-col">
         <QueryProvider>
           <NextIntlClientProvider>
             <AuthProvider>

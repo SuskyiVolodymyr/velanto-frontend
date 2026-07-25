@@ -486,7 +486,7 @@
       "pitch1": "Play any pack solo or in a room",
       "pitch2": "Four multiplayer modes, one code to join",
       "pitch3": "Your results saved, your picks scored",
-      "socialProof": "Join {count, number} people already arguing",
+      "socialProof": "Join {count, plural, one {# person} other {# people}} already arguing",
       "socialProofFallback": "Join the community"
     },
     "errors": {

@@ -19,8 +19,11 @@ const NAV_LINKS: { href: string; ns: "header" | "footer"; key: string }[] = [
 export function SiteFooter() {
   const tHeader = useTranslations("header");
   const tFooter = useTranslations("footer");
-  // Server Component: the year is computed at request time, so the copyright
-  // rolls over on its own without a client render or a hardcoded constant.
+  // Rendered inside the client <AppShell>, so this is compiled into the client
+  // bundle (not a Server Component). next-intl's isomorphic useTranslations
+  // resolves fine there. The year is still computed at render — it matches
+  // between SSR and hydration except at the exact New Year rollover, which is
+  // acceptable for a footer copyright.
   const year = new Date().getFullYear();
 
   return (
