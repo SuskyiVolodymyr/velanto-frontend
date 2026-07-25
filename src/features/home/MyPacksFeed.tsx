@@ -16,11 +16,11 @@ import type { PackStatus } from "@/src/shared/types/pack";
 type StatusChoice = "all" | PackStatus;
 
 /**
- * The "My packs" tab: the signed-in author's own packs across every moderation
- * status, filterable by a status chip row. Each card carries a status badge (via
- * `showStatus`) so drafts / pending / rejected read at a glance. Sits beside the
- * public discovery feed in {@link BrowseTabs}, which only mounts it when signed
- * in — the login fallback here is a belt-and-braces guard.
+ * The signed-in author's own packs across every moderation status, filterable
+ * by a status chip row. Each card carries a status badge (via `showStatus`) so
+ * drafts / pending / rejected read at a glance. Mounted by the `/my-packs`
+ * route, which the sidebar only exposes to signed-in users (a signed-out click
+ * routes to /auth) — the login fallback here is a belt-and-braces guard.
  */
 export function MyPacksFeed() {
   const t = useTranslations("myPacks");

@@ -6,7 +6,6 @@ import { cn } from "@/src/shared/lib/cn";
 import { Text } from "@/src/shared/components/Text";
 import type { PackTag } from "@/src/shared/types/pack";
 import type { PackLanguage } from "@/src/shared/types/pack-language";
-import { PackSearchField } from "@/src/features/home/PackSearchField";
 import { FormatFilter } from "@/src/features/home/FormatFilter";
 import { SortFilter } from "@/src/features/home/SortFilter";
 import { TagFilter } from "@/src/features/home/TagFilter";
@@ -44,8 +43,6 @@ function FilterGroup({
 // the useHomeFeed hook via the passed-in callbacks.
 export function HomeFilterSidebar({
   className,
-  search,
-  onSearchChange,
   format,
   onFormatChange,
   sort,
@@ -60,8 +57,6 @@ export function HomeFilterSidebar({
   onLanguagesChange,
 }: {
   className?: string;
-  search: string;
-  onSearchChange: (value: string) => void;
   format: FormatFilterValue;
   onFormatChange: (value: FormatFilterValue) => void;
   sort: SortFilterValue;
@@ -88,8 +83,6 @@ export function HomeFilterSidebar({
       )}
     >
       <div className="flex flex-col gap-5 rounded-[14px] border border-border bg-white/[0.02] p-5">
-        <PackSearchField value={search} onChange={onSearchChange} />
-
         <FilterGroup label={t("groupFormat")}>
           <FormatFilter value={format} onSelect={onFormatChange} />
         </FilterGroup>

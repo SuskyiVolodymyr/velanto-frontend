@@ -45,11 +45,11 @@ describe("SidebarContent", () => {
     );
     expect(screen.getByRole("link", { name: "My packs" })).toHaveAttribute(
       "href",
-      "/?feed=mine",
+      "/my-packs",
     );
     expect(screen.getByRole("link", { name: "People" })).toHaveAttribute(
       "href",
-      "/?feed=people",
+      "/people",
     );
     expect(screen.getByRole("link", { name: "Rules" })).toHaveAttribute(
       "href",
@@ -75,6 +75,21 @@ describe("SidebarContent", () => {
       </NextIntlClientProvider>,
     );
     expect(screen.getByRole("link", { name: "Rules" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    expect(screen.getByRole("link", { name: "Browse" })).not.toHaveAttribute(
+      "aria-current",
+    );
+
+    // People is its own route now; Browse (`/` exactly) must NOT light up on it.
+    pathname = "/people";
+    rerender(
+      <NextIntlClientProvider locale="en" messages={messages}>
+        <SidebarContent />
+      </NextIntlClientProvider>,
+    );
+    expect(screen.getByRole("link", { name: "People" })).toHaveAttribute(
       "aria-current",
       "page",
     );

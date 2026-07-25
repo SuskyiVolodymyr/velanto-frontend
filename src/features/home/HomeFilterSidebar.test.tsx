@@ -8,8 +8,6 @@ function renderSidebar(
   overrides: Partial<Parameters<typeof HomeFilterSidebar>[0]> = {},
 ) {
   const props = {
-    search: "",
-    onSearchChange: vi.fn(),
     format: "all" as const,
     onFormatChange: vi.fn(),
     sort: "popular" as const,
@@ -29,10 +27,11 @@ function renderSidebar(
 }
 
 describe("HomeFilterSidebar", () => {
-  it("renders the search box and every filter group in one panel", () => {
+  it("renders every filter group in one panel", () => {
     renderSidebar();
 
-    expect(screen.getByRole("searchbox")).toBeInTheDocument();
+    // Search lives in the global top bar now (URL-driven `/?q=…`), not here.
+    expect(screen.queryByRole("searchbox")).not.toBeInTheDocument();
     expect(
       screen.getByRole("complementary", { name: "Filters" }),
     ).toBeInTheDocument();
@@ -112,14 +111,5 @@ describe("HomeFilterSidebar", () => {
     await user.click(screen.getByRole("button", { name: "Oldest first" }));
 
     expect(onDateOrderChange).toHaveBeenCalledWith("oldest");
-  });
-
-  it("lifts search input changes to the parent", async () => {
-    const user = userEvent.setup();
-    const { onSearchChange } = renderSidebar();
-
-    await user.type(screen.getByRole("searchbox"), "a");
-
-    expect(onSearchChange).toHaveBeenCalledWith("a");
   });
 });

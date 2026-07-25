@@ -14,10 +14,21 @@ const DEFAULT_FEED_QUERY = `page=1&limit=${PACKS_FEED_PAGE_SIZE}&sort=popular&wi
  * instead of an empty "Loading…" shell. Anonymous `GET /packs` returns approved
  * packs only. Returns null on any failure so the caller can fall back to the
  * client-only fetch path rather than crash the home route at build/request time.
+ *
+ * `q` seeds a top-bar search landing (`/?q=…`) with server-rendered results too,
+ * so a shared search URL doesn't flash an empty "Loading…" — the client's first
+ * render uses default filters + this same `q`, so the seed matches (see
+ * useHomeFeed's isDefaultFilters). Only the default filters are seeded; changing
+ * a filter falls through to the client fetch.
  */
-export async function getHomeFeedServer(): Promise<PacksFeedResult | null> {
+export async function getHomeFeedServer(
+  q?: string,
+): Promise<PacksFeedResult | null> {
+  const query = q?.trim()
+    ? `${DEFAULT_FEED_QUERY}&q=${encodeURIComponent(q.trim())}`
+    : DEFAULT_FEED_QUERY;
   try {
-    const res = await fetch(`${API_BASE_URL}/packs?${DEFAULT_FEED_QUERY}`, {
+    const res = await fetch(`${API_BASE_URL}/packs?${query}`, {
       cache: "no-store",
     });
     if (!res.ok) return null;

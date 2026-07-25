@@ -348,8 +348,10 @@ describe("HomeFeed", () => {
   });
 
   describe("search", () => {
-    it("debounces, trims, and clears the search query", async () => {
-      const user = userEvent.setup();
+    // Search is URL-driven now: the global top-bar search routes to `/?q=…`, the
+    // Server-Component home page reads it, and it arrives as `initialQuery`.
+    // There is no in-feed search box anymore.
+    it("has no in-feed search box", async () => {
       vi.mocked(packsClient.list).mockResolvedValue({
         items: [PACK_A],
         total: 1,
@@ -357,42 +359,31 @@ describe("HomeFeed", () => {
         limit: 25,
       });
       render(<HomeFeed />);
-      await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
+      await screen.findByText("Best Anime Openings");
 
-      const searchBox = screen.getByRole("searchbox");
-      await user.type(searchBox, "  anime  ");
-      // Debounced: typing alone must not have re-fetched yet.
-      expect(packsClient.list).toHaveBeenCalledTimes(1);
+      expect(screen.queryByRole("searchbox")).not.toBeInTheDocument();
+    });
 
-      // After the debounce, q is sent trimmed.
-      await waitFor(
-        () =>
-          expect(packsClient.list).toHaveBeenLastCalledWith({
-            format: undefined,
-            tags: [],
-            languages: [],
-            q: "anime",
-            sort: "popular",
-            window: "month",
-            limit: 25,
-          }),
-        { timeout: 1000 },
-      );
+    it("fetches with the seeded query from the URL", async () => {
+      vi.mocked(packsClient.list).mockResolvedValue({
+        items: [PACK_A],
+        total: 1,
+        page: 1,
+        limit: 25,
+      });
+      render(<HomeFeed initialQuery="anime" />);
+      await screen.findByText("Best Anime Openings");
 
-      // Clearing the box re-fetches without q.
-      await user.clear(searchBox);
-      await waitFor(
-        () =>
-          expect(packsClient.list).toHaveBeenLastCalledWith({
-            format: undefined,
-            tags: [],
-            languages: [],
-            q: undefined,
-            sort: "popular",
-            window: "month",
-            limit: 25,
-          }),
-        { timeout: 1000 },
+      await waitFor(() =>
+        expect(packsClient.list).toHaveBeenLastCalledWith({
+          format: undefined,
+          tags: [],
+          languages: [],
+          q: "anime",
+          sort: "popular",
+          window: "month",
+          limit: 25,
+        }),
       );
     });
   });

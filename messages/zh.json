@@ -1480,8 +1480,10 @@
     "empty": "暂无更新，敬请期待。"
   },
   "myPacks": {
-    "packsTab": "题包",
-    "mineTab": "我的题包",
+    "title": "我的题包",
+    "subtitle": "你创建的所有题包，涵盖所有审核状态。",
+    "metaTitle": "我的题包 — Velanto",
+    "metaDescription": "管理你在 Velanto 上创建的题包。",
     "loginRequired": "登录后即可查看你的题包。",
     "loading": "正在加载你的题包…",
     "error": "无法加载你的题包。",
@@ -1490,7 +1492,10 @@
     "all": "全部"
   },
   "people": {
-    "tab": "用户",
+    "title": "用户",
+    "subtitle": "搜索创作者和玩家，关注你喜欢的人。",
+    "metaTitle": "用户 — Velanto",
+    "metaDescription": "在 Velanto 上搜索题包创作者和玩家并关注。",
     "searchLabel": "搜索用户",
     "searchPlaceholder": "按用户名搜索",
     "hint": "请输入至少 2 个字符进行搜索。",

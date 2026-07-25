@@ -6,8 +6,15 @@ import { HomeFilterSidebar } from "@/src/features/home/HomeFilterSidebar";
 import { HomePagination } from "@/src/features/home/HomePagination";
 import type { PacksFeedResult } from "@/src/features/home/api/packs-feed";
 
-export function HomeFeed({ initialFeed }: { initialFeed?: PacksFeedResult }) {
-  const feed = useHomeFeed(initialFeed);
+export function HomeFeed({
+  initialFeed,
+  initialQuery,
+}: {
+  initialFeed?: PacksFeedResult;
+  /** Search term from the URL (`/?q=…`), seeded by the top-bar search. */
+  initialQuery?: string;
+}) {
+  const feed = useHomeFeed(initialFeed, initialQuery);
 
   function goToPage(next: number) {
     feed.setPage(next);
@@ -33,8 +40,6 @@ export function HomeFeed({ initialFeed }: { initialFeed?: PacksFeedResult }) {
 
       <HomeFilterSidebar
         className="order-1 lg:order-2"
-        search={feed.searchInput}
-        onSearchChange={feed.setSearchInput}
         format={feed.format}
         onFormatChange={feed.setFormat}
         sort={feed.sort}
