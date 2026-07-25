@@ -239,6 +239,24 @@
     "notifications": "বিজ্ঞপ্তি",
     "profile": "প্রোফাইল"
   },
+  "shell": {
+    "nav": {
+      "label": "প্রধান নেভিগেশন",
+      "browse": "অন্বেষণ",
+      "myPacks": "আমার প্যাক",
+      "people": "লোকজন",
+      "history": "ইতিহাস",
+      "suggestions": "পরামর্শ",
+      "rules": "নিয়মাবলী"
+    },
+    "soon": "শীঘ্রই",
+    "menuToggle": "মেনু টগল করুন",
+    "room": {
+      "inARoom": "একটি রুমে",
+      "lobby": "লবি · {count}/{max}",
+      "rejoin": "পুনরায় যোগ দিন"
+    }
+  },
   "authGate": {
     "logInToVote": "ভোট দিতে লগ ইন করুন",
     "logInToFollow": "ফলো করতে লগ ইন করুন",

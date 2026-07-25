@@ -334,6 +334,24 @@
     "notifications": "Alerts",
     "profile": "Profile"
   },
+  "shell": {
+    "nav": {
+      "label": "Main navigation",
+      "browse": "Browse",
+      "myPacks": "My packs",
+      "people": "People",
+      "history": "History",
+      "suggestions": "Suggestions",
+      "rules": "Rules"
+    },
+    "soon": "Soon",
+    "menuToggle": "Toggle menu",
+    "room": {
+      "inARoom": "In a room",
+      "lobby": "Lobby · {count}/{max}",
+      "rejoin": "Rejoin"
+    }
+  },
   "authGate": {
     "logInToVote": "Log in to vote",
     "logInToFollow": "Log in to follow",

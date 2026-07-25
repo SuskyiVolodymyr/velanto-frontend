@@ -43,7 +43,7 @@ export function RoomPresenceIndicator() {
   if (visible.length === 0) return null;
 
   return (
-    <div className="fixed right-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom)+0.75rem)] z-30 flex flex-col items-end gap-2 md:bottom-6">
+    <div className="fixed right-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom)+0.75rem)] z-30 flex flex-col items-end gap-2">
       {visible.map((room) => (
         <RoomChip
           key={room.id}

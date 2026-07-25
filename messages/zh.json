@@ -239,6 +239,24 @@
     "notifications": "提醒",
     "profile": "我的"
   },
+  "shell": {
+    "nav": {
+      "label": "主导航",
+      "browse": "浏览",
+      "myPacks": "我的题包",
+      "people": "用户",
+      "history": "历史",
+      "suggestions": "建议",
+      "rules": "规则"
+    },
+    "soon": "敬请期待",
+    "menuToggle": "切换菜单",
+    "room": {
+      "inARoom": "在房间中",
+      "lobby": "大厅 · {count}/{max}",
+      "rejoin": "重新加入"
+    }
+  },
   "authGate": {
     "logInToVote": "登录后投票",
     "logInToFollow": "登录后关注",
