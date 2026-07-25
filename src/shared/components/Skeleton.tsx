@@ -14,7 +14,10 @@ export function Skeleton({
   return (
     <div
       aria-hidden
-      className={cn("animate-pulse rounded-[10px] bg-white/[0.06]", className)}
+      className={cn(
+        "animate-shimmer rounded-[10px] [background-size:320px_100%] bg-[linear-gradient(90deg,#1b1f28_25%,#242935_50%,#1b1f28_75%)]",
+        className,
+      )}
       {...props}
     />
   );

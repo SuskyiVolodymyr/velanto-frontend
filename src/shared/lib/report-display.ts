@@ -7,7 +7,8 @@ import type {
 // detail screen so both surfaces render report status/target consistently.
 export const REPORT_STATUS_BADGE_CLASS: Record<ReportStatus, string> = {
   new: "border-acc/30 bg-acc/10 text-acc",
-  reviewing: "border-yellow-500/30 bg-yellow-500/10 text-yellow-400",
+  reviewing:
+    "border-status-pending/30 bg-status-pending/10 text-status-pending",
   closed: "border-white/10 bg-white/[0.06] text-foreground-secondary",
 };
 
