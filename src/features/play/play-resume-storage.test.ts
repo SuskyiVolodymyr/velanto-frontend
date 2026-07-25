@@ -82,6 +82,25 @@ describe("play-resume-storage", () => {
     expect(ids).toEqual(["b", "a"]);
   });
 
+  it("rejects a malformed record with a non-numeric updatedAt (no NaN leak)", () => {
+    // A hand-edited/schema-drifted entry: valid JSON, but updatedAt is not a
+    // number. Left unguarded this poisons the TTL (now - NaN is never > TTL) and
+    // the freshest-first sort. It must be treated as absent.
+    localStorage.setItem(
+      "velanto:play-resume:bad",
+      JSON.stringify({
+        packId: "bad",
+        seed: 1,
+        packVersion: "v1",
+        roundIndex: 0,
+        choices: null,
+        updatedAt: "oops",
+      }),
+    );
+    expect(readPlayResume("bad", "v1")).toBeNull();
+    expect(listPlayResumes()).toHaveLength(0);
+  });
+
   it("caps uncompleted packs, evicting the least-recently-played on overflow", () => {
     // Fill to the cap with distinct, increasingly-recent packs.
     const now = Date.now();

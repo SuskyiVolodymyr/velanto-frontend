@@ -52,8 +52,17 @@ function parse(raw: string | null): PlayResumeRecord | null {
   if (!raw) return null;
   try {
     const value = JSON.parse(raw) as PlayResumeRecord;
-    // Guard against a hand-edited or partially-written entry.
-    if (typeof value?.packId !== "string" || typeof value.seed !== "number") {
+    // Guard against a hand-edited or schema-drifted entry. `updatedAt` is
+    // especially load-bearing: a non-numeric value would make `isExpired`
+    // compute NaN (never pruned) and poison the freshest-first sort, so a record
+    // missing any of the fields the storage layer itself relies on is dropped.
+    if (
+      typeof value?.packId !== "string" ||
+      typeof value.seed !== "number" ||
+      typeof value.updatedAt !== "number" ||
+      typeof value.packVersion !== "string" ||
+      typeof value.roundIndex !== "number"
+    ) {
       return null;
     }
     return value;
