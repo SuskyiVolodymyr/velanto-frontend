@@ -78,7 +78,9 @@
   --medal-bronze: #cd8f5a;
 
   --radius-chip: 8px;
-  --radius-control: 11px;
+  /* Buttons/inputs render at 12px in the mocks (the radii table's "11" is the
+   * stated scale, but the actual control markup is 12 — mocks win). */
+  --radius-control: 12px;
   --radius-tile: 14px;
   --radius-card: 18px;
   --radius-pill: 999px;

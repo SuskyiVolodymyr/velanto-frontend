@@ -13,10 +13,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         id={fieldId}
         name={name}
         className={cn(
-          "h-11 w-full rounded-[10px] bg-surface border border-border px-4",
+          "h-[46px] w-full rounded-control bg-background border border-white/10 px-4",
           "text-sm text-foreground placeholder:text-foreground-tertiary",
-          "transition-colors duration-200",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:border-transparent",
+          "transition-colors duration-150",
+          "focus:outline-none focus:border-acc focus-visible:ring-2 focus-visible:ring-acc/40",
           "disabled:opacity-45 disabled:pointer-events-none",
           className,
         )}
