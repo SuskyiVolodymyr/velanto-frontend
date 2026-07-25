@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { User } from "lucide-react";
 import { TextField } from "@/src/shared/components/form/TextField";
 
 /**
@@ -14,6 +15,8 @@ export function LoginFields({ disabled }: { disabled: boolean }) {
       name="identifier"
       label={t("identifier")}
       srOnlyLabel
+      icon={<User strokeWidth={1.8} aria-hidden />}
+      surface="card"
       placeholder={t("identifier")}
       autoComplete="username"
       disabled={disabled}

@@ -381,6 +381,15 @@
     "resetSuccess": "您的密码已重置，现在可以登录。",
     "backToLogin": "返回登录",
     "resetError": "无法重置密码，请检查验证码后重试。",
+    "brand": {
+      "headline": "八个上场，只有一个能挺过你的裁决。",
+      "subtitle": "创建卡包，独自游玩，或开一个房间，让朋友们争个高下——投票、认领、轮流淘汰，或猜猜谁选了什么。",
+      "pitch1": "任意卡包，单人或组队皆可畅玩",
+      "pitch2": "四种多人模式，一个房间码即可加入",
+      "pitch3": "结果自动保存，选择计入积分",
+      "socialProof": "已有 {count, number} 人正在争论，快来加入",
+      "socialProofFallback": "加入社区"
+    },
     "errors": {
       "loginRequired": "请输入你的邮箱／用户名和密码。",
       "username": "用户名必须为 2 到 16 个字符，且只能包含字母和数字。",

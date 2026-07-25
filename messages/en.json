@@ -480,6 +480,15 @@
     "resetSuccess": "Your password has been reset. You can now log in.",
     "backToLogin": "Back to log in",
     "resetError": "Couldn’t reset your password. Check the code and try again.",
+    "brand": {
+      "headline": "Eight things enter. One survives your judgement.",
+      "subtitle": "Build packs, play them solo, or open a room and let your friends argue it out — vote, claim, cut in turns, or guess who picked what.",
+      "pitch1": "Play any pack solo or in a room",
+      "pitch2": "Four multiplayer modes, one code to join",
+      "pitch3": "Your results saved, your picks scored",
+      "socialProof": "Join {count, number} people already arguing",
+      "socialProofFallback": "Join the community"
+    },
     "errors": {
       "loginRequired": "Enter your email/username and password.",
       "username": "Username must be 2-16 characters: letters and numbers only.",
