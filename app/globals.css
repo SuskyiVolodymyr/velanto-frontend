@@ -8,7 +8,7 @@
  * the `acc` Tailwind color, never hardcode #00e5ff in a component.
  * --danger is the error/destructive red (error text, active downvote,
  * remove/ban affordances) — reference it via the `danger` Tailwind color
- * (`text-danger`, `border-danger/40`), never hardcode #ff6b6b in a component.
+ * (`text-danger`, `border-danger/40`), never hardcode #ff5a5a in a component.
  * --success is the positive/live green (the admin overview's "live" metric
  * dot) — reference it via the `success` Tailwind color, never hardcode
  * #39d98a in a component.
@@ -19,16 +19,54 @@
    * of the default light theme. Without this the role/ban <select> dropdowns
    * open as white OS menus against the dark UI. */
   color-scheme: dark;
-  --background: #0a0b0e;
-  --surface: #111318;
+
+  /*
+   * Surface elevation ladder (UI-kit v1). Four steps from the page base up to
+   * an input sitting on a card, instead of the single --surface we had. Pick by
+   * how "lifted" the element is: --background page → --surface chrome (rail, top
+   * bar, bottom nav) → --surface-card cards/panels → --surface-raised controls
+   * resting on a card.
+   */
+  --background: #0f1116;
+  --surface: #13161d;
+  --surface-card: #171a22;
+  --surface-raised: #20242e;
+
   --border: rgba(255, 255, 255, 0.07);
-  --border-strong: rgba(255, 255, 255, 0.16);
-  --foreground: #f3f5f8;
-  --foreground-secondary: rgba(243, 245, 248, 0.65);
-  --foreground-tertiary: rgba(243, 245, 248, 0.45);
+  --border-strong: rgba(255, 255, 255, 0.14);
+
+  /* Text ladder — one near-white, stepped by opacity. */
+  --foreground: #eef1f6;
+  --foreground-secondary: rgba(238, 241, 246, 0.62);
+  --foreground-tertiary: rgba(238, 241, 246, 0.45);
+
+  /*
+   * Semantic accents — ONE meaning each (design rule 3). Reference via the
+   * matching Tailwind colour (`text-acc`, `bg-hot/10`, `text-score`…), never a
+   * hardcoded hex in a component.
+   *   --acc      cyan    — primary action, selection, focus
+   *   --live     green   — presence, "survived", ready  (alias: --success)
+   *   --hot      magenta — new / hot / count badges
+   *   --score    amber   — score, priority, winner (GAME amber)
+   *   --danger   red     — leave / wrong / destructive
+   */
   --acc: #00e5ff;
-  --danger: #ff6b6b;
-  --success: #39d98a;
+  --acc-hover: #8cf3ff;
+  --live: #39d98a;
+  --success: var(--live);
+  --hot: #ff5cc0;
+  --score: #ffc24b;
+  --danger: #ff5a5a;
+
+  /*
+   * Moderation status family — a DISTINCT amber (--status-pending) from the
+   * game --score amber. Deliberately kept separate: review states are not game
+   * scoring. Do not unify them.
+   */
+  --status-pending: #facc15;
+  --status-approved: #4ade80;
+  --status-rejected: #f87171;
+
   /*
    * Podium colours for a top-three ranking (the 1v1 result's "top picked"
    * table). Deliberately desaturated against the reference metals so they read
@@ -40,24 +78,43 @@
   --medal-bronze: #cd8f5a;
 
   --radius-chip: 8px;
-  --radius-control: 10px;
-  --radius-card: 15px;
+  --radius-control: 11px;
+  --radius-tile: 14px;
+  --radius-card: 18px;
+  --radius-pill: 999px;
+
+  /* Signature easing for hover/press/tally transitions (design motion). */
+  --ease-signature: cubic-bezier(0.2, 0.7, 0.3, 1);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-surface: var(--surface);
+  --color-surface-card: var(--surface-card);
+  --color-surface-raised: var(--surface-raised);
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
   --color-foreground: var(--foreground);
   --color-foreground-secondary: var(--foreground-secondary);
   --color-foreground-tertiary: var(--foreground-tertiary);
   --color-acc: var(--acc);
-  --color-danger: var(--danger);
+  --color-acc-hover: var(--acc-hover);
+  --color-live: var(--live);
   --color-success: var(--success);
+  --color-hot: var(--hot);
+  --color-score: var(--score);
+  --color-danger: var(--danger);
+  --color-status-pending: var(--status-pending);
+  --color-status-approved: var(--status-approved);
+  --color-status-rejected: var(--status-rejected);
   --color-medal-gold: var(--medal-gold);
   --color-medal-silver: var(--medal-silver);
   --color-medal-bronze: var(--medal-bronze);
+  --radius-chip: var(--radius-chip);
+  --radius-control: var(--radius-control);
+  --radius-tile: var(--radius-tile);
+  --radius-card: var(--radius-card);
+  --radius-pill: var(--radius-pill);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -172,6 +229,40 @@ html[data-streamer-mode="on"]:not([data-streamer-hydrated])
 }
 
 /*
+ * Presence pulse — the green "IN A ROOM" / live dot fades in and out. Applied
+ * via `.animate-livedot` on a presence dot. Frozen under reduced-motion below.
+ */
+@keyframes livedot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+.animate-livedot {
+  animation: livedot 1.6s ease-in-out infinite;
+}
+
+/*
+ * Skeleton shimmer — a highlight band scrolls across a placeholder. The
+ * consumer sets the gradient background (a 320px-wide 3-stop band); this just
+ * drives the sweep. Applied via `.animate-shimmer`. Frozen under reduced-motion.
+ */
+@keyframes shimmer {
+  0% {
+    background-position: -320px 0;
+  }
+  100% {
+    background-position: 320px 0;
+  }
+}
+.animate-shimmer {
+  animation: shimmer 1.4s linear infinite;
+}
+
+/*
  * Staff nicknames — admin/manager/moderator handles render as an animated
  * gradient: a narrow secondary-color band sweeps left→right across a
  * primary-color base, with a soft glow in the role's secondary color. Colors
@@ -253,5 +344,11 @@ html[data-streamer-mode="on"]:not([data-streamer-hydrated])
   .room-item-flash {
     animation: none;
     border-color: var(--danger);
+  }
+
+  /* Presence dot rests fully opaque; skeletons rest with no sweep. */
+  .animate-livedot,
+  .animate-shimmer {
+    animation: none;
   }
 }

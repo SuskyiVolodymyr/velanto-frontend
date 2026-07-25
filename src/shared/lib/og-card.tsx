@@ -23,9 +23,9 @@ import type { ReactElement } from "react";
  * render time is impractical for this; accepted for now.
  */
 
-const BG = "#0a0b0e";
+const BG = "#0f1116";
 const ACC = "#00e5ff";
-const FG = "#f5f7fa";
+const FG = "#eef1f6";
 const MUTED = "#9aa4b2";
 const PLACEHOLDER_BG = "#1a1d24";
 

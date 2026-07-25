@@ -20,9 +20,9 @@ export const contentType = OG_CARD_CONTENT_TYPE;
 
 // Brand tokens, inlined because Satori resolves neither CSS variables nor
 // external stylesheets (mirror of app/globals.css --background / --acc).
-const BG = "#0a0b0e";
+const BG = "#0f1116";
 const ACC = "#00e5ff";
-const FG = "#f5f7fa";
+const FG = "#eef1f6";
 const MUTED = "#9aa4b2";
 
 export default function OpengraphImage() {
