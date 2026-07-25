@@ -6,10 +6,10 @@ import type {
   SlotMode,
 } from "@/src/shared/types/pack";
 
-function shuffle<T>(items: readonly T[]): T[] {
+function shuffle<T>(items: readonly T[], rng: () => number): T[] {
   const result = [...items];
   for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+    const j = Math.floor(rng() * (i + 1));
     [result[i], result[j]] = [result[j], result[i]];
   }
   return result;
@@ -35,11 +35,17 @@ export interface SelectedRound {
  *     order. Those items are reserved globally, so a random slot never draws one.
  *   - a `random` slot shuffles the group's items not reserved by any manual slot
  *     and not already used by an earlier random slot, and takes `count`.
- * Only the random draws are non-deterministic — re-run fresh per play.
+ * The random draws are the only source of variation, and they consume `rng` in
+ * a FIXED order — pools assigned in round order, then items drawn round → slot →
+ * count — so a given `rng` sequence always produces the identical rounds and
+ * items. Passing a seeded generator (see seeded-rng.ts) is what lets a play be
+ * saved and resumed; the default `Math.random` reproduces the original
+ * fresh-every-play behaviour for callers that don't need determinism.
  */
 export function resolveRoundSelections(
   groups: readonly Group[],
   rounds: readonly Round[],
+  rng: () => number = Math.random,
 ): SelectedRound[] {
   const groupById = new Map(groups.map((group) => [group.id, group]));
 
@@ -66,7 +72,7 @@ export function resolveRoundSelections(
       if (slot.groupMode !== "random") continue;
       const free = groups.filter((group) => !takenGroupIds.has(group.id));
       if (free.length === 0) continue;
-      const picked = shuffle(free)[0];
+      const picked = shuffle(free, rng)[0];
       takenGroupIds.add(picked.id);
       randomPoolBySlot.set(slot, picked.id);
     }
@@ -113,7 +119,7 @@ export function resolveRoundSelections(
         0,
         Math.min(slot.count ?? 0, available.length),
       );
-      const drawn = shuffle(available).slice(0, drawnCount);
+      const drawn = shuffle(available, rng).slice(0, drawnCount);
       for (const item of drawn) used.add(item.id);
       randomUsedByGroup.set(groupId ?? "", used);
       return { groupId, mode: slot.mode, items: drawn };

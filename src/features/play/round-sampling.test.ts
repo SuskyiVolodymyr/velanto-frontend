@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { resolveRoundSelections } from "./round-sampling";
+import { mulberry32 } from "./seeded-rng";
 import type { Group, Round } from "@/src/shared/types/pack";
 
 function textItem(id: string, title: string) {
@@ -126,6 +127,44 @@ describe("resolveRoundSelections", () => {
     const drawn = result[1].slots[0].items.map((i) => i.id);
     expect(drawn).toHaveLength(3);
     expect(drawn).not.toContain("1");
+  });
+
+  it("replays an identical draw for the same seed (resume determinism)", () => {
+    const items = Array.from({ length: 6 }, (_, i) =>
+      textItem(String(i + 1), `Item ${i + 1}`),
+    );
+    const groups: Group[] = [{ id: "g1", name: "Pool", items }];
+    // Multiple random rounds across one shared pool: exercises both the
+    // pool-assignment pass and the per-round item draw under one rng.
+    const rounds = [
+      round("r1", [{ groupId: "g1", mode: "random", count: 3 }]),
+      round("r2", [{ groupId: "g1", mode: "random", count: 3 }]),
+    ];
+
+    const first = resolveRoundSelections(groups, rounds, mulberry32(99));
+    const second = resolveRoundSelections(groups, rounds, mulberry32(99));
+
+    // Same seed ⇒ byte-for-byte identical selections (same items, same order).
+    const ids = (result: typeof first) =>
+      result.map((r) => r.slots.map((s) => s.items.map((i) => i.id)));
+    expect(ids(first)).toEqual(ids(second));
+  });
+
+  it("draws differently for different seeds", () => {
+    const items = Array.from({ length: 8 }, (_, i) =>
+      textItem(String(i + 1), `Item ${i + 1}`),
+    );
+    const groups: Group[] = [{ id: "g1", name: "Pool", items }];
+    const rounds = [round("r1", [{ groupId: "g1", mode: "random", count: 8 }])];
+
+    const a = resolveRoundSelections(groups, rounds, mulberry32(1))[0].slots[0]
+      .items.map((i) => i.id);
+    const b = resolveRoundSelections(groups, rounds, mulberry32(2))[0].slots[0]
+      .items.map((i) => i.id);
+
+    // Same 8 items, but the shuffle order differs between the two seeds.
+    expect(new Set(a)).toEqual(new Set(b));
+    expect(a).not.toEqual(b);
   });
 
   it("draws each side of a two-slot (versus) round independently", () => {
