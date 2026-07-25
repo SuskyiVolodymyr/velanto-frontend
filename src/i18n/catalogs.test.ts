@@ -45,6 +45,12 @@ const IDENTICAL_ALLOWED = new Set([
   "pack.topItemPct",
   // Loanword: "Email" is borrowed as-is in some locales.
   "auth.email",
+  // Format hint, not prose: the browse join-code placeholder demonstrates the
+  // "ABC-123" code shape and stays Latin/ASCII in every locale.
+  "home.joinRoom.codePlaceholder",
+  // Loanword: the "HOT" trending badge is kept as-is in several locales (zh/ar
+  // use a native word; the rest borrow "HOT", which is a legitimate match).
+  "home.card.hot",
 ]);
 
 /**

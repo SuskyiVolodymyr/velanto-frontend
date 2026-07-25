@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { PackCard } from "./PackCard";
+import { HOT_PLAYS_THRESHOLD } from "./hot-pack";
 import type { Pack } from "@/src/shared/types/pack";
 
 const BASE_PACK = {
@@ -28,7 +29,7 @@ const BASE_PACK = {
 };
 
 describe("PackCard", () => {
-  it("counts rounds for a save_one pack", () => {
+  it("shows the format pill and the rounds · plays meta line", () => {
     const pack: Pack = {
       ...BASE_PACK,
       format: "save_one",
@@ -43,8 +44,75 @@ describe("PackCard", () => {
     };
     render(<PackCard pack={pack} />);
 
-    expect(screen.getByText("2 rounds")).toBeInTheDocument();
     expect(screen.getByText("Save One")).toBeInTheDocument();
+    expect(screen.getByText("2 rounds · 0 plays")).toBeInTheDocument();
+    // Agreement % was dropped from the card in the 2.0.0 redesign.
+    expect(screen.queryByText(/agreement/)).not.toBeInTheDocument();
+  });
+
+  it("singularizes a one-round, one-play pack", () => {
+    const pack: Pack = { ...BASE_PACK, format: "save_one", totalPlays: 1 };
+    render(<PackCard pack={pack} />);
+
+    expect(screen.getByText("1 round · 1 play")).toBeInTheDocument();
+  });
+
+  it("shows the first tag as the cover chip", () => {
+    const pack: Pack = {
+      ...BASE_PACK,
+      format: "save_one",
+      tags: ["Gaming", "Anime"],
+    };
+    render(<PackCard pack={pack} />);
+
+    expect(screen.getByText("Gaming")).toBeInTheDocument();
+  });
+
+  describe("HOT badge (derived from real plays)", () => {
+    it("shows HOT at or above the play threshold", () => {
+      const pack: Pack = {
+        ...BASE_PACK,
+        format: "save_one",
+        totalPlays: HOT_PLAYS_THRESHOLD,
+      };
+      render(<PackCard pack={pack} />);
+
+      expect(screen.getByText("HOT")).toBeInTheDocument();
+    });
+
+    it("hides HOT below the threshold", () => {
+      const pack: Pack = {
+        ...BASE_PACK,
+        format: "save_one",
+        totalPlays: HOT_PLAYS_THRESHOLD - 1,
+      };
+      render(<PackCard pack={pack} />);
+
+      expect(screen.queryByText("HOT")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("primary action (format-gated)", () => {
+    it("shows a Play link to the pack for a single-player format", () => {
+      render(<PackCard pack={{ ...BASE_PACK, format: "save_one" }} />);
+
+      const play = screen.getByRole("link", { name: "Play" });
+      expect(play).toHaveAttribute("href", "/packs/pack-a");
+      expect(
+        screen.queryByRole("link", { name: "Play with friends" }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("shows Play with friends (not solo Play) for a room-only friends pack", () => {
+      render(<PackCard pack={{ ...BASE_PACK, format: "save_one_friends" }} />);
+
+      expect(
+        screen.getByRole("link", { name: "Play with friends" }),
+      ).toHaveAttribute("href", "/packs/pack-a");
+      expect(
+        screen.queryByRole("link", { name: "Play" }),
+      ).not.toBeInTheDocument();
+    });
   });
 
   it("shows the author @handle when the feed includes author info", () => {
@@ -71,7 +139,7 @@ describe("PackCard", () => {
     expect(screen.queryByText(/^@/)).not.toBeInTheDocument();
   });
 
-  describe("created time", () => {
+  describe("published time", () => {
     beforeEach(() => {
       vi.useFakeTimers();
     });
@@ -79,35 +147,41 @@ describe("PackCard", () => {
       vi.useRealTimers();
     });
 
-    function renderAgedPack(createdAt: string, now: string) {
+    function renderAgedPack(publishedAt: string, now: string) {
       vi.setSystemTime(new Date(now));
       render(
-        <PackCard pack={{ ...BASE_PACK, format: "save_one", createdAt }} />,
+        <PackCard
+          pack={{
+            ...BASE_PACK,
+            format: "save_one",
+            createdAt: publishedAt,
+            firstPublishedAt: publishedAt,
+          }}
+        />,
       );
     }
 
-    it("shows how long ago the pack was created, in a machine-readable <time>", () => {
+    it("shows how long ago the pack went public, in a machine-readable <time>", () => {
       renderAgedPack("2026-01-01T00:00:00.000Z", "2026-05-01T00:00:00.000Z");
       expect(screen.getByText("120 days ago").closest("time")).toHaveAttribute(
         "dateTime",
         "2026-01-01T00:00:00.000Z",
       );
-
-      // Minutes for a freshly created pack.
-      renderAgedPack("2026-01-01T00:00:00.000Z", "2026-01-01T00:02:00.000Z");
-      expect(screen.getByText("2 minutes ago")).toBeInTheDocument();
-
-      // Day-capped on purpose: even a year-old pack still reads in days.
-      renderAgedPack("2025-01-01T00:00:00.000Z", "2026-01-01T00:00:00.000Z");
-      expect(screen.getByText("365 days ago")).toBeInTheDocument();
     });
 
     // Intl.RelativeTimeFormat throws a RangeError on NaN, so an unparseable
-    // createdAt must not be allowed to take the whole card down.
-    it("renders the card without a timestamp when createdAt is unusable", () => {
+    // date must not be allowed to take the whole card down.
+    it("renders the card without a timestamp when the date is unusable", () => {
       vi.setSystemTime(new Date("2026-05-01T00:00:00.000Z"));
       render(
-        <PackCard pack={{ ...BASE_PACK, format: "save_one", createdAt: "" }} />,
+        <PackCard
+          pack={{
+            ...BASE_PACK,
+            format: "save_one",
+            createdAt: "",
+            firstPublishedAt: null,
+          }}
+        />,
       );
 
       expect(screen.getByText(BASE_PACK.title)).toBeInTheDocument();
@@ -115,8 +189,6 @@ describe("PackCard", () => {
     });
 
     // The card dates the pack by when it went PUBLIC, not when the row was made.
-    // A pack can sit as a draft or wait in moderation, so firstPublishedAt is the
-    // honest "published X ago"; createdAt is only the fallback.
     it("prefers firstPublishedAt over createdAt for the timestamp", () => {
       vi.setSystemTime(new Date("2026-05-01T00:00:00.000Z"));
       render(
@@ -130,7 +202,6 @@ describe("PackCard", () => {
         />,
       );
 
-      // 30 days since publication (Apr 1 → May 1), not 120 since creation.
       expect(screen.getByText("30 days ago").closest("time")).toHaveAttribute(
         "dateTime",
         "2026-04-01T00:00:00.000Z",
@@ -176,60 +247,8 @@ describe("PackCard", () => {
     };
     render(<PackCard pack={pack} />);
 
-    expect(screen.getByText("8 rounds")).toBeInTheDocument();
+    expect(screen.getByText("8 rounds · 0 plays")).toBeInTheDocument();
     expect(screen.getByText("NxN")).toBeInTheDocument();
-  });
-
-  it("shows 'No plays yet' when the pack has never been played", () => {
-    const pack: Pack = {
-      ...BASE_PACK,
-      format: "save_one",
-      groups: [{ id: "g1", name: "2016", items: [] }],
-      totalPlays: 0,
-      avgAgreementPercent: 0,
-    };
-    render(<PackCard pack={pack} />);
-
-    expect(screen.getByText("No plays yet")).toBeInTheDocument();
-  });
-
-  it("shows the play count and agreement percentage when the pack has been played", () => {
-    const pack: Pack = {
-      ...BASE_PACK,
-      format: "save_one",
-      groups: [{ id: "g1", name: "2016", items: [] }],
-      totalPlays: 1,
-      avgAgreementPercent: 75,
-    };
-    render(<PackCard pack={pack} />);
-
-    expect(screen.getByText("1 play · 75% agreement")).toBeInTheDocument();
-  });
-
-  it("pluralizes play count for more than one play", () => {
-    const pack: Pack = {
-      ...BASE_PACK,
-      format: "save_one",
-      groups: [{ id: "g1", name: "2016", items: [] }],
-      totalPlays: 124,
-      avgAgreementPercent: 68,
-    };
-    render(<PackCard pack={pack} />);
-
-    expect(screen.getByText("124 plays · 68% agreement")).toBeInTheDocument();
-  });
-
-  it("rounds a fractional agreement percentage for display", () => {
-    const pack: Pack = {
-      ...BASE_PACK,
-      format: "save_one",
-      groups: [{ id: "g1", name: "2016", items: [] }],
-      totalPlays: 3,
-      avgAgreementPercent: 33.3,
-    };
-    render(<PackCard pack={pack} />);
-
-    expect(screen.getByText("3 plays · 33% agreement")).toBeInTheDocument();
   });
 
   it("shows a pending badge when showStatus is true and the pack is pending", () => {

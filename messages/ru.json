@@ -859,7 +859,20 @@
     "paginationPrevious": "Назад",
     "paginationNext": "Вперёд",
     "groupLanguage": "Язык",
-    "filterByLanguage": "Фильтровать по языку"
+    "filterByLanguage": "Фильтровать по языку",
+    "allFormats": "Все форматы",
+    "showingRange": "Показано {first}–{last} из {total, plural, one {# пак} few {# пака} many {# паков} other {# пака}}",
+    "card": {
+      "hot": "HOT",
+      "roundsPlays": "{rounds, plural, one {# раунд} few {# раунда} many {# раундов} other {# раунда}} · {plays, plural, one {# игра} few {# игры} many {# игр} other {# игры}}",
+      "play": "Играть",
+      "playWithFriends": "Играть с друзьями"
+    },
+    "joinRoom": {
+      "title": "Присоединиться к комнате",
+      "subtitle": "Есть код от друга? Введите его — искать пак не нужно.",
+      "codePlaceholder": "ABC-123"
+    }
   },
   "formats": {
     "save_one": "Спаси одного",

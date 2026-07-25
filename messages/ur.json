@@ -859,7 +859,20 @@
     "paginationPrevious": "پچھلا",
     "paginationNext": "اگلا",
     "groupLanguage": "زبان",
-    "filterByLanguage": "زبان کے مطابق فلٹر کریں"
+    "filterByLanguage": "زبان کے مطابق فلٹر کریں",
+    "allFormats": "تمام فارمیٹس",
+    "showingRange": "{total, plural, one {# پیک} other {# پیکس}} میں سے {first}–{last} دکھائے جا رہے ہیں",
+    "card": {
+      "hot": "HOT",
+      "roundsPlays": "{rounds, plural, one {# راؤنڈ} other {# راؤنڈز}} · {plays, plural, one {# بار کھیلا گیا} other {# بار کھیلا گیا}}",
+      "play": "کھیلیں",
+      "playWithFriends": "دوستوں کے ساتھ کھیلیں"
+    },
+    "joinRoom": {
+      "title": "روم میں شامل ہوں",
+      "subtitle": "دوست سے کوڈ ملا؟ یہاں درج کریں — پیک تلاش کرنے کی ضرورت نہیں۔",
+      "codePlaceholder": "ABC-123"
+    }
   },
   "formats": {
     "save_one": "ایک بچاؤ",

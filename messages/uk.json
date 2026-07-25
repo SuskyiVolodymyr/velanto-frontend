@@ -859,7 +859,20 @@
     "paginationPrevious": "Попередня",
     "paginationNext": "Наступна",
     "groupLanguage": "Мова",
-    "filterByLanguage": "Фільтрувати за мовою"
+    "filterByLanguage": "Фільтрувати за мовою",
+    "allFormats": "Усі формати",
+    "showingRange": "Показано {first}–{last} з {total, plural, one {# пак} few {# паки} many {# паків} other {# пака}}",
+    "card": {
+      "hot": "HOT",
+      "roundsPlays": "{rounds, plural, one {# раунд} few {# раунди} many {# раундів} other {# раунда}} · {plays, plural, one {# гра} few {# гри} many {# ігор} other {# гри}}",
+      "play": "Грати",
+      "playWithFriends": "Грати з друзями"
+    },
+    "joinRoom": {
+      "title": "Приєднатися до кімнати",
+      "subtitle": "Отримали код від друга? Введіть його — шукати пак не потрібно.",
+      "codePlaceholder": "ABC-123"
+    }
   },
   "formats": {
     "save_one": "Врятуй одного",

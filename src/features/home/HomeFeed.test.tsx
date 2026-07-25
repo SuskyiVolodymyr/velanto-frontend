@@ -36,6 +36,15 @@ const PACK_A: Pack = {
   myVote: null,
 };
 
+// The secondary filters (tags + language) live behind the "Filters" popover and
+// the sort behind its own popover — open them before driving those controls.
+function openFilters(user: ReturnType<typeof userEvent.setup>) {
+  return user.click(screen.getByRole("button", { name: "Filters" }));
+}
+function openSort(user: ReturnType<typeof userEvent.setup>) {
+  return user.click(screen.getByRole("button", { name: "Sort by" }));
+}
+
 beforeEach(() => {
   vi.clearAllMocks();
   // The feed now persists filters to localStorage; clear it so each test starts
@@ -89,8 +98,7 @@ describe("HomeFeed", () => {
 
   // Regression test for the bug the browser caught and the unit tests didn't:
   // `languages` reached the QUERY KEY (so a refetch fired) but not the request,
-  // because PacksFeedFilters/getPacksFeed never forwarded it. The dropdown
-  // looked like it worked — the refetch just sent an identical URL.
+  // because PacksFeedFilters/getPacksFeed never forwarded it.
   it("re-fetches with the selected language when one is chosen", async () => {
     const user = userEvent.setup();
     vi.mocked(packsClient.list).mockResolvedValue({
@@ -102,6 +110,7 @@ describe("HomeFeed", () => {
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
 
+    await openFilters(user);
     await user.selectOptions(
       screen.getByRole("combobox", { name: /filter by language/i }),
       "Українська",
@@ -125,15 +134,13 @@ describe("HomeFeed", () => {
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
 
+    await openFilters(user);
     const language = screen.getByRole("combobox", {
       name: /filter by language/i,
     });
     await user.selectOptions(language, "Українська");
     await user.selectOptions(language, "All");
 
-    // Empty, not absent-and-forgotten: the client omits the param entirely at
-    // this point, because `?languages=` would be a 400 and "none selected"
-    // means "every language", not "no languages".
     await waitFor(() =>
       expect(packsClient.list).toHaveBeenLastCalledWith(
         expect.objectContaining({ languages: [] }),
@@ -152,6 +159,7 @@ describe("HomeFeed", () => {
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
 
+    // Format pills are inline in the bar — no popover to open.
     await user.click(screen.getByRole("button", { name: "Sacrifice One" }));
 
     await waitFor(() =>
@@ -177,10 +185,8 @@ describe("HomeFeed", () => {
       });
       render(<HomeFeed />);
       await screen.findByText("Best Anime Openings");
-      await user.selectOptions(
-        screen.getByRole("combobox", { name: "Sort by" }),
-        "date",
-      );
+      await openSort(user);
+      await user.click(screen.getByRole("button", { name: "Date" }));
       return user;
     }
 
@@ -220,9 +226,8 @@ describe("HomeFeed", () => {
       const user = await renderAndPickDate();
       await user.click(screen.getByRole("button", { name: "Oldest first" }));
 
-      const select = screen.getByRole("combobox", { name: "Sort by" });
-      await user.selectOptions(select, "popular");
-      await user.selectOptions(select, "date");
+      await user.click(screen.getByRole("button", { name: "Popular" }));
+      await user.click(screen.getByRole("button", { name: "Date" }));
 
       await waitFor(() =>
         expect(packsClient.list).toHaveBeenLastCalledWith({
@@ -249,6 +254,7 @@ describe("HomeFeed", () => {
     await screen.findByText("Best Anime Openings");
     await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
 
+    await openFilters(user);
     await user.click(screen.getByRole("button", { name: "Filter by tags" }));
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
     await user.click(screen.getByRole("checkbox", { name: "Music" }));
@@ -281,6 +287,7 @@ describe("HomeFeed", () => {
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
 
+    await openFilters(user);
     await user.click(screen.getByRole("button", { name: "Filter by tags" }));
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
     await user.click(screen.getByRole("checkbox", { name: "Music" }));
@@ -324,6 +331,7 @@ describe("HomeFeed", () => {
     await screen.findByText("Best Anime Openings");
     await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
 
+    await openFilters(user);
     await user.click(screen.getByRole("button", { name: "Filter by tags" }));
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
     await user.click(screen.getByRole("button", { name: "Cancel" }));
@@ -350,7 +358,6 @@ describe("HomeFeed", () => {
   describe("search", () => {
     // Search is URL-driven now: the global top-bar search routes to `/?q=…`, the
     // Server-Component home page reads it, and it arrives as `initialQuery`.
-    // There is no in-feed search box anymore.
     it("has no in-feed search box", async () => {
       vi.mocked(packsClient.list).mockResolvedValue({
         items: [PACK_A],
@@ -400,14 +407,9 @@ describe("HomeFeed", () => {
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
 
-      await user.selectOptions(
-        screen.getByRole("combobox", { name: "Sort by" }),
-        "date",
-      );
-      await user.selectOptions(
-        screen.getByRole("combobox", { name: "Sort by" }),
-        "popular",
-      );
+      await openSort(user);
+      await user.click(screen.getByRole("button", { name: "Date" }));
+      await user.click(screen.getByRole("button", { name: "Popular" }));
 
       await waitFor(() => {
         const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
@@ -427,7 +429,7 @@ describe("HomeFeed", () => {
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
 
-      // Default is month; switch to a different window and confirm it's sent.
+      await openSort(user);
       await user.click(screen.getByRole("button", { name: "Week" }));
 
       await waitFor(() => {
@@ -448,14 +450,11 @@ describe("HomeFeed", () => {
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
 
-      await user.selectOptions(
-        screen.getByRole("combobox", { name: "Sort by" }),
-        "date",
-      );
+      await openSort(user);
+      await user.click(screen.getByRole("button", { name: "Date" }));
 
       await waitFor(() => {
         const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
-        // Date flattens to the default newest-first order; the window drops out.
         expect(lastCall?.sort).toBe("newest");
         expect(lastCall?.window).toBeUndefined();
       });
@@ -472,21 +471,15 @@ describe("HomeFeed", () => {
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
 
-      // Move off the default window, then leave Popular and return to it.
+      await openSort(user);
       await user.click(screen.getByRole("button", { name: "Week" }));
       await waitFor(() => {
         const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
         expect(lastCall?.window).toBe("week");
       });
 
-      await user.selectOptions(
-        screen.getByRole("combobox", { name: "Sort by" }),
-        "date",
-      );
-      await user.selectOptions(
-        screen.getByRole("combobox", { name: "Sort by" }),
-        "popular",
-      );
+      await user.click(screen.getByRole("button", { name: "Date" }));
+      await user.click(screen.getByRole("button", { name: "Popular" }));
 
       await waitFor(() => {
         const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
@@ -532,16 +525,14 @@ describe("HomeFeed", () => {
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
 
-      await user.selectOptions(
-        screen.getByRole("combobox", { name: "Sort by" }),
-        "popular",
-      );
+      await openSort(user);
+      await user.click(screen.getByRole("button", { name: "Week" }));
 
       await waitFor(() => {
         const stored = JSON.parse(
           localStorage.getItem("velanto:pack-filters") ?? "{}",
         );
-        expect(stored.sort).toBe("popular");
+        expect(stored.window).toBe("week");
       });
     });
   });
@@ -552,7 +543,7 @@ describe("HomeFeed", () => {
       window.scrollTo = vi.fn();
     });
 
-    it("hides the pager when a single page covers every result", async () => {
+    it("shows the range label but no pager when a single page covers everything", async () => {
       vi.mocked(packsClient.list).mockResolvedValue({
         items: [PACK_A],
         total: 1,
@@ -565,6 +556,27 @@ describe("HomeFeed", () => {
       expect(
         screen.queryByRole("navigation", { name: "Pagination" }),
       ).not.toBeInTheDocument();
+      expect(screen.getByText("Showing 1–1 of 1 pack")).toBeInTheDocument();
+    });
+
+    it("shows the range for the current page", async () => {
+      const user = userEvent.setup();
+      vi.mocked(packsClient.list).mockResolvedValue({
+        items: [PACK_A],
+        total: 60,
+        page: 1,
+        limit: 25,
+      });
+      render(<HomeFeed />);
+      await screen.findByText("Best Anime Openings");
+      expect(screen.getByText("Showing 1–25 of 60 packs")).toBeInTheDocument();
+
+      await user.click(screen.getByRole("button", { name: "2" }));
+      await waitFor(() =>
+        expect(
+          screen.getByText("Showing 26–50 of 60 packs"),
+        ).toBeInTheDocument(),
+      );
     });
 
     it("requests the chosen page when a page button is clicked", async () => {
