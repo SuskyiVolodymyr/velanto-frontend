@@ -38,12 +38,12 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           id={fieldId}
           name={name}
           className={cn(
-            "h-11 w-full appearance-none rounded-[10px] border border-border bg-surface",
+            "h-[42px] w-full appearance-none rounded-control border border-white/10 bg-background",
             // Extra inline-end padding clears the arrow box so long option text
             // never runs underneath it.
             "ps-4 pe-12 text-sm text-foreground",
-            "transition-colors duration-200",
-            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
+            "transition-colors duration-150",
+            "focus:outline-none focus:border-acc",
             "disabled:pointer-events-none disabled:opacity-45",
           )}
           {...props}
