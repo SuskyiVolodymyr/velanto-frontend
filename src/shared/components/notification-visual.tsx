@@ -28,7 +28,7 @@ export interface NotificationVisual {
 // inline (the two hues a component is told never to hardcode). The other three
 // hues have no token equivalent.
 const ACCENT = "#00e5ff"; // mirrors --acc
-const DANGER = "#ff6b6b"; // mirrors --danger
+const DANGER = "#ff5a5a"; // mirrors --danger
 
 const VISUALS: Record<NotificationType, NotificationVisual> = {
   new_follower: { tone: ACCENT, Icon: UserPlus, actor: true },
