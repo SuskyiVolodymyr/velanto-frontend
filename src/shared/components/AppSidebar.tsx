@@ -30,14 +30,26 @@ interface NavItem {
 }
 
 // Order matches the mock: Browse · My packs · People · History · Suggestions ·
-// Rules. My packs / People point at the browse page with a `feed` query that
-// D1b will honor; the shell stays query-agnostic (no useSearchParams here — it
-// would de-opt every page out of static rendering) so only Browse/Rules carry a
-// distinct active state for now.
+// Rules. My packs and People are their own SSR routes now (2.0.0 shell), so the
+// active state is a clean pathname match with no query-param reading — the shell
+// stays query-agnostic (no useSearchParams here, which would de-opt every page
+// out of static rendering). Browse is `/` exactly so it doesn't light up on the
+// nested routes.
 const NAV_ITEMS: NavItem[] = [
   { key: "browse", href: "/", icon: Compass, isActive: (p) => p === "/" },
-  { key: "myPacks", href: "/?feed=mine", icon: Layers, requiresAuth: true },
-  { key: "people", href: "/?feed=people", icon: Users },
+  {
+    key: "myPacks",
+    href: "/my-packs",
+    icon: Layers,
+    requiresAuth: true,
+    isActive: (p) => p === "/my-packs",
+  },
+  {
+    key: "people",
+    href: "/people",
+    icon: Users,
+    isActive: (p) => p === "/people",
+  },
   { key: "history", href: null, icon: History },
   { key: "suggestions", href: null, icon: Lightbulb },
   {

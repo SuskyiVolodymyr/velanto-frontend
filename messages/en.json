@@ -1480,8 +1480,10 @@
     "empty": "No updates yet — check back soon."
   },
   "myPacks": {
-    "packsTab": "Packs",
-    "mineTab": "My packs",
+    "title": "My packs",
+    "subtitle": "Every pack you've created, across all moderation states.",
+    "metaTitle": "My packs — Velanto",
+    "metaDescription": "Manage the packs you've created on Velanto.",
     "loginRequired": "Log in to see your packs.",
     "loading": "Loading your packs…",
     "error": "Couldn't load your packs.",
@@ -1490,7 +1492,10 @@
     "all": "All"
   },
   "people": {
-    "tab": "People",
+    "title": "People",
+    "subtitle": "Search for creators and players, and follow the ones you like.",
+    "metaTitle": "People — Velanto",
+    "metaDescription": "Search Velanto for pack creators and players to follow.",
     "searchLabel": "Search people",
     "searchPlaceholder": "Search by username",
     "hint": "Type at least 2 characters to search.",

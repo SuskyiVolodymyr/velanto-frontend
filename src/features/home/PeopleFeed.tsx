@@ -17,7 +17,7 @@ import {
 const SEARCH_DEBOUNCE_MS = 300;
 
 /**
- * The "People" tab: find users by username and follow them. Public — a
+ * The `/people` route body: find users by username and follow them. Public — a
  * signed-out visitor can search and open profiles; the follow button only shows
  * for a signed-in viewer on someone else's row (FollowUserRow handles that).
  * Below the minimum query length we show a hint rather than an empty result, so

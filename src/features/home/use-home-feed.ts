@@ -22,20 +22,25 @@ import {
   writePackFilters,
 } from "@/src/features/home/pack-filters-storage";
 
-// Avoids firing a request per keystroke.
-const SEARCH_DEBOUNCE_MS = 300;
-
 export type FeedStatus = "loading" | "ready" | "error";
 
 // Owns the home-feed filter state and derives the React Query request from it,
 // so HomeFeed stays a thin layout orchestrator and the filter sidebar/results
 // stay purely presentational. The fetch itself lives in `usePacksFeed`.
-export function useHomeFeed(initialFeed?: PacksFeedResult) {
+//
+// Search is URL-driven now (the global top-bar search routes to `/?q=…`, which
+// the Server-Component home page reads and passes down as `initialQuery`) — the
+// feed no longer owns a text input. A new search is a fresh navigation, so the
+// home page keys this component on the query and it remounts with the new seed.
+export function useHomeFeed(
+  initialFeed?: PacksFeedResult,
+  initialQuery = "",
+) {
   const [format, setFormat] = useState<FormatFilterValue>("all");
   const [tags, setTags] = useState<PackTag[]>([]);
   const [languages, setLanguages] = useState<PackLanguage[]>([]);
-  const [searchInput, setSearchInput] = useState("");
-  const [query, setQuery] = useState("");
+  // Constant for a given mount: the search term comes from the URL, not a field.
+  const query = initialQuery;
   const [page, setPage] = useState(1);
   // Default to Popular / this month so the landing feed leads with what people
   // are actually playing, not the newest upload.
@@ -78,14 +83,6 @@ export function useHomeFeed(initialFeed?: PacksFeedResult) {
     writePackFilters({ format, tags, languages, sort, window, dateOrder });
   }, [hydrated, format, tags, languages, sort, window, dateOrder]);
 
-  useEffect(() => {
-    const timeout = setTimeout(
-      () => setQuery(searchInput.trim()),
-      SEARCH_DEBOUNCE_MS,
-    );
-    return () => clearTimeout(timeout);
-  }, [searchInput]);
-
   // Snap back to the first page whenever the active filters change, so
   // narrowing the results while deep in the list doesn't leave the user on a
   // now-out-of-range page. Done as an effect (not wrapped setters) to keep the
@@ -102,7 +99,7 @@ export function useHomeFeed(initialFeed?: PacksFeedResult) {
   }, [format, tags, languages, query, sort, window, dateOrder]);
 
   // Resolve the UI filter state into the request/query key: the "all" format
-  // sentinel and empty search collapse to undefined; the "date" sort flattens
+  // sentinel and an empty query collapse to undefined; the "date" sort flattens
   // into the backend's newest/oldest wire values; and `window` only rides along
   // under the popular sort.
   const filters = useMemo<PacksFeedFilters>(
@@ -121,11 +118,13 @@ export function useHomeFeed(initialFeed?: PacksFeedResult) {
   // Seed only the default-filters query with the server-rendered feed — other
   // combinations fetch on demand. The default is Popular / DEFAULT_POPULAR_WINDOW
   // (see the sort state above and getHomeFeedServer, which must fetch the same).
+  // The query is NOT part of this check: getHomeFeedServer fetches the default
+  // filters *for this same `q`*, so the seed already matches whatever `q` the
+  // URL carried on the first render — only a filter change invalidates it.
   const isDefaultFilters =
     format === "all" &&
     tags.length === 0 &&
     languages.length === 0 &&
-    !query &&
     page === 1 &&
     sort === "popular" &&
     window === DEFAULT_POPULAR_WINDOW;
@@ -159,8 +158,6 @@ export function useHomeFeed(initialFeed?: PacksFeedResult) {
     setTags,
     languages,
     setLanguages,
-    searchInput,
-    setSearchInput,
     packs,
     status,
     sort,
