@@ -92,26 +92,12 @@ describe("PackCard", () => {
     });
   });
 
-  describe("primary action (format-gated)", () => {
-    it("shows a Play link to the pack for a single-player format", () => {
+  describe("primary action", () => {
+    it("shows a Play link to the pack", () => {
       render(<PackCard pack={{ ...BASE_PACK, format: "save_one" }} />);
 
       const play = screen.getByRole("link", { name: "Play" });
       expect(play).toHaveAttribute("href", "/packs/pack-a");
-      expect(
-        screen.queryByRole("link", { name: "Play with friends" }),
-      ).not.toBeInTheDocument();
-    });
-
-    it("shows Play with friends (not solo Play) for a room-only friends pack", () => {
-      render(<PackCard pack={{ ...BASE_PACK, format: "save_one_friends" }} />);
-
-      expect(
-        screen.getByRole("link", { name: "Play with friends" }),
-      ).toHaveAttribute("href", "/packs/pack-a");
-      expect(
-        screen.queryByRole("link", { name: "Play" }),
-      ).not.toBeInTheDocument();
     });
   });
 

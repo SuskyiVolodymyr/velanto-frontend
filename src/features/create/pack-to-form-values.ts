@@ -9,10 +9,10 @@ import { DEFAULT_PACK_LANGUAGE } from "@/src/shared/types/pack-language";
  * dropped — the edit submits a full content replacement, and the backend keeps
  * ownership/status under its own control.
  *
- * Every one of the six formats — save_one_friends included — has an editor body,
- * so this returns values for all of them. The null path is a defensive guard for
- * a genuinely unknown wire format (a backend deployed ahead of this build);
- * callers render an unsupported state rather than a broken form.
+ * Every one of the five formats has an editor body, so this returns values for
+ * all of them. The null path is a defensive guard for a genuinely unknown wire
+ * format (a backend deployed ahead of this build); callers render an
+ * unsupported state rather than a broken form.
  */
 export function packToFormValues(pack: Pack): CreatePackValues | null {
   // /packs/[id]/edit fetches ANY pack by id, and `format` arrives as a raw

@@ -959,8 +959,7 @@
     "card": {
       "hot": "HOT",
       "roundsPlays": "{rounds, plural, one {# round} other {# rounds}} · {plays, plural, one {# play} other {# plays}}",
-      "play": "Play",
-      "playWithFriends": "Play with friends"
+      "play": "Play"
     },
     "joinRoom": {
       "title": "Join a room",
@@ -978,9 +977,7 @@
     "sacrifice_one": "Sacrifice One",
     "nxn": "NxN",
     "rank_blind": "Rank Blind",
-    "1v1": "1v1",
-    "_note": "save_one_friends is a full format now: a label here, a creator option (create.blurbSaveOneFriends), and howItPlays steps (pack.howItPlays.save_one_friends), all in every locale. It has NO single-player play copy (play.instruction*/pickedLabel map it to \"\") because it is played live in a room, not on the /play path — see PlayRouter, which 404s that route for it.",
-    "save_one_friends": "Save One (Friends)"
+    "1v1": "1v1"
   },
   "tagPicker": {
     "title": "Select tags",
@@ -1036,20 +1033,6 @@
         {
           "title": "Next group, same deal",
           "desc": "One cut per round, across every group."
-        }
-      ],
-      "save_one_friends": [
-        {
-          "title": "Gather 2-4 friends",
-          "desc": "Everyone joins one room together — each round shows one item per player, plus one extra."
-        },
-        {
-          "title": "Claim who to sacrifice",
-          "desc": "You each take one item to cut; two players can't claim the same one, so you watch the picks race in."
-        },
-        {
-          "title": "One survives",
-          "desc": "The single item nobody claimed is saved — play through every round together."
         }
       ],
       "nxn": [
@@ -1313,9 +1296,7 @@
     "editItemAria": "Edit {title}",
     "saveItem": "Save",
     "cancelEdit": "Cancel",
-    "randomPoolOption": "Random pool ({count} available)",
-    "blurbSaveOneFriends": "Save One, live with 2–4 friends in a room.",
-    "friendsHint": "Played live by 2–4 friends in a room. Each round shows one item per player plus one to survive (up to {count}), so every pool needs at least {count} items."
+    "randomPoolOption": "Random pool ({count} available)"
   },
   "profile": {
     "loginRequiredView": "You need to be logged in to view your profile.",

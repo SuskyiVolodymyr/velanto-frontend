@@ -29,9 +29,9 @@ export function EditPackScreen({ pack }: { pack: Pack }) {
   }
 
   // null means the pack's format is one this build doesn't know (a backend
-  // deployed ahead of the frontend) — every shipped format, save_one_friends
-  // included, seeds the form. Say so plainly rather than seeding a form with no
-  // matching option and a Save that silently fails validation.
+  // deployed ahead of the frontend) — every shipped format seeds the form. Say
+  // so plainly rather than seeding a form with no matching option and a Save
+  // that silently fails validation.
   const initialValues = packToFormValues(pack);
   if (!initialValues) {
     return (

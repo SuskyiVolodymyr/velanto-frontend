@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
-import { Play, Users } from "lucide-react";
+import { Play } from "lucide-react";
 import { Badge } from "@/src/shared/components/Badge";
 import { StatusBadge } from "@/src/shared/components/StatusBadge";
 import { CoverImage } from "@/src/shared/components/CoverImage";
@@ -12,15 +12,13 @@ import { Text } from "@/src/shared/components/Text";
 import { getRoundsCount } from "@/src/shared/lib/pack-display";
 import { formatRelativeTimeIntl } from "@/src/shared/lib/relative-time";
 import { isHotPack } from "@/src/features/home/hot-pack";
-import { isUiPackFormat, type Pack } from "@/src/shared/types/pack";
+import { type Pack } from "@/src/shared/types/pack";
 
 /**
  * A pack tile in the browse grid (2.0.0 redesign). The cover + body link to the
- * pack detail page; the format-appropriate primary action sits below as its own
- * control. Exactly one action shows, gated on the format's real capability
- * today: single-player formats get **Play**, and the room-only
- * `save_one_friends` gets **Play with friends** (the mock's "both on every
- * card" is the not-yet-built multiplayer-for-all — see the modes redesign).
+ * pack detail page; a **Play** action sits below as its own control. (Room play
+ * for every format is the not-yet-built multiplayer redesign — see the modes
+ * brief; today every pack is played solo.)
  *
  * The "HOT" badge is DERIVED from real play counts (see {@link isHotPack}); the
  * per-card likes count is intentionally not shown yet (waits on D3).
@@ -44,7 +42,6 @@ export function PackCard({
   const firstTag = pack.tags[0];
   const hot = isHotPack(pack);
   const showStatusBadge = showStatus && pack.status !== "approved";
-  const isSolo = isUiPackFormat(pack.format);
 
   return (
     <article className="flex h-full flex-col overflow-hidden rounded-[18px] border border-border bg-surface-card transition-[transform,border-color] duration-200 ease-[cubic-bezier(0.2,0.7,0.3,1)] hover:-translate-y-[3px] hover:border-white/[0.18]">
@@ -125,23 +122,10 @@ export function PackCard({
       <div className="px-[14px] pb-[14px]">
         <Link
           href={`/packs/${pack.id}`}
-          className={
-            isSolo
-              ? "flex h-[38px] w-full items-center justify-center gap-2 rounded-[11px] bg-white/[0.09] text-[13px] font-[650] text-foreground transition-colors hover:bg-acc hover:text-[#07131a]"
-              : "flex h-[38px] w-full items-center justify-center gap-2 rounded-[11px] border border-white/[0.12] text-[13px] font-semibold text-foreground-secondary transition-colors hover:border-white/[0.28] hover:bg-white/[0.05] hover:text-foreground"
-          }
+          className="flex h-[38px] w-full items-center justify-center gap-2 rounded-[11px] bg-white/[0.09] text-[13px] font-[650] text-foreground transition-colors hover:bg-acc hover:text-[#07131a]"
         >
-          {isSolo ? (
-            <>
-              <Play size={15} strokeWidth={2} fill="currentColor" aria-hidden />
-              {t("play")}
-            </>
-          ) : (
-            <>
-              <Users size={15} strokeWidth={2} aria-hidden />
-              {t("playWithFriends")}
-            </>
-          )}
+          <Play size={15} strokeWidth={2} fill="currentColor" aria-hidden />
+          {t("play")}
         </Link>
       </div>
     </article>
