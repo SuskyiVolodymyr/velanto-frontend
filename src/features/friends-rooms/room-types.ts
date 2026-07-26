@@ -24,7 +24,10 @@ export const MIN_PLAYERS = 2;
  *  - {@link ../home/JoinRoomCard} renders nothing while dormant;
  *  - {@link ./friends-rooms-presence-context} skips its `/mine` poll, so
  *    {@link ../../shared/components/SidebarRoomPill} and
- *    {@link ./RoomPresenceIndicator} stay empty via their no-rooms guards.
+ *    {@link ./RoomPresenceIndicator} stay empty via their no-rooms guards;
+ *  - {@link ./JoinByLink} (the `/rooms/join/[code]` landing) lands straight on
+ *    its "not found" state instead of bouncing a signed-out visitor through
+ *    sign-in to a guaranteed 404.
  *
  * `FriendsRoomEntry` (the pack-detail create/join) was separately unmounted from
  * `PackDetailScreen` in the redesign and revives with the same flip.
