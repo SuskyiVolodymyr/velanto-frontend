@@ -13,6 +13,11 @@ import { MAX_PLAYERS } from "@/src/features/friends-rooms/room-types";
  * renders nothing when signed out or seatless. The floating
  * {@link RoomPresenceIndicator} is constrained to mobile so the two never
  * double up on desktop.
+ *
+ * While rooms are dormant (see `ROOMS_DORMANT` in friends-rooms/room-types) the
+ * presence provider skips its `/mine` poll, so `rooms` is always empty and this
+ * pill hides through the no-rooms guard below — no room-specific gate needed
+ * here, and it reappears the moment rooms return.
  */
 export function SidebarRoomPill({ onNavigate }: { onNavigate?: () => void }) {
   const t = useTranslations("shell");

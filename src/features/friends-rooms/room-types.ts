@@ -14,6 +14,26 @@ import type { Item } from "@/src/shared/types/pack";
 export const MAX_PLAYERS = 4;
 export const MIN_PLAYERS = 2;
 
+/**
+ * Master switch for the whole live-room surface, and the ONE line to flip when
+ * rooms return. `true` while multiplayer is being rebuilt as the universal mode
+ * model: the backend's `createRoom` returns 503 and `joinByCode` 404, so no room
+ * can exist (velanto-backend#276, docs/multiplayer-modes-redesign.md). Every room
+ * ENTRY POINT reads this so users are never offered a flow that cannot succeed:
+ *
+ *  - {@link ../home/JoinRoomCard} renders nothing while dormant;
+ *  - {@link ./friends-rooms-presence-context} skips its `/mine` poll, so
+ *    {@link ../../shared/components/SidebarRoomPill} and
+ *    {@link ./RoomPresenceIndicator} stay empty via their no-rooms guards.
+ *
+ * `FriendsRoomEntry` (the pack-detail create/join) was separately unmounted from
+ * `PackDetailScreen` in the redesign and revives with the same flip.
+ *
+ * Typed `boolean` (not the literal `true`) on purpose: the components branch on
+ * it, and a literal type would make the other branch unreachable code.
+ */
+export const ROOMS_DORMANT: boolean = true;
+
 export type FriendsRoomStatus = "lobby" | "playing" | "finished" | "abandoned";
 
 /** Which screen the client shows. `between` = a round resolved, waiting on Next. */

@@ -29,6 +29,10 @@ function currentRoomId(pathname: string | null): string | null {
  *
  * Renders nothing when signed out, when there are no rooms, or — to avoid
  * redundancy — for the room whose screen you are currently on.
+ *
+ * While rooms are dormant (`ROOMS_DORMANT` in room-types) the presence provider
+ * skips its `/mine` poll, so `rooms` is always empty and this hides through the
+ * no-rooms guard below — it needs no room-specific gate of its own.
  */
 export function RoomPresenceIndicator() {
   const router = useRouter();

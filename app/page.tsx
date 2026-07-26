@@ -44,8 +44,10 @@ export default async function Home({
           {t("subtitle")}
         </Text>
       </div>
-      {/* Real join-by-code hero. The speculative "every pack plays with friends"
-          promo from the mock is deferred until multiplayer-for-all is built. */}
+      {/* Join-by-code hero. Self-hides while rooms are dormant (ROOMS_DORMANT),
+          so there is no dead-end join flow; revives when multiplayer returns.
+          The speculative "every pack plays with friends" promo from the mock is
+          deferred until multiplayer-for-all is built. */}
       <JoinRoomCard />
       {/* Personal, client-only resume rail — renders nothing on the server or
           when the browser has no in-progress plays, so it never affects the
