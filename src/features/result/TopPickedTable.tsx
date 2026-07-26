@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
+import { ProgressBar } from "@/src/shared/components/ProgressBar";
 import {
   ColumnHeading,
   RankCell,
@@ -70,7 +71,7 @@ export function TopPickedTable({
               <ColumnHeading align="end">
                 {t("topPickedPickedColumn")}
               </ColumnHeading>
-              <ColumnHeading align="end" className="w-20">
+              <ColumnHeading align="end" className="w-32">
                 {t("topPickedShareColumn")}
               </ColumnHeading>
             </tr>
@@ -102,12 +103,19 @@ export function TopPickedTable({
                     </Text>
                   </RankCell>
                   <RankCell style={style} align="end" last>
-                    <Text
-                      as="span"
-                      className="text-sm font-semibold tabular-nums text-acc"
-                    >
-                      {item.percentage}%
-                    </Text>
+                    <div className="flex items-center justify-end gap-2.5">
+                      <ProgressBar
+                        value={item.percentage}
+                        ariaLabel={t("topPickedShareColumn")}
+                        className="w-14"
+                      />
+                      <Text
+                        as="span"
+                        className="text-sm font-semibold tabular-nums text-acc"
+                      >
+                        {item.percentage}%
+                      </Text>
+                    </div>
                   </RankCell>
                 </tr>
               );

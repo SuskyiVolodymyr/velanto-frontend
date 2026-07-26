@@ -5,6 +5,7 @@ import { Fragment, useMemo, useState } from "react";
 import { Trash2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
+import { Badge } from "@/src/shared/components/Badge";
 import { Skeleton } from "@/src/shared/components/Skeleton";
 import { Button } from "@/src/shared/components/Button";
 import { Spinner } from "@/src/shared/components/Spinner";
@@ -37,6 +38,7 @@ import { renderCommentBody } from "./mention-text";
 function CommentView({
   packId,
   comment,
+  isPackCreator,
   canDelete,
   deleting,
   onDelete,
@@ -44,6 +46,8 @@ function CommentView({
 }: {
   packId: string;
   comment: Comment;
+  /** Whether this comment's author is the pack's own creator — shows a badge. */
+  isPackCreator: boolean;
   canDelete: boolean;
   deleting: boolean;
   onDelete: () => void;
@@ -91,6 +95,11 @@ function CommentView({
               </Hidden>
             )}
           </AuthorHoverTrigger>
+          {isPackCreator && (
+            <Badge variant="accent" className="shrink-0">
+              {t("creatorBadge")}
+            </Badge>
+          )}
           {/* The relative label is computed from `now`, so the server and the
               hydrating client can legitimately render different text (they
               render seconds apart). suppressHydrationWarning keeps the server
@@ -498,6 +507,7 @@ export function CommentSection({
                     <CommentView
                       packId={packId}
                       comment={root}
+                      isPackCreator={root.authorId === packAuthorId}
                       canDelete={canDelete(root)}
                       deleting={deletingId === root.id}
                       onDelete={() => handleDelete(root)}
@@ -518,6 +528,7 @@ export function CommentSection({
                             key={reply.id}
                             packId={packId}
                             comment={reply}
+                            isPackCreator={reply.authorId === packAuthorId}
                             canDelete={canDelete(reply)}
                             deleting={deletingId === reply.id}
                             onDelete={() => handleDelete(reply)}

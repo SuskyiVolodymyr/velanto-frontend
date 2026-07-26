@@ -517,6 +517,33 @@ describe("CommentSection", () => {
     });
   });
 
+  describe("creator badge", () => {
+    function listOnce(items: Comment[]) {
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items,
+        total: items.length,
+        page: 1,
+        limit: 10,
+      });
+    }
+
+    it("shows a Creator badge on a comment authored by the pack's own author", async () => {
+      listOnce([COMMENT_A]); // authored by u2
+      renderAuthedAs(USER, "u2"); // u2 owns the pack
+
+      await screen.findByText("Loved this pack.");
+      expect(screen.getByText("Creator")).toBeInTheDocument();
+    });
+
+    it("hides the Creator badge on a comment from anyone else", async () => {
+      listOnce([COMMENT_A]); // authored by u2
+      renderAuthedAs(USER, "someone-else");
+
+      await screen.findByText("Loved this pack.");
+      expect(screen.queryByText("Creator")).not.toBeInTheDocument();
+    });
+  });
+
   describe("threading (replies)", () => {
     const MODERATOR: User = { ...USER, id: "mod-1", role: "moderator" };
     const REPLY: Comment = {

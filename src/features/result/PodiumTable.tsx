@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
+import { ProgressBar } from "@/src/shared/components/ProgressBar";
 import {
   ColumnHeading,
   RankCell,
@@ -39,6 +40,9 @@ export function PodiumTable({ items }: { items: PodiumTally[] }) {
     [items],
   );
   const visible = ranked.slice(0, shown);
+  // Ranked is pre-sorted best-first, so the top row's total is the scale's max
+  // — stable as more rows load, unlike scaling against only the visible slice.
+  const maxTotal = ranked[0]?.total ?? 0;
 
   return (
     <>
@@ -62,7 +66,7 @@ export function PodiumTable({ items }: { items: PodiumTally[] }) {
               <ColumnHeading align="end" className="w-14">
                 {t("podiumThirdColumn")}
               </ColumnHeading>
-              <ColumnHeading align="end" className="w-16">
+              <ColumnHeading align="end" className="w-32">
                 {t("podiumTotalColumn")}
               </ColumnHeading>
             </tr>
@@ -89,12 +93,19 @@ export function PodiumTable({ items }: { items: PodiumTally[] }) {
                   <PlacementCell style={style} count={item.second} />
                   <PlacementCell style={style} count={item.third} />
                   <RankCell style={style} align="end" last>
-                    <Text
-                      as="span"
-                      className="text-sm font-semibold tabular-nums text-acc"
-                    >
-                      {item.total}
-                    </Text>
+                    <div className="flex items-center justify-end gap-2.5">
+                      <ProgressBar
+                        value={maxTotal > 0 ? (item.total / maxTotal) * 100 : 0}
+                        ariaLabel={t("podiumTotalColumn")}
+                        className="w-14"
+                      />
+                      <Text
+                        as="span"
+                        className="text-sm font-semibold tabular-nums text-acc"
+                      >
+                        {item.total}
+                      </Text>
+                    </div>
                   </RankCell>
                 </tr>
               );

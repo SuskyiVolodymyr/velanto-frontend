@@ -985,6 +985,7 @@
       ]
     },
     "comments": "Коментарі · {count}",
+    "creatorBadge": "Автор",
     "commentPlaceholder": "Поділись думками про цей пак…",
     "commentLabel": "Коментар",
     "post": "Опублікувати",
