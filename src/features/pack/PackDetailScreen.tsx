@@ -35,7 +35,8 @@ function SectionHeading({
     <div className="flex items-baseline gap-2.5">
       <Text
         as="h2"
-        className="text-[12px] font-bold uppercase tracking-[0.14em] text-foreground-tertiary"
+        variant="tertiary"
+        className="text-[12px] font-bold uppercase tracking-[0.14em]"
       >
         {children}
       </Text>
@@ -137,8 +138,42 @@ export function PackDetailScreen({
         <PackCoverBanner pack={pack} />
 
         <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_368px]">
+          {/* Sticky sidebar — DOM-FIRST on purpose: on mobile it stacks above
+              the main column (the design's play-panel-first order), and keeping
+              it first in the DOM means visual order matches reading/focus order.
+              lg:order-2 moves it to the right column on desktop, where the main
+              content (lg:order-1) sits on the left. */}
+          <aside className="flex flex-col gap-3.5 lg:sticky lg:top-[82px] lg:order-2">
+            {/* Play panel — rendered only when it has a real CTA: a single-
+                player play link, or the room entry for an APPROVED
+                save_one_friends pack. An unapproved room pack (author viewing
+                their own) gets no panel rather than an empty bordered box. The
+                mock's "modes for every pack" is the unbuilt multiplayer epic and
+                is deliberately not faked here. */}
+            {(isUiPackFormat(pack.format) || isApproved) && (
+              <Panel className="flex flex-col gap-3 rounded-[20px] p-5">
+                {isUiPackFormat(pack.format) ? (
+                  <>
+                    <PackPlayButton packId={pack.id} />
+                    <PackPlayEstimate pack={pack} />
+                  </>
+                ) : (
+                  <FriendsRoomEntry packId={pack.id} />
+                )}
+              </Panel>
+            )}
+
+            <PackCreatorCard pack={pack} />
+
+            <PackOwnerActions
+              packId={pack.id}
+              packAuthorId={pack.authorId}
+              packStatus={pack.status}
+            />
+          </aside>
+
           {/* Main column */}
-          <div className="order-2 flex min-w-0 flex-col gap-8 lg:order-1">
+          <div className="flex min-w-0 flex-col gap-8 lg:order-1">
             <section className="flex flex-col gap-4">
               <PackOwnerStatusBadge
                 packAuthorId={pack.authorId}
@@ -192,32 +227,6 @@ export function PackDetailScreen({
 
             <CommentSection packId={pack.id} packAuthorId={pack.authorId} />
           </div>
-
-          {/* Sticky sidebar: play, creator, and owner controls. */}
-          <aside className="order-1 flex flex-col gap-3.5 lg:sticky lg:top-[82px] lg:order-2">
-            <Panel className="flex flex-col gap-3 rounded-[20px] p-5">
-              {/* Only single-player formats have a /play path. save_one_friends
-                  is played in a room, so it shows the room entry instead — the
-                  one honest multiplayer surface today (the mock's "modes for
-                  every pack" is the unbuilt multiplayer-for-all epic). */}
-              {isUiPackFormat(pack.format) ? (
-                <>
-                  <PackPlayButton packId={pack.id} />
-                  <PackPlayEstimate pack={pack} />
-                </>
-              ) : (
-                isApproved && <FriendsRoomEntry packId={pack.id} />
-              )}
-            </Panel>
-
-            <PackCreatorCard pack={pack} />
-
-            <PackOwnerActions
-              packId={pack.id}
-              packAuthorId={pack.authorId}
-              packStatus={pack.status}
-            />
-          </aside>
         </div>
       </main>
     </>

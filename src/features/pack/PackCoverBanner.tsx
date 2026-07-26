@@ -30,7 +30,7 @@ export function PackCoverBanner({ pack }: { pack: Pack }) {
 
       <div className="relative flex max-w-[760px] flex-col gap-[11px]">
         <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-pill bg-acc/[0.16] px-[11px] py-1 text-[11.5px] font-bold tracking-[0.04em] text-[#8CF3FF]">
+          <span className="rounded-pill bg-acc/[0.16] px-[11px] py-1 text-[11.5px] font-bold tracking-[0.04em] text-acc-hover">
             {tFormat(pack.format)}
           </span>
           {isHotPack(pack) && (
