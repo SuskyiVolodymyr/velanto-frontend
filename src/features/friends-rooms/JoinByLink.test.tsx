@@ -23,6 +23,19 @@ vi.mock("@/src/shared/lib/auth-context", () => ({
   useAuth: () => ({ user: currentUser, status: currentStatus }),
 }));
 
+// Toggle dormancy per test while preserving room-types' other exports. Default:
+// rooms LIVE, so the flows below exercise the revived join/redirect behaviour.
+const flag = vi.hoisted(() => ({ dormant: false }));
+vi.mock("./room-types", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("./room-types")>();
+  return {
+    ...actual,
+    get ROOMS_DORMANT() {
+      return flag.dormant;
+    },
+  };
+});
+
 function asUser(): User {
   return {
     id: "u1",
@@ -37,6 +50,20 @@ beforeEach(() => {
   vi.clearAllMocks();
   currentUser = asUser();
   currentStatus = "authenticated";
+  flag.dormant = false;
+});
+
+describe("JoinByLink — rooms dormant", () => {
+  it("shows the not-found state without joining or bouncing a signed-out visitor through sign-in", async () => {
+    flag.dormant = true;
+    currentUser = null;
+    currentStatus = "unauthenticated";
+    render(<JoinByLink code="ABC123" />);
+
+    expect(await screen.findByText("Room not found")).toBeInTheDocument();
+    expect(join).not.toHaveBeenCalled();
+    expect(replace).not.toHaveBeenCalled();
+  });
 });
 
 describe("JoinByLink — signed out", () => {

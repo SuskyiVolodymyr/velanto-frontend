@@ -21,6 +21,23 @@ vi.mock("@/src/features/friends-rooms/friends-rooms-client", () => ({
   friendsRoomsClient: { join },
 }));
 
+// Control the dormancy flag per test without disturbing room-types' other
+// exports (MAX_PLAYERS, the wire types). Default: rooms LIVE, so the behaviour
+// tests below exercise the revived join flow; one test flips it to dormant.
+const flag = vi.hoisted(() => ({ dormant: false }));
+vi.mock("@/src/features/friends-rooms/room-types", async (importOriginal) => {
+  const actual =
+    await importOriginal<
+      typeof import("@/src/features/friends-rooms/room-types")
+    >();
+  return {
+    ...actual,
+    get ROOMS_DORMANT() {
+      return flag.dormant;
+    },
+  };
+});
+
 function renderCard() {
   return render(
     <NextIntlClientProvider locale="en" messages={messages}>
@@ -32,9 +49,18 @@ function renderCard() {
 beforeEach(() => {
   vi.clearAllMocks();
   auth.current = { user: { id: "u1" } };
+  flag.dormant = false;
 });
 
 describe("JoinRoomCard", () => {
+  it("renders nothing while rooms are dormant", () => {
+    flag.dormant = true;
+    const { container } = renderCard();
+
+    expect(container).toBeEmptyDOMElement();
+    expect(screen.queryByLabelText("Room code")).not.toBeInTheDocument();
+  });
+
   it("normalizes the code, joins, and routes into the room", async () => {
     const user = userEvent.setup();
     join.mockResolvedValue({ id: "room-9" });

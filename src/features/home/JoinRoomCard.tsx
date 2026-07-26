@@ -11,6 +11,7 @@ import { useAuth } from "@/src/shared/lib/auth-context";
 import { ApiError } from "@/src/shared/lib/api-client";
 import { cn } from "@/src/shared/lib/cn";
 import { friendsRoomsClient } from "@/src/features/friends-rooms/friends-rooms-client";
+import { ROOMS_DORMANT } from "@/src/features/friends-rooms/room-types";
 
 /** Which inline error to show under the code field. `null` = none. */
 type JoinErrorKey =
@@ -31,8 +32,18 @@ type JoinErrorKey =
  * concealment applies (that rule is about revealing a code on screen). Signed-
  * out visitors get the anon-gate BLOCK: the field and button are disabled with a
  * sign-in tooltip, never a surprise redirect.
+ *
+ * While rooms are dormant (`ROOMS_DORMANT`) there is no live room to join, so
+ * the hero is not rendered at all — the gate lives HERE, before any hook, so the
+ * inner card never mounts and never even resolves its `home.joinRoom` strings.
+ * One flip of the flag revives it.
  */
 export function JoinRoomCard() {
+  if (ROOMS_DORMANT) return null;
+  return <JoinRoomCardInner />;
+}
+
+function JoinRoomCardInner() {
   const t = useTranslations("home.joinRoom");
   const tEntry = useTranslations("room.entry");
   const router = useRouter();
