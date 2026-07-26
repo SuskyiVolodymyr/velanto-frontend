@@ -4,6 +4,7 @@ import { cn } from "@/src/shared/lib/cn";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
+import { BackButton } from "@/src/shared/components/BackButton";
 import { PackCoverBanner } from "@/src/features/pack/PackCoverBanner";
 import { PackHeroStats } from "@/src/features/pack/PackHeroStats";
 import { PackHowItPlays } from "@/src/features/pack/PackHowItPlays";
@@ -13,6 +14,7 @@ import { TopPickedTable } from "@/src/features/result/TopPickedTable";
 import { PodiumTable } from "@/src/features/result/PodiumTable";
 import { PackCreatorCard } from "@/src/features/pack/PackCreatorCard";
 import { PackPlayButton } from "@/src/features/pack/PackPlayButton";
+import { PackPlayEstimate } from "@/src/features/pack/PackPlayEstimate";
 import { FriendsRoomEntry } from "@/src/features/friends-rooms/FriendsRoomEntry";
 import { PackOwnerActions } from "@/src/features/pack/PackOwnerActions";
 import { PackOwnerStatusBadge } from "@/src/features/pack/PackOwnerStatusBadge";
@@ -22,15 +24,46 @@ import { ShareButton } from "@/src/features/share/ShareButton";
 import { isUiPackFormat, type Pack } from "@/src/shared/types/pack";
 import type { PackResults, RankResults } from "@/src/shared/types/play-results";
 
-function SectionHeading({ children }: { children: ReactNode }) {
+function SectionHeading({
+  children,
+  aside,
+}: {
+  children: ReactNode;
+  aside?: ReactNode;
+}) {
   return (
-    <Text
-      as="h2"
-      variant="tertiary"
-      className="mb-4 text-xs font-medium uppercase tracking-[0.14em]"
-    >
+    <div className="flex items-baseline gap-2.5">
+      <Text
+        as="h2"
+        className="text-[12px] font-bold uppercase tracking-[0.14em] text-foreground-tertiary"
+      >
+        {children}
+      </Text>
+      {aside && (
+        <Text variant="tertiary" className="text-[12.5px]">
+          {aside}
+        </Text>
+      )}
+    </div>
+  );
+}
+
+// A card surface for the sidebar and stat panels — the mock's raised
+// surface-card with a hairline border.
+function Panel({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  // Radius and padding come from the caller — the sidebar panels and the stat
+  // panel differ, and cn() is a plain join (not tailwind-merge), so a base
+  // radius here would collide with an override rather than be replaced.
+  return (
+    <div className={cn("border border-border bg-surface-card", className)}>
       {children}
-    </Text>
+    </div>
   );
 }
 
@@ -41,14 +74,12 @@ export function PackDetailScreen({
   pack: Pack;
   results: PackResults | RankResults;
 }) {
-  const tFormat = useTranslations("formats");
   const t = useTranslations("pack");
+  const tFormat = useTranslations("formats");
   const tResult = useTranslations("result");
-  // The pack-wide ranking, in whichever shape this format has one: "which item
-  // wins most" for the four pick formats, "how often each item reached the
-  // podium" for rank_blind, whose results are placements rather than picks.
-  // Null until there is something to rank — that is when the generic per-round
-  // breakdown below stands in.
+
+  // The pack-wide ranking, in whichever shape this format has one (see below).
+  // Null until there is something to rank — the per-round breakdown stands in.
   let ranking: { heading: string; table: ReactNode } | null = null;
   if (results.format === "rank_blind") {
     const podium = results.podium ?? [];
@@ -61,7 +92,6 @@ export function PackDetailScreen({
   } else {
     const topItems = results.topItems ?? [];
     if (topItems.length > 0) {
-      // Same number under the verb the player actually performed.
       const heading = tResult(
         pack.format === "save_one"
           ? "topSavedHeading"
@@ -77,64 +107,22 @@ export function PackDetailScreen({
   }
   const sectionLabel =
     pack.format === "nxn" ? t("sectionCategory") : t("sectionGroup");
+  const isApproved = pack.status === "approved";
 
   return (
-    <main className={cn(PACK_CONTAINER, "flex-1 py-10")}>
-      <div className="flex flex-col gap-11">
-        <PackCoverBanner pack={pack} />
-
-        {/* Info row: description + primary actions on the left, stats and the
-            (secondary) vote control on the right. */}
-        <section className="flex flex-wrap gap-10">
-          <div className="flex min-w-[280px] flex-1 basis-[420px] flex-col gap-5">
-            <PackOwnerStatusBadge
-              packAuthorId={pack.authorId}
-              status={pack.status}
-            />
-
-            {pack.description && (
-              <Text
-                variant="secondary"
-                className="max-w-xl text-base leading-relaxed"
-              >
-                {pack.description}
-              </Text>
-            )}
-
-            {pack.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {pack.tags.map((tag) => (
-                  <Badge key={tag}>{tag}</Badge>
-                ))}
-              </div>
-            )}
-
-            <div className="flex flex-wrap items-center gap-3.5">
-              {/* save_one_friends (velanto-backend#258) is no longer excluded
-                  here: it has no single-player /play path (that still 404s), so
-                  instead of Play we offer the room entry points — Create room /
-                  Join by code — once the pack is approved. Every other UI format
-                  keeps the plain Play button. */}
-              {isUiPackFormat(pack.format) && (
-                <PackPlayButton packId={pack.id} />
-              )}
-              {pack.format === "save_one_friends" &&
-                pack.status === "approved" && (
-                  <FriendsRoomEntry packId={pack.id} />
-                )}
-              {pack.status === "approved" && (
-                <ShareButton path={`/packs/${pack.id}`} />
-              )}
-              <PackOwnerActions
-                packId={pack.id}
-                packAuthorId={pack.authorId}
-                packStatus={pack.status}
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col items-start gap-5">
-            <PackHeroStats pack={pack} />
+    <>
+      {/* Sticky action bar: back to browse on the left, share + the (secondary)
+          vote control on the right. */}
+      <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
+        <div
+          className={cn(
+            PACK_CONTAINER,
+            "flex items-center gap-3 py-3 max-[720px]:px-4",
+          )}
+        >
+          <BackButton href="/" />
+          <div className="ms-auto flex items-center gap-2.5">
+            {isApproved && <ShareButton path={`/packs/${pack.id}`} />}
             <VoteButtons
               packId={pack.id}
               initialLikes={pack.likes}
@@ -142,42 +130,96 @@ export function PackDetailScreen({
               initialMyVote={pack.myVote}
             />
           </div>
-        </section>
-
-        <section>
-          <SectionHeading>
-            {t("howItPlaysHeading", { format: tFormat(pack.format) })}
-          </SectionHeading>
-          <PackHowItPlays format={pack.format} />
-        </section>
-
-        <section>
-          <SectionHeading>
-            {t("roundsHeading", { section: sectionLabel })}
-          </SectionHeading>
-          <RoundChips pack={pack} />
-        </section>
-
-        {/* The pack-wide ranking IS the statistic here — the generic per-round
-            breakdown says far less about it, and divides by every play of the
-            pack rather than by the rounds an item actually appeared in. Falls
-            back to that breakdown only when there is nothing to rank yet. */}
-        {ranking ? (
-          <section>
-            <SectionHeading>{ranking.heading}</SectionHeading>
-            {ranking.table}
-          </section>
-        ) : (
-          <section>
-            <SectionHeading>{t("playerStats")}</SectionHeading>
-            <PackStats results={results} />
-          </section>
-        )}
-
-        <PackCreatorCard pack={pack} />
-
-        <CommentSection packId={pack.id} packAuthorId={pack.authorId} />
+        </div>
       </div>
-    </main>
+
+      <main className={cn(PACK_CONTAINER, "flex-1 pb-16 pt-[18px]")}>
+        <PackCoverBanner pack={pack} />
+
+        <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_368px]">
+          {/* Main column */}
+          <div className="order-2 flex min-w-0 flex-col gap-8 lg:order-1">
+            <section className="flex flex-col gap-4">
+              <PackOwnerStatusBadge
+                packAuthorId={pack.authorId}
+                status={pack.status}
+              />
+              {pack.description && (
+                <Text
+                  variant="secondary"
+                  className="max-w-[66ch] text-[15.5px] leading-[1.62] text-pretty"
+                >
+                  {pack.description}
+                </Text>
+              )}
+              {pack.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {pack.tags.map((tag) => (
+                    <Badge key={tag}>{tag}</Badge>
+                  ))}
+                </div>
+              )}
+              <PackHeroStats pack={pack} />
+            </section>
+
+            <section className="flex flex-col gap-3.5">
+              <SectionHeading>
+                {t("howItPlaysHeading", { format: tFormat(pack.format) })}
+              </SectionHeading>
+              <PackHowItPlays format={pack.format} />
+            </section>
+
+            <section className="flex flex-col gap-3.5">
+              <SectionHeading>
+                {t("roundsHeading", { section: sectionLabel })}
+              </SectionHeading>
+              <RoundChips pack={pack} />
+            </section>
+
+            {ranking ? (
+              <section className="flex flex-col gap-3.5">
+                <SectionHeading>{ranking.heading}</SectionHeading>
+                <Panel className="rounded-[18px] p-[18px]">
+                  {ranking.table}
+                </Panel>
+              </section>
+            ) : (
+              <section className="flex flex-col gap-3.5">
+                <SectionHeading>{t("playerStats")}</SectionHeading>
+                <PackStats results={results} />
+              </section>
+            )}
+
+            <CommentSection packId={pack.id} packAuthorId={pack.authorId} />
+          </div>
+
+          {/* Sticky sidebar: play, creator, and owner controls. */}
+          <aside className="order-1 flex flex-col gap-3.5 lg:sticky lg:top-[82px] lg:order-2">
+            <Panel className="flex flex-col gap-3 rounded-[20px] p-5">
+              {/* Only single-player formats have a /play path. save_one_friends
+                  is played in a room, so it shows the room entry instead — the
+                  one honest multiplayer surface today (the mock's "modes for
+                  every pack" is the unbuilt multiplayer-for-all epic). */}
+              {isUiPackFormat(pack.format) ? (
+                <>
+                  <PackPlayButton packId={pack.id} />
+                  <PackPlayEstimate pack={pack} />
+                </>
+              ) : (
+                isApproved && <FriendsRoomEntry packId={pack.id} />
+              )}
+            </Panel>
+
+            <PackCreatorCard pack={pack} />
+
+            <PackOwnerActions
+              packId={pack.id}
+              packAuthorId={pack.authorId}
+              packStatus={pack.status}
+            />
+          </aside>
+        </div>
+      </main>
+    </>
   );
 }
