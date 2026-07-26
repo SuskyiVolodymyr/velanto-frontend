@@ -65,7 +65,6 @@ describe("cross-repo mirrored constants (velanto-backend contract)", () => {
       "nxn",
       "rank_blind",
       "1v1",
-      "save_one_friends",
     ]);
   });
 

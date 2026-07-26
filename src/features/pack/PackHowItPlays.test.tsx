@@ -12,15 +12,6 @@ describe("PackHowItPlays", () => {
     expect(screen.getByText("1")).toBeInTheDocument();
   });
 
-  // save_one_friends is now a shipping, user-facing format, so it has its own
-  // how-it-plays steps like every other. (It used to be the "no entry" fixture
-  // here — that role moved to the unknown-format test below when the multiplayer
-  // UI landed and the catalog gained this key.)
-  it("renders the steps for save_one_friends", () => {
-    render(<PackHowItPlays format={"save_one_friends" as PackFormat} />);
-    expect(screen.getByText("1")).toBeInTheDocument();
-  });
-
   // The real guard: `t.raw` on a MISSING key returns next-intl's fallback STRING,
   // not undefined, so `steps.map(...)` would throw. PackDetailScreen is a Server
   // Component that renders this unconditionally, so that would take the entire

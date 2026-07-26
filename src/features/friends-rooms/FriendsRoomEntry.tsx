@@ -18,9 +18,11 @@ type JoinErrorKey =
   "emptyCode" | "errorNotFound" | "errorUnavailable" | "errorGeneric";
 
 /**
- * The play entry points for a `save_one_friends` pack, shown on the pack detail
- * page in place of the single-player Play button. Two registered-users-only
- * actions:
+ * The room play entry points for a pack. Kept as the room infrastructure the
+ * multiplayer redesign will revive, but currently UNMOUNTED: the pack detail
+ * page shows the solo Play button for every pack while rooms are dormant (the
+ * `save_one_friends` format was retired — see docs/multiplayer-modes-redesign.md
+ * and velanto-backend#276). Two registered-users-only actions:
  *
  *  - **Create room** opens a fresh room over this pack and routes the host to it.
  *  - **Join by code** opens a modal to enter a friend's room code and routes in.

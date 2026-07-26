@@ -103,8 +103,8 @@ export function PackApprovalsTab() {
             }
             options={[
               { value: "", label: t("allFormats") },
-              // Every format is a filterable option now, each with a
-              // FORMAT_LABELS entry (save_one_friends included).
+              // Every format is a filterable option, each with a FORMAT_LABELS
+              // entry; derived from PACK_FORMATS so it can't drift.
               ...PACK_FORMATS.map((format) => ({
                 value: format,
                 label: FORMAT_LABELS[format],

@@ -8,7 +8,13 @@ import type { MyRoomSummary, RoomState } from "./room-types";
  * request/response parts.
  */
 export const friendsRoomsClient = {
-  /** Open a room over a save_one_friends pack. The caller becomes the host. */
+  /**
+   * Open a room over a pack. The caller becomes the host.
+   *
+   * Rooms are DORMANT while the universal room/mode model is rebuilt (#276):
+   * the backend responds 503 to this call for now. Kept as the room infra that
+   * the redesign will revive. See docs/multiplayer-modes-redesign.md.
+   */
   create: (packId: string) =>
     apiClient.post<RoomState>("/friends-rooms", { packId }),
 

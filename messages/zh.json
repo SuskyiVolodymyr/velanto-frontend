@@ -865,8 +865,7 @@
     "card": {
       "hot": "热门",
       "roundsPlays": "{rounds, plural, other {# 轮}} · {plays, plural, other {# 次游玩}}",
-      "play": "开玩",
-      "playWithFriends": "与好友同玩"
+      "play": "开玩"
     },
     "joinRoom": {
       "title": "加入房间",
@@ -884,8 +883,7 @@
     "sacrifice_one": "淘汰一个",
     "nxn": "NxN",
     "rank_blind": "盲排",
-    "1v1": "1v1",
-    "save_one_friends": "留一个（好友同玩）"
+    "1v1": "1v1"
   },
   "tagPicker": {
     "title": "选择标签",
@@ -941,20 +939,6 @@
         {
           "title": "下一组，规则照旧",
           "desc": "每轮淘汰一个，组组如此。"
-        }
-      ],
-      "save_one_friends": [
-        {
-          "title": "召集 2-4 位好友",
-          "desc": "大家一起进入同一个房间——每轮为每位玩家亮出一个选项，再多加一个。"
-        },
-        {
-          "title": "认领要淘汰谁",
-          "desc": "你们各自划掉一个选项；两人不能认领同一个，所以你能看着大家的选择接连锁定。"
-        },
-        {
-          "title": "留下一个",
-          "desc": "没人认领的那个选项被保留下来——一起打完每一轮。"
         }
       ],
       "nxn": [
@@ -1218,9 +1202,7 @@
     "editItemAria": "编辑 {title}",
     "saveItem": "保存",
     "cancelEdit": "取消",
-    "randomPoolOption": "随机池（可用 {count} 个）",
-    "blurbSaveOneFriends": "与 2–4 位好友在房间里实时游玩「保留其一」。",
-    "friendsHint": "与 2–4 位好友在房间里实时游玩。每轮为每位玩家显示一个项目，再加一个幸存项（最多 {count} 个），因此每个池至少需要 {count} 个项目。"
+    "randomPoolOption": "随机池（可用 {count} 个）"
   },
   "profile": {
     "loginRequiredView": "你需要先登录才能查看个人资料。",

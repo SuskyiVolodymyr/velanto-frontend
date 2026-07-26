@@ -1,6 +1,5 @@
 import { describe, expect, it } from "vitest";
 import { FORMAT_FILTER_VALUES } from "./filter-options";
-import { PACK_FORMATS } from "@/src/shared/types/pack";
 
 describe("FORMAT_FILTER_VALUES", () => {
   it("starts with the 'all' sentinel", () => {
@@ -19,14 +18,6 @@ describe("FORMAT_FILTER_VALUES", () => {
       "nxn",
       "rank_blind",
       "1v1",
-      "save_one_friends",
     ]);
-  });
-
-  // save_one_friends is filterable: its cards lead to a detail page with a room
-  // entry, so a chip is no dead end. Derived from PACK_FORMATS, so it can't drift.
-  it("includes save_one_friends", () => {
-    expect(FORMAT_FILTER_VALUES).toContain("save_one_friends");
-    expect(PACK_FORMATS).toContain("save_one_friends");
   });
 });

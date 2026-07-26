@@ -15,13 +15,12 @@ import { PodiumTable } from "@/src/features/result/PodiumTable";
 import { PackCreatorCard } from "@/src/features/pack/PackCreatorCard";
 import { PackPlayButton } from "@/src/features/pack/PackPlayButton";
 import { PackPlayEstimate } from "@/src/features/pack/PackPlayEstimate";
-import { FriendsRoomEntry } from "@/src/features/friends-rooms/FriendsRoomEntry";
 import { PackOwnerActions } from "@/src/features/pack/PackOwnerActions";
 import { PackOwnerStatusBadge } from "@/src/features/pack/PackOwnerStatusBadge";
 import { CommentSection } from "@/src/features/pack/CommentSection";
 import { VoteButtons } from "@/src/features/pack/VoteButtons";
 import { ShareButton } from "@/src/features/share/ShareButton";
-import { isUiPackFormat, type Pack } from "@/src/shared/types/pack";
+import { type Pack } from "@/src/shared/types/pack";
 import type { PackResults, RankResults } from "@/src/shared/types/play-results";
 
 function SectionHeading({
@@ -144,24 +143,13 @@ export function PackDetailScreen({
               lg:order-2 moves it to the right column on desktop, where the main
               content (lg:order-1) sits on the left. */}
           <aside className="flex flex-col gap-3.5 lg:sticky lg:top-[82px] lg:order-2">
-            {/* Play panel — rendered only when it has a real CTA: a single-
-                player play link, or the room entry for an APPROVED
-                save_one_friends pack. An unapproved room pack (author viewing
-                their own) gets no panel rather than an empty bordered box. The
-                mock's "modes for every pack" is the unbuilt multiplayer epic and
-                is deliberately not faked here. */}
-            {(isUiPackFormat(pack.format) || isApproved) && (
-              <Panel className="flex flex-col gap-3 rounded-[20px] p-5">
-                {isUiPackFormat(pack.format) ? (
-                  <>
-                    <PackPlayButton packId={pack.id} />
-                    <PackPlayEstimate pack={pack} />
-                  </>
-                ) : (
-                  <FriendsRoomEntry packId={pack.id} />
-                )}
-              </Panel>
-            )}
+            {/* Play panel. Every pack is played solo today; room play for all
+                formats is the unbuilt multiplayer redesign and is deliberately
+                not faked here. */}
+            <Panel className="flex flex-col gap-3 rounded-[20px] p-5">
+              <PackPlayButton packId={pack.id} />
+              <PackPlayEstimate pack={pack} />
+            </Panel>
 
             <PackCreatorCard pack={pack} />
 

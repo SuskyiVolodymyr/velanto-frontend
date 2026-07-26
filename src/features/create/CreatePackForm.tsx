@@ -21,12 +21,10 @@ import { PackMetaFields } from "@/src/features/create/PackMetaFields";
 import { FormatSection } from "@/src/features/create/FormatSection";
 import { PoolsSection } from "@/src/features/create/PoolsSection";
 import { RoundsEditor } from "@/src/features/create/RoundsEditor";
-import { FriendsRoundsEditor } from "@/src/features/create/FriendsRoundsEditor";
 import { VersusEditor } from "@/src/features/create/VersusEditor";
 import {
   newGroup,
   newRound,
-  newFriendsRound,
   versusRounds,
 } from "@/src/features/create/create-pack.defaults";
 import {
@@ -45,31 +43,20 @@ function isVersusFormat(format: CreatePackValues["format"]): boolean {
   return format === "nxn" || format === "1v1";
 }
 
-type RoundFamily = "versus" | "friends" | "elimination";
+type RoundFamily = "versus" | "elimination";
 
-// Which body a format uses. The three families have incompatible round shapes
-// (2-slot versus, 1-slot friends with no count, 1-slot elimination with a
-// count/pins), so switching between them reshapes `rounds`.
+// Which body a format uses. The two families have incompatible round shapes
+// (2-slot versus, 1-slot elimination with a count/pins), so switching between
+// them reshapes `rounds`.
 function familyOf(format: CreatePackValues["format"]): RoundFamily {
   if (isVersusFormat(format)) return "versus";
-  if (format === "save_one_friends") return "friends";
   return "elimination";
 }
 
 // The family the current rounds are already shaped for — read back so a switch
 // WITHIN a family (e.g. save_one → rank_blind) leaves the author's rounds alone.
 function roundsFamily(rounds: CreatePackValues["rounds"]): RoundFamily {
-  const slot = rounds[0]?.slots[0];
   if (rounds[0]?.slots.length === 2) return "versus";
-  // A friends slot is the only single-slot random draw with no count and no
-  // pinned items; an elimination random slot always carries a count.
-  if (
-    slot &&
-    slot.mode === "random" &&
-    slot.count === undefined &&
-    !slot.itemIds
-  )
-    return "friends";
   return "elimination";
 }
 
@@ -188,8 +175,6 @@ export function CreatePackForm({
       setValue("rounds", versusRounds(aId, bId, DEFAULT_VERSUS_ROUNDS, 1), {
         shouldDirty: true,
       });
-    } else if (target === "friends") {
-      setValue("rounds", [newFriendsRound(firstId)], { shouldDirty: true });
     } else {
       setValue("rounds", [newRound(firstId)], { shouldDirty: true });
     }
@@ -269,13 +254,7 @@ export function CreatePackForm({
 
         <PoolsSection />
 
-        {familyOf(format) === "versus" ? (
-          <VersusEditor />
-        ) : familyOf(format) === "friends" ? (
-          <FriendsRoundsEditor />
-        ) : (
-          <RoundsEditor />
-        )}
+        {familyOf(format) === "versus" ? <VersusEditor /> : <RoundsEditor />}
 
         {errors.root?.message && (
           <Text variant="danger" role="alert" className="text-sm">

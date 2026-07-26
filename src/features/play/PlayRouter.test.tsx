@@ -1,7 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { PlayRouter } from "./PlayRouter";
-import { playsClient } from "@/src/shared/lib/plays-client";
 import type { Pack } from "@/src/shared/types/pack";
 
 const notFound = vi.hoisted(() =>
@@ -73,35 +72,9 @@ describe("PlayRouter", () => {
     },
   );
 
-  // save_one_friends is played in a ROOM, never on the single-player /play path,
-  // so this route 404s it by design. It must not reach PlayScreen — the wrong
-  // mechanic would run, the instruction copy would render as the literal "play."
-  // and the play would be RECORDED (anonymous plays count toward pack stats),
-  // which is data corruption, not a cosmetic bug.
-  describe("save_one_friends — played in a room, not on /play", () => {
-    const friendsPack: Pack = { ...BASE_PACK, format: "save_one_friends" };
-
-    it("does not render PlayScreen", () => {
-      expect(() => render(<PlayRouter pack={friendsPack} />)).toThrow(
-        "NEXT_NOT_FOUND",
-      );
-      expect(screen.queryByText("PlayScreen")).not.toBeInTheDocument();
-    });
-
-    it("404s instead of falling through to a play screen", () => {
-      expect(() => render(<PlayRouter pack={friendsPack} />)).toThrow();
-      expect(notFound).toHaveBeenCalled();
-    });
-
-    it("records no play", () => {
-      expect(() => render(<PlayRouter pack={friendsPack} />)).toThrow();
-      expect(playsClient.record).not.toHaveBeenCalled();
-    });
-  });
-
-  // A format the API knows and this build does not must behave like
-  // save_one_friends, not like save_one: the `never` parameter is only a
-  // compile-time gate, and API data outruns the deployed bundle.
+  // A format the API knows and this build does not must 404 rather than default
+  // to save_one: the `never` parameter is only a compile-time gate, and API data
+  // outruns the deployed bundle.
   it("404s for an unknown wire format rather than defaulting to PlayScreen", () => {
     const rogue = { ...BASE_PACK, format: "telepathy" } as unknown as Pack;
     expect(() => render(<PlayRouter pack={rogue} />)).toThrow();
