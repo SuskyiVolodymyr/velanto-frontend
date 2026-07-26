@@ -93,12 +93,21 @@ export function PodiumTable({ items }: { items: PodiumTally[] }) {
                   <PlacementCell style={style} count={item.second} />
                   <PlacementCell style={style} count={item.third} />
                   <RankCell style={style} align="end" last>
+                    {/* The bar is decorative — the total right beside it
+                        already says the same thing as text, so it stays out
+                        of the accessibility tree rather than announcing a
+                        scaled ratio that appears nowhere in the visible UI.
+                        Its scale is relative to the top row's total, not an
+                        absolute 0–100 (unlike TopPickedTable's identical-looking
+                        bar) — deliberate, since podium totals have no natural
+                        percentage; don't "fix" the two to match. */}
                     <div className="flex items-center justify-end gap-2.5">
-                      <ProgressBar
-                        value={maxTotal > 0 ? (item.total / maxTotal) * 100 : 0}
-                        ariaLabel={t("podiumTotalColumn")}
-                        className="w-14"
-                      />
+                      <span aria-hidden className="contents">
+                        <ProgressBar
+                          value={maxTotal > 0 ? (item.total / maxTotal) * 100 : 0}
+                          className="w-14"
+                        />
+                      </span>
                       <Text
                         as="span"
                         className="text-sm font-semibold tabular-nums text-acc"

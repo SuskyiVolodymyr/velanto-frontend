@@ -9,9 +9,10 @@ export interface ProgressBarProps {
 }
 
 /**
- * A thin determinate progress track with a cyan fill. Used by the resume card
- * ("Round 3 of 11") and anywhere a 0–100 completion needs showing. For an
- * indeterminate busy state use {@link LoadingState}/{@link Spinner} instead.
+ * A thin determinate progress track with a cyan fill, for anywhere a 0–100
+ * completion or relative magnitude needs showing (e.g. the result screens'
+ * ranking tables). For an indeterminate busy state use
+ * {@link LoadingState}/{@link Spinner} instead.
  */
 export function ProgressBar({ value, ariaLabel, className }: ProgressBarProps) {
   const pct = Math.max(0, Math.min(100, value));

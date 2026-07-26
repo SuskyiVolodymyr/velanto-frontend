@@ -61,4 +61,26 @@ describe("sitemap", () => {
     expect(urls.some((u) => u.includes("/packs/"))).toBe(false);
     expect(urls.some((u) => u.includes("/users/"))).toBe(false);
   });
+
+  it("uses submittedAt over createdAt for a pack's lastModified, since createdAt never changes after creation", async () => {
+    vi.spyOn(globalThis, "fetch").mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          items: [
+            {
+              ...pack("p1", "u1"),
+              createdAt: "2026-01-01T00:00:00.000Z",
+              submittedAt: "2026-03-15T00:00:00.000Z",
+            },
+          ],
+        }),
+        { status: 200 },
+      ),
+    );
+
+    const entries = await sitemap();
+    const packEntry = entries.find((e) => e.url === `${SITE_URL}/packs/p1`);
+
+    expect(packEntry?.lastModified).toEqual(new Date("2026-03-15T00:00:00.000Z"));
+  });
 });

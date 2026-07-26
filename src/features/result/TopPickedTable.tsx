@@ -103,12 +103,14 @@ export function TopPickedTable({
                     </Text>
                   </RankCell>
                   <RankCell style={style} align="end" last>
+                    {/* The bar is decorative — the percentage right beside it
+                        already says the same thing as text, so the bar stays
+                        out of the accessibility tree rather than making every
+                        row's share announce twice. */}
                     <div className="flex items-center justify-end gap-2.5">
-                      <ProgressBar
-                        value={item.percentage}
-                        ariaLabel={t("topPickedShareColumn")}
-                        className="w-14"
-                      />
+                      <span aria-hidden className="contents">
+                        <ProgressBar value={item.percentage} className="w-14" />
+                      </span>
                       <Text
                         as="span"
                         className="text-sm font-semibold tabular-nums text-acc"

@@ -542,6 +542,25 @@ describe("CommentSection", () => {
       await screen.findByText("Loved this pack.");
       expect(screen.queryByText("Creator")).not.toBeInTheDocument();
     });
+
+    it("badges only the reply that's the pack author, not the root, when they differ", async () => {
+      // Root (c1) authored by u2; reply authored by u3, the pack's owner —
+      // guards against a copy-paste slip that checks root.authorId on both rows.
+      const reply: Comment = {
+        id: "reply-1",
+        packId: "pack-1",
+        authorId: "u3",
+        authorUsername: "carol",
+        body: "I agree with this.",
+        createdAt: "2026-01-02T00:00:00.000Z",
+        parentId: "c1",
+      };
+      listOnce([{ ...COMMENT_A, replyCount: 1, replies: [reply] }]);
+      renderAuthedAs(USER, "u3"); // u3 owns the pack
+
+      await screen.findByText("I agree with this.");
+      expect(screen.getAllByText("Creator")).toHaveLength(1);
+    });
   });
 
   describe("threading (replies)", () => {
