@@ -58,12 +58,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const packs = await fetchApprovedPacks();
 
-  const packRoutes: MetadataRoute.Sitemap = packs.map((pack) => ({
-    url: `${SITE_URL}/packs/${pack.id}`,
-    lastModified: pack.createdAt ? new Date(pack.createdAt) : now,
-    changeFrequency: "weekly",
-    priority: 0.7,
-  }));
+  const packRoutes: MetadataRoute.Sitemap = packs.map((pack) => {
+    // submittedAt bumps on a re-moderated edit; createdAt never changes after
+    // creation, so it alone would never signal freshness for an edited pack.
+    const modified = pack.submittedAt ?? pack.createdAt;
+    return {
+      url: `${SITE_URL}/packs/${pack.id}`,
+      lastModified: modified ? new Date(modified) : now,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    };
+  });
 
   // No public users-list endpoint exists — derive indexable profile URLs from
   // the (public) authors of the approved packs above, de-duplicated.

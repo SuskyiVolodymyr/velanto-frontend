@@ -517,6 +517,52 @@ describe("CommentSection", () => {
     });
   });
 
+  describe("creator badge", () => {
+    function listOnce(items: Comment[]) {
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items,
+        total: items.length,
+        page: 1,
+        limit: 10,
+      });
+    }
+
+    it("shows a Creator badge on a comment authored by the pack's own author", async () => {
+      listOnce([COMMENT_A]); // authored by u2
+      renderAuthedAs(USER, "u2"); // u2 owns the pack
+
+      await screen.findByText("Loved this pack.");
+      expect(screen.getByText("Creator")).toBeInTheDocument();
+    });
+
+    it("hides the Creator badge on a comment from anyone else", async () => {
+      listOnce([COMMENT_A]); // authored by u2
+      renderAuthedAs(USER, "someone-else");
+
+      await screen.findByText("Loved this pack.");
+      expect(screen.queryByText("Creator")).not.toBeInTheDocument();
+    });
+
+    it("badges only the reply that's the pack author, not the root, when they differ", async () => {
+      // Root (c1) authored by u2; reply authored by u3, the pack's owner —
+      // guards against a copy-paste slip that checks root.authorId on both rows.
+      const reply: Comment = {
+        id: "reply-1",
+        packId: "pack-1",
+        authorId: "u3",
+        authorUsername: "carol",
+        body: "I agree with this.",
+        createdAt: "2026-01-02T00:00:00.000Z",
+        parentId: "c1",
+      };
+      listOnce([{ ...COMMENT_A, replyCount: 1, replies: [reply] }]);
+      renderAuthedAs(USER, "u3"); // u3 owns the pack
+
+      await screen.findByText("I agree with this.");
+      expect(screen.getAllByText("Creator")).toHaveLength(1);
+    });
+  });
+
   describe("threading (replies)", () => {
     const MODERATOR: User = { ...USER, id: "mod-1", role: "moderator" };
     const REPLY: Comment = {

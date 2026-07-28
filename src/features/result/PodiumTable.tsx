@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
+import { ProgressBar } from "@/src/shared/components/ProgressBar";
 import {
   ColumnHeading,
   RankCell,
@@ -39,6 +40,9 @@ export function PodiumTable({ items }: { items: PodiumTally[] }) {
     [items],
   );
   const visible = ranked.slice(0, shown);
+  // Ranked is pre-sorted best-first, so the top row's total is the scale's max
+  // — stable as more rows load, unlike scaling against only the visible slice.
+  const maxTotal = ranked[0]?.total ?? 0;
 
   return (
     <>
@@ -62,7 +66,7 @@ export function PodiumTable({ items }: { items: PodiumTally[] }) {
               <ColumnHeading align="end" className="w-14">
                 {t("podiumThirdColumn")}
               </ColumnHeading>
-              <ColumnHeading align="end" className="w-16">
+              <ColumnHeading align="end" className="w-32">
                 {t("podiumTotalColumn")}
               </ColumnHeading>
             </tr>
@@ -89,12 +93,28 @@ export function PodiumTable({ items }: { items: PodiumTally[] }) {
                   <PlacementCell style={style} count={item.second} />
                   <PlacementCell style={style} count={item.third} />
                   <RankCell style={style} align="end" last>
-                    <Text
-                      as="span"
-                      className="text-sm font-semibold tabular-nums text-acc"
-                    >
-                      {item.total}
-                    </Text>
+                    {/* The bar is decorative — the total right beside it
+                        already says the same thing as text, so it stays out
+                        of the accessibility tree rather than announcing a
+                        scaled ratio that appears nowhere in the visible UI.
+                        Its scale is relative to the top row's total, not an
+                        absolute 0–100 (unlike TopPickedTable's identical-looking
+                        bar) — deliberate, since podium totals have no natural
+                        percentage; don't "fix" the two to match. */}
+                    <div className="flex items-center justify-end gap-2.5">
+                      <span aria-hidden className="contents">
+                        <ProgressBar
+                          value={maxTotal > 0 ? (item.total / maxTotal) * 100 : 0}
+                          className="w-14"
+                        />
+                      </span>
+                      <Text
+                        as="span"
+                        className="text-sm font-semibold tabular-nums text-acc"
+                      >
+                        {item.total}
+                      </Text>
+                    </div>
                   </RankCell>
                 </tr>
               );

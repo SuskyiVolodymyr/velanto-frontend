@@ -985,6 +985,7 @@
       ]
     },
     "comments": "Комментарии · {count}",
+    "creatorBadge": "Автор",
     "commentPlaceholder": "Поделись мыслями об этом паке…",
     "commentLabel": "Комментарий",
     "post": "Опубликовать",
