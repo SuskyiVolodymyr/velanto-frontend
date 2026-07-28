@@ -1526,6 +1526,8 @@
     "metaNewTitle": "新建反馈 — Velanto"
   },
   "docs": {
+    "metaTitle": "文档 — Velanto",
+    "metaDescription": "了解 Velanto 的使用方法——创建题包、五种赛制、游玩方式，以及连接 AI 助手的 API。",
     "secOverview": "概述",
     "secCreators": "创作者",
     "secPlayers": "玩家",
