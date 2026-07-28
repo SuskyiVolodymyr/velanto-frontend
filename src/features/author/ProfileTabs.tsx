@@ -88,7 +88,10 @@ export function ProfileTabs({
               key={tabItem}
               type="button"
               role="tab"
+              id={`profile-tab-${tabItem}`}
               aria-selected={selected}
+              aria-controls={`profile-tabpanel-${tabItem}`}
+              tabIndex={selected ? 0 : -1}
               onClick={() => setActiveTab(tabItem)}
               className={cn(
                 "flex items-center gap-1.5 border-b-2 px-1 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
@@ -111,9 +114,16 @@ export function ProfileTabs({
         })}
       </div>
 
-      {activeTab === "packs" && packsPanel}
-      {activeTab === "people" && peoplePanel(initialPeopleSubTab)}
-      {activeTab === "history" && historyPanel}
+      <div
+        role="tabpanel"
+        id={`profile-tabpanel-${activeTab}`}
+        aria-labelledby={`profile-tab-${activeTab}`}
+        tabIndex={0}
+      >
+        {activeTab === "packs" && packsPanel}
+        {activeTab === "people" && peoplePanel(initialPeopleSubTab)}
+        {activeTab === "history" && historyPanel}
+      </div>
     </div>
   );
 }

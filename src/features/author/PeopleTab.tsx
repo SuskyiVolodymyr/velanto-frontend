@@ -90,13 +90,20 @@ function PeopleListPanel({
   }
   if (items.length === 0) {
     return (
-      <EmptyState title={t(kind === "followers" ? "noFollowers" : "noFollowing")} />
+      <EmptyState
+        title={t(kind === "followers" ? "noFollowers" : "noFollowing")}
+      />
     );
   }
 
   return (
     <div>
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(288px,1fr))] gap-3">
+      {/* min(288px,100%), not a bare 288px: AuthorScreen's container is only
+          ~264px wide at a 320px viewport (px-7 both sides), so a hard 288px
+          minimum would force horizontal overflow. AuthorPackList's own
+          auto-fill grid gets away with a bare 262px only because 262 < 264 —
+          this card is wider, so it needs the clamp explicitly. */}
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(min(288px,100%),1fr))] gap-3">
         {items.map((user) => (
           <div
             key={user.id}

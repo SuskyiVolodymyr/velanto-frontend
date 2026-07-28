@@ -32,9 +32,7 @@ describe("ProfileTabs", () => {
   it("shows the Packs/People counts as a pill beside each label", () => {
     renderTabs();
     expect(screen.getByRole("tab", { name: /Packs/ })).toHaveTextContent("5");
-    expect(screen.getByRole("tab", { name: /People/ })).toHaveTextContent(
-      "12",
-    );
+    expect(screen.getByRole("tab", { name: /People/ })).toHaveTextContent("12");
   });
 
   it("labels the History tab 'Recently played' for a visitor and 'History' for the owner", () => {
@@ -59,7 +57,9 @@ describe("ProfileTabs", () => {
   it("shows the Packs panel by default with the Packs tab marked selected", () => {
     renderTabs();
     expect(screen.getByText("Packs panel content")).toBeInTheDocument();
-    expect(screen.queryByText("People panel (followers)")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("People panel (followers)"),
+    ).not.toBeInTheDocument();
     expect(screen.getByRole("tab", { name: /Packs/ })).toHaveAttribute(
       "aria-selected",
       "true",
@@ -102,5 +102,20 @@ describe("ProfileTabs", () => {
       "aria-selected",
       "true",
     );
+  });
+
+  it("associates the active tab with its tabpanel via aria-controls/id/aria-labelledby", async () => {
+    renderTabs();
+    const packsTab = screen.getByRole("tab", { name: /Packs/ });
+    const panel = screen.getByRole("tabpanel");
+    expect(packsTab).toHaveAttribute("aria-controls", panel.id);
+    expect(panel).toHaveAttribute("aria-labelledby", packsTab.id);
+
+    await userEvent.click(screen.getByRole("tab", { name: /People/ }));
+
+    const peopleTab = screen.getByRole("tab", { name: /People/ });
+    const updatedPanel = screen.getByRole("tabpanel");
+    expect(peopleTab).toHaveAttribute("aria-controls", updatedPanel.id);
+    expect(updatedPanel).toHaveAttribute("aria-labelledby", peopleTab.id);
   });
 });

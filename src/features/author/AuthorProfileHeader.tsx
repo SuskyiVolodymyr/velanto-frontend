@@ -20,9 +20,18 @@ export type PeopleSubTab = "followers" | "following";
 const statPairClass = "inline-flex items-baseline gap-1.5";
 const statValueClass = "text-lg font-bold tabular-nums text-foreground";
 const statLabelClass = "text-sm text-foreground-tertiary";
+// `group` + `group-hover:` on the children: the value/label spans each set
+// their own text color, so a plain `hover:text-foreground` on the button
+// itself can never cascade down to them. The label additionally underlines
+// on hover/focus so the clickable stats read as distinct from the plain
+// Packs stat in every state, not just on identical colors.
 const statButtonClass = cn(
   statPairClass,
-  "rounded-[4px] transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
+  "group rounded-[4px] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
+);
+const statButtonLabelClass = cn(
+  statLabelClass,
+  "group-hover:text-foreground group-hover:underline group-focus-visible:text-foreground",
 );
 
 /**
@@ -104,7 +113,16 @@ export function AuthorProfileHeader({
       <div className="mb-8 flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex min-w-0 items-center gap-5">
           <div className="relative flex-none">
-            <Hidden kind="avatar" id={authorId}>
+            <Hidden
+              kind="avatar"
+              id={authorId}
+              // Hidden's own wrapper needs the size too — while streamer
+              // mode is on it renders a reveal button at h-full/w-full
+              // instead of AvatarLightbox, which would collapse to 0×0
+              // without this (the redacted avatar would be invisible and
+              // unclickable).
+              className="h-[76px] w-[76px] sm:h-24 sm:w-24"
+            >
               <AvatarLightbox
                 username={profile.username}
                 avatarKey={profile.avatarKey}
@@ -149,7 +167,7 @@ export function AuthorProfileHeader({
                     className={statButtonClass}
                   >
                     <span className={statValueClass}>{stat.value}</span>
-                    <span className={statLabelClass}>{stat.label}</span>
+                    <span className={statButtonLabelClass}>{stat.label}</span>
                   </button>
                 ) : (
                   <div key={stat.key} className={statPairClass}>

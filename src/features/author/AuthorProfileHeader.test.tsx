@@ -32,13 +32,31 @@ function baseProps() {
 }
 
 describe("AuthorProfileHeader", () => {
-  it("renders the username with the role pill and the bio", () => {
+  it("renders the username and bio (plain user: no role pill)", () => {
     render(<AuthorProfileHeader {...baseProps()} />);
     expect(screen.getByText("quizmaster")).toBeInTheDocument();
     expect(screen.getByText("I make packs")).toBeInTheDocument();
+    // A plain (non-staff, non-trusted) user gets no identity pill — Username's
+    // own logic, exercised here via a trusted-role variant below.
+    expect(screen.queryByText("TRUSTED")).not.toBeInTheDocument();
   });
 
-  it("renders the four stats as value/label pairs", () => {
+  it("shows the role/trust pill for a trusted user, via the untouched Username component", () => {
+    render(
+      <AuthorProfileHeader
+        {...baseProps()}
+        profile={{ ...profile, trusted: true }}
+      />,
+    );
+    expect(screen.getByText("quizmaster")).toBeInTheDocument();
+    expect(screen.getByText(/trusted/i)).toBeInTheDocument();
+  });
+
+  it("renders the three real stats as value/label pairs, and no fabricated Plays stat", () => {
+    // PublicUserProfile carries no aggregate play-count field today — the
+    // mock's fourth "Plays" stat is deliberately dropped rather than
+    // fabricated (T1). This negative assertion guards against it quietly
+    // reappearing with a made-up number.
     render(<AuthorProfileHeader {...baseProps()} />);
     expect(screen.getByText("12")).toBeInTheDocument();
     expect(screen.getByText("Packs")).toBeInTheDocument();
@@ -46,6 +64,7 @@ describe("AuthorProfileHeader", () => {
     expect(screen.getByText("Followers")).toBeInTheDocument();
     expect(screen.getByText("7")).toBeInTheDocument();
     expect(screen.getByText("Following")).toBeInTheDocument();
+    expect(screen.queryByText("Plays")).not.toBeInTheDocument();
   });
 
   it("calls onSelectPeopleTab with 'followers' when the followers stat is clicked", async () => {
@@ -171,6 +190,25 @@ describe("AuthorProfileHeader", () => {
     expect(
       screen.getAllByRole("button", { name: /reveal/i }).length,
     ).toBeGreaterThan(0);
+    localStorage.removeItem("velanto:streamer-mode");
+  });
+
+  it("sizes the redacted avatar's Hidden wrapper (not just the AvatarLightbox child) so the reveal button isn't 0×0", () => {
+    // Regression: Hidden's own wrapper needs the size className too — while
+    // hidden it renders a `h-full w-full` reveal button in place of
+    // AvatarLightbox, which collapses to nothing if only the (unrendered)
+    // child carries the dimensions.
+    localStorage.setItem("velanto:streamer-mode", "on");
+    render(
+      <StreamerModeProvider>
+        <AuthorProfileHeader {...baseProps()} />
+      </StreamerModeProvider>,
+    );
+    const revealButtons = screen.getAllByRole("button", { name: /reveal/i });
+    const avatarReveal = revealButtons.find((button) =>
+      button.parentElement?.className.includes("h-[76px]"),
+    );
+    expect(avatarReveal).toBeDefined();
     localStorage.removeItem("velanto:streamer-mode");
   });
 });
