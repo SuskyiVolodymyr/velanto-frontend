@@ -1445,6 +1445,8 @@
     "loadingMore": "Loading more…",
     "loadMoreError": "Couldn't load more packs. Try again.",
     "followers": "Followers",
+    "people": "People",
+    "history": "History",
     "noFollowers": "No followers yet.",
     "noFollowing": "Not following anyone yet.",
     "followsLoadMore": "Load more",
