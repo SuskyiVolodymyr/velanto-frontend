@@ -1298,7 +1298,20 @@
     "editItemAria": "Edit {title}",
     "saveItem": "Save",
     "cancelEdit": "Cancel",
-    "randomPoolOption": "Random pool ({count} available)"
+    "randomPoolOption": "Random pool ({count} available)",
+    "preview": {
+      "eyebrow": "LIVE PREVIEW",
+      "untitled": "Untitled pack",
+      "noDescription": "Add a short description…",
+      "roundsCount": "{count, plural, one {# round} other {# rounds}}",
+      "format": "Format",
+      "pools": "Pools",
+      "elements": "Elements",
+      "rounds": "Rounds",
+      "publishReady": "Publish pack",
+      "publishBlocked": "Add a title & elements",
+      "noAiNote": "No AI · no scoring rules to write"
+    }
   },
   "profile": {
     "loginRequiredView": "You need to be logged in to view your profile.",
