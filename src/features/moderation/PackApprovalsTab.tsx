@@ -2,6 +2,7 @@
 
 import { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Input } from "@/src/shared/components/Input";
@@ -31,6 +32,7 @@ export function PackApprovalsTab() {
   const t = useTranslations("moderation");
   const tCommon = useTranslations("common");
   const locale = useLocale();
+  const router = useRouter();
   const [searchInput, setSearchInput] = useState("");
   const [filters, setFilters] = useState<PackQueueFilters>(
     EMPTY_PACK_QUEUE_FILTERS,
@@ -164,9 +166,17 @@ export function PackApprovalsTab() {
                 // children directly, and a wrapper element between them orphans
                 // every data row from the table for a screen reader.
                 <Fragment key={pack.id}>
-                  <DataTableRow columns={COLUMNS}>
+                  <DataTableRow
+                    columns={COLUMNS}
+                    onClick={() => router.push(`/moderation/packs/${pack.id}`)}
+                  >
                     <Link
-                      href={`/packs/${pack.id}`}
+                      href={`/moderation/packs/${pack.id}`}
+                      // The row itself already navigates here on click (see
+                      // DataTableRow's `onClick` above); without this the
+                      // click would bubble up and fire router.push a second
+                      // time on top of the Link's own navigation.
+                      onClick={(event) => event.stopPropagation()}
                       className="block truncate text-[13px] font-semibold text-foreground hover:text-acc"
                     >
                       {pack.title}
@@ -184,7 +194,18 @@ export function PackApprovalsTab() {
                       <button
                         type="button"
                         disabled={busy}
-                        onClick={() => approve.mutate(pack.id)}
+                        onClick={(event) => {
+                          // The row itself navigates to the review screen on
+                          // click (see DataTableRow's `onClick`) — this button
+                          // is a descendant of that row, so its click would
+                          // bubble up and fire the row's navigation too unless
+                          // stopped here. The reject toggle button just below
+                          // needs the same guard; the expanded reject-reason
+                          // form (rendered as a sibling of the row, not a
+                          // descendant) does not.
+                          event.stopPropagation();
+                          approve.mutate(pack.id);
+                        }}
                         className="h-[34px] rounded-lg border border-success/40 bg-success/10 px-3.5 text-[13px] font-medium text-success transition-colors hover:bg-success/20 disabled:opacity-40"
                       >
                         {t("approve")}
@@ -192,11 +213,11 @@ export function PackApprovalsTab() {
                       <button
                         type="button"
                         disabled={busy}
-                        onClick={() =>
-                          rejectingId === pack.id
-                            ? closeRejectForm()
-                            : setRejectingId(pack.id)
-                        }
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          if (rejectingId === pack.id) closeRejectForm();
+                          else setRejectingId(pack.id);
+                        }}
                         className="h-[34px] rounded-lg border border-danger/40 bg-danger/10 px-3.5 text-[13px] font-medium text-danger transition-colors hover:bg-danger/20 disabled:opacity-40"
                       >
                         {t("reject")}

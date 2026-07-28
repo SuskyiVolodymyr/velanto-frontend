@@ -6,6 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
+import { ReportedContentPreview } from "@/src/features/moderation/ReportedContentPreview";
 import { ReportDetailSummary } from "@/src/features/moderation/ReportDetailSummary";
 import { ReportQueueActions } from "@/src/features/moderation/ReportQueueActions";
 import { ReportModerationPanel } from "@/src/features/moderation/ReportModerationPanel";
@@ -84,6 +85,14 @@ export function ReportDetailScreen({ reportId }: { reportId: string }) {
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-7 py-10">
       <ReportDetailSummary report={report} />
+
+      {/* The reported content itself (T7/D8): additive, not blocking — its
+          own fetch/loading/error state is scoped inside this component, so
+          it never delays or hides the actions below. `viewerRole` lets it
+          gate the user-report summary to manager/admin, matching the
+          backend's actual `adminClient.userDetail` RBAC (moderator+ can
+          reach this screen, but only manager/admin can hit that endpoint). */}
+      <ReportedContentPreview report={report} viewerRole={user?.role} />
 
       <ReportQueueActions
         status={report.status}

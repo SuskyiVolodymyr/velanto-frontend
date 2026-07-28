@@ -1,5 +1,6 @@
 import { cn } from "@/src/shared/lib/cn";
-import { identityPill, nicknameClass } from "@/src/shared/lib/user-role";
+import { nicknameClass } from "@/src/shared/lib/user-role";
+import { IdentityPillBadge } from "@/src/shared/components/IdentityPillBadge";
 import type { Role } from "@/src/shared/types/user";
 
 export interface UsernameProps {
@@ -35,7 +36,6 @@ export function Username({
   className,
 }: UsernameProps) {
   const gradient = nicknameClass({ role, trusted });
-  const pill = showRole ? identityPill({ role, trusted }) : null;
   const display = at ? `@${username}` : username;
 
   return (
@@ -54,30 +54,7 @@ export function Username({
         {display}
       </span>
 
-      {pill && (
-        <span
-          className={cn(
-            "inline-flex items-center gap-[5px] rounded-pill border px-2.5 py-[3px] text-[11px] font-bold tracking-[0.04em]",
-            pill.className,
-          )}
-        >
-          <svg
-            width="10"
-            height="10"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2.6}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
-            className="flex-none"
-          >
-            <path d={pill.iconPath} />
-          </svg>
-          {pill.label}
-        </span>
-      )}
+      {showRole && <IdentityPillBadge role={role} trusted={trusted} />}
     </span>
   );
 }

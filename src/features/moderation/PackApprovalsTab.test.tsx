@@ -10,6 +10,12 @@ vi.mock("@/src/shared/lib/packs-client", () => ({
   packsClient: { moderationQueue: vi.fn(), approve: vi.fn(), reject: vi.fn() },
 }));
 
+const { mockPush } = vi.hoisted(() => ({ mockPush: vi.fn() }));
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: mockPush, replace: vi.fn() }),
+}));
+
 function pack(overrides: Partial<Pack> = {}): Pack {
   return {
     id: "p1",
@@ -195,6 +201,57 @@ describe("PackApprovalsTab", () => {
     expect(
       within(row.closest('[role="row"]') as HTMLElement).getByText("—"),
     ).toBeInTheDocument();
+  });
+
+  it("links a row's title to the pack's review screen, not the public pack page", async () => {
+    render(<PackApprovalsTab />);
+
+    const link = await screen.findByRole("link", {
+      name: "Best Anime Openings",
+    });
+    expect(link).toHaveAttribute("href", "/moderation/packs/p1");
+  });
+
+  it("navigates to the review screen when the row is clicked", async () => {
+    const user = userEvent.setup();
+    render(<PackApprovalsTab />);
+
+    await screen.findByText("Best Anime Openings");
+    // Click a cell that isn't the title link or an action button — the
+    // author cell — to prove the WHOLE row opens the review screen, not
+    // just its title link.
+    await user.click(screen.getByText("packsmith"));
+
+    expect(mockPush).toHaveBeenCalledWith("/moderation/packs/p1");
+  });
+
+  it("does not navigate when Approve is clicked — the button stops the row's click from also firing", async () => {
+    const user = userEvent.setup();
+    render(<PackApprovalsTab />);
+
+    await screen.findByText("Best Anime Openings");
+    await user.click(screen.getByRole("button", { name: "Approve" }));
+
+    expect(packsClient.approve).toHaveBeenCalledWith("p1");
+    expect(mockPush).not.toHaveBeenCalled();
+  });
+
+  it("does not navigate when Reject (or the reject-form controls) is clicked", async () => {
+    const user = userEvent.setup();
+    render(<PackApprovalsTab />);
+
+    await screen.findByText("Best Anime Openings");
+    await user.click(screen.getByRole("button", { name: "Reject" }));
+    expect(mockPush).not.toHaveBeenCalled();
+
+    await user.type(
+      screen.getByLabelText("Rejection reason for Best Anime Openings"),
+      "Low effort",
+    );
+    await user.click(screen.getByRole("button", { name: "Confirm reject" }));
+
+    expect(packsClient.reject).toHaveBeenCalledWith("p1", "Low effort");
+    expect(mockPush).not.toHaveBeenCalled();
   });
 
   // Every format is a named filter option. Counting the options is what makes

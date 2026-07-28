@@ -2,6 +2,7 @@
 
 import { Children, type ReactNode } from "react";
 import { Text } from "@/src/shared/components/Text";
+import { cn } from "@/src/shared/lib/cn";
 
 /**
  * The bordered, header-topped table shell the admin and moderation panels share.
@@ -89,15 +90,32 @@ export function DataTable({
  */
 export function DataTableRow({
   columns,
+  onClick,
   children,
 }: {
   columns: string;
+  /**
+   * Optional: makes the whole row a pointer-clickable "open detail" target
+   * (e.g. PackApprovalsTab's rows opening the pack review screen). This is a
+   * convenience layer for mouse users only — it does NOT add a keyboard/
+   * screen-reader path of its own (a `role="row"` div isn't a link or
+   * button), so a caller using it should also keep a real `<Link>`/`<button>`
+   * cell inside the row as the accessible way in. Any action button inside
+   * the row (Approve/Reject, etc.) MUST call `event.stopPropagation()` in its
+   * own `onClick` so clicking it doesn't also fire this and navigate away —
+   * see PackApprovalsTab for the pattern.
+   */
+  onClick?: () => void;
   children: ReactNode;
 }) {
   return (
     <div
       role="row"
-      className="grid items-center gap-3 border-t border-white/[0.05] px-[18px] py-[13px]"
+      onClick={onClick}
+      className={cn(
+        "grid items-center gap-3 border-t border-white/[0.05] px-[18px] py-[13px]",
+        onClick && "cursor-pointer hover:bg-white/[0.03]",
+      )}
       style={{ gridTemplateColumns: columns }}
     >
       {/* toArray, not Children.map: it drops children that render nothing, so a

@@ -7,6 +7,7 @@ import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { cn } from "@/src/shared/lib/cn";
+import { IdentityPillBadge } from "@/src/shared/components/IdentityPillBadge";
 import { OverviewTab } from "@/src/features/admin/OverviewTab";
 import { StaffTab } from "@/src/features/admin/StaffTab";
 import { UsersTab } from "@/src/features/admin/UsersTab";
@@ -75,6 +76,11 @@ export function AdminScreen() {
         <div className="mb-2.5 flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.14em] text-foreground-tertiary">
           <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-acc" />
           {t("panelEyebrow")}
+          {/* The viewer's own role, per the mock's header pill (D2/T4) —
+              reuses Username's IDENTITY_PILL tokens rather than a new colour
+              map, so a manager viewer gets their own "MANAGER" tier, not a
+              blanket "ADMIN". `normal-case` counters this row's `uppercase`. */}
+          <IdentityPillBadge role={user?.role} className="normal-case" />
         </div>
         <Text as="h1" variant="title" className="text-[32px]">
           {t("overviewHeading")}

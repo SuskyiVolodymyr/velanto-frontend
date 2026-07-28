@@ -7,6 +7,7 @@ import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { cn } from "@/src/shared/lib/cn";
+import { IdentityPillBadge } from "@/src/shared/components/IdentityPillBadge";
 import { ReportsTab } from "@/src/features/moderation/ReportsTab";
 import { PackApprovalsTab } from "@/src/features/moderation/PackApprovalsTab";
 import { useModerationCounts } from "@/src/features/moderation/api/moderation.queries";
@@ -92,6 +93,11 @@ export function ModerationPanel() {
         <div className="mb-2.5 flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.14em] text-foreground-tertiary">
           <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-acc" />
           {t("panelEyebrow")}
+          {/* The viewer's own role, per the mock's header pill (D2/T4) —
+              reuses Username's IDENTITY_PILL tokens rather than a hardcoded
+              "STAFF" literal, so a moderator/manager/admin viewer each get
+              their own role's tier pill. */}
+          <IdentityPillBadge role={user?.role} className="normal-case" />
         </div>
         {/* The mock's heading was "Support queue", but that named a
             reports-only screen; this panel also holds pack approvals. */}

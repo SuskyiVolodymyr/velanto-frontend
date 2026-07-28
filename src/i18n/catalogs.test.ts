@@ -48,6 +48,9 @@ const IDENTICAL_ALLOWED = new Set([
   // Proper noun (T5): the item-kind toggle's YouTube option is the brand
   // name, not a translatable word, in every locale.
   "create.link",
+  // Proper noun (T8): the reported-content type filter's YouTube chip is the
+  // same brand name, not a translatable word, in every locale.
+  "moderation.contentsFilterYoutube",
   // Format hint, not prose: the browse join-code placeholder demonstrates the
   // "ABC-123" code shape and stays Latin/ASCII in every locale.
   "home.joinRoom.codePlaceholder",
