@@ -23,4 +23,34 @@ describe("ProgressBar", () => {
       "0",
     );
   });
+
+  it("defaults to the bar size: h-1, pill-rounded", () => {
+    render(<ProgressBar value={40} ariaLabel="p" />);
+    const classes = screen.getByRole("progressbar").className.split(" ");
+    expect(classes).toContain("h-1");
+    expect(classes).toContain("rounded-pill");
+  });
+
+  it('size="rail" renders a square-ended 3px rail with no rounded-pill', () => {
+    render(<ProgressBar value={40} ariaLabel="p" size="rail" />);
+    const bar = screen.getByRole("progressbar");
+    expect(bar.className.split(" ")).toContain("h-[3px]");
+    expect(bar.className).not.toMatch(/\brounded-pill\b/);
+    expect(bar.className.split(" ")).not.toContain("h-1");
+  });
+
+  it("keeps the progressbar role and aria-valuenow clamping for both sizes", () => {
+    const { rerender } = render(
+      <ProgressBar value={150} ariaLabel="p" size="bar" />,
+    );
+    expect(screen.getByRole("progressbar")).toHaveAttribute(
+      "aria-valuenow",
+      "100",
+    );
+    rerender(<ProgressBar value={-20} ariaLabel="p" size="rail" />);
+    expect(screen.getByRole("progressbar")).toHaveAttribute(
+      "aria-valuenow",
+      "0",
+    );
+  });
 });
