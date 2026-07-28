@@ -184,11 +184,7 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
             </div>
             {/* Same placement and copy as the elimination formats' confirm. */}
             <div className="mb-10 flex justify-end">
-              <Button
-                disabled={!selectedId}
-                onClick={confirmPick}
-                className="h-[52px] rounded-tile px-[30px] text-[15.5px] font-semibold"
-              >
+              <Button size="lg" disabled={!selectedId} onClick={confirmPick}>
                 {roundIndex === totalRounds - 1
                   ? t("finishRound")
                   : t("nextRound")}

@@ -8,11 +8,22 @@ export type ButtonVariant =
   | "outline"
   | "ghost"
   | "danger";
-export type ButtonSize = "md" | "sm" | "xs";
+export type ButtonSize = "md" | "sm" | "xs" | "lg";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant;
-  /** md = 44px (default), sm = 38px, xs = 34px. */
+  /**
+   * md = 44px (default), sm = 38px, xs = 34px, lg = 52px.
+   *
+   * `lg` is the "confirm" button every play screen's round-advance control
+   * uses — 52px tall, `rounded-tile` (not `rounded-control`), bold 15.5px
+   * label. Its own entry in `sizeClasses` carries ALL of that (including the
+   * radius), not just height/padding: `cn()` here is a plain join, not
+   * tailwind-merge (see `cn.ts`), so a caller who instead tried to override
+   * `baseClasses`' `rounded-control` via `className` would end up with both
+   * classes present and the winner decided by Tailwind's emit order, not
+   * intent. Use `size="lg"` instead of fighting the component from outside.
+   */
   size?: ButtonSize;
   /**
    * Square 40px icon button: a bordered dark tile with a single centered icon.
@@ -29,17 +40,22 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const baseClasses =
-  "inline-flex items-center justify-center gap-2 rounded-control " +
+  "inline-flex items-center justify-center gap-2 " +
   "transition-[background-color,border-color,color,filter] duration-150 " +
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc " +
   "focus-visible:ring-offset-2 focus-visible:ring-offset-background " +
   "disabled:cursor-not-allowed disabled:pointer-events-none " +
   "disabled:bg-white/[0.05] disabled:text-white/30 disabled:border-transparent";
 
+// Each size owns its own radius (not hoisted into `baseClasses`) so `lg` can
+// use `rounded-tile` instead of the other three's `rounded-control` without
+// a caller having to fight a base class via `className` — see the `size` doc
+// comment above.
 const sizeClasses: Record<ButtonSize, string> = {
-  md: "h-11 px-[18px] text-sm",
-  sm: "h-[38px] px-[14px] text-[13px]",
-  xs: "h-[34px] px-3 text-[12.5px]",
+  md: "h-11 rounded-control px-[18px] text-sm",
+  sm: "h-[38px] rounded-control px-[14px] text-[13px]",
+  xs: "h-[34px] rounded-control px-3 text-[12.5px]",
+  lg: "h-[52px] rounded-tile px-[30px] text-[15.5px] font-semibold",
 };
 
 const variantClasses: Record<ButtonVariant, string> = {

@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
+import { Button } from "@/src/shared/components/Button";
 import { VersusRound } from "@/src/features/play/VersusRound";
 import { usePlaySession } from "@/src/features/play/use-play-session";
 import {
@@ -123,27 +124,17 @@ export function PlayScreen({ pack }: { pack: Pack }) {
             )}
 
             <div className="mb-10 flex justify-end">
-              {/* A plain button, not the shared `Button` component: `Button`'s
-                  own `h-11`/`px-[18px]`/`text-sm` would sit alongside these
-                  arbitrary-value overrides in the stylesheet, and `cn()` is a
-                  plain join (not tailwind-merge) — the winner would be
-                  whichever rule Tailwind happens to emit later, not the one
-                  passed last here (see Text.tsx's doc comment for the same
-                  trap). Full control avoids it. */}
-              <button
-                type="button"
+              {/* `size="lg"` is `Button`'s real 52px/rounded-tile confirm-button
+                  variant — no more hand-rolling a raw button to dodge `cn()`
+                  being a plain join (not tailwind-merge): the size lives inside
+                  the component now, so there's nothing left to fight. */}
+              <Button
+                size="lg"
                 disabled={!session.canConfirm}
                 onClick={session.confirmPick}
-                className={cn(
-                  "h-[52px] rounded-tile px-[30px] text-[15.5px] font-semibold transition-[background-color,color,filter] duration-150",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                  session.canConfirm
-                    ? "bg-acc text-[#07131a] hover:brightness-110"
-                    : "cursor-not-allowed bg-white/[0.06] text-white/35",
-                )}
               >
                 {session.isLastRound ? t("finishRound") : t("nextRound")}
-              </button>
+              </Button>
             </div>
           </>
         )}
