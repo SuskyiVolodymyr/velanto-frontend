@@ -1078,6 +1078,7 @@
     "submitPack": "পর্যালোচনার জন্য পাঠান",
     "submittingPack": "পাঠানো হচ্ছে…",
     "submitPackError": "এই প্যাকটি পাঠানো যায়নি। আবার চেষ্টা করুন।",
+    "rejectionReasonHeading": "কেন এটি প্রত্যাখ্যান করা হয়েছে",
     "randomPoolLabel": "এলোমেলো পুল"
   },
   "share": {

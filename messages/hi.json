@@ -1078,6 +1078,7 @@
     "submitPack": "समीक्षा के लिए भेजें",
     "submittingPack": "भेजा जा रहा है…",
     "submitPackError": "यह पैक सबमिट नहीं हो सका। कृपया पुनः प्रयास करें।",
+    "rejectionReasonHeading": "इसे अस्वीकार क्यों किया गया",
     "randomPoolLabel": "यादृच्छिक पूल"
   },
   "share": {

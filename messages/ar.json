@@ -1078,6 +1078,7 @@
     "submitPack": "إرسال للمراجعة",
     "submittingPack": "جارٍ الإرسال…",
     "submitPackError": "تعذّر إرسال هذه الحزمة. حاول مرة أخرى.",
+    "rejectionReasonHeading": "سبب الرفض",
     "randomPoolLabel": "مجموعة عشوائية"
   },
   "share": {

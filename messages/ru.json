@@ -1078,6 +1078,7 @@
     "submitPack": "Отправить на проверку",
     "submittingPack": "Отправка…",
     "submitPackError": "Не удалось отправить пак. Попробуйте ещё раз.",
+    "rejectionReasonHeading": "Почему пак отклонён",
     "randomPoolLabel": "Случайный пул"
   },
   "share": {
