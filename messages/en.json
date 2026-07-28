@@ -87,7 +87,15 @@
     "contentsDrawnRandomly": "Drawn randomly · {count, plural, one {# item} other {# items}} in this pool",
     "contentsPoolEmpty": "This pool has no items yet.",
     "contentsEmpty": "No pack contents to show.",
-    "contentsNoMatches": "No items match your search."
+    "contentsNoMatches": "No items match your search.",
+    "packNotFound": "This pack doesn't exist.",
+    "packCrumb": "Pack review",
+    "packSubmittedBy": "Submitted by {author} on {date}",
+    "packSummarySentence": "{pools, plural, one {# pool} other {# pools}} · {rounds, plural, one {# round} other {# rounds}}",
+    "contentsHeading": "Pack contents",
+    "roundMappingHeading": "Rounds",
+    "roundLabelFallback": "Round {index}",
+    "roundRandomPool": "Random pool"
   },
   "admin": {
     "panelEyebrow": "Admin panel",
