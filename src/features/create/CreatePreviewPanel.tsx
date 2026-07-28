@@ -169,6 +169,13 @@ export function CreatePreviewPanel({ mode }: CreatePreviewPanelProps) {
         aria-disabled={!isEdit && blocked ? "true" : undefined}
         className={cn(
           "h-[48px] w-full rounded-[12px] transition-colors",
+          // Create mode has a second Publish control in the sticky action bar
+          // that only exists below `lg` (CreatePackForm, D2) — this CTA is
+          // the desktop-only counterpart there, so it hides on the same
+          // breakpoint the sticky bar's button takes over. Edit mode has no
+          // such duplicate ("Save changes" is the only action anywhere), so
+          // its CTA stays visible at every width.
+          !isEdit && "hidden lg:block",
           !isEdit && blocked
             ? "border border-border bg-white/[0.04] text-foreground-tertiary cursor-not-allowed"
             : "bg-acc font-semibold text-[#0a0b0e] hover:brightness-110",

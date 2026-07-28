@@ -1317,7 +1317,8 @@
       "publishReady": "Publish pack",
       "publishBlocked": "Add a title & elements",
       "noAiNote": "No AI · no scoring rules to write"
-    }
+    },
+    "cancel": "Cancel"
   },
   "profile": {
     "loginRequiredView": "You need to be logged in to view your profile.",
@@ -1369,7 +1370,7 @@
   },
   "pages": {
     "createTitle": "Create a pack",
-    "createSubtitle": "Pick an elimination format and build your rounds. Elements can be text or a YouTube link.",
+    "createSubtitle": "Pick an elimination format — the builder adapts to it. Elements can be text, a YouTube link, or an image.",
     "metaProfile": "Profile",
     "metaEditProfile": "Edit profile",
     "metaPlaying": "Playing {title}",
