@@ -59,11 +59,17 @@ function matches(text: string, query: string): boolean {
  * Client Component: the search box needs interactive state (query + per-render
  * filtering), which a Server Component can't hold.
  */
+
+/** Stable fallback so `content` never changes identity when the catalog has
+ *  no `rules.content` — a fresh `{}` on every render would defeat the
+ *  `categories` useMemo below. */
+const EMPTY_CONTENT: RulesContent = {};
+
 export function RulesScreen({ rules }: RulesScreenProps) {
   const t = useTranslations("rules");
   const content: RulesContent = t.has("content")
     ? (t.raw("content") as RulesContent)
-    : {};
+    : EMPTY_CONTENT;
   const [query, setQuery] = useState("");
 
   const categories: DisplayCategory[] = useMemo(() => {
