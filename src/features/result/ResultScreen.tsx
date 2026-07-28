@@ -18,6 +18,7 @@ import { SharedResultNote } from "@/src/features/result/SharedResultNote";
 import { summarizeResult } from "@/src/features/result/result-summary";
 import { usePackResults } from "@/src/features/result/api/results.queries";
 import { useResultPicks } from "@/src/features/result/use-result-picks";
+import { getRoundsCount } from "@/src/shared/lib/pack-display";
 import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
 
@@ -127,7 +128,9 @@ export function ResultScreen({ pack }: { pack: Pack }) {
         <div className={cn(PACK_CONTAINER, "pt-10")}>
           <ResultHero
             packTitle={pack.title}
+            format={results.format}
             shared={shared}
+            totalRounds={getRoundsCount(pack)}
             totalPlays={results.totalPlays}
             tiles={tiles}
           />

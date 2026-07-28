@@ -137,7 +137,12 @@ describe("ResultScreen", () => {
     // Scoped to the round: the ranking below lists it as well.
     const round = screen.getByRole("group", { name: /Round 1/ });
     expect(within(round).getByText("Redo")).toBeInTheDocument();
-    expect(screen.getByText(/4 plays recorded/)).toBeInTheDocument();
+    // T10: the "N plays recorded" subtitle text became a fixed phrase plus a
+    // compact "Total plays" stat showing the raw count.
+    expect(screen.getByText("Total plays")).toBeInTheDocument();
+    expect(
+      screen.getByText(/recorded and folded into this pack's stats/),
+    ).toBeInTheDocument();
   });
 
   // #222: the product promise is that stats stay locked until you finish, so
@@ -264,7 +269,8 @@ describe("ResultScreen", () => {
     seedResults(emptyResults);
     render(<ResultScreen pack={PACK} />);
 
-    expect(await screen.findByText(/0 plays recorded/)).toBeInTheDocument();
+    // T10: the "N plays recorded" text became a compact "Total plays" stat.
+    expect(await screen.findByText("Total plays")).toBeInTheDocument();
     // Your own round still renders — it comes from your picks, not the
     // aggregate — and there is no ranking to show yet.
     expect(screen.getByTestId("picked")).toHaveTextContent("Guren no Yumiya");
