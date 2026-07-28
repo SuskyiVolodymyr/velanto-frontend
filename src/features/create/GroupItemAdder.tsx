@@ -5,10 +5,20 @@ import { useTranslations } from "next-intl";
 import type { ItemType } from "@/src/shared/types/pack";
 import { ITEM_TITLE_MAX } from "@/src/features/create/create-pack.schema";
 import { Input } from "@/src/shared/components/Input";
-import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
+import { SegmentedControl } from "@/src/shared/components/SegmentedControl";
 import { cn } from "@/src/shared/lib/cn";
 import { ItemImageCropModal } from "@/src/features/create/ItemImageCropModal";
+
+// The mock's accent-tint commit button ("Add" / "Save") — a raw button rather
+// than the shared Button component, since none of its variants offer a tinted
+// (not filled) accent style. Shared across all three draft-type branches below.
+const commitButtonClassName = cn(
+  "inline-flex h-11 items-center justify-center rounded-control border px-[18px] text-sm font-semibold transition-colors",
+  "border-acc/30 bg-acc/[0.12] text-acc hover:bg-acc/[0.18]",
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+  "disabled:cursor-not-allowed disabled:pointer-events-none disabled:opacity-45",
+);
 
 interface GroupItemAdderProps {
   index: number;
@@ -71,44 +81,15 @@ export function GroupItemAdder({
       }}
     >
       <div className="flex flex-wrap items-center gap-2">
-        <div className="flex w-fit rounded-[9px] border border-border bg-white/[0.03] p-0.5">
-          <button
-            type="button"
-            onClick={() => onSelectType("text")}
-            className={cn(
-              "rounded-[7px] px-3 py-1.5 text-xs font-medium",
-              draftType === "text"
-                ? "bg-white/[0.12] text-foreground"
-                : "text-foreground-secondary",
-            )}
-          >
-            {t("text")}
-          </button>
-          <button
-            type="button"
-            onClick={() => onSelectType("youtube")}
-            className={cn(
-              "rounded-[7px] px-3 py-1.5 text-xs font-medium",
-              draftType === "youtube"
-                ? "bg-white/[0.12] text-foreground"
-                : "text-foreground-secondary",
-            )}
-          >
-            {t("link")}
-          </button>
-          <button
-            type="button"
-            onClick={() => onSelectType("image")}
-            className={cn(
-              "rounded-[7px] px-3 py-1.5 text-xs font-medium",
-              draftType === "image"
-                ? "bg-white/[0.12] text-foreground"
-                : "text-foreground-secondary",
-            )}
-          >
-            {t("image")}
-          </button>
-        </div>
+        <SegmentedControl<ItemType>
+          value={draftType}
+          onChange={onSelectType}
+          options={[
+            { value: "text", label: t("text") },
+            { value: "youtube", label: t("link") },
+            { value: "image", label: t("image") },
+          ]}
+        />
         {editing && onCancelEdit && (
           <button
             type="button"
@@ -132,9 +113,13 @@ export function GroupItemAdder({
               aria-label={t("groupNewItem", { index: index + 1 })}
               className="flex-1"
             />
-            <Button type="button" onClick={() => onAdd()}>
+            <button
+              type="button"
+              onClick={() => onAdd()}
+              className={commitButtonClassName}
+            >
               {commitLabel}
-            </Button>
+            </button>
           </div>
           {/* The text branch had no error slot at all — an empty Add was simply
               a no-op, which was fine when the only outcome was "nothing added",
@@ -168,9 +153,14 @@ export function GroupItemAdder({
               aria-label={t("groupNewItemLink", { index: index + 1 })}
               className="flex-[2] min-w-[140px]"
             />
-            <Button type="button" onClick={() => onAdd()} disabled={validating}>
+            <button
+              type="button"
+              onClick={() => onAdd()}
+              disabled={validating}
+              className={commitButtonClassName}
+            >
               {validating ? t("checking") : commitLabel}
-            </Button>
+            </button>
           </div>
           {addError && (
             <Text variant="danger" className="text-xs">
@@ -211,9 +201,14 @@ export function GroupItemAdder({
                 className="sr-only"
               />
             </label>
-            <Button type="button" onClick={() => onAdd()} disabled={uploading}>
+            <button
+              type="button"
+              onClick={() => onAdd()}
+              disabled={uploading}
+              className={commitButtonClassName}
+            >
               {commitLabel}
-            </Button>
+            </button>
           </div>
           {imagePreviewUrl && (
             <div className="flex flex-col items-start gap-1.5">

@@ -111,7 +111,7 @@ describe("GroupEditor (pool)", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Link" }));
+    await user.click(screen.getByRole("radio", { name: "Link" }));
     await user.type(screen.getByLabelText("Pool 1 new item title"), "My title");
     await user.type(
       screen.getByLabelText("Pool 1 new item link"),
@@ -147,7 +147,7 @@ describe("GroupEditor (pool)", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Link" }));
+    await user.click(screen.getByRole("radio", { name: "Link" }));
     await user.type(
       screen.getByLabelText("Pool 1 new item link"),
       "https://youtu.be/KsF_hdjWJjo",
@@ -175,7 +175,7 @@ describe("GroupEditor (pool)", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Link" }));
+    await user.click(screen.getByRole("radio", { name: "Link" }));
     await user.type(screen.getByLabelText("Pool 1 new item title"), "My title");
     await user.type(
       screen.getByLabelText("Pool 1 new item link"),
@@ -202,7 +202,7 @@ describe("GroupEditor (pool)", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Link" }));
+    await user.click(screen.getByRole("radio", { name: "Link" }));
     await user.type(
       screen.getByLabelText("Pool 1 new item link"),
       "not a link",
@@ -235,7 +235,7 @@ describe("GroupEditor (pool)", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Link" }));
+    await user.click(screen.getByRole("radio", { name: "Link" }));
     await user.type(screen.getByLabelText("Pool 1 new item title"), "My title");
     const link = screen.getByLabelText("Pool 1 new item link");
     await user.type(link, "https://youtu.be/KsF_hdjWJjo");
@@ -314,7 +314,7 @@ describe("GroupEditor (pool)", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Image" }));
+    await user.click(screen.getByRole("radio", { name: "Image" }));
     await user.type(
       screen.getByLabelText("Pool 1 new item title"),
       "Attack on Titan",
@@ -360,7 +360,7 @@ describe("GroupEditor (pool)", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Image" }));
+    await user.click(screen.getByRole("radio", { name: "Image" }));
     // fireEvent.change (not userEvent.upload) so the non-image file bypasses the
     // input's accept="image/*" pre-filter — we're asserting the component's OWN
     // type guard, not the browser's.
@@ -386,7 +386,7 @@ describe("GroupEditor (pool)", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Image" }));
+    await user.click(screen.getByRole("radio", { name: "Image" }));
     await user.upload(
       screen.getByLabelText("Pool 1 new image"),
       imageFile("huge.png", "image/png", 1024 * 1024 + 1),
@@ -416,7 +416,7 @@ describe("GroupEditor (pool)", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Image" }));
+    await user.click(screen.getByRole("radio", { name: "Image" }));
     await user.upload(screen.getByLabelText("Pool 1 new image"), imageFile());
     await waitFor(() => expect(uploadMedia).toHaveBeenCalled());
     await user.click(screen.getByRole("button", { name: "Add" }));
@@ -440,7 +440,7 @@ describe("GroupEditor (pool)", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Image" }));
+    await user.click(screen.getByRole("radio", { name: "Image" }));
     await user.upload(screen.getByLabelText("Pool 1 new image"), imageFile());
 
     expect(
@@ -463,6 +463,47 @@ describe("GroupEditor (pool)", () => {
 
     await user.click(screen.getByRole("button", { name: "Remove pool 1" }));
     expect(onRemove).toHaveBeenCalledTimes(1);
+  });
+});
+
+// The T7 restyle (2.0.0) changes the remove-pool control to a 34x34 icon
+// button and the type toggle from hand-rolled aria-pressed buttons to the
+// shared SegmentedControl, and re-skins the commit button — none of that may
+// change these three accessible names, since e2e/create-pack.spec.ts resolves
+// controls by them (the remove-pool aria-label via `create.removeGroup`, the
+// commit button via exact name "Add", and "+ Add pool" — the latter rendered
+// by PoolsSection, covered instead by CreatePackForm.test.tsx).
+describe("GroupEditor restyle — accessible names stay stable", () => {
+  it("keeps the remove-pool aria-label exactly as create.removeGroup renders it", () => {
+    render(
+      <GroupEditor
+        group={emptyGroup()}
+        index={2}
+        removable={true}
+        onChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Remove pool 3" }),
+    ).toBeInTheDocument();
+  });
+
+  it("keeps the commit button's accessible name exactly 'Add' (not editing)", () => {
+    render(
+      <GroupEditor
+        group={emptyGroup()}
+        index={0}
+        removable={false}
+        onChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByRole("button", { name: "Add" }),
+    ).toBeInTheDocument();
   });
 });
 
@@ -522,5 +563,100 @@ describe("GroupEditor editing an added item", () => {
       await screen.findByRole("button", { name: "Add" }),
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Pool 1 new item")).toHaveValue("");
+  });
+});
+
+// T7 restyle: item chips gain a 30x22 thumbnail slot for youtube/image items,
+// and an empty pool now shows the shared EmptyState placeholder instead of
+// rendering nothing.
+describe("GroupEditor restyle — chip thumbnails and empty state", () => {
+  it("shows the shared EmptyState placeholder when a pool has no items", () => {
+    render(
+      <GroupEditor
+        group={emptyGroup()}
+        index={0}
+        removable={false}
+        onChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByText("No elements yet — add your first above."),
+    ).toBeInTheDocument();
+  });
+
+  it("renders an image thumbnail before an image item's label", () => {
+    const group: Group = {
+      id: "g1",
+      name: "Pool",
+      items: [
+        {
+          id: "i1",
+          type: "image",
+          title: "Cover",
+          value: "media/item/abc.webp",
+        },
+      ],
+    };
+    render(
+      <GroupEditor
+        group={group}
+        index={0}
+        removable={false}
+        onChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+
+    const img = document.querySelector<HTMLImageElement>('img[alt=""]');
+    expect(img?.src).toContain("media/item/abc.webp");
+  });
+
+  it("renders a play-triangle overlay on a youtube item's thumbnail", () => {
+    const group: Group = {
+      id: "g1",
+      name: "Pool",
+      items: [
+        {
+          id: "i1",
+          type: "youtube",
+          title: "Opening",
+          value: "https://youtu.be/KsF_hdjWJjo",
+        },
+      ],
+    };
+    render(
+      <GroupEditor
+        group={group}
+        index={0}
+        removable={false}
+        onChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+
+    const editButton = screen.getByRole("button", { name: "Edit Opening" });
+    expect(editButton.querySelector(".border-l-white")).toBeInTheDocument();
+  });
+
+  it("renders no thumbnail slot for a text item", () => {
+    const group: Group = {
+      id: "g1",
+      name: "Pool",
+      items: [{ id: "i1", type: "text", title: "Naruto", value: "Naruto" }],
+    };
+    render(
+      <GroupEditor
+        group={group}
+        index={0}
+        removable={false}
+        onChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+
+    const editButton = screen.getByRole("button", { name: "Edit Naruto" });
+    expect(editButton.querySelector("img")).not.toBeInTheDocument();
   });
 });

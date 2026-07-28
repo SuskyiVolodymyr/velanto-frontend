@@ -2,10 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import type { Group } from "@/src/shared/types/pack";
-import { Input } from "@/src/shared/components/Input";
-import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
-import { Card } from "@/src/shared/components/Card";
 import { useGroupItemDraft } from "@/src/features/create/use-group-item-draft";
 import { GroupItemList } from "@/src/features/create/GroupItemList";
 import { GroupItemAdder } from "@/src/features/create/GroupItemAdder";
@@ -48,24 +45,28 @@ export function GroupEditor({
   }
 
   return (
-    <Card className="flex flex-col gap-3 hover:translate-y-0 hover:shadow-none">
+    <div className="flex flex-col gap-[13px] rounded-tile border border-border bg-surface-card p-[15px]">
       <div className="flex flex-wrap items-center gap-2.5">
-        <Input
+        <span
+          aria-hidden="true"
+          className="h-6 w-[5px] shrink-0 rounded-[3px] bg-acc opacity-55"
+        />
+        <input
           value={group.name}
           onChange={(e) => onChange({ ...group, name: e.target.value })}
           placeholder={t("groupName", { index: index + 1 })}
           aria-label={t("groupName", { index: index + 1 })}
-          className="flex-1 min-w-[140px] font-semibold"
+          className="h-[38px] min-w-[140px] flex-1 rounded-[9px] border border-white/10 bg-background px-4 text-[15px] font-semibold text-foreground placeholder:text-foreground-tertiary transition-colors duration-150 focus:outline-none focus:border-acc focus-visible:ring-2 focus-visible:ring-acc/40"
         />
         {removable && (
-          <Button
-            variant="ghost"
+          <button
             type="button"
             onClick={onRemove}
             aria-label={t("removeGroup", { index: index + 1 })}
+            className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-control border border-border text-foreground-secondary transition-colors hover:border-danger/40 hover:text-danger"
           >
-            {t("remove")}
-          </Button>
+            ×
+          </button>
         )}
       </div>
 
@@ -105,6 +106,6 @@ export function GroupEditor({
           {error}
         </Text>
       )}
-    </Card>
+    </div>
   );
 }
