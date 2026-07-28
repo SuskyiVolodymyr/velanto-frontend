@@ -7,7 +7,7 @@ import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { cn } from "@/src/shared/lib/cn";
-import { identityPill } from "@/src/shared/lib/user-role";
+import { IdentityPillBadge } from "@/src/shared/components/IdentityPillBadge";
 import { ReportsTab } from "@/src/features/moderation/ReportsTab";
 import { PackApprovalsTab } from "@/src/features/moderation/PackApprovalsTab";
 import { useModerationCounts } from "@/src/features/moderation/api/moderation.queries";
@@ -43,10 +43,6 @@ export function ModerationPanel() {
     user?.role === "moderator" ||
     user?.role === "manager" ||
     user?.role === "admin";
-  // The viewer's own role, per the mock's header pill (D2/T4) — reuses
-  // Username's IDENTITY_PILL tokens rather than a hardcoded "STAFF" literal,
-  // so a moderator/manager/admin viewer each get their own role's tier pill.
-  const pill = identityPill({ role: user?.role });
 
   useEffect(() => {
     if (status === "authenticated" && !allowed) {
@@ -97,30 +93,11 @@ export function ModerationPanel() {
         <div className="mb-2.5 flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.14em] text-foreground-tertiary">
           <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-acc" />
           {t("panelEyebrow")}
-          {pill && (
-            <span
-              className={cn(
-                "inline-flex items-center gap-[5px] rounded-pill border px-2.5 py-[3px] text-[11px] font-bold normal-case tracking-[0.04em]",
-                pill.className,
-              )}
-            >
-              <svg
-                width="10"
-                height="10"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2.6}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden
-                className="flex-none"
-              >
-                <path d={pill.iconPath} />
-              </svg>
-              {pill.label}
-            </span>
-          )}
+          {/* The viewer's own role, per the mock's header pill (D2/T4) —
+              reuses Username's IDENTITY_PILL tokens rather than a hardcoded
+              "STAFF" literal, so a moderator/manager/admin viewer each get
+              their own role's tier pill. */}
+          <IdentityPillBadge role={user?.role} className="normal-case" />
         </div>
         {/* The mock's heading was "Support queue", but that named a
             reports-only screen; this panel also holds pack approvals. */}
