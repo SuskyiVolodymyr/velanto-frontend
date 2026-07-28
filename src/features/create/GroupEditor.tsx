@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
-import type { Group } from "@/src/shared/types/pack";
+import type { Group, Item } from "@/src/shared/types/pack";
 import { Text } from "@/src/shared/components/Text";
 import { useGroupItemDraft } from "@/src/features/create/use-group-item-draft";
 import { GroupItemList } from "@/src/features/create/GroupItemList";
@@ -33,6 +34,10 @@ export function GroupEditor({
 }: GroupEditorProps) {
   const t = useTranslations("create");
   const draft = useGroupItemDraft(group, onChange);
+  // Which panel (if any) is expanded: the "+ Add item" trigger's own add
+  // panel, a specific chip's inline edit panel, or neither (T5 — items are
+  // read-only chips by default; nothing is docked open at the bottom).
+  const [expandedFor, setExpandedFor] = useState<"new" | string | null>(null);
 
   function removeItem(itemId: string) {
     // Removing the item currently lifted into the form row would leave the row
@@ -42,6 +47,56 @@ export function GroupEditor({
       ...group,
       items: group.items.filter((item) => item.id !== itemId),
     });
+    if (expandedFor === itemId) setExpandedFor(null);
+  }
+
+  function openAddPanel() {
+    setExpandedFor("new");
+  }
+
+  function openEditPanel(item: Item) {
+    draft.beginEdit(item);
+    setExpandedFor(item.id);
+  }
+
+  async function commit() {
+    const added = await draft.addItem();
+    if (added) setExpandedFor(null);
+  }
+
+  function collapse() {
+    draft.cancelEdit();
+    setExpandedFor(null);
+  }
+
+  function deleteEditing() {
+    if (draft.editingItemId) removeItem(draft.editingItemId);
+    setExpandedFor(null);
+  }
+
+  function renderAdder(editing: boolean) {
+    return (
+      <GroupItemAdder
+        index={index}
+        draftType={draft.draftType}
+        draftTitle={draft.draftTitle}
+        draftValue={draft.draftValue}
+        validating={draft.validating}
+        uploading={draft.uploading}
+        imagePreviewUrl={draft.imagePreviewUrl}
+        imageFile={draft.imageFile}
+        addError={draft.addError}
+        onSelectType={draft.selectType}
+        onDraftTitleChange={draft.setDraftTitle}
+        onDraftValueChange={draft.setDraftValue}
+        onSelectImage={(file) => void draft.selectImageFile(file)}
+        onApplyCrop={(cropped) => void draft.applyCroppedImage(cropped)}
+        onAdd={() => void commit()}
+        editing={editing}
+        onCancelEdit={collapse}
+        onDelete={editing ? deleteEditing : undefined}
+      />
+    );
   }
 
   return (
@@ -54,7 +109,13 @@ export function GroupEditor({
         <input
           value={group.name}
           onChange={(e) => onChange({ ...group, name: e.target.value })}
-          placeholder={t("groupName", { index: index + 1 })}
+          // Placeholder is plain "Pool name" (T7) — a transient hint that
+          // disappears the moment the author types, so the mock drops the
+          // index from it. The accessible name keeps the index: it's what
+          // distinguishes several still-unnamed pools from each other, for
+          // both screen readers and the many e2e/vitest selectors keyed on
+          // "Pool 1 name" / "Pool 2 name".
+          placeholder={t("groupNamePlaceholder")}
           aria-label={t("groupName", { index: index + 1 })}
           className="h-[46px] min-w-[140px] flex-1 rounded-control border border-white/10 bg-background px-4 text-[15px] font-semibold text-foreground placeholder:text-foreground-tertiary transition-colors duration-150 focus:outline-none focus:border-acc focus-visible:ring-2 focus-visible:ring-acc/40"
         />
@@ -72,30 +133,22 @@ export function GroupEditor({
 
       <GroupItemList
         items={group.items}
-        editingItemId={draft.editingItemId}
-        onEdit={draft.beginEdit}
+        editingItemId={expandedFor === "new" ? null : expandedFor}
+        onEdit={openEditPanel}
         onRemove={removeItem}
+        renderEditPanel={() => renderAdder(true)}
       />
 
-      <GroupItemAdder
-        index={index}
-        draftType={draft.draftType}
-        draftTitle={draft.draftTitle}
-        draftValue={draft.draftValue}
-        validating={draft.validating}
-        uploading={draft.uploading}
-        imagePreviewUrl={draft.imagePreviewUrl}
-        imageFile={draft.imageFile}
-        addError={draft.addError}
-        onSelectType={draft.selectType}
-        onDraftTitleChange={draft.setDraftTitle}
-        onDraftValueChange={draft.setDraftValue}
-        onSelectImage={(file) => void draft.selectImageFile(file)}
-        onApplyCrop={(cropped) => void draft.applyCroppedImage(cropped)}
-        onAdd={() => void draft.addItem()}
-        editing={draft.editingItemId !== null}
-        onCancelEdit={draft.cancelEdit}
-      />
+      {expandedFor === "new" && renderAdder(false)}
+      {expandedFor === null && (
+        <button
+          type="button"
+          onClick={openAddPanel}
+          className="flex h-11 w-full items-center justify-center rounded-control border border-dashed border-white/[0.14] text-sm font-semibold text-foreground-secondary transition-colors hover:border-acc hover:text-foreground"
+        >
+          {t("addItemTrigger")}
+        </button>
+      )}
 
       <Text variant="tertiary" className="text-xs">
         {t("itemCount", { count: group.items.length })}

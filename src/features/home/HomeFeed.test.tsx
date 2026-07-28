@@ -262,7 +262,7 @@ describe("HomeFeed", () => {
     // Drafting tags must not refetch until Apply is pressed.
     expect(packsClient.list).toHaveBeenCalledTimes(1);
 
-    await user.click(screen.getByRole("button", { name: "Apply" }));
+    await user.click(screen.getByRole("button", { name: "Done" }));
     await waitFor(() =>
       expect(packsClient.list).toHaveBeenLastCalledWith({
         format: undefined,
@@ -291,7 +291,7 @@ describe("HomeFeed", () => {
     await user.click(screen.getByRole("button", { name: "Filter by tags" }));
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
     await user.click(screen.getByRole("checkbox", { name: "Music" }));
-    await user.click(screen.getByRole("button", { name: "Apply" }));
+    await user.click(screen.getByRole("button", { name: "Done" }));
     await waitFor(() =>
       expect(packsClient.list).toHaveBeenLastCalledWith({
         format: undefined,
@@ -305,7 +305,7 @@ describe("HomeFeed", () => {
 
     await user.click(screen.getByRole("button", { name: "2 tags" }));
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
-    await user.click(screen.getByRole("button", { name: "Apply" }));
+    await user.click(screen.getByRole("button", { name: "Done" }));
     await waitFor(() =>
       expect(packsClient.list).toHaveBeenLastCalledWith({
         format: undefined,

@@ -19,6 +19,8 @@ function renderToolbar(
         min: 1,
         max: 8,
         placeholder: "4",
+        current: 2,
+        allMatch: true,
         onApply,
       }}
       {...over}
@@ -37,19 +39,88 @@ describe("RoundsToolbar", () => {
     expect(onAddRound).toHaveBeenCalledTimes(1);
   });
 
+  // The field now shows the live current count (T4) instead of starting
+  // blank, so typing a replacement clears it first.
   it("applies the typed count", async () => {
     const user = userEvent.setup();
     const { onApply } = renderToolbar();
 
-    await user.type(
-      screen.getByRole("spinbutton", { name: "Set all rounds to draw" }),
-      "6",
-    );
+    const field = screen.getByRole("spinbutton", {
+      name: "Set all rounds to draw",
+    });
+    await user.clear(field);
+    await user.type(field, "6");
     await user.click(
       screen.getByRole("button", { name: "Set count for all rounds" }),
     );
 
     expect(onApply).toHaveBeenCalledWith(6);
+  });
+
+  it("seeds the field from the live current count", () => {
+    renderToolbar({
+      bulk: {
+        label: "Set all rounds to draw",
+        applyLabel: "Set count for all rounds",
+        min: 1,
+        max: 8,
+        placeholder: "4",
+        current: 5,
+        allMatch: true,
+        onApply: vi.fn(),
+      },
+    });
+
+    expect(
+      screen.getByRole("spinbutton", { name: "Set all rounds to draw" }),
+    ).toHaveValue(5);
+  });
+
+  it("flags the apply button amber when the rounds have drifted apart", () => {
+    renderToolbar({
+      bulk: {
+        label: "Set all rounds to draw",
+        applyLabel: "Set count for all rounds",
+        min: 1,
+        max: 8,
+        placeholder: "4",
+        current: 2,
+        allMatch: false,
+        onApply: vi.fn(),
+      },
+    });
+
+    expect(
+      screen.getByRole("button", { name: "Set count for all rounds" }),
+    ).toHaveClass("border-status-pending/30");
+  });
+
+  it("steps the field up and down with the +/- buttons, clamped to min/max", async () => {
+    const user = userEvent.setup();
+    renderToolbar({
+      bulk: {
+        label: "Set all rounds to draw",
+        applyLabel: "Set count for all rounds",
+        min: 1,
+        max: 3,
+        placeholder: "4",
+        current: 3,
+        allMatch: true,
+        onApply: vi.fn(),
+      },
+    });
+
+    const field = screen.getByRole("spinbutton", {
+      name: "Set all rounds to draw",
+    });
+    expect(field).toHaveValue(3);
+    // Already at max — the + button is disabled.
+    expect(screen.getByRole("button", { name: "Increase" })).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: "Decrease" }));
+    await user.click(screen.getByRole("button", { name: "Decrease" }));
+    expect(field).toHaveValue(1);
+    expect(screen.getByRole("button", { name: "Decrease" })).toBeDisabled();
   });
 
   // The guard both editors used to carry a copy of. Applying "" would have set
@@ -58,6 +129,9 @@ describe("RoundsToolbar", () => {
     const user = userEvent.setup();
     const { onApply } = renderToolbar();
 
+    await user.clear(
+      screen.getByRole("spinbutton", { name: "Set all rounds to draw" }),
+    );
     await user.click(
       screen.getByRole("button", { name: "Set count for all rounds" }),
     );

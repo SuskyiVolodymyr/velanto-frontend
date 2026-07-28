@@ -45,6 +45,9 @@ const IDENTICAL_ALLOWED = new Set([
   "pack.topItemPct",
   // Loanword: "Email" is borrowed as-is in some locales.
   "auth.email",
+  // Proper noun (T5): the item-kind toggle's YouTube option is the brand
+  // name, not a translatable word, in every locale.
+  "create.link",
   // Format hint, not prose: the browse join-code placeholder demonstrates the
   // "ABC-123" code shape and stays Latin/ASCII in every locale.
   "home.joinRoom.codePlaceholder",

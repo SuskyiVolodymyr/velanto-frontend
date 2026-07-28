@@ -73,7 +73,14 @@ function TagPickerBody({
     <>
       <Text variant="tertiary" className="mb-3 text-xs">
         {maxTags !== undefined
-          ? t("selectedOfMax", { count: draft.length, max: maxTags })
+          ? t("selectedOfMax", {
+              count: draft.length,
+              max: maxTags,
+              // The "remove one to swap" hint only makes sense once the cap
+              // is actually reached — showing it while there's still room
+              // would suggest a step the author doesn't need to take.
+              atCap: String(atCap),
+            })
           : t("selected", { count: draft.length })}
       </Text>
 

@@ -1,9 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { Input } from "@/src/shared/components/Input";
+import { cn } from "@/src/shared/lib/cn";
 
 export interface RoundsBulkCount {
   /** Names what the number sets, beside the field. */
@@ -15,6 +17,18 @@ export interface RoundsBulkCount {
   placeholder: string;
   /** Called with the parsed number; never with NaN, never with nothing typed. */
   onApply: (value: number) => void;
+  /**
+   * The rounds' current shared count — the caller's own representative read
+   * (e.g. the first round's), used to seed the live stepper display. Absent
+   * when there's nothing to represent yet (no rounds).
+   */
+  current: number;
+  /**
+   * True when every round this bulk action would touch already has the same
+   * count as `current`. Drives the Apply button's amber "drifted" flag — off
+   * (nothing to reconcile) once every round agrees.
+   */
+  allMatch: boolean;
 }
 
 /**
@@ -43,13 +57,29 @@ export function RoundsToolbar({
   /** Shown in place of the controls (1v1's per-side count is locked to 1). */
   note?: string;
 }) {
-  const [draft, setDraft] = useState("");
+  const t = useTranslations("create");
+  // Seeded once from the caller's live representative count — after that this
+  // is a local PENDING value the +/- buttons and direct typing both adjust;
+  // it doesn't keep resyncing to `bulk.current` on every render (that would
+  // fight whatever the author is mid-typing). Apply is the explicit action
+  // that actually writes it back to every round.
+  const [draft, setDraft] = useState(() =>
+    bulk ? String(bulk.current) : "",
+  );
 
   function apply() {
     if (!bulk) return;
     const value = Number(draft);
     if (draft === "" || Number.isNaN(value)) return;
     bulk.onApply(value);
+  }
+
+  function step(delta: number) {
+    if (!bulk) return;
+    const current = Number(draft);
+    const base = Number.isNaN(current) ? bulk.current : current;
+    const next = Math.min(bulk.max, Math.max(bulk.min, base + delta));
+    setDraft(String(next));
   }
 
   return (
@@ -73,23 +103,54 @@ export function RoundsToolbar({
             <Text variant="tertiary" className="whitespace-nowrap text-[13px]">
               {bulk.label}
             </Text>
-            <Input
-              type="number"
-              min={bulk.min}
-              max={bulk.max}
-              value={draft}
-              onChange={(event) => setDraft(event.target.value)}
-              // Named by the text beside it, which says what the number means
-              // ("Items per side, all rounds"), not by the button's "Set for all".
-              aria-label={bulk.label}
-              placeholder={bulk.placeholder}
-              className="w-16 text-center"
-            />
+            <div className="flex items-center gap-1">
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={Number(draft) <= bulk.min}
+                onClick={() => step(-1)}
+                aria-label={t("decreaseCount")}
+                className="h-8 w-8 px-0"
+              >
+                −
+              </Button>
+              <Input
+                type="number"
+                min={bulk.min}
+                max={bulk.max}
+                value={draft}
+                onChange={(event) => setDraft(event.target.value)}
+                // Named by the text beside it, which says what the number means
+                // ("Items per side, all rounds"), not by the button's "Set for all".
+                aria-label={bulk.label}
+                placeholder={bulk.placeholder}
+                className="w-16 text-center"
+              />
+              <Button
+                type="button"
+                variant="secondary"
+                disabled={Number(draft) >= bulk.max}
+                onClick={() => step(1)}
+                aria-label={t("increaseCount")}
+                className="h-8 w-8 px-0"
+              >
+                +
+              </Button>
+            </div>
             <Button
               type="button"
               variant="secondary"
               onClick={apply}
-              className="whitespace-nowrap"
+              className={cn(
+                "whitespace-nowrap",
+                // Flags that the rounds have drifted apart from each other —
+                // there's something for this button to actually reconcile.
+                // Same amber token StatusBadge/report-display use for a
+                // "needs a look" state (--status-pending, distinct from the
+                // game --score amber).
+                !bulk.allMatch &&
+                  "border border-status-pending/30 bg-status-pending/10 text-status-pending hover:bg-status-pending/20",
+              )}
             >
               {bulk.applyLabel}
             </Button>

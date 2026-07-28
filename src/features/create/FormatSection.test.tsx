@@ -20,13 +20,19 @@ function baseValues(format: PackFormat = "save_one"): CreatePackValues {
   };
 }
 
-function Harness({ initial }: { initial?: CreatePackValues }) {
+function Harness({
+  initial,
+  locked,
+}: {
+  initial?: CreatePackValues;
+  locked?: boolean;
+}) {
   const methods = useForm<CreatePackValues>({
     defaultValues: initial ?? baseValues(),
   });
   return (
     <FormProvider {...methods}>
-      <FormatSection />
+      <FormatSection locked={locked} />
     </FormProvider>
   );
 }
@@ -38,12 +44,12 @@ describe("FormatSection", () => {
     const buttons = screen.getAllByRole("button");
     const names = buttons.map((button) => button.textContent);
 
-    // Order must be: save_one, sacrifice_one, rank_blind, nxn, 1v1.
+    // Order must be: save_one, sacrifice_one, 1v1, nxn, rank_blind.
     expect(names[0]).toContain("Save One");
     expect(names[1]).toContain("Sacrifice One");
-    expect(names[2]).toContain("Rank Blind");
+    expect(names[2]).toContain("1v1");
     expect(names[3]).toContain("NxN");
-    expect(names[4]).toContain("1v1");
+    expect(names[4]).toContain("Rank Blind");
   });
 
   it("marks the currently-watched format as aria-pressed and the rest as not", () => {
@@ -88,5 +94,70 @@ describe("FormatSection", () => {
       "aria-pressed",
       "false",
     );
+  });
+
+  // Edit mode: formatHint says the format can't change once published, and
+  // CreatePackForm sends the current format on every PATCH — locking the
+  // picker is what keeps that copy honest and stops an edit from silently
+  // reshaping the author's existing rounds via the family-switch effect.
+  describe("locked (edit mode)", () => {
+    it("does not change the format when a different, unselected card is clicked", async () => {
+      const user = userEvent.setup();
+      render(<Harness initial={baseValues("save_one")} locked />);
+
+      await user.click(screen.getByRole("button", { name: /NxN/ }));
+
+      expect(screen.getByRole("button", { name: /Save One/ })).toHaveAttribute(
+        "aria-pressed",
+        "true",
+      );
+      expect(screen.getByRole("button", { name: /NxN/ })).toHaveAttribute(
+        "aria-pressed",
+        "false",
+      );
+    });
+
+    it("natively disables every unselected card, but not the selected one", () => {
+      render(<Harness initial={baseValues("save_one")} locked />);
+
+      expect(screen.getByRole("button", { name: /Save One/ })).not.toBeDisabled();
+      expect(screen.getByRole("button", { name: /NxN/ })).toBeDisabled();
+      expect(
+        screen.getByRole("button", { name: /Sacrifice One/ }),
+      ).toBeDisabled();
+    });
+
+    // The selected card stays natively enabled (so it renders un-dimmed and
+    // legible), so it needs its own aria-disabled — otherwise a keyboard/AT
+    // user tabbing to it would find an activatable control that's silently
+    // a no-op.
+    it("marks the selected card aria-disabled even though it isn't natively disabled", () => {
+      render(<Harness initial={baseValues("save_one")} locked />);
+
+      const selected = screen.getByRole("button", { name: /Save One/ });
+      expect(selected).toHaveAttribute("aria-disabled", "true");
+      expect(selected).not.toBeDisabled();
+    });
+
+    it("does not mark anything aria-disabled when not locked", () => {
+      render(<Harness initial={baseValues("save_one")} />);
+
+      expect(
+        screen.getByRole("button", { name: /Save One/ }),
+      ).not.toHaveAttribute("aria-disabled");
+    });
+
+    it("shows a tooltip explaining why, only while locked", () => {
+      const { rerender } = render(<Harness initial={baseValues()} />);
+      expect(
+        screen.getByRole("button", { name: /Save One/ }),
+      ).not.toHaveAttribute("title");
+
+      rerender(<Harness initial={baseValues()} locked />);
+      expect(screen.getByRole("button", { name: /Save One/ })).toHaveAttribute(
+        "title",
+        "Format can't change after publishing.",
+      );
+    });
   });
 });

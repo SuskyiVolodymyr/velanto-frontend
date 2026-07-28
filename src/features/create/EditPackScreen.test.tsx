@@ -87,7 +87,7 @@ describe("EditPackScreen", () => {
     mockSession("u1");
     renderScreen();
 
-    expect(await screen.findByLabelText("Pack title")).toHaveValue(
+    expect(await screen.findByLabelText("Title")).toHaveValue(
       "Original Title",
     );
     expect(
@@ -102,7 +102,7 @@ describe("EditPackScreen", () => {
     expect(
       await screen.findByText("You can only edit your own packs."),
     ).toBeInTheDocument();
-    expect(screen.queryByLabelText("Pack title")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Title")).not.toBeInTheDocument();
   });
 
   it("does not block a moderator who is not the author beyond the backend (edit is author-only, so still blocked)", async () => {
@@ -119,7 +119,7 @@ describe("EditPackScreen", () => {
     renderScreen();
 
     await waitFor(() => expect(authClient.refresh).toHaveBeenCalled());
-    expect(screen.queryByLabelText("Pack title")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Title")).not.toBeInTheDocument();
     expect(
       screen.queryByText("You can only edit your own packs."),
     ).not.toBeInTheDocument();

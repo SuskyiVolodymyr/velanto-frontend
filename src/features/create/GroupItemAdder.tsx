@@ -39,7 +39,14 @@ interface GroupItemAdderProps {
   onAdd: () => void;
   /** Set when an existing item is lifted in for editing (Add becomes Save). */
   editing?: boolean;
+  /**
+   * Collapses this panel back to the dashed "+ Add item" trigger, discarding
+   * whatever's typed — present whenever the panel is expanded (T5), for both
+   * the "new" and "editing" cases, not just editing.
+   */
   onCancelEdit?: () => void;
+  /** Editing only: deletes the item being edited outright. */
+  onDelete?: () => void;
 }
 
 /** The text/YouTube/image toggle plus the draft inputs for adding a new item. */
@@ -61,6 +68,7 @@ export function GroupItemAdder({
   onAdd,
   editing = false,
   onCancelEdit,
+  onDelete,
 }: GroupItemAdderProps) {
   const t = useTranslations("create");
   const [cropOpen, setCropOpen] = useState(false);
@@ -70,11 +78,21 @@ export function GroupItemAdder({
   return (
     <div
       className="flex flex-col gap-2"
-      // Escape backs out of an edit from anywhere in the row — the author's
-      // hands are already on the keyboard, and the alternative is hunting for
-      // Cancel. Harmless when not editing.
+      // Escape backs out of this panel from anywhere in the row — the
+      // author's hands are already on the keyboard, and the alternative is
+      // hunting for Cancel. Collapses the "new" add panel just as readily as
+      // an in-progress edit (T5) — onCancelEdit is passed whenever this panel
+      // is expanded at all, not only while editing.
+      //
+      // `cropOpen` guards this: ItemImageCropModal renders inline in this
+      // same subtree (Modal.tsx isn't a portal), so an Escape aimed at
+      // dismissing the crop dialog would otherwise bubble here and collapse
+      // the WHOLE panel underneath it — discarding a typed title and an
+      // already-uploaded image key the author never asked to lose. While the
+      // cropper is open, Escape is its own concern (ItemImageCropModal's
+      // onCancel), not this row's.
       onKeyDown={(e) => {
-        if (e.key === "Escape" && editing && onCancelEdit) {
+        if (e.key === "Escape" && onCancelEdit && !cropOpen) {
           e.stopPropagation();
           onCancelEdit();
         }
@@ -91,6 +109,9 @@ export function GroupItemAdder({
               ariaLabel: t("itemTypeText", { index: index + 1 }),
             },
             {
+              // Display label only — the underlying value/i18n key stay
+              // "youtube"/itemTypeLink (T5: the mock reads "YouTube" here,
+              // was "Link").
               value: "youtube",
               label: t("link"),
               ariaLabel: t("itemTypeLink", { index: index + 1 }),
@@ -102,14 +123,25 @@ export function GroupItemAdder({
             },
           ]}
         />
-        {editing && onCancelEdit && (
-          <button
-            type="button"
-            onClick={onCancelEdit}
-            className="text-xs font-medium text-foreground-tertiary hover:text-foreground"
-          >
-            {t("cancelEdit")}
-          </button>
+        {onCancelEdit && (
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={onCancelEdit}
+              className="text-xs font-medium text-foreground-tertiary hover:text-foreground"
+            >
+              {t("cancelEdit")}
+            </button>
+            {editing && onDelete && (
+              <button
+                type="button"
+                onClick={onDelete}
+                className="text-xs font-medium text-danger hover:underline"
+              >
+                {t("remove")}
+              </button>
+            )}
+          </div>
         )}
       </div>
       {draftType === "text" && (

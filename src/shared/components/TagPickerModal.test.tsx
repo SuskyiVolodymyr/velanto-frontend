@@ -32,7 +32,7 @@ describe("TagPickerModal", () => {
     expect(screen.getByRole("checkbox", { name: "Music" })).not.toBeChecked();
   });
 
-  it("commits the drafted additions and closes when Apply is clicked", async () => {
+  it("commits the drafted additions and closes when Done is clicked", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     const onClose = vi.fn();
@@ -46,13 +46,13 @@ describe("TagPickerModal", () => {
     );
 
     await user.click(screen.getByRole("checkbox", { name: "Music" }));
-    await user.click(screen.getByRole("button", { name: "Apply" }));
+    await user.click(screen.getByRole("button", { name: "Done" }));
 
     expect(onChange).toHaveBeenCalledWith(["Anime", "Music"]);
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("commits drafted removals when Apply is clicked", async () => {
+  it("commits drafted removals when Done is clicked", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(
@@ -65,12 +65,12 @@ describe("TagPickerModal", () => {
     );
 
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
-    await user.click(screen.getByRole("button", { name: "Apply" }));
+    await user.click(screen.getByRole("button", { name: "Done" }));
 
     expect(onChange).toHaveBeenCalledWith(["Music"]);
   });
 
-  it("tracks the draft in the live count, and Clear empties it but only commits on Apply", async () => {
+  it("tracks the draft in the live count, and Clear all empties it but only commits on Done", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(
@@ -86,17 +86,17 @@ describe("TagPickerModal", () => {
     await user.click(screen.getByRole("checkbox", { name: "Gaming" }));
     expect(screen.getByText("3 selected")).toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: "Clear" }));
+    await user.click(screen.getByRole("button", { name: "Clear all" }));
 
     expect(screen.getByText("0 selected")).toBeInTheDocument();
     expect(screen.getByRole("checkbox", { name: "Anime" })).not.toBeChecked();
     expect(onChange).not.toHaveBeenCalled();
 
-    await user.click(screen.getByRole("button", { name: "Apply" }));
+    await user.click(screen.getByRole("button", { name: "Done" }));
     expect(onChange).toHaveBeenCalledWith([]);
   });
 
-  it("disables Clear when the draft is already empty", () => {
+  it("disables Clear all when the draft is already empty", () => {
     render(
       <TagPickerModal
         open
@@ -105,7 +105,7 @@ describe("TagPickerModal", () => {
         onChange={vi.fn()}
       />,
     );
-    expect(screen.getByRole("button", { name: "Clear" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Clear all" })).toBeDisabled();
   });
 
   it("never commits while drafting, and Cancel discards the draft without committing", async () => {

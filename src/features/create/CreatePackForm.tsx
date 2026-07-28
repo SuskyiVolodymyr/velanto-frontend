@@ -6,6 +6,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useForm, useWatch, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import type { CreatePackInput } from "@/src/shared/lib/packs-client";
@@ -25,7 +26,8 @@ import { FormatSection } from "@/src/features/create/FormatSection";
 import { PoolsSection } from "@/src/features/create/PoolsSection";
 import { RoundsEditor } from "@/src/features/create/RoundsEditor";
 import { VersusEditor } from "@/src/features/create/VersusEditor";
-import { CreatePreviewPanel } from "@/src/features/create/CreatePreviewPanel";
+import { CreateChecklistPanel } from "@/src/features/create/CreateChecklistPanel";
+import { summarizePack } from "@/src/features/create/create-pack.summary";
 import {
   newGroup,
   newRound,
@@ -35,6 +37,17 @@ import {
   createPackSchema,
   type CreatePackValues,
 } from "@/src/features/create/create-pack.schema";
+
+// How long the sticky bar's draft-status subtitle shows "Draft · saved just
+// now" before reverting. A save-draft click still navigates away immediately
+// on success (see the onValid draft branch below) — real e2e/vitest coverage
+// asserts on that immediate `router.push`, and this repo already treats
+// stable navigation timing as load-bearing (see the accessible-name note on
+// the submit button below). This flash is therefore mostly cosmetic: it's
+// genuinely visible only in the moment before Next.js swaps the route, but
+// it's cheap to keep correct for whenever that transition takes longer than
+// an instant (slow network, cached-render delay, etc).
+const JUST_SAVED_MS = 2200;
 
 // A fresh versus draft defaults to this many rounds; the author tunes it in the
 // VersusEditor. Per-side count starts at 1 for both nxn and 1v1.
@@ -98,6 +111,19 @@ export function CreatePackForm({
   // Which button initiated the in-flight submit, so only that one shows its
   // spinner/label (both actions run the same validation + mutation).
   const [submitMode, setSubmitMode] = useState<"publish" | "draft">("publish");
+  // True for JUST_SAVED_MS after a successful draft save — drives the sticky
+  // bar's "Draft · saved just now" subtitle (see the constant's comment for
+  // why this rarely outlives the redirect it's racing). The auto-revert timer
+  // is a declarative effect (not a ref) on purpose: `onValid` below is reached
+  // from a `handleSubmit(...)` call made during render (the form's own
+  // onSubmit), and react-hooks/refs flags a ref read anywhere reachable from
+  // there — this way `onValid` only ever calls a state setter.
+  const [justSaved, setJustSaved] = useState(false);
+  useEffect(() => {
+    if (!justSaved) return;
+    const timer = setTimeout(() => setJustSaved(false), JUST_SAVED_MS);
+    return () => clearTimeout(timer);
+  }, [justSaved]);
 
   // Seed one pool plus a matching elimination round drawing from it. Computed
   // once (lazy initializer) so the round's groupId keeps pointing at the pool.
@@ -131,12 +157,32 @@ export function CreatePackForm({
     setError,
     setValue,
     getValues,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting, errors, isDirty },
   } = methods;
 
-  // The one subscription the orchestrator needs itself: which body (Rounds vs
-  // Versus) to render. Each section subscribes to its own slices internally.
-  const format = useWatch({ control, name: "format" });
+  // A single whole-form subscription: `format` decides which body (Rounds vs
+  // Versus) to render, and the same object feeds the sticky bar's title +
+  // blocked-submit tooltip (via summarizePack) now that those live here
+  // instead of the old desktop preview CTA. Each section still subscribes to
+  // its own slices internally for its own rendering.
+  const values = useWatch({ control }) as CreatePackValues;
+  const format = values.format;
+  const summary = summarizePack(values);
+  // The blocked-submit tooltip only applies to create mode's pre-validation
+  // display gate (mirrors the old CreatePreviewPanel CTA) — edit mode's
+  // "Save changes" always runs the real zod validation on click instead.
+  const blocked = !isEdit && !summary.canPublish;
+  const barTitle = values.title?.trim() || t("bar.newPackTitle");
+  // `isDirty` is relative to the form's ORIGINAL defaultValues, not "since
+  // the last save" (react-hook-form doesn't move that baseline without an
+  // explicit `reset`) — so after a draft save this reverts to "unsaved
+  // changes" rather than clearing, which undersells a real save. `justSaved`
+  // is given priority for the window where that matters; see JUST_SAVED_MS.
+  const draftNote = justSaved
+    ? t("bar.draftNoteSaved")
+    : isDirty
+      ? t("bar.draftNoteUnsaved")
+      : undefined;
 
   // Reshape `rounds` when the format changes between the elimination family
   // (single-slot rounds) and the versus family (two-slot rounds). Keyed on
@@ -184,28 +230,35 @@ export function CreatePackForm({
     }
   }, [format, getValues, setValue]);
 
-  async function onValid(values: CreatePackValues, draft: boolean) {
+  async function onValid(formValues: CreatePackValues, draft: boolean) {
     const input: CreatePackInput = {
-      title: values.title,
-      description: values.description,
-      coverTone: values.coverTone,
-      coverImageKey: values.coverImageKey,
-      format: values.format,
-      language: values.language,
-      tags: values.tags,
-      groups: values.groups,
-      rounds: values.rounds,
+      title: formValues.title,
+      description: formValues.description,
+      coverTone: formValues.coverTone,
+      coverImageKey: formValues.coverImageKey,
+      format: formValues.format,
+      language: formValues.language,
+      tags: formValues.tags,
+      groups: formValues.groups,
+      rounds: formValues.rounds,
       draft,
     };
 
     try {
+      let targetId: string;
       if (isEdit && packId) {
         await packsClient.update(packId, input);
-        router.push(`/packs/${packId}`);
+        targetId = packId;
       } else {
         const pack = await packsClient.create(input);
-        router.push(`/packs/${pack.id}`);
+        targetId = pack.id;
       }
+
+      // The "Saved" flash is only meaningful for the draft action — Publish
+      // navigates straight to the new/reviewed pack regardless. The
+      // auto-revert timer is the effect above, keyed on `justSaved`.
+      if (draft) setJustSaved(true);
+      router.push(`/packs/${targetId}`);
     } catch (err) {
       setError("root", { message: messageFromError(err) });
     }
@@ -255,15 +308,15 @@ export function CreatePackForm({
         }}
         noValidate
       >
-        {/* Sticky action bar: Cancel on the start side, Save draft always on
-            the end side, plus a Publish button that only exists below `lg` —
-            at `lg`+ the live-preview panel's own CTA is the single Publish
-            control (D2: two same-named Publish controls would break e2e
-            strict-mode `getByRole` lookups). Mirrors PackDetailScreen's
-            sticky bar (`sticky top-0 z-30 border-b border-border
-            bg-background/85 backdrop-blur-md`). Edit mode never renders this
-            button: its one action is "Save changes", already surfaced by the
-            preview panel's CTA at every breakpoint (see below). */}
+        {/* Sticky action bar: icon back-button + live title/draft-status on
+            the start side, Save draft + the single submit button on the end
+            side — at every breakpoint (D2 in the previous design: two
+            same-named Publish controls would break e2e strict-mode
+            `getByRole` lookups; consolidating to ONE control here, always
+            visible, is what keeps that guarantee now that the aside panel
+            no longer has its own CTA — see CreateChecklistPanel). Mirrors
+            PackDetailScreen's sticky bar (`sticky top-0 z-30 border-b
+            border-border bg-background/85 backdrop-blur-md`). */}
         <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
           <div
             className={cn(
@@ -273,10 +326,28 @@ export function CreatePackForm({
           >
             <Link
               href={cancelHref}
-              className="text-sm font-medium text-foreground-secondary transition-colors hover:text-foreground"
+              aria-label={t("cancel")}
+              className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-control text-foreground-secondary transition-colors hover:bg-white/[0.05] hover:text-foreground"
             >
-              {t("cancel")}
+              <ArrowLeft size={18} aria-hidden />
             </Link>
+            <div className="flex min-w-0 flex-col">
+              <Text
+                as="span"
+                className="truncate text-[14px] font-semibold leading-tight"
+              >
+                {barTitle}
+              </Text>
+              {draftNote && (
+                <Text
+                  variant="tertiary"
+                  role="status"
+                  className="truncate text-[11.5px] leading-tight"
+                >
+                  {draftNote}
+                </Text>
+              )}
+            </div>
             <div className="ms-auto flex items-center gap-2.5">
               <Button
                 type="button"
@@ -291,22 +362,65 @@ export function CreatePackForm({
               >
                 {isSubmitting && submitMode === "draft"
                   ? t("savingDraft")
-                  : t("saveDraft")}
+                  : justSaved
+                    ? t("bar.saved")
+                    : t("saveDraft")}
               </Button>
-              {!isEdit && (
-                <Button
-                  type="submit"
-                  size="sm"
-                  loading={isSubmitting && submitMode === "publish"}
-                  disabled={coverUploading || isSubmitting}
-                  onClick={() => setSubmitMode("publish")}
-                  className="lg:hidden"
-                >
-                  {isSubmitting && submitMode === "publish"
-                    ? t("publishing")
-                    : t("publish")}
-                </Button>
-              )}
+              <Button
+                type="submit"
+                size="sm"
+                loading={isSubmitting && submitMode === "publish"}
+                disabled={coverUploading || isSubmitting}
+                onClick={() => setSubmitMode("publish")}
+                // The blocked-state copy stays a title/tooltip rather than
+                // replacing the button's label — swapping label text on
+                // disable would break the stable accessible-name e2e
+                // selectors below.
+                title={blocked ? t("bar.blockedTooltip") : undefined}
+                // Display-only gate (never native `disabled`): a blocked
+                // click still submits and surfaces the real per-field zod
+                // errors instead of dead-ending, matching the JoinRoomCard
+                // anon-gate precedent this mirrors from the old preview CTA.
+                aria-disabled={blocked ? "true" : undefined}
+                // Pins the accessible name to the FULL label regardless of
+                // which of the two spans below CSS currently shows — see the
+                // comment on them.
+                aria-label={
+                  !isEdit && !(isSubmitting && submitMode === "publish")
+                    ? t("bar.submit")
+                    : undefined
+                }
+                // Visual echo of aria-disabled — the button stays natively
+                // enabled (see above), so this is cosmetic only.
+                className={blocked ? "opacity-70" : undefined}
+              >
+                {isEdit ? (
+                  isSubmitting ? (
+                    t("saving")
+                  ) : (
+                    t("saveChanges")
+                  )
+                ) : isSubmitting && submitMode === "publish" ? (
+                  t("bar.submitting")
+                ) : (
+                  // Two spans swapped by a CSS breakpoint rather than JS, so
+                  // there's no layout-shift flash on resize. The button's
+                  // accessible name is pinned to the full label via
+                  // `aria-label` below regardless of which span is visible —
+                  // a screen reader announcing a different name depending on
+                  // viewport width would be its own bug, and it keeps every
+                  // `getByRole("button", { name: "Submit for review" })`
+                  // selector stable across breakpoints.
+                  <>
+                    <span className="max-[720px]:hidden" aria-hidden>
+                      {t("bar.submit")}
+                    </span>
+                    <span className="hidden max-[720px]:inline" aria-hidden>
+                      {t("bar.submitShort")}
+                    </span>
+                  </>
+                )}
+              </Button>
             </div>
           </div>
         </div>
@@ -327,9 +441,9 @@ export function CreatePackForm({
                 </Text>
               )}
 
-              <PackMetaFields onCoverUploadingChange={setCoverUploading} />
+              <FormatSection locked={isEdit} />
 
-              <FormatSection />
+              <PackMetaFields onCoverUploadingChange={setCoverUploading} />
 
               <PoolsSection />
 
@@ -341,12 +455,7 @@ export function CreatePackForm({
             </div>
 
             <div className="max-w-[380px] flex-1 basis-[320px]">
-              <CreatePreviewPanel
-                mode={mode}
-                coverUploading={coverUploading}
-                submitMode={submitMode}
-                onPublishClick={() => setSubmitMode("publish")}
-              />
+              <CreateChecklistPanel values={values} />
             </div>
           </div>
         </div>

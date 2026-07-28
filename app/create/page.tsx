@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
-import { cn } from "@/src/shared/lib/cn";
-import { Text } from "@/src/shared/components/Text";
 import { CreatePackForm } from "@/src/features/create/CreatePackForm";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -19,21 +16,12 @@ export default async function CreatePage() {
     // wrapper. Nesting PACK_CONTAINER here AND inside CreatePackForm would
     // double-apply its `lg:w-[70%]`, squashing the whole page.
     <main className="flex-1 pt-10">
-      <div className={cn(PACK_CONTAINER)}>
-        {/* The sticky action bar's own Cancel link (inside CreatePackForm,
-            right below this header) replaces the standalone BackButton that
-            used to sit here. */}
-        <Text
-          as="h1"
-          variant="title"
-          className="mb-2 text-[clamp(30px,3.6vw,40px)] leading-tight"
-        >
-          {t("createTitle")}
-        </Text>
-        <Text variant="secondary" className="mb-8 max-w-[520px]">
-          {t("createSubtitle")}
-        </Text>
-      </div>
+      {/* The real mock's sticky bar carries the visible title now (T1) —
+          this h1 stays sr-only purely for a11y/SEO landmark purposes,
+          replacing what used to be a visible header block here. The sticky
+          action bar's own icon back-button (inside CreatePackForm) replaces
+          the standalone BackButton that used to sit here too. */}
+      <h1 className="sr-only">{t("createTitle")}</h1>
       <CreatePackForm />
     </main>
   );
