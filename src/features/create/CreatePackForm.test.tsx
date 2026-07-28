@@ -144,6 +144,8 @@ async function fillMinimalValidPack(user: ReturnType<typeof userEvent.setup>) {
   await user.type(await screen.findByLabelText("Pack title"), "Best");
   await user.type(screen.getByLabelText("Pack description"), "Desc");
   await user.type(screen.getByLabelText("Pool 1 name"), "2016");
+  // T5: items are read-only chips by default — expand the add panel first.
+  await user.click(screen.getByRole("button", { name: "+ Add item" }));
   await user.type(screen.getByLabelText("Pool 1 new item"), "A");
   await user.click(screen.getByRole("button", { name: "Add" }));
 }
@@ -545,14 +547,17 @@ describe("CreatePackForm", () => {
       await user.type(screen.getByLabelText("Pack description"), "D");
 
       // Two distinct pools, each with one item, built before switching so the
-      // format switch generates rounds over both.
+      // format switch generates rounds over both. T5: each pool's items are
+      // read-only chips until its own "+ Add item" trigger is expanded.
       await user.type(screen.getByLabelText("Pool 1 name"), "Boys");
+      await user.click(screen.getAllByRole("button", { name: "+ Add item" })[0]);
       await user.type(screen.getByLabelText("Pool 1 new item"), "Naruto");
       await user.click(screen.getAllByRole("button", { name: "Add" })[0]);
       await user.click(screen.getByRole("button", { name: "+ Add pool" }));
       await user.type(screen.getByLabelText("Pool 2 name"), "Girls");
+      await user.click(screen.getAllByRole("button", { name: "+ Add item" })[1]);
       await user.type(screen.getByLabelText("Pool 2 new item"), "Sakura");
-      await user.click(screen.getAllByRole("button", { name: "Add" })[1]);
+      await user.click(screen.getAllByRole("button", { name: "Add" })[0]);
 
       await user.click(screen.getByRole("button", { name: /^NxN/ }));
 
@@ -579,12 +584,14 @@ describe("CreatePackForm", () => {
       await user.type(screen.getByLabelText("Pack description"), "D");
 
       await user.type(screen.getByLabelText("Pool 1 name"), "Left");
+      await user.click(screen.getAllByRole("button", { name: "+ Add item" })[0]);
       await user.type(screen.getByLabelText("Pool 1 new item"), "A");
       await user.click(screen.getAllByRole("button", { name: "Add" })[0]);
       await user.click(screen.getByRole("button", { name: "+ Add pool" }));
       await user.type(screen.getByLabelText("Pool 2 name"), "Right");
+      await user.click(screen.getAllByRole("button", { name: "+ Add item" })[1]);
       await user.type(screen.getByLabelText("Pool 2 new item"), "B");
-      await user.click(screen.getAllByRole("button", { name: "Add" })[1]);
+      await user.click(screen.getAllByRole("button", { name: "Add" })[0]);
 
       await user.click(screen.getByRole("button", { name: /^1v1/ }));
 
@@ -636,6 +643,7 @@ describe("CreatePackForm", () => {
     renderForm();
     await screen.findByLabelText("Pack title");
 
+    await user.click(screen.getByRole("button", { name: "+ Add item" }));
     await user.type(screen.getByLabelText("Pool 1 new item"), "Naruto{Enter}");
 
     expect(screen.getByText("Naruto")).toBeInTheDocument();

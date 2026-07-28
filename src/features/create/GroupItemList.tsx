@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import type { Item } from "@/src/shared/types/pack";
 import { cn } from "@/src/shared/lib/cn";
@@ -16,6 +17,13 @@ interface GroupItemListProps {
   editingItemId?: string | null;
   onEdit: (item: Item) => void;
   onRemove: (itemId: string) => void;
+  /**
+   * Renders the inline edit panel for whichever item matches
+   * `editingItemId` (T5) — inserted as its own full-width row right after
+   * that item's chip, so the edit panel is anchored at the chip rather than
+   * docked in one shared spot at the bottom of the pool.
+   */
+  renderEditPanel?: (item: Item) => ReactNode;
 }
 
 /**
@@ -79,6 +87,7 @@ export function GroupItemList({
   editingItemId,
   onEdit,
   onRemove,
+  renderEditPanel,
 }: GroupItemListProps) {
   const t = useTranslations("create");
   if (items.length === 0) {
@@ -90,37 +99,46 @@ export function GroupItemList({
       {items.map((item) => {
         const editing = item.id === editingItemId;
         return (
-          <li
-            key={item.id}
-            className={cn(
-              "inline-flex items-center gap-2 rounded-chip border px-[9px] py-[5px] text-[13px] transition-colors",
-              editing
-                ? "border-acc bg-acc/10 text-foreground-tertiary"
-                : "border-border bg-white/[0.04] text-foreground",
-            )}
-          >
-            <button
-              type="button"
-              onClick={() => onEdit(item)}
-              aria-label={t("editItemAria", { title: item.title })}
-              className="flex items-center gap-2 text-start hover:text-acc"
-            >
-              {(item.type === "image" || item.type === "youtube") && (
-                <ItemThumbnail item={item} />
+          <li key={item.id} className="contents">
+            <span
+              className={cn(
+                "inline-flex items-center gap-2 rounded-chip border px-[9px] py-[5px] text-[13px] transition-colors",
+                editing
+                  ? "border-acc bg-acc/10 text-foreground-tertiary"
+                  : "border-border bg-white/[0.04] text-foreground",
               )}
-              <span className="max-w-[220px] truncate">{item.title}</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => onRemove(item.id)}
-              aria-label={t("removeItemAria", { title: item.title })}
-              // Visual glyph stays 18px to match the chip, but the tap target
-              // is widened to the 44px minimum via an invisible pseudo-element
-              // (hit-slop) rather than growing the chip itself.
-              className="relative flex h-[18px] w-[18px] shrink-0 items-center justify-center text-foreground-tertiary before:absolute before:-inset-[13px] before:content-[''] hover:text-danger"
             >
-              ×
-            </button>
+              <button
+                type="button"
+                onClick={() => onEdit(item)}
+                aria-label={t("editItemAria", { title: item.title })}
+                className="flex items-center gap-2 text-start hover:text-acc"
+              >
+                {(item.type === "image" || item.type === "youtube") && (
+                  <ItemThumbnail item={item} />
+                )}
+                <span className="max-w-[220px] truncate">{item.title}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => onRemove(item.id)}
+                aria-label={t("removeItemAria", { title: item.title })}
+                // Visual glyph stays 18px to match the chip, but the tap
+                // target is widened to the 44px minimum via an invisible
+                // pseudo-element (hit-slop) rather than growing the chip
+                // itself.
+                className="relative flex h-[18px] w-[18px] shrink-0 items-center justify-center text-foreground-tertiary before:absolute before:-inset-[13px] before:content-[''] hover:text-danger"
+              >
+                ×
+              </button>
+            </span>
+            {/* The inline edit panel (T5): anchored right after ITS chip,
+                as its own full-width row (`basis-full` forces the parent's
+                flex-wrap onto a new line), rather than one shared panel
+                docked at the bottom of the pool. */}
+            {editing && renderEditPanel && (
+              <span className="basis-full">{renderEditPanel(item)}</span>
+            )}
           </li>
         );
       })}

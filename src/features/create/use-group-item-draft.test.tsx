@@ -323,6 +323,38 @@ describe("useGroupItemDraft editing an existing item", () => {
     expect(next.items).toHaveLength(3);
     expect(next.items[2].title).toBe("Gamma");
   });
+
+  // T5's expand/collapse panel (GroupEditor) collapses back to the dashed
+  // trigger only when an item was actually committed — it needs this return
+  // value to tell a successful add/save apart from a validation failure.
+  it("resolves addItem to true on a successful add", async () => {
+    const { result } = renderHook(() => useGroupItemDraft(GROUP, vi.fn()), {
+      wrapper,
+    });
+
+    act(() => result.current.setDraftValue("Delta"));
+    let added: boolean | undefined;
+    await act(async () => {
+      added = await result.current.addItem();
+    });
+
+    expect(added).toBe(true);
+  });
+
+  it("resolves addItem to false when the empty-item validation rejects it", async () => {
+    const { result } = renderHook(() => useGroupItemDraft(FILLED, vi.fn()), {
+      wrapper,
+    });
+
+    act(() => result.current.beginEdit(TEXT_ITEM));
+    act(() => result.current.setDraftValue("   "));
+    let added: boolean | undefined;
+    await act(async () => {
+      added = await result.current.addItem();
+    });
+
+    expect(added).toBe(false);
+  });
 });
 
 describe("useGroupItemDraft carries typed text across a format switch", () => {
