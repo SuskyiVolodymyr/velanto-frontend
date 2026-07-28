@@ -177,6 +177,9 @@ describe("RoundsEditor", () => {
     // The field is named by the text beside it, not by the apply button — the
     // two used to share one accessible name (#359).
     const bulk = screen.getByLabelText("Set all rounds to draw");
+    // T4: the field now seeds itself from the live current count, so a
+    // replacement value is typed after clearing rather than into a blank.
+    await user.clear(bulk);
     await user.type(bulk, "3");
     await user.click(
       screen.getByRole("button", { name: "Set count for all rounds" }),

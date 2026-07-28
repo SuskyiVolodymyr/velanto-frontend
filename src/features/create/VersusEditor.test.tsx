@@ -160,6 +160,9 @@ describe("VersusEditor", () => {
     render(<Harness format="nxn" perSide={1} />);
 
     const bulk = screen.getByLabelText("Items per side, all rounds");
+    // T4: the field now seeds itself from the live current per-side count, so
+    // a replacement value is typed after clearing rather than into a blank.
+    await user.clear(bulk);
     await user.type(bulk, "3");
     await user.click(screen.getByRole("button", { name: "Set for all" }));
 

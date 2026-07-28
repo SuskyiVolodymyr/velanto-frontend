@@ -50,6 +50,11 @@ export function RoundsEditor() {
   const resolved = resolveRoundDraws(groups, rounds);
   const roundsError = getFieldError(errors, "rounds");
   const groupById = new Map(groups.map((group) => [group.id, group]));
+  // Feeds RoundsToolbar's live stepper + "drifted" amber flag below — see the
+  // bulk.current/allMatch comment there.
+  const randomRoundCounts = rounds
+    .filter((round) => round.slots[0]?.mode === "random")
+    .map((round) => round.slots[0]?.count ?? ELIMINATION_MIN_DRAW);
 
   function setSlot(
     roundIndex: number,
@@ -179,6 +184,9 @@ export function RoundsEditor() {
 
   return (
     <section className="flex flex-col gap-3">
+      {/* Same heading + hint as VersusEditor now — both editors converged on
+          one consistent "Rounds" label + "click a round to pick its pool"
+          hint per the real mock, instead of each having its own copy. */}
       <StepHeader step={4} title={t("roundsHeading")} hint={t("roundsHint")} />
 
       {rounds.map((round, index) => {
@@ -412,6 +420,11 @@ export function RoundsEditor() {
           min: 1,
           max: ELIMINATION_MAX_DRAW,
           placeholder: "4",
+          // Represents only the random-mode rounds — a manual round has no
+          // count of its own (it shows exactly its pinned items), so it
+          // can't drift from or agree with this number.
+          current: randomRoundCounts[0] ?? ELIMINATION_MIN_DRAW,
+          allMatch: randomRoundCounts.every((c) => c === randomRoundCounts[0]),
           onApply: (value) =>
             rounds.forEach((round, index) => {
               // Only a random draw has a count to set; a manual round shows

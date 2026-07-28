@@ -59,6 +59,13 @@ export function VersusEditor() {
   const currentPerSide = isHeadToHead
     ? 1
     : (rounds[0]?.slots[0]?.count ?? NXN_SIDE_COUNT_MIN);
+  // Feeds RoundsToolbar's "drifted" amber flag — every round's own per-side
+  // count (both its sides already share one, via setPerSide) compared
+  // against currentPerSide.
+  const perSideCounts = rounds.map(
+    (round) => round.slots[0]?.count ?? NXN_SIDE_COUNT_MIN,
+  );
+  const perSideAllMatch = perSideCounts.every((c) => c === currentPerSide);
 
   // A side either names a pool or asks for one at play time — two different
   // slot shapes, so the whole slot is replaced rather than one field patched,
@@ -114,7 +121,10 @@ export function VersusEditor() {
 
   return (
     <section className="flex flex-col gap-3">
-      <StepHeader step={4} title={t("matchupHeading")} />
+      {/* Same heading + hint as RoundsEditor (both editors converged on one
+          consistent "Rounds" label per the real mock) — VersusEditor used to
+          say "Matchup" with no hint. */}
+      <StepHeader step={4} title={t("roundsHeading")} hint={t("roundsHint")} />
 
       {rounds.map((round, index) => {
         const slotA = round.slots[0];
@@ -254,6 +264,8 @@ export function VersusEditor() {
                 min: NXN_SIDE_COUNT_MIN,
                 max: NXN_SIDE_COUNT_MAX,
                 placeholder: "3",
+                current: currentPerSide,
+                allMatch: perSideAllMatch,
                 onApply: (value) =>
                   rounds.forEach((_, index) => setPerSide(index, value)),
               }
