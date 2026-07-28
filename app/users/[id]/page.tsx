@@ -106,7 +106,7 @@ export default async function AuthorPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }}
       />
-      <div className="mx-auto w-full max-w-4xl px-7 pt-6">
+      <div className="mx-auto w-full max-w-[1080px] px-7 pt-6">
         <BackButton href="/" />
       </div>
       <AuthorScreen authorId={id} initialData={initialData} />

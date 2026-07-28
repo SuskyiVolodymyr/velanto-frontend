@@ -96,7 +96,17 @@ export function DangerZoneSection() {
         {t("dangerHeading")}
       </Text>
 
-      <Card className="flex flex-col gap-6 hover:translate-y-0 hover:shadow-none">
+      {/*
+        `!border-danger/40`, not a plain `border-danger/40` className: Card's
+        base already sets `border-border`, and `cn()` only concatenates
+        classes rather than merging them (see the identical footgun documented
+        on `Text.tsx`'s `danger` variant, velanto-frontend#236) — two
+        same-specificity border-color utilities leave the winner to stylesheet
+        order, not source order, and `border-border` (used on nearly every
+        Card in the app) reliably wins that tie. The `!` important modifier
+        sidesteps the tie instead of gambling on it.
+      */}
+      <Card className="flex flex-col gap-6 !border-danger/40">
         {/* Data export */}
         <div className="flex flex-col gap-2">
           <Text className="font-semibold">{t("exportDataButton")}</Text>

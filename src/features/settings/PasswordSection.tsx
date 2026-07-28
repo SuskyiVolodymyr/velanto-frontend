@@ -46,14 +46,20 @@ export function PasswordSection() {
   if (status === "loading") return <SettingsSectionSkeleton />;
   if (status !== "authenticated") {
     return (
-      <Card>
-        <Text as="h2" variant="title" className="mb-1 text-lg">
+      <section className="flex flex-col gap-4">
+        <Text
+          as="h2"
+          variant="tertiary"
+          className="text-xs uppercase tracking-wide"
+        >
           {t("passwordHeading")}
         </Text>
-        <Text variant="secondary" className="text-sm">
-          {t("loginToChangePassword")}
-        </Text>
-      </Card>
+        <Card>
+          <Text variant="secondary" className="text-sm">
+            {t("loginToChangePassword")}
+          </Text>
+        </Card>
+      </section>
     );
   }
 
@@ -85,54 +91,60 @@ export function PasswordSection() {
   };
 
   return (
-    <Card>
-      <Text as="h2" variant="title" className="mb-4 text-lg">
+    <section className="flex flex-col gap-4">
+      <Text
+        as="h2"
+        variant="tertiary"
+        className="text-xs uppercase tracking-wide"
+      >
         {t("passwordHeading")}
       </Text>
-      <FormProvider {...methods}>
-        <form
-          onSubmit={methods.handleSubmit(onSubmit)}
-          className="flex max-w-md flex-col gap-4"
-          noValidate
-        >
-          <PasswordField
-            name="currentPassword"
-            label={t("currentPassword")}
-            autoComplete="current-password"
-            showLabel={tAuth("showPassword")}
-            hideLabel={tAuth("hidePassword")}
-          />
-          <PasswordField
-            name="newPassword"
-            label={t("newPassword")}
-            autoComplete="new-password"
-            showLabel={tAuth("showPassword")}
-            hideLabel={tAuth("hidePassword")}
-          />
-          <PasswordField
-            name="confirmPassword"
-            label={t("confirmNewPassword")}
-            autoComplete="new-password"
-            showLabel={tAuth("showPassword")}
-            hideLabel={tAuth("hidePassword")}
-          />
+      <Card>
+        <FormProvider {...methods}>
+          <form
+            onSubmit={methods.handleSubmit(onSubmit)}
+            className="flex max-w-md flex-col gap-4"
+            noValidate
+          >
+            <PasswordField
+              name="currentPassword"
+              label={t("currentPassword")}
+              autoComplete="current-password"
+              showLabel={tAuth("showPassword")}
+              hideLabel={tAuth("hidePassword")}
+            />
+            <PasswordField
+              name="newPassword"
+              label={t("newPassword")}
+              autoComplete="new-password"
+              showLabel={tAuth("showPassword")}
+              hideLabel={tAuth("hidePassword")}
+            />
+            <PasswordField
+              name="confirmPassword"
+              label={t("confirmNewPassword")}
+              autoComplete="new-password"
+              showLabel={tAuth("showPassword")}
+              hideLabel={tAuth("hidePassword")}
+            />
 
-          {submitError && (
-            <Text variant="danger" className="text-sm">
-              {submitError}
-            </Text>
-          )}
-          {done && (
-            <Text className="text-sm text-success" role="status">
-              {t("passwordChanged")}
-            </Text>
-          )}
+            {submitError && (
+              <Text variant="danger" className="text-sm">
+                {submitError}
+              </Text>
+            )}
+            {done && (
+              <Text className="text-sm text-success" role="status">
+                {t("passwordChanged")}
+              </Text>
+            )}
 
-          <Button type="submit" loading={isSubmitting} className="w-fit">
-            {t("changePasswordButton")}
-          </Button>
-        </form>
-      </FormProvider>
-    </Card>
+            <Button type="submit" loading={isSubmitting} className="w-fit">
+              {t("changePasswordButton")}
+            </Button>
+          </form>
+        </FormProvider>
+      </Card>
+    </section>
   );
 }

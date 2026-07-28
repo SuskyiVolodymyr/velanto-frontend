@@ -77,7 +77,10 @@ describe("AvatarSection", () => {
     const user = userEvent.setup();
     renderSection(null);
 
-    await user.upload(screen.getByLabelText("Change photo"), pngFile());
+    await user.upload(
+      screen.getByLabelText("Drag a photo here or click"),
+      pngFile(),
+    );
     // Picking a file opens the crop modal; upload runs on crop-confirm.
     await user.click(screen.getByText("confirm-crop"));
 
@@ -94,7 +97,10 @@ describe("AvatarSection", () => {
     const user = userEvent.setup();
     renderSection(null);
 
-    await user.upload(screen.getByLabelText("Change photo"), pngFile());
+    await user.upload(
+      screen.getByLabelText("Drag a photo here or click"),
+      pngFile(),
+    );
 
     expect(screen.getByTestId("crop-modal")).toBeInTheDocument();
     expect(uploadMedia).not.toHaveBeenCalled();
@@ -104,7 +110,10 @@ describe("AvatarSection", () => {
     const user = userEvent.setup();
     renderSection(null);
 
-    await user.upload(screen.getByLabelText("Change photo"), pngFile());
+    await user.upload(
+      screen.getByLabelText("Drag a photo here or click"),
+      pngFile(),
+    );
     await user.click(screen.getByText("cancel-crop"));
 
     expect(screen.queryByTestId("crop-modal")).not.toBeInTheDocument();
@@ -117,7 +126,7 @@ describe("AvatarSection", () => {
     // fireEvent (not userEvent.upload) so the non-image file isn't filtered out
     // by the input's accept="image/*" — we're testing the component's own
     // client-side type check, which is the defense behind that attribute.
-    fireEvent.change(screen.getByLabelText("Change photo"), {
+    fireEvent.change(screen.getByLabelText("Drag a photo here or click"), {
       target: {
         files: [new File(["x"], "notes.txt", { type: "text/plain" })],
       },
@@ -134,7 +143,7 @@ describe("AvatarSection", () => {
     renderSection(null);
 
     await user.upload(
-      screen.getByLabelText("Change photo"),
+      screen.getByLabelText("Drag a photo here or click"),
       pngFile(MEDIA_MAX_BYTES + 1),
     );
 
@@ -149,7 +158,10 @@ describe("AvatarSection", () => {
     const user = userEvent.setup();
     renderSection(null);
 
-    await user.upload(screen.getByLabelText("Change photo"), pngFile());
+    await user.upload(
+      screen.getByLabelText("Drag a photo here or click"),
+      pngFile(),
+    );
     await user.click(screen.getByText("confirm-crop"));
 
     expect(
@@ -177,5 +189,75 @@ describe("AvatarSection", () => {
     expect(
       screen.queryByRole("button", { name: "Remove photo" }),
     ).not.toBeInTheDocument();
+  });
+
+  it("shows the default drag-a-photo copy when no avatar is set", () => {
+    renderSection(null);
+    expect(screen.getByText("Drag a photo here or click")).toBeInTheDocument();
+  });
+
+  it("shows the replace-photo copy once an avatar is set", () => {
+    renderSection("media/avatar/old.webp");
+    expect(screen.getByText("Replace photo")).toBeInTheDocument();
+    expect(
+      screen.getByLabelText("Replace photo"),
+    ).toBeInTheDocument();
+  });
+
+  it("solidifies the border and shows drop-to-upload copy while dragging over the zone", () => {
+    renderSection(null);
+    const zone = screen.getByText("Drag a photo here or click").closest(
+      "label",
+    ) as HTMLLabelElement;
+
+    fireEvent.dragOver(zone);
+
+    expect(screen.getByText("Drop to upload")).toBeInTheDocument();
+    expect(zone.className).toContain("border-acc");
+  });
+
+  it("reverts to the default copy when the drag leaves the zone", () => {
+    renderSection(null);
+    const zone = screen.getByText("Drag a photo here or click").closest(
+      "label",
+    ) as HTMLLabelElement;
+
+    fireEvent.dragOver(zone);
+    expect(screen.getByText("Drop to upload")).toBeInTheDocument();
+
+    fireEvent.dragLeave(zone);
+    expect(screen.getByText("Drag a photo here or click")).toBeInTheDocument();
+  });
+
+  it("routes a dropped file through the same validation as a picked one", async () => {
+    renderSection(null);
+    const zone = screen.getByText("Drag a photo here or click").closest(
+      "label",
+    ) as HTMLLabelElement;
+
+    fireEvent.drop(zone, {
+      dataTransfer: {
+        files: [new File(["x"], "notes.txt", { type: "text/plain" })],
+      },
+    });
+
+    expect(
+      await screen.findByText("Choose an image file."),
+    ).toBeInTheDocument();
+    expect(uploadMedia).not.toHaveBeenCalled();
+  });
+
+  it("opens the crop modal for a valid dropped image", async () => {
+    renderSection(null);
+    const zone = screen.getByText("Drag a photo here or click").closest(
+      "label",
+    ) as HTMLLabelElement;
+
+    fireEvent.drop(zone, {
+      dataTransfer: { files: [pngFile()] },
+    });
+
+    expect(screen.getByTestId("crop-modal")).toBeInTheDocument();
+    expect(uploadMedia).not.toHaveBeenCalled();
   });
 });

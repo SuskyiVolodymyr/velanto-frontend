@@ -1,13 +1,11 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithQueryClient as render } from "@/src/shared/test/render-with-query-client";
+import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
-import { NextIntlClientProvider } from "next-intl";
-import messages from "@/messages/en.json";
-import { FollowListModal } from "./FollowListModal";
+import { PeopleTab } from "./PeopleTab";
 import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
 import { usersClient } from "@/src/shared/lib/users-client";
-import type { FollowListKind } from "./api/follow-list.queries";
+import type { PeopleSubTab } from "./AuthorProfileHeader";
 
 vi.mock("@/src/shared/lib/users-client", () => ({
   usersClient: {
@@ -29,17 +27,11 @@ const FOLLOWER = {
 // A row with no known follow state (anonymous viewer, or the viewer's own row).
 const SELF = { ...FOLLOWER, id: "u3", username: "me", isFollowedByMe: null };
 
-function renderModal(initialTab: FollowListKind = "followers") {
+function renderPeopleTab(initialSubTab: PeopleSubTab = "followers") {
   return render(
-    <NextIntlClientProvider locale="en" messages={messages}>
-      <StreamerModeProvider>
-        <FollowListModal
-          authorId="author-1"
-          initialTab={initialTab}
-          onClose={vi.fn()}
-        />
-      </StreamerModeProvider>
-    </NextIntlClientProvider>,
+    <StreamerModeProvider>
+      <PeopleTab authorId="author-1" initialSubTab={initialSubTab} />
+    </StreamerModeProvider>,
   );
 }
 
@@ -59,9 +51,37 @@ beforeEach(() => {
   });
 });
 
-describe("FollowListModal", () => {
-  it("lists followers; only rows with a known follow state get a Follow button", async () => {
-    renderModal();
+describe("PeopleTab", () => {
+  it("renders the Followers/Following sub-tab switch with Followers selected by default", () => {
+    renderPeopleTab();
+
+    const tabs = screen.getAllByRole("tab");
+    expect(tabs).toHaveLength(2);
+    expect(screen.getByRole("tab", { name: "Followers" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    expect(screen.getByRole("tab", { name: "Following" })).toHaveAttribute(
+      "aria-selected",
+      "false",
+    );
+  });
+
+  it("honors initialSubTab to start on the Following tab", () => {
+    renderPeopleTab("following");
+
+    expect(screen.getByRole("tab", { name: "Following" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    expect(usersClient.following).toHaveBeenCalledWith("author-1", {
+      page: 1,
+      limit: 20,
+    });
+  });
+
+  it("lists followers from useFollowList; only rows with a known follow state get a Follow button", async () => {
+    renderPeopleTab();
 
     // Two rows link to their profiles…
     await waitFor(() => expect(screen.getAllByRole("link")).toHaveLength(2));
@@ -79,7 +99,7 @@ describe("FollowListModal", () => {
 
   it("follows a listed user and flips their button to Following", async () => {
     vi.mocked(usersClient.follow).mockResolvedValue({ followerCount: 5 });
-    renderModal();
+    renderPeopleTab();
     await screen.findByRole("button", { name: "Follow" });
 
     await userEvent.click(screen.getByRole("button", { name: "Follow" }));
@@ -93,7 +113,7 @@ describe("FollowListModal", () => {
   });
 
   it("switches to the Following tab and shows its empty state", async () => {
-    renderModal();
+    renderPeopleTab();
     await screen.findByRole("button", { name: "Follow" });
 
     await userEvent.click(screen.getByRole("tab", { name: "Following" }));
@@ -103,6 +123,44 @@ describe("FollowListModal", () => {
     ).toBeInTheDocument();
     expect(usersClient.following).toHaveBeenCalledWith("author-1", {
       page: 1,
+      limit: 20,
+    });
+  });
+
+  it("shows the empty state for the Followers tab when there are no followers", async () => {
+    vi.mocked(usersClient.followers).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
+    renderPeopleTab();
+
+    expect(await screen.findByText("No followers yet.")).toBeInTheDocument();
+  });
+
+  it('shows "Load more" and appends a page when clicked', async () => {
+    vi.mocked(usersClient.followers)
+      .mockResolvedValueOnce({
+        items: [FOLLOWER],
+        total: 3,
+        page: 1,
+        limit: 20,
+      })
+      .mockResolvedValueOnce({ items: [SELF], total: 3, page: 2, limit: 20 });
+
+    renderPeopleTab();
+
+    await screen.findByRole("link", { name: /bob/ });
+    expect(screen.queryByRole("link", { name: /me/ })).not.toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("button", { name: "Load more" }));
+
+    await waitFor(() =>
+      expect(screen.getByRole("link", { name: /me/ })).toBeInTheDocument(),
+    );
+    expect(usersClient.followers).toHaveBeenCalledWith("author-1", {
+      page: 2,
       limit: 20,
     });
   });

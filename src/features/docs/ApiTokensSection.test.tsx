@@ -161,9 +161,9 @@ describe("ApiTokensSection", () => {
     expect(
       screen.queryByText(/haven.t created any tokens/i),
     ).not.toBeInTheDocument();
-    expect(container.querySelectorAll(".animate-pulse").length).toBeGreaterThan(
-      0,
-    );
+    expect(
+      container.querySelectorAll(".animate-shimmer").length,
+    ).toBeGreaterThan(0);
   });
 
   it("requires a name and at least one scope before creating", async () => {
