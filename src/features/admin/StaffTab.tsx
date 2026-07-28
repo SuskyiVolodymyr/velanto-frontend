@@ -168,10 +168,11 @@ export function StaffTab() {
    *    search, so trusting its top hit could promote a different account.
    *  - id → `adminClient.userDetail(id)` directly — already an exact,
    *    unambiguous lookup, so no disambiguation is needed.
-   *  - username (bare word or "@handle") → `listUsers({q})`; a single hit
-   *    resolves straight through, more than one hit surfaces as candidates
-   *    for the caller to disambiguate via a picker (never trust the top hit
-   *    of a substring search).
+   *  - username (bare word or "@handle") → `listUsers({q})`; only an EXACT
+   *    (case-insensitive) username match among the results resolves straight
+   *    through — anything else, including a lone substring-only hit, surfaces
+   *    as candidates for the caller to disambiguate via a picker (never trust
+   *    the top, or only, hit of a substring search for a privilege grant).
    */
   const resolveStaff = useMutation({
     mutationFn: async (raw: string): Promise<ResolvedStaff> => {
