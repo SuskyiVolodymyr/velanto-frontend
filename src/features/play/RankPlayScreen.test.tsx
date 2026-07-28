@@ -346,6 +346,50 @@ describe("RankPlayScreen", () => {
     expect(screen.getByText("Round 2 of 2")).toBeInTheDocument();
   });
 
+  // T7: the round-complete interstitial (eyebrow + "Next up: {name}", the
+  // real shipped screen between rounds — not the retired terminal COMPLETE
+  // mechanic) had no coverage. `nextUp` names the round via `roundHeading`,
+  // which for round 2 of this fixture falls back to "Round 2" (r2 has no
+  // author-given `name`).
+  it("shows the round-complete eyebrow and names the next round via roundHeading", async () => {
+    const user = userEvent.setup();
+    renderScreen(RANK_BLIND_PACK);
+    await screen.findByText("Kaikai Kitan");
+
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+
+    expect(await screen.findByText("Round complete")).toBeInTheDocument();
+    expect(screen.getByText("Next up: Round 2")).toBeInTheDocument();
+  });
+
+  // The interstitial must be ABSENT on the actual final round — `isFinished`
+  // (not `isRoundComplete`) gates the last round, since `roundHeading(pack,
+  // roundIndex + 1)` would otherwise try to name a round that doesn't exist.
+  // The screen instead goes straight to the loading state (see the "records
+  // the accumulated picks…" test for the redirect itself).
+  it("does not show the round-complete interstitial on the final round", async () => {
+    const user = userEvent.setup();
+    renderScreen(RANK_BLIND_PACK);
+    await screen.findByText("Kaikai Kitan");
+
+    // Finish round 1 and advance.
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await screen.findByText("Round complete");
+    await user.click(screen.getByRole("button", { name: "Next round →" }));
+
+    // Finish round 2, the last round.
+    await screen.findByText("Silhouette");
+    await user.click(screen.getByText("#1"));
+
+    expect(await screen.findByText("Loading your results…")).toBeInTheDocument();
+    expect(screen.queryByText("Round complete")).toBeNull();
+    expect(screen.queryByText(/^Next up:/)).toBeNull();
+  });
+
   // The recap between rounds is the same list the result screen shows, so what
   // a player reads mid-play matches what they get at the end — including where
   // each item came in the draw, which is the whole point of ranking blind.
