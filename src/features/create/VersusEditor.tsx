@@ -155,7 +155,10 @@ export function VersusEditor() {
     }
     const poolIndex = groups.findIndex((g) => g.id === slot?.groupId);
     return (
-      groups[poolIndex]?.name.trim() || t("groupName", { index: poolIndex + 1 })
+      groups[poolIndex]?.name.trim() ||
+      // -1 (no match — reachable only transiently mid format-family-switch)
+      // must not render as "Pool 0 name".
+      t("groupName", { index: Math.max(0, poolIndex) + 1 })
     );
   }
 
@@ -198,11 +201,14 @@ export function VersusEditor() {
             {/* Collapsed by default (T6), same shape as RoundsEditor. */}
             <button
               type="button"
-              onClick={() =>
-                setExpandedRoundId((current) =>
-                  current === round.id ? null : round.id,
-                )
-              }
+              // Compares against `expanded` (already resolved through
+              // `effectiveExpandedId`), not the raw state — see
+              // RoundsEditor's identical comment: right after a
+              // format-family switch, `expandedRoundId` still holds the
+              // STALE id while round 1 shows expanded via the fallback, so
+              // comparing against the raw state would make the first click
+              // on round 1's own header re-pin it instead of collapsing it.
+              onClick={() => setExpandedRoundId(expanded ? null : round.id)}
               aria-expanded={expanded}
               className="flex w-full items-center gap-2.5 text-start"
             >
@@ -243,8 +249,17 @@ export function VersusEditor() {
                       type="button"
                       onClick={() => {
                         roundsArray.remove(index);
-                        setExpandedRoundId((current) =>
-                          current === round.id ? null : current,
+                        // Expand whichever survivor now sits in the removed
+                        // round's place — see RoundsEditor's identical
+                        // comment (the Remove control only ever removes the
+                        // expanded round, so leaving `expandedRoundId` at
+                        // its old value would collapse everything).
+                        const remaining = rounds.filter(
+                          (_, i) => i !== index,
+                        );
+                        setExpandedRoundId(
+                          remaining[Math.min(index, remaining.length - 1)]
+                            ?.id ?? null,
                         );
                       }}
                       aria-label={t("removeRound", { index: index + 1 })}

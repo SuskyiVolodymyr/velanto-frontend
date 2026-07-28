@@ -62,11 +62,19 @@ export function CreateChecklistPanel({ values }: CreateChecklistPanelProps) {
   ];
 
   return (
-    <div className="flex max-w-[380px] flex-col gap-[16px] lg:sticky lg:top-[82px]">
+    // No max-w here — CreatePackForm's aside slot already constrains this
+    // (`max-w-[380px] flex-1 basis-[320px]`); repeating it on this root was
+    // redundant.
+    <div className="flex flex-col gap-[16px] lg:sticky lg:top-[82px]">
       <div className="rounded-card border border-border bg-surface-card p-[16px_18px]">
         <Text
           variant="tertiary"
-          className="mb-3 text-[12px] font-medium tracking-[0.14em]"
+          // `uppercase` (matching ResultHero's own eyebrow) rather than
+          // typing every locale's translation in caps — a CSS transform is a
+          // no-op on non-cased scripts (ar/ur/hi/bn/zh) and keeps en/ru/uk
+          // consistent with each other instead of depending on whether that
+          // locale's translator happened to shout the string.
+          className="mb-3 text-[12px] font-medium uppercase tracking-[0.14em]"
         >
           {t("eyebrow")}
         </Text>

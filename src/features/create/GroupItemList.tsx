@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import type { Item } from "@/src/shared/types/pack";
 import { cn } from "@/src/shared/lib/cn";
@@ -99,8 +99,13 @@ export function GroupItemList({
       {items.map((item) => {
         const editing = item.id === editingItemId;
         return (
-          <li key={item.id} className="contents">
-            <span
+          // A Fragment, not a single wrapping <li> with `display: contents`
+          // — that utility drops list semantics from VoiceOver/WebKit (the
+          // buttons inside survive, but the list/listitem structure doesn't).
+          // The chip stays a real <li>; the edit panel is a second, sibling
+          // <li> so `<ul>`/`<li>` semantics are intact either way.
+          <Fragment key={item.id}>
+            <li
               className={cn(
                 "inline-flex items-center gap-2 rounded-chip border px-[9px] py-[5px] text-[13px] transition-colors",
                 editing
@@ -131,15 +136,16 @@ export function GroupItemList({
               >
                 ×
               </button>
-            </span>
+            </li>
             {/* The inline edit panel (T5): anchored right after ITS chip,
                 as its own full-width row (`basis-full` forces the parent's
                 flex-wrap onto a new line), rather than one shared panel
-                docked at the bottom of the pool. */}
+                docked at the bottom of the pool. `list-none` because this
+                <li> is a layout convenience, not a second list entry. */}
             {editing && renderEditPanel && (
-              <span className="basis-full">{renderEditPanel(item)}</span>
+              <li className="basis-full list-none">{renderEditPanel(item)}</li>
             )}
-          </li>
+          </Fragment>
         );
       })}
     </ul>

@@ -20,13 +20,19 @@ function baseValues(format: PackFormat = "save_one"): CreatePackValues {
   };
 }
 
-function Harness({ initial }: { initial?: CreatePackValues }) {
+function Harness({
+  initial,
+  locked,
+}: {
+  initial?: CreatePackValues;
+  locked?: boolean;
+}) {
   const methods = useForm<CreatePackValues>({
     defaultValues: initial ?? baseValues(),
   });
   return (
     <FormProvider {...methods}>
-      <FormatSection />
+      <FormatSection locked={locked} />
     </FormProvider>
   );
 }
@@ -88,5 +94,50 @@ describe("FormatSection", () => {
       "aria-pressed",
       "false",
     );
+  });
+
+  // Edit mode: formatHint says the format can't change once published, and
+  // CreatePackForm sends the current format on every PATCH — locking the
+  // picker is what keeps that copy honest and stops an edit from silently
+  // reshaping the author's existing rounds via the family-switch effect.
+  describe("locked (edit mode)", () => {
+    it("does not change the format when a different, unselected card is clicked", async () => {
+      const user = userEvent.setup();
+      render(<Harness initial={baseValues("save_one")} locked />);
+
+      await user.click(screen.getByRole("button", { name: /NxN/ }));
+
+      expect(screen.getByRole("button", { name: /Save One/ })).toHaveAttribute(
+        "aria-pressed",
+        "true",
+      );
+      expect(screen.getByRole("button", { name: /NxN/ })).toHaveAttribute(
+        "aria-pressed",
+        "false",
+      );
+    });
+
+    it("natively disables every unselected card, but not the selected one", () => {
+      render(<Harness initial={baseValues("save_one")} locked />);
+
+      expect(screen.getByRole("button", { name: /Save One/ })).not.toBeDisabled();
+      expect(screen.getByRole("button", { name: /NxN/ })).toBeDisabled();
+      expect(
+        screen.getByRole("button", { name: /Sacrifice One/ }),
+      ).toBeDisabled();
+    });
+
+    it("shows a tooltip explaining why, only while locked", () => {
+      const { rerender } = render(<Harness initial={baseValues()} />);
+      expect(
+        screen.getByRole("button", { name: /Save One/ }),
+      ).not.toHaveAttribute("title");
+
+      rerender(<Harness initial={baseValues()} locked />);
+      expect(screen.getByRole("button", { name: /Save One/ })).toHaveAttribute(
+        "title",
+        "Format can't change after publishing.",
+      );
+    });
   });
 });

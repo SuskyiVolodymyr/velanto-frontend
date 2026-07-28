@@ -237,6 +237,12 @@ export function RoundsEditor() {
           ELIMINATION_MAX_DRAW,
         );
         const expanded = round.id === effectiveExpandedId;
+        // `index` here is the ROUND's position in `rounds` — an unnamed
+        // pool's fallback label needs the POOL's own position in `groups`
+        // instead (a round 3 drawing from unnamed pool 1 must still say
+        // "Pool 1 name", not "Pool 3 name"). Mirrors VersusEditor's
+        // poolLabelFor.
+        const poolIndex = groups.findIndex((g) => g.id === slot.groupId);
         const poolLabel = randomPool
           ? t("randomPoolOption", {
               count: Math.max(
@@ -247,7 +253,8 @@ export function RoundsEditor() {
                 }),
               ),
             })
-          : group?.name.trim() || t("groupName", { index: index + 1 });
+          : group?.name.trim() ||
+            t("groupName", { index: Math.max(0, poolIndex) + 1 });
 
         return (
           <div
@@ -260,11 +267,15 @@ export function RoundsEditor() {
                 Input) so a click never fights text-field focus. */}
             <button
               type="button"
-              onClick={() =>
-                setExpandedRoundId((current) =>
-                  current === round.id ? null : round.id,
-                )
-              }
+              // Compares against `expanded` (which already resolved through
+              // `effectiveExpandedId`), not the raw `expandedRoundId` state —
+              // right after a format-family switch replaces `rounds` with
+              // new ids, `expandedRoundId` still holds the STALE id while
+              // round 1 is showing expanded via the fallback; comparing
+              // against the raw state here would make the first click on
+              // round 1's own header a no-op (it'd re-pin the same round
+              // instead of collapsing it).
+              onClick={() => setExpandedRoundId(expanded ? null : round.id)}
               aria-expanded={expanded}
               className="flex w-full items-center gap-2.5 text-start"
             >
@@ -378,8 +389,15 @@ export function RoundsEditor() {
                       type="button"
                       onClick={() => {
                         roundsArray.remove(index);
-                        setExpandedRoundId((current) =>
-                          current === round.id ? null : current,
+                        // The Remove control only renders on the expanded
+                        // round, so this always removes whichever round was
+                        // open — expand whichever survivor now sits in its
+                        // place (the next round, or the previous one if it
+                        // was last) rather than leaving everything collapsed.
+                        const remaining = rounds.filter((_, i) => i !== index);
+                        setExpandedRoundId(
+                          remaining[Math.min(index, remaining.length - 1)]
+                            ?.id ?? null,
                         );
                       }}
                       aria-label={t("removeRound", { index: index + 1 })}

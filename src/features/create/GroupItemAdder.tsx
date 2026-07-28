@@ -83,8 +83,16 @@ export function GroupItemAdder({
       // hunting for Cancel. Collapses the "new" add panel just as readily as
       // an in-progress edit (T5) — onCancelEdit is passed whenever this panel
       // is expanded at all, not only while editing.
+      //
+      // `cropOpen` guards this: ItemImageCropModal renders inline in this
+      // same subtree (Modal.tsx isn't a portal), so an Escape aimed at
+      // dismissing the crop dialog would otherwise bubble here and collapse
+      // the WHOLE panel underneath it — discarding a typed title and an
+      // already-uploaded image key the author never asked to lose. While the
+      // cropper is open, Escape is its own concern (ItemImageCropModal's
+      // onCancel), not this row's.
       onKeyDown={(e) => {
-        if (e.key === "Escape" && onCancelEdit) {
+        if (e.key === "Escape" && onCancelEdit && !cropOpen) {
           e.stopPropagation();
           onCancelEdit();
         }

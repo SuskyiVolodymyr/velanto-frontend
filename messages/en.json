@@ -1229,6 +1229,7 @@
     "addTags": "+ Add tags",
     "formatHeading": "Format",
     "formatHint": "How a round works. This can't change once the pack is published.",
+    "formatLockedTooltip": "Format can't change after publishing.",
     "blurbSaveOne": "A group each round — the player keeps exactly one.",
     "blurbSacrificeOne": "A group each round — the player cuts exactly one.",
     "blurbNxn": "A pool against a pool, side by side, every round.",
@@ -1398,7 +1399,6 @@
   },
   "pages": {
     "createTitle": "Create a pack",
-    "createSubtitle": "Pick an elimination format — the builder adapts to it. Elements can be text, a YouTube link, or an image.",
     "metaProfile": "Profile",
     "metaEditProfile": "Edit profile",
     "metaPlaying": "Playing {title}",
@@ -1415,7 +1415,6 @@
     "errorBody": "We couldn't load this profile. Please try again.",
     "tryAgain": "Try again",
     "editTitle": "Edit pack",
-    "editSubtitle": "Update your pack's details. Republishing sends it back through moderation.",
     "notFoundTitle": "Page not found",
     "notFoundBody": "The page you're looking for doesn't exist or has moved.",
     "appErrorBody": "An unexpected error occurred. You can try again."

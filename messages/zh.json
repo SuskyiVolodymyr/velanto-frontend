@@ -1135,6 +1135,7 @@
     "addTags": "+ 添加标签",
     "formatHeading": "玩法",
     "formatHint": "每轮如何进行。题包发布后无法更改。",
+    "formatLockedTooltip": "题包发布后玩法无法更改。",
     "blurbSaveOne": "每轮一个池——玩家恰好留下一个。",
     "blurbSacrificeOne": "每轮一个池——玩家恰好淘汰一个。",
     "blurbNxn": "池对池，并肩对决，每轮如此。",
@@ -1304,7 +1305,6 @@
   },
   "pages": {
     "createTitle": "创建题包",
-    "createSubtitle": "选择一种淘汰玩法——编辑区会随之调整。选项可以是文字、YouTube 链接，或图片。",
     "metaProfile": "个人资料",
     "metaEditProfile": "编辑个人资料",
     "metaPlaying": "正在玩 {title}",
@@ -1321,7 +1321,6 @@
     "errorBody": "无法加载该个人资料，请重试。",
     "tryAgain": "重试",
     "editTitle": "编辑题包",
-    "editSubtitle": "更新题包信息。重新发布后需再次经过审核。",
     "notFoundTitle": "找不到页面",
     "notFoundBody": "您要查找的页面不存在或已被移动。",
     "appErrorBody": "发生了意外错误。您可以重试。"

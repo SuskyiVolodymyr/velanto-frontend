@@ -441,7 +441,7 @@ export function CreatePackForm({
                 </Text>
               )}
 
-              <FormatSection />
+              <FormatSection locked={isEdit} />
 
               <PackMetaFields onCoverUploadingChange={setCoverUploading} />
 

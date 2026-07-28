@@ -464,6 +464,21 @@ describe("CreatePackForm", () => {
       ).not.toBeInTheDocument();
     });
 
+    // formatHint says format can't change once published, and edit mode's
+    // PATCH sends whatever `format` is currently in the form — locking the
+    // picker is what keeps that copy true and stops an edit from silently
+    // reshaping the author's existing rounds via the family-switch effect.
+    it("locks the format picker so the pack's existing format can't be changed", async () => {
+      renderEditForm();
+      await screen.findByLabelText("Title");
+
+      expect(screen.getByRole("button", { name: /Save One/ })).toHaveAttribute(
+        "aria-pressed",
+        "true",
+      );
+      expect(screen.getByRole("button", { name: /NxN/ })).toBeDisabled();
+    });
+
     it("PATCHes the pack and redirects to its detail page on save", async () => {
       const user = userEvent.setup();
       vi.mocked(packsClient.update).mockResolvedValue(
@@ -533,6 +548,15 @@ describe("CreatePackForm", () => {
   });
 
   describe("versus formats swap in the Versus editor", () => {
+    // This also exercises T6's `effectiveExpandedId` fallback, though not by
+    // name: switching families remounts RoundsEditor -> VersusEditor, and
+    // VersusEditor's OWN `expandedRoundId` is seeded from `rounds[0]` at that
+    // mount — the render BEFORE CreatePackForm's family-switch effect has
+    // replaced `rounds` with brand-new versus-shaped ids. Without the
+    // fallback, `expandedRoundId` is left pointing at a round that no longer
+    // exists and round 1 renders collapsed, so "Side A for round 1" below
+    // would not be queryable at all (confirmed by temporarily reverting the
+    // fallback to a raw `expandedRoundId` comparison — this assertion fails).
     it("switches from Rounds to the per-round Versus editor when NxN is selected", async () => {
       const user = userEvent.setup();
       renderForm();
@@ -547,6 +571,42 @@ describe("CreatePackForm", () => {
       expect(
         screen.getByRole("button", { name: "New round" }),
       ).toBeInTheDocument();
+    });
+
+    // The toggle button compares against the RESOLVED `expanded` flag (which
+    // already ran through the fallback), not the raw, stale `expandedRoundId`
+    // state — otherwise this first click would be a no-op (re-pinning the
+    // same round instead of collapsing it) and a second click would be
+    // needed to actually collapse.
+    it("collapses round 1 on the first header click right after a format-family switch", async () => {
+      const user = userEvent.setup();
+      renderForm();
+      await user.click(await screen.findByRole("button", { name: /^NxN/ }));
+      await screen.findByLabelText("Side A for round 1");
+
+      await user.click(screen.getByRole("button", { name: /^Round 1/ }));
+
+      expect(
+        screen.queryByLabelText("Side A for round 1"),
+      ).not.toBeInTheDocument();
+    });
+
+    // Same fallback + toggle-comparison fix, the other direction: switching
+    // back out of a versus format remounts RoundsEditor with its own stale
+    // `expandedRoundId` (seeded before the reshape effect runs).
+    it("keeps round 1 expanded and collapsible on the first click when switching back from NxN to Save One", async () => {
+      const user = userEvent.setup();
+      renderForm();
+      await user.click(await screen.findByRole("button", { name: /^NxN/ }));
+      await screen.findByLabelText("Side A for round 1");
+
+      await user.click(await screen.findByRole("button", { name: /^Save One/ }));
+
+      expect(screen.getByLabelText("Round 1 pool")).toBeInTheDocument();
+
+      await user.click(screen.getByRole("button", { name: /^Round 1/ }));
+
+      expect(screen.queryByLabelText("Round 1 pool")).not.toBeInTheDocument();
     });
 
     it("pins per-side to 1 (no input) when 1v1 is selected", async () => {

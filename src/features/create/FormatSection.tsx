@@ -28,7 +28,16 @@ const FORMAT_OPTIONS: { value: PackFormat; blurbKey: string }[] = [
  * react-hook-form state, which in turn drives whether the Groups or Categories
  * body is shown by the parent form.
  */
-export function FormatSection() {
+export function FormatSection({
+  // Edit mode locks the picker: the hint text says format can't change once
+  // the pack is published (T3), and `CreatePackForm.onValid` sends the
+  // current format on every PATCH — without this gate that copy would be
+  // false, and picking a different format mid-edit would also silently swap
+  // out the author's existing rounds via the family-switch effect below.
+  locked = false,
+}: {
+  locked?: boolean;
+}) {
   const t = useTranslations("create");
   const tFormat = useTranslations("formats");
   const { control, setValue } = useFormContext<CreatePackValues>();
@@ -47,10 +56,18 @@ export function FormatSection() {
             <button
               key={option.value}
               type="button"
-              onClick={() => setValue("format", option.value)}
+              disabled={locked && !selected}
+              onClick={() => {
+                if (locked) return;
+                setValue("format", option.value);
+              }}
               aria-pressed={selected}
+              title={locked ? t("formatLockedTooltip") : undefined}
               className={cn(
-                "flex cursor-pointer flex-col gap-3 rounded-tile border p-4 text-start transition-colors",
+                "flex flex-col gap-3 rounded-tile border p-4 text-start transition-colors",
+                locked
+                  ? "cursor-not-allowed disabled:opacity-45"
+                  : "cursor-pointer",
                 selected
                   ? "border-acc bg-white/[0.055]"
                   : "border-border bg-surface-card",
