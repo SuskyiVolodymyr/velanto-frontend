@@ -1172,6 +1172,7 @@
     "submitPack": "Submit for review",
     "submittingPack": "Submitting…",
     "submitPackError": "Couldn't submit this pack. Please try again.",
+    "rejectionReasonHeading": "Why this was rejected",
     "randomPoolLabel": "Random pool"
   },
   "share": {
