@@ -24,13 +24,27 @@ import { useRoundSelections } from "@/src/features/play/use-round-selections";
 import { usePlayResume } from "@/src/features/play/use-play-resume";
 import { RankedList, type RankedRow } from "@/src/shared/components/RankedList";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { PlayChrome } from "@/src/features/play/PlayChrome";
+import { PlayRoundHeader } from "@/src/features/play/PlayRoundHeader";
+import { roundHeading } from "@/src/shared/lib/round-heading";
+import { COVER_TONES } from "@/src/shared/types/pack";
 import type { Pack, Item } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
+
+// Diagonal hairline overlay for a text item's gradient tile — same recipe as
+// the elimination round's media band (see CandidateCard.tsx / docs/superpowers/
+// plans/2026-07-28-solo-play-results-redesign.md T4/T7), matched independently
+// here since the two tasks land concurrently on different files.
+const HAIRLINE_OVERLAY_STYLE = {
+  backgroundImage:
+    "repeating-linear-gradient(122deg, rgba(255,255,255,.03) 0 1px, transparent 1px 15px)",
+};
 
 export function RankPlayScreen({ pack }: { pack: Pack }) {
   const { status } = useAuth();
   const router = useRouter();
   const t = useTranslations("play");
+  const tFormat = useTranslations("formats");
   const groups = pack.groups ?? [];
   const rounds = pack.rounds ?? [];
   const totalRounds = rounds.length;
@@ -107,6 +121,18 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
       title: item.title,
       drawIndex: candidates.findIndex((candidate) => candidate.id === item.id),
     }));
+
+  // A per-item accent tone, cycling COVER_TONES by the item's position in the
+  // draw and seeded off the pack's own cover tone so a pack's tiles stay in
+  // its own palette family. Derived independently of CandidateCard's version
+  // (T4 lands concurrently on a different file) but the same recipe.
+  const toneSeed = Math.max(
+    COVER_TONES.indexOf(pack.coverTone as (typeof COVER_TONES)[number]),
+    0,
+  );
+  function toneForDrawIndex(drawIndex: number): string {
+    return COVER_TONES[(toneSeed + drawIndex) % COVER_TONES.length];
+  }
 
   function place(slotIndex: number) {
     // `slot.groupId` is what the API keys a pick by; a random slot that found no
@@ -194,126 +220,152 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
     : Math.round((roundIndex / Math.max(totalRounds, 1)) * 100);
 
   return (
-    <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
-      <div className="mb-8">
-        <div className="mb-2 flex items-center justify-between">
-          <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-            {isFinished
-              ? t("complete")
-              : t("roundOf", { current: roundIndex + 1, total: totalRounds })}
-          </Text>
-        </div>
-        <div className="h-[3px] w-full rounded-full bg-white/[0.06]">
-          <div
-            className="h-full rounded-full bg-acc transition-[width] duration-300"
-            style={{ width: `${progressPct}%` }}
-          />
-        </div>
-      </div>
+    <>
+      <PlayChrome
+        packId={pack.id}
+        title={pack.title}
+        isFinished={isFinished}
+        roundIndex={roundIndex}
+        totalRounds={totalRounds}
+        progressPct={progressPct}
+      />
 
-      {slot && !roundDone && (
-        <>
-          <section className="mb-6 text-center">
-            <Text as="h2" variant="title" className="mb-2 text-3xl">
-              {groupName}
-            </Text>
-            <Text variant="secondary">
-              {t("rankInstruction", {
+      <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
+        {slot && !roundDone && (
+          <>
+            <PlayRoundHeader
+              eyebrow={`${tFormat("rank_blind")} · ${groupName}`}
+              title={groupName}
+              instruction={t("rankInstruction", {
                 current: placedCount + 1,
                 total: slotCount,
               })}
-            </Text>
-          </section>
+              align="center"
+            />
 
-          <div className="mb-8 flex justify-center">
-            {currentImageSrc ? (
-              <div className="w-full max-w-xl overflow-hidden rounded-2xl border border-acc bg-surface">
-                <ImageCard
-                  src={currentImageSrc}
-                  alt={currentItem?.title ?? ""}
-                />
-                <Text className="line-clamp-2 p-4 text-center font-semibold">
+            <div className="mb-8 mt-8 flex justify-center">
+              <div className="w-[230px] overflow-hidden rounded-card border-[1.5px] border-acc bg-background ring-4 ring-acc/[0.16] animate-card-float">
+                {currentImageSrc ? (
+                  <ImageCard
+                    src={currentImageSrc}
+                    alt={currentItem?.title ?? ""}
+                    className="h-[150px]"
+                  />
+                ) : currentVideoId ? (
+                  <YouTubeCard
+                    videoId={currentVideoId}
+                    startSeconds={currentStartSeconds}
+                    className="h-[150px]"
+                  />
+                ) : (
+                  <div
+                    className="relative h-[150px]"
+                    style={{
+                      background: `linear-gradient(158deg, ${toneForDrawIndex(placedCount)}, var(--background) 78%)`,
+                    }}
+                  >
+                    <div
+                      aria-hidden="true"
+                      className="absolute inset-0"
+                      style={HAIRLINE_OVERLAY_STYLE}
+                    />
+                  </div>
+                )}
+                <Text className="line-clamp-2 p-[14px] text-[16.5px] font-semibold">
                   {currentItem?.title}
                 </Text>
               </div>
-            ) : currentVideoId ? (
-              <div className="w-full max-w-xl overflow-hidden rounded-2xl border border-acc bg-surface">
-                <YouTubeCard
-                  videoId={currentVideoId}
-                  startSeconds={currentStartSeconds}
-                />
-                <Text className="line-clamp-2 p-4 text-center font-semibold">
-                  {currentItem?.title}
-                </Text>
-              </div>
-            ) : (
-              <div className="flex h-[100px] w-[230px] items-center justify-center rounded-2xl border border-acc bg-surface p-4 text-center">
-                <Text className="line-clamp-2 font-semibold">
-                  {currentItem?.title}
-                </Text>
-              </div>
-            )}
-          </div>
+            </div>
 
-          <div className="mb-10 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {Array.from({ length: slotCount }, (_, slotIndex) => {
-              const filled = placements[slotIndex];
-              return (
-                <button
-                  key={slotIndex}
-                  type="button"
-                  disabled={Boolean(filled)}
-                  onClick={() => place(slotIndex)}
-                  aria-label={
-                    filled
-                      ? t("rankSlotFilled", {
-                          rank: slotIndex + 1,
-                          title: filled.title,
-                        })
-                      : t("rankSlotEmpty", { rank: slotIndex + 1 })
-                  }
-                  className={cn(
-                    "flex h-[100px] flex-col justify-between rounded-2xl border p-3 text-start transition-colors",
-                    filled
-                      ? "border-border bg-surface"
-                      : "border-dashed border-border-strong bg-white/[0.02] hover:border-acc/40",
-                  )}
-                >
-                  <Text variant="tertiary" className="text-xs font-semibold">
-                    #{slotIndex + 1}
-                  </Text>
-                  <Text
+            <div className="mb-10 grid gap-[14px] [grid-template-columns:repeat(auto-fit,minmax(150px,1fr))]">
+              {Array.from({ length: slotCount }, (_, slotIndex) => {
+                const filled = placements[slotIndex];
+                const filledTone = filled
+                  ? toneForDrawIndex(
+                      candidates.findIndex(
+                        (candidate) => candidate.id === filled.id,
+                      ),
+                    )
+                  : undefined;
+                return (
+                  <button
+                    key={slotIndex}
+                    type="button"
+                    disabled={Boolean(filled)}
+                    onClick={() => place(slotIndex)}
+                    aria-label={
+                      filled
+                        ? t("rankSlotFilled", {
+                            rank: slotIndex + 1,
+                            title: filled.title,
+                          })
+                        : t("rankSlotEmpty", { rank: slotIndex + 1 })
+                    }
+                    style={
+                      filled
+                        ? {
+                            background: `linear-gradient(158deg, ${filledTone}, var(--background) 82%)`,
+                          }
+                        : undefined
+                    }
                     className={cn(
-                      "line-clamp-2 text-sm font-semibold",
-                      !filled && "text-foreground-tertiary",
+                      "flex min-h-[110px] flex-col justify-between rounded-tile border-[1.5px] p-[14px] text-start transition-colors",
+                      filled
+                        ? "border-border"
+                        : "border-dashed border-white/[0.14] bg-white/[0.02] hover:border-acc/40",
                     )}
                   >
-                    {filled ? filled.title : t("placeHere")}
-                  </Text>
-                </button>
-              );
-            })}
-          </div>
-        </>
-      )}
+                    {filled ? (
+                      <span className="text-[11px] font-semibold tabular-nums text-white/75">
+                        #{slotIndex + 1}
+                      </span>
+                    ) : (
+                      <Text
+                        variant="tertiary"
+                        className="text-[11px] font-semibold tabular-nums"
+                      >
+                        #{slotIndex + 1}
+                      </Text>
+                    )}
+                    {filled ? (
+                      <Text className="line-clamp-2 text-sm font-semibold">
+                        {filled.title}
+                      </Text>
+                    ) : (
+                      <Text variant="tertiary" className="text-[12.5px]">
+                        {t("placeHere")}
+                      </Text>
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          </>
+        )}
 
-      {isRoundComplete && slot && (
-        <section className="mb-10 text-center">
-          <Text as="h2" variant="title" className="mb-2 text-3xl">
-            {t("ranked", { name: groupName })}
-          </Text>
-          {/* The same list the result screen shows, so the recap and the
-              result a player ends up with read as one thing. */}
-          <div className="mb-8 text-start">
-            <RankedList rows={rankedRows} />
-          </div>
-          <Button onClick={goToNextRound} className="w-full">
-            {t("nextRound")}
-          </Button>
-        </section>
-      )}
+        {isRoundComplete && slot && (
+          <section className="mb-10 flex flex-col items-center gap-6 text-center">
+            <PlayRoundHeader
+              eyebrow={t("roundComplete")}
+              title={t("ranked", { name: groupName })}
+              instruction={t("nextUp", {
+                name: roundHeading(pack, roundIndex + 1),
+              })}
+              align="center"
+            />
+            {/* The same list the result screen shows, so the recap and the
+                result a player ends up with read as one thing. */}
+            <div className="w-full max-w-[420px] text-start">
+              <RankedList rows={rankedRows} />
+            </div>
+            <Button onClick={goToNextRound} className="w-full max-w-[420px]">
+              {t("nextRound")}
+            </Button>
+          </section>
+        )}
 
-      {isFinished && <LoadingState label={t("loadingResult")} />}
-    </div>
+        {isFinished && <LoadingState label={t("loadingResult")} />}
+      </div>
+    </>
   );
 }

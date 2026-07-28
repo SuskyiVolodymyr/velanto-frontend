@@ -1146,6 +1146,8 @@
     "rankSlotFilled": "Rank {rank}: {title}",
     "rankSlotEmpty": "Place at rank {rank}",
     "ranked": "{name} ranked",
+    "roundComplete": "Round complete",
+    "nextUp": "Next up: {name}",
     "loadingResult": "Loading your results…",
     "finishRound": "See results →",
     "versusSideA": "Side A",
