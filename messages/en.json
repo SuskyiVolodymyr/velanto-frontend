@@ -1535,7 +1535,15 @@
     "metaDescription": "New features, fixes, and improvements on Velanto.",
     "heading": "What's new",
     "intro": "The latest features, fixes, and improvements — newest first.",
-    "empty": "No updates yet — check back soon."
+    "empty": "No updates yet — check back soon.",
+    "releasesHeading": "Releases",
+    "latest": "Latest",
+    "changesCount": "{count, plural, one {# change} other {# changes}}",
+    "showMore": "Show {count} more",
+    "showLess": "Show less",
+    "missingTitle": "Missing something you want?",
+    "missingNote": "Suggestions get read and voted on — a lot of the list above started there.",
+    "openSuggestions": "Open suggestions"
   },
   "myPacks": {
     "title": "My packs",
