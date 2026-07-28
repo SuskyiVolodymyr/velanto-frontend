@@ -345,7 +345,8 @@ describe("RankResultScreen", () => {
     expect(screen.queryByRole("table")).toBeNull();
   });
 
-  // The approved/non-approved Share-button rule is owned by ResultActions.test.
+  // The approved/non-approved Share-button rule is owned by
+  // ResultAgainPanel.test (T12 moved the Share button out of ResultActions).
 
   it("recaps the sharer's picks the same as it would the viewer's own", () => {
     // The shared-result note itself now renders in ResultScreen (T11), not

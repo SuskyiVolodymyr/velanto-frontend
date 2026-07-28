@@ -148,9 +148,15 @@ export function ResultScreen({ pack }: { pack: Pack }) {
         >
           <div className="min-w-0">{recap}</div>
           <aside className="flex flex-col gap-4">
-            {/* T12 replaces this placeholder with the consolidated share/
-                play-again card; T11 adds the leaderboard card above it. */}
-            <ResultAgainPanel packId={pack.id} shared={shared} />
+            {/* T11's leaderboard card renders inside `recap` itself (see that
+                task's commit for why); T12's consolidated share/play-again
+                card is the aside's own content. */}
+            <ResultAgainPanel
+              packId={pack.id}
+              status={pack.status}
+              picks={picks}
+              shared={shared}
+            />
           </aside>
         </div>
       </>
@@ -180,8 +186,6 @@ export function ResultScreen({ pack }: { pack: Pack }) {
           {picks && !isError && results && (
             <ResultActions
               packId={pack.id}
-              status={pack.status}
-              picks={picks}
               shared={shared}
               className="ms-auto"
             />

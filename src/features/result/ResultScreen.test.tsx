@@ -306,7 +306,8 @@ describe("ResultScreen", () => {
     expect(await screen.findByText("Guren no Yumiya")).toBeInTheDocument();
   });
 
-  // The approved/non-approved Share-button rule is owned by ResultActions.test.
+  // The approved/non-approved Share-button rule is owned by
+  // ResultAgainPanel.test (T12 moved the Share button out of ResultActions).
 
   it("renders the sharer's picks and a shared-result note when opened via a ?p= link", async () => {
     searchParams = new URLSearchParams({
