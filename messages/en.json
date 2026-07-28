@@ -1212,10 +1212,8 @@
   "create": {
     "loginRequired": "You need to be logged in to create a pack.",
     "logIn": "Log in",
-    "saveDraft": "Save as draft",
+    "saveDraft": "Save draft",
     "savingDraft": "Saving draft…",
-    "publish": "Publish",
-    "publishing": "Publishing…",
     "basicsHeading": "Basics",
     "packTitle": "Pack title",
     "packDescription": "Pack description",
@@ -1325,17 +1323,24 @@
     "saveItem": "Save",
     "cancelEdit": "Cancel",
     "randomPoolOption": "Random pool ({count} available)",
-    "preview": {
-      "eyebrow": "LIVE PREVIEW",
-      "untitled": "Untitled pack",
-      "noDescription": "Add a short description…",
-      "roundsCount": "{count, plural, one {# round} other {# rounds}}",
-      "format": "Format",
-      "pools": "Pools",
-      "elements": "Elements",
-      "rounds": "Rounds",
-      "publishReady": "Publish pack",
-      "publishBlocked": "Add a title & elements",
+    "bar": {
+      "newPackTitle": "New pack",
+      "submit": "Submit for review",
+      "submitShort": "Submit",
+      "submitting": "Submitting…",
+      "blockedTooltip": "Add a title & elements",
+      "saved": "Saved",
+      "draftNoteUnsaved": "Draft · unsaved changes",
+      "draftNoteSaved": "Draft · saved just now"
+    },
+    "checklist": {
+      "eyebrow": "BEFORE YOU SUBMIT",
+      "formatChosen": "Format chosen",
+      "titleWritten": "Title written",
+      "poolsWithItems": "{count, plural, one {# pool with items} other {# pools with items}}",
+      "coverImage": "Cover image",
+      "rowDone": "Done",
+      "rowNotDone": "Not done yet",
       "noAiNote": "No AI · no scoring rules to write"
     },
     "cancel": "Cancel"

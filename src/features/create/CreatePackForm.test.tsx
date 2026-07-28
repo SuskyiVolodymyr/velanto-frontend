@@ -178,7 +178,7 @@ describe("CreatePackForm", () => {
     renderForm();
     await screen.findByLabelText("Pack title");
 
-    await user.click(screen.getByRole("button", { name: "Publish" }));
+    await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
     expect(
       await screen.findByText("Give your pack a title."),
@@ -193,7 +193,7 @@ describe("CreatePackForm", () => {
     await user.type(screen.getByLabelText("Pack description"), "Desc");
     await user.type(screen.getByLabelText("Pool 1 name"), "Round 1");
 
-    await user.click(screen.getByRole("button", { name: "Publish" }));
+    await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
     expect(
       await screen.findByText('Group "Round 1" needs at least one item.'),
@@ -312,7 +312,7 @@ describe("CreatePackForm", () => {
     renderForm();
     await fillMinimalValidPack(user);
 
-    await user.click(screen.getByRole("button", { name: "Save as draft" }));
+    await user.click(screen.getByRole("button", { name: "Save draft" }));
 
     await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-1"));
     expect(packsClient.create).toHaveBeenCalledWith(
@@ -327,7 +327,7 @@ describe("CreatePackForm", () => {
     await fillMinimalValidPack(user);
 
     await user.selectOptions(screen.getByLabelText("Pack language"), "es");
-    await user.click(screen.getByRole("button", { name: "Publish" }));
+    await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
     await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-1"));
     expect(packsClient.create).toHaveBeenCalledWith(
@@ -365,7 +365,7 @@ describe("CreatePackForm", () => {
     await user.click(screen.getByRole("button", { name: "Apply" }));
 
     await fillMinimalValidPack(user);
-    await user.click(screen.getByRole("button", { name: "Publish" }));
+    await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
     await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-1"));
     expect(packsClient.create).toHaveBeenCalledWith(
@@ -384,7 +384,7 @@ describe("CreatePackForm", () => {
     renderForm();
     await fillMinimalValidPack(user);
 
-    await user.click(screen.getByRole("button", { name: "Publish" }));
+    await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
     expect(await screen.findByText("Not allowed")).toBeInTheDocument();
     expect(push).not.toHaveBeenCalled();
@@ -409,7 +409,7 @@ describe("CreatePackForm", () => {
     renderForm();
     await fillMinimalValidPack(user);
 
-    await user.click(screen.getByRole("button", { name: "Publish" }));
+    await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
     expect(
       await screen.findByText(
@@ -434,7 +434,7 @@ describe("CreatePackForm", () => {
         screen.getByRole("button", { name: "Save changes" }),
       ).toBeInTheDocument();
       expect(
-        screen.queryByRole("button", { name: "Publish" }),
+        screen.queryByRole("button", { name: "Submit for review" }),
       ).not.toBeInTheDocument();
     });
 
@@ -494,7 +494,7 @@ describe("CreatePackForm", () => {
         expect(screen.queryByLabelText("Side A")).not.toBeInTheDocument();
 
         await fillMinimalValidPack(user);
-        await user.click(screen.getByRole("button", { name: "Publish" }));
+        await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
         await waitFor(() =>
           expect(push).toHaveBeenCalledWith(`/packs/pack-${format}`),
@@ -558,7 +558,7 @@ describe("CreatePackForm", () => {
 
       // The versus editor seeds a single matchup, which keeps the 1-item pools
       // feasible (per-side 1, no dedup exhaustion).
-      await user.click(screen.getByRole("button", { name: "Publish" }));
+      await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
       await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-nxn"));
       const payload = vi.mocked(packsClient.create).mock.calls[0][0];
@@ -589,7 +589,7 @@ describe("CreatePackForm", () => {
       await user.click(screen.getByRole("button", { name: /^1v1/ }));
 
       // The versus editor seeds a single matchup — feasible for the 1-item pools.
-      await user.click(screen.getByRole("button", { name: "Publish" }));
+      await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
       await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-1v1"));
       const payload = vi.mocked(packsClient.create).mock.calls[0][0];
@@ -643,12 +643,12 @@ describe("CreatePackForm", () => {
   });
 
   // The buttons are the deliberate action and keep working.
-  it("still submits from the Publish button", async () => {
+  it("still submits from the submit button", async () => {
     const user = userEvent.setup();
     renderForm();
     await screen.findByLabelText("Pack title");
 
-    await user.click(screen.getByRole("button", { name: "Publish" }));
+    await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
     expect(
       await screen.findByText("Give your pack a title."),
