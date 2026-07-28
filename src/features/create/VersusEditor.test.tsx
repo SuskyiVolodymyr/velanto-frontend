@@ -88,13 +88,18 @@ function readRounds() {
 }
 
 describe("VersusEditor", () => {
-  it("renders a matchup per round with both side selects", () => {
+  it("renders a matchup per round with both side selects", async () => {
+    const user = userEvent.setup();
     render(<Harness format="nxn" perSide={2} />);
 
+    // T6: rounds render collapsed by default, one open at a time — round 1
+    // starts expanded, round 2 needs its own header clicked open first.
     expect(screen.getByLabelText("Side A for round 1")).toHaveValue("boys");
     expect(screen.getByLabelText("Side B for round 1")).toHaveValue("girls");
-    expect(screen.getByLabelText("Side A for round 2")).toHaveValue("boys");
     expect(screen.getByLabelText("Items per side for round 1")).toHaveValue(2);
+
+    await user.click(screen.getByRole("button", { name: /^Round 2/ }));
+    expect(screen.getByLabelText("Side A for round 2")).toHaveValue("boys");
   });
 
   it("changes only the edited round's side", async () => {
@@ -263,5 +268,44 @@ describe("VersusEditor", () => {
       expect(round1.a).toBe("girls");
       expect(round1.ma).toBeUndefined();
     });
+  });
+});
+
+// T6: matchup rows collapse by default, same shape as RoundsEditor.
+describe("VersusEditor progressive disclosure (T6)", () => {
+  it("starts with the first round expanded and the rest collapsed", () => {
+    render(<Harness format="nxn" perSide={1} rounds={2} />);
+
+    expect(screen.getByLabelText("Side A for round 1")).toBeInTheDocument();
+    expect(
+      screen.queryByLabelText("Side A for round 2"),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /^Round 2 Boys vs Girls/ }),
+    ).toBeInTheDocument();
+  });
+
+  it("expands a collapsed round and collapses the previously-open one on click", async () => {
+    const user = userEvent.setup();
+    render(<Harness format="nxn" perSide={1} rounds={2} />);
+
+    await user.click(screen.getByRole("button", { name: /^Round 2/ }));
+
+    expect(screen.getByLabelText("Side A for round 2")).toBeInTheDocument();
+    expect(
+      screen.queryByLabelText("Side A for round 1"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("auto-expands a newly added round", async () => {
+    const user = userEvent.setup();
+    render(<Harness format="nxn" perSide={1} rounds={2} />);
+
+    await user.click(screen.getByRole("button", { name: "+ Add round" }));
+
+    expect(screen.getByLabelText("Side A for round 3")).toBeInTheDocument();
+    expect(
+      screen.queryByLabelText("Side A for round 1"),
+    ).not.toBeInTheDocument();
   });
 });
