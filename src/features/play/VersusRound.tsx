@@ -141,14 +141,32 @@ function SideCard({ side, letter, selected, onSelect, packCoverTone }: SideCardP
           </span>
         )}
       </div>
-      {side.items.map((item, index) => (
-        <ItemTile
-          key={item.id}
-          item={item}
-          index={index}
-          packCoverTone={packCoverTone}
-        />
-      ))}
+      <div
+        className="grid gap-3"
+        style={{
+          gridTemplateColumns: `repeat(${Math.max(side.items.length, 1)}, minmax(0,1fr))`,
+        }}
+      >
+        {side.items.map((item, index) => (
+          <ItemTile
+            key={item.id}
+            item={item}
+            index={index}
+            packCoverTone={packCoverTone}
+          />
+        ))}
+      </div>
+      {selected && (
+        <div className="flex items-center gap-[7px] border-t border-border pt-3 text-[12.5px] font-semibold text-acc">
+          <span
+            aria-hidden
+            className="flex h-4 w-4 flex-none items-center justify-center rounded-full bg-acc"
+          >
+            <span className="-mt-[1px] h-[3.5px] w-[6.5px] -rotate-45 border-b-2 border-l-2 border-[#07131a]" />
+          </span>
+          {t("sideSelected")}
+        </div>
+      )}
     </div>
   );
 }

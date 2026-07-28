@@ -1137,6 +1137,7 @@
     "confirmPendingTitle": "Nothing picked yet",
     "confirmNote": "Your pick is recorded when you move to the next round.",
     "picksCountNote": "{done} done, {toGo} to go",
+    "sideSelected": "Selected",
     "pick": "Pick {name}",
     "nextRound": "Next round →",
     "instructionSave": "Pick the one you'd save. Check it below, then confirm.",

@@ -249,4 +249,49 @@ describe("VersusRound", () => {
     await user.keyboard(" ");
     expect(onSelect).toHaveBeenCalledWith(0);
   });
+
+  it("lays a side's items out in a grid sized to its item count", () => {
+    render(
+      <VersusRound
+        sideA={SIDE_A}
+        sideB={SIDE_B}
+        selectedSide={null}
+        onSelect={vi.fn()}
+        packCoverTone={PACK_COVER_TONE}
+      />,
+    );
+
+    const naruto = screen.getByText("Naruto");
+    const grid = naruto.closest('[style*="grid-template-columns"]');
+    expect(grid).toHaveStyle({ gridTemplateColumns: "repeat(2, minmax(0,1fr))" });
+  });
+
+  it("shows a footer 'Selected' row under a side's items once picked", () => {
+    render(
+      <VersusRound
+        sideA={SIDE_A}
+        sideB={SIDE_B}
+        selectedSide={0}
+        onSelect={vi.fn()}
+        packCoverTone={PACK_COVER_TONE}
+      />,
+    );
+
+    expect(screen.getByText("Selected")).toBeInTheDocument();
+  });
+
+  it("omits the footer row for the unselected side", () => {
+    render(
+      <VersusRound
+        sideA={SIDE_A}
+        sideB={SIDE_B}
+        selectedSide={0}
+        onSelect={vi.fn()}
+        packCoverTone={PACK_COVER_TONE}
+      />,
+    );
+
+    // Only sideA (index 0) is selected, so exactly one footer row renders.
+    expect(screen.getAllByText("Selected")).toHaveLength(1);
+  });
 });
