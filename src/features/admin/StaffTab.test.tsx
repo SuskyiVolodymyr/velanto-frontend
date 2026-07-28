@@ -228,7 +228,7 @@ describe("StaffTab", () => {
         id: "u9",
         role: "moderator",
       });
-      const user = userEvent.setup();
+      const user = userEvent.setup({ delay: null });
       renderAs(ADMIN);
       await screen.findByText("No staff members yet.");
 
@@ -255,7 +255,7 @@ describe("StaffTab", () => {
     // only an exact email match may be promoted.
     it("refuses to promote when no row matches the email exactly", async () => {
       mockStaff([]);
-      const user = userEvent.setup();
+      const user = userEvent.setup({ delay: null });
       renderAs(ADMIN);
       await screen.findByText("No staff members yet.");
 
@@ -280,7 +280,7 @@ describe("StaffTab", () => {
 
     it("badges the input as EMAIL, USERNAME, or USER ID as the shape changes", async () => {
       mockStaff([]);
-      const user = userEvent.setup();
+      const user = userEvent.setup({ delay: null });
       renderAs(ADMIN);
       await screen.findByText("No staff members yet.");
 
@@ -304,7 +304,7 @@ describe("StaffTab", () => {
         id: "u9",
         role: "moderator",
       });
-      const user = userEvent.setup();
+      const user = userEvent.setup({ delay: null });
       renderAs(ADMIN);
       await screen.findByText("No staff members yet.");
 
@@ -330,7 +330,7 @@ describe("StaffTab", () => {
         id: "u11",
         role: "moderator",
       });
-      const user = userEvent.setup();
+      const user = userEvent.setup({ delay: null });
       renderAs(ADMIN);
       await screen.findByText("No staff members yet.");
 
@@ -369,7 +369,7 @@ describe("StaffTab", () => {
 
     it("shows a no-match error when a username search returns nothing", async () => {
       mockStaff([]);
-      const user = userEvent.setup();
+      const user = userEvent.setup({ delay: null });
       renderAs(ADMIN);
       await screen.findByText("No staff members yet.");
 
@@ -415,7 +415,7 @@ describe("StaffTab", () => {
         social: { followers: 0, following: 0 },
         moderation: { reportsAgainst: 0, reportsFiled: 0 },
       });
-      const user = userEvent.setup();
+      const user = userEvent.setup({ delay: null });
       renderAs(ADMIN);
       await screen.findByText("No staff members yet.");
 
@@ -437,7 +437,7 @@ describe("StaffTab", () => {
       vi.mocked(adminClient.userDetail).mockRejectedValueOnce(
         new Error("404"),
       );
-      const user = userEvent.setup();
+      const user = userEvent.setup({ delay: null });
       renderAs(ADMIN);
       await screen.findByText("No staff members yet.");
 
@@ -446,6 +446,61 @@ describe("StaffTab", () => {
 
       expect(await screen.findByText("No user found.")).toBeInTheDocument();
       expect(usersClient.changeRole).not.toHaveBeenCalled();
+    });
+
+    // Same dismiss convention as Popover.tsx/UserMenu.tsx: an open overlay
+    // closes on an outside click without acting on anything.
+    it("closes the matches dropdown on an outside click, without resolving", async () => {
+      mockStaff([]);
+      const user = userEvent.setup({ delay: null });
+      renderAs(ADMIN);
+      await screen.findByText("No staff members yet.");
+
+      vi.mocked(adminClient.listUsers).mockResolvedValueOnce({
+        items: [
+          { ...TARGET, id: "u10", username: "bobby", email: "bobby@example.com" },
+          { ...TARGET, id: "u11", username: "bobette", email: "bobette@example.com" },
+        ],
+        total: 2,
+        page: 1,
+        limit: 50,
+      });
+
+      await user.type(screen.getByLabelText(ADD_STAFF_INPUT_LABEL), "bob");
+      await user.click(screen.getByRole("button", { name: "+ Add staff" }));
+      await screen.findByRole("listbox");
+
+      await user.click(document.body);
+
+      expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+      expect(usersClient.changeRole).not.toHaveBeenCalled();
+    });
+
+    it("closes the matches dropdown on Escape and returns focus to the Add staff button", async () => {
+      mockStaff([]);
+      const user = userEvent.setup({ delay: null });
+      renderAs(ADMIN);
+      await screen.findByText("No staff members yet.");
+
+      vi.mocked(adminClient.listUsers).mockResolvedValueOnce({
+        items: [
+          { ...TARGET, id: "u10", username: "bobby", email: "bobby@example.com" },
+          { ...TARGET, id: "u11", username: "bobette", email: "bobette@example.com" },
+        ],
+        total: 2,
+        page: 1,
+        limit: 50,
+      });
+
+      await user.type(screen.getByLabelText(ADD_STAFF_INPUT_LABEL), "bob");
+      const addButton = screen.getByRole("button", { name: "+ Add staff" });
+      await user.click(addButton);
+      await screen.findByRole("listbox");
+
+      await user.keyboard("{Escape}");
+
+      expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+      expect(addButton).toHaveFocus();
     });
   });
 

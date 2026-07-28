@@ -1,7 +1,7 @@
 "use client";
 import { formatDate } from "@/src/shared/lib/format-date";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Text } from "@/src/shared/components/Text";
@@ -76,6 +76,37 @@ export function StaffTab() {
   const [addInput, setAddInput] = useState("");
   const [addRole, setAddRole] = useState<AssignableRole>("moderator");
   const [matches, setMatches] = useState<AdminUserRow[] | null>(null);
+  const addBarRef = useRef<HTMLDivElement>(null);
+  const addButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Same dismiss-on-outside-click / dismiss-on-Escape convention as
+  // Popover.tsx/UserMenu.tsx elsewhere in this app: close the matches
+  // dropdown on an outside mousedown, or on Escape (which also returns focus
+  // to the button that opened it).
+  useEffect(() => {
+    if (!matches) return;
+
+    function handlePointerDown(event: MouseEvent) {
+      if (
+        addBarRef.current &&
+        !addBarRef.current.contains(event.target as Node)
+      ) {
+        setMatches(null);
+      }
+    }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      setMatches(null);
+      addButtonRef.current?.focus();
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [matches]);
 
   useEffect(() => {
     const timeout = setTimeout(
@@ -211,7 +242,10 @@ export function StaffTab() {
 
   return (
     <div className="flex flex-col gap-5">
-      <div className="relative flex flex-wrap items-center gap-2.5 rounded-[14px] border border-border bg-white/[0.02] px-[18px] py-4">
+      <div
+        ref={addBarRef}
+        className="relative flex flex-wrap items-center gap-2.5 rounded-[14px] border border-border bg-white/[0.02] px-[18px] py-4"
+      >
         <Input
           type="text"
           aria-label={t("addStaffInputAria")}
@@ -236,6 +270,7 @@ export function StaffTab() {
           className="h-10 w-auto"
         />
         <Button
+          ref={addButtonRef}
           loading={resolveStaff.isPending || addStaff.isPending}
           disabled={!addInput.trim()}
           onClick={() => resolveStaff.mutate(addInput)}
