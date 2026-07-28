@@ -32,6 +32,9 @@ vi.mock("@/src/features/pack/PackOwnerActions", () => ({
 vi.mock("@/src/features/pack/PackOwnerStatusBadge", () => ({
   PackOwnerStatusBadge: () => null,
 }));
+vi.mock("@/src/features/pack/PackRejectionReason", () => ({
+  PackRejectionReason: () => null,
+}));
 
 const mockedUsePackFallback = vi.mocked(usePackFallback);
 const mockedNotFound = vi.mocked(notFound);
