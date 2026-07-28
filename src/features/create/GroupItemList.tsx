@@ -140,8 +140,13 @@ export function GroupItemList({
             {/* The inline edit panel (T5): anchored right after ITS chip,
                 as its own full-width row (`basis-full` forces the parent's
                 flex-wrap onto a new line), rather than one shared panel
-                docked at the bottom of the pool. `list-none` because this
-                <li> is a layout convenience, not a second list entry. */}
+                docked at the bottom of the pool. `list-none` is purely
+                visual (no bullet marker) — it does NOT remove this <li>
+                from the accessibility tree, so the pool announces one extra
+                listitem while a chip is being edited. Accepted trade-off:
+                still strictly better than the `display: contents` version
+                this replaced, which dropped list/listitem semantics
+                entirely in WebKit/VoiceOver. */}
             {editing && renderEditPanel && (
               <li className="basis-full list-none">{renderEditPanel(item)}</li>
             )}

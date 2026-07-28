@@ -62,6 +62,11 @@ export function FormatSection({
                 setValue("format", option.value);
               }}
               aria-pressed={selected}
+              // The selected tile stays natively enabled (see `disabled`
+              // above — it needs to render un-dimmed and legible), so it
+              // needs its own `aria-disabled` to tell an AT user activating
+              // it is a no-op; the other tiles already say so via `disabled`.
+              aria-disabled={locked && selected ? "true" : undefined}
               title={locked ? t("formatLockedTooltip") : undefined}
               className={cn(
                 "flex flex-col gap-3 rounded-tile border p-4 text-start transition-colors",

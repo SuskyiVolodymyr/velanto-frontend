@@ -127,6 +127,26 @@ describe("FormatSection", () => {
       ).toBeDisabled();
     });
 
+    // The selected card stays natively enabled (so it renders un-dimmed and
+    // legible), so it needs its own aria-disabled — otherwise a keyboard/AT
+    // user tabbing to it would find an activatable control that's silently
+    // a no-op.
+    it("marks the selected card aria-disabled even though it isn't natively disabled", () => {
+      render(<Harness initial={baseValues("save_one")} locked />);
+
+      const selected = screen.getByRole("button", { name: /Save One/ });
+      expect(selected).toHaveAttribute("aria-disabled", "true");
+      expect(selected).not.toBeDisabled();
+    });
+
+    it("does not mark anything aria-disabled when not locked", () => {
+      render(<Harness initial={baseValues("save_one")} />);
+
+      expect(
+        screen.getByRole("button", { name: /Save One/ }),
+      ).not.toHaveAttribute("aria-disabled");
+    });
+
     it("shows a tooltip explaining why, only while locked", () => {
       const { rerender } = render(<Harness initial={baseValues()} />);
       expect(
