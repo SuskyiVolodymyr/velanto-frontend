@@ -157,7 +157,7 @@ export function HeadToHeadResultScreen({
             {t("roundByRoundHeading")}
           </Text>
           <Text variant="secondary" className="mb-4 text-sm">
-            {t("roundByRoundNote")}
+            {t(shared ? "roundByRoundNoteShared" : "roundByRoundNote")}
           </Text>
           {/* `divide-y` rather than a gap: a hairline between matchups keeps a
               long list readable as separate comparisons. Border, not

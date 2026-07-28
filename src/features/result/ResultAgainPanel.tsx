@@ -48,15 +48,20 @@ export function ResultAgainPanel({
   // offering it back invites passing off another player's run. Also none for
   // a non-approved pack (ShareButton's existing rule, moved here with it).
   const canShare = status === "approved" && !shared;
+  // The fallback copy (no Share button) still needs to say whose run this is
+  // — a shared reader is looking at someone else's, so "Your run"/"give it
+  // another go" would misdescribe both the run and what they'd be doing.
+  const fallbackTitleKey = shared ? "sharedRunCardTitle" : "runCardTitle";
+  const fallbackNoteKey = shared ? "sharedRunCardNote" : "runCardNote";
 
   return (
     <div className="flex flex-col gap-4 rounded-[20px] border border-border bg-surface-card p-5">
       <div>
         <Text className="text-base font-semibold">
-          {canShare ? t("shareCardTitle") : t("runCardTitle")}
+          {canShare ? t("shareCardTitle") : t(fallbackTitleKey)}
         </Text>
         <Text variant="secondary" className="mt-1 text-[13px]">
-          {canShare ? t("shareCardNote") : t("runCardNote")}
+          {canShare ? t("shareCardNote") : t(fallbackNoteKey)}
         </Text>
       </div>
 

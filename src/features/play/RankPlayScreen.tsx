@@ -288,7 +288,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
                   <div className="flex flex-col gap-4">
                     <Text
                       variant="tertiary"
-                      className="text-[12.5px] font-medium uppercase tracking-[0.16em] text-[#7EE7B4]"
+                      className="text-[12.5px] font-medium uppercase tracking-[0.16em] text-success"
                     >
                       {t("roundComplete")}
                     </Text>

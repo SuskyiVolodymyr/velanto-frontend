@@ -111,7 +111,7 @@ export function EliminationResultScreen({
             {t("roundByRoundHeading")}
           </Text>
           <Text variant="secondary" className="mb-4 text-sm">
-            {t("roundByRoundNote")}
+            {t(shared ? "roundByRoundNoteShared" : "roundByRoundNote")}
           </Text>
           <div className="flex flex-col divide-y divide-border">
             {rounds.map((round) => (

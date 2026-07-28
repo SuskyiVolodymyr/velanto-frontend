@@ -78,7 +78,10 @@ describe("ResultAgainPanel", () => {
       />,
     );
 
-    expect(screen.getByText("Your run")).toBeInTheDocument();
+    // "Their run", not "Your run" — the reader has not played this pack, so
+    // the fallback copy needs its own shared-aware wording too (code review).
+    expect(screen.getByText("Their run")).toBeInTheDocument();
+    expect(screen.queryByText("Your run")).toBeNull();
     expect(screen.queryByText("Share your run")).toBeNull();
     expect(
       screen.queryByRole("button", { name: "Copy share link" }),
