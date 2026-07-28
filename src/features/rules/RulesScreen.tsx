@@ -125,7 +125,7 @@ export function RulesScreen({ rules }: RulesScreenProps) {
               type="button"
               onClick={() => setQuery("")}
               aria-label={t("clearSearch")}
-              className="absolute end-3 top-1/2 -translate-y-1/2 grid h-5 w-5 place-items-center rounded-full text-foreground-tertiary transition-colors hover:text-foreground"
+              className="absolute end-3 top-1/2 -translate-y-1/2 grid h-5 w-5 place-items-center rounded-full text-foreground-tertiary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
             >
               <ClearIcon size={14} aria-hidden />
             </button>
@@ -150,11 +150,14 @@ export function RulesScreen({ rules }: RulesScreenProps) {
               >
                 {t("categoriesHeading")}
               </Text>
-              {categories.map((category, index) => (
+              {/* Sourced from visibleCategories (not the full categories list) so
+                  a jump-link is never advertised for a category the active
+                  search has hidden — renumbered within the filtered set. */}
+              {visibleCategories.map((category, index) => (
                 <a
                   key={category.id}
                   href={`#rules-cat-${category.id}`}
-                  className="flex items-baseline gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary transition-colors hover:text-foreground hover:bg-white/[0.06]"
+                  className="flex items-baseline gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary transition-colors hover:text-foreground hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
                 >
                   <span
                     aria-hidden
@@ -167,7 +170,10 @@ export function RulesScreen({ rules }: RulesScreenProps) {
               ))}
             </div>
 
-            <Card className="p-4">
+            {/* No `p-*` override — `cn()` is a plain join (not tailwind-merge,
+                see Button.tsx), so it would sit alongside Card's own
+                `p-[18px]` with the winner decided by Tailwind's emit order. */}
+            <Card>
               <Text as="h3" variant="title" className="mb-1.5 text-sm">
                 {t("reportTitle")}
               </Text>

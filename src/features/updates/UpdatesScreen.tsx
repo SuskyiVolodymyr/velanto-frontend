@@ -121,7 +121,11 @@ export function UpdatesScreen({
                     )}
                   </div>
 
-                  <div className="min-w-0 flex-1 rounded-[15px] border border-border bg-surface p-5">
+                  {/* `cn()` is a plain join (not tailwind-merge, see Button.tsx),
+                      so this deliberately doesn't pass a `p-*` override — that
+                      would sit alongside Card's own `p-[18px]` with the winner
+                      decided by Tailwind's emit order, not source order. */}
+                  <Card className="min-w-0 flex-1">
                     <div className="mb-2 flex flex-wrap items-center gap-3">
                       <Badge variant="accent">v{entry.version}</Badge>
                       {isLatest && (
@@ -143,7 +147,10 @@ export function UpdatesScreen({
                     <Text as="h2" variant="title" className="mb-3 text-xl">
                       {entry.title}
                     </Text>
-                    <ul className="flex list-disc flex-col gap-2 ps-6">
+                    <ul
+                      id={`${entryKey}-bullets`}
+                      className="flex list-disc flex-col gap-2 ps-6"
+                    >
                       {visibleBullets.map((bullet, index) => (
                         <li key={index}>
                           <Text
@@ -158,18 +165,20 @@ export function UpdatesScreen({
                     {hasMore && (
                       <button
                         type="button"
+                        aria-expanded={isOpen}
+                        aria-controls={`${entryKey}-bullets`}
                         onClick={() =>
                           setOpen((prev) => ({
                             ...prev,
                             [entryKey]: !isOpen,
                           }))
                         }
-                        className="mt-3 text-sm font-semibold text-acc hover:text-acc-hover"
+                        className="mt-3 text-sm font-semibold text-acc hover:text-acc-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
                       >
                         {isOpen ? showLessLabel : formatShowMore(hiddenCount)}
                       </button>
                     )}
-                  </div>
+                  </Card>
                 </article>
               );
               })}
@@ -178,7 +187,7 @@ export function UpdatesScreen({
             <Card className="flex items-start gap-4">
               <span
                 aria-hidden
-                className="grid h-10 w-10 flex-none place-items-center rounded-[12px] bg-acc/[0.12] text-acc"
+                className="grid h-10 w-10 flex-none place-items-center rounded-control bg-acc/[0.12] text-acc"
               >
                 <Lightbulb size={18} strokeWidth={2} />
               </span>
@@ -213,7 +222,7 @@ export function UpdatesScreen({
               <a
                 key={entry.version}
                 href={`#${versionAnchor(entry.version)}`}
-                className="truncate rounded-lg px-3 py-1.5 font-mono text-[13px] font-medium text-foreground-secondary transition-colors hover:bg-white/[0.06] hover:text-foreground"
+                className="truncate rounded-lg px-3 py-1.5 font-mono text-[13px] font-medium text-foreground-secondary transition-colors hover:bg-white/[0.06] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
               >
                 v{entry.version}
               </a>

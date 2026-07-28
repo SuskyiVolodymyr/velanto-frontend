@@ -101,6 +101,7 @@ export function LegalScreen({
         <div className="flex flex-none flex-col items-start gap-3 min-[560px]:items-end">
           <div
             role="group"
+            aria-label={`${termsTabLabel} / ${privacyTabLabel}`}
             className="inline-flex gap-1 rounded-control border border-white/[0.08] bg-background p-[3px]"
           >
             <Link
@@ -108,6 +109,7 @@ export function LegalScreen({
               aria-current={activeDoc === "terms" ? "page" : undefined}
               className={cn(
                 "h-[34px] rounded-[9px] px-4 text-[13px] font-semibold leading-[34px] transition-colors",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
                 activeDoc === "terms"
                   ? "bg-white/10 text-foreground"
                   : "text-white/50 hover:text-foreground-secondary",
@@ -120,6 +122,7 @@ export function LegalScreen({
               aria-current={activeDoc === "privacy" ? "page" : undefined}
               className={cn(
                 "h-[34px] rounded-[9px] px-4 text-[13px] font-semibold leading-[34px] transition-colors",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
                 activeDoc === "privacy"
                   ? "bg-white/10 text-foreground"
                   : "text-white/50 hover:text-foreground-secondary",
@@ -172,7 +175,7 @@ export function LegalScreen({
           <Card className="flex items-start gap-4">
             <span
               aria-hidden
-              className="grid h-10 w-10 flex-none place-items-center rounded-[12px] bg-acc/[0.12] text-acc"
+              className="grid h-10 w-10 flex-none place-items-center rounded-control bg-acc/[0.12] text-acc"
             >
               <Mail size={18} strokeWidth={2} />
             </span>
@@ -188,7 +191,7 @@ export function LegalScreen({
               </Text>
               <a
                 href={`mailto:${SUPPORT_EMAIL}`}
-                className="text-sm font-semibold text-acc hover:text-acc-hover"
+                className="text-sm font-semibold text-acc hover:text-acc-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
               >
                 {SUPPORT_EMAIL}
               </a>
@@ -210,7 +213,7 @@ export function LegalScreen({
             <a
               key={index}
               href={`#${sectionIds[index]}`}
-              className="truncate rounded-lg px-3 py-1.5 text-[13px] font-medium text-foreground-secondary transition-colors hover:bg-white/[0.06] hover:text-foreground"
+              className="truncate rounded-lg px-3 py-1.5 text-[13px] font-medium text-foreground-secondary transition-colors hover:bg-white/[0.06] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
             >
               {section.title}
             </a>

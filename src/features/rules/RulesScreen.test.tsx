@@ -193,6 +193,24 @@ describe("RulesScreen", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("drops a category's TOC jump-link once the active search hides it, instead of leaving a dead link", async () => {
+    const user = userEvent.setup();
+    renderScreen(doc);
+
+    const nav = screen.getByRole("navigation", { name: /categories/i });
+    expect(within(nav).getByRole("link", { name: /Content/ })).toBeInTheDocument();
+
+    const search = screen.getByRole("searchbox", { name: /search the rules/i });
+    await user.type(search, "harassment");
+
+    // "Content" has no rule matching "harassment", so its section is gone —
+    // the TOC must not still advertise a jump-link to it.
+    expect(
+      within(nav).queryByRole("link", { name: /Content/ }),
+    ).not.toBeInTheDocument();
+    expect(within(nav).getByRole("link", { name: /Conduct/ })).toBeInTheDocument();
+  });
+
   it("shows the empty-search-result state when nothing matches, and Clear search resets it", async () => {
     const user = userEvent.setup();
     renderScreen(doc);

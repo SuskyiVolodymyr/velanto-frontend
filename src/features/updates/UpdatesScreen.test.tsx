@@ -146,12 +146,20 @@ describe("UpdatesScreen", () => {
 
     const toggles = screen.getAllByRole("button", { name: /show 2 more/i });
     expect(toggles).toHaveLength(1); // only "A big release" has exactly 2 hidden
+    // The disclosure's expanded state must be programmatically determinable,
+    // not conveyed by the visible label alone (WCAG 4.1.2).
+    expect(toggles[0]).toHaveAttribute("aria-expanded", "false");
+    const controlsId = toggles[0].getAttribute("aria-controls");
+    expect(controlsId).toBeTruthy();
+    expect(document.getElementById(controlsId!)).toBeInTheDocument();
+
     await user.click(toggles[0]);
 
     // Expanding "A big release" reveals the rest...
     expect(screen.getByText("five")).toBeInTheDocument();
     expect(screen.getByText("six")).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /show less/i })).toBeInTheDocument();
+    const showLessButton = screen.getByRole("button", { name: /show less/i });
+    expect(showLessButton).toHaveAttribute("aria-expanded", "true");
     // ...without expanding "Another big release", which stays collapsed.
     expect(screen.queryByText("e")).not.toBeInTheDocument();
   });
