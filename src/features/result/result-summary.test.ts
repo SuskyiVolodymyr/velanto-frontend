@@ -63,11 +63,7 @@ describe("summarizeResult", () => {
       ],
     });
 
-    const { tiles } = summarizeResult({
-      format: "save_one",
-      ownPicks,
-      results,
-    });
+    const { tiles } = summarizeResult({ ownPicks, results });
 
     expect(tiles).toEqual([
       { kind: "percent", labelKey: "result.statAgreement", value: 50 },
@@ -95,7 +91,7 @@ describe("summarizeResult", () => {
     ];
     const results = packResults({ format: "nxn", totalPlays: 12 });
 
-    const { tiles } = summarizeResult({ format: "nxn", ownPicks, results });
+    const { tiles } = summarizeResult({ ownPicks, results });
 
     expect(tiles).toEqual([
       { kind: "count", labelKey: "result.statPlays", value: 12 },
@@ -118,11 +114,7 @@ describe("summarizeResult", () => {
       ],
     });
 
-    const { tiles } = summarizeResult({
-      format: "rank_blind",
-      ownPicks,
-      results,
-    });
+    const { tiles } = summarizeResult({ ownPicks, results });
 
     expect(tiles).toEqual([
       { kind: "count", labelKey: "result.statRoundsRanked", value: 2 },
@@ -149,7 +141,7 @@ describe("summarizeResult", () => {
     });
 
     expect(
-      summarizeResult({ format: "save_one", ownPicks, results }).tiles,
+      summarizeResult({ ownPicks, results }).tiles,
     ).toEqual([]);
   });
 
@@ -160,7 +152,7 @@ describe("summarizeResult", () => {
     const results = packResults({ format: "save_one", topItems: [] });
 
     expect(
-      summarizeResult({ format: "save_one", ownPicks, results }).tiles,
+      summarizeResult({ ownPicks, results }).tiles,
     ).toEqual([]);
   });
 
@@ -179,10 +171,10 @@ describe("summarizeResult", () => {
     });
 
     expect(
-      summarizeResult({ format: "save_one", ownPicks: [], results }).tiles,
+      summarizeResult({ ownPicks: [], results }).tiles,
     ).toEqual([]);
     expect(
-      summarizeResult({ format: "save_one", ownPicks: null, results }).tiles,
+      summarizeResult({ ownPicks: null, results }).tiles,
     ).toEqual([]);
   });
 
@@ -206,11 +198,7 @@ describe("summarizeResult", () => {
       ],
     });
 
-    const { tiles } = summarizeResult({
-      format: "sacrifice_one",
-      ownPicks,
-      results,
-    });
+    const { tiles } = summarizeResult({ ownPicks, results });
 
     expect(tiles).toEqual([
       { kind: "percent", labelKey: "result.statAgreement", value: 75 },

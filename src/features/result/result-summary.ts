@@ -1,4 +1,3 @@
-import type { PackFormat } from "@/src/shared/types/pack";
 import type {
   PackResults,
   RankResults,
@@ -18,7 +17,6 @@ export type ResultTile =
   | { kind: "count"; labelKey: string; value: number };
 
 export interface SummarizeResultInput {
-  format: PackFormat;
   ownPicks: RecordedPick[] | null;
   results: PackResults | RankResults;
 }
@@ -37,21 +35,24 @@ export interface SummarizeResultInput {
  * rather than rendering a 0% that looks like a real, honest zero.
  */
 export function summarizeResult({
-  format,
   ownPicks,
   results,
 }: SummarizeResultInput): { tiles: ResultTile[] } {
   if (!ownPicks || ownPicks.length === 0) return { tiles: [] };
 
-  switch (format) {
+  // Switch on `results.format`, not a separately-passed pack format: this IS
+  // the discriminant the PackResults | RankResults union is typed for, so TS
+  // narrows `results` for free and an unsound `as` cast can't drift from the
+  // value that actually decides the runtime shape.
+  switch (results.format) {
     case "save_one":
     case "sacrifice_one":
     case "1v1":
-      return { tiles: summarizePickShare(ownPicks, results as PackResults) };
+      return { tiles: summarizePickShare(ownPicks, results) };
     case "nxn":
-      return { tiles: summarizeNxn(ownPicks, results as PackResults) };
+      return { tiles: summarizeNxn(ownPicks, results) };
     case "rank_blind":
-      return { tiles: summarizeRank(ownPicks, results as RankResults) };
+      return { tiles: summarizeRank(ownPicks, results) };
   }
 }
 

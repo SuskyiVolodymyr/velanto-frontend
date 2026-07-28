@@ -118,7 +118,6 @@ export function ResultScreen({ pack }: { pack: Pack }) {
     // format/ownPicks/results in scope, and it is the same "derive once at
     // the composition root" shape #222's picks/shared already follow above.
     const { tiles } = summarizeResult({
-      format: pack.format,
       ownPicks: picks,
       results,
     });
