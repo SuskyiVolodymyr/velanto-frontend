@@ -134,7 +134,7 @@ export function RankResultScreen({
           <Text variant="secondary" className="mb-4 text-sm">
             {t("podiumSubtitle")}
           </Text>
-          <PodiumTable items={podium} />
+          <PodiumTable items={podium} ownPicks={ownPicks} />
         </section>
       )}
     </div>

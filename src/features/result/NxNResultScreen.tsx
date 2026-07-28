@@ -166,7 +166,7 @@ export function NxNResultScreen({
           <Text variant="secondary" className="mb-4 text-sm">
             {t("topPickedSubtitle")}
           </Text>
-          <TopPickedTable items={topItems} />
+          <TopPickedTable items={topItems} ownPicks={ownPicks} />
         </section>
       )}
     </div>

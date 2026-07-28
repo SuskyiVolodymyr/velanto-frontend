@@ -5,16 +5,17 @@ import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { ProgressBar } from "@/src/shared/components/ProgressBar";
+import { cn } from "@/src/shared/lib/cn";
 import {
   ColumnHeading,
   RankCell,
   styleForRank,
   withCompetitionRanks,
 } from "@/src/features/result/result-table";
-import type { ItemTally } from "@/src/shared/types/play-results";
+import type { ItemTally, RecordedPick } from "@/src/shared/types/play-results";
 
-/** How many rows a press of "Load more" adds. */
-const PAGE = 10;
+/** How many rows a press of "Load more" adds — mock starts at 5, was 10 (T11). */
+const PAGE = 5;
 
 interface RankedTally extends ItemTally {
   rank: number;
@@ -41,22 +42,37 @@ function rankTallies(items: ItemTally[]): RankedTally[] {
  * `label` names the table for assistive tech; the elimination screens pass
  * their own ("Most saved" / "Most sacrificed"), which is the same number under
  * a verb that matches what the player actually did.
+ *
+ * T11: restyled as a `#171A22` rounded-20 aside card, and `ownPicks` (when
+ * passed) bolds any row the viewer picked at some point in their own run —
+ * the mock's "mine" flag.
  */
 export function TopPickedTable({
   items,
   label,
+  ownPicks,
 }: {
   items: ItemTally[];
   label?: string;
+  ownPicks?: RecordedPick[] | null;
 }) {
   const t = useTranslations("result");
   const tableLabel = label ?? t("topPickedHeading");
   const [shown, setShown] = useState(PAGE);
   const ranked = useMemo(() => rankTallies(items), [items]);
   const visible = ranked.slice(0, shown);
+  const mine = useMemo(
+    () =>
+      new Set(
+        (ownPicks ?? [])
+          .map((pick) => pick.itemId)
+          .filter((id): id is string => id !== undefined),
+      ),
+    [ownPicks],
+  );
 
   return (
-    <>
+    <div className="rounded-[20px] border border-border bg-[#171A22] p-5">
       <div className="overflow-x-auto">
         <table
           aria-label={tableLabel}
@@ -90,7 +106,13 @@ export function TopPickedTable({
                     </Text>
                   </RankCell>
                   <RankCell style={style}>
-                    <Text as="span" className="text-sm font-semibold">
+                    <Text
+                      as="span"
+                      className={cn(
+                        "text-sm",
+                        mine.has(item.itemId) ? "font-bold" : "font-semibold",
+                      )}
+                    >
                       {item.itemTitle}
                     </Text>
                   </RankCell>
@@ -132,6 +154,6 @@ export function TopPickedTable({
           </Button>
         </div>
       )}
-    </>
+    </div>
   );
 }

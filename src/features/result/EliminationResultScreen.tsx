@@ -148,6 +148,7 @@ export function EliminationResultScreen({
           <TopPickedTable
             items={topItems}
             label={t(sacrifice ? "topSacrificedHeading" : "topSavedHeading")}
+            ownPicks={ownPicks}
           />
         </section>
       )}
