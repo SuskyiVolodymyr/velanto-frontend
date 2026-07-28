@@ -6,12 +6,12 @@ import type { GroupMode, SlotMode } from "@/src/shared/types/pack";
 import { resolveRoundDraws } from "@/src/shared/lib/round-draw";
 import { Input } from "@/src/shared/components/Input";
 import { Select } from "@/src/shared/components/Select";
+import { SegmentedControl } from "@/src/shared/components/SegmentedControl";
 import { RoundsToolbar } from "@/src/features/create/RoundsToolbar";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
-import { Card } from "@/src/shared/components/Card";
+import { StepHeader } from "@/src/features/create/StepHeader";
 import { getFieldError } from "@/src/shared/components/form/getFieldError";
-import { cn } from "@/src/shared/lib/cn";
 import {
   newRound,
   randomSlot,
@@ -179,9 +179,7 @@ export function RoundsEditor() {
 
   return (
     <section className="flex flex-col gap-3">
-      <Text as="h2" variant="title" className="text-lg">
-        {t("roundsHeading")}
-      </Text>
+      <StepHeader step={4} title={t("roundsHeading")} hint={t("roundsHint")} />
 
       {rounds.map((round, index) => {
         const slot = round.slots[0];
@@ -210,9 +208,9 @@ export function RoundsEditor() {
         );
 
         return (
-          <Card
+          <div
             key={round.id}
-            className="flex flex-col gap-3 hover:translate-y-0 hover:shadow-none"
+            className="flex flex-col gap-[13px] rounded-tile border border-border bg-surface-card p-[15px]"
           >
             {/* Group leads — every place draws from it. */}
             <div className="flex flex-col gap-1">
@@ -262,36 +260,22 @@ export function RoundsEditor() {
                   no manual option to offer — the toggle goes with it rather
                   than sitting there disabled. */}
               {!randomPool && (
-                <div className="flex rounded-[9px] border border-border bg-white/[0.03] p-0.5">
-                  <button
-                    type="button"
-                    onClick={() => switchMode(index, "random")}
-                    aria-label={t("roundModeRandom", { index: index + 1 })}
-                    aria-pressed={slot.mode === "random"}
-                    className={cn(
-                      "rounded-[7px] px-3 py-1.5 text-xs font-medium transition-colors",
-                      slot.mode === "random"
-                        ? "bg-white/[0.12] text-foreground"
-                        : "text-foreground-secondary",
-                    )}
-                  >
-                    {t("random")}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => switchMode(index, "manual")}
-                    aria-label={t("roundModeManual", { index: index + 1 })}
-                    aria-pressed={slot.mode === "manual"}
-                    className={cn(
-                      "rounded-[7px] px-3 py-1.5 text-xs font-medium transition-colors",
-                      slot.mode === "manual"
-                        ? "bg-white/[0.12] text-foreground"
-                        : "text-foreground-secondary",
-                    )}
-                  >
-                    {t("manual")}
-                  </button>
-                </div>
+                <SegmentedControl
+                  value={slot.mode}
+                  onChange={(mode) => switchMode(index, mode)}
+                  options={[
+                    {
+                      value: "random",
+                      label: t("random"),
+                      ariaLabel: t("roundModeRandom", { index: index + 1 }),
+                    },
+                    {
+                      value: "manual",
+                      label: t("manual"),
+                      ariaLabel: t("roundModeManual", { index: index + 1 }),
+                    },
+                  ]}
+                />
               )}
               {rounds.length > 1 && (
                 <Button
@@ -324,7 +308,7 @@ export function RoundsEditor() {
                     })
                   }
                   aria-label={t("roundCountLabel", { index: index + 1 })}
-                  className="w-16 text-center"
+                  className="h-[38px] w-[54px] text-center font-semibold text-acc tabular-nums"
                 />
               </div>
             ) : (
@@ -400,10 +384,7 @@ export function RoundsEditor() {
               {t("roundDraws", { count: drawnCount })}
             </Text>
             {underfilled && (
-              <Text
-                role="status"
-                className="text-xs text-foreground-secondary italic"
-              >
+              <Text variant="tertiary" role="status" className="text-xs italic">
                 {t("roundUnderfill", { count: drawnCount })}
               </Text>
             )}
@@ -412,7 +393,7 @@ export function RoundsEditor() {
                 {slotError}
               </Text>
             )}
-          </Card>
+          </div>
         );
       })}
 

@@ -69,19 +69,30 @@ describe("RoundsToolbar", () => {
   // to spare beside it, and Button's fixed height meant the extra lines spilled
   // out of its box. The group is one flex item whose own children wrap, so its
   // min-content width is tiny — without these it squeezes instead of letting
-  // the parent's flex-wrap move it to its own line.
-  it("keeps its label and buttons on one line each", () => {
+  // the parent's flex-wrap move it to its own line. The add-round button no
+  // longer shares that row (it's now its own full-width dashed row, like
+  // "+ Add pool"), so only the bulk group still needs the nowrap protection.
+  it("keeps the bulk group's label and apply button on one line each", () => {
     renderToolbar();
 
-    expect(screen.getByRole("button", { name: "Add round" })).toHaveClass(
-      "whitespace-nowrap",
-    );
     expect(
       screen.getByRole("button", { name: "Set count for all rounds" }),
     ).toHaveClass("whitespace-nowrap");
     expect(screen.getByText("Set all rounds to draw")).toHaveClass(
       "whitespace-nowrap",
     );
+    // The wrap-fix itself: shrink-0 on the group so the parent's flex-wrap
+    // moves the whole group to its own line instead of squeezing it (#359).
+    expect(screen.getByText("Set all rounds to draw").closest("div")).toHaveClass(
+      "shrink-0",
+    );
+  });
+
+  it("renders the add-round button as its own dashed full-width row", () => {
+    renderToolbar();
+
+    const addButton = screen.getByRole("button", { name: "Add round" });
+    expect(addButton).toHaveClass("w-full", "border-dashed");
   });
 
   // 1v1 draws exactly one item per side, so there is nothing to bulk-set — it

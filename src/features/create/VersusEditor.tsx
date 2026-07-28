@@ -16,7 +16,7 @@ import { Select } from "@/src/shared/components/Select";
 import { RoundsToolbar } from "@/src/features/create/RoundsToolbar";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
-import { Card } from "@/src/shared/components/Card";
+import { StepHeader } from "@/src/features/create/StepHeader";
 import { getFieldError } from "@/src/shared/components/form/getFieldError";
 import {
   type CreatePackValues,
@@ -114,9 +114,7 @@ export function VersusEditor() {
 
   return (
     <section className="flex flex-col gap-3">
-      <Text as="h2" variant="title" className="text-lg">
-        {t("matchupHeading")}
-      </Text>
+      <StepHeader step={4} title={t("matchupHeading")} />
 
       {rounds.map((round, index) => {
         const slotA = round.slots[0];
@@ -141,9 +139,9 @@ export function VersusEditor() {
           getFieldError(errors, `rounds.${index}.slots.1.count`);
 
         return (
-          <Card
+          <div
             key={round.id}
-            className="flex flex-col gap-3 hover:translate-y-0 hover:shadow-none"
+            className="flex flex-col gap-[13px] rounded-tile border border-border bg-surface-card p-[15px]"
           >
             <div className="flex items-center justify-between gap-2">
               <Text variant="tertiary" className="text-xs uppercase">
@@ -215,7 +213,7 @@ export function VersusEditor() {
                       )
                     }
                     aria-label={t("versusPerSideRound", { index: index + 1 })}
-                    className="text-center"
+                    className="h-[38px] w-[54px] text-center font-semibold text-acc tabular-nums"
                   />
                 </div>
               )}
@@ -225,7 +223,7 @@ export function VersusEditor() {
               {t("versusDrawHint", { a: drawA, b: drawB })}
             </Text>
             {singlePool && (
-              <Text role="status" className="text-xs text-foreground-secondary">
+              <Text variant="tertiary" role="status" className="text-xs">
                 {t("versusSamePoolNote")}
               </Text>
             )}
@@ -234,7 +232,7 @@ export function VersusEditor() {
                 {slotError}
               </Text>
             )}
-          </Card>
+          </div>
         );
       })}
 
