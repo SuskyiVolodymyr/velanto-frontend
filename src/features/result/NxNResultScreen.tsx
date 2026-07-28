@@ -2,7 +2,6 @@
 
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { TopPickedTable } from "@/src/features/result/TopPickedTable";
@@ -88,12 +87,6 @@ export function NxNResultScreen({
   pack,
   results,
   ownPicks,
-  // Unused now that the header block + SharedResultNote that read it moved to
-  // ResultScreen (T11); kept in the signature so this still matches
-  // ResultScreen's shared { pack, results, ownPicks, shared } call shape
-  // across all four format screens, and so this file's own tests (which
-  // already pass it) don't need a T11 edit.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   shared,
 }: {
   pack: Pack;
@@ -119,18 +112,31 @@ export function NxNResultScreen({
   const topItems = results.topItems ?? [];
 
   return (
-    <div className={cn(PACK_CONTAINER, "flex-1 pb-10")}>
+    <div className="flex-1 pb-10">
       {rounds.length > 0 ? (
-        <div className="mb-10 flex flex-col divide-y divide-border">
-          {rounds.map((round) => (
-            <div key={round.roundIndex} className="py-4 first:pt-0 last:pb-0">
-              <RoundRow
-                round={round}
-                heading={roundHeading(pack, round.roundIndex)}
-              />
-            </div>
-          ))}
-        </div>
+        <section className="mb-10">
+          <Text
+            as="h2"
+            variant="tertiary"
+            className="mb-1 text-[12px] font-medium uppercase tracking-[0.14em] text-acc"
+          >
+            {t("roundByRoundHeading")}
+          </Text>
+          <Text variant="secondary" className="mb-4 text-sm">
+            {t(shared ? "roundByRoundNoteShared" : "roundByRoundNote")}
+          </Text>
+          <div className="flex flex-col divide-y divide-border">
+            {rounds.map((round) => (
+              <div key={round.roundIndex} className="py-4 first:pt-0 last:pb-0">
+                <RoundRow
+                  round={round}
+                  heading={roundHeading(pack, round.roundIndex)}
+                  shared={shared}
+                />
+              </div>
+            ))}
+          </div>
+        </section>
       ) : (
         <Card className="mb-10 py-8 text-center">
           <Text variant="tertiary" className="text-sm">
@@ -155,7 +161,7 @@ export function NxNResultScreen({
           <Text variant="secondary" className="mb-4 text-sm">
             {t("topPickedSubtitle")}
           </Text>
-          <TopPickedTable items={topItems} />
+          <TopPickedTable items={topItems} ownPicks={ownPicks} />
         </section>
       )}
     </div>
@@ -166,7 +172,15 @@ export function NxNResultScreen({
  * One played round: the two sides either side of a centre column carrying the
  * round's name. Below `sm` the three stack, each on its own row.
  */
-function RoundRow({ round, heading }: { round: PlayedRound; heading: string }) {
+function RoundRow({
+  round,
+  heading,
+  shared,
+}: {
+  round: PlayedRound;
+  heading: string;
+  shared: boolean;
+}) {
   const t = useTranslations("result");
   return (
     <div
@@ -182,7 +196,7 @@ function RoundRow({ round, heading }: { round: PlayedRound; heading: string }) {
       // row ended up a different width.
       className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-[minmax(0,1fr)_9rem_minmax(0,1fr)]"
     >
-      <SideCard side={round.left} position="left" />
+      <SideCard side={round.left} position="left" shared={shared} />
       <div className="flex flex-col items-center justify-center gap-1 text-center">
         <Text variant="tertiary" className="text-xs uppercase tracking-wide">
           {heading}
@@ -191,7 +205,7 @@ function RoundRow({ round, heading }: { round: PlayedRound; heading: string }) {
           VS
         </span>
       </div>
-      <SideCard side={round.right} position="right" />
+      <SideCard side={round.right} position="right" shared={shared} />
     </div>
   );
 }
@@ -208,10 +222,13 @@ function RoundRow({ round, heading }: { round: PlayedRound; heading: string }) {
 function SideCard({
   side,
   position,
+  shared,
 }: {
   side: PlayedSide;
   position: "left" | "right";
+  shared: boolean;
 }) {
+  const t = useTranslations("result");
   return (
     <div
       data-testid={side.picked ? "picked" : "dropped"}
@@ -223,6 +240,20 @@ function SideCard({
           : "border-danger/60 bg-danger/5",
       )}
     >
+      {/* T9: the winner-highlight verdict label — the loser-pills split
+          doesn't map here (each side can hold up to 8 items already shown as
+          its own list), so this is the lighter-touch adaptation for the two
+          versus screens; see the plan deviation noted in the T9 commit. */}
+      {side.picked && (
+        <Text
+          className={cn(
+            "text-[11px] font-semibold uppercase tracking-wide text-success",
+            position === "right" && "text-end",
+          )}
+        >
+          {t(shared ? "verdictWonShared" : "verdictWon")}
+        </Text>
+      )}
       <ul className="flex flex-col gap-2">
         {side.titles.map((title, index) => (
           <li

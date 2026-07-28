@@ -169,7 +169,7 @@ describe("RankPlayScreen", () => {
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
     await user.click(
-      await screen.findByRole("button", { name: "Next round →" }),
+      await screen.findByRole("button", { name: "Next round" }),
     );
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("#1"));
@@ -220,7 +220,7 @@ describe("RankPlayScreen", () => {
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
     await user.click(
-      await screen.findByRole("button", { name: "Next round →" }),
+      await screen.findByRole("button", { name: "Next round" }),
     );
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("#1"));
@@ -245,7 +245,7 @@ describe("RankPlayScreen", () => {
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
     await user.click(
-      await screen.findByRole("button", { name: "Next round →" }),
+      await screen.findByRole("button", { name: "Next round" }),
     );
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("#1"));
@@ -266,7 +266,10 @@ describe("RankPlayScreen", () => {
 
     expect(await screen.findByText("Kaikai Kitan")).toBeInTheDocument();
     expect(screen.getByText("Round 1 of 2")).toBeInTheDocument();
-    expect(screen.getAllByText("Place here")).toHaveLength(2);
+    // T7: the empty-slot placeholder now names the current (blind) item —
+    // both empty rows show the same text, since only one item is "in play"
+    // at a time.
+    expect(screen.getAllByText("Place Kaikai Kitan here")).toHaveLength(2);
   });
 
   it("places the current item into the slot the player clicks, out of numeric order", async () => {
@@ -295,7 +298,7 @@ describe("RankPlayScreen", () => {
     await screen.findByText("Redo");
     await user.click(screen.getByText("#1"));
     await user.click(
-      await screen.findByRole("button", { name: "Next round →" }),
+      await screen.findByRole("button", { name: "Next round" }),
     );
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("#1"));
@@ -340,7 +343,7 @@ describe("RankPlayScreen", () => {
     await user.click(screen.getByText("#2"));
 
     expect(await screen.findByText("Openers ranked")).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "Next round" }));
 
     expect(await screen.findByText("Silhouette")).toBeInTheDocument();
     expect(screen.getByText("Round 2 of 2")).toBeInTheDocument();
@@ -360,7 +363,7 @@ describe("RankPlayScreen", () => {
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
 
-    expect(await screen.findByText("Round complete")).toBeInTheDocument();
+    expect(await screen.findByText("Round ranked")).toBeInTheDocument();
     expect(screen.getByText("Next up: Round 2")).toBeInTheDocument();
   });
 
@@ -378,15 +381,15 @@ describe("RankPlayScreen", () => {
     await user.click(screen.getByText("#1"));
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
-    await screen.findByText("Round complete");
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await screen.findByText("Round ranked");
+    await user.click(screen.getByRole("button", { name: "Next round" }));
 
     // Finish round 2, the last round.
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("#1"));
 
     expect(await screen.findByText("Loading your results…")).toBeInTheDocument();
-    expect(screen.queryByText("Round complete")).toBeNull();
+    expect(screen.queryByText("Round ranked")).toBeNull();
     expect(screen.queryByText(/^Next up:/)).toBeNull();
   });
 
@@ -420,7 +423,7 @@ describe("RankPlayScreen", () => {
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
     await user.click(
-      await screen.findByRole("button", { name: "Next round →" }),
+      await screen.findByRole("button", { name: "Next round" }),
     );
 
     await screen.findByText("Silhouette");
@@ -542,7 +545,10 @@ describe("RankPlayScreen", () => {
     renderScreen(randomPack);
 
     await screen.findByText("Round 1 of 1");
-    expect(screen.getAllByText("Place here")).toHaveLength(2);
+    // T7: the empty-slot placeholder now names the current item, which for a
+    // random-mode slot is seed-dependent — assert the count via a pattern
+    // instead of a literal item name.
+    expect(screen.getAllByText(/^Place .+ here$/)).toHaveLength(2);
   });
 
   it("saves progress on advancing a round and resumes there on a fresh mount", async () => {
@@ -556,7 +562,7 @@ describe("RankPlayScreen", () => {
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
     await user.click(
-      await screen.findByRole("button", { name: "Next round →" }),
+      await screen.findByRole("button", { name: "Next round" }),
     );
     await screen.findByText("Silhouette");
     expect(readPlayResume("pack-rank", version)?.roundIndex).toBe(1);
@@ -580,7 +586,7 @@ describe("RankPlayScreen", () => {
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
     await user.click(
-      await screen.findByRole("button", { name: "Next round →" }),
+      await screen.findByRole("button", { name: "Next round" }),
     );
     expect(readPlayResume("pack-rank", version)).not.toBeNull();
 

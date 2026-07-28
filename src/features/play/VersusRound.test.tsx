@@ -249,4 +249,55 @@ describe("VersusRound", () => {
     await user.keyboard(" ");
     expect(onSelect).toHaveBeenCalledWith(0);
   });
+
+  // Code review fix: a fixed column count equal to the item count squeezed
+  // every tile down to a sliver for an 8-item nxn side (create-pack allows up
+  // to 8 per side). auto-fit wraps onto more rows instead, keeping tiles at
+  // a legible minimum width regardless of how many items a side has.
+  it("lays a side's items out in an auto-fit grid, not one column per item", () => {
+    render(
+      <VersusRound
+        sideA={SIDE_A}
+        sideB={SIDE_B}
+        selectedSide={null}
+        onSelect={vi.fn()}
+        packCoverTone={PACK_COVER_TONE}
+      />,
+    );
+
+    const naruto = screen.getByText("Naruto");
+    const grid = naruto.closest('[style*="grid-template-columns"]');
+    expect(grid).toHaveStyle({
+      gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))",
+    });
+  });
+
+  it("shows a footer 'Selected' row under a side's items once picked", () => {
+    render(
+      <VersusRound
+        sideA={SIDE_A}
+        sideB={SIDE_B}
+        selectedSide={0}
+        onSelect={vi.fn()}
+        packCoverTone={PACK_COVER_TONE}
+      />,
+    );
+
+    expect(screen.getByText("Selected")).toBeInTheDocument();
+  });
+
+  it("omits the footer row for the unselected side", () => {
+    render(
+      <VersusRound
+        sideA={SIDE_A}
+        sideB={SIDE_B}
+        selectedSide={0}
+        onSelect={vi.fn()}
+        packCoverTone={PACK_COVER_TONE}
+      />,
+    );
+
+    // Only sideA (index 0) is selected, so exactly one footer row renders.
+    expect(screen.getAllByText("Selected")).toHaveLength(1);
+  });
 });

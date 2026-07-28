@@ -137,7 +137,12 @@ describe("ResultScreen", () => {
     // Scoped to the round: the ranking below lists it as well.
     const round = screen.getByRole("group", { name: /Round 1/ });
     expect(within(round).getByText("Redo")).toBeInTheDocument();
-    expect(screen.getByText(/4 plays recorded/)).toBeInTheDocument();
+    // T10: the "N plays recorded" subtitle text became a fixed phrase plus a
+    // compact "Total plays" stat showing the raw count.
+    expect(screen.getByText("Total plays")).toBeInTheDocument();
+    expect(
+      screen.getByText(/recorded and folded into this pack's stats/),
+    ).toBeInTheDocument();
   });
 
   // #222: the product promise is that stats stay locked until you finish, so
@@ -227,6 +232,18 @@ describe("ResultScreen", () => {
     ).toHaveAttribute("href", "/packs/pack-1/play");
   });
 
+  // T8: the recap and the aside cards (leaderboard/share, T11-T12) sit in a
+  // two-column grid below the hero — the aside is a real landmark, not just a
+  // styling div.
+  it("renders the aside alongside the recap once results are on screen", async () => {
+    seedOwnPlay();
+    seedResults(RESULTS);
+    render(<ResultScreen pack={PACK} />);
+
+    expect(await screen.findByTestId("picked")).toBeInTheDocument();
+    expect(screen.getByRole("complementary")).toBeInTheDocument();
+  });
+
   it("renders without crashing when the pack has no recorded plays yet", async () => {
     const emptyResults: PackResults = {
       packId: "pack-1",
@@ -252,7 +269,8 @@ describe("ResultScreen", () => {
     seedResults(emptyResults);
     render(<ResultScreen pack={PACK} />);
 
-    expect(await screen.findByText(/0 plays recorded/)).toBeInTheDocument();
+    // T10: the "N plays recorded" text became a compact "Total plays" stat.
+    expect(await screen.findByText("Total plays")).toBeInTheDocument();
     // Your own round still renders — it comes from your picks, not the
     // aggregate — and there is no ranking to show yet.
     expect(screen.getByTestId("picked")).toHaveTextContent("Guren no Yumiya");
@@ -288,7 +306,8 @@ describe("ResultScreen", () => {
     expect(await screen.findByText("Guren no Yumiya")).toBeInTheDocument();
   });
 
-  // The approved/non-approved Share-button rule is owned by ResultActions.test.
+  // The approved/non-approved Share-button rule is owned by
+  // ResultAgainPanel.test (T12 moved the Share button out of ResultActions).
 
   it("renders the sharer's picks and a shared-result note when opened via a ?p= link", async () => {
     searchParams = new URLSearchParams({
@@ -301,10 +320,11 @@ describe("ResultScreen", () => {
     expect(
       await screen.findByText(/viewing a shared result/i),
     ).toBeInTheDocument();
-    // The sharer's pick is labelled "Pick", not "Your pick" — it isn't yours.
+    // The sharer's verdict reads "Saved", not "You saved" — it isn't yours.
+    // (T9 replaced the plain "Your pick"/"Pick" tag with this colored label.)
     expect(screen.getByTestId("picked")).toHaveTextContent("Guren no Yumiya");
-    expect(screen.getByText("Pick")).toBeInTheDocument();
-    expect(screen.queryByText("Your pick")).not.toBeInTheDocument();
+    expect(screen.getByText("Saved")).toBeInTheDocument();
+    expect(screen.queryByText("You saved")).not.toBeInTheDocument();
   });
 
   describe("single-pool versus round", () => {

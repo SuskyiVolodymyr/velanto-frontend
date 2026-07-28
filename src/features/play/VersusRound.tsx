@@ -141,14 +141,37 @@ function SideCard({ side, letter, selected, onSelect, packCoverTone }: SideCardP
           </span>
         )}
       </div>
-      {side.items.map((item, index) => (
-        <ItemTile
-          key={item.id}
-          item={item}
-          index={index}
-          packCoverTone={packCoverTone}
-        />
-      ))}
+      {/* auto-fit rather than a fixed column count equal to the item count:
+          nxn allows up to 8 items per side (create-pack.value-schemas.ts),
+          and 8 equal-width columns in this narrow a column squeezed every
+          tile down to a sliver. auto-fit instead wraps onto more rows,
+          keeping each tile at a legible minimum width regardless of N. */}
+      <div
+        className="grid gap-3"
+        style={{
+          gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))",
+        }}
+      >
+        {side.items.map((item, index) => (
+          <ItemTile
+            key={item.id}
+            item={item}
+            index={index}
+            packCoverTone={packCoverTone}
+          />
+        ))}
+      </div>
+      {selected && (
+        <div className="flex items-center gap-[7px] border-t border-border pt-3 text-[12.5px] font-semibold text-acc">
+          <span
+            aria-hidden
+            className="flex h-4 w-4 flex-none items-center justify-center rounded-full bg-acc"
+          >
+            <span className="-mt-[1px] h-[3.5px] w-[6.5px] -rotate-45 border-b-2 border-l-2 border-[#07131a]" />
+          </span>
+          {t("sideSelected")}
+        </div>
+      )}
     </div>
   );
 }

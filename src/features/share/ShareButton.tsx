@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Share2 } from "lucide-react";
-import { Button } from "@/src/shared/components/Button";
+import { Button, type ButtonVariant } from "@/src/shared/components/Button";
 import { Input } from "@/src/shared/components/Input";
 import { buildShareUrl } from "@/src/shared/lib/share-url";
 import type { RecordedPick } from "@/src/shared/types/play-results";
@@ -13,6 +13,8 @@ export function ShareButton({
   picks,
   resolvePlayId,
   label,
+  variant = "secondary",
+  className,
 }: {
   path: string;
   picks?: RecordedPick[] | null;
@@ -25,6 +27,11 @@ export function ShareButton({
    */
   resolvePlayId?: () => string | null;
   label?: string;
+  /** The trigger button's variant (T12: the share/CTA aside card wants the
+   * primary cyan treatment; every other caller keeps the original secondary
+   * look by omitting this). */
+  variant?: ButtonVariant;
+  className?: string;
 }) {
   const t = useTranslations("share");
   const triggerLabel = label ?? t("trigger");
@@ -94,7 +101,8 @@ export function ShareButton({
     <div ref={containerRef} className="relative">
       <Button
         ref={triggerRef}
-        variant="secondary"
+        variant={variant}
+        className={className}
         aria-haspopup="dialog"
         aria-expanded={open}
         onClick={() => (open ? close() : setOpen(true))}

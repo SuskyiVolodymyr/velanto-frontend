@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
-import { Button } from "@/src/shared/components/Button";
 import { VersusRound } from "@/src/features/play/VersusRound";
 import { usePlaySession } from "@/src/features/play/use-play-session";
 import {
@@ -14,6 +13,7 @@ import {
 } from "@/src/features/play/play-format-copy";
 import { PlayChrome } from "@/src/features/play/PlayChrome";
 import { PlayRoundHeader } from "@/src/features/play/PlayRoundHeader";
+import { PlayConfirmBar } from "@/src/features/play/PlayConfirmBar";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { CandidateCard } from "@/src/features/play/CandidateCard";
 import { PicksSummary } from "@/src/features/play/PicksSummary";
@@ -41,7 +41,6 @@ function candidateGridCols(count: number): string {
 
 export function PlayScreen({ pack }: { pack: Pack }) {
   const t = useTranslations("play");
-  const tFormat = useTranslations("formats");
   const router = useRouter();
   const session = usePlaySession(pack);
 
@@ -56,12 +55,10 @@ export function PlayScreen({ pack }: { pack: Pack }) {
   return (
     <>
       <PlayChrome
-        packId={pack.id}
-        title={pack.title}
+        pack={pack}
         isFinished={session.isFinished}
         roundIndex={session.roundIndex}
         totalRounds={session.totalRounds}
-        progressPct={session.progressPct}
       />
 
       <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
@@ -69,10 +66,15 @@ export function PlayScreen({ pack }: { pack: Pack }) {
           <>
             <div className="mb-6">
               <PlayRoundHeader
-                eyebrow={tFormat(pack.format)}
+                eyebrow={t("roundOf", {
+                  current: session.roundIndex + 1,
+                  total: session.totalRounds,
+                })}
                 title={session.roundTitle}
                 instruction={t(INSTRUCTION_KEY[pack.format])}
                 align="start"
+                roundIndex={session.roundIndex}
+                totalRounds={session.totalRounds}
               />
             </div>
 
@@ -118,24 +120,18 @@ export function PlayScreen({ pack }: { pack: Pack }) {
                     selected={item.id === session.selectedId}
                     onSelect={() => session.setSelectedId(item.id)}
                     packCoverTone={pack.coverTone}
+                    format={pack.format}
                   />
                 ))}
               </div>
             )}
 
-            <div className="mb-10 flex justify-end">
-              {/* `size="lg"` is `Button`'s real 52px/rounded-tile confirm-button
-                  variant — no more hand-rolling a raw button to dodge `cn()`
-                  being a plain join (not tailwind-merge): the size lives inside
-                  the component now, so there's nothing left to fight. */}
-              <Button
-                size="lg"
-                disabled={!session.canConfirm}
-                onClick={session.confirmPick}
-              >
-                {session.isLastRound ? t("finishRound") : t("nextRound")}
-              </Button>
-            </div>
+            <PlayConfirmBar
+              ready={session.canConfirm}
+              disabled={!session.canConfirm}
+              onConfirm={session.confirmPick}
+              confirmLabel={session.isLastRound ? t("finishRound") : t("nextRound")}
+            />
           </>
         )}
 
@@ -145,6 +141,7 @@ export function PlayScreen({ pack }: { pack: Pack }) {
           <PicksSummary
             label={t(PICKED_LABEL_KEY[pack.format])}
             picks={session.displayPicks}
+            totalRounds={session.totalRounds}
           />
         )}
       </div>

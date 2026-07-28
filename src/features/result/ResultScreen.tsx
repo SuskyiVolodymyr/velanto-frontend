@@ -18,6 +18,7 @@ import { SharedResultNote } from "@/src/features/result/SharedResultNote";
 import { summarizeResult } from "@/src/features/result/result-summary";
 import { usePackResults } from "@/src/features/result/api/results.queries";
 import { useResultPicks } from "@/src/features/result/use-result-picks";
+import { getRoundsCount } from "@/src/shared/lib/pack-display";
 import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
 
@@ -127,15 +128,36 @@ export function ResultScreen({ pack }: { pack: Pack }) {
         <div className={cn(PACK_CONTAINER, "pt-10")}>
           <ResultHero
             packTitle={pack.title}
+            format={results.format}
             shared={shared}
+            totalRounds={getRoundsCount(pack)}
             totalPlays={results.totalPlays}
             tiles={tiles}
           />
           {shared && <SharedResultNote />}
         </div>
-        {recap}
-        <div className={cn(PACK_CONTAINER, "pb-16")}>
-          <ResultAgainPanel packId={pack.id} shared={shared} />
+        {/* T8: recap (left) + a right aside for 2-3 stacked cards (the
+            leaderboard, T11; the share/play-again card, T12) — the mock's
+            `minmax(0,1fr) minmax(0,330px)` grid. The hero stays full-width
+            above this, not inside either column. Single column below `lg`. */}
+        <div
+          className={cn(
+            PACK_CONTAINER,
+            "grid grid-cols-1 items-start gap-8 pb-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,330px)]",
+          )}
+        >
+          <div className="min-w-0">{recap}</div>
+          <aside className="flex flex-col gap-4">
+            {/* T11's leaderboard card renders inside `recap` itself (see that
+                task's commit for why); T12's consolidated share/play-again
+                card is the aside's own content. */}
+            <ResultAgainPanel
+              packId={pack.id}
+              status={pack.status}
+              picks={picks}
+              shared={shared}
+            />
+          </aside>
         </div>
       </>
     );
@@ -164,8 +186,6 @@ export function ResultScreen({ pack }: { pack: Pack }) {
           {picks && !isError && results && (
             <ResultActions
               packId={pack.id}
-              status={pack.status}
-              picks={picks}
               shared={shared}
               className="ms-auto"
             />

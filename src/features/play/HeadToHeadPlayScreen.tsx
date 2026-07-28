@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
-import { Button } from "@/src/shared/components/Button";
 import { playsClient } from "@/src/shared/lib/plays-client";
 import {
   writeLastPlayId,
@@ -15,6 +14,7 @@ import { usePlayResume } from "@/src/features/play/use-play-resume";
 import { HeadToHeadRound } from "@/src/features/play/HeadToHeadRound";
 import { PlayChrome } from "@/src/features/play/PlayChrome";
 import { PlayRoundHeader } from "@/src/features/play/PlayRoundHeader";
+import { PlayConfirmBar } from "@/src/features/play/PlayConfirmBar";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { cn } from "@/src/shared/lib/cn";
@@ -149,19 +149,13 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
 
   if (status === "loading") return null;
 
-  const progressPct = isFinished
-    ? 100
-    : Math.round((roundIndex / Math.max(totalRounds, 1)) * 100);
-
   return (
     <>
       <PlayChrome
-        packId={pack.id}
-        title={pack.title}
+        pack={pack}
         isFinished={isFinished}
         roundIndex={roundIndex}
         totalRounds={totalRounds}
-        progressPct={progressPct}
       />
 
       <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
@@ -171,6 +165,8 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
               <PlayRoundHeader
                 eyebrow={tFormat("1v1")}
                 title={t("whichPrefer")}
+                roundIndex={roundIndex}
+                totalRounds={totalRounds}
               />
             </div>
             <div className="mb-8">
@@ -182,14 +178,17 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
                 coverTone={pack.coverTone}
               />
             </div>
-            {/* Same placement and copy as the elimination formats' confirm. */}
-            <div className="mb-10 flex justify-end">
-              <Button size="lg" disabled={!selectedId} onClick={confirmPick}>
-                {roundIndex === totalRounds - 1
+            {/* Same shared confirm bar as the elimination formats (T4). */}
+            <PlayConfirmBar
+              ready={Boolean(selectedId)}
+              disabled={!selectedId}
+              onConfirm={confirmPick}
+              confirmLabel={
+                roundIndex === totalRounds - 1
                   ? t("finishRound")
-                  : t("nextRound")}
-              </Button>
-            </div>
+                  : t("nextRound")
+              }
+            />
           </>
         )}
 

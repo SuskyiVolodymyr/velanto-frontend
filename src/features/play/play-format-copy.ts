@@ -21,3 +21,18 @@ export const PICKED_LABEL_KEY: Record<Pack["format"], string> = {
   rank_blind: "",
   "1v1": "",
 };
+
+/**
+ * The "chosen" badge overlaid on a CandidateCard's cover once selected —
+ * save_one/nxn both save, sacrifice_one is the odd one out. Only save_one/
+ * sacrifice_one actually reach CandidateCard (nxn renders via VersusRound
+ * instead), but every format needs a key for Record<PackFormat, ...>'s
+ * exhaustiveness.
+ */
+export const CHOSEN_LABEL_KEY: Record<Pack["format"], string> = {
+  save_one: "chosenSave",
+  sacrifice_one: "chosenSacrifice",
+  nxn: "chosenSave",
+  rank_blind: "",
+  "1v1": "",
+};

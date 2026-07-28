@@ -5,16 +5,20 @@ import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { ProgressBar } from "@/src/shared/components/ProgressBar";
+import { cn } from "@/src/shared/lib/cn";
 import {
   ColumnHeading,
   RankCell,
   styleForRank,
   withCompetitionRanks,
 } from "@/src/features/result/result-table";
-import type { PodiumTally } from "@/src/shared/types/play-results";
+import type {
+  PodiumTally,
+  RecordedPick,
+} from "@/src/shared/types/play-results";
 
-/** How many rows a press of "Load more" adds. */
-const PAGE = 10;
+/** How many rows a press of "Load more" adds — mock starts at 5, was 10 (T11). */
+const PAGE = 5;
 
 /**
  * rank_blind's pack-wide ranking: how often each item was placed first, second
@@ -25,8 +29,18 @@ const PAGE = 10;
  * about a pack than one that occasionally wins and is mid-table otherwise. The
  * three counts stay visible beside it, so a reader can see which kind of item
  * they're looking at instead of taking the sum on trust.
+ *
+ * T11: restyled as a rounded-20 aside card (`bg-surface-card`), and
+ * `ownPicks` (when passed) bolds any row the viewer placed at some point in
+ * their own run.
  */
-export function PodiumTable({ items }: { items: PodiumTally[] }) {
+export function PodiumTable({
+  items,
+  ownPicks,
+}: {
+  items: PodiumTally[];
+  ownPicks?: RecordedPick[] | null;
+}) {
   const t = useTranslations("result");
   const [shown, setShown] = useState(PAGE);
   // A tie needs all three counts to match, not just the total: 3/0/0 and 1/1/1
@@ -43,9 +57,18 @@ export function PodiumTable({ items }: { items: PodiumTally[] }) {
   // Ranked is pre-sorted best-first, so the top row's total is the scale's max
   // — stable as more rows load, unlike scaling against only the visible slice.
   const maxTotal = ranked[0]?.total ?? 0;
+  const mine = useMemo(
+    () =>
+      new Set(
+        (ownPicks ?? [])
+          .map((pick) => pick.itemId)
+          .filter((id): id is string => id !== undefined),
+      ),
+    [ownPicks],
+  );
 
   return (
-    <>
+    <div className="rounded-[20px] border border-border bg-surface-card p-5">
       <div className="overflow-x-auto">
         <table
           aria-label={t("podiumHeading")}
@@ -85,7 +108,13 @@ export function PodiumTable({ items }: { items: PodiumTally[] }) {
                     </Text>
                   </RankCell>
                   <RankCell style={style}>
-                    <Text as="span" className="text-sm font-semibold">
+                    <Text
+                      as="span"
+                      className={cn(
+                        "text-sm",
+                        mine.has(item.itemId) ? "font-bold" : "font-semibold",
+                      )}
+                    >
                       {item.itemTitle}
                     </Text>
                   </RankCell>
@@ -129,7 +158,7 @@ export function PodiumTable({ items }: { items: PodiumTally[] }) {
           </Button>
         </div>
       )}
-    </>
+    </div>
   );
 }
 

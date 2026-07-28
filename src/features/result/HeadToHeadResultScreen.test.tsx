@@ -194,20 +194,25 @@ describe("HeadToHeadResultScreen", () => {
     expect(within(matchups[0]).getByText(/4 plays/i)).toBeInTheDocument();
   });
 
-  it("lists the top picked ten at a time, loading more on demand", async () => {
+  // T11: PAGE changed from 10 to 5 (mock starts smaller, with a "Show more"
+  // button doing more of the work).
+  it("lists the top picked five at a time, loading more on demand", async () => {
     const user = userEvent.setup();
     renderScreen();
 
     const table = screen.getByRole("table", { name: /top picked/i });
     const bodyRows = () => within(table).getAllByRole("row").slice(1); // drop the header row
-    expect(bodyRows()).toHaveLength(10);
+    expect(bodyRows()).toHaveLength(5);
     expect(within(table).getByText("Item 1")).toBeInTheDocument();
-    expect(within(table).queryByText("Item 11")).toBeNull();
+    expect(within(table).queryByText("Item 6")).toBeNull();
 
     await user.click(screen.getByRole("button", { name: /load more/i }));
-    expect(bodyRows()).toHaveLength(20);
+    expect(bodyRows()).toHaveLength(10);
 
-    // 25 entries: the last press exhausts the list and the button goes away.
+    // 25 entries, 5 at a time: three more presses exhaust the list and the
+    // button goes away.
+    await user.click(screen.getByRole("button", { name: /load more/i }));
+    await user.click(screen.getByRole("button", { name: /load more/i }));
     await user.click(screen.getByRole("button", { name: /load more/i }));
     expect(bodyRows()).toHaveLength(25);
     expect(screen.queryByRole("button", { name: /load more/i })).toBeNull();
