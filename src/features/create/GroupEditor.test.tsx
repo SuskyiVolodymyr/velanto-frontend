@@ -507,7 +507,7 @@ describe("GroupEditor (pool)", () => {
 // shared SegmentedControl, and re-skins the commit button — none of that may
 // change these three accessible names, since e2e/create-pack.spec.ts resolves
 // controls by them (the remove-pool aria-label via `create.removeGroup`, the
-// commit button via exact name "Add", and "+ Add pool" — the latter rendered
+// commit button via exact name "Add", and "New pool" — the latter rendered
 // by PoolsSection, covered instead by CreatePackForm.test.tsx).
 describe("GroupEditor restyle — accessible names stay stable", () => {
   it("keeps the remove-pool aria-label exactly as create.removeGroup renders it", () => {

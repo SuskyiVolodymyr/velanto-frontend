@@ -146,7 +146,7 @@ describe("VersusEditor", () => {
     const user = userEvent.setup();
     render(<Harness format="nxn" perSide={1} />);
 
-    await user.click(screen.getByRole("button", { name: "+ Add round" }));
+    await user.click(screen.getByRole("button", { name: "New round" }));
 
     expect(readRounds()).toHaveLength(3);
   });
@@ -301,7 +301,7 @@ describe("VersusEditor progressive disclosure (T6)", () => {
     const user = userEvent.setup();
     render(<Harness format="nxn" perSide={1} rounds={2} />);
 
-    await user.click(screen.getByRole("button", { name: "+ Add round" }));
+    await user.click(screen.getByRole("button", { name: "New round" }));
 
     expect(screen.getByLabelText("Side A for round 3")).toBeInTheDocument();
     expect(

@@ -109,7 +109,13 @@ export function GroupEditor({
         <input
           value={group.name}
           onChange={(e) => onChange({ ...group, name: e.target.value })}
-          placeholder={t("groupName", { index: index + 1 })}
+          // Placeholder is plain "Pool name" (T7) — a transient hint that
+          // disappears the moment the author types, so the mock drops the
+          // index from it. The accessible name keeps the index: it's what
+          // distinguishes several still-unnamed pools from each other, for
+          // both screen readers and the many e2e/vitest selectors keyed on
+          // "Pool 1 name" / "Pool 2 name".
+          placeholder={t("groupNamePlaceholder")}
           aria-label={t("groupName", { index: index + 1 })}
           className="h-[46px] min-w-[140px] flex-1 rounded-control border border-white/10 bg-background px-4 text-[15px] font-semibold text-foreground placeholder:text-foreground-tertiary transition-colors duration-150 focus:outline-none focus:border-acc focus-visible:ring-2 focus-visible:ring-acc/40"
         />

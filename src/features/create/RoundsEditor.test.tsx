@@ -150,7 +150,7 @@ describe("RoundsEditor", () => {
     const user = userEvent.setup();
     render(<Harness />);
 
-    await user.click(screen.getByRole("button", { name: "+ Add round" }));
+    await user.click(screen.getByRole("button", { name: "New round" }));
 
     expect(screen.getByLabelText("Round 2 name")).toBeInTheDocument();
     const rounds = readRounds();
@@ -161,7 +161,7 @@ describe("RoundsEditor", () => {
   it("removes a round", async () => {
     const user = userEvent.setup();
     render(<Harness />);
-    await user.click(screen.getByRole("button", { name: "+ Add round" }));
+    await user.click(screen.getByRole("button", { name: "New round" }));
 
     await user.click(screen.getByRole("button", { name: "Remove round 2" }));
 
@@ -172,7 +172,7 @@ describe("RoundsEditor", () => {
   it("sets the count for every random round at once", async () => {
     const user = userEvent.setup();
     render(<Harness />);
-    await user.click(screen.getByRole("button", { name: "+ Add round" }));
+    await user.click(screen.getByRole("button", { name: "New round" }));
 
     // The field is named by the text beside it, not by the apply button — the
     // two used to share one accessible name (#359).
@@ -239,7 +239,7 @@ describe("RoundsEditor progressive disclosure (T6)", () => {
     const user = userEvent.setup();
     render(<Harness initial={twoRoundValues()} />);
 
-    await user.click(screen.getByRole("button", { name: "+ Add round" }));
+    await user.click(screen.getByRole("button", { name: "New round" }));
 
     expect(screen.getByLabelText("Round 3 pool")).toBeInTheDocument();
     expect(screen.queryByLabelText("Round 1 pool")).not.toBeInTheDocument();

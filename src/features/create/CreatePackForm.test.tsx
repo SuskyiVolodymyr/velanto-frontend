@@ -141,8 +141,8 @@ function renderEditForm() {
 // suite's runtime. The default pack has one pool + one elimination round
 // (drawing 2); a single-item pool still passes (under-fill is only a soft hint).
 async function fillMinimalValidPack(user: ReturnType<typeof userEvent.setup>) {
-  await user.type(await screen.findByLabelText("Pack title"), "Best");
-  await user.type(screen.getByLabelText("Pack description"), "Desc");
+  await user.type(await screen.findByLabelText("Title"), "Best");
+  await user.type(screen.getByLabelText("Description"), "Desc");
   await user.type(screen.getByLabelText("Pool 1 name"), "2016");
   // T5: items are read-only chips by default — expand the add panel first.
   await user.click(screen.getByRole("button", { name: "+ Add item" }));
@@ -169,7 +169,7 @@ describe("CreatePackForm", () => {
     expect(
       await screen.findByText("You need to be logged in to create a pack."),
     ).toBeInTheDocument();
-    expect(screen.queryByLabelText("Pack title")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Title")).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Log in" }));
     expect(push).toHaveBeenCalledWith("/auth?next=%2Fcreate");
@@ -178,7 +178,7 @@ describe("CreatePackForm", () => {
   it("rejects an empty submission without calling the API", async () => {
     const user = userEvent.setup();
     renderForm();
-    await screen.findByLabelText("Pack title");
+    await screen.findByLabelText("Title");
 
     await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
@@ -191,8 +191,8 @@ describe("CreatePackForm", () => {
   it("rejects a pool with no items", async () => {
     const user = userEvent.setup();
     renderForm();
-    await user.type(await screen.findByLabelText("Pack title"), "Title");
-    await user.type(screen.getByLabelText("Pack description"), "Desc");
+    await user.type(await screen.findByLabelText("Title"), "Title");
+    await user.type(screen.getByLabelText("Description"), "Desc");
     await user.type(screen.getByLabelText("Pool 1 name"), "Round 1");
 
     await user.click(screen.getByRole("button", { name: "Submit for review" }));
@@ -205,10 +205,10 @@ describe("CreatePackForm", () => {
 
   it("defaults to the Rounds editor (not Versus) for save_one", async () => {
     renderForm();
-    await screen.findByLabelText("Pack title");
+    await screen.findByLabelText("Title");
 
     expect(
-      screen.getByRole("button", { name: "+ Add round" }),
+      screen.getByRole("button", { name: "New round" }),
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Round 1 pool")).toBeInTheDocument();
     expect(screen.queryByLabelText("Side A")).not.toBeInTheDocument();
@@ -217,7 +217,7 @@ describe("CreatePackForm", () => {
   it("adds and removes pools, keeping each editor's live value", async () => {
     const user = userEvent.setup();
     renderForm();
-    await screen.findByLabelText("Pack title");
+    await screen.findByLabelText("Title");
 
     // Default: one pool, not removable.
     expect(screen.getByLabelText("Pool 1 name")).toBeInTheDocument();
@@ -226,7 +226,7 @@ describe("CreatePackForm", () => {
     ).not.toBeInTheDocument();
 
     await user.type(screen.getByLabelText("Pool 1 name"), "Boys");
-    await user.click(screen.getByRole("button", { name: "+ Add pool" }));
+    await user.click(screen.getByRole("button", { name: "New pool" }));
 
     await user.type(screen.getByLabelText("Pool 2 name"), "Girls");
     expect(screen.getByLabelText("Pool 1 name")).toHaveValue("Boys");
@@ -241,12 +241,12 @@ describe("CreatePackForm", () => {
   it("opens the tag picker modal and reflects the selected count next to the label", async () => {
     const user = userEvent.setup();
     renderForm();
-    await screen.findByLabelText("Pack title");
+    await screen.findByLabelText("Title");
 
     await user.click(screen.getByRole("button", { name: "+ Add tags" }));
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
     await user.click(screen.getByRole("checkbox", { name: "Music" }));
-    await user.click(screen.getByRole("button", { name: "Apply" }));
+    await user.click(screen.getByRole("button", { name: "Done" }));
 
     expect(screen.getByText("2/10 selected")).toBeInTheDocument();
   });
@@ -355,7 +355,7 @@ describe("CreatePackForm", () => {
     const user = userEvent.setup();
     vi.mocked(packsClient.create).mockResolvedValue(makePack({ id: "pack-1" }));
     renderForm();
-    await screen.findByLabelText("Pack title");
+    await screen.findByLabelText("Title");
 
     const tone = screen.getByRole("button", { name: "Cover tone #20303a" });
     await user.click(tone);
@@ -364,7 +364,7 @@ describe("CreatePackForm", () => {
     await user.click(screen.getByRole("button", { name: "+ Add tags" }));
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
     await user.click(screen.getByRole("checkbox", { name: "Music" }));
-    await user.click(screen.getByRole("button", { name: "Apply" }));
+    await user.click(screen.getByRole("button", { name: "Done" }));
 
     await fillMinimalValidPack(user);
     await user.click(screen.getByRole("button", { name: "Submit for review" }));
@@ -425,10 +425,10 @@ describe("CreatePackForm", () => {
     it("seeds the form from the pack and labels the submit button 'Save changes'", async () => {
       renderEditForm();
 
-      expect(await screen.findByLabelText("Pack title")).toHaveValue(
+      expect(await screen.findByLabelText("Title")).toHaveValue(
         "Original Title",
       );
-      expect(screen.getByLabelText("Pack description")).toHaveValue(
+      expect(screen.getByLabelText("Description")).toHaveValue(
         "Original description",
       );
       expect(screen.getByLabelText("Pool 1 name")).toHaveValue("2016");
@@ -446,7 +446,7 @@ describe("CreatePackForm", () => {
         makePack({ id: "pack-1" }),
       );
       renderEditForm();
-      const title = await screen.findByLabelText("Pack title");
+      const title = await screen.findByLabelText("Title");
       await user.clear(title);
       await user.type(title, "New Title");
 
@@ -466,7 +466,7 @@ describe("CreatePackForm", () => {
         new ApiError(403, "Forbidden", { message: "Not allowed" }),
       );
       renderEditForm();
-      await screen.findByLabelText("Pack title");
+      await screen.findByLabelText("Title");
 
       await user.click(screen.getByRole("button", { name: "Save changes" }));
 
@@ -491,7 +491,7 @@ describe("CreatePackForm", () => {
         );
 
         expect(
-          screen.getByRole("button", { name: "+ Add round" }),
+          screen.getByRole("button", { name: "New round" }),
         ).toBeInTheDocument();
         expect(screen.queryByLabelText("Side A")).not.toBeInTheDocument();
 
@@ -521,7 +521,7 @@ describe("CreatePackForm", () => {
       ).toBeInTheDocument();
       // The per-round editor has its own add-round control.
       expect(
-        screen.getByRole("button", { name: "+ Add round" }),
+        screen.getByRole("button", { name: "New round" }),
       ).toBeInTheDocument();
     });
 
@@ -543,8 +543,8 @@ describe("CreatePackForm", () => {
         makePack({ id: "pack-nxn", format: "nxn" }),
       );
       renderForm();
-      await user.type(await screen.findByLabelText("Pack title"), "T");
-      await user.type(screen.getByLabelText("Pack description"), "D");
+      await user.type(await screen.findByLabelText("Title"), "T");
+      await user.type(screen.getByLabelText("Description"), "D");
 
       // Two distinct pools, each with one item, built before switching so the
       // format switch generates rounds over both. T5: each pool's items are
@@ -553,7 +553,7 @@ describe("CreatePackForm", () => {
       await user.click(screen.getAllByRole("button", { name: "+ Add item" })[0]);
       await user.type(screen.getByLabelText("Pool 1 new item"), "Naruto");
       await user.click(screen.getAllByRole("button", { name: "Add" })[0]);
-      await user.click(screen.getByRole("button", { name: "+ Add pool" }));
+      await user.click(screen.getByRole("button", { name: "New pool" }));
       await user.type(screen.getByLabelText("Pool 2 name"), "Girls");
       await user.click(screen.getAllByRole("button", { name: "+ Add item" })[1]);
       await user.type(screen.getByLabelText("Pool 2 new item"), "Sakura");
@@ -580,14 +580,14 @@ describe("CreatePackForm", () => {
         makePack({ id: "pack-1v1", format: "1v1" }),
       );
       renderForm();
-      await user.type(await screen.findByLabelText("Pack title"), "T");
-      await user.type(screen.getByLabelText("Pack description"), "D");
+      await user.type(await screen.findByLabelText("Title"), "T");
+      await user.type(screen.getByLabelText("Description"), "D");
 
       await user.type(screen.getByLabelText("Pool 1 name"), "Left");
       await user.click(screen.getAllByRole("button", { name: "+ Add item" })[0]);
       await user.type(screen.getByLabelText("Pool 1 new item"), "A");
       await user.click(screen.getAllByRole("button", { name: "Add" })[0]);
-      await user.click(screen.getByRole("button", { name: "+ Add pool" }));
+      await user.click(screen.getByRole("button", { name: "New pool" }));
       await user.type(screen.getByLabelText("Pool 2 name"), "Right");
       await user.click(screen.getAllByRole("button", { name: "+ Add item" })[1]);
       await user.type(screen.getByLabelText("Pool 2 new item"), "B");
@@ -617,7 +617,7 @@ describe("CreatePackForm", () => {
   // submitting. The real end-to-end behaviour is covered in e2e/create-pack.
   it("cancels Enter in a text field, so a browser cannot implicitly submit", async () => {
     renderForm();
-    const title = await screen.findByLabelText("Pack title");
+    const title = await screen.findByLabelText("Title");
 
     const event = createEvent.keyDown(title, { key: "Enter" });
     fireEvent(title, event);
@@ -628,8 +628,8 @@ describe("CreatePackForm", () => {
   // A textarea's Enter is a newline, not a submit — leave it alone.
   it("leaves Enter alone in a textarea", async () => {
     renderForm();
-    await screen.findByLabelText("Pack title");
-    const description = screen.getByLabelText("Pack description");
+    await screen.findByLabelText("Title");
+    const description = screen.getByLabelText("Description");
 
     const event = createEvent.keyDown(description, { key: "Enter" });
     fireEvent(description, event);
@@ -641,7 +641,7 @@ describe("CreatePackForm", () => {
   it("still adds a pool item on Enter", async () => {
     const user = userEvent.setup();
     renderForm();
-    await screen.findByLabelText("Pack title");
+    await screen.findByLabelText("Title");
 
     await user.click(screen.getByRole("button", { name: "+ Add item" }));
     await user.type(screen.getByLabelText("Pool 1 new item"), "Naruto{Enter}");
@@ -654,7 +654,7 @@ describe("CreatePackForm", () => {
   it("still submits from the submit button", async () => {
     const user = userEvent.setup();
     renderForm();
-    await screen.findByLabelText("Pack title");
+    await screen.findByLabelText("Title");
 
     await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
