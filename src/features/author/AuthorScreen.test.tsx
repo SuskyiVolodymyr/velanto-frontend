@@ -124,9 +124,10 @@ describe("AuthorScreen", () => {
       expect(screen.getByText("quizmaster")).toBeInTheDocument(),
     );
     expect(screen.getByText("I make packs")).toBeInTheDocument();
-    // The follower count and pack count render as one combined stat line
-    // ("3 followers · 0 packs"), so match the substring, not the whole node.
-    expect(screen.getByText(/3 followers/)).toBeInTheDocument();
+    // The stats row (T1) splits each stat into a value/label pair across two
+    // elements, so match them separately rather than one combined node.
+    expect(screen.getByText("3")).toBeInTheDocument();
+    expect(screen.getByText("Followers")).toBeInTheDocument();
   });
 
   it("shows a not-found message when the profile 404s", async () => {
@@ -159,9 +160,13 @@ describe("AuthorScreen", () => {
       // count button, which is always present and opens the followers list.
       screen.queryByRole("button", { name: /^follow(ing)?$/i }),
     ).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /edit profile/i })).toHaveAttribute(
-      "href",
-      "/profile/edit",
+    // T1 adds a second "Edit profile" link (the pencil badge over the avatar)
+    // sharing the same accessible name as the button-styled one — both must
+    // point at the real edit route.
+    const editLinks = screen.getAllByRole("link", { name: /edit profile/i });
+    expect(editLinks.length).toBeGreaterThan(0);
+    editLinks.forEach((link) =>
+      expect(link).toHaveAttribute("href", "/profile/edit"),
     );
   });
 
@@ -179,7 +184,7 @@ describe("AuthorScreen", () => {
         screen.getByRole("button", { name: "Following" }),
       ).toBeInTheDocument(),
     );
-    expect(screen.getByText(/4 followers/)).toBeInTheDocument();
+    expect(screen.getByText("4")).toBeInTheDocument();
   });
 
   it("does not flip the button state when the follow request fails", async () => {
@@ -296,9 +301,9 @@ describe("AuthorScreen", () => {
       limit: 50,
     });
     renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() =>
-      expect(screen.getByText(/60 packs/)).toBeInTheDocument(),
-    );
+    // "Packs" alone is ambiguous — AuthorPackList's own section heading reads
+    // the same text — so anchor on the stat value, which is unique on screen.
+    await waitFor(() => expect(screen.getByText("60")).toBeInTheDocument());
   });
 
   it("does not show ban history or a ban button to a plain-user viewer", async () => {
@@ -546,7 +551,12 @@ describe("AuthorScreen", () => {
     );
     expect(mockedUsersClient.unfollow).toHaveBeenCalledWith("author-1");
     expect(mockedUsersClient.follow).not.toHaveBeenCalled();
-    expect(screen.getByText(/2 followers/)).toBeInTheDocument();
+    // Followers and Following both happen to read "2" here (fixture's
+    // followingCount is also 2) — anchor on the Followers stat button's
+    // accessible name so this doesn't collide with the Following stat.
+    expect(
+      screen.getByRole("button", { name: /2\s*followers/i }),
+    ).toBeInTheDocument();
   });
 
   it("redacts the author name behind a Reveal control when streamer mode is on", async () => {
@@ -564,8 +574,9 @@ describe("AuthorScreen", () => {
     );
     // The non-identity stat line still renders, so the screen has loaded…
     await waitFor(() =>
-      expect(screen.getByText(/3 followers/)).toBeInTheDocument(),
+      expect(screen.getByText("Followers")).toBeInTheDocument(),
     );
+    expect(screen.getByText("3")).toBeInTheDocument();
     // …but the username is redacted (never painted as plain text) and a Reveal
     // control stands in for it.
     expect(screen.queryByText("quizmaster")).not.toBeInTheDocument();
