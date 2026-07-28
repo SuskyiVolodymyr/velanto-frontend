@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { render, screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { RulesScreen } from "./RulesScreen";
@@ -145,5 +146,91 @@ describe("RulesScreen", () => {
       /couldn't load the rules/i,
     );
     expect(screen.queryByRole("list")).not.toBeInTheDocument();
+  });
+
+  it("renders a sticky category TOC with jump-links to each category heading", () => {
+    renderScreen(doc);
+    const nav = screen.getByRole("navigation", { name: /categories/i });
+    const conductLink = within(nav).getByRole("link", { name: /Conduct/ });
+    const contentLink = within(nav).getByRole("link", { name: /Content/ });
+    expect(conductLink).toHaveAttribute(
+      "href",
+      `#${screen.getByRole("heading", { level: 2, name: "Conduct" }).id}`,
+    );
+    expect(contentLink).toHaveAttribute(
+      "href",
+      `#${screen.getByRole("heading", { level: 2, name: "Content" }).id}`,
+    );
+  });
+
+  it("renders the report-a-rule-break callout in the TOC sidebar", () => {
+    renderScreen(doc);
+    expect(
+      screen.getByRole("heading", { name: /something break a rule/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("renders the closing 'think a rule is wrong' callout linking to Suggestions", () => {
+    renderScreen(doc);
+    const link = screen.getByRole("link", { name: /open suggestions/i });
+    expect(link).toHaveAttribute("href", "/feedback");
+  });
+
+  it("filters rules by search query, hiding categories with zero matches", async () => {
+    const user = userEvent.setup();
+    renderScreen(doc);
+
+    const search = screen.getByRole("searchbox", { name: /search the rules/i });
+    await user.type(search, "harassment");
+
+    expect(screen.getByText("No harassment.")).toBeInTheDocument();
+    expect(
+      screen.queryByText("Be respectful to other players."),
+    ).not.toBeInTheDocument();
+    // "Content" category has no rule containing "harassment" — hidden entirely.
+    expect(
+      screen.queryByRole("heading", { level: 2, name: "Content" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("drops a category's TOC jump-link once the active search hides it, instead of leaving a dead link", async () => {
+    const user = userEvent.setup();
+    renderScreen(doc);
+
+    const nav = screen.getByRole("navigation", { name: /categories/i });
+    expect(within(nav).getByRole("link", { name: /Content/ })).toBeInTheDocument();
+
+    const search = screen.getByRole("searchbox", { name: /search the rules/i });
+    await user.type(search, "harassment");
+
+    // "Content" has no rule matching "harassment", so its section is gone —
+    // the TOC must not still advertise a jump-link to it.
+    expect(
+      within(nav).queryByRole("link", { name: /Content/ }),
+    ).not.toBeInTheDocument();
+    expect(within(nav).getByRole("link", { name: /Conduct/ })).toBeInTheDocument();
+  });
+
+  it("shows the empty-search-result state when nothing matches, and Clear search resets it", async () => {
+    const user = userEvent.setup();
+    renderScreen(doc);
+
+    const search = screen.getByRole("searchbox", { name: /search the rules/i });
+    await user.type(search, "zzzzznomatch");
+
+    expect(screen.getByText(/no rule matches/i)).toBeInTheDocument();
+    expect(screen.queryByRole("list")).not.toBeInTheDocument();
+
+    // Two "Clear search" controls exist while there's a no-match query: the
+    // inline ×  inside the search field, and the empty state's CTA button.
+    // Either resets the query — exercise the empty state's dedicated button.
+    const clearButtons = screen.getAllByRole("button", {
+      name: /clear search/i,
+    });
+    await user.click(clearButtons[clearButtons.length - 1]);
+    expect(search).toHaveValue("");
+    expect(
+      screen.getByRole("heading", { level: 2, name: "Conduct" }),
+    ).toBeInTheDocument();
   });
 });

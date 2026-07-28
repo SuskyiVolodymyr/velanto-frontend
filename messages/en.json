@@ -529,6 +529,16 @@
     "heading": "Community Rules",
     "intro": "These rules keep Velanto safe and fair for everyone. By creating an account you agree to follow them.",
     "loadError": "We couldn't load the rules right now. Please try again in a moment.",
+    "searchPlaceholder": "Search the rules…",
+    "clearSearch": "Clear search",
+    "noMatch": "No rule matches \"{query}\"",
+    "tryPlainer": "Try a plainer word — \"spam\", \"copy\", \"ban\".",
+    "categoriesHeading": "Categories",
+    "reportTitle": "Something break a rule?",
+    "reportNote": "Report on a pack, comment, or profile — pick the rule it breaks and it goes straight to a moderator.",
+    "wrongRuleTitle": "Think a rule is wrong?",
+    "wrongRuleNote": "Rules change when enough people argue well. Post it as a suggestion.",
+    "openSuggestions": "Open Suggestions",
     "content": {
       "hate_discrimination": {
         "title": "Hate & Discrimination",
@@ -639,6 +649,13 @@
         }
       }
     }
+  },
+  "legal": {
+    "termsTab": "Terms",
+    "privacyTab": "Privacy",
+    "onThisPage": "On this page",
+    "questionsTitle": "Questions about this document?",
+    "questionsNote": "One person reads that inbox, and answers within 30 days."
   },
   "terms": {
     "metaTitle": "Terms of Service — Velanto",
@@ -1564,7 +1581,15 @@
     "metaDescription": "New features, fixes, and improvements on Velanto.",
     "heading": "What's new",
     "intro": "The latest features, fixes, and improvements — newest first.",
-    "empty": "No updates yet — check back soon."
+    "empty": "No updates yet — check back soon.",
+    "releasesHeading": "Releases",
+    "latest": "Latest",
+    "changesCount": "{count, plural, one {# change} other {# changes}}",
+    "showMore": "Show {count} more",
+    "showLess": "Show less",
+    "missingTitle": "Missing something you want?",
+    "missingNote": "Suggestions get read and voted on — a lot of the list above started there.",
+    "openSuggestions": "Open suggestions"
   },
   "myPacks": {
     "title": "My packs",

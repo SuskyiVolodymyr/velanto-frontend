@@ -26,6 +26,14 @@ export default async function UpdatesPage() {
       intro={t("intro")}
       emptyLabel={t("empty")}
       entries={UPDATES}
+      releasesHeading={t("releasesHeading")}
+      latestLabel={t("latest")}
+      showLessLabel={t("showLess")}
+      missingTitle={t("missingTitle")}
+      missingNote={t("missingNote")}
+      openSuggestionsLabel={t("openSuggestions")}
+      formatChangesCount={(count) => t("changesCount", { count })}
+      formatShowMore={(count) => t("showMore", { count })}
     />
   );
 }

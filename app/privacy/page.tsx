@@ -23,13 +23,20 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function PrivacyPage() {
   const t = await getTranslations("privacy");
+  const tl = await getTranslations("legal");
   return (
     <LegalScreen
+      activeDoc="privacy"
       heading={t("heading")}
       intro={t("intro")}
       lastUpdatedLabel={t("lastUpdatedLabel")}
       lastUpdated={LEGAL_LAST_UPDATED}
       sections={t.raw("sections") as LegalSection[]}
+      termsTabLabel={tl("termsTab")}
+      privacyTabLabel={tl("privacyTab")}
+      onThisPageLabel={tl("onThisPage")}
+      questionsTitle={tl("questionsTitle")}
+      questionsNote={tl("questionsNote")}
     />
   );
 }
