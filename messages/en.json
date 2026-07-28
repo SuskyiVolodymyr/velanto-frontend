@@ -650,6 +650,13 @@
       }
     }
   },
+  "legal": {
+    "termsTab": "Terms",
+    "privacyTab": "Privacy",
+    "onThisPage": "On this page",
+    "questionsTitle": "Questions about this document?",
+    "questionsNote": "One person reads that inbox, and answers within 30 days."
+  },
   "terms": {
     "metaTitle": "Terms of Service — Velanto",
     "metaDescription": "The terms that govern your use of Velanto.",
