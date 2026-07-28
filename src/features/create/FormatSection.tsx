@@ -5,17 +5,21 @@ import { useTranslations } from "next-intl";
 import type { PackFormat } from "@/src/shared/types/pack";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
+import { StepHeader } from "@/src/features/create/StepHeader";
+import { FormatGlyph } from "@/src/features/create/FormatGlyph";
 import { type CreatePackValues } from "@/src/features/create/create-pack.schema";
 
 // Each option's display name comes from the shared `formats` namespace (keyed by
 // the format value); the blurb is a create-form-only key. Every one of the five
 // formats is creatable, each with its own editor body (RoundsEditor /
-// VersusEditor) selected by the parent form.
+// VersusEditor) selected by the parent form. Order matches the mock
+// (save_one, sacrifice_one, rank_blind, nxn, 1v1) — nxn and rank_blind were
+// previously swapped from this.
 const FORMAT_OPTIONS: { value: PackFormat; blurbKey: string }[] = [
   { value: "save_one", blurbKey: "blurbSaveOne" },
   { value: "sacrifice_one", blurbKey: "blurbSacrificeOne" },
-  { value: "nxn", blurbKey: "blurbNxn" },
   { value: "rank_blind", blurbKey: "blurbRankBlind" },
+  { value: "nxn", blurbKey: "blurbNxn" },
   { value: "1v1", blurbKey: "blurb1v1" },
 ];
 
@@ -32,31 +36,41 @@ export function FormatSection() {
 
   return (
     <section className="flex flex-col gap-3">
-      <Text as="h2" variant="title" className="text-lg">
-        {t("formatHeading")}
-      </Text>
-      {/* 3-across on desktop (five formats ⇒ two tidy rows); wraps to 2 columns
-          on a phone so the cards never overflow the viewport. */}
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-        {FORMAT_OPTIONS.map((option) => (
-          <button
-            key={option.value}
-            type="button"
-            onClick={() => setValue("format", option.value)}
-            aria-pressed={format === option.value}
-            className={cn(
-              "cursor-pointer rounded-[12px] border px-4 py-3 text-start transition-colors",
-              format === option.value
-                ? "border-acc/40 bg-acc/5"
-                : "border-border bg-white/[0.02]",
-            )}
-          >
-            <Text className="font-semibold">{tFormat(option.value)}</Text>
-            <Text variant="secondary" className="mt-1 text-xs">
-              {t(option.blurbKey)}
-            </Text>
-          </button>
-        ))}
+      <StepHeader step={2} title={t("formatHeading")} hint={t("formatHint")} />
+      <div
+        className="grid gap-3"
+        style={{ gridTemplateColumns: "repeat(auto-fill, minmax(215px, 1fr))" }}
+      >
+        {FORMAT_OPTIONS.map((option) => {
+          const selected = format === option.value;
+          return (
+            <button
+              key={option.value}
+              type="button"
+              onClick={() => setValue("format", option.value)}
+              aria-pressed={selected}
+              className={cn(
+                "flex cursor-pointer flex-col gap-3 rounded-tile border p-4 text-start transition-colors",
+                selected
+                  ? "border-acc bg-white/[0.055]"
+                  : "border-border bg-surface-card",
+              )}
+            >
+              <FormatGlyph format={option.value} selected={selected} />
+              <div>
+                <Text className="text-[15px] font-semibold">
+                  {tFormat(option.value)}
+                </Text>
+                <Text
+                  variant="secondary"
+                  className="mt-[3px] text-[12.5px] leading-[1.45]"
+                >
+                  {t(option.blurbKey)}
+                </Text>
+              </div>
+            </button>
+          );
+        })}
       </div>
     </section>
   );

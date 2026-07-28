@@ -53,15 +53,14 @@ export function RoundsToolbar({
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-3">
-      <Button
+    <div className="flex flex-col gap-3">
+      <button
         type="button"
-        variant="secondary"
         onClick={onAddRound}
-        className="whitespace-nowrap"
+        className="flex h-[46px] w-full items-center justify-center rounded-control border border-dashed border-white/[0.14] text-sm font-semibold text-foreground-secondary transition-colors hover:border-acc hover:text-foreground"
       >
         {addLabel}
-      </Button>
+      </button>
       {bulk ? (
         // shrink-0 with nowrap children: as a single flex item this group's
         // min-content width is tiny, because its own label and button would
@@ -69,34 +68,36 @@ export function RoundsToolbar({
         // space is left instead of the parent's flex-wrap moving it to its own
         // line — and since Button is fixed height, the extra lines spill out of
         // the button's box rather than growing it.
-        <div className="flex shrink-0 items-center gap-2">
-          <Text variant="secondary" className="whitespace-nowrap text-sm">
-            {bulk.label}
-          </Text>
-          <Input
-            type="number"
-            min={bulk.min}
-            max={bulk.max}
-            value={draft}
-            onChange={(event) => setDraft(event.target.value)}
-            // Named by the text beside it, which says what the number means
-            // ("Items per side, all rounds"), not by the button's "Set for all".
-            aria-label={bulk.label}
-            placeholder={bulk.placeholder}
-            className="w-16 text-center"
-          />
-          <Button
-            type="button"
-            variant="secondary"
-            onClick={apply}
-            className="whitespace-nowrap"
-          >
-            {bulk.applyLabel}
-          </Button>
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="flex shrink-0 items-center gap-2">
+            <Text variant="tertiary" className="whitespace-nowrap text-[13px]">
+              {bulk.label}
+            </Text>
+            <Input
+              type="number"
+              min={bulk.min}
+              max={bulk.max}
+              value={draft}
+              onChange={(event) => setDraft(event.target.value)}
+              // Named by the text beside it, which says what the number means
+              // ("Items per side, all rounds"), not by the button's "Set for all".
+              aria-label={bulk.label}
+              placeholder={bulk.placeholder}
+              className="w-16 text-center"
+            />
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={apply}
+              className="whitespace-nowrap"
+            >
+              {bulk.applyLabel}
+            </Button>
+          </div>
         </div>
       ) : (
         note && (
-          <Text variant="secondary" className="text-sm">
+          <Text variant="tertiary" className="text-[13px]">
             {note}
           </Text>
         )

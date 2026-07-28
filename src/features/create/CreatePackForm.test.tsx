@@ -236,19 +236,17 @@ describe("CreatePackForm", () => {
     expect(screen.getByLabelText("Pool 1 name")).toHaveValue("Boys");
   });
 
-  it("opens the tag picker modal and reflects the selected count on the button", async () => {
+  it("opens the tag picker modal and reflects the selected count next to the label", async () => {
     const user = userEvent.setup();
     renderForm();
     await screen.findByLabelText("Pack title");
 
-    await user.click(screen.getByRole("button", { name: "Select tags" }));
+    await user.click(screen.getByRole("button", { name: "+ Add tags" }));
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
     await user.click(screen.getByRole("checkbox", { name: "Music" }));
     await user.click(screen.getByRole("button", { name: "Apply" }));
 
-    expect(
-      screen.getByRole("button", { name: "2 tags selected" }),
-    ).toBeInTheDocument();
+    expect(screen.getByText("2/10 selected")).toBeInTheDocument();
   });
 
   // #239: nothing could set Pack.language, so every pack was 'en' regardless of
@@ -361,7 +359,7 @@ describe("CreatePackForm", () => {
     await user.click(tone);
     expect(tone).toHaveAttribute("aria-pressed", "true");
 
-    await user.click(screen.getByRole("button", { name: "Select tags" }));
+    await user.click(screen.getByRole("button", { name: "+ Add tags" }));
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
     await user.click(screen.getByRole("checkbox", { name: "Music" }));
     await user.click(screen.getByRole("button", { name: "Apply" }));

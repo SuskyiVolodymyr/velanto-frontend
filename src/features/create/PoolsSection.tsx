@@ -7,9 +7,9 @@ import {
   type FieldErrors,
 } from "react-hook-form";
 import { useTranslations } from "next-intl";
-import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { getFieldError } from "@/src/shared/components/form/getFieldError";
+import { StepHeader } from "@/src/features/create/StepHeader";
 import { GroupEditor } from "@/src/features/create/GroupEditor";
 import { newGroup } from "@/src/features/create/create-pack.defaults";
 import { type CreatePackValues } from "@/src/features/create/create-pack.schema";
@@ -50,12 +50,19 @@ export function PoolsSection() {
   });
   const groups = useWatch({ control, name: "groups" });
   const groupsError = getFieldError(errors, "groups");
+  const totalItemCount = groups.reduce(
+    (sum, group) => sum + group.items.length,
+    0,
+  );
 
   return (
     <section className="flex flex-col gap-3">
-      <Text as="h2" variant="title" className="text-lg">
-        {t("poolsHeading")}
-      </Text>
+      <StepHeader
+        step={3}
+        title={t("poolsHeading")}
+        aside={t("itemCount", { count: totalItemCount })}
+        hint={t("poolsHint")}
+      />
       {groups.map((group, index) => (
         <GroupEditor
           key={group.id}
@@ -77,13 +84,13 @@ export function PoolsSection() {
           {groupsError}
         </Text>
       )}
-      <Button
+      <button
         type="button"
-        variant="secondary"
         onClick={() => groupsArray.append(newGroup())}
+        className="flex h-[46px] w-full items-center justify-center rounded-control border border-dashed border-white/[0.14] text-sm font-semibold text-foreground-secondary transition-colors hover:border-acc hover:text-foreground"
       >
         {t("addPool")}
-      </Button>
+      </button>
     </section>
   );
 }

@@ -3,6 +3,12 @@
 import { useTranslations } from "next-intl";
 import type { Item } from "@/src/shared/types/pack";
 import { cn } from "@/src/shared/lib/cn";
+import { mediaUrl } from "@/src/shared/lib/media-url";
+import {
+  extractYouTubeId,
+  youtubeThumbnailUrl,
+} from "@/src/shared/lib/youtube";
+import { EmptyState } from "@/src/shared/components/EmptyState";
 
 interface GroupItemListProps {
   items: Item[];
@@ -10,6 +16,54 @@ interface GroupItemListProps {
   editingItemId?: string | null;
   onEdit: (item: Item) => void;
   onRemove: (itemId: string) => void;
+}
+
+/**
+ * Decorative 30×22 preview shown before a youtube/image item's label — the
+ * uploaded image itself (via the shared media-key → URL resolver), or a
+ * play-triangle overlay on the video's YouTube-hosted thumbnail. Purely
+ * cosmetic (aria-hidden throughout); the click-to-edit button around it
+ * carries the real accessible name.
+ */
+function ItemThumbnail({ item }: { item: Item }) {
+  if (item.type === "image") {
+    const src = mediaUrl(item.value);
+    return (
+      <span className="relative h-[22px] w-[30px] shrink-0 overflow-hidden rounded-[5px] bg-black/30">
+        {src && (
+          // eslint-disable-next-line @next/next/no-img-element -- CDN-resolved chip preview; Next <Image> adds no value at this size
+          <img
+            src={src}
+            alt=""
+            aria-hidden
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        )}
+      </span>
+    );
+  }
+
+  const videoId = extractYouTubeId(item.value);
+  return (
+    <span className="relative h-[22px] w-[30px] shrink-0 overflow-hidden rounded-[5px] bg-black/30">
+      {videoId && (
+        // eslint-disable-next-line @next/next/no-img-element -- external, per-video thumbnail; not worth a remotePatterns entry for a chip-sized preview
+        <img
+          src={youtubeThumbnailUrl(videoId)}
+          alt=""
+          aria-hidden
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      )}
+      {/* Play-triangle glyph, same border-triangle technique as YouTubeCard. */}
+      <span
+        aria-hidden="true"
+        className="absolute inset-0 flex items-center justify-center"
+      >
+        <span className="ms-px h-0 w-0 border-y-[3px] border-l-[5px] border-y-transparent border-l-white" />
+      </span>
+    </span>
+  );
 }
 
 /**
@@ -27,17 +81,19 @@ export function GroupItemList({
   onRemove,
 }: GroupItemListProps) {
   const t = useTranslations("create");
-  if (items.length === 0) return null;
+  if (items.length === 0) {
+    return <EmptyState title={t("poolEmpty")} />;
+  }
 
   return (
-    <ul className="flex flex-wrap gap-1.5">
+    <ul className="flex flex-wrap gap-[7px]">
       {items.map((item) => {
         const editing = item.id === editingItemId;
         return (
           <li
             key={item.id}
             className={cn(
-              "inline-flex items-center gap-2 rounded-[8px] border px-2.5 py-1 text-sm transition-colors",
+              "inline-flex items-center gap-2 rounded-chip border px-[9px] py-[5px] text-[13px] transition-colors",
               editing
                 ? "border-acc bg-acc/10 text-foreground-tertiary"
                 : "border-border bg-white/[0.04] text-foreground",
@@ -47,15 +103,21 @@ export function GroupItemList({
               type="button"
               onClick={() => onEdit(item)}
               aria-label={t("editItemAria", { title: item.title })}
-              className="max-w-[220px] truncate text-left hover:text-acc"
+              className="flex items-center gap-2 text-start hover:text-acc"
             >
-              {item.title}
+              {(item.type === "image" || item.type === "youtube") && (
+                <ItemThumbnail item={item} />
+              )}
+              <span className="max-w-[220px] truncate">{item.title}</span>
             </button>
             <button
               type="button"
               onClick={() => onRemove(item.id)}
               aria-label={t("removeItemAria", { title: item.title })}
-              className="text-foreground-tertiary hover:text-danger"
+              // Visual glyph stays 18px to match the chip, but the tap target
+              // is widened to the 44px minimum via an invisible pseudo-element
+              // (hit-slop) rather than growing the chip itself.
+              className="relative flex h-[18px] w-[18px] shrink-0 items-center justify-center text-foreground-tertiary before:absolute before:-inset-[13px] before:content-[''] hover:text-danger"
             >
               ×
             </button>

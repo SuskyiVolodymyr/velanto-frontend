@@ -12,6 +12,13 @@ export interface SwatchPickerProps {
   /** Accessible label for a swatch (e.g. a localized "Cover tone …"). */
   getLabel: (color: string) => string;
   className?: string;
+  /**
+   * `"solid"` (default) is the UI-kit v1 flat chip with a white selection
+   * ring + check glyph — unchanged, so every existing caller/test stays
+   * byte-identical. `"gradient"` is the v2 mock's fade-to-near-black tile:
+   * no check, the border colour alone is the selection cue.
+   */
+  swatchStyle?: "solid" | "gradient";
 }
 
 /**
@@ -39,9 +46,11 @@ function checkColor(color: string): string {
 }
 
 /**
- * A single-select row of colour swatches (UI-kit v1 "AccentSwatches"): 34px
- * rounded chips, the selected one ringed in white with a check. Used by the pack
- * cover-tone picker; generic over any colour list.
+ * A single-select row of colour swatches. Default `swatchStyle="solid"` is
+ * the UI-kit v1 "AccentSwatches" chip: 34px rounded, the selected one ringed
+ * in white with a check. Opt-in `swatchStyle="gradient"` is the v2 mock's
+ * 38px fade-to-near-black tile, selection cued by an accent border instead
+ * of a check. Used by the pack cover-tone picker; generic over any colour list.
  */
 export function SwatchPicker({
   swatches,
@@ -49,7 +58,9 @@ export function SwatchPicker({
   onChange,
   getLabel,
   className,
+  swatchStyle = "solid",
 }: SwatchPickerProps) {
+  const gradient = swatchStyle === "gradient";
   return (
     <div className={cn("flex flex-wrap gap-[9px]", className)}>
       {swatches.map((color) => {
@@ -61,13 +72,26 @@ export function SwatchPicker({
             onClick={() => onChange(color)}
             aria-label={getLabel(color)}
             aria-pressed={selected}
-            style={{ background: color }}
+            style={{
+              background: gradient
+                ? `linear-gradient(150deg, ${color}, var(--background))`
+                : color,
+            }}
             className={cn(
-              "grid h-[34px] w-[34px] flex-none place-items-center rounded-[11px] border-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc/60",
-              selected ? "border-white" : "border-white/15",
+              "grid flex-none place-items-center border-2 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc/60",
+              gradient
+                ? "h-[38px] w-[38px] rounded-[10px]"
+                : "h-[34px] w-[34px] rounded-[11px]",
+              gradient
+                ? selected
+                  ? "border-acc"
+                  : "border-white/[0.12]"
+                : selected
+                  ? "border-white"
+                  : "border-white/15",
             )}
           >
-            {selected && (
+            {!gradient && selected && (
               <svg
                 width="14"
                 height="14"

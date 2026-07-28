@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useForm, useWatch, FormProvider } from "react-hook-form";
@@ -15,6 +16,8 @@ import {
   isPackLanguage,
   type PackLanguage,
 } from "@/src/shared/types/pack-language";
+import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { cn } from "@/src/shared/lib/cn";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { PackMetaFields } from "@/src/features/create/PackMetaFields";
@@ -22,6 +25,7 @@ import { FormatSection } from "@/src/features/create/FormatSection";
 import { PoolsSection } from "@/src/features/create/PoolsSection";
 import { RoundsEditor } from "@/src/features/create/RoundsEditor";
 import { VersusEditor } from "@/src/features/create/VersusEditor";
+import { CreatePreviewPanel } from "@/src/features/create/CreatePreviewPanel";
 import {
   newGroup,
   newRound,
@@ -225,6 +229,10 @@ export function CreatePackForm({
     );
   }
 
+  // Cancel always names a fixed destination (same rationale as BackButton):
+  // back to the pack being edited, or back to the feed for a fresh draft.
+  const cancelHref = isEdit && packId ? `/packs/${packId}` : "/";
+
   return (
     <FormProvider {...methods}>
       <form
@@ -246,53 +254,101 @@ export function CreatePackForm({
           event.preventDefault();
         }}
         noValidate
-        className="flex flex-col gap-8"
       >
-        <PackMetaFields onCoverUploadingChange={setCoverUploading} />
-
-        <FormatSection />
-
-        <PoolsSection />
-
-        {familyOf(format) === "versus" ? <VersusEditor /> : <RoundsEditor />}
-
-        {errors.root?.message && (
-          <Text variant="danger" role="alert" className="text-sm">
-            {errors.root.message}
-          </Text>
-        )}
-
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <Button
-            type="button"
-            variant="secondary"
-            loading={isSubmitting && submitMode === "draft"}
-            disabled={coverUploading || isSubmitting}
-            onClick={() => {
-              setSubmitMode("draft");
-              void handleSubmit((values) => onValid(values, true))();
-            }}
-            className="h-[50px] sm:flex-1"
+        {/* Sticky action bar: Cancel on the start side, Save draft always on
+            the end side, plus a Publish button that only exists below `lg` —
+            at `lg`+ the live-preview panel's own CTA is the single Publish
+            control (D2: two same-named Publish controls would break e2e
+            strict-mode `getByRole` lookups). Mirrors PackDetailScreen's
+            sticky bar (`sticky top-0 z-30 border-b border-border
+            bg-background/85 backdrop-blur-md`). Edit mode never renders this
+            button: its one action is "Save changes", already surfaced by the
+            preview panel's CTA at every breakpoint (see below). */}
+        <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
+          <div
+            className={cn(
+              PACK_CONTAINER,
+              "flex items-center gap-3 py-3 max-[720px]:px-4",
+            )}
           >
-            {isSubmitting && submitMode === "draft"
-              ? t("savingDraft")
-              : t("saveDraft")}
-          </Button>
-          <Button
-            type="submit"
-            loading={isSubmitting && submitMode === "publish"}
-            disabled={coverUploading || isSubmitting}
-            onClick={() => setSubmitMode("publish")}
-            className="h-[50px] sm:flex-[2]"
-          >
-            {isSubmitting && submitMode === "publish"
-              ? isEdit
-                ? t("saving")
-                : t("publishing")
-              : isEdit
-                ? t("saveChanges")
-                : t("publish")}
-          </Button>
+            <Link
+              href={cancelHref}
+              className="text-sm font-medium text-foreground-secondary transition-colors hover:text-foreground"
+            >
+              {t("cancel")}
+            </Link>
+            <div className="ms-auto flex items-center gap-2.5">
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                loading={isSubmitting && submitMode === "draft"}
+                disabled={coverUploading || isSubmitting}
+                onClick={() => {
+                  setSubmitMode("draft");
+                  void handleSubmit((values) => onValid(values, true))();
+                }}
+              >
+                {isSubmitting && submitMode === "draft"
+                  ? t("savingDraft")
+                  : t("saveDraft")}
+              </Button>
+              {!isEdit && (
+                <Button
+                  type="submit"
+                  size="sm"
+                  loading={isSubmitting && submitMode === "publish"}
+                  disabled={coverUploading || isSubmitting}
+                  onClick={() => setSubmitMode("publish")}
+                  className="lg:hidden"
+                >
+                  {isSubmitting && submitMode === "publish"
+                    ? t("publishing")
+                    : t("publish")}
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <div className={cn(PACK_CONTAINER, "flex-1 pb-16 pt-8")}>
+          {/* Builder column first in the DOM, live-preview aside second — the
+              opposite of PackDetailScreen's aside-first precedent. There, the
+              aside is the play panel, the primary action for a visitor. Here
+              the aside is a supplementary "here's what it'll look like"; an
+              author opening this on a phone wants the form first, so DOM
+              order already matches the desired mobile stacking order without
+              needing an `lg:order-*` override. */}
+          <div className="flex flex-wrap items-start gap-[34px]">
+            <div className="flex min-w-[300px] flex-1 basis-[540px] flex-col gap-[34px]">
+              {errors.root?.message && (
+                <Text variant="danger" role="alert" className="text-sm">
+                  {errors.root.message}
+                </Text>
+              )}
+
+              <PackMetaFields onCoverUploadingChange={setCoverUploading} />
+
+              <FormatSection />
+
+              <PoolsSection />
+
+              {familyOf(format) === "versus" ? (
+                <VersusEditor />
+              ) : (
+                <RoundsEditor />
+              )}
+            </div>
+
+            <div className="max-w-[380px] flex-1 basis-[320px]">
+              <CreatePreviewPanel
+                mode={mode}
+                coverUploading={coverUploading}
+                submitMode={submitMode}
+                onPublishClick={() => setSubmitMode("publish")}
+              />
+            </div>
+          </div>
         </div>
       </form>
     </FormProvider>

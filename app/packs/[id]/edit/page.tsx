@@ -6,7 +6,6 @@ import { getPackServer } from "@/src/shared/lib/get-pack-server";
 import { EditPackScreen } from "@/src/features/create/EditPackScreen";
 import { EditPackFallback } from "@/src/features/create/EditPackFallback";
 import { Text } from "@/src/shared/components/Text";
-import { BackButton } from "@/src/shared/components/BackButton";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("pages");
@@ -27,14 +26,26 @@ export default async function EditPackPage({
   const pack = await getPackServer(id);
 
   return (
-    <main className={cn(PACK_CONTAINER, "flex-1 py-10")}>
-      <BackButton href={`/packs/${id}`} className="mb-6" />
-      <Text as="h1" variant="title" className="mb-2 text-3xl">
-        {t("editTitle")}
-      </Text>
-      <Text variant="secondary" className="mb-8 max-w-lg">
-        {t("editSubtitle")}
-      </Text>
+    // No PACK_CONTAINER here — same reasoning as app/create/page.tsx: it
+    // would double up with the one CreatePackForm applies to its own sticky
+    // bar / body internally, since that bar needs to sit full-bleed.
+    <main className="flex-1 pt-10">
+      <div className={cn(PACK_CONTAINER)}>
+        {/* The sticky action bar's own Cancel link (inside CreatePackForm,
+            via EditPackScreen) replaces the standalone BackButton that used
+            to sit here — it points at /packs/{id}, same destination this
+            had. */}
+        <Text
+          as="h1"
+          variant="title"
+          className="mb-2 text-[clamp(30px,3.6vw,40px)] leading-tight"
+        >
+          {t("editTitle")}
+        </Text>
+        <Text variant="secondary" className="mb-8 max-w-[520px]">
+          {t("editSubtitle")}
+        </Text>
+      </div>
       {pack ? <EditPackScreen pack={pack} /> : <EditPackFallback packId={id} />}
     </main>
   );

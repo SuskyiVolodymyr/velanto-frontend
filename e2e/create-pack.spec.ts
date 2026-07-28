@@ -188,7 +188,12 @@ test.describe("Create pack", () => {
     await page.getByLabel("Pool 1 name").fill("Posters");
 
     // Switch the item adder to Image, upload a tiny PNG, name it, and add it.
-    await page.getByRole("button", { name: "Image", exact: true }).click();
+    // T7 swapped the hand-rolled Text/Link/Image toggle for the shared
+    // SegmentedControl, which uses radiogroup/radio semantics, not buttons,
+    // and each option carries a "Pool {index} item type: …" aria-label (a
+    // review fix disambiguating multiple pools) rather than the bare visible
+    // "Image" label.
+    await page.getByRole("radio", { name: "Pool 1 item type: Image" }).click();
     await page.getByLabel("Pool 1 new item title").fill("Poster One");
     await page.getByLabel("Pool 1 new image").setInputFiles({
       name: "poster.png",
@@ -292,7 +297,12 @@ test.describe("Create pack", () => {
     });
 
     await page.goto("/create");
-    await page.getByRole("button", { name: "Publish" }).click();
+    // The CTA is aria-disabled (not natively disabled) so this validation
+    // flow can still reach it — Playwright's actionability check treats
+    // aria-disabled="true" as not-enabled, so force the click.
+    await page
+      .getByRole("button", { name: "Add a title & elements" })
+      .click({ force: true });
 
     await expect(page.getByText("Give your pack a title.")).toBeVisible();
     expect(called).toBe(false);
