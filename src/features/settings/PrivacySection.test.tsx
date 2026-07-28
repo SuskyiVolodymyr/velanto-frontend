@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -83,29 +83,23 @@ describe("PrivacySection", () => {
     expect(localStorage.getItem(STORAGE_KEY)).toBe("on");
   });
 
-  it("shows the play-history control for an authed user and toggles it off", async () => {
-    const user = userEvent.setup();
+  // Full play-history behaviour (server-value load, toggling, mutation
+  // wiring, signed-out hide) is owned and covered by
+  // `PlayHistoryToggle.test.tsx` (T5) now that this section just renders
+  // that shared component — these two tests only confirm PrivacySection
+  // wires it in for the right audience, without re-testing its internals.
+  it("renders the shared play-history control for an authed user", async () => {
     renderPrivacySection();
 
     const group = await screen.findByRole("radiogroup", {
       name: "Show play history",
     });
-    // Loads reflecting the server value (public → On).
     expect(
       within(group).getByRole("radio", { name: "On", checked: true }),
     ).toBeInTheDocument();
-
-    await user.click(within(group).getByRole("radio", { name: "Off" }));
-
-    expect(mockedUsersClient.updatePreferences).toHaveBeenCalledWith(false);
-    await waitFor(() =>
-      expect(
-        within(group).getByRole("radio", { name: "Off", checked: true }),
-      ).toBeInTheDocument(),
-    );
   });
 
-  it("hides the play-history control for a signed-out visitor", () => {
+  it("does not render a play-history control for a signed-out visitor", () => {
     mockAuth("unauthenticated");
     renderPrivacySection();
     expect(
