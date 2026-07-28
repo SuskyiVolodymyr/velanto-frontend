@@ -98,6 +98,7 @@ export function PlayScreen({ pack }: { pack: Pack }) {
                       : Number(session.selectedId)
                   }
                   onSelect={(side) => session.setSelectedId(String(side))}
+                  packCoverTone={pack.coverTone}
                 />
               </div>
             ) : (
