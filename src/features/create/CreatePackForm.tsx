@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -113,14 +113,17 @@ export function CreatePackForm({
   const [submitMode, setSubmitMode] = useState<"publish" | "draft">("publish");
   // True for JUST_SAVED_MS after a successful draft save — drives the sticky
   // bar's "Draft · saved just now" subtitle (see the constant's comment for
-  // why this rarely outlives the redirect it's racing).
+  // why this rarely outlives the redirect it's racing). The auto-revert timer
+  // is a declarative effect (not a ref) on purpose: `onValid` below is reached
+  // from a `handleSubmit(...)` call made during render (the form's own
+  // onSubmit), and react-hooks/refs flags a ref read anywhere reachable from
+  // there — this way `onValid` only ever calls a state setter.
   const [justSaved, setJustSaved] = useState(false);
-  const justSavedTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
-    return () => {
-      if (justSavedTimeout.current) clearTimeout(justSavedTimeout.current);
-    };
-  }, []);
+    if (!justSaved) return;
+    const timer = setTimeout(() => setJustSaved(false), JUST_SAVED_MS);
+    return () => clearTimeout(timer);
+  }, [justSaved]);
 
   // Seed one pool plus a matching elimination round drawing from it. Computed
   // once (lazy initializer) so the round's groupId keeps pointing at the pool.
@@ -252,15 +255,9 @@ export function CreatePackForm({
       }
 
       // The "Saved" flash is only meaningful for the draft action — Publish
-      // navigates straight to the new/reviewed pack regardless.
-      if (draft) {
-        setJustSaved(true);
-        if (justSavedTimeout.current) clearTimeout(justSavedTimeout.current);
-        justSavedTimeout.current = setTimeout(
-          () => setJustSaved(false),
-          JUST_SAVED_MS,
-        );
-      }
+      // navigates straight to the new/reviewed pack regardless. The
+      // auto-revert timer is the effect above, keyed on `justSaved`.
+      if (draft) setJustSaved(true);
       router.push(`/packs/${targetId}`);
     } catch (err) {
       setError("root", { message: messageFromError(err) });
@@ -380,6 +377,11 @@ export function CreatePackForm({
                 // disable would break the stable accessible-name e2e
                 // selectors below.
                 title={blocked ? t("bar.blockedTooltip") : undefined}
+                // Display-only gate (never native `disabled`): a blocked
+                // click still submits and surfaces the real per-field zod
+                // errors instead of dead-ending, matching the JoinRoomCard
+                // anon-gate precedent this mirrors from the old preview CTA.
+                aria-disabled={blocked ? "true" : undefined}
                 // Pins the accessible name to the FULL label regardless of
                 // which of the two spans below CSS currently shows — see the
                 // comment on them.
@@ -388,6 +390,9 @@ export function CreatePackForm({
                     ? t("bar.submit")
                     : undefined
                 }
+                // Visual echo of aria-disabled — the button stays natively
+                // enabled (see above), so this is cosmetic only.
+                className={blocked ? "opacity-70" : undefined}
               >
                 {isEdit ? (
                   isSubmitting ? (

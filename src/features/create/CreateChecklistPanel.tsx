@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
 import { COVER_TONES } from "@/src/shared/types/pack";
-import { summarizePack } from "@/src/features/create/create-pack.summary";
 import type { CreatePackValues } from "@/src/features/create/create-pack.schema";
 
 export interface CreateChecklistPanelProps {
@@ -33,7 +32,6 @@ export interface CreateChecklistPanelProps {
  */
 export function CreateChecklistPanel({ values }: CreateChecklistPanelProps) {
   const t = useTranslations("create.checklist");
-  const summary = summarizePack(values);
   const poolsWithItems = values.groups.filter(
     (group) => group.items.length > 0,
   ).length;

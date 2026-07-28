@@ -188,6 +188,30 @@ describe("CreatePackForm", () => {
     expect(packsClient.create).not.toHaveBeenCalled();
   });
 
+  // Display-only gate, not a native disabled: the blocked submit button must
+  // still be clickable so a blocked click surfaces the real zod errors
+  // (asserted above) instead of doing nothing.
+  it("marks the submit button aria-disabled (but not natively disabled) while blocked", async () => {
+    renderForm();
+
+    const submit = await screen.findByRole("button", {
+      name: "Submit for review",
+    });
+    expect(submit).toHaveAttribute("aria-disabled", "true");
+    expect(submit).not.toBeDisabled();
+    expect(submit).toHaveAttribute("title", "Add a title & elements");
+  });
+
+  it("clears aria-disabled and the tooltip once the pack is publishable", async () => {
+    const user = userEvent.setup();
+    renderForm();
+    await fillMinimalValidPack(user);
+
+    const submit = screen.getByRole("button", { name: "Submit for review" });
+    expect(submit).not.toHaveAttribute("aria-disabled");
+    expect(submit).not.toHaveAttribute("title");
+  });
+
   it("rejects a pool with no items", async () => {
     const user = userEvent.setup();
     renderForm();
