@@ -261,7 +261,9 @@ describe("PlayScreen", () => {
     await user.click(screen.getByRole("button", { name: "Pick Boys" }));
     await user.click(screen.getByRole("button", { name: "Next round →" }));
 
-    expect(await screen.findByText("Round 2 of 2")).toBeInTheDocument();
+    // Appears twice now: PlayChrome's round counter AND PlayRoundHeader's
+    // round-position eyebrow (T2).
+    expect(await screen.findAllByText("Round 2 of 2")).toHaveLength(2);
     await user.click(screen.getByRole("button", { name: "Pick Girls" }));
     await user.click(screen.getByRole("button", { name: "See results →" }));
 
@@ -336,7 +338,9 @@ describe("PlayScreen", () => {
     await user.click(screen.getByRole("button", { name: "Next round →" }));
 
     expect(await screen.findByText("Silhouette")).toBeInTheDocument();
-    expect(screen.getByText("Round 2 of 2")).toBeInTheDocument();
+    // Appears twice now: PlayChrome's round counter AND PlayRoundHeader's
+    // round-position eyebrow (T2).
+    expect(screen.getAllByText("Round 2 of 2")).toHaveLength(2);
     await user.click(screen.getByText("Silhouette"));
     await user.click(screen.getByRole("button", { name: "See results →" }));
 

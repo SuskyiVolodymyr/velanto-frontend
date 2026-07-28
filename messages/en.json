@@ -1130,6 +1130,7 @@
     "roundOf": "Round {current} of {total}",
     "exit": "Exit",
     "soloMode": "SOLO",
+    "roundsDoneNote": "{count, plural, one {# round done} other {# rounds done}}",
     "pick": "Pick {name}",
     "nextRound": "Next round →",
     "instructionSave": "Pick the one you'd save. Check it below, then confirm.",

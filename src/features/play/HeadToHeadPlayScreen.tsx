@@ -165,6 +165,8 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
               <PlayRoundHeader
                 eyebrow={tFormat("1v1")}
                 title={t("whichPrefer")}
+                roundIndex={roundIndex}
+                totalRounds={totalRounds}
               />
             </div>
             <div className="mb-8">

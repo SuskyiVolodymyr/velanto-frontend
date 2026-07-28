@@ -222,6 +222,8 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
                 total: slotCount,
               })}
               align="center"
+              roundIndex={roundIndex}
+              totalRounds={totalRounds}
             />
 
             <div className="mb-8 mt-8 flex justify-center">
@@ -333,6 +335,8 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
                 name: roundHeading(pack, roundIndex + 1),
               })}
               align="center"
+              roundIndex={roundIndex}
+              totalRounds={totalRounds}
             />
             {/* The same list the result screen shows, so the recap and the
                 result a player ends up with read as one thing. */}

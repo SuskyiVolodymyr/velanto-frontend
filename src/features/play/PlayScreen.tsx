@@ -41,7 +41,6 @@ function candidateGridCols(count: number): string {
 
 export function PlayScreen({ pack }: { pack: Pack }) {
   const t = useTranslations("play");
-  const tFormat = useTranslations("formats");
   const router = useRouter();
   const session = usePlaySession(pack);
 
@@ -67,10 +66,15 @@ export function PlayScreen({ pack }: { pack: Pack }) {
           <>
             <div className="mb-6">
               <PlayRoundHeader
-                eyebrow={tFormat(pack.format)}
+                eyebrow={t("roundOf", {
+                  current: session.roundIndex + 1,
+                  total: session.totalRounds,
+                })}
                 title={session.roundTitle}
                 instruction={t(INSTRUCTION_KEY[pack.format])}
                 align="start"
+                roundIndex={session.roundIndex}
+                totalRounds={session.totalRounds}
               />
             </div>
 
