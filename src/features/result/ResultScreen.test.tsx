@@ -206,7 +206,11 @@ describe("ResultScreen", () => {
     render(<ResultScreen pack={PACK} />);
 
     // 75% comes from the pack-wide ranking, which a shared result also gets.
-    expect(await screen.findByText("75%")).toBeInTheDocument();
+    // Scoped to the ranking table: T11's hero also renders a "75%" agreement
+    // stat tile from the same underlying number, so the plain text now
+    // matches twice on screen — both are correct, this just disambiguates.
+    const table = await screen.findByRole("table");
+    expect(within(table).getByText("75%")).toBeInTheDocument();
   });
 
   it("links back to play the pack again once you have played", async () => {

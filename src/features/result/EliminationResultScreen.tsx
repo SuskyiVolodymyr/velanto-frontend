@@ -5,8 +5,6 @@ import { useTranslations } from "next-intl";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
-import { SharedResultNote } from "@/src/features/result/SharedResultNote";
-import { ResultActions } from "@/src/features/result/ResultActions";
 import { TopPickedTable } from "@/src/features/result/TopPickedTable";
 import { roundHeading } from "@/src/shared/lib/round-heading";
 import { cn } from "@/src/shared/lib/cn";
@@ -103,27 +101,7 @@ export function EliminationResultScreen({
   const topItems = results.topItems ?? [];
 
   return (
-    <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
-      <Text variant="tertiary" className="mb-2 text-xs uppercase tracking-wide">
-        {t("label")}
-      </Text>
-      <Text as="h1" variant="title" className="mb-2 text-3xl">
-        {pack.title}
-      </Text>
-      <Text variant="secondary" className="mb-8">
-        {t("playsRecorded", { count: results.totalPlays })}
-      </Text>
-
-      {shared && <SharedResultNote />}
-
-      <ResultActions
-        packId={pack.id}
-        status={pack.status}
-        picks={ownPicks}
-        shared={shared}
-        className="mb-6 justify-end"
-      />
-
+    <div className={cn(PACK_CONTAINER, "flex-1 pb-10")}>
       {rounds.length > 0 ? (
         <div className="mb-10 flex flex-col divide-y divide-border">
           {rounds.map((round) => (
