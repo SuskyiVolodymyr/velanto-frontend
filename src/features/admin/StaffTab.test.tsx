@@ -1,6 +1,6 @@
 // src/features/admin/StaffTab.test.tsx
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
@@ -25,7 +25,7 @@ vi.mock("@/src/shared/lib/auth-client", () => ({
   },
 }));
 vi.mock("@/src/shared/lib/admin-client", () => ({
-  adminClient: { listUsers: vi.fn() },
+  adminClient: { listUsers: vi.fn(), userDetail: vi.fn() },
 }));
 vi.mock("@/src/shared/lib/users-client", () => ({
   usersClient: { changeRole: vi.fn() },
@@ -219,6 +219,9 @@ describe("StaffTab", () => {
   });
 
   describe("add staff", () => {
+    const ADD_STAFF_INPUT_LABEL = "Email, username, or user id of the user to add as staff";
+    const USER_ID = "550e8400-e29b-41d4-a716-446655440000";
+
     it("resolves the email to a user id, then grants the role", async () => {
       mockStaff([]);
       vi.mocked(usersClient.changeRole).mockResolvedValue({
@@ -238,7 +241,7 @@ describe("StaffTab", () => {
       });
 
       await user.type(
-        screen.getByLabelText("Email of the user to add as staff"),
+        screen.getByLabelText(ADD_STAFF_INPUT_LABEL),
         "new@example.com",
       );
       await user.click(screen.getByRole("button", { name: "+ Add staff" }));
@@ -264,7 +267,7 @@ describe("StaffTab", () => {
       });
 
       await user.type(
-        screen.getByLabelText("Email of the user to add as staff"),
+        screen.getByLabelText(ADD_STAFF_INPUT_LABEL),
         "new@example.com",
       );
       await user.click(screen.getByRole("button", { name: "+ Add staff" }));
@@ -272,6 +275,176 @@ describe("StaffTab", () => {
       expect(
         await screen.findByText("No user with that email."),
       ).toBeInTheDocument();
+      expect(usersClient.changeRole).not.toHaveBeenCalled();
+    });
+
+    it("badges the input as EMAIL, USERNAME, or USER ID as the shape changes", async () => {
+      mockStaff([]);
+      const user = userEvent.setup();
+      renderAs(ADMIN);
+      await screen.findByText("No staff members yet.");
+
+      const input = screen.getByLabelText(ADD_STAFF_INPUT_LABEL);
+
+      await user.type(input, "new@example.com");
+      expect(screen.getByText("EMAIL")).toBeInTheDocument();
+
+      await user.clear(input);
+      await user.type(input, "bob");
+      expect(screen.getByText("USERNAME")).toBeInTheDocument();
+
+      await user.clear(input);
+      await user.type(input, USER_ID);
+      expect(screen.getByText("USER ID")).toBeInTheDocument();
+    });
+
+    it("resolves a username directly, without a dropdown, when exactly one row matches", async () => {
+      mockStaff([]);
+      vi.mocked(usersClient.changeRole).mockResolvedValue({
+        id: "u9",
+        role: "moderator",
+      });
+      const user = userEvent.setup();
+      renderAs(ADMIN);
+      await screen.findByText("No staff members yet.");
+
+      vi.mocked(adminClient.listUsers).mockResolvedValueOnce({
+        items: [{ ...TARGET, id: "u9", username: "bob" }],
+        total: 1,
+        page: 1,
+        limit: 50,
+      });
+
+      await user.type(screen.getByLabelText(ADD_STAFF_INPUT_LABEL), "bob");
+      await user.click(screen.getByRole("button", { name: "+ Add staff" }));
+
+      await waitFor(() =>
+        expect(usersClient.changeRole).toHaveBeenCalledWith("u9", "moderator"),
+      );
+      expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+    });
+
+    it("strips a leading @ before searching, and shows a matches dropdown for multiple hits", async () => {
+      mockStaff([]);
+      vi.mocked(usersClient.changeRole).mockResolvedValue({
+        id: "u11",
+        role: "moderator",
+      });
+      const user = userEvent.setup();
+      renderAs(ADMIN);
+      await screen.findByText("No staff members yet.");
+
+      vi.mocked(adminClient.listUsers).mockResolvedValueOnce({
+        items: [
+          { ...TARGET, id: "u10", username: "bobby", email: "bobby@example.com" },
+          { ...TARGET, id: "u11", username: "bobette", email: "bobette@example.com" },
+        ],
+        total: 2,
+        page: 1,
+        limit: 50,
+      });
+
+      await user.type(screen.getByLabelText(ADD_STAFF_INPUT_LABEL), "@bob");
+      await user.click(screen.getByRole("button", { name: "+ Add staff" }));
+
+      expect(adminClient.listUsers).toHaveBeenLastCalledWith(
+        expect.objectContaining({ q: "bob" }),
+      );
+
+      const listbox = await screen.findByRole("listbox");
+      expect(usersClient.changeRole).not.toHaveBeenCalled();
+
+      await user.click(
+        within(listbox).getByRole("option", { name: /bobette/ }),
+      );
+
+      await waitFor(() =>
+        expect(usersClient.changeRole).toHaveBeenCalledWith(
+          "u11",
+          "moderator",
+        ),
+      );
+      expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+    });
+
+    it("shows a no-match error when a username search returns nothing", async () => {
+      mockStaff([]);
+      const user = userEvent.setup();
+      renderAs(ADMIN);
+      await screen.findByText("No staff members yet.");
+
+      vi.mocked(adminClient.listUsers).mockResolvedValueOnce({
+        items: [],
+        total: 0,
+        page: 1,
+        limit: 50,
+      });
+
+      await user.type(screen.getByLabelText(ADD_STAFF_INPUT_LABEL), "nobody");
+      await user.click(screen.getByRole("button", { name: "+ Add staff" }));
+
+      expect(await screen.findByText("No user found.")).toBeInTheDocument();
+      expect(usersClient.changeRole).not.toHaveBeenCalled();
+    });
+
+    it("resolves a user-id-shaped input via userDetail, with no dropdown", async () => {
+      mockStaff([]);
+      vi.mocked(usersClient.changeRole).mockResolvedValue({
+        id: USER_ID,
+        role: "moderator",
+      });
+      vi.mocked(adminClient.userDetail).mockResolvedValueOnce({
+        id: USER_ID,
+        username: "bob",
+        email: "bob@example.com",
+        role: "user",
+        trusted: false,
+        createdAt: "2026-01-01T00:00:00.000Z",
+        bannedUntil: null,
+        banReason: null,
+        content: {
+          packsTotal: 0,
+          packsApproved: 0,
+          packsPending: 0,
+          packsRejected: 0,
+          totalPlaysOnPacks: 0,
+          likesOnPacks: 0,
+        },
+        activity: { commentsCount: 0, playsRecorded: 0 },
+        storage: { usedBytes: 0, limitBytes: null },
+        social: { followers: 0, following: 0 },
+        moderation: { reportsAgainst: 0, reportsFiled: 0 },
+      });
+      const user = userEvent.setup();
+      renderAs(ADMIN);
+      await screen.findByText("No staff members yet.");
+
+      await user.type(screen.getByLabelText(ADD_STAFF_INPUT_LABEL), USER_ID);
+      await user.click(screen.getByRole("button", { name: "+ Add staff" }));
+
+      expect(adminClient.userDetail).toHaveBeenCalledWith(USER_ID);
+      await waitFor(() =>
+        expect(usersClient.changeRole).toHaveBeenCalledWith(
+          USER_ID,
+          "moderator",
+        ),
+      );
+      expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+    });
+
+    it("shows a no-match error when the id doesn't resolve to any account", async () => {
+      mockStaff([]);
+      vi.mocked(adminClient.userDetail).mockRejectedValueOnce(
+        new Error("404"),
+      );
+      const user = userEvent.setup();
+      renderAs(ADMIN);
+      await screen.findByText("No staff members yet.");
+
+      await user.type(screen.getByLabelText(ADD_STAFF_INPUT_LABEL), USER_ID);
+      await user.click(screen.getByRole("button", { name: "+ Add staff" }));
+
+      expect(await screen.findByText("No user found.")).toBeInTheDocument();
       expect(usersClient.changeRole).not.toHaveBeenCalled();
     });
   });
