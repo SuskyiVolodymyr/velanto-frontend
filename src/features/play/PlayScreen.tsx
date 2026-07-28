@@ -56,12 +56,10 @@ export function PlayScreen({ pack }: { pack: Pack }) {
   return (
     <>
       <PlayChrome
-        packId={pack.id}
-        title={pack.title}
+        pack={pack}
         isFinished={session.isFinished}
         roundIndex={session.roundIndex}
         totalRounds={session.totalRounds}
-        progressPct={session.progressPct}
       />
 
       <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>

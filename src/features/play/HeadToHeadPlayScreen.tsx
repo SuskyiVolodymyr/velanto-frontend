@@ -149,19 +149,13 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
 
   if (status === "loading") return null;
 
-  const progressPct = isFinished
-    ? 100
-    : Math.round((roundIndex / Math.max(totalRounds, 1)) * 100);
-
   return (
     <>
       <PlayChrome
-        packId={pack.id}
-        title={pack.title}
+        pack={pack}
         isFinished={isFinished}
         roundIndex={roundIndex}
         totalRounds={totalRounds}
-        progressPct={progressPct}
       />
 
       <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>

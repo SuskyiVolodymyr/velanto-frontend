@@ -1129,6 +1129,7 @@
     "complete": "Complete",
     "roundOf": "Round {current} of {total}",
     "exit": "Exit",
+    "soloMode": "SOLO",
     "pick": "Pick {name}",
     "nextRound": "Next round →",
     "instructionSave": "Pick the one you'd save. Check it below, then confirm.",

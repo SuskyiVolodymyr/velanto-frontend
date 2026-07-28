@@ -1,62 +1,53 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { ArrowLeft } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
-import { ProgressBar } from "@/src/shared/components/ProgressBar";
-import { buttonClassName } from "@/src/shared/components/Button";
+import { Badge } from "@/src/shared/components/Badge";
 import { cn } from "@/src/shared/lib/cn";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import type { Pack } from "@/src/shared/types/pack";
 
 export interface PlayChromeProps {
-  /** The pack being played — where "Exit" returns to. */
-  packId: string;
-  title: string;
+  /** The pack being played — where the back button returns to. Also supplies
+   * the title, cover tone (thumbnail gradient) and format (meta line). */
+  pack: Pack;
   isFinished: boolean;
   roundIndex: number;
   totalRounds: number;
-  /**
-   * 0–100. Callers already compute this (`PlayScreen` reads it off `session`;
-   * `RankPlayScreen`/`HeadToHeadPlayScreen` share the same inline
-   * `isFinished ? 100 : Math.round((roundIndex / Math.max(totalRounds, 1)) * 100)`
-   * expression) — this component does not recompute it.
-   */
-  progressPct: number;
 }
 
 /**
- * The sticky bar every play screen shares: the pack title as the page's `h1`,
- * a round counter, an Exit link, and a full-bleed progress rail beneath the
- * row — absorbing today's `PlayHeader` (rendered by the page) and
- * `PlayProgress` (rendered by each screen) into one component (T2, see
- * docs/superpowers/plans/2026-07-28-solo-play-results-redesign.md).
+ * The sticky bar every play screen shares: an icon-only back button, a small
+ * cover-tone thumbnail, the pack title as the page's `h1`, a "SOLO" mode chip,
+ * a format/round-count meta line, and a round counter.
+ *
+ * Matches the real mock (`Solo Play.dc.html`) rather than the earlier
+ * text-Exit-link + full-bleed progress-rail header: the rail moved into the
+ * round section itself as segmented dashes (see `PlayRoundHeader`, T2) — this
+ * component no longer renders any progress indicator, so `progressPct` is no
+ * longer part of its props (docs/superpowers/plans/2026-07-28-solo-play-results-mock-patch.md, T1).
  *
  * The round counter is client state (`roundIndex`/`isFinished` live in each
- * screen's session hook, not in the server-rendered page), so this moves
- * INTO the three play screens rather than staying on `app/packs/[id]/play/page.tsx`
- * — each screen already has `pack`, so nothing new needs threading through.
+ * screen's session hook, not in the server-rendered page), so this lives in
+ * the three play screens rather than on `app/packs/[id]/play/page.tsx` —
+ * each screen already has `pack`, so nothing new needs threading through.
  *
- * `PlayRoundHeader` (T3) renders the per-round title as an `h2`, never an
- * `h1` — the pack title here is the page's only `h1`, matching `PlayHeader`'s
- * original doc comment on why a title is shown at all (a player arriving from
- * a shared link has no other on-page answer to "what am I playing?").
- *
- * Structural precedent: `PackDetailScreen`'s sticky action bar (same sticky
- * treatment, same `PACK_CONTAINER`-wrapped row), so the two pack surfaces
- * match.
+ * `PlayRoundHeader` (T2) renders the per-round title as an `h2`, never an
+ * `h1` — the pack title here is the page's only `h1`.
  */
 export function PlayChrome({
-  packId,
-  title,
+  pack,
   isFinished,
   roundIndex,
   totalRounds,
-  progressPct,
 }: PlayChromeProps) {
   const t = useTranslations("play");
-  // Same string in the row and the rail's aria-label, so the rail is
-  // announced once meaningfully rather than twice with different text.
+  const tFormat = useTranslations("formats");
+  const tPack = useTranslations("pack");
   const roundLabel = isFinished
     ? t("complete")
     : t("roundOf", { current: roundIndex + 1, total: totalRounds });
+  const packMeta = `${tFormat(pack.format)} · ${tPack("roundsCount", { count: totalRounds })}`;
 
   return (
     <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
@@ -66,25 +57,45 @@ export function PlayChrome({
           "flex items-center gap-3 py-3 max-[720px]:px-4",
         )}
       >
-        <Text as="h1" variant="title" className="min-w-0 truncate text-xl">
-          {title}
-        </Text>
-        <div className="ms-auto flex items-center gap-3">
-          <Text
-            variant="secondary"
-            className="text-[13.5px] tabular-nums text-foreground-secondary"
-          >
-            {roundLabel}
+        <Link
+          href={`/packs/${pack.id}`}
+          aria-label={t("exit")}
+          className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-tile border border-border bg-white/[0.03] text-foreground-secondary transition-colors hover:border-white/[0.18] hover:text-foreground"
+        >
+          <ArrowLeft size={18} aria-hidden />
+        </Link>
+
+        <div
+          aria-hidden="true"
+          className="h-9 w-9 shrink-0 rounded-[10px]"
+          style={{
+            background: `linear-gradient(150deg, ${pack.coverTone}, #0b0c0f)`,
+          }}
+        />
+
+        <div className="min-w-0">
+          <div className="flex items-center gap-2">
+            <Text
+              as="h1"
+              variant="title"
+              className="min-w-0 truncate text-[15.5px]"
+            >
+              {pack.title}
+            </Text>
+            <Badge className="shrink-0">{t("soloMode")}</Badge>
+          </div>
+          <Text variant="tertiary" className="truncate text-[12px]">
+            {packMeta}
           </Text>
-          <Link
-            href={`/packs/${packId}`}
-            className={buttonClassName("ghost", undefined, "sm")}
-          >
-            {t("exit")}
-          </Link>
         </div>
+
+        <Text
+          variant="secondary"
+          className="ms-auto shrink-0 text-[13.5px] tabular-nums text-foreground-secondary"
+        >
+          {roundLabel}
+        </Text>
       </div>
-      <ProgressBar size="rail" value={progressPct} ariaLabel={roundLabel} />
     </div>
   );
 }
