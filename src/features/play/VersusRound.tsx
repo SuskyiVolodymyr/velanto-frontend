@@ -1,6 +1,5 @@
 import { useTranslations } from "next-intl";
 import type { Item } from "@/src/shared/types/pack";
-import { COVER_TONES } from "@/src/shared/types/pack";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
 import { YouTubeCard } from "@/src/shared/components/YouTubeCard";
@@ -11,32 +10,11 @@ import {
 } from "@/src/shared/lib/youtube";
 import { mediaUrl } from "@/src/shared/lib/media-url";
 import { cn } from "@/src/shared/lib/cn";
+import { toneFor, HAIRLINE_OVERLAY_STYLE } from "@/src/features/play/candidate-tone";
 
 interface VersusSide {
   name: string;
   items: Item[];
-}
-
-// The diagonal hairline overlay on a text tile's gradient background — the
-// same texture CandidateCard's TextTile uses, purely decorative so it's
-// `aria-hidden`.
-const HAIRLINE_OVERLAY_STYLE = {
-  backgroundImage:
-    "repeating-linear-gradient(122deg, rgba(255,255,255,.03) 0 1px, transparent 1px 15px)",
-};
-
-/**
- * One item tile's gradient tone within its pack's palette family — same
- * derivation as `CandidateCard`'s `candidateTone`: start at the index
- * `packCoverTone` occupies in `COVER_TONES` (0 if it isn't one of the six),
- * then offset by the item's position within its side.
- */
-function itemTone(packCoverTone: string, index: number): string {
-  const baseIndex = Math.max(
-    0,
-    (COVER_TONES as readonly string[]).indexOf(packCoverTone),
-  );
-  return COVER_TONES[(baseIndex + index) % COVER_TONES.length];
 }
 
 /** One drawn item within a side panel — media band + label, no selection of its own. */
@@ -88,7 +66,7 @@ function ItemTile({
     );
   }
 
-  const tone = itemTone(packCoverTone, index);
+  const tone = toneFor(packCoverTone, index);
   return (
     <div style={appearDelay} className={frameClasses}>
       <div

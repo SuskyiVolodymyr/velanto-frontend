@@ -27,18 +27,9 @@ import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { PlayChrome } from "@/src/features/play/PlayChrome";
 import { PlayRoundHeader } from "@/src/features/play/PlayRoundHeader";
 import { roundHeading } from "@/src/shared/lib/round-heading";
-import { COVER_TONES } from "@/src/shared/types/pack";
+import { toneFor, HAIRLINE_OVERLAY_STYLE } from "@/src/features/play/candidate-tone";
 import type { Pack, Item } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
-
-// Diagonal hairline overlay for a text item's gradient tile — same recipe as
-// the elimination round's media band (see CandidateCard.tsx / docs/superpowers/
-// plans/2026-07-28-solo-play-results-redesign.md T4/T7), matched independently
-// here since the two tasks land concurrently on different files.
-const HAIRLINE_OVERLAY_STYLE = {
-  backgroundImage:
-    "repeating-linear-gradient(122deg, rgba(255,255,255,.03) 0 1px, transparent 1px 15px)",
-};
 
 export function RankPlayScreen({ pack }: { pack: Pack }) {
   const { status } = useAuth();
@@ -124,14 +115,10 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
 
   // A per-item accent tone, cycling COVER_TONES by the item's position in the
   // draw and seeded off the pack's own cover tone so a pack's tiles stay in
-  // its own palette family. Derived independently of CandidateCard's version
-  // (T4 lands concurrently on a different file) but the same recipe.
-  const toneSeed = Math.max(
-    COVER_TONES.indexOf(pack.coverTone as (typeof COVER_TONES)[number]),
-    0,
-  );
+  // its own palette family — the shared `toneFor` helper (see
+  // candidate-tone.ts), also used by CandidateCard/VersusRound/HeadToHeadRound.
   function toneForDrawIndex(drawIndex: number): string {
-    return COVER_TONES[(toneSeed + drawIndex) % COVER_TONES.length];
+    return toneFor(pack.coverTone, drawIndex);
   }
 
   function place(slotIndex: number) {
@@ -358,7 +345,11 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
             <div className="w-full max-w-[420px] text-start">
               <RankedList rows={rankedRows} />
             </div>
-            <Button onClick={goToNextRound} className="w-full max-w-[420px]">
+            <Button
+              size="lg"
+              onClick={goToNextRound}
+              className="w-full max-w-[420px]"
+            >
               {t("nextRound")}
             </Button>
           </section>

@@ -1,6 +1,5 @@
 import { useTranslations } from "next-intl";
 import type { Item } from "@/src/shared/types/pack";
-import { COVER_TONES } from "@/src/shared/types/pack";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
 import { YouTubeCard } from "@/src/shared/components/YouTubeCard";
@@ -11,12 +10,13 @@ import {
 } from "@/src/shared/lib/youtube";
 import { mediaUrl } from "@/src/shared/lib/media-url";
 import { cn } from "@/src/shared/lib/cn";
+import { toneFor, HAIRLINE_OVERLAY_STYLE } from "@/src/features/play/candidate-tone";
 
 interface HeadToHeadCardProps {
   item: Item;
   selected: boolean;
   onSelect: () => void;
-  /** Precomputed hex from `toneForOffset` — the text tile's gradient seed. */
+  /** Precomputed hex from `toneFor` — the text tile's gradient seed. */
   tone: string;
 }
 
@@ -29,28 +29,7 @@ const UNSELECTED_FRAME = "border-border";
 const CARD_FRAME =
   "flex flex-col overflow-hidden rounded-card border-2 bg-background transition-colors";
 
-// The diagonal hairline overlay on a text tile's gradient background — the
-// mock's texture for a candidate with no image/video of its own.
-const HAIRLINE_OVERLAY_STYLE = {
-  backgroundImage:
-    "repeating-linear-gradient(122deg, rgba(255,255,255,.03) 0 1px, transparent 1px 15px)",
-};
-
 const LABEL_CLASS = "p-[18px] text-center text-[18px] font-semibold";
-
-/**
- * Derives a text tile's gradient tone deterministically from `COVER_TONES`,
- * seeded off the pack's own `coverTone` index so a pack's tiles stay within
- * its own palette family, then offset by the contender's position (left = 0,
- * right = 1) so the two sides don't share a tone.
- */
-function toneForOffset(coverTone: string, offset: number): string {
-  const seedIndex = COVER_TONES.indexOf(
-    coverTone as (typeof COVER_TONES)[number],
-  );
-  const base = seedIndex === -1 ? 0 : seedIndex;
-  return COVER_TONES[(base + offset) % COVER_TONES.length];
-}
 
 function HeadToHeadCard({
   item,
@@ -141,7 +120,7 @@ interface HeadToHeadRoundProps {
   selectedId: string | null;
   onSelect: (id: string) => void;
   /** The playing pack's `coverTone` — seeds each contender's text-tile
-   * gradient (see `toneForOffset`). */
+   * gradient (see `toneFor`). */
   coverTone: string;
 }
 
@@ -158,7 +137,7 @@ export function HeadToHeadRound({
         item={left}
         selected={selectedId === left.id}
         onSelect={() => onSelect(left.id)}
-        tone={toneForOffset(coverTone, 0)}
+        tone={toneFor(coverTone, 0)}
       />
       {/* Exactly one "VS" may appear on the play screen (e2e strict-mode
           query) — this is the only place this format renders that string. */}
@@ -173,7 +152,7 @@ export function HeadToHeadRound({
         item={right}
         selected={selectedId === right.id}
         onSelect={() => onSelect(right.id)}
-        tone={toneForOffset(coverTone, 1)}
+        tone={toneFor(coverTone, 1)}
       />
     </div>
   );

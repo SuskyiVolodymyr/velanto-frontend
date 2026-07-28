@@ -9,7 +9,7 @@ import {
 } from "@/src/shared/lib/youtube";
 import { mediaUrl } from "@/src/shared/lib/media-url";
 import { cn } from "@/src/shared/lib/cn";
-import { COVER_TONES } from "@/src/shared/types/pack";
+import { toneFor, HAIRLINE_OVERLAY_STYLE } from "@/src/features/play/candidate-tone";
 import type { Item } from "@/src/shared/types/pack";
 
 interface CandidateCardProps {
@@ -25,31 +25,8 @@ interface CandidateCardProps {
   packCoverTone: string;
 }
 
-// Diagonal hairline texture over a text-item's gradient tile — purely
-// decorative, so it's applied via `aria-hidden`, not part of the accessible
-// tree.
-const HAIRLINE_OVERLAY = {
-  backgroundImage:
-    "repeating-linear-gradient(122deg, rgba(255,255,255,.03) 0 1px, transparent 1px 15px)",
-};
-
 const FRAME_SELECTED = "border-acc ring-[3px] ring-acc/30";
 const FRAME_UNSELECTED = "border-border hover:border-border-strong";
-
-/**
- * One candidate's tone within its pack's palette family: start at the index
- * `packCoverTone` occupies in `COVER_TONES` (0 if it isn't one of the six —
- * a custom/unknown cover value shouldn't break the derivation), then offset
- * by this card's index so consecutive cards visibly differ while staying
- * inside the same six-tone family.
- */
-function candidateTone(packCoverTone: string, index: number): string {
-  const baseIndex = Math.max(
-    0,
-    (COVER_TONES as readonly string[]).indexOf(packCoverTone),
-  );
-  return COVER_TONES[(baseIndex + index) % COVER_TONES.length];
-}
 
 /** The checkbox + title + index row shared by all three media treatments. */
 function SelectBar({
@@ -101,7 +78,7 @@ function TextTile({
   index: number;
   packCoverTone: string;
 }) {
-  const tone = candidateTone(packCoverTone, index);
+  const tone = toneFor(packCoverTone, index);
   return (
     <div
       className="relative h-[150px] overflow-hidden"
@@ -109,7 +86,7 @@ function TextTile({
         background: `linear-gradient(158deg, ${tone}, var(--background) 78%)`,
       }}
     >
-      <div aria-hidden className="absolute inset-0" style={HAIRLINE_OVERLAY} />
+      <div aria-hidden className="absolute inset-0" style={HAIRLINE_OVERLAY_STYLE} />
       <Text
         variant="tertiary"
         className="absolute start-2 top-2 text-[11px] font-semibold"
