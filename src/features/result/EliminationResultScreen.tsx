@@ -2,12 +2,10 @@
 
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { TopPickedTable } from "@/src/features/result/TopPickedTable";
 import { roundHeading } from "@/src/shared/lib/round-heading";
-import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
 import type {
   PackResults,
@@ -101,20 +99,32 @@ export function EliminationResultScreen({
   const topItems = results.topItems ?? [];
 
   return (
-    <div className={cn(PACK_CONTAINER, "flex-1 pb-10")}>
+    <div className="flex-1 pb-10">
       {rounds.length > 0 ? (
-        <div className="mb-10 flex flex-col divide-y divide-border">
-          {rounds.map((round) => (
-            <div key={round.roundIndex} className="py-4 first:pt-0 last:pb-0">
-              <RoundCard
-                round={round}
-                heading={roundHeading(pack, round.roundIndex)}
-                sacrifice={sacrifice}
-                shared={shared}
-              />
-            </div>
-          ))}
-        </div>
+        <section className="mb-10">
+          <Text
+            as="h2"
+            variant="tertiary"
+            className="mb-1 text-[12px] font-medium uppercase tracking-[0.14em] text-acc"
+          >
+            {t("roundByRoundHeading")}
+          </Text>
+          <Text variant="secondary" className="mb-4 text-sm">
+            {t("roundByRoundNote")}
+          </Text>
+          <div className="flex flex-col divide-y divide-border">
+            {rounds.map((round) => (
+              <div key={round.roundIndex} className="py-4 first:pt-0 last:pb-0">
+                <RoundCard
+                  round={round}
+                  heading={roundHeading(pack, round.roundIndex)}
+                  sacrifice={sacrifice}
+                  shared={shared}
+                />
+              </div>
+            ))}
+          </div>
+        </section>
       ) : (
         <Card className="mb-10 py-8 text-center">
           <Text variant="tertiary" className="text-sm">
@@ -146,8 +156,11 @@ export function EliminationResultScreen({
 }
 
 /**
- * One played round: its name, then every element it drew in one card, each
- * element in its own container so a slate of eight doesn't run together.
+ * One played round (T9): round-number chip + name and a verdict block on the
+ * left (a colored "YOU SAVED"/"YOU SACRIFICED" label plus the picked item's
+ * name), the round's OTHER elements as wrapped pill chips on the right,
+ * divided from the left by a border — replaces the earlier "every element its
+ * own full-width bordered row" list.
  */
 function RoundCard({
   round,
@@ -162,6 +175,15 @@ function RoundCard({
 }) {
   const t = useTranslations("result");
   const picked = round.items.find((item) => item.picked);
+  const others = round.items.filter((item) => !item.picked);
+  const verdictText = sacrifice
+    ? shared
+      ? t("verdictSacrificeShared")
+      : t("verdictSacrifice")
+    : shared
+      ? t("verdictSaveShared")
+      : t("verdictSave");
+  const otherLabel = sacrifice ? t("survivedLabel") : t("lostLabel");
 
   return (
     <div
@@ -170,44 +192,53 @@ function RoundCard({
         heading,
         picked: picked?.title ?? "",
       })}
+      className="grid grid-cols-1 gap-4 sm:grid-cols-[auto_1fr]"
     >
-      <Text variant="tertiary" className="mb-2 text-xs uppercase tracking-wide">
-        {heading}
-      </Text>
-      <ul className="flex flex-col gap-2 rounded-card border border-border p-3">
-        {round.items.map((item) => (
-          <li
-            key={item.itemId}
-            {...(item.picked
-              ? {
-                  "data-testid": "picked",
-                  "data-outcome": sacrifice ? "sacrificed" : "saved",
-                }
-              : {})}
-            className={cn(
-              "flex min-w-0 items-center justify-between gap-4 rounded-tile border p-[13px_16px]",
-              // Paired border+background rather than layered: cn() is a plain
-              // join, so two backgrounds on one element are resolved by
-              // stylesheet order, not class order (see Text.tsx).
-              !item.picked
-                ? "border-border bg-surface-card"
-                : sacrifice
-                  ? "border-danger/60 bg-danger/10"
-                  : "border-success/60 bg-success/10",
-            )}
+      <div className="min-w-0 sm:max-w-[220px]">
+        <div className="mb-2 flex items-center gap-2">
+          <span className="flex h-6 w-6 flex-none items-center justify-center rounded-chip bg-white/[0.06] text-[11px] font-bold tabular-nums">
+            {round.roundIndex + 1}
+          </span>
+          <Text
+            variant="tertiary"
+            className="truncate text-xs uppercase tracking-wide"
           >
-            <Text className="truncate text-sm font-semibold">{item.title}</Text>
-            {item.picked && (
-              <Text
-                variant="tertiary"
-                className="shrink-0 text-xs uppercase tracking-wide"
+            {heading}
+          </Text>
+        </div>
+        {picked && (
+          <div
+            data-testid="picked"
+            data-outcome={sacrifice ? "sacrificed" : "saved"}
+          >
+            <Text className="text-[11px] font-semibold uppercase tracking-wide text-[#7EE7B4]">
+              {verdictText}
+            </Text>
+            <Text className="mt-1 text-[15px] font-bold">{picked.title}</Text>
+          </div>
+        )}
+      </div>
+
+      {others.length > 0 && (
+        <div className="border-t border-border pt-3 sm:border-s sm:border-t-0 sm:ps-4 sm:pt-0">
+          <Text
+            variant="tertiary"
+            className="mb-2 text-[11px] uppercase tracking-wide"
+          >
+            {otherLabel}
+          </Text>
+          <div className="flex flex-wrap gap-2">
+            {others.map((item) => (
+              <span
+                key={item.itemId}
+                className="rounded-pill border border-border bg-white/[0.03] px-3 py-1 text-xs text-foreground-secondary"
               >
-                {shared ? t("sharedPick") : t("yourPick")}
-              </Text>
-            )}
-          </li>
-        ))}
-      </ul>
+                {item.title}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

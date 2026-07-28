@@ -313,10 +313,11 @@ describe("ResultScreen", () => {
     expect(
       await screen.findByText(/viewing a shared result/i),
     ).toBeInTheDocument();
-    // The sharer's pick is labelled "Pick", not "Your pick" — it isn't yours.
+    // The sharer's verdict reads "Saved", not "You saved" — it isn't yours.
+    // (T9 replaced the plain "Your pick"/"Pick" tag with this colored label.)
     expect(screen.getByTestId("picked")).toHaveTextContent("Guren no Yumiya");
-    expect(screen.getByText("Pick")).toBeInTheDocument();
-    expect(screen.queryByText("Your pick")).not.toBeInTheDocument();
+    expect(screen.getByText("Saved")).toBeInTheDocument();
+    expect(screen.queryByText("You saved")).not.toBeInTheDocument();
   });
 
   describe("single-pool versus round", () => {

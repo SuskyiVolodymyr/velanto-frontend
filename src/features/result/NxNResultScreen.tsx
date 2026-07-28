@@ -2,7 +2,6 @@
 
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { TopPickedTable } from "@/src/features/result/TopPickedTable";
@@ -119,18 +118,30 @@ export function NxNResultScreen({
   const topItems = results.topItems ?? [];
 
   return (
-    <div className={cn(PACK_CONTAINER, "flex-1 pb-10")}>
+    <div className="flex-1 pb-10">
       {rounds.length > 0 ? (
-        <div className="mb-10 flex flex-col divide-y divide-border">
-          {rounds.map((round) => (
-            <div key={round.roundIndex} className="py-4 first:pt-0 last:pb-0">
-              <RoundRow
-                round={round}
-                heading={roundHeading(pack, round.roundIndex)}
-              />
-            </div>
-          ))}
-        </div>
+        <section className="mb-10">
+          <Text
+            as="h2"
+            variant="tertiary"
+            className="mb-1 text-[12px] font-medium uppercase tracking-[0.14em] text-acc"
+          >
+            {t("roundByRoundHeading")}
+          </Text>
+          <Text variant="secondary" className="mb-4 text-sm">
+            {t("roundByRoundNote")}
+          </Text>
+          <div className="flex flex-col divide-y divide-border">
+            {rounds.map((round) => (
+              <div key={round.roundIndex} className="py-4 first:pt-0 last:pb-0">
+                <RoundRow
+                  round={round}
+                  heading={roundHeading(pack, round.roundIndex)}
+                />
+              </div>
+            ))}
+          </div>
+        </section>
       ) : (
         <Card className="mb-10 py-8 text-center">
           <Text variant="tertiary" className="text-sm">
@@ -212,6 +223,7 @@ function SideCard({
   side: PlayedSide;
   position: "left" | "right";
 }) {
+  const t = useTranslations("result");
   return (
     <div
       data-testid={side.picked ? "picked" : "dropped"}
@@ -223,6 +235,20 @@ function SideCard({
           : "border-danger/60 bg-danger/5",
       )}
     >
+      {/* T9: the winner-highlight verdict label — the loser-pills split
+          doesn't map here (each side can hold up to 8 items already shown as
+          its own list), so this is the lighter-touch adaptation for the two
+          versus screens; see the plan deviation noted in the T9 commit. */}
+      {side.picked && (
+        <Text
+          className={cn(
+            "text-[11px] font-semibold uppercase tracking-wide text-[#7EE7B4]",
+            position === "right" && "text-end",
+          )}
+        >
+          {t("verdictWon")}
+        </Text>
+      )}
       <ul className="flex flex-col gap-2">
         {side.titles.map((title, index) => (
           <li

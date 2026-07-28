@@ -163,9 +163,15 @@ describe("RankResultScreen", () => {
       />,
     );
 
+    // Scoped to the RankedList's own rows: T9 added a "You ranked #1: {name}"
+    // verdict line above the list, whose text also contains the item name and
+    // would otherwise double-match the same getAllByText query.
     expect(
-      screen.getAllByText(/Kaikai Kitan|Redo/).map((el) => el.textContent),
-    ).toEqual(["Redo", "Kaikai Kitan"]);
+      screen.getAllByRole("listitem").map((li) => li.textContent),
+    ).toEqual([
+      expect.stringContaining("Redo"),
+      expect.stringContaining("Kaikai Kitan"),
+    ]);
   });
 
   it("shows where each item came in the draw", () => {
