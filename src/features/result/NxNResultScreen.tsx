@@ -132,7 +132,7 @@ export function NxNResultScreen({
           ))}
         </div>
       ) : (
-        <Card className="mb-10 py-8 text-center hover:translate-y-0 hover:shadow-none">
+        <Card className="mb-10 py-8 text-center">
           <Text variant="tertiary" className="text-sm">
             {t("noMatchupBreakdown")}
           </Text>
@@ -145,7 +145,11 @@ export function NxNResultScreen({
           never repeats. */}
       {topItems.length > 0 && (
         <section className="mb-8">
-          <Text as="h2" variant="title" className="mb-1 text-lg">
+          <Text
+            as="h2"
+            variant="tertiary"
+            className="mb-2 text-[13px] font-medium uppercase tracking-[0.14em]"
+          >
             {t("topPickedHeading")}
           </Text>
           <Text variant="secondary" className="mb-4 text-sm">
@@ -213,7 +217,7 @@ function SideCard({
       data-testid={side.picked ? "picked" : "dropped"}
       data-side={position}
       className={cn(
-        "flex min-w-0 flex-col gap-2 rounded-xl border p-3",
+        "flex min-w-0 flex-col gap-2 rounded-tile border p-3",
         side.picked
           ? "border-success/60 bg-success/5"
           : "border-danger/60 bg-danger/5",
@@ -223,7 +227,7 @@ function SideCard({
         {side.titles.map((title, index) => (
           <li
             key={`${title}-${index}`}
-            className="min-w-0 rounded-lg border border-white/[0.06] bg-white/[0.03] px-3 py-2"
+            className="min-w-0 rounded-tile border border-border bg-surface-card p-[13px_16px]"
           >
             <Text
               className={cn(

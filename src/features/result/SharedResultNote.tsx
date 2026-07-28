@@ -8,7 +8,7 @@ export function SharedResultNote() {
   return (
     <Text
       variant="secondary"
-      className="mb-6 rounded-[10px] border border-border bg-surface px-4 py-2 text-sm"
+      className="mb-6 rounded-tile border border-border bg-surface-card px-4 py-2 text-sm"
     >
       {t("sharedNote")}
     </Text>

@@ -104,7 +104,11 @@ export function RankResultScreen({
 
       {podium.length > 0 && (
         <section className="mb-8">
-          <Text as="h2" variant="title" className="mb-1 text-lg">
+          <Text
+            as="h2"
+            variant="tertiary"
+            className="mb-2 text-[13px] font-medium uppercase tracking-[0.14em]"
+          >
             {t("podiumHeading")}
           </Text>
           <Text variant="secondary" className="mb-4 text-sm">

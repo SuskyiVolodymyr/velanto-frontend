@@ -4,7 +4,6 @@ import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { BackButton } from "@/src/shared/components/BackButton";
-import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { RankResultScreen } from "@/src/features/result/RankResultScreen";
@@ -188,9 +187,9 @@ function ResultLoadError() {
   const t = useTranslations("result");
   return (
     <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
-      <Card className="py-10 text-center hover:translate-y-0 hover:shadow-none">
+      <div className="rounded-card border border-border bg-surface-card p-[26px_24px] text-center">
         <Text variant="danger">{t("loadError")}</Text>
-      </Card>
+      </div>
     </div>
   );
 }
