@@ -113,20 +113,13 @@ export function PackMetaFields({
               label: PACK_LANGUAGE_NAMES[code],
             }))}
           />
-          <Text
-            id="pack-language-hint"
-            variant="tertiary"
-            className="text-xs"
-          >
+          <Text id="pack-language-hint" variant="tertiary" className="text-xs">
             {t("languageHint")}
           </Text>
         </div>
         <div className="flex flex-col gap-2">
           <div className="flex items-center gap-2">
-            <Text
-              variant="secondary"
-              className="text-[12.5px] font-medium"
-            >
+            <Text variant="secondary" className="text-[12.5px] font-medium">
               {t("tags")}
             </Text>
             <Text variant="tertiary" className="ms-auto text-xs tabular-nums">
@@ -145,7 +138,7 @@ export function PackMetaFields({
                   )
                 }
                 aria-label={t("removeTag", { tag })}
-                className="inline-flex items-center gap-1 rounded-[9px] border border-acc bg-acc/[0.14] px-[13px] py-[7px] text-[13px] font-medium text-acc transition-colors hover:bg-acc/[0.2]"
+                className="inline-flex items-center gap-1 rounded-chip border border-acc bg-acc/[0.14] px-[13px] py-[7px] text-[13px] font-medium text-acc transition-colors hover:bg-acc/[0.2]"
               >
                 {tag}
                 <span aria-hidden>×</span>
@@ -154,7 +147,7 @@ export function PackMetaFields({
             <button
               type="button"
               onClick={() => setTagPickerOpen(true)}
-              className="inline-flex items-center gap-1 rounded-[9px] border border-dashed border-white/[0.14] px-[13px] py-[7px] text-[13px] font-medium text-foreground-secondary transition-colors hover:border-acc hover:text-acc"
+              className="inline-flex items-center gap-1 rounded-chip border border-dashed border-white/[0.14] px-[13px] py-[7px] text-[13px] font-medium text-foreground-secondary transition-colors hover:border-acc hover:text-acc"
             >
               {t("addTags")}
             </button>

@@ -111,7 +111,9 @@ describe("GroupEditor (pool)", () => {
       />,
     );
 
-    await user.click(screen.getByRole("radio", { name: "Link" }));
+    await user.click(
+      screen.getByRole("radio", { name: "Pool 1 item type: Link" }),
+    );
     await user.type(screen.getByLabelText("Pool 1 new item title"), "My title");
     await user.type(
       screen.getByLabelText("Pool 1 new item link"),
@@ -147,7 +149,9 @@ describe("GroupEditor (pool)", () => {
       />,
     );
 
-    await user.click(screen.getByRole("radio", { name: "Link" }));
+    await user.click(
+      screen.getByRole("radio", { name: "Pool 1 item type: Link" }),
+    );
     await user.type(
       screen.getByLabelText("Pool 1 new item link"),
       "https://youtu.be/KsF_hdjWJjo",
@@ -175,7 +179,9 @@ describe("GroupEditor (pool)", () => {
       />,
     );
 
-    await user.click(screen.getByRole("radio", { name: "Link" }));
+    await user.click(
+      screen.getByRole("radio", { name: "Pool 1 item type: Link" }),
+    );
     await user.type(screen.getByLabelText("Pool 1 new item title"), "My title");
     await user.type(
       screen.getByLabelText("Pool 1 new item link"),
@@ -202,7 +208,9 @@ describe("GroupEditor (pool)", () => {
       />,
     );
 
-    await user.click(screen.getByRole("radio", { name: "Link" }));
+    await user.click(
+      screen.getByRole("radio", { name: "Pool 1 item type: Link" }),
+    );
     await user.type(
       screen.getByLabelText("Pool 1 new item link"),
       "not a link",
@@ -235,7 +243,9 @@ describe("GroupEditor (pool)", () => {
       />,
     );
 
-    await user.click(screen.getByRole("radio", { name: "Link" }));
+    await user.click(
+      screen.getByRole("radio", { name: "Pool 1 item type: Link" }),
+    );
     await user.type(screen.getByLabelText("Pool 1 new item title"), "My title");
     const link = screen.getByLabelText("Pool 1 new item link");
     await user.type(link, "https://youtu.be/KsF_hdjWJjo");
@@ -314,7 +324,9 @@ describe("GroupEditor (pool)", () => {
       />,
     );
 
-    await user.click(screen.getByRole("radio", { name: "Image" }));
+    await user.click(
+      screen.getByRole("radio", { name: "Pool 1 item type: Image" }),
+    );
     await user.type(
       screen.getByLabelText("Pool 1 new item title"),
       "Attack on Titan",
@@ -360,7 +372,9 @@ describe("GroupEditor (pool)", () => {
       />,
     );
 
-    await user.click(screen.getByRole("radio", { name: "Image" }));
+    await user.click(
+      screen.getByRole("radio", { name: "Pool 1 item type: Image" }),
+    );
     // fireEvent.change (not userEvent.upload) so the non-image file bypasses the
     // input's accept="image/*" pre-filter — we're asserting the component's OWN
     // type guard, not the browser's.
@@ -386,7 +400,9 @@ describe("GroupEditor (pool)", () => {
       />,
     );
 
-    await user.click(screen.getByRole("radio", { name: "Image" }));
+    await user.click(
+      screen.getByRole("radio", { name: "Pool 1 item type: Image" }),
+    );
     await user.upload(
       screen.getByLabelText("Pool 1 new image"),
       imageFile("huge.png", "image/png", 1024 * 1024 + 1),
@@ -416,7 +432,9 @@ describe("GroupEditor (pool)", () => {
       />,
     );
 
-    await user.click(screen.getByRole("radio", { name: "Image" }));
+    await user.click(
+      screen.getByRole("radio", { name: "Pool 1 item type: Image" }),
+    );
     await user.upload(screen.getByLabelText("Pool 1 new image"), imageFile());
     await waitFor(() => expect(uploadMedia).toHaveBeenCalled());
     await user.click(screen.getByRole("button", { name: "Add" }));
@@ -440,7 +458,9 @@ describe("GroupEditor (pool)", () => {
       />,
     );
 
-    await user.click(screen.getByRole("radio", { name: "Image" }));
+    await user.click(
+      screen.getByRole("radio", { name: "Pool 1 item type: Image" }),
+    );
     await user.upload(screen.getByLabelText("Pool 1 new image"), imageFile());
 
     expect(
@@ -501,9 +521,7 @@ describe("GroupEditor restyle — accessible names stay stable", () => {
       />,
     );
 
-    expect(
-      screen.getByRole("button", { name: "Add" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Add" })).toBeInTheDocument();
   });
 });
 

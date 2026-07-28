@@ -213,7 +213,7 @@ export function VersusEditor() {
                       )
                     }
                     aria-label={t("versusPerSideRound", { index: index + 1 })}
-                    className="h-[38px] w-[54px] text-center font-semibold text-acc tabular-nums"
+                    className="h-[46px] w-[54px] text-center font-semibold text-acc tabular-nums"
                   />
                 </div>
               )}

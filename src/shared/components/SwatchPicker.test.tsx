@@ -67,7 +67,7 @@ describe("SwatchPicker", () => {
   });
 });
 
-describe("SwatchPicker (swatchStyle=\"gradient\")", () => {
+describe('SwatchPicker (swatchStyle="gradient")', () => {
   it("renders a fade-to-near-black gradient background per swatch", () => {
     render(
       <SwatchPicker
@@ -79,7 +79,7 @@ describe("SwatchPicker (swatchStyle=\"gradient\")", () => {
       />,
     );
     expect(screen.getByRole("button", { name: "#39d98a" })).toHaveStyle({
-      background: "linear-gradient(150deg, #39d98a, #0b0c0f)",
+      background: "linear-gradient(150deg, #39d98a, var(--background))",
     });
   });
 

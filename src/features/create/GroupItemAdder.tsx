@@ -85,9 +85,21 @@ export function GroupItemAdder({
           value={draftType}
           onChange={onSelectType}
           options={[
-            { value: "text", label: t("text") },
-            { value: "youtube", label: t("link") },
-            { value: "image", label: t("image") },
+            {
+              value: "text",
+              label: t("text"),
+              ariaLabel: t("itemTypeText", { index: index + 1 }),
+            },
+            {
+              value: "youtube",
+              label: t("link"),
+              ariaLabel: t("itemTypeLink", { index: index + 1 }),
+            },
+            {
+              value: "image",
+              label: t("image"),
+              ariaLabel: t("itemTypeImage", { index: index + 1 }),
+            },
           ]}
         />
         {editing && onCancelEdit && (

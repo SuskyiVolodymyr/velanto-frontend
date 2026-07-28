@@ -36,7 +36,13 @@ const EMPTY_VALUES: CreatePackValues = {
   language: "en",
   tags: [],
   groups: [{ id: "g1", name: "Pool", items: [] }],
-  rounds: [{ id: "r1", name: "", slots: [{ groupId: "g1", mode: "random", count: 2 }] }],
+  rounds: [
+    {
+      id: "r1",
+      name: "",
+      slots: [{ groupId: "g1", mode: "random", count: 2 }],
+    },
+  ],
 };
 
 // Two pools (3 elements total), two rounds, title+description filled — the
@@ -64,30 +70,53 @@ const SEEDED_VALUES: CreatePackValues = {
     },
   ],
   rounds: [
-    { id: "r1", name: "", slots: [{ groupId: "g1", mode: "manual", itemIds: ["i1", "i2"] }] },
-    { id: "r2", name: "", slots: [{ groupId: "g2", mode: "manual", itemIds: ["i3"] }] },
+    {
+      id: "r1",
+      name: "",
+      slots: [{ groupId: "g1", mode: "manual", itemIds: ["i1", "i2"] }],
+    },
+    {
+      id: "r2",
+      name: "",
+      slots: [{ groupId: "g2", mode: "manual", itemIds: ["i3"] }],
+    },
   ],
 };
 
 function Harness({
   defaultValues,
   mode = "create",
+  coverUploading = false,
 }: {
   defaultValues: CreatePackValues;
   mode?: "create" | "edit";
+  coverUploading?: boolean;
 }) {
   const methods = useForm<CreatePackValues>({ defaultValues });
   return (
     <FormProvider {...methods}>
-      <CreatePreviewPanel mode={mode} />
+      <CreatePreviewPanel
+        mode={mode}
+        coverUploading={coverUploading}
+        submitMode="publish"
+        onPublishClick={() => {}}
+      />
     </FormProvider>
   );
 }
 
-function renderPanel(defaultValues: CreatePackValues, mode?: "create" | "edit") {
+function renderPanel(
+  defaultValues: CreatePackValues,
+  mode?: "create" | "edit",
+  coverUploading?: boolean,
+) {
   return render(
     <AuthProvider>
-      <Harness defaultValues={defaultValues} mode={mode} />
+      <Harness
+        defaultValues={defaultValues}
+        mode={mode}
+        coverUploading={coverUploading}
+      />
     </AuthProvider>,
   );
 }
@@ -141,6 +170,13 @@ describe("CreatePreviewPanel", () => {
 
     const cta = await screen.findByRole("button", { name: "Publish pack" });
     expect(cta).not.toHaveAttribute("aria-disabled", "true");
+  });
+
+  it("natively disables the ready Publish CTA while the cover image is uploading", async () => {
+    renderPanel(SEEDED_VALUES, "create", true);
+
+    const cta = await screen.findByRole("button", { name: "Publish pack" });
+    expect(cta).toBeDisabled();
   });
 
   it("shows the existing Save changes label instead of the publish CTA in edit mode", async () => {

@@ -56,14 +56,14 @@ export function GroupEditor({
           onChange={(e) => onChange({ ...group, name: e.target.value })}
           placeholder={t("groupName", { index: index + 1 })}
           aria-label={t("groupName", { index: index + 1 })}
-          className="h-[38px] min-w-[140px] flex-1 rounded-[9px] border border-white/10 bg-background px-4 text-[15px] font-semibold text-foreground placeholder:text-foreground-tertiary transition-colors duration-150 focus:outline-none focus:border-acc focus-visible:ring-2 focus-visible:ring-acc/40"
+          className="h-[46px] min-w-[140px] flex-1 rounded-control border border-white/10 bg-background px-4 text-[15px] font-semibold text-foreground placeholder:text-foreground-tertiary transition-colors duration-150 focus:outline-none focus:border-acc focus-visible:ring-2 focus-visible:ring-acc/40"
         />
         {removable && (
           <button
             type="button"
             onClick={onRemove}
             aria-label={t("removeGroup", { index: index + 1 })}
-            className="flex h-[34px] w-[34px] shrink-0 items-center justify-center rounded-control border border-border text-foreground-secondary transition-colors hover:border-danger/40 hover:text-danger"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-control border border-border text-foreground-secondary transition-colors hover:border-danger/40 hover:text-danger"
           >
             ×
           </button>

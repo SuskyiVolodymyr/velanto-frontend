@@ -74,7 +74,7 @@ export function SwatchPicker({
             aria-pressed={selected}
             style={{
               background: gradient
-                ? `linear-gradient(150deg, ${color}, #0b0c0f)`
+                ? `linear-gradient(150deg, ${color}, var(--background))`
                 : color,
             }}
             className={cn(

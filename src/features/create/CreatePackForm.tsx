@@ -341,7 +341,12 @@ export function CreatePackForm({
             </div>
 
             <div className="max-w-[380px] flex-1 basis-[320px]">
-              <CreatePreviewPanel mode={mode} />
+              <CreatePreviewPanel
+                mode={mode}
+                coverUploading={coverUploading}
+                submitMode={submitMode}
+                onPublishClick={() => setSubmitMode("publish")}
+              />
             </div>
           </div>
         </div>

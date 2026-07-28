@@ -4,7 +4,10 @@ import { useTranslations } from "next-intl";
 import type { Item } from "@/src/shared/types/pack";
 import { cn } from "@/src/shared/lib/cn";
 import { mediaUrl } from "@/src/shared/lib/media-url";
-import { extractYouTubeId, youtubeThumbnailUrl } from "@/src/shared/lib/youtube";
+import {
+  extractYouTubeId,
+  youtubeThumbnailUrl,
+} from "@/src/shared/lib/youtube";
 import { EmptyState } from "@/src/shared/components/EmptyState";
 
 interface GroupItemListProps {
@@ -24,15 +27,18 @@ interface GroupItemListProps {
  */
 function ItemThumbnail({ item }: { item: Item }) {
   if (item.type === "image") {
+    const src = mediaUrl(item.value);
     return (
       <span className="relative h-[22px] w-[30px] shrink-0 overflow-hidden rounded-[5px] bg-black/30">
-        {/* eslint-disable-next-line @next/next/no-img-element -- CDN-resolved chip preview; Next <Image> adds no value at this size */}
-        <img
-          src={mediaUrl(item.value)}
-          alt=""
-          aria-hidden
-          className="absolute inset-0 h-full w-full object-cover"
-        />
+        {src && (
+          // eslint-disable-next-line @next/next/no-img-element -- CDN-resolved chip preview; Next <Image> adds no value at this size
+          <img
+            src={src}
+            alt=""
+            aria-hidden
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        )}
       </span>
     );
   }
@@ -54,7 +60,7 @@ function ItemThumbnail({ item }: { item: Item }) {
         aria-hidden="true"
         className="absolute inset-0 flex items-center justify-center"
       >
-        <span className="ml-px h-0 w-0 border-y-[3px] border-l-[5px] border-y-transparent border-l-white" />
+        <span className="ms-px h-0 w-0 border-y-[3px] border-l-[5px] border-y-transparent border-l-white" />
       </span>
     </span>
   );
@@ -97,7 +103,7 @@ export function GroupItemList({
               type="button"
               onClick={() => onEdit(item)}
               aria-label={t("editItemAria", { title: item.title })}
-              className="flex items-center gap-2 text-left hover:text-acc"
+              className="flex items-center gap-2 text-start hover:text-acc"
             >
               {(item.type === "image" || item.type === "youtube") && (
                 <ItemThumbnail item={item} />
@@ -108,7 +114,10 @@ export function GroupItemList({
               type="button"
               onClick={() => onRemove(item.id)}
               aria-label={t("removeItemAria", { title: item.title })}
-              className="flex h-[18px] w-[18px] shrink-0 items-center justify-center text-foreground-tertiary hover:text-danger"
+              // Visual glyph stays 18px to match the chip, but the tap target
+              // is widened to the 44px minimum via an invisible pseudo-element
+              // (hit-slop) rather than growing the chip itself.
+              className="relative flex h-[18px] w-[18px] shrink-0 items-center justify-center text-foreground-tertiary before:absolute before:-inset-[13px] before:content-[''] hover:text-danger"
             >
               ×
             </button>

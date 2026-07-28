@@ -15,6 +15,17 @@ export interface CreatePreviewPanelProps {
    * prop) — this component never re-derives it.
    */
   mode: "create" | "edit";
+  /** True while a cover image is uploading; mirrors `CreatePackForm`'s guard
+   * on its other submit buttons — a pending cover must not be silently
+   * dropped by a publish that races the upload. */
+  coverUploading: boolean;
+  /** Which action is in flight, so this CTA only shows "Publishing…" for its
+   * own submit and not a concurrent "Save draft" from the sticky bar. */
+  submitMode: "publish" | "draft";
+  /** Marks this click as a publish (vs. the sticky bar's draft save) before
+   * the native form submit fires — mirrors the sticky bar's own Publish
+   * button. */
+  onPublishClick: () => void;
 }
 
 /**
@@ -25,13 +36,17 @@ export interface CreatePreviewPanelProps {
  *
  * Must be rendered inside `CreatePackForm`'s `<form>` element (or otherwise
  * within the same `FormProvider`) — the CTA is a native `type="submit"`
- * button with no `onClick` of its own, so it relies on the surrounding
- * form's existing `onSubmit={handleSubmit((values) => onValid(values, false))}`
- * to actually publish/save, exactly like the form's current bottom Publish
- * button. Wiring it into that layout is a separate task; this component is
- * self-contained and only needs a `FormProvider<CreatePackValues>` ancestor.
+ * button; its `onClick` only flips `submitMode` to "publish" before the
+ * surrounding form's existing
+ * `onSubmit={handleSubmit((values) => onValid(values, false))}` actually
+ * publishes/saves, exactly like the sticky action bar's own Publish button.
  */
-export function CreatePreviewPanel({ mode }: CreatePreviewPanelProps) {
+export function CreatePreviewPanel({
+  mode,
+  coverUploading,
+  submitMode,
+  onPublishClick,
+}: CreatePreviewPanelProps) {
   const t = useTranslations("create.preview");
   const tCreate = useTranslations("create");
   const tFormat = useTranslations("formats");
@@ -51,26 +66,33 @@ export function CreatePreviewPanel({ mode }: CreatePreviewPanelProps) {
 
   const isEdit = mode === "edit";
   const blocked = !summary.canPublish;
+  const publishing =
+    !isEdit && formState.isSubmitting && submitMode === "publish";
 
   const ctaLabel = isEdit
     ? formState.isSubmitting
       ? tCreate("saving")
       : tCreate("saveChanges")
-    : blocked
-      ? t("publishBlocked")
-      : t("publishReady");
+    : publishing
+      ? tCreate("publishing")
+      : blocked
+        ? t("publishBlocked")
+        : t("publishReady");
 
   return (
     <div className="flex max-w-[380px] flex-col gap-[16px] lg:sticky lg:top-[82px]">
-      <Text variant="tertiary" className="text-[12px] font-medium tracking-[0.14em]">
+      <Text
+        variant="tertiary"
+        className="text-[12px] font-medium tracking-[0.14em]"
+      >
         {t("eyebrow")}
       </Text>
 
-      <div className="overflow-hidden rounded-[16px] border border-border bg-surface-card">
+      <div className="overflow-hidden rounded-card border border-border bg-surface-card">
         <div
           className="relative aspect-[4/3]"
           style={{
-            background: `linear-gradient(158deg, ${coverTone}, #0b0c0f 76%)`,
+            background: `linear-gradient(158deg, ${coverTone}, var(--background) 76%)`,
           }}
         >
           {coverImageKey && <CoverImage coverKey={coverImageKey} />}
@@ -160,15 +182,21 @@ export function CreatePreviewPanel({ mode }: CreatePreviewPanelProps) {
 
       <button
         type="submit"
-        // Blocked is a display gate only (mirrors the zod schema's cheapest
-        // preconditions, see create-pack.summary.ts) — never native `disabled`,
+        onClick={() => onPublishClick()}
+        // Two independent gates. `disabled` (native) covers a cover upload or
+        // an already-in-flight submit — genuinely not actionable right now,
+        // for either mode. `aria-disabled` (never native) covers the
+        // create-mode "not ready yet" case: it's a display gate only (mirrors
+        // the zod schema's cheapest preconditions, see create-pack.summary.ts)
         // so a blocked click still submits and surfaces the real per-field
-        // zod errors instead of dead-ending. Matches the JoinRoomCard anon-gate
-        // precedent (D1b-ii). Edit mode never blocks: the existing "Save
-        // changes" submit always runs the real validation on click.
+        // zod errors instead of dead-ending, matching the JoinRoomCard
+        // anon-gate precedent (D1b-ii). Edit mode never blocks that way: the
+        // existing "Save changes" submit always runs the real validation on
+        // click.
+        disabled={coverUploading || formState.isSubmitting}
         aria-disabled={!isEdit && blocked ? "true" : undefined}
         className={cn(
-          "h-[48px] w-full rounded-[12px] transition-colors",
+          "h-[48px] w-full rounded-control transition-colors disabled:cursor-not-allowed disabled:opacity-70",
           // Create mode has a second Publish control in the sticky action bar
           // that only exists below `lg` (CreatePackForm, D2) — this CTA is
           // the desktop-only counterpart there, so it hides on the same
@@ -178,7 +206,7 @@ export function CreatePreviewPanel({ mode }: CreatePreviewPanelProps) {
           !isEdit && "hidden lg:block",
           !isEdit && blocked
             ? "border border-border bg-white/[0.04] text-foreground-tertiary cursor-not-allowed"
-            : "bg-acc font-semibold text-[#0a0b0e] hover:brightness-110",
+            : "bg-acc font-semibold text-background hover:brightness-110",
         )}
       >
         {ctaLabel}

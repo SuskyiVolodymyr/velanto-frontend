@@ -57,7 +57,7 @@ export function RoundsToolbar({
       <button
         type="button"
         onClick={onAddRound}
-        className="flex h-[46px] w-full items-center justify-center rounded-[12px] border border-dashed border-white/[0.14] text-sm font-semibold text-foreground-secondary transition-colors hover:border-acc hover:text-foreground"
+        className="flex h-[46px] w-full items-center justify-center rounded-control border border-dashed border-white/[0.14] text-sm font-semibold text-foreground-secondary transition-colors hover:border-acc hover:text-foreground"
       >
         {addLabel}
       </button>
