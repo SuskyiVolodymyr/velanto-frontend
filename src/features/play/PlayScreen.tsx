@@ -5,7 +5,6 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
-import { Button } from "@/src/shared/components/Button";
 import { VersusRound } from "@/src/features/play/VersusRound";
 import { usePlaySession } from "@/src/features/play/use-play-session";
 import {
@@ -14,6 +13,7 @@ import {
 } from "@/src/features/play/play-format-copy";
 import { PlayChrome } from "@/src/features/play/PlayChrome";
 import { PlayRoundHeader } from "@/src/features/play/PlayRoundHeader";
+import { PlayConfirmBar } from "@/src/features/play/PlayConfirmBar";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { CandidateCard } from "@/src/features/play/CandidateCard";
 import { PicksSummary } from "@/src/features/play/PicksSummary";
@@ -126,19 +126,12 @@ export function PlayScreen({ pack }: { pack: Pack }) {
               </div>
             )}
 
-            <div className="mb-10 flex justify-end">
-              {/* `size="lg"` is `Button`'s real 52px/rounded-tile confirm-button
-                  variant — no more hand-rolling a raw button to dodge `cn()`
-                  being a plain join (not tailwind-merge): the size lives inside
-                  the component now, so there's nothing left to fight. */}
-              <Button
-                size="lg"
-                disabled={!session.canConfirm}
-                onClick={session.confirmPick}
-              >
-                {session.isLastRound ? t("finishRound") : t("nextRound")}
-              </Button>
-            </div>
+            <PlayConfirmBar
+              ready={session.canConfirm}
+              disabled={!session.canConfirm}
+              onConfirm={session.confirmPick}
+              confirmLabel={session.isLastRound ? t("finishRound") : t("nextRound")}
+            />
           </>
         )}
 
