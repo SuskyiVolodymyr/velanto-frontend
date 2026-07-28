@@ -18,6 +18,7 @@ import { Button, buttonClassName } from "@/src/shared/components/Button";
 import { Badge } from "@/src/shared/components/Badge";
 import { BackButton } from "@/src/shared/components/BackButton";
 import { AvatarSection } from "@/src/features/profile/AvatarSection";
+import { ProfileEditPreview } from "@/src/features/profile/ProfileEditPreview";
 
 const BIO_MAX = 280;
 const USERNAME_MAX = 16;
@@ -226,6 +227,16 @@ export function ProfileEditForm() {
           placeholder={t("bioPlaceholder")}
           className="w-full rounded-[10px] border border-border bg-surface p-3 text-sm text-foreground placeholder:text-foreground-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
         />
+
+        <div className="mt-6">
+          <ProfileEditPreview
+            username={username}
+            bio={bio}
+            role={profileQuery.data?.role}
+            trusted={profileQuery.data?.trusted}
+            avatarKey={profileQuery.data?.avatarKey}
+          />
+        </div>
 
         {saveError && (
           <Text variant="danger" className="mt-3 text-sm">

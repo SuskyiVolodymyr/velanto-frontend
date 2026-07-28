@@ -1422,6 +1422,7 @@
     "noPacksOwn": "No packs yet — create your first one!",
     "bio": "Bio",
     "bioPlaceholder": "Tell people what your packs are about.",
+    "previewHeading": "How it looks",
     "saving": "Saving…",
     "save": "Save",
     "saveError": "Couldn't save your changes. Try again.",

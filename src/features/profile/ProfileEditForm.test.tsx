@@ -331,4 +331,29 @@ describe("ProfileEditForm", () => {
     expect(usernameInput).toHaveValue("alice");
     expect(screen.getByText("@")).toBeInTheDocument();
   });
+
+  it("renders a live 'How it looks' preview that updates as the username/bio drafts change", async () => {
+    const user = userEvent.setup();
+    renderForm();
+    expect(await screen.findByText("How it looks")).toBeInTheDocument();
+    // The preview's Username renders "alice" as text content; the input's
+    // own "alice" is a form value, not text content, so getByText only ever
+    // matches the preview — confirming the preview is a real, separate
+    // render fed by the same live state.
+    expect(screen.getByText("alice")).toBeInTheDocument();
+
+    const usernameInput = screen.getByRole("textbox", { name: "Username" });
+    await user.clear(usernameInput);
+    await user.type(usernameInput, "alice2");
+    expect(await screen.findByText("alice2")).toBeInTheDocument();
+    expect(screen.queryByText("alice", { exact: true })).not.toBeInTheDocument();
+
+    const textarea = screen.getByDisplayValue("Old bio");
+    await user.clear(textarea);
+    await user.type(textarea, "New live bio");
+    // "New live bio" now matches both the (still-present) textarea content
+    // and the preview's rendered text, so assert there are exactly two — one
+    // being the preview, proving it re-rendered with the live draft.
+    expect(await screen.findAllByText("New live bio")).toHaveLength(2);
+  });
 });
