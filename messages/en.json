@@ -244,6 +244,8 @@
     "storageOfCeiling": "of {total}"
   },
   "docs": {
+    "metaTitle": "Docs — Velanto",
+    "metaDescription": "How Velanto works — building a pack, the five formats, playing, and the API for AI assistants.",
     "secOverview": "OVERVIEW",
     "secCreators": "CREATORS",
     "secPlayers": "PLAYERS",
