@@ -199,8 +199,10 @@ export function PackApprovalsTab() {
                           // click (see DataTableRow's `onClick`) — this button
                           // is a descendant of that row, so its click would
                           // bubble up and fire the row's navigation too unless
-                          // stopped here. Same pattern the reject button below
-                          // (and its inline form) needs.
+                          // stopped here. The reject toggle button just below
+                          // needs the same guard; the expanded reject-reason
+                          // form (rendered as a sibling of the row, not a
+                          // descendant) does not.
                           event.stopPropagation();
                           approve.mutate(pack.id);
                         }}
