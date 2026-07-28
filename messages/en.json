@@ -375,6 +375,7 @@
   },
   "settings": {
     "title": "Preferences",
+    "intro": "Everything about your account, in one place. Changes save as you make them — no submit button, except where a password is required.",
     "languageHeading": "Language",
     "languageLabel": "Interface language",
     "languageHint": "Changes the language of menus and buttons. Pack content stays in the language its creator wrote it.",
