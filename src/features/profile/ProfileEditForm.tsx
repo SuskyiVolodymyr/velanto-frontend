@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Check } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import {
@@ -13,7 +14,9 @@ import { messageFromError } from "@/src/shared/lib/messageFromError";
 import { ApiError } from "@/src/shared/lib/api-client";
 import { USERNAME_PATTERN } from "@/src/features/auth/auth.schema";
 import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
+import { Button, buttonClassName } from "@/src/shared/components/Button";
+import { Badge } from "@/src/shared/components/Badge";
+import { BackButton } from "@/src/shared/components/BackButton";
 import { AvatarSection } from "@/src/features/profile/AvatarSection";
 
 const BIO_MAX = 280;
@@ -24,7 +27,6 @@ export function ProfileEditForm() {
   const tAuth = useTranslations("auth");
   const tAuthErrors = useTranslations("auth.errors");
   const { user, status: authStatus, patchUser } = useAuth();
-  const router = useRouter();
 
   const profileQuery = useMyProfile(user?.id ?? "", {
     enabled: authStatus === "authenticated" && !!user,
@@ -33,11 +35,25 @@ export function ProfileEditForm() {
   // fetched value until then (avoids seeding local state from the query in an
   // effect).
   const [draft, setDraft] = useState<string | null>(null);
-  const bio = draft ?? profileQuery.data?.bio ?? "";
+  const savedBio = profileQuery.data?.bio ?? "";
+  const bio = draft ?? savedBio;
   const [usernameDraft, setUsernameDraft] = useState<string | null>(null);
   const currentUsername = profileQuery.data?.username ?? "";
   const username = usernameDraft ?? currentUsername;
-  const [usernameError, setUsernameError] = useState<string | null>(null);
+  // True once the username field has been touched (typed in or blurred) once —
+  // gates the live format error so it doesn't show before the user has done
+  // anything (D8: validate on every keystroke once touched, not only on submit).
+  const [usernameTried, setUsernameTried] = useState(false);
+  // Server-side error only (409-taken, or any other backend failure from the
+  // last submit attempt) — the format error is derived live below instead of
+  // being stored here.
+  const [usernameServerError, setUsernameServerError] = useState<
+    string | null
+  >(null);
+  // Stays true until the next edit (bio or username) — an inline confirmation,
+  // not a toast, per the mock's "stays until the next edit" spec. Unlike
+  // CreatePackForm's `justSaved` this deliberately has no auto-revert timer.
+  const [saved, setSaved] = useState(false);
 
   const saveMutation = useUpdateBio(user?.id ?? "");
   const changeUsername = useChangeUsername(user?.id ?? "");
@@ -46,9 +62,34 @@ export function ProfileEditForm() {
     ? messageFromError(saveMutation.error, { fallback: t("saveError") })
     : null;
 
+  const trimmedUsername = username.trim();
+  const usernameDirty = trimmedUsername !== currentUsername;
+  const bioDirty = bio !== savedBio;
+  const dirty = bioDirty || usernameDirty;
+  const usernameFormatInvalid =
+    usernameDirty && !USERNAME_PATTERN.test(trimmedUsername);
+  const usernameFormatError =
+    usernameTried && usernameFormatInvalid ? tAuthErrors("username") : null;
+  const usernameError = usernameServerError ?? usernameFormatError;
+  const canSave = dirty && !usernameFormatInvalid;
+
+  const cancelHref = user ? `/users/${user.id}` : "/profile";
+
+  function handleBioChange(event: React.ChangeEvent<HTMLTextAreaElement>) {
+    setDraft(event.target.value.slice(0, BIO_MAX));
+    setSaved(false);
+  }
+
+  function handleUsernameChange(event: React.ChangeEvent<HTMLInputElement>) {
+    setUsernameDraft(event.target.value.slice(0, USERNAME_MAX));
+    setUsernameTried(true);
+    setUsernameServerError(null);
+    setSaved(false);
+  }
+
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
-    setUsernameError(null);
+    setUsernameServerError(null);
     saveMutation.reset();
 
     const nextUsername = username.trim();
@@ -56,7 +97,7 @@ export function ProfileEditForm() {
     // format client-side first so an obviously bad handle never round-trips.
     if (nextUsername !== currentUsername) {
       if (!USERNAME_PATTERN.test(nextUsername)) {
-        setUsernameError(tAuthErrors("username"));
+        setUsernameTried(true);
         return;
       }
       try {
@@ -64,7 +105,7 @@ export function ProfileEditForm() {
         // Reflect the new handle in header chrome immediately.
         patchUser({ username: nextUsername });
       } catch (err) {
-        setUsernameError(
+        setUsernameServerError(
           err instanceof ApiError && err.status === 409
             ? t("usernameTaken")
             : messageFromError(err, { fallback: t("saveError") }),
@@ -73,10 +114,12 @@ export function ProfileEditForm() {
       }
     }
 
-    // Straight to the merged profile page (/users/[id]); falls back to /profile
-    // (which redirects there anyway) if the id somehow isn't loaded yet.
+    // Stay on the page and show an inline "Saved" confirmation instead of
+    // navigating away — the mock's preview card (T10) needs the draft state to
+    // stick around, and a redirect-on-save would give the confirmation no time
+    // to be seen at all.
     saveMutation.mutate(bio, {
-      onSuccess: () => router.push(user ? `/users/${user.id}` : "/profile"),
+      onSuccess: () => setSaved(true),
     });
   }
 
@@ -101,70 +144,114 @@ export function ProfileEditForm() {
   }
 
   return (
-    <form
-      onSubmit={handleSubmit}
-      className="mx-auto w-full max-w-2xl px-7 py-10"
-    >
-      <Text as="h1" variant="title" className="mb-6 text-2xl">
-        {t("editProfile")}
-      </Text>
+    <>
+      <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
+        <div className="mx-auto flex w-full max-w-[680px] items-center gap-2 px-7 py-3">
+          <BackButton href={cancelHref} label={t("backToProfile")} />
+          <Text variant="tertiary" aria-hidden className="text-sm">
+            /
+          </Text>
+          <Text as="h1" variant="secondary" className="text-sm font-semibold">
+            {t("editProfile")}
+          </Text>
+        </div>
+      </div>
 
-      {profileQuery.data && (
-        <AvatarSection
-          userId={user?.id ?? ""}
-          username={profileQuery.data.username}
-          avatarKey={profileQuery.data.avatarKey ?? null}
+      <form
+        onSubmit={handleSubmit}
+        className="mx-auto w-full max-w-[680px] px-7 py-10"
+      >
+        {profileQuery.data && (
+          <AvatarSection
+            userId={user?.id ?? ""}
+            username={profileQuery.data.username}
+            avatarKey={profileQuery.data.avatarKey ?? null}
+          />
+        )}
+
+        <div className="mb-2 mt-6 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <label htmlFor="profile-username">
+              <Text variant="secondary" className="text-xs">
+                {tAuth("username")}
+              </Text>
+            </label>
+            {usernameDirty && (
+              <Badge variant="accent" className="text-[10px]">
+                {t("usernameChangedPill")}
+              </Badge>
+            )}
+          </div>
+          <Text variant="tertiary" className="text-xs">
+            {username.length}/{USERNAME_MAX}
+          </Text>
+        </div>
+        <div className="relative">
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-y-0 start-3 flex items-center text-sm text-foreground-tertiary"
+          >
+            @
+          </span>
+          <input
+            id="profile-username"
+            type="text"
+            value={username}
+            onChange={handleUsernameChange}
+            onBlur={() => setUsernameTried(true)}
+            maxLength={USERNAME_MAX}
+            autoComplete="username"
+            className="w-full rounded-[10px] border border-border bg-surface p-3 ps-7 text-sm text-foreground placeholder:text-foreground-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
+          />
+        </div>
+        {usernameError && (
+          <Text variant="danger" className="mt-2 text-sm">
+            {usernameError}
+          </Text>
+        )}
+
+        <label className="mb-2 mt-6 flex items-center justify-between">
+          <Text variant="secondary" className="text-xs">
+            {t("bio")}
+          </Text>
+          <Text variant="tertiary" className="text-xs">
+            {bio.length}/{BIO_MAX}
+          </Text>
+        </label>
+        <textarea
+          value={bio}
+          onChange={handleBioChange}
+          maxLength={BIO_MAX}
+          rows={4}
+          placeholder={t("bioPlaceholder")}
+          className="w-full rounded-[10px] border border-border bg-surface p-3 text-sm text-foreground placeholder:text-foreground-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
         />
-      )}
 
-      <label htmlFor="profile-username" className="mb-2 block">
-        <Text variant="secondary" className="text-xs">
-          {tAuth("username")}
-        </Text>
-      </label>
-      <input
-        id="profile-username"
-        type="text"
-        value={username}
-        onChange={(event) =>
-          setUsernameDraft(event.target.value.slice(0, USERNAME_MAX))
-        }
-        maxLength={USERNAME_MAX}
-        autoComplete="username"
-        className="w-full rounded-[10px] border border-border bg-surface p-3 text-sm text-foreground placeholder:text-foreground-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
-      />
-      {usernameError && (
-        <Text variant="danger" className="mt-2 text-sm">
-          {usernameError}
-        </Text>
-      )}
+        {saveError && (
+          <Text variant="danger" className="mt-3 text-sm">
+            {saveError}
+          </Text>
+        )}
 
-      <label className="mb-2 mt-6 flex items-center justify-between">
-        <Text variant="secondary" className="text-xs">
-          {t("bio")}
-        </Text>
-        <Text variant="tertiary" className="text-xs">
-          {bio.length}/{BIO_MAX}
-        </Text>
-      </label>
-      <textarea
-        value={bio}
-        onChange={(event) => setDraft(event.target.value.slice(0, BIO_MAX))}
-        maxLength={BIO_MAX}
-        rows={4}
-        placeholder={t("bioPlaceholder")}
-        className="w-full rounded-[10px] border border-border bg-surface p-3 text-sm text-foreground placeholder:text-foreground-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
-      />
+        <div className="mt-6 flex items-center gap-3">
+          <Button type="submit" loading={pending} disabled={!canSave}>
+            {pending ? t("saving") : t("save")}
+          </Button>
+          <Link href={cancelHref} className={buttonClassName("outline")}>
+            {t("cancel")}
+          </Link>
+        </div>
 
-      {saveError && (
-        <Text variant="danger" className="mt-3 text-sm">
-          {saveError}
-        </Text>
-      )}
-
-      <Button type="submit" loading={pending} className="mt-6 w-fit">
-        {pending ? t("saving") : t("save")}
-      </Button>
-    </form>
+        {saved && (
+          <p
+            role="status"
+            className="mt-3 flex items-center gap-1.5 text-sm font-semibold text-acc"
+          >
+            <Check size={16} aria-hidden />
+            {t("editSaved")}
+          </p>
+        )}
+      </form>
+    </>
   );
 }

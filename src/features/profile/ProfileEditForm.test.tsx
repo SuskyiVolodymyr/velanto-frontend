@@ -78,7 +78,7 @@ describe("ProfileEditForm", () => {
     expect(await screen.findByDisplayValue("Old bio")).toBeInTheDocument();
   });
 
-  it("saves the new bio and redirects to the profile page on success", async () => {
+  it("saves the new bio and shows an inline Saved confirmation without navigating", async () => {
     const user = userEvent.setup();
     renderForm();
     const textarea = await screen.findByDisplayValue("Old bio");
@@ -89,7 +89,21 @@ describe("ProfileEditForm", () => {
     await waitFor(() =>
       expect(usersClient.updateProfile).toHaveBeenCalledWith("New bio"),
     );
-    await waitFor(() => expect(push).toHaveBeenCalledWith("/users/u1"));
+    expect(await screen.findByText("Saved")).toBeInTheDocument();
+    expect(push).not.toHaveBeenCalled();
+  });
+
+  it("keeps the Saved confirmation visible until the next edit", async () => {
+    const user = userEvent.setup();
+    renderForm();
+    const textarea = await screen.findByDisplayValue("Old bio");
+    await user.clear(textarea);
+    await user.type(textarea, "New bio");
+    await user.click(screen.getByRole("button", { name: /save/i }));
+    await screen.findByText("Saved");
+
+    await user.type(textarea, "!");
+    expect(screen.queryByText("Saved")).not.toBeInTheDocument();
   });
 
   it("shows a character count against the 280 limit", async () => {
@@ -104,7 +118,8 @@ describe("ProfileEditForm", () => {
     );
     const user = userEvent.setup();
     renderForm();
-    await screen.findByDisplayValue("Old bio");
+    const textarea = await screen.findByDisplayValue("Old bio");
+    await user.type(textarea, "!");
     await user.click(screen.getByRole("button", { name: /save/i }));
     expect(await screen.findByText(/couldn.t save/i)).toBeInTheDocument();
   });
@@ -148,7 +163,7 @@ describe("ProfileEditForm", () => {
     ).toHaveValue("alice");
   });
 
-  it("changes the username (then saves bio) and redirects on success", async () => {
+  it("changes the username (then saves bio) and shows Saved without navigating", async () => {
     const user = userEvent.setup();
     renderForm();
     const usernameInput = await screen.findByRole("textbox", {
@@ -161,7 +176,8 @@ describe("ProfileEditForm", () => {
     await waitFor(() =>
       expect(usersClient.changeUsername).toHaveBeenCalledWith("alice2"),
     );
-    await waitFor(() => expect(push).toHaveBeenCalledWith("/users/u1"));
+    expect(await screen.findByText("Saved")).toBeInTheDocument();
+    expect(push).not.toHaveBeenCalled();
   });
 
   it("does not call the username endpoint when the username is unchanged", async () => {
@@ -172,7 +188,7 @@ describe("ProfileEditForm", () => {
     await user.type(textarea, "New bio");
     await user.click(screen.getByRole("button", { name: /save/i }));
 
-    await waitFor(() => expect(push).toHaveBeenCalledWith("/users/u1"));
+    await screen.findByText("Saved");
     expect(usersClient.changeUsername).not.toHaveBeenCalled();
   });
 
@@ -196,7 +212,26 @@ describe("ProfileEditForm", () => {
     expect(push).not.toHaveBeenCalled();
   });
 
-  it("rejects an invalid username format without calling the backend", async () => {
+  it("shows the format error live once the username field is touched, before any submit", async () => {
+    const user = userEvent.setup();
+    renderForm();
+    const usernameInput = await screen.findByRole("textbox", {
+      name: "Username",
+    });
+    expect(screen.queryByText(/2-16 characters/i)).not.toBeInTheDocument();
+
+    await user.clear(usernameInput);
+    await user.type(usernameInput, "a");
+
+    await waitFor(() =>
+      expect(screen.getByText(/2-16 characters/i)).toBeInTheDocument(),
+    );
+    expect(screen.getByRole("button", { name: /save/i })).toBeDisabled();
+    expect(usersClient.changeUsername).not.toHaveBeenCalled();
+    expect(push).not.toHaveBeenCalled();
+  });
+
+  it("rejects an invalid username format without calling the backend on submit", async () => {
     const user = userEvent.setup();
     renderForm();
     const usernameInput = await screen.findByRole("textbox", {
@@ -204,11 +239,10 @@ describe("ProfileEditForm", () => {
     });
     await user.clear(usernameInput);
     await user.type(usernameInput, "a");
+    // The Save button is disabled while the format is invalid, so a click is a
+    // no-op — asserting this instead of relying only on the disabled state.
     await user.click(screen.getByRole("button", { name: /save/i }));
 
-    await waitFor(() =>
-      expect(screen.getByText(/2-16 characters/i)).toBeInTheDocument(),
-    );
     expect(usersClient.changeUsername).not.toHaveBeenCalled();
     expect(push).not.toHaveBeenCalled();
   });
@@ -229,5 +263,72 @@ describe("ProfileEditForm", () => {
     );
     renderForm();
     expect(await screen.findByText(/couldn.t load/i)).toBeInTheDocument();
+  });
+
+  it("shows a CHANGED pill only once the username differs from the saved value", async () => {
+    const user = userEvent.setup();
+    renderForm();
+    const usernameInput = await screen.findByRole("textbox", {
+      name: "Username",
+    });
+    expect(screen.queryByText("Changed")).not.toBeInTheDocument();
+
+    await user.clear(usernameInput);
+    await user.type(usernameInput, "alice2");
+    expect(await screen.findByText("Changed")).toBeInTheDocument();
+
+    await user.clear(usernameInput);
+    await user.type(usernameInput, "alice");
+    expect(screen.queryByText("Changed")).not.toBeInTheDocument();
+  });
+
+  it("disables Save until something is dirty, and re-disables on an invalid dirty username", async () => {
+    const user = userEvent.setup();
+    renderForm();
+    const textarea = await screen.findByDisplayValue("Old bio");
+    const saveButton = screen.getByRole("button", { name: /save/i });
+    expect(saveButton).toBeDisabled();
+
+    await user.type(textarea, "!");
+    expect(saveButton).toBeEnabled();
+
+    // Undo the edit back to the exact saved value — dirty compares against the
+    // saved bio, not "has ever been touched", so this re-disables Save.
+    await user.type(textarea, "{backspace}");
+    expect(saveButton).toBeDisabled();
+
+    const usernameInput = screen.getByRole("textbox", { name: "Username" });
+    await user.clear(usernameInput);
+    await user.type(usernameInput, "a");
+    expect(saveButton).toBeDisabled();
+  });
+
+  it("renders a Cancel link back to the profile that discards in-progress drafts", async () => {
+    renderForm();
+    await screen.findByDisplayValue("Old bio");
+    expect(screen.getByRole("link", { name: "Cancel" })).toHaveAttribute(
+      "href",
+      "/users/u1",
+    );
+  });
+
+  it("renders a sticky back-to-profile header with an Edit profile crumb", async () => {
+    renderForm();
+    await screen.findByDisplayValue("Old bio");
+    expect(
+      screen.getByRole("link", { name: "Back to profile" }),
+    ).toHaveAttribute("href", "/users/u1");
+    expect(
+      screen.getByRole("heading", { name: "Edit profile" }),
+    ).toBeInTheDocument();
+  });
+
+  it("shows a fixed @ prefix beside the username input without it being part of the value", async () => {
+    renderForm();
+    const usernameInput = await screen.findByRole("textbox", {
+      name: "Username",
+    });
+    expect(usernameInput).toHaveValue("alice");
+    expect(screen.getByText("@")).toBeInTheDocument();
   });
 });
