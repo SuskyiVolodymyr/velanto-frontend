@@ -199,7 +199,17 @@ export function StaffTab() {
       const query = value.startsWith("@") ? value.slice(1) : value;
       const found = await adminClient.listUsers({ q: query, limit: 50 });
       if (found.items.length === 0) throw new Error(t("addStaffNoMatchOther"));
-      if (found.items.length === 1) return { id: found.items[0].id };
+      // `q` is a substring search, so a single hit is not necessarily an
+      // exact match (e.g. "alic" substring-matching only "alice") — the
+      // email path above already requires exactness before auto-resolving,
+      // and a privilege grant deserves the same bar. Only an exact,
+      // case-insensitive username match resolves directly; anything else
+      // (including a lone substring hit) goes through the disambiguation
+      // dropdown so a human confirms the actual account before it's staffed.
+      const exactMatch = found.items.find(
+        (row) => row.username.toLowerCase() === query.toLowerCase(),
+      );
+      if (exactMatch) return { id: exactMatch.id };
       return { candidates: found.items };
     },
     onSuccess: (result) => {
@@ -305,10 +315,7 @@ export function StaffTab() {
                     <Text className="truncate text-[13px] font-semibold">
                       {row.username}
                     </Text>
-                    <Text
-                      variant="tertiary"
-                      className="truncate text-[11.5px]"
-                    >
+                    <Text variant="tertiary" className="truncate text-[11.5px]">
                       {row.email}
                     </Text>
                   </span>

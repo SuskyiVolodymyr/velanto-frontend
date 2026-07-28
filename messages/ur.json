@@ -96,6 +96,7 @@
     "roundMappingHeading": "راؤنڈز",
     "roundLabelFallback": "راؤنڈ {index}",
     "roundRandomPool": "بے ترتیب پول",
+    "contentsRandomPoolSlot": "یہ سلاٹ ہر بار کھیلنے پر ایک بے ترتیب پول منتخب کرتا ہے — کون سا پول استعمال ہوا، یہ کہیں محفوظ نہیں ہوتا، اس لیے اس کا مواد یہاں نہیں دکھایا جا سکتا۔",
     "loadingReportedContent": "رپورٹ شدہ مواد لوڈ ہو رہا ہے…",
     "reportedContentError": "اس رپورٹ کا مواد لوڈ نہیں ہو سکا۔ بعد میں دوبارہ کوشش کریں۔",
     "reportedUserHeading": "رپورٹ شدہ اکاؤنٹ",
@@ -103,7 +104,8 @@
     "reportedUserPacks": "پیکس",
     "reportedUserComments": "تبصرے",
     "reportedUserReportsAgainst": "اُن کے خلاف رپورٹس",
-    "reportedUserReportsFiled": "درج کردہ رپورٹس"
+    "reportedUserReportsFiled": "درج کردہ رپورٹس",
+    "reportedUserRestricted": "رپورٹ شدہ اکاؤنٹ کی تفصیلات صرف مینیجرز اور ایڈمنز دیکھ سکتے ہیں۔"
   },
   "admin": {
     "panelEyebrow": "ایڈمن پینل",

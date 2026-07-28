@@ -48,20 +48,30 @@ interface Section {
    * while the visible item list is filtered down.
    */
   poolItemCount?: number;
+  /**
+   * A `groupMode: "random"` slot (`slot.groupId` absent) has its POOL itself
+   * chosen fresh at play time from whichever pools aren't pinned elsewhere
+   * (`round-sampling.ts::resolveRoundSelections`) — not just its items. That
+   * choice is never recorded, so unlike a `random`-mode slot's items (D10,
+   * still resolvable via its fixed pool), there is no pool here to show
+   * contents for at all. This section renders a `contentsRandomPoolSlot`
+   * explanation instead of a false-empty or fabricated pool.
+   */
+  unresolvedPool?: boolean;
 }
 
 /**
  * Builds the pool/slot sections to render. Full-pack mode (`roundIndex`
  * absent) shows every pool as-is. Round-scoped mode resolves only that
  * round's slots: a `manual` slot shows its pinned `itemIds` in order (that
- * *is* exactly what was shown); a `random` slot shows every item currently in
- * its pool, since there is no per-play record of which items a specific
- * playthrough actually drew (D10) — count-only would misrepresent that as
- * "this is what appeared".
- *
- * A slot whose `groupId` doesn't resolve to any pool is skipped rather than
- * thrown on — shouldn't happen given data integrity, but this is read-only
- * moderator tooling and must never crash on a stale/malformed pack.
+ * *is* exactly what was shown); a `random`-mode slot with a fixed pool shows
+ * every item currently in that pool, since there is no per-play record of
+ * which items a specific playthrough actually drew (D10) — count-only would
+ * misrepresent that as "this is what appeared"; a `groupMode: "random"` slot
+ * (no fixed `groupId` at all — the pool itself is chosen at play time, per
+ * `round-sampling.ts`) has no pool to show contents for and gets its own
+ * `unresolvedPool` section instead of silently vanishing (which would make a
+ * round with real content read as having none).
  */
 function buildSections(pack: Pack, roundIndex?: number): Section[] {
   if (roundIndex === undefined) {
@@ -78,7 +88,15 @@ function buildSections(pack: Pack, roundIndex?: number): Section[] {
   const sections: Section[] = [];
   round.slots.forEach((slot, index) => {
     const pool = pack.groups.find((group) => group.id === slot.groupId);
-    if (!pool) return;
+    if (!pool) {
+      sections.push({
+        key: `${round.id}-slot-${index}`,
+        poolName: "",
+        items: [],
+        unresolvedPool: true,
+      });
+      return;
+    }
 
     if (slot.mode === "manual") {
       const items = (slot.itemIds ?? [])
@@ -230,6 +248,19 @@ export function PackContentsPreview({
 
       <div className="flex flex-col gap-5">
         {sections.map((section) => {
+          if (section.unresolvedPool) {
+            return (
+              <section key={section.key} className="flex flex-col gap-2.5">
+                <Text as="h3" variant="title" className="text-base">
+                  {t("roundRandomPool")}
+                </Text>
+                <Text variant="tertiary" className="text-sm">
+                  {t("contentsRandomPoolSlot")}
+                </Text>
+              </section>
+            );
+          }
+
           const filteredItems = section.items.filter((item) =>
             matchesFilters(item, normalizedQuery, activeTypes),
           );

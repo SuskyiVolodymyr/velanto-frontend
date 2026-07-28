@@ -110,11 +110,25 @@ function reportedPack(overrides: Partial<Pack> = {}): Pack {
       },
     ],
     rounds: [
-      { id: "rnd1", name: "", slots: [{ groupId: "g1", mode: "manual", itemIds: ["i1"] }] },
-      { id: "rnd2", name: "", slots: [{ groupId: "g2", mode: "manual", itemIds: ["i2"] }] },
+      {
+        id: "rnd1",
+        name: "",
+        slots: [{ groupId: "g1", mode: "manual", itemIds: ["i1"] }],
+      },
+      {
+        id: "rnd2",
+        name: "",
+        slots: [{ groupId: "g2", mode: "manual", itemIds: ["i2"] }],
+      },
     ],
     authorId: "a1",
-    author: { id: "a1", username: "author1", avatarKey: null, role: "user", trusted: false },
+    author: {
+      id: "a1",
+      username: "author1",
+      avatarKey: null,
+      role: "user",
+      trusted: false,
+    },
     createdAt: "2020-01-01T00:00:00.000Z",
     submittedAt: "2026-01-01T00:00:00.000Z",
     totalPlays: 0,
@@ -129,7 +143,9 @@ function reportedPack(overrides: Partial<Pack> = {}): Pack {
   };
 }
 
-function reportedUser(overrides: Partial<AdminUserDetail> = {}): AdminUserDetail {
+function reportedUser(
+  overrides: Partial<AdminUserDetail> = {},
+): AdminUserDetail {
   return {
     id: "user-1",
     username: "reporteduser",
@@ -155,13 +171,13 @@ function reportedUser(overrides: Partial<AdminUserDetail> = {}): AdminUserDetail
   };
 }
 
-function mockAuth() {
+function mockAuth(role: "moderator" | "manager" | "admin" = "moderator") {
   mockedUseAuth.mockReturnValue({
     user: {
       id: "mod-1",
       email: "m@x.com",
       username: "mod",
-      role: "moderator",
+      role,
       createdAt: "",
     },
     status: "authenticated",
@@ -422,28 +438,48 @@ describe("ReportDetailScreen", () => {
     expect(mockedPacksClient.getById).toHaveBeenCalledWith("pack-1");
   });
 
-  it("fetches and renders a compact account summary for a user-type report (T7/D8)", async () => {
-    mockAuth();
-    mockedReportsClient.getById.mockResolvedValue(userReport);
-    mockedAdminClient.userDetail.mockResolvedValue(reportedUser());
-    renderScreen(<ReportDetailScreen reportId="r2" />);
+  it("fetches and renders a compact account summary for a user-type report, for a manager/admin viewer (T7/D8)", async () => {
+    // adminClient.userDetail (GET /admin/users/:id) is manager/admin-only
+    // server-side — this component's own manager/admin gate, not the
+    // moderator+ gate ReportDetailScreen itself uses.
+    for (const role of ["manager", "admin"] as const) {
+      mockAuth(role);
+      mockedReportsClient.getById.mockResolvedValue(userReport);
+      mockedAdminClient.userDetail.mockResolvedValue(reportedUser());
+      const { unmount } = renderScreen(<ReportDetailScreen reportId="r2" />);
 
-    expect(await screen.findByText("reporteduser")).toBeInTheDocument();
-    expect(screen.getByText(/joined 01-01-2026/i)).toBeInTheDocument();
-    // Aggregate moderation counts (D9) — not an itemized list.
-    expect(screen.getByText("6")).toBeInTheDocument();
-    expect(mockedAdminClient.userDetail).toHaveBeenCalledWith("user-1");
-    expect(screen.queryAllByRole("listitem")).toHaveLength(0);
+      expect(await screen.findByText("reporteduser")).toBeInTheDocument();
+      expect(screen.getByText(/joined 01-01-2026/i)).toBeInTheDocument();
+      // Aggregate moderation counts (D9) — not an itemized list.
+      expect(screen.getByText("6")).toBeInTheDocument();
+      expect(mockedAdminClient.userDetail).toHaveBeenCalledWith("user-1");
+      expect(screen.queryAllByRole("listitem")).toHaveLength(0);
+      unmount();
+    }
   });
 
   it("does not fetch the target pack or user for a user-type or pack-type report respectively", async () => {
-    mockAuth();
+    mockAuth("admin");
     mockedReportsClient.getById.mockResolvedValue(userReport);
     mockedAdminClient.userDetail.mockResolvedValue(reportedUser());
     renderScreen(<ReportDetailScreen reportId="r2" />);
 
     await screen.findByText("reporteduser");
     expect(mockedPacksClient.getById).not.toHaveBeenCalled();
+  });
+
+  it("does not call adminClient.userDetail for a moderator viewer on a user-type report — that endpoint is manager/admin-only server-side", async () => {
+    mockAuth("moderator");
+    mockedReportsClient.getById.mockResolvedValue(userReport);
+    renderScreen(<ReportDetailScreen reportId="r2" />);
+
+    expect(
+      await screen.findByText(
+        "Only managers and admins can view reported account details.",
+      ),
+    ).toBeInTheDocument();
+    expect(mockedAdminClient.userDetail).not.toHaveBeenCalled();
+    expect(screen.queryByText("reporteduser")).not.toBeInTheDocument();
   });
 
   it("keeps the summary and queue actions rendering while the content preview is still loading", async () => {
@@ -454,9 +490,7 @@ describe("ReportDetailScreen", () => {
     renderScreen(<ReportDetailScreen reportId="r1" />);
 
     expect(await screen.findByText("looks fake")).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Review" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Review" })).toBeInTheDocument();
   });
 
   it("shows an inline error for the content preview without blocking the rest of the screen when the target pack fetch fails", async () => {
@@ -466,9 +500,7 @@ describe("ReportDetailScreen", () => {
     renderScreen(<ReportDetailScreen reportId="r1" />);
 
     expect(await screen.findByText("looks fake")).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Review" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Review" })).toBeInTheDocument();
     expect(
       await screen.findByText(/couldn't load this report's content/i),
     ).toBeInTheDocument();

@@ -96,6 +96,7 @@
     "roundMappingHeading": "Rounds",
     "roundLabelFallback": "Round {index}",
     "roundRandomPool": "Random pool",
+    "contentsRandomPoolSlot": "This slot draws from a randomly chosen pool each play — which pool it used isn't recorded, so its contents can't be shown here.",
     "loadingReportedContent": "Loading reported content…",
     "reportedContentError": "Couldn't load this report's content. Try again later.",
     "reportedUserHeading": "Reported account",
@@ -103,7 +104,8 @@
     "reportedUserPacks": "Packs",
     "reportedUserComments": "Comments",
     "reportedUserReportsAgainst": "Reports against",
-    "reportedUserReportsFiled": "Reports filed"
+    "reportedUserReportsFiled": "Reports filed",
+    "reportedUserRestricted": "Only managers and admins can view reported account details."
   },
   "admin": {
     "panelEyebrow": "Admin panel",

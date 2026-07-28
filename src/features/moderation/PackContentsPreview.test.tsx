@@ -39,23 +39,30 @@ describe("PackContentsPreview", () => {
             id: "g1",
             name: "Openings",
             items: [
-              { id: "i1", type: "text", title: "Guren no Yumiya", value: "Guren no Yumiya" },
+              {
+                id: "i1",
+                type: "text",
+                title: "Guren no Yumiya",
+                value: "Guren no Yumiya",
+              },
             ],
           },
           {
             id: "g2",
             name: "Endings",
-            items: [
-              { id: "i2", type: "text", title: "Redo", value: "Redo" },
-            ],
+            items: [{ id: "i2", type: "text", title: "Redo", value: "Redo" }],
           },
         ],
       });
 
       render(<PackContentsPreview pack={p} />);
 
-      expect(screen.getByRole("heading", { name: "Openings" })).toBeInTheDocument();
-      expect(screen.getByRole("heading", { name: "Endings" })).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "Openings" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "Endings" }),
+      ).toBeInTheDocument();
       expect(screen.getByText("Guren no Yumiya")).toBeInTheDocument();
       expect(screen.getByText("Redo")).toBeInTheDocument();
     });
@@ -67,14 +74,24 @@ describe("PackContentsPreview", () => {
             id: "g1",
             name: "Mixed pool",
             items: [
-              { id: "i1", type: "text", title: "A text item", value: "A text item" },
+              {
+                id: "i1",
+                type: "text",
+                title: "A text item",
+                value: "A text item",
+              },
               {
                 id: "i2",
                 type: "youtube",
                 title: "A video item",
                 value: "https://youtu.be/dQw4w9WgXcQ",
               },
-              { id: "i3", type: "image", title: "An image item", value: "media/item/abc.webp" },
+              {
+                id: "i3",
+                type: "image",
+                title: "An image item",
+                value: "media/item/abc.webp",
+              },
             ],
           },
         ],
@@ -82,9 +99,15 @@ describe("PackContentsPreview", () => {
 
       render(<PackContentsPreview pack={p} />);
 
-      expect(screen.getByRole("img", { name: "Text item" })).toBeInTheDocument();
-      expect(screen.getByRole("img", { name: "YouTube item" })).toBeInTheDocument();
-      expect(screen.getByRole("img", { name: "Image item" })).toBeInTheDocument();
+      expect(
+        screen.getByRole("img", { name: "Text item" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("img", { name: "YouTube item" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("img", { name: "Image item" }),
+      ).toBeInTheDocument();
     });
 
     it("shows an empty state for a pool with no items", () => {
@@ -94,8 +117,12 @@ describe("PackContentsPreview", () => {
 
       render(<PackContentsPreview pack={p} />);
 
-      expect(screen.getByRole("heading", { name: "Empty pool" })).toBeInTheDocument();
-      expect(screen.getByText("This pool has no items yet.")).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "Empty pool" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText("This pool has no items yet."),
+      ).toBeInTheDocument();
     });
 
     it("shows an overall empty state when the pack has no pools", () => {
@@ -123,7 +150,9 @@ describe("PackContentsPreview", () => {
           {
             id: "g2",
             name: "Other pool",
-            items: [{ id: "x", type: "text", title: "Item X", value: "Item X" }],
+            items: [
+              { id: "x", type: "text", title: "Item X", value: "Item X" },
+            ],
           },
         ],
         rounds: [
@@ -144,8 +173,12 @@ describe("PackContentsPreview", () => {
 
       render(<PackContentsPreview pack={p} roundIndex={0} />);
 
-      expect(screen.getByRole("heading", { name: "Round pool" })).toBeInTheDocument();
-      expect(screen.queryByRole("heading", { name: "Other pool" })).not.toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "Round pool" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.queryByRole("heading", { name: "Other pool" }),
+      ).not.toBeInTheDocument();
       expect(screen.queryByText("Item X")).not.toBeInTheDocument();
     });
 
@@ -159,7 +192,9 @@ describe("PackContentsPreview", () => {
       expect(screen.getByText("Item A")).toBeInTheDocument();
       expect(screen.queryByText("Item B")).not.toBeInTheDocument();
 
-      const titles = screen.getAllByText(/^Item [A-Z]$/).map((el) => el.textContent);
+      const titles = screen
+        .getAllByText(/^Item [A-Z]$/)
+        .map((el) => el.textContent);
       expect(titles).toEqual(["Item C", "Item A"]);
     });
 
@@ -190,12 +225,22 @@ describe("PackContentsPreview", () => {
       expect(screen.getByText("Item A")).toBeInTheDocument();
       expect(screen.getByText("Item B")).toBeInTheDocument();
       expect(screen.getByText("Item C")).toBeInTheDocument();
-      expect(screen.getByText("Drawn randomly · 3 items in this pool")).toBeInTheDocument();
+      expect(
+        screen.getByText("Drawn randomly · 3 items in this pool"),
+      ).toBeInTheDocument();
     });
 
-    it("does not crash when a slot's groupId doesn't resolve to any pool", () => {
+    it("does not crash when a slot's groupId doesn't resolve to any pool, and says so honestly instead of vanishing", () => {
       const p = pack({
-        groups: [{ id: "g1", name: "Real pool", items: [{ id: "a", type: "text", title: "Item A", value: "Item A" }] }],
+        groups: [
+          {
+            id: "g1",
+            name: "Real pool",
+            items: [
+              { id: "a", type: "text", title: "Item A", value: "Item A" },
+            ],
+          },
+        ],
         rounds: [
           {
             id: "r1",
@@ -212,6 +257,62 @@ describe("PackContentsPreview", () => {
       ).not.toThrow();
       // The resolvable slot still renders despite the sibling's dangling groupId.
       expect(screen.getByText("Item A")).toBeInTheDocument();
+      // The unresolvable slot gets an honest explanation, not silent omission —
+      // the round is not misrepresented as having no content for that slot.
+      expect(
+        screen.getByRole("heading", { name: "Random pool" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          "This slot draws from a randomly chosen pool each play — which pool it used isn't recorded, so its contents can't be shown here.",
+        ),
+      ).toBeInTheDocument();
+    });
+
+    it("shows an honest explanation, not an empty-pack message, for a round whose only slot has a groupMode:random pool with no fixed groupId", () => {
+      // A groupMode:"random" slot's POOL (not just its items) is chosen fresh
+      // at play time — round-sampling.ts::resolveRoundSelections — and never
+      // has a groupId of its own. Before this fix, a round made up entirely of
+      // such slots produced zero sections and rendered "No pack contents to
+      // show", falsely implying the round/pack has no content at all.
+      const p = pack({
+        groups: [
+          {
+            id: "g1",
+            name: "Pool one",
+            items: [
+              { id: "a", type: "text", title: "Item A", value: "Item A" },
+            ],
+          },
+          {
+            id: "g2",
+            name: "Pool two",
+            items: [
+              { id: "b", type: "text", title: "Item B", value: "Item B" },
+            ],
+          },
+        ],
+        rounds: [
+          {
+            id: "r1",
+            slots: [{ groupMode: "random", mode: "random", count: 1 }],
+          },
+        ],
+      });
+
+      render(<PackContentsPreview pack={p} roundIndex={0} />);
+
+      expect(
+        screen.queryByText("No pack contents to show."),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "Random pool" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          "This slot draws from a randomly chosen pool each play — which pool it used isn't recorded, so its contents can't be shown here.",
+        ),
+      ).toBeInTheDocument();
     });
 
     it("shows an empty state when roundIndex points past the end of rounds", () => {
@@ -238,7 +339,12 @@ describe("PackContentsPreview", () => {
                 title: "Beta video",
                 value: "https://youtu.be/dQw4w9WgXcQ",
               },
-              { id: "i3", type: "image", title: "Gamma image", value: "media/item/abc.webp" },
+              {
+                id: "i3",
+                type: "image",
+                title: "Gamma image",
+                value: "media/item/abc.webp",
+              },
             ],
           },
         ],
@@ -249,7 +355,9 @@ describe("PackContentsPreview", () => {
       const user = userEvent.setup();
       render(<PackContentsPreview pack={mixedPack()} />);
 
-      const search = screen.getByRole("searchbox", { name: "Search pack items" });
+      const search = screen.getByRole("searchbox", {
+        name: "Search pack items",
+      });
       await user.type(search, "beta");
 
       expect(screen.getByText("Beta video")).toBeInTheDocument();
@@ -290,7 +398,9 @@ describe("PackContentsPreview", () => {
       });
 
       render(<PackContentsPreview pack={p} roundIndex={0} />);
-      const search = screen.getByRole("searchbox", { name: "Search pack items" });
+      const search = screen.getByRole("searchbox", {
+        name: "Search pack items",
+      });
       await user.type(search, "alpha");
 
       expect(screen.getByText("Alpha")).toBeInTheDocument();
@@ -301,12 +411,18 @@ describe("PackContentsPreview", () => {
       const user = userEvent.setup();
       render(<PackContentsPreview pack={mixedPack()} />);
 
-      const search = screen.getByRole("searchbox", { name: "Search pack items" });
+      const search = screen.getByRole("searchbox", {
+        name: "Search pack items",
+      });
       await user.type(search, "nonexistent-title");
 
-      expect(within(screen.getByRole("heading", { name: "Mixed pool" }).closest("section")!).getByText(
-        "No items match your search.",
-      )).toBeInTheDocument();
+      expect(
+        within(
+          screen
+            .getByRole("heading", { name: "Mixed pool" })
+            .closest("section")!,
+        ).getByText("No items match your search."),
+      ).toBeInTheDocument();
     });
   });
 });

@@ -88,8 +88,11 @@ export function ReportDetailScreen({ reportId }: { reportId: string }) {
 
       {/* The reported content itself (T7/D8): additive, not blocking — its
           own fetch/loading/error state is scoped inside this component, so
-          it never delays or hides the actions below. */}
-      <ReportedContentPreview report={report} />
+          it never delays or hides the actions below. `viewerRole` lets it
+          gate the user-report summary to manager/admin, matching the
+          backend's actual `adminClient.userDetail` RBAC (moderator+ can
+          reach this screen, but only manager/admin can hit that endpoint). */}
+      <ReportedContentPreview report={report} viewerRole={user?.role} />
 
       <ReportQueueActions
         status={report.status}

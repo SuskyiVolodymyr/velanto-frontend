@@ -96,6 +96,7 @@
     "roundMappingHeading": "राउंड",
     "roundLabelFallback": "राउंड {index}",
     "roundRandomPool": "यादृच्छिक पूल",
+    "contentsRandomPoolSlot": "यह स्लॉट हर बार खेले जाने पर एक यादृच्छिक पूल चुनता है — कौन-सा पूल इस्तेमाल हुआ, यह कहीं दर्ज नहीं होता, इसलिए इसकी सामग्री यहाँ नहीं दिखाई जा सकती।",
     "loadingReportedContent": "रिपोर्ट की गई सामग्री लोड हो रही है…",
     "reportedContentError": "इस रिपोर्ट की सामग्री लोड नहीं हो सकी। बाद में फिर कोशिश करें।",
     "reportedUserHeading": "रिपोर्ट किया गया खाता",
@@ -103,7 +104,8 @@
     "reportedUserPacks": "पैक",
     "reportedUserComments": "टिप्पणियाँ",
     "reportedUserReportsAgainst": "इनके विरुद्ध रिपोर्ट",
-    "reportedUserReportsFiled": "दर्ज की गई रिपोर्ट"
+    "reportedUserReportsFiled": "दर्ज की गई रिपोर्ट",
+    "reportedUserRestricted": "रिपोर्ट किए गए खाते का विवरण केवल मैनेजर और एडमिन देख सकते हैं।"
   },
   "admin": {
     "panelEyebrow": "एडमिन पैनल",

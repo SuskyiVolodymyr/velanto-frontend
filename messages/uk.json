@@ -96,6 +96,7 @@
     "roundMappingHeading": "Раунди",
     "roundLabelFallback": "Раунд {index}",
     "roundRandomPool": "Випадковий пул",
+    "contentsRandomPoolSlot": "Цей слот бере випадковий пул під час кожної гри — який саме пул було використано, ніде не зберігається, тому показати його вміст тут неможливо.",
     "loadingReportedContent": "Завантаження вмісту скарги…",
     "reportedContentError": "Не вдалося завантажити вміст цієї скарги. Спробуйте пізніше.",
     "reportedUserHeading": "Акаунт під скаргою",
@@ -103,7 +104,8 @@
     "reportedUserPacks": "Паки",
     "reportedUserComments": "Коментарі",
     "reportedUserReportsAgainst": "Скарги на нього",
-    "reportedUserReportsFiled": "Подані скарги"
+    "reportedUserReportsFiled": "Подані скарги",
+    "reportedUserRestricted": "Переглядати дані акаунта під скаргою можуть лише менеджери та адміністратори."
   },
   "admin": {
     "panelEyebrow": "Панель адміністратора",

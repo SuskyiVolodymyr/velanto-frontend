@@ -96,6 +96,7 @@
     "roundMappingHeading": "轮次",
     "roundLabelFallback": "第 {index} 轮",
     "roundRandomPool": "随机池",
+    "contentsRandomPoolSlot": "此卡槽每次游玩时都会随机抽取一个池——具体用了哪个池并没有记录，因此这里无法显示其内容。",
     "loadingReportedContent": "正在加载举报内容…",
     "reportedContentError": "无法加载此举报的内容，请稍后重试。",
     "reportedUserHeading": "被举报账户",
@@ -103,7 +104,8 @@
     "reportedUserPacks": "题包",
     "reportedUserComments": "评论",
     "reportedUserReportsAgainst": "被举报次数",
-    "reportedUserReportsFiled": "发起的举报"
+    "reportedUserReportsFiled": "发起的举报",
+    "reportedUserRestricted": "只有经理和管理员才能查看被举报账户的详细信息。"
   },
   "admin": {
     "panelEyebrow": "管理面板",

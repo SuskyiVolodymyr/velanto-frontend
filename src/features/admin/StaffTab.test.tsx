@@ -219,7 +219,8 @@ describe("StaffTab", () => {
   });
 
   describe("add staff", () => {
-    const ADD_STAFF_INPUT_LABEL = "Email, username, or user id of the user to add as staff";
+    const ADD_STAFF_INPUT_LABEL =
+      "Email, username, or user id of the user to add as staff";
     const USER_ID = "550e8400-e29b-41d4-a716-446655440000";
 
     it("resolves the email to a user id, then grants the role", async () => {
@@ -324,6 +325,33 @@ describe("StaffTab", () => {
       expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
     });
 
+    it("shows the matches dropdown — does not auto-resolve — for a single SUBSTRING-only hit", async () => {
+      // `q` is a substring search: typing "bo" and getting exactly one hit
+      // ("bob") is not the same guarantee as an exact match. A privilege
+      // grant needs the same exactness bar the email path already has, so
+      // this must land in the disambiguation dropdown, not auto-promote.
+      mockStaff([]);
+      const user = userEvent.setup({ delay: null });
+      renderAs(ADMIN);
+      await screen.findByText("No staff members yet.");
+
+      vi.mocked(adminClient.listUsers).mockResolvedValueOnce({
+        items: [{ ...TARGET, id: "u9", username: "bob" }],
+        total: 1,
+        page: 1,
+        limit: 50,
+      });
+
+      await user.type(screen.getByLabelText(ADD_STAFF_INPUT_LABEL), "bo");
+      await user.click(screen.getByRole("button", { name: "+ Add staff" }));
+
+      const listbox = await screen.findByRole("listbox");
+      expect(
+        within(listbox).getByRole("option", { name: /bob/ }),
+      ).toBeInTheDocument();
+      expect(usersClient.changeRole).not.toHaveBeenCalled();
+    });
+
     it("strips a leading @ before searching, and shows a matches dropdown for multiple hits", async () => {
       mockStaff([]);
       vi.mocked(usersClient.changeRole).mockResolvedValue({
@@ -336,8 +364,18 @@ describe("StaffTab", () => {
 
       vi.mocked(adminClient.listUsers).mockResolvedValueOnce({
         items: [
-          { ...TARGET, id: "u10", username: "bobby", email: "bobby@example.com" },
-          { ...TARGET, id: "u11", username: "bobette", email: "bobette@example.com" },
+          {
+            ...TARGET,
+            id: "u10",
+            username: "bobby",
+            email: "bobby@example.com",
+          },
+          {
+            ...TARGET,
+            id: "u11",
+            username: "bobette",
+            email: "bobette@example.com",
+          },
         ],
         total: 2,
         page: 1,
@@ -359,10 +397,7 @@ describe("StaffTab", () => {
       );
 
       await waitFor(() =>
-        expect(usersClient.changeRole).toHaveBeenCalledWith(
-          "u11",
-          "moderator",
-        ),
+        expect(usersClient.changeRole).toHaveBeenCalledWith("u11", "moderator"),
       );
       expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
     });
@@ -434,9 +469,7 @@ describe("StaffTab", () => {
 
     it("shows a no-match error when the id doesn't resolve to any account", async () => {
       mockStaff([]);
-      vi.mocked(adminClient.userDetail).mockRejectedValueOnce(
-        new Error("404"),
-      );
+      vi.mocked(adminClient.userDetail).mockRejectedValueOnce(new Error("404"));
       const user = userEvent.setup({ delay: null });
       renderAs(ADMIN);
       await screen.findByText("No staff members yet.");
@@ -458,8 +491,18 @@ describe("StaffTab", () => {
 
       vi.mocked(adminClient.listUsers).mockResolvedValueOnce({
         items: [
-          { ...TARGET, id: "u10", username: "bobby", email: "bobby@example.com" },
-          { ...TARGET, id: "u11", username: "bobette", email: "bobette@example.com" },
+          {
+            ...TARGET,
+            id: "u10",
+            username: "bobby",
+            email: "bobby@example.com",
+          },
+          {
+            ...TARGET,
+            id: "u11",
+            username: "bobette",
+            email: "bobette@example.com",
+          },
         ],
         total: 2,
         page: 1,
@@ -484,8 +527,18 @@ describe("StaffTab", () => {
 
       vi.mocked(adminClient.listUsers).mockResolvedValueOnce({
         items: [
-          { ...TARGET, id: "u10", username: "bobby", email: "bobby@example.com" },
-          { ...TARGET, id: "u11", username: "bobette", email: "bobette@example.com" },
+          {
+            ...TARGET,
+            id: "u10",
+            username: "bobby",
+            email: "bobby@example.com",
+          },
+          {
+            ...TARGET,
+            id: "u11",
+            username: "bobette",
+            email: "bobette@example.com",
+          },
         ],
         total: 2,
         page: 1,

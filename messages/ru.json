@@ -96,6 +96,7 @@
     "roundMappingHeading": "Раунды",
     "roundLabelFallback": "Раунд {index}",
     "roundRandomPool": "Случайный пул",
+    "contentsRandomPoolSlot": "Этот слот берёт случайный пул при каждой игре — какой именно пул использовался, нигде не сохраняется, поэтому его содержимое здесь показать нельзя.",
     "loadingReportedContent": "Загрузка содержимого жалобы…",
     "reportedContentError": "Не удалось загрузить содержимое этой жалобы. Повторите попытку позже.",
     "reportedUserHeading": "Аккаунт под жалобой",
@@ -103,7 +104,8 @@
     "reportedUserPacks": "Паки",
     "reportedUserComments": "Комментарии",
     "reportedUserReportsAgainst": "Жалобы на него",
-    "reportedUserReportsFiled": "Поданные жалобы"
+    "reportedUserReportsFiled": "Поданные жалобы",
+    "reportedUserRestricted": "Просматривать данные аккаунта под жалобой могут только менеджеры и администраторы."
   },
   "admin": {
     "panelEyebrow": "Панель администратора",
