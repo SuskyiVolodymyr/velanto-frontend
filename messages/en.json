@@ -387,6 +387,7 @@
     "accentColorHint": "Used for highlights, buttons, and progress bars.",
     "accentColorSwatch": "Use accent color {color}",
     "notificationsHeading": "Notifications",
+    "notifEnabledCount": "{count} of {total} on",
     "loginToManageNotifications": "<link>Log in</link> to manage notification preferences.",
     "notificationsLoadError": "Couldn't load your notification preferences.",
     "loading": "Loading…",

@@ -77,9 +77,9 @@ describe("NotificationsSection", () => {
     mockedClient.getPreferences.mockReturnValue(new Promise<never>(() => {}));
     const { container } = render(<NotificationsSection />);
 
-    expect(container.querySelectorAll(".animate-pulse").length).toBeGreaterThan(
-      0,
-    );
+    expect(
+      container.querySelectorAll(".animate-shimmer").length,
+    ).toBeGreaterThan(0);
     // No toggles yet — the skeletons stand in for them.
     expect(screen.queryByRole("switch")).not.toBeInTheDocument();
   });
@@ -103,6 +103,29 @@ describe("NotificationsSection", () => {
     expect(
       screen.getByRole("switch", { name: "Pack removed by a moderator" }),
     ).toBeInTheDocument();
+  });
+
+  it("shows an enabled-count header reflecting how many types are on", async () => {
+    mockedClient.getPreferences.mockResolvedValue({
+      ...ALL_ON,
+      new_comment: false,
+      comment_mention: false,
+    });
+    render(<NotificationsSection />);
+    await waitFor(() => expect(screen.getByText("4 of 6 on")).toBeInTheDocument());
+  });
+
+  it("updates the enabled-count header after a successful toggle", async () => {
+    mockedClient.setPreferences.mockResolvedValue({
+      ...ALL_ON,
+      new_comment: false,
+    });
+    render(<NotificationsSection />);
+    await waitFor(() => expect(screen.getByText("6 of 6 on")).toBeInTheDocument());
+    await userEvent.click(
+      screen.getByRole("switch", { name: "New comment on your pack" }),
+    );
+    await waitFor(() => expect(screen.getByText("5 of 6 on")).toBeInTheDocument());
   });
 
   it("toggling one calls setPreferences with only that key", async () => {
