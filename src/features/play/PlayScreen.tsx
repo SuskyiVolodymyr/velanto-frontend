@@ -3,8 +3,6 @@
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
 import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
 import { VersusRound } from "@/src/features/play/VersusRound";
@@ -13,7 +11,8 @@ import {
   INSTRUCTION_KEY,
   PICKED_LABEL_KEY,
 } from "@/src/features/play/play-format-copy";
-import { PlayProgress } from "@/src/features/play/PlayProgress";
+import { PlayChrome } from "@/src/features/play/PlayChrome";
+import { PlayRoundHeader } from "@/src/features/play/PlayRoundHeader";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { CandidateCard } from "@/src/features/play/CandidateCard";
 import { PicksSummary } from "@/src/features/play/PicksSummary";
@@ -41,6 +40,7 @@ function candidateGridCols(count: number): string {
 
 export function PlayScreen({ pack }: { pack: Pack }) {
   const t = useTranslations("play");
+  const tFormat = useTranslations("formats");
   const router = useRouter();
   const session = usePlaySession(pack);
 
@@ -53,87 +53,109 @@ export function PlayScreen({ pack }: { pack: Pack }) {
   }, [session.recordSettled, router, pack.id]);
 
   return (
-    <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
-      <PlayProgress
+    <>
+      <PlayChrome
+        packId={pack.id}
+        title={pack.title}
         isFinished={session.isFinished}
         roundIndex={session.roundIndex}
         totalRounds={session.totalRounds}
         progressPct={session.progressPct}
       />
 
-      {session.showRound && (
-        <>
-          <section className="mb-6">
-            <Text as="h2" variant="title" className="mb-2 text-3xl">
-              {session.roundTitle}
-            </Text>
-            <Text variant="secondary">{t(INSTRUCTION_KEY[pack.format])}</Text>
-          </section>
-
-          {session.isVersus ? (
-            <div className="mb-8">
-              <VersusRound
-                sideA={{
-                  // A single-pool round's two sides share a pool name, so label
-                  // them generically ("Side A"/"Side B") instead.
-                  name: session.versusSinglePool
-                    ? t("versusSideA")
-                    : session.sideA!.name,
-                  items: session.versusCandidatesA,
-                }}
-                sideB={{
-                  name: session.versusSinglePool
-                    ? t("versusSideB")
-                    : session.sideB!.name,
-                  items: session.versusCandidatesB,
-                }}
-                selectedSide={
-                  session.selectedId === null
-                    ? null
-                    : Number(session.selectedId)
-                }
-                onSelect={(side) => session.setSelectedId(String(side))}
+      <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
+        {session.showRound && (
+          <>
+            <div className="mb-6">
+              <PlayRoundHeader
+                eyebrow={tFormat(pack.format)}
+                title={session.roundTitle}
+                instruction={t(INSTRUCTION_KEY[pack.format])}
+                align="start"
               />
             </div>
-          ) : (
-            <div
-              data-testid="candidate-grid"
-              className={cn(
-                "mb-8 grid gap-4",
-                candidateGridCols(session.candidates.length),
-              )}
-            >
-              {session.candidates.map((item, index) => (
-                <CandidateCard
-                  key={item.id}
-                  item={item}
-                  index={index}
-                  selected={item.id === session.selectedId}
-                  onSelect={() => session.setSelectedId(item.id)}
+
+            {session.isVersus ? (
+              <div className="mb-8">
+                <VersusRound
+                  sideA={{
+                    // A single-pool round's two sides share a pool name, so label
+                    // them generically ("Side A"/"Side B") instead.
+                    name: session.versusSinglePool
+                      ? t("versusSideA")
+                      : session.sideA!.name,
+                    items: session.versusCandidatesA,
+                  }}
+                  sideB={{
+                    name: session.versusSinglePool
+                      ? t("versusSideB")
+                      : session.sideB!.name,
+                    items: session.versusCandidatesB,
+                  }}
+                  selectedSide={
+                    session.selectedId === null
+                      ? null
+                      : Number(session.selectedId)
+                  }
+                  onSelect={(side) => session.setSelectedId(String(side))}
                 />
-              ))}
+              </div>
+            ) : (
+              <div
+                data-testid="candidate-grid"
+                className={cn(
+                  "mb-8 grid gap-4",
+                  candidateGridCols(session.candidates.length),
+                )}
+              >
+                {session.candidates.map((item, index) => (
+                  <CandidateCard
+                    key={item.id}
+                    item={item}
+                    index={index}
+                    selected={item.id === session.selectedId}
+                    onSelect={() => session.setSelectedId(item.id)}
+                    packCoverTone={pack.coverTone}
+                  />
+                ))}
+              </div>
+            )}
+
+            <div className="mb-10 flex justify-end">
+              {/* A plain button, not the shared `Button` component: `Button`'s
+                  own `h-11`/`px-[18px]`/`text-sm` would sit alongside these
+                  arbitrary-value overrides in the stylesheet, and `cn()` is a
+                  plain join (not tailwind-merge) — the winner would be
+                  whichever rule Tailwind happens to emit later, not the one
+                  passed last here (see Text.tsx's doc comment for the same
+                  trap). Full control avoids it. */}
+              <button
+                type="button"
+                disabled={!session.canConfirm}
+                onClick={session.confirmPick}
+                className={cn(
+                  "h-[52px] rounded-tile px-[30px] text-[15.5px] font-semibold transition-[background-color,color,filter] duration-150",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                  session.canConfirm
+                    ? "bg-acc text-[#07131a] hover:brightness-110"
+                    : "cursor-not-allowed bg-white/[0.06] text-white/35",
+                )}
+              >
+                {session.isLastRound ? t("finishRound") : t("nextRound")}
+              </button>
             </div>
-          )}
+          </>
+        )}
 
-          <div className="mb-10 flex justify-end">
-            <Button
-              disabled={!session.canConfirm}
-              onClick={session.confirmPick}
-            >
-              {session.isLastRound ? t("finishRound") : t("nextRound")}
-            </Button>
-          </div>
-        </>
-      )}
+        {session.isFinished && <LoadingState label={t("loadingResult")} />}
 
-      {session.isFinished && <LoadingState label={t("loadingResult")} />}
-
-      {session.displayPicks.length > 0 && (
-        <PicksSummary
-          label={t(PICKED_LABEL_KEY[pack.format])}
-          picks={session.displayPicks}
-        />
-      )}
-    </div>
+        {session.displayPicks.length > 0 && (
+          <PicksSummary
+            label={t(PICKED_LABEL_KEY[pack.format])}
+            picks={session.displayPicks}
+          />
+        )}
+      </div>
+    </>
   );
 }

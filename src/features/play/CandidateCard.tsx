@@ -9,6 +9,7 @@ import {
 } from "@/src/shared/lib/youtube";
 import { mediaUrl } from "@/src/shared/lib/media-url";
 import { cn } from "@/src/shared/lib/cn";
+import { COVER_TONES } from "@/src/shared/types/pack";
 import type { Item } from "@/src/shared/types/pack";
 
 interface CandidateCardProps {
@@ -16,6 +17,110 @@ interface CandidateCardProps {
   index: number;
   selected: boolean;
   onSelect: () => void;
+  /**
+   * The pack's cover tone. Seeds which `COVER_TONES` entry a text-item's
+   * gradient tile starts from, so every card in a pack draws from that pack's
+   * own palette family instead of a fixed global cycle.
+   */
+  packCoverTone: string;
+}
+
+// Diagonal hairline texture over a text-item's gradient tile — purely
+// decorative, so it's applied via `aria-hidden`, not part of the accessible
+// tree.
+const HAIRLINE_OVERLAY = {
+  backgroundImage:
+    "repeating-linear-gradient(122deg, rgba(255,255,255,.03) 0 1px, transparent 1px 15px)",
+};
+
+const FRAME_SELECTED = "border-acc ring-[3px] ring-acc/30";
+const FRAME_UNSELECTED = "border-border hover:border-border-strong";
+
+/**
+ * One candidate's tone within its pack's palette family: start at the index
+ * `packCoverTone` occupies in `COVER_TONES` (0 if it isn't one of the six —
+ * a custom/unknown cover value shouldn't break the derivation), then offset
+ * by this card's index so consecutive cards visibly differ while staying
+ * inside the same six-tone family.
+ */
+function candidateTone(packCoverTone: string, index: number): string {
+  const baseIndex = Math.max(
+    0,
+    (COVER_TONES as readonly string[]).indexOf(packCoverTone),
+  );
+  return COVER_TONES[(baseIndex + index) % COVER_TONES.length];
+}
+
+/** The checkbox + title + index row shared by all three media treatments. */
+function SelectBar({
+  title,
+  index,
+  selected,
+}: {
+  title: string;
+  index: number;
+  selected: boolean;
+}) {
+  return (
+    <div
+      className={cn(
+        "flex items-center gap-[11px] border-t border-border p-[13px_14px]",
+        selected ? "bg-acc/[0.12]" : "bg-white/[0.02]",
+      )}
+    >
+      <span
+        aria-hidden
+        className={cn(
+          "flex h-[19px] w-[19px] flex-none items-center justify-center rounded-chip border-[1.5px]",
+          selected ? "border-acc bg-acc" : "border-border-strong",
+        )}
+      >
+        {selected && (
+          <span className="mb-[2px] h-[7px] w-[4px] rotate-45 border-b-[1.5px] border-r-[1.5px] border-[#07131a]" />
+        )}
+      </span>
+      <Text className="flex-1 text-[14.5px] font-semibold">{title}</Text>
+      <Text variant="tertiary" className="text-[11px]">
+        {String(index + 1).padStart(2, "0")}
+      </Text>
+    </div>
+  );
+}
+
+/**
+ * The new gradient media tile for a plain-text candidate (and the fallback
+ * for a youtube item whose id couldn't be resolved) — today's text card had
+ * no media band at all, so this is the single biggest visual change here.
+ */
+function TextTile({
+  item,
+  index,
+  packCoverTone,
+}: {
+  item: Item;
+  index: number;
+  packCoverTone: string;
+}) {
+  const tone = candidateTone(packCoverTone, index);
+  return (
+    <div
+      className="relative h-[150px] overflow-hidden"
+      style={{
+        background: `linear-gradient(158deg, ${tone}, var(--background) 78%)`,
+      }}
+    >
+      <div aria-hidden className="absolute inset-0" style={HAIRLINE_OVERLAY} />
+      <Text
+        variant="tertiary"
+        className="absolute start-2 top-2 text-[11px] font-semibold"
+      >
+        {String(index + 1).padStart(2, "0")}
+      </Text>
+      {item.type === "youtube" && (
+        <Badge className="absolute end-2 top-2">YouTube</Badge>
+      )}
+    </div>
+  );
 }
 
 /**
@@ -29,41 +134,38 @@ export function CandidateCard({
   index,
   selected,
   onSelect,
+  packCoverTone,
 }: CandidateCardProps) {
   const t = useTranslations("play");
   const videoId = item.type === "youtube" ? extractYouTubeId(item.value) : null;
   const startSeconds =
     item.type === "youtube" ? extractYouTubeStart(item.value) : null;
-  // Cards grow in one-by-one, 900ms apart, staggered by position.
+  // Cards grow in one-by-one, 900ms apart, staggered by position — the
+  // deliberate "the stagger IS the reveal" mechanic (see the 2.0.0 redesign
+  // plan's D1). Keep this exact per-index delay if the frame markup changes.
   const appearDelay = { animationDelay: `${index * 900}ms` };
+  const frameClasses = cn(
+    "play-card-appear w-full overflow-hidden rounded-card border-[1.5px] bg-background transition-colors",
+    selected ? FRAME_SELECTED : FRAME_UNSELECTED,
+  );
 
   if (videoId) {
     return (
-      <div
-        style={appearDelay}
-        className={cn(
-          "play-card-appear w-full overflow-hidden rounded-2xl border transition-colors",
-          selected ? "border-acc bg-acc/10" : "border-border bg-surface",
-        )}
-      >
-        <YouTubeCard videoId={videoId} startSeconds={startSeconds} />
+      <div style={appearDelay} className={frameClasses}>
+        <YouTubeCard
+          videoId={videoId}
+          startSeconds={startSeconds}
+          className="h-[150px]"
+        />
+        {/* A dedicated control below the player, not the player itself —
+            interacting with the video area must not select the item. */}
         <button
           type="button"
           onClick={onSelect}
           aria-label={t("pick", { name: item.title })}
-          className="flex w-full items-center gap-2 p-4 text-start"
+          className="block w-full text-start"
         >
-          <span
-            aria-hidden
-            className={cn(
-              "h-4 w-4 flex-none rounded border",
-              selected ? "border-acc bg-acc" : "border-border-strong",
-            )}
-          />
-          <Text className="flex-1 font-semibold">{item.title}</Text>
-          <Text variant="tertiary" className="text-xs">
-            {String(index + 1).padStart(2, "0")}
-          </Text>
+          <SelectBar title={item.title} index={index} selected={selected} />
         </button>
       </div>
     );
@@ -76,27 +178,14 @@ export function CandidateCard({
         onClick={onSelect}
         style={appearDelay}
         aria-label={t("pick", { name: item.title })}
-        className={cn(
-          "play-card-appear w-full overflow-hidden rounded-2xl border text-start transition-colors",
-          selected
-            ? "border-acc bg-acc/10"
-            : "border-border bg-surface hover:border-border-strong",
-        )}
+        className={cn(frameClasses, "text-start")}
       >
-        <ImageCard src={mediaUrl(item.value)} alt={item.title} />
-        <div className="flex items-center gap-2 p-4">
-          <span
-            aria-hidden
-            className={cn(
-              "h-4 w-4 flex-none rounded border",
-              selected ? "border-acc bg-acc" : "border-border-strong",
-            )}
-          />
-          <Text className="flex-1 font-semibold">{item.title}</Text>
-          <Text variant="tertiary" className="text-xs">
-            {String(index + 1).padStart(2, "0")}
-          </Text>
-        </div>
+        <ImageCard
+          src={mediaUrl(item.value)}
+          alt={item.title}
+          className="h-[150px]"
+        />
+        <SelectBar title={item.title} index={index} selected={selected} />
       </button>
     );
   }
@@ -106,18 +195,11 @@ export function CandidateCard({
       type="button"
       onClick={onSelect}
       style={appearDelay}
-      className={cn(
-        "play-card-appear w-full rounded-2xl border p-4 text-start transition-colors",
-        selected
-          ? "border-acc bg-acc/10"
-          : "border-border bg-surface hover:border-border-strong",
-      )}
+      aria-label={t("pick", { name: item.title })}
+      className={cn(frameClasses, "text-start")}
     >
-      {item.type === "youtube" && <Badge className="mb-2">YouTube</Badge>}
-      <Text className="font-semibold">{item.title}</Text>
-      <Text variant="tertiary" className="mt-1 text-xs">
-        {String(index + 1).padStart(2, "0")}
-      </Text>
+      <TextTile item={item} index={index} packCoverTone={packCoverTone} />
+      <SelectBar title={item.title} index={index} selected={selected} />
     </button>
   );
 }
