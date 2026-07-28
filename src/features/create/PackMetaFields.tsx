@@ -8,7 +8,6 @@ import {
   PACK_LANGUAGES,
   PACK_LANGUAGE_NAMES,
 } from "@/src/shared/types/pack-language";
-import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { TagPickerModal } from "@/src/shared/components/TagPickerModal";
 import { TextField } from "@/src/shared/components/form/TextField";
@@ -16,6 +15,7 @@ import { TextareaField } from "@/src/shared/components/form/TextareaField";
 import { SelectField } from "@/src/shared/components/form/SelectField";
 import { CoverImageField } from "@/src/features/create/CoverImageField";
 import { SwatchPicker } from "@/src/shared/components/SwatchPicker";
+import { StepHeader } from "@/src/features/create/StepHeader";
 import {
   type CreatePackValues,
   MAX_TAGS,
@@ -24,9 +24,10 @@ import {
 } from "@/src/features/create/create-pack.schema";
 
 /**
- * The "Basics" section: title, description, cover tone and tag picker. Reads and
- * writes the shared react-hook-form state through context, so it stays in sync
- * with the rest of the create form without prop drilling.
+ * The "Basics" section: title, description, cover tone, cover image, pack
+ * language and the tag picker. Reads and writes the shared react-hook-form
+ * state through context, so it stays in sync with the rest of the create form
+ * without prop drilling.
  */
 export function PackMetaFields({
   onCoverUploadingChange,
@@ -43,91 +44,96 @@ export function PackMetaFields({
   const [tagPickerOpen, setTagPickerOpen] = useState(false);
 
   return (
-    <section className="flex flex-col gap-3">
-      <Text as="h2" variant="title" className="text-lg">
-        {t("basicsHeading")}
-      </Text>
-      {/*
-        The pack CONTENT's language — what the pack is written in, not what the
-        UI is in. Offers all 11 PACK_LANGUAGES, which is a deliberate superset
-        of the 8 interface LOCALES: es/fr/pt have no catalog and can ONLY be
-        reached here, because a pack's content language carries no GDPR
-        targeting signal while the interface's does (see pack-language.ts).
-      */}
-      <SelectField
-        name="language"
-        label={t("languageLabel")}
-        aria-describedby="pack-language-hint"
-        options={PACK_LANGUAGES.map((code) => ({
-          value: code,
-          label: PACK_LANGUAGE_NAMES[code],
-        }))}
-      />
-      <Text
-        id="pack-language-hint"
-        variant="tertiary"
-        className="-mt-1 text-xs"
-      >
-        {t("languageHint")}
-      </Text>
-      <div className="flex flex-col gap-1">
-        <TextField
-          name="title"
-          label={t("packTitle")}
-          srOnlyLabel
-          placeholder={t("packTitle")}
-          maxLength={TITLE_MAX}
-          disabled={isSubmitting}
-        />
-        <Text
-          variant="tertiary"
-          className="self-end text-xs tabular-nums"
-          aria-hidden
-        >
-          {title.length}/{TITLE_MAX}
-        </Text>
-      </div>
-      <div className="flex flex-col gap-1">
-        <TextareaField
-          name="description"
-          label={t("packDescription")}
-          srOnlyLabel
-          placeholder={t("descriptionPlaceholder")}
-          rows={3}
-          maxLength={DESCRIPTION_MAX}
-          disabled={isSubmitting}
-        />
-        <Text
-          variant="tertiary"
-          className="self-end text-xs tabular-nums"
-          aria-hidden
-        >
-          {description.length}/{DESCRIPTION_MAX}
-        </Text>
-      </div>
-      <div className="flex flex-col gap-2">
-        <Text variant="secondary" className="text-xs">
-          {t("coverTone")}
-        </Text>
-        <SwatchPicker
-          swatches={COVER_TONES}
-          value={coverTone}
-          onChange={(tone) => setValue("coverTone", tone)}
-          getLabel={(tone) => t("coverToneSwatch", { tone })}
-        />
-      </div>
-      <CoverImageField onUploadingChange={onCoverUploadingChange} />
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between gap-2">
-          <Text variant="secondary" className="text-xs">
-            {t("tags")}
-          </Text>
-          <Text variant="tertiary" className="text-xs tabular-nums">
-            {tags.length}/{MAX_TAGS}
+    <section className="flex flex-col">
+      <StepHeader step={1} title={t("basicsHeading")} />
+      <div className="flex flex-col gap-[14px]">
+        <div className="flex flex-col gap-1">
+          <TextField
+            name="title"
+            label={t("packTitle")}
+            placeholder={t("titlePlaceholder")}
+            maxLength={TITLE_MAX}
+            disabled={isSubmitting}
+          />
+          <Text
+            variant="tertiary"
+            className="self-end text-xs tabular-nums"
+            aria-hidden
+          >
+            {title.length}/{TITLE_MAX}
           </Text>
         </div>
-        {tags.length > 0 && (
-          <div className="flex flex-wrap gap-2">
+        <div className="flex flex-col gap-1">
+          <TextareaField
+            name="description"
+            label={t("packDescription")}
+            placeholder={t("descriptionPlaceholder")}
+            rows={2}
+            maxLength={DESCRIPTION_MAX}
+            disabled={isSubmitting}
+          />
+          <Text
+            variant="tertiary"
+            className="self-end text-xs tabular-nums"
+            aria-hidden
+          >
+            {description.length}/{DESCRIPTION_MAX}
+          </Text>
+        </div>
+        <div className="flex flex-col gap-2">
+          <Text
+            variant="secondary"
+            className="mb-[7px] text-[12.5px] font-medium"
+          >
+            {t("coverTone")}
+          </Text>
+          <SwatchPicker
+            swatches={COVER_TONES}
+            value={coverTone}
+            onChange={(tone) => setValue("coverTone", tone)}
+            getLabel={(tone) => t("coverToneSwatch", { tone })}
+            swatchStyle="gradient"
+          />
+        </div>
+        <CoverImageField onUploadingChange={onCoverUploadingChange} />
+        {/*
+          The pack CONTENT's language — what the pack is written in, not what the
+          UI is in. Offers all 11 PACK_LANGUAGES, which is a deliberate superset
+          of the 8 interface LOCALES: es/fr/pt have no catalog and can ONLY be
+          reached here, because a pack's content language carries no GDPR
+          targeting signal while the interface's does (see pack-language.ts).
+        */}
+        <div className="flex flex-col gap-1">
+          <SelectField
+            name="language"
+            label={t("languageLabel")}
+            aria-describedby="pack-language-hint"
+            options={PACK_LANGUAGES.map((code) => ({
+              value: code,
+              label: PACK_LANGUAGE_NAMES[code],
+            }))}
+          />
+          <Text
+            id="pack-language-hint"
+            variant="tertiary"
+            className="text-xs"
+          >
+            {t("languageHint")}
+          </Text>
+        </div>
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2">
+            <Text
+              variant="secondary"
+              className="text-[12.5px] font-medium"
+            >
+              {t("tags")}
+            </Text>
+            <Text variant="tertiary" className="ms-auto text-xs tabular-nums">
+              {t("tagsCount", { count: tags.length, max: MAX_TAGS })}
+            </Text>
+          </div>
+          <div className="flex flex-wrap gap-[7px]">
             {tags.map((tag) => (
               <button
                 key={tag}
@@ -139,24 +145,21 @@ export function PackMetaFields({
                   )
                 }
                 aria-label={t("removeTag", { tag })}
-                className="inline-flex items-center gap-1 rounded-full border border-border bg-white/[0.04] px-3 py-1 text-xs text-foreground transition-colors hover:border-border-strong"
+                className="inline-flex items-center gap-1 rounded-[9px] border border-acc bg-acc/[0.14] px-[13px] py-[7px] text-[13px] font-medium text-acc transition-colors hover:bg-acc/[0.2]"
               >
                 {tag}
                 <span aria-hidden>×</span>
               </button>
             ))}
+            <button
+              type="button"
+              onClick={() => setTagPickerOpen(true)}
+              className="inline-flex items-center gap-1 rounded-[9px] border border-dashed border-white/[0.14] px-[13px] py-[7px] text-[13px] font-medium text-foreground-secondary transition-colors hover:border-acc hover:text-acc"
+            >
+              {t("addTags")}
+            </button>
           </div>
-        )}
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={() => setTagPickerOpen(true)}
-          className="self-start"
-        >
-          {tags.length === 0
-            ? t("selectTags")
-            : t("tagsSelected", { count: tags.length })}
-        </Button>
+        </div>
         <TagPickerModal
           open={tagPickerOpen}
           onClose={() => setTagPickerOpen(false)}
