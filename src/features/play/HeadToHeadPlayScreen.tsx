@@ -4,7 +4,6 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
-import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { playsClient } from "@/src/shared/lib/plays-client";
 import {
@@ -14,6 +13,8 @@ import {
 import { useRoundSelections } from "@/src/features/play/use-round-selections";
 import { usePlayResume } from "@/src/features/play/use-play-resume";
 import { HeadToHeadRound } from "@/src/features/play/HeadToHeadRound";
+import { PlayChrome } from "@/src/features/play/PlayChrome";
+import { PlayRoundHeader } from "@/src/features/play/PlayRoundHeader";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { cn } from "@/src/shared/lib/cn";
@@ -23,6 +24,7 @@ import type { RecordedPick } from "@/src/shared/types/play-results";
 export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
   const { status } = useAuth();
   const t = useTranslations("play");
+  const tFormat = useTranslations("formats");
   const router = useRouter();
   const groups = pack.groups ?? [];
   const rounds = pack.rounds ?? [];
@@ -152,50 +154,51 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
     : Math.round((roundIndex / Math.max(totalRounds, 1)) * 100);
 
   return (
-    <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
-      <div className="mb-8">
-        <div className="mb-2 flex items-center justify-between">
-          <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-            {isFinished
-              ? t("complete")
-              : t("roundOf", { current: roundIndex + 1, total: totalRounds })}
-          </Text>
-        </div>
-        <div className="h-[3px] w-full rounded-full bg-white/[0.06]">
-          <div
-            className="h-full rounded-full bg-acc transition-[width] duration-300"
-            style={{ width: `${progressPct}%` }}
-          />
-        </div>
+    <>
+      <PlayChrome
+        packId={pack.id}
+        title={pack.title}
+        isFinished={isFinished}
+        roundIndex={roundIndex}
+        totalRounds={totalRounds}
+        progressPct={progressPct}
+      />
+
+      <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
+        {left && right && (
+          <>
+            <div className="mb-8">
+              <PlayRoundHeader
+                eyebrow={tFormat("1v1")}
+                title={t("whichPrefer")}
+              />
+            </div>
+            <div className="mb-8">
+              <HeadToHeadRound
+                left={left}
+                right={right}
+                selectedId={selectedId}
+                onSelect={setSelectedId}
+                coverTone={pack.coverTone}
+              />
+            </div>
+            {/* Same placement and copy as the elimination formats' confirm. */}
+            <div className="mb-10 flex justify-end">
+              <Button
+                disabled={!selectedId}
+                onClick={confirmPick}
+                className="h-[52px] rounded-tile px-[30px] text-[15.5px] font-semibold"
+              >
+                {roundIndex === totalRounds - 1
+                  ? t("finishRound")
+                  : t("nextRound")}
+              </Button>
+            </div>
+          </>
+        )}
+
+        {isFinished && <LoadingState label={t("loadingResult")} />}
       </div>
-
-      {left && right && (
-        <>
-          <section className="mb-6 text-center">
-            <Text as="h2" variant="title" className="mb-2 text-3xl">
-              {t("whichPrefer")}
-            </Text>
-          </section>
-          <div className="mb-8">
-            <HeadToHeadRound
-              left={left}
-              right={right}
-              selectedId={selectedId}
-              onSelect={setSelectedId}
-            />
-          </div>
-          {/* Same placement and copy as the elimination formats' confirm. */}
-          <div className="mb-10 flex justify-end">
-            <Button disabled={!selectedId} onClick={confirmPick}>
-              {roundIndex === totalRounds - 1
-                ? t("finishRound")
-                : t("nextRound")}
-            </Button>
-          </div>
-        </>
-      )}
-
-      {isFinished && <LoadingState label={t("loadingResult")} />}
-    </div>
+    </>
   );
 }
