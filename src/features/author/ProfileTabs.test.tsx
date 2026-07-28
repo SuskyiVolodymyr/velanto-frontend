@@ -118,4 +118,15 @@ describe("ProfileTabs", () => {
     expect(peopleTab).toHaveAttribute("aria-controls", updatedPanel.id);
     expect(updatedPanel).toHaveAttribute("aria-labelledby", peopleTab.id);
   });
+
+  it("keeps every tab reachable by keyboard, including inactive ones", () => {
+    // Regression guard: a roving tabIndex (selected ? 0 : -1) without arrow-key
+    // handling would remove the two inactive tabs from the tab order entirely,
+    // making them unreachable by keyboard. These tabs are plain focusable
+    // buttons (default tabIndex), not a roving-tabindex widget.
+    renderTabs();
+    for (const tab of screen.getAllByRole("tab")) {
+      expect(tab).not.toHaveAttribute("tabIndex", "-1");
+    }
+  });
 });
