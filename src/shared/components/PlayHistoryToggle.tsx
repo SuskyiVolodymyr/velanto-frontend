@@ -24,11 +24,9 @@ type ToggleValue = "on" | "off";
  * each surface calling `useSetPlayHistory` itself) specifically so the two
  * can never disagree about the current value or race each other's mutation.
  *
- * `PrivacySection` still owns its own local `SegmentedControl` call as of
- * this component landing — migrating it onto `PlayHistoryToggle` is T11's
- * job (the profile/preferences plan explicitly defers that swap so T11 can
- * do it alongside the rest of that section's restyle). New callers should
- * render this component directly rather than re-deriving the wiring.
+ * `PrivacySection` renders this directly (migrated in T11 alongside the rest
+ * of that section's restyle). New callers should do the same rather than
+ * re-deriving the wiring.
  *
  * Renders nothing while signed out, or before the profile query has
  * resolved a value — callers don't need to gate on auth/loading themselves.
