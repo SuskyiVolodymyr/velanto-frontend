@@ -141,6 +141,7 @@ export function PlayScreen({ pack }: { pack: Pack }) {
           <PicksSummary
             label={t(PICKED_LABEL_KEY[pack.format])}
             picks={session.displayPicks}
+            totalRounds={session.totalRounds}
           />
         )}
       </div>

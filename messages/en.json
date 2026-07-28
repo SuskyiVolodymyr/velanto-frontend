@@ -1136,6 +1136,7 @@
     "confirmReadyTitle": "Locked in — you can still change it",
     "confirmPendingTitle": "Nothing picked yet",
     "confirmNote": "Your pick is recorded when you move to the next round.",
+    "picksCountNote": "{done} done, {toGo} to go",
     "pick": "Pick {name}",
     "nextRound": "Next round →",
     "instructionSave": "Pick the one you'd save. Check it below, then confirm.",

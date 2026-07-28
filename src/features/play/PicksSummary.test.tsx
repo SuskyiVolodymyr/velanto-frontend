@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { PicksSummary } from "@/src/features/play/PicksSummary";
 import type { Pick } from "@/src/features/play/use-play-session";
 
@@ -21,7 +22,6 @@ describe("PicksSummary", () => {
     expect(label.className).toContain("text-[12px]");
     expect(label.className).toContain("uppercase");
     expect(label.className).toContain("tracking-[0.12em]");
-    expect(label.className).toContain("mb-3");
   });
 
   it("renders exactly one chip per pick, with the correct title text and chip styling", () => {
@@ -33,14 +33,14 @@ describe("PicksSummary", () => {
 
     render(<PicksSummary label="Saved so far" picks={picks} />);
 
-    const chip = screen.getByText("2016");
+    const chip = screen.getByText("2016").closest("span");
     expect(chip).toBeInTheDocument();
     expect(screen.getByText("2017")).toBeInTheDocument();
     expect(screen.getByText("Team Alpha")).toBeInTheDocument();
-    expect(chip.className).toContain("inline-flex");
-    expect(chip.className).toContain("rounded-control");
-    expect(chip.className).toContain("border-border");
-    expect(chip.className).toContain("play-card-appear");
+    expect(chip?.className).toContain("inline-flex");
+    expect(chip?.className).toContain("rounded-control");
+    expect(chip?.className).toContain("border-border");
+    expect(chip?.className).toContain("play-card-appear");
   });
 
   it("keeps rendering one chip per item after the picks array reorders", () => {
@@ -58,5 +58,36 @@ describe("PicksSummary", () => {
     rerender(<PicksSummary label="Saved so far" picks={reordered} />);
 
     expect(screen.getAllByText(/First|Second/)).toHaveLength(2);
+  });
+
+  it("shows each chip's 1-based position as a numbered badge", () => {
+    const picks: Pick[] = [
+      makePick({ groupId: "a", itemTitle: "First" }),
+      makePick({ groupId: "b", itemTitle: "Second" }),
+    ];
+
+    render(<PicksSummary label="Saved so far" picks={picks} />);
+
+    expect(screen.getByText("1")).toBeInTheDocument();
+    expect(screen.getByText("2")).toBeInTheDocument();
+  });
+
+  it("shows a done/to-go count note beside the heading when totalRounds is passed", () => {
+    const picks: Pick[] = [
+      makePick({ groupId: "a", itemTitle: "First" }),
+      makePick({ groupId: "b", itemTitle: "Second" }),
+    ];
+
+    render(
+      <PicksSummary label="Saved so far" picks={picks} totalRounds={5} />,
+    );
+
+    expect(screen.getByText("2 done, 3 to go")).toBeInTheDocument();
+  });
+
+  it("omits the count note when totalRounds isn't passed", () => {
+    render(<PicksSummary label="Saved so far" picks={[]} />);
+
+    expect(screen.queryByText(/done,/)).not.toBeInTheDocument();
   });
 });
