@@ -33,6 +33,7 @@ describe("CandidateCard (image item)", () => {
         selected={false}
         onSelect={vi.fn()}
         packCoverTone={PACK_COVER_TONE}
+        format="save_one"
       />,
     );
 
@@ -53,6 +54,7 @@ describe("CandidateCard (image item)", () => {
         selected={false}
         onSelect={onSelect}
         packCoverTone={PACK_COVER_TONE}
+        format="save_one"
       />,
     );
 
@@ -70,6 +72,7 @@ describe("CandidateCard (text item)", () => {
         selected={false}
         onSelect={vi.fn()}
         packCoverTone={PACK_COVER_TONE}
+        format="save_one"
       />,
     );
 
@@ -91,6 +94,7 @@ describe("CandidateCard (text item)", () => {
         selected={false}
         onSelect={vi.fn()}
         packCoverTone={PACK_COVER_TONE}
+        format="save_one"
       />,
     );
 
@@ -108,6 +112,7 @@ describe("CandidateCard (text item)", () => {
         selected={false}
         onSelect={onSelect}
         packCoverTone={PACK_COVER_TONE}
+        format="save_one"
       />,
     );
 
@@ -124,12 +129,78 @@ describe("CandidateCard (text item)", () => {
         selected
         onSelect={vi.fn()}
         packCoverTone={PACK_COVER_TONE}
+        format="save_one"
       />,
     );
 
     expect(screen.getByRole("button", { name: "Pick Redo" })).toHaveClass(
       "border-acc",
     );
+  });
+
+  it("shows a Saved chosen badge instead of the index once selected (save_one)", () => {
+    render(
+      <CandidateCard
+        item={textItem("1", "Redo")}
+        index={0}
+        selected
+        onSelect={vi.fn()}
+        packCoverTone={PACK_COVER_TONE}
+        format="save_one"
+      />,
+    );
+
+    expect(screen.getByText("Saved")).toBeInTheDocument();
+  });
+
+  it("shows a Sacrificed chosen badge once selected (sacrifice_one)", () => {
+    render(
+      <CandidateCard
+        item={textItem("1", "Redo")}
+        index={0}
+        selected
+        onSelect={vi.fn()}
+        packCoverTone={PACK_COVER_TONE}
+        format="sacrifice_one"
+      />,
+    );
+
+    expect(screen.getByText("Sacrificed")).toBeInTheDocument();
+  });
+
+  it("omits the chosen badge when not selected", () => {
+    render(
+      <CandidateCard
+        item={textItem("1", "Redo")}
+        index={0}
+        selected={false}
+        onSelect={vi.fn()}
+        packCoverTone={PACK_COVER_TONE}
+        format="save_one"
+      />,
+    );
+
+    expect(screen.queryByText("Saved")).not.toBeInTheDocument();
+  });
+
+  it("places the select-bar mark after the title, not before it", () => {
+    render(
+      <CandidateCard
+        item={textItem("1", "Redo")}
+        index={0}
+        selected={false}
+        onSelect={vi.fn()}
+        packCoverTone={PACK_COVER_TONE}
+        format="save_one"
+      />,
+    );
+
+    const title = screen.getByText("Redo");
+    const selectBar = title.parentElement as HTMLElement;
+    const mark = selectBar.querySelector('[aria-hidden="true"]') as HTMLElement;
+    // The mark is the LAST child of the select bar row now (after the title
+    // and index), not the first — mirrors the mock's `margin-left:auto` mark.
+    expect(selectBar.lastElementChild).toBe(mark);
   });
 });
 
@@ -144,6 +215,7 @@ describe("CandidateCard (youtube item)", () => {
         selected={false}
         onSelect={onSelect}
         packCoverTone={PACK_COVER_TONE}
+        format="save_one"
       />,
     );
 
@@ -167,6 +239,7 @@ describe("CandidateCard (youtube item)", () => {
         selected={false}
         onSelect={vi.fn()}
         packCoverTone={PACK_COVER_TONE}
+        format="save_one"
       />,
     );
 

@@ -10,7 +10,8 @@ import {
 import { mediaUrl } from "@/src/shared/lib/media-url";
 import { cn } from "@/src/shared/lib/cn";
 import { toneFor, HAIRLINE_OVERLAY_STYLE } from "@/src/features/play/candidate-tone";
-import type { Item } from "@/src/shared/types/pack";
+import { CHOSEN_LABEL_KEY } from "@/src/features/play/play-format-copy";
+import type { Item, Pack } from "@/src/shared/types/pack";
 
 interface CandidateCardProps {
   item: Item;
@@ -23,12 +24,18 @@ interface CandidateCardProps {
    * own palette family instead of a fixed global cycle.
    */
   packCoverTone: string;
+  /** Picks which "chosen" badge text shows once selected — save_one/nxn say
+   * "Saved", sacrifice_one says "Sacrificed" (see `CHOSEN_LABEL_KEY`). */
+  format: Pack["format"];
 }
 
 const FRAME_SELECTED = "border-acc ring-[3px] ring-acc/30";
 const FRAME_UNSELECTED = "border-border hover:border-border-strong";
 
-/** The checkbox + title + index row shared by all three media treatments. */
+/** The title + index + checkbox row shared by all three media treatments.
+ * The checkbox/indicator sits on the RIGHT of the title (mock's `i.mark`,
+ * which uses `margin-left:auto`) — moved from its original left-of-title
+ * spot (T3). */
 function SelectBar({
   title,
   index,
@@ -45,10 +52,14 @@ function SelectBar({
         selected ? "bg-acc/[0.12]" : "bg-white/[0.02]",
       )}
     >
+      <Text className="flex-1 text-[14.5px] font-semibold">{title}</Text>
+      <Text variant="tertiary" className="text-[11px]">
+        {String(index + 1).padStart(2, "0")}
+      </Text>
       <span
         aria-hidden
         className={cn(
-          "flex h-[19px] w-[19px] flex-none items-center justify-center rounded-chip border-[1.5px]",
+          "ms-auto flex h-[19px] w-[19px] flex-none items-center justify-center rounded-chip border-[1.5px]",
           selected ? "border-acc bg-acc" : "border-border-strong",
         )}
       >
@@ -56,11 +67,16 @@ function SelectBar({
           <span className="mb-[2px] h-[7px] w-[4px] rotate-45 border-b-[1.5px] border-r-[1.5px] border-[#07131a]" />
         )}
       </span>
-      <Text className="flex-1 text-[14.5px] font-semibold">{title}</Text>
-      <Text variant="tertiary" className="text-[11px]">
-        {String(index + 1).padStart(2, "0")}
-      </Text>
     </div>
+  );
+}
+
+/** The top-left "chosen" pill overlaid on a card's cover once selected. */
+function ChosenBadge({ label }: { label: string }) {
+  return (
+    <Badge variant="accent" className="absolute start-2 top-2 z-10">
+      {label}
+    </Badge>
   );
 }
 
@@ -73,10 +89,14 @@ function TextTile({
   item,
   index,
   packCoverTone,
+  selected,
+  chosenLabel,
 }: {
   item: Item;
   index: number;
   packCoverTone: string;
+  selected: boolean;
+  chosenLabel: string;
 }) {
   const tone = toneFor(packCoverTone, index);
   return (
@@ -87,13 +107,17 @@ function TextTile({
       }}
     >
       <div aria-hidden className="absolute inset-0" style={HAIRLINE_OVERLAY_STYLE} />
-      <Text
-        variant="tertiary"
-        className="absolute start-2 top-2 text-[11px] font-semibold"
-      >
-        {String(index + 1).padStart(2, "0")}
-      </Text>
-      {item.type === "youtube" && (
+      {selected ? (
+        <ChosenBadge label={chosenLabel} />
+      ) : (
+        <Text
+          variant="tertiary"
+          className="absolute start-2 top-2 text-[11px] font-semibold"
+        >
+          {String(index + 1).padStart(2, "0")}
+        </Text>
+      )}
+      {item.type === "youtube" && !selected && (
         <Badge className="absolute end-2 top-2">YouTube</Badge>
       )}
     </div>
@@ -112,8 +136,10 @@ export function CandidateCard({
   selected,
   onSelect,
   packCoverTone,
+  format,
 }: CandidateCardProps) {
   const t = useTranslations("play");
+  const chosenLabel = t(CHOSEN_LABEL_KEY[format]);
   const videoId = item.type === "youtube" ? extractYouTubeId(item.value) : null;
   const startSeconds =
     item.type === "youtube" ? extractYouTubeStart(item.value) : null;
@@ -129,11 +155,14 @@ export function CandidateCard({
   if (videoId) {
     return (
       <div style={appearDelay} className={frameClasses}>
-        <YouTubeCard
-          videoId={videoId}
-          startSeconds={startSeconds}
-          className="h-[150px]"
-        />
+        <div className="relative">
+          <YouTubeCard
+            videoId={videoId}
+            startSeconds={startSeconds}
+            className="h-[150px]"
+          />
+          {selected && <ChosenBadge label={chosenLabel} />}
+        </div>
         {/* A dedicated control below the player, not the player itself —
             interacting with the video area must not select the item. */}
         <button
@@ -157,11 +186,14 @@ export function CandidateCard({
         aria-label={t("pick", { name: item.title })}
         className={cn(frameClasses, "text-start")}
       >
-        <ImageCard
-          src={mediaUrl(item.value)}
-          alt={item.title}
-          className="h-[150px]"
-        />
+        <div className="relative">
+          <ImageCard
+            src={mediaUrl(item.value)}
+            alt={item.title}
+            className="h-[150px]"
+          />
+          {selected && <ChosenBadge label={chosenLabel} />}
+        </div>
         <SelectBar title={item.title} index={index} selected={selected} />
       </button>
     );
@@ -175,7 +207,13 @@ export function CandidateCard({
       aria-label={t("pick", { name: item.title })}
       className={cn(frameClasses, "text-start")}
     >
-      <TextTile item={item} index={index} packCoverTone={packCoverTone} />
+      <TextTile
+        item={item}
+        index={index}
+        packCoverTone={packCoverTone}
+        selected={selected}
+        chosenLabel={chosenLabel}
+      />
       <SelectBar title={item.title} index={index} selected={selected} />
     </button>
   );

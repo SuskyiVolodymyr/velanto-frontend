@@ -120,6 +120,7 @@ export function PlayScreen({ pack }: { pack: Pack }) {
                     selected={item.id === session.selectedId}
                     onSelect={() => session.setSelectedId(item.id)}
                     packCoverTone={pack.coverTone}
+                    format={pack.format}
                   />
                 ))}
               </div>

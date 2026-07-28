@@ -1131,6 +1131,8 @@
     "exit": "Exit",
     "soloMode": "SOLO",
     "roundsDoneNote": "{count, plural, one {# round done} other {# rounds done}}",
+    "chosenSave": "Saved",
+    "chosenSacrifice": "Sacrificed",
     "pick": "Pick {name}",
     "nextRound": "Next round →",
     "instructionSave": "Pick the one you'd save. Check it below, then confirm.",
