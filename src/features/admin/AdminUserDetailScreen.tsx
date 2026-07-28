@@ -10,6 +10,7 @@ import { useAuth } from "@/src/shared/lib/auth-context";
 import { Text } from "@/src/shared/components/Text";
 import { Card } from "@/src/shared/components/Card";
 import { Badge } from "@/src/shared/components/Badge";
+import { Button } from "@/src/shared/components/Button";
 import { Username } from "@/src/shared/components/Username";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { AuthorPacksRail } from "@/src/features/author/AuthorPacksRail";
@@ -17,6 +18,9 @@ import { RecentlyPlayedSection } from "@/src/features/author/RecentlyPlayedSecti
 import { useAuthorBanHistory } from "@/src/features/author/api/author.queries";
 import { useAdminUserDetail } from "@/src/features/admin/api/admin.queries";
 import { isCurrentlyBanned } from "@/src/features/admin/use-users-admin";
+import { useAdminUserModeration } from "@/src/features/admin/use-admin-user-moderation";
+import { UserBanForm } from "@/src/features/admin/UserBanForm";
+import { canActOn } from "@/src/shared/lib/staff-permissions";
 import { formatBytes } from "@/src/shared/lib/format-bytes";
 
 /** A single labelled number tile in the stats grid. */
@@ -69,9 +73,10 @@ export function AdminUserDetailScreen({ userId }: { userId: string }) {
   const active = status === "authenticated" && allowed;
   const query = useAdminUserDetail(userId, { enabled: active });
   const banHistory = useAuthorBanHistory(userId, { enabled: active });
+  const moderation = useAdminUserModeration(userId);
 
   if (status === "loading") return null;
-  if (status === "unauthenticated" || !allowed) return null;
+  if (status === "unauthenticated" || !allowed || !viewer) return null;
 
   const backLink = (
     <Link
@@ -103,13 +108,14 @@ export function AdminUserDetailScreen({ userId }: { userId: string }) {
 
   const user = query.data;
   const banned = isCurrentlyBanned(user.bannedUntil);
+  const canAct = canActOn(viewer.role, user.role);
 
   return (
     <div className="mx-auto w-full max-w-5xl px-6 py-8">
       {backLink}
 
       {/* Account header */}
-      <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <Text as="h1" variant="title" className="text-2xl">
             <Username
@@ -130,10 +136,63 @@ export function AdminUserDetailScreen({ userId }: { userId: string }) {
             {t("detailPublicProfile")}
           </Link>
         </div>
-        <Badge className={banned ? "text-danger" : "text-success"}>
-          {banned ? t("detailStatusBanned") : t("detailStatusActive")}
-        </Badge>
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge className={banned ? "text-danger" : "text-success"}>
+            {banned ? t("detailStatusBanned") : t("detailStatusActive")}
+          </Badge>
+          {canAct && (
+            <>
+              <Button
+                variant="secondary"
+                size="sm"
+                loading={moderation.trustSubmitting}
+                onClick={() => void moderation.handleSetTrusted(!user.trusted)}
+              >
+                {user.trusted ? t("untrust") : t("trust")}
+              </Button>
+              {banned ? (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  loading={moderation.unbanSubmitting}
+                  onClick={() => void moderation.handleUnban()}
+                >
+                  {t("unban")}
+                </Button>
+              ) : (
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={moderation.toggleBanForm}
+                >
+                  {t("ban")}
+                </Button>
+              )}
+            </>
+          )}
+        </div>
       </div>
+
+      {canAct && moderation.actionError && (
+        <Text variant="danger" className="mb-4 text-sm">
+          {moderation.actionError}
+        </Text>
+      )}
+
+      {canAct && moderation.showBanForm && (
+        <div className="mb-8 rounded-[15px] border border-border bg-surface p-4">
+          <UserBanForm
+            userId={userId}
+            banDuration={moderation.banDuration}
+            banReason={moderation.banReason}
+            loading={moderation.banSubmitting}
+            onDurationChange={moderation.setBanDuration}
+            onReasonChange={moderation.setBanReason}
+            onConfirm={() => void moderation.handleBanSubmit()}
+            onCancel={moderation.toggleBanForm}
+          />
+        </div>
+      )}
 
       {/* Content */}
       <Text as="h2" variant="title" className="mb-3 text-lg">

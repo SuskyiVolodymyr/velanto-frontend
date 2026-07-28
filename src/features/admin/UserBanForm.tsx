@@ -18,9 +18,10 @@ interface UserBanFormProps {
   onDurationChange: (duration: BanDuration) => void;
   onReasonChange: (reason: BanReasonState) => void;
   onConfirm: () => void;
+  onCancel: () => void;
 }
 
-/** The inline ban form: duration select + reason picker + confirm. */
+/** The inline ban form: duration select + reason picker + confirm/cancel. */
 export function UserBanForm({
   userId,
   banDuration,
@@ -29,8 +30,10 @@ export function UserBanForm({
   onDurationChange,
   onReasonChange,
   onConfirm,
+  onCancel,
 }: UserBanFormProps) {
   const t = useTranslations("ban");
+  const tCommon = useTranslations("common");
   return (
     <div className="mt-3 flex flex-col gap-3 border-t border-border pt-3">
       <div className="flex flex-wrap items-start gap-3">
@@ -57,15 +60,23 @@ export function UserBanForm({
           />
         </div>
       </div>
-      <Button
-        variant="primary"
-        className="self-start"
-        disabled={!isBanReasonValid(banReason)}
-        loading={loading}
-        onClick={() => onConfirm()}
-      >
-        {t("confirm")}
-      </Button>
+      <div className="flex gap-2">
+        <Button
+          variant="primary"
+          disabled={!isBanReasonValid(banReason)}
+          loading={loading}
+          onClick={() => onConfirm()}
+        >
+          {t("confirm")}
+        </Button>
+        <Button
+          variant="secondary"
+          disabled={loading}
+          onClick={() => onCancel()}
+        >
+          {tCommon("cancel")}
+        </Button>
+      </div>
     </div>
   );
 }
