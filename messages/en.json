@@ -73,7 +73,21 @@
     "deletePack": "Delete pack",
     "packDeleted": "Pack deleted",
     "deletePackError": "Couldn't delete this pack. Try again.",
-    "banUserError": "Couldn't ban this user. Try again."
+    "banUserError": "Couldn't ban this user. Try again.",
+    "contentsSearchAria": "Search pack items",
+    "contentsSearchPlaceholder": "Search items…",
+    "contentsFilterText": "Text",
+    "contentsFilterYoutube": "YouTube",
+    "contentsFilterImage": "Image",
+    "contentsItemType": {
+      "text": "Text item",
+      "youtube": "YouTube item",
+      "image": "Image item"
+    },
+    "contentsDrawnRandomly": "Drawn randomly · {count, plural, one {# item} other {# items}} in this pool",
+    "contentsPoolEmpty": "This pool has no items yet.",
+    "contentsEmpty": "No pack contents to show.",
+    "contentsNoMatches": "No items match your search."
   },
   "admin": {
     "panelEyebrow": "Admin panel",
