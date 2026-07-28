@@ -435,6 +435,16 @@
     "heading": "社区规则",
     "intro": "这些规则让 Velanto 对每个人都安全、公平。创建账号即表示你同意遵守这些规则。",
     "loadError": "目前无法加载规则。请稍后再试。",
+    "searchPlaceholder": "搜索规则…",
+    "clearSearch": "清除搜索",
+    "noMatch": "没有规则匹配“{query}”",
+    "tryPlainer": "试试更简单的词——“垃圾信息”“抄袭”“封禁”。",
+    "categoriesHeading": "分类",
+    "reportTitle": "有人违反规则了吗？",
+    "reportNote": "举报一个卡包、评论或个人资料——选择被违反的规则，举报会直接送到管理员手中。",
+    "wrongRuleTitle": "觉得某条规则不合理？",
+    "wrongRuleNote": "当足够多的人给出充分理由时，规则就会改变。把它作为建议发布出来。",
+    "openSuggestions": "打开建议",
     "content": {
       "hate_discrimination": {
         "title": "仇恨与歧视",
@@ -545,6 +555,13 @@
         }
       }
     }
+  },
+  "legal": {
+    "termsTab": "条款",
+    "privacyTab": "隐私",
+    "onThisPage": "本页内容",
+    "questionsTitle": "对本文件有疑问？",
+    "questionsNote": "这个收件箱由一个人查看，会在 30 天内回复。"
   },
   "terms": {
     "metaTitle": "服务条款 — Velanto",
@@ -1519,7 +1536,15 @@
     "metaDescription": "Velanto 的新功能、修复和改进。",
     "heading": "最新动态",
     "intro": "最新的功能、修复和改进——最新的排在前面。",
-    "empty": "暂无更新，敬请期待。"
+    "empty": "暂无更新，敬请期待。",
+    "releasesHeading": "版本",
+    "latest": "最新",
+    "changesCount": "{count, plural, other {# 项更改}}",
+    "showMore": "显示另外 {count} 项",
+    "showLess": "收起",
+    "missingTitle": "还缺点什么？",
+    "missingNote": "建议会被阅读和投票——上面列表中的许多内容都是从这里开始的。",
+    "openSuggestions": "打开建议"
   },
   "myPacks": {
     "title": "我的题包",
