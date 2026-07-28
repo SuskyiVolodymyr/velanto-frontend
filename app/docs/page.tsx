@@ -21,8 +21,8 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function DocsPage() {
-  // DocsScreen reads the active topic from the query string, which needs a
-  // Suspense boundary for this route to stay statically rendered.
+  // DocsScreen reads the active topic from the query string via
+  // useSearchParams, which Next requires be wrapped in a Suspense boundary.
   return (
     <Suspense>
       <DocsScreen />
