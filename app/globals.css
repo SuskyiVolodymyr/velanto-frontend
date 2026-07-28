@@ -197,6 +197,24 @@ html[data-streamer-mode="on"]:not([data-streamer-hydrated])
   animation: play-card-fade-in 1000ms linear both;
 }
 
+/*
+ * Rank-blind's floating current-item card — a gentle idle bob so the card
+ * being placed reads as "live" while it waits on the player. Applied via
+ * `.animate-card-float` by RankPlayScreen. Frozen under reduced-motion below.
+ */
+@keyframes card-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+.animate-card-float {
+  animation: card-float 3.2s ease-in-out infinite;
+}
+
 /* Form-error micro-interaction — see design-tokens.md's motion section. */
 @keyframes shake {
   0%,
@@ -352,6 +370,11 @@ input:-webkit-autofill:active {
 
   /* Show every candidate immediately — no staggered fade. */
   .play-card-appear {
+    animation: none;
+  }
+
+  /* Rank-blind's floating card rests still, no idle bob. */
+  .animate-card-float {
     animation: none;
   }
 

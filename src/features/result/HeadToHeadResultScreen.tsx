@@ -5,8 +5,6 @@ import { useTranslations } from "next-intl";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
-import { SharedResultNote } from "@/src/features/result/SharedResultNote";
-import { ResultActions } from "@/src/features/result/ResultActions";
 import { TopPickedTable } from "@/src/features/result/TopPickedTable";
 import { roundHeading } from "@/src/shared/lib/round-heading";
 import { cn } from "@/src/shared/lib/cn";
@@ -125,6 +123,12 @@ export function HeadToHeadResultScreen({
   pack,
   results,
   ownPicks,
+  // Unused now that the header block + SharedResultNote that read it moved to
+  // ResultScreen (T11); kept in the signature so this still matches
+  // ResultScreen's shared { pack, results, ownPicks, shared } call shape
+  // across all four format screens, and so this file's own tests (which
+  // already pass it) don't need a T11 edit.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   shared,
 }: {
   pack: Pack;
@@ -149,30 +153,7 @@ export function HeadToHeadResultScreen({
   const topItems = results.topItems ?? [];
 
   return (
-    <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
-      <Text variant="tertiary" className="mb-2 text-xs uppercase tracking-wide">
-        {t("label")}
-      </Text>
-      <Text as="h1" variant="title" className="mb-2 text-3xl">
-        {pack.title}
-      </Text>
-      <Text variant="secondary" className="mb-8">
-        {t("playsRecorded", { count: results.totalPlays })}
-      </Text>
-
-      {shared && <SharedResultNote />}
-
-      {/* Above the matchups, not below them: a 1v1 pack can run to dozens of
-          rows, and burying Share under all of them meant scrolling past the
-          whole result to find it. */}
-      <ResultActions
-        packId={pack.id}
-        status={pack.status}
-        picks={ownPicks}
-        shared={shared}
-        className="mb-6 justify-end"
-      />
-
+    <div className={cn(PACK_CONTAINER, "flex-1 pb-10")}>
       {matchups.length > 0 ? (
         // `divide-y` rather than a gap: a hairline between matchups keeps a
         // long list readable as separate comparisons. Border, not background —
@@ -188,7 +169,7 @@ export function HeadToHeadResultScreen({
           ))}
         </div>
       ) : (
-        <Card className="mb-10 py-8 text-center hover:translate-y-0 hover:shadow-none">
+        <Card className="mb-10 py-8 text-center">
           <Text variant="tertiary" className="text-sm">
             {t("noMatchupBreakdown")}
           </Text>
@@ -197,7 +178,11 @@ export function HeadToHeadResultScreen({
 
       {topItems.length > 0 && (
         <section className="mb-8">
-          <Text as="h2" variant="title" className="mb-1 text-lg">
+          <Text
+            as="h2"
+            variant="tertiary"
+            className="mb-2 text-[13px] font-medium uppercase tracking-[0.14em]"
+          >
             {t("topPickedHeading")}
           </Text>
           <Text variant="secondary" className="mb-4 text-sm">
@@ -281,7 +266,7 @@ function ContenderCard({
       data-testid={won ? "winner" : "loser"}
       data-side={side}
       className={cn(
-        "flex min-w-0 items-center gap-3 rounded-xl border px-4 py-3",
+        "flex min-w-0 items-center gap-4 rounded-tile border p-[13px_16px]",
         won ? "border-success/60 bg-success/5" : "border-danger/60 bg-danger/5",
         side === "left" ? "flex-row" : "flex-row-reverse",
       )}

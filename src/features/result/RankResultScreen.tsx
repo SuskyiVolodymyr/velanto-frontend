@@ -4,8 +4,6 @@ import { useTranslations } from "next-intl";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { cn } from "@/src/shared/lib/cn";
 import { Text } from "@/src/shared/components/Text";
-import { SharedResultNote } from "@/src/features/result/SharedResultNote";
-import { ResultActions } from "@/src/features/result/ResultActions";
 import { PodiumTable } from "@/src/features/result/PodiumTable";
 import { RankedList } from "@/src/shared/components/RankedList";
 import { roundHeading } from "@/src/shared/lib/round-heading";
@@ -29,6 +27,12 @@ export function RankResultScreen({
   pack,
   results,
   ownPicks,
+  // Unused now that the header block + SharedResultNote that read it moved to
+  // ResultScreen (T11); kept in the signature so this still matches
+  // ResultScreen's shared { pack, results, ownPicks, shared } call shape
+  // across all four format screens, and so this file's own tests (which
+  // already pass it) don't need a T11 edit.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   shared,
 }: {
   pack: Pack;
@@ -40,27 +44,7 @@ export function RankResultScreen({
   const podium = results.podium ?? [];
 
   return (
-    <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
-      <Text variant="tertiary" className="mb-2 text-xs uppercase tracking-wide">
-        {t("label")}
-      </Text>
-      <Text as="h1" variant="title" className="mb-2 text-3xl">
-        {pack.title}
-      </Text>
-      <Text variant="secondary" className="mb-8">
-        {t("playsRecorded", { count: results.totalPlays })}
-      </Text>
-
-      {shared && <SharedResultNote />}
-
-      <ResultActions
-        packId={pack.id}
-        status={pack.status}
-        picks={ownPicks}
-        shared={shared}
-        className="mb-6 justify-end"
-      />
-
+    <div className={cn(PACK_CONTAINER, "flex-1 pb-10")}>
       <div className="mb-10 flex flex-col divide-y divide-border">
         {results.rounds.map((round) => {
           const roundPicks =
@@ -120,7 +104,11 @@ export function RankResultScreen({
 
       {podium.length > 0 && (
         <section className="mb-8">
-          <Text as="h2" variant="title" className="mb-1 text-lg">
+          <Text
+            as="h2"
+            variant="tertiary"
+            className="mb-2 text-[13px] font-medium uppercase tracking-[0.14em]"
+          >
             {t("podiumHeading")}
           </Text>
           <Text variant="secondary" className="mb-4 text-sm">

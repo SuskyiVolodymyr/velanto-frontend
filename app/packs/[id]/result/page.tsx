@@ -1,11 +1,8 @@
 import type { Metadata } from "next";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
-import { cn } from "@/src/shared/lib/cn";
 import { getTranslations } from "next-intl/server";
 import { getPackServer } from "@/src/shared/lib/get-pack-server";
 import { ResultScreen } from "@/src/features/result/ResultScreen";
 import { ResultFallback } from "@/src/features/result/ResultFallback";
-import { BackButton } from "@/src/shared/components/BackButton";
 
 export async function generateMetadata({
   params,
@@ -56,12 +53,10 @@ export default async function ResultPage({
   // screen's heading, so the page is not an empty shell. The RESULTS are not:
   // ResultScreen fetches those itself, only once it knows they will be shown
   // (#243).
-  return (
-    <>
-      <div className={cn(PACK_CONTAINER, "pt-6")}>
-        <BackButton href={`/packs/${id}`} />
-      </div>
-      <ResultScreen pack={pack} />
-    </>
-  );
+  //
+  // The Back control used to render here in a loose wrapper; it now lives
+  // inside ResultScreen's own sticky action bar (T11), alongside
+  // ResultActions — both need client state (#222's evidence, #243's results),
+  // so the whole bar moved to where that state already lives.
+  return <ResultScreen pack={pack} />;
 }

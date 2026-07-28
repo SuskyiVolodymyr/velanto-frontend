@@ -30,11 +30,11 @@ export function RankedList({ rows }: { rows: RankedRow[] }) {
   const t = useTranslations("result");
 
   return (
-    <ul className="flex flex-col gap-2 rounded-xl border border-border p-3">
+    <ul className="flex flex-col gap-2 rounded-card border border-border p-3">
       {rows.map((row, index) => (
         <li
           key={row.id}
-          className="flex min-w-0 items-center gap-3 rounded-lg border border-white/[0.06] bg-white/[0.03] px-3 py-2"
+          className="flex min-w-0 items-center gap-4 rounded-tile border border-border bg-surface-card p-[13px_16px]"
         >
           <span className="flex h-7 w-7 flex-none items-center justify-center rounded-lg bg-white/[0.06] text-xs font-bold tabular-nums">
             {index + 1}

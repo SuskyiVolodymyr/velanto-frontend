@@ -16,6 +16,8 @@ const RIGHT = {
   value: "Vegeta",
 };
 
+const COVER_TONE = "#2b2a3a";
+
 describe("HeadToHeadRound", () => {
   it("renders both items in full immediately, with no reveal control", () => {
     render(
@@ -24,6 +26,7 @@ describe("HeadToHeadRound", () => {
         right={RIGHT}
         selectedId={null}
         onSelect={vi.fn()}
+        coverTone={COVER_TONE}
       />,
     );
 
@@ -43,6 +46,7 @@ describe("HeadToHeadRound", () => {
         right={RIGHT}
         selectedId={null}
         onSelect={onSelect}
+        coverTone={COVER_TONE}
       />,
     );
 
@@ -60,6 +64,7 @@ describe("HeadToHeadRound", () => {
         right={RIGHT}
         selectedId={null}
         onSelect={onSelect}
+        coverTone={COVER_TONE}
       />,
     );
 
@@ -83,6 +88,7 @@ describe("HeadToHeadRound", () => {
         right={RIGHT}
         selectedId={null}
         onSelect={onSelect}
+        coverTone={COVER_TONE}
       />,
     );
 
@@ -117,6 +123,7 @@ describe("HeadToHeadRound", () => {
         right={RIGHT}
         selectedId={null}
         onSelect={onSelect}
+        coverTone={COVER_TONE}
       />,
     );
 
@@ -136,6 +143,7 @@ describe("HeadToHeadRound", () => {
         right={RIGHT}
         selectedId="i2"
         onSelect={vi.fn()}
+        coverTone={COVER_TONE}
       />,
     );
 
@@ -149,5 +157,41 @@ describe("HeadToHeadRound", () => {
       "aria-pressed",
       "true",
     );
+  });
+
+  it("renders exactly one literal VS badge", () => {
+    // e2e/play.spec.ts does a strict-mode getByText("VS", { exact: true }) —
+    // a second match anywhere on this screen (e.g. inside a card label) would
+    // break that query.
+    render(
+      <HeadToHeadRound
+        left={LEFT}
+        right={RIGHT}
+        selectedId={null}
+        onSelect={vi.fn()}
+        coverTone={COVER_TONE}
+      />,
+    );
+
+    expect(screen.getAllByText("VS", { exact: true })).toHaveLength(1);
+  });
+
+  it("selects a border+ring frame for the chosen contender and a plain border for the other", () => {
+    render(
+      <HeadToHeadRound
+        left={LEFT}
+        right={RIGHT}
+        selectedId="i1"
+        onSelect={vi.fn()}
+        coverTone={COVER_TONE}
+      />,
+    );
+
+    const selectedCard = screen.getByRole("button", { name: "Pick Goku" });
+    const unselectedCard = screen.getByRole("button", { name: "Pick Vegeta" });
+    expect(selectedCard.className).toContain("border-acc");
+    expect(selectedCard.className).toContain("ring-acc/30");
+    expect(unselectedCard.className).toContain("border-border");
+    expect(unselectedCard.className).not.toContain("ring-acc/30");
   });
 });

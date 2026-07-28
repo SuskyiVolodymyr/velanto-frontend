@@ -1,8 +1,9 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
-import { Card } from "@/src/shared/components/Card";
+import { BackButton } from "@/src/shared/components/BackButton";
 import { Text } from "@/src/shared/components/Text";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { RankResultScreen } from "@/src/features/result/RankResultScreen";
@@ -10,6 +11,11 @@ import { HeadToHeadResultScreen } from "@/src/features/result/HeadToHeadResultSc
 import { NxNResultScreen } from "@/src/features/result/NxNResultScreen";
 import { EliminationResultScreen } from "@/src/features/result/EliminationResultScreen";
 import { ResultLocked } from "@/src/features/result/ResultLocked";
+import { ResultActions } from "@/src/features/result/ResultActions";
+import { ResultHero } from "@/src/features/result/ResultHero";
+import { ResultAgainPanel } from "@/src/features/result/ResultAgainPanel";
+import { SharedResultNote } from "@/src/features/result/SharedResultNote";
+import { summarizeResult } from "@/src/features/result/result-summary";
 import { usePackResults } from "@/src/features/result/api/results.queries";
 import { useResultPicks } from "@/src/features/result/use-result-picks";
 import { cn } from "@/src/shared/lib/cn";
@@ -37,67 +43,138 @@ export function ResultScreen({ pack }: { pack: Pack }) {
   const { data: results, isError } = usePackResults(pack.id, hasEvidence);
   const t = useTranslations("result");
 
-  // Not "no play" — the sessionStorage read hasn't happened yet. Rendering the
-  // locked state here would flash it at every player before their own results.
-  if (!ready) return <LoadingState label={t("loading")} />;
-  if (!picks) return <ResultLocked packId={pack.id} title={pack.title} />;
+  let body: ReactNode;
+  if (!ready) {
+    // Not "no play" — the sessionStorage read hasn't happened yet. Rendering
+    // the locked state here would flash it at every player before their own
+    // results.
+    body = <LoadingState label={t("loading")} />;
+  } else if (!picks) {
+    body = <ResultLocked packId={pack.id} title={pack.title} />;
+  } else if (isError) {
+    // Evidence exists, so the numbers are coming. A spinner rather than the
+    // locked state: telling someone who just finished that they haven't
+    // played reads as broken, which is the same reason `!ready` isn't locked
+    // either.
+    body = <ResultLoadError />;
+  } else if (!results) {
+    body = <LoadingState label={t("loading")} />;
+  } else {
+    // picks/shared are PASSED DOWN to the format screen, not re-read. Both
+    // child screens used to call useResultPicks themselves, which gave each
+    // its own copy of the hook's after-mount state: they rendered once with
+    // picks=null (the aggregate list), then again once their own effect
+    // resolved (the "your pick" row). That is a real flash of the crowd's
+    // numbers before your own pick, and it is what #222's gate exists to
+    // prevent — the parent has already done this read.
+    let recap: ReactNode;
+    if (results.format === "rank_blind") {
+      // The versus formats each get their own screen: their rounds are
+      // randomly drawn matchups, which a per-round tally of a shared
+      // candidate list cannot express. nxn replays the sides you were shown;
+      // 1v1 adds the crowd's split for that exact pairing (see
+      // NxNResultScreen on why nxn has no percentages).
+      recap = (
+        <RankResultScreen
+          pack={pack}
+          results={results}
+          ownPicks={picks}
+          shared={shared}
+        />
+      );
+    } else if (results.format === "nxn") {
+      recap = (
+        <NxNResultScreen
+          pack={pack}
+          results={results}
+          ownPicks={picks}
+          shared={shared}
+        />
+      );
+    } else if (results.format === "1v1") {
+      recap = (
+        <HeadToHeadResultScreen
+          pack={pack}
+          results={results}
+          ownPicks={picks}
+          shared={shared}
+        />
+      );
+    } else {
+      // save_one / sacrifice_one. Same recap shape as the versus screens: the
+      // rounds you played, each as the slate it drew, with your pick marked.
+      recap = (
+        <EliminationResultScreen
+          pack={pack}
+          results={results}
+          ownPicks={picks}
+          shared={shared}
+        />
+      );
+    }
 
-  // Evidence exists, so the numbers are coming. A spinner rather than the
-  // locked state: telling someone who just finished that they haven't played
-  // reads as broken, which is the same reason `!ready` isn't locked either.
-  if (isError) return <ResultLoadError />;
-  if (!results) return <LoadingState label={t("loading")} />;
+    // D5 (T10): the hero's stat tiles, derived here rather than inside
+    // ResultHero — the hero is presentational, this screen already has
+    // format/ownPicks/results in scope, and it is the same "derive once at
+    // the composition root" shape #222's picks/shared already follow above.
+    const { tiles } = summarizeResult({
+      format: pack.format,
+      ownPicks: picks,
+      results,
+    });
 
-  // picks/shared are PASSED DOWN, not re-read. Both child screens used to call
-  // useResultPicks themselves, which gave each its own copy of the hook's
-  // after-mount state: they rendered once with picks=null (the aggregate list),
-  // then again once their own effect resolved (the "your pick" row). That is a
-  // real flash of the crowd's numbers before your own pick, and it is what
-  // #222's gate exists to prevent — the parent has already done this read.
-  if (results.format === "rank_blind") {
-    return (
-      <RankResultScreen
-        pack={pack}
-        results={results}
-        ownPicks={picks}
-        shared={shared}
-      />
+    body = (
+      <>
+        <div className={cn(PACK_CONTAINER, "pt-10")}>
+          <ResultHero
+            packTitle={pack.title}
+            shared={shared}
+            totalPlays={results.totalPlays}
+            tiles={tiles}
+          />
+          {shared && <SharedResultNote />}
+        </div>
+        {recap}
+        <div className={cn(PACK_CONTAINER, "pb-16")}>
+          <ResultAgainPanel packId={pack.id} shared={shared} />
+        </div>
+      </>
     );
   }
-  // The versus formats each get their own screen: their rounds are randomly
-  // drawn matchups, which GroupResultScreen's per-round tally of a shared
-  // candidate list cannot express. nxn replays the sides you were shown; 1v1
-  // adds the crowd's split for that exact pairing (see NxNResultScreen on why
-  // nxn has no percentages).
-  if (results.format === "nxn") {
-    return (
-      <NxNResultScreen
-        pack={pack}
-        results={results}
-        ownPicks={picks}
-        shared={shared}
-      />
-    );
-  }
-  if (results.format === "1v1") {
-    return (
-      <HeadToHeadResultScreen
-        pack={pack}
-        results={results}
-        ownPicks={picks}
-        shared={shared}
-      />
-    );
-  }
-  // save_one / sacrifice_one. Same recap shape as the versus screens: the
-  // rounds you played, each as the slate it drew, with your pick marked.
+
   return (
-    <EliminationResultScreen
-      pack={pack}
-      results={results}
-      ownPicks={picks}
-      shared={shared}
-    />
+    <>
+      {/* Sticky action bar (T11): same treatment as PackDetailScreen's — back
+          on the start side, ResultActions on the end. BackButton moved here
+          from app/packs/[id]/result/page.tsx's loose <div> so it's always
+          visible, matching every other state this screen can render.
+          ResultActions is centralized here instead of being duplicated by
+          each of the four format screens (each used to render its own copy
+          with `className="mb-6 justify-end"`) — it renders in exactly the
+          states that used to render it: once results are actually on screen.
+          Locked/loading/error keep whatever CTA they already had (or none);
+          that is untouched #222 gate behaviour, not something T11 changes. */}
+      <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
+        <div
+          className={cn(
+            PACK_CONTAINER,
+            "flex items-center gap-3 py-3 max-[720px]:px-4",
+          )}
+        >
+          <BackButton href={`/packs/${pack.id}`} />
+          {picks && !isError && results && (
+            <ResultActions
+              packId={pack.id}
+              status={pack.status}
+              picks={picks}
+              shared={shared}
+              className="ms-auto"
+            />
+          )}
+        </div>
+      </div>
+      {body}
+    </>
   );
 }
 
@@ -110,9 +187,9 @@ function ResultLoadError() {
   const t = useTranslations("result");
   return (
     <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
-      <Card className="py-10 text-center hover:translate-y-0 hover:shadow-none">
+      <div className="rounded-card border border-border bg-surface-card p-[26px_24px] text-center">
         <Text variant="danger">{t("loadError")}</Text>
-      </Card>
+      </div>
     </div>
   );
 }

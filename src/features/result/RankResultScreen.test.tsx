@@ -332,12 +332,20 @@ describe("RankResultScreen", () => {
       />,
     );
 
-    expect(screen.getByText(/0 plays recorded/)).toBeInTheDocument();
+    // "N plays recorded" now lives in ResultHero, rendered by ResultScreen
+    // (T11) — not this screen. Nothing was ever ranked, so there is no round
+    // to show and no podium; the meaningful assertion left at this level is
+    // that it renders without crashing and without a podium table.
+    expect(screen.queryByRole("table")).toBeNull();
   });
 
   // The approved/non-approved Share-button rule is owned by ResultActions.test.
 
-  it("shows the shared-result note when opened via a ?p= link", async () => {
+  it("recaps the sharer's picks the same as it would the viewer's own", () => {
+    // The shared-result note itself now renders in ResultScreen (T11), not
+    // here — `shared` has no visible effect on RankResultScreen's own markup
+    // (see the eslint-disabled unused prop above), it recaps whatever picks
+    // it's given regardless of whose they are.
     render(
       <RankResultScreen
         pack={RANK_PACK}
@@ -346,9 +354,6 @@ describe("RankResultScreen", () => {
         shared
       />,
     );
-    expect(
-      await screen.findByText(/viewing a shared result/i),
-    ).toBeInTheDocument();
     expect(screen.getByText("Kaikai Kitan")).toBeInTheDocument();
   });
 });

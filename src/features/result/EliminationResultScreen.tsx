@@ -5,8 +5,6 @@ import { useTranslations } from "next-intl";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
-import { SharedResultNote } from "@/src/features/result/SharedResultNote";
-import { ResultActions } from "@/src/features/result/ResultActions";
 import { TopPickedTable } from "@/src/features/result/TopPickedTable";
 import { roundHeading } from "@/src/shared/lib/round-heading";
 import { cn } from "@/src/shared/lib/cn";
@@ -103,27 +101,7 @@ export function EliminationResultScreen({
   const topItems = results.topItems ?? [];
 
   return (
-    <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
-      <Text variant="tertiary" className="mb-2 text-xs uppercase tracking-wide">
-        {t("label")}
-      </Text>
-      <Text as="h1" variant="title" className="mb-2 text-3xl">
-        {pack.title}
-      </Text>
-      <Text variant="secondary" className="mb-8">
-        {t("playsRecorded", { count: results.totalPlays })}
-      </Text>
-
-      {shared && <SharedResultNote />}
-
-      <ResultActions
-        packId={pack.id}
-        status={pack.status}
-        picks={ownPicks}
-        shared={shared}
-        className="mb-6 justify-end"
-      />
-
+    <div className={cn(PACK_CONTAINER, "flex-1 pb-10")}>
       {rounds.length > 0 ? (
         <div className="mb-10 flex flex-col divide-y divide-border">
           {rounds.map((round) => (
@@ -138,7 +116,7 @@ export function EliminationResultScreen({
           ))}
         </div>
       ) : (
-        <Card className="mb-10 py-8 text-center hover:translate-y-0 hover:shadow-none">
+        <Card className="mb-10 py-8 text-center">
           <Text variant="tertiary" className="text-sm">
             {t("noRoundBreakdown")}
           </Text>
@@ -147,7 +125,11 @@ export function EliminationResultScreen({
 
       {topItems.length > 0 && (
         <section className="mb-8">
-          <Text as="h2" variant="title" className="mb-1 text-lg">
+          <Text
+            as="h2"
+            variant="tertiary"
+            className="mb-2 text-[13px] font-medium uppercase tracking-[0.14em]"
+          >
             {t(sacrifice ? "topSacrificedHeading" : "topSavedHeading")}
           </Text>
           <Text variant="secondary" className="mb-4 text-sm">
@@ -192,7 +174,7 @@ function RoundCard({
       <Text variant="tertiary" className="mb-2 text-xs uppercase tracking-wide">
         {heading}
       </Text>
-      <ul className="flex flex-col gap-2 rounded-xl border border-border p-3">
+      <ul className="flex flex-col gap-2 rounded-card border border-border p-3">
         {round.items.map((item) => (
           <li
             key={item.itemId}
@@ -203,12 +185,12 @@ function RoundCard({
                 }
               : {})}
             className={cn(
-              "flex min-w-0 items-center justify-between gap-3 rounded-lg border px-3 py-2",
+              "flex min-w-0 items-center justify-between gap-4 rounded-tile border p-[13px_16px]",
               // Paired border+background rather than layered: cn() is a plain
               // join, so two backgrounds on one element are resolved by
               // stylesheet order, not class order (see Text.tsx).
               !item.picked
-                ? "border-white/[0.06] bg-white/[0.03]"
+                ? "border-border bg-surface-card"
                 : sacrifice
                   ? "border-danger/60 bg-danger/10"
                   : "border-success/60 bg-success/10",

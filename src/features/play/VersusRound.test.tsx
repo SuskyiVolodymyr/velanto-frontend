@@ -16,6 +16,8 @@ function imageItem(id: string, title: string, key: string) {
   return { id, type: "image" as const, title, value: key };
 }
 
+const PACK_COVER_TONE = "#2b2a3a";
+
 const SIDE_A = {
   name: "Boys",
   items: [textItem("1", "Naruto"), textItem("2", "Sasuke")],
@@ -30,15 +32,56 @@ describe("VersusRound", () => {
         sideB={SIDE_B}
         selectedSide={null}
         onSelect={vi.fn()}
+        packCoverTone={PACK_COVER_TONE}
       />,
     );
 
     expect(screen.getByText("Boys")).toBeInTheDocument();
     expect(screen.getByText("Girls")).toBeInTheDocument();
-    expect(screen.getByText("VS")).toBeInTheDocument();
+    // Exactly one "VS" — the e2e suite's getByText query is strict-mode.
+    expect(screen.getAllByText("VS", { exact: true })).toHaveLength(1);
     // All of a side's items render at once (no reveal gating).
     expect(screen.getByText("Naruto")).toBeInTheDocument();
     expect(screen.getByText("Sasuke")).toBeInTheDocument();
+  });
+
+  it("labels the side badges A / B by slot index, not by pool name", () => {
+    render(
+      <VersusRound
+        sideA={SIDE_A}
+        sideB={SIDE_B}
+        selectedSide={null}
+        onSelect={vi.fn()}
+        packCoverTone={PACK_COVER_TONE}
+      />,
+    );
+
+    // The letter badges sit beside each side's name; both letters are on
+    // screen exactly once each, independent of what the pools are named.
+    expect(screen.getByText("A")).toBeInTheDocument();
+    expect(screen.getByText("B")).toBeInTheDocument();
+  });
+
+  it("reflects the selected side via aria-pressed", async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    render(
+      <VersusRound
+        sideA={SIDE_A}
+        sideB={SIDE_B}
+        selectedSide={null}
+        onSelect={onSelect}
+        packCoverTone={PACK_COVER_TONE}
+      />,
+    );
+
+    const boysButton = screen.getByRole("button", { name: "Pick Boys" });
+    const girlsButton = screen.getByRole("button", { name: "Pick Girls" });
+    expect(boysButton).toHaveAttribute("aria-pressed", "false");
+    expect(girlsButton).toHaveAttribute("aria-pressed", "false");
+
+    await user.click(boysButton);
+    expect(onSelect).toHaveBeenCalledWith(0);
   });
 
   it("calls onSelect with the side INDEX when a side is clicked", async () => {
@@ -50,6 +93,7 @@ describe("VersusRound", () => {
         sideB={SIDE_B}
         selectedSide={null}
         onSelect={onSelect}
+        packCoverTone={PACK_COVER_TONE}
       />,
     );
 
@@ -68,6 +112,7 @@ describe("VersusRound", () => {
         sideB={SIDE_B}
         selectedSide={null}
         onSelect={onSelect}
+        packCoverTone={PACK_COVER_TONE}
       />,
     );
 
@@ -87,6 +132,7 @@ describe("VersusRound", () => {
         sideB={{ name: "Side B", items: [textItem("2", "Luffy")] }}
         selectedSide={0}
         onSelect={onSelect}
+        packCoverTone={PACK_COVER_TONE}
       />,
     );
 
@@ -105,6 +151,7 @@ describe("VersusRound", () => {
         sideB={SIDE_B}
         selectedSide={null}
         onSelect={vi.fn()}
+        packCoverTone={PACK_COVER_TONE}
       />,
     );
 
@@ -127,6 +174,7 @@ describe("VersusRound", () => {
         sideB={SIDE_B}
         selectedSide={null}
         onSelect={onSelect}
+        packCoverTone={PACK_COVER_TONE}
       />,
     );
 
@@ -152,6 +200,7 @@ describe("VersusRound", () => {
         sideB={SIDE_B}
         selectedSide={null}
         onSelect={onSelect}
+        packCoverTone={PACK_COVER_TONE}
       />,
     );
 
@@ -174,6 +223,7 @@ describe("VersusRound", () => {
         sideB={SIDE_B}
         selectedSide={null}
         onSelect={onSelect}
+        packCoverTone={PACK_COVER_TONE}
       />,
     );
 
@@ -191,6 +241,7 @@ describe("VersusRound", () => {
         sideB={SIDE_B}
         selectedSide={null}
         onSelect={onSelect}
+        packCoverTone={PACK_COVER_TONE}
       />,
     );
 

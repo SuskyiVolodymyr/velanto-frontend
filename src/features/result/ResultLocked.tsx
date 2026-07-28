@@ -4,7 +4,6 @@ import Link from "next/link";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { cn } from "@/src/shared/lib/cn";
 import { useTranslations } from "next-intl";
-import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { buttonClassName } from "@/src/shared/components/Button";
 
@@ -37,7 +36,12 @@ export function ResultLocked({
         {title}
       </Text>
 
-      <Card className="flex flex-col items-center gap-3 py-10 text-center hover:translate-y-0 hover:shadow-none">
+      {/* Same panel recipe as ResultAgainPanel (T11): rounded-card +
+          border-border + bg-surface-card + p-[26px_24px], built as a raw div
+          rather than <Card> so this arbitrary padding doesn't collide with
+          Card's own baked-in p-[18px] (cn() is a plain join, not
+          tailwind-merge — see Text.tsx / EliminationResultScreen.tsx). */}
+      <div className="flex flex-col items-center gap-3 rounded-card border border-border bg-surface-card p-[26px_24px] text-center">
         <Text as="h2" className="text-lg font-semibold">
           {t("lockedTitle")}
         </Text>
@@ -50,7 +54,7 @@ export function ResultLocked({
         >
           {t("lockedCta")}
         </Link>
-      </Card>
+      </div>
     </div>
   );
 }
