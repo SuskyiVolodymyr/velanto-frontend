@@ -43,7 +43,9 @@ test.describe("Play a pack", () => {
 
       // Round 1: all candidates shown at once; gated until something is selected.
       await expect(page.getByRole("heading", { name: "2016" })).toBeVisible();
-      await expect(page.getByText("Round 1 of 2")).toBeVisible();
+      // T2: "Round 1 of 2" now renders twice — PlayChrome's round counter AND
+      // PlayRoundHeader's round-position eyebrow — so scope to the first.
+      await expect(page.getByText("Round 1 of 2").first()).toBeVisible();
       await expect(page.getByRole("button", { name: "Show all" })).toHaveCount(
         0,
       );
@@ -60,7 +62,7 @@ test.describe("Play a pack", () => {
       // Round 2 (the last round): single item, still gated on selection; the
       // confirm button reads "see results" now.
       await expect(page.getByRole("heading", { name: "2020" })).toBeVisible();
-      await expect(page.getByText("Round 2 of 2")).toBeVisible();
+      await expect(page.getByText("Round 2 of 2").first()).toBeVisible();
       await expect(
         page.getByRole("button", { name: "See results →" }),
       ).toBeDisabled();
@@ -163,7 +165,7 @@ test.describe("Play a pack", () => {
     await page.getByRole("button", { name: "Next round →" }).click();
 
     // Round 2.
-    await expect(page.getByText("Round 2 of 2")).toBeVisible();
+    await expect(page.getByText("Round 2 of 2").first()).toBeVisible();
     await page.getByRole("button", { name: "Pick Girls" }).click();
     await page.getByRole("button", { name: "See results →" }).click();
 
