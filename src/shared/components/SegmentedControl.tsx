@@ -5,6 +5,13 @@ export interface SegmentedControlOption<T extends string> {
   value: T;
   label: string;
   disabled?: boolean;
+  /**
+   * Overrides this option's accessible name (defaults to `label`). Needed when
+   * the same control repeats many times on a page (e.g. one per row) and each
+   * instance's options need a disambiguating name of their own, distinct from
+   * the short visible label.
+   */
+  ariaLabel?: string;
 }
 
 export interface SegmentedControlProps<T extends string> {
@@ -97,6 +104,7 @@ export function SegmentedControl<T extends string>({
             type="button"
             role="radio"
             aria-checked={selected}
+            aria-label={option.ariaLabel}
             disabled={option.disabled}
             tabIndex={selected ? 0 : -1}
             onClick={() => onChange(option.value)}
