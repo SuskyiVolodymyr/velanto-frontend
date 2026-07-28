@@ -12,15 +12,15 @@ import { type CreatePackValues } from "@/src/features/create/create-pack.schema"
 // Each option's display name comes from the shared `formats` namespace (keyed by
 // the format value); the blurb is a create-form-only key. Every one of the five
 // formats is creatable, each with its own editor body (RoundsEditor /
-// VersusEditor) selected by the parent form. Order matches the mock
-// (save_one, sacrifice_one, rank_blind, nxn, 1v1) — nxn and rank_blind were
-// previously swapped from this.
+// VersusEditor) selected by the parent form. Order matches the real mock
+// (Create Pack.dc.html, DesignSync 67c2561f-a9ab-433b-a48b-d1a3e2aa88d8):
+// save_one, sacrifice_one, 1v1, nxn, rank_blind.
 const FORMAT_OPTIONS: { value: PackFormat; blurbKey: string }[] = [
   { value: "save_one", blurbKey: "blurbSaveOne" },
   { value: "sacrifice_one", blurbKey: "blurbSacrificeOne" },
-  { value: "rank_blind", blurbKey: "blurbRankBlind" },
-  { value: "nxn", blurbKey: "blurbNxn" },
   { value: "1v1", blurbKey: "blurb1v1" },
+  { value: "nxn", blurbKey: "blurbNxn" },
+  { value: "rank_blind", blurbKey: "blurbRankBlind" },
 ];
 
 /**
@@ -36,7 +36,7 @@ export function FormatSection() {
 
   return (
     <section className="flex flex-col gap-3">
-      <StepHeader step={2} title={t("formatHeading")} hint={t("formatHint")} />
+      <StepHeader step={1} title={t("formatHeading")} hint={t("formatHint")} />
       <div
         className="grid gap-3"
         style={{ gridTemplateColumns: "repeat(auto-fill, minmax(215px, 1fr))" }}

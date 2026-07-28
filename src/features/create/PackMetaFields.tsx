@@ -45,7 +45,7 @@ export function PackMetaFields({
 
   return (
     <section className="flex flex-col">
-      <StepHeader step={1} title={t("basicsHeading")} />
+      <StepHeader step={2} title={t("basicsHeading")} />
       <div className="flex flex-col gap-[14px]">
         <div className="flex flex-col gap-1">
           <TextField

@@ -436,9 +436,9 @@ export function CreatePackForm({
                 </Text>
               )}
 
-              <PackMetaFields onCoverUploadingChange={setCoverUploading} />
-
               <FormatSection />
+
+              <PackMetaFields onCoverUploadingChange={setCoverUploading} />
 
               <PoolsSection />
 

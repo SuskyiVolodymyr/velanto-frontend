@@ -38,12 +38,12 @@ describe("FormatSection", () => {
     const buttons = screen.getAllByRole("button");
     const names = buttons.map((button) => button.textContent);
 
-    // Order must be: save_one, sacrifice_one, rank_blind, nxn, 1v1.
+    // Order must be: save_one, sacrifice_one, 1v1, nxn, rank_blind.
     expect(names[0]).toContain("Save One");
     expect(names[1]).toContain("Sacrifice One");
-    expect(names[2]).toContain("Rank Blind");
+    expect(names[2]).toContain("1v1");
     expect(names[3]).toContain("NxN");
-    expect(names[4]).toContain("1v1");
+    expect(names[4]).toContain("Rank Blind");
   });
 
   it("marks the currently-watched format as aria-pressed and the rest as not", () => {
