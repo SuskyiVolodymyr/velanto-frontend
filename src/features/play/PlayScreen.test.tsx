@@ -157,10 +157,10 @@ describe("PlayScreen", () => {
     ).toBeNull();
 
     await user.click(screen.getByText("Redo"));
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "Next round" }));
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("Silhouette"));
-    await user.click(screen.getByRole("button", { name: "See results →" }));
+    await user.click(screen.getByRole("button", { name: "See results" }));
 
     // Anon play advances to the result page and stashes local picks…
     await waitFor(() =>
@@ -248,9 +248,9 @@ describe("PlayScreen", () => {
     renderScreen(NXN_PACK);
     await screen.findByRole("button", { name: "Pick Boys" });
 
-    expect(screen.getByRole("button", { name: "Next round →" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Next round" })).toBeDisabled();
     await user.click(screen.getByRole("button", { name: "Pick Boys" }));
-    expect(screen.getByRole("button", { name: "Next round →" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Next round" })).toBeEnabled();
   });
 
   it("advances through nxn rounds and records both sides' drawn items per round", async () => {
@@ -259,13 +259,13 @@ describe("PlayScreen", () => {
     await screen.findByRole("button", { name: "Pick Boys" });
 
     await user.click(screen.getByRole("button", { name: "Pick Boys" }));
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "Next round" }));
 
     // Appears twice now: PlayChrome's round counter AND PlayRoundHeader's
     // round-position eyebrow (T2).
     expect(await screen.findAllByText("Round 2 of 2")).toHaveLength(2);
     await user.click(screen.getByRole("button", { name: "Pick Girls" }));
-    await user.click(screen.getByRole("button", { name: "See results →" }));
+    await user.click(screen.getByRole("button", { name: "See results" }));
 
     // No interstitial finished screen — it records and goes straight to results.
     await waitFor(() =>
@@ -310,7 +310,7 @@ describe("PlayScreen", () => {
     renderScreen(SAVE_ONE_PACK);
     await screen.findByText("Guren no Yumiya");
 
-    expect(screen.getByRole("button", { name: "Next round →" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Next round" })).toBeDisabled();
   });
 
   // The count→columns mapping is real layout logic: ≤4 in one row, 6 as two
@@ -335,14 +335,14 @@ describe("PlayScreen", () => {
     await screen.findByText("Guren no Yumiya");
 
     await user.click(screen.getByText("Redo"));
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "Next round" }));
 
     expect(await screen.findByText("Silhouette")).toBeInTheDocument();
     // Appears twice now: PlayChrome's round counter AND PlayRoundHeader's
     // round-position eyebrow (T2).
     expect(screen.getAllByText("Round 2 of 2")).toHaveLength(2);
     await user.click(screen.getByText("Silhouette"));
-    await user.click(screen.getByRole("button", { name: "See results →" }));
+    await user.click(screen.getByRole("button", { name: "See results" }));
 
     // No "all rounds done" screen — a loader shows while it records, then it
     // navigates straight to the result page.
@@ -425,13 +425,13 @@ describe("PlayScreen", () => {
     );
     // Single-round pack → the confirm button is the finish/"see results" one.
     expect(
-      screen.getByRole("button", { name: "See results →" }),
+      screen.getByRole("button", { name: "See results" }),
     ).toBeDisabled();
 
     await user.click(
       screen.getByRole("button", { name: "Pick Guren no Yumiya" }),
     );
-    expect(screen.getByRole("button", { name: "See results →" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "See results" })).toBeEnabled();
   });
 
   it("resets the selection when advancing to the next round", async () => {
@@ -440,12 +440,12 @@ describe("PlayScreen", () => {
     await screen.findByText("Guren no Yumiya");
 
     await user.click(screen.getByText("Redo"));
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "Next round" }));
 
     // Round 2 (the last round) starts with nothing selected.
     await screen.findByText("Silhouette");
     expect(
-      screen.getByRole("button", { name: "See results →" }),
+      screen.getByRole("button", { name: "See results" }),
     ).toBeDisabled();
   });
 
@@ -455,10 +455,10 @@ describe("PlayScreen", () => {
     await screen.findByText("Guren no Yumiya");
 
     await user.click(screen.getByText("Redo"));
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "Next round" }));
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("Silhouette"));
-    await user.click(screen.getByRole("button", { name: "See results →" }));
+    await user.click(screen.getByRole("button", { name: "See results" }));
 
     await screen.findByRole("status");
     await waitFor(() => expect(playsClient.record).toHaveBeenCalledTimes(1));
@@ -482,10 +482,10 @@ describe("PlayScreen", () => {
     await screen.findByText("Guren no Yumiya");
 
     await user.click(screen.getByText("Redo"));
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "Next round" }));
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("Silhouette"));
-    await user.click(screen.getByRole("button", { name: "See results →" }));
+    await user.click(screen.getByRole("button", { name: "See results" }));
 
     await screen.findByRole("status");
     await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
@@ -517,10 +517,10 @@ describe("PlayScreen", () => {
     await screen.findByText("Guren no Yumiya");
 
     await user.click(screen.getByText("Redo"));
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "Next round" }));
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("Silhouette"));
-    await user.click(screen.getByRole("button", { name: "See results →" }));
+    await user.click(screen.getByRole("button", { name: "See results" }));
 
     await screen.findByRole("status");
     await waitFor(() => expect(playsClient.record).toHaveBeenCalled());

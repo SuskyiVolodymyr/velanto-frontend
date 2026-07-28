@@ -43,9 +43,9 @@ function rankTallies(items: ItemTally[]): RankedTally[] {
  * their own ("Most saved" / "Most sacrificed"), which is the same number under
  * a verb that matches what the player actually did.
  *
- * T11: restyled as a `#171A22` rounded-20 aside card, and `ownPicks` (when
- * passed) bolds any row the viewer picked at some point in their own run —
- * the mock's "mine" flag.
+ * T11: restyled as a rounded-20 aside card (`bg-surface-card`), and
+ * `ownPicks` (when passed) bolds any row the viewer picked at some point in
+ * their own run — the mock's "mine" flag.
  */
 export function TopPickedTable({
   items,
@@ -72,7 +72,7 @@ export function TopPickedTable({
   );
 
   return (
-    <div className="rounded-[20px] border border-border bg-[#171A22] p-5">
+    <div className="rounded-[20px] border border-border bg-surface-card p-5">
       <div className="overflow-x-auto">
         <table
           aria-label={tableLabel}

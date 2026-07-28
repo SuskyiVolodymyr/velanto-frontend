@@ -87,12 +87,6 @@ export function NxNResultScreen({
   pack,
   results,
   ownPicks,
-  // Unused now that the header block + SharedResultNote that read it moved to
-  // ResultScreen (T11); kept in the signature so this still matches
-  // ResultScreen's shared { pack, results, ownPicks, shared } call shape
-  // across all four format screens, and so this file's own tests (which
-  // already pass it) don't need a T11 edit.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   shared,
 }: {
   pack: Pack;
@@ -137,6 +131,7 @@ export function NxNResultScreen({
                 <RoundRow
                   round={round}
                   heading={roundHeading(pack, round.roundIndex)}
+                  shared={shared}
                 />
               </div>
             ))}
@@ -177,7 +172,15 @@ export function NxNResultScreen({
  * One played round: the two sides either side of a centre column carrying the
  * round's name. Below `sm` the three stack, each on its own row.
  */
-function RoundRow({ round, heading }: { round: PlayedRound; heading: string }) {
+function RoundRow({
+  round,
+  heading,
+  shared,
+}: {
+  round: PlayedRound;
+  heading: string;
+  shared: boolean;
+}) {
   const t = useTranslations("result");
   return (
     <div
@@ -193,7 +196,7 @@ function RoundRow({ round, heading }: { round: PlayedRound; heading: string }) {
       // row ended up a different width.
       className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-[minmax(0,1fr)_9rem_minmax(0,1fr)]"
     >
-      <SideCard side={round.left} position="left" />
+      <SideCard side={round.left} position="left" shared={shared} />
       <div className="flex flex-col items-center justify-center gap-1 text-center">
         <Text variant="tertiary" className="text-xs uppercase tracking-wide">
           {heading}
@@ -202,7 +205,7 @@ function RoundRow({ round, heading }: { round: PlayedRound; heading: string }) {
           VS
         </span>
       </div>
-      <SideCard side={round.right} position="right" />
+      <SideCard side={round.right} position="right" shared={shared} />
     </div>
   );
 }
@@ -219,9 +222,11 @@ function RoundRow({ round, heading }: { round: PlayedRound; heading: string }) {
 function SideCard({
   side,
   position,
+  shared,
 }: {
   side: PlayedSide;
   position: "left" | "right";
+  shared: boolean;
 }) {
   const t = useTranslations("result");
   return (
@@ -242,11 +247,11 @@ function SideCard({
       {side.picked && (
         <Text
           className={cn(
-            "text-[11px] font-semibold uppercase tracking-wide text-[#7EE7B4]",
+            "text-[11px] font-semibold uppercase tracking-wide text-success",
             position === "right" && "text-end",
           )}
         >
-          {t("verdictWon")}
+          {t(shared ? "verdictWonShared" : "verdictWon")}
         </Text>
       )}
       <ul className="flex flex-col gap-2">

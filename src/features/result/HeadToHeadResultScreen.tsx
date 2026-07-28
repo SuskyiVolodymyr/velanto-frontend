@@ -122,12 +122,6 @@ export function HeadToHeadResultScreen({
   pack,
   results,
   ownPicks,
-  // Unused now that the header block + SharedResultNote that read it moved to
-  // ResultScreen (T11); kept in the signature so this still matches
-  // ResultScreen's shared { pack, results, ownPicks, shared } call shape
-  // across all four format screens, and so this file's own tests (which
-  // already pass it) don't need a T11 edit.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   shared,
 }: {
   pack: Pack;
@@ -177,6 +171,7 @@ export function HeadToHeadResultScreen({
                 <MatchupRow
                   matchup={matchup}
                   heading={roundHeading(pack, matchup.roundIndex)}
+                  shared={shared}
                 />
               </div>
             ))}
@@ -219,9 +214,11 @@ export function HeadToHeadResultScreen({
 function MatchupRow({
   matchup,
   heading,
+  shared,
 }: {
   matchup: PlayedMatchup;
   heading: string;
+  shared: boolean;
 }) {
   const t = useTranslations("result");
   return (
@@ -239,7 +236,7 @@ function MatchupRow({
       // row ended up a different width.
       className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-[minmax(0,1fr)_9rem_minmax(0,1fr)]"
     >
-      <ContenderCard contender={matchup.left} side="left" />
+      <ContenderCard contender={matchup.left} side="left" shared={shared} />
       <div className="flex flex-col items-center justify-center gap-1 text-center">
         <Text variant="tertiary" className="text-xs uppercase tracking-wide">
           {heading}
@@ -253,7 +250,7 @@ function MatchupRow({
           {t("matchupSeen", { count: matchup.seen })}
         </Text>
       </div>
-      <ContenderCard contender={matchup.right} side="right" />
+      <ContenderCard contender={matchup.right} side="right" shared={shared} />
     </div>
   );
 }
@@ -270,9 +267,11 @@ function MatchupRow({
 function ContenderCard({
   contender,
   side,
+  shared,
 }: {
   contender: Contender;
   side: "left" | "right";
+  shared: boolean;
 }) {
   const t = useTranslations("result");
   const { won } = contender;
@@ -291,11 +290,11 @@ function ContenderCard({
       {won && (
         <Text
           className={cn(
-            "text-[11px] font-semibold uppercase tracking-wide text-[#7EE7B4]",
+            "text-[11px] font-semibold uppercase tracking-wide text-success",
             side === "right" && "text-end",
           )}
         >
-          {t("verdictWon")}
+          {t(shared ? "verdictWonShared" : "verdictWon")}
         </Text>
       )}
       <div

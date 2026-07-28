@@ -50,24 +50,24 @@ test.describe("Play a pack", () => {
         0,
       );
       await expect(
-        page.getByRole("button", { name: "Next round →" }),
+        page.getByRole("button", { name: "Next round" }),
       ).toBeDisabled();
 
       await page.getByText("Guren no Yumiya").click();
       await expect(
-        page.getByRole("button", { name: "Next round →" }),
+        page.getByRole("button", { name: "Next round" }),
       ).toBeEnabled();
-      await page.getByRole("button", { name: "Next round →" }).click();
+      await page.getByRole("button", { name: "Next round" }).click();
 
       // Round 2 (the last round): single item, still gated on selection; the
       // confirm button reads "see results" now.
       await expect(page.getByRole("heading", { name: "2020" })).toBeVisible();
       await expect(page.getByText("Round 2 of 2").first()).toBeVisible();
       await expect(
-        page.getByRole("button", { name: "See results →" }),
+        page.getByRole("button", { name: "See results" }),
       ).toBeDisabled();
       await page.getByText("Silhouette").click();
-      await page.getByRole("button", { name: "See results →" }).click();
+      await page.getByRole("button", { name: "See results" }).click();
 
       // Finishing records the play (then it navigates straight to the result
       // page — no interstitial "all rounds done" screen; that redirect is
@@ -106,10 +106,10 @@ test.describe("Play a pack", () => {
     // No login wall — anon can play the whole session.
     await expect(page.getByRole("heading", { name: "2016" })).toBeVisible();
     await page.getByText("Guren no Yumiya").click();
-    await page.getByRole("button", { name: "Next round →" }).click();
+    await page.getByRole("button", { name: "Next round" }).click();
     await expect(page.getByRole("heading", { name: "2020" })).toBeVisible();
     await page.getByText("Silhouette").click();
-    await page.getByRole("button", { name: "See results →" }).click();
+    await page.getByRole("button", { name: "See results" }).click();
 
     // It reaches the result page…
     await expect(page).toHaveURL(/\/packs\/pack-save\/result/);
@@ -130,7 +130,7 @@ test.describe("Play a pack", () => {
     // The whole image card is selectable (single round → confirm reads results).
     await page.getByRole("button", { name: "Pick Poster A" }).click();
     await expect(
-      page.getByRole("button", { name: "See results →" }),
+      page.getByRole("button", { name: "See results" }),
     ).toBeEnabled();
   });
 
@@ -155,19 +155,19 @@ test.describe("Play a pack", () => {
     await expect(page.getByText("VS", { exact: true })).toBeVisible();
     await expect(page.getByRole("button", { name: "Show all" })).toHaveCount(0);
     await expect(
-      page.getByRole("button", { name: "Next round →" }),
+      page.getByRole("button", { name: "Next round" }),
     ).toBeDisabled();
 
     await page.getByRole("button", { name: "Pick Boys" }).click();
     await expect(
-      page.getByRole("button", { name: "Next round →" }),
+      page.getByRole("button", { name: "Next round" }),
     ).toBeEnabled();
-    await page.getByRole("button", { name: "Next round →" }).click();
+    await page.getByRole("button", { name: "Next round" }).click();
 
     // Round 2.
     await expect(page.getByText("Round 2 of 2").first()).toBeVisible();
     await page.getByRole("button", { name: "Pick Girls" }).click();
-    await page.getByRole("button", { name: "See results →" }).click();
+    await page.getByRole("button", { name: "See results" }).click();
 
     // Finishing records the play, then navigates straight to the result page
     // (redirect covered by the PlayScreen unit tests).

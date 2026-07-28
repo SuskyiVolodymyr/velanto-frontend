@@ -127,7 +127,7 @@ async function pickAndConfirm(
   await user.click(screen.getByRole("button", { name: `Pick ${name}` }));
   await user.click(
     screen.getByRole("button", {
-      name: last ? "See results →" : "Next round →",
+      name: last ? "See results" : "Next round",
     }),
   );
 }
@@ -263,7 +263,7 @@ describe("HeadToHeadPlayScreen", () => {
 
     // Every other format selects first and commits with a button; 1v1 used to
     // advance on the click itself, so a misclick was unrecoverable.
-    const confirm = screen.getByRole("button", { name: "Next round →" });
+    const confirm = screen.getByRole("button", { name: "Next round" });
     expect(confirm).toBeDisabled();
 
     await user.click(screen.getByRole("button", { name: "Pick Goku" }));
@@ -281,7 +281,7 @@ describe("HeadToHeadPlayScreen", () => {
       "false",
     );
 
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "Next round" }));
     // Absorbed from the retired "advances immediately after picking" test: the
     // next matchup's own contenders are on screen, not the previous round's.
     expect(await screen.findByText("Naruto")).toBeInTheDocument();
@@ -290,7 +290,7 @@ describe("HeadToHeadPlayScreen", () => {
     // The new matchup starts unselected, so the button can't be double-fired.
     // Round 2 of 2 is the last, so the confirm reads as finishing the pack.
     expect(
-      screen.getByRole("button", { name: "See results →" }),
+      screen.getByRole("button", { name: "See results" }),
     ).toBeDisabled();
   });
 
@@ -301,13 +301,13 @@ describe("HeadToHeadPlayScreen", () => {
 
     await user.click(screen.getByRole("button", { name: "Pick Goku" }));
     expect(
-      screen.getByRole("button", { name: "Next round →" }),
+      screen.getByRole("button", { name: "Next round" }),
     ).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "Next round" }));
     await screen.findByText("Naruto");
 
     await user.click(screen.getByRole("button", { name: "Pick Sasuke" }));
-    await user.click(screen.getByRole("button", { name: "See results →" }));
+    await user.click(screen.getByRole("button", { name: "See results" }));
 
     // The label is the claim under test; that it actually finishes the pack is
     // proved by the redirect the two tests below assert.

@@ -6,6 +6,7 @@ import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { TopPickedTable } from "@/src/features/result/TopPickedTable";
 import { roundHeading } from "@/src/shared/lib/round-heading";
+import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
 import type {
   PackResults,
@@ -212,7 +213,12 @@ function RoundCard({
             data-testid="picked"
             data-outcome={sacrifice ? "sacrificed" : "saved"}
           >
-            <Text className="text-[11px] font-semibold uppercase tracking-wide text-[#7EE7B4]">
+            <Text
+              className={cn(
+                "text-[11px] font-semibold uppercase tracking-wide",
+                sacrifice ? "text-danger" : "text-success",
+              )}
+            >
               {verdictText}
             </Text>
             <Text className="mt-1 text-[15px] font-bold">{picked.title}</Text>
@@ -228,16 +234,16 @@ function RoundCard({
           >
             {otherLabel}
           </Text>
-          <div className="flex flex-wrap gap-2">
+          <ul className="flex list-none flex-wrap gap-2">
             {others.map((item) => (
-              <span
+              <li
                 key={item.itemId}
                 className="rounded-pill border border-border bg-white/[0.03] px-3 py-1 text-xs text-foreground-secondary"
               >
                 {item.title}
-              </span>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
       )}
     </div>

@@ -44,7 +44,31 @@ describe("ResultAgainPanel", () => {
     ).toHaveAttribute("href", "/packs/pack-1/play");
   });
 
-  it("switches to shared-appropriate wording when shared", () => {
+  // The card's own accessible name is deliberately different from
+  // ResultActions's sticky-bar CTA ("Play again" / "Try it yourself") — both
+  // can be mounted at once, and identical accessible names on two different
+  // links is the exact bug class a Critical finding caught in the Create
+  // Pack slice. Restored here after T12 folded ResultActions's old Share
+  // button into this card (the guard, not just the wording, needs to
+  // survive that move).
+  it("uses wording distinct from ResultActions's sticky-bar link", () => {
+    render(
+      <ResultAgainPanel
+        packId="pack-1"
+        status="approved"
+        picks={null}
+        shared={false}
+      />,
+    );
+
+    expect(screen.queryByText("Play again", { selector: "a" })).toBeNull();
+  });
+
+  // Code review fix: a shared reader can't use the Share button (it's their
+  // own picks it would leak, not the sharer's), so the card falls back to
+  // plain "Your run" framing instead of promising share copy with no button
+  // underneath it — see the doc comment on `canShare` in ResultAgainPanel.tsx.
+  it("falls back to non-share wording when shared, with shared-appropriate play link", () => {
     render(
       <ResultAgainPanel
         packId="pack-1"
@@ -54,11 +78,31 @@ describe("ResultAgainPanel", () => {
       />,
     );
 
-    expect(screen.getByText("Share this run")).toBeInTheDocument();
+    expect(screen.getByText("Your run")).toBeInTheDocument();
+    expect(screen.queryByText("Share your run")).toBeNull();
+    expect(
+      screen.queryByRole("button", { name: "Copy share link" }),
+    ).toBeNull();
     expect(
       screen.getByRole("link", { name: "Give it a go" }),
     ).toHaveAttribute("href", "/packs/pack-1/play");
     expect(screen.queryByText("Play it again")).toBeNull();
+  });
+
+  it("falls back to non-share wording for a non-approved pack even when not shared", () => {
+    render(
+      <ResultAgainPanel
+        packId="pack-1"
+        status="pending"
+        picks={null}
+        shared={false}
+      />,
+    );
+
+    expect(screen.getByText("Your run")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Copy share link" }),
+    ).toBeNull();
   });
 
   it("shows the Copy share link button for an approved, non-shared result", () => {

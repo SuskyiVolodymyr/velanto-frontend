@@ -25,12 +25,6 @@ export function RankResultScreen({
   pack,
   results,
   ownPicks,
-  // Unused now that the header block + SharedResultNote that read it moved to
-  // ResultScreen (T11); kept in the signature so this still matches
-  // ResultScreen's shared { pack, results, ownPicks, shared } call shape
-  // across all four format screens, and so this file's own tests (which
-  // already pass it) don't need a T11 edit.
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   shared,
 }: {
   pack: Pack;
@@ -105,8 +99,11 @@ export function RankResultScreen({
                 {roundHeading(pack, round.roundIndex)}
               </Text>
               {playedThisRound && firstPlace && (
-                <Text className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-[#7EE7B4]">
-                  {t("verdictRankedFirst", { name: firstPlace.itemTitle })}
+                <Text className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-success">
+                  {t(
+                    shared ? "verdictRankedFirstShared" : "verdictRankedFirst",
+                    { name: firstPlace.itemTitle },
+                  )}
                 </Text>
               )}
               <RankedList

@@ -88,11 +88,11 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   const roundDone = slotCount > 0 && placedCount >= slotCount;
   const isLastRound = roundIndex >= totalRounds - 1;
   const isFinished = totalRounds > 0 && isLastRound && roundDone;
-  // Round done but not the whole play — i.e. the interstitial state where the
+  // "Round done but not the whole play" (the interstitial state where the
   // left status panel shows "ROUND RANKED" and the right column shows the
-  // finished RankedList (T7). Not hoisted into its own variable: every use
-  // site already has `!isFinished` in scope, and `roundDone` alone is exactly
-  // that condition there.
+  // finished RankedList, T7) has no variable of its own below: every use site
+  // already has `!isFinished` in scope, and `roundDone` alone is exactly that
+  // condition there.
   const currentItem = !roundDone ? candidates[placedCount] : undefined;
   const currentVideoId =
     currentItem?.type === "youtube"

@@ -30,8 +30,9 @@ const PAGE = 5;
  * three counts stay visible beside it, so a reader can see which kind of item
  * they're looking at instead of taking the sum on trust.
  *
- * T11: restyled as a `#171A22` rounded-20 aside card, and `ownPicks` (when
- * passed) bolds any row the viewer placed at some point in their own run.
+ * T11: restyled as a rounded-20 aside card (`bg-surface-card`), and
+ * `ownPicks` (when passed) bolds any row the viewer placed at some point in
+ * their own run.
  */
 export function PodiumTable({
   items,
@@ -67,7 +68,7 @@ export function PodiumTable({
   );
 
   return (
-    <div className="rounded-[20px] border border-border bg-[#171A22] p-5">
+    <div className="rounded-[20px] border border-border bg-surface-card p-5">
       <div className="overflow-x-auto">
         <table
           aria-label={t("podiumHeading")}

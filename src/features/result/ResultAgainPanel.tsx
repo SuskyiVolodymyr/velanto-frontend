@@ -25,6 +25,11 @@ import type { RecordedPick } from "@/src/shared/types/play-results";
  * all, so "again" would misdescribe what they'd be doing — same reasoning
  * `ResultActions` already carried, kept here since this card now performs
  * that role too.
+ *
+ * When `canShare` is false (a shared reader, or a pack still in moderation)
+ * the card falls back to plain "Your run" framing instead of the share copy
+ * — the title/note used to always say "Share your run" even with no Share
+ * button underneath it, which promised a control that wasn't there.
  */
 export function ResultAgainPanel({
   packId,
@@ -38,22 +43,24 @@ export function ResultAgainPanel({
   shared: boolean;
 }) {
   const t = useTranslations("result");
+  // No Share on a shared result: the picks on screen are someone else's, so
+  // the only thing there is to share is the link the reader arrived on —
+  // offering it back invites passing off another player's run. Also none for
+  // a non-approved pack (ShareButton's existing rule, moved here with it).
+  const canShare = status === "approved" && !shared;
 
   return (
-    <div className="flex flex-col gap-4 rounded-[20px] border border-border bg-[#171A22] p-5">
+    <div className="flex flex-col gap-4 rounded-[20px] border border-border bg-surface-card p-5">
       <div>
         <Text className="text-base font-semibold">
-          {shared ? t("shareCardTitleShared") : t("shareCardTitle")}
+          {canShare ? t("shareCardTitle") : t("runCardTitle")}
         </Text>
         <Text variant="secondary" className="mt-1 text-[13px]">
-          {t("shareCardNote")}
+          {canShare ? t("shareCardNote") : t("runCardNote")}
         </Text>
       </div>
 
-      {/* No Share on a shared result: the picks on screen are someone else's,
-          so the only thing there is to share is the link the reader arrived
-          on — offering it back invites passing off another player's run. */}
-      {status === "approved" && !shared && (
+      {canShare && (
         <ShareButton
           path={`/packs/${packId}/result`}
           picks={picks}

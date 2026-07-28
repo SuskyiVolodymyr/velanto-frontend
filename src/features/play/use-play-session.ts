@@ -40,7 +40,6 @@ export interface PlaySession {
   // navigates straight to the result page on this, so there's no interstitial
   // "all rounds done" step.
   recordSettled: boolean;
-  progressPct: number;
   showRound: boolean;
   roundTitle: string;
   // True on the final round, so the confirm button can read "see results"
@@ -300,9 +299,6 @@ export function usePlaySession(pack: Pack): PlaySession {
       .finally(() => setRecordSettled(true));
   }, [isFinished, pack.id, picks, status, clearProgress]);
 
-  const progressPct = isFinished
-    ? 100
-    : Math.round((roundIndex / Math.max(totalRounds, 1)) * 100);
   const showRound = isVersus
     ? Boolean(currentRound && sideA && sideB)
     : Boolean(currentRound);
@@ -313,7 +309,6 @@ export function usePlaySession(pack: Pack): PlaySession {
     totalRounds,
     isFinished,
     recordSettled,
-    progressPct,
     showRound,
     roundTitle: round.title,
     isLastRound,

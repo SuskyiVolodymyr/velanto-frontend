@@ -141,10 +141,15 @@ function SideCard({ side, letter, selected, onSelect, packCoverTone }: SideCardP
           </span>
         )}
       </div>
+      {/* auto-fit rather than a fixed column count equal to the item count:
+          nxn allows up to 8 items per side (create-pack.value-schemas.ts),
+          and 8 equal-width columns in this narrow a column squeezed every
+          tile down to a sliver. auto-fit instead wraps onto more rows,
+          keeping each tile at a legible minimum width regardless of N. */}
       <div
         className="grid gap-3"
         style={{
-          gridTemplateColumns: `repeat(${Math.max(side.items.length, 1)}, minmax(0,1fr))`,
+          gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))",
         }}
       >
         {side.items.map((item, index) => (

@@ -45,7 +45,7 @@ export function PlayConfirmBar({
   return (
     <div
       className={cn(
-        "mb-10 flex flex-wrap items-center gap-4 rounded-card border border-border bg-[#171A22] p-4",
+        "mb-10 flex flex-wrap items-center gap-4 rounded-card border border-border bg-surface-card p-4",
         className,
       )}
     >
