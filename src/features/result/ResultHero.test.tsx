@@ -83,6 +83,28 @@ describe("ResultHero", () => {
     ).toBeInTheDocument();
   });
 
+  // Code review: the subtitle used to say "Your picks are recorded…"
+  // unconditionally, right below an h1 that was already shared-aware — a
+  // shared reader was told THEIR picks were recorded, about a run they
+  // never played.
+  it("uses third-person subtitle copy on a shared result", () => {
+    render(
+      <ResultHero
+        packTitle="Best Anime Openings"
+        format="save_one"
+        shared
+        totalRounds={2}
+        totalPlays={4}
+        tiles={[]}
+      />,
+    );
+
+    expect(
+      screen.getByText(/Their picks are recorded/),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/Your picks are recorded/)).not.toBeInTheDocument();
+  });
+
   it("renders the pack title and fixed subtitle copy, not the h1", () => {
     render(
       <ResultHero

@@ -1075,6 +1075,7 @@
   "result": {
     "label": "रन पूरा हुआ",
     "heroSubtitleFixed": "आपकी पसंद दर्ज कर ली गई है और इस पैक के आँकड़ों में जोड़ दी गई है।",
+    "heroSubtitleFixedShared": "उनकी पसंद दर्ज कर ली गई है और इस पैक के आँकड़ों में जोड़ दी गई है।",
     "statRoundsCompact": "राउंड",
     "statPlaysCompact": "कुल बार खेला गया",
     "heroTitleSave": "यह रहा जो आपने बचाया",

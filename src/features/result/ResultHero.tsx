@@ -76,7 +76,8 @@ export function ResultHero({
         variant="secondary"
         className="mt-[10px] max-w-[520px] text-[15.5px]"
       >
-        {packTitle} · {t("heroSubtitleFixed")}
+        {packTitle} ·{" "}
+        {t(shared ? "heroSubtitleFixedShared" : "heroSubtitleFixed")}
       </Text>
 
       {tiles.length > 0 && (

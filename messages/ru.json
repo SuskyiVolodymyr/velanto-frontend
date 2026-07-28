@@ -1075,6 +1075,7 @@
   "result": {
     "label": "Прохождение завершено",
     "heroSubtitleFixed": "Твои выборы записаны и добавлены в статистику этого набора.",
+    "heroSubtitleFixedShared": "Их выборы записаны и добавлены в статистику этого набора.",
     "statRoundsCompact": "Раунды",
     "statPlaysCompact": "Всего игр",
     "heroTitleSave": "Вот кого ты спас",

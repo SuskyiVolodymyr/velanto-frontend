@@ -1075,6 +1075,7 @@
   "result": {
     "label": "انتهت المحاولة",
     "heroSubtitleFixed": "تم تسجيل اختياراتك وإضافتها إلى إحصاءات هذه الحزمة.",
+    "heroSubtitleFixedShared": "تم تسجيل اختياراتهم وإضافتها إلى إحصاءات هذه الحزمة.",
     "statRoundsCompact": "الجولات",
     "statPlaysCompact": "إجمالي المرات",
     "heroTitleSave": "إليك ما أنقذته",

@@ -1075,6 +1075,7 @@
   "result": {
     "label": "Проходження завершено",
     "heroSubtitleFixed": "Твої вибори записано й додано до статистики цього набору.",
+    "heroSubtitleFixedShared": "Їхні вибори записано й додано до статистики цього набору.",
     "statRoundsCompact": "Раунди",
     "statPlaysCompact": "Усього ігор",
     "heroTitleSave": "Ось кого ти врятував",

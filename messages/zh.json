@@ -1075,6 +1075,7 @@
   "result": {
     "label": "本次游玩已完成",
     "heroSubtitleFixed": "你的选择已被记录，并计入本合集的统计数据。",
+    "heroSubtitleFixedShared": "他们的选择已被记录，并计入本合集的统计数据。",
     "statRoundsCompact": "轮数",
     "statPlaysCompact": "总游玩次数",
     "heroTitleSave": "这就是你保留下来的",

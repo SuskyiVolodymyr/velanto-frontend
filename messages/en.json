@@ -1169,6 +1169,7 @@
   "result": {
     "label": "Run complete",
     "heroSubtitleFixed": "Your picks are recorded and folded into this pack's stats.",
+    "heroSubtitleFixedShared": "Their picks are recorded and folded into this pack's stats.",
     "statRoundsCompact": "Rounds",
     "statPlaysCompact": "Total plays",
     "heroTitleSave": "Here's what you saved",
