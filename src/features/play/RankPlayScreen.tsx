@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { cn } from "@/src/shared/lib/cn";
 import { playsClient } from "@/src/shared/lib/plays-client";
@@ -26,6 +25,7 @@ import { RankedList, type RankedRow } from "@/src/shared/components/RankedList";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { PlayChrome } from "@/src/features/play/PlayChrome";
 import { PlayRoundHeader } from "@/src/features/play/PlayRoundHeader";
+import { PlayConfirmBar } from "@/src/features/play/PlayConfirmBar";
 import { roundHeading } from "@/src/shared/lib/round-heading";
 import { toneFor, HAIRLINE_OVERLAY_STYLE } from "@/src/features/play/candidate-tone";
 import type { Pack, Item } from "@/src/shared/types/pack";
@@ -88,7 +88,11 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   const roundDone = slotCount > 0 && placedCount >= slotCount;
   const isLastRound = roundIndex >= totalRounds - 1;
   const isFinished = totalRounds > 0 && isLastRound && roundDone;
-  const isRoundComplete = roundDone && !isFinished;
+  // Round done but not the whole play — i.e. the interstitial state where the
+  // left status panel shows "ROUND RANKED" and the right column shows the
+  // finished RankedList (T7). Not hoisted into its own variable: every use
+  // site already has `!isFinished` in scope, and `roundDone` alone is exactly
+  // that condition there.
   const currentItem = !roundDone ? candidates[placedCount] : undefined;
   const currentVideoId =
     currentItem?.type === "youtube"
@@ -212,145 +216,170 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
       />
 
       <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
-        {slot && !roundDone && (
+        {slot && !isFinished && (
           <>
-            <PlayRoundHeader
-              eyebrow={`${tFormat("rank_blind")} · ${groupName}`}
-              title={groupName}
-              instruction={t("rankInstruction", {
-                current: placedCount + 1,
-                total: slotCount,
-              })}
-              align="center"
-              roundIndex={roundIndex}
-              totalRounds={totalRounds}
-            />
+            <div className="mb-6">
+              <PlayRoundHeader
+                eyebrow={`${tFormat("rank_blind")} · ${groupName}`}
+                title={groupName}
+                align="center"
+                roundIndex={roundIndex}
+                totalRounds={totalRounds}
+              />
+            </div>
 
-            <div className="mb-8 mt-8 flex justify-center">
-              <div className="w-[230px] overflow-hidden rounded-card border-[1.5px] border-acc bg-background ring-4 ring-acc/[0.16] animate-card-float">
-                {currentImageSrc ? (
-                  <ImageCard
-                    src={currentImageSrc}
-                    alt={currentItem?.title ?? ""}
-                    className="h-[150px]"
-                  />
-                ) : currentVideoId ? (
-                  <YouTubeCard
-                    videoId={currentVideoId}
-                    startSeconds={currentStartSeconds}
-                    className="h-[150px]"
-                  />
+            {/* T7: a persistent two-column grid for the whole round — the
+                left status panel flips in place between the "place this
+                one" (pending) and "round ranked" (done) copy, while the
+                right column stays a vertical list of numbered rows: the
+                interactive slot rows while pending, the same RankedList the
+                result screen shows once the round is done. */}
+            <div className="mb-6 grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
+              <div className="rounded-card border border-border bg-surface-card p-6">
+                {!roundDone ? (
+                  <div className="flex flex-col gap-4">
+                    <Text
+                      variant="tertiary"
+                      className="text-[12.5px] font-medium uppercase tracking-[0.16em] text-acc"
+                    >
+                      {t("rankPendingEyebrow")}
+                    </Text>
+                    <div className="w-full max-w-[230px] overflow-hidden rounded-card border-[1.5px] border-acc bg-background ring-4 ring-acc/[0.16] animate-card-float">
+                      {currentImageSrc ? (
+                        <ImageCard
+                          src={currentImageSrc}
+                          alt={currentItem?.title ?? ""}
+                          className="h-[150px]"
+                        />
+                      ) : currentVideoId ? (
+                        <YouTubeCard
+                          videoId={currentVideoId}
+                          startSeconds={currentStartSeconds}
+                          className="h-[150px]"
+                        />
+                      ) : (
+                        <div
+                          className="relative h-[150px]"
+                          style={{
+                            background: `linear-gradient(158deg, ${toneForDrawIndex(placedCount)}, var(--background) 78%)`,
+                          }}
+                        >
+                          <div
+                            aria-hidden="true"
+                            className="absolute inset-0"
+                            style={HAIRLINE_OVERLAY_STYLE}
+                          />
+                        </div>
+                      )}
+                      <Text className="line-clamp-2 p-[14px] text-[16.5px] font-semibold">
+                        {currentItem?.title}
+                      </Text>
+                    </div>
+                    <Text variant="secondary" className="text-[14px]">
+                      {t("rankPendingFlavor")}
+                    </Text>
+                    <Text variant="tertiary" className="text-[12px]">
+                      {t("rankRemainingNote", {
+                        count: Math.max(slotCount - placedCount - 1, 0),
+                      })}
+                    </Text>
+                  </div>
                 ) : (
-                  <div
-                    className="relative h-[150px]"
-                    style={{
-                      background: `linear-gradient(158deg, ${toneForDrawIndex(placedCount)}, var(--background) 78%)`,
-                    }}
-                  >
-                    <div
-                      aria-hidden="true"
-                      className="absolute inset-0"
-                      style={HAIRLINE_OVERLAY_STYLE}
-                    />
+                  <div className="flex flex-col gap-4">
+                    <Text
+                      variant="tertiary"
+                      className="text-[12.5px] font-medium uppercase tracking-[0.16em] text-[#7EE7B4]"
+                    >
+                      {t("roundComplete")}
+                    </Text>
+                    <Text as="h2" variant="title" className="text-[22px]">
+                      {t("ranked", { name: groupName })}
+                    </Text>
+                    <Text variant="secondary" className="text-[14px]">
+                      {t("rankDoneFlavor")}
+                    </Text>
+                    <Text variant="tertiary" className="text-[12px]">
+                      {t("rankDoneFooter", { count: slotCount })}
+                    </Text>
                   </div>
                 )}
-                <Text className="line-clamp-2 p-[14px] text-[16.5px] font-semibold">
-                  {currentItem?.title}
-                </Text>
+              </div>
+
+              <div>
+                {!roundDone ? (
+                  <div className="flex flex-col gap-3">
+                    {Array.from({ length: slotCount }, (_, slotIndex) => {
+                      const filled = placements[slotIndex];
+                      return (
+                        <button
+                          key={slotIndex}
+                          type="button"
+                          disabled={Boolean(filled)}
+                          onClick={() => place(slotIndex)}
+                          aria-label={
+                            filled
+                              ? t("rankSlotFilled", {
+                                  rank: slotIndex + 1,
+                                  title: filled.title,
+                                })
+                              : t("rankSlotEmpty", { rank: slotIndex + 1 })
+                          }
+                          className={cn(
+                            "flex w-full items-center gap-3 rounded-tile border-[1.5px] p-[14px] text-start transition-colors",
+                            filled
+                              ? "border-border"
+                              : "border-dashed border-white/[0.14] bg-white/[0.02] hover:border-acc/40",
+                          )}
+                        >
+                          <span
+                            aria-hidden
+                            className={cn(
+                              "flex h-8 w-8 flex-none items-center justify-center rounded-chip text-[12px] font-semibold tabular-nums",
+                              filled
+                                ? "bg-white/[0.06] text-white/75"
+                                : "bg-white/[0.02] text-foreground-tertiary",
+                            )}
+                          >
+                            #{slotIndex + 1}
+                          </span>
+                          {filled ? (
+                            <Text className="line-clamp-1 flex-1 text-sm font-semibold">
+                              {filled.title}
+                            </Text>
+                          ) : (
+                            <Text
+                              variant="tertiary"
+                              className="line-clamp-1 flex-1 text-[13px]"
+                            >
+                              {t("rankPlaceItemHere", {
+                                name: currentItem?.title ?? "",
+                              })}
+                            </Text>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                ) : (
+                  // The same list the result screen shows, so the recap and
+                  // the result a player ends up with read as one thing.
+                  <RankedList rows={rankedRows} />
+                )}
               </div>
             </div>
 
-            <div className="mb-10 grid gap-[14px] [grid-template-columns:repeat(auto-fit,minmax(150px,1fr))]">
-              {Array.from({ length: slotCount }, (_, slotIndex) => {
-                const filled = placements[slotIndex];
-                const filledTone = filled
-                  ? toneForDrawIndex(
-                      candidates.findIndex(
-                        (candidate) => candidate.id === filled.id,
-                      ),
-                    )
-                  : undefined;
-                return (
-                  <button
-                    key={slotIndex}
-                    type="button"
-                    disabled={Boolean(filled)}
-                    onClick={() => place(slotIndex)}
-                    aria-label={
-                      filled
-                        ? t("rankSlotFilled", {
-                            rank: slotIndex + 1,
-                            title: filled.title,
-                          })
-                        : t("rankSlotEmpty", { rank: slotIndex + 1 })
-                    }
-                    style={
-                      filled
-                        ? {
-                            background: `linear-gradient(158deg, ${filledTone}, var(--background) 82%)`,
-                          }
-                        : undefined
-                    }
-                    className={cn(
-                      "flex min-h-[110px] flex-col justify-between rounded-tile border-[1.5px] p-[14px] text-start transition-colors",
-                      filled
-                        ? "border-border"
-                        : "border-dashed border-white/[0.14] bg-white/[0.02] hover:border-acc/40",
-                    )}
-                  >
-                    {filled ? (
-                      <span className="text-[11px] font-semibold tabular-nums text-white/75">
-                        #{slotIndex + 1}
-                      </span>
-                    ) : (
-                      <Text
-                        variant="tertiary"
-                        className="text-[11px] font-semibold tabular-nums"
-                      >
-                        #{slotIndex + 1}
-                      </Text>
-                    )}
-                    {filled ? (
-                      <Text className="line-clamp-2 text-sm font-semibold">
-                        {filled.title}
-                      </Text>
-                    ) : (
-                      <Text variant="tertiary" className="text-[12.5px]">
-                        {t("placeHere")}
-                      </Text>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
+            {roundDone && (
+              <PlayConfirmBar
+                ready
+                disabled={false}
+                onConfirm={goToNextRound}
+                confirmLabel={t("nextRound")}
+                title={t("nextUp", {
+                  name: roundHeading(pack, roundIndex + 1),
+                })}
+              />
+            )}
           </>
-        )}
-
-        {isRoundComplete && slot && (
-          <section className="mb-10 flex flex-col items-center gap-6 text-center">
-            <PlayRoundHeader
-              eyebrow={t("roundComplete")}
-              title={t("ranked", { name: groupName })}
-              instruction={t("nextUp", {
-                name: roundHeading(pack, roundIndex + 1),
-              })}
-              align="center"
-              roundIndex={roundIndex}
-              totalRounds={totalRounds}
-            />
-            {/* The same list the result screen shows, so the recap and the
-                result a player ends up with read as one thing. */}
-            <div className="w-full max-w-[420px] text-start">
-              <RankedList rows={rankedRows} />
-            </div>
-            <Button
-              size="lg"
-              onClick={goToNextRound}
-              className="w-full max-w-[420px]"
-            >
-              {t("nextRound")}
-            </Button>
-          </section>
         )}
 
         {isFinished && <LoadingState label={t("loadingResult")} />}
