@@ -227,6 +227,18 @@ describe("ResultScreen", () => {
     ).toHaveAttribute("href", "/packs/pack-1/play");
   });
 
+  // T8: the recap and the aside cards (leaderboard/share, T11-T12) sit in a
+  // two-column grid below the hero — the aside is a real landmark, not just a
+  // styling div.
+  it("renders the aside alongside the recap once results are on screen", async () => {
+    seedOwnPlay();
+    seedResults(RESULTS);
+    render(<ResultScreen pack={PACK} />);
+
+    expect(await screen.findByTestId("picked")).toBeInTheDocument();
+    expect(screen.getByRole("complementary")).toBeInTheDocument();
+  });
+
   it("renders without crashing when the pack has no recorded plays yet", async () => {
     const emptyResults: PackResults = {
       packId: "pack-1",

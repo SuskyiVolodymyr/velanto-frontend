@@ -133,9 +133,22 @@ export function ResultScreen({ pack }: { pack: Pack }) {
           />
           {shared && <SharedResultNote />}
         </div>
-        {recap}
-        <div className={cn(PACK_CONTAINER, "pb-16")}>
-          <ResultAgainPanel packId={pack.id} shared={shared} />
+        {/* T8: recap (left) + a right aside for 2-3 stacked cards (the
+            leaderboard, T11; the share/play-again card, T12) — the mock's
+            `minmax(0,1fr) minmax(0,330px)` grid. The hero stays full-width
+            above this, not inside either column. Single column below `lg`. */}
+        <div
+          className={cn(
+            PACK_CONTAINER,
+            "grid grid-cols-1 items-start gap-8 pb-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,330px)]",
+          )}
+        >
+          <div className="min-w-0">{recap}</div>
+          <aside className="flex flex-col gap-4">
+            {/* T12 replaces this placeholder with the consolidated share/
+                play-again card; T11 adds the leaderboard card above it. */}
+            <ResultAgainPanel packId={pack.id} shared={shared} />
+          </aside>
         </div>
       </>
     );
