@@ -95,7 +95,15 @@
     "contentsHeading": "Pack contents",
     "roundMappingHeading": "Rounds",
     "roundLabelFallback": "Round {index}",
-    "roundRandomPool": "Random pool"
+    "roundRandomPool": "Random pool",
+    "loadingReportedContent": "Loading reported content…",
+    "reportedContentError": "Couldn't load this report's content. Try again later.",
+    "reportedUserHeading": "Reported account",
+    "reportedUserJoined": "Joined {date}",
+    "reportedUserPacks": "Packs",
+    "reportedUserComments": "Comments",
+    "reportedUserReportsAgainst": "Reports against",
+    "reportedUserReportsFiled": "Reports filed"
   },
   "admin": {
     "panelEyebrow": "Admin panel",
