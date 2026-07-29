@@ -12,6 +12,7 @@ import type {
 } from "./room-types";
 import { RoomRound } from "./RoomRound";
 import { GuessWhoRoundBoard } from "./GuessWhoRoundBoard";
+import { TurnBasedCutBoard } from "./TurnBasedCutBoard";
 
 /** Every round-scoped action a board might need, keyed by mode so each board
  * only destructures what its own mode uses. */
@@ -72,7 +73,15 @@ export function RoomRoundBoard({
           onPick={actions.pick}
         />
       );
-    // "turn_based_cut" -> TurnBasedCutBoard, wired in Task 18.
+    case "turn_based_cut":
+      return (
+        <TurnBasedCutBoard
+          state={state}
+          currentUserId={currentUserId}
+          packFormat={packFormat}
+          onCut={actions.cut}
+        />
+      );
     // "voting" -> VotingBoard, wired in Task 21.
     // "shared_grid" -> SharedGridRankSubmission, wired in Task 23.
     // "relay" -> RelayInsertBoard, wired in Task 25.

@@ -1733,6 +1733,11 @@
       "heading": "Reveal",
       "scoresPending": "Full scores available once every player's total is on the wire."
     },
+    "turnBasedCut": {
+      "instruction": "On your turn, cut one item. The last one standing wins.",
+      "cutOrderHeading": "Cut order",
+      "cutVerb": "cut"
+    },
     "entry": {
       "createRoom": "Create room",
       "joinByCode": "Join by code",

@@ -38,9 +38,21 @@ export function RoomBetweenBoard({
           onNext={onNext}
         />
       );
+    case "turn_based_cut":
+      // Turn-based cut's resolved round is still `kind: "survivor"` (Task 1's
+      // SurvivorRoundResult carries an optional `cuts` field precisely for
+      // this mode) — reuses RoomBetween exactly like Claim does.
+      return (
+        <RoomBetween
+          state={state}
+          currentUserId={currentUserId}
+          onNext={onNext}
+          packFormat={packFormat}
+        />
+      );
     // Every other mode's between-round block is added by that mode's task
-    // group (Tasks 19/22/24/26) — each reuses this same shell, since "show
-    // this round's outcome + wait for everyone to press Next" is identical
+    // group (Tasks 22/24/26) — each reuses this same shell, since "show this
+    // round's outcome + wait for everyone to press Next" is identical
     // lobby-side chrome across every mode; only the outcome BLOCK differs.
     default:
       return null;
