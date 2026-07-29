@@ -1,47 +1,43 @@
 import { useTranslations } from "next-intl";
 import { Input } from "@/src/shared/components/Input";
-import { cn } from "@/src/shared/lib/cn";
+import { FilterChipRow } from "@/src/features/home/FilterChipRow";
 import type {
   FeedbackSort,
   FeedbackStatus,
   FeedbackTopic,
 } from "@/src/shared/types/feedback";
 
-// value → translation key. `undefined` (the "All" chip) resolves to filterAll;
-// topic keys live in the `feedback` ns, status keys in the `status` ns.
-const TOPIC_FILTERS: { value: FeedbackTopic | undefined; key: string }[] = [
-  { value: undefined, key: "filterAll" },
-  { value: "bug", key: "topicBug" },
-  { value: "feature", key: "topicFeature" },
-  { value: "translation", key: "topicTranslation" },
-  { value: "other", key: "topicOther" },
-];
+// "all" is the UI sentinel for "no filter" — same convention as
+// AuthorPackList's StatusChoice (Profile/Preferences redesign, D13).
+type TopicChoice = "all" | FeedbackTopic;
+type StatusChoice = "all" | FeedbackStatus;
 
-// The "All" chip (undefined) resolves to feedback.filterAll; the rest use the
-// shared `status` ns keys (feedbackNew/…), so the labels match the badges.
-const STATUS_FILTERS: {
-  value: FeedbackStatus | undefined;
-  key: string | null;
-}[] = [
-  { value: undefined, key: null },
-  { value: "new", key: "feedbackNew" },
-  { value: "in_progress", key: "feedbackInProgress" },
-  { value: "done", key: "feedbackDone" },
-  { value: "declined", key: "feedbackDeclined" },
+const TOPIC_ORDER: FeedbackTopic[] = ["bug", "feature", "translation", "other"];
+const TOPIC_LABEL_KEY: Record<FeedbackTopic, string> = {
+  bug: "topicBug",
+  feature: "topicFeature",
+  translation: "topicTranslation",
+  other: "topicOther",
+};
+
+const STATUS_ORDER: FeedbackStatus[] = [
+  "new",
+  "in_progress",
+  "done",
+  "declined",
 ];
+// status labels live in the shared `status` ns (matches the StatusBadge labels).
+const STATUS_LABEL_KEY: Record<FeedbackStatus, string> = {
+  new: "feedbackNew",
+  in_progress: "feedbackInProgress",
+  done: "feedbackDone",
+  declined: "feedbackDeclined",
+};
 
 const SORT_OPTIONS: { value: FeedbackSort; key: string }[] = [
   { value: "top", key: "sortTop" },
   { value: "new", key: "sortNewest" },
 ];
-
-const chipClass = (active: boolean) =>
-  cn(
-    "rounded-[9px] border px-3 py-1.5 text-sm font-medium transition-colors",
-    active
-      ? "border-acc/30 bg-acc/10 text-acc"
-      : "border-border bg-white/[0.03] text-foreground-secondary",
-  );
 
 interface FeedbackFiltersProps {
   searchInput: string;
@@ -66,6 +62,28 @@ export function FeedbackFilters({
 }: FeedbackFiltersProps) {
   const t = useTranslations("feedback");
   const tStatus = useTranslations("status");
+
+  const topicOptions: { value: TopicChoice; label: string }[] = [
+    { value: "all", label: t("filterAll") },
+    ...TOPIC_ORDER.map((value) => ({
+      value,
+      label: t(TOPIC_LABEL_KEY[value]),
+    })),
+  ];
+
+  const statusOptions: { value: StatusChoice; label: string }[] = [
+    { value: "all", label: t("filterAll") },
+    ...STATUS_ORDER.map((value) => ({
+      value,
+      label: tStatus(STATUS_LABEL_KEY[value]),
+    })),
+  ];
+
+  const sortOptions = SORT_OPTIONS.map((option) => ({
+    value: option.value,
+    label: t(option.key),
+  }));
+
   return (
     <>
       <div className="max-w-sm">
@@ -78,47 +96,25 @@ export function FeedbackFilters({
         />
       </div>
 
-      <div className="flex flex-wrap gap-2">
-        {TOPIC_FILTERS.map((f) => (
-          <button
-            key={f.key}
-            type="button"
-            onClick={() => onTopicChange(f.value)}
-            aria-pressed={topic === f.value}
-            className={chipClass(topic === f.value)}
-          >
-            {t(f.key)}
-          </button>
-        ))}
-      </div>
+      <FilterChipRow<TopicChoice>
+        options={topicOptions}
+        value={topic ?? "all"}
+        onSelect={(value) => onTopicChange(value === "all" ? undefined : value)}
+      />
 
-      <div className="flex flex-wrap gap-2">
-        {STATUS_FILTERS.map((f) => (
-          <button
-            key={f.value ?? "all"}
-            type="button"
-            onClick={() => onStatusChange(f.value)}
-            aria-pressed={statusFilter === f.value}
-            className={chipClass(statusFilter === f.value)}
-          >
-            {f.key ? tStatus(f.key) : t("filterAll")}
-          </button>
-        ))}
-      </div>
+      <FilterChipRow<StatusChoice>
+        options={statusOptions}
+        value={statusFilter ?? "all"}
+        onSelect={(value) =>
+          onStatusChange(value === "all" ? undefined : value)
+        }
+      />
 
-      <div className="flex flex-wrap gap-2">
-        {SORT_OPTIONS.map((option) => (
-          <button
-            key={option.value}
-            type="button"
-            onClick={() => onSortChange(option.value)}
-            aria-pressed={sort === option.value}
-            className={chipClass(sort === option.value)}
-          >
-            {t(option.key)}
-          </button>
-        ))}
-      </div>
+      <FilterChipRow<FeedbackSort>
+        options={sortOptions}
+        value={sort}
+        onSelect={onSortChange}
+      />
     </>
   );
 }

@@ -1078,6 +1078,7 @@
     "submitPack": "Надіслати на перевірку",
     "submittingPack": "Надсилання…",
     "submitPackError": "Не вдалося надіслати пак. Спробуйте ще раз.",
+    "rejectionReasonHeading": "Чому пак відхилено",
     "randomPoolLabel": "Випадковий пул"
   },
   "share": {

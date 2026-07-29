@@ -17,6 +17,7 @@ import { PackPlayButton } from "@/src/features/pack/PackPlayButton";
 import { PackPlayEstimate } from "@/src/features/pack/PackPlayEstimate";
 import { PackOwnerActions } from "@/src/features/pack/PackOwnerActions";
 import { PackOwnerStatusBadge } from "@/src/features/pack/PackOwnerStatusBadge";
+import { PackRejectionReason } from "@/src/features/pack/PackRejectionReason";
 import { CommentSection } from "@/src/features/pack/CommentSection";
 import { VoteButtons } from "@/src/features/pack/VoteButtons";
 import { ShareButton } from "@/src/features/share/ShareButton";
@@ -166,6 +167,11 @@ export function PackDetailScreen({
               <PackOwnerStatusBadge
                 packAuthorId={pack.authorId}
                 status={pack.status}
+              />
+              <PackRejectionReason
+                packAuthorId={pack.authorId}
+                status={pack.status}
+                rejectionReason={pack.rejectionReason}
               />
               {pack.description && (
                 <Text

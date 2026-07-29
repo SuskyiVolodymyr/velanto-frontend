@@ -2,6 +2,7 @@ import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { Button } from "@/src/shared/components/Button";
+import { EmptyState } from "@/src/shared/components/EmptyState";
 import { FeedbackCard } from "@/src/features/feedback/FeedbackCard";
 import type { Feedback } from "@/src/shared/types/feedback";
 
@@ -31,9 +32,7 @@ export function FeedbackList({
     <>
       {loading && <LoadingState label={t("loadingList")} showLabel />}
       {error && <Text variant="danger">{t("listError")}</Text>}
-      {listReady && items.length === 0 && (
-        <Text variant="secondary">{t("noMatches")}</Text>
-      )}
+      {listReady && items.length === 0 && <EmptyState title={t("noMatches")} />}
 
       {listReady && items.length > 0 && (
         <div className="flex flex-col gap-2">

@@ -1078,6 +1078,7 @@
     "submitPack": "提交审核",
     "submittingPack": "提交中…",
     "submitPackError": "无法提交该合集，请重试。",
+    "rejectionReasonHeading": "被拒绝的原因",
     "randomPoolLabel": "随机池"
   },
   "share": {

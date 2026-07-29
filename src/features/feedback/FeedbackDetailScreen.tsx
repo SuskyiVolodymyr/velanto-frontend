@@ -18,6 +18,8 @@ import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { Badge } from "@/src/shared/components/Badge";
 import { StatusBadge } from "@/src/shared/components/StatusBadge";
+import { Card } from "@/src/shared/components/Card";
+import { Select } from "@/src/shared/components/Select";
 import { TOPIC_KEYS } from "@/src/features/feedback/FeedbackCard";
 import { FeedbackVote } from "@/src/features/feedback/FeedbackVote";
 import { FeedbackComments } from "@/src/features/feedback/FeedbackComments";
@@ -140,7 +142,7 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
       </Text>
 
       {post.topic === "translation" && (
-        <div className="flex flex-col gap-2 rounded-[15px] border border-border bg-surface p-5">
+        <Card className="flex flex-col gap-2">
           <Text className="text-xs font-semibold uppercase tracking-wide text-foreground-tertiary">
             {t("translationHeading")}
           </Text>
@@ -168,7 +170,7 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
               {post.translationSuggestion}
             </Text>
           )}
-        </div>
+        </Card>
       )}
 
       <FeedbackVote
@@ -179,25 +181,27 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
       />
 
       {(isStaff || canDelete) && (
-        <div className="flex flex-wrap items-center gap-3 rounded-[15px] border border-border bg-surface p-5">
+        <Card className="flex flex-wrap items-center gap-3">
           {isStaff && (
             <label className="flex flex-col gap-1 text-xs text-foreground-secondary">
               {t("statusSelectLabel")}
-              <select
-                value={post.status}
-                disabled={statusBusy}
-                onChange={(e) =>
-                  handleStatusChange(e.target.value as FeedbackStatus)
-                }
-                aria-label={t("statusSelectLabel")}
-                className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground disabled:opacity-45"
-              >
-                {STATUS_OPTIONS.map((o) => (
-                  <option key={o.value} value={o.value}>
-                    {tStatus(o.key)}
-                  </option>
-                ))}
-              </select>
+              {/* Select hardcodes w-full (cn() is a plain joiner, not
+                  tailwind-merge — see UsersTab.tsx's own filter selects), so
+                  sizing lives on this wrapper or the control fills the Card. */}
+              <div className="w-[180px]">
+                <Select
+                  value={post.status}
+                  disabled={statusBusy}
+                  onChange={(e) =>
+                    handleStatusChange(e.target.value as FeedbackStatus)
+                  }
+                  aria-label={t("statusSelectLabel")}
+                  options={STATUS_OPTIONS.map((o) => ({
+                    value: o.value,
+                    label: tStatus(o.key),
+                  }))}
+                />
+              </div>
             </label>
           )}
           {statusBusy && (
@@ -225,7 +229,7 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
               {deleteError}
             </Text>
           )}
-        </div>
+        </Card>
       )}
 
       <FeedbackComments feedbackId={post.id} />

@@ -44,6 +44,9 @@ vi.mock("@/src/features/pack/PackOwnerActions", () => ({
 vi.mock("@/src/features/pack/PackOwnerStatusBadge", () => ({
   PackOwnerStatusBadge: () => null,
 }));
+vi.mock("@/src/features/pack/PackRejectionReason", () => ({
+  PackRejectionReason: () => null,
+}));
 
 const BASE_PACK: Pack = {
   id: "p1",
