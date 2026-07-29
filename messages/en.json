@@ -1755,6 +1755,14 @@
       "pointsLabel": "{count} pts",
       "tiedNote": "Tied — {count} items share this rank"
     },
+    "relay": {
+      "instruction": "Insert the current item into the shared ranking.",
+      "insertHere": "Insert here",
+      "currentItem": "Now placing",
+      "finalOrderHeading": "Final order",
+      "placementHistoryHeading": "Placement history",
+      "placedVerb": "placed"
+    },
     "entry": {
       "createRoom": "Create room",
       "joinByCode": "Join by code",
