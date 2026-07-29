@@ -103,6 +103,18 @@ export function RoomRound({
         })}
       </div>
 
+      {/* Plain <p>, not <Text variant="secondary">, deliberately: Text's variant
+          system sets a color class of equal CSS specificity to any color
+          class passed via className, and per Text.tsx's own documented
+          gotcha the variant's class wins regardless of source order — a
+          variant="secondary" className="text-score" pairing here would have
+          silently rendered muted grey instead of the amber warning tone. */}
+      {lastRejection?.reason === "too_fast" && (
+        <p role="status" className="text-xs text-score tracking-[-0.01em]">
+          {t("round.tooFastNote")}
+        </p>
+      )}
+
       <Text
         variant="secondary"
         aria-live="polite"
