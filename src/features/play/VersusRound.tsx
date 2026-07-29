@@ -39,11 +39,9 @@ function ItemTile({
   if (videoId) {
     return (
       <div style={appearDelay} className={frameClasses}>
-        <YouTubeCard
-          videoId={videoId}
-          startSeconds={startSeconds}
-          className="h-[110px]"
-        />
+        {/* No fixed height: aspect-video needs an auto width to size a
+            matching 16:9 height from — see CandidateCard's identical fix. */}
+        <YouTubeCard videoId={videoId} startSeconds={startSeconds} />
         <Text className="p-[11px_13px] text-[13.5px] font-semibold">
           {item.title}
         </Text>
@@ -54,11 +52,7 @@ function ItemTile({
   if (item.type === "image") {
     return (
       <div style={appearDelay} className={frameClasses}>
-        <ImageCard
-          src={mediaUrl(item.value)}
-          alt={item.title}
-          className="h-[110px]"
-        />
+        <ImageCard src={mediaUrl(item.value)} alt={item.title} />
         <Text className="p-[11px_13px] text-[13.5px] font-semibold">
           {item.title}
         </Text>

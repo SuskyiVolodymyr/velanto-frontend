@@ -316,9 +316,9 @@ describe("PlayScreen", () => {
   // The count→columns mapping is real layout logic: ≤4 in one row, 6 as two
   // rows of three, 8 as two rows of four.
   it.each([
-    [4, "lg:grid-cols-4"],
-    [6, "lg:grid-cols-3"],
-    [8, "lg:grid-cols-4"],
+    [4, "min-[1000px]:grid-cols-4"],
+    [6, "min-[1000px]:grid-cols-3"],
+    [8, "min-[1000px]:grid-cols-4"],
   ])(
     "lays %i candidates out with the %s grid on wide screens",
     async (count, gridClass) => {

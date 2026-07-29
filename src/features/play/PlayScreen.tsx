@@ -21,16 +21,18 @@ import { LoadingState } from "@/src/shared/components/LoadingState";
 
 // How many columns a groups-format round lays its candidates out in, chosen by
 // candidate count so they fill the row instead of leaving fixed-width gaps: up
-// to 4 sit in one row; more split across two balanced rows (6→3, 8→4). Drops to
-// two columns below `lg` so cards stay legible on narrow viewports. Keys are the
-// resolved column target (1–6); values are literal classes so Tailwind emits them.
+// to 4 sit in one row; more split across two balanced rows (6→3, 8→4). Breakpoints
+// match the mock (`Solo Play.dc.html`'s `[data-el="grid"]` media queries) exactly:
+// 2 columns below 1000px, 1 column below 560px — not Tailwind's default `sm`/`lg`.
+// Keys are the resolved column target (1–6); values are literal classes so
+// Tailwind emits them.
 const CANDIDATE_GRID_COLS: Record<number, string> = {
   1: "grid-cols-1",
-  2: "grid-cols-2",
-  3: "grid-cols-2 lg:grid-cols-3",
-  4: "grid-cols-2 lg:grid-cols-4",
-  5: "grid-cols-2 lg:grid-cols-5",
-  6: "grid-cols-2 lg:grid-cols-6",
+  2: "grid-cols-1 min-[560px]:grid-cols-2",
+  3: "grid-cols-1 min-[560px]:grid-cols-2 min-[1000px]:grid-cols-3",
+  4: "grid-cols-1 min-[560px]:grid-cols-2 min-[1000px]:grid-cols-4",
+  5: "grid-cols-1 min-[560px]:grid-cols-2 min-[1000px]:grid-cols-5",
+  6: "grid-cols-1 min-[560px]:grid-cols-2 min-[1000px]:grid-cols-6",
 };
 
 function candidateGridCols(count: number): string {

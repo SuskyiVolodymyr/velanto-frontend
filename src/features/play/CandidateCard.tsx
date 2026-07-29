@@ -40,19 +40,27 @@ function SelectBar({
   title,
   index,
   selected,
+  className,
 }: {
   title: string;
   index: number;
   selected: boolean;
+  className?: string;
 }) {
   return (
     <div
       className={cn(
         "flex items-center gap-[11px] border-t border-border p-[13px_14px]",
         selected ? "bg-acc/[0.12]" : "bg-white/[0.02]",
+        className,
       )}
     >
-      <Text className="flex-1 text-[14.5px] font-semibold">{title}</Text>
+      {/* min-h reserves a full 2-line slot regardless of the actual title's
+          line count, so a card's title container is the same height whether
+          its neighbor's title wraps to one line or two. */}
+      <Text className="line-clamp-2 min-h-[2.6em] flex-1 text-[14.5px] font-semibold leading-[1.3]">
+        {title}
+      </Text>
       <Text variant="tertiary" className="text-[11px]">
         {String(index + 1).padStart(2, "0")}
       </Text>
@@ -147,8 +155,12 @@ export function CandidateCard({
   // deliberate "the stagger IS the reveal" mechanic (see the 2.0.0 redesign
   // plan's D1). Keep this exact per-index delay if the frame markup changes.
   const appearDelay = { animationDelay: `${index * 900}ms` };
+  // flex-col + h-full: a grid row stretches every card to the tallest card's
+  // height (e.g. a neighbor with a 2-line title); without this the extra
+  // height just sat as blank space below the SelectBar instead of the title
+  // row hugging the card's bottom edge.
   const frameClasses = cn(
-    "play-card-appear w-full overflow-hidden rounded-card border-[1.5px] bg-background transition-colors",
+    "play-card-appear flex h-full w-full flex-col overflow-hidden rounded-card border-[1.5px] bg-background transition-colors",
     selected ? FRAME_SELECTED : FRAME_UNSELECTED,
   );
 
@@ -156,20 +168,23 @@ export function CandidateCard({
     return (
       <div style={appearDelay} className={frameClasses}>
         <div className="relative">
-          <YouTubeCard
-            videoId={videoId}
-            startSeconds={startSeconds}
-            className="h-[150px]"
-          />
+          {/* No fixed height here (unlike the other two media treatments):
+              YouTubeCard's own `aspect-video` needs an auto width to compute
+              a matching 16:9 height from — a fixed height instead forced an
+              aspect-ratio-derived width narrower than the card, leaving the
+              embedded player (and its native controls/progress bar) short of
+              the card's full width. */}
+          <YouTubeCard videoId={videoId} startSeconds={startSeconds} />
           {selected && <ChosenBadge label={chosenLabel} />}
         </div>
         {/* A dedicated control below the player, not the player itself —
-            interacting with the video area must not select the item. */}
+            interacting with the video area must not select the item.
+            mt-auto pins it to the card's bottom edge (see frameClasses). */}
         <button
           type="button"
           onClick={onSelect}
           aria-label={t("pick", { name: item.title })}
-          className="block w-full text-start"
+          className="mt-auto block w-full text-start"
         >
           <SelectBar title={item.title} index={index} selected={selected} />
         </button>
@@ -187,14 +202,17 @@ export function CandidateCard({
         className={cn(frameClasses, "text-start")}
       >
         <div className="relative">
-          <ImageCard
-            src={mediaUrl(item.value)}
-            alt={item.title}
-            className="h-[150px]"
-          />
+          {/* Same reasoning as the video branch above: let aspect-video size
+              from the card's full width instead of a fixed height. */}
+          <ImageCard src={mediaUrl(item.value)} alt={item.title} />
           {selected && <ChosenBadge label={chosenLabel} />}
         </div>
-        <SelectBar title={item.title} index={index} selected={selected} />
+        <SelectBar
+          title={item.title}
+          index={index}
+          selected={selected}
+          className="mt-auto"
+        />
       </button>
     );
   }
@@ -214,7 +232,12 @@ export function CandidateCard({
         selected={selected}
         chosenLabel={chosenLabel}
       />
-      <SelectBar title={item.title} index={index} selected={selected} />
+      <SelectBar
+        title={item.title}
+        index={index}
+        selected={selected}
+        className="mt-auto"
+      />
     </button>
   );
 }
