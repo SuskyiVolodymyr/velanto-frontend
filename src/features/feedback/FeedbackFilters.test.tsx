@@ -4,7 +4,9 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { FeedbackFilters } from "./FeedbackFilters";
 
-function renderFilters(overrides: Partial<React.ComponentProps<typeof FeedbackFilters>> = {}) {
+function renderFilters(
+  overrides: Partial<React.ComponentProps<typeof FeedbackFilters>> = {},
+) {
   const props: React.ComponentProps<typeof FeedbackFilters> = {
     searchInput: "",
     onSearchInputChange: vi.fn(),
@@ -13,11 +15,10 @@ function renderFilters(overrides: Partial<React.ComponentProps<typeof FeedbackFi
     statusFilter: undefined,
     onStatusChange: vi.fn(),
     sort: "new",
+    onSortChange: vi.fn(),
     ...overrides,
-    onSortChange: overrides.onSortChange ?? vi.fn(),
   };
   render(<FeedbackFilters {...props} />);
-  return props;
 }
 
 describe("FeedbackFilters", () => {
@@ -50,6 +51,14 @@ describe("FeedbackFilters", () => {
     renderFilters({ onStatusChange });
     await userEvent.click(screen.getByRole("button", { name: "In progress" }));
     expect(onStatusChange).toHaveBeenCalledWith("in_progress");
+  });
+
+  it("clicking 'All' in the status row after a status is active calls onStatusChange(undefined)", async () => {
+    const onStatusChange = vi.fn();
+    renderFilters({ statusFilter: "in_progress", onStatusChange });
+    const [, statusAll] = screen.getAllByRole("button", { name: "All" });
+    await userEvent.click(statusAll);
+    expect(onStatusChange).toHaveBeenCalledWith(undefined);
   });
 
   it("clicking a sort chip calls onSortChange directly (no 'all' sentinel to translate)", async () => {

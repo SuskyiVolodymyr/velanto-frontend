@@ -185,19 +185,23 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
           {isStaff && (
             <label className="flex flex-col gap-1 text-xs text-foreground-secondary">
               {t("statusSelectLabel")}
-              <Select
-                value={post.status}
-                disabled={statusBusy}
-                onChange={(e) =>
-                  handleStatusChange(e.target.value as FeedbackStatus)
-                }
-                aria-label={t("statusSelectLabel")}
-                className="w-auto"
-                options={STATUS_OPTIONS.map((o) => ({
-                  value: o.value,
-                  label: tStatus(o.key),
-                }))}
-              />
+              {/* Select hardcodes w-full (cn() is a plain joiner, not
+                  tailwind-merge — see UsersTab.tsx's own filter selects), so
+                  sizing lives on this wrapper or the control fills the Card. */}
+              <div className="w-[180px]">
+                <Select
+                  value={post.status}
+                  disabled={statusBusy}
+                  onChange={(e) =>
+                    handleStatusChange(e.target.value as FeedbackStatus)
+                  }
+                  aria-label={t("statusSelectLabel")}
+                  options={STATUS_OPTIONS.map((o) => ({
+                    value: o.value,
+                    label: tStatus(o.key),
+                  }))}
+                />
+              </div>
             </label>
           )}
           {statusBusy && (
