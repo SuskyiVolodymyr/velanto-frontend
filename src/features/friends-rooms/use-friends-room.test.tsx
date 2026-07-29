@@ -516,6 +516,7 @@ describe("useFriendsRoom per-mode round actions", () => {
       { userId: "u1", itemId: "a" },
     ]);
     expect(result.current.state?.round?.relayCurrentItemId).toBe("b");
+    expect(result.current.state?.round?.turnUserId).toBe("u2");
   });
 
   it("cutRejected/pickRejected/voteRejected/rankingRejected/placeRejected all store the actor's lastRejection without crashing on other modes' state", async () => {

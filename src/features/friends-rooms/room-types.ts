@@ -86,7 +86,7 @@ export interface AvailableMode extends ModeFeasibility {
  * Flipped to `false` in the final task of the rooms-UI implementation plan,
  * once every mode's lobby/round/results path is built and e2e-verified.
  */
-export const ROOMS_DORMANT: boolean = true;
+export const ROOMS_DORMANT: boolean = false;
 
 export type FriendsRoomStatus = "lobby" | "playing" | "finished" | "abandoned";
 

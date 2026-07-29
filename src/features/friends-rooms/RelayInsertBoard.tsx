@@ -42,7 +42,12 @@ export function RelayInsertBoard({
   const isMyTurn = round.turnUserId === currentUserId;
   const currentItemId = round.relayCurrentItemId;
 
-  function Gap({ position }: { position: number }) {
+  // A plain render-helper function, not a nested component definition —
+  // deliberately lowercase and called directly (`renderGap(0)`, never
+  // `<Gap .../>`) so nothing gets remounted (and loses state) on every
+  // parent re-render, which is what defining a component inside another
+  // component's render body would otherwise cause.
+  function renderGap(position: number) {
     if (!isMyTurn || !currentItemId) {
       return <div aria-hidden className="h-2 w-full" />;
     }
@@ -96,7 +101,7 @@ export function RelayInsertBoard({
       )}
 
       <div className="relative flex flex-col">
-        <Gap position={0} />
+        {renderGap(0)}
         {placed.map((itemId, index) => (
           <div key={itemId} className="flex flex-col">
             <div
@@ -111,7 +116,7 @@ export function RelayInsertBoard({
                 {itemsById.get(itemId)?.title ?? itemId}
               </Text>
             </div>
-            <Gap position={index + 1} />
+            {renderGap(index + 1)}
           </div>
         ))}
       </div>

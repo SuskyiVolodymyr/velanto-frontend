@@ -47,6 +47,15 @@ vi.mock("@/src/features/pack/PackOwnerStatusBadge", () => ({
 vi.mock("@/src/features/pack/PackRejectionReason", () => ({
   PackRejectionReason: () => null,
 }));
+// FriendsRoomEntry is an auth-gated client island (own tests in
+// FriendsRoomEntry.test.tsx — useAuth() throws outside an AuthProvider).
+// Stub it so this screen's own wiring assertion (does it render, with the
+// right packId) stays independent of the auth context.
+vi.mock("@/src/features/friends-rooms/FriendsRoomEntry", () => ({
+  FriendsRoomEntry: ({ packId }: { packId: string }) => (
+    <button type="button">{`Create room (${packId})`}</button>
+  ),
+}));
 
 const BASE_PACK: Pack = {
   id: "p1",
@@ -88,14 +97,16 @@ const RESULTS: PackResults = {
 };
 
 describe("PackDetailScreen", () => {
-  // ROOMS_DORMANT is still true — this locks in "no room entry while dormant"
-  // as an explicit, checked contract (the real "it renders once revived"
-  // behavior is covered by FriendsRoomEntry's own tests in isolation).
-  it("does not render the room entry while ROOMS_DORMANT is true", () => {
+  // ROOMS_DORMANT flipped to false in Task 31 — this locks in "the room
+  // entry renders now that rooms are live" as an explicit, checked contract
+  // (FriendsRoomEntry's own auth-gating/create/join behavior has its own
+  // tests in FriendsRoomEntry.test.tsx; this screen only needs to prove it
+  // mounts the component at all, wired to the right pack).
+  it("renders the room entry now that rooms are live", () => {
     render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
     expect(
-      screen.queryByRole("button", { name: /create room/i }),
-    ).not.toBeInTheDocument();
+      screen.getByRole("button", { name: /create room/i }),
+    ).toBeInTheDocument();
   });
 
   it("renders the pack's title, description, and a Play link", () => {

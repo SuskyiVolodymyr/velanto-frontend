@@ -488,6 +488,7 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
                 relayPlaced,
                 relayPlacements,
                 relayCurrentItemId: remainingOrder?.[0] ?? null,
+                turnUserId,
               },
             };
           }),

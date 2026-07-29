@@ -27,7 +27,17 @@ export function BordaRevealBoard({
   const me = state.players.find((p) => p.userId === currentUserId);
   const ready = state.players.filter((p) => p.next).length;
 
-  let rank = 1;
+  // Each tier's rank number is 1 plus the total size of every tier before
+  // it — precomputed in a plain loop here, rather than mutating a running
+  // counter inside the JSX .map() below (which the lint rule flags as an
+  // unsafe cross-render reassignment).
+  const tierStartRanks: number[] = [];
+  let cumulativeRank = 1;
+  for (const tier of result.order) {
+    tierStartRanks.push(cumulativeRank);
+    cumulativeRank += tier.length;
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-1">
@@ -41,8 +51,7 @@ export function BordaRevealBoard({
 
       <ol className="flex flex-col gap-2">
         {result.order.map((tier, tierIndex) => {
-          const rowRank = rank;
-          rank += tier.length;
+          const rowRank = tierStartRanks[tierIndex];
           const tied = tier.length > 1;
           return (
             <li

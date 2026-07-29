@@ -35,6 +35,13 @@ vi.mock("@/src/features/pack/PackOwnerStatusBadge", () => ({
 vi.mock("@/src/features/pack/PackRejectionReason", () => ({
   PackRejectionReason: () => null,
 }));
+// FriendsRoomEntry is an auth-gated client island (own tests in
+// FriendsRoomEntry.test.tsx — useAuth()/useRouter() need a real provider/
+// next/navigation mock this fallback test doesn't otherwise set up). Stub it
+// the same way PackDetailScreen.test.tsx does.
+vi.mock("@/src/features/friends-rooms/FriendsRoomEntry", () => ({
+  FriendsRoomEntry: () => <div>FriendsRoomEntry</div>,
+}));
 
 const mockedUsePackFallback = vi.mocked(usePackFallback);
 const mockedNotFound = vi.mocked(notFound);
