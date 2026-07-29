@@ -8,6 +8,7 @@ import { useAuth } from "@/src/shared/lib/auth-context";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
+import { PageHeader } from "@/src/shared/components/PageHeader";
 import { PackContentsPreview } from "@/src/features/moderation/PackContentsPreview";
 import { PackReviewSummary } from "@/src/features/moderation/PackReviewSummary";
 import { PackReviewAuthorCard } from "@/src/features/moderation/PackReviewAuthorCard";
@@ -96,17 +97,20 @@ export function PackReviewScreen({ packId }: { packId: string }) {
 
   if (authStatus === "unauthenticated") {
     return (
-      <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">{tCommon("loginRequired")}</Text>
-        <Button
-          className="mt-4"
-          onClick={() =>
-            router.push(`/auth?next=${encodeURIComponent(pathname)}`)
-          }
-        >
-          {tHeader("logIn")}
-        </Button>
-      </div>
+      <>
+        <PageHeader back={{ href: "/moderation", label: t("queueBack") }} />
+        <div className="mx-auto max-w-md py-16 text-center">
+          <Text variant="secondary">{tCommon("loginRequired")}</Text>
+          <Button
+            className="mt-4"
+            onClick={() =>
+              router.push(`/auth?next=${encodeURIComponent(pathname)}`)
+            }
+          >
+            {tHeader("logIn")}
+          </Button>
+        </div>
+      </>
     );
   }
 
@@ -116,45 +120,59 @@ export function PackReviewScreen({ packId }: { packId: string }) {
 
   if (packQuery.isError || !pack) {
     return (
-      <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="danger">{t("packNotFound")}</Text>
-      </div>
+      <>
+        <PageHeader back={{ href: "/moderation", label: t("queueBack") }} />
+        <div className="mx-auto max-w-md py-16 text-center">
+          <Text variant="danger">{t("packNotFound")}</Text>
+        </div>
+      </>
     );
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-[1180px] flex-1 flex-col gap-6 px-7 py-10">
-      <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-        <div className="flex min-w-0 flex-col gap-7">
-          <PackReviewSummary pack={pack} />
-          <PackReviewAuthorCard
-            author={pack.author}
-            authorProfile={authorQuery.data}
+    <>
+      <PageHeader
+        back={{ href: "/moderation", label: t("queueBack") }}
+        crumb={t("packCrumb")}
+        meta={
+          <span data-mono="1" className="text-xs text-foreground-tertiary/60">
+            {packId.slice(0, 8)}
+          </span>
+        }
+      />
+      <main className="mx-auto flex w-full max-w-[1180px] flex-1 flex-col gap-6 px-7 py-10">
+        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+          <div className="flex min-w-0 flex-col gap-7">
+            <PackReviewSummary pack={pack} />
+            <PackReviewAuthorCard
+              author={pack.author}
+              authorProfile={authorQuery.data}
+            />
+
+            <section className="flex flex-col gap-3.5">
+              <Text
+                as="h2"
+                variant="tertiary"
+                className="text-[12px] font-bold uppercase tracking-[0.14em]"
+              >
+                {t("contentsHeading")}
+              </Text>
+              <PackContentsPreview pack={pack} />
+            </section>
+
+            <PackRoundMapping pack={pack} />
+          </div>
+
+          <PackReviewSidebar
+            packTitle={pack.title}
+            approving={approve.isPending}
+            rejecting={reject.isPending}
+            actionError={actionError}
+            onApprove={handleApprove}
+            onReject={handleReject}
           />
-
-          <section className="flex flex-col gap-3.5">
-            <Text
-              as="h2"
-              variant="tertiary"
-              className="text-[12px] font-bold uppercase tracking-[0.14em]"
-            >
-              {t("contentsHeading")}
-            </Text>
-            <PackContentsPreview pack={pack} />
-          </section>
-
-          <PackRoundMapping pack={pack} />
         </div>
-
-        <PackReviewSidebar
-          packTitle={pack.title}
-          approving={approve.isPending}
-          rejecting={reject.isPending}
-          actionError={actionError}
-          onApprove={handleApprove}
-          onReject={handleReject}
-        />
-      </div>
-    </main>
+      </main>
+    </>
   );
 }

@@ -20,6 +20,7 @@ import { Badge } from "@/src/shared/components/Badge";
 import { StatusBadge } from "@/src/shared/components/StatusBadge";
 import { Card } from "@/src/shared/components/Card";
 import { Select } from "@/src/shared/components/Select";
+import { PageHeader } from "@/src/shared/components/PageHeader";
 import { TOPIC_KEYS } from "@/src/features/feedback/FeedbackCard";
 import { FeedbackVote } from "@/src/features/feedback/FeedbackVote";
 import { FeedbackComments } from "@/src/features/feedback/FeedbackComments";
@@ -67,37 +68,55 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
 
   if (postQuery.isLoading) {
     return (
-      <main className="mx-auto w-full max-w-2xl px-7 py-10">
-        <LoadingState label={t("loading")} showLabel />
-      </main>
+      <>
+        <PageHeader
+          back={{ href: "/feedback", label: t("backToFeedback") }}
+          crumb={t("detailCrumb")}
+        />
+        <main className="mx-auto w-full max-w-2xl px-7 py-10">
+          <LoadingState label={t("loading")} showLabel />
+        </main>
+      </>
     );
   }
 
   if (isNotFound) {
     return (
-      <main className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">{t("detailNotFound")}</Text>
-        <Link
-          href="/feedback"
-          className="mt-4 inline-block text-acc hover:underline"
-        >
-          {t("backToFeedback")}
-        </Link>
-      </main>
+      <>
+        <PageHeader
+          back={{ href: "/feedback", label: t("backToFeedback") }}
+          crumb={t("detailCrumb")}
+        />
+        <main className="mx-auto max-w-md py-16 text-center">
+          <Text variant="secondary">{t("detailNotFound")}</Text>
+          <Link
+            href="/feedback"
+            className="mt-4 inline-block text-acc hover:underline"
+          >
+            {t("backToFeedback")}
+          </Link>
+        </main>
+      </>
     );
   }
 
   if (postQuery.error || !post) {
     return (
-      <main className="mx-auto max-w-md py-16 text-center">
-        <Text variant="danger">{t("detailLoadError")}</Text>
-        <Link
-          href="/feedback"
-          className="mt-4 inline-block text-acc hover:underline"
-        >
-          {t("backToFeedback")}
-        </Link>
-      </main>
+      <>
+        <PageHeader
+          back={{ href: "/feedback", label: t("backToFeedback") }}
+          crumb={t("detailCrumb")}
+        />
+        <main className="mx-auto max-w-md py-16 text-center">
+          <Text variant="danger">{t("detailLoadError")}</Text>
+          <Link
+            href="/feedback"
+            className="mt-4 inline-block text-acc hover:underline"
+          >
+            {t("backToFeedback")}
+          </Link>
+        </main>
+      </>
     );
   }
 
@@ -108,131 +127,137 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
   const canDelete = isStaff || user?.id === post.authorId;
 
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-7 py-10">
-      <div className="flex flex-wrap items-center gap-2">
-        <Badge>{t(TOPIC_KEYS[post.topic])}</Badge>
-        <StatusBadge kind="feedback" status={post.status} />
-      </div>
-
-      <Text as="h1" variant="title" className="text-2xl">
-        {post.title}
-      </Text>
-
-      <div className="flex flex-wrap items-center gap-2 text-xs">
-        <Text variant="tertiary" as="span">
-          {t("by")}{" "}
-          <Hidden kind="name" id={post.authorId}>
-            <Username
-              username={post.authorUsername}
-              role={post.authorRole}
-              trusted={post.authorTrusted}
-            />
-          </Hidden>
-        </Text>
-        <Text variant="tertiary">· {formatDateTime(post.createdAt)}</Text>
-        {post.updatedAt !== post.createdAt && (
-          <Text variant="tertiary">
-            · {t("edited")} {formatDateTime(post.updatedAt)}
-          </Text>
-        )}
-      </div>
-
-      <Text variant="secondary" className="whitespace-pre-wrap">
-        {post.body}
-      </Text>
-
-      {post.topic === "translation" && (
-        <Card className="flex flex-col gap-2">
-          <Text className="text-xs font-semibold uppercase tracking-wide text-foreground-tertiary">
-            {t("translationHeading")}
-          </Text>
-          {post.locale && (
-            <Text variant="secondary" className="text-sm">
-              <span className="font-semibold text-foreground">
-                {t("languageValueLabel")}
-              </span>{" "}
-              {LOCALE_NAMES[post.locale as Locale] ?? post.locale}
-            </Text>
-          )}
-          {post.translationContext && (
-            <Text variant="secondary" className="text-sm">
-              <span className="font-semibold text-foreground">
-                {t("contextValueLabel")}
-              </span>{" "}
-              {post.translationContext}
-            </Text>
-          )}
-          {post.translationSuggestion && (
-            <Text variant="secondary" className="text-sm">
-              <span className="font-semibold text-foreground">
-                {t("suggestionValueLabel")}
-              </span>{" "}
-              {post.translationSuggestion}
-            </Text>
-          )}
-        </Card>
-      )}
-
-      <FeedbackVote
-        feedbackId={post.id}
-        initialLikes={post.likes}
-        initialDislikes={post.dislikes}
-        initialMyVote={post.myVote}
+    <>
+      <PageHeader
+        back={{ href: "/feedback", label: t("backToFeedback") }}
+        crumb={t("detailCrumb")}
       />
+      <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-7 py-10">
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge>{t(TOPIC_KEYS[post.topic])}</Badge>
+          <StatusBadge kind="feedback" status={post.status} />
+        </div>
 
-      {(isStaff || canDelete) && (
-        <Card className="flex flex-wrap items-center gap-3">
-          {isStaff && (
-            <label className="flex flex-col gap-1 text-xs text-foreground-secondary">
-              {t("statusSelectLabel")}
-              {/* Select hardcodes w-full (cn() is a plain joiner, not
+        <Text as="h1" variant="title" className="text-2xl">
+          {post.title}
+        </Text>
+
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          <Text variant="tertiary" as="span">
+            {t("by")}{" "}
+            <Hidden kind="name" id={post.authorId}>
+              <Username
+                username={post.authorUsername}
+                role={post.authorRole}
+                trusted={post.authorTrusted}
+              />
+            </Hidden>
+          </Text>
+          <Text variant="tertiary">· {formatDateTime(post.createdAt)}</Text>
+          {post.updatedAt !== post.createdAt && (
+            <Text variant="tertiary">
+              · {t("edited")} {formatDateTime(post.updatedAt)}
+            </Text>
+          )}
+        </div>
+
+        <Text variant="secondary" className="whitespace-pre-wrap">
+          {post.body}
+        </Text>
+
+        {post.topic === "translation" && (
+          <Card className="flex flex-col gap-2">
+            <Text className="text-xs font-semibold uppercase tracking-wide text-foreground-tertiary">
+              {t("translationHeading")}
+            </Text>
+            {post.locale && (
+              <Text variant="secondary" className="text-sm">
+                <span className="font-semibold text-foreground">
+                  {t("languageValueLabel")}
+                </span>{" "}
+                {LOCALE_NAMES[post.locale as Locale] ?? post.locale}
+              </Text>
+            )}
+            {post.translationContext && (
+              <Text variant="secondary" className="text-sm">
+                <span className="font-semibold text-foreground">
+                  {t("contextValueLabel")}
+                </span>{" "}
+                {post.translationContext}
+              </Text>
+            )}
+            {post.translationSuggestion && (
+              <Text variant="secondary" className="text-sm">
+                <span className="font-semibold text-foreground">
+                  {t("suggestionValueLabel")}
+                </span>{" "}
+                {post.translationSuggestion}
+              </Text>
+            )}
+          </Card>
+        )}
+
+        <FeedbackVote
+          feedbackId={post.id}
+          initialLikes={post.likes}
+          initialDislikes={post.dislikes}
+          initialMyVote={post.myVote}
+        />
+
+        {(isStaff || canDelete) && (
+          <Card className="flex flex-wrap items-center gap-3">
+            {isStaff && (
+              <label className="flex flex-col gap-1 text-xs text-foreground-secondary">
+                {t("statusSelectLabel")}
+                {/* Select hardcodes w-full (cn() is a plain joiner, not
                   tailwind-merge — see UsersTab.tsx's own filter selects), so
                   sizing lives on this wrapper or the control fills the Card. */}
-              <div className="w-[180px]">
-                <Select
-                  value={post.status}
-                  disabled={statusBusy}
-                  onChange={(e) =>
-                    handleStatusChange(e.target.value as FeedbackStatus)
-                  }
-                  aria-label={t("statusSelectLabel")}
-                  options={STATUS_OPTIONS.map((o) => ({
-                    value: o.value,
-                    label: tStatus(o.key),
-                  }))}
-                />
-              </div>
-            </label>
-          )}
-          {statusBusy && (
-            <Text variant="tertiary" className="text-xs">
-              {t("saving")}
-            </Text>
-          )}
-          {statusError && (
-            <Text variant="danger" className="text-xs">
-              {statusError}
-            </Text>
-          )}
-          {canDelete && (
-            <Button
-              variant="secondary"
-              className="ml-auto"
-              loading={deleteMutation.isPending}
-              onClick={handleDelete}
-            >
-              {t("delete")}
-            </Button>
-          )}
-          {deleteError && (
-            <Text variant="danger" className="text-xs">
-              {deleteError}
-            </Text>
-          )}
-        </Card>
-      )}
+                <div className="w-[180px]">
+                  <Select
+                    value={post.status}
+                    disabled={statusBusy}
+                    onChange={(e) =>
+                      handleStatusChange(e.target.value as FeedbackStatus)
+                    }
+                    aria-label={t("statusSelectLabel")}
+                    options={STATUS_OPTIONS.map((o) => ({
+                      value: o.value,
+                      label: tStatus(o.key),
+                    }))}
+                  />
+                </div>
+              </label>
+            )}
+            {statusBusy && (
+              <Text variant="tertiary" className="text-xs">
+                {t("saving")}
+              </Text>
+            )}
+            {statusError && (
+              <Text variant="danger" className="text-xs">
+                {statusError}
+              </Text>
+            )}
+            {canDelete && (
+              <Button
+                variant="secondary"
+                className="ml-auto"
+                loading={deleteMutation.isPending}
+                onClick={handleDelete}
+              >
+                {t("delete")}
+              </Button>
+            )}
+            {deleteError && (
+              <Text variant="danger" className="text-xs">
+                {deleteError}
+              </Text>
+            )}
+          </Card>
+        )}
 
-      <FeedbackComments feedbackId={post.id} />
-    </main>
+        <FeedbackComments feedbackId={post.id} />
+      </main>
+    </>
   );
 }

@@ -12,6 +12,7 @@ import type {
 } from "@/src/shared/types/feedback";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
+import { PageHeader } from "@/src/shared/components/PageHeader";
 import { FeedbackFilters } from "@/src/features/feedback/FeedbackFilters";
 import { FeedbackList } from "@/src/features/feedback/FeedbackList";
 import { FeedbackTopSidebar } from "@/src/features/feedback/FeedbackTopSidebar";
@@ -25,6 +26,7 @@ const SEARCH_DEBOUNCE_MS = 300;
 
 export function FeedbackScreen() {
   const t = useTranslations("feedback");
+  const th = useTranslations("header");
   const { user } = useAuth();
   const router = useRouter();
 
@@ -94,43 +96,48 @@ export function FeedbackScreen() {
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-7 py-10">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+    <>
+      <PageHeader
+        back={{ href: "/", label: th("browse") }}
+        trailing={
+          <Button type="button" onClick={handleNewPost}>
+            {t("newPost")}
+          </Button>
+        }
+      />
+      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-7 py-10">
         <Text as="h1" variant="title" className="text-3xl">
           {t("pageTitle")}
         </Text>
-        <Button type="button" onClick={handleNewPost}>
-          {t("newPost")}
-        </Button>
-      </div>
 
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-        <div className="flex min-w-0 flex-1 flex-col gap-4">
-          <FeedbackFilters
-            searchInput={searchInput}
-            onSearchInputChange={setSearchInput}
-            topic={topic}
-            onTopicChange={setTopic}
-            statusFilter={statusFilter}
-            onStatusChange={setStatusFilter}
-            sort={sort}
-            onSortChange={setSort}
-          />
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+          <div className="flex min-w-0 flex-1 flex-col gap-4">
+            <FeedbackFilters
+              searchInput={searchInput}
+              onSearchInputChange={setSearchInput}
+              topic={topic}
+              onTopicChange={setTopic}
+              statusFilter={statusFilter}
+              onStatusChange={setStatusFilter}
+              sort={sort}
+              onSortChange={setSort}
+            />
 
-          <FeedbackList
-            loading={listQuery.isLoading}
-            error={firstLoadError}
-            listReady={listReady}
-            items={items}
-            total={total}
-            loadingMore={listQuery.isFetchingNextPage}
-            loadMoreError={loadMoreError}
-            onLoadMore={() => void listQuery.fetchNextPage()}
-          />
+            <FeedbackList
+              loading={listQuery.isLoading}
+              error={firstLoadError}
+              listReady={listReady}
+              items={items}
+              total={total}
+              loadingMore={listQuery.isFetchingNextPage}
+              loadMoreError={loadMoreError}
+              onLoadMore={() => void listQuery.fetchNextPage()}
+            />
+          </div>
+
+          <FeedbackTopSidebar posts={top3} />
         </div>
-
-        <FeedbackTopSidebar posts={top3} />
-      </div>
-    </main>
+      </main>
+    </>
   );
 }

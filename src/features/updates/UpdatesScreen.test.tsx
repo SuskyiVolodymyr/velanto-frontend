@@ -37,6 +37,7 @@ describe("UpdatesScreen", () => {
     missingNote:
       "Suggestions get read and voted on — a lot of the list above started there.",
     openSuggestionsLabel: "Open suggestions",
+    docsLabel: "Docs",
     formatChangesCount: (count: number) =>
       count === 1 ? "1 change" : `${count} changes`,
     formatShowMore: (count: number) => `Show ${count} more`,

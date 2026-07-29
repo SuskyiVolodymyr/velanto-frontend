@@ -9,6 +9,7 @@ import { SearchField } from "@/src/shared/components/SearchField";
 import { EmptyState } from "@/src/shared/components/EmptyState";
 import { Card } from "@/src/shared/components/Card";
 import { Button, buttonClassName } from "@/src/shared/components/Button";
+import { PageHeader } from "@/src/shared/components/PageHeader";
 import { cn } from "@/src/shared/lib/cn";
 import type { RulesDocument } from "@/src/features/rules/get-rules-server";
 
@@ -67,6 +68,7 @@ const EMPTY_CONTENT: RulesContent = {};
 
 export function RulesScreen({ rules }: RulesScreenProps) {
   const t = useTranslations("rules");
+  const th = useTranslations("header");
   const content: RulesContent = t.has("content")
     ? (t.raw("content") as RulesContent)
     : EMPTY_CONTENT;
@@ -94,7 +96,9 @@ export function RulesScreen({ rules }: RulesScreenProps) {
     return categories
       .map((category) => ({
         ...category,
-        rules: category.rules.filter((rule) => matches(rule.text, trimmedQuery)),
+        rules: category.rules.filter((rule) =>
+          matches(rule.text, trimmedQuery),
+        ),
       }))
       .filter((category) => category.rules.length > 0);
   }, [categories, hasQuery, trimmedQuery]);
@@ -102,158 +106,180 @@ export function RulesScreen({ rules }: RulesScreenProps) {
   const noMatches = hasQuery && visibleCategories.length === 0;
 
   return (
-    <main className="mx-auto w-full max-w-[1100px] px-6 py-12">
-      <Text as="h1" variant="title" className="text-3xl mb-3">
-        {t("heading")}
-      </Text>
-      <Text variant="secondary" className="text-base leading-relaxed mb-8">
-        {t("intro")}
-      </Text>
-
-      {rules !== null && (
-        <div className="relative mb-10 max-w-[420px]">
-          <SearchField
-            type="search"
-            aria-label={t("searchPlaceholder")}
-            placeholder={t("searchPlaceholder")}
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            className={hasQuery ? "pe-9" : undefined}
-          />
-          {hasQuery && (
-            <button
-              type="button"
-              onClick={() => setQuery("")}
-              aria-label={t("clearSearch")}
-              className="absolute end-3 top-1/2 -translate-y-1/2 grid h-5 w-5 place-items-center rounded-full text-foreground-tertiary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
+    <>
+      <PageHeader
+        back={{ href: "/", label: th("browse") }}
+        trailing={
+          rules && (
+            <span
+              data-mono="1"
+              className="text-[11.5px] text-foreground-tertiary"
             >
-              <ClearIcon size={14} aria-hidden />
-            </button>
-          )}
-        </div>
-      )}
-
-      {rules === null ? (
-        <Text variant="danger" role="alert" className="text-sm">
-          {t("loadError")}
+              v{rules.version}
+            </span>
+          )
+        }
+      />
+      <main className="mx-auto w-full max-w-[1100px] px-6 py-12">
+        <Text as="h1" variant="title" className="text-3xl mb-3">
+          {t("heading")}
         </Text>
-      ) : (
-        <div className="grid grid-cols-1 gap-8 min-[940px]:grid-cols-[minmax(0,232px)_minmax(0,1fr)] min-[940px]:items-start">
-          <nav
-            aria-label={t("categoriesHeading")}
-            className="flex flex-col gap-4 min-[940px]:sticky min-[940px]:top-6"
-          >
-            <div className="flex flex-col gap-0.5">
-              <Text
-                variant="tertiary"
-                className="mb-1 ps-3 text-[11px] font-semibold tracking-[0.12em]"
+        <Text variant="secondary" className="text-base leading-relaxed mb-8">
+          {t("intro")}
+        </Text>
+
+        {rules !== null && (
+          <div className="relative mb-10 max-w-[420px]">
+            <SearchField
+              type="search"
+              aria-label={t("searchPlaceholder")}
+              placeholder={t("searchPlaceholder")}
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              className={hasQuery ? "pe-9" : undefined}
+            />
+            {hasQuery && (
+              <button
+                type="button"
+                onClick={() => setQuery("")}
+                aria-label={t("clearSearch")}
+                className="absolute end-3 top-1/2 -translate-y-1/2 grid h-5 w-5 place-items-center rounded-full text-foreground-tertiary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
               >
-                {t("categoriesHeading")}
-              </Text>
-              {/* Sourced from visibleCategories (not the full categories list) so
+                <ClearIcon size={14} aria-hidden />
+              </button>
+            )}
+          </div>
+        )}
+
+        {rules === null ? (
+          <Text variant="danger" role="alert" className="text-sm">
+            {t("loadError")}
+          </Text>
+        ) : (
+          <div className="grid grid-cols-1 gap-8 min-[940px]:grid-cols-[minmax(0,232px)_minmax(0,1fr)] min-[940px]:items-start">
+            <nav
+              aria-label={t("categoriesHeading")}
+              className="flex flex-col gap-4 min-[940px]:sticky min-[940px]:top-6"
+            >
+              <div className="flex flex-col gap-0.5">
+                <Text
+                  variant="tertiary"
+                  className="mb-1 ps-3 text-[11px] font-semibold tracking-[0.12em]"
+                >
+                  {t("categoriesHeading")}
+                </Text>
+                {/* Sourced from visibleCategories (not the full categories list) so
                   a jump-link is never advertised for a category the active
                   search has hidden — renumbered within the filtered set. */}
-              {visibleCategories.map((category, index) => (
-                <a
-                  key={category.id}
-                  href={`#rules-cat-${category.id}`}
-                  className="flex items-baseline gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary transition-colors hover:text-foreground hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
-                >
-                  <span
-                    aria-hidden
-                    className="font-mono text-xs text-foreground-tertiary tabular-nums"
+                {visibleCategories.map((category, index) => (
+                  <a
+                    key={category.id}
+                    href={`#rules-cat-${category.id}`}
+                    className="flex items-baseline gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary transition-colors hover:text-foreground hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
                   >
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  {category.title}
-                </a>
-              ))}
-            </div>
+                    <span
+                      aria-hidden
+                      className="font-mono text-xs text-foreground-tertiary tabular-nums"
+                    >
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                    {category.title}
+                  </a>
+                ))}
+              </div>
 
-            {/* No `p-*` override — `cn()` is a plain join (not tailwind-merge,
+              {/* No `p-*` override — `cn()` is a plain join (not tailwind-merge,
                 see Button.tsx), so it would sit alongside Card's own
                 `p-[18px]` with the winner decided by Tailwind's emit order. */}
-            <Card>
-              <Text as="h3" variant="title" className="mb-1.5 text-sm">
-                {t("reportTitle")}
-              </Text>
-              <Text variant="tertiary" className="text-[12.5px] leading-relaxed">
-                {t("reportNote")}
-              </Text>
-            </Card>
-          </nav>
-
-          <div className="flex min-w-0 flex-col gap-10">
-            {noMatches ? (
-              <EmptyState
-                icon={<SearchIcon size={18} aria-hidden />}
-                title={t("noMatch", { query: trimmedQuery })}
-                description={t("tryPlainer")}
-                action={
-                  <Button variant="secondary" onClick={() => setQuery("")}>
-                    {t("clearSearch")}
-                  </Button>
-                }
-              />
-            ) : (
-              visibleCategories.map((category) => (
-                <section
-                  key={category.id}
-                  aria-labelledby={`rules-cat-${category.id}`}
+              <Card>
+                <Text as="h3" variant="title" className="mb-1.5 text-sm">
+                  {t("reportTitle")}
+                </Text>
+                <Text
+                  variant="tertiary"
+                  className="text-[12.5px] leading-relaxed"
                 >
-                  <Text
-                    as="h2"
-                    id={`rules-cat-${category.id}`}
-                    variant="title"
-                    className="text-xl mb-4"
-                  >
-                    {category.title}
-                  </Text>
-                  <ol className="flex flex-col gap-3">
-                    {category.rules.map((rule) => {
-                      const isMatch = hasQuery && matches(rule.text, trimmedQuery);
-                      return (
-                        <li
-                          key={rule.number}
-                          className={cn(
-                            "flex gap-3 rounded-lg p-2 -m-2",
-                            isMatch && "bg-acc/[0.08] ring-1 ring-acc/30",
-                          )}
-                        >
-                          <span
-                            aria-hidden
-                            className="shrink-0 font-mono text-sm text-foreground-tertiary tabular-nums pt-0.5"
-                          >
-                            {rule.number}.
-                          </span>
-                          <Text variant="body" className="text-[15px] leading-relaxed">
-                            {rule.text}
-                          </Text>
-                        </li>
-                      );
-                    })}
-                  </ol>
-                </section>
-              ))
-            )}
+                  {t("reportNote")}
+                </Text>
+              </Card>
+            </nav>
 
-            <Card className="text-center">
-              <Text as="h2" variant="title" className="mb-1.5 text-lg">
-                {t("wrongRuleTitle")}
-              </Text>
-              <Text
-                variant="secondary"
-                className="mx-auto mb-4 max-w-[52ch] text-sm leading-relaxed"
-              >
-                {t("wrongRuleNote")}
-              </Text>
-              <Link href="/feedback" className={buttonClassName("secondary")}>
-                {t("openSuggestions")}
-              </Link>
-            </Card>
+            <div className="flex min-w-0 flex-col gap-10">
+              {noMatches ? (
+                <EmptyState
+                  icon={<SearchIcon size={18} aria-hidden />}
+                  title={t("noMatch", { query: trimmedQuery })}
+                  description={t("tryPlainer")}
+                  action={
+                    <Button variant="secondary" onClick={() => setQuery("")}>
+                      {t("clearSearch")}
+                    </Button>
+                  }
+                />
+              ) : (
+                visibleCategories.map((category) => (
+                  <section
+                    key={category.id}
+                    aria-labelledby={`rules-cat-${category.id}`}
+                  >
+                    <Text
+                      as="h2"
+                      id={`rules-cat-${category.id}`}
+                      variant="title"
+                      className="text-xl mb-4"
+                    >
+                      {category.title}
+                    </Text>
+                    <ol className="flex flex-col gap-3">
+                      {category.rules.map((rule) => {
+                        const isMatch =
+                          hasQuery && matches(rule.text, trimmedQuery);
+                        return (
+                          <li
+                            key={rule.number}
+                            className={cn(
+                              "flex gap-3 rounded-lg p-2 -m-2",
+                              isMatch && "bg-acc/[0.08] ring-1 ring-acc/30",
+                            )}
+                          >
+                            <span
+                              aria-hidden
+                              className="shrink-0 font-mono text-sm text-foreground-tertiary tabular-nums pt-0.5"
+                            >
+                              {rule.number}.
+                            </span>
+                            <Text
+                              variant="body"
+                              className="text-[15px] leading-relaxed"
+                            >
+                              {rule.text}
+                            </Text>
+                          </li>
+                        );
+                      })}
+                    </ol>
+                  </section>
+                ))
+              )}
+
+              <Card className="text-center">
+                <Text as="h2" variant="title" className="mb-1.5 text-lg">
+                  {t("wrongRuleTitle")}
+                </Text>
+                <Text
+                  variant="secondary"
+                  className="mx-auto mb-4 max-w-[52ch] text-sm leading-relaxed"
+                >
+                  {t("wrongRuleNote")}
+                </Text>
+                <Link href="/feedback" className={buttonClassName("secondary")}>
+                  {t("openSuggestions")}
+                </Link>
+              </Card>
+            </div>
           </div>
-        </div>
-      )}
-    </main>
+        )}
+      </main>
+    </>
   );
 }

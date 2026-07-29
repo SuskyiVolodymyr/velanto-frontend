@@ -1,10 +1,13 @@
 "use client";
 
 import { useEffect } from "react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
+import { PageHeader } from "@/src/shared/components/PageHeader";
+import { UserMenu } from "@/src/shared/components/UserMenu";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { cn } from "@/src/shared/lib/cn";
 import { IdentityPillBadge } from "@/src/shared/components/IdentityPillBadge";
@@ -31,7 +34,7 @@ export function AdminScreen() {
   const t = useTranslations("admin");
   const tCommon = useTranslations("common");
   const tHeader = useTranslations("header");
-  const { user, status } = useAuth();
+  const { user, status, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -54,68 +57,84 @@ export function AdminScreen() {
 
   if (status === "unauthenticated") {
     return (
-      <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">{tCommon("loginRequired")}</Text>
-        <Button
-          className="mt-4"
-          onClick={() =>
-            router.push(`/auth?next=${encodeURIComponent(pathname)}`)
-          }
-        >
-          {tHeader("logIn")}
-        </Button>
-      </div>
+      <>
+        <PageHeader brand crumb={tHeader("admin")} />
+        <div className="mx-auto max-w-md py-16 text-center">
+          <Text variant="secondary">{tCommon("loginRequired")}</Text>
+          <Button
+            className="mt-4"
+            onClick={() =>
+              router.push(`/auth?next=${encodeURIComponent(pathname)}`)
+            }
+          >
+            {tHeader("logIn")}
+          </Button>
+        </div>
+      </>
     );
   }
 
   if (!allowed) return null;
 
   return (
-    <main className="mx-auto flex w-full max-w-[1180px] flex-1 flex-col gap-7 px-7 py-11">
-      <section>
-        <div className="mb-2.5 flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.14em] text-foreground-tertiary">
-          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-acc" />
-          {t("panelEyebrow")}
-          {/* The viewer's own role, per the mock's header pill (D2/T4) —
-              reuses Username's IDENTITY_PILL tokens rather than a new colour
-              map, so a manager viewer gets their own "MANAGER" tier, not a
-              blanket "ADMIN". `normal-case` counters this row's `uppercase`. */}
-          <IdentityPillBadge role={user?.role} className="normal-case" />
+    <>
+      <PageHeader
+        brand
+        crumb={tHeader("admin")}
+        badge={<IdentityPillBadge role={user?.role} />}
+        trailing={
+          <>
+            <Link
+              href="/moderation"
+              className="flex h-[38px] items-center rounded-[11px] border border-white/[0.12] px-[14px] text-[13px] font-semibold text-foreground transition-colors hover:bg-white/[0.06]"
+            >
+              {tHeader("moderation")}
+            </Link>
+            {user && <UserMenu user={user} onLogout={() => void logout()} />}
+          </>
+        }
+      />
+      <main className="mx-auto flex w-full max-w-[1180px] flex-1 flex-col gap-7 px-7 py-11">
+        <section>
+          <div className="mb-2.5 flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.14em] text-foreground-tertiary">
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-acc" />
+            {t("panelEyebrow")}
+          </div>
+          <Text as="h1" variant="title" className="text-[32px]">
+            {t("overviewHeading")}
+          </Text>
+        </section>
+
+        {/* Underline tabs, per the design — not the pill/chip row used elsewhere. */}
+        <div role="tablist" className="flex gap-2 border-b border-border">
+          {TABS.map((tabItem) => (
+            <button
+              key={tabItem.value}
+              type="button"
+              role="tab"
+              aria-selected={tab === tabItem.value}
+              onClick={() =>
+                router.replace(`${pathname}?tab=${tabItem.value}`, {
+                  scroll: false,
+                })
+              }
+              className={cn(
+                "mr-[22px] border-b-2 px-1 py-2.5 text-sm font-semibold transition-colors",
+                tab === tabItem.value
+                  ? "border-acc text-foreground"
+                  : "border-transparent text-foreground-tertiary hover:text-foreground-secondary",
+              )}
+            >
+              {t(tabItem.labelKey)}
+            </button>
+          ))}
         </div>
-        <Text as="h1" variant="title" className="text-[32px]">
-          {t("overviewHeading")}
-        </Text>
-      </section>
 
-      {/* Underline tabs, per the design — not the pill/chip row used elsewhere. */}
-      <div role="tablist" className="flex gap-2 border-b border-border">
-        {TABS.map((tabItem) => (
-          <button
-            key={tabItem.value}
-            type="button"
-            role="tab"
-            aria-selected={tab === tabItem.value}
-            onClick={() =>
-              router.replace(`${pathname}?tab=${tabItem.value}`, {
-                scroll: false,
-              })
-            }
-            className={cn(
-              "mr-[22px] border-b-2 px-1 py-2.5 text-sm font-semibold transition-colors",
-              tab === tabItem.value
-                ? "border-acc text-foreground"
-                : "border-transparent text-foreground-tertiary hover:text-foreground-secondary",
-            )}
-          >
-            {t(tabItem.labelKey)}
-          </button>
-        ))}
-      </div>
-
-      {tab === "overview" && <OverviewTab />}
-      {tab === "staff" && <StaffTab />}
-      {tab === "users" && <UsersTab />}
-      {tab === "logs" && <LogsTab />}
-    </main>
+        {tab === "overview" && <OverviewTab />}
+        {tab === "staff" && <StaffTab />}
+        {tab === "users" && <UsersTab />}
+        {tab === "logs" && <LogsTab />}
+      </main>
+    </>
   );
 }

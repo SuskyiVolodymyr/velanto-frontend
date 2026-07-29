@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Loader2, WifiOff } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
+import { PageHeader } from "@/src/shared/components/PageHeader";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { cn } from "@/src/shared/lib/cn";
@@ -145,9 +146,9 @@ export function RoomScreen({ roomId }: { roomId: string }) {
   }
 
   return (
-    <Shell>
-      {/* The pack's title, and the page's h1 for every live phase — the round
-          and survivor headings below are h2s beneath it.
+    <>
+      {/* The pack's title, and the page's h1-equivalent for every live phase —
+          the round and survivor headings below are h2s beneath it.
 
           Same reasoning as PlayHeader on the single-player screens: once a
           round is up, nothing else on the page says WHICH pack you are in. The
@@ -158,80 +159,76 @@ export function RoomScreen({ roomId }: { roomId: string }) {
           it confirms first during a round (see RoomLeaveButton). Both are kept
           out of the finished/ended/abandoned states above, where there is
           nothing left to leave and RoomResults heads itself. */}
-      <div className="mb-6 flex items-center justify-between gap-4">
-        <Text
-          as="h1"
-          variant="title"
-          // min-w-0 is what lets truncate work in a flex row: without it the
-          // item's automatic minimum size is its content, so a long title
-          // widens the row and pushes Leave off instead of clipping.
-          className="min-w-0 truncate text-xl sm:text-2xl"
-        >
+      <PageHeader
+        crumb={state.packTitle}
+        trailing={<RoomLeaveButton state={state} onLeave={leave} />}
+      />
+      <Shell>
+        {/* The header shows the title visually; this keeps it as the page's
+            real (if visually hidden) h1 for every phase below that doesn't
+            render its own — same role the old visible h1 played here. */}
+        <Text as="h1" className="sr-only">
           {state.packTitle}
         </Text>
-        <div className="flex-none">
-          <RoomLeaveButton state={state} onLeave={leave} />
-        </div>
-      </div>
+        {connection === "connecting" && (
+          <div
+            role="status"
+            className="mb-6 flex items-center gap-2 rounded-[10px] border border-border-strong bg-surface px-4 py-2.5"
+          >
+            <WifiOff
+              size={16}
+              aria-hidden
+              className="text-foreground-secondary"
+            />
+            <Text variant="secondary" className="text-sm">
+              {t("reconnecting")}
+            </Text>
+          </div>
+        )}
 
-      {connection === "connecting" && (
-        <div
-          role="status"
-          className="mb-6 flex items-center gap-2 rounded-[10px] border border-border-strong bg-surface px-4 py-2.5"
-        >
-          <WifiOff
-            size={16}
-            aria-hidden
-            className="text-foreground-secondary"
+        {state.phase === "lobby" && (
+          <RoomLobby
+            state={state}
+            currentUserId={userId}
+            onReady={ready}
+            onLock={lock}
+            onKick={kick}
+            onSetMode={setMode}
           />
-          <Text variant="secondary" className="text-sm">
-            {t("reconnecting")}
-          </Text>
-        </div>
-      )}
-
-      {state.phase === "lobby" && (
-        <RoomLobby
-          state={state}
-          currentUserId={userId}
-          onReady={ready}
-          onLock={lock}
-          onKick={kick}
-          onSetMode={setMode}
-        />
-      )}
-      {state.phase === "round" && (
-        <RoomRoundBoard
-          state={state}
-          currentUserId={userId}
-          packFormat={packFormat}
-          actions={{
-            claim,
-            cut,
-            pick,
-            vote,
-            submitRanking,
-            placeItem,
-            lastRejection,
-            lastModeRejection,
-            modeRejectionSeq,
-          }}
-        />
-      )}
-      {state.phase === "between" && (
-        <RoomBetweenBoard
-          state={state}
-          currentUserId={userId}
-          packFormat={packFormat}
-          onNext={next}
-        />
-      )}
-      {state.phase === "guessing" && (
-        <GuessingPhaseScreen state={state} onSubmit={guess} />
-      )}
-      {/* phase "finished" is handled above, before the connection checks, so a
+        )}
+        {state.phase === "round" && (
+          <RoomRoundBoard
+            state={state}
+            currentUserId={userId}
+            packFormat={packFormat}
+            actions={{
+              claim,
+              cut,
+              pick,
+              vote,
+              submitRanking,
+              placeItem,
+              lastRejection,
+              lastModeRejection,
+              modeRejectionSeq,
+            }}
+          />
+        )}
+        {state.phase === "between" && (
+          <RoomBetweenBoard
+            state={state}
+            currentUserId={userId}
+            packFormat={packFormat}
+            onNext={next}
+          />
+        )}
+        {state.phase === "guessing" && (
+          <GuessingPhaseScreen state={state} onSubmit={guess} />
+        )}
+        {/* phase "finished" is handled above, before the connection checks, so a
           torn-down socket still shows results. */}
-    </Shell>
+      </Shell>
+    </>
   );
 }
 

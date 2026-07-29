@@ -1,11 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { useFollowMutation } from "@/src/shared/api/follow.mutations";
 import { useRules } from "@/src/shared/api/rules.queries";
 import { Text } from "@/src/shared/components/Text";
+import { PageHeader } from "@/src/shared/components/PageHeader";
 import { AuthorProfileHeader } from "./AuthorProfileHeader";
 import type { PeopleSubTab } from "./AuthorProfileHeader";
 import { ProfileTabs } from "./ProfileTabs";
@@ -37,6 +39,7 @@ export function AuthorScreen({
   initialData?: AuthorData;
 }) {
   const t = useTranslations("profile");
+  const th = useTranslations("header");
   const { user, status: authStatus } = useAuth();
 
   const authorQuery = useAuthor(authorId, initialData);
@@ -86,83 +89,101 @@ export function AuthorScreen({
 
   if (authorQuery.isError || !authorQuery.data) {
     return (
-      <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="danger">{t("userNotFound")}</Text>
-      </div>
+      <>
+        <PageHeader back={{ href: "/", label: th("browse") }} />
+        <div className="mx-auto max-w-md py-16 text-center">
+          <Text variant="danger">{t("userNotFound")}</Text>
+        </div>
+      </>
     );
   }
 
   const { profile, packs, packsTotal } = authorQuery.data;
 
   return (
-    <div className="mx-auto w-full max-w-[1080px] px-7 py-10">
-      <AuthorProfileHeader
-        authorId={authorId}
-        profile={profile}
-        packsTotal={packsTotal}
-        isOwnProfile={isOwnProfile}
-        followBusy={follow.isPending}
-        followBlocked={follow.blocked}
-        followError={follow.isError ? t("followError") : ""}
-        onFollowToggle={() => follow.toggle(profile.isFollowedByMe ?? false)}
-        onSelectPeopleTab={(subTab) =>
-          setPeopleJump((prev) => ({ subTab, nonce: (prev?.nonce ?? 0) + 1 }))
+    <>
+      <PageHeader
+        back={{ href: "/", label: th("browse") }}
+        trailing={
+          isOwnProfile && (
+            <Link
+              href="/settings"
+              className="flex h-[38px] items-center rounded-[11px] border border-white/[0.09] bg-surface-card px-[14px] text-[13px] font-semibold text-foreground-secondary transition-colors hover:border-white/20 hover:text-foreground"
+            >
+              {th("settings")}
+            </Link>
+          )
         }
       />
-
-      {showModeratorTools && (
-        <AuthorModeratorPanel
+      <div className="mx-auto w-full max-w-[1080px] px-7 py-10">
+        <AuthorProfileHeader
           authorId={authorId}
-          moderation={moderation}
-          banHistoryQuery={banHistoryQuery}
-          ruleCategories={ruleCategories}
+          profile={profile}
+          packsTotal={packsTotal}
+          isOwnProfile={isOwnProfile}
+          followBusy={follow.isPending}
+          followBlocked={follow.blocked}
+          followError={follow.isError ? t("followError") : ""}
+          onFollowToggle={() => follow.toggle(profile.isFollowedByMe ?? false)}
+          onSelectPeopleTab={(subTab) =>
+            setPeopleJump((prev) => ({ subTab, nonce: (prev?.nonce ?? 0) + 1 }))
+          }
         />
-      )}
 
-      <ProfileTabs
-        // Remount on every People deep-link jump so `initialTab`/
-        // `initialPeopleSubTab` (only consulted once, on mount) pick up the
-        // new target — see the `peopleJump` comment above.
-        key={
-          peopleJump
-            ? `people-${peopleJump.subTab}-${peopleJump.nonce}`
-            : "default"
-        }
-        isOwnProfile={isOwnProfile}
-        packsCount={packsTotal}
-        peopleCount={profile.followerCount + profile.followingCount}
-        initialTab={peopleJump ? "people" : "packs"}
-        initialPeopleSubTab={peopleJump?.subTab ?? "followers"}
-        packsPanel={
-          <AuthorPackList
+        {showModeratorTools && (
+          <AuthorModeratorPanel
             authorId={authorId}
-            initialPacks={packs}
-            initialTotal={packsTotal}
-            // Your own page shows your pending/rejected packs with status
-            // badges, just like the old /profile did.
-            own={isOwnProfile}
+            moderation={moderation}
+            banHistoryQuery={banHistoryQuery}
+            ruleCategories={ruleCategories}
           />
-        }
-        peoplePanel={(subTab) => (
-          <PeopleTab authorId={authorId} initialSubTab={subTab} />
         )}
-        historyPanel={
-          // Play history is public unless the user opted out; the owner and
-          // staff can always see it. `showPlayHistory` may be undefined on
-          // older fixtures — treat only an explicit `false` as opted out.
-          <RecentlyPlayedSection
-            userId={authorId}
-            visible={
-              profile.showPlayHistory !== false ||
-              isOwnProfile ||
-              isModeratorPlus
-            }
-            // On your own profile, show an empty-state placeholder instead of
-            // collapsing, so the section is discoverable before you've played.
-            showEmptyState={isOwnProfile}
-          />
-        }
-      />
-    </div>
+
+        <ProfileTabs
+          // Remount on every People deep-link jump so `initialTab`/
+          // `initialPeopleSubTab` (only consulted once, on mount) pick up the
+          // new target — see the `peopleJump` comment above.
+          key={
+            peopleJump
+              ? `people-${peopleJump.subTab}-${peopleJump.nonce}`
+              : "default"
+          }
+          isOwnProfile={isOwnProfile}
+          packsCount={packsTotal}
+          peopleCount={profile.followerCount + profile.followingCount}
+          initialTab={peopleJump ? "people" : "packs"}
+          initialPeopleSubTab={peopleJump?.subTab ?? "followers"}
+          packsPanel={
+            <AuthorPackList
+              authorId={authorId}
+              initialPacks={packs}
+              initialTotal={packsTotal}
+              // Your own page shows your pending/rejected packs with status
+              // badges, just like the old /profile did.
+              own={isOwnProfile}
+            />
+          }
+          peoplePanel={(subTab) => (
+            <PeopleTab authorId={authorId} initialSubTab={subTab} />
+          )}
+          historyPanel={
+            // Play history is public unless the user opted out; the owner and
+            // staff can always see it. `showPlayHistory` may be undefined on
+            // older fixtures — treat only an explicit `false` as opted out.
+            <RecentlyPlayedSection
+              userId={authorId}
+              visible={
+                profile.showPlayHistory !== false ||
+                isOwnProfile ||
+                isModeratorPlus
+              }
+              // On your own profile, show an empty-state placeholder instead of
+              // collapsing, so the section is discoverable before you've played.
+              showEmptyState={isOwnProfile}
+            />
+          }
+        />
+      </div>
+    </>
   );
 }
