@@ -14,6 +14,17 @@ vi.mock("@/src/shared/lib/packs-client", () => ({
   },
 }));
 
+// Each rendered PackCard's Friends button needs a mounted router, an auth
+// session, and the room-create client — signed-out by default so the button
+// renders blocked; unused by these feed-behaviour tests otherwise.
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
+vi.mock("@/src/shared/lib/auth-context", () => ({
+  useAuth: () => ({ user: null }),
+}));
+vi.mock("@/src/features/friends-rooms/friends-rooms-client", () => ({
+  friendsRoomsClient: { create: vi.fn() },
+}));
+
 const PACK_A: Pack = {
   id: "pack-a",
   title: "Best Anime Openings",

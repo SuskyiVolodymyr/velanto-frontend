@@ -13,5 +13,6 @@ export { ChevronDownIcon } from "@/src/shared/components/icons/ChevronDownIcon";
 export { ChevronLeftIcon } from "@/src/shared/components/icons/ChevronLeftIcon";
 export { ChevronRightIcon } from "@/src/shared/components/icons/ChevronRightIcon";
 export { PlayIcon } from "@/src/shared/components/icons/PlayIcon";
+export { FriendsIcon } from "@/src/shared/components/icons/FriendsIcon";
 export { RoomIcon } from "@/src/shared/components/icons/RoomIcon";
 export { SlidersIcon } from "@/src/shared/components/icons/SlidersIcon";

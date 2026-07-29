@@ -94,7 +94,10 @@ export function UserMenu({
           avatarKey={user.avatarKey}
           className="size-[30px] shrink-0 rounded-full text-xs"
         />
-        <span className="hidden max-w-[120px] truncate min-[881px]:inline-block">
+        <span
+          data-streamer-hideable=""
+          className="hidden max-w-[120px] truncate min-[881px]:inline-block"
+        >
           {triggerNameHidden ? (
             <span className="text-[13px] font-bold italic text-foreground-tertiary">
               {tStreamer("hiddenName")}

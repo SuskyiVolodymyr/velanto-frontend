@@ -76,7 +76,7 @@ export function DocsSidebar({
       </Select>
 
       {/* Desktop: the sticky sidebar list. */}
-      <nav className="hidden w-full flex-col gap-6 md:sticky md:top-[80px] md:flex md:w-[220px] md:flex-none">
+      <nav className="hidden w-full flex-col gap-6 md:sticky md:top-6 md:flex md:w-[220px] md:flex-none">
         {NAV.map((section) => (
           <div key={section.labelKey}>
             <Text

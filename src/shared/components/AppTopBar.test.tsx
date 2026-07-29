@@ -98,7 +98,10 @@ describe("AppTopBar", () => {
   it("shows only the brand while the session is loading", () => {
     auth.current = { status: "loading", user: null, logout };
     renderTopBar();
-    expect(screen.getByText("VELANTO")).toBeInTheDocument();
+    // Icon-only mobile brand mark (mock has no wordmark span here, and the
+    // full "VELANTO" text alongside the hamburger/create/bell/account cluster
+    // overflowed the header on a phone-width viewport).
+    expect(screen.getByRole("link", { name: "Velanto" })).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Log in" })).toBeNull();
     expect(screen.queryByRole("link", { name: "Create pack" })).toBeNull();
   });

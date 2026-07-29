@@ -30,7 +30,7 @@ export function HomeFeed({
   const lastOnPage = Math.min(feed.page * PACKS_FEED_PAGE_SIZE, feed.total);
 
   return (
-    <div id="browse-packs" className="flex flex-col gap-6 scroll-mt-20">
+    <div className="flex flex-col gap-6">
       <BrowseFilterBar
         format={feed.format}
         onFormatChange={feed.setFormat}

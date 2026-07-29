@@ -1,11 +1,14 @@
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import type { ReactNode } from "react";
 import messages from "@/messages/en.json";
 import { UserMenu } from "./UserMenu";
+import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
 import type { User } from "@/src/shared/types/user";
+
+const STREAMER_MODE_STORAGE_KEY = "velanto:streamer-mode";
 
 const USER: User = {
   id: "u1",
@@ -174,5 +177,31 @@ describe("UserMenu", () => {
     await user.click(screen.getByRole("menuitem", { name: "Log out" }));
 
     expect(trigger).toHaveFocus();
+  });
+
+  describe("streamer mode", () => {
+    beforeEach(() => localStorage.setItem(STREAMER_MODE_STORAGE_KEY, "on"));
+    afterEach(() => localStorage.clear());
+
+    it("masks the trigger's username and marks it hideable for the pre-hydration guard, with no nested Reveal button", () => {
+      render(
+        withIntl(
+          <StreamerModeProvider>
+            <UserMenu user={USER} onLogout={vi.fn()} />
+          </StreamerModeProvider>,
+        ),
+      );
+
+      const trigger = screen.getByRole("button", { name: "Account menu" });
+      expect(trigger).not.toHaveTextContent("alice");
+      expect(trigger).toHaveTextContent("Hidden");
+      // A nested interactive Reveal button inside the trigger <button> would be
+      // invalid HTML and would steal the click meant for the dropdown toggle —
+      // the trigger has no reveal control of its own.
+      expect(within(trigger).queryByRole("button")).not.toBeInTheDocument();
+      expect(
+        trigger.querySelector("[data-streamer-hideable]"),
+      ).toBeInTheDocument();
+    });
   });
 });

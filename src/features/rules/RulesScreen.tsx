@@ -141,7 +141,7 @@ export function RulesScreen({ rules }: RulesScreenProps) {
         <div className="grid grid-cols-1 gap-8 min-[940px]:grid-cols-[minmax(0,232px)_minmax(0,1fr)] min-[940px]:items-start">
           <nav
             aria-label={t("categoriesHeading")}
-            className="flex flex-col gap-4 min-[940px]:sticky min-[940px]:top-[80px]"
+            className="flex flex-col gap-4 min-[940px]:sticky min-[940px]:top-6"
           >
             <div className="flex flex-col gap-0.5">
               <Text

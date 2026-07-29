@@ -270,10 +270,7 @@
   },
   "bottomNav": {
     "label": "Головна",
-    "discovery": "Огляд",
-    "feedback": "Відгуки",
     "create": "Створити",
-    "notifications": "Сповіщення",
     "profile": "Профіль"
   },
   "shell": {
@@ -924,7 +921,9 @@
     "card": {
       "hot": "HOT",
       "roundsPlays": "{rounds, plural, one {# раунд} few {# раунди} many {# раундів} other {# раунда}} · {plays, plural, one {# гра} few {# гри} many {# ігор} other {# гри}}",
-      "play": "Грати"
+      "play": "Грати",
+      "friends": "Друзі",
+      "friendsTitle": "Грати з друзями"
     },
     "joinRoom": {
       "title": "Приєднатися до кімнати",

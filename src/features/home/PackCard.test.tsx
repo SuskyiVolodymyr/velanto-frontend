@@ -1,9 +1,25 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { PackCard } from "./PackCard";
 import { HOT_PLAYS_THRESHOLD } from "./hot-pack";
 import type { Pack } from "@/src/shared/types/pack";
+
+const { push } = vi.hoisted(() => ({ push: vi.fn() }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
+
+const auth = vi.hoisted(() => ({
+  current: { user: { id: "u1" } as { id: string } | null },
+}));
+vi.mock("@/src/shared/lib/auth-context", () => ({
+  useAuth: () => auth.current,
+}));
+
+const { create } = vi.hoisted(() => ({ create: vi.fn() }));
+vi.mock("@/src/features/friends-rooms/friends-rooms-client", () => ({
+  friendsRoomsClient: { create },
+}));
 
 const BASE_PACK = {
   id: "pack-a",
@@ -29,6 +45,11 @@ const BASE_PACK = {
 };
 
 describe("PackCard", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    auth.current = { user: { id: "u1" } };
+  });
+
   it("shows the format pill and the rounds · plays meta line", () => {
     const pack: Pack = {
       ...BASE_PACK,
@@ -98,6 +119,44 @@ describe("PackCard", () => {
 
       const play = screen.getByRole("link", { name: "Play" });
       expect(play).toHaveAttribute("href", "/packs/pack-a");
+    });
+  });
+
+  describe("Friends action", () => {
+    it("creates a room for the pack and routes into it when clicked", async () => {
+      const user = userEvent.setup();
+      create.mockResolvedValue({ id: "room-9" });
+      render(<PackCard pack={{ ...BASE_PACK, format: "save_one" }} />);
+
+      await user.click(screen.getByRole("button", { name: "Friends" }));
+
+      expect(create).toHaveBeenCalledWith("pack-a");
+      await waitFor(() => expect(push).toHaveBeenCalledWith("/rooms/room-9"));
+    });
+
+    it("shows an error message when room creation fails, without navigating", async () => {
+      const user = userEvent.setup();
+      create.mockRejectedValue(new Error("nope"));
+      render(<PackCard pack={{ ...BASE_PACK, format: "save_one" }} />);
+
+      await user.click(screen.getByRole("button", { name: "Friends" }));
+
+      expect(
+        await screen.findByText("Couldn't create the room. Try again."),
+      ).toBeInTheDocument();
+      expect(push).not.toHaveBeenCalled();
+    });
+
+    it("blocks the Friends button with a sign-in tooltip when signed out, without calling create", async () => {
+      auth.current = { user: null };
+      const user = userEvent.setup();
+      render(<PackCard pack={{ ...BASE_PACK, format: "save_one" }} />);
+
+      const friendsButton = screen.getByRole("button", { name: "Friends" });
+      expect(friendsButton).toHaveAttribute("aria-disabled", "true");
+
+      await user.click(friendsButton);
+      expect(create).not.toHaveBeenCalled();
     });
   });
 

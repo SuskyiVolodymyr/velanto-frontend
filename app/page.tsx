@@ -32,7 +32,7 @@ export default async function Home({
   const initialFeed = await getHomeFeedServer(query || undefined);
 
   return (
-    <main className="flex flex-1 flex-col gap-8 px-7 py-10">
+    <main className="flex flex-1 flex-col gap-8 px-7 py-10 max-[620px]:px-4">
       {/* Promo hero + join-by-code card (mock: Dashboard.dc.html). Both halves
           self-hide while rooms are dormant (ROOMS_DORMANT) — see
           DashboardHero's own doc comment — so there is no dead-end room pitch

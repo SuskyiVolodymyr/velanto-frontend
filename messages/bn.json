@@ -270,10 +270,7 @@
   },
   "bottomNav": {
     "label": "প্রধান",
-    "discovery": "আবিষ্কার",
-    "feedback": "মতামত",
     "create": "তৈরি",
-    "notifications": "বিজ্ঞপ্তি",
     "profile": "প্রোফাইল"
   },
   "shell": {
@@ -924,7 +921,9 @@
     "card": {
       "hot": "HOT",
       "roundsPlays": "{rounds, plural, one {# রাউন্ড} other {# রাউন্ড}} · {plays, plural, one {# বার খেলা হয়েছে} other {# বার খেলা হয়েছে}}",
-      "play": "খেলুন"
+      "play": "খেলুন",
+      "friends": "বন্ধুরা",
+      "friendsTitle": "বন্ধুদের সাথে খেলুন"
     },
     "joinRoom": {
       "title": "একটি রুমে যোগ দিন",

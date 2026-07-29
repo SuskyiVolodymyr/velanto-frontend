@@ -270,10 +270,7 @@
   },
   "bottomNav": {
     "label": "主导航",
-    "discovery": "发现",
-    "feedback": "反馈",
     "create": "创建",
-    "notifications": "提醒",
     "profile": "我的"
   },
   "shell": {
@@ -924,7 +921,9 @@
     "card": {
       "hot": "热门",
       "roundsPlays": "{rounds, plural, other {# 轮}} · {plays, plural, other {# 次游玩}}",
-      "play": "开玩"
+      "play": "开玩",
+      "friends": "好友",
+      "friendsTitle": "与好友一起游玩"
     },
     "joinRoom": {
       "title": "加入房间",

@@ -37,7 +37,7 @@ export async function DashboardHero() {
           <Text
             as="h1"
             variant="title"
-            className="text-pretty text-[32px] leading-[1.1] tracking-[-0.02em]"
+            className="text-pretty text-[32px] leading-[1.1] tracking-[-0.02em] max-[880px]:text-[26px]"
           >
             {t("title")}
           </Text>

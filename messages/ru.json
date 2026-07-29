@@ -270,10 +270,7 @@
   },
   "bottomNav": {
     "label": "Главное",
-    "discovery": "Обзор",
-    "feedback": "Отзывы",
     "create": "Создать",
-    "notifications": "Уведомления",
     "profile": "Профиль"
   },
   "shell": {
@@ -924,7 +921,9 @@
     "card": {
       "hot": "HOT",
       "roundsPlays": "{rounds, plural, one {# раунд} few {# раунда} many {# раундов} other {# раунда}} · {plays, plural, one {# игра} few {# игры} many {# игр} other {# игры}}",
-      "play": "Играть"
+      "play": "Играть",
+      "friends": "Друзья",
+      "friendsTitle": "Играть с друзьями"
     },
     "joinRoom": {
       "title": "Присоединиться к комнате",

@@ -8,7 +8,6 @@ import { MenuIcon, PlusIcon } from "@/src/shared/components/icons";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { buttonClassName } from "@/src/shared/components/Button";
 import { BrandMark } from "@/src/shared/components/BrandMark";
-import { Text } from "@/src/shared/components/Text";
 import { SearchField } from "@/src/shared/components/SearchField";
 import { UserMenu } from "@/src/shared/components/UserMenu";
 import { NotificationsBell } from "@/src/shared/components/NotificationsBell";
@@ -71,17 +70,18 @@ export function AppTopBar({ onMenuToggle }: { onMenuToggle: () => void }) {
         <MenuIcon size={19} strokeWidth={2} />
       </button>
 
-      {/* Brand shows on mobile, where the sidebar (which carries the brand) is a
-          closed drawer. Hidden from 881px up, where the rail is present. */}
+      {/* Brand shows on mobile, where the sidebar (which carries the full
+          wordmark) is a closed drawer. Hidden from 881px up, where the rail
+          is present. Icon-only (mock: mobile topbar's brandword has no
+          wordmark span) — the full "VELANTO" text alongside the hamburger,
+          Create button, bell, and account pill overflowed the header on a
+          phone-width viewport (measured ~70px past the viewport edge). */}
       <Link
         href="/"
         className="flex items-center gap-2 min-[881px]:hidden"
         aria-label="Velanto"
       >
         <BrandMark className="h-[22px] w-[22px]" />
-        <Text as="span" variant="title" className="text-[16px] tracking-[0.18em]">
-          VELANTO
-        </Text>
       </Link>
 
       <form

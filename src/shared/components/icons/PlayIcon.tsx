@@ -1,7 +1,13 @@
 import type { IconProps } from "@/src/shared/components/icons/icon-types";
 
-/** A filled play triangle — pack cards, resume rail, play buttons. */
-export function PlayIcon({ size = 13, className }: IconProps) {
+/**
+ * A filled play triangle — pack cards, resume rail, play buttons. Fill-only
+ * (no stroke), so it omits `strokeWidth` rather than silently ignoring it.
+ */
+export function PlayIcon({
+  size = 13,
+  className,
+}: Omit<IconProps, "strokeWidth">) {
   return (
     <svg
       width={size}

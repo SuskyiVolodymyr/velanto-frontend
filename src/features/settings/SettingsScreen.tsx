@@ -24,7 +24,7 @@ interface SettingsSectionEntry {
 /**
  * The `SettingsScreen` shell (T15): sticky section TOC + page intro,
  * mirroring the sticky "on this page" nav already shipped on
- * `LegalScreen.tsx` (D12) — same `min-[900px]:sticky min-[900px]:top-[80px]`
+ * `LegalScreen.tsx` (D12) — same `min-[900px]:sticky min-[900px]:top-6`
  * convention — plus the horizontal `overflow-x-auto no-scrollbar` chip-row
  * collapse below that breakpoint this task's own spec calls for (Legal's own
  * nav doesn't collapse like this; Settings' does).
@@ -105,7 +105,7 @@ export function SettingsScreen() {
       <div className="flex flex-col gap-8 min-[900px]:flex-row min-[900px]:items-start">
         <nav
           aria-label={t("title")}
-          className="flex gap-2 overflow-x-auto no-scrollbar pb-1 min-[900px]:w-[216px] min-[900px]:flex-none min-[900px]:sticky min-[900px]:top-[80px] min-[900px]:flex-col min-[900px]:gap-0.5 min-[900px]:overflow-visible min-[900px]:pb-0"
+          className="flex gap-2 overflow-x-auto no-scrollbar pb-1 min-[900px]:w-[216px] min-[900px]:flex-none min-[900px]:sticky min-[900px]:top-6 min-[900px]:flex-col min-[900px]:gap-0.5 min-[900px]:overflow-visible min-[900px]:pb-0"
         >
           {SECTIONS.map((section) => (
             <a

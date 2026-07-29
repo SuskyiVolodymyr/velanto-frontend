@@ -31,9 +31,10 @@ function isFullScreenRoute(pathname: string): boolean {
 // Docs.dc.html etc. each have their own simple top header with no rail at
 // all. Every other route keeps the top bar (search/create/notifications/
 // account) but not the rail. The optional locale prefix mirrors
-// isFullScreenRoute above.
+// isFullScreenRoute above — trailing slash is optional too, since
+// next-intl's localePrefix emits the root as `/en` with no slash.
 function isDashboardRoute(pathname: string): boolean {
-  return /^(?:\/[a-z]{2})?\/$/.test(pathname);
+  return /^(?:\/[a-z]{2})?\/?$/.test(pathname);
 }
 
 // Below this width the rail is hidden and the mobile bottom nav + drawer take
@@ -89,14 +90,18 @@ export function AppShell({ children }: { children: ReactNode }) {
   // Gates the WHOLE global chrome bundle now, not just the rail: the top bar
   // (search/create/notifications/account) is global chrome too, and stacking
   // it above a page's own local header (Pack Detail's Back/Share/Vote bar,
-  // both `sticky top-0`) produced a visible double-header. Off-dashboard
-  // pages are expected to own their header entirely, per their own mocks
-  // (Admin/Rules/Docs each have one already) — the global bar doesn't layer
-  // on top of it anymore. Known gap: pages with no local header of their own
-  // yet (most content pages) currently render bare at the top on desktop —
-  // Create/Notifications/Account become unreachable there except by
-  // navigating back to `/` first. Mobile is unaffected (MobileBottomNav
-  // always carries Create/Notifications/Profile regardless of route).
+  // both `sticky top-0`) produced a visible double-header. A handful of pages
+  // already own a local `sticky top-0` header of their own (Pack Detail,
+  // Profile Edit, Create Pack, Result, Play) and the global bar no longer
+  // layers on top of those. KNOWN GAP, not yet fixed: most other pages
+  // (Rules, Docs, People, My Packs, Settings, Feedback, Admin, ...) have a
+  // page heading but no real header/account cluster, so on desktop they now
+  // render with NO way to reach Create/Notifications/Account/Log out except
+  // navigating back to `/` first — this is a real usability regression, only
+  // accepted because the mocks call for entirely per-page headers that
+  // haven't been built yet (separate, larger job). Mobile is unaffected
+  // (MobileBottomNav always carries Create/Notifications/Profile regardless
+  // of route).
   const onDashboard = isDashboardRoute(pathname);
 
   // The menu toggle opens the drawer on phones and collapses the rail on

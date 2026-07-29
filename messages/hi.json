@@ -270,10 +270,7 @@
   },
   "bottomNav": {
     "label": "मुख्य",
-    "discovery": "खोज",
-    "feedback": "प्रतिक्रिया",
     "create": "बनाएँ",
-    "notifications": "सूचनाएँ",
     "profile": "प्रोफ़ाइल"
   },
   "shell": {
@@ -924,7 +921,9 @@
     "card": {
       "hot": "HOT",
       "roundsPlays": "{rounds, plural, one {# राउंड} other {# राउंड}} · {plays, plural, one {# बार खेला गया} other {# बार खेला गया}}",
-      "play": "खेलें"
+      "play": "खेलें",
+      "friends": "दोस्त",
+      "friendsTitle": "दोस्तों के साथ खेलें"
     },
     "joinRoom": {
       "title": "रूम में शामिल हों",

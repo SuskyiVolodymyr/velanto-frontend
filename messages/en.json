@@ -367,10 +367,7 @@
   },
   "bottomNav": {
     "label": "Primary",
-    "discovery": "Discovery",
-    "feedback": "Feedback",
     "create": "Create",
-    "notifications": "Alerts",
     "profile": "Profile"
   },
   "shell": {
@@ -1020,7 +1017,9 @@
     "card": {
       "hot": "HOT",
       "roundsPlays": "{rounds, plural, one {# round} other {# rounds}} · {plays, plural, one {# play} other {# plays}}",
-      "play": "Play"
+      "play": "Play",
+      "friends": "Friends",
+      "friendsTitle": "Play with friends"
     },
     "joinRoom": {
       "title": "Join a room",

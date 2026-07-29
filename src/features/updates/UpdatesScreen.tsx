@@ -210,7 +210,7 @@ export function UpdatesScreen({
 
           <nav
             aria-label={releasesHeading}
-            className="flex flex-col gap-0.5 min-[900px]:sticky min-[900px]:top-[80px]"
+            className="flex flex-col gap-0.5 min-[900px]:sticky min-[900px]:top-6"
           >
             <Text
               variant="tertiary"

@@ -22,6 +22,13 @@ vi.mock("@/src/shared/lib/packs-client", () => ({
   packsClient: { list: vi.fn() },
 }));
 
+// Each rendered PackCard's Friends button needs a mounted router and the
+// room-create client — auth here comes from the real AuthProvider below.
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
+vi.mock("@/src/features/friends-rooms/friends-rooms-client", () => ({
+  friendsRoomsClient: { create: vi.fn() },
+}));
+
 function draftPack(id: string): Pack {
   return {
     id,
