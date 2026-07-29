@@ -14,14 +14,6 @@ export interface CreateChecklistPanelProps {
   values: CreatePackValues;
 }
 
-// The real mock (Create Pack.dc.html, DesignSync 67c2561f-a9ab-433b-a48b-
-// d1a3e2aa88d8) also has a "Friend modes unlocked" / feasibility panel here
-// (SCORED — Claim / Voting / Turn-based cut / Guess Who / Shared-grid-Relay).
-// That is DELIBERATELY not built: it maps to room modes from the
-// still-dormant multiplayer rooms epic (`friends-rooms-client.create` 503s in
-// prod — see the root CLAUDE.md's "save_one_friends was retired" section).
-// If you're looking for it, it was omitted on purpose, not missed.
-
 /**
  * The "Before you submit" checklist that replaced the old live-preview aside
  * (cover thumbnail, LIVE PREVIEW eyebrow, Format/Pools/Elements/Rounds stat
@@ -62,10 +54,12 @@ export function CreateChecklistPanel({ values }: CreateChecklistPanelProps) {
   ];
 
   return (
-    // No max-w here — CreatePackForm's aside slot already constrains this
-    // (`max-w-[380px] flex-1 basis-[320px]`); repeating it on this root was
-    // redundant.
-    <div className="flex flex-col gap-[16px] lg:sticky lg:top-[82px]">
+    // No max-w, no sticky here — CreatePackForm's aside slot already
+    // constrains this (`max-w-[380px] flex-1 basis-[320px]`) and now owns the
+    // sticky positioning for the whole aside stack (this panel + the
+    // feasibility panel above it), matching the mock's own single
+    // `position:sticky` on the aside container, not one per panel.
+    <div className="flex flex-col gap-[16px]">
       <div className="rounded-card border border-border bg-surface-card p-[16px_18px]">
         <Text
           variant="tertiary"

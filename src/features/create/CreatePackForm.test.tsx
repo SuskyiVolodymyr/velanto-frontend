@@ -52,6 +52,19 @@ vi.mock("@/src/shared/lib/packs-client", () => ({
   },
 }));
 
+// The CreateFeasibilityPanel aside now mounts unconditionally and calls this
+// on every render — without a mock, a long-running test (the format-switch
+// suites drive many real userEvent keystrokes) outlives the 400ms debounce
+// and fires a REAL fetch to whatever's on localhost:3001. Worse than a
+// flaky assertion: a real 401 from a real dev backend trips apiClient's
+// global sessionCallbacks.onLost(), flipping this test's OWN AuthProvider to
+// unauthenticated mid-test. Never resolving keeps the panel in its
+// loading (renders null) state, which is exactly what every test here wants
+// — none of them assert on feasibility content.
+vi.mock("@/src/features/friends-rooms/friends-rooms-client", () => ({
+  friendsRoomsClient: { previewModes: vi.fn(() => new Promise(() => {})) },
+}));
+
 // A complete, valid set of edit-mode seed values (one pool with one item, a
 // single elimination round drawing the whole pool).
 const EDIT_VALUES = {

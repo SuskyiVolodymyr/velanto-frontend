@@ -15,7 +15,12 @@ export default async function CreatePage() {
     // the width constraint is applied once, per-block, below — not on this
     // wrapper. Nesting PACK_CONTAINER here AND inside CreatePackForm would
     // double-apply its `lg:w-[70%]`, squashing the whole page.
-    <main className="flex-1 pt-10">
+    //
+    // No `pt-10` either: that was clearance for a since-removed visible
+    // header block (see the h1 comment below) — CreatePackForm's own sticky
+    // bar is now the first thing here, so the padding just pushed it down
+    // 40px past the viewport top, opening a bare gap above it at scroll 0.
+    <main className="flex-1">
       {/* The real mock's sticky bar carries the visible title now (T1) —
           this h1 stays sr-only purely for a11y/SEO landmark purposes,
           replacing what used to be a visible header block here. The sticky

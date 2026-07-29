@@ -160,4 +160,54 @@ describe("FormatSection", () => {
       );
     });
   });
+
+  // Mock (Create Pack.dc.html): every format has its own identity color
+  // (hue), used to tint its icon badge always and its card's
+  // background/border only once selected — not a single shared accent
+  // across every card.
+  describe("per-format hue identity (mock parity)", () => {
+    it("shows a checkmark indicator only on the selected card", () => {
+      render(<Harness initial={baseValues("rank_blind")} />);
+
+      const checks = screen.getAllByTestId("format-selected-check");
+      expect(checks).toHaveLength(1);
+      expect(
+        screen.getByRole("button", { name: /Rank Blind/ }),
+      ).toContainElement(checks[0]);
+    });
+
+    it("tints each icon badge with the format's own hue, regardless of selection", () => {
+      render(<Harness initial={baseValues("save_one")} />);
+
+      // NxN isn't selected, but its icon badge still carries NxN's own pink
+      // hue rather than the muted/gray treatment an unselected card used to get.
+      expect(screen.getByTestId("format-icon-nxn")).toHaveStyle({
+        backgroundColor: "rgba(255,92,192,.14)",
+        color: "rgb(255,92,192)",
+      });
+      expect(screen.getByTestId("format-icon-save_one")).toHaveStyle({
+        backgroundColor: "rgba(57,217,138,.14)",
+        color: "rgb(57,217,138)",
+      });
+    });
+
+    it("tints the selected card's border and background with its own hue", () => {
+      render(<Harness initial={baseValues("sacrifice_one")} />);
+
+      expect(
+        screen.getByRole("button", { name: /Sacrifice One/ }),
+      ).toHaveStyle({
+        borderColor: "rgba(255,90,90,.5)",
+        backgroundColor: "rgba(255,90,90,.1)",
+      });
+    });
+
+    it("leaves unselected cards on the plain surface-card border/background, not hue-tinted", () => {
+      render(<Harness initial={baseValues("sacrifice_one")} />);
+
+      const saveOne = screen.getByRole("button", { name: /Save One/ });
+      expect(saveOne.style.borderColor).toBe("");
+      expect(saveOne.style.backgroundColor).toBe("");
+    });
+  });
 });

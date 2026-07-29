@@ -27,6 +27,7 @@ import { PoolsSection } from "@/src/features/create/PoolsSection";
 import { RoundsEditor } from "@/src/features/create/RoundsEditor";
 import { VersusEditor } from "@/src/features/create/VersusEditor";
 import { CreateChecklistPanel } from "@/src/features/create/CreateChecklistPanel";
+import { CreateFeasibilityPanel } from "@/src/features/create/CreateFeasibilityPanel";
 import { summarizePack } from "@/src/features/create/create-pack.summary";
 import {
   newGroup,
@@ -314,20 +315,21 @@ export function CreatePackForm({
             same-named Publish controls would break e2e strict-mode
             `getByRole` lookups; consolidating to ONE control here, always
             visible, is what keeps that guarantee now that the aside panel
-            no longer has its own CTA — see CreateChecklistPanel). Mirrors
-            PackDetailScreen's sticky bar (`sticky top-0 z-30 border-b
-            border-border bg-background/85 backdrop-blur-md`). */}
+            no longer has its own CTA — see CreateChecklistPanel).
+            Background/border are edge-to-edge like PackDetailScreen's own
+            sticky bar, but the CONTENT row is not run through
+            PACK_CONTAINER — the mock's own header (`padding:13px 30px`, no
+            width cap) spans the full bar, not just the page body's 70%
+            reading-width column. */}
         <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
-          <div
-            className={cn(
-              PACK_CONTAINER,
-              "flex items-center gap-3 py-3 max-[720px]:px-4",
-            )}
-          >
+          <div className="flex items-center gap-3 px-7 py-3 max-[720px]:px-4">
+            {/* Boxed back button matching PlayChrome's / the pack surfaces'
+                own sticky-bar precedent (38x38, bordered tile) — this was
+                bare (no border, no background) before. */}
             <Link
               href={cancelHref}
               aria-label={t("cancel")}
-              className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-control text-foreground-secondary transition-colors hover:bg-white/[0.05] hover:text-foreground"
+              className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-tile border border-border bg-white/[0.03] text-foreground-secondary transition-colors hover:border-white/[0.18] hover:text-foreground"
             >
               <ArrowLeft size={18} aria-hidden />
             </Link>
@@ -359,7 +361,39 @@ export function CreatePackForm({
                   setSubmitMode("draft");
                   void handleSubmit((values) => onValid(values, true))();
                 }}
+                // Mock: this button's own color communicates draft state
+                // (amber = unsaved changes, green = just saved), not just its
+                // label — a plain gray secondary button said the same thing
+                // twice as quietly as it should. `!` (Tailwind's importance
+                // modifier) is required, not decorative: `cn()` is a plain
+                // join, not tailwind-merge, so this className is appended
+                // after (not instead of) variant="secondary"'s own
+                // `bg-white/[0.09] text-foreground` — without `!`, those win
+                // the cascade regardless of source order (see Text.tsx's
+                // identical documented gotcha; confirmed here the same way,
+                // via getComputedStyle before adding `!`).
+                className={
+                  justSaved
+                    ? "!border !border-[#39d98a]/45 !bg-[#39d98a]/[0.16] !text-[#7ee7b4] hover:!bg-[#39d98a]/[0.16]"
+                    : "!border !border-[#ffc24b]/35 !bg-[#ffc24b]/10 !text-[#ffd27a] hover:!bg-[#ffc24b]/10"
+                }
               >
+                {!(isSubmitting && submitMode === "draft") && (
+                  <svg
+                    aria-hidden
+                    width="15"
+                    height="15"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="1.9"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M5 4h11l3 3v13H5z" />
+                    <path d="M8 4v5h7M8 19v-6h8v6" />
+                  </svg>
+                )}
                 {isSubmitting && submitMode === "draft"
                   ? t("savingDraft")
                   : justSaved
@@ -433,8 +467,24 @@ export function CreatePackForm({
               author opening this on a phone wants the form first, so DOM
               order already matches the desired mobile stacking order without
               needing an `lg:order-*` override. */}
-          <div className="flex flex-wrap items-start gap-[34px]">
-            <div className="flex min-w-[300px] flex-1 basis-[540px] flex-col gap-[34px]">
+          {/*
+            No `items-start` here (default `items-stretch`): the sticky aside
+            column's containing block must span the SAME height as the main
+            column for `position: sticky` to have room to stay pinned while
+            scrolling through it — `items-start` sizes each flex item to its
+            own content height, so the aside wrapper was only as tall as the
+            aside itself and the sticky child had nowhere to travel.
+          */}
+          <div className="flex flex-wrap gap-[34px]">
+            {/*
+              `basis-0` (not a large aspirational basis like 540px): the main
+              column only needs a `min-width` floor — a real flex-basis here
+              was fighting the aside's fixed basis for space and silently
+              wrapping the whole aside onto its own line (killing both the
+              2-column layout AND the sticky positioning that depends on it)
+              at any viewport under ~1357px, which is most desktop widths.
+            */}
+            <div className="flex min-w-[300px] flex-1 basis-0 flex-col gap-[34px]">
               {errors.root?.message && (
                 <Text variant="danger" role="alert" className="text-sm">
                   {errors.root.message}
@@ -455,7 +505,19 @@ export function CreatePackForm({
             </div>
 
             <div className="max-w-[380px] flex-1 basis-[320px]">
-              <CreateChecklistPanel values={values} />
+              {/* One sticky boundary for the whole aside stack, matching the
+                  mock's single `position:sticky` on the aside container
+                  (gap:14px) rather than one per panel. */}
+              <div className="flex flex-col gap-[14px] lg:sticky lg:top-[82px]">
+                <CreateFeasibilityPanel
+                  draft={{
+                    format: values.format,
+                    groups: values.groups,
+                    rounds: values.rounds,
+                  }}
+                />
+                <CreateChecklistPanel values={values} />
+              </div>
             </div>
           </div>
         </div>

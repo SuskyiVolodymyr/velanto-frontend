@@ -2,17 +2,14 @@ import { describe, expect, it, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
-import { RoundsToolbar } from "./RoundsToolbar";
+import { RoundsBulkBar, RoundsAddButton } from "./RoundsToolbar";
 
-function renderToolbar(
-  over: Partial<Parameters<typeof RoundsToolbar>[0]> = {},
+function renderBulkBar(
+  over: Partial<Parameters<typeof RoundsBulkBar>[0]> = {},
 ) {
-  const onAddRound = vi.fn();
   const onApply = vi.fn();
   render(
-    <RoundsToolbar
-      addLabel="Add round"
-      onAddRound={onAddRound}
+    <RoundsBulkBar
       bulk={{
         label: "Set all rounds to draw",
         applyLabel: "Set count for all rounds",
@@ -20,30 +17,37 @@ function renderToolbar(
         max: 8,
         placeholder: "4",
         current: 2,
-        allMatch: true,
+        counts: [2, 2],
         onApply,
       }}
       {...over}
     />,
   );
-  return { onAddRound, onApply };
+  return { onApply };
 }
 
-describe("RoundsToolbar", () => {
-  it("adds a round", async () => {
+describe("RoundsBulkBar", () => {
+  // Every round already shares the seeded value, so Apply starts out
+  // disabled/"Applied" — typing a DIFFERENT number is what re-enables it
+  // (mock: drift is judged against the live stepper value, not a stale
+  // snapshot), and only then does clicking Apply fire onApply.
+  it("applies the typed count once it differs from what every round already has", async () => {
     const user = userEvent.setup();
-    const { onAddRound } = renderToolbar();
-
-    await user.click(screen.getByRole("button", { name: "Add round" }));
-
-    expect(onAddRound).toHaveBeenCalledTimes(1);
-  });
-
-  // The field now shows the live current count (T4) instead of starting
-  // blank, so typing a replacement clears it first.
-  it("applies the typed count", async () => {
-    const user = userEvent.setup();
-    const { onApply } = renderToolbar();
+    const onApply = vi.fn();
+    render(
+      <RoundsBulkBar
+        bulk={{
+          label: "Set all rounds to draw",
+          applyLabel: "Set count for all rounds",
+          min: 1,
+          max: 8,
+          placeholder: "4",
+          current: 2,
+          counts: [2, 2],
+          onApply,
+        }}
+      />,
+    );
 
     const field = screen.getByRole("spinbutton", {
       name: "Set all rounds to draw",
@@ -58,7 +62,7 @@ describe("RoundsToolbar", () => {
   });
 
   it("seeds the field from the live current count", () => {
-    renderToolbar({
+    renderBulkBar({
       bulk: {
         label: "Set all rounds to draw",
         applyLabel: "Set count for all rounds",
@@ -66,7 +70,7 @@ describe("RoundsToolbar", () => {
         max: 8,
         placeholder: "4",
         current: 5,
-        allMatch: true,
+        counts: [5, 6],
         onApply: vi.fn(),
       },
     });
@@ -76,8 +80,29 @@ describe("RoundsToolbar", () => {
     ).toHaveValue(5);
   });
 
-  it("flags the apply button amber when the rounds have drifted apart", () => {
-    renderToolbar({
+  // Mock: once every round already agrees with the stepper's own value,
+  // there's nothing left to apply — the button reads "Applied" and disables,
+  // rather than staying an always-clickable "Set count for all rounds".
+  it("shows a disabled 'Applied' state and the match hint when every round already agrees", () => {
+    renderBulkBar();
+
+    const applyButton = screen.getByRole("button", { name: "Applied" });
+    expect(applyButton).toBeDisabled();
+    expect(
+      screen.queryByRole("button", { name: "Set count for all rounds" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByText(
+        "Every round uses this. Open a round to give it a different number.",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  // Mock: once the rounds disagree with each other (so none of them can
+  // match the seeded stepper value either), the Apply button becomes the
+  // live "Set count for all rounds" action and the hint lists what's in play.
+  it("shows the enabled apply action and the drift hint (with the varying counts) when rounds disagree", () => {
+    renderBulkBar({
       bulk: {
         label: "Set all rounds to draw",
         applyLabel: "Set count for all rounds",
@@ -85,19 +110,39 @@ describe("RoundsToolbar", () => {
         max: 8,
         placeholder: "4",
         current: 2,
-        allMatch: false,
+        counts: [4, 2, 4],
         onApply: vi.fn(),
       },
     });
 
+    const applyButton = screen.getByRole("button", {
+      name: "Set count for all rounds",
+    });
+    expect(applyButton).not.toBeDisabled();
+    expect(
+      screen.getByText("Rounds currently vary (2, 4). Apply to reset them all."),
+    ).toBeInTheDocument();
+  });
+
+  // Stepping (or typing) away from what every round shares re-enables Apply
+  // immediately, before it's ever clicked — the mock judges drift against
+  // the live stepper value, not the value at mount.
+  it("re-enables Apply as soon as the stepper is nudged off what every round already shares", async () => {
+    const user = userEvent.setup();
+    renderBulkBar();
+
+    expect(screen.getByRole("button", { name: "Applied" })).toBeDisabled();
+
+    await user.click(screen.getByRole("button", { name: "Increase" }));
+
     expect(
       screen.getByRole("button", { name: "Set count for all rounds" }),
-    ).toHaveClass("border-status-pending/30");
+    ).not.toBeDisabled();
   });
 
   it("steps the field up and down with the +/- buttons, clamped to min/max", async () => {
     const user = userEvent.setup();
-    renderToolbar({
+    renderBulkBar({
       bulk: {
         label: "Set all rounds to draw",
         applyLabel: "Set count for all rounds",
@@ -105,7 +150,7 @@ describe("RoundsToolbar", () => {
         max: 3,
         placeholder: "4",
         current: 3,
-        allMatch: true,
+        counts: [3, 3],
         onApply: vi.fn(),
       },
     });
@@ -127,11 +172,27 @@ describe("RoundsToolbar", () => {
   // every round's count to NaN, which reads back as an empty round.
   it("does nothing while the field is empty", async () => {
     const user = userEvent.setup();
-    const { onApply } = renderToolbar();
+    const onApply = vi.fn();
+    render(
+      <RoundsBulkBar
+        bulk={{
+          label: "Set all rounds to draw",
+          applyLabel: "Set count for all rounds",
+          min: 1,
+          max: 8,
+          placeholder: "4",
+          current: 2,
+          counts: [2, 3],
+          onApply,
+        }}
+      />,
+    );
 
     await user.clear(
       screen.getByRole("spinbutton", { name: "Set all rounds to draw" }),
     );
+    // An empty field can't match every round's count either, so Apply is
+    // still enabled — but clicking it must still be a no-op (see guard above).
     await user.click(
       screen.getByRole("button", { name: "Set count for all rounds" }),
     );
@@ -139,45 +200,31 @@ describe("RoundsToolbar", () => {
     expect(onApply).not.toHaveBeenCalled();
   });
 
-  // #359: the row broke "Set count for all rounds" across three lines with room
-  // to spare beside it, and Button's fixed height meant the extra lines spilled
-  // out of its box. The group is one flex item whose own children wrap, so its
-  // min-content width is tiny — without these it squeezes instead of letting
-  // the parent's flex-wrap move it to its own line. The add-round button no
-  // longer shares that row (it's now its own full-width dashed row, like
-  // "+ Add pool"), so only the bulk group still needs the nowrap protection.
-  it("keeps the bulk group's label and apply button on one line each", () => {
-    renderToolbar();
-
-    expect(
-      screen.getByRole("button", { name: "Set count for all rounds" }),
-    ).toHaveClass("whitespace-nowrap");
-    expect(screen.getByText("Set all rounds to draw")).toHaveClass(
-      "whitespace-nowrap",
-    );
-    // The wrap-fix itself: shrink-0 on the group so the parent's flex-wrap
-    // moves the whole group to its own line instead of squeezing it (#359).
-    expect(screen.getByText("Set all rounds to draw").closest("div")).toHaveClass(
-      "shrink-0",
-    );
-  });
-
-  it("renders the add-round button as its own dashed full-width row", () => {
-    renderToolbar();
-
-    const addButton = screen.getByRole("button", { name: "Add round" });
-    expect(addButton).toHaveClass("w-full", "border-dashed");
-  });
-
   // 1v1 draws exactly one item per side, so there is nothing to bulk-set — it
   // says so rather than offering a control that can only take one value.
   it("shows a note instead of the controls when there is nothing to set", () => {
-    renderToolbar({ bulk: undefined, note: "Always 1 per side" });
+    render(<RoundsBulkBar bulk={undefined} note="Always 1 per side" />);
 
     expect(screen.getByText("Always 1 per side")).toBeInTheDocument();
     expect(screen.queryByRole("spinbutton")).toBeNull();
-    expect(
-      screen.getByRole("button", { name: "Add round" }),
-    ).toBeInTheDocument();
+  });
+});
+
+describe("RoundsAddButton", () => {
+  it("adds a round", async () => {
+    const user = userEvent.setup();
+    const onAddRound = vi.fn();
+    render(<RoundsAddButton addLabel="Add round" onAddRound={onAddRound} />);
+
+    await user.click(screen.getByRole("button", { name: "Add round" }));
+
+    expect(onAddRound).toHaveBeenCalledTimes(1);
+  });
+
+  it("renders as its own dashed full-width row", () => {
+    render(<RoundsAddButton addLabel="Add round" onAddRound={vi.fn()} />);
+
+    const addButton = screen.getByRole("button", { name: "Add round" });
+    expect(addButton).toHaveClass("w-full", "border-dashed");
   });
 });

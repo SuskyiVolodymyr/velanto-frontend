@@ -1,4 +1,5 @@
 import { apiClient } from "@/src/shared/lib/api-client";
+import type { Group, PackFormat, Round } from "@/src/shared/types/pack";
 import type { AvailableMode, MyRoomSummary, RoomState } from "./room-types";
 
 /**
@@ -41,4 +42,17 @@ export const friendsRoomsClient = {
    */
   availableModes: (packId: string) =>
     apiClient.get<AvailableMode[]>(`/packs/${packId}/modes`),
+
+  /**
+   * The Create/Edit Pack form's live "Friend modes unlocked" preview — same
+   * feasibility rules as availableModes, run against an unsaved draft (no
+   * packId yet). Auth-required (mirrors POST /packs itself), unlike the
+   * public GET above. `signal` lets a caller cancel a superseded in-flight
+   * request when the draft changes again before this one resolves.
+   */
+  previewModes: (
+    draft: { format: PackFormat; groups: Group[]; rounds: Round[] },
+    options?: { signal?: AbortSignal },
+  ) =>
+    apiClient.post<AvailableMode[]>("/packs/modes/preview", draft, options),
 };

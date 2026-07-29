@@ -45,40 +45,58 @@ export function PackMetaFields({
 
   return (
     <section className="flex flex-col">
-      <StepHeader step={2} title={t("basicsHeading")} />
-      <div className="flex flex-col gap-[14px]">
-        <div className="flex flex-col gap-1">
+      <StepHeader title={t("basicsHeading")} />
+      <div className="flex flex-col gap-[14px] rounded-card border border-border bg-surface-card p-[18px]">
+        <div className="flex flex-col gap-[7px]">
+          <div className="flex items-center gap-2">
+            <label
+              htmlFor="title"
+              className="text-[12.5px] font-medium text-foreground-secondary"
+            >
+              {t("packTitle")}
+            </label>
+            <Text
+              variant="tertiary"
+              className="ms-auto text-xs tabular-nums"
+              aria-hidden
+            >
+              {title.length}/{TITLE_MAX}
+            </Text>
+          </div>
           <TextField
             name="title"
             label={t("packTitle")}
+            srOnlyLabel
             placeholder={t("titlePlaceholder")}
             maxLength={TITLE_MAX}
             disabled={isSubmitting}
           />
-          <Text
-            variant="tertiary"
-            className="self-end text-xs tabular-nums"
-            aria-hidden
-          >
-            {title.length}/{TITLE_MAX}
-          </Text>
         </div>
-        <div className="flex flex-col gap-1">
+        <div className="flex flex-col gap-[7px]">
+          <div className="flex items-center gap-2">
+            <label
+              htmlFor="description"
+              className="text-[12.5px] font-medium text-foreground-secondary"
+            >
+              {t("packDescription")}
+            </label>
+            <Text
+              variant="tertiary"
+              className="ms-auto text-xs tabular-nums"
+              aria-hidden
+            >
+              {description.length}/{DESCRIPTION_MAX}
+            </Text>
+          </div>
           <TextareaField
             name="description"
             label={t("packDescription")}
+            srOnlyLabel
             placeholder={t("descriptionPlaceholder")}
             rows={2}
             maxLength={DESCRIPTION_MAX}
             disabled={isSubmitting}
           />
-          <Text
-            variant="tertiary"
-            className="self-end text-xs tabular-nums"
-            aria-hidden
-          >
-            {description.length}/{DESCRIPTION_MAX}
-          </Text>
         </div>
         <div className="flex flex-col gap-2">
           <Text
@@ -95,7 +113,56 @@ export function PackMetaFields({
             swatchStyle="gradient"
           />
         </div>
-        <CoverImageField onUploadingChange={onCoverUploadingChange} />
+        {/*
+          Mock: Tags (flex:1) and Cover (fixed ~210px) sit side by side in one
+          row — not two independent full-width blocks.
+        */}
+        <div className="flex flex-wrap gap-[14px]">
+          <div className="flex min-w-[180px] flex-1 flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <Text variant="secondary" className="text-[12.5px] font-medium">
+                {t("tags")}
+              </Text>
+              <Text variant="tertiary" className="ms-auto text-xs tabular-nums">
+                {t("tagsCount", { count: tags.length, max: MAX_TAGS })}
+              </Text>
+            </div>
+            <div className="flex min-h-11 flex-wrap items-center gap-[7px] rounded-[12px] border border-white/10 bg-[#0F1116] px-[10px] py-[7px]">
+              {tags.map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() =>
+                    setValue(
+                      "tags",
+                      tags.filter((value) => value !== tag),
+                    )
+                  }
+                  aria-label={t("removeTag", { tag })}
+                  className="inline-flex h-7 items-center gap-[6px] rounded-pill bg-white/[0.07] ps-[11px] pe-[6px] text-xs font-semibold text-foreground/80 transition-colors hover:bg-white/[0.12]"
+                >
+                  {tag}
+                  <span
+                    aria-hidden
+                    className="flex h-[17px] w-[17px] flex-none items-center justify-center rounded-full bg-white/[0.1] text-[11px]"
+                  >
+                    ×
+                  </span>
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => setTagPickerOpen(true)}
+                className="inline-flex h-7 items-center gap-1 rounded-pill border border-dashed border-white/[0.14] px-[11px] text-xs font-semibold text-foreground-secondary transition-colors hover:border-acc hover:text-acc"
+              >
+                {t("addTags")}
+              </button>
+            </div>
+          </div>
+          <div className="w-[210px] flex-none">
+            <CoverImageField onUploadingChange={onCoverUploadingChange} />
+          </div>
+        </div>
         {/*
           The pack CONTENT's language — what the pack is written in, not what the
           UI is in. Offers all 11 PACK_LANGUAGES, which is a deliberate superset
@@ -116,42 +183,6 @@ export function PackMetaFields({
           <Text id="pack-language-hint" variant="tertiary" className="text-xs">
             {t("languageHint")}
           </Text>
-        </div>
-        <div className="flex flex-col gap-2">
-          <div className="flex items-center gap-2">
-            <Text variant="secondary" className="text-[12.5px] font-medium">
-              {t("tags")}
-            </Text>
-            <Text variant="tertiary" className="ms-auto text-xs tabular-nums">
-              {t("tagsCount", { count: tags.length, max: MAX_TAGS })}
-            </Text>
-          </div>
-          <div className="flex flex-wrap gap-[7px]">
-            {tags.map((tag) => (
-              <button
-                key={tag}
-                type="button"
-                onClick={() =>
-                  setValue(
-                    "tags",
-                    tags.filter((value) => value !== tag),
-                  )
-                }
-                aria-label={t("removeTag", { tag })}
-                className="inline-flex items-center gap-1 rounded-chip border border-acc bg-acc/[0.14] px-[13px] py-[7px] text-[13px] font-medium text-acc transition-colors hover:bg-acc/[0.2]"
-              >
-                {tag}
-                <span aria-hidden>×</span>
-              </button>
-            ))}
-            <button
-              type="button"
-              onClick={() => setTagPickerOpen(true)}
-              className="inline-flex items-center gap-1 rounded-chip border border-dashed border-white/[0.14] px-[13px] py-[7px] text-[13px] font-medium text-foreground-secondary transition-colors hover:border-acc hover:text-acc"
-            >
-              {t("addTags")}
-            </button>
-          </div>
         </div>
         <TagPickerModal
           open={tagPickerOpen}
