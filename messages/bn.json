@@ -1526,6 +1526,8 @@
     "metaNewTitle": "নতুন মতামত — Velanto"
   },
   "docs": {
+    "metaTitle": "ডকুমেন্টেশন — Velanto",
+    "metaDescription": "Velanto কীভাবে কাজ করে — প্যাক তৈরি করা, পাঁচটি ফরম্যাট, খেলা এবং AI অ্যাসিস্ট্যান্টের জন্য API।",
     "secOverview": "সংক্ষিপ্ত বিবরণ",
     "secCreators": "নির্মাতা",
     "secPlayers": "খেলোয়াড়",

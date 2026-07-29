@@ -1526,6 +1526,8 @@
     "metaNewTitle": "نئی رائے — Velanto"
   },
   "docs": {
+    "metaTitle": "دستاویزات — Velanto",
+    "metaDescription": "Velanto کیسے کام کرتا ہے — پیک بنانا، پانچ فارمیٹس، کھیلنا، اور AI اسسٹنٹ کے لیے API۔",
     "secOverview": "جائزہ",
     "secCreators": "تخلیق کار",
     "secPlayers": "کھلاڑی",
