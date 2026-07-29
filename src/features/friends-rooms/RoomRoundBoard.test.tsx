@@ -61,6 +61,29 @@ describe("RoomRoundBoard", () => {
     expect(screen.getByText("Pizza")).toBeInTheDocument();
   });
 
+  it("mode voting renders the voting board", () => {
+    render(
+      <RoomRoundBoard
+        state={baseRoomState({
+          mode: "voting",
+          round: {
+            index: 0,
+            name: "",
+            items: [{ id: "i1", title: "Pizza", type: "text", value: "Pizza" }],
+            claims: {},
+            survivorItemId: null,
+            optionIds: ["i1"],
+            votes: {},
+            priorityUserId: "u1",
+          },
+        })}
+        currentUserId="u1"
+        actions={{ vote: vi.fn() } as never}
+      />,
+    );
+    expect(screen.getByText("Pizza")).toBeInTheDocument();
+  });
+
   it("mode null renders nothing (defensive — a round should never start with no mode)", () => {
     const { container } = render(
       <RoomRoundBoard

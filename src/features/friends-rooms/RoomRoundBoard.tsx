@@ -13,6 +13,7 @@ import type {
 import { RoomRound } from "./RoomRound";
 import { GuessWhoRoundBoard } from "./GuessWhoRoundBoard";
 import { TurnBasedCutBoard } from "./TurnBasedCutBoard";
+import { VotingBoard } from "./VotingBoard";
 
 /** Every round-scoped action a board might need, keyed by mode so each board
  * only destructures what its own mode uses. */
@@ -82,7 +83,14 @@ export function RoomRoundBoard({
           onCut={actions.cut}
         />
       );
-    // "voting" -> VotingBoard, wired in Task 21.
+    case "voting":
+      return (
+        <VotingBoard
+          state={state}
+          currentUserId={currentUserId}
+          onVote={actions.vote}
+        />
+      );
     // "shared_grid" -> SharedGridRankSubmission, wired in Task 23.
     // "relay" -> RelayInsertBoard, wired in Task 25.
     default:
