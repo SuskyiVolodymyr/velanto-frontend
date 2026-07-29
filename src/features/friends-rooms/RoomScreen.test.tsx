@@ -11,11 +11,18 @@ import type { User } from "@/src/shared/types/user";
 // The room hook and auth are the whole surface RoomScreen sits on; drive both
 // from fixtures so each phase can be rendered in isolation.
 const claim = vi.fn();
+const cut = vi.fn();
+const pick = vi.fn();
+const vote = vi.fn();
+const submitRanking = vi.fn();
+const placeItem = vi.fn();
 const ready = vi.fn();
 const next = vi.fn();
 const lock = vi.fn();
 const leave = vi.fn();
 const kick = vi.fn();
+const setMode = vi.fn();
+const guess = vi.fn();
 const push = vi.fn();
 
 let room: FriendsRoom;
@@ -65,6 +72,8 @@ function baseState(overrides: Partial<RoomState> = {}): RoomState {
     status: "lobby",
     phase: "lobby",
     locked: false,
+    mode: "claim",
+    availableModes: [{ mode: "claim", available: true, maxPlayers: 4 }],
     maxPlayers: 4,
     totalRounds: 3,
     roundIndex: 0,
@@ -75,6 +84,9 @@ function baseState(overrides: Partial<RoomState> = {}): RoomState {
     ],
     round: null,
     results: [],
+    guessing: null,
+    endgame: null,
+    myGuess: null,
     ...overrides,
   };
 }
@@ -89,13 +101,21 @@ function setRoom(
     state,
     connection,
     lastRejection,
+    lastModeRejection: null,
     kicked,
     claim,
+    cut,
+    pick,
+    vote,
+    submitRanking,
+    placeItem,
     ready,
     next,
     lock,
     leave,
     kick,
+    setMode,
+    guess,
   };
 }
 
@@ -446,6 +466,7 @@ describe("RoomScreen — results", () => {
       totalRounds: 2,
       results: [
         {
+          kind: "survivor",
           index: 0,
           name: "Semifinals",
           items: [textItem("a1", "Apple"), textItem("a2", "Banana")],
@@ -453,6 +474,7 @@ describe("RoomScreen — results", () => {
           survivorItemId: "a2",
         },
         {
+          kind: "survivor",
           index: 1,
           name: "Final",
           items: [textItem("b1", "Cherry"), textItem("b2", "Date")],
@@ -615,6 +637,7 @@ describe("RoomScreen — connection", () => {
         totalRounds: 1,
         results: [
           {
+            kind: "survivor",
             index: 0,
             name: "Round 1",
             items: [textItem("a1", "Apple"), textItem("a2", "Banana")],

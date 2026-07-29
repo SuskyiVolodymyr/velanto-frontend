@@ -8,8 +8,9 @@ import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { cn } from "@/src/shared/lib/cn";
 import { useFriendsRoom } from "./use-friends-room";
 import { RoomLobby } from "./RoomLobby";
-import { RoomRound } from "./RoomRound";
-import { RoomBetween } from "./RoomBetween";
+import { RoomRoundBoard } from "./RoomRoundBoard";
+import { RoomBetweenBoard } from "./RoomBetweenBoard";
+import { GuessingPhaseScreen } from "./GuessingPhaseScreen";
 import { RoomResults } from "./RoomResults";
 import { RoomLeaveButton } from "./RoomLeaveButton";
 import { RoomKicked } from "./RoomKicked";
@@ -31,13 +32,21 @@ export function RoomScreen({ roomId }: { roomId: string }) {
     state,
     connection,
     lastRejection,
+    lastModeRejection,
     kicked,
     claim,
+    cut,
+    pick,
+    vote,
+    submitRanking,
+    placeItem,
     ready,
     next,
     lock,
     leave,
     kick,
+    setMode,
+    guess,
   } = useFriendsRoom(roomId);
   const userId = user?.id ?? null;
 
@@ -148,18 +157,30 @@ export function RoomScreen({ roomId }: { roomId: string }) {
           onReady={ready}
           onLock={lock}
           onKick={kick}
+          onSetMode={setMode}
         />
       )}
       {state.phase === "round" && (
-        <RoomRound
+        <RoomRoundBoard
           state={state}
           currentUserId={userId}
-          lastRejection={lastRejection}
-          onClaim={claim}
+          actions={{
+            claim,
+            cut,
+            pick,
+            vote,
+            submitRanking,
+            placeItem,
+            lastRejection,
+            lastModeRejection,
+          }}
         />
       )}
       {state.phase === "between" && (
-        <RoomBetween state={state} currentUserId={userId} onNext={next} />
+        <RoomBetweenBoard state={state} currentUserId={userId} onNext={next} />
+      )}
+      {state.phase === "guessing" && (
+        <GuessingPhaseScreen state={state} onSubmit={guess} />
       )}
       {/* phase "finished" is handled above, before the connection checks, so a
           torn-down socket still shows results. */}
