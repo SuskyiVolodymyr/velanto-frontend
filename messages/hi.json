@@ -1870,7 +1870,7 @@
     },
     "leaderboard": {
       "winner": "विजेता",
-      "points": "{count} अंक"
+      "points": "{count, plural, one {# अंक} other {# अंक}}"
     }
   }
 }

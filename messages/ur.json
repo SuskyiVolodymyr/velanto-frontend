@@ -1870,7 +1870,7 @@
     },
     "leaderboard": {
       "winner": "فاتح",
-      "points": "{count} پوائنٹس"
+      "points": "{count, plural, one {# پوائنٹ} other {# پوائنٹس}}"
     }
   }
 }

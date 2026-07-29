@@ -1870,7 +1870,7 @@
     },
     "leaderboard": {
       "winner": "বিজয়ী",
-      "points": "{count} পয়েন্ট"
+      "points": "{count, plural, one {# পয়েন্ট} other {# পয়েন্ট}}"
     }
   }
 }

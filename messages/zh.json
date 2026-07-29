@@ -1870,7 +1870,7 @@
     },
     "leaderboard": {
       "winner": "获胜者",
-      "points": "{count} 分"
+      "points": "{count, plural, other {# 分}}"
     }
   }
 }

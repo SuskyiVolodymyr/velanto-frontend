@@ -1870,7 +1870,7 @@
     },
     "leaderboard": {
       "winner": "Победитель",
-      "points": "{count} очк."
+      "points": "{count, plural, one {# очко} few {# очка} many {# очков} other {# очка}}"
     }
   }
 }

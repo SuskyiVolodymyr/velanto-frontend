@@ -1870,7 +1870,7 @@
     },
     "leaderboard": {
       "winner": "الفائز",
-      "points": "{count} نقطة"
+      "points": "{count, plural, zero {# نقطة} one {نقطة واحدة} two {نقطتان} few {# نقاط} many {# نقطة} other {# نقطة}}"
     }
   }
 }
