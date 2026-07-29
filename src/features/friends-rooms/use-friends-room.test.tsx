@@ -377,3 +377,163 @@ describe("useFriendsRoom mode lifecycle + guess-who endgame", () => {
     });
   });
 });
+
+describe("useFriendsRoom per-mode round actions", () => {
+  it("cut/pick/vote/submitRanking/placeItem emit their commands", async () => {
+    const { result } = await connected();
+    act(() => result.current.cut("item-1"));
+    act(() => result.current.pick(["item-2"]));
+    act(() => result.current.vote("item-3"));
+    act(() => result.current.submitRanking(["item-1", "item-2"]));
+    act(() => result.current.placeItem("item-4", 1));
+    expect(fakeSocket.emit).toHaveBeenCalledWith("cut", { itemId: "item-1" });
+    expect(fakeSocket.emit).toHaveBeenCalledWith("pick", {
+      selection: ["item-2"],
+    });
+    expect(fakeSocket.emit).toHaveBeenCalledWith("vote", { optionId: "item-3" });
+    expect(fakeSocket.emit).toHaveBeenCalledWith("submitRanking", {
+      ranking: ["item-1", "item-2"],
+    });
+    expect(fakeSocket.emit).toHaveBeenCalledWith("placeItem", {
+      itemId: "item-4",
+      position: 1,
+    });
+  });
+
+  it("item.cut updates round.remainingItemIds, cuts, and turnUserId", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", {
+      ...snapshot([player("host")]),
+      mode: "turn_based_cut",
+      phase: "round",
+      round: {
+        index: 0,
+        name: "",
+        items: [],
+        claims: {},
+        survivorItemId: null,
+        remainingItemIds: ["a", "b", "c"],
+        turnUserId: "u1",
+        cuts: [],
+      },
+    });
+    serverEmit("item.cut", { userId: "u1", itemId: "a", turnUserId: "u2" });
+    expect(result.current.state?.round?.remainingItemIds).toEqual(["b", "c"]);
+    expect(result.current.state?.round?.cuts).toEqual([
+      { userId: "u1", itemId: "a" },
+    ]);
+    expect(result.current.state?.round?.turnUserId).toBe("u2");
+  });
+
+  it("pick.locked adds the userId to round.lockedIn without leaking the selection", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", {
+      ...snapshot([player("host")]),
+      mode: "guess_who",
+      phase: "round",
+      round: {
+        index: 0,
+        name: "",
+        items: [],
+        claims: {},
+        survivorItemId: null,
+        optionIds: ["a", "b"],
+        actionKind: "pick",
+        lockedIn: [],
+      },
+    });
+    serverEmit("pick.locked", { userId: "u1" });
+    expect(result.current.state?.round?.lockedIn).toEqual(["u1"]);
+  });
+
+  it("vote.cast updates round.votes (fully public, unlike pick.locked)", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", {
+      ...snapshot([player("host")]),
+      mode: "voting",
+      phase: "round",
+      round: {
+        index: 0,
+        name: "",
+        items: [],
+        claims: {},
+        survivorItemId: null,
+        optionIds: ["a", "b"],
+        votes: {},
+        priorityUserId: "u1",
+      },
+    });
+    serverEmit("vote.cast", { userId: "u2", optionId: "a" });
+    expect(result.current.state?.round?.votes).toEqual({ u2: "a" });
+  });
+
+  it("ranking.locked adds the userId to round.lockedIn", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", {
+      ...snapshot([player("host")]),
+      mode: "shared_grid",
+      phase: "round",
+      round: {
+        index: 0,
+        name: "",
+        items: [],
+        claims: {},
+        survivorItemId: null,
+        optionIds: ["a", "b"],
+        lockedIn: [],
+      },
+    });
+    serverEmit("ranking.locked", { userId: "u1" });
+    expect(result.current.state?.round?.lockedIn).toEqual(["u1"]);
+  });
+
+  it("item.placed updates relayPlaced, relayPlacements, relayCurrentItemId and turn", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", {
+      ...snapshot([player("host")]),
+      mode: "relay",
+      phase: "round",
+      round: {
+        index: 0,
+        name: "",
+        items: [],
+        claims: {},
+        survivorItemId: null,
+        relayOrder: ["a", "b"],
+        relayPlaced: [],
+        relayCurrentItemId: "a",
+        relayPlacements: [],
+      },
+    });
+    serverEmit("item.placed", {
+      userId: "u1",
+      itemId: "a",
+      position: 0,
+      turnUserId: "u2",
+    });
+    expect(result.current.state?.round?.relayPlaced).toEqual(["a"]);
+    expect(result.current.state?.round?.relayPlacements).toEqual([
+      { userId: "u1", itemId: "a" },
+    ]);
+    expect(result.current.state?.round?.relayCurrentItemId).toBe("b");
+  });
+
+  it("cutRejected/pickRejected/voteRejected/rankingRejected/placeRejected all store the actor's lastRejection without crashing on other modes' state", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", {
+      ...snapshot([player("host")]),
+      mode: "turn_based_cut",
+    });
+    serverEmit("cut.rejected", {
+      itemId: "a",
+      reason: "not_your_turn",
+      turnUserId: "u2",
+    });
+    expect(result.current.lastModeRejection).toEqual({
+      kind: "cut",
+      itemId: "a",
+      reason: "not_your_turn",
+      turnUserId: "u2",
+    });
+  });
+});

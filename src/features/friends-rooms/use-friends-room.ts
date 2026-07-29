@@ -10,11 +10,16 @@ import {
   ROOM_COMMANDS,
   ROOM_EVENTS,
   type ClaimRejection,
+  type CutRejection,
+  type GuessWhoRejection,
+  type RelayRejection,
   type RoomMode,
   type RoomPlayerState,
   type RoomState,
   type RoundState,
+  type SharedGridRejection,
   type SurvivorRoundResult,
+  type VoteRejection,
 } from "./room-types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
@@ -45,6 +50,21 @@ export interface FriendsRoom {
   setMode: (mode: RoomMode) => void;
   /** Guess-who endgame: submit a label -> real-player mapping. */
   guess: (mapping: Record<string, string>) => void;
+  cut: (itemId: string) => void;
+  pick: (selection: string[]) => void;
+  vote: (optionId: string) => void;
+  submitRanking: (ranking: string[]) => void;
+  placeItem: (itemId: string, position: number) => void;
+  /** The most recent per-mode action rejection (cut/pick/vote/ranking/place),
+   * kept distinct from `lastRejection` (Claim's own) so a mode never has to
+   * guess which shape a shared field holds. */
+  lastModeRejection:
+    | (CutRejection & { kind: "cut" })
+    | (GuessWhoRejection & { kind: "pick" })
+    | (VoteRejection & { kind: "vote" })
+    | (SharedGridRejection & { kind: "ranking" })
+    | (RelayRejection & { kind: "place" })
+    | null;
 }
 
 /**
@@ -69,6 +89,8 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
     null,
   );
   const [kicked, setKicked] = useState(false);
+  const [lastModeRejection, setLastModeRejection] =
+    useState<FriendsRoom["lastModeRejection"]>(null);
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
@@ -346,6 +368,133 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
         setState(final),
       );
       socket.on(ROOM_EVENTS.roomClosed, () => setConnection("closed"));
+
+      socket.on(
+        ROOM_EVENTS.itemCut,
+        ({
+          userId,
+          itemId,
+          turnUserId,
+        }: {
+          userId: string | null;
+          itemId: string | null;
+          turnUserId: string | null;
+        }) =>
+          setState((s) => {
+            if (!s || !s.round) return s;
+            const remainingItemIds = itemId
+              ? (s.round.remainingItemIds ?? []).filter((id) => id !== itemId)
+              : s.round.remainingItemIds;
+            const cuts =
+              userId && itemId
+                ? [...(s.round.cuts ?? []), { userId, itemId }]
+                : s.round.cuts;
+            return {
+              ...s,
+              round: { ...s.round, remainingItemIds, cuts, turnUserId },
+            };
+          }),
+      );
+      socket.on(ROOM_EVENTS.cutRejected, (rejection: CutRejection) =>
+        setLastModeRejection({ ...rejection, kind: "cut" }),
+      );
+
+      socket.on(ROOM_EVENTS.pickLocked, ({ userId }: { userId: string }) =>
+        setState((s) =>
+          s && s.round
+            ? {
+                ...s,
+                round: {
+                  ...s.round,
+                  lockedIn: s.round.lockedIn?.includes(userId)
+                    ? s.round.lockedIn
+                    : [...(s.round.lockedIn ?? []), userId],
+                },
+              }
+            : s,
+        ),
+      );
+      socket.on(ROOM_EVENTS.pickRejected, (rejection: GuessWhoRejection) =>
+        setLastModeRejection({ ...rejection, kind: "pick" }),
+      );
+
+      socket.on(
+        ROOM_EVENTS.voteCast,
+        ({ userId, optionId }: { userId: string; optionId: string }) =>
+          setState((s) =>
+            s && s.round
+              ? {
+                  ...s,
+                  round: {
+                    ...s.round,
+                    votes: { ...s.round.votes, [userId]: optionId },
+                  },
+                }
+              : s,
+          ),
+      );
+      socket.on(ROOM_EVENTS.voteRejected, (rejection: VoteRejection) =>
+        setLastModeRejection({ ...rejection, kind: "vote" }),
+      );
+
+      socket.on(ROOM_EVENTS.rankingLocked, ({ userId }: { userId: string }) =>
+        setState((s) =>
+          s && s.round
+            ? {
+                ...s,
+                round: {
+                  ...s.round,
+                  lockedIn: s.round.lockedIn?.includes(userId)
+                    ? s.round.lockedIn
+                    : [...(s.round.lockedIn ?? []), userId],
+                },
+              }
+            : s,
+        ),
+      );
+      socket.on(ROOM_EVENTS.rankingRejected, (rejection: SharedGridRejection) =>
+        setLastModeRejection({ ...rejection, kind: "ranking" }),
+      );
+
+      socket.on(
+        ROOM_EVENTS.itemPlaced,
+        ({
+          userId,
+          itemId,
+          turnUserId,
+        }: {
+          userId: string | null;
+          itemId: string | null;
+          position?: number;
+          turnUserId: string | null;
+        }) =>
+          setState((s) => {
+            if (!s || !s.round) return s;
+            const relayPlaced =
+              itemId && s.round.relayPlaced
+                ? [...s.round.relayPlaced, itemId]
+                : s.round.relayPlaced;
+            const relayPlacements =
+              userId && itemId
+                ? [...(s.round.relayPlacements ?? []), { userId, itemId }]
+                : s.round.relayPlacements;
+            const remainingOrder = s.round.relayOrder?.filter(
+              (id) => !(relayPlaced ?? []).includes(id),
+            );
+            return {
+              ...s,
+              round: {
+                ...s.round,
+                relayPlaced,
+                relayPlacements,
+                relayCurrentItemId: remainingOrder?.[0] ?? null,
+              },
+            };
+          }),
+      );
+      socket.on(ROOM_EVENTS.placeRejected, (rejection: RelayRejection) =>
+        setLastModeRejection({ ...rejection, kind: "place" }),
+      );
     });
 
     return () => {
@@ -381,6 +530,25 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
       (mapping: Record<string, string>) => send(ROOM_COMMANDS.guess, { mapping }),
       [send],
     ),
+    cut: useCallback((itemId: string) => send(ROOM_COMMANDS.cut, { itemId }), [send]),
+    pick: useCallback(
+      (selection: string[]) => send(ROOM_COMMANDS.pick, { selection }),
+      [send],
+    ),
+    vote: useCallback(
+      (optionId: string) => send(ROOM_COMMANDS.vote, { optionId }),
+      [send],
+    ),
+    submitRanking: useCallback(
+      (ranking: string[]) => send(ROOM_COMMANDS.submitRanking, { ranking }),
+      [send],
+    ),
+    placeItem: useCallback(
+      (itemId: string, position: number) =>
+        send(ROOM_COMMANDS.placeItem, { itemId, position }),
+      [send],
+    ),
+    lastModeRejection,
   };
 }
 
