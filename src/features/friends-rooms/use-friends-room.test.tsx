@@ -96,6 +96,8 @@ function snapshot(players: RoomPlayerState[], hostId = "host"): RoomState {
     status: "lobby",
     phase: "lobby",
     locked: false,
+    mode: "claim",
+    availableModes: [{ mode: "claim", available: true, maxPlayers: 4 }],
     maxPlayers: 4,
     totalRounds: 3,
     roundIndex: 0,
@@ -103,6 +105,9 @@ function snapshot(players: RoomPlayerState[], hostId = "host"): RoomState {
     players,
     round: null,
     results: [],
+    guessing: null,
+    endgame: null,
+    myGuess: null,
   };
 }
 
@@ -209,6 +214,7 @@ describe("useFriendsRoom round events", () => {
     // the name and items have to come from the round the client is holding.
     expect(result.current.state?.results).toEqual([
       {
+        kind: "survivor",
         index: 0,
         name: "One",
         items: [item("a"), item("b")],
@@ -224,6 +230,7 @@ describe("useFriendsRoom round events", () => {
   it("leaves existing results alone when it holds no matching round", async () => {
     const { result } = await connected();
     const existing = {
+      kind: "survivor" as const,
       index: 0,
       name: "One",
       items: [item("a"), item("b")],
@@ -281,6 +288,7 @@ describe("useFriendsRoom round events", () => {
       phase: "finished",
       results: [
         {
+          kind: "survivor",
           index: 0,
           name: "One",
           items: [item("a"), item("b")],
@@ -296,5 +304,76 @@ describe("useFriendsRoom round events", () => {
     // payload that dropped them would blank the results it was meant to show.
     expect(result.current.state?.players).toHaveLength(2);
     expect(result.current.state?.packTitle).toBe("Best Movies");
+  });
+});
+
+describe("useFriendsRoom mode lifecycle + guess-who endgame", () => {
+  it("setMode emits the setMode command with the chosen mode", async () => {
+    const { result } = await connected();
+    act(() => result.current.setMode("voting"));
+    expect(fakeSocket.emit).toHaveBeenCalledWith("setMode", { mode: "voting" });
+  });
+
+  it("room.modeChanged updates state.mode", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", { ...snapshot([player("host")]), mode: null });
+    serverEmit("room.modeChanged", { mode: "guess_who" });
+    expect(result.current.state?.mode).toBe("guess_who");
+  });
+
+  it("guessing.started sets phase to guessing and populates state.guessing", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", {
+      ...snapshot([player("host")]),
+      mode: "guess_who",
+    });
+    serverEmit("guessing.started", {
+      labels: ["P1", "P2", "P3"],
+      candidateUserIds: ["u1", "u2", "u3"],
+      deadlineAt: 1_700_000_090_000,
+    });
+    expect(result.current.state?.phase).toBe("guessing");
+    expect(result.current.state?.guessing?.labels).toEqual(["P1", "P2", "P3"]);
+    expect(result.current.state?.guessing?.submitted).toEqual([]);
+  });
+
+  it("guess.submitted appends the submitter without leaking their mapping", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", {
+      ...snapshot([player("host")]),
+      mode: "guess_who",
+      phase: "guessing",
+      guessing: { labels: ["P1"], candidateUserIds: ["u1"], submitted: [] },
+    });
+    serverEmit("guess.submitted", { userId: "u1" });
+    expect(result.current.state?.guessing?.submitted).toEqual(["u1"]);
+  });
+
+  it("identity.revealed sets state.endgame and state.myGuess from the per-player payload", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", {
+      ...snapshot([player("host")]),
+      mode: "guess_who",
+      phase: "guessing",
+      guessing: { labels: ["P1", "P2"], candidateUserIds: ["u1", "u2"], submitted: [] },
+    });
+    serverEmit("identity.revealed", {
+      mapping: { P1: "u1", P2: "u2" },
+      yourGuess: { P1: "u2", P2: "u1" },
+    });
+    expect(result.current.state?.phase).toBe("finished");
+    expect(result.current.state?.endgame).toEqual({
+      kind: "identity_reveal",
+      mapping: { P1: "u1", P2: "u2" },
+    });
+    expect(result.current.state?.myGuess).toEqual({ P1: "u2", P2: "u1" });
+  });
+
+  it("guess emits the guess command with the submitted mapping", async () => {
+    const { result } = await connected();
+    act(() => result.current.guess({ P1: "u2", P2: "u1" }));
+    expect(fakeSocket.emit).toHaveBeenCalledWith("guess", {
+      mapping: { P1: "u2", P2: "u1" },
+    });
   });
 });

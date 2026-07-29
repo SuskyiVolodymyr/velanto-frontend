@@ -10,10 +10,11 @@ import {
   ROOM_COMMANDS,
   ROOM_EVENTS,
   type ClaimRejection,
-  type ResolvedRoundState,
+  type RoomMode,
   type RoomPlayerState,
   type RoomState,
   type RoundState,
+  type SurvivorRoundResult,
 } from "./room-types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
@@ -40,6 +41,10 @@ export interface FriendsRoom {
   /** Host-only: remove another player by id. The server drops their socket and
    *  broadcasts `player.left { seatKept: false }` to everyone else. */
   kick: (userId: string) => void;
+  /** Host-only: choose (or change, in the lobby) the room's mode. */
+  setMode: (mode: RoomMode) => void;
+  /** Guess-who endgame: submit a label -> real-player mapping. */
+  guess: (mapping: Record<string, string>) => void;
 }
 
 /**
@@ -142,6 +147,71 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
         setState((s) => (s ? { ...s, locked } : s)),
       );
 
+      socket.on(ROOM_EVENTS.modeChanged, ({ mode }: { mode: RoomMode }) =>
+        setState((s) => (s ? { ...s, mode } : s)),
+      );
+
+      socket.on(
+        ROOM_EVENTS.guessingStarted,
+        ({
+          labels,
+          candidateUserIds,
+          deadlineAt,
+        }: {
+          labels: string[];
+          candidateUserIds: string[];
+          deadlineAt: number;
+        }) =>
+          setState((s) =>
+            s
+              ? {
+                  ...s,
+                  phase: "guessing",
+                  autoNextAt: deadlineAt,
+                  guessing: { labels, candidateUserIds, submitted: [] },
+                }
+              : s,
+          ),
+      );
+
+      socket.on(ROOM_EVENTS.guessSubmitted, ({ userId }: { userId: string }) =>
+        setState((s) =>
+          s && s.guessing
+            ? {
+                ...s,
+                guessing: {
+                  ...s.guessing,
+                  submitted: s.guessing.submitted.includes(userId)
+                    ? s.guessing.submitted
+                    : [...s.guessing.submitted, userId],
+                },
+              }
+            : s,
+        ),
+      );
+
+      socket.on(
+        ROOM_EVENTS.identityRevealed,
+        ({
+          mapping,
+          yourGuess,
+        }: {
+          mapping: Record<string, string>;
+          yourGuess: Record<string, string> | null;
+        }) =>
+          setState((s) =>
+            s
+              ? {
+                  ...s,
+                  phase: "finished",
+                  autoNextAt: null,
+                  endgame: { kind: "identity_reveal", mapping },
+                  myGuess: yourGuess,
+                }
+              : s,
+          ),
+      );
+
       // `totalRounds` rides this event because the room's only full snapshot
       // arrives when the socket connects — in the LOBBY, before the server has
       // drawn the plan, where it is 0. Without folding it in here the round
@@ -239,9 +309,10 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
             // below would DELETE a result the snapshot already carried, since
             // "filter then append nothing" is a removal, not a replacement.
             const round = s.round;
-            const replacement: ResolvedRoundState | null =
+            const replacement: SurvivorRoundResult | null =
               round && round.index === resolved.index
                 ? {
+                    kind: "survivor",
                     index: resolved.index,
                     name: round.name,
                     items: round.items,
@@ -302,6 +373,14 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
     lock: useCallback((locked) => send(ROOM_COMMANDS.lock, { locked }), [send]),
     leave: useCallback(() => send(ROOM_COMMANDS.leave), [send]),
     kick: useCallback((userId) => send(ROOM_COMMANDS.kick, { userId }), [send]),
+    setMode: useCallback(
+      (mode: RoomMode) => send(ROOM_COMMANDS.setMode, { mode }),
+      [send],
+    ),
+    guess: useCallback(
+      (mapping: Record<string, string>) => send(ROOM_COMMANDS.guess, { mapping }),
+      [send],
+    ),
   };
 }
 
