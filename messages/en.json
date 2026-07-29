@@ -1786,7 +1786,7 @@
     },
     "presence": {
       "returnTo": "Return to {title}",
-      "label": "{count} / {max} in room"
+      "playerCount": "{count} in room"
     },
     "kick": {
       "action": "Remove {name} from the room",
