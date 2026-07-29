@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getPackServer } from "@/src/shared/lib/get-pack-server";
 import { getResultsServer } from "@/src/shared/lib/get-results-server";
+import { getAvailableModesServer } from "@/src/shared/lib/get-available-modes-server";
 import { PackDetailScreen } from "@/src/features/pack/PackDetailScreen";
 import { PackDetailFallback } from "@/src/features/pack/PackDetailFallback";
 import { buildOpenGraph } from "@/src/shared/lib/open-graph";
@@ -46,7 +47,10 @@ export default async function PackPage({
   const { id } = await params;
   const pack = await getPackServer(id);
   if (!pack) return <PackDetailFallback packId={id} />;
-  const results = await getResultsServer(id);
+  const [results, availableModes] = await Promise.all([
+    getResultsServer(id),
+    getAvailableModesServer(id),
+  ]);
 
   // CreativeWork, not Quiz/Game: Quiz means a knowledge test (packs are
   // preference/elimination games, not assessments), and Game isn't a
@@ -75,7 +79,11 @@ export default async function PackPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }}
       />
-      <PackDetailScreen pack={pack} results={results} />
+      <PackDetailScreen
+        pack={pack}
+        results={results}
+        availableModes={availableModes}
+      />
     </>
   );
 }

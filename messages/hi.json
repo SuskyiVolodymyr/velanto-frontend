@@ -296,7 +296,8 @@
     "logInToFollow": "फ़ॉलो करने के लिए लॉग इन करें",
     "logInToComment": "टिप्पणी करने के लिए लॉग इन करें",
     "logInToPlay": "खेलने के लिए लॉग इन करें",
-    "logInToCreateTokens": "API टोकन बनाने के लिए लॉग इन करें"
+    "logInToCreateTokens": "API टोकन बनाने के लिए लॉग इन करें",
+    "logInToReport": "रिपोर्ट करने के लिए लॉग इन करें"
   },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
@@ -1081,7 +1082,25 @@
     "submittingPack": "भेजा जा रहा है…",
     "submitPackError": "यह पैक सबमिट नहीं हो सका। कृपया पुनः प्रयास करें।",
     "rejectionReasonHeading": "इसे अस्वीकार क्यों किया गया",
-    "randomPoolLabel": "यादृच्छिक पूल"
+    "randomPoolLabel": "यादृच्छिक पूल",
+    "acrossPlays": "{count, plural, one {# बार खेला गया} other {# बार खेला गया}}",
+    "report": {
+      "button": "रिपोर्ट करें",
+      "buttonReported": "रिपोर्ट किया गया",
+      "title": "इस पैक की रिपोर्ट करें",
+      "reasonLabel": "कारण",
+      "reasonPlaceholder": "एक कारण चुनें",
+      "reasons": {
+        "inappropriate": "अनुचित या आपत्तिजनक सामग्री",
+        "copyright": "कॉपीराइट या स्वामित्व की समस्या",
+        "spam": "स्पैम या भ्रामक",
+        "other": "कुछ और"
+      },
+      "commentLabel": "अतिरिक्त विवरण (वैकल्पिक)",
+      "commentPlaceholder": "जो कुछ भी मॉडरेटर को इसकी समीक्षा करने में मदद करे",
+      "submit": "रिपोर्ट सबमिट करें",
+      "error": "रिपोर्ट सबमिट नहीं हो सकी। फिर से कोशिश करें।"
+    }
   },
   "share": {
     "trigger": "शेयर",
@@ -1677,6 +1696,10 @@
       "hostIsChoosing": "होस्ट एक गेम मोड चुन रहा है…",
       "playerRange": "{min}-{max} खिलाड़ी"
     },
+    "packModes": {
+      "heading": "यह पैक जिन मोड को सपोर्ट करता है",
+      "caption": "होस्ट लॉबी में मोड चुनता है। धूसर मोड के लिए अलग रूम आकार चाहिए।"
+    },
     "modes": {
       "claim": {
         "name": "क्लेम",
@@ -1706,9 +1729,9 @@
     "entry": {
       "createRoom": "रूम बनाएँ",
       "joinByCode": "कोड से जुड़ें",
+      "orWithFriends": "या दोस्तों के साथ",
       "signInToPlay": "दोस्तों के साथ खेलने के लिए लॉग इन करें",
       "createError": "रूम नहीं बन सका। फिर से कोशिश करें।",
-      "joinTitle": "रूम में शामिल हों",
       "codeLabel": "रूम कोड",
       "codePlaceholder": "कोड दर्ज करें",
       "join": "शामिल हों",

@@ -4,6 +4,7 @@ import { describe, it, expect, vi } from "vitest";
 import { PackDetailScreen } from "./PackDetailScreen";
 import type { Pack } from "@/src/shared/types/pack";
 import type { PackResults } from "@/src/shared/types/play-results";
+import type { AvailableMode } from "@/src/features/friends-rooms/room-types";
 
 vi.mock("@/src/features/pack/VoteButtons", () => ({
   VoteButtons: () => <div>VoteButtons</div>,
@@ -56,6 +57,13 @@ vi.mock("@/src/features/friends-rooms/FriendsRoomEntry", () => ({
     <button type="button">{`Create room (${packId})`}</button>
   ),
 }));
+// ReportPackDialog is another auth-gated client island (own tests in
+// ReportPackDialog.test.tsx). Stub it the same way.
+vi.mock("@/src/features/pack/ReportPackDialog", () => ({
+  ReportPackDialog: ({ packId }: { packId: string }) => (
+    <button type="button">{`Report (${packId})`}</button>
+  ),
+}));
 
 const BASE_PACK: Pack = {
   id: "p1",
@@ -96,6 +104,16 @@ const RESULTS: PackResults = {
   rounds: [],
 };
 
+const AVAILABLE_MODES: AvailableMode[] = [
+  { mode: "claim", available: true, maxPlayers: 4 },
+  {
+    mode: "guess_who",
+    available: false,
+    maxPlayers: 0,
+    reason: "Needs at least 5 playable rounds",
+  },
+];
+
 describe("PackDetailScreen", () => {
   // ROOMS_DORMANT flipped to false in Task 31 — this locks in "the room
   // entry renders now that rooms are live" as an explicit, checked contract
@@ -103,14 +121,14 @@ describe("PackDetailScreen", () => {
   // tests in FriendsRoomEntry.test.tsx; this screen only needs to prove it
   // mounts the component at all, wired to the right pack).
   it("renders the room entry now that rooms are live", () => {
-    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
+    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} availableModes={AVAILABLE_MODES} />);
     expect(
       screen.getByRole("button", { name: /create room/i }),
     ).toBeInTheDocument();
   });
 
   it("renders the pack's title, description, and a Play link", () => {
-    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
+    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} availableModes={AVAILABLE_MODES} />);
     expect(screen.getByText("Best Anime Openings")).toBeInTheDocument();
     expect(
       screen.getByText("Pick your favorite each round."),
@@ -122,7 +140,7 @@ describe("PackDetailScreen", () => {
   });
 
   it("lists each round as a chip, falling back to the group name when unnamed", () => {
-    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
+    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} availableModes={AVAILABLE_MODES} />);
     expect(screen.getByText("2016")).toBeInTheDocument();
     expect(screen.getByText("1 item")).toBeInTheDocument();
     // The full item titles are no longer listed on the pack page.
@@ -140,7 +158,7 @@ describe("PackDetailScreen", () => {
         },
       ],
     };
-    render(<PackDetailScreen pack={named} results={RESULTS} />);
+    render(<PackDetailScreen pack={named} results={RESULTS} availableModes={AVAILABLE_MODES} />);
     expect(screen.getByText("Semifinals")).toBeInTheDocument();
     // The round name replaces the group-name fallback.
     expect(screen.queryByText("2016")).not.toBeInTheDocument();
@@ -167,7 +185,7 @@ describe("PackDetailScreen", () => {
         },
       ],
     };
-    render(<PackDetailScreen pack={nxnPack} results={RESULTS} />);
+    render(<PackDetailScreen pack={nxnPack} results={RESULTS} availableModes={AVAILABLE_MODES} />);
     // A multi-slot (versus) round with no name falls back to "Round N".
     expect(screen.getByText("Round 1")).toBeInTheDocument();
     // The raw group/category names and item titles are not listed.
@@ -194,6 +212,7 @@ describe("PackDetailScreen", () => {
             },
           ],
         }}
+        availableModes={AVAILABLE_MODES}
       />,
     );
 
@@ -220,6 +239,7 @@ describe("PackDetailScreen", () => {
             },
           ],
         }}
+        availableModes={AVAILABLE_MODES}
       />,
     );
 
@@ -250,6 +270,7 @@ describe("PackDetailScreen", () => {
             },
           ],
         }}
+        availableModes={AVAILABLE_MODES}
       />,
     );
 
@@ -270,6 +291,7 @@ describe("PackDetailScreen", () => {
           rounds: [],
           podium: [],
         }}
+        availableModes={AVAILABLE_MODES}
       />,
     );
 
@@ -292,6 +314,7 @@ describe("PackDetailScreen", () => {
           ],
         }}
         results={RESULTS}
+        availableModes={AVAILABLE_MODES}
       />,
     );
 
@@ -299,12 +322,12 @@ describe("PackDetailScreen", () => {
   });
 
   it("wires the owner/moderator actions to this pack", () => {
-    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
+    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} availableModes={AVAILABLE_MODES} />);
     expect(screen.getByText("PackOwnerActions:p1:u1")).toBeInTheDocument();
   });
 
   it("shows a Share button for an approved pack", () => {
-    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
+    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} availableModes={AVAILABLE_MODES} />);
     expect(screen.getByRole("button", { name: "Share" })).toBeInTheDocument();
   });
 
@@ -313,6 +336,7 @@ describe("PackDetailScreen", () => {
       <PackDetailScreen
         pack={{ ...BASE_PACK, status: "pending" }}
         results={RESULTS}
+        availableModes={AVAILABLE_MODES}
       />,
     );
     expect(
@@ -321,7 +345,7 @@ describe("PackDetailScreen", () => {
   });
 
   it("shows the Play button for a normal pack", () => {
-    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
+    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} availableModes={AVAILABLE_MODES} />);
 
     expect(screen.getByRole("link", { name: "Play now" })).toBeInTheDocument();
   });

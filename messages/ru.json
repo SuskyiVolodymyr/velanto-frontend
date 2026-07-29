@@ -296,7 +296,8 @@
     "logInToFollow": "Войдите, чтобы подписаться",
     "logInToComment": "Войдите, чтобы комментировать",
     "logInToPlay": "Войдите, чтобы играть",
-    "logInToCreateTokens": "Войдите, чтобы создавать токены API"
+    "logInToCreateTokens": "Войдите, чтобы создавать токены API",
+    "logInToReport": "Войдите, чтобы пожаловаться"
   },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
@@ -1081,7 +1082,25 @@
     "submittingPack": "Отправка…",
     "submitPackError": "Не удалось отправить пак. Попробуйте ещё раз.",
     "rejectionReasonHeading": "Почему пак отклонён",
-    "randomPoolLabel": "Случайный пул"
+    "randomPoolLabel": "Случайный пул",
+    "acrossPlays": "{count, plural, one {# игра} few {# игры} many {# игр} other {# игры}} всего",
+    "report": {
+      "button": "Пожаловаться",
+      "buttonReported": "Жалоба отправлена",
+      "title": "Пожаловаться на этот пак",
+      "reasonLabel": "Причина",
+      "reasonPlaceholder": "Выберите причину",
+      "reasons": {
+        "inappropriate": "Неприемлемый или оскорбительный контент",
+        "copyright": "Проблема с авторскими правами или владением",
+        "spam": "Спам или вводит в заблуждение",
+        "other": "Что-то другое"
+      },
+      "commentLabel": "Дополнительные детали (необязательно)",
+      "commentPlaceholder": "Всё, что поможет модератору разобраться",
+      "submit": "Отправить жалобу",
+      "error": "Не удалось отправить жалобу. Попробуйте ещё раз."
+    }
   },
   "share": {
     "trigger": "Поделиться",
@@ -1677,6 +1696,10 @@
       "hostIsChoosing": "Хост выбирает режим игры…",
       "playerRange": "{min}–{max} игроков"
     },
+    "packModes": {
+      "heading": "Режимы, доступные в этом паке",
+      "caption": "Хост выбирает режим в лобби. Затемнённые режимы требуют другого размера комнаты."
+    },
     "modes": {
       "claim": {
         "name": "Захват",
@@ -1706,9 +1729,9 @@
     "entry": {
       "createRoom": "Создать комнату",
       "joinByCode": "Войти по коду",
+      "orWithFriends": "Или с друзьями",
       "signInToPlay": "Войдите, чтобы играть с друзьями",
       "createError": "Не удалось создать комнату. Попробуйте ещё раз.",
-      "joinTitle": "Присоединиться к комнате",
       "codeLabel": "Код комнаты",
       "codePlaceholder": "Введите код",
       "join": "Войти",

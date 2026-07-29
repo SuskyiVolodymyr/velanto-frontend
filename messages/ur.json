@@ -296,7 +296,8 @@
     "logInToFollow": "فالو کرنے کے لیے لاگ ان کریں",
     "logInToComment": "تبصرہ کرنے کے لیے لاگ ان کریں",
     "logInToPlay": "کھیلنے کے لیے لاگ ان کریں",
-    "logInToCreateTokens": "API ٹوکنز بنانے کے لیے لاگ ان کریں"
+    "logInToCreateTokens": "API ٹوکنز بنانے کے لیے لاگ ان کریں",
+    "logInToReport": "رپورٹ کرنے کے لیے لاگ ان کریں"
   },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
@@ -1081,7 +1082,25 @@
     "submittingPack": "بھیجا جا رہا ہے…",
     "submitPackError": "یہ پیک بھیجا نہیں جا سکا۔ دوبارہ کوشش کریں۔",
     "rejectionReasonHeading": "اسے کیوں مسترد کیا گیا",
-    "randomPoolLabel": "بے ترتیب پول"
+    "randomPoolLabel": "بے ترتیب پول",
+    "acrossPlays": "{count, plural, one {# بار کھیلا گیا} other {# بار کھیلا گیا}}",
+    "report": {
+      "button": "رپورٹ کریں",
+      "buttonReported": "رپورٹ کر دی گئی",
+      "title": "اس پیک کی رپورٹ کریں",
+      "reasonLabel": "وجہ",
+      "reasonPlaceholder": "ایک وجہ منتخب کریں",
+      "reasons": {
+        "inappropriate": "نامناسب یا قابل اعتراض مواد",
+        "copyright": "کاپی رائٹ یا ملکیت کا مسئلہ",
+        "spam": "اسپیم یا گمراہ کن",
+        "other": "کچھ اور"
+      },
+      "commentLabel": "اضافی تفصیلات (اختیاری)",
+      "commentPlaceholder": "کچھ بھی جو ماڈریٹر کو اس کا جائزہ لینے میں مدد دے",
+      "submit": "رپورٹ جمع کرائیں",
+      "error": "رپورٹ جمع نہیں ہو سکی۔ دوبارہ کوشش کریں۔"
+    }
   },
   "share": {
     "trigger": "شیئر",
@@ -1677,6 +1696,10 @@
       "hostIsChoosing": "میزبان گیم موڈ منتخب کر رہا ہے…",
       "playerRange": "{min}-{max} کھلاڑی"
     },
+    "packModes": {
+      "heading": "موڈز جو یہ پیک سپورٹ کرتا ہے",
+      "caption": "میزبان لابی میں موڈ منتخب کرتا ہے۔ دھندلے موڈز کو مختلف روم سائز درکار ہے۔"
+    },
     "modes": {
       "claim": {
         "name": "کلیم",
@@ -1706,9 +1729,9 @@
     "entry": {
       "createRoom": "روم بنائیں",
       "joinByCode": "کوڈ سے شامل ہوں",
+      "orWithFriends": "یا دوستوں کے ساتھ",
       "signInToPlay": "دوستوں کے ساتھ کھیلنے کے لیے لاگ ان کریں",
       "createError": "روم نہیں بن سکا۔ دوبارہ کوشش کریں۔",
-      "joinTitle": "روم میں شامل ہوں",
       "codeLabel": "روم کوڈ",
       "codePlaceholder": "کوڈ درج کریں",
       "join": "شامل ہوں",

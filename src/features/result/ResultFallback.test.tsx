@@ -51,6 +51,7 @@ describe("ResultFallback", () => {
       status: "ready",
       pack: PACK,
       results: RESULTS,
+      availableModes: null,
     });
     render(<ResultFallback packId="p1" />);
     expect(screen.getByText("ResultScreen")).toBeInTheDocument();

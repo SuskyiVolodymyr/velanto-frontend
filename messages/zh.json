@@ -296,7 +296,8 @@
     "logInToFollow": "登录后关注",
     "logInToComment": "登录后评论",
     "logInToPlay": "登录后游玩",
-    "logInToCreateTokens": "登录后可创建 API 令牌"
+    "logInToCreateTokens": "登录后可创建 API 令牌",
+    "logInToReport": "登录后举报"
   },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
@@ -1081,7 +1082,25 @@
     "submittingPack": "提交中…",
     "submitPackError": "无法提交该合集，请重试。",
     "rejectionReasonHeading": "被拒绝的原因",
-    "randomPoolLabel": "随机池"
+    "randomPoolLabel": "随机池",
+    "acrossPlays": "{count, plural, other {共 # 次游玩}}",
+    "report": {
+      "button": "举报",
+      "buttonReported": "已举报",
+      "title": "举报此题包",
+      "reasonLabel": "原因",
+      "reasonPlaceholder": "选择一个原因",
+      "reasons": {
+        "inappropriate": "不当或冒犯性内容",
+        "copyright": "版权或所有权问题",
+        "spam": "垃圾内容或误导性信息",
+        "other": "其他原因"
+      },
+      "commentLabel": "补充说明（可选）",
+      "commentPlaceholder": "任何有助于版主审核的信息",
+      "submit": "提交举报",
+      "error": "举报提交失败，请重试。"
+    }
   },
   "share": {
     "trigger": "分享",
@@ -1677,6 +1696,10 @@
       "hostIsChoosing": "房主正在选择游戏模式…",
       "playerRange": "{min}-{max} 名玩家"
     },
+    "packModes": {
+      "heading": "此题包支持的模式",
+      "caption": "房主在大厅中选择模式。灰色模式需要不同的房间人数。"
+    },
     "modes": {
       "claim": {
         "name": "认领",
@@ -1706,9 +1729,9 @@
     "entry": {
       "createRoom": "创建房间",
       "joinByCode": "输入代码加入",
+      "orWithFriends": "或与好友一起",
       "signInToPlay": "登录后与好友一起游玩",
       "createError": "无法创建房间，请重试。",
-      "joinTitle": "加入房间",
       "codeLabel": "房间代码",
       "codePlaceholder": "输入代码",
       "join": "加入",

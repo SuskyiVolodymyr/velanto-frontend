@@ -296,7 +296,8 @@
     "logInToFollow": "ফলো করতে লগ ইন করুন",
     "logInToComment": "মন্তব্য করতে লগ ইন করুন",
     "logInToPlay": "খেলতে লগ ইন করুন",
-    "logInToCreateTokens": "API টোকেন তৈরি করতে লগ ইন করুন"
+    "logInToCreateTokens": "API টোকেন তৈরি করতে লগ ইন করুন",
+    "logInToReport": "রিপোর্ট করতে লগ ইন করুন"
   },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
@@ -1081,7 +1082,25 @@
     "submittingPack": "পাঠানো হচ্ছে…",
     "submitPackError": "এই প্যাকটি পাঠানো যায়নি। আবার চেষ্টা করুন।",
     "rejectionReasonHeading": "কেন এটি প্রত্যাখ্যান করা হয়েছে",
-    "randomPoolLabel": "এলোমেলো পুল"
+    "randomPoolLabel": "এলোমেলো পুল",
+    "acrossPlays": "{count, plural, one {# বার খেলা হয়েছে} other {# বার খেলা হয়েছে}}",
+    "report": {
+      "button": "রিপোর্ট",
+      "buttonReported": "রিপোর্ট করা হয়েছে",
+      "title": "এই প্যাক রিপোর্ট করুন",
+      "reasonLabel": "কারণ",
+      "reasonPlaceholder": "একটি কারণ বেছে নিন",
+      "reasons": {
+        "inappropriate": "অনুপযুক্ত বা আপত্তিকর কনটেন্ট",
+        "copyright": "কপিরাইট বা মালিকানা সংক্রান্ত সমস্যা",
+        "spam": "স্প্যাম বা বিভ্রান্তিকর",
+        "other": "অন্য কিছু"
+      },
+      "commentLabel": "অতিরিক্ত বিবরণ (ঐচ্ছিক)",
+      "commentPlaceholder": "যা কিছু মডারেটরকে এটি পর্যালোচনা করতে সাহায্য করবে",
+      "submit": "রিপোর্ট জমা দিন",
+      "error": "রিপোর্ট জমা দেওয়া যায়নি। আবার চেষ্টা করুন।"
+    }
   },
   "share": {
     "trigger": "শেয়ার",
@@ -1677,6 +1696,10 @@
       "hostIsChoosing": "হোস্ট একটি গেম মোড বেছে নিচ্ছেন…",
       "playerRange": "{min}-{max} জন খেলোয়াড়"
     },
+    "packModes": {
+      "heading": "এই প্যাক যেসব মোড সমর্থন করে",
+      "caption": "হোস্ট লবিতে মোড বেছে নেয়। ধূসর করা মোডগুলোর জন্য ভিন্ন রুম আকার প্রয়োজন।"
+    },
     "modes": {
       "claim": {
         "name": "ক্লেইম",
@@ -1706,9 +1729,9 @@
     "entry": {
       "createRoom": "রুম তৈরি করুন",
       "joinByCode": "কোড দিয়ে যোগ দিন",
+      "orWithFriends": "অথবা বন্ধুদের সাথে",
       "signInToPlay": "বন্ধুদের সাথে খেলতে লগ ইন করুন",
       "createError": "রুম তৈরি করা যায়নি। আবার চেষ্টা করুন।",
-      "joinTitle": "একটি রুমে যোগ দিন",
       "codeLabel": "রুম কোড",
       "codePlaceholder": "কোড লিখুন",
       "join": "যোগ দিন",

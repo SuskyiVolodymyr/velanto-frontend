@@ -1,5 +1,5 @@
 import { apiClient } from "@/src/shared/lib/api-client";
-import type { MyRoomSummary, RoomState } from "./room-types";
+import type { AvailableMode, MyRoomSummary, RoomState } from "./room-types";
 
 /**
  * REST surface for friends rooms. The realtime game runs over the socket (see
@@ -31,4 +31,14 @@ export const friendsRoomsClient = {
    * persistent presence indicator.
    */
   mine: () => apiClient.get<MyRoomSummary[]>("/friends-rooms/mine"),
+
+  /**
+   * Every mode a pack's format offers, with that pack's feasibility folded in —
+   * the pack detail page's mode preview, callable with no room yet. Public
+   * (mirrors GET /packs/:id's own visibility), so no auth is required, but the
+   * client-side pack-fallback path calls it authenticated same as everything
+   * else there. Backed by PackModesController in the friends-rooms module.
+   */
+  availableModes: (packId: string) =>
+    apiClient.get<AvailableMode[]>(`/packs/${packId}/modes`),
 };

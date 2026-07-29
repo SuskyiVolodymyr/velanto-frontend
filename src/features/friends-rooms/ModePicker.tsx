@@ -1,37 +1,16 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import {
-  Check,
-  Circle,
-  LayoutGrid,
-  Repeat,
-  Scissors,
-  Swords,
-  Users,
-  Vote,
-  type LucideIcon,
-} from "lucide-react";
+import { Check, Circle } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
 import { MODE_NAME_KEY, MODE_BLURB_KEY, MODE_ICON } from "./room-mode-copy";
+import { ICON_BY_NAME } from "./mode-icons";
 import {
   ROOM_MODE_BOUNDS,
   type AvailableMode,
   type RoomMode,
 } from "./room-types";
-
-/** Resolves room-mode-copy's icon NAMES to components. The map there stays a
- * plain data module with no React dependency, so the binding happens here —
- * the one place that renders them. */
-const ICON_BY_NAME: Record<string, LucideIcon> = {
-  Swords,
-  Users,
-  Scissors,
-  Vote,
-  LayoutGrid,
-  Repeat,
-};
 
 interface ModePickerProps {
   availableModes: AvailableMode[];

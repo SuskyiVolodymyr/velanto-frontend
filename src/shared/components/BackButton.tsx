@@ -36,16 +36,25 @@ export interface BackButtonProps {
 export function BackButton({ href, label, className }: BackButtonProps) {
   const t = useTranslations("pages");
 
+  const text = label ?? t("back");
+
   return (
     <Link
       href={href}
+      // aria-label carries the accessible name at every width — an
+      // aria-label always wins accessible-name computation over visible
+      // text, so collapsing the label to icon-only below 481px (a crowded
+      // sticky header's narrowest controls) never leaves the link unnamed.
+      aria-label={text}
       className={cn(
-        "inline-flex items-center gap-1.5 text-sm text-foreground-secondary transition-colors hover:text-foreground",
+        "inline-flex h-[38px] items-center gap-2 rounded-[11px] border border-border bg-surface-card ps-[10px] pe-[14px] text-[13px] font-semibold text-foreground-secondary transition-colors hover:border-border-strong hover:text-foreground",
         className,
       )}
     >
       <ArrowLeft size={16} aria-hidden />
-      {label ?? t("back")}
+      <span aria-hidden className="hidden min-[481px]:inline">
+        {text}
+      </span>
     </Link>
   );
 }

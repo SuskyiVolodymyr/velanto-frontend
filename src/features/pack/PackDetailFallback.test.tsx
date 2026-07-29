@@ -42,6 +42,10 @@ vi.mock("@/src/features/pack/PackRejectionReason", () => ({
 vi.mock("@/src/features/friends-rooms/FriendsRoomEntry", () => ({
   FriendsRoomEntry: () => <div>FriendsRoomEntry</div>,
 }));
+// ReportPackDialog is another auth-gated client island — stub the same way.
+vi.mock("@/src/features/pack/ReportPackDialog", () => ({
+  ReportPackDialog: () => <div>ReportPackDialog</div>,
+}));
 
 const mockedUsePackFallback = vi.mocked(usePackFallback);
 const mockedNotFound = vi.mocked(notFound);
@@ -82,6 +86,7 @@ describe("PackDetailFallback", () => {
       status: "ready",
       pack: PACK,
       results: RESULTS,
+      availableModes: [],
     });
     render(<PackDetailFallback packId="p1" />);
     expect(screen.getByText("Pending Pack")).toBeInTheDocument();

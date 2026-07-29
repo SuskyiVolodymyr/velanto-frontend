@@ -14,6 +14,7 @@ export function ShareButton({
   resolvePlayId,
   label,
   variant = "secondary",
+  compact = false,
   className,
 }: {
   path: string;
@@ -31,6 +32,14 @@ export function ShareButton({
    * primary cyan treatment; every other caller keeps the original secondary
    * look by omitting this). */
   variant?: ButtonVariant;
+  /**
+   * Collapse the visible label to icon-only below 481px, keeping the full
+   * label as the button's aria-label so it never loses its accessible name.
+   * Opt-in — a caller like Pack Detail's crowded sticky header (Back/Share/
+   * Report/Vote all fighting for the same row) wants this; a standalone Share
+   * CTA elsewhere doesn't, so the default keeps the label always visible.
+   */
+  compact?: boolean;
   className?: string;
 }) {
   const t = useTranslations("share");
@@ -105,10 +114,17 @@ export function ShareButton({
         className={className}
         aria-haspopup="dialog"
         aria-expanded={open}
+        aria-label={compact ? triggerLabel : undefined}
         onClick={() => (open ? close() : setOpen(true))}
       >
         <Share2 size={16} aria-hidden />
-        {triggerLabel}
+        {compact ? (
+          <span aria-hidden className="hidden min-[481px]:inline">
+            {triggerLabel}
+          </span>
+        ) : (
+          triggerLabel
+        )}
       </Button>
       {open && (
         <div

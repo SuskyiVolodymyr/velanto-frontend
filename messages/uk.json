@@ -296,7 +296,8 @@
     "logInToFollow": "Увійдіть, щоб стежити",
     "logInToComment": "Увійдіть, щоб коментувати",
     "logInToPlay": "Увійдіть, щоб грати",
-    "logInToCreateTokens": "Увійдіть, щоб створювати токени API"
+    "logInToCreateTokens": "Увійдіть, щоб створювати токени API",
+    "logInToReport": "Увійдіть, щоб поскаржитися"
   },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
@@ -1081,7 +1082,25 @@
     "submittingPack": "Надсилання…",
     "submitPackError": "Не вдалося надіслати пак. Спробуйте ще раз.",
     "rejectionReasonHeading": "Чому пак відхилено",
-    "randomPoolLabel": "Випадковий пул"
+    "randomPoolLabel": "Випадковий пул",
+    "acrossPlays": "{count, plural, one {# гра} few {# ігри} many {# ігор} other {# гри}} усього",
+    "report": {
+      "button": "Поскаржитись",
+      "buttonReported": "Скаргу надіслано",
+      "title": "Поскаржитися на цей пак",
+      "reasonLabel": "Причина",
+      "reasonPlaceholder": "Оберіть причину",
+      "reasons": {
+        "inappropriate": "Неприйнятний або образливий вміст",
+        "copyright": "Проблема з авторськими правами чи власністю",
+        "spam": "Спам або оманливий вміст",
+        "other": "Щось інше"
+      },
+      "commentLabel": "Додаткові деталі (необов'язково)",
+      "commentPlaceholder": "Усе, що допоможе модератору розібратися",
+      "submit": "Надіслати скаргу",
+      "error": "Не вдалося надіслати скаргу. Спробуйте ще раз."
+    }
   },
   "share": {
     "trigger": "Поділитися",
@@ -1677,6 +1696,10 @@
       "hostIsChoosing": "Ведучий обирає режим гри…",
       "playerRange": "{min}–{max} гравців"
     },
+    "packModes": {
+      "heading": "Режими, які підтримує цей пак",
+      "caption": "Хост обирає режим у лобі. Затемнені режими потребують іншого розміру кімнати."
+    },
     "modes": {
       "claim": {
         "name": "Захоплення",
@@ -1706,9 +1729,9 @@
     "entry": {
       "createRoom": "Створити кімнату",
       "joinByCode": "Приєднатися за кодом",
+      "orWithFriends": "Або з друзями",
       "signInToPlay": "Увійдіть, щоб грати з друзями",
       "createError": "Не вдалося створити кімнату. Спробуйте ще раз.",
-      "joinTitle": "Приєднатися до кімнати",
       "codeLabel": "Код кімнати",
       "codePlaceholder": "Введіть код",
       "join": "Приєднатися",

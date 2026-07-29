@@ -296,7 +296,8 @@
     "logInToFollow": "سجّل الدخول للمتابعة",
     "logInToComment": "سجّل الدخول للتعليق",
     "logInToPlay": "سجّل الدخول للعب",
-    "logInToCreateTokens": "سجّل الدخول لإنشاء رموز API"
+    "logInToCreateTokens": "سجّل الدخول لإنشاء رموز API",
+    "logInToReport": "سجّل الدخول للإبلاغ"
   },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
@@ -1081,7 +1082,25 @@
     "submittingPack": "جارٍ الإرسال…",
     "submitPackError": "تعذّر إرسال هذه الحزمة. حاول مرة أخرى.",
     "rejectionReasonHeading": "سبب الرفض",
-    "randomPoolLabel": "مجموعة عشوائية"
+    "randomPoolLabel": "مجموعة عشوائية",
+    "acrossPlays": "عبر {count, plural, zero {# لعبة} one {لعبة واحدة} two {لعبتين} few {# ألعاب} many {# لعبة} other {# لعبة}}",
+    "report": {
+      "button": "إبلاغ",
+      "buttonReported": "تم الإبلاغ",
+      "title": "الإبلاغ عن هذه الحزمة",
+      "reasonLabel": "السبب",
+      "reasonPlaceholder": "اختر سببًا",
+      "reasons": {
+        "inappropriate": "محتوى غير لائق أو مسيء",
+        "copyright": "مشكلة في حقوق النشر أو الملكية",
+        "spam": "محتوى مزعج أو مضلل",
+        "other": "شيء آخر"
+      },
+      "commentLabel": "تفاصيل إضافية (اختياري)",
+      "commentPlaceholder": "أي شيء يساعد المشرف على مراجعة هذا",
+      "submit": "إرسال البلاغ",
+      "error": "تعذّر إرسال البلاغ. حاول مرة أخرى."
+    }
   },
   "share": {
     "trigger": "مشاركة",
@@ -1677,6 +1696,10 @@
       "hostIsChoosing": "المضيف يختار نمط اللعب…",
       "playerRange": "{min}-{max} لاعبين"
     },
+    "packModes": {
+      "heading": "الأوضاع التي تدعمها هذه الحزمة",
+      "caption": "يختار المضيف الوضع في غرفة الانتظار. الأوضاع الرمادية تحتاج إلى حجم غرفة مختلف."
+    },
     "modes": {
       "claim": {
         "name": "المطالبة",
@@ -1706,9 +1729,9 @@
     "entry": {
       "createRoom": "إنشاء غرفة",
       "joinByCode": "الانضمام بالرمز",
+      "orWithFriends": "أو مع الأصدقاء",
       "signInToPlay": "سجّل الدخول للعب مع الأصدقاء",
       "createError": "تعذّر إنشاء الغرفة. حاول مرة أخرى.",
-      "joinTitle": "الانضمام إلى غرفة",
       "codeLabel": "رمز الغرفة",
       "codePlaceholder": "أدخل الرمز",
       "join": "انضمام",

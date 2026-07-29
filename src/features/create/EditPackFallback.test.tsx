@@ -26,6 +26,7 @@ describe("EditPackFallback", () => {
       status: "ready",
       pack: PACK,
       results: null,
+      availableModes: null,
     });
     render(<EditPackFallback packId="p1" />);
     expect(screen.getByText("edit:p1")).toBeInTheDocument();
