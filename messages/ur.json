@@ -1670,6 +1670,37 @@
   "room": {
     "loading": "کمرہ لوڈ ہو رہا ہے…",
     "reconnecting": "دوبارہ منسلک ہو رہا ہے…",
+    "modePicker": {
+      "heading": "گیم موڈ",
+      "hostIsChoosing": "میزبان گیم موڈ منتخب کر رہا ہے…",
+      "playerRange": "{min}-{max} کھلاڑی"
+    },
+    "modes": {
+      "claim": {
+        "name": "کلیم",
+        "blurb": "کسی اور سے پہلے ایک آئٹم پر قبضہ کریں۔"
+      },
+      "guess_who": {
+        "name": "گیس ہو",
+        "blurb": "خفیہ طور پر منتخب کریں، پھر اندازہ لگائیں کس نے کیا چنا۔"
+      },
+      "turn_based_cut": {
+        "name": "ٹرن بیسڈ کٹ",
+        "blurb": "باری باری آئٹمز ہٹائیں جب تک ایک باقی نہ رہے۔"
+      },
+      "voting": {
+        "name": "ووٹنگ",
+        "blurb": "لائیو ووٹ دیں — سب کو گنتی نظر آتی ہے۔"
+      },
+      "shared_grid": {
+        "name": "شیئرڈ گرڈ",
+        "blurb": "خفیہ درجہ بندی کریں، پھر مشترکہ درجہ بندی دیکھیں۔"
+      },
+      "relay": {
+        "name": "ریلے",
+        "blurb": "باری باری رکھتے ہوئے مل کر ایک درجہ بندی بنائیں۔"
+      }
+    },
     "entry": {
       "createRoom": "روم بنائیں",
       "joinByCode": "کوڈ سے شامل ہوں",
@@ -1713,20 +1744,28 @@
     },
     "round": {
       "heading": "راؤنڈ {index} از {total}",
-      "instruction": "قربان کرنے کے لیے ایک آئٹم منتخب کریں۔ جسے کوئی منتخب نہیں کرتا وہ بچ جاتا ہے۔",
-      "claim": "{name} کو قربان کریں",
       "taken": "لے لیا گیا",
-      "sacrificedBy": "{name} نے قربان کیا",
-      "survivor": "بچا ہوا",
-      "chosen": "{total} میں سے {count} نے منتخب کیا"
+      "chosen": "{total} میں سے {count} نے منتخب کیا",
+      "instructionSave": "بچانے کے لیے ایک آئٹم منتخب کریں۔ باقی سب باہر ہو جائیں گے۔",
+      "instructionSacrifice": "قربان کرنے کے لیے ایک آئٹم منتخب کریں۔ جسے کوئی منتخب نہیں کرتا وہ بچ جاتا ہے۔",
+      "claimSave": "{name} کو بچائیں",
+      "claimSacrifice": "{name} کو قربان کریں",
+      "claimedBySave": "{name} نے رکھا",
+      "claimedBySacrifice": "{name} نے قربان کیا",
+      "survivorSave": "بچا لیا گیا",
+      "survivorSacrifice": "بچا ہوا",
+      "tooFastNote": "آپ بہت تیزی سے دوبارہ منتخب کر رہے ہیں — تھوڑا انتظار کریں اور دوبارہ کوشش کریں۔"
     },
     "between": {
-      "survivorHeading": "بچا ہوا",
-      "survivorNote": "یہ آئٹم اس راؤنڈ میں بچ گیا۔",
-      "boardHeading": "اس راؤنڈ کی قربانیاں",
       "next": "اگلا",
       "ready": "{count} / {total} تیار",
-      "autoNext": "اگلا راؤنڈ {seconds} سیکنڈ میں"
+      "autoNext": "اگلا راؤنڈ {seconds} سیکنڈ میں",
+      "survivorHeadingSave": "بچا لیا گیا",
+      "survivorHeadingSacrifice": "بچا ہوا",
+      "survivorNoteSave": "یہ آئٹم بچا لیا گیا۔",
+      "survivorNoteSacrifice": "یہ آئٹم اس راؤنڈ میں بچ گیا۔",
+      "boardHeadingSave": "اس راؤنڈ کے انتخاب",
+      "boardHeadingSacrifice": "اس راؤنڈ کی قربانیاں"
     },
     "results": {
       "heading": "نتائج",
@@ -1756,7 +1795,7 @@
     },
     "presence": {
       "returnTo": "{title} پر واپس جائیں",
-      "label": "کمرے میں {count} / {max}"
+      "playerCount": "کمرے میں {count} افراد"
     },
     "kick": {
       "action": "{name} کو کمرے سے نکالیں",
@@ -1769,6 +1808,69 @@
       "heading": "میزبان نے آپ کو اس کمرے سے نکال دیا",
       "description": "میزبان نے آپ کو اس کمرے سے نکال دیا ہے۔ اگر وہ اسے دوبارہ کھولیں تو آپ کوڈ کے ذریعے دوبارہ شامل ہو سکتے ہیں۔",
       "leave": "پیک پر واپس"
+    },
+    "guessWho": {
+      "roundInstruction": "اپنا جواب منتخب کریں",
+      "pickInstruction": "خفیہ طور پر منتخب کریں — جب تک سب لاک نہ ہو جائیں، کوئی آپ کا انتخاب نہیں دیکھے گا۔",
+      "rankInstruction": "ہر آئٹم کو ترتیب دیں، بہترین پہلے — جب تک سب لاک نہ ہوں، کوئی آپ کی درجہ بندی نہیں دیکھے گا۔",
+      "revealHeading": "انکشاف",
+      "trajectoryHeading": "اب تک سب نے کیا جواب دیا",
+      "roundColumn": "راؤنڈ"
+    },
+    "guessing": {
+      "heading": "آخری راؤنڈ",
+      "title": "کون کون تھا؟",
+      "instruction": "ہر کھلاڑی کو اس لیبل پر مقرر کریں جو آپ کے خیال میں وہ تھے۔",
+      "chooseSomeone": "ایک کھلاڑی منتخب کریں…",
+      "submit": "اندازے جمع کروائیں",
+      "waitingForOthers": "{count} / {total} نے جمع کروا دیا ہے"
+    },
+    "identityReveal": {
+      "heading": "انکشاف",
+      "scoresPending": "ہر کھلاڑی کا مکمل اسکور دستیاب ہونے پر پورے اسکور دکھائے جائیں گے۔"
+    },
+    "turnBasedCut": {
+      "instruction": "اپنی باری میں، ایک آئٹم کاٹیں۔ آخر تک باقی رہنے والا جیتتا ہے۔",
+      "cutOrderHeading": "کاٹنے کی ترتیب",
+      "cutVerb": "نے کاٹا"
+    },
+    "voting": {
+      "instruction": "ایک آپشن کے لیے ووٹ دیں۔ راؤنڈ بند ہونے تک آپ اپنا ووٹ بدل سکتے ہیں۔",
+      "votedSoFar": "{count} / {total} نے ووٹ دیا ہے",
+      "winnerHeading": "فاتح",
+      "tieBrokenNote": "یہ برابری تھی — {name} کے پاس ترجیح تھی اور انہوں نے اسے حل کیا۔"
+    },
+    "sharedGrid": {
+      "instruction": "ہر آئٹم کو خفیہ طور پر ترتیب دیں۔",
+      "aggregateHeading": "مجموعی",
+      "groupRanking": "گروپ کی درجہ بندی",
+      "pointsLabel": "{count} پوائنٹس",
+      "tiedNote": "برابری — {count} آئٹمز اس درجے میں شریک ہیں"
+    },
+    "relay": {
+      "instruction": "موجودہ آئٹم کو مشترکہ درجہ بندی میں شامل کریں۔",
+      "insertHere": "یہاں شامل کریں",
+      "currentItem": "ابھی رکھا جا رہا ہے",
+      "finalOrderHeading": "حتمی ترتیب",
+      "placementHistoryHeading": "رکھنے کی تاریخ",
+      "placedVerb": "نے رکھا"
+    },
+    "lockedIn": {
+      "playerLocked": "{name} — لاک ہو گیا",
+      "playerWaiting": "{name} — ابھی فیصلہ کر رہے ہیں",
+      "count": "{count} / {total} لاک ہو گئے"
+    },
+    "priority": {
+      "holder": "{name} کے پاس ترجیح ہے",
+      "explainer": "اس راؤنڈ میں برابری حل کرتا ہے"
+    },
+    "turnIndicator": {
+      "yourTurn": "آپ کی باری",
+      "waitingFor": "{name} کا انتظار"
+    },
+    "leaderboard": {
+      "winner": "فاتح",
+      "points": "{count} پوائنٹس"
     }
   }
 }
