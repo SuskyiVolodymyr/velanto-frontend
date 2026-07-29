@@ -12,10 +12,12 @@ import { Username } from "@/src/shared/components/Username";
 import { cn } from "@/src/shared/lib/cn";
 import {
   MIN_PLAYERS,
+  type RoomMode,
   type RoomPlayerState,
   type RoomState,
 } from "./room-types";
 import { JoinCode } from "./JoinCode";
+import { ModePicker } from "./ModePicker";
 
 interface RoomLobbyProps {
   state: RoomState;
@@ -24,6 +26,8 @@ interface RoomLobbyProps {
   onLock: (locked: boolean) => void;
   /** Host-only: remove another player from the room. */
   onKick: (userId: string) => void;
+  /** Host-only: change the room's mode. */
+  onSetMode: (mode: RoomMode) => void;
 }
 
 /**
@@ -38,6 +42,7 @@ export function RoomLobby({
   onReady,
   onLock,
   onKick,
+  onSetMode,
 }: RoomLobbyProps) {
   const t = useTranslations("room");
   const isHost = currentUserId === state.hostId;
@@ -70,6 +75,13 @@ export function RoomLobby({
           {t("lobby.heading")}
         </Text>
       </header>
+
+      <ModePicker
+        availableModes={state.availableModes}
+        selectedMode={state.mode}
+        isHost={isHost}
+        onChange={onSetMode}
+      />
 
       <section aria-label={t("lobby.roster")} className="flex flex-col gap-3">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

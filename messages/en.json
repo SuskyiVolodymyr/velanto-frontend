@@ -1669,6 +1669,37 @@
   "room": {
     "loading": "Loading room…",
     "reconnecting": "Reconnecting…",
+    "modePicker": {
+      "heading": "Game mode",
+      "hostIsChoosing": "The host is choosing a game mode…",
+      "playerRange": "{min}-{max} players"
+    },
+    "modes": {
+      "claim": {
+        "name": "Claim",
+        "blurb": "Be the fastest to grab an item before anyone else does."
+      },
+      "guess_who": {
+        "name": "Guess Who",
+        "blurb": "Pick blind, then guess who picked what."
+      },
+      "turn_based_cut": {
+        "name": "Turn-Based Cut",
+        "blurb": "Take turns cutting items until one remains."
+      },
+      "voting": {
+        "name": "Voting",
+        "blurb": "Vote live — everyone sees the tally as it grows."
+      },
+      "shared_grid": {
+        "name": "Shared Grid",
+        "blurb": "Rank blind, then see everyone's combined ranking."
+      },
+      "relay": {
+        "name": "Relay",
+        "blurb": "Build one shared ranking together, one insert at a time."
+      }
+    },
     "entry": {
       "createRoom": "Create room",
       "joinByCode": "Join by code",
