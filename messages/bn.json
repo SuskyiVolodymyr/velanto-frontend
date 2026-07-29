@@ -290,7 +290,7 @@
     "menuToggle": "মেনু টগল করুন",
     "room": {
       "inARoom": "একটি রুমে",
-      "lobby": "লবি · {count}/{max}",
+      "lobby": "লবি · {count}",
       "rejoin": "পুনরায় যোগ দিন"
     }
   },
@@ -1670,6 +1670,37 @@
   "room": {
     "loading": "রুম লোড হচ্ছে…",
     "reconnecting": "পুনরায় সংযোগ করা হচ্ছে…",
+    "modePicker": {
+      "heading": "গেম মোড",
+      "hostIsChoosing": "হোস্ট একটি গেম মোড বেছে নিচ্ছেন…",
+      "playerRange": "{min}-{max} জন খেলোয়াড়"
+    },
+    "modes": {
+      "claim": {
+        "name": "ক্লেইম",
+        "blurb": "অন্য কারো আগে একটি আইটেম দখল করুন।"
+      },
+      "guess_who": {
+        "name": "গেস হু",
+        "blurb": "গোপনে বেছে নিন, তারপর অনুমান করুন কে কী বেছে নিয়েছে।"
+      },
+      "turn_based_cut": {
+        "name": "টার্ন-বেসড কাট",
+        "blurb": "একটি না বাঁচা পর্যন্ত পালা করে আইটেম বাদ দিন।"
+      },
+      "voting": {
+        "name": "ভোটিং",
+        "blurb": "লাইভ ভোট দিন — সবাই গণনা বাড়তে দেখে।"
+      },
+      "shared_grid": {
+        "name": "শেয়ার্ড গ্রিড",
+        "blurb": "গোপনে র‍্যাঙ্ক করুন, তারপর সম্মিলিত র‍্যাঙ্কিং দেখুন।"
+      },
+      "relay": {
+        "name": "রিলে",
+        "blurb": "পালা করে বসিয়ে একসাথে একটি র‍্যাঙ্কিং তৈরি করুন।"
+      }
+    },
     "entry": {
       "createRoom": "রুম তৈরি করুন",
       "joinByCode": "কোড দিয়ে যোগ দিন",
@@ -1713,20 +1744,35 @@
     },
     "round": {
       "heading": "রাউন্ড {index} / {total}",
-      "instruction": "উৎসর্গ করার জন্য একটি আইটেম বেছে নিন। যেটি কেউ বেছে নেয় না সেটি টিকে থাকে।",
-      "claim": "{name} উৎসর্গ করুন",
       "taken": "নেওয়া হয়েছে",
-      "sacrificedBy": "{name} উৎসর্গ করেছেন",
-      "survivor": "টিকে থাকা",
-      "chosen": "{total} জনের মধ্যে {count} জন বেছে নিয়েছেন"
+      "chosen": "{total} জনের মধ্যে {count} জন বেছে নিয়েছেন",
+      "instructionSave": "বাঁচানোর জন্য একটি আইটেম বেছে নিন। বাকি সবাই বাদ পড়ে যাবে।",
+      "instructionSacrifice": "উৎসর্গ করার জন্য একটি আইটেম বেছে নিন। যেটি কেউ বেছে নেয় না সেটি টিকে থাকে।",
+      "claimSave": "{name}-কে বাঁচান",
+      "claimSacrifice": "{name} উৎসর্গ করুন",
+      "claimedBySave": "{name} রেখে দিয়েছেন",
+      "claimedBySacrifice": "{name} উৎসর্গ করেছেন",
+      "survivorSave": "বাঁচানো হয়েছে",
+      "survivorSacrifice": "টিকে থাকা",
+      "tooFastNote": "আপনি খুব দ্রুত আবার বেছে নিচ্ছেন — একটু অপেক্ষা করে আবার চেষ্টা করুন।"
+    },
+    "rejection": {
+      "not_your_turn": "এখনও আপনার পালা আসেনি।",
+      "not_in_round": "এই বিকল্পটি এই রাউন্ডের অংশ নয়।",
+      "round_not_active": "এই রাউন্ড ইতিমধ্যেই শেষ হয়েছে।",
+      "not_a_player": "এই রুমে আপনার কোনও আসন নেই।",
+      "malformed": "জমা দেওয়াটি বৈধ ছিল না — আবার চেষ্টা করুন।"
     },
     "between": {
-      "survivorHeading": "টিকে থাকা",
-      "survivorNote": "এই আইটেমটি এই রাউন্ডে টিকে গেছে।",
-      "boardHeading": "এই রাউন্ডের উৎসর্গ",
       "next": "পরবর্তী",
       "ready": "{count} / {total} প্রস্তুত",
-      "autoNext": "পরবর্তী রাউন্ড {seconds} সেকেন্ডে"
+      "autoNext": "পরবর্তী রাউন্ড {seconds} সেকেন্ডে",
+      "survivorHeadingSave": "বাঁচানো হয়েছে",
+      "survivorHeadingSacrifice": "টিকে থাকা",
+      "survivorNoteSave": "এই আইটেমটি বাঁচানো হয়েছে।",
+      "survivorNoteSacrifice": "এই আইটেমটি এই রাউন্ডে টিকে গেছে।",
+      "boardHeadingSave": "এই রাউন্ডের পছন্দ",
+      "boardHeadingSacrifice": "এই রাউন্ডের উৎসর্গ"
     },
     "results": {
       "heading": "ফলাফল",
@@ -1756,7 +1802,7 @@
     },
     "presence": {
       "returnTo": "{title}-এ ফিরে যান",
-      "label": "রুমে {count} / {max}"
+      "playerCount": "রুমে {count} জন"
     },
     "kick": {
       "action": "{name}-কে রুম থেকে সরান",
@@ -1769,6 +1815,73 @@
       "heading": "হোস্ট আপনাকে এই রুম থেকে সরিয়ে দিয়েছেন",
       "description": "হোস্ট আপনাকে এই রুম থেকে সরিয়ে দিয়েছেন। তিনি আবার খুললে আপনি কোড দিয়ে আবার যোগ দিতে পারবেন।",
       "leave": "প্যাকে ফিরুন"
+    },
+    "guessWho": {
+      "roundInstruction": "আপনার উত্তর বেছে নিন",
+      "pickInstruction": "গোপনে বেছে নিন — সবাই লক না করা পর্যন্ত কেউ আপনার পছন্দ দেখবে না।",
+      "rankInstruction": "প্রতিটি আইটেম ক্রমে সাজান, সেরাটি প্রথমে — সবাই লক না করা পর্যন্ত কেউ আপনার র‍্যাঙ্কিং দেখবে না।",
+      "revealHeading": "প্রকাশ",
+      "trajectoryHeading": "এখন পর্যন্ত সবাই কী উত্তর দিয়েছে",
+      "roundColumn": "রাউন্ড"
+    },
+    "guessing": {
+      "heading": "শেষ রাউন্ড",
+      "title": "কে কে ছিল?",
+      "instruction": "প্রতিটি খেলোয়াড়কে সেই লেবেলে বরাদ্দ করুন যা আপনার মনে হয় তারা ছিল।",
+      "chooseSomeone": "একজন খেলোয়াড় বেছে নিন…",
+      "submit": "অনুমান জমা দিন",
+      "waitingForOthers": "{count} / {total} জন জমা দিয়েছেন"
+    },
+    "identityReveal": {
+      "heading": "প্রকাশ",
+      "correct": "সঠিক অনুমান",
+      "incorrect": "ভুল অনুমান",
+      "scoresPending": "প্রতিটি খেলোয়াড়ের মোট স্কোর যুক্ত হলে পূর্ণ স্কোর দেখা যাবে।"
+    },
+    "turnBasedCut": {
+      "instruction": "আপনার পালায়, একটি আইটেম বাদ দিন। শেষ পর্যন্ত টিকে থাকা জেতে।",
+      "cutOrderHeading": "বাদ দেওয়ার ক্রম",
+      "cutVerb": "বাদ দিয়েছেন"
+    },
+    "voting": {
+      "instruction": "একটি বিকল্পে ভোট দিন। রাউন্ড বন্ধ হওয়ার আগ পর্যন্ত আপনি ভোট পরিবর্তন করতে পারেন।",
+      "votedSoFar": "{count} / {total} জন ভোট দিয়েছেন",
+      "winnerHeading": "বিজয়ী",
+      "tieBrokenNote": "এটি ড্র হয়েছিল — {name}-এর অগ্রাধিকার ছিল এবং তিনি সেটি ভেঙেছেন।"
+    },
+    "sharedGrid": {
+      "instruction": "প্রতিটি আইটেম গোপনে ক্রমে সাজান।",
+      "aggregateHeading": "সমষ্টিগত",
+      "groupRanking": "দলের র‍্যাঙ্কিং",
+      "pointsLabel": "{count} পয়েন্ট",
+      "tiedNote": "{count}-মুখী টাই"
+    },
+    "relay": {
+      "instruction": "বর্তমান আইটেমটি সাধারণ র‍্যাঙ্কিংয়ে বসান।",
+      "insertHere": "এখানে বসান",
+      "insertBefore": "{title}-এর আগে বসান",
+      "insertAtEnd": "শেষে বসান",
+      "currentItem": "এখন বসানো হচ্ছে",
+      "finalOrderHeading": "চূড়ান্ত ক্রম",
+      "placementHistoryHeading": "বসানোর ইতিহাস",
+      "placedVerb": "বসিয়েছেন"
+    },
+    "lockedIn": {
+      "playerLocked": "{name} — লক হয়েছে",
+      "playerWaiting": "{name} — এখনও ঠিক করছেন",
+      "count": "{count} / {total} লক হয়েছে"
+    },
+    "priority": {
+      "holder": "{name}-এর অগ্রাধিকার আছে",
+      "explainer": "এই রাউন্ডে টাই ভাঙেন"
+    },
+    "turnIndicator": {
+      "yourTurn": "আপনার পালা",
+      "waitingFor": "{name}-এর জন্য অপেক্ষা"
+    },
+    "leaderboard": {
+      "winner": "বিজয়ী",
+      "points": "{count, plural, one {# পয়েন্ট} other {# পয়েন্ট}}"
     }
   }
 }

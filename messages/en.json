@@ -387,7 +387,7 @@
     "menuToggle": "Toggle menu",
     "room": {
       "inARoom": "In a room",
-      "lobby": "Lobby · {count}/{max}",
+      "lobby": "Lobby · {count}",
       "rejoin": "Rejoin"
     }
   },
@@ -1669,6 +1669,104 @@
   "room": {
     "loading": "Loading room…",
     "reconnecting": "Reconnecting…",
+    "modePicker": {
+      "heading": "Game mode",
+      "hostIsChoosing": "The host is choosing a game mode…",
+      "playerRange": "{min}-{max} players"
+    },
+    "modes": {
+      "claim": {
+        "name": "Claim",
+        "blurb": "Be the fastest to grab an item before anyone else does."
+      },
+      "guess_who": {
+        "name": "Guess Who",
+        "blurb": "Pick blind, then guess who picked what."
+      },
+      "turn_based_cut": {
+        "name": "Turn-Based Cut",
+        "blurb": "Take turns cutting items until one remains."
+      },
+      "voting": {
+        "name": "Voting",
+        "blurb": "Vote live — everyone sees the tally as it grows."
+      },
+      "shared_grid": {
+        "name": "Shared Grid",
+        "blurb": "Rank blind, then see everyone's combined ranking."
+      },
+      "relay": {
+        "name": "Relay",
+        "blurb": "Build one shared ranking together, one insert at a time."
+      }
+    },
+    "lockedIn": {
+      "playerLocked": "{name} has locked in",
+      "playerWaiting": "{name} is still waiting",
+      "count": "{count} / {total} locked in"
+    },
+    "priority": {
+      "holder": "{name} holds priority",
+      "explainer": "breaks ties this round"
+    },
+    "turnIndicator": {
+      "yourTurn": "Your turn",
+      "waitingFor": "Waiting for {name}"
+    },
+    "leaderboard": {
+      "winner": "Winner",
+      "points": "{count, plural, one {# point} other {# points}}"
+    },
+    "guessWho": {
+      "roundInstruction": "Choose your answer",
+      "pickInstruction": "Pick one — nobody else will see your choice until everyone's locked in.",
+      "rankInstruction": "Rank every item, best first — nobody else will see your ranking until everyone's locked in.",
+      "revealHeading": "Reveal",
+      "trajectoryHeading": "How everyone's answered so far",
+      "roundColumn": "Round"
+    },
+    "guessing": {
+      "heading": "Final round",
+      "title": "Who's who?",
+      "instruction": "Assign each player to the label you think they played as.",
+      "chooseSomeone": "Choose a player…",
+      "submit": "Submit guesses",
+      "waitingForOthers": "{count} / {total} have submitted"
+    },
+    "identityReveal": {
+      "heading": "Reveal",
+      "correct": "Correct guess",
+      "incorrect": "Wrong guess",
+      "scoresPending": "Full scores available once every player's total is on the wire."
+    },
+    "turnBasedCut": {
+      "instruction": "On your turn, cut one item. The last one standing wins.",
+      "cutOrderHeading": "Cut order",
+      "cutVerb": "cut"
+    },
+    "voting": {
+      "instruction": "Vote for one option. You can change your vote until the round closes.",
+      "votedSoFar": "{count} / {total} have voted",
+      "winnerHeading": "Winner",
+      "tieBrokenNote": "It was a tie — {name} held priority and broke it."
+    },
+    "sharedGrid": {
+      "instruction": "Rank every item blind, in order.",
+      "aggregateHeading": "Aggregated",
+      "groupRanking": "The group's ranking",
+      "pointsLabel": "{count} pts",
+      "tiedNote": "Tied — {count} items share this rank"
+    },
+    "relay": {
+      "instruction": "Insert the current item into the shared ranking.",
+      "insertHere": "Insert here",
+      "insertBefore": "Insert before {title}",
+      "insertAtEnd": "Insert at the end",
+      "currentItem": "Now placing",
+      "finalOrderHeading": "Final order",
+      "placementHistoryHeading": "Placement history",
+      "placedVerb": "placed"
+    },
     "entry": {
       "createRoom": "Create room",
       "joinByCode": "Join by code",
@@ -1712,17 +1810,32 @@
     },
     "round": {
       "heading": "Round {index} of {total}",
-      "instruction": "Claim one item to sacrifice. The item nobody claims survives.",
-      "claim": "Sacrifice {name}",
+      "instructionSave": "Claim one item to save. Everyone else is eliminated.",
+      "instructionSacrifice": "Claim one item to sacrifice. The item nobody claims survives.",
+      "claimSave": "Save {name}",
+      "claimSacrifice": "Sacrifice {name}",
       "taken": "Taken",
-      "sacrificedBy": "Sacrificed by {name}",
-      "survivor": "Survivor",
-      "chosen": "{count} of {total} have chosen"
+      "claimedBySave": "Kept by {name}",
+      "claimedBySacrifice": "Sacrificed by {name}",
+      "survivorSave": "Saved",
+      "survivorSacrifice": "Survivor",
+      "chosen": "{count} of {total} chosen",
+      "tooFastNote": "You're re-claiming too fast — wait a moment and try again."
+    },
+    "rejection": {
+      "not_your_turn": "It's not your turn yet.",
+      "not_in_round": "That option isn't part of this round.",
+      "round_not_active": "This round has already ended.",
+      "not_a_player": "You don't hold a seat in this room.",
+      "malformed": "That submission wasn't valid — try again."
     },
     "between": {
-      "survivorHeading": "Survivor",
-      "survivorNote": "This item survived the round.",
-      "boardHeading": "This round's sacrifices",
+      "survivorHeadingSave": "Saved",
+      "survivorHeadingSacrifice": "Survivor",
+      "survivorNoteSave": "This item was saved.",
+      "survivorNoteSacrifice": "This item survived the round.",
+      "boardHeadingSave": "This round's picks",
+      "boardHeadingSacrifice": "This round's sacrifices",
       "next": "Next",
       "ready": "{count} / {total} ready",
       "autoNext": "Next round in {seconds}s"
@@ -1755,7 +1868,7 @@
     },
     "presence": {
       "returnTo": "Return to {title}",
-      "label": "{count} / {max} in room"
+      "playerCount": "{count} in room"
     },
     "kick": {
       "action": "Remove {name} from the room",

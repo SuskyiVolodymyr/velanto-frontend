@@ -3,10 +3,9 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { AvatarStack } from "@/src/shared/components/AvatarStack";
-import { cn } from "@/src/shared/lib/cn";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { useFriendsRoomsPresence } from "./friends-rooms-presence-context";
-import { MAX_PLAYERS, type MyRoomSummary } from "./room-types";
+import type { MyRoomSummary } from "./room-types";
 
 /** Pull the room id out of a `/rooms/<id>` path, else null. */
 function currentRoomId(pathname: string | null): string | null {
@@ -47,7 +46,7 @@ export function RoomPresenceIndicator() {
   if (visible.length === 0) return null;
 
   return (
-    <div className="fixed right-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom)+0.75rem)] z-30 flex flex-col items-end gap-2">
+    <div className="fixed end-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom)+0.75rem)] z-30 flex flex-col items-end gap-2">
       {visible.map((room) => (
         <RoomChip
           key={room.id}
@@ -67,21 +66,19 @@ function RoomChip({
   onClick: () => void;
 }) {
   const t = useTranslations("room");
-  // The format caps a room at MAX_PLAYERS, so filled seats never overflow —
-  // render every member as an avatar, then dashed empty circles for the seats
-  // still open, so the chip reads as "N of MAX are here" at a glance.
-  const emptySeats = Math.max(0, MAX_PLAYERS - room.players.length);
 
   return (
     <button
       type="button"
       onClick={onClick}
       aria-label={t("presence.returnTo", { title: room.packTitle })}
-      className="group flex max-w-[19rem] items-center gap-3 rounded-2xl border border-acc/40 bg-surface py-2.5 pl-3 pr-4 shadow-[0_10px_30px_rgba(0,0,0,0.4)] ring-1 ring-acc/10 transition-colors hover:border-acc focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
+      className="group flex max-w-[19rem] items-center gap-3 rounded-2xl border border-acc/40 bg-surface py-2.5 ps-3 pe-4 shadow-[0_10px_30px_rgba(0,0,0,0.4)] ring-1 ring-acc/10 transition-colors hover:border-acc focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
     >
-      {/* Filled seats reuse the shared AvatarStack (ring matches this chip's
-          surface); the still-open seats stay a room-specific dashed variant,
-          sized to match and overlapped onto the last avatar. */}
+      {/* Capacity is not on MyRoomSummary (see room-types.ts) and varies per
+          mode (4 seats for Claim, up to 12 for Voting), so this renders every
+          member as a real avatar and lets AvatarStack's own `+N` overflow
+          chip collapse the rest — no empty-seat placeholders, since there's
+          no single capacity left to fill them up to. */}
       <div className="flex flex-none">
         <AvatarStack
           users={room.players.map((player) => ({
@@ -90,17 +87,8 @@ function RoomChip({
           }))}
           size="md"
           ringClassName="border-surface"
+          max={6}
         />
-        {Array.from({ length: emptySeats }, (_, i) => (
-          <span
-            key={`empty-${i}`}
-            aria-hidden
-            className={cn(
-              "h-[34px] w-[34px] flex-none rounded-full border-2 border-dashed border-border-strong bg-surface",
-              (room.players.length > 0 || i > 0) && "-ml-2",
-            )}
-          />
-        ))}
       </div>
       {/* flex-1 + min-w-0 is what lets the title truncate: without them this
           column is sized by its content, so a long pack title pushes straight
@@ -111,10 +99,7 @@ function RoomChip({
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-acc/70" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-acc" />
           </span>
-          {t("presence.label", {
-            count: room.players.length,
-            max: MAX_PLAYERS,
-          })}
+          {t("presence.playerCount", { count: room.players.length })}
         </span>
         {/* Truncates to whatever the chip has left after the avatars, rather
             than to a fixed width that could be wider than that. The full title

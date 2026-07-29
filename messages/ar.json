@@ -290,7 +290,7 @@
     "menuToggle": "تبديل القائمة",
     "room": {
       "inARoom": "في غرفة",
-      "lobby": "الردهة · {count}/{max}",
+      "lobby": "الردهة · {count}",
       "rejoin": "إعادة الانضمام"
     }
   },
@@ -1670,6 +1670,37 @@
   "room": {
     "loading": "جارٍ تحميل الغرفة…",
     "reconnecting": "جارٍ إعادة الاتصال…",
+    "modePicker": {
+      "heading": "نمط اللعب",
+      "hostIsChoosing": "المضيف يختار نمط اللعب…",
+      "playerRange": "{min}-{max} لاعبين"
+    },
+    "modes": {
+      "claim": {
+        "name": "المطالبة",
+        "blurb": "كن الأسرع في الاستحواذ على عنصر قبل أي شخص آخر."
+      },
+      "guess_who": {
+        "name": "خمّن من",
+        "blurb": "اختر خفية، ثم خمّن من اختار ماذا."
+      },
+      "turn_based_cut": {
+        "name": "قص بالتناوب",
+        "blurb": "تناوبوا على إزالة عنصر حتى يتبقى واحد فقط."
+      },
+      "voting": {
+        "name": "التصويت",
+        "blurb": "صوّتوا مباشرة — يرى الجميع النتائج أولًا بأول."
+      },
+      "shared_grid": {
+        "name": "الشبكة المشتركة",
+        "blurb": "رتّب خفية، ثم اطّلع على الترتيب الجماعي المجمّع."
+      },
+      "relay": {
+        "name": "التتابع",
+        "blurb": "ابنوا ترتيبًا مشتركًا معًا، بالتناوب على وضع كل عنصر."
+      }
+    },
     "entry": {
       "createRoom": "إنشاء غرفة",
       "joinByCode": "الانضمام بالرمز",
@@ -1695,7 +1726,7 @@
       "away": "غائب",
       "readyUp": "استعد",
       "readyCancel": "جاهز",
-      "waitingForPlayers": "في انتظار انضمام {count} لاعبين آخرين",
+      "waitingForPlayers": "في انتظار انضمام {count} {count, plural, zero {لاعبين} one {لاعب آخر} two {لاعبين آخرين} few {لاعبين آخرين} many {لاعبًا آخر} other {لاعب آخر}}",
       "waitingForReady": "في انتظار استعداد الجميع",
       "starting": "الجميع مستعدون — جارٍ البدء…",
       "inviteHeading": "ادعُ الأصدقاء",
@@ -1713,20 +1744,35 @@
     },
     "round": {
       "heading": "الجولة {index} من {total}",
-      "instruction": "اختر عنصرًا واحدًا للتضحية به. العنصر الذي لا يختاره أحد ينجو.",
-      "claim": "التضحية بـ {name}",
       "taken": "مأخوذ",
-      "sacrificedBy": "ضحّى به {name}",
-      "survivor": "الناجي",
-      "chosen": "اختار {count} من {total}"
+      "chosen": "اختار {count} من {total}",
+      "instructionSave": "اختر عنصرًا واحدًا لإنقاذه. سيُقصى كل من عداه.",
+      "instructionSacrifice": "اختر عنصرًا واحدًا للتضحية به. العنصر الذي لا يختاره أحد ينجو.",
+      "claimSave": "إنقاذ {name}",
+      "claimSacrifice": "التضحية بـ {name}",
+      "claimedBySave": "احتفظ به {name}",
+      "claimedBySacrifice": "ضحّى به {name}",
+      "survivorSave": "تم إنقاذه",
+      "survivorSacrifice": "الناجي",
+      "tooFastNote": "أنت تعيد الاختيار بسرعة كبيرة — انتظر لحظة وحاول مرة أخرى."
+    },
+    "rejection": {
+      "not_your_turn": "ليس دورك بعد.",
+      "not_in_round": "هذا الخيار ليس ضمن هذه الجولة.",
+      "round_not_active": "انتهت هذه الجولة بالفعل.",
+      "not_a_player": "لست مشاركًا في هذه الغرفة.",
+      "malformed": "تعذّر قبول هذه الإجابة — حاول مرة أخرى."
     },
     "between": {
-      "survivorHeading": "الناجي",
-      "survivorNote": "نجا هذا العنصر في هذه الجولة.",
-      "boardHeading": "تضحيات هذه الجولة",
       "next": "التالي",
       "ready": "{count} / {total} جاهزون",
-      "autoNext": "الجولة التالية خلال {seconds} ثانية"
+      "autoNext": "الجولة التالية خلال {seconds} ثانية",
+      "survivorHeadingSave": "تم إنقاذه",
+      "survivorHeadingSacrifice": "الناجي",
+      "survivorNoteSave": "تم إنقاذ هذا العنصر.",
+      "survivorNoteSacrifice": "نجا هذا العنصر في هذه الجولة.",
+      "boardHeadingSave": "اختيارات هذه الجولة",
+      "boardHeadingSacrifice": "تضحيات هذه الجولة"
     },
     "results": {
       "heading": "النتائج",
@@ -1756,7 +1802,7 @@
     },
     "presence": {
       "returnTo": "العودة إلى {title}",
-      "label": "{count} / {max} في الغرفة"
+      "playerCount": "{count} في الغرفة"
     },
     "kick": {
       "action": "إزالة {name} من الغرفة",
@@ -1769,6 +1815,73 @@
       "heading": "أزالك المضيف من هذه الغرفة",
       "description": "أزالك المضيف من هذه الغرفة. يمكنك الانضمام مجددًا بالرمز إذا أعاد فتحها.",
       "leave": "العودة إلى الحزمة"
+    },
+    "guessWho": {
+      "roundInstruction": "اختر إجابتك",
+      "pickInstruction": "اختر خفية — لن يرى أحد اختيارك حتى يقفل الجميع اختياراتهم.",
+      "rankInstruction": "رتّب كل عنصر خفية، بالترتيب — لن يرى أحد ترتيبك حتى يقفل الجميع اختياراتهم.",
+      "revealHeading": "الكشف",
+      "trajectoryHeading": "ما اختاره الجميع حتى الآن",
+      "roundColumn": "الجولة"
+    },
+    "guessing": {
+      "heading": "الجولة الأخيرة",
+      "title": "من هو من؟",
+      "instruction": "عيّن كل لاعب للرمز الذي تعتقد أنه لعب به.",
+      "chooseSomeone": "اختر لاعبًا…",
+      "submit": "إرسال التخمينات",
+      "waitingForOthers": "أرسل {count} / {total}"
+    },
+    "identityReveal": {
+      "heading": "الكشف",
+      "correct": "تخمين صحيح",
+      "incorrect": "تخمين خاطئ",
+      "scoresPending": "ستتوفر النتائج الكاملة بمجرد توفر مجموع كل لاعب على النظام."
+    },
+    "turnBasedCut": {
+      "instruction": "في دورك، اقصص عنصرًا واحدًا. يفوز آخر عنصر يتبقى.",
+      "cutOrderHeading": "ترتيب القص",
+      "cutVerb": "قصّ"
+    },
+    "voting": {
+      "instruction": "صوّت لخيار واحد. يمكنك تغيير تصويتك حتى إغلاق الجولة.",
+      "votedSoFar": "صوّت {count} / {total}",
+      "winnerHeading": "الفائز",
+      "tieBrokenNote": "كان تعادلًا — وكان {name} صاحب الأولوية فحسمه."
+    },
+    "sharedGrid": {
+      "instruction": "رتّب كل عنصر خفية، بالترتيب.",
+      "aggregateHeading": "مجمَّع",
+      "groupRanking": "ترتيب المجموعة",
+      "pointsLabel": "{count} {count, plural, zero {نقطة} one {نقطة} two {نقطتان} few {نقاط} many {نقطة} other {نقطة}}",
+      "tiedNote": "تعادل — {count} {count, plural, zero {عناصر} one {عنصر} two {عنصران} few {عناصر} many {عنصرًا} other {عنصر}} يتشارك هذا الترتيب"
+    },
+    "relay": {
+      "instruction": "أدرج العنصر الحالي في الترتيب المشترك.",
+      "insertHere": "أدرج هنا",
+      "insertBefore": "أدرج قبل {title}",
+      "insertAtEnd": "أدرج في النهاية",
+      "currentItem": "يوضع الآن",
+      "finalOrderHeading": "الترتيب النهائي",
+      "placementHistoryHeading": "سجل الوضع",
+      "placedVerb": "وضع"
+    },
+    "lockedIn": {
+      "playerLocked": "{name} — أقفل اختياره",
+      "playerWaiting": "{name} — ما زال يقرر",
+      "count": "{count} / {total} أقفلوا اختيارهم"
+    },
+    "priority": {
+      "holder": "{name} يملك الأولوية",
+      "explainer": "يحسم التعادل هذه الجولة"
+    },
+    "turnIndicator": {
+      "yourTurn": "دورك",
+      "waitingFor": "في انتظار {name}"
+    },
+    "leaderboard": {
+      "winner": "الفائز",
+      "points": "{count, plural, zero {# نقطة} one {نقطة واحدة} two {نقطتان} few {# نقاط} many {# نقطة} other {# نقطة}}"
     }
   }
 }

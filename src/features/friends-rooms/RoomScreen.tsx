@@ -1,16 +1,21 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Loader2, WifiOff } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { cn } from "@/src/shared/lib/cn";
+import { packsClient } from "@/src/shared/lib/packs-client";
+import type { Pack } from "@/src/shared/types/pack";
 import { useFriendsRoom } from "./use-friends-room";
 import { RoomLobby } from "./RoomLobby";
-import { RoomRound } from "./RoomRound";
-import { RoomBetween } from "./RoomBetween";
+import { RoomRoundBoard } from "./RoomRoundBoard";
+import { RoomBetweenBoard } from "./RoomBetweenBoard";
+import { GuessingPhaseScreen } from "./GuessingPhaseScreen";
 import { RoomResults } from "./RoomResults";
+import { IdentityRevealScreen } from "./IdentityRevealScreen";
 import { RoomLeaveButton } from "./RoomLeaveButton";
 import { RoomKicked } from "./RoomKicked";
 import { useExitToPack } from "./use-exit-to-pack";
@@ -31,15 +36,55 @@ export function RoomScreen({ roomId }: { roomId: string }) {
     state,
     connection,
     lastRejection,
+    lastModeRejection,
+    modeRejectionSeq,
     kicked,
     claim,
+    cut,
+    pick,
+    vote,
+    submitRanking,
+    placeItem,
     ready,
     next,
     lock,
     leave,
     kick,
+    setMode,
+    guess,
   } = useFriendsRoom(roomId);
   const userId = user?.id ?? null;
+
+  // Claim's save/sacrifice copy needs the pack's format, which isn't on the
+  // room's own wire state (RoomState carries no format field — see the
+  // rooms-UI plan's Task 9 note). Best-effort: a failed fetch just keeps the
+  // "sacrifice_one" fallback every Claim board already defaults to.
+  const [packFormat, setPackFormat] = useState<
+    Extract<Pack["format"], "save_one" | "sacrifice_one"> | undefined
+  >(undefined);
+  useEffect(() => {
+    // Only Claim and Turn-based cut read `packFormat` at all, so there is no
+    // reason to fetch for the four modes that ignore it.
+    const mode = state?.mode;
+    if (!state?.packId || (mode !== "claim" && mode !== "turn_based_cut")) {
+      return;
+    }
+    // Cancellation guard: without it a resolve arriving after the packId
+    // changed (or after unmount) would write a stale format over a newer one.
+    let cancelled = false;
+    packsClient
+      .getById(state.packId)
+      .then((pack) => {
+        if (cancelled) return;
+        if (pack.format === "save_one" || pack.format === "sacrifice_one") {
+          setPackFormat(pack.format);
+        }
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [state?.packId, state?.mode]);
 
   // A finished game shows its results even after the server tears the socket
   // down (teardown closes every socket, which arrives as connection "closed").
@@ -48,7 +93,11 @@ export function RoomScreen({ roomId }: { roomId: string }) {
   if (state?.phase === "finished") {
     return (
       <Shell>
-        <RoomResults state={state} />
+        {state.mode === "guess_who" && state.endgame ? (
+          <IdentityRevealScreen state={state} />
+        ) : (
+          <RoomResults state={state} packFormat={packFormat} />
+        )}
       </Shell>
     );
   }
@@ -148,18 +197,37 @@ export function RoomScreen({ roomId }: { roomId: string }) {
           onReady={ready}
           onLock={lock}
           onKick={kick}
+          onSetMode={setMode}
         />
       )}
       {state.phase === "round" && (
-        <RoomRound
+        <RoomRoundBoard
           state={state}
           currentUserId={userId}
-          lastRejection={lastRejection}
-          onClaim={claim}
+          packFormat={packFormat}
+          actions={{
+            claim,
+            cut,
+            pick,
+            vote,
+            submitRanking,
+            placeItem,
+            lastRejection,
+            lastModeRejection,
+            modeRejectionSeq,
+          }}
         />
       )}
       {state.phase === "between" && (
-        <RoomBetween state={state} currentUserId={userId} onNext={next} />
+        <RoomBetweenBoard
+          state={state}
+          currentUserId={userId}
+          packFormat={packFormat}
+          onNext={next}
+        />
+      )}
+      {state.phase === "guessing" && (
+        <GuessingPhaseScreen state={state} onSubmit={guess} />
       )}
       {/* phase "finished" is handled above, before the connection checks, so a
           torn-down socket still shows results. */}

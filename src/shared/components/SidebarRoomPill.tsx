@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { useFriendsRoomsPresence } from "@/src/features/friends-rooms/friends-rooms-presence-context";
-import { MAX_PLAYERS } from "@/src/features/friends-rooms/room-types";
 
 /**
  * "You're in a room" pill for the sidebar footer. Shows the first room the
@@ -44,9 +43,11 @@ export function SidebarRoomPill({ onNavigate }: { onNavigate?: () => void }) {
         {room.packTitle}
       </span>
       <span className="flex items-center justify-between text-[12px] text-foreground-secondary">
-        <span>
-          {t("room.lobby", { count: room.players.length, max: MAX_PLAYERS })}
-        </span>
+        {/* No denominator. Capacity is per-mode now (4 seats for Claim, up
+            to 12 for Voting) and isn't carried on MyRoomSummary at all, so
+            the old fixed MAX_PLAYERS read "6 / 4 in lobby" for a Voting
+            room. Same fix the presence chip already took. */}
+        <span>{t("room.lobby", { count: room.players.length })}</span>
         <span className="font-semibold text-live">{t("room.rejoin")}</span>
       </span>
     </Link>

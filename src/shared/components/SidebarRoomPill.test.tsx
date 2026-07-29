@@ -10,12 +10,9 @@ let currentUser: { id: string } | null = { id: "u1" };
 vi.mock("@/src/shared/lib/auth-context", () => ({
   useAuth: () => ({ user: currentUser }),
 }));
-vi.mock(
-  "@/src/features/friends-rooms/friends-rooms-presence-context",
-  () => ({
-    useFriendsRoomsPresence: () => ({ rooms, refresh: vi.fn() }),
-  }),
-);
+vi.mock("@/src/features/friends-rooms/friends-rooms-presence-context", () => ({
+  useFriendsRoomsPresence: () => ({ rooms, refresh: vi.fn() }),
+}));
 
 function summary(): MyRoomSummary {
   return {
@@ -39,6 +36,25 @@ describe("SidebarRoomPill", () => {
 
     expect(screen.getByText("Best Movies")).toBeInTheDocument();
     expect(screen.getByRole("link")).toHaveAttribute("href", "/rooms/r1");
+  });
+
+  it("shows the seated count with no capacity denominator", () => {
+    // Capacity is per-mode (4 for Claim, up to 12 for Voting) and is not on
+    // MyRoomSummary at all, so a fixed denominator here rendered "6 / 4" for
+    // a Voting room. There must not be one.
+    rooms = [
+      {
+        ...summary(),
+        players: [
+          { userId: "u1", username: "Alice", avatarKey: null },
+          { userId: "u2", username: "Bob", avatarKey: null },
+        ],
+      },
+    ];
+    render(<SidebarRoomPill />);
+
+    expect(screen.getByText("Lobby · 2")).toBeInTheDocument();
+    expect(screen.queryByText(/\/\s*4/)).not.toBeInTheDocument();
   });
 
   // The dormancy path: the presence provider skips its poll while rooms are

@@ -11,11 +11,18 @@ import type { User } from "@/src/shared/types/user";
 // The room hook and auth are the whole surface RoomScreen sits on; drive both
 // from fixtures so each phase can be rendered in isolation.
 const claim = vi.fn();
+const cut = vi.fn();
+const pick = vi.fn();
+const vote = vi.fn();
+const submitRanking = vi.fn();
+const placeItem = vi.fn();
 const ready = vi.fn();
 const next = vi.fn();
 const lock = vi.fn();
 const leave = vi.fn();
 const kick = vi.fn();
+const setMode = vi.fn();
+const guess = vi.fn();
 const push = vi.fn();
 
 let room: FriendsRoom;
@@ -65,6 +72,8 @@ function baseState(overrides: Partial<RoomState> = {}): RoomState {
     status: "lobby",
     phase: "lobby",
     locked: false,
+    mode: "claim",
+    availableModes: [{ mode: "claim", available: true, maxPlayers: 4 }],
     maxPlayers: 4,
     totalRounds: 3,
     roundIndex: 0,
@@ -75,6 +84,9 @@ function baseState(overrides: Partial<RoomState> = {}): RoomState {
     ],
     round: null,
     results: [],
+    guessing: null,
+    endgame: null,
+    myGuess: null,
     ...overrides,
   };
 }
@@ -89,13 +101,22 @@ function setRoom(
     state,
     connection,
     lastRejection,
+    lastModeRejection: null,
+    modeRejectionSeq: 0,
     kicked,
     claim,
+    cut,
+    pick,
+    vote,
+    submitRanking,
+    placeItem,
     ready,
     next,
     lock,
     leave,
     kick,
+    setMode,
+    guess,
   };
 }
 
@@ -242,7 +263,7 @@ describe("RoomScreen — round", () => {
     setRoom(roundState());
     render(<RoomScreen roomId="room-1" />);
 
-    expect(screen.getByText("1 of 2 have chosen")).toBeInTheDocument();
+    expect(screen.getByText("1 of 2 chosen")).toBeInTheDocument();
   });
 
   // A disconnected player keeps their seat and the round waits for them — the
@@ -277,8 +298,8 @@ describe("RoomScreen — round", () => {
     );
     render(<RoomScreen roomId="room-1" />);
 
-    expect(screen.getByText("1 of 3 have chosen")).toBeInTheDocument();
-    expect(screen.queryByText("1 of 2 have chosen")).not.toBeInTheDocument();
+    expect(screen.getByText("1 of 3 chosen")).toBeInTheDocument();
+    expect(screen.queryByText("1 of 2 chosen")).not.toBeInTheDocument();
   });
 
   // Without a name, every round rendered an identical header — no title, and a
@@ -438,6 +459,104 @@ describe("RoomScreen — between", () => {
   });
 });
 
+describe("RoomScreen — results by RoundResult kind", () => {
+  it("renders a vote-kind round with its winning option and tally, not the claim survivor board", () => {
+    setRoom(
+      baseState({
+        mode: "voting",
+        status: "finished",
+        phase: "finished",
+        totalRounds: 1,
+        results: [
+          {
+            kind: "vote",
+            index: 0,
+            name: "Round 1",
+            items: [textItem("i1", "Pizza"), textItem("i2", "Sushi")],
+            optionIds: ["i1", "i2"],
+            votes: { host: "i1" },
+            tally: { i1: 1 },
+            winnerOptionId: "i1",
+            tieBroken: false,
+            priorityUserId: "host",
+          },
+        ],
+      }),
+    );
+    render(<RoomScreen roomId="room-1" />);
+    expect(screen.getByText("Pizza")).toBeInTheDocument();
+  });
+
+  it("renders a borda-kind round with its tiered order", () => {
+    setRoom(
+      baseState({
+        mode: "shared_grid",
+        status: "finished",
+        phase: "finished",
+        totalRounds: 1,
+        results: [
+          {
+            kind: "borda",
+            index: 0,
+            name: "Round 1",
+            items: [textItem("i1", "A"), textItem("i2", "B")],
+            scores: { i1: 3, i2: 1 },
+            order: [["i1"], ["i2"]],
+            ballots: {},
+          },
+        ],
+      }),
+    );
+    render(<RoomScreen roomId="room-1" />);
+    const region = screen.getByRole("region", { name: "Round 1" });
+    expect(region).toHaveTextContent("A");
+    expect(region).toHaveTextContent("B");
+  });
+
+  it("renders a relay-kind round with its final flat order", () => {
+    setRoom(
+      baseState({
+        mode: "relay",
+        status: "finished",
+        phase: "finished",
+        totalRounds: 1,
+        results: [
+          {
+            kind: "relay",
+            index: 0,
+            name: "Round 1",
+            items: [textItem("i1", "A"), textItem("i2", "B")],
+            order: ["i2", "i1"],
+            placements: [],
+          },
+        ],
+      }),
+    );
+    render(<RoomScreen roomId="room-1" />);
+    const region = screen.getByRole("region", { name: "Round 1" });
+    expect(region).toHaveTextContent("A");
+    expect(region).toHaveTextContent("B");
+  });
+});
+
+describe("RoomScreen — guess-who identity reveal", () => {
+  it("renders the identity reveal instead of RoomResults when mode is guess_who and endgame is set", () => {
+    setRoom(
+      baseState({
+        status: "finished",
+        phase: "finished",
+        mode: "guess_who",
+        endgame: { kind: "identity_reveal", mapping: { P1: "host" } },
+        myGuess: { P1: "host" },
+      }),
+    );
+    render(<RoomScreen roomId="room-1" />);
+
+    expect(screen.getByText("Reveal")).toBeInTheDocument();
+    expect(screen.queryByText("Results")).not.toBeInTheDocument();
+  });
+});
+
 describe("RoomScreen — results", () => {
   function finishedState() {
     return baseState({
@@ -446,6 +565,7 @@ describe("RoomScreen — results", () => {
       totalRounds: 2,
       results: [
         {
+          kind: "survivor",
           index: 0,
           name: "Semifinals",
           items: [textItem("a1", "Apple"), textItem("a2", "Banana")],
@@ -453,6 +573,7 @@ describe("RoomScreen — results", () => {
           survivorItemId: "a2",
         },
         {
+          kind: "survivor",
           index: 1,
           name: "Final",
           items: [textItem("b1", "Cherry"), textItem("b2", "Date")],
@@ -508,6 +629,33 @@ describe("RoomScreen — results", () => {
 
     const round1 = screen.getByRole("region", { name: "Round 1" });
     expect(within(round1).getByText("Round 1")).toBeInTheDocument();
+  });
+
+  it("shows the ordered cut history for a turn_based_cut round that carries one", () => {
+    setRoom(
+      baseState({
+        mode: "turn_based_cut",
+        status: "finished",
+        phase: "finished",
+        totalRounds: 1,
+        results: [
+          {
+            kind: "survivor",
+            index: 0,
+            name: "Round 1",
+            items: [textItem("a1", "Apple"), textItem("a2", "Banana")],
+            claims: { host: "a1" },
+            survivorItemId: "a2",
+            cuts: [{ userId: "host", itemId: "a1" }],
+          },
+        ],
+      }),
+    );
+    render(<RoomScreen roomId="room-1" />);
+
+    const history = screen.getByLabelText(/cut order/i);
+    expect(history).toHaveTextContent("Alice");
+    expect(history).toHaveTextContent("Apple");
   });
 });
 
@@ -615,6 +763,7 @@ describe("RoomScreen — connection", () => {
         totalRounds: 1,
         results: [
           {
+            kind: "survivor",
             index: 0,
             name: "Round 1",
             items: [textItem("a1", "Apple"), textItem("a2", "Banana")],

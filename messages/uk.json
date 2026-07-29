@@ -290,7 +290,7 @@
     "menuToggle": "Перемкнути меню",
     "room": {
       "inARoom": "У кімнаті",
-      "lobby": "Лобі · {count}/{max}",
+      "lobby": "Лобі · {count}",
       "rejoin": "Повернутися"
     }
   },
@@ -1670,6 +1670,37 @@
   "room": {
     "loading": "Завантаження кімнати…",
     "reconnecting": "Повторне підключення…",
+    "modePicker": {
+      "heading": "Режим гри",
+      "hostIsChoosing": "Ведучий обирає режим гри…",
+      "playerRange": "{min}–{max} гравців"
+    },
+    "modes": {
+      "claim": {
+        "name": "Захоплення",
+        "blurb": "Встигніть забрати елемент швидше за інших."
+      },
+      "guess_who": {
+        "name": "Вгадай хто",
+        "blurb": "Обирайте наосліп, а потім вгадуйте, хто що обрав."
+      },
+      "turn_based_cut": {
+        "name": "Почергове вирізання",
+        "blurb": "По черзі прибирайте по одному елементу, поки не залишиться один."
+      },
+      "voting": {
+        "name": "Голосування",
+        "blurb": "Голосуйте наживо — усі бачать підрахунок одразу."
+      },
+      "shared_grid": {
+        "name": "Спільна сітка",
+        "blurb": "Ранжуйте наосліп, потім перегляньте спільний зведений рейтинг."
+      },
+      "relay": {
+        "name": "Естафета",
+        "blurb": "Будуйте один спільний рейтинг разом, по черзі розставляючи елементи."
+      }
+    },
     "entry": {
       "createRoom": "Створити кімнату",
       "joinByCode": "Приєднатися за кодом",
@@ -1695,7 +1726,7 @@
       "away": "Відсутній",
       "readyUp": "Приготуватися",
       "readyCancel": "Готовий",
-      "waitingForPlayers": "Очікуємо ще {count} гравців",
+      "waitingForPlayers": "Очікуємо ще {count} {count, plural, one {гравця} few {гравців} many {гравців} other {гравців}}",
       "waitingForReady": "Очікуємо готовності всіх",
       "starting": "Усі готові — починаємо…",
       "inviteHeading": "Запросити друзів",
@@ -1713,20 +1744,35 @@
     },
     "round": {
       "heading": "Раунд {index} із {total}",
-      "instruction": "Оберіть один елемент, щоб пожертвувати ним. Елемент, який ніхто не обрав, виживає.",
-      "claim": "Пожертвувати {name}",
       "taken": "Зайнято",
-      "sacrificedBy": "Пожертвував {name}",
-      "survivor": "Той, що вцілів",
-      "chosen": "Обрали {count} з {total}"
+      "chosen": "{count, plural, one {Обрав} other {Обрали}} {count} з {total}",
+      "instructionSave": "Оберіть один елемент, щоб врятувати його. Усі інші вибувають.",
+      "instructionSacrifice": "Оберіть один елемент, щоб пожертвувати ним. Елемент, який ніхто не обрав, виживає.",
+      "claimSave": "Врятувати {name}",
+      "claimSacrifice": "Пожертвувати {name}",
+      "claimedBySave": "Залишив(ла) {name}",
+      "claimedBySacrifice": "Пожертвував {name}",
+      "survivorSave": "Врятовано",
+      "survivorSacrifice": "Той, що вцілів",
+      "tooFastNote": "Ви надто швидко змінюєте вибір — зачекайте трохи і спробуйте ще раз."
+    },
+    "rejection": {
+      "not_your_turn": "Зараз не ваш хід.",
+      "not_in_round": "Цього варіанта немає в цьому раунді.",
+      "round_not_active": "Цей раунд уже завершено.",
+      "not_a_player": "Ви не займаєте місце в цій кімнаті.",
+      "malformed": "Не вдалося прийняти відповідь — спробуйте ще раз."
     },
     "between": {
-      "survivorHeading": "Той, що вцілів",
-      "survivorNote": "Цей елемент пережив раунд.",
-      "boardHeading": "Жертви цього раунду",
       "next": "Далі",
       "ready": "{count} / {total} готові",
-      "autoNext": "Наступний раунд через {seconds} с"
+      "autoNext": "Наступний раунд через {seconds} с",
+      "survivorHeadingSave": "Врятовано",
+      "survivorHeadingSacrifice": "Той, що вцілів",
+      "survivorNoteSave": "Цей елемент було врятовано.",
+      "survivorNoteSacrifice": "Цей елемент пережив раунд.",
+      "boardHeadingSave": "Вибори цього раунду",
+      "boardHeadingSacrifice": "Жертви цього раунду"
     },
     "results": {
       "heading": "Результати",
@@ -1756,7 +1802,7 @@
     },
     "presence": {
       "returnTo": "Повернутися до {title}",
-      "label": "{count} / {max} у кімнаті"
+      "playerCount": "{count} у кімнаті"
     },
     "kick": {
       "action": "Видалити {name} з кімнати",
@@ -1769,6 +1815,73 @@
       "heading": "Ведучий видалив вас із цієї кімнати",
       "description": "Ведучий видалив вас із цієї кімнати. Ви можете приєднатися знову за кодом, якщо його буде відкрито знову.",
       "leave": "Назад до паку"
+    },
+    "guessWho": {
+      "roundInstruction": "Зробіть вибір",
+      "pickInstruction": "Обирайте наосліп — ніхто не побачить ваш вибір, поки всі не підтвердять свої.",
+      "rankInstruction": "Розставте всі елементи за порядком, найкращий — першим — ніхто не побачить ваш рейтинг, поки всі не підтвердять свої.",
+      "revealHeading": "Розкриття",
+      "trajectoryHeading": "Хто що відповідав досі",
+      "roundColumn": "Раунд"
+    },
+    "guessing": {
+      "heading": "Фінальний раунд",
+      "title": "Хто є хто?",
+      "instruction": "Зіставте кожного гравця з міткою, під якою, на вашу думку, він грав.",
+      "chooseSomeone": "Оберіть гравця…",
+      "submit": "Надіслати здогадки",
+      "waitingForOthers": "Надіслали {count} / {total}"
+    },
+    "identityReveal": {
+      "heading": "Розкриття",
+      "correct": "Вгадано правильно",
+      "incorrect": "Вгадано неправильно",
+      "scoresPending": "Повний підрахунок очок стане доступним, коли підсумковий рахунок кожного гравця з'явиться на сервері."
+    },
+    "turnBasedCut": {
+      "instruction": "У свій хід виріжте один елемент. Перемагає той, що залишився останнім.",
+      "cutOrderHeading": "Порядок вирізань",
+      "cutVerb": "виріз(ала)"
+    },
+    "voting": {
+      "instruction": "Проголосуйте за один варіант. Ви можете змінювати голос, поки раунд не закриється.",
+      "votedSoFar": "Проголосували {count} / {total}",
+      "winnerHeading": "Переможець",
+      "tieBrokenNote": "Була нічия — {name} мав(ла) пріоритет і вирішив(ла) результат."
+    },
+    "sharedGrid": {
+      "instruction": "Розставте всі елементи за порядком наосліп.",
+      "aggregateHeading": "Підсумок",
+      "groupRanking": "Спільний рейтинг групи",
+      "pointsLabel": "{count} {count, plural, one {очко} few {очки} many {очок} other {очка}}",
+      "tiedNote": "Нічия — {count} {count, plural, one {позиція ділить} few {позиції ділять} many {позицій ділять} other {позиції ділять}} це місце"
+    },
+    "relay": {
+      "instruction": "Вставте поточний елемент у спільний рейтинг.",
+      "insertHere": "Вставити сюди",
+      "insertBefore": "Вставити перед «{title}»",
+      "insertAtEnd": "Вставити в кінець",
+      "currentItem": "Зараз розміщується",
+      "finalOrderHeading": "Підсумковий порядок",
+      "placementHistoryHeading": "Історія розміщень",
+      "placedVerb": "розмістив(ла)"
+    },
+    "lockedIn": {
+      "playerLocked": "{name} — підтвердив(ла) вибір",
+      "playerWaiting": "{name} — ще вирішує",
+      "count": "{count} / {total} підтвердили вибір"
+    },
+    "priority": {
+      "holder": "{name} має пріоритет",
+      "explainer": "вирішує результат нічиєї цього раунду"
+    },
+    "turnIndicator": {
+      "yourTurn": "Ваш хід",
+      "waitingFor": "Очікуємо {name}"
+    },
+    "leaderboard": {
+      "winner": "Переможець",
+      "points": "{count, plural, one {# очко} few {# очки} many {# очок} other {# очка}}"
     }
   }
 }

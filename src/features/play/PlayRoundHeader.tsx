@@ -16,7 +16,7 @@ export interface PlayRoundHeaderProps {
   /** Optional instruction line beneath the title. */
   instruction?: string;
   /** `"center"` (default) for nxn/1v1/rank; `"start"` for the elimination
-   * screen. Logical, not `text-left` — 3 of 8 locales are RTL. */
+   * screen. Logical, not `text-left` — 2 of 8 locales (ar, ur) are RTL. */
   align?: PlayRoundHeaderAlign;
   /** 0-based index of the round this header describes, and the total round
    * count — drive the round-number badge tile and the segmented progress-dash
@@ -64,7 +64,9 @@ export function PlayRoundHeader({
           {roundNumber}
         </div>
 
-        <div className={cn("min-w-0", isCentered && "flex flex-col items-center")}>
+        <div
+          className={cn("min-w-0", isCentered && "flex flex-col items-center")}
+        >
           <div
             className={cn(
               "flex items-center gap-[9px]",

@@ -290,7 +290,7 @@
     "menuToggle": "切换菜单",
     "room": {
       "inARoom": "在房间中",
-      "lobby": "大厅 · {count}/{max}",
+      "lobby": "大厅 · {count}",
       "rejoin": "重新加入"
     }
   },
@@ -1670,6 +1670,37 @@
   "room": {
     "loading": "正在加载房间…",
     "reconnecting": "正在重新连接…",
+    "modePicker": {
+      "heading": "游戏模式",
+      "hostIsChoosing": "房主正在选择游戏模式…",
+      "playerRange": "{min}-{max} 名玩家"
+    },
+    "modes": {
+      "claim": {
+        "name": "认领",
+        "blurb": "抢先认领一项，比谁都快。"
+      },
+      "guess_who": {
+        "name": "猜猜看",
+        "blurb": "盲选后，猜猜谁选了什么。"
+      },
+      "turn_based_cut": {
+        "name": "轮流淘汰",
+        "blurb": "轮流淘汰一项，直到只剩一项。"
+      },
+      "voting": {
+        "name": "投票",
+        "blurb": "实时投票，票数随时可见。"
+      },
+      "shared_grid": {
+        "name": "共同排名",
+        "blurb": "各自盲排，再看合并后的整体排名。"
+      },
+      "relay": {
+        "name": "接力排序",
+        "blurb": "轮流插入，共同排出一份排名。"
+      }
+    },
     "entry": {
       "createRoom": "创建房间",
       "joinByCode": "输入代码加入",
@@ -1713,20 +1744,35 @@
     },
     "round": {
       "heading": "第 {index} 轮，共 {total} 轮",
-      "instruction": "认领一项进行淘汰。无人认领的那一项将存活。",
-      "claim": "淘汰 {name}",
       "taken": "已被认领",
-      "sacrificedBy": "由 {name} 淘汰",
-      "survivor": "存活",
-      "chosen": "已有 {count}/{total} 人选择"
+      "chosen": "已有 {count}/{total} 人选择",
+      "instructionSave": "认领一项以保留。其他所有项都将被淘汰。",
+      "instructionSacrifice": "认领一项进行淘汰。无人认领的那一项将存活。",
+      "claimSave": "保留 {name}",
+      "claimSacrifice": "淘汰 {name}",
+      "claimedBySave": "已被 {name} 保留",
+      "claimedBySacrifice": "由 {name} 淘汰",
+      "survivorSave": "已保留",
+      "survivorSacrifice": "存活",
+      "tooFastNote": "你重新认领得太快了——请稍等片刻再试。"
+    },
+    "rejection": {
+      "not_your_turn": "还没轮到你。",
+      "not_in_round": "该选项不属于本轮。",
+      "round_not_active": "本轮已经结束。",
+      "not_a_player": "你在该房间中没有座位。",
+      "malformed": "提交无效，请重试。"
     },
     "between": {
-      "survivorHeading": "存活项",
-      "survivorNote": "此项在本轮中存活。",
-      "boardHeading": "本轮的淘汰",
       "next": "下一步",
       "ready": "{count}/{total} 已准备",
-      "autoNext": "{seconds} 秒后进入下一轮"
+      "autoNext": "{seconds} 秒后进入下一轮",
+      "survivorHeadingSave": "已保留",
+      "survivorHeadingSacrifice": "存活项",
+      "survivorNoteSave": "此项已被保留。",
+      "survivorNoteSacrifice": "此项在本轮中存活。",
+      "boardHeadingSave": "本轮的选择",
+      "boardHeadingSacrifice": "本轮的淘汰"
     },
     "results": {
       "heading": "结果",
@@ -1756,7 +1802,7 @@
     },
     "presence": {
       "returnTo": "返回 {title}",
-      "label": "房间内 {count} / {max}"
+      "playerCount": "房间内 {count} 人"
     },
     "kick": {
       "action": "将 {name} 移出房间",
@@ -1769,6 +1815,73 @@
       "heading": "房主已将你移出此房间",
       "description": "房主已将你移出此房间。如果房主重新开放，你可以用房间代码再次加入。",
       "leave": "返回卡包"
+    },
+    "guessWho": {
+      "roundInstruction": "做出你的选择",
+      "pickInstruction": "盲选一项——在所有人锁定之前，没人能看到你的选择。",
+      "rankInstruction": "对每一项排序，最佳在前——在所有人锁定之前，没人能看到你的排名。",
+      "revealHeading": "揭晓",
+      "trajectoryHeading": "大家目前的选择",
+      "roundColumn": "轮次"
+    },
+    "guessing": {
+      "heading": "最后一轮",
+      "title": "他们是谁？",
+      "instruction": "将每位玩家分配给你认为对应的标签。",
+      "chooseSomeone": "选择一位玩家…",
+      "submit": "提交猜测",
+      "waitingForOthers": "已有 {count} / {total} 人提交"
+    },
+    "identityReveal": {
+      "heading": "揭晓",
+      "correct": "猜对了",
+      "incorrect": "猜错了",
+      "scoresPending": "待每位玩家的总分数据接入后，即可查看完整分数。"
+    },
+    "turnBasedCut": {
+      "instruction": "轮到你时，淘汰一项。最后剩下的获胜。",
+      "cutOrderHeading": "淘汰顺序",
+      "cutVerb": "淘汰了"
+    },
+    "voting": {
+      "instruction": "为一个选项投票。回合结束前可随时更改。",
+      "votedSoFar": "已有 {count} / {total} 人投票",
+      "winnerHeading": "获胜项",
+      "tieBrokenNote": "出现平票——由持有优先权的 {name} 打破平局。"
+    },
+    "sharedGrid": {
+      "instruction": "对每一项排序，最佳在前，盲排。",
+      "aggregateHeading": "汇总",
+      "groupRanking": "群体排名",
+      "pointsLabel": "{count} 分",
+      "tiedNote": "并列——{count} 项并列此名次"
+    },
+    "relay": {
+      "instruction": "将当前项插入共同排名中。",
+      "insertHere": "插入到这里",
+      "insertBefore": "插入到「{title}」之前",
+      "insertAtEnd": "插入到末尾",
+      "currentItem": "正在放置",
+      "finalOrderHeading": "最终排名",
+      "placementHistoryHeading": "放置记录",
+      "placedVerb": "放置了"
+    },
+    "lockedIn": {
+      "playerLocked": "{name} 已锁定",
+      "playerWaiting": "{name} 仍在决定",
+      "count": "{count} / {total} 已锁定"
+    },
+    "priority": {
+      "holder": "{name} 持有优先权",
+      "explainer": "本轮由其打破平局"
+    },
+    "turnIndicator": {
+      "yourTurn": "轮到你了",
+      "waitingFor": "等待 {name}"
+    },
+    "leaderboard": {
+      "winner": "获胜者",
+      "points": "{count, plural, other {# 分}}"
     }
   }
 }

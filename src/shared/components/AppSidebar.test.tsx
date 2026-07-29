@@ -137,7 +137,7 @@ describe("SidebarContent", () => {
       "href",
       "/rooms/r1",
     );
-    expect(screen.getByText("Lobby · 2/4")).toBeInTheDocument();
+    expect(screen.getByText("Lobby · 2")).toBeInTheDocument();
     expect(screen.getByText("Rejoin")).toBeInTheDocument();
   });
 

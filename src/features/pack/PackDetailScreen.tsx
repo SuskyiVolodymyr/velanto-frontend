@@ -15,6 +15,8 @@ import { PodiumTable } from "@/src/features/result/PodiumTable";
 import { PackCreatorCard } from "@/src/features/pack/PackCreatorCard";
 import { PackPlayButton } from "@/src/features/pack/PackPlayButton";
 import { PackPlayEstimate } from "@/src/features/pack/PackPlayEstimate";
+import { FriendsRoomEntry } from "@/src/features/friends-rooms/FriendsRoomEntry";
+import { ROOMS_DORMANT } from "@/src/features/friends-rooms/room-types";
 import { PackOwnerActions } from "@/src/features/pack/PackOwnerActions";
 import { PackOwnerStatusBadge } from "@/src/features/pack/PackOwnerStatusBadge";
 import { PackRejectionReason } from "@/src/features/pack/PackRejectionReason";
@@ -150,6 +152,12 @@ export function PackDetailScreen({
             <Panel className="flex flex-col gap-3 rounded-[20px] p-5">
               <PackPlayButton packId={pack.id} />
               <PackPlayEstimate pack={pack} />
+              {/* FriendsRoomEntry has no ROOMS_DORMANT guard of its own, so
+                  the flag is checked here — the same shape JoinRoomCard uses
+                  internally. Now that the flag is false this renders; the
+                  guard stays so the surface can be parked again by flipping
+                  one constant rather than unpicking the mount. */}
+              {!ROOMS_DORMANT && <FriendsRoomEntry packId={pack.id} />}
             </Panel>
 
             <PackCreatorCard pack={pack} />

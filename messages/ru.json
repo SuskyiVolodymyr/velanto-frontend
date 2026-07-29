@@ -290,7 +290,7 @@
     "menuToggle": "Переключить меню",
     "room": {
       "inARoom": "В комнате",
-      "lobby": "Лобби · {count}/{max}",
+      "lobby": "Лобби · {count}",
       "rejoin": "Вернуться"
     }
   },
@@ -1670,6 +1670,37 @@
   "room": {
     "loading": "Загрузка комнаты…",
     "reconnecting": "Переподключение…",
+    "modePicker": {
+      "heading": "Режим игры",
+      "hostIsChoosing": "Хост выбирает режим игры…",
+      "playerRange": "{min}–{max} игроков"
+    },
+    "modes": {
+      "claim": {
+        "name": "Захват",
+        "blurb": "Успейте забрать предмет быстрее всех."
+      },
+      "guess_who": {
+        "name": "Угадай кто",
+        "blurb": "Выбирайте вслепую, затем угадывайте, кто что выбрал."
+      },
+      "turn_based_cut": {
+        "name": "Пошаговое отсечение",
+        "blurb": "По очереди убирайте по одному предмету, пока не останется один."
+      },
+      "voting": {
+        "name": "Голосование",
+        "blurb": "Голосуйте вживую — все видят счёт в реальном времени."
+      },
+      "shared_grid": {
+        "name": "Общая сетка",
+        "blurb": "Ранжируйте вслепую, затем смотрите общий совместный рейтинг."
+      },
+      "relay": {
+        "name": "Эстафета",
+        "blurb": "Стройте один общий рейтинг вместе, по очереди расставляя предметы."
+      }
+    },
     "entry": {
       "createRoom": "Создать комнату",
       "joinByCode": "Войти по коду",
@@ -1695,7 +1726,7 @@
       "away": "Отошёл",
       "readyUp": "Приготовиться",
       "readyCancel": "Готов",
-      "waitingForPlayers": "Ожидаем ещё {count} игроков",
+      "waitingForPlayers": "Ожидаем ещё {count} {count, plural, one {игрока} few {игроков} many {игроков} other {игроков}}",
       "waitingForReady": "Ожидаем готовности всех",
       "starting": "Все готовы — начинаем…",
       "inviteHeading": "Пригласить друзей",
@@ -1713,20 +1744,35 @@
     },
     "round": {
       "heading": "Раунд {index} из {total}",
-      "instruction": "Выберите один предмет, чтобы пожертвовать им. Предмет, который никто не выбрал, выживает.",
-      "claim": "Пожертвовать {name}",
       "taken": "Занято",
-      "sacrificedBy": "Пожертвовал {name}",
-      "survivor": "Выживший",
-      "chosen": "Выбрали {count} из {total}"
+      "chosen": "{count, plural, one {Выбрал} other {Выбрали}} {count} из {total}",
+      "instructionSave": "Выберите один предмет, чтобы спасти его. Все остальные выбывают.",
+      "instructionSacrifice": "Выберите один предмет, чтобы пожертвовать им. Предмет, который никто не выбрал, выживает.",
+      "claimSave": "Спасти {name}",
+      "claimSacrifice": "Пожертвовать {name}",
+      "claimedBySave": "Оставил(а) {name}",
+      "claimedBySacrifice": "Пожертвовал {name}",
+      "survivorSave": "Спасён",
+      "survivorSacrifice": "Выживший",
+      "tooFastNote": "Вы слишком быстро меняете выбор — подождите немного и попробуйте снова."
+    },
+    "rejection": {
+      "not_your_turn": "Сейчас не ваш ход.",
+      "not_in_round": "Этого варианта нет в этом раунде.",
+      "round_not_active": "Этот раунд уже завершён.",
+      "not_a_player": "Вы не занимаете место в этой комнате.",
+      "malformed": "Не удалось принять ответ — попробуйте ещё раз."
     },
     "between": {
-      "survivorHeading": "Выживший",
-      "survivorNote": "Этот предмет пережил раунд.",
-      "boardHeading": "Жертвы этого раунда",
       "next": "Далее",
       "ready": "{count} / {total} готовы",
-      "autoNext": "Следующий раунд через {seconds} с"
+      "autoNext": "Следующий раунд через {seconds} с",
+      "survivorHeadingSave": "Спасён",
+      "survivorHeadingSacrifice": "Выживший",
+      "survivorNoteSave": "Этот предмет был спасён.",
+      "survivorNoteSacrifice": "Этот предмет пережил раунд.",
+      "boardHeadingSave": "Выборы этого раунда",
+      "boardHeadingSacrifice": "Жертвы этого раунда"
     },
     "results": {
       "heading": "Результаты",
@@ -1756,7 +1802,7 @@
     },
     "presence": {
       "returnTo": "Вернуться в {title}",
-      "label": "{count} / {max} в комнате"
+      "playerCount": "{count} в комнате"
     },
     "kick": {
       "action": "Удалить {name} из комнаты",
@@ -1769,6 +1815,73 @@
       "heading": "Ведущий удалил вас из этой комнаты",
       "description": "Ведущий удалил вас из этой комнаты. Вы можете снова присоединиться по коду, если он откроет её заново.",
       "leave": "Назад к паку"
+    },
+    "guessWho": {
+      "roundInstruction": "Сделайте выбор",
+      "pickInstruction": "Выбирайте вслепую — никто не увидит ваш выбор, пока все не подтвердят свои.",
+      "rankInstruction": "Расставьте все предметы по порядку, лучший — первым — никто не увидит ваш рейтинг, пока все не подтвердят свои.",
+      "revealHeading": "Раскрытие",
+      "trajectoryHeading": "Кто что отвечал до сих пор",
+      "roundColumn": "Раунд"
+    },
+    "guessing": {
+      "heading": "Финальный раунд",
+      "title": "Кто есть кто?",
+      "instruction": "Сопоставьте каждого игрока с меткой, под которой, как вы думаете, он играл.",
+      "chooseSomeone": "Выберите игрока…",
+      "submit": "Отправить догадки",
+      "waitingForOthers": "Отправили {count} / {total}"
+    },
+    "identityReveal": {
+      "heading": "Раскрытие",
+      "correct": "Угадано верно",
+      "incorrect": "Угадано неверно",
+      "scoresPending": "Полный подсчёт очков станет доступен, когда итоговый счёт каждого игрока появится на сервере."
+    },
+    "turnBasedCut": {
+      "instruction": "В свой ход отсеките один предмет. Побеждает тот, что остался последним.",
+      "cutOrderHeading": "Порядок отсечений",
+      "cutVerb": "отсёк(ла)"
+    },
+    "voting": {
+      "instruction": "Проголосуйте за один вариант. Вы можете менять голос, пока раунд не закроется.",
+      "votedSoFar": "Проголосовали {count} / {total}",
+      "winnerHeading": "Победитель",
+      "tieBrokenNote": "Была ничья — {name} обладал(а) приоритетом и решил(а) исход."
+    },
+    "sharedGrid": {
+      "instruction": "Расставьте все предметы по порядку вслепую.",
+      "aggregateHeading": "Итог",
+      "groupRanking": "Общий рейтинг группы",
+      "pointsLabel": "{count} очк.",
+      "tiedNote": "Ничья — {count} {count, plural, one {позиция делит} few {позиции делят} many {позиций делят} other {позиции делят}} это место"
+    },
+    "relay": {
+      "instruction": "Вставьте текущий предмет в общий рейтинг.",
+      "insertHere": "Вставить сюда",
+      "insertBefore": "Вставить перед «{title}»",
+      "insertAtEnd": "Вставить в конец",
+      "currentItem": "Сейчас размещается",
+      "finalOrderHeading": "Итоговый порядок",
+      "placementHistoryHeading": "История размещений",
+      "placedVerb": "разместил(а)"
+    },
+    "lockedIn": {
+      "playerLocked": "{name} — подтвердил(а) выбор",
+      "playerWaiting": "{name} — ещё решает",
+      "count": "{count} / {total} подтвердили выбор"
+    },
+    "priority": {
+      "holder": "{name} обладает приоритетом",
+      "explainer": "решает исход при ничьей в этом раунде"
+    },
+    "turnIndicator": {
+      "yourTurn": "Ваш ход",
+      "waitingFor": "Ожидаем {name}"
+    },
+    "leaderboard": {
+      "winner": "Победитель",
+      "points": "{count, plural, one {# очко} few {# очка} many {# очков} other {# очка}}"
     }
   }
 }
