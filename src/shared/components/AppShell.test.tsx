@@ -43,7 +43,7 @@ vi.mock("@/src/shared/components/BannedBanner", () => ({
   BannedBanner: () => null,
 }));
 vi.mock("@/src/shared/components/SiteFooter", () => ({
-  SiteFooter: () => null,
+  SiteFooter: () => <div data-testid="site-footer" />,
 }));
 vi.mock("@/src/shared/components/MobileBottomNav", () => ({
   MobileBottomNav: () => <div data-testid="mobile-bottom-nav" />,
@@ -86,5 +86,22 @@ describe("AppShell", () => {
     renderShell(<div>rules content</div>);
     expect(screen.getByText("rules content")).toBeInTheDocument();
     expect(screen.queryByTestId("app-topbar")).not.toBeInTheDocument();
+  });
+
+  it("shows the site footer on the dashboard route", () => {
+    renderShell(<div>content</div>);
+    expect(screen.getByTestId("site-footer")).toBeInTheDocument();
+  });
+
+  it("hides the site footer on every other route", () => {
+    pathname.current = "/people";
+    renderShell(<div>content</div>);
+    expect(screen.queryByTestId("site-footer")).not.toBeInTheDocument();
+  });
+
+  it("hides the site footer on the full-screen /auth route", () => {
+    pathname.current = "/auth";
+    renderShell(<div>auth content</div>);
+    expect(screen.queryByTestId("site-footer")).not.toBeInTheDocument();
   });
 });

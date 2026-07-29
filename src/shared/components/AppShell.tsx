@@ -131,7 +131,7 @@ export function AppShell({ children }: { children: ReactNode }) {
         {onDashboard && <AppTopBar onMenuToggle={onMenuToggle} />}
         <BannedBanner />
         {children}
-        <SiteFooter />
+        {onDashboard && <SiteFooter />}
       </div>
 
       <MobileBottomNav />
