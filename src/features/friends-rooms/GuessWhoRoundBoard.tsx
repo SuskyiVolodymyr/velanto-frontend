@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
@@ -33,6 +34,18 @@ export function GuessWhoRoundBoard({
   onPick,
 }: GuessWhoRoundBoardProps) {
   const t = useTranslations("room");
+  // The pick arm's own echo of what THIS player just clicked. The server
+  // never sends anyone's selection back (that's the whole point of a blind
+  // round), and nothing upstream tracks it either — `myLastSelection` is an
+  // optional override that no current caller passes — so without this the
+  // selected ring and `aria-pressed` could never turn on and clicking an
+  // option gave no feedback at all. Stamped with the round index so it
+  // self-invalidates when the round advances, rather than needing an effect.
+  // The rank arm already works this way (BlindRankBoard's own `rankSoFar`).
+  const [pickedForRound, setPickedForRound] = useState<{
+    roundIndex: number;
+    optionId: string;
+  } | null>(null);
   const round = state.round;
   if (!round || !round.optionIds || !round.actionKind) return null;
 
@@ -40,8 +53,15 @@ export function GuessWhoRoundBoard({
   const iAmLockedIn = Boolean(me && round.lockedIn?.includes(me.userId));
   const itemsById = new Map(round.items.map((item) => [item.id, item]));
 
+  const myPick =
+    myLastSelection?.[0] ??
+    (pickedForRound?.roundIndex === round.index
+      ? pickedForRound.optionId
+      : null);
+
   function selectPick(optionId: string) {
-    if (iAmLockedIn || round?.actionKind !== "pick") return;
+    if (iAmLockedIn || !round || round.actionKind !== "pick") return;
+    setPickedForRound({ roundIndex: round.index, optionId });
     onPick([optionId]);
   }
 
@@ -68,7 +88,7 @@ export function GuessWhoRoundBoard({
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {round.optionIds.map((optionId) => {
             const item = itemsById.get(optionId);
-            const isMine = myLastSelection?.[0] === optionId;
+            const isMine = myPick === optionId;
             return (
               <button
                 key={optionId}

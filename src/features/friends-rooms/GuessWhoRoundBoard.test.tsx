@@ -38,6 +38,40 @@ describe("GuessWhoRoundBoard", () => {
     expect(onPick).toHaveBeenCalledWith(["i1"]);
   });
 
+  it("pick mode: the clicked option shows as selected WITHOUT any myLastSelection prop", async () => {
+    // Regression guard: the real dispatcher (RoomRoundBoard) never passes
+    // `myLastSelection`, so a test that supplies it cannot prove the player
+    // sees anything happen when they click. Nothing is passed here on
+    // purpose — this is the actual production wiring.
+    render(
+      <GuessWhoRoundBoard
+        state={baseRoomState({
+          mode: "guess_who",
+          round: {
+            index: 0,
+            name: "",
+            items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
+            claims: {},
+            survivorItemId: null,
+            optionIds: ["i1", "i2"],
+            actionKind: "pick",
+            lockedIn: [],
+          },
+        })}
+        currentUserId="u1"
+        onPick={vi.fn()}
+      />,
+    );
+    const pizza = screen.getByRole("button", { name: /pizza/i });
+    expect(pizza).toHaveAttribute("aria-pressed", "false");
+    await userEvent.click(pizza);
+    expect(pizza).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: /sushi/i })).toHaveAttribute(
+      "aria-pressed",
+      "false",
+    );
+  });
+
   it("pick mode: once locked in, the board shows YOUR pick highlighted and stops taking further clicks", async () => {
     const onPick = vi.fn();
     render(

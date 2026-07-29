@@ -92,7 +92,6 @@ export function GuessingPhaseScreen({
                 <span className="flex h-9 w-9 flex-none items-center justify-center rounded-chip border border-acc/30 bg-acc/[0.12] font-mono text-sm font-bold text-acc">
                   {label}
                 </span>
-                <Text className="sr-only">{label}</Text>
                 <select
                   aria-label={label}
                   value={assignment[label] ?? ""}

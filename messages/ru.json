@@ -1827,6 +1827,8 @@
     },
     "identityReveal": {
       "heading": "Раскрытие",
+      "correct": "Угадано верно",
+      "incorrect": "Угадано неверно",
       "scoresPending": "Полный подсчёт очков станет доступен, когда итоговый счёт каждого игрока появится на сервере."
     },
     "turnBasedCut": {
@@ -1850,6 +1852,8 @@
     "relay": {
       "instruction": "Вставьте текущий предмет в общий рейтинг.",
       "insertHere": "Вставить сюда",
+      "insertBefore": "Вставить перед «{title}»",
+      "insertAtEnd": "Вставить в конец",
       "currentItem": "Сейчас размещается",
       "finalOrderHeading": "Итоговый порядок",
       "placementHistoryHeading": "История размещений",

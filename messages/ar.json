@@ -1827,6 +1827,8 @@
     },
     "identityReveal": {
       "heading": "الكشف",
+      "correct": "تخمين صحيح",
+      "incorrect": "تخمين خاطئ",
       "scoresPending": "ستتوفر النتائج الكاملة بمجرد توفر مجموع كل لاعب على النظام."
     },
     "turnBasedCut": {
@@ -1850,6 +1852,8 @@
     "relay": {
       "instruction": "أدرج العنصر الحالي في الترتيب المشترك.",
       "insertHere": "أدرج هنا",
+      "insertBefore": "أدرج قبل {title}",
+      "insertAtEnd": "أدرج في النهاية",
       "currentItem": "يوضع الآن",
       "finalOrderHeading": "الترتيب النهائي",
       "placementHistoryHeading": "سجل الوضع",

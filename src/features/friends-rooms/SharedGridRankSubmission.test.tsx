@@ -57,6 +57,6 @@ describe("SharedGridRankSubmission", () => {
         onSubmitRanking={vi.fn()}
       />,
     );
-    expect(screen.getByLabelText(/alice.*locked in/i)).toBeInTheDocument();
+    expect(screen.getByText(/alice has locked in/i)).toBeInTheDocument();
   });
 });

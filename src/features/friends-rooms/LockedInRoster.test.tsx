@@ -27,10 +27,14 @@ const PLAYERS = [
 ];
 
 describe("LockedInRoster", () => {
-  it("shows a checkmark for a locked-in player and a pending dot for the rest", () => {
+  it("announces each player's locked-in state as real list-item text", () => {
     render(<LockedInRoster players={PLAYERS} lockedIn={["u1"]} />);
-    expect(screen.getByLabelText(/alice.*locked in/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/bob.*waiting/i)).toBeInTheDocument();
+    // Asserted as text inside a real <li>, not as an aria-label: an
+    // aria-label on a plain <div> is not exposed to assistive tech at all,
+    // which is exactly the bug this replaced.
+    expect(screen.getAllByRole("listitem")).toHaveLength(2);
+    expect(screen.getByText(/alice has locked in/i)).toBeInTheDocument();
+    expect(screen.getByText(/bob is still waiting/i)).toBeInTheDocument();
   });
 
   it("never renders anything about WHAT a player picked", () => {

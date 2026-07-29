@@ -1827,6 +1827,8 @@
     },
     "identityReveal": {
       "heading": "Розкриття",
+      "correct": "Вгадано правильно",
+      "incorrect": "Вгадано неправильно",
       "scoresPending": "Повний підрахунок очок стане доступним, коли підсумковий рахунок кожного гравця з'явиться на сервері."
     },
     "turnBasedCut": {
@@ -1850,6 +1852,8 @@
     "relay": {
       "instruction": "Вставте поточний елемент у спільний рейтинг.",
       "insertHere": "Вставити сюди",
+      "insertBefore": "Вставити перед «{title}»",
+      "insertAtEnd": "Вставити в кінець",
       "currentItem": "Зараз розміщується",
       "finalOrderHeading": "Підсумковий порядок",
       "placementHistoryHeading": "Історія розміщень",

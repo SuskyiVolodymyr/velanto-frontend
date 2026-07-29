@@ -1827,6 +1827,8 @@
     },
     "identityReveal": {
       "heading": "প্রকাশ",
+      "correct": "সঠিক অনুমান",
+      "incorrect": "ভুল অনুমান",
       "scoresPending": "প্রতিটি খেলোয়াড়ের মোট স্কোর যুক্ত হলে পূর্ণ স্কোর দেখা যাবে।"
     },
     "turnBasedCut": {
@@ -1850,6 +1852,8 @@
     "relay": {
       "instruction": "বর্তমান আইটেমটি সাধারণ র‍্যাঙ্কিংয়ে বসান।",
       "insertHere": "এখানে বসান",
+      "insertBefore": "{title}-এর আগে বসান",
+      "insertAtEnd": "শেষে বসান",
       "currentItem": "এখন বসানো হচ্ছে",
       "finalOrderHeading": "চূড়ান্ত ক্রম",
       "placementHistoryHeading": "বসানোর ইতিহাস",

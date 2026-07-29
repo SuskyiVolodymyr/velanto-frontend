@@ -1827,6 +1827,8 @@
     },
     "identityReveal": {
       "heading": "खुलासा",
+      "correct": "सही अनुमान",
+      "incorrect": "ग़लत अनुमान",
       "scoresPending": "हर खिलाड़ी का कुल स्कोर उपलब्ध होने पर पूरे स्कोर दिखेंगे।"
     },
     "turnBasedCut": {
@@ -1850,6 +1852,8 @@
     "relay": {
       "instruction": "मौजूदा आइटम को साझा रैंकिंग में डालें।",
       "insertHere": "यहाँ डालें",
+      "insertBefore": "{title} से पहले डालें",
+      "insertAtEnd": "अंत में डालें",
       "currentItem": "अभी रखा जा रहा है",
       "finalOrderHeading": "अंतिम क्रम",
       "placementHistoryHeading": "प्लेसमेंट इतिहास",

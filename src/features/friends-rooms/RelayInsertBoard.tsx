@@ -51,11 +51,24 @@ export function RelayInsertBoard({
     if (!isMyTurn || !currentItemId) {
       return <div aria-hidden className="h-2 w-full" />;
     }
+    // Every gap used to share the one label "Insert here", leaving N+1
+    // buttons indistinguishable to screen-reader and voice-control users
+    // ("click Insert here" — which one?). Name each gap by the item it lands
+    // in front of, and the trailing gap by where it lands.
+    const before = placed[position];
+    const label =
+      placed.length === 0
+        ? t("relay.insertHere")
+        : before !== undefined
+          ? t("relay.insertBefore", {
+              title: itemsById.get(before)?.title ?? before,
+            })
+          : t("relay.insertAtEnd");
     return (
       <button
         type="button"
         onClick={() => onPlaceItem(currentItemId, position)}
-        aria-label={t("relay.insertHere")}
+        aria-label={label}
         className="group relative flex h-6 w-full items-center justify-center"
       >
         <span className="h-[2px] w-full rounded-pill bg-white/[0.08] transition-colors group-hover:bg-acc" />

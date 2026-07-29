@@ -66,6 +66,16 @@ export function IdentityRevealScreen({ state }: { state: RoomState }) {
               <Text className="flex-1 text-sm font-semibold">
                 {usernameByUserId.get(trueUserId) ?? trueUserId}
               </Text>
+              {/* The correct/wrong verdict must not be carried by color (and
+                  an aria-hidden icon) alone — that is invisible to screen
+                  readers and to anyone who can't distinguish the green/red
+                  tint. The icon stays decorative; the sr-only text is the
+                  accessible signal. */}
+              <span className="sr-only">
+                {correct
+                  ? t("identityReveal.correct")
+                  : t("identityReveal.incorrect")}
+              </span>
               {correct ? (
                 <Check size={16} aria-hidden className="text-live" />
               ) : (

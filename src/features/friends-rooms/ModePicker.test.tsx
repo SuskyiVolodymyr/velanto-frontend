@@ -30,17 +30,23 @@ describe("ModePicker", () => {
     expect(onChange).toHaveBeenCalledWith("claim");
   });
 
-  it("host: an unavailable mode's card is disabled and shows its reason", () => {
+  it("host: an unavailable mode's card is inert, focusable, and shows its reason", async () => {
+    const onChange = vi.fn();
     render(
       <ModePicker
         availableModes={AVAILABLE}
         selectedMode={null}
         isHost
-        onChange={vi.fn()}
+        onChange={onChange}
       />,
     );
     const guessWho = screen.getByRole("button", { name: /Guess Who/i });
-    expect(guessWho).toBeDisabled();
+    // aria-disabled rather than `disabled`, so the reason stays reachable by
+    // keyboard/AT — but clicking it must still do nothing.
+    expect(guessWho).toHaveAttribute("aria-disabled", "true");
+    expect(guessWho).not.toBeDisabled();
+    await userEvent.click(guessWho);
+    expect(onChange).not.toHaveBeenCalled();
     expect(
       screen.getByText("Needs at least 5 playable rounds"),
     ).toBeInTheDocument();

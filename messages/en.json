@@ -1735,6 +1735,8 @@
     },
     "identityReveal": {
       "heading": "Reveal",
+      "correct": "Correct guess",
+      "incorrect": "Wrong guess",
       "scoresPending": "Full scores available once every player's total is on the wire."
     },
     "turnBasedCut": {
@@ -1758,6 +1760,8 @@
     "relay": {
       "instruction": "Insert the current item into the shared ranking.",
       "insertHere": "Insert here",
+      "insertBefore": "Insert before {title}",
+      "insertAtEnd": "Insert at the end",
       "currentItem": "Now placing",
       "finalOrderHeading": "Final order",
       "placementHistoryHeading": "Placement history",

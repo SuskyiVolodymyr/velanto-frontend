@@ -1827,6 +1827,8 @@
     },
     "identityReveal": {
       "heading": "揭晓",
+      "correct": "猜对了",
+      "incorrect": "猜错了",
       "scoresPending": "待每位玩家的总分数据接入后，即可查看完整分数。"
     },
     "turnBasedCut": {
@@ -1850,6 +1852,8 @@
     "relay": {
       "instruction": "将当前项插入共同排名中。",
       "insertHere": "插入到这里",
+      "insertBefore": "插入到「{title}」之前",
+      "insertAtEnd": "插入到末尾",
       "currentItem": "正在放置",
       "finalOrderHeading": "最终排名",
       "placementHistoryHeading": "放置记录",

@@ -1827,6 +1827,8 @@
     },
     "identityReveal": {
       "heading": "انکشاف",
+      "correct": "درست اندازہ",
+      "incorrect": "غلط اندازہ",
       "scoresPending": "ہر کھلاڑی کا مکمل اسکور دستیاب ہونے پر پورے اسکور دکھائے جائیں گے۔"
     },
     "turnBasedCut": {
@@ -1850,6 +1852,8 @@
     "relay": {
       "instruction": "موجودہ آئٹم کو مشترکہ درجہ بندی میں شامل کریں۔",
       "insertHere": "یہاں شامل کریں",
+      "insertBefore": "{title} سے پہلے شامل کریں",
+      "insertAtEnd": "آخر میں شامل کریں",
       "currentItem": "ابھی رکھا جا رہا ہے",
       "finalOrderHeading": "حتمی ترتیب",
       "placementHistoryHeading": "رکھنے کی تاریخ",

@@ -36,10 +36,16 @@ describe("RelayInsertBoard", () => {
         onPlaceItem={onPlaceItem}
       />,
     );
-    // one placed item ("A") -> two gaps: before it, after it.
-    const gaps = screen.getAllByRole("button", { name: /insert here/i });
+    // one placed item ("A") -> two gaps: before it, after it. Each gap must
+    // carry its OWN accessible name — a shared "Insert here" leaves them
+    // indistinguishable to screen-reader and voice-control users.
+    const gaps = screen.getAllByRole("button", { name: /insert/i });
     expect(gaps).toHaveLength(2);
-    await userEvent.click(gaps[1]);
+    expect(
+      screen.getByRole("button", { name: /insert before a/i }),
+    ).toBeInTheDocument();
+    const atEnd = screen.getByRole("button", { name: /insert at the end/i });
+    await userEvent.click(atEnd);
     expect(onPlaceItem).toHaveBeenCalledWith("i2", 1);
   });
 
@@ -66,7 +72,7 @@ describe("RelayInsertBoard", () => {
       />,
     );
     expect(
-      screen.queryByRole("button", { name: /insert here/i }),
+      screen.queryByRole("button", { name: /insert/i }),
     ).not.toBeInTheDocument();
   });
 

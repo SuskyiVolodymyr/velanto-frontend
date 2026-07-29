@@ -68,16 +68,23 @@ export function ModePicker({
             <button
               key={entry.mode}
               type="button"
-              disabled={!entry.available}
+              // `aria-disabled`, not `disabled`: a `disabled` button is
+              // removed from the tab order, so keyboard and voice-control
+              // users could never reach the one thing this card exists to
+              // tell them — `entry.reason`, the explanation of WHY the mode
+              // is out of reach. The click is inert either way.
+              aria-disabled={!entry.available}
               aria-pressed={selected}
-              onClick={() => onChange(entry.mode)}
+              onClick={() => {
+                if (entry.available) onChange(entry.mode);
+              }}
               className={cn(
                 "flex flex-col gap-2 rounded-card border-[1.5px] p-4 text-start transition-colors",
                 selected
                   ? "border-acc bg-acc/[0.08] ring-[3px] ring-acc/20"
                   : entry.available
                     ? "border-border bg-surface hover:border-border-strong"
-                    : "cursor-not-allowed border-border bg-surface/40 opacity-60",
+                    : "cursor-not-allowed border-border bg-surface/40",
               )}
             >
               <div className="flex items-center justify-between gap-2">
@@ -93,7 +100,13 @@ export function ModePicker({
               <Text variant="secondary" className="text-xs">
                 {t(MODE_BLURB_KEY[entry.mode])}
               </Text>
-              <Text variant="tertiary" className="text-[11px]">
+              {/* The unavailable `reason` is the load-bearing string on this
+                  card, so it renders at "secondary", not the dimmed
+                  "tertiary" used for the incidental player-range hint. */}
+              <Text
+                variant={entry.available ? "tertiary" : "secondary"}
+                className="text-[11px]"
+              >
                 {entry.available
                   ? t("modePicker.playerRange", {
                       min: bounds.minPlayers,
