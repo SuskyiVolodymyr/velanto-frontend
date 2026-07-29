@@ -3,8 +3,6 @@ import { useTranslations } from "next-intl";
 import { ArrowLeft } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
-import { cn } from "@/src/shared/lib/cn";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import type { Pack } from "@/src/shared/types/pack";
 
 export interface PlayChromeProps {
@@ -50,52 +48,48 @@ export function PlayChrome({
   const packMeta = `${tFormat(pack.format)} · ${tPack("roundsCount", { count: totalRounds })}`;
 
   return (
-    <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
-      <div
-        className={cn(
-          PACK_CONTAINER,
-          "flex items-center gap-3 py-3 max-[720px]:px-4",
-        )}
+    <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/85 px-7 py-3 backdrop-blur-md max-[720px]:px-4">
+      <Link
+        href={`/packs/${pack.id}`}
+        aria-label={t("exit")}
+        className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-tile border border-border bg-white/[0.03] text-foreground-secondary transition-colors hover:border-white/[0.18] hover:text-foreground"
       >
-        <Link
-          href={`/packs/${pack.id}`}
-          aria-label={t("exit")}
-          className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-tile border border-border bg-white/[0.03] text-foreground-secondary transition-colors hover:border-white/[0.18] hover:text-foreground"
-        >
-          <ArrowLeft size={18} aria-hidden />
-        </Link>
+        <ArrowLeft size={18} aria-hidden />
+      </Link>
 
-        <div
-          aria-hidden="true"
-          className="h-9 w-9 shrink-0 rounded-[10px]"
-          style={{
-            background: `linear-gradient(150deg, ${pack.coverTone}, #0b0c0f)`,
-          }}
-        />
+      <div
+        aria-hidden="true"
+        className="h-9 w-9 shrink-0 rounded-[10px]"
+        style={{
+          background: `linear-gradient(150deg, ${pack.coverTone}, #0b0c0f)`,
+        }}
+      />
 
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <Text
-              as="h1"
-              variant="title"
-              className="min-w-0 truncate text-[15.5px]"
-            >
-              {pack.title}
-            </Text>
-            <Badge className="shrink-0">{t("soloMode")}</Badge>
-          </div>
-          <Text variant="tertiary" className="truncate text-[12px]">
-            {packMeta}
+      <div className="min-w-0">
+        <div className="flex items-center gap-2">
+          <Text
+            as="h1"
+            variant="title"
+            className="min-w-0 truncate text-[15.5px]"
+          >
+            {pack.title}
           </Text>
+          <Badge className="shrink-0">{t("soloMode")}</Badge>
         </div>
-
         <Text
-          variant="secondary"
-          className="ms-auto shrink-0 text-[13.5px] tabular-nums text-foreground-secondary"
+          variant="tertiary"
+          className="truncate text-[12px] max-[720px]:hidden"
         >
-          {roundLabel}
+          {packMeta}
         </Text>
       </div>
+
+      <Text
+        variant="secondary"
+        className="ms-auto shrink-0 text-[13.5px] tabular-nums text-foreground-secondary"
+      >
+        {roundLabel}
+      </Text>
     </div>
   );
 }

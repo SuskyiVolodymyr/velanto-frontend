@@ -130,26 +130,17 @@ export function PackDetailScreen({
     <>
       {/* Sticky action bar: back to browse on the left, share + report + the
           (secondary) vote control on the right. */}
-      <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
-        <div
-          className={cn(
-            PACK_CONTAINER,
-            "flex items-center gap-3 py-3 max-[720px]:px-4",
-          )}
-        >
-          <BackButton href="/" label={tNav("browse")} />
-          <div className="ms-auto flex items-center gap-2.5">
-            {isApproved && (
-              <ShareButton path={`/packs/${pack.id}`} compact />
-            )}
-            <ReportPackDialog packId={pack.id} />
-            <VoteButtons
-              packId={pack.id}
-              initialLikes={pack.likes}
-              initialDislikes={pack.dislikes}
-              initialMyVote={pack.myVote}
-            />
-          </div>
+      <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/85 px-7 py-3 backdrop-blur-md max-[720px]:px-4">
+        <BackButton href="/" label={tNav("browse")} />
+        <div className="ms-auto flex items-center gap-2.5">
+          {isApproved && <ShareButton path={`/packs/${pack.id}`} compact />}
+          <ReportPackDialog packId={pack.id} />
+          <VoteButtons
+            packId={pack.id}
+            initialLikes={pack.likes}
+            initialDislikes={pack.dislikes}
+            initialMyVote={pack.myVote}
+          />
         </div>
       </div>
 

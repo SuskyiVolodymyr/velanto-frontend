@@ -175,22 +175,15 @@ export function ResultScreen({ pack }: { pack: Pack }) {
           states that used to render it: once results are actually on screen.
           Locked/loading/error keep whatever CTA they already had (or none);
           that is untouched #222 gate behaviour, not something T11 changes. */}
-      <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
-        <div
-          className={cn(
-            PACK_CONTAINER,
-            "flex items-center gap-3 py-3 max-[720px]:px-4",
-          )}
-        >
-          <BackButton href={`/packs/${pack.id}`} />
-          {picks && !isError && results && (
-            <ResultActions
-              packId={pack.id}
-              shared={shared}
-              className="ms-auto"
-            />
-          )}
-        </div>
+      <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/85 px-7 py-3 backdrop-blur-md max-[720px]:px-4">
+        <BackButton href={`/packs/${pack.id}`} />
+        {picks && !isError && results && (
+          <ResultActions
+            packId={pack.id}
+            shared={shared}
+            className="ms-auto"
+          />
+        )}
       </div>
       {body}
     </>
