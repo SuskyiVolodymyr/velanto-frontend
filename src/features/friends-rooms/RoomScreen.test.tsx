@@ -458,6 +458,24 @@ describe("RoomScreen — between", () => {
   });
 });
 
+describe("RoomScreen — guess-who identity reveal", () => {
+  it("renders the identity reveal instead of RoomResults when mode is guess_who and endgame is set", () => {
+    setRoom(
+      baseState({
+        status: "finished",
+        phase: "finished",
+        mode: "guess_who",
+        endgame: { kind: "identity_reveal", mapping: { P1: "host" } },
+        myGuess: { P1: "host" },
+      }),
+    );
+    render(<RoomScreen roomId="room-1" />);
+
+    expect(screen.getByText("Reveal")).toBeInTheDocument();
+    expect(screen.queryByText("Results")).not.toBeInTheDocument();
+  });
+});
+
 describe("RoomScreen — results", () => {
   function finishedState() {
     return baseState({

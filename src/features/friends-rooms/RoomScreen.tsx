@@ -15,6 +15,7 @@ import { RoomRoundBoard } from "./RoomRoundBoard";
 import { RoomBetweenBoard } from "./RoomBetweenBoard";
 import { GuessingPhaseScreen } from "./GuessingPhaseScreen";
 import { RoomResults } from "./RoomResults";
+import { IdentityRevealScreen } from "./IdentityRevealScreen";
 import { RoomLeaveButton } from "./RoomLeaveButton";
 import { RoomKicked } from "./RoomKicked";
 import { useExitToPack } from "./use-exit-to-pack";
@@ -79,7 +80,11 @@ export function RoomScreen({ roomId }: { roomId: string }) {
   if (state?.phase === "finished") {
     return (
       <Shell>
-        <RoomResults state={state} packFormat={packFormat} />
+        {state.mode === "guess_who" && state.endgame ? (
+          <IdentityRevealScreen state={state} />
+        ) : (
+          <RoomResults state={state} packFormat={packFormat} />
+        )}
       </Shell>
     );
   }

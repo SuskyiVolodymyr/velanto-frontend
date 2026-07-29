@@ -1725,6 +1725,10 @@
       "submit": "Submit guesses",
       "waitingForOthers": "{count} / {total} have submitted"
     },
+    "identityReveal": {
+      "heading": "Reveal",
+      "scoresPending": "Full scores available once every player's total is on the wire."
+    },
     "entry": {
       "createRoom": "Create room",
       "joinByCode": "Join by code",
