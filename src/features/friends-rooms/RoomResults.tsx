@@ -86,6 +86,37 @@ export function RoomResults({
               );
             })}
           </div>
+
+          {/* Turn-based cut's ordered cut history — see RoomBetween's
+              identical block. Only `kind: "survivor"` results ever carry
+              `cuts`; Claim's own rounds never populate it. */}
+          {result.kind === "survivor" &&
+            result.cuts &&
+            result.cuts.length > 0 && (
+              <ol
+                aria-label={t("turnBasedCut.cutOrderHeading")}
+                className="flex flex-wrap items-center gap-2"
+              >
+                {result.cuts.map((cut, index) => {
+                  const cutter = byId.get(cut.userId);
+                  const item = result.items.find((i) => i.id === cut.itemId);
+                  return (
+                    <li
+                      key={`${cut.userId}-${cut.itemId}-${index}`}
+                      className="flex items-center gap-1.5 rounded-pill border border-border bg-surface px-2.5 py-1 text-xs"
+                    >
+                      <span className="font-semibold">
+                        {cutter?.username ?? cut.userId}
+                      </span>
+                      <span className="text-foreground-tertiary">
+                        {t("turnBasedCut.cutVerb")}
+                      </span>
+                      <span>{item?.title ?? cut.itemId}</span>
+                    </li>
+                  );
+                })}
+              </ol>
+            )}
         </section>
       ))}
     </div>

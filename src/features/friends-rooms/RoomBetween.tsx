@@ -82,6 +82,42 @@ export function RoomBetween({
         </div>
       )}
 
+      {/* Turn-based cut: SurvivorRoundResult carries an optional `cuts` list
+          (the order cuts happened in), since a single player may cut more
+          than once in a round — the per-item claimant map alone doesn't
+          convey ORDER. Claim's own rounds never populate `round.cuts`, so
+          this renders only for Turn-based cut. */}
+      {round.cuts && round.cuts.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <Text variant="secondary" className="text-sm">
+            {t("turnBasedCut.cutOrderHeading")}
+          </Text>
+          <ol
+            aria-label={t("turnBasedCut.cutOrderHeading")}
+            className="flex flex-wrap items-center gap-2"
+          >
+            {round.cuts.map((cut, index) => {
+              const cutter = state.players.find((p) => p.userId === cut.userId);
+              const item = round.items.find((i) => i.id === cut.itemId);
+              return (
+                <li
+                  key={`${cut.userId}-${cut.itemId}-${index}`}
+                  className="flex items-center gap-1.5 rounded-pill border border-border bg-surface px-2.5 py-1 text-xs"
+                >
+                  <span className="font-semibold">
+                    {cutter?.username ?? cut.userId}
+                  </span>
+                  <span className="text-foreground-tertiary">
+                    {t("turnBasedCut.cutVerb")}
+                  </span>
+                  <span>{item?.title ?? cut.itemId}</span>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      )}
+
       <div className="flex flex-col gap-2">
         <Text variant="secondary" className="text-sm">
           {t(`between.boardHeading${verb}`)}

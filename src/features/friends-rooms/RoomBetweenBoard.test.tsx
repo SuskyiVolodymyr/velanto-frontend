@@ -4,6 +4,13 @@ import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { RoomBetweenBoard } from "./RoomBetweenBoard";
 import { baseRoomState } from "./test-fixtures";
 
+const ITEM = (id: string, title: string) => ({
+  id,
+  title,
+  type: "text" as const,
+  value: title,
+});
+
 describe("RoomBetweenBoard", () => {
   it("mode claim renders the survivor board (RoomBetween)", () => {
     render(
@@ -45,6 +52,33 @@ describe("RoomBetweenBoard", () => {
       />,
     );
     expect(screen.getByText("P1")).toBeInTheDocument();
+  });
+
+  it("mode turn_based_cut with a cuts history renders it as an ordered strip", () => {
+    render(
+      <RoomBetweenBoard
+        state={baseRoomState({
+          mode: "turn_based_cut",
+          round: {
+            index: 0,
+            name: "",
+            items: [ITEM("i1", "A"), ITEM("i2", "B"), ITEM("i3", "C")],
+            claims: {},
+            survivorItemId: "i3",
+            cuts: [
+              { userId: "u1", itemId: "i1" },
+              { userId: "u2", itemId: "i2" },
+            ],
+          },
+        })}
+        currentUserId="u1"
+        packFormat="sacrifice_one"
+        onNext={vi.fn()}
+      />,
+    );
+    const history = screen.getByLabelText(/cut order/i);
+    expect(history).toHaveTextContent("Alice");
+    expect(history).toHaveTextContent("Bob");
   });
 
   it("mode null renders nothing (defensive — between should never resolve with no mode)", () => {

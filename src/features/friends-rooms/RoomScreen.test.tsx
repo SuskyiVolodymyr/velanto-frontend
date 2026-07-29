@@ -549,6 +549,33 @@ describe("RoomScreen — results", () => {
     const round1 = screen.getByRole("region", { name: "Round 1" });
     expect(within(round1).getByText("Round 1")).toBeInTheDocument();
   });
+
+  it("shows the ordered cut history for a turn_based_cut round that carries one", () => {
+    setRoom(
+      baseState({
+        mode: "turn_based_cut",
+        status: "finished",
+        phase: "finished",
+        totalRounds: 1,
+        results: [
+          {
+            kind: "survivor",
+            index: 0,
+            name: "Round 1",
+            items: [textItem("a1", "Apple"), textItem("a2", "Banana")],
+            claims: { host: "a1" },
+            survivorItemId: "a2",
+            cuts: [{ userId: "host", itemId: "a1" }],
+          },
+        ],
+      }),
+    );
+    render(<RoomScreen roomId="room-1" />);
+
+    const history = screen.getByLabelText(/cut order/i);
+    expect(history).toHaveTextContent("Alice");
+    expect(history).toHaveTextContent("Apple");
+  });
 });
 
 // A terminal room is a dead end: the socket is gone and there is nothing to
