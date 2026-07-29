@@ -11,6 +11,7 @@ import type {
   VoteRejection,
 } from "./room-types";
 import { RoomRound } from "./RoomRound";
+import { GuessWhoRoundBoard } from "./GuessWhoRoundBoard";
 
 /** Every round-scoped action a board might need, keyed by mode so each board
  * only destructures what its own mode uses. */
@@ -63,7 +64,14 @@ export function RoomRoundBoard({
           packFormat={packFormat}
         />
       );
-    // "guess_who" -> GuessWhoRoundBoard, wired in Task 12.
+    case "guess_who":
+      return (
+        <GuessWhoRoundBoard
+          state={state}
+          currentUserId={currentUserId}
+          onPick={actions.pick}
+        />
+      );
     // "turn_based_cut" -> TurnBasedCutBoard, wired in Task 18.
     // "voting" -> VotingBoard, wired in Task 21.
     // "shared_grid" -> SharedGridRankSubmission, wired in Task 23.

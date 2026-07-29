@@ -38,6 +38,29 @@ describe("RoomRoundBoard", () => {
     expect(screen.getByText("Item 1")).toBeInTheDocument();
   });
 
+  it("mode guess_who renders the guess-who pick board", () => {
+    render(
+      <RoomRoundBoard
+        state={baseRoomState({
+          mode: "guess_who",
+          round: {
+            index: 0,
+            name: "",
+            items: [{ id: "i1", title: "Pizza", type: "text", value: "Pizza" }],
+            claims: {},
+            survivorItemId: null,
+            optionIds: ["i1"],
+            actionKind: "pick",
+            lockedIn: [],
+          },
+        })}
+        currentUserId="u1"
+        actions={{ pick: vi.fn() } as never}
+      />,
+    );
+    expect(screen.getByText("Pizza")).toBeInTheDocument();
+  });
+
   it("mode null renders nothing (defensive — a round should never start with no mode)", () => {
     const { container } = render(
       <RoomRoundBoard
