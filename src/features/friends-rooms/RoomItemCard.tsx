@@ -12,7 +12,8 @@ import {
 } from "@/src/shared/lib/youtube";
 import { mediaUrl } from "@/src/shared/lib/media-url";
 import { cn } from "@/src/shared/lib/cn";
-import type { Item } from "@/src/shared/types/pack";
+import type { Item, Pack } from "@/src/shared/types/pack";
+import { claimVerbKey } from "./room-mode-copy";
 import type { RoomPlayerState } from "./room-types";
 
 /**
@@ -36,6 +37,8 @@ interface RoomItemCardProps {
   flash?: boolean;
   /** Present and status `free` ⇒ the card is a claim button. */
   onClaim?: () => void;
+  /** save_one or sacrifice_one — picks the "Save"/"Sacrifice" verb pair. */
+  format: Extract<Pack["format"], "save_one" | "sacrifice_one">;
 }
 
 // Exactly one value per CSS property per state — cn() is a plain join here, not
@@ -65,8 +68,10 @@ export function RoomItemCard({
   isOwn = false,
   flash = false,
   onClaim,
+  format,
 }: RoomItemCardProps) {
   const t = useTranslations("room");
+  const verb = claimVerbKey(format).endsWith("Save") ? "Save" : "Sacrifice";
   const videoId = item.type === "youtube" ? extractYouTubeId(item.value) : null;
   const startSeconds =
     item.type === "youtube" ? extractYouTubeStart(item.value) : null;
@@ -83,11 +88,11 @@ export function RoomItemCard({
 
   const statusLabel =
     status === "survivor"
-      ? t("round.survivor")
+      ? t(`round.survivor${verb}`)
       : status === "free"
         ? null
         : claimant
-          ? t("round.sacrificedBy", { name: claimant.username })
+          ? t(`round.claimedBy${verb}`, { name: claimant.username })
           : t("round.taken");
 
   const media = videoId ? (
@@ -154,7 +159,7 @@ export function RoomItemCard({
   );
 
   if (claimable) {
-    const claimLabel = t("round.claim", { name: item.title });
+    const claimLabel = t(`round.claim${verb}`, { name: item.title });
     // A resolvable youtube item renders YouTubeCard's OWN play button. Wrapping
     // the whole card in the claim <button> would nest a button inside a button —
     // invalid HTML that breaks hydration. Mirror CandidateCard: the media sits

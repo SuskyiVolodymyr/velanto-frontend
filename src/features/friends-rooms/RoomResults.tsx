@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { BackButton } from "@/src/shared/components/BackButton";
 import { Text } from "@/src/shared/components/Text";
+import type { Pack } from "@/src/shared/types/pack";
 import type { RoomPlayerState, RoomState } from "./room-types";
 import { RoomItemCard } from "./RoomItemCard";
 
@@ -12,7 +13,15 @@ import { RoomItemCard } from "./RoomItemCard";
  * This is the shareable summary — wiring an actual share is a later task, so no
  * backend call is made here.
  */
-export function RoomResults({ state }: { state: RoomState }) {
+export function RoomResults({
+  state,
+  packFormat = "sacrifice_one",
+}: {
+  state: RoomState;
+  /** save_one or sacrifice_one — picks the "Save"/"Sacrifice" verb pair.
+   * Defaults to sacrifice_one, this board's original (and only) framing. */
+  packFormat?: Extract<Pack["format"], "save_one" | "sacrifice_one">;
+}) {
   const t = useTranslations("room");
   const byId = new Map(state.players.map((p) => [p.userId, p]));
 
@@ -72,6 +81,7 @@ export function RoomResults({ state }: { state: RoomState }) {
                   claimant={
                     isSurvivor ? null : claimantFor(result.claims, item.id)
                   }
+                  format={packFormat}
                 />
               );
             })}

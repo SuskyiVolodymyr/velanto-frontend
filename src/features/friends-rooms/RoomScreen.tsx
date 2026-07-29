@@ -1,11 +1,14 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Loader2, WifiOff } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { cn } from "@/src/shared/lib/cn";
+import { packsClient } from "@/src/shared/lib/packs-client";
+import type { Pack } from "@/src/shared/types/pack";
 import { useFriendsRoom } from "./use-friends-room";
 import { RoomLobby } from "./RoomLobby";
 import { RoomRoundBoard } from "./RoomRoundBoard";
@@ -50,6 +53,25 @@ export function RoomScreen({ roomId }: { roomId: string }) {
   } = useFriendsRoom(roomId);
   const userId = user?.id ?? null;
 
+  // Claim's save/sacrifice copy needs the pack's format, which isn't on the
+  // room's own wire state (RoomState carries no format field — see the
+  // rooms-UI plan's Task 9 note). Best-effort: a failed fetch just keeps the
+  // "sacrifice_one" fallback every Claim board already defaults to.
+  const [packFormat, setPackFormat] = useState<
+    Extract<Pack["format"], "save_one" | "sacrifice_one"> | undefined
+  >(undefined);
+  useEffect(() => {
+    if (!state?.packId) return;
+    packsClient
+      .getById(state.packId)
+      .then((pack) => {
+        if (pack.format === "save_one" || pack.format === "sacrifice_one") {
+          setPackFormat(pack.format);
+        }
+      })
+      .catch(() => undefined);
+  }, [state?.packId]);
+
   // A finished game shows its results even after the server tears the socket
   // down (teardown closes every socket, which arrives as connection "closed").
   // This must come before the closed check, or the results would flash and be
@@ -57,7 +79,7 @@ export function RoomScreen({ roomId }: { roomId: string }) {
   if (state?.phase === "finished") {
     return (
       <Shell>
-        <RoomResults state={state} />
+        <RoomResults state={state} packFormat={packFormat} />
       </Shell>
     );
   }
@@ -164,6 +186,7 @@ export function RoomScreen({ roomId }: { roomId: string }) {
         <RoomRoundBoard
           state={state}
           currentUserId={userId}
+          packFormat={packFormat}
           actions={{
             claim,
             cut,
@@ -177,7 +200,12 @@ export function RoomScreen({ roomId }: { roomId: string }) {
         />
       )}
       {state.phase === "between" && (
-        <RoomBetweenBoard state={state} currentUserId={userId} onNext={next} />
+        <RoomBetweenBoard
+          state={state}
+          currentUserId={userId}
+          packFormat={packFormat}
+          onNext={next}
+        />
       )}
       {state.phase === "guessing" && (
         <GuessingPhaseScreen state={state} onSubmit={guess} />

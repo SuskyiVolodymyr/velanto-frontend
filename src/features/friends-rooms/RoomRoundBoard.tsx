@@ -1,5 +1,6 @@
 "use client";
 
+import type { Pack } from "@/src/shared/types/pack";
 import type {
   ClaimRejection,
   CutRejection,
@@ -34,6 +35,10 @@ interface RoomRoundBoardProps {
   state: RoomState;
   currentUserId: string | null;
   actions: RoomRoundActions;
+  /** save_one or sacrifice_one — Claim's own save/sacrifice verb. Request-
+   * derived data (RoomScreen fetches the pack once), not an action, so it's
+   * a sibling prop rather than folded into `actions`. */
+  packFormat?: Extract<Pack["format"], "save_one" | "sacrifice_one">;
 }
 
 /**
@@ -45,6 +50,7 @@ export function RoomRoundBoard({
   state,
   currentUserId,
   actions,
+  packFormat,
 }: RoomRoundBoardProps) {
   switch (state.mode) {
     case "claim":
@@ -54,6 +60,7 @@ export function RoomRoundBoard({
           currentUserId={currentUserId}
           lastRejection={actions.lastRejection}
           onClaim={actions.claim}
+          packFormat={packFormat}
         />
       );
     // "guess_who" -> GuessWhoRoundBoard, wired in Task 12.

@@ -1743,17 +1743,25 @@
     },
     "round": {
       "heading": "Round {index} of {total}",
-      "instruction": "Claim one item to sacrifice. The item nobody claims survives.",
-      "claim": "Sacrifice {name}",
+      "instructionSave": "Claim one item to save. Everyone else is eliminated.",
+      "instructionSacrifice": "Claim one item to sacrifice. The item nobody claims survives.",
+      "claimSave": "Save {name}",
+      "claimSacrifice": "Sacrifice {name}",
       "taken": "Taken",
-      "sacrificedBy": "Sacrificed by {name}",
-      "survivor": "Survivor",
-      "chosen": "{count} of {total} have chosen"
+      "claimedBySave": "Kept by {name}",
+      "claimedBySacrifice": "Sacrificed by {name}",
+      "survivorSave": "Saved",
+      "survivorSacrifice": "Survivor",
+      "chosen": "{count} of {total} have chosen",
+      "tooFastNote": "You're re-claiming too fast — wait a moment and try again."
     },
     "between": {
-      "survivorHeading": "Survivor",
-      "survivorNote": "This item survived the round.",
-      "boardHeading": "This round's sacrifices",
+      "survivorHeadingSave": "Saved",
+      "survivorHeadingSacrifice": "Survivor",
+      "survivorNoteSave": "This item was saved.",
+      "survivorNoteSacrifice": "This item survived the round.",
+      "boardHeadingSave": "This round's picks",
+      "boardHeadingSacrifice": "This round's sacrifices",
       "next": "Next",
       "ready": "{count} / {total} ready",
       "autoNext": "Next round in {seconds}s"

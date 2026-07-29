@@ -6,6 +6,7 @@ import { ArrowRight } from "lucide-react";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
+import type { Pack } from "@/src/shared/types/pack";
 import type { RoomPlayerState, RoomState } from "./room-types";
 import { RoomItemCard } from "./RoomItemCard";
 
@@ -13,6 +14,9 @@ interface RoomBetweenProps {
   state: RoomState;
   currentUserId: string | null;
   onNext: () => void;
+  /** save_one or sacrifice_one — picks the "Save"/"Sacrifice" verb pair.
+   * Defaults to sacrifice_one, this board's original (and only) framing. */
+  packFormat?: Extract<Pack["format"], "save_one" | "sacrifice_one">;
 }
 
 /**
@@ -24,9 +28,11 @@ export function RoomBetween({
   state,
   currentUserId,
   onNext,
+  packFormat = "sacrifice_one",
 }: RoomBetweenProps) {
   const t = useTranslations("room");
   const round = state.round;
+  const verb = packFormat === "save_one" ? "Save" : "Sacrifice";
 
   const claimantByItem = useMemo(() => {
     const map = new Map<string, RoomPlayerState>();
@@ -58,10 +64,10 @@ export function RoomBetween({
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-1">
         <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-          {t("between.survivorHeading")}
+          {t(`between.survivorHeading${verb}`)}
         </Text>
         <Text as="h2" variant="title" className="text-2xl text-success">
-          {t("between.survivorNote")}
+          {t(`between.survivorNote${verb}`)}
         </Text>
       </header>
 
@@ -71,13 +77,14 @@ export function RoomBetween({
             item={survivor}
             index={survivorIndex}
             status="survivor"
+            format={packFormat}
           />
         </div>
       )}
 
       <div className="flex flex-col gap-2">
         <Text variant="secondary" className="text-sm">
-          {t("between.boardHeading")}
+          {t(`between.boardHeading${verb}`)}
         </Text>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {round.items.map((item, index) => {
@@ -89,6 +96,7 @@ export function RoomBetween({
                 index={index}
                 status={isSurvivor ? "survivor" : "sacrificed"}
                 claimant={isSurvivor ? null : claimantByItem.get(item.id)}
+                format={packFormat}
               />
             );
           })}

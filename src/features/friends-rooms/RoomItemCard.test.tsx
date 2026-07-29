@@ -30,6 +30,7 @@ describe("RoomItemCard — claimable", () => {
         item={youtubeItem()}
         index={0}
         status="free"
+        format="sacrifice_one"
         onClaim={() => {}}
       />,
     );
@@ -50,6 +51,7 @@ describe("RoomItemCard — claimable", () => {
         item={youtubeItem()}
         index={0}
         status="free"
+        format="sacrifice_one"
         onClaim={onClaim}
       />,
     );
@@ -68,6 +70,7 @@ describe("RoomItemCard — claimable", () => {
         item={textItem()}
         index={0}
         status="free"
+        format="sacrifice_one"
         onClaim={onClaim}
       />,
     );
@@ -101,6 +104,7 @@ describe("RoomItemCard — claimant", () => {
         item={textItem()}
         index={0}
         status="sacrificed"
+        format="sacrifice_one"
         claimant={claimant()}
       />,
     );
@@ -116,6 +120,7 @@ describe("RoomItemCard — claimant", () => {
         item={youtubeItem()}
         index={0}
         status="sacrificed"
+        format="sacrifice_one"
         claimant={claimant()}
       />,
     );
@@ -124,7 +129,51 @@ describe("RoomItemCard — claimant", () => {
   });
 
   it("still numbers an unclaimed item", () => {
-    render(<RoomItemCard item={textItem()} index={2} status="free" />);
+    render(
+      <RoomItemCard
+        item={textItem()}
+        index={2}
+        status="free"
+        format="sacrifice_one"
+      />,
+    );
     expect(screen.getByText("03")).toBeInTheDocument();
+  });
+});
+
+describe("RoomItemCard — format-aware verb", () => {
+  it("uses the save verb for a save_one room and the sacrifice verb for sacrifice_one", () => {
+    const item = { id: "i1", title: "Pizza", type: "text" as const, value: "Pizza" };
+    const { rerender } = render(
+      <RoomItemCard
+        item={item}
+        index={0}
+        status="free"
+        format="save_one"
+        onClaim={vi.fn()}
+      />,
+    );
+    expect(screen.getByRole("button", { name: /save pizza/i })).toBeInTheDocument();
+
+    rerender(
+      <RoomItemCard
+        item={item}
+        index={0}
+        status="free"
+        format="sacrifice_one"
+        onClaim={vi.fn()}
+      />,
+    );
+    expect(
+      screen.getByRole("button", { name: /sacrifice pizza/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("the survivor badge also flips: 'Saved' for save_one, 'Survivor' for sacrifice_one", () => {
+    const item = { id: "i1", title: "Pizza", type: "text" as const, value: "Pizza" };
+    render(
+      <RoomItemCard item={item} index={0} status="survivor" format="save_one" />,
+    );
+    expect(screen.getByText(/saved/i)).toBeInTheDocument();
   });
 });

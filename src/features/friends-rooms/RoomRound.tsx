@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
+import type { Pack } from "@/src/shared/types/pack";
 import type { ClaimRejection, RoomPlayerState, RoomState } from "./room-types";
 import { RoomItemCard } from "./RoomItemCard";
 
@@ -12,6 +13,10 @@ interface RoomRoundProps {
   currentUserId: string | null;
   lastRejection: ClaimRejection | null;
   onClaim: (itemId: string) => void;
+  /** save_one or sacrifice_one — picks the "Save"/"Sacrifice" verb pair.
+   * Defaults to sacrifice_one, this board's original (and only) framing,
+   * for any caller that doesn't yet know the pack's format. */
+  packFormat?: Extract<Pack["format"], "save_one" | "sacrifice_one">;
 }
 
 /**
@@ -25,9 +30,12 @@ export function RoomRound({
   currentUserId,
   lastRejection,
   onClaim,
+  packFormat = "sacrifice_one",
 }: RoomRoundProps) {
   const t = useTranslations("room");
   const round = state.round;
+  const instructionKey =
+    packFormat === "save_one" ? "round.instructionSave" : "round.instructionSacrifice";
 
   // itemId → the player sacrificing it, inverted from { userId: itemId }.
   const claimantByItem = useMemo(() => {
@@ -65,11 +73,11 @@ export function RoomRound({
           })}
         </Text>
         <Text as="h2" variant="title" className="text-2xl">
-          {round.name || t("round.instruction")}
+          {round.name || t(instructionKey)}
         </Text>
         {round.name && (
           <Text variant="secondary" className="text-sm">
-            {t("round.instruction")}
+            {t(instructionKey)}
           </Text>
         )}
       </header>
@@ -89,6 +97,7 @@ export function RoomRound({
               isOwn={isOwn}
               flash={lastRejection?.itemId === item.id}
               onClaim={free ? () => onClaim(item.id) : undefined}
+              format={packFormat}
             />
           );
         })}
