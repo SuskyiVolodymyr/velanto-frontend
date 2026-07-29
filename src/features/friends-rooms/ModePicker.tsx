@@ -1,11 +1,37 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Check, Circle } from "lucide-react";
+import {
+  Check,
+  Circle,
+  LayoutGrid,
+  Repeat,
+  Scissors,
+  Swords,
+  Users,
+  Vote,
+  type LucideIcon,
+} from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
-import { MODE_NAME_KEY, MODE_BLURB_KEY } from "./room-mode-copy";
-import { ROOM_MODE_BOUNDS, type AvailableMode, type RoomMode } from "./room-types";
+import { MODE_NAME_KEY, MODE_BLURB_KEY, MODE_ICON } from "./room-mode-copy";
+import {
+  ROOM_MODE_BOUNDS,
+  type AvailableMode,
+  type RoomMode,
+} from "./room-types";
+
+/** Resolves room-mode-copy's icon NAMES to components. The map there stays a
+ * plain data module with no React dependency, so the binding happens here —
+ * the one place that renders them. */
+const ICON_BY_NAME: Record<string, LucideIcon> = {
+  Swords,
+  Users,
+  Scissors,
+  Vote,
+  LayoutGrid,
+  Repeat,
+};
 
 interface ModePickerProps {
   availableModes: AvailableMode[];
@@ -33,7 +59,10 @@ export function ModePicker({
   if (!isHost) {
     const chosen = availableModes.find((m) => m.mode === selectedMode);
     return (
-      <section aria-label={t("modePicker.heading")} className="flex flex-col gap-2">
+      <section
+        aria-label={t("modePicker.heading")}
+        className="flex flex-col gap-2"
+      >
         <Text variant="tertiary" className="text-xs uppercase tracking-wide">
           {t("modePicker.heading")}
         </Text>
@@ -56,7 +85,10 @@ export function ModePicker({
   }
 
   return (
-    <section aria-label={t("modePicker.heading")} className="flex flex-col gap-3">
+    <section
+      aria-label={t("modePicker.heading")}
+      className="flex flex-col gap-3"
+    >
       <Text variant="tertiary" className="text-xs uppercase tracking-wide">
         {t("modePicker.heading")}
       </Text>
@@ -64,6 +96,7 @@ export function ModePicker({
         {availableModes.map((entry) => {
           const selected = entry.mode === selectedMode;
           const bounds = ROOM_MODE_BOUNDS[entry.mode];
+          const ModeIcon = ICON_BY_NAME[MODE_ICON[entry.mode]];
           return (
             <button
               key={entry.mode}
@@ -88,13 +121,28 @@ export function ModePicker({
               )}
             >
               <div className="flex items-center justify-between gap-2">
-                <Text className="text-sm font-semibold">
-                  {t(MODE_NAME_KEY[entry.mode])}
-                </Text>
+                <span className="flex items-center gap-2">
+                  {ModeIcon && (
+                    <ModeIcon
+                      size={16}
+                      aria-hidden
+                      className={
+                        selected ? "text-acc" : "text-foreground-secondary"
+                      }
+                    />
+                  )}
+                  <Text className="text-sm font-semibold">
+                    {t(MODE_NAME_KEY[entry.mode])}
+                  </Text>
+                </span>
                 {selected ? (
                   <Check size={16} aria-hidden className="text-acc" />
                 ) : (
-                  <Circle size={14} aria-hidden className="text-foreground-tertiary" />
+                  <Circle
+                    size={14}
+                    aria-hidden
+                    className="text-foreground-tertiary"
+                  />
                 )}
               </div>
               <Text variant="secondary" className="text-xs">

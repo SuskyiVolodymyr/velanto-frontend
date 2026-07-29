@@ -1726,7 +1726,7 @@
       "away": "غائب",
       "readyUp": "استعد",
       "readyCancel": "جاهز",
-      "waitingForPlayers": "في انتظار انضمام {count} لاعبين آخرين",
+      "waitingForPlayers": "في انتظار انضمام {count} {count, plural, zero {لاعبين} one {لاعب آخر} two {لاعبين آخرين} few {لاعبين آخرين} many {لاعبًا آخر} other {لاعب آخر}}",
       "waitingForReady": "في انتظار استعداد الجميع",
       "starting": "الجميع مستعدون — جارٍ البدء…",
       "inviteHeading": "ادعُ الأصدقاء",
@@ -1853,8 +1853,8 @@
       "instruction": "رتّب كل عنصر خفية، بالترتيب.",
       "aggregateHeading": "مجمَّع",
       "groupRanking": "ترتيب المجموعة",
-      "pointsLabel": "{count} نقطة",
-      "tiedNote": "تعادل — يتشارك {count} عناصر هذا الترتيب"
+      "pointsLabel": "{count} {count, plural, zero {نقطة} one {نقطة} two {نقطتان} few {نقاط} many {نقطة} other {نقطة}}",
+      "tiedNote": "تعادل — {count} {count, plural, zero {عناصر} one {عنصر} two {عنصران} few {عناصر} many {عنصرًا} other {عنصر}} يتشارك هذا الترتيب"
     },
     "relay": {
       "instruction": "أدرج العنصر الحالي في الترتيب المشترك.",

@@ -63,16 +63,28 @@ export function RoomScreen({ roomId }: { roomId: string }) {
     Extract<Pack["format"], "save_one" | "sacrifice_one"> | undefined
   >(undefined);
   useEffect(() => {
-    if (!state?.packId) return;
+    // Only Claim and Turn-based cut read `packFormat` at all, so there is no
+    // reason to fetch for the four modes that ignore it.
+    const mode = state?.mode;
+    if (!state?.packId || (mode !== "claim" && mode !== "turn_based_cut")) {
+      return;
+    }
+    // Cancellation guard: without it a resolve arriving after the packId
+    // changed (or after unmount) would write a stale format over a newer one.
+    let cancelled = false;
     packsClient
       .getById(state.packId)
       .then((pack) => {
+        if (cancelled) return;
         if (pack.format === "save_one" || pack.format === "sacrifice_one") {
           setPackFormat(pack.format);
         }
       })
       .catch(() => undefined);
-  }, [state?.packId]);
+    return () => {
+      cancelled = true;
+    };
+  }, [state?.packId, state?.mode]);
 
   // A finished game shows its results even after the server tears the socket
   // down (teardown closes every socket, which arrives as connection "closed").

@@ -152,11 +152,11 @@ export function PackDetailScreen({
             <Panel className="flex flex-col gap-3 rounded-[20px] p-5">
               <PackPlayButton packId={pack.id} />
               <PackPlayEstimate pack={pack} />
-              {/* Room infra is dormant until every mode's UI ships (see
-                  docs/superpowers/plans/2026-07-29-rooms-ui-plan.md, Task 31) —
-                  FriendsRoomEntry itself no-ops nothing here since it has no
-                  ROOMS_DORMANT guard of its own; it is simply not rendered
-                  until that flip, mirroring how JoinRoomCard guards itself. */}
+              {/* FriendsRoomEntry has no ROOMS_DORMANT guard of its own, so
+                  the flag is checked here — the same shape JoinRoomCard uses
+                  internally. Now that the flag is false this renders; the
+                  guard stays so the surface can be parked again by flipping
+                  one constant rather than unpicking the mount. */}
               {!ROOMS_DORMANT && <FriendsRoomEntry packId={pack.id} />}
             </Panel>
 

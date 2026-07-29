@@ -1726,7 +1726,7 @@
       "away": "غیر حاضر",
       "readyUp": "تیار ہو جائیں",
       "readyCancel": "تیار",
-      "waitingForPlayers": "مزید {count} کھلاڑیوں کے شامل ہونے کا انتظار ہے",
+      "waitingForPlayers": "مزید {count} {count, plural, one {کھلاڑی} other {کھلاڑیوں}} کے شامل ہونے کا انتظار ہے",
       "waitingForReady": "سب کے تیار ہونے کا انتظار ہے",
       "starting": "سب تیار ہیں — شروع ہو رہا ہے…",
       "inviteHeading": "دوستوں کو مدعو کریں",
@@ -1802,7 +1802,7 @@
     },
     "presence": {
       "returnTo": "{title} پر واپس جائیں",
-      "playerCount": "کمرے میں {count} افراد"
+      "playerCount": "کمرے میں {count} {count, plural, one {فرد} other {افراد}}"
     },
     "kick": {
       "action": "{name} کو کمرے سے نکالیں",
@@ -1853,7 +1853,7 @@
       "instruction": "ہر آئٹم کو خفیہ طور پر ترتیب دیں۔",
       "aggregateHeading": "مجموعی",
       "groupRanking": "گروپ کی درجہ بندی",
-      "pointsLabel": "{count} پوائنٹس",
+      "pointsLabel": "{count} {count, plural, one {پوائنٹ} other {پوائنٹس}}",
       "tiedNote": "برابری — {count} آئٹمز اس درجے میں شریک ہیں"
     },
     "relay": {

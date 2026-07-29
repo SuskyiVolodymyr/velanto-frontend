@@ -93,7 +93,7 @@ They're different things that were identical until [#226](https://github.com/Sus
 
 `PACK_FORMATS` has **five** entries. The old room-only `save_one_friends` format (velanto-backend#258) was retired in the multiplayer redesign (velanto-backend#276): its live-claim gameplay becomes the "Claim" **mode** in the universal room model, so it is no longer a distinct format. `Pack.format` is the full `PackFormat` (all five are single-player-playable), so the `UiPackFormat`/`isUiPackFormat` read-side split is gone.
 
-The **room infrastructure** (`src/features/friends-rooms/*`) is kept but currently DORMANT: `friends-rooms-client.create` gets a 503 from the backend, and `FriendsRoomEntry` is unmounted (the pack detail page shows the solo Play button for every pack). Rooms return as the universal mode surface in a later slice — see `docs/multiplayer-modes-redesign.md`.
+The **room infrastructure** (`src/features/friends-rooms/*`) is LIVE again as the universal mode surface: a room now carries a **mode** (Claim, Guess-who, Turn-based cut, Voting, Shared-grid, Relay) chosen by the host in the lobby from `RoomState.availableModes`, and `FriendsRoomEntry` is mounted on the pack detail page again. The `ROOMS_DORMANT` constant in `src/features/friends-rooms/room-types.ts` is the single switch that gated this and is now `false`; the guards keyed off it (`JoinRoomCard`, `JoinByLink`, the presence provider's poll) are kept so the surface can be parked again without unpicking it. See `docs/multiplayer-modes-redesign.md` for the product brief.
 
 ## Workflow (established discipline)
 

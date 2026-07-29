@@ -1726,7 +1726,7 @@
       "away": "अनुपस्थित",
       "readyUp": "तैयार हो जाएँ",
       "readyCancel": "तैयार",
-      "waitingForPlayers": "{count} और खिलाड़ियों के शामिल होने की प्रतीक्षा है",
+      "waitingForPlayers": "{count} और {count, plural, one {खिलाड़ी} other {खिलाड़ियों}} के शामिल होने की प्रतीक्षा है",
       "waitingForReady": "सभी के तैयार होने की प्रतीक्षा है",
       "starting": "सभी तैयार हैं — शुरू हो रहा है…",
       "inviteHeading": "दोस्तों को आमंत्रित करें",
@@ -1802,7 +1802,7 @@
     },
     "presence": {
       "returnTo": "{title} पर लौटें",
-      "playerCount": "कमरे में {count} लोग"
+      "playerCount": "कमरे में {count} {count, plural, one {व्यक्ति} other {लोग}}"
     },
     "kick": {
       "action": "{name} को कमरे से हटाएँ",

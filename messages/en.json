@@ -1819,7 +1819,7 @@
       "claimedBySacrifice": "Sacrificed by {name}",
       "survivorSave": "Saved",
       "survivorSacrifice": "Survivor",
-      "chosen": "{count} of {total} have chosen",
+      "chosen": "{count} of {total} chosen",
       "tooFastNote": "You're re-claiming too fast — wait a moment and try again."
     },
     "rejection": {

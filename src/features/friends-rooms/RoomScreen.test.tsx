@@ -263,7 +263,7 @@ describe("RoomScreen — round", () => {
     setRoom(roundState());
     render(<RoomScreen roomId="room-1" />);
 
-    expect(screen.getByText("1 of 2 have chosen")).toBeInTheDocument();
+    expect(screen.getByText("1 of 2 chosen")).toBeInTheDocument();
   });
 
   // A disconnected player keeps their seat and the round waits for them — the
@@ -298,8 +298,8 @@ describe("RoomScreen — round", () => {
     );
     render(<RoomScreen roomId="room-1" />);
 
-    expect(screen.getByText("1 of 3 have chosen")).toBeInTheDocument();
-    expect(screen.queryByText("1 of 2 have chosen")).not.toBeInTheDocument();
+    expect(screen.getByText("1 of 3 chosen")).toBeInTheDocument();
+    expect(screen.queryByText("1 of 2 chosen")).not.toBeInTheDocument();
   });
 
   // Without a name, every round rendered an identical header — no title, and a

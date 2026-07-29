@@ -1726,7 +1726,7 @@
       "away": "Відсутній",
       "readyUp": "Приготуватися",
       "readyCancel": "Готовий",
-      "waitingForPlayers": "Очікуємо ще {count} гравців",
+      "waitingForPlayers": "Очікуємо ще {count} {count, plural, one {гравця} few {гравців} many {гравців} other {гравців}}",
       "waitingForReady": "Очікуємо готовності всіх",
       "starting": "Усі готові — починаємо…",
       "inviteHeading": "Запросити друзів",
@@ -1745,7 +1745,7 @@
     "round": {
       "heading": "Раунд {index} із {total}",
       "taken": "Зайнято",
-      "chosen": "Обрали {count} з {total}",
+      "chosen": "{count, plural, one {Обрав} other {Обрали}} {count} з {total}",
       "instructionSave": "Оберіть один елемент, щоб врятувати його. Усі інші вибувають.",
       "instructionSacrifice": "Оберіть один елемент, щоб пожертвувати ним. Елемент, який ніхто не обрав, виживає.",
       "claimSave": "Врятувати {name}",
@@ -1853,8 +1853,8 @@
       "instruction": "Розставте всі елементи за порядком наосліп.",
       "aggregateHeading": "Підсумок",
       "groupRanking": "Спільний рейтинг групи",
-      "pointsLabel": "{count} балів",
-      "tiedNote": "Нічия — {count} позицій ділять це місце"
+      "pointsLabel": "{count} {count, plural, one {очко} few {очки} many {очок} other {очка}}",
+      "tiedNote": "Нічия — {count} {count, plural, one {позиція ділить} few {позиції ділять} many {позицій ділять} other {позиції ділять}} це місце"
     },
     "relay": {
       "instruction": "Вставте поточний елемент у спільний рейтинг.",

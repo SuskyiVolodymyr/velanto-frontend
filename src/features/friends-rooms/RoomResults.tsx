@@ -8,6 +8,7 @@ import type { Pack } from "@/src/shared/types/pack";
 import type {
   BordaRoundResult,
   RelayRoundResult,
+  RevealRoundResult,
   RoomPlayerState,
   RoomState,
   SurvivorRoundResult,
@@ -17,9 +18,11 @@ import { RoomItemCard } from "./RoomItemCard";
 
 /**
  * The end screen: one block per round, in order, each rendered per its
- * `RoundResult.kind`. Reached only for the five "shared-verdict" modes
- * (claim, turn_based_cut, voting, shared_grid, relay) — `guess_who`'s
- * `finished` phase routes to `IdentityRevealScreen` instead (Task 16). This is
+ * `RoundResult.kind`. Normally reached for the five "shared-verdict" modes
+ * (claim, turn_based_cut, voting, shared_grid, relay), since `guess_who`'s
+ * `finished` phase routes to `IdentityRevealScreen` — but only when its
+ * `endgame` is populated, so a reconnect into a finished room before
+ * `identity.revealed` lands here too and `reveal` needs an arm. This is
  * the shareable summary — wiring an actual share is a later task, so no
  * backend call is made here.
  */
@@ -81,8 +84,13 @@ export function RoomResults({
           )}
           {result.kind === "borda" && <BordaResultBlock result={result} />}
           {result.kind === "relay" && <RelayResultBlock result={result} />}
-          {/* `kind: "reveal"` (Guess-who) never reaches this screen — Task 16
-              routes guess_who's finished phase to IdentityRevealScreen. */}
+          {/* Guess-who normally routes its finished phase to
+              IdentityRevealScreen, but only when `endgame` is populated —
+              reconnecting into a finished room before `identity.revealed`, or
+              a guessing phase that closed without one, falls through to here.
+              Without an arm those rounds rendered as a bordered box holding
+              nothing but the round name. */}
+          {result.kind === "reveal" && <RevealResultBlock result={result} />}
         </section>
       ))}
     </div>
@@ -190,6 +198,27 @@ function BordaResultBlock({ result }: { result: BordaRoundResult }) {
         </li>
       ))}
     </ol>
+  );
+}
+
+/**
+ * Guess-who's per-round reveal: which anonymous label picked what. The full
+ * cross-round chronology lives in GuessWhoRevealBoard; here each round shows
+ * only its own row, matching how every other kind renders one block per round.
+ */
+function RevealResultBlock({ result }: { result: RevealRoundResult }) {
+  const itemsById = new Map(result.items.map((item) => [item.id, item]));
+  return (
+    <ul className="flex flex-col gap-1">
+      {Object.entries(result.picks)
+        .sort(([a], [b]) => a.localeCompare(b))
+        .map(([label, picks]) => (
+          <li key={label} className="text-sm">
+            <span className="font-mono font-bold">{label}</span>{" "}
+            {picks.map((id) => itemsById.get(id)?.title ?? id).join(" › ")}
+          </li>
+        ))}
+    </ul>
   );
 }
 
