@@ -1700,6 +1700,11 @@
         "blurb": "Build one shared ranking together, one insert at a time."
       }
     },
+    "lockedIn": {
+      "playerLocked": "{name} has locked in",
+      "playerWaiting": "{name} is still waiting",
+      "count": "{count} / {total} locked in"
+    },
     "entry": {
       "createRoom": "Create room",
       "joinByCode": "Join by code",
