@@ -1717,6 +1717,14 @@
       "trajectoryHeading": "How everyone's answered so far",
       "roundColumn": "Round"
     },
+    "guessing": {
+      "heading": "Final round",
+      "title": "Who's who?",
+      "instruction": "Assign each player to the label you think they played as.",
+      "chooseSomeone": "Choose a player…",
+      "submit": "Submit guesses",
+      "waitingForOthers": "{count} / {total} have submitted"
+    },
     "entry": {
       "createRoom": "Create room",
       "joinByCode": "Join by code",
