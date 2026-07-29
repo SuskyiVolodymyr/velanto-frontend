@@ -98,13 +98,17 @@ describe("SidebarContent", () => {
     );
   });
 
-  it("renders not-yet-built destinations as disabled 'Soon' items, not links", () => {
+  it("renders History (no page exists yet) as a disabled 'Soon' item, not a link", () => {
     renderSidebar();
     expect(screen.queryByRole("link", { name: /History/ })).toBeNull();
-    expect(screen.queryByRole("link", { name: /Suggestions/ })).toBeNull();
     expect(screen.getByText("History")).toBeInTheDocument();
-    expect(screen.getByText("Suggestions")).toBeInTheDocument();
-    expect(screen.getAllByText("Soon")).toHaveLength(2);
+    expect(screen.getAllByText("Soon")).toHaveLength(1);
+  });
+
+  it("routes Suggestions to the real /feedback page, not a 'Soon' item", () => {
+    renderSidebar();
+    const link = screen.getByRole("link", { name: /Suggestions/ });
+    expect(link).toHaveAttribute("href", "/feedback");
   });
 
   it("routes the auth-gated destination to /auth when signed out", () => {

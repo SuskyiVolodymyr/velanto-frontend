@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Tag, ChevronDown } from "lucide-react";
+import { Tag } from "lucide-react";
 import { useTranslations } from "next-intl";
+import { ChevronDownIcon } from "@/src/shared/components/icons";
 import { Button } from "@/src/shared/components/Button";
 import { TagPickerModal } from "@/src/shared/components/TagPickerModal";
 import type { PackTag } from "@/src/shared/types/pack";
@@ -39,8 +40,7 @@ export function TagFilter({
               ? t("filterByTags")
               : t("tagCount", { count: tags.length })}
           </span>
-          <ChevronDown
-            aria-hidden
+          <ChevronDownIcon
             className="h-4 w-4 text-foreground-secondary"
             strokeWidth={1.8}
           />

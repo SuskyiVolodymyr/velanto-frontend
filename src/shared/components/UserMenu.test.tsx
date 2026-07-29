@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import type { ReactNode } from "react";
@@ -24,11 +24,13 @@ function withIntl(ui: ReactNode) {
 }
 
 describe("UserMenu", () => {
-  it("shows only the initial-letter trigger when closed", () => {
+  it("shows the avatar + username trigger, with no menu open, when closed", () => {
     render(withIntl(<UserMenu user={USER} onLogout={vi.fn()} />));
-    expect(
-      screen.getByRole("button", { name: "Account menu" }),
-    ).toHaveTextContent("A");
+    const trigger = screen.getByRole("button", { name: "Account menu" });
+    // Avatar initial ("A") and the username pill (mock: Dashboard.dc.html's
+    // account button pairs a circular avatar with the handle).
+    expect(trigger).toHaveTextContent("A");
+    expect(trigger).toHaveTextContent("alice");
     expect(screen.queryByRole("menu")).not.toBeInTheDocument();
   });
 
@@ -38,8 +40,12 @@ describe("UserMenu", () => {
 
     await user.click(screen.getByRole("button", { name: "Account menu" }));
 
-    expect(screen.getByRole("menu")).toBeInTheDocument();
-    expect(screen.getByText("alice")).toBeInTheDocument();
+    const menu = screen.getByRole("menu");
+    expect(menu).toBeInTheDocument();
+    // Two "alice"s now: the trigger pill also shows the username next to the
+    // avatar (mock: Dashboard.dc.html's account button), plus the dropdown's
+    // own header — scope this assertion to the dropdown specifically.
+    expect(within(menu).getByText("alice")).toBeInTheDocument();
     // Email is intentionally not surfaced in the account menu.
     expect(screen.queryByText("alice@example.com")).not.toBeInTheDocument();
     expect(screen.getByRole("menuitem", { name: "Docs" })).toHaveAttribute(

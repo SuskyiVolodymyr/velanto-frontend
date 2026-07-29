@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Menu } from "lucide-react";
+import { MenuIcon, PlusIcon } from "@/src/shared/components/icons";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { buttonClassName } from "@/src/shared/components/Button";
 import { BrandMark } from "@/src/shared/components/BrandMark";
@@ -14,8 +14,10 @@ import { UserMenu } from "@/src/shared/components/UserMenu";
 import { NotificationsBell } from "@/src/shared/components/NotificationsBell";
 
 /**
- * Global top bar for chromed routes: menu toggle (collapses the desktop rail /
- * opens the mobile drawer), global pack search, and the account cluster.
+ * Global top bar: menu toggle (collapses the desktop rail / opens the mobile
+ * drawer), global pack search, and the account cluster. AppShell mounts this
+ * on the dashboard route only (see `isDashboardRoute`) — every other route
+ * owns its own local header instead, so this never stacks under one.
  *
  * The search routes to the browse page with a `q` query; D1b wires the feed to
  * consume it (today it unifies only packs — people/tags search is deferred). A
@@ -64,9 +66,9 @@ export function AppTopBar({ onMenuToggle }: { onMenuToggle: () => void }) {
         type="button"
         onClick={onMenuToggle}
         aria-label={t("menuToggle")}
-        className="grid h-10 w-10 flex-none place-items-center rounded-[11px] bg-surface-raised text-foreground-secondary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
+        className="grid h-10 w-10 flex-none place-items-center rounded-[11px] bg-surface-control text-foreground-secondary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
       >
-        <Menu size={19} strokeWidth={2} aria-hidden />
+        <MenuIcon size={19} strokeWidth={2} />
       </button>
 
       {/* Brand shows on mobile, where the sidebar (which carries the brand) is a
@@ -94,16 +96,14 @@ export function AppTopBar({ onMenuToggle }: { onMenuToggle: () => void }) {
           placeholder={thome("searchPlaceholder")}
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          className="w-full max-w-[520px] border-white/[0.06] bg-surface-raised"
+          className="w-full max-w-[520px] border-white/[0.06] bg-surface-control"
         />
       </form>
 
       {status === "authenticated" && user && (
         <div className="ms-auto flex items-center gap-2.5 min-[881px]:gap-3">
-          <Link
-            href="/create"
-            className={buttonClassName("primary")}
-          >
+          <Link href="/create" className={buttonClassName("primary")}>
+            <PlusIcon size={16} strokeWidth={2.4} />
             {th("create")}
           </Link>
           <NotificationsBell />

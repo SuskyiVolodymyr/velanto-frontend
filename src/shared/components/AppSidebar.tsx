@@ -4,14 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
-  Compass,
-  Layers,
-  Users,
-  History,
-  Lightbulb,
-  ScrollText,
-  type LucideIcon,
-} from "lucide-react";
+  BrowseIcon,
+  MyPacksIcon,
+  PeopleIcon,
+  HistoryIcon,
+  SuggestionsIcon,
+  RulesIcon,
+  type IconProps,
+} from "@/src/shared/components/icons";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { BrandMark } from "@/src/shared/components/BrandMark";
 import { Text } from "@/src/shared/components/Text";
@@ -22,7 +22,7 @@ interface NavItem {
   key: string;
   /** Destination, or null for a not-yet-built ("soon") destination. */
   href: string | null;
-  icon: LucideIcon;
+  icon: (props: IconProps) => React.JSX.Element;
   /** Signed-out users are routed to /auth instead of href. */
   requiresAuth?: boolean;
   /** Active when the current pathname satisfies this (query-agnostic). */
@@ -35,27 +35,37 @@ interface NavItem {
 // stays query-agnostic (no useSearchParams here, which would de-opt every page
 // out of static rendering). Browse is `/` exactly so it doesn't light up on the
 // nested routes.
+//
+// "Suggestions" points at /feedback — the mock's "Suggestions" nav slot is the
+// same surface the footer calls "Feedback & Suggestions" (FeedbackScreen), not
+// a separate not-yet-built page. "History" genuinely has no page yet (no route,
+// no feature) and stays "soon".
 const NAV_ITEMS: NavItem[] = [
-  { key: "browse", href: "/", icon: Compass, isActive: (p) => p === "/" },
+  { key: "browse", href: "/", icon: BrowseIcon, isActive: (p) => p === "/" },
   {
     key: "myPacks",
     href: "/my-packs",
-    icon: Layers,
+    icon: MyPacksIcon,
     requiresAuth: true,
     isActive: (p) => p === "/my-packs",
   },
   {
     key: "people",
     href: "/people",
-    icon: Users,
+    icon: PeopleIcon,
     isActive: (p) => p === "/people",
   },
-  { key: "history", href: null, icon: History },
-  { key: "suggestions", href: null, icon: Lightbulb },
+  { key: "history", href: null, icon: HistoryIcon },
+  {
+    key: "suggestions",
+    href: "/feedback",
+    icon: SuggestionsIcon,
+    isActive: (p) => p === "/feedback" || p.startsWith("/feedback/"),
+  },
   {
     key: "rules",
     href: "/rules",
-    icon: ScrollText,
+    icon: RulesIcon,
     isActive: (p) => p === "/rules" || p.startsWith("/rules/"),
   },
 ];
@@ -115,12 +125,7 @@ export function SidebarContent({
 
           const inner = (
             <>
-              <Icon
-                size={19}
-                strokeWidth={2}
-                aria-hidden
-                className="flex-none"
-              />
+              <Icon size={19} strokeWidth={2} className="flex-none" />
               {!collapsed && (
                 <span className="min-w-0 flex-1 truncate">
                   {t(`nav.${item.key}`)}

@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { SlidersHorizontal, ChevronDown } from "lucide-react";
+import { SlidersIcon, ChevronDownIcon } from "@/src/shared/components/icons";
 import { Text } from "@/src/shared/components/Text";
 import { Popover } from "@/src/shared/components/Popover";
 import type { PackTag } from "@/src/shared/types/pack";
@@ -95,7 +95,7 @@ export function BrowseFilterBar({
         <Popover
           label={
             <>
-              <SlidersHorizontal size={15} strokeWidth={2} aria-hidden />
+              <SlidersIcon size={15} strokeWidth={2} />
               {t("filters")}
             </>
           }
@@ -119,7 +119,7 @@ export function BrowseFilterBar({
           label={
             <>
               {t(SORT_LABEL_KEYS[sort])}
-              <ChevronDown size={15} strokeWidth={2} aria-hidden />
+              <ChevronDownIcon size={15} strokeWidth={2} />
             </>
           }
           triggerAriaLabel={t("groupSort")}

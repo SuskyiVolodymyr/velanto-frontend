@@ -11,9 +11,12 @@ import {
   LayoutDashboard,
   LogOut,
 } from "lucide-react";
-import { Text } from "@/src/shared/components/Text";
+import { ChevronDownIcon } from "@/src/shared/components/icons";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { UserAvatar } from "@/src/shared/components/UserAvatar";
+import { Username } from "@/src/shared/components/Username";
+import { useStreamerModeOrDefault } from "@/src/shared/lib/streamer-mode-context";
+import { cn } from "@/src/shared/lib/cn";
 import type { User } from "@/src/shared/types/user";
 
 // Shared layout for every row in the menu: a leading icon and the label, so the
@@ -30,6 +33,19 @@ export function UserMenu({
   onLogout: () => void;
 }) {
   const t = useTranslations("header");
+  const tStreamer = useTranslations("streamerMode");
+  // `<Username>` also takes a `trusted` prop for the trusted-non-staff
+  // gradient, but the signed-in `User` type (unlike `PublicUserProfile`)
+  // doesn't carry that flag today — the auth endpoints never send it. Staff
+  // roles (moderator/manager/admin) still get their gradient correctly since
+  // that only needs `role`.
+  const { enabled: streamerModeEnabled, isRevealed } = useStreamerModeOrDefault();
+  // The trigger shows a masked label with no reveal control while streaming —
+  // an interactive Reveal button (what <Hidden> renders) can't sit inside this
+  // <button> (nested-interactive is invalid HTML and the click would bubble
+  // into the dropdown toggle); revealing lives in the dropdown panel below,
+  // which already wraps its own copy of the username in <Hidden>.
+  const triggerNameHidden = streamerModeEnabled && !isRevealed(user.id);
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -71,12 +87,33 @@ export function UserMenu({
         aria-expanded={open}
         aria-label={t("accountMenu")}
         onClick={() => setOpen((prev) => !prev)}
-        className="flex h-10 w-10 cursor-pointer items-center justify-center overflow-hidden rounded-[11px] border border-border bg-surface text-sm font-semibold text-foreground-secondary transition-colors hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="flex h-10 cursor-pointer items-center gap-2 rounded-pill border border-border bg-surface-control py-1 ps-1 pe-3 text-sm font-semibold text-foreground transition-colors hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
         <UserAvatar
           username={user.username}
           avatarKey={user.avatarKey}
-          className="h-full w-full rounded-[10px] text-sm"
+          className="size-[30px] shrink-0 rounded-full text-xs"
+        />
+        <span className="hidden max-w-[120px] truncate min-[881px]:inline-block">
+          {triggerNameHidden ? (
+            <span className="text-[13px] font-bold italic text-foreground-tertiary">
+              {tStreamer("hiddenName")}
+            </span>
+          ) : (
+            <Username
+              username={user.username}
+              role={user.role}
+              className="text-[13px]"
+            />
+          )}
+        </span>
+        <ChevronDownIcon
+          size={13}
+          strokeWidth={2.2}
+          className={cn(
+            "shrink-0 text-foreground-tertiary transition-transform duration-150",
+            open && "rotate-180",
+          )}
         />
       </button>
       {open && (
@@ -85,11 +122,13 @@ export function UserMenu({
           className="absolute end-0 top-12 z-10 w-[190px] overflow-hidden rounded-xl border border-border bg-surface shadow-[0_16px_40px_rgba(0,0,0,0.5)]"
         >
           <div className="border-b border-border px-3.5 py-3">
-            <Text className="text-sm font-semibold">
-              <Hidden kind="name" id={user.id}>
-                {user.username}
-              </Hidden>
-            </Text>
+            <Hidden kind="name" id={user.id}>
+              <Username
+                username={user.username}
+                role={user.role}
+                className="text-sm"
+              />
+            </Hidden>
           </div>
           <Link
             href={`/users/${user.id}`}

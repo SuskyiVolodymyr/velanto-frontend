@@ -17,12 +17,23 @@ import { MobileBottomNav } from "@/src/shared/components/MobileBottomNav";
 import { RoomPresenceIndicator } from "@/src/features/friends-rooms/RoomPresenceIndicator";
 import { cn } from "@/src/shared/lib/cn";
 
-// Routes that render full-screen without the app chrome (sidebar/top bar/nav).
+// Routes that render full-screen without ANY app chrome (sidebar/top bar/nav).
 // Currently just /auth, whose design is a standalone split screen with its own
 // branding. The optional locale prefix keeps it correct if URL localization is
 // ever turned on.
 function isFullScreenRoute(pathname: string): boolean {
   return /^(?:\/[a-z]{2})?\/auth(?:\/|$)/.test(pathname);
+}
+
+// The persistent left nav rail (Browse/My packs/People/History/Suggestions/
+// Rules) is Dashboard-only chrome, per the mocks: Dashboard.dc.html is the
+// only screen carrying `data-el="sidebar"` — Admin.dc.html, Rules.dc.html,
+// Docs.dc.html etc. each have their own simple top header with no rail at
+// all. Every other route keeps the top bar (search/create/notifications/
+// account) but not the rail. The optional locale prefix mirrors
+// isFullScreenRoute above.
+function isDashboardRoute(pathname: string): boolean {
+  return /^(?:\/[a-z]{2})?\/$/.test(pathname);
 }
 
 // Below this width the rail is hidden and the mobile bottom nav + drawer take
@@ -75,8 +86,22 @@ export function AppShell({ children }: { children: ReactNode }) {
     return <>{children}</>;
   }
 
+  // Gates the WHOLE global chrome bundle now, not just the rail: the top bar
+  // (search/create/notifications/account) is global chrome too, and stacking
+  // it above a page's own local header (Pack Detail's Back/Share/Vote bar,
+  // both `sticky top-0`) produced a visible double-header. Off-dashboard
+  // pages are expected to own their header entirely, per their own mocks
+  // (Admin/Rules/Docs each have one already) — the global bar doesn't layer
+  // on top of it anymore. Known gap: pages with no local header of their own
+  // yet (most content pages) currently render bare at the top on desktop —
+  // Create/Notifications/Account become unreachable there except by
+  // navigating back to `/` first. Mobile is unaffected (MobileBottomNav
+  // always carries Create/Notifications/Profile regardless of route).
+  const onDashboard = isDashboardRoute(pathname);
+
   // The menu toggle opens the drawer on phones and collapses the rail on
-  // desktop — read the viewport at click time rather than tracking it.
+  // desktop — read the viewport at click time rather than tracking it. Not
+  // rendered at all off the dashboard, where there's no rail/drawer to open.
   const onMenuToggle = () => {
     if (window.matchMedia(`(max-width: ${MOBILE_MAX}px)`).matches) {
       setDrawerOpen((open) => !open);
@@ -87,23 +112,30 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-full">
-      <AppSidebar collapsed={collapsed || narrowDesktop} />
-      <MobileDrawer open={drawerOpen} onClose={closeDrawer} />
+      {onDashboard && (
+        <>
+          <AppSidebar collapsed={collapsed || narrowDesktop} />
+          <MobileDrawer open={drawerOpen} onClose={closeDrawer} />
+        </>
+      )}
 
       {/* Content column. Bottom padding clears the fixed MobileBottomNav (its
           emphasized Create button makes it ~4.5rem) plus the safe-area inset,
           dropping away from 881px up where the nav is gone. */}
       <div className="flex min-h-full min-w-0 flex-1 flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] min-[881px]:pb-0">
-        <AppTopBar onMenuToggle={onMenuToggle} />
+        {onDashboard && <AppTopBar onMenuToggle={onMenuToggle} />}
         <BannedBanner />
         {children}
         <SiteFooter />
       </div>
 
       <MobileBottomNav />
-      {/* Floating "you're in a room" affordance — constrained to mobile so it
-          never doubles up with the sidebar's room pill on desktop. */}
-      <div className="contents min-[881px]:hidden">
+      {/* Floating "you're in a room" affordance. On the dashboard it's
+          constrained to mobile, since the sidebar's own room pill covers
+          desktop there; everywhere else the sidebar (and its pill) is gone
+          entirely, so this becomes the only "you're in a room" affordance at
+          any width. */}
+      <div className={onDashboard ? "contents min-[881px]:hidden" : "contents"}>
         <RoomPresenceIndicator />
       </div>
     </div>

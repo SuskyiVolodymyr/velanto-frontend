@@ -1,5 +1,5 @@
 import { forwardRef, InputHTMLAttributes } from "react";
-import { Search } from "lucide-react";
+import { SearchIcon } from "@/src/shared/components/icons";
 import { cn } from "@/src/shared/lib/cn";
 
 export interface SearchFieldProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -23,10 +23,9 @@ export const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(
           className,
         )}
       >
-        <Search
+        <SearchIcon
           size={17}
           strokeWidth={2}
-          aria-hidden
           className="shrink-0 text-foreground-tertiary"
         />
         <input

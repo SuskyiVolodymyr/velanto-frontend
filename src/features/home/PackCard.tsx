@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
-import { Play } from "lucide-react";
+import { PlayIcon } from "@/src/shared/components/icons";
 import { Badge } from "@/src/shared/components/Badge";
 import { StatusBadge } from "@/src/shared/components/StatusBadge";
 import { CoverImage } from "@/src/shared/components/CoverImage";
@@ -124,7 +124,7 @@ export function PackCard({
           href={`/packs/${pack.id}`}
           className="flex h-[38px] w-full items-center justify-center gap-2 rounded-[11px] bg-white/[0.09] text-[13px] font-[650] text-foreground transition-colors hover:bg-acc hover:text-[#07131a]"
         >
-          <Play size={15} strokeWidth={2} fill="currentColor" aria-hidden />
+          <PlayIcon size={15} />
           {t("play")}
         </Link>
       </div>

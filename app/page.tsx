@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
-import { Text } from "@/src/shared/components/Text";
 import { HomeFeed } from "@/src/features/home/HomeFeed";
-import { JoinRoomCard } from "@/src/features/home/JoinRoomCard";
+import { DashboardHero } from "@/src/features/home/DashboardHero";
 import { ContinuePlayingRail } from "@/src/features/home/ContinuePlayingRail";
 import { getHomeFeedServer } from "@/src/features/home/get-home-feed-server";
 
@@ -27,7 +25,6 @@ export default async function Home({
 }: {
   searchParams: Promise<{ q?: string | string[] }>;
 }) {
-  const t = await getTranslations("home");
   const query = readQuery((await searchParams).q);
   // Seed the feed server-side for indexable landing content; null on failure
   // falls back to HomeFeed's own client fetch. Keyed on the query so a new
@@ -36,19 +33,11 @@ export default async function Home({
 
   return (
     <main className="flex flex-1 flex-col gap-8 px-7 py-10">
-      <div>
-        <Text as="h1" variant="title" className="mb-2 text-3xl">
-          {t("title")}
-        </Text>
-        <Text variant="secondary" className="max-w-lg">
-          {t("subtitle")}
-        </Text>
-      </div>
-      {/* Join-by-code hero. Self-hides while rooms are dormant (ROOMS_DORMANT),
-          so there is no dead-end join flow; revives when multiplayer returns.
-          The speculative "every pack plays with friends" promo from the mock is
-          deferred until multiplayer-for-all is built. */}
-      <JoinRoomCard />
+      {/* Promo hero + join-by-code card (mock: Dashboard.dc.html). Both halves
+          self-hide while rooms are dormant (ROOMS_DORMANT) — see
+          DashboardHero's own doc comment — so there is no dead-end room pitch
+          or join flow; both revive together when multiplayer returns. */}
+      <DashboardHero />
       {/* Personal, client-only resume rail — renders nothing on the server or
           when the browser has no in-progress plays, so it never affects the
           indexable home content. Sits between the hero and the browse grid,

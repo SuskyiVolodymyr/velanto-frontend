@@ -3,7 +3,7 @@
 import { useState, type ReactElement } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { KeyRound } from "lucide-react";
+import { RoomIcon } from "@/src/shared/components/icons";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { Tooltip } from "@/src/shared/components/Tooltip";
@@ -21,12 +21,16 @@ type JoinErrorKey =
   | "errorGeneric";
 
 /**
- * Browse-page hero: a real join-by-code entry that drops a signed-in user into a
+ * The dashboard hero's right column: a translucent panel nested inside
+ * DashboardHero's outer gradient card (not a standalone card of its own — the
+ * mock merged the promo pitch and this join panel into one `data-el="hero"`
+ * section). A real join-by-code entry that drops a signed-in user into a
  * friend's room over any pack (`friendsRoomsClient.join` works for any live
- * room code — it isn't tied to a pack's format). The mock's second, forward-
- * looking "every pack plays with friends" promo is intentionally NOT shipped
- * here — it advertises the not-yet-built multiplayer-for-all, so only the
- * functional join card is real.
+ * room code — it isn't tied to a pack's format). An earlier mock revision
+ * showed a friends-avatar-stack + "N friends are playing right now" footer
+ * here; that was never shipped (it's live-activity data no endpoint reports,
+ * and fabricating a number would be dishonest) and the current mock dropped
+ * it too.
  *
  * The code is a user-typed INPUT, not a displayed secret, so no stream-safety
  * concealment applies (that rule is about revealing a code on screen). Signed-
@@ -34,9 +38,10 @@ type JoinErrorKey =
  * sign-in tooltip, never a surprise redirect.
  *
  * While rooms are dormant (`ROOMS_DORMANT`) there is no live room to join, so
- * the hero is not rendered at all — the gate lives HERE, before any hook, so the
- * inner card never mounts and never even resolves its `home.joinRoom` strings.
- * One flip of the flag revives it.
+ * this renders nothing — the gate lives HERE, before any hook, so the inner
+ * card never mounts and never even resolves its `home.joinRoom` strings. One
+ * flip of the flag revives it (DashboardHero gates the promo card on the same
+ * flag, so the whole hero disappears together, not just this half).
  */
 export function JoinRoomCard() {
   if (ROOMS_DORMANT) return null;
@@ -88,25 +93,18 @@ function JoinRoomCardInner() {
     blocked ? <Tooltip content={tEntry("signInToPlay")}>{node}</Tooltip> : node;
 
   return (
-    <section className="flex flex-col gap-4 rounded-[20px] border border-border bg-surface-card p-[22px] min-[560px]:flex-row min-[560px]:items-center min-[560px]:justify-between">
-      <div className="flex items-start gap-3">
-        <span
-          aria-hidden
-          className="grid h-10 w-10 flex-none place-items-center rounded-[12px] bg-acc/[0.12] text-acc"
-        >
-          <KeyRound size={20} strokeWidth={2} />
-        </span>
-        <div className="flex flex-col gap-1">
-          <Text as="h2" className="text-[15px] font-bold">
-            {t("title")}
-          </Text>
-          <Text variant="secondary" className="max-w-sm text-[13px] leading-[1.5]">
-            {t("subtitle")}
-          </Text>
-        </div>
+    <section className="flex flex-col gap-3 rounded-[16px] border border-white/[0.08] bg-background/[0.55] p-[18px]">
+      <div className="flex items-center gap-2.5">
+        <RoomIcon size={17} strokeWidth={1.9} className="shrink-0 text-acc" />
+        <Text as="h2" className="text-[15px] font-bold">
+          {t("title")}
+        </Text>
       </div>
+      <Text variant="secondary" className="text-pretty text-[13px] leading-[1.5]">
+        {t("subtitle")}
+      </Text>
 
-      <div className="flex w-full flex-col gap-1.5 min-[560px]:w-auto">
+      <div className="flex flex-col gap-1.5">
         <form onSubmit={handleJoin} className="flex gap-2.5">
           <input
             value={code}
@@ -119,13 +117,13 @@ function JoinRoomCardInner() {
             disabled={blocked || joining}
             maxLength={12}
             className={cn(
-              "h-[46px] w-full rounded-[12px] border border-white/[0.1] bg-background px-3.5 font-mono text-base font-semibold uppercase tracking-[0.18em] text-foreground outline-none transition-colors focus-visible:border-acc disabled:opacity-45 min-[560px]:w-[168px]",
+              "h-[46px] min-w-0 flex-1 rounded-[12px] border border-white/[0.1] bg-background px-3.5 font-mono text-base font-semibold uppercase tracking-[0.18em] text-foreground outline-none transition-colors focus-visible:border-acc disabled:opacity-45",
             )}
           />
           {withGate(
             <Button
               type="submit"
-              variant="secondary"
+              variant="primary"
               // Gate with aria-disabled, NOT the native `disabled` attribute:
               // `disabled` drops the button from the tab order, so the sign-in
               // Tooltip's focus/hover linkage never fires and a keyboard user
@@ -133,7 +131,7 @@ function JoinRoomCardInner() {
               // and the input is disabled, so submit stays inert. Mirrors
               // FriendsRoomEntry's anon-gate.
               className={cn(
-                "h-[46px] flex-none",
+                "h-[46px] flex-none px-5",
                 blocked && "cursor-not-allowed opacity-45",
               )}
               loading={joining}

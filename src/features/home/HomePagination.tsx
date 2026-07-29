@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@/src/shared/components/icons";
 import { useTranslations } from "next-intl";
 import { cn } from "@/src/shared/lib/cn";
 import { buildPaginationRange } from "@/src/features/home/pagination-range";
@@ -77,7 +77,7 @@ export function HomePagination({
             onClick={() => onPageChange(page - 1)}
             disabled={page <= 1}
           >
-            <ChevronLeft size={16} aria-hidden />
+            <ChevronLeftIcon size={16} />
           </button>
 
           {items.map((item, index) =>
@@ -114,7 +114,7 @@ export function HomePagination({
             onClick={() => onPageChange(page + 1)}
             disabled={page >= totalPages}
           >
-            <ChevronRight size={16} aria-hidden />
+            <ChevronRightIcon size={16} />
           </button>
         </nav>
       )}

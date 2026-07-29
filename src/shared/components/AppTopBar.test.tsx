@@ -118,6 +118,7 @@ describe("AppTopBar", () => {
     expect(onMenuToggle).toHaveBeenCalledTimes(1);
   });
 
+
   it("logging out calls the auth logout handler", async () => {
     const user = userEvent.setup();
     renderTopBar();

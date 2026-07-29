@@ -1,0 +1,17 @@
+export type { IconProps } from "@/src/shared/components/icons/icon-types";
+export { BrowseIcon } from "@/src/shared/components/icons/BrowseIcon";
+export { MyPacksIcon } from "@/src/shared/components/icons/MyPacksIcon";
+export { PeopleIcon } from "@/src/shared/components/icons/PeopleIcon";
+export { HistoryIcon } from "@/src/shared/components/icons/HistoryIcon";
+export { SuggestionsIcon } from "@/src/shared/components/icons/SuggestionsIcon";
+export { RulesIcon } from "@/src/shared/components/icons/RulesIcon";
+export { MenuIcon } from "@/src/shared/components/icons/MenuIcon";
+export { SearchIcon } from "@/src/shared/components/icons/SearchIcon";
+export { PlusIcon } from "@/src/shared/components/icons/PlusIcon";
+export { BellIcon } from "@/src/shared/components/icons/BellIcon";
+export { ChevronDownIcon } from "@/src/shared/components/icons/ChevronDownIcon";
+export { ChevronLeftIcon } from "@/src/shared/components/icons/ChevronLeftIcon";
+export { ChevronRightIcon } from "@/src/shared/components/icons/ChevronRightIcon";
+export { PlayIcon } from "@/src/shared/components/icons/PlayIcon";
+export { RoomIcon } from "@/src/shared/components/icons/RoomIcon";
+export { SlidersIcon } from "@/src/shared/components/icons/SlidersIcon";

@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell } from "lucide-react";
+import { BellIcon } from "@/src/shared/components/icons";
 import { useTranslations } from "next-intl";
 import { useNotifications } from "@/src/shared/components/use-notifications";
 import { NotificationList } from "@/src/shared/components/NotificationList";
@@ -38,12 +38,11 @@ export function NotificationsBell() {
         aria-haspopup="dialog"
         aria-expanded={open}
         onClick={() => setOpen((prev) => !prev)}
-        className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-[11px] border border-border bg-surface transition-colors hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-[11px] border border-border bg-surface-control transition-colors hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
-        <Bell
+        <BellIcon
           className="h-[18px] w-[18px] text-foreground-secondary"
           strokeWidth={1.8}
-          aria-hidden
         />
         {unreadCount > 0 && (
           <span

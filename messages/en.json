@@ -983,8 +983,11 @@
     "other": "Other"
   },
   "home": {
-    "title": "Discover packs",
-    "subtitle": "Browse packs by format or tag, then play through one to see who comes out on top.",
+    "hero": {
+      "badge": "NEW · MODES",
+      "title": "Every pack now plays with friends",
+      "subtitle": "Open a room over any pack and pick a mode — vote it out, claim, cut in turns, or play Guess Who and score points."
+    },
     "searchPlaceholder": "Search packs…",
     "searchLabel": "Search packs",
     "filters": "Filters",
