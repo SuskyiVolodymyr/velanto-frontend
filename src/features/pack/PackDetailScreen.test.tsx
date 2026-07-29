@@ -88,6 +88,16 @@ const RESULTS: PackResults = {
 };
 
 describe("PackDetailScreen", () => {
+  // ROOMS_DORMANT is still true — this locks in "no room entry while dormant"
+  // as an explicit, checked contract (the real "it renders once revived"
+  // behavior is covered by FriendsRoomEntry's own tests in isolation).
+  it("does not render the room entry while ROOMS_DORMANT is true", () => {
+    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
+    expect(
+      screen.queryByRole("button", { name: /create room/i }),
+    ).not.toBeInTheDocument();
+  });
+
   it("renders the pack's title, description, and a Play link", () => {
     render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
     expect(screen.getByText("Best Anime Openings")).toBeInTheDocument();
