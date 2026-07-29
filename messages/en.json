@@ -1753,7 +1753,7 @@
       "aggregateHeading": "Aggregated",
       "groupRanking": "The group's ranking",
       "pointsLabel": "{count} pts",
-      "tiedNote": "{count}-way tie"
+      "tiedNote": "Tied — {count} items share this rank"
     },
     "entry": {
       "createRoom": "Create room",
