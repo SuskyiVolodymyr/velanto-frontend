@@ -16,11 +16,15 @@ import {
   type RoomMode,
   type RoomPlayerState,
   type RoomState,
+  type RoundResult,
   type RoundState,
   type SharedGridRejection,
-  type SurvivorRoundResult,
   type VoteRejection,
 } from "./room-types";
+import {
+  roundResultFromResolved,
+  type RoundResolvedPayload,
+} from "./round-resolved";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
@@ -241,27 +245,36 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
       socket.on(
         ROOM_EVENTS.roundStarted,
         ({
-          index,
-          name,
-          items,
           totalRounds,
-        }: Pick<RoundState, "index" | "name" | "items"> & {
-          totalRounds: number;
-        }) =>
+          ...started
+        }: Pick<RoundState, "index" | "name" | "items"> &
+          Partial<RoundState> & {
+            totalRounds: number;
+          }) =>
           setState((s) =>
             s
               ? {
                   ...s,
                   phase: "round",
-                  roundIndex: index,
+                  roundIndex: started.index,
                   totalRounds,
                   // The previous round's deadline is spent the moment this one
                   // starts; leaving it set would keep a countdown on screen.
                   autoNextAt: null,
+                  // Spread the payload rather than enumerating Claim's four
+                  // fields. Every non-Claim board opens with a guard on a
+                  // mode-specific field — optionIds (Voting, Shared-grid,
+                  // Guess-who), remainingItemIds (Turn-based cut),
+                  // relayPlaced (Relay) — and returns null when it is
+                  // missing, so listing only Claim's fields here rendered a
+                  // blank round screen with no error for five of six modes
+                  // from round 2 onward (round 1 survived only on clients
+                  // fresh enough to still be holding the connect snapshot).
+                  // A fresh object each round, so per-round state that the
+                  // server does NOT resend (lockedIn, votes, cuts) resets
+                  // rather than carrying over.
                   round: {
-                    index,
-                    name,
-                    items,
+                    ...started,
                     claims: {},
                     survivorItemId: null,
                   },
@@ -315,12 +328,7 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
       // entry in `results` without its items or its name.
       socket.on(
         ROOM_EVENTS.roundResolved,
-        (resolved: {
-          index: number;
-          survivorItemId: string;
-          claims: Record<string, string>;
-          autoNextAt: number | null;
-        }) =>
+        (resolved: RoundResolvedPayload) =>
           setState((s) => {
             if (!s) return s;
             // Only the round we are actually holding can be assembled into a
@@ -331,23 +339,22 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
             // below would DELETE a result the snapshot already carried, since
             // "filter then append nothing" is a removal, not a replacement.
             const round = s.round;
-            const replacement: SurvivorRoundResult | null =
-              round && round.index === resolved.index
-                ? {
-                    kind: "survivor",
-                    index: resolved.index,
-                    name: round.name,
-                    items: round.items,
-                    claims: resolved.claims,
-                    survivorItemId: resolved.survivorItemId,
-                  }
+            const matches = Boolean(round && round.index === resolved.index);
+            // One event name, five payload shapes, no `kind` on the wire —
+            // so the room's own mode is what discriminates them. This used to
+            // synthesize `kind: "survivor"` unconditionally, which left every
+            // non-Claim between-board looking up its own kind, finding a
+            // survivor, and rendering nothing.
+            const replacement: RoundResult | null =
+              round && matches
+                ? roundResultFromResolved(s.mode, round, resolved)
                 : null;
             return {
               ...s,
               phase: "between",
               autoNextAt: resolved.autoNextAt ?? null,
               round:
-                round && round.index === resolved.index
+                round && matches && resolved.survivorItemId !== undefined
                   ? { ...round, survivorItemId: resolved.survivorItemId }
                   : round,
               results: replacement
@@ -461,6 +468,7 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
         ({
           userId,
           itemId,
+          position,
           turnUserId,
         }: {
           userId: string | null;
@@ -470,10 +478,25 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
         }) =>
           setState((s) => {
             if (!s || !s.round) return s;
+            // Insert AT `position`, don't append. Insert-at-a-gap is Relay's
+            // entire mechanic — RelayInsertBoard calls
+            // `onPlaceItem(itemId, i)` for gap `i`, the gateway validates
+            // position 0 explicitly, and the engine echoes the accepted
+            // position back on this event. Appending regardless meant any
+            // placement other than at the very end left every client's
+            // shared ranking permanently diverged from the server's, and
+            // every later player then inserted against a board they were
+            // seeing wrong. `position` is absent only on the roster-shrink
+            // broadcast, which carries a null itemId and is skipped anyway.
+            const placedBefore = s.round.relayPlaced;
             const relayPlaced =
-              itemId && s.round.relayPlaced
-                ? [...s.round.relayPlaced, itemId]
-                : s.round.relayPlaced;
+              itemId && placedBefore
+                ? [
+                    ...placedBefore.slice(0, position ?? placedBefore.length),
+                    itemId,
+                    ...placedBefore.slice(position ?? placedBefore.length),
+                  ]
+                : placedBefore;
             const relayPlacements =
               userId && itemId
                 ? [...(s.round.relayPlacements ?? []), { userId, itemId }]

@@ -190,6 +190,64 @@ describe("useFriendsRoom round events", () => {
     expect(result.current.state?.phase).toBe("round");
   });
 
+  it("round.started keeps every mode-specific field, not just Claim's", async () => {
+    // The handler used to build the round from an enumerated list of Claim's
+    // four fields, silently dropping optionIds/actionKind/remainingItemIds/
+    // turnUserId/priorityUserId/relay*. Every non-Claim board guards on
+    // exactly those and returns null, so five of six modes rendered a blank
+    // round screen — with no error — from round 2 onward.
+    const { result } = await connected();
+    serverEmit("room.state", { ...snapshot([player("host")]), mode: "voting" });
+
+    serverEmit("round.started", {
+      index: 1,
+      name: "Round two",
+      items: [item("a"), item("b")],
+      totalRounds: 3,
+      optionIds: ["a", "b"],
+      priorityUserId: "host",
+    });
+
+    expect(result.current.state?.round?.optionIds).toEqual(["a", "b"]);
+    expect(result.current.state?.round?.priorityUserId).toBe("host");
+    // …and per-round state the server does NOT resend starts clean.
+    expect(result.current.state?.round?.claims).toEqual({});
+    expect(result.current.state?.round?.survivorItemId).toBeNull();
+    expect(result.current.state?.round?.votes).toBeUndefined();
+  });
+
+  it("round.resolved builds the RESOLVING MODE's result, not always a survivor", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", { ...snapshot([player("host")]), mode: "voting" });
+    serverEmit("round.started", {
+      index: 0,
+      name: "One",
+      items: [item("a"), item("b")],
+      totalRounds: 1,
+      optionIds: ["a", "b"],
+    });
+
+    serverEmit("round.resolved", {
+      index: 0,
+      optionIds: ["a", "b"],
+      votes: { host: "a" },
+      tally: { a: 1 },
+      winnerOptionId: "a",
+      tieBroken: false,
+      priorityUserId: "host",
+      autoNextAt: null,
+    });
+
+    expect(result.current.state?.results).toHaveLength(1);
+    expect(result.current.state?.results[0]).toMatchObject({
+      kind: "vote",
+      winnerOptionId: "a",
+      name: "One",
+    });
+    // A vote round has no survivor, so the live round must not acquire one.
+    expect(result.current.state?.round?.survivorItemId).toBeNull();
+  });
+
   it("carries the auto-advance deadline from round.resolved", async () => {
     const { result } = await connected();
     serverEmit("room.state", snapshot([player("host")]));
@@ -517,6 +575,67 @@ describe("useFriendsRoom per-mode round actions", () => {
     ]);
     expect(result.current.state?.round?.relayCurrentItemId).toBe("b");
     expect(result.current.state?.round?.turnUserId).toBe("u2");
+  });
+
+  it("item.placed INSERTS at the reported position rather than appending", async () => {
+    // The test above places into an empty list, where append and insert-at-0
+    // are indistinguishable — which is why it passed while the handler
+    // ignored `position` entirely. Insert-at-a-gap IS Relay's mechanic, and
+    // getting it wrong diverges every client's shared ranking from the
+    // server's for the rest of the round.
+    const { result } = await connected();
+    serverEmit("room.state", {
+      ...snapshot([player("host")]),
+      mode: "relay",
+      phase: "round",
+      round: {
+        index: 0,
+        name: "",
+        items: [],
+        claims: {},
+        survivorItemId: null,
+        relayOrder: ["a", "b", "c"],
+        relayPlaced: ["a", "b"],
+        relayCurrentItemId: "c",
+        relayPlacements: [],
+      },
+    });
+    // Position 1 == the gap between "a" and "b", not the end.
+    serverEmit("item.placed", {
+      userId: "u1",
+      itemId: "c",
+      position: 1,
+      turnUserId: null,
+    });
+    expect(result.current.state?.round?.relayPlaced).toEqual(["a", "c", "b"]);
+    expect(result.current.state?.round?.relayCurrentItemId).toBeNull();
+  });
+
+  it("item.placed at position 0 goes to the FRONT of a non-empty ranking", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", {
+      ...snapshot([player("host")]),
+      mode: "relay",
+      phase: "round",
+      round: {
+        index: 0,
+        name: "",
+        items: [],
+        claims: {},
+        survivorItemId: null,
+        relayOrder: ["a", "b"],
+        relayPlaced: ["a"],
+        relayCurrentItemId: "b",
+        relayPlacements: [],
+      },
+    });
+    serverEmit("item.placed", {
+      userId: "u1",
+      itemId: "b",
+      position: 0,
+      turnUserId: null,
+    });
+    expect(result.current.state?.round?.relayPlaced).toEqual(["b", "a"]);
   });
 
   it("cutRejected/pickRejected/voteRejected/rankingRejected/placeRejected all store the actor's lastRejection without crashing on other modes' state", async () => {
