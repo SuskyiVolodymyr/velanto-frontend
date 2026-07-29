@@ -60,3 +60,52 @@ describe("SharedGridRankSubmission", () => {
     expect(screen.getByText(/alice has locked in/i)).toBeInTheDocument();
   });
 });
+
+describe("SharedGridRankSubmission — rejected ranking", () => {
+  function state() {
+    return baseRoomState({
+      mode: "shared_grid",
+      round: {
+        index: 0,
+        name: "",
+        items: [ITEM("i1", "A"), ITEM("i2", "B")],
+        claims: {},
+        survivorItemId: null,
+        optionIds: ["i1", "i2"],
+        lockedIn: [],
+      },
+    });
+  }
+
+  // BlindRankBoard auto-submits on the final click and then disables every
+  // button, so a REJECTED ranking used to strand the player with a full,
+  // frozen board and no way to retry for the rest of the round.
+  it("a bumped rejection token clears the board so the player can rank again", async () => {
+    const onSubmitRanking = vi.fn();
+    const { rerender } = render(
+      <SharedGridRankSubmission
+        state={state()}
+        currentUserId="u1"
+        onSubmitRanking={onSubmitRanking}
+        rejectionToken={0}
+      />,
+    );
+    await userEvent.click(screen.getByRole("button", { name: /a/i }));
+    await userEvent.click(screen.getByRole("button", { name: /b/i }));
+    expect(screen.getByRole("button", { name: /a/i })).toBeDisabled();
+
+    rerender(
+      <SharedGridRankSubmission
+        state={state()}
+        currentUserId="u1"
+        onSubmitRanking={onSubmitRanking}
+        rejectionToken={1}
+      />,
+    );
+
+    expect(screen.getByRole("button", { name: /a/i })).not.toBeDisabled();
+    await userEvent.click(screen.getByRole("button", { name: /b/i }));
+    await userEvent.click(screen.getByRole("button", { name: /a/i }));
+    expect(onSubmitRanking).toHaveBeenLastCalledWith(["i2", "i1"]);
+  });
+});

@@ -102,6 +102,7 @@ function setRoom(
     connection,
     lastRejection,
     lastModeRejection: null,
+    modeRejectionSeq: 0,
     kicked,
     claim,
     cut,

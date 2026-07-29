@@ -46,7 +46,7 @@ export function RoomPresenceIndicator() {
   if (visible.length === 0) return null;
 
   return (
-    <div className="fixed right-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom)+0.75rem)] z-30 flex flex-col items-end gap-2">
+    <div className="fixed end-4 bottom-[calc(4.5rem+env(safe-area-inset-bottom)+0.75rem)] z-30 flex flex-col items-end gap-2">
       {visible.map((room) => (
         <RoomChip
           key={room.id}
@@ -72,7 +72,7 @@ function RoomChip({
       type="button"
       onClick={onClick}
       aria-label={t("presence.returnTo", { title: room.packTitle })}
-      className="group flex max-w-[19rem] items-center gap-3 rounded-2xl border border-acc/40 bg-surface py-2.5 pl-3 pr-4 shadow-[0_10px_30px_rgba(0,0,0,0.4)] ring-1 ring-acc/10 transition-colors hover:border-acc focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
+      className="group flex max-w-[19rem] items-center gap-3 rounded-2xl border border-acc/40 bg-surface py-2.5 ps-3 pe-4 shadow-[0_10px_30px_rgba(0,0,0,0.4)] ring-1 ring-acc/10 transition-colors hover:border-acc focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
     >
       {/* Capacity is not on MyRoomSummary (see room-types.ts) and varies per
           mode (4 seats for Claim, up to 12 for Voting), so this renders every

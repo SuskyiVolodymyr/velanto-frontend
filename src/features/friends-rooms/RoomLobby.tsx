@@ -12,6 +12,7 @@ import { Username } from "@/src/shared/components/Username";
 import { cn } from "@/src/shared/lib/cn";
 import {
   MIN_PLAYERS,
+  ROOM_MODE_BOUNDS,
   type RoomMode,
   type RoomPlayerState,
   type RoomState,
@@ -55,7 +56,16 @@ export function RoomLobby({
   const [kickTarget, setKickTarget] = useState<RoomPlayerState | null>(null);
 
   const present = state.players.filter((p) => p.connected);
-  const missing = Math.max(0, MIN_PLAYERS - present.length);
+  // Once a mode is chosen, ITS minimum is the one the server will actually
+  // gate the start on — MIN_PLAYERS is only the fallback for a room whose
+  // mode is still null (room-types.ts says so explicitly). Guess-who needs 3,
+  // so a 2-player Guess-who lobby with everyone ready used to say
+  // "starting…" and then sit there forever, on the one screen whose whole
+  // job is telling you what it is still waiting on.
+  const minPlayers = state.mode
+    ? ROOM_MODE_BOUNDS[state.mode].minPlayers
+    : MIN_PLAYERS;
+  const missing = Math.max(0, minPlayers - present.length);
   const allReady = present.length > 0 && present.every((p) => p.ready);
 
   const waiting =
@@ -226,7 +236,7 @@ function SeatCard({
         <span
           aria-hidden
           className={cn(
-            "absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-surface",
+            "absolute -bottom-0.5 -end-0.5 h-3 w-3 rounded-full border-2 border-surface",
             player.connected ? "bg-success" : "bg-foreground-tertiary",
           )}
         />

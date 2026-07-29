@@ -76,7 +76,9 @@ export function RoomResults({
               packFormat={packFormat}
             />
           )}
-          {result.kind === "vote" && <VoteResultBlock result={result} byId={byId} />}
+          {result.kind === "vote" && (
+            <VoteResultBlock result={result} byId={byId} />
+          )}
           {result.kind === "borda" && <BordaResultBlock result={result} />}
           {result.kind === "relay" && <RelayResultBlock result={result} />}
           {/* `kind: "reveal"` (Guess-who) never reaches this screen — Task 16
@@ -164,7 +166,7 @@ function VoteResultBlock({
   const priorityPlayer = byId.get(result.priorityUserId);
   return (
     <div className="flex flex-col gap-2">
-      <Text className="text-lg font-semibold text-success">{winner?.title}</Text>
+      <Text className="text-lg font-semibold text-live">{winner?.title}</Text>
       {result.tieBroken && priorityPlayer && (
         <Text variant="tertiary" className="text-xs">
           {t("voting.tieBrokenNote", { name: priorityPlayer.username })}

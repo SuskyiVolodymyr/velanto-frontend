@@ -387,7 +387,7 @@
     "menuToggle": "Toggle menu",
     "room": {
       "inARoom": "In a room",
-      "lobby": "Lobby · {count}/{max}",
+      "lobby": "Lobby · {count}",
       "rejoin": "Rejoin"
     }
   },
@@ -1821,6 +1821,13 @@
       "survivorSacrifice": "Survivor",
       "chosen": "{count} of {total} have chosen",
       "tooFastNote": "You're re-claiming too fast — wait a moment and try again."
+    },
+    "rejection": {
+      "not_your_turn": "It's not your turn yet.",
+      "not_in_round": "That option isn't part of this round.",
+      "round_not_active": "This round has already ended.",
+      "not_a_player": "You don't hold a seat in this room.",
+      "malformed": "That submission wasn't valid — try again."
     },
     "between": {
       "survivorHeadingSave": "Saved",

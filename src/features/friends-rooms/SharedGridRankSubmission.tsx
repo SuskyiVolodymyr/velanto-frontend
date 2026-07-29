@@ -10,6 +10,12 @@ interface SharedGridRankSubmissionProps {
   state: RoomState;
   currentUserId: string | null;
   onSubmitRanking: (ranking: string[]) => void;
+  /** Bumped by the parent every time a ranking is rejected. BlindRankBoard
+   * auto-submits on the final click and then disables every button, so a
+   * rejected ranking would otherwise strand the player with a full, frozen
+   * board and no way to retry for the rest of the round. Used as a remount
+   * key, which is the whole reset. */
+  rejectionToken?: number;
 }
 
 /**
@@ -22,6 +28,7 @@ export function SharedGridRankSubmission({
   state,
   currentUserId,
   onSubmitRanking,
+  rejectionToken = 0,
 }: SharedGridRankSubmissionProps) {
   const t = useTranslations("room");
   const round = state.round;
@@ -46,6 +53,7 @@ export function SharedGridRankSubmission({
       </header>
 
       <BlindRankBoard
+        key={`${round.index}:${rejectionToken}`}
         optionIds={round.optionIds}
         itemsById={itemsById}
         disabled={iAmLockedIn}

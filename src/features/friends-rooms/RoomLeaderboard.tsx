@@ -13,10 +13,14 @@ export interface LeaderboardEntry {
   score: number;
 }
 
+// The medal colours are registered Tailwind theme colours
+// (`--color-medal-*` in globals.css), so use the generated utilities the way
+// the solo result table does — an arbitrary `[var(--medal-gold)]` bypasses
+// the token layer for no gain.
 const RANK_TONE = [
-  "border-[var(--medal-gold)]/50 bg-[var(--medal-gold)]/10",
-  "border-[var(--medal-silver)]/50 bg-[var(--medal-silver)]/10",
-  "border-[var(--medal-bronze)]/50 bg-[var(--medal-bronze)]/10",
+  "border-medal-gold/50 bg-medal-gold/10",
+  "border-medal-silver/50 bg-medal-silver/10",
+  "border-medal-bronze/50 bg-medal-bronze/10",
 ];
 
 /**
@@ -61,7 +65,10 @@ export function RoomLeaderboard({ entries }: { entries: LeaderboardEntry[] }) {
                 {t("leaderboard.winner")}
               </span>
             )}
-            <Text variant="secondary" className="text-sm font-bold tabular-nums">
+            <Text
+              variant="secondary"
+              className="text-sm font-bold tabular-nums"
+            >
               {t("leaderboard.points", { count: entry.score })}
             </Text>
           </li>

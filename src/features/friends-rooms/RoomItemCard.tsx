@@ -146,7 +146,7 @@ export function RoomItemCard({
   const cornerAvatar = claimant && hasMedia && (
     <span
       className={cn(
-        "absolute right-2 top-2 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full border-2",
+        "absolute end-2 top-2 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full border-2",
         status === "survivor" ? "border-success" : "border-danger",
       )}
     >

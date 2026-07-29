@@ -26,7 +26,9 @@ describe("RoomRoundBoard", () => {
           round: {
             index: 0,
             name: "",
-            items: [{ id: "i1", title: "Item 1", type: "text", value: "Item 1" }],
+            items: [
+              { id: "i1", title: "Item 1", type: "text", value: "Item 1" },
+            ],
             claims: {},
             survivorItemId: null,
           },
@@ -102,10 +104,12 @@ describe("RoomRoundBoard — claim rejection feedback", () => {
       <RoomRoundBoard
         state={claimRoundState()}
         currentUserId="u1"
-        actions={{
-          claim: vi.fn(),
-          lastRejection: { itemId: "i1", reason: "too_fast", claims: {} },
-        } as never}
+        actions={
+          {
+            claim: vi.fn(),
+            lastRejection: { itemId: "i1", reason: "too_fast", claims: {} },
+          } as never
+        }
       />,
     );
     expect(screen.getByText(/wait a moment/i)).toBeInTheDocument();
@@ -116,12 +120,75 @@ describe("RoomRoundBoard — claim rejection feedback", () => {
       <RoomRoundBoard
         state={claimRoundState()}
         currentUserId="u1"
-        actions={{
-          claim: vi.fn(),
-          lastRejection: { itemId: "i1", reason: "taken", claims: {} },
-        } as never}
+        actions={
+          {
+            claim: vi.fn(),
+            lastRejection: { itemId: "i1", reason: "taken", claims: {} },
+          } as never
+        }
       />,
     );
     expect(screen.queryByText(/wait a moment/i)).not.toBeInTheDocument();
+  });
+});
+
+describe("RoomRoundBoard — mode rejection feedback", () => {
+  function cutRoundState() {
+    return baseRoomState({
+      mode: "turn_based_cut",
+      round: {
+        index: 0,
+        name: "",
+        items: [{ id: "i1", title: "Item 1", type: "text", value: "Item 1" }],
+        claims: {},
+        survivorItemId: null,
+        remainingItemIds: ["i1"],
+        turnUserId: "u2",
+        cuts: [],
+      },
+    });
+  }
+
+  // Every non-Claim rejection used to reach state and be rendered by nobody:
+  // you clicked, the server refused, and the board looked identical either
+  // way. The worst case was Shared-grid, whose rank board auto-submits and
+  // then disables every button.
+  it("surfaces a rejected mode action as an alert", () => {
+    render(
+      <RoomRoundBoard
+        state={cutRoundState()}
+        currentUserId="u1"
+        actions={
+          {
+            cut: vi.fn(),
+            modeRejectionSeq: 1,
+            lastModeRejection: {
+              kind: "cut",
+              itemId: "i1",
+              reason: "not_your_turn",
+              turnUserId: "u2",
+            },
+          } as never
+        }
+      />,
+    );
+    expect(screen.getByRole("alert")).toHaveTextContent(/not your turn/i);
+  });
+
+  it("renders no alert when nothing has been rejected", () => {
+    render(
+      <RoomRoundBoard
+        state={cutRoundState()}
+        currentUserId="u1"
+        actions={
+          {
+            cut: vi.fn(),
+            modeRejectionSeq: 0,
+            lastModeRejection: null,
+          } as never
+        }
+      />,
+    );
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 });

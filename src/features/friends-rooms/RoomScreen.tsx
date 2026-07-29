@@ -37,6 +37,7 @@ export function RoomScreen({ roomId }: { roomId: string }) {
     connection,
     lastRejection,
     lastModeRejection,
+    modeRejectionSeq,
     kicked,
     claim,
     cut,
@@ -201,6 +202,7 @@ export function RoomScreen({ roomId }: { roomId: string }) {
             placeItem,
             lastRejection,
             lastModeRejection,
+            modeRejectionSeq,
           }}
         />
       )}

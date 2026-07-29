@@ -290,7 +290,7 @@
     "menuToggle": "切换菜单",
     "room": {
       "inARoom": "在房间中",
-      "lobby": "大厅 · {count}/{max}",
+      "lobby": "大厅 · {count}",
       "rejoin": "重新加入"
     }
   },
@@ -1755,6 +1755,13 @@
       "survivorSave": "已保留",
       "survivorSacrifice": "存活",
       "tooFastNote": "你重新认领得太快了——请稍等片刻再试。"
+    },
+    "rejection": {
+      "not_your_turn": "还没轮到你。",
+      "not_in_round": "该选项不属于本轮。",
+      "round_not_active": "本轮已经结束。",
+      "not_a_player": "你在该房间中没有座位。",
+      "malformed": "提交无效，请重试。"
     },
     "between": {
       "next": "下一步",

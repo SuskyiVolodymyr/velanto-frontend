@@ -69,6 +69,10 @@ export interface FriendsRoom {
     | (SharedGridRejection & { kind: "ranking" })
     | (RelayRejection & { kind: "place" })
     | null;
+  /** Increments on every mode rejection. Lets a board distinguish a REPEAT
+   * rejection from the same one still being displayed — needed because the
+   * reason alone is unchanged when you retry and are refused again. */
+  modeRejectionSeq: number;
 }
 
 /**
@@ -95,6 +99,10 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
   const [kicked, setKicked] = useState(false);
   const [lastModeRejection, setLastModeRejection] =
     useState<FriendsRoom["lastModeRejection"]>(null);
+  // Bumped on every rejection so a board can tell "rejected again" from
+  // "still showing the previous rejection" — Shared-grid uses it to remount
+  // its auto-submitting rank board, which is otherwise frozen after a reject.
+  const [modeRejectionSeq, setModeRejectionSeq] = useState(0);
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
@@ -112,6 +120,17 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
         query: { roomId },
       });
       socketRef.current = socket;
+
+      // Store a rejection AND bump its sequence, so a board can react to a
+      // repeat of the same reason. Every mode's `*.rejected` goes through
+      // here; a rejection that is never cleared would otherwise sit on
+      // screen as a stale alert once one is actually rendered.
+      const noteModeRejection = (
+        rejection: FriendsRoom["lastModeRejection"],
+      ) => {
+        setLastModeRejection(rejection);
+        setModeRejectionSeq((n) => n + 1);
+      };
 
       socket.on("connect", () => setConnection("open"));
       socket.io.on("reconnect_attempt", () => setConnection("connecting"));
@@ -137,6 +156,7 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
       socket.on(ROOM_EVENTS.state, (next: RoomState) => {
         setState(next);
         setLastRejection(null);
+        setLastModeRejection(null);
         setKicked(false);
       });
 
@@ -250,7 +270,11 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
         }: Pick<RoundState, "index" | "name" | "items"> &
           Partial<RoundState> & {
             totalRounds: number;
-          }) =>
+          }) => {
+          // Last round's rejection ("not your turn", "this round has ended")
+          // is spent the moment a new round starts; leaving it set would
+          // keep a stale alert on the new board.
+          setLastModeRejection(null);
           setState((s) =>
             s
               ? {
@@ -285,7 +309,8 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
                   })),
                 }
               : s,
-          ),
+          );
+        },
       );
 
       socket.on(
@@ -326,45 +351,43 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
       // client already has that in `round`. So the result is assembled from
       // both rather than storing the payload as-is, which would leave every
       // entry in `results` without its items or its name.
-      socket.on(
-        ROOM_EVENTS.roundResolved,
-        (resolved: RoundResolvedPayload) =>
-          setState((s) => {
-            if (!s) return s;
-            // Only the round we are actually holding can be assembled into a
-            // result. Without the index check a mismatched pair would build a
-            // result labelled with one round's index and another's items, and
-            // stamp a foreign survivor onto the live round — which renders
-            // every item as sacrificed. Without the null check the filter
-            // below would DELETE a result the snapshot already carried, since
-            // "filter then append nothing" is a removal, not a replacement.
-            const round = s.round;
-            const matches = Boolean(round && round.index === resolved.index);
-            // One event name, five payload shapes, no `kind` on the wire —
-            // so the room's own mode is what discriminates them. This used to
-            // synthesize `kind: "survivor"` unconditionally, which left every
-            // non-Claim between-board looking up its own kind, finding a
-            // survivor, and rendering nothing.
-            const replacement: RoundResult | null =
-              round && matches
-                ? roundResultFromResolved(s.mode, round, resolved)
-                : null;
-            return {
-              ...s,
-              phase: "between",
-              autoNextAt: resolved.autoNextAt ?? null,
-              round:
-                round && matches && resolved.survivorItemId !== undefined
-                  ? { ...round, survivorItemId: resolved.survivorItemId }
-                  : round,
-              results: replacement
-                ? [
-                    ...s.results.filter((r) => r.index !== replacement.index),
-                    replacement,
-                  ].sort((a, b) => a.index - b.index)
-                : s.results,
-            };
-          }),
+      socket.on(ROOM_EVENTS.roundResolved, (resolved: RoundResolvedPayload) =>
+        setState((s) => {
+          if (!s) return s;
+          // Only the round we are actually holding can be assembled into a
+          // result. Without the index check a mismatched pair would build a
+          // result labelled with one round's index and another's items, and
+          // stamp a foreign survivor onto the live round — which renders
+          // every item as sacrificed. Without the null check the filter
+          // below would DELETE a result the snapshot already carried, since
+          // "filter then append nothing" is a removal, not a replacement.
+          const round = s.round;
+          const matches = Boolean(round && round.index === resolved.index);
+          // One event name, five payload shapes, no `kind` on the wire —
+          // so the room's own mode is what discriminates them. This used to
+          // synthesize `kind: "survivor"` unconditionally, which left every
+          // non-Claim between-board looking up its own kind, finding a
+          // survivor, and rendering nothing.
+          const replacement: RoundResult | null =
+            round && matches
+              ? roundResultFromResolved(s.mode, round, resolved)
+              : null;
+          return {
+            ...s,
+            phase: "between",
+            autoNextAt: resolved.autoNextAt ?? null,
+            round:
+              round && matches && resolved.survivorItemId !== undefined
+                ? { ...round, survivorItemId: resolved.survivorItemId }
+                : round,
+            results: replacement
+              ? [
+                  ...s.results.filter((r) => r.index !== replacement.index),
+                  replacement,
+                ].sort((a, b) => a.index - b.index)
+              : s.results,
+          };
+        }),
       );
 
       socket.on(ROOM_EVENTS.playerNext, ({ userId }: { userId: string }) =>
@@ -386,7 +409,9 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
           userId: string | null;
           itemId: string | null;
           turnUserId: string | null;
-        }) =>
+        }) => {
+          // The turn just moved, so a "not your turn" rejection is spent.
+          setLastModeRejection(null);
           setState((s) => {
             if (!s || !s.round) return s;
             const remainingItemIds = itemId
@@ -400,10 +425,11 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
               ...s,
               round: { ...s.round, remainingItemIds, cuts, turnUserId },
             };
-          }),
+          });
+        },
       );
       socket.on(ROOM_EVENTS.cutRejected, (rejection: CutRejection) =>
-        setLastModeRejection({ ...rejection, kind: "cut" }),
+        noteModeRejection({ ...rejection, kind: "cut" }),
       );
 
       socket.on(ROOM_EVENTS.pickLocked, ({ userId }: { userId: string }) =>
@@ -422,7 +448,7 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
         ),
       );
       socket.on(ROOM_EVENTS.pickRejected, (rejection: GuessWhoRejection) =>
-        setLastModeRejection({ ...rejection, kind: "pick" }),
+        noteModeRejection({ ...rejection, kind: "pick" }),
       );
 
       socket.on(
@@ -441,7 +467,7 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
           ),
       );
       socket.on(ROOM_EVENTS.voteRejected, (rejection: VoteRejection) =>
-        setLastModeRejection({ ...rejection, kind: "vote" }),
+        noteModeRejection({ ...rejection, kind: "vote" }),
       );
 
       socket.on(ROOM_EVENTS.rankingLocked, ({ userId }: { userId: string }) =>
@@ -460,7 +486,7 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
         ),
       );
       socket.on(ROOM_EVENTS.rankingRejected, (rejection: SharedGridRejection) =>
-        setLastModeRejection({ ...rejection, kind: "ranking" }),
+        noteModeRejection({ ...rejection, kind: "ranking" }),
       );
 
       socket.on(
@@ -475,7 +501,9 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
           itemId: string | null;
           position?: number;
           turnUserId: string | null;
-        }) =>
+        }) => {
+          // The turn just moved, so a "not your turn" rejection is spent.
+          setLastModeRejection(null);
           setState((s) => {
             if (!s || !s.round) return s;
             // Insert AT `position`, don't append. Insert-at-a-gap is Relay's
@@ -514,10 +542,11 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
                 turnUserId,
               },
             };
-          }),
+          });
+        },
       );
       socket.on(ROOM_EVENTS.placeRejected, (rejection: RelayRejection) =>
-        setLastModeRejection({ ...rejection, kind: "place" }),
+        noteModeRejection({ ...rejection, kind: "place" }),
       );
     });
 
@@ -551,10 +580,14 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
       [send],
     ),
     guess: useCallback(
-      (mapping: Record<string, string>) => send(ROOM_COMMANDS.guess, { mapping }),
+      (mapping: Record<string, string>) =>
+        send(ROOM_COMMANDS.guess, { mapping }),
       [send],
     ),
-    cut: useCallback((itemId: string) => send(ROOM_COMMANDS.cut, { itemId }), [send]),
+    cut: useCallback(
+      (itemId: string) => send(ROOM_COMMANDS.cut, { itemId }),
+      [send],
+    ),
     pick: useCallback(
       (selection: string[]) => send(ROOM_COMMANDS.pick, { selection }),
       [send],
@@ -573,6 +606,7 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
       [send],
     ),
     lastModeRejection,
+    modeRejectionSeq,
   };
 }
 

@@ -35,7 +35,7 @@ export function VotingBetweenBoard({
         <Text variant="tertiary" className="text-xs uppercase tracking-wide">
           {t("voting.winnerHeading")}
         </Text>
-        <Text as="h2" variant="title" className="text-2xl text-success">
+        <Text as="h2" variant="title" className="text-2xl text-live">
           {winner?.title ?? result.winnerOptionId}
         </Text>
       </header>

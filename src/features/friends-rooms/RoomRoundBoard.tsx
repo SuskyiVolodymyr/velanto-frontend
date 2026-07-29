@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import type { Pack } from "@/src/shared/types/pack";
 import type {
   ClaimRejection,
@@ -16,6 +17,7 @@ import { TurnBasedCutBoard } from "./TurnBasedCutBoard";
 import { VotingBoard } from "./VotingBoard";
 import { SharedGridRankSubmission } from "./SharedGridRankSubmission";
 import { RelayInsertBoard } from "./RelayInsertBoard";
+import { RoundRejectionNotice } from "./RoundRejectionNotice";
 
 /** Every round-scoped action a board might need, keyed by mode so each board
  * only destructures what its own mode uses. */
@@ -34,6 +36,9 @@ export interface RoomRoundActions {
     | (SharedGridRejection & { kind: "ranking" })
     | (RelayRejection & { kind: "place" })
     | null;
+  /** Increments on every rejection, so a repeat refusal is distinguishable
+   * from the one already on screen. Shared-grid keys its rank board on it. */
+  modeRejectionSeq: number;
 }
 
 interface RoomRoundBoardProps {
@@ -57,27 +62,33 @@ export function RoomRoundBoard({
   actions,
   packFormat,
 }: RoomRoundBoardProps) {
+  // Claim surfaces its own rejection inside RoomRound (the too-fast note and
+  // the item flash), so it is the one arm that opts out of the shared notice.
+  if (state.mode === "claim") {
+    return (
+      <RoomRound
+        state={state}
+        currentUserId={currentUserId}
+        lastRejection={actions.lastRejection}
+        onClaim={actions.claim}
+        packFormat={packFormat}
+      />
+    );
+  }
+
+  let board: ReactNode = null;
   switch (state.mode) {
-    case "claim":
-      return (
-        <RoomRound
-          state={state}
-          currentUserId={currentUserId}
-          lastRejection={actions.lastRejection}
-          onClaim={actions.claim}
-          packFormat={packFormat}
-        />
-      );
     case "guess_who":
-      return (
+      board = (
         <GuessWhoRoundBoard
           state={state}
           currentUserId={currentUserId}
           onPick={actions.pick}
         />
       );
+      break;
     case "turn_based_cut":
-      return (
+      board = (
         <TurnBasedCutBoard
           state={state}
           currentUserId={currentUserId}
@@ -85,31 +96,48 @@ export function RoomRoundBoard({
           onCut={actions.cut}
         />
       );
+      break;
     case "voting":
-      return (
+      board = (
         <VotingBoard
           state={state}
           currentUserId={currentUserId}
           onVote={actions.vote}
         />
       );
+      break;
     case "shared_grid":
-      return (
+      board = (
         <SharedGridRankSubmission
           state={state}
           currentUserId={currentUserId}
           onSubmitRanking={actions.submitRanking}
+          rejectionToken={actions.modeRejectionSeq}
         />
       );
+      break;
     case "relay":
-      return (
+      board = (
         <RelayInsertBoard
           state={state}
           currentUserId={currentUserId}
           onPlaceItem={actions.placeItem}
         />
       );
+      break;
     default:
       return null;
   }
+
+  return (
+    <div className="flex flex-col gap-4">
+      {/* Every non-Claim rejection was reaching state and being rendered by
+          nobody — you clicked, the server refused, and the board looked
+          identical either way. Rendered once here rather than five times. */}
+      <RoundRejectionNotice
+        reason={actions.lastModeRejection?.reason ?? null}
+      />
+      {board}
+    </div>
+  );
 }

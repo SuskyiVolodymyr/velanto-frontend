@@ -42,8 +42,8 @@ export function TurnIndicator({
     >
       <span
         className={cn(
-          "flex h-11 w-11 flex-none items-center justify-center rounded-full ring-2",
-          isMine ? "ring-acc animate-livedot" : "ring-border-strong",
+          "relative flex h-11 w-11 flex-none items-center justify-center rounded-full ring-2",
+          isMine ? "ring-acc" : "ring-border-strong",
         )}
       >
         <UserAvatar
@@ -51,6 +51,16 @@ export function TurnIndicator({
           avatarKey={turnPlayer.avatarKey}
           size="sm"
         />
+        {/* `.animate-livedot` pulses opacity 1 <-> .35 and is specified for a
+            presence DOT, not a portrait — on the 44px avatar wrapper it faded
+            the player's whole face in and out. Same token, applied to an
+            actual dot. Reduced-motion freezes it globally (globals.css). */}
+        {isMine && (
+          <span
+            aria-hidden
+            className="animate-livedot absolute -bottom-0.5 -end-0.5 h-3 w-3 rounded-full border-2 border-surface bg-acc"
+          />
+        )}
       </span>
       {/* Plain <p>, not <Text>, when isMine: Text always applies a variant
           color class of equal specificity to any color className passed

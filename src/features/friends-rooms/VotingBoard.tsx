@@ -19,7 +19,11 @@ interface VotingBoardProps {
  * so the room knows whom a tie favors. Casting a vote is free to change at any
  * time before resolution — clicking a different option just re-votes.
  */
-export function VotingBoard({ state, currentUserId, onVote }: VotingBoardProps) {
+export function VotingBoard({
+  state,
+  currentUserId,
+  onVote,
+}: VotingBoardProps) {
   const t = useTranslations("room");
   const round = state.round;
   if (!round || !round.optionIds) return null;
@@ -49,14 +53,17 @@ export function VotingBoard({ state, currentUserId, onVote }: VotingBoardProps) 
         <Text as="h2" variant="title" className="text-2xl">
           {round.name || t("voting.instruction")}
         </Text>
-        {priorityPlayer && <PriorityHolderBadge username={priorityPlayer.username} />}
+        {priorityPlayer && (
+          <PriorityHolderBadge username={priorityPlayer.username} />
+        )}
       </header>
 
       <div className="flex flex-col gap-3">
         {round.optionIds.map((optionId) => {
           const item = itemsById.get(optionId);
           const count = tally.get(optionId) ?? 0;
-          const pct = totalVotes > 0 ? Math.round((count / totalVotes) * 100) : 0;
+          const pct =
+            totalVotes > 0 ? Math.round((count / totalVotes) * 100) : 0;
           const isMine = myVote === optionId;
           return (
             <button
@@ -66,14 +73,16 @@ export function VotingBoard({ state, currentUserId, onVote }: VotingBoardProps) 
               onClick={() => onVote(optionId)}
               className={cn(
                 "relative overflow-hidden rounded-tile border-[1.5px] p-4 text-start transition-colors",
-                isMine ? "border-acc" : "border-border hover:border-border-strong",
+                isMine
+                  ? "border-acc"
+                  : "border-border hover:border-border-strong",
               )}
             >
               {/* The live tally bar — width is the vote-tally motion token
                   reserved in design-tokens.md ("vote-tally bar width .3s"). */}
               <span
                 aria-hidden
-                className="absolute inset-y-0 start-0 bg-acc/10 transition-[width] duration-300 ease-[var(--ease-signature)]"
+                className="absolute inset-y-0 start-0 bg-acc/10 transition-[width] duration-300 ease-[var(--ease-signature)] motion-reduce:transition-none"
                 style={{ width: `${pct}%` }}
               />
               <div className="relative flex items-center justify-between gap-3">
@@ -88,7 +97,10 @@ export function VotingBoard({ state, currentUserId, onVote }: VotingBoardProps) 
       </div>
 
       <Text variant="secondary" aria-live="polite" className="text-sm">
-        {t("voting.votedSoFar", { count: totalVotes, total: state.players.length })}
+        {t("voting.votedSoFar", {
+          count: totalVotes,
+          total: state.players.length,
+        })}
       </Text>
     </div>
   );
