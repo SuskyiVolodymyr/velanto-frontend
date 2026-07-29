@@ -458,6 +458,86 @@ describe("RoomScreen — between", () => {
   });
 });
 
+describe("RoomScreen — results by RoundResult kind", () => {
+  it("renders a vote-kind round with its winning option and tally, not the claim survivor board", () => {
+    setRoom(
+      baseState({
+        mode: "voting",
+        status: "finished",
+        phase: "finished",
+        totalRounds: 1,
+        results: [
+          {
+            kind: "vote",
+            index: 0,
+            name: "Round 1",
+            items: [textItem("i1", "Pizza"), textItem("i2", "Sushi")],
+            optionIds: ["i1", "i2"],
+            votes: { host: "i1" },
+            tally: { i1: 1 },
+            winnerOptionId: "i1",
+            tieBroken: false,
+            priorityUserId: "host",
+          },
+        ],
+      }),
+    );
+    render(<RoomScreen roomId="room-1" />);
+    expect(screen.getByText("Pizza")).toBeInTheDocument();
+  });
+
+  it("renders a borda-kind round with its tiered order", () => {
+    setRoom(
+      baseState({
+        mode: "shared_grid",
+        status: "finished",
+        phase: "finished",
+        totalRounds: 1,
+        results: [
+          {
+            kind: "borda",
+            index: 0,
+            name: "Round 1",
+            items: [textItem("i1", "A"), textItem("i2", "B")],
+            scores: { i1: 3, i2: 1 },
+            order: [["i1"], ["i2"]],
+            ballots: {},
+          },
+        ],
+      }),
+    );
+    render(<RoomScreen roomId="room-1" />);
+    const region = screen.getByRole("region", { name: "Round 1" });
+    expect(region).toHaveTextContent("A");
+    expect(region).toHaveTextContent("B");
+  });
+
+  it("renders a relay-kind round with its final flat order", () => {
+    setRoom(
+      baseState({
+        mode: "relay",
+        status: "finished",
+        phase: "finished",
+        totalRounds: 1,
+        results: [
+          {
+            kind: "relay",
+            index: 0,
+            name: "Round 1",
+            items: [textItem("i1", "A"), textItem("i2", "B")],
+            order: ["i2", "i1"],
+            placements: [],
+          },
+        ],
+      }),
+    );
+    render(<RoomScreen roomId="room-1" />);
+    const region = screen.getByRole("region", { name: "Round 1" });
+    expect(region).toHaveTextContent("A");
+    expect(region).toHaveTextContent("B");
+  });
+});
+
 describe("RoomScreen — guess-who identity reveal", () => {
   it("renders the identity reveal instead of RoomResults when mode is guess_who and endgame is set", () => {
     setRoom(

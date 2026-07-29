@@ -3,14 +3,24 @@
 import { useTranslations } from "next-intl";
 import { BackButton } from "@/src/shared/components/BackButton";
 import { Text } from "@/src/shared/components/Text";
+import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
-import type { RoomPlayerState, RoomState } from "./room-types";
+import type {
+  BordaRoundResult,
+  RelayRoundResult,
+  RoomPlayerState,
+  RoomState,
+  SurvivorRoundResult,
+  VoteRoundResult,
+} from "./room-types";
 import { RoomItemCard } from "./RoomItemCard";
 
 /**
- * The end screen: one block per round, in order, each showing every item with
- * the sacrificer's avatar beside the eliminated ones and the survivor in green.
- * This is the shareable summary — wiring an actual share is a later task, so no
+ * The end screen: one block per round, in order, each rendered per its
+ * `RoundResult.kind`. Reached only for the five "shared-verdict" modes
+ * (claim, turn_based_cut, voting, shared_grid, relay) — `guess_who`'s
+ * `finished` phase routes to `IdentityRevealScreen` instead (Task 16). This is
+ * the shareable summary — wiring an actual share is a later task, so no
  * backend call is made here.
  */
 export function RoomResults({
@@ -24,16 +34,6 @@ export function RoomResults({
 }) {
   const t = useTranslations("room");
   const byId = new Map(state.players.map((p) => [p.userId, p]));
-
-  const claimantFor = (
-    claims: Record<string, string>,
-    itemId: string,
-  ): RoomPlayerState | null => {
-    for (const [userId, claimed] of Object.entries(claims)) {
-      if (claimed === itemId) return byId.get(userId) ?? null;
-    }
-    return null;
-  };
 
   return (
     <div className="flex flex-col gap-8">
@@ -69,56 +69,138 @@ export function RoomResults({
             {result.name ||
               t("results.roundLabel", { index: result.index + 1 })}
           </Text>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {result.items.map((item, index) => {
-              const isSurvivor = item.id === result.survivorItemId;
-              return (
-                <RoomItemCard
-                  key={item.id}
-                  item={item}
-                  index={index}
-                  status={isSurvivor ? "survivor" : "sacrificed"}
-                  claimant={
-                    isSurvivor ? null : claimantFor(result.claims, item.id)
-                  }
-                  format={packFormat}
-                />
-              );
-            })}
-          </div>
-
-          {/* Turn-based cut's ordered cut history — see RoomBetween's
-              identical block. Only `kind: "survivor"` results ever carry
-              `cuts`; Claim's own rounds never populate it. */}
-          {result.kind === "survivor" &&
-            result.cuts &&
-            result.cuts.length > 0 && (
-              <ol
-                aria-label={t("turnBasedCut.cutOrderHeading")}
-                className="flex flex-wrap items-center gap-2"
-              >
-                {result.cuts.map((cut, index) => {
-                  const cutter = byId.get(cut.userId);
-                  const item = result.items.find((i) => i.id === cut.itemId);
-                  return (
-                    <li
-                      key={`${cut.userId}-${cut.itemId}-${index}`}
-                      className="flex items-center gap-1.5 rounded-pill border border-border bg-surface px-2.5 py-1 text-xs"
-                    >
-                      <span className="font-semibold">
-                        {cutter?.username ?? cut.userId}
-                      </span>
-                      <span className="text-foreground-tertiary">
-                        {t("turnBasedCut.cutVerb")}
-                      </span>
-                      <span>{item?.title ?? cut.itemId}</span>
-                    </li>
-                  );
-                })}
-              </ol>
-            )}
+          {result.kind === "survivor" && (
+            <SurvivorResultBlock
+              result={result}
+              byId={byId}
+              packFormat={packFormat}
+            />
+          )}
+          {result.kind === "vote" && <VoteResultBlock result={result} byId={byId} />}
+          {result.kind === "borda" && <BordaResultBlock result={result} />}
+          {result.kind === "relay" && <RelayResultBlock result={result} />}
+          {/* `kind: "reveal"` (Guess-who) never reaches this screen — Task 16
+              routes guess_who's finished phase to IdentityRevealScreen. */}
         </section>
       ))}
     </div>
+  );
+}
+
+function SurvivorResultBlock({
+  result,
+  byId,
+  packFormat,
+}: {
+  result: SurvivorRoundResult;
+  byId: Map<string, RoomPlayerState>;
+  packFormat: Extract<Pack["format"], "save_one" | "sacrifice_one">;
+}) {
+  const t = useTranslations("room");
+  const claimantFor = (itemId: string): RoomPlayerState | null => {
+    for (const [userId, claimed] of Object.entries(result.claims)) {
+      if (claimed === itemId) return byId.get(userId) ?? null;
+    }
+    return null;
+  };
+  return (
+    <>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {result.items.map((item, index) => {
+          const isSurvivor = item.id === result.survivorItemId;
+          return (
+            <RoomItemCard
+              key={item.id}
+              item={item}
+              index={index}
+              format={packFormat}
+              status={isSurvivor ? "survivor" : "sacrificed"}
+              claimant={isSurvivor ? null : claimantFor(item.id)}
+            />
+          );
+        })}
+      </div>
+
+      {/* Turn-based cut's ordered cut history — see RoomBetween's identical
+          block. Claim's own rounds never populate `cuts`. */}
+      {result.cuts && result.cuts.length > 0 && (
+        <ol
+          aria-label={t("turnBasedCut.cutOrderHeading")}
+          className="flex flex-wrap items-center gap-2"
+        >
+          {result.cuts.map((cut, index) => {
+            const cutter = byId.get(cut.userId);
+            const item = result.items.find((i) => i.id === cut.itemId);
+            return (
+              <li
+                key={`${cut.userId}-${cut.itemId}-${index}`}
+                className="flex items-center gap-1.5 rounded-pill border border-border bg-surface px-2.5 py-1 text-xs"
+              >
+                <span className="font-semibold">
+                  {cutter?.username ?? cut.userId}
+                </span>
+                <span className="text-foreground-tertiary">
+                  {t("turnBasedCut.cutVerb")}
+                </span>
+                <span>{item?.title ?? cut.itemId}</span>
+              </li>
+            );
+          })}
+        </ol>
+      )}
+    </>
+  );
+}
+
+function VoteResultBlock({
+  result,
+  byId,
+}: {
+  result: VoteRoundResult;
+  byId: Map<string, RoomPlayerState>;
+}) {
+  const t = useTranslations("room");
+  const winner = result.items.find((item) => item.id === result.winnerOptionId);
+  const priorityPlayer = byId.get(result.priorityUserId);
+  return (
+    <div className="flex flex-col gap-2">
+      <Text className="text-lg font-semibold text-success">{winner?.title}</Text>
+      {result.tieBroken && priorityPlayer && (
+        <Text variant="tertiary" className="text-xs">
+          {t("voting.tieBrokenNote", { name: priorityPlayer.username })}
+        </Text>
+      )}
+    </div>
+  );
+}
+
+function BordaResultBlock({ result }: { result: BordaRoundResult }) {
+  const itemsById = new Map(result.items.map((item) => [item.id, item]));
+  return (
+    <ol className="flex flex-col gap-1">
+      {result.order.map((tier, index) => (
+        <li
+          key={index}
+          className={cn("text-sm", tier.length > 1 && "font-medium")}
+        >
+          <span className="font-semibold">{index + 1}.</span>{" "}
+          {tier.map((id) => itemsById.get(id)?.title ?? id).join(" / ")}
+        </li>
+      ))}
+    </ol>
+  );
+}
+
+function RelayResultBlock({ result }: { result: RelayRoundResult }) {
+  const itemsById = new Map(result.items.map((item) => [item.id, item]));
+  return (
+    <ol className="flex flex-col gap-1">
+      {result.order.map((id, index) => (
+        <li key={id} className="text-sm">
+          <span className="font-semibold">{index + 1}.</span>{" "}
+          {itemsById.get(id)?.title ?? id}
+        </li>
+      ))}
+    </ol>
   );
 }
