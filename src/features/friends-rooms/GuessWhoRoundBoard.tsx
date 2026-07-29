@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
+import { BlindRankBoard } from "./BlindRankBoard";
 import { LockedInRoster } from "./LockedInRoster";
 import type { RoomState } from "./room-types";
 
@@ -34,7 +34,6 @@ export function GuessWhoRoundBoard({
 }: GuessWhoRoundBoardProps) {
   const t = useTranslations("room");
   const round = state.round;
-  const [rankSoFar, setRankSoFar] = useState<string[]>([]);
   if (!round || !round.optionIds || !round.actionKind) return null;
 
   const me = state.players.find((p) => p.userId === currentUserId);
@@ -44,19 +43,6 @@ export function GuessWhoRoundBoard({
   function selectPick(optionId: string) {
     if (iAmLockedIn || round?.actionKind !== "pick") return;
     onPick([optionId]);
-  }
-
-  function selectRankNext(optionId: string) {
-    if (
-      iAmLockedIn ||
-      round?.actionKind !== "rank" ||
-      rankSoFar.includes(optionId)
-    ) {
-      return;
-    }
-    const next = [...rankSoFar, optionId];
-    setRankSoFar(next);
-    if (next.length === round.optionIds!.length) onPick(next);
   }
 
   return (
@@ -104,37 +90,12 @@ export function GuessWhoRoundBoard({
           })}
         </div>
       ) : (
-        <div className="flex flex-col gap-2">
-          {round.optionIds.map((optionId) => {
-            const item = itemsById.get(optionId);
-            const placedAt = rankSoFar.indexOf(optionId);
-            const placed = placedAt !== -1;
-            return (
-              <button
-                key={optionId}
-                type="button"
-                disabled={iAmLockedIn || placed}
-                onClick={() => selectRankNext(optionId)}
-                className={cn(
-                  "flex items-center gap-3 rounded-tile border-[1.5px] p-[14px] text-start transition-colors",
-                  placed
-                    ? "border-border opacity-60"
-                    : "border-dashed border-white/[0.14] hover:border-acc/40",
-                )}
-              >
-                <span
-                  aria-hidden
-                  className="flex h-8 w-8 flex-none items-center justify-center rounded-chip bg-white/[0.06] text-[12px] font-semibold"
-                >
-                  {placed ? placedAt + 1 : ""}
-                </span>
-                <Text className="flex-1 text-sm font-semibold">
-                  {item?.title ?? optionId}
-                </Text>
-              </button>
-            );
-          })}
-        </div>
+        <BlindRankBoard
+          optionIds={round.optionIds}
+          itemsById={itemsById}
+          disabled={iAmLockedIn}
+          onSubmit={onPick}
+        />
       )}
 
       <LockedInRoster players={state.players} lockedIn={round.lockedIn ?? []} />

@@ -1748,6 +1748,13 @@
       "winnerHeading": "Winner",
       "tieBrokenNote": "It was a tie — {name} held priority and broke it."
     },
+    "sharedGrid": {
+      "instruction": "Rank every item blind, in order.",
+      "aggregateHeading": "Aggregated",
+      "groupRanking": "The group's ranking",
+      "pointsLabel": "{count} pts",
+      "tiedNote": "{count}-way tie"
+    },
     "entry": {
       "createRoom": "Create room",
       "joinByCode": "Join by code",

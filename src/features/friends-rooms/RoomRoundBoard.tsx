@@ -14,6 +14,7 @@ import { RoomRound } from "./RoomRound";
 import { GuessWhoRoundBoard } from "./GuessWhoRoundBoard";
 import { TurnBasedCutBoard } from "./TurnBasedCutBoard";
 import { VotingBoard } from "./VotingBoard";
+import { SharedGridRankSubmission } from "./SharedGridRankSubmission";
 
 /** Every round-scoped action a board might need, keyed by mode so each board
  * only destructures what its own mode uses. */
@@ -91,7 +92,14 @@ export function RoomRoundBoard({
           onVote={actions.vote}
         />
       );
-    // "shared_grid" -> SharedGridRankSubmission, wired in Task 23.
+    case "shared_grid":
+      return (
+        <SharedGridRankSubmission
+          state={state}
+          currentUserId={currentUserId}
+          onSubmitRanking={actions.submitRanking}
+        />
+      );
     // "relay" -> RelayInsertBoard, wired in Task 25.
     default:
       return null;
