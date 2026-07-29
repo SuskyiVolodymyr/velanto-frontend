@@ -6,6 +6,7 @@ import { RoomBetween } from "./RoomBetween";
 import { GuessWhoRevealBoard } from "./GuessWhoRevealBoard";
 import { VotingBetweenBoard } from "./VotingBetweenBoard";
 import { BordaRevealBoard } from "./BordaRevealBoard";
+import { RelayBetweenBoard } from "./RelayBetweenBoard";
 
 interface RoomBetweenBoardProps {
   state: RoomState;
@@ -68,10 +69,14 @@ export function RoomBetweenBoard({
           onNext={onNext}
         />
       );
-    // Every other mode's between-round block is added by that mode's task
-    // group (Task 26) — each reuses this same shell, since "show this
-    // round's outcome + wait for everyone to press Next" is identical
-    // lobby-side chrome across every mode; only the outcome BLOCK differs.
+    case "relay":
+      return (
+        <RelayBetweenBoard
+          state={state}
+          currentUserId={currentUserId}
+          onNext={onNext}
+        />
+      );
     default:
       return null;
   }
