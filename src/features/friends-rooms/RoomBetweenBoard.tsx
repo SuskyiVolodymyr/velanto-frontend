@@ -3,6 +3,7 @@
 import type { Pack } from "@/src/shared/types/pack";
 import type { RoomState } from "./room-types";
 import { RoomBetween } from "./RoomBetween";
+import { GuessWhoRevealBoard } from "./GuessWhoRevealBoard";
 
 interface RoomBetweenBoardProps {
   state: RoomState;
@@ -29,8 +30,16 @@ export function RoomBetweenBoard({
           packFormat={packFormat}
         />
       );
+    case "guess_who":
+      return (
+        <GuessWhoRevealBoard
+          state={state}
+          currentUserId={currentUserId}
+          onNext={onNext}
+        />
+      );
     // Every other mode's between-round block is added by that mode's task
-    // group (Tasks 13/19/22/24/26) — each reuses this same shell, since "show
+    // group (Tasks 19/22/24/26) — each reuses this same shell, since "show
     // this round's outcome + wait for everyone to press Next" is identical
     // lobby-side chrome across every mode; only the outcome BLOCK differs.
     default:
