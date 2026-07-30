@@ -64,6 +64,26 @@ describe("HomeFeed", () => {
     });
   });
 
+  it("still fetches on mount when seeded from the server, so a stale SSR feed is never what the visitor ends up looking at", async () => {
+    vi.mocked(packsClient.list).mockResolvedValue({
+      items: [PACK_A],
+      total: 1,
+      page: 1,
+      limit: 25,
+    });
+
+    // The seed the home route passes down. It comes out of Next's Data Cache
+    // and can be up to six hours old (see get-home-feed-server.ts), so it must
+    // arrive already stale rather than fresh-as-of-now — otherwise `staleTime`
+    // suppresses this refetch and a visitor is served the cached copy with no
+    // way to ever see a newer pack. A trusted author publishing and reloading
+    // is the case that breaks first.
+    render(<HomeFeed initialFeed={{ items: [], total: 0 }} />);
+
+    expect(await screen.findByText("Best Anime Openings")).toBeInTheDocument();
+    expect(packsClient.list).toHaveBeenCalled();
+  });
+
   it("shows the empty state when no packs match", async () => {
     vi.mocked(packsClient.list).mockResolvedValue({
       items: [],
