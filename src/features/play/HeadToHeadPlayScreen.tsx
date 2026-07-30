@@ -15,6 +15,14 @@ import { HeadToHeadRound } from "@/src/features/play/HeadToHeadRound";
 import { PlayChrome } from "@/src/features/play/PlayChrome";
 import { PlayRoundHeader } from "@/src/features/play/PlayRoundHeader";
 import { PlayConfirmBar } from "@/src/features/play/PlayConfirmBar";
+import { PicksSummary } from "@/src/features/play/PicksSummary";
+import {
+  INSTRUCTION_KEY,
+  PICKED_LABEL_KEY,
+} from "@/src/features/play/play-format-copy";
+// Aliased: a bare `Pick` would shadow TypeScript's own Pick<T, K> utility
+// inside this module.
+import type { Pick as SessionPick } from "@/src/features/play/use-play-session";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { cn } from "@/src/shared/lib/cn";
@@ -24,7 +32,6 @@ import type { RecordedPick } from "@/src/shared/types/play-results";
 export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
   const { status } = useAuth();
   const t = useTranslations("play");
-  const tFormat = useTranslations("formats");
   const router = useRouter();
   const groups = pack.groups ?? [];
   const rounds = pack.rounds ?? [];
@@ -70,6 +77,24 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
   const slotB = !isFinished ? selections[roundIndex]?.slots[1] : undefined;
   const left = slotA?.items[0];
   const right = slotB?.items[0];
+
+  // The mock's run-so-far row: one chip per finished round, naming the
+  // contender that WON it. `confirmPick` records BOTH sides of every matchup
+  // (see its note), so the winners are the `chosen` half — and their titles
+  // have to be looked up in the resolved draw, because a RecordedPick carries
+  // only ids.
+  const displayPicks: SessionPick[] = allPicks
+    .filter((pick) => pick.chosen)
+    .map((pick) => ({
+      roundIndex: pick.roundIndex,
+      groupId: pick.groupId,
+      itemId: pick.itemId,
+      itemTitle:
+        selections[pick.roundIndex]?.slots
+          .flatMap((slot) => slot.items)
+          .find((item) => item.id === pick.itemId)?.title ?? "",
+      chosen: true,
+    }));
 
   function confirmPick() {
     if (!selectedId || !slotA || !slotB || !left || !right) return;
@@ -151,20 +176,35 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
 
   return (
     <>
+      {/* No counter in the bar: the round header's eyebrow below is
+          `play.roundOf`, and the mock only ever draws it there. */}
       <PlayChrome
         pack={pack}
         isFinished={isFinished}
         roundIndex={roundIndex}
         totalRounds={totalRounds}
+        showRoundCounter={false}
       />
 
       <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
         {left && right && (
           <>
             <div className="mb-8">
+              {/* Mirrors PlayScreen's header contract, which is the one the
+                  Solo Play mock actually draws: "Round N of M" eyebrow, the
+                  author's round name as the heading, the format's prompt
+                  underneath, all left-aligned with the progress rail pinned
+                  right. The rounds of a 1v1 pack are usually unnamed, so
+                  today's "Which one do you prefer?" stays as the fallback
+                  heading rather than an untranslated "Round N". */}
               <PlayRoundHeader
-                eyebrow={tFormat("1v1")}
-                title={t("whichPrefer")}
+                eyebrow={t("roundOf", {
+                  current: roundIndex + 1,
+                  total: totalRounds,
+                })}
+                title={rounds[roundIndex]?.name?.trim() || t("whichPrefer")}
+                instruction={t(INSTRUCTION_KEY["1v1"])}
+                align="start"
                 roundIndex={roundIndex}
                 totalRounds={totalRounds}
               />
@@ -189,6 +229,18 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
                   : t("nextRound")
               }
             />
+
+            {/* The mock's "YOUR RUN SO FAR" chip row, below the confirm bar and
+                hidden until there's something to show. */}
+            {displayPicks.length > 0 && (
+              <div className="mt-8">
+                <PicksSummary
+                  label={t(PICKED_LABEL_KEY["1v1"])}
+                  picks={displayPicks}
+                  totalRounds={totalRounds}
+                />
+              </div>
+            )}
           </>
         )}
 

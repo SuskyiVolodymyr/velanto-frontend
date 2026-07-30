@@ -272,6 +272,8 @@ describe("HeadToHeadPlayScreen", () => {
       "true",
     );
     // Still on round 1 — the click chose a side, it did not commit it.
+    // getBy, singular: the counter lives only in the round header's eyebrow now,
+    // since PlayChrome's bar opts out of printing a second copy.
     expect(screen.getByText("Round 1 of 2")).toBeInTheDocument();
 
     // A pick is changeable right up until it's confirmed.
@@ -405,7 +407,14 @@ describe("HeadToHeadPlayScreen", () => {
 
     // Opens directly on round 2 (Naruto vs Sasuke) — round 1 is not replayed.
     await screen.findByText("Naruto");
-    expect(screen.queryByText("Goku")).toBeNull();
+    // Scoped to the contender cards: Goku must not be back on the board, but he
+    // IS expected in the "Your run so far" row as round 1's restored winner.
+    for (const card of screen.getAllByTestId("h2h-contender")) {
+      expect(card).not.toHaveTextContent("Goku");
+    }
+    expect(
+      screen.queryByRole("button", { name: "Pick Goku" }),
+    ).not.toBeInTheDocument();
 
     // Finishing records all four picks: the two restored plus this matchup's.
     await pickAndConfirm(user, "Naruto", { last: true });

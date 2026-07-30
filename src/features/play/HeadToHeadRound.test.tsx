@@ -176,7 +176,7 @@ describe("HeadToHeadRound", () => {
     expect(screen.getAllByText("VS", { exact: true })).toHaveLength(1);
   });
 
-  it("selects a border+ring frame for the chosen contender and a plain border for the other", () => {
+  it("washes the chosen contender's card in accent and leaves the other plain", () => {
     render(
       <HeadToHeadRound
         left={LEFT}
@@ -187,11 +187,117 @@ describe("HeadToHeadRound", () => {
       />,
     );
 
-    const selectedCard = screen.getByRole("button", { name: "Pick Goku" });
-    const unselectedCard = screen.getByRole("button", { name: "Pick Vegeta" });
-    expect(selectedCard.className).toContain("border-acc");
-    expect(selectedCard.className).toContain("ring-acc/30");
+    const [selectedCard, unselectedCard] =
+      screen.getAllByTestId("h2h-contender");
+    expect(selectedCard.className).toContain("border-acc/50");
+    expect(selectedCard.className).toContain("bg-acc/[0.08]");
     expect(unselectedCard.className).toContain("border-border");
-    expect(unselectedCard.className).not.toContain("ring-acc/30");
+    expect(unselectedCard.className).not.toContain("bg-acc/[0.08]");
+  });
+
+  it("sizes each contender's media to 16:9 rather than a fixed pixel height", () => {
+    // Regression guard. `cn()` is a plain join, not tailwind-merge, so an
+    // `h-[230px] w-full` passed down here landed *alongside* YouTubeCard's own
+    // `aspect-video` — and an explicit width+height beats `aspect-ratio`, so the
+    // embedded player was letterboxed into a 2.58:1 box instead of 16:9.
+    vi.stubEnv("NEXT_PUBLIC_MEDIA_BASE_URL", "https://cdn.example.com");
+    render(
+      <HeadToHeadRound
+        left={{
+          id: "v1",
+          type: "youtube" as const,
+          title: "Opening theme",
+          value: "https://youtu.be/KsF_hdjWJjo",
+        }}
+        right={{
+          id: "im1",
+          type: "image" as const,
+          title: "Poster",
+          value: "media/item/poster.webp",
+        }}
+        selectedId={null}
+        onSelect={vi.fn()}
+        coverTone={COVER_TONE}
+      />,
+    );
+
+    for (const testId of ["youtube-card", "image-card"]) {
+      const media = screen.getByTestId(testId);
+      expect(media.className).toContain("aspect-video");
+      expect(media.className).not.toMatch(/\bh-\[/);
+    }
+  });
+
+  it("selects the contender when anywhere on its card body is clicked", async () => {
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    render(
+      <HeadToHeadRound
+        left={LEFT}
+        right={RIGHT}
+        selectedId={null}
+        onSelect={onSelect}
+        coverTone={COVER_TONE}
+      />,
+    );
+
+    await user.click(screen.getAllByTestId("h2h-contender")[0]);
+
+    expect(onSelect).toHaveBeenCalledWith("i1");
+  });
+
+  it("does not select when the media area itself is engaged", async () => {
+    // The card body being clickable must not extend to the player: engaging a
+    // video has to start it, not pick the contender out from under the viewer.
+    const user = userEvent.setup();
+    const onSelect = vi.fn();
+    render(
+      <HeadToHeadRound
+        left={{
+          id: "v1",
+          type: "youtube" as const,
+          title: "Opening theme",
+          value: "https://youtu.be/KsF_hdjWJjo",
+        }}
+        right={RIGHT}
+        selectedId={null}
+        onSelect={onSelect}
+        coverTone={COVER_TONE}
+      />,
+    );
+
+    await user.click(screen.getByTestId("youtube-card"));
+
+    expect(onSelect).not.toHaveBeenCalled();
+  });
+
+  it("labels every contender's pick control 'Pick this one' while the round is untouched", () => {
+    render(
+      <HeadToHeadRound
+        left={LEFT}
+        right={RIGHT}
+        selectedId={null}
+        onSelect={vi.fn()}
+        coverTone={COVER_TONE}
+      />,
+    );
+
+    expect(screen.getAllByText("Pick this one")).toHaveLength(2);
+    expect(screen.queryByText("Your pick")).not.toBeInTheDocument();
+  });
+
+  it("switches only the chosen contender's pick control to 'Your pick'", () => {
+    render(
+      <HeadToHeadRound
+        left={LEFT}
+        right={RIGHT}
+        selectedId="i1"
+        onSelect={vi.fn()}
+        coverTone={COVER_TONE}
+      />,
+    );
+
+    expect(screen.getByText("Your pick")).toBeInTheDocument();
+    expect(screen.getAllByText("Pick this one")).toHaveLength(1);
   });
 });
