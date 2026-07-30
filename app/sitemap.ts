@@ -1,42 +1,35 @@
 import type { MetadataRoute } from "next";
-import type { Pack } from "@/src/shared/types/pack";
 import { SITE_URL } from "@/src/shared/lib/site-url";
 import { LEGAL_LAST_UPDATED } from "@/src/features/legal/legal-meta";
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
-
-// The backend caps `limit` at 50 and there's no sitemap-index/pagination here
-// yet — request one page of the most relevant approved packs. If the catalog
-// outgrows this, a paginated sitemap index is the follow-up.
-const PACK_CAP = 50;
-
 // Public, indexable app routes that always exist regardless of API state.
-const STATIC_PATHS = ["/", "/docs", "/feedback", "/updates"] as const;
+const STATIC_PATHS = ["/", "/docs", "/updates"] as const;
 
 // Same, but they change about once a year rather than weekly, so they carry a
 // lower priority and changeFrequency than the paths above.
 const LEGAL_PATHS = ["/terms", "/privacy"] as const;
 
 /**
- * Fetches the anonymous public pack list (approved packs only — the
- * unauthenticated `GET /packs` view never exposes pending/rejected packs).
- * Returns [] on any failure so an unreachable API at build/request time
- * degrades the sitemap to its static routes instead of erroring the build.
+ * Lists only the routes `robots.ts` actually allows — which is why this file no
+ * longer queries the API at all.
+ *
+ * It used to fetch up to 50 approved packs and derive their authors' profile
+ * URLs. Both of those route families are now disallowed to crawlers (they query
+ * Neon on every request, and a crawl walking them held the free plan's
+ * scale-to-zero compute awake around the clock — see robots.ts for the full
+ * reasoning). Advertising URLs that robots.txt forbids would earn a "sitemap
+ * contains URLs which are blocked" warning in Search Console and help nobody.
+ *
+ * Dropping them removes this route's own database round trip as a side effect,
+ * which is strictly better than caching it: a crawler-facing sitemap that is
+ * itself an uncached query is the worst of both worlds. `/feedback` is gone for
+ * the same reason — it is disallowed and backend-backed.
+ *
+ * If crawling is re-enabled (paid plan, or discovery outweighing the quota),
+ * restore the pack/author routes here in the same change that reopens
+ * robots.ts, and add caching to the fetch at that point.
  */
-async function fetchApprovedPacks(): Promise<Pack[]> {
-  try {
-    const res = await fetch(`${API_BASE_URL}/packs?limit=${PACK_CAP}`, {
-      cache: "no-store",
-    });
-    if (!res.ok) return [];
-    const data = (await res.json()) as { items?: Pack[] };
-    return data.items ?? [];
-  } catch {
-    return [];
-  }
-}
-
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
 
   const staticRoutes: MetadataRoute.Sitemap = STATIC_PATHS.map((path) => ({
@@ -56,26 +49,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.3,
   }));
 
-  const packs = await fetchApprovedPacks();
-
-  const packRoutes: MetadataRoute.Sitemap = packs.map((pack) => ({
-    url: `${SITE_URL}/packs/${pack.id}`,
-    lastModified: pack.createdAt ? new Date(pack.createdAt) : now,
-    changeFrequency: "weekly",
-    priority: 0.7,
-  }));
-
-  // No public users-list endpoint exists — derive indexable profile URLs from
-  // the (public) authors of the approved packs above, de-duplicated.
-  const authorIds = [
-    ...new Set(packs.map((pack) => pack.authorId).filter(Boolean)),
-  ];
-  const userRoutes: MetadataRoute.Sitemap = authorIds.map((authorId) => ({
-    url: `${SITE_URL}/users/${authorId}`,
-    lastModified: now,
-    changeFrequency: "weekly",
-    priority: 0.5,
-  }));
-
-  return [...staticRoutes, ...legalRoutes, ...packRoutes, ...userRoutes];
+  return [...staticRoutes, ...legalRoutes];
 }

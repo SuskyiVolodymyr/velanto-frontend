@@ -130,13 +130,19 @@ describe("HomeFeed", () => {
     });
     await user.selectOptions(language, "Українська");
     await user.selectOptions(language, "All");
+    // Selecting a format after clearing the language moves us to a filter
+    // combination that has NOT been fetched yet, so a real request fires and
+    // we can still assert what the cleared language serialises to. Without it,
+    // "All" alone returns to the mount combination and is served from the
+    // React Query cache (see packs-feed.queries.ts) with no request at all.
+    await user.click(screen.getByRole("button", { name: "Sacrifice One" }));
 
     // Empty, not absent-and-forgotten: the client omits the param entirely at
     // this point, because `?languages=` would be a 400 and "none selected"
     // means "every language", not "no languages".
     await waitFor(() =>
       expect(packsClient.list).toHaveBeenLastCalledWith(
-        expect.objectContaining({ languages: [] }),
+        expect.objectContaining({ languages: [], format: "sacrifice_one" }),
       ),
     );
   });
@@ -224,16 +230,19 @@ describe("HomeFeed", () => {
       await user.selectOptions(select, "popular");
       await user.selectOptions(select, "date");
 
+      // Asserted on the control rather than the request: returning to a
+      // filter combination already in the React Query cache is served from it
+      // without a refetch (see packs-feed.queries.ts), so "the last call" is no
+      // longer an observable for state that reset correctly. The chip is —
+      // and it is what the user actually sees.
       await waitFor(() =>
-        expect(packsClient.list).toHaveBeenLastCalledWith({
-          format: undefined,
-          tags: [],
-          languages: [],
-          sort: "newest",
-          window: undefined,
-          limit: 25,
-        }),
+        expect(
+          screen.getByRole("button", { name: "Newest first" }),
+        ).toHaveAttribute("aria-pressed", "true"),
       );
+      expect(
+        screen.getByRole("button", { name: "Oldest first" }),
+      ).toHaveAttribute("aria-pressed", "false");
     });
   });
 
@@ -379,26 +388,21 @@ describe("HomeFeed", () => {
         { timeout: 1000 },
       );
 
-      // Clearing the box re-fetches without q.
+      // Clearing the box returns to the unfiltered feed. That combination was
+      // fetched on mount, so it comes back from the React Query cache rather
+      // than over the network (see packs-feed.queries.ts) — assert the restored
+      // view, which is what the user experiences, not a request that correctly
+      // no longer happens.
       await user.clear(searchBox);
-      await waitFor(
-        () =>
-          expect(packsClient.list).toHaveBeenLastCalledWith({
-            format: undefined,
-            tags: [],
-            languages: [],
-            q: undefined,
-            sort: "popular",
-            window: "month",
-            limit: 25,
-          }),
-        { timeout: 1000 },
-      );
+      await waitFor(() => expect(searchBox).toHaveValue(""));
+      expect(
+        await screen.findByText("Best Anime Openings"),
+      ).toBeInTheDocument();
     });
   });
 
   describe("popularity sort", () => {
-    it("re-selecting Popular after Date sends popular/month", async () => {
+    it("re-selecting Popular after Date restores popular/month", async () => {
       const user = userEvent.setup();
       vi.mocked(packsClient.list).mockResolvedValue({
         items: [],
@@ -418,11 +422,17 @@ describe("HomeFeed", () => {
         "popular",
       );
 
-      await waitFor(() => {
-        const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
-        expect(lastCall?.sort).toBe("popular");
-        expect(lastCall?.window).toBe("month");
-      });
+      // popular/month was fetched on mount, so returning to it is a cache hit
+      // and fires no request — assert the restored controls instead.
+      await waitFor(() =>
+        expect(screen.getByRole("combobox", { name: "Sort by" })).toHaveValue(
+          "popular",
+        ),
+      );
+      expect(screen.getByRole("button", { name: "Month" })).toHaveAttribute(
+        "aria-pressed",
+        "true",
+      );
     });
 
     it("changing the window while Popular is active sends the new window", async () => {
@@ -497,11 +507,18 @@ describe("HomeFeed", () => {
         "popular",
       );
 
-      await waitFor(() => {
-        const lastCall = vi.mocked(packsClient.list).mock.calls.at(-1)?.[0];
-        expect(lastCall?.sort).toBe("popular");
-        expect(lastCall?.window).toBe("month");
-      });
+      // The point of this test: the window must snap back to the default
+      // rather than remembering "week" from before the round trip.
+      await waitFor(() =>
+        expect(screen.getByRole("button", { name: "Month" })).toHaveAttribute(
+          "aria-pressed",
+          "true",
+        ),
+      );
+      expect(screen.getByRole("button", { name: "Week" })).toHaveAttribute(
+        "aria-pressed",
+        "false",
+      );
     });
   });
 
