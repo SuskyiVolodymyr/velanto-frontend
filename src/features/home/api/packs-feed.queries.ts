@@ -16,14 +16,30 @@ export function packsFeedQueryOptions(filters: PacksFeedFilters) {
   });
 }
 
-// Long enough that a visitor who lands and leaves does not force a second
-// identical request. `initialData` arrives with no `initialDataUpdatedAt`, so
-// React Query treats it as fresh-as-of-now — meaning any staleTime above zero
-// suppresses the refetch-on-mount that used to fire immediately after
-// hydration. That refetch made every human home-page visit cost TWO identical
-// backend list calls (the SSR seed, then the client's copy of it), and the
-// second one bypassed the server cache entirely.
+// Long enough that re-viewing a filter combination inside one session does not
+// re-request an identical list.
 const FEED_STALE_MS = 5 * 60_000;
+
+// The SSR seed is deliberately marked as maximally stale rather than left to
+// default. Without this, `initialData` arrives with no `initialDataUpdatedAt`
+// and React Query dates it as fresh-as-of-now, so any staleTime above zero
+// suppresses the refetch-on-mount — and the seed comes out of Next's Data
+// Cache, where it can be up to six hours old (see get-home-feed-server.ts).
+// The visitor would then be served that cached copy with no path to a newer
+// one: window-focus refetching is off and there is no interval.
+//
+// Costing this correctly matters, because it looks like it gives back the
+// saving. It does not. Crawlers — the traffic that actually drove the compute
+// bill — do not execute JavaScript, so they never reach this refetch and still
+// only ever see the cached HTML. It adds one query per human home-page load,
+// and Neon bills wall-clock time the compute is awake rather than queries, so
+// a query issued while someone is already browsing lands inside awake time
+// that is already paid for.
+//
+// `0` and not a computed timestamp: query-core dates the seed with
+// `initialDataUpdatedAt ?? Date.now()`, and `??` passes a literal 0 through
+// (verified against @tanstack/query-core 5.101.2).
+const SSR_SEED_UPDATED_AT = 0;
 
 /**
  * The home feed, keyed on the active filters so each combination caches
@@ -37,6 +53,10 @@ const FEED_STALE_MS = 5 * 60_000;
  * a few minutes of staleness on a discovery feed is not something a visitor
  * can perceive. Publishing a pack invalidates this key explicitly so an author
  * still sees their own new pack at once.
+ *
+ * The server-seeded default query is the exception: it arrives already stale
+ * (see `SSR_SEED_UPDATED_AT`) so first paint shows the cached feed and the
+ * browser immediately replaces it with a current one.
  */
 export function usePacksFeed(
   filters: PacksFeedFilters,
@@ -45,6 +65,7 @@ export function usePacksFeed(
   return useQuery({
     ...packsFeedQueryOptions(filters),
     initialData,
+    initialDataUpdatedAt: initialData ? SSR_SEED_UPDATED_AT : undefined,
     placeholderData: keepPreviousData,
     staleTime: FEED_STALE_MS,
     refetchOnWindowFocus: false,

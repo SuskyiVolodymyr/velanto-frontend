@@ -26,10 +26,17 @@ export async function getHomeFeedServer(): Promise<PacksFeedResult | null> {
     // database awake permanently on its own and undo the whole robots change.
     // The previous 60s did exactly that.
     //
-    // At 6h this costs ~4 wakes/day. Staleness is close to invisible in
-    // exchange: every real browser refetches this list on hydration anyway
-    // (see packs-feed.queries.ts), so the cached copy is what crawlers and the
-    // first paint see, not what a visitor ends up looking at.
+    // At 6h this costs ~4 wakes/day. What makes that staleness acceptable is
+    // a property of the CLIENT, not of this number: the seed is handed to
+    // React Query pre-dated as stale, so a real browser replaces it on
+    // hydration and the cached copy is only ever the first paint and what
+    // crawlers see (see SSR_SEED_UPDATED_AT in packs-feed.queries.ts).
+    //
+    // That coupling is load-bearing and easy to break from the other side.
+    // Dating the seed as fresh — which is what React Query does by default —
+    // silently converts this TTL into up-to-6h staleness for real visitors,
+    // with no failing test on this file to show for it. HomeFeed.test.tsx
+    // pins the refetch for that reason.
     const res = await fetch(`${API_BASE_URL}/packs?${DEFAULT_FEED_QUERY}`, {
       next: { revalidate: 21600 },
     });
