@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Text } from "@/src/shared/components/Text";
+import { PageHeader } from "@/src/shared/components/PageHeader";
 import { MyPacksFeed } from "@/src/features/home/MyPacksFeed";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -22,15 +23,19 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function MyPacksPage() {
   const t = await getTranslations("myPacks");
+  const th = await getTranslations("header");
   return (
-    <main className="flex-1 px-7 py-10">
-      <Text as="h1" variant="title" className="mb-2 text-3xl">
-        {t("title")}
-      </Text>
-      <Text variant="secondary" className="mb-8 max-w-lg">
-        {t("subtitle")}
-      </Text>
-      <MyPacksFeed />
-    </main>
+    <>
+      <PageHeader back={{ href: "/", label: th("browse") }} crumb={t("title")} />
+      <main className="flex-1 px-7 py-10">
+        <Text as="h1" variant="title" className="mb-2 text-3xl">
+          {t("title")}
+        </Text>
+        <Text variant="secondary" className="mb-8 max-w-lg">
+          {t("subtitle")}
+        </Text>
+        <MyPacksFeed />
+      </main>
+    </>
   );
 }

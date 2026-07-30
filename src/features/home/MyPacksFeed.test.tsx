@@ -134,4 +134,61 @@ describe("MyPacksFeed", () => {
       await screen.findByText("You haven't created any packs yet."),
     ).toBeInTheDocument();
   });
+
+  it("defaults to newest first and can be switched to oldest first", async () => {
+    mockSession("u1");
+    vi.mocked(packsClient.list).mockResolvedValue({
+      items: [draftPack("p1")],
+      total: 1,
+      page: 1,
+      limit: 25,
+    });
+
+    renderFeed();
+    await screen.findByText("Draft p1");
+    await waitFor(() =>
+      expect(packsClient.list).toHaveBeenCalledWith(
+        expect.objectContaining({ authorId: "u1", sort: "newest" }),
+      ),
+    );
+
+    await userEvent.click(
+      screen.getByRole("button", { name: "Oldest first" }),
+    );
+
+    await waitFor(() =>
+      expect(packsClient.list).toHaveBeenCalledWith(
+        expect.objectContaining({ authorId: "u1", sort: "oldest" }),
+      ),
+    );
+  });
+
+  it("restarts at page 1 when the sort order changes", async () => {
+    mockSession("u1");
+    vi.mocked(packsClient.list).mockResolvedValue({
+      items: [draftPack("p1")],
+      total: 30,
+      page: 1,
+      limit: 25,
+    });
+
+    renderFeed();
+    await screen.findByText("Draft p1");
+    await userEvent.click(screen.getByRole("button", { name: "2" }));
+    await waitFor(() =>
+      expect(packsClient.list).toHaveBeenCalledWith(
+        expect.objectContaining({ page: 2 }),
+      ),
+    );
+
+    await userEvent.click(
+      screen.getByRole("button", { name: "Oldest first" }),
+    );
+
+    await waitFor(() =>
+      expect(packsClient.list).toHaveBeenCalledWith(
+        expect.objectContaining({ sort: "oldest", page: undefined }),
+      ),
+    );
+  });
 });
