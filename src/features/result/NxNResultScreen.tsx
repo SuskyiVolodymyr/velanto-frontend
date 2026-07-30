@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
-import { TopPickedTable } from "@/src/features/result/TopPickedTable";
+import { RecapHeading } from "@/src/features/result/RecapHeading";
 import { roundHeading } from "@/src/shared/lib/round-heading";
 import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
@@ -85,11 +85,13 @@ function playedRounds(
  */
 export function NxNResultScreen({
   pack,
-  results,
   ownPicks,
   shared,
 }: {
   pack: Pack;
+  // Still accepted (ResultScreen passes it uniformly to all 4 recap
+  // screens) but no longer read here — the pack-wide ranking that used to
+  // read it moved to ResultScreen's own aside board.
   results: PackResults;
   ownPicks: RecordedPick[] | null;
   shared: boolean;
@@ -109,22 +111,15 @@ export function NxNResultScreen({
     () => playedRounds(ownPicks, titleById),
     [ownPicks, titleById],
   );
-  const topItems = results.topItems ?? [];
 
+  // The pack-wide ranking (topItems) is no longer rendered here — it's a
+  // right-aside card in the mock, not part of the recap column. ResultScreen
+  // renders it directly, keyed to the same `results.format`.
   return (
     <div className="flex-1 pb-10">
       {rounds.length > 0 ? (
-        <section className="mb-10">
-          <Text
-            as="h2"
-            variant="tertiary"
-            className="mb-1 text-[12px] font-medium uppercase tracking-[0.14em] text-acc"
-          >
-            {t("roundByRoundHeading")}
-          </Text>
-          <Text variant="secondary" className="mb-4 text-sm">
-            {t(shared ? "roundByRoundNoteShared" : "roundByRoundNote")}
-          </Text>
+        <section className="flex min-w-0 flex-col gap-[13px]">
+          <RecapHeading shared={shared} />
           <div className="flex flex-col divide-y divide-border">
             {rounds.map((round) => (
               <div key={round.roundIndex} className="py-4 first:pt-0 last:pb-0">
@@ -138,31 +133,11 @@ export function NxNResultScreen({
           </div>
         </section>
       ) : (
-        <Card className="mb-10 py-8 text-center">
+        <Card className="py-8 text-center">
           <Text variant="tertiary" className="text-sm">
             {t("noMatchupBreakdown")}
           </Text>
         </Card>
-      )}
-
-      {/* The one aggregate nxn CAN state honestly: per ITEM, not per pairing.
-          An item's win rate is a share of the rounds it appeared in, which
-          saturates immediately — unlike a set-vs-set pairing, which almost
-          never repeats. */}
-      {topItems.length > 0 && (
-        <section className="mb-8">
-          <Text
-            as="h2"
-            variant="tertiary"
-            className="mb-2 text-[13px] font-medium uppercase tracking-[0.14em]"
-          >
-            {t("topPickedHeading")}
-          </Text>
-          <Text variant="secondary" className="mb-4 text-sm">
-            {t("topPickedSubtitle")}
-          </Text>
-          <TopPickedTable items={topItems} ownPicks={ownPicks} />
-        </section>
       )}
     </div>
   );

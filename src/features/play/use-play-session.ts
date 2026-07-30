@@ -9,7 +9,6 @@ import {
 } from "@/src/shared/lib/last-play-storage";
 import { useRoundSelections } from "@/src/features/play/use-round-selections";
 import { usePlayResume } from "@/src/features/play/use-play-resume";
-import { scrollToRoundTop } from "@/src/features/play/scroll-to-round-top";
 import type { Item, Pack } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
 
@@ -273,10 +272,6 @@ export function usePlaySession(pack: Pack): PlaySession {
     if (nextRoundIndex < totalRounds) {
       saveProgress(nextRoundIndex, nextPicks);
     }
-    // nxn only. Its rounds are the tall ones — two sides of up to eight items
-    // each — so confirming from the bottom of one lands you in the middle of
-    // the next. An elimination round fits on a screen and doesn't need it.
-    if (isVersus) scrollToRoundTop();
     setSelectedId(null);
   }
 

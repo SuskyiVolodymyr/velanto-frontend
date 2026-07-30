@@ -183,13 +183,8 @@ describe("EliminationResultScreen", () => {
     expect(within(round).queryByText(/%/)).toBeNull();
   });
 
-  it("ranks the pack's items in the top table", () => {
-    renderScreen();
-
-    const table = screen.getByRole("table");
-    expect(within(table).getByText("Redo")).toBeInTheDocument();
-    expect(within(table).getByText("75%")).toBeInTheDocument();
-  });
+  // The pack-wide ranking moved to ResultScreen's own aside board (see
+  // ResultScreen.test.tsx) — it's no longer this component's job to render.
 
   // Plays recorded before #336 name the winner and nothing else. There is no
   // slate to show around it and no backfill possible, so the round shows just

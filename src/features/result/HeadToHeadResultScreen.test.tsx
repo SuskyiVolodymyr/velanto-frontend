@@ -1,6 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
 import { screen, within } from "@testing-library/react";
-import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { HeadToHeadResultScreen } from "./HeadToHeadResultScreen";
 import type { Pack } from "@/src/shared/types/pack";
@@ -194,117 +193,9 @@ describe("HeadToHeadResultScreen", () => {
     expect(within(matchups[0]).getByText(/4 plays/i)).toBeInTheDocument();
   });
 
-  // T11: PAGE changed from 10 to 5 (mock starts smaller, with a "Show more"
-  // button doing more of the work).
-  it("lists the top picked five at a time, loading more on demand", async () => {
-    const user = userEvent.setup();
-    renderScreen();
-
-    const table = screen.getByRole("table", { name: /top picked/i });
-    const bodyRows = () => within(table).getAllByRole("row").slice(1); // drop the header row
-    expect(bodyRows()).toHaveLength(5);
-    expect(within(table).getByText("Item 1")).toBeInTheDocument();
-    expect(within(table).queryByText("Item 6")).toBeNull();
-
-    await user.click(screen.getByRole("button", { name: /load more/i }));
-    expect(bodyRows()).toHaveLength(10);
-
-    // 25 entries, 5 at a time: three more presses exhaust the list and the
-    // button goes away.
-    await user.click(screen.getByRole("button", { name: /load more/i }));
-    await user.click(screen.getByRole("button", { name: /load more/i }));
-    await user.click(screen.getByRole("button", { name: /load more/i }));
-    expect(bodyRows()).toHaveLength(25);
-    expect(screen.queryByRole("button", { name: /load more/i })).toBeNull();
-  });
-
-  it("shares a place between equal scores and skips the one they consumed", () => {
-    // Two items on 90% off 27 picks tie for first, so the next is THIRD —
-    // second is not awarded. A third item matches the percentage but not the
-    // pick count, which is a different result and ranks on its own.
-    const tie: ItemTally[] = [
-      {
-        itemId: "a",
-        itemTitle: "Alpha",
-        picked: 27,
-        appeared: 30,
-        percentage: 90,
-      },
-      {
-        itemId: "b",
-        itemTitle: "Beta",
-        picked: 27,
-        appeared: 30,
-        percentage: 90,
-      },
-      {
-        itemId: "c",
-        itemTitle: "Gamma",
-        picked: 9,
-        appeared: 10,
-        percentage: 90,
-      },
-      {
-        itemId: "d",
-        itemTitle: "Delta",
-        picked: 1,
-        appeared: 10,
-        percentage: 10,
-      },
-    ];
-    renderScreen({ topItems: tie });
-
-    const rows = within(screen.getByRole("table", { name: /top picked/i }))
-      .getAllByRole("row")
-      .slice(1);
-    expect(rows.map((row) => row.getAttribute("data-rank"))).toEqual([
-      "1",
-      "1",
-      "3",
-      "4",
-    ]);
-  });
-
-  it("gives the top three podium outlines, following rank rather than row order", () => {
-    const tie: ItemTally[] = [
-      {
-        itemId: "a",
-        itemTitle: "Alpha",
-        picked: 9,
-        appeared: 10,
-        percentage: 90,
-      },
-      {
-        itemId: "b",
-        itemTitle: "Beta",
-        picked: 9,
-        appeared: 10,
-        percentage: 90,
-      },
-      {
-        itemId: "c",
-        itemTitle: "Gamma",
-        picked: 5,
-        appeared: 10,
-        percentage: 50,
-      },
-    ];
-    renderScreen({ topItems: tie });
-
-    const rows = within(screen.getByRole("table", { name: /top picked/i }))
-      .getAllByRole("row")
-      .slice(1);
-    // Both firsts are gold; the next row is third, so it takes BRONZE and
-    // silver goes unawarded — the medal follows the place, not the position.
-    expect(rows[0].querySelector("td")).toHaveClass("border-medal-gold");
-    expect(rows[1].querySelector("td")).toHaveClass("border-medal-gold");
-    expect(rows[2].querySelector("td")).toHaveClass("border-medal-bronze");
-    // Fill as well as outline, and it REPLACES bg-surface rather than joining
-    // it — cn() is a plain join, so two background classes would leave the
-    // cascade to pick by stylesheet order.
-    expect(rows[0].querySelector("td")).toHaveClass("bg-medal-gold/10");
-    expect(rows[0].querySelector("td")).not.toHaveClass("bg-surface");
-  });
+  // The pack-wide ranking (paging, tie-ranking, podium outlines) moved to
+  // ResultScreen's own aside board and is TopPickedTable's own behavior now
+  // — see TopPickedTable.test.tsx, not this file.
 
   it("names contenders from the pack, not from the aggregate", () => {
     // The aggregate only knows a pairing once a play has been counted into it,

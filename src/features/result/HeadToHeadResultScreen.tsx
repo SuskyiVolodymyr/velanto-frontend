@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
-import { TopPickedTable } from "@/src/features/result/TopPickedTable";
+import { RecapHeading } from "@/src/features/result/RecapHeading";
 import { roundHeading } from "@/src/shared/lib/round-heading";
 import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
@@ -143,22 +143,15 @@ export function HeadToHeadResultScreen({
     () => playedMatchups(ownPicks, results.matchups ?? [], titleById),
     [ownPicks, results.matchups, titleById],
   );
-  const topItems = results.topItems ?? [];
 
+  // The pack-wide ranking (topItems) is no longer rendered here — it's a
+  // right-aside card in the mock, not part of the recap column. ResultScreen
+  // renders it directly, keyed to the same `results.format`.
   return (
     <div className="flex-1 pb-10">
       {matchups.length > 0 ? (
-        <section className="mb-10">
-          <Text
-            as="h2"
-            variant="tertiary"
-            className="mb-1 text-[12px] font-medium uppercase tracking-[0.14em] text-acc"
-          >
-            {t("roundByRoundHeading")}
-          </Text>
-          <Text variant="secondary" className="mb-4 text-sm">
-            {t(shared ? "roundByRoundNoteShared" : "roundByRoundNote")}
-          </Text>
+        <section className="flex min-w-0 flex-col gap-[13px]">
+          <RecapHeading shared={shared} />
           {/* `divide-y` rather than a gap: a hairline between matchups keeps a
               long list readable as separate comparisons. Border, not
               background — it reads as one shade up from the page behind it. */}
@@ -178,27 +171,11 @@ export function HeadToHeadResultScreen({
           </div>
         </section>
       ) : (
-        <Card className="mb-10 py-8 text-center">
+        <Card className="py-8 text-center">
           <Text variant="tertiary" className="text-sm">
             {t("noMatchupBreakdown")}
           </Text>
         </Card>
-      )}
-
-      {topItems.length > 0 && (
-        <section className="mb-8">
-          <Text
-            as="h2"
-            variant="tertiary"
-            className="mb-2 text-[13px] font-medium uppercase tracking-[0.14em]"
-          >
-            {t("topPickedHeading")}
-          </Text>
-          <Text variant="secondary" className="mb-4 text-sm">
-            {t("topPickedSubtitle")}
-          </Text>
-          <TopPickedTable items={topItems} ownPicks={ownPicks} />
-        </section>
       )}
     </div>
   );
@@ -279,47 +256,42 @@ function ContenderCard({
     <div
       data-testid={won ? "winner" : "loser"}
       data-side={side}
+      // The percentage is a child of the CARD, not of the title's line, and
+      // the card is `items-center`. Nested inside the title row it sat on the
+      // title's baseline — which is the card's vertical centre only on the
+      // loser card; the winner card carries a verdict label above, and the
+      // grid stretches both to the same height, so the two percentages never
+      // lined up with each other across the VS divider.
       className={cn(
-        "flex min-w-0 flex-col gap-1 rounded-tile border p-[13px_16px]",
+        "flex min-w-0 items-center gap-4 rounded-tile border p-[13px_16px]",
+        side === "left" ? "flex-row" : "flex-row-reverse",
         won ? "border-success/60 bg-success/5" : "border-danger/60 bg-danger/5",
       )}
     >
-      {/* T9: winner-highlight verdict label, added above the existing
-          split — the full loser-pills grid doesn't map to a 1v1 matchup
-          (each contender is already its own card either side of the VS). */}
-      {won && (
-        <Text
-          className={cn(
-            "text-[11px] font-semibold uppercase tracking-wide text-success",
-            side === "right" && "text-end",
-          )}
-        >
-          {t(shared ? "verdictWonShared" : "verdictWon")}
-        </Text>
-      )}
       <div
         className={cn(
-          "flex min-w-0 items-center gap-4",
-          side === "left" ? "flex-row" : "flex-row-reverse",
+          "flex min-w-0 flex-1 flex-col gap-1",
+          side === "left" ? "text-start" : "text-end",
         )}
       >
-        <Text
-          className={cn(
-            "min-w-0 flex-1 text-sm font-semibold",
-            side === "left" ? "text-start" : "text-end",
-          )}
-        >
-          {contender.title}
-        </Text>
-        <Text
-          className={cn(
-            "flex-none text-sm font-semibold tabular-nums",
-            won ? "text-success" : "text-danger",
-          )}
-        >
-          {contender.percentage}%
-        </Text>
+        {/* T9: winner-highlight verdict label, added above the existing
+            split — the full loser-pills grid doesn't map to a 1v1 matchup
+            (each contender is already its own card either side of the VS). */}
+        {won && (
+          <Text className="text-[11px] font-semibold uppercase tracking-wide text-success">
+            {t(shared ? "verdictWonShared" : "verdictWon")}
+          </Text>
+        )}
+        <Text className="min-w-0 text-sm font-semibold">{contender.title}</Text>
       </div>
+      <Text
+        className={cn(
+          "flex-none text-sm font-semibold tabular-nums",
+          won ? "text-success" : "text-danger",
+        )}
+      >
+        {contender.percentage}%
+      </Text>
     </div>
   );
 }

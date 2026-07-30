@@ -16,6 +16,7 @@ export function ShareButton({
   label,
   variant = "secondary",
   compact = false,
+  icon,
   className,
 }: {
   path: string;
@@ -41,6 +42,13 @@ export function ShareButton({
    * CTA elsewhere doesn't, so the default keeps the label always visible.
    */
   compact?: boolean;
+  /**
+   * Overrides the trigger's leading glyph. The default share-node icon is what
+   * every "share this page" trigger uses; the result page's share CARD mocks
+   * an upload glyph instead (`Results.dc.html`), because there the button is
+   * the card's own primary action rather than a share affordance in a toolbar.
+   */
+  icon?: React.ReactNode;
   className?: string;
 }) {
   const t = useTranslations("share");
@@ -124,7 +132,7 @@ export function ShareButton({
         aria-label={compact ? triggerLabel : undefined}
         onClick={() => (open ? close() : setOpen(true))}
       >
-        <Share2 size={16} aria-hidden />
+        {icon ?? <Share2 size={16} aria-hidden />}
         {compact ? (
           <span aria-hidden className="hidden min-[481px]:inline">
             {triggerLabel}

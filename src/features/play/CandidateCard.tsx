@@ -109,7 +109,13 @@ function TextTile({
   const tone = toneFor(packCoverTone, index);
   return (
     <div
-      className="relative h-[150px] overflow-hidden"
+      // 16:9, not a fixed height. The mock gives EVERY candidate tile
+      // `aspect-ratio:16/9` — including this gradient one — and both media
+      // treatments beside it (ImageCard, YouTubeCard) are `aspect-video`
+      // already. A fixed 150px made a text candidate visibly shorter than an
+      // image candidate at the same card width, and shorter still than the
+      // mock, in any round that mixes item types.
+      className="relative aspect-video overflow-hidden"
       style={{
         background: `linear-gradient(158deg, ${tone}, var(--background) 78%)`,
       }}

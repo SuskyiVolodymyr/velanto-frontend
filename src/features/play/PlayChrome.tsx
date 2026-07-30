@@ -1,9 +1,6 @@
-import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { ArrowLeft } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
-import { Badge } from "@/src/shared/components/Badge";
-import { STICKY_HEADER_SHELL_CLASS } from "@/src/shared/lib/sticky-header-shell";
+import { PackHeaderBar } from "@/src/shared/components/PackHeaderBar";
 import type { Pack } from "@/src/shared/types/pack";
 
 export interface PlayChromeProps {
@@ -44,6 +41,9 @@ export interface PlayChromeProps {
  *
  * `PlayRoundHeader` (T2) renders the per-round title as an `h2`, never an
  * `h1` — the pack title here is the page's only `h1`.
+ *
+ * The bar itself is `PackHeaderBar` — shared with `ResultScreen`, whose
+ * result mock uses the identical shape.
  */
 export function PlayChrome({
   pack,
@@ -61,50 +61,22 @@ export function PlayChrome({
   const packMeta = `${tFormat(pack.format)} · ${tPack("roundsCount", { count: totalRounds })}`;
 
   return (
-    <div className={STICKY_HEADER_SHELL_CLASS}>
-      <Link
-        href={`/packs/${pack.id}`}
-        aria-label={t("exit")}
-        className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-tile border border-border bg-white/[0.03] text-foreground-secondary transition-colors hover:border-white/[0.18] hover:text-foreground"
-      >
-        <ArrowLeft size={18} aria-hidden />
-      </Link>
-
-      <div
-        aria-hidden="true"
-        className="h-9 w-9 shrink-0 rounded-[10px]"
-        style={{
-          background: `linear-gradient(150deg, ${pack.coverTone}, #0b0c0f)`,
-        }}
-      />
-
-      <div className="min-w-0">
-        <div className="flex items-center gap-2">
+    <PackHeaderBar
+      pack={pack}
+      backHref={`/packs/${pack.id}`}
+      backLabel={t("exit")}
+      modeLabel={t("soloMode")}
+      meta={packMeta}
+      end={
+        showRoundCounter && (
           <Text
-            as="h1"
-            variant="title"
-            className="min-w-0 truncate text-[15.5px]"
+            variant="secondary"
+            className="text-[13.5px] tabular-nums text-foreground-secondary"
           >
-            {pack.title}
+            {roundLabel}
           </Text>
-          <Badge className="shrink-0">{t("soloMode")}</Badge>
-        </div>
-        <Text
-          variant="tertiary"
-          className="truncate text-[12px] max-[720px]:hidden"
-        >
-          {packMeta}
-        </Text>
-      </div>
-
-      {showRoundCounter && (
-        <Text
-          variant="secondary"
-          className="ms-auto shrink-0 text-[13.5px] tabular-nums text-foreground-secondary"
-        >
-          {roundLabel}
-        </Text>
-      )}
-    </div>
+        )
+      }
+    />
   );
 }

@@ -274,8 +274,11 @@ describe("PackDetailScreen", () => {
       />,
     );
 
+    // PodiumTable is shared with the result screen's aside, where it was
+    // rebuilt from a six-column <table> into the mock's flat list — it is a
+    // real <ul> now, on this page too.
     expect(
-      screen.getByRole("table", { name: "Podium finishes" }),
+      screen.getByRole("list", { name: "Podium finishes" }),
     ).toBeInTheDocument();
     expect(screen.queryByText("Player stats")).not.toBeInTheDocument();
   });
