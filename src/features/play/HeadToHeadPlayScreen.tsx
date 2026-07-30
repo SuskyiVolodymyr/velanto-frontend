@@ -16,6 +16,7 @@ import { PlayChrome } from "@/src/features/play/PlayChrome";
 import { PlayRoundHeader } from "@/src/features/play/PlayRoundHeader";
 import { PlayConfirmBar } from "@/src/features/play/PlayConfirmBar";
 import { PicksSummary } from "@/src/features/play/PicksSummary";
+import { ResumePlayModal } from "@/src/features/play/ResumePlayModal";
 import {
   INSTRUCTION_KEY,
   PICKED_LABEL_KEY,
@@ -64,7 +65,7 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
   // null so the resumed matchup opens unselected; initialChoices is allPicks.
   const restoredRef = useRef(false);
   useEffect(() => {
-    if (restoredRef.current || !resume.ready) return;
+    if (restoredRef.current || !resume.ready || resume.needsChoice) return;
     restoredRef.current = true;
     if (resume.initialRoundIndex > 0 && Array.isArray(resume.initialChoices)) {
       /* eslint-disable react-hooks/set-state-in-effect */
@@ -72,7 +73,12 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
       setAllPicks(resume.initialChoices as RecordedPick[]);
       /* eslint-enable react-hooks/set-state-in-effect */
     }
-  }, [resume.ready, resume.initialRoundIndex, resume.initialChoices]);
+  }, [
+    resume.ready,
+    resume.needsChoice,
+    resume.initialRoundIndex,
+    resume.initialChoices,
+  ]);
   const slotA = !isFinished ? selections[roundIndex]?.slots[0] : undefined;
   const slotB = !isFinished ? selections[roundIndex]?.slots[1] : undefined;
   const left = slotA?.items[0];
@@ -184,6 +190,13 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
         roundIndex={roundIndex}
         totalRounds={totalRounds}
         showRoundCounter={false}
+      />
+
+      <ResumePlayModal
+        open={resume.needsChoice}
+        onContinue={resume.chooseContinue}
+        onRestart={resume.chooseRestart}
+        roundsDone={resume.initialRoundIndex}
       />
 
       <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>

@@ -41,6 +41,8 @@ vi.mock("@/src/shared/lib/plays-client", () => ({
 vi.mock("./use-play-resume", () => ({ usePlayResume: vi.fn() }));
 const resumeSave = vi.fn();
 const resumeClear = vi.fn();
+const resumeContinue = vi.fn();
+const resumeRestart = vi.fn();
 
 const MOCK_USER = {
   id: "u1",
@@ -151,6 +153,9 @@ beforeEach(() => {
     initialChoices: null,
     saveProgress: resumeSave,
     clearProgress: resumeClear,
+    needsChoice: false,
+    chooseContinue: resumeContinue,
+    chooseRestart: resumeRestart,
   });
   sessionStorage.clear();
 });
@@ -401,6 +406,11 @@ describe("HeadToHeadPlayScreen", () => {
       initialChoices: restoredPicks,
       saveProgress: resumeSave,
       clearProgress: resumeClear,
+      // Already decided — this test covers the screen's OWN restore effect,
+      // not the modal gate (see the dedicated "resume choice" tests below).
+      needsChoice: false,
+      chooseContinue: resumeContinue,
+      chooseRestart: resumeRestart,
     });
     const user = userEvent.setup();
     renderScreen(HEAD_TO_HEAD_PACK);
@@ -438,5 +448,53 @@ describe("HeadToHeadPlayScreen", () => {
     await pickAndConfirm(user, "Naruto", { last: true });
     await waitFor(() => expect(resumeClear).toHaveBeenCalled());
     expect(resumeSave).toHaveBeenCalledTimes(1);
+  });
+
+  describe("resume-choice modal", () => {
+    beforeEach(() => {
+      vi.mocked(usePlayResume).mockReturnValue({
+        ready: true,
+        seed: null,
+        initialRoundIndex: 1,
+        initialChoices: null,
+        saveProgress: resumeSave,
+        clearProgress: resumeClear,
+        needsChoice: true,
+        chooseContinue: resumeContinue,
+        chooseRestart: resumeRestart,
+      });
+    });
+
+    it("shows the modal instead of any matchup while a decision is pending", async () => {
+      renderScreen(HEAD_TO_HEAD_PACK);
+
+      expect(await screen.findByRole("alertdialog")).toBeInTheDocument();
+      expect(screen.getByText("1 round done")).toBeInTheDocument();
+      expect(screen.queryByTestId("h2h-contender")).not.toBeInTheDocument();
+    });
+
+    it("calls chooseContinue when Continue is clicked", async () => {
+      const user = userEvent.setup();
+      renderScreen(HEAD_TO_HEAD_PACK);
+
+      await user.click(
+        await screen.findByRole("button", { name: "Continue" }),
+      );
+
+      expect(resumeContinue).toHaveBeenCalledTimes(1);
+      expect(resumeRestart).not.toHaveBeenCalled();
+    });
+
+    it("calls chooseRestart when Start over is clicked", async () => {
+      const user = userEvent.setup();
+      renderScreen(HEAD_TO_HEAD_PACK);
+
+      await user.click(
+        await screen.findByRole("button", { name: "Start over" }),
+      );
+
+      expect(resumeRestart).toHaveBeenCalledTimes(1);
+      expect(resumeContinue).not.toHaveBeenCalled();
+    });
   });
 });

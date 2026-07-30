@@ -6,6 +6,7 @@ import {
   readPlayResume,
   writePlayResume,
 } from "./play-resume-storage";
+import { setPlayIntent } from "./play-intent-storage";
 import type { Pack } from "@/src/shared/types/pack";
 
 function makePack(over: Partial<Pack> = {}): Pack {
@@ -48,6 +49,7 @@ function makePack(over: Partial<Pack> = {}): Pack {
 
 afterEach(() => {
   localStorage.clear();
+  sessionStorage.clear();
 });
 
 describe("usePlayResume", () => {
@@ -58,9 +60,11 @@ describe("usePlayResume", () => {
     expect(typeof result.current.seed).toBe("number");
     expect(result.current.initialRoundIndex).toBe(0);
     expect(result.current.initialChoices).toBeNull();
+    // Nothing to choose between on a fresh play — the gate never engages.
+    expect(result.current.needsChoice).toBe(false);
   });
 
-  it("restores seed, round index, and choices from a matching saved record", async () => {
+  it("withholds the seed and asks for a decision when a saved play is found", async () => {
     const pack = makePack();
     const version = packStructureHash(pack);
     writePlayResume({
@@ -76,11 +80,69 @@ describe("usePlayResume", () => {
     const { result } = renderHook(() => usePlayResume(pack));
 
     await waitFor(() => expect(result.current.ready).toBe(true));
+    expect(result.current.needsChoice).toBe(true);
+    // Withheld, not just unset: useRoundSelections draws as soon as it sees a
+    // non-null seed, and its draw is one-shot — exposing the saved seed before
+    // a decision would let a later Restart's fresh seed arrive too late to
+    // matter.
+    expect(result.current.seed).toBeNull();
+  });
+
+  it("chooseContinue resolves to the saved seed, round index, and choices", async () => {
+    const pack = makePack();
+    const version = packStructureHash(pack);
+    writePlayResume({
+      packId: pack.id,
+      seed: 777,
+      packVersion: version,
+      roundIndex: 1,
+      choices: [{ roundIndex: 0, itemId: "1" }],
+      pack: { title: pack.title, coverTone: pack.coverTone, totalRounds: 2 },
+      updatedAt: Date.now(),
+    });
+
+    const { result } = renderHook(() => usePlayResume(pack));
+    await waitFor(() => expect(result.current.needsChoice).toBe(true));
+
+    act(() => result.current.chooseContinue());
+
+    expect(result.current.needsChoice).toBe(false);
     expect(result.current.seed).toBe(777);
     expect(result.current.initialRoundIndex).toBe(1);
     expect(result.current.initialChoices).toEqual([
       { roundIndex: 0, itemId: "1" },
     ]);
+    // A decision, not a rewrite — the saved record is untouched until the
+    // play itself next saves or completes.
+    expect(readPlayResume(pack.id, version)?.seed).toBe(777);
+  });
+
+  it("chooseRestart discards the saved play and mints a new seed from round 0", async () => {
+    const pack = makePack();
+    const version = packStructureHash(pack);
+    writePlayResume({
+      packId: pack.id,
+      seed: 777,
+      packVersion: version,
+      roundIndex: 1,
+      choices: [{ roundIndex: 0, itemId: "1" }],
+      pack: { title: pack.title, coverTone: pack.coverTone, totalRounds: 2 },
+      updatedAt: Date.now(),
+    });
+
+    const { result } = renderHook(() => usePlayResume(pack));
+    await waitFor(() => expect(result.current.needsChoice).toBe(true));
+
+    act(() => result.current.chooseRestart());
+
+    expect(result.current.needsChoice).toBe(false);
+    expect(typeof result.current.seed).toBe("number");
+    expect(result.current.seed).not.toBe(777);
+    expect(result.current.initialRoundIndex).toBe(0);
+    expect(result.current.initialChoices).toBeNull();
+    // The old record is gone outright, not just superseded in memory — a
+    // reload before any new progress must not re-offer the discarded play.
+    expect(readPlayResume(pack.id, version)).toBeNull();
   });
 
   it("ignores a saved record from a since-edited pack and mints a fresh seed", async () => {
@@ -101,6 +163,8 @@ describe("usePlayResume", () => {
     await waitFor(() => expect(result.current.ready).toBe(true));
     expect(result.current.seed).not.toBe(777);
     expect(result.current.initialRoundIndex).toBe(0);
+    // An invalidated record is exactly a fresh play — no decision to offer.
+    expect(result.current.needsChoice).toBe(false);
   });
 
   it("saveProgress persists a record readable at the current version", async () => {
@@ -136,5 +200,95 @@ describe("usePlayResume", () => {
 
     act(() => result.current.clearProgress());
     expect(readPlayResume(pack.id, packStructureHash(pack))).toBeNull();
+  });
+
+  describe("one-shot navigation intent", () => {
+    it("a 'continue' intent resumes silently — no needsChoice gate", async () => {
+      const pack = makePack();
+      const version = packStructureHash(pack);
+      writePlayResume({
+        packId: pack.id,
+        seed: 777,
+        packVersion: version,
+        roundIndex: 1,
+        choices: [{ roundIndex: 0, itemId: "1" }],
+        pack: { title: pack.title, coverTone: pack.coverTone, totalRounds: 2 },
+        updatedAt: Date.now(),
+      });
+      setPlayIntent(pack.id, "continue");
+
+      const { result } = renderHook(() => usePlayResume(pack));
+
+      await waitFor(() => expect(result.current.ready).toBe(true));
+      expect(result.current.needsChoice).toBe(false);
+      expect(result.current.seed).toBe(777);
+      expect(result.current.initialRoundIndex).toBe(1);
+      expect(result.current.initialChoices).toEqual([
+        { roundIndex: 0, itemId: "1" },
+      ]);
+    });
+
+    it("a 'restart' intent discards the saved play and mints a new seed silently", async () => {
+      const pack = makePack();
+      const version = packStructureHash(pack);
+      writePlayResume({
+        packId: pack.id,
+        seed: 777,
+        packVersion: version,
+        roundIndex: 1,
+        choices: [{ roundIndex: 0, itemId: "1" }],
+        pack: { title: pack.title, coverTone: pack.coverTone, totalRounds: 2 },
+        updatedAt: Date.now(),
+      });
+      setPlayIntent(pack.id, "restart");
+
+      const { result } = renderHook(() => usePlayResume(pack));
+
+      await waitFor(() => expect(result.current.ready).toBe(true));
+      expect(result.current.needsChoice).toBe(false);
+      expect(typeof result.current.seed).toBe("number");
+      expect(result.current.seed).not.toBe(777);
+      expect(result.current.initialRoundIndex).toBe(0);
+      expect(result.current.initialChoices).toBeNull();
+      expect(readPlayResume(pack.id, version)).toBeNull();
+    });
+
+    it("the intent is consumed once — a fresh mount (a refresh) with no new intent falls back to asking", async () => {
+      const pack = makePack();
+      const version = packStructureHash(pack);
+      writePlayResume({
+        packId: pack.id,
+        seed: 777,
+        packVersion: version,
+        roundIndex: 1,
+        choices: [{ roundIndex: 0, itemId: "1" }],
+        pack: { title: pack.title, coverTone: pack.coverTone, totalRounds: 2 },
+        updatedAt: Date.now(),
+      });
+      setPlayIntent(pack.id, "continue");
+
+      const first = renderHook(() => usePlayResume(pack));
+      await waitFor(() => expect(first.result.current.needsChoice).toBe(false));
+      first.unmount();
+
+      // Simulates a page refresh of the destination: same pack, same saved
+      // record, but the click handler that set the intent never re-runs.
+      const second = renderHook(() => usePlayResume(pack));
+      await waitFor(() => expect(second.result.current.ready).toBe(true));
+      expect(second.result.current.needsChoice).toBe(true);
+      expect(second.result.current.seed).toBeNull();
+    });
+
+    it("a 'restart' intent with no saved play is just a normal fresh play", async () => {
+      const pack = makePack();
+      setPlayIntent(pack.id, "restart");
+
+      const { result } = renderHook(() => usePlayResume(pack));
+
+      await waitFor(() => expect(result.current.ready).toBe(true));
+      expect(result.current.needsChoice).toBe(false);
+      expect(typeof result.current.seed).toBe("number");
+      expect(result.current.initialRoundIndex).toBe(0);
+    });
   });
 });

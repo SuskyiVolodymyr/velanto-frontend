@@ -439,7 +439,7 @@ describe("usePlaySession", () => {
   });
 
   describe("resume", () => {
-    it("saves progress after a finished round and restores it on a fresh mount", async () => {
+    it("saves progress after a finished round and restores it on a fresh mount, once continued", async () => {
       const version = packStructureHash(GROUPS_PACK);
 
       // First mount: finish round 0 of the two-round pack.
@@ -455,11 +455,40 @@ describe("usePlaySession", () => {
       expect((saved?.choices as unknown[]).length).toBe(2);
       first.unmount();
 
-      // Second mount reads it and picks up on round 1 with the picks restored.
+      // Second mount finds it and asks for a decision — nothing draws or
+      // restores yet.
       const second = renderHook(() => usePlaySession(GROUPS_PACK));
+      await waitFor(() => expect(second.result.current.needsChoice).toBe(true));
+      expect(second.result.current.showRound).toBe(false);
+      expect(second.result.current.roundIndex).toBe(0);
+
+      // Continuing picks up on round 1 with the picks restored.
+      act(() => second.result.current.chooseContinue());
       await waitFor(() => expect(second.result.current.roundIndex).toBe(1));
       expect(second.result.current.picks).toHaveLength(2);
       expect(second.result.current.showRound).toBe(true);
+    });
+
+    it("chooseRestart discards the saved play and starts over from round 0", async () => {
+      const version = packStructureHash(GROUPS_PACK);
+
+      const first = renderHook(() => usePlaySession(GROUPS_PACK));
+      await waitFor(() => expect(first.result.current.showRound).toBe(true));
+      act(() => first.result.current.setSelectedId("1"));
+      act(() => first.result.current.confirmPick());
+      expect(readPlayResume("pack-a", version)).not.toBeNull();
+      first.unmount();
+
+      const second = renderHook(() => usePlaySession(GROUPS_PACK));
+      await waitFor(() => expect(second.result.current.needsChoice).toBe(true));
+
+      act(() => second.result.current.chooseRestart());
+
+      await waitFor(() => expect(second.result.current.showRound).toBe(true));
+      expect(second.result.current.roundIndex).toBe(0);
+      expect(second.result.current.picks).toHaveLength(0);
+      // Discarded outright, not just superseded in memory.
+      expect(readPlayResume("pack-a", version)).toBeNull();
     });
 
     it("deletes the resume record when the play completes", async () => {

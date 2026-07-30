@@ -17,6 +17,7 @@ import { PlayConfirmBar } from "@/src/features/play/PlayConfirmBar";
 import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { CandidateCard } from "@/src/features/play/CandidateCard";
 import { PicksSummary } from "@/src/features/play/PicksSummary";
+import { ResumePlayModal } from "@/src/features/play/ResumePlayModal";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 
 // How many columns a groups-format round lays its candidates out in, chosen by
@@ -64,6 +65,13 @@ export function PlayScreen({ pack }: { pack: Pack }) {
         roundIndex={session.roundIndex}
         totalRounds={session.totalRounds}
         showRoundCounter={false}
+      />
+
+      <ResumePlayModal
+        open={session.needsChoice}
+        onContinue={session.chooseContinue}
+        onRestart={session.chooseRestart}
+        roundsDone={session.savedRoundsDone}
       />
 
       <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>

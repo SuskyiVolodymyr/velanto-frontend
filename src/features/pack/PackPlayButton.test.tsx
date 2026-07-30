@@ -1,8 +1,10 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { PackPlayButton } from "./PackPlayButton";
 import { useAuth } from "@/src/shared/lib/auth-context";
+import { consumePlayIntent } from "@/src/features/play/play-intent-storage";
 
 vi.mock("@/src/shared/lib/auth-context");
 
@@ -63,5 +65,19 @@ describe("PackPlayButton", () => {
       "href",
       "/packs/p1/play",
     );
+  });
+
+  // "Play now" always means a fresh start, even when this exact pack has an
+  // in-progress saved play — a visitor who came back to the pack's own page
+  // clicked Play on purpose; the resume-choice modal is only for a truly
+  // ambiguous arrival (a refresh), which this signals is NOT one.
+  it("signals a fresh start before navigating, so the destination never asks", async () => {
+    mockStatus("authenticated");
+    const user = userEvent.setup();
+    render(<PackPlayButton packId="p1" />);
+
+    await user.click(screen.getByRole("link", { name: /play now/i }));
+
+    expect(consumePlayIntent("p1")).toBe("restart");
   });
 });

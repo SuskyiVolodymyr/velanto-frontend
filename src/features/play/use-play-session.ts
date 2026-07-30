@@ -66,6 +66,16 @@ export interface PlaySession {
   versusCandidatesB: Item[];
   // True when the current versus round draws both sides from one pool.
   versusSinglePool: boolean;
+  /** True while a saved play awaits a continue/restart decision — see
+   * usePlayResume's own doc. PlayScreen shows ResumePlayModal instead of any
+   * round content while this is true. */
+  needsChoice: boolean;
+  chooseContinue: () => void;
+  chooseRestart: () => void;
+  /** Rounds completed in a saved-but-undecided play, for the modal's context
+   * line. Independent of `roundIndex` (which stays 0 until the choice
+   * resolves) — sourced straight from the resume record. */
+  savedRoundsDone: number;
 }
 
 function toRecordedPick(pick: Pick): RecordedPick {
@@ -124,7 +134,7 @@ export function usePlaySession(pack: Pack): PlaySession {
   // completion), so initialRoundIndex is always in range for the seeded draw.
   const restoredRef = useRef(false);
   useEffect(() => {
-    if (restoredRef.current || !resume.ready) return;
+    if (restoredRef.current || !resume.ready || resume.needsChoice) return;
     restoredRef.current = true;
     if (resume.initialRoundIndex > 0 && Array.isArray(resume.initialChoices)) {
       /* eslint-disable react-hooks/set-state-in-effect */
@@ -132,7 +142,12 @@ export function usePlaySession(pack: Pack): PlaySession {
       setPicks(resume.initialChoices as Pick[]);
       /* eslint-enable react-hooks/set-state-in-effect */
     }
-  }, [resume.ready, resume.initialRoundIndex, resume.initialChoices]);
+  }, [
+    resume.ready,
+    resume.needsChoice,
+    resume.initialRoundIndex,
+    resume.initialChoices,
+  ]);
 
   const isFinished = roundIndex >= totalRounds;
   const isLastRound = !isFinished && roundIndex === totalRounds - 1;
@@ -325,5 +340,9 @@ export function usePlaySession(pack: Pack): PlaySession {
     versusCandidatesA,
     versusCandidatesB,
     versusSinglePool,
+    needsChoice: resume.needsChoice,
+    chooseContinue: resume.chooseContinue,
+    chooseRestart: resume.chooseRestart,
+    savedRoundsDone: resume.initialRoundIndex,
   };
 }

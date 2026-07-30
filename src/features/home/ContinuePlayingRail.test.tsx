@@ -1,11 +1,13 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { ContinuePlayingRail } from "./ContinuePlayingRail";
 import {
   writePlayResume,
   type PlayResumeRecord,
 } from "@/src/features/play/play-resume-storage";
+import { consumePlayIntent } from "@/src/features/play/play-intent-storage";
 
 function record(over: Partial<PlayResumeRecord> = {}): PlayResumeRecord {
   return {
@@ -95,5 +97,25 @@ describe("ContinuePlayingRail", () => {
     await screen.findByText("Round 5 of 8");
     const resume = screen.getByRole("link", { name: "Resume Save one anime" });
     expect(resume).toHaveAttribute("href", "/packs/pack-9/play");
+  });
+
+  // This card's whole point is "pick up where I left off" — clicking it must
+  // never route through the resume-choice modal; it signals its own answer
+  // before the destination even mounts.
+  it("signals a silent continue before navigating, so the destination never asks", async () => {
+    writePlayResume(
+      record({
+        packId: "pack-9",
+        pack: { title: "Save one anime", coverTone: "#2b2a3a", totalRounds: 8 },
+      }),
+    );
+    const user = userEvent.setup();
+    render(<ContinuePlayingRail />);
+
+    await user.click(
+      await screen.findByRole("link", { name: "Resume Save one anime" }),
+    );
+
+    expect(consumePlayIntent("pack-9")).toBe("continue");
   });
 });
