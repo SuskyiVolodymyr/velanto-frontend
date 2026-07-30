@@ -1,12 +1,12 @@
 import { usersClient } from "@/src/shared/lib/users-client";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import type { PublicUserProfile } from "@/src/shared/types/user";
-import type { Pack } from "@/src/shared/types/pack";
+import type { PackSummary } from "@/src/shared/types/pack";
 import { AUTHOR_PACKS_PAGE_SIZE } from "./author-packs";
 
 export interface AuthorData {
   profile: PublicUserProfile;
-  packs: Pack[];
+  packs: PackSummary[];
   packsTotal: number;
 }
 

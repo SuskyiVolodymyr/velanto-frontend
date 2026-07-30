@@ -181,3 +181,12 @@ export interface Pack {
   dislikes: number;
   myVote: 1 | -1 | null;
 }
+
+/**
+ * The list/feed shape: everything a card renders, minus `groups`/`rounds` (a
+ * pack's entire content — every pool, round and item). That content is ~95%
+ * of a pack's payload and unused by any list view, so the backend's list
+ * endpoint (GET /packs, via packsClient.list) never sends it — only
+ * GET /packs/:id (a single pack) does, returning the full {@link Pack}.
+ */
+export type PackSummary = Omit<Pack, "groups" | "rounds">;

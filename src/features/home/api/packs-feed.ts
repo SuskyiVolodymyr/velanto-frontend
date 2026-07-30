@@ -1,5 +1,9 @@
 import { packsClient } from "@/src/shared/lib/packs-client";
-import type { Pack, PackFormat, PackTag } from "@/src/shared/types/pack";
+import type {
+  PackFormat,
+  PackSummary,
+  PackTag,
+} from "@/src/shared/types/pack";
 import type { PackLanguage } from "@/src/shared/types/pack-language";
 import type { WindowFilterValue } from "@/src/features/home/filter-options";
 
@@ -33,7 +37,7 @@ export interface PacksFeedFilters {
 
 /** One page of feed results plus the unpaginated total, for the pager. */
 export interface PacksFeedResult {
-  items: Pack[];
+  items: PackSummary[];
   total: number;
 }
 

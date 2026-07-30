@@ -3,6 +3,7 @@ import type {
   Pack,
   PackFormat,
   PackStatus,
+  PackSummary,
   PackTag,
   Group,
   Round,
@@ -63,8 +64,10 @@ export interface ModerationQueueFilters {
   limit?: number;
 }
 
-export interface PackList {
-  items: Pack[];
+/** `T` defaults to `Pack` for endpoints that still return full packs (e.g.
+ * the moderation queue); `packsClient.list` uses `PackSummary`. */
+export interface PackList<T = Pack> {
+  items: T[];
   total: number;
   page: number;
   limit: number;
@@ -107,7 +110,7 @@ export const packsClient = {
   submit: (id: string) => apiClient.post<Pack>(`/packs/${id}/submit`),
   getById: (id: string) => apiClient.get<Pack>(`/packs/${id}`),
   list: (filters: ListPacksFilters = {}) =>
-    apiClient.get<PackList>(`/packs${buildListQuery(filters)}`),
+    apiClient.get<PackList<PackSummary>>(`/packs${buildListQuery(filters)}`),
   delete: (id: string) => apiClient.delete<{ deleted: true }>(`/packs/${id}`),
   vote: (id: string, value: 1 | -1) =>
     apiClient.post<VoteResult>(`/packs/${id}/vote`, { value }),

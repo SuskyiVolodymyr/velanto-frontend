@@ -925,6 +925,7 @@
     "card": {
       "hot": "热门",
       "roundsPlays": "{rounds, plural, other {# 轮}} · {plays, plural, other {# 次游玩}}",
+      "playsCount": "{plays, plural, other {# 次游玩}}",
       "play": "开玩",
       "friends": "好友",
       "friendsTitle": "与好友一起游玩"

@@ -925,6 +925,7 @@
     "card": {
       "hot": "HOT",
       "roundsPlays": "{rounds, plural, one {# раунд} few {# раунда} many {# раундов} other {# раунда}} · {plays, plural, one {# игра} few {# игры} many {# игр} other {# игры}}",
+      "playsCount": "{plays, plural, one {# игра} few {# игры} many {# игр} other {# игры}}",
       "play": "Играть",
       "friends": "Друзья",
       "friendsTitle": "Играть с друзьями"

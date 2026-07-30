@@ -925,6 +925,7 @@
     "card": {
       "hot": "رائج",
       "roundsPlays": "{rounds, plural, zero {# جولة} one {جولة واحدة} two {جولتان} few {# جولات} many {# جولة} other {# جولة}} · {plays, plural, zero {# لعبة} one {لعبة واحدة} two {لعبتان} few {# ألعاب} many {# لعبة} other {# لعبة}}",
+      "playsCount": "{plays, plural, zero {# لعبة} one {لعبة واحدة} two {لعبتان} few {# ألعاب} many {# لعبة} other {# لعبة}}",
       "play": "العب",
       "friends": "الأصدقاء",
       "friendsTitle": "اللعب مع الأصدقاء"

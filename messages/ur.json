@@ -925,6 +925,7 @@
     "card": {
       "hot": "HOT",
       "roundsPlays": "{rounds, plural, one {# راؤنڈ} other {# راؤنڈز}} · {plays, plural, one {# بار کھیلا گیا} other {# بار کھیلا گیا}}",
+      "playsCount": "{plays, plural, one {# بار کھیلا گیا} other {# بار کھیلا گیا}}",
       "play": "کھیلیں",
       "friends": "دوست",
       "friendsTitle": "دوستوں کے ساتھ کھیلیں"

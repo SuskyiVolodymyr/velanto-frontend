@@ -12,13 +12,12 @@ import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { Username } from "@/src/shared/components/Username";
 import { Text } from "@/src/shared/components/Text";
 import { Tooltip } from "@/src/shared/components/Tooltip";
-import { getRoundsCount } from "@/src/shared/lib/pack-display";
 import { formatRelativeTimeIntl } from "@/src/shared/lib/relative-time";
 import { isHotPack } from "@/src/features/home/hot-pack";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { cn } from "@/src/shared/lib/cn";
 import { friendsRoomsClient } from "@/src/features/friends-rooms/friends-rooms-client";
-import { type Pack } from "@/src/shared/types/pack";
+import { type PackSummary } from "@/src/shared/types/pack";
 
 /**
  * A pack tile in the browse grid (2.0.0 redesign). The cover + body link to the
@@ -37,7 +36,7 @@ export function PackCard({
   pack,
   showStatus,
 }: {
-  pack: Pack;
+  pack: PackSummary;
   showStatus?: boolean;
 }) {
   const tFormat = useTranslations("formats");
@@ -47,7 +46,6 @@ export function PackCard({
   const router = useRouter();
   const { user } = useAuth();
   const blocked = user === null;
-  const roundsCount = getRoundsCount(pack);
   // Date the pack by when it went public, not when the row was made — a pack can
   // sit as a draft or wait in moderation. createdAt is the fallback for drafts
   // and legacy packs the backend sends with a null firstPublishedAt.
@@ -151,7 +149,7 @@ export function PackCard({
             )}
           </div>
           <Text variant="tertiary" className="text-[11.5px]">
-            {t("roundsPlays", { rounds: roundsCount, plays: pack.totalPlays })}
+            {t("playsCount", { plays: pack.totalPlays })}
           </Text>
         </div>
       </Link>

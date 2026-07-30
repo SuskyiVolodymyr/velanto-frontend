@@ -1021,6 +1021,7 @@
     "card": {
       "hot": "HOT",
       "roundsPlays": "{rounds, plural, one {# round} other {# rounds}} · {plays, plural, one {# play} other {# plays}}",
+      "playsCount": "{plays, plural, one {# play} other {# plays}}",
       "play": "Play",
       "friends": "Friends",
       "friendsTitle": "Play with friends"

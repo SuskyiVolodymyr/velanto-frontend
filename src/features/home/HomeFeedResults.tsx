@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { Pack } from "@/src/shared/types/pack";
+import type { PackSummary } from "@/src/shared/types/pack";
 import { Text } from "@/src/shared/components/Text";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { PackCard } from "@/src/features/home/PackCard";
@@ -11,7 +11,7 @@ export function HomeFeedResults({
   packs,
 }: {
   status: "loading" | "ready" | "error";
-  packs: Pack[];
+  packs: PackSummary[];
 }) {
   const t = useTranslations("home");
 
