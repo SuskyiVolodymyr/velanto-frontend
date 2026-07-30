@@ -26,6 +26,7 @@ import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { PlayChrome } from "@/src/features/play/PlayChrome";
 import { PlayRoundHeader } from "@/src/features/play/PlayRoundHeader";
 import { PlayConfirmBar } from "@/src/features/play/PlayConfirmBar";
+import { ResumePlayModal } from "@/src/features/play/ResumePlayModal";
 import { roundHeading } from "@/src/shared/lib/round-heading";
 import { toneFor, HAIRLINE_OVERLAY_STYLE } from "@/src/features/play/candidate-tone";
 import type { Pack, Item } from "@/src/shared/types/pack";
@@ -35,7 +36,6 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   const { status } = useAuth();
   const router = useRouter();
   const t = useTranslations("play");
-  const tFormat = useTranslations("formats");
   const groups = pack.groups ?? [];
   const rounds = pack.rounds ?? [];
   const totalRounds = rounds.length;
@@ -63,7 +63,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
   // between rounds, never mid-round). initialChoices is the accumulated picks.
   const restoredRef = useRef(false);
   useEffect(() => {
-    if (restoredRef.current || !resume.ready) return;
+    if (restoredRef.current || !resume.ready || resume.needsChoice) return;
     restoredRef.current = true;
     if (resume.initialRoundIndex > 0 && Array.isArray(resume.initialChoices)) {
       /* eslint-disable react-hooks/set-state-in-effect */
@@ -71,7 +71,12 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
       setAllPicks(resume.initialChoices as RecordedPick[]);
       /* eslint-enable react-hooks/set-state-in-effect */
     }
-  }, [resume.ready, resume.initialRoundIndex, resume.initialChoices]);
+  }, [
+    resume.ready,
+    resume.needsChoice,
+    resume.initialRoundIndex,
+    resume.initialChoices,
+  ]);
   const groupNameById = useMemo(
     () => new Map(groups.map((g) => [g.id, g.name])),
     [groups],
@@ -208,21 +213,48 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
 
   return (
     <>
+      {/* No counter in the bar: the round header's eyebrow below is
+          `play.roundOf`, and the mock only ever draws it there. */}
       <PlayChrome
         pack={pack}
         isFinished={isFinished}
         roundIndex={roundIndex}
         totalRounds={totalRounds}
+        showRoundCounter={false}
+      />
+
+      <ResumePlayModal
+        open={resume.needsChoice}
+        onContinue={resume.chooseContinue}
+        onRestart={resume.chooseRestart}
+        roundsDone={resume.initialRoundIndex}
       />
 
       <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
         {slot && !isFinished && (
           <>
             <div className="mb-6">
+              {/* Mirrors PlayScreen/HeadToHeadPlayScreen's header contract —
+                  the one the mock actually draws for every format, including
+                  rank_blind: "Round N of M" eyebrow, the round's own name (the
+                  pool name is the fallback, same convention as elimination
+                  rounds), and the in-round placement count as the prompt
+                  underneath, left-aligned with the progress rail pinned right. */}
               <PlayRoundHeader
-                eyebrow={`${tFormat("rank_blind")} · ${groupName}`}
-                title={groupName}
-                align="center"
+                eyebrow={t("roundOf", {
+                  current: roundIndex + 1,
+                  total: totalRounds,
+                })}
+                title={rounds[roundIndex]?.name?.trim() || groupName}
+                instruction={
+                  roundDone
+                    ? t("rankAllPlacedPrompt")
+                    : t("rankPlaceItemPrompt", {
+                        current: placedCount + 1,
+                        total: slotCount,
+                      })
+                }
+                align="start"
                 roundIndex={roundIndex}
                 totalRounds={totalRounds}
               />
@@ -234,80 +266,96 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
                 right column stays a vertical list of numbered rows: the
                 interactive slot rows while pending, the same RankedList the
                 result screen shows once the round is done. */}
-            <div className="mb-6 grid grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
-              <div className="rounded-card border border-border bg-surface-card p-6">
+            {/* 900px, not Tailwind's lg (1024px) — the mock's own
+                [data-el="rankcols"] breakpoint. */}
+            <div
+              data-testid="rank-columns"
+              className="mb-6 grid grid-cols-1 items-start gap-[16px] min-[901px]:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]"
+            >
+              <div
+                data-testid="rank-status-panel"
+                className={cn(
+                  "flex flex-col gap-[12px] rounded-[20px] border bg-surface-card p-[18px]",
+                  roundDone ? "border-success/30" : "border-acc/30",
+                )}
+              >
                 {!roundDone ? (
-                  <div className="flex flex-col gap-4">
+                  <>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-acc-hover">
+                      {t("rankPendingEyebrow")}
+                    </p>
+                    {/* Full-width 16:9, matching the mock — not a fixed-width
+                        floating box, and no idle-bob motion: a real video
+                        drifting under the pointer makes its own controls hard
+                        to hit. ImageCard/YouTubeCard already carry their own
+                        aspect-video box (own data-testid too); only the text
+                        fallback needs one built here. */}
+                    {currentImageSrc ? (
+                      <ImageCard
+                        src={currentImageSrc}
+                        alt={currentItem?.title ?? ""}
+                        className="rounded-[13px]"
+                      />
+                    ) : currentVideoId ? (
+                      <YouTubeCard
+                        videoId={currentVideoId}
+                        startSeconds={currentStartSeconds}
+                        className="rounded-[13px]"
+                      />
+                    ) : (
+                      <div
+                        data-testid="rank-current-media"
+                        className="relative aspect-video overflow-hidden rounded-[13px]"
+                        style={{
+                          background: `linear-gradient(158deg, ${toneForDrawIndex(placedCount)}, var(--background) 78%)`,
+                        }}
+                      >
+                        <div
+                          aria-hidden="true"
+                          className="absolute inset-0"
+                          style={HAIRLINE_OVERLAY_STYLE}
+                        />
+                      </div>
+                    )}
+                    <p className="text-[18px] font-bold tracking-[-0.015em] text-foreground">
+                      {currentItem?.title}
+                    </p>
+                    <p className="text-[12.5px] leading-[1.5] text-foreground/50 text-pretty">
+                      {t("rankPendingFlavor")}
+                    </p>
                     <Text
                       variant="tertiary"
-                      className="text-[12.5px] font-medium uppercase tracking-[0.16em] text-acc"
+                      className="mt-auto border-t border-border pt-[11px] text-[12px]"
                     >
-                      {t("rankPendingEyebrow")}
-                    </Text>
-                    <div className="w-full max-w-[230px] overflow-hidden rounded-card border-[1.5px] border-acc bg-background ring-4 ring-acc/[0.16] animate-card-float">
-                      {currentImageSrc ? (
-                        <ImageCard
-                          src={currentImageSrc}
-                          alt={currentItem?.title ?? ""}
-                          className="h-[150px]"
-                        />
-                      ) : currentVideoId ? (
-                        <YouTubeCard
-                          videoId={currentVideoId}
-                          startSeconds={currentStartSeconds}
-                          className="h-[150px]"
-                        />
-                      ) : (
-                        <div
-                          className="relative h-[150px]"
-                          style={{
-                            background: `linear-gradient(158deg, ${toneForDrawIndex(placedCount)}, var(--background) 78%)`,
-                          }}
-                        >
-                          <div
-                            aria-hidden="true"
-                            className="absolute inset-0"
-                            style={HAIRLINE_OVERLAY_STYLE}
-                          />
-                        </div>
-                      )}
-                      <Text className="line-clamp-2 p-[14px] text-[16.5px] font-semibold">
-                        {currentItem?.title}
-                      </Text>
-                    </div>
-                    <Text variant="secondary" className="text-[14px]">
-                      {t("rankPendingFlavor")}
-                    </Text>
-                    <Text variant="tertiary" className="text-[12px]">
                       {t("rankRemainingNote", {
                         count: Math.max(slotCount - placedCount - 1, 0),
                       })}
                     </Text>
-                  </div>
+                  </>
                 ) : (
-                  <div className="flex flex-col gap-4">
+                  <>
+                    <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-[#7EE7B4]">
+                      {t("roundComplete")}
+                    </p>
+                    <p className="text-[18px] font-bold tracking-[-0.015em] text-foreground">
+                      {t("ranked", { name: groupName })}
+                    </p>
+                    <p className="text-[12.5px] leading-[1.5] text-foreground/50 text-pretty">
+                      {t("rankDoneFlavor")}
+                    </p>
                     <Text
                       variant="tertiary"
-                      className="text-[12.5px] font-medium uppercase tracking-[0.16em] text-success"
+                      className="mt-auto border-t border-border pt-[11px] text-[12px]"
                     >
-                      {t("roundComplete")}
-                    </Text>
-                    <Text as="h2" variant="title" className="text-[22px]">
-                      {t("ranked", { name: groupName })}
-                    </Text>
-                    <Text variant="secondary" className="text-[14px]">
-                      {t("rankDoneFlavor")}
-                    </Text>
-                    <Text variant="tertiary" className="text-[12px]">
                       {t("rankDoneFooter", { count: slotCount })}
                     </Text>
-                  </div>
+                  </>
                 )}
               </div>
 
               <div>
                 {!roundDone ? (
-                  <div className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-[8px]">
                     {Array.from({ length: slotCount }, (_, slotIndex) => {
                       const filled = placements[slotIndex];
                       return (
@@ -325,36 +373,33 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
                               : t("rankSlotEmpty", { rank: slotIndex + 1 })
                           }
                           className={cn(
-                            "flex w-full items-center gap-3 rounded-tile border-[1.5px] p-[14px] text-start transition-colors",
+                            "flex w-full items-center gap-3 rounded-tile border p-[11px_13px] text-start transition-colors",
                             filled
-                              ? "border-border"
-                              : "border-dashed border-white/[0.14] bg-white/[0.02] hover:border-acc/40",
+                              ? "border-border bg-surface-card"
+                              : "border-dashed border-acc/40 hover:bg-acc/[0.08]",
                           )}
                         >
                           <span
                             aria-hidden
                             className={cn(
-                              "flex h-8 w-8 flex-none items-center justify-center rounded-chip text-[12px] font-semibold tabular-nums",
+                              "flex h-[30px] w-[30px] flex-none items-center justify-center rounded-[9px] font-mono text-[13px] font-bold tabular-nums",
                               filled
-                                ? "bg-white/[0.06] text-white/75"
-                                : "bg-white/[0.02] text-foreground-tertiary",
+                                ? "bg-white/[0.06] text-foreground/55"
+                                : "bg-acc/[0.12] text-acc-hover",
                             )}
                           >
                             #{slotIndex + 1}
                           </span>
                           {filled ? (
-                            <Text className="line-clamp-1 flex-1 text-sm font-semibold">
+                            <Text className="line-clamp-1 flex-1 text-sm font-[650]">
                               {filled.title}
                             </Text>
                           ) : (
-                            <Text
-                              variant="tertiary"
-                              className="line-clamp-1 flex-1 text-[13px]"
-                            >
+                            <p className="line-clamp-1 flex-1 text-[14px] font-semibold text-foreground/50">
                               {t("rankPlaceItemHere", {
                                 name: currentItem?.title ?? "",
                               })}
-                            </Text>
+                            </p>
                           )}
                         </button>
                       );
