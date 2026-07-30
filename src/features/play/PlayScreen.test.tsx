@@ -261,9 +261,10 @@ describe("PlayScreen", () => {
     await user.click(screen.getByRole("button", { name: "Pick Boys" }));
     await user.click(screen.getByRole("button", { name: "Next round" }));
 
-    // Appears twice now: PlayChrome's round counter AND PlayRoundHeader's
-    // round-position eyebrow (T2).
-    expect(await screen.findAllByText("Round 2 of 2")).toHaveLength(2);
+    // Exactly once: the round-position eyebrow on PlayRoundHeader. PlayChrome's
+    // bar opts out of the counter (showRoundCounter={false}) — the mock only
+    // ever draws it in the round header.
+    expect(await screen.findAllByText("Round 2 of 2")).toHaveLength(1);
     await user.click(screen.getByRole("button", { name: "Pick Girls" }));
     await user.click(screen.getByRole("button", { name: "See results" }));
 
@@ -338,9 +339,8 @@ describe("PlayScreen", () => {
     await user.click(screen.getByRole("button", { name: "Next round" }));
 
     expect(await screen.findByText("Silhouette")).toBeInTheDocument();
-    // Appears twice now: PlayChrome's round counter AND PlayRoundHeader's
-    // round-position eyebrow (T2).
-    expect(screen.getAllByText("Round 2 of 2")).toHaveLength(2);
+    // Exactly once — see the note above.
+    expect(screen.getAllByText("Round 2 of 2")).toHaveLength(1);
     await user.click(screen.getByText("Silhouette"));
     await user.click(screen.getByRole("button", { name: "See results" }));
 

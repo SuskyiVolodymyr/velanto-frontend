@@ -39,6 +39,37 @@ describe("PlayChrome", () => {
     expect(screen.getByText("Round 1 of 2")).toBeInTheDocument();
   });
 
+  it("omits the counter entirely when the screen carries its own", () => {
+    // The mock's sticky bar has no round counter — it lives in the round
+    // header's eyebrow. Screens whose PlayRoundHeader already shows it opt out
+    // here rather than printing it twice on one page.
+    render(
+      <PlayChrome
+        pack={PACK}
+        isFinished={false}
+        roundIndex={0}
+        totalRounds={2}
+        showRoundCounter={false}
+      />,
+    );
+
+    expect(screen.queryByText("Round 1 of 2")).not.toBeInTheDocument();
+  });
+
+  it("still hides the finished label when the counter is opted out", () => {
+    render(
+      <PlayChrome
+        pack={PACK}
+        isFinished
+        roundIndex={1}
+        totalRounds={2}
+        showRoundCounter={false}
+      />,
+    );
+
+    expect(screen.queryByText("Complete")).not.toBeInTheDocument();
+  });
+
   it("shows play.complete instead of the round counter when finished", () => {
     render(
       <PlayChrome pack={PACK} isFinished roundIndex={1} totalRounds={2} />,

@@ -56,11 +56,14 @@ export function PlayScreen({ pack }: { pack: Pack }) {
 
   return (
     <>
+      {/* No counter in the bar: the round header's eyebrow below is
+          `play.roundOf`, and the mock only ever draws it there. */}
       <PlayChrome
         pack={pack}
         isFinished={session.isFinished}
         roundIndex={session.roundIndex}
         totalRounds={session.totalRounds}
+        showRoundCounter={false}
       />
 
       <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
@@ -144,6 +147,10 @@ export function PlayScreen({ pack }: { pack: Pack }) {
             label={t(PICKED_LABEL_KEY[pack.format])}
             picks={session.displayPicks}
             totalRounds={session.totalRounds}
+            // nxn's displayPicks holds every item of the WINNING side, not
+            // one per round — group them so a 3-item side reads as one
+            // round's container of 3, not 3 indistinguishable flat chips.
+            groupByRound={pack.format === "nxn"}
           />
         )}
       </div>

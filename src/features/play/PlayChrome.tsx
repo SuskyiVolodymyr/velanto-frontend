@@ -12,6 +12,17 @@ export interface PlayChromeProps {
   isFinished: boolean;
   roundIndex: number;
   totalRounds: number;
+  /**
+   * Whether to print the round counter at the end of the bar. Default `true`,
+   * kept for `RankPlayScreen`, whose own eyebrow is the pool name and so
+   * carries no round position anywhere else.
+   *
+   * The mock's bar has no counter at all — it belongs to the round header's
+   * eyebrow. So any screen whose `PlayRoundHeader` eyebrow is already
+   * `play.roundOf` passes `false` here rather than printing it twice on one
+   * page.
+   */
+  showRoundCounter?: boolean;
 }
 
 /**
@@ -38,6 +49,7 @@ export function PlayChrome({
   isFinished,
   roundIndex,
   totalRounds,
+  showRoundCounter = true,
 }: PlayChromeProps) {
   const t = useTranslations("play");
   const tFormat = useTranslations("formats");
@@ -84,12 +96,14 @@ export function PlayChrome({
         </Text>
       </div>
 
-      <Text
-        variant="secondary"
-        className="ms-auto shrink-0 text-[13.5px] tabular-nums text-foreground-secondary"
-      >
-        {roundLabel}
-      </Text>
+      {showRoundCounter && (
+        <Text
+          variant="secondary"
+          className="ms-auto shrink-0 text-[13.5px] tabular-nums text-foreground-secondary"
+        >
+          {roundLabel}
+        </Text>
+      )}
     </div>
   );
 }
