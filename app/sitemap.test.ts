@@ -2,14 +2,6 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import sitemap from "./sitemap";
 import { SITE_URL } from "@/src/shared/lib/site-url";
 
-function pack(id: string, authorId: string) {
-  return {
-    id,
-    authorId,
-    createdAt: "2026-01-01T00:00:00.000Z",
-  };
-}
-
 describe("sitemap", () => {
   beforeEach(() => {
     vi.restoreAllMocks();
@@ -18,47 +10,40 @@ describe("sitemap", () => {
     vi.restoreAllMocks();
   });
 
-  it("lists static routes plus real pack and de-duplicated user profile URLs", async () => {
-    vi.spyOn(globalThis, "fetch").mockResolvedValue(
-      new Response(
-        JSON.stringify({
-          items: [pack("p1", "u1"), pack("p2", "u1"), pack("p3", "u2")],
-        }),
-        { status: 200 },
-      ),
-    );
-
-    const entries = await sitemap();
-    const urls = entries.map((e) => e.url);
-
-    expect(urls).toContain(`${SITE_URL}/`); // home
-    expect(urls).toContain(`${SITE_URL}/docs`);
-    expect(urls).toContain(`${SITE_URL}/feedback`);
-    expect(urls).toContain(`${SITE_URL}/updates`);
-    expect(urls).toContain(`${SITE_URL}/terms`);
-    expect(urls).toContain(`${SITE_URL}/privacy`);
-    expect(urls).toContain(`${SITE_URL}/packs/p1`);
-    expect(urls).toContain(`${SITE_URL}/packs/p3`);
-    expect(urls).toContain(`${SITE_URL}/users/u1`);
-    expect(urls).toContain(`${SITE_URL}/users/u2`);
-    // u1 authored two packs but must appear once.
-    expect(urls.filter((u) => u === `${SITE_URL}/users/u1`)).toHaveLength(1);
-  });
-
-  it("degrades to static routes when the API is unreachable, without throwing", async () => {
-    vi.spyOn(globalThis, "fetch").mockRejectedValue(new Error("ECONNREFUSED"));
-
-    const entries = await sitemap();
-    const urls = entries.map((e) => e.url);
+  it("lists the crawlable static routes", () => {
+    const urls = sitemap().map((e) => e.url);
 
     expect(urls).toContain(`${SITE_URL}/`);
     expect(urls).toContain(`${SITE_URL}/docs`);
-    expect(urls).toContain(`${SITE_URL}/feedback`);
     expect(urls).toContain(`${SITE_URL}/updates`);
     expect(urls).toContain(`${SITE_URL}/terms`);
     expect(urls).toContain(`${SITE_URL}/privacy`);
-    // No pack/user routes when the fetch fails.
-    expect(urls.some((u) => u.includes("/packs/"))).toBe(false);
-    expect(urls.some((u) => u.includes("/users/"))).toBe(false);
+  });
+
+  // Advertising URLs that robots.ts forbids earns a "sitemap contains URLs
+  // which are blocked by robots.txt" warning and helps nobody. These route
+  // families are disallowed because they query the database per request.
+  it("advertises no route that robots.ts disallows", () => {
+    const urls = sitemap().map((e) => e.url);
+
+    for (const blocked of [
+      "/packs/",
+      "/users/",
+      "/feedback",
+      "/rules",
+      "/auth",
+    ]) {
+      expect(urls.some((u) => u.includes(blocked))).toBe(false);
+    }
+  });
+
+  // The whole point of dropping the pack/author routes: this route used to be
+  // an uncached database query served to crawlers. It must not reacquire one.
+  it("makes no network request at all", () => {
+    const fetchSpy = vi.spyOn(globalThis, "fetch");
+
+    sitemap();
+
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 });
