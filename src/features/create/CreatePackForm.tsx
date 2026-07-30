@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { useForm, useWatch, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import type { CreatePackInput } from "@/src/shared/lib/packs-client";
@@ -90,6 +91,7 @@ export function CreatePackForm({
   const t = useTranslations("create");
   const router = useRouter();
   const pathname = usePathname();
+  const queryClient = useQueryClient();
   const { status } = useAuth();
   const isEdit = mode === "edit";
   // The author's interface language, used as the initial guess for the pack's
@@ -212,9 +214,16 @@ export function CreatePackForm({
     try {
       if (isEdit && packId) {
         await packsClient.update(packId, input);
+        // The home feed now holds its cached list for several minutes
+        // (packs-feed.queries.ts) so a visitor's hydration doesn't refetch it.
+        // That would otherwise hide the author's own just-saved change from
+        // them, which reads as a bug rather than as staleness — so drop the
+        // cached feed on the one action that makes it wrong for THIS user.
+        await queryClient.invalidateQueries({ queryKey: ["packs-feed"] });
         router.push(`/packs/${packId}`);
       } else {
         const pack = await packsClient.create(input);
+        await queryClient.invalidateQueries({ queryKey: ["packs-feed"] });
         router.push(`/packs/${pack.id}`);
       }
     } catch (err) {

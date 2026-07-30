@@ -114,6 +114,51 @@ describe("message catalogs", () => {
       );
       expect(untranslated, `untranslated keys in ${locale}`).toEqual([]);
     });
+
+    /**
+     * The checks above compare each locale to English structurally — key
+     * parity, placeholders, tags — and flag a value left identical to the
+     * source. None of them can catch the opposite failure: a locale whose
+     * translation is perfectly good prose that no longer matches what the code
+     * does, because only the English string was updated.
+     *
+     * That is a real hazard for the retention promises specifically. They are
+     * factual claims about system behaviour, and the backend's prune schedule
+     * moved from hourly to daily — so a locale still promising deletion "within
+     * the hour" would be a false statement in a privacy policy, in a language
+     * whoever changes the schedule next probably cannot read.
+     */
+    it("carries no stale hourly retention promise", () => {
+      const bullets = (
+        (
+          (CATALOGS[locale] as Record<string, Record<string, unknown>>).privacy
+            ?.sections as Record<string, { bullets?: Record<string, string> }>
+        )?.["11"]?.bullets ?? {}
+      ) as Record<string, string>;
+
+      const HOURLY = [
+        "within the hour",
+        "an hour after they expire",
+        "一小时",
+        "एक घंटे",
+        "ساعة",
+        "ঘণ্টা",
+        "в течение часа",
+        "через час",
+        "ایک گھنٹے",
+        "протягом години",
+        "через годину",
+      ];
+
+      for (const [index, text] of Object.entries(bullets)) {
+        for (const phrase of HOURLY) {
+          expect(
+            text.includes(phrase),
+            `${locale} privacy bullet ${index} still promises "${phrase}" — the prune job runs daily`,
+          ).toBe(false);
+        }
+      }
+    });
   });
 });
 

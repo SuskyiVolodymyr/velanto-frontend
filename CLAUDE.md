@@ -102,6 +102,14 @@ Two types, and the difference still matters — but it's a READ-side split now, 
 
 **Playing one:** the pack detail page shows a room entry (`FriendsRoomEntry`) instead of a Play button; `/packs/[id]/play` 404s for it by design (see `PlayRouter`). It has a real label, "How it plays" steps, and a create blurb in every locale; it has no single-player play _instruction_ copy (`play-format-copy.ts` maps it to `""`).
 
+## Crawlers are restricted on purpose (Neon compute budget)
+
+`app/robots.ts` allows only routes that do **not** query the database: the landing page plus `/docs`, `/terms`, `/privacy`, `/updates`. Everything backend-backed — `/packs/`, `/users/`, `/rules`, `/auth` — is disallowed, and `app/sitemap.ts` lists only the allowed routes (which is why it makes no API call).
+
+This is a cost constraint, not an SEO opinion. The database is Neon on the free plan, which bills **wall-clock time the compute is awake**, not queries, and suspends only after 5 minutes without one. A crawler walking pack and profile pages held it awake around the clock and consumed most of the 100 CU-hour monthly quota; running out **suspends the database until the next billing period**. Caching those routes would not have fixed it — each page revalidates independently, so a crawl produces a steady dribble, and any continuously-crawled URL with a TTL under ~5 minutes pins the compute awake regardless. That is also why `get-home-feed-server.ts` uses a 6-hour window and `packs-feed.queries.ts` sets a non-zero `staleTime`: `/` is the one database-backed route still open, and both numbers are load-bearing rather than taste.
+
+Guarded by `app/robots.test.ts`, `app/sitemap.test.ts` and `get-home-feed-server.test.ts`. Re-opening crawling is a budget decision — do the CU-hour arithmetic, and expect to need caching (`getPackServer` et al are still `no-store`) in the same change.
+
 ## Workflow (established discipline)
 
 GitHub issue filed → feature branch → TDD (failing test first) → `pr-review-toolkit:code-reviewer` before merge → PR → merge to `develop` once green → manual browser verification (Playwright plugin) against the live backend before trusting tests alone.

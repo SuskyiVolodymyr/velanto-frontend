@@ -17,13 +17,21 @@ const DEFAULT_FEED_QUERY = `page=1&limit=${PACKS_FEED_PAGE_SIZE}&sort=popular&wi
  */
 export async function getHomeFeedServer(): Promise<PacksFeedResult | null> {
   try {
-    // Revalidated rather than no-store: this is the most-hit endpoint in the
-    // app (every landing-page view, including bots/crawlers on the open
-    // robots.txt), and every no-store hit was a fresh round trip to Neon,
-    // preventing its free-tier compute from ever auto-suspending. A 60s-stale
-    // feed is an invisible tradeoff for how often this page gets loaded.
+    // Six hours, and the exact number is load-bearing rather than a taste call.
+    //
+    // `/` is the one database-backed route crawlers are still allowed on (see
+    // app/robots.ts), and Neon's compute suspends only after 5 minutes with no
+    // query. So any TTL under ~5 minutes on a continuously-crawled URL means a
+    // fresh query before the compute can ever sleep — it would hold the
+    // database awake permanently on its own and undo the whole robots change.
+    // The previous 60s did exactly that.
+    //
+    // At 6h this costs ~4 wakes/day. Staleness is close to invisible in
+    // exchange: every real browser refetches this list on hydration anyway
+    // (see packs-feed.queries.ts), so the cached copy is what crawlers and the
+    // first paint see, not what a visitor ends up looking at.
     const res = await fetch(`${API_BASE_URL}/packs?${DEFAULT_FEED_QUERY}`, {
-      next: { revalidate: 60 },
+      next: { revalidate: 21600 },
     });
     if (!res.ok) return null;
     const data = (await res.json()) as {
