@@ -6,6 +6,7 @@ import { Share2 } from "lucide-react";
 import { Button, type ButtonVariant } from "@/src/shared/components/Button";
 import { Input } from "@/src/shared/components/Input";
 import { buildShareUrl } from "@/src/shared/lib/share-url";
+import { useHorizontalClamp } from "@/src/shared/lib/use-horizontal-clamp";
 import type { RecordedPick } from "@/src/shared/types/play-results";
 
 export function ShareButton({
@@ -48,8 +49,14 @@ export function ShareButton({
   const [copied, setCopied] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const copyTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Corrective nudge so the fixed-width, right-anchored panel below can't
+  // render off-screen when the trigger sits well left of the viewport's
+  // right edge — the crowded Pack Detail sticky bar (Back/Share/Report/Vote
+  // in one row) is exactly that case on a narrow screen.
+  const clampStyle = useHorizontalClamp(panelRef, open);
 
   // Built lazily on open: buildShareUrl reads window.location.origin, which only
   // exists client-side, and the input only renders after a click — so no SSR/
@@ -128,8 +135,10 @@ export function ShareButton({
       </Button>
       {open && (
         <div
+          ref={panelRef}
           role="dialog"
           aria-label={t("dialogLabel")}
+          style={clampStyle}
           className="absolute right-0 top-12 z-10 flex w-[300px] items-center gap-2 rounded-xl border border-border bg-surface p-3 shadow-[0_16px_40px_rgba(0,0,0,0.5)]"
         >
           <Input
