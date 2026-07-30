@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
+import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { UpdatesScreen } from "./UpdatesScreen";
 import type { UpdateEntry } from "./updates-data";
@@ -26,6 +27,7 @@ describe("UpdatesScreen", () => {
   ];
 
   const props = {
+    browseLabel: "Browse",
     heading: "What's new",
     intro: "The latest features, improvements, and fixes on Velanto.",
     emptyLabel: "No updates yet — check back soon.",
@@ -38,10 +40,16 @@ describe("UpdatesScreen", () => {
       "Suggestions get read and voted on — a lot of the list above started there.",
     openSuggestionsLabel: "Open suggestions",
     docsLabel: "Docs",
-    formatChangesCount: (count: number) =>
-      count === 1 ? "1 change" : `${count} changes`,
-    formatShowMore: (count: number) => `Show ${count} more`,
   };
+
+  it("renders a back-to-browse link in the header, not the brand mark", () => {
+    render(<UpdatesScreen {...props} />);
+    expect(screen.getByRole("link", { name: "Browse" })).toHaveAttribute(
+      "href",
+      "/",
+    );
+    expect(screen.queryByText("VELANTO")).not.toBeInTheDocument();
+  });
 
   it("renders each entry with its version, date, title, and bullets", () => {
     render(<UpdatesScreen {...props} />);

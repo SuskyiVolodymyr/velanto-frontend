@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { Lightbulb } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
@@ -24,6 +25,8 @@ function versionAnchor(version: string): string {
 }
 
 export interface UpdatesScreenProps {
+  /** Label for the header's back-to-browse pill (shared `header` namespace). */
+  browseLabel: string;
   heading: string;
   intro: string;
   /** Shown in place of the list when there are no entries yet. */
@@ -41,10 +44,6 @@ export interface UpdatesScreenProps {
   openSuggestionsLabel: string;
   /** Header's trailing "Docs" link label (shared `header` namespace). */
   docsLabel: string;
-  /** "N changes" / "1 change", formatted (and pluralized) by the caller. */
-  formatChangesCount: (count: number) => string;
-  /** "Show N more", formatted by the caller — `count` is always >= 1. */
-  formatShowMore: (count: number) => string;
 }
 
 /**
@@ -56,6 +55,7 @@ export interface UpdatesScreenProps {
  * state (`open`, keyed by `version-date`), which a Server Component can't hold.
  */
 export function UpdatesScreen({
+  browseLabel,
   heading,
   intro,
   emptyLabel,
@@ -67,16 +67,20 @@ export function UpdatesScreen({
   missingNote,
   openSuggestionsLabel,
   docsLabel,
-  formatChangesCount,
-  formatShowMore,
 }: UpdatesScreenProps) {
+  // Pluralized ICU messages ("N changes" / "Show N more") — resolved here
+  // rather than passed in as formatter functions from the server page, since
+  // functions can't cross the Server→Client Component boundary (#UpdatesScreen
+  // is "use client"; the rest of this component's copy is plain strings,
+  // which are serializable, so only these two moved).
+  const t = useTranslations("updates");
   const ordered = [...entries].sort((a, b) => b.date.localeCompare(a.date));
   const [open, setOpen] = useState<Record<string, boolean>>({});
 
   return (
     <>
       <PageHeader
-        brand
+        back={{ href: "/", label: browseLabel }}
         crumb={heading}
         trailing={
           <Link
@@ -162,7 +166,7 @@ export function UpdatesScreen({
                             variant="tertiary"
                             className="ms-auto text-xs"
                           >
-                            {formatChangesCount(entry.bullets.length)}
+                            {t("changesCount", { count: entry.bullets.length })}
                           </Text>
                         </div>
                         <Text as="h2" variant="title" className="mb-3 text-xl">
@@ -198,7 +202,7 @@ export function UpdatesScreen({
                           >
                             {isOpen
                               ? showLessLabel
-                              : formatShowMore(hiddenCount)}
+                              : t("showMore", { count: hiddenCount })}
                           </button>
                         )}
                       </Card>

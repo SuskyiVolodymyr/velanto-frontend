@@ -23,6 +23,7 @@ export default async function UpdatesPage() {
   const th = await getTranslations("header");
   return (
     <UpdatesScreen
+      browseLabel={th("browse")}
       heading={t("heading")}
       intro={t("intro")}
       emptyLabel={t("empty")}
@@ -34,8 +35,6 @@ export default async function UpdatesPage() {
       missingNote={t("missingNote")}
       openSuggestionsLabel={t("openSuggestions")}
       docsLabel={th("docs")}
-      formatChangesCount={(count) => t("changesCount", { count })}
-      formatShowMore={(count) => t("showMore", { count })}
     />
   );
 }
