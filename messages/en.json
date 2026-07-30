@@ -1240,6 +1240,8 @@
     "rankSlotEmpty": "Place at rank {rank}",
     "rankPendingEyebrow": "Place this one",
     "rankPendingFlavor": "You can't see what's coming next — that's the whole game. Pick a slot and commit.",
+    "rankPlaceItemPrompt": "Place item {current} of {total}",
+    "rankAllPlacedPrompt": "Every slot filled — this is your order",
     "rankRemainingNote": "{count, plural, one {# item still hidden after this} other {# items still hidden after this}}",
     "rankDoneFlavor": "Nothing to change now — this is what blind ranking gives you. Move on to the next round.",
     "rankDoneFooter": "All {count} placed",
@@ -1250,7 +1252,11 @@
     "loadingResult": "Loading your results…",
     "finishRound": "See results",
     "versusSideA": "Side A",
-    "versusSideB": "Side B"
+    "versusSideB": "Side B",
+    "resumeModalTitle": "Continue where you left off?",
+    "resumeModalBody": "Continue to pick up exactly where you left off, or start over with a fresh draw.",
+    "resumeContinue": "Continue",
+    "resumeRestart": "Start over"
   },
   "result": {
     "label": "Run complete",

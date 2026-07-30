@@ -1144,6 +1144,8 @@
     "rankSlotEmpty": "র‍্যাঙ্ক {rank}-এ বসান",
     "rankPendingEyebrow": "এটি বসান",
     "rankPendingFlavor": "পরে কী আসছে তা আপনি দেখতে পারবেন না — এটাই তো পুরো খেলা। একটি স্লট বেছে নিন এবং স্থির করুন।",
+    "rankPlaceItemPrompt": "{total} এর মধ্যে {current} নম্বর আইটেম রাখুন",
+    "rankAllPlacedPrompt": "সব স্লট পূর্ণ হয়েছে — এটাই আপনার ক্রম",
     "rankRemainingNote": "{count, plural, one {এর পরেও # টি আইটেম লুকানো আছে} other {এর পরেও # টি আইটেম লুকানো আছে}}",
     "rankDoneFlavor": "এখন আর কিছু বদলানোর নেই — ব্লাইন্ড র‍্যাঙ্কিং এটাই দেয়। পরের রাউন্ডে এগিয়ে যান।",
     "rankDoneFooter": "সব {count}টি বসানো হয়েছে",
@@ -1154,7 +1156,11 @@
     "loadingResult": "আপনার ফলাফল লোড হচ্ছে…",
     "finishRound": "ফলাফল দেখুন",
     "versusSideA": "পক্ষ A",
-    "versusSideB": "পক্ষ B"
+    "versusSideB": "পক্ষ B",
+    "resumeModalTitle": "যেখানে রেখেছিলেন সেখান থেকে চালিয়ে যাবেন?",
+    "resumeModalBody": "ঠিক যেখানে রেখেছিলেন সেখান থেকে চালিয়ে যান, অথবা নতুন ড্র দিয়ে আবার শুরু করুন।",
+    "resumeContinue": "চালিয়ে যান",
+    "resumeRestart": "আবার শুরু করুন"
   },
   "result": {
     "label": "খেলা সম্পন্ন",

@@ -1144,6 +1144,8 @@
     "rankSlotEmpty": "放到第 {rank} 名",
     "rankPendingEyebrow": "放置这个",
     "rankPendingFlavor": "你看不到接下来会出现什么——这正是这个玩法的核心。选一个位置放下并确认。",
+    "rankPlaceItemPrompt": "放置第 {current} 项，共 {total} 项",
+    "rankAllPlacedPrompt": "所有位置已放满——这就是你的排序",
     "rankRemainingNote": "{count, plural, other {之后还有 # 项隐藏}}",
     "rankDoneFlavor": "现在已经无法更改——盲排排名给你的就是这个结果。继续下一轮吧。",
     "rankDoneFooter": "全部 {count} 项已放置",
@@ -1154,7 +1156,11 @@
     "loadingResult": "正在加载结果…",
     "finishRound": "查看结果",
     "versusSideA": "A 方",
-    "versusSideB": "B 方"
+    "versusSideB": "B 方",
+    "resumeModalTitle": "从上次的地方继续吗？",
+    "resumeModalBody": "继续从上次的进度开始，或者用全新的抽取重新开始。",
+    "resumeContinue": "继续",
+    "resumeRestart": "重新开始"
   },
   "result": {
     "label": "本次游玩已完成",

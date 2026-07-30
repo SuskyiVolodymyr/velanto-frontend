@@ -1144,6 +1144,8 @@
     "rankSlotEmpty": "رینک {rank} پر رکھیں",
     "rankPendingEyebrow": "اسے رکھیں",
     "rankPendingFlavor": "آپ نہیں دیکھ سکتے کہ آگے کیا آ رہا ہے — یہی تو پورا کھیل ہے۔ ایک جگہ چنیں اور طے کر دیں۔",
+    "rankPlaceItemPrompt": "{total} میں سے آئٹم {current} رکھیں",
+    "rankAllPlacedPrompt": "ہر جگہ بھر گئی — یہی آپ کی ترتیب ہے",
     "rankRemainingNote": "{count, plural, one {اس کے بعد # آئٹم چھپا ہوا} other {اس کے بعد # آئٹمز چھپے ہوئے}}",
     "rankDoneFlavor": "اب کچھ بدلنے کو نہیں — یہی تو بلائنڈ رینکنگ کا مطلب ہے۔ اگلے راؤنڈ کی طرف بڑھیں۔",
     "rankDoneFooter": "تمام {count} رکھ دیے گئے",
@@ -1154,7 +1156,11 @@
     "loadingResult": "آپ کے نتائج لوڈ ہو رہے ہیں…",
     "finishRound": "نتائج دیکھیں",
     "versusSideA": "طرف A",
-    "versusSideB": "طرف B"
+    "versusSideB": "طرف B",
+    "resumeModalTitle": "وہیں سے جاری رکھیں جہاں چھوڑا تھا؟",
+    "resumeModalBody": "بالکل وہیں سے جاری رکھیں جہاں آپ نے چھوڑا تھا، یا نئے ڈرا کے ساتھ دوبارہ شروع کریں۔",
+    "resumeContinue": "جاری رکھیں",
+    "resumeRestart": "دوبارہ شروع کریں"
   },
   "result": {
     "label": "کھیل مکمل",

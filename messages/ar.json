@@ -1144,6 +1144,8 @@
     "rankSlotEmpty": "ضعه في المرتبة {rank}",
     "rankPendingEyebrow": "ضع هذا",
     "rankPendingFlavor": "لا يمكنك رؤية ما هو قادم — هذا جوهر اللعبة. اختر مكانًا والتزم به.",
+    "rankPlaceItemPrompt": "ضع العنصر {current} من {total}",
+    "rankAllPlacedPrompt": "امتلأت كل الخانات — هذا هو ترتيبك",
     "rankRemainingNote": "{count, plural, zero {لا عناصر مخفية بعد ذلك} one {عنصر واحد مخفي بعد ذلك} two {عنصران مخفيان بعد ذلك} few {# عناصر مخفية بعد ذلك} many {# عنصرًا مخفيًا بعد ذلك} other {# عنصر مخفي بعد ذلك}}",
     "rankDoneFlavor": "لا شيء لتغييره الآن — هذا ما يمنحك إياه الترتيب الأعمى. انتقل إلى الجولة التالية.",
     "rankDoneFooter": "تم وضع كل {count}",
@@ -1154,7 +1156,11 @@
     "loadingResult": "جارٍ تحميل نتائجك…",
     "finishRound": "عرض النتائج",
     "versusSideA": "الجانب A",
-    "versusSideB": "الجانب B"
+    "versusSideB": "الجانب B",
+    "resumeModalTitle": "المتابعة من حيث توقفت؟",
+    "resumeModalBody": "تابع من حيث توقفت تمامًا، أو ابدأ من جديد بسحب جديد.",
+    "resumeContinue": "متابعة",
+    "resumeRestart": "البدء من جديد"
   },
   "result": {
     "label": "انتهت المحاولة",

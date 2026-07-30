@@ -1144,6 +1144,8 @@
     "rankSlotEmpty": "Поставить на место {rank}",
     "rankPendingEyebrow": "Поставь этот",
     "rankPendingFlavor": "Ты не видишь, что будет дальше — в этом вся суть игры. Выбери место и подтверди.",
+    "rankPlaceItemPrompt": "Разместите {current}-й из {total}",
+    "rankAllPlacedPrompt": "Все места заполнены — это ваш порядок",
     "rankRemainingNote": "{count, plural, one {ещё # скрытый элемент} few {ещё # скрытых элемента} many {ещё # скрытых элементов} other {ещё # скрытого элемента}}",
     "rankDoneFlavor": "Теперь уже ничего не изменить — в этом суть слепого ранжирования. Переходи к следующему раунду.",
     "rankDoneFooter": "Все {count} размещены",
@@ -1154,7 +1156,11 @@
     "loadingResult": "Загрузка результатов…",
     "finishRound": "Смотреть результаты",
     "versusSideA": "Сторона A",
-    "versusSideB": "Сторона B"
+    "versusSideB": "Сторона B",
+    "resumeModalTitle": "Продолжить с того места?",
+    "resumeModalBody": "Продолжите ровно с того места, где остановились, или начните заново с новой раздачей.",
+    "resumeContinue": "Продолжить",
+    "resumeRestart": "Начать заново"
   },
   "result": {
     "label": "Прохождение завершено",

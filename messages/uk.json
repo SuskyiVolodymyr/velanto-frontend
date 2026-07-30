@@ -1144,6 +1144,8 @@
     "rankSlotEmpty": "Поставити на місце {rank}",
     "rankPendingEyebrow": "Постав цей",
     "rankPendingFlavor": "Ти не бачиш, що буде далі — у цьому й гра. Обери місце й підтверди.",
+    "rankPlaceItemPrompt": "Розмістіть {current} з {total}",
+    "rankAllPlacedPrompt": "Усі місця заповнено — це ваш порядок",
     "rankRemainingNote": "{count, plural, one {ще # прихований елемент} few {ще # приховані елементи} many {ще # прихованих елементів} other {ще # прихованого елемента}}",
     "rankDoneFlavor": "Тепер уже нічого не змінити — це і є суть сліпого рейтингування. Переходь до наступного раунду.",
     "rankDoneFooter": "Усі {count} розміщено",
@@ -1154,7 +1156,11 @@
     "loadingResult": "Завантаження результатів…",
     "finishRound": "Переглянути результати",
     "versusSideA": "Сторона A",
-    "versusSideB": "Сторона B"
+    "versusSideB": "Сторона B",
+    "resumeModalTitle": "Продовжити з того місця?",
+    "resumeModalBody": "Продовжте рівно з того місця, де зупинились, або почніть заново з новою роздачею.",
+    "resumeContinue": "Продовжити",
+    "resumeRestart": "Почати заново"
   },
   "result": {
     "label": "Проходження завершено",

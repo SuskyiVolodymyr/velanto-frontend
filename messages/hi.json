@@ -1144,6 +1144,8 @@
     "rankSlotEmpty": "रैंक {rank} पर रखें",
     "rankPendingEyebrow": "इसे रखें",
     "rankPendingFlavor": "आप नहीं देख सकते कि आगे क्या आने वाला है — यही तो पूरा खेल है। एक जगह चुनें और तय करें।",
+    "rankPlaceItemPrompt": "{total} में से आइटम {current} रखें",
+    "rankAllPlacedPrompt": "हर स्लॉट भर गया — यही आपका क्रम है",
     "rankRemainingNote": "{count, plural, one {इसके बाद # आइटम अभी छिपा है} other {इसके बाद # आइटम अभी छिपे हैं}}",
     "rankDoneFlavor": "अब कुछ बदलने को नहीं है — ब्लाइंड रैंकिंग यही तो देती है। अगले राउंड की ओर बढ़ें।",
     "rankDoneFooter": "सभी {count} रखे गए",
@@ -1154,7 +1156,11 @@
     "loadingResult": "आपके परिणाम लोड हो रहे हैं…",
     "finishRound": "परिणाम देखें",
     "versusSideA": "पक्ष A",
-    "versusSideB": "पक्ष B"
+    "versusSideB": "पक्ष B",
+    "resumeModalTitle": "जहाँ छोड़ा था वहीं से जारी रखें?",
+    "resumeModalBody": "जहाँ आपने छोड़ा था वहीं से जारी रखें, या नए ड्रॉ के साथ फिर से शुरू करें।",
+    "resumeContinue": "जारी रखें",
+    "resumeRestart": "फिर से शुरू करें"
   },
   "result": {
     "label": "रन पूरा हुआ",
