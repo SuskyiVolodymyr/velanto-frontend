@@ -16,7 +16,6 @@ import type { NotificationList } from "@/src/shared/types/notification";
 
 const LIST_KEY = ["notifications-list"] as const;
 
-const POLL_INTERVAL_MS = 30_000;
 const PAGE_SIZE = 20;
 
 const UNREAD_KEY = ["notifications-unread"] as const;
@@ -62,24 +61,19 @@ export function useNotifications({ alwaysOpen = false } = {}) {
 
   const authenticated = status === "authenticated";
 
-  // Polled unread count. React Query's refetchInterval covers the 30s poll;
-  // its refetchOnWindowFocus keys off `visibilitychange`, so the explicit
-  // focus listener below covers a plain window focus too.
+  // Unread count is fetched once (query mount = effectively "page load") and
+  // left alone otherwise — no interval poll, no refetch-on-focus. Each of
+  // those was a recurring request against Neon's free-tier compute for every
+  // open, signed-in tab, which kept it from ever hitting the 5min idle window
+  // needed to auto-suspend. A stale badge until the next real navigation/
+  // reload is an acceptable tradeoff for that.
   const unreadQuery = useQuery({
     queryKey: UNREAD_KEY,
     queryFn: () => notificationsClient.unreadCount(),
     enabled: authenticated,
-    refetchInterval: authenticated ? POLL_INTERVAL_MS : false,
+    refetchOnWindowFocus: false,
   });
   const unreadCount = unreadQuery.data?.count ?? 0;
-  const { refetch: refetchUnread } = unreadQuery;
-
-  useEffect(() => {
-    if (!authenticated) return;
-    const onFocus = () => void refetchUnread();
-    window.addEventListener("focus", onFocus);
-    return () => window.removeEventListener("focus", onFocus);
-  }, [authenticated, refetchUnread]);
 
   useEffect(() => {
     if (!open) return;
