@@ -90,4 +90,70 @@ describe("PicksSummary", () => {
 
     expect(screen.queryByText(/done,/)).not.toBeInTheDocument();
   });
+
+  describe("groupByRound (nxn: a side can hold several items per round)", () => {
+    it("renders one container per round, holding that round's items together", () => {
+      const picks: Pick[] = [
+        makePick({ roundIndex: 0, groupId: "a", itemId: "1", itemTitle: "Naruto" }),
+        makePick({ roundIndex: 0, groupId: "a", itemId: "2", itemTitle: "Sasuke" }),
+        makePick({ roundIndex: 0, groupId: "a", itemId: "3", itemTitle: "Sakura" }),
+        makePick({ roundIndex: 1, groupId: "b", itemId: "4", itemTitle: "Luffy" }),
+      ];
+
+      render(
+        <PicksSummary label="Saved so far" picks={picks} groupByRound />,
+      );
+
+      // Round 1's three items share one container; round 2's one item is in
+      // its own separate container — not six items flattened into one row.
+      const naruto = screen.getByText("Naruto");
+      const luffy = screen.getByText("Luffy");
+      const round1Container = naruto.closest('[data-testid="picks-round-group"]');
+      const round2Container = luffy.closest('[data-testid="picks-round-group"]');
+      expect(round1Container).toBeInTheDocument();
+      expect(round2Container).toBeInTheDocument();
+      expect(round1Container).not.toBe(round2Container);
+      expect(round1Container).toContainElement(screen.getByText("Sasuke"));
+      expect(round1Container).toContainElement(screen.getByText("Sakura"));
+      expect(round1Container).not.toContainElement(luffy);
+
+      expect(
+        screen.getAllByTestId("picks-round-group"),
+      ).toHaveLength(2);
+    });
+
+    it("counts DONE as rounds, not individual items, once grouped", () => {
+      const picks: Pick[] = [
+        makePick({ roundIndex: 0, groupId: "a", itemId: "1", itemTitle: "Naruto" }),
+        makePick({ roundIndex: 0, groupId: "a", itemId: "2", itemTitle: "Sasuke" }),
+        makePick({ roundIndex: 0, groupId: "a", itemId: "3", itemTitle: "Sakura" }),
+      ];
+
+      render(
+        <PicksSummary
+          label="Saved so far"
+          picks={picks}
+          totalRounds={5}
+          groupByRound
+        />,
+      );
+
+      // One round finished (all three items belong to round 0), 4 to go — NOT
+      // "3 done" (which would be counting items instead of rounds).
+      expect(screen.getByText("1 done, 4 to go")).toBeInTheDocument();
+    });
+
+    it("keeps the plain flat chip row when groupByRound is left off", () => {
+      const picks: Pick[] = [
+        makePick({ roundIndex: 0, groupId: "a", itemTitle: "2016" }),
+        makePick({ roundIndex: 1, groupId: "b", itemTitle: "2017" }),
+      ];
+
+      render(<PicksSummary label="Saved so far" picks={picks} />);
+
+      expect(
+        screen.queryByTestId("picks-round-group"),
+      ).not.toBeInTheDocument();
+    });
+  });
 });
