@@ -59,7 +59,10 @@ export function ModerationPanel() {
   if (status === "unauthenticated") {
     return (
       <>
-        <PageHeader brand crumb={tHeader("moderation")} />
+        <PageHeader
+          back={{ href: "/", label: tHeader("browse") }}
+          crumb={tHeader("moderation")}
+        />
         <div className="mx-auto max-w-md py-16 text-center">
           <Text variant="secondary">{tCommon("loginRequired")}</Text>
           <Button
@@ -95,7 +98,7 @@ export function ModerationPanel() {
   return (
     <>
       <PageHeader
-        brand
+        back={{ href: "/", label: tHeader("browse") }}
         crumb={tHeader("moderation")}
         badge={
           // Reuses Username's IDENTITY_PILL tokens rather than a hardcoded

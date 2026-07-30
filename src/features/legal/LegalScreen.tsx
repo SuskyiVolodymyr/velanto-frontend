@@ -26,6 +26,8 @@ export interface LegalSection {
 export interface LegalScreenProps {
   /** Which document is on screen — drives the toggle's active state. */
   activeDoc: LegalDocId;
+  /** Label for the header's back-to-browse pill (shared `header` namespace). */
+  browseLabel: string;
   heading: string;
   intro: string;
   /** e.g. "Last updated" — paired with {@link lastUpdated} for the date line. */
@@ -69,6 +71,7 @@ function slugify(title: string, index: number): string {
  */
 export function LegalScreen({
   activeDoc,
+  browseLabel,
   heading,
   intro,
   lastUpdatedLabel,
@@ -86,7 +89,7 @@ export function LegalScreen({
 
   return (
     <>
-      <PageHeader brand crumb={heading} />
+      <PageHeader back={{ href: "/", label: browseLabel }} crumb={heading} />
       <main className="mx-auto w-full max-w-[1040px] px-6 py-12">
         <div className="mb-10 flex flex-col gap-5 min-[560px]:flex-row min-[560px]:items-start min-[560px]:justify-between">
           <div className="min-w-0">

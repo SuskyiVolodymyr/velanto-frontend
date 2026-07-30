@@ -35,7 +35,7 @@ export function DocsScreen() {
   return (
     <>
       <PageHeader
-        brand
+        back={{ href: "/", label: th("browse") }}
         crumb={th("docs")}
         trailing={
           <Link

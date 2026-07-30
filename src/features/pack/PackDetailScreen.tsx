@@ -4,7 +4,7 @@ import { cn } from "@/src/shared/lib/cn";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
-import { BackButton } from "@/src/shared/components/BackButton";
+import { PageHeader } from "@/src/shared/components/PageHeader";
 import { PackCoverBanner } from "@/src/features/pack/PackCoverBanner";
 import { PackHeroStats } from "@/src/features/pack/PackHeroStats";
 import { PackHowItPlays } from "@/src/features/pack/PackHowItPlays";
@@ -128,21 +128,21 @@ export function PackDetailScreen({
 
   return (
     <>
-      {/* Sticky action bar: back to browse on the left, share + report + the
-          (secondary) vote control on the right. */}
-      <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/85 px-7 py-3 backdrop-blur-md max-[720px]:px-4">
-        <BackButton href="/" label={tNav("browse")} />
-        <div className="ms-auto flex items-center gap-2.5">
-          {isApproved && <ShareButton path={`/packs/${pack.id}`} compact />}
-          <ReportPackDialog packId={pack.id} />
-          <VoteButtons
-            packId={pack.id}
-            initialLikes={pack.likes}
-            initialDislikes={pack.dislikes}
-            initialMyVote={pack.myVote}
-          />
-        </div>
-      </div>
+      <PageHeader
+        back={{ href: "/", label: tNav("browse") }}
+        trailing={
+          <>
+            {isApproved && <ShareButton path={`/packs/${pack.id}`} compact />}
+            <ReportPackDialog packId={pack.id} />
+            <VoteButtons
+              packId={pack.id}
+              initialLikes={pack.likes}
+              initialDislikes={pack.dislikes}
+              initialMyVote={pack.myVote}
+            />
+          </>
+        }
+      />
 
       <main
         className={cn(

@@ -1,10 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
+import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { LegalScreen } from "./LegalScreen";
 
 describe("LegalScreen", () => {
   const props = {
     activeDoc: "terms" as const,
+    browseLabel: "Browse",
     heading: "Terms of Service",
     intro: "These Terms govern your use of Velanto.",
     lastUpdatedLabel: "Last updated",
@@ -36,6 +38,15 @@ describe("LegalScreen", () => {
       },
     ],
   };
+
+  it("renders a back-to-browse link in the header, not the brand mark", () => {
+    render(<LegalScreen {...props} />);
+    expect(screen.getByRole("link", { name: "Browse" })).toHaveAttribute(
+      "href",
+      "/",
+    );
+    expect(screen.queryByText("VELANTO")).not.toBeInTheDocument();
+  });
 
   it("renders the heading, intro, and the last-updated date", () => {
     render(<LegalScreen {...props} />);

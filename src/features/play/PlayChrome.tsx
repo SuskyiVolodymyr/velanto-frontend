@@ -3,6 +3,7 @@ import { useTranslations } from "next-intl";
 import { ArrowLeft } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
+import { STICKY_HEADER_SHELL_CLASS } from "@/src/shared/lib/sticky-header-shell";
 import type { Pack } from "@/src/shared/types/pack";
 
 export interface PlayChromeProps {
@@ -60,7 +61,7 @@ export function PlayChrome({
   const packMeta = `${tFormat(pack.format)} · ${tPack("roundsCount", { count: totalRounds })}`;
 
   return (
-    <div className="sticky top-0 z-30 flex items-center gap-3 border-b border-border bg-background/85 px-7 py-3 backdrop-blur-md max-[720px]:px-4">
+    <div className={STICKY_HEADER_SHELL_CLASS}>
       <Link
         href={`/packs/${pack.id}`}
         aria-label={t("exit")}

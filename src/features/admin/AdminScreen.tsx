@@ -58,7 +58,10 @@ export function AdminScreen() {
   if (status === "unauthenticated") {
     return (
       <>
-        <PageHeader brand crumb={tHeader("admin")} />
+        <PageHeader
+          back={{ href: "/", label: tHeader("browse") }}
+          crumb={tHeader("admin")}
+        />
         <div className="mx-auto max-w-md py-16 text-center">
           <Text variant="secondary">{tCommon("loginRequired")}</Text>
           <Button
@@ -79,7 +82,7 @@ export function AdminScreen() {
   return (
     <>
       <PageHeader
-        brand
+        back={{ href: "/", label: tHeader("browse") }}
         crumb={tHeader("admin")}
         badge={<IdentityPillBadge role={user?.role} />}
         trailing={

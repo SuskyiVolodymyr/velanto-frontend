@@ -1,8 +1,6 @@
 "use client";
 
 import type { ComponentType } from "react";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/src/shared/lib/cn";
 import { Text } from "@/src/shared/components/Text";
@@ -98,17 +96,8 @@ export function SettingsScreen() {
   return (
     <>
       <PageHeader
-        brand
+        back={{ href: "/", label: tPages("back") }}
         crumb={t("title")}
-        trailing={
-          <Link
-            href="/"
-            className="flex h-[38px] items-center gap-[7px] rounded-[11px] border border-white/[0.12] px-[14px] text-[13px] font-semibold text-foreground transition-colors hover:bg-white/[0.06]"
-          >
-            <ArrowLeft size={15} strokeWidth={2} aria-hidden />
-            {tPages("back")}
-          </Link>
-        }
       />
       <main className="mx-auto w-full max-w-[1080px] flex-1 px-7 py-10">
         <div className="mb-10 max-w-[62ch]">

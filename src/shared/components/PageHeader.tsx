@@ -3,6 +3,7 @@ import Link from "next/link";
 import { BackButton } from "@/src/shared/components/BackButton";
 import { BrandMark } from "@/src/shared/components/BrandMark";
 import { cn } from "@/src/shared/lib/cn";
+import { STICKY_HEADER_SHELL_CLASS } from "@/src/shared/lib/sticky-header-shell";
 
 export interface PageHeaderProps {
   /**
@@ -59,12 +60,7 @@ export function PageHeader({
   className,
 }: PageHeaderProps) {
   return (
-    <header
-      className={cn(
-        "sticky top-0 z-30 flex items-center gap-[13px] border-b border-border bg-background/85 px-7 py-3 backdrop-blur-md max-[720px]:px-4",
-        className,
-      )}
-    >
+    <header className={cn(STICKY_HEADER_SHELL_CLASS, className)}>
       {back && (
         <BackButton
           href={back.href}

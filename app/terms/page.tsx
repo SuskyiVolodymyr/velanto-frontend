@@ -24,9 +24,11 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function TermsPage() {
   const t = await getTranslations("terms");
   const tl = await getTranslations("legal");
+  const th = await getTranslations("header");
   return (
     <LegalScreen
       activeDoc="terms"
+      browseLabel={th("browse")}
       heading={t("heading")}
       intro={t("intro")}
       lastUpdatedLabel={t("lastUpdatedLabel")}
