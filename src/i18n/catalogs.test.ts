@@ -129,12 +129,10 @@ describe("message catalogs", () => {
      * whoever changes the schedule next probably cannot read.
      */
     it("carries no stale hourly retention promise", () => {
-      const bullets = (
-        (
-          (CATALOGS[locale] as Record<string, Record<string, unknown>>).privacy
-            ?.sections as Record<string, { bullets?: Record<string, string> }>
-        )?.["11"]?.bullets ?? {}
-      ) as Record<string, string>;
+      const bullets = ((
+        (CATALOGS[locale] as Record<string, Record<string, unknown>>).privacy
+          ?.sections as Record<string, { bullets?: Record<string, string> }>
+      )?.["11"]?.bullets ?? {}) as Record<string, string>;
 
       const HOURLY = [
         "within the hour",

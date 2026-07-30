@@ -395,7 +395,9 @@ describe("HomeFeed", () => {
       // no longer happens.
       await user.clear(searchBox);
       await waitFor(() => expect(searchBox).toHaveValue(""));
-      expect(await screen.findByText("Best Anime Openings")).toBeInTheDocument();
+      expect(
+        await screen.findByText("Best Anime Openings"),
+      ).toBeInTheDocument();
     });
   });
 
