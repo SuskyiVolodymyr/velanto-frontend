@@ -17,8 +17,13 @@ const DEFAULT_FEED_QUERY = `page=1&limit=${PACKS_FEED_PAGE_SIZE}&sort=popular&wi
  */
 export async function getHomeFeedServer(): Promise<PacksFeedResult | null> {
   try {
+    // Revalidated rather than no-store: this is the most-hit endpoint in the
+    // app (every landing-page view, including bots/crawlers on the open
+    // robots.txt), and every no-store hit was a fresh round trip to Neon,
+    // preventing its free-tier compute from ever auto-suspending. A 60s-stale
+    // feed is an invisible tradeoff for how often this page gets loaded.
     const res = await fetch(`${API_BASE_URL}/packs?${DEFAULT_FEED_QUERY}`, {
-      cache: "no-store",
+      next: { revalidate: 60 },
     });
     if (!res.ok) return null;
     const data = (await res.json()) as {
