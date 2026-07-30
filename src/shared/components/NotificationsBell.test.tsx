@@ -273,7 +273,7 @@ describe("NotificationsBell", () => {
     ).not.toBeDisabled();
   });
 
-  it("polls unread-count again after the interval elapses", async () => {
+  it("does not re-poll unread-count as time passes", async () => {
     vi.useFakeTimers({ shouldAdvanceTime: true });
     mockAuth("authenticated");
     render(<NotificationsBell />);
@@ -282,13 +282,13 @@ describe("NotificationsBell", () => {
     });
     expect(mockedClient.unreadCount).toHaveBeenCalledTimes(1);
     await act(async () => {
-      vi.advanceTimersByTime(30_000);
+      vi.advanceTimersByTime(60 * 60_000);
       await Promise.resolve();
     });
-    expect(mockedClient.unreadCount).toHaveBeenCalledTimes(2);
+    expect(mockedClient.unreadCount).toHaveBeenCalledTimes(1);
   });
 
-  it("polls unread-count again on window focus", async () => {
+  it("does not refetch unread-count on window focus", async () => {
     mockAuth("authenticated");
     render(<NotificationsBell />);
     await waitFor(() =>
@@ -298,8 +298,6 @@ describe("NotificationsBell", () => {
       window.dispatchEvent(new Event("focus"));
       await Promise.resolve();
     });
-    await waitFor(() =>
-      expect(mockedClient.unreadCount).toHaveBeenCalledTimes(2),
-    );
+    expect(mockedClient.unreadCount).toHaveBeenCalledTimes(1);
   });
 });
