@@ -14,6 +14,7 @@ import { PasswordSection } from "@/src/features/settings/PasswordSection";
 import { ConnectedAccountsSection } from "@/src/features/settings/ConnectedAccountsSection";
 import { ApiTokensPointer } from "@/src/features/settings/ApiTokensPointer";
 import { DangerZoneSection } from "@/src/features/settings/DangerZoneSection";
+import { pageContainer } from "@/src/shared/lib/page-container";
 
 interface SettingsSectionEntry {
   /** Stable anchor id (T15/D12) — the TOC link's `href` target. */
@@ -99,7 +100,7 @@ export function SettingsScreen() {
         back={{ href: "/", label: tPages("back") }}
         crumb={t("title")}
       />
-      <main className="mx-auto w-full max-w-[1080px] flex-1 px-7 py-10">
+      <main className={cn(pageContainer(1180), "flex-1 py-10")}>
         <div className="mb-10 max-w-[62ch]">
           <Text as="h1" variant="title" className="mb-3 text-3xl">
             {t("title")}
