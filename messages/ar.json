@@ -480,6 +480,8 @@
     "noMatch": "لا توجد قاعدة تطابق «{query}»",
     "tryPlainer": "جرّب كلمة أبسط — «سبام»، «نسخ»، «حظر».",
     "categoriesHeading": "الفئات",
+    "matchCount": "{count, plural, zero {# مطابقة} one {مطابقة واحدة} two {مطابقتان} few {# مطابقات} many {# مطابقة} other {# مطابقة}}",
+    "ruleCount": "{count, plural, zero {# قاعدة} one {قاعدة واحدة} two {قاعدتان} few {# قواعد} many {# قاعدة} other {# قاعدة}}",
     "reportTitle": "هل خالف أحدهم قاعدة؟",
     "reportNote": "أبلغ عن حزمة أو تعليق أو ملف شخصي — اختر القاعدة التي خُرقت وستصل الشكوى مباشرة إلى أحد المشرفين.",
     "wrongRuleTitle": "تظن أن إحدى القواعد خاطئة؟",
@@ -600,6 +602,7 @@
     "termsTab": "الشروط",
     "privacyTab": "الخصوصية",
     "onThisPage": "في هذه الصفحة",
+    "sectionCount": "{count, plural, zero {# قسم} one {قسم واحد} two {قسمان} few {# أقسام} many {# قسمًا} other {# قسم}}",
     "questionsTitle": "لديك أسئلة حول هذا المستند؟",
     "questionsNote": "يقرأ هذا البريد شخص واحد، ويجيب خلال 30 يومًا."
   },
@@ -924,6 +927,7 @@
     "showingRange": "عرض {first}–{last} من أصل {total, plural, zero {# حزمة} one {حزمة واحدة} two {حزمتان} few {# حزم} many {# حزمة} other {# حزمة}}",
     "card": {
       "hot": "رائج",
+      "playedAt": "لعبتها {when}",
       "roundsPlays": "{rounds, plural, zero {# جولة} one {جولة واحدة} two {جولتان} few {# جولات} many {# جولة} other {# جولة}} · {plays, plural, zero {# لعبة} one {لعبة واحدة} two {لعبتان} few {# ألعاب} many {# لعبة} other {# لعبة}}",
       "playsCount": "{plays, plural, zero {# لعبة} one {لعبة واحدة} two {لعبتان} few {# ألعاب} many {# لعبة} other {# لعبة}}",
       "play": "العب",
@@ -1629,6 +1633,8 @@
     "statsTitle": "الإحصاءات والمقارنات",
     "statsBody": "أثناء لعبك، لا شيء يخبرك كيف اختار الآخرون، فتبقى خياراتك خياراتك وحدك. وبمجرد أن تنتهي، تُفتح كل جولة: العناصر التي اختارها اللاعبون أكثر من غيرها، والنسبة المئوية لمن اتفقوا مع اختيارك. كما تظهر درجة التوافق الإجمالية للحزمة على بطاقتها وصفحة تفاصيلها قبل أن تلعب.",
     "jumpTo": "الانتقال إلى الموضوع",
+    "nextTopic": "التالي",
+    "previousTopic": "السابق",
     "tokenNameLabel": "الاسم",
     "tokenNamePlaceholder": "مثال: Claude Desktop",
     "tokenScopesLabel": "الأذونات",
@@ -1723,6 +1729,23 @@
     "empty": "لم تُنشئ أي حزمة بعد.",
     "emptyFiltered": "لا توجد حزم تطابق هذا المرشّح.",
     "all": "الكل"
+  },
+  "history": {
+    "title": "السجل",
+    "subtitle": "الحزم التي لعبتها، الأحدث أولاً.",
+    "emptyFiltered": "لم تلعب أي حزمة بهذا النمط بعد.",
+    "progress": "الجولة {current} من {total}",
+    "continue": "متابعة",
+    "inProgressBadge": "قيد التقدم",
+    "inProgressTitle": "ما زلت تلعب",
+    "playedTitle": "ما لعبته",
+    "sortOldest": "الأقدم لعبًا",
+    "sortRecent": "لُعبت مؤخرًا",
+    "metaTitle": "السجل — Velanto",
+    "metaDescription": "الحزم التي لعبتها، مرتبة حسب آخر لعب.",
+    "empty": "لم تلعب أي شيء بعد. العب حزمة وستظهر هنا.",
+    "error": "تعذّر تحميل سجلك. حاول مرة أخرى.",
+    "loginRequired": "سجّل الدخول لعرض سجل اللعب الخاص بك."
   },
   "people": {
     "title": "الأشخاص",

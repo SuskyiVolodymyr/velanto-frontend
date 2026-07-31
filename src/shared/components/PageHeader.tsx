@@ -46,7 +46,7 @@ export interface PageHeaderProps {
  * sections that aren't reached by drilling into something (Admin, Docs,
  * Legal, Moderation, Preferences, Updates).
  *
- * Deliberately NOT capped to the reading column (`PACK_CONTAINER`) — the
+ * Deliberately NOT capped to the page column (`pageContainer`) — the
  * mock's own header spans edge to edge regardless of how narrow the page
  * body underneath it is.
  */
@@ -69,7 +69,9 @@ export function PageHeader({
           // to its compact 36px sizing; bare (Rules/Suggestions/Profile's
           // "Browse", nothing else in the left cluster) it stays the
           // default 38px.
-          className={crumb ? "h-9 gap-[7px] rounded-[10px] ps-[9px] pe-3" : undefined}
+          className={
+            crumb ? "h-9 gap-[7px] rounded-[10px] ps-[9px] pe-3" : undefined
+          }
         />
       )}
       {brand && (
@@ -79,9 +81,7 @@ export function PageHeader({
           className="flex flex-none items-center gap-[9px] text-foreground"
         >
           <BrandMark className="h-[26px] w-[26px]" />
-          <span className="text-[13px] font-bold tracking-[.2em]">
-            VELANTO
-          </span>
+          <span className="text-[13px] font-bold tracking-[.2em]">VELANTO</span>
         </Link>
       )}
       {brand && crumb && (

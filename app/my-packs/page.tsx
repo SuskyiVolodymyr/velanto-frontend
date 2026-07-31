@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Text } from "@/src/shared/components/Text";
 import { PageHeader } from "@/src/shared/components/PageHeader";
+import { cn } from "@/src/shared/lib/cn";
+import { PAGE_CONTAINER_FULL } from "@/src/shared/lib/page-container";
 import { MyPacksFeed } from "@/src/features/home/MyPacksFeed";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -26,8 +28,11 @@ export default async function MyPacksPage() {
   const th = await getTranslations("header");
   return (
     <>
-      <PageHeader back={{ href: "/", label: th("browse") }} crumb={t("title")} />
-      <main className="flex-1 px-7 py-10">
+      <PageHeader
+        back={{ href: "/", label: th("browse") }}
+        crumb={t("title")}
+      />
+      <main className={cn(PAGE_CONTAINER_FULL, "flex-1 py-10")}>
         <Text as="h1" variant="title" className="mb-2 text-3xl">
           {t("title")}
         </Text>

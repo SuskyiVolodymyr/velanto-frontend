@@ -25,6 +25,7 @@ export default async function TermsPage() {
   const t = await getTranslations("terms");
   const tl = await getTranslations("legal");
   const th = await getTranslations("header");
+  const sections = t.raw("sections") as LegalSection[];
   return (
     <LegalScreen
       activeDoc="terms"
@@ -33,7 +34,8 @@ export default async function TermsPage() {
       intro={t("intro")}
       lastUpdatedLabel={t("lastUpdatedLabel")}
       lastUpdated={LEGAL_LAST_UPDATED}
-      sections={t.raw("sections") as LegalSection[]}
+      sectionCountLabel={tl("sectionCount", { count: sections.length })}
+      sections={sections}
       termsTabLabel={tl("termsTab")}
       privacyTabLabel={tl("privacyTab")}
       onThisPageLabel={tl("onThisPage")}

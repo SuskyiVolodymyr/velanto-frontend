@@ -19,6 +19,8 @@ import {
   useApprovePack,
   useRejectPack,
 } from "@/src/features/moderation/api/moderation.queries";
+import { cn } from "@/src/shared/lib/cn";
+import { pageContainer } from "@/src/shared/lib/page-container";
 
 /**
  * Query key for a single pack fetched for review. Deliberately its own key
@@ -140,7 +142,9 @@ export function PackReviewScreen({ packId }: { packId: string }) {
           </span>
         }
       />
-      <main className="mx-auto flex w-full max-w-[1180px] flex-1 flex-col gap-6 px-7 py-10">
+      <main
+        className={cn(pageContainer(1240), "flex flex-1 flex-col gap-6 py-10")}
+      >
         <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
           <div className="flex min-w-0 flex-col gap-7">
             <PackReviewSummary pack={pack} />

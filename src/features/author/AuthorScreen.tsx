@@ -22,6 +22,8 @@ import {
   authorQueryOptions,
 } from "./api/author.queries";
 import type { AuthorData } from "./api/author";
+import { cn } from "@/src/shared/lib/cn";
+import { pageContainer } from "@/src/shared/lib/page-container";
 
 export type { AuthorData };
 
@@ -115,7 +117,7 @@ export function AuthorScreen({
           )
         }
       />
-      <div className="mx-auto w-full max-w-[1080px] px-7 py-10">
+      <div className={cn(pageContainer(1320), "py-10")}>
         <AuthorProfileHeader
           authorId={authorId}
           profile={profile}

@@ -25,7 +25,7 @@ import {
 // inside this module.
 import type { Pick as SessionPick } from "@/src/features/play/use-play-session";
 import { LoadingState } from "@/src/shared/components/LoadingState";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { pageContainer } from "@/src/shared/lib/page-container";
 import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
@@ -199,7 +199,7 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
         roundsDone={resume.initialRoundIndex}
       />
 
-      <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
+      <div className={cn(pageContainer(1120), "flex-1 py-10")}>
         {left && right && (
           <>
             <div className="mb-8">

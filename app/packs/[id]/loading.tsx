@@ -1,12 +1,12 @@
 import { Skeleton } from "@/src/shared/components/Skeleton";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { pageContainer } from "@/src/shared/lib/page-container";
 import { cn } from "@/src/shared/lib/cn";
 
 /** Route-level skeleton for a pack detail page: back button, title/meta, cover,
- * and the play/sidebar column, matching the page's shared PACK_CONTAINER layout. */
+ * and the play/sidebar column, matching the page's own 1320px column. */
 export default function PackLoading() {
   return (
-    <div className={cn(PACK_CONTAINER, "pt-6")}>
+    <div className={cn(pageContainer(1320), "pt-6")}>
       <Skeleton className="h-9 w-24" />
       <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
         <div className="flex flex-col gap-4">

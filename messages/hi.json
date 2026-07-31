@@ -480,6 +480,8 @@
     "noMatch": "कोई नियम “{query}” से मेल नहीं खाता",
     "tryPlainer": "कोई सरल शब्द आज़माएँ — “स्पैम”, “कॉपी”, “बैन”।",
     "categoriesHeading": "श्रेणियाँ",
+    "matchCount": "{count, plural, one {# मिलान} other {# मिलान}}",
+    "ruleCount": "{count, plural, one {# नियम} other {# नियम}}",
     "reportTitle": "किसी ने नियम तोड़ा?",
     "reportNote": "किसी पैक, टिप्पणी या प्रोफ़ाइल की रिपोर्ट करें — वह नियम चुनें जो टूटा है, और यह सीधे मॉडरेटर तक पहुँच जाएगी।",
     "wrongRuleTitle": "लगता है कोई नियम गलत है?",
@@ -600,6 +602,7 @@
     "termsTab": "शर्तें",
     "privacyTab": "गोपनीयता",
     "onThisPage": "इस पृष्ठ पर",
+    "sectionCount": "{count, plural, one {# अनुभाग} other {# अनुभाग}}",
     "questionsTitle": "इस दस्तावेज़ के बारे में सवाल हैं?",
     "questionsNote": "यह इनबॉक्स एक व्यक्ति पढ़ता है, और 30 दिनों के भीतर जवाब देता है।"
   },
@@ -924,6 +927,7 @@
     "showingRange": "{total, plural, one {# पैक} other {# पैक}} में से {first}–{last} दिखा रहे हैं",
     "card": {
       "hot": "HOT",
+      "playedAt": "{when} खेला",
       "roundsPlays": "{rounds, plural, one {# राउंड} other {# राउंड}} · {plays, plural, one {# बार खेला गया} other {# बार खेला गया}}",
       "playsCount": "{plays, plural, one {# बार खेला गया} other {# बार खेला गया}}",
       "play": "खेलें",
@@ -1629,6 +1633,8 @@
     "statsTitle": "आँकड़े और तुलना",
     "statsBody": "जब तक आप खेल रहे हैं, कुछ भी आपको नहीं बताता कि दूसरों ने क्या चुना, इसलिए आपके विकल्प आपके ही रहते हैं। समाप्त करते ही हर राउंड खुल जाता है: वे आइटम जिन्हें खिलाड़ियों ने सबसे ज़्यादा चुना, और कितने प्रतिशत लोग आपके चुनाव से सहमत थे। किसी पैक का कुल सहमति स्कोर खेलने से पहले भी उसके कार्ड और विवरण पेज पर दिखता है।",
     "jumpTo": "विषय पर जाएँ",
+    "nextTopic": "अगला",
+    "previousTopic": "पिछला",
     "tokenNameLabel": "नाम",
     "tokenNamePlaceholder": "जैसे, Claude Desktop",
     "tokenScopesLabel": "अनुमतियाँ",
@@ -1723,6 +1729,23 @@
     "empty": "आपने अभी तक कोई पैक नहीं बनाया है।",
     "emptyFiltered": "इस फ़िल्टर से मेल खाने वाला कोई पैक नहीं है।",
     "all": "सभी"
+  },
+  "history": {
+    "title": "इतिहास",
+    "subtitle": "आपके खेले हुए पैक, सबसे नए पहले।",
+    "emptyFiltered": "आपने अभी तक इस फ़ॉर्मैट का कोई पैक नहीं खेला।",
+    "progress": "राउंड {current} / {total}",
+    "continue": "जारी रखें",
+    "inProgressBadge": "जारी",
+    "inProgressTitle": "अभी खेल रहे हैं",
+    "playedTitle": "खेले हुए",
+    "sortOldest": "सबसे पहले खेला",
+    "sortRecent": "हाल में खेला",
+    "metaTitle": "इतिहास — Velanto",
+    "metaDescription": "आपके खेले हुए पैक, हाल में खेले गए क्रम में।",
+    "empty": "आपने अभी तक कुछ नहीं खेला। कोई पैक खेलें और वह यहाँ दिखेगा।",
+    "error": "आपका इतिहास लोड नहीं हो सका। फिर से कोशिश करें।",
+    "loginRequired": "अपना खेल इतिहास देखने के लिए लॉग इन करें।"
   },
   "people": {
     "title": "लोग",

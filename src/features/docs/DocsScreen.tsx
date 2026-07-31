@@ -11,6 +11,9 @@ import {
   type TopicId,
 } from "./DocsSidebar";
 import { DocsArticle } from "./DocsArticle";
+import { latestVersion } from "@/src/features/updates/updates-data";
+import { cn } from "@/src/shared/lib/cn";
+import { pageContainer } from "@/src/shared/lib/page-container";
 
 function topicFromParam(value: string | null): TopicId {
   return TOPICS.includes(value as TopicId) ? (value as TopicId) : DEFAULT_TOPIC;
@@ -31,6 +34,9 @@ export function DocsScreen() {
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const activeTopic = topicFromParam(searchParams.get("topic"));
+  const latest = latestVersion();
+  const selectTopic = (next: TopicId) =>
+    router.replace(`${pathname}?topic=${next}`, { scroll: false });
 
   return (
     <>
@@ -40,20 +46,30 @@ export function DocsScreen() {
         trailing={
           <Link
             href="/updates"
-            className="flex h-[38px] items-center rounded-[11px] border border-white/[0.12] px-[14px] text-[13px] font-semibold text-foreground transition-colors hover:bg-white/[0.06]"
+            className="flex h-[38px] items-center gap-[7px] rounded-[11px] border border-white/[0.12] px-[14px] text-[13px] font-semibold text-foreground transition-colors hover:bg-white/[0.06]"
           >
             {tu("heading")}
+            {/* Mock pairs the link with the shipped version. Read from
+                updates-data rather than pinned here, so cutting a release
+                updates this pill and the changelog in one edit. */}
+            {latest && (
+              <span className="rounded-pill bg-acc/[0.16] px-[7px] py-px text-[10.5px] font-bold text-acc-hover">
+                v{latest}
+              </span>
+            )}
           </Link>
         }
       />
-      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-7 py-10 md:flex-row md:gap-11">
-        <DocsSidebar
-          activeTopic={activeTopic}
-          onSelect={(next) =>
-            router.replace(`${pathname}?topic=${next}`, { scroll: false })
-          }
-        />
-        <DocsArticle activeTopic={activeTopic} />
+      <main
+        className={cn(
+          pageContainer(1320),
+          // Mock breaks the two columns at 820px, not Tailwind's `md` (768) —
+          // the 220px nav plus a 672px article needs the extra room.
+          "flex flex-1 flex-col items-start gap-5 pb-20 pt-[30px] min-[820px]:flex-row min-[820px]:gap-11",
+        )}
+      >
+        <DocsSidebar activeTopic={activeTopic} onSelect={selectTopic} />
+        <DocsArticle activeTopic={activeTopic} onSelect={selectTopic} />
       </main>
     </>
   );

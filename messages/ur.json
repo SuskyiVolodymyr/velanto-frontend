@@ -480,6 +480,8 @@
     "noMatch": "کوئی قاعدہ “{query}” سے مطابقت نہیں رکھتا",
     "tryPlainer": "کوئی آسان لفظ آزمائیں — “سپیم”، “کاپی”، “بین”۔",
     "categoriesHeading": "زمرہ جات",
+    "matchCount": "{count, plural, one {# مماثل} other {# مماثل}}",
+    "ruleCount": "{count, plural, one {# اصول} other {# اصول}}",
     "reportTitle": "کسی نے قاعدہ توڑا؟",
     "reportNote": "کسی پیک، تبصرے یا پروفائل کی رپورٹ کریں — وہ قاعدہ چنیں جو توڑا گیا اور یہ سیدھا موڈریٹر تک پہنچ جائے گی۔",
     "wrongRuleTitle": "لگتا ہے کوئی قاعدہ غلط ہے؟",
@@ -600,6 +602,7 @@
     "termsTab": "شرائط",
     "privacyTab": "رازداری",
     "onThisPage": "اس صفحے پر",
+    "sectionCount": "{count, plural, one {# سیکشن} other {# سیکشنز}}",
     "questionsTitle": "اس دستاویز کے بارے میں سوالات ہیں؟",
     "questionsNote": "یہ ان باکس ایک شخص پڑھتا ہے، اور 30 دن کے اندر جواب دیتا ہے۔"
   },
@@ -924,6 +927,7 @@
     "showingRange": "{total, plural, one {# پیک} other {# پیکس}} میں سے {first}–{last} دکھائے جا رہے ہیں",
     "card": {
       "hot": "HOT",
+      "playedAt": "{when} کھیلا",
       "roundsPlays": "{rounds, plural, one {# راؤنڈ} other {# راؤنڈز}} · {plays, plural, one {# بار کھیلا گیا} other {# بار کھیلا گیا}}",
       "playsCount": "{plays, plural, one {# بار کھیلا گیا} other {# بار کھیلا گیا}}",
       "play": "کھیلیں",
@@ -1629,6 +1633,8 @@
     "statsTitle": "اعداد و شمار اور موازنے",
     "statsBody": "جب تک آپ کھیل رہے ہوں، کوئی چیز آپ کو نہیں بتاتی کہ دوسروں نے کیا چنا، اس لیے آپ کے انتخاب آپ کے اپنے رہتے ہیں۔ ختم کرنے پر ہر راؤنڈ کھل جاتا ہے: وہ آئٹمز جو کھلاڑیوں نے سب سے زیادہ چنے، اور کتنے فیصد آپ کے انتخاب سے متفق تھے۔ کسی پیک کا مجموعی اتفاق اسکور کھیلنے سے پہلے بھی اس کے کارڈ اور تفصیل کے صفحے پر دکھایا جاتا ہے۔",
     "jumpTo": "موضوع پر جائیں",
+    "nextTopic": "اگلا",
+    "previousTopic": "پچھلا",
     "tokenNameLabel": "نام",
     "tokenNamePlaceholder": "مثلاً، Claude Desktop",
     "tokenScopesLabel": "اجازتیں",
@@ -1723,6 +1729,23 @@
     "empty": "آپ نے ابھی تک کوئی پیک نہیں بنایا۔",
     "emptyFiltered": "اس فلٹر سے مماثل کوئی پیک نہیں۔",
     "all": "سب"
+  },
+  "history": {
+    "title": "تاریخ",
+    "subtitle": "آپ کے کھیلے ہوئے پیک، سب سے حالیہ پہلے۔",
+    "emptyFiltered": "آپ نے ابھی تک اس فارمیٹ کا کوئی پیک نہیں کھیلا۔",
+    "progress": "راؤنڈ {current} / {total}",
+    "continue": "جاری رکھیں",
+    "inProgressBadge": "جاری",
+    "inProgressTitle": "ابھی کھیل رہے ہیں",
+    "playedTitle": "کھیلے گئے",
+    "sortOldest": "سب سے پہلے کھیلا",
+    "sortRecent": "حال ہی میں کھیلا",
+    "metaTitle": "تاریخ — Velanto",
+    "metaDescription": "آپ کے کھیلے ہوئے پیک، حالیہ کھیل کی ترتیب میں۔",
+    "empty": "آپ نے ابھی تک کچھ نہیں کھیلا۔ کوئی پیک کھیلیں، وہ یہاں نظر آئے گا۔",
+    "error": "آپ کی تاریخ لوڈ نہیں ہو سکی۔ دوبارہ کوشش کریں۔",
+    "loginRequired": "اپنی کھیل کی تاریخ دیکھنے کے لیے لاگ ان کریں۔"
   },
   "people": {
     "title": "لوگ",

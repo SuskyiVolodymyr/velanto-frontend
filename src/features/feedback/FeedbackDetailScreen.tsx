@@ -26,6 +26,8 @@ import { FeedbackVote } from "@/src/features/feedback/FeedbackVote";
 import { FeedbackComments } from "@/src/features/feedback/FeedbackComments";
 import type { FeedbackStatus } from "@/src/shared/types/feedback";
 import { LOCALE_NAMES, type Locale } from "@/src/i18n/config";
+import { cn } from "@/src/shared/lib/cn";
+import { pageContainer } from "@/src/shared/lib/page-container";
 
 // status value → key in the shared `status` ns (matches the badge labels).
 const STATUS_OPTIONS: { value: FeedbackStatus; key: string }[] = [
@@ -73,7 +75,7 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
           back={{ href: "/feedback", label: t("backToFeedback") }}
           crumb={t("detailCrumb")}
         />
-        <main className="mx-auto w-full max-w-2xl px-7 py-10">
+        <main className={cn(pageContainer(720), "py-10")}>
           <LoadingState label={t("loading")} showLabel />
         </main>
       </>
@@ -132,7 +134,9 @@ export function FeedbackDetailScreen({ postId }: { postId: string }) {
         back={{ href: "/feedback", label: t("backToFeedback") }}
         crumb={t("detailCrumb")}
       />
-      <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-7 py-10">
+      <main
+        className={cn(pageContainer(720), "flex flex-1 flex-col gap-6 py-10")}
+      >
         <div className="flex flex-wrap items-center gap-2">
           <Badge>{t(TOPIC_KEYS[post.topic])}</Badge>
           <StatusBadge kind="feedback" status={post.status} />

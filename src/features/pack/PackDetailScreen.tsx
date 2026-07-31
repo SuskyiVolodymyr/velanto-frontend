@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { pageContainer } from "@/src/shared/lib/page-container";
 import { cn } from "@/src/shared/lib/cn";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
@@ -146,7 +146,7 @@ export function PackDetailScreen({
 
       <main
         className={cn(
-          PACK_CONTAINER,
+          pageContainer(1320),
           "flex-1 pb-16 pt-[18px] max-[720px]:px-4 max-[720px]:pb-10",
         )}
       >

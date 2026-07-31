@@ -14,7 +14,7 @@ import {
 import { PlayChrome } from "@/src/features/play/PlayChrome";
 import { PlayRoundHeader } from "@/src/features/play/PlayRoundHeader";
 import { PlayConfirmBar } from "@/src/features/play/PlayConfirmBar";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { pageContainer } from "@/src/shared/lib/page-container";
 import { CandidateCard } from "@/src/features/play/CandidateCard";
 import { PicksSummary } from "@/src/features/play/PicksSummary";
 import { ResumePlayModal } from "@/src/features/play/ResumePlayModal";
@@ -74,7 +74,7 @@ export function PlayScreen({ pack }: { pack: Pack }) {
         roundsDone={session.savedRoundsDone}
       />
 
-      <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
+      <div className={cn(pageContainer(1120), "flex-1 py-10")}>
         {session.showRound && (
           <>
             <div className="mb-6">
@@ -143,7 +143,9 @@ export function PlayScreen({ pack }: { pack: Pack }) {
               ready={session.canConfirm}
               disabled={!session.canConfirm}
               onConfirm={session.confirmPick}
-              confirmLabel={session.isLastRound ? t("finishRound") : t("nextRound")}
+              confirmLabel={
+                session.isLastRound ? t("finishRound") : t("nextRound")
+              }
             />
           </>
         )}

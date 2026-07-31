@@ -61,8 +61,9 @@ describe("UpdatesScreen", () => {
     ).toBeInTheDocument();
     // "v1.1.0" also appears in the releases rail, so there are two.
     expect(screen.getAllByText("v1.1.0")).toHaveLength(2);
-    // Rendered dd-mm-yyyy via formatDate, not the raw ISO date.
-    expect(screen.getByText("18-07-2026")).toBeInTheDocument();
+    // Rendered dd-mm-yyyy via formatDate, not the raw ISO date. Twice: the
+    // entry's own meta line and its jump-link in the releases rail.
+    expect(screen.getAllByText("18-07-2026")).toHaveLength(2);
     expect(
       screen.getByText("Change your username any time from Settings."),
     ).toBeInTheDocument();
@@ -107,11 +108,13 @@ describe("UpdatesScreen", () => {
   it("renders a sticky releases rail with a jump-link per entry by version", () => {
     render(<UpdatesScreen {...props} />);
     const nav = screen.getByRole("navigation", { name: "Releases" });
-    expect(within(nav).getByRole("link", { name: "v1.1.0" })).toHaveAttribute(
+    // Each rail link reads "v1.1.0 18-07-2026" — the mock pairs the version
+    // with its release date — so match on the version rather than exactly.
+    expect(within(nav).getByRole("link", { name: /v1\.1\.0/ })).toHaveAttribute(
       "href",
       "#v1-1-0",
     );
-    expect(within(nav).getByRole("link", { name: "v1.0.0" })).toHaveAttribute(
+    expect(within(nav).getByRole("link", { name: /v1\.0\.0/ })).toHaveAttribute(
       "href",
       "#v1-0-0",
     );

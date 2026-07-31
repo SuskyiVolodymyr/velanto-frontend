@@ -280,6 +280,8 @@
     "statsTitle": "Stats & comparisons",
     "statsBody": "While you're playing, nothing tells you how others picked, so your choices stay your own. Once you finish, each round opens up: the items players picked most, and the percentage who agreed with your pick. A pack's overall agreement score is also shown on its card and detail page before you play.",
     "jumpTo": "Jump to topic",
+    "nextTopic": "Next",
+    "previousTopic": "Previous",
     "tokenNameLabel": "Name",
     "tokenNamePlaceholder": "e.g. Claude Desktop",
     "tokenScopesLabel": "Permissions",
@@ -576,6 +578,8 @@
     "noMatch": "No rule matches \"{query}\"",
     "tryPlainer": "Try a plainer word — \"spam\", \"copy\", \"ban\".",
     "categoriesHeading": "Categories",
+    "matchCount": "{count, plural, one {# matching} other {# matching}}",
+    "ruleCount": "{count, plural, one {# rule} other {# rules}}",
     "reportTitle": "Something break a rule?",
     "reportNote": "Report on a pack, comment, or profile — pick the rule it breaks and it goes straight to a moderator.",
     "wrongRuleTitle": "Think a rule is wrong?",
@@ -696,6 +700,7 @@
     "termsTab": "Terms",
     "privacyTab": "Privacy",
     "onThisPage": "On this page",
+    "sectionCount": "{count, plural, one {# section} other {# sections}}",
     "questionsTitle": "Questions about this document?",
     "questionsNote": "One person reads that inbox, and answers within 30 days."
   },
@@ -1020,6 +1025,7 @@
     "showingRange": "Showing {first}–{last} of {total, plural, one {# pack} other {# packs}}",
     "card": {
       "hot": "HOT",
+      "playedAt": "Played {when}",
       "roundsPlays": "{rounds, plural, one {# round} other {# rounds}} · {plays, plural, one {# play} other {# plays}}",
       "playsCount": "{plays, plural, one {# play} other {# plays}}",
       "play": "Play",
@@ -1722,6 +1728,23 @@
     "empty": "You haven't created any packs yet.",
     "emptyFiltered": "No packs match this filter.",
     "all": "All"
+  },
+  "history": {
+    "title": "History",
+    "subtitle": "Packs you've played, most recent first.",
+    "emptyFiltered": "You haven't played any packs in this format yet.",
+    "progress": "Round {current} of {total}",
+    "continue": "Continue",
+    "inProgressBadge": "In progress",
+    "inProgressTitle": "Still playing",
+    "playedTitle": "Played",
+    "sortOldest": "Played longest ago",
+    "sortRecent": "Recently played",
+    "metaTitle": "History — Velanto",
+    "metaDescription": "The packs you've played, most recently played first.",
+    "empty": "You haven't played anything yet. Play a pack and it'll show up here.",
+    "error": "Couldn't load your history. Try again.",
+    "loginRequired": "Log in to see your play history."
   },
   "people": {
     "title": "People",

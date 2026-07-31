@@ -480,6 +480,8 @@
     "noMatch": "没有规则匹配“{query}”",
     "tryPlainer": "试试更简单的词——“垃圾信息”“抄袭”“封禁”。",
     "categoriesHeading": "分类",
+    "matchCount": "{count, plural, other {# 条匹配}}",
+    "ruleCount": "{count, plural, other {# 条规则}}",
     "reportTitle": "有人违反规则了吗？",
     "reportNote": "举报一个卡包、评论或个人资料——选择被违反的规则，举报会直接送到管理员手中。",
     "wrongRuleTitle": "觉得某条规则不合理？",
@@ -600,6 +602,7 @@
     "termsTab": "条款",
     "privacyTab": "隐私",
     "onThisPage": "本页内容",
+    "sectionCount": "{count, plural, other {# 个章节}}",
     "questionsTitle": "对本文件有疑问？",
     "questionsNote": "这个收件箱由一个人查看，会在 30 天内回复。"
   },
@@ -924,6 +927,7 @@
     "showingRange": "显示 {first}–{last}，共 {total, plural, other {# 个题包}}",
     "card": {
       "hot": "热门",
+      "playedAt": "{when}玩过",
       "roundsPlays": "{rounds, plural, other {# 轮}} · {plays, plural, other {# 次游玩}}",
       "playsCount": "{plays, plural, other {# 次游玩}}",
       "play": "开玩",
@@ -1629,6 +1633,8 @@
     "statsTitle": "统计与对比",
     "statsBody": "在你游玩期间，任何地方都不会告诉你别人是怎么选的，因此你的选择完全出于自己。完成之后，每一轮都会展开：玩家选得最多的条目，以及与你的选择一致的人数百分比。题包的整体认同分数也会在你游玩前显示在它的卡片和详情页上。",
     "jumpTo": "跳转到主题",
+    "nextTopic": "下一节",
+    "previousTopic": "上一节",
     "tokenNameLabel": "名称",
     "tokenNamePlaceholder": "例如 Claude Desktop",
     "tokenScopesLabel": "权限",
@@ -1723,6 +1729,23 @@
     "empty": "你还没有创建任何题包。",
     "emptyFiltered": "没有符合此筛选条件的题包。",
     "all": "全部"
+  },
+  "history": {
+    "title": "历史记录",
+    "subtitle": "你玩过的卡包，最近的排在前面。",
+    "emptyFiltered": "你还没有玩过这种玩法的卡包。",
+    "progress": "第 {current} / {total} 轮",
+    "continue": "继续",
+    "inProgressBadge": "进行中",
+    "inProgressTitle": "仍在进行",
+    "playedTitle": "已玩过",
+    "sortOldest": "最久之前游玩",
+    "sortRecent": "最近游玩",
+    "metaTitle": "历史记录 — Velanto",
+    "metaDescription": "你玩过的卡包，按最近游玩时间排序。",
+    "empty": "你还没有玩过任何内容。玩一个卡包，它就会出现在这里。",
+    "error": "无法加载历史记录，请重试。",
+    "loginRequired": "登录后即可查看你的游玩历史。"
   },
   "people": {
     "title": "用户",

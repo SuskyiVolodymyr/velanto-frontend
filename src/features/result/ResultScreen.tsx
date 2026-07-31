@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { pageContainer } from "@/src/shared/lib/page-container";
 import { PackHeaderBar } from "@/src/shared/components/PackHeaderBar";
 import { Text } from "@/src/shared/components/Text";
 import { LoadingState } from "@/src/shared/components/LoadingState";
@@ -161,7 +161,12 @@ export function ResultScreen({ pack }: { pack: Pack }) {
     // Mock's `<main data-el="page">`: one column, 20px between the hero and
     // the two-column body, 24px top / 70px bottom padding.
     body = (
-      <div className={cn(PACK_CONTAINER, "flex flex-col gap-5 pb-[70px] pt-6")}>
+      <div
+        className={cn(
+          pageContainer(1240),
+          "flex flex-col gap-5 pb-[70px] pt-6",
+        )}
+      >
         <ResultHero
           format={results.format}
           shared={shared}
@@ -174,15 +179,8 @@ export function ResultScreen({ pack }: { pack: Pack }) {
             `minmax(0,1fr) minmax(0,330px)` grid with an 18px gutter. Below
             the breakpoint it collapses to one column AND drops the aside to
             `display:contents` with the share panel at `order:-1`, so the
-            reading order becomes share → recap → leaderboard.
-
-            The breakpoint is 1440, not the mock's 1040. The mock's page is a
-            fixed 1240px-wide container, so at 1040 its recap column is still
-            ~650px; `PACK_CONTAINER` is 70% of the VIEWPORT, so at a 1040px
-            viewport the same split leaves the recap ~330px — narrow enough
-            that each round's chips wrap one per line. 1440 is where 70%
-            minus the fixed 330px aside reproduces the mock's own proportions. */}
-        <div className="grid grid-cols-1 items-start gap-[18px] min-[1440px]:grid-cols-[minmax(0,1fr)_minmax(0,330px)]">
+            reading order becomes share → recap → leaderboard. */}
+        <div className="grid grid-cols-1 items-start gap-[18px] min-[1040px]:grid-cols-[minmax(0,1fr)_minmax(0,330px)]">
           <div className="min-w-0">{recap}</div>
           {/* `pt-8` starts the aside level with the FIRST ROUND CARD rather
               than with the recap column's own top, which is where the caps
@@ -190,13 +188,13 @@ export function ResultScreen({ pack }: { pack: Pack }) {
               at 12.5px/normal) plus the section's 13px gap. Only at the
               two-column breakpoint; below it the aside is `display:contents`
               and the cards stack, so there is nothing to line up with. */}
-          <aside className="flex flex-col gap-[14px] max-[1439px]:contents min-[1440px]:pt-8">
+          <aside className="flex flex-col gap-[14px] max-[1039px]:contents min-[1040px]:pt-8">
             <ResultAgainPanel
               packId={pack.id}
               status={pack.status}
               picks={picks}
               shared={shared}
-              className="max-[1439px]:order-first"
+              className="max-[1039px]:order-first"
             />
             {board}
           </aside>
@@ -238,7 +236,7 @@ export function ResultScreen({ pack }: { pack: Pack }) {
 function ResultLoadError() {
   const t = useTranslations("result");
   return (
-    <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
+    <div className={cn(pageContainer(1240), "flex-1 py-10")}>
       <div className="rounded-card border border-border bg-surface-card p-[26px_24px] text-center">
         <Text variant="danger">{t("loadError")}</Text>
       </div>

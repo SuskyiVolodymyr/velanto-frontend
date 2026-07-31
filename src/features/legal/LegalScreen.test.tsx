@@ -11,6 +11,7 @@ describe("LegalScreen", () => {
     intro: "These Terms govern your use of Velanto.",
     lastUpdatedLabel: "Last updated",
     lastUpdated: "2026-07-15",
+    sectionCountLabel: "2 sections",
     termsTabLabel: "Terms",
     privacyTabLabel: "Privacy",
     onThisPageLabel: "On this page",
@@ -109,9 +110,9 @@ describe("LegalScreen", () => {
       "aria-current",
       "page",
     );
-    expect(
-      screen.getByRole("link", { name: "Terms" }),
-    ).not.toHaveAttribute("aria-current");
+    expect(screen.getByRole("link", { name: "Terms" })).not.toHaveAttribute(
+      "aria-current",
+    );
   });
 
   it("renders a sticky 'on this page' TOC with a jump-link per section", () => {
@@ -127,9 +128,7 @@ describe("LegalScreen", () => {
     expect(contactLink.getAttribute("href")).toBe("#contact");
     // The href targets a real element on the page.
     expect(
-      document.getElementById(
-        acceptanceLink.getAttribute("href")!.slice(1),
-      ),
+      document.getElementById(acceptanceLink.getAttribute("href")!.slice(1)),
     ).toBeInTheDocument();
   });
 
@@ -144,7 +143,9 @@ describe("LegalScreen", () => {
       }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("One person reads that inbox, and answers within 30 days."),
+      screen.getByText(
+        "One person reads that inbox, and answers within 30 days.",
+      ),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: "support@playvelanto.com" }),

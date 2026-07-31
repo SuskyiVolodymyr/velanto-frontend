@@ -23,7 +23,7 @@ export default async function EditPackPage({
   const pack = await getPackServer(id);
 
   return (
-    // No PACK_CONTAINER here — same reasoning as app/create/page.tsx: it
+    // No page container here — same reasoning as app/create/page.tsx: it
     // would double up with the one CreatePackForm applies to its own sticky
     // bar / body internally, since that bar needs to sit full-bleed. No
     // `pt-10` either — same fix as app/create/page.tsx: dead clearance for a

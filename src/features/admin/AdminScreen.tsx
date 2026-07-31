@@ -15,6 +15,7 @@ import { OverviewTab } from "@/src/features/admin/OverviewTab";
 import { StaffTab } from "@/src/features/admin/StaffTab";
 import { UsersTab } from "@/src/features/admin/UsersTab";
 import { LogsTab } from "@/src/features/admin/LogsTab";
+import { pageContainer } from "@/src/shared/lib/page-container";
 
 type Tab = "overview" | "staff" | "users" | "logs";
 
@@ -97,7 +98,9 @@ export function AdminScreen() {
           </>
         }
       />
-      <main className="mx-auto flex w-full max-w-[1180px] flex-1 flex-col gap-7 px-7 py-11">
+      <main
+        className={cn(pageContainer(1180), "flex flex-1 flex-col gap-7 py-11")}
+      >
         <section>
           <div className="mb-2.5 flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.14em] text-foreground-tertiary">
             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-acc" />

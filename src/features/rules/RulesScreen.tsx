@@ -3,15 +3,20 @@
 import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Search as SearchIcon, X as ClearIcon } from "lucide-react";
+import {
+  Search as SearchIcon,
+  ShieldCheck,
+  X as ClearIcon,
+} from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
 import { SearchField } from "@/src/shared/components/SearchField";
 import { EmptyState } from "@/src/shared/components/EmptyState";
-import { Card } from "@/src/shared/components/Card";
 import { Button, buttonClassName } from "@/src/shared/components/Button";
 import { PageHeader } from "@/src/shared/components/PageHeader";
 import { cn } from "@/src/shared/lib/cn";
 import type { RulesDocument } from "@/src/features/rules/get-rules-server";
+import { ruleCategoryTone } from "@/src/features/rules/rule-category-tone";
+import { pageContainer } from "@/src/shared/lib/page-container";
 
 export interface RulesScreenProps {
   /** Fetched rules, or `null` when the server fetch failed. */
@@ -120,91 +125,99 @@ export function RulesScreen({ rules }: RulesScreenProps) {
           )
         }
       />
-      <main className="mx-auto w-full max-w-[1100px] px-6 py-12">
-        <Text as="h1" variant="title" className="text-3xl mb-3">
-          {t("heading")}
-        </Text>
-        <Text variant="secondary" className="text-base leading-relaxed mb-8">
-          {t("intro")}
-        </Text>
-
-        {rules !== null && (
-          <div className="relative mb-10 max-w-[420px]">
-            <SearchField
-              type="search"
-              aria-label={t("searchPlaceholder")}
-              placeholder={t("searchPlaceholder")}
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              className={hasQuery ? "pe-9" : undefined}
-            />
-            {hasQuery && (
-              <button
-                type="button"
-                onClick={() => setQuery("")}
-                aria-label={t("clearSearch")}
-                className="absolute end-3 top-1/2 -translate-y-1/2 grid h-5 w-5 place-items-center rounded-full text-foreground-tertiary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
-              >
-                <ClearIcon size={14} aria-hidden />
-              </button>
-            )}
-          </div>
+      <main
+        className={cn(
+          pageContainer(1320),
+          "flex flex-col gap-[26px] pb-[90px] pt-7",
         )}
+      >
+        <section className="flex flex-col gap-3.5">
+          <div className="flex items-center gap-3">
+            <span
+              aria-hidden
+              className="grid h-11 w-11 flex-none place-items-center rounded-[14px] bg-acc/[0.12] text-acc-hover"
+            >
+              <ShieldCheck size={22} strokeWidth={1.8} />
+            </span>
+            <h1 className="text-[30px] font-bold leading-tight tracking-[-0.025em] text-foreground">
+              {t("heading")}
+            </h1>
+          </div>
+          <p className="max-w-[68ch] text-[15px] leading-[1.6] text-pretty text-foreground-secondary">
+            {t("intro")}
+          </p>
+
+          {rules !== null && (
+            <div className="relative max-w-[420px]">
+              <SearchField
+                type="search"
+                aria-label={t("searchPlaceholder")}
+                placeholder={t("searchPlaceholder")}
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                className={hasQuery ? "pe-9" : undefined}
+              />
+              {hasQuery && (
+                <button
+                  type="button"
+                  onClick={() => setQuery("")}
+                  aria-label={t("clearSearch")}
+                  className="absolute end-3 top-1/2 grid h-6 w-6 -translate-y-1/2 place-items-center rounded-[7px] bg-white/[0.07] text-foreground-tertiary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
+                >
+                  <ClearIcon size={12} strokeWidth={2.4} aria-hidden />
+                </button>
+              )}
+            </div>
+          )}
+        </section>
 
         {rules === null ? (
           <Text variant="danger" role="alert" className="text-sm">
             {t("loadError")}
           </Text>
         ) : (
-          <div className="grid grid-cols-1 gap-8 min-[940px]:grid-cols-[minmax(0,232px)_minmax(0,1fr)] min-[940px]:items-start">
+          <div className="grid grid-cols-1 items-start gap-[26px] min-[940px]:grid-cols-[minmax(0,232px)_minmax(0,1fr)]">
             <nav
               aria-label={t("categoriesHeading")}
-              className="flex flex-col gap-4 min-[940px]:sticky min-[940px]:top-6"
+              className="flex flex-col gap-[11px] min-[940px]:sticky min-[940px]:top-20"
             >
-              <div className="flex flex-col gap-0.5">
-                <Text
-                  variant="tertiary"
-                  className="mb-1 ps-3 text-[11px] font-semibold tracking-[0.12em]"
-                >
-                  {t("categoriesHeading")}
-                </Text>
-                {/* Sourced from visibleCategories (not the full categories list) so
-                  a jump-link is never advertised for a category the active
-                  search has hidden — renumbered within the filtered set. */}
+              <span className="px-0.5 text-[11px] font-bold uppercase tracking-[0.14em] text-foreground-tertiary">
+                {t("categoriesHeading")}
+              </span>
+              {/* Sourced from visibleCategories (not the full categories list) so
+                a jump-link is never advertised for a category the active
+                search has hidden — renumbered within the filtered set. Wraps
+                into rows below the two-column breakpoint, where the nav sits
+                above the rules as a strip rather than beside them. */}
+              <div className="flex flex-wrap gap-[3px] min-[940px]:flex-col min-[940px]:flex-nowrap">
                 {visibleCategories.map((category, index) => (
                   <a
                     key={category.id}
                     href={`#rules-cat-${category.id}`}
-                    className="flex items-baseline gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-foreground-secondary transition-colors hover:text-foreground hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
+                    className="flex items-center gap-2.5 rounded-[10px] px-[11px] py-[9px] text-[13px] font-semibold text-foreground-secondary transition-colors hover:bg-white/[0.05] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
                   >
                     <span
                       aria-hidden
-                      className="font-mono text-xs text-foreground-tertiary tabular-nums"
+                      className="font-mono text-[11px] tabular-nums text-foreground-tertiary"
                     >
-                      {String(index + 1).padStart(2, "0")}
+                      {index + 1}
                     </span>
                     {category.title}
                   </a>
                 ))}
               </div>
 
-              {/* No `p-*` override — `cn()` is a plain join (not tailwind-merge,
-                see Button.tsx), so it would sit alongside Card's own
-                `p-[18px]` with the winner decided by Tailwind's emit order. */}
-              <Card>
-                <Text as="h3" variant="title" className="mb-1.5 text-sm">
+              <div className="mt-2 flex flex-col gap-2 rounded-[14px] border border-border bg-surface-card p-3.5">
+                <h2 className="text-[12.5px] font-[650] text-foreground">
                   {t("reportTitle")}
-                </Text>
-                <Text
-                  variant="tertiary"
-                  className="text-[12.5px] leading-relaxed"
-                >
+                </h2>
+                <span className="text-[11.5px] leading-[1.5] text-pretty text-foreground-tertiary">
                   {t("reportNote")}
-                </Text>
-              </Card>
+                </span>
+              </div>
             </nav>
 
-            <div className="flex min-w-0 flex-col gap-10">
+            <div className="flex min-w-0 flex-col gap-[30px]">
               {noMatches ? (
                 <EmptyState
                   icon={<SearchIcon size={18} aria-hidden />}
@@ -217,65 +230,92 @@ export function RulesScreen({ rules }: RulesScreenProps) {
                   }
                 />
               ) : (
-                visibleCategories.map((category) => (
-                  <section
-                    key={category.id}
-                    aria-labelledby={`rules-cat-${category.id}`}
-                  >
-                    <Text
-                      as="h2"
-                      id={`rules-cat-${category.id}`}
-                      variant="title"
-                      className="text-xl mb-4"
+                visibleCategories.map((category) => {
+                  const { Icon, tile } = ruleCategoryTone(category.id);
+                  return (
+                    <section
+                      key={category.id}
+                      aria-labelledby={`rules-cat-${category.id}`}
+                      className="flex scroll-mt-[86px] flex-col gap-[13px]"
                     >
-                      {category.title}
-                    </Text>
-                    <ol className="flex flex-col gap-3">
-                      {category.rules.map((rule) => {
-                        const isMatch =
-                          hasQuery && matches(rule.text, trimmedQuery);
-                        return (
-                          <li
-                            key={rule.number}
-                            className={cn(
-                              "flex gap-3 rounded-lg p-2 -m-2",
-                              isMatch && "bg-acc/[0.08] ring-1 ring-acc/30",
-                            )}
-                          >
-                            <span
-                              aria-hidden
-                              className="shrink-0 font-mono text-sm text-foreground-tertiary tabular-nums pt-0.5"
+                      <div className="flex items-center gap-[11px]">
+                        <span
+                          aria-hidden
+                          className={cn(
+                            "grid h-8 w-8 flex-none place-items-center rounded-[10px]",
+                            tile,
+                          )}
+                        >
+                          <Icon size={16} strokeWidth={1.9} />
+                        </span>
+                        <h2
+                          id={`rules-cat-${category.id}`}
+                          className="text-[19px] font-bold tracking-[-0.015em] text-foreground"
+                        >
+                          {category.title}
+                        </h2>
+                        <span className="ms-auto font-mono text-[11.5px] text-foreground-tertiary">
+                          {t(hasQuery ? "matchCount" : "ruleCount", {
+                            count: category.rules.length,
+                          })}
+                        </span>
+                      </div>
+                      <ol className="flex flex-col gap-0.5">
+                        {category.rules.map((rule) => {
+                          const isMatch =
+                            hasQuery && matches(rule.text, trimmedQuery);
+                          return (
+                            <li
+                              key={rule.number}
+                              className={cn(
+                                "flex gap-[13px] rounded-xl border px-[13px] py-3",
+                                isMatch
+                                  ? "border-acc/25 bg-acc/[0.06]"
+                                  : "border-transparent",
+                              )}
                             >
-                              {rule.number}.
-                            </span>
-                            <Text
-                              variant="body"
-                              className="text-[15px] leading-relaxed"
-                            >
-                              {rule.text}
-                            </Text>
-                          </li>
-                        );
-                      })}
-                    </ol>
-                  </section>
-                ))
+                              <span
+                                aria-hidden
+                                className={cn(
+                                  "w-[26px] flex-none pt-px font-mono text-[12.5px] font-bold tabular-nums",
+                                  isMatch
+                                    ? "text-acc-hover"
+                                    : "text-foreground-tertiary",
+                                )}
+                              >
+                                {rule.number}.
+                              </span>
+                              <span className="text-[14.5px] leading-[1.6] text-pretty text-foreground-secondary">
+                                {rule.text}
+                              </span>
+                            </li>
+                          );
+                        })}
+                      </ol>
+                    </section>
+                  );
+                })
               )}
 
-              <Card className="text-center">
-                <Text as="h2" variant="title" className="mb-1.5 text-lg">
-                  {t("wrongRuleTitle")}
-                </Text>
-                <Text
-                  variant="secondary"
-                  className="mx-auto mb-4 max-w-[52ch] text-sm leading-relaxed"
+              <section className="flex flex-wrap items-center gap-3.5 rounded-[18px] border border-border bg-surface-card p-[18px]">
+                <div className="flex min-w-0 flex-col gap-1">
+                  <h2 className="text-[14.5px] font-bold text-foreground">
+                    {t("wrongRuleTitle")}
+                  </h2>
+                  <span className="text-[12.5px] leading-[1.5] text-pretty text-foreground-tertiary">
+                    {t("wrongRuleNote")}
+                  </span>
+                </div>
+                <Link
+                  href="/feedback"
+                  className={cn(
+                    buttonClassName("secondary"),
+                    "ms-auto flex-none",
+                  )}
                 >
-                  {t("wrongRuleNote")}
-                </Text>
-                <Link href="/feedback" className={buttonClassName("secondary")}>
                   {t("openSuggestions")}
                 </Link>
-              </Card>
+              </section>
             </div>
           </div>
         )}

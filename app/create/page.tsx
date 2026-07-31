@@ -10,11 +10,11 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function CreatePage() {
   const t = await getTranslations("pages");
   return (
-    // No PACK_CONTAINER here: CreatePackForm's sticky action bar needs to sit
+    // No page container here: CreatePackForm's sticky action bar needs to sit
     // full-bleed (edge to edge, like PackDetailScreen's own sticky bar), so
     // the width constraint is applied once, per-block, below — not on this
-    // wrapper. Nesting PACK_CONTAINER here AND inside CreatePackForm would
-    // double-apply its `lg:w-[70%]`, squashing the whole page.
+    // wrapper. Nesting a container here AND inside CreatePackForm would double
+    // up the 30px gutter on both sides.
     //
     // No `pt-10` either: that was clearance for a since-removed visible
     // header block (see the h1 comment below) — CreatePackForm's own sticky

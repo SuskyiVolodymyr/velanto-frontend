@@ -22,6 +22,8 @@ import { useAdminUserModeration } from "@/src/features/admin/use-admin-user-mode
 import { UserBanForm } from "@/src/features/admin/UserBanForm";
 import { canActOn } from "@/src/shared/lib/staff-permissions";
 import { formatBytes } from "@/src/shared/lib/format-bytes";
+import { cn } from "@/src/shared/lib/cn";
+import { pageContainer } from "@/src/shared/lib/page-container";
 
 /** A single labelled number tile in the stats grid. */
 // `value` is a ReactNode, not a number: storage reads as a formatted size
@@ -94,7 +96,7 @@ export function AdminUserDetailScreen({ userId }: { userId: string }) {
     return (
       <>
         {header}
-        <div className="mx-auto w-full max-w-5xl px-6 py-8">
+        <div className={cn(pageContainer(1040), "py-8")}>
           <LoadingState label={t("detailLoading")} showLabel />
         </div>
       </>
@@ -105,7 +107,7 @@ export function AdminUserDetailScreen({ userId }: { userId: string }) {
     return (
       <>
         {header}
-        <div className="mx-auto w-full max-w-5xl px-6 py-8">
+        <div className={cn(pageContainer(1040), "py-8")}>
           <Text variant="danger">{t("detailError")}</Text>
         </div>
       </>
@@ -119,7 +121,7 @@ export function AdminUserDetailScreen({ userId }: { userId: string }) {
   return (
     <>
       {header}
-      <div className="mx-auto w-full max-w-5xl px-6 py-8">
+      <div className={cn(pageContainer(1040), "py-8")}>
         {/* Account header */}
         <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
           <div>

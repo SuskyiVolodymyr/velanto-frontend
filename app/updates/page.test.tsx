@@ -18,9 +18,8 @@ vi.mock("next-intl/server", () => ({
         const count = values?.count ?? 0;
         return count === 1 ? "1 change" : `${count} changes`;
       }
-      return template.replace(
-        /\{(\w+)\}/g,
-        (_, name) => String(values?.[name] ?? ""),
+      return template.replace(/\{(\w+)\}/g, (_, name) =>
+        String(values?.[name] ?? ""),
       );
     };
     return t;
@@ -39,7 +38,10 @@ describe("/updates route", () => {
       screen.getByRole("heading", { level: 1, name: "What's new" }),
     ).toBeInTheDocument();
     const nav = screen.getByRole("navigation", { name: "Releases" });
-    expect(within(nav).getByRole("link", { name: "v1.0.0" })).toBeInTheDocument();
+    // Rail links read "v1.0.0 <date>" — match on the version, not exactly.
+    expect(
+      within(nav).getByRole("link", { name: /v1\.0\.0/ }),
+    ).toBeInTheDocument();
     // The most recent entry, 1.8.1, has 4 bullets — exactly PREVIEW_BULLETS,
     // so no "show more" toggle, but the count badge still renders.
     expect(screen.getAllByText("4 changes").length).toBeGreaterThan(0);

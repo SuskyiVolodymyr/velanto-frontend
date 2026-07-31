@@ -21,6 +21,8 @@ import {
   useTopFeedback,
 } from "@/src/features/feedback/api/feedback-list.queries";
 import type { FeedbackListFilters } from "@/src/features/feedback/api/feedback-list";
+import { cn } from "@/src/shared/lib/cn";
+import { pageContainer } from "@/src/shared/lib/page-container";
 
 const SEARCH_DEBOUNCE_MS = 300;
 
@@ -105,7 +107,9 @@ export function FeedbackScreen() {
           </Button>
         }
       />
-      <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-7 py-10">
+      <main
+        className={cn(pageContainer(1120), "flex flex-1 flex-col gap-6 py-10")}
+      >
         <Text as="h1" variant="title" className="text-3xl">
           {t("pageTitle")}
         </Text>

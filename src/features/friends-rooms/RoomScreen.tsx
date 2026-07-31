@@ -6,7 +6,7 @@ import { Loader2, WifiOff } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
 import { PageHeader } from "@/src/shared/components/PageHeader";
 import { useAuth } from "@/src/shared/lib/auth-context";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { pageContainer } from "@/src/shared/lib/page-container";
 import { cn } from "@/src/shared/lib/cn";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import type { Pack } from "@/src/shared/types/pack";
@@ -233,7 +233,9 @@ export function RoomScreen({ roomId }: { roomId: string }) {
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
-  return <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>{children}</div>;
+  return (
+    <div className={cn(pageContainer(1320), "flex-1 py-10")}>{children}</div>
+  );
 }
 
 function RoomEnded({ packId }: { packId: string | null }) {

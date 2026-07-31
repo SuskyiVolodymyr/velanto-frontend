@@ -17,6 +17,8 @@ import {
   useReviewReport,
   useCloseReport,
 } from "@/src/features/moderation/api/report-detail.mutations";
+import { cn } from "@/src/shared/lib/cn";
+import { pageContainer } from "@/src/shared/lib/page-container";
 
 export function ReportDetailScreen({ reportId }: { reportId: string }) {
   const t = useTranslations("moderation");
@@ -100,7 +102,9 @@ export function ReportDetailScreen({ reportId }: { reportId: string }) {
           </span>
         }
       />
-      <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-7 py-10">
+      <main
+        className={cn(pageContainer(720), "flex flex-1 flex-col gap-6 py-10")}
+      >
         <ReportDetailSummary report={report} />
 
         {/* The reported content itself (T7/D8): additive, not blocking — its

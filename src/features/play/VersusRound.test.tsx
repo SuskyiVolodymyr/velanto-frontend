@@ -289,7 +289,7 @@ describe("VersusRound", () => {
   // Deliberate deviation from the mock's literal `repeat(count, 1fr)`: the
   // mock's own demo never shows more than 2 items a side, but create-pack
   // allows up to 8. A fixed column count equal to the item count squeezes
-  // every tile down to a sliver at 8 (PACK_CONTAINER's own width divided 8
+  // every tile down to a sliver at 8 (the page column's own width divided 8
   // ways falls under the auto-fit floor below) — auto-fit instead wraps onto
   // more rows, keeping tiles at a legible minimum width regardless of N.
   it("lays a side's items out in an auto-fit grid, not one column per item", () => {

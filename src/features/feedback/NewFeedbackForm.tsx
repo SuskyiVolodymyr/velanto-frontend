@@ -27,6 +27,8 @@ import { TextField } from "@/src/shared/components/form/TextField";
 import { TextareaField } from "@/src/shared/components/form/TextareaField";
 import { SelectField } from "@/src/shared/components/form/SelectField";
 import { SegmentedField } from "@/src/shared/components/form/SegmentedField";
+import { cn } from "@/src/shared/lib/cn";
+import { pageContainer } from "@/src/shared/lib/page-container";
 
 const TOPIC_ORDER: FeedbackTopic[] = ["bug", "feature", "translation", "other"];
 const VISIBILITY_ORDER: FeedbackVisibility[] = ["everyone", "staff_only"];
@@ -104,7 +106,7 @@ export function NewFeedbackForm() {
 
   if (status === "loading") {
     return (
-      <main className="mx-auto w-full max-w-2xl px-7 py-10">
+      <main className={cn(pageContainer(720), "py-10")}>
         <LoadingState label={t("loading")} showLabel />
       </main>
     );
@@ -113,7 +115,7 @@ export function NewFeedbackForm() {
   if (status === "unauthenticated") return null;
 
   return (
-    <main className="mx-auto w-full max-w-2xl px-7 py-10">
+    <main className={cn(pageContainer(720), "py-10")}>
       <Text as="h1" variant="title" className="mb-6 text-2xl">
         {t("newFeedbackTitle")}
       </Text>

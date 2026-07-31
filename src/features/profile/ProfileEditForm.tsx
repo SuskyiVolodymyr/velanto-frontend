@@ -19,6 +19,8 @@ import { Badge } from "@/src/shared/components/Badge";
 import { BackButton } from "@/src/shared/components/BackButton";
 import { AvatarSection } from "@/src/features/profile/AvatarSection";
 import { ProfileEditPreview } from "@/src/features/profile/ProfileEditPreview";
+import { cn } from "@/src/shared/lib/cn";
+import { pageContainer } from "@/src/shared/lib/page-container";
 
 const BIO_MAX = 280;
 const USERNAME_MAX = 16;
@@ -48,9 +50,9 @@ export function ProfileEditForm() {
   // Server-side error only (409-taken, or any other backend failure from the
   // last submit attempt) — the format error is derived live below instead of
   // being stored here.
-  const [usernameServerError, setUsernameServerError] = useState<
-    string | null
-  >(null);
+  const [usernameServerError, setUsernameServerError] = useState<string | null>(
+    null,
+  );
   // Stays true until the next edit (bio or username) — an inline confirmation,
   // not a toast, per the mock's "stays until the next edit" spec. Unlike
   // CreatePackForm's `justSaved` this deliberately has no auto-revert timer.
@@ -147,7 +149,7 @@ export function ProfileEditForm() {
   return (
     <>
       <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
-        <div className="mx-auto flex w-full max-w-[680px] items-center gap-2 px-7 py-3">
+        <div className={cn(pageContainer(680), "flex items-center gap-2 py-3")}>
           <BackButton href={cancelHref} label={t("backToProfile")} />
           <Text variant="tertiary" aria-hidden className="text-sm">
             /
@@ -158,10 +160,7 @@ export function ProfileEditForm() {
         </div>
       </div>
 
-      <form
-        onSubmit={handleSubmit}
-        className="mx-auto w-full max-w-[680px] px-7 py-10"
-      >
+      <form onSubmit={handleSubmit} className={cn(pageContainer(680), "py-10")}>
         {profileQuery.data && (
           <AvatarSection
             userId={user?.id ?? ""}

@@ -17,7 +17,7 @@ import {
   isPackLanguage,
   type PackLanguage,
 } from "@/src/shared/types/pack-language";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { pageContainer } from "@/src/shared/lib/page-container";
 import { cn } from "@/src/shared/lib/cn";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
@@ -317,10 +317,9 @@ export function CreatePackForm({
             visible, is what keeps that guarantee now that the aside panel
             no longer has its own CTA — see CreateChecklistPanel).
             Background/border are edge-to-edge like PackDetailScreen's own
-            sticky bar, but the CONTENT row is not run through
-            PACK_CONTAINER — the mock's own header (`padding:13px 30px`, no
-            width cap) spans the full bar, not just the page body's 70%
-            reading-width column. */}
+            sticky bar, but the CONTENT row is not run through the page
+            container — the mock's own header (`padding:13px 30px`, no width
+            cap) spans the full bar, not just the 1320px page column. */}
         <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
           <div className="flex items-center gap-3 px-7 py-3 max-[720px]:px-4">
             {/* Boxed back button matching PlayChrome's / the pack surfaces'
@@ -459,7 +458,7 @@ export function CreatePackForm({
           </div>
         </div>
 
-        <div className={cn(PACK_CONTAINER, "flex-1 pb-16 pt-8")}>
+        <div className={cn(pageContainer(1320), "flex-1 pb-16 pt-8")}>
           {/* Builder column first in the DOM, live-preview aside second — the
               opposite of PackDetailScreen's aside-first precedent. There, the
               aside is the play panel, the primary action for a visitor. Here

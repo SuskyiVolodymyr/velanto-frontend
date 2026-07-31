@@ -22,13 +22,16 @@ import { mediaUrl } from "@/src/shared/lib/media-url";
 import { useRoundSelections } from "@/src/features/play/use-round-selections";
 import { usePlayResume } from "@/src/features/play/use-play-resume";
 import { RankedList, type RankedRow } from "@/src/shared/components/RankedList";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { pageContainer } from "@/src/shared/lib/page-container";
 import { PlayChrome } from "@/src/features/play/PlayChrome";
 import { PlayRoundHeader } from "@/src/features/play/PlayRoundHeader";
 import { PlayConfirmBar } from "@/src/features/play/PlayConfirmBar";
 import { ResumePlayModal } from "@/src/features/play/ResumePlayModal";
 import { roundHeading } from "@/src/shared/lib/round-heading";
-import { toneFor, HAIRLINE_OVERLAY_STYLE } from "@/src/features/play/candidate-tone";
+import {
+  toneFor,
+  HAIRLINE_OVERLAY_STYLE,
+} from "@/src/features/play/candidate-tone";
 import type { Pack, Item } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
 
@@ -230,7 +233,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
         roundsDone={resume.initialRoundIndex}
       />
 
-      <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
+      <div className={cn(pageContainer(1120), "flex-1 py-10")}>
         {slot && !isFinished && (
           <>
             <div className="mb-6">
