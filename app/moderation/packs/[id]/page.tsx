@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { PackReviewScreen } from "@/src/features/moderation/PackReviewScreen";
-import { BackButton } from "@/src/shared/components/BackButton";
 
 export const metadata: Metadata = {
   title: "Pack review",
@@ -13,12 +12,7 @@ export default async function PackReviewPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  return (
-    <>
-      <div className="mx-auto w-full max-w-[1180px] px-7 pt-6">
-        <BackButton href="/moderation?tab=packs" />
-      </div>
-      <PackReviewScreen packId={id} />
-    </>
-  );
+  // PackReviewScreen renders its own sticky PageHeader with the back pill — this
+  // route used to stack a second, loose BackButton above it.
+  return <PackReviewScreen packId={id} />;
 }

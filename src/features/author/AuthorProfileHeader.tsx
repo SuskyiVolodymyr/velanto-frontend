@@ -143,7 +143,10 @@ export function AuthorProfileHeader({
             )}
           </div>
 
-          <div className="min-w-0">
+          {/* Name → bio → stats, in that order and in one column. The bio used
+              to sit below the whole hero row, which put it under the avatar and
+              read as a caption for the page rather than for the person. */}
+          <div className="flex min-w-0 flex-col gap-2">
             <Text as="h1" variant="title">
               <Hidden kind="name" id={authorId}>
                 <Username
@@ -156,7 +159,28 @@ export function AuthorProfileHeader({
               </Hidden>
             </Text>
 
-            <div className="mt-3 flex flex-wrap items-baseline gap-x-6 gap-y-2">
+            {profile.bio ? (
+              <Text
+                variant="secondary"
+                className="max-w-[56ch] text-sm leading-[1.55]"
+              >
+                {profile.bio}
+              </Text>
+            ) : (
+              // Only the owner is nudged to add a bio; a visitor just sees none.
+              isOwnProfile && (
+                <Link href="/profile/edit">
+                  <Text
+                    variant="tertiary"
+                    className="max-w-[56ch] text-sm italic"
+                  >
+                    {t("addBioPrompt")}
+                  </Text>
+                </Link>
+              )
+            )}
+
+            <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2 pt-1">
               {stats.map((stat) => {
                 const subTab = stat.onSelect;
                 return subTab ? (
@@ -208,25 +232,6 @@ export function AuthorProfileHeader({
           </div>
         )}
       </div>
-
-      {profile.bio ? (
-        <div className="mb-10">
-          <Text variant="secondary" className="max-w-[56ch] text-sm">
-            {profile.bio}
-          </Text>
-        </div>
-      ) : (
-        // Only the owner is nudged to add a bio; a visitor just sees no bio.
-        isOwnProfile && (
-          <div className="mb-10">
-            <Link href="/profile/edit">
-              <Text variant="tertiary" className="max-w-[56ch] text-sm italic">
-                {t("addBioPrompt")}
-              </Text>
-            </Link>
-          </div>
-        )
-      )}
     </>
   );
 }

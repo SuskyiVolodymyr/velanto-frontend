@@ -3,7 +3,6 @@
 import { useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/src/shared/lib/cn";
-import { Badge } from "@/src/shared/components/Badge";
 import type { PeopleSubTab } from "./AuthorProfileHeader";
 
 export type ProfileTab = "packs" | "people" | "history";
@@ -72,13 +71,13 @@ export function ProfileTabs({
   };
 
   return (
-    <div>
+    <div className="flex flex-col gap-3.5">
       {/* Underlined tabs (per the mock) — physical `gap` not `mr-`, so the
           spacing stays correct under RTL locales without a logical-property
           utility per item. */}
       <div
         role="tablist"
-        className="mb-6 flex gap-[22px] border-b border-border"
+        className="flex flex-wrap gap-[22px] border-b border-white/[0.07]"
       >
         {TABS.map((tabItem) => {
           const selected = activeTab === tabItem;
@@ -93,20 +92,29 @@ export function ProfileTabs({
               aria-controls={`profile-tabpanel-${tabItem}`}
               onClick={() => setActiveTab(tabItem)}
               className={cn(
-                "flex items-center gap-1.5 border-b-2 px-1 py-2.5 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
+                "flex cursor-pointer items-center gap-2 border-b-2 px-1 py-[11px] text-sm font-[650] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
                 selected
                   ? "border-acc text-foreground"
                   : "border-transparent text-foreground-tertiary hover:text-foreground-secondary",
               )}
             >
               {labels[tabItem]}
+              {/* A plain span, not `Badge`: the mock's count is a 6px-radius
+                  mono chip, and Badge is a fully-round 11px/700 pill. Passing
+                  the differences via className would leave BOTH geometries in
+                  the class list — `cn()` is a plain join, not tailwind-merge. */}
               {count !== undefined && (
-                <Badge
-                  variant={selected ? "accent" : "default"}
-                  className="px-1.5 py-0.5 text-[10px] tabular-nums"
+                <span
+                  data-mono
+                  className={cn(
+                    "rounded-[6px] px-[7px] py-0.5 text-[11px] font-bold tabular-nums",
+                    selected
+                      ? "bg-acc/[0.14] text-acc-hover"
+                      : "bg-white/[0.06] text-foreground-tertiary",
+                  )}
                 >
                   {count}
-                </Badge>
+                </span>
               )}
             </button>
           );

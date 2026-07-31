@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Users } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
@@ -36,10 +37,12 @@ export function PeopleTab({
   const [tab, setTab] = useState<PeopleSubTab>(initialSubTab);
 
   return (
-    <div>
+    <div className="flex flex-col gap-3.5">
+      {/* The mock's segmented track: a lifted, bordered rail with the active
+          option filled — not two loose text buttons. */}
       <div
         role="tablist"
-        className="mb-5 inline-flex rounded-[10px] border border-border p-1"
+        className="inline-flex self-start rounded-control border border-white/[0.08] bg-surface-card p-[3px]"
       >
         {TABS.map((kind) => (
           <button
@@ -49,9 +52,9 @@ export function PeopleTab({
             aria-selected={tab === kind}
             onClick={() => setTab(kind)}
             className={cn(
-              "rounded-[7px] px-5 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
+              "h-8 cursor-pointer rounded-[9px] px-3.5 text-[12.5px] font-[650] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
               tab === kind
-                ? "bg-white/[0.06] text-foreground"
+                ? "bg-white/10 text-foreground"
                 : "text-foreground-tertiary hover:text-foreground",
             )}
           >
@@ -89,36 +92,34 @@ function PeopleListPanel({
     );
   }
   if (items.length === 0) {
+    const followers = kind === "followers";
     return (
       <EmptyState
-        title={t(kind === "followers" ? "noFollowers" : "noFollowing")}
+        icon={<Users size={21} strokeWidth={1.8} />}
+        title={t(followers ? "noFollowers" : "noFollowing")}
+        description={t(followers ? "noFollowersNote" : "noFollowingNote")}
       />
     );
   }
 
   return (
-    <div>
+    <div className="flex flex-col gap-3.5">
       {/* min(288px,100%), not a bare 288px: AuthorScreen's container is only
           ~264px wide at a 320px viewport (px-7 both sides), so a hard 288px
           minimum would force horizontal overflow. AuthorPackList's own
           auto-fill grid gets away with a bare 262px only because 262 < 264 —
           this card is wider, so it needs the clamp explicitly. */}
-      <div className="grid grid-cols-[repeat(auto-fill,minmax(min(288px,100%),1fr))] gap-3">
+      <div className="grid grid-cols-[repeat(auto-fill,minmax(min(288px,100%),1fr))] gap-2.5">
         {items.map((user) => (
-          <div
-            key={user.id}
-            className="rounded-tile border border-border bg-surface-card px-3"
-          >
-            <FollowUserRow user={user} />
-          </div>
+          <FollowUserRow key={user.id} user={user} />
         ))}
       </div>
       {query.hasNextPage && (
         <Button
-          variant="secondary"
+          variant="outline"
           loading={query.isFetchingNextPage}
           onClick={() => void query.fetchNextPage()}
-          className="mt-4 w-full"
+          className="self-center"
         >
           {t("followsLoadMore")}
         </Button>

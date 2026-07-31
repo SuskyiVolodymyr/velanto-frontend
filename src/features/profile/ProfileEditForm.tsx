@@ -15,8 +15,7 @@ import { ApiError } from "@/src/shared/lib/api-client";
 import { USERNAME_PATTERN } from "@/src/features/auth/auth.schema";
 import { Text } from "@/src/shared/components/Text";
 import { Button, buttonClassName } from "@/src/shared/components/Button";
-import { Badge } from "@/src/shared/components/Badge";
-import { BackButton } from "@/src/shared/components/BackButton";
+import { PageHeader } from "@/src/shared/components/PageHeader";
 import { AvatarSection } from "@/src/features/profile/AvatarSection";
 import { ProfileEditPreview } from "@/src/features/profile/ProfileEditPreview";
 import { cn } from "@/src/shared/lib/cn";
@@ -24,6 +23,9 @@ import { pageContainer } from "@/src/shared/lib/page-container";
 
 const BIO_MAX = 280;
 const USERNAME_MAX = 16;
+
+/** The mock's small-caps field label, shared by both fields. */
+const FIELD_LABEL = "text-[11.5px] font-[650] text-foreground-secondary";
 
 export function ProfileEditForm() {
   const t = useTranslations("profile");
@@ -148,19 +150,28 @@ export function ProfileEditForm() {
 
   return (
     <>
-      <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
-        <div className={cn(pageContainer(680), "flex items-center gap-2 py-3")}>
-          <BackButton href={cancelHref} label={t("backToProfile")} />
-          <Text variant="tertiary" aria-hidden className="text-sm">
-            /
-          </Text>
-          <Text as="h1" variant="secondary" className="text-sm font-semibold">
-            {t("editProfile")}
-          </Text>
-        </div>
-      </div>
+      {/* The shared header, which is full-bleed by design. It used to wrap its
+          contents in `pageContainer(680)`, which indented the back pill to the
+          centre column — on a wide viewport that left it stranded ~360px from
+          the edge while every other page's header started at the gutter. The
+          `crumb` is a breadcrumb, not the page heading: the <h1> is in the form
+          below, and two would leave the page with no single document title. */}
+      <PageHeader
+        back={{ href: cancelHref, label: t("backToProfile") }}
+        crumb={t("editProfile")}
+      />
 
-      <form onSubmit={handleSubmit} className={cn(pageContainer(680), "py-10")}>
+      <form
+        onSubmit={handleSubmit}
+        className={cn(
+          pageContainer(680),
+          "flex flex-col gap-[26px] pt-[30px] pb-[70px]",
+        )}
+      >
+        <h1 className="text-[26px] font-bold tracking-[-0.02em] text-foreground">
+          {t("editProfile")}
+        </h1>
+
         {profileQuery.data && (
           <AvatarSection
             userId={user?.id ?? ""}
@@ -169,98 +180,113 @@ export function ProfileEditForm() {
           />
         )}
 
-        <div className="mb-2 mt-6 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <label htmlFor="profile-username">
-              <Text variant="secondary" className="text-xs">
-                {tAuth("username")}
-              </Text>
+        <section className="flex flex-col gap-2">
+          <div className="flex items-baseline justify-between gap-2.5">
+            <label htmlFor="profile-username" className={FIELD_LABEL}>
+              {tAuth("username")}
             </label>
+            <span data-mono className="text-[11.5px] text-foreground-tertiary">
+              {username.length}/{USERNAME_MAX}
+            </span>
+          </div>
+          {/* The "@" and the CHANGED pill live INSIDE the field box, so the
+              control reads as one unit rather than a label with decorations
+              floating beside it. */}
+          <div
+            className={cn(
+              "flex h-12 items-center gap-2.5 rounded-[11px] border bg-surface-card px-[13px] transition-colors focus-within:border-acc",
+              usernameError ? "border-danger/50" : "border-white/10",
+            )}
+          >
+            <span aria-hidden className="text-sm text-foreground-tertiary">
+              @
+            </span>
+            <input
+              id="profile-username"
+              type="text"
+              value={username}
+              onChange={handleUsernameChange}
+              onBlur={() => setUsernameTried(true)}
+              maxLength={USERNAME_MAX}
+              autoComplete="username"
+              className="min-w-0 flex-1 bg-transparent text-sm text-foreground outline-none placeholder:text-foreground-tertiary"
+            />
             {usernameDirty && (
-              <Badge variant="accent" className="text-[10px]">
+              <span className="flex-none rounded-[6px] bg-status-pending/[0.14] px-2 py-0.5 text-[10px] font-bold tracking-[0.04em] text-status-pending">
                 {t("usernameChangedPill")}
-              </Badge>
+              </span>
             )}
           </div>
-          <Text variant="tertiary" className="text-xs">
-            {username.length}/{USERNAME_MAX}
-          </Text>
-        </div>
-        <div className="relative">
-          <span
-            aria-hidden
-            className="pointer-events-none absolute inset-y-0 start-3 flex items-center text-sm text-foreground-tertiary"
-          >
-            @
-          </span>
-          <input
-            id="profile-username"
-            type="text"
-            value={username}
-            onChange={handleUsernameChange}
-            onBlur={() => setUsernameTried(true)}
-            maxLength={USERNAME_MAX}
-            autoComplete="username"
-            className="w-full rounded-[10px] border border-border bg-surface p-3 ps-7 text-sm text-foreground placeholder:text-foreground-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
-          />
-        </div>
-        {usernameError && (
-          <Text variant="danger" className="mt-2 text-sm">
-            {usernameError}
-          </Text>
-        )}
+          {/* The rule is shown either way: as an error once you've broken it,
+              as a hint before you have. A field whose constraint only appears
+              after a failure makes you guess.
+              The rule itself is `auth.errors.username` — the SAME string the
+              validator rejects with — rather than a second copy that could
+              drift from USERNAME_PATTERN (it already had: a hand-written hint
+              said "letters and numbers only" while the pattern allows
+              underscores). `usernameHint` carries only the consequence. */}
+          {usernameError ? (
+            <Text variant="danger" className="text-[12.5px] font-semibold">
+              {usernameError}
+            </Text>
+          ) : (
+            <Text variant="tertiary" className="text-xs leading-[1.5]">
+              {tAuthErrors("username")} {t("usernameHint")}
+            </Text>
+          )}
+        </section>
 
-        <label className="mb-2 mt-6 flex items-center justify-between">
-          <Text variant="secondary" className="text-xs">
-            {t("bio")}
-          </Text>
-          <Text variant="tertiary" className="text-xs">
-            {bio.length}/{BIO_MAX}
-          </Text>
-        </label>
-        <textarea
-          value={bio}
-          onChange={handleBioChange}
-          maxLength={BIO_MAX}
-          rows={4}
-          placeholder={t("bioPlaceholder")}
-          className="w-full rounded-[10px] border border-border bg-surface p-3 text-sm text-foreground placeholder:text-foreground-tertiary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
+        <section className="flex flex-col gap-2">
+          <div className="flex items-baseline justify-between gap-2.5">
+            <label htmlFor="profile-bio" className={FIELD_LABEL}>
+              {t("bio")}
+            </label>
+            <span data-mono className="text-[11.5px] text-foreground-tertiary">
+              {bio.length}/{BIO_MAX}
+            </span>
+          </div>
+          <textarea
+            id="profile-bio"
+            value={bio}
+            onChange={handleBioChange}
+            maxLength={BIO_MAX}
+            rows={4}
+            placeholder={t("bioPlaceholder")}
+            className="resize-y rounded-[11px] border border-white/10 bg-surface-card p-[13px] text-sm leading-[1.6] text-foreground outline-none transition-colors placeholder:text-foreground-tertiary focus-visible:border-acc"
+          />
+        </section>
+
+        <ProfileEditPreview
+          username={username}
+          bio={bio}
+          role={profileQuery.data?.role}
+          trusted={profileQuery.data?.trusted}
+          avatarKey={profileQuery.data?.avatarKey}
         />
 
-        <div className="mt-6">
-          <ProfileEditPreview
-            username={username}
-            bio={bio}
-            role={profileQuery.data?.role}
-            trusted={profileQuery.data?.trusted}
-            avatarKey={profileQuery.data?.avatarKey}
-          />
-        </div>
-
         {saveError && (
-          <Text variant="danger" className="mt-3 text-sm">
+          <Text variant="danger" className="text-sm">
             {saveError}
           </Text>
         )}
 
-        <div className="mt-6 flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-[11px]">
           <Button type="submit" loading={pending} disabled={!canSave}>
             {pending ? t("saving") : t("save")}
           </Button>
           <Link href={cancelHref} className={buttonClassName("outline")}>
             {t("cancel")}
           </Link>
+          {saved && (
+            <p
+              role="status"
+              className="flex items-center gap-[7px] text-[13px] font-[650] text-[#7ee7b4]"
+            >
+              <Check size={15} strokeWidth={2.6} aria-hidden />
+              {t("editSaved")}
+            </p>
+          )}
         </div>
-
-        {saved && (
-          <p
-            role="status"
-            className="mt-3 flex items-center gap-1.5 text-sm font-semibold text-acc"
-          >
-            <Check size={16} aria-hidden />
-            {t("editSaved")}
-          </p>
-        )}
       </form>
     </>
   );

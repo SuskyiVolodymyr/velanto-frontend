@@ -199,16 +199,16 @@ describe("AvatarSection", () => {
   it("shows the replace-photo copy once an avatar is set", () => {
     renderSection("media/avatar/old.webp");
     expect(screen.getByText("Replace photo")).toBeInTheDocument();
-    expect(
-      screen.getByLabelText("Replace photo"),
-    ).toBeInTheDocument();
+    expect(screen.getByLabelText("Replace photo")).toBeInTheDocument();
   });
 
   it("solidifies the border and shows drop-to-upload copy while dragging over the zone", () => {
     renderSection(null);
-    const zone = screen.getByText("Drag a photo here or click").closest(
-      "label",
-    ) as HTMLLabelElement;
+    // The whole card is the drop target now (the <label> wraps only the pick
+    // button, so a click on "Remove photo" can't open the file picker).
+    const zone = screen
+      .getByText("Drag a photo here or click")
+      .closest("section") as HTMLElement;
 
     fireEvent.dragOver(zone);
 
@@ -218,9 +218,11 @@ describe("AvatarSection", () => {
 
   it("reverts to the default copy when the drag leaves the zone", () => {
     renderSection(null);
-    const zone = screen.getByText("Drag a photo here or click").closest(
-      "label",
-    ) as HTMLLabelElement;
+    // The whole card is the drop target now (the <label> wraps only the pick
+    // button, so a click on "Remove photo" can't open the file picker).
+    const zone = screen
+      .getByText("Drag a photo here or click")
+      .closest("section") as HTMLElement;
 
     fireEvent.dragOver(zone);
     expect(screen.getByText("Drop to upload")).toBeInTheDocument();
@@ -231,9 +233,11 @@ describe("AvatarSection", () => {
 
   it("routes a dropped file through the same validation as a picked one", async () => {
     renderSection(null);
-    const zone = screen.getByText("Drag a photo here or click").closest(
-      "label",
-    ) as HTMLLabelElement;
+    // The whole card is the drop target now (the <label> wraps only the pick
+    // button, so a click on "Remove photo" can't open the file picker).
+    const zone = screen
+      .getByText("Drag a photo here or click")
+      .closest("section") as HTMLElement;
 
     fireEvent.drop(zone, {
       dataTransfer: {
@@ -249,9 +253,11 @@ describe("AvatarSection", () => {
 
   it("opens the crop modal for a valid dropped image", async () => {
     renderSection(null);
-    const zone = screen.getByText("Drag a photo here or click").closest(
-      "label",
-    ) as HTMLLabelElement;
+    // The whole card is the drop target now (the <label> wraps only the pick
+    // button, so a click on "Remove photo" can't open the file picker).
+    const zone = screen
+      .getByText("Drag a photo here or click")
+      .closest("section") as HTMLElement;
 
     fireEvent.drop(zone, {
       dataTransfer: { files: [pngFile()] },
