@@ -107,7 +107,13 @@
     "reportedUserComments": "تبصرے",
     "reportedUserReportsAgainst": "اُن کے خلاف رپورٹس",
     "reportedUserReportsFiled": "درج کردہ رپورٹس",
-    "reportedUserRestricted": "رپورٹ شدہ اکاؤنٹ کی تفصیلات صرف مینیجرز اور ایڈمنز دیکھ سکتے ہیں۔"
+    "reportedUserRestricted": "رپورٹ شدہ اکاؤنٹ کی تفصیلات صرف مینیجرز اور ایڈمنز دیکھ سکتے ہیں۔",
+    "otherReportsHeading": "اس ہدف کے بارے میں دیگر رپورٹس",
+    "otherReportsLoading": "رپورٹ کی تاریخ لوڈ ہو رہی ہے…",
+    "otherReportsError": "رپورٹ کی تاریخ لوڈ نہیں ہو سکی۔",
+    "otherReportsNone": "اس ہدف کے بارے میں کوئی اور رپورٹ نہیں ہے۔",
+    "otherReportsBy": "بذریعہ {reporter}",
+    "otherReportsMore": "{total} دیگر رپورٹس میں سے {shown} دکھائی جا رہی ہیں۔"
   },
   "admin": {
     "panelEyebrow": "ایڈمن پینل",
@@ -1093,32 +1099,36 @@
     "randomPoolLabel": "بے ترتیب پول",
     "acrossPlays": "{count, plural, one {# بار کھیلا گیا} other {# بار کھیلا گیا}}",
     "report": {
-      "button": "رپورٹ کریں",
-      "buttonReported": "رپورٹ کر دی گئی",
       "title": "اس پیک کی رپورٹ کریں",
-      "reasonLabel": "وجہ",
-      "reasonPlaceholder": "ایک وجہ منتخب کریں",
       "reasons": {
         "inappropriate": "نامناسب یا قابل اعتراض مواد",
         "copyright": "کاپی رائٹ یا ملکیت کا مسئلہ",
         "spam": "اسپیم یا گمراہ کن",
         "other": "کچھ اور"
-      },
-      "commentLabel": "اضافی تفصیلات (اختیاری)",
-      "commentPlaceholder": "کچھ بھی جو ماڈریٹر کو اس کا جائزہ لینے میں مدد دے",
-      "submit": "رپورٹ جمع کرائیں",
-      "error": "رپورٹ جمع نہیں ہو سکی۔ دوبارہ کوشش کریں۔"
+      }
     },
     "reportComment": {
-      "title": "@{username} کی شکایت کریں",
       "scopeNote": "شکایت اکاؤنٹ کے خلاف درج ہوتی ہے۔ تبصرہ نیچے نقل کیا گیا ہے تاکہ موڈریٹر اسے ڈھونڈ سکے۔",
-      "quote": "تبصرہ {id} کے بارے میں:\n\n«{body}»",
-      "reasons": {
-        "harassment": "ہراسانی یا بدسلوکی",
-        "impersonation": "کسی اور کا روپ دھارنا",
-        "spam": "سپیم یا فراڈ",
-        "other": "کچھ اور"
-      }
+      "quote": "تبصرہ {id} کے بارے میں:\n\n«{body}»"
+    }
+  },
+  "report": {
+    "button": "رپورٹ کریں",
+    "buttonReported": "رپورٹ کر دی گئی",
+    "reasonLabel": "وجہ",
+    "reasonPlaceholder": "ایک وجہ منتخب کریں",
+    "commentLabel": "اضافی تفصیلات (اختیاری)",
+    "commentPlaceholder": "کچھ بھی جو ماڈریٹر کو اس کا جائزہ لینے میں مدد دے",
+    "submit": "رپورٹ جمع کرائیں",
+    "error": "رپورٹ جمع نہیں ہو سکی۔ دوبارہ کوشش کریں۔",
+    "buttonUser": "صارف کی رپورٹ کریں",
+    "userTitle": "@{username} کی شکایت کریں",
+    "userNote": "رپورٹس نگرانی ٹیم کو جاتی ہیں۔ آپ کا صارف نام رپورٹ کے ساتھ منسلک ہوتا ہے۔",
+    "userReasons": {
+      "harassment": "ہراسانی یا بدسلوکی",
+      "impersonation": "کسی اور کا روپ دھارنا",
+      "spam": "سپیم یا فراڈ",
+      "other": "کچھ اور"
     }
   },
   "share": {

@@ -24,6 +24,19 @@ describe("reportsClient", () => {
     );
   });
 
+  it("list() passes targetId through for a single target's report history", async () => {
+    mockedApiClient.get.mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 10,
+    });
+    await reportsClient.list({ targetId: "user-1", limit: 10 });
+    expect(mockedApiClient.get).toHaveBeenCalledWith(
+      "/reports?targetId=user-1&limit=10",
+    );
+  });
+
   it("list() omits query params when no filters given", async () => {
     mockedApiClient.get.mockResolvedValue({
       items: [],

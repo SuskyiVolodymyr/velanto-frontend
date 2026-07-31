@@ -62,6 +62,7 @@ const packReport = {
   reason: "spam",
   comment: "looks fake",
   targetId: "pack-1",
+  targetLabel: "Best Anime Openings",
   roundIndex: null,
   reporterId: "u1",
   reporterUsername: "reporter1",
@@ -76,6 +77,7 @@ const userReport = {
   id: "r2",
   type: "user" as const,
   targetId: "user-1",
+  targetLabel: "suspect",
   reason: "harassment",
 };
 
@@ -201,6 +203,13 @@ describe("ReportDetailScreen", () => {
     // override these per-case.
     mockedPacksClient.getById.mockResolvedValue(reportedPack());
     mockedAdminClient.userDetail.mockResolvedValue(reportedUser());
+    // Same for the target's report history: additive, fires on every render.
+    mockedReportsClient.list.mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 10,
+    });
   });
 
   it("shows a not-found message when the report doesn't exist", async () => {
@@ -504,5 +513,86 @@ describe("ReportDetailScreen", () => {
     expect(
       await screen.findByText(/couldn't load this report's content/i),
     ).toBeInTheDocument();
+  });
+
+  describe("other reports about the same target", () => {
+    it("lists them, keyed on the target rather than the report", async () => {
+      mockAuth("moderator");
+      mockedReportsClient.getById.mockResolvedValue(userReport);
+      mockedReportsClient.list.mockResolvedValue({
+        items: [
+          userReport,
+          { ...userReport, id: "r9", reason: "spam", reporterUsername: "mia" },
+        ],
+        total: 2,
+        page: 1,
+        limit: 10,
+      });
+      renderScreen(<ReportDetailScreen reportId="r2" />);
+
+      expect(await screen.findByText("Spam or scam")).toBeInTheDocument();
+      expect(screen.getByText("by mia")).toBeInTheDocument();
+      expect(mockedReportsClient.list).toHaveBeenCalledWith(
+        expect.objectContaining({ targetId: "user-1" }),
+      );
+    });
+
+    // The endpoint has no "exclude" parameter, so the report being viewed comes
+    // back in its own history — listing it again would read as a second report.
+    it("drops the report being viewed from its own history", async () => {
+      mockAuth("moderator");
+      mockedReportsClient.getById.mockResolvedValue(userReport);
+      mockedReportsClient.list.mockResolvedValue({
+        items: [userReport],
+        total: 1,
+        page: 1,
+        limit: 10,
+      });
+      renderScreen(<ReportDetailScreen reportId="r2" />);
+
+      expect(
+        await screen.findByText("No other reports about this target."),
+      ).toBeInTheDocument();
+    });
+
+    it("is available to a plain moderator, unlike the account summary", async () => {
+      mockAuth("moderator");
+      mockedReportsClient.getById.mockResolvedValue(userReport);
+      mockedReportsClient.list.mockResolvedValue({
+        items: [
+          userReport,
+          { ...userReport, id: "r9", reason: "spam", reporterUsername: "mia" },
+        ],
+        total: 2,
+        page: 1,
+        limit: 10,
+      });
+      renderScreen(<ReportDetailScreen reportId="r2" />);
+
+      expect(await screen.findByText("by mia")).toBeInTheDocument();
+      expect(
+        screen.getByText(
+          "Only managers and admins can view reported account details.",
+        ),
+      ).toBeInTheDocument();
+    });
+
+    it("says how many are hidden when the target has more than one page of history", async () => {
+      mockAuth("moderator");
+      mockedReportsClient.getById.mockResolvedValue(userReport);
+      mockedReportsClient.list.mockResolvedValue({
+        items: [
+          { ...userReport, id: "r9", reason: "spam", reporterUsername: "mia" },
+        ],
+        total: 31,
+        page: 1,
+        limit: 10,
+      });
+      renderScreen(<ReportDetailScreen reportId="r2" />);
+
+      expect(
+        await screen.findByText("Showing 1 of 30 other reports."),
+      ).toBeInTheDocument();
+    });
   });
 });

@@ -107,7 +107,13 @@
     "reportedUserComments": "Comments",
     "reportedUserReportsAgainst": "Reports against",
     "reportedUserReportsFiled": "Reports filed",
-    "reportedUserRestricted": "Only managers and admins can view reported account details."
+    "reportedUserRestricted": "Only managers and admins can view reported account details.",
+    "otherReportsHeading": "Other reports about this target",
+    "otherReportsLoading": "Loading report history…",
+    "otherReportsError": "Couldn't load the report history.",
+    "otherReportsNone": "No other reports about this target.",
+    "otherReportsBy": "by {reporter}",
+    "otherReportsMore": "Showing {shown} of {total} other reports."
   },
   "admin": {
     "panelEyebrow": "Admin panel",
@@ -1191,32 +1197,36 @@
     "randomPoolLabel": "Random pool",
     "acrossPlays": "across {count, plural, one {# play} other {# plays}}",
     "report": {
-      "button": "Report",
-      "buttonReported": "Reported",
       "title": "Report this pack",
-      "reasonLabel": "Reason",
-      "reasonPlaceholder": "Select a reason",
       "reasons": {
         "inappropriate": "Inappropriate or offensive content",
         "copyright": "Copyright or ownership issue",
         "spam": "Spam or misleading",
         "other": "Something else"
-      },
-      "commentLabel": "Additional details (optional)",
-      "commentPlaceholder": "Anything that helps a moderator review this",
-      "submit": "Submit report",
-      "error": "Couldn't submit the report. Try again."
+      }
     },
     "reportComment": {
-      "title": "Report @{username}",
       "scopeNote": "Reports are filed against the account. The comment is quoted below so a moderator can find it.",
-      "quote": "About comment {id}:\n\n“{body}”",
-      "reasons": {
-        "harassment": "Harassment or abuse",
-        "impersonation": "Impersonation",
-        "spam": "Spam or scam",
-        "other": "Something else"
-      }
+      "quote": "About comment {id}:\n\n“{body}”"
+    }
+  },
+  "report": {
+    "button": "Report",
+    "buttonReported": "Reported",
+    "reasonLabel": "Reason",
+    "reasonPlaceholder": "Select a reason",
+    "commentLabel": "Additional details (optional)",
+    "commentPlaceholder": "Anything that helps a moderator review this",
+    "submit": "Submit report",
+    "error": "Couldn't submit the report. Try again.",
+    "buttonUser": "Report user",
+    "userTitle": "Report @{username}",
+    "userNote": "Reports go to the moderation team. Your username is attached to the report.",
+    "userReasons": {
+      "harassment": "Harassment or abuse",
+      "impersonation": "Impersonation",
+      "spam": "Spam or scam",
+      "other": "Something else"
     }
   },
   "share": {

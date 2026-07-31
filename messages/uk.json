@@ -107,7 +107,13 @@
     "reportedUserComments": "Коментарі",
     "reportedUserReportsAgainst": "Скарги на нього",
     "reportedUserReportsFiled": "Подані скарги",
-    "reportedUserRestricted": "Переглядати дані акаунта під скаргою можуть лише менеджери та адміністратори."
+    "reportedUserRestricted": "Переглядати дані акаунта під скаргою можуть лише менеджери та адміністратори.",
+    "otherReportsHeading": "Інші скарги на цей обʼєкт",
+    "otherReportsLoading": "Завантаження історії скарг…",
+    "otherReportsError": "Не вдалося завантажити історію скарг.",
+    "otherReportsNone": "Інших скарг на цей обʼєкт немає.",
+    "otherReportsBy": "від {reporter}",
+    "otherReportsMore": "Показано {shown} із {total} інших скарг."
   },
   "admin": {
     "panelEyebrow": "Панель адміністратора",
@@ -1093,32 +1099,36 @@
     "randomPoolLabel": "Випадковий пул",
     "acrossPlays": "{count, plural, one {# гра} few {# ігри} many {# ігор} other {# гри}} усього",
     "report": {
-      "button": "Поскаржитись",
-      "buttonReported": "Скаргу надіслано",
       "title": "Поскаржитися на цей пак",
-      "reasonLabel": "Причина",
-      "reasonPlaceholder": "Оберіть причину",
       "reasons": {
         "inappropriate": "Неприйнятний або образливий вміст",
         "copyright": "Проблема з авторськими правами чи власністю",
         "spam": "Спам або оманливий вміст",
         "other": "Щось інше"
-      },
-      "commentLabel": "Додаткові деталі (необов'язково)",
-      "commentPlaceholder": "Усе, що допоможе модератору розібратися",
-      "submit": "Надіслати скаргу",
-      "error": "Не вдалося надіслати скаргу. Спробуйте ще раз."
+      }
     },
     "reportComment": {
-      "title": "Поскаржитися на @{username}",
       "scopeNote": "Скарга подається на обліковий запис. Коментар процитовано нижче, щоб модератор його знайшов.",
-      "quote": "Про коментар {id}:\n\n«{body}»",
-      "reasons": {
-        "harassment": "Цькування або образи",
-        "impersonation": "Видавання себе за іншого",
-        "spam": "Спам або шахрайство",
-        "other": "Щось інше"
-      }
+      "quote": "Про коментар {id}:\n\n«{body}»"
+    }
+  },
+  "report": {
+    "button": "Поскаржитись",
+    "buttonReported": "Скаргу надіслано",
+    "reasonLabel": "Причина",
+    "reasonPlaceholder": "Оберіть причину",
+    "commentLabel": "Додаткові деталі (необов'язково)",
+    "commentPlaceholder": "Усе, що допоможе модератору розібратися",
+    "submit": "Надіслати скаргу",
+    "error": "Не вдалося надіслати скаргу. Спробуйте ще раз.",
+    "buttonUser": "Поскаржитися на користувача",
+    "userTitle": "Поскаржитися на @{username}",
+    "userNote": "Скарги розглядає команда модерації. До скарги додається ваше імʼя користувача.",
+    "userReasons": {
+      "harassment": "Цькування або образи",
+      "impersonation": "Видавання себе за іншого",
+      "spam": "Спам або шахрайство",
+      "other": "Щось інше"
     }
   },
   "share": {

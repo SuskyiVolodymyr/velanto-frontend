@@ -107,7 +107,13 @@
     "reportedUserComments": "التعليقات",
     "reportedUserReportsAgainst": "البلاغات ضده",
     "reportedUserReportsFiled": "البلاغات المُقدَّمة",
-    "reportedUserRestricted": "لا يمكن عرض تفاصيل الحساب المُبلَّغ عنه إلا للمديرين والمشرفين."
+    "reportedUserRestricted": "لا يمكن عرض تفاصيل الحساب المُبلَّغ عنه إلا للمديرين والمشرفين.",
+    "otherReportsHeading": "بلاغات أخرى عن هذا الهدف",
+    "otherReportsLoading": "جارٍ تحميل سجل البلاغات…",
+    "otherReportsError": "تعذّر تحميل سجل البلاغات.",
+    "otherReportsNone": "لا توجد بلاغات أخرى عن هذا الهدف.",
+    "otherReportsBy": "بواسطة {reporter}",
+    "otherReportsMore": "عرض {shown} من {total} بلاغًا آخر."
   },
   "admin": {
     "panelEyebrow": "لوحة الإدارة",
@@ -1093,32 +1099,36 @@
     "randomPoolLabel": "مجموعة عشوائية",
     "acrossPlays": "عبر {count, plural, zero {# لعبة} one {لعبة واحدة} two {لعبتين} few {# ألعاب} many {# لعبة} other {# لعبة}}",
     "report": {
-      "button": "إبلاغ",
-      "buttonReported": "تم الإبلاغ",
       "title": "الإبلاغ عن هذه الحزمة",
-      "reasonLabel": "السبب",
-      "reasonPlaceholder": "اختر سببًا",
       "reasons": {
         "inappropriate": "محتوى غير لائق أو مسيء",
         "copyright": "مشكلة في حقوق النشر أو الملكية",
         "spam": "محتوى مزعج أو مضلل",
         "other": "شيء آخر"
-      },
-      "commentLabel": "تفاصيل إضافية (اختياري)",
-      "commentPlaceholder": "أي شيء يساعد المشرف على مراجعة هذا",
-      "submit": "إرسال البلاغ",
-      "error": "تعذّر إرسال البلاغ. حاول مرة أخرى."
+      }
     },
     "reportComment": {
-      "title": "الإبلاغ عن @{username}",
       "scopeNote": "تُقدَّم البلاغات ضد الحساب. التعليق مقتبس أدناه ليتمكن المشرف من العثور عليه.",
-      "quote": "بخصوص التعليق {id}:\n\n«{body}»",
-      "reasons": {
-        "harassment": "تحرّش أو إساءة",
-        "impersonation": "انتحال شخصية",
-        "spam": "رسائل مزعجة أو احتيال",
-        "other": "شيء آخر"
-      }
+      "quote": "بخصوص التعليق {id}:\n\n«{body}»"
+    }
+  },
+  "report": {
+    "button": "إبلاغ",
+    "buttonReported": "تم الإبلاغ",
+    "reasonLabel": "السبب",
+    "reasonPlaceholder": "اختر سببًا",
+    "commentLabel": "تفاصيل إضافية (اختياري)",
+    "commentPlaceholder": "أي شيء يساعد المشرف على مراجعة هذا",
+    "submit": "إرسال البلاغ",
+    "error": "تعذّر إرسال البلاغ. حاول مرة أخرى.",
+    "buttonUser": "الإبلاغ عن المستخدم",
+    "userTitle": "الإبلاغ عن @{username}",
+    "userNote": "تُرسل البلاغات إلى فريق الإشراف، ويُرفق اسم المستخدم الخاص بك مع البلاغ.",
+    "userReasons": {
+      "harassment": "تحرّش أو إساءة",
+      "impersonation": "انتحال شخصية",
+      "spam": "رسائل مزعجة أو احتيال",
+      "other": "شيء آخر"
     }
   },
   "share": {

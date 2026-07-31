@@ -107,7 +107,13 @@
     "reportedUserComments": "टिप्पणियाँ",
     "reportedUserReportsAgainst": "इनके विरुद्ध रिपोर्ट",
     "reportedUserReportsFiled": "दर्ज की गई रिपोर्ट",
-    "reportedUserRestricted": "रिपोर्ट किए गए खाते का विवरण केवल मैनेजर और एडमिन देख सकते हैं।"
+    "reportedUserRestricted": "रिपोर्ट किए गए खाते का विवरण केवल मैनेजर और एडमिन देख सकते हैं।",
+    "otherReportsHeading": "इस लक्ष्य पर अन्य रिपोर्टें",
+    "otherReportsLoading": "रिपोर्ट इतिहास लोड हो रहा है…",
+    "otherReportsError": "रिपोर्ट इतिहास लोड नहीं हो सका।",
+    "otherReportsNone": "इस लक्ष्य पर कोई अन्य रिपोर्ट नहीं है।",
+    "otherReportsBy": "{reporter} द्वारा",
+    "otherReportsMore": "{total} अन्य रिपोर्टों में से {shown} दिख रही हैं।"
   },
   "admin": {
     "panelEyebrow": "एडमिन पैनल",
@@ -1093,32 +1099,36 @@
     "randomPoolLabel": "यादृच्छिक पूल",
     "acrossPlays": "{count, plural, one {# बार खेला गया} other {# बार खेला गया}}",
     "report": {
-      "button": "रिपोर्ट करें",
-      "buttonReported": "रिपोर्ट किया गया",
       "title": "इस पैक की रिपोर्ट करें",
-      "reasonLabel": "कारण",
-      "reasonPlaceholder": "एक कारण चुनें",
       "reasons": {
         "inappropriate": "अनुचित या आपत्तिजनक सामग्री",
         "copyright": "कॉपीराइट या स्वामित्व की समस्या",
         "spam": "स्पैम या भ्रामक",
         "other": "कुछ और"
-      },
-      "commentLabel": "अतिरिक्त विवरण (वैकल्पिक)",
-      "commentPlaceholder": "जो कुछ भी मॉडरेटर को इसकी समीक्षा करने में मदद करे",
-      "submit": "रिपोर्ट सबमिट करें",
-      "error": "रिपोर्ट सबमिट नहीं हो सकी। फिर से कोशिश करें।"
+      }
     },
     "reportComment": {
-      "title": "@{username} की रिपोर्ट करें",
       "scopeNote": "रिपोर्ट खाते के विरुद्ध दर्ज होती है। टिप्पणी नीचे उद्धृत है ताकि मॉडरेटर उसे ढूँढ़ सके।",
-      "quote": "टिप्पणी {id} के बारे में:\n\n«{body}»",
-      "reasons": {
-        "harassment": "उत्पीड़न या दुर्व्यवहार",
-        "impersonation": "किसी और का रूप धरना",
-        "spam": "स्पैम या धोखाधड़ी",
-        "other": "कुछ और"
-      }
+      "quote": "टिप्पणी {id} के बारे में:\n\n«{body}»"
+    }
+  },
+  "report": {
+    "button": "रिपोर्ट करें",
+    "buttonReported": "रिपोर्ट किया गया",
+    "reasonLabel": "कारण",
+    "reasonPlaceholder": "एक कारण चुनें",
+    "commentLabel": "अतिरिक्त विवरण (वैकल्पिक)",
+    "commentPlaceholder": "जो कुछ भी मॉडरेटर को इसकी समीक्षा करने में मदद करे",
+    "submit": "रिपोर्ट सबमिट करें",
+    "error": "रिपोर्ट सबमिट नहीं हो सकी। फिर से कोशिश करें।",
+    "buttonUser": "उपयोगकर्ता की रिपोर्ट करें",
+    "userTitle": "@{username} की रिपोर्ट करें",
+    "userNote": "रिपोर्ट मॉडरेशन टीम को भेजी जाती है। आपका उपयोगकर्ता नाम रिपोर्ट के साथ जुड़ा रहता है।",
+    "userReasons": {
+      "harassment": "उत्पीड़न या दुर्व्यवहार",
+      "impersonation": "किसी और का रूप धरना",
+      "spam": "स्पैम या धोखाधड़ी",
+      "other": "कुछ और"
     }
   },
   "share": {

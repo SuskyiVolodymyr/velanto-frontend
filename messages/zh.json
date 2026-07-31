@@ -107,7 +107,13 @@
     "reportedUserComments": "评论",
     "reportedUserReportsAgainst": "被举报次数",
     "reportedUserReportsFiled": "发起的举报",
-    "reportedUserRestricted": "只有经理和管理员才能查看被举报账户的详细信息。"
+    "reportedUserRestricted": "只有经理和管理员才能查看被举报账户的详细信息。",
+    "otherReportsHeading": "针对该对象的其他举报",
+    "otherReportsLoading": "正在加载举报记录…",
+    "otherReportsError": "无法加载举报记录。",
+    "otherReportsNone": "没有针对该对象的其他举报。",
+    "otherReportsBy": "举报人：{reporter}",
+    "otherReportsMore": "显示 {total} 条其他举报中的 {shown} 条。"
   },
   "admin": {
     "panelEyebrow": "管理面板",
@@ -1093,32 +1099,36 @@
     "randomPoolLabel": "随机池",
     "acrossPlays": "{count, plural, other {共 # 次游玩}}",
     "report": {
-      "button": "举报",
-      "buttonReported": "已举报",
       "title": "举报此题包",
-      "reasonLabel": "原因",
-      "reasonPlaceholder": "选择一个原因",
       "reasons": {
         "inappropriate": "不当或冒犯性内容",
         "copyright": "版权或所有权问题",
         "spam": "垃圾内容或误导性信息",
         "other": "其他原因"
-      },
-      "commentLabel": "补充说明（可选）",
-      "commentPlaceholder": "任何有助于版主审核的信息",
-      "submit": "提交举报",
-      "error": "举报提交失败，请重试。"
+      }
     },
     "reportComment": {
-      "title": "举报 @{username}",
       "scopeNote": "举报针对该账号提交。下方引用了这条评论，方便审核人员查找。",
-      "quote": "关于评论 {id}：\n\n“{body}”",
-      "reasons": {
-        "harassment": "骚扰或辱骂",
-        "impersonation": "冒充他人",
-        "spam": "垃圾信息或诈骗",
-        "other": "其他情况"
-      }
+      "quote": "关于评论 {id}：\n\n“{body}”"
+    }
+  },
+  "report": {
+    "button": "举报",
+    "buttonReported": "已举报",
+    "reasonLabel": "原因",
+    "reasonPlaceholder": "选择一个原因",
+    "commentLabel": "补充说明（可选）",
+    "commentPlaceholder": "任何有助于版主审核的信息",
+    "submit": "提交举报",
+    "error": "举报提交失败，请重试。",
+    "buttonUser": "举报用户",
+    "userTitle": "举报 @{username}",
+    "userNote": "举报将提交给审核团队，你的用户名会随举报一并提交。",
+    "userReasons": {
+      "harassment": "骚扰或辱骂",
+      "impersonation": "冒充他人",
+      "spam": "垃圾信息或诈骗",
+      "other": "其他情况"
     }
   },
   "share": {

@@ -15,6 +15,7 @@ import { AuthorPackList } from "./AuthorPackList";
 import { PeopleTab } from "./PeopleTab";
 import { RecentlyPlayedSection } from "./RecentlyPlayedSection";
 import { AuthorModeratorPanel } from "./AuthorModeratorPanel";
+import { ReportUserButton } from "./ReportUserButton";
 import { useAuthorModeration } from "./use-author-moderation";
 import {
   useAuthor,
@@ -107,13 +108,18 @@ export function AuthorScreen({
       <PageHeader
         back={{ href: "/", label: th("browse") }}
         trailing={
-          isOwnProfile && (
+          isOwnProfile ? (
             <Link
               href="/settings"
               className="flex h-[38px] items-center rounded-[11px] border border-white/[0.09] bg-surface-card px-[14px] text-[13px] font-semibold text-foreground-secondary transition-colors hover:border-white/20 hover:text-foreground"
             >
               {th("settings")}
             </Link>
+          ) : (
+            // Someone else's page: report the account. Lives in the header
+            // beside Back for the same reason the pack's Report does — it acts
+            // on the whole page, not on any one section of it.
+            <ReportUserButton userId={authorId} username={profile.username} />
           )
         }
       />

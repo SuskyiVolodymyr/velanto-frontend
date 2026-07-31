@@ -9,6 +9,7 @@ import { Button } from "@/src/shared/components/Button";
 import { PageHeader } from "@/src/shared/components/PageHeader";
 import { ReportedContentPreview } from "@/src/features/moderation/ReportedContentPreview";
 import { ReportDetailSummary } from "@/src/features/moderation/ReportDetailSummary";
+import { ReportsAgainstTarget } from "@/src/features/moderation/ReportsAgainstTarget";
 import { ReportQueueActions } from "@/src/features/moderation/ReportQueueActions";
 import { ReportModerationPanel } from "@/src/features/moderation/ReportModerationPanel";
 import { useReportModeration } from "@/src/features/moderation/use-report-moderation";
@@ -114,6 +115,11 @@ export function ReportDetailScreen({ reportId }: { reportId: string }) {
           backend's actual `adminClient.userDetail` RBAC (moderator+ can
           reach this screen, but only manager/admin can hit that endpoint). */}
         <ReportedContentPreview report={report} viewerRole={user?.role} />
+
+        {/* The target's report history, above the actions: whether this is a
+            one-off or a pattern is the main thing that changes the decision
+            the buttons below are about. */}
+        <ReportsAgainstTarget report={report} />
 
         <ReportQueueActions
           status={report.status}

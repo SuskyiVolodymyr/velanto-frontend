@@ -23,12 +23,12 @@ function Stat({ label, value }: { label: string; value: number }) {
  * sibling of `AdminUserDetailScreen`'s own stat tiles/`PackReviewAuthorCard`,
  * not a divergent new look.
  *
- * The mock's itemized "recent reports against this account" list is a
- * confirmed hard cut (D9): `ListReportsQueryDto` has no `targetId` filter, so
- * there is no way to ask the backend for "every report filed against user X".
- * The two aggregate `moderation.reportsAgainst`/`reportsFiled` counts that
- * `AdminUserDetail` already carries stand in for it instead — do not add an
- * itemized list here.
+ * Aggregate counts only. The mock's itemized "recent reports against this
+ * account" list is now `ReportsAgainstTarget`, a sibling section on the same
+ * screen (it pages `GET /reports?targetId=`, added alongside the profile
+ * report button) — it stays out of this card because this card needs
+ * `GET /admin/users/:id` and is therefore manager/admin-only, while the
+ * itemized list is reachable by every moderator.
  */
 export function ReportedUserSummary({ user }: { user: AdminUserDetail }) {
   const t = useTranslations("moderation");
