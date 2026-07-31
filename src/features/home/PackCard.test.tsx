@@ -64,7 +64,11 @@ describe("PackCard", () => {
   });
 
   it("singularizes a one-play pack", () => {
-    const pack: PackSummary = { ...BASE_PACK, format: "save_one", totalPlays: 1 };
+    const pack: PackSummary = {
+      ...BASE_PACK,
+      format: "save_one",
+      totalPlays: 1,
+    };
     render(<PackCard pack={pack} />);
 
     expect(screen.getByText("1 play")).toBeInTheDocument();
@@ -106,11 +110,14 @@ describe("PackCard", () => {
   });
 
   describe("primary action", () => {
-    it("shows a Play link to the pack", () => {
+    // Straight into the session, not the detail page: a button labelled
+    // "Play" that lands on a description with another Play button costs a
+    // click. The card body still links to the detail page.
+    it("starts the play session rather than opening the detail page", () => {
       render(<PackCard pack={{ ...BASE_PACK, format: "save_one" }} />);
 
       const play = screen.getByRole("link", { name: "Play" });
-      expect(play).toHaveAttribute("href", "/packs/pack-a");
+      expect(play).toHaveAttribute("href", "/packs/pack-a/play");
     });
   });
 
