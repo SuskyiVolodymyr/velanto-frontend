@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
 import { BlindRankBoard } from "./BlindRankBoard";
@@ -33,7 +32,6 @@ export function GuessWhoRoundBoard({
   myLastSelection,
   onPick,
 }: GuessWhoRoundBoardProps) {
-  const t = useTranslations("room");
   // The pick arm's own echo of what THIS player just clicked. The server
   // never sends anyone's selection back (that's the whole point of a blind
   // round), and nothing upstream tracks it either — `myLastSelection` is an
@@ -67,23 +65,6 @@ export function GuessWhoRoundBoard({
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-2">
-        <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-          {t("round.heading", {
-            index: round.index + 1,
-            total: state.totalRounds,
-          })}
-        </Text>
-        <Text as="h2" variant="title" className="text-2xl">
-          {round.name || t("guessWho.roundInstruction")}
-        </Text>
-        <Text variant="secondary" className="text-sm">
-          {round.actionKind === "pick"
-            ? t("guessWho.pickInstruction")
-            : t("guessWho.rankInstruction")}
-        </Text>
-      </header>
-
       {round.actionKind === "pick" ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {round.optionIds.map((optionId) => {

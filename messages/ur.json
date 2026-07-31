@@ -2215,7 +2215,17 @@
       "tieTitle": "برابری — {name} کی ترجیح فیصلہ کرے گی",
       "tieBody": "آخری ووٹ پڑنے سے پہلے انہیں منا لیں۔",
       "cutSoFar": "اب تک ہٹائے گئے",
-      "cutEmpty": "ابھی کچھ نہیں ہٹا — {name} پہلے ہیں۔"
+      "cutEmpty": "ابھی کچھ نہیں ہٹا — {name} پہلے ہیں۔",
+      "claimed": "دعویٰ کیا",
+      "claimPrompt": "جسے ہٹانا ہے اسے لے لیں",
+      "claimHint": "جو پہلے پہنچے، اسی کا",
+      "lockedIn": "لاک کر دیا",
+      "lockInPrompt": "اپنا جواب لاک کریں",
+      "lockedWaiting": "لاک — کمرے کا انتظار",
+      "blindHint": "سب کے دینے تک کسی کو نظر نہیں آتا",
+      "placed": "رکھ دیا",
+      "placingNow": "ابھی رکھ رہے ہیں",
+      "progressPlaced": "{total} میں سے {count} رکھے گئے"
     }
   },
   "reviewOutcome": {

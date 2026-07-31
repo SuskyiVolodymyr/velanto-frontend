@@ -83,18 +83,6 @@ export function RelayInsertBoard({
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-2">
-        <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-          {t("round.heading", {
-            index: round.index + 1,
-            total: state.totalRounds,
-          })}
-        </Text>
-        <Text as="h2" variant="title" className="text-2xl">
-          {round.name || t("relay.instruction")}
-        </Text>
-      </header>
-
       <TurnIndicator
         players={state.players}
         turnUserId={round.turnUserId ?? null}

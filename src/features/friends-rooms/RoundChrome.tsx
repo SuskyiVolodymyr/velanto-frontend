@@ -91,11 +91,16 @@ export function RoundChrome({
             variant="title"
             className="text-[28px] tracking-[-0.025em] text-pretty max-[720px]:text-[19px]"
           >
-            {round.name}
+            {/* Rounds are usually named (the author's name, or the drawn
+                pool's). An unnamed one promotes the question rather than
+                heading the page with an empty line. */}
+            {round.name || question}
           </Text>
-          <Text variant="secondary" className="text-sm font-semibold">
-            {question}
-          </Text>
+          {round.name && (
+            <Text variant="secondary" className="text-sm font-semibold">
+              {question}
+            </Text>
+          )}
         </div>
         {/* One pip per round, the current one half-lit. Only meaningful once the
             plan is drawn — totalRounds is 0 in the lobby, never here. */}
@@ -115,7 +120,15 @@ export function RoundChrome({
               />
             ))}
           </div>
-          <Text variant="tertiary" className="text-end text-[11.5px]">
+          {/* Announced, not just shown: "everyone has voted" is the moment
+              the round is about to resolve, and it is the one line that says
+              so. Boards used to carry their own live region for this, which
+              read the same sentence out twice. */}
+          <Text
+            variant="tertiary"
+            aria-live="polite"
+            className="text-end text-[11.5px]"
+          >
             {progressNote}
           </Text>
         </div>

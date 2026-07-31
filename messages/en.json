@@ -2214,7 +2214,17 @@
       "tieTitle": "It's tied — {name}'s priority decides",
       "tieBody": "Talk them round before the last vote lands.",
       "cutSoFar": "Cut so far",
-      "cutEmpty": "Nothing cut yet — {name} goes first."
+      "cutEmpty": "Nothing cut yet — {name} goes first.",
+      "claimed": "Claimed",
+      "claimPrompt": "Take the one you want out",
+      "claimHint": "First to it keeps it",
+      "lockedIn": "Locked in",
+      "lockInPrompt": "Lock in your answer",
+      "lockedWaiting": "Locked in — waiting for the room",
+      "blindHint": "Nobody sees it until everyone's in",
+      "placed": "Placed",
+      "placingNow": "Placing now",
+      "progressPlaced": "{count} of {total} placed"
     }
   },
   "reviewOutcome": {

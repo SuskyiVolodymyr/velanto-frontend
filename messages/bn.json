@@ -2215,7 +2215,17 @@
       "tieTitle": "সমান — {name}-এর অগ্রাধিকার ঠিক করবে",
       "tieBody": "শেষ ভোটটি পড়ার আগে তাঁকে বোঝান।",
       "cutSoFar": "এ পর্যন্ত সরানো",
-      "cutEmpty": "এখনও কিছু সরানো হয়নি — {name} প্রথমে।"
+      "cutEmpty": "এখনও কিছু সরানো হয়নি — {name} প্রথমে।",
+      "claimed": "দখল করেছেন",
+      "claimPrompt": "যেটি সরাতে চান সেটি নিন",
+      "claimHint": "যে আগে পায়, তারই",
+      "lockedIn": "লক করেছেন",
+      "lockInPrompt": "নিজের উত্তর লক করুন",
+      "lockedWaiting": "লক করা — ঘরের অপেক্ষা",
+      "blindHint": "সবাই না দেওয়া পর্যন্ত কেউ দেখতে পায় না",
+      "placed": "বসিয়েছেন",
+      "placingNow": "এখন বসাচ্ছেন",
+      "progressPlaced": "{total}-এর মধ্যে {count} বসানো"
     }
   },
   "reviewOutcome": {

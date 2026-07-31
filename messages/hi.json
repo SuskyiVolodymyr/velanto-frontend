@@ -2215,7 +2215,17 @@
       "tieTitle": "बराबरी — {name} की प्राथमिकता तय करेगी",
       "tieBody": "आख़िरी वोट पड़ने से पहले उन्हें मना लें।",
       "cutSoFar": "अब तक हटाए गए",
-      "cutEmpty": "अभी कुछ नहीं हटा — {name} पहले हैं।"
+      "cutEmpty": "अभी कुछ नहीं हटा — {name} पहले हैं।",
+      "claimed": "दावा किया",
+      "claimPrompt": "जिसे हटाना है उसे ले लें",
+      "claimHint": "जो पहले पहुँचे, उसी का",
+      "lockedIn": "लॉक कर दिया",
+      "lockInPrompt": "अपना जवाब लॉक करें",
+      "lockedWaiting": "लॉक — कमरे का इंतज़ार",
+      "blindHint": "सबके देने तक किसी को नहीं दिखता",
+      "placed": "रख दिया",
+      "placingNow": "अभी रख रहे हैं",
+      "progressPlaced": "{total} में से {count} रखे गए"
     }
   },
   "reviewOutcome": {

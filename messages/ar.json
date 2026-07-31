@@ -2215,7 +2215,17 @@
       "tieTitle": "تعادل — أولوية {name} تحسمه",
       "tieBody": "أقنعه قبل أن يسقط الصوت الأخير.",
       "cutSoFar": "ما حُذف حتى الآن",
-      "cutEmpty": "لم يُحذف شيء بعد — {name} يبدأ."
+      "cutEmpty": "لم يُحذف شيء بعد — {name} يبدأ.",
+      "claimed": "حجز",
+      "claimPrompt": "احجز ما تريد استبعاده",
+      "claimHint": "من يسبق يفز به",
+      "lockedIn": "ثبّت اختياره",
+      "lockInPrompt": "ثبّت إجابتك",
+      "lockedWaiting": "مُثبّت — بانتظار الغرفة",
+      "blindHint": "لا يراه أحد حتى يسلّم الجميع",
+      "placed": "أدرج",
+      "placingNow": "يُدرج الآن",
+      "progressPlaced": "أُدرج {count} من {total}"
     }
   },
   "reviewOutcome": {

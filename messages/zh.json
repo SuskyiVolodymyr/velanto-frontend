@@ -2215,7 +2215,17 @@
       "tieTitle": "打平了——由 {name} 的优先权决定",
       "tieBody": "趁最后一票落下之前说服他们。",
       "cutSoFar": "已划掉的",
-      "cutEmpty": "还没有人划掉——{name} 先手。"
+      "cutEmpty": "还没有人划掉——{name} 先手。",
+      "claimed": "已抢到",
+      "claimPrompt": "抢下你想淘汰的那个",
+      "claimHint": "先到先得",
+      "lockedIn": "已锁定",
+      "lockInPrompt": "锁定你的答案",
+      "lockedWaiting": "已锁定——等待其他人",
+      "blindHint": "所有人都提交前谁也看不到",
+      "placed": "已放置",
+      "placingNow": "正在放置",
+      "progressPlaced": "已放置 {count} / {total}"
     }
   },
   "reviewOutcome": {
