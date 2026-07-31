@@ -190,9 +190,15 @@ export function RoundItemTile({
   }
 
   return (
+    // Named even when inert: an un-pickable tile still carries state worth
+    // reading (your locked-in pick, an item out of play), and without a name
+    // there is nothing for a screen reader — or a test — to address it by.
     <div
+      role="group"
+      aria-label={
+        spent ? `${item.title} — ${t("board.outOfPlay")}` : item.title
+      }
       className={frame}
-      aria-label={spent ? t("board.outOfPlay") : undefined}
     >
       {overlays}
       {media}

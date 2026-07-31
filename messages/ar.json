@@ -2121,6 +2121,7 @@
     "guessWho": {
       "roundInstruction": "اختر إجابتك",
       "pickInstruction": "اختر خفية — لن يرى أحد اختيارك حتى يقفل الجميع اختياراتهم.",
+      "pickLabel": "اختر {name}",
       "rankInstruction": "رتّب كل عنصر خفية، بالترتيب — لن يرى أحد ترتيبك حتى يقفل الجميع اختياراتهم.",
       "revealHeading": "الكشف",
       "trajectoryHeading": "ما اختاره الجميع حتى الآن",

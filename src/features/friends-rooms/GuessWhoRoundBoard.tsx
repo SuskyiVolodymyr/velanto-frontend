@@ -1,10 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
+import { useTranslations } from "next-intl";
 import { BlindRankBoard } from "./BlindRankBoard";
 import { LockedInRoster } from "./LockedInRoster";
+import { RoundItemTile } from "./RoundItemTile";
 import type { RoomState } from "./room-types";
 
 interface GuessWhoRoundBoardProps {
@@ -32,6 +32,7 @@ export function GuessWhoRoundBoard({
   myLastSelection,
   onPick,
 }: GuessWhoRoundBoardProps) {
+  const t = useTranslations("room");
   // The pick arm's own echo of what THIS player just clicked. The server
   // never sends anyone's selection back (that's the whole point of a blind
   // round), and nothing upstream tracks it either — `myLastSelection` is an
@@ -69,24 +70,28 @@ export function GuessWhoRoundBoard({
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {round.optionIds.map((optionId) => {
             const item = itemsById.get(optionId);
+            if (!item) return null;
             const isMine = myPick === optionId;
             return (
-              <button
+              // RoundItemTile, not a bare title button: this board wrote its
+              // own and so played no video and showed no image, leaving a pack
+              // of music videos as a list of names while every other mode
+              // played them. No `tally` or `people` — the round is blind.
+              <RoundItemTile
                 key={optionId}
-                type="button"
-                aria-pressed={isMine}
-                disabled={iAmLockedIn}
-                onClick={() => selectPick(optionId)}
-                className={cn(
-                  "rounded-card border-[1.5px] bg-surface p-4 text-start transition-colors",
-                  isMine
-                    ? "border-acc ring-[3px] ring-acc/30"
-                    : "border-border hover:border-border-strong",
-                  iAmLockedIn && !isMine && "opacity-50",
-                )}
-              >
-                <Text className="font-semibold">{item?.title ?? optionId}</Text>
-              </button>
+                item={item}
+                actionLabel={t("guessWho.pickLabel", { name: item.title })}
+                onPick={iAmLockedIn ? undefined : () => selectPick(optionId)}
+                mine={isMine}
+                // Once locked in the tile is inert, so `aria-pressed` is gone
+                // with the button — the badge is what still says, visibly and
+                // to a screen reader, which one you sent.
+                badge={
+                  isMine && iAmLockedIn
+                    ? { label: t("board.lockedIn"), tone: "acc" }
+                    : undefined
+                }
+              />
             );
           })}
         </div>

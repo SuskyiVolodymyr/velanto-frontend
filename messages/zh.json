@@ -2121,6 +2121,7 @@
     "guessWho": {
       "roundInstruction": "做出你的选择",
       "pickInstruction": "盲选一项——在所有人锁定之前，没人能看到你的选择。",
+      "pickLabel": "选择 {name}",
       "rankInstruction": "对每一项排序，最佳在前——在所有人锁定之前，没人能看到你的排名。",
       "revealHeading": "揭晓",
       "trajectoryHeading": "大家目前的选择",
