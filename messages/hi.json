@@ -2190,6 +2190,32 @@
       "inRound": "राउंड चल रहा है",
       "between": "राउंड का नतीजा",
       "guessing": "अंदाज़ा लगाना"
+    },
+    "board": {
+      "room": "कमरा",
+      "here": "{count} यहाँ",
+      "outOfPlay": "बाहर हो गया",
+      "voted": "वोट दिया",
+      "deciding": "सोच रहे हैं…",
+      "waiting": "इंतज़ार में",
+      "cut": "हटाया",
+      "cuttingNow": "अभी हटा रहे हैं",
+      "progressVotes": "{total} में से {count} वोट आए",
+      "progressLeft": "बोर्ड पर {count} बचे",
+      "tapToVote": "जिसे चुनना है उस पर टैप करें",
+      "voteLocked": "वोट दर्ज — अब भी बदल सकते हैं",
+      "resolvesWhenAllVote": "सबके वोट आने पर नतीजा",
+      "noTakebacks": "एक बार हटा दिया तो वापस नहीं",
+      "voteFor": "{name} को वोट दें",
+      "cutItem": "{name} को हटाएँ",
+      "yourVote": "आपका वोट",
+      "cutBadge": "हटाया",
+      "liveTally": "लाइव गिनती",
+      "tallyHint": "लॉक होने तक बदल सकते हैं",
+      "tieTitle": "बराबरी — {name} की प्राथमिकता तय करेगी",
+      "tieBody": "आख़िरी वोट पड़ने से पहले उन्हें मना लें।",
+      "cutSoFar": "अब तक हटाए गए",
+      "cutEmpty": "अभी कुछ नहीं हटा — {name} पहले हैं।"
     }
   },
   "reviewOutcome": {

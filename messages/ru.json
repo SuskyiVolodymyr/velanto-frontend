@@ -2190,6 +2190,32 @@
       "inRound": "Идёт раунд",
       "between": "Раунд сыгран",
       "guessing": "Угадываем"
+    },
+    "board": {
+      "room": "Комната",
+      "here": "{count} на связи",
+      "outOfPlay": "Выбыл",
+      "voted": "Проголосовал",
+      "deciding": "Решает…",
+      "waiting": "Ждёт",
+      "cut": "Убрал",
+      "cuttingNow": "Сейчас убирает",
+      "progressVotes": "Голосов: {count} из {total}",
+      "progressLeft": "На доске осталось {count}",
+      "tapToVote": "Нажмите на свой вариант",
+      "voteLocked": "Голос учтён — его ещё можно поменять",
+      "resolvesWhenAllVote": "Итог, когда проголосуют все",
+      "noTakebacks": "Убрали — назад не вернуть",
+      "voteFor": "Голос за {name}",
+      "cutItem": "Убрать {name}",
+      "yourVote": "ВАШ ГОЛОС",
+      "cutBadge": "УБРАНО",
+      "liveTally": "Счёт вживую",
+      "tallyHint": "можно менять до закрытия",
+      "tieTitle": "Ничья — решает приоритет: {name}",
+      "tieBody": "Переубедите их, пока не лёг последний голос.",
+      "cutSoFar": "Уже убрано",
+      "cutEmpty": "Пока ничего не убрано — первым ходит {name}."
     }
   },
   "reviewOutcome": {

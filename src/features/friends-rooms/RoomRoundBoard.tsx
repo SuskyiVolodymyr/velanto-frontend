@@ -92,7 +92,6 @@ export function RoomRoundBoard({
         <TurnBasedCutBoard
           state={state}
           currentUserId={currentUserId}
-          packFormat={packFormat}
           onCut={actions.cut}
         />
       );

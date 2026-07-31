@@ -2190,6 +2190,32 @@
       "inRound": "本轮进行中",
       "between": "本轮已揭晓",
       "guessing": "猜人环节"
+    },
+    "board": {
+      "room": "房间",
+      "here": "{count} 人在线",
+      "outOfPlay": "已出局",
+      "voted": "已投票",
+      "deciding": "考虑中…",
+      "waiting": "等待中",
+      "cut": "已划掉",
+      "cuttingNow": "正在划掉",
+      "progressVotes": "已投 {count} / {total} 票",
+      "progressLeft": "台面上还剩 {count} 个",
+      "tapToVote": "点一下你要选的那个",
+      "voteLocked": "已投票——仍可更改",
+      "resolvesWhenAllVote": "所有人投完票后揭晓",
+      "noTakebacks": "划掉之后不能反悔",
+      "voteFor": "投给 {name}",
+      "cutItem": "划掉 {name}",
+      "yourVote": "你的一票",
+      "cutBadge": "已划掉",
+      "liveTally": "实时计票",
+      "tallyHint": "锁定前可更改",
+      "tieTitle": "打平了——由 {name} 的优先权决定",
+      "tieBody": "趁最后一票落下之前说服他们。",
+      "cutSoFar": "已划掉的",
+      "cutEmpty": "还没有人划掉——{name} 先手。"
     }
   },
   "reviewOutcome": {

@@ -2190,6 +2190,32 @@
       "inRound": "جولة جارية",
       "between": "انتهت الجولة",
       "guessing": "التخمين"
+    },
+    "board": {
+      "room": "الغرفة",
+      "here": "{count} حاضرون",
+      "outOfPlay": "خارج اللعب",
+      "voted": "صوّت",
+      "deciding": "يفكر…",
+      "waiting": "ينتظر",
+      "cut": "حذف",
+      "cuttingNow": "يحذف الآن",
+      "progressVotes": "{count} من {total} صوتوا",
+      "progressLeft": "بقي {count} على اللوحة",
+      "tapToVote": "اضغط على اختيارك",
+      "voteLocked": "سُجّل صوتك — ما زال بإمكانك تغييره",
+      "resolvesWhenAllVote": "تُحسم عندما يصوّت الجميع",
+      "noTakebacks": "لا تراجع بعد الحذف",
+      "voteFor": "صوّت لـ {name}",
+      "cutItem": "احذف {name}",
+      "yourVote": "صوتك",
+      "cutBadge": "محذوف",
+      "liveTally": "العدّ المباشر",
+      "tallyHint": "قابل للتغيير حتى الإغلاق",
+      "tieTitle": "تعادل — أولوية {name} تحسمه",
+      "tieBody": "أقنعه قبل أن يسقط الصوت الأخير.",
+      "cutSoFar": "ما حُذف حتى الآن",
+      "cutEmpty": "لم يُحذف شيء بعد — {name} يبدأ."
     }
   },
   "reviewOutcome": {

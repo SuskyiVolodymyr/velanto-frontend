@@ -33,7 +33,12 @@ describe("VotingBoard", () => {
         onVote={vi.fn()}
       />,
     );
-    expect(screen.getByText("1")).toBeInTheDocument(); // Pizza's live count
+    // Pizza's count reads twice — on its own tile and in the aside's live
+    // tally — which is the point of having both.
+    expect(screen.getAllByText("1").length).toBeGreaterThanOrEqual(2);
+    expect(
+      screen.getByRole("region", { name: "Live tally" }),
+    ).toBeInTheDocument();
   });
 
   it("a vote can be changed freely — clicking a different option re-votes, no confirmation", async () => {
@@ -81,6 +86,61 @@ describe("VotingBoard", () => {
         onVote={vi.fn()}
       />,
     );
-    expect(screen.getByText(/breaks ties/i)).toBeInTheDocument();
+    // The priority holder is a crown on their avatar in the Room panel now,
+    // not a captioned badge — but it must still SAY what it means, or it is
+    // just an unexplained gold dot.
+    expect(
+      screen.getByRole("img", { name: "Alice holds priority" }),
+    ).toBeInTheDocument();
+  });
+
+  it("warns once a tie could actually decide the round", () => {
+    render(
+      <VotingBoard
+        state={baseRoomState({
+          mode: "voting",
+          round: {
+            index: 0,
+            name: "",
+            items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
+            claims: {},
+            survivorItemId: null,
+            optionIds: ["i1", "i2"],
+            votes: { u1: "i1", u2: "i2" },
+            priorityUserId: "u1",
+          },
+        })}
+        currentUserId="u1"
+        onVote={vi.fn()}
+      />,
+    );
+    expect(
+      screen.getByText("It's tied — Alice's priority decides"),
+    ).toBeInTheDocument();
+  });
+
+  // One vote each on two options with everyone still to go is not news; the
+  // warning is for a tie that is about to matter.
+  it("stays quiet on a single vote", () => {
+    render(
+      <VotingBoard
+        state={baseRoomState({
+          mode: "voting",
+          round: {
+            index: 0,
+            name: "",
+            items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
+            claims: {},
+            survivorItemId: null,
+            optionIds: ["i1", "i2"],
+            votes: { u1: "i1" },
+            priorityUserId: "u1",
+          },
+        })}
+        currentUserId="u1"
+        onVote={vi.fn()}
+      />,
+    );
+    expect(screen.queryByText(/It's tied/)).not.toBeInTheDocument();
   });
 });

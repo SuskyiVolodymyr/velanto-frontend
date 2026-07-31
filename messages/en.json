@@ -2189,6 +2189,32 @@
       "inRound": "Round in play",
       "between": "Round resolved",
       "guessing": "Guessing"
+    },
+    "board": {
+      "room": "Room",
+      "here": "{count} here",
+      "outOfPlay": "Out of play",
+      "voted": "Voted",
+      "deciding": "Deciding…",
+      "waiting": "Waiting",
+      "cut": "Cut",
+      "cuttingNow": "Cutting now",
+      "progressVotes": "{count} of {total} votes in",
+      "progressLeft": "{count} left on the board",
+      "tapToVote": "Tap the one you'd pick",
+      "voteLocked": "Vote in — you can still change it",
+      "resolvesWhenAllVote": "Resolves when everyone has voted",
+      "noTakebacks": "No takebacks once it's gone",
+      "voteFor": "Vote for {name}",
+      "cutItem": "Cut {name}",
+      "yourVote": "YOUR VOTE",
+      "cutBadge": "CUT",
+      "liveTally": "Live tally",
+      "tallyHint": "changeable until locked",
+      "tieTitle": "It's tied — {name}'s priority decides",
+      "tieBody": "Talk them round before the last vote lands.",
+      "cutSoFar": "Cut so far",
+      "cutEmpty": "Nothing cut yet — {name} goes first."
     }
   },
   "reviewOutcome": {

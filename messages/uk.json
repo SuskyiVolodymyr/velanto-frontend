@@ -2190,6 +2190,32 @@
       "inRound": "Триває раунд",
       "between": "Раунд зіграно",
       "guessing": "Вгадуємо"
+    },
+    "board": {
+      "room": "Кімната",
+      "here": "{count} на зв’язку",
+      "outOfPlay": "Вибув",
+      "voted": "Проголосував",
+      "deciding": "Вирішує…",
+      "waiting": "Чекає",
+      "cut": "Прибрав",
+      "cuttingNow": "Зараз прибирає",
+      "progressVotes": "Голосів: {count} із {total}",
+      "progressLeft": "На дошці лишилося {count}",
+      "tapToVote": "Натисніть свій варіант",
+      "voteLocked": "Голос зараховано — його ще можна змінити",
+      "resolvesWhenAllVote": "Підсумок, коли проголосують усі",
+      "noTakebacks": "Прибрали — назад не повернути",
+      "voteFor": "Голос за {name}",
+      "cutItem": "Прибрати {name}",
+      "yourVote": "ВАШ ГОЛОС",
+      "cutBadge": "ПРИБРАНО",
+      "liveTally": "Лічба наживо",
+      "tallyHint": "можна змінювати до закриття",
+      "tieTitle": "Нічия — вирішує пріоритет: {name}",
+      "tieBody": "Переконайте їх, доки не ліг останній голос.",
+      "cutSoFar": "Уже прибрано",
+      "cutEmpty": "Поки нічого не прибрано — першим ходить {name}."
     }
   },
   "reviewOutcome": {
