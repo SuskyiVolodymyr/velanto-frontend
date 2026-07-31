@@ -138,12 +138,17 @@ export const usersClient = {
       `/users/${id}/following${followsQuery(params)}`,
     ),
   /**
-   * Public username search — find people to follow by a case-insensitive
-   * username substring. Same row shape as the follow lists (so `FollowUserRow`
-   * renders results), with `isFollowedByMe` for a signed-in viewer.
+   * Public user directory + username search. With `q`, a case-insensitive
+   * username substring; WITHOUT it, every active account alphabetically —
+   * which is what /people lists before you type anything. Same row shape as
+   * the follow lists (so `FollowUserRow` renders results), with
+   * `isFollowedByMe` for a signed-in viewer.
    */
-  search: (q: string, params: { page?: number; limit?: number } = {}) => {
-    const query = new URLSearchParams({ q });
+  search: (q?: string, params: { page?: number; limit?: number } = {}) => {
+    const query = new URLSearchParams();
+    // Omitted, not sent empty: the backend schema is `.strict()` and treats a
+    // missing `q` as "the whole directory".
+    if (q) query.set("q", q);
     if (params.page !== undefined) query.set("page", String(params.page));
     if (params.limit !== undefined) query.set("limit", String(params.limit));
     return apiClient.get<FollowUserPage>(`/users/search?${query.toString()}`);

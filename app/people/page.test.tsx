@@ -1,5 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
+import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import messages from "@/messages/en.json";
 import PeoplePage, { generateMetadata } from "./page";
 
@@ -9,13 +10,16 @@ vi.mock("@/src/features/home/PeopleFeed", () => ({
   PeopleFeed: () => <div>PeopleFeed island</div>,
 }));
 
-// getTranslations needs a request context we don't have in a unit test; back it
-// with the real English catalog so the page reads the shipped copy.
+// The route resolves two namespaces ("people" for its own copy, "header" for
+// the shared back-to-browse label), so the mock dispatches by namespace —
+// same shape as app/my-packs/page.test.tsx.
 vi.mock("next-intl/server", () => ({
-  getTranslations: vi.fn(
-    async () => (key: string) =>
-      (messages.people as Record<string, string>)[key] ?? key,
-  ),
+  getTranslations: vi.fn(async (namespace: string) => {
+    const dict = (messages as Record<string, unknown>)[
+      namespace
+    ] as Record<string, string>;
+    return (key: string) => dict[key] ?? key;
+  }),
 }));
 
 describe("/people route", () => {

@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { PeopleFeed } from "./PeopleFeed";
@@ -10,10 +10,10 @@ vi.mock("@/src/shared/lib/users-client", () => ({
   usersClient: { search: vi.fn() },
 }));
 
-// Isolate PeopleFeed from the follow-row's own dependencies (auth, mutation,
+// Isolate PeopleFeed from the card's own dependencies (auth, follow mutation,
 // streamer-mode) — a marker that echoes the username is enough here.
-vi.mock("@/src/features/author/FollowUserRow", () => ({
-  FollowUserRow: ({ user }: { user: FollowUser }) => <div>{user.username}</div>,
+vi.mock("@/src/features/home/PersonCard", () => ({
+  PersonCard: ({ user }: { user: FollowUser }) => <div>{user.username}</div>,
 }));
 
 function person(username: string): FollowUser {
@@ -27,48 +27,73 @@ function person(username: string): FollowUser {
   };
 }
 
+function mockPage(items: FollowUser[]) {
+  vi.mocked(usersClient.search).mockResolvedValue({
+    items,
+    total: items.length,
+    page: 1,
+    limit: 20,
+  });
+}
+
 beforeEach(() => {
   vi.clearAllMocks();
 });
 
 describe("PeopleFeed", () => {
-  it("shows a hint and does not search until the query is long enough", async () => {
-    render(<PeopleFeed />);
-
-    expect(
-      screen.getByText("Type at least 2 characters to search."),
-    ).toBeInTheDocument();
-
-    await userEvent.type(screen.getByRole("searchbox"), "a");
-    expect(usersClient.search).not.toHaveBeenCalled();
-  });
-
-  it("searches (debounced) and lists the matching users", async () => {
-    vi.mocked(usersClient.search).mockResolvedValue({
-      items: [person("alice"), person("alicia")],
-      total: 2,
-      page: 1,
-      limit: 20,
-    });
+  // The directory opens on everyone rather than on a "type at least 2
+  // characters" hint — an empty query is the real request now, not a doomed
+  // one to suppress.
+  it("lists the directory on mount, with no query", async () => {
+    mockPage([person("alice"), person("bob")]);
 
     render(<PeopleFeed />);
-    await userEvent.type(screen.getByRole("searchbox"), "ali");
 
     expect(await screen.findByText("alice")).toBeInTheDocument();
-    expect(screen.getByText("alicia")).toBeInTheDocument();
+    expect(screen.getByText("bob")).toBeInTheDocument();
     expect(usersClient.search).toHaveBeenCalledWith(
-      "ali",
+      undefined,
       expect.objectContaining({ limit: 20 }),
     );
   });
 
+  // These wait on the CALL, not on rendered names: the mount already fetched
+  // the directory with the same stub, so the rows are on screen before the
+  // debounce has flushed and `findByText` would resolve against them.
+  it("searches on a single character rather than waiting for two", async () => {
+    mockPage([person("alice")]);
+
+    render(<PeopleFeed />);
+    await userEvent.type(screen.getByRole("searchbox"), "a");
+
+    await waitFor(() =>
+      expect(usersClient.search).toHaveBeenCalledWith(
+        "a",
+        expect.objectContaining({ limit: 20 }),
+      ),
+    );
+  });
+
+  it("searches (debounced) and lists the matching users", async () => {
+    mockPage([person("alice"), person("alicia")]);
+
+    render(<PeopleFeed />);
+    await userEvent.type(screen.getByRole("searchbox"), "ali");
+
+    await waitFor(() =>
+      expect(usersClient.search).toHaveBeenCalledWith(
+        "ali",
+        expect.objectContaining({ limit: 20 }),
+      ),
+    );
+    expect(await screen.findByText("alice")).toBeInTheDocument();
+    expect(screen.getByText("alicia")).toBeInTheDocument();
+    // One request per settled query, not one per keystroke.
+    expect(usersClient.search).toHaveBeenCalledTimes(2);
+  });
+
   it("shows an empty message when nobody matches", async () => {
-    vi.mocked(usersClient.search).mockResolvedValue({
-      items: [],
-      total: 0,
-      page: 1,
-      limit: 20,
-    });
+    mockPage([]);
 
     render(<PeopleFeed />);
     await userEvent.type(screen.getByRole("searchbox"), "zzz");
