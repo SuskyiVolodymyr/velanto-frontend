@@ -195,8 +195,24 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
         setState((s) => (s ? { ...s, locked } : s)),
       );
 
-      socket.on(ROOM_EVENTS.modeChanged, ({ mode }: { mode: RoomMode }) =>
-        setState((s) => (s ? { ...s, mode } : s)),
+      // A mode change is three changes: the mode, the room's new cap, and the
+      // withdrawal of every ready vote (the server re-consents the room to the
+      // new game). There is no per-player event for that last one, so it is
+      // applied here — otherwise the lobby keeps showing a ready room whose
+      // Start the server then refuses with nothing on screen to say why.
+      socket.on(
+        ROOM_EVENTS.modeChanged,
+        ({ mode, maxPlayers }: { mode: RoomMode; maxPlayers: number }) =>
+          setState((s) =>
+            s
+              ? {
+                  ...s,
+                  mode,
+                  maxPlayers,
+                  players: s.players.map((p) => ({ ...p, ready: false })),
+                }
+              : s,
+          ),
       );
 
       socket.on(

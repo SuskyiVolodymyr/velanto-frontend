@@ -378,8 +378,29 @@ describe("useFriendsRoom mode lifecycle + guess-who endgame", () => {
   it("room.modeChanged updates state.mode", async () => {
     const { result } = await connected();
     serverEmit("room.state", { ...snapshot([player("host")]), mode: null });
-    serverEmit("room.modeChanged", { mode: "guess_who" });
+    serverEmit("room.modeChanged", { mode: "guess_who", maxPlayers: 8 });
     expect(result.current.state?.mode).toBe("guess_who");
+  });
+
+  // The server withdraws every ready vote when the mode changes and re-caps the
+  // room, but sends no per-player event for it. A client that keeps the old
+  // flags shows a fully-ready lobby whose Start the server refuses — silently,
+  // since socket commands have no reply channel.
+  it("room.modeChanged withdraws every ready vote and adopts the new cap", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", {
+      ...snapshot([
+        player("host", { ready: true }),
+        player("u2", { seat: 1, ready: true }),
+      ]),
+      mode: "claim",
+      maxPlayers: 4,
+    });
+
+    serverEmit("room.modeChanged", { mode: "guess_who", maxPlayers: 8 });
+
+    expect(result.current.state?.players.every((p) => !p.ready)).toBe(true);
+    expect(result.current.state?.maxPlayers).toBe(8);
   });
 
   it("guessing.started sets phase to guessing and populates state.guessing", async () => {

@@ -2175,7 +2175,8 @@
     },
     "ended": {
       "heading": "This room has ended",
-      "description": "This room is no longer available. Start a new one from the pack page."
+      "description": "This room is no longer available. Start a new one from the pack page.",
+      "leave": "Back to pack"
     },
     "joinLink": {
       "joining": "Joining room…",

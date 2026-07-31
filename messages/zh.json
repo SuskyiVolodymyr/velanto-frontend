@@ -2084,7 +2084,8 @@
     },
     "ended": {
       "heading": "该房间已结束",
-      "description": "该房间已不可用。可从卡包页面开启新房间。"
+      "description": "该房间已不可用。可从卡包页面开启新房间。",
+      "leave": "返回卡包"
     },
     "joinLink": {
       "joining": "正在加入房间…",

@@ -1,7 +1,9 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Loader2, WifiOff } from "lucide-react";
+import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { pageContainer } from "@/src/shared/lib/page-container";
@@ -226,15 +228,23 @@ function Shell({ children }: { children: React.ReactNode }) {
 
 function RoomEnded({ packId }: { packId: string | null }) {
   const t = useTranslations("room");
+  const router = useRouter();
   useExitToPack(packId);
   return (
-    <div className="flex flex-col items-center gap-3 py-20 text-center">
+    <div className="flex flex-col items-center gap-4 py-20 text-center">
       <Text as="h1" variant="title" className="text-2xl">
         {t("ended.heading")}
       </Text>
       <Text variant="secondary" className="max-w-sm">
         {t("ended.description")}
       </Text>
+      {/* The timer above is the floor, not the exit. A terminal screen with no
+          control on it reads as a hang — and anyone who looks away and back
+          finds a page they have no way to leave. Same escape hatch, and the
+          same destination, as RoomKicked's. */}
+      <Button onClick={() => router.push(packId ? `/packs/${packId}` : "/")}>
+        {t("ended.leave")}
+      </Button>
     </div>
   );
 }

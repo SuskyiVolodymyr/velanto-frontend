@@ -763,6 +763,17 @@ describe("RoomScreen — getting out", () => {
     }
   });
 
+  // The six-second timer is the floor, not the exit: a dead-end screen with no
+  // control on it reads as a hang, and anyone who looks away and back finds
+  // themselves on a page they cannot leave.
+  it("offers a way out of the ended room without waiting for the timer", async () => {
+    setRoom(baseState(), "closed");
+    render(<RoomScreen roomId="room-1" />);
+
+    await userEvent.click(screen.getByRole("button", { name: /back to pack/i }));
+    expect(push).toHaveBeenCalledWith("/packs/pack-1");
+  });
+
   it("sends you back to the pack after the host removes you", () => {
     vi.useFakeTimers();
     try {
