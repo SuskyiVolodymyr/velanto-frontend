@@ -24,6 +24,7 @@ const STATUS_LABEL_KEY: Record<PackStatus, string> = {
   draft: "packDraft",
   pending: "packPending",
   approved: "packApproved",
+  changes_requested: "packChangesRequested",
   rejected: "packRejected",
 };
 
@@ -91,7 +92,10 @@ export function AuthorPackList({
   ];
 
   const isFilteredEmpty =
-    own && statusFilter !== "all" && packs.length > 0 && visiblePacks.length === 0;
+    own &&
+    statusFilter !== "all" &&
+    packs.length > 0 &&
+    visiblePacks.length === 0;
 
   return (
     <>

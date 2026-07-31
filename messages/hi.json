@@ -113,7 +113,44 @@
     "otherReportsError": "रिपोर्ट इतिहास लोड नहीं हो सका।",
     "otherReportsNone": "इस लक्ष्य पर कोई अन्य रिपोर्ट नहीं है।",
     "otherReportsBy": "{reporter} द्वारा",
-    "otherReportsMore": "{total} अन्य रिपोर्टों में से {shown} दिख रही हैं।"
+    "otherReportsMore": "{total} अन्य रिपोर्टों में से {shown} दिख रही हैं।",
+    "approvalHeading": "अनुमोदन समीक्षा — पैक की हर वस्तु",
+    "approvalIntro": "एक खेल हर पूल से केवल कुछ हिस्सा ही यादृच्छिक रूप से लेता है। लेखक ने जो भी भेजा है वह सब नीचे है, ताकि कोई भी सामग्री बिना समीक्षा खिलाड़ियों तक न पहुँचे।",
+    "decisionHeading": "निर्णय",
+    "approvePack": "पैक स्वीकार करें",
+    "requestChanges": "बदलाव माँगें",
+    "rejectPack": "पैक अस्वीकार करें",
+    "changesRequestedHeading": "बदलाव माँगे गए",
+    "changesNoMarks": "जिन चीज़ों में काम चाहिए उन्हें ऊपर “संपादन हेतु चिह्नित करें” से चुनें, फिर बताएँ कि लेखक को क्या बदलना है।",
+    "changesMessageLabel": "लेखक के लिए संदेश",
+    "changesMessagePlaceholder": "लाइव होने से पहले क्या बदलना ज़रूरी है?",
+    "sendChangeRequest": "अनुरोध भेजें",
+    "changesOutcomeNote": "पैक आपके नोट्स के साथ लेखक के पास लौट जाता है। कुछ भी मिटाया नहीं जाता, और फिर से भेजने पर वह कतार में लौट आता है।",
+    "rejectReasonLabel": "अस्वीकृति का कारण",
+    "markForEdit": "संपादन हेतु चिह्नित करें",
+    "marked": "चिह्नित",
+    "unmark": "{label} से चिह्न हटाएँ",
+    "markNoRequest": "कोई नोट नहीं — लेखक को केवल यह दिखेगा कि यह चिह्नित है।",
+    "markAskedOfAuthor": "लेखक से अपेक्षा",
+    "markItemPlaceholder": "लेखक इस वस्तु का क्या करे?",
+    "markRoundPlaceholder": "इस राउंड में क्या बदलना चाहिए?",
+    "markFieldPlaceholder": "लेखक इसकी जगह क्या लिखे?",
+    "markKind": {
+      "title": "शीर्षक",
+      "description": "विवरण",
+      "cover": "कवर",
+      "tags": "टैग",
+      "item": "वस्तु",
+      "round": "राउंड"
+    },
+    "fieldsHeading": "पैक विवरण — जिसे दोबारा लिखना है उसे चिह्नित करें",
+    "fieldTitle": "शीर्षक",
+    "fieldDescription": "विवरण",
+    "fieldCover": "कवर",
+    "fieldTags": "टैग",
+    "fieldEmpty": "सेट नहीं",
+    "fieldCoverUploaded": "अपलोड की गई छवि",
+    "fieldCoverTone": "रंग {tone}"
   },
   "admin": {
     "panelEyebrow": "एडमिन पैनल",
@@ -275,7 +312,8 @@
     "newCount": "{count} नई",
     "loadOlder": "पुरानी सूचनाएँ लोड करें",
     "commentReply": "<user>@{username}</user> <muted>ने आपकी टिप्पणी का उत्तर दिया</muted> <obj>{packTitle}</obj>",
-    "kindReply": "उत्तर"
+    "kindReply": "उत्तर",
+    "packChangesRequested": "<muted>एक मॉडरेटर ने बदलाव माँगे हैं:</muted> <obj>{packTitle}</obj>"
   },
   "bottomNav": {
     "label": "मुख्य",
@@ -395,7 +433,8 @@
     "addEmailConfirmButton": "ईमेल जोड़ें",
     "addEmailTaken": "वह ईमेल पहले से किसी अन्य खाते द्वारा उपयोग किया जा रहा है।",
     "addEmailError": "वह ईमेल जोड़ा नहीं जा सका। कृपया पुनः प्रयास करें।",
-    "notifCommentReply": "किसी ने आपकी टिप्पणी का उत्तर दिया"
+    "notifCommentReply": "किसी ने आपकी टिप्पणी का उत्तर दिया",
+    "notifPackChangesRequested": "मॉडरेटर मेरे पैक में बदलाव माँगे"
   },
   "streamerMode": {
     "hiddenHint": "स्ट्रीमर मोड के कारण छिपाया गया",
@@ -1548,7 +1587,8 @@
     "feedbackDeclined": "नामंज़ूर",
     "reportNew": "नई",
     "reportReviewing": "समीक्षाधीन",
-    "reportClosed": "बंद"
+    "reportClosed": "बंद",
+    "packChangesRequested": "बदलाव माँगे गए"
   },
   "feedback": {
     "pageTitle": "सुझाव",

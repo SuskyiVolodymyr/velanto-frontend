@@ -83,7 +83,9 @@ function pack(overrides: Partial<Pack> = {}): Pack {
   };
 }
 
-function authorProfile(overrides: Partial<PublicUserProfile> = {}): PublicUserProfile {
+function authorProfile(
+  overrides: Partial<PublicUserProfile> = {},
+): PublicUserProfile {
   return {
     id: "a1",
     username: "packsmith",
@@ -99,7 +101,9 @@ function authorProfile(overrides: Partial<PublicUserProfile> = {}): PublicUserPr
   };
 }
 
-function mockAuth(role: "moderator" | "manager" | "admin" | "user" = "moderator") {
+function mockAuth(
+  role: "moderator" | "manager" | "admin" | "user" = "moderator",
+) {
   mockedUseAuth.mockReturnValue({
     user: {
       id: "mod-1",
@@ -134,6 +138,9 @@ beforeEach(() => {
   mockedPacksClient.getById.mockResolvedValue(pack());
   mockedPacksClient.approve.mockResolvedValue(pack({ status: "approved" }));
   mockedPacksClient.reject.mockResolvedValue(pack({ status: "rejected" }));
+  mockedPacksClient.requestChanges.mockResolvedValue(
+    pack({ status: "changes_requested" }),
+  );
   mockedPacksClient.list.mockResolvedValue({
     items: [],
     total: 7,
@@ -156,7 +163,9 @@ describe("PackReviewScreen", () => {
     for (const role of ["moderator", "manager", "admin"] as const) {
       mockAuth(role);
       const { unmount } = renderScreen(<PackReviewScreen packId="p1" />);
-      await screen.findByText("Best Anime Openings");
+      await screen.findByRole("heading", {
+        name: "Approval review — every item in the pack",
+      });
       unmount();
     }
   });
@@ -175,9 +184,11 @@ describe("PackReviewScreen", () => {
     mockAuth();
     renderScreen(<PackReviewScreen packId="p1" />);
 
-    await screen.findByText("Best Anime Openings");
+    await screen.findByRole("heading", {
+      name: "Approval review — every item in the pack",
+    });
     expect(
-      screen.getByText(/A ranking of the best anime openings/),
+      screen.getAllByText(/A ranking of the best anime openings/)[0],
     ).toBeInTheDocument();
     expect(screen.getAllByText(/packsmith/).length).toBeGreaterThan(0);
     expect(screen.getByText("Save One")).toBeInTheDocument();
@@ -190,7 +201,9 @@ describe("PackReviewScreen", () => {
     mockAuth();
     renderScreen(<PackReviewScreen packId="p1" />);
 
-    await screen.findByText("Best Anime Openings");
+    await screen.findByRole("heading", {
+      name: "Approval review — every item in the pack",
+    });
     expect(mockedUsersClient.getProfile).toHaveBeenCalledWith("a1");
     expect(await screen.findByText(/42 followers/)).toBeInTheDocument();
     expect(screen.getByText(/7 packs/)).toBeInTheDocument();
@@ -200,18 +213,22 @@ describe("PackReviewScreen", () => {
     mockAuth();
     renderScreen(<PackReviewScreen packId="p1" />);
 
-    await screen.findByText("Best Anime Openings");
-    expect(screen.getByRole("heading", { name: "Openings" })).toBeInTheDocument();
+    await screen.findByRole("heading", {
+      name: "Approval review — every item in the pack",
+    });
+    expect(
+      screen.getByRole("heading", { name: "Openings" }),
+    ).toBeInTheDocument();
     expect(screen.getByText("Guren no Yumiya")).toBeInTheDocument();
   });
 
   it("renders a round-to-pool mapping list", async () => {
     mockAuth();
-    renderScreen(
-      <PackReviewScreen packId="p1" />,
-    );
+    renderScreen(<PackReviewScreen packId="p1" />);
 
-    await screen.findByText("Best Anime Openings");
+    await screen.findByRole("heading", {
+      name: "Approval review — every item in the pack",
+    });
     expect(screen.getByText("Round 1")).toBeInTheDocument();
     // The round's slot draws from the "Openings" pool — this must appear a
     // second time in the mapping list, distinct from the contents section's
@@ -219,18 +236,88 @@ describe("PackReviewScreen", () => {
     expect(screen.getAllByText("Openings").length).toBeGreaterThan(1);
   });
 
-  it("never shows mark-for-edit, request-changes, or pack-history UI (D5/D7 cuts)", async () => {
-    mockAuth();
-    renderScreen(<PackReviewScreen packId="p1" />);
+  // Mark-for-edit and Request changes were a deliberate cut when this screen
+  // first shipped (D5/D7) and this test asserted their absence. The backend
+  // outcome now exists, so the cut is undone and the assertion is inverted.
+  describe("request changes", () => {
+    it("offers the third outcome, and marks anything in the pack for edit", async () => {
+      mockAuth();
+      const user = userEvent.setup();
+      renderScreen(<PackReviewScreen packId="p1" />);
+      await screen.findByRole("heading", {
+        name: "Approval review — every item in the pack",
+      });
 
-    await screen.findByText("Best Anime Openings");
-    expect(
-      screen.queryByRole("button", { name: /request changes/i }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("button", { name: /mark for edit/i }),
-    ).not.toBeInTheDocument();
-    expect(screen.queryByText(/history/i)).not.toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Request changes" }),
+      ).toBeInTheDocument();
+      // One per markable pack field (title/description/cover/tags), plus one
+      // per item and one per round.
+      expect(
+        screen.getAllByRole("button", { name: "Mark for edit" }).length,
+      ).toBeGreaterThan(4);
+
+      await user.click(
+        screen.getAllByRole("button", { name: "Mark for edit" })[0],
+      );
+      expect(
+        screen.getByRole("button", { name: "Marked" }),
+      ).toBeInTheDocument();
+    });
+
+    it("sends the message and the marks the moderator made", async () => {
+      mockAuth();
+      const user = userEvent.setup();
+      renderScreen(<PackReviewScreen packId="p1" />);
+      await screen.findByRole("heading", {
+        name: "Approval review — every item in the pack",
+      });
+
+      // Mark the title, then describe what is wrong with it.
+      await user.click(
+        screen.getAllByRole("button", { name: "Mark for edit" })[0],
+      );
+      await user.type(
+        screen.getByLabelText("What should the author write instead?"),
+        "Too vague",
+      );
+
+      await user.click(screen.getByRole("button", { name: "Request changes" }));
+      await user.type(
+        screen.getByPlaceholderText(
+          "What has to change before this can go live?",
+        ),
+        "One fix and this is good to go.",
+      );
+      await user.click(screen.getByRole("button", { name: "Send request" }));
+
+      expect(mockedPacksClient.requestChanges).toHaveBeenCalledWith("p1", {
+        message: "One fix and this is good to go.",
+        marks: [
+          { kind: "title", id: "", label: "Title", request: "Too vague" },
+        ],
+      });
+      await waitFor(() =>
+        expect(mockPush).toHaveBeenCalledWith("/moderation?tab=packs"),
+      );
+    });
+
+    // The backend requires a message too, so an empty one can only fail.
+    it("will not send a request with no message", async () => {
+      mockAuth();
+      const user = userEvent.setup();
+      renderScreen(<PackReviewScreen packId="p1" />);
+      await screen.findByRole("heading", {
+        name: "Approval review — every item in the pack",
+      });
+
+      await user.click(screen.getByRole("button", { name: "Request changes" }));
+
+      expect(
+        screen.getByRole("button", { name: "Send request" }),
+      ).toBeDisabled();
+      expect(mockedPacksClient.requestChanges).not.toHaveBeenCalled();
+    });
   });
 
   it("approves the pack and returns to the pack-approvals queue", async () => {
@@ -238,8 +325,10 @@ describe("PackReviewScreen", () => {
     const user = userEvent.setup();
     renderScreen(<PackReviewScreen packId="p1" />);
 
-    await screen.findByText("Best Anime Openings");
-    await user.click(screen.getByRole("button", { name: "Approve" }));
+    await screen.findByRole("heading", {
+      name: "Approval review — every item in the pack",
+    });
+    await user.click(screen.getByRole("button", { name: "Approve pack" }));
 
     expect(mockedPacksClient.approve).toHaveBeenCalledWith("p1");
     await waitFor(() =>
@@ -252,8 +341,10 @@ describe("PackReviewScreen", () => {
     const user = userEvent.setup();
     renderScreen(<PackReviewScreen packId="p1" />);
 
-    await screen.findByText("Best Anime Openings");
-    await user.click(screen.getByRole("button", { name: "Reject" }));
+    await screen.findByRole("heading", {
+      name: "Approval review — every item in the pack",
+    });
+    await user.click(screen.getByRole("button", { name: "Reject pack" }));
 
     const confirm = screen.getByRole("button", { name: "Confirm reject" });
     expect(confirm).toBeDisabled();
@@ -264,8 +355,10 @@ describe("PackReviewScreen", () => {
     const user = userEvent.setup();
     renderScreen(<PackReviewScreen packId="p1" />);
 
-    await screen.findByText("Best Anime Openings");
-    await user.click(screen.getByRole("button", { name: "Reject" }));
+    await screen.findByRole("heading", {
+      name: "Approval review — every item in the pack",
+    });
+    await user.click(screen.getByRole("button", { name: "Reject pack" }));
     await user.type(
       screen.getByLabelText("Rejection reason for Best Anime Openings"),
       "Low effort",
@@ -284,8 +377,10 @@ describe("PackReviewScreen", () => {
     const user = userEvent.setup();
     renderScreen(<PackReviewScreen packId="p1" />);
 
-    await screen.findByText("Best Anime Openings");
-    await user.click(screen.getByRole("button", { name: "Approve" }));
+    await screen.findByRole("heading", {
+      name: "Approval review — every item in the pack",
+    });
+    await user.click(screen.getByRole("button", { name: "Approve pack" }));
 
     expect(
       await screen.findByText("Couldn't update this pack. Try again."),

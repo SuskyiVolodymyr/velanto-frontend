@@ -1,7 +1,6 @@
 "use client";
 
 import { Children, type ReactNode } from "react";
-import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
 
 /**
@@ -27,8 +26,12 @@ export function DataTable({
   columns: string;
   headers: string[];
   children: ReactNode;
-  /** Shown instead of the rows when there are none. */
-  empty: string;
+  /**
+   * Shown instead of the rows when there are none. A node, not a string: the
+   * pack queue's empty state is the mock's icon tile above its line, while the
+   * report queue's is a single centred sentence.
+   */
+  empty: ReactNode;
   isEmpty: boolean;
   /**
    * Floor width for the table's fixed-px columns. Below it (e.g. a phone) the
@@ -43,12 +46,12 @@ export function DataTable({
     <div className="overflow-x-auto">
       <div
         role="table"
-        className="overflow-hidden rounded-[16px] border border-border"
+        className="overflow-hidden rounded-[16px] border border-border bg-surface-card"
         style={{ minWidth }}
       >
         <div
           role="row"
-          className="grid gap-3 bg-white/[0.03] px-[18px] py-3 text-[11px] font-semibold uppercase tracking-[0.08em] text-foreground-tertiary"
+          className="grid gap-[14px] border-b border-border bg-white/[0.02] px-[18px] py-3 text-[11px] font-bold uppercase tracking-[0.08em] text-foreground-tertiary"
           style={{ gridTemplateColumns: columns }}
         >
           {headers.map((header, index) => (
@@ -64,13 +67,12 @@ export function DataTable({
         </div>
         {isEmpty ? (
           <div role="row">
-            <Text
+            <div
               role="cell"
-              variant="tertiary"
-              className="p-10 text-center text-sm"
+              className="px-[18px] py-11 text-center text-[13.5px] text-foreground-tertiary"
             >
               {empty}
-            </Text>
+            </div>
           </div>
         ) : (
           children
@@ -88,20 +90,44 @@ export function DataTable({
  * `min-w-0` because a grid item defaults to `min-width: auto`, which refuses to
  * shrink below its content and so defeats `truncate` on anything inside it.
  */
+/**
+ * Put this on the single `<Link>` inside a `linked` {@link DataTableRow}: its
+ * hit area then stretches over the whole row, so clicking anywhere in the row
+ * follows that link.
+ *
+ * This is how the mock's whole-row-clickable report rows are built without
+ * making the row itself an `<a>`. An `<a role="row">` would satisfy the table's
+ * ARIA but silently drop the link role — the row would no longer be announced
+ * as a link at all, which is the trade the previous "one link per row" layout
+ * was written to avoid. Here the row stays a `role="row"` div, exactly one real
+ * link keeps its own accessible name, and the pointer target is the full row.
+ *
+ * The overlay covers the row's other cells, so their text is no longer
+ * selectable — acceptable for a queue row whose whole job is to be opened, and
+ * the reason this is opt-in per row rather than automatic.
+ */
+export const ROW_LINK_CLASS = "after:absolute after:inset-0 after:content-['']";
+
 export function DataTableRow({
   columns,
+  linked,
   onClick,
   children,
 }: {
   columns: string;
   /**
-   * Optional: makes the whole row a pointer-clickable "open detail" target
-   * (e.g. PackApprovalsTab's rows opening the pack review screen). This is a
-   * convenience layer for mouse users only — it does NOT add a keyboard/
-   * screen-reader path of its own (a `role="row"` div isn't a link or
-   * button), so a caller using it should also keep a real `<Link>`/`<button>`
-   * cell inside the row as the accessible way in. Any action button inside
-   * the row (Approve/Reject, etc.) MUST call `event.stopPropagation()` in its
+   * The row contains a stretched link (see {@link ROW_LINK_CLASS}): positions
+   * the row so the overlay resolves against it, and gives it the pointer and
+   * hover treatment of a clickable row.
+   */
+  linked?: boolean;
+  /**
+   * Pointer-clickable "open detail" target for rows that DO hold buttons (the
+   * pack queue's Approve/Reject). A convenience layer for mouse users only —
+   * it adds no keyboard/screen-reader path of its own (a `role="row"` div is
+   * neither link nor button), so such a caller must also keep a real
+   * `<Link>`/`<button>` cell inside the row as the accessible way in. Any
+   * action button inside the row MUST call `event.stopPropagation()` in its
    * own `onClick` so clicking it doesn't also fire this and navigate away —
    * see PackApprovalsTab for the pattern.
    */
@@ -113,8 +139,9 @@ export function DataTableRow({
       role="row"
       onClick={onClick}
       className={cn(
-        "grid items-center gap-3 border-t border-white/[0.05] px-[18px] py-[13px]",
-        onClick && "cursor-pointer hover:bg-white/[0.03]",
+        "grid items-center gap-[14px] border-b border-white/[0.05] px-[18px] py-[14px]",
+        linked && "relative",
+        (linked || onClick) && "cursor-pointer hover:bg-white/[0.03]",
       )}
       style={{ gridTemplateColumns: columns }}
     >

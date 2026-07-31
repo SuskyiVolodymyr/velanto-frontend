@@ -1,5 +1,6 @@
 import {
   AlertTriangle,
+  PencilLine,
   AtSign,
   Bell,
   MessageCircle,
@@ -37,6 +38,10 @@ const VISUALS: Record<NotificationType, NotificationVisual> = {
   comment_mention: { tone: "#fbbf24", Icon: AtSign, actor: true },
   comment_reply: { tone: "#2dd4bf", Icon: Reply, actor: true },
   pack_deleted_warning: { tone: DANGER, Icon: AlertTriangle, actor: false },
+  // Amber, not red: the pack is coming back, not gone. `actor: false` for the
+  // same reason as the deletion warning — the payload names no moderator, and
+  // inventing an actor tile for a staff decision would be worse than none.
+  pack_changes_requested: { tone: "#facc15", Icon: PencilLine, actor: false },
 };
 
 // A type this client version doesn't recognise yet (newer backend) still gets a

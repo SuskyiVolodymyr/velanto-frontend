@@ -4,9 +4,11 @@ import { Fragment, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
+import { Check } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
 import { Input } from "@/src/shared/components/Input";
-import { Select } from "@/src/shared/components/Select";
+import { SearchField } from "@/src/shared/components/SearchField";
+import { Dropdown } from "@/src/shared/components/Dropdown";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { DataTable, DataTableRow } from "@/src/shared/components/DataTable";
 import { TablePagination } from "@/src/shared/components/TablePagination";
@@ -79,14 +81,16 @@ export function PackApprovalsTab() {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Input and Select are w-full primitives, and `cn` is a plain joiner —
-          a `flex-1`/`w-auto` passed in as className loses to their own w-full.
-          So the sizing lives on wrapper divs; without them every control claims
-          a full row and the bar stacks three deep. */}
-      <div className="flex flex-wrap items-end gap-2.5">
+      {/* SearchField and Dropdown are w-full primitives, and `cn` is a plain
+          joiner — a `flex-1`/`w-auto` passed in as className loses to their own
+          w-full. So the sizing lives on wrapper divs; without them every
+          control claims a full row and the bar stacks three deep. All three
+          controls are 44px per the mock, which is what `size="lg"` selects. */}
+      <div className="flex flex-wrap items-center gap-2.5">
         <div className="min-w-[200px] flex-1">
-          <Input
-            type="search"
+          <SearchField
+            size="lg"
+            surface="card"
             aria-label={t("searchPacks")}
             placeholder={t("searchPacks")}
             value={searchInput}
@@ -94,13 +98,17 @@ export function PackApprovalsTab() {
           />
         </div>
         <div className="w-[190px]">
-          <Select
-            aria-label={t("filterFormat")}
+          {/* The design's listbox, not a native <select>: the OS menu a
+              <select> opens ignores every token on this page. */}
+          <Dropdown
+            size="lg"
+            surface="card"
+            ariaLabel={t("filterFormat")}
             value={filters.format}
-            onChange={(event) =>
+            onChange={(format) =>
               setFilters((prev) => ({
                 ...prev,
-                format: event.target.value as PackFormat | "",
+                format: format as PackFormat | "",
               }))
             }
             options={[
@@ -124,7 +132,7 @@ export function PackApprovalsTab() {
               sort: prev.sort === "oldest" ? "newest" : "oldest",
             }))
           }
-          className="h-11 rounded-[10px] border border-border bg-white/[0.05] px-3.5 text-[13px] font-medium text-foreground-secondary transition-colors hover:bg-white/[0.08]"
+          className="h-11 rounded-control border border-border bg-white/[0.05] px-[14px] text-[13px] font-semibold text-foreground-secondary transition-colors hover:bg-white/[0.09] hover:text-foreground"
         >
           {t("sortLabel")}{" "}
           {filters.sort === "oldest" ? t("sortOldest") : t("sortNewest")}
@@ -147,7 +155,17 @@ export function PackApprovalsTab() {
               t("hSubmitted"),
               "",
             ]}
-            empty={t("noPacks")}
+            empty={
+              // The mock gives the pack queue a richer empty state than the
+              // report queue's single line: an "all clear" tick above it, since
+              // here an empty queue is good news rather than a dead end.
+              <span className="flex flex-col items-center gap-2.5">
+                <span className="grid h-11 w-11 place-items-center rounded-[13px] bg-success/10 text-success">
+                  <Check size={21} strokeWidth={2.2} aria-hidden />
+                </span>
+                {t("noPacks")}
+              </span>
+            }
             isEmpty={packs.length === 0}
           >
             {packs.map((pack) => {
@@ -206,7 +224,7 @@ export function PackApprovalsTab() {
                           event.stopPropagation();
                           approve.mutate(pack.id);
                         }}
-                        className="h-[34px] rounded-lg border border-success/40 bg-success/10 px-3.5 text-[13px] font-medium text-success transition-colors hover:bg-success/20 disabled:opacity-40"
+                        className="h-[34px] rounded-[9px] border border-success/40 bg-success/10 px-[14px] text-[13px] font-semibold text-success transition-colors hover:bg-success/20 disabled:opacity-40"
                       >
                         {t("approve")}
                       </button>
@@ -218,7 +236,7 @@ export function PackApprovalsTab() {
                           if (rejectingId === pack.id) closeRejectForm();
                           else setRejectingId(pack.id);
                         }}
-                        className="h-[34px] rounded-lg border border-danger/40 bg-danger/10 px-3.5 text-[13px] font-medium text-danger transition-colors hover:bg-danger/20 disabled:opacity-40"
+                        className="h-[34px] rounded-[9px] border border-danger/40 bg-danger/10 px-[14px] text-[13px] font-semibold text-danger transition-colors hover:bg-danger/20 disabled:opacity-40"
                       >
                         {t("reject")}
                       </button>
@@ -229,8 +247,8 @@ export function PackApprovalsTab() {
                       form expands under its row rather than opening a dialog —
                       same shape as the admin Users tab's ban form. */}
                   {rejectingId === pack.id && (
-                    <div className="flex items-center gap-2 border-t border-white/[0.05] bg-white/[0.02] px-[18px] py-3">
-                      <div className="flex-1">
+                    <div className="flex flex-wrap items-center gap-[9px] border-t border-white/[0.05] bg-white/[0.02] px-[18px] py-[13px]">
+                      <div className="min-w-[200px] flex-1">
                         <Input
                           aria-label={t("rejectReasonAria", {
                             title: pack.title,
@@ -246,14 +264,14 @@ export function PackApprovalsTab() {
                         type="button"
                         disabled={busy || rejectReason.trim().length === 0}
                         onClick={() => submitReject(pack.id)}
-                        className="h-10 rounded-lg border border-danger/40 bg-danger/10 px-3.5 text-[13px] font-medium text-danger transition-colors hover:bg-danger/20 disabled:cursor-not-allowed disabled:opacity-40"
+                        className="h-10 rounded-[10px] border border-danger/40 bg-danger/10 px-[14px] text-[13px] font-[650] text-danger transition-colors hover:bg-danger/20 disabled:cursor-not-allowed disabled:opacity-40"
                       >
                         {t("confirmReject")}
                       </button>
                       <button
                         type="button"
                         onClick={closeRejectForm}
-                        className="h-10 rounded-lg border border-border bg-white/[0.05] px-3.5 text-[13px] font-medium text-foreground-secondary transition-colors hover:bg-white/[0.08]"
+                        className="h-10 rounded-[10px] border border-border bg-white/[0.05] px-[14px] text-[13px] font-semibold text-foreground-secondary transition-colors hover:bg-white/[0.09] hover:text-foreground"
                       >
                         {tCommon("cancel")}
                       </button>

@@ -112,7 +112,10 @@ export function ModerationPanel() {
         }
       />
       <main
-        className={cn(pageContainer(1180), "flex flex-1 flex-col gap-7 py-11")}
+        className={cn(
+          pageContainer(1180),
+          "flex flex-1 flex-col gap-[26px] pt-[34px] pb-[70px]",
+        )}
       >
         <section>
           <div className="mb-2.5 flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.14em] text-foreground-tertiary">
@@ -126,7 +129,9 @@ export function ModerationPanel() {
           </Text>
         </section>
 
-        <div role="tablist" className="flex gap-2 border-b border-border">
+        {/* No `gap`: the mock spaces the tabs with a 22px margin on each
+            button, so a gap here would add to it rather than replace it. */}
+        <div role="tablist" className="flex border-b border-border">
           {TABS.map((value) => {
             const badge = badges[value];
             const waiting = badge !== undefined && badge > 0 ? badge : null;
@@ -145,7 +150,7 @@ export function ModerationPanel() {
                 }
                 onClick={() => selectTab(value)}
                 className={cn(
-                  "mr-[22px] flex items-center gap-2 border-b-2 px-1 py-2.5 text-sm font-semibold transition-colors",
+                  "mr-[22px] flex items-center gap-[9px] border-b-2 px-1 py-2.5 text-sm font-[650] transition-colors",
                   tab === value
                     ? "border-acc text-foreground"
                     : "border-transparent text-foreground-tertiary hover:text-foreground-secondary",
@@ -158,7 +163,8 @@ export function ModerationPanel() {
                 {waiting !== null && (
                   <span
                     aria-hidden
-                    className="rounded-full bg-acc/15 px-2 py-0.5 text-[11px] font-semibold tabular-nums text-acc"
+                    data-mono
+                    className="rounded-full bg-acc/15 px-2 py-0.5 text-[11px] font-bold tabular-nums text-acc"
                   >
                     {waiting}
                   </span>

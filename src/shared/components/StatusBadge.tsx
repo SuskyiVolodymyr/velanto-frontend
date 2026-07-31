@@ -22,6 +22,10 @@ const PACK_TONE: Record<PackStatus, string> = {
   draft: NEUTRAL,
   pending: WARNING,
   approved: SUCCESS,
+  // The same amber as `pending`: both mean "not public yet, someone still has
+  // work to do". What differs is WHO — the queue vs the author — and that is
+  // what the label says, not the colour.
+  changes_requested: WARNING,
   rejected: DANGER,
 };
 const FEEDBACK_TONE: Record<FeedbackStatus, string> = {
@@ -34,6 +38,7 @@ const PACK_KEY: Record<PackStatus, string> = {
   draft: "packDraft",
   pending: "packPending",
   approved: "packApproved",
+  changes_requested: "packChangesRequested",
   rejected: "packRejected",
 };
 const FEEDBACK_KEY: Record<FeedbackStatus, string> = {

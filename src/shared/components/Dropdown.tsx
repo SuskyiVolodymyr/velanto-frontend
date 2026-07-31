@@ -24,7 +24,34 @@ export interface DropdownProps<T extends string> {
   disabled?: boolean;
   id?: string;
   className?: string;
+  /**
+   * Trigger height. `md` (42px) is the app's standard field; `lg` (44px) is the
+   * taller staff filter bar (Moderation.dc.html sizes search + format + sort
+   * together at 44). The floating panel positions itself off the trigger, so it
+   * follows either.
+   */
+  size?: "md" | "lg";
+  /**
+   * Which step of the elevation ladder the trigger sits on — `background`
+   * (default) for a field in a form, `card` for one in a filter bar sitting on
+   * the page body, where a background-coloured control reads as a hole.
+   *
+   * Both this and `size` are props rather than `className` overrides: `cn()` is
+   * a plain join, so an outside `h-11`/`bg-surface-card` would leave both
+   * values in the class list and let Tailwind's emit order decide.
+   */
+  surface?: "background" | "card";
 }
+
+const TRIGGER_SIZE_CLASS: Record<"md" | "lg", string> = {
+  md: "h-[42px]",
+  lg: "h-11",
+};
+
+const TRIGGER_SURFACE_CLASS: Record<"background" | "card", string> = {
+  background: "bg-background",
+  card: "bg-surface-card",
+};
 
 /**
  * The design's own dropdown (Components.dc.html → "Dropdown · long or localized
@@ -49,6 +76,8 @@ export function Dropdown<T extends string>({
   disabled = false,
   id,
   className,
+  size = "md",
+  surface = "background",
 }: DropdownProps<T>) {
   const [open, setOpen] = useState(false);
   // Which option the keyboard is on. Kept apart from `value`: moving through the
@@ -160,7 +189,9 @@ export function Dropdown<T extends string>({
         onClick={() => (open ? setOpen(false) : openList())}
         onKeyDown={handleKeyDown}
         className={cn(
-          "flex h-[42px] w-full cursor-pointer items-center justify-between gap-2 rounded-control border bg-background px-[13px] text-[13.5px] font-semibold transition-colors",
+          "flex w-full cursor-pointer items-center justify-between gap-2 rounded-control border px-[13px] text-[13.5px] font-semibold transition-colors",
+          TRIGGER_SIZE_CLASS[size],
+          TRIGGER_SURFACE_CLASS[surface],
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
           "disabled:cursor-not-allowed disabled:opacity-45",
           open ? "border-acc" : "border-white/[0.12] hover:border-white/25",

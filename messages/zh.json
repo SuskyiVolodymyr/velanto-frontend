@@ -113,7 +113,44 @@
     "otherReportsError": "无法加载举报记录。",
     "otherReportsNone": "没有针对该对象的其他举报。",
     "otherReportsBy": "举报人：{reporter}",
-    "otherReportsMore": "显示 {total} 条其他举报中的 {shown} 条。"
+    "otherReportsMore": "显示 {total} 条其他举报中的 {shown} 条。",
+    "approvalHeading": "审核——包中的每一项",
+    "approvalIntro": "一次游戏只会从每个池中随机抽取部分内容。作者提交的全部内容列在下方，因此不会有未经审核的内容到达玩家。",
+    "decisionHeading": "处理决定",
+    "approvePack": "通过该包",
+    "requestChanges": "要求修改",
+    "rejectPack": "驳回该包",
+    "changesRequestedHeading": "已要求修改",
+    "changesNoMarks": "先在上方点击“标记待改”选中需要修改的内容，再说明作者需要改什么。",
+    "changesMessageLabel": "给作者的说明",
+    "changesMessagePlaceholder": "上线前必须修改什么？",
+    "sendChangeRequest": "发送要求",
+    "changesOutcomeNote": "该包连同你的备注退回给作者。不会删除任何内容，重新提交后会重新进入队列。",
+    "rejectReasonLabel": "驳回理由",
+    "markForEdit": "标记待改",
+    "marked": "已标记",
+    "unmark": "取消标记 {label}",
+    "markNoRequest": "无备注——作者只会看到此处被标记。",
+    "markAskedOfAuthor": "对作者的要求",
+    "markItemPlaceholder": "作者应如何处理这一项？",
+    "markRoundPlaceholder": "这一轮应该改什么？",
+    "markFieldPlaceholder": "作者应该改写成什么？",
+    "markKind": {
+      "title": "标题",
+      "description": "描述",
+      "cover": "封面",
+      "tags": "标签",
+      "item": "项目",
+      "round": "回合"
+    },
+    "fieldsHeading": "包信息——标记需要重写的内容",
+    "fieldTitle": "标题",
+    "fieldDescription": "描述",
+    "fieldCover": "封面",
+    "fieldTags": "标签",
+    "fieldEmpty": "未设置",
+    "fieldCoverUploaded": "上传的图片",
+    "fieldCoverTone": "颜色 {tone}"
   },
   "admin": {
     "panelEyebrow": "管理面板",
@@ -275,7 +312,8 @@
     "newCount": "{count} 条新",
     "loadOlder": "加载更早的通知",
     "commentReply": "<user>@{username}</user> <muted>回复了你在题包中的评论：</muted> <obj>{packTitle}</obj>",
-    "kindReply": "回复"
+    "kindReply": "回复",
+    "packChangesRequested": "<muted>审核员要求修改</muted> <obj>{packTitle}</obj>"
   },
   "bottomNav": {
     "label": "主导航",
@@ -395,7 +433,8 @@
     "addEmailConfirmButton": "添加邮箱",
     "addEmailTaken": "该邮箱已被其他账户使用。",
     "addEmailError": "无法添加该邮箱。请重试。",
-    "notifCommentReply": "有人回复了你的评论"
+    "notifCommentReply": "有人回复了你的评论",
+    "notifPackChangesRequested": "审核员要求修改我的包"
   },
   "streamerMode": {
     "hiddenHint": "已因主播模式隐藏",
@@ -1548,7 +1587,8 @@
     "feedbackDeclined": "已婉拒",
     "reportNew": "新",
     "reportReviewing": "审核中",
-    "reportClosed": "已关闭"
+    "reportClosed": "已关闭",
+    "packChangesRequested": "要求修改"
   },
   "feedback": {
     "pageTitle": "建议",

@@ -49,7 +49,10 @@ import {
   DEFAULT_PACK_LANGUAGE,
   PACK_LANGUAGE_NAMES,
 } from "@/src/shared/types/pack-language";
-import { ROOM_MODES, ROOM_MODE_BOUNDS } from "@/src/features/friends-rooms/room-types";
+import {
+  ROOM_MODES,
+  ROOM_MODE_BOUNDS,
+} from "@/src/features/friends-rooms/room-types";
 
 describe("cross-repo mirrored constants (velanto-backend contract)", () => {
   // ROLES — MIRRORED in velanto-backend src/modules/users/role.ts (ROLES).
@@ -88,6 +91,7 @@ describe("cross-repo mirrored constants (velanto-backend contract)", () => {
       "draft",
       "pending",
       "approved",
+      "changes_requested",
       "rejected",
     ]);
   });
@@ -291,6 +295,7 @@ describe("cross-repo mirrored constants (velanto-backend contract)", () => {
       "comment_mention",
       "comment_reply",
       "pack_deleted_warning",
+      "pack_changes_requested",
     ]);
   });
 
@@ -315,7 +320,11 @@ describe("cross-repo mirrored constants (velanto-backend contract)", () => {
   // before a mode is chosen.
   it("ROOM_MODE_BOUNDS", () => {
     expect(ROOM_MODE_BOUNDS).toEqual({
-      claim: { formats: ["save_one", "sacrifice_one"], minPlayers: 2, maxPlayers: 4 },
+      claim: {
+        formats: ["save_one", "sacrifice_one"],
+        minPlayers: 2,
+        maxPlayers: 4,
+      },
       guess_who: {
         formats: ["save_one", "sacrifice_one", "rank_blind", "nxn", "1v1"],
         minPlayers: 3,

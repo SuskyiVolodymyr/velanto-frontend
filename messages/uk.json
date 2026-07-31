@@ -113,7 +113,44 @@
     "otherReportsError": "Не вдалося завантажити історію скарг.",
     "otherReportsNone": "Інших скарг на цей обʼєкт немає.",
     "otherReportsBy": "від {reporter}",
-    "otherReportsMore": "Показано {shown} із {total} інших скарг."
+    "otherReportsMore": "Показано {shown} із {total} інших скарг.",
+    "approvalHeading": "Перевірка перед публікацією — кожен елемент пака",
+    "approvalIntro": "За одну гру з кожного пулу випадає лише частина елементів. Нижче — усе, що надіслав автор, щоб ніщо не потрапило до гравців без перевірки.",
+    "decisionHeading": "Рішення",
+    "approvePack": "Схвалити пак",
+    "requestChanges": "Запитати правки",
+    "rejectPack": "Відхилити пак",
+    "changesRequestedHeading": "Запитано правки",
+    "changesNoMarks": "Позначте те, що потребує роботи — кнопкою «Позначити для правки» вище — і напишіть, що автору треба змінити.",
+    "changesMessageLabel": "Повідомлення автору",
+    "changesMessagePlaceholder": "Що має змінитися перед публікацією?",
+    "sendChangeRequest": "Надіслати запит",
+    "changesOutcomeNote": "Пак повертається автору разом із вашими нотатками. Нічого не видаляється, а повторне подання повертає його в чергу.",
+    "rejectReasonLabel": "Причина відхилення",
+    "markForEdit": "Позначити для правки",
+    "marked": "Позначено",
+    "unmark": "Зняти позначку з {label}",
+    "markNoRequest": "Без нотатки — автор побачить лише саму позначку.",
+    "markAskedOfAuthor": "Що потрібно від автора",
+    "markItemPlaceholder": "Що автору зробити з цим елементом?",
+    "markRoundPlaceholder": "Що змінити в цьому раунді?",
+    "markFieldPlaceholder": "Що автору написати натомість?",
+    "markKind": {
+      "title": "Назва",
+      "description": "Опис",
+      "cover": "Обкладинка",
+      "tags": "Теги",
+      "item": "Елемент",
+      "round": "Раунд"
+    },
+    "fieldsHeading": "Дані пака — позначте те, що треба переписати",
+    "fieldTitle": "Назва",
+    "fieldDescription": "Опис",
+    "fieldCover": "Обкладинка",
+    "fieldTags": "Теги",
+    "fieldEmpty": "Не задано",
+    "fieldCoverUploaded": "Завантажене зображення",
+    "fieldCoverTone": "Колір {tone}"
   },
   "admin": {
     "panelEyebrow": "Панель адміністратора",
@@ -275,7 +312,8 @@
     "newCount": "{count} нових",
     "loadOlder": "Завантажити старіші",
     "commentReply": "<user>@{username}</user> <muted>відповів на твій коментар у</muted> <obj>{packTitle}</obj>",
-    "kindReply": "Відповідь"
+    "kindReply": "Відповідь",
+    "packChangesRequested": "<muted>Модератор запитав правки до</muted> <obj>{packTitle}</obj>"
   },
   "bottomNav": {
     "label": "Головна",
@@ -395,7 +433,8 @@
     "addEmailConfirmButton": "Додати пошту",
     "addEmailTaken": "Ця пошта вже використовується іншим обліковим записом.",
     "addEmailError": "Не вдалося додати цю пошту. Будь ласка, спробуйте ще раз.",
-    "notifCommentReply": "Хтось відповів на твій коментар"
+    "notifCommentReply": "Хтось відповів на твій коментар",
+    "notifPackChangesRequested": "Модератор запитав правки до мого пака"
   },
   "streamerMode": {
     "hiddenHint": "Приховано через режим стримера",
@@ -1548,7 +1587,8 @@
     "feedbackDeclined": "Відхилено",
     "reportNew": "Новий",
     "reportReviewing": "Розглядаємо",
-    "reportClosed": "Закрито"
+    "reportClosed": "Закрито",
+    "packChangesRequested": "Запитано правки"
   },
   "feedback": {
     "pageTitle": "Пропозиції",

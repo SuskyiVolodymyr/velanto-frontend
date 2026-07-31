@@ -116,10 +116,51 @@ export const PACK_STATUSES = [
   "draft",
   "pending",
   "approved",
+  // Sent back to the author with a list of marked items and a message, rather
+  // than turned away: the pack leaves the moderation queue but stays editable
+  // and keeps its `changeRequest`, and re-submitting returns it to "pending".
+  // Distinct from "rejected", which is a refusal carrying only a reason.
+  "changes_requested",
   "rejected",
 ] as const;
 
 export type PackStatus = (typeof PACK_STATUSES)[number];
+
+/** What part of a pack a moderator's change request points at. */
+export const CHANGE_REQUEST_MARK_KINDS = [
+  "title",
+  "description",
+  "cover",
+  "tags",
+  "item",
+  "round",
+] as const;
+
+export type ChangeRequestMarkKind = (typeof CHANGE_REQUEST_MARK_KINDS)[number];
+
+export interface ChangeRequestMark {
+  kind: ChangeRequestMarkKind;
+  /** Item or round id; "" for the single-valued pack fields (title, cover, …). */
+  id: string;
+  /**
+   * What the marked thing was called when the request was written. Stored
+   * rather than resolved on read: the author is about to change exactly these
+   * things, and a request that renamed itself as they edited would stop
+   * matching what the moderator saw.
+   */
+  label: string;
+  /** What the author has to do about it. */
+  request: string;
+}
+
+/** A moderator's outstanding "request changes" outcome for one pack. */
+export interface PackChangeRequest {
+  message: string;
+  marks: ChangeRequestMark[];
+  requestedById: string;
+  /** ISO-8601. */
+  requestedAt: string;
+}
 
 export const COVER_TONES = [
   "#2b2a3a",
@@ -172,6 +213,15 @@ export interface Pack {
   // draft or wait in moderation before going live. Optional here only so Pack
   // fixtures that predate it stay valid; the backend always sends it.
   firstPublishedAt?: string | null;
+  /**
+   * The moderator's outstanding change request, or null. Only ever non-null
+   * while `status` is "changes_requested" — approve, reject and the author's
+   * re-submission all clear it — and only the author and moderators can fetch
+   * a pack in that state at all. Optional here only so the many Pack fixtures
+   * that predate it stay valid; the backend always sends it on a single pack
+   * (never on a list summary).
+   */
+  changeRequest?: PackChangeRequest | null;
   totalPlays: number;
   avgAgreementPercent: number;
   status: PackStatus;

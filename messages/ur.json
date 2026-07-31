@@ -113,7 +113,44 @@
     "otherReportsError": "رپورٹ کی تاریخ لوڈ نہیں ہو سکی۔",
     "otherReportsNone": "اس ہدف کے بارے میں کوئی اور رپورٹ نہیں ہے۔",
     "otherReportsBy": "بذریعہ {reporter}",
-    "otherReportsMore": "{total} دیگر رپورٹس میں سے {shown} دکھائی جا رہی ہیں۔"
+    "otherReportsMore": "{total} دیگر رپورٹس میں سے {shown} دکھائی جا رہی ہیں۔",
+    "approvalHeading": "منظوری کا جائزہ — پیک کی ہر شے",
+    "approvalIntro": "ایک کھیل ہر پول سے صرف کچھ حصہ بے ترتیب اٹھاتی ہے۔ مصنف کی بھیجی ہوئی ہر چیز نیچے موجود ہے، تاکہ کوئی مواد بغیر جائزے کھلاڑیوں تک نہ پہنچے۔",
+    "decisionHeading": "فیصلہ",
+    "approvePack": "پیک منظور کریں",
+    "requestChanges": "تبدیلیاں طلب کریں",
+    "rejectPack": "پیک مسترد کریں",
+    "changesRequestedHeading": "تبدیلیاں طلب کی گئیں",
+    "changesNoMarks": "جن چیزوں میں کام درکار ہے انہیں اوپر “ترمیم کے لیے نشان زد کریں” سے منتخب کریں، پھر بتائیں کہ مصنف کو کیا بدلنا ہے۔",
+    "changesMessageLabel": "مصنف کے لیے پیغام",
+    "changesMessagePlaceholder": "لائو ہونے سے پہلے کیا بدلنا ضروری ہے؟",
+    "sendChangeRequest": "درخواست بھیجیں",
+    "changesOutcomeNote": "پیک آپ کے نوٹس کے ساتھ مصنف کے پاس واپس چلا جاتا ہے۔ کچھ حذف نہیں ہوتا، اور دوبارہ جمع کرانے پر وہ دوبارہ قطار میں آ جاتا ہے۔",
+    "rejectReasonLabel": "مستردی کی وجہ",
+    "markForEdit": "ترمیم کے لیے نشان زد کریں",
+    "marked": "نشان زد",
+    "unmark": "{label} سے نشان ہٹائیں",
+    "markNoRequest": "کوئی نوٹ نہیں — مصنف صرف یہ دیکھے گا کہ یہ نشان زد ہے۔",
+    "markAskedOfAuthor": "مصنف سے مطلوب",
+    "markItemPlaceholder": "مصنف اس شے کا کیا کرے؟",
+    "markRoundPlaceholder": "اس راؤنڈ میں کیا بدلنا چاہیے؟",
+    "markFieldPlaceholder": "مصنف اس کی جگہ کیا لکھے؟",
+    "markKind": {
+      "title": "عنوان",
+      "description": "تفصیل",
+      "cover": "سرورق",
+      "tags": "ٹیگز",
+      "item": "شے",
+      "round": "راؤنڈ"
+    },
+    "fieldsHeading": "پیک کی تفصیلات — جو دوبارہ لکھنا ہے اسے نشان زد کریں",
+    "fieldTitle": "عنوان",
+    "fieldDescription": "تفصیل",
+    "fieldCover": "سرورق",
+    "fieldTags": "ٹیگز",
+    "fieldEmpty": "مقرر نہیں",
+    "fieldCoverUploaded": "اپ لوڈ کی گئی تصویر",
+    "fieldCoverTone": "رنگ {tone}"
   },
   "admin": {
     "panelEyebrow": "ایڈمن پینل",
@@ -275,7 +312,8 @@
     "newCount": "{count} نئی",
     "loadOlder": "پرانی اطلاعات لوڈ کریں",
     "commentReply": "<user>@{username}</user> <muted>نے آپ کے تبصرے کا جواب دیا</muted> <obj>{packTitle}</obj>",
-    "kindReply": "جواب"
+    "kindReply": "جواب",
+    "packChangesRequested": "<muted>ایک موڈریٹر نے تبدیلیاں طلب کی ہیں:</muted> <obj>{packTitle}</obj>"
   },
   "bottomNav": {
     "label": "بنیادی",
@@ -395,7 +433,8 @@
     "addEmailConfirmButton": "ای میل شامل کریں",
     "addEmailTaken": "وہ ای میل پہلے ہی کسی دوسرے اکاؤنٹ کے زیرِ استعمال ہے۔",
     "addEmailError": "وہ ای میل شامل نہیں کیا جا سکا۔ براہ کرم دوبارہ کوشش کریں۔",
-    "notifCommentReply": "کسی نے آپ کے تبصرے کا جواب دیا"
+    "notifCommentReply": "کسی نے آپ کے تبصرے کا جواب دیا",
+    "notifPackChangesRequested": "موڈریٹر میرے پیک میں تبدیلیاں طلب کرے"
   },
   "streamerMode": {
     "hiddenHint": "اسٹریمر موڈ کی وجہ سے چھپایا گیا",
@@ -1548,7 +1587,8 @@
     "feedbackDeclined": "نامنظور",
     "reportNew": "نیا",
     "reportReviewing": "جائزے میں",
-    "reportClosed": "بند"
+    "reportClosed": "بند",
+    "packChangesRequested": "تبدیلیاں طلب"
   },
   "feedback": {
     "pageTitle": "تجاویز",

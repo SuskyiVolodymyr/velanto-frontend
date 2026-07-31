@@ -1,5 +1,6 @@
 import { apiClient } from "@/src/shared/lib/api-client";
 import type {
+  ChangeRequestMark,
   Pack,
   PackFormat,
   PackStatus,
@@ -120,6 +121,15 @@ export const packsClient = {
       `/packs/moderation-queue${buildListQuery(filters)}`,
     ),
   approve: (id: string) => apiClient.post<Pack>(`/packs/${id}/approve`),
+  /**
+   * The third review outcome: hand the pack back to its author with a list of
+   * what has to change. `message` is required (a bare list of marks explains
+   * nothing); `marks` may be empty when the whole pack is the problem.
+   */
+  requestChanges: (
+    id: string,
+    body: { message: string; marks: ChangeRequestMark[] },
+  ) => apiClient.post<Pack>(`/packs/${id}/request-changes`, body),
   reject: (id: string, reason?: string) =>
     apiClient.post<Pack>(`/packs/${id}/reject`, { reason }),
 };

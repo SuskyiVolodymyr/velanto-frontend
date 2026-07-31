@@ -113,7 +113,44 @@
     "otherReportsError": "تعذّر تحميل سجل البلاغات.",
     "otherReportsNone": "لا توجد بلاغات أخرى عن هذا الهدف.",
     "otherReportsBy": "بواسطة {reporter}",
-    "otherReportsMore": "عرض {shown} من {total} بلاغًا آخر."
+    "otherReportsMore": "عرض {shown} من {total} بلاغًا آخر.",
+    "approvalHeading": "مراجعة الموافقة — كل عنصر في الحزمة",
+    "approvalIntro": "لا تسحب الجولة الواحدة سوى جزء من كل مجموعة عشوائيًا. كل ما أرسله المؤلف معروض أدناه، حتى لا يصل شيء إلى اللاعبين دون مراجعة.",
+    "decisionHeading": "القرار",
+    "approvePack": "اعتماد الحزمة",
+    "requestChanges": "طلب تعديلات",
+    "rejectPack": "رفض الحزمة",
+    "changesRequestedHeading": "تم طلب تعديلات",
+    "changesNoMarks": "حدّد العناصر التي تحتاج عملًا — باستخدام «تحديد للتعديل» أعلاه — ثم اشرح ما على المؤلف تغييره.",
+    "changesMessageLabel": "رسالة إلى المؤلف",
+    "changesMessagePlaceholder": "ما الذي يجب تغييره قبل النشر؟",
+    "sendChangeRequest": "إرسال الطلب",
+    "changesOutcomeNote": "تعود الحزمة إلى مؤلفها مع ملاحظاتك. لا يُحذف شيء، وإعادة الإرسال تعيدها إلى الطابور.",
+    "rejectReasonLabel": "سبب الرفض",
+    "markForEdit": "تحديد للتعديل",
+    "marked": "محدّد",
+    "unmark": "إلغاء تحديد {label}",
+    "markNoRequest": "بلا ملاحظة — سيرى المؤلف أنه محدّد فقط.",
+    "markAskedOfAuthor": "المطلوب من المؤلف",
+    "markItemPlaceholder": "ما الذي يجب أن يفعله المؤلف بهذا العنصر؟",
+    "markRoundPlaceholder": "ما الذي يجب تغييره في هذه الجولة؟",
+    "markFieldPlaceholder": "ما الذي يجب أن يكتبه المؤلف بدلاً من ذلك؟",
+    "markKind": {
+      "title": "العنوان",
+      "description": "الوصف",
+      "cover": "الغلاف",
+      "tags": "الوسوم",
+      "item": "عنصر",
+      "round": "جولة"
+    },
+    "fieldsHeading": "تفاصيل الحزمة — حدّد ما يحتاج إعادة صياغة",
+    "fieldTitle": "العنوان",
+    "fieldDescription": "الوصف",
+    "fieldCover": "الغلاف",
+    "fieldTags": "الوسوم",
+    "fieldEmpty": "غير محدد",
+    "fieldCoverUploaded": "صورة مرفوعة",
+    "fieldCoverTone": "اللون {tone}"
   },
   "admin": {
     "panelEyebrow": "لوحة الإدارة",
@@ -275,7 +312,8 @@
     "newCount": "{count} جديد",
     "loadOlder": "تحميل الإشعارات الأقدم",
     "commentReply": "<user>@{username}</user> <muted>ردّ على تعليقك في</muted> <obj>{packTitle}</obj>",
-    "kindReply": "ردّ"
+    "kindReply": "ردّ",
+    "packChangesRequested": "<muted>طلب مشرف تعديلات على</muted> <obj>{packTitle}</obj>"
   },
   "bottomNav": {
     "label": "رئيسي",
@@ -395,7 +433,8 @@
     "addEmailConfirmButton": "إضافة البريد الإلكتروني",
     "addEmailTaken": "هذا البريد الإلكتروني مستخدم بالفعل من قبل حساب آخر.",
     "addEmailError": "تعذّر إضافة هذا البريد الإلكتروني. يُرجى المحاولة مرة أخرى.",
-    "notifCommentReply": "ردّ أحدهم على تعليقك"
+    "notifCommentReply": "ردّ أحدهم على تعليقك",
+    "notifPackChangesRequested": "طلب مشرف تعديلات على حزمتي"
   },
   "streamerMode": {
     "hiddenHint": "مخفي بسبب وضع البث",
@@ -1548,7 +1587,8 @@
     "feedbackDeclined": "مرفوضة",
     "reportNew": "جديد",
     "reportReviewing": "قيد المراجعة",
-    "reportClosed": "مغلق"
+    "reportClosed": "مغلق",
+    "packChangesRequested": "طُلبت تعديلات"
   },
   "feedback": {
     "pageTitle": "الاقتراحات",

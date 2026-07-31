@@ -1,40 +1,28 @@
 import { useTranslations } from "next-intl";
 import { formatLabel } from "@/src/shared/lib/pack-display";
-import { formatDateTime } from "@/src/shared/lib/format-date";
 import { PACK_LANGUAGE_NAMES } from "@/src/shared/types/pack-language";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
-import { StatusBadge } from "@/src/shared/components/StatusBadge";
 import { CoverImage } from "@/src/shared/components/CoverImage";
 import type { Pack } from "@/src/shared/types/pack";
 
 /**
- * The pack-review screen's identity block: status/crumb, submitted-by line,
- * cover, title, description, tags, format/language, and pool/round summary
- * sentence. Split out of `PackReviewScreen` (which stays a thin orchestrator,
- * mirroring `ReportDetailScreen`'s delegation to `ReportDetailSummary`) —
- * this component only reads fields already on the fetched `Pack`, no
- * mark-for-edit or timeline (D5/D7).
+ * The pack-review screen's identity card: cover, title, description, tags,
+ * format/language, and the pool/round summary sentence. Split out of
+ * `PackReviewScreen` (which stays a thin orchestrator, mirroring
+ * `ReportDetailScreen`'s delegation to `ReportDetailSummary`) — it only reads
+ * fields already on the fetched `Pack`.
+ *
+ * The status badge and the submitted-by line used to live here too. They moved
+ * to the screen's approval banner when that shipped, rather than being shown
+ * twice; for the same reason the title is a plain heading here, not the page's
+ * `h1` — the banner owns that now.
  */
 export function PackReviewSummary({ pack }: { pack: Pack }) {
   const t = useTranslations("moderation");
 
   return (
     <section className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-center gap-2.5">
-        <StatusBadge kind="pack" status={pack.status} />
-        <span className="text-xs font-semibold uppercase text-foreground-secondary">
-          {t("packCrumb")}
-        </span>
-      </div>
-
-      <Text variant="secondary" className="text-sm">
-        {t("packSubmittedBy", {
-          author: pack.author?.username ?? "—",
-          date: formatDateTime(pack.submittedAt ?? pack.createdAt),
-        })}
-      </Text>
-
       {(pack.coverImageKey || pack.coverTone) && (
         <div
           className="relative h-[130px] w-full overflow-hidden rounded-[16px] border border-border"
@@ -46,7 +34,7 @@ export function PackReviewSummary({ pack }: { pack: Pack }) {
         </div>
       )}
 
-      <Text as="h1" variant="title" className="text-2xl">
+      <Text as="h2" variant="title" className="text-[17px]">
         {pack.title}
       </Text>
 

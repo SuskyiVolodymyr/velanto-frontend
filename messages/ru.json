@@ -113,7 +113,44 @@
     "otherReportsError": "Не удалось загрузить историю жалоб.",
     "otherReportsNone": "Других жалоб на этот объект нет.",
     "otherReportsBy": "от {reporter}",
-    "otherReportsMore": "Показано {shown} из {total} других жалоб."
+    "otherReportsMore": "Показано {shown} из {total} других жалоб.",
+    "approvalHeading": "Проверка перед публикацией — каждый элемент пака",
+    "approvalIntro": "За одну игру из каждого пула выпадает лишь часть элементов. Ниже — всё, что отправил автор, чтобы ничто не попало к игрокам без проверки.",
+    "decisionHeading": "Решение",
+    "approvePack": "Одобрить пак",
+    "requestChanges": "Запросить правки",
+    "rejectPack": "Отклонить пак",
+    "changesRequestedHeading": "Запрошены правки",
+    "changesNoMarks": "Отметьте то, что надо исправить — кнопкой «Отметить к правке» выше — и напишите, что автору нужно изменить.",
+    "changesMessageLabel": "Сообщение автору",
+    "changesMessagePlaceholder": "Что нужно изменить перед публикацией?",
+    "sendChangeRequest": "Отправить запрос",
+    "changesOutcomeNote": "Пак вернётся автору вместе с вашими замечаниями. Ничего не удаляется, а повторная отправка вернёт его в очередь.",
+    "rejectReasonLabel": "Причина отклонения",
+    "markForEdit": "Отметить к правке",
+    "marked": "Отмечено",
+    "unmark": "Снять отметку с {label}",
+    "markNoRequest": "Без замечания — автор увидит только саму отметку.",
+    "markAskedOfAuthor": "Что требуется от автора",
+    "markItemPlaceholder": "Что автору сделать с этим элементом?",
+    "markRoundPlaceholder": "Что изменить в этом раунде?",
+    "markFieldPlaceholder": "Что автору написать вместо этого?",
+    "markKind": {
+      "title": "Название",
+      "description": "Описание",
+      "cover": "Обложка",
+      "tags": "Теги",
+      "item": "Элемент",
+      "round": "Раунд"
+    },
+    "fieldsHeading": "Данные пака — отметьте то, что надо переписать",
+    "fieldTitle": "Название",
+    "fieldDescription": "Описание",
+    "fieldCover": "Обложка",
+    "fieldTags": "Теги",
+    "fieldEmpty": "Не задано",
+    "fieldCoverUploaded": "Загруженное изображение",
+    "fieldCoverTone": "Цвет {tone}"
   },
   "admin": {
     "panelEyebrow": "Панель администратора",
@@ -275,7 +312,8 @@
     "newCount": "{count} новых",
     "loadOlder": "Загрузить старые",
     "commentReply": "<user>@{username}</user> <muted>ответил на ваш комментарий в</muted> <obj>{packTitle}</obj>",
-    "kindReply": "Ответ"
+    "kindReply": "Ответ",
+    "packChangesRequested": "<muted>Модератор запросил правки к</muted> <obj>{packTitle}</obj>"
   },
   "bottomNav": {
     "label": "Главное",
@@ -395,7 +433,8 @@
     "addEmailConfirmButton": "Добавить почту",
     "addEmailTaken": "Эта почта уже используется другим аккаунтом.",
     "addEmailError": "Не удалось добавить эту почту. Пожалуйста, попробуйте ещё раз.",
-    "notifCommentReply": "Кто-то ответил на ваш комментарий"
+    "notifCommentReply": "Кто-то ответил на ваш комментарий",
+    "notifPackChangesRequested": "Модератор запросил правки к моему паку"
   },
   "streamerMode": {
     "hiddenHint": "Скрыто из-за режима стримера",
@@ -1548,7 +1587,8 @@
     "feedbackDeclined": "Отклонён",
     "reportNew": "Новая",
     "reportReviewing": "На рассмотрении",
-    "reportClosed": "Закрыта"
+    "reportClosed": "Закрыта",
+    "packChangesRequested": "Запрошены правки"
   },
   "feedback": {
     "pageTitle": "Предложения",

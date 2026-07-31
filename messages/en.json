@@ -113,7 +113,44 @@
     "otherReportsError": "Couldn't load the report history.",
     "otherReportsNone": "No other reports about this target.",
     "otherReportsBy": "by {reporter}",
-    "otherReportsMore": "Showing {shown} of {total} other reports."
+    "otherReportsMore": "Showing {shown} of {total} other reports.",
+    "approvalHeading": "Approval review — every item in the pack",
+    "approvalIntro": "A play only draws part of each pool at random. Everything the author submitted is listed below, so nothing reaches players unreviewed.",
+    "decisionHeading": "Decision",
+    "approvePack": "Approve pack",
+    "requestChanges": "Request changes",
+    "rejectPack": "Reject pack",
+    "changesRequestedHeading": "Changes requested",
+    "changesNoMarks": "Mark the items that need work — hit “Mark for edit” on anything above — then say what the author has to change.",
+    "changesMessageLabel": "Message to the author",
+    "changesMessagePlaceholder": "What has to change before this can go live?",
+    "sendChangeRequest": "Send request",
+    "changesOutcomeNote": "The pack goes back to the author with your notes. Nothing is deleted, and re-submitting puts it back in the queue.",
+    "rejectReasonLabel": "Rejection reason",
+    "markForEdit": "Mark for edit",
+    "marked": "Marked",
+    "unmark": "Unmark {label}",
+    "markNoRequest": "No note — the author only sees that this was marked.",
+    "markAskedOfAuthor": "Asked of the author",
+    "markItemPlaceholder": "What should the author do with this item?",
+    "markRoundPlaceholder": "What should change about this round?",
+    "markFieldPlaceholder": "What should the author write instead?",
+    "markKind": {
+      "title": "Title",
+      "description": "Description",
+      "cover": "Cover",
+      "tags": "Tags",
+      "item": "Item",
+      "round": "Round"
+    },
+    "fieldsHeading": "Pack details — mark anything that needs rewriting",
+    "fieldTitle": "Title",
+    "fieldDescription": "Description",
+    "fieldCover": "Cover",
+    "fieldTags": "Tags",
+    "fieldEmpty": "Not set",
+    "fieldCoverUploaded": "Uploaded image",
+    "fieldCoverTone": "Colour {tone}"
   },
   "admin": {
     "panelEyebrow": "Admin panel",
@@ -374,7 +411,8 @@
     "newCount": "{count} new",
     "loadOlder": "Load older notifications",
     "commentReply": "<user>@{username}</user> <muted>replied to your comment on</muted> <obj>{packTitle}</obj>",
-    "kindReply": "Reply"
+    "kindReply": "Reply",
+    "packChangesRequested": "<muted>A moderator asked for changes to</muted> <obj>{packTitle}</obj>"
   },
   "bottomNav": {
     "label": "Primary",
@@ -493,7 +531,8 @@
     "addEmailConfirmButton": "Add email",
     "addEmailTaken": "That email is already used by another account.",
     "addEmailError": "Couldn’t add that email. Please try again.",
-    "notifCommentReply": "Someone replied to your comment"
+    "notifCommentReply": "Someone replied to your comment",
+    "notifPackChangesRequested": "A moderator asks for changes to my pack"
   },
   "streamerMode": {
     "hiddenHint": "Hidden because of streamer mode",
@@ -1646,7 +1685,8 @@
     "feedbackDeclined": "Declined",
     "reportNew": "New",
     "reportReviewing": "Reviewing",
-    "reportClosed": "Closed"
+    "reportClosed": "Closed",
+    "packChangesRequested": "Changes requested"
   },
   "feedback": {
     "pageTitle": "Suggestions",

@@ -113,7 +113,44 @@
     "otherReportsError": "রিপোর্টের ইতিহাস লোড করা যায়নি।",
     "otherReportsNone": "এই লক্ষ্য সম্পর্কে আর কোনো রিপোর্ট নেই।",
     "otherReportsBy": "{reporter}-এর দেওয়া",
-    "otherReportsMore": "{total}টি অন্য রিপোর্টের মধ্যে {shown}টি দেখানো হচ্ছে।"
+    "otherReportsMore": "{total}টি অন্য রিপোর্টের মধ্যে {shown}টি দেখানো হচ্ছে।",
+    "approvalHeading": "অনুমোদন পর্যালোচনা — প্যাকের প্রতিটি আইটেম",
+    "approvalIntro": "একটি খেলা প্রতিটি পুল থেকে কেবল কিছু অংশ এলোমেলোভাবে নেয়। লেখক যা পাঠিয়েছেন তার সবই নীচে রয়েছে, যাতে পর্যালোচনা ছাড়া কিছু খেলোয়াড়দের কাছে না পৌঁছায়।",
+    "decisionHeading": "সিদ্ধান্ত",
+    "approvePack": "প্যাক অনুমোদন",
+    "requestChanges": "পরিবর্তন চাও",
+    "rejectPack": "প্যাক বাতিল",
+    "changesRequestedHeading": "পরিবর্তন চাওয়া হয়েছে",
+    "changesNoMarks": "যেগুলোতে কাজ দরকার সেগুলো উপরে “সম্পাদনার জন্য চিহ্নিত করুন” দিয়ে বেছে নিন, তারপর বলুন লেখককে কী বদলাতে হবে।",
+    "changesMessageLabel": "লেখককে বার্তা",
+    "changesMessagePlaceholder": "প্রকাশের আগে কী বদলাতে হবে?",
+    "sendChangeRequest": "অনুরোধ পাঠান",
+    "changesOutcomeNote": "আপনার নোটসহ প্যাকটি লেখকের কাছে ফিরে যায়। কিছুই মুছে ফেলা হয় না, এবং পুনরায় জমা দিলে সেটি আবার সারিতে আসে।",
+    "rejectReasonLabel": "বাতিলের কারণ",
+    "markForEdit": "সম্পাদনার জন্য চিহ্নিত করুন",
+    "marked": "চিহ্নিত",
+    "unmark": "{label} থেকে চিহ্ন সরান",
+    "markNoRequest": "কোনো নোট নেই — লেখক কেবল দেখবেন এটি চিহ্নিত।",
+    "markAskedOfAuthor": "লেখকের কাছে চাওয়া",
+    "markItemPlaceholder": "লেখক এই আইটেমটি নিয়ে কী করবেন?",
+    "markRoundPlaceholder": "এই রাউন্ডে কী বদলানো উচিত?",
+    "markFieldPlaceholder": "লেখক এর বদলে কী লিখবেন?",
+    "markKind": {
+      "title": "শিরোনাম",
+      "description": "বিবরণ",
+      "cover": "কভার",
+      "tags": "ট্যাগ",
+      "item": "আইটেম",
+      "round": "রাউন্ড"
+    },
+    "fieldsHeading": "প্যাকের বিবরণ — যা পুনরায় লিখতে হবে চিহ্নিত করুন",
+    "fieldTitle": "শিরোনাম",
+    "fieldDescription": "বিবরণ",
+    "fieldCover": "কভার",
+    "fieldTags": "ট্যাগ",
+    "fieldEmpty": "সেট করা নেই",
+    "fieldCoverUploaded": "আপলোড করা ছবি",
+    "fieldCoverTone": "রং {tone}"
   },
   "admin": {
     "panelEyebrow": "অ্যাডমিন প্যানেল",
@@ -275,7 +312,8 @@
     "newCount": "{count} নতুন",
     "loadOlder": "পুরোনো বিজ্ঞপ্তি লোড করুন",
     "commentReply": "<user>@{username}</user> <muted>আপনার মন্তব্যে উত্তর দিয়েছেন</muted> <obj>{packTitle}</obj>",
-    "kindReply": "উত্তর"
+    "kindReply": "উত্তর",
+    "packChangesRequested": "<muted>একজন মডারেটর পরিবর্তন চেয়েছেন:</muted> <obj>{packTitle}</obj>"
   },
   "bottomNav": {
     "label": "প্রধান",
@@ -395,7 +433,8 @@
     "addEmailConfirmButton": "ইমেল যোগ করুন",
     "addEmailTaken": "ওই ইমেলটি ইতিমধ্যে অন্য একটি অ্যাকাউন্ট ব্যবহার করছে।",
     "addEmailError": "ওই ইমেলটি যোগ করা যায়নি। অনুগ্রহ করে আবার চেষ্টা করুন।",
-    "notifCommentReply": "কেউ আপনার মন্তব্যে উত্তর দিয়েছেন"
+    "notifCommentReply": "কেউ আপনার মন্তব্যে উত্তর দিয়েছেন",
+    "notifPackChangesRequested": "একজন মডারেটর আমার প্যাকে পরিবর্তন চায়"
   },
   "streamerMode": {
     "hiddenHint": "স্ট্রিমার মোডের কারণে লুকানো",
@@ -1548,7 +1587,8 @@
     "feedbackDeclined": "নাকচ",
     "reportNew": "নতুন",
     "reportReviewing": "পর্যালোচনা চলছে",
-    "reportClosed": "বন্ধ"
+    "reportClosed": "বন্ধ",
+    "packChangesRequested": "পরিবর্তন চাওয়া হয়েছে"
   },
   "feedback": {
     "pageTitle": "পরামর্শ",

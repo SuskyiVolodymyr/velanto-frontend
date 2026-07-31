@@ -14,10 +14,15 @@ import { PackReviewSummary } from "@/src/features/moderation/PackReviewSummary";
 import { PackReviewAuthorCard } from "@/src/features/moderation/PackReviewAuthorCard";
 import { PackRoundMapping } from "@/src/features/moderation/PackRoundMapping";
 import { PackReviewSidebar } from "@/src/features/moderation/PackReviewSidebar";
+import { PackReviewFields } from "@/src/features/moderation/PackReviewFields";
+import { usePackMarks } from "@/src/features/moderation/use-pack-marks";
+import { StatusBadge } from "@/src/shared/components/StatusBadge";
+import { formatDateTime } from "@/src/shared/lib/format-date";
 import { usePackAuthor } from "@/src/features/pack/api/pack-author.queries";
 import {
   useApprovePack,
   useRejectPack,
+  useRequestPackChanges,
 } from "@/src/features/moderation/api/moderation.queries";
 import { cn } from "@/src/shared/lib/cn";
 import { pageContainer } from "@/src/shared/lib/page-container";
@@ -72,8 +77,12 @@ export function PackReviewScreen({ packId }: { packId: string }) {
 
   const approve = useApprovePack();
   const reject = useRejectPack();
+  const requestChanges = useRequestPackChanges();
+  const marks = usePackMarks();
   const actionError =
-    approve.isError || reject.isError ? t("updatePackError") : "";
+    approve.isError || reject.isError || requestChanges.isError
+      ? t("updatePackError")
+      : "";
 
   // Approve/reject are terminal here (no mark-for-edit, no further action
   // possible on this screen per D7), so success sends the moderator back to
@@ -93,6 +102,16 @@ export function PackReviewScreen({ packId }: { packId: string }) {
   function handleReject(reason: string) {
     if (!pack) return;
     reject.mutate({ id: pack.id, reason }, { onSuccess: backToQueue });
+  }
+
+  function handleRequestChanges(message: string) {
+    if (!pack) return;
+    // Terminal here like approve/reject: the pack is now with its author and
+    // has left the queue, so there is nothing further to do on this screen.
+    requestChanges.mutate(
+      { id: pack.id, message, marks: marks.marks },
+      { onSuccess: backToQueue },
+    );
   }
 
   if (authStatus === "loading") return null;
@@ -143,15 +162,45 @@ export function PackReviewScreen({ packId }: { packId: string }) {
         }
       />
       <main
-        className={cn(pageContainer(1240), "flex flex-1 flex-col gap-6 py-10")}
+        className={cn(
+          pageContainer(1240),
+          "flex flex-1 flex-col gap-5 pt-[26px] pb-[70px]",
+        )}
       >
-        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_360px]">
-          <div className="flex min-w-0 flex-col gap-7">
+        <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_330px]">
+          <div className="flex min-w-0 flex-col gap-[18px]">
+            {/* The mock's approval banner. Its job is to say what this screen
+                is FOR: a play only ever draws part of each pool, so the grid
+                below — not a playthrough — is the only way every item gets
+                looked at before it reaches anyone. */}
+            <section className="flex flex-col gap-3 rounded-[18px] border border-status-pending/25 bg-surface-card p-5">
+              <div className="flex flex-wrap items-center gap-2.5">
+                <StatusBadge kind="pack" status={pack.status} />
+                <Text variant="tertiary" className="ms-auto text-[12.5px]">
+                  {t("packSubmittedBy", {
+                    author: pack.author?.username ?? "—",
+                    date: formatDateTime(pack.submittedAt ?? pack.createdAt),
+                  })}
+                </Text>
+              </div>
+              <Text as="h1" variant="title" className="text-[23px] text-pretty">
+                {t("approvalHeading")}
+              </Text>
+              <Text
+                variant="secondary"
+                className="max-w-[70ch] text-[13.5px] leading-[1.55] text-pretty"
+              >
+                {t("approvalIntro")}
+              </Text>
+            </section>
+
             <PackReviewSummary pack={pack} />
             <PackReviewAuthorCard
               author={pack.author}
               authorProfile={authorQuery.data}
             />
+
+            <PackReviewFields pack={pack} marks={marks} />
 
             <section className="flex flex-col gap-3.5">
               <Text
@@ -161,19 +210,22 @@ export function PackReviewScreen({ packId }: { packId: string }) {
               >
                 {t("contentsHeading")}
               </Text>
-              <PackContentsPreview pack={pack} />
+              <PackContentsPreview pack={pack} marks={marks} />
             </section>
 
-            <PackRoundMapping pack={pack} />
+            <PackRoundMapping pack={pack} marks={marks} />
           </div>
 
           <PackReviewSidebar
             packTitle={pack.title}
             approving={approve.isPending}
             rejecting={reject.isPending}
+            requesting={requestChanges.isPending}
             actionError={actionError}
+            marks={marks}
             onApprove={handleApprove}
             onReject={handleReject}
+            onRequestChanges={handleRequestChanges}
           />
         </div>
       </main>
