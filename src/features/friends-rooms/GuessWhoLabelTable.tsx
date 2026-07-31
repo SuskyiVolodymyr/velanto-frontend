@@ -4,17 +4,8 @@ import { useTranslations } from "next-intl";
 import { Info } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
+import { labelTone } from "./guess-who-labels";
 import type { RoomState } from "./room-types";
-
-/** One label's colour family. Four is the roster cap the endgame ever shows at
- * once in practice; beyond that they cycle, which is fine — the letters, not
- * the colours, are what identify a column. */
-const LABEL_TONES = [
-  { chip: "bg-acc/[0.14] text-acc-hover", cell: "bg-acc/[0.07]" },
-  { chip: "bg-hot/[0.14] text-hot", cell: "bg-hot/[0.07]" },
-  { chip: "bg-live/[0.14] text-live", cell: "bg-live/[0.07]" },
-  { chip: "bg-score/[0.14] text-score", cell: "bg-score/[0.07]" },
-];
 
 /**
  * "What each label picked" (Guess Who Results.dc.html): one column per
@@ -69,8 +60,8 @@ export function GuessWhoLabelTable({
           <span className="px-1 py-1.5 text-[11px] font-bold tracking-[0.1em] text-foreground-tertiary uppercase">
             {t("guessWho.roundColumn")}
           </span>
-          {labels.map((label, i) => {
-            const tone = LABEL_TONES[i % LABEL_TONES.length];
+          {labels.map((label) => {
+            const tone = labelTone(labels, label);
             const who = revealed ? usernameById.get(mapping[label]) : null;
             return (
               <div
@@ -131,9 +122,9 @@ function FragmentRow({
       <span className="grid place-items-center px-1.5 font-mono text-[11.5px] font-semibold text-foreground-tertiary">
         {index + 1}
       </span>
-      {labels.map((label, i) => {
+      {labels.map((label) => {
         const picks = round.picks[label] ?? [];
-        const tone = LABEL_TONES[i % LABEL_TONES.length];
+        const tone = labelTone(labels, label);
         return (
           <span
             key={label}

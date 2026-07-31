@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
+import { labelTone } from "./guess-who-labels";
 import { RoundItemTile } from "./RoundItemTile";
 import type { RevealRoundResult, RoomState } from "./room-types";
 
@@ -36,12 +37,16 @@ export function GuessWhoRevealBoard({
   // The round that just closed — the last reveal, which is the one whose cards
   // are still fresh in everyone's head.
   const closed = reveals.length > 0 ? reveals[reveals.length - 1] : null;
-  const pickCounts = new Map<string, number>();
-  for (const ids of Object.values(closed?.picks ?? {})) {
+  const labelsByItem = new Map<string, { label: string; className: string }[]>();
+  for (const [label, ids] of Object.entries(closed?.picks ?? {})) {
     // A rank_blind round's "pick" is a whole ordering; only its FIRST entry
     // reads as a choice, exactly as the label table treats it.
     const top = ids[0];
-    if (top) pickCounts.set(top, (pickCounts.get(top) ?? 0) + 1);
+    if (!top) continue;
+    labelsByItem.set(top, [
+      ...(labelsByItem.get(top) ?? []),
+      { label, className: labelTone(labels, label).chip },
+    ]);
   }
 
   const me = state.players.find((p) => p.userId === currentUserId) ?? null;
@@ -59,11 +64,11 @@ export function GuessWhoRevealBoard({
         </Text>
       </header>
 
-      {/* The round's own cards, marked. The table below is the game's memory —
-          this is the round you were just looking at, with the media you picked
-          from and a faceless chip per pick. Only reachable once EVERY player is
-          locked in, which is what makes the marks safe: they all arrive at the
-          same instant, so no chip can be tied to whoever moved last. */}
+      {/* The round's own cards, marked with the label that took each — the
+          brief's blind-then-reveal beat. The table below is the game's memory;
+          this is the round still fresh in everyone's head, with the media they
+          picked from. Only reachable once every player is locked in, so
+          revealing here cannot help anyone copy. */}
       {closed && (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {closed.items.map((item) => (
@@ -71,7 +76,7 @@ export function GuessWhoRevealBoard({
               key={item.id}
               item={item}
               actionLabel={item.title}
-              maskedPicks={pickCounts.get(item.id) ?? 0}
+              pickLabels={labelsByItem.get(item.id)}
             />
           ))}
         </div>

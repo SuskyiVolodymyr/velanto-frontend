@@ -32,12 +32,13 @@ export interface RoundItemTileProps {
   /** Who is publicly attached to this item — voters, or the player who cut it. */
   people?: RoomPlayerState[];
   /**
-   * How many players picked this, with no clue WHICH — one faceless chip each,
-   * in the same corner {@link people} would use. For a blind round, where the
-   * count is the only thing that may ever be shown: an avatar or a stable
-   * label there would hand over the deduction the whole mode is about.
+   * Guess-who's anonymous labels that picked this item, once the round has
+   * revealed — one lettered chip each, in the same corner {@link people} would
+   * use. Labels, not names and not a count: a single round attributes nothing
+   * (two people often pick the same option), and it is a label's trajectory
+   * ACROSS rounds that the mode asks you to read.
    */
-  maskedPicks?: number;
+  pickLabels?: { label: string; className: string }[];
 }
 
 /**
@@ -59,7 +60,7 @@ export function RoundItemTile({
   badge,
   tally,
   people,
-  maskedPicks = 0,
+  pickLabels,
 }: RoundItemTileProps) {
   const t = useTranslations("room");
   const videoId = item.type === "youtube" ? extractYouTubeId(item.value) : null;
@@ -137,19 +138,22 @@ export function RoundItemTile({
           {badge.label}
         </span>
       )}
-      {maskedPicks > 0 && (
+      {pickLabels && pickLabels.length > 0 && (
         <span
-          role="img"
-          aria-label={t("guessWho.pickedByCount", { count: maskedPicks })}
-          className="absolute top-[9px] right-[9px] z-10 flex"
+          aria-label={t("guessWho.pickedByLabels", {
+            labels: pickLabels.map((p) => p.label).join(", "),
+          })}
+          className="absolute top-[9px] right-[9px] z-10 flex gap-1"
         >
-          {Array.from({ length: maskedPicks }).map((_, i) => (
+          {pickLabels.map((pick) => (
             <span
-              key={i}
-              aria-hidden
-              className="-ms-[7px] grid h-6 w-6 place-items-center rounded-full border-2 border-surface-card bg-surface-raised text-[10px] font-bold text-foreground-tertiary"
+              key={pick.label}
+              className={cn(
+                "grid h-6 min-w-6 place-items-center rounded-full border-2 border-surface-card px-1 text-[10px] font-extrabold",
+                pick.className,
+              )}
             >
-              ?
+              {pick.label}
             </span>
           ))}
         </span>

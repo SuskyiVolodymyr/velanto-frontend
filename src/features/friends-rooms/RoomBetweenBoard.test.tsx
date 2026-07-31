@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { RoomBetweenBoard } from "./RoomBetweenBoard";
@@ -51,7 +51,11 @@ describe("RoomBetweenBoard", () => {
         onNext={vi.fn()}
       />,
     );
-    expect(screen.getByText("P1")).toBeInTheDocument();
+    // The label rides both the history table and the closed round's own card
+    // now, so scope to the table this test is about.
+    expect(
+      within(screen.getByRole("table")).getByText("P1"),
+    ).toBeInTheDocument();
   });
 
   it("mode turn_based_cut with a cuts history renders it as an ordered strip", () => {

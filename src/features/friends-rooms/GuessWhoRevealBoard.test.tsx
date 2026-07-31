@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { GuessWhoRevealBoard } from "./GuessWhoRevealBoard";
@@ -49,32 +49,24 @@ describe("GuessWhoRevealBoard", () => {
     // to a title, never a raw item id.
     expect(screen.getAllByText("Pizza").length).toBeGreaterThan(0);
     expect(screen.getAllByText("Tacos").length).toBeGreaterThan(0);
-    expect(screen.getByText("P1")).toBeInTheDocument();
-    expect(screen.getByText("P2")).toBeInTheDocument();
+    // Scoped to the table: the labels also ride the closed round's cards now,
+    // so a bare getByText would match twice.
+    const history = screen.getByRole("table");
+    expect(within(history).getByText("P1")).toBeInTheDocument();
+    expect(within(history).getByText("P2")).toBeInTheDocument();
   });
 
-  // The round closed with only a table of titles, so you never saw the items
-  // you had just been looking at, and nothing said how many people converged
-  // on one. The marks are deliberately faceless: they arrive together, once
-  // everyone is locked in, and carry no label — the whole game is deducing who
-  // is who, and an avatar or a letter here would hand that over.
-  it("marks the closed round's own cards with a faceless chip per pick", () => {
+  // The round closed on a table of titles, so you never saw the choice ON the
+  // item you had just been looking at. The brief's mechanic is that each
+  // anonymous label's pick is revealed once everyone is locked in and the
+  // labels accumulate into readable trajectories — so the mark is the LABEL,
+  // not a faceless count. A single round still attributes nothing (two people
+  // pick the same option); the column across rounds is what identifies anyone.
+  it("marks the closed round's own cards with the label that picked each", () => {
     render(
       <GuessWhoRevealBoard
         state={baseRoomState({
           mode: "guess_who",
-          players: [
-            { userId: "u1", username: "Alice" },
-            { userId: "u2", username: "Bob" },
-          ].map((p, i) => ({
-            ...p,
-            avatarKey: null,
-            seat: i,
-            connected: true,
-            ready: true,
-            next: false,
-            claimedItemId: null,
-          })),
           round: {
             index: 0,
             name: "Round 1",
@@ -88,7 +80,7 @@ describe("GuessWhoRevealBoard", () => {
               index: 0,
               name: "Round 1",
               items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
-              picks: { P1: ["i1"], P2: ["i1"] },
+              picks: { P1: ["i1"], P2: ["i1"], P3: ["i2"] },
             },
           ],
         })}
@@ -97,11 +89,13 @@ describe("GuessWhoRevealBoard", () => {
       />,
     );
 
-    // Both labels took Pizza, so its card carries two marks; Sushi carries none.
-    expect(screen.getByLabelText("Picked by 2")).toBeInTheDocument();
-    expect(screen.queryByLabelText("Picked by 0")).toBeNull();
-    // Nothing on the cards names a player or their label.
-    expect(screen.queryByText("Alice")).toBeNull();
-    expect(screen.queryByText("Bob")).toBeNull();
+    // P1 and P2 both took Pizza; P3 took Sushi.
+    const pizza = screen.getByRole("group", { name: "Pizza" });
+    expect(within(pizza).getByText("P1")).toBeInTheDocument();
+    expect(within(pizza).getByText("P2")).toBeInTheDocument();
+    expect(within(pizza).queryByText("P3")).toBeNull();
+
+    const sushi = screen.getByRole("group", { name: "Sushi" });
+    expect(within(sushi).getByText("P3")).toBeInTheDocument();
   });
 });

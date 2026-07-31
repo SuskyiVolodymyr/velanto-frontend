@@ -1990,7 +1990,7 @@
       "roundInstruction": "Choose your answer",
       "pickInstruction": "Pick one — nobody else will see your choice until everyone's locked in.",
       "pickLabel": "Pick {name}",
-      "pickedByCount": "Picked by {count}",
+      "pickedByLabels": "Picked by {labels}",
       "rankInstruction": "Rank every item, best first — nobody else will see your ranking until everyone's locked in.",
       "revealHeading": "Reveal",
       "trajectoryHeading": "How everyone's answered so far",

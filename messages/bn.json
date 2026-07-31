@@ -2122,7 +2122,7 @@
       "roundInstruction": "আপনার উত্তর বেছে নিন",
       "pickInstruction": "গোপনে বেছে নিন — সবাই লক না করা পর্যন্ত কেউ আপনার পছন্দ দেখবে না।",
       "pickLabel": "{name} বেছে নিন",
-      "pickedByCount": "{count} জন বেছে নিয়েছেন",
+      "pickedByLabels": "{labels} বেছে নিয়েছেন",
       "rankInstruction": "প্রতিটি আইটেম ক্রমে সাজান, সেরাটি প্রথমে — সবাই লক না করা পর্যন্ত কেউ আপনার র‍্যাঙ্কিং দেখবে না।",
       "revealHeading": "প্রকাশ",
       "trajectoryHeading": "এখন পর্যন্ত সবাই কী উত্তর দিয়েছে",
