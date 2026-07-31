@@ -450,7 +450,7 @@
     },
     "errors": {
       "loginRequired": "请输入你的邮箱／用户名和密码。",
-      "username": "用户名必须为 2 到 16 个字符，且只能包含字母和数字。",
+      "username": "用户名必须为 2 到 16 个字符，只能包含字母、数字和下划线。",
       "email": "请输入有效的电子邮箱地址。",
       "passwordLength": "密码至少需要 8 个字符。",
       "passwordMax": "密码最多 72 个字符。",
@@ -1731,7 +1731,6 @@
     "metaDescription": "在 Velanto 上搜索题包创作者和玩家并关注。",
     "searchLabel": "搜索用户",
     "searchPlaceholder": "按用户名搜索",
-    "hint": "请输入至少 2 个字符进行搜索。",
     "loading": "正在搜索…",
     "error": "搜索用户失败，请重试。",
     "empty": "未找到用户。"

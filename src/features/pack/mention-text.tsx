@@ -1,9 +1,15 @@
+import { USERNAME_CHARS } from "@/src/features/auth/auth.schema";
 import type { ReactNode } from "react";
 
-// Same shape the backend resolves (auth username charset: 2–16 letters/digits;
-// see the backend's extractMentions). The lookbehind keeps an `@` glued to a
-// word character — e.g. an email like bob@example.com — from highlighting.
-const MENTION_PATTERN = /(?<![\w@])@([a-zA-Z0-9]{2,16})(?![a-zA-Z0-9])/g;
+// Built from the username charset rather than restating it, and mirroring the
+// backend's own `mentions.ts` — the two must agree or a comment renders a
+// mention the server never notified about (or vice versa). Both lookarounds use
+// the charset, not `\w`: `\w` is ASCII-only, so an `@` glued to the end of a
+// Cyrillic word would otherwise read as a mention.
+const MENTION_PATTERN = new RegExp(
+  `(?<!${USERNAME_CHARS}|@)@(${USERNAME_CHARS}{2,16})(?!${USERNAME_CHARS})`,
+  "gu",
+);
 
 /**
  * Splits a comment body into plain text and accent-highlighted `@mention`
