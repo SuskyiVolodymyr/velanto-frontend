@@ -1,5 +1,6 @@
 import { apiClient } from "@/src/shared/lib/api-client";
 import type { PackList } from "@/src/shared/lib/packs-client";
+import type { PackFormat, RecentlyPlayedPack } from "@/src/shared/types/pack";
 import type { AssignableRole } from "@/src/shared/lib/staff-permissions";
 import type {
   MyProfile,
@@ -110,16 +111,28 @@ export const usersClient = {
   /** Clear the caller's avatar back to the initials placeholder. */
   removeAvatar: () =>
     apiClient.delete<{ id: string; avatarKey: null }>("/users/me/avatar"),
-  /** A user's public "recently played" packs (paginated, newest play first). */
+  /**
+   * A user's "recently played" packs (paginated, newest play first). Each item
+   * carries `lastPlayedAt` — when that user last played it — which is what the
+   * History page dates its rows by.
+   */
   recentlyPlayed: (
     id: string,
-    params: { page?: number; limit?: number } = {},
+    params: {
+      page?: number;
+      limit?: number;
+      format?: PackFormat;
+      sort?: "recent" | "oldest";
+    } = {},
   ) => {
     const query = new URLSearchParams();
     if (params.page !== undefined) query.set("page", String(params.page));
     if (params.limit !== undefined) query.set("limit", String(params.limit));
+    // Omitted rather than sent empty — the backend schema is `.strict()`.
+    if (params.format) query.set("format", params.format);
+    if (params.sort) query.set("sort", params.sort);
     const qs = query.toString();
-    return apiClient.get<PackList>(
+    return apiClient.get<PackList<RecentlyPlayedPack>>(
       `/users/${id}/recently-played${qs ? `?${qs}` : ""}`,
     );
   },

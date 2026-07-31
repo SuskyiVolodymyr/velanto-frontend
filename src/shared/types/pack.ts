@@ -190,3 +190,17 @@ export interface Pack {
  * GET /packs/:id (a single pack) does, returning the full {@link Pack}.
  */
 export type PackSummary = Omit<Pack, "groups" | "rounds">;
+
+/**
+ * A played pack as `/users/:id/recently-played` returns it: the same card
+ * summary the browse grid renders, plus when THIS user last played it.
+ *
+ * The timestamp can't be derived client-side — `createdAt`/`firstPublishedAt`
+ * are facts about the pack's own life, not about the viewer — so it rides on
+ * the row. Mirrors `RecentlyPlayedPack` in the backend's
+ * `recently-played.service.ts`.
+ */
+export type RecentlyPlayedPack = PackSummary & {
+  /** ISO timestamp of this user's most recent play of this pack. */
+  lastPlayedAt: string;
+};

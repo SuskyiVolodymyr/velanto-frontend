@@ -98,11 +98,15 @@ describe("SidebarContent", () => {
     );
   });
 
-  it("renders History (no page exists yet) as a disabled 'Soon' item, not a link", () => {
+  it("routes History to the real /history page, with no 'Soon' items left", () => {
     renderSidebar();
-    expect(screen.queryByRole("link", { name: /History/ })).toBeNull();
-    expect(screen.getByText("History")).toBeInTheDocument();
-    expect(screen.getAllByText("Soon")).toHaveLength(1);
+    expect(screen.getByRole("link", { name: /History/ })).toHaveAttribute(
+      "href",
+      "/history",
+    );
+    // Every nav slot now has a page behind it — the "Soon" affordance is kept
+    // in the component for the next unbuilt destination, but nothing uses it.
+    expect(screen.queryAllByText("Soon")).toHaveLength(0);
   });
 
   it("routes Suggestions to the real /feedback page, not a 'Soon' item", () => {

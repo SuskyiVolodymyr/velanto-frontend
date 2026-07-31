@@ -38,8 +38,7 @@ interface NavItem {
 //
 // "Suggestions" points at /feedback — the mock's "Suggestions" nav slot is the
 // same surface the footer calls "Feedback & Suggestions" (FeedbackScreen), not
-// a separate not-yet-built page. "History" genuinely has no page yet (no route,
-// no feature) and stays "soon".
+// a separate not-yet-built page.
 const NAV_ITEMS: NavItem[] = [
   { key: "browse", href: "/", icon: BrowseIcon, isActive: (p) => p === "/" },
   {
@@ -55,7 +54,13 @@ const NAV_ITEMS: NavItem[] = [
     icon: PeopleIcon,
     isActive: (p) => p === "/people",
   },
-  { key: "history", href: null, icon: HistoryIcon },
+  {
+    key: "history",
+    href: "/history",
+    icon: HistoryIcon,
+    requiresAuth: true,
+    isActive: (p) => p === "/history",
+  },
   {
     key: "suggestions",
     href: "/feedback",
@@ -112,10 +117,7 @@ export function SidebarContent({
         )}
       </Link>
 
-      <nav
-        aria-label={t("nav.label")}
-        className="flex flex-col gap-1"
-      >
+      <nav aria-label={t("nav.label")} className="flex flex-col gap-1">
         {NAV_ITEMS.map((item) => {
           const soon = item.href === null;
           const active = !soon && item.isActive?.(pathname) === true;
@@ -155,10 +157,7 @@ export function SidebarContent({
                 // so name it for assistive tech.
                 aria-label={collapsed ? `${label} — ${t("soon")}` : undefined}
                 title={collapsed ? label : t("soon")}
-                className={cn(
-                  base,
-                  "cursor-default text-foreground-tertiary",
-                )}
+                className={cn(base, "cursor-default text-foreground-tertiary")}
               >
                 {inner}
               </span>

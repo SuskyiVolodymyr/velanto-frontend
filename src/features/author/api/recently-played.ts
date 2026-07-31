@@ -1,5 +1,6 @@
 import { usersClient } from "@/src/shared/lib/users-client";
 import type { PackList } from "@/src/shared/lib/packs-client";
+import type { RecentlyPlayedPack } from "@/src/shared/types/pack";
 
 // One page of a user's recently-played packs. The section is a horizontal
 // scroller that appends the next page as it nears the end, so the page size is
@@ -9,7 +10,7 @@ export const RECENTLY_PLAYED_PAGE_SIZE = 8;
 export function fetchRecentlyPlayedPage(
   userId: string,
   page: number,
-): Promise<PackList> {
+): Promise<PackList<RecentlyPlayedPack>> {
   return usersClient.recentlyPlayed(userId, {
     page,
     limit: RECENTLY_PLAYED_PAGE_SIZE,
