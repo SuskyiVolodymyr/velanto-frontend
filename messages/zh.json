@@ -1862,27 +1862,111 @@
     "modes": {
       "claim": {
         "name": "认领",
-        "blurb": "抢先认领一项，比谁都快。"
+        "blurb": "抢先认领一项，比谁都快。",
+        "steps": {
+          "1": {
+            "title": "抢得要快",
+            "body": "每轮抽出的条目比玩家人数多一个。"
+          },
+          "2": {
+            "title": "不能共享",
+            "body": "被抢走的条目就没了——你要抢的是你最想淘汰的那个。"
+          },
+          "3": {
+            "title": "只有一个留下",
+            "body": "唯一没被抢的那个条目就是被保住的。"
+          }
+        }
       },
       "guess_who": {
         "name": "猜猜看",
-        "blurb": "盲选后，猜猜谁选了什么。"
+        "blurb": "盲选后，猜猜谁选了什么。",
+        "steps": {
+          "1": {
+            "title": "盲选锁定",
+            "body": "在任何人的选择公开之前，先定下你自己的答案。"
+          },
+          "2": {
+            "title": "读懂各自的风格",
+            "body": "玩家 X、Y、Z 会在整局中各自累积一列选择。"
+          },
+          "3": {
+            "title": "猜人计分",
+            "body": "把每个代号对上真人。猜对最多的人获胜。"
+          }
+        }
       },
       "turn_based_cut": {
         "name": "轮流淘汰",
-        "blurb": "轮流淘汰一项，直到只剩一项。"
+        "blurb": "轮流淘汰一项，直到只剩一项。",
+        "steps": {
+          "1": {
+            "title": "轮到你了",
+            "body": "轮到你时，你要从台面上划掉正好一个条目。"
+          },
+          "2": {
+            "title": "选项越来越少",
+            "body": "所有人看着选项一个接一个地消失。"
+          },
+          "3": {
+            "title": "最后一个留到最后",
+            "body": "不投票、不打平——剩下的那个就是结果。"
+          }
+        }
       },
       "voting": {
         "name": "投票",
-        "blurb": "实时投票，票数随时可见。"
+        "blurb": "实时投票，票数随时可见。",
+        "steps": {
+          "1": {
+            "title": "投票",
+            "body": "点你想选的那个。别人还在犹豫时你可以随时改。"
+          },
+          "2": {
+            "title": "盯着票数",
+            "body": "计票实时更新，你可以据理力争，把风向掰回来。"
+          },
+          "3": {
+            "title": "多数说了算",
+            "body": "打平时由持有优先权的人决定——绝不靠抛硬币。"
+          }
+        }
       },
       "shared_grid": {
         "name": "共同排名",
-        "blurb": "各自盲排，再看合并后的整体排名。"
+        "blurb": "各自盲排，再看合并后的整体排名。",
+        "steps": {
+          "1": {
+            "title": "盲排",
+            "body": "自己给整个台面排序，看不到任何人的排名。"
+          },
+          "2": {
+            "title": "全员提交",
+            "body": "本轮要等每个座位都锁定排名后才继续。"
+          },
+          "3": {
+            "title": "汇成一份排名",
+            "body": "所有人的排名会一起计分，合成房间的总排名。"
+          }
+        }
       },
       "relay": {
         "name": "接力排序",
-        "blurb": "轮流插入，共同排出一份排名。"
+        "blurb": "轮流插入，共同排出一份排名。",
+        "steps": {
+          "1": {
+            "title": "一次一个",
+            "body": "本轮按固定顺序逐个亮出条目，每回合一个。"
+          },
+          "2": {
+            "title": "插到合适的位置",
+            "body": "轮到你时，把它插进目前排名的任意位置。"
+          },
+          "3": {
+            "title": "一起搭出来",
+            "body": "结果不属于某个人——是全房间共同拼出的一份排名。"
+          }
+        }
       }
     },
     "entry": {
@@ -1924,7 +2008,41 @@
       "lock": "锁定房间",
       "unlock": "解锁房间",
       "lockedNote": "已锁定——不接受新玩家。",
-      "unlockedNote": "开放——拥有加入码的好友可以加入。"
+      "unlockedNote": "开放——拥有加入码的好友可以加入。",
+      "open": "房间开放中",
+      "chooseHeading": "选择你们的玩法",
+      "hostHint": "挑一个模式——它决定每轮的玩法和房间人数。",
+      "guestHint": "房主正在选择模式。一旦选定，这里就会显示。",
+      "roleHost": "你是房主",
+      "roleGuest": "由房主决定",
+      "howARoundGoes": "一轮是怎么进行的",
+      "resultShared": "共同结论",
+      "resultScored": "计分 · 分胜负",
+      "priorityTitle": "平局由优先权决定",
+      "priorityBody": "票数打平时，由持有优先权的玩家拍板。每轮轮换给下一位。",
+      "capacityRoomFor": "还能再进 {count} 人",
+      "capacityFull": "房间已满",
+      "capacityNeeds": "至少需要 {min} 人",
+      "stillDeciding": "还在考虑",
+      "tapReadyWhenYouAre": "准备好了就点一下",
+      "inviteSomeone": "邀请好友",
+      "inviteCode": "邀请码",
+      "codeHidden": "已在屏幕上隐藏",
+      "codeVisible": "已显示",
+      "everyoneReady": "所有人都准备好了",
+      "waitingOn": "还在等 {count} 人",
+      "start": "开始{mode}",
+      "startGeneric": "开始游戏",
+      "waitingForHost": "等待房主开始",
+      "imReady": "我准备好了",
+      "unready": "取消准备",
+      "startNoteGuest": "只有房主能开始。先点准备，好让他们开局。",
+      "startNoteAllReady": "全员就绪——一旦开始，本局的模式就固定了。",
+      "startNoteWaiting": "房内所有人准备好后即可开始。",
+      "startNoteNeedsMore": "满 {min} 人后才能开始。",
+      "startNoteNoMode": "先在上方选一个模式才能开始。",
+      "seatCount": "{count}/{max}",
+      "readyCount": "{ready}/{total}"
     },
     "round": {
       "heading": "第 {index} 轮，共 {total} 轮",
@@ -2066,6 +2184,12 @@
     "leaderboard": {
       "winner": "获胜者",
       "points": "{count, plural, other {# 分}}"
+    },
+    "header": {
+      "rounds": "{count, plural, other {# 轮}}",
+      "inRound": "本轮进行中",
+      "between": "本轮已揭晓",
+      "guessing": "猜人环节"
     }
   },
   "reviewOutcome": {

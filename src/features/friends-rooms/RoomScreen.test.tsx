@@ -17,6 +17,7 @@ const vote = vi.fn();
 const submitRanking = vi.fn();
 const placeItem = vi.fn();
 const ready = vi.fn();
+const start = vi.fn();
 const next = vi.fn();
 const lock = vi.fn();
 const leave = vi.fn();
@@ -68,6 +69,9 @@ function baseState(overrides: Partial<RoomState> = {}): RoomState {
     code: "ABC123",
     packId: "pack-1",
     packTitle: "Best Movies",
+    packFormat: "sacrifice_one",
+    packRounds: 3,
+    packAuthorUsername: "packsmith",
     hostId: "host",
     status: "lobby",
     phase: "lobby",
@@ -111,6 +115,7 @@ function setRoom(
     submitRanking,
     placeItem,
     ready,
+    start,
     next,
     lock,
     leave,
@@ -137,14 +142,19 @@ beforeEach(() => {
 });
 
 describe("RoomScreen — lobby", () => {
-  it("renders every seat plus empty chairs up to capacity", () => {
+  // Empty-seat placeholders are gone (Room Lobby.dc.html): a capacity note says
+  // the same thing without implying the room is waiting on a specific number of
+  // people who are on their way.
+  it("renders every seat and says how much room is left", () => {
     setRoom(baseState());
     render(<RoomScreen roomId="room-1" />);
 
     expect(screen.getByText("Alice")).toBeInTheDocument();
     expect(screen.getByText("Bob")).toBeInTheDocument();
-    // 4 seats total, 2 filled ⇒ 2 empty chairs.
-    expect(screen.getAllByText("Empty seat")).toHaveLength(2);
+    expect(screen.queryByText("Empty seat")).not.toBeInTheDocument();
+    // 4 seats total, 2 filled.
+    expect(screen.getByText("2/4")).toBeInTheDocument();
+    expect(screen.getByText("Room for 2 more")).toBeInTheDocument();
   });
 
   it("shows the host the copy and lock controls", () => {
@@ -156,7 +166,7 @@ describe("RoomScreen — lobby", () => {
       screen.getByRole("button", { name: "Copy code" }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: "Lock room" }),
+      screen.getByRole("switch", { name: "Lock room" }),
     ).toBeInTheDocument();
   });
 
@@ -169,7 +179,7 @@ describe("RoomScreen — lobby", () => {
       screen.queryByRole("button", { name: "Copy code" }),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByRole("button", { name: "Lock room" }),
+      screen.queryByRole("switch", { name: "Lock room" }),
     ).not.toBeInTheDocument();
   });
 
@@ -198,8 +208,53 @@ describe("RoomScreen — lobby", () => {
     setRoom(baseState());
     render(<RoomScreen roomId="room-1" />);
 
-    await user.click(screen.getByRole("button", { name: "Ready up" }));
+    // Rendered twice — inline on desktop, fixed bar on phones — and exactly one
+    // is visible at a time, so either is the control the viewer would press.
+    await user.click(screen.getAllByRole("button", { name: "I'm ready" })[0]);
     expect(ready).toHaveBeenCalledTimes(1);
+  });
+
+  // Ready is consent; the host is the trigger. Before this the room started
+  // itself on the last Ready, so there was no Start to press.
+  it("lets the host start once everyone present is ready", async () => {
+    const user = userEvent.setup();
+    currentUser = asUser("host");
+    setRoom(
+      baseState({
+        players: [
+          player("host", "Alice", { seat: 0, ready: true }),
+          player("guest", "Bob", { seat: 1, ready: true }),
+        ],
+      }),
+    );
+    render(<RoomScreen roomId="room-1" />);
+
+    expect(screen.getByText("Everyone's ready")).toBeInTheDocument();
+    await user.click(screen.getAllByRole("button", { name: "Start Claim" })[0]);
+    expect(start).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps Start out of reach while anyone is still deciding", () => {
+    currentUser = asUser("host");
+    setRoom(baseState()); // neither player is ready
+    render(<RoomScreen roomId="room-1" />);
+
+    expect(
+      screen.getAllByRole("button", { name: "Start Claim" })[0],
+    ).toBeDisabled();
+    expect(screen.getByText("Waiting on 2")).toBeInTheDocument();
+  });
+
+  // A guest pressing Start would be refused server-side anyway; the point is
+  // that they are told who they are waiting on instead.
+  it("shows a guest that the host holds the start", () => {
+    currentUser = asUser("guest");
+    setRoom(baseState());
+    render(<RoomScreen roomId="room-1" />);
+
+    expect(
+      screen.getAllByRole("button", { name: "Waiting for host" })[0],
+    ).toBeDisabled();
   });
 });
 
@@ -342,11 +397,35 @@ describe("RoomScreen — round", () => {
 });
 
 describe("RoomScreen — pack title", () => {
+  // The sticky header carries the title on every live phase — someone who
+  // joined from a shared link has no other answer to "what are we playing?".
   it.each([
     ["lobby", () => baseState()],
     ["round", () => roundStateForTitle()],
-  ])("heads the %s with the pack title", (_phase, build) => {
+  ])("names the pack in the %s header", (_phase, build) => {
     setRoom(build());
+    render(<RoomScreen roomId="room-1" />);
+
+    // [0] is the sticky room header. The round board renders a bare <header>
+    // of its own, which counts as a second banner landmark — a wart to clean up
+    // when that board is rebuilt, not something to assert around here.
+    const header = screen.getAllByRole("banner")[0];
+    expect(within(header).getByText("Best Movies")).toBeInTheDocument();
+  });
+
+  // The lobby heads itself ("Choose how you'll play"), so the page must not
+  // also carry a second, hidden h1 with the title.
+  it("gives the lobby exactly one h1, its own", () => {
+    setRoom(baseState());
+    render(<RoomScreen roomId="room-1" />);
+
+    const h1s = screen.getAllByRole("heading", { level: 1 });
+    expect(h1s).toHaveLength(1);
+    expect(h1s[0]).toHaveTextContent("Choose how you'll play");
+  });
+
+  it("falls back to the pack title as the h1 once a round is up", () => {
+    setRoom(roundStateForTitle());
     render(<RoomScreen roomId="room-1" />);
 
     expect(

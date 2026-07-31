@@ -1861,27 +1861,111 @@
     "modes": {
       "claim": {
         "name": "Claim",
-        "blurb": "Be the fastest to grab an item before anyone else does."
+        "blurb": "Be the fastest to grab an item before anyone else does.",
+        "steps": {
+          "1": {
+            "title": "Claim fast",
+            "body": "Each round draws one more item than there are players."
+          },
+          "2": {
+            "title": "No sharing",
+            "body": "A claimed item is gone — you race for the one you want out."
+          },
+          "3": {
+            "title": "One survives",
+            "body": "The single unclaimed item is the one that's saved."
+          }
+        }
       },
       "guess_who": {
         "name": "Guess Who",
-        "blurb": "Pick blind, then guess who picked what."
+        "blurb": "Pick blind, then guess who picked what.",
+        "steps": {
+          "1": {
+            "title": "Lock in blind",
+            "body": "Pick your own answer before anyone's choices are revealed."
+          },
+          "2": {
+            "title": "Read the builds",
+            "body": "Player X, Y, Z each grow a column of picks over the game."
+          },
+          "3": {
+            "title": "Guess & score",
+            "body": "Match every label to a real person. Most correct wins."
+          }
+        }
       },
       "turn_based_cut": {
         "name": "Turn-Based Cut",
-        "blurb": "Take turns cutting items until one remains."
+        "blurb": "Take turns cutting items until one remains.",
+        "steps": {
+          "1": {
+            "title": "Your turn",
+            "body": "On your turn you remove exactly one item from the board."
+          },
+          "2": {
+            "title": "The board shrinks",
+            "body": "Everyone watches the options drop away one by one."
+          },
+          "3": {
+            "title": "Last one standing",
+            "body": "No votes, no ties — the final item is the result."
+          }
+        }
       },
       "voting": {
         "name": "Voting",
-        "blurb": "Vote live — everyone sees the tally as it grows."
+        "blurb": "Vote live — everyone sees the tally as it grows.",
+        "steps": {
+          "1": {
+            "title": "Vote",
+            "body": "Tap the one you'd pick. Change it while others are still deciding."
+          },
+          "2": {
+            "title": "Watch the tally",
+            "body": "Counts update live, so you can argue and swing the room."
+          },
+          "3": {
+            "title": "Majority wins",
+            "body": "On a tie the priority holder decides — never a coin flip."
+          }
+        }
       },
       "shared_grid": {
         "name": "Shared Grid",
-        "blurb": "Rank blind, then see everyone's combined ranking."
+        "blurb": "Rank blind, then see everyone's combined ranking.",
+        "steps": {
+          "1": {
+            "title": "Rank blind",
+            "body": "Order the whole board yourself, with nobody else's ranking in view."
+          },
+          "2": {
+            "title": "Everyone submits",
+            "body": "The round waits until every seat has locked a ranking in."
+          },
+          "3": {
+            "title": "One combined order",
+            "body": "Every ballot is scored together into the room's ranking."
+          }
+        }
       },
       "relay": {
         "name": "Relay",
-        "blurb": "Build one shared ranking together, one insert at a time."
+        "blurb": "Build one shared ranking together, one insert at a time.",
+        "steps": {
+          "1": {
+            "title": "One item at a time",
+            "body": "The round reveals items in a fixed order, one per turn."
+          },
+          "2": {
+            "title": "Slot it in",
+            "body": "On your turn you insert it anywhere in the ranking so far."
+          },
+          "3": {
+            "title": "Built together",
+            "body": "Nobody owns the result — the room assembles one shared order."
+          }
+        }
       }
     },
     "lockedIn": {
@@ -1990,7 +2074,41 @@
       "lock": "Lock room",
       "unlock": "Unlock room",
       "lockedNote": "Locked — closed to new players.",
-      "unlockedNote": "Open — friends with the code can join."
+      "unlockedNote": "Open — friends with the code can join.",
+      "open": "Lobby open",
+      "chooseHeading": "Choose how you'll play",
+      "hostHint": "Pick a mode — it changes the round mechanic and the room size.",
+      "guestHint": "The host is choosing the mode. You'll see it here as soon as they pick.",
+      "roleHost": "YOU'RE THE HOST",
+      "roleGuest": "HOST DECIDES",
+      "howARoundGoes": "how a round goes",
+      "resultShared": "Shared verdict",
+      "resultScored": "Scored · winner",
+      "priorityTitle": "Ties are broken by priority",
+      "priorityBody": "On a tied vote one player's choice decides. It rotates to the next player every round.",
+      "seatCount": "{count}/{max}",
+      "capacityRoomFor": "Room for {count} more",
+      "capacityFull": "Room is full",
+      "capacityNeeds": "Needs {min}+",
+      "stillDeciding": "Still deciding",
+      "tapReadyWhenYouAre": "Tap ready when you are",
+      "inviteSomeone": "Invite someone",
+      "inviteCode": "Invite code",
+      "codeHidden": "hidden on screen",
+      "codeVisible": "visible",
+      "everyoneReady": "Everyone's ready",
+      "waitingOn": "Waiting on {count}",
+      "readyCount": "{ready}/{total}",
+      "start": "Start {mode}",
+      "startGeneric": "Start the game",
+      "waitingForHost": "Waiting for host",
+      "imReady": "I'm ready",
+      "unready": "Unready",
+      "startNoteGuest": "Only the host can start. Mark yourself ready so they can.",
+      "startNoteAllReady": "All players ready — starting locks the mode for the whole game.",
+      "startNoteWaiting": "Start unlocks when everyone in the room is ready.",
+      "startNoteNeedsMore": "Start unlocks at {min} players.",
+      "startNoteNoMode": "Pick a mode above before you can start."
     },
     "round": {
       "heading": "Round {index} of {total}",
@@ -2065,6 +2183,12 @@
       "heading": "The host removed you from this room",
       "description": "The host removed you from this room. You can join again with the code if they reopen it.",
       "leave": "Back to pack"
+    },
+    "header": {
+      "rounds": "{count, plural, one {# round} other {# rounds}}",
+      "inRound": "Round in play",
+      "between": "Round resolved",
+      "guessing": "Guessing"
     }
   },
   "reviewOutcome": {

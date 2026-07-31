@@ -1,4 +1,4 @@
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
@@ -50,22 +50,36 @@ describe("ModePicker", () => {
     expect(
       screen.getByText("Needs at least 5 playable rounds"),
     ).toBeInTheDocument();
+    // maxPlayers is 0 on an unavailable mode — the pack can seat nobody for it
+    // — which rendered as "3-0 players". The card falls back to the mode's own
+    // ceiling so it still says what the mode is for.
+    expect(within(guessWho).getByText("3-8 players")).toBeInTheDocument();
   });
 
-  it("guest: renders the selected mode read-only, no buttons", () => {
+  // A guest used to get a one-line summary of the host's pick. The mock shows
+  // them the same grid — they're deciding whether to ready up, and "Claim" on
+  // its own doesn't tell them what they'd be agreeing to.
+  it("guest: sees every mode, marked but not clickable", async () => {
+    const onChange = vi.fn();
     render(
       <ModePicker
         availableModes={AVAILABLE}
         selectedMode="claim"
         isHost={false}
-        onChange={vi.fn()}
+        onChange={onChange}
       />,
     );
-    expect(screen.queryByRole("button")).not.toBeInTheDocument();
-    expect(screen.getByText(/Claim/i)).toBeInTheDocument();
+
+    const claim = screen.getByRole("button", { name: /Claim/i });
+    expect(claim).toHaveAttribute("aria-pressed", "true");
+    expect(claim).toHaveAttribute("aria-disabled", "true");
+    expect(screen.getByRole("button", { name: /Guess Who/i })).toBeVisible();
+
+    await userEvent.click(claim);
+    expect(onChange).not.toHaveBeenCalled();
   });
 
-  it("guest: no mode chosen yet shows a waiting note, not an empty picker", () => {
+  it("guest: nothing is marked before the host has picked", () => {
     render(
       <ModePicker
         availableModes={AVAILABLE}
@@ -74,6 +88,8 @@ describe("ModePicker", () => {
         onChange={vi.fn()}
       />,
     );
-    expect(screen.getByText(/host is choosing/i)).toBeInTheDocument();
+    for (const card of screen.getAllByRole("button")) {
+      expect(card).toHaveAttribute("aria-pressed", "false");
+    }
   });
 });

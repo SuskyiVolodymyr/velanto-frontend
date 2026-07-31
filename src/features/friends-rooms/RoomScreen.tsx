@@ -1,15 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Loader2, WifiOff } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
-import { PageHeader } from "@/src/shared/components/PageHeader";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { pageContainer } from "@/src/shared/lib/page-container";
 import { cn } from "@/src/shared/lib/cn";
-import { packsClient } from "@/src/shared/lib/packs-client";
-import type { Pack } from "@/src/shared/types/pack";
 import { useFriendsRoom } from "./use-friends-room";
 import { RoomLobby } from "./RoomLobby";
 import { RoomRoundBoard } from "./RoomRoundBoard";
@@ -17,7 +13,7 @@ import { RoomBetweenBoard } from "./RoomBetweenBoard";
 import { GuessingPhaseScreen } from "./GuessingPhaseScreen";
 import { RoomResults } from "./RoomResults";
 import { IdentityRevealScreen } from "./IdentityRevealScreen";
-import { RoomLeaveButton } from "./RoomLeaveButton";
+import { RoomHeader } from "./RoomHeader";
 import { RoomKicked } from "./RoomKicked";
 import { useExitToPack } from "./use-exit-to-pack";
 
@@ -53,39 +49,18 @@ export function RoomScreen({ roomId }: { roomId: string }) {
     kick,
     setMode,
     guess,
+    start,
   } = useFriendsRoom(roomId);
   const userId = user?.id ?? null;
 
-  // Claim's save/sacrifice copy needs the pack's format, which isn't on the
-  // room's own wire state (RoomState carries no format field — see the
-  // rooms-UI plan's Task 9 note). Best-effort: a failed fetch just keeps the
-  // "sacrifice_one" fallback every Claim board already defaults to.
-  const [packFormat, setPackFormat] = useState<
-    Extract<Pack["format"], "save_one" | "sacrifice_one"> | undefined
-  >(undefined);
-  useEffect(() => {
-    // Only Claim and Turn-based cut read `packFormat` at all, so there is no
-    // reason to fetch for the four modes that ignore it.
-    const mode = state?.mode;
-    if (!state?.packId || (mode !== "claim" && mode !== "turn_based_cut")) {
-      return;
-    }
-    // Cancellation guard: without it a resolve arriving after the packId
-    // changed (or after unmount) would write a stale format over a newer one.
-    let cancelled = false;
-    packsClient
-      .getById(state.packId)
-      .then((pack) => {
-        if (cancelled) return;
-        if (pack.format === "save_one" || pack.format === "sacrifice_one") {
-          setPackFormat(pack.format);
-        }
-      })
-      .catch(() => undefined);
-    return () => {
-      cancelled = true;
-    };
-  }, [state?.packId, state?.mode]);
+  // Claim and Turn-based cut caption themselves "Save" or "Sacrifice" after
+  // the PACK's format. It rides the room snapshot (the live room already holds
+  // the pack), so this no longer costs a fetch per room; the two modes that
+  // read it are the only ones that care.
+  const packFormat =
+    state?.packFormat === "save_one" || state?.packFormat === "sacrifice_one"
+      ? state.packFormat
+      : undefined;
 
   // A finished game shows its results even after the server tears the socket
   // down (teardown closes every socket, which arrives as connection "closed").
@@ -159,17 +134,17 @@ export function RoomScreen({ roomId }: { roomId: string }) {
           it confirms first during a round (see RoomLeaveButton). Both are kept
           out of the finished/ended/abandoned states above, where there is
           nothing left to leave and RoomResults heads itself. */}
-      <PageHeader
-        crumb={state.packTitle}
-        trailing={<RoomLeaveButton state={state} onLeave={leave} />}
-      />
+      <RoomHeader state={state} onLeave={leave} />
       <Shell>
         {/* The header shows the title visually; this keeps it as the page's
-            real (if visually hidden) h1 for every phase below that doesn't
-            render its own — same role the old visible h1 played here. */}
-        <Text as="h1" className="sr-only">
-          {state.packTitle}
-        </Text>
+            real (if visually hidden) h1 for the phases that render no heading
+            of their own. The lobby does ("Choose how you'll play"), so it is
+            skipped there rather than giving the page two h1s. */}
+        {state.phase !== "lobby" && (
+          <Text as="h1" className="sr-only">
+            {state.packTitle}
+          </Text>
+        )}
         {connection === "connecting" && (
           <div
             role="status"
@@ -191,6 +166,7 @@ export function RoomScreen({ roomId }: { roomId: string }) {
             state={state}
             currentUserId={userId}
             onReady={ready}
+            onStart={start}
             onLock={lock}
             onKick={kick}
             onSetMode={setMode}
@@ -234,7 +210,17 @@ export function RoomScreen({ roomId }: { roomId: string }) {
 
 function Shell({ children }: { children: React.ReactNode }) {
   return (
-    <div className={cn(pageContainer(1320), "flex-1 py-10")}>{children}</div>
+    <div
+      className={cn(
+        pageContainer(1320),
+        // The mock's 120px bottom gutter clears its own fixed start bar. Ours
+        // has to clear that AND the app's mobile bottom nav stacked under it
+        // (~72px each), or the last card sits behind them both.
+        "flex flex-1 flex-col gap-[22px] pt-[26px] pb-[60px] max-[720px]:pt-[18px] max-[720px]:pb-[168px]",
+      )}
+    >
+      {children}
+    </div>
   );
 }
 

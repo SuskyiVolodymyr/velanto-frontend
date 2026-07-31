@@ -39,7 +39,11 @@ export const ROOM_MODE_BOUNDS: Record<
   RoomMode,
   { formats: PackFormat[]; minPlayers: number; maxPlayers: number }
 > = {
-  claim: { formats: ["save_one", "sacrifice_one"], minPlayers: 2, maxPlayers: 4 },
+  claim: {
+    formats: ["save_one", "sacrifice_one"],
+    minPlayers: 2,
+    maxPlayers: 4,
+  },
   guess_who: {
     formats: ["save_one", "sacrifice_one", "rank_blind", "nxn", "1v1"],
     minPlayers: 3,
@@ -239,6 +243,12 @@ export interface RoomState {
   code: string | null;
   packId: string;
   packTitle: string;
+  /** The pack's own identity, for the room header's caption. `packRounds` is
+   * what the author wrote (known in the lobby); `totalRounds` is the drawn
+   * plan, still 0 there. */
+  packFormat: PackFormat;
+  packRounds: number;
+  packAuthorUsername: string | null;
   hostId: string;
   status: FriendsRoomStatus;
   phase: RoomPhase;
@@ -321,7 +331,8 @@ export interface RelayRejection {
   turnUserId: string | null;
 }
 
-export type GuessRejectionReason = "not_a_player" | "not_guessing" | "malformed";
+export type GuessRejectionReason =
+  "not_a_player" | "not_guessing" | "malformed";
 export interface GuessRejection {
   mapping: Record<string, string>;
   reason: GuessRejectionReason;
@@ -369,6 +380,8 @@ export const ROOM_COMMANDS = {
   submitRanking: "submitRanking",
   placeItem: "placeItem",
   ready: "ready",
+  /** Host-only: begin the game. Ready is consent; this is the trigger. */
+  start: "start",
   next: "next",
   leave: "leave",
   lock: "lock",

@@ -92,6 +92,9 @@ function snapshot(players: RoomPlayerState[], hostId = "host"): RoomState {
     code: "ABC123",
     packId: "pack-1",
     packTitle: "Best Movies",
+    packFormat: "save_one",
+    packRounds: 3,
+    packAuthorUsername: "packsmith",
     hostId,
     status: "lobby",
     phase: "lobby",
@@ -413,7 +416,11 @@ describe("useFriendsRoom mode lifecycle + guess-who endgame", () => {
       ...snapshot([player("host")]),
       mode: "guess_who",
       phase: "guessing",
-      guessing: { labels: ["P1", "P2"], candidateUserIds: ["u1", "u2"], submitted: [] },
+      guessing: {
+        labels: ["P1", "P2"],
+        candidateUserIds: ["u1", "u2"],
+        submitted: [],
+      },
     });
     serverEmit("identity.revealed", {
       mapping: { P1: "u1", P2: "u2" },
@@ -448,7 +455,9 @@ describe("useFriendsRoom per-mode round actions", () => {
     expect(fakeSocket.emit).toHaveBeenCalledWith("pick", {
       selection: ["item-2"],
     });
-    expect(fakeSocket.emit).toHaveBeenCalledWith("vote", { optionId: "item-3" });
+    expect(fakeSocket.emit).toHaveBeenCalledWith("vote", {
+      optionId: "item-3",
+    });
     expect(fakeSocket.emit).toHaveBeenCalledWith("submitRanking", {
       ranking: ["item-1", "item-2"],
     });

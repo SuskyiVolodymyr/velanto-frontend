@@ -44,6 +44,8 @@ export interface FriendsRoom {
   kicked: boolean;
   claim: (itemId: string) => void;
   ready: () => void;
+  /** Host-only: begin the game. A guest's call is refused server-side. */
+  start: () => void;
   next: () => void;
   lock: (locked: boolean) => void;
   leave: () => void;
@@ -571,6 +573,7 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
       [send],
     ),
     ready: useCallback(() => send(ROOM_COMMANDS.ready), [send]),
+    start: useCallback(() => send(ROOM_COMMANDS.start), [send]),
     next: useCallback(() => send(ROOM_COMMANDS.next), [send]),
     lock: useCallback((locked) => send(ROOM_COMMANDS.lock, { locked }), [send]),
     leave: useCallback(() => send(ROOM_COMMANDS.leave), [send]),

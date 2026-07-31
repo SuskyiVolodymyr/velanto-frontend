@@ -43,6 +43,10 @@ const IDENTICAL_ALLOWED = new Set([
   "formats.1v1",
   // Pure placeholder/punctuation, no translatable words: "{item} — {pct}%".
   "pack.topItemPct",
+  // Same: the lobby's seat and ready counters are "{count}/{max}" and
+  // "{ready}/{total}" — two placeholders and a slash.
+  "room.lobby.seatCount",
+  "room.lobby.readyCount",
   // Loanword: "Email" is borrowed as-is in some locales.
   "auth.email",
   // Proper noun (T5): the item-kind toggle's YouTube option is the brand
