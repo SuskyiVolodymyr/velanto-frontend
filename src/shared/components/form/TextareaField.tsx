@@ -1,4 +1,4 @@
-import type { TextareaHTMLAttributes } from "react";
+import type { ReactNode, TextareaHTMLAttributes } from "react";
 import { useFormContext } from "react-hook-form";
 import { Textarea } from "@/src/shared/components/Textarea";
 import { FormField } from "@/src/shared/components/form/FormField";
@@ -11,6 +11,8 @@ export interface TextareaFieldProps extends Omit<
   name: string;
   label: string;
   srOnlyLabel?: boolean;
+  /** Right-aligned label-row adornment (see {@link FormField}). */
+  labelTrailing?: ReactNode;
 }
 
 /**
@@ -21,6 +23,7 @@ export function TextareaField({
   name,
   label,
   srOnlyLabel,
+  labelTrailing,
   id,
   "aria-describedby": ariaDescribedby,
   ...rest
@@ -44,6 +47,7 @@ export function TextareaField({
       label={label}
       error={error}
       srOnlyLabel={srOnlyLabel}
+      labelTrailing={labelTrailing}
     >
       <Textarea
         id={fieldId}

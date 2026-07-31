@@ -1,5 +1,6 @@
 import { cn } from "@/src/shared/lib/cn";
 import { mediaUrl } from "@/src/shared/lib/media-url";
+import { avatarGradient } from "@/src/shared/lib/avatar-gradient";
 import { AvatarImage } from "./AvatarImage";
 
 /** Canonical UI-kit v1 avatar sizes (diameter / initial font): xs 20, sm 26,
@@ -32,6 +33,7 @@ export function UserAvatar({
   username,
   avatarKey,
   size,
+  tone = false,
   className,
 }: {
   username: string;
@@ -39,6 +41,13 @@ export function UserAvatar({
   avatarKey?: string | null;
   /** Canonical circular size; omit to size via `className`. */
   size?: AvatarSize;
+  /**
+   * Paint the initial fallback on a colour derived from the username instead of
+   * leaving it to the caller's background. Deterministic, so the same person
+   * keeps the same tile down a comment thread — which is the only thing that
+   * makes a wall of initials scannable. No effect when an avatar image exists.
+   */
+  tone?: boolean;
   className?: string;
 }) {
   const initial = username.trim().slice(0, 1).toUpperCase() || "?";
@@ -65,8 +74,12 @@ export function UserAvatar({
   return (
     <span
       aria-hidden
+      style={tone ? { background: avatarGradient(username) } : undefined}
       className={cn(
         "inline-flex items-center justify-center font-bold",
+        // The toned tile is a saturated gradient, so the initial has to go dark
+        // to stay legible on it.
+        tone && "text-[#0a0b0e]",
         shape,
       )}
     >

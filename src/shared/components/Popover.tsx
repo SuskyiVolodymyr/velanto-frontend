@@ -61,19 +61,24 @@ export function Popover({
   useEffect(() => {
     if (!open) return;
 
+    // A Modal renders through a portal into <body>, so a modal opened FROM this
+    // panel is not a DOM descendant of it even though it is logically inside.
+    // Both handlers below therefore consult the open modal by role rather than
+    // by containment — without this, clicking anything in that modal counted as
+    // an outside click and tore down the popover (and the modal with it).
+    const openModal = () => document.querySelector('[aria-modal="true"]');
+
     function handlePointerDown(event: MouseEvent) {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
-        setOpen(false);
-      }
+      const target = event.target as Node;
+      if (containerRef.current?.contains(target)) return;
+      if (openModal()?.contains(target)) return;
+      setOpen(false);
     }
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key !== "Escape") return;
-      // A modal open inside the panel owns Escape — let it dismiss itself first
-      // rather than tearing down the whole popover from under it.
-      if (containerRef.current?.querySelector('[aria-modal="true"]')) return;
+      // An open modal owns Escape — let it dismiss itself first rather than
+      // tearing down the whole popover from under it.
+      if (openModal()) return;
       setOpen(false);
       triggerRef.current?.focus();
     }

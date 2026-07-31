@@ -13,6 +13,8 @@ export interface TextFieldProps extends Omit<
   label: string;
   /** Visually hide the label but keep it for a11y (placeholder-driven inputs). */
   srOnlyLabel?: boolean;
+  /** Right-aligned label-row adornment (see {@link FormField}). */
+  labelTrailing?: ReactNode;
   /** Optional leading icon — switches the input to the UI-kit v1 shell layout. */
   icon?: ReactNode;
   /** Field background surface (see {@link Input}). */
@@ -28,6 +30,7 @@ export function TextField({
   name,
   label,
   srOnlyLabel,
+  labelTrailing,
   icon,
   surface,
   id,
@@ -50,6 +53,7 @@ export function TextField({
       label={label}
       error={error}
       srOnlyLabel={srOnlyLabel}
+      labelTrailing={labelTrailing}
     >
       <Input
         id={fieldId}
