@@ -4,6 +4,7 @@ import { useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
+import { RoundItemTile } from "./RoundItemTile";
 import type { RevealRoundResult, RoomState } from "./room-types";
 
 interface GuessWhoRevealBoardProps {
@@ -32,6 +33,17 @@ export function GuessWhoRevealBoard({
     new Set(reveals.flatMap((r) => Object.keys(r.picks))),
   ).sort();
 
+  // The round that just closed — the last reveal, which is the one whose cards
+  // are still fresh in everyone's head.
+  const closed = reveals.length > 0 ? reveals[reveals.length - 1] : null;
+  const pickCounts = new Map<string, number>();
+  for (const ids of Object.values(closed?.picks ?? {})) {
+    // A rank_blind round's "pick" is a whole ordering; only its FIRST entry
+    // reads as a choice, exactly as the label table treats it.
+    const top = ids[0];
+    if (top) pickCounts.set(top, (pickCounts.get(top) ?? 0) + 1);
+  }
+
   const me = state.players.find((p) => p.userId === currentUserId) ?? null;
   const ready = state.players.filter((p) => p.next).length;
   const total = state.players.length;
@@ -46,6 +58,24 @@ export function GuessWhoRevealBoard({
           {t("guessWho.trajectoryHeading")}
         </Text>
       </header>
+
+      {/* The round's own cards, marked. The table below is the game's memory —
+          this is the round you were just looking at, with the media you picked
+          from and a faceless chip per pick. Only reachable once EVERY player is
+          locked in, which is what makes the marks safe: they all arrive at the
+          same instant, so no chip can be tied to whoever moved last. */}
+      {closed && (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {closed.items.map((item) => (
+            <RoundItemTile
+              key={item.id}
+              item={item}
+              actionLabel={item.title}
+              maskedPicks={pickCounts.get(item.id) ?? 0}
+            />
+          ))}
+        </div>
+      )}
 
       <div className="overflow-x-auto rounded-card border border-border">
         <table className="w-full min-w-[420px] border-collapse text-sm">

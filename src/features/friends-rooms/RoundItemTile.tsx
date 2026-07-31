@@ -31,6 +31,13 @@ export interface RoundItemTileProps {
   tally?: { count: number; max: number };
   /** Who is publicly attached to this item — voters, or the player who cut it. */
   people?: RoomPlayerState[];
+  /**
+   * How many players picked this, with no clue WHICH — one faceless chip each,
+   * in the same corner {@link people} would use. For a blind round, where the
+   * count is the only thing that may ever be shown: an avatar or a stable
+   * label there would hand over the deduction the whole mode is about.
+   */
+  maskedPicks?: number;
 }
 
 /**
@@ -52,6 +59,7 @@ export function RoundItemTile({
   badge,
   tally,
   people,
+  maskedPicks = 0,
 }: RoundItemTileProps) {
   const t = useTranslations("room");
   const videoId = item.type === "youtube" ? extractYouTubeId(item.value) : null;
@@ -127,6 +135,23 @@ export function RoundItemTile({
           )}
         >
           {badge.label}
+        </span>
+      )}
+      {maskedPicks > 0 && (
+        <span
+          role="img"
+          aria-label={t("guessWho.pickedByCount", { count: maskedPicks })}
+          className="absolute top-[9px] right-[9px] z-10 flex"
+        >
+          {Array.from({ length: maskedPicks }).map((_, i) => (
+            <span
+              key={i}
+              aria-hidden
+              className="-ms-[7px] grid h-6 w-6 place-items-center rounded-full border-2 border-surface-card bg-surface-raised text-[10px] font-bold text-foreground-tertiary"
+            >
+              ?
+            </span>
+          ))}
         </span>
       )}
       {people && people.length > 0 && (
