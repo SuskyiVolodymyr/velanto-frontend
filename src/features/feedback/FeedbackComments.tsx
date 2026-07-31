@@ -7,12 +7,23 @@ import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { Username } from "@/src/shared/components/Username";
+import { UserAvatar } from "@/src/shared/components/UserAvatar";
+import {
+  CommentComposerCard,
+  CommentIdentityBadge,
+  CommentRow,
+  CommentsHeading,
+  COMMENT_CARD_CLASS,
+  COMMENT_LIST_CLASS,
+  commentAvatarSize,
+} from "@/src/shared/components/CommentCard";
 import { AuthorHoverTrigger } from "@/src/features/pack/AuthorHoverTrigger";
 import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { Tooltip } from "@/src/shared/components/Tooltip";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { cn } from "@/src/shared/lib/cn";
+import { isStaff } from "@/src/shared/lib/user-role";
 import { messageFromError } from "@/src/shared/lib/messageFromError";
 import type { FeedbackComment } from "@/src/shared/types/feedback";
 import {
@@ -23,7 +34,7 @@ import {
 export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
   const t = useTranslations("feedback");
   const tAuth = useTranslations("authGate");
-  const { status } = useAuth();
+  const { status, user } = useAuth();
   const blocked = status === "unauthenticated";
   const [draft, setDraft] = useState("");
 
@@ -76,48 +87,66 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
   // aria-disabled, and one tooltip covers the lot (so it's clear from the
   // input — not just the button — why it's inert).
   const composer = (
-    <div className="mb-6 flex flex-col gap-2">
-      <textarea
-        value={draft}
-        onChange={(e) => setDraft(e.target.value)}
-        placeholder={
-          blocked ? tAuth("logInToComment") : t("commentPlaceholder")
-        }
-        aria-label={t("commentAria")}
-        rows={2}
-        readOnly={blocked}
-        disabled={posting}
-        className={cn(
-          "rounded-[10px] border border-border bg-surface px-3.5 py-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-acc disabled:opacity-45",
-          blocked && "cursor-not-allowed opacity-60",
+    <CommentComposerCard
+      avatar={
+        user && (
+          <UserAvatar
+            username={user.username}
+            avatarKey={user.avatarKey}
+            tone
+            className={commentAvatarSize("root")}
+          />
+        )
+      }
+    >
+      <div className="flex min-w-0 flex-1 flex-col gap-2">
+        <div className="flex items-start gap-[11px]">
+          <textarea
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            placeholder={
+              blocked ? tAuth("logInToComment") : t("commentPlaceholder")
+            }
+            aria-label={t("commentAria")}
+            rows={1}
+            readOnly={blocked}
+            disabled={posting}
+            className={cn(
+              "min-h-[38px] min-w-0 flex-1 resize-y rounded-[11px] border border-white/10 bg-background px-3.5 py-2 text-[13.5px] leading-[1.55] text-foreground outline-none focus-visible:border-acc disabled:opacity-45",
+              blocked && "cursor-not-allowed opacity-60",
+            )}
+          />
+          {/* `size="sm"` rather than a height in className: cn() is a plain
+              join, so an h-* here would sit alongside the size's own. */}
+          <Button
+            variant="secondary"
+            size="sm"
+            className={cn(
+              "flex-none",
+              blocked && "cursor-not-allowed opacity-45",
+            )}
+            aria-disabled={blocked || undefined}
+            disabled={blocked ? false : !draft.trim() || posting}
+            loading={posting}
+            onClick={handlePost}
+          >
+            {t("postComment")}
+          </Button>
+        </div>
+        {postError && (
+          <Text variant="danger" className="text-sm">
+            {postError}
+          </Text>
         )}
-      />
-      {postError && (
-        <Text variant="danger" className="text-sm">
-          {postError}
-        </Text>
-      )}
-      <Button
-        className={cn("self-end", blocked && "cursor-not-allowed opacity-45")}
-        aria-disabled={blocked || undefined}
-        disabled={blocked ? false : !draft.trim() || posting}
-        loading={posting}
-        onClick={handlePost}
-      >
-        {t("postComment")}
-      </Button>
-    </div>
+      </div>
+    </CommentComposerCard>
   );
 
   return (
-    <section>
-      <Text
-        as="h2"
-        variant="tertiary"
-        className="mb-4 text-xs uppercase tracking-wide"
-      >
+    <section className="flex flex-col gap-3 border-t border-white/[0.07] pt-4">
+      <CommentsHeading>
         {t("commentsHeading", { count: total })}
-      </Text>
+      </CommentsHeading>
 
       {status !== "loading" &&
         (blocked ? (
@@ -135,52 +164,77 @@ export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
         <Text variant="danger">{t("commentsLoadError")}</Text>
       )}
       {loadStatus === "ready" && comments.length === 0 && (
-        <Text variant="secondary">{t("noComments")}</Text>
+        <Text variant="secondary" className="text-[13.5px]">
+          {t("noComments")}
+        </Text>
       )}
       {loadStatus === "ready" && comments.length > 0 && (
-        <div className="flex flex-col gap-4">
+        <div className={COMMENT_LIST_CLASS}>
           {comments.map((comment) => (
-            <div key={comment.id}>
-              <div className="flex items-baseline gap-2">
-                <AuthorHoverTrigger
-                  authorId={comment.authorId}
-                  className="w-fit"
-                  prefetch={false}
-                >
-                  {({ triggerProps }) => (
-                    <Hidden kind="name" id={comment.authorId}>
-                      <Link
-                        href={`/users/${comment.authorId}`}
-                        {...triggerProps}
-                        className="text-sm hover:underline"
-                      >
-                        <Username
-                          username={comment.authorUsername}
-                          role={comment.authorRole}
-                          trusted={comment.authorTrusted}
-                        />
-                      </Link>
-                    </Hidden>
-                  )}
-                </AuthorHoverTrigger>
-                <span className="text-xs text-foreground-tertiary">
-                  {formatDateTime(comment.createdAt)}
-                </span>
-              </div>
-              <Hidden kind="comment" id={comment.id}>
-                <Text variant="secondary" className="text-sm">
-                  {comment.body}
-                </Text>
-              </Hidden>
+            <div key={comment.id} className={COMMENT_CARD_CLASS}>
+              <CommentRow
+                // No `actions`: a suggestion comment has no votes and no
+                // replies on the backend, so the row that would hold them is
+                // omitted rather than rendered with dead controls.
+                avatar={
+                  <UserAvatar
+                    username={comment.authorUsername}
+                    tone
+                    className={commentAvatarSize("root")}
+                  />
+                }
+                identity={
+                  <AuthorHoverTrigger
+                    authorId={comment.authorId}
+                    className="w-fit"
+                    prefetch={false}
+                  >
+                    {({ triggerProps }) => (
+                      <Hidden kind="name" id={comment.authorId}>
+                        <Link
+                          href={`/users/${comment.authorId}`}
+                          {...triggerProps}
+                          className="hover:underline"
+                        >
+                          <Username
+                            username={comment.authorUsername}
+                            role={comment.authorRole}
+                            trusted={comment.authorTrusted}
+                            at
+                          />
+                        </Link>
+                      </Hidden>
+                    )}
+                  </AuthorHoverTrigger>
+                }
+                // Hardcoded English, same convention as the role pills in
+                // user-role.ts — these ALL-CAPS identity words aren't localized.
+                badge={
+                  isStaff(comment.authorRole) && (
+                    <CommentIdentityBadge>TEAM</CommentIdentityBadge>
+                  )
+                }
+                timestamp={
+                  <time dateTime={comment.createdAt}>
+                    {formatDateTime(comment.createdAt)}
+                  </time>
+                }
+                body={
+                  <Hidden kind="comment" id={comment.id}>
+                    <span className="whitespace-pre-wrap">{comment.body}</span>
+                  </Hidden>
+                }
+              />
             </div>
           ))}
         </div>
       )}
 
       {loadStatus === "ready" && comments.length < total && (
-        <div className="mt-4 flex flex-col gap-2">
+        <div className="flex flex-col items-start gap-2">
           <Button
-            variant="secondary"
+            variant="outline"
+            size="sm"
             loading={loadingMore}
             onClick={() => void commentsQuery.fetchNextPage()}
           >
