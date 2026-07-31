@@ -4,7 +4,10 @@ import { useState, type ReactElement } from "react";
 import { useTranslations } from "next-intl";
 import { Flag } from "lucide-react";
 import { Modal } from "@/src/shared/components/Modal";
-import { Select, type SelectOption } from "@/src/shared/components/Select";
+import {
+  Dropdown,
+  type DropdownOption,
+} from "@/src/shared/components/Dropdown";
 import { Textarea } from "@/src/shared/components/Textarea";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
@@ -86,13 +89,12 @@ export function ReportPackDialog({ packId }: { packId: string }) {
     }
   }
 
-  const reasonOptions: SelectOption[] = [
-    { value: "", label: t("reasonPlaceholder"), disabled: true },
-    ...PACK_REPORT_REASONS.map((id) => ({
-      value: id,
-      label: t(`reasons.${id}`),
-    })),
-  ];
+  // No "select a reason" row in the list — the trigger shows the placeholder
+  // until something is picked, so an unselectable first option would only be a
+  // dead row you can arrow onto.
+  const reasonOptions: DropdownOption<string>[] = PACK_REPORT_REASONS.map(
+    (id) => ({ value: id, label: t(`reasons.${id}`) }),
+  );
 
   const label = reported ? t("buttonReported") : t("button");
 
@@ -134,17 +136,21 @@ export function ReportPackDialog({ packId }: { packId: string }) {
       {gated}
       <Modal open={open} onClose={closeDialog} title={t("title")}>
         <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
-          <label className="flex flex-col gap-1.5">
+          {/* A div, not a <label>: the control is a button-based listbox, and a
+              <label> wrapping it would make every click on the label text
+              re-trigger the button. `ariaLabel` carries the name instead. */}
+          <div className="flex flex-col gap-1.5">
             <Text variant="secondary" className="text-sm">
               {t("reasonLabel")}
             </Text>
-            <Select
+            <Dropdown
               value={reason}
-              onChange={(e) => setReason(e.target.value)}
+              onChange={setReason}
               options={reasonOptions}
-              aria-label={t("reasonLabel")}
+              placeholder={t("reasonPlaceholder")}
+              ariaLabel={t("reasonLabel")}
             />
-          </label>
+          </div>
           <label className="flex flex-col gap-1.5">
             <Text variant="secondary" className="text-sm">
               {t("commentLabel")}

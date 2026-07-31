@@ -40,6 +40,18 @@ beforeEach(() => {
   currentUser = asUser();
 });
 
+/**
+ * The reason picker is the design's listbox {@link Dropdown}, not a native
+ * <select>: open the trigger, then click the option by its visible label.
+ */
+async function pickReason(
+  user: ReturnType<typeof userEvent.setup>,
+  label: string,
+) {
+  await user.click(screen.getByRole("combobox", { name: "Reason" }));
+  await user.click(screen.getByRole("option", { name: label }));
+}
+
 describe("ReportPackDialog", () => {
   it("blocks a signed-out visitor: the dialog does not open", async () => {
     const user = userEvent.setup();
@@ -60,7 +72,9 @@ describe("ReportPackDialog", () => {
       screen.getByRole("combobox", { name: "Reason" }),
     ).toBeInTheDocument();
     expect(
-      screen.getByPlaceholderText("Anything that helps a moderator review this"),
+      screen.getByPlaceholderText(
+        "Anything that helps a moderator review this",
+      ),
     ).toBeInTheDocument();
   });
 
@@ -76,12 +90,11 @@ describe("ReportPackDialog", () => {
     create.mockResolvedValue({ id: "report-1" });
     const user = await openDialog();
 
-    await user.selectOptions(
-      screen.getByRole("combobox", { name: "Reason" }),
-      "spam",
-    );
+    await pickReason(user, "Spam or misleading");
     await user.type(
-      screen.getByPlaceholderText("Anything that helps a moderator review this"),
+      screen.getByPlaceholderText(
+        "Anything that helps a moderator review this",
+      ),
       "  looks like spam  ",
     );
     await user.click(screen.getByRole("button", { name: "Submit report" }));
@@ -102,10 +115,7 @@ describe("ReportPackDialog", () => {
     create.mockResolvedValue({ id: "report-1" });
     const user = await openDialog();
 
-    await user.selectOptions(
-      screen.getByRole("combobox", { name: "Reason" }),
-      "other",
-    );
+    await pickReason(user, "Something else");
     await user.click(screen.getByRole("button", { name: "Submit report" }));
 
     expect(create).toHaveBeenCalledWith({
@@ -120,10 +130,7 @@ describe("ReportPackDialog", () => {
     create.mockRejectedValue(new ApiError(409, "Conflict", null));
     const user = await openDialog();
 
-    await user.selectOptions(
-      screen.getByRole("combobox", { name: "Reason" }),
-      "spam",
-    );
+    await pickReason(user, "Spam or misleading");
     await user.click(screen.getByRole("button", { name: "Submit report" }));
 
     expect(
@@ -138,10 +145,7 @@ describe("ReportPackDialog", () => {
     create.mockRejectedValue(new ApiError(500, "Server Error", null));
     const user = await openDialog();
 
-    await user.selectOptions(
-      screen.getByRole("combobox", { name: "Reason" }),
-      "spam",
-    );
+    await pickReason(user, "Spam or misleading");
     await user.click(screen.getByRole("button", { name: "Submit report" }));
 
     expect(
@@ -153,10 +157,7 @@ describe("ReportPackDialog", () => {
   it("does not reopen the dialog once already reported", async () => {
     create.mockResolvedValue({ id: "report-1" });
     const user = await openDialog();
-    await user.selectOptions(
-      screen.getByRole("combobox", { name: "Reason" }),
-      "spam",
-    );
+    await pickReason(user, "Spam or misleading");
     await user.click(screen.getByRole("button", { name: "Submit report" }));
     await screen.findByRole("button", { name: "Reported" });
 
