@@ -2166,7 +2166,15 @@
       "currentItem": "এখন বসানো হচ্ছে",
       "finalOrderHeading": "চূড়ান্ত ক্রম",
       "placementHistoryHeading": "বসানোর ইতিহাস",
-      "placedVerb": "বসিয়েছেন"
+      "placedVerb": "বসিয়েছেন",
+      "nobodyKnowsNext": "এর পরে কী আসবে, কেউ জানে না।",
+      "stillHidden": "{count}টি এখনও লুকানো",
+      "sharedRanking": "সবার এক ক্রম",
+      "sharedRankingHint": "একটি একটি করে, সবাই মিলে",
+      "placedBy": "বসিয়েছেন",
+      "nothingPlacedYet": "এখনও কিছু বসানো হয়নি।",
+      "turnOrder": "পালার ক্রম",
+      "placingBadge": "বসাচ্ছেন"
     },
     "lockedIn": {
       "playerLocked": "{name} — লক হয়েছে",

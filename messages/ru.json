@@ -2166,7 +2166,15 @@
       "currentItem": "Сейчас размещается",
       "finalOrderHeading": "Итоговый порядок",
       "placementHistoryHeading": "История размещений",
-      "placedVerb": "разместил(а)"
+      "placedVerb": "разместил(а)",
+      "nobodyKnowsNext": "Никто не знает, что будет следующим.",
+      "stillHidden": "Ещё {count} скрыто",
+      "sharedRanking": "Общий список",
+      "sharedRankingHint": "собираем вместе, по одному",
+      "placedBy": "поставил",
+      "nothingPlacedYet": "Пока ничего не поставлено.",
+      "turnOrder": "Порядок ходов",
+      "placingBadge": "СТАВИТ"
     },
     "lockedIn": {
       "playerLocked": "{name} — подтвердил(а) выбор",

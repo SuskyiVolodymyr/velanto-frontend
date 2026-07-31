@@ -1,7 +1,11 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { ArrowRight, Eye, Hand, ListOrdered, Lock } from "lucide-react";
 import type { useTranslations } from "next-intl";
+import { Text } from "@/src/shared/components/Text";
+import { UserAvatar } from "@/src/shared/components/UserAvatar";
+import { cn } from "@/src/shared/lib/cn";
 import type { RoundCall, RoundPlayerStatus } from "./RoundChrome";
 import type { RoomPlayerState, RoomState } from "./room-types";
 
@@ -12,6 +16,8 @@ export interface RoundChromeConfig {
   progressNote: string;
   call: RoundCall;
   status: (player: RoomPlayerState) => RoundPlayerStatus;
+  /** A mode-specific panel under Room, when the mode has one. */
+  asidePanel?: ReactNode;
 }
 
 /**
@@ -133,6 +139,52 @@ export function roundChromeConfig(
             active,
           };
         },
+        // Relay's turn order is fixed for the round, so it is worth showing in
+        // full rather than only naming whoever is up: you can see your own
+        // placement coming and think about it before it arrives.
+        asidePanel: (
+          <section
+            aria-label={t("relay.turnOrder")}
+            className="flex flex-col gap-[11px] rounded-card border border-border bg-surface-card p-[18px]"
+          >
+            <Text as="h3" className="text-[15px] font-bold">
+              {t("relay.turnOrder")}
+            </Text>
+            <ol className="flex flex-col gap-[7px]">
+              {state.players.map((player, i) => {
+                const now = player.userId === round.turnUserId;
+                return (
+                  <li
+                    key={player.userId}
+                    className={cn(
+                      "flex items-center gap-2.5 rounded-control border p-[9px_11px]",
+                      now
+                        ? "border-acc/35 bg-acc/[0.07]"
+                        : "border-border bg-background",
+                    )}
+                  >
+                    <span className="w-3.5 font-mono text-[11.5px] font-bold text-foreground-tertiary">
+                      {i + 1}
+                    </span>
+                    <UserAvatar
+                      username={player.username}
+                      avatarKey={player.avatarKey}
+                      className="h-[26px] w-[26px] flex-none rounded-full bg-surface-raised text-[10px] font-bold text-foreground"
+                    />
+                    <Text className="truncate text-[12.5px] font-semibold">
+                      {player.username}
+                    </Text>
+                    {now && (
+                      <span className="ms-auto flex-none rounded-md bg-acc/[0.16] px-[9px] py-[3px] text-[10.5px] font-bold tracking-[0.04em] text-acc-hover">
+                        {t("relay.placingBadge")}
+                      </span>
+                    )}
+                  </li>
+                );
+              })}
+            </ol>
+          </section>
+        ),
       };
     }
 

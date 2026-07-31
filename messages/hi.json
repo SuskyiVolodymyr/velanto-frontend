@@ -2166,7 +2166,15 @@
       "currentItem": "अभी रखा जा रहा है",
       "finalOrderHeading": "अंतिम क्रम",
       "placementHistoryHeading": "प्लेसमेंट इतिहास",
-      "placedVerb": "ने रखा"
+      "placedVerb": "ने रखा",
+      "nobodyKnowsNext": "इसके बाद क्या आएगा, किसी को नहीं पता।",
+      "stillHidden": "{count} अभी छिपे हैं",
+      "sharedRanking": "साझा क्रम",
+      "sharedRankingHint": "एक-एक करके, सब मिलकर",
+      "placedBy": "रखा",
+      "nothingPlacedYet": "अभी कुछ नहीं रखा गया।",
+      "turnOrder": "बारी का क्रम",
+      "placingBadge": "रख रहे हैं"
     },
     "lockedIn": {
       "playerLocked": "{name} — लॉक हो गया",

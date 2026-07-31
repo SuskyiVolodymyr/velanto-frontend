@@ -3,8 +3,8 @@
 import { useTranslations } from "next-intl";
 import { Plus } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
+import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { cn } from "@/src/shared/lib/cn";
-import { TurnIndicator } from "./TurnIndicator";
 import type { RoomState } from "./room-types";
 
 interface RelayInsertBoardProps {
@@ -14,14 +14,15 @@ interface RelayInsertBoardProps {
 }
 
 /**
- * Relay's round board (design brief §4.3(f); this plan's D2 decision point).
- * The whole room builds ONE shared ranking, turn by turn: the player whose
- * turn it is inserts the CURRENT item into the partial ranking at a chosen
- * position — click-a-gap, not drag-and-drop (D2). N placed items -> N+1 gap
- * buttons (before the first, between every pair, after the last); clicking
- * gap `i` calls `onPlaceItem(currentItemId, i)`, matching the wire's
- * `{itemId, position}` shape exactly (velanto-backend
- * friends-rooms.gateway.ts's `readPlacement`).
+ * Relay's board (Rank Modes.dc.html, relay arm): the item currently on the
+ * table, and the shared ranking built so far with an insertion gap between
+ * every pair — live only on the viewer's own turn.
+ *
+ * Nobody owns the result: the reveal order is fixed at round start and each
+ * player only ever places the one item in front of them, so the ranking is
+ * genuinely assembled by the room rather than aggregated from private ballots.
+ * Whose turn it is comes from the chrome's call banner, so this no longer
+ * carries a TurnIndicator of its own.
  */
 export function RelayInsertBoard({
   state,
@@ -35,12 +36,18 @@ export function RelayInsertBoard({
   }
 
   const itemsById = new Map(round.items.map((item) => [item.id, item]));
+  const playerById = new Map(state.players.map((p) => [p.userId, p]));
   const placed = round.relayPlaced;
-  const currentItem = round.relayCurrentItemId
-    ? itemsById.get(round.relayCurrentItemId)
-    : null;
-  const isMyTurn = round.turnUserId === currentUserId;
   const currentItemId = round.relayCurrentItemId;
+  const currentItem = currentItemId ? itemsById.get(currentItemId) : null;
+  const isMyTurn = round.turnUserId === currentUserId;
+  const remaining = round.items.length - placed.length - (currentItem ? 1 : 0);
+
+  // Who placed which item. `relayPlacements` is in placement order, not slot
+  // order, so it is indexed by item rather than by position.
+  const placerByItem = new Map(
+    (round.relayPlacements ?? []).map((p) => [p.itemId, p.userId]),
+  );
 
   // A plain render-helper function, not a nested component definition —
   // deliberately lowercase and called directly (`renderGap(0)`, never
@@ -49,7 +56,7 @@ export function RelayInsertBoard({
   // component's render body would otherwise cause.
   function renderGap(position: number) {
     if (!isMyTurn || !currentItemId) {
-      return <div aria-hidden className="h-2 w-full" />;
+      return <div aria-hidden className="h-1.5 w-full" />;
     }
     // Every gap used to share the one label "Insert here", leaving N+1
     // buttons indistinguishable to screen-reader and voice-control users
@@ -75,52 +82,99 @@ export function RelayInsertBoard({
         <Plus
           size={14}
           aria-hidden
-          className="absolute text-foreground-tertiary opacity-0 transition-opacity group-hover:opacity-100 group-hover:text-acc"
+          className="absolute text-foreground-tertiary opacity-0 transition-opacity group-hover:text-acc group-hover:opacity-100"
         />
       </button>
     );
   }
 
   return (
-    <div className="flex flex-col gap-6">
-      <TurnIndicator
-        players={state.players}
-        turnUserId={round.turnUserId ?? null}
-        currentUserId={currentUserId}
-      />
-
+    <>
       {currentItem && (
-        <div className="w-full max-w-[230px] self-center overflow-hidden rounded-card border-[1.5px] border-acc bg-background p-4 ring-4 ring-acc/[0.16]">
-          {/* Plain <p>, not <Text>: same variant/className color-precedence
-              gotcha as Tasks 10/17/20 — text-acc would lose to the
-              "tertiary" variant's own text-foreground-tertiary. */}
-          <p className="text-[11px] font-medium uppercase tracking-wide text-acc">
-            {t("relay.currentItem")}
-          </p>
-          <Text className="font-semibold">{currentItem.title}</Text>
+        <div
+          className={cn(
+            "flex flex-wrap items-center gap-3.5 rounded-card border p-4",
+            isMyTurn
+              ? "border-acc/40 bg-acc/[0.07]"
+              : "border-border bg-surface-card",
+          )}
+        >
+          <span
+            aria-hidden
+            className="aspect-video w-[132px] flex-none overflow-hidden rounded-control bg-[linear-gradient(150deg,#20303a,#0b0c0f)]"
+          />
+          <div className="flex min-w-0 flex-col gap-1">
+            {/* Plain <p> via `as`, with the colour on the element: `variant`
+                would win over a text-* className (cn() is a plain join). */}
+            <Text
+              as="p"
+              className="text-[11px] font-bold tracking-[0.12em] text-acc-hover uppercase"
+            >
+              {t("relay.currentItem")}
+            </Text>
+            <Text className="text-[19px] font-bold tracking-[-0.015em]">
+              {currentItem.title}
+            </Text>
+            <Text variant="tertiary" className="text-[12.5px]">
+              {t("relay.nobodyKnowsNext")}
+            </Text>
+          </div>
+          <span className="ms-auto rounded-full bg-white/[0.06] px-3 py-1.5 text-xs font-semibold text-foreground-secondary">
+            {t("relay.stillHidden", { count: Math.max(0, remaining) })}
+          </span>
         </div>
       )}
 
-      <div className="relative flex flex-col">
+      <section
+        aria-label={t("relay.sharedRanking")}
+        className="flex flex-col gap-[9px] rounded-card border border-border bg-surface-card p-[18px]"
+      >
+        <div className="flex items-baseline gap-[9px] pb-1">
+          <Text as="h3" className="text-[13px] font-bold">
+            {t("relay.sharedRanking")}
+          </Text>
+          <Text variant="tertiary" className="ms-auto text-[11.5px]">
+            {t("relay.sharedRankingHint")}
+          </Text>
+        </div>
+
         {renderGap(0)}
-        {placed.map((itemId, index) => (
-          <div key={itemId} className="flex flex-col">
-            <div
-              className={cn(
-                "flex items-center gap-3 rounded-tile border border-border bg-surface-card p-3",
-              )}
-            >
-              <span className="flex h-7 w-7 flex-none items-center justify-center rounded-chip bg-white/[0.06] text-xs font-bold tabular-nums">
-                {index + 1}
-              </span>
-              <Text className="font-semibold">
-                {itemsById.get(itemId)?.title ?? itemId}
-              </Text>
+        {placed.map((itemId, index) => {
+          const placer = placerByItem.get(itemId);
+          const player = placer ? playerById.get(placer) : undefined;
+          return (
+            <div key={itemId} className="flex flex-col">
+              <div className="flex items-center gap-3 rounded-tile border border-border bg-background p-[11px_13px]">
+                <span className="grid h-[30px] w-[30px] flex-none place-items-center rounded-[9px] bg-white/[0.06] font-mono text-[13px] font-bold tabular-nums">
+                  {index + 1}
+                </span>
+                <Text className="min-w-0 truncate text-sm font-semibold">
+                  {itemsById.get(itemId)?.title ?? itemId}
+                </Text>
+                {player && (
+                  <span className="ms-auto flex flex-none items-center gap-[7px]">
+                    <Text variant="tertiary" className="text-[11px]">
+                      {t("relay.placedBy")}
+                    </Text>
+                    <UserAvatar
+                      username={player.username}
+                      avatarKey={player.avatarKey}
+                      className="h-6 w-6 rounded-full bg-surface-raised text-[9.5px] font-bold text-foreground"
+                    />
+                  </span>
+                )}
+              </div>
+              {renderGap(index + 1)}
             </div>
-            {renderGap(index + 1)}
-          </div>
-        ))}
-      </div>
-    </div>
+          );
+        })}
+
+        {placed.length === 0 && !isMyTurn && (
+          <Text variant="tertiary" className="py-3.5 text-center text-xs">
+            {t("relay.nothingPlacedYet")}
+          </Text>
+        )}
+      </section>
+    </>
   );
 }

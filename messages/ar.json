@@ -2166,7 +2166,15 @@
       "currentItem": "يوضع الآن",
       "finalOrderHeading": "الترتيب النهائي",
       "placementHistoryHeading": "سجل الوضع",
-      "placedVerb": "وضع"
+      "placedVerb": "وضع",
+      "nobodyKnowsNext": "لا أحد يعرف ما يأتي بعد هذا.",
+      "stillHidden": "ما زال {count} مخفيًا",
+      "sharedRanking": "الترتيب المشترك",
+      "sharedRankingHint": "نبنيه معًا، واحدًا في كل مرة",
+      "placedBy": "أدرجه",
+      "nothingPlacedYet": "لم يُدرج شيء بعد.",
+      "turnOrder": "ترتيب الأدوار",
+      "placingBadge": "يُدرج"
     },
     "lockedIn": {
       "playerLocked": "{name} — أقفل اختياره",

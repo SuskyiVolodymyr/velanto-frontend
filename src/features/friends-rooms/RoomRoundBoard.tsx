@@ -160,6 +160,7 @@ export function RoomRoundBoard({
         progressNote={chrome.progressNote}
         call={chrome.call}
         status={chrome.status}
+        asidePanel={chrome.asidePanel}
       >
         {board}
       </RoundChrome>

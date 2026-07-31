@@ -2166,7 +2166,15 @@
       "currentItem": "Зараз розміщується",
       "finalOrderHeading": "Підсумковий порядок",
       "placementHistoryHeading": "Історія розміщень",
-      "placedVerb": "розмістив(ла)"
+      "placedVerb": "розмістив(ла)",
+      "nobodyKnowsNext": "Ніхто не знає, що буде наступним.",
+      "stillHidden": "Ще {count} приховано",
+      "sharedRanking": "Спільний список",
+      "sharedRankingHint": "збираємо разом, по одному",
+      "placedBy": "поставив",
+      "nothingPlacedYet": "Поки нічого не поставлено.",
+      "turnOrder": "Порядок ходів",
+      "placingBadge": "СТАВИТЬ"
     },
     "lockedIn": {
       "playerLocked": "{name} — підтвердив(ла) вибір",

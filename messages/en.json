@@ -2033,7 +2033,15 @@
       "currentItem": "Now placing",
       "finalOrderHeading": "Final order",
       "placementHistoryHeading": "Placement history",
-      "placedVerb": "placed"
+      "placedVerb": "placed",
+      "nobodyKnowsNext": "Nobody knows what comes after this one.",
+      "stillHidden": "{count} still hidden",
+      "sharedRanking": "The shared ranking",
+      "sharedRankingHint": "built together, one insert at a time",
+      "placedBy": "placed by",
+      "nothingPlacedYet": "Nothing placed yet.",
+      "turnOrder": "Turn order",
+      "placingBadge": "PLACING"
     },
     "entry": {
       "createRoom": "Create room",

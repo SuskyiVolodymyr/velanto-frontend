@@ -2166,7 +2166,15 @@
       "currentItem": "正在放置",
       "finalOrderHeading": "最终排名",
       "placementHistoryHeading": "放置记录",
-      "placedVerb": "放置了"
+      "placedVerb": "放置了",
+      "nobodyKnowsNext": "谁也不知道下一个是什么。",
+      "stillHidden": "还有 {count} 个没揭晓",
+      "sharedRanking": "共同排名",
+      "sharedRankingHint": "一次插一个，大家一起排",
+      "placedBy": "放置者",
+      "nothingPlacedYet": "还没有人放置。",
+      "turnOrder": "出手顺序",
+      "placingBadge": "正在放置"
     },
     "lockedIn": {
       "playerLocked": "{name} 已锁定",
