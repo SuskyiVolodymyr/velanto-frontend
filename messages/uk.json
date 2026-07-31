@@ -2079,7 +2079,8 @@
     "results": {
       "heading": "Результати",
       "roundLabel": "Раунд {index}",
-      "backToPack": "Назад до паку"
+      "backToPack": "Назад до паку",
+      "playAgain": "Зіграти ще"
     },
     "ended": {
       "heading": "Ця кімната завершена",
@@ -2124,21 +2125,33 @@
       "rankInstruction": "Розставте всі елементи за порядком, найкращий — першим — ніхто не побачить ваш рейтинг, поки всі не підтвердять свої.",
       "revealHeading": "Розкриття",
       "trajectoryHeading": "Хто що відповідав досі",
-      "roundColumn": "Раунд"
+      "roundColumn": "Раунд",
+      "trajectoryHint": "вибори за {count, plural, one {# раунд} few {# раунди} many {# раундів} other {# раунду}}",
+      "stillAnonymous": "?",
+      "columnHint": "За одним раундом нікого не вирахувати — двоє часто обирають те саме. Унікальний саме весь стовпчик."
     },
     "guessing": {
       "heading": "Фінальний раунд",
       "title": "Хто є хто?",
       "instruction": "Зіставте кожного гравця з міткою, під якою, на вашу думку, він грав.",
-      "chooseSomeone": "Оберіть гравця…",
       "submit": "Надіслати здогадки",
-      "waitingForOthers": "Надіслали {count} / {total}"
+      "waitingForOthers": "Надіслали {count} / {total}",
+      "assignedCount": "Призначено {count} із {total}",
+      "whoIs": "Хто такий {label}?",
+      "revealsAtOnce": "Усе розкривається одразу, щоб ніхто не підглянув."
     },
     "identityReveal": {
       "heading": "Розкриття",
       "correct": "Вгадано правильно",
       "incorrect": "Вгадано неправильно",
-      "scoresPending": "Повний підрахунок очок стане доступним, коли підсумковий рахунок кожного гравця з'явиться на сервері."
+      "winner": "Переможець",
+      "winnerNote": "Найкраще прочитав кімнату — вгадано {count} із {total}",
+      "points": "балів",
+      "sharedWin": "Спільна перемога — {names} вгадали по {count}",
+      "yourGuess": "Ваш здогад",
+      "youSaid": "Ви назвали: {name}",
+      "nobody": "нікого",
+      "pointPerMatch": "1 бал за кожен збіг"
     },
     "turnBasedCut": {
       "instruction": "У свій хід виріжте один елемент. Перемагає той, що залишився останнім.",
@@ -2156,7 +2169,11 @@
       "aggregateHeading": "Підсумок",
       "groupRanking": "Спільний рейтинг групи",
       "pointsLabel": "{count} {count, plural, one {очко} few {очки} many {очок} other {очка}}",
-      "tiedNote": "Нічия — {count} {count, plural, one {позиція ділить} few {позиції ділять} many {позицій ділять} other {позиції ділять}} це місце"
+      "tiedNote": "Нічия — {count} {count, plural, one {позиція ділить} few {позиції ділять} many {позицій ділять} other {позиції ділять}} це місце",
+      "aggregateHint": "усі бюлетені, пораховані разом",
+      "alignment": "Збіг",
+      "alignmentHint": "наскільки близько до кімнати",
+      "alignmentNote": "Ніхто не виграє — збіг просто показує, чий смак збігся з кімнатою."
     },
     "relay": {
       "instruction": "Вставте поточний елемент у спільний рейтинг.",
@@ -2191,7 +2208,8 @@
     },
     "leaderboard": {
       "winner": "Переможець",
-      "points": "{count, plural, one {# очко} few {# очки} many {# очок} other {# очка}}"
+      "points": "{count, plural, one {# очко} few {# очки} many {# очок} other {# очка}}",
+      "heading": "Таблиця результатів"
     },
     "header": {
       "rounds": "{count, plural, one {# раунд} few {# раунди} many {# раундів} other {# раунду}}",

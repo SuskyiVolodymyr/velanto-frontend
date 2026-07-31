@@ -2079,7 +2079,8 @@
     "results": {
       "heading": "结果",
       "roundLabel": "第 {index} 轮",
-      "backToPack": "返回卡包"
+      "backToPack": "返回卡包",
+      "playAgain": "再玩一次"
     },
     "ended": {
       "heading": "该房间已结束",
@@ -2124,21 +2125,33 @@
       "rankInstruction": "对每一项排序，最佳在前——在所有人锁定之前，没人能看到你的排名。",
       "revealHeading": "揭晓",
       "trajectoryHeading": "大家目前的选择",
-      "roundColumn": "轮次"
+      "roundColumn": "轮次",
+      "trajectoryHint": "{count, plural, other {# 轮}}的选择",
+      "stillAnonymous": "？",
+      "columnHint": "单看一轮谁也认不出来——两个人常常选同一个。真正独特的是一整列。"
     },
     "guessing": {
       "heading": "最后一轮",
       "title": "他们是谁？",
       "instruction": "将每位玩家分配给你认为对应的标签。",
-      "chooseSomeone": "选择一位玩家…",
       "submit": "提交猜测",
-      "waitingForOthers": "已有 {count} / {total} 人提交"
+      "waitingForOthers": "已有 {count} / {total} 人提交",
+      "assignedCount": "已分配 {count}/{total}",
+      "whoIs": "{label} 是谁？",
+      "revealsAtOnce": "所有答案同时揭晓，谁也偷看不了。"
     },
     "identityReveal": {
       "heading": "揭晓",
       "correct": "猜对了",
       "incorrect": "猜错了",
-      "scoresPending": "待每位玩家的总分数据接入后，即可查看完整分数。"
+      "winner": "获胜者",
+      "winnerNote": "最会读空气——{total} 个代号猜对 {count} 个",
+      "points": "分",
+      "sharedWin": "并列获胜——{names} 各猜对 {count} 个",
+      "yourGuess": "你的答案",
+      "youSaid": "你选了 {name}",
+      "nobody": "没有人",
+      "pointPerMatch": "每猜对一个得 1 分"
     },
     "turnBasedCut": {
       "instruction": "轮到你时，淘汰一项。最后剩下的获胜。",
@@ -2156,7 +2169,11 @@
       "aggregateHeading": "汇总",
       "groupRanking": "群体排名",
       "pointsLabel": "{count} 分",
-      "tiedNote": "并列——{count} 项并列此名次"
+      "tiedNote": "并列——{count} 项并列此名次",
+      "aggregateHint": "所有人的排名，合并计分",
+      "alignment": "契合度",
+      "alignmentHint": "与大家的接近程度",
+      "alignmentNote": "没有输赢——契合度只是显示谁的口味和房间最合拍。"
     },
     "relay": {
       "instruction": "将当前项插入共同排名中。",
@@ -2191,7 +2208,8 @@
     },
     "leaderboard": {
       "winner": "获胜者",
-      "points": "{count, plural, other {# 分}}"
+      "points": "{count, plural, other {# 分}}",
+      "heading": "排行榜"
     },
     "header": {
       "rounds": "{count, plural, other {# 轮}}",

@@ -631,7 +631,11 @@ describe("RoomScreen — guess-who identity reveal", () => {
     );
     render(<RoomScreen roomId="room-1" />);
 
-    expect(screen.getByText("Reveal")).toBeInTheDocument();
+    // The reveal screen heads itself with the winner/your-guess panels, not a
+    // "Reveal" eyebrow, so identify it by the panel only it renders.
+    expect(
+      screen.getByRole("region", { name: "Your guess" }),
+    ).toBeInTheDocument();
     expect(screen.queryByText("Results")).not.toBeInTheDocument();
   });
 });

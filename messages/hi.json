@@ -2079,7 +2079,8 @@
     "results": {
       "heading": "परिणाम",
       "roundLabel": "राउंड {index}",
-      "backToPack": "पैक पर वापस"
+      "backToPack": "पैक पर वापस",
+      "playAgain": "फिर से खेलें"
     },
     "ended": {
       "heading": "यह कमरा समाप्त हो गया है",
@@ -2124,21 +2125,33 @@
       "rankInstruction": "हर आइटम को क्रम में रखें, सबसे अच्छा पहले — जब तक सब लॉक न हों, कोई आपकी रैंकिंग नहीं देखेगा।",
       "revealHeading": "खुलासा",
       "trajectoryHeading": "अब तक सभी ने क्या जवाब दिया",
-      "roundColumn": "राउंड"
+      "roundColumn": "राउंड",
+      "trajectoryHint": "{count, plural, one {# राउंड} other {# राउंड}} के चुनाव",
+      "stillAnonymous": "?",
+      "columnHint": "एक राउंड से किसी की पहचान नहीं होती — दो लोग अक्सर एक ही चीज़ चुनते हैं। असली पहचान पूरे कॉलम से होती है।"
     },
     "guessing": {
       "heading": "अंतिम राउंड",
       "title": "कौन कौन है?",
       "instruction": "हर खिलाड़ी को उस लेबल पर लगाएँ जो आपको लगता है वे थे।",
-      "chooseSomeone": "एक खिलाड़ी चुनें…",
       "submit": "अनुमान जमा करें",
-      "waitingForOthers": "{count} / {total} ने जमा किया है"
+      "waitingForOthers": "{count} / {total} ने जमा किया है",
+      "assignedCount": "{total} में से {count} तय",
+      "whoIs": "{label} कौन है?",
+      "revealsAtOnce": "सब कुछ एक साथ खुलता है, ताकि कोई झाँक न सके।"
     },
     "identityReveal": {
       "heading": "खुलासा",
       "correct": "सही अनुमान",
       "incorrect": "ग़लत अनुमान",
-      "scoresPending": "हर खिलाड़ी का कुल स्कोर उपलब्ध होने पर पूरे स्कोर दिखेंगे।"
+      "winner": "विजेता",
+      "winnerNote": "सबसे अच्छा पढ़ा — {total} में से {count} लेबल सही",
+      "points": "अंक",
+      "sharedWin": "साझा जीत — {names} ने {count} सही किए",
+      "yourGuess": "आपका अंदाज़ा",
+      "youSaid": "आपने {name} कहा",
+      "nobody": "कोई नहीं",
+      "pointPerMatch": "हर सही मिलान पर 1 अंक"
     },
     "turnBasedCut": {
       "instruction": "अपनी बारी में, एक आइटम काटें। जो आखिर तक बचे वह जीतता है।",
@@ -2156,7 +2169,11 @@
       "aggregateHeading": "समेकित",
       "groupRanking": "समूह की रैंकिंग",
       "pointsLabel": "{count} अंक",
-      "tiedNote": "{count} तरफ़ा बराबरी"
+      "tiedNote": "{count} तरफ़ा बराबरी",
+      "aggregateHint": "सबकी पर्चियाँ, मिलाकर गिनी गईं",
+      "alignment": "मेल",
+      "alignmentHint": "समूह से कितना क़रीब",
+      "alignmentNote": "कोई जीतता नहीं — मेल सिर्फ़ दिखाता है कि किसकी पसंद कमरे से मिली।"
     },
     "relay": {
       "instruction": "मौजूदा आइटम को साझा रैंकिंग में डालें।",
@@ -2191,7 +2208,8 @@
     },
     "leaderboard": {
       "winner": "विजेता",
-      "points": "{count, plural, one {# अंक} other {# अंक}}"
+      "points": "{count, plural, one {# अंक} other {# अंक}}",
+      "heading": "लीडरबोर्ड"
     },
     "header": {
       "rounds": "{count, plural, one {# राउंड} other {# राउंड}}",

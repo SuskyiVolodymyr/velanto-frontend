@@ -236,6 +236,9 @@ export interface GuessingState {
 export interface PublicEndgameState {
   kind: "identity_reveal";
   mapping: Record<string, string>;
+  /** guesser userId → how many labels they matched. The leaderboard. Absent
+   * when the game ended without a reveal, which is not "zero for everyone". */
+  scores?: Record<string, number>;
 }
 
 export interface RoomState {

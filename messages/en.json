@@ -1983,7 +1983,8 @@
     },
     "leaderboard": {
       "winner": "Winner",
-      "points": "{count, plural, one {# point} other {# points}}"
+      "points": "{count, plural, one {# point} other {# points}}",
+      "heading": "Leaderboard"
     },
     "guessWho": {
       "roundInstruction": "Choose your answer",
@@ -1991,21 +1992,33 @@
       "rankInstruction": "Rank every item, best first — nobody else will see your ranking until everyone's locked in.",
       "revealHeading": "Reveal",
       "trajectoryHeading": "How everyone's answered so far",
-      "roundColumn": "Round"
+      "roundColumn": "Round",
+      "trajectoryHint": "{count, plural, one {# round} other {# rounds}} of picks",
+      "stillAnonymous": "?",
+      "columnHint": "A single round can't give anyone away — two people often pick the same thing. It's the whole column that's unique."
     },
     "guessing": {
       "heading": "Final round",
       "title": "Who's who?",
       "instruction": "Assign each player to the label you think they played as.",
-      "chooseSomeone": "Choose a player…",
       "submit": "Submit guesses",
-      "waitingForOthers": "{count} / {total} have submitted"
+      "waitingForOthers": "{count} / {total} have submitted",
+      "assignedCount": "{count}/{total} assigned",
+      "whoIs": "Who is {label}?",
+      "revealsAtOnce": "Everything reveals at once so nobody can peek."
     },
     "identityReveal": {
       "heading": "Reveal",
       "correct": "Correct guess",
       "incorrect": "Wrong guess",
-      "scoresPending": "Full scores available once every player's total is on the wire."
+      "winner": "Winner",
+      "winnerNote": "Read the room best — {count} of {total} labels matched",
+      "points": "points",
+      "sharedWin": "Shared win — {names} each matched {count}",
+      "yourGuess": "Your guess",
+      "youSaid": "You said {name}",
+      "nobody": "nobody",
+      "pointPerMatch": "1 point per correct match"
     },
     "turnBasedCut": {
       "instruction": "On your turn, cut one item. The last one standing wins.",
@@ -2023,7 +2036,11 @@
       "aggregateHeading": "Aggregated",
       "groupRanking": "The group's ranking",
       "pointsLabel": "{count} pts",
-      "tiedNote": "Tied — {count} items share this rank"
+      "tiedNote": "Tied — {count} items share this rank",
+      "aggregateHint": "everyone's ballots, scored together",
+      "alignment": "Alignment",
+      "alignmentHint": "how close to the group",
+      "alignmentNote": "Nobody wins — alignment just shows whose taste matched the room."
     },
     "relay": {
       "instruction": "Insert the current item into the shared ranking.",
@@ -2153,7 +2170,8 @@
     "results": {
       "heading": "Results",
       "roundLabel": "Round {index}",
-      "backToPack": "Back to pack"
+      "backToPack": "Back to pack",
+      "playAgain": "Play again"
     },
     "ended": {
       "heading": "This room has ended",

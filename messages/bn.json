@@ -2079,7 +2079,8 @@
     "results": {
       "heading": "ফলাফল",
       "roundLabel": "রাউন্ড {index}",
-      "backToPack": "প্যাকে ফিরুন"
+      "backToPack": "প্যাকে ফিরুন",
+      "playAgain": "আবার খেলুন"
     },
     "ended": {
       "heading": "এই রুমটি শেষ হয়ে গেছে",
@@ -2124,21 +2125,33 @@
       "rankInstruction": "প্রতিটি আইটেম ক্রমে সাজান, সেরাটি প্রথমে — সবাই লক না করা পর্যন্ত কেউ আপনার র‍্যাঙ্কিং দেখবে না।",
       "revealHeading": "প্রকাশ",
       "trajectoryHeading": "এখন পর্যন্ত সবাই কী উত্তর দিয়েছে",
-      "roundColumn": "রাউন্ড"
+      "roundColumn": "রাউন্ড",
+      "trajectoryHint": "{count, plural, one {# রাউন্ডের} other {# রাউন্ডের}} বাছাই",
+      "stillAnonymous": "?",
+      "columnHint": "একটি রাউন্ড দেখে কাউকে চেনা যায় না — দুজন প্রায়ই একই জিনিস বাছেন। গোটা কলামটাই আসল সূত্র।"
     },
     "guessing": {
       "heading": "শেষ রাউন্ড",
       "title": "কে কে ছিল?",
       "instruction": "প্রতিটি খেলোয়াড়কে সেই লেবেলে বরাদ্দ করুন যা আপনার মনে হয় তারা ছিল।",
-      "chooseSomeone": "একজন খেলোয়াড় বেছে নিন…",
       "submit": "অনুমান জমা দিন",
-      "waitingForOthers": "{count} / {total} জন জমা দিয়েছেন"
+      "waitingForOthers": "{count} / {total} জন জমা দিয়েছেন",
+      "assignedCount": "{total}-এর মধ্যে {count} মেলানো",
+      "whoIs": "{label} কে?",
+      "revealsAtOnce": "সব একসঙ্গে খোলে, যাতে কেউ উঁকি দিতে না পারে।"
     },
     "identityReveal": {
       "heading": "প্রকাশ",
       "correct": "সঠিক অনুমান",
       "incorrect": "ভুল অনুমান",
-      "scoresPending": "প্রতিটি খেলোয়াড়ের মোট স্কোর যুক্ত হলে পূর্ণ স্কোর দেখা যাবে।"
+      "winner": "বিজয়ী",
+      "winnerNote": "সবচেয়ে ভালো বুঝেছেন — {total}-এর মধ্যে {count}টি মিলেছে",
+      "points": "পয়েন্ট",
+      "sharedWin": "যৌথ জয় — {names} প্রত্যেকে {count}টি মিলিয়েছেন",
+      "yourGuess": "আপনার অনুমান",
+      "youSaid": "আপনি বলেছিলেন {name}",
+      "nobody": "কেউ না",
+      "pointPerMatch": "প্রতিটি সঠিক মিলে ১ পয়েন্ট"
     },
     "turnBasedCut": {
       "instruction": "আপনার পালায়, একটি আইটেম বাদ দিন। শেষ পর্যন্ত টিকে থাকা জেতে।",
@@ -2156,7 +2169,11 @@
       "aggregateHeading": "সমষ্টিগত",
       "groupRanking": "দলের র‍্যাঙ্কিং",
       "pointsLabel": "{count} পয়েন্ট",
-      "tiedNote": "{count}-মুখী টাই"
+      "tiedNote": "{count}-মুখী টাই",
+      "aggregateHint": "সবার ব্যালট, একসঙ্গে হিসেব করা",
+      "alignment": "মিল",
+      "alignmentHint": "দলের কতটা কাছে",
+      "alignmentNote": "কেউ জেতে না — মিল শুধু দেখায় কার পছন্দ ঘরের সঙ্গে মিলেছে।"
     },
     "relay": {
       "instruction": "বর্তমান আইটেমটি সাধারণ র‍্যাঙ্কিংয়ে বসান।",
@@ -2191,7 +2208,8 @@
     },
     "leaderboard": {
       "winner": "বিজয়ী",
-      "points": "{count, plural, one {# পয়েন্ট} other {# পয়েন্ট}}"
+      "points": "{count, plural, one {# পয়েন্ট} other {# পয়েন্ট}}",
+      "heading": "লিডারবোর্ড"
     },
     "header": {
       "rounds": "{count, plural, one {# রাউন্ড} other {# রাউন্ড}}",

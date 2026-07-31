@@ -2079,7 +2079,8 @@
     "results": {
       "heading": "نتائج",
       "roundLabel": "راؤنڈ {index}",
-      "backToPack": "پیک پر واپس"
+      "backToPack": "پیک پر واپس",
+      "playAgain": "دوبارہ کھیلیں"
     },
     "ended": {
       "heading": "یہ کمرہ ختم ہو چکا ہے",
@@ -2124,21 +2125,33 @@
       "rankInstruction": "ہر آئٹم کو ترتیب دیں، بہترین پہلے — جب تک سب لاک نہ ہوں، کوئی آپ کی درجہ بندی نہیں دیکھے گا۔",
       "revealHeading": "انکشاف",
       "trajectoryHeading": "اب تک سب نے کیا جواب دیا",
-      "roundColumn": "راؤنڈ"
+      "roundColumn": "راؤنڈ",
+      "trajectoryHint": "{count, plural, one {# راؤنڈ} other {# راؤنڈز}} کے انتخاب",
+      "stillAnonymous": "؟",
+      "columnHint": "ایک راؤنڈ سے کسی کو نہیں پہچانا جا سکتا — دو لوگ اکثر ایک ہی چیز چنتے ہیں۔ اصل پہچان پورے کالم سے ہوتی ہے۔"
     },
     "guessing": {
       "heading": "آخری راؤنڈ",
       "title": "کون کون تھا؟",
       "instruction": "ہر کھلاڑی کو اس لیبل پر مقرر کریں جو آپ کے خیال میں وہ تھے۔",
-      "chooseSomeone": "ایک کھلاڑی منتخب کریں…",
       "submit": "اندازے جمع کروائیں",
-      "waitingForOthers": "{count} / {total} نے جمع کروا دیا ہے"
+      "waitingForOthers": "{count} / {total} نے جمع کروا دیا ہے",
+      "assignedCount": "{total} میں سے {count} طے",
+      "whoIs": "{label} کون ہے؟",
+      "revealsAtOnce": "سب کچھ ایک ساتھ کھلتا ہے تاکہ کوئی جھانک نہ سکے۔"
     },
     "identityReveal": {
       "heading": "انکشاف",
       "correct": "درست اندازہ",
       "incorrect": "غلط اندازہ",
-      "scoresPending": "ہر کھلاڑی کا مکمل اسکور دستیاب ہونے پر پورے اسکور دکھائے جائیں گے۔"
+      "winner": "فاتح",
+      "winnerNote": "سب سے بہتر پہچانا — {total} میں سے {count} درست",
+      "points": "پوائنٹس",
+      "sharedWin": "مشترکہ جیت — {names} نے {count} درست کیے",
+      "yourGuess": "آپ کا اندازہ",
+      "youSaid": "آپ نے {name} کہا",
+      "nobody": "کوئی نہیں",
+      "pointPerMatch": "ہر درست جوڑ پر 1 پوائنٹ"
     },
     "turnBasedCut": {
       "instruction": "اپنی باری میں، ایک آئٹم کاٹیں۔ آخر تک باقی رہنے والا جیتتا ہے۔",
@@ -2156,7 +2169,11 @@
       "aggregateHeading": "مجموعی",
       "groupRanking": "گروپ کی درجہ بندی",
       "pointsLabel": "{count} {count, plural, one {پوائنٹ} other {پوائنٹس}}",
-      "tiedNote": "برابری — {count} آئٹمز اس درجے میں شریک ہیں"
+      "tiedNote": "برابری — {count} آئٹمز اس درجے میں شریک ہیں",
+      "aggregateHint": "سب کی پرچیاں، مل کر گنی گئیں",
+      "alignment": "ہم آہنگی",
+      "alignmentHint": "گروپ کے کتنا قریب",
+      "alignmentNote": "کوئی نہیں جیتتا — ہم آہنگی صرف دکھاتی ہے کہ کس کا ذوق کمرے سے ملا۔"
     },
     "relay": {
       "instruction": "موجودہ آئٹم کو مشترکہ درجہ بندی میں شامل کریں۔",
@@ -2191,7 +2208,8 @@
     },
     "leaderboard": {
       "winner": "فاتح",
-      "points": "{count, plural, one {# پوائنٹ} other {# پوائنٹس}}"
+      "points": "{count, plural, one {# پوائنٹ} other {# پوائنٹس}}",
+      "heading": "لیڈر بورڈ"
     },
     "header": {
       "rounds": "{count, plural, one {# راؤنڈ} other {# راؤنڈز}}",

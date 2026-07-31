@@ -2079,7 +2079,8 @@
     "results": {
       "heading": "النتائج",
       "roundLabel": "الجولة {index}",
-      "backToPack": "العودة إلى الحزمة"
+      "backToPack": "العودة إلى الحزمة",
+      "playAgain": "العب مرة أخرى"
     },
     "ended": {
       "heading": "انتهت هذه الغرفة",
@@ -2124,21 +2125,33 @@
       "rankInstruction": "رتّب كل عنصر خفية، بالترتيب — لن يرى أحد ترتيبك حتى يقفل الجميع اختياراتهم.",
       "revealHeading": "الكشف",
       "trajectoryHeading": "ما اختاره الجميع حتى الآن",
-      "roundColumn": "الجولة"
+      "roundColumn": "الجولة",
+      "trajectoryHint": "اختيارات {count, plural, zero {# جولة} one {جولة واحدة} two {جولتين} few {# جولات} many {# جولة} other {# جولة}}",
+      "stillAnonymous": "؟",
+      "columnHint": "جولة واحدة لا تكشف أحدًا — كثيرًا ما يختار شخصان الشيء نفسه. العمود كله هو المميّز."
     },
     "guessing": {
       "heading": "الجولة الأخيرة",
       "title": "من هو من؟",
       "instruction": "عيّن كل لاعب للرمز الذي تعتقد أنه لعب به.",
-      "chooseSomeone": "اختر لاعبًا…",
       "submit": "إرسال التخمينات",
-      "waitingForOthers": "أرسل {count} / {total}"
+      "waitingForOthers": "أرسل {count} / {total}",
+      "assignedCount": "عُيّن {count} من {total}",
+      "whoIs": "من هو {label}؟",
+      "revealsAtOnce": "يُكشف كل شيء دفعة واحدة كي لا يسترق أحد النظر."
     },
     "identityReveal": {
       "heading": "الكشف",
       "correct": "تخمين صحيح",
       "incorrect": "تخمين خاطئ",
-      "scoresPending": "ستتوفر النتائج الكاملة بمجرد توفر مجموع كل لاعب على النظام."
+      "winner": "الفائز",
+      "winnerNote": "قرأ الغرفة أفضل من الجميع — طابق {count} من {total}",
+      "points": "نقطة",
+      "sharedWin": "فوز مشترك — طابق {names} {count} لكلٍّ منهم",
+      "yourGuess": "تخمينك",
+      "youSaid": "قلتَ {name}",
+      "nobody": "لا أحد",
+      "pointPerMatch": "نقطة واحدة لكل مطابقة صحيحة"
     },
     "turnBasedCut": {
       "instruction": "في دورك، اقصص عنصرًا واحدًا. يفوز آخر عنصر يتبقى.",
@@ -2156,7 +2169,11 @@
       "aggregateHeading": "مجمَّع",
       "groupRanking": "ترتيب المجموعة",
       "pointsLabel": "{count} {count, plural, zero {نقطة} one {نقطة} two {نقطتان} few {نقاط} many {نقطة} other {نقطة}}",
-      "tiedNote": "تعادل — {count} {count, plural, zero {عناصر} one {عنصر} two {عنصران} few {عناصر} many {عنصرًا} other {عنصر}} يتشارك هذا الترتيب"
+      "tiedNote": "تعادل — {count} {count, plural, zero {عناصر} one {عنصر} two {عنصران} few {عناصر} many {عنصرًا} other {عنصر}} يتشارك هذا الترتيب",
+      "aggregateHint": "كل الأوراق، محتسبة معًا",
+      "alignment": "التوافق",
+      "alignmentHint": "مدى القرب من الغرفة",
+      "alignmentNote": "لا أحد يفوز — التوافق يبيّن فقط من تطابق ذوقه مع الغرفة."
     },
     "relay": {
       "instruction": "أدرج العنصر الحالي في الترتيب المشترك.",
@@ -2191,7 +2208,8 @@
     },
     "leaderboard": {
       "winner": "الفائز",
-      "points": "{count, plural, zero {# نقطة} one {نقطة واحدة} two {نقطتان} few {# نقاط} many {# نقطة} other {# نقطة}}"
+      "points": "{count, plural, zero {# نقطة} one {نقطة واحدة} two {نقطتان} few {# نقاط} many {# نقطة} other {# نقطة}}",
+      "heading": "لوحة النتائج"
     },
     "header": {
       "rounds": "{count, plural, zero {# جولة} one {جولة واحدة} two {جولتان} few {# جولات} many {# جولة} other {# جولة}}",
