@@ -15,6 +15,7 @@ import { BannedBanner } from "@/src/shared/components/BannedBanner";
 import { SiteFooter } from "@/src/shared/components/SiteFooter";
 import { MobileBottomNav } from "@/src/shared/components/MobileBottomNav";
 import { RoomPresenceIndicator } from "@/src/features/friends-rooms/RoomPresenceIndicator";
+import { SearchQueryProvider } from "@/src/features/home/search-query-context";
 import { cn } from "@/src/shared/lib/cn";
 
 // Routes that render full-screen without ANY app chrome (sidebar/top bar/nav).
@@ -116,34 +117,42 @@ export function AppShell({ children }: { children: ReactNode }) {
   };
 
   return (
-    <div className="flex min-h-full">
-      {onDashboard && (
-        <>
-          <AppSidebar collapsed={collapsed || narrowDesktop} />
-          <MobileDrawer open={drawerOpen} onClose={closeDrawer} />
-        </>
-      )}
+    // The search term is shared between AppTopBar (the input) and the
+    // dashboard feed (the results), which sit in different trees — the
+    // provider is the seam. Wraps the whole shell, but only the dashboard
+    // mounts a search box, so it's inert everywhere else.
+    <SearchQueryProvider>
+      <div className="flex min-h-full">
+        {onDashboard && (
+          <>
+            <AppSidebar collapsed={collapsed || narrowDesktop} />
+            <MobileDrawer open={drawerOpen} onClose={closeDrawer} />
+          </>
+        )}
 
-      {/* Content column. Bottom padding clears the fixed MobileBottomNav (its
-          emphasized Create button makes it ~4.5rem) plus the safe-area inset,
-          dropping away from 881px up where the nav is gone. */}
-      <div className="flex min-h-full min-w-0 flex-1 flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] min-[881px]:pb-0">
-        {onDashboard && <AppTopBar onMenuToggle={onMenuToggle} />}
-        <BannedBanner />
-        {children}
-        {onDashboard && <SiteFooter />}
-      </div>
+        {/* Content column. Bottom padding clears the fixed MobileBottomNav (its
+            emphasized Create button makes it ~4.5rem) plus the safe-area inset,
+            dropping away from 881px up where the nav is gone. */}
+        <div className="flex min-h-full min-w-0 flex-1 flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] min-[881px]:pb-0">
+          {onDashboard && <AppTopBar onMenuToggle={onMenuToggle} />}
+          <BannedBanner />
+          {children}
+          {onDashboard && <SiteFooter />}
+        </div>
 
-      <MobileBottomNav />
-      {/* Floating "you're in a room" affordance. On the dashboard it's
-          constrained to mobile, since the sidebar's own room pill covers
-          desktop there; everywhere else the sidebar (and its pill) is gone
-          entirely, so this becomes the only "you're in a room" affordance at
-          any width. */}
-      <div className={onDashboard ? "contents min-[881px]:hidden" : "contents"}>
-        <RoomPresenceIndicator />
+        <MobileBottomNav />
+        {/* Floating "you're in a room" affordance. On the dashboard it's
+            constrained to mobile, since the sidebar's own room pill covers
+            desktop there; everywhere else the sidebar (and its pill) is gone
+            entirely, so this becomes the only "you're in a room" affordance at
+            any width. */}
+        <div
+          className={onDashboard ? "contents min-[881px]:hidden" : "contents"}
+        >
+          <RoomPresenceIndicator />
+        </div>
       </div>
-    </div>
+    </SearchQueryProvider>
   );
 }
 

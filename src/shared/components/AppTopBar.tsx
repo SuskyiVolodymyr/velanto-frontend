@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { MenuIcon, PlusIcon } from "@/src/shared/components/icons";
 import { useAuth } from "@/src/shared/lib/auth-context";
@@ -11,6 +10,7 @@ import { BrandMark } from "@/src/shared/components/BrandMark";
 import { SearchField } from "@/src/shared/components/SearchField";
 import { UserMenu } from "@/src/shared/components/UserMenu";
 import { NotificationsBell } from "@/src/shared/components/NotificationsBell";
+import { useSearchQuery } from "@/src/features/home/search-query-context";
 
 /**
  * Global top bar: menu toggle (collapses the desktop rail / opens the mobile
@@ -29,9 +29,10 @@ export function AppTopBar({ onMenuToggle }: { onMenuToggle: () => void }) {
   // honest "Search packs…" wins over the mock's aspirational "people, tags…"
   // until unified search lands.
   const thome = useTranslations("home");
-  const router = useRouter();
   const { user, status, logout } = useAuth();
-  const [query, setQuery] = useState("");
+  // The term is shared state, not local: the feed below re-queries as it
+  // changes (debounced), so typing filters without pressing Enter.
+  const { input, setInput, commit } = useSearchQuery();
   const searchRef = useRef<HTMLInputElement>(null);
 
   // `/` focuses search, unless the user is already typing in a field.
@@ -53,10 +54,12 @@ export function AppTopBar({ onMenuToggle }: { onMenuToggle: () => void }) {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, []);
 
+  // Enter is now a shortcut past the debounce, not the trigger — the feed is
+  // already updating as you type. Still handled so the form doesn't reload the
+  // page, and so an impatient Enter feels instant.
   function onSearchSubmit(event: React.FormEvent) {
     event.preventDefault();
-    const q = query.trim();
-    router.push(q ? `/?q=${encodeURIComponent(q)}` : "/");
+    commit();
   }
 
   return (
@@ -94,8 +97,8 @@ export function AppTopBar({ onMenuToggle }: { onMenuToggle: () => void }) {
           showKeyHint
           aria-label={thome("searchLabel")}
           placeholder={thome("searchPlaceholder")}
-          value={query}
-          onChange={(event) => setQuery(event.target.value)}
+          value={input}
+          onChange={(event) => setInput(event.target.value)}
           className="w-full max-w-[520px] border-white/[0.06] bg-surface-control"
         />
       </form>

@@ -21,6 +21,7 @@ import {
   readPackFilters,
   writePackFilters,
 } from "@/src/features/home/pack-filters-storage";
+import { useSearchQuery } from "@/src/features/home/search-query-context";
 
 export type FeedStatus = "loading" | "ready" | "error";
 
@@ -28,19 +29,22 @@ export type FeedStatus = "loading" | "ready" | "error";
 // so HomeFeed stays a thin layout orchestrator and the filter sidebar/results
 // stay purely presentational. The fetch itself lives in `usePacksFeed`.
 //
-// Search is URL-driven now (the global top-bar search routes to `/?q=…`, which
-// the Server-Component home page reads and passes down as `initialQuery`) — the
-// feed no longer owns a text input. A new search is a fresh navigation, so the
-// home page keys this component on the query and it remounts with the new seed.
-export function useHomeFeed(
-  initialFeed?: PacksFeedResult,
-  initialQuery = "",
-) {
+// The feed owns no text input: the term comes from the global top-bar search
+// via SearchQueryProvider, debounced there, so typing re-queries as you go.
+// `initialQuery` is the URL's `?q=` as the SERVER rendered it — it seeds the
+// first paint (and matches `initialFeed`) until the provider's client-side
+// value takes over, so a shared `/?q=…` link still arrives with results.
+export function useHomeFeed(initialFeed?: PacksFeedResult, initialQuery = "") {
   const [format, setFormat] = useState<FormatFilterValue>("all");
   const [tags, setTags] = useState<PackTag[]>([]);
   const [languages, setLanguages] = useState<PackLanguage[]>([]);
-  // Constant for a given mount: the search term comes from the URL, not a field.
-  const query = initialQuery;
+  const { query: liveQuery, hydrated: searchHydrated } = useSearchQuery();
+  // Until the provider has read `?q=` (one tick after mount) its term is
+  // empty for a reason we can't act on, so keep the server's — otherwise a
+  // shared `/?q=zelda` link would flash the unfiltered feed. After that the
+  // provider is authoritative, including when the user CLEARS the box: falling
+  // back on emptiness alone would resurrect the old search.
+  const query = searchHydrated ? liveQuery : initialQuery;
   const [page, setPage] = useState(1);
   // Default to Popular / this month so the landing feed leads with what people
   // are actually playing, not the newest upload.
