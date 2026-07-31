@@ -1767,6 +1767,7 @@
   "history": {
     "title": "历史记录",
     "subtitle": "你玩过的卡包，最近的排在前面。",
+    "loading": "正在加载你的历史记录…",
     "emptyFiltered": "你还没有玩过这种玩法的卡包。",
     "progress": "第 {current} / {total} 轮",
     "continue": "继续",

@@ -8,16 +8,15 @@ import { FormatFilter } from "@/src/features/home/FormatFilter";
 import { HomePagination } from "@/src/features/home/HomePagination";
 import { InProgressSection } from "@/src/features/home/InProgressSection";
 import { PackCard } from "@/src/features/home/PackCard";
+import {
+  PACK_GRID_CLASS,
+  PackGridSkeleton,
+} from "@/src/features/home/PackGridSkeleton";
 import { Text } from "@/src/shared/components/Text";
-import { Skeleton } from "@/src/shared/components/Skeleton";
 import { useHistory } from "@/src/features/home/api/history.queries";
 import type { HistorySort } from "@/src/features/home/api/history";
 import { PACKS_FEED_PAGE_SIZE } from "@/src/features/home/api/packs-feed";
 import type { FormatFilterValue } from "@/src/features/home/filter-options";
-
-/** Shared by the grid and its skeleton so the two can't drift apart. */
-const GRID_CLASS =
-  "grid grid-cols-[repeat(auto-fill,minmax(262px,1fr))] gap-[18px]";
 
 const SORT_VALUES: HistorySort[] = ["recent", "oldest"];
 
@@ -105,7 +104,7 @@ export function HistoryFeed() {
       {/* `!user` covers the still-resolving session: hold the grid's shape
           rather than flashing an empty page before the fetch can start. */}
       {!user || query.isLoading ? (
-        <HistoryGridSkeleton />
+        <PackGridSkeleton label={t("loading")} />
       ) : query.isError ? (
         <Text variant="danger">{t("error")}</Text>
       ) : packs.length === 0 ? (
@@ -122,7 +121,7 @@ export function HistoryFeed() {
           >
             {t("playedTitle")}
           </Text>
-          <div className={GRID_CLASS}>
+          <div className={PACK_GRID_CLASS}>
             {packs.map((pack) => (
               <PackCard
                 key={pack.id}
@@ -138,32 +137,6 @@ export function HistoryFeed() {
           />
         </section>
       )}
-    </div>
-  );
-}
-
-/**
- * A full page of card-shaped placeholders while the history loads, in place of
- * a spinner: the grid is the page's whole content, so holding its shape keeps
- * the layout from jumping when the real cards land. Mirrors PackCard's own
- * proportions — the 16:10 cover, title/description lines, then the action row.
- */
-function HistoryGridSkeleton() {
-  return (
-    <div className={GRID_CLASS}>
-      {Array.from({ length: PACKS_FEED_PAGE_SIZE }, (_, index) => (
-        <div
-          key={index}
-          className="overflow-hidden rounded-[18px] border border-border bg-surface-card"
-        >
-          <Skeleton className="aspect-[16/10] w-full rounded-none" />
-          <div className="flex flex-col gap-[7px] p-[14px]">
-            <Skeleton className="h-[18px] w-3/4" />
-            <Skeleton className="h-[14px] w-full" />
-            <Skeleton className="mt-2 h-[38px] w-full" />
-          </div>
-        </div>
-      ))}
     </div>
   );
 }

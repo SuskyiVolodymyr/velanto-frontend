@@ -94,7 +94,12 @@ export function SidebarContent({
   const isAuthed = status === "authenticated";
 
   return (
-    <div className="flex h-full flex-col gap-6">
+    // `w-full` is load-bearing: the desktop rail is `display:flex` (row), so
+    // this column is a ROW flex item and shrink-to-fits its content without it.
+    // Collapsed, that content is a single 26px glyph — every nav row became
+    // 26px wide inside a 78px rail, which cropped the icons at the sides and
+    // turned the active pill into a sliver.
+    <div className="flex h-full w-full min-w-0 flex-col gap-6">
       <Link
         href="/"
         onClick={onNavigate}

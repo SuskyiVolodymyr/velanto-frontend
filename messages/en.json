@@ -1766,6 +1766,7 @@
   "history": {
     "title": "History",
     "subtitle": "Packs you've played, most recent first.",
+    "loading": "Loading your history…",
     "emptyFiltered": "You haven't played any packs in this format yet.",
     "progress": "Round {current} of {total}",
     "continue": "Continue",

@@ -1767,6 +1767,7 @@
   "history": {
     "title": "السجل",
     "subtitle": "الحزم التي لعبتها، الأحدث أولاً.",
+    "loading": "جارٍ تحميل سجلك…",
     "emptyFiltered": "لم تلعب أي حزمة بهذا النمط بعد.",
     "progress": "الجولة {current} من {total}",
     "continue": "متابعة",

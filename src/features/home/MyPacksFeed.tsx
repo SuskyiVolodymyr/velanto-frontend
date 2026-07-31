@@ -6,8 +6,11 @@ import { useAuth } from "@/src/shared/lib/auth-context";
 import { FilterChipRow } from "@/src/features/home/FilterChipRow";
 import { HomePagination } from "@/src/features/home/HomePagination";
 import { PackCard } from "@/src/features/home/PackCard";
+import {
+  PACK_GRID_CLASS,
+  PackGridSkeleton,
+} from "@/src/features/home/PackGridSkeleton";
 import { Text } from "@/src/shared/components/Text";
-import { LoadingState } from "@/src/shared/components/LoadingState";
 import { useMyPacks } from "@/src/features/home/api/my-packs.queries";
 import { PACKS_FEED_PAGE_SIZE } from "@/src/features/home/api/packs-feed";
 import {
@@ -35,9 +38,8 @@ export function MyPacksFeed() {
   const { user } = useAuth();
 
   const [status, setStatus] = useState<StatusChoice>("all");
-  const [dateOrder, setDateOrder] = useState<DateOrderValue>(
-    DEFAULT_DATE_ORDER,
-  );
+  const [dateOrder, setDateOrder] =
+    useState<DateOrderValue>(DEFAULT_DATE_ORDER);
   const [page, setPage] = useState(1);
 
   const filters = useMemo(
@@ -113,14 +115,14 @@ export function MyPacksFeed() {
       {query.isError ? (
         <Text variant="danger">{t("error")}</Text>
       ) : query.isLoading ? (
-        <LoadingState label={t("loading")} showLabel />
+        <PackGridSkeleton label={t("loading")} />
       ) : packs.length === 0 ? (
         <Text variant="secondary">
           {status === "all" ? t("empty") : t("emptyFiltered")}
         </Text>
       ) : (
         <>
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(262px,1fr))] gap-[18px]">
+          <div className={PACK_GRID_CLASS}>
             {packs.map((pack) => (
               <PackCard key={pack.id} pack={pack} showStatus />
             ))}
