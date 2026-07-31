@@ -153,9 +153,9 @@ export function describeNotification(
         // has to know what to fix, and making them open the pack to find out
         // would make the row a bare "something is wrong".
         excerpt: snippet(payload.message),
-        // Straight to the editor: the pack is theirs to change, and the only
-        // useful next action is editing it.
-        href: `/packs/${payload.packId}/edit`,
+        // The outcome page, not the editor: the editor shows the pack but not
+        // what was asked of it, and the marked items are the whole point.
+        href: `/packs/${payload.packId}/review`,
       };
     }
     default:

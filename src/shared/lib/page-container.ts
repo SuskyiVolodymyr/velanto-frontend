@@ -45,6 +45,8 @@ export const PAGE_CONTAINERS = {
   1180: "mx-auto w-full max-w-[1180px] px-[30px] max-[720px]:px-4",
   /** Solo Play (all five formats), Suggestions. */
   1120: "mx-auto w-full max-w-[1120px] px-[30px] max-[720px]:px-4",
+  /** Pack Review Outcome. */
+  1100: "mx-auto w-full max-w-[1100px] px-[30px] max-[720px]:px-4",
   /** Admin User Detail. */
   1040: "mx-auto w-full max-w-[1040px] px-[30px] max-[720px]:px-4",
   /** Suggestion Detail. */

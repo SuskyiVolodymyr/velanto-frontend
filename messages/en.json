@@ -1247,7 +1247,11 @@
     "reportComment": {
       "scopeNote": "Reports are filed against the account. The comment is quoted below so a moderator can find it.",
       "quote": "About comment {id}:\n\n“{body}”"
-    }
+    },
+    "changesRequestedHeading": "Changes were requested",
+    "changesRequestedMarks": "{count, plural, one {# thing marked to fix} other {# things marked to fix}} — read what the moderator asked.",
+    "changesRequestedNoMarks": "Read what the moderator asked before you edit.",
+    "changesRequestedCta": "See what to fix"
   },
   "report": {
     "button": "Report",
@@ -2062,5 +2066,33 @@
       "description": "The host removed you from this room. You can join again with the code if they reopen it.",
       "leave": "Back to pack"
     }
+  },
+  "reviewOutcome": {
+    "crumb": "Review result",
+    "loading": "Loading the review result…",
+    "notFound": "This pack doesn't exist, or it isn't yours.",
+    "loginRequired": "Log in to see this review result.",
+    "heroTitle": "Almost there — a few things to fix",
+    "heroWhen": "Reviewed {date}",
+    "heroBody": "Your pack isn't published yet. A moderator went through it and asked for the changes below. Nothing was deleted — make the edits and re-submit, and it goes back into the queue.",
+    "openEditor": "Open the editor",
+    "viewPack": "View the pack",
+    "moderatorSaid": "What the moderator said",
+    "marksHeading": "What to fix",
+    "marksCount": "{count, plural, one {# thing marked} other {# things marked}}",
+    "needsEdit": "NEEDS EDIT",
+    "doThis": "Do this",
+    "inPool": "Pool: {pool}",
+    "nextHeading": "What happens next",
+    "step1": "Open the editor and make the changes above.",
+    "step2": "Save. The pack goes straight back into the moderation queue.",
+    "step3": "You'll be notified again when a moderator has looked at it.",
+    "thePack": "The pack",
+    "metaPools": "Pools",
+    "metaRounds": "Rounds",
+    "metaSubmitted": "Submitted",
+    "mistakeTitle": "Think this was a mistake?",
+    "mistakeBody": "Open a suggestion and the team will take another look. Include the pack name.",
+    "mistakeLink": "Contact moderation →"
   }
 }

@@ -35,6 +35,11 @@ vi.mock("@/src/features/pack/PackOwnerStatusBadge", () => ({
 vi.mock("@/src/features/pack/PackRejectionReason", () => ({
   PackRejectionReason: () => null,
 }));
+// Same treatment, same reason: an author-gated island whose useAuth() throws
+// outside an AuthProvider.
+vi.mock("@/src/features/pack/PackChangesRequestedBanner", () => ({
+  PackChangesRequestedBanner: () => null,
+}));
 // FriendsRoomEntry is an auth-gated client island (own tests in
 // FriendsRoomEntry.test.tsx — useAuth()/useRouter() need a real provider/
 // next/navigation mock this fallback test doesn't otherwise set up). Stub it

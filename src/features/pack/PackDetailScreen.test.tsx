@@ -48,6 +48,11 @@ vi.mock("@/src/features/pack/PackOwnerStatusBadge", () => ({
 vi.mock("@/src/features/pack/PackRejectionReason", () => ({
   PackRejectionReason: () => null,
 }));
+// Same treatment, same reason: an author-gated island whose useAuth() throws
+// outside an AuthProvider. Its own gating is covered in its own test.
+vi.mock("@/src/features/pack/PackChangesRequestedBanner", () => ({
+  PackChangesRequestedBanner: () => null,
+}));
 // FriendsRoomEntry is an auth-gated client island (own tests in
 // FriendsRoomEntry.test.tsx — useAuth() throws outside an AuthProvider).
 // Stub it so this screen's own wiring assertion (does it render, with the
@@ -121,14 +126,26 @@ describe("PackDetailScreen", () => {
   // tests in FriendsRoomEntry.test.tsx; this screen only needs to prove it
   // mounts the component at all, wired to the right pack).
   it("renders the room entry now that rooms are live", () => {
-    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} availableModes={AVAILABLE_MODES} />);
+    render(
+      <PackDetailScreen
+        pack={BASE_PACK}
+        results={RESULTS}
+        availableModes={AVAILABLE_MODES}
+      />,
+    );
     expect(
       screen.getByRole("button", { name: /create room/i }),
     ).toBeInTheDocument();
   });
 
   it("renders the pack's title, description, and a Play link", () => {
-    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} availableModes={AVAILABLE_MODES} />);
+    render(
+      <PackDetailScreen
+        pack={BASE_PACK}
+        results={RESULTS}
+        availableModes={AVAILABLE_MODES}
+      />,
+    );
     expect(screen.getByText("Best Anime Openings")).toBeInTheDocument();
     expect(
       screen.getByText("Pick your favorite each round."),
@@ -140,7 +157,13 @@ describe("PackDetailScreen", () => {
   });
 
   it("lists each round as a chip, falling back to the group name when unnamed", () => {
-    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} availableModes={AVAILABLE_MODES} />);
+    render(
+      <PackDetailScreen
+        pack={BASE_PACK}
+        results={RESULTS}
+        availableModes={AVAILABLE_MODES}
+      />,
+    );
     expect(screen.getByText("2016")).toBeInTheDocument();
     expect(screen.getByText("1 item")).toBeInTheDocument();
     // The full item titles are no longer listed on the pack page.
@@ -158,7 +181,13 @@ describe("PackDetailScreen", () => {
         },
       ],
     };
-    render(<PackDetailScreen pack={named} results={RESULTS} availableModes={AVAILABLE_MODES} />);
+    render(
+      <PackDetailScreen
+        pack={named}
+        results={RESULTS}
+        availableModes={AVAILABLE_MODES}
+      />,
+    );
     expect(screen.getByText("Semifinals")).toBeInTheDocument();
     // The round name replaces the group-name fallback.
     expect(screen.queryByText("2016")).not.toBeInTheDocument();
@@ -185,7 +214,13 @@ describe("PackDetailScreen", () => {
         },
       ],
     };
-    render(<PackDetailScreen pack={nxnPack} results={RESULTS} availableModes={AVAILABLE_MODES} />);
+    render(
+      <PackDetailScreen
+        pack={nxnPack}
+        results={RESULTS}
+        availableModes={AVAILABLE_MODES}
+      />,
+    );
     // A multi-slot (versus) round with no name falls back to "Round N".
     expect(screen.getByText("Round 1")).toBeInTheDocument();
     // The raw group/category names and item titles are not listed.
@@ -325,12 +360,24 @@ describe("PackDetailScreen", () => {
   });
 
   it("wires the owner/moderator actions to this pack", () => {
-    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} availableModes={AVAILABLE_MODES} />);
+    render(
+      <PackDetailScreen
+        pack={BASE_PACK}
+        results={RESULTS}
+        availableModes={AVAILABLE_MODES}
+      />,
+    );
     expect(screen.getByText("PackOwnerActions:p1:u1")).toBeInTheDocument();
   });
 
   it("shows a Share button for an approved pack", () => {
-    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} availableModes={AVAILABLE_MODES} />);
+    render(
+      <PackDetailScreen
+        pack={BASE_PACK}
+        results={RESULTS}
+        availableModes={AVAILABLE_MODES}
+      />,
+    );
     expect(screen.getByRole("button", { name: "Share" })).toBeInTheDocument();
   });
 
@@ -348,7 +395,13 @@ describe("PackDetailScreen", () => {
   });
 
   it("shows the Play button for a normal pack", () => {
-    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} availableModes={AVAILABLE_MODES} />);
+    render(
+      <PackDetailScreen
+        pack={BASE_PACK}
+        results={RESULTS}
+        availableModes={AVAILABLE_MODES}
+      />,
+    );
 
     expect(screen.getByRole("link", { name: "Play now" })).toBeInTheDocument();
   });

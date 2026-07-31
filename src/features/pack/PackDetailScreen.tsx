@@ -21,6 +21,7 @@ import { ROOMS_DORMANT } from "@/src/features/friends-rooms/room-types";
 import { PackOwnerActions } from "@/src/features/pack/PackOwnerActions";
 import { PackOwnerStatusBadge } from "@/src/features/pack/PackOwnerStatusBadge";
 import { PackRejectionReason } from "@/src/features/pack/PackRejectionReason";
+import { PackChangesRequestedBanner } from "@/src/features/pack/PackChangesRequestedBanner";
 import { CommentSection } from "@/src/features/pack/CommentSection";
 import { ReportPackDialog } from "@/src/features/pack/ReportPackDialog";
 import { VoteButtons } from "@/src/features/pack/VoteButtons";
@@ -199,6 +200,7 @@ export function PackDetailScreen({
                 status={pack.status}
                 rejectionReason={pack.rejectionReason}
               />
+              <PackChangesRequestedBanner pack={pack} />
               {pack.description && (
                 <Text
                   variant="secondary"

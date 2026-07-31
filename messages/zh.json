@@ -1149,7 +1149,11 @@
     "reportComment": {
       "scopeNote": "举报针对该账号提交。下方引用了这条评论，方便审核人员查找。",
       "quote": "关于评论 {id}：\n\n“{body}”"
-    }
+    },
+    "changesRequestedHeading": "已要求修改",
+    "changesRequestedMarks": "{count, plural, other {已标记 # 处待修改}}——请查看审核员的要求。",
+    "changesRequestedNoMarks": "修改前请先查看审核员的要求。",
+    "changesRequestedCta": "查看需要修改什么"
   },
   "report": {
     "button": "举报",
@@ -2063,5 +2067,33 @@
       "winner": "获胜者",
       "points": "{count, plural, other {# 分}}"
     }
+  },
+  "reviewOutcome": {
+    "crumb": "审核结果",
+    "loading": "正在加载审核结果…",
+    "notFound": "该包不存在，或不属于你。",
+    "loginRequired": "登录后即可查看审核结果。",
+    "heroTitle": "快好了——还有几处需要修改",
+    "heroWhen": "审核于 {date}",
+    "heroBody": "你的包尚未发布。审核员已逐项查看并提出了以下修改要求。任何内容都未被删除——修改后重新提交，它就会重新进入队列。",
+    "openEditor": "打开编辑器",
+    "viewPack": "查看该包",
+    "moderatorSaid": "审核员的说明",
+    "marksHeading": "需要修改的内容",
+    "marksCount": "{count, plural, other {已标记 # 处}}",
+    "needsEdit": "待修改",
+    "doThis": "请这样做",
+    "inPool": "池：{pool}",
+    "nextHeading": "接下来",
+    "step1": "打开编辑器，按上述要求修改。",
+    "step2": "保存。该包会直接重新进入审核队列。",
+    "step3": "审核员再次查看后，你会收到通知。",
+    "thePack": "该包",
+    "metaPools": "池",
+    "metaRounds": "回合",
+    "metaSubmitted": "提交时间",
+    "mistakeTitle": "认为这是误判？",
+    "mistakeBody": "提交一条建议，团队会再看一次。请附上包的名称。",
+    "mistakeLink": "联系审核团队 →"
   }
 }

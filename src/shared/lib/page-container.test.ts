@@ -34,6 +34,7 @@ describe("pageContainer", () => {
       1240: "mx-auto w-full max-w-[1240px] px-[30px] max-[720px]:px-4",
       1180: "mx-auto w-full max-w-[1180px] px-[30px] max-[720px]:px-4",
       1120: "mx-auto w-full max-w-[1120px] px-[30px] max-[720px]:px-4",
+      1100: "mx-auto w-full max-w-[1100px] px-[30px] max-[720px]:px-4",
       1040: "mx-auto w-full max-w-[1040px] px-[30px] max-[720px]:px-4",
       720: "mx-auto w-full max-w-[720px] px-[30px] max-[720px]:px-4",
       680: "mx-auto w-full max-w-[680px] px-[30px] max-[720px]:px-4",
