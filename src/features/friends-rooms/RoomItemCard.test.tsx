@@ -165,7 +165,9 @@ describe("RoomItemCard — claimant", () => {
       />,
     );
 
-    const title = screen.getByText("Spirited Away - Joe Hisaishi / One Summer's Day");
+    const title = screen.getByText(
+      "Spirited Away - Joe Hisaishi / One Summer's Day",
+    );
     const label = screen.getByText("Sacrificed by Fiona");
     expect(title.parentElement).not.toContainElement(label);
   });
@@ -192,7 +194,12 @@ describe("RoomItemCard — a claim is a sacrifice in both formats", () => {
   it.each(["save_one", "sacrifice_one"] as const)(
     "offers a %s room a sacrifice, not a save",
     (format) => {
-      const item = { id: "i1", title: "Pizza", type: "text" as const, value: "Pizza" };
+      const item = {
+        id: "i1",
+        title: "Pizza",
+        type: "text" as const,
+        value: "Pizza",
+      };
       render(
         <RoomItemCard
           item={item}
@@ -225,9 +232,19 @@ describe("RoomItemCard — a claim is a sacrifice in both formats", () => {
   );
 
   it("the survivor badge also flips: 'Saved' for save_one, 'Survivor' for sacrifice_one", () => {
-    const item = { id: "i1", title: "Pizza", type: "text" as const, value: "Pizza" };
+    const item = {
+      id: "i1",
+      title: "Pizza",
+      type: "text" as const,
+      value: "Pizza",
+    };
     render(
-      <RoomItemCard item={item} index={0} status="survivor" format="save_one" />,
+      <RoomItemCard
+        item={item}
+        index={0}
+        status="survivor"
+        format="save_one"
+      />,
     );
     expect(screen.getByText(/saved/i)).toBeInTheDocument();
   });

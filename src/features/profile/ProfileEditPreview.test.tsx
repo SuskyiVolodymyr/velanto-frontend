@@ -43,7 +43,9 @@ describe("ProfileEditPreview", () => {
   it("shows no pill for a plain untrusted user", () => {
     render(<ProfileEditPreview {...baseProps()} />);
     expect(screen.queryByText("TRUSTED")).not.toBeInTheDocument();
-    expect(screen.queryByText(/moderator|admin|manager/i)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/moderator|admin|manager/i),
+    ).not.toBeInTheDocument();
   });
 
   it("updates the rendered username live as the username prop changes (draft typing)", () => {

@@ -60,7 +60,10 @@ describe("ContinuePlayingRail", () => {
 
   it("skips a record whose display snapshot is missing without crashing", async () => {
     writePlayResume(
-      record({ packId: "ok", pack: { title: "Good pack", coverTone: "#2b2a3a", totalRounds: 4 } }),
+      record({
+        packId: "ok",
+        pack: { title: "Good pack", coverTone: "#2b2a3a", totalRounds: 4 },
+      }),
     );
     // A resume-valid record with no display snapshot (storage keeps it so the
     // pack still resumes, but the rail can't render a card for it).

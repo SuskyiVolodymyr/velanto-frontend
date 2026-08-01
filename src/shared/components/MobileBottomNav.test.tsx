@@ -25,7 +25,13 @@ describe("MobileBottomNav", () => {
   it("shows all five tabs", () => {
     mockAuth("authenticated");
     render(<MobileBottomNav />);
-    for (const label of ["Browse", "My packs", "Create", "Suggestions", "Profile"]) {
+    for (const label of [
+      "Browse",
+      "My packs",
+      "Create",
+      "Suggestions",
+      "Profile",
+    ]) {
       expect(linkFor(label)).toBeInTheDocument();
     }
   });

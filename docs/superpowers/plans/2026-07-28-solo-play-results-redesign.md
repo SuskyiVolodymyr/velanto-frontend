@@ -3,13 +3,13 @@
 Date: 2026-07-28
 Mocks (ground truth), all under `../../../design/extracted/design_handoff_vilante/screens/`:
 
-| Mock | Drives |
-| --- | --- |
-| `Vilante Play.dc.html` | the elimination round body (`save_one` / `sacrifice_one`) **and** the chrome every play screen shares |
-| `Vilante Play NxN.dc.html` | the `nxn` two-side round body |
-| `Vilante Play 1v1.dc.html` | the `1v1` head-to-head round body |
-| `Vilante Play Rank.dc.html` | the `rank_blind` place-a-card round body + its between-rounds interstitial |
-| `Vilante Result.dc.html` | all four result screens |
+| Mock                        | Drives                                                                                                |
+| --------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `Vilante Play.dc.html`      | the elimination round body (`save_one` / `sacrifice_one`) **and** the chrome every play screen shares |
+| `Vilante Play NxN.dc.html`  | the `nxn` two-side round body                                                                         |
+| `Vilante Play 1v1.dc.html`  | the `1v1` head-to-head round body                                                                     |
+| `Vilante Play Rank.dc.html` | the `rank_blind` place-a-card round body + its between-rounds interstitial                            |
+| `Vilante Result.dc.html`    | all four result screens                                                                               |
 
 Surfaces touched: `/packs/[id]/play` (all five formats, three screens) and
 `/packs/[id]/result` (four screens + locked/error/shared states).
@@ -30,28 +30,28 @@ inside a format task.
 ## 0. Scope boundary — read this first
 
 This slice is **styling + layout only**. Unlike Create Pack, the play/result
-*domain* model in the code is current and correct — pools and rounds, slots,
+_domain_ model in the code is current and correct — pools and rounds, slots,
 seeded resume, the recorded-pick shapes. But the mocks predate four deliberate
 behavioural decisions (§0b D1–D3, D5), and following them literally would
 regress each one.
 
 ### DO NOT TOUCH (functionally correct, out of scope)
 
-| Area | Files |
-| --- | --- |
-| Deterministic-replay infrastructure (2026-07) | `seeded-rng.ts`, `pack-structure-hash.ts`, `play-resume-storage.ts`, `use-play-resume.ts` |
-| The draw engine (manual pins, cross-round dedup, random shuffle) | `round-sampling.ts`, `use-round-selections.ts` |
-| The elimination/nxn state machine, `resolvePicks` shapes, record-on-finish | `use-play-session.ts` in full |
-| Rank placement + per-round `RecordedPick` build (`position` / `drawIndex`) | `RankPlayScreen.tsx` `place()`, `goToNextRound()`, both effects |
-| 1v1 pick recording (both contenders, `chosen` on the winner) | `HeadToHeadPlayScreen.tsx` `confirmPick()`, both effects |
-| Format→screen routing + the `never` exhaustiveness gate | `PlayRouter.tsx` |
-| Resume restore blocks (`restoredRef`, the eslint-disabled `setState`-in-effect) | all three play screens |
-| `scroll-to-round-top.ts` and its nxn-only call site | untouched |
-| The #222 evidence gate, #243 fetch-where-displayed | `ResultScreen.tsx`, `use-result-picks.ts`, `ResultFallback.tsx` |
-| Every `playedRounds` / `playedMatchups` rebuild (side boundary from `chosen`, title-from-pack, the `seen ?? 1` fallback) | `EliminationResultScreen.tsx`, `NxNResultScreen.tsx`, `HeadToHeadResultScreen.tsx` |
-| Competition ranking, medal pairing, `RankCell` border-per-cell | `result-table.tsx` |
-| `TopPickedTable` / `PodiumTable` **ProgressBar decoration** — already landed in `fceea18`, do not re-propose | both files |
-| `roundHeading()` precedence (#355) | `src/shared/lib/round-heading.ts` |
+| Area                                                                                                                     | Files                                                                                     |
+| ------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- |
+| Deterministic-replay infrastructure (2026-07)                                                                            | `seeded-rng.ts`, `pack-structure-hash.ts`, `play-resume-storage.ts`, `use-play-resume.ts` |
+| The draw engine (manual pins, cross-round dedup, random shuffle)                                                         | `round-sampling.ts`, `use-round-selections.ts`                                            |
+| The elimination/nxn state machine, `resolvePicks` shapes, record-on-finish                                               | `use-play-session.ts` in full                                                             |
+| Rank placement + per-round `RecordedPick` build (`position` / `drawIndex`)                                               | `RankPlayScreen.tsx` `place()`, `goToNextRound()`, both effects                           |
+| 1v1 pick recording (both contenders, `chosen` on the winner)                                                             | `HeadToHeadPlayScreen.tsx` `confirmPick()`, both effects                                  |
+| Format→screen routing + the `never` exhaustiveness gate                                                                  | `PlayRouter.tsx`                                                                          |
+| Resume restore blocks (`restoredRef`, the eslint-disabled `setState`-in-effect)                                          | all three play screens                                                                    |
+| `scroll-to-round-top.ts` and its nxn-only call site                                                                      | untouched                                                                                 |
+| The #222 evidence gate, #243 fetch-where-displayed                                                                       | `ResultScreen.tsx`, `use-result-picks.ts`, `ResultFallback.tsx`                           |
+| Every `playedRounds` / `playedMatchups` rebuild (side boundary from `chosen`, title-from-pack, the `seen ?? 1` fallback) | `EliminationResultScreen.tsx`, `NxNResultScreen.tsx`, `HeadToHeadResultScreen.tsx`        |
+| Competition ranking, medal pairing, `RankCell` border-per-cell                                                           | `result-table.tsx`                                                                        |
+| `TopPickedTable` / `PodiumTable` **ProgressBar decoration** — already landed in `fceea18`, do not re-propose             | both files                                                                                |
+| `roundHeading()` precedence (#355)                                                                                       | `src/shared/lib/round-heading.ts`                                                         |
 
 ### IN SCOPE (visual/structural)
 
@@ -73,7 +73,7 @@ items to continue"). Commit `4ff2462` deleted exactly this — `RoundRevealContr
 the `revealed`/`revealNext`/`revealAll`/`canRevealMore` surface on
 `usePlaySession`, and the `play.showingOf`/`showNext`/`showAll` keys in every
 catalog — replacing it with "render every candidate immediately, staggered by
-`.play-card-appear`". `e2e/play.spec.ts` asserts the *absence* of that control
+`.play-card-appear`". `e2e/play.spec.ts` asserts the _absence_ of that control
 twice (`getByRole("button", { name: "Show all" })).toHaveCount(0)`).
 → **Adopt the mock's card visuals only.** No reveal controls, no "Showing X of
 Y" line, no reveal gate on confirm. Confirm stays gated on selection alone.
@@ -85,7 +85,7 @@ gap. That is commented as deliberate in all three screens ("no interstitial
 'all rounds done' step") and `e2e/play.spec.ts` asserts the redirect.
 → Do **not** build the mock's COMPLETE block, its pick recap, or its "See your
 result" CTA on any of the four screens. Style the `LoadingState` gap instead.
-**Exception:** `rank_blind`'s *ROUND COMPLETE* interstitial (mock lines 96–117)
+**Exception:** `rank_blind`'s _ROUND COMPLETE_ interstitial (mock lines 96–117)
 is real and ships today — that one gets restyled (T7), it is not the same thing
 as the mock's terminal COMPLETE section.
 
@@ -96,7 +96,7 @@ toggle and requires the confirm button — a documented, deliberate change
 ("these are now toggles that hold a selection until it's confirmed, not
 controls that act on click", `HeadToHeadRound.tsx`). One misclick in the mock's
 model is an unrecoverable recorded pick.
-→ Keep the confirm step and `aria-pressed`. Adopt the mock's card *proportions*
+→ Keep the confirm step and `aria-pressed`. Adopt the mock's card _proportions_
 (radius 20, 230px media, centred 18px label, 48px VS circle) only.
 
 **D4 — Play chrome: AppShell stays, the mock's own `<header>` does not.**
@@ -105,7 +105,7 @@ each mock is a standalone file. The Pack Detail slice (`35eef1e`) and the
 Create Pack plan both settled this: the mock's nav is replaced by the existing
 `AppShell` top bar + sidebar, and only the screen-specific controls become a
 sticky sub-bar. Making `/packs/[id]/play` a full-screen route instead is a
-*different, larger* decision — it means editing `AppShell.isFullScreenRoute`
+_different, larger_ decision — it means editing `AppShell.isFullScreenRoute`
 (today `/auth` only), the `MobileBottomNav` bottom-padding branch, and the
 drawer, for every play screen at once.
 → **Default: keep AppShell.** The progress rail, round counter and Exit link
@@ -113,26 +113,26 @@ become `PlayChrome`, a sticky bar beneath the top bar (T2). If the reviewer
 wants a distraction-free play mode, file it as its own slice.
 
 **D5 — The result mock's headline statistic is the one #336 deleted as misleading.**
-`Vilante Result.dc.html` builds its three hero tiles *and* the per-pick bars in
+`Vilante Result.dc.html` builds its three hero tiles _and_ the per-pick bars in
 "YOUR PICKS" out of `pct` = "share of all players who picked the same thing in
 this round". `EliminationResultScreen` documents why that number is gone:
-`count / totalPlays` caps a rarely-drawn item at how often the draw *surfaces*
+`count / totalPlays` caps a rarely-drawn item at how often the draw _surfaces_
 it and lists never-drawn items at 0%. `NxNResultScreen` documents a second,
 independent reason percentages can't exist for `nxn` (a set-vs-set pairing
 almost never repeats — #333).
 → Recommended resolution, per format, derived in `result-summary.ts` (T10):
 
-| Format | Hero tiles |
-| --- | --- |
+| Format                               | Hero tiles                                                                                                                                                              |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `save_one` / `sacrifice_one` / `1v1` | agreement + most-popular pick + rarest pick, all computed from **`ItemTally.percentage`** (`picked / appeared`) — the honest denominator, already shipped in `topItems` |
-| `nxn` | **no percentages, ever.** Plays recorded + rounds you played + items you saw |
-| `rank_blind` | rounds ranked + items placed + podium entries. No agreement number (`RankResults` has no per-pick share) |
+| `nxn`                                | **no percentages, ever.** Plays recorded + rounds you played + items you saw                                                                                            |
+| `rank_blind`                         | rounds ranked + items placed + podium entries. No agreement number (`RankResults` has no per-pick share)                                                                |
 
 Tiles render only when the numbers exist (`topItems` empty → hide the row, not
 show zeros). Do **not** resurrect `RoundResultItem.percentage` for this.
 
 **D6 — The mock's flat "YOUR PICKS · ONE PER GROUP" list + All/Rare filter.**
-Ours is a per-round recap of the *slate you were shown* with your pick marked,
+Ours is a per-round recap of the _slate you were shown_ with your pick marked,
 and it is format-specific (elimination slate / nxn two sides / 1v1 contender
 pair / rank ordering). It is strictly richer than the mock's one-row-per-pick
 list, and the mock's list is keyed on the D5 statistic.
@@ -200,28 +200,28 @@ Identical in all four play mocks:
 
 Token mapping (never hardcode a hex — `.claude/docs/design-tokens.md`):
 
-| Mock literal | Token / utility |
-| --- | --- |
-| `#0a0b0e` page bg | `bg-background` |
-| `#0b0c0f` media-tile bg / gradient terminator | `bg-background` / `var(--background)` inside the inline gradient |
-| `rgba(255,255,255,.02)` / `.025` panel | `bg-surface-card` |
-| `rgba(255,255,255,.03)`–`.06` control fill | `bg-white/[0.04]` on a card, or `bg-surface-raised` |
-| `rgba(255,255,255,.06)`–`.09` hairline | `border-border` |
-| `rgba(255,255,255,.12)`–`.14` dashed | `border-dashed border-white/[0.14]` (as `EmptyState` does) |
-| `#f3f5f8` / `.5` / `.4` / `.35` text | `text-foreground` / `variant="secondary"` / `variant="tertiary"` |
-| `var(--acc) #00e5ff` | `text-acc` / `bg-acc` / `border-acc` |
-| `0 0 0 3px color-mix(… acc 30% …)` selection ring | `ring-[3px] ring-acc/30` — **not** an arbitrary `shadow-[…]` with a literal |
-| `color-mix(… acc 12% …)` tinted bar | `bg-acc/[0.12]` |
-| `#ff6b6b` | `text-danger` |
-| radius 6 / 9–11 / 13–14 / 16–20 | `rounded-chip` / `rounded-control` / `rounded-tile` / `rounded-card` |
-| `softBlink` keyframe | the existing `.animate-livedot` — do **not** add a second blink keyframe |
-| `cardFloat` keyframe (rank only) | new keyframe in `app/globals.css`, frozen under `prefers-reduced-motion` alongside the others |
+| Mock literal                                      | Token / utility                                                                               |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| `#0a0b0e` page bg                                 | `bg-background`                                                                               |
+| `#0b0c0f` media-tile bg / gradient terminator     | `bg-background` / `var(--background)` inside the inline gradient                              |
+| `rgba(255,255,255,.02)` / `.025` panel            | `bg-surface-card`                                                                             |
+| `rgba(255,255,255,.03)`–`.06` control fill        | `bg-white/[0.04]` on a card, or `bg-surface-raised`                                           |
+| `rgba(255,255,255,.06)`–`.09` hairline            | `border-border`                                                                               |
+| `rgba(255,255,255,.12)`–`.14` dashed              | `border-dashed border-white/[0.14]` (as `EmptyState` does)                                    |
+| `#f3f5f8` / `.5` / `.4` / `.35` text              | `text-foreground` / `variant="secondary"` / `variant="tertiary"`                              |
+| `var(--acc) #00e5ff`                              | `text-acc` / `bg-acc` / `border-acc`                                                          |
+| `0 0 0 3px color-mix(… acc 30% …)` selection ring | `ring-[3px] ring-acc/30` — **not** an arbitrary `shadow-[…]` with a literal                   |
+| `color-mix(… acc 12% …)` tinted bar               | `bg-acc/[0.12]`                                                                               |
+| `#ff6b6b`                                         | `text-danger`                                                                                 |
+| radius 6 / 9–11 / 13–14 / 16–20                   | `rounded-chip` / `rounded-control` / `rounded-tile` / `rounded-card`                          |
+| `softBlink` keyframe                              | the existing `.animate-livedot` — do **not** add a second blink keyframe                      |
+| `cardFloat` keyframe (rank only)                  | new keyframe in `app/globals.css`, frozen under `prefers-reduced-motion` alongside the others |
 
 `{tone}` in the mocks cycles a hardcoded `TONES` array. Ours: derive
 deterministically from `COVER_TONES` (`src/shared/types/pack.ts`) by candidate
 index, seeded off `pack.coverTone`'s index so a pack's tiles stay in its own
 palette family. Tone is a runtime hex, so the gradient is an inline `style` —
-that is the documented exception, and the *terminator* still uses
+that is the documented exception, and the _terminator_ still uses
 `var(--background)`.
 
 RTL: 3 of the 8 locales are RTL — logical properties throughout
@@ -262,7 +262,7 @@ New i18n: none.
 **Files (edited):** `app/packs/[id]/play/page.tsx`, `PlayScreen.tsx`,
 `RankPlayScreen.tsx`, `HeadToHeadPlayScreen.tsx`
 
-One component absorbing today's `PlayHeader` (rendered by the *page*) and
+One component absorbing today's `PlayHeader` (rendered by the _page_) and
 `PlayProgress` (rendered inside each screen). The round counter is client state,
 so the bar moves **into the three screens** and `page.tsx` stops rendering a
 header — each screen already has `pack`, so nothing new is threaded.
@@ -272,14 +272,14 @@ match: `sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-
 inner row inside `PACK_CONTAINER`, `flex items-center gap-3 py-3 max-[720px]:px-4`.
 
 - **Start:** the pack title as the page `h1` — `variant="title"`, `text-xl`,
-  `min-w-0 truncate`. Keep the h1: `PlayHeader`'s doc comment records *why*
+  `min-w-0 truncate`. Keep the h1: `PlayHeader`'s doc comment records _why_
   (round headings are "Round 1"/a pool name/"Which do you prefer?", so a player
   arriving from a shared link had no on-page answer to "what am I playing?").
   The two-layout stacked/grid dance and its `sm:truncate` test go away with the
   old component — a single truncating row in a sticky bar is the mock's shape.
 - **End (`ms-auto`):** round counter — `play.roundOf` when playing,
   `play.complete` when finished — `text-[13.5px] tabular-nums
-  text-foreground-secondary`; then an `Exit` link to `/packs/{id}` styled with
+text-foreground-secondary`; then an `Exit` link to `/packs/{id}` styled with
   `buttonClassName("ghost", …, "sm")`, new key `play.exit`.
   ⚠ **Keep the `play.roundOf` string exactly** — `e2e/play.spec.ts` asserts
   `getByText("Round 1 of 2")` and `"Round 2 of 2"` four times.
@@ -309,7 +309,7 @@ The block all four mocks open with. Props:
 
 - **Eyebrow row** — `flex items-center gap-[9px]`, a `6px` `rounded-pill bg-acc`
   dot with `animate-livedot` (`aria-hidden`), label `text-[12.5px] font-medium
-  uppercase tracking-[0.16em]`, `variant="tertiary"`.
+uppercase tracking-[0.16em]`, `variant="tertiary"`.
 - **Title** — `Text as="h2" variant="title"`, `text-[clamp(26px,3.6vw,40px)]`,
   `leading-[1.06] tracking-[-0.02em]`. **`h2`, not the mock's `h1`** — the pack
   title in `PlayChrome` is the page's `h1`. `e2e/play.spec.ts` queries
@@ -348,13 +348,13 @@ Mock: `Vilante Play.dc.html` lines 77–128.
   `variant="tertiary"`. This replaces today's bare text card, which had no
   media band at all — it is the biggest single visual change on the play screen.
 - **Select bar** — `flex items-center gap-[11px] p-[13px_14px] border-t
-  border-border`, `bg-white/[0.02]` → `bg-acc/[0.12]` when selected. Checkbox:
+border-border`, `bg-white/[0.02]` → `bg-acc/[0.12]` when selected. Checkbox:
   `h-[19px] w-[19px] rounded-chip border-[1.5px]`, `border-border-strong` →
   `border-acc bg-acc` with a CSS-border check glyph (`aria-hidden`) when
   selected. Title `text-[14.5px] font-semibold`; index `text-[11px]`,
   `variant="tertiary"`, at the end.
 - ⚠ **Keep the accessible names and the youtube split-control structure.** The
-  youtube branch deliberately puts the select control *below* the player so
+  youtube branch deliberately puts the select control _below_ the player so
   interacting with the video doesn't select the item. `aria-label={t("pick", …)}`
   is asserted by `e2e/play.spec.ts` (`"Pick Poster A"`) and the image branch
   must keep its `<img>` accessible name (`getByRole("img", { name: "Poster A" })`).
@@ -365,7 +365,7 @@ Mock: `Vilante Play.dc.html` lines 77–128.
   fixed-230px `flex-wrap` is a downgrade for an 8-candidate round; the comment
   above `CANDIDATE_GRID_COLS` explains the current choice. Adapt, don't replace.
 - **Confirm row** — restyle to the mock's button (`h-[52px] px-[30px]
-  rounded-tile text-[15.5px] font-semibold`) but keep it **always rendered and
+rounded-tile text-[15.5px] font-semibold`) but keep it **always rendered and
   natively `disabled`** (D1): `e2e/play.spec.ts` asserts
   `getByRole("button", { name: "Next round →" })).toBeDisabled()` before a
   selection exists. Keep `play.nextRound` / `play.finishRound` verbatim
@@ -388,11 +388,11 @@ Mock: `Vilante Play NxN.dc.html` lines 77–132.
   `NxNResultScreen`'s established stacking).
 - **Side panel** — `rounded-card border-2 p-4 flex flex-col gap-3`. Unselected
   `border-border bg-white/[0.015]`; selected `border-acc bg-acc/[0.08]
-  ring-[3px] ring-acc/[0.22]`.
+ring-[3px] ring-acc/[0.22]`.
 - **Side header** — centred row: a `h-5 w-5 rounded-chip bg-acc text-[11px]
-  font-semibold text-[#07131a]` letter badge (A / B — derive from the slot
+font-semibold text-[#07131a]` letter badge (A / B — derive from the slot
   index, **not** from the pool name), the side name at `text-[14.5px]
-  font-semibold`, and when selected an `18px` accent check circle
+font-semibold`, and when selected an `18px` accent check circle
   (`aria-hidden`; selection is already announced by `aria-pressed`).
 - **Item tiles** — `rounded-tile overflow-hidden bg-background border border-border`,
   media band `h-[110px]` (same three treatments as T4), label
@@ -443,7 +443,7 @@ Mock: `Vilante Play Rank.dc.html` lines 51–117. **Styling only — `place()`,
 `goToNextRound()`, both effects and the `RecordedPick` build are D-protected.**
 
 - **Current item card** — `w-[230px] rounded-card overflow-hidden bg-background
-  border-[1.5px] border-acc ring-4 ring-acc/[0.16]`, centred, with the mock's
+border-[1.5px] border-acc ring-4 ring-acc/[0.16]`, centred, with the mock's
   `cardFloat` idle animation. Add `@keyframes card-float` +
   `.animate-card-float` to `app/globals.css` (`3.2s ease-in-out infinite`,
   `translateY(0 → -5px → 0)`) **and freeze it in the existing
@@ -457,7 +457,7 @@ Mock: `Vilante Play Rank.dc.html` lines 51–117. **Styling only — `place()`,
   `min-h-[110px] rounded-tile p-[14px] flex flex-col justify-between`:
   - empty → `border-[1.5px] border-dashed border-white/[0.14] bg-white/[0.02]`,
     hover `border-acc/40` (keep), label `#N` at `text-[11px] font-semibold
-    tabular-nums` `variant="tertiary"`, body `t("placeHere")` at `text-[12.5px]`.
+tabular-nums` `variant="tertiary"`, body `t("placeHere")` at `text-[12.5px]`.
   - filled → `border-[1.5px] border-border` with the tone gradient as the
     background (`linear-gradient(158deg, {tone}, var(--background) 82%)`,
     inline), `#N` at `text-white/75`, title `text-sm font-semibold line-clamp-2`.
@@ -493,7 +493,7 @@ text-[12.5px]`, `variant="secondary"`, each with `animate-[…] popIn`-equivalen
 The mocks prefix each chip with a per-format marker (a year, an A/B side
 badge). Ours has `Pick.itemTitle` and, for versus, the side name in the same
 field — **do not invent a marker the data doesn't carry**. Render the title
-alone; for nxn, the title *is* the side name, which is the mock's marker in
+alone; for nxn, the title _is_ the side name, which is the mock's marker in
 substance.
 
 Keep `Badge`'s role out of it: today's `<Badge>` is a bold uppercase pill, which
@@ -588,7 +588,7 @@ Mock: `Vilante Result.dc.html` lines 32–74 and 100–110.
 - **Hero** (`ResultHero`) — eyebrow (`result.label`, live dot, same recipe as
   `PlayRoundHeader`'s), then `h1` = `result.heroTitle` ("Your run is complete")
   or `result.heroTitleShared` when `shared`, `text-[clamp(30px,4vw,44px)]
-  font-semibold leading-[1.06] tracking-[-0.02em]`; then a subtitle line
+font-semibold leading-[1.06] tracking-[-0.02em]`; then a subtitle line
   carrying **the pack title** + `result.playsRecorded`, `text-[15.5px]`,
   `variant="secondary"`, `max-w-[520px]`.
   ⚠ **This moves the pack title out of the `h1`.** Every result `*.test.tsx`
@@ -597,19 +597,19 @@ Mock: `Vilante Result.dc.html` lines 32–74 and 100–110.
   `ResultLocked` keeps the pack title as its `h1` (it is not a completed run).
 - **Stat tiles** — the `summarizeResult` tiles (T10) as
   `flex flex-wrap gap-[14px]`, each `flex-1 basis-[200px] p-5 rounded-card
-  bg-surface-card border border-border`. `percent` tiles put the number at
+bg-surface-card border border-border`. `percent` tiles put the number at
   `text-[32px] font-semibold tabular-nums text-acc` over a `text-[12.5px]`
   `variant="tertiary"` label; `pick` tiles put `{title}` at `text-[15px]
-  font-semibold` over the label. Row hidden entirely when `tiles` is empty.
+font-semibold` over the label. Row hidden entirely when `tiles` is empty.
 - **`ResultAgainPanel`** (new, mock lines 100–110) — a full-width panel at the
   bottom: `flex items-center justify-between gap-[18px] flex-wrap p-[26px_24px]
-  rounded-card bg-surface-card border border-border`. Copy `result.againHeading`
-  + `result.againBody`, then two links: `result.exploreMore` → `/` (secondary)
-  and the play link (primary). ⚠ The mock's body copy — "Groups reshuffle their
-  random pools each time you play" — is **retired vocabulary**; ship
-  "Rounds redraw from their pools each time you play." Give the panel's play
-  link a distinct accessible name from the sticky bar's, or make the sticky
-  bar's the only one — decide once and assert it.
+rounded-card bg-surface-card border border-border`. Copy `result.againHeading`
+  - `result.againBody`, then two links: `result.exploreMore` → `/` (secondary)
+    and the play link (primary). ⚠ The mock's body copy — "Groups reshuffle their
+    random pools each time you play" — is **retired vocabulary**; ship
+    "Rounds redraw from their pools each time you play." Give the panel's play
+    link a distinct accessible name from the sticky bar's, or make the sticky
+    bar's the only one — decide once and assert it.
 - `SharedResultNote` keeps its slot between the hero and the recap.
 
 New i18n: `result.heroTitle`, `result.heroTitleShared`, `result.againHeading`,
@@ -637,8 +637,8 @@ Restyle only — every `playedRounds`/`playedMatchups` rebuild is D-protected.
   (`picked` / `dropped` / `winner` / `loser`, plus `data-outcome` and
   `data-side`), which the tests drive. Restyle the row itself to the mock's:
   `flex items-center gap-4 p-[13px_16px] rounded-tile bg-surface-card border
-  border-border`, meta right-aligned and `tabular-nums`. Keep the
-  green/red picked/dropped pairing — it is a *paired* border+background for the
+border-border`, meta right-aligned and `tabular-nums`. Keep the
+  green/red picked/dropped pairing — it is a _paired_ border+background for the
   `cn()` reason documented in `EliminationResultScreen`; do not split it.
 - **Drop the stale `hover:translate-y-0 hover:shadow-none` overrides** on every
   `<Card>` in `ResultScreen`, `EliminationResultScreen`, `NxNResultScreen`,
@@ -667,7 +667,7 @@ transliterated placeholders. Traps, all burned before:
 - **ar/ur connotation.** Do **not** re-translate the format names when wiring
   the eyebrow (T3) — `formats.sacrifice_one` already has a vetted rendering in
   both (`ضحِّ بواحد` / `ایک نکالو`; the obvious literal قربانی reads as
-  *religious sacrifice*, Qurbani/Eid al-Adha, which is why it was fixed once).
+  _religious sacrifice_, Qurbani/Eid al-Adha, which is why it was fixed once).
   Read the value, never re-derive it. The same care applies to any new
   "sacrificed" phrasing in the result hero labels.
 - **ICU plurals.** `result.playsRecorded` and `play.finishedSave`/`Sacrifice`
@@ -698,7 +698,7 @@ and **all four** result screen tests (the `h1` moves off the pack title — T11)
 need edits; if one does, something in scope-boundary was touched.
 
 **Playwright.** `e2e/play.spec.ts` is the only play/result e2e today. This slice
-changes UI *and* moves copy between elements, so per the repo's e2e rule it is
+changes UI _and_ moves copy between elements, so per the repo's e2e rule it is
 not optional. Verify each of these still resolves after the restyle rather than
 assuming:
 

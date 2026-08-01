@@ -1,4 +1,10 @@
-import { useLayoutEffect, useRef, useState, type CSSProperties, type RefObject } from "react";
+import {
+  useLayoutEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type RefObject,
+} from "react";
 
 // How close a panel's edge may sit to the viewport edge before it counts as
 // overflowing — matches the page gutters used elsewhere, so a clamped panel

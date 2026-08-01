@@ -652,20 +652,16 @@ describe("random pool capacity", () => {
 });
 
 describe("format", () => {
-  it.each([
-    "save_one",
-    "sacrifice_one",
-    "nxn",
-    "rank_blind",
-    "1v1",
-  ] as const)("accepts the shipped format %s", (format) => {
-    // Each format has its own round shape; only the format FIELD is under test
-    // here, so assert nothing rejects the format value itself.
-    const result = createPackSchema.safeParse(makeValues({ format }));
-    const paths = (result.error?.issues ?? []).map((issue) =>
-      issue.path.join("."),
-    );
-    expect(paths).not.toContain("format");
-  });
+  it.each(["save_one", "sacrifice_one", "nxn", "rank_blind", "1v1"] as const)(
+    "accepts the shipped format %s",
+    (format) => {
+      // Each format has its own round shape; only the format FIELD is under test
+      // here, so assert nothing rejects the format value itself.
+      const result = createPackSchema.safeParse(makeValues({ format }));
+      const paths = (result.error?.issues ?? []).map((issue) =>
+        issue.path.join("."),
+      );
+      expect(paths).not.toContain("format");
+    },
+  );
 });
-

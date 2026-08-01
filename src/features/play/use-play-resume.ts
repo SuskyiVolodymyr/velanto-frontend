@@ -93,9 +93,7 @@ export function usePlayResume(pack: Pack): PlayResume {
   // `state`, which is populated either way (fresh or restored). A fresh play
   // has nothing to choose between, so `needsChoice` never engages for it.
   const [hadSavedRecord, setHadSavedRecord] = useState(false);
-  const [decision, setDecision] = useState<"continue" | "restart" | null>(
-    null,
-  );
+  const [decision, setDecision] = useState<"continue" | "restart" | null>(null);
 
   const initialisedRef = useRef(false);
   useEffect(() => {

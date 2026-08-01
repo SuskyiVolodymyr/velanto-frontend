@@ -92,7 +92,9 @@ describe("JoinRoomCard", () => {
     await user.click(screen.getByRole("button", { name: "Join" }));
 
     expect(
-      await screen.findByText("No room with that code. Check it and try again."),
+      await screen.findByText(
+        "No room with that code. Check it and try again.",
+      ),
     ).toBeInTheDocument();
     expect(push).not.toHaveBeenCalled();
   });

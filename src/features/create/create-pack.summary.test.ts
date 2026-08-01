@@ -10,7 +10,9 @@ function textItem(title: string): Item {
 // A base elimination draft: one pool of 2 items, one round drawing both.
 // Mirrors the fixture convention in create-pack.schema.test.ts so the two
 // suites stay easy to compare.
-function makeValues(overrides: Partial<CreatePackValues> = {}): CreatePackValues {
+function makeValues(
+  overrides: Partial<CreatePackValues> = {},
+): CreatePackValues {
   return {
     title: "My pack",
     description: "A short description.",
@@ -66,8 +68,16 @@ describe("summarizePack", () => {
     const values = makeValues({
       format: "nxn",
       groups: [
-        { id: "boys", name: "Boys", items: [textItem("Naruto"), textItem("Sasuke")] },
-        { id: "girls", name: "Girls", items: [textItem("Sakura"), textItem("Hinata")] },
+        {
+          id: "boys",
+          name: "Boys",
+          items: [textItem("Naruto"), textItem("Sasuke")],
+        },
+        {
+          id: "girls",
+          name: "Girls",
+          items: [textItem("Sakura"), textItem("Hinata")],
+        },
       ],
       rounds: [
         {

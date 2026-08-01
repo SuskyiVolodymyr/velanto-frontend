@@ -3,7 +3,10 @@ import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { PodiumTable } from "./PodiumTable";
-import type { PodiumTally, RecordedPick } from "@/src/shared/types/play-results";
+import type {
+  PodiumTally,
+  RecordedPick,
+} from "@/src/shared/types/play-results";
 
 function podium(n: number): PodiumTally {
   return {
@@ -57,8 +60,22 @@ describe("PodiumTable", () => {
 
   it("ranks items by first/second/third combined", () => {
     const items: PodiumTally[] = [
-      { itemId: "i1", itemTitle: "Kaikai Kitan", first: 2, second: 1, third: 0, total: 3 },
-      { itemId: "i2", itemTitle: "Redo", first: 0, second: 1, third: 1, total: 2 },
+      {
+        itemId: "i1",
+        itemTitle: "Kaikai Kitan",
+        first: 2,
+        second: 1,
+        third: 0,
+        total: 3,
+      },
+      {
+        itemId: "i2",
+        itemTitle: "Redo",
+        first: 0,
+        second: 1,
+        third: 1,
+        total: 2,
+      },
     ];
     render(<PodiumTable items={items} />);
 

@@ -33,7 +33,9 @@ describe("Popover", () => {
     await user.click(trigger);
 
     expect(trigger).toHaveAttribute("aria-expanded", "true");
-    expect(screen.getByRole("dialog", { name: "Filter options" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("dialog", { name: "Filter options" }),
+    ).toBeInTheDocument();
     expect(screen.getByText("Panel body")).toBeInTheDocument();
   });
 

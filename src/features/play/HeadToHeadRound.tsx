@@ -10,7 +10,10 @@ import {
 } from "@/src/shared/lib/youtube";
 import { mediaUrl } from "@/src/shared/lib/media-url";
 import { cn } from "@/src/shared/lib/cn";
-import { toneFor, HAIRLINE_OVERLAY_STYLE } from "@/src/features/play/candidate-tone";
+import {
+  toneFor,
+  HAIRLINE_OVERLAY_STYLE,
+} from "@/src/features/play/candidate-tone";
 import { VsBadge } from "@/src/features/play/VsBadge";
 
 interface HeadToHeadCardProps {
@@ -54,7 +57,9 @@ function PickTick({ selected }: { selected: boolean }) {
         aria-hidden
         className={cn(
           "flex h-5 w-5 flex-none items-center justify-center rounded-pill",
-          selected ? "bg-acc text-[#07131a]" : "bg-white/[0.07] text-foreground/35",
+          selected
+            ? "bg-acc text-[#07131a]"
+            : "bg-white/[0.07] text-foreground/35",
         )}
       >
         <svg
@@ -110,7 +115,11 @@ function HeadToHeadCard({
           background: `linear-gradient(158deg, ${tone}, var(--background) 78%)`,
         }}
       >
-        <div aria-hidden className="absolute inset-0" style={HAIRLINE_OVERLAY_STYLE} />
+        <div
+          aria-hidden
+          className="absolute inset-0"
+          style={HAIRLINE_OVERLAY_STYLE}
+        />
         {/* A youtube item whose id wouldn't parse still says so. */}
         {item.type === "youtube" && (
           <Badge className="absolute end-2 top-2">YouTube</Badge>

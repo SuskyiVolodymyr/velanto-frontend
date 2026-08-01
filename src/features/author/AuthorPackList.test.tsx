@@ -227,9 +227,7 @@ describe("AuthorPackList", () => {
         />,
       );
       expect(screen.getByRole("button", { name: "All" })).toBeInTheDocument();
-      expect(
-        screen.getByRole("button", { name: "Draft" }),
-      ).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Draft" })).toBeInTheDocument();
       expect(
         screen.getByRole("button", { name: "Pending review" }),
       ).toBeInTheDocument();

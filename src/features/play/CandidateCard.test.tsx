@@ -210,7 +210,11 @@ describe("CandidateCard (youtube item)", () => {
     const onSelect = vi.fn();
     render(
       <CandidateCard
-        item={youtubeItem("v1", "Guren no Yumiya", "https://youtu.be/KsF_hdjWJjo")}
+        item={youtubeItem(
+          "v1",
+          "Guren no Yumiya",
+          "https://youtu.be/KsF_hdjWJjo",
+        )}
         index={0}
         selected={false}
         onSelect={onSelect}

@@ -7,9 +7,10 @@ import PrivacyPage, { generateMetadata } from "./page";
 // See app/terms/page.test.tsx for why this mock dispatches by namespace.
 vi.mock("next-intl/server", () => ({
   getTranslations: vi.fn(async (namespace: string) => {
-    const dict = (messages as Record<string, unknown>)[
-      namespace
-    ] as Record<string, unknown>;
+    const dict = (messages as Record<string, unknown>)[namespace] as Record<
+      string,
+      unknown
+    >;
     const t = (key: string) => {
       const value = dict[key];
       return typeof value === "string" ? value : key;

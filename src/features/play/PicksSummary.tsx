@@ -115,7 +115,10 @@ export function PicksSummary({
               </span>
               <div className="flex flex-wrap gap-2">
                 {roundPicks.map((pick) => (
-                  <PickChip key={`${pick.groupId}-${pick.itemId}`} pick={pick} />
+                  <PickChip
+                    key={`${pick.groupId}-${pick.itemId}`}
+                    pick={pick}
+                  />
                 ))}
               </div>
             </div>

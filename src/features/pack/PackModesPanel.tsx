@@ -74,7 +74,10 @@ export function PackModesPanel({ modes }: { modes: AvailableMode[] }) {
           );
         })}
       </div>
-      <Text variant="tertiary" className="text-[11.5px] leading-[1.45] text-pretty">
+      <Text
+        variant="tertiary"
+        className="text-[11.5px] leading-[1.45] text-pretty"
+      >
         {t("packModes.caption")}
       </Text>
     </div>

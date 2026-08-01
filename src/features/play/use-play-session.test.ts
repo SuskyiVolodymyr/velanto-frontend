@@ -504,9 +504,7 @@ describe("usePlaySession", () => {
       act(() => result.current.setSelectedId("3"));
       act(() => result.current.confirmPick());
 
-      await waitFor(() =>
-        expect(readPlayResume("pack-a", version)).toBeNull(),
-      );
+      await waitFor(() => expect(readPlayResume("pack-a", version)).toBeNull());
     });
   });
 });

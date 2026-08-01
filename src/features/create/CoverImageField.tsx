@@ -142,7 +142,11 @@ export function CoverImageField({
           hasImage
             ? { borderColor: "rgba(255,255,255,.14)" }
             : dragOver
-              ? { borderColor: "#00e5ff", backgroundColor: "rgba(0,229,255,.12)", color: "#8cf3ff" }
+              ? {
+                  borderColor: "#00e5ff",
+                  backgroundColor: "rgba(0,229,255,.12)",
+                  color: "#8cf3ff",
+                }
               : {
                   borderColor: "rgba(0,229,255,.32)",
                   backgroundImage:

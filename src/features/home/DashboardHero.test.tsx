@@ -62,7 +62,9 @@ describe("DashboardHero", () => {
     render(await DashboardHero());
 
     expect(screen.queryByTestId("join-room-card-stub")).not.toBeInTheDocument();
-    expect(screen.queryByText(messages.home.hero.badge)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(messages.home.hero.badge),
+    ).not.toBeInTheDocument();
 
     const heading = screen.getByRole("heading", {
       level: 1,

@@ -10,21 +10,21 @@ Branch: one feature branch off `release/2.0.0`, TDD, small commits, `pr-review-t
 ## 0. Scope boundary — read this first
 
 This slice is **styling + layout only**. The create flow's behaviour is newer than the
-mock and is *correct*; the mock is older than the pools/rounds redesign and encodes a
+mock and is _correct_; the mock is older than the pools/rounds redesign and encodes a
 retired domain model.
 
 ### DO NOT TOUCH (functionally correct, out of scope)
 
-| Area | Files |
-| --- | --- |
-| Zod contract + limits + per-format refinements | `create-pack.schema.ts`, `create-pack.value-schemas.ts`, `create-pack.refinements.ts` |
-| Format→round-family reshape effect, submit/PATCH, error mapping | `CreatePackForm.tsx` (the `useEffect`, `onValid`, `handleSubmit`) |
-| Enter-key submit suppression (deliberate; commented) | `CreatePackForm.tsx` `onKeyDown` |
-| Auth gate / edit-mode gates | `CreatePackForm.tsx` login gate, `EditPackScreen.tsx`, `EditPackFallback.tsx` |
-| Manual pin reservation, `availableItemIds`, `pinnedElsewhere`, random-pool option | `RoundsEditor.tsx`, `random-pool-option.ts` |
-| Versus per-side count / same-pool detection / draw resolution | `VersusEditor.tsx`, `round-draw.ts` |
-| Item draft state machine, YouTube validation, image upload/crop | `use-group-item-draft.ts`, `ItemImageCropModal.tsx`, `CoverCropModal.tsx`, `CoverImageField.tsx` upload logic |
-| `pack-to-form-values.ts`, `create-pack.defaults.ts` | unchanged |
+| Area                                                                              | Files                                                                                                         |
+| --------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Zod contract + limits + per-format refinements                                    | `create-pack.schema.ts`, `create-pack.value-schemas.ts`, `create-pack.refinements.ts`                         |
+| Format→round-family reshape effect, submit/PATCH, error mapping                   | `CreatePackForm.tsx` (the `useEffect`, `onValid`, `handleSubmit`)                                             |
+| Enter-key submit suppression (deliberate; commented)                              | `CreatePackForm.tsx` `onKeyDown`                                                                              |
+| Auth gate / edit-mode gates                                                       | `CreatePackForm.tsx` login gate, `EditPackScreen.tsx`, `EditPackFallback.tsx`                                 |
+| Manual pin reservation, `availableItemIds`, `pinnedElsewhere`, random-pool option | `RoundsEditor.tsx`, `random-pool-option.ts`                                                                   |
+| Versus per-side count / same-pool detection / draw resolution                     | `VersusEditor.tsx`, `round-draw.ts`                                                                           |
+| Item draft state machine, YouTube validation, image upload/crop                   | `use-group-item-draft.ts`, `ItemImageCropModal.tsx`, `CoverCropModal.tsx`, `CoverImageField.tsx` upload logic |
+| `pack-to-form-values.ts`, `create-pack.defaults.ts`                               | unchanged                                                                                                     |
 
 ### IN SCOPE (visual/structural)
 
@@ -42,8 +42,8 @@ would be a behaviour regression:
 **D1 — The mock's Step 3/Step 4 model is the RETIRED one. Keep ours.**
 The mock puts `selection: random|manual` + `sampleN` **on the group**, and derives
 rounds ("N rounds — one per group") or exposes them as a bare slider. `CLAUDE.md` is
-explicit: *"The pre-redesign vocabulary (categories, item tags, selectionMode/sampleSize
-on a group) is gone — don't reintroduce it."* Pools are named bags; rounds are separate
+explicit: _"The pre-redesign vocabulary (categories, item tags, selectionMode/sampleSize
+on a group) is gone — don't reintroduce it."_ Pools are named bags; rounds are separate
 ordered entities with slots carrying `mode`/`count`/`itemIds`.
 → **Adopt the mock's visual language only.** Keep `PoolsSection` (Step 3) and
 `RoundsEditor`/`VersusEditor` (Step 4) as separate, always-rendered sections for every
@@ -59,11 +59,11 @@ desktop** (label `Publish pack` when enabled / `Add a title & elements` when blo
 the **sticky action bar** carries `Cancel` + `Save draft` only, and gains a Publish
 button only below the `lg` breakpoint where the preview panel has collapsed. Exactly one
 Publish button in the accessibility tree at any viewport. If the implementer prefers two,
-they must give them distinct accessible names *and* update every e2e call site.
+they must give them distinct accessible names _and_ update every e2e call site.
 
 **D3 — Tags: mock shows 16 inline chips; we have 31 `PACK_TAGS`.**
 An inline 31-chip wall is not the mock's composition. Recommended: keep
-`TagPickerModal`, but restyle the *trigger area* to the mock's row — selected tags render
+`TagPickerModal`, but restyle the _trigger area_ to the mock's row — selected tags render
 as accent chips inline (removable, as today) with the `{n}/10 selected` counter to the
 right, and a dashed `+ Add tags` chip opens the modal. Do not delete `TagPickerModal`.
 
@@ -93,17 +93,17 @@ position:sticky; top:88px; gap:16px`.
 
 Token mapping (never hardcode a hex — `.claude/docs/design-tokens.md`):
 
-| Mock literal | Token / utility |
-| --- | --- |
-| `#0a0b0e` page bg | `bg-background` |
-| `rgba(255,255,255,.02)` card | `bg-surface-card` |
-| `rgba(255,255,255,.03)` field | `bg-background` on a card (see `Input`) |
-| `rgba(255,255,255,.07)` / `.09` hairline | `border-border` |
-| `rgba(255,255,255,.14)` dashed | `border-white/[0.14]` (as `EmptyState` already does) |
-| `#f3f5f8` / `.5` / `.4` text | `text-foreground` / `variant="secondary"` / `variant="tertiary"` |
-| `var(--acc) #00e5ff` | `text-acc` / `bg-acc` / `border-acc` |
-| `#ff6b6b` | `text-danger` |
-| radius 8 / 11 / 14 / 18 | `rounded-chip` / `rounded-control` / `rounded-tile` / `rounded-card` |
+| Mock literal                             | Token / utility                                                      |
+| ---------------------------------------- | -------------------------------------------------------------------- |
+| `#0a0b0e` page bg                        | `bg-background`                                                      |
+| `rgba(255,255,255,.02)` card             | `bg-surface-card`                                                    |
+| `rgba(255,255,255,.03)` field            | `bg-background` on a card (see `Input`)                              |
+| `rgba(255,255,255,.07)` / `.09` hairline | `border-border`                                                      |
+| `rgba(255,255,255,.14)` dashed           | `border-white/[0.14]` (as `EmptyState` already does)                 |
+| `#f3f5f8` / `.5` / `.4` text             | `text-foreground` / `variant="secondary"` / `variant="tertiary"`     |
+| `var(--acc) #00e5ff`                     | `text-acc` / `bg-acc` / `border-acc`                                 |
+| `#ff6b6b`                                | `text-danger`                                                        |
+| radius 8 / 11 / 14 / 18                  | `rounded-chip` / `rounded-control` / `rounded-tile` / `rounded-card` |
 
 RTL: this screen must use logical properties throughout (`ms-`/`me-`, `ps-`/`pe-`,
 `start`/`end`) — 3 of the 8 locales are RTL.
@@ -120,7 +120,7 @@ Each task = one commit. Tests first (TDD) in every task that names a `.test.tsx`
 
 Mock draws each cover-tone chip as `linear-gradient(150deg, {hex}, #0b0c0f)` at
 `38×38`, `border-radius:10px`, `border:2px` (accent when selected, `rgba(255,255,255,.12)`
-otherwise) and **no check glyph** — the border *is* the selection cue.
+otherwise) and **no check glyph** — the border _is_ the selection cue.
 
 Add an opt-in `swatchStyle?: "solid" | "gradient"` prop (default `solid`, so nothing else
 changes). `gradient` renders the 150° fade-to-near-black, sizes to 38px, and swaps the
@@ -167,7 +167,7 @@ summarizePack(values) -> {
 }
 ```
 
-`canPublish` is a **display gate for the CTA label only** — it must *mirror* the zod
+`canPublish` is a **display gate for the CTA label only** — it must _mirror_ the zod
 schema's cheapest preconditions, never replace it. Submission still runs
 `zodResolver(createPackSchema)`; the button stays clickable so a blocked submit surfaces
 the real per-field errors rather than dead-ending. (The mock's `cursor:not-allowed`
@@ -189,13 +189,13 @@ boundary in each direction.
 Glyphs (pure CSS shapes, `26px` tall, `aria-hidden`; accent = selected, else
 `text-foreground-secondary` at `.7`; "mute" spans always `rgba(243,245,248,.16)`):
 
-| Format | Glyph |
-| --- | --- |
-| `save_one` | 3 squares `16px`, middle `16×22`, `align-items:flex-end`, gap 6 — middle is the accent one |
-| `sacrifice_one` | 3 squares `16px`, first two accent, third muted with a `14×2` `#ff6b6b` bar rotated 45° |
-| `rank_blind` | 3 stacked bars `26/20/14 × 4px`, radius 3, gap 4 — first accent |
-| `nxn` | 2×2 grid of `14px` squares, gap 5 — the diagonal pair accent |
-| `1v1` | `18px` square + `vs` (`11px`, `text-foreground-tertiary`) + `18px` square, gap 8 |
+| Format          | Glyph                                                                                      |
+| --------------- | ------------------------------------------------------------------------------------------ |
+| `save_one`      | 3 squares `16px`, middle `16×22`, `align-items:flex-end`, gap 6 — middle is the accent one |
+| `sacrifice_one` | 3 squares `16px`, first two accent, third muted with a `14×2` `#ff6b6b` bar rotated 45°    |
+| `rank_blind`    | 3 stacked bars `26/20/14 × 4px`, radius 3, gap 4 — first accent                            |
+| `nxn`           | 2×2 grid of `14px` squares, gap 5 — the diagonal pair accent                               |
+| `1v1`           | `18px` square + `vs` (`11px`, `text-foreground-tertiary`) + `18px` square, gap 8           |
 
 Card: `padding:16px`, `rounded-tile` (14), `flex-col gap-12px`, `text-align:start`.
 Selected → `bg-white/[0.055]` + `border-acc`; unselected → `bg-surface-card` +
@@ -216,6 +216,7 @@ Header (via `StepHeader` step 2): title `create.formatHeading` — **change copy
 builder below changes to match it."
 
 New/updated i18n (all 8 locales):
+
 - `create.formatHeading` → "Elimination format" (update)
 - `create.formatHint` → "Pick one. The element builder below changes to match it." (new)
 - `create.blurbRankBlind` → "Place each pick blind into a growing list." (update)
@@ -238,6 +239,7 @@ Column stack, `gap:16px`, `lg:sticky lg:top-[82px]`, `max-w-[380px]`.
 **a. Eyebrow** — `LIVE PREVIEW`, `12px/500`, `tracking-[0.14em]`, `variant="tertiary"`.
 
 **b. Cover preview card** — `rounded-[16px] overflow-hidden bg-surface-card border-border`:
+
 - Cover: `aspect-[4/3]`, `background: linear-gradient(158deg, {coverTone}, #0b0c0f 76%)`.
   When `coverImageKey` is set, render `<CoverImage>` beneath the scrim (same as
   `PackCoverBanner`) — the mock has no cover-image case, this is the D4 carry-over.
@@ -307,7 +309,7 @@ Structure per mock: `flex-col gap-[14px]`, each field = a visible label above th
 - **Tags** — label row with `ms-auto` counter `create.tagsCount` = "{count}/{max}
   selected" (mock: "2/10 selected"; today "2/10" bare). Selected tags render as the
   mock's chips: `7px 13px`, `rounded-[9px]`, `13px/500`, `bg-acc/[0.14] text-acc
-  border-acc`, with the existing `×` remove. Add a dashed `+ Add tags` chip opening
+border-acc`, with the existing `×` remove. Add a dashed `+ Add tags` chip opening
   `TagPickerModal` (replaces the current secondary `Button`). See D3.
 
 Header: `StepHeader` step 1, title `create.basicsHeading` ("Basics", unchanged).
@@ -328,11 +330,11 @@ New/updated i18n: `create.titlePlaceholder` (new), `create.descriptionPlaceholde
 - **Pool card** — `bg-surface-card border-border rounded-tile p-[15px] gap-[13px]`.
   Header row gains the mock's `5×24` accent bar (`rounded-[3px] bg-acc opacity-55`,
   `aria-hidden`) before the name input. Name input `h-[38px] rounded-[9px] font-semibold
-  text-[15px]`. Remove button becomes the mock's `34×34` icon button (`×`,
+text-[15px]`. Remove button becomes the mock's `34×34` icon button (`×`,
   `border-border`, hover `text-danger border-danger/40`) — **keep the existing
   `aria-label` (`create.removeGroup`)** so it stays reachable by name.
 - **Item chips** (`GroupItemList`) — `gap-[7px]`; chip `p-[5px_9px] rounded-chip
-  bg-white/[0.04] border-border text-[13px]`. **New:** a `30×22` `rounded-[5px]`
+bg-white/[0.04] border-border text-[13px]`. **New:** a `30×22` `rounded-[5px]`
   thumbnail slot before the label for `youtube`/`image` items, with the mock's white
   play-triangle overlay on YouTube (CSS border triangle, `aria-hidden`). Keep the
   click-to-edit button and the `×` (`18×18`) with their existing aria labels; keep the
@@ -347,7 +349,7 @@ New/updated i18n: `create.titlePlaceholder` (new), `create.descriptionPlaceholde
 - **Empty pool** — mock's dashed placeholder, via the shared `EmptyState`:
   `create.poolEmpty` = "No elements yet — add your first above."
 - **Add-pool button** — dashed full-width, `h-[46px] rounded-[12px] border-dashed
-  border-white/[0.14]`, hover `border-acc`. ⚠ Keep the label string `"+ Add pool"`
+border-white/[0.14]`, hover `border-acc`. ⚠ Keep the label string `"+ Add pool"`
   (`create.addPool`) — e2e clicks it by name.
 
 New i18n: `create.poolsHint`, `create.poolEmpty`.
@@ -411,7 +413,7 @@ New i18n: `create.roundsHint`.
   → builder column `flex-1 basis-[540px] min-w-[300px] flex-col gap-[34px]`, aside
   `flex-1 basis-[320px] max-w-[380px]`. Follow `PackDetailScreen`'s DOM-order trick:
   put the preview aside **first in the DOM with `lg:order-2`** so that on mobile it
-  stacks above the builder and reading order matches visual order — *unless* the
+  stacks above the builder and reading order matches visual order — _unless_ the
   preview reads better below on mobile, in which case it goes second in the DOM and
   keeps `order` untouched. Pick one and comment why.
 - Section order inside the builder column: `PackMetaFields` (1) → `FormatSection` (2) →
@@ -432,14 +434,15 @@ New i18n: `create.cancel`; updated `pages.createSubtitle`.
 
 **i18n.** Add every key above to all 8 catalogs — real translations, not transliterated
 placeholders. Two specific traps, both burned before:
+
 - **`create.preview.roundsCount` / `create.itemCount` are ICU plurals.** ar and ru/uk
   need their full form sets (`zero/one/two/few/many/other` for ar; `one/few/many/other`
-  for ru/uk). Mirror the plural forms from an *existing* count-noun in the same catalog
+  for ru/uk). Mirror the plural forms from an _existing_ count-noun in the same catalog
   rather than inventing them (this is exactly what `auth.brand.socialProof` had to be
   fixed for in `386d06c`).
 - **ar/ur connotation.** Do not re-translate the existing format names — `sacrifice_one`
   in Arabic/Urdu already has a vetted rendering; the obvious literal (تضحية / قربانی)
-  reads as *religious sacrifice* (Qurbani/Eid al-Adha), which is why it was fixed once
+  reads as _religious sacrifice_ (Qurbani/Eid al-Adha), which is why it was fixed once
   already. Copy the existing `formats.sacrifice_one` value verbatim. For the new
   `create.preview.noAiNote`, avoid a literal "no AI" that reads as a denial of
   intelligence; phrase it as "no AI involved / no scoring rules to write".
@@ -452,7 +455,8 @@ placeholders. Two specific traps, both burned before:
 `RoundsEditor.test.tsx`, `VersusEditor.test.tsx`, `SwatchPicker.test.tsx`.
 
 **Playwright.** `e2e/create-pack.spec.ts` + `e2e/edit-pack.spec.ts` need a pass —
-this slice changes UI *and* copy, so per the repo's e2e rule they are not optional:
+this slice changes UI _and_ copy, so per the repo's e2e rule they are not optional:
+
 1. **Publish button ambiguity** (D2) — the single highest-risk break. Verify exactly one
    `getByRole("button", { name: "Publish" })` match at the test viewport, or retarget.
 2. **Format-card reorder** (T4) — any `.nth()` over the format grid shifts;

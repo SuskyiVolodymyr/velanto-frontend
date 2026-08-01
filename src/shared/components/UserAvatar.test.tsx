@@ -74,7 +74,11 @@ describe("UserAvatar", () => {
 
   it("applies the size classes to the image variant too", () => {
     render(
-      <UserAvatar username="quinn" avatarKey="media/avatar/abc.webp" size="sm" />,
+      <UserAvatar
+        username="quinn"
+        avatarKey="media/avatar/abc.webp"
+        size="sm"
+      />,
     );
     expect(document.querySelector("img")).toHaveClass(
       "h-[26px]",

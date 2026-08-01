@@ -120,7 +120,9 @@ describe("RoundsBulkBar", () => {
     });
     expect(applyButton).not.toBeDisabled();
     expect(
-      screen.getByText("Rounds currently vary (2, 4). Apply to reset them all."),
+      screen.getByText(
+        "Rounds currently vary (2, 4). Apply to reset them all.",
+      ),
     ).toBeInTheDocument();
   });
 

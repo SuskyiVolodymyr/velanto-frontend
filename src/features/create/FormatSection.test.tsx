@@ -55,9 +55,10 @@ describe("FormatSection", () => {
   it("marks the currently-watched format as aria-pressed and the rest as not", () => {
     render(<Harness initial={baseValues("rank_blind")} />);
 
-    expect(
-      screen.getByRole("button", { name: /Rank Blind/ }),
-    ).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: /Rank Blind/ })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
     expect(screen.getByRole("button", { name: /Save One/ })).toHaveAttribute(
       "aria-pressed",
       "false",
@@ -120,7 +121,9 @@ describe("FormatSection", () => {
     it("natively disables every unselected card, but not the selected one", () => {
       render(<Harness initial={baseValues("save_one")} locked />);
 
-      expect(screen.getByRole("button", { name: /Save One/ })).not.toBeDisabled();
+      expect(
+        screen.getByRole("button", { name: /Save One/ }),
+      ).not.toBeDisabled();
       expect(screen.getByRole("button", { name: /NxN/ })).toBeDisabled();
       expect(
         screen.getByRole("button", { name: /Sacrifice One/ }),
@@ -194,12 +197,12 @@ describe("FormatSection", () => {
     it("tints the selected card's border and background with its own hue", () => {
       render(<Harness initial={baseValues("sacrifice_one")} />);
 
-      expect(
-        screen.getByRole("button", { name: /Sacrifice One/ }),
-      ).toHaveStyle({
-        borderColor: "rgba(255,90,90,.5)",
-        backgroundColor: "rgba(255,90,90,.1)",
-      });
+      expect(screen.getByRole("button", { name: /Sacrifice One/ })).toHaveStyle(
+        {
+          borderColor: "rgba(255,90,90,.5)",
+          backgroundColor: "rgba(255,90,90,.1)",
+        },
+      );
     });
 
     it("leaves unselected cards on the plain surface-card border/background, not hue-tinted", () => {

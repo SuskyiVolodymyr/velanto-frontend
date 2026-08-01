@@ -8,7 +8,10 @@ describe("FilterChip", () => {
     const { rerender } = render(
       <FilterChip label="Save One" selected={false} onToggle={vi.fn()} />,
     );
-    const chip = screen.getByRole("button", { name: "Save One", pressed: false });
+    const chip = screen.getByRole("button", {
+      name: "Save One",
+      pressed: false,
+    });
     expect(chip).toBeInTheDocument();
 
     rerender(<FilterChip label="Save One" selected onToggle={vi.fn()} />);

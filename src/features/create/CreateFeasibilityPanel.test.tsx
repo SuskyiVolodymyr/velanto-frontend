@@ -43,7 +43,9 @@ describe("CreateFeasibilityPanel", () => {
     mockedPreviewModes.mockResolvedValue(modes);
     render(<CreateFeasibilityPanel draft={DRAFT} debounceMs={0} />);
 
-    expect(await screen.findByText("Friend modes unlocked")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Friend modes unlocked"),
+    ).toBeInTheDocument();
     expect(screen.getByText("Claim")).toBeInTheDocument();
     expect(screen.getByText("2-4 players")).toBeInTheDocument();
     expect(screen.getByText("1/1")).toBeInTheDocument();

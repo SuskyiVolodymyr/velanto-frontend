@@ -20,7 +20,9 @@ describe("RoomBetweenBoard", () => {
           round: {
             index: 0,
             name: "",
-            items: [{ id: "i1", title: "Item 1", type: "text", value: "Item 1" }],
+            items: [
+              { id: "i1", title: "Item 1", type: "text", value: "Item 1" },
+            ],
             claims: {},
             survivorItemId: "i1",
           },
@@ -44,7 +46,9 @@ describe("RoomBetweenBoard", () => {
               kind: "reveal",
               index: 0,
               name: "Round 1",
-              items: [{ id: "i1", title: "Pizza", type: "text", value: "Pizza" }],
+              items: [
+                { id: "i1", title: "Pizza", type: "text", value: "Pizza" },
+              ],
               picks: { P1: ["i1"] },
             },
           ],

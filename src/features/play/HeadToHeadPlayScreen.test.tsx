@@ -296,9 +296,7 @@ describe("HeadToHeadPlayScreen", () => {
     expect(screen.getByText("Round 2 of 2")).toBeInTheDocument();
     // The new matchup starts unselected, so the button can't be double-fired.
     // Round 2 of 2 is the last, so the confirm reads as finishing the pack.
-    expect(
-      screen.getByRole("button", { name: "See results" }),
-    ).toBeDisabled();
+    expect(screen.getByRole("button", { name: "See results" })).toBeDisabled();
   });
 
   it("labels the last matchup's confirm as finishing the pack", async () => {
@@ -477,9 +475,7 @@ describe("HeadToHeadPlayScreen", () => {
       const user = userEvent.setup();
       renderScreen(HEAD_TO_HEAD_PACK);
 
-      await user.click(
-        await screen.findByRole("button", { name: "Continue" }),
-      );
+      await user.click(await screen.findByRole("button", { name: "Continue" }));
 
       expect(resumeContinue).toHaveBeenCalledTimes(1);
       expect(resumeRestart).not.toHaveBeenCalled();

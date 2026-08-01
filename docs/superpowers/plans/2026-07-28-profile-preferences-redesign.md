@@ -4,11 +4,11 @@ Date: 2026-07-28
 Mocks (ground truth), persisted for this slice (not in `design/extracted/` —
 fetched via DesignSync this session):
 
-| Mock | File | Drives |
-| --- | --- | --- |
-| Profile | `Profile.dc.html` (JSON-wrapped tool result — see note below) | the public profile hero, stats, Packs/People/History tabs |
-| Profile Edit | `Profile Edit.dc.html` (content-only, markup pattern in a leading comment) | the dedicated `/profile/edit` page |
-| Preferences | `Preferences.dc.html` (content-only, behaviour summarized in a leading comment) | `/settings` (`SettingsScreen.tsx`) |
+| Mock         | File                                                                            | Drives                                                    |
+| ------------ | ------------------------------------------------------------------------------- | --------------------------------------------------------- |
+| Profile      | `Profile.dc.html` (JSON-wrapped tool result — see note below)                   | the public profile hero, stats, Packs/People/History tabs |
+| Profile Edit | `Profile Edit.dc.html` (content-only, markup pattern in a leading comment)      | the dedicated `/profile/edit` page                        |
+| Preferences  | `Preferences.dc.html` (content-only, behaviour summarized in a leading comment) | `/settings` (`SettingsScreen.tsx`)                        |
 
 > The Profile mock's raw tool-result JSON is long (~51k chars) and was
 > truncated once mid-session; the second half (stats, role-badge derivation,
@@ -35,20 +35,20 @@ surface, not a redesign, and is explicitly **out of scope** (see D7, D9, D11).
 
 ### DO NOT TOUCH (functionally correct, out of scope)
 
-| Area | Files |
-| --- | --- |
-| Identity treatment (staff/trusted gradient handle, role pill) | `src/shared/lib/user-role.ts` (`identityKind`, `nicknameClass`, `identityPill`), `src/shared/components/Username.tsx` |
-| Avatar crop engine (zoom slider, round/rect shape, WebP export) | `src/shared/components/ImageCropModal.tsx`, `src/shared/lib/crop-image.ts` |
-| Streamer-mode redaction + per-item reveal | `src/shared/components/Hidden.tsx`, `src/shared/lib/streamer-mode-context.tsx` |
-| Live accent switching (localStorage + pre-hydration script + live `--acc`) | `src/shared/lib/theme.ts` |
-| Username change: format check + real 409-backed uniqueness | `ProfileEditForm.tsx`'s `useChangeUsername`, `USERNAME_PATTERN` (`auth.schema.ts`) |
-| Follow/unfollow mutation, follow-list pagination, cache patching | `src/features/author/api/follow-list.queries.ts`, `useFollowMutation` |
-| Author packs pagination, recently-played pagination | `author-packs.queries.ts`, `recently-played.queries.ts` |
-| Notification preferences fetch/set for the 6 EXISTING types | `notifications.queries.ts` |
-| Password change / set-password / add-email flows | `PasswordSection.tsx`, `SetPasswordSection.tsx`, `AddEmailForm.tsx`, their schemas |
-| OAuth account linking (popup flow, one-shot link cookie) | `ConnectedAccountsSection.tsx` |
-| Data export + soft-delete account flow | `DangerZoneSection.tsx` |
-| `PackCard` (already 2.0.0-redesigned) | `src/features/home/PackCard.tsx` |
+| Area                                                                       | Files                                                                                                                 |
+| -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Identity treatment (staff/trusted gradient handle, role pill)              | `src/shared/lib/user-role.ts` (`identityKind`, `nicknameClass`, `identityPill`), `src/shared/components/Username.tsx` |
+| Avatar crop engine (zoom slider, round/rect shape, WebP export)            | `src/shared/components/ImageCropModal.tsx`, `src/shared/lib/crop-image.ts`                                            |
+| Streamer-mode redaction + per-item reveal                                  | `src/shared/components/Hidden.tsx`, `src/shared/lib/streamer-mode-context.tsx`                                        |
+| Live accent switching (localStorage + pre-hydration script + live `--acc`) | `src/shared/lib/theme.ts`                                                                                             |
+| Username change: format check + real 409-backed uniqueness                 | `ProfileEditForm.tsx`'s `useChangeUsername`, `USERNAME_PATTERN` (`auth.schema.ts`)                                    |
+| Follow/unfollow mutation, follow-list pagination, cache patching           | `src/features/author/api/follow-list.queries.ts`, `useFollowMutation`                                                 |
+| Author packs pagination, recently-played pagination                        | `author-packs.queries.ts`, `recently-played.queries.ts`                                                               |
+| Notification preferences fetch/set for the 6 EXISTING types                | `notifications.queries.ts`                                                                                            |
+| Password change / set-password / add-email flows                           | `PasswordSection.tsx`, `SetPasswordSection.tsx`, `AddEmailForm.tsx`, their schemas                                    |
+| OAuth account linking (popup flow, one-shot link cookie)                   | `ConnectedAccountsSection.tsx`                                                                                        |
+| Data export + soft-delete account flow                                     | `DangerZoneSection.tsx`                                                                                               |
+| `PackCard` (already 2.0.0-redesigned)                                      | `src/features/home/PackCard.tsx`                                                                                      |
 
 ### IN SCOPE (visual/structural)
 
@@ -66,8 +66,8 @@ Legal/Rules pattern) + every section card restyled to the mock's rows;
 **D1 — The mock's "Profile" is `AuthorScreen`, not a `ProfileScreen`.**
 There is no `ProfileScreen.tsx` in this codebase — the old one was merged
 into `AuthorScreen` when `/profile` became a pure redirect (see
-`ProfileRedirect.tsx`'s doc comment: *"the old separate ProfileScreen was
-merged into AuthorScreen"*). The canonical, shareable, SEO'd profile page is
+`ProfileRedirect.tsx`'s doc comment: _"the old separate ProfileScreen was
+merged into AuthorScreen"_). The canonical, shareable, SEO'd profile page is
 `app/users/[id]/page.tsx` → `AuthorScreen.tsx`. `/profile`
 (`app/profile/page.tsx` → `ProfileRedirect.tsx`) only bounces an
 authenticated owner to `/users/{own id}` and shows a login-block for a
@@ -114,7 +114,7 @@ pick. `src/shared/components/ImageCropModal.tsx` (wrapping `react-easy-crop`)
 already does exactly this — a zoom `<input type="range" min={1} max={3}
 step={0.1}>`, round/rect `cropShape`, WebP export via `crop-image.ts` — and is
 already wired end to end via `AvatarSection.tsx` → `AvatarCropModal.tsx` →
-`useUpdateAvatar`. This is the *same* component the Create Pack cover-image
+`useUpdateAvatar`. This is the _same_ component the Create Pack cover-image
 flow uses (`CoverCropModal.tsx`, rect variant).
 → **No new crop engine.** Restyle `AvatarSection`'s trigger area (mock wants
 a drag-and-drop zone with "Drag a photo here or click" / "Drop to upload" /
@@ -164,7 +164,7 @@ follow-up issue instead of scope-creeping it into this slice.
 `ProfileEditForm.tsx`'s `useChangeUsername` already round-trips to the real
 endpoint and maps a 409 to `t("usernameTaken")`, after a client-side
 `USERNAME_PATTERN` format check. The mock's hardcoded `TAKEN` array is
-explicitly commented as *"a stand-in for the real backend 409"* — it is not
+explicitly commented as _"a stand-in for the real backend 409"_ — it is not
 something to port.
 → Keep the 409-is-the-only-uniqueness-authority behaviour. The mock's UX
 polish worth adopting: validate on every keystroke once the field has been
@@ -180,7 +180,7 @@ client-side filter would silently only search whatever page happened to be
 loaded so far, which is worse than no search. (There IS a real, working
 people-search elsewhere — `src/features/home/PeopleFeed.tsx` /
 `useUserSearch`, backing the sitewide `/people` route — but that searches
-*all users*, not *this profile's followers*, a different endpoint with a
+_all users_, not _this profile's followers_, a different endpoint with a
 different `q` param the followers/following endpoints don't accept.)
 → **Cut the search box from the People tab** (T3). If per-profile
 follower search becomes worth it, it needs a backend `q` param on
@@ -231,7 +231,7 @@ The mock's Packs-tab filter row (All/Live/In review/Needs edits/Drafts/
 Rejected) has no backend support either — `useAuthorPacks` fetches an
 author's full pack list with no `status` param. Unlike D9 (a public,
 potentially-huge people-search), this is safe to build **client-side**: it's
-the *owner's own* pack list, realistically small, and the mock does the
+the _owner's own_ pack list, realistically small, and the mock does the
 exact same in-memory filtering. Implement the filter as a `.filter()` over
 whatever `AuthorPackList` has already loaded (own profile only — a visitor
 sees no filter row, matching `isOwn` in the mock); "Load more" keeps fetching
@@ -298,25 +298,25 @@ not new capability). Save (disabled until dirty+valid) + Cancel + inline
 **Preferences** — sticky left TOC (D12) + right column of `#171A22 r16`
 bordered cards, one per section, in this order: Language, Appearance,
 Connected accounts, Privacy, Notifications, Account, Password, API tokens,
-Danger zone. Page intro copy: *"Everything about your account, in one place.
+Danger zone. Page intro copy: _"Everything about your account, in one place.
 Changes save as you make them — no submit button, except where a password is
-required."* — every section autosaves on change except Password and Delete
+required."_ — every section autosaves on change except Password and Delete
 Account, which keep explicit submit buttons (already true of the current
 implementation; the intro copy itself is new, T15).
 
 Token mapping (never hardcode a hex — `.claude/docs/design-tokens.md`):
 
-| Mock literal | Token / utility |
-| --- | --- |
-| `#0F1116` page bg | `bg-background` |
-| `#171A22` card | `bg-surface-card` |
-| `rgba(255,255,255,.07)`–`.09` hairline | `border-border` |
-| `rgba(255,255,255,.14)`–`.18` dashed / hover border | `border-white/[0.14]` / `border-white/[0.18]` |
-| `#EEF1F6` / `.6` / `.45` / `.35` text | `text-foreground` / `variant="secondary"` / `variant="tertiary"` |
-| `#00E5FF` / `#8CF3FF` | `text-acc` / `bg-acc` / `border-acc` / `text-acc-hover` (never hardcode — this repo's accent is USER-switchable, D6) |
-| `#FF8C8C` / `#FF5A5A`-family | `text-danger` / `border-danger/40` |
-| radius 8–11 / 12–15 / 18–26 | `rounded-chip`/`rounded-control` / `rounded-tile` / `rounded-card` (26px hero avatar is the one deliberate one-off — comment why) |
-| `nicknamesweep` role gradient | the existing `.nickname-gradient` + per-role modifier — do **not** re-derive `ROLE_STYLE`, it is `user-role.ts`'s `IDENTITY_PILL`/`NICKNAME_CLASS` byte-for-byte |
+| Mock literal                                        | Token / utility                                                                                                                                                  |
+| --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `#0F1116` page bg                                   | `bg-background`                                                                                                                                                  |
+| `#171A22` card                                      | `bg-surface-card`                                                                                                                                                |
+| `rgba(255,255,255,.07)`–`.09` hairline              | `border-border`                                                                                                                                                  |
+| `rgba(255,255,255,.14)`–`.18` dashed / hover border | `border-white/[0.14]` / `border-white/[0.18]`                                                                                                                    |
+| `#EEF1F6` / `.6` / `.45` / `.35` text               | `text-foreground` / `variant="secondary"` / `variant="tertiary"`                                                                                                 |
+| `#00E5FF` / `#8CF3FF`                               | `text-acc` / `bg-acc` / `border-acc` / `text-acc-hover` (never hardcode — this repo's accent is USER-switchable, D6)                                             |
+| `#FF8C8C` / `#FF5A5A`-family                        | `text-danger` / `border-danger/40`                                                                                                                               |
+| radius 8–11 / 12–15 / 18–26                         | `rounded-chip`/`rounded-control` / `rounded-tile` / `rounded-card` (26px hero avatar is the one deliberate one-off — comment why)                                |
+| `nicknamesweep` role gradient                       | the existing `.nickname-gradient` + per-role modifier — do **not** re-derive `ROLE_STYLE`, it is `user-role.ts`'s `IDENTITY_PILL`/`NICKNAME_CLASS` byte-for-byte |
 
 RTL: 3 of the 8 locales are RTL — logical properties throughout
 (`ms-`/`me-`, `ps-`/`pe-`, `start`/`end`). The Profile hero's pencil badge
@@ -347,13 +347,13 @@ there is no test today; check for one under a different name first)
   `AvatarLightbox` — unchanged behaviour, restyled frame only.
 - Own-profile pencil badge (D3): `30×30`, `bg-acc`, `text-[#07131a]`,
   3px-ring border in `bg-background`, positioned `absolute end-[-6px]
-  bottom-[-6px]`, `aria-label` = existing `editProfile` key, `<Link
-  href="/profile/edit">`.
+bottom-[-6px]`, `aria-label` = existing `editProfile` key, `<Link
+href="/profile/edit">`.
 - Username + role pill: swap the current bare `<Username showRole />` call's
   surrounding markup to the mock's `30px/700` sizing; the component itself
   (gradient, pill colours) is untouched (D-do-not-touch table).
 - Stats row (new, replaces the current `followerCount · followingCount ·
-  packCount` inline text): 4 `value/label` pairs — Packs (own: `packsTotal`
+packCount` inline text): 4 `value/label` pairs — Packs (own: `packsTotal`
   incl. non-approved; visitor: approved-only, which `packsTotal` already is
   server-side per `AuthorPackList`'s `own` split — verify, don't assume),
   Plays (**mock hardcodes "12.4k" — we have no aggregate play-count stat on
@@ -443,7 +443,7 @@ entries `FollowListModal` already used).
   D13.
 - Grid restyle to the mock's `repeat(auto-fill,minmax(262px,1fr))` — verify
   against `PackCard`'s current grid usage elsewhere (`grid-cols-1
-  sm:grid-cols-2 lg:grid-cols-3` today) and pick whichever reads better at
+sm:grid-cols-2 lg:grid-cols-3` today) and pick whichever reads better at
   this narrower tab-panel width; they don't have to match `HomeFeed`'s grid.
   `PackCard` itself is unchanged (D7 — no review-outcome link, no inline
   Edit action added).
@@ -519,7 +519,7 @@ field has been blurred/changed once) so the format error shows live rather
 than only after a failed submit; a "CHANGED" pill (`rounded-pill`, accent
 tint) appears beside the field once `username !== currentUsername`. The
 409-taken path and the `USERNAME_PATTERN` check are unchanged — this task
-only changes *when* the client-side error renders, never adds a client-side
+only changes _when_ the client-side error renders, never adds a client-side
 taken-list.
 
 New i18n: `profile.usernameChangedPill` = "Changed" (or similar — check
@@ -607,6 +607,7 @@ onChange={handleSelect} getLabel={...} swatchStyle="solid" />` — same
 New i18n: none (copy unchanged).
 
 ### T14 — `ApiTokensPointer`, `AccountSection`, `ConnectedAccountsSection`,
+
 `PasswordSection`, `SetPasswordSection`, `AddEmailForm`, `DangerZoneSection`
 restyle pass
 
@@ -640,8 +641,8 @@ every touched `*.test.tsx`
 - Sticky TOC (D12): `SECTIONS` list (Language/Appearance/Connected
   accounts/Privacy/Notifications/Account/Password/API tokens/Danger zone),
   dot-marker links scrolling to each section's `id` anchor, `min-[900px]:
-  sticky min-[900px]:top-[80px]`, collapsing to a horizontal `overflow-x-auto
-  no-scrollbar` chip row below 900px — same convention as `LegalScreen.tsx`.
+sticky min-[900px]:top-[80px]`, collapsing to a horizontal `overflow-x-auto
+no-scrollbar` chip row below 900px — same convention as `LegalScreen.tsx`.
   Give every section a stable `id` (`<section id="language">` etc.) for the
   anchors.
 - Container: `max-w-[1080px]` two-column layout (TOC `216px` fixed + content
@@ -651,6 +652,7 @@ every touched `*.test.tsx`
 translations, not transliterated placeholders. Same two traps as both prior
 2.0.0 redesign plans, worth repeating because they've burned this repo
 twice already:
+
 - **ICU plurals** (T12's enabled-count line, any new count-bearing string):
   ar needs the full `zero/one/two/few/many/other` set, ru/uk need
   `one/few/many/other` — mirror an existing count-noun in the same catalog,

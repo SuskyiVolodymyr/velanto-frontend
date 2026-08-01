@@ -11,9 +11,7 @@ describe("Toggle", () => {
     const sw = screen.getByRole("switch", { name: "Stream safety" });
     expect(sw).toHaveAttribute("aria-checked", "false");
 
-    rerender(
-      <Toggle checked onChange={vi.fn()} ariaLabel="Stream safety" />,
-    );
+    rerender(<Toggle checked onChange={vi.fn()} ariaLabel="Stream safety" />);
     expect(sw).toHaveAttribute("aria-checked", "true");
   });
 
@@ -31,7 +29,12 @@ describe("Toggle", () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(
-      <Toggle checked={false} onChange={onChange} ariaLabel="Notify" disabled />,
+      <Toggle
+        checked={false}
+        onChange={onChange}
+        ariaLabel="Notify"
+        disabled
+      />,
     );
 
     await user.click(screen.getByRole("switch", { name: "Notify" }));

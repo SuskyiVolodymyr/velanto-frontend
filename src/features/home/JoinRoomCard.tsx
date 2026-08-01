@@ -15,10 +15,7 @@ import { ROOMS_DORMANT } from "@/src/features/friends-rooms/room-types";
 
 /** Which inline error to show under the code field. `null` = none. */
 type JoinErrorKey =
-  | "emptyCode"
-  | "errorNotFound"
-  | "errorUnavailable"
-  | "errorGeneric";
+  "emptyCode" | "errorNotFound" | "errorUnavailable" | "errorGeneric";
 
 /**
  * The dashboard hero's right column: a translucent panel nested inside
@@ -100,7 +97,10 @@ function JoinRoomCardInner() {
           {t("title")}
         </Text>
       </div>
-      <Text variant="secondary" className="text-pretty text-[13px] leading-[1.5]">
+      <Text
+        variant="secondary"
+        className="text-pretty text-[13px] leading-[1.5]"
+      >
         {t("subtitle")}
       </Text>
 

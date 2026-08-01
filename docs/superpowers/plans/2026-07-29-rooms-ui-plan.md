@@ -4,7 +4,7 @@
 
 **Goal:** Build the frontend play surface for all six backend room modes (`claim`, `guess_who`, `turn_based_cut`, `voting`, `shared_grid`, `relay`) on top of the existing-but-dormant `src/features/friends-rooms/*` infrastructure, and flip `ROOMS_DORMANT` to `false` once every mode's lobby → round → results path is built and tested. This is the single largest remaining surface of the 2.0.0 epic.
 
-**Architecture:** The dormant room infra already has a *complete, working Claim-mode implementation* (`RoomScreen`/`RoomLobby`/`RoomRound`/`RoomItemCard`/`RoomBetween`/`RoomResults`/`useFriendsRoom`/`room-types.ts`) built against the OLD single-mode wire contract (no `mode` concept at all — every room was implicitly Claim). The backend has since replaced that contract with a universal `mode`-carrying `RoomState` (`velanto-backend/src/modules/friends-rooms/types/room.ts`) supporting six modes. This plan: (1) regenerates `room-types.ts` to mirror the new wire contract exactly, (2) extends `useFriendsRoom` with the new commands/events every mode needs, (3) adds a host-only mode picker to the lobby, (4) keeps Claim's existing round/between/results components almost untouched (per the product brief, `docs/multiplayer-modes-redesign.md` §4.3(a): "mostly unchanged... reuse today's `RoomRound`/`RoomItemCard`/`RoomBetween` largely as-is"), and (5) adds one new round-board component per remaining mode, reusing the interaction vocabulary already established by the SOLO play screens (`src/features/play/*`) wherever the interaction shape overlaps (picking one item from a board), plus a small set of new shared primitives (`TurnIndicator`, `LockedInRoster`, `PriorityHolderBadge`, `RoomLeaderboard`) that the design brief calls out as genuinely new UI concepts.
+**Architecture:** The dormant room infra already has a _complete, working Claim-mode implementation_ (`RoomScreen`/`RoomLobby`/`RoomRound`/`RoomItemCard`/`RoomBetween`/`RoomResults`/`useFriendsRoom`/`room-types.ts`) built against the OLD single-mode wire contract (no `mode` concept at all — every room was implicitly Claim). The backend has since replaced that contract with a universal `mode`-carrying `RoomState` (`velanto-backend/src/modules/friends-rooms/types/room.ts`) supporting six modes. This plan: (1) regenerates `room-types.ts` to mirror the new wire contract exactly, (2) extends `useFriendsRoom` with the new commands/events every mode needs, (3) adds a host-only mode picker to the lobby, (4) keeps Claim's existing round/between/results components almost untouched (per the product brief, `docs/multiplayer-modes-redesign.md` §4.3(a): "mostly unchanged... reuse today's `RoomRound`/`RoomItemCard`/`RoomBetween` largely as-is"), and (5) adds one new round-board component per remaining mode, reusing the interaction vocabulary already established by the SOLO play screens (`src/features/play/*`) wherever the interaction shape overlaps (picking one item from a board), plus a small set of new shared primitives (`TurnIndicator`, `LockedInRoster`, `PriorityHolderBadge`, `RoomLeaderboard`) that the design brief calls out as genuinely new UI concepts.
 
 **Tech Stack:** Next.js 16 (App Router), React 19, Tailwind v4 (semantic tokens only, see `.claude/docs/design-tokens.md`), socket.io-client, Vitest + RTL, Playwright, next-intl (8 locales: en, zh, hi, ar, bn, ru, ur, uk).
 
@@ -16,20 +16,20 @@
 
 Confirmed by direct inspection of `src/features/friends-rooms/*` in this worktree — **this is not a from-zero build**:
 
-| File | What it does today | Fate in this plan |
-| --- | --- | --- |
-| `room-types.ts` | The OLD wire contract: no `mode`, `RoundState`/`RoomState` shaped only for Claim, `ROOM_EVENTS`/`ROOM_COMMANDS` cover only claim/ready/next/leave/lock/kick | **Rewritten** (Task 1) to mirror the new backend contract exactly |
-| `use-friends-room.ts` | Socket lifecycle + Claim-only event reducers | **Extended** (Tasks 2–3) with the new commands/events; existing claim logic untouched |
-| `friends-rooms-client.ts` | REST `create`/`join`/`getById`/`mine` | Untouched — no REST surface changed for modes (mode is set over the socket) |
-| `RoomScreen.tsx` | Phase switch: `lobby → round → between → finished` (+ `abandoned`/`kicked`) | **Extended** (Task 6) to add the `guessing` phase and delegate `round`/`between` to per-mode dispatchers |
-| `RoomLobby.tsx` | Roster, Ready toggle, host Lock + join code | **Extended** (Task 5) with the mode picker; roster/Ready/Lock/code untouched |
-| `RoomRound.tsx` / `RoomItemCard.tsx` / `RoomBetween.tsx` | The full Claim board: claim buttons, claimant avatars, survivor reveal | Kept **almost as-is** (Task 10) — only format-aware copy (save vs sacrifice) generalized, since Claim now serves both formats instead of the old single `save_one_friends` |
-| `RoomResults.tsx` | Claim-only results (one block per round, survivor vs sacrificed) | **Generalized** (Task 27) to switch on every `RoundResult.kind` |
-| `RoomKicked.tsx` / `RoomLeaveButton.tsx` / `use-exit-to-pack.ts` | Terminal states | Untouched — mode-agnostic already |
-| `RoomPresenceIndicator.tsx` / `friends-rooms-presence-context.tsx` | The floating "you're in a room" chip, `/mine` poll | **Fixed** (Task 7) — its empty-seat math assumes the old fixed `MAX_PLAYERS = 4`, which is wrong once a room can be an 8–12 seat Voting/Guess-who game |
-| `FriendsRoomEntry.tsx` | Create-room / Join-by-code buttons | **Re-mounted** (Task 8) into `PackDetailScreen.tsx` — confirmed by direct grep that it is not imported there today at all (fully unmounted, not just flag-gated) |
-| `JoinCode.tsx` / `JoinByLink.tsx` / `JoinRoomCard.tsx` / `app/rooms/[id]/page.tsx` / `app/rooms/join/[code]/page.tsx` | Stream-safe code reveal, invite-link landing, home-page join card, routes | Untouched — already format/mode-agnostic |
-| `ROOMS_DORMANT` (in `room-types.ts`) | `true` — every entry point renders its dead-end state | **Flipped to `false`** only in the final task (Task 31), after every mode is built and tested |
+| File                                                                                                                  | What it does today                                                                                                                                          | Fate in this plan                                                                                                                                                          |
+| --------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `room-types.ts`                                                                                                       | The OLD wire contract: no `mode`, `RoundState`/`RoomState` shaped only for Claim, `ROOM_EVENTS`/`ROOM_COMMANDS` cover only claim/ready/next/leave/lock/kick | **Rewritten** (Task 1) to mirror the new backend contract exactly                                                                                                          |
+| `use-friends-room.ts`                                                                                                 | Socket lifecycle + Claim-only event reducers                                                                                                                | **Extended** (Tasks 2–3) with the new commands/events; existing claim logic untouched                                                                                      |
+| `friends-rooms-client.ts`                                                                                             | REST `create`/`join`/`getById`/`mine`                                                                                                                       | Untouched — no REST surface changed for modes (mode is set over the socket)                                                                                                |
+| `RoomScreen.tsx`                                                                                                      | Phase switch: `lobby → round → between → finished` (+ `abandoned`/`kicked`)                                                                                 | **Extended** (Task 6) to add the `guessing` phase and delegate `round`/`between` to per-mode dispatchers                                                                   |
+| `RoomLobby.tsx`                                                                                                       | Roster, Ready toggle, host Lock + join code                                                                                                                 | **Extended** (Task 5) with the mode picker; roster/Ready/Lock/code untouched                                                                                               |
+| `RoomRound.tsx` / `RoomItemCard.tsx` / `RoomBetween.tsx`                                                              | The full Claim board: claim buttons, claimant avatars, survivor reveal                                                                                      | Kept **almost as-is** (Task 10) — only format-aware copy (save vs sacrifice) generalized, since Claim now serves both formats instead of the old single `save_one_friends` |
+| `RoomResults.tsx`                                                                                                     | Claim-only results (one block per round, survivor vs sacrificed)                                                                                            | **Generalized** (Task 27) to switch on every `RoundResult.kind`                                                                                                            |
+| `RoomKicked.tsx` / `RoomLeaveButton.tsx` / `use-exit-to-pack.ts`                                                      | Terminal states                                                                                                                                             | Untouched — mode-agnostic already                                                                                                                                          |
+| `RoomPresenceIndicator.tsx` / `friends-rooms-presence-context.tsx`                                                    | The floating "you're in a room" chip, `/mine` poll                                                                                                          | **Fixed** (Task 7) — its empty-seat math assumes the old fixed `MAX_PLAYERS = 4`, which is wrong once a room can be an 8–12 seat Voting/Guess-who game                     |
+| `FriendsRoomEntry.tsx`                                                                                                | Create-room / Join-by-code buttons                                                                                                                          | **Re-mounted** (Task 8) into `PackDetailScreen.tsx` — confirmed by direct grep that it is not imported there today at all (fully unmounted, not just flag-gated)           |
+| `JoinCode.tsx` / `JoinByLink.tsx` / `JoinRoomCard.tsx` / `app/rooms/[id]/page.tsx` / `app/rooms/join/[code]/page.tsx` | Stream-safe code reveal, invite-link landing, home-page join card, routes                                                                                   | Untouched — already format/mode-agnostic                                                                                                                                   |
+| `ROOMS_DORMANT` (in `room-types.ts`)                                                                                  | `true` — every entry point renders its dead-end state                                                                                                       | **Flipped to `false`** only in the final task (Task 31), after every mode is built and tested                                                                              |
 
 ### D1 — No real mock access in this environment; established 2.0.0 component vocabulary stands in for it
 
@@ -37,17 +37,17 @@ Confirmed by direct inspection of `src/features/friends-rooms/*` in this worktre
 
 1. **The four already-completed 2.0.0 redesigns' converged component vocabulary** — `Card` (`rounded-card bg-surface-card border-border p-[18px]`), `Badge`, `AvatarStack`, `EmptyState`, `SegmentedControl`, `StatusBadge`, `Modal`/`ConfirmModal`, and the design-token catalog (`.claude/docs/design-tokens.md`) — all confirmed current by direct reads in this session.
 2. **The SOLO play screens** (`src/features/play/*`, redesigned this same epic), which already establish exactly the interaction vocabulary the product brief says the multiplayer round screens should extend: `CandidateCard`'s select-one-of-many, `VersusRound`/`HeadToHeadRound`'s two-side pick, `RankPlayScreen`'s click-to-place ranking, `PlayRoundHeader`'s round-progress chrome, `PlayConfirmBar`'s footer action bar.
-3. **The product design brief itself**, `docs/multiplayer-modes-redesign.md` (owner-approved, lives in this repo, written specifically to hand this exact rebuild to a designer/engineer with no mock), which already specifies every new UI concept's *behavior* (mode picker, priority-holder badge, live vote tally, turn indicator, anonymous labels, scored/winner results) even though it does not specify pixel layout.
+3. **The product design brief itself**, `docs/multiplayer-modes-redesign.md` (owner-approved, lives in this repo, written specifically to hand this exact rebuild to a designer/engineer with no mock), which already specifies every new UI concept's _behavior_ (mode picker, priority-holder badge, live vote tally, turn indicator, anonymous labels, scored/winner results) even though it does not specify pixel layout.
 
 Where this plan invents a NEW visual pattern with no direct analog in an already-shipped screen (the mode picker cards, the turn indicator, the label-accumulation table, the leaderboard/podium), it says so explicitly and grounds the choice in the existing token catalog (e.g. the podium already has `--medal-gold`/`--medal-silver`/`--medal-bronze` tokens reserved in `design-tokens.md`, unused until now). If a future session gets real mock access and finds a concrete visual mismatch, that is new information this plan did not have — file it separately, exactly as the Docs-page plan's own D1 instructs.
 
 ### D2 — Relay needs a genuinely different interaction primitive from the other five modes; it does not reuse "pick one" at all
 
-Five of the six modes (`claim`, `guess_who`, `turn_based_cut`, `voting`, `shared_grid`) are, at the interaction level, **selecting one thing from a fixed set** — a click/tap on a card, exactly what `CandidateCard`/`VersusRound`/`HeadToHeadRound`/`RankPlayScreen`'s click-to-place-next already do. `relay` is not: per `RoundState.relayCurrentItemId`/`relayPlaced`/`relayPlacements` (`velanto-backend/src/modules/friends-rooms/types/room.ts`), the whole room is building **one shared, growing ordered list**, and the player whose turn it is inserts the *current* item into a **position among the already-placed ones** — an insertion-into-a-list interaction, not a selection-from-a-set one. `RankPlayScreen`'s ranking is the closest existing analog (also builds an ordered list one item at a time) but is solo and always appends to the *end*; Relay's insert can land anywhere in the existing order and is watched live by the whole room. This plan (Task 29) builds a dedicated `RelayInsertBoard.tsx` with **click-a-gap-to-insert** (not drag-and-drop): the same click-based interaction convention `RankPlayScreen` already uses for placement (this codebase has no drag-and-drop anywhere — confirmed by grep — introducing the app's first drag interaction for one mode's one screen would be a bigger, unreviewable visual/interaction bet than this no-mock environment should make; §4.3(f) of the design brief itself only asks for "keeps the 'blind' tension... argue live," not a drag gesture specifically).
+Five of the six modes (`claim`, `guess_who`, `turn_based_cut`, `voting`, `shared_grid`) are, at the interaction level, **selecting one thing from a fixed set** — a click/tap on a card, exactly what `CandidateCard`/`VersusRound`/`HeadToHeadRound`/`RankPlayScreen`'s click-to-place-next already do. `relay` is not: per `RoundState.relayCurrentItemId`/`relayPlaced`/`relayPlacements` (`velanto-backend/src/modules/friends-rooms/types/room.ts`), the whole room is building **one shared, growing ordered list**, and the player whose turn it is inserts the _current_ item into a **position among the already-placed ones** — an insertion-into-a-list interaction, not a selection-from-a-set one. `RankPlayScreen`'s ranking is the closest existing analog (also builds an ordered list one item at a time) but is solo and always appends to the _end_; Relay's insert can land anywhere in the existing order and is watched live by the whole room. This plan (Task 29) builds a dedicated `RelayInsertBoard.tsx` with **click-a-gap-to-insert** (not drag-and-drop): the same click-based interaction convention `RankPlayScreen` already uses for placement (this codebase has no drag-and-drop anywhere — confirmed by grep — introducing the app's first drag interaction for one mode's one screen would be a bigger, unreviewable visual/interaction bet than this no-mock environment should make; §4.3(f) of the design brief itself only asks for "keeps the 'blind' tension... argue live," not a drag gesture specifically).
 
 ### D3 — `ROOMS_DORMANT` stays `true` until every mode is built; flipped exactly once, last
 
-Flipping it early would let real users reach a partially-built mode surface (e.g. Claim done, Relay not) the moment `createRoom` stops 503-ing. The flag only gates *entry points* (`JoinRoomCard`, the presence poll, `FriendsRoomEntry`'s mount, `JoinByLink`'s redirect) — none of the screens or hooks built in Tasks 1–30 read it, so every mode's components are independently unit-testable throughout without needing the flag flipped. Task 31 flips it once, after Task 30's e2e pass, as the very last step before the final gates (Task 32).
+Flipping it early would let real users reach a partially-built mode surface (e.g. Claim done, Relay not) the moment `createRoom` stops 503-ing. The flag only gates _entry points_ (`JoinRoomCard`, the presence poll, `FriendsRoomEntry`'s mount, `JoinByLink`'s redirect) — none of the screens or hooks built in Tasks 1–30 read it, so every mode's components are independently unit-testable throughout without needing the flag flipped. Task 31 flips it once, after Task 30's e2e pass, as the very last step before the final gates (Task 32).
 
 ### D4 — The wire contract is rewritten once, up front (Task 1), not incrementally per mode
 
@@ -57,14 +57,14 @@ Every later task depends on the exact shape of `RoundState`/`RoundResult`/`ROOM_
 
 `RoomState.availableModes[]` (`AvailableMode`) carries `{ mode, available, maxPlayers, reason }` — the pack-specific ceiling — but **not** each mode's `minPlayers`, which the lobby's "waiting for N more" copy needs before a mode is even chosen. `minPlayers` is not on any wire type (confirmed: absent from `ModeFeasibility`, `AvailableMode`, and `RoomState`). Exactly like `PACK_FORMATS`/`ROLES`/etc., this is a **closed-set constant hand-mirrored from the backend**, read directly from each mode's descriptor file in `velanto-backend/src/modules/friends-rooms/modes/*/*.descriptor.ts` (confirmed by direct grep this session, not invented):
 
-| Mode | formats | minPlayers | maxPlayers |
-| --- | --- | --- | --- |
-| `claim` | save_one, sacrifice_one | 2 | 4 |
-| `guess_who` | save_one, sacrifice_one, rank_blind, nxn, 1v1 (all five) | 3 | 8 |
-| `turn_based_cut` | save_one, sacrifice_one | 2 | 6 |
-| `voting` | save_one, sacrifice_one, nxn, 1v1 (NOT rank_blind) | 2 | 12 |
-| `shared_grid` | rank_blind | 2 | 12 |
-| `relay` | rank_blind | 2 | 6 |
+| Mode             | formats                                                  | minPlayers | maxPlayers |
+| ---------------- | -------------------------------------------------------- | ---------- | ---------- |
+| `claim`          | save_one, sacrifice_one                                  | 2          | 4          |
+| `guess_who`      | save_one, sacrifice_one, rank_blind, nxn, 1v1 (all five) | 3          | 8          |
+| `turn_based_cut` | save_one, sacrifice_one                                  | 2          | 6          |
+| `voting`         | save_one, sacrifice_one, nxn, 1v1 (NOT rank_blind)       | 2          | 12         |
+| `shared_grid`    | rank_blind                                               | 2          | 12         |
+| `relay`          | rank_blind                                               | 2          | 6          |
 
 Task 1 adds this as `ROOM_MODE_BOUNDS` in `room-types.ts`, with the same drift-snapshot discipline as every other mirrored constant (Task 1's last step adds the cross-repo-drift test entry).
 
@@ -75,6 +75,7 @@ Task 1 adds this as `ROOM_MODE_BOUNDS` in `room-types.ts`, with the same drift-s
 ### Task 1: Rewrite `room-types.ts` to mirror the new backend wire contract
 
 **Files:**
+
 - Modify: `src/features/friends-rooms/room-types.ts`
 - Modify: `src/shared/types/cross-repo-drift.test.ts`
 
@@ -83,53 +84,60 @@ Task 1 adds this as `ROOM_MODE_BOUNDS` in `room-types.ts`, with the same drift-s
 Add to `src/shared/types/cross-repo-drift.test.ts`, inside the existing `describe("cross-repo mirrored constants...")` block (after the `NOTIFICATION_TYPES` test, before the closing `});`):
 
 ```ts
-  // ROOM_MODES — MIRRORED in velanto-backend
-  // src/modules/friends-rooms/modes/mode.ts. Backend-only until this room-revival
-  // slice (see that file's own comment); this is the reciprocal FE entry now owed.
-  it("ROOM_MODES", () => {
-    expect([...ROOM_MODES]).toEqual([
-      "claim",
-      "guess_who",
-      "turn_based_cut",
-      "voting",
-      "shared_grid",
-      "relay",
-    ]);
-  });
+// ROOM_MODES — MIRRORED in velanto-backend
+// src/modules/friends-rooms/modes/mode.ts. Backend-only until this room-revival
+// slice (see that file's own comment); this is the reciprocal FE entry now owed.
+it("ROOM_MODES", () => {
+  expect([...ROOM_MODES]).toEqual([
+    "claim",
+    "guess_who",
+    "turn_based_cut",
+    "voting",
+    "shared_grid",
+    "relay",
+  ]);
+});
 
-  // ROOM_MODE_BOUNDS — MIRRORED, per-mode, from each mode's own
-  // velanto-backend src/modules/friends-rooms/modes/*/*.descriptor.ts
-  // (minPlayers/maxPlayers/formats). Not on the wire (see room-types.ts D5
-  // comment) so this hand-mirrored table is the only source of truth the FE has
-  // before a mode is chosen.
-  it("ROOM_MODE_BOUNDS", () => {
-    expect(ROOM_MODE_BOUNDS).toEqual({
-      claim: { formats: ["save_one", "sacrifice_one"], minPlayers: 2, maxPlayers: 4 },
-      guess_who: {
-        formats: ["save_one", "sacrifice_one", "rank_blind", "nxn", "1v1"],
-        minPlayers: 3,
-        maxPlayers: 8,
-      },
-      turn_based_cut: {
-        formats: ["save_one", "sacrifice_one"],
-        minPlayers: 2,
-        maxPlayers: 6,
-      },
-      voting: {
-        formats: ["save_one", "sacrifice_one", "nxn", "1v1"],
-        minPlayers: 2,
-        maxPlayers: 12,
-      },
-      shared_grid: { formats: ["rank_blind"], minPlayers: 2, maxPlayers: 12 },
-      relay: { formats: ["rank_blind"], minPlayers: 2, maxPlayers: 6 },
-    });
+// ROOM_MODE_BOUNDS — MIRRORED, per-mode, from each mode's own
+// velanto-backend src/modules/friends-rooms/modes/*/*.descriptor.ts
+// (minPlayers/maxPlayers/formats). Not on the wire (see room-types.ts D5
+// comment) so this hand-mirrored table is the only source of truth the FE has
+// before a mode is chosen.
+it("ROOM_MODE_BOUNDS", () => {
+  expect(ROOM_MODE_BOUNDS).toEqual({
+    claim: {
+      formats: ["save_one", "sacrifice_one"],
+      minPlayers: 2,
+      maxPlayers: 4,
+    },
+    guess_who: {
+      formats: ["save_one", "sacrifice_one", "rank_blind", "nxn", "1v1"],
+      minPlayers: 3,
+      maxPlayers: 8,
+    },
+    turn_based_cut: {
+      formats: ["save_one", "sacrifice_one"],
+      minPlayers: 2,
+      maxPlayers: 6,
+    },
+    voting: {
+      formats: ["save_one", "sacrifice_one", "nxn", "1v1"],
+      minPlayers: 2,
+      maxPlayers: 12,
+    },
+    shared_grid: { formats: ["rank_blind"], minPlayers: 2, maxPlayers: 12 },
+    relay: { formats: ["rank_blind"], minPlayers: 2, maxPlayers: 6 },
   });
+});
 ```
 
 Add the import at the top of the file, alongside the other type-level imports:
 
 ```ts
-import { ROOM_MODES, ROOM_MODE_BOUNDS } from "@/src/features/friends-rooms/room-types";
+import {
+  ROOM_MODES,
+  ROOM_MODE_BOUNDS,
+} from "@/src/features/friends-rooms/room-types";
 ```
 
 - [ ] **Step 2: Run the test, confirm it fails**
@@ -181,7 +189,11 @@ export const ROOM_MODE_BOUNDS: Record<
   RoomMode,
   { formats: PackFormat[]; minPlayers: number; maxPlayers: number }
 > = {
-  claim: { formats: ["save_one", "sacrifice_one"], minPlayers: 2, maxPlayers: 4 },
+  claim: {
+    formats: ["save_one", "sacrifice_one"],
+    minPlayers: 2,
+    maxPlayers: 4,
+  },
   guess_who: {
     formats: ["save_one", "sacrifice_one", "rank_blind", "nxn", "1v1"],
     minPlayers: 3,
@@ -463,7 +475,8 @@ export interface RelayRejection {
   turnUserId: string | null;
 }
 
-export type GuessRejectionReason = "not_a_player" | "not_guessing" | "malformed";
+export type GuessRejectionReason =
+  "not_a_player" | "not_guessing" | "malformed";
 export interface GuessRejection {
   mapping: Record<string, string>;
   reason: GuessRejectionReason;
@@ -540,6 +553,7 @@ git commit -m "feat(rooms): rewrite room-types.ts for the universal mode wire co
 ### Task 2: Extend `useFriendsRoom` — mode lifecycle (`setMode`, `modeChanged`, `guessing`/`endgame`/`myGuess` in state)
 
 **Files:**
+
 - Modify: `src/features/friends-rooms/use-friends-room.ts`
 - Modify: `src/features/friends-rooms/use-friends-room.test.tsx`
 
@@ -581,7 +595,10 @@ it("guessing.started sets phase to guessing and populates state.guessing", () =>
 it("guess.submitted appends the submitter without leaking their mapping", () => {
   const { result, emit } = renderHookWithSocket();
   act(() =>
-    emit(ROOM_EVENTS.state, baseRoomState({ mode: "guess_who", phase: "guessing" })),
+    emit(
+      ROOM_EVENTS.state,
+      baseRoomState({ mode: "guess_who", phase: "guessing" }),
+    ),
   );
   act(() => emit(ROOM_EVENTS.guessSubmitted, { userId: "u1" }));
   expect(result.current.state?.guessing?.submitted).toEqual(["u1"]);
@@ -590,7 +607,10 @@ it("guess.submitted appends the submitter without leaking their mapping", () => 
 it("identity.revealed sets state.endgame and state.myGuess from the per-player payload", () => {
   const { result, emit } = renderHookWithSocket();
   act(() =>
-    emit(ROOM_EVENTS.state, baseRoomState({ mode: "guess_who", phase: "guessing" })),
+    emit(
+      ROOM_EVENTS.state,
+      baseRoomState({ mode: "guess_who", phase: "guessing" }),
+    ),
   );
   act(() =>
     emit(ROOM_EVENTS.identityRevealed, {
@@ -651,70 +671,70 @@ Add the import for `RoomMode` at the top alongside the existing `room-types` imp
 Inside the `useEffect` that wires up socket listeners, add the new handlers right after the existing `roomLocked` handler:
 
 ```ts
-      socket.on(ROOM_EVENTS.modeChanged, ({ mode }: { mode: RoomMode }) =>
-        setState((s) => (s ? { ...s, mode } : s)),
-      );
+socket.on(ROOM_EVENTS.modeChanged, ({ mode }: { mode: RoomMode }) =>
+  setState((s) => (s ? { ...s, mode } : s)),
+);
 
-      socket.on(
-        ROOM_EVENTS.guessingStarted,
-        ({
-          labels,
-          candidateUserIds,
-          deadlineAt,
-        }: {
-          labels: string[];
-          candidateUserIds: string[];
-          deadlineAt: number;
-        }) =>
-          setState((s) =>
-            s
-              ? {
-                  ...s,
-                  phase: "guessing",
-                  autoNextAt: deadlineAt,
-                  guessing: { labels, candidateUserIds, submitted: [] },
-                }
-              : s,
-          ),
-      );
+socket.on(
+  ROOM_EVENTS.guessingStarted,
+  ({
+    labels,
+    candidateUserIds,
+    deadlineAt,
+  }: {
+    labels: string[];
+    candidateUserIds: string[];
+    deadlineAt: number;
+  }) =>
+    setState((s) =>
+      s
+        ? {
+            ...s,
+            phase: "guessing",
+            autoNextAt: deadlineAt,
+            guessing: { labels, candidateUserIds, submitted: [] },
+          }
+        : s,
+    ),
+);
 
-      socket.on(ROOM_EVENTS.guessSubmitted, ({ userId }: { userId: string }) =>
-        setState((s) =>
-          s && s.guessing
-            ? {
-                ...s,
-                guessing: {
-                  ...s.guessing,
-                  submitted: s.guessing.submitted.includes(userId)
-                    ? s.guessing.submitted
-                    : [...s.guessing.submitted, userId],
-                },
-              }
-            : s,
-        ),
-      );
+socket.on(ROOM_EVENTS.guessSubmitted, ({ userId }: { userId: string }) =>
+  setState((s) =>
+    s && s.guessing
+      ? {
+          ...s,
+          guessing: {
+            ...s.guessing,
+            submitted: s.guessing.submitted.includes(userId)
+              ? s.guessing.submitted
+              : [...s.guessing.submitted, userId],
+          },
+        }
+      : s,
+  ),
+);
 
-      socket.on(
-        ROOM_EVENTS.identityRevealed,
-        ({
-          mapping,
-          yourGuess,
-        }: {
-          mapping: Record<string, string>;
-          yourGuess: Record<string, string> | null;
-        }) =>
-          setState((s) =>
-            s
-              ? {
-                  ...s,
-                  phase: "finished",
-                  autoNextAt: null,
-                  endgame: { kind: "identity_reveal", mapping },
-                  myGuess: yourGuess,
-                }
-              : s,
-          ),
-      );
+socket.on(
+  ROOM_EVENTS.identityRevealed,
+  ({
+    mapping,
+    yourGuess,
+  }: {
+    mapping: Record<string, string>;
+    yourGuess: Record<string, string> | null;
+  }) =>
+    setState((s) =>
+      s
+        ? {
+            ...s,
+            phase: "finished",
+            autoNextAt: null,
+            endgame: { kind: "identity_reveal", mapping },
+            myGuess: yourGuess,
+          }
+        : s,
+    ),
+);
 ```
 
 Extend the hook's return object:
@@ -746,6 +766,7 @@ git commit -m "feat(rooms): wire mode lifecycle + guess-who endgame events into 
 ### Task 3: Extend `useFriendsRoom` — per-mode round actions (`cut`, `pick`, `vote`, `submitRanking`, `placeItem`) and their public/lock/reject events
 
 **Files:**
+
 - Modify: `src/features/friends-rooms/use-friends-room.ts`
 - Modify: `src/features/friends-rooms/use-friends-room.test.tsx`
 
@@ -797,7 +818,9 @@ it("item.cut updates round.remainingItemIds, cuts, and turnUserId", () => {
     emit(ROOM_EVENTS.itemCut, { userId: "u1", itemId: "a", turnUserId: "u2" }),
   );
   expect(result.current.state?.round?.remainingItemIds).toEqual(["b", "c"]);
-  expect(result.current.state?.round?.cuts).toEqual([{ userId: "u1", itemId: "a" }]);
+  expect(result.current.state?.round?.cuts).toEqual([
+    { userId: "u1", itemId: "a" },
+  ]);
   expect(result.current.state?.round?.turnUserId).toBe("u2");
 });
 
@@ -960,8 +983,8 @@ Extend `FriendsRoom` further:
 Add a new piece of state alongside `lastRejection`:
 
 ```ts
-  const [lastModeRejection, setLastModeRejection] =
-    useState<FriendsRoom["lastModeRejection"]>(null);
+const [lastModeRejection, setLastModeRejection] =
+  useState<FriendsRoom["lastModeRejection"]>(null);
 ```
 
 Add the round-scoped update helper (place it near `patchPlayer`/`patchPlayers` at the bottom of the file):
@@ -970,139 +993,138 @@ Add the round-scoped update helper (place it near `patchPlayer`/`patchPlayers` a
 type SetState2 = React.Dispatch<React.SetStateAction<RoomState | null>>;
 
 function patchRound(setState: SetState2, patch: Partial<RoundState>) {
-  setState((s) => (s && s.round ? { ...s, round: { ...s.round, ...patch } } : s));
+  setState((s) =>
+    s && s.round ? { ...s, round: { ...s.round, ...patch } } : s,
+  );
 }
 ```
 
 Inside the listener-registration `useEffect`, add:
 
 ```ts
-      socket.on(
-        ROOM_EVENTS.itemCut,
-        ({
-          userId,
-          itemId,
-          turnUserId,
-        }: {
-          userId: string | null;
-          itemId: string | null;
-          turnUserId: string | null;
-        }) =>
-          setState((s) => {
-            if (!s || !s.round) return s;
-            const remainingItemIds = itemId
-              ? (s.round.remainingItemIds ?? []).filter((id) => id !== itemId)
-              : s.round.remainingItemIds;
-            const cuts =
-              userId && itemId
-                ? [...(s.round.cuts ?? []), { userId, itemId }]
-                : s.round.cuts;
-            return {
-              ...s,
-              round: { ...s.round, remainingItemIds, cuts, turnUserId },
-            };
-          }),
-      );
-      socket.on(
-        ROOM_EVENTS.cutRejected,
-        (rejection: CutRejection) =>
-          setLastModeRejection({ ...rejection, kind: "cut" }),
-      );
+socket.on(
+  ROOM_EVENTS.itemCut,
+  ({
+    userId,
+    itemId,
+    turnUserId,
+  }: {
+    userId: string | null;
+    itemId: string | null;
+    turnUserId: string | null;
+  }) =>
+    setState((s) => {
+      if (!s || !s.round) return s;
+      const remainingItemIds = itemId
+        ? (s.round.remainingItemIds ?? []).filter((id) => id !== itemId)
+        : s.round.remainingItemIds;
+      const cuts =
+        userId && itemId
+          ? [...(s.round.cuts ?? []), { userId, itemId }]
+          : s.round.cuts;
+      return {
+        ...s,
+        round: { ...s.round, remainingItemIds, cuts, turnUserId },
+      };
+    }),
+);
+socket.on(ROOM_EVENTS.cutRejected, (rejection: CutRejection) =>
+  setLastModeRejection({ ...rejection, kind: "cut" }),
+);
 
-      socket.on(ROOM_EVENTS.pickLocked, ({ userId }: { userId: string }) =>
-        patchRound(setState, {
-          lockedIn: state?.round?.lockedIn?.includes(userId)
-            ? state.round.lockedIn
-            : [...(state?.round?.lockedIn ?? []), userId],
-        }),
-      );
-      socket.on(
-        ROOM_EVENTS.pickRejected,
-        (rejection: GuessWhoRejection) =>
-          setLastModeRejection({ ...rejection, kind: "pick" }),
-      );
+socket.on(ROOM_EVENTS.pickLocked, ({ userId }: { userId: string }) =>
+  patchRound(setState, {
+    lockedIn: state?.round?.lockedIn?.includes(userId)
+      ? state.round.lockedIn
+      : [...(state?.round?.lockedIn ?? []), userId],
+  }),
+);
+socket.on(ROOM_EVENTS.pickRejected, (rejection: GuessWhoRejection) =>
+  setLastModeRejection({ ...rejection, kind: "pick" }),
+);
 
-      socket.on(
-        ROOM_EVENTS.voteCast,
-        ({ userId, optionId }: { userId: string; optionId: string }) =>
-          setState((s) =>
-            s && s.round
-              ? { ...s, round: { ...s.round, votes: { ...s.round.votes, [userId]: optionId } } }
-              : s,
-          ),
-      );
-      socket.on(
-        ROOM_EVENTS.voteRejected,
-        (rejection: VoteRejection) =>
-          setLastModeRejection({ ...rejection, kind: "vote" }),
-      );
+socket.on(
+  ROOM_EVENTS.voteCast,
+  ({ userId, optionId }: { userId: string; optionId: string }) =>
+    setState((s) =>
+      s && s.round
+        ? {
+            ...s,
+            round: {
+              ...s.round,
+              votes: { ...s.round.votes, [userId]: optionId },
+            },
+          }
+        : s,
+    ),
+);
+socket.on(ROOM_EVENTS.voteRejected, (rejection: VoteRejection) =>
+  setLastModeRejection({ ...rejection, kind: "vote" }),
+);
 
-      socket.on(ROOM_EVENTS.rankingLocked, ({ userId }: { userId: string }) =>
-        setState((s) =>
-          s && s.round
-            ? {
-                ...s,
-                round: {
-                  ...s.round,
-                  lockedIn: s.round.lockedIn?.includes(userId)
-                    ? s.round.lockedIn
-                    : [...(s.round.lockedIn ?? []), userId],
-                },
-              }
-            : s,
-        ),
-      );
-      socket.on(
-        ROOM_EVENTS.rankingRejected,
-        (rejection: SharedGridRejection) =>
-          setLastModeRejection({ ...rejection, kind: "ranking" }),
-      );
+socket.on(ROOM_EVENTS.rankingLocked, ({ userId }: { userId: string }) =>
+  setState((s) =>
+    s && s.round
+      ? {
+          ...s,
+          round: {
+            ...s.round,
+            lockedIn: s.round.lockedIn?.includes(userId)
+              ? s.round.lockedIn
+              : [...(s.round.lockedIn ?? []), userId],
+          },
+        }
+      : s,
+  ),
+);
+socket.on(ROOM_EVENTS.rankingRejected, (rejection: SharedGridRejection) =>
+  setLastModeRejection({ ...rejection, kind: "ranking" }),
+);
 
-      socket.on(
-        ROOM_EVENTS.itemPlaced,
-        ({
-          userId,
-          itemId,
-          position,
-          turnUserId,
-        }: {
-          userId: string | null;
-          itemId: string | null;
-          position?: number;
-          turnUserId: string | null;
-        }) =>
-          setState((s) => {
-            if (!s || !s.round) return s;
-            const relayPlaced =
-              itemId && s.round.relayPlaced
-                ? [...s.round.relayPlaced, itemId]
-                : s.round.relayPlaced;
-            const relayPlacements =
-              userId && itemId
-                ? [...(s.round.relayPlacements ?? []), { userId, itemId }]
-                : s.round.relayPlacements;
-            const remainingOrder = s.round.relayOrder?.filter(
-              (id) => !(relayPlaced ?? []).includes(id),
-            );
-            return {
-              ...s,
-              round: {
-                ...s.round,
-                relayPlaced,
-                relayPlacements,
-                relayCurrentItemId: remainingOrder?.[0] ?? null,
-              },
-            };
-          }),
+socket.on(
+  ROOM_EVENTS.itemPlaced,
+  ({
+    userId,
+    itemId,
+    position,
+    turnUserId,
+  }: {
+    userId: string | null;
+    itemId: string | null;
+    position?: number;
+    turnUserId: string | null;
+  }) =>
+    setState((s) => {
+      if (!s || !s.round) return s;
+      const relayPlaced =
+        itemId && s.round.relayPlaced
+          ? [...s.round.relayPlaced, itemId]
+          : s.round.relayPlaced;
+      const relayPlacements =
+        userId && itemId
+          ? [...(s.round.relayPlacements ?? []), { userId, itemId }]
+          : s.round.relayPlacements;
+      const remainingOrder = s.round.relayOrder?.filter(
+        (id) => !(relayPlaced ?? []).includes(id),
       );
-      socket.on(
-        ROOM_EVENTS.placeRejected,
-        (rejection: RelayRejection) =>
-          setLastModeRejection({ ...rejection, kind: "place" }),
-      );
+      return {
+        ...s,
+        round: {
+          ...s.round,
+          relayPlaced,
+          relayPlacements,
+          relayCurrentItemId: remainingOrder?.[0] ?? null,
+        },
+      };
+    }),
+);
+socket.on(ROOM_EVENTS.placeRejected, (rejection: RelayRejection) =>
+  setLastModeRejection({ ...rejection, kind: "place" }),
+);
 ```
 
 > Note the `pickLocked` handler above reads `state` directly rather than through the `setState` updater — mirror the codebase's existing convention instead (see `patchRound`'s pure updater-function form) to avoid a stale-closure bug: replace that one handler with `patchRound`-style logic identical to `rankingLocked`'s, i.e.
+>
 > ```ts
 > socket.on(ROOM_EVENTS.pickLocked, ({ userId }: { userId: string }) =>
 >   setState((s) =>
@@ -1160,6 +1182,7 @@ git commit -m "feat(rooms): wire per-mode round action commands + events into us
 ### Task 4: `room-mode-copy.ts` — per-mode display name, blurb, and format-aware verb helper
 
 **Files:**
+
 - Create: `src/features/friends-rooms/room-mode-copy.ts`
 - Create: `src/features/friends-rooms/room-mode-copy.test.ts`
 
@@ -1280,6 +1303,7 @@ git commit -m "feat(rooms): add per-mode display copy + Claim's format-aware ver
 ### Task 5: `ModePicker.tsx` — host mode selection + guest read-only summary
 
 **Files:**
+
 - Create: `src/features/friends-rooms/ModePicker.tsx`
 - Create: `src/features/friends-rooms/ModePicker.test.tsx`
 - Modify: `src/features/friends-rooms/RoomLobby.tsx`
@@ -1299,7 +1323,12 @@ import type { AvailableMode } from "./room-types";
 
 const AVAILABLE: AvailableMode[] = [
   { mode: "claim", available: true, maxPlayers: 4 },
-  { mode: "guess_who", available: false, maxPlayers: 0, reason: "Needs at least 5 playable rounds" },
+  {
+    mode: "guess_who",
+    available: false,
+    maxPlayers: 0,
+    reason: "Needs at least 5 playable rounds",
+  },
 ];
 
 describe("ModePicker", () => {
@@ -1328,7 +1357,9 @@ describe("ModePicker", () => {
     );
     const guessWho = screen.getByRole("button", { name: /Guess Who/i });
     expect(guessWho).toBeDisabled();
-    expect(screen.getByText("Needs at least 5 playable rounds")).toBeInTheDocument();
+    expect(
+      screen.getByText("Needs at least 5 playable rounds"),
+    ).toBeInTheDocument();
   });
 
   it("guest: renders the selected mode read-only, no buttons", () => {
@@ -1373,7 +1404,11 @@ import { Check, Circle } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
 import { MODE_NAME_KEY, MODE_BLURB_KEY } from "./room-mode-copy";
-import { ROOM_MODE_BOUNDS, type AvailableMode, type RoomMode } from "./room-types";
+import {
+  ROOM_MODE_BOUNDS,
+  type AvailableMode,
+  type RoomMode,
+} from "./room-types";
 
 interface ModePickerProps {
   availableModes: AvailableMode[];
@@ -1401,7 +1436,10 @@ export function ModePicker({
   if (!isHost) {
     const chosen = availableModes.find((m) => m.mode === selectedMode);
     return (
-      <section aria-label={t("modePicker.heading")} className="flex flex-col gap-2">
+      <section
+        aria-label={t("modePicker.heading")}
+        className="flex flex-col gap-2"
+      >
         <Text variant="tertiary" className="text-xs uppercase tracking-wide">
           {t("modePicker.heading")}
         </Text>
@@ -1424,7 +1462,10 @@ export function ModePicker({
   }
 
   return (
-    <section aria-label={t("modePicker.heading")} className="flex flex-col gap-3">
+    <section
+      aria-label={t("modePicker.heading")}
+      className="flex flex-col gap-3"
+    >
       <Text variant="tertiary" className="text-xs uppercase tracking-wide">
         {t("modePicker.heading")}
       </Text>
@@ -1455,7 +1496,11 @@ export function ModePicker({
                 {selected ? (
                   <Check size={16} aria-hidden className="text-acc" />
                 ) : (
-                  <Circle size={14} aria-hidden className="text-foreground-tertiary" />
+                  <Circle
+                    size={14}
+                    aria-hidden
+                    className="text-foreground-tertiary"
+                  />
                 )}
               </div>
               <Text variant="secondary" className="text-xs">
@@ -1543,6 +1588,7 @@ git commit -m "feat(rooms): add the lobby mode picker (host select / guest read-
 ### Task 6: `RoomScreen.tsx` — route `round`/`between` per mode, add the `guessing` phase
 
 **Files:**
+
 - Modify: `src/features/friends-rooms/RoomScreen.tsx`
 - Modify: `src/features/friends-rooms/RoomScreen.test.tsx`
 - Create: `src/features/friends-rooms/RoomRoundBoard.tsx`
@@ -1572,7 +1618,9 @@ describe("RoomRoundBoard", () => {
           round: {
             index: 0,
             name: "",
-            items: [{ id: "i1", title: "Item 1", type: "text", value: "Item 1" }],
+            items: [
+              { id: "i1", title: "Item 1", type: "text", value: "Item 1" },
+            ],
             claims: {},
             survivorItemId: null,
           },
@@ -1752,7 +1800,11 @@ export function RoomBetweenBoard({
   switch (state.mode) {
     case "claim":
       return (
-        <RoomBetween state={state} currentUserId={currentUserId} onNext={onNext} />
+        <RoomBetween
+          state={state}
+          currentUserId={currentUserId}
+          onNext={onNext}
+        />
       );
     // Every other mode's between-round block is added by that mode's task
     // group (Tasks 13/19/22/24/26) — each reuses this same shell, since "show
@@ -1779,63 +1831,71 @@ import { RoomBetweenBoard } from "./RoomBetweenBoard";
 ```
 
 ```tsx
-  const {
-    state,
-    connection,
-    lastRejection,
-    lastModeRejection,
-    kicked,
-    claim,
-    cut,
-    pick,
-    vote,
-    submitRanking,
-    placeItem,
-    ready,
-    next,
-    lock,
-    leave,
-    kick,
-    setMode,
-    guess,
-  } = useFriendsRoom(roomId);
+const {
+  state,
+  connection,
+  lastRejection,
+  lastModeRejection,
+  kicked,
+  claim,
+  cut,
+  pick,
+  vote,
+  submitRanking,
+  placeItem,
+  ready,
+  next,
+  lock,
+  leave,
+  kick,
+  setMode,
+  guess,
+} = useFriendsRoom(roomId);
 ```
 
 Replace the `state.phase === "round"` and `state.phase === "between"` blocks:
 
 ```tsx
-      {state.phase === "lobby" && (
-        <RoomLobby
-          state={state}
-          currentUserId={userId}
-          onReady={ready}
-          onLock={lock}
-          onKick={kick}
-          onSetMode={setMode}
-        />
-      )}
-      {state.phase === "round" && (
-        <RoomRoundBoard
-          state={state}
-          currentUserId={userId}
-          actions={{
-            claim,
-            cut,
-            pick,
-            vote,
-            submitRanking,
-            placeItem,
-            lastRejection,
-            lastModeRejection,
-          }}
-        />
-      )}
-      {state.phase === "between" && (
-        <RoomBetweenBoard state={state} currentUserId={userId} onNext={next} />
-      )}
-      {state.phase === "guessing" && (
-        <GuessingPhaseScreen state={state} onSubmit={guess} />
-      )}
+{
+  state.phase === "lobby" && (
+    <RoomLobby
+      state={state}
+      currentUserId={userId}
+      onReady={ready}
+      onLock={lock}
+      onKick={kick}
+      onSetMode={setMode}
+    />
+  );
+}
+{
+  state.phase === "round" && (
+    <RoomRoundBoard
+      state={state}
+      currentUserId={userId}
+      actions={{
+        claim,
+        cut,
+        pick,
+        vote,
+        submitRanking,
+        placeItem,
+        lastRejection,
+        lastModeRejection,
+      }}
+    />
+  );
+}
+{
+  state.phase === "between" && (
+    <RoomBetweenBoard state={state} currentUserId={userId} onNext={next} />
+  );
+}
+{
+  state.phase === "guessing" && (
+    <GuessingPhaseScreen state={state} onSubmit={guess} />
+  );
+}
 ```
 
 Add the `GuessingPhaseScreen` import at the top; it does not exist until Task 16, so add a temporary placeholder export in this task to keep the build green, replaced for real in Task 16:
@@ -1887,6 +1947,7 @@ git commit -m "feat(rooms): route round/between per mode in RoomScreen, add the 
 ### Task 7: Fix `RoomPresenceIndicator`'s empty-seat math for per-mode capacity
 
 **Files:**
+
 - Modify: `src/features/friends-rooms/RoomPresenceIndicator.tsx`
 - Modify: `src/features/friends-rooms/RoomPresenceIndicator.test.tsx`
 
@@ -1906,7 +1967,9 @@ it("does not render empty-seat placeholders (capacity is not on MyRoomSummary)",
   );
   expect(screen.queryByText(/\+/)).not.toBeInTheDocument(); // no stray "+N" overflow chip either
   // six avatars rendered, zero dashed placeholders:
-  expect(screen.getAllByRole("img", { hidden: true }).length).toBeLessThanOrEqual(6);
+  expect(
+    screen.getAllByRole("img", { hidden: true }).length,
+  ).toBeLessThanOrEqual(6);
 });
 ```
 
@@ -1971,10 +2034,13 @@ function RoomChip({
 Update the `room.entry.presence.label` key usage: it referenced `{ count, max }`; replace with a new `presence.playerCount` key taking only `{ count }` (Task 28 later consolidates every OTHER new i18n key, but this one is deleted-and-replaced in place right here, in this same step, since leaving `presence.label` half-updated would break this task's own Step 4 test before Task 28 ever runs):
 
 In `messages/en.json`, under `room.presence`, replace:
+
 ```json
     "label": "{count} / {max} in room"
 ```
+
 with:
+
 ```json
     "playerCount": "{count} in room"
 ```
@@ -1994,6 +2060,7 @@ git commit -m "fix(rooms): presence chip no longer assumes a fixed 4-seat capaci
 ### Task 8: Re-mount `FriendsRoomEntry` into `PackDetailScreen.tsx`
 
 **Files:**
+
 - Modify: `src/features/pack/PackDetailScreen.tsx`
 - Modify: `src/features/pack/PackDetailScreen.test.tsx`
 
@@ -2006,7 +2073,9 @@ Add to `PackDetailScreen.test.tsx`:
 ```tsx
 it("does not render the room entry while ROOMS_DORMANT is true", () => {
   render(<PackDetailScreen pack={makeTestPack()} />);
-  expect(screen.queryByRole("button", { name: /create room/i })).not.toBeInTheDocument();
+  expect(
+    screen.queryByRole("button", { name: /create room/i }),
+  ).not.toBeInTheDocument();
 });
 ```
 
@@ -2028,16 +2097,16 @@ import { FriendsRoomEntry } from "@/src/features/friends-rooms/FriendsRoomEntry"
 Update the play panel:
 
 ```tsx
-            <Panel className="flex flex-col gap-3 rounded-[20px] p-5">
-              <PackPlayButton packId={pack.id} />
-              <PackPlayEstimate pack={pack} />
-              {/* Room infra is dormant until every mode's UI ships (see
+<Panel className="flex flex-col gap-3 rounded-[20px] p-5">
+  <PackPlayButton packId={pack.id} />
+  <PackPlayEstimate pack={pack} />
+  {/* Room infra is dormant until every mode's UI ships (see
                   docs/superpowers/plans/2026-07-29-rooms-ui-plan.md, Task 31) —
                   FriendsRoomEntry itself no-ops nothing here since it has no
                   ROOMS_DORMANT guard of its own; it is simply not rendered
                   until that flip, mirroring how JoinRoomCard guards itself. */}
-              {!ROOMS_DORMANT && <FriendsRoomEntry packId={pack.id} />}
-            </Panel>
+  {!ROOMS_DORMANT && <FriendsRoomEntry packId={pack.id} />}
+</Panel>
 ```
 
 Add the `ROOMS_DORMANT` import:
@@ -2062,11 +2131,12 @@ git commit -m "feat(rooms): re-mount FriendsRoomEntry on the pack detail page, s
 
 ## Group B — Claim mode (generalize the existing board from save_one_friends-only to save_one + sacrifice_one)
 
-Per the design brief §4.3(a): "mostly unchanged... Only change: it's now a *mode*, reachable from save_one/sacrifice_one packs (labels flip for sacrifice)." `RoomRound`/`RoomItemCard`/`RoomBetween` keep their exact shapes; only their hardcoded "sacrifice" copy becomes format-aware, and the claim-rejection UI learns to distinguish `too_fast` from `taken`.
+Per the design brief §4.3(a): "mostly unchanged... Only change: it's now a _mode_, reachable from save_one/sacrifice_one packs (labels flip for sacrifice)." `RoomRound`/`RoomItemCard`/`RoomBetween` keep their exact shapes; only their hardcoded "sacrifice" copy becomes format-aware, and the claim-rejection UI learns to distinguish `too_fast` from `taken`.
 
 ### Task 9: Format-aware claim copy (save vs sacrifice) in `RoomItemCard`/`RoomRound`/`RoomBetween`/`RoomResults`
 
 **Files:**
+
 - Modify: `src/features/friends-rooms/RoomItemCard.tsx`
 - Modify: `src/features/friends-rooms/RoomItemCard.test.tsx`
 - Modify: `src/features/friends-rooms/RoomRound.tsx`
@@ -2082,20 +2152,46 @@ Add to `RoomItemCard.test.tsx`:
 
 ```tsx
 it("uses the save verb for a save_one room and the sacrifice verb for sacrifice_one", () => {
-  const item = { id: "i1", title: "Pizza", type: "text" as const, value: "Pizza" };
+  const item = {
+    id: "i1",
+    title: "Pizza",
+    type: "text" as const,
+    value: "Pizza",
+  };
   const { rerender } = render(
-    <RoomItemCard item={item} index={0} status="free" format="save_one" onClaim={vi.fn()} />,
+    <RoomItemCard
+      item={item}
+      index={0}
+      status="free"
+      format="save_one"
+      onClaim={vi.fn()}
+    />,
   );
-  expect(screen.getByRole("button", { name: /save pizza/i })).toBeInTheDocument();
+  expect(
+    screen.getByRole("button", { name: /save pizza/i }),
+  ).toBeInTheDocument();
 
   rerender(
-    <RoomItemCard item={item} index={0} status="free" format="sacrifice_one" onClaim={vi.fn()} />,
+    <RoomItemCard
+      item={item}
+      index={0}
+      status="free"
+      format="sacrifice_one"
+      onClaim={vi.fn()}
+    />,
   );
-  expect(screen.getByRole("button", { name: /sacrifice pizza/i })).toBeInTheDocument();
+  expect(
+    screen.getByRole("button", { name: /sacrifice pizza/i }),
+  ).toBeInTheDocument();
 });
 
 it("the survivor badge also flips: 'Saved' for save_one, 'Survivor' for sacrifice_one", () => {
-  const item = { id: "i1", title: "Pizza", type: "text" as const, value: "Pizza" };
+  const item = {
+    id: "i1",
+    title: "Pizza",
+    type: "text" as const,
+    value: "Pizza",
+  };
   render(
     <RoomItemCard item={item} index={0} status="survivor" format="save_one" />,
   );
@@ -2152,16 +2248,16 @@ interface RoomItemCardProps {
 Replace the `statusLabel`/`claimLabel` derivations to key off `claimVerbKey(format)` producing `"Save"`/`"Sacrifice"`, e.g.:
 
 ```tsx
-  const verb = claimVerbKey(format).endsWith("Save") ? "Save" : "Sacrifice";
-  const statusLabel =
-    status === "survivor"
-      ? t(`round.survivor${verb}`)
-      : status === "free"
-        ? null
-        : claimant
-          ? t(`round.claimedBy${verb}`, { name: claimant.username })
-          : t("round.taken");
-  const claimLabel = t(`round.claim${verb}`, { name: item.title });
+const verb = claimVerbKey(format).endsWith("Save") ? "Save" : "Sacrifice";
+const statusLabel =
+  status === "survivor"
+    ? t(`round.survivor${verb}`)
+    : status === "free"
+      ? null
+      : claimant
+        ? t(`round.claimedBy${verb}`, { name: claimant.username })
+        : t("round.taken");
+const claimLabel = t(`round.claim${verb}`, { name: item.title });
 ```
 
 (Replace every other `t("round.claim", ...)`/`t("round.survivor")`/etc. call site in the file with the same `${verb}`-suffixed key.)
@@ -2214,6 +2310,7 @@ git commit -m "feat(rooms): make Claim's save/sacrifice copy format-aware instea
 ### Task 10: Distinguish `too_fast` from `taken` in the claim-rejection flash
 
 **Files:**
+
 - Modify: `src/features/friends-rooms/RoomRound.tsx`
 - Modify: `src/features/friends-rooms/RoomRound.test.tsx`
 
@@ -2257,15 +2354,13 @@ Expected: FAIL — no such note exists.
 Add below the existing grid, before the "chosen" counter `<Text>`:
 
 ```tsx
-      {lastRejection?.reason === "too_fast" && (
-        <Text
-          role="status"
-          variant="secondary"
-          className="text-xs text-score"
-        >
-          {t("round.tooFastNote")}
-        </Text>
-      )}
+{
+  lastRejection?.reason === "too_fast" && (
+    <Text role="status" variant="secondary" className="text-xs text-score">
+      {t("round.tooFastNote")}
+    </Text>
+  );
+}
 ```
 
 Add `messages/en.json`'s `room.round.tooFastNote`: `"You're re-claiming too fast — wait a moment and try again."`
@@ -2291,10 +2386,11 @@ The richest new surface (design brief §4.3(d)). Built in five layers: a shared 
 ### Task 11: `LockedInRoster.tsx` — shared "who's locked in" indicator (blind modes)
 
 **Files:**
+
 - Create: `src/features/friends-rooms/LockedInRoster.tsx`
 - Create: `src/features/friends-rooms/LockedInRoster.test.tsx`
 
-Used by Guess-who (this task) and Shared-grid (Task 24) — both blind modes whose `RoundState.lockedIn: string[]` carries only *who* has submitted, never *what*. A shared component keeps the "never render the actual pick" discipline in exactly one place.
+Used by Guess-who (this task) and Shared-grid (Task 24) — both blind modes whose `RoundState.lockedIn: string[]` carries only _who_ has submitted, never _what_. A shared component keeps the "never render the actual pick" discipline in exactly one place.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -2305,8 +2401,26 @@ import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { LockedInRoster } from "./LockedInRoster";
 
 const PLAYERS = [
-  { userId: "u1", username: "Alice", avatarKey: null, seat: 0, connected: true, ready: true, next: false, claimedItemId: null },
-  { userId: "u2", username: "Bob", avatarKey: null, seat: 1, connected: true, ready: true, next: false, claimedItemId: null },
+  {
+    userId: "u1",
+    username: "Alice",
+    avatarKey: null,
+    seat: 0,
+    connected: true,
+    ready: true,
+    next: false,
+    claimedItemId: null,
+  },
+  {
+    userId: "u2",
+    username: "Bob",
+    avatarKey: null,
+    seat: 1,
+    connected: true,
+    ready: true,
+    next: false,
+    claimedItemId: null,
+  },
 ];
 
 describe("LockedInRoster", () => {
@@ -2415,6 +2529,7 @@ git commit -m "feat(rooms): add LockedInRoster, the shared blind-round lock-in i
 ### Task 12: `GuessWhoRoundBoard.tsx` — blind pick (single-select) or blind rank UI
 
 **Files:**
+
 - Create: `src/features/friends-rooms/GuessWhoRoundBoard.tsx`
 - Create: `src/features/friends-rooms/GuessWhoRoundBoard.test.tsx`
 - Modify: `src/features/friends-rooms/RoomRoundBoard.tsx`
@@ -2432,7 +2547,12 @@ import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { GuessWhoRoundBoard } from "./GuessWhoRoundBoard";
 import { baseRoomState } from "./test-fixtures";
 
-const ITEM = (id: string, title: string) => ({ id, title, type: "text" as const, value: title });
+const ITEM = (id: string, title: string) => ({
+  id,
+  title,
+  type: "text" as const,
+  value: title,
+});
 
 describe("GuessWhoRoundBoard", () => {
   it("pick mode: clicking an option locks it in and calls onPick once", async () => {
@@ -2442,9 +2562,14 @@ describe("GuessWhoRoundBoard", () => {
         state={baseRoomState({
           mode: "guess_who",
           round: {
-            index: 0, name: "", items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
-            claims: {}, survivorItemId: null,
-            optionIds: ["i1", "i2"], actionKind: "pick", lockedIn: [],
+            index: 0,
+            name: "",
+            items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
+            claims: {},
+            survivorItemId: null,
+            optionIds: ["i1", "i2"],
+            actionKind: "pick",
+            lockedIn: [],
           },
         })}
         currentUserId="u1"
@@ -2462,9 +2587,14 @@ describe("GuessWhoRoundBoard", () => {
         state={baseRoomState({
           mode: "guess_who",
           round: {
-            index: 0, name: "", items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
-            claims: {}, survivorItemId: null,
-            optionIds: ["i1", "i2"], actionKind: "pick", lockedIn: ["u1"],
+            index: 0,
+            name: "",
+            items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
+            claims: {},
+            survivorItemId: null,
+            optionIds: ["i1", "i2"],
+            actionKind: "pick",
+            lockedIn: ["u1"],
           },
         })}
         currentUserId="u1"
@@ -2472,7 +2602,10 @@ describe("GuessWhoRoundBoard", () => {
         onPick={onPick}
       />,
     );
-    expect(screen.getByRole("button", { name: /pizza/i })).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button", { name: /pizza/i })).toHaveAttribute(
+      "aria-pressed",
+      "true",
+    );
   });
 
   it("rank mode: clicking items one at a time builds a full ranking and submits when the last item is placed", async () => {
@@ -2482,9 +2615,14 @@ describe("GuessWhoRoundBoard", () => {
         state={baseRoomState({
           mode: "guess_who",
           round: {
-            index: 0, name: "", items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
-            claims: {}, survivorItemId: null,
-            optionIds: ["i1", "i2"], actionKind: "rank", lockedIn: [],
+            index: 0,
+            name: "",
+            items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
+            claims: {},
+            survivorItemId: null,
+            optionIds: ["i1", "i2"],
+            actionKind: "rank",
+            lockedIn: [],
           },
         })}
         currentUserId="u1"
@@ -2555,7 +2693,11 @@ export function GuessWhoRoundBoard({
   }
 
   function selectRankNext(optionId: string) {
-    if (iAmLockedIn || round?.actionKind !== "rank" || rankSoFar.includes(optionId)) {
+    if (
+      iAmLockedIn ||
+      round?.actionKind !== "rank" ||
+      rankSoFar.includes(optionId)
+    ) {
       return;
     }
     const next = [...rankSoFar, optionId];
@@ -2567,7 +2709,10 @@ export function GuessWhoRoundBoard({
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
         <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-          {t("round.heading", { index: round.index + 1, total: state.totalRounds })}
+          {t("round.heading", {
+            index: round.index + 1,
+            total: state.totalRounds,
+          })}
         </Text>
         <Text as="h2" variant="title" className="text-2xl">
           {round.name || t("guessWho.roundInstruction")}
@@ -2618,7 +2763,9 @@ export function GuessWhoRoundBoard({
                 onClick={() => selectRankNext(optionId)}
                 className={cn(
                   "flex items-center gap-3 rounded-tile border-[1.5px] p-[14px] text-start transition-colors",
-                  placed ? "border-border opacity-60" : "border-dashed border-white/[0.14] hover:border-acc/40",
+                  placed
+                    ? "border-border opacity-60"
+                    : "border-dashed border-white/[0.14] hover:border-acc/40",
                 )}
               >
                 <span
@@ -2675,6 +2822,7 @@ git commit -m "feat(rooms): add the Guess-who blind pick/rank round board"
 ### Task 13: `GuessWhoRevealBoard.tsx` — between-round reveal + accumulating label-history table
 
 **Files:**
+
 - Create: `src/features/friends-rooms/GuessWhoRevealBoard.tsx`
 - Create: `src/features/friends-rooms/GuessWhoRevealBoard.test.tsx`
 - Modify: `src/features/friends-rooms/RoomBetweenBoard.tsx`
@@ -2691,7 +2839,12 @@ import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { GuessWhoRevealBoard } from "./GuessWhoRevealBoard";
 import { baseRoomState } from "./test-fixtures";
 
-const ITEM = (id: string, title: string) => ({ id, title, type: "text" as const, value: title });
+const ITEM = (id: string, title: string) => ({
+  id,
+  title,
+  type: "text" as const,
+  value: title,
+});
 
 describe("GuessWhoRevealBoard", () => {
   it("shows this round's fresh reveal — every label's pick, resolved to the item title", () => {
@@ -2700,12 +2853,27 @@ describe("GuessWhoRevealBoard", () => {
         state={baseRoomState({
           mode: "guess_who",
           round: {
-            index: 1, name: "Round 2", items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
-            claims: {}, survivorItemId: null,
+            index: 1,
+            name: "Round 2",
+            items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
+            claims: {},
+            survivorItemId: null,
           },
           results: [
-            { kind: "reveal", index: 0, name: "Round 1", items: [ITEM("i3", "Tacos")], picks: { P1: ["i3"], P2: ["i3"] } },
-            { kind: "reveal", index: 1, name: "Round 2", items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")], picks: { P1: ["i1"], P2: ["i2"] } },
+            {
+              kind: "reveal",
+              index: 0,
+              name: "Round 1",
+              items: [ITEM("i3", "Tacos")],
+              picks: { P1: ["i3"], P2: ["i3"] },
+            },
+            {
+              kind: "reveal",
+              index: 1,
+              name: "Round 2",
+              items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
+              picks: { P1: ["i1"], P2: ["i2"] },
+            },
           ],
         })}
         onNext={() => {}}
@@ -2749,7 +2917,10 @@ interface GuessWhoRevealBoardProps {
  * label's raw item id back to its title via that round's own `items`, since
  * `picks` only ever carries ids.
  */
-export function GuessWhoRevealBoard({ state, onNext }: GuessWhoRevealBoardProps) {
+export function GuessWhoRevealBoard({
+  state,
+  onNext,
+}: GuessWhoRevealBoardProps) {
   const t = useTranslations("room");
   const reveals = state.results.filter(
     (r): r is RevealRoundResult => r.kind === "reveal",
@@ -2781,7 +2952,10 @@ export function GuessWhoRevealBoard({ state, onNext }: GuessWhoRevealBoardProps)
                 {t("guessWho.roundColumn")}
               </th>
               {labels.map((label) => (
-                <th key={label} className="p-3 text-start font-semibold text-foreground-secondary">
+                <th
+                  key={label}
+                  className="p-3 text-start font-semibold text-foreground-secondary"
+                >
                   {label}
                 </th>
               ))}
@@ -2789,15 +2963,23 @@ export function GuessWhoRevealBoard({ state, onNext }: GuessWhoRevealBoardProps)
           </thead>
           <tbody>
             {reveals.map((round) => {
-              const itemsById = new Map(round.items.map((item) => [item.id, item]));
+              const itemsById = new Map(
+                round.items.map((item) => [item.id, item]),
+              );
               return (
-                <tr key={round.index} className="border-b border-border last:border-0">
+                <tr
+                  key={round.index}
+                  className="border-b border-border last:border-0"
+                >
                   <td className="p-3 font-medium text-foreground-tertiary">
-                    {round.name || t("results.roundLabel", { index: round.index + 1 })}
+                    {round.name ||
+                      t("results.roundLabel", { index: round.index + 1 })}
                   </td>
                   {labels.map((label) => {
                     const ids = round.picks[label] ?? [];
-                    const titles = ids.map((id) => itemsById.get(id)?.title ?? id).join(", ");
+                    const titles = ids
+                      .map((id) => itemsById.get(id)?.title ?? id)
+                      .join(", ");
                     return (
                       <td key={label} className="p-3">
                         {titles || "—"}
@@ -2847,6 +3029,7 @@ git commit -m "feat(rooms): add the Guess-who between-round label-history reveal
 ### Task 14: `RoomLeaderboard.tsx` — shared scored/winner podium (the app's first)
 
 **Files:**
+
 - Create: `src/features/friends-rooms/RoomLeaderboard.tsx`
 - Create: `src/features/friends-rooms/RoomLeaderboard.test.tsx`
 
@@ -2946,7 +3129,11 @@ export function RoomLeaderboard({ entries }: { entries: LeaderboardEntry[] }) {
             <span className="w-6 flex-none text-center text-sm font-bold tabular-nums text-foreground-tertiary">
               {index + 1}
             </span>
-            <UserAvatar username={entry.username} avatarKey={entry.avatarKey} size="sm" />
+            <UserAvatar
+              username={entry.username}
+              avatarKey={entry.avatarKey}
+              size="sm"
+            />
             <Text className="flex-1 truncate text-sm font-semibold">
               {entry.username}
             </Text>
@@ -2956,7 +3143,10 @@ export function RoomLeaderboard({ entries }: { entries: LeaderboardEntry[] }) {
                 {t("leaderboard.winner")}
               </span>
             )}
-            <Text variant="secondary" className="text-sm font-bold tabular-nums">
+            <Text
+              variant="secondary"
+              className="text-sm font-bold tabular-nums"
+            >
               {t("leaderboard.points", { count: entry.score })}
             </Text>
           </li>
@@ -2982,6 +3172,7 @@ git commit -m "feat(rooms): add RoomLeaderboard, the shared scored/winner podium
 ### Task 15: `GuessingPhaseScreen.tsx` — the identity-assignment endgame
 
 **Files:**
+
 - Modify: `src/features/friends-rooms/GuessingPhaseScreen.tsx` (replace the Task 6 stub)
 - Create: `src/features/friends-rooms/GuessingPhaseScreen.test.tsx`
 
@@ -3030,7 +3221,11 @@ describe("GuessingPhaseScreen", () => {
         state={baseRoomState({
           phase: "guessing",
           mode: "guess_who",
-          guessing: { labels: ["P1", "P2"], candidateUserIds: ["u1", "u2"], submitted: [] },
+          guessing: {
+            labels: ["P1", "P2"],
+            candidateUserIds: ["u1", "u2"],
+            submitted: [],
+          },
         })}
         onSubmit={vi.fn()}
       />,
@@ -3075,7 +3270,10 @@ interface GuessingPhaseScreenProps {
  * person client-side (the server re-validates regardless, per
  * GUESS_REJECTION_REASONS.malformed).
  */
-export function GuessingPhaseScreen({ state, onSubmit }: GuessingPhaseScreenProps) {
+export function GuessingPhaseScreen({
+  state,
+  onSubmit,
+}: GuessingPhaseScreenProps) {
   const t = useTranslations("room");
   const [assignment, setAssignment] = useState<Record<string, string>>({});
   const guessing = state.guessing;
@@ -3195,6 +3393,7 @@ git commit -m "feat(rooms): build the Guess-who identity-assignment endgame scre
 ### Task 16: `IdentityRevealScreen.tsx` — green/red reveal + leaderboard, wired as Guess-who's finished screen
 
 **Files:**
+
 - Create: `src/features/friends-rooms/IdentityRevealScreen.tsx`
 - Create: `src/features/friends-rooms/IdentityRevealScreen.test.tsx`
 - Modify: `src/features/friends-rooms/RoomScreen.tsx`
@@ -3280,7 +3479,9 @@ export function IdentityRevealScreen({ state }: { state: RoomState }) {
   const t = useTranslations("room");
   const mapping = state.endgame?.mapping ?? {};
   const myGuess = state.myGuess ?? {};
-  const usernameByUserId = new Map(state.players.map((p) => [p.userId, p.username]));
+  const usernameByUserId = new Map(
+    state.players.map((p) => [p.userId, p.username]),
+  );
   const labels = Object.keys(mapping);
 
   return (
@@ -3294,7 +3495,10 @@ export function IdentityRevealScreen({ state }: { state: RoomState }) {
         </Text>
       </header>
 
-      <BackButton href={`/packs/${state.packId}`} label={t("results.backToPack")} />
+      <BackButton
+        href={`/packs/${state.packId}`}
+        label={t("results.backToPack")}
+      />
 
       <ol className="flex flex-col gap-2">
         {labels.map((label) => {
@@ -3306,7 +3510,9 @@ export function IdentityRevealScreen({ state }: { state: RoomState }) {
               key={label}
               className={cn(
                 "flex items-center gap-3 rounded-tile border p-3",
-                correct ? "border-live/40 bg-live/10" : "border-danger/40 bg-danger/10",
+                correct
+                  ? "border-live/40 bg-live/10"
+                  : "border-danger/40 bg-danger/10",
               )}
             >
               <span className="flex h-8 w-8 flex-none items-center justify-center rounded-chip bg-white/[0.06] font-mono text-xs font-bold">
@@ -3343,17 +3549,17 @@ Expected: PASS.
 The existing `state?.phase === "finished"` block always renders `RoomResults` — extend it to check the mode:
 
 ```tsx
-  if (state?.phase === "finished") {
-    return (
-      <Shell>
-        {state.mode === "guess_who" && state.endgame ? (
-          <IdentityRevealScreen state={state} />
-        ) : (
-          <RoomResults state={state} />
-        )}
-      </Shell>
-    );
-  }
+if (state?.phase === "finished") {
+  return (
+    <Shell>
+      {state.mode === "guess_who" && state.endgame ? (
+        <IdentityRevealScreen state={state} />
+      ) : (
+        <RoomResults state={state} />
+      )}
+    </Shell>
+  );
+}
 ```
 
 Add the import. Add a `RoomScreen.test.tsx` case: a `mode: "guess_who"`, `phase: "finished"`, `endgame` non-null state renders the identity-reveal heading text instead of `RoomResults`' own heading.
@@ -3375,6 +3581,7 @@ git commit -m "feat(rooms): add the Guess-who identity reveal, wired as its fini
 ### Task 17: `TurnIndicator.tsx` — shared "whose turn" banner (reused by Relay in Group G)
 
 **Files:**
+
 - Create: `src/features/friends-rooms/TurnIndicator.tsx`
 - Create: `src/features/friends-rooms/TurnIndicator.test.tsx`
 
@@ -3389,18 +3596,40 @@ import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { TurnIndicator } from "./TurnIndicator";
 
 const PLAYERS = [
-  { userId: "u1", username: "Alice", avatarKey: null, seat: 0, connected: true, ready: true, next: false, claimedItemId: null },
-  { userId: "u2", username: "Bob", avatarKey: null, seat: 1, connected: true, ready: true, next: false, claimedItemId: null },
+  {
+    userId: "u1",
+    username: "Alice",
+    avatarKey: null,
+    seat: 0,
+    connected: true,
+    ready: true,
+    next: false,
+    claimedItemId: null,
+  },
+  {
+    userId: "u2",
+    username: "Bob",
+    avatarKey: null,
+    seat: 1,
+    connected: true,
+    ready: true,
+    next: false,
+    claimedItemId: null,
+  },
 ];
 
 describe("TurnIndicator", () => {
   it("shows a distinct 'your turn' CTA state when the viewer holds the turn", () => {
-    render(<TurnIndicator players={PLAYERS} turnUserId="u1" currentUserId="u1" />);
+    render(
+      <TurnIndicator players={PLAYERS} turnUserId="u1" currentUserId="u1" />,
+    );
     expect(screen.getByText(/your turn/i)).toBeInTheDocument();
   });
 
   it("shows 'waiting for Alice' when someone else holds the turn", () => {
-    render(<TurnIndicator players={PLAYERS} turnUserId="u1" currentUserId="u2" />);
+    render(
+      <TurnIndicator players={PLAYERS} turnUserId="u1" currentUserId="u2" />,
+    );
     expect(screen.getByText(/waiting for alice/i)).toBeInTheDocument();
   });
 
@@ -3443,7 +3672,11 @@ interface TurnIndicatorProps {
  * (the "turn-circle visualization" the task brief calls out) plus a text CTA
  * that flips to a stronger, accented state when it is the VIEWER'S OWN turn.
  */
-export function TurnIndicator({ players, turnUserId, currentUserId }: TurnIndicatorProps) {
+export function TurnIndicator({
+  players,
+  turnUserId,
+  currentUserId,
+}: TurnIndicatorProps) {
   const t = useTranslations("room");
   if (!turnUserId) return null;
   const turnPlayer = players.find((p) => p.userId === turnUserId);
@@ -3496,6 +3729,7 @@ git commit -m "feat(rooms): add TurnIndicator, the shared whose-turn banner"
 ### Task 18: `TurnBasedCutBoard.tsx` — the shrinking shared board
 
 **Files:**
+
 - Create: `src/features/friends-rooms/TurnBasedCutBoard.tsx`
 - Create: `src/features/friends-rooms/TurnBasedCutBoard.test.tsx`
 - Modify: `src/features/friends-rooms/RoomRoundBoard.tsx`
@@ -3513,7 +3747,12 @@ import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { TurnBasedCutBoard } from "./TurnBasedCutBoard";
 import { baseRoomState } from "./test-fixtures";
 
-const ITEM = (id: string, title: string) => ({ id, title, type: "text" as const, value: title });
+const ITEM = (id: string, title: string) => ({
+  id,
+  title,
+  type: "text" as const,
+  value: title,
+});
 
 describe("TurnBasedCutBoard", () => {
   it("on your turn, clicking a remaining item calls onCut", async () => {
@@ -3523,9 +3762,14 @@ describe("TurnBasedCutBoard", () => {
         state={baseRoomState({
           mode: "turn_based_cut",
           round: {
-            index: 0, name: "", items: [ITEM("i1", "A"), ITEM("i2", "B")],
-            claims: {}, survivorItemId: null,
-            remainingItemIds: ["i1", "i2"], turnUserId: "u1", cuts: [],
+            index: 0,
+            name: "",
+            items: [ITEM("i1", "A"), ITEM("i2", "B")],
+            claims: {},
+            survivorItemId: null,
+            remainingItemIds: ["i1", "i2"],
+            turnUserId: "u1",
+            cuts: [],
           },
         })}
         currentUserId="u1"
@@ -3542,16 +3786,23 @@ describe("TurnBasedCutBoard", () => {
         state={baseRoomState({
           mode: "turn_based_cut",
           round: {
-            index: 0, name: "", items: [ITEM("i1", "A"), ITEM("i2", "B")],
-            claims: {}, survivorItemId: null,
-            remainingItemIds: ["i1", "i2"], turnUserId: "u2", cuts: [],
+            index: 0,
+            name: "",
+            items: [ITEM("i1", "A"), ITEM("i2", "B")],
+            claims: {},
+            survivorItemId: null,
+            remainingItemIds: ["i1", "i2"],
+            turnUserId: "u2",
+            cuts: [],
           },
         })}
         currentUserId="u1"
         onCut={vi.fn()}
       />,
     );
-    expect(screen.queryByRole("button", { name: /cut a/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /cut a/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("an already-cut item renders with sacrificed status, not as a live option", () => {
@@ -3560,9 +3811,13 @@ describe("TurnBasedCutBoard", () => {
         state={baseRoomState({
           mode: "turn_based_cut",
           round: {
-            index: 0, name: "", items: [ITEM("i1", "A"), ITEM("i2", "B")],
-            claims: {}, survivorItemId: null,
-            remainingItemIds: ["i2"], turnUserId: "u1",
+            index: 0,
+            name: "",
+            items: [ITEM("i1", "A"), ITEM("i2", "B")],
+            claims: {},
+            survivorItemId: null,
+            remainingItemIds: ["i2"],
+            turnUserId: "u1",
             cuts: [{ userId: "u2", itemId: "i1" }],
           },
         })}
@@ -3605,7 +3860,11 @@ interface TurnBasedCutBoardProps {
  * "sacrificed" status (labeled with WHO cut it, from `round.cuts`) and every
  * remaining item a live cut button ONLY while it's the viewer's own turn.
  */
-export function TurnBasedCutBoard({ state, currentUserId, onCut }: TurnBasedCutBoardProps) {
+export function TurnBasedCutBoard({
+  state,
+  currentUserId,
+  onCut,
+}: TurnBasedCutBoardProps) {
   const t = useTranslations("room");
   const round = state.round;
   if (!round || !round.remainingItemIds) return null;
@@ -3621,7 +3880,10 @@ export function TurnBasedCutBoard({ state, currentUserId, onCut }: TurnBasedCutB
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
         <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-          {t("round.heading", { index: round.index + 1, total: state.totalRounds })}
+          {t("round.heading", {
+            index: round.index + 1,
+            total: state.totalRounds,
+          })}
         </Text>
         <Text as="h2" variant="title" className="text-2xl">
           {round.name || t("turnBasedCut.instruction")}
@@ -3647,7 +3909,9 @@ export function TurnBasedCutBoard({ state, currentUserId, onCut }: TurnBasedCutB
               format="sacrifice_one"
               status={isRemaining ? "free" : "sacrificed"}
               claimant={cutter}
-              onClaim={isRemaining && isMyTurn ? () => onCut(item.id) : undefined}
+              onClaim={
+                isRemaining && isMyTurn ? () => onCut(item.id) : undefined
+              }
             />
           );
         })}
@@ -3700,6 +3964,7 @@ git commit -m "feat(rooms): add the Turn-based cut shrinking board + turn indica
 ### Task 19: Between-round cut history in `RoomBetween`/`RoomResults`
 
 **Files:**
+
 - Modify: `src/features/friends-rooms/RoomBetween.tsx`
 - Modify: `src/features/friends-rooms/RoomResults.tsx`
 
@@ -3718,9 +3983,15 @@ it("when the resolved round carries a cuts history, renders it as an ordered str
         phase: "between",
         packFormat: "sacrifice_one",
         round: {
-          index: 0, name: "", items: [ITEM("i1", "A"), ITEM("i2", "B"), ITEM("i3", "C")],
-          claims: {}, survivorItemId: "i3",
-          cuts: [{ userId: "u1", itemId: "i1" }, { userId: "u2", itemId: "i2" }],
+          index: 0,
+          name: "",
+          items: [ITEM("i1", "A"), ITEM("i2", "B"), ITEM("i3", "C")],
+          claims: {},
+          survivorItemId: "i3",
+          cuts: [
+            { userId: "u1", itemId: "i1" },
+            { userId: "u2", itemId: "i2" },
+          ],
         },
       })}
       currentUserId="u1"
@@ -3743,26 +4014,38 @@ Expected: FAIL — no cut-history strip exists.
 Add below the survivor `<RoomItemCard>` block in `RoomBetween.tsx`, before the "This round's sacrifices" board:
 
 ```tsx
-      {round.cuts && round.cuts.length > 0 && (
-        <div className="flex flex-col gap-2">
-          <Text variant="secondary" className="text-sm">
-            {t("turnBasedCut.cutOrderHeading")}
-          </Text>
-          <ol aria-label={t("turnBasedCut.cutOrderHeading")} className="flex flex-wrap items-center gap-2">
-            {round.cuts.map((cut, index) => {
-              const cutter = state.players.find((p) => p.userId === cut.userId);
-              const item = round.items.find((i) => i.id === cut.itemId);
-              return (
-                <li key={`${cut.userId}-${cut.itemId}-${index}`} className="flex items-center gap-1.5 rounded-pill border border-border bg-surface px-2.5 py-1 text-xs">
-                  <span className="font-semibold">{cutter?.username ?? cut.userId}</span>
-                  <span className="text-foreground-tertiary">{t("turnBasedCut.cutVerb")}</span>
-                  <span>{item?.title ?? cut.itemId}</span>
-                </li>
-              );
-            })}
-          </ol>
-        </div>
-      )}
+{
+  round.cuts && round.cuts.length > 0 && (
+    <div className="flex flex-col gap-2">
+      <Text variant="secondary" className="text-sm">
+        {t("turnBasedCut.cutOrderHeading")}
+      </Text>
+      <ol
+        aria-label={t("turnBasedCut.cutOrderHeading")}
+        className="flex flex-wrap items-center gap-2"
+      >
+        {round.cuts.map((cut, index) => {
+          const cutter = state.players.find((p) => p.userId === cut.userId);
+          const item = round.items.find((i) => i.id === cut.itemId);
+          return (
+            <li
+              key={`${cut.userId}-${cut.itemId}-${index}`}
+              className="flex items-center gap-1.5 rounded-pill border border-border bg-surface px-2.5 py-1 text-xs"
+            >
+              <span className="font-semibold">
+                {cutter?.username ?? cut.userId}
+              </span>
+              <span className="text-foreground-tertiary">
+                {t("turnBasedCut.cutVerb")}
+              </span>
+              <span>{item?.title ?? cut.itemId}</span>
+            </li>
+          );
+        })}
+      </ol>
+    </div>
+  );
+}
 ```
 
 Apply the identical block to `RoomResults.tsx`'s per-round `<section>`, reading `result.cuts` (only present on `kind: "survivor"` results — guard with `result.kind === "survivor" && result.cuts`).
@@ -3786,6 +4069,7 @@ git commit -m "feat(rooms): show Turn-based cut's ordered cut history between ro
 ### Task 20: `PriorityHolderBadge.tsx` — shared crown/badge for the tiebreak role
 
 **Files:**
+
 - Create: `src/features/friends-rooms/PriorityHolderBadge.tsx`
 - Create: `src/features/friends-rooms/PriorityHolderBadge.test.tsx`
 
@@ -3859,12 +4143,13 @@ git commit -m "feat(rooms): add PriorityHolderBadge, the Voting tiebreak role in
 ### Task 21: `VotingBoard.tsx` — live public tally over the format's own option shape
 
 **Files:**
+
 - Create: `src/features/friends-rooms/VotingBoard.tsx`
 - Create: `src/features/friends-rooms/VotingBoard.test.tsx`
 - Modify: `src/features/friends-rooms/RoomRoundBoard.tsx`
 - Modify: `src/features/friends-rooms/RoomRoundBoard.test.tsx`
 
-Design brief §4.3(b): items for save/sacrifice, two items for 1v1, two sides for nxn — the SAME option-set shapes `RoundState.optionIds` already uses for Guess-who (Task 12 established reading `optionIds` generically). Unlike Guess-who, Voting is FULLY PUBLIC and live (`RoundState.votes: Record<userId,optionId>`, changeable until resolve) — the tally bar itself reuses the exact motion token already reserved for it: `.claude/docs/design-tokens.md`'s Motion section literally lists *"vote-tally bar `width .3s`"* among the signature-easing transitions, unused until now.
+Design brief §4.3(b): items for save/sacrifice, two items for 1v1, two sides for nxn — the SAME option-set shapes `RoundState.optionIds` already uses for Guess-who (Task 12 established reading `optionIds` generically). Unlike Guess-who, Voting is FULLY PUBLIC and live (`RoundState.votes: Record<userId,optionId>`, changeable until resolve) — the tally bar itself reuses the exact motion token already reserved for it: `.claude/docs/design-tokens.md`'s Motion section literally lists _"vote-tally bar `width .3s`"_ among the signature-easing transitions, unused until now.
 
 - [ ] **Step 1: Write the failing test**
 
@@ -3876,7 +4161,12 @@ import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { VotingBoard } from "./VotingBoard";
 import { baseRoomState } from "./test-fixtures";
 
-const ITEM = (id: string, title: string) => ({ id, title, type: "text" as const, value: title });
+const ITEM = (id: string, title: string) => ({
+  id,
+  title,
+  type: "text" as const,
+  value: title,
+});
 
 describe("VotingBoard", () => {
   it("clicking an option casts a vote, and the live tally shows every option's current count", () => {
@@ -3886,9 +4176,14 @@ describe("VotingBoard", () => {
         state={baseRoomState({
           mode: "voting",
           round: {
-            index: 0, name: "", items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
-            claims: {}, survivorItemId: null,
-            optionIds: ["i1", "i2"], votes: { u2: "i1" }, priorityUserId: "u1",
+            index: 0,
+            name: "",
+            items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
+            claims: {},
+            survivorItemId: null,
+            optionIds: ["i1", "i2"],
+            votes: { u2: "i1" },
+            priorityUserId: "u1",
           },
         })}
         currentUserId="u1"
@@ -3905,9 +4200,14 @@ describe("VotingBoard", () => {
         state={baseRoomState({
           mode: "voting",
           round: {
-            index: 0, name: "", items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
-            claims: {}, survivorItemId: null,
-            optionIds: ["i1", "i2"], votes: { u1: "i1" }, priorityUserId: "u1",
+            index: 0,
+            name: "",
+            items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
+            claims: {},
+            survivorItemId: null,
+            optionIds: ["i1", "i2"],
+            votes: { u1: "i1" },
+            priorityUserId: "u1",
           },
         })}
         currentUserId="u1"
@@ -3924,9 +4224,14 @@ describe("VotingBoard", () => {
         state={baseRoomState({
           mode: "voting",
           round: {
-            index: 0, name: "", items: [ITEM("i1", "Pizza")],
-            claims: {}, survivorItemId: null,
-            optionIds: ["i1"], votes: {}, priorityUserId: "u1",
+            index: 0,
+            name: "",
+            items: [ITEM("i1", "Pizza")],
+            claims: {},
+            survivorItemId: null,
+            optionIds: ["i1"],
+            votes: {},
+            priorityUserId: "u1",
           },
         })}
         currentUserId="u2"
@@ -3967,7 +4272,11 @@ interface VotingBoardProps {
  * so the room knows whom a tie favors. Casting a vote is free to change at any
  * time before resolution — clicking a different option just re-votes.
  */
-export function VotingBoard({ state, currentUserId, onVote }: VotingBoardProps) {
+export function VotingBoard({
+  state,
+  currentUserId,
+  onVote,
+}: VotingBoardProps) {
   const t = useTranslations("room");
   const round = state.round;
   if (!round || !round.optionIds) return null;
@@ -3976,7 +4285,9 @@ export function VotingBoard({ state, currentUserId, onVote }: VotingBoardProps) 
   const itemsById = new Map(round.items.map((item) => [item.id, item]));
   const totalVotes = Object.keys(votes).length;
   const myVote = currentUserId ? votes[currentUserId] : undefined;
-  const priorityPlayer = state.players.find((p) => p.userId === round.priorityUserId);
+  const priorityPlayer = state.players.find(
+    (p) => p.userId === round.priorityUserId,
+  );
 
   const tally = new Map<string, number>();
   for (const optionId of Object.values(votes)) {
@@ -3987,19 +4298,25 @@ export function VotingBoard({ state, currentUserId, onVote }: VotingBoardProps) 
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
         <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-          {t("round.heading", { index: round.index + 1, total: state.totalRounds })}
+          {t("round.heading", {
+            index: round.index + 1,
+            total: state.totalRounds,
+          })}
         </Text>
         <Text as="h2" variant="title" className="text-2xl">
           {round.name || t("voting.instruction")}
         </Text>
-        {priorityPlayer && <PriorityHolderBadge username={priorityPlayer.username} />}
+        {priorityPlayer && (
+          <PriorityHolderBadge username={priorityPlayer.username} />
+        )}
       </header>
 
       <div className="flex flex-col gap-3">
         {round.optionIds.map((optionId) => {
           const item = itemsById.get(optionId);
           const count = tally.get(optionId) ?? 0;
-          const pct = totalVotes > 0 ? Math.round((count / totalVotes) * 100) : 0;
+          const pct =
+            totalVotes > 0 ? Math.round((count / totalVotes) * 100) : 0;
           const isMine = myVote === optionId;
           return (
             <button
@@ -4009,7 +4326,9 @@ export function VotingBoard({ state, currentUserId, onVote }: VotingBoardProps) 
               onClick={() => onVote(optionId)}
               className={cn(
                 "relative overflow-hidden rounded-tile border-[1.5px] p-4 text-start transition-colors",
-                isMine ? "border-acc" : "border-border hover:border-border-strong",
+                isMine
+                  ? "border-acc"
+                  : "border-border hover:border-border-strong",
               )}
             >
               {/* The live tally bar — width is the vote-tally motion token
@@ -4031,7 +4350,10 @@ export function VotingBoard({ state, currentUserId, onVote }: VotingBoardProps) 
       </div>
 
       <Text variant="secondary" aria-live="polite" className="text-sm">
-        {t("voting.votedSoFar", { count: totalVotes, total: state.players.length })}
+        {t("voting.votedSoFar", {
+          count: totalVotes,
+          total: state.players.length,
+        })}
       </Text>
     </div>
   );
@@ -4060,6 +4382,7 @@ git commit -m "feat(rooms): add the Voting round board with live public tally"
 ### Task 22: `VotingBetweenBoard.tsx` — winning-option reveal + tie-break explanation
 
 **Files:**
+
 - Create: `src/features/friends-rooms/VotingBetweenBoard.tsx`
 - Create: `src/features/friends-rooms/VotingBetweenBoard.test.tsx`
 - Modify: `src/features/friends-rooms/RoomBetweenBoard.tsx`
@@ -4075,7 +4398,12 @@ import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { VotingBetweenBoard } from "./VotingBetweenBoard";
 import { baseRoomState } from "./test-fixtures";
 
-const ITEM = (id: string, title: string) => ({ id, title, type: "text" as const, value: title });
+const ITEM = (id: string, title: string) => ({
+  id,
+  title,
+  type: "text" as const,
+  value: title,
+});
 
 describe("VotingBetweenBoard", () => {
   it("shows the winning option and, when tieBroken, explains the priority tiebreak", () => {
@@ -4084,12 +4412,27 @@ describe("VotingBetweenBoard", () => {
         state={baseRoomState({
           mode: "voting",
           phase: "between",
-          round: { index: 0, name: "", items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")], claims: {}, survivorItemId: null },
-          results: [{
-            kind: "vote", index: 0, name: "", items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
-            optionIds: ["i1", "i2"], votes: { u1: "i1", u2: "i2" }, tally: { i1: 1, i2: 1 },
-            winnerOptionId: "i1", tieBroken: true, priorityUserId: "u1",
-          }],
+          round: {
+            index: 0,
+            name: "",
+            items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
+            claims: {},
+            survivorItemId: null,
+          },
+          results: [
+            {
+              kind: "vote",
+              index: 0,
+              name: "",
+              items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
+              optionIds: ["i1", "i2"],
+              votes: { u1: "i1", u2: "i2" },
+              tally: { i1: 1, i2: 1 },
+              winnerOptionId: "i1",
+              tieBroken: true,
+              priorityUserId: "u1",
+            },
+          ],
         })}
         currentUserId="u1"
         onNext={vi.fn()}
@@ -4134,7 +4477,9 @@ export function VotingBetweenBoard({
   if (!round || !result) return null;
 
   const winner = result.items.find((item) => item.id === result.winnerOptionId);
-  const priorityPlayer = state.players.find((p) => p.userId === result.priorityUserId);
+  const priorityPlayer = state.players.find(
+    (p) => p.userId === result.priorityUserId,
+  );
   const me = state.players.find((p) => p.userId === currentUserId);
   const ready = state.players.filter((p) => p.next).length;
 
@@ -4188,6 +4533,7 @@ git commit -m "feat(rooms): add Voting's winner reveal + tie-break explanation b
 ### Task 23: `SharedGridRankSubmission.tsx` — blind full-ranking submission, reusing `LockedInRoster`
 
 **Files:**
+
 - Create: `src/features/friends-rooms/SharedGridRankSubmission.tsx`
 - Create: `src/features/friends-rooms/SharedGridRankSubmission.test.tsx`
 - Modify: `src/features/friends-rooms/RoomRoundBoard.tsx`
@@ -4285,7 +4631,12 @@ import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { SharedGridRankSubmission } from "./SharedGridRankSubmission";
 import { baseRoomState } from "./test-fixtures";
 
-const ITEM = (id: string, title: string) => ({ id, title, type: "text" as const, value: title });
+const ITEM = (id: string, title: string) => ({
+  id,
+  title,
+  type: "text" as const,
+  value: title,
+});
 
 describe("SharedGridRankSubmission", () => {
   it("ranking every item in order submits the full ranking", async () => {
@@ -4295,9 +4646,13 @@ describe("SharedGridRankSubmission", () => {
         state={baseRoomState({
           mode: "shared_grid",
           round: {
-            index: 0, name: "", items: [ITEM("i1", "A"), ITEM("i2", "B")],
-            claims: {}, survivorItemId: null,
-            optionIds: ["i1", "i2"], lockedIn: [],
+            index: 0,
+            name: "",
+            items: [ITEM("i1", "A"), ITEM("i2", "B")],
+            claims: {},
+            survivorItemId: null,
+            optionIds: ["i1", "i2"],
+            lockedIn: [],
           },
         })}
         currentUserId="u1"
@@ -4315,9 +4670,13 @@ describe("SharedGridRankSubmission", () => {
         state={baseRoomState({
           mode: "shared_grid",
           round: {
-            index: 0, name: "", items: [ITEM("i1", "A")],
-            claims: {}, survivorItemId: null,
-            optionIds: ["i1"], lockedIn: ["u1"],
+            index: 0,
+            name: "",
+            items: [ITEM("i1", "A")],
+            claims: {},
+            survivorItemId: null,
+            optionIds: ["i1"],
+            lockedIn: ["u1"],
           },
         })}
         currentUserId="u2"
@@ -4374,7 +4733,10 @@ export function SharedGridRankSubmission({
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
         <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-          {t("round.heading", { index: round.index + 1, total: state.totalRounds })}
+          {t("round.heading", {
+            index: round.index + 1,
+            total: state.totalRounds,
+          })}
         </Text>
         <Text as="h2" variant="title" className="text-2xl">
           {round.name || t("sharedGrid.instruction")}
@@ -4422,6 +4784,7 @@ git commit -m "feat(rooms): add Shared-grid's blind ranking board, extracting Bl
 ### Task 24: `BordaRevealBoard.tsx` — the aggregated reveal (scores, tiers, tie explanations)
 
 **Files:**
+
 - Create: `src/features/friends-rooms/BordaRevealBoard.tsx`
 - Create: `src/features/friends-rooms/BordaRevealBoard.test.tsx`
 - Modify: `src/features/friends-rooms/RoomBetweenBoard.tsx`
@@ -4437,7 +4800,12 @@ import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { BordaRevealBoard } from "./BordaRevealBoard";
 import { baseRoomState } from "./test-fixtures";
 
-const ITEM = (id: string, title: string) => ({ id, title, type: "text" as const, value: title });
+const ITEM = (id: string, title: string) => ({
+  id,
+  title,
+  type: "text" as const,
+  value: title,
+});
 
 describe("BordaRevealBoard", () => {
   it("renders each tier as a rank row, and a two-item tier shares one rank number with a tie note", () => {
@@ -4446,13 +4814,24 @@ describe("BordaRevealBoard", () => {
         state={baseRoomState({
           mode: "shared_grid",
           phase: "between",
-          round: { index: 0, name: "", items: [ITEM("i1", "A"), ITEM("i2", "B"), ITEM("i3", "C")], claims: {}, survivorItemId: null },
-          results: [{
-            kind: "borda", index: 0, name: "", items: [ITEM("i1", "A"), ITEM("i2", "B"), ITEM("i3", "C")],
-            scores: { i1: 5, i2: 5, i3: 2 },
-            order: [["i1", "i2"], ["i3"]],
-            ballots: { u1: ["i1", "i2", "i3"], u2: ["i2", "i1", "i3"] },
-          }],
+          round: {
+            index: 0,
+            name: "",
+            items: [ITEM("i1", "A"), ITEM("i2", "B"), ITEM("i3", "C")],
+            claims: {},
+            survivorItemId: null,
+          },
+          results: [
+            {
+              kind: "borda",
+              index: 0,
+              name: "",
+              items: [ITEM("i1", "A"), ITEM("i2", "B"), ITEM("i3", "C")],
+              scores: { i1: 5, i2: 5, i3: 2 },
+              order: [["i1", "i2"], ["i3"]],
+              ballots: { u1: ["i1", "i2", "i3"], u2: ["i2", "i1", "i3"] },
+            },
+          ],
         })}
         currentUserId="u1"
         onNext={vi.fn()}
@@ -4494,7 +4873,8 @@ export function BordaRevealBoard({
   const t = useTranslations("room");
   const round = state.round;
   const result = state.results.find(
-    (r): r is BordaRoundResult => r.kind === "borda" && r.index === round?.index,
+    (r): r is BordaRoundResult =>
+      r.kind === "borda" && r.index === round?.index,
   );
   if (!round || !result) return null;
 
@@ -4524,7 +4904,9 @@ export function BordaRevealBoard({
               key={tierIndex}
               className={cn(
                 "flex flex-col gap-1 rounded-tile border p-3",
-                tierIndex === 0 ? "border-score/40 bg-score/10" : "border-border bg-surface-card",
+                tierIndex === 0
+                  ? "border-score/40 bg-score/10"
+                  : "border-border bg-surface-card",
               )}
             >
               <div className="flex flex-wrap items-center gap-2">
@@ -4536,8 +4918,13 @@ export function BordaRevealBoard({
                     {itemsById.get(itemId)?.title ?? itemId}
                   </Text>
                 ))}
-                <Text variant="tertiary" className="ms-auto text-xs tabular-nums">
-                  {t("sharedGrid.pointsLabel", { count: result.scores[tier[0]] ?? 0 })}
+                <Text
+                  variant="tertiary"
+                  className="ms-auto text-xs tabular-nums"
+                >
+                  {t("sharedGrid.pointsLabel", {
+                    count: result.scores[tier[0]] ?? 0,
+                  })}
                 </Text>
               </div>
               {tied && (
@@ -4583,6 +4970,7 @@ git commit -m "feat(rooms): add Shared-grid's Borda-aggregated reveal with tiere
 ### Task 25: `RelayInsertBoard.tsx` — click-a-gap-to-insert into the shared growing ranking
 
 **Files:**
+
 - Create: `src/features/friends-rooms/RelayInsertBoard.tsx`
 - Create: `src/features/friends-rooms/RelayInsertBoard.test.tsx`
 - Modify: `src/features/friends-rooms/RoomRoundBoard.tsx`
@@ -4600,7 +4988,12 @@ import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { RelayInsertBoard } from "./RelayInsertBoard";
 import { baseRoomState } from "./test-fixtures";
 
-const ITEM = (id: string, title: string) => ({ id, title, type: "text" as const, value: title });
+const ITEM = (id: string, title: string) => ({
+  id,
+  title,
+  type: "text" as const,
+  value: title,
+});
 
 describe("RelayInsertBoard", () => {
   it("on your turn, renders one more gap than placed items, and clicking a gap places the current item there", async () => {
@@ -4610,10 +5003,15 @@ describe("RelayInsertBoard", () => {
         state={baseRoomState({
           mode: "relay",
           round: {
-            index: 0, name: "", items: [ITEM("i1", "A"), ITEM("i2", "B"), ITEM("i3", "C")],
-            claims: {}, survivorItemId: null,
-            relayOrder: ["i1", "i2", "i3"], relayPlaced: ["i1"],
-            relayCurrentItemId: "i2", relayPlacements: [{ userId: "u1", itemId: "i1" }],
+            index: 0,
+            name: "",
+            items: [ITEM("i1", "A"), ITEM("i2", "B"), ITEM("i3", "C")],
+            claims: {},
+            survivorItemId: null,
+            relayOrder: ["i1", "i2", "i3"],
+            relayPlaced: ["i1"],
+            relayCurrentItemId: "i2",
+            relayPlacements: [{ userId: "u1", itemId: "i1" }],
             turnUserId: "u1",
           },
         })}
@@ -4634,17 +5032,25 @@ describe("RelayInsertBoard", () => {
         state={baseRoomState({
           mode: "relay",
           round: {
-            index: 0, name: "", items: [ITEM("i1", "A")],
-            claims: {}, survivorItemId: null,
-            relayOrder: ["i1"], relayPlaced: [], relayCurrentItemId: "i1",
-            relayPlacements: [], turnUserId: "u2",
+            index: 0,
+            name: "",
+            items: [ITEM("i1", "A")],
+            claims: {},
+            survivorItemId: null,
+            relayOrder: ["i1"],
+            relayPlaced: [],
+            relayCurrentItemId: "i1",
+            relayPlacements: [],
+            turnUserId: "u2",
           },
         })}
         currentUserId="u1"
         onPlaceItem={vi.fn()}
       />,
     );
-    expect(screen.queryByRole("button", { name: /insert here/i })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: /insert here/i }),
+    ).not.toBeInTheDocument();
   });
 
   it("shows the current item awaiting placement", () => {
@@ -4653,10 +5059,16 @@ describe("RelayInsertBoard", () => {
         state={baseRoomState({
           mode: "relay",
           round: {
-            index: 0, name: "", items: [ITEM("i1", "A"), ITEM("i2", "B")],
-            claims: {}, survivorItemId: null,
-            relayOrder: ["i1", "i2"], relayPlaced: [], relayCurrentItemId: "i1",
-            relayPlacements: [], turnUserId: "u1",
+            index: 0,
+            name: "",
+            items: [ITEM("i1", "A"), ITEM("i2", "B")],
+            claims: {},
+            survivorItemId: null,
+            relayOrder: ["i1", "i2"],
+            relayPlaced: [],
+            relayCurrentItemId: "i1",
+            relayPlacements: [],
+            turnUserId: "u1",
           },
         })}
         currentUserId="u1"
@@ -4701,10 +5113,15 @@ interface RelayInsertBoardProps {
  * `{itemId, position}` shape exactly (velanto-backend
  * friends-rooms.gateway.ts's `readPlacement`).
  */
-export function RelayInsertBoard({ state, currentUserId, onPlaceItem }: RelayInsertBoardProps) {
+export function RelayInsertBoard({
+  state,
+  currentUserId,
+  onPlaceItem,
+}: RelayInsertBoardProps) {
   const t = useTranslations("room");
   const round = state.round;
-  if (!round || !round.relayPlaced || round.relayCurrentItemId === undefined) return null;
+  if (!round || !round.relayPlaced || round.relayCurrentItemId === undefined)
+    return null;
 
   const itemsById = new Map(round.items.map((item) => [item.id, item]));
   const placed = round.relayPlaced;
@@ -4738,7 +5155,10 @@ export function RelayInsertBoard({ state, currentUserId, onPlaceItem }: RelayIns
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
         <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-          {t("round.heading", { index: round.index + 1, total: state.totalRounds })}
+          {t("round.heading", {
+            index: round.index + 1,
+            total: state.totalRounds,
+          })}
         </Text>
         <Text as="h2" variant="title" className="text-2xl">
           {round.name || t("relay.instruction")}
@@ -4753,7 +5173,10 @@ export function RelayInsertBoard({ state, currentUserId, onPlaceItem }: RelayIns
 
       {currentItem && (
         <div className="w-full max-w-[230px] self-center overflow-hidden rounded-card border-[1.5px] border-acc bg-background p-4 ring-4 ring-acc/[0.16]">
-          <Text variant="tertiary" className="text-[11px] uppercase tracking-wide text-acc">
+          <Text
+            variant="tertiary"
+            className="text-[11px] uppercase tracking-wide text-acc"
+          >
             {t("relay.currentItem")}
           </Text>
           <Text className="font-semibold">{currentItem.title}</Text>
@@ -4772,7 +5195,9 @@ export function RelayInsertBoard({ state, currentUserId, onPlaceItem }: RelayIns
               <span className="flex h-7 w-7 flex-none items-center justify-center rounded-chip bg-white/[0.06] text-xs font-bold tabular-nums">
                 {index + 1}
               </span>
-              <Text className="font-semibold">{itemsById.get(itemId)?.title ?? itemId}</Text>
+              <Text className="font-semibold">
+                {itemsById.get(itemId)?.title ?? itemId}
+              </Text>
             </div>
             <Gap position={index + 1} />
           </div>
@@ -4811,6 +5236,7 @@ git commit -m "feat(rooms): add Relay's click-to-insert shared ranking board (D2
 ### Task 26: `RelayBetweenBoard.tsx` — the completed shared ranking + placement history
 
 **Files:**
+
 - Create: `src/features/friends-rooms/RelayBetweenBoard.tsx`
 - Create: `src/features/friends-rooms/RelayBetweenBoard.test.tsx`
 - Modify: `src/features/friends-rooms/RoomBetweenBoard.tsx`
@@ -4826,7 +5252,12 @@ import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { RelayBetweenBoard } from "./RelayBetweenBoard";
 import { baseRoomState } from "./test-fixtures";
 
-const ITEM = (id: string, title: string) => ({ id, title, type: "text" as const, value: title });
+const ITEM = (id: string, title: string) => ({
+  id,
+  title,
+  type: "text" as const,
+  value: title,
+});
 
 describe("RelayBetweenBoard", () => {
   it("shows the final shared order and the placement history", () => {
@@ -4835,12 +5266,26 @@ describe("RelayBetweenBoard", () => {
         state={baseRoomState({
           mode: "relay",
           phase: "between",
-          round: { index: 0, name: "", items: [ITEM("i1", "A"), ITEM("i2", "B")], claims: {}, survivorItemId: null },
-          results: [{
-            kind: "relay", index: 0, name: "", items: [ITEM("i1", "A"), ITEM("i2", "B")],
-            order: ["i2", "i1"],
-            placements: [{ userId: "u1", itemId: "i2" }, { userId: "u2", itemId: "i1" }],
-          }],
+          round: {
+            index: 0,
+            name: "",
+            items: [ITEM("i1", "A"), ITEM("i2", "B")],
+            claims: {},
+            survivorItemId: null,
+          },
+          results: [
+            {
+              kind: "relay",
+              index: 0,
+              name: "",
+              items: [ITEM("i1", "A"), ITEM("i2", "B")],
+              order: ["i2", "i1"],
+              placements: [
+                { userId: "u1", itemId: "i2" },
+                { userId: "u2", itemId: "i1" },
+              ],
+            },
+          ],
         })}
         currentUserId="u1"
         onNext={vi.fn()}
@@ -4849,7 +5294,9 @@ describe("RelayBetweenBoard", () => {
     const list = screen.getByRole("list", { name: /final order/i });
     expect(list).toHaveTextContent("B");
     expect(list).toHaveTextContent("A");
-    expect(screen.getByLabelText(/placement history/i)).toHaveTextContent("Alice");
+    expect(screen.getByLabelText(/placement history/i)).toHaveTextContent(
+      "Alice",
+    );
   });
 });
 ```
@@ -4882,7 +5329,8 @@ export function RelayBetweenBoard({
   const t = useTranslations("room");
   const round = state.round;
   const result = state.results.find(
-    (r): r is RelayRoundResult => r.kind === "relay" && r.index === round?.index,
+    (r): r is RelayRoundResult =>
+      r.kind === "relay" && r.index === round?.index,
   );
   if (!round || !result) return null;
 
@@ -4899,13 +5347,21 @@ export function RelayBetweenBoard({
         </Text>
       </header>
 
-      <ol aria-label={t("relay.finalOrderHeading")} className="flex flex-col gap-2">
+      <ol
+        aria-label={t("relay.finalOrderHeading")}
+        className="flex flex-col gap-2"
+      >
         {result.order.map((itemId, index) => (
-          <li key={itemId} className="flex items-center gap-3 rounded-tile border border-border bg-surface-card p-3">
+          <li
+            key={itemId}
+            className="flex items-center gap-3 rounded-tile border border-border bg-surface-card p-3"
+          >
             <span className="flex h-7 w-7 flex-none items-center justify-center rounded-chip bg-white/[0.06] text-xs font-bold tabular-nums">
               {index + 1}
             </span>
-            <Text className="font-semibold">{itemsById.get(itemId)?.title ?? itemId}</Text>
+            <Text className="font-semibold">
+              {itemsById.get(itemId)?.title ?? itemId}
+            </Text>
           </li>
         ))}
       </ol>
@@ -4914,12 +5370,25 @@ export function RelayBetweenBoard({
         <Text variant="secondary" className="text-sm">
           {t("relay.placementHistoryHeading")}
         </Text>
-        <ol aria-label={t("relay.placementHistoryHeading")} className="flex flex-wrap items-center gap-2">
+        <ol
+          aria-label={t("relay.placementHistoryHeading")}
+          className="flex flex-wrap items-center gap-2"
+        >
           {result.placements.map((placement, index) => (
-            <li key={`${placement.userId}-${placement.itemId}-${index}`} className="flex items-center gap-1.5 rounded-pill border border-border bg-surface px-2.5 py-1 text-xs">
-              <span className="font-semibold">{playerByUserId.get(placement.userId)?.username ?? placement.userId}</span>
-              <span className="text-foreground-tertiary">{t("relay.placedVerb")}</span>
-              <span>{itemsById.get(placement.itemId)?.title ?? placement.itemId}</span>
+            <li
+              key={`${placement.userId}-${placement.itemId}-${index}`}
+              className="flex items-center gap-1.5 rounded-pill border border-border bg-surface px-2.5 py-1 text-xs"
+            >
+              <span className="font-semibold">
+                {playerByUserId.get(placement.userId)?.username ??
+                  placement.userId}
+              </span>
+              <span className="text-foreground-tertiary">
+                {t("relay.placedVerb")}
+              </span>
+              <span>
+                {itemsById.get(placement.itemId)?.title ?? placement.itemId}
+              </span>
             </li>
           ))}
         </ol>
@@ -4958,6 +5427,7 @@ git commit -m "feat(rooms): add Relay's final-order + placement-history between-
 ### Task 27: Generalize `RoomResults.tsx` to render every `RoundResult.kind`
 
 **Files:**
+
 - Modify: `src/features/friends-rooms/RoomResults.tsx`
 - Modify: `src/features/friends-rooms/RoomResults.test.tsx`
 
@@ -4975,11 +5445,20 @@ it("renders a vote-kind round with its winning option and tally, not the claim s
         mode: "voting",
         phase: "finished",
         packFormat: undefined,
-        results: [{
-          kind: "vote", index: 0, name: "Round 1", items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
-          optionIds: ["i1", "i2"], votes: { u1: "i1" }, tally: { i1: 1 },
-          winnerOptionId: "i1", tieBroken: false, priorityUserId: "u1",
-        }],
+        results: [
+          {
+            kind: "vote",
+            index: 0,
+            name: "Round 1",
+            items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
+            optionIds: ["i1", "i2"],
+            votes: { u1: "i1" },
+            tally: { i1: 1 },
+            winnerOptionId: "i1",
+            tieBroken: false,
+            priorityUserId: "u1",
+          },
+        ],
       })}
     />,
   );
@@ -4992,10 +5471,17 @@ it("renders a borda-kind round with its tiered order", () => {
       state={baseRoomState({
         mode: "shared_grid",
         phase: "finished",
-        results: [{
-          kind: "borda", index: 0, name: "Round 1", items: [ITEM("i1", "A"), ITEM("i2", "B")],
-          scores: { i1: 3, i2: 1 }, order: [["i1"], ["i2"]], ballots: {},
-        }],
+        results: [
+          {
+            kind: "borda",
+            index: 0,
+            name: "Round 1",
+            items: [ITEM("i1", "A"), ITEM("i2", "B")],
+            scores: { i1: 3, i2: 1 },
+            order: [["i1"], ["i2"]],
+            ballots: {},
+          },
+        ],
       })}
     />,
   );
@@ -5009,10 +5495,16 @@ it("renders a relay-kind round with its final flat order", () => {
       state={baseRoomState({
         mode: "relay",
         phase: "finished",
-        results: [{
-          kind: "relay", index: 0, name: "Round 1", items: [ITEM("i1", "A"), ITEM("i2", "B")],
-          order: ["i2", "i1"], placements: [],
-        }],
+        results: [
+          {
+            kind: "relay",
+            index: 0,
+            name: "Round 1",
+            items: [ITEM("i1", "A"), ITEM("i2", "B")],
+            order: ["i2", "i1"],
+            placements: [],
+          },
+        ],
       })}
     />,
   );
@@ -5031,23 +5523,33 @@ Expected: FAIL — every non-`survivor` result kind currently renders nothing (t
 Replace the body of the `state.results.map(...)` block with a per-kind switch, extracting each kind's row rendering into a small local function so the file stays readable:
 
 ```tsx
-      {state.results.map((result) => (
-        <section
-          key={result.index}
-          aria-label={t("results.roundLabel", { index: result.index + 1 })}
-          className="flex flex-col gap-3 rounded-2xl border border-border bg-surface/40 p-5"
-        >
-          <Text variant="title" className="text-sm">
-            {result.name || t("results.roundLabel", { index: result.index + 1 })}
-          </Text>
-          {result.kind === "survivor" && (
-            <SurvivorResultBlock result={result} byId={byId} packFormat={packFormat} />
-          )}
-          {result.kind === "vote" && <VoteResultBlock result={result} byId={byId} />}
-          {result.kind === "borda" && <BordaResultBlock result={result} />}
-          {result.kind === "relay" && <RelayResultBlock result={result} byId={byId} />}
-        </section>
-      ))}
+{
+  state.results.map((result) => (
+    <section
+      key={result.index}
+      aria-label={t("results.roundLabel", { index: result.index + 1 })}
+      className="flex flex-col gap-3 rounded-2xl border border-border bg-surface/40 p-5"
+    >
+      <Text variant="title" className="text-sm">
+        {result.name || t("results.roundLabel", { index: result.index + 1 })}
+      </Text>
+      {result.kind === "survivor" && (
+        <SurvivorResultBlock
+          result={result}
+          byId={byId}
+          packFormat={packFormat}
+        />
+      )}
+      {result.kind === "vote" && (
+        <VoteResultBlock result={result} byId={byId} />
+      )}
+      {result.kind === "borda" && <BordaResultBlock result={result} />}
+      {result.kind === "relay" && (
+        <RelayResultBlock result={result} byId={byId} />
+      )}
+    </section>
+  ));
+}
 ```
 
 Add the four block components at the bottom of the file (each takes only the one result kind it renders, never the whole union, so a mismatched call is a compile error rather than a runtime `undefined`):
@@ -5099,7 +5601,9 @@ function VoteResultBlock({
   const priorityPlayer = byId.get(result.priorityUserId);
   return (
     <div className="flex flex-col gap-2">
-      <Text className="text-lg font-semibold text-success">{winner?.title}</Text>
+      <Text className="text-lg font-semibold text-success">
+        {winner?.title}
+      </Text>
       {result.tieBroken && priorityPlayer && (
         <Text variant="tertiary" className="text-xs">
           {t("voting.tieBrokenNote", { name: priorityPlayer.username })}
@@ -5135,7 +5639,8 @@ function RelayResultBlock({
     <ol className="flex flex-col gap-1">
       {result.order.map((id, index) => (
         <li key={id} className="text-sm">
-          <span className="font-semibold">{index + 1}.</span> {itemsById.get(id)?.title ?? id}
+          <span className="font-semibold">{index + 1}.</span>{" "}
+          {itemsById.get(id)?.title ?? id}
         </li>
       ))}
     </ol>
@@ -5167,6 +5672,7 @@ git commit -m "feat(rooms): generalize RoomResults to render every RoundResult k
 ### Task 28: i18n — add every new `room.*` key to `messages/en.json`
 
 **Files:**
+
 - Modify: `messages/en.json`
 
 Every task above (9, 10, 12, 13, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27) introduced new `t("room....")` calls. This task is the single consolidated pass adding every one of them to the English catalog in one place, so Task 29's per-locale translation pass has one finished source to translate FROM rather than seven partial diffs. Cross-check every `t(...)` call site added in Tasks 9–27 against this list before considering the task done — this list is exhaustive as of this plan, but the implementing engineer must re-grep `t("` calls under `src/features/friends-rooms/*.tsx` created/modified since Task 8 and confirm every key resolves, since a plan cannot guarantee it enumerated literally every string an engineer's exact code ends up calling.
@@ -5204,7 +5710,14 @@ describe("room i18n keys (2.0.0 rooms-UI plan)", () => {
 
   it("has a name/blurb pair for every ROOM_MODE (matches room-mode-copy.ts's key shape)", () => {
     const modes = room.modes as Record<string, { name: string; blurb: string }>;
-    for (const mode of ["claim", "guess_who", "turn_based_cut", "voting", "shared_grid", "relay"]) {
+    for (const mode of [
+      "claim",
+      "guess_who",
+      "turn_based_cut",
+      "voting",
+      "shared_grid",
+      "relay",
+    ]) {
       expect(modes[mode]?.name).toBeTruthy();
       expect(modes[mode]?.blurb).toBeTruthy();
     }
@@ -5320,6 +5833,7 @@ git commit -m "feat(rooms): consolidate every new room i18n key into the English
 ### Task 29: i18n — translate the new keys into the other 7 locale catalogs
 
 **Files:**
+
 - Modify: `messages/zh.json`, `messages/hi.json`, `messages/ar.json`, `messages/bn.json`, `messages/ru.json`, `messages/ur.json`, `messages/uk.json`
 
 Every key Task 28 added to `messages/en.json`'s `room` namespace needs the identical key structure in the other 7 catalogs, per the workspace's established i18n discipline (`.claude/CLAUDE.md`'s "8 locales" requirement) — this is real translation work, not English-fallback copy-paste: `ar`/`ur` are RTL (already handled by the app's existing `RTL_LOCALES` mechanism — no per-string RTL markup needed, just correct translated text), and every `{placeholder}` token (`{name}`, `{count}`, `{total}`, `{min}`, `{max}`) must be preserved verbatim in each translation since next-intl interpolates by token name, not position.
@@ -5335,13 +5849,26 @@ describe("room i18n keys exist in every locale catalog", () => {
   for (const locale of LOCALES) {
     if (locale === "en") continue;
     it(`messages/${locale}.json has every new room namespace`, async () => {
-      const catalog = (await import(`./${locale}.json`)).default as Record<string, unknown>;
+      const catalog = (await import(`./${locale}.json`)).default as Record<
+        string,
+        unknown
+      >;
       const room = catalog.room as Record<string, unknown> | undefined;
       expect(room).toBeDefined();
       for (const namespace of [
-        "modePicker", "modes", "guessWho", "guessing", "identityReveal",
-        "turnBasedCut", "voting", "sharedGrid", "relay", "lockedIn",
-        "priority", "turnIndicator", "leaderboard",
+        "modePicker",
+        "modes",
+        "guessWho",
+        "guessing",
+        "identityReveal",
+        "turnBasedCut",
+        "voting",
+        "sharedGrid",
+        "relay",
+        "lockedIn",
+        "priority",
+        "turnIndicator",
+        "leaderboard",
       ]) {
         expect(room![namespace]).toBeDefined();
       }
@@ -5379,6 +5906,7 @@ git commit -m "feat(rooms): translate the new room i18n keys into all 7 remainin
 ### Task 30: Playwright e2e — Claim and Guess-who golden paths
 
 **Files:**
+
 - Create: `e2e/rooms.spec.ts`
 
 Per `.claude/docs/testing-requirements.md`: "Cover the golden path per feature area once it exists... plus at least one broken/edge path." Six full-game e2e runs (one per mode) against a live backend would be a large, slow surface for one plan to add in one pass — this task covers the two highest-value paths: **Claim** (the restored golden path that existed before the dormancy, proving the rebuild didn't regress it) and **Guess Who** (the richest new mode, proving the mode picker → blind round → reveal → guessing → identity-reveal pipeline works end to end). The remaining four modes (Turn-based cut, Voting, Shared-grid, Relay) have full component-level test coverage from their own task groups but no dedicated e2e in this plan — flagged explicitly as follow-up scope, not silently dropped.
@@ -5390,7 +5918,9 @@ import { test, expect } from "@playwright/test";
 import { loginAsTestUser, createTestPack, createTestUser } from "./helpers";
 
 test.describe("Rooms — Claim mode golden path", () => {
-  test("host creates a room, sets Claim, both players ready, play a round to the survivor", async ({ browser }) => {
+  test("host creates a room, sets Claim, both players ready, play a round to the survivor", async ({
+    browser,
+  }) => {
     const pack = await createTestPack({ format: "save_one" });
     const hostContext = await browser.newContext();
     const hostPage = await hostContext.newPage();
@@ -5415,7 +5945,10 @@ test.describe("Rooms — Claim mode golden path", () => {
     await expect(hostPage.getByText(/round 1/i)).toBeVisible();
     const items = hostPage.getByRole("button", { name: /save|sacrifice/i });
     await items.first().click();
-    await guestPage.getByRole("button", { name: /save|sacrifice/i }).nth(1).click();
+    await guestPage
+      .getByRole("button", { name: /save|sacrifice/i })
+      .nth(1)
+      .click();
 
     await expect(hostPage.getByText(/survivor|saved/i)).toBeVisible();
   });
@@ -5426,9 +5959,19 @@ test.describe("Rooms — Claim mode golden path", () => {
 
 ```ts
 test.describe("Rooms — Guess Who golden path", () => {
-  test("mode picker to identity reveal, three players, one full round", async ({ browser }) => {
-    const pack = await createTestPack({ format: "save_one", rounds: 5, poolSize: 8 });
-    const contexts = await Promise.all([browser.newContext(), browser.newContext(), browser.newContext()]);
+  test("mode picker to identity reveal, three players, one full round", async ({
+    browser,
+  }) => {
+    const pack = await createTestPack({
+      format: "save_one",
+      rounds: 5,
+      poolSize: 8,
+    });
+    const contexts = await Promise.all([
+      browser.newContext(),
+      browser.newContext(),
+      browser.newContext(),
+    ]);
     const pages = await Promise.all(contexts.map((c) => c.newPage()));
     await Promise.all(pages.map((p) => loginAsTestUser(p)));
 
@@ -5473,6 +6016,7 @@ git commit -m "test(rooms): add Playwright e2e golden paths for Claim and Guess 
 ### Task 31: Flip `ROOMS_DORMANT` to `false`
 
 **Files:**
+
 - Modify: `src/features/friends-rooms/room-types.ts`
 - Modify: every test that asserted dormant behavior as its expected state (`RoomPresenceIndicator.test.tsx`, `JoinByLink.test.tsx`, `PackDetailScreen.test.tsx`, `JoinRoomCard.test.tsx` — grep `ROOMS_DORMANT` across the repo to find every call site)
 
@@ -5500,7 +6044,9 @@ For each: where a test asserted "renders nothing" / "shows the not-found dead-en
 ```tsx
 it("renders the room entry now that rooms are live", () => {
   render(<PackDetailScreen pack={makeTestPack()} />);
-  expect(screen.getByRole("button", { name: /create room/i })).toBeInTheDocument();
+  expect(
+    screen.getByRole("button", { name: /create room/i }),
+  ).toBeInTheDocument();
 });
 ```
 
@@ -5569,6 +6115,7 @@ Follow `.claude/workflows/pull-request.md`. Target branch: whatever feature/inte
 ## Self-review
 
 **Spec coverage** — every named requirement in the dispatch brief maps to a task:
+
 - Lobby (mode picker, ready-toggle, host controls, join-by-code) → Tasks 5, 8 (join-by-code/create already existed and are re-mounted)
 - Claim round screen + anti-script feedback → Tasks 9, 10
 - Guess-who blind pick/rank, locked-in, reveal, identity endgame → Tasks 11, 12, 13, 15, 16
@@ -5584,4 +6131,3 @@ Follow `.claude/workflows/pull-request.md`. Target branch: whatever feature/inte
 **Placeholder scan** — no `TBD`/`TODO`/"add appropriate error handling" strings appear in any task's code; every code block is complete, typed, and named consistently with Task 1's contract. Task 16 and Task 30 both explicitly flag real, unresolved gaps (the missing per-player score field; the four modes without dedicated e2e) rather than inventing a fix or silently omitting the gap — this is a documented decision, not a placeholder.
 
 **Type consistency** — `RoomRoundActions` (Task 6) is the single shape every mode's round board destructures from; `RoomMode`/`RoundResult`/`AvailableMode`/`ROOM_MODE_BOUNDS` are defined exactly once (Task 1) and every later task imports rather than redefines them. `packFormat` threading (Task 9) is consistent across `RoomRound`/`RoomBetween`/`RoomResults`/`TurnBasedCutBoard`/`RoomItemCard`.
-

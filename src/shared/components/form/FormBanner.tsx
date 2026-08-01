@@ -7,17 +7,23 @@ export type FormBannerTone = "danger" | "success";
 // Tinted, iconed inline message for a whole form (a failed submit, a
 // confirmation) — distinct from a per-field {@link FieldError}. Colours are the
 // UI-kit v1 danger/success tints.
-const TONE: Record<
-  FormBannerTone,
-  { box: string; icon: ReactNode }
-> = {
+const TONE: Record<FormBannerTone, { box: string; icon: ReactNode }> = {
   danger: {
     box: "border-danger/30 bg-danger/10 text-[#ff8c8c]",
-    icon: <CircleAlert size={15} strokeWidth={2} aria-hidden className="flex-none" />,
+    icon: (
+      <CircleAlert
+        size={15}
+        strokeWidth={2}
+        aria-hidden
+        className="flex-none"
+      />
+    ),
   },
   success: {
     box: "border-live/30 bg-live/10 text-[#7ee7b4]",
-    icon: <Check size={15} strokeWidth={2.4} aria-hidden className="flex-none" />,
+    icon: (
+      <Check size={15} strokeWidth={2.4} aria-hidden className="flex-none" />
+    ),
   },
 };
 

@@ -26,7 +26,10 @@ export function StepHeader({
   return (
     <div>
       <div
-        className={cn("flex items-center gap-[10px]", hint ? "mb-2" : "mb-[13px]")}
+        className={cn(
+          "flex items-center gap-[10px]",
+          hint ? "mb-2" : "mb-[13px]",
+        )}
       >
         <h2 className="m-0 text-[12px] font-bold uppercase tracking-[.14em] text-acc">
           {title}

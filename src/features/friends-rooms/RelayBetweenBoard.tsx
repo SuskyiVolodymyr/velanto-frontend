@@ -18,7 +18,8 @@ export function RelayBetweenBoard({
   const t = useTranslations("room");
   const round = state.round;
   const result = state.results.find(
-    (r): r is RelayRoundResult => r.kind === "relay" && r.index === round?.index,
+    (r): r is RelayRoundResult =>
+      r.kind === "relay" && r.index === round?.index,
   );
   if (!round || !result) return null;
 
@@ -74,7 +75,9 @@ export function RelayBetweenBoard({
               <span className="text-foreground-tertiary">
                 {t("relay.placedVerb")}
               </span>
-              <span>{itemsById.get(placement.itemId)?.title ?? placement.itemId}</span>
+              <span>
+                {itemsById.get(placement.itemId)?.title ?? placement.itemId}
+              </span>
             </li>
           ))}
         </ol>

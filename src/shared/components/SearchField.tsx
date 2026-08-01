@@ -6,8 +6,10 @@ import { cn } from "@/src/shared/lib/cn";
 // `size` on an <input> is a character-count width, which this control (a styled
 // wrapper around a flex-filling input) has never honoured anyway. Taking the
 // name lets it mean the same thing here as on Dropdown.
-export interface SearchFieldProps
-  extends Omit<InputHTMLAttributes<HTMLInputElement>, "size"> {
+export interface SearchFieldProps extends Omit<
+  InputHTMLAttributes<HTMLInputElement>,
+  "size"
+> {
   /** Render the trailing "/" keyboard-hint chip (a focus-shortcut affordance). */
   showKeyHint?: boolean;
   /**

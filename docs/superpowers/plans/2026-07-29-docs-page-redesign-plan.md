@@ -15,20 +15,20 @@
 This is a **small, single-task slice**, not a rebuild. Docs already looks and behaves like the rest of the 2.0.0-redesigned UI:
 
 - It already uses the shared component vocabulary (`Card`, `Text` with `title`/`secondary`/`tertiary` variants, `Select`) that Rules/Legal/Updates were rebuilt onto.
-- It already has the sticky-sidebar pattern (`md:sticky md:top-[80px]`) those three pages use for their TOC/rail, plus a **mobile-appropriate variant** of it: a native `<select>` dropdown instead of a flat jump-link list, because Docs' nav is two-level (section → topic, 4 sections / 6 topics) and *swaps* the visible article rather than scrolling to an anchor — a genuinely different interaction model from Rules'/Legal's/Updates' single-level "jump to a heading on this same long page" TOCs. This is a deliberate, already-correct divergence, not a gap (see D2).
-- `docs/superpowers/plans/2026-07-28-content-pages-mock-patch.md` — the plan that redesigned Rules/Legal/Updates against their real mocks this same epic — explicitly audited Docs and ruled it out of scope: *"an audit already confirmed the shipped Docs screen already has the mock's structural pattern (sidebar TOC) and, where the mock's prose differs from shipped copy, the SHIPPED copy is the more accurate/complete one... Do not touch `src/features/docs/*`."* That audit had real access to the current mocks; this plan does not (see D1) and treats that finding as authoritative for structure/content.
+- It already has the sticky-sidebar pattern (`md:sticky md:top-[80px]`) those three pages use for their TOC/rail, plus a **mobile-appropriate variant** of it: a native `<select>` dropdown instead of a flat jump-link list, because Docs' nav is two-level (section → topic, 4 sections / 6 topics) and _swaps_ the visible article rather than scrolling to an anchor — a genuinely different interaction model from Rules'/Legal's/Updates' single-level "jump to a heading on this same long page" TOCs. This is a deliberate, already-correct divergence, not a gap (see D2).
+- `docs/superpowers/plans/2026-07-28-content-pages-mock-patch.md` — the plan that redesigned Rules/Legal/Updates against their real mocks this same epic — explicitly audited Docs and ruled it out of scope: _"an audit already confirmed the shipped Docs screen already has the mock's structural pattern (sidebar TOC) and, where the mock's prose differs from shipped copy, the SHIPPED copy is the more accurate/complete one... Do not touch `src/features/docs/*`."_ That audit had real access to the current mocks; this plan does not (see D1) and treats that finding as authoritative for structure/content.
 
 What IS a real, verifiable gap — found by comparing code, not a mock — is that `app/docs/page.tsx` never received the `generateMetadata` pattern that **every other content-adjacent route** (`app/rules/page.tsx`, `app/terms/page.tsx`, `app/privacy/page.tsx`, `app/updates/page.tsx`, plus `myPacks`/`people`) already carries: a localized title via `getTranslations`, a meta description, a canonical URL, and `buildOpenGraph`. Today it's a bare hardcoded `{ title: "Docs" }` — untranslated, no description, no canonical, no explicit OpenGraph — despite `/docs` being one of only four paths in `app/sitemap.ts`'s `STATIC_PATHS` (`"/"`, `"/docs"`, `"/feedback"`, `"/updates"`), so it's actively submitted to search engines in this state. That's the entire scope of this plan.
 
 ### DO NOT TOUCH (functionally and structurally correct, out of scope)
 
-| Area | Files |
-| --- | --- |
-| Topic content, sidebar nav, mobile `<Select>` | `src/features/docs/DocsScreen.tsx`, `DocsSidebar.tsx`, `DocsArticle.tsx` |
-| API/token docs prose + scope cards + MCP config sample | `src/features/docs/ApiDocs.tsx`, `scope-keys.ts` |
-| Token manager (mint/list/revoke) | `src/features/docs/ApiTokensSection.tsx`, `api/tokens.queries.ts` |
-| Behavior-pinned copy tests (`statsAnonNote` #221, `compareCardBody` #222) | `src/features/docs/DocsScreen.test.tsx` |
-| All existing `docs.*` body-copy keys in `messages/*.json` | every locale catalog — only the two new SEO keys are added |
+| Area                                                                      | Files                                                                    |
+| ------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Topic content, sidebar nav, mobile `<Select>`                             | `src/features/docs/DocsScreen.tsx`, `DocsSidebar.tsx`, `DocsArticle.tsx` |
+| API/token docs prose + scope cards + MCP config sample                    | `src/features/docs/ApiDocs.tsx`, `scope-keys.ts`                         |
+| Token manager (mint/list/revoke)                                          | `src/features/docs/ApiTokensSection.tsx`, `api/tokens.queries.ts`        |
+| Behavior-pinned copy tests (`statsAnonNote` #221, `compareCardBody` #222) | `src/features/docs/DocsScreen.test.tsx`                                  |
+| All existing `docs.*` body-copy keys in `messages/*.json`                 | every locale catalog — only the two new SEO keys are added               |
 
 ### IN SCOPE
 
@@ -39,22 +39,23 @@ What IS a real, verifiable gap — found by comparing code, not a mock — is th
 ## 0b. Decision points (do NOT silently resolve these — confirm before implementing)
 
 **D1 — No real mock access in this environment; the prior in-repo audit + direct comparison against the already-redesigned siblings stand in for it.**
-This plan was written from a sandboxed session with no access to `design/extracted/design_handoff_vilante/` (not present on disk here — it lives outside both repos' git trees) and no working DesignSync-style fetch tool. Rather than guess at pixel-level details with no source of truth, this plan leans on two things that *are* verifiable in-repo: (1) `2026-07-28-content-pages-mock-patch.md`'s explicit, specific audit finding that Docs already matches its mock's structural pattern and that the mock's own prose is the less accurate of the two — written by an agent that *did* have real mock access, this same epic; (2) a direct code diff of `DocsScreen`/`DocsSidebar`/`DocsArticle`/`ApiDocs` against `RulesScreen.tsx`/`LegalScreen.tsx`/`UpdatesScreen.tsx` **after** those three were rebuilt against their real mocks — which shows Docs already on the same component vocabulary and spacing/typography idioms (`Card`, `Text` variants, `text-3xl` H1s, `leading-7` body copy, `top-[80px]` sticky nav). If a future session gets real DesignSync/design-folder access and finds a concrete visual mismatch this plan missed, that's new information this plan didn't have — file it separately rather than treating this plan as having missed something it could have checked.
+This plan was written from a sandboxed session with no access to `design/extracted/design_handoff_vilante/` (not present on disk here — it lives outside both repos' git trees) and no working DesignSync-style fetch tool. Rather than guess at pixel-level details with no source of truth, this plan leans on two things that _are_ verifiable in-repo: (1) `2026-07-28-content-pages-mock-patch.md`'s explicit, specific audit finding that Docs already matches its mock's structural pattern and that the mock's own prose is the less accurate of the two — written by an agent that _did_ have real mock access, this same epic; (2) a direct code diff of `DocsScreen`/`DocsSidebar`/`DocsArticle`/`ApiDocs` against `RulesScreen.tsx`/`LegalScreen.tsx`/`UpdatesScreen.tsx` **after** those three were rebuilt against their real mocks — which shows Docs already on the same component vocabulary and spacing/typography idioms (`Card`, `Text` variants, `text-3xl` H1s, `leading-7` body copy, `top-[80px]` sticky nav). If a future session gets real DesignSync/design-folder access and finds a concrete visual mismatch this plan missed, that's new information this plan didn't have — file it separately rather than treating this plan as having missed something it could have checked.
 
 **D2 — Docs' mobile `<select>` nav vs. Rules'/Legal's/Updates' "TOC becomes a non-sticky row above the content" collapse. Keep Docs' `<select>`.**
-The three redesigned siblings all collapse their sticky TOC into a plain list sitting above the article below a ~900-940px breakpoint — that works because each is a *single* long page and the TOC just jumps to an anchor within it. Docs' nav is two-level (`OVERVIEW`/`CREATORS`/`PLAYERS`/`DEVELOPERS` sections, 6 topics) and picking a topic *swaps* the entire article rather than scrolling — a flat row of 6 topic buttons wouldn't carry the section grouping and would be a worse mobile experience than the existing grouped `<optgroup>` `<select>`. This was a deliberate choice already documented in `DocsSidebar.tsx`'s own comment ("Mobile: a compact dropdown instead of the full stacked list, so the article isn't pushed way down the page"). No change.
+The three redesigned siblings all collapse their sticky TOC into a plain list sitting above the article below a ~900-940px breakpoint — that works because each is a _single_ long page and the TOC just jumps to an anchor within it. Docs' nav is two-level (`OVERVIEW`/`CREATORS`/`PLAYERS`/`DEVELOPERS` sections, 6 topics) and picking a topic _swaps_ the entire article rather than scrolling — a flat row of 6 topic buttons wouldn't carry the section grouping and would be a worse mobile experience than the existing grouped `<optgroup>` `<select>`. This was a deliberate choice already documented in `DocsSidebar.tsx`'s own comment ("Mobile: a compact dropdown instead of the full stacked list, so the article isn't pushed way down the page"). No change.
 
 **D3 — Not adding a closing "still have questions?" callout card, even though Rules/Legal/Updates all end with one.**
-All three redesigned siblings close with a `Card` linking to `/feedback` (Rules: "Think a rule is wrong?"; Legal: "Questions about this document?"; Updates: "Missing something you want?"). That's a strong cross-page pattern, and Docs arguably wants a "Didn't find what you needed?" equivalent. **Not adding it here**: unlike those three, whose callout *copy* was verbatim-checked against a real mock, there is no Docs mock available in this session to check against, and this project's own established discipline (`content-pages-mock-patch.md`'s "zero content changes... if you notice a copy difference, STOP and flag it, don't invent it") is specifically about not inventing UI copy without a mock backing it. Adding a plausible-sounding card here would violate that discipline in the opposite direction — writing copy with nothing to check it against. Flagged for a future session that has real mock access to confirm one way or the other; not built speculatively now.
+All three redesigned siblings close with a `Card` linking to `/feedback` (Rules: "Think a rule is wrong?"; Legal: "Questions about this document?"; Updates: "Missing something you want?"). That's a strong cross-page pattern, and Docs arguably wants a "Didn't find what you needed?" equivalent. **Not adding it here**: unlike those three, whose callout _copy_ was verbatim-checked against a real mock, there is no Docs mock available in this session to check against, and this project's own established discipline (`content-pages-mock-patch.md`'s "zero content changes... if you notice a copy difference, STOP and flag it, don't invent it") is specifically about not inventing UI copy without a mock backing it. Adding a plausible-sounding card here would violate that discipline in the opposite direction — writing copy with nothing to check it against. Flagged for a future session that has real mock access to confirm one way or the other; not built speculatively now.
 
 **D4 — Container width/padding differs slightly from Rules/Legal/Updates (`max-w-5xl px-7 py-10` vs. their `max-w-[1100px]`/`[1040px]`/`[1080px]` + `px-6 py-12`). Not a gap.**
-There's no shared `PageContainer` component in this codebase — every screen hand-rolls its own `<main className="mx-auto w-full max-w-[...] px-... py-...">`, and the three redesigned siblings *already* disagree with each other (1100px / 1040px / 1080px). Docs' 1024px (`5xl`) + `px-7 py-10` is well inside that existing spread, not an outlier that needs "fixing" to some single canonical value that doesn't exist. Left alone.
+There's no shared `PageContainer` component in this codebase — every screen hand-rolls its own `<main className="mx-auto w-full max-w-[...] px-... py-...">`, and the three redesigned siblings _already_ disagree with each other (1100px / 1040px / 1080px). Docs' 1024px (`5xl`) + `px-7 py-10` is well inside that existing spread, not an outlier that needs "fixing" to some single canonical value that doesn't exist. Left alone.
 
 ---
 
 ## Task 1: Add localized SEO metadata to `/docs`
 
 **Files:**
+
 - Modify: `app/docs/page.tsx`
 - Create: `app/docs/page.test.tsx`
 - Modify: `messages/en.json` (new keys: `docs.metaTitle`, `docs.metaDescription`)
@@ -185,6 +186,7 @@ git commit -m "feat(docs): add localized SEO metadata to /docs (T1)"
 ## Task 2: Translate the new keys × 7 locales, then full gates + PR
 
 **Files:**
+
 - Modify: `messages/{zh,hi,ar,bn,ru,ur,uk}.json`
 
 - [ ] **Step 1: Add `docs.metaTitle` / `docs.metaDescription` to each of the 7 other catalogs**
@@ -192,6 +194,7 @@ git commit -m "feat(docs): add localized SEO metadata to /docs (T1)"
 Insert as the first two keys inside each file's `"docs": {` object (same position as `en.json`, immediately before the existing `secOverview`-equivalent key — do not reorder or touch anything else in the namespace). Reusing each locale's already-established nav word for "Docs" (from the `docs` key under the nav/`header` namespace) and its already-established words for "pack" / format name / "API" (from elsewhere in that locale's own `docs` namespace), so terminology stays consistent within the language per `messages/README.md`'s "same English term → same translation" rule:
 
 `messages/zh.json`:
+
 ```json
   "docs": {
     "metaTitle": "文档 — Velanto",
@@ -199,6 +202,7 @@ Insert as the first two keys inside each file's `"docs": {` object (same positio
 ```
 
 `messages/hi.json`:
+
 ```json
   "docs": {
     "metaTitle": "दस्तावेज़ — Velanto",
@@ -206,6 +210,7 @@ Insert as the first two keys inside each file's `"docs": {` object (same positio
 ```
 
 `messages/ar.json`:
+
 ```json
   "docs": {
     "metaTitle": "التوثيق — Velanto",
@@ -213,6 +218,7 @@ Insert as the first two keys inside each file's `"docs": {` object (same positio
 ```
 
 `messages/bn.json`:
+
 ```json
   "docs": {
     "metaTitle": "ডকুমেন্টেশন — Velanto",
@@ -220,6 +226,7 @@ Insert as the first two keys inside each file's `"docs": {` object (same positio
 ```
 
 `messages/ru.json`:
+
 ```json
   "docs": {
     "metaTitle": "Документация — Velanto",
@@ -227,6 +234,7 @@ Insert as the first two keys inside each file's `"docs": {` object (same positio
 ```
 
 `messages/ur.json`:
+
 ```json
   "docs": {
     "metaTitle": "دستاویزات — Velanto",
@@ -234,6 +242,7 @@ Insert as the first two keys inside each file's `"docs": {` object (same positio
 ```
 
 `messages/uk.json`:
+
 ```json
   "docs": {
     "metaTitle": "Документація — Velanto",
@@ -248,12 +257,14 @@ Expected: PASS — `src/i18n/catalogs.test.ts` fails if any locale's key set div
 - [ ] **Step 3: Full local gates**
 
 Run in order:
+
 ```bash
 npm run typecheck
 npm run lint
 npm test
 npm run build
 ```
+
 Expected: all four succeed. (`npm run build` additionally catches a structurally broken JSON catalog, per `messages/README.md`.)
 
 - [ ] **Step 4: `pr-review-toolkit:code-reviewer` on the full branch diff**

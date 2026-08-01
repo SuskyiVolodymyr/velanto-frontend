@@ -362,7 +362,10 @@ export function RoundsEditor() {
                     54px field. */}
                 <div className="flex flex-wrap gap-3">
                   <div className="flex min-w-[190px] flex-1 flex-col gap-[7px]">
-                    <Text variant="tertiary" className="text-[11.5px] font-semibold">
+                    <Text
+                      variant="tertiary"
+                      className="text-[11.5px] font-semibold"
+                    >
                       {t("roundName", { index: index + 1 })}
                     </Text>
                     <Input
@@ -379,7 +382,10 @@ export function RoundsEditor() {
                   </div>
                   {slot.mode === "random" && (
                     <div className="flex w-[170px] flex-none flex-col gap-[7px]">
-                      <Text variant="tertiary" className="text-[11.5px] font-semibold">
+                      <Text
+                        variant="tertiary"
+                        className="text-[11.5px] font-semibold"
+                      >
                         {t("roundCountLabel", { index: index + 1 })}
                       </Text>
                       <div className="flex h-10 items-center gap-[9px] rounded-control border border-white/10 bg-surface-card px-[6px]">
@@ -408,7 +414,9 @@ export function RoundsEditor() {
                                   : Number(e.target.value),
                             })
                           }
-                          aria-label={t("roundCountLabel", { index: index + 1 })}
+                          aria-label={t("roundCountLabel", {
+                            index: index + 1,
+                          })}
                           className="min-w-0 flex-1 border-0 bg-transparent text-center text-[15px] font-bold text-foreground outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                         />
                         <button
@@ -433,7 +441,10 @@ export function RoundsEditor() {
 
                 {/* Group leads — every place draws from it. */}
                 <div className="flex flex-col gap-1">
-                  <Text variant="tertiary" className="text-[11.5px] font-semibold">
+                  <Text
+                    variant="tertiary"
+                    className="text-[11.5px] font-semibold"
+                  >
                     {t("roundGroup")}
                   </Text>
                   <Select

@@ -11,9 +11,10 @@ import TermsPage, { generateMetadata } from "./page";
 // mock must dispatch by namespace rather than assuming a single one.
 vi.mock("next-intl/server", () => ({
   getTranslations: vi.fn(async (namespace: string) => {
-    const dict = (messages as Record<string, unknown>)[
-      namespace
-    ] as Record<string, unknown>;
+    const dict = (messages as Record<string, unknown>)[namespace] as Record<
+      string,
+      unknown
+    >;
     const t = (key: string) => {
       const value = dict[key];
       return typeof value === "string" ? value : key;
@@ -38,12 +39,14 @@ describe("/terms route", () => {
       "aria-current",
       "page",
     );
-    expect(
-      screen.getByRole("link", { name: "Privacy" }),
-    ).not.toHaveAttribute("aria-current");
+    expect(screen.getByRole("link", { name: "Privacy" })).not.toHaveAttribute(
+      "aria-current",
+    );
     // The existing Contact section's real body copy is unchanged.
     expect(
-      screen.getByText("Questions about these Terms? Write to support@playvelanto.com."),
+      screen.getByText(
+        "Questions about these Terms? Write to support@playvelanto.com.",
+      ),
     ).toBeInTheDocument();
   });
 

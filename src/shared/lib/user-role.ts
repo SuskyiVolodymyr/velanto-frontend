@@ -67,17 +67,20 @@ const IDENTITY_PILL: Record<IdentityKind, IdentityPill> = {
   moderator: {
     label: "MODERATOR",
     className: "bg-acc/[0.16] border-transparent text-acc-hover",
-    iconPath: "M12 3l8 4v5c0 4.6-3.2 8.2-8 9-4.8-.8-8-4.4-8-9V7zM9.5 12l1.8 1.8L15 10",
+    iconPath:
+      "M12 3l8 4v5c0 4.6-3.2 8.2-8 9-4.8-.8-8-4.4-8-9V7zM9.5 12l1.8 1.8L15 10",
   },
   manager: {
     label: "MANAGER",
     className: "bg-[rgba(124,140,255,0.16)] border-transparent text-[#b3bcff]",
-    iconPath: "M12 3l8 4v5c0 4.6-3.2 8.2-8 9-4.8-.8-8-4.4-8-9V7zM8.5 12h7M12 8.5v7",
+    iconPath:
+      "M12 3l8 4v5c0 4.6-3.2 8.2-8 9-4.8-.8-8-4.4-8-9V7zM8.5 12h7M12 8.5v7",
   },
   admin: {
     label: "ADMIN",
     className: "bg-[#0b0714] border-[rgba(168,85,247,0.6)] text-[#d8a6ff]",
-    iconPath: "M12 3l8 4v5c0 4.6-3.2 8.2-8 9-4.8-.8-8-4.4-8-9V7zM12 8v4M12 15h.01",
+    iconPath:
+      "M12 3l8 4v5c0 4.6-3.2 8.2-8 9-4.8-.8-8-4.4-8-9V7zM12 8v4M12 15h.01",
   },
   trusted: {
     label: "TRUSTED",

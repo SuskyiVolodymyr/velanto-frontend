@@ -106,7 +106,10 @@ export function FormatSection({
                   </span>
                 )}
               </div>
-              <Text variant="secondary" className="text-[12.5px] leading-[1.45]">
+              <Text
+                variant="secondary"
+                className="text-[12.5px] leading-[1.45]"
+              >
                 {t(option.blurbKey)}
               </Text>
             </button>

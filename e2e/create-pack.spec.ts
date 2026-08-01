@@ -56,9 +56,7 @@ test.describe("Create pack", () => {
 
     await page.goto("/create");
     await page.getByLabel("Title").fill("Best Anime Openings");
-    await page
-      .getByLabel("Description")
-      .fill("Pick your favorite each round.");
+    await page.getByLabel("Description").fill("Pick your favorite each round.");
     // Default: one pool + one elimination round drawing 2 (under-fill of a
     // single-item pool is only a soft hint, so the pack is still valid).
     await page.getByLabel("Pool 1 name").fill("2016");
@@ -142,12 +140,12 @@ test.describe("Create pack", () => {
       .click();
     await page.getByRole("button", { name: "New pool" }).click();
     await page.getByLabel("Pool 2 name").fill("Girls");
-    await page
-      .getByRole("button", { name: "+ Add item" })
-      .nth(1)
-      .click();
+    await page.getByRole("button", { name: "+ Add item" }).nth(1).click();
     await page.getByLabel("Pool 2 new item").fill("Sakura");
-    await page.getByRole("button", { name: "Add", exact: true }).first().click();
+    await page
+      .getByRole("button", { name: "Add", exact: true })
+      .first()
+      .click();
 
     await page.getByRole("button", { name: /^NxN/ }).click();
 
@@ -193,9 +191,7 @@ test.describe("Create pack", () => {
 
     await page.goto("/create");
     await page.getByLabel("Title").fill("Best Posters");
-    await page
-      .getByLabel("Description")
-      .fill("Pick your favorite each round.");
+    await page.getByLabel("Description").fill("Pick your favorite each round.");
     await page.getByLabel("Pool 1 name").fill("Posters");
 
     // T5: expand the add panel first — items are read-only chips by default.
@@ -266,9 +262,7 @@ test.describe("Create pack", () => {
 
     await page.goto("/create");
     await page.getByLabel("Title").fill("Cover Pack");
-    await page
-      .getByLabel("Description")
-      .fill("Pick your favorite each round.");
+    await page.getByLabel("Description").fill("Pick your favorite each round.");
 
     // Upload a tiny PNG as the pack cover; picking it opens the crop modal.
     await page.getByLabel("Cover image").setInputFiles({

@@ -157,10 +157,16 @@ describe("resolveRoundSelections", () => {
     const groups: Group[] = [{ id: "g1", name: "Pool", items }];
     const rounds = [round("r1", [{ groupId: "g1", mode: "random", count: 8 }])];
 
-    const a = resolveRoundSelections(groups, rounds, mulberry32(1))[0].slots[0]
-      .items.map((i) => i.id);
-    const b = resolveRoundSelections(groups, rounds, mulberry32(2))[0].slots[0]
-      .items.map((i) => i.id);
+    const a = resolveRoundSelections(
+      groups,
+      rounds,
+      mulberry32(1),
+    )[0].slots[0].items.map((i) => i.id);
+    const b = resolveRoundSelections(
+      groups,
+      rounds,
+      mulberry32(2),
+    )[0].slots[0].items.map((i) => i.id);
 
     // Same 8 items, but the shuffle order differs between the two seeds.
     expect(new Set(a)).toEqual(new Set(b));

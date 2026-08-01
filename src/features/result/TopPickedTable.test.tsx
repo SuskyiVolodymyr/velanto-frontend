@@ -66,7 +66,9 @@ describe("TopPickedTable", () => {
   it("uses the caller-supplied label for assistive tech when passed", () => {
     render(<TopPickedTable items={[tally(1)]} label="Most saved" />);
 
-    expect(screen.getByRole("list", { name: "Most saved" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("list", { name: "Most saved" }),
+    ).toBeInTheDocument();
   });
 
   it("shares a place between equal scores and skips the one they consumed", () => {
@@ -74,10 +76,34 @@ describe("TopPickedTable", () => {
     // second is not awarded. A third item matches the percentage but not the
     // pick count, which is a different result and ranks on its own.
     const tie: ItemTally[] = [
-      { itemId: "a", itemTitle: "Alpha", picked: 27, appeared: 30, percentage: 90 },
-      { itemId: "b", itemTitle: "Beta", picked: 27, appeared: 30, percentage: 90 },
-      { itemId: "c", itemTitle: "Gamma", picked: 9, appeared: 10, percentage: 90 },
-      { itemId: "d", itemTitle: "Delta", picked: 1, appeared: 10, percentage: 10 },
+      {
+        itemId: "a",
+        itemTitle: "Alpha",
+        picked: 27,
+        appeared: 30,
+        percentage: 90,
+      },
+      {
+        itemId: "b",
+        itemTitle: "Beta",
+        picked: 27,
+        appeared: 30,
+        percentage: 90,
+      },
+      {
+        itemId: "c",
+        itemTitle: "Gamma",
+        picked: 9,
+        appeared: 10,
+        percentage: 90,
+      },
+      {
+        itemId: "d",
+        itemTitle: "Delta",
+        picked: 1,
+        appeared: 10,
+        percentage: 10,
+      },
     ];
     render(<TopPickedTable items={tie} />);
 
@@ -95,9 +121,27 @@ describe("TopPickedTable", () => {
   // was T11's own invention, never actually in the mock — removed).
   it("highlights only first place, not a medal podium of three", () => {
     const tie: ItemTally[] = [
-      { itemId: "a", itemTitle: "Alpha", picked: 9, appeared: 10, percentage: 90 },
-      { itemId: "b", itemTitle: "Beta", picked: 9, appeared: 10, percentage: 90 },
-      { itemId: "c", itemTitle: "Gamma", picked: 5, appeared: 10, percentage: 50 },
+      {
+        itemId: "a",
+        itemTitle: "Alpha",
+        picked: 9,
+        appeared: 10,
+        percentage: 90,
+      },
+      {
+        itemId: "b",
+        itemTitle: "Beta",
+        picked: 9,
+        appeared: 10,
+        percentage: 90,
+      },
+      {
+        itemId: "c",
+        itemTitle: "Gamma",
+        picked: 5,
+        appeared: 10,
+        percentage: 50,
+      },
     ];
     render(<TopPickedTable items={tie} />);
 

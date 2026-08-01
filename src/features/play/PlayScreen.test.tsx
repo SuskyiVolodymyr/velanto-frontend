@@ -303,9 +303,9 @@ describe("PlayScreen", () => {
 
     // The round heading is an h2: PlayChrome owns the page's only h1 (the pack
     // title), and a second h1 here would flatten that hierarchy.
-    expect(
-      screen.getByRole("heading", { level: 1 }),
-    ).toHaveTextContent("Best Anime Openings");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+      "Best Anime Openings",
+    );
     expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("2016");
   });
 
@@ -426,9 +426,7 @@ describe("PlayScreen", () => {
       screen.getByRole("button", { name: "Play video preview" }),
     );
     // Single-round pack → the confirm button is the finish/"see results" one.
-    expect(
-      screen.getByRole("button", { name: "See results" }),
-    ).toBeDisabled();
+    expect(screen.getByRole("button", { name: "See results" })).toBeDisabled();
 
     await user.click(
       screen.getByRole("button", { name: "Pick Guren no Yumiya" }),
@@ -446,9 +444,7 @@ describe("PlayScreen", () => {
 
     // Round 2 (the last round) starts with nothing selected.
     await screen.findByText("Silhouette");
-    expect(
-      screen.getByRole("button", { name: "See results" }),
-    ).toBeDisabled();
+    expect(screen.getByRole("button", { name: "See results" })).toBeDisabled();
   });
 
   it("records the finished play exactly once", async () => {
@@ -565,9 +561,7 @@ describe("PlayScreen", () => {
 
       const user = userEvent.setup();
       renderScreen(SAVE_ONE_PACK);
-      await user.click(
-        await screen.findByRole("button", { name: "Continue" }),
-      );
+      await user.click(await screen.findByRole("button", { name: "Continue" }));
 
       await screen.findByText("Silhouette");
       expect(screen.queryByText("Guren no Yumiya")).toBeNull();

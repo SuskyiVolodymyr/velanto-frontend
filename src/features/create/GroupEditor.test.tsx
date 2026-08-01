@@ -587,9 +587,7 @@ describe("GroupEditor editing an added item", () => {
     expect(
       await screen.findByRole("button", { name: "+ Add item" }),
     ).toBeInTheDocument();
-    expect(
-      screen.queryByLabelText("Pool 1 new item"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Pool 1 new item")).not.toBeInTheDocument();
     expect(onChange).not.toHaveBeenCalled();
   });
 
@@ -604,9 +602,7 @@ describe("GroupEditor editing an added item", () => {
     expect(
       await screen.findByRole("button", { name: "+ Add item" }),
     ).toBeInTheDocument();
-    expect(
-      screen.queryByLabelText("Pool 1 new item"),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Pool 1 new item")).not.toBeInTheDocument();
   });
 });
 
@@ -735,7 +731,9 @@ describe("GroupEditor progressive disclosure (T5)", () => {
       screen.getByRole("button", { name: "+ Add item" }),
     ).toBeInTheDocument();
     expect(screen.queryByLabelText("Pool 1 new item")).not.toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: "Add" })).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Add" }),
+    ).not.toBeInTheDocument();
   });
 
   it("expands the add panel on click and collapses it back on Cancel", async () => {
@@ -825,9 +823,7 @@ describe("GroupEditor progressive disclosure (T5)", () => {
     // "Remove" doubles as the edit panel's Delete action (T5) — it deletes
     // the item being edited outright, distinct from Cancel (which discards
     // only the in-progress edit).
-    expect(
-      screen.getByRole("button", { name: "Remove" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Remove" })).toBeInTheDocument();
     // The dashed "+ Add item" trigger is hidden while a chip is expanded —
     // only one panel is open at a time.
     expect(

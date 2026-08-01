@@ -548,7 +548,9 @@ describe("CreatePackForm", () => {
         expect(screen.queryByLabelText("Side A")).not.toBeInTheDocument();
 
         await fillMinimalValidPack(user);
-        await user.click(screen.getByRole("button", { name: "Submit for review" }));
+        await user.click(
+          screen.getByRole("button", { name: "Submit for review" }),
+        );
 
         await waitFor(() =>
           expect(push).toHaveBeenCalledWith(`/packs/pack-${format}`),
@@ -613,7 +615,9 @@ describe("CreatePackForm", () => {
       await user.click(await screen.findByRole("button", { name: /^NxN/ }));
       await screen.findByLabelText("Side A for round 1");
 
-      await user.click(await screen.findByRole("button", { name: /^Save One/ }));
+      await user.click(
+        await screen.findByRole("button", { name: /^Save One/ }),
+      );
 
       expect(screen.getByLabelText("Round 1 pool")).toBeInTheDocument();
 
@@ -647,12 +651,16 @@ describe("CreatePackForm", () => {
       // format switch generates rounds over both. T5: each pool's items are
       // read-only chips until its own "+ Add item" trigger is expanded.
       await user.type(screen.getByLabelText("Pool 1 name"), "Boys");
-      await user.click(screen.getAllByRole("button", { name: "+ Add item" })[0]);
+      await user.click(
+        screen.getAllByRole("button", { name: "+ Add item" })[0],
+      );
       await user.type(screen.getByLabelText("Pool 1 new item"), "Naruto");
       await user.click(screen.getAllByRole("button", { name: "Add" })[0]);
       await user.click(screen.getByRole("button", { name: "New pool" }));
       await user.type(screen.getByLabelText("Pool 2 name"), "Girls");
-      await user.click(screen.getAllByRole("button", { name: "+ Add item" })[1]);
+      await user.click(
+        screen.getAllByRole("button", { name: "+ Add item" })[1],
+      );
       await user.type(screen.getByLabelText("Pool 2 new item"), "Sakura");
       await user.click(screen.getAllByRole("button", { name: "Add" })[0]);
 
@@ -660,7 +668,9 @@ describe("CreatePackForm", () => {
 
       // The versus editor seeds a single matchup, which keeps the 1-item pools
       // feasible (per-side 1, no dedup exhaustion).
-      await user.click(screen.getByRole("button", { name: "Submit for review" }));
+      await user.click(
+        screen.getByRole("button", { name: "Submit for review" }),
+      );
 
       await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-nxn"));
       const payload = vi.mocked(packsClient.create).mock.calls[0][0];
@@ -681,19 +691,25 @@ describe("CreatePackForm", () => {
       await user.type(screen.getByLabelText("Description"), "D");
 
       await user.type(screen.getByLabelText("Pool 1 name"), "Left");
-      await user.click(screen.getAllByRole("button", { name: "+ Add item" })[0]);
+      await user.click(
+        screen.getAllByRole("button", { name: "+ Add item" })[0],
+      );
       await user.type(screen.getByLabelText("Pool 1 new item"), "A");
       await user.click(screen.getAllByRole("button", { name: "Add" })[0]);
       await user.click(screen.getByRole("button", { name: "New pool" }));
       await user.type(screen.getByLabelText("Pool 2 name"), "Right");
-      await user.click(screen.getAllByRole("button", { name: "+ Add item" })[1]);
+      await user.click(
+        screen.getAllByRole("button", { name: "+ Add item" })[1],
+      );
       await user.type(screen.getByLabelText("Pool 2 new item"), "B");
       await user.click(screen.getAllByRole("button", { name: "Add" })[0]);
 
       await user.click(screen.getByRole("button", { name: /^1v1/ }));
 
       // The versus editor seeds a single matchup — feasible for the 1-item pools.
-      await user.click(screen.getByRole("button", { name: "Submit for review" }));
+      await user.click(
+        screen.getByRole("button", { name: "Submit for review" }),
+      );
 
       await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-1v1"));
       const payload = vi.mocked(packsClient.create).mock.calls[0][0];

@@ -42,21 +42,20 @@ export function useAuthorPacks(
   authorId: string,
   seed?: { items: PackSummary[]; total: number },
 ) {
-  const initialData:
-    | InfiniteData<PackList<PackSummary>, number>
-    | undefined = seed
-    ? {
-        pages: [
-          {
-            items: seed.items,
-            total: seed.total,
-            page: 1,
-            limit: AUTHOR_PACKS_PAGE_SIZE,
-          },
-        ],
-        pageParams: [1],
-      }
-    : undefined;
+  const initialData: InfiniteData<PackList<PackSummary>, number> | undefined =
+    seed
+      ? {
+          pages: [
+            {
+              items: seed.items,
+              total: seed.total,
+              page: 1,
+              limit: AUTHOR_PACKS_PAGE_SIZE,
+            },
+          ],
+          pageParams: [1],
+        }
+      : undefined;
 
   const query = useInfiniteQuery({
     ...authorPacksInfiniteQueryOptions(authorId),

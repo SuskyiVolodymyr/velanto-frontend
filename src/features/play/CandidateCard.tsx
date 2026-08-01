@@ -9,7 +9,10 @@ import {
 } from "@/src/shared/lib/youtube";
 import { mediaUrl } from "@/src/shared/lib/media-url";
 import { cn } from "@/src/shared/lib/cn";
-import { toneFor, HAIRLINE_OVERLAY_STYLE } from "@/src/features/play/candidate-tone";
+import {
+  toneFor,
+  HAIRLINE_OVERLAY_STYLE,
+} from "@/src/features/play/candidate-tone";
 import { CHOSEN_LABEL_KEY } from "@/src/features/play/play-format-copy";
 import type { Item, Pack } from "@/src/shared/types/pack";
 
@@ -120,7 +123,11 @@ function TextTile({
         background: `linear-gradient(158deg, ${tone}, var(--background) 78%)`,
       }}
     >
-      <div aria-hidden className="absolute inset-0" style={HAIRLINE_OVERLAY_STYLE} />
+      <div
+        aria-hidden
+        className="absolute inset-0"
+        style={HAIRLINE_OVERLAY_STYLE}
+      />
       {selected ? (
         <ChosenBadge label={chosenLabel} />
       ) : (

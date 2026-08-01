@@ -39,7 +39,8 @@ export function UserMenu({
   // doesn't carry that flag today — the auth endpoints never send it. Staff
   // roles (moderator/manager/admin) still get their gradient correctly since
   // that only needs `role`.
-  const { enabled: streamerModeEnabled, isRevealed } = useStreamerModeOrDefault();
+  const { enabled: streamerModeEnabled, isRevealed } =
+    useStreamerModeOrDefault();
   // The trigger shows a masked label with no reveal control while streaming —
   // an interactive Reveal button (what <Hidden> renders) can't sit inside this
   // <button> (nested-interactive is invalid HTML and the click would bubble

@@ -67,9 +67,7 @@ test.describe("Rooms — Claim mode golden path", () => {
 
     await hostPage.getByRole("button", { name: /claim/i }).click();
     await hostPage.getByRole("button", { name: /copy code/i }).click();
-    const code = await hostPage.evaluate(() =>
-      navigator.clipboard.readText(),
-    );
+    const code = await hostPage.evaluate(() => navigator.clipboard.readText());
 
     const guestContext = await browser.newContext();
     const guestPage = await guestContext.newPage();

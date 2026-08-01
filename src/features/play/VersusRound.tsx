@@ -10,7 +10,10 @@ import {
 } from "@/src/shared/lib/youtube";
 import { mediaUrl } from "@/src/shared/lib/media-url";
 import { cn } from "@/src/shared/lib/cn";
-import { toneFor, HAIRLINE_OVERLAY_STYLE } from "@/src/features/play/candidate-tone";
+import {
+  toneFor,
+  HAIRLINE_OVERLAY_STYLE,
+} from "@/src/features/play/candidate-tone";
 import { VsBadge } from "@/src/features/play/VsBadge";
 
 interface VersusSide {
@@ -69,7 +72,11 @@ function ItemTile({
           background: `linear-gradient(158deg, ${tone}, var(--background) 78%)`,
         }}
       >
-        <div aria-hidden className="absolute inset-0" style={HAIRLINE_OVERLAY_STYLE} />
+        <div
+          aria-hidden
+          className="absolute inset-0"
+          style={HAIRLINE_OVERLAY_STYLE}
+        />
         {item.type === "youtube" && (
           <Badge className="absolute end-2 top-2">YouTube</Badge>
         )}
@@ -78,7 +85,10 @@ function ItemTile({
   }
 
   return (
-    <div style={appearDelay} className="play-card-appear flex flex-col gap-[9px]">
+    <div
+      style={appearDelay}
+      className="play-card-appear flex flex-col gap-[9px]"
+    >
       {media}
       <Text className="text-center text-[13.5px] font-[650] text-pretty">
         {item.title}

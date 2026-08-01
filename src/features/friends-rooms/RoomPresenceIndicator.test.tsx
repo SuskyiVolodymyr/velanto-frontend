@@ -74,9 +74,9 @@ describe("RoomPresenceIndicator", () => {
     rooms = [summary()]; // 2 players
     const { container } = render(<RoomPresenceIndicator />);
 
-    expect(
-      container.querySelectorAll('[class*="border-dashed"]'),
-    ).toHaveLength(0);
+    expect(container.querySelectorAll('[class*="border-dashed"]')).toHaveLength(
+      0,
+    );
     expect(screen.getByText("2 in room")).toBeInTheDocument();
   });
 

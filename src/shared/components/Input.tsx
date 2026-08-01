@@ -28,7 +28,10 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
  * emits exactly one class set — never by appending overrides.
  */
 export const Input = forwardRef<HTMLInputElement, InputProps>(
-  ({ className, id, name, icon, trailing, surface = "base", ...props }, ref) => {
+  (
+    { className, id, name, icon, trailing, surface = "base", ...props },
+    ref,
+  ) => {
     const fieldId = useFieldIdentity(id, name);
     const invalid = props["aria-invalid"] === true;
 

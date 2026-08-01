@@ -14,21 +14,21 @@
 
 Unlike Admin/Moderation or Profile, the Feedback cluster's **layout is already correct**: `FeedbackScreen.tsx` (list + filters + top-3 sidebar) and `FeedbackDetailScreen.tsx` (summary → body → vote → staff actions → comments, single column, `max-w-2xl`) already match the shapes the completed redesigns settled on — confirmed directly against `ReportDetailScreen.tsx` (also a single-column `max-w-2xl` "summary → content → actions" stack with no sticky sidebar; that shape isn't unique to Feedback, it's the established pattern for this kind of single-item staff-actionable screen). `/feedback` and `/feedback/[id]` also already have `generateMetadata` (`metaListTitle`/`metaListDescription` in the `feedback` catalog) — they don't have the Docs-page-plan's SEO gap.
 
-What's real: **surface-token drift**. Every one of the four completed redesigns converged on `Card` (`rounded-card bg-surface-card border-border p-[18px]`) for panels and `bg-surface-card`/`rounded-tile` for row-style cards — confirmed independently in `PackCard.tsx` (already 2.0.0-redesigned), `PeopleTab.tsx`/`RecentlyPlayedSection.tsx` (Profile redesign), `Card.tsx` itself, and 23 other files that import `Card` directly. `FeedbackCard.tsx` and `FeedbackDetailScreen.tsx` instead hardcode `rounded-[12px]`/`rounded-[15px]` + `bg-surface` (the page-chrome token, one elevation step below `bg-surface-card` — see `app/globals.css`'s own comment: *"bar, bottom nav → --surface-card cards/panels"*). That's the gap this plan closes.
+What's real: **surface-token drift**. Every one of the four completed redesigns converged on `Card` (`rounded-card bg-surface-card border-border p-[18px]`) for panels and `bg-surface-card`/`rounded-tile` for row-style cards — confirmed independently in `PackCard.tsx` (already 2.0.0-redesigned), `PeopleTab.tsx`/`RecentlyPlayedSection.tsx` (Profile redesign), `Card.tsx` itself, and 23 other files that import `Card` directly. `FeedbackCard.tsx` and `FeedbackDetailScreen.tsx` instead hardcode `rounded-[12px]`/`rounded-[15px]` + `bg-surface` (the page-chrome token, one elevation step below `bg-surface-card` — see `app/globals.css`'s own comment: _"bar, bottom nav → --surface-card cards/panels"_). That's the gap this plan closes.
 
 Separately: `FeedbackFilters.tsx` hand-rolls a single-select chip row (`chipClass`, `aria-pressed` buttons) that turns out to be **class-for-class identical** to `src/features/home/FilterChipRow.tsx`'s `"chip"` variant — the shared component `AuthorPackList.tsx`'s own status filter (built in the Profile/Preferences redesign, per its D13) already uses for the exact same "All / value / value / …" single-select shape. This is pure duplication to fix, not a restyle.
 
 ### DO NOT TOUCH (functionally correct, out of scope)
 
-| Area | Files | Why |
-| --- | --- | --- |
-| List/detail screen shape, filter semantics, pagination, debounced search | `FeedbackScreen.tsx`, `FeedbackList.tsx` (structure), `api/feedback-list.queries.ts` | Already matches the established single-column list+detail shape (see above) |
-| `/feedback`, `/feedback/[id]` metadata | `app/feedback/page.tsx`, `app/feedback/[id]/page.tsx` | Already has `generateMetadata` with real translated copy — not the Docs-page gap |
-| Vote control | `FeedbackVote.tsx` | Already a thin wrapper over the shared `VoteControl` — no gap |
-| Comment composer + thread styling | `FeedbackComments.tsx` | `rounded-[10px] border border-border bg-surface` for the textarea is **not stale** — it's byte-identical to Pack Detail's own still-current `CommentSection.tsx` composer (same classes, same tokens), which none of the four completed redesigns touched either. "Fixing" only the Feedback copy would create a *new* inconsistency between two comment UIs that currently agree (see D4). |
-| New-post form | `NewFeedbackForm.tsx`, `app/feedback/new/page.tsx` | Not one of the three named screens for this slice — see D6 |
-| `PackOwnerStatusBadge.tsx` | `src/features/pack/PackOwnerStatusBadge.tsx` | Already correct and already tested; extended by a new sibling component (Task 5), not modified |
-| Moderator pack-review screen | `src/features/moderation/PackReviewScreen.tsx` + `PackReviewSidebar.tsx`/`PackReviewSummary.tsx`/`PackReviewAuthorCard.tsx`/`PackRoundMapping.tsx`/`PackContentsPreview.tsx`, `app/moderation/packs/[id]/page.tsx` | Confirmed already built (Admin/Moderation redesign) and confirmed to be a **different** screen — a moderator's approve/reject workspace (`useApprovePack`/`useRejectPack`), not an author-facing outcome view. See D2. |
+| Area                                                                     | Files                                                                                                                                                                                                              | Why                                                                                                                                                                                                                                                                                                                                                                                         |
+| ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| List/detail screen shape, filter semantics, pagination, debounced search | `FeedbackScreen.tsx`, `FeedbackList.tsx` (structure), `api/feedback-list.queries.ts`                                                                                                                               | Already matches the established single-column list+detail shape (see above)                                                                                                                                                                                                                                                                                                                 |
+| `/feedback`, `/feedback/[id]` metadata                                   | `app/feedback/page.tsx`, `app/feedback/[id]/page.tsx`                                                                                                                                                              | Already has `generateMetadata` with real translated copy — not the Docs-page gap                                                                                                                                                                                                                                                                                                            |
+| Vote control                                                             | `FeedbackVote.tsx`                                                                                                                                                                                                 | Already a thin wrapper over the shared `VoteControl` — no gap                                                                                                                                                                                                                                                                                                                               |
+| Comment composer + thread styling                                        | `FeedbackComments.tsx`                                                                                                                                                                                             | `rounded-[10px] border border-border bg-surface` for the textarea is **not stale** — it's byte-identical to Pack Detail's own still-current `CommentSection.tsx` composer (same classes, same tokens), which none of the four completed redesigns touched either. "Fixing" only the Feedback copy would create a _new_ inconsistency between two comment UIs that currently agree (see D4). |
+| New-post form                                                            | `NewFeedbackForm.tsx`, `app/feedback/new/page.tsx`                                                                                                                                                                 | Not one of the three named screens for this slice — see D6                                                                                                                                                                                                                                                                                                                                  |
+| `PackOwnerStatusBadge.tsx`                                               | `src/features/pack/PackOwnerStatusBadge.tsx`                                                                                                                                                                       | Already correct and already tested; extended by a new sibling component (Task 5), not modified                                                                                                                                                                                                                                                                                              |
+| Moderator pack-review screen                                             | `src/features/moderation/PackReviewScreen.tsx` + `PackReviewSidebar.tsx`/`PackReviewSummary.tsx`/`PackReviewAuthorCard.tsx`/`PackRoundMapping.tsx`/`PackContentsPreview.tsx`, `app/moderation/packs/[id]/page.tsx` | Confirmed already built (Admin/Moderation redesign) and confirmed to be a **different** screen — a moderator's approve/reject workspace (`useApprovePack`/`useRejectPack`), not an author-facing outcome view. See D2.                                                                                                                                                                      |
 
 ### IN SCOPE
 
@@ -39,12 +39,12 @@ Separately: `FeedbackFilters.tsx` hand-rolls a single-select chip row (`chipClas
 ## 0b. Decision points (do NOT silently resolve these — confirm before implementing)
 
 **D1 — No real mock access in this environment; cross-referencing the four completed redesigns stands in for it, same as the Docs-page plan's D1.**
-`design/extracted/design_handoff_vilante/` does not exist on disk in this session (confirmed directly, not a worktree-isolation artifact), and there is no DesignSync-style fetch tool available. This plan leans on three things that *are* verifiable in-repo instead: (1) the shared-component vocabulary independently converged on by `Card`/`FilterChipRow`/`Select`/`EmptyState` across 23+ files in the four already-completed 2.0.0 redesigns (Admin/Moderation, Profile/Preferences, Create Pack, Solo Play/Results — all of which *did* have real mock access this same epic); (2) a direct diff of every Feedback-cluster file against those converged patterns; (3) `docs/superpowers/plans/2026-07-28-profile-preferences-redesign.md`'s own D7, which — written by an agent with real mock access — already identified the "pack review outcome" gap from the Profile mock's own `showReview` link and a `Pack Review Outcome.dc.html` mock file it did not have permission to build against, and explicitly deferred it. If a future session with real mock access finds a concrete visual mismatch this plan missed, that's new information this plan didn't have — file it separately.
+`design/extracted/design_handoff_vilante/` does not exist on disk in this session (confirmed directly, not a worktree-isolation artifact), and there is no DesignSync-style fetch tool available. This plan leans on three things that _are_ verifiable in-repo instead: (1) the shared-component vocabulary independently converged on by `Card`/`FilterChipRow`/`Select`/`EmptyState` across 23+ files in the four already-completed 2.0.0 redesigns (Admin/Moderation, Profile/Preferences, Create Pack, Solo Play/Results — all of which _did_ have real mock access this same epic); (2) a direct diff of every Feedback-cluster file against those converged patterns; (3) `docs/superpowers/plans/2026-07-28-profile-preferences-redesign.md`'s own D7, which — written by an agent with real mock access — already identified the "pack review outcome" gap from the Profile mock's own `showReview` link and a `Pack Review Outcome.dc.html` mock file it did not have permission to build against, and explicitly deferred it. If a future session with real mock access finds a concrete visual mismatch this plan missed, that's new information this plan didn't have — file it separately.
 
 **D2 — "Pack Review Outcome" is a real, distinct, author-facing gap — not a mix-up with the already-built moderator screen. Build only the mock-independent slice: the reason text itself.**
-Investigated directly: `src/features/moderation/PackReviewScreen.tsx` (plus `PackReviewSidebar.tsx`/`PackReviewSummary.tsx`/`PackReviewAuthorCard.tsx`/`PackRoundMapping.tsx`/`PackContentsPreview.tsx`, routed at `app/moderation/packs/[id]/page.tsx`) is confirmed built and confirmed to be the **moderator's** approve/reject workspace — it imports `useApprovePack`/`useRejectPack` from `api/moderation.queries.ts` and is gated to `moderator`/`manager`/`admin` viewers. It has no relationship to what a pack's *author* sees after the fact. Separately, `src/features/pack/PackOwnerStatusBadge.tsx` is confirmed to be exactly what its own doc comment says: a small status pill (Draft/Pending/Rejected), author-only, nothing else. Grepping the whole frontend for `rejectionReason` turns up the field only in test fixtures and its own type declaration (`src/shared/types/pack.ts:178`) — **zero production components render it**, even though it's real, populated data: `packsClient.reject(id, reason)` (`src/shared/lib/packs-client.ts:120-121`) posts a moderator's reason to `POST /packs/:id/reject` and the response `Pack` carries it back on `rejectionReason`.
+Investigated directly: `src/features/moderation/PackReviewScreen.tsx` (plus `PackReviewSidebar.tsx`/`PackReviewSummary.tsx`/`PackReviewAuthorCard.tsx`/`PackRoundMapping.tsx`/`PackContentsPreview.tsx`, routed at `app/moderation/packs/[id]/page.tsx`) is confirmed built and confirmed to be the **moderator's** approve/reject workspace — it imports `useApprovePack`/`useRejectPack` from `api/moderation.queries.ts` and is gated to `moderator`/`manager`/`admin` viewers. It has no relationship to what a pack's _author_ sees after the fact. Separately, `src/features/pack/PackOwnerStatusBadge.tsx` is confirmed to be exactly what its own doc comment says: a small status pill (Draft/Pending/Rejected), author-only, nothing else. Grepping the whole frontend for `rejectionReason` turns up the field only in test fixtures and its own type declaration (`src/shared/types/pack.ts:178`) — **zero production components render it**, even though it's real, populated data: `packsClient.reject(id, reason)` (`src/shared/lib/packs-client.ts:120-121`) posts a moderator's reason to `POST /packs/:id/reject` and the response `Pack` carries it back on `rejectionReason`.
 
-So: the mock's fuller "Pack Review Outcome" screen (implied by the Profile plan's D7 to include a `showReview` link/screen) is a real target that genuinely doesn't exist yet — but this session, like the Profile/Preferences session before it, has no mock for its actual layout, and per this project's own established discipline (Docs-page D3: *"if you notice a copy difference, STOP and flag it, don't invent it"*; Profile D7's own deferral) building a full new screen from zero source of truth would be inventing UI, not redesigning it.
+So: the mock's fuller "Pack Review Outcome" screen (implied by the Profile plan's D7 to include a `showReview` link/screen) is a real target that genuinely doesn't exist yet — but this session, like the Profile/Preferences session before it, has no mock for its actual layout, and per this project's own established discipline (Docs-page D3: _"if you notice a copy difference, STOP and flag it, don't invent it"_; Profile D7's own deferral) building a full new screen from zero source of truth would be inventing UI, not redesigning it.
 → **Build the one piece that needs no mock at all: surface the existing `rejectionReason` text to the author.** A new `PackRejectionReason.tsx` (Task 5) renders inline on the pack detail page, directly below the existing `PackOwnerStatusBadge`, using only the already-established `Card` vocabulary (heading + body text — the same shape every other "read-only info panel" in this app already uses, e.g. `FeedbackDetailScreen`'s translation-context block after Task 4). This is deliberately **not** a dedicated route, **not** a timeline, and **not** the richer "3 items need your edit" granular flow the mock's own name implies — those need a `changes_requested` pack status and per-item annotation data that (per the Admin/Moderation redesign's own D5/D7) **do not exist in either repo's backend**. Building them here would be the same unsupported invention Admin/Moderation explicitly declined for the analogous moderator-side surface. File a follow-up issue for the full mock-driven "Pack Review Outcome" screen once mock access returns; this task closes the honest, currently-buildable subset of it.
 
 **D3 — `FeedbackFilters.tsx`'s hand-rolled chip row is a duplicate of `FilterChipRow`, not a stale pattern to restyle from scratch.**
@@ -52,11 +52,11 @@ So: the mock's fuller "Pack Review Outcome" screen (implied by the Profile plan'
 → Task 1 replaces the three hand-rolled `.map()` chip blocks with three `<FilterChipRow>` calls. Because `FilterChipRow` renders the same `<button type="button" aria-pressed>` shape with the same visible label text, this is behavior- and accessibility-preserving — `FeedbackScreen.test.tsx`'s existing `getByRole("button", { name: "Feature" })`-style queries need **no changes**.
 
 **D4 — `FeedbackComments.tsx`'s composer/thread styling is not touched — it matches Pack Detail's own still-current comment UI, which is itself untouched by every 2.0.0 redesign so far.**
-`FeedbackComments.tsx`'s composer textarea (`rounded-[10px] border border-border bg-surface px-3.5 py-3 …`) looks, at first read, like the same `bg-surface`-instead-of-`bg-surface-card` drift as `FeedbackCard.tsx`. It is not: `src/features/pack/CommentSection.tsx` — the pack detail page's own comment thread, a completely separate feature not in scope for this plan and not touched by any of the four completed redesigns — uses the *identical* class string for its own composer textarea, and the identical `rounded-[14px] border border-border bg-surface` for its thread-card wrapper (`THREAD_CARD`). Since two independent, still-current comment UIs already agree with each other on this token combination, it reads as a deliberate (if older) convention specific to comment surfaces, not drift from the redesign's `Card`/`bg-surface-card` convention. "Fixing" only `FeedbackComments.tsx` would make it disagree with `CommentSection.tsx` instead of agreeing with `Card.tsx` — a net new inconsistency, not a fixed one.
+`FeedbackComments.tsx`'s composer textarea (`rounded-[10px] border border-border bg-surface px-3.5 py-3 …`) looks, at first read, like the same `bg-surface`-instead-of-`bg-surface-card` drift as `FeedbackCard.tsx`. It is not: `src/features/pack/CommentSection.tsx` — the pack detail page's own comment thread, a completely separate feature not in scope for this plan and not touched by any of the four completed redesigns — uses the _identical_ class string for its own composer textarea, and the identical `rounded-[14px] border border-border bg-surface` for its thread-card wrapper (`THREAD_CARD`). Since two independent, still-current comment UIs already agree with each other on this token combination, it reads as a deliberate (if older) convention specific to comment surfaces, not drift from the redesign's `Card`/`bg-surface-card` convention. "Fixing" only `FeedbackComments.tsx` would make it disagree with `CommentSection.tsx` instead of agreeing with `Card.tsx` — a net new inconsistency, not a fixed one.
 → No changes to `FeedbackComments.tsx`. If `CommentSection.tsx` is ever redesigned in a future slice, revisit `FeedbackComments.tsx` alongside it so the two stay in lockstep — file that as a paired follow-up if wanted, not built speculatively here.
 
 **D5 — `FeedbackDetailScreen.tsx`'s overall layout (badges → title → meta → body → conditional info card → vote → conditional staff panel → comments, single column, `max-w-2xl`) is not a gap.**
-It already matches `ReportDetailScreen.tsx`'s shape (`summary → content → actions`, also single-column `max-w-2xl`, no sticky sidebar) — confirmed by reading both files directly. There is no "old" detail-screen layout being carried over here; only the surface tokens *inside* two of its conditional panels (Task 4) are stale.
+It already matches `ReportDetailScreen.tsx`'s shape (`summary → content → actions`, also single-column `max-w-2xl`, no sticky sidebar) — confirmed by reading both files directly. There is no "old" detail-screen layout being carried over here; only the surface tokens _inside_ two of its conditional panels (Task 4) are stale.
 
 **D6 — `NewFeedbackForm.tsx` (`/feedback/new`) is explicitly out of scope, even though it shares the same anti-pattern.**
 Its translation-suggestion section uses the identical `rounded-[15px] border border-border bg-white/[0.02] p-5` hand-rolled panel that Task 4 fixes on the detail screen. The task brief names three screens — Suggestions list, Suggestion Detail, Pack Review Outcome — and `/feedback/new` isn't one of them. Flagged here rather than silently fixed (scope creep) or silently ignored (an unflagged known gap): a follow-up task can apply the identical `Card` swap Task 4 does, verbatim, whenever `/feedback/new` is in scope.
@@ -66,6 +66,7 @@ Its translation-suggestion section uses the identical `rounded-[15px] border bor
 ## Task 1: `FeedbackFilters` — dedupe the hand-rolled chip row onto `FilterChipRow`
 
 **Files:**
+
 - Create: `src/features/feedback/FeedbackFilters.test.tsx`
 - Modify: `src/features/feedback/FeedbackFilters.tsx`
 
@@ -82,7 +83,9 @@ import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
 import { FeedbackFilters } from "./FeedbackFilters";
 
-function renderFilters(overrides: Partial<React.ComponentProps<typeof FeedbackFilters>> = {}) {
+function renderFilters(
+  overrides: Partial<React.ComponentProps<typeof FeedbackFilters>> = {},
+) {
   const props: React.ComponentProps<typeof FeedbackFilters> = {
     searchInput: "",
     onSearchInputChange: vi.fn(),
@@ -288,6 +291,7 @@ git commit -m "refactor(feedback): dedupe FeedbackFilters' chip row onto the sha
 ## Task 2: `FeedbackCard` — fix the row-card elevation token
 
 **Files:**
+
 - Modify: `src/features/feedback/FeedbackCard.tsx:29,45`
 
 - [ ] **Step 1: Confirm the current wrong token**
@@ -299,25 +303,29 @@ git commit -m "refactor(feedback): dedupe FeedbackFilters' chip row onto the sha
 In `src/features/feedback/FeedbackCard.tsx`, change line 29:
 
 ```tsx
-      className="flex items-center gap-3 rounded-[12px] border border-border bg-surface px-3 py-2.5 hover:bg-white/[0.03]"
+className =
+  "flex items-center gap-3 rounded-[12px] border border-border bg-surface px-3 py-2.5 hover:bg-white/[0.03]";
 ```
 
 to:
 
 ```tsx
-      className="flex items-center gap-3 rounded-tile border border-border bg-surface-card px-3 py-2.5 hover:bg-white/[0.03]"
+className =
+  "flex items-center gap-3 rounded-tile border border-border bg-surface-card px-3 py-2.5 hover:bg-white/[0.03]";
 ```
 
 And line 45:
 
 ```tsx
-      className="flex items-start gap-4 rounded-[12px] border border-border bg-surface px-4 py-3 hover:bg-white/[0.03]"
+className =
+  "flex items-start gap-4 rounded-[12px] border border-border bg-surface px-4 py-3 hover:bg-white/[0.03]";
 ```
 
 to:
 
 ```tsx
-      className="flex items-start gap-4 rounded-tile border border-border bg-surface-card px-4 py-3 hover:bg-white/[0.03]"
+className =
+  "flex items-start gap-4 rounded-tile border border-border bg-surface-card px-4 py-3 hover:bg-white/[0.03]";
 ```
 
 - [ ] **Step 3: Run the existing coverage that renders `FeedbackCard`**
@@ -339,6 +347,7 @@ git commit -m "style(feedback): fix FeedbackCard's row surface to the establishe
 ## Task 3: `FeedbackList` — empty state onto the shared `EmptyState`
 
 **Files:**
+
 - Modify: `src/features/feedback/FeedbackList.tsx`
 
 - [ ] **Step 1: Confirm the target component's contract**
@@ -356,22 +365,26 @@ import { EmptyState } from "@/src/shared/components/EmptyState";
 Replace:
 
 ```tsx
-      {listReady && items.length === 0 && (
-        <Text variant="secondary">{t("noMatches")}</Text>
-      )}
+{
+  listReady && items.length === 0 && (
+    <Text variant="secondary">{t("noMatches")}</Text>
+  );
+}
 ```
 
 with:
 
 ```tsx
-      {listReady && items.length === 0 && <EmptyState title={t("noMatches")} />}
+{
+  listReady && items.length === 0 && <EmptyState title={t("noMatches")} />;
+}
 ```
 
 The error branch (`{error && <Text variant="danger">{t("listError")}</Text>}`) is unchanged — `EmptyState` is for "nothing here yet", not an error state, matching `ReportDetailScreen.tsx`'s own error-vs-empty split (errors stay `Text variant="danger"` everywhere in this codebase; only empty-list states use `EmptyState`).
 
 - [ ] **Step 3: Run the existing test that covers this exact branch**
 
-`FeedbackScreen.test.tsx`'s `"shows an empty message when there are no items"` test asserts `screen.getByText(/no feedback matches/i)` — `EmptyState` renders its `title` prop as visible text in a `<p>`, so this regex still matches the same `noMatches` copy (*"No feedback matches these filters."*) unchanged.
+`FeedbackScreen.test.tsx`'s `"shows an empty message when there are no items"` test asserts `screen.getByText(/no feedback matches/i)` — `EmptyState` renders its `title` prop as visible text in a `<p>`, so this regex still matches the same `noMatches` copy (_"No feedback matches these filters."_) unchanged.
 
 Run: `npm test -- src/features/feedback/FeedbackScreen.test.tsx`
 Expected: PASS, unchanged.
@@ -388,6 +401,7 @@ git commit -m "style(feedback): use the shared EmptyState for the no-matches lis
 ## Task 4: `FeedbackDetailScreen` — `Card` + `Select` for its two info panels
 
 **Files:**
+
 - Modify: `src/features/feedback/FeedbackDetailScreen.tsx`
 
 - [ ] **Step 1: Confirm the target components' contracts**
@@ -494,7 +508,7 @@ and its closing `</div>` (after the trailing `{deleteError && (…)}` block) to 
 
 - [ ] **Step 5: Run the existing detail-screen tests**
 
-`FeedbackDetailScreen.test.tsx`'s `"shows the status select to a staff viewer…"` test uses `screen.findByLabelText("Status")` + `userEvent.selectOptions(select, "in_progress")` — `Select` still renders a real `<select>` as a descendant of the wrapping `<label>` (implicit label association doesn't require the control to be the label's *only* or *direct* child), and `aria-label={t("statusSelectLabel")}` still names it "Status", so this query and interaction are unaffected. The `"shows the translation block…"` test only asserts on text content inside the (now-`Card`) panel, also unaffected.
+`FeedbackDetailScreen.test.tsx`'s `"shows the status select to a staff viewer…"` test uses `screen.findByLabelText("Status")` + `userEvent.selectOptions(select, "in_progress")` — `Select` still renders a real `<select>` as a descendant of the wrapping `<label>` (implicit label association doesn't require the control to be the label's _only_ or _direct_ child), and `aria-label={t("statusSelectLabel")}` still names it "Status", so this query and interaction are unaffected. The `"shows the translation block…"` test only asserts on text content inside the (now-`Card`) panel, also unaffected.
 
 Run: `npm test -- src/features/feedback/FeedbackDetailScreen.test.tsx`
 Expected: PASS, unchanged.
@@ -511,6 +525,7 @@ git commit -m "style(feedback): move FeedbackDetailScreen's info panels onto Car
 ## Task 5: `PackRejectionReason` — surface a rejected pack's reason to its author
 
 **Files:**
+
 - Create: `src/features/pack/PackRejectionReason.tsx`
 - Create: `src/features/pack/PackRejectionReason.test.tsx`
 - Modify: `src/features/pack/PackDetailScreen.tsx:19,166-169`
@@ -752,6 +767,7 @@ git commit -m "feat(pack): surface a rejected pack's reason to its author (T5)"
 ## Task 6: i18n × 7 locales + full gates + PR
 
 **Files:**
+
 - Modify: `messages/{zh,hi,ar,bn,ru,ur,uk}.json`
 
 - [ ] **Step 1: Add `pack.rejectionReasonHeading` to each of the 7 other catalogs**
@@ -759,36 +775,43 @@ git commit -m "feat(pack): surface a rejected pack's reason to its author (T5)"
 Insert next to each file's existing `submitPackError` key (same position as `en.json`), short real translations — no ICU plural forms needed (no count involved):
 
 `messages/zh.json`:
+
 ```json
     "rejectionReasonHeading": "被拒绝的原因",
 ```
 
 `messages/hi.json`:
+
 ```json
     "rejectionReasonHeading": "इसे अस्वीकार क्यों किया गया",
 ```
 
 `messages/ar.json`:
+
 ```json
     "rejectionReasonHeading": "سبب الرفض",
 ```
 
 `messages/bn.json`:
+
 ```json
     "rejectionReasonHeading": "কেন এটি প্রত্যাখ্যান করা হয়েছে",
 ```
 
 `messages/ru.json`:
+
 ```json
     "rejectionReasonHeading": "Почему пак отклонён",
 ```
 
 `messages/ur.json`:
+
 ```json
     "rejectionReasonHeading": "اسے کیوں مسترد کیا گیا",
 ```
 
 `messages/uk.json`:
+
 ```json
     "rejectionReasonHeading": "Чому пак відхилено",
 ```
@@ -801,12 +824,14 @@ Expected: PASS — `src/shared/types/cross-repo-drift.test.ts`'s `LOCALES` ↔ `
 - [ ] **Step 3: Full local gates**
 
 Run in order:
+
 ```bash
 npx tsc --noEmit
 npm run lint
 npm test
 npm run build
 ```
+
 Expected: all four succeed.
 
 There is no existing `e2e/feedback.spec.ts` in this repo (checked `e2e/` — only `auth`, `home`, `create-pack`, `edit-pack`, `play`), so `npm run test:e2e` has no Feedback-specific coverage to protect and isn't a gate here — same situation the Profile/Preferences plan noted for `/profile`/`/settings` (T15). Adding one is optional net-new coverage, not required by this plan.
@@ -826,4 +851,4 @@ Branch off `release/2.0.0` (per the workspace root `CLAUDE.md`'s "sub-branch →
 - **Spec coverage:** the task asked for a plan covering the Suggestions list, Suggestion Detail, and Pack Review Outcome (if needed) screens, matching established 2.0.0 UI-kit conventions. List (Tasks 1-3) and Detail (Task 4) are covered by real, triangulated token/component-reuse gaps; Pack Review Outcome is covered by Task 5's deliberately-scoped-down slice, with the full mock-driven screen explicitly deferred and justified (D2) rather than silently dropped or silently invented.
 - **Placeholder scan:** no TBDs; every step has literal file contents, exact line anchors, and exact commands with expected output. All 7 non-English translations are real short strings, not transliterated stubs.
 - **Type consistency:** `PackRejectionReason`'s props (`packAuthorId: string`, `status: PackStatus`, `rejectionReason: string | null`) match `Pack`'s actual field types in `src/shared/types/pack.ts` and the exact prop names `PackOwnerStatusBadge` already established for the same two shared fields (`packAuthorId`, `status`). `FeedbackFilters`' external prop contract (`FeedbackTopic | undefined` / `FeedbackStatus | undefined`) is unchanged by Task 1 — only its internals change, so `FeedbackScreen.tsx` (which consumes it) needs no edits anywhere in this plan.
-- **Risk check:** Tasks 1-4 are deliberately structured so the *existing* test suites (`FeedbackScreen.test.tsx`, `FeedbackDetailScreen.test.tsx`) pass unmodified — every swap targets a component with a matching accessible-name/role contract to what it replaces. The only genuinely new behavior in this plan is Task 5, which ships with its own full test suite mirroring `PackOwnerStatusBadge.test.tsx`'s proven gating pattern.
+- **Risk check:** Tasks 1-4 are deliberately structured so the _existing_ test suites (`FeedbackScreen.test.tsx`, `FeedbackDetailScreen.test.tsx`) pass unmodified — every swap targets a component with a matching accessible-name/role contract to what it replaces. The only genuinely new behavior in this plan is Task 5, which ships with its own full test suite mirroring `PackOwnerStatusBadge.test.tsx`'s proven gating pattern.

@@ -15,7 +15,9 @@ describe("StepHeader", () => {
   });
 
   it("renders the hint paragraph when a hint is passed", () => {
-    render(<StepHeader title="Pools" hint="Pools are reusable bags of items." />);
+    render(
+      <StepHeader title="Pools" hint="Pools are reusable bags of items." />,
+    );
 
     expect(
       screen.getByText("Pools are reusable bags of items."),

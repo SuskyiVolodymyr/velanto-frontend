@@ -109,9 +109,7 @@ describe("PlayRouter across a pack change", () => {
     // Finish pack A's round 0, creating a real saved record for pack A.
     await screen.findByText("Alpha Item");
     await user.click(screen.getByText("#1"));
-    await user.click(
-      await screen.findByRole("button", { name: "Next round" }),
-    );
+    await user.click(await screen.findByRole("button", { name: "Next round" }));
     await waitFor(() =>
       expect(screen.getByText("Round 2 of 2")).toBeInTheDocument(),
     );

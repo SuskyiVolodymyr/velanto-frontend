@@ -96,9 +96,7 @@ describe("EditPackScreen", () => {
     mockSession("u1");
     renderScreen();
 
-    expect(await screen.findByLabelText("Title")).toHaveValue(
-      "Original Title",
-    );
+    expect(await screen.findByLabelText("Title")).toHaveValue("Original Title");
     expect(
       screen.getByRole("button", { name: "Save changes" }),
     ).toBeInTheDocument();
@@ -133,5 +131,4 @@ describe("EditPackScreen", () => {
       screen.queryByText("You can only edit your own packs."),
     ).not.toBeInTheDocument();
   });
-
 });

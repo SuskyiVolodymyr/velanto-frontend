@@ -168,9 +168,7 @@ describe("RankPlayScreen", () => {
     await user.click(screen.getByText("#1"));
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
-    await user.click(
-      await screen.findByRole("button", { name: "Next round" }),
-    );
+    await user.click(await screen.findByRole("button", { name: "Next round" }));
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("#1"));
 
@@ -219,9 +217,7 @@ describe("RankPlayScreen", () => {
     await user.click(screen.getByText("#1"));
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
-    await user.click(
-      await screen.findByRole("button", { name: "Next round" }),
-    );
+    await user.click(await screen.findByRole("button", { name: "Next round" }));
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("#1"));
 
@@ -244,9 +240,7 @@ describe("RankPlayScreen", () => {
     await user.click(screen.getByText("#1"));
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
-    await user.click(
-      await screen.findByRole("button", { name: "Next round" }),
-    );
+    await user.click(await screen.findByRole("button", { name: "Next round" }));
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("#1"));
 
@@ -297,9 +291,7 @@ describe("RankPlayScreen", () => {
     await user.click(screen.getByText("#2"));
     await screen.findByText("Redo");
     await user.click(screen.getByText("#1"));
-    await user.click(
-      await screen.findByRole("button", { name: "Next round" }),
-    );
+    await user.click(await screen.findByRole("button", { name: "Next round" }));
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("#1"));
 
@@ -388,7 +380,9 @@ describe("RankPlayScreen", () => {
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("#1"));
 
-    expect(await screen.findByText("Loading your results…")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Loading your results…"),
+    ).toBeInTheDocument();
     expect(screen.queryByText("Round ranked")).toBeNull();
     expect(screen.queryByText(/^Next up:/)).toBeNull();
   });
@@ -422,9 +416,7 @@ describe("RankPlayScreen", () => {
     await user.click(screen.getByText("#1"));
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
-    await user.click(
-      await screen.findByRole("button", { name: "Next round" }),
-    );
+    await user.click(await screen.findByRole("button", { name: "Next round" }));
 
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("#1"));
@@ -561,9 +553,7 @@ describe("RankPlayScreen", () => {
     await user.click(screen.getByText("#1"));
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
-    await user.click(
-      await screen.findByRole("button", { name: "Next round" }),
-    );
+    await user.click(await screen.findByRole("button", { name: "Next round" }));
     await screen.findByText("Silhouette");
     expect(readPlayResume("pack-rank", version)?.roundIndex).toBe(1);
 
@@ -586,9 +576,7 @@ describe("RankPlayScreen", () => {
     await user.click(screen.getByText("#1"));
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
-    await user.click(
-      await screen.findByRole("button", { name: "Next round" }),
-    );
+    await user.click(await screen.findByRole("button", { name: "Next round" }));
     first.unmount();
 
     renderScreen(RANK_BLIND_PACK);
@@ -608,15 +596,11 @@ describe("RankPlayScreen", () => {
     await user.click(screen.getByText("#1"));
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
-    await user.click(
-      await screen.findByRole("button", { name: "Next round" }),
-    );
+    await user.click(await screen.findByRole("button", { name: "Next round" }));
     first.unmount();
 
     renderScreen(RANK_BLIND_PACK);
-    await user.click(
-      await screen.findByRole("button", { name: "Start over" }),
-    );
+    await user.click(await screen.findByRole("button", { name: "Start over" }));
 
     await screen.findByText("Round 1 of 2");
     // Discarded outright, not just superseded in memory — a reload right
@@ -633,9 +617,7 @@ describe("RankPlayScreen", () => {
     await user.click(screen.getByText("#1"));
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
-    await user.click(
-      await screen.findByRole("button", { name: "Next round" }),
-    );
+    await user.click(await screen.findByRole("button", { name: "Next round" }));
     expect(readPlayResume("pack-rank", version)).not.toBeNull();
 
     // Finish the last round.

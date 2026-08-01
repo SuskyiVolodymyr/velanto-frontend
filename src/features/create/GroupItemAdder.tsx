@@ -267,7 +267,9 @@ export function GroupItemAdder({
 
         <div className="flex min-w-[200px] flex-1 flex-col gap-[7px]">
           <span className={fieldCaptionClassName}>
-            {draftType === "text" ? t("itemTextOnCardLabel") : t("itemNameLabel")}
+            {draftType === "text"
+              ? t("itemTextOnCardLabel")
+              : t("itemNameLabel")}
           </span>
           {draftType === "text" ? (
             <Input
@@ -292,7 +294,9 @@ export function GroupItemAdder({
 
         {draftType === "youtube" && (
           <div className="flex w-[230px] flex-none flex-col gap-[7px]">
-            <span className={fieldCaptionClassName}>{t("youtubeLinkLabel")}</span>
+            <span className={fieldCaptionClassName}>
+              {t("youtubeLinkLabel")}
+            </span>
             <Input
               value={draftValue}
               onChange={(e) => onDraftValueChange(e.target.value)}

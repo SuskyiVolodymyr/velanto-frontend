@@ -10,7 +10,11 @@ const groups: Group[] = [
   { id: "g1", name: "Pool A", items: [textItem("1", "A"), textItem("2", "B")] },
 ];
 const rounds: Round[] = [
-  { id: "r1", name: "Round one", slots: [{ groupId: "g1", mode: "random", count: 1 }] },
+  {
+    id: "r1",
+    name: "Round one",
+    slots: [{ groupId: "g1", mode: "random", count: 1 }],
+  },
 ];
 
 describe("packStructureHash", () => {

@@ -21,12 +21,11 @@ describe("ResultAgainPanel", () => {
     );
 
     expect(screen.getByText("Share your run")).toBeInTheDocument();
-    expect(
-      screen.getByText(/link to this exact run/),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: "Back to pack" }),
-    ).toHaveAttribute("href", "/packs/pack-1");
+    expect(screen.getByText(/link to this exact run/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Back to pack" })).toHaveAttribute(
+      "href",
+      "/packs/pack-1",
+    );
   });
 
   it("links the play-again CTA at the pack's play route", () => {
@@ -39,9 +38,10 @@ describe("ResultAgainPanel", () => {
       />,
     );
 
-    expect(
-      screen.getByRole("link", { name: "Play it again" }),
-    ).toHaveAttribute("href", "/packs/pack-1/play");
+    expect(screen.getByRole("link", { name: "Play it again" })).toHaveAttribute(
+      "href",
+      "/packs/pack-1/play",
+    );
   });
 
   // The card's own accessible name is deliberately different from
@@ -86,9 +86,10 @@ describe("ResultAgainPanel", () => {
     expect(
       screen.queryByRole("button", { name: "Copy share link" }),
     ).toBeNull();
-    expect(
-      screen.getByRole("link", { name: "Give it a go" }),
-    ).toHaveAttribute("href", "/packs/pack-1/play");
+    expect(screen.getByRole("link", { name: "Give it a go" })).toHaveAttribute(
+      "href",
+      "/packs/pack-1/play",
+    );
     expect(screen.queryByText("Play it again")).toBeNull();
   });
 

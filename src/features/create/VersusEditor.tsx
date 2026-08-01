@@ -268,7 +268,10 @@ export function VersusEditor() {
               // RoundsEditor's identical fix — see its comment for why.
               <div className="flex flex-col gap-[13px] rounded-[13px] border border-acc/35 bg-[#0F1116] p-[14px]">
                 <div className="flex flex-col gap-1">
-                  <Text variant="tertiary" className="text-[11.5px] font-semibold">
+                  <Text
+                    variant="tertiary"
+                    className="text-[11.5px] font-semibold"
+                  >
                     {t("roundName", { index: index + 1 })}
                   </Text>
                   <Input
@@ -286,7 +289,10 @@ export function VersusEditor() {
 
                 <div className="flex flex-wrap items-end gap-3">
                   <div className="flex min-w-[130px] flex-1 flex-col gap-1">
-                    <Text variant="tertiary" className="text-[11.5px] font-semibold">
+                    <Text
+                      variant="tertiary"
+                      className="text-[11.5px] font-semibold"
+                    >
                       {t("versusSideA")}
                     </Text>
                     <Select
@@ -297,7 +303,10 @@ export function VersusEditor() {
                     />
                   </div>
                   <div className="flex min-w-[130px] flex-1 flex-col gap-1">
-                    <Text variant="tertiary" className="text-[11.5px] font-semibold">
+                    <Text
+                      variant="tertiary"
+                      className="text-[11.5px] font-semibold"
+                    >
                       {t("versusSideB")}
                     </Text>
                     <Select
@@ -313,7 +322,10 @@ export function VersusEditor() {
                     // append-not-override collision with Input's own
                     // `w-full` rendered this as a huge, uncapped-width box).
                     <div className="flex w-[150px] flex-none flex-col gap-1">
-                      <Text variant="tertiary" className="text-[11.5px] font-semibold">
+                      <Text
+                        variant="tertiary"
+                        className="text-[11.5px] font-semibold"
+                      >
                         {t("versusPerSide")}
                       </Text>
                       <div className="flex h-10 items-center gap-[9px] rounded-control border border-white/10 bg-surface-card px-[6px]">
@@ -378,7 +390,11 @@ export function VersusEditor() {
                       {t("versusDrawHint", { a: drawA, b: drawB })}
                     </Text>
                     {singlePool && (
-                      <Text variant="tertiary" role="status" className="text-xs">
+                      <Text
+                        variant="tertiary"
+                        role="status"
+                        className="text-xs"
+                      >
                         {t("versusSamePoolNote")}
                       </Text>
                     )}

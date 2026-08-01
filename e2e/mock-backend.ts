@@ -189,7 +189,10 @@ export function startMockBackend(port = 3001): Promise<Server> {
     // that opens /packs/:id renders the error boundary instead of the page.
     // Claim is the mode the room entry section offers for the save_one
     // fixtures; the rest of the list is irrelevant to these specs.
-    if (req.method === "GET" && (match = /^\/packs\/([^/?]+)\/modes$/.exec(url))) {
+    if (
+      req.method === "GET" &&
+      (match = /^\/packs\/([^/?]+)\/modes$/.exec(url))
+    ) {
       if (!PACKS[match[1]]) {
         json(res, 404, { message: "Not found" });
         return;

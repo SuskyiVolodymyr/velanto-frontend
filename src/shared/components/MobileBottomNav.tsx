@@ -95,8 +95,7 @@ export function MobileBottomNav() {
       {TABS.map((tab) => {
         const href = tab.requiresAuth && !isAuthed ? "/auth" : tab.href;
         const active = pathname === tab.href;
-        const label =
-          tab.labelFrom === "shell" ? tNav(tab.key) : t(tab.key);
+        const label = tab.labelFrom === "shell" ? tNav(tab.key) : t(tab.key);
         const Icon = tab.icon;
         return (
           <Link

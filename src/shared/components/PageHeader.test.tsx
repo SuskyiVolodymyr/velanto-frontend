@@ -24,7 +24,12 @@ describe("PageHeader", () => {
     expect(screen.getByText("/")).toBeInTheDocument();
     unmount();
 
-    render(<PageHeader back={{ href: "/moderation", label: "Queue" }} crumb="Report #42" />);
+    render(
+      <PageHeader
+        back={{ href: "/moderation", label: "Queue" }}
+        crumb="Report #42"
+      />,
+    );
     expect(screen.queryByText("/")).not.toBeInTheDocument();
     expect(screen.getByText("Report #42")).toBeInTheDocument();
   });

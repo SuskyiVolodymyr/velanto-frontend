@@ -18,7 +18,11 @@ describe("RoundItemTile", () => {
   // looks clickable and isn't. Asserted on classes: jsdom has no layout.
   it("grows its control to fill a stretched tile", () => {
     render(
-      <RoundItemTile item={YOUTUBE} actionLabel="Pick Silhouette" onPick={vi.fn()} />,
+      <RoundItemTile
+        item={YOUTUBE}
+        actionLabel="Pick Silhouette"
+        onPick={vi.fn()}
+      />,
     );
 
     const pick = screen.getByRole("button", { name: "Pick Silhouette" });

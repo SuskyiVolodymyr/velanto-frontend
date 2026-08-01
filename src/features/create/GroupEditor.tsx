@@ -152,14 +152,19 @@ export function GroupEditor({
           type="button"
           onClick={() => setCollapsed((c) => !c)}
           aria-label={
-            collapsed ? t("expandPool", { index: index + 1 }) : t("collapsePool", { index: index + 1 })
+            collapsed
+              ? t("expandPool", { index: index + 1 })
+              : t("collapsePool", { index: index + 1 })
           }
           aria-expanded={!collapsed}
           className="flex h-8 w-8 flex-none items-center justify-center rounded-[9px] border border-border text-foreground-secondary transition-colors hover:text-foreground"
         >
           <ChevronDown
             aria-hidden
-            className={cn("h-4 w-4 transition-transform", collapsed && "-rotate-90")}
+            className={cn(
+              "h-4 w-4 transition-transform",
+              collapsed && "-rotate-90",
+            )}
             strokeWidth={1.9}
           />
         </button>

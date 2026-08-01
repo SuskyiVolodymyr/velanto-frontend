@@ -3,11 +3,7 @@ import { cn } from "@/src/shared/lib/cn";
 import { Spinner } from "./Spinner";
 
 export type ButtonVariant =
-  | "primary"
-  | "secondary"
-  | "outline"
-  | "ghost"
-  | "danger";
+  "primary" | "secondary" | "outline" | "ghost" | "danger";
 export type ButtonSize = "md" | "sm" | "xs" | "lg";
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

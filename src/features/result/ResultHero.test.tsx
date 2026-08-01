@@ -58,9 +58,9 @@ describe("ResultHero", () => {
       <ResultHero format="save_one" shared totalRounds={2} totalPlays={4} />,
     );
 
-    expect(
-      screen.getByRole("heading", { level: 1 }),
-    ).not.toHaveTextContent("Here's what you saved");
+    expect(screen.getByRole("heading", { level: 1 })).not.toHaveTextContent(
+      "Here's what you saved",
+    );
     expect(
       screen.getByRole("heading", {
         level: 1,
@@ -79,14 +79,21 @@ describe("ResultHero", () => {
     );
 
     expect(screen.getByText(/Their picks are recorded/)).toBeInTheDocument();
-    expect(screen.queryByText(/Your picks are recorded/)).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/Your picks are recorded/),
+    ).not.toBeInTheDocument();
   });
 
   // The pack title is NOT rendered here — it moved to ResultScreen's sticky
   // chrome bar (matches the mock, which never puts it in the hero).
   it("renders the fixed subtitle copy without the pack title, and not as the h1", () => {
     render(
-      <ResultHero format="save_one" shared={false} totalRounds={2} totalPlays={4} />,
+      <ResultHero
+        format="save_one"
+        shared={false}
+        totalRounds={2}
+        totalPlays={4}
+      />,
     );
 
     const heading = screen.getByRole("heading", { level: 1 });
@@ -119,7 +126,12 @@ describe("ResultHero", () => {
   // addition beyond the mock; removed to match the mock exactly.
   it("renders as a single self-contained card with no extra rows below it", () => {
     const { container } = render(
-      <ResultHero format="save_one" shared={false} totalRounds={2} totalPlays={4} />,
+      <ResultHero
+        format="save_one"
+        shared={false}
+        totalRounds={2}
+        totalPlays={4}
+      />,
     );
 
     expect(container.children).toHaveLength(1);

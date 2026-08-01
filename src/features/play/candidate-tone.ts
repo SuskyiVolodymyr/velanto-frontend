@@ -23,7 +23,10 @@ import { COVER_TONES } from "@/src/shared/types/pack";
  * already >= 0.
  */
 export function toneFor(coverTone: string, index: number): string {
-  const baseIndex = Math.max(0, (COVER_TONES as readonly string[]).indexOf(coverTone));
+  const baseIndex = Math.max(
+    0,
+    (COVER_TONES as readonly string[]).indexOf(coverTone),
+  );
   const toneIndex = Math.max(0, (baseIndex + index) % COVER_TONES.length);
   return COVER_TONES[toneIndex];
 }

@@ -16,9 +16,7 @@ vi.mock("@/src/features/settings/AppearanceSection", () => ({
   AppearanceSection: () => <div>Appearance section stub</div>,
 }));
 vi.mock("@/src/features/settings/ConnectedAccountsSection", () => ({
-  ConnectedAccountsSection: () => (
-    <div>Connected accounts section stub</div>
-  ),
+  ConnectedAccountsSection: () => <div>Connected accounts section stub</div>,
 }));
 vi.mock("@/src/features/settings/PrivacySection", () => ({
   PrivacySection: () => <div>Privacy section stub</div>,
@@ -80,9 +78,7 @@ describe("SettingsScreen", () => {
       screen.getByText("Connected accounts section stub"),
     ).toBeInTheDocument();
     expect(screen.getByText("Privacy section stub")).toBeInTheDocument();
-    expect(
-      screen.getByText("Notifications section stub"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Notifications section stub")).toBeInTheDocument();
     expect(screen.getByText("Account section stub")).toBeInTheDocument();
     expect(screen.getByText("Password section stub")).toBeInTheDocument();
     expect(screen.getByText("API tokens section stub")).toBeInTheDocument();

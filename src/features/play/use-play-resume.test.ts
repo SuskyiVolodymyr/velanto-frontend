@@ -2,10 +2,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { renderHook, waitFor, act } from "@testing-library/react";
 import { usePlayResume } from "./use-play-resume";
 import { packStructureHash } from "./pack-structure-hash";
-import {
-  readPlayResume,
-  writePlayResume,
-} from "./play-resume-storage";
+import { readPlayResume, writePlayResume } from "./play-resume-storage";
 import { setPlayIntent } from "./play-intent-storage";
 import type { Pack } from "@/src/shared/types/pack";
 

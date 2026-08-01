@@ -59,9 +59,7 @@ export function RoundsBulkBar({
   // it doesn't keep resyncing to `bulk.current` on every render (that would
   // fight whatever the author is mid-typing). Apply is the explicit action
   // that actually writes it back to every round.
-  const [draft, setDraft] = useState(() =>
-    bulk ? String(bulk.current) : "",
-  );
+  const [draft, setDraft] = useState(() => (bulk ? String(bulk.current) : ""));
 
   function apply() {
     if (!bulk) return;

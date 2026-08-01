@@ -772,7 +772,9 @@ describe("RoomScreen — getting out", () => {
     setRoom(baseState(), "closed");
     render(<RoomScreen roomId="room-1" />);
 
-    await userEvent.click(screen.getByRole("button", { name: /back to pack/i }));
+    await userEvent.click(
+      screen.getByRole("button", { name: /back to pack/i }),
+    );
     expect(push).toHaveBeenCalledWith("/packs/pack-1");
   });
 

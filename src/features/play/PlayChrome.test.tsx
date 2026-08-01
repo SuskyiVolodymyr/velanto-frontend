@@ -22,7 +22,12 @@ const PACK: Pack = {
 describe("PlayChrome", () => {
   it("renders the pack title as the page's h1", () => {
     render(
-      <PlayChrome pack={PACK} isFinished={false} roundIndex={0} totalRounds={2} />,
+      <PlayChrome
+        pack={PACK}
+        isFinished={false}
+        roundIndex={0}
+        totalRounds={2}
+      />,
     );
 
     expect(
@@ -32,7 +37,12 @@ describe("PlayChrome", () => {
 
   it("renders the round counter with the current/total round", () => {
     render(
-      <PlayChrome pack={PACK} isFinished={false} roundIndex={0} totalRounds={2} />,
+      <PlayChrome
+        pack={PACK}
+        isFinished={false}
+        roundIndex={0}
+        totalRounds={2}
+      />,
     );
 
     // e2e/play.spec.ts asserts this exact string, unchanged from PlayProgress.
@@ -81,7 +91,12 @@ describe("PlayChrome", () => {
 
   it("renders an icon-only back button pointing at the pack", () => {
     render(
-      <PlayChrome pack={PACK} isFinished={false} roundIndex={0} totalRounds={2} />,
+      <PlayChrome
+        pack={PACK}
+        isFinished={false}
+        roundIndex={0}
+        totalRounds={2}
+      />,
     );
 
     expect(screen.getByRole("link", { name: "Exit" })).toHaveAttribute(
@@ -92,7 +107,12 @@ describe("PlayChrome", () => {
 
   it("renders a SOLO mode chip", () => {
     render(
-      <PlayChrome pack={PACK} isFinished={false} roundIndex={0} totalRounds={2} />,
+      <PlayChrome
+        pack={PACK}
+        isFinished={false}
+        roundIndex={0}
+        totalRounds={2}
+      />,
     );
 
     expect(screen.getByText("SOLO")).toBeInTheDocument();
@@ -100,7 +120,12 @@ describe("PlayChrome", () => {
 
   it("renders a format + round-count meta line", () => {
     render(
-      <PlayChrome pack={PACK} isFinished={false} roundIndex={0} totalRounds={2} />,
+      <PlayChrome
+        pack={PACK}
+        isFinished={false}
+        roundIndex={0}
+        totalRounds={2}
+      />,
     );
 
     expect(screen.getByText("Save One · 2 rounds")).toBeInTheDocument();

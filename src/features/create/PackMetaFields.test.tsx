@@ -20,7 +20,9 @@ function baseValues(tags: PackTag[] = []): CreatePackValues {
 }
 
 function Harness({ tags }: { tags?: PackTag[] } = {}) {
-  const methods = useForm<CreatePackValues>({ defaultValues: baseValues(tags) });
+  const methods = useForm<CreatePackValues>({
+    defaultValues: baseValues(tags),
+  });
   return (
     <FormProvider {...methods}>
       <PackMetaFields />

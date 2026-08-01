@@ -15,9 +15,10 @@ vi.mock("@/src/features/home/MyPacksFeed", () => ({
 // see app/terms/page.test.tsx for the same pattern.
 vi.mock("next-intl/server", () => ({
   getTranslations: vi.fn(async (namespace: string) => {
-    const dict = (messages as Record<string, unknown>)[
-      namespace
-    ] as Record<string, string>;
+    const dict = (messages as Record<string, unknown>)[namespace] as Record<
+      string,
+      string
+    >;
     return (key: string) => dict[key] ?? key;
   }),
 }));

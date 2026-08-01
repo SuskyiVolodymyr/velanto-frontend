@@ -152,9 +152,7 @@ describe("MyPacksFeed", () => {
       ),
     );
 
-    await userEvent.click(
-      screen.getByRole("button", { name: "Oldest first" }),
-    );
+    await userEvent.click(screen.getByRole("button", { name: "Oldest first" }));
 
     await waitFor(() =>
       expect(packsClient.list).toHaveBeenCalledWith(
@@ -181,9 +179,7 @@ describe("MyPacksFeed", () => {
       ),
     );
 
-    await userEvent.click(
-      screen.getByRole("button", { name: "Oldest first" }),
-    );
+    await userEvent.click(screen.getByRole("button", { name: "Oldest first" }));
 
     await waitFor(() =>
       expect(packsClient.list).toHaveBeenCalledWith(

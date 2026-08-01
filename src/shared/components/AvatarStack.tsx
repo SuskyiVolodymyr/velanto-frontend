@@ -1,9 +1,5 @@
 import { cn } from "@/src/shared/lib/cn";
-import {
-  AVATAR_SIZE_CLASS,
-  UserAvatar,
-  type AvatarSize,
-} from "./UserAvatar";
+import { AVATAR_SIZE_CLASS, UserAvatar, type AvatarSize } from "./UserAvatar";
 
 export interface AvatarStackUser {
   username: string;

@@ -120,7 +120,10 @@ describe("PlayRoundHeader", () => {
       />,
     );
 
-    expect(container.querySelectorAll('[aria-hidden="true"].rounded-pill').length - 1).toBe(4);
+    expect(
+      container.querySelectorAll('[aria-hidden="true"].rounded-pill').length -
+        1,
+    ).toBe(4);
   });
 
   it("renders the rounds-done note reflecting roundIndex", () => {

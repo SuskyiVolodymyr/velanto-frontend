@@ -35,9 +35,15 @@ export function PersonCard({ user }: { user: FollowUser }) {
       <Link href={`/users/${user.id}`} className="flex flex-1 flex-col">
         <div
           className="relative isolate flex aspect-[16/10] items-center justify-center"
-          style={{ background: `linear-gradient(150deg, ${toneForUser(user.id)}, #0b0c0f)` }}
+          style={{
+            background: `linear-gradient(150deg, ${toneForUser(user.id)}, #0b0c0f)`,
+          }}
         >
-          <div aria-hidden className="absolute inset-0" style={HAIRLINE_OVERLAY_STYLE} />
+          <div
+            aria-hidden
+            className="absolute inset-0"
+            style={HAIRLINE_OVERLAY_STYLE}
+          />
           <Hidden kind="avatar" id={user.id}>
             <UserAvatar
               username={user.username}

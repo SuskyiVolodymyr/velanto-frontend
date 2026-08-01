@@ -53,6 +53,5 @@ export const friendsRoomsClient = {
   previewModes: (
     draft: { format: PackFormat; groups: Group[]; rounds: Round[] },
     options?: { signal?: AbortSignal },
-  ) =>
-    apiClient.post<AvailableMode[]>("/packs/modes/preview", draft, options),
+  ) => apiClient.post<AvailableMode[]>("/packs/modes/preview", draft, options),
 };
