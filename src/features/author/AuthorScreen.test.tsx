@@ -124,9 +124,10 @@ describe("AuthorScreen", () => {
       expect(screen.getByText("quizmaster")).toBeInTheDocument(),
     );
     expect(screen.getByText("I make packs")).toBeInTheDocument();
-    // The follower count and pack count render as one combined stat line
-    // ("3 followers · 0 packs"), so match the substring, not the whole node.
-    expect(screen.getByText(/3 followers/)).toBeInTheDocument();
+    // The stats row (T1) splits each stat into a value/label pair across two
+    // elements, so match them separately rather than one combined node.
+    expect(screen.getByText("3")).toBeInTheDocument();
+    expect(screen.getByText("Followers")).toBeInTheDocument();
   });
 
   it("shows a not-found message when the profile 404s", async () => {
@@ -159,9 +160,13 @@ describe("AuthorScreen", () => {
       // count button, which is always present and opens the followers list.
       screen.queryByRole("button", { name: /^follow(ing)?$/i }),
     ).not.toBeInTheDocument();
-    expect(screen.getByRole("link", { name: /edit profile/i })).toHaveAttribute(
-      "href",
-      "/profile/edit",
+    // T1 adds a second "Edit profile" link (the pencil badge over the avatar)
+    // sharing the same accessible name as the button-styled one — both must
+    // point at the real edit route.
+    const editLinks = screen.getAllByRole("link", { name: /edit profile/i });
+    expect(editLinks.length).toBeGreaterThan(0);
+    editLinks.forEach((link) =>
+      expect(link).toHaveAttribute("href", "/profile/edit"),
     );
   });
 
@@ -179,7 +184,7 @@ describe("AuthorScreen", () => {
         screen.getByRole("button", { name: "Following" }),
       ).toBeInTheDocument(),
     );
-    expect(screen.getByText(/4 followers/)).toBeInTheDocument();
+    expect(screen.getByText("4")).toBeInTheDocument();
   });
 
   it("does not flip the button state when the follow request fails", async () => {
@@ -296,9 +301,10 @@ describe("AuthorScreen", () => {
       limit: 50,
     });
     renderScreen(<AuthorScreen authorId="author-1" />);
-    await waitFor(() =>
-      expect(screen.getByText(/60 packs/)).toBeInTheDocument(),
-    );
+    // "60" now renders twice — the stat row's value (AuthorProfileHeader) AND
+    // the Packs tab's count pill (ProfileTabs) both read packsTotal — so
+    // assert on the pair rather than a single unique node.
+    await waitFor(() => expect(screen.getAllByText("60")).toHaveLength(2));
   });
 
   it("does not show ban history or a ban button to a plain-user viewer", async () => {
@@ -546,7 +552,12 @@ describe("AuthorScreen", () => {
     );
     expect(mockedUsersClient.unfollow).toHaveBeenCalledWith("author-1");
     expect(mockedUsersClient.follow).not.toHaveBeenCalled();
-    expect(screen.getByText(/2 followers/)).toBeInTheDocument();
+    // Followers and Following both happen to read "2" here (fixture's
+    // followingCount is also 2) — anchor on the Followers stat button's
+    // accessible name so this doesn't collide with the Following stat.
+    expect(
+      screen.getByRole("button", { name: /2\s*followers/i }),
+    ).toBeInTheDocument();
   });
 
   it("redacts the author name behind a Reveal control when streamer mode is on", async () => {
@@ -564,8 +575,9 @@ describe("AuthorScreen", () => {
     );
     // The non-identity stat line still renders, so the screen has loaded…
     await waitFor(() =>
-      expect(screen.getByText(/3 followers/)).toBeInTheDocument(),
+      expect(screen.getByText("Followers")).toBeInTheDocument(),
     );
+    expect(screen.getByText("3")).toBeInTheDocument();
     // …but the username is redacted (never painted as plain text) and a Reveal
     // control stands in for it.
     expect(screen.queryByText("quizmaster")).not.toBeInTheDocument();
@@ -573,5 +585,147 @@ describe("AuthorScreen", () => {
       screen.getAllByRole("button", { name: /reveal/i }).length,
     ).toBeGreaterThan(0);
     localStorage.removeItem("velanto:streamer-mode");
+  });
+
+  // --- T7: AuthorScreen shell wiring — ProfileTabs replaces the old always-
+  // stacked Packs + Recently-played layout, and the header's stat buttons
+  // deep-link into it.
+
+  it("shows only the Packs tab's panel by default; People/History are not mounted", async () => {
+    mockAuth();
+    mockedUsersClient.getProfile.mockResolvedValue(profile);
+    mockedPacksClient.list.mockResolvedValue({
+      items: [
+        {
+          id: "pack-1",
+          title: "Anime Showdown",
+          description: "d",
+          coverTone: "#111",
+          format: "save_one",
+          tags: [],
+          authorId: "author-1",
+          status: "approved",
+          rejectionReason: null,
+          totalPlays: 0,
+          avgAgreementPercent: 0,
+          groups: [],
+          rounds: [],
+        } as never,
+      ],
+      total: 1,
+      page: 1,
+      limit: 50,
+    });
+    renderScreen(<AuthorScreen authorId="author-1" />);
+    await waitFor(() =>
+      expect(screen.getByText("Anime Showdown")).toBeInTheDocument(),
+    );
+    expect(screen.getByRole("tab", { name: /Packs/ })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    // The People tab's own sub-tab switch (Followers/Following) hasn't
+    // mounted, so its follow-list fetch never fires.
+    expect(mockedUsersClient.followers).not.toHaveBeenCalled();
+    expect(mockedUsersClient.following).not.toHaveBeenCalled();
+  });
+
+  it("jumps to the People tab with Followers preselected when the Followers stat is clicked", async () => {
+    mockAuth();
+    mockedUsersClient.getProfile.mockResolvedValue(profile);
+    mockedUsersClient.followers.mockResolvedValue({
+      items: [
+        {
+          id: "u1",
+          username: "alice",
+          avatarKey: null,
+          role: "user",
+          trusted: false,
+          isFollowedByMe: false,
+        },
+      ],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
+    renderScreen(<AuthorScreen authorId="author-1" />);
+    await waitFor(() =>
+      expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+    );
+
+    await userEvent.click(
+      screen.getByRole("button", { name: /3\s*followers/i }),
+    );
+
+    await waitFor(() =>
+      expect(screen.getByRole("tab", { name: /People/ })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      ),
+    );
+    // PeopleTab mounted with its Followers sub-tab preselected, and fetched
+    // followers (not following).
+    expect(screen.getByRole("tab", { name: "Followers" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    // FollowUserRow renders the handle "@"-prefixed (Username's `at` prop).
+    await waitFor(() => expect(screen.getByText("@alice")).toBeInTheDocument());
+    expect(mockedUsersClient.following).not.toHaveBeenCalled();
+  });
+
+  it("jumps to the People tab with Following preselected when the Following stat is clicked, even from an already-open People tab", async () => {
+    mockAuth();
+    mockedUsersClient.getProfile.mockResolvedValue(profile);
+    mockedUsersClient.followers.mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 20,
+    });
+    mockedUsersClient.following.mockResolvedValue({
+      items: [
+        {
+          id: "u2",
+          username: "bob",
+          avatarKey: null,
+          role: "user",
+          trusted: false,
+          isFollowedByMe: false,
+        },
+      ],
+      total: 1,
+      page: 1,
+      limit: 20,
+    });
+    renderScreen(<AuthorScreen authorId="author-1" />);
+    await waitFor(() =>
+      expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+    );
+
+    // First jump: Followers.
+    await userEvent.click(
+      screen.getByRole("button", { name: /3\s*followers/i }),
+    );
+    await waitFor(() =>
+      expect(screen.getByRole("tab", { name: "Followers" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      ),
+    );
+
+    // Second jump, from an already-mounted People tab: Following. The `key`
+    // remount must pick up the new initialPeopleSubTab even though the tab
+    // itself doesn't change.
+    await userEvent.click(
+      screen.getByRole("button", { name: /2\s*following/i }),
+    );
+    await waitFor(() =>
+      expect(screen.getByRole("tab", { name: "Following" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      ),
+    );
+    await waitFor(() => expect(screen.getByText("@bob")).toBeInTheDocument());
   });
 });

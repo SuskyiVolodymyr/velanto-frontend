@@ -1,7 +1,6 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
 
 /**
  * "Showing 1–20 of 132" plus Prev/Next, per the design. A simple two-button
@@ -29,10 +28,13 @@ export function TablePagination({
   const last = Math.min(page * pageSize, total);
 
   return (
-    <div className="flex items-center justify-between gap-3">
-      <Text variant="tertiary" className="text-xs">
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      {/* A plain span, not <Text>: the mock sets this range in the mono face
+          (`data-mono`), which is a DOM attribute the Text primitive's props
+          don't carry. */}
+      <span data-mono className="text-xs text-foreground-tertiary">
         {t("showing", { first, last, total })}
-      </Text>
+      </span>
       <div className="flex gap-2">
         <PagerButton
           label={t("prev")}
@@ -63,7 +65,7 @@ function PagerButton({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className="h-[34px] rounded-lg border border-border bg-white/[0.05] px-3.5 text-[13px] font-medium text-foreground transition-colors hover:bg-white/[0.08] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white/[0.05]"
+      className="h-[34px] rounded-[9px] border border-border bg-white/[0.05] px-3.5 text-[13px] font-medium text-foreground transition-colors hover:bg-white/[0.08] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white/[0.05]"
     >
       {label}
     </button>

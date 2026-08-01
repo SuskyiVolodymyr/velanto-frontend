@@ -12,6 +12,8 @@ import type {
 } from "@/src/shared/types/feedback";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
+import { PageHeader } from "@/src/shared/components/PageHeader";
+import { PlusIcon } from "@/src/shared/components/icons";
 import { FeedbackFilters } from "@/src/features/feedback/FeedbackFilters";
 import { FeedbackList } from "@/src/features/feedback/FeedbackList";
 import { FeedbackTopSidebar } from "@/src/features/feedback/FeedbackTopSidebar";
@@ -20,11 +22,14 @@ import {
   useTopFeedback,
 } from "@/src/features/feedback/api/feedback-list.queries";
 import type { FeedbackListFilters } from "@/src/features/feedback/api/feedback-list";
+import { cn } from "@/src/shared/lib/cn";
+import { pageContainer } from "@/src/shared/lib/page-container";
 
 const SEARCH_DEBOUNCE_MS = 300;
 
 export function FeedbackScreen() {
   const t = useTranslations("feedback");
+  const th = useTranslations("header");
   const { user } = useAuth();
   const router = useRouter();
 
@@ -93,44 +98,77 @@ export function FeedbackScreen() {
     router.push(user ? "/feedback/new" : "/auth?next=/feedback");
   }
 
+  // Sort is deliberately excluded: it reorders the board, it doesn't narrow it,
+  // so "Clear filters" leaving your chosen ordering alone is the correct
+  // surprise-free behaviour.
+  const filtering = Boolean(q || topic || statusFilter);
+
+  function handleClearFilters() {
+    setSearchInput("");
+    setQ("");
+    setTopic(undefined);
+    setStatusFilter(undefined);
+  }
+
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-7 py-10">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Text as="h1" variant="title" className="text-3xl">
-          {t("pageTitle")}
-        </Text>
-        <Button type="button" onClick={handleNewPost}>
-          {t("newPost")}
-        </Button>
-      </div>
+    <>
+      <PageHeader
+        back={{ href: "/", label: th("browse") }}
+        trailing={
+          <Button type="button" size="sm" onClick={handleNewPost}>
+            <PlusIcon size={15} strokeWidth={2.4} />
+            {t("newPost")}
+          </Button>
+        }
+      />
+      <main
+        className={cn(
+          pageContainer(1120),
+          "flex flex-1 flex-col gap-[22px] pt-[26px] pb-20",
+        )}
+      >
+        <section className="flex flex-col gap-1.5">
+          <Text as="h1" variant="title" className="text-[28px]">
+            {t("pageTitle")}
+          </Text>
+          <Text variant="secondary" className="max-w-[64ch] text-sm">
+            {t("pageSubtitle")}
+          </Text>
+        </section>
 
-      <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
-        <div className="flex min-w-0 flex-1 flex-col gap-4">
-          <FeedbackFilters
-            searchInput={searchInput}
-            onSearchInputChange={setSearchInput}
-            topic={topic}
-            onTopicChange={setTopic}
-            statusFilter={statusFilter}
-            onStatusChange={setStatusFilter}
-            sort={sort}
-            onSortChange={setSort}
-          />
+        {/* One-column below 1000px, matching the mock's own breakpoint — the
+            300px rail is unreadable any narrower and belongs under the list. */}
+        <div className="grid grid-cols-1 items-start gap-5 min-[1000px]:grid-cols-[minmax(0,1fr)_minmax(0,300px)]">
+          <div className="flex min-w-0 flex-col gap-3.5">
+            <FeedbackFilters
+              searchInput={searchInput}
+              onSearchInputChange={setSearchInput}
+              topic={topic}
+              onTopicChange={setTopic}
+              statusFilter={statusFilter}
+              onStatusChange={setStatusFilter}
+              sort={sort}
+              onSortChange={setSort}
+            />
 
-          <FeedbackList
-            loading={listQuery.isLoading}
-            error={firstLoadError}
-            listReady={listReady}
-            items={items}
-            total={total}
-            loadingMore={listQuery.isFetchingNextPage}
-            loadMoreError={loadMoreError}
-            onLoadMore={() => void listQuery.fetchNextPage()}
-          />
+            <FeedbackList
+              loading={listQuery.isLoading}
+              error={firstLoadError}
+              listReady={listReady}
+              items={items}
+              total={total}
+              loadingMore={listQuery.isFetchingNextPage}
+              loadMoreError={loadMoreError}
+              onLoadMore={() => void listQuery.fetchNextPage()}
+              filtering={filtering}
+              onClearFilters={handleClearFilters}
+              onNewPost={handleNewPost}
+            />
+          </div>
+
+          <FeedbackTopSidebar posts={top3} />
         </div>
-
-        <FeedbackTopSidebar posts={top3} />
-      </div>
-    </main>
+      </main>
+    </>
   );
 }

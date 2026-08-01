@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { cn } from "@/src/shared/lib/cn";
 import type { ReportStatus, ReportType } from "@/src/shared/types/report";
 
 const STATUS_FILTERS: { value: ReportStatus | undefined; labelKey: string }[] =
@@ -25,6 +26,40 @@ interface ReportFiltersProps {
   onTypeChange: (value: ReportType | undefined) => void;
 }
 
+// One chip, at the mock's 38px / 10px-radius / 13px-semibold geometry. Idle and
+// active are whole alternative strings, never a base plus an override: `cn()` is
+// a plain join, so layering a colour would leave both in the class list.
+function FilterChip({
+  label,
+  active,
+  onSelect,
+}: {
+  label: string;
+  active: boolean;
+  onSelect: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onSelect}
+      aria-pressed={active}
+      className={cn(
+        "h-[38px] rounded-[10px] border px-[14px] text-[13px] font-semibold transition-colors",
+        active
+          ? "border-acc/40 bg-acc/10 text-acc"
+          : "border-border bg-white/[0.02] text-foreground-secondary hover:text-foreground",
+      )}
+    >
+      {label}
+    </button>
+  );
+}
+
+/**
+ * The report queue's two chip groups: status on the left, type pushed to the
+ * right by a spacer, per the mock. They wrap onto their own rows below ~700px,
+ * where the spacer collapses and the groups stack left-aligned.
+ */
 export function ReportFilters({
   statusFilter,
   onStatusChange,
@@ -35,35 +70,21 @@ export function ReportFilters({
   return (
     <div className="flex flex-wrap items-center gap-2">
       {STATUS_FILTERS.map((f) => (
-        <button
+        <FilterChip
           key={f.labelKey}
-          type="button"
-          onClick={() => onStatusChange(f.value)}
-          aria-pressed={statusFilter === f.value}
-          className={`rounded-[9px] border px-3.5 py-2 text-sm font-medium ${
-            statusFilter === f.value
-              ? "border-acc/40 bg-acc/10 text-acc"
-              : "border-border bg-white/[0.02] text-foreground-secondary"
-          }`}
-        >
-          {t(f.labelKey)}
-        </button>
+          label={t(f.labelKey)}
+          active={statusFilter === f.value}
+          onSelect={() => onStatusChange(f.value)}
+        />
       ))}
       <div className="flex-1" />
       {TYPE_FILTERS.map((f) => (
-        <button
+        <FilterChip
           key={f.labelKey}
-          type="button"
-          onClick={() => onTypeChange(f.value)}
-          aria-pressed={typeFilter === f.value}
-          className={`rounded-[9px] border px-3.5 py-2 text-sm font-medium ${
-            typeFilter === f.value
-              ? "border-acc/40 bg-acc/10 text-acc"
-              : "border-border bg-white/[0.02] text-foreground-secondary"
-          }`}
-        >
-          {t(f.labelKey)}
-        </button>
+          label={t(f.labelKey)}
+          active={typeFilter === f.value}
+          onSelect={() => onTypeChange(f.value)}
+        />
       ))}
     </div>
   );

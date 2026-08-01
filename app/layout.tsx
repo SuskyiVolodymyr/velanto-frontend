@@ -6,12 +6,8 @@ import { isRtl, type Locale } from "@/src/i18n/config";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
 import { FriendsRoomsPresenceProvider } from "@/src/features/friends-rooms/friends-rooms-presence-context";
-import { RoomPresenceIndicator } from "@/src/features/friends-rooms/RoomPresenceIndicator";
 import { QueryProvider } from "@/src/shared/lib/query-provider";
-import { AppHeader } from "@/src/shared/components/AppHeader";
-import { MobileBottomNav } from "@/src/shared/components/MobileBottomNav";
-import { SiteFooter } from "@/src/shared/components/SiteFooter";
-import { BannedBanner } from "@/src/shared/components/BannedBanner";
+import { AppShell } from "@/src/shared/components/AppShell";
 import { getThemeInitScript } from "@/src/shared/lib/theme";
 import { getStreamerModeInitScript } from "@/src/shared/lib/streamer-mode";
 import { SITE_URL } from "@/src/shared/lib/site-url";
@@ -68,24 +64,16 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: getStreamerModeInitScript() }}
         />
       </head>
-      {/* Bottom padding on phones so the fixed MobileBottomNav never covers the
-          last of the content or the footer; must clear the nav's full height
-          (its emphasized Create button makes it ~4.5rem) plus the device's
-          safe-area inset. The nav itself is md:hidden. */}
-      <body className="flex min-h-full flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0">
+      {/* The MobileBottomNav bottom-padding lives in AppShell's chrome branch
+          (only the chromed routes have that nav), so full-screen routes like
+          /auth don't reserve phantom space beneath their layout. */}
+      <body className="flex min-h-full flex-col">
         <QueryProvider>
           <NextIntlClientProvider>
             <AuthProvider>
               <FriendsRoomsPresenceProvider>
                 <StreamerModeProvider>
-                  <AppHeader />
-                  <BannedBanner />
-                  {children}
-                  <SiteFooter />
-                  <MobileBottomNav />
-                  {/* Floating "you're in a room" affordance; renders nothing
-                      unless the signed-in user holds a room seat. */}
-                  <RoomPresenceIndicator />
+                  <AppShell>{children}</AppShell>
                 </StreamerModeProvider>
               </FriendsRoomsPresenceProvider>
             </AuthProvider>

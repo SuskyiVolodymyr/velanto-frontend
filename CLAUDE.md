@@ -38,8 +38,8 @@ src/
       last-play-storage.ts        sessionStorage read/write for recorded picks, keyed `velanto:last-play:${packId}`
       auth-context.tsx, query-client.ts, query-provider.tsx
     types/
-      pack.ts       PACK_FORMATS (six — five UI + save_one_friends), UiPackFormat/isUiPackFormat,
-                    Group (= a Pool), Round, Slot; PACK_STATUSES, PACK_TAGS
+      pack.ts       PACK_FORMATS (five), Group (= a Pool), Round, Slot;
+                    PACK_STATUSES, PACK_TAGS
       play-results.ts, user.ts, index.ts
 ```
 
@@ -49,7 +49,7 @@ src/
 
 ## Domain model: pools and rounds
 
-Five of the six formats are supported end to end (see "The sixth format" below). The pre-redesign vocabulary ("categories", item tags, `selectionMode`/`sampleSize` on a group) is **gone** — don't reintroduce it:
+All five formats are supported end to end. The pre-redesign vocabulary ("categories", item tags, `selectionMode`/`sampleSize` on a group) is **gone** — don't reintroduce it:
 
 - **Pool** (`Group` in code, "Pool" in the UI) — a named bag of items, nothing more. It does not decide how many items appear or when.
 - **Round** — an ordered list of **slots** plus an optional label. Slot count is fixed per format: 1 for `save_one`/`sacrifice_one`/`rank_blind`, exactly 2 for `nxn`/`1v1` (the same two distinct pools in every round).
@@ -65,7 +65,7 @@ Several closed-set wire-contract constants are hand-mirrored in both repos (deli
 | Constant (this repo)                                                                 | Frontend home                                                        | Backend counterpart                                                           |
 | ------------------------------------------------------------------------------------ | -------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
 | `ROLES`                                                                              | `src/shared/types/user.ts`                                           | `ROLES` — `src/modules/users/role.ts`                                         |
-| `PACK_FORMATS` (six — **not** all UI-visible, see below)                             | `src/shared/types/pack.ts`                                           | `SUPPORTED_FORMATS` — `src/modules/packs/types/format.ts`                     |
+| `PACK_FORMATS` (five)                                                                | `src/shared/types/pack.ts`                                           | `SUPPORTED_FORMATS` — `src/modules/packs/types/format.ts`                     |
 | `PACK_STATUSES`                                                                      | `src/shared/types/pack.ts`                                           | `PACK_MODERATION_STATUSES` — `src/modules/packs/types/moderation-status.ts`   |
 | `PACK_TAGS`                                                                          | `src/shared/types/pack.ts`                                           | `PACK_TAGS` — `src/modules/packs/types/tags.ts`                               |
 | `LOCALES` — **subset, not a mirror** (see below)                                     | `src/i18n/config.ts` (+ `messages/*.json` basenames)                 | `PACK_LANGUAGES` — `src/modules/packs/types/language.ts`                      |
@@ -89,18 +89,11 @@ They're different things that were identical until [#226](https://github.com/Sus
 
 **The subset direction is load-bearing**: a new pack defaults to its author's interface language, so every `LOCALE` must be a legal `PACK_LANGUAGE`. The reverse need not hold. Both repos assert this from their own side. Restoring a locale means restoring its `messages/*.json` from git history _and_ re-adding it here — it's a ~10-minute job, deliberately.
 
-## The sixth format: `save_one_friends` is created like the rest, played only in a room
+## `save_one_friends` was retired (multiplayer redesign)
 
-`PACK_FORMATS` has **six** entries, all six now creatable/editable in the form. `save_one_friends` (room-based multiplayer, 2-4 friends — velanto-backend#258) is the one whose **play** happens in a live room, not on the single-player `/play` path (velanto-frontend#368).
+`PACK_FORMATS` has **five** entries. The old room-only `save_one_friends` format (velanto-backend#258) was retired in the multiplayer redesign (velanto-backend#276): its live-claim gameplay becomes the "Claim" **mode** in the universal room model, so it is no longer a distinct format. `Pack.format` is the full `PackFormat` (all five are single-player-playable), so the `UiPackFormat`/`isUiPackFormat` read-side split is gone.
 
-Two types, and the difference still matters — but it's a READ-side split now, not write-side:
-
-- `PackFormat` — the full wire union; `Pack.format` is this. The **write** side (creator picker, create schema, filter rows, label maps) accepts all six.
-- `UiPackFormat` = `Exclude<PackFormat, "save_one_friends">` — the formats with a **single-player play path**. Read/routing paths that pick a `/play` screen narrow with `isUiPackFormat()` from `src/shared/types/pack.ts` (never a cast); `save_one_friends` is routed to a room instead.
-
-**Creating one:** pick "Save One (Friends)" in the creator — its body (`FriendsRoundsEditor`) is single-slot random rounds with no count (the room shows players+1), and every pool needs ≥5 items. Backend rules are mirrored in `create-pack.refinements.ts` (`validateFriends`). Packs can also be authored over the API — `velanto-pack-creator` via the `velanto-mcp` server.
-
-**Playing one:** the pack detail page shows a room entry (`FriendsRoomEntry`) instead of a Play button; `/packs/[id]/play` 404s for it by design (see `PlayRouter`). It has a real label, "How it plays" steps, and a create blurb in every locale; it has no single-player play _instruction_ copy (`play-format-copy.ts` maps it to `""`).
+The **room infrastructure** (`src/features/friends-rooms/*`) is LIVE again as the universal mode surface: a room now carries a **mode** (Claim, Guess-who, Turn-based cut, Voting, Shared-grid, Relay) chosen by the host in the lobby from `RoomState.availableModes`, and `FriendsRoomEntry` is mounted on the pack detail page again. The `ROOMS_DORMANT` constant in `src/features/friends-rooms/room-types.ts` is the single switch that gated this and is now `false`; the guards keyed off it (`JoinRoomCard`, `JoinByLink`, the presence provider's poll) are kept so the surface can be parked again without unpicking it. See `docs/multiplayer-modes-redesign.md` for the product brief.
 
 ## Crawlers are restricted on purpose (Neon compute budget)
 

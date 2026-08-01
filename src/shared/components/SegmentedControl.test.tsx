@@ -132,6 +132,27 @@ describe("SegmentedControl", () => {
     expect(onChange).toHaveBeenCalledWith("three");
   });
 
+  it("lets an option override its accessible name via ariaLabel", () => {
+    render(
+      <SegmentedControl
+        options={[
+          { value: "one", label: "One", ariaLabel: "Round 1 one" },
+          { value: "two", label: "Two" },
+        ]}
+        value="one"
+        onChange={vi.fn()}
+      />,
+    );
+
+    expect(
+      screen.getByRole("radio", { name: "Round 1 one" }),
+    ).toBeInTheDocument();
+    // The visible label is unaffected — only the accessible name changes.
+    expect(screen.getByText("One")).toBeInTheDocument();
+    // Options without an ariaLabel keep falling back to their visible label.
+    expect(screen.getByRole("radio", { name: "Two" })).toBeInTheDocument();
+  });
+
   it("does not select a disabled option on click", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();

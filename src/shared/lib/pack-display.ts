@@ -3,16 +3,14 @@ import type { Pack, PackFormat } from "@/src/shared/types/pack";
 // Staff-facing English labels for the moderation/admin tables, which are not
 // localized. (Player-facing surfaces use the `formats` i18n namespace instead.)
 //
-// Keyed by the full PackFormat so every format — including save_one_friends,
-// now a first-class creatable format — has a label; adding a future format
-// won't compile until it is labelled here.
+// Keyed by the full PackFormat so every format has a label; adding a future
+// format won't compile until it is labelled here.
 export const FORMAT_LABELS: Record<PackFormat, string> = {
   save_one: "Save One",
   sacrifice_one: "Sacrifice One",
   nxn: "NxN",
   rank_blind: "Rank Blind",
   "1v1": "1v1",
-  save_one_friends: "Save One (Friends)",
 };
 
 // A pack's `format` arrives from the API as a raw string, so it could in

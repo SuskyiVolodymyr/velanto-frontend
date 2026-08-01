@@ -22,24 +22,28 @@ function noPlayPathFor(format: never): never {
 
 export function PlayRouter({ pack }: { pack: Pack }) {
   const format: PackFormat = pack.format;
+  // `key={pack.id}`, on every branch: without it, navigating from one pack's
+  // play page straight to a DIFFERENT pack's — of the SAME format, so the
+  // switch below returns the SAME component type at the SAME tree position —
+  // updates the existing screen in place instead of remounting it. Its
+  // `usePlayResume` state (seed, round index, saved-progress decision) is then
+  // stuck from the FIRST pack: the new pack's own screen renders with the
+  // wrong pack's round content, and reading a genuinely-saved play for pack A
+  // as if it belonged to never-played pack B is exactly the resume-choice
+  // modal surfacing that mismatch. The key forces React to unmount the old
+  // screen and mount a fresh one whenever the pack identity changes, for any
+  // format pairing, regardless of how the navigation reached this page.
   switch (format) {
     case "rank_blind":
-      return <RankPlayScreen pack={pack} />;
+      return <RankPlayScreen key={pack.id} pack={pack} />;
     case "1v1":
-      return <HeadToHeadPlayScreen pack={pack} />;
-    // save_one_friends is played LIVE IN A ROOM (see FriendsRoomEntry on the
-    // pack page), never on the single-player /play path — there is no screen
-    // here by design. A stale or shared /play link for such a pack must 404
-    // rather than fall through to PlayScreen, which would run the wrong
-    // mechanic, render the "" instruction copy, and RECORD a single-player play.
-    case "save_one_friends":
-      return notFound();
+      return <HeadToHeadPlayScreen key={pack.id} pack={pack} />;
     // The elimination screen — the only formats it has instruction copy for
     // (see play-format-copy.ts).
     case "save_one":
     case "sacrifice_one":
     case "nxn":
-      return <PlayScreen pack={pack} />;
+      return <PlayScreen key={pack.id} pack={pack} />;
     default:
       return noPlayPathFor(format);
   }

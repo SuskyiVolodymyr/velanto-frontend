@@ -10,6 +10,23 @@ vi.mock("@/src/shared/lib/packs-client", () => ({
   packsClient: { moderationQueue: vi.fn(), approve: vi.fn(), reject: vi.fn() },
 }));
 
+/**
+ * The format filter is the design's listbox {@link Dropdown}, not a native
+ * <select>: its options only exist in the DOM while the panel is open, so a
+ * test has to open the trigger before it can see or click one.
+ */
+async function openFormatFilter(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(
+    await screen.findByRole("combobox", { name: "Filter by format" }),
+  );
+}
+
+const { mockPush } = vi.hoisted(() => ({ mockPush: vi.fn() }));
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: mockPush, replace: vi.fn() }),
+}));
+
 function pack(overrides: Partial<Pack> = {}): Pack {
   return {
     id: "p1",
@@ -95,10 +112,8 @@ describe("PackApprovalsTab", () => {
     const user = userEvent.setup();
     render(<PackApprovalsTab />);
 
-    await user.selectOptions(
-      await screen.findByLabelText("Filter by format"),
-      "nxn",
-    );
+    await openFormatFilter(user);
+    await user.click(screen.getByRole("option", { name: "NxN" }));
 
     await vi.waitFor(() =>
       expect(packsClient.moderationQueue).toHaveBeenLastCalledWith(
@@ -197,17 +212,69 @@ describe("PackApprovalsTab", () => {
     ).toBeInTheDocument();
   });
 
-  // Every format is a named filter option, save_one_friends included. Counting
-  // the options is what makes dropping a format from the filter fail — asserting
-  // only "1v1 is present" would stay green.
-  it("offers every named format in the filter, including save_one_friends", async () => {
+  it("links a row's title to the pack's review screen, not the public pack page", async () => {
+    render(<PackApprovalsTab />);
+
+    const link = await screen.findByRole("link", {
+      name: "Best Anime Openings",
+    });
+    expect(link).toHaveAttribute("href", "/moderation/packs/p1");
+  });
+
+  it("navigates to the review screen when the row is clicked", async () => {
+    const user = userEvent.setup();
+    render(<PackApprovalsTab />);
+
+    await screen.findByText("Best Anime Openings");
+    // Click a cell that isn't the title link or an action button — the
+    // author cell — to prove the WHOLE row opens the review screen, not
+    // just its title link.
+    await user.click(screen.getByText("packsmith"));
+
+    expect(mockPush).toHaveBeenCalledWith("/moderation/packs/p1");
+  });
+
+  it("does not navigate when Approve is clicked — the button stops the row's click from also firing", async () => {
+    const user = userEvent.setup();
+    render(<PackApprovalsTab />);
+
+    await screen.findByText("Best Anime Openings");
+    await user.click(screen.getByRole("button", { name: "Approve" }));
+
+    expect(packsClient.approve).toHaveBeenCalledWith("p1");
+    expect(mockPush).not.toHaveBeenCalled();
+  });
+
+  it("does not navigate when Reject (or the reject-form controls) is clicked", async () => {
+    const user = userEvent.setup();
+    render(<PackApprovalsTab />);
+
+    await screen.findByText("Best Anime Openings");
+    await user.click(screen.getByRole("button", { name: "Reject" }));
+    expect(mockPush).not.toHaveBeenCalled();
+
+    await user.type(
+      screen.getByLabelText("Rejection reason for Best Anime Openings"),
+      "Low effort",
+    );
+    await user.click(screen.getByRole("button", { name: "Confirm reject" }));
+
+    expect(packsClient.reject).toHaveBeenCalledWith("p1", "Low effort");
+    expect(mockPush).not.toHaveBeenCalled();
+  });
+
+  // Every format is a named filter option. Counting the options is what makes
+  // dropping a format from the filter fail — asserting only "1v1 is present"
+  // would stay green.
+  it("offers every named format in the filter", async () => {
+    const user = userEvent.setup();
     render(<PackApprovalsTab />);
     await screen.findByText("Best Anime Openings");
 
-    const select = screen.getByRole("combobox", { name: "Filter by format" });
-    const options = within(select).getAllByRole("option");
+    await openFormatFilter(user);
+    const options = screen.getAllByRole("option");
 
-    expect(options).toHaveLength(7); // "All formats" + 6 named formats
+    expect(options).toHaveLength(6); // "All formats" + 5 named formats
     expect(options.map((option) => option.textContent)).toEqual([
       "All formats",
       "Save One",
@@ -215,22 +282,6 @@ describe("PackApprovalsTab", () => {
       "NxN",
       "Rank Blind",
       "1v1",
-      "Save One (Friends)",
     ]);
-  });
-
-  // A save_one_friends pack appears in the queue with its real label.
-  it("lists a save_one_friends pack in the queue with its label", async () => {
-    vi.mocked(packsClient.moderationQueue).mockResolvedValue(
-      queuePage([pack({ format: "save_one_friends" })]),
-    );
-    render(<PackApprovalsTab />);
-
-    const row = await screen.findByText("Best Anime Openings");
-    expect(
-      within(row.closest('[role="row"]') as HTMLElement).getByText(
-        "Save One (Friends)",
-      ),
-    ).toBeInTheDocument();
   });
 });

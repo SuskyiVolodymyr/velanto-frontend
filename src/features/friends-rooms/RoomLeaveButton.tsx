@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { LogOut } from "lucide-react";
-import { Button } from "@/src/shared/components/Button";
 import { ConfirmModal } from "@/src/shared/components/ConfirmModal";
 import { useFriendsRoomsPresenceOrDefault } from "./friends-rooms-presence-context";
 import type { RoomState } from "./room-types";
@@ -51,10 +50,18 @@ export function RoomLeaveButton({
 
   return (
     <>
-      <Button variant="ghost" onClick={handleClick} className="gap-2">
+      {/* Its own element rather than a restyled <Button>: the mock's header
+          pill is a distinct geometry (38px, 11px radius, bordered) and cn() is
+          a plain join, so overriding Button's would leave both sets of
+          utilities fighting. */}
+      <button
+        type="button"
+        onClick={handleClick}
+        className="flex h-[38px] flex-none items-center gap-2 rounded-[11px] border border-border-strong bg-surface-card ps-2.5 pe-[13px] text-[13px] font-semibold text-foreground-secondary transition-colors hover:border-white/20 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
+      >
         <LogOut size={16} aria-hidden />
         {t("leave")}
-      </Button>
+      </button>
 
       <ConfirmModal
         open={confirmOpen}

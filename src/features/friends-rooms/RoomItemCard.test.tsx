@@ -15,8 +15,8 @@ function youtubeItem(): Item {
   };
 }
 
-function textItem(): Item {
-  return { id: "t1", type: "text", title: "Apple", value: "" };
+function textItem(overrides: Partial<Item> = {}): Item {
+  return { id: "t1", type: "text", title: "Apple", value: "", ...overrides };
 }
 
 describe("RoomItemCard — claimable", () => {
@@ -30,6 +30,7 @@ describe("RoomItemCard — claimable", () => {
         item={youtubeItem()}
         index={0}
         status="free"
+        format="sacrifice_one"
         onClaim={() => {}}
       />,
     );
@@ -42,6 +43,26 @@ describe("RoomItemCard — claimable", () => {
     expect(within(claim).queryByRole("button")).toBeNull();
   });
 
+  // Cards in a row stretch to the tallest one, so a card with a short title
+  // grows past its own content. The claim control has to grow with it or the
+  // empty strip under the title is dead space that looks clickable and isn't.
+  // Asserted on the classes because jsdom has no layout to measure.
+  it("grows the claim control to fill a stretched card", () => {
+    render(
+      <RoomItemCard
+        item={youtubeItem()}
+        index={0}
+        status="free"
+        format="save_one"
+        onClaim={vi.fn()}
+      />,
+    );
+
+    const claim = screen.getByRole("button", { name: /sacrifice silhouette/i });
+    expect(claim).toHaveClass("flex-1");
+    expect(claim.parentElement).toHaveClass("flex", "flex-col");
+  });
+
   it("fires onClaim when a youtube card's claim control is clicked", async () => {
     const onClaim = vi.fn();
     const user = userEvent.setup();
@@ -50,6 +71,7 @@ describe("RoomItemCard — claimable", () => {
         item={youtubeItem()}
         index={0}
         status="free"
+        format="sacrifice_one"
         onClaim={onClaim}
       />,
     );
@@ -68,6 +90,7 @@ describe("RoomItemCard — claimable", () => {
         item={textItem()}
         index={0}
         status="free"
+        format="sacrifice_one"
         onClaim={onClaim}
       />,
     );
@@ -87,6 +110,7 @@ function claimant(username = "Fiona"): RoomPlayerState {
     ready: true,
     next: false,
     claimedItemId: "t1",
+    label: null,
   };
 }
 
@@ -101,6 +125,7 @@ describe("RoomItemCard — claimant", () => {
         item={textItem()}
         index={0}
         status="sacrificed"
+        format="sacrifice_one"
         claimant={claimant()}
       />,
     );
@@ -116,6 +141,7 @@ describe("RoomItemCard — claimant", () => {
         item={youtubeItem()}
         index={0}
         status="sacrificed"
+        format="sacrifice_one"
         claimant={claimant()}
       />,
     );
@@ -123,8 +149,103 @@ describe("RoomItemCard — claimant", () => {
     expect(screen.getAllByText("F")).toHaveLength(1);
   });
 
+  // Sharing a row with the title left the title a narrow column: a long name
+  // broke one word per line while the claim label sat beside it in the space it
+  // needed. The label gets its own line under the title.
+  it("puts the claim label on its own line beneath the title", () => {
+    render(
+      <RoomItemCard
+        item={textItem({
+          title: "Spirited Away - Joe Hisaishi / One Summer's Day",
+        })}
+        index={0}
+        status="sacrificed"
+        format="save_one"
+        claimant={claimant()}
+      />,
+    );
+
+    const title = screen.getByText(
+      "Spirited Away - Joe Hisaishi / One Summer's Day",
+    );
+    const label = screen.getByText("Sacrificed by Fiona");
+    expect(title.parentElement).not.toContainElement(label);
+  });
+
   it("still numbers an unclaimed item", () => {
-    render(<RoomItemCard item={textItem()} index={2} status="free" />);
+    render(
+      <RoomItemCard
+        item={textItem()}
+        index={2}
+        status="free"
+        format="sacrifice_one"
+      />,
+    );
     expect(screen.getByText("03")).toBeInTheDocument();
+  });
+});
+
+describe("RoomItemCard — a claim is a sacrifice in both formats", () => {
+  // The engine has every player claim one item TO SACRIFICE, and the single
+  // unclaimed item survive (claim.engine.ts) — that does not flip with the
+  // pack's format. Labelling a save_one claim "Kept by <name>" described the
+  // opposite game to the chrome directly above it, which asks the room to take
+  // the one they want OUT. The pack's format still names the SURVIVOR (below).
+  it.each(["save_one", "sacrifice_one"] as const)(
+    "offers a %s room a sacrifice, not a save",
+    (format) => {
+      const item = {
+        id: "i1",
+        title: "Pizza",
+        type: "text" as const,
+        value: "Pizza",
+      };
+      render(
+        <RoomItemCard
+          item={item}
+          index={0}
+          status="free"
+          format={format}
+          onClaim={vi.fn()}
+        />,
+      );
+      expect(
+        screen.getByRole("button", { name: /sacrifice pizza/i }),
+      ).toBeInTheDocument();
+    },
+  );
+
+  it.each(["save_one", "sacrifice_one"] as const)(
+    "names the claimant of a %s item the one who sacrificed it",
+    (format) => {
+      render(
+        <RoomItemCard
+          item={textItem()}
+          index={0}
+          status="sacrificed"
+          format={format}
+          claimant={claimant()}
+        />,
+      );
+      expect(screen.getByText("Sacrificed by Fiona")).toBeInTheDocument();
+    },
+  );
+
+  it("the survivor badge also flips: 'Saved' for save_one, 'Survivor' for sacrifice_one", () => {
+    const item = {
+      id: "i1",
+      title: "Pizza",
+      type: "text" as const,
+      value: "Pizza",
+    };
+    render(
+      <RoomItemCard
+        item={item}
+        index={0}
+        status="survivor"
+        format="save_one"
+      />,
+    );
+    expect(screen.getByText(/saved/i)).toBeInTheDocument();
   });
 });

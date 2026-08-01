@@ -16,7 +16,7 @@ export function LanguageSection() {
       >
         {t("languageHeading")}
       </Text>
-      <Card className="flex items-center justify-between gap-4 hover:translate-y-0 hover:shadow-none">
+      <Card className="flex items-center justify-between gap-4">
         <div>
           <Text className="font-semibold">{t("languageLabel")}</Text>
           <Text variant="secondary" className="text-sm">

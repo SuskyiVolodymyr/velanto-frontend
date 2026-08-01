@@ -1,4 +1,5 @@
 import { packsClient, type PackList } from "@/src/shared/lib/packs-client";
+import type { PackSummary } from "@/src/shared/types/pack";
 
 // One page of an author's packs. Small on purpose: the profile leads with a
 // handful and reveals the rest on demand via "Load more". Mirrored by the SSR
@@ -9,7 +10,7 @@ export const AUTHOR_PACKS_PAGE_SIZE = 6;
 export function fetchAuthorPacksPage(
   authorId: string,
   page: number,
-): Promise<PackList> {
+): Promise<PackList<PackSummary>> {
   return packsClient.list({
     authorId,
     page,

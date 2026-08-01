@@ -34,6 +34,7 @@ export function FeedbackVote({
       downvoteLabel={t("dislike")}
       blockedReason={tAuth("logInToVote")}
       errorLabel={t("voteError")}
+      framed
     />
   );
 }

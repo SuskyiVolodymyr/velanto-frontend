@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { User, Mail, Lock } from "lucide-react";
 import { TextField } from "@/src/shared/components/form/TextField";
 import { PasswordField } from "@/src/shared/components/form/PasswordField";
 import { CheckboxField } from "@/src/shared/components/form/CheckboxField";
@@ -19,6 +20,8 @@ export function RegisterFields({ disabled }: { disabled: boolean }) {
         name="username"
         label={t("username")}
         srOnlyLabel
+        icon={<User strokeWidth={1.8} aria-hidden />}
+        surface="card"
         placeholder={t("username")}
         autoComplete="username"
         disabled={disabled}
@@ -28,6 +31,8 @@ export function RegisterFields({ disabled }: { disabled: boolean }) {
         label={t("email")}
         srOnlyLabel
         type="email"
+        icon={<Mail strokeWidth={1.8} aria-hidden />}
+        surface="card"
         placeholder={t("email")}
         autoComplete="email"
         disabled={disabled}
@@ -49,6 +54,8 @@ export function ConfirmPasswordField({ disabled }: { disabled: boolean }) {
       name="confirmPassword"
       label={t("confirmPassword")}
       srOnlyLabel
+      icon={<Lock strokeWidth={1.8} aria-hidden />}
+      surface="card"
       placeholder={t("confirmPassword")}
       autoComplete="new-password"
       showLabel={t("showPassword")}

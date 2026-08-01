@@ -1,5 +1,6 @@
 import { packsClient } from "@/src/shared/lib/packs-client";
 import type { PackStatus } from "@/src/shared/types/pack";
+import type { DateOrderValue } from "@/src/features/home/filter-options";
 import {
   PACKS_FEED_PAGE_SIZE,
   type PacksFeedResult,
@@ -13,14 +14,17 @@ export interface MyPacksFilters {
   /** One moderation status, or undefined for the "All" chip (every status). */
   status?: PackStatus;
   page?: number;
+  /** Defaults to "newest" — see {@link getMyPacks}. */
+  sort?: DateOrderValue;
 }
 
 /**
  * The signed-in user's own packs across every moderation status (drafts,
  * pending, approved, rejected). The backend returns all statuses only for a
  * self-author view — `authorId` MUST be the signed-in user, which the caller
- * guarantees. Newest-first: when managing your own packs the most recent is the
- * most relevant, and "popular" is meaningless for an unplayed draft.
+ * guarantees. Defaults to newest-first: when managing your own packs the most
+ * recent is the most relevant, and "popular" is meaningless for an unplayed
+ * draft — so unlike the discovery feed, date is the only sort this offers.
  */
 export async function getMyPacks(
   authorId: string,
@@ -31,7 +35,7 @@ export async function getMyPacks(
     status: filters.status,
     page: filters.page && filters.page > 1 ? filters.page : undefined,
     limit: PACKS_FEED_PAGE_SIZE,
-    sort: "newest",
+    sort: filters.sort ?? "newest",
   });
   return { items: result.items, total: result.total };
 }

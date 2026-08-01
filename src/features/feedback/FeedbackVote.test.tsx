@@ -40,7 +40,7 @@ function mockAuth(authenticated: boolean) {
 describe("FeedbackVote", () => {
   beforeEach(() => vi.resetAllMocks());
 
-  it("renders the net score and the like/dislike counts from the initial props", () => {
+  it("renders each reaction's own count from the initial props", () => {
     mockAuth(true);
     render(
       <FeedbackVote
@@ -50,9 +50,12 @@ describe("FeedbackVote", () => {
         initialMyVote={null}
       />,
     );
-    expect(screen.getByText("2")).toBeInTheDocument(); // net score
-    expect(screen.getByText("3")).toBeInTheDocument(); // likes
-    expect(screen.getByText("1")).toBeInTheDocument(); // dislikes
+    // Each reaction carries its own count; there is no net score any more.
+    expect(screen.getByRole("button", { name: "Like" })).toHaveTextContent("3");
+    expect(screen.getByRole("button", { name: "Dislike" })).toHaveTextContent(
+      "1",
+    );
+    expect(screen.queryByText("2")).not.toBeInTheDocument();
   });
 
   it("votes on the feedback post via the feedback client when an arrow is clicked", async () => {

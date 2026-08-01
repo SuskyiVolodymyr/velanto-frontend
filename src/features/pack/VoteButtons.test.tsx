@@ -41,7 +41,7 @@ function mockAuth(authenticated: boolean) {
 describe("VoteButtons", () => {
   beforeEach(() => vi.resetAllMocks());
 
-  it("renders the net score (likes − dislikes) from the initial props", () => {
+  it("renders each reaction's own count from the initial props", () => {
     mockAuth(true);
     render(
       <VoteButtons
@@ -51,7 +51,12 @@ describe("VoteButtons", () => {
         initialMyVote={null}
       />,
     );
-    expect(screen.getByText("2")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Upvote" })).toHaveTextContent(
+      "3",
+    );
+    expect(screen.getByRole("button", { name: "Downvote" })).toHaveTextContent(
+      "1",
+    );
   });
 
   it("votes on the pack via the packs client when an arrow is clicked", async () => {

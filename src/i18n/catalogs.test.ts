@@ -43,8 +43,28 @@ const IDENTICAL_ALLOWED = new Set([
   "formats.1v1",
   // Pure placeholder/punctuation, no translatable words: "{item} — {pct}%".
   "pack.topItemPct",
+  // Same: the lobby's seat and ready counters are "{count}/{max}" and
+  // "{ready}/{total}" — two placeholders and a slash.
+  "room.lobby.seatCount",
+  "room.lobby.readyCount",
+  // A bare question mark: the placeholder under a guess-who column whose
+  // player has not been revealed yet. Latin-script locales borrow the glyph;
+  // ar/ur/zh use their own and are not exempted by this entry.
+  "room.guessWho.stillAnonymous",
   // Loanword: "Email" is borrowed as-is in some locales.
   "auth.email",
+  // Proper noun (T5): the item-kind toggle's YouTube option is the brand
+  // name, not a translatable word, in every locale.
+  "create.link",
+  // Proper noun (T8): the reported-content type filter's YouTube chip is the
+  // same brand name, not a translatable word, in every locale.
+  "moderation.contentsFilterYoutube",
+  // Format hint, not prose: the browse join-code placeholder demonstrates the
+  // "ABC-123" code shape and stays Latin/ASCII in every locale.
+  "home.joinRoom.codePlaceholder",
+  // Loanword: the "HOT" trending badge is kept as-is in several locales (zh/ar
+  // use a native word; the rest borrow "HOT", which is a legitimate match).
+  "home.card.hot",
 ]);
 
 /**

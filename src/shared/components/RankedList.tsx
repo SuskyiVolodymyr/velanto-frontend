@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 
@@ -26,29 +27,47 @@ export interface RankedRow {
  * The "shown at" copy lives in the `result` namespace, its first home; the
  * whole catalog is on the client, so reading it from the play screen is safe.
  */
-export function RankedList({ rows }: { rows: RankedRow[] }) {
+export function RankedList({
+  rows,
+  header,
+}: {
+  rows: RankedRow[];
+  /**
+   * Optional block rendered INSIDE the card, above the list — the result
+   * screen's round name and "you ranked #1" verdict, which used to sit
+   * outside it and read as loose text floating above an unrelated box. The
+   * play screen's recap passes nothing and is unchanged.
+   */
+  header?: ReactNode;
+}) {
   const t = useTranslations("result");
 
   return (
-    <ul className="flex flex-col gap-2 rounded-xl border border-border p-3">
-      {rows.map((row, index) => (
-        <li
-          key={row.id}
-          className="flex min-w-0 items-center gap-3 rounded-lg border border-white/[0.06] bg-white/[0.03] px-3 py-2"
-        >
-          <span className="flex h-7 w-7 flex-none items-center justify-center rounded-lg bg-white/[0.06] text-xs font-bold tabular-nums">
-            {index + 1}
-          </span>
-          <Text className="flex-1 truncate text-sm font-semibold">
-            {row.title}
-          </Text>
-          {row.drawIndex !== undefined && (
-            <Text variant="tertiary" className="flex-none text-xs tabular-nums">
-              {t("shownAt", { n: row.drawIndex + 1 })}
+    <div className="flex flex-col gap-2 rounded-card border border-border p-3">
+      {header}
+      <ul className="flex flex-col gap-2">
+        {rows.map((row, index) => (
+          <li
+            key={row.id}
+            className="flex min-w-0 items-center gap-4 rounded-tile border border-border bg-surface-card p-[13px_16px]"
+          >
+            <span className="flex h-7 w-7 flex-none items-center justify-center rounded-lg bg-white/[0.06] text-xs font-bold tabular-nums">
+              {index + 1}
+            </span>
+            <Text className="flex-1 truncate text-sm font-semibold">
+              {row.title}
             </Text>
-          )}
-        </li>
-      ))}
-    </ul>
+            {row.drawIndex !== undefined && (
+              <Text
+                variant="tertiary"
+                className="flex-none text-xs tabular-nums"
+              >
+                {t("shownAt", { n: row.drawIndex + 1 })}
+              </Text>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }

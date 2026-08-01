@@ -184,6 +184,22 @@ export function startMockBackend(port = 3001): Promise<Server> {
       json(res, 200, results);
       return;
     }
+    // The pack detail page fetches this server-side (getAvailableModesServer)
+    // and THROWS on a non-ok response, so without a handler here every spec
+    // that opens /packs/:id renders the error boundary instead of the page.
+    // Claim is the mode the room entry section offers for the save_one
+    // fixtures; the rest of the list is irrelevant to these specs.
+    if (
+      req.method === "GET" &&
+      (match = /^\/packs\/([^/?]+)\/modes$/.exec(url))
+    ) {
+      if (!PACKS[match[1]]) {
+        json(res, 404, { message: "Not found" });
+        return;
+      }
+      json(res, 200, [{ mode: "claim", available: true, maxPlayers: 4 }]);
+      return;
+    }
     if (req.method === "GET" && (match = /^\/packs\/([^/?]+)$/.exec(url))) {
       const pack = PACKS[match[1]];
       if (pack) {

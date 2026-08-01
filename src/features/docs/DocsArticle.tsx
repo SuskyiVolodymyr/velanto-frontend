@@ -1,59 +1,81 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { Card } from "@/src/shared/components/Card";
+import { BarChart3, EyeOff, Pencil } from "lucide-react";
 import { ApiDocs } from "./ApiDocs";
+import { DocsNote, H1, PANEL, PROSE } from "./docs-primitives";
+import { DocsPager } from "./DocsPager";
 import type { TopicId } from "./DocsSidebar";
 
 const FORMAT_DOCS = [
-  { nameKey: "save_one", descKey: "formatSaveOneDesc" },
-  { nameKey: "sacrifice_one", descKey: "formatSacrificeOneDesc" },
-  { nameKey: "rank_blind", descKey: "formatRankBlindDesc" },
-  { nameKey: "nxn", descKey: "formatNxnDesc" },
-  { nameKey: "1v1", descKey: "format1v1Desc" },
+  { nameKey: "save_one", code: "save_one", descKey: "formatSaveOneDesc" },
+  {
+    nameKey: "sacrifice_one",
+    code: "sacrifice_one",
+    descKey: "formatSacrificeOneDesc",
+  },
+  { nameKey: "rank_blind", code: "rank_blind", descKey: "formatRankBlindDesc" },
+  { nameKey: "nxn", code: "nxn", descKey: "formatNxnDesc" },
+  { nameKey: "1v1", code: "1v1", descKey: "format1v1Desc" },
 ];
 
-export function DocsArticle({ activeTopic }: { activeTopic: TopicId }) {
+/** Per-card accent, matching the mock's three hues on the overview cards. */
+const OVERVIEW_CARDS = [
+  {
+    titleKey: "buildCardTitle",
+    bodyKey: "buildCardBody",
+    Icon: Pencil,
+    tone: "bg-acc/[0.12] text-acc",
+  },
+  {
+    titleKey: "playCardTitle",
+    bodyKey: "playCardBody",
+    Icon: EyeOff,
+    tone: "bg-[rgba(255,92,192,0.12)] text-[#FF5CC0]",
+  },
+  {
+    titleKey: "compareCardTitle",
+    bodyKey: "compareCardBody",
+    Icon: BarChart3,
+    tone: "bg-success/[0.12] text-success",
+  },
+];
+
+export function DocsArticle({
+  activeTopic,
+  onSelect,
+}: {
+  activeTopic: TopicId;
+  onSelect: (id: TopicId) => void;
+}) {
   const t = useTranslations("docs");
   const tFormats = useTranslations("formats");
   return (
-    <article className="min-w-0 max-w-2xl flex-1">
+    <article className="flex min-w-0 flex-1 flex-col gap-[18px]">
       {activeTopic === "start" && (
         <>
-          <Text as="h1" variant="title" className="mb-3 text-3xl">
-            {t("whatIsTitle")}
-          </Text>
-          <Text variant="secondary" className="mb-4 leading-7">
-            {t("whatIsIntro1")}
-          </Text>
-          <Text variant="secondary" className="mb-7 leading-7">
-            {t("whatIsIntro2")}
-          </Text>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-            {[
-              {
-                titleKey: "buildCardTitle",
-                bodyKey: "buildCardBody",
-              },
-              {
-                titleKey: "playCardTitle",
-                bodyKey: "playCardBody",
-              },
-              {
-                titleKey: "compareCardTitle",
-                bodyKey: "compareCardBody",
-              },
-            ].map((card) => (
-              <Card
+          <h1 className={H1}>{t("whatIsTitle")}</h1>
+          <p className={PROSE}>{t("whatIsIntro1")}</p>
+          <p className={PROSE}>{t("whatIsIntro2")}</p>
+          <div className="grid grid-cols-1 gap-3 pt-1 sm:grid-cols-3">
+            {OVERVIEW_CARDS.map((card) => (
+              <div
                 key={card.titleKey}
-                className="hover:translate-y-0 hover:shadow-none"
+                className={`${PANEL} flex flex-col gap-2 p-4`}
               >
-                <Text className="mb-1.5 font-semibold">{t(card.titleKey)}</Text>
-                <Text variant="tertiary" className="text-sm leading-6">
+                <span
+                  aria-hidden
+                  className={`grid h-[30px] w-[30px] place-items-center rounded-[10px] ${card.tone}`}
+                >
+                  <card.Icon size={15} strokeWidth={1.9} />
+                </span>
+                <span className="text-sm font-[650] text-foreground">
+                  {t(card.titleKey)}
+                </span>
+                <span className="text-[12.5px] leading-[1.55] text-pretty text-foreground-tertiary">
                   {t(card.bodyKey)}
-                </Text>
-              </Card>
+                </span>
+              </div>
             ))}
           </div>
         </>
@@ -61,63 +83,66 @@ export function DocsArticle({ activeTopic }: { activeTopic: TopicId }) {
 
       {activeTopic === "creating" && (
         <>
-          <Text as="h1" variant="title" className="mb-3 text-3xl">
-            {t("creatingTitle")}
-          </Text>
-          <Text variant="secondary" className="mb-4 leading-7">
-            {t("creatingIntro")}
-          </Text>
-          <ul className="mb-4 list-disc ps-5">
-            <li className="mb-2">
-              <Text as="span" className="font-semibold">
-                {t("creatingPoolName")}
-              </Text>
-              <Text as="span" variant="secondary">
-                {t("creatingPoolDesc")}
-              </Text>
-            </li>
-            <li>
-              <Text as="span" className="font-semibold">
-                {t("creatingRoundName")}
-              </Text>
-              <Text as="span" variant="secondary">
-                {t("creatingRoundDesc")}
-              </Text>
-            </li>
-          </ul>
-          <Text variant="secondary" className="mb-4 leading-7">
-            {t("creatingModesPara")}
-          </Text>
-          <Text variant="secondary" className="mb-4 leading-7">
-            {t("creatingLimitsPara")}
-          </Text>
-          <Text variant="secondary" className="mb-4 leading-7">
-            {t("creatingItemsPara")}
-          </Text>
-          <Text variant="secondary" className="leading-7">
-            {t("creatingPublishPara")}
-          </Text>
+          <h1 className={H1}>{t("creatingTitle")}</h1>
+          <p className={PROSE}>{t("creatingIntro")}</p>
+          {/* Mock: the two layers are "step" panels, not a bulleted list —
+              they're the structure of a pack, not a list of caveats. */}
+          <div className="flex flex-col gap-[11px]">
+            {[
+              { n: 1, name: "creatingPoolName", desc: "creatingPoolDesc" },
+              { n: 2, name: "creatingRoundName", desc: "creatingRoundDesc" },
+            ].map((step) => (
+              <div
+                key={step.n}
+                className={`${PANEL} flex gap-[13px] p-[15px_16px]`}
+              >
+                <span
+                  aria-hidden
+                  className="grid h-[26px] w-[26px] flex-none place-items-center rounded-lg bg-acc/[0.12] font-mono text-xs font-bold text-acc"
+                >
+                  {step.n}
+                </span>
+                {/* One flowing line, not the mock's title/body pair: our copy
+                    is authored as "Pools — named bags of items…", so the
+                    localized description already opens with its own separator
+                    and would read as a stray dash on a line of its own. */}
+                <p className="min-w-0 text-[13.5px] leading-[1.6] text-pretty text-foreground-tertiary">
+                  <span className="font-[650] text-foreground">
+                    {t(step.name)}
+                  </span>
+                  {t(step.desc)}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p className={PROSE}>{t("creatingModesPara")}</p>
+          <p className={PROSE}>{t("creatingLimitsPara")}</p>
+          <p className={PROSE}>{t("creatingItemsPara")}</p>
+          <DocsNote>{t("creatingPublishPara")}</DocsNote>
         </>
       )}
 
       {activeTopic === "formats" && (
         <>
-          <Text as="h1" variant="title" className="mb-5 text-3xl">
-            {t("formatsTitle")}
-          </Text>
-          <div className="flex flex-col gap-3">
+          <h1 className={H1}>{t("formatsTitle")}</h1>
+          <div className="flex flex-col gap-[11px]">
             {FORMAT_DOCS.map((format) => (
-              <Card
+              <div
                 key={format.nameKey}
-                className="hover:translate-y-0 hover:shadow-none"
+                className={`${PANEL} flex flex-col gap-2 p-[16px_18px]`}
               >
-                <Text className="mb-1.5 font-semibold">
-                  {tFormats(format.nameKey)}
-                </Text>
-                <Text variant="secondary" className="text-sm leading-6">
+                <div className="flex flex-wrap items-center gap-[9px]">
+                  <span className="text-[15px] font-bold tracking-[-0.01em] text-foreground">
+                    {tFormats(format.nameKey)}
+                  </span>
+                  <span className="rounded-md bg-white/[0.06] px-2 py-0.5 font-mono text-[10.5px] font-[650] text-foreground-tertiary">
+                    {format.code}
+                  </span>
+                </div>
+                <span className="text-[13.5px] leading-[1.65] text-pretty text-foreground-secondary">
                   {t(format.descKey)}
-                </Text>
-              </Card>
+                </span>
+              </div>
             ))}
           </div>
         </>
@@ -125,36 +150,24 @@ export function DocsArticle({ activeTopic }: { activeTopic: TopicId }) {
 
       {activeTopic === "playing" && (
         <>
-          <Text as="h1" variant="title" className="mb-3 text-3xl">
-            {t("playingTitle")}
-          </Text>
-          <Text variant="secondary" className="mb-4 leading-7">
-            {t("playingIntro")}
-          </Text>
-          <Text variant="secondary" className="mb-4 leading-7">
-            {t("playingOutro")}
-          </Text>
-          <Text variant="secondary" className="leading-7">
-            {t("statsAnonNote")}
-          </Text>
+          <h1 className={H1}>{t("playingTitle")}</h1>
+          <p className={PROSE}>{t("playingIntro")}</p>
+          <p className={PROSE}>{t("playingOutro")}</p>
+          <p className={PROSE}>{t("statsAnonNote")}</p>
         </>
       )}
 
       {activeTopic === "stats" && (
         <>
-          <Text as="h1" variant="title" className="mb-3 text-3xl">
-            {t("statsTitle")}
-          </Text>
-          <Text variant="secondary" className="mb-4 leading-7">
-            {t("statsBody")}
-          </Text>
-          <Text variant="secondary" className="leading-7">
-            {t("statsAnonNote")}
-          </Text>
+          <h1 className={H1}>{t("statsTitle")}</h1>
+          <p className={PROSE}>{t("statsBody")}</p>
+          <p className={PROSE}>{t("statsAnonNote")}</p>
         </>
       )}
 
       {activeTopic === "api" && <ApiDocs />}
+
+      <DocsPager activeTopic={activeTopic} onSelect={onSelect} />
     </article>
   );
 }

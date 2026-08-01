@@ -22,22 +22,22 @@ export function EditPackScreen({ pack }: { pack: Pack }) {
 
   if (status === "authenticated" && user && user.id !== pack.authorId) {
     return (
-      <Text variant="secondary" className="py-10 text-center">
-        {t("editOthersForbidden")}
-      </Text>
+      <div className="mx-auto max-w-md py-16 text-center">
+        <Text variant="secondary">{t("editOthersForbidden")}</Text>
+      </div>
     );
   }
 
   // null means the pack's format is one this build doesn't know (a backend
-  // deployed ahead of the frontend) — every shipped format, save_one_friends
-  // included, seeds the form. Say so plainly rather than seeding a form with no
-  // matching option and a Save that silently fails validation.
+  // deployed ahead of the frontend) — every shipped format seeds the form. Say
+  // so plainly rather than seeding a form with no matching option and a Save
+  // that silently fails validation.
   const initialValues = packToFormValues(pack);
   if (!initialValues) {
     return (
-      <Text variant="secondary" className="py-10 text-center">
-        {t("editFormatUnsupported")}
-      </Text>
+      <div className="mx-auto max-w-md py-16 text-center">
+        <Text variant="secondary">{t("editFormatUnsupported")}</Text>
+      </div>
     );
   }
 

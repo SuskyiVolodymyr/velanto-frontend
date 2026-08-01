@@ -1,55 +1,97 @@
 import type { ReactNode } from "react";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { pageContainer } from "@/src/shared/lib/page-container";
 import { cn } from "@/src/shared/lib/cn";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
+import { PageHeader } from "@/src/shared/components/PageHeader";
 import { PackCoverBanner } from "@/src/features/pack/PackCoverBanner";
 import { PackHeroStats } from "@/src/features/pack/PackHeroStats";
 import { PackHowItPlays } from "@/src/features/pack/PackHowItPlays";
+import { PackModesPanel } from "@/src/features/pack/PackModesPanel";
+import { PackTopItemsList } from "@/src/features/pack/PackTopItemsList";
 import { RoundChips } from "@/src/features/pack/RoundChips";
 import { PackStats } from "@/src/features/pack/PackStats";
-import { TopPickedTable } from "@/src/features/result/TopPickedTable";
 import { PodiumTable } from "@/src/features/result/PodiumTable";
 import { PackCreatorCard } from "@/src/features/pack/PackCreatorCard";
 import { PackPlayButton } from "@/src/features/pack/PackPlayButton";
+import { PackPlayEstimate } from "@/src/features/pack/PackPlayEstimate";
 import { FriendsRoomEntry } from "@/src/features/friends-rooms/FriendsRoomEntry";
+import { ROOMS_DORMANT } from "@/src/features/friends-rooms/room-types";
 import { PackOwnerActions } from "@/src/features/pack/PackOwnerActions";
 import { PackOwnerStatusBadge } from "@/src/features/pack/PackOwnerStatusBadge";
+import { PackRejectionReason } from "@/src/features/pack/PackRejectionReason";
+import { PackChangesRequestedBanner } from "@/src/features/pack/PackChangesRequestedBanner";
 import { CommentSection } from "@/src/features/pack/CommentSection";
+import { ReportPackDialog } from "@/src/features/pack/ReportPackDialog";
 import { VoteButtons } from "@/src/features/pack/VoteButtons";
 import { ShareButton } from "@/src/features/share/ShareButton";
-import { isUiPackFormat, type Pack } from "@/src/shared/types/pack";
+import { type Pack } from "@/src/shared/types/pack";
 import type { PackResults, RankResults } from "@/src/shared/types/play-results";
+import type { AvailableMode } from "@/src/features/friends-rooms/room-types";
 
-function SectionHeading({ children }: { children: ReactNode }) {
+function SectionHeading({
+  children,
+  aside,
+}: {
+  children: ReactNode;
+  aside?: ReactNode;
+}) {
   return (
-    <Text
-      as="h2"
-      variant="tertiary"
-      className="mb-4 text-xs font-medium uppercase tracking-[0.14em]"
-    >
+    <div className="flex items-baseline gap-2.5">
+      <Text
+        as="h2"
+        variant="tertiary"
+        className="text-[12px] font-bold uppercase tracking-[0.14em]"
+      >
+        {children}
+      </Text>
+      {aside && (
+        <Text variant="tertiary" className="text-[12.5px]">
+          {aside}
+        </Text>
+      )}
+    </div>
+  );
+}
+
+// A card surface for the sidebar and stat panels — the mock's raised
+// surface-card with a hairline border.
+function Panel({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
+  // Radius and padding come from the caller — the sidebar panels and the stat
+  // panel differ, and cn() is a plain join (not tailwind-merge), so a base
+  // radius here would collide with an override rather than be replaced.
+  return (
+    <div className={cn("border border-border bg-surface-card", className)}>
       {children}
-    </Text>
+    </div>
   );
 }
 
 export function PackDetailScreen({
   pack,
   results,
+  availableModes,
 }: {
   pack: Pack;
   results: PackResults | RankResults;
+  availableModes: AvailableMode[];
 }) {
-  const tFormat = useTranslations("formats");
   const t = useTranslations("pack");
+  const tFormat = useTranslations("formats");
   const tResult = useTranslations("result");
-  // The pack-wide ranking, in whichever shape this format has one: "which item
-  // wins most" for the four pick formats, "how often each item reached the
-  // podium" for rank_blind, whose results are placements rather than picks.
-  // Null until there is something to rank — that is when the generic per-round
-  // breakdown below stands in.
-  let ranking: { heading: string; table: ReactNode } | null = null;
+  const tNav = useTranslations("shell.nav");
+
+  // The pack-wide ranking, in whichever shape this format has one (see below).
+  // Null until there is something to rank — the per-round breakdown stands in.
+  let ranking: { heading: string; aside?: string; table: ReactNode } | null =
+    null;
   if (results.format === "rank_blind") {
     const podium = results.podium ?? [];
     if (podium.length > 0) {
@@ -61,7 +103,6 @@ export function PackDetailScreen({
   } else {
     const topItems = results.topItems ?? [];
     if (topItems.length > 0) {
-      // Same number under the verb the player actually performed.
       const heading = tResult(
         pack.format === "save_one"
           ? "topSavedHeading"
@@ -71,113 +112,147 @@ export function PackDetailScreen({
       );
       ranking = {
         heading,
-        table: <TopPickedTable items={topItems} label={heading} />,
+        aside: t("acrossPlays", { count: pack.totalPlays }),
+        table: (
+          <PackTopItemsList
+            items={topItems}
+            coverTone={pack.coverTone}
+            label={heading}
+          />
+        ),
       };
     }
   }
   const sectionLabel =
     pack.format === "nxn" ? t("sectionCategory") : t("sectionGroup");
+  const isApproved = pack.status === "approved";
 
   return (
-    <main className={cn(PACK_CONTAINER, "flex-1 py-10")}>
-      <div className="flex flex-col gap-11">
-        <PackCoverBanner pack={pack} />
-
-        {/* Info row: description + primary actions on the left, stats and the
-            (secondary) vote control on the right. */}
-        <section className="flex flex-wrap gap-10">
-          <div className="flex min-w-[280px] flex-1 basis-[420px] flex-col gap-5">
-            <PackOwnerStatusBadge
-              packAuthorId={pack.authorId}
-              status={pack.status}
-            />
-
-            {pack.description && (
-              <Text
-                variant="secondary"
-                className="max-w-xl text-base leading-relaxed"
-              >
-                {pack.description}
-              </Text>
-            )}
-
-            {pack.tags.length > 0 && (
-              <div className="flex flex-wrap gap-2">
-                {pack.tags.map((tag) => (
-                  <Badge key={tag}>{tag}</Badge>
-                ))}
-              </div>
-            )}
-
-            <div className="flex flex-wrap items-center gap-3.5">
-              {/* save_one_friends (velanto-backend#258) is no longer excluded
-                  here: it has no single-player /play path (that still 404s), so
-                  instead of Play we offer the room entry points — Create room /
-                  Join by code — once the pack is approved. Every other UI format
-                  keeps the plain Play button. */}
-              {isUiPackFormat(pack.format) && (
-                <PackPlayButton packId={pack.id} />
-              )}
-              {pack.format === "save_one_friends" &&
-                pack.status === "approved" && (
-                  <FriendsRoomEntry packId={pack.id} />
-                )}
-              {pack.status === "approved" && (
-                <ShareButton path={`/packs/${pack.id}`} />
-              )}
-              <PackOwnerActions
-                packId={pack.id}
-                packAuthorId={pack.authorId}
-                packStatus={pack.status}
-              />
-            </div>
-          </div>
-
-          <div className="flex flex-col items-start gap-5">
-            <PackHeroStats pack={pack} />
+    <>
+      <PageHeader
+        back={{ href: "/", label: tNav("browse") }}
+        trailing={
+          <>
+            {isApproved && <ShareButton path={`/packs/${pack.id}`} compact />}
+            <ReportPackDialog packId={pack.id} />
             <VoteButtons
               packId={pack.id}
               initialLikes={pack.likes}
               initialDislikes={pack.dislikes}
               initialMyVote={pack.myVote}
             />
-          </div>
-        </section>
+          </>
+        }
+      />
 
-        <section>
-          <SectionHeading>
-            {t("howItPlaysHeading", { format: tFormat(pack.format) })}
-          </SectionHeading>
-          <PackHowItPlays format={pack.format} />
-        </section>
-
-        <section>
-          <SectionHeading>
-            {t("roundsHeading", { section: sectionLabel })}
-          </SectionHeading>
-          <RoundChips pack={pack} />
-        </section>
-
-        {/* The pack-wide ranking IS the statistic here — the generic per-round
-            breakdown says far less about it, and divides by every play of the
-            pack rather than by the rounds an item actually appeared in. Falls
-            back to that breakdown only when there is nothing to rank yet. */}
-        {ranking ? (
-          <section>
-            <SectionHeading>{ranking.heading}</SectionHeading>
-            {ranking.table}
-          </section>
-        ) : (
-          <section>
-            <SectionHeading>{t("playerStats")}</SectionHeading>
-            <PackStats results={results} />
-          </section>
+      <main
+        className={cn(
+          pageContainer(1320),
+          "flex-1 pb-16 pt-[18px] max-[720px]:px-4 max-[720px]:pb-10",
         )}
+      >
+        <PackCoverBanner pack={pack} />
 
-        <PackCreatorCard pack={pack} />
+        {/* The mock's own two-column breakpoint is 1080px, not Tailwind's
+            standard 1024px `lg` — min-[1081px]: matches it exactly rather than
+            stacking ~56px early. */}
+        <div className="mt-6 grid items-start gap-6 min-[1081px]:grid-cols-[minmax(0,1fr)_368px]">
+          {/* Sticky sidebar — DOM-FIRST on purpose: on mobile it stacks above
+              the main column (the design's play-panel-first order), and keeping
+              it first in the DOM means visual order matches reading/focus order.
+              min-[1081px]:order-2 moves it to the right column on desktop,
+              where the main content (min-[1081px]:order-1) sits on the left. */}
+          <aside className="flex flex-col gap-3.5 min-[1081px]:sticky min-[1081px]:top-[82px] min-[1081px]:order-2">
+            {/* Play panel. Every pack is played solo today; room play for all
+                formats is the unbuilt multiplayer redesign and is deliberately
+                not faked here. */}
+            <Panel className="flex flex-col gap-3 rounded-[20px] p-5">
+              <PackPlayButton packId={pack.id} />
+              <PackPlayEstimate pack={pack} />
+              {/* FriendsRoomEntry has no ROOMS_DORMANT guard of its own, so
+                  the flag is checked here — the same shape JoinRoomCard uses
+                  internally. Now that the flag is false this renders; the
+                  guard stays so the surface can be parked again by flipping
+                  one constant rather than unpicking the mount. */}
+              {!ROOMS_DORMANT && <FriendsRoomEntry packId={pack.id} />}
+            </Panel>
 
-        <CommentSection packId={pack.id} packAuthorId={pack.authorId} />
-      </div>
-    </main>
+            <PackModesPanel modes={availableModes} />
+
+            <PackCreatorCard pack={pack} />
+
+            <PackOwnerActions
+              packId={pack.id}
+              packAuthorId={pack.authorId}
+              packStatus={pack.status}
+            />
+          </aside>
+
+          {/* Main column */}
+          <div className="flex min-w-0 flex-col gap-8 min-[1081px]:order-1">
+            <section className="flex flex-col gap-4">
+              <PackOwnerStatusBadge
+                packAuthorId={pack.authorId}
+                status={pack.status}
+              />
+              <PackRejectionReason
+                packAuthorId={pack.authorId}
+                status={pack.status}
+                rejectionReason={pack.rejectionReason}
+              />
+              <PackChangesRequestedBanner pack={pack} />
+              {pack.description && (
+                <Text
+                  variant="secondary"
+                  className="max-w-[66ch] text-[15.5px] leading-[1.62] text-pretty"
+                >
+                  {pack.description}
+                </Text>
+              )}
+              {pack.tags.length > 0 && (
+                <div className="flex flex-wrap gap-2">
+                  {pack.tags.map((tag) => (
+                    <Badge key={tag}>{tag}</Badge>
+                  ))}
+                </div>
+              )}
+              <PackHeroStats pack={pack} />
+            </section>
+
+            <section className="flex flex-col gap-3.5">
+              <SectionHeading>
+                {t("howItPlaysHeading", { format: tFormat(pack.format) })}
+              </SectionHeading>
+              <PackHowItPlays format={pack.format} />
+            </section>
+
+            <section className="flex flex-col gap-3.5">
+              <SectionHeading>
+                {t("roundsHeading", { section: sectionLabel })}
+              </SectionHeading>
+              <RoundChips pack={pack} />
+            </section>
+
+            {ranking ? (
+              <section className="flex flex-col gap-3.5">
+                <SectionHeading aside={ranking.aside}>
+                  {ranking.heading}
+                </SectionHeading>
+                <Panel className="rounded-[18px] p-[18px]">
+                  {ranking.table}
+                </Panel>
+              </section>
+            ) : (
+              <section className="flex flex-col gap-3.5">
+                <SectionHeading>{t("playerStats")}</SectionHeading>
+                <PackStats results={results} />
+              </section>
+            )}
+
+            <CommentSection packId={pack.id} packAuthorId={pack.authorId} />
+          </div>
+        </div>
+      </main>
+    </>
   );
 }

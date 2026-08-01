@@ -92,7 +92,7 @@ export function ConnectedAccountsSection() {
       >
         {t("connectedAccountsHeading")}
       </Text>
-      <Card className="flex flex-col gap-4 hover:translate-y-0 hover:shadow-none">
+      <Card className="flex flex-col gap-4">
         <Text variant="secondary" className="text-sm">
           {t("connectedAccountsDescription")}
         </Text>

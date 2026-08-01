@@ -11,7 +11,6 @@ describe("formatLabel", () => {
     expect(formatLabel("nxn")).toBe("NxN");
     expect(formatLabel("rank_blind")).toBe("Rank Blind");
     expect(formatLabel("1v1")).toBe("1v1");
-    expect(formatLabel("save_one_friends")).toBe("Save One (Friends)");
   });
 
   // A format the wire names but this build has no label for still renders the
