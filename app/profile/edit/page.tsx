@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { ProfileEditForm } from "@/src/features/profile/ProfileEditForm";
-import { BackButton } from "@/src/shared/components/BackButton";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("pages");
@@ -9,12 +8,7 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function ProfileEditPage() {
-  return (
-    <>
-      <div className="mx-auto w-full max-w-md px-7 pt-6">
-        <BackButton href="/profile" />
-      </div>
-      <ProfileEditForm />
-    </>
-  );
+  // ProfileEditForm renders its own sticky "Back to profile" header — see its
+  // doc comment — so this route is just the form, no extra chrome.
+  return <ProfileEditForm />;
 }

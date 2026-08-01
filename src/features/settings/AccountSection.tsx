@@ -24,7 +24,7 @@ export function AccountSection() {
         {t("accountHeading")}
       </Text>
       {status === "authenticated" && user && (
-        <Card className="hover:translate-y-0 hover:shadow-none">
+        <Card>
           {user.email ? (
             <>
               <Text className="font-semibold">{user.email}</Text>

@@ -29,17 +29,20 @@ export function FollowUserRow({
   const isFollowing = user.isFollowedByMe ?? false;
 
   return (
-    <div className="flex items-center gap-3 py-2.5">
+    <div className="flex items-center gap-[11px] rounded-[15px] border border-white/[0.07] bg-surface-card p-3">
       <Link
         href={`/users/${user.id}`}
         onClick={onNavigate}
-        className="flex min-w-0 flex-1 items-center gap-3 rounded-[8px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
+        className="flex min-w-0 flex-1 items-center gap-[11px] rounded-[8px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
       >
         <Hidden kind="avatar" id={user.id} className="flex-none">
+          {/* A 13px-radius square tile, not the circle used elsewhere — the
+              mock's people card mirrors the profile hero's own square avatar. */}
           <UserAvatar
             username={user.username}
             avatarKey={user.avatarKey}
-            className="h-10 w-10 rounded-full border border-border bg-surface text-sm text-foreground-secondary"
+            tone
+            className="h-10 w-10 flex-none rounded-[13px] text-sm"
           />
         </Hidden>
         <div className="min-w-0 truncate">
@@ -50,6 +53,7 @@ export function FollowUserRow({
               trusted={user.trusted}
               at
               showRole
+              className="text-[13.5px]"
             />
           </Hidden>
         </div>
@@ -58,6 +62,7 @@ export function FollowUserRow({
       {user.isFollowedByMe !== null && (
         <Button
           variant={isFollowing ? "secondary" : "primary"}
+          size="xs"
           loading={mutation.isPending}
           onClick={() =>
             mutation.mutate({
@@ -65,7 +70,7 @@ export function FollowUserRow({
               currentlyFollowing: isFollowing,
             })
           }
-          className="flex-none"
+          className="flex-none whitespace-nowrap"
         >
           {isFollowing ? t("following") : t("follow")}
         </Button>

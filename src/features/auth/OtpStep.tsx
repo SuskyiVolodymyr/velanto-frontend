@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+import { KeyRound } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
 import { TextField } from "@/src/shared/components/form/TextField";
 import { getResendCooldownRemaining } from "./otp-cooldown";
@@ -65,9 +66,12 @@ export function OtpStep({
         name="code"
         label={t("verificationCode")}
         srOnlyLabel
+        icon={<KeyRound strokeWidth={1.8} aria-hidden />}
+        surface="card"
         inputMode="numeric"
         autoComplete="one-time-code"
         maxLength={6}
+        className="tracking-[0.4em]"
         placeholder={t("verificationCode")}
         disabled={disabled}
       />

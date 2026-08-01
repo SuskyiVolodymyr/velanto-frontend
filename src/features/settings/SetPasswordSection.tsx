@@ -48,45 +48,51 @@ export function SetPasswordSection() {
   };
 
   return (
-    <Card>
-      <Text as="h2" variant="title" className="mb-1 text-lg">
+    <section className="flex flex-col gap-4">
+      <Text
+        as="h2"
+        variant="tertiary"
+        className="text-xs uppercase tracking-wide"
+      >
         {t("setPasswordHeading")}
       </Text>
-      <Text variant="secondary" className="mb-4 text-sm">
-        {t("setPasswordDescription")}
-      </Text>
-      <FormProvider {...methods}>
-        <form
-          onSubmit={methods.handleSubmit(onSubmit)}
-          className="flex max-w-md flex-col gap-4"
-          noValidate
-        >
-          <PasswordField
-            name="newPassword"
-            label={t("newPassword")}
-            autoComplete="new-password"
-            showLabel={tAuth("showPassword")}
-            hideLabel={tAuth("hidePassword")}
-          />
-          <PasswordField
-            name="confirmPassword"
-            label={t("confirmNewPassword")}
-            autoComplete="new-password"
-            showLabel={tAuth("showPassword")}
-            hideLabel={tAuth("hidePassword")}
-          />
+      <Card className="flex flex-col gap-4">
+        <Text variant="secondary" className="text-sm">
+          {t("setPasswordDescription")}
+        </Text>
+        <FormProvider {...methods}>
+          <form
+            onSubmit={methods.handleSubmit(onSubmit)}
+            className="flex max-w-md flex-col gap-4"
+            noValidate
+          >
+            <PasswordField
+              name="newPassword"
+              label={t("newPassword")}
+              autoComplete="new-password"
+              showLabel={tAuth("showPassword")}
+              hideLabel={tAuth("hidePassword")}
+            />
+            <PasswordField
+              name="confirmPassword"
+              label={t("confirmNewPassword")}
+              autoComplete="new-password"
+              showLabel={tAuth("showPassword")}
+              hideLabel={tAuth("hidePassword")}
+            />
 
-          {submitError && (
-            <Text variant="danger" className="text-sm">
-              {submitError}
-            </Text>
-          )}
+            {submitError && (
+              <Text variant="danger" className="text-sm">
+                {submitError}
+              </Text>
+            )}
 
-          <Button type="submit" loading={isSubmitting} className="w-fit">
-            {t("setPasswordButton")}
-          </Button>
-        </form>
-      </FormProvider>
-    </Card>
+            <Button type="submit" loading={isSubmitting} className="w-fit">
+              {t("setPasswordButton")}
+            </Button>
+          </form>
+        </FormProvider>
+      </Card>
+    </section>
   );
 }

@@ -12,8 +12,17 @@ vi.mock("@/src/shared/lib/packs-client", () => ({
 
 // useAuthorPacks now reads auth (to refetch as the viewer on sign-in); a stable
 // signed-out session keeps these list-rendering tests focused and refetch-free.
+// The same signed-out `user: null` also satisfies each rendered PackCard's own
+// useAuth() call for its Friends button.
 vi.mock("@/src/shared/lib/auth-context", () => ({
   useAuth: () => ({ status: "unauthenticated", user: null }),
+}));
+
+// PackCard's Friends button needs a mounted router + the room-create client —
+// unused by these list-rendering tests, but required for PackCard to mount.
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
+vi.mock("@/src/features/friends-rooms/friends-rooms-client", () => ({
+  friendsRoomsClient: { create: vi.fn() },
 }));
 
 function pack(
@@ -175,7 +184,12 @@ describe("AuthorPackList", () => {
         own
       />,
     );
-    expect(await screen.findByText("Pending review")).toBeInTheDocument();
+    // Own profile now also renders a "Pending review" filter chip (a
+    // <button>), so disambiguate from the pack card's status badge (a
+    // <span>) by element type.
+    expect(
+      await screen.findByText("Pending review", { selector: "span" }),
+    ).toBeInTheDocument();
     unmount();
 
     render(
@@ -186,5 +200,172 @@ describe("AuthorPackList", () => {
       />,
     );
     expect(screen.queryByText("Pending review")).not.toBeInTheDocument();
+  });
+
+  it("does not render a section heading (redundant with the ProfileTabs Packs tab)", () => {
+    render(
+      <AuthorPackList
+        authorId="author-1"
+        initialPacks={SEED_SIX}
+        initialTotal={6}
+        own
+      />,
+    );
+    expect(
+      screen.queryByRole("heading", { name: /my packs|^packs$/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  describe("status filter chips (own profile only)", () => {
+    it("renders All + one chip per PACK_STATUSES value for the owner", () => {
+      render(
+        <AuthorPackList
+          authorId="author-1"
+          initialPacks={SEED_SIX}
+          initialTotal={6}
+          own
+        />,
+      );
+      expect(screen.getByRole("button", { name: "All" })).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Draft" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Pending review" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Approved" }),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: "Rejected" }),
+      ).toBeInTheDocument();
+    });
+
+    it("does not render the filter chip row for a visitor", () => {
+      render(
+        <AuthorPackList
+          authorId="author-1"
+          initialPacks={SEED_SIX}
+          initialTotal={6}
+        />,
+      );
+      expect(
+        screen.queryByRole("button", { name: "All" }),
+      ).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("button", { name: "Approved" }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("filters the visible packs client-side without refetching", async () => {
+      const user = userEvent.setup();
+      const mixed = [
+        pack("p1", "Draft Pack", "draft"),
+        pack("p2", "Approved Pack", "approved"),
+        pack("p3", "Pending Pack", "pending"),
+      ];
+      vi.mocked(packsClient.list).mockResolvedValue({
+        items: mixed,
+        total: 3,
+        page: 1,
+        limit: 6,
+      });
+      render(
+        <AuthorPackList
+          authorId="author-1"
+          initialPacks={mixed}
+          initialTotal={3}
+          own
+        />,
+      );
+      await screen.findByText("Draft Pack");
+      const callsBeforeFilter = vi.mocked(packsClient.list).mock.calls.length;
+
+      await user.click(screen.getByRole("button", { name: "Draft" }));
+
+      expect(screen.getByText("Draft Pack")).toBeInTheDocument();
+      expect(screen.queryByText("Approved Pack")).not.toBeInTheDocument();
+      expect(screen.queryByText("Pending Pack")).not.toBeInTheDocument();
+      // Purely a local .filter() over already-loaded packs (D13) — no new fetch.
+      expect(vi.mocked(packsClient.list).mock.calls.length).toBe(
+        callsBeforeFilter,
+      );
+    });
+
+    it("shows every pack again after switching back to All", async () => {
+      const user = userEvent.setup();
+      const mixed = [
+        pack("p1", "Draft Pack", "draft"),
+        pack("p2", "Approved Pack", "approved"),
+      ];
+      vi.mocked(packsClient.list).mockResolvedValue({
+        items: mixed,
+        total: 2,
+        page: 1,
+        limit: 6,
+      });
+      render(
+        <AuthorPackList
+          authorId="author-1"
+          initialPacks={mixed}
+          initialTotal={2}
+          own
+        />,
+      );
+      await screen.findByText("Draft Pack");
+
+      await user.click(screen.getByRole("button", { name: "Draft" }));
+      expect(screen.queryByText("Approved Pack")).not.toBeInTheDocument();
+
+      await user.click(screen.getByRole("button", { name: "All" }));
+      expect(screen.getByText("Draft Pack")).toBeInTheDocument();
+      expect(screen.getByText("Approved Pack")).toBeInTheDocument();
+    });
+
+    it("keeps Load more calling the real, unfiltered next page while a filter is active", async () => {
+      const user = userEvent.setup();
+      // First page is all "draft" (6 = AUTHOR_PACKS_PAGE_SIZE, matching the
+      // existing "appends the next page" test's shape) so filtering to
+      // "approved" hides everything until page 2 loads.
+      const draftPage = Array.from({ length: 6 }, (_, i) =>
+        pack(`p${i + 1}`, `Draft ${i + 1}`, "draft"),
+      );
+      vi.mocked(packsClient.list).mockImplementation((filters) =>
+        Promise.resolve(
+          filters?.page === 2
+            ? {
+                items: [pack("p7", "Page Two Approved", "approved")],
+                total: 7,
+                page: 2,
+                limit: 6,
+              }
+            : { items: draftPage, total: 7, page: 1, limit: 6 },
+        ),
+      );
+      render(
+        <AuthorPackList
+          authorId="author-1"
+          initialPacks={draftPage}
+          initialTotal={7}
+          own
+        />,
+      );
+      await screen.findByText("Draft 1");
+
+      // Filter down to "approved" first — nothing on page 1 matches.
+      await user.click(screen.getByRole("button", { name: "Approved" }));
+      expect(screen.queryByText("Draft 1")).not.toBeInTheDocument();
+
+      await user.click(screen.getByRole("button", { name: /load more/i }));
+
+      // Load more fetched page 2 of the UNFILTERED query (no status param).
+      expect(packsClient.list).toHaveBeenCalledWith({
+        authorId: "author-1",
+        page: 2,
+        limit: 6,
+      });
+      // The newly-loaded approved pack from page 2 now shows through the filter.
+      expect(await screen.findByText("Page Two Approved")).toBeInTheDocument();
+    });
   });
 });

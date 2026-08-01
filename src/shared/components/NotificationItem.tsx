@@ -79,7 +79,7 @@ export function NotificationItem({
           <span
             data-testid="notification-avatar"
             aria-hidden
-            className="grid h-11 w-11 place-items-center rounded-full text-base font-semibold text-[#0a0b0e]"
+            className="grid h-11 w-11 place-items-center rounded-full text-base font-semibold text-[#0f1116]"
             style={{ background: avatarGradient(actorName) }}
           >
             {avatarInitial(actorName)}
@@ -100,7 +100,7 @@ export function NotificationItem({
         {showAvatar && (
           <span
             aria-hidden
-            className="absolute -bottom-[3px] -right-[3px] grid h-5 w-5 place-items-center rounded-full border-[2.5px] border-surface text-[#0a0b0e]"
+            className="absolute -bottom-[3px] -right-[3px] grid h-5 w-5 place-items-center rounded-full border-[2.5px] border-surface text-[#0f1116]"
             style={{ backgroundColor: tone }}
           >
             <Icon className="h-[11px] w-[11px]" strokeWidth={2.4} />

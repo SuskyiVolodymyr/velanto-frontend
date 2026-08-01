@@ -19,7 +19,6 @@ import {
   PACK_LANGUAGE_NAMES,
 } from "@/src/shared/types/pack-language";
 import { NextIntlClientProvider } from "next-intl";
-import messages from "@/messages/en.json";
 import ukMessages from "@/messages/uk.json";
 
 // This is a heavy component suite: the format-switch tests drive many sequential
@@ -51,6 +50,19 @@ vi.mock("@/src/shared/lib/packs-client", () => ({
     update: vi.fn(),
     getById: vi.fn(),
   },
+}));
+
+// The CreateFeasibilityPanel aside now mounts unconditionally and calls this
+// on every render — without a mock, a long-running test (the format-switch
+// suites drive many real userEvent keystrokes) outlives the 400ms debounce
+// and fires a REAL fetch to whatever's on localhost:3001. Worse than a
+// flaky assertion: a real 401 from a real dev backend trips apiClient's
+// global sessionCallbacks.onLost(), flipping this test's OWN AuthProvider to
+// unauthenticated mid-test. Never resolving keeps the panel in its
+// loading (renders null) state, which is exactly what every test here wants
+// — none of them assert on feasibility content.
+vi.mock("@/src/features/friends-rooms/friends-rooms-client", () => ({
+  friendsRoomsClient: { previewModes: vi.fn(() => new Promise(() => {})) },
 }));
 
 // A complete, valid set of edit-mode seed values (one pool with one item, a
@@ -142,9 +154,11 @@ function renderEditForm() {
 // suite's runtime. The default pack has one pool + one elimination round
 // (drawing 2); a single-item pool still passes (under-fill is only a soft hint).
 async function fillMinimalValidPack(user: ReturnType<typeof userEvent.setup>) {
-  await user.type(await screen.findByLabelText("Pack title"), "Best");
-  await user.type(screen.getByLabelText("Pack description"), "Desc");
+  await user.type(await screen.findByLabelText("Title"), "Best");
+  await user.type(screen.getByLabelText("Description"), "Desc");
   await user.type(screen.getByLabelText("Pool 1 name"), "2016");
+  // T5: items are read-only chips by default — expand the add panel first.
+  await user.click(screen.getByRole("button", { name: "+ Add item" }));
   await user.type(screen.getByLabelText("Pool 1 new item"), "A");
   await user.click(screen.getByRole("button", { name: "Add" }));
 }
@@ -168,7 +182,7 @@ describe("CreatePackForm", () => {
     expect(
       await screen.findByText("You need to be logged in to create a pack."),
     ).toBeInTheDocument();
-    expect(screen.queryByLabelText("Pack title")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Title")).not.toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Log in" }));
     expect(push).toHaveBeenCalledWith("/auth?next=%2Fcreate");
@@ -177,9 +191,9 @@ describe("CreatePackForm", () => {
   it("rejects an empty submission without calling the API", async () => {
     const user = userEvent.setup();
     renderForm();
-    await screen.findByLabelText("Pack title");
+    await screen.findByLabelText("Title");
 
-    await user.click(screen.getByRole("button", { name: "Publish" }));
+    await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
     expect(
       await screen.findByText("Give your pack a title."),
@@ -187,14 +201,38 @@ describe("CreatePackForm", () => {
     expect(packsClient.create).not.toHaveBeenCalled();
   });
 
+  // Display-only gate, not a native disabled: the blocked submit button must
+  // still be clickable so a blocked click surfaces the real zod errors
+  // (asserted above) instead of doing nothing.
+  it("marks the submit button aria-disabled (but not natively disabled) while blocked", async () => {
+    renderForm();
+
+    const submit = await screen.findByRole("button", {
+      name: "Submit for review",
+    });
+    expect(submit).toHaveAttribute("aria-disabled", "true");
+    expect(submit).not.toBeDisabled();
+    expect(submit).toHaveAttribute("title", "Add a title & elements");
+  });
+
+  it("clears aria-disabled and the tooltip once the pack is publishable", async () => {
+    const user = userEvent.setup();
+    renderForm();
+    await fillMinimalValidPack(user);
+
+    const submit = screen.getByRole("button", { name: "Submit for review" });
+    expect(submit).not.toHaveAttribute("aria-disabled");
+    expect(submit).not.toHaveAttribute("title");
+  });
+
   it("rejects a pool with no items", async () => {
     const user = userEvent.setup();
     renderForm();
-    await user.type(await screen.findByLabelText("Pack title"), "Title");
-    await user.type(screen.getByLabelText("Pack description"), "Desc");
+    await user.type(await screen.findByLabelText("Title"), "Title");
+    await user.type(screen.getByLabelText("Description"), "Desc");
     await user.type(screen.getByLabelText("Pool 1 name"), "Round 1");
 
-    await user.click(screen.getByRole("button", { name: "Publish" }));
+    await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
     expect(
       await screen.findByText('Group "Round 1" needs at least one item.'),
@@ -204,10 +242,10 @@ describe("CreatePackForm", () => {
 
   it("defaults to the Rounds editor (not Versus) for save_one", async () => {
     renderForm();
-    await screen.findByLabelText("Pack title");
+    await screen.findByLabelText("Title");
 
     expect(
-      screen.getByRole("button", { name: "+ Add round" }),
+      screen.getByRole("button", { name: "New round" }),
     ).toBeInTheDocument();
     expect(screen.getByLabelText("Round 1 pool")).toBeInTheDocument();
     expect(screen.queryByLabelText("Side A")).not.toBeInTheDocument();
@@ -216,7 +254,7 @@ describe("CreatePackForm", () => {
   it("adds and removes pools, keeping each editor's live value", async () => {
     const user = userEvent.setup();
     renderForm();
-    await screen.findByLabelText("Pack title");
+    await screen.findByLabelText("Title");
 
     // Default: one pool, not removable.
     expect(screen.getByLabelText("Pool 1 name")).toBeInTheDocument();
@@ -225,7 +263,7 @@ describe("CreatePackForm", () => {
     ).not.toBeInTheDocument();
 
     await user.type(screen.getByLabelText("Pool 1 name"), "Boys");
-    await user.click(screen.getByRole("button", { name: "+ Add pool" }));
+    await user.click(screen.getByRole("button", { name: "New pool" }));
 
     await user.type(screen.getByLabelText("Pool 2 name"), "Girls");
     expect(screen.getByLabelText("Pool 1 name")).toHaveValue("Boys");
@@ -237,19 +275,17 @@ describe("CreatePackForm", () => {
     expect(screen.getByLabelText("Pool 1 name")).toHaveValue("Boys");
   });
 
-  it("opens the tag picker modal and reflects the selected count on the button", async () => {
+  it("opens the tag picker modal and reflects the selected count next to the label", async () => {
     const user = userEvent.setup();
     renderForm();
-    await screen.findByLabelText("Pack title");
+    await screen.findByLabelText("Title");
 
-    await user.click(screen.getByRole("button", { name: "Select tags" }));
+    await user.click(screen.getByRole("button", { name: "+ Add tags" }));
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
     await user.click(screen.getByRole("checkbox", { name: "Music" }));
-    await user.click(screen.getByRole("button", { name: "Apply" }));
+    await user.click(screen.getByRole("button", { name: "Done" }));
 
-    expect(
-      screen.getByRole("button", { name: "2 tags selected" }),
-    ).toBeInTheDocument();
+    expect(screen.getByText("2/10 selected")).toBeInTheDocument();
   });
 
   // #239: nothing could set Pack.language, so every pack was 'en' regardless of
@@ -315,7 +351,7 @@ describe("CreatePackForm", () => {
     renderForm();
     await fillMinimalValidPack(user);
 
-    await user.click(screen.getByRole("button", { name: "Save as draft" }));
+    await user.click(screen.getByRole("button", { name: "Save draft" }));
 
     await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-1"));
     expect(packsClient.create).toHaveBeenCalledWith(
@@ -330,7 +366,7 @@ describe("CreatePackForm", () => {
     await fillMinimalValidPack(user);
 
     await user.selectOptions(screen.getByLabelText("Pack language"), "es");
-    await user.click(screen.getByRole("button", { name: "Publish" }));
+    await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
     await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-1"));
     expect(packsClient.create).toHaveBeenCalledWith(
@@ -356,19 +392,19 @@ describe("CreatePackForm", () => {
     const user = userEvent.setup();
     vi.mocked(packsClient.create).mockResolvedValue(makePack({ id: "pack-1" }));
     renderForm();
-    await screen.findByLabelText("Pack title");
+    await screen.findByLabelText("Title");
 
     const tone = screen.getByRole("button", { name: "Cover tone #20303a" });
     await user.click(tone);
     expect(tone).toHaveAttribute("aria-pressed", "true");
 
-    await user.click(screen.getByRole("button", { name: "Select tags" }));
+    await user.click(screen.getByRole("button", { name: "+ Add tags" }));
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
     await user.click(screen.getByRole("checkbox", { name: "Music" }));
-    await user.click(screen.getByRole("button", { name: "Apply" }));
+    await user.click(screen.getByRole("button", { name: "Done" }));
 
     await fillMinimalValidPack(user);
-    await user.click(screen.getByRole("button", { name: "Publish" }));
+    await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
     await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-1"));
     expect(packsClient.create).toHaveBeenCalledWith(
@@ -387,7 +423,7 @@ describe("CreatePackForm", () => {
     renderForm();
     await fillMinimalValidPack(user);
 
-    await user.click(screen.getByRole("button", { name: "Publish" }));
+    await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
     expect(await screen.findByText("Not allowed")).toBeInTheDocument();
     expect(push).not.toHaveBeenCalled();
@@ -412,7 +448,7 @@ describe("CreatePackForm", () => {
     renderForm();
     await fillMinimalValidPack(user);
 
-    await user.click(screen.getByRole("button", { name: "Publish" }));
+    await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
     expect(
       await screen.findByText(
@@ -426,10 +462,10 @@ describe("CreatePackForm", () => {
     it("seeds the form from the pack and labels the submit button 'Save changes'", async () => {
       renderEditForm();
 
-      expect(await screen.findByLabelText("Pack title")).toHaveValue(
+      expect(await screen.findByLabelText("Title")).toHaveValue(
         "Original Title",
       );
-      expect(screen.getByLabelText("Pack description")).toHaveValue(
+      expect(screen.getByLabelText("Description")).toHaveValue(
         "Original description",
       );
       expect(screen.getByLabelText("Pool 1 name")).toHaveValue("2016");
@@ -437,8 +473,23 @@ describe("CreatePackForm", () => {
         screen.getByRole("button", { name: "Save changes" }),
       ).toBeInTheDocument();
       expect(
-        screen.queryByRole("button", { name: "Publish" }),
+        screen.queryByRole("button", { name: "Submit for review" }),
       ).not.toBeInTheDocument();
+    });
+
+    // formatHint says format can't change once published, and edit mode's
+    // PATCH sends whatever `format` is currently in the form — locking the
+    // picker is what keeps that copy true and stops an edit from silently
+    // reshaping the author's existing rounds via the family-switch effect.
+    it("locks the format picker so the pack's existing format can't be changed", async () => {
+      renderEditForm();
+      await screen.findByLabelText("Title");
+
+      expect(screen.getByRole("button", { name: /Save One/ })).toHaveAttribute(
+        "aria-pressed",
+        "true",
+      );
+      expect(screen.getByRole("button", { name: /NxN/ })).toBeDisabled();
     });
 
     it("PATCHes the pack and redirects to its detail page on save", async () => {
@@ -447,7 +498,7 @@ describe("CreatePackForm", () => {
         makePack({ id: "pack-1" }),
       );
       renderEditForm();
-      const title = await screen.findByLabelText("Pack title");
+      const title = await screen.findByLabelText("Title");
       await user.clear(title);
       await user.type(title, "New Title");
 
@@ -467,7 +518,7 @@ describe("CreatePackForm", () => {
         new ApiError(403, "Forbidden", { message: "Not allowed" }),
       );
       renderEditForm();
-      await screen.findByLabelText("Pack title");
+      await screen.findByLabelText("Title");
 
       await user.click(screen.getByRole("button", { name: "Save changes" }));
 
@@ -492,12 +543,12 @@ describe("CreatePackForm", () => {
         );
 
         expect(
-          screen.getByRole("button", { name: "+ Add round" }),
+          screen.getByRole("button", { name: "New round" }),
         ).toBeInTheDocument();
         expect(screen.queryByLabelText("Side A")).not.toBeInTheDocument();
 
         await fillMinimalValidPack(user);
-        await user.click(screen.getByRole("button", { name: "Publish" }));
+        await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
         await waitFor(() =>
           expect(push).toHaveBeenCalledWith(`/packs/pack-${format}`),
@@ -509,64 +560,16 @@ describe("CreatePackForm", () => {
     }
   });
 
-  describe("save_one_friends swaps in the friends editor", () => {
-    it("shows the friends body — no count input, not versus — when selected", async () => {
-      const user = userEvent.setup();
-      renderForm();
-      await user.click(
-        await screen.findByRole("button", { name: /^Save One \(Friends\)/ }),
-      );
-
-      // The friends explainer is unique to that body; it has its own add-round
-      // control but no Side A/B (not versus) and no per-round count input.
-      expect(
-        screen.getByText(/one item per player plus one/i),
-      ).toBeInTheDocument();
-      expect(
-        screen.getByRole("button", { name: "+ Add round" }),
-      ).toBeInTheDocument();
-      expect(
-        screen.queryByLabelText("Side A for round 1"),
-      ).not.toBeInTheDocument();
-      expect(
-        screen.queryByLabelText("Items to draw for round 1"),
-      ).not.toBeInTheDocument();
-    });
-
-    it("submits a friends pack: one pool of five, a single random round with no count", async () => {
-      const user = userEvent.setup();
-      vi.mocked(packsClient.create).mockResolvedValue(
-        makePack({ id: "pack-friends", format: "save_one_friends" }),
-      );
-      renderForm();
-      await user.type(await screen.findByLabelText("Pack title"), "T");
-      await user.type(screen.getByLabelText("Pack description"), "D");
-      await user.type(screen.getByLabelText("Pool 1 name"), "Songs");
-      // A friends pool needs at least five items (one per player plus one).
-      for (const name of ["a", "b", "c", "d", "e"]) {
-        await user.type(screen.getByLabelText("Pool 1 new item"), name);
-        await user.click(screen.getByRole("button", { name: "Add" }));
-      }
-
-      await user.click(
-        screen.getByRole("button", { name: /^Save One \(Friends\)/ }),
-      );
-      await user.click(screen.getByRole("button", { name: "Publish" }));
-
-      await waitFor(() =>
-        expect(push).toHaveBeenCalledWith("/packs/pack-friends"),
-      );
-      const input = vi.mocked(packsClient.create).mock.calls[0][0];
-      expect(input.format).toBe("save_one_friends");
-      expect(input.rounds).toHaveLength(1);
-      expect(input.rounds[0].slots).toHaveLength(1);
-      expect(input.rounds[0].slots[0].mode).toBe("random");
-      // The room fixes the board size, so no count is ever sent.
-      expect(input.rounds[0].slots[0].count).toBeUndefined();
-    });
-  });
-
   describe("versus formats swap in the Versus editor", () => {
+    // This also exercises T6's `effectiveExpandedId` fallback, though not by
+    // name: switching families remounts RoundsEditor -> VersusEditor, and
+    // VersusEditor's OWN `expandedRoundId` is seeded from `rounds[0]` at that
+    // mount — the render BEFORE CreatePackForm's family-switch effect has
+    // replaced `rounds` with brand-new versus-shaped ids. Without the
+    // fallback, `expandedRoundId` is left pointing at a round that no longer
+    // exists and round 1 renders collapsed, so "Side A for round 1" below
+    // would not be queryable at all (confirmed by temporarily reverting the
+    // fallback to a raw `expandedRoundId` comparison — this assertion fails).
     it("switches from Rounds to the per-round Versus editor when NxN is selected", async () => {
       const user = userEvent.setup();
       renderForm();
@@ -579,8 +582,44 @@ describe("CreatePackForm", () => {
       ).toBeInTheDocument();
       // The per-round editor has its own add-round control.
       expect(
-        screen.getByRole("button", { name: "+ Add round" }),
+        screen.getByRole("button", { name: "New round" }),
       ).toBeInTheDocument();
+    });
+
+    // The toggle button compares against the RESOLVED `expanded` flag (which
+    // already ran through the fallback), not the raw, stale `expandedRoundId`
+    // state — otherwise this first click would be a no-op (re-pinning the
+    // same round instead of collapsing it) and a second click would be
+    // needed to actually collapse.
+    it("collapses round 1 on the first header click right after a format-family switch", async () => {
+      const user = userEvent.setup();
+      renderForm();
+      await user.click(await screen.findByRole("button", { name: /^NxN/ }));
+      await screen.findByLabelText("Side A for round 1");
+
+      await user.click(screen.getByRole("button", { name: /^Round 1/ }));
+
+      expect(
+        screen.queryByLabelText("Side A for round 1"),
+      ).not.toBeInTheDocument();
+    });
+
+    // Same fallback + toggle-comparison fix, the other direction: switching
+    // back out of a versus format remounts RoundsEditor with its own stale
+    // `expandedRoundId` (seeded before the reshape effect runs).
+    it("keeps round 1 expanded and collapsible on the first click when switching back from NxN to Save One", async () => {
+      const user = userEvent.setup();
+      renderForm();
+      await user.click(await screen.findByRole("button", { name: /^NxN/ }));
+      await screen.findByLabelText("Side A for round 1");
+
+      await user.click(await screen.findByRole("button", { name: /^Save One/ }));
+
+      expect(screen.getByLabelText("Round 1 pool")).toBeInTheDocument();
+
+      await user.click(screen.getByRole("button", { name: /^Round 1/ }));
+
+      expect(screen.queryByLabelText("Round 1 pool")).not.toBeInTheDocument();
     });
 
     it("pins per-side to 1 (no input) when 1v1 is selected", async () => {
@@ -601,24 +640,27 @@ describe("CreatePackForm", () => {
         makePack({ id: "pack-nxn", format: "nxn" }),
       );
       renderForm();
-      await user.type(await screen.findByLabelText("Pack title"), "T");
-      await user.type(screen.getByLabelText("Pack description"), "D");
+      await user.type(await screen.findByLabelText("Title"), "T");
+      await user.type(screen.getByLabelText("Description"), "D");
 
       // Two distinct pools, each with one item, built before switching so the
-      // format switch generates rounds over both.
+      // format switch generates rounds over both. T5: each pool's items are
+      // read-only chips until its own "+ Add item" trigger is expanded.
       await user.type(screen.getByLabelText("Pool 1 name"), "Boys");
+      await user.click(screen.getAllByRole("button", { name: "+ Add item" })[0]);
       await user.type(screen.getByLabelText("Pool 1 new item"), "Naruto");
       await user.click(screen.getAllByRole("button", { name: "Add" })[0]);
-      await user.click(screen.getByRole("button", { name: "+ Add pool" }));
+      await user.click(screen.getByRole("button", { name: "New pool" }));
       await user.type(screen.getByLabelText("Pool 2 name"), "Girls");
+      await user.click(screen.getAllByRole("button", { name: "+ Add item" })[1]);
       await user.type(screen.getByLabelText("Pool 2 new item"), "Sakura");
-      await user.click(screen.getAllByRole("button", { name: "Add" })[1]);
+      await user.click(screen.getAllByRole("button", { name: "Add" })[0]);
 
       await user.click(screen.getByRole("button", { name: /^NxN/ }));
 
       // The versus editor seeds a single matchup, which keeps the 1-item pools
       // feasible (per-side 1, no dedup exhaustion).
-      await user.click(screen.getByRole("button", { name: "Publish" }));
+      await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
       await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-nxn"));
       const payload = vi.mocked(packsClient.create).mock.calls[0][0];
@@ -635,21 +677,23 @@ describe("CreatePackForm", () => {
         makePack({ id: "pack-1v1", format: "1v1" }),
       );
       renderForm();
-      await user.type(await screen.findByLabelText("Pack title"), "T");
-      await user.type(screen.getByLabelText("Pack description"), "D");
+      await user.type(await screen.findByLabelText("Title"), "T");
+      await user.type(screen.getByLabelText("Description"), "D");
 
       await user.type(screen.getByLabelText("Pool 1 name"), "Left");
+      await user.click(screen.getAllByRole("button", { name: "+ Add item" })[0]);
       await user.type(screen.getByLabelText("Pool 1 new item"), "A");
       await user.click(screen.getAllByRole("button", { name: "Add" })[0]);
-      await user.click(screen.getByRole("button", { name: "+ Add pool" }));
+      await user.click(screen.getByRole("button", { name: "New pool" }));
       await user.type(screen.getByLabelText("Pool 2 name"), "Right");
+      await user.click(screen.getAllByRole("button", { name: "+ Add item" })[1]);
       await user.type(screen.getByLabelText("Pool 2 new item"), "B");
-      await user.click(screen.getAllByRole("button", { name: "Add" })[1]);
+      await user.click(screen.getAllByRole("button", { name: "Add" })[0]);
 
       await user.click(screen.getByRole("button", { name: /^1v1/ }));
 
       // The versus editor seeds a single matchup — feasible for the 1-item pools.
-      await user.click(screen.getByRole("button", { name: "Publish" }));
+      await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
       await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-1v1"));
       const payload = vi.mocked(packsClient.create).mock.calls[0][0];
@@ -670,7 +714,7 @@ describe("CreatePackForm", () => {
   // submitting. The real end-to-end behaviour is covered in e2e/create-pack.
   it("cancels Enter in a text field, so a browser cannot implicitly submit", async () => {
     renderForm();
-    const title = await screen.findByLabelText("Pack title");
+    const title = await screen.findByLabelText("Title");
 
     const event = createEvent.keyDown(title, { key: "Enter" });
     fireEvent(title, event);
@@ -681,8 +725,8 @@ describe("CreatePackForm", () => {
   // A textarea's Enter is a newline, not a submit — leave it alone.
   it("leaves Enter alone in a textarea", async () => {
     renderForm();
-    await screen.findByLabelText("Pack title");
-    const description = screen.getByLabelText("Pack description");
+    await screen.findByLabelText("Title");
+    const description = screen.getByLabelText("Description");
 
     const event = createEvent.keyDown(description, { key: "Enter" });
     fireEvent(description, event);
@@ -694,8 +738,9 @@ describe("CreatePackForm", () => {
   it("still adds a pool item on Enter", async () => {
     const user = userEvent.setup();
     renderForm();
-    await screen.findByLabelText("Pack title");
+    await screen.findByLabelText("Title");
 
+    await user.click(screen.getByRole("button", { name: "+ Add item" }));
     await user.type(screen.getByLabelText("Pool 1 new item"), "Naruto{Enter}");
 
     expect(screen.getByText("Naruto")).toBeInTheDocument();
@@ -703,12 +748,12 @@ describe("CreatePackForm", () => {
   });
 
   // The buttons are the deliberate action and keep working.
-  it("still submits from the Publish button", async () => {
+  it("still submits from the submit button", async () => {
     const user = userEvent.setup();
     renderForm();
-    await screen.findByLabelText("Pack title");
+    await screen.findByLabelText("Title");
 
-    await user.click(screen.getByRole("button", { name: "Publish" }));
+    await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
     expect(
       await screen.findByText("Give your pack a title."),

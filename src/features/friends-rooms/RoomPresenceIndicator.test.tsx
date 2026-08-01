@@ -67,16 +67,40 @@ describe("RoomPresenceIndicator", () => {
     expect(screen.getByText("B")).toBeInTheDocument();
   });
 
-  // A room caps at 4 seats; the chip fills the open ones with empty circles so
-  // it reads as "2 of 4 here". Two members ⇒ two empty seats.
-  it("shows an empty circle for each open seat and a count", () => {
+  // Capacity is not on MyRoomSummary (a Guess-who room seats up to 8, Voting
+  // up to 12) — the chip no longer assumes a fixed 4-seat room, so it renders
+  // no empty-seat placeholders at all, just the real member count.
+  it("shows no empty-seat placeholders and just the member count", () => {
     rooms = [summary()]; // 2 players
     const { container } = render(<RoomPresenceIndicator />);
 
-    expect(container.querySelectorAll('[class*="border-dashed"]')).toHaveLength(
-      2,
-    );
-    expect(screen.getByText("2 / 4 in room")).toBeInTheDocument();
+    expect(
+      container.querySelectorAll('[class*="border-dashed"]'),
+    ).toHaveLength(0);
+    expect(screen.getByText("2 in room")).toBeInTheDocument();
+  });
+
+  // A 6-player room would have gone NEGATIVE under the old
+  // `MAX_PLAYERS - room.players.length` math (4 - 6 = -2); this pins that a
+  // roster bigger than the old fixed cap renders cleanly with no stray
+  // overflow chip and no crash.
+  it("does not render empty-seat placeholders for a room bigger than the old fixed cap", () => {
+    rooms = [
+      summary({
+        players: [
+          { userId: "u1", username: "Alice", avatarKey: null },
+          { userId: "u2", username: "Bob", avatarKey: null },
+          { userId: "u3", username: "Carol", avatarKey: null },
+          { userId: "u4", username: "Dave", avatarKey: null },
+          { userId: "u5", username: "Eve", avatarKey: null },
+          { userId: "u6", username: "Frank", avatarKey: null },
+        ],
+      }),
+    ];
+    render(<RoomPresenceIndicator />);
+
+    expect(screen.queryByText(/\+/)).not.toBeInTheDocument();
+    expect(screen.getByText("6 in room")).toBeInTheDocument();
   });
 
   it("navigates to the room on click", async () => {

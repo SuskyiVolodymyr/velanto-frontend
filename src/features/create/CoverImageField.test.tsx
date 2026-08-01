@@ -60,16 +60,54 @@ beforeEach(() => {
 });
 
 describe("CoverImageField", () => {
-  it("shows the upload control and hint, with no preview or remove when empty", () => {
+  it("shows the dropzone, with no preview or remove when empty", () => {
     render(<Harness />);
 
-    expect(screen.getByText("Choose image")).toBeInTheDocument();
-    expect(
-      screen.getByText("PNG or JPG, up to 1 MB. Shown instead of the tone."),
-    ).toBeInTheDocument();
+    expect(screen.getByText("Drag an image here")).toBeInTheDocument();
     expect(
       screen.queryByRole("button", { name: "Remove cover image" }),
     ).not.toBeInTheDocument();
+  });
+
+  // Mock (Create Pack.dc.html): the empty state is a real drop target, not
+  // just a click-to-browse button — dragging a file over it swaps the label
+  // to "Drop to upload" and dropping it feeds the same crop/upload pipeline
+  // a clicked-and-picked file does.
+  it("shows a drop-to-upload label while a file is dragged over the empty dropzone", () => {
+    render(<Harness />);
+
+    const dropzone = screen.getByText("Drag an image here").closest("label")!;
+    fireEvent.dragEnter(dropzone);
+
+    expect(screen.getByText("Drop to upload")).toBeInTheDocument();
+
+    fireEvent.dragLeave(dropzone);
+
+    expect(screen.getByText("Drag an image here")).toBeInTheDocument();
+  });
+
+  it("uploads a dropped image the same way a picked one is uploaded", async () => {
+    vi.mocked(uploadMedia).mockResolvedValue({
+      key: "media/cover/dropped.webp",
+      url: "https://cdn.example.com/media/cover/dropped.webp",
+      byteSize: 100,
+    });
+    const user = userEvent.setup();
+    const { container } = render(<Harness />);
+
+    const dropzone = screen.getByText("Drag an image here").closest("label")!;
+    fireEvent.drop(dropzone, { dataTransfer: { files: [pngFile()] } });
+
+    expect(screen.getByTestId("cover-crop-modal")).toBeInTheDocument();
+    await user.click(screen.getByText("confirm-crop"));
+
+    await waitFor(() =>
+      expect(uploadMedia).toHaveBeenCalledWith(expect.any(File), "cover"),
+    );
+    await waitFor(() => {
+      const img = container.querySelector("img");
+      expect(img?.getAttribute("src")).toContain("media/cover/dropped.webp");
+    });
   });
 
   it("uploads a picked image as a cover and previews the returned key", async () => {

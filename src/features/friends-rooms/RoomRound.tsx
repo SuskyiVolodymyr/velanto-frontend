@@ -2,8 +2,7 @@
 
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
+import type { Pack } from "@/src/shared/types/pack";
 import type { ClaimRejection, RoomPlayerState, RoomState } from "./room-types";
 import { RoomItemCard } from "./RoomItemCard";
 
@@ -12,6 +11,10 @@ interface RoomRoundProps {
   currentUserId: string | null;
   lastRejection: ClaimRejection | null;
   onClaim: (itemId: string) => void;
+  /** save_one or sacrifice_one — picks the "Save"/"Sacrifice" verb pair.
+   * Defaults to sacrifice_one, this board's original (and only) framing,
+   * for any caller that doesn't yet know the pack's format. */
+  packFormat?: Extract<Pack["format"], "save_one" | "sacrifice_one">;
 }
 
 /**
@@ -25,6 +28,7 @@ export function RoomRound({
   currentUserId,
   lastRejection,
   onClaim,
+  packFormat = "sacrifice_one",
 }: RoomRoundProps) {
   const t = useTranslations("room");
   const round = state.round;
@@ -43,37 +47,9 @@ export function RoomRound({
 
   if (!round) return null;
 
-  const chosen = Object.keys(round.claims).length;
-  // Total SEATED players, not just the connected ones. A disconnected player
-  // keeps their seat and the round waits for them — the backend resolves only
-  // once every seated player has claimed, never skipping a dropped one. Counting
-  // connected players would imply the round can resolve while a seat is empty,
-  // which it can't.
-  const total = state.players.length;
 
   return (
     <div className="flex flex-col gap-6">
-      {/* The counter alone made every round look the same, which players read
-          as the rounds repeating. The author's round name (or its pool's) is
-          the title when there is one, and the instruction steps down a line;
-          with no name the instruction stays the heading as before. */}
-      <header className="flex flex-col gap-2">
-        <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-          {t("round.heading", {
-            index: round.index + 1,
-            total: state.totalRounds,
-          })}
-        </Text>
-        <Text as="h2" variant="title" className="text-2xl">
-          {round.name || t("round.instruction")}
-        </Text>
-        {round.name && (
-          <Text variant="secondary" className="text-sm">
-            {t("round.instruction")}
-          </Text>
-        )}
-      </header>
-
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {round.items.map((item, index) => {
           const claimant = claimantByItem.get(item.id) ?? null;
@@ -89,18 +65,23 @@ export function RoomRound({
               isOwn={isOwn}
               flash={lastRejection?.itemId === item.id}
               onClaim={free ? () => onClaim(item.id) : undefined}
+              format={packFormat}
             />
           );
         })}
       </div>
 
-      <Text
-        variant="secondary"
-        aria-live="polite"
-        className={cn("text-sm", chosen === total && "text-success")}
-      >
-        {t("round.chosen", { count: chosen, total })}
-      </Text>
+      {/* Plain <p>, not <Text variant="secondary">, deliberately: Text's variant
+          system sets a color class of equal CSS specificity to any color
+          class passed via className, and per Text.tsx's own documented
+          gotcha the variant's class wins regardless of source order — a
+          variant="secondary" className="text-score" pairing here would have
+          silently rendered muted grey instead of the amber warning tone. */}
+      {lastRejection?.reason === "too_fast" && (
+        <p role="status" className="text-xs text-score tracking-[-0.01em]">
+          {t("round.tooFastNote")}
+        </p>
+      )}
     </div>
   );
 }

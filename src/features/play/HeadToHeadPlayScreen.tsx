@@ -1,20 +1,31 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
 import { playsClient } from "@/src/shared/lib/plays-client";
 import {
   writeLastPlayId,
   writeLastPlayPicks,
 } from "@/src/shared/lib/last-play-storage";
 import { useRoundSelections } from "@/src/features/play/use-round-selections";
+import { usePlayResume } from "@/src/features/play/use-play-resume";
 import { HeadToHeadRound } from "@/src/features/play/HeadToHeadRound";
+import { PlayChrome } from "@/src/features/play/PlayChrome";
+import { PlayRoundHeader } from "@/src/features/play/PlayRoundHeader";
+import { PlayConfirmBar } from "@/src/features/play/PlayConfirmBar";
+import { PicksSummary } from "@/src/features/play/PicksSummary";
+import { ResumePlayModal } from "@/src/features/play/ResumePlayModal";
+import {
+  INSTRUCTION_KEY,
+  PICKED_LABEL_KEY,
+} from "@/src/features/play/play-format-copy";
+// Aliased: a bare `Pick` would shadow TypeScript's own Pick<T, K> utility
+// inside this module.
+import type { Pick as SessionPick } from "@/src/features/play/use-play-session";
 import { LoadingState } from "@/src/shared/components/LoadingState";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { pageContainer } from "@/src/shared/lib/page-container";
 import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
@@ -35,16 +46,61 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [recordSettled, setRecordSettled] = useState(false);
 
+  // Resume: seeded draw so a reload replays the same matchups, plus restore of
+  // the round cursor and picks. Read from storage after mount → `seed` is null
+  // until then, and the draw waits for it.
+  const resume = usePlayResume(pack);
+  // Destructured so the completion effect can depend on the stable
+  // `clearProgress` directly, not the freshly-built `resume` object each render.
+  const { saveProgress, clearProgress } = resume;
+
   const isFinished = totalRounds > 0 && roundIndex >= totalRounds;
   // Drawn items for every round, resolved once at mount (dedup spans rounds).
   // A 1v1 round has two slots (the two sides); each draws exactly one item, so
   // the matchup is that pair and the pick records the winning side's group.
-  const resolved = useRoundSelections(groups, rounds);
+  const resolved = useRoundSelections(groups, rounds, resume.seed);
   const selections = resolved ?? [];
+
+  // Restore a saved play ONCE, after the resume read settles. selectedId stays
+  // null so the resumed matchup opens unselected; initialChoices is allPicks.
+  const restoredRef = useRef(false);
+  useEffect(() => {
+    if (restoredRef.current || !resume.ready || resume.needsChoice) return;
+    restoredRef.current = true;
+    if (resume.initialRoundIndex > 0 && Array.isArray(resume.initialChoices)) {
+      /* eslint-disable react-hooks/set-state-in-effect */
+      setRoundIndex(resume.initialRoundIndex);
+      setAllPicks(resume.initialChoices as RecordedPick[]);
+      /* eslint-enable react-hooks/set-state-in-effect */
+    }
+  }, [
+    resume.ready,
+    resume.needsChoice,
+    resume.initialRoundIndex,
+    resume.initialChoices,
+  ]);
   const slotA = !isFinished ? selections[roundIndex]?.slots[0] : undefined;
   const slotB = !isFinished ? selections[roundIndex]?.slots[1] : undefined;
   const left = slotA?.items[0];
   const right = slotB?.items[0];
+
+  // The mock's run-so-far row: one chip per finished round, naming the
+  // contender that WON it. `confirmPick` records BOTH sides of every matchup
+  // (see its note), so the winners are the `chosen` half — and their titles
+  // have to be looked up in the resolved draw, because a RecordedPick carries
+  // only ids.
+  const displayPicks: SessionPick[] = allPicks
+    .filter((pick) => pick.chosen)
+    .map((pick) => ({
+      roundIndex: pick.roundIndex,
+      groupId: pick.groupId,
+      itemId: pick.itemId,
+      itemTitle:
+        selections[pick.roundIndex]?.slots
+          .flatMap((slot) => slot.items)
+          .find((item) => item.id === pick.itemId)?.title ?? "",
+      chosen: true,
+    }));
 
   function confirmPick() {
     if (!selectedId || !slotA || !slotB || !left || !right) return;
@@ -62,8 +118,8 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
     // per-matchup results were impossible, and still are for plays recorded
     // that way. Single-pool always recorded per item; this is now the one
     // shape, and it is what the backend counts a side by.
-    setAllPicks((prev) => [
-      ...prev,
+    const nextAllPicks: RecordedPick[] = [
+      ...allPicks,
       {
         roundIndex,
         groupId: groupIdA,
@@ -76,9 +132,16 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
         itemId: right.id,
         chosen: !leftWon,
       },
-    ]);
+    ];
+    const nextRoundIndex = roundIndex + 1;
+    setAllPicks(nextAllPicks);
     setSelectedId(null);
-    setRoundIndex((prev) => prev + 1);
+    setRoundIndex(nextRoundIndex);
+    // Save progress after each finished matchup so a reload resumes here; the
+    // final matchup writes nothing — the completion effect clears the record.
+    if (nextRoundIndex < totalRounds) {
+      saveProgress(nextRoundIndex, nextAllPicks);
+    }
   }
 
   // Fires once when the last matchup's pick is recorded. Anonymous plays ARE
@@ -93,6 +156,8 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
   useEffect(() => {
     if (!isFinished || status === "loading" || recordedRef.current) return;
     recordedRef.current = true;
+    // Completed — drop the resume record so the pack leaves "Continue playing".
+    clearProgress();
     writeLastPlayPicks(pack.id, allPicks);
     playsClient
       .record(pack.id, { picks: allPicks })
@@ -104,7 +169,7 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
       })
       .catch(() => undefined)
       .finally(() => setRecordSettled(true));
-  }, [isFinished, pack.id, allPicks, status]);
+  }, [isFinished, pack.id, allPicks, status, clearProgress]);
 
   // Straight to the result once the play is recorded — no interstitial recap.
   // Waits for the record to SETTLE (not resolve) so the aggregate normally
@@ -115,55 +180,85 @@ export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
 
   if (status === "loading") return null;
 
-  const progressPct = isFinished
-    ? 100
-    : Math.round((roundIndex / Math.max(totalRounds, 1)) * 100);
-
   return (
-    <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
-      <div className="mb-8">
-        <div className="mb-2 flex items-center justify-between">
-          <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-            {isFinished
-              ? t("complete")
-              : t("roundOf", { current: roundIndex + 1, total: totalRounds })}
-          </Text>
-        </div>
-        <div className="h-[3px] w-full rounded-full bg-white/[0.06]">
-          <div
-            className="h-full rounded-full bg-acc transition-[width] duration-300"
-            style={{ width: `${progressPct}%` }}
-          />
-        </div>
-      </div>
+    <>
+      {/* No counter in the bar: the round header's eyebrow below is
+          `play.roundOf`, and the mock only ever draws it there. */}
+      <PlayChrome
+        pack={pack}
+        isFinished={isFinished}
+        roundIndex={roundIndex}
+        totalRounds={totalRounds}
+        showRoundCounter={false}
+      />
 
-      {left && right && (
-        <>
-          <section className="mb-6 text-center">
-            <Text as="h2" variant="title" className="mb-2 text-3xl">
-              {t("whichPrefer")}
-            </Text>
-          </section>
-          <div className="mb-8">
-            <HeadToHeadRound
-              left={left}
-              right={right}
-              selectedId={selectedId}
-              onSelect={setSelectedId}
+      <ResumePlayModal
+        open={resume.needsChoice}
+        onContinue={resume.chooseContinue}
+        onRestart={resume.chooseRestart}
+        roundsDone={resume.initialRoundIndex}
+      />
+
+      <div className={cn(pageContainer(1120), "flex-1 py-10")}>
+        {left && right && (
+          <>
+            <div className="mb-8">
+              {/* Mirrors PlayScreen's header contract, which is the one the
+                  Solo Play mock actually draws: "Round N of M" eyebrow, the
+                  author's round name as the heading, the format's prompt
+                  underneath, all left-aligned with the progress rail pinned
+                  right. The rounds of a 1v1 pack are usually unnamed, so
+                  today's "Which one do you prefer?" stays as the fallback
+                  heading rather than an untranslated "Round N". */}
+              <PlayRoundHeader
+                eyebrow={t("roundOf", {
+                  current: roundIndex + 1,
+                  total: totalRounds,
+                })}
+                title={rounds[roundIndex]?.name?.trim() || t("whichPrefer")}
+                instruction={t(INSTRUCTION_KEY["1v1"])}
+                align="start"
+                roundIndex={roundIndex}
+                totalRounds={totalRounds}
+              />
+            </div>
+            <div className="mb-8">
+              <HeadToHeadRound
+                left={left}
+                right={right}
+                selectedId={selectedId}
+                onSelect={setSelectedId}
+                coverTone={pack.coverTone}
+              />
+            </div>
+            {/* Same shared confirm bar as the elimination formats (T4). */}
+            <PlayConfirmBar
+              ready={Boolean(selectedId)}
+              disabled={!selectedId}
+              onConfirm={confirmPick}
+              confirmLabel={
+                roundIndex === totalRounds - 1
+                  ? t("finishRound")
+                  : t("nextRound")
+              }
             />
-          </div>
-          {/* Same placement and copy as the elimination formats' confirm. */}
-          <div className="mb-10 flex justify-end">
-            <Button disabled={!selectedId} onClick={confirmPick}>
-              {roundIndex === totalRounds - 1
-                ? t("finishRound")
-                : t("nextRound")}
-            </Button>
-          </div>
-        </>
-      )}
 
-      {isFinished && <LoadingState label={t("loadingResult")} />}
-    </div>
+            {/* The mock's "YOUR RUN SO FAR" chip row, below the confirm bar and
+                hidden until there's something to show. */}
+            {displayPicks.length > 0 && (
+              <div className="mt-8">
+                <PicksSummary
+                  label={t(PICKED_LABEL_KEY["1v1"])}
+                  picks={displayPicks}
+                  totalRounds={totalRounds}
+                />
+              </div>
+            )}
+          </>
+        )}
+
+        {isFinished && <LoadingState label={t("loadingResult")} />}
+      </div>
+    </>
   );
 }

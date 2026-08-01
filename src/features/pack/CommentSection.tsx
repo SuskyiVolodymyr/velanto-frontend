@@ -1,11 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { Fragment, useMemo, useState } from "react";
-import { Trash2 } from "lucide-react";
+import { useMemo, useState } from "react";
+import { Reply, Trash2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Skeleton } from "@/src/shared/components/Skeleton";
+import {
+  CommentAction,
+  CommentComposerCard,
+  CommentIdentityBadge,
+  CommentRow,
+  CommentsHeading,
+  COMMENT_CARD_CLASS,
+  COMMENT_LIST_CLASS,
+  REPLY_COMPOSER_RAIL_CLASS,
+  REPLY_RAIL_CLASS,
+  commentAvatarSize,
+  type CommentRowVariant,
+} from "@/src/shared/components/CommentCard";
 import { Button } from "@/src/shared/components/Button";
 import { Spinner } from "@/src/shared/components/Spinner";
 import { Hidden } from "@/src/shared/components/Hidden";
@@ -30,6 +43,7 @@ import {
   useDeletePackComment,
 } from "@/src/features/pack/api/pack-comments.queries";
 import { AuthorHoverTrigger } from "./AuthorHoverTrigger";
+import { ReportCommentAction } from "./ReportCommentAction";
 import { renderCommentBody } from "./mention-text";
 
 /** A single comment's identity + body + row actions, shared by roots and
@@ -37,6 +51,8 @@ import { renderCommentBody } from "./mention-text";
 function CommentView({
   packId,
   comment,
+  isReply = false,
+  isPackCreator,
   canDelete,
   deleting,
   onDelete,
@@ -44,6 +60,10 @@ function CommentView({
 }: {
   packId: string;
   comment: Comment;
+  /** Renders the smaller variant used inside a thread's reply rail. */
+  isReply?: boolean;
+  /** Whether this comment's author is the pack's own creator — shows a badge. */
+  isPackCreator: boolean;
   canDelete: boolean;
   deleting: boolean;
   onDelete: () => void;
@@ -55,65 +75,72 @@ function CommentView({
   // Null for an unparseable/absent timestamp — render no <time> at all rather
   // than an empty one (see formatRelativeTimeIntl).
   const createdLabel = formatRelativeTimeIntl(comment.createdAt, locale);
+  const variant: CommentRowVariant = isReply ? "reply" : "root";
   return (
-    <div>
-      {/* items-center now that the vote moved to the footer: the only thing on
-          the right is the trash button, which is the same height as the avatar
-          beside the username. */}
-      <div className="flex items-center justify-between gap-2">
-        <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
-          <AuthorHoverTrigger
-            authorId={comment.authorId}
-            className="w-fit"
-            prefetch={false}
-          >
-            {({ triggerProps }) => (
-              // One identity Hidden wraps the whole avatar+name block so streamer
-              // mode redacts them together behind a single reveal (not two
-              // buttons crammed onto a compact comment row).
-              <Hidden kind="name" id={comment.authorId}>
-                <Link
-                  href={`/users/${comment.authorId}`}
-                  {...triggerProps}
-                  className="flex items-center gap-2 text-sm hover:underline"
-                >
-                  <UserAvatar
-                    username={comment.authorUsername}
-                    avatarKey={comment.authorAvatarKey}
-                    className="h-7 w-7 flex-none rounded-full border border-border bg-surface text-[11px] text-foreground-secondary"
-                  />
-                  <Username
-                    username={comment.authorUsername}
-                    role={comment.authorRole}
-                    trusted={comment.authorTrusted}
-                  />
-                </Link>
-              </Hidden>
-            )}
-          </AuthorHoverTrigger>
-          {/* The relative label is computed from `now`, so the server and the
-              hydrating client can legitimately render different text (they
-              render seconds apart). suppressHydrationWarning keeps the server
-              copy on hydration and lets later renders refresh it; the exact
-              instant stays machine-readable in `dateTime` regardless. */}
-          {createdLabel && (
-            <Text variant="tertiary" className="shrink-0 text-xs">
-              {/* Decorative separator between the username and the time — read
-                  aloud it would only add noise. */}
-              <span aria-hidden>· </span>
-              <time dateTime={comment.createdAt} suppressHydrationWarning>
-                {createdLabel}
-              </time>
-            </Text>
+    <CommentRow
+      variant={variant}
+      avatar={
+        <UserAvatar
+          username={comment.authorUsername}
+          avatarKey={comment.authorAvatarKey}
+          tone
+          className={commentAvatarSize(variant)}
+        />
+      }
+      identity={
+        <AuthorHoverTrigger
+          authorId={comment.authorId}
+          className="w-fit"
+          prefetch={false}
+        >
+          {({ triggerProps }) => (
+            <Hidden kind="name" id={comment.authorId}>
+              <Link
+                href={`/users/${comment.authorId}`}
+                {...triggerProps}
+                className="hover:underline"
+              >
+                <Username
+                  username={comment.authorUsername}
+                  role={comment.authorRole}
+                  trusted={comment.authorTrusted}
+                  at
+                />
+              </Link>
+            </Hidden>
           )}
-        </div>
-        {canDelete && (
+        </AuthorHoverTrigger>
+      }
+      badge={
+        isPackCreator && (
+          <CommentIdentityBadge>{t("creatorBadge")}</CommentIdentityBadge>
+        )
+      }
+      // The relative label is computed from `now`, so the server and the
+      // hydrating client can legitimately render different text (they render
+      // seconds apart). suppressHydrationWarning keeps the server copy on
+      // hydration and lets later renders refresh it; the exact instant stays
+      // machine-readable in `dateTime` regardless.
+      timestamp={
+        createdLabel && (
+          <time dateTime={comment.createdAt} suppressHydrationWarning>
+            {createdLabel}
+          </time>
+        )
+      }
+      body={
+        <Hidden kind="comment" id={comment.id}>
+          {renderCommentBody(comment.body)}
+        </Hidden>
+      }
+      trailing={
+        canDelete && (
           <button
             type="button"
             aria-label={t("deleteComment")}
             disabled={deleting}
             onClick={onDelete}
-            className="inline-flex h-7 w-7 flex-none items-center justify-center rounded-[7px] text-foreground-tertiary transition-colors hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:opacity-50"
+            className="inline-flex h-7 w-7 flex-none cursor-pointer items-center justify-center rounded-[7px] text-foreground-tertiary transition-colors hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc disabled:opacity-50"
           >
             {deleting ? (
               <Spinner size={14} />
@@ -121,103 +148,73 @@ function CommentView({
               <Trash2 aria-hidden className="h-4 w-4" />
             )}
           </button>
-        )}
-      </div>
-      {/* mt-2.5 on the Hidden wrapper (not on the Text) so the gap survives
-          streamer mode, where the body is swapped for a reveal placeholder.
-          Matches the skeleton's name-row → body spacing. */}
-      <Hidden kind="comment" id={comment.id} className="mt-2.5">
-        <Text variant="secondary" className="text-sm">
-          {renderCommentBody(comment.body)}
-        </Text>
-      </Hidden>
-      {/* Footer: the vote sits beside Reply as a bare arrow/score/arrow row.
-          It is unboxed on purpose — see VoteControl's `layout` prop. The row
-          renders even for a signed-out viewer (who gets no Reply), because the
-          score is still worth reading. */}
-      <div className="mt-2.5 flex items-center gap-4">
-        <VoteControl
-          vote={(value) => commentsClient.vote(packId, comment.id, value)}
-          initialLikes={comment.likes ?? 0}
-          initialDislikes={comment.dislikes ?? 0}
-          initialMyVote={comment.myVote ?? null}
-          upvoteLabel={t("upvote")}
-          downvoteLabel={t("downvote")}
-          blockedReason={tAuth("logInToVote")}
-          errorLabel={t("voteError")}
-          layout="inline"
-        />
-        {onReply && (
-          <button
-            type="button"
-            onClick={onReply}
-            className="text-xs font-medium text-foreground-tertiary transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc rounded-[4px]"
-          >
-            {t("reply")}
-          </button>
-        )}
-      </div>
-    </div>
+        )
+      }
+      // The reactions render even for a signed-out viewer (who gets no Reply),
+      // because the counts are still worth reading.
+      actions={
+        <>
+          <VoteControl
+            vote={(value) => commentsClient.vote(packId, comment.id, value)}
+            initialLikes={comment.likes ?? 0}
+            initialDislikes={comment.dislikes ?? 0}
+            initialMyVote={comment.myVote ?? null}
+            upvoteLabel={t("upvote")}
+            downvoteLabel={t("downvote")}
+            blockedReason={tAuth("logInToVote")}
+            errorLabel={t("voteError")}
+          />
+          {onReply && (
+            <CommentAction variant={variant} onClick={onReply}>
+              <Reply aria-hidden className="h-[13px] w-[13px]" />
+              {t("reply")}
+            </CommentAction>
+          )}
+          <ReportCommentAction
+            commentId={comment.id}
+            authorId={comment.authorId}
+            authorUsername={comment.authorUsername}
+            body={comment.body}
+            variant={variant}
+          />
+        </>
+      }
+    />
   );
 }
 
 /**
- * The hairline between two top-level threads — the only rule left in the list.
- * There is none between a root and its replies, none between replies, and none
- * before the first thread or after the last, so a single conversation reads as
- * one uninterrupted block and the lines mark only where one thread ends and the
- * next begins.
- *
- * A real `<hr>` rather than a `border-t` utility on the thread: a thematic break
- * between two unrelated conversations is exactly what the element means, and it
- * keeps the rule observable in tests without asserting on class strings.
- */
-function ThreadDivider() {
-  return <hr className="border-t border-border" />;
-}
-
-/**
- * One card holds the whole list. Its 6px of vertical padding plus each thread's
- * own 16px gives the first and last entry the breathing room the mockup has,
- * while a rule between two threads still gets a clean 16px on either side.
- */
-const THREAD_CARD =
-  "rounded-[14px] border border-border bg-surface px-4 py-1.5";
-const THREAD_ENTRY = "py-4";
-
-/**
  * Pulsing placeholders for the comment list while it loads, so the section
- * holds its shape instead of flashing a spinner. Mirrors the real list: one
- * card, three entries, a rule between them. Decorative (each row is
- * `aria-hidden`); a single sr-only `role="status"` carries the busy
- * announcement the {@link LoadingState} spinner used to.
+ * holds its shape instead of flashing a spinner. Mirrors the real list: three
+ * thread cards. Decorative (each card is `aria-hidden`); a single sr-only
+ * `role="status"` carries the busy announcement.
  */
 function CommentsSkeleton({ label }: { label: string }) {
   return (
-    <div className={THREAD_CARD} data-testid="comments-skeleton">
+    <div className={COMMENT_LIST_CLASS} data-testid="comments-skeleton">
       <span role="status" className="sr-only">
         {label}
       </span>
       {[0, 1, 2].map((row) => (
-        <Fragment key={row}>
-          {row > 0 && <ThreadDivider />}
-          <div aria-hidden className={THREAD_ENTRY}>
-            <div className="flex items-center gap-2">
-              <Skeleton className="h-7 w-7 rounded-full" />
-              <Skeleton className="h-4 w-28" />
-              <Skeleton className="h-3 w-16" />
-            </div>
-            <div className="mt-2.5 flex flex-col gap-1.5">
+        <div key={row} aria-hidden className={COMMENT_CARD_CLASS}>
+          <div className="flex gap-[11px]">
+            <Skeleton className="h-8 w-8 flex-none rounded-full" />
+            <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+              <div className="flex items-center gap-2">
+                <Skeleton className="h-4 w-28" />
+                <Skeleton className="h-3 w-16" />
+              </div>
               <Skeleton className="h-3 w-full" />
               <Skeleton className="h-3 w-4/5" />
-            </div>
-            {/* The footer row: the unboxed vote, then Reply. */}
-            <div className="mt-2.5 flex items-center gap-4">
-              <Skeleton className="h-4 w-14" />
-              <Skeleton className="h-4 w-8" />
+              {/* The action row: two reactions, then Reply. */}
+              <div className="flex items-center gap-3.5 pt-0.5">
+                <Skeleton className="h-4 w-8" />
+                <Skeleton className="h-4 w-8" />
+                <Skeleton className="h-4 w-12" />
+              </div>
             </div>
           </div>
-        </Fragment>
+        </div>
       ))}
     </div>
   );
@@ -237,8 +234,10 @@ export function CommentSection({
   const blocked = status === "unauthenticated";
   const authenticated = status === "authenticated";
   const [draft, setDraft] = useState("");
-  // Root ordering — Top (net score) by default, or New (newest first).
-  const [sort, setSort] = useState<CommentSort>("top");
+  // Root ordering. Newest-first is the default: on a thread that's still
+  // filling up, a fresh comment being invisible until it out-scores the old
+  // ones is what kills the conversation. Top is one click away.
+  const [sort, setSort] = useState<CommentSort>("new");
   // The root whose inline reply composer is open (null = none), plus its text.
   const [replyingToId, setReplyingToId] = useState<string | null>(null);
   const [replyDraft, setReplyDraft] = useState("");
@@ -346,57 +345,93 @@ export function CommentSection({
   // aria-disabled, and one tooltip covers the lot (so it's clear from the
   // input — not just the button — why it's inert).
   const composer = (
-    <div className="mb-6 flex flex-col gap-2">
-      <textarea
-        value={draft}
-        onChange={(e) => setDraft(e.target.value)}
-        placeholder={
-          blocked ? tAuth("logInToComment") : t("commentPlaceholder")
-        }
-        aria-label={t("commentLabel")}
-        rows={2}
-        readOnly={blocked}
-        disabled={posting}
-        className={cn(
-          "rounded-[10px] border border-border bg-surface px-3.5 py-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-acc disabled:opacity-45",
-          blocked && "cursor-not-allowed opacity-60",
+    <CommentComposerCard
+      avatar={
+        user && (
+          <UserAvatar
+            username={user.username}
+            avatarKey={user.avatarKey}
+            tone
+            className={commentAvatarSize("root")}
+          />
+        )
+      }
+    >
+      <div className="flex min-w-0 flex-1 flex-col gap-2">
+        <div className="flex items-start gap-[11px]">
+          <textarea
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            placeholder={
+              blocked ? tAuth("logInToComment") : t("commentPlaceholder")
+            }
+            aria-label={t("commentLabel")}
+            rows={1}
+            readOnly={blocked}
+            disabled={posting}
+            className={cn(
+              "min-h-[38px] min-w-0 flex-1 resize-y rounded-[11px] border border-white/10 bg-background px-3.5 py-2 text-[13.5px] leading-[1.55] text-foreground outline-none focus-visible:border-acc disabled:opacity-45",
+              blocked && "cursor-not-allowed opacity-60",
+            )}
+          />
+          {/* `size="sm"` rather than a height in className: cn() is a plain
+              join, so an h-* here would sit alongside the size's own. */}
+          <Button
+            variant="secondary"
+            size="sm"
+            className={cn(
+              "flex-none",
+              blocked && "cursor-not-allowed opacity-45",
+            )}
+            aria-disabled={blocked || undefined}
+            disabled={blocked ? false : !draft.trim() || posting}
+            loading={posting}
+            onClick={handlePost}
+          >
+            {t("post")}
+          </Button>
+        </div>
+        {postError && (
+          <Text variant="danger" className="text-sm">
+            {postError}
+          </Text>
         )}
-      />
-      {postError && (
-        <Text variant="danger" className="text-sm">
-          {postError}
-        </Text>
-      )}
-      <Button
-        className={cn("self-end", blocked && "cursor-not-allowed opacity-45")}
-        aria-disabled={blocked || undefined}
-        disabled={blocked ? false : !draft.trim() || posting}
-        loading={posting}
-        onClick={handlePost}
-      >
-        {t("post")}
-      </Button>
-    </div>
+      </div>
+    </CommentComposerCard>
   );
 
   const replyPending = (rootId: string) =>
     replyComment.isPending && replyComment.variables?.parentId === rootId;
 
+  // The open composer gets its own accent-tinted rail rather than sitting in
+  // the neutral reply column, so an unsent draft reads as attached to the
+  // thread it will join.
   function renderReplyComposer(rootId: string) {
-    // No margin of its own: it is one more child of the indented reply column,
-    // so that column's gap already spaces it from whatever precedes it.
     return (
-      <div className="flex flex-col gap-2">
-        <textarea
-          value={replyDraft}
-          onChange={(e) => setReplyDraft(e.target.value)}
-          placeholder={t("replyPlaceholder")}
-          aria-label={t("replyLabel")}
-          rows={2}
-          autoFocus
-          disabled={replyPending(rootId)}
-          className="rounded-[10px] border border-border bg-surface px-3.5 py-2.5 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-acc disabled:opacity-45"
-        />
+      <div
+        data-testid="reply-composer"
+        className={cn(REPLY_COMPOSER_RAIL_CLASS, "flex flex-col gap-2")}
+      >
+        <div className="flex items-start gap-2.5">
+          {user && (
+            <UserAvatar
+              username={user.username}
+              avatarKey={user.avatarKey}
+              tone
+              className={commentAvatarSize("reply")}
+            />
+          )}
+          <textarea
+            value={replyDraft}
+            onChange={(e) => setReplyDraft(e.target.value)}
+            placeholder={t("replyPlaceholder")}
+            aria-label={t("replyLabel")}
+            rows={1}
+            autoFocus
+            disabled={replyPending(rootId)}
+            className="min-h-[38px] min-w-0 flex-1 resize-y rounded-[11px] border border-acc/35 bg-background px-3.5 py-2 text-[13px] leading-[1.55] text-foreground outline-none focus-visible:border-acc disabled:opacity-45"
+          />
+        </div>
         {replyError && (
           <Text variant="danger" className="text-sm">
             {replyError}
@@ -404,7 +439,8 @@ export function CommentSection({
         )}
         <div className="flex justify-end gap-2">
           <Button
-            variant="secondary"
+            variant="ghost"
+            size="xs"
             onClick={() => {
               setReplyingToId(null);
               setReplyDraft("");
@@ -413,11 +449,12 @@ export function CommentSection({
             {t("cancel")}
           </Button>
           <Button
+            size="xs"
             disabled={!replyDraft.trim() || replyPending(rootId)}
             loading={replyPending(rootId)}
             onClick={() => handlePostReply(rootId)}
           >
-            {t("post")}
+            {t("reply")}
           </Button>
         </div>
       </div>
@@ -425,15 +462,9 @@ export function CommentSection({
   }
 
   return (
-    <section>
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <Text
-          as="h2"
-          variant="tertiary"
-          className="text-xs uppercase tracking-wide"
-        >
-          {t("comments", { count: total })}
-        </Text>
+    <section className="flex flex-col gap-3">
+      <div className="flex items-center justify-between gap-3">
+        <CommentsHeading>{t("comments", { count: total })}</CommentsHeading>
         {loadStatus === "ready" && total > 0 && (
           <div
             role="group"
@@ -479,71 +510,67 @@ export function CommentSection({
         <Text variant="secondary">{t("noComments")}</Text>
       )}
       {loadStatus === "ready" && roots.length > 0 && (
-        <div className="flex flex-col gap-4">
+        <div className={COMMENT_LIST_CLASS}>
           {deleteError && (
             <Text variant="danger" className="text-sm">
               {deleteError}
             </Text>
           )}
-          {/* One card for the whole list, not one per thread. Nesting and
-              spacing carry the structure inside it; the only rule is between
-              two top-level threads. */}
-          <div className={THREAD_CARD}>
-            {roots.map((root, rootIndex) => {
-              const replies = root.replies ?? [];
-              return (
-                <Fragment key={root.id}>
-                  {rootIndex > 0 && <ThreadDivider />}
-                  <div className={THREAD_ENTRY}>
-                    <CommentView
-                      packId={packId}
-                      comment={root}
-                      canDelete={canDelete(root)}
-                      deleting={deletingId === root.id}
-                      onDelete={() => handleDelete(root)}
-                      onReply={
-                        authenticated ? () => openReply(root.id) : undefined
-                      }
-                    />
+          {/* One card per top-level thread — a root and everything hanging off
+              it are one block, and the gap between cards is what separates one
+              conversation from the next. */}
+          {roots.map((root) => {
+            const replies = root.replies ?? [];
+            return (
+              <div
+                key={root.id}
+                data-testid="comment-thread"
+                className={COMMENT_CARD_CLASS}
+              >
+                <CommentView
+                  packId={packId}
+                  comment={root}
+                  isPackCreator={root.authorId === packAuthorId}
+                  canDelete={canDelete(root)}
+                  deleting={deletingId === root.id}
+                  onDelete={() => handleDelete(root)}
+                  onReply={authenticated ? () => openReply(root.id) : undefined}
+                />
 
-                    {(replies.length > 0 || replyingToId === root.id) && (
-                      // ps-9 = the avatar's h-7 plus the gap-2 beside it, so a
-                      // reply's avatar starts exactly under the root's
-                      // username. Indentation alone marks the nesting: no rule
-                      // above the replies, none between them — within one
-                      // thread there are no lines at all.
-                      <div className="mt-3.5 flex flex-col gap-3.5 ps-9">
-                        {replies.map((reply) => (
-                          <CommentView
-                            key={reply.id}
-                            packId={packId}
-                            comment={reply}
-                            canDelete={canDelete(reply)}
-                            deleting={deletingId === reply.id}
-                            onDelete={() => handleDelete(reply)}
-                            onReply={
-                              authenticated
-                                ? () => openReply(root.id, reply.authorUsername)
-                                : undefined
-                            }
-                          />
-                        ))}
-                        {replyingToId === root.id &&
-                          renderReplyComposer(root.id)}
-                      </div>
-                    )}
+                {replies.length > 0 && (
+                  <div className={REPLY_RAIL_CLASS}>
+                    {replies.map((reply) => (
+                      <CommentView
+                        key={reply.id}
+                        packId={packId}
+                        comment={reply}
+                        isReply
+                        isPackCreator={reply.authorId === packAuthorId}
+                        canDelete={canDelete(reply)}
+                        deleting={deletingId === reply.id}
+                        onDelete={() => handleDelete(reply)}
+                        onReply={
+                          authenticated
+                            ? () => openReply(root.id, reply.authorUsername)
+                            : undefined
+                        }
+                      />
+                    ))}
                   </div>
-                </Fragment>
-              );
-            })}
-          </div>
+                )}
+
+                {replyingToId === root.id && renderReplyComposer(root.id)}
+              </div>
+            );
+          })}
         </div>
       )}
 
       {loadStatus === "ready" && roots.length < total && (
-        <div className="mt-4 flex flex-col gap-2">
+        <div className="flex flex-col items-start gap-2">
           <Button
-            variant="secondary"
+            variant="outline"
+            size="sm"
             loading={loadingMore}
             onClick={() => void commentsQuery.fetchNextPage()}
           >

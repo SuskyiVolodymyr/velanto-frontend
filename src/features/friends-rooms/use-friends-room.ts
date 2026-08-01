@@ -10,11 +10,21 @@ import {
   ROOM_COMMANDS,
   ROOM_EVENTS,
   type ClaimRejection,
-  type ResolvedRoundState,
+  type CutRejection,
+  type GuessWhoRejection,
+  type RelayRejection,
+  type RoomMode,
   type RoomPlayerState,
   type RoomState,
+  type RoundResult,
   type RoundState,
+  type SharedGridRejection,
+  type VoteRejection,
 } from "./room-types";
+import {
+  roundResultFromResolved,
+  type RoundResolvedPayload,
+} from "./round-resolved";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
@@ -34,12 +44,37 @@ export interface FriendsRoom {
   kicked: boolean;
   claim: (itemId: string) => void;
   ready: () => void;
+  /** Host-only: begin the game. A guest's call is refused server-side. */
+  start: () => void;
   next: () => void;
   lock: (locked: boolean) => void;
   leave: () => void;
   /** Host-only: remove another player by id. The server drops their socket and
    *  broadcasts `player.left { seatKept: false }` to everyone else. */
   kick: (userId: string) => void;
+  /** Host-only: choose (or change, in the lobby) the room's mode. */
+  setMode: (mode: RoomMode) => void;
+  /** Guess-who endgame: submit a label -> real-player mapping. */
+  guess: (mapping: Record<string, string>) => void;
+  cut: (itemId: string) => void;
+  pick: (selection: string[]) => void;
+  vote: (optionId: string) => void;
+  submitRanking: (ranking: string[]) => void;
+  placeItem: (itemId: string, position: number) => void;
+  /** The most recent per-mode action rejection (cut/pick/vote/ranking/place),
+   * kept distinct from `lastRejection` (Claim's own) so a mode never has to
+   * guess which shape a shared field holds. */
+  lastModeRejection:
+    | (CutRejection & { kind: "cut" })
+    | (GuessWhoRejection & { kind: "pick" })
+    | (VoteRejection & { kind: "vote" })
+    | (SharedGridRejection & { kind: "ranking" })
+    | (RelayRejection & { kind: "place" })
+    | null;
+  /** Increments on every mode rejection. Lets a board distinguish a REPEAT
+   * rejection from the same one still being displayed — needed because the
+   * reason alone is unchanged when you retry and are refused again. */
+  modeRejectionSeq: number;
 }
 
 /**
@@ -64,6 +99,12 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
     null,
   );
   const [kicked, setKicked] = useState(false);
+  const [lastModeRejection, setLastModeRejection] =
+    useState<FriendsRoom["lastModeRejection"]>(null);
+  // Bumped on every rejection so a board can tell "rejected again" from
+  // "still showing the previous rejection" — Shared-grid uses it to remount
+  // its auto-submitting rank board, which is otherwise frozen after a reject.
+  const [modeRejectionSeq, setModeRejectionSeq] = useState(0);
   const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
@@ -81,6 +122,17 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
         query: { roomId },
       });
       socketRef.current = socket;
+
+      // Store a rejection AND bump its sequence, so a board can react to a
+      // repeat of the same reason. Every mode's `*.rejected` goes through
+      // here; a rejection that is never cleared would otherwise sit on
+      // screen as a stale alert once one is actually rendered.
+      const noteModeRejection = (
+        rejection: FriendsRoom["lastModeRejection"],
+      ) => {
+        setLastModeRejection(rejection);
+        setModeRejectionSeq((n) => n + 1);
+      };
 
       socket.on("connect", () => setConnection("open"));
       socket.io.on("reconnect_attempt", () => setConnection("connecting"));
@@ -104,8 +156,19 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
       // any stale `kicked` flag (this hook instance can be reused across a
       // roomId change without remounting).
       socket.on(ROOM_EVENTS.state, (next: RoomState) => {
-        setState(next);
+        // Wholesale replace — EXCEPT the viewer's own guess. A room-wide
+        // snapshot always carries `myGuess: null` (it has no single viewer),
+        // and finishGuessing hands each player their guess and THEN calls
+        // finish(), whose broadcast landed microseconds later and wiped it: the
+        // results screen opened with an empty guess and every label marked
+        // wrong, for everyone. Only ever restores — a snapshot that carries a
+        // guess (the per-caller HTTP read) still wins.
+        setState((prev) => ({
+          ...next,
+          myGuess: next.myGuess ?? prev?.myGuess ?? null,
+        }));
         setLastRejection(null);
+        setLastModeRejection(null);
         setKicked(false);
       });
 
@@ -142,6 +205,87 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
         setState((s) => (s ? { ...s, locked } : s)),
       );
 
+      // A mode change is three changes: the mode, the room's new cap, and the
+      // withdrawal of every ready vote (the server re-consents the room to the
+      // new game). There is no per-player event for that last one, so it is
+      // applied here — otherwise the lobby keeps showing a ready room whose
+      // Start the server then refuses with nothing on screen to say why.
+      socket.on(
+        ROOM_EVENTS.modeChanged,
+        ({ mode, maxPlayers }: { mode: RoomMode; maxPlayers: number }) =>
+          setState((s) =>
+            s
+              ? {
+                  ...s,
+                  mode,
+                  maxPlayers,
+                  players: s.players.map((p) => ({ ...p, ready: false })),
+                }
+              : s,
+          ),
+      );
+
+      socket.on(
+        ROOM_EVENTS.guessingStarted,
+        ({
+          labels,
+          candidateUserIds,
+          deadlineAt,
+        }: {
+          labels: string[];
+          candidateUserIds: string[];
+          deadlineAt: number;
+        }) =>
+          setState((s) =>
+            s
+              ? {
+                  ...s,
+                  phase: "guessing",
+                  autoNextAt: deadlineAt,
+                  guessing: { labels, candidateUserIds, submitted: [] },
+                }
+              : s,
+          ),
+      );
+
+      socket.on(ROOM_EVENTS.guessSubmitted, ({ userId }: { userId: string }) =>
+        setState((s) =>
+          s && s.guessing
+            ? {
+                ...s,
+                guessing: {
+                  ...s.guessing,
+                  submitted: s.guessing.submitted.includes(userId)
+                    ? s.guessing.submitted
+                    : [...s.guessing.submitted, userId],
+                },
+              }
+            : s,
+        ),
+      );
+
+      socket.on(
+        ROOM_EVENTS.identityRevealed,
+        ({
+          mapping,
+          yourGuess,
+        }: {
+          mapping: Record<string, string>;
+          yourGuess: Record<string, string> | null;
+        }) =>
+          setState((s) =>
+            s
+              ? {
+                  ...s,
+                  phase: "finished",
+                  autoNextAt: null,
+                  endgame: { kind: "identity_reveal", mapping },
+                  myGuess: yourGuess,
+                }
+              : s,
+          ),
+      );
+
       // `totalRounds` rides this event because the room's only full snapshot
       // arrives when the socket connects — in the LOBBY, before the server has
       // drawn the plan, where it is 0. Without folding it in here the round
@@ -149,27 +293,48 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
       socket.on(
         ROOM_EVENTS.roundStarted,
         ({
-          index,
-          name,
-          items,
           totalRounds,
-        }: Pick<RoundState, "index" | "name" | "items"> & {
-          totalRounds: number;
-        }) =>
+          labels,
+          ...started
+        }: Pick<RoundState, "index" | "name" | "items"> &
+          Partial<RoundState> & {
+            totalRounds: number;
+            // Guess-who's anonymous labels, for the same reason: they are
+            // assigned at game START, so a lobby snapshot has none, and the
+            // room panel shows them instead of anyone's name all game.
+            labels?: string[] | null;
+          }) => {
+          // Last round's rejection ("not your turn", "this round has ended")
+          // is spent the moment a new round starts; leaving it set would
+          // keep a stale alert on the new board.
+          setLastModeRejection(null);
           setState((s) =>
             s
               ? {
                   ...s,
                   phase: "round",
-                  roundIndex: index,
+                  roundIndex: started.index,
                   totalRounds,
+                  // Fixed for the game, so keep what we have if a later round
+                  // ever omits them.
+                  labels: labels ?? s.labels,
                   // The previous round's deadline is spent the moment this one
                   // starts; leaving it set would keep a countdown on screen.
                   autoNextAt: null,
+                  // Spread the payload rather than enumerating Claim's four
+                  // fields. Every non-Claim board opens with a guard on a
+                  // mode-specific field — optionIds (Voting, Shared-grid,
+                  // Guess-who), remainingItemIds (Turn-based cut),
+                  // relayPlaced (Relay) — and returns null when it is
+                  // missing, so listing only Claim's fields here rendered a
+                  // blank round screen with no error for five of six modes
+                  // from round 2 onward (round 1 survived only on clients
+                  // fresh enough to still be holding the connect snapshot).
+                  // A fresh object each round, so per-round state that the
+                  // server does NOT resend (lockedIn, votes, cuts) resets
+                  // rather than carrying over.
                   round: {
-                    index,
-                    name,
-                    items,
+                    ...started,
                     claims: {},
                     survivorItemId: null,
                   },
@@ -180,7 +345,8 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
                   })),
                 }
               : s,
-          ),
+          );
+        },
       );
 
       socket.on(
@@ -221,60 +387,221 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
       // client already has that in `round`. So the result is assembled from
       // both rather than storing the payload as-is, which would leave every
       // entry in `results` without its items or its name.
-      socket.on(
-        ROOM_EVENTS.roundResolved,
-        (resolved: {
-          index: number;
-          survivorItemId: string;
-          claims: Record<string, string>;
-          autoNextAt: number | null;
-        }) =>
-          setState((s) => {
-            if (!s) return s;
-            // Only the round we are actually holding can be assembled into a
-            // result. Without the index check a mismatched pair would build a
-            // result labelled with one round's index and another's items, and
-            // stamp a foreign survivor onto the live round — which renders
-            // every item as sacrificed. Without the null check the filter
-            // below would DELETE a result the snapshot already carried, since
-            // "filter then append nothing" is a removal, not a replacement.
-            const round = s.round;
-            const replacement: ResolvedRoundState | null =
-              round && round.index === resolved.index
-                ? {
-                    index: resolved.index,
-                    name: round.name,
-                    items: round.items,
-                    claims: resolved.claims,
-                    survivorItemId: resolved.survivorItemId,
-                  }
-                : null;
-            return {
-              ...s,
-              phase: "between",
-              autoNextAt: resolved.autoNextAt ?? null,
-              round:
-                round && round.index === resolved.index
-                  ? { ...round, survivorItemId: resolved.survivorItemId }
-                  : round,
-              results: replacement
-                ? [
-                    ...s.results.filter((r) => r.index !== replacement.index),
-                    replacement,
-                  ].sort((a, b) => a.index - b.index)
-                : s.results,
-            };
-          }),
+      socket.on(ROOM_EVENTS.roundResolved, (resolved: RoundResolvedPayload) =>
+        setState((s) => {
+          if (!s) return s;
+          // Only the round we are actually holding can be assembled into a
+          // result. Without the index check a mismatched pair would build a
+          // result labelled with one round's index and another's items, and
+          // stamp a foreign survivor onto the live round — which renders
+          // every item as sacrificed. Without the null check the filter
+          // below would DELETE a result the snapshot already carried, since
+          // "filter then append nothing" is a removal, not a replacement.
+          const round = s.round;
+          const matches = Boolean(round && round.index === resolved.index);
+          // One event name, five payload shapes, no `kind` on the wire —
+          // so the room's own mode is what discriminates them. This used to
+          // synthesize `kind: "survivor"` unconditionally, which left every
+          // non-Claim between-board looking up its own kind, finding a
+          // survivor, and rendering nothing.
+          const replacement: RoundResult | null =
+            round && matches
+              ? roundResultFromResolved(s.mode, round, resolved)
+              : null;
+          return {
+            ...s,
+            phase: "between",
+            autoNextAt: resolved.autoNextAt ?? null,
+            round:
+              round && matches && resolved.survivorItemId !== undefined
+                ? { ...round, survivorItemId: resolved.survivorItemId }
+                : round,
+            results: replacement
+              ? [
+                  ...s.results.filter((r) => r.index !== replacement.index),
+                  replacement,
+                ].sort((a, b) => a.index - b.index)
+              : s.results,
+          };
+        }),
       );
 
       socket.on(ROOM_EVENTS.playerNext, ({ userId }: { userId: string }) =>
         patchPlayer(setState, userId, { next: true }),
       );
 
+      // Same wholesale-replace caveat as `room.state` above, and the same
+      // reason: this broadcast is room-wide, so it carries `myGuess: null`, and
+      // it lands right after the per-player reveal that just delivered it. Left
+      // alone it wiped the guess and the reveal screen read "You said nobody"
+      // on every label while the leaderboard scored everyone correctly.
       socket.on(ROOM_EVENTS.gameFinished, (final: RoomState) =>
-        setState(final),
+        setState((prev) => ({
+          ...final,
+          myGuess: final.myGuess ?? prev?.myGuess ?? null,
+        })),
       );
       socket.on(ROOM_EVENTS.roomClosed, () => setConnection("closed"));
+
+      socket.on(
+        ROOM_EVENTS.itemCut,
+        ({
+          userId,
+          itemId,
+          turnUserId,
+        }: {
+          userId: string | null;
+          itemId: string | null;
+          turnUserId: string | null;
+        }) => {
+          // The turn just moved, so a "not your turn" rejection is spent.
+          setLastModeRejection(null);
+          setState((s) => {
+            if (!s || !s.round) return s;
+            const remainingItemIds = itemId
+              ? (s.round.remainingItemIds ?? []).filter((id) => id !== itemId)
+              : s.round.remainingItemIds;
+            const cuts =
+              userId && itemId
+                ? [...(s.round.cuts ?? []), { userId, itemId }]
+                : s.round.cuts;
+            return {
+              ...s,
+              round: { ...s.round, remainingItemIds, cuts, turnUserId },
+            };
+          });
+        },
+      );
+      socket.on(ROOM_EVENTS.cutRejected, (rejection: CutRejection) =>
+        noteModeRejection({ ...rejection, kind: "cut" }),
+      );
+
+      // The pick rides this event under the actor's LABEL, so the board can
+      // mark the card the moment someone locks in rather than only when the
+      // round closes. `label` is absent outside guess-who.
+      socket.on(
+        ROOM_EVENTS.pickLocked,
+        ({
+          userId,
+          label,
+          selection,
+        }: {
+          userId: string;
+          label?: string | null;
+          selection?: string[];
+        }) =>
+          setState((s) =>
+            s && s.round
+              ? {
+                  ...s,
+                  round: {
+                    ...s.round,
+                    lockedIn: s.round.lockedIn?.includes(userId)
+                      ? s.round.lockedIn
+                      : [...(s.round.lockedIn ?? []), userId],
+                    picks:
+                      label && selection
+                        ? { ...(s.round.picks ?? {}), [label]: selection }
+                        : s.round.picks,
+                  },
+                }
+              : s,
+          ),
+      );
+      socket.on(ROOM_EVENTS.pickRejected, (rejection: GuessWhoRejection) =>
+        noteModeRejection({ ...rejection, kind: "pick" }),
+      );
+
+      socket.on(
+        ROOM_EVENTS.voteCast,
+        ({ userId, optionId }: { userId: string; optionId: string }) =>
+          setState((s) =>
+            s && s.round
+              ? {
+                  ...s,
+                  round: {
+                    ...s.round,
+                    votes: { ...s.round.votes, [userId]: optionId },
+                  },
+                }
+              : s,
+          ),
+      );
+      socket.on(ROOM_EVENTS.voteRejected, (rejection: VoteRejection) =>
+        noteModeRejection({ ...rejection, kind: "vote" }),
+      );
+
+      socket.on(ROOM_EVENTS.rankingLocked, ({ userId }: { userId: string }) =>
+        setState((s) =>
+          s && s.round
+            ? {
+                ...s,
+                round: {
+                  ...s.round,
+                  lockedIn: s.round.lockedIn?.includes(userId)
+                    ? s.round.lockedIn
+                    : [...(s.round.lockedIn ?? []), userId],
+                },
+              }
+            : s,
+        ),
+      );
+      socket.on(ROOM_EVENTS.rankingRejected, (rejection: SharedGridRejection) =>
+        noteModeRejection({ ...rejection, kind: "ranking" }),
+      );
+
+      socket.on(
+        ROOM_EVENTS.itemPlaced,
+        ({
+          userId,
+          itemId,
+          position,
+          turnUserId,
+        }: {
+          userId: string | null;
+          itemId: string | null;
+          position?: number;
+          turnUserId: string | null;
+        }) => {
+          // The turn just moved, so a "not your turn" rejection is spent.
+          setLastModeRejection(null);
+          setState((s) => {
+            if (!s || !s.round) return s;
+            // FILL the slot at `position`. The board is a fixed set of slots,
+            // one per item, so a placement writes into one — it does not grow
+            // the list. While this spliced, the board gained a row on every
+            // placement (six slots became nine) and every client diverged
+            // from the server for the rest of the round. `position` is absent
+            // only on the roster-shrink broadcast, which carries a null itemId
+            // and is skipped anyway.
+            const placedBefore = s.round.relayPlaced;
+            const relayPlaced =
+              itemId && placedBefore && position !== undefined
+                ? placedBefore.map((id, i) => (i === position ? itemId : id))
+                : placedBefore;
+            const relayPlacements =
+              userId && itemId
+                ? [...(s.round.relayPlacements ?? []), { userId, itemId }]
+                : s.round.relayPlacements;
+            const remainingOrder = s.round.relayOrder?.filter(
+              (id) => !(relayPlaced ?? []).includes(id),
+            );
+            return {
+              ...s,
+              round: {
+                ...s.round,
+                relayPlaced,
+                relayPlacements,
+                relayCurrentItemId: remainingOrder?.[0] ?? null,
+                turnUserId,
+              },
+            };
+          });
+        },
+      );
+      socket.on(ROOM_EVENTS.placeRejected, (rejection: RelayRejection) =>
+        noteModeRejection({ ...rejection, kind: "place" }),
+      );
     });
 
     return () => {
@@ -298,10 +625,43 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
       [send],
     ),
     ready: useCallback(() => send(ROOM_COMMANDS.ready), [send]),
+    start: useCallback(() => send(ROOM_COMMANDS.start), [send]),
     next: useCallback(() => send(ROOM_COMMANDS.next), [send]),
     lock: useCallback((locked) => send(ROOM_COMMANDS.lock, { locked }), [send]),
     leave: useCallback(() => send(ROOM_COMMANDS.leave), [send]),
     kick: useCallback((userId) => send(ROOM_COMMANDS.kick, { userId }), [send]),
+    setMode: useCallback(
+      (mode: RoomMode) => send(ROOM_COMMANDS.setMode, { mode }),
+      [send],
+    ),
+    guess: useCallback(
+      (mapping: Record<string, string>) =>
+        send(ROOM_COMMANDS.guess, { mapping }),
+      [send],
+    ),
+    cut: useCallback(
+      (itemId: string) => send(ROOM_COMMANDS.cut, { itemId }),
+      [send],
+    ),
+    pick: useCallback(
+      (selection: string[]) => send(ROOM_COMMANDS.pick, { selection }),
+      [send],
+    ),
+    vote: useCallback(
+      (optionId: string) => send(ROOM_COMMANDS.vote, { optionId }),
+      [send],
+    ),
+    submitRanking: useCallback(
+      (ranking: string[]) => send(ROOM_COMMANDS.submitRanking, { ranking }),
+      [send],
+    ),
+    placeItem: useCallback(
+      (itemId: string, position: number) =>
+        send(ROOM_COMMANDS.placeItem, { itemId, position }),
+      [send],
+    ),
+    lastModeRejection,
+    modeRejectionSeq,
   };
 }
 

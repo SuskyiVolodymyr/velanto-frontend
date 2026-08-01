@@ -5,6 +5,13 @@ export interface SegmentedControlOption<T extends string> {
   value: T;
   label: string;
   disabled?: boolean;
+  /**
+   * Overrides this option's accessible name (defaults to `label`). Needed when
+   * the same control repeats many times on a page (e.g. one per row) and each
+   * instance's options need a disambiguating name of their own, distinct from
+   * the short visible label.
+   */
+  ariaLabel?: string;
 }
 
 export interface SegmentedControlProps<T extends string> {
@@ -81,7 +88,10 @@ export function SegmentedControl<T extends string>({
       aria-label={ariaLabel}
       aria-describedby={ariaDescribedby}
       aria-invalid={ariaInvalid}
-      className={cn("flex gap-2", className)}
+      className={cn(
+        "inline-flex self-start gap-1 rounded-control border border-white/[0.08] bg-background p-[3px]",
+        className,
+      )}
     >
       {options.map((option, index) => {
         const selected = option.value === value;
@@ -94,17 +104,18 @@ export function SegmentedControl<T extends string>({
             type="button"
             role="radio"
             aria-checked={selected}
+            aria-label={option.ariaLabel}
             disabled={option.disabled}
             tabIndex={selected ? 0 : -1}
             onClick={() => onChange(option.value)}
             onKeyDown={(event) => handleKeyDown(event, index)}
             className={cn(
-              "flex-1 rounded-[12px] border px-4 py-3 text-sm font-semibold transition-colors",
+              "h-[34px] rounded-[9px] px-4 text-[13px] font-semibold transition-colors",
               "outline-none focus-visible:ring-2 focus-visible:ring-acc",
               "disabled:opacity-45 disabled:pointer-events-none",
               selected
-                ? "border-acc/40 bg-acc/5 text-foreground"
-                : "border-border bg-white/[0.02] text-foreground-secondary",
+                ? "bg-white/10 text-foreground"
+                : "bg-transparent text-white/50 hover:text-foreground-secondary",
             )}
           >
             {option.label}

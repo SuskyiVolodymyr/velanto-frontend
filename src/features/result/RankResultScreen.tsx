@@ -1,12 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
-import { cn } from "@/src/shared/lib/cn";
 import { Text } from "@/src/shared/components/Text";
-import { SharedResultNote } from "@/src/features/result/SharedResultNote";
-import { ResultActions } from "@/src/features/result/ResultActions";
-import { PodiumTable } from "@/src/features/result/PodiumTable";
+import { RecapHeading } from "@/src/features/result/RecapHeading";
 import { RankedList } from "@/src/shared/components/RankedList";
 import { roundHeading } from "@/src/shared/lib/round-heading";
 import type { Pack } from "@/src/shared/types/pack";
@@ -37,31 +33,18 @@ export function RankResultScreen({
   shared: boolean;
 }) {
   const t = useTranslations("result");
-  const podium = results.podium ?? [];
 
+  // The podium (pack-wide ranking) is no longer rendered here — it's a
+  // right-aside card in the mock, not part of the recap column. ResultScreen
+  // renders it directly, keyed to the same `results.format`.
   return (
-    <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
-      <Text variant="tertiary" className="mb-2 text-xs uppercase tracking-wide">
-        {t("label")}
-      </Text>
-      <Text as="h1" variant="title" className="mb-2 text-3xl">
-        {pack.title}
-      </Text>
-      <Text variant="secondary" className="mb-8">
-        {t("playsRecorded", { count: results.totalPlays })}
-      </Text>
-
-      {shared && <SharedResultNote />}
-
-      <ResultActions
-        packId={pack.id}
-        status={pack.status}
-        picks={ownPicks}
-        shared={shared}
-        className="mb-6 justify-end"
-      />
-
-      <div className="mb-10 flex flex-col divide-y divide-border">
+    <div className="flex-1 pb-10">
+      <section className="flex min-w-0 flex-col gap-[13px]">
+        <RecapHeading shared={shared} />
+        {/* Cards, so a gap between them — the hairline `divide-y` separators
+            were carrying the visual break that each card's own border now
+            does. */}
+        <div className="flex flex-col gap-[10px]">
         {results.rounds.map((round) => {
           const roundPicks =
             ownPicks?.filter((pick) => pick.roundIndex === round.roundIndex) ??
@@ -98,37 +81,47 @@ export function RankResultScreen({
 
           if (sortedItems.length === 0) return null;
 
+          // T9: a ranked list has no single "winner" the way an elimination
+          // or versus round does — the closest analogue is the item that
+          // landed #1 this round, so that's what the verdict line names.
+          const firstPlace = sortedItems[0];
+
           return (
-            <div key={round.roundIndex} className="py-4 first:pt-0 last:pb-0">
-              <Text
-                variant="tertiary"
-                className="mb-2 text-xs uppercase tracking-wide"
-              >
-                {roundHeading(pack, round.roundIndex)}
-              </Text>
-              <RankedList
-                rows={sortedItems.map((item) => ({
-                  id: item.itemId,
-                  title: item.itemTitle,
-                  drawIndex: pickFor(item)?.drawIndex,
-                }))}
-              />
-            </div>
+            <RankedList
+              key={round.roundIndex}
+              // The round's name and verdict belong INSIDE the card, the way
+              // an elimination round card carries its own — outside it they
+              // read as loose text above an unrelated box.
+              header={
+                <div className="flex flex-col gap-[4px] px-1 pb-1">
+                  <Text
+                    variant="tertiary"
+                    className="text-xs uppercase tracking-wide"
+                  >
+                    {roundHeading(pack, round.roundIndex)}
+                  </Text>
+                  {playedThisRound && firstPlace && (
+                    <Text className="text-[11px] font-semibold uppercase tracking-wide text-success">
+                      {t(
+                        shared
+                          ? "verdictRankedFirstShared"
+                          : "verdictRankedFirst",
+                        { name: firstPlace.itemTitle },
+                      )}
+                    </Text>
+                  )}
+                </div>
+              }
+              rows={sortedItems.map((item) => ({
+                id: item.itemId,
+                title: item.itemTitle,
+                drawIndex: pickFor(item)?.drawIndex,
+              }))}
+            />
           );
         })}
-      </div>
-
-      {podium.length > 0 && (
-        <section className="mb-8">
-          <Text as="h2" variant="title" className="mb-1 text-lg">
-            {t("podiumHeading")}
-          </Text>
-          <Text variant="secondary" className="mb-4 text-sm">
-            {t("podiumSubtitle")}
-          </Text>
-          <PodiumTable items={podium} />
-        </section>
-      )}
+        </div>
+      </section>
     </div>
   );
 }

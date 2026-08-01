@@ -108,15 +108,17 @@ describe("EliminationResultScreen", () => {
     expect(round.getByText("Silhouette")).toBeInTheDocument();
   });
 
-  it("keeps the elements in the order they were drawn", () => {
+  // T9: the picked item moved out of the shared list into its own verdict
+  // block, and the OTHER items became pill chips — order is now asserted on
+  // those pills (the picked one is excluded, checked separately below).
+  it("keeps the round's other elements in draw order as pill chips", () => {
     renderScreen();
 
     const round = within(screen.getByRole("group", { name: /Round 1/ }));
-    expect(round.getAllByRole("listitem").map((li) => li.textContent)).toEqual([
-      expect.stringContaining("Guren no Yumiya"),
-      expect.stringContaining("Redo"),
-      expect.stringContaining("Silhouette"),
-    ]);
+    const pills = round
+      .getAllByText(/Guren no Yumiya|Silhouette/)
+      .map((el) => el.textContent);
+    expect(pills).toEqual(["Guren no Yumiya", "Silhouette"]);
   });
 
   it("marks the save_one pick as saved", () => {
@@ -141,13 +143,34 @@ describe("EliminationResultScreen", () => {
 
   // Colour alone can't carry the pick — it's the only difference between the
   // two formats' screens, and a third of the way through a list of look-alike
-  // titles is exactly where it matters.
-  it("names the pick in text as well as colour", () => {
+  // titles is exactly where it matters. T9: the "Your pick" tag became a
+  // colored verdict label ("You saved"/"You sacrificed").
+  it("names the pick's verdict in text as well as colour", () => {
     renderScreen();
 
     expect(
-      within(screen.getByTestId("picked")).getByText("Your pick"),
+      within(screen.getByTestId("picked")).getByText("You saved"),
     ).toBeInTheDocument();
+  });
+
+  it("labels the round's other elements as Lost for save_one", () => {
+    renderScreen();
+
+    const round = within(screen.getByRole("group", { name: /Round 1/ }));
+    expect(round.getByText("Lost")).toBeInTheDocument();
+  });
+
+  it("labels the round's other elements as Survived for sacrifice_one", () => {
+    renderScreen({
+      pack: { ...PACK, format: "sacrifice_one" },
+      results: { ...RESULTS, format: "sacrifice_one" },
+    });
+
+    expect(
+      within(screen.getByTestId("picked")).getByText("You sacrificed"),
+    ).toBeInTheDocument();
+    const round = within(screen.getByRole("group", { name: /Round 1/ }));
+    expect(round.getByText("Survived")).toBeInTheDocument();
   });
 
   it("shows no crowd percentages beside the round's elements", () => {
@@ -160,25 +183,20 @@ describe("EliminationResultScreen", () => {
     expect(within(round).queryByText(/%/)).toBeNull();
   });
 
-  it("ranks the pack's items in the top table", () => {
-    renderScreen();
-
-    const table = screen.getByRole("table");
-    expect(within(table).getByText("Redo")).toBeInTheDocument();
-    expect(within(table).getByText("75%")).toBeInTheDocument();
-  });
+  // The pack-wide ranking moved to ResultScreen's own aside board (see
+  // ResultScreen.test.tsx) — it's no longer this component's job to render.
 
   // Plays recorded before #336 name the winner and nothing else. There is no
-  // slate to show around it and no backfill possible, so the round shows the
-  // one item it knows about rather than an empty state.
-  it("shows a winner-only play as a single marked element", () => {
+  // slate to show around it and no backfill possible, so the round shows just
+  // the verdict block and no "Lost" pills at all.
+  it("shows a winner-only play as a single marked element, with no Lost pills", () => {
     renderScreen({
       picks: [{ roundIndex: 0, groupId: "g1", itemId: "2" }],
     });
 
     const round = within(screen.getByRole("group", { name: /Round 1/ }));
-    expect(round.getAllByRole("listitem")).toHaveLength(1);
     expect(screen.getByTestId("picked")).toHaveTextContent("Redo");
+    expect(round.queryByText("Lost")).not.toBeInTheDocument();
   });
 
   it("falls back to a note when the play recorded no rounds at all", () => {

@@ -4,6 +4,7 @@ import { describe, it, expect, vi } from "vitest";
 import { PackDetailScreen } from "./PackDetailScreen";
 import type { Pack } from "@/src/shared/types/pack";
 import type { PackResults } from "@/src/shared/types/play-results";
+import type { AvailableMode } from "@/src/features/friends-rooms/room-types";
 
 vi.mock("@/src/features/pack/VoteButtons", () => ({
   VoteButtons: () => <div>VoteButtons</div>,
@@ -19,14 +20,6 @@ vi.mock("@/src/features/pack/PackCreatorCard", () => ({
 vi.mock("@/src/features/pack/PackPlayButton", () => ({
   PackPlayButton: ({ packId }: { packId: string }) => (
     <a href={`/packs/${packId}/play`}>Play now</a>
-  ),
-}));
-// The friends-room entry is its own client island (auth-gated create/join, own
-// tests). Stub it to echo the pack id so we can assert the screen offers it in
-// place of Play for a save_one_friends pack.
-vi.mock("@/src/features/friends-rooms/FriendsRoomEntry", () => ({
-  FriendsRoomEntry: ({ packId }: { packId: string }) => (
-    <div>{`FriendsRoomEntry:${packId}`}</div>
   ),
 }));
 // The banner's author line is an auth-gated client island (own tests); stub it
@@ -51,6 +44,30 @@ vi.mock("@/src/features/pack/PackOwnerActions", () => ({
 // this screen test doesn't need an AuthProvider.
 vi.mock("@/src/features/pack/PackOwnerStatusBadge", () => ({
   PackOwnerStatusBadge: () => null,
+}));
+vi.mock("@/src/features/pack/PackRejectionReason", () => ({
+  PackRejectionReason: () => null,
+}));
+// Same treatment, same reason: an author-gated island whose useAuth() throws
+// outside an AuthProvider. Its own gating is covered in its own test.
+vi.mock("@/src/features/pack/PackChangesRequestedBanner", () => ({
+  PackChangesRequestedBanner: () => null,
+}));
+// FriendsRoomEntry is an auth-gated client island (own tests in
+// FriendsRoomEntry.test.tsx — useAuth() throws outside an AuthProvider).
+// Stub it so this screen's own wiring assertion (does it render, with the
+// right packId) stays independent of the auth context.
+vi.mock("@/src/features/friends-rooms/FriendsRoomEntry", () => ({
+  FriendsRoomEntry: ({ packId }: { packId: string }) => (
+    <button type="button">{`Create room (${packId})`}</button>
+  ),
+}));
+// ReportPackDialog is another auth-gated client island (own tests in
+// ReportPackDialog.test.tsx). Stub it the same way.
+vi.mock("@/src/features/pack/ReportPackDialog", () => ({
+  ReportPackDialog: ({ packId }: { packId: string }) => (
+    <button type="button">{`Report (${packId})`}</button>
+  ),
 }));
 
 const BASE_PACK: Pack = {
@@ -92,9 +109,43 @@ const RESULTS: PackResults = {
   rounds: [],
 };
 
+const AVAILABLE_MODES: AvailableMode[] = [
+  { mode: "claim", available: true, maxPlayers: 4 },
+  {
+    mode: "guess_who",
+    available: false,
+    maxPlayers: 0,
+    reason: "Needs at least 5 playable rounds",
+  },
+];
+
 describe("PackDetailScreen", () => {
+  // ROOMS_DORMANT flipped to false in Task 31 — this locks in "the room
+  // entry renders now that rooms are live" as an explicit, checked contract
+  // (FriendsRoomEntry's own auth-gating/create/join behavior has its own
+  // tests in FriendsRoomEntry.test.tsx; this screen only needs to prove it
+  // mounts the component at all, wired to the right pack).
+  it("renders the room entry now that rooms are live", () => {
+    render(
+      <PackDetailScreen
+        pack={BASE_PACK}
+        results={RESULTS}
+        availableModes={AVAILABLE_MODES}
+      />,
+    );
+    expect(
+      screen.getByRole("button", { name: /create room/i }),
+    ).toBeInTheDocument();
+  });
+
   it("renders the pack's title, description, and a Play link", () => {
-    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
+    render(
+      <PackDetailScreen
+        pack={BASE_PACK}
+        results={RESULTS}
+        availableModes={AVAILABLE_MODES}
+      />,
+    );
     expect(screen.getByText("Best Anime Openings")).toBeInTheDocument();
     expect(
       screen.getByText("Pick your favorite each round."),
@@ -106,7 +157,13 @@ describe("PackDetailScreen", () => {
   });
 
   it("lists each round as a chip, falling back to the group name when unnamed", () => {
-    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
+    render(
+      <PackDetailScreen
+        pack={BASE_PACK}
+        results={RESULTS}
+        availableModes={AVAILABLE_MODES}
+      />,
+    );
     expect(screen.getByText("2016")).toBeInTheDocument();
     expect(screen.getByText("1 item")).toBeInTheDocument();
     // The full item titles are no longer listed on the pack page.
@@ -124,7 +181,13 @@ describe("PackDetailScreen", () => {
         },
       ],
     };
-    render(<PackDetailScreen pack={named} results={RESULTS} />);
+    render(
+      <PackDetailScreen
+        pack={named}
+        results={RESULTS}
+        availableModes={AVAILABLE_MODES}
+      />,
+    );
     expect(screen.getByText("Semifinals")).toBeInTheDocument();
     // The round name replaces the group-name fallback.
     expect(screen.queryByText("2016")).not.toBeInTheDocument();
@@ -151,7 +214,13 @@ describe("PackDetailScreen", () => {
         },
       ],
     };
-    render(<PackDetailScreen pack={nxnPack} results={RESULTS} />);
+    render(
+      <PackDetailScreen
+        pack={nxnPack}
+        results={RESULTS}
+        availableModes={AVAILABLE_MODES}
+      />,
+    );
     // A multi-slot (versus) round with no name falls back to "Round N".
     expect(screen.getByText("Round 1")).toBeInTheDocument();
     // The raw group/category names and item titles are not listed.
@@ -178,6 +247,7 @@ describe("PackDetailScreen", () => {
             },
           ],
         }}
+        availableModes={AVAILABLE_MODES}
       />,
     );
 
@@ -204,6 +274,7 @@ describe("PackDetailScreen", () => {
             },
           ],
         }}
+        availableModes={AVAILABLE_MODES}
       />,
     );
 
@@ -234,11 +305,15 @@ describe("PackDetailScreen", () => {
             },
           ],
         }}
+        availableModes={AVAILABLE_MODES}
       />,
     );
 
+    // PodiumTable is shared with the result screen's aside, where it was
+    // rebuilt from a six-column <table> into the mock's flat list — it is a
+    // real <ul> now, on this page too.
     expect(
-      screen.getByRole("table", { name: "Podium finishes" }),
+      screen.getByRole("list", { name: "Podium finishes" }),
     ).toBeInTheDocument();
     expect(screen.queryByText("Player stats")).not.toBeInTheDocument();
   });
@@ -254,6 +329,7 @@ describe("PackDetailScreen", () => {
           rounds: [],
           podium: [],
         }}
+        availableModes={AVAILABLE_MODES}
       />,
     );
 
@@ -276,6 +352,7 @@ describe("PackDetailScreen", () => {
           ],
         }}
         results={RESULTS}
+        availableModes={AVAILABLE_MODES}
       />,
     );
 
@@ -283,12 +360,24 @@ describe("PackDetailScreen", () => {
   });
 
   it("wires the owner/moderator actions to this pack", () => {
-    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
+    render(
+      <PackDetailScreen
+        pack={BASE_PACK}
+        results={RESULTS}
+        availableModes={AVAILABLE_MODES}
+      />,
+    );
     expect(screen.getByText("PackOwnerActions:p1:u1")).toBeInTheDocument();
   });
 
   it("shows a Share button for an approved pack", () => {
-    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
+    render(
+      <PackDetailScreen
+        pack={BASE_PACK}
+        results={RESULTS}
+        availableModes={AVAILABLE_MODES}
+      />,
+    );
     expect(screen.getByRole("button", { name: "Share" })).toBeInTheDocument();
   });
 
@@ -297,6 +386,7 @@ describe("PackDetailScreen", () => {
       <PackDetailScreen
         pack={{ ...BASE_PACK, status: "pending" }}
         results={RESULTS}
+        availableModes={AVAILABLE_MODES}
       />,
     );
     expect(
@@ -304,60 +394,15 @@ describe("PackDetailScreen", () => {
     ).not.toBeInTheDocument();
   });
 
-  // save_one_friends (velanto-backend#258) has no single-player /play path, so
-  // an approved one offers the room entry points (Create room / Join by code via
-  // FriendsRoomEntry) instead of the dead-end Play button.
-  it("offers the friends-room entry instead of Play for an approved save_one_friends pack", () => {
+  it("shows the Play button for a normal pack", () => {
     render(
       <PackDetailScreen
-        pack={{ ...BASE_PACK, format: "save_one_friends" }}
+        pack={BASE_PACK}
         results={RESULTS}
+        availableModes={AVAILABLE_MODES}
       />,
     );
-
-    expect(
-      screen.queryByRole("link", { name: "Play now" }),
-    ).not.toBeInTheDocument();
-    expect(screen.getByText("FriendsRoomEntry:p1")).toBeInTheDocument();
-    // The rest of the page still renders: the pack exists and is public.
-    expect(screen.getByText("Best Anime Openings")).toBeInTheDocument();
-  });
-
-  it("does not offer the friends-room entry until the pack is approved", () => {
-    render(
-      <PackDetailScreen
-        pack={{ ...BASE_PACK, format: "save_one_friends", status: "pending" }}
-        results={RESULTS}
-      />,
-    );
-
-    expect(screen.queryByText("FriendsRoomEntry:p1")).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("link", { name: "Play now" }),
-    ).not.toBeInTheDocument();
-  });
-
-  it("keeps the plain Play button (and no friends-room entry) for a normal pack", () => {
-    render(<PackDetailScreen pack={BASE_PACK} results={RESULTS} />);
 
     expect(screen.getByRole("link", { name: "Play now" })).toBeInTheDocument();
-    expect(screen.queryByText("FriendsRoomEntry:p1")).not.toBeInTheDocument();
-  });
-
-  // The format label must resolve from the `formats` namespace rather than
-  // rendering the literal key path "formats.save_one_friends" (and logging a
-  // console.error per render, which reaches Sentry).
-  it("labels a save_one_friends pack from the catalog, not as a raw key path", () => {
-    render(
-      <PackDetailScreen
-        pack={{ ...BASE_PACK, format: "save_one_friends" }}
-        results={RESULTS}
-      />,
-    );
-
-    expect(
-      screen.queryByText(/formats\.save_one_friends/),
-    ).not.toBeInTheDocument();
-    expect(screen.getAllByText("Save One (Friends)").length).toBeGreaterThan(0);
   });
 });

@@ -18,6 +18,12 @@ export interface CreateReportInput {
 export interface ListReportsFilters {
   status?: ReportStatus;
   type?: ReportType;
+  /**
+   * Every report filed against one target — the account or pack id, NOT a
+   * report id. Spans types: a pack's id matches both its `pack` reports and
+   * the `round` reports filed against its rounds.
+   */
+  targetId?: string;
   page?: number;
   limit?: number;
 }
@@ -26,6 +32,7 @@ function buildListQuery(filters: ListReportsFilters): string {
   const params = new URLSearchParams();
   if (filters.status) params.set("status", filters.status);
   if (filters.type) params.set("type", filters.type);
+  if (filters.targetId) params.set("targetId", filters.targetId);
   if (filters.page !== undefined) params.set("page", String(filters.page));
   if (filters.limit !== undefined) params.set("limit", String(filters.limit));
   const query = params.toString();

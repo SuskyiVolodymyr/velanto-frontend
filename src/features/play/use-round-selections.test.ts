@@ -56,4 +56,29 @@ describe("useRoundSelections", () => {
     // dependency on freshly-built arrays would.
     expect(result.current).toBe(first);
   });
+
+  it("does not draw while the seed is still null (unresolved)", async () => {
+    const { result, rerender } = renderHook(
+      ({ seed }) => useRoundSelections(GROUPS, ROUNDS, seed),
+      { initialProps: { seed: null as number | null } },
+    );
+
+    // Waiting on a seed — the draw must not run against Math.random meanwhile.
+    expect(result.current).toBeNull();
+
+    rerender({ seed: 123 });
+    await waitFor(() => expect(result.current).not.toBeNull());
+    expect(result.current![0].slots[0].items).toHaveLength(2);
+  });
+
+  it("draws deterministically for a given seed (resume replay)", async () => {
+    const a = renderHook(() => useRoundSelections(GROUPS, ROUNDS, 42));
+    const b = renderHook(() => useRoundSelections(GROUPS, ROUNDS, 42));
+    await waitFor(() => expect(a.result.current).not.toBeNull());
+    await waitFor(() => expect(b.result.current).not.toBeNull());
+
+    const ids = (r: typeof a.result.current) =>
+      r![0].slots[0].items.map((i) => i.id);
+    expect(ids(a.result.current)).toEqual(ids(b.result.current));
+  });
 });

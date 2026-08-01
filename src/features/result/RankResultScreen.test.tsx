@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach, vi } from "vitest";
-import { screen, within } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { RankResultScreen } from "./RankResultScreen";
 import type { Pack } from "@/src/shared/types/pack";
@@ -163,9 +163,15 @@ describe("RankResultScreen", () => {
       />,
     );
 
+    // Scoped to the RankedList's own rows: T9 added a "You ranked #1: {name}"
+    // verdict line above the list, whose text also contains the item name and
+    // would otherwise double-match the same getAllByText query.
     expect(
-      screen.getAllByText(/Kaikai Kitan|Redo/).map((el) => el.textContent),
-    ).toEqual(["Redo", "Kaikai Kitan"]);
+      screen.getAllByRole("listitem").map((li) => li.textContent),
+    ).toEqual([
+      expect.stringContaining("Redo"),
+      expect.stringContaining("Kaikai Kitan"),
+    ]);
   });
 
   it("shows where each item came in the draw", () => {
@@ -211,56 +217,8 @@ describe("RankResultScreen", () => {
     expect(screen.queryByText(/Shown #/)).toBeNull();
   });
 
-  it("ranks the pack's podium finishes by first, second and third combined", () => {
-    render(
-      <RankResultScreen
-        pack={RANK_PACK}
-        results={{
-          ...RANK_RESULTS,
-          podium: [
-            {
-              itemId: "i1",
-              itemTitle: "Kaikai Kitan",
-              first: 2,
-              second: 1,
-              third: 0,
-              total: 3,
-            },
-            {
-              itemId: "i2",
-              itemTitle: "Redo",
-              first: 0,
-              second: 1,
-              third: 1,
-              total: 2,
-            },
-          ],
-        }}
-        ownPicks={null}
-        shared={false}
-      />,
-    );
-
-    const table = screen.getByRole("table");
-    const rows = within(table).getAllByRole("row").slice(1); // drop the header
-    expect(rows[0]).toHaveTextContent("Kaikai Kitan");
-    expect(rows[0]).toHaveAttribute("data-rank", "1");
-    expect(rows[1]).toHaveTextContent("Redo");
-    expect(rows[1]).toHaveAttribute("data-rank", "2");
-  });
-
-  it("shows no podium table before anyone has reached one", () => {
-    render(
-      <RankResultScreen
-        pack={RANK_PACK}
-        results={{ ...RANK_RESULTS, podium: [] }}
-        ownPicks={null}
-        shared={false}
-      />,
-    );
-
-    expect(screen.queryByRole("table")).toBeNull();
-  });
+  // The podium (pack-wide ranking) moved to ResultScreen's own aside board
+  // and is PodiumTable's own behavior now — see PodiumTable.test.tsx.
 
   it("hides items that weren't in the player's own play for a round they played", () => {
     render(
@@ -332,12 +290,21 @@ describe("RankResultScreen", () => {
       />,
     );
 
-    expect(screen.getByText(/0 plays recorded/)).toBeInTheDocument();
+    // "N plays recorded" now lives in ResultHero, rendered by ResultScreen
+    // (T11) — not this screen. Nothing was ever ranked, so there is no round
+    // to show and no podium; the meaningful assertion left at this level is
+    // that it renders without crashing and without a podium table.
+    expect(screen.queryByRole("table")).toBeNull();
   });
 
-  // The approved/non-approved Share-button rule is owned by ResultActions.test.
+  // The approved/non-approved Share-button rule is owned by
+  // ResultAgainPanel.test (T12 moved the Share button out of ResultActions).
 
-  it("shows the shared-result note when opened via a ?p= link", async () => {
+  it("recaps the sharer's picks the same as it would the viewer's own", () => {
+    // The shared-result note itself now renders in ResultScreen (T11), not
+    // here — `shared` has no visible effect on RankResultScreen's own markup
+    // (see the eslint-disabled unused prop above), it recaps whatever picks
+    // it's given regardless of whose they are.
     render(
       <RankResultScreen
         pack={RANK_PACK}
@@ -346,9 +313,6 @@ describe("RankResultScreen", () => {
         shared
       />,
     );
-    expect(
-      await screen.findByText(/viewing a shared result/i),
-    ).toBeInTheDocument();
     expect(screen.getByText("Kaikai Kitan")).toBeInTheDocument();
   });
 });

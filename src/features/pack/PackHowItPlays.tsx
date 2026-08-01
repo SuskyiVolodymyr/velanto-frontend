@@ -14,7 +14,7 @@ export function PackHowItPlays({ format }: { format: PackFormat }) {
   // that renders this unconditionally, take the whole public pack page down with
   // a 500. Check the shape at the point of use rather than trusting the catalog:
   // this covers a plain catalog typo or a format from a backend deployed ahead
-  // of this build (every shipped format, save_one_friends included, has steps).
+  // of this build (every shipped format has steps).
   const raw: unknown = t.raw(`howItPlays.${format}`);
   if (!Array.isArray(raw)) return null;
   const steps = raw as Step[];

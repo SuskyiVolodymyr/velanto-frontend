@@ -9,9 +9,11 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { messageFromError } from "@/src/shared/lib/messageFromError";
+import { Lock } from "lucide-react";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { PasswordField } from "@/src/shared/components/form/PasswordField";
+import { FormBanner } from "@/src/shared/components/form/FormBanner";
 import { cn } from "@/src/shared/lib/cn";
 import { sanitizeNextPath } from "@/src/shared/lib/safe-redirect";
 import {
@@ -221,7 +223,7 @@ export function AuthForm() {
   return (
     <div className="w-full max-w-[400px]">
       <div
-        className="flex bg-white/[0.04] border border-border rounded-xl p-1 mb-6"
+        className="mb-6 flex gap-1 rounded-[13px] border border-white/[0.08] bg-white/[0.04] p-1"
         role="tablist"
       >
         <button
@@ -230,7 +232,7 @@ export function AuthForm() {
           aria-selected={!isRegister}
           onClick={() => switchMode("login")}
           className={cn(
-            "flex-1 h-[38px] rounded-[9px] text-sm font-semibold transition-colors duration-200",
+            "flex-1 h-[38px] rounded-[9px] text-[13.5px] font-[650] transition-colors duration-200",
             !isRegister
               ? "bg-white/[0.12] text-foreground"
               : "text-foreground-secondary",
@@ -244,7 +246,7 @@ export function AuthForm() {
           aria-selected={isRegister}
           onClick={() => switchMode("register")}
           className={cn(
-            "flex-1 h-[38px] rounded-[9px] text-sm font-semibold transition-colors duration-200",
+            "flex-1 h-[38px] rounded-[9px] text-[13.5px] font-[650] transition-colors duration-200",
             isRegister
               ? "bg-white/[0.12] text-foreground"
               : "text-foreground-secondary",
@@ -254,7 +256,7 @@ export function AuthForm() {
         </button>
       </div>
 
-      <Text as="h1" variant="title" className="text-2xl text-center mb-1.5">
+      <Text as="h1" variant="title" className="mb-1.5 text-center text-[23px]">
         {isRegister ? t("headingRegister") : t("headingLogin")}
       </Text>
       <Text variant="secondary" className="text-center text-sm mb-6">
@@ -287,6 +289,8 @@ export function AuthForm() {
                 name="password"
                 label={t("password")}
                 srOnlyLabel
+                icon={<Lock strokeWidth={1.8} aria-hidden />}
+                surface="card"
                 placeholder={t("password")}
                 autoComplete="current-password"
                 showLabel={t("showPassword")}
@@ -310,6 +314,8 @@ export function AuthForm() {
                 name="password"
                 label={t("password")}
                 srOnlyLabel
+                icon={<Lock strokeWidth={1.8} aria-hidden />}
+                surface="card"
                 placeholder={t("password")}
                 autoComplete="new-password"
                 showLabel={t("showPassword")}
@@ -332,9 +338,9 @@ export function AuthForm() {
           )}
 
           {errors.root?.message && (
-            <Text variant="danger" role="alert" className="text-sm">
+            <FormBanner tone="danger" role="alert">
               {errors.root.message}
-            </Text>
+            </FormBanner>
           )}
 
           <Button

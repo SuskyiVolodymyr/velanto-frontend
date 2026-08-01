@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
+import { SwatchPicker } from "@/src/shared/components/SwatchPicker";
 import { useHydratedValue } from "@/src/shared/hooks/useHydratedValue";
 import {
   ACCENTS,
@@ -39,31 +39,20 @@ export function AppearanceSection() {
       >
         {t("appearanceHeading")}
       </Text>
-      <Card className="flex items-center justify-between gap-4 hover:translate-y-0 hover:shadow-none">
+      <Card className="flex items-center justify-between gap-4">
         <div>
           <Text className="font-semibold">{t("accentColor")}</Text>
           <Text variant="secondary" className="text-sm">
             {t("accentColorHint")}
           </Text>
         </div>
-        <div className="flex gap-2">
-          {ACCENTS.map((color) => (
-            <button
-              key={color}
-              type="button"
-              aria-label={t("accentColorSwatch", { color })}
-              aria-pressed={accent === color}
-              onClick={() => handleSelect(color)}
-              className={cn(
-                "h-7 w-7 rounded-[9px] border-2 transition-colors",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
-                "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                accent === color ? "border-white" : "border-white/15",
-              )}
-              style={{ backgroundColor: color }}
-            />
-          ))}
-        </div>
+        <SwatchPicker
+          swatches={ACCENTS}
+          value={accent}
+          onChange={handleSelect}
+          getLabel={(color) => t("accentColorSwatch", { color })}
+          swatchStyle="solid"
+        />
       </Card>
     </section>
   );

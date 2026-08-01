@@ -1,13 +1,29 @@
 import { cn } from "@/src/shared/lib/cn";
 import { mediaUrl } from "@/src/shared/lib/media-url";
+import { avatarGradient } from "@/src/shared/lib/avatar-gradient";
 import { AvatarImage } from "./AvatarImage";
+
+/** Canonical UI-kit v1 avatar sizes (diameter / initial font): xs 20, sm 26,
+ * md 34, lg 48. Opt in via the `size` prop; callers can still hand-size via
+ * `className` when they need a one-off dimension. */
+export type AvatarSize = "xs" | "sm" | "md" | "lg";
+
+export const AVATAR_SIZE_CLASS: Record<AvatarSize, string> = {
+  xs: "h-5 w-5 text-[9px]",
+  sm: "h-[26px] w-[26px] text-[10px]",
+  md: "h-[34px] w-[34px] text-xs",
+  lg: "h-12 w-12 text-base",
+};
 
 /**
  * User avatar. Renders the user's uploaded photo (resolved from its storage
  * `avatarKey` via {@link mediaUrl}) when present, otherwise a tile with the
- * first letter of the username. Size, shape, border and colours are supplied by
- * the caller via `className`; the base only centres the initial / covers the
- * image.
+ * first letter of the username. Pass `size` for a canonical circular tile (it
+ * owns the dimensions), or omit `size` and size/shape it yourself via
+ * `className`. Don't combine `size` with a dimensional `className`: `cn()` here
+ * is a plain join, so conflicting `h/w/rounded` utilities resolve by stylesheet
+ * order, not by `className` winning. `className` is still the place for
+ * non-dimensional extras (a background tone, a ring).
  *
  * Decorative by design (`aria-hidden`, empty `alt`): every call site renders it
  * next to the user's @handle, which is the accessible identity — announcing the
@@ -16,14 +32,32 @@ import { AvatarImage } from "./AvatarImage";
 export function UserAvatar({
   username,
   avatarKey,
+  size,
+  tone = false,
   className,
 }: {
   username: string;
   /** Storage key of the avatar image; null/absent falls back to the initial. */
   avatarKey?: string | null;
+  /** Canonical circular size; omit to size via `className`. */
+  size?: AvatarSize;
+  /**
+   * Paint the initial fallback on a colour derived from the username instead of
+   * leaving it to the caller's background. Deterministic, so the same person
+   * keeps the same tile down a comment thread — which is the only thing that
+   * makes a wall of initials scannable. No effect when an avatar image exists.
+   */
+  tone?: boolean;
   className?: string;
 }) {
   const initial = username.trim().slice(0, 1).toUpperCase() || "?";
+  // `size` owns the circle + fixed flex basis so the tile never deforms or
+  // shrinks in a flex row; a `className` adds non-dimensional extras only (see
+  // the doc comment — it must not set a conflicting h/w under plain-join cn).
+  const shape = size
+    ? cn("flex-none rounded-full", AVATAR_SIZE_CLASS[size], className)
+    : className;
+
   if (avatarKey) {
     // `key` on the resolved URL so a changed avatar resets AvatarImage's
     // load-error state (a fresh key gets a fresh attempt).
@@ -32,7 +66,7 @@ export function UserAvatar({
         key={avatarKey}
         src={mediaUrl(avatarKey)}
         initial={initial}
-        className={className}
+        className={shape}
       />
     );
   }
@@ -40,9 +74,13 @@ export function UserAvatar({
   return (
     <span
       aria-hidden
+      style={tone ? { background: avatarGradient(username) } : undefined}
       className={cn(
-        "inline-flex items-center justify-center font-semibold",
-        className,
+        "inline-flex items-center justify-center font-bold",
+        // The toned tile is a saturated gradient, so the initial has to go dark
+        // to stay legible on it.
+        tone && "text-[#0a0b0e]",
+        shape,
       )}
     >
       {initial}

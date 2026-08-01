@@ -19,7 +19,7 @@ export function RoundChips({ pack }: { pack: Pack }) {
   const resolved = resolveRoundDraws(groups, rounds);
 
   return (
-    <div className="flex flex-wrap gap-2.5">
+    <div className="grid grid-cols-[repeat(auto-fill,minmax(214px,1fr))] gap-2.5">
       {rounds.map((round, index) => {
         const drawn =
           resolved[index]?.slots.reduce(
@@ -38,12 +38,19 @@ export function RoundChips({ pack }: { pack: Pack }) {
         return (
           <div
             key={round.id}
-            className="flex min-w-[86px] flex-col gap-1 rounded-[11px] border border-border bg-white/[0.025] px-3.5 py-2.5"
+            className="flex items-center gap-3 rounded-[14px] border border-border bg-white/[0.02] px-3.5 py-3"
           >
-            <span className="text-[14.5px] font-semibold">{label}</span>
-            <span className="text-[11px] text-foreground-tertiary">
-              {t("itemsCount", { count: drawn })}
+            <span className="flex h-[26px] w-[26px] flex-none items-center justify-center rounded-[8px] bg-white/[0.06] text-[12.5px] font-semibold text-foreground-secondary">
+              {index + 1}
             </span>
+            <div className="flex min-w-0 flex-col gap-0.5">
+              <span className="truncate text-[14.5px] font-semibold">
+                {label}
+              </span>
+              <span className="text-[11px] text-foreground-tertiary">
+                {t("itemsCount", { count: drawn })}
+              </span>
+            </div>
           </div>
         );
       })}

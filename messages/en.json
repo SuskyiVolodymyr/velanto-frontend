@@ -73,7 +73,84 @@
     "deletePack": "Delete pack",
     "packDeleted": "Pack deleted",
     "deletePackError": "Couldn't delete this pack. Try again.",
-    "banUserError": "Couldn't ban this user. Try again."
+    "banUserError": "Couldn't ban this user. Try again.",
+    "contentsSearchAria": "Search pack items",
+    "contentsSearchPlaceholder": "Search items…",
+    "contentsFilterText": "Text",
+    "contentsFilterYoutube": "YouTube",
+    "contentsFilterImage": "Image",
+    "contentsItemType": {
+      "text": "Text item",
+      "youtube": "YouTube item",
+      "image": "Image item"
+    },
+    "contentsDrawnRandomly": "Drawn randomly · {count, plural, one {# item} other {# items}} in this pool",
+    "contentsPoolEmpty": "This pool has no items yet.",
+    "contentsEmpty": "No pack contents to show.",
+    "contentsNoMatches": "No items match your search.",
+    "packNotFound": "This pack doesn't exist.",
+    "packCrumb": "Pack review",
+    "reportCrumb": "Report review",
+    "queueBack": "Queue",
+    "packSubmittedBy": "Submitted by {author} on {date}",
+    "packSummarySentence": "{pools, plural, one {# pool} other {# pools}} · {rounds, plural, one {# round} other {# rounds}}",
+    "contentsHeading": "Pack contents",
+    "roundMappingHeading": "Rounds",
+    "roundLabelFallback": "Round {index}",
+    "roundRandomPool": "Random pool",
+    "contentsRandomPoolSlot": "This slot draws from a randomly chosen pool each play — which pool it used isn't recorded, so its contents can't be shown here.",
+    "loadingReportedContent": "Loading reported content…",
+    "reportedContentError": "Couldn't load this report's content. Try again later.",
+    "reportedUserHeading": "Reported account",
+    "reportedUserJoined": "Joined {date}",
+    "reportedUserPacks": "Packs",
+    "reportedUserComments": "Comments",
+    "reportedUserReportsAgainst": "Reports against",
+    "reportedUserReportsFiled": "Reports filed",
+    "reportedUserRestricted": "Only managers and admins can view reported account details.",
+    "otherReportsHeading": "Other reports about this target",
+    "otherReportsLoading": "Loading report history…",
+    "otherReportsError": "Couldn't load the report history.",
+    "otherReportsNone": "No other reports about this target.",
+    "otherReportsBy": "by {reporter}",
+    "otherReportsMore": "Showing {shown} of {total} other reports.",
+    "approvalHeading": "Approval review — every item in the pack",
+    "approvalIntro": "A play only draws part of each pool at random. Everything the author submitted is listed below, so nothing reaches players unreviewed.",
+    "decisionHeading": "Decision",
+    "approvePack": "Approve pack",
+    "requestChanges": "Request changes",
+    "rejectPack": "Reject pack",
+    "changesRequestedHeading": "Changes requested",
+    "changesNoMarks": "Mark the items that need work — hit “Mark for edit” on anything above — then say what the author has to change.",
+    "changesMessageLabel": "Message to the author",
+    "changesMessagePlaceholder": "What has to change before this can go live?",
+    "sendChangeRequest": "Send request",
+    "changesOutcomeNote": "The pack goes back to the author with your notes. Nothing is deleted, and re-submitting puts it back in the queue.",
+    "rejectReasonLabel": "Rejection reason",
+    "markForEdit": "Mark for edit",
+    "marked": "Marked",
+    "unmark": "Unmark {label}",
+    "markNoRequest": "No note — the author only sees that this was marked.",
+    "markAskedOfAuthor": "Asked of the author",
+    "markItemPlaceholder": "What should the author do with this item?",
+    "markRoundPlaceholder": "What should change about this round?",
+    "markFieldPlaceholder": "What should the author write instead?",
+    "markKind": {
+      "title": "Title",
+      "description": "Description",
+      "cover": "Cover",
+      "tags": "Tags",
+      "item": "Item",
+      "round": "Round"
+    },
+    "fieldsHeading": "Pack details — mark anything that needs rewriting",
+    "fieldTitle": "Title",
+    "fieldDescription": "Description",
+    "fieldCover": "Cover",
+    "fieldTags": "Tags",
+    "fieldEmpty": "Not set",
+    "fieldCoverUploaded": "Uploaded image",
+    "fieldCoverTone": "Colour {tone}"
   },
   "admin": {
     "panelEyebrow": "Admin panel",
@@ -120,8 +197,13 @@
     "noUserEmailError": "No user with that email.",
     "changeRoleError": "Couldn't change this member's role. Try again.",
     "loadMoreStaffError": "Couldn't load more staff. Try again.",
-    "addStaffEmailAria": "Email of the user to add as staff",
-    "addStaffEmailPlaceholder": "name@email.com",
+    "addStaffInputAria": "Email, username, or user id of the user to add as staff",
+    "addStaffInputPlaceholder": "Email, @username, or user id",
+    "addStaffKindEmail": "EMAIL",
+    "addStaffKindUsername": "USERNAME",
+    "addStaffKindUserId": "USER ID",
+    "addStaffNoMatchOther": "No user found.",
+    "addStaffMatchesAria": "Matching users",
     "roleToGrantAria": "Role to grant",
     "addStaff": "+ Add staff",
     "searchStaffAria": "Search staff by username or email",
@@ -171,6 +253,7 @@
     "untrustError": "Couldn't untrust this user. Try again.",
     "loadMoreUsersError": "Couldn't load more users. Try again.",
     "detailBack": "Back to users",
+    "detailCrumb": "User detail",
     "detailLoading": "Loading user…",
     "detailError": "Couldn’t load this user.",
     "detailStatusBanned": "Banned",
@@ -207,6 +290,8 @@
     "storageOfCeiling": "of {total}"
   },
   "docs": {
+    "metaTitle": "Docs — Velanto",
+    "metaDescription": "How Velanto works — building a pack, the five formats, playing, and the API for AI assistants.",
     "secOverview": "OVERVIEW",
     "secCreators": "CREATORS",
     "secPlayers": "PLAYERS",
@@ -238,6 +323,8 @@
     "statsTitle": "Stats & comparisons",
     "statsBody": "While you're playing, nothing tells you how others picked, so your choices stay your own. Once you finish, each round opens up: the items players picked most, and the percentage who agreed with your pick. A pack's overall agreement score is also shown on its card and detail page before you play.",
     "jumpTo": "Jump to topic",
+    "nextTopic": "Next",
+    "previousTopic": "Previous",
     "tokenNameLabel": "Name",
     "tokenNamePlaceholder": "e.g. Claude Desktop",
     "tokenScopesLabel": "Permissions",
@@ -324,22 +411,39 @@
     "newCount": "{count} new",
     "loadOlder": "Load older notifications",
     "commentReply": "<user>@{username}</user> <muted>replied to your comment on</muted> <obj>{packTitle}</obj>",
-    "kindReply": "Reply"
+    "kindReply": "Reply",
+    "packChangesRequested": "<muted>A moderator asked for changes to</muted> <obj>{packTitle}</obj>"
   },
   "bottomNav": {
     "label": "Primary",
-    "discovery": "Discovery",
-    "feedback": "Feedback",
     "create": "Create",
-    "notifications": "Alerts",
     "profile": "Profile"
+  },
+  "shell": {
+    "nav": {
+      "label": "Main navigation",
+      "browse": "Browse",
+      "myPacks": "My packs",
+      "people": "People",
+      "history": "History",
+      "suggestions": "Suggestions",
+      "rules": "Rules"
+    },
+    "soon": "Soon",
+    "menuToggle": "Toggle menu",
+    "room": {
+      "inARoom": "In a room",
+      "lobby": "Lobby · {count}",
+      "rejoin": "Rejoin"
+    }
   },
   "authGate": {
     "logInToVote": "Log in to vote",
     "logInToFollow": "Log in to follow",
     "logInToComment": "Log in to comment",
     "logInToPlay": "Log in to play",
-    "logInToCreateTokens": "Log in to create API tokens"
+    "logInToCreateTokens": "Log in to create API tokens",
+    "logInToReport": "Log in to report"
   },
   "header": {
     "create": "Create pack",
@@ -357,6 +461,7 @@
   },
   "settings": {
     "title": "Preferences",
+    "intro": "Everything about your account, in one place. Changes save as you make them — no submit button, except where a password is required.",
     "languageHeading": "Language",
     "languageLabel": "Interface language",
     "languageHint": "Changes the language of menus and buttons. Pack content stays in the language its creator wrote it.",
@@ -369,6 +474,7 @@
     "accentColorHint": "Used for highlights, buttons, and progress bars.",
     "accentColorSwatch": "Use accent color {color}",
     "notificationsHeading": "Notifications",
+    "notifEnabledCount": "{count} of {total} on",
     "loginToManageNotifications": "<link>Log in</link> to manage notification preferences.",
     "notificationsLoadError": "Couldn't load your notification preferences.",
     "loading": "Loading…",
@@ -425,7 +531,8 @@
     "addEmailConfirmButton": "Add email",
     "addEmailTaken": "That email is already used by another account.",
     "addEmailError": "Couldn’t add that email. Please try again.",
-    "notifCommentReply": "Someone replied to your comment"
+    "notifCommentReply": "Someone replied to your comment",
+    "notifPackChangesRequested": "A moderator asks for changes to my pack"
   },
   "streamerMode": {
     "hiddenHint": "Hidden because of streamer mode",
@@ -480,9 +587,18 @@
     "resetSuccess": "Your password has been reset. You can now log in.",
     "backToLogin": "Back to log in",
     "resetError": "Couldn’t reset your password. Check the code and try again.",
+    "brand": {
+      "headline": "Eight things enter. One survives your judgement.",
+      "subtitle": "Build packs, play them solo, or open a room and let your friends argue it out — vote, claim, cut in turns, or guess who picked what.",
+      "pitch1": "Play any pack solo or in a room",
+      "pitch2": "Four multiplayer modes, one code to join",
+      "pitch3": "Your results saved, your picks scored",
+      "socialProof": "Join {count, plural, one {# person} other {# people}} already arguing",
+      "socialProofFallback": "Join the community"
+    },
     "errors": {
       "loginRequired": "Enter your email/username and password.",
-      "username": "Username must be 2-16 characters: letters and numbers only.",
+      "username": "Username must be 2-16 characters: letters, numbers and underscores.",
       "email": "Enter a valid email address.",
       "passwordLength": "Password must be at least 8 characters.",
       "passwordMax": "Password must be at most 72 characters.",
@@ -502,6 +618,18 @@
     "heading": "Community Rules",
     "intro": "These rules keep Velanto safe and fair for everyone. By creating an account you agree to follow them.",
     "loadError": "We couldn't load the rules right now. Please try again in a moment.",
+    "searchPlaceholder": "Search the rules…",
+    "clearSearch": "Clear search",
+    "noMatch": "No rule matches \"{query}\"",
+    "tryPlainer": "Try a plainer word — \"spam\", \"copy\", \"ban\".",
+    "categoriesHeading": "Categories",
+    "matchCount": "{count, plural, one {# matching} other {# matching}}",
+    "ruleCount": "{count, plural, one {# rule} other {# rules}}",
+    "reportTitle": "Something break a rule?",
+    "reportNote": "Report on a pack, comment, or profile — pick the rule it breaks and it goes straight to a moderator.",
+    "wrongRuleTitle": "Think a rule is wrong?",
+    "wrongRuleNote": "Rules change when enough people argue well. Post it as a suggestion.",
+    "openSuggestions": "Open Suggestions",
     "content": {
       "hate_discrimination": {
         "title": "Hate & Discrimination",
@@ -612,6 +740,14 @@
         }
       }
     }
+  },
+  "legal": {
+    "termsTab": "Terms",
+    "privacyTab": "Privacy",
+    "onThisPage": "On this page",
+    "sectionCount": "{count, plural, one {# section} other {# sections}}",
+    "questionsTitle": "Questions about this document?",
+    "questionsNote": "One person reads that inbox, and answers within 30 days."
   },
   "terms": {
     "metaTitle": "Terms of Service — Velanto",
@@ -898,8 +1034,11 @@
     "other": "Other"
   },
   "home": {
-    "title": "Discover packs",
-    "subtitle": "Browse packs by format or tag, then play through one to see who comes out on top.",
+    "hero": {
+      "badge": "NEW · MODES",
+      "title": "Every pack now plays with friends",
+      "subtitle": "Open a room over any pack and pick a mode — vote it out, claim, cut in turns, or play Guess Who and score points."
+    },
     "searchPlaceholder": "Search packs…",
     "searchLabel": "Search packs",
     "filters": "Filters",
@@ -926,24 +1065,43 @@
     "paginationPrevious": "Previous",
     "paginationNext": "Next",
     "groupLanguage": "Language",
-    "filterByLanguage": "Filter by language"
+    "filterByLanguage": "Filter by language",
+    "allFormats": "All formats",
+    "showingRange": "Showing {first}–{last} of {total, plural, one {# pack} other {# packs}}",
+    "card": {
+      "hot": "HOT",
+      "playedAt": "Played {when}",
+      "roundsPlays": "{rounds, plural, one {# round} other {# rounds}} · {plays, plural, one {# play} other {# plays}}",
+      "playsCount": "{plays, plural, one {# play} other {# plays}}",
+      "play": "Play",
+      "friends": "Friends",
+      "friendsTitle": "Play with friends"
+    },
+    "joinRoom": {
+      "title": "Join a room",
+      "subtitle": "Got a code from a friend? Drop it in — no pack hunting needed.",
+      "codePlaceholder": "ABC-123"
+    },
+    "continue": {
+      "title": "Continue playing",
+      "progress": "Round {current} of {total}",
+      "resume": "Resume {title}"
+    }
   },
   "formats": {
     "save_one": "Save One",
     "sacrifice_one": "Sacrifice One",
     "nxn": "NxN",
     "rank_blind": "Rank Blind",
-    "1v1": "1v1",
-    "_note": "save_one_friends is a full format now: a label here, a creator option (create.blurbSaveOneFriends), and howItPlays steps (pack.howItPlays.save_one_friends), all in every locale. It has NO single-player play copy (play.instruction*/pickedLabel map it to \"\") because it is played live in a room, not on the /play path — see PlayRouter, which 404s that route for it.",
-    "save_one_friends": "Save One (Friends)"
+    "1v1": "1v1"
   },
   "tagPicker": {
-    "title": "Select tags",
+    "title": "Choose tags",
     "selected": "{count} selected",
-    "selectedOfMax": "{count} selected / {max}",
-    "clear": "Clear",
+    "selectedOfMax": "{count} of {max} picked{atCap, select, true { — remove one to swap} other {}}",
+    "clear": "Clear all",
     "cancel": "Cancel",
-    "apply": "Apply"
+    "apply": "Done"
   },
   "pack": {
     "viewAuthor": "View author",
@@ -993,20 +1151,6 @@
           "desc": "One cut per round, across every group."
         }
       ],
-      "save_one_friends": [
-        {
-          "title": "Gather 2-4 friends",
-          "desc": "Everyone joins one room together — each round shows one item per player, plus one extra."
-        },
-        {
-          "title": "Claim who to sacrifice",
-          "desc": "You each take one item to cut; two players can't claim the same one, so you watch the picks race in."
-        },
-        {
-          "title": "One survives",
-          "desc": "The single item nobody claimed is saved — play through every round together."
-        }
-      ],
       "nxn": [
         {
           "title": "Two categories face off",
@@ -1051,6 +1195,7 @@
       ]
     },
     "comments": "Comments · {count}",
+    "creatorBadge": "Creator",
     "commentPlaceholder": "Share your thoughts on this pack…",
     "commentLabel": "Comment",
     "post": "Post",
@@ -1087,7 +1232,45 @@
     "submitPack": "Submit for review",
     "submittingPack": "Submitting…",
     "submitPackError": "Couldn't submit this pack. Please try again.",
-    "randomPoolLabel": "Random pool"
+    "rejectionReasonHeading": "Why this was rejected",
+    "randomPoolLabel": "Random pool",
+    "acrossPlays": "across {count, plural, one {# play} other {# plays}}",
+    "report": {
+      "title": "Report this pack",
+      "reasons": {
+        "inappropriate": "Inappropriate or offensive content",
+        "copyright": "Copyright or ownership issue",
+        "spam": "Spam or misleading",
+        "other": "Something else"
+      }
+    },
+    "reportComment": {
+      "scopeNote": "Reports are filed against the account. The comment is quoted below so a moderator can find it.",
+      "quote": "About comment {id}:\n\n“{body}”"
+    },
+    "changesRequestedHeading": "Changes were requested",
+    "changesRequestedMarks": "{count, plural, one {# thing marked to fix} other {# things marked to fix}} — read what the moderator asked.",
+    "changesRequestedNoMarks": "Read what the moderator asked before you edit.",
+    "changesRequestedCta": "See what to fix"
+  },
+  "report": {
+    "button": "Report",
+    "buttonReported": "Reported",
+    "reasonLabel": "Reason",
+    "reasonPlaceholder": "Select a reason",
+    "commentLabel": "Additional details (optional)",
+    "commentPlaceholder": "Anything that helps a moderator review this",
+    "submit": "Submit report",
+    "error": "Couldn't submit the report. Try again.",
+    "buttonUser": "Report user",
+    "userTitle": "Report @{username}",
+    "userNote": "Reports go to the moderation team. Your username is attached to the report.",
+    "userReasons": {
+      "harassment": "Harassment or abuse",
+      "impersonation": "Impersonation",
+      "spam": "Spam or scam",
+      "other": "Something else"
+    }
   },
   "share": {
     "trigger": "Share",
@@ -1099,40 +1282,109 @@
   "play": {
     "complete": "Complete",
     "roundOf": "Round {current} of {total}",
+    "exit": "Exit",
+    "soloMode": "SOLO",
+    "roundsDoneNote": "{count, plural, one {# round done} other {# rounds done}}",
+    "chosenSave": "Saved",
+    "chosenSacrifice": "Sacrificed",
+    "confirmReadyTitle": "Locked in — you can still change it",
+    "confirmPendingTitle": "Nothing picked yet",
+    "confirmNote": "Your pick is recorded when you move to the next round.",
+    "picksCountNote": "{done} done, {toGo} to go",
     "pick": "Pick {name}",
-    "nextRound": "Next round →",
+    "pickThisOne": "Pick this one",
+    "yourPick": "Your pick",
+    "nextRound": "Next round",
     "instructionSave": "Pick the one you'd save. Check it below, then confirm.",
     "instructionSacrifice": "Pick the one you'd sacrifice. Check it below, then confirm.",
     "instructionNxn": "Pick the side you'd save. Check it below, then confirm.",
+    "instruction1v1": "Pick one.",
     "savedSoFar": "Saved so far",
     "sacrificedSoFar": "Sacrificed so far",
+    "yourRunSoFar": "Your run so far",
     "finishedTitle": "All rounds done",
     "finishedSave": "You saved {count, plural, one {# pick} other {# picks}}, one per round.",
     "finishedSacrifice": "You sacrificed {count, plural, one {# pick} other {# picks}}, one per round.",
     "finishedVersus": "You picked a side in {count, plural, one {# round} other {# rounds}} between {a} and {b}.",
     "whichPrefer": "Which one do you prefer?",
-    "rankInstruction": "Choose where this one goes — item {current} of {total}",
-    "placeHere": "Place here",
     "rankSlotFilled": "Rank {rank}: {title}",
     "rankSlotEmpty": "Place at rank {rank}",
+    "rankPendingEyebrow": "Place this one",
+    "rankPendingFlavor": "You can't see what's coming next — that's the whole game. Pick a slot and commit.",
+    "rankPlaceItemPrompt": "Place item {current} of {total}",
+    "rankAllPlacedPrompt": "Every slot filled — this is your order",
+    "rankRemainingNote": "{count, plural, one {# item still hidden after this} other {# items still hidden after this}}",
+    "rankDoneFlavor": "Nothing to change now — this is what blind ranking gives you. Move on to the next round.",
+    "rankDoneFooter": "All {count} placed",
+    "rankPlaceItemHere": "Place {name} here",
     "ranked": "{name} ranked",
+    "roundComplete": "Round ranked",
+    "nextUp": "Next up: {name}",
     "loadingResult": "Loading your results…",
-    "finishRound": "See results →",
+    "finishRound": "See results",
     "versusSideA": "Side A",
-    "versusSideB": "Side B"
+    "versusSideB": "Side B",
+    "resumeModalTitle": "Continue where you left off?",
+    "resumeModalBody": "Continue to pick up exactly where you left off, or start over with a fresh draw.",
+    "resumeContinue": "Continue",
+    "resumeRestart": "Start over"
   },
   "result": {
-    "label": "Result",
-    "playsRecorded": "{count, plural, one {# play recorded.} other {# plays recorded.}}",
+    "label": "Run complete",
+    "heroSubtitleFixed": "Your picks are recorded and folded into this pack's stats.",
+    "heroSubtitleFixedShared": "Their picks are recorded and folded into this pack's stats.",
+    "statRoundsCompact": "Rounds",
+    "statPlaysCompact": "Total plays",
+    "resultBarMeta": "{count, plural, one {# round} other {# rounds}} · your run",
+    "resultBarMetaShared": "{count, plural, one {# round} other {# rounds}} · shared run",
+    "heroTitleSave": "Here's what you saved",
+    "heroTitleSaveShared": "Here's what they saved",
+    "heroTitleSacrifice": "Here's what you sacrificed",
+    "heroTitleSacrificeShared": "Here's what they sacrificed",
+    "heroTitleNxn": "Here's who you picked",
+    "heroTitleNxnShared": "Here's who they picked",
+    "heroTitle1v1": "Here's who you picked",
+    "heroTitle1v1Shared": "Here's who they picked",
+    "heroTitleRank": "Here's how you ranked them",
+    "heroTitleRankShared": "Here's how they ranked them",
+    "statAgreement": "Average agreement with other players",
+    "statTopPick": "Most popular pick — {percent}% picked the same",
+    "statRarePick": "Rarest pick — only {percent}% agreed",
+    "statPlays": "Plays recorded",
+    "statRoundsPlayed": "Rounds played",
+    "statItemsSeen": "Items seen",
+    "statRoundsRanked": "Rounds ranked",
+    "statItemsPlaced": "Items placed",
+    "statPodiumEntries": "Podium entries",
     "lockedTitle": "Finish the pack to see the results",
     "lockedBody": "Stats stay hidden while you play, so your picks are your own and not the crowd’s.",
     "lockedCta": "Play this pack",
-    "yourPick": "Your pick",
-    "sharedPick": "Pick",
+    "roundByRoundHeading": "Round by round",
+    "roundByRoundNote": "What you picked each round",
+    "roundByRoundNoteShared": "What they picked each round",
+    "verdictSave": "You saved",
+    "verdictSaveShared": "Saved",
+    "verdictSacrifice": "You sacrificed",
+    "verdictSacrificeShared": "Sacrificed",
+    "verdictWon": "You picked",
+    "verdictWonShared": "Picked",
+    "verdictRankedFirst": "You ranked #1: {name}",
+    "verdictRankedFirstShared": "Ranked #1: {name}",
+    "lostLabel": "Lost",
+    "survivedLabel": "Survived",
     "playAgain": "Play again",
     "tryItYourself": "Try it yourself",
-    "shareResult": "Share result",
     "sharedNote": "You're viewing a shared result.",
+    "shareCardTitle": "Share your run",
+    "shareCardNote": "A link to this exact run, so friends can see what you chose before they play.",
+    "runCardTitle": "Your run",
+    "runCardNote": "Head back to the pack, or give it another go.",
+    "sharedRunCardTitle": "Their run",
+    "sharedRunCardNote": "Head back to the pack, or try it yourself.",
+    "copyShareLink": "Copy share link",
+    "backToPack": "Back to pack",
+    "playAgainFooter": "Play it again",
+    "tryItYourselfFooter": "Give it a go",
     "loading": "Loading results…",
     "loadError": "We could not load the results. Refresh the page to try again.",
     "matchupLabel": "{heading} matchup: {winner} over {loser}",
@@ -1145,6 +1397,9 @@
     "topPickedItemColumn": "Item",
     "topPickedPickedColumn": "Picked",
     "topPickedShareColumn": "Share",
+    "topPickedYours": "Yours",
+    "boardAcrossPlays": "{count, plural, one {across # play} other {across # plays}}",
+    "boardShowMore": "Show {count} more",
     "pickedOfAppeared": "{picked} of {appeared}",
     "loadMore": "Load more",
     "eliminationRoundLabel": "{heading}: picked {picked}",
@@ -1164,39 +1419,48 @@
   "create": {
     "loginRequired": "You need to be logged in to create a pack.",
     "logIn": "Log in",
-    "saveDraft": "Save as draft",
+    "saveDraft": "Save draft",
     "savingDraft": "Saving draft…",
-    "publish": "Publish",
-    "publishing": "Publishing…",
     "basicsHeading": "Basics",
-    "packTitle": "Pack title",
-    "packDescription": "Pack description",
-    "descriptionPlaceholder": "Short description",
+    "packTitle": "Title",
+    "packDescription": "Description",
+    "titlePlaceholder": "Save one anime protagonist",
+    "descriptionPlaceholder": "What makes this pack worth arguing over?",
     "coverTone": "Cover tone",
     "coverToneSwatch": "Cover tone {tone}",
     "coverImage": "Cover image",
     "coverImageHint": "PNG or JPG, up to 1 MB. Shown instead of the tone.",
+    "coverDragHint": "Drag an image here",
+    "coverDropToUpload": "Drop to upload",
     "removeCoverImage": "Remove cover image",
     "tags": "Tags",
-    "selectTags": "Select tags",
-    "tagsSelected": "{count, plural, one {# tag selected} other {# tags selected}}",
+    "tagsCount": "{count}/{max} selected",
+    "addTags": "+ Add tags",
     "formatHeading": "Format",
-    "blurbSaveOne": "Show a group, keep one to advance.",
-    "blurbSacrificeOne": "Remove one at a time; a favorite remains.",
-    "blurbNxn": "Two categories compared side by side.",
-    "blurbRankBlind": "Place each pick blind into a growing ranked list.",
-    "blurb1v1": "Pick a winner in each head-to-head matchup.",
+    "formatHint": "How a round works. This can't change once the pack is published.",
+    "formatLockedTooltip": "Format can't change after publishing.",
+    "blurbSaveOne": "A group each round — the player keeps exactly one.",
+    "blurbSacrificeOne": "A group each round — the player cuts exactly one.",
+    "blurbNxn": "A pool against a pool, side by side, every round.",
+    "blurbRankBlind": "One blind pick at a time, building a ranked list.",
+    "blurb1v1": "One item against another, head-to-head, no bracket.",
     "groupName": "Pool {index} name",
+    "groupNamePlaceholder": "Pool name",
     "random": "Random",
     "manual": "Manual",
     "removeGroup": "Remove pool {index}",
+    "deletePool": "Delete pool",
+    "collapsePool": "Collapse pool {index}",
+    "expandPool": "Expand pool {index}",
+    "clickItemToEdit": "Click an item to edit",
     "remove": "Remove",
     "itemCount": "{count, plural, one {# item} other {# items}}",
     "text": "Text",
-    "link": "Link",
+    "link": "YouTube",
     "add": "Add",
     "checking": "Checking…",
     "addItemPlaceholder": "Add an item…",
+    "addItemTrigger": "+ Add item",
     "itemTitlePlaceholder": "Title",
     "youtubeLinkPlaceholder": "YouTube link…",
     "notYoutubeLink": "That doesn't look like a YouTube link.",
@@ -1208,19 +1472,25 @@
     "linkTitleRequired": "Add a title for this link.",
     "removeTag": "Remove {tag}",
     "poolsHeading": "Pools",
-    "addPool": "+ Add pool",
+    "poolsHint": "Pools are reusable bags of items. The rounds below decide which pool each round draws from.",
+    "poolEmpty": "No elements yet — add your first above.",
+    "addPool": "New pool",
     "roundsHeading": "Rounds",
-    "addRound": "+ Add round",
+    "roundsHint": "Click a round to pick its pool.",
+    "addRound": "New round",
     "removeRound": "Remove round {index}",
     "roundLabel": "Round {index}",
     "roundPool": "Round {index} pool",
     "roundModeRandom": "Round {index} random",
     "roundModeManual": "Round {index} manual",
     "roundCountLabel": "Round {index} count",
+    "roundDone": "Done",
+    "roundDoneAria": "Done, round {index}",
     "roundDraws": "{count, plural, one {Draws # item} other {Draws # items}}",
     "roundUnderfill": "Only {count} left — this round will show {count}.",
     "setCountAll": "Set count for all rounds",
-    "matchupHeading": "Matchup",
+    "decreaseCount": "Decrease",
+    "increaseCount": "Increase",
     "versusSideA": "Side A",
     "versusSideB": "Side B",
     "versusRoundCount": "Rounds",
@@ -1238,10 +1508,16 @@
     "addPlace": "Add a place",
     "removePlace": "Remove a place",
     "setCountAllLabel": "Set all rounds to draw",
+    "bulkCountHintMatch": "Every round uses this. Open a round to give it a different number.",
+    "bulkCountHintDrift": "Rounds currently vary ({list}). Apply to reset them all.",
+    "bulkApplied": "Applied",
     "image": "Image",
     "chooseImage": "Choose image",
     "uploading": "Uploading…",
     "groupNewItemImage": "Pool {index} new image",
+    "itemTypeText": "Pool {index} item type: Text",
+    "itemTypeLink": "Pool {index} item type: YouTube",
+    "itemTypeImage": "Pool {index} item type: Image",
     "notAnImage": "Choose an image file.",
     "imageTooLarge": "Image must be 1 MB or smaller.",
     "imageUploadFailed": "Upload failed. Try again.",
@@ -1268,9 +1544,46 @@
     "editItemAria": "Edit {title}",
     "saveItem": "Save",
     "cancelEdit": "Cancel",
+    "itemTypeLabel": "Item type",
+    "newItemLabel": "New item",
+    "itemHintText": "Just a name on a card",
+    "itemHintVideo": "Plays inline in the round",
+    "itemHintImage": "Shown as a 16:9 thumbnail",
+    "itemNameLabel": "Name",
+    "itemTextOnCardLabel": "Text on the card",
+    "youtubeLinkLabel": "YouTube link",
+    "itemImageLabel": "Image",
+    "itemImageDragHint": "Drop or upload",
+    "replaceImage": "Replace",
+    "previewNoteText": "Text items keep rounds fast to read.",
+    "previewNoteVideo": "Pulled from the link when you save.",
+    "previewNoteImage": "16:9 — anything else gets cropped.",
     "randomPoolOption": "Random pool ({count} available)",
-    "blurbSaveOneFriends": "Save One, live with 2–4 friends in a room.",
-    "friendsHint": "Played live by 2–4 friends in a room. Each round shows one item per player plus one to survive (up to {count}), so every pool needs at least {count} items."
+    "bar": {
+      "newPackTitle": "New pack",
+      "submit": "Submit for review",
+      "submitShort": "Submit",
+      "submitting": "Submitting…",
+      "blockedTooltip": "Add a title & elements",
+      "saved": "Saved",
+      "draftNoteUnsaved": "Draft · unsaved changes",
+      "draftNoteSaved": "Draft · saved just now"
+    },
+    "feasibility": {
+      "heading": "Friend modes unlocked",
+      "subtitle": "Informational — the pack saves and plays either way. This is just what a room can run with it."
+    },
+    "checklist": {
+      "eyebrow": "BEFORE YOU SUBMIT",
+      "formatChosen": "Format chosen",
+      "titleWritten": "Title written",
+      "poolsWithItems": "{count, plural, one {# pool with items} other {# pools with items}}",
+      "coverImage": "Cover image",
+      "rowDone": "Done",
+      "rowNotDone": "Not done yet",
+      "noAiNote": "No AI · no scoring rules to write"
+    },
+    "cancel": "Cancel"
   },
   "profile": {
     "loginRequiredView": "You need to be logged in to view your profile.",
@@ -1280,11 +1593,17 @@
     "loadBioError": "Couldn't load your current bio. Try again later.",
     "followerCount": "{count, plural, one {# follower} other {# followers}}",
     "editProfile": "Edit profile",
+    "backToProfile": "Back to profile",
+    "usernameChangedPill": "Changed",
+    "usernameHint": "Changing it updates every link to your profile.",
+    "cancel": "Cancel",
+    "editSaved": "Saved",
     "addBioPrompt": "Add a bio to tell people what your packs are about.",
     "myPacks": "My Packs",
     "noPacksOwn": "No packs yet — create your first one!",
     "bio": "Bio",
     "bioPlaceholder": "Tell people what your packs are about.",
+    "previewHeading": "How it looks",
     "saving": "Saving…",
     "save": "Save",
     "saveError": "Couldn't save your changes. Try again.",
@@ -1298,8 +1617,12 @@
     "noPacks": "No packs yet.",
     "recentlyPlayed": "Recently played",
     "recentlyPlayedEmpty": "You haven't played any packs yet.",
+    "recentlyPlayedEmptyNote": "Finished packs and rooms show up here.",
+    "browsePacks": "Browse packs",
     "avatarHeading": "Profile photo",
-    "avatarChange": "Change photo",
+    "avatarDropLabel": "Drag a photo here or click",
+    "avatarDropActive": "Drop to upload",
+    "avatarReplaceLabel": "Replace photo",
     "avatarRemove": "Remove photo",
     "avatarHint": "PNG or JPG, up to 1 MB.",
     "avatarRemoveError": "Couldn't remove your photo. Try again.",
@@ -1312,8 +1635,12 @@
     "loadingMore": "Loading more…",
     "loadMoreError": "Couldn't load more packs. Try again.",
     "followers": "Followers",
+    "people": "People",
+    "history": "History",
     "noFollowers": "No followers yet.",
+    "noFollowersNote": "When someone follows you, they'll show up here.",
     "noFollowing": "Not following anyone yet.",
+    "noFollowingNote": "Follow people to see their new packs first.",
     "followsLoadMore": "Load more",
     "followsError": "Couldn't load this list. Try again.",
     "followsLoading": "Loading…",
@@ -1322,7 +1649,6 @@
   },
   "pages": {
     "createTitle": "Create a pack",
-    "createSubtitle": "Pick an elimination format and build your rounds. Elements can be text or a YouTube link.",
     "metaProfile": "Profile",
     "metaEditProfile": "Edit profile",
     "metaPlaying": "Playing {title}",
@@ -1339,7 +1665,6 @@
     "errorBody": "We couldn't load this profile. Please try again.",
     "tryAgain": "Try again",
     "editTitle": "Edit pack",
-    "editSubtitle": "Update your pack's details. Republishing sends it back through moderation.",
     "notFoundTitle": "Page not found",
     "notFoundBody": "The page you're looking for doesn't exist or has moved.",
     "appErrorBody": "An unexpected error occurred. You can try again."
@@ -1364,13 +1689,15 @@
     "feedbackDeclined": "Declined",
     "reportNew": "New",
     "reportReviewing": "Reviewing",
-    "reportClosed": "Closed"
+    "reportClosed": "Closed",
+    "packChangesRequested": "Changes requested"
   },
   "feedback": {
-    "pageTitle": "Feedback & suggestions",
-    "newPost": "New post",
-    "searchAria": "Search feedback",
-    "searchPlaceholder": "Search feedback…",
+    "pageTitle": "Suggestions",
+    "pageSubtitle": "Ask for a feature, report a bug, or fix a translation. Vote so we know what to build next.",
+    "newPost": "New suggestion",
+    "searchAria": "Search suggestions",
+    "searchPlaceholder": "Search suggestions…",
     "filterAll": "All",
     "topicBug": "Bug",
     "topicFeature": "Feature",
@@ -1378,26 +1705,40 @@
     "topicOther": "Other",
     "sortTop": "Top",
     "sortNewest": "Newest",
-    "loadMoreError": "Couldn't load more feedback. Try again.",
-    "topSidebarHeading": "Top feedback",
-    "noFeedbackYet": "No feedback yet.",
+    "countShowing": "Showing {shown} of {total}",
+    "countNone": "Nothing matches",
+    "clearFilters": "Clear filters",
+    "loadMoreError": "Couldn't load more suggestions. Try again.",
+    "mostWanted": "Most wanted",
+    "noFeedbackYet": "No suggestions yet.",
+    "legendHeading": "What the statuses mean",
+    "legendNew": "Read, not triaged yet.",
+    "legendInProgress": "Someone is building it right now.",
+    "legendDone": "Shipped — check the updates page.",
+    "legendDeclined": "Not planned. The reason is in the comments.",
     "scoreLabel": "score",
     "by": "by",
     "commentCount": "{count, plural, one {# comment} other {# comments}}",
-    "loadingList": "Loading feedback…",
-    "listError": "Couldn't load feedback. Try again.",
-    "noMatches": "No feedback matches these filters.",
+    "loadingList": "Loading suggestions…",
+    "listError": "Couldn't load suggestions. Try again.",
+    "emptyTitle": "No suggestions yet",
+    "emptyNote": "Be the first to ask for something.",
+    "emptyFilteredTitle": "Nothing matches these filters",
+    "emptyFilteredNote": "Try a different topic or clear the search.",
+    "postFirst": "Post the first one",
     "loadingMore": "Loading…",
     "loadMore": "Load more",
+    "showMore": "Show {count} more",
     "voteError": "Couldn't record your vote. Try again.",
     "like": "Like",
     "dislike": "Dislike",
     "detailNotFound": "This feedback post doesn't exist or isn't visible to you.",
-    "backToFeedback": "Back to feedback",
+    "backToFeedback": "Back to suggestions",
+    "detailCrumb": "Suggestion",
     "detailLoadError": "Couldn't load this feedback post. Try again.",
     "loading": "Loading…",
     "statusUpdateError": "Couldn't update the status. Try again.",
-    "deleteConfirm": "Delete this feedback post?",
+    "deleteConfirm": "Delete this suggestion?",
     "deleteError": "Couldn't delete this post. Try again.",
     "translationHeading": "Translation",
     "languageValueLabel": "Language:",
@@ -1408,7 +1749,7 @@
     "delete": "Delete",
     "edited": "edited",
     "commentsHeading": "Comments · {count}",
-    "commentPlaceholder": "Share your thoughts on this feedback…",
+    "commentPlaceholder": "Share your thoughts on this suggestion…",
     "commentAria": "Comment",
     "postComment": "Post",
     "loginToComment": "<link>Log in</link> to leave a comment.",
@@ -1417,28 +1758,32 @@
     "commentsLoadError": "Couldn't load comments. Try again later.",
     "noComments": "No comments yet.",
     "loadMoreCommentsError": "Couldn't load more comments. Try again.",
-    "newFeedbackTitle": "New feedback",
+    "newFeedbackTitle": "New suggestion",
     "topicLabel": "Topic",
     "titleLabel": "Title",
-    "titlePlaceholder": "A short summary",
+    "titlePlaceholder": "One line — what should change?",
     "detailsLabel": "Details",
-    "detailsPlaceholder": "Describe your bug, idea, or suggestion",
+    "detailsPlaceholder": "What problem does this solve for you?",
+    "detailsPlaceholderBug": "What did you do, what happened, what did you expect?",
+    "detailsPlaceholderTranslation": "Which language, which screen, and what it should say.",
     "visibilityLabel": "Visibility",
     "visibilityEveryone": "Everyone",
     "visibilityStaffOnly": "Staff-only",
-    "staffOnlyHint": "Staff-only posts are visible only to you and the team.",
+    "visibilityHintEveryone": "Public — anyone can read it and vote on it.",
+    "visibilityHintStaffOnly": "Only the Velanto team sees this. Nobody can vote on it.",
     "translationSuggestionHeading": "Translation suggestion",
     "languageFieldLabel": "Language",
     "chooseLanguage": "Choose a language…",
-    "contextFieldLabel": "Which text / where you saw it (optional)",
-    "contextPlaceholder": "e.g. the Play button on the home screen",
+    "contextFieldLabel": "Where it appears · optional",
+    "contextPlaceholder": "e.g. the round header in sacrifice_one",
     "suggestionFieldLabel": "Your suggested wording",
     "suggestionPlaceholder": "What it should say instead",
     "posting": "Posting…",
-    "postFeedback": "Post feedback",
-    "metaListTitle": "Feedback & suggestions — Velanto",
+    "postFeedback": "Post",
+    "duplicateHint": "Search first — voting on an existing post helps more than a duplicate.",
+    "metaListTitle": "Suggestions — Velanto",
     "metaListDescription": "Report bugs, suggest features, and propose translation improvements.",
-    "metaNewTitle": "New feedback — Velanto"
+    "metaNewTitle": "New suggestion — Velanto"
   },
   "media": {
     "playPreview": "Play video preview",
@@ -1450,11 +1795,21 @@
     "metaDescription": "New features, fixes, and improvements on Velanto.",
     "heading": "What's new",
     "intro": "The latest features, fixes, and improvements — newest first.",
-    "empty": "No updates yet — check back soon."
+    "empty": "No updates yet — check back soon.",
+    "releasesHeading": "Releases",
+    "latest": "Latest",
+    "changesCount": "{count, plural, one {# change} other {# changes}}",
+    "showMore": "Show {count} more",
+    "showLess": "Show less",
+    "missingTitle": "Missing something you want?",
+    "missingNote": "Suggestions get read and voted on — a lot of the list above started there.",
+    "openSuggestions": "Open suggestions"
   },
   "myPacks": {
-    "packsTab": "Packs",
-    "mineTab": "My packs",
+    "title": "My packs",
+    "subtitle": "Every pack you've created, across all moderation states.",
+    "metaTitle": "My packs — Velanto",
+    "metaDescription": "Manage the packs you've created on Velanto.",
     "loginRequired": "Log in to see your packs.",
     "loading": "Loading your packs…",
     "error": "Couldn't load your packs.",
@@ -1462,11 +1817,31 @@
     "emptyFiltered": "No packs match this filter.",
     "all": "All"
   },
+  "history": {
+    "title": "History",
+    "subtitle": "Packs you've played, most recent first.",
+    "loading": "Loading your history…",
+    "emptyFiltered": "You haven't played any packs in this format yet.",
+    "progress": "Round {current} of {total}",
+    "continue": "Continue",
+    "inProgressBadge": "In progress",
+    "inProgressTitle": "Still playing",
+    "playedTitle": "Played",
+    "sortOldest": "Played longest ago",
+    "sortRecent": "Recently played",
+    "metaTitle": "History — Velanto",
+    "metaDescription": "The packs you've played, most recently played first.",
+    "empty": "You haven't played anything yet. Play a pack and it'll show up here.",
+    "error": "Couldn't load your history. Try again.",
+    "loginRequired": "Log in to see your play history."
+  },
   "people": {
-    "tab": "People",
+    "title": "People",
+    "subtitle": "Search for creators and players, and follow the ones you like.",
+    "metaTitle": "People — Velanto",
+    "metaDescription": "Search Velanto for pack creators and players to follow.",
     "searchLabel": "Search people",
     "searchPlaceholder": "Search by username",
-    "hint": "Type at least 2 characters to search.",
     "loading": "Searching…",
     "error": "Couldn't search for people. Try again.",
     "empty": "No people found."
@@ -1474,12 +1849,230 @@
   "room": {
     "loading": "Loading room…",
     "reconnecting": "Reconnecting…",
+    "modePicker": {
+      "heading": "Game mode",
+      "hostIsChoosing": "The host is choosing a game mode…",
+      "playerRange": "{min}-{max} players"
+    },
+    "packModes": {
+      "heading": "Modes this pack supports",
+      "caption": "The host picks the mode in the lobby. Greyed ones need a different room size."
+    },
+    "modes": {
+      "claim": {
+        "name": "Claim",
+        "blurb": "Be the fastest to grab an item before anyone else does.",
+        "steps": {
+          "1": {
+            "title": "Claim fast",
+            "body": "Each round draws one more item than there are players."
+          },
+          "2": {
+            "title": "No sharing",
+            "body": "A claimed item is gone — you race for the one you want out."
+          },
+          "3": {
+            "title": "One survives",
+            "body": "The single unclaimed item is the one that's saved."
+          }
+        }
+      },
+      "guess_who": {
+        "name": "Guess Who",
+        "blurb": "Pick blind, then guess who picked what.",
+        "steps": {
+          "1": {
+            "title": "Lock in blind",
+            "body": "Pick your own answer before anyone's choices are revealed."
+          },
+          "2": {
+            "title": "Read the builds",
+            "body": "Player X, Y, Z each grow a column of picks over the game."
+          },
+          "3": {
+            "title": "Guess & score",
+            "body": "Match every label to a real person. Most correct wins."
+          }
+        }
+      },
+      "turn_based_cut": {
+        "name": "Turn-Based Cut",
+        "blurb": "Take turns cutting items until one remains.",
+        "steps": {
+          "1": {
+            "title": "Your turn",
+            "body": "On your turn you remove exactly one item from the board."
+          },
+          "2": {
+            "title": "The board shrinks",
+            "body": "Everyone watches the options drop away one by one."
+          },
+          "3": {
+            "title": "Last one standing",
+            "body": "No votes, no ties — the final item is the result."
+          }
+        }
+      },
+      "voting": {
+        "name": "Voting",
+        "blurb": "Vote live — everyone sees the tally as it grows.",
+        "steps": {
+          "1": {
+            "title": "Vote",
+            "body": "Tap the one you'd pick. Change it while others are still deciding."
+          },
+          "2": {
+            "title": "Watch the tally",
+            "body": "Counts update live, so you can argue and swing the room."
+          },
+          "3": {
+            "title": "Majority wins",
+            "body": "On a tie the priority holder decides — never a coin flip."
+          }
+        }
+      },
+      "shared_grid": {
+        "name": "Shared Grid",
+        "blurb": "Rank blind, then see everyone's combined ranking.",
+        "steps": {
+          "1": {
+            "title": "Rank blind",
+            "body": "Order the whole board yourself, with nobody else's ranking in view."
+          },
+          "2": {
+            "title": "Everyone submits",
+            "body": "The round waits until every seat has locked a ranking in."
+          },
+          "3": {
+            "title": "One combined order",
+            "body": "Every ballot is scored together into the room's ranking."
+          }
+        }
+      },
+      "relay": {
+        "name": "Relay",
+        "blurb": "Build one shared ranking together, one insert at a time.",
+        "steps": {
+          "1": {
+            "title": "One item at a time",
+            "body": "The round reveals items in a fixed order, one per turn."
+          },
+          "2": {
+            "title": "Slot it in",
+            "body": "On your turn you insert it anywhere in the ranking so far."
+          },
+          "3": {
+            "title": "Built together",
+            "body": "Nobody owns the result — the room assembles one shared order."
+          }
+        }
+      }
+    },
+    "lockedIn": {
+      "playerLocked": "{name} has locked in",
+      "playerWaiting": "{name} is still waiting",
+      "count": "{count} / {total} locked in"
+    },
+    "priority": {
+      "holder": "{name} holds priority",
+      "explainer": "breaks ties this round"
+    },
+    "turnIndicator": {
+      "yourTurn": "Your turn",
+      "waitingFor": "Waiting for {name}"
+    },
+    "leaderboard": {
+      "winner": "Winner",
+      "points": "{count, plural, one {# point} other {# points}}",
+      "heading": "Leaderboard"
+    },
+    "guessWho": {
+      "roundInstruction": "Choose your answer",
+      "pickInstruction": "Pick one — everyone sees the letter that picked it, nobody sees whose letter it is.",
+      "pickHint": "Letters show as they land",
+      "pickLabel": "Pick {name}",
+      "pickedByLabels": "Picked by {labels}",
+      "maskedRosterNote": "Everyone plays as a letter until the reveal.",
+      "rankInstruction": "Rank every item, best first — nobody else will see your ranking until everyone's locked in.",
+      "revealHeading": "Reveal",
+      "trajectoryHeading": "How everyone's answered so far",
+      "roundColumn": "Round",
+      "trajectoryHint": "{count, plural, one {# round} other {# rounds}} of picks",
+      "stillAnonymous": "?",
+      "columnHint": "A single round can't give anyone away — two people often pick the same thing. It's the whole column that's unique."
+    },
+    "guessing": {
+      "heading": "Final round",
+      "title": "Who's who?",
+      "instruction": "Assign each player to the label you think they played as.",
+      "submit": "Submit guesses",
+      "waitingForOthers": "{count} / {total} have submitted",
+      "assignedCount": "{count}/{total} assigned",
+      "whoIs": "Who is {label}?",
+      "revealsAtOnce": "Everything reveals at once so nobody can peek.",
+      "deadline": "Reveal in"
+    },
+    "identityReveal": {
+      "heading": "Reveal",
+      "correct": "Correct guess",
+      "incorrect": "Wrong guess",
+      "winner": "Winner",
+      "winnerNote": "Read the room best — {count} of {total} labels matched",
+      "points": "points",
+      "sharedWin": "Shared win — {names} each matched {count}",
+      "yourGuess": "Your guess",
+      "youSaid": "You said {name}",
+      "nobody": "nobody",
+      "pointPerMatch": "1 point per correct match"
+    },
+    "turnBasedCut": {
+      "instruction": "On your turn, cut one item. The last one standing wins.",
+      "cutOrderHeading": "Cut order",
+      "cutVerb": "cut"
+    },
+    "voting": {
+      "instruction": "Vote for one option. You can change your vote until the round closes.",
+      "votedSoFar": "{count} / {total} have voted",
+      "winnerHeading": "Winner",
+      "tieBrokenNote": "It was a tie — {name} held priority and broke it."
+    },
+    "sharedGrid": {
+      "instruction": "Rank every item blind, in order.",
+      "aggregateHeading": "Aggregated",
+      "groupRanking": "The group's ranking",
+      "pointsLabel": "{count} pts",
+      "tiedNote": "Tied — {count} items share this rank",
+      "aggregateHint": "everyone's ballots, scored together",
+      "alignment": "Alignment",
+      "alignmentHint": "how close to the group",
+      "alignmentNote": "Nobody wins — alignment just shows whose taste matched the room."
+    },
+    "relay": {
+      "instruction": "Insert the current item into the shared ranking.",
+      "insertHere": "Insert here",
+      "insertBefore": "Insert before {title}",
+      "insertAtEnd": "Insert at the end",
+      "currentItem": "Now placing",
+      "finalOrderHeading": "Final order",
+      "placementHistoryHeading": "Placement history",
+      "placedVerb": "placed",
+      "nobodyKnowsNext": "Nobody knows what comes after this one.",
+      "stillHidden": "{count} still hidden",
+      "sharedRanking": "The shared ranking",
+      "sharedRankingHint": "built together, one insert at a time",
+      "placedBy": "placed by",
+      "nothingPlacedYet": "Nothing placed yet.",
+      "turnOrder": "Turn order",
+      "placingBadge": "PLACING",
+      "placeItemHere": "Place {name} here",
+      "placeAtRank": "Place at rank {rank}"
+    },
     "entry": {
       "createRoom": "Create room",
       "joinByCode": "Join by code",
+      "orWithFriends": "Or with friends",
       "signInToPlay": "Log in to play with friends",
       "createError": "Couldn't create the room. Try again.",
-      "joinTitle": "Join a room",
       "codeLabel": "Room code",
       "codePlaceholder": "Enter code",
       "join": "Join",
@@ -1513,21 +2106,68 @@
       "lock": "Lock room",
       "unlock": "Unlock room",
       "lockedNote": "Locked — closed to new players.",
-      "unlockedNote": "Open — friends with the code can join."
+      "unlockedNote": "Open — friends with the code can join.",
+      "open": "Lobby open",
+      "chooseHeading": "Choose how you'll play",
+      "hostHint": "Pick a mode — it changes the round mechanic and the room size.",
+      "guestHint": "The host is choosing the mode. You'll see it here as soon as they pick.",
+      "roleHost": "YOU'RE THE HOST",
+      "roleGuest": "HOST DECIDES",
+      "howARoundGoes": "how a round goes",
+      "resultShared": "Shared verdict",
+      "resultScored": "Scored · winner",
+      "priorityTitle": "Ties are broken by priority",
+      "priorityBody": "On a tied vote one player's choice decides. It rotates to the next player every round.",
+      "seatCount": "{count}/{max}",
+      "capacityRoomFor": "Room for {count} more",
+      "capacityFull": "Room is full",
+      "capacityNeeds": "Needs {min}+",
+      "stillDeciding": "Still deciding",
+      "tapReadyWhenYouAre": "Tap ready when you are",
+      "inviteSomeone": "Invite someone",
+      "inviteCode": "Invite code",
+      "codeHidden": "hidden on screen",
+      "codeVisible": "visible",
+      "everyoneReady": "Everyone's ready",
+      "waitingOn": "Waiting on {count}",
+      "readyCount": "{ready}/{total}",
+      "start": "Start {mode}",
+      "startGeneric": "Start the game",
+      "waitingForHost": "Waiting for host",
+      "imReady": "I'm ready",
+      "unready": "Unready",
+      "startNoteGuest": "Only the host can start. Mark yourself ready so they can.",
+      "startNoteAllReady": "All players ready — starting locks the mode for the whole game.",
+      "startNoteWaiting": "Start unlocks when everyone in the room is ready.",
+      "startNoteNeedsMore": "Start unlocks at {min} players.",
+      "startNoteNoMode": "Pick a mode above before you can start."
     },
     "round": {
       "heading": "Round {index} of {total}",
-      "instruction": "Claim one item to sacrifice. The item nobody claims survives.",
-      "claim": "Sacrifice {name}",
+      "instructionSave": "Claim one item to save. Everyone else is eliminated.",
+      "instructionSacrifice": "Claim one item to sacrifice. The item nobody claims survives.",
+      "claimSacrifice": "Sacrifice {name}",
       "taken": "Taken",
-      "sacrificedBy": "Sacrificed by {name}",
-      "survivor": "Survivor",
-      "chosen": "{count} of {total} have chosen"
+      "claimedBySacrifice": "Sacrificed by {name}",
+      "survivorSave": "Saved",
+      "survivorSacrifice": "Survivor",
+      "chosen": "{count} of {total} chosen",
+      "tooFastNote": "You're re-claiming too fast — wait a moment and try again."
+    },
+    "rejection": {
+      "not_your_turn": "It's not your turn yet.",
+      "not_in_round": "That option isn't part of this round.",
+      "round_not_active": "This round has already ended.",
+      "not_a_player": "You don't hold a seat in this room.",
+      "malformed": "That submission wasn't valid — try again."
     },
     "between": {
-      "survivorHeading": "Survivor",
-      "survivorNote": "This item survived the round.",
-      "boardHeading": "This round's sacrifices",
+      "survivorHeadingSave": "Saved",
+      "survivorHeadingSacrifice": "Survivor",
+      "survivorNoteSave": "This item was saved.",
+      "survivorNoteSacrifice": "This item survived the round.",
+      "boardHeadingSave": "This round's picks",
+      "boardHeadingSacrifice": "This round's sacrifices",
       "next": "Next",
       "ready": "{count} / {total} ready",
       "autoNext": "Next round in {seconds}s"
@@ -1535,11 +2175,13 @@
     "results": {
       "heading": "Results",
       "roundLabel": "Round {index}",
-      "backToPack": "Back to pack"
+      "backToPack": "Back to pack",
+      "playAgain": "Play again"
     },
     "ended": {
       "heading": "This room has ended",
-      "description": "This room is no longer available. Start a new one from the pack page."
+      "description": "This room is no longer available. Start a new one from the pack page.",
+      "leave": "Back to pack"
     },
     "joinLink": {
       "joining": "Joining room…",
@@ -1560,7 +2202,7 @@
     },
     "presence": {
       "returnTo": "Return to {title}",
-      "label": "{count} / {max} in room"
+      "playerCount": "{count} in room"
     },
     "kick": {
       "action": "Remove {name} from the room",
@@ -1573,6 +2215,82 @@
       "heading": "The host removed you from this room",
       "description": "The host removed you from this room. You can join again with the code if they reopen it.",
       "leave": "Back to pack"
+    },
+    "header": {
+      "rounds": "{count, plural, one {# round} other {# rounds}}",
+      "inRound": "Round in play",
+      "between": "Round resolved",
+      "guessing": "Guessing"
+    },
+    "board": {
+      "room": "Room",
+      "here": "{count} here",
+      "outOfPlay": "Out of play",
+      "voted": "Voted",
+      "deciding": "Deciding…",
+      "waiting": "Waiting",
+      "cut": "Cut",
+      "cuttingNow": "Cutting now",
+      "progressVotes": "{count} of {total} votes in",
+      "progressLeft": "{count} left on the board",
+      "tapToVote": "Tap the one you'd pick",
+      "voteLocked": "Vote in — you can still change it",
+      "resolvesWhenAllVote": "Resolves when everyone has voted",
+      "noTakebacks": "No takebacks once it's gone",
+      "voteFor": "Vote for {name}",
+      "cutItem": "Cut {name}",
+      "yourVote": "YOUR VOTE",
+      "cutBadge": "CUT",
+      "liveTally": "Live tally",
+      "tallyHint": "changeable until locked",
+      "tieTitle": "It's tied — {name}'s priority decides",
+      "tieBody": "Talk them round before the last vote lands.",
+      "cutSoFar": "Cut so far",
+      "cutEmpty": "Nothing cut yet — {name} goes first.",
+      "claimed": "Claimed",
+      "claimPrompt": "Take the one you want out",
+      "claimHint": "First to it keeps it",
+      "sideItemCount": "{count} in play",
+      "lockedIn": "Locked in",
+      "lockInPrompt": "Lock in your answer",
+      "lockedWaiting": "Locked in — waiting for the room",
+      "blindHint": "Nobody sees it until everyone's in",
+      "placed": "Placed",
+      "placingNow": "Placing now",
+      "progressPlaced": "{count} of {total} placed",
+      "rankNowPlacing": "Place this one",
+      "rankSlotEmpty": "Place at rank {rank}",
+      "rankSlotFilled": "Rank {rank}: {title}",
+      "rankPlaceHere": "Place {name} here",
+      "rankHiddenAfter": "{count} still hidden after this"
     }
+  },
+  "reviewOutcome": {
+    "crumb": "Review result",
+    "loading": "Loading the review result…",
+    "notFound": "This pack doesn't exist, or it isn't yours.",
+    "loginRequired": "Log in to see this review result.",
+    "heroTitle": "Almost there — a few things to fix",
+    "heroWhen": "Reviewed {date}",
+    "heroBody": "Your pack isn't published yet. A moderator went through it and asked for the changes below. Nothing was deleted — make the edits and re-submit, and it goes back into the queue.",
+    "openEditor": "Open the editor",
+    "viewPack": "View the pack",
+    "moderatorSaid": "What the moderator said",
+    "marksHeading": "What to fix",
+    "marksCount": "{count, plural, one {# thing marked} other {# things marked}}",
+    "needsEdit": "NEEDS EDIT",
+    "doThis": "Do this",
+    "inPool": "Pool: {pool}",
+    "nextHeading": "What happens next",
+    "step1": "Open the editor and make the changes above.",
+    "step2": "Save. The pack goes straight back into the moderation queue.",
+    "step3": "You'll be notified again when a moderator has looked at it.",
+    "thePack": "The pack",
+    "metaPools": "Pools",
+    "metaRounds": "Rounds",
+    "metaSubmitted": "Submitted",
+    "mistakeTitle": "Think this was a mistake?",
+    "mistakeBody": "Open a suggestion and the team will take another look. Include the pack name.",
+    "mistakeLink": "Contact moderation →"
   }
 }

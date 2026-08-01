@@ -131,15 +131,15 @@ describe("CommentSection", () => {
     });
     const { container } = renderAsUnauthenticated();
 
-    expect(await screen.findByText("bob")).toBeInTheDocument();
+    expect(await screen.findByText("@bob")).toBeInTheDocument();
     expect(screen.getByText("Loved this pack.")).toBeInTheDocument();
     expect(commentsClient.list).toHaveBeenCalledWith("pack-1", {
       page: 1,
       limit: 10,
-      sort: "top",
+      sort: "new",
     });
     expect(screen.getByText("Comments · 1")).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "bob" })).toHaveAttribute(
+    expect(screen.getByRole("link", { name: "@bob" })).toHaveAttribute(
       "href",
       "/users/u2",
     );
@@ -337,7 +337,7 @@ describe("CommentSection", () => {
     expect(commentsClient.list).toHaveBeenLastCalledWith("pack-1", {
       page: 2,
       limit: 10,
-      sort: "top",
+      sort: "new",
     });
     expect(await screen.findByText("Second comment.")).toBeInTheDocument();
     expect(screen.getByText("Loved this pack.")).toBeInTheDocument();
@@ -517,6 +517,52 @@ describe("CommentSection", () => {
     });
   });
 
+  describe("creator badge", () => {
+    function listOnce(items: Comment[]) {
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items,
+        total: items.length,
+        page: 1,
+        limit: 10,
+      });
+    }
+
+    it("shows a Creator badge on a comment authored by the pack's own author", async () => {
+      listOnce([COMMENT_A]); // authored by u2
+      renderAuthedAs(USER, "u2"); // u2 owns the pack
+
+      await screen.findByText("Loved this pack.");
+      expect(screen.getByText("Creator")).toBeInTheDocument();
+    });
+
+    it("hides the Creator badge on a comment from anyone else", async () => {
+      listOnce([COMMENT_A]); // authored by u2
+      renderAuthedAs(USER, "someone-else");
+
+      await screen.findByText("Loved this pack.");
+      expect(screen.queryByText("Creator")).not.toBeInTheDocument();
+    });
+
+    it("badges only the reply that's the pack author, not the root, when they differ", async () => {
+      // Root (c1) authored by u2; reply authored by u3, the pack's owner —
+      // guards against a copy-paste slip that checks root.authorId on both rows.
+      const reply: Comment = {
+        id: "reply-1",
+        packId: "pack-1",
+        authorId: "u3",
+        authorUsername: "carol",
+        body: "I agree with this.",
+        createdAt: "2026-01-02T00:00:00.000Z",
+        parentId: "c1",
+      };
+      listOnce([{ ...COMMENT_A, replyCount: 1, replies: [reply] }]);
+      renderAuthedAs(USER, "u3"); // u3 owns the pack
+
+      await screen.findByText("I agree with this.");
+      expect(screen.getAllByText("Creator")).toHaveLength(1);
+    });
+  });
+
   describe("threading (replies)", () => {
     const MODERATOR: User = { ...USER, id: "mod-1", role: "moderator" };
     const REPLY: Comment = {
@@ -550,7 +596,7 @@ describe("CommentSection", () => {
 
       expect(await screen.findByText("Loved this pack.")).toBeInTheDocument();
       expect(screen.getByText("I agree with this.")).toBeInTheDocument();
-      expect(screen.getByText("carol")).toBeInTheDocument();
+      expect(screen.getByText("@carol")).toBeInTheDocument();
     });
 
     it("does not show Reply buttons when unauthenticated", async () => {
@@ -583,8 +629,8 @@ describe("CommentSection", () => {
         name: "Reply to comment",
       });
       await user.type(replyBox, "My reply.");
-      const composer = replyBox.closest("div") as HTMLElement;
-      await user.click(within(composer).getByRole("button", { name: "Post" }));
+      const composer = screen.getByTestId("reply-composer");
+      await user.click(within(composer).getByRole("button", { name: "Reply" }));
 
       await waitFor(() =>
         expect(commentsClient.create).toHaveBeenCalledWith("pack-1", {
@@ -667,8 +713,8 @@ describe("CommentSection", () => {
       await user.click(await screen.findByRole("button", { name: "Reply" }));
       const box = screen.getByRole("textbox", { name: "Reply to comment" });
       await user.type(box, "oops");
-      const composer = box.closest("div") as HTMLElement;
-      await user.click(within(composer).getByRole("button", { name: "Post" }));
+      const composer = screen.getByTestId("reply-composer");
+      await user.click(within(composer).getByRole("button", { name: "Reply" }));
       expect(
         await screen.findByText("Couldn't post your comment. Try again."),
       ).toBeInTheDocument();
@@ -707,7 +753,9 @@ describe("CommentSection", () => {
       );
     });
 
-    it("renders a vote pill showing each comment's net score", async () => {
+    // Each reaction shows its own count. A single net used to render here, and
+    // a net of 0 from 1↑/1↓ was indistinguishable from a net of 0 from silence.
+    it("shows the like and dislike counts on their own reactions", async () => {
       const scored: Comment = { ...COMMENT_A, likes: 5, dislikes: 2 };
       vi.mocked(commentsClient.list).mockResolvedValue({
         items: [scored],
@@ -718,10 +766,13 @@ describe("CommentSection", () => {
       renderAsUnauthenticated();
 
       await screen.findByText("Loved this pack.");
+      expect(screen.getByRole("button", { name: "Upvote" })).toHaveTextContent(
+        "5",
+      );
       expect(
-        screen.getByRole("button", { name: "Upvote" }),
-      ).toBeInTheDocument();
-      expect(screen.getByText("3")).toBeInTheDocument(); // 5 − 2
+        screen.getByRole("button", { name: "Downvote" }),
+      ).toHaveTextContent("2");
+      expect(screen.queryByText("3")).not.toBeInTheDocument();
     });
 
     it("casts an upvote on a comment and reflects the returned tally", async () => {
@@ -732,8 +783,6 @@ describe("CommentSection", () => {
         page: 1,
         limit: 10,
       });
-      // Distinct likes/dislikes so the net score (6 − 2 = 4) is unambiguous —
-      // VoteControl renders the score and the raw counts as separate text.
       vi.mocked(commentsClient.vote).mockResolvedValue({
         score: 4,
         likes: 6,
@@ -748,7 +797,15 @@ describe("CommentSection", () => {
       await waitFor(() =>
         expect(commentsClient.vote).toHaveBeenCalledWith("pack-1", "c1", 1),
       );
-      expect(await screen.findByText("4")).toBeInTheDocument();
+      await waitFor(() =>
+        expect(
+          screen.getByRole("button", { name: "Upvote" }),
+        ).toHaveTextContent("6"),
+      );
+      expect(screen.getByRole("button", { name: "Upvote" })).toHaveAttribute(
+        "aria-pressed",
+        "true",
+      );
     });
 
     it("does not fire a vote for a signed-out viewer", async () => {
@@ -838,12 +895,13 @@ describe("CommentSection", () => {
     });
   });
 
-  // The rule: a separator sits *between top-level threads only*. Never inside
-  // one — not between a root and its replies, not between two replies — and
-  // never leading or trailing at the card's edge. So the count of separators is
-  // exactly `roots − 1`, whatever the replies do. Each fixture below pins one
-  // way an implementation could get that wrong.
-  describe("thread separators", () => {
+  // The rule (Pack Detail.dc.html): ONE CARD PER TOP-LEVEL THREAD. A root and
+  // everything hanging off it live in the same card, the gap between cards is
+  // what separates two conversations, and there are no horizontal rules
+  // anywhere. Each fixture below pins one way an implementation could get that
+  // wrong — including the previous shape, which was one card around the whole
+  // list with an <hr> between threads.
+  describe("thread cards", () => {
     const REPLY_ONE: Comment = {
       id: "reply-1",
       packId: "pack-1",
@@ -879,41 +937,31 @@ describe("CommentSection", () => {
       });
     }
 
-    // `separator` is the accessible role of an <hr>; querying by role rather
-    // than by tag or class keeps this about the observable structure.
-    const separators = () => screen.queryAllByRole("separator");
+    const cards = () => screen.queryAllByTestId("comment-thread");
 
-    it("draws no separator for a single thread — nothing to separate it from", async () => {
+    it("gives one thread one card", async () => {
       listOnce([COMMENT_A]);
       renderAsUnauthenticated();
 
       await screen.findByText("Loved this pack.");
-      expect(separators()).toHaveLength(0);
+      expect(cards()).toHaveLength(1);
     });
 
-    it("draws exactly one separator between two top-level threads, and none at the card's edges", async () => {
+    it("gives two top-level threads a card each", async () => {
       listOnce([COMMENT_A, SECOND_ROOT]);
       renderAsUnauthenticated();
 
       await screen.findByText("A separate thread.");
-      // Two threads → one rule. Two would mean a trailing (or leading) rule
-      // against the card's own edge.
-      expect(separators()).toHaveLength(1);
+      const [first, second] = cards();
+      expect(cards()).toHaveLength(2);
+      // Each conversation is wholly inside its own card — the previous shape
+      // put both in one shared card with a rule between them.
+      expect(first).toHaveTextContent("Loved this pack.");
+      expect(second).toHaveTextContent("A separate thread.");
+      expect(first).not.toHaveTextContent("A separate thread.");
     });
 
-    it("draws no separator inside a thread, however many replies it has", async () => {
-      listOnce([
-        { ...COMMENT_A, replyCount: 2, replies: [REPLY_ONE, REPLY_TWO] },
-      ]);
-      renderAsUnauthenticated();
-
-      await screen.findByText("Second reply.");
-      // The old design ruled off the root from its replies and each reply from
-      // the next — that would be two rules here. A thread is now unbroken.
-      expect(separators()).toHaveLength(0);
-    });
-
-    it("counts separators by thread, not by entry, when threads and replies are mixed", async () => {
+    it("counts cards by thread, not by entry — replies live inside their root's card", async () => {
       listOnce([
         { ...COMMENT_A, replyCount: 2, replies: [REPLY_ONE, REPLY_TWO] },
         SECOND_ROOT,
@@ -921,23 +969,21 @@ describe("CommentSection", () => {
       renderAsUnauthenticated();
 
       await screen.findByText("A separate thread.");
-      // Four entries, two threads → one rule. A per-entry implementation would
-      // draw three.
-      expect(separators()).toHaveLength(1);
+      // Four entries, two threads → two cards. A per-entry implementation
+      // would render four.
+      expect(cards()).toHaveLength(2);
+      expect(cards()[0]).toHaveTextContent("Second reply.");
     });
 
-    it("keeps the whole list in one card rather than a card per thread", async () => {
-      listOnce([COMMENT_A, SECOND_ROOT]);
+    it("draws no horizontal rules at all — the gap between cards is the separation", async () => {
+      listOnce([
+        { ...COMMENT_A, replyCount: 2, replies: [REPLY_ONE, REPLY_TWO] },
+        SECOND_ROOT,
+      ]);
       renderAsUnauthenticated();
 
-      const first = await screen.findByText("Loved this pack.");
-      const second = screen.getByText("A separate thread.");
-      // The separator between them is a sibling of both threads inside a single
-      // shared container — with a card per thread it could not be.
-      const rule = screen.getByRole("separator");
-      const card = rule.parentElement as HTMLElement;
-      expect(card.contains(first)).toBe(true);
-      expect(card.contains(second)).toBe(true);
+      await screen.findByText("A separate thread.");
+      expect(screen.queryAllByRole("separator")).toHaveLength(0);
     });
   });
 
@@ -986,7 +1032,7 @@ describe("CommentSection", () => {
       // Wait for the fetch to resolve (header shows the count) then assert the
       // identity + body are redacted rather than shown.
       await screen.findByText("Comments · 1");
-      expect(screen.queryByText("bob")).not.toBeInTheDocument();
+      expect(screen.queryByText("@bob")).not.toBeInTheDocument();
       expect(screen.queryByText("Loved this pack.")).not.toBeInTheDocument();
 
       const revealButtons = screen.getAllByRole("button", { name: /reveal/i });
@@ -995,7 +1041,7 @@ describe("CommentSection", () => {
       await user.click(revealButtons[0]);
       await user.click(screen.getAllByRole("button", { name: /reveal/i })[0]);
 
-      expect(screen.getByText("bob")).toBeInTheDocument();
+      expect(screen.getByText("@bob")).toBeInTheDocument();
       expect(screen.getByText("Loved this pack.")).toBeInTheDocument();
     });
   });

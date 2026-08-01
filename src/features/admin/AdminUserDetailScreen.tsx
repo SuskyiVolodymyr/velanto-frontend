@@ -4,20 +4,26 @@ import { formatDate, formatDateTime } from "@/src/shared/lib/format-date";
 import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { Text } from "@/src/shared/components/Text";
 import { Card } from "@/src/shared/components/Card";
 import { Badge } from "@/src/shared/components/Badge";
+import { Button } from "@/src/shared/components/Button";
 import { Username } from "@/src/shared/components/Username";
 import { LoadingState } from "@/src/shared/components/LoadingState";
+import { PageHeader } from "@/src/shared/components/PageHeader";
 import { AuthorPacksRail } from "@/src/features/author/AuthorPacksRail";
 import { RecentlyPlayedSection } from "@/src/features/author/RecentlyPlayedSection";
 import { useAuthorBanHistory } from "@/src/features/author/api/author.queries";
 import { useAdminUserDetail } from "@/src/features/admin/api/admin.queries";
 import { isCurrentlyBanned } from "@/src/features/admin/use-users-admin";
+import { useAdminUserModeration } from "@/src/features/admin/use-admin-user-moderation";
+import { UserBanForm } from "@/src/features/admin/UserBanForm";
+import { canActOn } from "@/src/shared/lib/staff-permissions";
 import { formatBytes } from "@/src/shared/lib/format-bytes";
+import { cn } from "@/src/shared/lib/cn";
+import { pageContainer } from "@/src/shared/lib/page-container";
 
 /** A single labelled number tile in the stats grid. */
 // `value` is a ReactNode, not a number: storage reads as a formatted size
@@ -69,176 +75,249 @@ export function AdminUserDetailScreen({ userId }: { userId: string }) {
   const active = status === "authenticated" && allowed;
   const query = useAdminUserDetail(userId, { enabled: active });
   const banHistory = useAuthorBanHistory(userId, { enabled: active });
+  const moderation = useAdminUserModeration(userId);
 
   if (status === "loading") return null;
-  if (status === "unauthenticated" || !allowed) return null;
+  if (status === "unauthenticated" || !allowed || !viewer) return null;
 
-  const backLink = (
-    <Link
-      href="/admin?tab=users"
-      className="mb-6 inline-flex items-center gap-1.5 text-sm text-foreground-secondary transition-colors hover:text-foreground"
-    >
-      <ArrowLeft size={16} aria-hidden />
-      {t("detailBack")}
-    </Link>
+  const header = (
+    <PageHeader
+      back={{ href: "/admin?tab=users", label: t("detailBack") }}
+      crumb={t("detailCrumb")}
+      meta={
+        <span data-mono="1" className="text-xs text-foreground-tertiary/60">
+          {userId.slice(0, 8)}
+        </span>
+      }
+    />
   );
 
   if (query.isLoading) {
     return (
-      <div className="mx-auto w-full max-w-5xl px-6 py-8">
-        {backLink}
-        <LoadingState label={t("detailLoading")} showLabel />
-      </div>
+      <>
+        {header}
+        <div className={cn(pageContainer(1040), "py-8")}>
+          <LoadingState label={t("detailLoading")} showLabel />
+        </div>
+      </>
     );
   }
 
   if (query.isError || !query.data) {
     return (
-      <div className="mx-auto w-full max-w-5xl px-6 py-8">
-        {backLink}
-        <Text variant="danger">{t("detailError")}</Text>
-      </div>
+      <>
+        {header}
+        <div className={cn(pageContainer(1040), "py-8")}>
+          <Text variant="danger">{t("detailError")}</Text>
+        </div>
+      </>
     );
   }
 
   const user = query.data;
   const banned = isCurrentlyBanned(user.bannedUntil);
+  const canAct = canActOn(viewer.role, user.role);
 
   return (
-    <div className="mx-auto w-full max-w-5xl px-6 py-8">
-      {backLink}
-
-      {/* Account header */}
-      <div className="mb-8 flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <Text as="h1" variant="title" className="text-2xl">
-            <Username
-              username={user.username}
-              role={user.role}
-              trusted={user.trusted}
-              showRole
-            />
-          </Text>
-          <Text variant="tertiary" className="mt-1 text-sm">
-            {t("detailEmail")}: {user.email} · {t("hRegistered")}:{" "}
-            {formatDate(user.createdAt)}
-          </Text>
-          <Link
-            href={`/users/${userId}`}
-            className="mt-1 inline-block text-xs text-acc hover:underline"
-          >
-            {t("detailPublicProfile")}
-          </Link>
+    <>
+      {header}
+      <div className={cn(pageContainer(1040), "py-8")}>
+        {/* Account header */}
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <Text as="h1" variant="title" className="text-2xl">
+              <Username
+                username={user.username}
+                role={user.role}
+                trusted={user.trusted}
+                showRole
+              />
+            </Text>
+            <Text variant="tertiary" className="mt-1 text-sm">
+              {t("detailEmail")}: {user.email} · {t("hRegistered")}:{" "}
+              {formatDate(user.createdAt)}
+            </Text>
+            <Link
+              href={`/users/${userId}`}
+              className="mt-1 inline-block text-xs text-acc hover:underline"
+            >
+              {t("detailPublicProfile")}
+            </Link>
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            <Badge className={banned ? "text-danger" : "text-success"}>
+              {banned ? t("detailStatusBanned") : t("detailStatusActive")}
+            </Badge>
+            {canAct && (
+              <>
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  loading={moderation.trustSubmitting}
+                  onClick={() =>
+                    void moderation.handleSetTrusted(!user.trusted)
+                  }
+                >
+                  {user.trusted ? t("untrust") : t("trust")}
+                </Button>
+                {banned ? (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    loading={moderation.unbanSubmitting}
+                    onClick={() => void moderation.handleUnban()}
+                  >
+                    {t("unban")}
+                  </Button>
+                ) : (
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={moderation.toggleBanForm}
+                  >
+                    {t("ban")}
+                  </Button>
+                )}
+              </>
+            )}
+          </div>
         </div>
-        <Badge className={banned ? "text-danger" : "text-success"}>
-          {banned ? t("detailStatusBanned") : t("detailStatusActive")}
-        </Badge>
-      </div>
 
-      {/* Content */}
-      <Text as="h2" variant="title" className="mb-3 text-lg">
-        {t("detailSecContent")}
-      </Text>
-      <StatGrid>
-        <Stat label={t("hPacks")} value={user.content.packsTotal} />
-        <Stat label={t("detailApproved")} value={user.content.packsApproved} />
-        <Stat label={t("detailPending")} value={user.content.packsPending} />
-        <Stat label={t("detailRejected")} value={user.content.packsRejected} />
-        <Stat
-          label={t("detailPlaysOnPacks")}
-          value={user.content.totalPlaysOnPacks}
-        />
-        <Stat label={t("detailLikes")} value={user.content.likesOnPacks} />
-      </StatGrid>
+        {canAct && moderation.actionError && (
+          <Text variant="danger" className="mb-4 text-sm">
+            {moderation.actionError}
+          </Text>
+        )}
 
-      {/* Activity */}
-      <Text as="h2" variant="title" className="mb-3 mt-8 text-lg">
-        {t("detailSecActivity")}
-      </Text>
-      <StatGrid>
-        <Stat label={t("detailComments")} value={user.activity.commentsCount} />
-        <Stat
-          label={t("detailPacksPlayed")}
-          value={user.activity.playsRecorded}
-        />
-      </StatGrid>
+        {canAct && moderation.showBanForm && (
+          <div className="mb-8 rounded-[15px] border border-border bg-surface p-4">
+            <UserBanForm
+              userId={userId}
+              banDuration={moderation.banDuration}
+              banReason={moderation.banReason}
+              loading={moderation.banSubmitting}
+              onDurationChange={moderation.setBanDuration}
+              onReasonChange={moderation.setBanReason}
+              onConfirm={() => void moderation.handleBanSubmit()}
+              onCancel={moderation.toggleBanForm}
+            />
+          </div>
+        )}
 
-      {/* Storage — what they are holding NOW, beside the budget it is judged
+        {/* Content */}
+        <Text as="h2" variant="title" className="mb-3 text-lg">
+          {t("detailSecContent")}
+        </Text>
+        <StatGrid>
+          <Stat label={t("hPacks")} value={user.content.packsTotal} />
+          <Stat
+            label={t("detailApproved")}
+            value={user.content.packsApproved}
+          />
+          <Stat label={t("detailPending")} value={user.content.packsPending} />
+          <Stat
+            label={t("detailRejected")}
+            value={user.content.packsRejected}
+          />
+          <Stat
+            label={t("detailPlaysOnPacks")}
+            value={user.content.totalPlaysOnPacks}
+          />
+          <Stat label={t("detailLikes")} value={user.content.likesOnPacks} />
+        </StatGrid>
+
+        {/* Activity */}
+        <Text as="h2" variant="title" className="mb-3 mt-8 text-lg">
+          {t("detailSecActivity")}
+        </Text>
+        <StatGrid>
+          <Stat
+            label={t("detailComments")}
+            value={user.activity.commentsCount}
+          />
+          <Stat
+            label={t("detailPacksPlayed")}
+            value={user.activity.playsRecorded}
+          />
+        </StatGrid>
+
+        {/* Storage — what they are holding NOW, beside the budget it is judged
           against. No all-time or per-month figure exists: media rows are
           hard-deleted with their object, so nothing records what a user used to
           store (velanto-backend#254). */}
-      <Text as="h2" variant="title" className="mb-3 mt-8 text-lg">
-        {t("detailSecStorage")}
-      </Text>
-      <StatGrid>
-        <Stat
-          label={t("detailStorageUsed")}
-          value={formatBytes(user.storage.usedBytes)}
-        />
-        <Stat
-          label={t("detailStorageLimit")}
-          value={
-            user.storage.limitBytes === null
-              ? t("storageUnlimited")
-              : formatBytes(user.storage.limitBytes)
-          }
-        />
-      </StatGrid>
-
-      {/* Social */}
-      <Text as="h2" variant="title" className="mb-3 mt-8 text-lg">
-        {t("detailSecSocial")}
-      </Text>
-      <StatGrid>
-        <Stat label={t("detailFollowers")} value={user.social.followers} />
-        <Stat label={t("detailFollowing")} value={user.social.following} />
-      </StatGrid>
-
-      {/* Moderation */}
-      <Text as="h2" variant="title" className="mb-3 mt-8 text-lg">
-        {t("detailSecModeration")}
-      </Text>
-      <StatGrid>
-        <Stat
-          label={t("detailReportsAgainst")}
-          value={user.moderation.reportsAgainst}
-        />
-        <Stat
-          label={t("detailReportsFiled")}
-          value={user.moderation.reportsFiled}
-        />
-      </StatGrid>
-      <div className="mt-4">
-        <Text variant="secondary" className="mb-2 text-sm font-semibold">
-          {t("detailBanHistory")}
+        <Text as="h2" variant="title" className="mb-3 mt-8 text-lg">
+          {t("detailSecStorage")}
         </Text>
-        {banHistory.data && banHistory.data.items.length > 0 ? (
-          <div className="flex flex-col gap-2">
-            {banHistory.data.items.map((entry, index) => (
-              <div key={index} className="text-sm">
-                <Text variant="tertiary" className="text-xs">
-                  {formatDateTime(entry.createdAt)}
-                </Text>
-                <Text>
-                  <span className="font-semibold">{entry.actorUsername}</span> ·{" "}
-                  {entry.meta.duration} ·{" "}
-                  <span className="text-foreground-secondary">
-                    {entry.meta.reason}
-                  </span>
-                </Text>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <Text variant="tertiary" className="text-sm">
-            {t("detailNoBanHistory")}
-          </Text>
-        )}
-      </div>
+        <StatGrid>
+          <Stat
+            label={t("detailStorageUsed")}
+            value={formatBytes(user.storage.usedBytes)}
+          />
+          <Stat
+            label={t("detailStorageLimit")}
+            value={
+              user.storage.limitBytes === null
+                ? t("storageUnlimited")
+                : formatBytes(user.storage.limitBytes)
+            }
+          />
+        </StatGrid>
 
-      {/* Created packs + recently played rails */}
-      <AuthorPacksRail authorId={userId} title={t("detailCreatedPacks")} />
-      <RecentlyPlayedSection userId={userId} visible />
-    </div>
+        {/* Social */}
+        <Text as="h2" variant="title" className="mb-3 mt-8 text-lg">
+          {t("detailSecSocial")}
+        </Text>
+        <StatGrid>
+          <Stat label={t("detailFollowers")} value={user.social.followers} />
+          <Stat label={t("detailFollowing")} value={user.social.following} />
+        </StatGrid>
+
+        {/* Moderation */}
+        <Text as="h2" variant="title" className="mb-3 mt-8 text-lg">
+          {t("detailSecModeration")}
+        </Text>
+        <StatGrid>
+          <Stat
+            label={t("detailReportsAgainst")}
+            value={user.moderation.reportsAgainst}
+          />
+          <Stat
+            label={t("detailReportsFiled")}
+            value={user.moderation.reportsFiled}
+          />
+        </StatGrid>
+        <div className="mt-4">
+          <Text variant="secondary" className="mb-2 text-sm font-semibold">
+            {t("detailBanHistory")}
+          </Text>
+          {banHistory.data && banHistory.data.items.length > 0 ? (
+            <div className="flex flex-col gap-2">
+              {banHistory.data.items.map((entry, index) => (
+                <div key={index} className="text-sm">
+                  <Text variant="tertiary" className="text-xs">
+                    {formatDateTime(entry.createdAt)}
+                  </Text>
+                  <Text>
+                    <span className="font-semibold">{entry.actorUsername}</span>{" "}
+                    · {entry.meta.duration} ·{" "}
+                    <span className="text-foreground-secondary">
+                      {entry.meta.reason}
+                    </span>
+                  </Text>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <Text variant="tertiary" className="text-sm">
+              {t("detailNoBanHistory")}
+            </Text>
+          )}
+        </div>
+
+        {/* Created packs + recently played rails */}
+        <AuthorPacksRail authorId={userId} title={t("detailCreatedPacks")} />
+        <RecentlyPlayedSection userId={userId} visible />
+      </div>
+    </>
   );
 }

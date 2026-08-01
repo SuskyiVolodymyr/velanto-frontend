@@ -5,8 +5,8 @@ import { PACK_FORMATS, type PackFormat } from "@/src/shared/types/pack";
 // labels are resolved from the i18n catalogs at render time (see FormatFilter /
 // SortFilter), so only the values live here.
 //
-// Every format is filterable, including save_one_friends: its cards lead to a
-// detail page with a room entry, so a chip is no dead end.
+// Every format is filterable; the row is derived from PACK_FORMATS so it can't
+// drift from the canonical list.
 export type FormatFilterValue = "all" | PackFormat;
 export type SortFilterValue = "popular" | "date";
 export type WindowFilterValue = "day" | "week" | "month" | "year" | "all";

@@ -66,4 +66,33 @@ describe("GroupItemAdder image input", () => {
       screen.queryByRole("button", { name: "Adjust crop" }),
     ).not.toBeInTheDocument();
   });
+
+  // Regression: Modal isn't a portal, so the crop dialog renders inside this
+  // same panel — an Escape aimed at dismissing IT used to bubble up to the
+  // panel's own Escape guard and collapse the whole thing, discarding a
+  // typed title and an already-uploaded image key the author never asked to
+  // lose (T5's Escape guard was widened from "only while editing" to
+  // "whenever expanded", which made this reachable from the add-new flow too).
+  it("does not collapse the whole panel when Escape is pressed while the crop dialog is open", async () => {
+    const onCancelEdit = vi.fn();
+    const user = userEvent.setup();
+    renderAdder({
+      editing: true,
+      onCancelEdit,
+      imagePreviewUrl: "https://cdn/pic.webp",
+      imageFile: new File(["x"], "pic.png", { type: "image/png" }),
+    });
+
+    await user.click(screen.getByRole("button", { name: "Adjust crop" }));
+    expect(screen.getByText("Adjust image crop")).toBeInTheDocument();
+
+    await user.keyboard("{Escape}");
+
+    // The crop dialog's own Escape handling (Modal.tsx) closes just itself;
+    // the panel underneath must still be here, untouched.
+    expect(onCancelEdit).not.toHaveBeenCalled();
+    expect(
+      screen.getByRole("button", { name: "Adjust crop" }),
+    ).toBeInTheDocument();
+  });
 });

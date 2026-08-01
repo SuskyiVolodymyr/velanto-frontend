@@ -12,7 +12,7 @@ export function SettingsSectionSkeleton() {
   return (
     <section className="flex flex-col gap-4" aria-hidden>
       <Skeleton className="h-3 w-28" />
-      <Card className="flex flex-col gap-3 hover:translate-y-0 hover:shadow-none">
+      <Card className="flex flex-col gap-3">
         <Skeleton className="h-5 w-1/2" />
         <Skeleton className="h-4 w-3/4" />
       </Card>

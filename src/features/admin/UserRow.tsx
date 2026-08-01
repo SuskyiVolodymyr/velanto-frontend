@@ -162,6 +162,7 @@ export function UserRow({
             onDurationChange={onBanDurationChange}
             onReasonChange={onBanReasonChange}
             onConfirm={() => onConfirmBan(row.id)}
+            onCancel={() => onToggleBanForm(row.id)}
           />
         </div>
       )}

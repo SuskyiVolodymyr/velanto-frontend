@@ -49,12 +49,12 @@ test.describe("Edit & delete pack", () => {
     await page.goto("/packs/pack-1/edit");
 
     // The form is seeded from the pack; the submit button is in edit mode.
-    await expect(page.getByLabel("Pack title")).toHaveValue("Original Title");
+    await expect(page.getByLabel("Title")).toHaveValue("Original Title");
     await expect(
       page.getByRole("button", { name: "Save changes" }),
     ).toBeVisible();
 
-    await page.getByLabel("Pack title").fill("Edited Title");
+    await page.getByLabel("Title").fill("Edited Title");
     await page.getByRole("button", { name: "Save changes" }).click();
 
     await page.waitForURL("**/packs/pack-1");
@@ -82,7 +82,7 @@ test.describe("Edit & delete pack", () => {
     await expect(
       page.getByText("You can only edit your own packs."),
     ).toBeVisible();
-    await expect(page.getByLabel("Pack title")).toHaveCount(0);
+    await expect(page.getByLabel("Title")).toHaveCount(0);
   });
 
   test("the author deletes their pack from the detail page via the confirm modal", async ({

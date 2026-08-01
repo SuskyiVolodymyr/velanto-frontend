@@ -3,6 +3,8 @@ import { screen, waitFor } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { RankPlayScreen } from "./RankPlayScreen";
+import { packStructureHash } from "./pack-structure-hash";
+import { readPlayResume } from "./play-resume-storage";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { playsClient } from "@/src/shared/lib/plays-client";
@@ -100,6 +102,11 @@ beforeEach(() => {
   });
   vi.mocked(playsClient.record).mockResolvedValue({ id: "play-1" });
   sessionStorage.clear();
+  // Resume records live in localStorage; clear so a test that advances a round
+  // doesn't leave a saved play that makes the next test resume mid-pack. The
+  // rank pack uses manual slots, so its draw is deterministic regardless of the
+  // seed — the real usePlayResume hook is exercised here.
+  localStorage.clear();
 });
 
 describe("RankPlayScreen", () => {
@@ -162,7 +169,7 @@ describe("RankPlayScreen", () => {
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
     await user.click(
-      await screen.findByRole("button", { name: "Next round →" }),
+      await screen.findByRole("button", { name: "Next round" }),
     );
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("#1"));
@@ -213,7 +220,7 @@ describe("RankPlayScreen", () => {
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
     await user.click(
-      await screen.findByRole("button", { name: "Next round →" }),
+      await screen.findByRole("button", { name: "Next round" }),
     );
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("#1"));
@@ -238,7 +245,7 @@ describe("RankPlayScreen", () => {
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
     await user.click(
-      await screen.findByRole("button", { name: "Next round →" }),
+      await screen.findByRole("button", { name: "Next round" }),
     );
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("#1"));
@@ -259,7 +266,10 @@ describe("RankPlayScreen", () => {
 
     expect(await screen.findByText("Kaikai Kitan")).toBeInTheDocument();
     expect(screen.getByText("Round 1 of 2")).toBeInTheDocument();
-    expect(screen.getAllByText("Place here")).toHaveLength(2);
+    // T7: the empty-slot placeholder now names the current (blind) item —
+    // both empty rows show the same text, since only one item is "in play"
+    // at a time.
+    expect(screen.getAllByText("Place Kaikai Kitan here")).toHaveLength(2);
   });
 
   it("places the current item into the slot the player clicks, out of numeric order", async () => {
@@ -288,7 +298,7 @@ describe("RankPlayScreen", () => {
     await screen.findByText("Redo");
     await user.click(screen.getByText("#1"));
     await user.click(
-      await screen.findByRole("button", { name: "Next round →" }),
+      await screen.findByRole("button", { name: "Next round" }),
     );
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("#1"));
@@ -333,10 +343,54 @@ describe("RankPlayScreen", () => {
     await user.click(screen.getByText("#2"));
 
     expect(await screen.findByText("Openers ranked")).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "Next round" }));
 
     expect(await screen.findByText("Silhouette")).toBeInTheDocument();
     expect(screen.getByText("Round 2 of 2")).toBeInTheDocument();
+  });
+
+  // T7: the round-complete interstitial (eyebrow + "Next up: {name}", the
+  // real shipped screen between rounds — not the retired terminal COMPLETE
+  // mechanic) had no coverage. `nextUp` names the round via `roundHeading`,
+  // which for round 2 of this fixture falls back to "Round 2" (r2 has no
+  // author-given `name`).
+  it("shows the round-complete eyebrow and names the next round via roundHeading", async () => {
+    const user = userEvent.setup();
+    renderScreen(RANK_BLIND_PACK);
+    await screen.findByText("Kaikai Kitan");
+
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+
+    expect(await screen.findByText("Round ranked")).toBeInTheDocument();
+    expect(screen.getByText("Next up: Round 2")).toBeInTheDocument();
+  });
+
+  // The interstitial must be ABSENT on the actual final round — `isFinished`
+  // (not `isRoundComplete`) gates the last round, since `roundHeading(pack,
+  // roundIndex + 1)` would otherwise try to name a round that doesn't exist.
+  // The screen instead goes straight to the loading state (see the "records
+  // the accumulated picks…" test for the redirect itself).
+  it("does not show the round-complete interstitial on the final round", async () => {
+    const user = userEvent.setup();
+    renderScreen(RANK_BLIND_PACK);
+    await screen.findByText("Kaikai Kitan");
+
+    // Finish round 1 and advance.
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await screen.findByText("Round ranked");
+    await user.click(screen.getByRole("button", { name: "Next round" }));
+
+    // Finish round 2, the last round.
+    await screen.findByText("Silhouette");
+    await user.click(screen.getByText("#1"));
+
+    expect(await screen.findByText("Loading your results…")).toBeInTheDocument();
+    expect(screen.queryByText("Round ranked")).toBeNull();
+    expect(screen.queryByText(/^Next up:/)).toBeNull();
   });
 
   // The recap between rounds is the same list the result screen shows, so what
@@ -369,7 +423,7 @@ describe("RankPlayScreen", () => {
     await screen.findByText("Redo");
     await user.click(screen.getByText("#2"));
     await user.click(
-      await screen.findByRole("button", { name: "Next round →" }),
+      await screen.findByRole("button", { name: "Next round" }),
     );
 
     await screen.findByText("Silhouette");
@@ -491,6 +545,189 @@ describe("RankPlayScreen", () => {
     renderScreen(randomPack);
 
     await screen.findByText("Round 1 of 1");
-    expect(screen.getAllByText("Place here")).toHaveLength(2);
+    // T7: the empty-slot placeholder now names the current item, which for a
+    // random-mode slot is seed-dependent — assert the count via a pattern
+    // instead of a literal item name.
+    expect(screen.getAllByText(/^Place .+ here$/)).toHaveLength(2);
+  });
+
+  it("saves progress on advancing a round and resumes there on a fresh mount", async () => {
+    const version = packStructureHash(RANK_BLIND_PACK);
+    const user = userEvent.setup();
+    const first = renderScreen(RANK_BLIND_PACK);
+
+    // Rank round 1, then advance — this saves progress at round 1.
+    await screen.findByText("Kaikai Kitan");
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await user.click(
+      await screen.findByRole("button", { name: "Next round" }),
+    );
+    await screen.findByText("Silhouette");
+    expect(readPlayResume("pack-rank", version)?.roundIndex).toBe(1);
+
+    first.unmount();
+
+    // A fresh mount asks first, and only resumes on round 2 (without
+    // replaying round 1) once the player continues.
+    renderScreen(RANK_BLIND_PACK);
+    await user.click(await screen.findByRole("button", { name: "Continue" }));
+    await screen.findByText("Round 2 of 2");
+    expect(screen.queryByText("Kaikai Kitan")).toBeNull();
+    await screen.findByText("Silhouette");
+  });
+
+  it("shows the resume-choice modal on a fresh mount when a saved play exists", async () => {
+    const user = userEvent.setup();
+    const first = renderScreen(RANK_BLIND_PACK);
+
+    await screen.findByText("Kaikai Kitan");
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await user.click(
+      await screen.findByRole("button", { name: "Next round" }),
+    );
+    first.unmount();
+
+    renderScreen(RANK_BLIND_PACK);
+
+    expect(await screen.findByRole("alertdialog")).toBeInTheDocument();
+    expect(screen.getByText("1 round done")).toBeInTheDocument();
+    // No round content behind it until a choice is made.
+    expect(screen.queryByText("Silhouette")).toBeNull();
+  });
+
+  it("Start over discards the saved play and re-draws from round 1", async () => {
+    const version = packStructureHash(RANK_BLIND_PACK);
+    const user = userEvent.setup();
+    const first = renderScreen(RANK_BLIND_PACK);
+
+    await screen.findByText("Kaikai Kitan");
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await user.click(
+      await screen.findByRole("button", { name: "Next round" }),
+    );
+    first.unmount();
+
+    renderScreen(RANK_BLIND_PACK);
+    await user.click(
+      await screen.findByRole("button", { name: "Start over" }),
+    );
+
+    await screen.findByText("Round 1 of 2");
+    // Discarded outright, not just superseded in memory — a reload right
+    // after must not re-offer the discarded play.
+    expect(readPlayResume("pack-rank", version)).toBeNull();
+  });
+
+  it("clears the resume record when the play completes", async () => {
+    const version = packStructureHash(RANK_BLIND_PACK);
+    const user = userEvent.setup();
+    renderScreen(RANK_BLIND_PACK);
+
+    await screen.findByText("Kaikai Kitan");
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await user.click(
+      await screen.findByRole("button", { name: "Next round" }),
+    );
+    expect(readPlayResume("pack-rank", version)).not.toBeNull();
+
+    // Finish the last round.
+    await screen.findByText("Silhouette");
+    await user.click(screen.getByText("#1"));
+    await waitFor(() =>
+      expect(readPlayResume("pack-rank", version)).toBeNull(),
+    );
+  });
+
+  describe("mock fidelity (Solo Play.dc.html's isRank branch)", () => {
+    it("tints the status panel's border by state — accent while pending, success once ranked", async () => {
+      const user = userEvent.setup();
+      renderScreen(RANK_BLIND_PACK);
+
+      await screen.findByText("Kaikai Kitan");
+      expect(screen.getByTestId("rank-status-panel").className).toContain(
+        "border-acc/30",
+      );
+
+      await user.click(screen.getByText("#1"));
+      await user.click(screen.getByText("#2"));
+
+      await screen.findByText("Openers");
+      expect(screen.getByTestId("rank-status-panel").className).toContain(
+        "border-success/30",
+      );
+    });
+
+    it("stacks the two columns below the mock's own 900px breakpoint", async () => {
+      renderScreen(RANK_BLIND_PACK);
+
+      await screen.findByText("Kaikai Kitan");
+      expect(screen.getByTestId("rank-columns").className).toContain(
+        "min-[901px]:grid-cols-",
+      );
+    });
+
+    it("sizes the pending item's media as a full-width 16:9 tile, not a fixed-width box", async () => {
+      renderScreen(RANK_BLIND_PACK);
+
+      await screen.findByText("Kaikai Kitan");
+      const media = screen.getByTestId("rank-current-media");
+      expect(media.className).toContain("aspect-video");
+      expect(media.className).not.toMatch(/max-w-\[230px\]/);
+    });
+
+    it("does not float the media — a real video shouldn't drift under the pointer", async () => {
+      renderScreen(RANK_BLIND_PACK);
+
+      await screen.findByText("Kaikai Kitan");
+      expect(screen.getByTestId("rank-current-media").className).not.toMatch(
+        /animate-card-float/,
+      );
+    });
+
+    it("shows the shared left-aligned round header — 'Round N of M' eyebrow, the round's own title, and the in-round placement prompt", async () => {
+      renderScreen(RANK_BLIND_PACK);
+
+      await screen.findByText("Kaikai Kitan");
+      expect(screen.getByText("Round 1 of 2")).toBeInTheDocument();
+      expect(screen.getByText("Place item 1 of 2")).toBeInTheDocument();
+      // Left-aligned, matching PlayScreen/HeadToHeadPlayScreen — not the old
+      // centered layout.
+      const heading = screen.getByRole("heading", { name: "Openers" });
+      expect(heading.closest("div")?.parentElement?.className).toContain(
+        "text-start",
+      );
+    });
+
+    it("updates the placement prompt as items are placed, then swaps to the all-placed message", async () => {
+      const user = userEvent.setup();
+      renderScreen(RANK_BLIND_PACK);
+
+      await screen.findByText("Kaikai Kitan");
+      await user.click(screen.getByText("#1"));
+
+      await screen.findByText("Redo");
+      expect(screen.getByText("Place item 2 of 2")).toBeInTheDocument();
+
+      await user.click(screen.getByText("#2"));
+      expect(
+        await screen.findByText("Every slot filled — this is your order"),
+      ).toBeInTheDocument();
+    });
+
+    it("omits the round counter from the sticky bar — it's carried by the round header now", async () => {
+      renderScreen(RANK_BLIND_PACK);
+
+      await screen.findByText("Kaikai Kitan");
+      // Exactly one match: the round header's own eyebrow.
+      expect(screen.getAllByText("Round 1 of 2")).toHaveLength(1);
+    });
   });
 });

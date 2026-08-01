@@ -14,8 +14,19 @@ const DEFAULT_FEED_QUERY = `page=1&limit=${PACKS_FEED_PAGE_SIZE}&sort=popular&wi
  * instead of an empty "Loading…" shell. Anonymous `GET /packs` returns approved
  * packs only. Returns null on any failure so the caller can fall back to the
  * client-only fetch path rather than crash the home route at build/request time.
+ *
+ * `q` seeds a top-bar search landing (`/?q=…`) with server-rendered results too,
+ * so a shared search URL doesn't flash an empty "Loading…" — the client's first
+ * render uses default filters + this same `q`, so the seed matches (see
+ * useHomeFeed's isDefaultFilters). Only the default filters are seeded; changing
+ * a filter falls through to the client fetch.
  */
-export async function getHomeFeedServer(): Promise<PacksFeedResult | null> {
+export async function getHomeFeedServer(
+  q?: string,
+): Promise<PacksFeedResult | null> {
+  const query = q?.trim()
+    ? `${DEFAULT_FEED_QUERY}&q=${encodeURIComponent(q.trim())}`
+    : DEFAULT_FEED_QUERY;
   try {
     // Six hours, and the exact number is load-bearing rather than a taste call.
     //
@@ -37,7 +48,14 @@ export async function getHomeFeedServer(): Promise<PacksFeedResult | null> {
     // silently converts this TTL into up-to-6h staleness for real visitors,
     // with no failing test on this file to show for it. HomeFeed.test.tsx
     // pins the refetch for that reason.
-    const res = await fetch(`${API_BASE_URL}/packs?${DEFAULT_FEED_QUERY}`, {
+    //
+    // `query` (not DEFAULT_FEED_QUERY) so a `/?q=…` search landing is seeded
+    // too — each distinct `q` is its own cache entry, and so its own 6h
+    // window. That is only affordable because nothing LINKS those URLs: the
+    // sitemap lists static routes only, so a crawler has no `?q=` to discover.
+    // Publishing search links would multiply the wake count by the number of
+    // distinct queries crawled.
+    const res = await fetch(`${API_BASE_URL}/packs?${query}`, {
       next: { revalidate: 21600 },
     });
     if (!res.ok) return null;

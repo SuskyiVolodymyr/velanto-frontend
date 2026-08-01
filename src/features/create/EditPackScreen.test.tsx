@@ -26,6 +26,15 @@ vi.mock("@/src/shared/lib/packs-client", () => ({
   packsClient: { create: vi.fn(), update: vi.fn() },
 }));
 
+// EditPackScreen mounts the real CreatePackForm, whose aside now includes
+// CreateFeasibilityPanel — unmocked, it fires a real fetch after a 400ms
+// debounce. These tests are short enough to unmount before that ever fires,
+// but see CreatePackForm.test.tsx's identical mock for why leaving it
+// unmocked is a real bug waiting to happen, not just noise.
+vi.mock("@/src/features/friends-rooms/friends-rooms-client", () => ({
+  friendsRoomsClient: { previewModes: vi.fn(() => new Promise(() => {})) },
+}));
+
 const PACK: Pack = {
   id: "pack-1",
   title: "Original Title",
@@ -87,7 +96,7 @@ describe("EditPackScreen", () => {
     mockSession("u1");
     renderScreen();
 
-    expect(await screen.findByLabelText("Pack title")).toHaveValue(
+    expect(await screen.findByLabelText("Title")).toHaveValue(
       "Original Title",
     );
     expect(
@@ -102,7 +111,7 @@ describe("EditPackScreen", () => {
     expect(
       await screen.findByText("You can only edit your own packs."),
     ).toBeInTheDocument();
-    expect(screen.queryByLabelText("Pack title")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Title")).not.toBeInTheDocument();
   });
 
   it("does not block a moderator who is not the author beyond the backend (edit is author-only, so still blocked)", async () => {
@@ -119,30 +128,10 @@ describe("EditPackScreen", () => {
     renderScreen();
 
     await waitFor(() => expect(authClient.refresh).toHaveBeenCalled());
-    expect(screen.queryByLabelText("Pack title")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Title")).not.toBeInTheDocument();
     expect(
       screen.queryByText("You can only edit your own packs."),
     ).not.toBeInTheDocument();
   });
 
-  // save_one_friends is a first-class editable format now — the author gets the
-  // real form (with the friends body), not an unsupported message.
-  it("edits a save_one_friends pack in the friends body", async () => {
-    mockSession("u1");
-    renderScreen({
-      ...PACK,
-      format: "save_one_friends",
-      rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "random" }] }],
-    });
-
-    expect(await screen.findByLabelText("Pack title")).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Save changes" }),
-    ).toBeInTheDocument();
-    expect(
-      screen.queryByText(
-        "This pack uses a format the editor doesn't support yet, so it can't be edited here.",
-      ),
-    ).not.toBeInTheDocument();
-  });
 });

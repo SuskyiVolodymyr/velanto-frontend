@@ -7,6 +7,8 @@ import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { playsClient } from "@/src/shared/lib/plays-client";
 import { ApiError } from "@/src/shared/lib/api-client";
+import { packStructureHash } from "@/src/features/play/pack-structure-hash";
+import { readPlayResume } from "@/src/features/play/play-resume-storage";
 import type { Pack } from "@/src/shared/types/pack";
 
 const push = vi.fn();
@@ -133,6 +135,10 @@ beforeEach(() => {
   });
   vi.mocked(playsClient.record).mockResolvedValue({ id: "play-1" });
   sessionStorage.clear();
+  // Resume records live in localStorage now; clear it too so a test that
+  // advances a round in pack-a doesn't leave a saved play that makes the next
+  // test resume mid-pack instead of starting fresh.
+  localStorage.clear();
 });
 
 describe("PlayScreen", () => {
@@ -153,10 +159,10 @@ describe("PlayScreen", () => {
     ).toBeNull();
 
     await user.click(screen.getByText("Redo"));
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "Next round" }));
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("Silhouette"));
-    await user.click(screen.getByRole("button", { name: "See results →" }));
+    await user.click(screen.getByRole("button", { name: "See results" }));
 
     // Anon play advances to the result page and stashes local picks…
     await waitFor(() =>
@@ -244,9 +250,9 @@ describe("PlayScreen", () => {
     renderScreen(NXN_PACK);
     await screen.findByRole("button", { name: "Pick Boys" });
 
-    expect(screen.getByRole("button", { name: "Next round →" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Next round" })).toBeDisabled();
     await user.click(screen.getByRole("button", { name: "Pick Boys" }));
-    expect(screen.getByRole("button", { name: "Next round →" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Next round" })).toBeEnabled();
   });
 
   it("advances through nxn rounds and records both sides' drawn items per round", async () => {
@@ -255,11 +261,14 @@ describe("PlayScreen", () => {
     await screen.findByRole("button", { name: "Pick Boys" });
 
     await user.click(screen.getByRole("button", { name: "Pick Boys" }));
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "Next round" }));
 
-    expect(await screen.findByText("Round 2 of 2")).toBeInTheDocument();
+    // Exactly once: the round-position eyebrow on PlayRoundHeader. PlayChrome's
+    // bar opts out of the counter (showRoundCounter={false}) — the mock only
+    // ever draws it in the round header.
+    expect(await screen.findAllByText("Round 2 of 2")).toHaveLength(1);
     await user.click(screen.getByRole("button", { name: "Pick Girls" }));
-    await user.click(screen.getByRole("button", { name: "See results →" }));
+    await user.click(screen.getByRole("button", { name: "See results" }));
 
     // No interstitial finished screen — it records and goes straight to results.
     await waitFor(() =>
@@ -292,25 +301,27 @@ describe("PlayScreen", () => {
     expect(screen.queryByRole("button", { name: "Show all" })).toBeNull();
     expect(screen.queryByText(/Showing/)).toBeNull();
 
-    // The round heading is an h2: PlayHeader owns the page's only h1 (the pack
+    // The round heading is an h2: PlayChrome owns the page's only h1 (the pack
     // title), and a second h1 here would flatten that hierarchy.
+    expect(
+      screen.getByRole("heading", { level: 1 }),
+    ).toHaveTextContent("Best Anime Openings");
     expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("2016");
-    expect(screen.queryByRole("heading", { level: 1 })).toBeNull();
   });
 
   it("requires a selection before confirming", async () => {
     renderScreen(SAVE_ONE_PACK);
     await screen.findByText("Guren no Yumiya");
 
-    expect(screen.getByRole("button", { name: "Next round →" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Next round" })).toBeDisabled();
   });
 
   // The count→columns mapping is real layout logic: ≤4 in one row, 6 as two
   // rows of three, 8 as two rows of four.
   it.each([
-    [4, "lg:grid-cols-4"],
-    [6, "lg:grid-cols-3"],
-    [8, "lg:grid-cols-4"],
+    [4, "min-[1000px]:grid-cols-4"],
+    [6, "min-[1000px]:grid-cols-3"],
+    [8, "min-[1000px]:grid-cols-4"],
   ])(
     "lays %i candidates out with the %s grid on wide screens",
     async (count, gridClass) => {
@@ -327,12 +338,13 @@ describe("PlayScreen", () => {
     await screen.findByText("Guren no Yumiya");
 
     await user.click(screen.getByText("Redo"));
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "Next round" }));
 
     expect(await screen.findByText("Silhouette")).toBeInTheDocument();
-    expect(screen.getByText("Round 2 of 2")).toBeInTheDocument();
+    // Exactly once — see the note above.
+    expect(screen.getAllByText("Round 2 of 2")).toHaveLength(1);
     await user.click(screen.getByText("Silhouette"));
-    await user.click(screen.getByRole("button", { name: "See results →" }));
+    await user.click(screen.getByRole("button", { name: "See results" }));
 
     // No "all rounds done" screen — a loader shows while it records, then it
     // navigates straight to the result page.
@@ -415,13 +427,13 @@ describe("PlayScreen", () => {
     );
     // Single-round pack → the confirm button is the finish/"see results" one.
     expect(
-      screen.getByRole("button", { name: "See results →" }),
+      screen.getByRole("button", { name: "See results" }),
     ).toBeDisabled();
 
     await user.click(
       screen.getByRole("button", { name: "Pick Guren no Yumiya" }),
     );
-    expect(screen.getByRole("button", { name: "See results →" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "See results" })).toBeEnabled();
   });
 
   it("resets the selection when advancing to the next round", async () => {
@@ -430,12 +442,12 @@ describe("PlayScreen", () => {
     await screen.findByText("Guren no Yumiya");
 
     await user.click(screen.getByText("Redo"));
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "Next round" }));
 
     // Round 2 (the last round) starts with nothing selected.
     await screen.findByText("Silhouette");
     expect(
-      screen.getByRole("button", { name: "See results →" }),
+      screen.getByRole("button", { name: "See results" }),
     ).toBeDisabled();
   });
 
@@ -445,10 +457,10 @@ describe("PlayScreen", () => {
     await screen.findByText("Guren no Yumiya");
 
     await user.click(screen.getByText("Redo"));
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "Next round" }));
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("Silhouette"));
-    await user.click(screen.getByRole("button", { name: "See results →" }));
+    await user.click(screen.getByRole("button", { name: "See results" }));
 
     await screen.findByRole("status");
     await waitFor(() => expect(playsClient.record).toHaveBeenCalledTimes(1));
@@ -472,10 +484,10 @@ describe("PlayScreen", () => {
     await screen.findByText("Guren no Yumiya");
 
     await user.click(screen.getByText("Redo"));
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "Next round" }));
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("Silhouette"));
-    await user.click(screen.getByRole("button", { name: "See results →" }));
+    await user.click(screen.getByRole("button", { name: "See results" }));
 
     await screen.findByRole("status");
     await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
@@ -507,10 +519,10 @@ describe("PlayScreen", () => {
     await screen.findByText("Guren no Yumiya");
 
     await user.click(screen.getByText("Redo"));
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "Next round" }));
     await screen.findByText("Silhouette");
     await user.click(screen.getByText("Silhouette"));
-    await user.click(screen.getByRole("button", { name: "See results →" }));
+    await user.click(screen.getByRole("button", { name: "See results" }));
 
     await screen.findByRole("status");
     await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
@@ -521,5 +533,61 @@ describe("PlayScreen", () => {
       { roundIndex: 0, groupId: "g1", itemId: "2", chosen: true },
       { roundIndex: 1, groupId: "g2", itemId: "3", chosen: true },
     ]);
+  });
+
+  describe("resume choice", () => {
+    // Advances round 0 (choosing "Redo") to create a real saved record, then
+    // unmounts — a fresh mount of the same pack is what a page refresh or a
+    // "Continue playing" navigation both produce.
+    async function playRoundOneAndUnmount() {
+      const user = userEvent.setup();
+      const first = renderScreen(SAVE_ONE_PACK);
+      await screen.findByText("Guren no Yumiya");
+      await user.click(screen.getByText("Redo"));
+      await user.click(screen.getByRole("button", { name: "Next round" }));
+      await screen.findByText("Silhouette");
+      first.unmount();
+      return user;
+    }
+
+    it("shows the resume-choice modal instead of any round content on a fresh mount", async () => {
+      await playRoundOneAndUnmount();
+
+      renderScreen(SAVE_ONE_PACK);
+
+      expect(await screen.findByRole("alertdialog")).toBeInTheDocument();
+      expect(screen.getByText("1 round done")).toBeInTheDocument();
+      expect(screen.queryByTestId("candidate-grid")).not.toBeInTheDocument();
+    });
+
+    it("Continue resumes on the saved round without replaying the first", async () => {
+      await playRoundOneAndUnmount();
+
+      const user = userEvent.setup();
+      renderScreen(SAVE_ONE_PACK);
+      await user.click(
+        await screen.findByRole("button", { name: "Continue" }),
+      );
+
+      await screen.findByText("Silhouette");
+      expect(screen.queryByText("Guren no Yumiya")).toBeNull();
+    });
+
+    it("Start over discards the saved play and re-draws from round 1", async () => {
+      await playRoundOneAndUnmount();
+      const version = packStructureHash(SAVE_ONE_PACK);
+
+      const user = userEvent.setup();
+      renderScreen(SAVE_ONE_PACK);
+      await user.click(
+        await screen.findByRole("button", { name: "Start over" }),
+      );
+
+      // Back on round 1's pool, not round 2's.
+      await screen.findByText("Guren no Yumiya");
+      // Discarded outright, not just superseded in memory — a reload right
+      // after must not re-offer the discarded play.
+      expect(readPlayResume("pack-a", version)).toBeNull();
+    });
   });
 });

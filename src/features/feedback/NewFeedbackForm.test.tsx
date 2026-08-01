@@ -85,7 +85,9 @@ describe("NewFeedbackForm", () => {
     await userEvent.click(screen.getByRole("radio", { name: "Translation" }));
 
     expect(screen.getByLabelText(/suggested wording/i)).toBeInTheDocument();
-    expect(screen.getByLabelText(/language/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole("radiogroup", { name: /language/i }),
+    ).toBeInTheDocument();
   });
 
   it("submits a valid bug post with the right payload and redirects to the created post", async () => {
@@ -97,9 +99,7 @@ describe("NewFeedbackForm", () => {
       screen.getByLabelText(/details/i),
       "It crashes on load",
     );
-    await userEvent.click(
-      screen.getByRole("button", { name: /post feedback/i }),
-    );
+    await userEvent.click(screen.getByRole("button", { name: "Post" }));
 
     await waitFor(() =>
       expect(mockedFeedbackClient.create).toHaveBeenCalledWith({
@@ -122,14 +122,14 @@ describe("NewFeedbackForm", () => {
       screen.getByLabelText(/details/i),
       "The label reads oddly",
     );
-    await userEvent.selectOptions(screen.getByLabelText(/language/i), "uk");
+    // The language picker is a chip radiogroup (the mock's own control), not
+    // a <select> — options are named by the locale's endonym.
+    await userEvent.click(screen.getByRole("radio", { name: "Українська" }));
     await userEvent.type(
       screen.getByLabelText(/suggested wording/i),
       "Краще формулювання",
     );
-    await userEvent.click(
-      screen.getByRole("button", { name: /post feedback/i }),
-    );
+    await userEvent.click(screen.getByRole("button", { name: "Post" }));
 
     await waitFor(() =>
       expect(mockedFeedbackClient.create).toHaveBeenCalledWith({
@@ -146,9 +146,7 @@ describe("NewFeedbackForm", () => {
   it("shows a validation message and does not submit when required fields are empty", async () => {
     render(<NewFeedbackForm />);
 
-    await userEvent.click(
-      screen.getByRole("button", { name: /post feedback/i }),
-    );
+    await userEvent.click(screen.getByRole("button", { name: "Post" }));
 
     expect(await screen.findByText("Title is required.")).toBeInTheDocument();
     expect(mockedFeedbackClient.create).not.toHaveBeenCalled();
@@ -166,9 +164,7 @@ describe("NewFeedbackForm", () => {
       screen.getByLabelText(/details/i),
       "It crashes on load",
     );
-    await userEvent.click(
-      screen.getByRole("button", { name: /post feedback/i }),
-    );
+    await userEvent.click(screen.getByRole("button", { name: "Post" }));
 
     expect(
       await screen.findByText("That topic is closed."),
@@ -200,9 +196,7 @@ describe("NewFeedbackForm", () => {
       screen.getByLabelText(/details/i),
       "It crashes on load",
     );
-    await userEvent.click(
-      screen.getByRole("button", { name: /post feedback/i }),
-    );
+    await userEvent.click(screen.getByRole("button", { name: "Post" }));
 
     expect(
       await screen.findByText(
@@ -226,9 +220,7 @@ describe("NewFeedbackForm", () => {
       screen.getByLabelText(/details/i),
       "It crashes on load",
     );
-    await userEvent.click(
-      screen.getByRole("button", { name: /post feedback/i }),
-    );
+    await userEvent.click(screen.getByRole("button", { name: "Post" }));
 
     await waitFor(() =>
       expect(screen.getByRole("button", { name: /posting/i })).toBeDisabled(),

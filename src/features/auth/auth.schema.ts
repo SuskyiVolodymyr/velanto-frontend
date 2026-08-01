@@ -1,7 +1,20 @@
 import { z } from "zod";
 
 // Mirrors velanto-backend's register.dto.ts (usernameSchema / passwordSchema).
-export const USERNAME_PATTERN = /^[a-zA-Z0-9]{2,16}$/;
+/**
+ * The username charset, kept as a source fragment so `mention-text.tsx` builds
+ * its pattern from the SAME definition — a legal username must always be
+ * mentionable. Mirrors the backend's `USERNAME_CHARS`.
+ *
+ * `\p{L}` letters of any script, `\p{M}` combining marks (Devanagari matras,
+ * Arabic harakat and the like are separate code points), `\p{N}` digits, plus
+ * `_`. Emoji and punctuation are excluded — neither letters nor digits.
+ */
+export const USERNAME_CHARS = "[\\p{L}\\p{M}\\p{N}_]";
+
+/** 2–16 CODE POINTS (the `u` flag makes the quantifier count code points, so a
+ * 16-character CJK name is 16 and not 32). */
+export const USERNAME_PATTERN = new RegExp(`^${USERNAME_CHARS}{2,16}$`, "u");
 export const MIN_PASSWORD_LENGTH = 8;
 export const MAX_PASSWORD_LENGTH = 72;
 

@@ -73,7 +73,84 @@
     "deletePack": "حذف الحزمة",
     "packDeleted": "تم حذف الحزمة",
     "deletePackError": "تعذّر حذف هذه الحزمة. حاول مرة أخرى.",
-    "banUserError": "تعذّر حظر هذا المستخدم. حاول مرة أخرى."
+    "banUserError": "تعذّر حظر هذا المستخدم. حاول مرة أخرى.",
+    "contentsSearchAria": "البحث في عناصر الحزمة",
+    "contentsSearchPlaceholder": "البحث في العناصر…",
+    "contentsFilterText": "نص",
+    "contentsFilterYoutube": "YouTube",
+    "contentsFilterImage": "صورة",
+    "contentsItemType": {
+      "text": "عنصر نصي",
+      "youtube": "عنصر YouTube",
+      "image": "عنصر صورة"
+    },
+    "contentsDrawnRandomly": "تُسحب عشوائيًا · {count, plural, zero {# عنصر} one {عنصر واحد} two {عنصران} few {# عناصر} many {# عنصرًا} other {# عنصر}} في هذه المجموعة",
+    "contentsPoolEmpty": "لا توجد عناصر في هذه المجموعة بعد.",
+    "contentsEmpty": "لا توجد محتويات لهذه الحزمة لعرضها.",
+    "contentsNoMatches": "لا توجد عناصر تطابق بحثك.",
+    "packNotFound": "هذه الحزمة غير موجودة.",
+    "packCrumb": "مراجعة الحزمة",
+    "reportCrumb": "مراجعة البلاغ",
+    "queueBack": "قائمة الانتظار",
+    "packSubmittedBy": "أرسلها {author} في {date}",
+    "packSummarySentence": "{pools, plural, zero {# مجموعة} one {مجموعة واحدة} two {مجموعتان} few {# مجموعات} many {# مجموعةً} other {# مجموعة}} · {rounds, plural, zero {# جولة} one {جولة واحدة} two {جولتان} few {# جولات} many {# جولةً} other {# جولة}}",
+    "contentsHeading": "محتويات الحزمة",
+    "roundMappingHeading": "الجولات",
+    "roundLabelFallback": "الجولة {index}",
+    "roundRandomPool": "مجموعة عشوائية",
+    "contentsRandomPoolSlot": "تسحب هذه الفتحة مجموعة عشوائية في كل مرة تُلعب فيها — ولا يُحفظ أي سجل بالمجموعة التي استُخدمت فعليًا، لذا يتعذّر عرض محتواها هنا.",
+    "loadingReportedContent": "جارٍ تحميل محتوى البلاغ…",
+    "reportedContentError": "تعذّر تحميل محتوى هذا البلاغ. حاول مرة أخرى لاحقًا.",
+    "reportedUserHeading": "الحساب المُبلَّغ عنه",
+    "reportedUserJoined": "انضم في {date}",
+    "reportedUserPacks": "الحزم",
+    "reportedUserComments": "التعليقات",
+    "reportedUserReportsAgainst": "البلاغات ضده",
+    "reportedUserReportsFiled": "البلاغات المُقدَّمة",
+    "reportedUserRestricted": "لا يمكن عرض تفاصيل الحساب المُبلَّغ عنه إلا للمديرين والمشرفين.",
+    "otherReportsHeading": "بلاغات أخرى عن هذا الهدف",
+    "otherReportsLoading": "جارٍ تحميل سجل البلاغات…",
+    "otherReportsError": "تعذّر تحميل سجل البلاغات.",
+    "otherReportsNone": "لا توجد بلاغات أخرى عن هذا الهدف.",
+    "otherReportsBy": "بواسطة {reporter}",
+    "otherReportsMore": "عرض {shown} من {total} بلاغًا آخر.",
+    "approvalHeading": "مراجعة الموافقة — كل عنصر في الحزمة",
+    "approvalIntro": "لا تسحب الجولة الواحدة سوى جزء من كل مجموعة عشوائيًا. كل ما أرسله المؤلف معروض أدناه، حتى لا يصل شيء إلى اللاعبين دون مراجعة.",
+    "decisionHeading": "القرار",
+    "approvePack": "اعتماد الحزمة",
+    "requestChanges": "طلب تعديلات",
+    "rejectPack": "رفض الحزمة",
+    "changesRequestedHeading": "تم طلب تعديلات",
+    "changesNoMarks": "حدّد العناصر التي تحتاج عملًا — باستخدام «تحديد للتعديل» أعلاه — ثم اشرح ما على المؤلف تغييره.",
+    "changesMessageLabel": "رسالة إلى المؤلف",
+    "changesMessagePlaceholder": "ما الذي يجب تغييره قبل النشر؟",
+    "sendChangeRequest": "إرسال الطلب",
+    "changesOutcomeNote": "تعود الحزمة إلى مؤلفها مع ملاحظاتك. لا يُحذف شيء، وإعادة الإرسال تعيدها إلى الطابور.",
+    "rejectReasonLabel": "سبب الرفض",
+    "markForEdit": "تحديد للتعديل",
+    "marked": "محدّد",
+    "unmark": "إلغاء تحديد {label}",
+    "markNoRequest": "بلا ملاحظة — سيرى المؤلف أنه محدّد فقط.",
+    "markAskedOfAuthor": "المطلوب من المؤلف",
+    "markItemPlaceholder": "ما الذي يجب أن يفعله المؤلف بهذا العنصر؟",
+    "markRoundPlaceholder": "ما الذي يجب تغييره في هذه الجولة؟",
+    "markFieldPlaceholder": "ما الذي يجب أن يكتبه المؤلف بدلاً من ذلك؟",
+    "markKind": {
+      "title": "العنوان",
+      "description": "الوصف",
+      "cover": "الغلاف",
+      "tags": "الوسوم",
+      "item": "عنصر",
+      "round": "جولة"
+    },
+    "fieldsHeading": "تفاصيل الحزمة — حدّد ما يحتاج إعادة صياغة",
+    "fieldTitle": "العنوان",
+    "fieldDescription": "الوصف",
+    "fieldCover": "الغلاف",
+    "fieldTags": "الوسوم",
+    "fieldEmpty": "غير محدد",
+    "fieldCoverUploaded": "صورة مرفوعة",
+    "fieldCoverTone": "اللون {tone}"
   },
   "admin": {
     "panelEyebrow": "لوحة الإدارة",
@@ -120,8 +197,13 @@
     "noUserEmailError": "لا يوجد مستخدم بهذا البريد.",
     "changeRoleError": "تعذّر تغيير دور هذا العضو. حاول مرة أخرى.",
     "loadMoreStaffError": "تعذّر تحميل المزيد من الفريق. حاول مرة أخرى.",
-    "addStaffEmailAria": "بريد المستخدم المراد إضافته إلى الفريق",
-    "addStaffEmailPlaceholder": "الاسم@email.com",
+    "addStaffInputAria": "البريد الإلكتروني أو اسم المستخدم أو معرف المستخدم المراد إضافته إلى الفريق",
+    "addStaffInputPlaceholder": "البريد الإلكتروني، أو @اسم_المستخدم، أو معرف المستخدم",
+    "addStaffKindEmail": "البريد الإلكتروني",
+    "addStaffKindUsername": "اسم المستخدم",
+    "addStaffKindUserId": "معرف المستخدم",
+    "addStaffNoMatchOther": "لم يُعثر على مستخدم.",
+    "addStaffMatchesAria": "المستخدمون المطابقون",
     "roleToGrantAria": "الدور المراد منحه",
     "addStaff": "+ إضافة عضو",
     "searchStaffAria": "ابحث في الفريق باسم المستخدم أو البريد",
@@ -171,6 +253,7 @@
     "untrustError": "تعذّر إلغاء الثقة عن هذا المستخدم. حاول مرة أخرى.",
     "loadMoreUsersError": "تعذّر تحميل المزيد من المستخدمين. حاول مرة أخرى.",
     "detailBack": "العودة إلى المستخدمين",
+    "detailCrumb": "تفاصيل المستخدم",
     "detailLoading": "جارٍ تحميل المستخدم…",
     "detailError": "تعذّر تحميل هذا المستخدم.",
     "detailStatusBanned": "محظور",
@@ -229,22 +312,39 @@
     "newCount": "{count} جديد",
     "loadOlder": "تحميل الإشعارات الأقدم",
     "commentReply": "<user>@{username}</user> <muted>ردّ على تعليقك في</muted> <obj>{packTitle}</obj>",
-    "kindReply": "ردّ"
+    "kindReply": "ردّ",
+    "packChangesRequested": "<muted>طلب مشرف تعديلات على</muted> <obj>{packTitle}</obj>"
   },
   "bottomNav": {
     "label": "رئيسي",
-    "discovery": "استكشاف",
-    "feedback": "ملاحظات",
     "create": "إنشاء",
-    "notifications": "تنبيهات",
     "profile": "حسابي"
+  },
+  "shell": {
+    "nav": {
+      "label": "التنقل الرئيسي",
+      "browse": "تصفح",
+      "myPacks": "حِزَمي",
+      "people": "الأشخاص",
+      "history": "السجل",
+      "suggestions": "الاقتراحات",
+      "rules": "القواعد"
+    },
+    "soon": "قريباً",
+    "menuToggle": "تبديل القائمة",
+    "room": {
+      "inARoom": "في غرفة",
+      "lobby": "الردهة · {count}",
+      "rejoin": "إعادة الانضمام"
+    }
   },
   "authGate": {
     "logInToVote": "سجّل الدخول للتصويت",
     "logInToFollow": "سجّل الدخول للمتابعة",
     "logInToComment": "سجّل الدخول للتعليق",
     "logInToPlay": "سجّل الدخول للعب",
-    "logInToCreateTokens": "سجّل الدخول لإنشاء رموز API"
+    "logInToCreateTokens": "سجّل الدخول لإنشاء رموز API",
+    "logInToReport": "سجّل الدخول للإبلاغ"
   },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
@@ -263,6 +363,7 @@
   },
   "settings": {
     "title": "التفضيلات",
+    "intro": "كل ما يخص حسابك، في مكان واحد. تُحفظ التغييرات فور إجرائها — دون زر إرسال، إلا في الحالات التي تتطلب كلمة مرور.",
     "languageHeading": "اللغة",
     "languageLabel": "لغة الواجهة",
     "languageHint": "يغيّر لغة القوائم والأزرار. يبقى محتوى الحزمة باللغة التي كتبه بها منشئه.",
@@ -275,6 +376,7 @@
     "accentColorHint": "يُستخدَم للإبرازات والأزرار وأشرطة التقدّم.",
     "accentColorSwatch": "استخدام اللون المميّز {color}",
     "notificationsHeading": "الإشعارات",
+    "notifEnabledCount": "{count} من {total} مفعّل",
     "loginToManageNotifications": "<link>تسجيل الدخول</link> لإدارة تفضيلات الإشعارات.",
     "notificationsLoadError": "تعذّر تحميل تفضيلات الإشعارات.",
     "loading": "جارٍ التحميل…",
@@ -331,7 +433,8 @@
     "addEmailConfirmButton": "إضافة البريد الإلكتروني",
     "addEmailTaken": "هذا البريد الإلكتروني مستخدم بالفعل من قبل حساب آخر.",
     "addEmailError": "تعذّر إضافة هذا البريد الإلكتروني. يُرجى المحاولة مرة أخرى.",
-    "notifCommentReply": "ردّ أحدهم على تعليقك"
+    "notifCommentReply": "ردّ أحدهم على تعليقك",
+    "notifPackChangesRequested": "طلب مشرف تعديلات على حزمتي"
   },
   "streamerMode": {
     "hiddenHint": "مخفي بسبب وضع البث",
@@ -381,9 +484,18 @@
     "resetSuccess": "تمت إعادة تعيين كلمة المرور. يمكنك الآن تسجيل الدخول.",
     "backToLogin": "العودة إلى تسجيل الدخول",
     "resetError": "تعذّر إعادة تعيين كلمة المرور. تحقّق من الرمز وحاول مرة أخرى.",
+    "brand": {
+      "headline": "ثمانيةٌ تدخل. واحدٌ ينجو من حُكمك.",
+      "subtitle": "أنشئ حِزَمًا، والعبها منفردًا، أو افتح غرفة ودع أصدقاءك يتجادلون — صوّتوا، وطالبوا، وأقصوا بالتناوب، أو خمّنوا من اختار ماذا.",
+      "pitch1": "العب أي حزمة منفردًا أو في غرفة",
+      "pitch2": "أربعة أنماط جماعية، ورمز واحد للانضمام",
+      "pitch3": "نتائجك محفوظة، واختياراتك محسوبة",
+      "socialProof": "انضم إلى {count, plural, zero {# أشخاص يتجادلون بالفعل} one {# شخص يتجادل بالفعل} two {# شخصين يتجادلان بالفعل} few {# أشخاص يتجادلون بالفعل} many {# شخصًا يتجادلون بالفعل} other {# شخص يتجادلون بالفعل}}",
+      "socialProofFallback": "انضم إلى المجتمع"
+    },
     "errors": {
       "loginRequired": "أدخل بريدك الإلكتروني أو اسم المستخدم وكلمة المرور.",
-      "username": "يجب أن يتكوّن اسم المستخدم من 2 إلى 16 حرفًا: أحرف وأرقام فقط.",
+      "username": "يجب أن يتكوّن اسم المستخدم من 2 إلى 16 حرفًا: أحرف وأرقام وشرطة سفلية فقط.",
       "email": "أدخل عنوان بريد إلكتروني صالحًا.",
       "passwordLength": "يجب ألّا تقلّ كلمة المرور عن 8 أحرف.",
       "passwordMax": "يجب ألّا تزيد كلمة المرور عن 72 حرفًا.",
@@ -408,6 +520,18 @@
     "heading": "قواعد المجتمع",
     "intro": "تحافظ هذه القواعد على أمان Velanto وعدالته للجميع. بإنشائك حسابًا فإنك توافق على الالتزام بها.",
     "loadError": "تعذّر تحميل القواعد الآن. يرجى المحاولة مرة أخرى بعد قليل.",
+    "searchPlaceholder": "ابحث في القواعد…",
+    "clearSearch": "مسح البحث",
+    "noMatch": "لا توجد قاعدة تطابق «{query}»",
+    "tryPlainer": "جرّب كلمة أبسط — «سبام»، «نسخ»، «حظر».",
+    "categoriesHeading": "الفئات",
+    "matchCount": "{count, plural, zero {# مطابقة} one {مطابقة واحدة} two {مطابقتان} few {# مطابقات} many {# مطابقة} other {# مطابقة}}",
+    "ruleCount": "{count, plural, zero {# قاعدة} one {قاعدة واحدة} two {قاعدتان} few {# قواعد} many {# قاعدة} other {# قاعدة}}",
+    "reportTitle": "هل خالف أحدهم قاعدة؟",
+    "reportNote": "أبلغ عن حزمة أو تعليق أو ملف شخصي — اختر القاعدة التي خُرقت وستصل الشكوى مباشرة إلى أحد المشرفين.",
+    "wrongRuleTitle": "تظن أن إحدى القواعد خاطئة؟",
+    "wrongRuleNote": "تتغيّر القواعد عندما يقدّم عدد كافٍ من الأشخاص حججًا مقنعة. انشرها كاقتراح.",
+    "openSuggestions": "فتح الاقتراحات",
     "content": {
       "hate_discrimination": {
         "title": "الكراهية والتمييز",
@@ -518,6 +642,14 @@
         }
       }
     }
+  },
+  "legal": {
+    "termsTab": "الشروط",
+    "privacyTab": "الخصوصية",
+    "onThisPage": "في هذه الصفحة",
+    "sectionCount": "{count, plural, zero {# قسم} one {قسم واحد} two {قسمان} few {# أقسام} many {# قسمًا} other {# قسم}}",
+    "questionsTitle": "لديك أسئلة حول هذا المستند؟",
+    "questionsNote": "يقرأ هذا البريد شخص واحد، ويجيب خلال 30 يومًا."
   },
   "terms": {
     "metaTitle": "شروط الخدمة — Velanto",
@@ -804,8 +936,11 @@
     "other": "أخرى"
   },
   "home": {
-    "title": "اكتشف الحزم",
-    "subtitle": "تصفّح الحزم حسب النوع أو الوسم، ثم العب إحداها لترى من يتصدّر في النهاية.",
+    "hero": {
+      "badge": "جديد · الأوضاع",
+      "title": "الآن يمكن لعب أي حزمة مع الأصدقاء",
+      "subtitle": "افتح غرفة لأي حزمة واختر وضعًا — صوّت للإقصاء، أو اطالب، أو اقطع بالتناوب، أو العب خمّن من وسجّل نقاطًا."
+    },
     "searchPlaceholder": "ابحث عن الحزم…",
     "searchLabel": "بحث عن الحزم",
     "filters": "تصفية",
@@ -832,23 +967,43 @@
     "paginationPrevious": "السابق",
     "paginationNext": "التالي",
     "groupLanguage": "اللغة",
-    "filterByLanguage": "التصفية حسب اللغة"
+    "filterByLanguage": "التصفية حسب اللغة",
+    "allFormats": "كل الصيغ",
+    "showingRange": "عرض {first}–{last} من أصل {total, plural, zero {# حزمة} one {حزمة واحدة} two {حزمتان} few {# حزم} many {# حزمة} other {# حزمة}}",
+    "card": {
+      "hot": "رائج",
+      "playedAt": "لعبتها {when}",
+      "roundsPlays": "{rounds, plural, zero {# جولة} one {جولة واحدة} two {جولتان} few {# جولات} many {# جولة} other {# جولة}} · {plays, plural, zero {# لعبة} one {لعبة واحدة} two {لعبتان} few {# ألعاب} many {# لعبة} other {# لعبة}}",
+      "playsCount": "{plays, plural, zero {# لعبة} one {لعبة واحدة} two {لعبتان} few {# ألعاب} many {# لعبة} other {# لعبة}}",
+      "play": "العب",
+      "friends": "الأصدقاء",
+      "friendsTitle": "اللعب مع الأصدقاء"
+    },
+    "joinRoom": {
+      "title": "الانضمام إلى غرفة",
+      "subtitle": "حصلت على رمز من صديق؟ أدخله هنا — لا حاجة للبحث عن حزمة.",
+      "codePlaceholder": "ABC-123"
+    },
+    "continue": {
+      "title": "متابعة اللعب",
+      "progress": "الجولة {current} من {total}",
+      "resume": "متابعة {title}"
+    }
   },
   "formats": {
     "save_one": "أنقذ واحدًا",
     "sacrifice_one": "ضحِّ بواحد",
     "nxn": "NxN",
     "rank_blind": "رتّب بلا رؤية",
-    "1v1": "1v1",
-    "save_one_friends": "أنقذ واحدًا (مع الأصدقاء)"
+    "1v1": "1v1"
   },
   "tagPicker": {
     "title": "اختر الوسوم",
     "selected": "{count} محدَّد",
-    "selectedOfMax": "{count} / {max} محدَّد",
-    "clear": "مسح",
+    "selectedOfMax": "{count} من {max} محدَّد{atCap, select, true { — أزل واحدًا للاستبدال} other {}}",
+    "clear": "مسح الكل",
     "cancel": "إلغاء",
-    "apply": "تطبيق"
+    "apply": "تم"
   },
   "pack": {
     "viewAuthor": "عرض المؤلف",
@@ -898,20 +1053,6 @@
           "desc": "استبعاد واحد في كل جولة، عبر كل مجموعة."
         }
       ],
-      "save_one_friends": [
-        {
-          "title": "اجمع 2-4 أصدقاء",
-          "desc": "ينضم الجميع إلى غرفة واحدة معًا — تعرض كل جولة عنصرًا لكل لاعب، وعنصرًا إضافيًا واحدًا."
-        },
-        {
-          "title": "احجز من تريد استبعاده",
-          "desc": "يختار كل منكم عنصرًا ليُقصيه؛ ولا يمكن للاعبين حجز العنصر نفسه، فترى الاختيارات تتوالى أمامك."
-        },
-        {
-          "title": "ينجو واحد",
-          "desc": "العنصر الوحيد الذي لم يحجزه أحد يُنقَذ — أكملوا كل الجولات معًا."
-        }
-      ],
       "nxn": [
         {
           "title": "فئتان تتواجهان",
@@ -956,6 +1097,7 @@
       ]
     },
     "comments": "التعليقات · {count}",
+    "creatorBadge": "المنشئ",
     "commentPlaceholder": "شاركنا رأيك في هذه الحزمة…",
     "commentLabel": "تعليق",
     "post": "نشر",
@@ -992,7 +1134,45 @@
     "submitPack": "إرسال للمراجعة",
     "submittingPack": "جارٍ الإرسال…",
     "submitPackError": "تعذّر إرسال هذه الحزمة. حاول مرة أخرى.",
-    "randomPoolLabel": "مجموعة عشوائية"
+    "rejectionReasonHeading": "سبب الرفض",
+    "randomPoolLabel": "مجموعة عشوائية",
+    "acrossPlays": "عبر {count, plural, zero {# لعبة} one {لعبة واحدة} two {لعبتين} few {# ألعاب} many {# لعبة} other {# لعبة}}",
+    "report": {
+      "title": "الإبلاغ عن هذه الحزمة",
+      "reasons": {
+        "inappropriate": "محتوى غير لائق أو مسيء",
+        "copyright": "مشكلة في حقوق النشر أو الملكية",
+        "spam": "محتوى مزعج أو مضلل",
+        "other": "شيء آخر"
+      }
+    },
+    "reportComment": {
+      "scopeNote": "تُقدَّم البلاغات ضد الحساب. التعليق مقتبس أدناه ليتمكن المشرف من العثور عليه.",
+      "quote": "بخصوص التعليق {id}:\n\n«{body}»"
+    },
+    "changesRequestedHeading": "طُلبت تعديلات",
+    "changesRequestedMarks": "{count, plural, zero {لا شيء محدد} one {عنصر واحد محدد} two {عنصران محددان} few {# عناصر محددة} many {# عنصرًا محددًا} other {# عنصر محدد}} — اقرأ ما طلبه المشرف.",
+    "changesRequestedNoMarks": "اقرأ ما طلبه المشرف قبل التعديل.",
+    "changesRequestedCta": "اعرض ما يجب إصلاحه"
+  },
+  "report": {
+    "button": "إبلاغ",
+    "buttonReported": "تم الإبلاغ",
+    "reasonLabel": "السبب",
+    "reasonPlaceholder": "اختر سببًا",
+    "commentLabel": "تفاصيل إضافية (اختياري)",
+    "commentPlaceholder": "أي شيء يساعد المشرف على مراجعة هذا",
+    "submit": "إرسال البلاغ",
+    "error": "تعذّر إرسال البلاغ. حاول مرة أخرى.",
+    "buttonUser": "الإبلاغ عن المستخدم",
+    "userTitle": "الإبلاغ عن @{username}",
+    "userNote": "تُرسل البلاغات إلى فريق الإشراف، ويُرفق اسم المستخدم الخاص بك مع البلاغ.",
+    "userReasons": {
+      "harassment": "تحرّش أو إساءة",
+      "impersonation": "انتحال شخصية",
+      "spam": "رسائل مزعجة أو احتيال",
+      "other": "شيء آخر"
+    }
   },
   "share": {
     "trigger": "مشاركة",
@@ -1004,40 +1184,109 @@
   "play": {
     "complete": "مكتمل",
     "roundOf": "الجولة {current} من {total}",
+    "exit": "خروج",
+    "soloMode": "فردي",
+    "roundsDoneNote": "{count, plural, zero {# جولة منتهية} one {جولة واحدة منتهية} two {جولتان منتهيتان} few {# جولات منتهية} many {# جولة منتهية} other {# جولة منتهية}}",
+    "chosenSave": "تم الإنقاذ",
+    "chosenSacrifice": "تمت التضحية",
+    "confirmReadyTitle": "تم الاختيار — لا يزال بإمكانك تغييره",
+    "confirmPendingTitle": "لم يتم اختيار أي شيء بعد",
+    "confirmNote": "يُسجَّل اختيارك عند الانتقال إلى الجولة التالية.",
+    "picksCountNote": "{done} مكتمل، {toGo} متبقٍ",
     "pick": "اختر {name}",
-    "nextRound": "الجولة التالية →",
+    "pickThisOne": "اختر هذا",
+    "yourPick": "اختيارك",
+    "nextRound": "الجولة التالية",
     "instructionSave": "اختر من ستنقذه. حدِّده بالأسفل ثم أكِّد.",
     "instructionSacrifice": "اختر من ستضحّي به. حدِّده بالأسفل ثم أكِّد.",
     "instructionNxn": "اختر الجانب الذي ستنقذه. حدِّده بالأسفل ثم أكِّد.",
+    "instruction1v1": "اختر واحدًا.",
     "savedSoFar": "المُنقَذون حتى الآن",
     "sacrificedSoFar": "المُضحّى بهم حتى الآن",
+    "yourRunSoFar": "مسارك حتى الآن",
     "finishedTitle": "انتهت كل الجولات",
     "finishedSave": "أنقذت {count, plural, zero {# اختيار} one {اختيارًا واحدًا} two {اختيارين} few {# اختيارات} many {# اختيارًا} other {# اختيار}}، واحدًا في كل جولة.",
     "finishedSacrifice": "ضحّيت بـ {count, plural, zero {# اختيار} one {اختيار واحد} two {اختيارين} few {# اختيارات} many {# اختيارًا} other {# اختيار}}، واحدًا في كل جولة.",
     "finishedVersus": "اخترت جانبًا في {count, plural, zero {# جولة} one {جولة واحدة} two {جولتين} few {# جولات} many {# جولة} other {# جولة}} بين {a} و{b}.",
     "whichPrefer": "أيهما تفضّل؟",
-    "rankInstruction": "اختر مكان هذا العنصر — العنصر {current} من {total}",
-    "placeHere": "ضعه هنا",
     "rankSlotFilled": "المرتبة {rank}: {title}",
     "rankSlotEmpty": "ضعه في المرتبة {rank}",
+    "rankPendingEyebrow": "ضع هذا",
+    "rankPendingFlavor": "لا يمكنك رؤية ما هو قادم — هذا جوهر اللعبة. اختر مكانًا والتزم به.",
+    "rankPlaceItemPrompt": "ضع العنصر {current} من {total}",
+    "rankAllPlacedPrompt": "امتلأت كل الخانات — هذا هو ترتيبك",
+    "rankRemainingNote": "{count, plural, zero {لا عناصر مخفية بعد ذلك} one {عنصر واحد مخفي بعد ذلك} two {عنصران مخفيان بعد ذلك} few {# عناصر مخفية بعد ذلك} many {# عنصرًا مخفيًا بعد ذلك} other {# عنصر مخفي بعد ذلك}}",
+    "rankDoneFlavor": "لا شيء لتغييره الآن — هذا ما يمنحك إياه الترتيب الأعمى. انتقل إلى الجولة التالية.",
+    "rankDoneFooter": "تم وضع كل {count}",
+    "rankPlaceItemHere": "ضع {name} هنا",
     "ranked": "تم ترتيب {name}",
+    "roundComplete": "تم ترتيب الجولة",
+    "nextUp": "التالي: {name}",
     "loadingResult": "جارٍ تحميل نتائجك…",
-    "finishRound": "عرض النتائج →",
+    "finishRound": "عرض النتائج",
     "versusSideA": "الجانب A",
-    "versusSideB": "الجانب B"
+    "versusSideB": "الجانب B",
+    "resumeModalTitle": "المتابعة من حيث توقفت؟",
+    "resumeModalBody": "تابع من حيث توقفت تمامًا، أو ابدأ من جديد بسحب جديد.",
+    "resumeContinue": "متابعة",
+    "resumeRestart": "البدء من جديد"
   },
   "result": {
-    "label": "النتيجة",
-    "playsRecorded": "{count, plural, zero {# لعبة مُسجّلة.} one {# لعبة مُسجّلة.} two {# لعبتان مُسجّلتان.} few {# ألعاب مُسجّلة.} many {# لعبة مُسجّلة.} other {# لعبة مُسجّلة.}}",
+    "label": "انتهت المحاولة",
+    "heroSubtitleFixed": "تم تسجيل اختياراتك وإضافتها إلى إحصاءات هذه الحزمة.",
+    "heroSubtitleFixedShared": "تم تسجيل اختياراتهم وإضافتها إلى إحصاءات هذه الحزمة.",
+    "statRoundsCompact": "الجولات",
+    "statPlaysCompact": "إجمالي المرات",
+    "resultBarMeta": "{count, plural, zero {# جولة} one {جولة واحدة} two {جولتان} few {# جولات} many {# جولة} other {# جولة}} · محاولتك",
+    "resultBarMetaShared": "{count, plural, zero {# جولة} one {جولة واحدة} two {جولتان} few {# جولات} many {# جولة} other {# جولة}} · محاولة مشاركة",
+    "heroTitleSave": "إليك ما أنقذته",
+    "heroTitleSaveShared": "إليك ما أنقذوه",
+    "heroTitleSacrifice": "إليك ما ضحيت به",
+    "heroTitleSacrificeShared": "إليك ما ضحوا به",
+    "heroTitleNxn": "إليك من اخترته",
+    "heroTitleNxnShared": "إليك من اختاروه",
+    "heroTitle1v1": "إليك من اخترته",
+    "heroTitle1v1Shared": "إليك من اختاروه",
+    "heroTitleRank": "إليك كيف رتبتهم",
+    "heroTitleRankShared": "إليك كيف رتبوهم",
+    "statAgreement": "متوسط التوافق مع اللاعبين الآخرين",
+    "statTopPick": "الاختيار الأكثر شيوعًا — اختار {percent}% نفس الشيء",
+    "statRarePick": "الاختيار الأندر — {percent}% فقط وافقوا",
+    "statPlays": "الألعاب المُسجّلة",
+    "statRoundsPlayed": "الجولات الملعوبة",
+    "statItemsSeen": "العناصر المُشاهَدة",
+    "statRoundsRanked": "الجولات المُرتَّبة",
+    "statItemsPlaced": "العناصر الموضوعة",
+    "statPodiumEntries": "ظهورات على المنصة",
     "lockedTitle": "أكمل الحزمة لترى النتائج",
     "lockedBody": "تبقى الإحصاءات مخفيّة أثناء اللعب، حتّى تكون اختياراتك اختياراتك أنت لا اختيارات الجمهور.",
     "lockedCta": "العب هذه الحزمة",
-    "yourPick": "اختيارك",
-    "sharedPick": "الاختيار",
+    "roundByRoundHeading": "جولة بجولة",
+    "roundByRoundNote": "ما اخترته في كل جولة",
+    "roundByRoundNoteShared": "ما اختاروه في كل جولة",
+    "verdictSave": "أنقذت",
+    "verdictSaveShared": "تم الإنقاذ",
+    "verdictSacrifice": "ضحيت بـ",
+    "verdictSacrificeShared": "تمت التضحية",
+    "verdictWon": "اخترت",
+    "verdictWonShared": "تم الاختيار",
+    "verdictRankedFirst": "ترتيبك رقم ١: {name}",
+    "verdictRankedFirstShared": "الترتيب رقم ١: {name}",
+    "lostLabel": "خسر",
+    "survivedLabel": "نجا",
     "playAgain": "العب مجددًا",
     "tryItYourself": "جرّبها بنفسك",
-    "shareResult": "شارك النتيجة",
     "sharedNote": "أنت تشاهد نتيجة مُشارَكة.",
+    "shareCardTitle": "شارك محاولتك",
+    "shareCardNote": "رابط لهذه المحاولة بالذات، حتى يرى أصدقاؤك اختياراتك قبل أن يلعبوا.",
+    "runCardTitle": "محاولتك",
+    "runCardNote": "ارجع إلى الحزمة، أو جرّب مرة أخرى.",
+    "sharedRunCardTitle": "محاولتهم",
+    "sharedRunCardNote": "ارجع إلى الحزمة، أو جرّبها بنفسك.",
+    "copyShareLink": "نسخ رابط المشاركة",
+    "backToPack": "العودة إلى الحزمة",
+    "playAgainFooter": "العبها مرة أخرى",
+    "tryItYourselfFooter": "جرّبها الآن",
     "loading": "جارٍ تحميل النتائج…",
     "loadError": "تعذّر تحميل النتائج. حدّث الصفحة للمحاولة مرة أخرى.",
     "matchupLabel": "مواجهة {heading}: {winner} على {loser}",
@@ -1050,6 +1299,9 @@
     "topPickedItemColumn": "العنصر",
     "topPickedPickedColumn": "اختير",
     "topPickedShareColumn": "النسبة",
+    "topPickedYours": "من اختيارك",
+    "boardAcrossPlays": "{count, plural, zero {عبر # محاولة} one {عبر محاولة واحدة} two {عبر محاولتين} few {عبر # محاولات} many {عبر # محاولة} other {عبر # محاولة}}",
+    "boardShowMore": "عرض {count} إضافية",
     "pickedOfAppeared": "{picked} من {appeared}",
     "loadMore": "تحميل المزيد",
     "eliminationRoundLabel": "{heading}: تم اختيار {picked}",
@@ -1071,34 +1323,41 @@
     "logIn": "تسجيل الدخول",
     "saveDraft": "حفظ كمسودة",
     "savingDraft": "جارٍ حفظ المسودة…",
-    "publish": "نشر",
-    "publishing": "جارٍ النشر…",
     "basicsHeading": "الأساسيات",
-    "packTitle": "عنوان الحزمة",
-    "packDescription": "وصف الحزمة",
-    "descriptionPlaceholder": "وصف مختصر",
+    "packTitle": "العنوان",
+    "packDescription": "الوصف",
+    "titlePlaceholder": "أنقذ بطل أنمي واحدًا",
+    "descriptionPlaceholder": "ما الذي يجعل هذه الحزمة تستحق الجدال؟",
     "coverTone": "لون الغلاف",
     "coverToneSwatch": "لون الغلاف {tone}",
     "coverImage": "صورة الغلاف",
     "coverImageHint": "PNG أو JPG، بحد أقصى 1 ميغابايت. تُعرض بدلاً من اللون.",
+    "coverDragHint": "اسحب صورة إلى هنا",
+    "coverDropToUpload": "أفلت للرفع",
     "removeCoverImage": "إزالة صورة الغلاف",
     "tags": "الوسوم",
-    "selectTags": "اختر الوسوم",
-    "tagsSelected": "{count, plural, zero {# وسم محدَّد} one {# وسم محدَّد} two {# وسمان محدَّدان} few {# وسوم محدَّدة} many {# وسمًا محدَّدًا} other {# وسم محدَّد}}",
+    "tagsCount": "{count}/{max} محدَّد",
+    "addTags": "+ إضافة وسوم",
     "formatHeading": "النمط",
-    "blurbSaveOne": "اعرض مجموعة، وأبقِ واحدًا للتقدّم.",
-    "blurbSacrificeOne": "استبعِد واحدًا في كل مرة؛ يبقى المفضّل.",
-    "blurbNxn": "فئتان تُقارَنان جنبًا إلى جنب.",
-    "blurbRankBlind": "ضع كل اختيار بلا رؤية في قائمة مرتّبة متنامية.",
-    "blurb1v1": "اختر فائزًا في كل مواجهة مباشرة.",
+    "formatHint": "كيف تسير الجولة. لا يمكن تغيير هذا بعد نشر الحزمة.",
+    "formatLockedTooltip": "لا يمكن تغيير النمط بعد النشر.",
+    "blurbSaveOne": "مجموعة كل جولة — يُبقي اللاعب على واحد بالضبط.",
+    "blurbSacrificeOne": "مجموعة كل جولة — يستبعد اللاعب واحدًا بالضبط.",
+    "blurbNxn": "مجموعة مقابل مجموعة، جنبًا إلى جنب، في كل جولة.",
+    "blurbRankBlind": "اختيار واحد بلا رؤية في كل مرة، ضمن قائمة متنامية.",
+    "blurb1v1": "عنصر مقابل آخر، وجهًا لوجه، بلا قرعة.",
     "groupName": "اسم المجموعة {index}",
     "random": "عشوائي",
     "manual": "يدوي",
     "removeGroup": "إزالة المجموعة {index}",
+    "deletePool": "حذف المجموعة",
+    "collapsePool": "طي المجموعة {index}",
+    "expandPool": "توسيع المجموعة {index}",
+    "clickItemToEdit": "انقر على عنصر لتعديله",
     "remove": "إزالة",
     "itemCount": "{count, plural, zero {# عنصر} one {# عنصر} two {# عنصران} few {# عناصر} many {# عنصرًا} other {# عنصر}}",
     "text": "نص",
-    "link": "رابط",
+    "link": "YouTube",
     "add": "إضافة",
     "checking": "جارٍ التحقق…",
     "addItemPlaceholder": "أضف عنصرًا…",
@@ -1113,19 +1372,23 @@
     "linkTitleRequired": "أضف عنوانًا لهذا الرابط.",
     "removeTag": "إزالة {tag}",
     "poolsHeading": "المجموعات",
-    "addPool": "+ إضافة مجموعة",
+    "poolsHint": "المجموعات هي حقائب عناصر قابلة لإعادة الاستخدام. الجولات أدناه تحدّد أي مجموعة تسحب منها كل جولة.",
+    "poolEmpty": "لا عناصر بعد — أضف أول عنصر أعلاه.",
+    "addPool": "مجموعة جديدة",
     "roundsHeading": "الجولات",
-    "addRound": "+ إضافة جولة",
+    "roundsHint": "انقر على جولة لاختيار مجموعتها.",
+    "addRound": "جولة جديدة",
     "removeRound": "إزالة الجولة {index}",
     "roundLabel": "الجولة {index}",
     "roundPool": "مجموعة الجولة {index}",
     "roundModeRandom": "الجولة {index} عشوائي",
     "roundModeManual": "الجولة {index} يدوي",
     "roundCountLabel": "عدد الجولة {index}",
+    "roundDone": "تم",
+    "roundDoneAria": "تم، الجولة {index}",
     "roundDraws": "{count, plural, one {يسحب عنصرًا واحدًا} other {يسحب # عناصر}}",
     "roundUnderfill": "بقي {count} فقط — ستعرض هذه الجولة {count}.",
     "setCountAll": "تعيين العدد لجميع الجولات",
-    "matchupHeading": "المواجهة",
     "versusSideA": "الجانب A",
     "versusSideB": "الجانب B",
     "versusRoundCount": "الجولات",
@@ -1143,10 +1406,16 @@
     "addPlace": "إضافة موضع",
     "removePlace": "إزالة موضع",
     "setCountAllLabel": "تحديد سحب كل الجولات",
+    "bulkCountHintMatch": "تستخدم كل الجولات هذا الرقم. افتح جولة لإعطائها رقمًا مختلفًا.",
+    "bulkCountHintDrift": "تتفاوت الجولات حاليًا ({list}). التطبيق سيعيدها كلها لهذا الرقم.",
+    "bulkApplied": "تم التطبيق",
     "image": "صورة",
     "chooseImage": "اختر صورة",
     "uploading": "جارٍ الرفع…",
     "groupNewItemImage": "صورة جديدة للمجموعة {index}",
+    "itemTypeText": "نوع عنصر المجموعة {index}: نص",
+    "itemTypeLink": "نوع عنصر المجموعة {index}: YouTube",
+    "itemTypeImage": "نوع عنصر المجموعة {index}: صورة",
     "notAnImage": "اختر ملف صورة.",
     "imageTooLarge": "يجب ألا يتجاوز حجم الصورة 1 ميغابايت.",
     "imageUploadFailed": "فشل الرفع. حاول مرة أخرى.",
@@ -1173,9 +1442,50 @@
     "editItemAria": "تحرير {title}",
     "saveItem": "حفظ",
     "cancelEdit": "إلغاء",
+    "itemTypeLabel": "نوع العنصر",
+    "newItemLabel": "عنصر جديد",
+    "itemHintText": "مجرد اسم على البطاقة",
+    "itemHintVideo": "يُعرض ضمن الجولة مباشرة",
+    "itemHintImage": "يُعرض كصورة مصغّرة بنسبة 16:9",
+    "itemNameLabel": "الاسم",
+    "itemTextOnCardLabel": "النص على البطاقة",
+    "youtubeLinkLabel": "رابط يوتيوب",
+    "itemImageLabel": "الصورة",
+    "itemImageDragHint": "اسحب أو ارفع",
+    "replaceImage": "استبدال",
+    "previewNoteText": "عناصر النص تُبقي الجولات سريعة القراءة.",
+    "previewNoteVideo": "يُستخرج من الرابط عند الحفظ.",
+    "previewNoteImage": "16:9 — سيتم قص أي نسبة أخرى.",
     "randomPoolOption": "مجموعة عشوائية ({count} متاحة)",
-    "blurbSaveOneFriends": "«احتفظ بواحد» مباشرةً مع 2–4 أصدقاء في غرفة.",
-    "friendsHint": "يُلعب مباشرةً مع 2–4 أصدقاء في غرفة. تعرض كل جولة عنصرًا لكل لاعب بالإضافة إلى عنصر ناجٍ (حتى {count})، لذا يحتاج كل تجمّع إلى {count} عناصر على الأقل."
+    "cancel": "إلغاء",
+    "groupNamePlaceholder": "اسم المجموعة",
+    "addItemTrigger": "+ إضافة عنصر",
+    "decreaseCount": "إنقاص",
+    "increaseCount": "زيادة",
+    "bar": {
+      "newPackTitle": "حزمة جديدة",
+      "submit": "إرسال للمراجعة",
+      "submitShort": "إرسال",
+      "submitting": "جارٍ الإرسال…",
+      "blockedTooltip": "أضف عنوانًا وعناصر",
+      "saved": "تم الحفظ",
+      "draftNoteUnsaved": "مسودة · تغييرات غير محفوظة",
+      "draftNoteSaved": "مسودة · حُفظت للتو"
+    },
+    "feasibility": {
+      "heading": "أوضاع الأصدقاء المتاحة",
+      "subtitle": "للعِلم فقط — يُحفظ الحزمة ويمكن لعبها في كلتا الحالتين. هذا فقط ما يمكن للغرفة تشغيله بها."
+    },
+    "checklist": {
+      "eyebrow": "قبل الإرسال",
+      "formatChosen": "تم اختيار النمط",
+      "titleWritten": "تمت كتابة العنوان",
+      "poolsWithItems": "{count, plural, zero {# مجموعة تحتوي عناصر} one {# مجموعة تحتوي عناصر} two {مجموعتان تحتويان عناصر} few {# مجموعات تحتوي عناصر} many {# مجموعة تحتوي عناصر} other {# مجموعة تحتوي عناصر}}",
+      "coverImage": "صورة الغلاف",
+      "rowDone": "تم",
+      "rowNotDone": "لم يكتمل بعد",
+      "noAiNote": "بدون ذكاء اصطناعي · لا حاجة لكتابة قواعد تسجيل"
+    }
   },
   "profile": {
     "loginRequiredView": "يجب تسجيل الدخول لعرض ملفك الشخصي.",
@@ -1185,11 +1495,17 @@
     "loadBioError": "تعذّر تحميل نبذتك الحالية. حاول مرة أخرى لاحقًا.",
     "followerCount": "{count, plural, zero {# متابِع} one {متابِع واحد} two {متابِعان} few {# متابِعين} many {# متابِعًا} other {# متابِع}}",
     "editProfile": "تعديل الملف الشخصي",
+    "backToProfile": "العودة إلى الملف الشخصي",
+    "usernameChangedPill": "تم التغيير",
+    "usernameHint": "تغييره يحدّث كل رابط يؤدي إلى ملفك.",
+    "cancel": "إلغاء",
+    "editSaved": "تم الحفظ",
     "addBioPrompt": "أضِف نبذة تُعرِّف الناس بموضوع حِزَمك.",
     "myPacks": "حِزَمي",
     "noPacksOwn": "لا توجد حزم بعد — أنشئ حزمتك الأولى!",
     "bio": "نبذة",
     "bioPlaceholder": "عرِّف الناس بموضوع حِزَمك.",
+    "previewHeading": "كيف يبدو",
     "saving": "جارٍ الحفظ…",
     "save": "حفظ",
     "saveError": "تعذّر حفظ تغييراتك. حاول مرة أخرى.",
@@ -1203,8 +1519,12 @@
     "noPacks": "لا توجد حزم بعد.",
     "recentlyPlayed": "لُعبت مؤخراً",
     "recentlyPlayedEmpty": "لم تلعب أي حزمة بعد.",
+    "recentlyPlayedEmptyNote": "تظهر هنا الحزم والغرف التي أنهيتها.",
+    "browsePacks": "تصفّح الحزم",
     "avatarHeading": "صورة الملف الشخصي",
-    "avatarChange": "تغيير الصورة",
+    "avatarDropLabel": "اسحب صورة إلى هنا أو انقر",
+    "avatarDropActive": "أفلتها للتحميل",
+    "avatarReplaceLabel": "استبدال الصورة",
     "avatarRemove": "إزالة الصورة",
     "avatarHint": "PNG أو JPG، بحد أقصى 1 ميغابايت.",
     "avatarRemoveError": "تعذّر إزالة صورتك. حاول مرة أخرى.",
@@ -1217,8 +1537,12 @@
     "loadingMore": "جارٍ التحميل…",
     "loadMoreError": "تعذّر تحميل المزيد من الحزم. حاول مرة أخرى.",
     "followers": "المتابِعون",
+    "people": "الأشخاص",
+    "history": "السجل",
     "noFollowers": "لا يوجد متابِعون بعد.",
+    "noFollowersNote": "عندما يتابعك أحد، سيظهر هنا.",
     "noFollowing": "لا يتابِع أحدًا بعد.",
+    "noFollowingNote": "تابع أشخاصًا لترى حزمهم الجديدة أولًا.",
     "followsLoadMore": "تحميل المزيد",
     "followsError": "تعذّر تحميل هذه القائمة. حاول مرة أخرى.",
     "followsLoading": "جارٍ التحميل…",
@@ -1227,7 +1551,6 @@
   },
   "pages": {
     "createTitle": "أنشئ حزمة",
-    "createSubtitle": "اختر نمط إقصاء وابنِ جولاتك. يمكن أن تكون العناصر نصًا أو رابط YouTube.",
     "metaProfile": "الملف الشخصي",
     "metaEditProfile": "تعديل الملف الشخصي",
     "metaPlaying": "جارٍ لعب {title}",
@@ -1244,7 +1567,6 @@
     "errorBody": "تعذّر تحميل هذا الملف الشخصي. حاول مرة أخرى.",
     "tryAgain": "حاول مرة أخرى",
     "editTitle": "تعديل الحزمة",
-    "editSubtitle": "حدّث تفاصيل حزمتك. تؤدي إعادة النشر إلى مرورها بالمراجعة من جديد.",
     "notFoundTitle": "الصفحة غير موجودة",
     "notFoundBody": "الصفحة التي تبحث عنها غير موجودة أو تم نقلها.",
     "appErrorBody": "حدث خطأ غير متوقع. يمكنك المحاولة مرة أخرى."
@@ -1269,13 +1591,15 @@
     "feedbackDeclined": "مرفوضة",
     "reportNew": "جديد",
     "reportReviewing": "قيد المراجعة",
-    "reportClosed": "مغلق"
+    "reportClosed": "مغلق",
+    "packChangesRequested": "طُلبت تعديلات"
   },
   "feedback": {
-    "pageTitle": "الملاحظات والاقتراحات",
-    "newPost": "منشور جديد",
-    "searchAria": "بحث في الملاحظات",
-    "searchPlaceholder": "ابحث في الملاحظات…",
+    "pageTitle": "الاقتراحات",
+    "pageSubtitle": "اطلب ميزة، أو أبلغ عن خلل، أو صحّح ترجمة. صوّت لنعرف ما الذي نبنيه تاليًا.",
+    "newPost": "اقتراح جديد",
+    "searchAria": "ابحث في الاقتراحات",
+    "searchPlaceholder": "ابحث في الاقتراحات…",
     "filterAll": "الكل",
     "topicBug": "خطأ",
     "topicFeature": "ميزة",
@@ -1283,26 +1607,40 @@
     "topicOther": "أخرى",
     "sortTop": "الأعلى",
     "sortNewest": "الأحدث",
-    "loadMoreError": "تعذّر تحميل مزيد من الملاحظات. حاول مرة أخرى.",
-    "topSidebarHeading": "أبرز الملاحظات",
-    "noFeedbackYet": "لا توجد ملاحظات بعد.",
+    "countShowing": "عرض {shown} من {total}",
+    "countNone": "لا شيء مطابق",
+    "clearFilters": "مسح عوامل التصفية",
+    "loadMoreError": "تعذّر تحميل المزيد من الاقتراحات. حاول مرة أخرى.",
+    "mostWanted": "الأكثر طلبًا",
+    "noFeedbackYet": "لا توجد اقتراحات بعد.",
+    "legendHeading": "ماذا تعني الحالات",
+    "legendNew": "تمت قراءته، ولم يُصنّف بعد.",
+    "legendInProgress": "يجري العمل عليه الآن.",
+    "legendDone": "تم إطلاقه — راجع صفحة التحديثات.",
+    "legendDeclined": "غير مخطط له. السبب مذكور في التعليقات.",
     "scoreLabel": "النقاط",
     "by": "بواسطة",
     "commentCount": "{count, plural, zero {# تعليق} one {# تعليق} two {# تعليقان} few {# تعليقات} many {# تعليقًا} other {# تعليق}}",
-    "loadingList": "جارٍ تحميل الملاحظات…",
-    "listError": "تعذّر تحميل الملاحظات. حاول مرة أخرى.",
-    "noMatches": "لا توجد ملاحظات تطابق هذه التصفية.",
+    "loadingList": "جارٍ تحميل الاقتراحات…",
+    "listError": "تعذّر تحميل الاقتراحات. حاول مرة أخرى.",
+    "emptyTitle": "لا توجد اقتراحات بعد",
+    "emptyNote": "كن أول من يطلب شيئًا.",
+    "emptyFilteredTitle": "لا شيء يطابق عوامل التصفية هذه",
+    "emptyFilteredNote": "جرّب موضوعًا آخر أو امسح البحث.",
+    "postFirst": "انشر الاقتراح الأول",
     "loadingMore": "جارٍ التحميل…",
     "loadMore": "تحميل المزيد",
+    "showMore": "عرض {count} إضافية",
     "voteError": "تعذّر تسجيل تصويتك. حاول مرة أخرى.",
     "like": "إعجاب",
     "dislike": "عدم إعجاب",
     "detailNotFound": "هذا المنشور غير موجود أو غير متاح لك.",
-    "backToFeedback": "العودة إلى الملاحظات",
+    "backToFeedback": "العودة إلى الاقتراحات",
+    "detailCrumb": "اقتراح",
     "detailLoadError": "تعذّر تحميل هذا المنشور. حاول مرة أخرى.",
     "loading": "جارٍ التحميل…",
     "statusUpdateError": "تعذّر تحديث الحالة. حاول مرة أخرى.",
-    "deleteConfirm": "حذف هذا المنشور؟",
+    "deleteConfirm": "حذف هذا الاقتراح؟",
     "deleteError": "تعذّر حذف هذا المنشور. حاول مرة أخرى.",
     "translationHeading": "الترجمة",
     "languageValueLabel": "اللغة:",
@@ -1313,7 +1651,7 @@
     "delete": "حذف",
     "edited": "عُدّل",
     "commentsHeading": "التعليقات · {count}",
-    "commentPlaceholder": "شاركنا رأيك في هذه الملاحظة…",
+    "commentPlaceholder": "شاركنا رأيك في هذا الاقتراح…",
     "commentAria": "تعليق",
     "postComment": "نشر",
     "loginToComment": "<link>سجّل الدخول</link> لترك تعليق.",
@@ -1322,30 +1660,36 @@
     "commentsLoadError": "تعذّر تحميل التعليقات. حاول مرة أخرى لاحقًا.",
     "noComments": "لا توجد تعليقات بعد.",
     "loadMoreCommentsError": "تعذّر تحميل مزيد من التعليقات. حاول مرة أخرى.",
-    "newFeedbackTitle": "ملاحظة جديدة",
+    "newFeedbackTitle": "اقتراح جديد",
     "topicLabel": "الموضوع",
     "titleLabel": "العنوان",
-    "titlePlaceholder": "ملخّص مختصر",
+    "titlePlaceholder": "سطر واحد — ما الذي يجب أن يتغير؟",
     "detailsLabel": "التفاصيل",
-    "detailsPlaceholder": "صِف الخطأ أو الفكرة أو الاقتراح",
+    "detailsPlaceholder": "ما المشكلة التي يحلّها هذا لك؟",
+    "detailsPlaceholderBug": "ماذا فعلت، وماذا حدث، وماذا كنت تتوقع؟",
+    "detailsPlaceholderTranslation": "أي لغة، وأي شاشة، وما الذي يجب أن تقوله.",
     "visibilityLabel": "الظهور",
     "visibilityEveryone": "الجميع",
     "visibilityStaffOnly": "الفريق فقط",
-    "staffOnlyHint": "منشورات الفريق فقط مرئية لك وللفريق فقط.",
+    "visibilityHintEveryone": "علني — يمكن لأي شخص قراءته والتصويت عليه.",
+    "visibilityHintStaffOnly": "يراه فريق Velanto فقط. لا يمكن لأحد التصويت عليه.",
     "translationSuggestionHeading": "اقتراح ترجمة",
     "languageFieldLabel": "اللغة",
     "chooseLanguage": "اختر لغة…",
-    "contextFieldLabel": "أي نص / أين رأيته (اختياري)",
-    "contextPlaceholder": "مثال: زر اللعب في الشاشة الرئيسية",
+    "contextFieldLabel": "أين يظهر · اختياري",
+    "contextPlaceholder": "مثلًا عنوان الجولة في sacrifice_one",
     "suggestionFieldLabel": "صياغتك المقترحة",
     "suggestionPlaceholder": "ما الذي ينبغي أن يُكتب بدلاً منه",
     "posting": "جارٍ النشر…",
-    "postFeedback": "نشر الملاحظة",
-    "metaListTitle": "الملاحظات والاقتراحات — Velanto",
+    "postFeedback": "نشر",
+    "duplicateHint": "ابحث أولاً — التصويت على منشور قائم أجدى من نسخة مكررة.",
+    "metaListTitle": "الاقتراحات — Velanto",
     "metaListDescription": "أبلغ عن الأخطاء، واقترح الميزات، واقترح تحسينات على الترجمة.",
-    "metaNewTitle": "ملاحظة جديدة — Velanto"
+    "metaNewTitle": "اقتراح جديد — Velanto"
   },
   "docs": {
+    "metaTitle": "التوثيق — Velanto",
+    "metaDescription": "كيف يعمل Velanto — إنشاء حزمة، الصيغ الخمس، اللعب، وواجهة API لمساعدي الذكاء الاصطناعي.",
     "secOverview": "نظرة عامة",
     "secCreators": "المنشئون",
     "secPlayers": "اللاعبون",
@@ -1377,6 +1721,8 @@
     "statsTitle": "الإحصاءات والمقارنات",
     "statsBody": "أثناء لعبك، لا شيء يخبرك كيف اختار الآخرون، فتبقى خياراتك خياراتك وحدك. وبمجرد أن تنتهي، تُفتح كل جولة: العناصر التي اختارها اللاعبون أكثر من غيرها، والنسبة المئوية لمن اتفقوا مع اختيارك. كما تظهر درجة التوافق الإجمالية للحزمة على بطاقتها وصفحة تفاصيلها قبل أن تلعب.",
     "jumpTo": "الانتقال إلى الموضوع",
+    "nextTopic": "التالي",
+    "previousTopic": "السابق",
     "tokenNameLabel": "الاسم",
     "tokenNamePlaceholder": "مثال: Claude Desktop",
     "tokenScopesLabel": "الأذونات",
@@ -1450,11 +1796,21 @@
     "metaDescription": "ميزات جديدة وإصلاحات وتحسينات في Velanto.",
     "heading": "ما الجديد",
     "intro": "أحدث الميزات والإصلاحات والتحسينات — الأحدث أولًا.",
-    "empty": "لا توجد تحديثات بعد — عُد قريبًا."
+    "empty": "لا توجد تحديثات بعد — عُد قريبًا.",
+    "releasesHeading": "الإصدارات",
+    "latest": "الأحدث",
+    "changesCount": "{count, plural, zero {# تغيير} one {تغيير واحد} two {تغييران} few {# تغييرات} many {# تغييرًا} other {# تغيير}}",
+    "showMore": "عرض {count} أخرى",
+    "showLess": "عرض أقل",
+    "missingTitle": "هل ينقصك شيء تريده؟",
+    "missingNote": "تُقرأ الاقتراحات ويُصوَّت عليها — الكثير مما في القائمة أعلاه بدأ من هناك.",
+    "openSuggestions": "فتح الاقتراحات"
   },
   "myPacks": {
-    "packsTab": "الحِزَم",
-    "mineTab": "حِزَمي",
+    "title": "حِزَمي",
+    "subtitle": "كل حزمة أنشأتها، عبر جميع حالات الإشراف.",
+    "metaTitle": "حِزَمي — Velanto",
+    "metaDescription": "أدِر الحزم التي أنشأتها على Velanto.",
     "loginRequired": "سجّل الدخول لرؤية حزمك.",
     "loading": "جارٍ تحميل حزمك…",
     "error": "تعذّر تحميل حزمك.",
@@ -1462,11 +1818,31 @@
     "emptyFiltered": "لا توجد حزم تطابق هذا المرشّح.",
     "all": "الكل"
   },
+  "history": {
+    "title": "السجل",
+    "subtitle": "الحزم التي لعبتها، الأحدث أولاً.",
+    "loading": "جارٍ تحميل سجلك…",
+    "emptyFiltered": "لم تلعب أي حزمة بهذا النمط بعد.",
+    "progress": "الجولة {current} من {total}",
+    "continue": "متابعة",
+    "inProgressBadge": "قيد التقدم",
+    "inProgressTitle": "ما زلت تلعب",
+    "playedTitle": "ما لعبته",
+    "sortOldest": "الأقدم لعبًا",
+    "sortRecent": "لُعبت مؤخرًا",
+    "metaTitle": "السجل — Velanto",
+    "metaDescription": "الحزم التي لعبتها، مرتبة حسب آخر لعب.",
+    "empty": "لم تلعب أي شيء بعد. العب حزمة وستظهر هنا.",
+    "error": "تعذّر تحميل سجلك. حاول مرة أخرى.",
+    "loginRequired": "سجّل الدخول لعرض سجل اللعب الخاص بك."
+  },
   "people": {
-    "tab": "الأشخاص",
+    "title": "الأشخاص",
+    "subtitle": "ابحث عن المنشئين واللاعبين، وتابِع من يعجبك منهم.",
+    "metaTitle": "الأشخاص — Velanto",
+    "metaDescription": "ابحث في Velanto عن منشئي الحزم واللاعبين لمتابعتهم.",
     "searchLabel": "البحث عن أشخاص",
     "searchPlaceholder": "ابحث باسم المستخدم",
-    "hint": "اكتب حرفين على الأقل للبحث.",
     "loading": "جارٍ البحث…",
     "error": "تعذّر البحث عن أشخاص. حاول مرة أخرى.",
     "empty": "لم يُعثر على أحد."
@@ -1474,12 +1850,131 @@
   "room": {
     "loading": "جارٍ تحميل الغرفة…",
     "reconnecting": "جارٍ إعادة الاتصال…",
+    "modePicker": {
+      "heading": "نمط اللعب",
+      "hostIsChoosing": "المضيف يختار نمط اللعب…",
+      "playerRange": "{min}-{max} لاعبين"
+    },
+    "packModes": {
+      "heading": "الأوضاع التي تدعمها هذه الحزمة",
+      "caption": "يختار المضيف الوضع في غرفة الانتظار. الأوضاع الرمادية تحتاج إلى حجم غرفة مختلف."
+    },
+    "modes": {
+      "claim": {
+        "name": "المطالبة",
+        "blurb": "كن الأسرع في الاستحواذ على عنصر قبل أي شخص آخر.",
+        "steps": {
+          "1": {
+            "title": "احجز بسرعة",
+            "body": "تسحب كل جولة عنصرًا واحدًا أكثر من عدد اللاعبين."
+          },
+          "2": {
+            "title": "لا مشاركة",
+            "body": "العنصر المحجوز يخرج من المتناول — فأنت تسابق على ما تريد استبعاده."
+          },
+          "3": {
+            "title": "واحد ينجو",
+            "body": "العنصر الوحيد الذي لم يحجزه أحد هو الناجي."
+          }
+        }
+      },
+      "guess_who": {
+        "name": "خمّن من",
+        "blurb": "اختر خفية، ثم خمّن من اختار ماذا.",
+        "steps": {
+          "1": {
+            "title": "اختر على العمياء",
+            "body": "حدّد إجابتك قبل أن تُكشف اختيارات الآخرين."
+          },
+          "2": {
+            "title": "اقرأ الأسلوب",
+            "body": "يبني اللاعبون س وص وع عمودًا من الاختيارات على مدى اللعبة."
+          },
+          "3": {
+            "title": "خمّن واكسب",
+            "body": "طابق كل رمز مع شخص حقيقي. صاحب أكثر الإجابات صوابًا يفوز."
+          }
+        }
+      },
+      "turn_based_cut": {
+        "name": "قص بالتناوب",
+        "blurb": "تناوبوا على إزالة عنصر حتى يتبقى واحد فقط.",
+        "steps": {
+          "1": {
+            "title": "دورك",
+            "body": "في دورك تحذف عنصرًا واحدًا بالضبط من اللوحة."
+          },
+          "2": {
+            "title": "اللوحة تتقلص",
+            "body": "يرى الجميع الخيارات تتساقط واحدًا تلو الآخر."
+          },
+          "3": {
+            "title": "الأخير الباقي",
+            "body": "لا تصويت ولا تعادل — العنصر الأخير هو النتيجة."
+          }
+        }
+      },
+      "voting": {
+        "name": "التصويت",
+        "blurb": "صوّتوا مباشرة — يرى الجميع النتائج أولًا بأول.",
+        "steps": {
+          "1": {
+            "title": "صوّت",
+            "body": "اضغط على اختيارك. يمكنك تغييره ما دام الآخرون يفكرون."
+          },
+          "2": {
+            "title": "راقب العدّ",
+            "body": "الأصوات تظهر مباشرة، فيمكنك أن تجادل وتقلب رأي الغرفة."
+          },
+          "3": {
+            "title": "الأغلبية تفوز",
+            "body": "عند التعادل يقرّر صاحب الأولوية — لا قرعة أبدًا."
+          }
+        }
+      },
+      "shared_grid": {
+        "name": "الشبكة المشتركة",
+        "blurb": "رتّب خفية، ثم اطّلع على الترتيب الجماعي المجمّع.",
+        "steps": {
+          "1": {
+            "title": "رتّب على العمياء",
+            "body": "رتّب اللوحة كلها بنفسك دون أن ترى ترتيب أحد."
+          },
+          "2": {
+            "title": "الجميع يسلّمون",
+            "body": "تنتظر الجولة حتى يثبّت كل مقعد ترتيبه."
+          },
+          "3": {
+            "title": "ترتيب موحّد",
+            "body": "تُحتسب كل الأوراق معًا لتنتج ترتيب الغرفة."
+          }
+        }
+      },
+      "relay": {
+        "name": "التتابع",
+        "blurb": "ابنوا ترتيبًا مشتركًا معًا، بالتناوب على وضع كل عنصر.",
+        "steps": {
+          "1": {
+            "title": "واحدًا تلو الآخر",
+            "body": "تكشف الجولة العناصر بترتيب ثابت، واحدًا في كل دور."
+          },
+          "2": {
+            "title": "أدرجه في مكانه",
+            "body": "في دورك أدرجه في أي موضع من الترتيب المبني حتى الآن."
+          },
+          "3": {
+            "title": "بُني معًا",
+            "body": "النتيجة ليست ملكًا لأحد — الغرفة تبني ترتيبًا واحدًا مشتركًا."
+          }
+        }
+      }
+    },
     "entry": {
       "createRoom": "إنشاء غرفة",
       "joinByCode": "الانضمام بالرمز",
+      "orWithFriends": "أو مع الأصدقاء",
       "signInToPlay": "سجّل الدخول للعب مع الأصدقاء",
       "createError": "تعذّر إنشاء الغرفة. حاول مرة أخرى.",
-      "joinTitle": "الانضمام إلى غرفة",
       "codeLabel": "رمز الغرفة",
       "codePlaceholder": "أدخل الرمز",
       "join": "انضمام",
@@ -1499,7 +1994,7 @@
       "away": "غائب",
       "readyUp": "استعد",
       "readyCancel": "جاهز",
-      "waitingForPlayers": "في انتظار انضمام {count} لاعبين آخرين",
+      "waitingForPlayers": "في انتظار انضمام {count} {count, plural, zero {لاعبين} one {لاعب آخر} two {لاعبين آخرين} few {لاعبين آخرين} many {لاعبًا آخر} other {لاعب آخر}}",
       "waitingForReady": "في انتظار استعداد الجميع",
       "starting": "الجميع مستعدون — جارٍ البدء…",
       "inviteHeading": "ادعُ الأصدقاء",
@@ -1513,33 +2008,82 @@
       "lock": "قفل الغرفة",
       "unlock": "فتح الغرفة",
       "lockedNote": "مقفلة — مغلقة أمام اللاعبين الجدد.",
-      "unlockedNote": "مفتوحة — يمكن للأصدقاء الذين لديهم الرمز الانضمام."
+      "unlockedNote": "مفتوحة — يمكن للأصدقاء الذين لديهم الرمز الانضمام.",
+      "open": "الغرفة مفتوحة",
+      "chooseHeading": "اختاروا طريقة اللعب",
+      "hostHint": "اختر نمطًا — فهو يغيّر آلية الجولة وحجم الغرفة.",
+      "guestHint": "المضيف يختار النمط. سيظهر هنا فور اختياره.",
+      "roleHost": "أنت المضيف",
+      "roleGuest": "المضيف هو من يقرر",
+      "howARoundGoes": "كيف تجري الجولة",
+      "resultShared": "حكم مشترك",
+      "resultScored": "بالنقاط · فائز",
+      "priorityTitle": "التعادل تحسمه الأولوية",
+      "priorityBody": "عند تعادل الأصوات يحسمها اختيار لاعب واحد، وتنتقل الأولوية إلى اللاعب التالي كل جولة.",
+      "capacityRoomFor": "يتسع لـ {count} آخرين",
+      "capacityFull": "الغرفة ممتلئة",
+      "capacityNeeds": "يلزم {min} على الأقل",
+      "stillDeciding": "ما زال يفكر",
+      "tapReadyWhenYouAre": "اضغط عندما تكون جاهزًا",
+      "inviteSomeone": "ادعُ أحدهم",
+      "inviteCode": "رمز الدعوة",
+      "codeHidden": "مخفي على الشاشة",
+      "codeVisible": "ظاهر",
+      "everyoneReady": "الجميع جاهزون",
+      "waitingOn": "بانتظار {count}",
+      "start": "ابدأ {mode}",
+      "startGeneric": "ابدأ اللعبة",
+      "waitingForHost": "بانتظار المضيف",
+      "imReady": "أنا جاهز",
+      "unready": "لست جاهزًا",
+      "startNoteGuest": "المضيف وحده يبدأ اللعبة. علّم نفسك جاهزًا كي يستطيع.",
+      "startNoteAllReady": "الجميع جاهزون — البدء يثبّت النمط طوال اللعبة.",
+      "startNoteWaiting": "يُفتح البدء عندما يجهز كل من في الغرفة.",
+      "startNoteNeedsMore": "يُفتح البدء عند {min} لاعبين.",
+      "startNoteNoMode": "اختر نمطًا في الأعلى قبل أن تبدأ.",
+      "seatCount": "{count}/{max}",
+      "readyCount": "{ready}/{total}"
     },
     "round": {
       "heading": "الجولة {index} من {total}",
-      "instruction": "اختر عنصرًا واحدًا للتضحية به. العنصر الذي لا يختاره أحد ينجو.",
-      "claim": "التضحية بـ {name}",
       "taken": "مأخوذ",
-      "sacrificedBy": "ضحّى به {name}",
-      "survivor": "الناجي",
-      "chosen": "اختار {count} من {total}"
+      "chosen": "اختار {count} من {total}",
+      "instructionSave": "اختر عنصرًا واحدًا لإنقاذه. سيُقصى كل من عداه.",
+      "instructionSacrifice": "اختر عنصرًا واحدًا للتضحية به. العنصر الذي لا يختاره أحد ينجو.",
+      "claimSacrifice": "التضحية بـ {name}",
+      "claimedBySacrifice": "ضحّى به {name}",
+      "survivorSave": "تم إنقاذه",
+      "survivorSacrifice": "الناجي",
+      "tooFastNote": "أنت تعيد الاختيار بسرعة كبيرة — انتظر لحظة وحاول مرة أخرى."
+    },
+    "rejection": {
+      "not_your_turn": "ليس دورك بعد.",
+      "not_in_round": "هذا الخيار ليس ضمن هذه الجولة.",
+      "round_not_active": "انتهت هذه الجولة بالفعل.",
+      "not_a_player": "لست مشاركًا في هذه الغرفة.",
+      "malformed": "تعذّر قبول هذه الإجابة — حاول مرة أخرى."
     },
     "between": {
-      "survivorHeading": "الناجي",
-      "survivorNote": "نجا هذا العنصر في هذه الجولة.",
-      "boardHeading": "تضحيات هذه الجولة",
       "next": "التالي",
       "ready": "{count} / {total} جاهزون",
-      "autoNext": "الجولة التالية خلال {seconds} ثانية"
+      "autoNext": "الجولة التالية خلال {seconds} ثانية",
+      "survivorHeadingSave": "تم إنقاذه",
+      "survivorHeadingSacrifice": "الناجي",
+      "survivorNoteSave": "تم إنقاذ هذا العنصر.",
+      "survivorNoteSacrifice": "نجا هذا العنصر في هذه الجولة.",
+      "boardHeadingSave": "اختيارات هذه الجولة",
+      "boardHeadingSacrifice": "تضحيات هذه الجولة"
     },
     "results": {
       "heading": "النتائج",
       "roundLabel": "الجولة {index}",
-      "backToPack": "العودة إلى الحزمة"
+      "backToPack": "العودة إلى الحزمة",
+      "playAgain": "العب مرة أخرى"
     },
     "ended": {
       "heading": "انتهت هذه الغرفة",
-      "description": "لم تعد هذه الغرفة متاحة. ابدأ غرفة جديدة من صفحة الحزمة."
+      "description": "لم تعد هذه الغرفة متاحة. ابدأ غرفة جديدة من صفحة الحزمة.",
+      "leave": "العودة إلى الحزمة"
     },
     "joinLink": {
       "joining": "جارٍ الانضمام إلى الغرفة…",
@@ -1560,7 +2104,7 @@
     },
     "presence": {
       "returnTo": "العودة إلى {title}",
-      "label": "{count} / {max} في الغرفة"
+      "playerCount": "{count} في الغرفة"
     },
     "kick": {
       "action": "إزالة {name} من الغرفة",
@@ -1573,6 +2117,181 @@
       "heading": "أزالك المضيف من هذه الغرفة",
       "description": "أزالك المضيف من هذه الغرفة. يمكنك الانضمام مجددًا بالرمز إذا أعاد فتحها.",
       "leave": "العودة إلى الحزمة"
+    },
+    "guessWho": {
+      "roundInstruction": "اختر إجابتك",
+      "pickInstruction": "اختر واحدًا — يرى الجميع الحرف الذي اختاره، دون أن يعرفوا لمن هذا الحرف.",
+      "pickHint": "تظهر الحروف فور اختيارها",
+      "pickLabel": "اختر {name}",
+      "pickedByLabels": "اختاره {labels}",
+      "maskedRosterNote": "يلعب الجميع بحرف إلى أن يحين الكشف.",
+      "rankInstruction": "رتّب كل عنصر خفية، بالترتيب — لن يرى أحد ترتيبك حتى يقفل الجميع اختياراتهم.",
+      "revealHeading": "الكشف",
+      "trajectoryHeading": "ما اختاره الجميع حتى الآن",
+      "roundColumn": "الجولة",
+      "trajectoryHint": "اختيارات {count, plural, zero {# جولة} one {جولة واحدة} two {جولتين} few {# جولات} many {# جولة} other {# جولة}}",
+      "stillAnonymous": "؟",
+      "columnHint": "جولة واحدة لا تكشف أحدًا — كثيرًا ما يختار شخصان الشيء نفسه. العمود كله هو المميّز."
+    },
+    "guessing": {
+      "heading": "الجولة الأخيرة",
+      "title": "من هو من؟",
+      "instruction": "عيّن كل لاعب للرمز الذي تعتقد أنه لعب به.",
+      "submit": "إرسال التخمينات",
+      "waitingForOthers": "أرسل {count} / {total}",
+      "assignedCount": "عُيّن {count} من {total}",
+      "whoIs": "من هو {label}؟",
+      "revealsAtOnce": "يُكشف كل شيء دفعة واحدة كي لا يسترق أحد النظر.",
+      "deadline": "الكشف خلال"
+    },
+    "identityReveal": {
+      "heading": "الكشف",
+      "correct": "تخمين صحيح",
+      "incorrect": "تخمين خاطئ",
+      "winner": "الفائز",
+      "winnerNote": "قرأ الغرفة أفضل من الجميع — طابق {count} من {total}",
+      "points": "نقطة",
+      "sharedWin": "فوز مشترك — طابق {names} {count} لكلٍّ منهم",
+      "yourGuess": "تخمينك",
+      "youSaid": "قلتَ {name}",
+      "nobody": "لا أحد",
+      "pointPerMatch": "نقطة واحدة لكل مطابقة صحيحة"
+    },
+    "turnBasedCut": {
+      "instruction": "في دورك، اقصص عنصرًا واحدًا. يفوز آخر عنصر يتبقى.",
+      "cutOrderHeading": "ترتيب القص",
+      "cutVerb": "قصّ"
+    },
+    "voting": {
+      "instruction": "صوّت لخيار واحد. يمكنك تغيير تصويتك حتى إغلاق الجولة.",
+      "votedSoFar": "صوّت {count} / {total}",
+      "winnerHeading": "الفائز",
+      "tieBrokenNote": "كان تعادلًا — وكان {name} صاحب الأولوية فحسمه."
+    },
+    "sharedGrid": {
+      "instruction": "رتّب كل عنصر خفية، بالترتيب.",
+      "aggregateHeading": "مجمَّع",
+      "groupRanking": "ترتيب المجموعة",
+      "pointsLabel": "{count} {count, plural, zero {نقطة} one {نقطة} two {نقطتان} few {نقاط} many {نقطة} other {نقطة}}",
+      "tiedNote": "تعادل — {count} {count, plural, zero {عناصر} one {عنصر} two {عنصران} few {عناصر} many {عنصرًا} other {عنصر}} يتشارك هذا الترتيب",
+      "aggregateHint": "كل الأوراق، محتسبة معًا",
+      "alignment": "التوافق",
+      "alignmentHint": "مدى القرب من الغرفة",
+      "alignmentNote": "لا أحد يفوز — التوافق يبيّن فقط من تطابق ذوقه مع الغرفة."
+    },
+    "relay": {
+      "instruction": "أدرج العنصر الحالي في الترتيب المشترك.",
+      "insertHere": "أدرج هنا",
+      "insertBefore": "أدرج قبل {title}",
+      "insertAtEnd": "أدرج في النهاية",
+      "currentItem": "يوضع الآن",
+      "finalOrderHeading": "الترتيب النهائي",
+      "placementHistoryHeading": "سجل الوضع",
+      "placedVerb": "وضع",
+      "nobodyKnowsNext": "لا أحد يعرف ما يأتي بعد هذا.",
+      "stillHidden": "ما زال {count} مخفيًا",
+      "sharedRanking": "الترتيب المشترك",
+      "sharedRankingHint": "نبنيه معًا، واحدًا في كل مرة",
+      "placedBy": "أدرجه",
+      "nothingPlacedYet": "لم يُدرج شيء بعد.",
+      "turnOrder": "ترتيب الأدوار",
+      "placingBadge": "يُدرج",
+      "placeItemHere": "ضع {name} هنا",
+      "placeAtRank": "ضع في المرتبة {rank}"
+    },
+    "lockedIn": {
+      "playerLocked": "{name} — أقفل اختياره",
+      "playerWaiting": "{name} — ما زال يقرر",
+      "count": "{count} / {total} أقفلوا اختيارهم"
+    },
+    "priority": {
+      "holder": "{name} يملك الأولوية",
+      "explainer": "يحسم التعادل هذه الجولة"
+    },
+    "turnIndicator": {
+      "yourTurn": "دورك",
+      "waitingFor": "في انتظار {name}"
+    },
+    "leaderboard": {
+      "winner": "الفائز",
+      "points": "{count, plural, zero {# نقطة} one {نقطة واحدة} two {نقطتان} few {# نقاط} many {# نقطة} other {# نقطة}}",
+      "heading": "لوحة النتائج"
+    },
+    "header": {
+      "rounds": "{count, plural, zero {# جولة} one {جولة واحدة} two {جولتان} few {# جولات} many {# جولة} other {# جولة}}",
+      "inRound": "جولة جارية",
+      "between": "انتهت الجولة",
+      "guessing": "التخمين"
+    },
+    "board": {
+      "room": "الغرفة",
+      "here": "{count} حاضرون",
+      "outOfPlay": "خارج اللعب",
+      "voted": "صوّت",
+      "deciding": "يفكر…",
+      "waiting": "ينتظر",
+      "cut": "حذف",
+      "cuttingNow": "يحذف الآن",
+      "progressVotes": "{count} من {total} صوتوا",
+      "progressLeft": "بقي {count} على اللوحة",
+      "tapToVote": "اضغط على اختيارك",
+      "voteLocked": "سُجّل صوتك — ما زال بإمكانك تغييره",
+      "resolvesWhenAllVote": "تُحسم عندما يصوّت الجميع",
+      "noTakebacks": "لا تراجع بعد الحذف",
+      "voteFor": "صوّت لـ {name}",
+      "cutItem": "احذف {name}",
+      "yourVote": "صوتك",
+      "cutBadge": "محذوف",
+      "liveTally": "العدّ المباشر",
+      "tallyHint": "قابل للتغيير حتى الإغلاق",
+      "tieTitle": "تعادل — أولوية {name} تحسمه",
+      "tieBody": "أقنعه قبل أن يسقط الصوت الأخير.",
+      "cutSoFar": "ما حُذف حتى الآن",
+      "cutEmpty": "لم يُحذف شيء بعد — {name} يبدأ.",
+      "claimed": "حجز",
+      "claimPrompt": "احجز ما تريد استبعاده",
+      "claimHint": "من يسبق يفز به",
+      "sideItemCount": "{count} في اللعب",
+      "lockedIn": "ثبّت اختياره",
+      "lockInPrompt": "ثبّت إجابتك",
+      "lockedWaiting": "مُثبّت — بانتظار الغرفة",
+      "blindHint": "لا يراه أحد حتى يسلّم الجميع",
+      "placed": "أدرج",
+      "placingNow": "يُدرج الآن",
+      "progressPlaced": "أُدرج {count} من {total}",
+      "rankNowPlacing": "ضع هذا",
+      "rankSlotEmpty": "ضع في المرتبة {rank}",
+      "rankSlotFilled": "المرتبة {rank}: {title}",
+      "rankPlaceHere": "ضع {name} هنا",
+      "rankHiddenAfter": "لا يزال {count} مخفيًا بعد هذا"
     }
+  },
+  "reviewOutcome": {
+    "crumb": "نتيجة المراجعة",
+    "loading": "جارٍ تحميل نتيجة المراجعة…",
+    "notFound": "هذه الحزمة غير موجودة، أو ليست لك.",
+    "loginRequired": "سجّل الدخول لرؤية نتيجة المراجعة.",
+    "heroTitle": "اقتربت — بقيت أشياء قليلة",
+    "heroWhen": "تمت المراجعة في {date}",
+    "heroBody": "حزمتك لم تُنشر بعد. راجعها مشرف وطلب التعديلات أدناه. لم يُحذف شيء — عدّل ثم أعد الإرسال، وستعود إلى الطابور.",
+    "openEditor": "فتح المحرر",
+    "viewPack": "عرض الحزمة",
+    "moderatorSaid": "ما قاله المشرف",
+    "marksHeading": "ما يجب إصلاحه",
+    "marksCount": "{count, plural, zero {لا شيء محدد} one {عنصر واحد محدد} two {عنصران محددان} few {# عناصر محددة} many {# عنصرًا محددًا} other {# عنصر محدد}}",
+    "needsEdit": "يحتاج تعديلًا",
+    "doThis": "افعل هذا",
+    "inPool": "المجموعة: {pool}",
+    "nextHeading": "ما الخطوة التالية",
+    "step1": "افتح المحرر ونفّذ التعديلات أعلاه.",
+    "step2": "احفظ. تعود الحزمة مباشرة إلى طابور الإشراف.",
+    "step3": "سنخطرك مرة أخرى بعد أن يراجعها مشرف.",
+    "thePack": "الحزمة",
+    "metaPools": "المجموعات",
+    "metaRounds": "الجولات",
+    "metaSubmitted": "أُرسلت",
+    "mistakeTitle": "تظن أن هذا خطأ؟",
+    "mistakeBody": "أرسل اقتراحًا وسيعيد الفريق النظر. اذكر اسم الحزمة.",
+    "mistakeLink": "تواصل مع الإشراف →"
   }
 }

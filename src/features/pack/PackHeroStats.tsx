@@ -29,18 +29,18 @@ export function PackHeroStats({ pack }: { pack: Pack }) {
   ];
 
   return (
-    <div className="flex gap-7">
+    <div className="flex flex-wrap gap-[26px] pt-1.5 max-[720px]:gap-[14px]">
       {stats.map((stat) => (
-        <div key={stat.label}>
+        <div key={stat.label} className="flex flex-col gap-0.5">
           <div
             className={cn(
-              "text-2xl font-semibold tabular-nums",
+              "text-xl font-bold tabular-nums tracking-[-0.01em]",
               stat.accent && "text-acc",
             )}
           >
             {stat.value}
           </div>
-          <div className="mt-0.5 text-[11.5px] tracking-[0.06em] text-foreground-tertiary">
+          <div className="text-[11.5px] font-semibold uppercase tracking-[0.06em] text-foreground-tertiary">
             {stat.label}
           </div>
         </div>

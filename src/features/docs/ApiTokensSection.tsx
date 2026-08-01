@@ -2,15 +2,14 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations, useFormatter } from "next-intl";
-import { Card } from "@/src/shared/components/Card";
+import { Check } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
-import { Input } from "@/src/shared/components/Input";
-import { Select } from "@/src/shared/components/Select";
 import { Modal } from "@/src/shared/components/Modal";
 import { ConfirmModal } from "@/src/shared/components/ConfirmModal";
 import { Tooltip } from "@/src/shared/components/Tooltip";
 import { Skeleton } from "@/src/shared/components/Skeleton";
+import { cn } from "@/src/shared/lib/cn";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { isStaff } from "@/src/shared/lib/user-role";
 import {
@@ -41,6 +40,17 @@ const SCOPE_DISPLAY_ORDER: PatScope[] = [
   "packs:delete",
   "moderation",
 ];
+
+/** Mock's token panels: 18px padding, 16px radius, hairline border. */
+const PANEL_CLASS =
+  "flex flex-col gap-[13px] rounded-[16px] border border-border bg-surface-card p-[18px]";
+
+/** Field caption above an input / group. */
+const FIELD_LABEL_CLASS = "text-xs font-[650] text-foreground-secondary";
+
+/** One row in the "Your tokens" list — inset on the page background. */
+const TOKEN_ROW_CLASS =
+  "flex flex-wrap items-center gap-2.5 rounded-xl border border-white/[0.06] bg-background p-[12px_13px]";
 
 /** Expiry presets offered in the create form; "never" maps to null days. */
 const EXPIRY_CHOICES = ["30", "90", "365", "never"] as const;
@@ -173,7 +183,7 @@ export function ApiTokensSection() {
       loading={createMutation.isPending}
       aria-disabled={blocked || undefined}
       disabled={blocked ? undefined : !canSubmit}
-      className={blocked ? "cursor-not-allowed opacity-45" : undefined}
+      className={cn("self-start", blocked && "cursor-not-allowed opacity-45")}
     >
       {t("tokenCreateButton")}
     </Button>
@@ -184,166 +194,197 @@ export function ApiTokensSection() {
   );
 
   return (
-    <section className="flex flex-col gap-4">
-      <Text
-        as="h2"
-        variant="tertiary"
-        className="text-xs uppercase tracking-wide"
-      >
-        {t("tokensHeading")}
-      </Text>
+    <>
+      {/* Mock: "Create a token" and "Your tokens" are two separate 16px-radius
+          panels, not one card with a divider. */}
+      <div className={PANEL_CLASS}>
+        <h2 className="text-sm font-bold text-foreground">
+          {t("tokensHeading")}
+        </h2>
 
-      <Card className="flex flex-col gap-6 hover:translate-y-0 hover:shadow-none">
-        {/* No blurb here: the surrounding docs topic already introduces what a
-            token is and what each scope grants. */}
+        <label className="flex flex-col gap-[7px]">
+          <span className={FIELD_LABEL_CLASS}>{t("tokenNameLabel")}</span>
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder={t("tokenNamePlaceholder")}
+            maxLength={100}
+            disabled={createMutation.isPending}
+            className="h-11 rounded-[11px] border border-white/10 bg-background px-[13px] text-sm text-foreground outline-none transition-colors placeholder:text-foreground-tertiary focus:border-acc disabled:opacity-60"
+          />
+        </label>
 
-        {/* Create form */}
-        <div className="flex flex-col gap-4">
-          <label className="flex flex-col gap-1.5">
-            <Text variant="secondary" className="text-sm">
-              {t("tokenNameLabel")}
-            </Text>
-            <Input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder={t("tokenNamePlaceholder")}
-              maxLength={100}
-              disabled={createMutation.isPending}
-            />
-          </label>
-
-          <fieldset className="flex flex-col gap-2">
-            <Text as="legend" variant="secondary" className="text-sm">
-              {t("tokenScopesLabel")}
-            </Text>
-            <div className="flex flex-col gap-2">
-              {displayScopes.map((scope) => (
-                <label key={scope} className="flex items-center gap-2.5">
-                  <input
-                    type="checkbox"
-                    className="h-4 w-4 accent-acc"
-                    checked={scopes.has(scope)}
-                    onChange={() => toggleScope(scope)}
-                    disabled={createMutation.isPending}
-                  />
-                  {/* Label only — each scope is described in full just above,
-                      so repeating it per checkbox is noise. */}
-                  <Text className="text-sm font-medium">
+        {/* A real <fieldset>/<legend> can't be used here: the browser takes
+            <legend> out of the flex flow and paints it over the box's top
+            border, so the label collided with the first row. A labelled group
+            gives the same semantics with normal layout. */}
+        <div
+          role="group"
+          aria-labelledby="token-scopes-label"
+          className="flex flex-col gap-[9px]"
+        >
+          <span id="token-scopes-label" className={FIELD_LABEL_CLASS}>
+            {t("tokenScopesLabel")}
+          </span>
+          {/* Each scope's own description lives on its row — the mock has no
+              separate scope reference above, so the checkbox IS the docs. */}
+          {displayScopes.map((scope) => {
+            const on = scopes.has(scope);
+            return (
+              <button
+                key={scope}
+                type="button"
+                role="checkbox"
+                // The raw scope id is no longer printed on the row (the mock
+                // shows a human label + description), so it's exposed here for
+                // the ordering test rather than adding UI nothing reads.
+                data-scope={scope}
+                aria-checked={on}
+                onClick={() => toggleScope(scope)}
+                disabled={createMutation.isPending}
+                className={cn(
+                  "flex w-full items-start gap-[11px] rounded-[11px] border p-[11px_12px] text-start transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
+                  on
+                    ? "border-acc/30 bg-acc/[0.05]"
+                    : "border-white/[0.07] bg-background hover:border-white/20",
+                )}
+              >
+                <span
+                  aria-hidden
+                  className={cn(
+                    "mt-px grid h-[19px] w-[19px] flex-none place-items-center rounded-md border-[1.5px]",
+                    on
+                      ? "border-acc bg-acc text-[#07131A]"
+                      : "border-white/20 bg-transparent",
+                  )}
+                >
+                  {on && <Check size={12} strokeWidth={3.2} />}
+                </span>
+                <span className="flex min-w-0 flex-col gap-0.5">
+                  <span className="text-[13.5px] font-[650] text-foreground">
                     {t(`scopeLabel_${SCOPE_KEY[scope]}`)}
-                  </Text>
-                  <code className="text-xs text-foreground-secondary">
-                    {scope}
-                  </code>
-                </label>
-              ))}
-            </div>
-          </fieldset>
-
-          <label className="flex flex-col gap-1.5">
-            <Text variant="secondary" className="text-sm">
-              {t("tokenExpiryLabel")}
-            </Text>
-            <Select
-              value={expiry}
-              onChange={(e) => setExpiry(e.target.value as ExpiryChoice)}
-              disabled={createMutation.isPending}
-              options={EXPIRY_CHOICES.map((choice) => ({
-                value: choice,
-                label: t(`tokenExpiry_${choice}`),
-              }))}
-            />
-          </label>
-
-          <div>{blocked ? createButtonWithReason : createButton}</div>
-          {createError && (
-            <Text variant="danger" role="alert" className="text-sm">
-              {t("tokenCreateError")}
-            </Text>
-          )}
+                  </span>
+                  <span className="text-xs leading-[1.5] text-pretty text-foreground-tertiary">
+                    {t(`scopeDesc_${SCOPE_KEY[scope]}`)}
+                  </span>
+                </span>
+              </button>
+            );
+          })}
         </div>
 
-        {/* Existing tokens — withheld while signed out, where the list would
-            always be empty and the heading just noise. */}
-        {authed && <div className="h-px w-full bg-border" />}
-        {authed && (
-          <div className="flex flex-col gap-3">
-            <Text className="font-semibold">{t("tokenListHeading")}</Text>
-            {tokensQuery.isLoading ? (
-              <ul className="flex flex-col divide-y divide-border" aria-hidden>
-                {[0, 1].map((row) => (
-                  <li
-                    key={row}
-                    className="flex items-start justify-between gap-4 py-3"
-                  >
-                    <div className="flex min-w-0 flex-1 flex-col gap-2">
-                      <Skeleton className="h-4 w-32" />
-                      <Skeleton className="h-4 w-24" />
-                      <Skeleton className="h-3 w-44" />
-                    </div>
-                    <Skeleton className="h-9 w-20 shrink-0" />
-                  </li>
-                ))}
-              </ul>
-            ) : tokens.length === 0 ? (
-              <Text variant="secondary" className="text-sm">
-                {t("tokenListEmpty")}
-              </Text>
-            ) : (
-              <ul className="flex flex-col divide-y divide-border">
-                {tokens.map((token) => (
-                  <li
-                    key={token.id}
-                    className="flex items-start justify-between gap-4 py-3"
-                  >
-                    <div className="flex min-w-0 flex-col gap-1">
-                      <Text className="truncate font-medium">{token.name}</Text>
-                      <div className="flex flex-wrap gap-1.5">
-                        {token.scopes.map((scope) => (
-                          <span
-                            key={scope}
-                            className="rounded border border-border bg-surface px-1.5 py-0.5 text-[11px] text-secondary"
-                          >
-                            {scope}
-                          </span>
-                        ))}
-                      </div>
-                      <Text variant="secondary" className="text-xs">
-                        {token.lastUsedAt
-                          ? t("tokenLastUsed", {
-                              date: format.dateTime(
-                                new Date(token.lastUsedAt),
-                                {
-                                  dateStyle: "medium",
-                                },
-                              ),
-                            })
-                          : t("tokenNeverUsed")}
-                        {" · "}
-                        {token.expiresAt
-                          ? t("tokenExpiresOn", {
-                              date: format.dateTime(new Date(token.expiresAt), {
-                                dateStyle: "medium",
-                              }),
-                            })
-                          : t("tokenNeverExpires")}
-                      </Text>
-                    </div>
-                    <Button
-                      variant="secondary"
-                      onClick={() => {
-                        setRevokeError(false);
-                        setToRevoke(token);
-                      }}
-                    >
-                      {t("tokenRevokeButton")}
-                    </Button>
-                  </li>
-                ))}
-              </ul>
-            )}
+        <div className="flex flex-col gap-[7px]">
+          <span className={FIELD_LABEL_CLASS}>{t("tokenExpiryLabel")}</span>
+          {/* Mock uses a chip row, not a <select> — four choices read faster
+              laid out than collapsed behind a dropdown. */}
+          <div role="radiogroup" className="flex flex-wrap gap-[7px]">
+            {EXPIRY_CHOICES.map((choice) => {
+              const on = expiry === choice;
+              return (
+                <button
+                  key={choice}
+                  type="button"
+                  role="radio"
+                  aria-checked={on}
+                  onClick={() => setExpiry(choice)}
+                  disabled={createMutation.isPending}
+                  className={cn(
+                    "h-9 rounded-[10px] border px-[13px] text-[12.5px] font-[650] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
+                    on
+                      ? "border-acc/40 bg-acc/[0.12] text-acc"
+                      : "border-white/[0.12] text-foreground-secondary hover:text-foreground",
+                  )}
+                >
+                  {t(`tokenExpiry_${choice}`)}
+                </button>
+              );
+            })}
           </div>
+        </div>
+
+        {blocked ? createButtonWithReason : createButton}
+        {createError && (
+          <Text variant="danger" role="alert" className="text-sm">
+            {t("tokenCreateError")}
+          </Text>
         )}
-      </Card>
+      </div>
+
+      {/* Existing tokens — withheld while signed out, where the list would
+          always be empty and the heading just noise. */}
+      {authed && (
+        <div className={PANEL_CLASS}>
+          <h2 className="text-sm font-bold text-foreground">
+            {t("tokenListHeading")}
+          </h2>
+          {tokensQuery.isLoading ? (
+            <ul className="flex flex-col gap-[11px]" aria-hidden>
+              {[0, 1].map((row) => (
+                <li key={row} className={TOKEN_ROW_CLASS}>
+                  <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+                    <Skeleton className="h-4 w-32" />
+                    <Skeleton className="h-3 w-44" />
+                  </div>
+                  <Skeleton className="h-8 w-20 shrink-0" />
+                </li>
+              ))}
+            </ul>
+          ) : tokens.length === 0 ? (
+            <Text variant="secondary" className="text-sm">
+              {t("tokenListEmpty")}
+            </Text>
+          ) : (
+            <ul className="flex flex-col gap-[11px]">
+              {tokens.map((token) => (
+                <li key={token.id} className={TOKEN_ROW_CLASS}>
+                  <div className="flex min-w-0 flex-col gap-[3px]">
+                    <span className="truncate text-[13.5px] font-[650] text-foreground">
+                      {token.name}
+                    </span>
+                    <span className="font-mono text-[11.5px] text-foreground-tertiary">
+                      {token.lastUsedAt
+                        ? t("tokenLastUsed", {
+                            date: format.dateTime(new Date(token.lastUsedAt), {
+                              dateStyle: "medium",
+                            }),
+                          })
+                        : t("tokenNeverUsed")}
+                      {" · "}
+                      {token.expiresAt
+                        ? t("tokenExpiresOn", {
+                            date: format.dateTime(new Date(token.expiresAt), {
+                              dateStyle: "medium",
+                            }),
+                          })
+                        : t("tokenNeverExpires")}
+                    </span>
+                  </div>
+                  <div className="ms-auto flex flex-wrap gap-1.5">
+                    {token.scopes.map((scope) => (
+                      <span
+                        key={scope}
+                        className="rounded-md bg-acc/10 px-2 py-0.5 font-mono text-[10px] font-[650] text-[#7FEBFF]"
+                      >
+                        {scope}
+                      </span>
+                    ))}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setRevokeError(false);
+                      setToRevoke(token);
+                    }}
+                    className="h-8 flex-none rounded-[9px] bg-danger/10 px-3 text-[12.5px] font-semibold text-[#FF8C8C] transition-colors hover:bg-danger/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
+                  >
+                    {t("tokenRevokeButton")}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
 
       {/* Once-shown secret */}
       <Modal
@@ -389,6 +430,6 @@ export function ApiTokensSection() {
         confirming={revokeMutation.isPending}
         error={revokeError ? t("tokenRevokeError") : null}
       />
-    </section>
+    </>
   );
 }

@@ -106,9 +106,9 @@ export default async function AuthorPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: jsonLdScript(jsonLd) }}
       />
-      <div className="mx-auto w-full max-w-4xl px-7 pt-6">
-        <BackButton href="/" />
-      </div>
+      {/* AuthorScreen renders its own sticky PageHeader with the back pill —
+          this route used to stack a second, loose BackButton above it, which
+          showed up as two back controls on the same screen. */}
       <AuthorScreen authorId={id} initialData={initialData} />
     </>
   );

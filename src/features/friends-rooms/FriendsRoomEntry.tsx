@@ -3,9 +3,8 @@
 import { useState, type ReactElement } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Users, Ticket } from "lucide-react";
+import { Users } from "lucide-react";
 import { Button } from "@/src/shared/components/Button";
-import { Modal } from "@/src/shared/components/Modal";
 import { Text } from "@/src/shared/components/Text";
 import { Tooltip } from "@/src/shared/components/Tooltip";
 import { useAuth } from "@/src/shared/lib/auth-context";
@@ -18,12 +17,12 @@ type JoinErrorKey =
   "emptyCode" | "errorNotFound" | "errorUnavailable" | "errorGeneric";
 
 /**
- * The play entry points for a `save_one_friends` pack, shown on the pack detail
- * page in place of the single-player Play button. Two registered-users-only
- * actions:
+ * The room play entry points for a pack: a full-width Create-room button plus
+ * an always-visible inline code field + Join button (matches the pack detail
+ * mock — no modal). Two registered-users-only actions:
  *
  *  - **Create room** opens a fresh room over this pack and routes the host to it.
- *  - **Join by code** opens a modal to enter a friend's room code and routes in.
+ *  - **Join by code** submits the inline code field and routes into that room.
  *
  * Signed-out visitors see both controls blocked with a sign-in tooltip rather
  * than a surprise redirect (the app's anon-gate pattern — same as the vote and
@@ -39,7 +38,6 @@ export function FriendsRoomEntry({ packId }: { packId: string }) {
   const [creating, setCreating] = useState(false);
   const [createFailed, setCreateFailed] = useState(false);
 
-  const [joinOpen, setJoinOpen] = useState(false);
   const [code, setCode] = useState("");
   const [joining, setJoining] = useState(false);
   const [joinError, setJoinError] = useState<JoinErrorKey | null>(null);
@@ -59,19 +57,9 @@ export function FriendsRoomEntry({ packId }: { packId: string }) {
     }
   }
 
-  function openJoin() {
-    if (blocked) return;
-    setJoinError(null);
-    setJoinOpen(true);
-  }
-
-  function closeJoin() {
-    setJoinOpen(false);
-  }
-
   async function handleJoin(event: React.FormEvent) {
     event.preventDefault();
-    if (joining) return;
+    if (blocked || joining) return;
     // A code is read aloud or typed from a friend's screen, so normalize for a
     // clean UX before sending — the backend normalizes too, but this keeps the
     // input forgiving of stray spaces and lowercase.
@@ -107,37 +95,34 @@ export function FriendsRoomEntry({ packId }: { packId: string }) {
     );
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex flex-wrap items-center gap-3.5">
-        {withGate(
-          <Button
-            onClick={handleCreate}
-            loading={creating}
-            aria-disabled={blocked || undefined}
-            className={cn(
-              "gap-2.5",
-              blocked && "cursor-not-allowed opacity-45",
-            )}
-          >
-            <Users size={16} aria-hidden />
-            {t("entry.createRoom")}
-          </Button>,
-        )}
-        {withGate(
-          <Button
-            variant="secondary"
-            onClick={openJoin}
-            aria-disabled={blocked || undefined}
-            className={cn(
-              "gap-2.5",
-              blocked && "cursor-not-allowed opacity-45",
-            )}
-          >
-            <Ticket size={16} aria-hidden />
-            {t("entry.joinByCode")}
-          </Button>,
-        )}
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-2.5 py-0.5">
+        <span aria-hidden className="h-px flex-1 bg-border" />
+        <Text
+          variant="tertiary"
+          className="text-[11px] font-bold uppercase tracking-[0.1em]"
+        >
+          {t("entry.orWithFriends")}
+        </Text>
+        <span aria-hidden className="h-px flex-1 bg-border" />
       </div>
+
+      {withGate(
+        <Button
+          variant="secondary"
+          size="lg"
+          onClick={handleCreate}
+          loading={creating}
+          aria-disabled={blocked || undefined}
+          className={cn(
+            "w-full gap-2.5 rounded-[13px] text-[14.5px]",
+            blocked && "cursor-not-allowed opacity-45",
+          )}
+        >
+          <Users size={17} aria-hidden />
+          {t("entry.createRoom")}
+        </Button>,
+      )}
 
       {createFailed && (
         <Text variant="danger" className="text-sm">
@@ -145,34 +130,43 @@ export function FriendsRoomEntry({ packId }: { packId: string }) {
         </Text>
       )}
 
-      <Modal open={joinOpen} onClose={closeJoin} title={t("entry.joinTitle")}>
-        <form onSubmit={handleJoin} className="flex flex-col gap-3">
-          <label className="flex flex-col gap-1.5">
-            <Text variant="secondary" className="text-sm">
-              {t("entry.codeLabel")}
-            </Text>
-            <input
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
-              placeholder={t("entry.codePlaceholder")}
-              autoFocus
-              autoCapitalize="characters"
-              autoCorrect="off"
-              spellCheck={false}
-              disabled={joining}
-              className="rounded-[10px] border border-border bg-surface px-3.5 py-3 text-sm uppercase tracking-[0.2em] text-foreground outline-none focus-visible:ring-2 focus-visible:ring-acc disabled:opacity-45"
-            />
-          </label>
-          {joinError && (
-            <Text variant="danger" className="text-sm">
-              {t(`entry.${joinError}`)}
-            </Text>
-          )}
-          <Button type="submit" loading={joining} className="self-end">
+      {withGate(
+        <form onSubmit={handleJoin} className="flex gap-2.5">
+          {/* readOnly, not disabled, while blocked — same reasoning as
+              CommentSection's composer: a truly `disabled` field drops out of
+              the tab order, so a keyboard-only signed-out visitor could never
+              tab to it and discover the sign-in tooltip. */}
+          <input
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            placeholder={t("entry.codePlaceholder")}
+            aria-label={t("entry.codeLabel")}
+            readOnly={blocked}
+            disabled={joining}
+            autoCapitalize="characters"
+            autoCorrect="off"
+            spellCheck={false}
+            className={cn(
+              "min-w-0 flex-1 rounded-[12px] border border-border bg-surface px-3.5 py-2.5 font-mono text-[15px] font-semibold uppercase tracking-[0.16em] text-foreground outline-none focus-visible:ring-2 focus-visible:ring-acc disabled:opacity-45",
+              blocked && "cursor-not-allowed opacity-45",
+            )}
+          />
+          <Button
+            type="submit"
+            variant="secondary"
+            loading={joining}
+            aria-disabled={blocked || undefined}
+            className={cn(blocked && "cursor-not-allowed opacity-45")}
+          >
             {t("entry.join")}
           </Button>
-        </form>
-      </Modal>
+        </form>,
+      )}
+      {joinError && (
+        <Text variant="danger" className="text-sm">
+          {t(`entry.${joinError}`)}
+        </Text>
+      )}
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { authClient, type OAuthProviders } from "@/src/shared/lib/auth-client";
 import { Text } from "@/src/shared/components/Text";
+import { FormBanner } from "@/src/shared/components/form/FormBanner";
 import {
   OAuthProviderIcon,
   OAUTH_BRAND_CLASS,
@@ -81,18 +82,20 @@ export function OAuthButtons() {
   }
 
   return (
-    <div className="mt-4">
-      <div className="my-4 flex items-center gap-3" aria-hidden>
-        <span className="h-px flex-1 bg-border" />
-        <Text variant="tertiary" className="text-xs">
+    <div className="mt-5">
+      <div className="mb-4 flex items-center gap-3" aria-hidden>
+        <span className="h-px flex-1 bg-white/[0.09]" />
+        <Text variant="tertiary" className="text-[11.5px]">
           {t("orContinueWith")}
         </Text>
-        <span className="h-px flex-1 bg-border" />
+        <span className="h-px flex-1 bg-white/[0.09]" />
       </div>
       {error && (
-        <Text variant="danger" role="alert" className="mb-2 text-sm">
-          {error}
-        </Text>
+        <div className="mb-2">
+          <FormBanner tone="danger" role="alert">
+            {error}
+          </FormBanner>
+        </div>
       )}
       <div className="flex flex-col gap-2">
         {providers.google && (

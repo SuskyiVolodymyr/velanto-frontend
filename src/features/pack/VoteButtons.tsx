@@ -56,6 +56,7 @@ export function VoteButtons({
       downvoteLabel={t("downvote")}
       blockedReason={tAuth("logInToVote")}
       errorLabel={t("voteError")}
+      framed
     />
   );
 }

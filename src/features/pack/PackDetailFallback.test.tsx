@@ -32,6 +32,25 @@ vi.mock("@/src/features/pack/PackOwnerActions", () => ({
 vi.mock("@/src/features/pack/PackOwnerStatusBadge", () => ({
   PackOwnerStatusBadge: () => null,
 }));
+vi.mock("@/src/features/pack/PackRejectionReason", () => ({
+  PackRejectionReason: () => null,
+}));
+// Same treatment, same reason: an author-gated island whose useAuth() throws
+// outside an AuthProvider.
+vi.mock("@/src/features/pack/PackChangesRequestedBanner", () => ({
+  PackChangesRequestedBanner: () => null,
+}));
+// FriendsRoomEntry is an auth-gated client island (own tests in
+// FriendsRoomEntry.test.tsx — useAuth()/useRouter() need a real provider/
+// next/navigation mock this fallback test doesn't otherwise set up). Stub it
+// the same way PackDetailScreen.test.tsx does.
+vi.mock("@/src/features/friends-rooms/FriendsRoomEntry", () => ({
+  FriendsRoomEntry: () => <div>FriendsRoomEntry</div>,
+}));
+// ReportPackDialog is another auth-gated client island — stub the same way.
+vi.mock("@/src/features/pack/ReportPackDialog", () => ({
+  ReportPackDialog: () => <div>ReportPackDialog</div>,
+}));
 
 const mockedUsePackFallback = vi.mocked(usePackFallback);
 const mockedNotFound = vi.mocked(notFound);
@@ -72,6 +91,7 @@ describe("PackDetailFallback", () => {
       status: "ready",
       pack: PACK,
       results: RESULTS,
+      availableModes: [],
     });
     render(<PackDetailFallback packId="p1" />);
     expect(screen.getByText("Pending Pack")).toBeInTheDocument();
