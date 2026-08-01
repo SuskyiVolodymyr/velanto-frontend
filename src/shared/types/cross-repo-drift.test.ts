@@ -49,6 +49,10 @@ import {
   DEFAULT_PACK_LANGUAGE,
   PACK_LANGUAGE_NAMES,
 } from "@/src/shared/types/pack-language";
+import {
+  ROOM_MODES,
+  ROOM_MODE_BOUNDS,
+} from "@/src/features/friends-rooms/room-types";
 
 describe("cross-repo mirrored constants (velanto-backend contract)", () => {
   // ROLES — MIRRORED in velanto-backend src/modules/users/role.ts (ROLES).
@@ -65,7 +69,6 @@ describe("cross-repo mirrored constants (velanto-backend contract)", () => {
       "nxn",
       "rank_blind",
       "1v1",
-      "save_one_friends",
     ]);
   });
 
@@ -88,6 +91,7 @@ describe("cross-repo mirrored constants (velanto-backend contract)", () => {
       "draft",
       "pending",
       "approved",
+      "changes_requested",
       "rejected",
     ]);
   });
@@ -291,7 +295,54 @@ describe("cross-repo mirrored constants (velanto-backend contract)", () => {
       "comment_mention",
       "comment_reply",
       "pack_deleted_warning",
+      "pack_changes_requested",
     ]);
+  });
+
+  // ROOM_MODES — MIRRORED in velanto-backend
+  // src/modules/friends-rooms/modes/mode.ts. Backend-only until this room-revival
+  // slice (see that file's own comment); this is the reciprocal FE entry now owed.
+  it("ROOM_MODES", () => {
+    expect([...ROOM_MODES]).toEqual([
+      "claim",
+      "guess_who",
+      "turn_based_cut",
+      "voting",
+      "shared_grid",
+      "relay",
+    ]);
+  });
+
+  // ROOM_MODE_BOUNDS — MIRRORED, per-mode, from each mode's own
+  // velanto-backend src/modules/friends-rooms/modes/*/*.descriptor.ts
+  // (minPlayers/maxPlayers/formats). Not on the wire (see room-types.ts D5
+  // comment) so this hand-mirrored table is the only source of truth the FE has
+  // before a mode is chosen.
+  it("ROOM_MODE_BOUNDS", () => {
+    expect(ROOM_MODE_BOUNDS).toEqual({
+      claim: {
+        formats: ["save_one", "sacrifice_one"],
+        minPlayers: 2,
+        maxPlayers: 4,
+      },
+      guess_who: {
+        formats: ["save_one", "sacrifice_one", "rank_blind", "nxn", "1v1"],
+        minPlayers: 3,
+        maxPlayers: 8,
+      },
+      turn_based_cut: {
+        formats: ["save_one", "sacrifice_one"],
+        minPlayers: 2,
+        maxPlayers: 6,
+      },
+      voting: {
+        formats: ["save_one", "sacrifice_one", "nxn", "1v1"],
+        minPlayers: 2,
+        maxPlayers: 12,
+      },
+      shared_grid: { formats: ["rank_blind"], minPlayers: 2, maxPlayers: 12 },
+      relay: { formats: ["rank_blind"], minPlayers: 2, maxPlayers: 6 },
+    });
   });
 });
 

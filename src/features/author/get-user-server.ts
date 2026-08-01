@@ -1,5 +1,5 @@
 import type { PublicUserProfile } from "@/src/shared/types/user";
-import type { Pack } from "@/src/shared/types/pack";
+import type { PackSummary } from "@/src/shared/types/pack";
 import { AUTHOR_PACKS_PAGE_SIZE } from "./api/author-packs";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
@@ -9,7 +9,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 const AUTHOR_PACKS_LIMIT = AUTHOR_PACKS_PAGE_SIZE;
 
 export interface AuthorPacksPage {
-  items: Pack[];
+  items: PackSummary[];
   total: number;
 }
 
@@ -46,6 +46,6 @@ export async function getAuthorPacksServer(
     { cache: "no-store" },
   );
   if (!res.ok) throw new Error(`Failed to load author packs: ${res.status}`);
-  const data = (await res.json()) as { items: Pack[]; total: number };
+  const data = (await res.json()) as { items: PackSummary[]; total: number };
   return { items: data.items, total: data.total };
 }

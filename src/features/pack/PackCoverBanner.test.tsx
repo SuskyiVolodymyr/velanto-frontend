@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { PackCoverBanner } from "./PackCoverBanner";
+import { HOT_PLAYS_THRESHOLD } from "@/src/features/home/hot-pack";
 import type { Pack } from "@/src/shared/types/pack";
 
 // The author line is a client island with its own auth-gated hover-card fetch
@@ -39,19 +40,25 @@ const SAVE_ONE_PACK: Pack = {
 };
 
 describe("PackCoverBanner", () => {
-  it("shows the pack title, format badge, and round count", () => {
+  it("shows the pack title and format pill", () => {
     render(<PackCoverBanner pack={SAVE_ONE_PACK} />);
 
-    expect(screen.getByText("Best Anime Openings")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+      "Best Anime Openings",
+    );
     expect(screen.getByText("Save One")).toBeInTheDocument();
-    expect(screen.getByText("2 rounds")).toBeInTheDocument();
   });
 
-  it("singularizes the round count for a single round", () => {
-    const pack: Pack = { ...SAVE_ONE_PACK, rounds: [SAVE_ONE_PACK.rounds[0]] };
-    render(<PackCoverBanner pack={pack} />);
+  it("shows a HOT pill only for a pack over the plays threshold", () => {
+    render(<PackCoverBanner pack={SAVE_ONE_PACK} />);
+    expect(screen.queryByText("HOT")).toBeNull();
 
-    expect(screen.getByText("1 round")).toBeInTheDocument();
+    render(
+      <PackCoverBanner
+        pack={{ ...SAVE_ONE_PACK, totalPlays: HOT_PLAYS_THRESHOLD }}
+      />,
+    );
+    expect(screen.getByText("HOT")).toBeInTheDocument();
   });
 
   it("renders the custom cover image when a coverImageKey is set", () => {
@@ -73,25 +80,8 @@ describe("PackCoverBanner", () => {
     expect(container.querySelector("img")).toBeNull();
   });
 
-  it("uses the rounds length for an nxn pack", () => {
-    const pack: Pack = {
-      ...SAVE_ONE_PACK,
-      format: "nxn",
-      groups: [
-        { id: "a", name: "Boys", items: [] },
-        { id: "b", name: "Girls", items: [] },
-      ],
-      rounds: Array.from({ length: 8 }, (_, i) => ({
-        id: `r${i + 1}`,
-        slots: [
-          { groupId: "a", mode: "random" as const, count: 1 },
-          { groupId: "b", mode: "random" as const, count: 1 },
-        ],
-      })),
-    };
-    render(<PackCoverBanner pack={pack} />);
-
+  it("shows the format label for an nxn pack", () => {
+    render(<PackCoverBanner pack={{ ...SAVE_ONE_PACK, format: "nxn" }} />);
     expect(screen.getByText("NxN")).toBeInTheDocument();
-    expect(screen.getByText("8 rounds")).toBeInTheDocument();
   });
 });

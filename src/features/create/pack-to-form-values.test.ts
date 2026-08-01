@@ -87,21 +87,6 @@ describe("packToFormValues", () => {
     });
   });
 
-  // save_one_friends is a first-class editable format now — its rounds are
-  // single-slot random draws with no count, which the friends editor renders.
-  it("seeds the form for a save_one_friends pack", () => {
-    const friendsPack: Pack = {
-      ...PACK,
-      format: "save_one_friends",
-      rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "random" }] }],
-    };
-    const values = packToFormValues(friendsPack);
-
-    expect(values).not.toBeNull();
-    expect(values?.format).toBe("save_one_friends");
-    expect(values?.rounds).toEqual(friendsPack.rounds);
-  });
-
   // The null path is the defensive guard for a genuinely unknown wire format (a
   // backend deployed ahead of this build), NOT for any shipped format.
   it("returns null for a format this build does not know", () => {

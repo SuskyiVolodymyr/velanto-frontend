@@ -6,7 +6,10 @@ import { useRouter, usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
+import { PageHeader } from "@/src/shared/components/PageHeader";
+import { ReportedContentPreview } from "@/src/features/moderation/ReportedContentPreview";
 import { ReportDetailSummary } from "@/src/features/moderation/ReportDetailSummary";
+import { ReportsAgainstTarget } from "@/src/features/moderation/ReportsAgainstTarget";
 import { ReportQueueActions } from "@/src/features/moderation/ReportQueueActions";
 import { ReportModerationPanel } from "@/src/features/moderation/ReportModerationPanel";
 import { useReportModeration } from "@/src/features/moderation/use-report-moderation";
@@ -15,6 +18,8 @@ import {
   useReviewReport,
   useCloseReport,
 } from "@/src/features/moderation/api/report-detail.mutations";
+import { cn } from "@/src/shared/lib/cn";
+import { pageContainer } from "@/src/shared/lib/page-container";
 
 export function ReportDetailScreen({ reportId }: { reportId: string }) {
   const t = useTranslations("moderation");
@@ -55,17 +60,20 @@ export function ReportDetailScreen({ reportId }: { reportId: string }) {
 
   if (authStatus === "unauthenticated") {
     return (
-      <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">{tCommon("loginRequired")}</Text>
-        <Button
-          className="mt-4"
-          onClick={() =>
-            router.push(`/auth?next=${encodeURIComponent(pathname)}`)
-          }
-        >
-          {tHeader("logIn")}
-        </Button>
-      </div>
+      <>
+        <PageHeader back={{ href: "/moderation", label: t("queueBack") }} />
+        <div className="mx-auto max-w-md py-16 text-center">
+          <Text variant="secondary">{tCommon("loginRequired")}</Text>
+          <Button
+            className="mt-4"
+            onClick={() =>
+              router.push(`/auth?next=${encodeURIComponent(pathname)}`)
+            }
+          >
+            {tHeader("logIn")}
+          </Button>
+        </div>
+      </>
     );
   }
 
@@ -75,25 +83,54 @@ export function ReportDetailScreen({ reportId }: { reportId: string }) {
 
   if (reportQuery.isError || !report) {
     return (
-      <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="danger">{t("reportNotFound")}</Text>
-      </div>
+      <>
+        <PageHeader back={{ href: "/moderation", label: t("queueBack") }} />
+        <div className="mx-auto max-w-md py-16 text-center">
+          <Text variant="danger">{t("reportNotFound")}</Text>
+        </div>
+      </>
     );
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-7 py-10">
-      <ReportDetailSummary report={report} />
-
-      <ReportQueueActions
-        status={report.status}
-        actionBusy={actionBusy}
-        actionError={actionError}
-        onReview={() => reviewMutation.mutate()}
-        onClose={() => closeMutation.mutate()}
+    <>
+      <PageHeader
+        back={{ href: "/moderation", label: t("queueBack") }}
+        crumb={t("reportCrumb")}
+        meta={
+          <span data-mono="1" className="text-xs text-foreground-tertiary/60">
+            {reportId.slice(0, 8)}
+          </span>
+        }
       />
+      <main
+        className={cn(pageContainer(720), "flex flex-1 flex-col gap-6 py-10")}
+      >
+        <ReportDetailSummary report={report} />
 
-      <ReportModerationPanel report={report} moderation={moderation} />
-    </main>
+        {/* The reported content itself (T7/D8): additive, not blocking — its
+          own fetch/loading/error state is scoped inside this component, so
+          it never delays or hides the actions below. `viewerRole` lets it
+          gate the user-report summary to manager/admin, matching the
+          backend's actual `adminClient.userDetail` RBAC (moderator+ can
+          reach this screen, but only manager/admin can hit that endpoint). */}
+        <ReportedContentPreview report={report} viewerRole={user?.role} />
+
+        {/* The target's report history, above the actions: whether this is a
+            one-off or a pattern is the main thing that changes the decision
+            the buttons below are about. */}
+        <ReportsAgainstTarget report={report} />
+
+        <ReportQueueActions
+          status={report.status}
+          actionBusy={actionBusy}
+          actionError={actionError}
+          onReview={() => reviewMutation.mutate()}
+          onClose={() => closeMutation.mutate()}
+        />
+
+        <ReportModerationPanel report={report} moderation={moderation} />
+      </main>
+    </>
   );
 }

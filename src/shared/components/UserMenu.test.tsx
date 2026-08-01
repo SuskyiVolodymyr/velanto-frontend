@@ -1,11 +1,14 @@
-import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import type { ReactNode } from "react";
 import messages from "@/messages/en.json";
 import { UserMenu } from "./UserMenu";
+import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
 import type { User } from "@/src/shared/types/user";
+
+const STREAMER_MODE_STORAGE_KEY = "velanto:streamer-mode";
 
 const USER: User = {
   id: "u1",
@@ -24,11 +27,13 @@ function withIntl(ui: ReactNode) {
 }
 
 describe("UserMenu", () => {
-  it("shows only the initial-letter trigger when closed", () => {
+  it("shows the avatar + username trigger, with no menu open, when closed", () => {
     render(withIntl(<UserMenu user={USER} onLogout={vi.fn()} />));
-    expect(
-      screen.getByRole("button", { name: "Account menu" }),
-    ).toHaveTextContent("A");
+    const trigger = screen.getByRole("button", { name: "Account menu" });
+    // Avatar initial ("A") and the username pill (mock: Dashboard.dc.html's
+    // account button pairs a circular avatar with the handle).
+    expect(trigger).toHaveTextContent("A");
+    expect(trigger).toHaveTextContent("alice");
     expect(screen.queryByRole("menu")).not.toBeInTheDocument();
   });
 
@@ -38,8 +43,12 @@ describe("UserMenu", () => {
 
     await user.click(screen.getByRole("button", { name: "Account menu" }));
 
-    expect(screen.getByRole("menu")).toBeInTheDocument();
-    expect(screen.getByText("alice")).toBeInTheDocument();
+    const menu = screen.getByRole("menu");
+    expect(menu).toBeInTheDocument();
+    // Two "alice"s now: the trigger pill also shows the username next to the
+    // avatar (mock: Dashboard.dc.html's account button), plus the dropdown's
+    // own header — scope this assertion to the dropdown specifically.
+    expect(within(menu).getByText("alice")).toBeInTheDocument();
     // Email is intentionally not surfaced in the account menu.
     expect(screen.queryByText("alice@example.com")).not.toBeInTheDocument();
     expect(screen.getByRole("menuitem", { name: "Docs" })).toHaveAttribute(
@@ -168,5 +177,31 @@ describe("UserMenu", () => {
     await user.click(screen.getByRole("menuitem", { name: "Log out" }));
 
     expect(trigger).toHaveFocus();
+  });
+
+  describe("streamer mode", () => {
+    beforeEach(() => localStorage.setItem(STREAMER_MODE_STORAGE_KEY, "on"));
+    afterEach(() => localStorage.clear());
+
+    it("masks the trigger's username and marks it hideable for the pre-hydration guard, with no nested Reveal button", () => {
+      render(
+        withIntl(
+          <StreamerModeProvider>
+            <UserMenu user={USER} onLogout={vi.fn()} />
+          </StreamerModeProvider>,
+        ),
+      );
+
+      const trigger = screen.getByRole("button", { name: "Account menu" });
+      expect(trigger).not.toHaveTextContent("alice");
+      expect(trigger).toHaveTextContent("Hidden");
+      // A nested interactive Reveal button inside the trigger <button> would be
+      // invalid HTML and would steal the click meant for the dropdown toggle —
+      // the trigger has no reveal control of its own.
+      expect(within(trigger).queryByRole("button")).not.toBeInTheDocument();
+      expect(
+        trigger.querySelector("[data-streamer-hideable]"),
+      ).toBeInTheDocument();
+    });
   });
 });

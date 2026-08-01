@@ -7,7 +7,12 @@ import Link from "next/link";
 import { Text } from "@/src/shared/components/Text";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { StatusBadge } from "@/src/shared/components/StatusBadge";
-import { DataTable, DataTableRow } from "@/src/shared/components/DataTable";
+import {
+  DataTable,
+  DataTableRow,
+  ROW_LINK_CLASS,
+} from "@/src/shared/components/DataTable";
+import { cn } from "@/src/shared/lib/cn";
 import { TablePagination } from "@/src/shared/components/TablePagination";
 import { reportReasonLabel } from "@/src/shared/lib/report-reasons";
 import { reportTargetLabel } from "@/src/shared/lib/report-display";
@@ -74,15 +79,22 @@ export function ReportsTab() {
             {reports.map((report) => {
               const target = reportTargetLabel(report);
               return (
-                <DataTableRow key={report.id} columns={COLUMNS}>
-                  <span className="text-[11.5px] font-semibold uppercase tracking-[0.04em] text-foreground-secondary">
+                // Clicking anywhere in the row opens the report, per the mock,
+                // via the target cell's stretched link — the row itself stays a
+                // role="row" div so the link keeps being announced as one.
+                <DataTableRow key={report.id} columns={COLUMNS} linked>
+                  <span
+                    data-mono
+                    className="text-[11px] font-bold uppercase tracking-[0.05em] text-foreground-secondary"
+                  >
                     {report.type}
                   </span>
-                  {/* The whole row used to be one <a>; a link per row inside a
-                      grid of cells keeps the table semantics intact. */}
                   <Link
                     href={`/moderation/reports/${report.id}`}
-                    className="block truncate text-[13px] font-semibold text-foreground hover:text-acc"
+                    className={cn(
+                      "block truncate text-[13px] font-[650] text-foreground",
+                      ROW_LINK_CLASS,
+                    )}
                   >
                     {target.text}
                   </Link>
@@ -92,9 +104,12 @@ export function ReportsTab() {
                   <Text variant="tertiary" className="truncate text-[13px]">
                     {report.reporterUsername}
                   </Text>
-                  <Text variant="tertiary" className="text-[12.5px]">
+                  <span
+                    data-mono
+                    className="text-[12px] text-foreground-tertiary"
+                  >
                     {formatDate(report.createdAt)}
-                  </Text>
+                  </span>
                   <StatusBadge kind="report" status={report.status} />
                 </DataTableRow>
               );

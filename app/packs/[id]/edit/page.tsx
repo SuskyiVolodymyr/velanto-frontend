@@ -1,12 +1,8 @@
 import type { Metadata } from "next";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
-import { cn } from "@/src/shared/lib/cn";
 import { getTranslations } from "next-intl/server";
 import { getPackServer } from "@/src/shared/lib/get-pack-server";
 import { EditPackScreen } from "@/src/features/create/EditPackScreen";
 import { EditPackFallback } from "@/src/features/create/EditPackFallback";
-import { Text } from "@/src/shared/components/Text";
-import { BackButton } from "@/src/shared/components/BackButton";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("pages");
@@ -27,14 +23,19 @@ export default async function EditPackPage({
   const pack = await getPackServer(id);
 
   return (
-    <main className={cn(PACK_CONTAINER, "flex-1 py-10")}>
-      <BackButton href={`/packs/${id}`} className="mb-6" />
-      <Text as="h1" variant="title" className="mb-2 text-3xl">
-        {t("editTitle")}
-      </Text>
-      <Text variant="secondary" className="mb-8 max-w-lg">
-        {t("editSubtitle")}
-      </Text>
+    // No page container here — same reasoning as app/create/page.tsx: it
+    // would double up with the one CreatePackForm applies to its own sticky
+    // bar / body internally, since that bar needs to sit full-bleed. No
+    // `pt-10` either — same fix as app/create/page.tsx: dead clearance for a
+    // since-removed header block, now just pushing the sticky bar itself
+    // down 40px and opening a bare gap above it at scroll 0.
+    <main className="flex-1">
+      {/* The real mock's sticky bar carries the visible title now (T1) —
+          this h1 stays sr-only purely for a11y/SEO landmark purposes. The
+          sticky action bar's own icon back-button (inside CreatePackForm,
+          via EditPackScreen) replaces the standalone BackButton that used to
+          sit here — it points at /packs/{id}, same destination this had. */}
+      <h1 className="sr-only">{t("editTitle")}</h1>
       {pack ? <EditPackScreen pack={pack} /> : <EditPackFallback packId={id} />}
     </main>
   );

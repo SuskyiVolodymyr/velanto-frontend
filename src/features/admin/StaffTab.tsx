@@ -1,11 +1,12 @@
 "use client";
 import { formatDate } from "@/src/shared/lib/format-date";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Text } from "@/src/shared/components/Text";
 import { Username } from "@/src/shared/components/Username";
+import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
 import { Select } from "@/src/shared/components/Select";
@@ -41,6 +42,27 @@ function formatAddedBy(addedBy: string | null, systemLabel: string): string {
   return addedBy ?? systemLabel;
 }
 
+type AddStaffInputKind = "email" | "username" | "id";
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// AdminUserRow.id is the backend's User.id, which Prisma generates via
+// `@id @default(uuid())` (velanto-backend/prisma/schema.prisma) — a canonical
+// 8-4-4-4-12 hex UUID. That's a real, hyphenated shape, not the bare
+// `[0-9a-f]{6,}` heuristic the mock ports — a plain hex-run regex would both
+// misfire on ordinary hex-looking usernames and never match an actual id
+// (which always carries hyphens), so this checks the real format instead.
+const USER_ID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function detectAddStaffKind(raw: string): AddStaffInputKind {
+  const value = raw.trim();
+  if (EMAIL_RE.test(value)) return "email";
+  if (USER_ID_RE.test(value)) return "id";
+  return "username";
+}
+
+type ResolvedStaff = { id: string } | { candidates: AdminUserRow[] };
+
 export function StaffTab() {
   const t = useTranslations("admin");
   const tCommon = useTranslations("common");
@@ -51,8 +73,40 @@ export function StaffTab() {
   const queryClient = useQueryClient();
   const [searchInput, setSearchInput] = useState("");
   const [query, setQuery] = useState("");
-  const [addEmail, setAddEmail] = useState("");
+  const [addInput, setAddInput] = useState("");
   const [addRole, setAddRole] = useState<AssignableRole>("moderator");
+  const [matches, setMatches] = useState<AdminUserRow[] | null>(null);
+  const addBarRef = useRef<HTMLDivElement>(null);
+  const addButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Same dismiss-on-outside-click / dismiss-on-Escape convention as
+  // Popover.tsx/UserMenu.tsx elsewhere in this app: close the matches
+  // dropdown on an outside mousedown, or on Escape (which also returns focus
+  // to the button that opened it).
+  useEffect(() => {
+    if (!matches) return;
+
+    function handlePointerDown(event: MouseEvent) {
+      if (
+        addBarRef.current &&
+        !addBarRef.current.contains(event.target as Node)
+      ) {
+        setMatches(null);
+      }
+    }
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key !== "Escape") return;
+      setMatches(null);
+      addButtonRef.current?.focus();
+    }
+
+    document.addEventListener("mousedown", handlePointerDown);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handlePointerDown);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [matches]);
 
   useEffect(() => {
     const timeout = setTimeout(
@@ -95,40 +149,89 @@ export function StaffTab() {
       queryClient.invalidateQueries({ queryKey: ["admin-staff"] }),
   });
 
-  /**
-   * "+ Add staff" takes an EMAIL, but the role endpoint takes a user id — so
-   * resolve the email through the admin user search first. The match must be an
-   * exact email, not just the first hit: `q` is a substring search, so trusting
-   * its top result could promote a different account.
-   */
+  // "+ Add staff" grants a role once a user id is known; that id is resolved
+  // separately below (email / username / id), so this mutation stays a plain
+  // grant.
   const addStaff = useMutation({
-    mutationFn: async ({
-      email,
-      role,
-    }: {
-      email: string;
-      role: AssignableRole;
-    }) => {
-      const found = await adminClient.listUsers({ q: email, limit: 50 });
-      const match = found.items.find(
-        (row) => row.email.toLowerCase() === email.toLowerCase(),
-      );
-      if (!match) throw new Error(t("noUserEmailError"));
-      return usersClient.changeRole(match.id, role);
-    },
+    mutationFn: ({ id, role }: { id: string; role: AssignableRole }) =>
+      usersClient.changeRole(id, role),
     onSuccess: () => {
-      setAddEmail("");
+      setAddInput("");
+      setMatches(null);
       void queryClient.invalidateQueries({ queryKey: ["admin-staff"] });
+    },
+  });
+
+  /**
+   * Resolves whatever was typed into a user id, three ways depending on shape:
+   *  - email → `listUsers({q})` + an EXACT email match. `q` is a substring
+   *    search, so trusting its top hit could promote a different account.
+   *  - id → `adminClient.userDetail(id)` directly — already an exact,
+   *    unambiguous lookup, so no disambiguation is needed.
+   *  - username (bare word or "@handle") → `listUsers({q})`; only an EXACT
+   *    (case-insensitive) username match among the results resolves straight
+   *    through — anything else, including a lone substring-only hit, surfaces
+   *    as candidates for the caller to disambiguate via a picker (never trust
+   *    the top, or only, hit of a substring search for a privilege grant).
+   */
+  const resolveStaff = useMutation({
+    mutationFn: async (raw: string): Promise<ResolvedStaff> => {
+      const value = raw.trim();
+      const kind = detectAddStaffKind(value);
+
+      if (kind === "email") {
+        const found = await adminClient.listUsers({ q: value, limit: 50 });
+        const match = found.items.find(
+          (row) => row.email.toLowerCase() === value.toLowerCase(),
+        );
+        if (!match) throw new Error(t("noUserEmailError"));
+        return { id: match.id };
+      }
+
+      if (kind === "id") {
+        try {
+          const found = await adminClient.userDetail(value);
+          return { id: found.id };
+        } catch {
+          throw new Error(t("addStaffNoMatchOther"));
+        }
+      }
+
+      const query = value.startsWith("@") ? value.slice(1) : value;
+      const found = await adminClient.listUsers({ q: query, limit: 50 });
+      if (found.items.length === 0) throw new Error(t("addStaffNoMatchOther"));
+      // `q` is a substring search, so a single hit is not necessarily an
+      // exact match (e.g. "alic" substring-matching only "alice") — the
+      // email path above already requires exactness before auto-resolving,
+      // and a privilege grant deserves the same bar. Only an exact,
+      // case-insensitive username match resolves directly; anything else
+      // (including a lone substring hit) goes through the disambiguation
+      // dropdown so a human confirms the actual account before it's staffed.
+      const exactMatch = found.items.find(
+        (row) => row.username.toLowerCase() === query.toLowerCase(),
+      );
+      if (exactMatch) return { id: exactMatch.id };
+      return { candidates: found.items };
+    },
+    onSuccess: (result) => {
+      if ("candidates" in result) {
+        setMatches(result.candidates);
+        return;
+      }
+      setMatches(null);
+      addStaff.mutate({ id: result.id, role: addRole });
     },
   });
 
   const actionError = changeRole.isError
     ? t("changeRoleError")
-    : addStaff.isError
-      ? addStaff.error.message
-      : staffQuery.isFetchNextPageError
-        ? t("loadMoreStaffError")
-        : "";
+    : resolveStaff.isError
+      ? resolveStaff.error.message
+      : addStaff.isError
+        ? t("changeRoleError")
+        : staffQuery.isFetchNextPageError
+          ? t("loadMoreStaffError")
+          : "";
 
   if (!user) return null;
 
@@ -138,17 +241,38 @@ export function StaffTab() {
     (role) => role !== "user",
   );
 
+  const addKind = addInput.trim() ? detectAddStaffKind(addInput) : null;
+  const addKindLabel =
+    addKind === "email"
+      ? t("addStaffKindEmail")
+      : addKind === "id"
+        ? t("addStaffKindUserId")
+        : addKind === "username"
+          ? t("addStaffKindUsername")
+          : null;
+
   return (
     <div className="flex flex-col gap-5">
-      <div className="flex flex-wrap items-center gap-2.5 rounded-[14px] border border-border bg-white/[0.02] px-[18px] py-4">
+      <div
+        ref={addBarRef}
+        className="relative flex flex-wrap items-center gap-2.5 rounded-[14px] border border-border bg-white/[0.02] px-[18px] py-4"
+      >
         <Input
-          type="email"
-          aria-label={t("addStaffEmailAria")}
-          placeholder={t("addStaffEmailPlaceholder")}
-          value={addEmail}
-          onChange={(event) => setAddEmail(event.target.value)}
+          type="text"
+          aria-label={t("addStaffInputAria")}
+          placeholder={t("addStaffInputPlaceholder")}
+          value={addInput}
+          onChange={(event) => {
+            setAddInput(event.target.value);
+            setMatches(null);
+          }}
           className="min-w-[180px] flex-1"
         />
+        {addKindLabel && (
+          <span className="w-fit shrink-0 rounded-md bg-white/[0.06] px-2 py-1 text-[11px] font-bold uppercase tracking-[0.05em] text-foreground-secondary">
+            {addKindLabel}
+          </span>
+        )}
         <Select
           aria-label={t("roleToGrantAria")}
           value={addRole}
@@ -157,14 +281,50 @@ export function StaffTab() {
           className="h-10 w-auto"
         />
         <Button
-          loading={addStaff.isPending}
-          disabled={!addEmail.trim()}
-          onClick={() =>
-            addStaff.mutate({ email: addEmail.trim(), role: addRole })
-          }
+          ref={addButtonRef}
+          loading={resolveStaff.isPending || addStaff.isPending}
+          disabled={!addInput.trim()}
+          onClick={() => resolveStaff.mutate(addInput)}
         >
           {t("addStaff")}
         </Button>
+
+        {matches && (
+          <ul
+            role="listbox"
+            aria-label={t("addStaffMatchesAria")}
+            className="absolute start-0 top-[calc(100%+8px)] z-30 max-h-64 w-full min-w-[260px] overflow-y-auto rounded-xl border border-border bg-surface-raised p-1.5 shadow-lg"
+          >
+            {matches.map((row) => (
+              <li key={row.id}>
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={false}
+                  onClick={() => {
+                    setMatches(null);
+                    addStaff.mutate({ id: row.id, role: addRole });
+                  }}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-white/[0.05]"
+                >
+                  <UserAvatar
+                    username={row.username}
+                    size="sm"
+                    className="border border-border bg-surface text-foreground-secondary"
+                  />
+                  <span className="min-w-0 flex-1">
+                    <Text className="truncate text-[13px] font-semibold">
+                      {row.username}
+                    </Text>
+                    <Text variant="tertiary" className="truncate text-[11.5px]">
+                      {row.email}
+                    </Text>
+                  </span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <div className="max-w-sm">

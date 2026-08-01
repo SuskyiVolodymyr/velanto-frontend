@@ -73,7 +73,84 @@
     "deletePack": "پیک حذف کریں",
     "packDeleted": "پیک حذف کر دیا گیا",
     "deletePackError": "اس پیک کو حذف نہیں کیا جا سکا۔ دوبارہ کوشش کریں۔",
-    "banUserError": "اس صارف پر پابندی نہیں لگائی جا سکی۔ دوبارہ کوشش کریں۔"
+    "banUserError": "اس صارف پر پابندی نہیں لگائی جا سکی۔ دوبارہ کوشش کریں۔",
+    "contentsSearchAria": "پیک آئٹمز تلاش کریں",
+    "contentsSearchPlaceholder": "آئٹمز تلاش کریں…",
+    "contentsFilterText": "متن",
+    "contentsFilterYoutube": "YouTube",
+    "contentsFilterImage": "تصویر",
+    "contentsItemType": {
+      "text": "متنی آئٹم",
+      "youtube": "YouTube آئٹم",
+      "image": "تصویری آئٹم"
+    },
+    "contentsDrawnRandomly": "بے ترتیب طور پر نکالا گیا · {count, plural, one {# آئٹم} other {# آئٹمز}} اس پول میں",
+    "contentsPoolEmpty": "اس پول میں ابھی تک کوئی آئٹم نہیں ہے۔",
+    "contentsEmpty": "دکھانے کے لیے پیک کا کوئی مواد نہیں ہے۔",
+    "contentsNoMatches": "آپ کی تلاش سے مماثل کوئی آئٹم نہیں ہے۔",
+    "packNotFound": "یہ پیک موجود نہیں ہے۔",
+    "packCrumb": "پیک کا جائزہ",
+    "reportCrumb": "رپورٹ کا جائزہ",
+    "queueBack": "قطار",
+    "packSubmittedBy": "{author} نے {date} کو جمع کرایا",
+    "packSummarySentence": "{pools, plural, one {# پول} other {# پولز}} · {rounds, plural, one {# راؤنڈ} other {# راؤنڈز}}",
+    "contentsHeading": "پیک کا مواد",
+    "roundMappingHeading": "راؤنڈز",
+    "roundLabelFallback": "راؤنڈ {index}",
+    "roundRandomPool": "بے ترتیب پول",
+    "contentsRandomPoolSlot": "یہ سلاٹ ہر بار کھیلنے پر ایک بے ترتیب پول منتخب کرتا ہے — کون سا پول استعمال ہوا، یہ کہیں محفوظ نہیں ہوتا، اس لیے اس کا مواد یہاں نہیں دکھایا جا سکتا۔",
+    "loadingReportedContent": "رپورٹ شدہ مواد لوڈ ہو رہا ہے…",
+    "reportedContentError": "اس رپورٹ کا مواد لوڈ نہیں ہو سکا۔ بعد میں دوبارہ کوشش کریں۔",
+    "reportedUserHeading": "رپورٹ شدہ اکاؤنٹ",
+    "reportedUserJoined": "{date} کو شامل ہوئے",
+    "reportedUserPacks": "پیکس",
+    "reportedUserComments": "تبصرے",
+    "reportedUserReportsAgainst": "اُن کے خلاف رپورٹس",
+    "reportedUserReportsFiled": "درج کردہ رپورٹس",
+    "reportedUserRestricted": "رپورٹ شدہ اکاؤنٹ کی تفصیلات صرف مینیجرز اور ایڈمنز دیکھ سکتے ہیں۔",
+    "otherReportsHeading": "اس ہدف کے بارے میں دیگر رپورٹس",
+    "otherReportsLoading": "رپورٹ کی تاریخ لوڈ ہو رہی ہے…",
+    "otherReportsError": "رپورٹ کی تاریخ لوڈ نہیں ہو سکی۔",
+    "otherReportsNone": "اس ہدف کے بارے میں کوئی اور رپورٹ نہیں ہے۔",
+    "otherReportsBy": "بذریعہ {reporter}",
+    "otherReportsMore": "{total} دیگر رپورٹس میں سے {shown} دکھائی جا رہی ہیں۔",
+    "approvalHeading": "منظوری کا جائزہ — پیک کی ہر شے",
+    "approvalIntro": "ایک کھیل ہر پول سے صرف کچھ حصہ بے ترتیب اٹھاتی ہے۔ مصنف کی بھیجی ہوئی ہر چیز نیچے موجود ہے، تاکہ کوئی مواد بغیر جائزے کھلاڑیوں تک نہ پہنچے۔",
+    "decisionHeading": "فیصلہ",
+    "approvePack": "پیک منظور کریں",
+    "requestChanges": "تبدیلیاں طلب کریں",
+    "rejectPack": "پیک مسترد کریں",
+    "changesRequestedHeading": "تبدیلیاں طلب کی گئیں",
+    "changesNoMarks": "جن چیزوں میں کام درکار ہے انہیں اوپر “ترمیم کے لیے نشان زد کریں” سے منتخب کریں، پھر بتائیں کہ مصنف کو کیا بدلنا ہے۔",
+    "changesMessageLabel": "مصنف کے لیے پیغام",
+    "changesMessagePlaceholder": "لائو ہونے سے پہلے کیا بدلنا ضروری ہے؟",
+    "sendChangeRequest": "درخواست بھیجیں",
+    "changesOutcomeNote": "پیک آپ کے نوٹس کے ساتھ مصنف کے پاس واپس چلا جاتا ہے۔ کچھ حذف نہیں ہوتا، اور دوبارہ جمع کرانے پر وہ دوبارہ قطار میں آ جاتا ہے۔",
+    "rejectReasonLabel": "مستردی کی وجہ",
+    "markForEdit": "ترمیم کے لیے نشان زد کریں",
+    "marked": "نشان زد",
+    "unmark": "{label} سے نشان ہٹائیں",
+    "markNoRequest": "کوئی نوٹ نہیں — مصنف صرف یہ دیکھے گا کہ یہ نشان زد ہے۔",
+    "markAskedOfAuthor": "مصنف سے مطلوب",
+    "markItemPlaceholder": "مصنف اس شے کا کیا کرے؟",
+    "markRoundPlaceholder": "اس راؤنڈ میں کیا بدلنا چاہیے؟",
+    "markFieldPlaceholder": "مصنف اس کی جگہ کیا لکھے؟",
+    "markKind": {
+      "title": "عنوان",
+      "description": "تفصیل",
+      "cover": "سرورق",
+      "tags": "ٹیگز",
+      "item": "شے",
+      "round": "راؤنڈ"
+    },
+    "fieldsHeading": "پیک کی تفصیلات — جو دوبارہ لکھنا ہے اسے نشان زد کریں",
+    "fieldTitle": "عنوان",
+    "fieldDescription": "تفصیل",
+    "fieldCover": "سرورق",
+    "fieldTags": "ٹیگز",
+    "fieldEmpty": "مقرر نہیں",
+    "fieldCoverUploaded": "اپ لوڈ کی گئی تصویر",
+    "fieldCoverTone": "رنگ {tone}"
   },
   "admin": {
     "panelEyebrow": "ایڈمن پینل",
@@ -120,8 +197,13 @@
     "noUserEmailError": "اس ای میل والا کوئی صارف نہیں ہے۔",
     "changeRoleError": "اس رکن کا کردار تبدیل نہیں ہو سکا۔ دوبارہ کوشش کریں۔",
     "loadMoreStaffError": "مزید عملہ لوڈ نہیں ہو سکا۔ دوبارہ کوشش کریں۔",
-    "addStaffEmailAria": "عملے میں شامل کرنے والے صارف کا ای میل",
-    "addStaffEmailPlaceholder": "نام@email.com",
+    "addStaffInputAria": "عملے میں شامل کرنے والے صارف کا ای میل، صارف نام، یا صارف آئی ڈی",
+    "addStaffInputPlaceholder": "ای میل، @صارف-نام، یا صارف آئی ڈی",
+    "addStaffKindEmail": "ای میل",
+    "addStaffKindUsername": "صارف نام",
+    "addStaffKindUserId": "صارف آئی ڈی",
+    "addStaffNoMatchOther": "کوئی صارف نہیں ملا۔",
+    "addStaffMatchesAria": "مماثل صارفین",
     "roleToGrantAria": "دینے کے لیے کردار",
     "addStaff": "+ عملہ شامل کریں",
     "searchStaffAria": "صارف نام یا ای میل سے عملہ تلاش کریں",
@@ -171,6 +253,7 @@
     "untrustError": "اس صارف سے بھروسہ نہیں ہٹایا جا سکا۔ دوبارہ کوشش کریں۔",
     "loadMoreUsersError": "مزید صارفین لوڈ نہیں ہو سکے۔ دوبارہ کوشش کریں۔",
     "detailBack": "صارفین پر واپس جائیں",
+    "detailCrumb": "صارف کی تفصیلات",
     "detailLoading": "صارف لوڈ ہو رہا ہے…",
     "detailError": "یہ صارف لوڈ نہیں ہو سکا۔",
     "detailStatusBanned": "پابندی شدہ",
@@ -229,22 +312,39 @@
     "newCount": "{count} نئی",
     "loadOlder": "پرانی اطلاعات لوڈ کریں",
     "commentReply": "<user>@{username}</user> <muted>نے آپ کے تبصرے کا جواب دیا</muted> <obj>{packTitle}</obj>",
-    "kindReply": "جواب"
+    "kindReply": "جواب",
+    "packChangesRequested": "<muted>ایک موڈریٹر نے تبدیلیاں طلب کی ہیں:</muted> <obj>{packTitle}</obj>"
   },
   "bottomNav": {
     "label": "بنیادی",
-    "discovery": "دریافت",
-    "feedback": "رائے",
     "create": "بنائیں",
-    "notifications": "اطلاعات",
     "profile": "پروفائل"
+  },
+  "shell": {
+    "nav": {
+      "label": "مرکزی نیویگیشن",
+      "browse": "براؤز کریں",
+      "myPacks": "میرے پیک",
+      "people": "لوگ",
+      "history": "تاریخ",
+      "suggestions": "تجاویز",
+      "rules": "قواعد"
+    },
+    "soon": "جلد",
+    "menuToggle": "مینو ٹوگل کریں",
+    "room": {
+      "inARoom": "ایک روم میں",
+      "lobby": "لابی · {count}",
+      "rejoin": "دوبارہ شامل ہوں"
+    }
   },
   "authGate": {
     "logInToVote": "ووٹ دینے کے لیے لاگ ان کریں",
     "logInToFollow": "فالو کرنے کے لیے لاگ ان کریں",
     "logInToComment": "تبصرہ کرنے کے لیے لاگ ان کریں",
     "logInToPlay": "کھیلنے کے لیے لاگ ان کریں",
-    "logInToCreateTokens": "API ٹوکنز بنانے کے لیے لاگ ان کریں"
+    "logInToCreateTokens": "API ٹوکنز بنانے کے لیے لاگ ان کریں",
+    "logInToReport": "رپورٹ کرنے کے لیے لاگ ان کریں"
   },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
@@ -263,6 +363,7 @@
   },
   "settings": {
     "title": "ترجیحات",
+    "intro": "آپ کے اکاؤنٹ سے متعلق ہر چیز، ایک ہی جگہ پر۔ تبدیلیاں کرتے ہی محفوظ ہو جاتی ہیں — کوئی سبمٹ بٹن نہیں، سوائے وہاں کے جہاں پاس ورڈ درکار ہو۔",
     "languageHeading": "زبان",
     "languageLabel": "انٹرفیس کی زبان",
     "languageHint": "مینو اور بٹنوں کی زبان تبدیل کرتا ہے۔ پیک کا مواد اسی زبان میں رہتا ہے جس میں اس کے تخلیق کار نے اسے لکھا تھا۔",
@@ -275,6 +376,7 @@
     "accentColorHint": "نمایاں حصوں، بٹنوں اور پیش رفت کی پٹیوں کے لیے استعمال ہوتا ہے۔",
     "accentColorSwatch": "نمایاں رنگ {color} استعمال کریں",
     "notificationsHeading": "اطلاعات",
+    "notifEnabledCount": "{total} میں سے {count} آن",
     "loginToManageNotifications": "اطلاعات کی ترجیحات منظم کرنے کے لیے <link>لاگ اِن کریں</link>۔",
     "notificationsLoadError": "آپ کی اطلاعات کی ترجیحات لوڈ نہیں ہو سکیں۔",
     "loading": "لوڈ ہو رہا ہے…",
@@ -331,7 +433,8 @@
     "addEmailConfirmButton": "ای میل شامل کریں",
     "addEmailTaken": "وہ ای میل پہلے ہی کسی دوسرے اکاؤنٹ کے زیرِ استعمال ہے۔",
     "addEmailError": "وہ ای میل شامل نہیں کیا جا سکا۔ براہ کرم دوبارہ کوشش کریں۔",
-    "notifCommentReply": "کسی نے آپ کے تبصرے کا جواب دیا"
+    "notifCommentReply": "کسی نے آپ کے تبصرے کا جواب دیا",
+    "notifPackChangesRequested": "موڈریٹر میرے پیک میں تبدیلیاں طلب کرے"
   },
   "streamerMode": {
     "hiddenHint": "اسٹریمر موڈ کی وجہ سے چھپایا گیا",
@@ -381,9 +484,18 @@
     "resetSuccess": "آپ کا پاس ورڈ دوبارہ ترتیب دے دیا گیا ہے۔ اب آپ لاگ ان کر سکتے ہیں۔",
     "backToLogin": "لاگ ان پر واپس جائیں",
     "resetError": "آپ کا پاس ورڈ دوبارہ ترتیب نہیں دیا جا سکا۔ کوڈ چیک کریں اور دوبارہ کوشش کریں۔",
+    "brand": {
+      "headline": "آٹھ میدان میں اترتے ہیں۔ صرف ایک آپ کے فیصلے سے بچتا ہے۔",
+      "subtitle": "پیک بنائیں، اکیلے کھیلیں، یا ایک روم کھول کر دوستوں کو بحث کرنے دیں — ووٹ دیں، دعویٰ کریں، باری باری خارج کریں، یا اندازہ لگائیں کہ کس نے کیا چنا۔",
+      "pitch1": "کوئی بھی پیک اکیلے یا روم میں کھیلیں",
+      "pitch2": "چار ملٹی پلیئر موڈز، شامل ہونے کے لیے ایک کوڈ",
+      "pitch3": "آپ کے نتائج محفوظ، آپ کے انتخاب شمار شدہ",
+      "socialProof": "پہلے سے بحث کرتے {count, plural, one {# شخص} other {# لوگوں}} میں شامل ہوں",
+      "socialProofFallback": "کمیونٹی میں شامل ہوں"
+    },
     "errors": {
       "loginRequired": "اپنا ای میل／صارف نام اور پاس ورڈ درج کریں۔",
-      "username": "صارف نام 2 سے 16 حروف کا ہونا چاہیے: صرف حروف اور اعداد۔",
+      "username": "صارف نام 2 سے 16 حروف کا ہونا چاہیے: صرف حروف، اعداد اور انڈر اسکور۔",
       "email": "ایک درست ای میل پتہ درج کریں۔",
       "passwordLength": "پاس ورڈ کم از کم 8 حروف کا ہونا چاہیے۔",
       "passwordMax": "پاس ورڈ زیادہ سے زیادہ 72 حروف کا ہو سکتا ہے۔",
@@ -408,6 +520,18 @@
     "heading": "کمیونٹی قواعد",
     "intro": "یہ قواعد Velanto کو سب کے لیے محفوظ اور منصفانہ رکھتے ہیں۔ اکاؤنٹ بنا کر آپ ان کی پابندی سے اتفاق کرتے ہیں۔",
     "loadError": "ہم ابھی قواعد لوڈ نہیں کر سکے۔ براہ کرم تھوڑی دیر بعد دوبارہ کوشش کریں۔",
+    "searchPlaceholder": "قواعد میں تلاش کریں…",
+    "clearSearch": "تلاش صاف کریں",
+    "noMatch": "کوئی قاعدہ “{query}” سے مطابقت نہیں رکھتا",
+    "tryPlainer": "کوئی آسان لفظ آزمائیں — “سپیم”، “کاپی”، “بین”۔",
+    "categoriesHeading": "زمرہ جات",
+    "matchCount": "{count, plural, one {# مماثل} other {# مماثل}}",
+    "ruleCount": "{count, plural, one {# اصول} other {# اصول}}",
+    "reportTitle": "کسی نے قاعدہ توڑا؟",
+    "reportNote": "کسی پیک، تبصرے یا پروفائل کی رپورٹ کریں — وہ قاعدہ چنیں جو توڑا گیا اور یہ سیدھا موڈریٹر تک پہنچ جائے گی۔",
+    "wrongRuleTitle": "لگتا ہے کوئی قاعدہ غلط ہے؟",
+    "wrongRuleNote": "قواعد اس وقت بدلتے ہیں جب کافی لوگ اچھی دلیل دیں۔ اسے تجویز کے طور پر پوسٹ کریں۔",
+    "openSuggestions": "تجاویز کھولیں",
     "content": {
       "hate_discrimination": {
         "title": "نفرت اور امتیازی سلوک",
@@ -518,6 +642,14 @@
         }
       }
     }
+  },
+  "legal": {
+    "termsTab": "شرائط",
+    "privacyTab": "رازداری",
+    "onThisPage": "اس صفحے پر",
+    "sectionCount": "{count, plural, one {# سیکشن} other {# سیکشنز}}",
+    "questionsTitle": "اس دستاویز کے بارے میں سوالات ہیں؟",
+    "questionsNote": "یہ ان باکس ایک شخص پڑھتا ہے، اور 30 دن کے اندر جواب دیتا ہے۔"
   },
   "terms": {
     "metaTitle": "سروس کی شرائط — Velanto",
@@ -804,8 +936,11 @@
     "other": "دیگر"
   },
   "home": {
-    "title": "پیکس دریافت کریں",
-    "subtitle": "فارمیٹ یا ٹیگ کے حساب سے پیکس دیکھیں، پھر کوئی ایک کھیل کر دیکھیں کہ کون سب سے بہتر ثابت ہوتا ہے۔",
+    "hero": {
+      "badge": "نیا · موڈز",
+      "title": "اب ہر پیک دوستوں کے ساتھ کھیلا جا سکتا ہے",
+      "subtitle": "کسی بھی پیک کے لیے روم کھولیں اور موڈ منتخب کریں — ووٹ دے کر نکالیں، دعویٰ کریں، باری باری کاٹیں، یا گیس ہو کھیل کر پوائنٹس کمائیں۔"
+    },
     "searchPlaceholder": "پیکس تلاش کریں…",
     "searchLabel": "پیکس تلاش کریں",
     "filters": "فلٹرز",
@@ -832,23 +967,43 @@
     "paginationPrevious": "پچھلا",
     "paginationNext": "اگلا",
     "groupLanguage": "زبان",
-    "filterByLanguage": "زبان کے مطابق فلٹر کریں"
+    "filterByLanguage": "زبان کے مطابق فلٹر کریں",
+    "allFormats": "تمام فارمیٹس",
+    "showingRange": "{total, plural, one {# پیک} other {# پیکس}} میں سے {first}–{last} دکھائے جا رہے ہیں",
+    "card": {
+      "hot": "HOT",
+      "playedAt": "{when} کھیلا",
+      "roundsPlays": "{rounds, plural, one {# راؤنڈ} other {# راؤنڈز}} · {plays, plural, one {# بار کھیلا گیا} other {# بار کھیلا گیا}}",
+      "playsCount": "{plays, plural, one {# بار کھیلا گیا} other {# بار کھیلا گیا}}",
+      "play": "کھیلیں",
+      "friends": "دوست",
+      "friendsTitle": "دوستوں کے ساتھ کھیلیں"
+    },
+    "joinRoom": {
+      "title": "روم میں شامل ہوں",
+      "subtitle": "دوست سے کوڈ ملا؟ یہاں درج کریں — پیک تلاش کرنے کی ضرورت نہیں۔",
+      "codePlaceholder": "ABC-123"
+    },
+    "continue": {
+      "title": "کھیل جاری رکھیں",
+      "progress": "راؤنڈ {current} از {total}",
+      "resume": "{title} جاری رکھیں"
+    }
   },
   "formats": {
     "save_one": "ایک بچاؤ",
     "sacrifice_one": "ایک نکالو",
     "nxn": "NxN",
     "rank_blind": "بغیر دیکھے درجہ دو",
-    "1v1": "1v1",
-    "save_one_friends": "ایک بچاؤ (دوستوں کے ساتھ)"
+    "1v1": "1v1"
   },
   "tagPicker": {
     "title": "ٹیگز چنیں",
     "selected": "{count} منتخب",
-    "selectedOfMax": "{count} منتخب / {max}",
-    "clear": "صاف کریں",
+    "selectedOfMax": "{count} از {max} منتخب{atCap, select, true { — تبدیل کرنے کے لیے ایک ہٹائیں} other {}}",
+    "clear": "سب صاف کریں",
     "cancel": "منسوخ",
-    "apply": "لاگو کریں"
+    "apply": "ہو گیا"
   },
   "pack": {
     "viewAuthor": "مصنف دیکھیں",
@@ -898,20 +1053,6 @@
           "desc": "ہر راؤنڈ میں ایک کٹوتی، ہر گروپ میں۔"
         }
       ],
-      "save_one_friends": [
-        {
-          "title": "2-4 دوست جمع کریں",
-          "desc": "سب مل کر ایک ہی روم میں شامل ہوتے ہیں — ہر راؤنڈ میں ہر کھلاڑی کے لیے ایک آئٹم، اور ایک اضافی۔"
-        },
-        {
-          "title": "طے کریں کسے نکالنا ہے",
-          "desc": "آپ میں سے ہر ایک ایک آئٹم کاٹنے کے لیے لیتا ہے؛ دو کھلاڑی ایک ہی آئٹم نہیں لے سکتے، سو انتخاب آپ کی آنکھوں کے سامنے بھرتے جاتے ہیں۔"
-        },
-        {
-          "title": "ایک بچ جاتا ہے",
-          "desc": "جسے کسی نے نہیں لیا وہی واحد آئٹم بچ جاتا ہے — ہر راؤنڈ مل کر کھیلیں۔"
-        }
-      ],
       "nxn": [
         {
           "title": "دو کیٹیگریز کا مقابلہ",
@@ -956,6 +1097,7 @@
       ]
     },
     "comments": "تبصرے · {count}",
+    "creatorBadge": "تخلیق کار",
     "commentPlaceholder": "اس پیک پر اپنی رائے شیئر کریں…",
     "commentLabel": "تبصرہ",
     "post": "پوسٹ کریں",
@@ -992,7 +1134,45 @@
     "submitPack": "جائزے کے لیے بھیجیں",
     "submittingPack": "بھیجا جا رہا ہے…",
     "submitPackError": "یہ پیک بھیجا نہیں جا سکا۔ دوبارہ کوشش کریں۔",
-    "randomPoolLabel": "بے ترتیب پول"
+    "rejectionReasonHeading": "اسے کیوں مسترد کیا گیا",
+    "randomPoolLabel": "بے ترتیب پول",
+    "acrossPlays": "{count, plural, one {# بار کھیلا گیا} other {# بار کھیلا گیا}}",
+    "report": {
+      "title": "اس پیک کی رپورٹ کریں",
+      "reasons": {
+        "inappropriate": "نامناسب یا قابل اعتراض مواد",
+        "copyright": "کاپی رائٹ یا ملکیت کا مسئلہ",
+        "spam": "اسپیم یا گمراہ کن",
+        "other": "کچھ اور"
+      }
+    },
+    "reportComment": {
+      "scopeNote": "شکایت اکاؤنٹ کے خلاف درج ہوتی ہے۔ تبصرہ نیچے نقل کیا گیا ہے تاکہ موڈریٹر اسے ڈھونڈ سکے۔",
+      "quote": "تبصرہ {id} کے بارے میں:\n\n«{body}»"
+    },
+    "changesRequestedHeading": "تبدیلیاں طلب کی گئی ہیں",
+    "changesRequestedMarks": "{count, plural, one {# چیز نشان زد} other {# چیزیں نشان زد}} — پڑھیں کہ موڈریٹر نے کیا کہا۔",
+    "changesRequestedNoMarks": "ترمیم سے پہلے موڈریٹر کی بات پڑھیں۔",
+    "changesRequestedCta": "دیکھیں کیا ٹھیک کرنا ہے"
+  },
+  "report": {
+    "button": "رپورٹ کریں",
+    "buttonReported": "رپورٹ کر دی گئی",
+    "reasonLabel": "وجہ",
+    "reasonPlaceholder": "ایک وجہ منتخب کریں",
+    "commentLabel": "اضافی تفصیلات (اختیاری)",
+    "commentPlaceholder": "کچھ بھی جو ماڈریٹر کو اس کا جائزہ لینے میں مدد دے",
+    "submit": "رپورٹ جمع کرائیں",
+    "error": "رپورٹ جمع نہیں ہو سکی۔ دوبارہ کوشش کریں۔",
+    "buttonUser": "صارف کی رپورٹ کریں",
+    "userTitle": "@{username} کی شکایت کریں",
+    "userNote": "رپورٹس نگرانی ٹیم کو جاتی ہیں۔ آپ کا صارف نام رپورٹ کے ساتھ منسلک ہوتا ہے۔",
+    "userReasons": {
+      "harassment": "ہراسانی یا بدسلوکی",
+      "impersonation": "کسی اور کا روپ دھارنا",
+      "spam": "سپیم یا فراڈ",
+      "other": "کچھ اور"
+    }
   },
   "share": {
     "trigger": "شیئر",
@@ -1004,40 +1184,109 @@
   "play": {
     "complete": "مکمل",
     "roundOf": "{total} میں سے راؤنڈ {current}",
+    "exit": "باہر نکلیں",
+    "soloMode": "تنہا",
+    "roundsDoneNote": "{count, plural, one {# راؤنڈ مکمل} other {# راؤنڈز مکمل}}",
+    "chosenSave": "بچا لیا",
+    "chosenSacrifice": "قربان کر دیا",
+    "confirmReadyTitle": "طے ہو گیا — آپ ابھی بھی بدل سکتے ہیں",
+    "confirmPendingTitle": "ابھی تک کچھ منتخب نہیں ہوا",
+    "confirmNote": "اگلے راؤنڈ میں جانے پر آپ کا انتخاب ریکارڈ ہو جائے گا۔",
+    "picksCountNote": "{done} مکمل، {toGo} باقی",
     "pick": "{name} چنیں",
-    "nextRound": "اگلا راؤنڈ →",
+    "pickThisOne": "یہ منتخب کریں",
+    "yourPick": "آپ کا انتخاب",
+    "nextRound": "اگلا راؤنڈ",
     "instructionSave": "جسے آپ بچانا چاہیں اسے چنیں۔ نیچے اسے چیک کریں، پھر تصدیق کریں۔",
     "instructionSacrifice": "جسے آپ قربان کرنا چاہیں اسے چنیں۔ نیچے اسے چیک کریں، پھر تصدیق کریں۔",
     "instructionNxn": "جس طرف کو آپ بچانا چاہیں اسے چنیں۔ نیچے اسے چیک کریں، پھر تصدیق کریں۔",
+    "instruction1v1": "ایک منتخب کریں۔",
     "savedSoFar": "اب تک بچائے گئے",
     "sacrificedSoFar": "اب تک قربان کیے گئے",
+    "yourRunSoFar": "اب تک کا سفر",
     "finishedTitle": "تمام راؤنڈز مکمل",
     "finishedSave": "آپ نے {count, plural, one {# چناؤ} other {# چناؤ}} بچائے، ہر راؤنڈ میں ایک۔",
     "finishedSacrifice": "آپ نے {count, plural, one {# چناؤ} other {# چناؤ}} قربان کیے، ہر راؤنڈ میں ایک۔",
     "finishedVersus": "آپ نے {a} اور {b} کے درمیان {count, plural, one {# راؤنڈ} other {# راؤنڈز}} میں ایک طرف چنی۔",
     "whichPrefer": "آپ کسے ترجیح دیتے ہیں؟",
-    "rankInstruction": "چنیں کہ یہ کہاں جائے — {total} میں سے آئٹم {current}",
-    "placeHere": "یہاں رکھیں",
     "rankSlotFilled": "رینک {rank}: {title}",
     "rankSlotEmpty": "رینک {rank} پر رکھیں",
+    "rankPendingEyebrow": "اسے رکھیں",
+    "rankPendingFlavor": "آپ نہیں دیکھ سکتے کہ آگے کیا آ رہا ہے — یہی تو پورا کھیل ہے۔ ایک جگہ چنیں اور طے کر دیں۔",
+    "rankPlaceItemPrompt": "{total} میں سے آئٹم {current} رکھیں",
+    "rankAllPlacedPrompt": "ہر جگہ بھر گئی — یہی آپ کی ترتیب ہے",
+    "rankRemainingNote": "{count, plural, one {اس کے بعد # آئٹم چھپا ہوا} other {اس کے بعد # آئٹمز چھپے ہوئے}}",
+    "rankDoneFlavor": "اب کچھ بدلنے کو نہیں — یہی تو بلائنڈ رینکنگ کا مطلب ہے۔ اگلے راؤنڈ کی طرف بڑھیں۔",
+    "rankDoneFooter": "تمام {count} رکھ دیے گئے",
+    "rankPlaceItemHere": "{name} کو یہاں رکھیں",
     "ranked": "{name} کو درجہ دیا گیا",
+    "roundComplete": "راؤنڈ ترتیب دے دیا گیا",
+    "nextUp": "اگلا: {name}",
     "loadingResult": "آپ کے نتائج لوڈ ہو رہے ہیں…",
-    "finishRound": "نتائج دیکھیں →",
+    "finishRound": "نتائج دیکھیں",
     "versusSideA": "طرف A",
-    "versusSideB": "طرف B"
+    "versusSideB": "طرف B",
+    "resumeModalTitle": "وہیں سے جاری رکھیں جہاں چھوڑا تھا؟",
+    "resumeModalBody": "بالکل وہیں سے جاری رکھیں جہاں آپ نے چھوڑا تھا، یا نئے ڈرا کے ساتھ دوبارہ شروع کریں۔",
+    "resumeContinue": "جاری رکھیں",
+    "resumeRestart": "دوبارہ شروع کریں"
   },
   "result": {
-    "label": "نتیجہ",
-    "playsRecorded": "{count, plural, one {# کھیل درج ہوا۔} other {# کھیل درج ہوئے۔}}",
+    "label": "کھیل مکمل",
+    "heroSubtitleFixed": "آپ کے انتخابات ریکارڈ ہو گئے ہیں اور اس پیک کے اعداد و شمار میں شامل کر دیے گئے ہیں۔",
+    "heroSubtitleFixedShared": "ان کے انتخابات ریکارڈ ہو گئے ہیں اور اس پیک کے اعداد و شمار میں شامل کر دیے گئے ہیں۔",
+    "statRoundsCompact": "راؤنڈز",
+    "statPlaysCompact": "کل مرتبہ کھیلا گیا",
+    "resultBarMeta": "{count, plural, one {# راؤنڈ} other {# راؤنڈز}} · آپ کا کھیل",
+    "resultBarMetaShared": "{count, plural, one {# راؤنڈ} other {# راؤنڈز}} · مشترکہ کھیل",
+    "heroTitleSave": "یہ رہا جو آپ نے بچایا",
+    "heroTitleSaveShared": "یہ رہا جو انہوں نے بچایا",
+    "heroTitleSacrifice": "یہ رہا جو آپ نے قربان کیا",
+    "heroTitleSacrificeShared": "یہ رہا جو انہوں نے قربان کیا",
+    "heroTitleNxn": "یہ رہا جسے آپ نے چنا",
+    "heroTitleNxnShared": "یہ رہا جسے انہوں نے چنا",
+    "heroTitle1v1": "یہ رہا جسے آپ نے چنا",
+    "heroTitle1v1Shared": "یہ رہا جسے انہوں نے چنا",
+    "heroTitleRank": "یہ رہا کہ آپ نے انہیں کیسے ترتیب دیا",
+    "heroTitleRankShared": "یہ رہا کہ انہوں نے انہیں کیسے ترتیب دیا",
+    "statAgreement": "دوسرے کھلاڑیوں کے ساتھ اوسط اتفاق",
+    "statTopPick": "سب سے مقبول انتخاب — {percent}% نے وہی چنا",
+    "statRarePick": "سب سے نایاب انتخاب — صرف {percent}% متفق ہوئے",
+    "statPlays": "درج شدہ کھیل",
+    "statRoundsPlayed": "کھیلے گئے راؤنڈز",
+    "statItemsSeen": "دیکھے گئے آئٹمز",
+    "statRoundsRanked": "درجہ بند راؤنڈز",
+    "statItemsPlaced": "رکھے گئے آئٹمز",
+    "statPodiumEntries": "پہلے تین میں جگہیں",
     "lockedTitle": "نتائج دیکھنے کے لیے پیک مکمل کریں",
     "lockedBody": "کھیلتے وقت اعداد و شمار چھپے رہتے ہیں، تاکہ آپ کے چناؤ آپ کے اپنے ہوں، مجمع کے نہیں۔",
     "lockedCta": "یہ پیک کھیلیں",
-    "yourPick": "آپ کا چناؤ",
-    "sharedPick": "چناؤ",
+    "roundByRoundHeading": "راؤنڈ بہ راؤنڈ",
+    "roundByRoundNote": "ہر راؤنڈ میں آپ نے کیا چنا",
+    "roundByRoundNoteShared": "ہر راؤنڈ میں انہوں نے کیا چنا",
+    "verdictSave": "آپ نے بچایا",
+    "verdictSaveShared": "بچا لیا گیا",
+    "verdictSacrifice": "آپ نے قربان کیا",
+    "verdictSacrificeShared": "قربان کر دیا گیا",
+    "verdictWon": "آپ نے چنا",
+    "verdictWonShared": "منتخب کیا گیا",
+    "verdictRankedFirst": "آپ کا نمبر 1: {name}",
+    "verdictRankedFirstShared": "نمبر 1: {name}",
+    "lostLabel": "ہار گیا",
+    "survivedLabel": "بچ گیا",
     "playAgain": "دوبارہ کھیلیں",
     "tryItYourself": "خود آزمائیں",
-    "shareResult": "نتیجہ شیئر کریں",
     "sharedNote": "آپ ایک شیئر کیا گیا نتیجہ دیکھ رہے ہیں۔",
+    "shareCardTitle": "اپنا کھیل شیئر کریں",
+    "shareCardNote": "بالکل اسی کھیل کا لنک، تاکہ دوست خود کھیلنے سے پہلے دیکھ سکیں آپ نے کیا چنا۔",
+    "runCardTitle": "آپ کا کھیل",
+    "runCardNote": "پیک پر واپس جائیں، یا دوبارہ کوشش کریں۔",
+    "sharedRunCardTitle": "ان کا کھیل",
+    "sharedRunCardNote": "پیک پر واپس جائیں، یا خود آزمائیں۔",
+    "copyShareLink": "شیئر لنک کاپی کریں",
+    "backToPack": "پیک پر واپس جائیں",
+    "playAgainFooter": "اسے دوبارہ کھیلیں",
+    "tryItYourselfFooter": "ابھی آزمائیں",
     "loading": "نتائج لوڈ ہو رہے ہیں…",
     "loadError": "ہم نتائج لوڈ نہیں کر سکے۔ دوبارہ کوشش کرنے کے لیے صفحہ ریفریش کریں۔",
     "matchupLabel": "{heading} مقابلہ: {loser} کے مقابلے میں {winner}",
@@ -1050,6 +1299,9 @@
     "topPickedItemColumn": "آئٹم",
     "topPickedPickedColumn": "منتخب",
     "topPickedShareColumn": "حصہ",
+    "topPickedYours": "آپ کا",
+    "boardAcrossPlays": "{count, plural, one {# بار کھیلا گیا} other {# بار کھیلا گیا}}",
+    "boardShowMore": "مزید {count} دکھائیں",
     "pickedOfAppeared": "{appeared} میں سے {picked}",
     "loadMore": "مزید دکھائیں",
     "eliminationRoundLabel": "{heading}: منتخب {picked}",
@@ -1071,34 +1323,41 @@
     "logIn": "لاگ اِن کریں",
     "saveDraft": "ڈرافٹ محفوظ کریں",
     "savingDraft": "ڈرافٹ محفوظ ہو رہا ہے…",
-    "publish": "شائع کریں",
-    "publishing": "شائع ہو رہا ہے…",
     "basicsHeading": "بنیادی معلومات",
-    "packTitle": "پیک کا عنوان",
-    "packDescription": "پیک کی تفصیل",
-    "descriptionPlaceholder": "مختصر تفصیل",
+    "packTitle": "عنوان",
+    "packDescription": "تفصیل",
+    "titlePlaceholder": "ایک اینیمی مرکزی کردار بچائیں",
+    "descriptionPlaceholder": "اس پیک میں بحث کے قابل کیا ہے؟",
     "coverTone": "کور کی رنگت",
     "coverToneSwatch": "کور کی رنگت {tone}",
     "coverImage": "کور تصویر",
     "coverImageHint": "PNG یا JPG، زیادہ سے زیادہ 1 MB۔ رنگت کے بجائے دکھائی جائے گی۔",
+    "coverDragHint": "یہاں ایک تصویر گھسیٹ کر لائیں",
+    "coverDropToUpload": "اپ لوڈ کرنے کے لیے چھوڑیں",
     "removeCoverImage": "کور تصویر ہٹائیں",
     "tags": "ٹیگز",
-    "selectTags": "ٹیگز منتخب کریں",
-    "tagsSelected": "{count, plural, one {# ٹیگ منتخب} other {# ٹیگز منتخب}}",
+    "tagsCount": "{count}/{max} منتخب",
+    "addTags": "+ ٹیگز شامل کریں",
     "formatHeading": "فارمیٹ",
-    "blurbSaveOne": "ایک گروپ دکھائیں، آگے بڑھانے کے لیے ایک رکھیں۔",
-    "blurbSacrificeOne": "ایک ایک کر کے نکالیں؛ ایک پسندیدہ باقی رہتا ہے۔",
-    "blurbNxn": "دو کیٹیگریز کا آمنے سامنے موازنہ۔",
-    "blurbRankBlind": "ہر چناؤ بغیر دیکھے بڑھتی ہوئی رینک لسٹ میں رکھیں۔",
-    "blurb1v1": "ہر آمنے سامنے مقابلے میں ایک فاتح چنیں۔",
+    "formatHint": "راؤنڈ کیسے کام کرتا ہے۔ پیک شائع ہونے کے بعد یہ تبدیل نہیں ہو سکتا۔",
+    "formatLockedTooltip": "پبلش ہونے کے بعد فارمیٹ تبدیل نہیں ہو سکتا۔",
+    "blurbSaveOne": "ہر راؤنڈ ایک گروپ — کھلاڑی بالکل ایک رکھتا ہے۔",
+    "blurbSacrificeOne": "ہر راؤنڈ ایک گروپ — کھلاڑی بالکل ایک نکالتا ہے۔",
+    "blurbNxn": "گروپ بمقابلہ گروپ، شانہ بشانہ، ہر راؤنڈ۔",
+    "blurbRankBlind": "ہر چناؤ بغیر دیکھے، بڑھتی فہرست میں ایک وقت میں۔",
+    "blurb1v1": "ایک آئٹم دوسرے کے مقابلے میں، آمنے سامنے، کوئی بریکٹ نہیں۔",
     "groupName": "گروپ {index} کا نام",
     "random": "رینڈم",
     "manual": "دستی",
     "removeGroup": "گروپ {index} ہٹائیں",
+    "deletePool": "پول حذف کریں",
+    "collapsePool": "پول {index} سکیڑیں",
+    "expandPool": "پول {index} پھیلائیں",
+    "clickItemToEdit": "ترمیم کے لیے کسی آئٹم پر کلک کریں",
     "remove": "ہٹائیں",
     "itemCount": "{count, plural, one {# آئٹم} other {# آئٹمز}}",
     "text": "متن",
-    "link": "لنک",
+    "link": "YouTube",
     "add": "شامل کریں",
     "checking": "جانچ ہو رہی ہے…",
     "addItemPlaceholder": "ایک آئٹم شامل کریں…",
@@ -1113,19 +1372,23 @@
     "linkTitleRequired": "اس لنک کے لیے ایک عنوان شامل کریں۔",
     "removeTag": "{tag} ہٹائیں",
     "poolsHeading": "گروپس",
-    "addPool": "+ گروپ شامل کریں",
+    "poolsHint": "گروپس آئٹمز کے دوبارہ قابلِ استعمال تھیلے ہیں۔ نیچے دیے گئے راؤنڈز طے کرتے ہیں کہ ہر راؤنڈ کس گروپ سے نکالے گا۔",
+    "poolEmpty": "ابھی تک کوئی آئٹم نہیں — اوپر اپنا پہلا آئٹم شامل کریں۔",
+    "addPool": "نیا گروپ",
     "roundsHeading": "راؤنڈز",
-    "addRound": "+ راؤنڈ شامل کریں",
+    "roundsHint": "کسی راؤنڈ پر کلک کریں تاکہ اس کا گروپ منتخب کریں۔",
+    "addRound": "نیا راؤنڈ",
     "removeRound": "راؤنڈ {index} ہٹائیں",
     "roundLabel": "راؤنڈ {index}",
     "roundPool": "راؤنڈ {index} کا گروپ",
     "roundModeRandom": "راؤنڈ {index} بے ترتیب",
     "roundModeManual": "راؤنڈ {index} دستی",
     "roundCountLabel": "راؤنڈ {index} کی تعداد",
+    "roundDone": "مکمل",
+    "roundDoneAria": "مکمل، راؤنڈ {index}",
     "roundDraws": "{count, plural, one {# آئٹم نکالتا ہے} other {# آئٹمز نکالتا ہے}}",
     "roundUnderfill": "صرف {count} باقی ہیں — یہ راؤنڈ {count} دکھائے گا۔",
     "setCountAll": "تمام راؤنڈز کے لیے تعداد مقرر کریں",
-    "matchupHeading": "مقابلہ",
     "versusSideA": "طرف A",
     "versusSideB": "طرف B",
     "versusRoundCount": "راؤنڈز",
@@ -1143,10 +1406,16 @@
     "addPlace": "مقام شامل کریں",
     "removePlace": "مقام ہٹائیں",
     "setCountAllLabel": "تمام راؤنڈز کے لیے ڈرا مقرر کریں",
+    "bulkCountHintMatch": "ہر راؤنڈ یہی نمبر استعمال کرتا ہے۔ مختلف نمبر کے لیے راؤنڈ کھولیں۔",
+    "bulkCountHintDrift": "راؤنڈز کی تعداد اس وقت مختلف ہے ({list})۔ لاگو کرنے پر سب دوبارہ سیٹ ہو جائیں گے۔",
+    "bulkApplied": "لاگو ہو گیا",
     "image": "تصویر",
     "chooseImage": "تصویر منتخب کریں",
     "uploading": "اپ لوڈ ہو رہا ہے…",
     "groupNewItemImage": "گروپ {index} نئی تصویر",
+    "itemTypeText": "گروپ {index} آئٹم کی قسم: متن",
+    "itemTypeLink": "گروپ {index} آئٹم کی قسم: YouTube",
+    "itemTypeImage": "گروپ {index} آئٹم کی قسم: تصویر",
     "notAnImage": "ایک تصویر فائل منتخب کریں۔",
     "imageTooLarge": "تصویر 1 MB یا اس سے کم ہونی چاہیے۔",
     "imageUploadFailed": "اپ لوڈ ناکام۔ دوبارہ کوشش کریں۔",
@@ -1173,9 +1442,50 @@
     "editItemAria": "{title} میں ترمیم کریں",
     "saveItem": "محفوظ کریں",
     "cancelEdit": "منسوخ",
+    "itemTypeLabel": "آئٹم کی قسم",
+    "newItemLabel": "نیا آئٹم",
+    "itemHintText": "کارڈ پر صرف ایک نام",
+    "itemHintVideo": "راؤنڈ میں براہ راست چلتا ہے",
+    "itemHintImage": "16:9 تھمب نیل کے طور پر دکھایا جائے گا",
+    "itemNameLabel": "نام",
+    "itemTextOnCardLabel": "کارڈ پر موجود متن",
+    "youtubeLinkLabel": "یوٹیوب لنک",
+    "itemImageLabel": "تصویر",
+    "itemImageDragHint": "گھسیٹیں یا اپ لوڈ کریں",
+    "replaceImage": "تبدیل کریں",
+    "previewNoteText": "متن آئٹمز راؤنڈز کو تیزی سے پڑھنے کے قابل رکھتے ہیں۔",
+    "previewNoteVideo": "محفوظ کرتے وقت لنک سے حاصل کیا جائے گا۔",
+    "previewNoteImage": "16:9 — باقی سب کچھ کراپ ہو جائے گا۔",
     "randomPoolOption": "بے ترتیب پول ({count} دستیاب)",
-    "blurbSaveOneFriends": "روم میں 2–4 دوستوں کے ساتھ لائیو Save One کھیلیں۔",
-    "friendsHint": "روم میں 2–4 دوستوں کے ساتھ لائیو کھیلا جاتا ہے۔ ہر راؤنڈ میں ہر کھلاڑی کے لیے ایک آئٹم اور ایک بچنے والا آئٹم دکھایا جاتا ہے (زیادہ سے زیادہ {count})، اس لیے ہر پول میں کم از کم {count} آئٹمز درکار ہیں۔"
+    "cancel": "منسوخ کریں",
+    "groupNamePlaceholder": "گروپ کا نام",
+    "addItemTrigger": "+ آئٹم شامل کریں",
+    "decreaseCount": "کم کریں",
+    "increaseCount": "بڑھائیں",
+    "bar": {
+      "newPackTitle": "نیا پیک",
+      "submit": "جائزے کے لیے بھیجیں",
+      "submitShort": "بھیجیں",
+      "submitting": "بھیجا جا رہا ہے…",
+      "blockedTooltip": "ایک عنوان اور آئٹمز شامل کریں",
+      "saved": "محفوظ ہو گیا",
+      "draftNoteUnsaved": "ڈرافٹ · غیر محفوظ تبدیلیاں",
+      "draftNoteSaved": "ڈرافٹ · ابھی محفوظ ہوا"
+    },
+    "feasibility": {
+      "heading": "دوستوں کے موڈز غیر مقفل",
+      "subtitle": "صرف معلوماتی — پیک بہرحال محفوظ اور کھیلا جا سکتا ہے۔ یہ صرف یہ ظاہر کرتا ہے کہ کمرہ کیا چلا سکتا ہے۔"
+    },
+    "checklist": {
+      "eyebrow": "بھیجنے سے پہلے",
+      "formatChosen": "فارمیٹ منتخب ہو گیا",
+      "titleWritten": "عنوان لکھ دیا گیا",
+      "poolsWithItems": "{count, plural, one {# گروپ آئٹمز کے ساتھ} other {# گروپس آئٹمز کے ساتھ}}",
+      "coverImage": "کور تصویر",
+      "rowDone": "مکمل",
+      "rowNotDone": "ابھی مکمل نہیں",
+      "noAiNote": "مصنوعی ذہانت شامل نہیں · اسکورنگ رولز لکھنے کی ضرورت نہیں"
+    }
   },
   "profile": {
     "loginRequiredView": "اپنی پروفائل دیکھنے کے لیے آپ کا لاگ اِن ہونا ضروری ہے۔",
@@ -1185,11 +1495,17 @@
     "loadBioError": "آپ کا موجودہ تعارف لوڈ نہیں ہو سکا۔ بعد میں دوبارہ کوشش کریں۔",
     "followerCount": "{count, plural, one {# فالوور} other {# فالوورز}}",
     "editProfile": "پروفائل میں ترمیم کریں",
+    "backToProfile": "پروفائل پر واپس جائیں",
+    "usernameChangedPill": "تبدیل شدہ",
+    "usernameHint": "اسے تبدیل کرنے پر آپ کے پروفائل کے تمام لنک اپ ڈیٹ ہو جائیں گے۔",
+    "cancel": "منسوخ کریں",
+    "editSaved": "محفوظ ہو گیا",
     "addBioPrompt": "لوگوں کو بتائیں کہ آپ کے پیکس کس بارے میں ہیں — ایک تعارف شامل کریں۔",
     "myPacks": "میرے پیکس",
     "noPacksOwn": "ابھی کوئی پیک نہیں — اپنا پہلا پیک بنائیں!",
     "bio": "تعارف",
     "bioPlaceholder": "لوگوں کو بتائیں کہ آپ کے پیکس کس بارے میں ہیں۔",
+    "previewHeading": "یہ ایسا نظر آئے گا",
     "saving": "محفوظ ہو رہا ہے…",
     "save": "محفوظ کریں",
     "saveError": "آپ کی تبدیلیاں محفوظ نہیں ہو سکیں۔ دوبارہ کوشش کریں۔",
@@ -1203,8 +1519,12 @@
     "noPacks": "ابھی کوئی پیک نہیں۔",
     "recentlyPlayed": "حال ہی میں کھیلے گئے",
     "recentlyPlayedEmpty": "آپ نے ابھی تک کوئی پیک نہیں کھیلا۔",
+    "recentlyPlayedEmptyNote": "مکمل کیے گئے پیک اور رومز یہاں نظر آئیں گے۔",
+    "browsePacks": "پیک دیکھیں",
     "avatarHeading": "پروفائل تصویر",
-    "avatarChange": "تصویر تبدیل کریں",
+    "avatarDropLabel": "یہاں تصویر گھسیٹیں یا کلک کریں",
+    "avatarDropActive": "اپ لوڈ کرنے کے لیے چھوڑ دیں",
+    "avatarReplaceLabel": "تصویر تبدیل کریں",
     "avatarRemove": "تصویر ہٹائیں",
     "avatarHint": "PNG یا JPG، زیادہ سے زیادہ 1 MB۔",
     "avatarRemoveError": "آپ کی تصویر ہٹائی نہیں جا سکی۔ دوبارہ کوشش کریں۔",
@@ -1217,8 +1537,12 @@
     "loadingMore": "لوڈ ہو رہا ہے…",
     "loadMoreError": "مزید پیک لوڈ نہیں ہو سکے۔ دوبارہ کوشش کریں۔",
     "followers": "فالوورز",
+    "people": "لوگ",
+    "history": "تاریخچہ",
     "noFollowers": "ابھی تک کوئی فالوور نہیں۔",
+    "noFollowersNote": "جب کوئی آپ کو فالو کرے گا، وہ یہاں نظر آئے گا۔",
     "noFollowing": "ابھی تک کسی کو فالو نہیں کر رہے۔",
+    "noFollowingNote": "لوگوں کو فالو کریں تاکہ ان کے نئے پیک سب سے پہلے دیکھ سکیں۔",
     "followsLoadMore": "مزید لوڈ کریں",
     "followsError": "یہ فہرست لوڈ نہیں ہو سکی۔ دوبارہ کوشش کریں۔",
     "followsLoading": "لوڈ ہو رہا ہے…",
@@ -1227,7 +1551,6 @@
   },
   "pages": {
     "createTitle": "پیک بنائیں",
-    "createSubtitle": "ایک ایلیمینیشن فارمیٹ منتخب کریں اور اپنے راؤنڈز ترتیب دیں۔ آئٹمز متن یا YouTube لنک ہو سکتے ہیں۔",
     "metaProfile": "پروفائل",
     "metaEditProfile": "پروفائل میں ترمیم",
     "metaPlaying": "{title} کھیل رہے ہیں",
@@ -1244,7 +1567,6 @@
     "errorBody": "ہم یہ پروفائل لوڈ نہیں کر سکے۔ براہ کرم دوبارہ کوشش کریں۔",
     "tryAgain": "دوبارہ کوشش کریں",
     "editTitle": "پیک میں ترمیم کریں",
-    "editSubtitle": "اپنے پیک کی تفصیلات اپ ڈیٹ کریں۔ دوبارہ شائع کرنے پر یہ دوبارہ نظرثانی سے گزرے گا۔",
     "notFoundTitle": "صفحہ نہیں ملا",
     "notFoundBody": "آپ جس صفحے کو تلاش کر رہے ہیں وہ موجود نہیں یا منتقل ہو چکا ہے۔",
     "appErrorBody": "ایک غیر متوقع خرابی پیش آئی۔ آپ دوبارہ کوشش کر سکتے ہیں۔"
@@ -1269,13 +1591,15 @@
     "feedbackDeclined": "نامنظور",
     "reportNew": "نیا",
     "reportReviewing": "جائزے میں",
-    "reportClosed": "بند"
+    "reportClosed": "بند",
+    "packChangesRequested": "تبدیلیاں طلب"
   },
   "feedback": {
-    "pageTitle": "رائے اور تجاویز",
-    "newPost": "نئی پوسٹ",
-    "searchAria": "رائے تلاش کریں",
-    "searchPlaceholder": "رائے تلاش کریں…",
+    "pageTitle": "تجاویز",
+    "pageSubtitle": "کوئی فیچر مانگیں، خرابی بتائیں، یا ترجمہ درست کریں۔ ووٹ دیں تاکہ ہمیں پتہ چلے کہ آگے کیا بنانا ہے۔",
+    "newPost": "نئی تجویز",
+    "searchAria": "تجاویز تلاش کریں",
+    "searchPlaceholder": "تجاویز تلاش کریں…",
     "filterAll": "سب",
     "topicBug": "خرابی",
     "topicFeature": "خصوصیت",
@@ -1283,26 +1607,40 @@
     "topicOther": "دیگر",
     "sortTop": "نمایاں",
     "sortNewest": "تازہ ترین",
-    "loadMoreError": "مزید رائے لوڈ نہیں ہو سکی۔ دوبارہ کوشش کریں۔",
-    "topSidebarHeading": "نمایاں رائے",
-    "noFeedbackYet": "ابھی کوئی رائے نہیں۔",
+    "countShowing": "{total} میں سے {shown} دکھائی جا رہی ہیں",
+    "countNone": "کچھ بھی مماثل نہیں",
+    "clearFilters": "فلٹر ہٹائیں",
+    "loadMoreError": "مزید تجاویز لوڈ نہیں ہو سکیں۔ دوبارہ کوشش کریں۔",
+    "mostWanted": "سب سے زیادہ مطلوب",
+    "noFeedbackYet": "ابھی کوئی تجویز نہیں۔",
+    "legendHeading": "ان حالتوں کا کیا مطلب ہے",
+    "legendNew": "پڑھ لیا گیا، ابھی چھانٹا نہیں گیا۔",
+    "legendInProgress": "ابھی اس پر کام ہو رہا ہے۔",
+    "legendDone": "جاری کر دیا گیا — اپ ڈیٹس صفحہ دیکھیں۔",
+    "legendDeclined": "منصوبے میں نہیں۔ وجہ تبصروں میں ہے۔",
     "scoreLabel": "اسکور",
     "by": "از",
     "commentCount": "{count, plural, one {# تبصرہ} other {# تبصرے}}",
-    "loadingList": "رائے لوڈ ہو رہی ہے…",
-    "listError": "رائے لوڈ نہیں ہو سکی۔ دوبارہ کوشش کریں۔",
-    "noMatches": "ان فلٹرز سے کوئی رائے نہیں ملی۔",
+    "loadingList": "تجاویز لوڈ ہو رہی ہیں…",
+    "listError": "تجاویز لوڈ نہیں ہو سکیں۔ دوبارہ کوشش کریں۔",
+    "emptyTitle": "ابھی کوئی تجویز نہیں",
+    "emptyNote": "کچھ مانگنے والے پہلے فرد بنیں۔",
+    "emptyFilteredTitle": "ان فلٹرز سے کچھ مماثل نہیں",
+    "emptyFilteredNote": "کوئی اور موضوع آزمائیں یا تلاش صاف کریں۔",
+    "postFirst": "پہلی تجویز شائع کریں",
     "loadingMore": "لوڈ ہو رہا ہے…",
     "loadMore": "مزید دیکھیں",
+    "showMore": "مزید {count} دکھائیں",
     "voteError": "آپ کا ووٹ درج نہیں ہو سکا۔ دوبارہ کوشش کریں۔",
     "like": "پسند",
     "dislike": "ناپسند",
     "detailNotFound": "یہ رائے پوسٹ موجود نہیں ہے یا آپ کے لیے قابلِ رؤیت نہیں۔",
-    "backToFeedback": "رائے پر واپس جائیں",
+    "backToFeedback": "تجاویز پر واپس",
+    "detailCrumb": "تجویز",
     "detailLoadError": "یہ رائے پوسٹ لوڈ نہیں ہو سکی۔ دوبارہ کوشش کریں۔",
     "loading": "لوڈ ہو رہا ہے…",
     "statusUpdateError": "حالت اپ ڈیٹ نہیں ہو سکی۔ دوبارہ کوشش کریں۔",
-    "deleteConfirm": "یہ رائے پوسٹ حذف کریں؟",
+    "deleteConfirm": "یہ تجویز حذف کریں؟",
     "deleteError": "یہ پوسٹ حذف نہیں ہو سکی۔ دوبارہ کوشش کریں۔",
     "translationHeading": "ترجمہ",
     "languageValueLabel": "زبان:",
@@ -1313,7 +1651,7 @@
     "delete": "حذف کریں",
     "edited": "ترمیم شدہ",
     "commentsHeading": "تبصرے · {count}",
-    "commentPlaceholder": "اس رائے پر اپنے خیالات شیئر کریں…",
+    "commentPlaceholder": "اس تجویز پر اپنی رائے دیں…",
     "commentAria": "تبصرہ",
     "postComment": "پوسٹ کریں",
     "loginToComment": "تبصرہ کرنے کے لیے <link>لاگ اِن کریں</link>۔",
@@ -1322,30 +1660,36 @@
     "commentsLoadError": "تبصرے لوڈ نہیں ہو سکے۔ بعد میں دوبارہ کوشش کریں۔",
     "noComments": "ابھی تک کوئی تبصرہ نہیں۔",
     "loadMoreCommentsError": "مزید تبصرے لوڈ نہیں ہو سکے۔ دوبارہ کوشش کریں۔",
-    "newFeedbackTitle": "نئی رائے",
+    "newFeedbackTitle": "نئی تجویز",
     "topicLabel": "موضوع",
     "titleLabel": "عنوان",
-    "titlePlaceholder": "مختصر خلاصہ",
+    "titlePlaceholder": "ایک لائن — کیا بدلنا چاہیے؟",
     "detailsLabel": "تفصیلات",
-    "detailsPlaceholder": "اپنی خرابی، خیال یا تجویز بیان کریں",
+    "detailsPlaceholder": "یہ آپ کا کون سا مسئلہ حل کرتا ہے؟",
+    "detailsPlaceholderBug": "آپ نے کیا کیا، کیا ہوا، اور آپ کیا توقع کر رہے تھے؟",
+    "detailsPlaceholderTranslation": "کون سی زبان، کون سی اسکرین، اور وہاں کیا لکھا ہونا چاہیے۔",
     "visibilityLabel": "مرئیت",
     "visibilityEveryone": "ہر کوئی",
     "visibilityStaffOnly": "صرف عملہ",
-    "staffOnlyHint": "صرف عملہ والی پوسٹس صرف آپ اور ٹیم کو نظر آتی ہیں۔",
+    "visibilityHintEveryone": "عوامی — کوئی بھی پڑھ اور ووٹ دے سکتا ہے۔",
+    "visibilityHintStaffOnly": "اسے صرف Velanto ٹیم دیکھتی ہے۔ کوئی ووٹ نہیں دے سکتا۔",
     "translationSuggestionHeading": "ترجمے کی تجویز",
     "languageFieldLabel": "زبان",
     "chooseLanguage": "ایک زبان منتخب کریں…",
-    "contextFieldLabel": "کون سا متن / آپ نے اسے کہاں دیکھا (اختیاری)",
-    "contextPlaceholder": "مثلاً ہوم اسکرین پر کھیلیں بٹن",
+    "contextFieldLabel": "یہ کہاں نظر آتا ہے · اختیاری",
+    "contextPlaceholder": "مثلاً sacrifice_one کا راؤنڈ ہیڈر",
     "suggestionFieldLabel": "آپ کی تجویز کردہ عبارت",
     "suggestionPlaceholder": "اس کے بجائے کیا ہونا چاہیے",
     "posting": "پوسٹ ہو رہا ہے…",
-    "postFeedback": "رائے پوسٹ کریں",
-    "metaListTitle": "رائے اور تجاویز — Velanto",
+    "postFeedback": "شائع کریں",
+    "duplicateHint": "پہلے تلاش کریں — موجودہ پوسٹ کو ووٹ دینا نقل سے زیادہ مددگار ہے۔",
+    "metaListTitle": "تجاویز — Velanto",
     "metaListDescription": "خرابیاں رپورٹ کریں، خصوصیات تجویز کریں، اور ترجمے میں بہتری پیش کریں۔",
-    "metaNewTitle": "نئی رائے — Velanto"
+    "metaNewTitle": "نئی تجویز — Velanto"
   },
   "docs": {
+    "metaTitle": "دستاویزات — Velanto",
+    "metaDescription": "Velanto کیسے کام کرتا ہے — پیک بنانا، پانچ فارمیٹس، کھیلنا، اور AI اسسٹنٹ کے لیے API۔",
     "secOverview": "جائزہ",
     "secCreators": "تخلیق کار",
     "secPlayers": "کھلاڑی",
@@ -1377,6 +1721,8 @@
     "statsTitle": "اعداد و شمار اور موازنے",
     "statsBody": "جب تک آپ کھیل رہے ہوں، کوئی چیز آپ کو نہیں بتاتی کہ دوسروں نے کیا چنا، اس لیے آپ کے انتخاب آپ کے اپنے رہتے ہیں۔ ختم کرنے پر ہر راؤنڈ کھل جاتا ہے: وہ آئٹمز جو کھلاڑیوں نے سب سے زیادہ چنے، اور کتنے فیصد آپ کے انتخاب سے متفق تھے۔ کسی پیک کا مجموعی اتفاق اسکور کھیلنے سے پہلے بھی اس کے کارڈ اور تفصیل کے صفحے پر دکھایا جاتا ہے۔",
     "jumpTo": "موضوع پر جائیں",
+    "nextTopic": "اگلا",
+    "previousTopic": "پچھلا",
     "tokenNameLabel": "نام",
     "tokenNamePlaceholder": "مثلاً، Claude Desktop",
     "tokenScopesLabel": "اجازتیں",
@@ -1450,11 +1796,21 @@
     "metaDescription": "Velanto پر نئی خصوصیات، اصلاحات اور بہتری۔",
     "heading": "نیا کیا ہے",
     "intro": "تازہ ترین خصوصیات، اصلاحات اور بہتری — نئی پہلے۔",
-    "empty": "ابھی تک کوئی اپڈیٹ نہیں — جلد دوبارہ دیکھیں۔"
+    "empty": "ابھی تک کوئی اپڈیٹ نہیں — جلد دوبارہ دیکھیں۔",
+    "releasesHeading": "ریلیزز",
+    "latest": "تازہ ترین",
+    "changesCount": "{count, plural, one {# تبدیلی} other {# تبدیلیاں}}",
+    "showMore": "{count} مزید دکھائیں",
+    "showLess": "کم دکھائیں",
+    "missingTitle": "کوئی چیز کمی محسوس ہو رہی ہے؟",
+    "missingNote": "تجاویز پڑھی اور ووٹ کی جاتی ہیں — اوپر کی فہرست میں سے بہت کچھ وہیں سے شروع ہوا۔",
+    "openSuggestions": "تجاویز کھولیں"
   },
   "myPacks": {
-    "packsTab": "پیکس",
-    "mineTab": "میرے پیکس",
+    "title": "میرے پیکس",
+    "subtitle": "آپ کے بنائے گئے تمام پیکس، ہر ماڈریشن حالت میں۔",
+    "metaTitle": "میرے پیکس — Velanto",
+    "metaDescription": "Velanto پر اپنے بنائے گئے پیکس کا نظم کریں۔",
     "loginRequired": "اپنے پیکس دیکھنے کے لیے لاگ ان کریں۔",
     "loading": "آپ کے پیکس لوڈ ہو رہے ہیں…",
     "error": "آپ کے پیکس لوڈ نہیں ہو سکے۔",
@@ -1462,11 +1818,31 @@
     "emptyFiltered": "اس فلٹر سے مماثل کوئی پیک نہیں۔",
     "all": "سب"
   },
+  "history": {
+    "title": "تاریخ",
+    "subtitle": "آپ کے کھیلے ہوئے پیک، سب سے حالیہ پہلے۔",
+    "loading": "آپ کی ہسٹری لوڈ ہو رہی ہے…",
+    "emptyFiltered": "آپ نے ابھی تک اس فارمیٹ کا کوئی پیک نہیں کھیلا۔",
+    "progress": "راؤنڈ {current} / {total}",
+    "continue": "جاری رکھیں",
+    "inProgressBadge": "جاری",
+    "inProgressTitle": "ابھی کھیل رہے ہیں",
+    "playedTitle": "کھیلے گئے",
+    "sortOldest": "سب سے پہلے کھیلا",
+    "sortRecent": "حال ہی میں کھیلا",
+    "metaTitle": "تاریخ — Velanto",
+    "metaDescription": "آپ کے کھیلے ہوئے پیک، حالیہ کھیل کی ترتیب میں۔",
+    "empty": "آپ نے ابھی تک کچھ نہیں کھیلا۔ کوئی پیک کھیلیں، وہ یہاں نظر آئے گا۔",
+    "error": "آپ کی تاریخ لوڈ نہیں ہو سکی۔ دوبارہ کوشش کریں۔",
+    "loginRequired": "اپنی کھیل کی تاریخ دیکھنے کے لیے لاگ ان کریں۔"
+  },
   "people": {
-    "tab": "لوگ",
+    "title": "لوگ",
+    "subtitle": "تخلیق کاروں اور کھلاڑیوں کو تلاش کریں، اور جو پسند آئیں انہیں فالو کریں۔",
+    "metaTitle": "لوگ — Velanto",
+    "metaDescription": "Velanto پر فالو کرنے کے لیے پیک تخلیق کاروں اور کھلاڑیوں کو تلاش کریں۔",
     "searchLabel": "لوگوں کو تلاش کریں",
     "searchPlaceholder": "صارف نام سے تلاش کریں",
-    "hint": "تلاش کے لیے کم از کم 2 حروف لکھیں۔",
     "loading": "تلاش جاری ہے…",
     "error": "لوگوں کو تلاش نہیں کیا جا سکا۔ دوبارہ کوشش کریں۔",
     "empty": "کوئی نہیں ملا۔"
@@ -1474,12 +1850,131 @@
   "room": {
     "loading": "کمرہ لوڈ ہو رہا ہے…",
     "reconnecting": "دوبارہ منسلک ہو رہا ہے…",
+    "modePicker": {
+      "heading": "گیم موڈ",
+      "hostIsChoosing": "میزبان گیم موڈ منتخب کر رہا ہے…",
+      "playerRange": "{min}-{max} کھلاڑی"
+    },
+    "packModes": {
+      "heading": "موڈز جو یہ پیک سپورٹ کرتا ہے",
+      "caption": "میزبان لابی میں موڈ منتخب کرتا ہے۔ دھندلے موڈز کو مختلف روم سائز درکار ہے۔"
+    },
+    "modes": {
+      "claim": {
+        "name": "کلیم",
+        "blurb": "کسی اور سے پہلے ایک آئٹم پر قبضہ کریں۔",
+        "steps": {
+          "1": {
+            "title": "تیزی سے دعویٰ کریں",
+            "body": "ہر راؤنڈ میں کھلاڑیوں سے ایک زیادہ آئٹم نکلتا ہے۔"
+          },
+          "2": {
+            "title": "بانٹنا نہیں",
+            "body": "جس پر دعویٰ ہو گیا وہ گیا — آپ اسی کے لیے دوڑتے ہیں جسے ہٹانا ہے۔"
+          },
+          "3": {
+            "title": "ایک بچ جاتا ہے",
+            "body": "جس اکیلے آئٹم پر کسی نے دعویٰ نہ کیا، وہی بچ جاتا ہے۔"
+          }
+        }
+      },
+      "guess_who": {
+        "name": "گیس ہو",
+        "blurb": "خفیہ طور پر منتخب کریں، پھر اندازہ لگائیں کس نے کیا چنا۔",
+        "steps": {
+          "1": {
+            "title": "بغیر دیکھے چنیں",
+            "body": "کسی کا انتخاب کھلنے سے پہلے اپنا جواب طے کر لیں۔"
+          },
+          "2": {
+            "title": "انداز پہچانیں",
+            "body": "کھلاڑی X، Y، Z پورے کھیل میں اپنے انتخاب کا ایک کالم بناتے ہیں۔"
+          },
+          "3": {
+            "title": "اندازہ اور اسکور",
+            "body": "ہر لیبل کو اصل شخص سے ملائیں۔ سب سے زیادہ درست والا جیتتا ہے۔"
+          }
+        }
+      },
+      "turn_based_cut": {
+        "name": "ٹرن بیسڈ کٹ",
+        "blurb": "باری باری آئٹمز ہٹائیں جب تک ایک باقی نہ رہے۔",
+        "steps": {
+          "1": {
+            "title": "آپ کی باری",
+            "body": "اپنی باری پر آپ بورڈ سے ٹھیک ایک آئٹم ہٹاتے ہیں۔"
+          },
+          "2": {
+            "title": "بورڈ سکڑتا ہے",
+            "body": "سب دیکھتے ہیں کہ اختیارات ایک ایک کر کے ختم ہوتے جاتے ہیں۔"
+          },
+          "3": {
+            "title": "آخر میں بچا ہوا",
+            "body": "نہ ووٹ، نہ برابری — جو آخر میں بچا وہی نتیجہ ہے۔"
+          }
+        }
+      },
+      "voting": {
+        "name": "ووٹنگ",
+        "blurb": "لائیو ووٹ دیں — سب کو گنتی نظر آتی ہے۔",
+        "steps": {
+          "1": {
+            "title": "ووٹ دیں",
+            "body": "جسے چننا ہے اس پر دبائیں۔ باقی سوچ رہے ہوں تب تک بدل سکتے ہیں۔"
+          },
+          "2": {
+            "title": "گنتی دیکھیں",
+            "body": "گنتی فوراً بدلتی ہے، تو آپ بحث کر کے کمرے کا رخ پلٹ سکتے ہیں۔"
+          },
+          "3": {
+            "title": "اکثریت جیتتی ہے",
+            "body": "برابری پر ترجیح رکھنے والا فیصلہ کرتا ہے — کبھی سکہ نہیں اچھالا جاتا۔"
+          }
+        }
+      },
+      "shared_grid": {
+        "name": "شیئرڈ گرڈ",
+        "blurb": "خفیہ درجہ بندی کریں، پھر مشترکہ درجہ بندی دیکھیں۔",
+        "steps": {
+          "1": {
+            "title": "بغیر دیکھے ترتیب دیں",
+            "body": "پورے بورڈ کو خود ترتیب دیں، کسی اور کی درجہ بندی دیکھے بغیر۔"
+          },
+          "2": {
+            "title": "سب جمع کراتے ہیں",
+            "body": "راؤنڈ اس وقت تک رکتا ہے جب تک ہر نشست اپنی ترتیب پکی نہ کر دے۔"
+          },
+          "3": {
+            "title": "ایک مشترکہ ترتیب",
+            "body": "سب کی پرچیاں مل کر گنی جاتی ہیں اور کمرے کی درجہ بندی بنتی ہے۔"
+          }
+        }
+      },
+      "relay": {
+        "name": "ریلے",
+        "blurb": "باری باری رکھتے ہوئے مل کر ایک درجہ بندی بنائیں۔",
+        "steps": {
+          "1": {
+            "title": "ایک وقت میں ایک",
+            "body": "راؤنڈ آئٹمز کو ایک مقررہ ترتیب میں دکھاتا ہے، فی باری ایک۔"
+          },
+          "2": {
+            "title": "جگہ پر ڈالیں",
+            "body": "اپنی باری پر اسے اب تک کی ترتیب میں کہیں بھی رکھ دیں۔"
+          },
+          "3": {
+            "title": "مل کر بنایا",
+            "body": "نتیجہ کسی ایک کا نہیں — پورا کمرہ ایک مشترکہ ترتیب بناتا ہے۔"
+          }
+        }
+      }
+    },
     "entry": {
       "createRoom": "روم بنائیں",
       "joinByCode": "کوڈ سے شامل ہوں",
+      "orWithFriends": "یا دوستوں کے ساتھ",
       "signInToPlay": "دوستوں کے ساتھ کھیلنے کے لیے لاگ ان کریں",
       "createError": "روم نہیں بن سکا۔ دوبارہ کوشش کریں۔",
-      "joinTitle": "روم میں شامل ہوں",
       "codeLabel": "روم کوڈ",
       "codePlaceholder": "کوڈ درج کریں",
       "join": "شامل ہوں",
@@ -1499,7 +1994,7 @@
       "away": "غیر حاضر",
       "readyUp": "تیار ہو جائیں",
       "readyCancel": "تیار",
-      "waitingForPlayers": "مزید {count} کھلاڑیوں کے شامل ہونے کا انتظار ہے",
+      "waitingForPlayers": "مزید {count} {count, plural, one {کھلاڑی} other {کھلاڑیوں}} کے شامل ہونے کا انتظار ہے",
       "waitingForReady": "سب کے تیار ہونے کا انتظار ہے",
       "starting": "سب تیار ہیں — شروع ہو رہا ہے…",
       "inviteHeading": "دوستوں کو مدعو کریں",
@@ -1513,33 +2008,82 @@
       "lock": "کمرہ مقفل کریں",
       "unlock": "کمرہ غیر مقفل کریں",
       "lockedNote": "مقفل — نئے کھلاڑیوں کے لیے بند۔",
-      "unlockedNote": "کھلا — کوڈ رکھنے والے دوست شامل ہو سکتے ہیں۔"
+      "unlockedNote": "کھلا — کوڈ رکھنے والے دوست شامل ہو سکتے ہیں۔",
+      "open": "لابی کھلی ہے",
+      "chooseHeading": "طے کریں کہ آپ کیسے کھیلیں گے",
+      "hostHint": "ایک موڈ چنیں — اس سے ہر راؤنڈ کا طریقہ اور کمرے کی گنجائش بدلتی ہے۔",
+      "guestHint": "میزبان موڈ چن رہے ہیں۔ چنتے ہی یہاں دکھ جائے گا۔",
+      "roleHost": "آپ میزبان ہیں",
+      "roleGuest": "میزبان طے کریں گے",
+      "howARoundGoes": "ایک راؤنڈ کیسے چلتا ہے",
+      "resultShared": "مشترکہ فیصلہ",
+      "resultScored": "اسکور · فاتح",
+      "priorityTitle": "برابری ترجیح سے طے ہوتی ہے",
+      "priorityBody": "ووٹ برابر ہوں تو ایک کھلاڑی کا انتخاب فیصلہ کرتا ہے۔ ہر راؤنڈ یہ اگلے کھلاڑی کو منتقل ہو جاتی ہے۔",
+      "capacityRoomFor": "مزید {count} کی گنجائش",
+      "capacityFull": "کمرہ بھر چکا",
+      "capacityNeeds": "کم از کم {min} درکار",
+      "stillDeciding": "ابھی سوچ رہے ہیں",
+      "tapReadyWhenYouAre": "تیار ہوں تو دبائیں",
+      "inviteSomeone": "کسی کو بلائیں",
+      "inviteCode": "دعوتی کوڈ",
+      "codeHidden": "اسکرین پر چھپا ہوا",
+      "codeVisible": "نظر آ رہا ہے",
+      "everyoneReady": "سب تیار ہیں",
+      "waitingOn": "{count} کا انتظار",
+      "start": "{mode} شروع کریں",
+      "startGeneric": "کھیل شروع کریں",
+      "waitingForHost": "میزبان کا انتظار",
+      "imReady": "میں تیار ہوں",
+      "unready": "تیار نہیں",
+      "startNoteGuest": "صرف میزبان شروع کر سکتے ہیں۔ خود کو تیار نشان زد کریں تاکہ وہ کر سکیں۔",
+      "startNoteAllReady": "سب تیار — شروع کرتے ہی موڈ پورے کھیل کے لیے طے ہو جائے گا۔",
+      "startNoteWaiting": "کمرے کے سب لوگ تیار ہوں تو شروع کرنا کھل جائے گا۔",
+      "startNoteNeedsMore": "{min} کھلاڑی ہونے پر شروع کرنا کھلے گا۔",
+      "startNoteNoMode": "شروع کرنے سے پہلے اوپر ایک موڈ چنیں۔",
+      "seatCount": "{count}/{max}",
+      "readyCount": "{ready}/{total}"
     },
     "round": {
       "heading": "راؤنڈ {index} از {total}",
-      "instruction": "قربان کرنے کے لیے ایک آئٹم منتخب کریں۔ جسے کوئی منتخب نہیں کرتا وہ بچ جاتا ہے۔",
-      "claim": "{name} کو قربان کریں",
       "taken": "لے لیا گیا",
-      "sacrificedBy": "{name} نے قربان کیا",
-      "survivor": "بچا ہوا",
-      "chosen": "{total} میں سے {count} نے منتخب کیا"
+      "chosen": "{total} میں سے {count} نے منتخب کیا",
+      "instructionSave": "بچانے کے لیے ایک آئٹم منتخب کریں۔ باقی سب باہر ہو جائیں گے۔",
+      "instructionSacrifice": "قربان کرنے کے لیے ایک آئٹم منتخب کریں۔ جسے کوئی منتخب نہیں کرتا وہ بچ جاتا ہے۔",
+      "claimSacrifice": "{name} کو قربان کریں",
+      "claimedBySacrifice": "{name} نے قربان کیا",
+      "survivorSave": "بچا لیا گیا",
+      "survivorSacrifice": "بچا ہوا",
+      "tooFastNote": "آپ بہت تیزی سے دوبارہ منتخب کر رہے ہیں — تھوڑا انتظار کریں اور دوبارہ کوشش کریں۔"
+    },
+    "rejection": {
+      "not_your_turn": "ابھی آپ کی باری نہیں ہے۔",
+      "not_in_round": "یہ آپشن اس راؤنڈ کا حصہ نہیں ہے۔",
+      "round_not_active": "یہ راؤنڈ پہلے ہی ختم ہو چکا ہے۔",
+      "not_a_player": "اس کمرے میں آپ کی کوئی نشست نہیں ہے۔",
+      "malformed": "یہ جمع کرانا درست نہیں تھا — دوبارہ کوشش کریں۔"
     },
     "between": {
-      "survivorHeading": "بچا ہوا",
-      "survivorNote": "یہ آئٹم اس راؤنڈ میں بچ گیا۔",
-      "boardHeading": "اس راؤنڈ کی قربانیاں",
       "next": "اگلا",
       "ready": "{count} / {total} تیار",
-      "autoNext": "اگلا راؤنڈ {seconds} سیکنڈ میں"
+      "autoNext": "اگلا راؤنڈ {seconds} سیکنڈ میں",
+      "survivorHeadingSave": "بچا لیا گیا",
+      "survivorHeadingSacrifice": "بچا ہوا",
+      "survivorNoteSave": "یہ آئٹم بچا لیا گیا۔",
+      "survivorNoteSacrifice": "یہ آئٹم اس راؤنڈ میں بچ گیا۔",
+      "boardHeadingSave": "اس راؤنڈ کے انتخاب",
+      "boardHeadingSacrifice": "اس راؤنڈ کی قربانیاں"
     },
     "results": {
       "heading": "نتائج",
       "roundLabel": "راؤنڈ {index}",
-      "backToPack": "پیک پر واپس"
+      "backToPack": "پیک پر واپس",
+      "playAgain": "دوبارہ کھیلیں"
     },
     "ended": {
       "heading": "یہ کمرہ ختم ہو چکا ہے",
-      "description": "یہ کمرہ اب دستیاب نہیں ہے۔ پیک صفحے سے نیا شروع کریں۔"
+      "description": "یہ کمرہ اب دستیاب نہیں ہے۔ پیک صفحے سے نیا شروع کریں۔",
+      "leave": "پیک پر واپس"
     },
     "joinLink": {
       "joining": "روم میں شامل ہو رہے ہیں…",
@@ -1560,7 +2104,7 @@
     },
     "presence": {
       "returnTo": "{title} پر واپس جائیں",
-      "label": "کمرے میں {count} / {max}"
+      "playerCount": "کمرے میں {count} {count, plural, one {فرد} other {افراد}}"
     },
     "kick": {
       "action": "{name} کو کمرے سے نکالیں",
@@ -1573,6 +2117,181 @@
       "heading": "میزبان نے آپ کو اس کمرے سے نکال دیا",
       "description": "میزبان نے آپ کو اس کمرے سے نکال دیا ہے۔ اگر وہ اسے دوبارہ کھولیں تو آپ کوڈ کے ذریعے دوبارہ شامل ہو سکتے ہیں۔",
       "leave": "پیک پر واپس"
+    },
+    "guessWho": {
+      "roundInstruction": "اپنا جواب منتخب کریں",
+      "pickInstruction": "ایک منتخب کریں — سب کو وہ حرف نظر آتا ہے جس نے اسے چنا، مگر یہ نہیں کہ حرف کس کا ہے۔",
+      "pickHint": "حروف فوراً ظاہر ہوتے ہیں",
+      "pickLabel": "{name} منتخب کریں",
+      "pickedByLabels": "{labels} نے منتخب کیا",
+      "maskedRosterNote": "انکشاف تک ہر کوئی ایک حرف کے طور پر کھیلتا ہے۔",
+      "rankInstruction": "ہر آئٹم کو ترتیب دیں، بہترین پہلے — جب تک سب لاک نہ ہوں، کوئی آپ کی درجہ بندی نہیں دیکھے گا۔",
+      "revealHeading": "انکشاف",
+      "trajectoryHeading": "اب تک سب نے کیا جواب دیا",
+      "roundColumn": "راؤنڈ",
+      "trajectoryHint": "{count, plural, one {# راؤنڈ} other {# راؤنڈز}} کے انتخاب",
+      "stillAnonymous": "؟",
+      "columnHint": "ایک راؤنڈ سے کسی کو نہیں پہچانا جا سکتا — دو لوگ اکثر ایک ہی چیز چنتے ہیں۔ اصل پہچان پورے کالم سے ہوتی ہے۔"
+    },
+    "guessing": {
+      "heading": "آخری راؤنڈ",
+      "title": "کون کون تھا؟",
+      "instruction": "ہر کھلاڑی کو اس لیبل پر مقرر کریں جو آپ کے خیال میں وہ تھے۔",
+      "submit": "اندازے جمع کروائیں",
+      "waitingForOthers": "{count} / {total} نے جمع کروا دیا ہے",
+      "assignedCount": "{total} میں سے {count} طے",
+      "whoIs": "{label} کون ہے؟",
+      "revealsAtOnce": "سب کچھ ایک ساتھ کھلتا ہے تاکہ کوئی جھانک نہ سکے۔",
+      "deadline": "انکشاف"
+    },
+    "identityReveal": {
+      "heading": "انکشاف",
+      "correct": "درست اندازہ",
+      "incorrect": "غلط اندازہ",
+      "winner": "فاتح",
+      "winnerNote": "سب سے بہتر پہچانا — {total} میں سے {count} درست",
+      "points": "پوائنٹس",
+      "sharedWin": "مشترکہ جیت — {names} نے {count} درست کیے",
+      "yourGuess": "آپ کا اندازہ",
+      "youSaid": "آپ نے {name} کہا",
+      "nobody": "کوئی نہیں",
+      "pointPerMatch": "ہر درست جوڑ پر 1 پوائنٹ"
+    },
+    "turnBasedCut": {
+      "instruction": "اپنی باری میں، ایک آئٹم کاٹیں۔ آخر تک باقی رہنے والا جیتتا ہے۔",
+      "cutOrderHeading": "کاٹنے کی ترتیب",
+      "cutVerb": "نے کاٹا"
+    },
+    "voting": {
+      "instruction": "ایک آپشن کے لیے ووٹ دیں۔ راؤنڈ بند ہونے تک آپ اپنا ووٹ بدل سکتے ہیں۔",
+      "votedSoFar": "{count} / {total} نے ووٹ دیا ہے",
+      "winnerHeading": "فاتح",
+      "tieBrokenNote": "یہ برابری تھی — {name} کے پاس ترجیح تھی اور انہوں نے اسے حل کیا۔"
+    },
+    "sharedGrid": {
+      "instruction": "ہر آئٹم کو خفیہ طور پر ترتیب دیں۔",
+      "aggregateHeading": "مجموعی",
+      "groupRanking": "گروپ کی درجہ بندی",
+      "pointsLabel": "{count} {count, plural, one {پوائنٹ} other {پوائنٹس}}",
+      "tiedNote": "برابری — {count} آئٹمز اس درجے میں شریک ہیں",
+      "aggregateHint": "سب کی پرچیاں، مل کر گنی گئیں",
+      "alignment": "ہم آہنگی",
+      "alignmentHint": "گروپ کے کتنا قریب",
+      "alignmentNote": "کوئی نہیں جیتتا — ہم آہنگی صرف دکھاتی ہے کہ کس کا ذوق کمرے سے ملا۔"
+    },
+    "relay": {
+      "instruction": "موجودہ آئٹم کو مشترکہ درجہ بندی میں شامل کریں۔",
+      "insertHere": "یہاں شامل کریں",
+      "insertBefore": "{title} سے پہلے شامل کریں",
+      "insertAtEnd": "آخر میں شامل کریں",
+      "currentItem": "ابھی رکھا جا رہا ہے",
+      "finalOrderHeading": "حتمی ترتیب",
+      "placementHistoryHeading": "رکھنے کی تاریخ",
+      "placedVerb": "نے رکھا",
+      "nobodyKnowsNext": "اس کے بعد کیا آئے گا، کسی کو نہیں معلوم۔",
+      "stillHidden": "{count} ابھی چھپے ہیں",
+      "sharedRanking": "مشترکہ ترتیب",
+      "sharedRankingHint": "ایک ایک کر کے، سب مل کر",
+      "placedBy": "رکھا",
+      "nothingPlacedYet": "ابھی کچھ نہیں رکھا گیا۔",
+      "turnOrder": "باری کی ترتیب",
+      "placingBadge": "رکھ رہے ہیں",
+      "placeItemHere": "{name} یہاں رکھیں",
+      "placeAtRank": "درجہ {rank} پر رکھیں"
+    },
+    "lockedIn": {
+      "playerLocked": "{name} — لاک ہو گیا",
+      "playerWaiting": "{name} — ابھی فیصلہ کر رہے ہیں",
+      "count": "{count} / {total} لاک ہو گئے"
+    },
+    "priority": {
+      "holder": "{name} کے پاس ترجیح ہے",
+      "explainer": "اس راؤنڈ میں برابری حل کرتا ہے"
+    },
+    "turnIndicator": {
+      "yourTurn": "آپ کی باری",
+      "waitingFor": "{name} کا انتظار"
+    },
+    "leaderboard": {
+      "winner": "فاتح",
+      "points": "{count, plural, one {# پوائنٹ} other {# پوائنٹس}}",
+      "heading": "لیڈر بورڈ"
+    },
+    "header": {
+      "rounds": "{count, plural, one {# راؤنڈ} other {# راؤنڈز}}",
+      "inRound": "راؤنڈ جاری ہے",
+      "between": "راؤنڈ کا نتیجہ",
+      "guessing": "اندازہ لگانا"
+    },
+    "board": {
+      "room": "کمرہ",
+      "here": "{count} موجود",
+      "outOfPlay": "باہر ہو گیا",
+      "voted": "ووٹ دیا",
+      "deciding": "سوچ رہے ہیں…",
+      "waiting": "انتظار میں",
+      "cut": "ہٹایا",
+      "cuttingNow": "ابھی ہٹا رہے ہیں",
+      "progressVotes": "{total} میں سے {count} ووٹ آ گئے",
+      "progressLeft": "بورڈ پر {count} باقی",
+      "tapToVote": "جسے چننا ہے اس پر دبائیں",
+      "voteLocked": "ووٹ درج — اب بھی بدل سکتے ہیں",
+      "resolvesWhenAllVote": "سب کے ووٹ آنے پر فیصلہ",
+      "noTakebacks": "ایک بار ہٹا دیا تو واپس نہیں",
+      "voteFor": "{name} کو ووٹ دیں",
+      "cutItem": "{name} ہٹائیں",
+      "yourVote": "آپ کا ووٹ",
+      "cutBadge": "ہٹایا",
+      "liveTally": "لائیو گنتی",
+      "tallyHint": "بند ہونے تک بدل سکتے ہیں",
+      "tieTitle": "برابری — {name} کی ترجیح فیصلہ کرے گی",
+      "tieBody": "آخری ووٹ پڑنے سے پہلے انہیں منا لیں۔",
+      "cutSoFar": "اب تک ہٹائے گئے",
+      "cutEmpty": "ابھی کچھ نہیں ہٹا — {name} پہلے ہیں۔",
+      "claimed": "دعویٰ کیا",
+      "claimPrompt": "جسے ہٹانا ہے اسے لے لیں",
+      "claimHint": "جو پہلے پہنچے، اسی کا",
+      "sideItemCount": "{count} کھیل میں",
+      "lockedIn": "لاک کر دیا",
+      "lockInPrompt": "اپنا جواب لاک کریں",
+      "lockedWaiting": "لاک — کمرے کا انتظار",
+      "blindHint": "سب کے دینے تک کسی کو نظر نہیں آتا",
+      "placed": "رکھ دیا",
+      "placingNow": "ابھی رکھ رہے ہیں",
+      "progressPlaced": "{total} میں سے {count} رکھے گئے",
+      "rankNowPlacing": "اسے رکھیں",
+      "rankSlotEmpty": "درجہ {rank} پر رکھیں",
+      "rankSlotFilled": "درجہ {rank}: {title}",
+      "rankPlaceHere": "{name} یہاں رکھیں",
+      "rankHiddenAfter": "اس کے بعد {count} اب بھی پوشیدہ"
     }
+  },
+  "reviewOutcome": {
+    "crumb": "جائزے کا نتیجہ",
+    "loading": "جائزے کا نتیجہ لوڈ ہو رہا ہے…",
+    "notFound": "یہ پیک موجود نہیں، یا آپ کا نہیں ہے۔",
+    "loginRequired": "یہ نتیجہ دیکھنے کے لیے لاگ ان کریں۔",
+    "heroTitle": "تقریباً ہو گیا — چند چیزیں ٹھیک کرنی ہیں",
+    "heroWhen": "{date} کو جائزہ لیا گیا",
+    "heroBody": "آپ کا پیک ابھی شائع نہیں ہوا۔ ایک موڈریٹر نے اسے دیکھ کر ذیل تبدیلیاں طلب کی ہیں۔ کچھ حذف نہیں ہوا — ترمیم کر کے دوبارہ جمع کرائیں، یہ قطار میں واپس آ جائے گا۔",
+    "openEditor": "ایڈیٹر کھولیں",
+    "viewPack": "پیک دیکھیں",
+    "moderatorSaid": "موڈریٹر نے کیا کہا",
+    "marksHeading": "کیا ٹھیک کرنا ہے",
+    "marksCount": "{count, plural, one {# چیز نشان زد} other {# چیزیں نشان زد}}",
+    "needsEdit": "ترمیم درکار",
+    "doThis": "یہ کریں",
+    "inPool": "پول: {pool}",
+    "nextHeading": "اب کیا ہوگا",
+    "step1": "ایڈیٹر کھول کر اوپر دی گئی تبدیلیاں کریں۔",
+    "step2": "محفوظ کریں۔ پیک سیدھا نگرانی قطار میں واپس چلا جائے گا۔",
+    "step3": "جب موڈریٹر دوبارہ دیکھ لے گا تو آپ کو اطلاع ملے گی۔",
+    "thePack": "پیک",
+    "metaPools": "پولز",
+    "metaRounds": "راؤنڈز",
+    "metaSubmitted": "جمع کرایا گیا",
+    "mistakeTitle": "کیا یہ غلطی لگتی ہے؟",
+    "mistakeBody": "ایک تجویز بھیجیں، ٹیم دوبارہ دیکھے گی۔ پیک کا نام ضرور لکھیں۔",
+    "mistakeLink": "نگرانی ٹیم سے رابطہ →"
   }
 }

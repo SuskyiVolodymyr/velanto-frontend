@@ -2,12 +2,9 @@
 
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
 import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
-import { SharedResultNote } from "@/src/features/result/SharedResultNote";
-import { ResultActions } from "@/src/features/result/ResultActions";
-import { TopPickedTable } from "@/src/features/result/TopPickedTable";
+import { RecapHeading } from "@/src/features/result/RecapHeading";
 import { roundHeading } from "@/src/shared/lib/round-heading";
 import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
@@ -88,11 +85,13 @@ function playedRounds(
  */
 export function NxNResultScreen({
   pack,
-  results,
   ownPicks,
   shared,
 }: {
   pack: Pack;
+  // Still accepted (ResultScreen passes it uniformly to all 4 recap
+  // screens) but no longer read here — the pack-wide ranking that used to
+  // read it moved to ResultScreen's own aside board.
   results: PackResults;
   ownPicks: RecordedPick[] | null;
   shared: boolean;
@@ -112,63 +111,33 @@ export function NxNResultScreen({
     () => playedRounds(ownPicks, titleById),
     [ownPicks, titleById],
   );
-  const topItems = results.topItems ?? [];
 
+  // The pack-wide ranking (topItems) is no longer rendered here — it's a
+  // right-aside card in the mock, not part of the recap column. ResultScreen
+  // renders it directly, keyed to the same `results.format`.
   return (
-    <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
-      <Text variant="tertiary" className="mb-2 text-xs uppercase tracking-wide">
-        {t("label")}
-      </Text>
-      <Text as="h1" variant="title" className="mb-2 text-3xl">
-        {pack.title}
-      </Text>
-      <Text variant="secondary" className="mb-8">
-        {t("playsRecorded", { count: results.totalPlays })}
-      </Text>
-
-      {shared && <SharedResultNote />}
-
-      <ResultActions
-        packId={pack.id}
-        status={pack.status}
-        picks={ownPicks}
-        shared={shared}
-        className="mb-6 justify-end"
-      />
-
+    <div className="flex-1 pb-10">
       {rounds.length > 0 ? (
-        <div className="mb-10 flex flex-col divide-y divide-border">
-          {rounds.map((round) => (
-            <div key={round.roundIndex} className="py-4 first:pt-0 last:pb-0">
-              <RoundRow
-                round={round}
-                heading={roundHeading(pack, round.roundIndex)}
-              />
-            </div>
-          ))}
-        </div>
+        <section className="flex min-w-0 flex-col gap-[13px]">
+          <RecapHeading shared={shared} />
+          <div className="flex flex-col divide-y divide-border">
+            {rounds.map((round) => (
+              <div key={round.roundIndex} className="py-4 first:pt-0 last:pb-0">
+                <RoundRow
+                  round={round}
+                  heading={roundHeading(pack, round.roundIndex)}
+                  shared={shared}
+                />
+              </div>
+            ))}
+          </div>
+        </section>
       ) : (
-        <Card className="mb-10 py-8 text-center hover:translate-y-0 hover:shadow-none">
+        <Card className="py-8 text-center">
           <Text variant="tertiary" className="text-sm">
             {t("noMatchupBreakdown")}
           </Text>
         </Card>
-      )}
-
-      {/* The one aggregate nxn CAN state honestly: per ITEM, not per pairing.
-          An item's win rate is a share of the rounds it appeared in, which
-          saturates immediately — unlike a set-vs-set pairing, which almost
-          never repeats. */}
-      {topItems.length > 0 && (
-        <section className="mb-8">
-          <Text as="h2" variant="title" className="mb-1 text-lg">
-            {t("topPickedHeading")}
-          </Text>
-          <Text variant="secondary" className="mb-4 text-sm">
-            {t("topPickedSubtitle")}
-          </Text>
-          <TopPickedTable items={topItems} />
-        </section>
       )}
     </div>
   );
@@ -178,7 +147,15 @@ export function NxNResultScreen({
  * One played round: the two sides either side of a centre column carrying the
  * round's name. Below `sm` the three stack, each on its own row.
  */
-function RoundRow({ round, heading }: { round: PlayedRound; heading: string }) {
+function RoundRow({
+  round,
+  heading,
+  shared,
+}: {
+  round: PlayedRound;
+  heading: string;
+  shared: boolean;
+}) {
   const t = useTranslations("result");
   return (
     <div
@@ -194,7 +171,7 @@ function RoundRow({ round, heading }: { round: PlayedRound; heading: string }) {
       // row ended up a different width.
       className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-[minmax(0,1fr)_9rem_minmax(0,1fr)]"
     >
-      <SideCard side={round.left} position="left" />
+      <SideCard side={round.left} position="left" shared={shared} />
       <div className="flex flex-col items-center justify-center gap-1 text-center">
         <Text variant="tertiary" className="text-xs uppercase tracking-wide">
           {heading}
@@ -203,7 +180,7 @@ function RoundRow({ round, heading }: { round: PlayedRound; heading: string }) {
           VS
         </span>
       </div>
-      <SideCard side={round.right} position="right" />
+      <SideCard side={round.right} position="right" shared={shared} />
     </div>
   );
 }
@@ -220,26 +197,43 @@ function RoundRow({ round, heading }: { round: PlayedRound; heading: string }) {
 function SideCard({
   side,
   position,
+  shared,
 }: {
   side: PlayedSide;
   position: "left" | "right";
+  shared: boolean;
 }) {
+  const t = useTranslations("result");
   return (
     <div
       data-testid={side.picked ? "picked" : "dropped"}
       data-side={position}
       className={cn(
-        "flex min-w-0 flex-col gap-2 rounded-xl border p-3",
+        "flex min-w-0 flex-col gap-2 rounded-tile border p-3",
         side.picked
           ? "border-success/60 bg-success/5"
           : "border-danger/60 bg-danger/5",
       )}
     >
+      {/* T9: the winner-highlight verdict label — the loser-pills split
+          doesn't map here (each side can hold up to 8 items already shown as
+          its own list), so this is the lighter-touch adaptation for the two
+          versus screens; see the plan deviation noted in the T9 commit. */}
+      {side.picked && (
+        <Text
+          className={cn(
+            "text-[11px] font-semibold uppercase tracking-wide text-success",
+            position === "right" && "text-end",
+          )}
+        >
+          {t(shared ? "verdictWonShared" : "verdictWon")}
+        </Text>
+      )}
       <ul className="flex flex-col gap-2">
         {side.titles.map((title, index) => (
           <li
             key={`${title}-${index}`}
-            className="min-w-0 rounded-lg border border-white/[0.06] bg-white/[0.03] px-3 py-2"
+            className="min-w-0 rounded-tile border border-border bg-surface-card p-[13px_16px]"
           >
             <Text
               className={cn(

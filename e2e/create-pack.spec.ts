@@ -55,16 +55,16 @@ test.describe("Create pack", () => {
     });
 
     await page.goto("/create");
-    await page.getByLabel("Pack title").fill("Best Anime Openings");
-    await page
-      .getByLabel("Pack description")
-      .fill("Pick your favorite each round.");
+    await page.getByLabel("Title").fill("Best Anime Openings");
+    await page.getByLabel("Description").fill("Pick your favorite each round.");
     // Default: one pool + one elimination round drawing 2 (under-fill of a
     // single-item pool is only a soft hint, so the pack is still valid).
     await page.getByLabel("Pool 1 name").fill("2016");
+    // T5: items are read-only chips by default — expand the add panel first.
+    await page.getByRole("button", { name: "+ Add item" }).click();
     await page.getByLabel("Pool 1 new item").fill("Guren no Yumiya");
     await page.getByRole("button", { name: "Add", exact: true }).click();
-    await page.getByRole("button", { name: "Publish" }).click();
+    await page.getByRole("button", { name: "Submit for review" }).click();
 
     await page.waitForURL("**/packs/pack-1");
     expect(captured.body).toMatchObject({ format: "save_one" });
@@ -92,12 +92,13 @@ test.describe("Create pack", () => {
 
     await page.goto("/create");
     await page.getByRole("button", { name: /^Sacrifice One/ }).click();
-    await page.getByLabel("Pack title").fill("Worst Endings");
-    await page.getByLabel("Pack description").fill("Cut them one by one.");
+    await page.getByLabel("Title").fill("Worst Endings");
+    await page.getByLabel("Description").fill("Cut them one by one.");
     await page.getByLabel("Pool 1 name").fill("Finales");
+    await page.getByRole("button", { name: "+ Add item" }).click();
     await page.getByLabel("Pool 1 new item").fill("Lost");
     await page.getByRole("button", { name: "Add", exact: true }).click();
-    await page.getByRole("button", { name: "Publish" }).click();
+    await page.getByRole("button", { name: "Submit for review" }).click();
 
     await page.waitForURL("**/packs/pack-sac");
     expect(captured.body).toMatchObject({ format: "sacrifice_one" });
@@ -122,27 +123,35 @@ test.describe("Create pack", () => {
     });
 
     await page.goto("/create");
-    await page.getByLabel("Pack title").fill("Boys vs Girls");
-    await page.getByLabel("Pack description").fill("Pick a side.");
+    await page.getByLabel("Title").fill("Boys vs Girls");
+    await page.getByLabel("Description").fill("Pick a side.");
 
     // Two distinct pools, each with one item, built before switching so the
-    // versus format generates rounds over both.
+    // versus format generates rounds over both. T5: each pool's items stay
+    // read-only chips until its own "+ Add item" trigger is expanded; pool
+    // 1's collapses back to its trigger once its item commits, so pool 2's
+    // is the second "+ Add item" trigger on the page by the time it's added.
     await page.getByLabel("Pool 1 name").fill("Boys");
+    await page.getByRole("button", { name: "+ Add item" }).first().click();
     await page.getByLabel("Pool 1 new item").fill("Naruto");
     await page
       .getByRole("button", { name: "Add", exact: true })
       .first()
       .click();
-    await page.getByRole("button", { name: "+ Add pool" }).click();
+    await page.getByRole("button", { name: "New pool" }).click();
     await page.getByLabel("Pool 2 name").fill("Girls");
+    await page.getByRole("button", { name: "+ Add item" }).nth(1).click();
     await page.getByLabel("Pool 2 new item").fill("Sakura");
-    await page.getByRole("button", { name: "Add", exact: true }).nth(1).click();
+    await page
+      .getByRole("button", { name: "Add", exact: true })
+      .first()
+      .click();
 
     await page.getByRole("button", { name: /^NxN/ }).click();
 
     // The versus editor seeds one matchup, which keeps the single-item pools
     // feasible (per-side 1, no dedup exhaustion).
-    await page.getByRole("button", { name: "Publish" }).click();
+    await page.getByRole("button", { name: "Submit for review" }).click();
 
     await page.waitForURL("**/packs/pack-nxn");
     expect(captured.body).toMatchObject({ format: "nxn" });
@@ -181,14 +190,19 @@ test.describe("Create pack", () => {
     });
 
     await page.goto("/create");
-    await page.getByLabel("Pack title").fill("Best Posters");
-    await page
-      .getByLabel("Pack description")
-      .fill("Pick your favorite each round.");
+    await page.getByLabel("Title").fill("Best Posters");
+    await page.getByLabel("Description").fill("Pick your favorite each round.");
     await page.getByLabel("Pool 1 name").fill("Posters");
 
+    // T5: expand the add panel first — items are read-only chips by default.
+    await page.getByRole("button", { name: "+ Add item" }).click();
     // Switch the item adder to Image, upload a tiny PNG, name it, and add it.
-    await page.getByRole("button", { name: "Image", exact: true }).click();
+    // T7 swapped the hand-rolled Text/Link/Image toggle for the shared
+    // SegmentedControl, which uses radiogroup/radio semantics, not buttons,
+    // and each option carries a "Pool {index} item type: …" aria-label (a
+    // review fix disambiguating multiple pools) rather than the bare visible
+    // "Image" label.
+    await page.getByRole("radio", { name: "Pool 1 item type: Image" }).click();
     await page.getByLabel("Pool 1 new item title").fill("Poster One");
     await page.getByLabel("Pool 1 new image").setInputFiles({
       name: "poster.png",
@@ -206,7 +220,7 @@ test.describe("Create pack", () => {
     ).toBeVisible();
     await page.getByRole("button", { name: "Add", exact: true }).click();
 
-    await page.getByRole("button", { name: "Publish" }).click();
+    await page.getByRole("button", { name: "Submit for review" }).click();
 
     await page.waitForURL("**/packs/pack-img");
     const groups = captured.body?.groups as Array<{
@@ -247,10 +261,8 @@ test.describe("Create pack", () => {
     });
 
     await page.goto("/create");
-    await page.getByLabel("Pack title").fill("Cover Pack");
-    await page
-      .getByLabel("Pack description")
-      .fill("Pick your favorite each round.");
+    await page.getByLabel("Title").fill("Cover Pack");
+    await page.getByLabel("Description").fill("Pick your favorite each round.");
 
     // Upload a tiny PNG as the pack cover; picking it opens the crop modal.
     await page.getByLabel("Cover image").setInputFiles({
@@ -274,9 +286,11 @@ test.describe("Create pack", () => {
     ).toBeVisible();
 
     await page.getByLabel("Pool 1 name").fill("2016");
+    // T5: items are read-only chips by default — expand the add panel first.
+    await page.getByRole("button", { name: "+ Add item" }).click();
     await page.getByLabel("Pool 1 new item").fill("Guren no Yumiya");
     await page.getByRole("button", { name: "Add", exact: true }).click();
-    await page.getByRole("button", { name: "Publish" }).click();
+    await page.getByRole("button", { name: "Submit for review" }).click();
 
     await page.waitForURL("**/packs/pack-cover");
     expect(captured.body?.coverImageKey).toBe("media/cover/uploaded.webp");
@@ -292,7 +306,14 @@ test.describe("Create pack", () => {
     });
 
     await page.goto("/create");
-    await page.getByRole("button", { name: "Publish" }).click();
+    // The submit button's accessible name is pinned to "Submit for review"
+    // regardless of the blocked state (T1) — the blocked copy is a `title`
+    // tooltip now, not the label. It's aria-disabled (not natively disabled)
+    // so this validation flow can still reach it — Playwright's actionability
+    // check treats aria-disabled="true" as not-enabled, so force the click.
+    const submit = page.getByRole("button", { name: "Submit for review" });
+    await expect(submit).toHaveAttribute("title", "Add a title & elements");
+    await submit.click({ force: true });
 
     await expect(page.getByText("Give your pack a title.")).toBeVisible();
     expect(called).toBe(false);
@@ -320,23 +341,25 @@ test.describe("Create pack", () => {
     });
 
     await page.goto("/create");
-    await page.getByLabel("Pack title").fill("Enter Probe");
+    await page.getByLabel("Title").fill("Enter Probe");
     await page
-      .getByLabel("Pack description")
+      .getByLabel("Description")
       .fill("Should not be published by a keystroke.");
     await page.getByLabel("Pool 1 name").fill("2016");
+    // T5: items are read-only chips by default — expand the add panel first.
+    await page.getByRole("button", { name: "+ Add item" }).click();
     await page.getByLabel("Pool 1 new item").fill("Guren no Yumiya");
     await page.getByRole("button", { name: "Add", exact: true }).click();
 
     // A complete, valid pack — so nothing but the Enter guard is stopping it.
-    await page.getByLabel("Pack title").press("Enter");
+    await page.getByLabel("Title").press("Enter");
     await page.getByLabel("Pool 1 name").press("Enter");
 
     await expect(page).toHaveURL(/\/create$/);
     expect(captured.body).toBeNull();
 
     // …and the button still works, so the guard didn't break publishing.
-    await page.getByRole("button", { name: "Publish" }).click();
+    await page.getByRole("button", { name: "Submit for review" }).click();
     await page.waitForURL("**/packs/pack-1");
     expect(captured.body).toMatchObject({ title: "Enter Probe" });
   });

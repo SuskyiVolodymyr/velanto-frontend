@@ -1,15 +1,23 @@
 import { HTMLAttributes } from "react";
 import { cn } from "@/src/shared/lib/cn";
 
-export type CardProps = HTMLAttributes<HTMLDivElement>;
+export interface CardProps extends HTMLAttributes<HTMLDivElement> {
+  /**
+   * Lift-and-lighten on hover — for clickable cards (e.g. feed pack cards).
+   * Off by default: the Card component is a static panel almost everywhere, and
+   * a hover cue on a non-interactive panel reads as a false affordance.
+   */
+  interactive?: boolean;
+}
 
-export function Card({ className, ...props }: CardProps) {
+export function Card({ className, interactive = false, ...props }: CardProps) {
   return (
     <div
       className={cn(
-        "rounded-[15px] bg-surface border border-border p-5",
-        "transition-transform duration-200 ease-[cubic-bezier(0.2,0.7,0.3,1)]",
-        "hover:-translate-y-1 hover:shadow-[0_14px_34px_rgba(0,0,0,0.42)]",
+        "rounded-card bg-surface-card border border-border p-[18px]",
+        // Elevation cue is a lightening border, not a shadow (flat on the base).
+        interactive &&
+          "transition-[transform,border-color] duration-[180ms] ease-[var(--ease-signature)] hover:-translate-y-[3px] hover:border-white/[0.18]",
         className,
       )}
       {...props}

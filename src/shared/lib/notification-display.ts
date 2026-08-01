@@ -53,6 +53,12 @@ interface CommentReplyPayload {
 interface PackDeletedWarningPayload {
   packTitle: string;
 }
+interface PackChangesRequestedPayload {
+  packId: string;
+  packTitle: string;
+  message: string;
+  markCount: number;
+}
 
 /** Trim whitespace and null-out an empty snippet so it never renders a blank
  *  quote box. */
@@ -135,6 +141,21 @@ export function describeNotification(
         values: { packTitle: payload.packTitle },
         excerpt: null,
         href: null,
+      };
+    }
+    case "pack_changes_requested": {
+      const payload = notification.payload as PackChangesRequestedPayload;
+      return {
+        messageKey: "packChangesRequested",
+        kindKey: "kindModeration",
+        values: { packTitle: payload.packTitle },
+        // The moderator's message IS the notification's content — the author
+        // has to know what to fix, and making them open the pack to find out
+        // would make the row a bare "something is wrong".
+        excerpt: snippet(payload.message),
+        // The outcome page, not the editor: the editor shows the pack but not
+        // what was asked of it, and the marked items are the whole point.
+        href: `/packs/${payload.packId}/review`,
       };
     }
     default:

@@ -8,7 +8,7 @@ import {
   writeLastPlayId,
 } from "@/src/shared/lib/last-play-storage";
 import { useRoundSelections } from "@/src/features/play/use-round-selections";
-import { scrollToRoundTop } from "@/src/features/play/scroll-to-round-top";
+import { usePlayResume } from "@/src/features/play/use-play-resume";
 import type { Item, Pack } from "@/src/shared/types/pack";
 import type { RecordedPick } from "@/src/shared/types/play-results";
 
@@ -39,7 +39,6 @@ export interface PlaySession {
   // navigates straight to the result page on this, so there's no interstitial
   // "all rounds done" step.
   recordSettled: boolean;
-  progressPct: number;
   showRound: boolean;
   roundTitle: string;
   // True on the final round, so the confirm button can read "see results"
@@ -66,6 +65,16 @@ export interface PlaySession {
   versusCandidatesB: Item[];
   // True when the current versus round draws both sides from one pool.
   versusSinglePool: boolean;
+  /** True while a saved play awaits a continue/restart decision — see
+   * usePlayResume's own doc. PlayScreen shows ResumePlayModal instead of any
+   * round content while this is true. */
+  needsChoice: boolean;
+  chooseContinue: () => void;
+  chooseRestart: () => void;
+  /** Rounds completed in a saved-but-undecided play, for the modal's context
+   * line. Independent of `roundIndex` (which stays 0 until the choice
+   * resolves) — sourced straight from the resume record. */
+  savedRoundsDone: number;
 }
 
 function toRecordedPick(pick: Pick): RecordedPick {
@@ -93,10 +102,20 @@ export function usePlaySession(pack: Pack): PlaySession {
   const rounds = pack.rounds ?? [];
   const totalRounds = rounds.length;
 
+  // Resume support: the seed makes the draw deterministic so a reload replays
+  // the identical rounds/items, and any saved progress (round cursor + picks so
+  // far) is restored below. Both are read from storage after mount, so `seed`
+  // starts null and the draw waits for it.
+  const resume = usePlayResume(pack);
+  // Destructured so the completion effect can depend on the stable
+  // `clearProgress` callback directly — a `resume.clearProgress` dep reads as
+  // depending on the whole, freshly-built `resume` object every render.
+  const { saveProgress, clearProgress } = resume;
+
   // Drawn items for every round, resolved once after mount — the per-group
   // dedup spans rounds, so the whole walk has to happen together (not
   // per-round). Null until the client has drawn; see useRoundSelections.
-  const resolved = useRoundSelections(groups, rounds);
+  const resolved = useRoundSelections(groups, rounds, resume.seed);
   const selections = resolved ?? [];
   const groupNameById = useMemo(
     () => new Map(groups.map((group) => [group.id, group.name])),
@@ -107,6 +126,27 @@ export function usePlaySession(pack: Pack): PlaySession {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [picks, setPicks] = useState<Pick[]>([]);
   const [recordSettled, setRecordSettled] = useState(false);
+
+  // Restore a saved play ONCE, after the resume read settles — the same
+  // deferred, guarded shape as the draw itself, so nothing changes during the
+  // server/first-client render. A record only exists mid-play (it's deleted on
+  // completion), so initialRoundIndex is always in range for the seeded draw.
+  const restoredRef = useRef(false);
+  useEffect(() => {
+    if (restoredRef.current || !resume.ready || resume.needsChoice) return;
+    restoredRef.current = true;
+    if (resume.initialRoundIndex > 0 && Array.isArray(resume.initialChoices)) {
+      /* eslint-disable react-hooks/set-state-in-effect */
+      setRoundIndex(resume.initialRoundIndex);
+      setPicks(resume.initialChoices as Pick[]);
+      /* eslint-enable react-hooks/set-state-in-effect */
+    }
+  }, [
+    resume.ready,
+    resume.needsChoice,
+    resume.initialRoundIndex,
+    resume.initialChoices,
+  ]);
 
   const isFinished = roundIndex >= totalRounds;
   const isLastRound = !isFinished && roundIndex === totalRounds - 1;
@@ -222,12 +262,16 @@ export function usePlaySession(pack: Pack): PlaySession {
     if (!canConfirm || selectedId === null) return;
     const roundPicks = round.resolvePicks(selectedId);
     if (roundPicks.length === 0) return;
-    setPicks((prev) => [...prev, ...roundPicks]);
-    setRoundIndex((prev) => prev + 1);
-    // nxn only. Its rounds are the tall ones — two sides of up to eight items
-    // each — so confirming from the bottom of one lands you in the middle of
-    // the next. An elimination round fits on a screen and doesn't need it.
-    if (isVersus) scrollToRoundTop();
+    const nextPicks = [...picks, ...roundPicks];
+    const nextRoundIndex = roundIndex + 1;
+    setPicks(nextPicks);
+    setRoundIndex(nextRoundIndex);
+    // Save progress after each FINISHED round so a reload resumes here. The
+    // final round writes nothing — the completion effect deletes the record
+    // instead, so a completed pack never lingers in "Continue playing".
+    if (nextRoundIndex < totalRounds) {
+      saveProgress(nextRoundIndex, nextPicks);
+    }
     setSelectedId(null);
   }
 
@@ -249,6 +293,9 @@ export function usePlaySession(pack: Pack): PlaySession {
   useEffect(() => {
     if (!isFinished || status === "loading" || recordedRef.current) return;
     recordedRef.current = true;
+    // The play is complete — drop the resume record so the pack leaves the
+    // "Continue playing" rail and a reopen is a fresh play.
+    clearProgress();
     const recordedPicks = picks.map(toRecordedPick);
     writeLastPlayPicks(pack.id, recordedPicks);
     playsClient
@@ -260,11 +307,8 @@ export function usePlaySession(pack: Pack): PlaySession {
       })
       .catch(() => undefined)
       .finally(() => setRecordSettled(true));
-  }, [isFinished, pack.id, picks, status]);
+  }, [isFinished, pack.id, picks, status, clearProgress]);
 
-  const progressPct = isFinished
-    ? 100
-    : Math.round((roundIndex / Math.max(totalRounds, 1)) * 100);
   const showRound = isVersus
     ? Boolean(currentRound && sideA && sideB)
     : Boolean(currentRound);
@@ -275,7 +319,6 @@ export function usePlaySession(pack: Pack): PlaySession {
     totalRounds,
     isFinished,
     recordSettled,
-    progressPct,
     showRound,
     roundTitle: round.title,
     isLastRound,
@@ -292,5 +335,9 @@ export function usePlaySession(pack: Pack): PlaySession {
     versusCandidatesA,
     versusCandidatesB,
     versusSinglePool,
+    needsChoice: resume.needsChoice,
+    chooseContinue: resume.chooseContinue,
+    chooseRestart: resume.chooseRestart,
+    savedRoundsDone: resume.initialRoundIndex,
   };
 }

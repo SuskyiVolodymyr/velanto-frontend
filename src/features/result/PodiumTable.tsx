@@ -2,18 +2,15 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
-import {
-  ColumnHeading,
-  RankCell,
-  styleForRank,
-  withCompetitionRanks,
-} from "@/src/features/result/result-table";
-import type { PodiumTally } from "@/src/shared/types/play-results";
+import { BoardCard, BoardRow } from "@/src/features/result/BoardCard";
+import { withCompetitionRanks } from "@/src/features/result/result-table";
+import type {
+  PodiumTally,
+  RecordedPick,
+} from "@/src/shared/types/play-results";
 
-/** How many rows a press of "Load more" adds. */
-const PAGE = 10;
+/** How many rows a press of "Show N more" adds — mock starts at 5, was 10 (T11). */
+const PAGE = 5;
 
 /**
  * rank_blind's pack-wide ranking: how often each item was placed first, second
@@ -22,10 +19,36 @@ const PAGE = 10;
  * The sum ranks rather than the firsts alone because a rank_blind round is a
  * whole ordering, not a single pick — an item reliably near the top says more
  * about a pack than one that occasionally wins and is mid-table otherwise. The
- * three counts stay visible beside it, so a reader can see which kind of item
- * they're looking at instead of taking the sum on trust.
+ * three counts stay visible as the row's detail figure ("12/8/5", best-to-
+ * worst placement), so a reader can still see which kind of item they're
+ * looking at instead of taking the sum on trust; `podiumSubtitle` at the
+ * card's foot is what names those three numbers.
+ *
+ * Shares `BoardCard`/`BoardRow` with `TopPickedTable`. This used to be a
+ * six-column `<table>` (rank / item / 1st / 2nd / 3rd / total) with
+ * medal-coloured row outlines, which in the mock's 330px aside had to scroll
+ * sideways and wrapped every item title over five lines. `Results.dc.html` has
+ * no rank_blind variant, so this slot takes the board shape the mock does
+ * define for it.
  */
-export function PodiumTable({ items }: { items: PodiumTally[] }) {
+export function PodiumTable({
+  items,
+  title,
+  note,
+  subtitle,
+  ownPicks,
+}: {
+  items: PodiumTally[];
+  /** Visible bold card title (mock's `boardTitle` shape) — omit for no
+   * visible header (existing callers that only need the list itself). */
+  title?: string;
+  /** Right-aligned text beside the title (mock's `boardNote`). Only shown
+   * when `title` is also passed. */
+  note?: string;
+  /** Footnote line at the card's foot. Only rendered when `title` is passed. */
+  subtitle?: string;
+  ownPicks?: RecordedPick[] | null;
+}) {
   const t = useTranslations("result");
   const [shown, setShown] = useState(PAGE);
   // A tie needs all three counts to match, not just the total: 3/0/0 and 1/1/1
@@ -39,100 +62,43 @@ export function PodiumTable({ items }: { items: PodiumTally[] }) {
     [items],
   );
   const visible = ranked.slice(0, shown);
-
-  return (
-    <>
-      <div className="overflow-x-auto">
-        <table
-          aria-label={t("podiumHeading")}
-          className="w-full border-separate border-spacing-y-2"
-        >
-          <thead>
-            <tr>
-              <ColumnHeading className="w-12">
-                {t("topPickedRankColumn")}
-              </ColumnHeading>
-              <ColumnHeading>{t("topPickedItemColumn")}</ColumnHeading>
-              <ColumnHeading align="end" className="w-14">
-                {t("podiumFirstColumn")}
-              </ColumnHeading>
-              <ColumnHeading align="end" className="w-14">
-                {t("podiumSecondColumn")}
-              </ColumnHeading>
-              <ColumnHeading align="end" className="w-14">
-                {t("podiumThirdColumn")}
-              </ColumnHeading>
-              <ColumnHeading align="end" className="w-16">
-                {t("podiumTotalColumn")}
-              </ColumnHeading>
-            </tr>
-          </thead>
-          <tbody>
-            {visible.map((item) => {
-              const style = styleForRank(item.rank);
-              return (
-                <tr key={item.itemId} data-rank={item.rank}>
-                  <RankCell style={style} first>
-                    <Text
-                      as="span"
-                      className="text-sm font-semibold tabular-nums"
-                    >
-                      {item.rank}
-                    </Text>
-                  </RankCell>
-                  <RankCell style={style}>
-                    <Text as="span" className="text-sm font-semibold">
-                      {item.itemTitle}
-                    </Text>
-                  </RankCell>
-                  <PlacementCell style={style} count={item.first} />
-                  <PlacementCell style={style} count={item.second} />
-                  <PlacementCell style={style} count={item.third} />
-                  <RankCell style={style} align="end" last>
-                    <Text
-                      as="span"
-                      className="text-sm font-semibold tabular-nums text-acc"
-                    >
-                      {item.total}
-                    </Text>
-                  </RankCell>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-      {visible.length < ranked.length && (
-        <div className="mt-4 flex justify-center">
-          <Button variant="ghost" onClick={() => setShown((n) => n + PAGE)}>
-            {t("loadMore")}
-          </Button>
-        </div>
-      )}
-    </>
+  // Ranked is pre-sorted best-first, so the top row's total is the scale's max
+  // — stable as more rows load, unlike scaling against only the visible slice.
+  // Podium totals have no natural percentage, so unlike TopPickedTable's
+  // identical-looking bar this one is relative, not absolute 0–100. Don't
+  // "fix" the two to match.
+  const maxTotal = ranked[0]?.total ?? 0;
+  const mine = useMemo(
+    () =>
+      new Set(
+        (ownPicks ?? [])
+          .map((pick) => pick.itemId)
+          .filter((id): id is string => id !== undefined),
+      ),
+    [ownPicks],
   );
-}
 
-/**
- * One placement count. A zero is dimmed rather than blank: the columns line up
- * as a shape you can read across, which an empty cell breaks.
- */
-function PlacementCell({
-  style,
-  count,
-}: {
-  style: { border: string; background: string };
-  count: number;
-}) {
   return (
-    <RankCell style={style} align="end">
-      <Text
-        as="span"
-        variant={count === 0 ? "tertiary" : undefined}
-        className="text-sm tabular-nums"
-      >
-        {count}
-      </Text>
-    </RankCell>
+    <BoardCard
+      title={title}
+      note={note}
+      subtitle={subtitle}
+      listLabel={title ?? t("podiumHeading")}
+      remaining={Math.min(PAGE, ranked.length - visible.length)}
+      onShowMore={() => setShown((n) => n + PAGE)}
+    >
+      {visible.map((item) => (
+        <li key={item.itemId} data-rank={item.rank}>
+          <BoardRow
+            name={item.itemTitle}
+            rank={item.rank}
+            mine={mine.has(item.itemId)}
+            headline={String(item.total)}
+            detail={`${item.first}/${item.second}/${item.third}`}
+            fill={maxTotal > 0 ? (item.total / maxTotal) * 100 : 0}
+          />
+        </li>
+      ))}
+    </BoardCard>
   );
 }

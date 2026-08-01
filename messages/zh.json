@@ -73,7 +73,84 @@
     "deletePack": "删除题包",
     "packDeleted": "题包已删除",
     "deletePackError": "无法删除此题包，请重试。",
-    "banUserError": "无法封禁此用户，请重试。"
+    "banUserError": "无法封禁此用户，请重试。",
+    "contentsSearchAria": "搜索题包条目",
+    "contentsSearchPlaceholder": "搜索条目…",
+    "contentsFilterText": "文字",
+    "contentsFilterYoutube": "YouTube",
+    "contentsFilterImage": "图片",
+    "contentsItemType": {
+      "text": "文字条目",
+      "youtube": "YouTube 条目",
+      "image": "图片条目"
+    },
+    "contentsDrawnRandomly": "随机抽取 · 此池中有 {count, plural, other {# 个条目}}",
+    "contentsPoolEmpty": "此池中还没有条目。",
+    "contentsEmpty": "没有可显示的题包内容。",
+    "contentsNoMatches": "没有符合搜索条件的条目。",
+    "packNotFound": "此题包不存在。",
+    "packCrumb": "题包审核",
+    "reportCrumb": "举报审核",
+    "queueBack": "队列",
+    "packSubmittedBy": "由 {author} 于 {date} 提交",
+    "packSummarySentence": "{pools, plural, other {# 个池}} · {rounds, plural, other {# 轮}}",
+    "contentsHeading": "题包内容",
+    "roundMappingHeading": "轮次",
+    "roundLabelFallback": "第 {index} 轮",
+    "roundRandomPool": "随机池",
+    "contentsRandomPoolSlot": "此卡槽每次游玩时都会随机抽取一个池——具体用了哪个池并没有记录，因此这里无法显示其内容。",
+    "loadingReportedContent": "正在加载举报内容…",
+    "reportedContentError": "无法加载此举报的内容，请稍后重试。",
+    "reportedUserHeading": "被举报账户",
+    "reportedUserJoined": "加入于 {date}",
+    "reportedUserPacks": "题包",
+    "reportedUserComments": "评论",
+    "reportedUserReportsAgainst": "被举报次数",
+    "reportedUserReportsFiled": "发起的举报",
+    "reportedUserRestricted": "只有经理和管理员才能查看被举报账户的详细信息。",
+    "otherReportsHeading": "针对该对象的其他举报",
+    "otherReportsLoading": "正在加载举报记录…",
+    "otherReportsError": "无法加载举报记录。",
+    "otherReportsNone": "没有针对该对象的其他举报。",
+    "otherReportsBy": "举报人：{reporter}",
+    "otherReportsMore": "显示 {total} 条其他举报中的 {shown} 条。",
+    "approvalHeading": "审核——包中的每一项",
+    "approvalIntro": "一次游戏只会从每个池中随机抽取部分内容。作者提交的全部内容列在下方，因此不会有未经审核的内容到达玩家。",
+    "decisionHeading": "处理决定",
+    "approvePack": "通过该包",
+    "requestChanges": "要求修改",
+    "rejectPack": "驳回该包",
+    "changesRequestedHeading": "已要求修改",
+    "changesNoMarks": "先在上方点击“标记待改”选中需要修改的内容，再说明作者需要改什么。",
+    "changesMessageLabel": "给作者的说明",
+    "changesMessagePlaceholder": "上线前必须修改什么？",
+    "sendChangeRequest": "发送要求",
+    "changesOutcomeNote": "该包连同你的备注退回给作者。不会删除任何内容，重新提交后会重新进入队列。",
+    "rejectReasonLabel": "驳回理由",
+    "markForEdit": "标记待改",
+    "marked": "已标记",
+    "unmark": "取消标记 {label}",
+    "markNoRequest": "无备注——作者只会看到此处被标记。",
+    "markAskedOfAuthor": "对作者的要求",
+    "markItemPlaceholder": "作者应如何处理这一项？",
+    "markRoundPlaceholder": "这一轮应该改什么？",
+    "markFieldPlaceholder": "作者应该改写成什么？",
+    "markKind": {
+      "title": "标题",
+      "description": "描述",
+      "cover": "封面",
+      "tags": "标签",
+      "item": "项目",
+      "round": "回合"
+    },
+    "fieldsHeading": "包信息——标记需要重写的内容",
+    "fieldTitle": "标题",
+    "fieldDescription": "描述",
+    "fieldCover": "封面",
+    "fieldTags": "标签",
+    "fieldEmpty": "未设置",
+    "fieldCoverUploaded": "上传的图片",
+    "fieldCoverTone": "颜色 {tone}"
   },
   "admin": {
     "panelEyebrow": "管理面板",
@@ -120,8 +197,13 @@
     "noUserEmailError": "没有使用该邮箱的用户。",
     "changeRoleError": "无法更改该成员的角色，请重试。",
     "loadMoreStaffError": "无法加载更多员工，请重试。",
-    "addStaffEmailAria": "要添加为员工的用户邮箱",
-    "addStaffEmailPlaceholder": "名称@email.com",
+    "addStaffInputAria": "要添加为员工的用户的邮箱、用户名或用户 ID",
+    "addStaffInputPlaceholder": "邮箱、@用户名或用户 ID",
+    "addStaffKindEmail": "邮箱",
+    "addStaffKindUsername": "用户名",
+    "addStaffKindUserId": "用户 ID",
+    "addStaffNoMatchOther": "未找到用户。",
+    "addStaffMatchesAria": "匹配的用户",
     "roleToGrantAria": "要授予的角色",
     "addStaff": "+ 添加员工",
     "searchStaffAria": "按用户名或邮箱搜索员工",
@@ -171,6 +253,7 @@
     "untrustError": "无法取消信任此用户，请重试。",
     "loadMoreUsersError": "无法加载更多用户，请重试。",
     "detailBack": "返回用户列表",
+    "detailCrumb": "用户详情",
     "detailLoading": "正在加载用户…",
     "detailError": "无法加载该用户。",
     "detailStatusBanned": "已封禁",
@@ -229,22 +312,39 @@
     "newCount": "{count} 条新",
     "loadOlder": "加载更早的通知",
     "commentReply": "<user>@{username}</user> <muted>回复了你在题包中的评论：</muted> <obj>{packTitle}</obj>",
-    "kindReply": "回复"
+    "kindReply": "回复",
+    "packChangesRequested": "<muted>审核员要求修改</muted> <obj>{packTitle}</obj>"
   },
   "bottomNav": {
     "label": "主导航",
-    "discovery": "发现",
-    "feedback": "反馈",
     "create": "创建",
-    "notifications": "提醒",
     "profile": "我的"
+  },
+  "shell": {
+    "nav": {
+      "label": "主导航",
+      "browse": "浏览",
+      "myPacks": "我的题包",
+      "people": "用户",
+      "history": "历史",
+      "suggestions": "建议",
+      "rules": "规则"
+    },
+    "soon": "敬请期待",
+    "menuToggle": "切换菜单",
+    "room": {
+      "inARoom": "在房间中",
+      "lobby": "大厅 · {count}",
+      "rejoin": "重新加入"
+    }
   },
   "authGate": {
     "logInToVote": "登录后投票",
     "logInToFollow": "登录后关注",
     "logInToComment": "登录后评论",
     "logInToPlay": "登录后游玩",
-    "logInToCreateTokens": "登录后可创建 API 令牌"
+    "logInToCreateTokens": "登录后可创建 API 令牌",
+    "logInToReport": "登录后举报"
   },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
@@ -263,6 +363,7 @@
   },
   "settings": {
     "title": "偏好设置",
+    "intro": "关于你账户的一切，尽在一处。更改会随手保存——无需点击提交按钮，除非涉及密码。",
     "languageHeading": "语言",
     "languageLabel": "界面语言",
     "languageHint": "更改菜单和按钮的显示语言。题包内容会保持创作者编写时使用的语言。",
@@ -275,6 +376,7 @@
     "accentColorHint": "用于高亮、按钮和进度条。",
     "accentColorSwatch": "使用强调色 {color}",
     "notificationsHeading": "通知",
+    "notifEnabledCount": "共 {total} 项，已开启 {count} 项",
     "loginToManageNotifications": "<link>登录</link>后即可管理通知偏好。",
     "notificationsLoadError": "无法加载你的通知偏好。",
     "loading": "加载中…",
@@ -331,7 +433,8 @@
     "addEmailConfirmButton": "添加邮箱",
     "addEmailTaken": "该邮箱已被其他账户使用。",
     "addEmailError": "无法添加该邮箱。请重试。",
-    "notifCommentReply": "有人回复了你的评论"
+    "notifCommentReply": "有人回复了你的评论",
+    "notifPackChangesRequested": "审核员要求修改我的包"
   },
   "streamerMode": {
     "hiddenHint": "已因主播模式隐藏",
@@ -381,9 +484,18 @@
     "resetSuccess": "您的密码已重置，现在可以登录。",
     "backToLogin": "返回登录",
     "resetError": "无法重置密码，请检查验证码后重试。",
+    "brand": {
+      "headline": "八个上场，只有一个能挺过你的裁决。",
+      "subtitle": "创建卡包，独自游玩，或开一个房间，让朋友们争个高下——投票、认领、轮流淘汰，或猜猜谁选了什么。",
+      "pitch1": "任意卡包，单人或组队皆可畅玩",
+      "pitch2": "四种多人模式，一个房间码即可加入",
+      "pitch3": "结果自动保存，选择计入积分",
+      "socialProof": "已有 {count, number} 人正在争论，快来加入",
+      "socialProofFallback": "加入社区"
+    },
     "errors": {
       "loginRequired": "请输入你的邮箱／用户名和密码。",
-      "username": "用户名必须为 2 到 16 个字符，且只能包含字母和数字。",
+      "username": "用户名必须为 2 到 16 个字符，只能包含字母、数字和下划线。",
       "email": "请输入有效的电子邮箱地址。",
       "passwordLength": "密码至少需要 8 个字符。",
       "passwordMax": "密码最多 72 个字符。",
@@ -408,6 +520,18 @@
     "heading": "社区规则",
     "intro": "这些规则让 Velanto 对每个人都安全、公平。创建账号即表示你同意遵守这些规则。",
     "loadError": "目前无法加载规则。请稍后再试。",
+    "searchPlaceholder": "搜索规则…",
+    "clearSearch": "清除搜索",
+    "noMatch": "没有规则匹配“{query}”",
+    "tryPlainer": "试试更简单的词——“垃圾信息”“抄袭”“封禁”。",
+    "categoriesHeading": "分类",
+    "matchCount": "{count, plural, other {# 条匹配}}",
+    "ruleCount": "{count, plural, other {# 条规则}}",
+    "reportTitle": "有人违反规则了吗？",
+    "reportNote": "举报一个卡包、评论或个人资料——选择被违反的规则，举报会直接送到管理员手中。",
+    "wrongRuleTitle": "觉得某条规则不合理？",
+    "wrongRuleNote": "当足够多的人给出充分理由时，规则就会改变。把它作为建议发布出来。",
+    "openSuggestions": "打开建议",
     "content": {
       "hate_discrimination": {
         "title": "仇恨与歧视",
@@ -518,6 +642,14 @@
         }
       }
     }
+  },
+  "legal": {
+    "termsTab": "条款",
+    "privacyTab": "隐私",
+    "onThisPage": "本页内容",
+    "sectionCount": "{count, plural, other {# 个章节}}",
+    "questionsTitle": "对本文件有疑问？",
+    "questionsNote": "这个收件箱由一个人查看，会在 30 天内回复。"
   },
   "terms": {
     "metaTitle": "服务条款 — Velanto",
@@ -804,8 +936,11 @@
     "other": "其他"
   },
   "home": {
-    "title": "发现题包",
-    "subtitle": "按玩法或标签浏览题包，挑一个玩上一局，看看谁能拔得头筹。",
+    "hero": {
+      "badge": "新功能 · 模式",
+      "title": "现在任何题包都能和朋友一起玩",
+      "subtitle": "为任意题包开一个房间，选择一种模式——投票淘汰、抢夺、轮流削减，或玩猜猜看赢取积分。"
+    },
     "searchPlaceholder": "搜索题包…",
     "searchLabel": "搜索题包",
     "filters": "筛选",
@@ -832,23 +967,43 @@
     "paginationPrevious": "上一页",
     "paginationNext": "下一页",
     "groupLanguage": "语言",
-    "filterByLanguage": "按语言筛选"
+    "filterByLanguage": "按语言筛选",
+    "allFormats": "所有格式",
+    "showingRange": "显示 {first}–{last}，共 {total, plural, other {# 个题包}}",
+    "card": {
+      "hot": "热门",
+      "playedAt": "{when}玩过",
+      "roundsPlays": "{rounds, plural, other {# 轮}} · {plays, plural, other {# 次游玩}}",
+      "playsCount": "{plays, plural, other {# 次游玩}}",
+      "play": "开玩",
+      "friends": "好友",
+      "friendsTitle": "与好友一起游玩"
+    },
+    "joinRoom": {
+      "title": "加入房间",
+      "subtitle": "有朋友给的代码？直接输入即可，无需再找题包。",
+      "codePlaceholder": "ABC-123"
+    },
+    "continue": {
+      "title": "继续游戏",
+      "progress": "第 {current} 轮 / 共 {total} 轮",
+      "resume": "继续玩《{title}》"
+    }
   },
   "formats": {
     "save_one": "留一个",
     "sacrifice_one": "淘汰一个",
     "nxn": "NxN",
     "rank_blind": "盲排",
-    "1v1": "1v1",
-    "save_one_friends": "留一个（好友同玩）"
+    "1v1": "1v1"
   },
   "tagPicker": {
     "title": "选择标签",
     "selected": "已选 {count} 个",
-    "selectedOfMax": "已选 {count} / {max}",
-    "clear": "清除",
+    "selectedOfMax": "已选 {count}/{max}{atCap, select, true { — 移除一个以替换} other {}}",
+    "clear": "全部清除",
     "cancel": "取消",
-    "apply": "应用"
+    "apply": "完成"
   },
   "pack": {
     "viewAuthor": "查看作者",
@@ -898,20 +1053,6 @@
           "desc": "每轮淘汰一个，组组如此。"
         }
       ],
-      "save_one_friends": [
-        {
-          "title": "召集 2-4 位好友",
-          "desc": "大家一起进入同一个房间——每轮为每位玩家亮出一个选项，再多加一个。"
-        },
-        {
-          "title": "认领要淘汰谁",
-          "desc": "你们各自划掉一个选项；两人不能认领同一个，所以你能看着大家的选择接连锁定。"
-        },
-        {
-          "title": "留下一个",
-          "desc": "没人认领的那个选项被保留下来——一起打完每一轮。"
-        }
-      ],
       "nxn": [
         {
           "title": "两大类别对决",
@@ -956,6 +1097,7 @@
       ]
     },
     "comments": "评论 · {count}",
+    "creatorBadge": "创作者",
     "commentPlaceholder": "说说你对这个题包的看法…",
     "commentLabel": "评论",
     "post": "发布",
@@ -992,7 +1134,45 @@
     "submitPack": "提交审核",
     "submittingPack": "提交中…",
     "submitPackError": "无法提交该合集，请重试。",
-    "randomPoolLabel": "随机池"
+    "rejectionReasonHeading": "被拒绝的原因",
+    "randomPoolLabel": "随机池",
+    "acrossPlays": "{count, plural, other {共 # 次游玩}}",
+    "report": {
+      "title": "举报此题包",
+      "reasons": {
+        "inappropriate": "不当或冒犯性内容",
+        "copyright": "版权或所有权问题",
+        "spam": "垃圾内容或误导性信息",
+        "other": "其他原因"
+      }
+    },
+    "reportComment": {
+      "scopeNote": "举报针对该账号提交。下方引用了这条评论，方便审核人员查找。",
+      "quote": "关于评论 {id}：\n\n“{body}”"
+    },
+    "changesRequestedHeading": "已要求修改",
+    "changesRequestedMarks": "{count, plural, other {已标记 # 处待修改}}——请查看审核员的要求。",
+    "changesRequestedNoMarks": "修改前请先查看审核员的要求。",
+    "changesRequestedCta": "查看需要修改什么"
+  },
+  "report": {
+    "button": "举报",
+    "buttonReported": "已举报",
+    "reasonLabel": "原因",
+    "reasonPlaceholder": "选择一个原因",
+    "commentLabel": "补充说明（可选）",
+    "commentPlaceholder": "任何有助于版主审核的信息",
+    "submit": "提交举报",
+    "error": "举报提交失败，请重试。",
+    "buttonUser": "举报用户",
+    "userTitle": "举报 @{username}",
+    "userNote": "举报将提交给审核团队，你的用户名会随举报一并提交。",
+    "userReasons": {
+      "harassment": "骚扰或辱骂",
+      "impersonation": "冒充他人",
+      "spam": "垃圾信息或诈骗",
+      "other": "其他情况"
+    }
   },
   "share": {
     "trigger": "分享",
@@ -1004,40 +1184,109 @@
   "play": {
     "complete": "完成",
     "roundOf": "第 {current} / {total} 轮",
+    "exit": "退出",
+    "soloMode": "单人",
+    "roundsDoneNote": "{count, plural, other {已完成 # 轮}}",
+    "chosenSave": "已保留",
+    "chosenSacrifice": "已牺牲",
+    "confirmReadyTitle": "已锁定——你仍可以更改",
+    "confirmPendingTitle": "还没有选择",
+    "confirmNote": "进入下一轮时会记录你的选择。",
+    "picksCountNote": "已完成 {done} 个，还剩 {toGo} 个",
     "pick": "选择 {name}",
-    "nextRound": "下一轮 →",
+    "pickThisOne": "选择这个",
+    "yourPick": "你的选择",
+    "nextRound": "下一轮",
     "instructionSave": "选出你要留下的那个，在下方勾选后确认。",
     "instructionSacrifice": "选出你要淘汰的那个，在下方勾选后确认。",
     "instructionNxn": "选出你要留下的那一方，在下方勾选后确认。",
+    "instruction1v1": "选一个。",
     "savedSoFar": "已留下",
     "sacrificedSoFar": "已淘汰",
+    "yourRunSoFar": "你的进程",
     "finishedTitle": "所有轮次完成",
     "finishedSave": "你共留下了 {count, plural, other {# 个}}，每轮一个。",
     "finishedSacrifice": "你共淘汰了 {count, plural, other {# 个}}，每轮一个。",
     "finishedVersus": "你在 {a} 与 {b} 之间共 {count, plural, other {# 轮}}做出了选边。",
     "whichPrefer": "你更喜欢哪一个？",
-    "rankInstruction": "决定它排在哪里——第 {current} / {total} 个",
-    "placeHere": "放这里",
     "rankSlotFilled": "第 {rank} 名：{title}",
     "rankSlotEmpty": "放到第 {rank} 名",
+    "rankPendingEyebrow": "放置这个",
+    "rankPendingFlavor": "你看不到接下来会出现什么——这正是这个玩法的核心。选一个位置放下并确认。",
+    "rankPlaceItemPrompt": "放置第 {current} 项，共 {total} 项",
+    "rankAllPlacedPrompt": "所有位置已放满——这就是你的排序",
+    "rankRemainingNote": "{count, plural, other {之后还有 # 项隐藏}}",
+    "rankDoneFlavor": "现在已经无法更改——盲排排名给你的就是这个结果。继续下一轮吧。",
+    "rankDoneFooter": "全部 {count} 项已放置",
+    "rankPlaceItemHere": "把「{name}」放在这里",
     "ranked": "{name} 已排名",
+    "roundComplete": "本轮已排序",
+    "nextUp": "接下来：{name}",
     "loadingResult": "正在加载结果…",
-    "finishRound": "查看结果 →",
+    "finishRound": "查看结果",
     "versusSideA": "A 方",
-    "versusSideB": "B 方"
+    "versusSideB": "B 方",
+    "resumeModalTitle": "从上次的地方继续吗？",
+    "resumeModalBody": "继续从上次的进度开始，或者用全新的抽取重新开始。",
+    "resumeContinue": "继续",
+    "resumeRestart": "重新开始"
   },
   "result": {
-    "label": "结果",
-    "playsRecorded": "{count, plural, other {已记录 # 次游玩。}}",
+    "label": "本次游玩已完成",
+    "heroSubtitleFixed": "你的选择已被记录，并计入本合集的统计数据。",
+    "heroSubtitleFixedShared": "他们的选择已被记录，并计入本合集的统计数据。",
+    "statRoundsCompact": "轮数",
+    "statPlaysCompact": "总游玩次数",
+    "resultBarMeta": "{count, plural, other {# 轮}} · 你的记录",
+    "resultBarMetaShared": "{count, plural, other {# 轮}} · 分享的记录",
+    "heroTitleSave": "这就是你保留下来的",
+    "heroTitleSaveShared": "这就是他们保留下来的",
+    "heroTitleSacrifice": "这就是你牺牲掉的",
+    "heroTitleSacrificeShared": "这就是他们牺牲掉的",
+    "heroTitleNxn": "这就是你选择的",
+    "heroTitleNxnShared": "这就是他们选择的",
+    "heroTitle1v1": "这就是你选择的",
+    "heroTitle1v1Shared": "这就是他们选择的",
+    "heroTitleRank": "这就是你为它们排的顺序",
+    "heroTitleRankShared": "这就是他们为它们排的顺序",
+    "statAgreement": "与其他玩家的平均一致度",
+    "statTopPick": "最受欢迎的选择 — {percent}% 选择了相同项",
+    "statRarePick": "最稀有的选择 — 只有 {percent}% 认同",
+    "statPlays": "已记录的游玩次数",
+    "statRoundsPlayed": "已玩轮次",
+    "statItemsSeen": "已看到的条目",
+    "statRoundsRanked": "已排名轮次",
+    "statItemsPlaced": "已放置的条目",
+    "statPodiumEntries": "进入前三的次数",
     "lockedTitle": "完成题包后查看结果",
     "lockedBody": "游玩期间统计数据会隐藏，这样你的选择才是你自己的，而不是随大流。",
     "lockedCta": "玩这个题包",
-    "yourPick": "你的选择",
-    "sharedPick": "选择",
+    "roundByRoundHeading": "逐轮回顾",
+    "roundByRoundNote": "你在每一轮的选择",
+    "roundByRoundNoteShared": "他们在每一轮的选择",
+    "verdictSave": "你保留了",
+    "verdictSaveShared": "已保留",
+    "verdictSacrifice": "你牺牲了",
+    "verdictSacrificeShared": "已牺牲",
+    "verdictWon": "你选择了",
+    "verdictWonShared": "已选择",
+    "verdictRankedFirst": "你排的第一名：{name}",
+    "verdictRankedFirstShared": "第一名：{name}",
+    "lostLabel": "已淘汰",
+    "survivedLabel": "幸存",
     "playAgain": "再玩一次",
     "tryItYourself": "自己来试试",
-    "shareResult": "分享结果",
     "sharedNote": "你正在查看一份分享的结果。",
+    "shareCardTitle": "分享你的这次游玩",
+    "shareCardNote": "这次游玩的专属链接，朋友们在玩之前就能看到你的选择。",
+    "runCardTitle": "你的这次游玩",
+    "runCardNote": "返回合集，或者再玩一次。",
+    "sharedRunCardTitle": "他们的这次游玩",
+    "sharedRunCardNote": "返回合集，或者自己也来试试。",
+    "copyShareLink": "复制分享链接",
+    "backToPack": "返回合集",
+    "playAgainFooter": "再来一局",
+    "tryItYourselfFooter": "马上试试看",
     "loading": "正在加载结果……",
     "loadError": "无法加载结果。请刷新页面重试。",
     "matchupLabel": "{heading} 对决：{winner} 胜过 {loser}",
@@ -1050,6 +1299,9 @@
     "topPickedItemColumn": "条目",
     "topPickedPickedColumn": "被选中",
     "topPickedShareColumn": "占比",
+    "topPickedYours": "你的",
+    "boardAcrossPlays": "{count, plural, other {共 # 次游玩}}",
+    "boardShowMore": "再显示 {count} 个",
     "pickedOfAppeared": "{appeared} 次中的 {picked} 次",
     "loadMore": "加载更多",
     "eliminationRoundLabel": "{heading}：已选 {picked}",
@@ -1071,34 +1323,41 @@
     "logIn": "登录",
     "saveDraft": "保存草稿",
     "savingDraft": "正在保存草稿…",
-    "publish": "发布",
-    "publishing": "发布中…",
     "basicsHeading": "基本信息",
-    "packTitle": "题包标题",
-    "packDescription": "题包简介",
-    "descriptionPlaceholder": "简短介绍",
+    "packTitle": "标题",
+    "packDescription": "简介",
+    "titlePlaceholder": "拯救一位动漫主角",
+    "descriptionPlaceholder": "这个题包有什么值得争论的？",
     "coverTone": "封面色调",
     "coverToneSwatch": "封面色调 {tone}",
     "coverImage": "封面图片",
     "coverImageHint": "PNG 或 JPG，最大 1 MB。将替代色调显示。",
+    "coverDragHint": "将图片拖到此处",
+    "coverDropToUpload": "松开即可上传",
     "removeCoverImage": "移除封面图片",
     "tags": "标签",
-    "selectTags": "选择标签",
-    "tagsSelected": "{count, plural, other {已选择 # 个标签}}",
+    "tagsCount": "已选 {count}/{max}",
+    "addTags": "+ 添加标签",
     "formatHeading": "玩法",
-    "blurbSaveOne": "亮出一组，留一个晋级。",
-    "blurbSacrificeOne": "每次淘汰一个，最爱留到最后。",
-    "blurbNxn": "两个类别并肩对决。",
-    "blurbRankBlind": "盲抽逐个放入不断成型的排名。",
-    "blurb1v1": "每场一对一对决选出胜者。",
+    "formatHint": "每轮如何进行。题包发布后无法更改。",
+    "formatLockedTooltip": "题包发布后玩法无法更改。",
+    "blurbSaveOne": "每轮一个池——玩家恰好留下一个。",
+    "blurbSacrificeOne": "每轮一个池——玩家恰好淘汰一个。",
+    "blurbNxn": "池对池，并肩对决，每轮如此。",
+    "blurbRankBlind": "每次盲选一个，放入不断变长的列表。",
+    "blurb1v1": "一个条目对另一个，正面交锋，没有对阵表。",
     "groupName": "池 {index} 名称",
     "random": "随机",
     "manual": "手动",
     "removeGroup": "移除池 {index}",
+    "deletePool": "删除池",
+    "collapsePool": "收起池 {index}",
+    "expandPool": "展开池 {index}",
+    "clickItemToEdit": "点击项目进行编辑",
     "remove": "移除",
     "itemCount": "{count, plural, other {# 个选项}}",
     "text": "文字",
-    "link": "链接",
+    "link": "YouTube",
     "add": "添加",
     "checking": "检查中…",
     "addItemPlaceholder": "添加选项…",
@@ -1113,19 +1372,23 @@
     "linkTitleRequired": "为此链接添加标题。",
     "removeTag": "移除 {tag}",
     "poolsHeading": "池",
-    "addPool": "+ 添加池",
+    "poolsHint": "池是可重复使用的条目集合。下方的轮次决定每轮从哪个池中抽取。",
+    "poolEmpty": "还没有选项——在上方添加第一个。",
+    "addPool": "新建池",
     "roundsHeading": "轮次",
-    "addRound": "+ 添加轮次",
+    "roundsHint": "点击一轮以选择它的池。",
+    "addRound": "新建轮次",
     "removeRound": "移除轮次 {index}",
     "roundLabel": "第 {index} 轮",
     "roundPool": "第 {index} 轮的池",
     "roundModeRandom": "第 {index} 轮随机",
     "roundModeManual": "第 {index} 轮手动",
     "roundCountLabel": "第 {index} 轮数量",
+    "roundDone": "完成",
+    "roundDoneAria": "完成，第 {index} 轮",
     "roundDraws": "{count, plural, other {抽取 # 项}}",
     "roundUnderfill": "仅剩 {count} 项 — 本轮将显示 {count} 项。",
     "setCountAll": "为所有轮次设置数量",
-    "matchupHeading": "对阵",
     "versusSideA": "A 方",
     "versusSideB": "B 方",
     "versusRoundCount": "轮次",
@@ -1143,10 +1406,16 @@
     "addPlace": "添加位置",
     "removePlace": "删除位置",
     "setCountAllLabel": "设置所有轮次抽取",
+    "bulkCountHintMatch": "每一回合都用这个数字。打开某一回合可单独设置。",
+    "bulkCountHintDrift": "回合数量目前不一致（{list}）。应用后将全部重设。",
+    "bulkApplied": "已应用",
     "image": "图片",
     "chooseImage": "选择图片",
     "uploading": "上传中…",
     "groupNewItemImage": "池 {index} 新图片",
+    "itemTypeText": "池 {index} 条目类型：文字",
+    "itemTypeLink": "池 {index} 条目类型：YouTube",
+    "itemTypeImage": "池 {index} 条目类型：图片",
     "notAnImage": "请选择图片文件。",
     "imageTooLarge": "图片不得超过 1 MB。",
     "imageUploadFailed": "上传失败，请重试。",
@@ -1173,9 +1442,50 @@
     "editItemAria": "编辑 {title}",
     "saveItem": "保存",
     "cancelEdit": "取消",
+    "itemTypeLabel": "项目类型",
+    "newItemLabel": "新项目",
+    "itemHintText": "卡片上只显示名称",
+    "itemHintVideo": "在回合中内嵌播放",
+    "itemHintImage": "以16:9缩略图显示",
+    "itemNameLabel": "名称",
+    "itemTextOnCardLabel": "卡片上的文字",
+    "youtubeLinkLabel": "YouTube 链接",
+    "itemImageLabel": "图片",
+    "itemImageDragHint": "拖放或上传",
+    "replaceImage": "替换",
+    "previewNoteText": "文字项目能让回合更易读。",
+    "previewNoteVideo": "保存时会从链接中提取。",
+    "previewNoteImage": "16:9 — 其他比例都会被裁剪。",
     "randomPoolOption": "随机池（可用 {count} 个）",
-    "blurbSaveOneFriends": "与 2–4 位好友在房间里实时游玩「保留其一」。",
-    "friendsHint": "与 2–4 位好友在房间里实时游玩。每轮为每位玩家显示一个项目，再加一个幸存项（最多 {count} 个），因此每个池至少需要 {count} 个项目。"
+    "cancel": "取消",
+    "groupNamePlaceholder": "池名称",
+    "addItemTrigger": "+ 添加条目",
+    "decreaseCount": "减少",
+    "increaseCount": "增加",
+    "bar": {
+      "newPackTitle": "新题包",
+      "submit": "提交审核",
+      "submitShort": "提交",
+      "submitting": "提交中…",
+      "blockedTooltip": "添加标题和选项",
+      "saved": "已保存",
+      "draftNoteUnsaved": "草稿 · 有未保存的更改",
+      "draftNoteSaved": "草稿 · 刚刚保存"
+    },
+    "feasibility": {
+      "heading": "好友模式已解锁",
+      "subtitle": "仅供参考——无论如何题包都可以保存和游玩。这只是显示房间可以运行哪些模式。"
+    },
+    "checklist": {
+      "eyebrow": "提交前检查",
+      "formatChosen": "已选择玩法",
+      "titleWritten": "已填写标题",
+      "poolsWithItems": "{count, plural, other {# 个池有条目}}",
+      "coverImage": "封面图片",
+      "rowDone": "已完成",
+      "rowNotDone": "尚未完成",
+      "noAiNote": "不涉及 AI · 无需编写评分规则"
+    }
   },
   "profile": {
     "loginRequiredView": "你需要先登录才能查看个人资料。",
@@ -1185,11 +1495,17 @@
     "loadBioError": "无法加载你当前的简介，请稍后再试。",
     "followerCount": "{count, plural, other {# 位关注者}}",
     "editProfile": "编辑个人资料",
+    "backToProfile": "返回个人资料",
+    "usernameChangedPill": "已更改",
+    "usernameHint": "修改后，指向你主页的所有链接都会更新。",
+    "cancel": "取消",
+    "editSaved": "已保存",
     "addBioPrompt": "添加简介，向大家介绍你的题包。",
     "myPacks": "我的题包",
     "noPacksOwn": "还没有题包——快来创建第一个吧！",
     "bio": "简介",
     "bioPlaceholder": "向大家介绍你的题包。",
+    "previewHeading": "效果预览",
     "saving": "保存中…",
     "save": "保存",
     "saveError": "无法保存你的更改，请重试。",
@@ -1203,8 +1519,12 @@
     "noPacks": "还没有题包。",
     "recentlyPlayed": "最近玩过",
     "recentlyPlayedEmpty": "你还没有玩过任何合集。",
+    "recentlyPlayedEmptyNote": "玩完的合集和房间会显示在这里。",
+    "browsePacks": "浏览合集",
     "avatarHeading": "头像",
-    "avatarChange": "更换照片",
+    "avatarDropLabel": "将照片拖到此处或点击",
+    "avatarDropActive": "松开以上传",
+    "avatarReplaceLabel": "更换照片",
     "avatarRemove": "移除照片",
     "avatarHint": "PNG 或 JPG，最大 1 MB。",
     "avatarRemoveError": "无法移除您的照片。请重试。",
@@ -1217,8 +1537,12 @@
     "loadingMore": "加载中…",
     "loadMoreError": "无法加载更多卡包，请重试。",
     "followers": "关注者",
+    "people": "好友",
+    "history": "历史记录",
     "noFollowers": "还没有关注者。",
+    "noFollowersNote": "有人关注你时，会显示在这里。",
     "noFollowing": "还没有关注任何人。",
+    "noFollowingNote": "关注他人，第一时间看到他们的新合集。",
     "followsLoadMore": "加载更多",
     "followsError": "无法加载此列表。请重试。",
     "followsLoading": "加载中…",
@@ -1227,7 +1551,6 @@
   },
   "pages": {
     "createTitle": "创建题包",
-    "createSubtitle": "选择一种淘汰玩法，搭建你的各轮内容。选项可以是文字，也可以是 YouTube 链接。",
     "metaProfile": "个人资料",
     "metaEditProfile": "编辑个人资料",
     "metaPlaying": "正在玩 {title}",
@@ -1244,7 +1567,6 @@
     "errorBody": "无法加载该个人资料，请重试。",
     "tryAgain": "重试",
     "editTitle": "编辑题包",
-    "editSubtitle": "更新题包信息。重新发布后需再次经过审核。",
     "notFoundTitle": "找不到页面",
     "notFoundBody": "您要查找的页面不存在或已被移动。",
     "appErrorBody": "发生了意外错误。您可以重试。"
@@ -1269,13 +1591,15 @@
     "feedbackDeclined": "已婉拒",
     "reportNew": "新",
     "reportReviewing": "审核中",
-    "reportClosed": "已关闭"
+    "reportClosed": "已关闭",
+    "packChangesRequested": "要求修改"
   },
   "feedback": {
-    "pageTitle": "反馈与建议",
-    "newPost": "发帖",
-    "searchAria": "搜索反馈",
-    "searchPlaceholder": "搜索反馈…",
+    "pageTitle": "建议",
+    "pageSubtitle": "提出功能需求、报告问题，或改进翻译。投票让我们知道接下来该做什么。",
+    "newPost": "新建建议",
+    "searchAria": "搜索建议",
+    "searchPlaceholder": "搜索建议…",
     "filterAll": "全部",
     "topicBug": "问题",
     "topicFeature": "功能",
@@ -1283,26 +1607,40 @@
     "topicOther": "其他",
     "sortTop": "热门",
     "sortNewest": "最新",
-    "loadMoreError": "无法加载更多反馈，请重试。",
-    "topSidebarHeading": "热门反馈",
-    "noFeedbackYet": "还没有反馈。",
+    "countShowing": "显示 {total} 条中的 {shown} 条",
+    "countNone": "没有匹配的内容",
+    "clearFilters": "清除筛选",
+    "loadMoreError": "无法加载更多建议。请重试。",
+    "mostWanted": "呼声最高",
+    "noFeedbackYet": "还没有建议。",
+    "legendHeading": "各状态的含义",
+    "legendNew": "已阅读，尚未分类。",
+    "legendInProgress": "正在开发中。",
+    "legendDone": "已上线 — 请查看更新页面。",
+    "legendDeclined": "暂不计划。原因见评论。",
     "scoreLabel": "得分",
     "by": "作者",
     "commentCount": "{count, plural, other {# 条评论}}",
-    "loadingList": "正在加载反馈…",
-    "listError": "无法加载反馈，请重试。",
-    "noMatches": "没有符合筛选条件的反馈。",
+    "loadingList": "正在加载建议…",
+    "listError": "无法加载建议。请重试。",
+    "emptyTitle": "还没有建议",
+    "emptyNote": "来做第一个提出需求的人吧。",
+    "emptyFilteredTitle": "没有符合这些筛选条件的内容",
+    "emptyFilteredNote": "换一个主题，或者清除搜索。",
+    "postFirst": "发布第一条",
     "loadingMore": "加载中…",
     "loadMore": "加载更多",
+    "showMore": "再显示 {count} 条",
     "voteError": "无法记录你的投票，请重试。",
     "like": "赞",
     "dislike": "踩",
     "detailNotFound": "该反馈帖不存在或对你不可见。",
-    "backToFeedback": "返回反馈",
+    "backToFeedback": "返回建议",
+    "detailCrumb": "建议",
     "detailLoadError": "无法加载该反馈帖，请重试。",
     "loading": "加载中…",
     "statusUpdateError": "无法更新状态，请重试。",
-    "deleteConfirm": "确定删除该反馈帖吗？",
+    "deleteConfirm": "删除这条建议？",
     "deleteError": "无法删除该帖子，请重试。",
     "translationHeading": "翻译",
     "languageValueLabel": "语言：",
@@ -1313,7 +1651,7 @@
     "delete": "删除",
     "edited": "编辑于",
     "commentsHeading": "评论 · {count}",
-    "commentPlaceholder": "说说你对这条反馈的看法…",
+    "commentPlaceholder": "分享你对这条建议的看法…",
     "commentAria": "评论",
     "postComment": "发布",
     "loginToComment": "<link>登录</link>后即可发表评论。",
@@ -1322,30 +1660,36 @@
     "commentsLoadError": "无法加载评论，请稍后再试。",
     "noComments": "还没有评论。",
     "loadMoreCommentsError": "无法加载更多评论，请重试。",
-    "newFeedbackTitle": "新建反馈",
+    "newFeedbackTitle": "新建建议",
     "topicLabel": "主题",
     "titleLabel": "标题",
-    "titlePlaceholder": "简短概述",
+    "titlePlaceholder": "一句话 — 应该改什么？",
     "detailsLabel": "详情",
-    "detailsPlaceholder": "描述你遇到的问题、想法或建议",
+    "detailsPlaceholder": "这为你解决了什么问题？",
+    "detailsPlaceholderBug": "你做了什么，发生了什么，你预期的是什么？",
+    "detailsPlaceholderTranslation": "哪种语言、哪个界面，以及应该怎么说。",
     "visibilityLabel": "可见性",
     "visibilityEveryone": "所有人",
     "visibilityStaffOnly": "仅工作人员",
-    "staffOnlyHint": "仅工作人员可见的帖子只有你和团队能看到。",
+    "visibilityHintEveryone": "公开 — 任何人都可以阅读并投票。",
+    "visibilityHintStaffOnly": "只有 Velanto 团队能看到。无人可以投票。",
     "translationSuggestionHeading": "翻译建议",
     "languageFieldLabel": "语言",
     "chooseLanguage": "选择语言…",
-    "contextFieldLabel": "哪段文字／在哪里看到的（选填）",
-    "contextPlaceholder": "例如：首页的“开玩”按钮",
+    "contextFieldLabel": "出现位置 · 可选",
+    "contextPlaceholder": "例如 sacrifice_one 的回合标题",
     "suggestionFieldLabel": "你建议的措辞",
     "suggestionPlaceholder": "你觉得应该改成什么",
     "posting": "发布中…",
-    "postFeedback": "提交反馈",
-    "metaListTitle": "反馈与建议 — Velanto",
+    "postFeedback": "发布",
+    "duplicateHint": "先搜索 — 为已有帖子投票比发重复帖更有帮助。",
+    "metaListTitle": "建议 — Velanto",
     "metaListDescription": "报告问题、提出功能建议，并改进翻译。",
-    "metaNewTitle": "新建反馈 — Velanto"
+    "metaNewTitle": "新建建议 — Velanto"
   },
   "docs": {
+    "metaTitle": "文档 — Velanto",
+    "metaDescription": "了解 Velanto 的使用方法——创建题包、五种赛制、游玩方式，以及连接 AI 助手的 API。",
     "secOverview": "概述",
     "secCreators": "创作者",
     "secPlayers": "玩家",
@@ -1377,6 +1721,8 @@
     "statsTitle": "统计与对比",
     "statsBody": "在你游玩期间，任何地方都不会告诉你别人是怎么选的，因此你的选择完全出于自己。完成之后，每一轮都会展开：玩家选得最多的条目，以及与你的选择一致的人数百分比。题包的整体认同分数也会在你游玩前显示在它的卡片和详情页上。",
     "jumpTo": "跳转到主题",
+    "nextTopic": "下一节",
+    "previousTopic": "上一节",
     "tokenNameLabel": "名称",
     "tokenNamePlaceholder": "例如 Claude Desktop",
     "tokenScopesLabel": "权限",
@@ -1450,11 +1796,21 @@
     "metaDescription": "Velanto 的新功能、修复和改进。",
     "heading": "最新动态",
     "intro": "最新的功能、修复和改进——最新的排在前面。",
-    "empty": "暂无更新，敬请期待。"
+    "empty": "暂无更新，敬请期待。",
+    "releasesHeading": "版本",
+    "latest": "最新",
+    "changesCount": "{count, plural, other {# 项更改}}",
+    "showMore": "显示另外 {count} 项",
+    "showLess": "收起",
+    "missingTitle": "还缺点什么？",
+    "missingNote": "建议会被阅读和投票——上面列表中的许多内容都是从这里开始的。",
+    "openSuggestions": "打开建议"
   },
   "myPacks": {
-    "packsTab": "题包",
-    "mineTab": "我的题包",
+    "title": "我的题包",
+    "subtitle": "你创建的所有题包，涵盖所有审核状态。",
+    "metaTitle": "我的题包 — Velanto",
+    "metaDescription": "管理你在 Velanto 上创建的题包。",
     "loginRequired": "登录后即可查看你的题包。",
     "loading": "正在加载你的题包…",
     "error": "无法加载你的题包。",
@@ -1462,11 +1818,31 @@
     "emptyFiltered": "没有符合此筛选条件的题包。",
     "all": "全部"
   },
+  "history": {
+    "title": "历史记录",
+    "subtitle": "你玩过的卡包，最近的排在前面。",
+    "loading": "正在加载你的历史记录…",
+    "emptyFiltered": "你还没有玩过这种玩法的卡包。",
+    "progress": "第 {current} / {total} 轮",
+    "continue": "继续",
+    "inProgressBadge": "进行中",
+    "inProgressTitle": "仍在进行",
+    "playedTitle": "已玩过",
+    "sortOldest": "最久之前游玩",
+    "sortRecent": "最近游玩",
+    "metaTitle": "历史记录 — Velanto",
+    "metaDescription": "你玩过的卡包，按最近游玩时间排序。",
+    "empty": "你还没有玩过任何内容。玩一个卡包，它就会出现在这里。",
+    "error": "无法加载历史记录，请重试。",
+    "loginRequired": "登录后即可查看你的游玩历史。"
+  },
   "people": {
-    "tab": "用户",
+    "title": "用户",
+    "subtitle": "搜索创作者和玩家，关注你喜欢的人。",
+    "metaTitle": "用户 — Velanto",
+    "metaDescription": "在 Velanto 上搜索题包创作者和玩家并关注。",
     "searchLabel": "搜索用户",
     "searchPlaceholder": "按用户名搜索",
-    "hint": "请输入至少 2 个字符进行搜索。",
     "loading": "正在搜索…",
     "error": "搜索用户失败，请重试。",
     "empty": "未找到用户。"
@@ -1474,12 +1850,131 @@
   "room": {
     "loading": "正在加载房间…",
     "reconnecting": "正在重新连接…",
+    "modePicker": {
+      "heading": "游戏模式",
+      "hostIsChoosing": "房主正在选择游戏模式…",
+      "playerRange": "{min}-{max} 名玩家"
+    },
+    "packModes": {
+      "heading": "此题包支持的模式",
+      "caption": "房主在大厅中选择模式。灰色模式需要不同的房间人数。"
+    },
+    "modes": {
+      "claim": {
+        "name": "认领",
+        "blurb": "抢先认领一项，比谁都快。",
+        "steps": {
+          "1": {
+            "title": "抢得要快",
+            "body": "每轮抽出的条目比玩家人数多一个。"
+          },
+          "2": {
+            "title": "不能共享",
+            "body": "被抢走的条目就没了——你要抢的是你最想淘汰的那个。"
+          },
+          "3": {
+            "title": "只有一个留下",
+            "body": "唯一没被抢的那个条目就是被保住的。"
+          }
+        }
+      },
+      "guess_who": {
+        "name": "猜猜看",
+        "blurb": "盲选后，猜猜谁选了什么。",
+        "steps": {
+          "1": {
+            "title": "盲选锁定",
+            "body": "在任何人的选择公开之前，先定下你自己的答案。"
+          },
+          "2": {
+            "title": "读懂各自的风格",
+            "body": "玩家 X、Y、Z 会在整局中各自累积一列选择。"
+          },
+          "3": {
+            "title": "猜人计分",
+            "body": "把每个代号对上真人。猜对最多的人获胜。"
+          }
+        }
+      },
+      "turn_based_cut": {
+        "name": "轮流淘汰",
+        "blurb": "轮流淘汰一项，直到只剩一项。",
+        "steps": {
+          "1": {
+            "title": "轮到你了",
+            "body": "轮到你时，你要从台面上划掉正好一个条目。"
+          },
+          "2": {
+            "title": "选项越来越少",
+            "body": "所有人看着选项一个接一个地消失。"
+          },
+          "3": {
+            "title": "最后一个留到最后",
+            "body": "不投票、不打平——剩下的那个就是结果。"
+          }
+        }
+      },
+      "voting": {
+        "name": "投票",
+        "blurb": "实时投票，票数随时可见。",
+        "steps": {
+          "1": {
+            "title": "投票",
+            "body": "点你想选的那个。别人还在犹豫时你可以随时改。"
+          },
+          "2": {
+            "title": "盯着票数",
+            "body": "计票实时更新，你可以据理力争，把风向掰回来。"
+          },
+          "3": {
+            "title": "多数说了算",
+            "body": "打平时由持有优先权的人决定——绝不靠抛硬币。"
+          }
+        }
+      },
+      "shared_grid": {
+        "name": "共同排名",
+        "blurb": "各自盲排，再看合并后的整体排名。",
+        "steps": {
+          "1": {
+            "title": "盲排",
+            "body": "自己给整个台面排序，看不到任何人的排名。"
+          },
+          "2": {
+            "title": "全员提交",
+            "body": "本轮要等每个座位都锁定排名后才继续。"
+          },
+          "3": {
+            "title": "汇成一份排名",
+            "body": "所有人的排名会一起计分，合成房间的总排名。"
+          }
+        }
+      },
+      "relay": {
+        "name": "接力排序",
+        "blurb": "轮流插入，共同排出一份排名。",
+        "steps": {
+          "1": {
+            "title": "一次一个",
+            "body": "本轮按固定顺序逐个亮出条目，每回合一个。"
+          },
+          "2": {
+            "title": "插到合适的位置",
+            "body": "轮到你时，把它插进目前排名的任意位置。"
+          },
+          "3": {
+            "title": "一起搭出来",
+            "body": "结果不属于某个人——是全房间共同拼出的一份排名。"
+          }
+        }
+      }
+    },
     "entry": {
       "createRoom": "创建房间",
       "joinByCode": "输入代码加入",
+      "orWithFriends": "或与好友一起",
       "signInToPlay": "登录后与好友一起游玩",
       "createError": "无法创建房间，请重试。",
-      "joinTitle": "加入房间",
       "codeLabel": "房间代码",
       "codePlaceholder": "输入代码",
       "join": "加入",
@@ -1513,33 +2008,82 @@
       "lock": "锁定房间",
       "unlock": "解锁房间",
       "lockedNote": "已锁定——不接受新玩家。",
-      "unlockedNote": "开放——拥有加入码的好友可以加入。"
+      "unlockedNote": "开放——拥有加入码的好友可以加入。",
+      "open": "房间开放中",
+      "chooseHeading": "选择你们的玩法",
+      "hostHint": "挑一个模式——它决定每轮的玩法和房间人数。",
+      "guestHint": "房主正在选择模式。一旦选定，这里就会显示。",
+      "roleHost": "你是房主",
+      "roleGuest": "由房主决定",
+      "howARoundGoes": "一轮是怎么进行的",
+      "resultShared": "共同结论",
+      "resultScored": "计分 · 分胜负",
+      "priorityTitle": "平局由优先权决定",
+      "priorityBody": "票数打平时，由持有优先权的玩家拍板。每轮轮换给下一位。",
+      "capacityRoomFor": "还能再进 {count} 人",
+      "capacityFull": "房间已满",
+      "capacityNeeds": "至少需要 {min} 人",
+      "stillDeciding": "还在考虑",
+      "tapReadyWhenYouAre": "准备好了就点一下",
+      "inviteSomeone": "邀请好友",
+      "inviteCode": "邀请码",
+      "codeHidden": "已在屏幕上隐藏",
+      "codeVisible": "已显示",
+      "everyoneReady": "所有人都准备好了",
+      "waitingOn": "还在等 {count} 人",
+      "start": "开始{mode}",
+      "startGeneric": "开始游戏",
+      "waitingForHost": "等待房主开始",
+      "imReady": "我准备好了",
+      "unready": "取消准备",
+      "startNoteGuest": "只有房主能开始。先点准备，好让他们开局。",
+      "startNoteAllReady": "全员就绪——一旦开始，本局的模式就固定了。",
+      "startNoteWaiting": "房内所有人准备好后即可开始。",
+      "startNoteNeedsMore": "满 {min} 人后才能开始。",
+      "startNoteNoMode": "先在上方选一个模式才能开始。",
+      "seatCount": "{count}/{max}",
+      "readyCount": "{ready}/{total}"
     },
     "round": {
       "heading": "第 {index} 轮，共 {total} 轮",
-      "instruction": "认领一项进行淘汰。无人认领的那一项将存活。",
-      "claim": "淘汰 {name}",
       "taken": "已被认领",
-      "sacrificedBy": "由 {name} 淘汰",
-      "survivor": "存活",
-      "chosen": "已有 {count}/{total} 人选择"
+      "chosen": "已有 {count}/{total} 人选择",
+      "instructionSave": "认领一项以保留。其他所有项都将被淘汰。",
+      "instructionSacrifice": "认领一项进行淘汰。无人认领的那一项将存活。",
+      "claimSacrifice": "淘汰 {name}",
+      "claimedBySacrifice": "由 {name} 淘汰",
+      "survivorSave": "已保留",
+      "survivorSacrifice": "存活",
+      "tooFastNote": "你重新认领得太快了——请稍等片刻再试。"
+    },
+    "rejection": {
+      "not_your_turn": "还没轮到你。",
+      "not_in_round": "该选项不属于本轮。",
+      "round_not_active": "本轮已经结束。",
+      "not_a_player": "你在该房间中没有座位。",
+      "malformed": "提交无效，请重试。"
     },
     "between": {
-      "survivorHeading": "存活项",
-      "survivorNote": "此项在本轮中存活。",
-      "boardHeading": "本轮的淘汰",
       "next": "下一步",
       "ready": "{count}/{total} 已准备",
-      "autoNext": "{seconds} 秒后进入下一轮"
+      "autoNext": "{seconds} 秒后进入下一轮",
+      "survivorHeadingSave": "已保留",
+      "survivorHeadingSacrifice": "存活项",
+      "survivorNoteSave": "此项已被保留。",
+      "survivorNoteSacrifice": "此项在本轮中存活。",
+      "boardHeadingSave": "本轮的选择",
+      "boardHeadingSacrifice": "本轮的淘汰"
     },
     "results": {
       "heading": "结果",
       "roundLabel": "第 {index} 轮",
-      "backToPack": "返回卡包"
+      "backToPack": "返回卡包",
+      "playAgain": "再玩一次"
     },
     "ended": {
       "heading": "该房间已结束",
-      "description": "该房间已不可用。可从卡包页面开启新房间。"
+      "description": "该房间已不可用。可从卡包页面开启新房间。",
+      "leave": "返回卡包"
     },
     "joinLink": {
       "joining": "正在加入房间…",
@@ -1560,7 +2104,7 @@
     },
     "presence": {
       "returnTo": "返回 {title}",
-      "label": "房间内 {count} / {max}"
+      "playerCount": "房间内 {count} 人"
     },
     "kick": {
       "action": "将 {name} 移出房间",
@@ -1573,6 +2117,181 @@
       "heading": "房主已将你移出此房间",
       "description": "房主已将你移出此房间。如果房主重新开放，你可以用房间代码再次加入。",
       "leave": "返回卡包"
+    },
+    "guessWho": {
+      "roundInstruction": "做出你的选择",
+      "pickInstruction": "选择一项——所有人都看到选它的字母，但看不到字母属于谁。",
+      "pickHint": "字母即时显示",
+      "pickLabel": "选择 {name}",
+      "pickedByLabels": "{labels} 选择",
+      "maskedRosterNote": "揭晓之前，每个人都只是一个字母。",
+      "rankInstruction": "对每一项排序，最佳在前——在所有人锁定之前，没人能看到你的排名。",
+      "revealHeading": "揭晓",
+      "trajectoryHeading": "大家目前的选择",
+      "roundColumn": "轮次",
+      "trajectoryHint": "{count, plural, other {# 轮}}的选择",
+      "stillAnonymous": "？",
+      "columnHint": "单看一轮谁也认不出来——两个人常常选同一个。真正独特的是一整列。"
+    },
+    "guessing": {
+      "heading": "最后一轮",
+      "title": "他们是谁？",
+      "instruction": "将每位玩家分配给你认为对应的标签。",
+      "submit": "提交猜测",
+      "waitingForOthers": "已有 {count} / {total} 人提交",
+      "assignedCount": "已分配 {count}/{total}",
+      "whoIs": "{label} 是谁？",
+      "revealsAtOnce": "所有答案同时揭晓，谁也偷看不了。",
+      "deadline": "揭晓倒计时"
+    },
+    "identityReveal": {
+      "heading": "揭晓",
+      "correct": "猜对了",
+      "incorrect": "猜错了",
+      "winner": "获胜者",
+      "winnerNote": "最会读空气——{total} 个代号猜对 {count} 个",
+      "points": "分",
+      "sharedWin": "并列获胜——{names} 各猜对 {count} 个",
+      "yourGuess": "你的答案",
+      "youSaid": "你选了 {name}",
+      "nobody": "没有人",
+      "pointPerMatch": "每猜对一个得 1 分"
+    },
+    "turnBasedCut": {
+      "instruction": "轮到你时，淘汰一项。最后剩下的获胜。",
+      "cutOrderHeading": "淘汰顺序",
+      "cutVerb": "淘汰了"
+    },
+    "voting": {
+      "instruction": "为一个选项投票。回合结束前可随时更改。",
+      "votedSoFar": "已有 {count} / {total} 人投票",
+      "winnerHeading": "获胜项",
+      "tieBrokenNote": "出现平票——由持有优先权的 {name} 打破平局。"
+    },
+    "sharedGrid": {
+      "instruction": "对每一项排序，最佳在前，盲排。",
+      "aggregateHeading": "汇总",
+      "groupRanking": "群体排名",
+      "pointsLabel": "{count} 分",
+      "tiedNote": "并列——{count} 项并列此名次",
+      "aggregateHint": "所有人的排名，合并计分",
+      "alignment": "契合度",
+      "alignmentHint": "与大家的接近程度",
+      "alignmentNote": "没有输赢——契合度只是显示谁的口味和房间最合拍。"
+    },
+    "relay": {
+      "instruction": "将当前项插入共同排名中。",
+      "insertHere": "插入到这里",
+      "insertBefore": "插入到「{title}」之前",
+      "insertAtEnd": "插入到末尾",
+      "currentItem": "正在放置",
+      "finalOrderHeading": "最终排名",
+      "placementHistoryHeading": "放置记录",
+      "placedVerb": "放置了",
+      "nobodyKnowsNext": "谁也不知道下一个是什么。",
+      "stillHidden": "还有 {count} 个没揭晓",
+      "sharedRanking": "共同排名",
+      "sharedRankingHint": "一次插一个，大家一起排",
+      "placedBy": "放置者",
+      "nothingPlacedYet": "还没有人放置。",
+      "turnOrder": "出手顺序",
+      "placingBadge": "正在放置",
+      "placeItemHere": "把《{name}》放这里",
+      "placeAtRank": "放到第 {rank} 位"
+    },
+    "lockedIn": {
+      "playerLocked": "{name} 已锁定",
+      "playerWaiting": "{name} 仍在决定",
+      "count": "{count} / {total} 已锁定"
+    },
+    "priority": {
+      "holder": "{name} 持有优先权",
+      "explainer": "本轮由其打破平局"
+    },
+    "turnIndicator": {
+      "yourTurn": "轮到你了",
+      "waitingFor": "等待 {name}"
+    },
+    "leaderboard": {
+      "winner": "获胜者",
+      "points": "{count, plural, other {# 分}}",
+      "heading": "排行榜"
+    },
+    "header": {
+      "rounds": "{count, plural, other {# 轮}}",
+      "inRound": "本轮进行中",
+      "between": "本轮已揭晓",
+      "guessing": "猜人环节"
+    },
+    "board": {
+      "room": "房间",
+      "here": "{count} 人在线",
+      "outOfPlay": "已出局",
+      "voted": "已投票",
+      "deciding": "考虑中…",
+      "waiting": "等待中",
+      "cut": "已划掉",
+      "cuttingNow": "正在划掉",
+      "progressVotes": "已投 {count} / {total} 票",
+      "progressLeft": "台面上还剩 {count} 个",
+      "tapToVote": "点一下你要选的那个",
+      "voteLocked": "已投票——仍可更改",
+      "resolvesWhenAllVote": "所有人投完票后揭晓",
+      "noTakebacks": "划掉之后不能反悔",
+      "voteFor": "投给 {name}",
+      "cutItem": "划掉 {name}",
+      "yourVote": "你的一票",
+      "cutBadge": "已划掉",
+      "liveTally": "实时计票",
+      "tallyHint": "锁定前可更改",
+      "tieTitle": "打平了——由 {name} 的优先权决定",
+      "tieBody": "趁最后一票落下之前说服他们。",
+      "cutSoFar": "已划掉的",
+      "cutEmpty": "还没有人划掉——{name} 先手。",
+      "claimed": "已抢到",
+      "claimPrompt": "抢下你想淘汰的那个",
+      "claimHint": "先到先得",
+      "sideItemCount": "{count} 项参战",
+      "lockedIn": "已锁定",
+      "lockInPrompt": "锁定你的答案",
+      "lockedWaiting": "已锁定——等待其他人",
+      "blindHint": "所有人都提交前谁也看不到",
+      "placed": "已放置",
+      "placingNow": "正在放置",
+      "progressPlaced": "已放置 {count} / {total}",
+      "rankNowPlacing": "放置这一个",
+      "rankSlotEmpty": "放到第 {rank} 位",
+      "rankSlotFilled": "第 {rank} 位：{title}",
+      "rankPlaceHere": "把《{name}》放这里",
+      "rankHiddenAfter": "之后还有 {count} 个未显示"
     }
+  },
+  "reviewOutcome": {
+    "crumb": "审核结果",
+    "loading": "正在加载审核结果…",
+    "notFound": "该包不存在，或不属于你。",
+    "loginRequired": "登录后即可查看审核结果。",
+    "heroTitle": "快好了——还有几处需要修改",
+    "heroWhen": "审核于 {date}",
+    "heroBody": "你的包尚未发布。审核员已逐项查看并提出了以下修改要求。任何内容都未被删除——修改后重新提交，它就会重新进入队列。",
+    "openEditor": "打开编辑器",
+    "viewPack": "查看该包",
+    "moderatorSaid": "审核员的说明",
+    "marksHeading": "需要修改的内容",
+    "marksCount": "{count, plural, other {已标记 # 处}}",
+    "needsEdit": "待修改",
+    "doThis": "请这样做",
+    "inPool": "池：{pool}",
+    "nextHeading": "接下来",
+    "step1": "打开编辑器，按上述要求修改。",
+    "step2": "保存。该包会直接重新进入审核队列。",
+    "step3": "审核员再次查看后，你会收到通知。",
+    "thePack": "该包",
+    "metaPools": "池",
+    "metaRounds": "回合",
+    "metaSubmitted": "提交时间",
+    "mistakeTitle": "认为这是误判？",
+    "mistakeBody": "提交一条建议，团队会再看一次。请附上包的名称。",
+    "mistakeLink": "联系审核团队 →"
   }
 }

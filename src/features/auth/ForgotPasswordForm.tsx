@@ -4,10 +4,12 @@ import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
+import { Mail, KeyRound, Lock } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { TextField } from "@/src/shared/components/form/TextField";
 import { PasswordField } from "@/src/shared/components/form/PasswordField";
+import { FormBanner } from "@/src/shared/components/form/FormBanner";
 import { authClient } from "@/src/shared/lib/auth-client";
 import {
   resetPasswordSchema,
@@ -82,13 +84,13 @@ export function ForgotPasswordForm({
 
   if (step === "done") {
     return (
-      <div className="flex flex-col gap-4 text-center">
-        <Text as="h1" variant="title" className="text-2xl">
+      <div className="flex flex-col gap-4">
+        <Text as="h1" variant="title" className="text-center text-[23px]">
           {t("resetHeading")}
         </Text>
-        <Text variant="secondary" className="text-sm" role="status">
+        <FormBanner tone="success" role="status">
           {t("resetSuccess")}
-        </Text>
+        </FormBanner>
         <Button type="button" onClick={onBackToLogin} className="w-full">
           {t("backToLogin")}
         </Button>
@@ -98,7 +100,7 @@ export function ForgotPasswordForm({
 
   return (
     <>
-      <Text as="h1" variant="title" className="mb-1.5 text-center text-2xl">
+      <Text as="h1" variant="title" className="mb-1.5 text-center text-[23px]">
         {t("resetHeading")}
       </Text>
       <Text variant="secondary" className="mb-6 text-center text-sm">
@@ -122,6 +124,10 @@ export function ForgotPasswordForm({
             name="email"
             type="email"
             label={t("email")}
+            srOnlyLabel
+            icon={<Mail strokeWidth={1.8} aria-hidden />}
+            surface="card"
+            placeholder={t("email")}
             autoComplete="email"
             disabled={step !== "request"}
           />
@@ -132,11 +138,20 @@ export function ForgotPasswordForm({
                 name="code"
                 inputMode="numeric"
                 label={t("resetEnterCode")}
+                srOnlyLabel
+                icon={<KeyRound strokeWidth={1.8} aria-hidden />}
+                surface="card"
+                className="tracking-[0.4em]"
+                placeholder={t("resetEnterCode")}
                 autoComplete="one-time-code"
               />
               <PasswordField
                 name="newPassword"
                 label={t("resetNewPassword")}
+                srOnlyLabel
+                icon={<Lock strokeWidth={1.8} aria-hidden />}
+                surface="card"
+                placeholder={t("resetNewPassword")}
                 autoComplete="new-password"
                 showLabel={t("showPassword")}
                 hideLabel={t("hidePassword")}
@@ -144,6 +159,10 @@ export function ForgotPasswordForm({
               <PasswordField
                 name="confirmPassword"
                 label={t("resetConfirmPassword")}
+                srOnlyLabel
+                icon={<Lock strokeWidth={1.8} aria-hidden />}
+                surface="card"
+                placeholder={t("resetConfirmPassword")}
                 autoComplete="new-password"
                 showLabel={t("showPassword")}
                 hideLabel={t("hidePassword")}
@@ -152,9 +171,9 @@ export function ForgotPasswordForm({
           )}
 
           {submitError && (
-            <Text variant="danger" className="text-sm">
+            <FormBanner tone="danger" role="alert">
               {submitError}
-            </Text>
+            </FormBanner>
           )}
 
           <Button
@@ -165,13 +184,14 @@ export function ForgotPasswordForm({
             {step === "request" ? t("sendResetCode") : t("resetSubmit")}
           </Button>
 
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={onBackToLogin}
-            className="mt-1 text-center text-sm text-foreground-secondary transition-colors hover:text-foreground"
+            className="w-full"
           >
             {t("backToLogin")}
-          </button>
+          </Button>
         </form>
       </FormProvider>
     </>

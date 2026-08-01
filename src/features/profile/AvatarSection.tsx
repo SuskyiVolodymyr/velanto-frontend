@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, type DragEvent } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { MEDIA_MAX_BYTES } from "@/src/shared/lib/media-client";
@@ -36,6 +36,10 @@ export function AvatarSection({
   // The picked file awaiting crop; non-null opens the crop modal. Upload doesn't
   // start until the user confirms a crop.
   const [pendingFile, setPendingFile] = useState<File | null>(null);
+  // True while a file is dragged over the drop zone; purely visual (border +
+  // copy), reset on drop/leave. Never gates validation — handleFile is the
+  // single source of truth for that, regardless of how the file arrived.
+  const [dragging, setDragging] = useState(false);
 
   const updateAvatar = useUpdateAvatar(userId);
   const removeAvatar = useRemoveAvatar(userId);
@@ -80,6 +84,27 @@ export function AvatarSection({
     removeAvatar.mutate(undefined, { onSuccess: () => setAvatarKey(null) });
   }
 
+  function handleDragOver(event: DragEvent<HTMLLabelElement>) {
+    // Required for onDrop to fire at all — browsers reject a drop on an
+    // element whose dragover handler doesn't call preventDefault.
+    event.preventDefault();
+    if (!busy) setDragging(true);
+  }
+
+  function handleDragLeave(event: DragEvent<HTMLLabelElement>) {
+    event.preventDefault();
+    setDragging(false);
+  }
+
+  function handleDrop(event: DragEvent<HTMLLabelElement>) {
+    event.preventDefault();
+    setDragging(false);
+    if (busy) return;
+    // Same handleFile as the click-to-pick path — no separate validation for
+    // the dropped file.
+    handleFile(event.dataTransfer.files?.[0] ?? null);
+  }
+
   const mutationError = updateAvatar.isError
     ? messageFromError(updateAvatar.error, {
         fallback: tCreate("imageUploadFailed"),
@@ -89,34 +114,60 @@ export function AvatarSection({
       : "";
   const error = validationError || mutationError;
 
+  // The accessible name (and drop-zone copy) tracks whether an avatar is
+  // already set, not the transient drag/busy state — "Drop to upload"/
+  // "Uploading…" are visual-only, a screen-reader user can't drag anyway.
+  const pickLabel = avatarKey ? t("avatarReplaceLabel") : t("avatarDropLabel");
+  const zoneCopy = updateAvatar.isPending
+    ? tCreate("uploading")
+    : dragging
+      ? t("avatarDropActive")
+      : pickLabel;
+
   return (
-    <section className="mb-8">
-      <Text as="h2" variant="secondary" className="mb-3 text-xs">
+    // The whole card is the drop target. The file input lives in a <label> that
+    // wraps ONLY the pick button — wrapping the row would make a click on
+    // "Remove photo" also open the file picker.
+    <section
+      className={cn(
+        "flex flex-col gap-[13px] rounded-card border p-5 transition-colors",
+        dragging
+          ? "border-dashed border-acc bg-acc/[0.04]"
+          : "border-white/[0.07] bg-surface-card",
+        busy && "opacity-60",
+      )}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      <h2 className="text-[11.5px] font-[650] tracking-[0.06em] text-foreground-tertiary">
         {t("avatarHeading")}
-      </Text>
+      </h2>
+
       <div className="flex items-center gap-4">
         <UserAvatar
           username={username}
           avatarKey={avatarKey}
-          className="h-16 w-16 rounded-full border border-border bg-surface text-xl text-foreground-secondary"
+          tone
+          className="h-16 w-16 flex-none rounded-full border border-white/10 text-[22px]"
         />
-        <div className="flex flex-col gap-2">
-          <div className="flex flex-wrap items-center gap-2">
+        <div className="flex min-w-0 flex-col gap-[9px]">
+          <div className="flex flex-wrap items-center gap-[9px]">
             <label
               className={cn(
-                "cursor-pointer rounded-[9px] border border-border bg-white/[0.03] px-3 py-2 text-sm font-medium text-foreground-secondary hover:text-foreground",
-                busy && "pointer-events-none opacity-60",
+                "inline-flex h-[38px] items-center rounded-[10px] border border-white/[0.12] bg-white/[0.03] px-[13px] text-[13px] text-foreground-secondary transition-colors",
+                busy
+                  ? "pointer-events-none"
+                  : "cursor-pointer hover:border-white/25 hover:text-foreground",
               )}
             >
-              {updateAvatar.isPending
-                ? tCreate("uploading")
-                : t("avatarChange")}
+              {zoneCopy}
               <input
                 ref={inputRef}
                 type="file"
                 accept="image/*"
                 disabled={busy}
-                aria-label={t("avatarChange")}
+                aria-label={pickLabel}
                 onChange={(e) => handleFile(e.target.files?.[0] ?? null)}
                 className="sr-only"
               />
@@ -124,7 +175,8 @@ export function AvatarSection({
             {avatarKey && (
               <Button
                 type="button"
-                variant="secondary"
+                variant="outline"
+                size="sm"
                 disabled={busy}
                 loading={removeAvatar.isPending}
                 onClick={handleRemove}
@@ -138,8 +190,9 @@ export function AvatarSection({
           </Text>
         </div>
       </div>
+
       {error && (
-        <Text variant="danger" className="mt-3 text-sm">
+        <Text variant="danger" className="text-sm">
           {error}
         </Text>
       )}

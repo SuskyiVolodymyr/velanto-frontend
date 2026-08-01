@@ -3,7 +3,7 @@ import {
   useQuery,
   keepPreviousData,
 } from "@tanstack/react-query";
-import { getUserSearch, MIN_SEARCH_LENGTH } from "./user-search";
+import { getUserSearch } from "./user-search";
 
 export function userSearchQueryOptions(q: string, page: number) {
   return queryOptions({
@@ -13,8 +13,11 @@ export function userSearchQueryOptions(q: string, page: number) {
 }
 
 /**
- * People search, keyed on the (debounced) query + page. Disabled until the query
- * meets the minimum length, so a too-short query never hits the backend.
+ * The people directory, keyed on the (debounced) query + page. Always enabled:
+ * an empty query is the meaningful "everyone, alphabetically" request that
+ * /people opens on, not a request to suppress. (It used to be gated on a
+ * two-character minimum the backend enforced; that floor is gone.)
+ *
  * `keepPreviousData` keeps results steady while paging/typing; `staleTime: 0`
  * refetches so follow state and new accounts stay fresh. The
  * `["user-search", …]` key is what the follow mutation patches so a row's button
@@ -23,7 +26,6 @@ export function userSearchQueryOptions(q: string, page: number) {
 export function useUserSearch(q: string, page: number) {
   return useQuery({
     ...userSearchQueryOptions(q, page),
-    enabled: q.length >= MIN_SEARCH_LENGTH,
     placeholderData: keepPreviousData,
     staleTime: 0,
     refetchOnWindowFocus: false,

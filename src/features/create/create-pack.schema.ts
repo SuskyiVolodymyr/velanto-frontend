@@ -10,7 +10,6 @@ import {
 } from "@/src/features/create/create-pack.value-schemas";
 import {
   validateElimination,
-  validateFriends,
   validateVersus,
 } from "@/src/features/create/create-pack.refinements";
 
@@ -32,8 +31,6 @@ export {
   ITEM_TITLE_MAX,
   ELIMINATION_MIN_DRAW,
   ELIMINATION_MAX_DRAW,
-  FRIENDS_MAX_PLAYERS,
-  FRIENDS_ROUND_DRAW,
   NXN_SIDE_COUNT_MIN,
   NXN_SIDE_COUNT_MAX,
 } from "@/src/features/create/create-pack.value-schemas";
@@ -56,7 +53,7 @@ export const createPackSchema = z
     coverTone: z.string().min(1),
     // Optional storage key of an uploaded cover image; absent keeps the tone.
     coverImageKey: z.string().optional(),
-    // Every one of the six formats is creatable/editable in the form, each with
+    // Every one of the five formats is creatable/editable in the form, each with
     // its own per-format round rules in the superRefine below.
     format: z.enum(PACK_FORMATS),
     // The pack CONTENT's language — not the UI's. Defaulted to the author's
@@ -72,10 +69,6 @@ export const createPackSchema = z
   .superRefine((pack, ctx) => {
     if (pack.format === "nxn" || pack.format === "1v1") {
       validateVersus(pack, ctx);
-      return;
-    }
-    if (pack.format === "save_one_friends") {
-      validateFriends(pack, ctx);
       return;
     }
     validateElimination(pack, ctx);

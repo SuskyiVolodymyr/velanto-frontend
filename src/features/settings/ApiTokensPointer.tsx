@@ -24,7 +24,7 @@ export function ApiTokensPointer() {
         {t("tokensHeading")}
       </Text>
 
-      <Card className="flex flex-col items-start gap-3 hover:translate-y-0 hover:shadow-none">
+      <Card className="flex flex-col items-start gap-3">
         <Text variant="secondary" className="text-sm leading-relaxed">
           {t("tokensMovedDescription")}
         </Text>

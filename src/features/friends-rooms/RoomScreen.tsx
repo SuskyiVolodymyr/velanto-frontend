@@ -1,17 +1,21 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Loader2, WifiOff } from "lucide-react";
+import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { useAuth } from "@/src/shared/lib/auth-context";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { pageContainer } from "@/src/shared/lib/page-container";
 import { cn } from "@/src/shared/lib/cn";
 import { useFriendsRoom } from "./use-friends-room";
 import { RoomLobby } from "./RoomLobby";
-import { RoomRound } from "./RoomRound";
-import { RoomBetween } from "./RoomBetween";
+import { RoomRoundBoard } from "./RoomRoundBoard";
+import { RoomBetweenBoard } from "./RoomBetweenBoard";
+import { GuessingPhaseScreen } from "./GuessingPhaseScreen";
 import { RoomResults } from "./RoomResults";
-import { RoomLeaveButton } from "./RoomLeaveButton";
+import { IdentityRevealScreen } from "./IdentityRevealScreen";
+import { RoomHeader } from "./RoomHeader";
 import { RoomKicked } from "./RoomKicked";
 import { useExitToPack } from "./use-exit-to-pack";
 
@@ -31,15 +35,34 @@ export function RoomScreen({ roomId }: { roomId: string }) {
     state,
     connection,
     lastRejection,
+    lastModeRejection,
+    modeRejectionSeq,
     kicked,
     claim,
+    cut,
+    pick,
+    vote,
+    submitRanking,
+    placeItem,
     ready,
     next,
     lock,
     leave,
     kick,
+    setMode,
+    guess,
+    start,
   } = useFriendsRoom(roomId);
   const userId = user?.id ?? null;
+
+  // Claim and Turn-based cut caption themselves "Save" or "Sacrifice" after
+  // the PACK's format. It rides the room snapshot (the live room already holds
+  // the pack), so this no longer costs a fetch per room; the two modes that
+  // read it are the only ones that care.
+  const packFormat =
+    state?.packFormat === "save_one" || state?.packFormat === "sacrifice_one"
+      ? state.packFormat
+      : undefined;
 
   // A finished game shows its results even after the server tears the socket
   // down (teardown closes every socket, which arrives as connection "closed").
@@ -48,7 +71,11 @@ export function RoomScreen({ roomId }: { roomId: string }) {
   if (state?.phase === "finished") {
     return (
       <Shell>
-        <RoomResults state={state} />
+        {state.mode === "guess_who" && state.endgame ? (
+          <IdentityRevealScreen state={state} />
+        ) : (
+          <RoomResults state={state} packFormat={packFormat} />
+        )}
       </Shell>
     );
   }
@@ -96,9 +123,9 @@ export function RoomScreen({ roomId }: { roomId: string }) {
   }
 
   return (
-    <Shell>
-      {/* The pack's title, and the page's h1 for every live phase — the round
-          and survivor headings below are h2s beneath it.
+    <>
+      {/* The pack's title, and the page's h1-equivalent for every live phase —
+          the round and survivor headings below are h2s beneath it.
 
           Same reasoning as PlayHeader on the single-player screens: once a
           round is up, nothing else on the page says WHICH pack you are in. The
@@ -109,79 +136,119 @@ export function RoomScreen({ roomId }: { roomId: string }) {
           it confirms first during a round (see RoomLeaveButton). Both are kept
           out of the finished/ended/abandoned states above, where there is
           nothing left to leave and RoomResults heads itself. */}
-      <div className="mb-6 flex items-center justify-between gap-4">
-        <Text
-          as="h1"
-          variant="title"
-          // min-w-0 is what lets truncate work in a flex row: without it the
-          // item's automatic minimum size is its content, so a long title
-          // widens the row and pushes Leave off instead of clipping.
-          className="min-w-0 truncate text-xl sm:text-2xl"
-        >
-          {state.packTitle}
-        </Text>
-        <div className="flex-none">
-          <RoomLeaveButton state={state} onLeave={leave} />
-        </div>
-      </div>
-
-      {connection === "connecting" && (
-        <div
-          role="status"
-          className="mb-6 flex items-center gap-2 rounded-[10px] border border-border-strong bg-surface px-4 py-2.5"
-        >
-          <WifiOff
-            size={16}
-            aria-hidden
-            className="text-foreground-secondary"
-          />
-          <Text variant="secondary" className="text-sm">
-            {t("reconnecting")}
+      <RoomHeader state={state} onLeave={leave} />
+      <Shell>
+        {/* The header shows the title visually; this keeps it as the page's
+            real (if visually hidden) h1 for the phases that render no heading
+            of their own. The lobby does ("Choose how you'll play"), so it is
+            skipped there rather than giving the page two h1s. */}
+        {state.phase !== "lobby" && (
+          <Text as="h1" className="sr-only">
+            {state.packTitle}
           </Text>
-        </div>
-      )}
+        )}
+        {connection === "connecting" && (
+          <div
+            role="status"
+            className="mb-6 flex items-center gap-2 rounded-[10px] border border-border-strong bg-surface px-4 py-2.5"
+          >
+            <WifiOff
+              size={16}
+              aria-hidden
+              className="text-foreground-secondary"
+            />
+            <Text variant="secondary" className="text-sm">
+              {t("reconnecting")}
+            </Text>
+          </div>
+        )}
 
-      {state.phase === "lobby" && (
-        <RoomLobby
-          state={state}
-          currentUserId={userId}
-          onReady={ready}
-          onLock={lock}
-          onKick={kick}
-        />
-      )}
-      {state.phase === "round" && (
-        <RoomRound
-          state={state}
-          currentUserId={userId}
-          lastRejection={lastRejection}
-          onClaim={claim}
-        />
-      )}
-      {state.phase === "between" && (
-        <RoomBetween state={state} currentUserId={userId} onNext={next} />
-      )}
-      {/* phase "finished" is handled above, before the connection checks, so a
+        {state.phase === "lobby" && (
+          <RoomLobby
+            state={state}
+            currentUserId={userId}
+            onReady={ready}
+            onStart={start}
+            onLock={lock}
+            onKick={kick}
+            onSetMode={setMode}
+          />
+        )}
+        {state.phase === "round" && (
+          <RoomRoundBoard
+            state={state}
+            currentUserId={userId}
+            packFormat={packFormat}
+            actions={{
+              claim,
+              cut,
+              pick,
+              vote,
+              submitRanking,
+              placeItem,
+              lastRejection,
+              lastModeRejection,
+              modeRejectionSeq,
+            }}
+          />
+        )}
+        {state.phase === "between" && (
+          <RoomBetweenBoard
+            state={state}
+            currentUserId={userId}
+            packFormat={packFormat}
+            onNext={next}
+          />
+        )}
+        {state.phase === "guessing" && (
+          <GuessingPhaseScreen
+            state={state}
+            currentUserId={userId}
+            onSubmit={guess}
+          />
+        )}
+        {/* phase "finished" is handled above, before the connection checks, so a
           torn-down socket still shows results. */}
-    </Shell>
+      </Shell>
+    </>
   );
 }
 
 function Shell({ children }: { children: React.ReactNode }) {
-  return <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>{children}</div>;
+  return (
+    <div
+      className={cn(
+        pageContainer(1320),
+        // The mock's 120px bottom gutter clears its own fixed start bar. Ours
+        // has to clear that AND the app's mobile bottom nav stacked under it
+        // (~72px each), or the last card sits behind them both.
+        "flex flex-1 flex-col gap-[22px] pt-[26px] pb-[60px] max-[720px]:pt-[18px] max-[720px]:pb-[168px]",
+      )}
+    >
+      {children}
+    </div>
+  );
 }
 
 function RoomEnded({ packId }: { packId: string | null }) {
   const t = useTranslations("room");
+  const router = useRouter();
   useExitToPack(packId);
   return (
-    <div className="flex flex-col items-center gap-3 py-20 text-center">
+    <div className="flex flex-col items-center gap-4 py-20 text-center">
       <Text as="h1" variant="title" className="text-2xl">
         {t("ended.heading")}
       </Text>
       <Text variant="secondary" className="max-w-sm">
         {t("ended.description")}
       </Text>
+      {/* The timer above is the floor, not the exit. A terminal screen with no
+          control on it reads as a hang — and anyone who looks away and back
+          finds a page they have no way to leave. Same escape hatch, and the
+          same destination, as RoomKicked's. */}
+      <Button onClick={() => router.push(packId ? `/packs/${packId}` : "/")}>
+        {t("ended.leave")}
+      </Button>
     </div>
   );
 }

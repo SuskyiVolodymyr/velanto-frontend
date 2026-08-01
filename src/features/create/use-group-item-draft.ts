@@ -192,21 +192,27 @@ export function useGroupItemDraft(
     }
   }
 
-  async function addItem() {
-    if (validating || uploading) return;
+  /**
+   * Commit the draft, returning whether an item was actually added/saved.
+   * The caller (GroupEditor, T5) uses this to know when it's safe to collapse
+   * the add/edit panel back to the dashed trigger — a validation failure
+   * leaves the panel open with its error showing instead.
+   */
+  async function addItem(): Promise<boolean> {
+    if (validating || uploading) return false;
     setAddError("");
 
     if (draftType === "image") {
       if (!draftValue) {
         setAddError(t("imageRequired"));
-        return;
+        return false;
       }
       if (!draftTitle.trim()) {
         setAddError(t("imageTitleRequired"));
-        return;
+        return false;
       }
       pushItem({ type: "image", title: draftTitle.trim(), value: draftValue });
-      return;
+      return true;
     }
 
     // Empty is a silent no-op when composing (the author just hasn't typed yet),
@@ -214,7 +220,7 @@ export function useGroupItemDraft(
     // and saying nothing would look like the save had worked.
     if (!draftValue.trim()) {
       if (editingItemId) setAddError(t("itemTextRequired"));
-      return;
+      return false;
     }
 
     if (draftType === "text") {
@@ -223,18 +229,18 @@ export function useGroupItemDraft(
         title: draftValue.trim(),
         value: draftValue.trim(),
       });
-      return;
+      return true;
     }
 
     const videoId = extractYouTubeId(draftValue.trim());
     if (!videoId) {
       setAddError(t("notYoutubeLink"));
-      return;
+      return false;
     }
 
     if (!draftTitle.trim()) {
       setAddError(t("linkTitleRequired"));
-      return;
+      return false;
     }
 
     setValidating(true);
@@ -244,7 +250,7 @@ export function useGroupItemDraft(
       const result = await fetchYouTubeOEmbed(draftValue.trim());
       if (!result) {
         setAddError(t("videoNotFound"));
-        return;
+        return false;
       }
 
       pushItem({
@@ -252,6 +258,7 @@ export function useGroupItemDraft(
         title: draftTitle.trim(),
         value: draftValue.trim(),
       });
+      return true;
     } finally {
       setValidating(false);
     }

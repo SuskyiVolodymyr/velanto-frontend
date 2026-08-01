@@ -9,9 +9,10 @@ import { LoadingState } from "@/src/shared/components/LoadingState";
 import { Text } from "@/src/shared/components/Text";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { ApiError } from "@/src/shared/lib/api-client";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { pageContainer } from "@/src/shared/lib/page-container";
 import { cn } from "@/src/shared/lib/cn";
 import { friendsRoomsClient } from "./friends-rooms-client";
+import { ROOMS_DORMANT } from "./room-types";
 
 /** Which inline error state to show. `null` = still working (spinner). */
 type JoinLinkError = "notFound" | "unavailable" | "generic";
@@ -35,7 +36,14 @@ export function JoinByLink({ code }: { code: string }) {
   const t = useTranslations("room");
   const router = useRouter();
   const { user, status } = useAuth();
-  const [error, setError] = useState<JoinLinkError | null>(null);
+  // While rooms are dormant no invite code can resolve, so land straight on the
+  // graceful "not found" + browse state — never bounce a signed-out visitor
+  // through sign-in only to reach a guaranteed 404. Seeded here (not via the
+  // effect) so there is no spinner flash and no doomed join. Revives with one
+  // flip of ROOMS_DORMANT.
+  const [error, setError] = useState<JoinLinkError | null>(
+    ROOMS_DORMANT ? "notFound" : null,
+  );
 
   // Fire the sign-in redirect / join exactly once per code. join() has a side
   // effect (it claims a seat), and React strict mode double-invokes effects
@@ -44,6 +52,9 @@ export function JoinByLink({ code }: { code: string }) {
   const actedFor = useRef<string | null>(null);
 
   useEffect(() => {
+    // Rooms dormant — the initial state above is already the graceful dead-end;
+    // do not join or redirect.
+    if (ROOMS_DORMANT) return;
     // Wait for auth to settle. During "loading" `user` is momentarily null even
     // for a signed-in visitor, and acting then would wrongly bounce them to the
     // sign-in screen. (`status` is undefined only under a bare test mock; that
@@ -86,7 +97,7 @@ export function JoinByLink({ code }: { code: string }) {
 
   if (error) {
     return (
-      <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
+      <div className={cn(pageContainer(1320), "flex-1 py-10")}>
         <div className="flex flex-col items-center gap-4 py-16 text-center">
           <Text as="h1" variant="title" className="text-2xl">
             {t(`joinLink.${error}Title`)}
@@ -103,7 +114,7 @@ export function JoinByLink({ code }: { code: string }) {
   }
 
   return (
-    <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
+    <div className={cn(pageContainer(1320), "flex-1 py-10")}>
       <LoadingState label={t("joinLink.joining")} showLabel size={28} />
     </div>
   );

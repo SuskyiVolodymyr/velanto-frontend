@@ -25,6 +25,13 @@ export interface Report {
 
 export interface ReportWithReporter extends Report {
   reporterUsername: string;
+  /**
+   * What the report points at, named: the target account's username for a
+   * `user` report, the pack's title for `pack`/`round`. Null when the target
+   * has since been deleted — render the id instead of an empty name (see
+   * `reportTargetLabel`).
+   */
+  targetLabel: string | null;
 }
 
 export interface ReportList {

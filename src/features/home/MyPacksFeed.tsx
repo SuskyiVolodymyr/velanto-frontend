@@ -6,33 +6,49 @@ import { useAuth } from "@/src/shared/lib/auth-context";
 import { FilterChipRow } from "@/src/features/home/FilterChipRow";
 import { HomePagination } from "@/src/features/home/HomePagination";
 import { PackCard } from "@/src/features/home/PackCard";
+import {
+  PACK_GRID_CLASS,
+  PackGridSkeleton,
+} from "@/src/features/home/PackGridSkeleton";
 import { Text } from "@/src/shared/components/Text";
-import { LoadingState } from "@/src/shared/components/LoadingState";
 import { useMyPacks } from "@/src/features/home/api/my-packs.queries";
 import { PACKS_FEED_PAGE_SIZE } from "@/src/features/home/api/packs-feed";
+import {
+  DATE_ORDER_LABEL_KEYS,
+  DATE_ORDER_VALUES,
+  DEFAULT_DATE_ORDER,
+  type DateOrderValue,
+} from "@/src/features/home/filter-options";
 import type { PackStatus } from "@/src/shared/types/pack";
 
 // "all" is the UI sentinel for "no status filter" (every status).
 type StatusChoice = "all" | PackStatus;
 
 /**
- * The "My packs" tab: the signed-in author's own packs across every moderation
- * status, filterable by a status chip row. Each card carries a status badge (via
- * `showStatus`) so drafts / pending / rejected read at a glance. Sits beside the
- * public discovery feed in {@link BrowseTabs}, which only mounts it when signed
- * in — the login fallback here is a belt-and-braces guard.
+ * The signed-in author's own packs across every moderation status, filterable
+ * by a status chip row. Each card carries a status badge (via `showStatus`) so
+ * drafts / pending / rejected read at a glance. Mounted by the `/my-packs`
+ * route, which the sidebar only exposes to signed-in users (a signed-out click
+ * routes to /auth) — the login fallback here is a belt-and-braces guard.
  */
 export function MyPacksFeed() {
   const t = useTranslations("myPacks");
   const tStatus = useTranslations("status");
+  const tHome = useTranslations("home");
   const { user } = useAuth();
 
   const [status, setStatus] = useState<StatusChoice>("all");
+  const [dateOrder, setDateOrder] =
+    useState<DateOrderValue>(DEFAULT_DATE_ORDER);
   const [page, setPage] = useState(1);
 
   const filters = useMemo(
-    () => ({ status: status === "all" ? undefined : status, page }),
-    [status, page],
+    () => ({
+      status: status === "all" ? undefined : status,
+      sort: dateOrder,
+      page,
+    }),
+    [status, dateOrder, page],
   );
   const query = useMyPacks(user?.id ?? "", filters);
 
@@ -55,6 +71,16 @@ export function MyPacksFeed() {
     setPage(1);
   }
 
+  function selectDateOrder(next: DateOrderValue) {
+    setDateOrder(next);
+    setPage(1);
+  }
+
+  const dateOrderOptions = DATE_ORDER_VALUES.map((value) => ({
+    value,
+    label: tHome(DATE_ORDER_LABEL_KEYS[value]),
+  }));
+
   function goToPage(next: number) {
     setPage(next);
     if (typeof window !== "undefined") {
@@ -68,23 +94,35 @@ export function MyPacksFeed() {
 
   return (
     <div className="flex flex-col gap-6">
-      <FilterChipRow
-        options={statusOptions}
-        value={status}
-        onSelect={selectStatus}
-      />
+      <div className="flex flex-wrap items-center gap-2">
+        <FilterChipRow
+          options={statusOptions}
+          value={status}
+          onSelect={selectStatus}
+        />
+        {/* Right-aligned against the status chips, like the discovery feed's
+            secondary filters — wraps to its own left-aligned row on narrow
+            screens once the status chips no longer share the line. */}
+        <div className="ms-auto max-[480px]:ms-0">
+          <FilterChipRow
+            options={dateOrderOptions}
+            value={dateOrder}
+            onSelect={selectDateOrder}
+          />
+        </div>
+      </div>
 
       {query.isError ? (
         <Text variant="danger">{t("error")}</Text>
       ) : query.isLoading ? (
-        <LoadingState label={t("loading")} showLabel />
+        <PackGridSkeleton label={t("loading")} />
       ) : packs.length === 0 ? (
         <Text variant="secondary">
           {status === "all" ? t("empty") : t("emptyFiltered")}
         </Text>
       ) : (
         <>
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          <div className={PACK_GRID_CLASS}>
             {packs.map((pack) => (
               <PackCard key={pack.id} pack={pack} showStatus />
             ))}

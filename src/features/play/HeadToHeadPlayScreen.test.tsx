@@ -3,6 +3,7 @@ import { screen, waitFor } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { HeadToHeadPlayScreen } from "./HeadToHeadPlayScreen";
+import { usePlayResume } from "./use-play-resume";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { playsClient } from "@/src/shared/lib/plays-client";
@@ -32,6 +33,16 @@ vi.mock("@/src/shared/lib/plays-client", () => ({
     record: vi.fn().mockResolvedValue({ id: "play-1" }),
   },
 }));
+
+// Resume is exercised end-to-end via usePlaySession + use-play-resume unit
+// tests. Here it's stubbed with `seed: undefined` so the draw keeps using the
+// Math.random identity shuffle these matchup assertions rely on, while the
+// save/clear spies let us assert the screen wires them at the right moments.
+vi.mock("./use-play-resume", () => ({ usePlayResume: vi.fn() }));
+const resumeSave = vi.fn();
+const resumeClear = vi.fn();
+const resumeContinue = vi.fn();
+const resumeRestart = vi.fn();
 
 const MOCK_USER = {
   id: "u1",
@@ -118,7 +129,7 @@ async function pickAndConfirm(
   await user.click(screen.getByRole("button", { name: `Pick ${name}` }));
   await user.click(
     screen.getByRole("button", {
-      name: last ? "See results →" : "Next round →",
+      name: last ? "See results" : "Next round",
     }),
   );
 }
@@ -133,6 +144,19 @@ beforeEach(() => {
     user: MOCK_USER,
   });
   vi.mocked(playsClient.record).mockResolvedValue({ id: "play-1" });
+  vi.mocked(usePlayResume).mockReturnValue({
+    ready: true,
+    // undefined seed → useRoundSelections falls back to Math.random (mocked
+    // above to an identity shuffle), keeping the matchups deterministic.
+    seed: undefined as unknown as number,
+    initialRoundIndex: 0,
+    initialChoices: null,
+    saveProgress: resumeSave,
+    clearProgress: resumeClear,
+    needsChoice: false,
+    chooseContinue: resumeContinue,
+    chooseRestart: resumeRestart,
+  });
   sessionStorage.clear();
 });
 
@@ -244,7 +268,7 @@ describe("HeadToHeadPlayScreen", () => {
 
     // Every other format selects first and commits with a button; 1v1 used to
     // advance on the click itself, so a misclick was unrecoverable.
-    const confirm = screen.getByRole("button", { name: "Next round →" });
+    const confirm = screen.getByRole("button", { name: "Next round" });
     expect(confirm).toBeDisabled();
 
     await user.click(screen.getByRole("button", { name: "Pick Goku" }));
@@ -253,6 +277,8 @@ describe("HeadToHeadPlayScreen", () => {
       "true",
     );
     // Still on round 1 — the click chose a side, it did not commit it.
+    // getBy, singular: the counter lives only in the round header's eyebrow now,
+    // since PlayChrome's bar opts out of printing a second copy.
     expect(screen.getByText("Round 1 of 2")).toBeInTheDocument();
 
     // A pick is changeable right up until it's confirmed.
@@ -262,7 +288,7 @@ describe("HeadToHeadPlayScreen", () => {
       "false",
     );
 
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "Next round" }));
     // Absorbed from the retired "advances immediately after picking" test: the
     // next matchup's own contenders are on screen, not the previous round's.
     expect(await screen.findByText("Naruto")).toBeInTheDocument();
@@ -270,9 +296,7 @@ describe("HeadToHeadPlayScreen", () => {
     expect(screen.getByText("Round 2 of 2")).toBeInTheDocument();
     // The new matchup starts unselected, so the button can't be double-fired.
     // Round 2 of 2 is the last, so the confirm reads as finishing the pack.
-    expect(
-      screen.getByRole("button", { name: "See results →" }),
-    ).toBeDisabled();
+    expect(screen.getByRole("button", { name: "See results" })).toBeDisabled();
   });
 
   it("labels the last matchup's confirm as finishing the pack", async () => {
@@ -282,13 +306,13 @@ describe("HeadToHeadPlayScreen", () => {
 
     await user.click(screen.getByRole("button", { name: "Pick Goku" }));
     expect(
-      screen.getByRole("button", { name: "Next round →" }),
+      screen.getByRole("button", { name: "Next round" }),
     ).toBeInTheDocument();
-    await user.click(screen.getByRole("button", { name: "Next round →" }));
+    await user.click(screen.getByRole("button", { name: "Next round" }));
     await screen.findByText("Naruto");
 
     await user.click(screen.getByRole("button", { name: "Pick Sasuke" }));
-    await user.click(screen.getByRole("button", { name: "See results →" }));
+    await user.click(screen.getByRole("button", { name: "See results" }));
 
     // The label is the claim under test; that it actually finishes the pack is
     // proved by the redirect the two tests below assert.
@@ -365,5 +389,108 @@ describe("HeadToHeadPlayScreen", () => {
     await waitFor(() =>
       expect(replace).toHaveBeenCalledWith("/packs/pack-1v1/result"),
     );
+  });
+
+  it("resumes on the saved matchup with earlier picks restored", async () => {
+    // A play saved after round 1: cursor at index 1, round 0's two picks kept.
+    const restoredPicks = [
+      { roundIndex: 0, groupId: "gl", itemId: "i1", chosen: true },
+      { roundIndex: 0, groupId: "gr", itemId: "i2", chosen: false },
+    ];
+    vi.mocked(usePlayResume).mockReturnValue({
+      ready: true,
+      seed: undefined as unknown as number,
+      initialRoundIndex: 1,
+      initialChoices: restoredPicks,
+      saveProgress: resumeSave,
+      clearProgress: resumeClear,
+      // Already decided — this test covers the screen's OWN restore effect,
+      // not the modal gate (see the dedicated "resume choice" tests below).
+      needsChoice: false,
+      chooseContinue: resumeContinue,
+      chooseRestart: resumeRestart,
+    });
+    const user = userEvent.setup();
+    renderScreen(HEAD_TO_HEAD_PACK);
+
+    // Opens directly on round 2 (Naruto vs Sasuke) — round 1 is not replayed.
+    await screen.findByText("Naruto");
+    // Scoped to the contender cards: Goku must not be back on the board, but he
+    // IS expected in the "Your run so far" row as round 1's restored winner.
+    for (const card of screen.getAllByTestId("h2h-contender")) {
+      expect(card).not.toHaveTextContent("Goku");
+    }
+    expect(
+      screen.queryByRole("button", { name: "Pick Goku" }),
+    ).not.toBeInTheDocument();
+
+    // Finishing records all four picks: the two restored plus this matchup's.
+    await pickAndConfirm(user, "Naruto", { last: true });
+    await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
+    const [, body] = vi.mocked(playsClient.record).mock.calls[0];
+    expect(body.picks).toHaveLength(4);
+    expect(body.picks.slice(0, 2)).toEqual(restoredPicks);
+  });
+
+  it("saves resume progress after a matchup and clears it on completion", async () => {
+    const user = userEvent.setup();
+    renderScreen(HEAD_TO_HEAD_PACK);
+    await screen.findByText("Goku");
+
+    // Finishing the first (non-final) matchup advances to round 1 and saves.
+    await pickAndConfirm(user, "Goku");
+    expect(resumeSave).toHaveBeenCalledWith(1, expect.any(Array));
+
+    // Finishing the last matchup clears the record instead of saving again.
+    await screen.findByText("Naruto");
+    await pickAndConfirm(user, "Naruto", { last: true });
+    await waitFor(() => expect(resumeClear).toHaveBeenCalled());
+    expect(resumeSave).toHaveBeenCalledTimes(1);
+  });
+
+  describe("resume-choice modal", () => {
+    beforeEach(() => {
+      vi.mocked(usePlayResume).mockReturnValue({
+        ready: true,
+        seed: null,
+        initialRoundIndex: 1,
+        initialChoices: null,
+        saveProgress: resumeSave,
+        clearProgress: resumeClear,
+        needsChoice: true,
+        chooseContinue: resumeContinue,
+        chooseRestart: resumeRestart,
+      });
+    });
+
+    it("shows the modal instead of any matchup while a decision is pending", async () => {
+      renderScreen(HEAD_TO_HEAD_PACK);
+
+      expect(await screen.findByRole("alertdialog")).toBeInTheDocument();
+      expect(screen.getByText("1 round done")).toBeInTheDocument();
+      expect(screen.queryByTestId("h2h-contender")).not.toBeInTheDocument();
+    });
+
+    it("calls chooseContinue when Continue is clicked", async () => {
+      const user = userEvent.setup();
+      renderScreen(HEAD_TO_HEAD_PACK);
+
+      await user.click(await screen.findByRole("button", { name: "Continue" }));
+
+      expect(resumeContinue).toHaveBeenCalledTimes(1);
+      expect(resumeRestart).not.toHaveBeenCalled();
+    });
+
+    it("calls chooseRestart when Start over is clicked", async () => {
+      const user = userEvent.setup();
+      renderScreen(HEAD_TO_HEAD_PACK);
+
+      await user.click(
+        await screen.findByRole("button", { name: "Start over" }),
+      );
+
+      expect(resumeRestart).toHaveBeenCalledTimes(1);
+      expect(resumeContinue).not.toHaveBeenCalled();
+    });
   });
 });

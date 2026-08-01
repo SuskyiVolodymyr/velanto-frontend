@@ -11,11 +11,19 @@ import type { User } from "@/src/shared/types/user";
 // The room hook and auth are the whole surface RoomScreen sits on; drive both
 // from fixtures so each phase can be rendered in isolation.
 const claim = vi.fn();
+const cut = vi.fn();
+const pick = vi.fn();
+const vote = vi.fn();
+const submitRanking = vi.fn();
+const placeItem = vi.fn();
 const ready = vi.fn();
+const start = vi.fn();
 const next = vi.fn();
 const lock = vi.fn();
 const leave = vi.fn();
 const kick = vi.fn();
+const setMode = vi.fn();
+const guess = vi.fn();
 const push = vi.fn();
 
 let room: FriendsRoom;
@@ -52,6 +60,7 @@ function player(
     ready: overrides.ready ?? false,
     next: overrides.next ?? false,
     claimedItemId: overrides.claimedItemId ?? null,
+    label: overrides.label ?? null,
   };
 }
 
@@ -61,10 +70,15 @@ function baseState(overrides: Partial<RoomState> = {}): RoomState {
     code: "ABC123",
     packId: "pack-1",
     packTitle: "Best Movies",
+    packFormat: "sacrifice_one",
+    packRounds: 3,
+    packAuthorUsername: "packsmith",
     hostId: "host",
     status: "lobby",
     phase: "lobby",
     locked: false,
+    mode: "claim",
+    availableModes: [{ mode: "claim", available: true, maxPlayers: 4 }],
     maxPlayers: 4,
     totalRounds: 3,
     roundIndex: 0,
@@ -75,6 +89,10 @@ function baseState(overrides: Partial<RoomState> = {}): RoomState {
     ],
     round: null,
     results: [],
+    labels: null,
+    guessing: null,
+    endgame: null,
+    myGuess: null,
     ...overrides,
   };
 }
@@ -89,13 +107,23 @@ function setRoom(
     state,
     connection,
     lastRejection,
+    lastModeRejection: null,
+    modeRejectionSeq: 0,
     kicked,
     claim,
+    cut,
+    pick,
+    vote,
+    submitRanking,
+    placeItem,
     ready,
+    start,
     next,
     lock,
     leave,
     kick,
+    setMode,
+    guess,
   };
 }
 
@@ -116,14 +144,19 @@ beforeEach(() => {
 });
 
 describe("RoomScreen — lobby", () => {
-  it("renders every seat plus empty chairs up to capacity", () => {
+  // Empty-seat placeholders are gone (Room Lobby.dc.html): a capacity note says
+  // the same thing without implying the room is waiting on a specific number of
+  // people who are on their way.
+  it("renders every seat and says how much room is left", () => {
     setRoom(baseState());
     render(<RoomScreen roomId="room-1" />);
 
     expect(screen.getByText("Alice")).toBeInTheDocument();
     expect(screen.getByText("Bob")).toBeInTheDocument();
-    // 4 seats total, 2 filled ⇒ 2 empty chairs.
-    expect(screen.getAllByText("Empty seat")).toHaveLength(2);
+    expect(screen.queryByText("Empty seat")).not.toBeInTheDocument();
+    // 4 seats total, 2 filled.
+    expect(screen.getByText("2/4")).toBeInTheDocument();
+    expect(screen.getByText("Room for 2 more")).toBeInTheDocument();
   });
 
   it("shows the host the copy and lock controls", () => {
@@ -135,7 +168,7 @@ describe("RoomScreen — lobby", () => {
       screen.getByRole("button", { name: "Copy code" }),
     ).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: "Lock room" }),
+      screen.getByRole("switch", { name: "Lock room" }),
     ).toBeInTheDocument();
   });
 
@@ -148,7 +181,7 @@ describe("RoomScreen — lobby", () => {
       screen.queryByRole("button", { name: "Copy code" }),
     ).not.toBeInTheDocument();
     expect(
-      screen.queryByRole("button", { name: "Lock room" }),
+      screen.queryByRole("switch", { name: "Lock room" }),
     ).not.toBeInTheDocument();
   });
 
@@ -177,8 +210,53 @@ describe("RoomScreen — lobby", () => {
     setRoom(baseState());
     render(<RoomScreen roomId="room-1" />);
 
-    await user.click(screen.getByRole("button", { name: "Ready up" }));
+    // Rendered twice — inline on desktop, fixed bar on phones — and exactly one
+    // is visible at a time, so either is the control the viewer would press.
+    await user.click(screen.getAllByRole("button", { name: "I'm ready" })[0]);
     expect(ready).toHaveBeenCalledTimes(1);
+  });
+
+  // Ready is consent; the host is the trigger. Before this the room started
+  // itself on the last Ready, so there was no Start to press.
+  it("lets the host start once everyone present is ready", async () => {
+    const user = userEvent.setup();
+    currentUser = asUser("host");
+    setRoom(
+      baseState({
+        players: [
+          player("host", "Alice", { seat: 0, ready: true }),
+          player("guest", "Bob", { seat: 1, ready: true }),
+        ],
+      }),
+    );
+    render(<RoomScreen roomId="room-1" />);
+
+    expect(screen.getByText("Everyone's ready")).toBeInTheDocument();
+    await user.click(screen.getAllByRole("button", { name: "Start Claim" })[0]);
+    expect(start).toHaveBeenCalledTimes(1);
+  });
+
+  it("keeps Start out of reach while anyone is still deciding", () => {
+    currentUser = asUser("host");
+    setRoom(baseState()); // neither player is ready
+    render(<RoomScreen roomId="room-1" />);
+
+    expect(
+      screen.getAllByRole("button", { name: "Start Claim" })[0],
+    ).toBeDisabled();
+    expect(screen.getByText("Waiting on 2")).toBeInTheDocument();
+  });
+
+  // A guest pressing Start would be refused server-side anyway; the point is
+  // that they are told who they are waiting on instead.
+  it("shows a guest that the host holds the start", () => {
+    currentUser = asUser("guest");
+    setRoom(baseState());
+    render(<RoomScreen roomId="room-1" />);
+
+    expect(
+      screen.getAllByRole("button", { name: "Waiting for host" })[0],
+    ).toBeDisabled();
   });
 });
 
@@ -242,7 +320,7 @@ describe("RoomScreen — round", () => {
     setRoom(roundState());
     render(<RoomScreen roomId="room-1" />);
 
-    expect(screen.getByText("1 of 2 have chosen")).toBeInTheDocument();
+    expect(screen.getByText("1 of 2 chosen")).toBeInTheDocument();
   });
 
   // A disconnected player keeps their seat and the round waits for them — the
@@ -277,8 +355,8 @@ describe("RoomScreen — round", () => {
     );
     render(<RoomScreen roomId="room-1" />);
 
-    expect(screen.getByText("1 of 3 have chosen")).toBeInTheDocument();
-    expect(screen.queryByText("1 of 2 have chosen")).not.toBeInTheDocument();
+    expect(screen.getByText("1 of 3 chosen")).toBeInTheDocument();
+    expect(screen.queryByText("1 of 2 chosen")).not.toBeInTheDocument();
   });
 
   // Without a name, every round rendered an identical header — no title, and a
@@ -321,11 +399,35 @@ describe("RoomScreen — round", () => {
 });
 
 describe("RoomScreen — pack title", () => {
+  // The sticky header carries the title on every live phase — someone who
+  // joined from a shared link has no other answer to "what are we playing?".
   it.each([
     ["lobby", () => baseState()],
     ["round", () => roundStateForTitle()],
-  ])("heads the %s with the pack title", (_phase, build) => {
+  ])("names the pack in the %s header", (_phase, build) => {
     setRoom(build());
+    render(<RoomScreen roomId="room-1" />);
+
+    // [0] is the sticky room header. The round board renders a bare <header>
+    // of its own, which counts as a second banner landmark — a wart to clean up
+    // when that board is rebuilt, not something to assert around here.
+    const header = screen.getAllByRole("banner")[0];
+    expect(within(header).getByText("Best Movies")).toBeInTheDocument();
+  });
+
+  // The lobby heads itself ("Choose how you'll play"), so the page must not
+  // also carry a second, hidden h1 with the title.
+  it("gives the lobby exactly one h1, its own", () => {
+    setRoom(baseState());
+    render(<RoomScreen roomId="room-1" />);
+
+    const h1s = screen.getAllByRole("heading", { level: 1 });
+    expect(h1s).toHaveLength(1);
+    expect(h1s[0]).toHaveTextContent("Choose how you'll play");
+  });
+
+  it("falls back to the pack title as the h1 once a round is up", () => {
+    setRoom(roundStateForTitle());
     render(<RoomScreen roomId="room-1" />);
 
     expect(
@@ -438,6 +540,108 @@ describe("RoomScreen — between", () => {
   });
 });
 
+describe("RoomScreen — results by RoundResult kind", () => {
+  it("renders a vote-kind round with its winning option and tally, not the claim survivor board", () => {
+    setRoom(
+      baseState({
+        mode: "voting",
+        status: "finished",
+        phase: "finished",
+        totalRounds: 1,
+        results: [
+          {
+            kind: "vote",
+            index: 0,
+            name: "Round 1",
+            items: [textItem("i1", "Pizza"), textItem("i2", "Sushi")],
+            optionIds: ["i1", "i2"],
+            votes: { host: "i1" },
+            tally: { i1: 1 },
+            winnerOptionId: "i1",
+            tieBroken: false,
+            priorityUserId: "host",
+          },
+        ],
+      }),
+    );
+    render(<RoomScreen roomId="room-1" />);
+    expect(screen.getByText("Pizza")).toBeInTheDocument();
+  });
+
+  it("renders a borda-kind round with its tiered order", () => {
+    setRoom(
+      baseState({
+        mode: "shared_grid",
+        status: "finished",
+        phase: "finished",
+        totalRounds: 1,
+        results: [
+          {
+            kind: "borda",
+            index: 0,
+            name: "Round 1",
+            items: [textItem("i1", "A"), textItem("i2", "B")],
+            scores: { i1: 3, i2: 1 },
+            order: [["i1"], ["i2"]],
+            ballots: {},
+          },
+        ],
+      }),
+    );
+    render(<RoomScreen roomId="room-1" />);
+    const region = screen.getByRole("region", { name: "Round 1" });
+    expect(region).toHaveTextContent("A");
+    expect(region).toHaveTextContent("B");
+  });
+
+  it("renders a relay-kind round with its final flat order", () => {
+    setRoom(
+      baseState({
+        mode: "relay",
+        status: "finished",
+        phase: "finished",
+        totalRounds: 1,
+        results: [
+          {
+            kind: "relay",
+            index: 0,
+            name: "Round 1",
+            items: [textItem("i1", "A"), textItem("i2", "B")],
+            order: ["i2", "i1"],
+            placements: [],
+          },
+        ],
+      }),
+    );
+    render(<RoomScreen roomId="room-1" />);
+    const region = screen.getByRole("region", { name: "Round 1" });
+    expect(region).toHaveTextContent("A");
+    expect(region).toHaveTextContent("B");
+  });
+});
+
+describe("RoomScreen — guess-who identity reveal", () => {
+  it("renders the identity reveal instead of RoomResults when mode is guess_who and endgame is set", () => {
+    setRoom(
+      baseState({
+        status: "finished",
+        phase: "finished",
+        mode: "guess_who",
+        endgame: { kind: "identity_reveal", mapping: { P1: "host" } },
+        myGuess: { P1: "host" },
+      }),
+    );
+    render(<RoomScreen roomId="room-1" />);
+
+    // The reveal screen heads itself with the winner/your-guess panels, not a
+    // "Reveal" eyebrow, so identify it by the panel only it renders.
+    expect(
+      screen.getByRole("region", { name: "Your guess" }),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Results")).not.toBeInTheDocument();
+  });
+});
+
 describe("RoomScreen — results", () => {
   function finishedState() {
     return baseState({
@@ -446,6 +650,7 @@ describe("RoomScreen — results", () => {
       totalRounds: 2,
       results: [
         {
+          kind: "survivor",
           index: 0,
           name: "Semifinals",
           items: [textItem("a1", "Apple"), textItem("a2", "Banana")],
@@ -453,6 +658,7 @@ describe("RoomScreen — results", () => {
           survivorItemId: "a2",
         },
         {
+          kind: "survivor",
           index: 1,
           name: "Final",
           items: [textItem("b1", "Cherry"), textItem("b2", "Date")],
@@ -509,6 +715,33 @@ describe("RoomScreen — results", () => {
     const round1 = screen.getByRole("region", { name: "Round 1" });
     expect(within(round1).getByText("Round 1")).toBeInTheDocument();
   });
+
+  it("shows the ordered cut history for a turn_based_cut round that carries one", () => {
+    setRoom(
+      baseState({
+        mode: "turn_based_cut",
+        status: "finished",
+        phase: "finished",
+        totalRounds: 1,
+        results: [
+          {
+            kind: "survivor",
+            index: 0,
+            name: "Round 1",
+            items: [textItem("a1", "Apple"), textItem("a2", "Banana")],
+            claims: { host: "a1" },
+            survivorItemId: "a2",
+            cuts: [{ userId: "host", itemId: "a1" }],
+          },
+        ],
+      }),
+    );
+    render(<RoomScreen roomId="room-1" />);
+
+    const history = screen.getByLabelText(/cut order/i);
+    expect(history).toHaveTextContent("Alice");
+    expect(history).toHaveTextContent("Apple");
+  });
 });
 
 // A terminal room is a dead end: the socket is gone and there is nothing to
@@ -530,6 +763,19 @@ describe("RoomScreen — getting out", () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  // The six-second timer is the floor, not the exit: a dead-end screen with no
+  // control on it reads as a hang, and anyone who looks away and back finds
+  // themselves on a page they cannot leave.
+  it("offers a way out of the ended room without waiting for the timer", async () => {
+    setRoom(baseState(), "closed");
+    render(<RoomScreen roomId="room-1" />);
+
+    await userEvent.click(
+      screen.getByRole("button", { name: /back to pack/i }),
+    );
+    expect(push).toHaveBeenCalledWith("/packs/pack-1");
   });
 
   it("sends you back to the pack after the host removes you", () => {
@@ -615,6 +861,7 @@ describe("RoomScreen — connection", () => {
         totalRounds: 1,
         results: [
           {
+            kind: "survivor",
             index: 0,
             name: "Round 1",
             items: [textItem("a1", "Apple"), textItem("a2", "Banana")],

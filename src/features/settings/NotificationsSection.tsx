@@ -6,6 +6,7 @@ import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { Skeleton } from "@/src/shared/components/Skeleton";
 import { SettingsSectionSkeleton } from "@/src/features/settings/SettingsSectionSkeleton";
+import { notificationVisual } from "@/src/shared/components/notification-visual";
 import { cn } from "@/src/shared/lib/cn";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import {
@@ -25,6 +26,7 @@ const LABEL_KEYS: Record<NotificationType, string> = {
   comment_mention: "notifCommentMention",
   comment_reply: "notifCommentReply",
   pack_deleted_warning: "notifPackDeleted",
+  pack_changes_requested: "notifPackChangesRequested",
 };
 
 export function NotificationsSection() {
@@ -42,6 +44,10 @@ export function NotificationsSection() {
   // busy/error indicators to the row that was toggled.
   const pendingType = setPref.isPending ? setPref.variables?.type : undefined;
   const erroredType = setPref.isError ? setPref.variables?.type : undefined;
+
+  const enabledCount = prefs
+    ? NOTIFICATION_TYPES.filter((type) => prefs[type]).length
+    : 0;
 
   function handleToggle(type: NotificationType) {
     if (!prefs) return;
@@ -78,9 +84,12 @@ export function NotificationsSection() {
       {status === "authenticated" && !fetchError && !prefs && (
         <div className="flex flex-col gap-2" aria-hidden>
           {NOTIFICATION_TYPES.map((type) => (
-            <Card key={type} className="hover:translate-y-0 hover:shadow-none">
+            <Card key={type}>
               <div className="flex items-center justify-between gap-4">
-                <Skeleton className="h-5 w-44" />
+                <div className="flex min-w-0 items-center gap-3">
+                  <Skeleton className="h-10 w-10 shrink-0 rounded-[13px]" />
+                  <Skeleton className="h-5 w-44" />
+                </div>
                 <Skeleton className="h-6 w-11 shrink-0 rounded-full" />
               </div>
             </Card>
@@ -88,46 +97,69 @@ export function NotificationsSection() {
         </div>
       )}
       {status === "authenticated" && prefs && (
-        <div className="flex flex-col gap-2">
-          {NOTIFICATION_TYPES.map((type) => (
-            <Card
-              key={type}
-              className="flex flex-col gap-1 hover:translate-y-0 hover:shadow-none"
-            >
-              <div className="flex items-center justify-between gap-4">
-                <Text className="font-semibold">{t(LABEL_KEYS[type])}</Text>
-                <button
-                  type="button"
-                  role="switch"
-                  aria-checked={prefs[type]}
-                  aria-label={t(LABEL_KEYS[type])}
-                  disabled={pendingType === type}
-                  onClick={() => handleToggle(type)}
-                  className={cn(
-                    "h-6 w-11 shrink-0 rounded-full border transition-colors",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
-                    "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
-                    prefs[type]
-                      ? "border-acc bg-acc/30"
-                      : "border-border bg-white/5",
+        <>
+          <Text variant="secondary" className="text-sm">
+            {t("notifEnabledCount", {
+              count: enabledCount,
+              total: NOTIFICATION_TYPES.length,
+            })}
+          </Text>
+          <div className="flex flex-col gap-2">
+            {NOTIFICATION_TYPES.map((type) => {
+              const { tone, Icon } = notificationVisual(type);
+              return (
+                <Card key={type} className="flex flex-col gap-1">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span
+                        aria-hidden
+                        className="grid h-10 w-10 shrink-0 place-items-center rounded-[13px]"
+                        style={{
+                          color: tone,
+                          backgroundColor: `${tone}24`,
+                          border: `1px solid ${tone}4d`,
+                        }}
+                      >
+                        <Icon className="h-[18px] w-[18px]" strokeWidth={2} />
+                      </span>
+                      <Text className="min-w-0 font-semibold">
+                        {t(LABEL_KEYS[type])}
+                      </Text>
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={prefs[type]}
+                      aria-label={t(LABEL_KEYS[type])}
+                      disabled={pendingType === type}
+                      onClick={() => handleToggle(type)}
+                      className={cn(
+                        "h-6 w-11 shrink-0 rounded-full border transition-colors",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
+                        "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                        prefs[type]
+                          ? "border-acc bg-acc/30"
+                          : "border-border bg-white/5",
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "block h-4 w-4 rounded-full bg-foreground transition-transform",
+                          prefs[type] ? "translate-x-6" : "translate-x-1",
+                        )}
+                      />
+                    </button>
+                  </div>
+                  {erroredType === type && (
+                    <Text variant="danger" className="text-xs">
+                      {t("notificationUpdateError")}
+                    </Text>
                   )}
-                >
-                  <span
-                    className={cn(
-                      "block h-4 w-4 rounded-full bg-foreground transition-transform",
-                      prefs[type] ? "translate-x-6" : "translate-x-1",
-                    )}
-                  />
-                </button>
-              </div>
-              {erroredType === type && (
-                <Text variant="danger" className="text-xs">
-                  {t("notificationUpdateError")}
-                </Text>
-              )}
-            </Card>
-          ))}
-        </div>
+                </Card>
+              );
+            })}
+          </div>
+        </>
       )}
     </section>
   );

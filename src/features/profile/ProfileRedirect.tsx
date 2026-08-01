@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { Text } from "@/src/shared/components/Text";
+import { Card } from "@/src/shared/components/Card";
 import { buttonClassName } from "@/src/shared/components/Button";
 
 /**
@@ -28,14 +29,16 @@ export function ProfileRedirect() {
 
   if (status === "unauthenticated") {
     return (
-      <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">{t("loginRequiredView")}</Text>
-        <Link
-          href="/auth?next=%2Fprofile"
-          className={buttonClassName("primary", "mt-4 w-fit")}
-        >
-          {t("logIn")}
-        </Link>
+      <div className="mx-auto max-w-md px-7 py-16">
+        <Card className="flex flex-col items-center gap-4 text-center">
+          <Text variant="secondary">{t("loginRequiredView")}</Text>
+          <Link
+            href="/auth?next=%2Fprofile"
+            className={buttonClassName("primary", "w-fit")}
+          >
+            {t("logIn")}
+          </Link>
+        </Card>
       </div>
     );
   }

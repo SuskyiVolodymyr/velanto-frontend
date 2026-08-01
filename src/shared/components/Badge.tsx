@@ -7,12 +7,13 @@ export interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {
   variant?: BadgeVariant;
 }
 
+// A pill label — fill + text, no border. One meaning per colour (design rule 3).
+// `default` is the neutral pill; `accent` is cyan; `overlay` is the glass pill
+// for badges sitting on cover art (dark scrim + blur, readable over any image).
 const variantClasses: Record<BadgeVariant, string> = {
-  default: "bg-white/[0.04] text-foreground-secondary border border-border",
-  accent: "bg-acc/10 text-acc border border-acc/30",
-  // Readable over any cover image (light or dark): dark scrim + blur + white
-  // text. Used for badges overlaid on pack cover art.
-  overlay: "bg-black/50 text-white/95 border border-white/20 backdrop-blur-sm",
+  default: "bg-white/[0.07] text-foreground-secondary",
+  accent: "bg-acc/[0.16] text-acc-hover",
+  overlay: "bg-black/55 text-white/95 backdrop-blur-sm",
 };
 
 export function Badge({
@@ -23,7 +24,7 @@ export function Badge({
   return (
     <span
       className={cn(
-        "inline-flex items-center rounded-[8px] px-2.5 py-1 text-xs font-medium tracking-[-0.01em]",
+        "inline-flex items-center rounded-pill px-2.5 py-1 text-[11px] font-bold tracking-[0.04em]",
         variantClasses[variant],
         className,
       )}

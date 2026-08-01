@@ -8,14 +8,14 @@ import {
   PACK_LANGUAGES,
   PACK_LANGUAGE_NAMES,
 } from "@/src/shared/types/pack-language";
-import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { TagPickerModal } from "@/src/shared/components/TagPickerModal";
 import { TextField } from "@/src/shared/components/form/TextField";
 import { TextareaField } from "@/src/shared/components/form/TextareaField";
 import { SelectField } from "@/src/shared/components/form/SelectField";
 import { CoverImageField } from "@/src/features/create/CoverImageField";
-import { cn } from "@/src/shared/lib/cn";
+import { SwatchPicker } from "@/src/shared/components/SwatchPicker";
+import { StepHeader } from "@/src/features/create/StepHeader";
 import {
   type CreatePackValues,
   MAX_TAGS,
@@ -24,9 +24,10 @@ import {
 } from "@/src/features/create/create-pack.schema";
 
 /**
- * The "Basics" section: title, description, cover tone and tag picker. Reads and
- * writes the shared react-hook-form state through context, so it stays in sync
- * with the rest of the create form without prop drilling.
+ * The "Basics" section: title, description, cover tone, cover image, pack
+ * language and the tag picker. Reads and writes the shared react-hook-form
+ * state through context, so it stays in sync with the rest of the create form
+ * without prop drilling.
  */
 export function PackMetaFields({
   onCoverUploadingChange,
@@ -43,130 +44,146 @@ export function PackMetaFields({
   const [tagPickerOpen, setTagPickerOpen] = useState(false);
 
   return (
-    <section className="flex flex-col gap-3">
-      <Text as="h2" variant="title" className="text-lg">
-        {t("basicsHeading")}
-      </Text>
-      {/*
-        The pack CONTENT's language — what the pack is written in, not what the
-        UI is in. Offers all 11 PACK_LANGUAGES, which is a deliberate superset
-        of the 8 interface LOCALES: es/fr/pt have no catalog and can ONLY be
-        reached here, because a pack's content language carries no GDPR
-        targeting signal while the interface's does (see pack-language.ts).
-      */}
-      <SelectField
-        name="language"
-        label={t("languageLabel")}
-        aria-describedby="pack-language-hint"
-        options={PACK_LANGUAGES.map((code) => ({
-          value: code,
-          label: PACK_LANGUAGE_NAMES[code],
-        }))}
-      />
-      <Text
-        id="pack-language-hint"
-        variant="tertiary"
-        className="-mt-1 text-xs"
-      >
-        {t("languageHint")}
-      </Text>
-      <div className="flex flex-col gap-1">
-        <TextField
-          name="title"
-          label={t("packTitle")}
-          srOnlyLabel
-          placeholder={t("packTitle")}
-          maxLength={TITLE_MAX}
-          disabled={isSubmitting}
-        />
-        <Text
-          variant="tertiary"
-          className="self-end text-xs tabular-nums"
-          aria-hidden
-        >
-          {title.length}/{TITLE_MAX}
-        </Text>
-      </div>
-      <div className="flex flex-col gap-1">
-        <TextareaField
-          name="description"
-          label={t("packDescription")}
-          srOnlyLabel
-          placeholder={t("descriptionPlaceholder")}
-          rows={3}
-          maxLength={DESCRIPTION_MAX}
-          disabled={isSubmitting}
-        />
-        <Text
-          variant="tertiary"
-          className="self-end text-xs tabular-nums"
-          aria-hidden
-        >
-          {description.length}/{DESCRIPTION_MAX}
-        </Text>
-      </div>
-      <div className="flex flex-col gap-2">
-        <Text variant="secondary" className="text-xs">
-          {t("coverTone")}
-        </Text>
-        <div className="flex gap-2">
-          {COVER_TONES.map((tone) => (
-            <button
-              key={tone}
-              type="button"
-              onClick={() => setValue("coverTone", tone)}
-              aria-label={t("coverToneSwatch", { tone })}
-              aria-pressed={coverTone === tone}
-              style={{ background: tone }}
-              className={cn(
-                "h-9 w-9 rounded-[10px] border-2",
-                coverTone === tone ? "border-acc" : "border-transparent",
-              )}
-            />
-          ))}
-        </div>
-      </div>
-      <CoverImageField onUploadingChange={onCoverUploadingChange} />
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between gap-2">
-          <Text variant="secondary" className="text-xs">
-            {t("tags")}
-          </Text>
-          <Text variant="tertiary" className="text-xs tabular-nums">
-            {tags.length}/{MAX_TAGS}
-          </Text>
-        </div>
-        {tags.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {tags.map((tag) => (
-              <button
-                key={tag}
-                type="button"
-                onClick={() =>
-                  setValue(
-                    "tags",
-                    tags.filter((value) => value !== tag),
-                  )
-                }
-                aria-label={t("removeTag", { tag })}
-                className="inline-flex items-center gap-1 rounded-full border border-border bg-white/[0.04] px-3 py-1 text-xs text-foreground transition-colors hover:border-border-strong"
-              >
-                {tag}
-                <span aria-hidden>×</span>
-              </button>
-            ))}
+    <section className="flex flex-col">
+      <StepHeader title={t("basicsHeading")} />
+      <div className="flex flex-col gap-[14px] rounded-card border border-border bg-surface-card p-[18px]">
+        <div className="flex flex-col gap-[7px]">
+          <div className="flex items-center gap-2">
+            <label
+              htmlFor="title"
+              className="text-[12.5px] font-medium text-foreground-secondary"
+            >
+              {t("packTitle")}
+            </label>
+            <Text
+              variant="tertiary"
+              className="ms-auto text-xs tabular-nums"
+              aria-hidden
+            >
+              {title.length}/{TITLE_MAX}
+            </Text>
           </div>
-        )}
-        <Button
-          type="button"
-          variant="secondary"
-          onClick={() => setTagPickerOpen(true)}
-          className="self-start"
-        >
-          {tags.length === 0
-            ? t("selectTags")
-            : t("tagsSelected", { count: tags.length })}
-        </Button>
+          <TextField
+            name="title"
+            label={t("packTitle")}
+            srOnlyLabel
+            placeholder={t("titlePlaceholder")}
+            maxLength={TITLE_MAX}
+            disabled={isSubmitting}
+          />
+        </div>
+        <div className="flex flex-col gap-[7px]">
+          <div className="flex items-center gap-2">
+            <label
+              htmlFor="description"
+              className="text-[12.5px] font-medium text-foreground-secondary"
+            >
+              {t("packDescription")}
+            </label>
+            <Text
+              variant="tertiary"
+              className="ms-auto text-xs tabular-nums"
+              aria-hidden
+            >
+              {description.length}/{DESCRIPTION_MAX}
+            </Text>
+          </div>
+          <TextareaField
+            name="description"
+            label={t("packDescription")}
+            srOnlyLabel
+            placeholder={t("descriptionPlaceholder")}
+            rows={2}
+            maxLength={DESCRIPTION_MAX}
+            disabled={isSubmitting}
+          />
+        </div>
+        <div className="flex flex-col gap-2">
+          <Text
+            variant="secondary"
+            className="mb-[7px] text-[12.5px] font-medium"
+          >
+            {t("coverTone")}
+          </Text>
+          <SwatchPicker
+            swatches={COVER_TONES}
+            value={coverTone}
+            onChange={(tone) => setValue("coverTone", tone)}
+            getLabel={(tone) => t("coverToneSwatch", { tone })}
+            swatchStyle="gradient"
+          />
+        </div>
+        {/*
+          Mock: Tags (flex:1) and Cover (fixed ~210px) sit side by side in one
+          row — not two independent full-width blocks.
+        */}
+        <div className="flex flex-wrap gap-[14px]">
+          <div className="flex min-w-[180px] flex-1 flex-col gap-2">
+            <div className="flex items-center gap-2">
+              <Text variant="secondary" className="text-[12.5px] font-medium">
+                {t("tags")}
+              </Text>
+              <Text variant="tertiary" className="ms-auto text-xs tabular-nums">
+                {t("tagsCount", { count: tags.length, max: MAX_TAGS })}
+              </Text>
+            </div>
+            <div className="flex min-h-11 flex-wrap items-center gap-[7px] rounded-[12px] border border-white/10 bg-[#0F1116] px-[10px] py-[7px]">
+              {tags.map((tag) => (
+                <button
+                  key={tag}
+                  type="button"
+                  onClick={() =>
+                    setValue(
+                      "tags",
+                      tags.filter((value) => value !== tag),
+                    )
+                  }
+                  aria-label={t("removeTag", { tag })}
+                  className="inline-flex h-7 items-center gap-[6px] rounded-pill bg-white/[0.07] ps-[11px] pe-[6px] text-xs font-semibold text-foreground/80 transition-colors hover:bg-white/[0.12]"
+                >
+                  {tag}
+                  <span
+                    aria-hidden
+                    className="flex h-[17px] w-[17px] flex-none items-center justify-center rounded-full bg-white/[0.1] text-[11px]"
+                  >
+                    ×
+                  </span>
+                </button>
+              ))}
+              <button
+                type="button"
+                onClick={() => setTagPickerOpen(true)}
+                className="inline-flex h-7 items-center gap-1 rounded-pill border border-dashed border-white/[0.14] px-[11px] text-xs font-semibold text-foreground-secondary transition-colors hover:border-acc hover:text-acc"
+              >
+                {t("addTags")}
+              </button>
+            </div>
+          </div>
+          <div className="w-[210px] flex-none">
+            <CoverImageField onUploadingChange={onCoverUploadingChange} />
+          </div>
+        </div>
+        {/*
+          The pack CONTENT's language — what the pack is written in, not what the
+          UI is in. Offers all 11 PACK_LANGUAGES, which is a deliberate superset
+          of the 8 interface LOCALES: es/fr/pt have no catalog and can ONLY be
+          reached here, because a pack's content language carries no GDPR
+          targeting signal while the interface's does (see pack-language.ts).
+        */}
+        <div className="flex flex-col gap-1">
+          <SelectField
+            name="language"
+            label={t("languageLabel")}
+            aria-describedby="pack-language-hint"
+            options={PACK_LANGUAGES.map((code) => ({
+              value: code,
+              label: PACK_LANGUAGE_NAMES[code],
+            }))}
+          />
+          <Text id="pack-language-hint" variant="tertiary" className="text-xs">
+            {t("languageHint")}
+          </Text>
+        </div>
         <TagPickerModal
           open={tagPickerOpen}
           onClose={() => setTagPickerOpen(false)}

@@ -7,9 +7,9 @@ import {
   type FieldErrors,
 } from "react-hook-form";
 import { useTranslations } from "next-intl";
-import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { getFieldError } from "@/src/shared/components/form/getFieldError";
+import { StepHeader } from "@/src/features/create/StepHeader";
 import { GroupEditor } from "@/src/features/create/GroupEditor";
 import { newGroup } from "@/src/features/create/create-pack.defaults";
 import { type CreatePackValues } from "@/src/features/create/create-pack.schema";
@@ -50,12 +50,18 @@ export function PoolsSection() {
   });
   const groups = useWatch({ control, name: "groups" });
   const groupsError = getFieldError(errors, "groups");
+  const totalItemCount = groups.reduce(
+    (sum, group) => sum + group.items.length,
+    0,
+  );
 
   return (
     <section className="flex flex-col gap-3">
-      <Text as="h2" variant="title" className="text-lg">
-        {t("poolsHeading")}
-      </Text>
+      <StepHeader
+        title={t("poolsHeading")}
+        aside={t("itemCount", { count: totalItemCount })}
+        hint={t("poolsHint")}
+      />
       {groups.map((group, index) => (
         <GroupEditor
           key={group.id}
@@ -77,13 +83,25 @@ export function PoolsSection() {
           {groupsError}
         </Text>
       )}
-      <Button
+      <button
         type="button"
-        variant="secondary"
         onClick={() => groupsArray.append(newGroup())}
+        className="flex h-12 w-full items-center justify-center gap-[9px] rounded-tile border border-dashed border-white/[0.16] text-[13.5px] font-semibold text-foreground-secondary transition-colors hover:border-white/30 hover:bg-white/[0.03] hover:text-foreground"
       >
+        <svg
+          aria-hidden
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+        >
+          <path d="M12 5v14M5 12h14" />
+        </svg>
         {t("addPool")}
-      </Button>
+      </button>
     </section>
   );
 }

@@ -40,6 +40,13 @@ const MANAGER: User = {
   createdAt: "2026-01-01T00:00:00.000Z",
 };
 
+const ADMIN: User = {
+  ...MANAGER,
+  id: "a1",
+  role: "admin",
+  username: "admin1",
+};
+
 const PLAIN_USER: User = {
   ...MANAGER,
   id: "u1",
@@ -138,6 +145,39 @@ describe("AdminScreen", () => {
     );
 
     expect(await screen.findByText("Registered users")).toBeInTheDocument();
+  });
+
+  // D2/T4: the header shows the *viewer's own* role, reusing Username's
+  // ROLE_STYLE/IDENTITY_PILL tokens — each staff role that can reach /admin
+  // (admin, manager) gets its own tier pill, not a single hardcoded "ADMIN".
+  it("shows an ADMIN role pill in the header for an admin viewer", async () => {
+    vi.mocked(authClient.refresh).mockResolvedValue({
+      accessToken: "token",
+      user: ADMIN,
+    });
+    render(
+      <AuthProvider>
+        <AdminScreen />
+      </AuthProvider>,
+    );
+
+    await screen.findByText("Registered users");
+    expect(screen.getByText("ADMIN")).toBeInTheDocument();
+  });
+
+  it("shows a MANAGER role pill in the header for a manager viewer", async () => {
+    vi.mocked(authClient.refresh).mockResolvedValue({
+      accessToken: "token",
+      user: MANAGER,
+    });
+    render(
+      <AuthProvider>
+        <AdminScreen />
+      </AuthProvider>,
+    );
+
+    await screen.findByText("Registered users");
+    expect(screen.getByText("MANAGER")).toBeInTheDocument();
   });
 
   it("redirects home for an authenticated user without admin/manager role", async () => {

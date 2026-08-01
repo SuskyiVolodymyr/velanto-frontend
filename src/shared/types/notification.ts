@@ -5,6 +5,7 @@ export const NOTIFICATION_TYPES = [
   "comment_mention",
   "comment_reply",
   "pack_deleted_warning",
+  "pack_changes_requested",
 ] as const;
 
 export type NotificationType = (typeof NOTIFICATION_TYPES)[number];

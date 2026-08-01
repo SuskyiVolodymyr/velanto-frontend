@@ -114,6 +114,39 @@ describe("YouTubeCard", () => {
     expect(fakePlayer.playVideo).toHaveBeenCalledTimes(2);
   });
 
+  // `mouseleave` fires on pointer MOVEMENT only, so every way of walking away
+  // that doesn't move the pointer — switching tab, switching window, scrolling
+  // the card off-screen — used to leave the video playing out of sight.
+  it("pauses a playing card when the tab is hidden, without any mouseleave", async () => {
+    const fakePlayer = makeFakePlayer();
+    mockedLoad.mockResolvedValue(makeFakeApi(fakePlayer));
+
+    render(<YouTubeCard videoId="abc123" />);
+    fireEvent.mouseEnter(screen.getByTestId("youtube-card"));
+    await waitFor(() => expect(fakePlayer.playVideo).toHaveBeenCalled());
+    expect(fakePlayer.pauseVideo).not.toHaveBeenCalled();
+
+    const hidden = vi.spyOn(document, "hidden", "get").mockReturnValue(true);
+    fireEvent(document, new Event("visibilitychange"));
+
+    await waitFor(() => expect(fakePlayer.pauseVideo).toHaveBeenCalledTimes(1));
+    hidden.mockRestore();
+  });
+
+  it("pauses a playing card when the window loses focus", async () => {
+    const fakePlayer = makeFakePlayer();
+    mockedLoad.mockResolvedValue(makeFakeApi(fakePlayer));
+
+    render(<YouTubeCard videoId="abc123" />);
+    fireEvent.mouseEnter(screen.getByTestId("youtube-card"));
+    await waitFor(() => expect(fakePlayer.playVideo).toHaveBeenCalled());
+    expect(fakePlayer.pauseVideo).not.toHaveBeenCalled();
+
+    fireEvent.blur(window);
+
+    await waitFor(() => expect(fakePlayer.pauseVideo).toHaveBeenCalledTimes(1));
+  });
+
   it("destroys the player on unmount", async () => {
     const fakePlayer = makeFakePlayer();
     const fakeApi = makeFakeApi(fakePlayer);

@@ -150,7 +150,7 @@ describe("RoundsEditor", () => {
     const user = userEvent.setup();
     render(<Harness />);
 
-    await user.click(screen.getByRole("button", { name: "+ Add round" }));
+    await user.click(screen.getByRole("button", { name: "New round" }));
 
     expect(screen.getByLabelText("Round 2 name")).toBeInTheDocument();
     const rounds = readRounds();
@@ -161,7 +161,7 @@ describe("RoundsEditor", () => {
   it("removes a round", async () => {
     const user = userEvent.setup();
     render(<Harness />);
-    await user.click(screen.getByRole("button", { name: "+ Add round" }));
+    await user.click(screen.getByRole("button", { name: "New round" }));
 
     await user.click(screen.getByRole("button", { name: "Remove round 2" }));
 
@@ -172,11 +172,14 @@ describe("RoundsEditor", () => {
   it("sets the count for every random round at once", async () => {
     const user = userEvent.setup();
     render(<Harness />);
-    await user.click(screen.getByRole("button", { name: "+ Add round" }));
+    await user.click(screen.getByRole("button", { name: "New round" }));
 
     // The field is named by the text beside it, not by the apply button — the
     // two used to share one accessible name (#359).
     const bulk = screen.getByLabelText("Set all rounds to draw");
+    // T4: the field now seeds itself from the live current count, so a
+    // replacement value is typed after clearing rather than into a blank.
+    await user.clear(bulk);
     await user.type(bulk, "3");
     await user.click(
       screen.getByRole("button", { name: "Set count for all rounds" }),
@@ -184,5 +187,61 @@ describe("RoundsEditor", () => {
 
     const rounds = readRounds();
     expect(rounds.every((r: { c: number }) => r.c === 3)).toBe(true);
+  });
+});
+
+// T6: rounds render collapsed by default (number + name + a one-line pool
+// summary + chevron), expanding individually on click — only one open at a
+// time.
+describe("RoundsEditor progressive disclosure (T6)", () => {
+  function twoRoundValues(): CreatePackValues {
+    const base = baseValues();
+    return {
+      ...base,
+      rounds: [
+        { id: "r1", slots: [{ groupId: "a", mode: "random", count: 2 }] },
+        { id: "r2", slots: [{ groupId: "b", mode: "random", count: 2 }] },
+      ],
+    };
+  }
+
+  it("starts with the first round expanded and every other round collapsed", () => {
+    render(<Harness initial={twoRoundValues()} />);
+
+    expect(screen.getByLabelText("Round 1 pool")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Round 2 pool")).not.toBeInTheDocument();
+    // The collapsed row still shows a one-line pool summary.
+    expect(
+      screen.getByRole("button", { name: /^Round 2 Pool B/ }),
+    ).toBeInTheDocument();
+  });
+
+  it("expands a collapsed round and collapses the previously-open one on click", async () => {
+    const user = userEvent.setup();
+    render(<Harness initial={twoRoundValues()} />);
+
+    await user.click(screen.getByRole("button", { name: /^Round 2/ }));
+
+    expect(screen.getByLabelText("Round 2 pool")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Round 1 pool")).not.toBeInTheDocument();
+  });
+
+  it("re-collapses an expanded round when its own header is clicked again", async () => {
+    const user = userEvent.setup();
+    render(<Harness initial={twoRoundValues()} />);
+
+    await user.click(screen.getByRole("button", { name: /^Round 1/ }));
+
+    expect(screen.queryByLabelText("Round 1 pool")).not.toBeInTheDocument();
+  });
+
+  it("auto-expands a newly added round", async () => {
+    const user = userEvent.setup();
+    render(<Harness initial={twoRoundValues()} />);
+
+    await user.click(screen.getByRole("button", { name: "New round" }));
+
+    expect(screen.getByLabelText("Round 3 pool")).toBeInTheDocument();
+    expect(screen.queryByLabelText("Round 1 pool")).not.toBeInTheDocument();
   });
 });

@@ -2,170 +2,130 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Check, Lock, LockOpen, UserPlus, X } from "lucide-react";
-import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
-import { Badge } from "@/src/shared/components/Badge";
 import { ConfirmModal } from "@/src/shared/components/ConfirmModal";
-import { UserAvatar } from "@/src/shared/components/UserAvatar";
-import { Username } from "@/src/shared/components/Username";
-import { cn } from "@/src/shared/lib/cn";
 import {
   MIN_PLAYERS,
+  ROOM_MODE_BOUNDS,
+  type RoomMode,
   type RoomPlayerState,
   type RoomState,
 } from "./room-types";
-import { JoinCode } from "./JoinCode";
+import { MODE_NAME_KEY } from "./room-mode-copy";
+import { ModePicker } from "./ModePicker";
+import { ModeHowItWorks } from "./ModeHowItWorks";
+import { RoomRosterPanel } from "./RoomRosterPanel";
+import { RoomInvitePanel } from "./RoomInvitePanel";
+import { RoomStartPanel } from "./RoomStartPanel";
 
 interface RoomLobbyProps {
   state: RoomState;
   currentUserId: string | null;
   onReady: () => void;
+  onStart: () => void;
   onLock: (locked: boolean) => void;
   /** Host-only: remove another player from the room. */
   onKick: (userId: string) => void;
+  /** Host-only: change the room's mode. */
+  onSetMode: (mode: RoomMode) => void;
 }
 
 /**
- * The pre-game lobby: the roster of seats, a Ready toggle for the viewer, and a
- * host-only bar (stream-safe join code + Lock room). There is no Start button —
- * the server starts the game once every present player is ready and there are at
- * least MIN_PLAYERS, so this only ever tells you what it's still waiting on.
+ * The pre-game lobby (Room Lobby.dc.html): pick the game on the left, manage
+ * the room on the right.
+ *
+ * Readiness is consent, not the trigger — the host presses Start (see the
+ * backend's `startGame`), so this screen's job is to make it obvious what the
+ * room is still waiting on and who is holding it up.
  */
 export function RoomLobby({
   state,
   currentUserId,
   onReady,
+  onStart,
   onLock,
   onKick,
+  onSetMode,
 }: RoomLobbyProps) {
   const t = useTranslations("room");
   const isHost = currentUserId === state.hostId;
   const me = state.players.find((p) => p.userId === currentUserId) ?? null;
 
   // The player the host is about to kick, pending confirmation. Null = no
-  // dialog. Kicking is host-only and, for this first version, lobby-only — the
-  // button isn't rendered mid-game even though the server permits it, to keep
-  // the in-round UI simple.
+  // dialog. Host-only and, for now, lobby-only — the button isn't rendered
+  // mid-game even though the server permits it, to keep the in-round UI simple.
   const [kickTarget, setKickTarget] = useState<RoomPlayerState | null>(null);
 
   const present = state.players.filter((p) => p.connected);
-  const missing = Math.max(0, MIN_PLAYERS - present.length);
-  const allReady = present.length > 0 && present.every((p) => p.ready);
-
-  const waiting =
-    missing > 0
-      ? t("lobby.waitingForPlayers", { count: missing })
-      : allReady
-        ? t("lobby.starting")
-        : t("lobby.waitingForReady");
-
-  // Fill remaining chairs up to the room's capacity with empty seats.
-  const emptySeats = Math.max(0, state.maxPlayers - state.players.length);
+  // Once a mode is chosen, ITS minimum is the one the server gates the start on
+  // — MIN_PLAYERS is only the fallback for a room whose mode is still null.
+  const minPlayers = state.mode
+    ? ROOM_MODE_BOUNDS[state.mode].minPlayers
+    : MIN_PLAYERS;
 
   return (
-    <div className="flex flex-col gap-8">
-      <header className="flex flex-col gap-1">
-        <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-          {t("lobby.heading")}
-        </Text>
-      </header>
-
-      <section aria-label={t("lobby.roster")} className="flex flex-col gap-3">
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-          {state.players.map((player) => (
-            <SeatCard
-              key={player.userId}
-              player={player}
-              isHost={player.userId === state.hostId}
-              isYou={player.userId === currentUserId}
-              // The host can kick anyone but themselves.
-              onKick={
-                isHost && player.userId !== currentUserId
-                  ? () => setKickTarget(player)
-                  : undefined
-              }
-            />
-          ))}
-          {Array.from({ length: emptySeats }).map((_, i) => (
-            <div
-              key={`empty-${i}`}
-              className="flex items-center gap-3 rounded-2xl border border-dashed border-border p-4"
-            >
-              <span className="h-10 w-10 flex-none rounded-full border border-dashed border-border-strong" />
-              <Text variant="tertiary" className="text-sm">
-                {t("lobby.emptySeat")}
-              </Text>
-            </div>
-          ))}
+    <div className="grid items-start gap-[18px] min-[1080px]:grid-cols-[minmax(0,1.55fr)_minmax(0,1fr)]">
+      {/* On one column the aside leads: what the room is waiting on, and your
+          own Ready, matter more than browsing the mode you may not even pick. */}
+      <section className="flex flex-col gap-4 max-[1079px]:order-2">
+        <div className="flex flex-wrap items-end justify-between gap-2.5">
+          <div className="flex flex-col gap-1">
+            <Text as="h1" variant="title" className="text-[22px]">
+              {t("lobby.chooseHeading")}
+            </Text>
+            <Text variant="secondary" className="text-[13px]">
+              {isHost ? t("lobby.hostHint") : t("lobby.guestHint")}
+            </Text>
+          </div>
+          <span className="rounded-full bg-acc/[0.14] px-[11px] py-[5px] text-[11.5px] font-bold tracking-[0.05em] text-acc-hover">
+            {isHost ? t("lobby.roleHost") : t("lobby.roleGuest")}
+          </span>
         </div>
+
+        <ModePicker
+          availableModes={state.availableModes}
+          selectedMode={state.mode}
+          isHost={isHost}
+          onChange={onSetMode}
+        />
+
+        <ModeHowItWorks mode={state.mode} />
       </section>
 
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Text variant="secondary" aria-live="polite">
-          {waiting}
-        </Text>
-        <Button
-          variant={me?.ready ? "secondary" : "primary"}
-          aria-pressed={me?.ready ?? false}
-          onClick={onReady}
-        >
-          {me?.ready ? (
-            <>
-              <Check size={16} aria-hidden />
-              {t("lobby.readyCancel")}
-            </>
-          ) : (
-            t("lobby.readyUp")
-          )}
-        </Button>
-      </div>
+      <aside className="flex flex-col gap-3.5 max-[1079px]:order-1">
+        <RoomRosterPanel
+          players={state.players}
+          currentUserId={currentUserId}
+          hostId={state.hostId}
+          maxPlayers={state.maxPlayers}
+          minPlayers={minPlayers}
+          canKick={isHost}
+          onKick={setKickTarget}
+        />
 
-      {isHost && (
-        <section className="flex flex-col gap-4 rounded-2xl border border-border bg-surface p-5">
-          <div className="flex items-center gap-2">
-            <UserPlus
-              size={16}
-              aria-hidden
-              className="text-foreground-secondary"
-            />
-            <Text variant="title" className="text-sm">
-              {t("lobby.inviteHeading")}
-            </Text>
-          </div>
+        {/* Host-only, as the room lock inside it is: a guest has nothing to
+            invite with and nothing to lock. */}
+        {isHost && (
+          <RoomInvitePanel
+            code={state.code}
+            locked={state.locked}
+            onLock={onLock}
+          />
+        )}
 
-          {state.code ? (
-            <JoinCode code={state.code} />
-          ) : (
-            <Text variant="tertiary" className="text-xs">
-              {t("lobby.codeUnavailable")}
-            </Text>
-          )}
-
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-4">
-            <Text variant="secondary" className="text-sm">
-              {state.locked ? t("lobby.lockedNote") : t("lobby.unlockedNote")}
-            </Text>
-            <Button
-              variant={state.locked ? "primary" : "secondary"}
-              aria-pressed={state.locked}
-              onClick={() => onLock(!state.locked)}
-            >
-              {state.locked ? (
-                <>
-                  <Lock size={16} aria-hidden />
-                  {t("lobby.unlock")}
-                </>
-              ) : (
-                <>
-                  <LockOpen size={16} aria-hidden />
-                  {t("lobby.lock")}
-                </>
-              )}
-            </Button>
-          </div>
-        </section>
-      )}
+        <RoomStartPanel
+          state={{
+            isHost,
+            ready: present.filter((p) => p.ready).length,
+            total: present.length,
+            meReady: me?.ready ?? false,
+            modeName: state.mode ? t(MODE_NAME_KEY[state.mode]) : null,
+            minPlayers,
+          }}
+          onStart={onStart}
+          onToggleReady={onReady}
+        />
+      </aside>
 
       <ConfirmModal
         open={kickTarget !== null}
@@ -179,78 +139,6 @@ export function RoomLobby({
         confirmLabel={t("kick.confirm")}
         cancelLabel={t("kick.cancel")}
       />
-    </div>
-  );
-}
-
-function SeatCard({
-  player,
-  isHost,
-  isYou,
-  onKick,
-}: {
-  player: RoomPlayerState;
-  isHost: boolean;
-  isYou: boolean;
-  /** Host-only kick handler for another player's seat; absent otherwise. */
-  onKick?: () => void;
-}) {
-  const t = useTranslations("room");
-  return (
-    <div
-      className={cn(
-        "flex items-center gap-3 rounded-2xl border p-4",
-        player.connected
-          ? "border-border bg-surface"
-          : "border-border bg-surface/40",
-      )}
-    >
-      <div className="relative flex-none">
-        <UserAvatar
-          username={player.username}
-          avatarKey={player.avatarKey}
-          className="h-10 w-10 rounded-full border border-border bg-background text-sm text-foreground-secondary"
-        />
-        <span
-          aria-hidden
-          className={cn(
-            "absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full border-2 border-surface",
-            player.connected ? "bg-success" : "bg-foreground-tertiary",
-          )}
-        />
-      </div>
-      <div className="flex min-w-0 flex-1 flex-col gap-1">
-        <div className="flex items-center gap-1.5">
-          <Username username={player.username} />
-          {isYou && <Badge variant="accent">{t("lobby.you")}</Badge>}
-          {isHost && <Badge>{t("lobby.host")}</Badge>}
-        </div>
-        <Text
-          variant={
-            !player.connected ? "tertiary" : player.ready ? "body" : "secondary"
-          }
-          className={cn(
-            "text-xs",
-            player.connected && player.ready && "text-success",
-          )}
-        >
-          {!player.connected
-            ? t("lobby.away")
-            : player.ready
-              ? t("lobby.ready")
-              : t("lobby.notReady")}
-        </Text>
-      </div>
-      {onKick && (
-        <button
-          type="button"
-          onClick={onKick}
-          aria-label={t("kick.action", { name: player.username })}
-          className="flex-none rounded-full p-1.5 text-foreground-tertiary transition-colors hover:bg-danger/10 hover:text-danger focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
-        >
-          <X size={16} aria-hidden />
-        </button>
-      )}
     </div>
   );
 }

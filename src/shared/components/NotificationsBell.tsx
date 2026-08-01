@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell } from "lucide-react";
+import { BellIcon } from "@/src/shared/components/icons";
 import { useTranslations } from "next-intl";
 import { useNotifications } from "@/src/shared/components/use-notifications";
 import { NotificationList } from "@/src/shared/components/NotificationList";
@@ -38,12 +38,11 @@ export function NotificationsBell() {
         aria-haspopup="dialog"
         aria-expanded={open}
         onClick={() => setOpen((prev) => !prev)}
-        className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-[11px] border border-border bg-surface transition-colors hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+        className="relative flex h-10 w-10 cursor-pointer items-center justify-center rounded-[11px] border border-border bg-surface-control transition-colors hover:border-border-strong focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc focus-visible:ring-offset-2 focus-visible:ring-offset-background"
       >
-        <Bell
+        <BellIcon
           className="h-[18px] w-[18px] text-foreground-secondary"
           strokeWidth={1.8}
-          aria-hidden
         />
         {unreadCount > 0 && (
           <span
@@ -63,10 +62,17 @@ export function NotificationsBell() {
             onClick={() => setOpen(false)}
             className="fixed inset-0 z-[9] bg-black/40"
           />
+          {/* absolute + right-0 + a fixed width anchors this to the bell's own
+              ~40px container — fine on desktop, but on a narrow phone that
+              container sits far enough from the screen edge that a 380px
+              panel overflows off the LEFT of the viewport while never
+              reaching the right. Below 620px it switches to viewport-fixed
+              positioning instead (mock: bellpanel's own mobile override —
+              top:64px, left/right:12px, width:auto). */}
           <div
             role="dialog"
             aria-label={t("title")}
-            className="absolute right-0 top-12 z-10 flex max-h-[70vh] w-[380px] flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-[0_24px_60px_rgba(0,0,0,0.55)]"
+            className="absolute right-0 top-12 z-10 flex max-h-[70vh] w-[380px] flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-[0_24px_60px_rgba(0,0,0,0.55)] max-[620px]:fixed max-[620px]:inset-x-3 max-[620px]:top-16 max-[620px]:w-auto"
           >
             <NotificationsPanelHeader
               newCount={newCount}

@@ -91,7 +91,8 @@ describe("FeedbackDetailScreen", () => {
     expect(screen.getByText("Something is broken.")).toBeInTheDocument();
     // The author name sits in its own element (wrapped for streamer mode), so
     // "by" and the username are separate text nodes.
-    expect(screen.getByText("alice")).toBeInTheDocument();
+    // The handle renders with its "@" prefix on the detail page.
+    expect(screen.getByText("@alice")).toBeInTheDocument();
   });
 
   it("shows the status select to a staff viewer and calls setStatus on change", async () => {
@@ -103,8 +104,11 @@ describe("FeedbackDetailScreen", () => {
 
     render(<FeedbackDetailScreen postId="f1" />);
 
-    const select = await screen.findByLabelText("Status");
-    await userEvent.selectOptions(select, "in_progress");
+    // A listbox Dropdown, not a native <select>: open it, then pick the option.
+    await userEvent.click(
+      await screen.findByRole("combobox", { name: "Status" }),
+    );
+    await userEvent.click(screen.getByRole("option", { name: "In progress" }));
 
     await waitFor(() =>
       expect(mockedFeedbackClient.setStatus).toHaveBeenCalledWith(
@@ -127,23 +131,49 @@ describe("FeedbackDetailScreen", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("lets the author delete the post and redirects to /feedback", async () => {
+  // Delete is two steps: the button arms an inline confirm strip, and only the
+  // strip's own Delete calls the API. (It used to be window.confirm.)
+  it("lets the author delete the post after confirming, and redirects to /feedback", async () => {
     mockAuth({ id: "u1", role: "user" });
     mockedFeedbackClient.getById.mockResolvedValue(makePost());
     mockedFeedbackClient.remove.mockResolvedValue(undefined);
-    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
 
     render(<FeedbackDetailScreen postId="f1" />);
 
-    const deleteButton = await screen.findByRole("button", { name: "Delete" });
-    await userEvent.click(deleteButton);
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Delete" }),
+    );
+    expect(mockedFeedbackClient.remove).not.toHaveBeenCalled();
 
-    expect(confirmSpy).toHaveBeenCalled();
+    expect(
+      await screen.findByText("Delete this suggestion?"),
+    ).toBeInTheDocument();
+    const [, confirmDelete] = screen.getAllByRole("button", {
+      name: "Delete",
+    });
+    await userEvent.click(confirmDelete);
+
     await waitFor(() =>
       expect(mockedFeedbackClient.remove).toHaveBeenCalledWith("f1"),
     );
     expect(push).toHaveBeenCalledWith("/feedback");
-    confirmSpy.mockRestore();
+  });
+
+  it("abandons the delete when the confirm strip is cancelled", async () => {
+    mockAuth({ id: "u1", role: "user" });
+    mockedFeedbackClient.getById.mockResolvedValue(makePost());
+
+    render(<FeedbackDetailScreen postId="f1" />);
+
+    await userEvent.click(
+      await screen.findByRole("button", { name: "Delete" }),
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Cancel" }));
+
+    expect(
+      screen.queryByText("Delete this suggestion?"),
+    ).not.toBeInTheDocument();
+    expect(mockedFeedbackClient.remove).not.toHaveBeenCalled();
   });
 
   it("renders the not-found state when getById rejects with a 404 ApiError", async () => {

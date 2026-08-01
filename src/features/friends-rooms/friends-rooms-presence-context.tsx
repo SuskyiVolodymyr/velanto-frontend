@@ -12,7 +12,7 @@ import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { friendsRoomsClient } from "./friends-rooms-client";
-import type { MyRoomSummary } from "./room-types";
+import { ROOMS_DORMANT, type MyRoomSummary } from "./room-types";
 
 export interface FriendsRoomsPresenceValue {
   /** The rooms the signed-in user currently holds a seat in. Empty when signed
@@ -56,7 +56,12 @@ export function FriendsRoomsPresenceProvider({
   } | null>(null);
 
   const refresh = useCallback(() => {
-    if (!user) return;
+    // No room can exist while rooms are dormant (velanto-backend#276), so skip
+    // the poll entirely: `rooms` stays empty and every presence-driven entry
+    // point — SidebarRoomPill, RoomPresenceIndicator — hides via its no-rooms
+    // guard, without spending a `/mine` request on every navigation. One flip
+    // of ROOMS_DORMANT restores polling and the pills with it.
+    if (!user || ROOMS_DORMANT) return;
     const userId = user.id;
     friendsRoomsClient
       .mine()

@@ -20,12 +20,21 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function UpdatesPage() {
   const t = await getTranslations("updates");
+  const th = await getTranslations("header");
   return (
     <UpdatesScreen
+      browseLabel={th("browse")}
       heading={t("heading")}
       intro={t("intro")}
       emptyLabel={t("empty")}
       entries={UPDATES}
+      releasesHeading={t("releasesHeading")}
+      latestLabel={t("latest")}
+      showLessLabel={t("showLess")}
+      missingTitle={t("missingTitle")}
+      missingNote={t("missingNote")}
+      openSuggestionsLabel={t("openSuggestions")}
+      docsLabel={th("docs")}
     />
   );
 }

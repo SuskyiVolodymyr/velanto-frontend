@@ -47,6 +47,20 @@ const MODERATOR: User = {
   createdAt: "2026-01-01T00:00:00.000Z",
 };
 
+const MANAGER: User = {
+  ...MODERATOR,
+  id: "m2",
+  role: "manager",
+  username: "manager1",
+};
+
+const ADMIN: User = {
+  ...MODERATOR,
+  id: "a1",
+  role: "admin",
+  username: "admin1",
+};
+
 const PLAIN_USER: User = {
   ...MODERATOR,
   id: "u1",
@@ -179,6 +193,46 @@ describe("ModerationPanel", () => {
     expect(
       screen.getByRole("tab", { name: "Pack approvals" }),
     ).toBeInTheDocument();
+  });
+
+  // D2/T4: the header shows the *viewer's own* role, reusing Username's
+  // ROLE_STYLE/IDENTITY_PILL tokens — every staff role that can reach
+  // /moderation (moderator, manager, admin) gets its own tier pill, not a
+  // single hardcoded "STAFF" label.
+  it("shows a MODERATOR role pill in the header for a moderator viewer", async () => {
+    signedInAs(MODERATOR);
+    render(
+      <AuthProvider>
+        <ModerationPanel />
+      </AuthProvider>,
+    );
+
+    await screen.findByRole("tab", { name: "Reports, 7 waiting" });
+    expect(screen.getByText("MODERATOR")).toBeInTheDocument();
+  });
+
+  it("shows a MANAGER role pill in the header for a manager viewer", async () => {
+    signedInAs(MANAGER);
+    render(
+      <AuthProvider>
+        <ModerationPanel />
+      </AuthProvider>,
+    );
+
+    await screen.findByRole("tab", { name: "Reports, 7 waiting" });
+    expect(screen.getByText("MANAGER")).toBeInTheDocument();
+  });
+
+  it("shows an ADMIN role pill in the header for an admin viewer", async () => {
+    signedInAs(ADMIN);
+    render(
+      <AuthProvider>
+        <ModerationPanel />
+      </AuthProvider>,
+    );
+
+    await screen.findByRole("tab", { name: "Reports, 7 waiting" });
+    expect(screen.getByText("ADMIN")).toBeInTheDocument();
   });
 
   it("redirects home for an authenticated non-staff user, fetching nothing", async () => {

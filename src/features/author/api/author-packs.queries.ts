@@ -3,7 +3,7 @@ import {
   useInfiniteQuery,
   type InfiniteData,
 } from "@tanstack/react-query";
-import type { Pack } from "@/src/shared/types/pack";
+import type { PackSummary } from "@/src/shared/types/pack";
 import type { PackList } from "@/src/shared/lib/packs-client";
 import { useRefetchOnSignIn } from "@/src/shared/lib/use-refetch-on-sign-in";
 import { AUTHOR_PACKS_PAGE_SIZE, fetchAuthorPacksPage } from "./author-packs";
@@ -40,21 +40,22 @@ export function authorPacksInfiniteQueryOptions(authorId: string) {
  */
 export function useAuthorPacks(
   authorId: string,
-  seed?: { items: Pack[]; total: number },
+  seed?: { items: PackSummary[]; total: number },
 ) {
-  const initialData: InfiniteData<PackList, number> | undefined = seed
-    ? {
-        pages: [
-          {
-            items: seed.items,
-            total: seed.total,
-            page: 1,
-            limit: AUTHOR_PACKS_PAGE_SIZE,
-          },
-        ],
-        pageParams: [1],
-      }
-    : undefined;
+  const initialData: InfiniteData<PackList<PackSummary>, number> | undefined =
+    seed
+      ? {
+          pages: [
+            {
+              items: seed.items,
+              total: seed.total,
+              page: 1,
+              limit: AUTHOR_PACKS_PAGE_SIZE,
+            },
+          ],
+          pageParams: [1],
+        }
+      : undefined;
 
   const query = useInfiniteQuery({
     ...authorPacksInfiniteQueryOptions(authorId),
