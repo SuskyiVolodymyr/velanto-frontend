@@ -569,11 +569,59 @@ describe("RankPlayScreen", () => {
 
     first.unmount();
 
-    // A fresh mount resumes on round 2 without replaying round 1.
+    // A fresh mount asks first, and only resumes on round 2 (without
+    // replaying round 1) once the player continues.
     renderScreen(RANK_BLIND_PACK);
+    await user.click(await screen.findByRole("button", { name: "Continue" }));
     await screen.findByText("Round 2 of 2");
     expect(screen.queryByText("Kaikai Kitan")).toBeNull();
     await screen.findByText("Silhouette");
+  });
+
+  it("shows the resume-choice modal on a fresh mount when a saved play exists", async () => {
+    const user = userEvent.setup();
+    const first = renderScreen(RANK_BLIND_PACK);
+
+    await screen.findByText("Kaikai Kitan");
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await user.click(
+      await screen.findByRole("button", { name: "Next round" }),
+    );
+    first.unmount();
+
+    renderScreen(RANK_BLIND_PACK);
+
+    expect(await screen.findByRole("alertdialog")).toBeInTheDocument();
+    expect(screen.getByText("1 round done")).toBeInTheDocument();
+    // No round content behind it until a choice is made.
+    expect(screen.queryByText("Silhouette")).toBeNull();
+  });
+
+  it("Start over discards the saved play and re-draws from round 1", async () => {
+    const version = packStructureHash(RANK_BLIND_PACK);
+    const user = userEvent.setup();
+    const first = renderScreen(RANK_BLIND_PACK);
+
+    await screen.findByText("Kaikai Kitan");
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await user.click(
+      await screen.findByRole("button", { name: "Next round" }),
+    );
+    first.unmount();
+
+    renderScreen(RANK_BLIND_PACK);
+    await user.click(
+      await screen.findByRole("button", { name: "Start over" }),
+    );
+
+    await screen.findByText("Round 1 of 2");
+    // Discarded outright, not just superseded in memory — a reload right
+    // after must not re-offer the discarded play.
+    expect(readPlayResume("pack-rank", version)).toBeNull();
   });
 
   it("clears the resume record when the play completes", async () => {
@@ -596,5 +644,90 @@ describe("RankPlayScreen", () => {
     await waitFor(() =>
       expect(readPlayResume("pack-rank", version)).toBeNull(),
     );
+  });
+
+  describe("mock fidelity (Solo Play.dc.html's isRank branch)", () => {
+    it("tints the status panel's border by state — accent while pending, success once ranked", async () => {
+      const user = userEvent.setup();
+      renderScreen(RANK_BLIND_PACK);
+
+      await screen.findByText("Kaikai Kitan");
+      expect(screen.getByTestId("rank-status-panel").className).toContain(
+        "border-acc/30",
+      );
+
+      await user.click(screen.getByText("#1"));
+      await user.click(screen.getByText("#2"));
+
+      await screen.findByText("Openers");
+      expect(screen.getByTestId("rank-status-panel").className).toContain(
+        "border-success/30",
+      );
+    });
+
+    it("stacks the two columns below the mock's own 900px breakpoint", async () => {
+      renderScreen(RANK_BLIND_PACK);
+
+      await screen.findByText("Kaikai Kitan");
+      expect(screen.getByTestId("rank-columns").className).toContain(
+        "min-[901px]:grid-cols-",
+      );
+    });
+
+    it("sizes the pending item's media as a full-width 16:9 tile, not a fixed-width box", async () => {
+      renderScreen(RANK_BLIND_PACK);
+
+      await screen.findByText("Kaikai Kitan");
+      const media = screen.getByTestId("rank-current-media");
+      expect(media.className).toContain("aspect-video");
+      expect(media.className).not.toMatch(/max-w-\[230px\]/);
+    });
+
+    it("does not float the media — a real video shouldn't drift under the pointer", async () => {
+      renderScreen(RANK_BLIND_PACK);
+
+      await screen.findByText("Kaikai Kitan");
+      expect(screen.getByTestId("rank-current-media").className).not.toMatch(
+        /animate-card-float/,
+      );
+    });
+
+    it("shows the shared left-aligned round header — 'Round N of M' eyebrow, the round's own title, and the in-round placement prompt", async () => {
+      renderScreen(RANK_BLIND_PACK);
+
+      await screen.findByText("Kaikai Kitan");
+      expect(screen.getByText("Round 1 of 2")).toBeInTheDocument();
+      expect(screen.getByText("Place item 1 of 2")).toBeInTheDocument();
+      // Left-aligned, matching PlayScreen/HeadToHeadPlayScreen — not the old
+      // centered layout.
+      const heading = screen.getByRole("heading", { name: "Openers" });
+      expect(heading.closest("div")?.parentElement?.className).toContain(
+        "text-start",
+      );
+    });
+
+    it("updates the placement prompt as items are placed, then swaps to the all-placed message", async () => {
+      const user = userEvent.setup();
+      renderScreen(RANK_BLIND_PACK);
+
+      await screen.findByText("Kaikai Kitan");
+      await user.click(screen.getByText("#1"));
+
+      await screen.findByText("Redo");
+      expect(screen.getByText("Place item 2 of 2")).toBeInTheDocument();
+
+      await user.click(screen.getByText("#2"));
+      expect(
+        await screen.findByText("Every slot filled — this is your order"),
+      ).toBeInTheDocument();
+    });
+
+    it("omits the round counter from the sticky bar — it's carried by the round header now", async () => {
+      renderScreen(RANK_BLIND_PACK);
+
+      await screen.findByText("Kaikai Kitan");
+      // Exactly one match: the round header's own eyebrow.
+      expect(screen.getAllByText("Round 1 of 2")).toHaveLength(1);
+    });
   });
 });

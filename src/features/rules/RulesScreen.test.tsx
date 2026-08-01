@@ -198,7 +198,9 @@ describe("RulesScreen", () => {
     renderScreen(doc);
 
     const nav = screen.getByRole("navigation", { name: /categories/i });
-    expect(within(nav).getByRole("link", { name: /Content/ })).toBeInTheDocument();
+    expect(
+      within(nav).getByRole("link", { name: /Content/ }),
+    ).toBeInTheDocument();
 
     const search = screen.getByRole("searchbox", { name: /search the rules/i });
     await user.type(search, "harassment");
@@ -208,7 +210,9 @@ describe("RulesScreen", () => {
     expect(
       within(nav).queryByRole("link", { name: /Content/ }),
     ).not.toBeInTheDocument();
-    expect(within(nav).getByRole("link", { name: /Conduct/ })).toBeInTheDocument();
+    expect(
+      within(nav).getByRole("link", { name: /Conduct/ }),
+    ).toBeInTheDocument();
   });
 
   it("shows the empty-search-result state when nothing matches, and Clear search resets it", async () => {

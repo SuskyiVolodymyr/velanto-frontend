@@ -11,13 +11,20 @@ import {
 import { mediaUrl } from "@/src/shared/lib/media-url";
 import { cn } from "@/src/shared/lib/cn";
 import { toneFor, HAIRLINE_OVERLAY_STYLE } from "@/src/features/play/candidate-tone";
+import { VsBadge } from "@/src/features/play/VsBadge";
 
 interface VersusSide {
   name: string;
   items: Item[];
 }
 
-/** One drawn item within a side panel — media band + label, no selection of its own. */
+// The mock's item tile is media + a centred caption, nothing else — no
+// tile-level border or background. Matches the same inset-media treatment
+// used for HeadToHeadRound's contenders (that component's MEDIA_TILE).
+const MEDIA_TILE = "rounded-[11px]";
+
+/** One drawn item within a side panel — media band + centred title, no
+ * selection of its own (the whole side is the pick target). */
 function ItemTile({
   item,
   index,
@@ -33,44 +40,31 @@ function ItemTile({
   // Cards grow in one-by-one, staggered by position — the D1 "stagger IS the
   // reveal" mechanic, kept from the pre-restyle version of this component.
   const appearDelay = { animationDelay: `${index * 900}ms` };
-  const frameClasses =
-    "play-card-appear overflow-hidden rounded-tile border border-border bg-background";
 
+  let media;
   if (videoId) {
-    return (
-      <div style={appearDelay} className={frameClasses}>
-        <YouTubeCard
-          videoId={videoId}
-          startSeconds={startSeconds}
-          className="h-[110px]"
-        />
-        <Text className="p-[11px_13px] text-[13.5px] font-semibold">
-          {item.title}
-        </Text>
-      </div>
+    // No fixed height: aspect-video needs an auto width to size a matching
+    // 16:9 height from — see HeadToHeadRound's identical fix/regression test.
+    media = (
+      <YouTubeCard
+        videoId={videoId}
+        startSeconds={startSeconds}
+        className={MEDIA_TILE}
+      />
     );
-  }
-
-  if (item.type === "image") {
-    return (
-      <div style={appearDelay} className={frameClasses}>
-        <ImageCard
-          src={mediaUrl(item.value)}
-          alt={item.title}
-          className="h-[110px]"
-        />
-        <Text className="p-[11px_13px] text-[13.5px] font-semibold">
-          {item.title}
-        </Text>
-      </div>
+  } else if (item.type === "image") {
+    media = (
+      <ImageCard
+        src={mediaUrl(item.value)}
+        alt={item.title}
+        className={MEDIA_TILE}
+      />
     );
-  }
-
-  const tone = toneFor(packCoverTone, index);
-  return (
-    <div style={appearDelay} className={frameClasses}>
+  } else {
+    const tone = toneFor(packCoverTone, index);
+    media = (
       <div
-        className="relative h-[110px]"
+        className={cn("relative aspect-video overflow-hidden", MEDIA_TILE)}
         style={{
           background: `linear-gradient(158deg, ${tone}, var(--background) 78%)`,
         }}
@@ -80,7 +74,13 @@ function ItemTile({
           <Badge className="absolute end-2 top-2">YouTube</Badge>
         )}
       </div>
-      <Text className="p-[11px_13px] text-[13.5px] font-semibold">
+    );
+  }
+
+  return (
+    <div style={appearDelay} className="play-card-appear flex flex-col gap-[9px]">
+      {media}
+      <Text className="text-center text-[13.5px] font-[650] text-pretty">
         {item.title}
       </Text>
     </div>
@@ -89,15 +89,12 @@ function ItemTile({
 
 interface SideCardProps {
   side: VersusSide;
-  /** Derived from the slot's INDEX (0 → "A", 1 → "B"), never from `side.name` —
-   * pool names are arbitrary author-chosen strings, not always A/B-shaped. */
-  letter: "A" | "B";
   selected: boolean;
   onSelect: () => void;
   packCoverTone: string;
 }
 
-function SideCard({ side, letter, selected, onSelect, packCoverTone }: SideCardProps) {
+function SideCard({ side, selected, onSelect, packCoverTone }: SideCardProps) {
   const t = useTranslations("play");
   return (
     <div
@@ -118,36 +115,62 @@ function SideCard({ side, letter, selected, onSelect, packCoverTone }: SideCardP
       }}
       aria-label={t("pick", { name: side.name })}
       className={cn(
-        "flex min-w-0 flex-1 cursor-pointer flex-col gap-3 rounded-card border-2 p-4 text-start transition-colors",
+        "flex min-w-0 cursor-pointer flex-col gap-3 rounded-[20px] border p-4 text-start transition-colors",
         selected
-          ? "border-acc bg-acc/[0.08] ring-[3px] ring-acc/[0.22]"
-          : "border-border bg-white/[0.015] hover:border-border-strong",
+          ? "border-acc/50 bg-acc/[0.08]"
+          : "border-border bg-surface-card hover:border-border-strong",
       )}
     >
-      <div className="flex items-center justify-center gap-[9px]">
-        <span
-          aria-hidden
-          className="flex h-5 w-5 flex-none items-center justify-center rounded-chip bg-acc text-[11px] font-semibold text-[#07131a]"
+      {/* The label row: pool/side name, faded unless selected, with a
+          trailing check pushed to the far end (mock's margin-left:auto) once
+          chosen — this and the panel wash above are the ONLY selected
+          signals now; the mock's nxn side has no separate footer row (that
+          belongs to 1v1 alone — see HeadToHeadRound's PickTick) and no A/B
+          letter badge (the two sides are already disambiguated by name
+          upstream — PlayScreen substitutes "Side A"/"Side B" for a
+          single-pool round before either side name reaches this component). */}
+      <div className="flex items-center gap-[9px]">
+        <Text
+          className={cn(
+            "truncate text-[11.5px] font-bold uppercase tracking-[0.1em]",
+            selected ? "text-acc-hover" : "text-foreground/45",
+          )}
         >
-          {letter}
-        </span>
-        <Text className="text-[14.5px] font-semibold">{side.name}</Text>
+          {side.name}
+        </Text>
         {selected && (
           <span
-            aria-hidden
-            className="flex h-[18px] w-[18px] flex-none items-center justify-center rounded-full bg-acc"
+            aria-hidden="true"
+            className="ms-auto flex h-[22px] w-[22px] flex-none items-center justify-center rounded-pill bg-acc text-[#07131a]"
           >
-            <span className="-mt-[2px] h-[4.5px] w-[8px] -rotate-45 border-b-2 border-l-2 border-[#07131a]" />
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="3.2"
+              strokeLinecap="round"
+            >
+              <path d="M5 12.5l4.5 4.5L19 7.5" />
+            </svg>
           </span>
         )}
       </div>
       {/* auto-fit rather than a fixed column count equal to the item count:
           nxn allows up to 8 items per side (create-pack.value-schemas.ts),
-          and 8 equal-width columns in this narrow a column squeezed every
-          tile down to a sliver. auto-fit instead wraps onto more rows,
-          keeping each tile at a legible minimum width regardless of N. */}
+          and 8 equal-width columns squeezed every tile down to a sliver.
+          auto-fit instead wraps onto more rows, keeping each tile at a
+          legible minimum width regardless of N.
+
+          Below 720px (this feature's established mobile threshold — see
+          PlayChrome/PlayRoundHeader's own max-[720px] rules), auto-fit still
+          fits 2-up at ~110px each, too cramped for a video's controls to be
+          usable — force a single column instead. `!` is required: the
+          override has to beat the inline style's grid-template-columns,
+          which otherwise wins on specificity over a plain utility class. */}
       <div
-        className="grid gap-3"
+        className="grid gap-3 max-[720px]:!grid-cols-1"
         style={{
           gridTemplateColumns: "repeat(auto-fit, minmax(110px, 1fr))",
         }}
@@ -161,17 +184,6 @@ function SideCard({ side, letter, selected, onSelect, packCoverTone }: SideCardP
           />
         ))}
       </div>
-      {selected && (
-        <div className="flex items-center gap-[7px] border-t border-border pt-3 text-[12.5px] font-semibold text-acc">
-          <span
-            aria-hidden
-            className="flex h-4 w-4 flex-none items-center justify-center rounded-full bg-acc"
-          >
-            <span className="-mt-[1px] h-[3.5px] w-[6.5px] -rotate-45 border-b-2 border-l-2 border-[#07131a]" />
-          </span>
-          {t("sideSelected")}
-        </div>
-      )}
     </div>
   );
 }
@@ -195,28 +207,20 @@ export function VersusRound({
   packCoverTone,
 }: VersusRoundProps) {
   return (
-    <div className="grid grid-cols-1 items-start gap-[22px] sm:grid-cols-[1fr_auto_1fr]">
+    // Single column, the two sides stacked with VS between — the mock's
+    // versusCols is "1fr" for nxn (only 1v1 gets the 3-column "1fr auto 1fr"
+    // row), since a side can hold up to 8 items and needs the full content
+    // width, not half of it.
+    <div className="grid grid-cols-1 gap-[14px]">
       <SideCard
         side={sideA}
-        letter="A"
         selected={selectedSide === 0}
         onSelect={() => onSelect(0)}
         packCoverTone={packCoverTone}
       />
-      {/* Exactly one "VS" may appear on the play screen (e2e strict-mode
-          query) — this is the only place nxn renders that string. */}
-      <div className="flex justify-center pt-[60px]">
-        <Text
-          as="span"
-          variant="secondary"
-          className="flex h-11 w-11 flex-none items-center justify-center rounded-pill border border-border bg-white/[0.04] text-xs font-semibold"
-        >
-          VS
-        </Text>
-      </div>
+      <VsBadge />
       <SideCard
         side={sideB}
-        letter="B"
         selected={selectedSide === 1}
         onSelect={() => onSelect(1)}
         packCoverTone={packCoverTone}

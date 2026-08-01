@@ -41,7 +41,13 @@ describe("ReportedUserSummary", () => {
   });
 
   it("renders the moderation.reportsAgainst/reportsFiled aggregate counts (D9)", () => {
-    render(<ReportedUserSummary user={userDetail({ moderation: { reportsAgainst: 5, reportsFiled: 2 } })} />);
+    render(
+      <ReportedUserSummary
+        user={userDetail({
+          moderation: { reportsAgainst: 5, reportsFiled: 2 },
+        })}
+      />,
+    );
 
     expect(screen.getByText("5")).toBeInTheDocument();
     expect(screen.getByText("2")).toBeInTheDocument();

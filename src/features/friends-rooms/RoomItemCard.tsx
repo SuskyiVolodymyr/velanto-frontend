@@ -71,7 +71,13 @@ export function RoomItemCard({
   format,
 }: RoomItemCardProps) {
   const t = useTranslations("room");
-  const verb = claimVerbKey(format).endsWith("Save") ? "Save" : "Sacrifice";
+  // A claim is ALWAYS a sacrifice. The engine has each player claim one item to
+  // give up and the single unclaimed item survive (claim.engine.ts), and a
+  // save_one pack does not invert that — its saved item IS that survivor. The
+  // format decides only what the survivor is called.
+  const survivorVerb = claimVerbKey(format).endsWith("Save")
+    ? "Save"
+    : "Sacrifice";
   const videoId = item.type === "youtube" ? extractYouTubeId(item.value) : null;
   const startSeconds =
     item.type === "youtube" ? extractYouTubeStart(item.value) : null;
@@ -79,8 +85,11 @@ export function RoomItemCard({
   const claimable = status === "free" && Boolean(onClaim);
   const number = String(index + 1).padStart(2, "0");
 
+  // A column, so the body can take the slack when the grid stretches this card
+  // to match a taller neighbour — otherwise the strip below a short title is
+  // dead space inside a card that reads as clickable everywhere.
   const frame = cn(
-    "relative w-full overflow-hidden rounded-2xl border text-start transition-colors",
+    "relative flex w-full flex-col overflow-hidden rounded-2xl border text-start transition-colors",
     STATUS_FRAME[status],
     isOwn && "ring-2 ring-acc",
     flash && "room-item-flash",
@@ -88,11 +97,11 @@ export function RoomItemCard({
 
   const statusLabel =
     status === "survivor"
-      ? t(`round.survivor${verb}`)
+      ? t(`round.survivor${survivorVerb}`)
       : status === "free"
         ? null
         : claimant
-          ? t(`round.claimedBy${verb}`, { name: claimant.username })
+          ? t("round.claimedBySacrifice", { name: claimant.username })
           : t("round.taken");
 
   const media = videoId ? (
@@ -107,28 +116,33 @@ export function RoomItemCard({
   // to sit on.
   const hasMedia = media !== null;
 
+  // The status label gets its own line rather than a column beside the title:
+  // sharing the row left a long title a narrow gutter and broke it one word per
+  // line, while "Kept by <name>" sat in the space it needed.
   const body = (
-    <div className="flex items-center gap-2 p-4">
-      {claimant && !hasMedia ? (
-        <UserAvatar
-          username={claimant.username}
-          avatarKey={claimant.avatarKey}
-          className={cn(
-            "h-6 w-6 flex-none rounded-full border text-[11px]",
-            status === "survivor"
-              ? "border-success text-foreground-secondary"
-              : "border-danger text-foreground-secondary",
-          )}
-        />
-      ) : (
-        <span
-          aria-hidden
-          className="text-xs font-semibold text-foreground-tertiary"
-        >
-          {number}
-        </span>
-      )}
-      <Text className="flex-1 font-semibold">{item.title}</Text>
+    <div className="flex flex-col gap-1.5 p-4">
+      <div className="flex items-center gap-2">
+        {claimant && !hasMedia ? (
+          <UserAvatar
+            username={claimant.username}
+            avatarKey={claimant.avatarKey}
+            className={cn(
+              "h-6 w-6 flex-none rounded-full border text-[11px]",
+              status === "survivor"
+                ? "border-success text-foreground-secondary"
+                : "border-danger text-foreground-secondary",
+            )}
+          />
+        ) : (
+          <span
+            aria-hidden
+            className="flex-none text-xs font-semibold text-foreground-tertiary"
+          >
+            {number}
+          </span>
+        )}
+        <Text className="min-w-0 flex-1 font-semibold">{item.title}</Text>
+      </div>
       {statusLabel && (
         <Text
           variant={status === "survivor" ? "body" : "danger"}
@@ -159,7 +173,7 @@ export function RoomItemCard({
   );
 
   if (claimable) {
-    const claimLabel = t(`round.claim${verb}`, { name: item.title });
+    const claimLabel = t("round.claimSacrifice", { name: item.title });
     // A resolvable youtube item renders YouTubeCard's OWN play button. Wrapping
     // the whole card in the claim <button> would nest a button inside a button —
     // invalid HTML that breaks hydration. Mirror CandidateCard: the media sits
@@ -173,7 +187,7 @@ export function RoomItemCard({
             type="button"
             onClick={onClaim}
             aria-label={claimLabel}
-            className="w-full text-start"
+            className="flex-1 w-full text-start"
           >
             {body}
           </button>

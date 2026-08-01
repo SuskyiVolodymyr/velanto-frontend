@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 import type { Pack } from "@/src/shared/types/pack";
 import type {
   ClaimRejection,
@@ -18,6 +19,8 @@ import { VotingBoard } from "./VotingBoard";
 import { SharedGridRankSubmission } from "./SharedGridRankSubmission";
 import { RelayInsertBoard } from "./RelayInsertBoard";
 import { RoundRejectionNotice } from "./RoundRejectionNotice";
+import { RoundChrome } from "./RoundChrome";
+import { roundChromeConfig } from "./round-chrome-config";
 
 /** Every round-scoped action a board might need, keyed by mode so each board
  * only destructures what its own mode uses. */
@@ -45,16 +48,19 @@ interface RoomRoundBoardProps {
   state: RoomState;
   currentUserId: string | null;
   actions: RoomRoundActions;
-  /** save_one or sacrifice_one — Claim's own save/sacrifice verb. Request-
-   * derived data (RoomScreen fetches the pack once), not an action, so it's
-   * a sibling prop rather than folded into `actions`. */
+  /** save_one or sacrifice_one — Claim's own save/sacrifice verb, off the room
+   * snapshot. Not an action, so it's a sibling prop rather than in `actions`. */
   packFormat?: Extract<Pack["format"], "save_one" | "sacrifice_one">;
 }
 
 /**
- * The `phase === 'round'` dispatcher — switches on `state.mode` to the right
- * board. Claim's arm is the existing, unchanged `RoomRound`; every other
- * mode's board is added by that mode's own task group (Tasks 12/18/21/23/25).
+ * The `phase === 'round'` dispatcher: picks the mode's board and gives it the
+ * shared round chrome.
+ *
+ * Voting and Turn-based cut wrap themselves — each has an aside panel only that
+ * board can build (the live tally, the cut log). The other four have nothing
+ * extra to say on the right, so the chrome is applied here from one per-mode
+ * config rather than repeated inside each of them.
  */
 export function RoomRoundBoard({
   state,
@@ -62,47 +68,56 @@ export function RoomRoundBoard({
   actions,
   packFormat,
 }: RoomRoundBoardProps) {
-  // Claim surfaces its own rejection inside RoomRound (the too-fast note and
-  // the item flash), so it is the one arm that opts out of the shared notice.
-  if (state.mode === "claim") {
+  const t = useTranslations("room");
+  const rejection = (
+    <RoundRejectionNotice reason={actions.lastModeRejection?.reason ?? null} />
+  );
+
+  if (state.mode === "voting") {
     return (
-      <RoomRound
-        state={state}
-        currentUserId={currentUserId}
-        lastRejection={actions.lastRejection}
-        onClaim={actions.claim}
-        packFormat={packFormat}
-      />
+      <>
+        {rejection}
+        <VotingBoard
+          state={state}
+          currentUserId={currentUserId}
+          onVote={actions.vote}
+        />
+      </>
+    );
+  }
+
+  if (state.mode === "turn_based_cut") {
+    return (
+      <>
+        {rejection}
+        <TurnBasedCutBoard
+          state={state}
+          currentUserId={currentUserId}
+          onCut={actions.cut}
+        />
+      </>
     );
   }
 
   let board: ReactNode = null;
   switch (state.mode) {
+    case "claim":
+      board = (
+        <RoomRound
+          state={state}
+          currentUserId={currentUserId}
+          lastRejection={actions.lastRejection}
+          onClaim={actions.claim}
+          packFormat={packFormat}
+        />
+      );
+      break;
     case "guess_who":
       board = (
         <GuessWhoRoundBoard
           state={state}
           currentUserId={currentUserId}
           onPick={actions.pick}
-        />
-      );
-      break;
-    case "turn_based_cut":
-      board = (
-        <TurnBasedCutBoard
-          state={state}
-          currentUserId={currentUserId}
-          packFormat={packFormat}
-          onCut={actions.cut}
-        />
-      );
-      break;
-    case "voting":
-      board = (
-        <VotingBoard
-          state={state}
-          currentUserId={currentUserId}
-          onVote={actions.vote}
         />
       );
       break;
@@ -129,15 +144,27 @@ export function RoomRoundBoard({
       return null;
   }
 
+  const chrome = roundChromeConfig(state, currentUserId, t);
+  if (!chrome) return board;
+
   return (
-    <div className="flex flex-col gap-4">
-      {/* Every non-Claim rejection was reaching state and being rendered by
-          nobody — you clicked, the server refused, and the board looked
-          identical either way. Rendered once here rather than five times. */}
-      <RoundRejectionNotice
-        reason={actions.lastModeRejection?.reason ?? null}
-      />
-      {board}
-    </div>
+    <>
+      {/* Claim surfaces its own rejection inside RoomRound (the too-fast note
+          and the item flash); every other mode's was reaching state and being
+          rendered by nobody — you clicked, the server refused, and the board
+          looked identical either way. */}
+      {state.mode !== "claim" && rejection}
+      <RoundChrome
+        state={state}
+        question={chrome.question}
+        progressNote={chrome.progressNote}
+        call={chrome.call}
+        status={chrome.status}
+        currentUserId={currentUserId}
+        asidePanel={chrome.asidePanel}
+      >
+        {board}
+      </RoundChrome>
+    </>
   );
 }

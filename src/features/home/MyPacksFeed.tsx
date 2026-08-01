@@ -6,10 +6,19 @@ import { useAuth } from "@/src/shared/lib/auth-context";
 import { FilterChipRow } from "@/src/features/home/FilterChipRow";
 import { HomePagination } from "@/src/features/home/HomePagination";
 import { PackCard } from "@/src/features/home/PackCard";
+import {
+  PACK_GRID_CLASS,
+  PackGridSkeleton,
+} from "@/src/features/home/PackGridSkeleton";
 import { Text } from "@/src/shared/components/Text";
-import { LoadingState } from "@/src/shared/components/LoadingState";
 import { useMyPacks } from "@/src/features/home/api/my-packs.queries";
 import { PACKS_FEED_PAGE_SIZE } from "@/src/features/home/api/packs-feed";
+import {
+  DATE_ORDER_LABEL_KEYS,
+  DATE_ORDER_VALUES,
+  DEFAULT_DATE_ORDER,
+  type DateOrderValue,
+} from "@/src/features/home/filter-options";
 import type { PackStatus } from "@/src/shared/types/pack";
 
 // "all" is the UI sentinel for "no status filter" (every status).
@@ -25,14 +34,21 @@ type StatusChoice = "all" | PackStatus;
 export function MyPacksFeed() {
   const t = useTranslations("myPacks");
   const tStatus = useTranslations("status");
+  const tHome = useTranslations("home");
   const { user } = useAuth();
 
   const [status, setStatus] = useState<StatusChoice>("all");
+  const [dateOrder, setDateOrder] =
+    useState<DateOrderValue>(DEFAULT_DATE_ORDER);
   const [page, setPage] = useState(1);
 
   const filters = useMemo(
-    () => ({ status: status === "all" ? undefined : status, page }),
-    [status, page],
+    () => ({
+      status: status === "all" ? undefined : status,
+      sort: dateOrder,
+      page,
+    }),
+    [status, dateOrder, page],
   );
   const query = useMyPacks(user?.id ?? "", filters);
 
@@ -55,6 +71,16 @@ export function MyPacksFeed() {
     setPage(1);
   }
 
+  function selectDateOrder(next: DateOrderValue) {
+    setDateOrder(next);
+    setPage(1);
+  }
+
+  const dateOrderOptions = DATE_ORDER_VALUES.map((value) => ({
+    value,
+    label: tHome(DATE_ORDER_LABEL_KEYS[value]),
+  }));
+
   function goToPage(next: number) {
     setPage(next);
     if (typeof window !== "undefined") {
@@ -68,23 +94,35 @@ export function MyPacksFeed() {
 
   return (
     <div className="flex flex-col gap-6">
-      <FilterChipRow
-        options={statusOptions}
-        value={status}
-        onSelect={selectStatus}
-      />
+      <div className="flex flex-wrap items-center gap-2">
+        <FilterChipRow
+          options={statusOptions}
+          value={status}
+          onSelect={selectStatus}
+        />
+        {/* Right-aligned against the status chips, like the discovery feed's
+            secondary filters — wraps to its own left-aligned row on narrow
+            screens once the status chips no longer share the line. */}
+        <div className="ms-auto max-[480px]:ms-0">
+          <FilterChipRow
+            options={dateOrderOptions}
+            value={dateOrder}
+            onSelect={selectDateOrder}
+          />
+        </div>
+      </div>
 
       {query.isError ? (
         <Text variant="danger">{t("error")}</Text>
       ) : query.isLoading ? (
-        <LoadingState label={t("loading")} showLabel />
+        <PackGridSkeleton label={t("loading")} />
       ) : packs.length === 0 ? (
         <Text variant="secondary">
           {status === "all" ? t("empty") : t("emptyFiltered")}
         </Text>
       ) : (
         <>
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(262px,1fr))] gap-[18px]">
+          <div className={PACK_GRID_CLASS}>
             {packs.map((pack) => (
               <PackCard key={pack.id} pack={pack} showStatus />
             ))}

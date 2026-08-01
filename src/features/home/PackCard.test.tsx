@@ -1,21 +1,35 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { PackCard } from "./PackCard";
 import { HOT_PLAYS_THRESHOLD } from "./hot-pack";
-import type { Pack } from "@/src/shared/types/pack";
+import type { PackSummary } from "@/src/shared/types/pack";
 
+const { push } = vi.hoisted(() => ({ push: vi.fn() }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
+
+const auth = vi.hoisted(() => ({
+  current: { user: { id: "u1" } as { id: string } | null },
+}));
+vi.mock("@/src/shared/lib/auth-context", () => ({
+  useAuth: () => auth.current,
+}));
+
+const { create } = vi.hoisted(() => ({ create: vi.fn() }));
+vi.mock("@/src/features/friends-rooms/friends-rooms-client", () => ({
+  friendsRoomsClient: { create },
+}));
+
+// No `groups`/`rounds` — PackCard takes PackSummary, the list-endpoint shape
+// (the backend never sends pack content to a card that doesn't render it).
 const BASE_PACK = {
   id: "pack-a",
   title: "Best Anime Openings",
   description: "Pick your favorite each round.",
   coverTone: "#2b2a3a",
-  language: "en" as Pack["language"],
-  tags: ["Anime"] as Pack["tags"],
-  groups: [{ id: "g1", name: "2016", items: [] }] as Pack["groups"],
-  rounds: [
-    { id: "r1", slots: [{ groupId: "g1", mode: "manual" }] },
-  ] as Pack["rounds"],
+  language: "en" as PackSummary["language"],
+  tags: ["Anime"] as PackSummary["tags"],
   authorId: "u1",
   createdAt: "2026-01-01T00:00:00.000Z",
   totalPlays: 0,
@@ -29,36 +43,39 @@ const BASE_PACK = {
 };
 
 describe("PackCard", () => {
-  it("shows the format pill and the rounds · plays meta line", () => {
-    const pack: Pack = {
-      ...BASE_PACK,
-      format: "save_one",
-      groups: [
-        { id: "g1", name: "2016", items: [] },
-        { id: "g2", name: "2020", items: [] },
-      ],
-      rounds: [
-        { id: "r1", slots: [{ groupId: "g1", mode: "manual" }] },
-        { id: "r2", slots: [{ groupId: "g2", mode: "manual" }] },
-      ],
-    };
+  beforeEach(() => {
+    vi.clearAllMocks();
+    auth.current = { user: { id: "u1" } };
+  });
+
+  // Rounds count used to read from `pack.rounds.length`, which no longer
+  // exists on the list-endpoint shape the card actually receives — dropped
+  // entirely rather than kept, since groups/rounds share one JSON column on
+  // the backend and there's no way to select "just enough to count rounds".
+  it("shows the format pill and the play count, with no round count", () => {
+    const pack: PackSummary = { ...BASE_PACK, format: "save_one" };
     render(<PackCard pack={pack} />);
 
     expect(screen.getByText("Save One")).toBeInTheDocument();
-    expect(screen.getByText("2 rounds · 0 plays")).toBeInTheDocument();
+    expect(screen.queryByText(/rounds?$/)).not.toBeInTheDocument();
+    expect(screen.getByText("0 plays")).toBeInTheDocument();
     // Agreement % was dropped from the card in the 2.0.0 redesign.
     expect(screen.queryByText(/agreement/)).not.toBeInTheDocument();
   });
 
-  it("singularizes a one-round, one-play pack", () => {
-    const pack: Pack = { ...BASE_PACK, format: "save_one", totalPlays: 1 };
+  it("singularizes a one-play pack", () => {
+    const pack: PackSummary = {
+      ...BASE_PACK,
+      format: "save_one",
+      totalPlays: 1,
+    };
     render(<PackCard pack={pack} />);
 
-    expect(screen.getByText("1 round · 1 play")).toBeInTheDocument();
+    expect(screen.getByText("1 play")).toBeInTheDocument();
   });
 
   it("shows the first tag as the cover chip", () => {
-    const pack: Pack = {
+    const pack: PackSummary = {
       ...BASE_PACK,
       format: "save_one",
       tags: ["Gaming", "Anime"],
@@ -70,7 +87,7 @@ describe("PackCard", () => {
 
   describe("HOT badge (derived from real plays)", () => {
     it("shows HOT at or above the play threshold", () => {
-      const pack: Pack = {
+      const pack: PackSummary = {
         ...BASE_PACK,
         format: "save_one",
         totalPlays: HOT_PLAYS_THRESHOLD,
@@ -81,7 +98,7 @@ describe("PackCard", () => {
     });
 
     it("hides HOT below the threshold", () => {
-      const pack: Pack = {
+      const pack: PackSummary = {
         ...BASE_PACK,
         format: "save_one",
         totalPlays: HOT_PLAYS_THRESHOLD - 1,
@@ -93,16 +110,57 @@ describe("PackCard", () => {
   });
 
   describe("primary action", () => {
-    it("shows a Play link to the pack", () => {
+    // Straight into the session, not the detail page: a button labelled
+    // "Play" that lands on a description with another Play button costs a
+    // click. The card body still links to the detail page.
+    it("starts the play session rather than opening the detail page", () => {
       render(<PackCard pack={{ ...BASE_PACK, format: "save_one" }} />);
 
       const play = screen.getByRole("link", { name: "Play" });
-      expect(play).toHaveAttribute("href", "/packs/pack-a");
+      expect(play).toHaveAttribute("href", "/packs/pack-a/play");
+    });
+  });
+
+  describe("Friends action", () => {
+    it("creates a room for the pack and routes into it when clicked", async () => {
+      const user = userEvent.setup();
+      create.mockResolvedValue({ id: "room-9" });
+      render(<PackCard pack={{ ...BASE_PACK, format: "save_one" }} />);
+
+      await user.click(screen.getByRole("button", { name: "Friends" }));
+
+      expect(create).toHaveBeenCalledWith("pack-a");
+      await waitFor(() => expect(push).toHaveBeenCalledWith("/rooms/room-9"));
+    });
+
+    it("shows an error message when room creation fails, without navigating", async () => {
+      const user = userEvent.setup();
+      create.mockRejectedValue(new Error("nope"));
+      render(<PackCard pack={{ ...BASE_PACK, format: "save_one" }} />);
+
+      await user.click(screen.getByRole("button", { name: "Friends" }));
+
+      expect(
+        await screen.findByText("Couldn't create the room. Try again."),
+      ).toBeInTheDocument();
+      expect(push).not.toHaveBeenCalled();
+    });
+
+    it("blocks the Friends button with a sign-in tooltip when signed out, without calling create", async () => {
+      auth.current = { user: null };
+      const user = userEvent.setup();
+      render(<PackCard pack={{ ...BASE_PACK, format: "save_one" }} />);
+
+      const friendsButton = screen.getByRole("button", { name: "Friends" });
+      expect(friendsButton).toHaveAttribute("aria-disabled", "true");
+
+      await user.click(friendsButton);
+      expect(create).not.toHaveBeenCalled();
     });
   });
 
   it("shows the author @handle when the feed includes author info", () => {
-    const pack: Pack = {
+    const pack: PackSummary = {
       ...BASE_PACK,
       format: "save_one",
       author: {
@@ -119,7 +177,7 @@ describe("PackCard", () => {
   });
 
   it("omits the author line when the pack has no author summary", () => {
-    const pack: Pack = { ...BASE_PACK, format: "save_one" };
+    const pack: PackSummary = { ...BASE_PACK, format: "save_one" };
     render(<PackCard pack={pack} />);
 
     expect(screen.queryByText(/^@/)).not.toBeInTheDocument();
@@ -215,26 +273,23 @@ describe("PackCard", () => {
     });
   });
 
-  it("uses the rounds length as the round count for an nxn pack", () => {
-    const pack: Pack = {
+  it("shows the format pill with no round count for an nxn pack", () => {
+    const pack: PackSummary = { ...BASE_PACK, format: "nxn" };
+    render(<PackCard pack={pack} />);
+
+    expect(screen.getByText("NxN")).toBeInTheDocument();
+    expect(screen.queryByText(/rounds?$/)).not.toBeInTheDocument();
+  });
+
+  it("pluralizes play count for more than one play", () => {
+    const pack: PackSummary = {
       ...BASE_PACK,
-      format: "nxn",
-      groups: [
-        { id: "a", name: "Boys", items: [] },
-        { id: "b", name: "Girls", items: [] },
-      ],
-      rounds: Array.from({ length: 8 }, (_, i) => ({
-        id: `r${i + 1}`,
-        slots: [
-          { groupId: "a", mode: "random" as const, count: 1 },
-          { groupId: "b", mode: "random" as const, count: 1 },
-        ],
-      })),
+      format: "save_one",
+      totalPlays: 124,
     };
     render(<PackCard pack={pack} />);
 
-    expect(screen.getByText("8 rounds · 0 plays")).toBeInTheDocument();
-    expect(screen.getByText("NxN")).toBeInTheDocument();
+    expect(screen.getByText("124 plays")).toBeInTheDocument();
   });
 
   it("shows a pending badge when showStatus is true and the pack is pending", () => {

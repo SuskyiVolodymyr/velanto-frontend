@@ -1,10 +1,6 @@
-import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { ArrowLeft } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
-import { Badge } from "@/src/shared/components/Badge";
-import { cn } from "@/src/shared/lib/cn";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { PackHeaderBar } from "@/src/shared/components/PackHeaderBar";
 import type { Pack } from "@/src/shared/types/pack";
 
 export interface PlayChromeProps {
@@ -14,6 +10,17 @@ export interface PlayChromeProps {
   isFinished: boolean;
   roundIndex: number;
   totalRounds: number;
+  /**
+   * Whether to print the round counter at the end of the bar. Default `true`,
+   * kept for `RankPlayScreen`, whose own eyebrow is the pool name and so
+   * carries no round position anywhere else.
+   *
+   * The mock's bar has no counter at all — it belongs to the round header's
+   * eyebrow. So any screen whose `PlayRoundHeader` eyebrow is already
+   * `play.roundOf` passes `false` here rather than printing it twice on one
+   * page.
+   */
+  showRoundCounter?: boolean;
 }
 
 /**
@@ -34,12 +41,16 @@ export interface PlayChromeProps {
  *
  * `PlayRoundHeader` (T2) renders the per-round title as an `h2`, never an
  * `h1` — the pack title here is the page's only `h1`.
+ *
+ * The bar itself is `PackHeaderBar` — shared with `ResultScreen`, whose
+ * result mock uses the identical shape.
  */
 export function PlayChrome({
   pack,
   isFinished,
   roundIndex,
   totalRounds,
+  showRoundCounter = true,
 }: PlayChromeProps) {
   const t = useTranslations("play");
   const tFormat = useTranslations("formats");
@@ -50,52 +61,22 @@ export function PlayChrome({
   const packMeta = `${tFormat(pack.format)} · ${tPack("roundsCount", { count: totalRounds })}`;
 
   return (
-    <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
-      <div
-        className={cn(
-          PACK_CONTAINER,
-          "flex items-center gap-3 py-3 max-[720px]:px-4",
-        )}
-      >
-        <Link
-          href={`/packs/${pack.id}`}
-          aria-label={t("exit")}
-          className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-tile border border-border bg-white/[0.03] text-foreground-secondary transition-colors hover:border-white/[0.18] hover:text-foreground"
-        >
-          <ArrowLeft size={18} aria-hidden />
-        </Link>
-
-        <div
-          aria-hidden="true"
-          className="h-9 w-9 shrink-0 rounded-[10px]"
-          style={{
-            background: `linear-gradient(150deg, ${pack.coverTone}, #0b0c0f)`,
-          }}
-        />
-
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <Text
-              as="h1"
-              variant="title"
-              className="min-w-0 truncate text-[15.5px]"
-            >
-              {pack.title}
-            </Text>
-            <Badge className="shrink-0">{t("soloMode")}</Badge>
-          </div>
-          <Text variant="tertiary" className="truncate text-[12px]">
-            {packMeta}
+    <PackHeaderBar
+      pack={pack}
+      backHref={`/packs/${pack.id}`}
+      backLabel={t("exit")}
+      modeLabel={t("soloMode")}
+      meta={packMeta}
+      end={
+        showRoundCounter && (
+          <Text
+            variant="secondary"
+            className="text-[13.5px] tabular-nums text-foreground-secondary"
+          >
+            {roundLabel}
           </Text>
-        </div>
-
-        <Text
-          variant="secondary"
-          className="ms-auto shrink-0 text-[13.5px] tabular-nums text-foreground-secondary"
-        >
-          {roundLabel}
-        </Text>
-      </div>
-    </div>
+        )
+      }
+    />
   );
 }

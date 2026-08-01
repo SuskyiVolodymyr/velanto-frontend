@@ -39,7 +39,11 @@ export const ROOM_MODE_BOUNDS: Record<
   RoomMode,
   { formats: PackFormat[]; minPlayers: number; maxPlayers: number }
 > = {
-  claim: { formats: ["save_one", "sacrifice_one"], minPlayers: 2, maxPlayers: 4 },
+  claim: {
+    formats: ["save_one", "sacrifice_one"],
+    minPlayers: 2,
+    maxPlayers: 4,
+  },
   guess_who: {
     formats: ["save_one", "sacrifice_one", "rank_blind", "nxn", "1v1"],
     minPlayers: 3,
@@ -112,6 +116,26 @@ export interface RoomPlayerState {
   ready: boolean;
   next: boolean;
   claimedItemId: string | null;
+  /**
+   * Guess-who's anonymous label for this player, or null outside that mode and
+   * before the game starts. The room panel renders it in place of the avatar
+   * and the username, so the room reads as X / Y / Z all game.
+   *
+   * Owner-made tradeoff: this pairs a label with a userId on the wire, so the
+   * masking is for the screen, not against someone reading the socket.
+   */
+  label: string | null;
+}
+
+/**
+ * One side of a versus (nxn) round: a POOL picked as a whole, with the items
+ * drawn from it as the matchup context. nxn is the one format whose options are
+ * not items, so without this a board has option ids it cannot name.
+ */
+export interface RoundSide {
+  id: string;
+  name: string;
+  itemIds: string[];
 }
 
 export interface RoundState {
@@ -125,9 +149,18 @@ export interface RoundState {
   /** Guess-who mode: the ids a player selects among, and how. Absent otherwise. */
   optionIds?: string[];
   actionKind?: "pick" | "rank";
+  /** Guess-who and Voting on an NXN pack: what each option IS, since there an
+   * option is a pool rather than an item. Absent for every other format. */
+  sides?: RoundSide[];
   /** Guess-who and Shared-grid: userIds who have locked in a BLIND
    * selection/ranking this round — never the picks/rankings themselves. */
   lockedIn?: string[];
+  /**
+   * Guess-who only: each anonymous LABEL's pick this round, as it lands.
+   * Live — the round is watchable while people choose. Which real player holds
+   * a label is what stays hidden.
+   */
+  picks?: Record<string, string[]>;
   /** Turn-based cut: the ids still in play, shrinking with every cut. */
   remainingItemIds?: string[];
   /** Turn-based cut: whose turn it is right now, or null once resolved. */
@@ -143,7 +176,9 @@ export interface RoundState {
   relayOrder?: string[];
   /** Relay: the shared ranking built SO FAR, in final relative order — fully
    * public, grows by one every placement. */
-  relayPlaced?: string[];
+  /** The ranking BOARD — one slot per item, `null` where still free. Fixed
+   * length from the start, so every position is open to the first placement. */
+  relayPlaced?: (string | null)[];
   /** Relay: the item id currently awaiting placement, or null once every
    * item in the round has been placed. */
   relayCurrentItemId?: string | null;
@@ -171,6 +206,12 @@ export interface RevealRoundResult {
   items: Item[];
   /** label -> a length-1 array (pick formats) or the full ordering (rank_blind). */
   picks: Record<string, string[]>;
+  /**
+   * nxn only: what each picked id IS, since there a pick names a POOL and
+   * resolves to nothing in `items`. Absent for every other format, where a
+   * pick is already an item in `items`.
+   */
+  sides?: RoundSide[];
 }
 
 /** Voting's resolved round. */
@@ -232,6 +273,9 @@ export interface GuessingState {
 export interface PublicEndgameState {
   kind: "identity_reveal";
   mapping: Record<string, string>;
+  /** guesser userId → how many labels they matched. The leaderboard. Absent
+   * when the game ended without a reveal, which is not "zero for everyone". */
+  scores?: Record<string, number>;
 }
 
 export interface RoomState {
@@ -239,6 +283,12 @@ export interface RoomState {
   code: string | null;
   packId: string;
   packTitle: string;
+  /** The pack's own identity, for the room header's caption. `packRounds` is
+   * what the author wrote (known in the lobby); `totalRounds` is the drawn
+   * plan, still 0 there. */
+  packFormat: PackFormat;
+  packRounds: number;
+  packAuthorUsername: string | null;
   hostId: string;
   status: FriendsRoomStatus;
   phase: RoomPhase;
@@ -256,6 +306,13 @@ export interface RoomState {
   players: RoomPlayerState[];
   round: RoundState | null;
   results: RoundResult[];
+  /**
+   * Guess-who's anonymous labels, SORTED — the set, never who holds which.
+   * Null outside guess-who and before the game starts. This is what lets the
+   * room panel show X / Y / Z from round one instead of everyone's real names,
+   * which is the mode's whole fiction.
+   */
+  labels: string[] | null;
   /** The live guessing-phase board, or null outside `phase === 'guessing'`. */
   guessing: GuessingState | null;
   /** The identity reveal once the guessing phase has closed. Null before
@@ -321,7 +378,8 @@ export interface RelayRejection {
   turnUserId: string | null;
 }
 
-export type GuessRejectionReason = "not_a_player" | "not_guessing" | "malformed";
+export type GuessRejectionReason =
+  "not_a_player" | "not_guessing" | "malformed";
 export interface GuessRejection {
   mapping: Record<string, string>;
   reason: GuessRejectionReason;
@@ -369,6 +427,8 @@ export const ROOM_COMMANDS = {
   submitRanking: "submitRanking",
   placeItem: "placeItem",
   ready: "ready",
+  /** Host-only: begin the game. Ready is consent; this is the trigger. */
+  start: "start",
   next: "next",
   leave: "leave",
   lock: "lock",

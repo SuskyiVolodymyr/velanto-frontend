@@ -29,7 +29,7 @@ export function PackHeroStats({ pack }: { pack: Pack }) {
   ];
 
   return (
-    <div className="flex flex-wrap gap-[26px] pt-1.5">
+    <div className="flex flex-wrap gap-[26px] pt-1.5 max-[720px]:gap-[14px]">
       {stats.map((stat) => (
         <div key={stat.label} className="flex flex-col gap-0.5">
           <div

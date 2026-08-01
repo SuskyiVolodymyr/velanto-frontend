@@ -2,8 +2,8 @@
 
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
-import { BackButton } from "@/src/shared/components/BackButton";
+import { pageContainer } from "@/src/shared/lib/page-container";
+import { PackHeaderBar } from "@/src/shared/components/PackHeaderBar";
 import { Text } from "@/src/shared/components/Text";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { RankResultScreen } from "@/src/features/result/RankResultScreen";
@@ -11,11 +11,11 @@ import { HeadToHeadResultScreen } from "@/src/features/result/HeadToHeadResultSc
 import { NxNResultScreen } from "@/src/features/result/NxNResultScreen";
 import { EliminationResultScreen } from "@/src/features/result/EliminationResultScreen";
 import { ResultLocked } from "@/src/features/result/ResultLocked";
-import { ResultActions } from "@/src/features/result/ResultActions";
 import { ResultHero } from "@/src/features/result/ResultHero";
 import { ResultAgainPanel } from "@/src/features/result/ResultAgainPanel";
 import { SharedResultNote } from "@/src/features/result/SharedResultNote";
-import { summarizeResult } from "@/src/features/result/result-summary";
+import { TopPickedTable } from "@/src/features/result/TopPickedTable";
+import { PodiumTable } from "@/src/features/result/PodiumTable";
 import { usePackResults } from "@/src/features/result/api/results.queries";
 import { useResultPicks } from "@/src/features/result/use-result-picks";
 import { getRoundsCount } from "@/src/shared/lib/pack-display";
@@ -43,6 +43,7 @@ export function ResultScreen({ pack }: { pack: Pack }) {
   const hasEvidence = ready && picks !== null;
   const { data: results, isError } = usePackResults(pack.id, hasEvidence);
   const t = useTranslations("result");
+  const tPlay = useTranslations("play");
 
   let body: ReactNode;
   if (!ready) {
@@ -114,84 +115,114 @@ export function ResultScreen({ pack }: { pack: Pack }) {
       );
     }
 
-    // D5 (T10): the hero's stat tiles, derived here rather than inside
-    // ResultHero — the hero is presentational, this screen already has
-    // format/ownPicks/results in scope, and it is the same "derive once at
-    // the composition root" shape #222's picks/shared already follow above.
-    const { tiles } = summarizeResult({
-      ownPicks: picks,
-      results,
-    });
-
-    body = (
-      <>
-        <div className={cn(PACK_CONTAINER, "pt-10")}>
-          <ResultHero
-            packTitle={pack.title}
-            format={results.format}
-            shared={shared}
-            totalRounds={getRoundsCount(pack)}
-            totalPlays={results.totalPlays}
-            tiles={tiles}
+    // Mock (`Results.dc.html`): the pack-wide ranking is an ASIDE card, below
+    // the share panel — not inline in the recap column, which is where each
+    // format screen used to render its own copy of this. Computed here so
+    // ResultScreen owns exactly one rendering of it, keyed to the same
+    // `results.format` branch as `recap` above.
+    let board: ReactNode = null;
+    if (results.format === "rank_blind") {
+      const podium = results.podium ?? [];
+      if (podium.length > 0) {
+        board = (
+          <PodiumTable
+            items={podium}
+            title={t("podiumHeading")}
+            note={t("boardAcrossPlays", { count: results.totalPlays })}
+            subtitle={t("podiumSubtitle")}
+            ownPicks={picks}
           />
-          {shared && <SharedResultNote />}
-        </div>
-        {/* T8: recap (left) + a right aside for 2-3 stacked cards (the
-            leaderboard, T11; the share/play-again card, T12) — the mock's
-            `minmax(0,1fr) minmax(0,330px)` grid. The hero stays full-width
-            above this, not inside either column. Single column below `lg`. */}
-        <div
-          className={cn(
-            PACK_CONTAINER,
-            "grid grid-cols-1 items-start gap-8 pb-16 lg:grid-cols-[minmax(0,1fr)_minmax(0,330px)]",
-          )}
-        >
+        );
+      }
+    } else {
+      const topItems = results.topItems ?? [];
+      if (topItems.length > 0) {
+        const sacrifice = results.format === "sacrifice_one";
+        const isElimination =
+          results.format === "save_one" || results.format === "sacrifice_one";
+        const heading = isElimination
+          ? t(sacrifice ? "topSacrificedHeading" : "topSavedHeading")
+          : t("topPickedHeading");
+        const subtitle = isElimination
+          ? t(sacrifice ? "topSacrificedSubtitle" : "topSavedSubtitle")
+          : t("topPickedSubtitle");
+        board = (
+          <TopPickedTable
+            items={topItems}
+            title={heading}
+            note={t("boardAcrossPlays", { count: results.totalPlays })}
+            subtitle={subtitle}
+            ownPicks={picks}
+          />
+        );
+      }
+    }
+
+    // Mock's `<main data-el="page">`: one column, 20px between the hero and
+    // the two-column body, 24px top / 70px bottom padding.
+    body = (
+      <div
+        className={cn(
+          pageContainer(1240),
+          "flex flex-col gap-5 pb-[70px] pt-6",
+        )}
+      >
+        <ResultHero
+          format={results.format}
+          shared={shared}
+          totalRounds={getRoundsCount(pack)}
+          totalPlays={results.totalPlays}
+        />
+        {shared && <SharedResultNote />}
+        {/* Mock's `[data-el="cols"]`: recap (left) + an aside stacking the
+            share panel and the pack-wide leaderboard, on a
+            `minmax(0,1fr) minmax(0,330px)` grid with an 18px gutter. Below
+            the breakpoint it collapses to one column AND drops the aside to
+            `display:contents` with the share panel at `order:-1`, so the
+            reading order becomes share → recap → leaderboard. */}
+        <div className="grid grid-cols-1 items-start gap-[18px] min-[1040px]:grid-cols-[minmax(0,1fr)_minmax(0,330px)]">
           <div className="min-w-0">{recap}</div>
-          <aside className="flex flex-col gap-4">
-            {/* T11's leaderboard card renders inside `recap` itself (see that
-                task's commit for why); T12's consolidated share/play-again
-                card is the aside's own content. */}
+          {/* `pt-8` starts the aside level with the FIRST ROUND CARD rather
+              than with the recap column's own top, which is where the caps
+              "ROUND BY ROUND" heading sits — 32px is that heading row (18.8px
+              at 12.5px/normal) plus the section's 13px gap. Only at the
+              two-column breakpoint; below it the aside is `display:contents`
+              and the cards stack, so there is nothing to line up with. */}
+          <aside className="flex flex-col gap-[14px] max-[1039px]:contents min-[1040px]:pt-8">
             <ResultAgainPanel
               packId={pack.id}
               status={pack.status}
               picks={picks}
               shared={shared}
+              className="max-[1039px]:order-first"
             />
+            {board}
           </aside>
         </div>
-      </>
+      </div>
     );
   }
 
+  // Mock (`Results.dc.html`): the same chrome bar as the play screens — back
+  // button, cover thumbnail, pack title, "SOLO" chip, meta — not a bare
+  // back+action bar. `titleAs="p"`: `ResultHero` renders the page's actual
+  // `h1` (the format-aware "Here's what you saved" copy), so the pack title
+  // here must not be a second one.
+  const roundsCount = getRoundsCount(pack);
+  const barMeta = t(shared ? "resultBarMetaShared" : "resultBarMeta", {
+    count: roundsCount,
+  });
+
   return (
     <>
-      {/* Sticky action bar (T11): same treatment as PackDetailScreen's — back
-          on the start side, ResultActions on the end. BackButton moved here
-          from app/packs/[id]/result/page.tsx's loose <div> so it's always
-          visible, matching every other state this screen can render.
-          ResultActions is centralized here instead of being duplicated by
-          each of the four format screens (each used to render its own copy
-          with `className="mb-6 justify-end"`) — it renders in exactly the
-          states that used to render it: once results are actually on screen.
-          Locked/loading/error keep whatever CTA they already had (or none);
-          that is untouched #222 gate behaviour, not something T11 changes. */}
-      <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
-        <div
-          className={cn(
-            PACK_CONTAINER,
-            "flex items-center gap-3 py-3 max-[720px]:px-4",
-          )}
-        >
-          <BackButton href={`/packs/${pack.id}`} />
-          {picks && !isError && results && (
-            <ResultActions
-              packId={pack.id}
-              shared={shared}
-              className="ms-auto"
-            />
-          )}
-        </div>
-      </div>
+      <PackHeaderBar
+        pack={pack}
+        backHref={`/packs/${pack.id}`}
+        backLabel={tPlay("exit")}
+        modeLabel={tPlay("soloMode")}
+        meta={barMeta}
+        titleAs="p"
+      />
       {body}
     </>
   );
@@ -205,7 +236,7 @@ export function ResultScreen({ pack }: { pack: Pack }) {
 function ResultLoadError() {
   const t = useTranslations("result");
   return (
-    <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
+    <div className={cn(pageContainer(1240), "flex-1 py-10")}>
       <div className="rounded-card border border-border bg-surface-card p-[26px_24px] text-center">
         <Text variant="danger">{t("loadError")}</Text>
       </div>

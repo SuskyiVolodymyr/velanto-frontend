@@ -145,6 +145,36 @@ describe("ResultScreen", () => {
     ).toBeInTheDocument();
   });
 
+  // Mock (`Results.dc.html`): the sticky bar is the same chrome as the play
+  // screens (back + thumbnail + title + SOLO chip + meta), not a bare
+  // back-button-and-action bar — and it must not introduce a second `h1`
+  // (ResultHero's format-aware title is the page's only one).
+  it("shows the pack's chrome bar with its title, SOLO chip and rounds meta", async () => {
+    seedOwnPlay();
+    seedResults(RESULTS);
+    render(<ResultScreen pack={PACK} />);
+
+    await screen.findByTestId("picked");
+    expect(screen.getByText("Best Anime Openings")).toBeInTheDocument();
+    expect(screen.getByText("SOLO")).toBeInTheDocument();
+    expect(screen.getByText("1 round · your run")).toBeInTheDocument();
+    expect(screen.getAllByRole("heading", { level: 1 })).toHaveLength(1);
+  });
+
+  // T11/T13: the pack-wide ranking is an aside card, not part of the recap
+  // column — assert it actually lands inside the `complementary` landmark.
+  it("renders the leaderboard inside the aside, with the viewer's picks marked", async () => {
+    seedOwnPlay();
+    seedResults(RESULTS);
+    render(<ResultScreen pack={PACK} />);
+
+    await screen.findByTestId("picked");
+    const aside = within(screen.getByRole("complementary"));
+    expect(aside.getByRole("list")).toBeInTheDocument();
+    expect(aside.getByText("Most saved")).toBeInTheDocument();
+    expect(aside.getByText("Yours")).toBeInTheDocument();
+  });
+
   // #222: the product promise is that stats stay locked until you finish, so
   // nobody is influenced by the crowd. This used to assert the OPPOSITE — that
   // the aggregate showed to anyone who reached the URL — which is the bug.
@@ -211,11 +241,8 @@ describe("ResultScreen", () => {
     render(<ResultScreen pack={PACK} />);
 
     // 75% comes from the pack-wide ranking, which a shared result also gets.
-    // Scoped to the ranking table: T11's hero also renders a "75%" agreement
-    // stat tile from the same underlying number, so the plain text now
-    // matches twice on screen — both are correct, this just disambiguates.
-    const table = await screen.findByRole("table");
-    expect(within(table).getByText("75%")).toBeInTheDocument();
+    const list = await screen.findByRole("list");
+    expect(within(list).getByText("75%")).toBeInTheDocument();
   });
 
   it("links back to play the pack again once you have played", async () => {
@@ -228,7 +255,7 @@ describe("ResultScreen", () => {
     render(<ResultScreen pack={PACK} />);
 
     expect(
-      await screen.findByRole("link", { name: "Play again" }),
+      await screen.findByRole("link", { name: "Play it again" }),
     ).toHaveAttribute("href", "/packs/pack-1/play");
   });
 
@@ -274,7 +301,7 @@ describe("ResultScreen", () => {
     // Your own round still renders — it comes from your picks, not the
     // aggregate — and there is no ranking to show yet.
     expect(screen.getByTestId("picked")).toHaveTextContent("Guren no Yumiya");
-    expect(screen.queryByRole("table")).toBeNull();
+    expect(screen.queryByRole("list")).toBeNull();
   });
 
   it("delegates to RankResultScreen for rank_blind results", async () => {

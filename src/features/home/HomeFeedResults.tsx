@@ -1,22 +1,24 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { Pack } from "@/src/shared/types/pack";
+import type { PackSummary } from "@/src/shared/types/pack";
 import { Text } from "@/src/shared/components/Text";
-import { LoadingState } from "@/src/shared/components/LoadingState";
 import { PackCard } from "@/src/features/home/PackCard";
+import {
+  PACK_GRID_CLASS,
+  PackGridSkeleton,
+} from "@/src/features/home/PackGridSkeleton";
 
 export function HomeFeedResults({
   status,
   packs,
 }: {
   status: "loading" | "ready" | "error";
-  packs: Pack[];
+  packs: PackSummary[];
 }) {
   const t = useTranslations("home");
 
-  if (status === "loading")
-    return <LoadingState label={t("loading")} showLabel />;
+  if (status === "loading") return <PackGridSkeleton label={t("loading")} />;
   if (status === "error") {
     return <Text variant="danger">{t("error")}</Text>;
   }
@@ -24,7 +26,7 @@ export function HomeFeedResults({
     return <Text variant="secondary">{t("empty")}</Text>;
   }
   return (
-    <div className="grid grid-cols-[repeat(auto-fill,minmax(262px,1fr))] gap-[18px]">
+    <div className={PACK_GRID_CLASS}>
       {packs.map((pack) => (
         <PackCard key={pack.id} pack={pack} />
       ))}

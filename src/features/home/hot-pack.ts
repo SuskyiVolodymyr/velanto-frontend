@@ -1,4 +1,4 @@
-import type { Pack } from "@/src/shared/types/pack";
+import type { PackSummary } from "@/src/shared/types/pack";
 
 /**
  * Play count at which a pack earns the "HOT" badge on its browse card.
@@ -15,6 +15,6 @@ import type { Pack } from "@/src/shared/types/pack";
 export const HOT_PLAYS_THRESHOLD = 100;
 
 /** Whether a pack should show the derived "HOT" badge — see the threshold doc. */
-export function isHotPack(pack: Pack): boolean {
+export function isHotPack(pack: PackSummary): boolean {
   return pack.totalPlays >= HOT_PLAYS_THRESHOLD;
 }

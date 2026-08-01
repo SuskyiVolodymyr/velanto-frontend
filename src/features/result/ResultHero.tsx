@@ -1,14 +1,10 @@
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
+import { Check } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
 import { HERO_TITLE_KEY } from "@/src/features/result/result-format-copy";
-import type { ResultTile } from "@/src/features/result/result-summary";
 import type { Pack } from "@/src/shared/types/pack";
 
 export interface ResultHeroProps {
-  /** The pack's own title — no longer the page's `h1` (T11 moves it into the
-   * subtitle; the format-aware "Here's what you saved" copy is the `h1` now,
-   * T10). */
-  packTitle: string;
   /** Picks the h1's per-format phrasing (T10) — save_one reads differently
    * from rank_blind, etc. */
   format: Pack["format"];
@@ -16,113 +12,74 @@ export interface ResultHeroProps {
   shared: boolean;
   totalRounds: number;
   totalPlays: number;
-  /** `summarizeResult()`'s tiles (T10). Empty hides the whole row — "zeros are
-   * a lie here, not a fallback" (D5). */
-  tiles: ResultTile[];
 }
 
 /**
- * The result page's hero block (T11, T10): eyebrow, the page's one `h1`, a
- * subtitle carrying the pack title + a fixed "picks recorded" note, a compact
- * rounds/plays stat row, and the D5 richer stat tiles.
+ * The result page's hero card: a cyan-tinted highlight panel with a check
+ * badge, eyebrow, the page's one `h1`, a fixed "picks recorded" note, and a
+ * compact rounds/plays stat row pinned to the end — matches the real mock
+ * (`Results.dc.html`) exactly, including its gradient/border treatment.
  *
- * Mirrors `PlayRoundHeader`'s eyebrow recipe (T3) — same live-dot + uppercase
- * label shape — but is not that component: this one owns its own i18n (the
- * eyebrow copy is always `result.label`, never caller-supplied), and its title
- * is the page's `h1`, not an `h2` under someone else's `h1`.
+ * The pack's own title is NOT rendered here (mock never puts it in the hero,
+ * only in the sticky header bar) — `ResultScreen`'s chrome bar owns it, same
+ * split as `PlayChrome`/`PlayRoundHeader` on the play screens.
  */
 export function ResultHero({
-  packTitle,
   format,
   shared,
   totalRounds,
   totalPlays,
-  tiles,
 }: ResultHeroProps) {
   const t = useTranslations("result");
   const titleKey = HERO_TITLE_KEY[format];
 
   return (
-    <div>
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="flex items-center gap-[9px]">
-          <span
-            aria-hidden="true"
-            className="h-[6px] w-[6px] rounded-pill bg-acc animate-livedot"
-          />
-          <Text
-            variant="tertiary"
-            className="text-[12.5px] font-medium uppercase tracking-[0.16em]"
-          >
-            {t("label")}
-          </Text>
-        </div>
-        {/* T10: compact mono stat row (rounds/total plays) — distinct from
-            and shown ALONGSIDE the richer D5 stat tiles below, not replacing
-            them (see the plan's D10 decision). */}
-        <div className="flex gap-5">
-          <CompactStat label={t("statRoundsCompact")} value={totalRounds} />
-          <CompactStat label={t("statPlaysCompact")} value={totalPlays} />
-        </div>
+    <div className="flex flex-wrap items-center gap-[18px] rounded-[20px] border border-acc/30 bg-gradient-to-br from-acc/[0.12] to-acc/[0.02] p-[22px]">
+      <span
+        aria-hidden="true"
+        className="flex h-14 w-14 shrink-0 items-center justify-center rounded-[17px] bg-acc/[0.16] text-acc-hover"
+      >
+        <Check size={26} strokeWidth={2} />
+      </span>
+      <div className="flex min-w-0 flex-col gap-[5px]">
+        <span className="text-[11px] font-bold uppercase tracking-[0.16em] text-acc-hover">
+          {t("label")}
+        </span>
+        <Text
+          as="h1"
+          variant="title"
+          className="text-pretty text-[30px] font-bold leading-[1.06] tracking-[-0.025em] max-[720px]:text-[26px]"
+        >
+          {t(shared ? titleKey.shared : titleKey.own)}
+        </Text>
+        <Text variant="secondary" className="text-pretty text-[13.5px]">
+          {t(shared ? "heroSubtitleFixedShared" : "heroSubtitleFixed")}
+        </Text>
       </div>
-      <Text
-        as="h1"
-        variant="title"
-        className="mt-[10px] text-[clamp(30px,4vw,44px)] leading-[1.06] tracking-[-0.02em]"
-      >
-        {t(shared ? titleKey.shared : titleKey.own)}
-      </Text>
-      <Text
-        variant="secondary"
-        className="mt-[10px] max-w-[520px] text-[15.5px]"
-      >
-        {packTitle} ·{" "}
-        {t(shared ? "heroSubtitleFixedShared" : "heroSubtitleFixed")}
-      </Text>
-
-      {tiles.length > 0 && (
-        <div className="mt-7 flex flex-wrap gap-[14px]">
-          {tiles.map((tile, index) => (
-            <StatTile key={`${tile.labelKey}-${index}`} tile={tile} />
-          ))}
-        </div>
-      )}
+      {/* The mock's `heroStats`, rendered INSIDE the card beside the message
+          rather than as its own row above or below it. */}
+      <div className="ms-auto flex gap-[22px]">
+        <CompactStat label={t("statRoundsCompact")} value={totalRounds} />
+        <CompactStat label={t("statPlaysCompact")} value={totalPlays} />
+      </div>
     </div>
   );
 }
 
 function CompactStat({ label, value }: { label: string; value: number }) {
+  const format = useFormatter();
   return (
-    <div className="text-end">
-      <Text className="font-mono text-[15px] font-bold tabular-nums">
-        {value}
+    <div className="flex flex-col gap-[3px]">
+      <Text className="font-mono text-[22px] font-bold tracking-[-0.01em] tabular-nums">
+        {/* Mock shows "2,142" — a four-figure play count without grouping
+            reads as an id, not a quantity. */}
+        {format.number(value)}
       </Text>
       <Text
         variant="tertiary"
-        className="text-[10px] font-medium uppercase tracking-[0.1em]"
+        className="text-[11px] font-semibold uppercase tracking-[0.06em]"
       >
         {label}
-      </Text>
-    </div>
-  );
-}
-
-function StatTile({ tile }: { tile: ResultTile }) {
-  const t = useTranslations();
-
-  return (
-    <div className="flex-1 basis-[200px] rounded-card border border-border bg-surface-card p-5">
-      {tile.kind === "pick" ? (
-        <Text className="text-[15px] font-semibold">{tile.title}</Text>
-      ) : (
-        <Text className="text-[32px] font-semibold tabular-nums text-acc">
-          {tile.kind === "percent" ? `${tile.value}%` : tile.value}
-        </Text>
-      )}
-      <Text variant="tertiary" className="mt-1 text-[12.5px]">
-        {tile.kind === "pick"
-          ? t(tile.labelKey, { percent: tile.percent })
-          : t(tile.labelKey)}
       </Text>
     </div>
   );

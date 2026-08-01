@@ -1,19 +1,18 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
 import { Select } from "@/src/shared/components/Select";
 import { cn } from "@/src/shared/lib/cn";
 
 export type TopicId =
   "start" | "creating" | "formats" | "playing" | "stats" | "api";
 
-interface NavSection {
+export interface NavSection {
   labelKey: string;
   topics: { id: TopicId; labelKey: string }[];
 }
 
-const NAV: NavSection[] = [
+export const NAV: NavSection[] = [
   {
     labelKey: "secOverview",
     topics: [{ id: "start", labelKey: "topStart" }],
@@ -59,7 +58,7 @@ export function DocsSidebar({
           article isn't pushed way down the page. Native <select> keeps the
           section grouping (optgroups) and is a11y/SSR-safe. */}
       <Select
-        className="md:hidden"
+        className="min-[820px]:hidden"
         aria-label={t("jumpTo")}
         value={activeTopic}
         onChange={(event) => onSelect(event.target.value as TopicId)}
@@ -75,16 +74,14 @@ export function DocsSidebar({
         ))}
       </Select>
 
-      {/* Desktop: the sticky sidebar list. */}
-      <nav className="hidden w-full flex-col gap-6 md:sticky md:top-[80px] md:flex md:w-[220px] md:flex-none">
+      {/* Desktop: the sticky sidebar list. `top-20` clears the sticky page
+          header — at the old `top-6` the nav slid underneath it on scroll. */}
+      <nav className="hidden w-full flex-col gap-6 min-[820px]:sticky min-[820px]:top-20 min-[820px]:flex min-[820px]:w-[220px] min-[820px]:flex-none">
         {NAV.map((section) => (
-          <div key={section.labelKey}>
-            <Text
-              variant="tertiary"
-              className="mb-2 ps-3 text-[11px] font-semibold tracking-[0.12em]"
-            >
+          <div key={section.labelKey} className="flex flex-col gap-2">
+            <span className="px-3 text-[11px] font-[650] uppercase tracking-[0.12em] text-foreground-tertiary">
               {t(section.labelKey)}
-            </Text>
+            </span>
             <div className="flex flex-col gap-0.5">
               {section.topics.map((topic) => {
                 const active = topic.id === activeTopic;
@@ -95,7 +92,7 @@ export function DocsSidebar({
                     onClick={() => onSelect(topic.id)}
                     aria-pressed={active}
                     className={cn(
-                      "cursor-pointer rounded-lg px-3 py-2 text-start text-sm font-medium transition-colors",
+                      "cursor-pointer rounded-[9px] px-3 py-[9px] text-start text-sm font-medium transition-colors",
                       active
                         ? "bg-white/[0.12] text-foreground"
                         : "text-foreground-secondary hover:text-foreground",

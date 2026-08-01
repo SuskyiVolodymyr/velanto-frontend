@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
-import { PodiumTable } from "@/src/features/result/PodiumTable";
+import { RecapHeading } from "@/src/features/result/RecapHeading";
 import { RankedList } from "@/src/shared/components/RankedList";
 import { roundHeading } from "@/src/shared/lib/round-heading";
 import type { Pack } from "@/src/shared/types/pack";
@@ -33,22 +33,18 @@ export function RankResultScreen({
   shared: boolean;
 }) {
   const t = useTranslations("result");
-  const podium = results.podium ?? [];
 
+  // The podium (pack-wide ranking) is no longer rendered here — it's a
+  // right-aside card in the mock, not part of the recap column. ResultScreen
+  // renders it directly, keyed to the same `results.format`.
   return (
     <div className="flex-1 pb-10">
-      <section className="mb-10">
-        <Text
-          as="h2"
-          variant="tertiary"
-          className="mb-1 text-[12px] font-medium uppercase tracking-[0.14em] text-acc"
-        >
-          {t("roundByRoundHeading")}
-        </Text>
-        <Text variant="secondary" className="mb-4 text-sm">
-          {t(shared ? "roundByRoundNoteShared" : "roundByRoundNote")}
-        </Text>
-        <div className="flex flex-col divide-y divide-border">
+      <section className="flex min-w-0 flex-col gap-[13px]">
+        <RecapHeading shared={shared} />
+        {/* Cards, so a gap between them — the hairline `divide-y` separators
+            were carrying the visual break that each card's own border now
+            does. */}
+        <div className="flex flex-col gap-[10px]">
         {results.rounds.map((round) => {
           const roundPicks =
             ownPicks?.filter((pick) => pick.roundIndex === round.roundIndex) ??
@@ -91,49 +87,41 @@ export function RankResultScreen({
           const firstPlace = sortedItems[0];
 
           return (
-            <div key={round.roundIndex} className="py-4 first:pt-0 last:pb-0">
-              <Text
-                variant="tertiary"
-                className="mb-2 text-xs uppercase tracking-wide"
-              >
-                {roundHeading(pack, round.roundIndex)}
-              </Text>
-              {playedThisRound && firstPlace && (
-                <Text className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-success">
-                  {t(
-                    shared ? "verdictRankedFirstShared" : "verdictRankedFirst",
-                    { name: firstPlace.itemTitle },
+            <RankedList
+              key={round.roundIndex}
+              // The round's name and verdict belong INSIDE the card, the way
+              // an elimination round card carries its own — outside it they
+              // read as loose text above an unrelated box.
+              header={
+                <div className="flex flex-col gap-[4px] px-1 pb-1">
+                  <Text
+                    variant="tertiary"
+                    className="text-xs uppercase tracking-wide"
+                  >
+                    {roundHeading(pack, round.roundIndex)}
+                  </Text>
+                  {playedThisRound && firstPlace && (
+                    <Text className="text-[11px] font-semibold uppercase tracking-wide text-success">
+                      {t(
+                        shared
+                          ? "verdictRankedFirstShared"
+                          : "verdictRankedFirst",
+                        { name: firstPlace.itemTitle },
+                      )}
+                    </Text>
                   )}
-                </Text>
-              )}
-              <RankedList
-                rows={sortedItems.map((item) => ({
-                  id: item.itemId,
-                  title: item.itemTitle,
-                  drawIndex: pickFor(item)?.drawIndex,
-                }))}
-              />
-            </div>
+                </div>
+              }
+              rows={sortedItems.map((item) => ({
+                id: item.itemId,
+                title: item.itemTitle,
+                drawIndex: pickFor(item)?.drawIndex,
+              }))}
+            />
           );
         })}
         </div>
       </section>
-
-      {podium.length > 0 && (
-        <section className="mb-8">
-          <Text
-            as="h2"
-            variant="tertiary"
-            className="mb-2 text-[13px] font-medium uppercase tracking-[0.14em]"
-          >
-            {t("podiumHeading")}
-          </Text>
-          <Text variant="secondary" className="mb-4 text-sm">
-            {t("podiumSubtitle")}
-          </Text>
-          <PodiumTable items={podium} ownPicks={ownPicks} />
-        </section>
-      )}
     </div>
   );
 }

@@ -85,21 +85,32 @@ describe("registerSchema", () => {
   });
 
   describe("username", () => {
-    it.each(["ab", "a1", "Alice", "user16charslong0"])(
-      "accepts %p",
-      (username) => {
-        expect(registerSchema.safeParse(values({ username })).success).toBe(
-          true,
-        );
-      },
-    );
+    it.each([
+      "ab",
+      "a1",
+      "Alice",
+      "user16charslong0",
+      // Letters of any script, combining marks, and the underscore.
+      "has_underscore",
+      "Аліна",
+      "日本語",
+      "عربية",
+      "Ünïcodé",
+      "हिन्दी",
+      // 16 CODE POINTS of CJK — the bound counts code points, not UTF-16 units.
+      "あああああああああああああああ".slice(0, 16),
+    ])("accepts %p", (username) => {
+      expect(registerSchema.safeParse(values({ username })).success).toBe(true);
+    });
 
     it.each([
       ["a", "too short"],
       ["user17characterslong", "too long"],
-      ["has_underscore", "underscore"],
+      ["あ".repeat(17), "too long in code points"],
       ["no spaces!", "space + symbol"],
       ["dash-name", "dash"],
+      ["🎉🎉", "emoji are neither letters nor digits"],
+      ["dot.name", "dot"],
     ])("rejects %p (%s) with the username message", (username) => {
       expect(errorFor(registerSchema, values({ username }), "username")).toBe(
         AUTH_MESSAGES.username,

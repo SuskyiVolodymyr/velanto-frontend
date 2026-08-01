@@ -31,6 +31,13 @@
   --surface: #13161d;
   --surface-card: #171a22;
   --surface-raised: #20242e;
+  /* A fifth, narrower tier: icon buttons and the search field sitting directly
+   * on the top bar (menu toggle, notification bell, account trigger) — one
+   * step up from --surface but distinct from --surface-raised, which is for
+   * inputs/avatars sitting on a --surface-card. Matches Dashboard.dc.html /
+   * Admin.dc.html / Moderation.dc.html's own controls, which are consistently
+   * a shade lighter than --surface and darker than --surface-raised. */
+  --surface-control: #181b23;
 
   --border: rgba(255, 255, 255, 0.07);
   --border-strong: rgba(255, 255, 255, 0.14);
@@ -94,6 +101,7 @@
   --color-surface: var(--surface);
   --color-surface-card: var(--surface-card);
   --color-surface-raised: var(--surface-raised);
+  --color-surface-control: var(--surface-control);
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
   --color-foreground: var(--foreground);
@@ -195,24 +203,6 @@ html[data-streamer-mode="on"]:not([data-streamer-hydrated])
 }
 .play-card-appear {
   animation: play-card-fade-in 1000ms linear both;
-}
-
-/*
- * Rank-blind's floating current-item card — a gentle idle bob so the card
- * being placed reads as "live" while it waits on the player. Applied via
- * `.animate-card-float` by RankPlayScreen. Frozen under reduced-motion below.
- */
-@keyframes card-float {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-5px);
-  }
-}
-.animate-card-float {
-  animation: card-float 3.2s ease-in-out infinite;
 }
 
 /* Form-error micro-interaction — see design-tokens.md's motion section. */
@@ -370,11 +360,6 @@ input:-webkit-autofill:active {
 
   /* Show every candidate immediately — no staggered fade. */
   .play-card-appear {
-    animation: none;
-  }
-
-  /* Rank-blind's floating card rests still, no idle bob. */
-  .animate-card-float {
     animation: none;
   }
 

@@ -90,6 +90,8 @@
     "contentsNoMatches": "आपकी खोज से मेल खाता कोई आइटम नहीं है।",
     "packNotFound": "यह पैक मौजूद नहीं है।",
     "packCrumb": "पैक समीक्षा",
+    "reportCrumb": "रिपोर्ट समीक्षा",
+    "queueBack": "कतार",
     "packSubmittedBy": "{author} द्वारा {date} को सबमिट किया गया",
     "packSummarySentence": "{pools, plural, one {# पूल} other {# पूल}} · {rounds, plural, one {# राउंड} other {# राउंड}}",
     "contentsHeading": "पैक सामग्री",
@@ -105,7 +107,50 @@
     "reportedUserComments": "टिप्पणियाँ",
     "reportedUserReportsAgainst": "इनके विरुद्ध रिपोर्ट",
     "reportedUserReportsFiled": "दर्ज की गई रिपोर्ट",
-    "reportedUserRestricted": "रिपोर्ट किए गए खाते का विवरण केवल मैनेजर और एडमिन देख सकते हैं।"
+    "reportedUserRestricted": "रिपोर्ट किए गए खाते का विवरण केवल मैनेजर और एडमिन देख सकते हैं।",
+    "otherReportsHeading": "इस लक्ष्य पर अन्य रिपोर्टें",
+    "otherReportsLoading": "रिपोर्ट इतिहास लोड हो रहा है…",
+    "otherReportsError": "रिपोर्ट इतिहास लोड नहीं हो सका।",
+    "otherReportsNone": "इस लक्ष्य पर कोई अन्य रिपोर्ट नहीं है।",
+    "otherReportsBy": "{reporter} द्वारा",
+    "otherReportsMore": "{total} अन्य रिपोर्टों में से {shown} दिख रही हैं।",
+    "approvalHeading": "अनुमोदन समीक्षा — पैक की हर वस्तु",
+    "approvalIntro": "एक खेल हर पूल से केवल कुछ हिस्सा ही यादृच्छिक रूप से लेता है। लेखक ने जो भी भेजा है वह सब नीचे है, ताकि कोई भी सामग्री बिना समीक्षा खिलाड़ियों तक न पहुँचे।",
+    "decisionHeading": "निर्णय",
+    "approvePack": "पैक स्वीकार करें",
+    "requestChanges": "बदलाव माँगें",
+    "rejectPack": "पैक अस्वीकार करें",
+    "changesRequestedHeading": "बदलाव माँगे गए",
+    "changesNoMarks": "जिन चीज़ों में काम चाहिए उन्हें ऊपर “संपादन हेतु चिह्नित करें” से चुनें, फिर बताएँ कि लेखक को क्या बदलना है।",
+    "changesMessageLabel": "लेखक के लिए संदेश",
+    "changesMessagePlaceholder": "लाइव होने से पहले क्या बदलना ज़रूरी है?",
+    "sendChangeRequest": "अनुरोध भेजें",
+    "changesOutcomeNote": "पैक आपके नोट्स के साथ लेखक के पास लौट जाता है। कुछ भी मिटाया नहीं जाता, और फिर से भेजने पर वह कतार में लौट आता है।",
+    "rejectReasonLabel": "अस्वीकृति का कारण",
+    "markForEdit": "संपादन हेतु चिह्नित करें",
+    "marked": "चिह्नित",
+    "unmark": "{label} से चिह्न हटाएँ",
+    "markNoRequest": "कोई नोट नहीं — लेखक को केवल यह दिखेगा कि यह चिह्नित है।",
+    "markAskedOfAuthor": "लेखक से अपेक्षा",
+    "markItemPlaceholder": "लेखक इस वस्तु का क्या करे?",
+    "markRoundPlaceholder": "इस राउंड में क्या बदलना चाहिए?",
+    "markFieldPlaceholder": "लेखक इसकी जगह क्या लिखे?",
+    "markKind": {
+      "title": "शीर्षक",
+      "description": "विवरण",
+      "cover": "कवर",
+      "tags": "टैग",
+      "item": "वस्तु",
+      "round": "राउंड"
+    },
+    "fieldsHeading": "पैक विवरण — जिसे दोबारा लिखना है उसे चिह्नित करें",
+    "fieldTitle": "शीर्षक",
+    "fieldDescription": "विवरण",
+    "fieldCover": "कवर",
+    "fieldTags": "टैग",
+    "fieldEmpty": "सेट नहीं",
+    "fieldCoverUploaded": "अपलोड की गई छवि",
+    "fieldCoverTone": "रंग {tone}"
   },
   "admin": {
     "panelEyebrow": "एडमिन पैनल",
@@ -208,6 +253,7 @@
     "untrustError": "इस उपयोगकर्ता से भरोसा नहीं हटाया जा सका। फिर कोशिश करें।",
     "loadMoreUsersError": "और उपयोगकर्ता लोड नहीं हो सके। फिर कोशिश करें।",
     "detailBack": "उपयोगकर्ताओं पर वापस जाएँ",
+    "detailCrumb": "उपयोगकर्ता विवरण",
     "detailLoading": "उपयोगकर्ता लोड हो रहा है…",
     "detailError": "यह उपयोगकर्ता लोड नहीं हो सका।",
     "detailStatusBanned": "प्रतिबंधित",
@@ -266,14 +312,12 @@
     "newCount": "{count} नई",
     "loadOlder": "पुरानी सूचनाएँ लोड करें",
     "commentReply": "<user>@{username}</user> <muted>ने आपकी टिप्पणी का उत्तर दिया</muted> <obj>{packTitle}</obj>",
-    "kindReply": "उत्तर"
+    "kindReply": "उत्तर",
+    "packChangesRequested": "<muted>एक मॉडरेटर ने बदलाव माँगे हैं:</muted> <obj>{packTitle}</obj>"
   },
   "bottomNav": {
     "label": "मुख्य",
-    "discovery": "खोज",
-    "feedback": "प्रतिक्रिया",
     "create": "बनाएँ",
-    "notifications": "सूचनाएँ",
     "profile": "प्रोफ़ाइल"
   },
   "shell": {
@@ -299,7 +343,8 @@
     "logInToFollow": "फ़ॉलो करने के लिए लॉग इन करें",
     "logInToComment": "टिप्पणी करने के लिए लॉग इन करें",
     "logInToPlay": "खेलने के लिए लॉग इन करें",
-    "logInToCreateTokens": "API टोकन बनाने के लिए लॉग इन करें"
+    "logInToCreateTokens": "API टोकन बनाने के लिए लॉग इन करें",
+    "logInToReport": "रिपोर्ट करने के लिए लॉग इन करें"
   },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
@@ -388,7 +433,8 @@
     "addEmailConfirmButton": "ईमेल जोड़ें",
     "addEmailTaken": "वह ईमेल पहले से किसी अन्य खाते द्वारा उपयोग किया जा रहा है।",
     "addEmailError": "वह ईमेल जोड़ा नहीं जा सका। कृपया पुनः प्रयास करें।",
-    "notifCommentReply": "किसी ने आपकी टिप्पणी का उत्तर दिया"
+    "notifCommentReply": "किसी ने आपकी टिप्पणी का उत्तर दिया",
+    "notifPackChangesRequested": "मॉडरेटर मेरे पैक में बदलाव माँगे"
   },
   "streamerMode": {
     "hiddenHint": "स्ट्रीमर मोड के कारण छिपाया गया",
@@ -449,7 +495,7 @@
     },
     "errors": {
       "loginRequired": "अपना ईमेल／उपयोगकर्ता नाम और पासवर्ड दर्ज करें।",
-      "username": "उपयोगकर्ता नाम 2 से 16 वर्णों का होना चाहिए: केवल अक्षर और अंक।",
+      "username": "उपयोगकर्ता नाम 2 से 16 वर्णों का होना चाहिए: केवल अक्षर, अंक और अंडरस्कोर।",
       "email": "एक वैध ईमेल पता दर्ज करें।",
       "passwordLength": "पासवर्ड कम से कम 8 वर्णों का होना चाहिए।",
       "passwordMax": "पासवर्ड अधिकतम 72 वर्णों का हो सकता है।",
@@ -479,6 +525,8 @@
     "noMatch": "कोई नियम “{query}” से मेल नहीं खाता",
     "tryPlainer": "कोई सरल शब्द आज़माएँ — “स्पैम”, “कॉपी”, “बैन”।",
     "categoriesHeading": "श्रेणियाँ",
+    "matchCount": "{count, plural, one {# मिलान} other {# मिलान}}",
+    "ruleCount": "{count, plural, one {# नियम} other {# नियम}}",
     "reportTitle": "किसी ने नियम तोड़ा?",
     "reportNote": "किसी पैक, टिप्पणी या प्रोफ़ाइल की रिपोर्ट करें — वह नियम चुनें जो टूटा है, और यह सीधे मॉडरेटर तक पहुँच जाएगी।",
     "wrongRuleTitle": "लगता है कोई नियम गलत है?",
@@ -599,6 +647,7 @@
     "termsTab": "शर्तें",
     "privacyTab": "गोपनीयता",
     "onThisPage": "इस पृष्ठ पर",
+    "sectionCount": "{count, plural, one {# अनुभाग} other {# अनुभाग}}",
     "questionsTitle": "इस दस्तावेज़ के बारे में सवाल हैं?",
     "questionsNote": "यह इनबॉक्स एक व्यक्ति पढ़ता है, और 30 दिनों के भीतर जवाब देता है।"
   },
@@ -887,8 +936,11 @@
     "other": "अन्य"
   },
   "home": {
-    "title": "पैक ढूँढें",
-    "subtitle": "फ़ॉर्मेट या टैग के हिसाब से पैक ब्राउज़ करें, फिर किसी एक को खेलें और देखें कि कौन बाज़ी मारता है।",
+    "hero": {
+      "badge": "नया · मोड्स",
+      "title": "अब हर पैक दोस्तों के साथ खेला जा सकता है",
+      "subtitle": "किसी भी पैक पर रूम खोलें और मोड चुनें — वोट देकर बाहर करें, क्लेम करें, बारी-बारी से काटें, या गेस हू खेलकर अंक कमाएँ।"
+    },
     "searchPlaceholder": "पैक खोजें…",
     "searchLabel": "पैक खोजें",
     "filters": "फ़िल्टर",
@@ -920,8 +972,12 @@
     "showingRange": "{total, plural, one {# पैक} other {# पैक}} में से {first}–{last} दिखा रहे हैं",
     "card": {
       "hot": "HOT",
+      "playedAt": "{when} खेला",
       "roundsPlays": "{rounds, plural, one {# राउंड} other {# राउंड}} · {plays, plural, one {# बार खेला गया} other {# बार खेला गया}}",
-      "play": "खेलें"
+      "playsCount": "{plays, plural, one {# बार खेला गया} other {# बार खेला गया}}",
+      "play": "खेलें",
+      "friends": "दोस्त",
+      "friendsTitle": "दोस्तों के साथ खेलें"
     },
     "joinRoom": {
       "title": "रूम में शामिल हों",
@@ -1079,7 +1135,44 @@
     "submittingPack": "भेजा जा रहा है…",
     "submitPackError": "यह पैक सबमिट नहीं हो सका। कृपया पुनः प्रयास करें।",
     "rejectionReasonHeading": "इसे अस्वीकार क्यों किया गया",
-    "randomPoolLabel": "यादृच्छिक पूल"
+    "randomPoolLabel": "यादृच्छिक पूल",
+    "acrossPlays": "{count, plural, one {# बार खेला गया} other {# बार खेला गया}}",
+    "report": {
+      "title": "इस पैक की रिपोर्ट करें",
+      "reasons": {
+        "inappropriate": "अनुचित या आपत्तिजनक सामग्री",
+        "copyright": "कॉपीराइट या स्वामित्व की समस्या",
+        "spam": "स्पैम या भ्रामक",
+        "other": "कुछ और"
+      }
+    },
+    "reportComment": {
+      "scopeNote": "रिपोर्ट खाते के विरुद्ध दर्ज होती है। टिप्पणी नीचे उद्धृत है ताकि मॉडरेटर उसे ढूँढ़ सके।",
+      "quote": "टिप्पणी {id} के बारे में:\n\n«{body}»"
+    },
+    "changesRequestedHeading": "बदलाव माँगे गए हैं",
+    "changesRequestedMarks": "{count, plural, one {# चीज़ चिह्नित} other {# चीज़ें चिह्नित}} — मॉडरेटर की बात पढ़ें।",
+    "changesRequestedNoMarks": "संपादन से पहले मॉडरेटर की बात पढ़ें।",
+    "changesRequestedCta": "देखें क्या ठीक करना है"
+  },
+  "report": {
+    "button": "रिपोर्ट करें",
+    "buttonReported": "रिपोर्ट किया गया",
+    "reasonLabel": "कारण",
+    "reasonPlaceholder": "एक कारण चुनें",
+    "commentLabel": "अतिरिक्त विवरण (वैकल्पिक)",
+    "commentPlaceholder": "जो कुछ भी मॉडरेटर को इसकी समीक्षा करने में मदद करे",
+    "submit": "रिपोर्ट सबमिट करें",
+    "error": "रिपोर्ट सबमिट नहीं हो सकी। फिर से कोशिश करें।",
+    "buttonUser": "उपयोगकर्ता की रिपोर्ट करें",
+    "userTitle": "@{username} की रिपोर्ट करें",
+    "userNote": "रिपोर्ट मॉडरेशन टीम को भेजी जाती है। आपका उपयोगकर्ता नाम रिपोर्ट के साथ जुड़ा रहता है।",
+    "userReasons": {
+      "harassment": "उत्पीड़न या दुर्व्यवहार",
+      "impersonation": "किसी और का रूप धरना",
+      "spam": "स्पैम या धोखाधड़ी",
+      "other": "कुछ और"
+    }
   },
   "share": {
     "trigger": "शेयर",
@@ -1100,14 +1193,17 @@
     "confirmPendingTitle": "अभी तक कुछ नहीं चुना गया",
     "confirmNote": "अगले राउंड में जाने पर आपकी पसंद दर्ज हो जाएगी।",
     "picksCountNote": "{done} पूरे, {toGo} बाकी",
-    "sideSelected": "चयनित",
     "pick": "{name} चुनें",
+    "pickThisOne": "इसे चुनें",
+    "yourPick": "आपकी पसंद",
     "nextRound": "अगला राउंड",
     "instructionSave": "जिसे बचाना चाहें उसे चुनें। नीचे उस पर निशान लगाएँ, फिर पक्का करें।",
     "instructionSacrifice": "जिसे हटाना चाहें उसे चुनें। नीचे उस पर निशान लगाएँ, फिर पक्का करें।",
     "instructionNxn": "जिस पक्ष को बचाना चाहें उसे चुनें। नीचे उस पर निशान लगाएँ, फिर पक्का करें।",
+    "instruction1v1": "एक चुनें।",
     "savedSoFar": "अब तक बचाए",
     "sacrificedSoFar": "अब तक हटाए",
+    "yourRunSoFar": "अब तक का सफ़र",
     "finishedTitle": "सभी राउंड पूरे",
     "finishedSave": "आपने हर राउंड में एक, कुल {count, plural, one {# पिक} other {# पिक}} बचाए।",
     "finishedSacrifice": "आपने हर राउंड में एक, कुल {count, plural, one {# पिक} other {# पिक}} हटाए।",
@@ -1117,6 +1213,8 @@
     "rankSlotEmpty": "रैंक {rank} पर रखें",
     "rankPendingEyebrow": "इसे रखें",
     "rankPendingFlavor": "आप नहीं देख सकते कि आगे क्या आने वाला है — यही तो पूरा खेल है। एक जगह चुनें और तय करें।",
+    "rankPlaceItemPrompt": "{total} में से आइटम {current} रखें",
+    "rankAllPlacedPrompt": "हर स्लॉट भर गया — यही आपका क्रम है",
     "rankRemainingNote": "{count, plural, one {इसके बाद # आइटम अभी छिपा है} other {इसके बाद # आइटम अभी छिपे हैं}}",
     "rankDoneFlavor": "अब कुछ बदलने को नहीं है — ब्लाइंड रैंकिंग यही तो देती है। अगले राउंड की ओर बढ़ें।",
     "rankDoneFooter": "सभी {count} रखे गए",
@@ -1127,7 +1225,11 @@
     "loadingResult": "आपके परिणाम लोड हो रहे हैं…",
     "finishRound": "परिणाम देखें",
     "versusSideA": "पक्ष A",
-    "versusSideB": "पक्ष B"
+    "versusSideB": "पक्ष B",
+    "resumeModalTitle": "जहाँ छोड़ा था वहीं से जारी रखें?",
+    "resumeModalBody": "जहाँ आपने छोड़ा था वहीं से जारी रखें, या नए ड्रॉ के साथ फिर से शुरू करें।",
+    "resumeContinue": "जारी रखें",
+    "resumeRestart": "फिर से शुरू करें"
   },
   "result": {
     "label": "रन पूरा हुआ",
@@ -1135,6 +1237,8 @@
     "heroSubtitleFixedShared": "उनकी पसंद दर्ज कर ली गई है और इस पैक के आँकड़ों में जोड़ दी गई है।",
     "statRoundsCompact": "राउंड",
     "statPlaysCompact": "कुल बार खेला गया",
+    "resultBarMeta": "{count, plural, one {# राउंड} other {# राउंड}} · आपका रन",
+    "resultBarMetaShared": "{count, plural, one {# राउंड} other {# राउंड}} · साझा रन",
     "heroTitleSave": "यह रहा जो आपने बचाया",
     "heroTitleSaveShared": "यह रहा जो उन्होंने बचाया",
     "heroTitleSacrifice": "यह रहा जो आपने बलिदान किया",
@@ -1195,6 +1299,9 @@
     "topPickedItemColumn": "आइटम",
     "topPickedPickedColumn": "चुना गया",
     "topPickedShareColumn": "हिस्सा",
+    "topPickedYours": "आपका",
+    "boardAcrossPlays": "{count, plural, one {# बार खेला गया} other {# बार खेला गया}}",
+    "boardShowMore": "{count} और दिखाएँ",
     "pickedOfAppeared": "{appeared} में से {picked}",
     "loadMore": "और लोड करें",
     "eliminationRoundLabel": "{heading}: चुना गया {picked}",
@@ -1225,6 +1332,8 @@
     "coverToneSwatch": "कवर रंग {tone}",
     "coverImage": "कवर छवि",
     "coverImageHint": "PNG या JPG, अधिकतम 1 MB। रंग के बजाय दिखाई जाएगी।",
+    "coverDragHint": "यहाँ एक छवि खींचकर लाएँ",
+    "coverDropToUpload": "अपलोड करने के लिए छोड़ें",
     "removeCoverImage": "कवर छवि हटाएँ",
     "tags": "टैग",
     "tagsCount": "{count}/{max} चुने गए",
@@ -1241,6 +1350,10 @@
     "random": "रैंडम",
     "manual": "मैनुअल",
     "removeGroup": "पूल {index} हटाएँ",
+    "deletePool": "पूल हटाएँ",
+    "collapsePool": "पूल {index} समेटें",
+    "expandPool": "पूल {index} विस्तृत करें",
+    "clickItemToEdit": "संपादित करने के लिए किसी आइटम पर क्लिक करें",
     "remove": "हटाएँ",
     "itemCount": "{count, plural, one {# आइटम} other {# आइटम}}",
     "text": "टेक्स्ट",
@@ -1271,6 +1384,8 @@
     "roundModeRandom": "राउंड {index} यादृच्छिक",
     "roundModeManual": "राउंड {index} मैनुअल",
     "roundCountLabel": "राउंड {index} की संख्या",
+    "roundDone": "पूर्ण",
+    "roundDoneAria": "पूर्ण, राउंड {index}",
     "roundDraws": "{count, plural, one {# वस्तु चुनता है} other {# वस्तुएँ चुनता है}}",
     "roundUnderfill": "केवल {count} शेष — यह राउंड {count} दिखाएगा।",
     "setCountAll": "सभी राउंड के लिए संख्या सेट करें",
@@ -1291,6 +1406,9 @@
     "addPlace": "स्थान जोड़ें",
     "removePlace": "स्थान हटाएँ",
     "setCountAllLabel": "सभी राउंड के लिए ड्रा सेट करें",
+    "bulkCountHintMatch": "हर राउंड यही संख्या इस्तेमाल करता है। अलग संख्या के लिए राउंड खोलें।",
+    "bulkCountHintDrift": "राउंड्स की संख्या अभी अलग-अलग है ({list})। लागू करने पर सब रीसेट हो जाएँगे।",
+    "bulkApplied": "लागू हो गया",
     "image": "छवि",
     "chooseImage": "छवि चुनें",
     "uploading": "अपलोड हो रहा है…",
@@ -1324,6 +1442,20 @@
     "editItemAria": "{title} संपादित करें",
     "saveItem": "सहेजें",
     "cancelEdit": "रद्द करें",
+    "itemTypeLabel": "आइटम प्रकार",
+    "newItemLabel": "नया आइटम",
+    "itemHintText": "कार्ड पर सिर्फ़ एक नाम",
+    "itemHintVideo": "राउंड में इनलाइन चलता है",
+    "itemHintImage": "16:9 थंबनेल के रूप में दिखेगा",
+    "itemNameLabel": "नाम",
+    "itemTextOnCardLabel": "कार्ड पर लिखा टेक्स्ट",
+    "youtubeLinkLabel": "YouTube लिंक",
+    "itemImageLabel": "छवि",
+    "itemImageDragHint": "खींचें या अपलोड करें",
+    "replaceImage": "बदलें",
+    "previewNoteText": "टेक्स्ट आइटम राउंड को पढ़ने में तेज़ बनाए रखते हैं।",
+    "previewNoteVideo": "सेव करते समय लिंक से लिया जाएगा।",
+    "previewNoteImage": "16:9 — बाकी सब क्रॉप हो जाएगा।",
     "randomPoolOption": "यादृच्छिक पूल ({count} उपलब्ध)",
     "cancel": "रद्द करें",
     "groupNamePlaceholder": "पूल का नाम",
@@ -1339,6 +1471,10 @@
       "saved": "सहेजा गया",
       "draftNoteUnsaved": "ड्राफ़्ट · न सहेजे गए बदलाव",
       "draftNoteSaved": "ड्राफ़्ट · अभी सहेजा गया"
+    },
+    "feasibility": {
+      "heading": "फ्रेंड मोड्स अनलॉक्ड",
+      "subtitle": "केवल जानकारी के लिए — पैक हर हाल में सेव और खेला जा सकता है। यह सिर्फ़ दिखाता है कि रूम में कौन-से मोड चल सकते हैं।"
     },
     "checklist": {
       "eyebrow": "भेजने से पहले",
@@ -1361,6 +1497,7 @@
     "editProfile": "प्रोफ़ाइल संपादित करें",
     "backToProfile": "प्रोफ़ाइल पर वापस जाएँ",
     "usernameChangedPill": "बदला गया",
+    "usernameHint": "इसे बदलने पर आपकी प्रोफ़ाइल के सभी लिंक अपडेट हो जाएँगे।",
     "cancel": "रद्द करें",
     "editSaved": "सहेजा गया",
     "addBioPrompt": "लोगों को बताने के लिए बायो जोड़ें कि आपके पैक किस बारे में हैं।",
@@ -1382,6 +1519,8 @@
     "noPacks": "अभी तक कोई पैक नहीं।",
     "recentlyPlayed": "हाल ही में खेले गए",
     "recentlyPlayedEmpty": "आपने अभी तक कोई पैक नहीं खेला है।",
+    "recentlyPlayedEmptyNote": "पूरे किए गए पैक और रूम यहाँ दिखेंगे।",
+    "browsePacks": "पैक देखें",
     "avatarHeading": "प्रोफ़ाइल फ़ोटो",
     "avatarDropLabel": "यहाँ फ़ोटो खींचें या क्लिक करें",
     "avatarDropActive": "अपलोड करने के लिए छोड़ें",
@@ -1401,7 +1540,9 @@
     "people": "लोग",
     "history": "इतिहास",
     "noFollowers": "अभी तक कोई फ़ॉलोअर नहीं।",
+    "noFollowersNote": "जब कोई आपको फ़ॉलो करेगा, वह यहाँ दिखेगा।",
     "noFollowing": "अभी तक किसी को फ़ॉलो नहीं कर रहे।",
+    "noFollowingNote": "लोगों को फ़ॉलो करें और उनके नए पैक सबसे पहले देखें।",
     "followsLoadMore": "और लोड करें",
     "followsError": "यह सूची लोड नहीं हो सकी। फिर से कोशिश करें।",
     "followsLoading": "लोड हो रहा है…",
@@ -1450,13 +1591,15 @@
     "feedbackDeclined": "नामंज़ूर",
     "reportNew": "नई",
     "reportReviewing": "समीक्षाधीन",
-    "reportClosed": "बंद"
+    "reportClosed": "बंद",
+    "packChangesRequested": "बदलाव माँगे गए"
   },
   "feedback": {
-    "pageTitle": "प्रतिक्रिया और सुझाव",
-    "newPost": "नई पोस्ट",
-    "searchAria": "प्रतिक्रिया खोजें",
-    "searchPlaceholder": "प्रतिक्रिया खोजें…",
+    "pageTitle": "सुझाव",
+    "pageSubtitle": "कोई सुविधा माँगें, बग बताएँ, या अनुवाद सुधारें। वोट करें ताकि हमें पता चले कि आगे क्या बनाना है।",
+    "newPost": "नया सुझाव",
+    "searchAria": "सुझाव खोजें",
+    "searchPlaceholder": "सुझाव खोजें…",
     "filterAll": "सभी",
     "topicBug": "बग",
     "topicFeature": "फ़ीचर",
@@ -1464,26 +1607,40 @@
     "topicOther": "अन्य",
     "sortTop": "शीर्ष",
     "sortNewest": "नवीनतम",
-    "loadMoreError": "और प्रतिक्रिया लोड नहीं हो सकी। फिर से प्रयास करें।",
-    "topSidebarHeading": "शीर्ष प्रतिक्रिया",
-    "noFeedbackYet": "अभी तक कोई प्रतिक्रिया नहीं।",
+    "countShowing": "{total} में से {shown} दिखाए जा रहे हैं",
+    "countNone": "कुछ भी मेल नहीं खाता",
+    "clearFilters": "फ़िल्टर हटाएँ",
+    "loadMoreError": "और सुझाव लोड नहीं हो सके। दोबारा कोशिश करें।",
+    "mostWanted": "सबसे ज़्यादा माँगे गए",
+    "noFeedbackYet": "अभी कोई सुझाव नहीं।",
+    "legendHeading": "इन स्थितियों का क्या मतलब है",
+    "legendNew": "पढ़ लिया गया, अभी छाँटा नहीं गया।",
+    "legendInProgress": "अभी इस पर काम हो रहा है।",
+    "legendDone": "जारी कर दिया गया — अपडेट पेज देखें।",
+    "legendDeclined": "योजना में नहीं। कारण टिप्पणियों में है।",
     "scoreLabel": "स्कोर",
     "by": "द्वारा",
     "commentCount": "{count, plural, one {# टिप्पणी} other {# टिप्पणियाँ}}",
-    "loadingList": "प्रतिक्रिया लोड हो रही है…",
-    "listError": "प्रतिक्रिया लोड नहीं हो सकी। फिर से प्रयास करें।",
-    "noMatches": "इन फ़िल्टर से मेल खाती कोई प्रतिक्रिया नहीं।",
+    "loadingList": "सुझाव लोड हो रहे हैं…",
+    "listError": "सुझाव लोड नहीं हो सके। दोबारा कोशिश करें।",
+    "emptyTitle": "अभी कोई सुझाव नहीं",
+    "emptyNote": "कुछ माँगने वाले पहले व्यक्ति बनें।",
+    "emptyFilteredTitle": "इन फ़िल्टरों से कुछ मेल नहीं खाता",
+    "emptyFilteredNote": "कोई दूसरा विषय आज़माएँ या खोज हटाएँ।",
+    "postFirst": "पहला सुझाव पोस्ट करें",
     "loadingMore": "लोड हो रहा है…",
     "loadMore": "और देखें",
+    "showMore": "{count} और दिखाएँ",
     "voteError": "आपका वोट दर्ज नहीं हो सका। फिर से प्रयास करें।",
     "like": "पसंद",
     "dislike": "नापसंद",
     "detailNotFound": "यह प्रतिक्रिया पोस्ट मौजूद नहीं है या आपको दिखाई नहीं देती।",
-    "backToFeedback": "प्रतिक्रिया पर वापस जाएँ",
+    "backToFeedback": "सुझावों पर वापस",
+    "detailCrumb": "सुझाव",
     "detailLoadError": "यह प्रतिक्रिया पोस्ट लोड नहीं हो सकी। फिर से प्रयास करें।",
     "loading": "लोड हो रहा है…",
     "statusUpdateError": "स्थिति अपडेट नहीं हो सकी। फिर से प्रयास करें।",
-    "deleteConfirm": "यह प्रतिक्रिया पोस्ट हटाएँ?",
+    "deleteConfirm": "यह सुझाव हटाएँ?",
     "deleteError": "यह पोस्ट हटाई नहीं जा सकी। फिर से प्रयास करें।",
     "translationHeading": "अनुवाद",
     "languageValueLabel": "भाषा:",
@@ -1494,7 +1651,7 @@
     "delete": "हटाएँ",
     "edited": "संपादित",
     "commentsHeading": "टिप्पणियाँ · {count}",
-    "commentPlaceholder": "इस प्रतिक्रिया पर अपने विचार साझा करें…",
+    "commentPlaceholder": "इस सुझाव पर अपनी राय दें…",
     "commentAria": "टिप्पणी",
     "postComment": "पोस्ट करें",
     "loginToComment": "टिप्पणी करने के लिए <link>लॉग इन करें</link>।",
@@ -1503,28 +1660,32 @@
     "commentsLoadError": "टिप्पणियाँ लोड नहीं हो सकीं। थोड़ी देर बाद फिर कोशिश करें।",
     "noComments": "अभी तक कोई टिप्पणी नहीं।",
     "loadMoreCommentsError": "और टिप्पणियाँ लोड नहीं हो सकीं। फिर से प्रयास करें।",
-    "newFeedbackTitle": "नई प्रतिक्रिया",
+    "newFeedbackTitle": "नया सुझाव",
     "topicLabel": "विषय",
     "titleLabel": "शीर्षक",
-    "titlePlaceholder": "एक संक्षिप्त सारांश",
+    "titlePlaceholder": "एक पंक्ति — क्या बदलना चाहिए?",
     "detailsLabel": "विवरण",
-    "detailsPlaceholder": "अपना बग, विचार या सुझाव बताएँ",
+    "detailsPlaceholder": "यह आपकी कौन-सी समस्या हल करता है?",
+    "detailsPlaceholderBug": "आपने क्या किया, क्या हुआ, और आपको क्या उम्मीद थी?",
+    "detailsPlaceholderTranslation": "कौन-सी भाषा, कौन-सी स्क्रीन, और वहाँ क्या लिखा होना चाहिए।",
     "visibilityLabel": "दृश्यता",
     "visibilityEveryone": "सभी",
     "visibilityStaffOnly": "केवल स्टाफ़",
-    "staffOnlyHint": "केवल स्टाफ़ वाली पोस्ट सिर्फ़ आपको और टीम को दिखती हैं।",
+    "visibilityHintEveryone": "सार्वजनिक — कोई भी इसे पढ़ और वोट कर सकता है।",
+    "visibilityHintStaffOnly": "इसे केवल Velanto टीम देखती है। कोई वोट नहीं कर सकता।",
     "translationSuggestionHeading": "अनुवाद सुझाव",
     "languageFieldLabel": "भाषा",
     "chooseLanguage": "एक भाषा चुनें…",
-    "contextFieldLabel": "कौन सा टेक्स्ट / आपने इसे कहाँ देखा (वैकल्पिक)",
-    "contextPlaceholder": "जैसे होम स्क्रीन पर अभी खेलें बटन",
+    "contextFieldLabel": "यह कहाँ दिखता है · वैकल्पिक",
+    "contextPlaceholder": "जैसे sacrifice_one का राउंड हेडर",
     "suggestionFieldLabel": "आपका सुझाया गया शब्द",
     "suggestionPlaceholder": "इसके बजाय क्या लिखा होना चाहिए",
     "posting": "पोस्ट हो रहा है…",
-    "postFeedback": "प्रतिक्रिया पोस्ट करें",
-    "metaListTitle": "प्रतिक्रिया और सुझाव — Velanto",
+    "postFeedback": "पोस्ट करें",
+    "duplicateHint": "पहले खोजें — मौजूदा पोस्ट को वोट करना डुप्लिकेट से ज़्यादा मदद करता है।",
+    "metaListTitle": "सुझाव — Velanto",
     "metaListDescription": "बग रिपोर्ट करें, फ़ीचर सुझाएँ और अनुवाद सुधार प्रस्तावित करें।",
-    "metaNewTitle": "नई प्रतिक्रिया — Velanto"
+    "metaNewTitle": "नया सुझाव — Velanto"
   },
   "docs": {
     "metaTitle": "दस्तावेज़ — Velanto",
@@ -1560,6 +1721,8 @@
     "statsTitle": "आँकड़े और तुलना",
     "statsBody": "जब तक आप खेल रहे हैं, कुछ भी आपको नहीं बताता कि दूसरों ने क्या चुना, इसलिए आपके विकल्प आपके ही रहते हैं। समाप्त करते ही हर राउंड खुल जाता है: वे आइटम जिन्हें खिलाड़ियों ने सबसे ज़्यादा चुना, और कितने प्रतिशत लोग आपके चुनाव से सहमत थे। किसी पैक का कुल सहमति स्कोर खेलने से पहले भी उसके कार्ड और विवरण पेज पर दिखता है।",
     "jumpTo": "विषय पर जाएँ",
+    "nextTopic": "अगला",
+    "previousTopic": "पिछला",
     "tokenNameLabel": "नाम",
     "tokenNamePlaceholder": "जैसे, Claude Desktop",
     "tokenScopesLabel": "अनुमतियाँ",
@@ -1655,6 +1818,24 @@
     "emptyFiltered": "इस फ़िल्टर से मेल खाने वाला कोई पैक नहीं है।",
     "all": "सभी"
   },
+  "history": {
+    "title": "इतिहास",
+    "subtitle": "आपके खेले हुए पैक, सबसे नए पहले।",
+    "loading": "आपका इतिहास लोड हो रहा है…",
+    "emptyFiltered": "आपने अभी तक इस फ़ॉर्मैट का कोई पैक नहीं खेला।",
+    "progress": "राउंड {current} / {total}",
+    "continue": "जारी रखें",
+    "inProgressBadge": "जारी",
+    "inProgressTitle": "अभी खेल रहे हैं",
+    "playedTitle": "खेले हुए",
+    "sortOldest": "सबसे पहले खेला",
+    "sortRecent": "हाल में खेला",
+    "metaTitle": "इतिहास — Velanto",
+    "metaDescription": "आपके खेले हुए पैक, हाल में खेले गए क्रम में।",
+    "empty": "आपने अभी तक कुछ नहीं खेला। कोई पैक खेलें और वह यहाँ दिखेगा।",
+    "error": "आपका इतिहास लोड नहीं हो सका। फिर से कोशिश करें।",
+    "loginRequired": "अपना खेल इतिहास देखने के लिए लॉग इन करें।"
+  },
   "people": {
     "title": "लोग",
     "subtitle": "क्रिएटर्स और खिलाड़ियों को खोजें, और जो पसंद आएँ उन्हें फ़ॉलो करें।",
@@ -1662,7 +1843,6 @@
     "metaDescription": "Velanto पर फ़ॉलो करने के लिए पैक क्रिएटर्स और खिलाड़ियों को खोजें।",
     "searchLabel": "लोगों को खोजें",
     "searchPlaceholder": "उपयोगकर्ता नाम से खोजें",
-    "hint": "खोजने के लिए कम से कम 2 अक्षर लिखें।",
     "loading": "खोजा जा रहा है…",
     "error": "लोगों को खोजा नहीं जा सका। फिर से प्रयास करें।",
     "empty": "कोई नहीं मिला।"
@@ -1675,38 +1855,126 @@
       "hostIsChoosing": "होस्ट एक गेम मोड चुन रहा है…",
       "playerRange": "{min}-{max} खिलाड़ी"
     },
+    "packModes": {
+      "heading": "यह पैक जिन मोड को सपोर्ट करता है",
+      "caption": "होस्ट लॉबी में मोड चुनता है। धूसर मोड के लिए अलग रूम आकार चाहिए।"
+    },
     "modes": {
       "claim": {
         "name": "क्लेम",
-        "blurb": "किसी और से पहले एक आइटम पर कब्ज़ा करें।"
+        "blurb": "किसी और से पहले एक आइटम पर कब्ज़ा करें।",
+        "steps": {
+          "1": {
+            "title": "तेज़ी से दावा करें",
+            "body": "हर राउंड में खिलाड़ियों से एक ज़्यादा आइटम निकाले जाते हैं।"
+          },
+          "2": {
+            "title": "बाँटना नहीं",
+            "body": "जिस पर दावा हो गया वह गया — आप उसी के लिए दौड़ते हैं जिसे हटाना है।"
+          },
+          "3": {
+            "title": "एक बचता है",
+            "body": "जिस अकेले आइटम पर किसी ने दावा नहीं किया, वही बच जाता है।"
+          }
+        }
       },
       "guess_who": {
         "name": "गेस हू",
-        "blurb": "बिना देखे चुनें, फिर अंदाज़ा लगाएँ किसने क्या चुना।"
+        "blurb": "बिना देखे चुनें, फिर अंदाज़ा लगाएँ किसने क्या चुना।",
+        "steps": {
+          "1": {
+            "title": "बिना देखे चुनें",
+            "body": "किसी की पसंद खुलने से पहले अपना जवाब तय कर लें।"
+          },
+          "2": {
+            "title": "पैटर्न पढ़ें",
+            "body": "खिलाड़ी X, Y, Z पूरे खेल में अपनी-अपनी पसंद की एक कॉलम बनाते हैं।"
+          },
+          "3": {
+            "title": "अंदाज़ा और स्कोर",
+            "body": "हर लेबल को असली व्यक्ति से मिलाएँ। सबसे ज़्यादा सही वाला जीतता है।"
+          }
+        }
       },
       "turn_based_cut": {
         "name": "टर्न-बेस्ड कट",
-        "blurb": "बारी-बारी से आइटम हटाएँ, जब तक एक न बचे।"
+        "blurb": "बारी-बारी से आइटम हटाएँ, जब तक एक न बचे।",
+        "steps": {
+          "1": {
+            "title": "आपकी बारी",
+            "body": "अपनी बारी पर आप बोर्ड से ठीक एक आइटम हटाते हैं।"
+          },
+          "2": {
+            "title": "बोर्ड सिमटता है",
+            "body": "सब देखते हैं कि विकल्प एक-एक करके गिरते जाते हैं।"
+          },
+          "3": {
+            "title": "आख़िरी बचा हुआ",
+            "body": "न वोट, न बराबरी — जो आख़िर में बचा वही नतीजा है।"
+          }
+        }
       },
       "voting": {
         "name": "वोटिंग",
-        "blurb": "लाइव वोट करें — सभी को गिनती दिखती है।"
+        "blurb": "लाइव वोट करें — सभी को गिनती दिखती है।",
+        "steps": {
+          "1": {
+            "title": "वोट दें",
+            "body": "जिसे चुनना है उस पर टैप करें। बाकी सोच रहे हों तब तक बदल सकते हैं।"
+          },
+          "2": {
+            "title": "गिनती देखें",
+            "body": "गिनती लाइव बदलती है, तो आप बहस करके पासा पलट सकते हैं।"
+          },
+          "3": {
+            "title": "बहुमत जीतता है",
+            "body": "बराबरी पर प्राथमिकता वाला तय करता है — कभी सिक्का नहीं उछलता।"
+          }
+        }
       },
       "shared_grid": {
         "name": "शेयर्ड ग्रिड",
-        "blurb": "बिना देखे रैंक करें, फिर सामूहिक रैंकिंग देखें।"
+        "blurb": "बिना देखे रैंक करें, फिर सामूहिक रैंकिंग देखें।",
+        "steps": {
+          "1": {
+            "title": "बिना देखे क्रम दें",
+            "body": "पूरे बोर्ड को खुद क्रम दें, किसी और की रैंकिंग देखे बिना।"
+          },
+          "2": {
+            "title": "सब जमा करते हैं",
+            "body": "राउंड तब तक रुकता है जब तक हर सीट अपनी रैंकिंग लॉक न कर दे।"
+          },
+          "3": {
+            "title": "एक साझा क्रम",
+            "body": "हर पर्ची को मिलाकर कमरे की एक रैंकिंग बनती है।"
+          }
+        }
       },
       "relay": {
         "name": "रिले",
-        "blurb": "बारी-बारी से रखते हुए साथ मिलकर एक रैंकिंग बनाएँ।"
+        "blurb": "बारी-बारी से रखते हुए साथ मिलकर एक रैंकिंग बनाएँ।",
+        "steps": {
+          "1": {
+            "title": "एक बार में एक",
+            "body": "राउंड तय क्रम में आइटम दिखाता है, हर बारी पर एक।"
+          },
+          "2": {
+            "title": "जगह पर डालें",
+            "body": "अपनी बारी पर उसे अब तक की रैंकिंग में कहीं भी डाल दें।"
+          },
+          "3": {
+            "title": "मिलकर बना",
+            "body": "नतीजा किसी एक का नहीं — पूरा कमरा एक साझा क्रम बनाता है।"
+          }
+        }
       }
     },
     "entry": {
       "createRoom": "रूम बनाएँ",
       "joinByCode": "कोड से जुड़ें",
+      "orWithFriends": "या दोस्तों के साथ",
       "signInToPlay": "दोस्तों के साथ खेलने के लिए लॉग इन करें",
       "createError": "रूम नहीं बन सका। फिर से कोशिश करें।",
-      "joinTitle": "रूम में शामिल हों",
       "codeLabel": "रूम कोड",
       "codePlaceholder": "कोड दर्ज करें",
       "join": "शामिल हों",
@@ -1740,7 +2008,41 @@
       "lock": "कमरा लॉक करें",
       "unlock": "कमरा अनलॉक करें",
       "lockedNote": "लॉक किया गया — नए खिलाड़ियों के लिए बंद।",
-      "unlockedNote": "खुला — कोड वाले दोस्त शामिल हो सकते हैं।"
+      "unlockedNote": "खुला — कोड वाले दोस्त शामिल हो सकते हैं।",
+      "open": "लॉबी खुली है",
+      "chooseHeading": "तय करें कि आप कैसे खेलेंगे",
+      "hostHint": "एक मोड चुनें — इससे हर राउंड का तरीका और कमरे का आकार बदलता है।",
+      "guestHint": "होस्ट मोड चुन रहे हैं। चुनते ही वह यहाँ दिख जाएगा।",
+      "roleHost": "आप होस्ट हैं",
+      "roleGuest": "होस्ट तय करेंगे",
+      "howARoundGoes": "एक राउंड कैसे चलता है",
+      "resultShared": "साझा नतीजा",
+      "resultScored": "स्कोर · विजेता",
+      "priorityTitle": "बराबरी प्राथमिकता से टूटती है",
+      "priorityBody": "वोट बराबर होने पर एक खिलाड़ी की पसंद तय करती है। हर राउंड यह अगले खिलाड़ी को मिल जाती है।",
+      "capacityRoomFor": "{count} और के लिए जगह",
+      "capacityFull": "कमरा भर गया",
+      "capacityNeeds": "कम से कम {min} चाहिए",
+      "stillDeciding": "अभी सोच रहे हैं",
+      "tapReadyWhenYouAre": "तैयार हों तो टैप करें",
+      "inviteSomeone": "किसी को बुलाएँ",
+      "inviteCode": "आमंत्रण कोड",
+      "codeHidden": "स्क्रीन पर छिपा है",
+      "codeVisible": "दिख रहा है",
+      "everyoneReady": "सब तैयार हैं",
+      "waitingOn": "{count} का इंतज़ार",
+      "start": "{mode} शुरू करें",
+      "startGeneric": "खेल शुरू करें",
+      "waitingForHost": "होस्ट का इंतज़ार",
+      "imReady": "मैं तैयार हूँ",
+      "unready": "तैयार नहीं",
+      "startNoteGuest": "सिर्फ़ होस्ट शुरू कर सकते हैं। खुद को तैयार बताएँ ताकि वे शुरू कर सकें।",
+      "startNoteAllReady": "सभी तैयार — शुरू करते ही मोड पूरे खेल के लिए तय हो जाएगा।",
+      "startNoteWaiting": "कमरे के सब लोग तैयार होने पर शुरू करना खुल जाएगा।",
+      "startNoteNeedsMore": "{min} खिलाड़ी होने पर शुरू करना खुलेगा।",
+      "startNoteNoMode": "शुरू करने से पहले ऊपर एक मोड चुनें।",
+      "seatCount": "{count}/{max}",
+      "readyCount": "{ready}/{total}"
     },
     "round": {
       "heading": "राउंड {index} / {total}",
@@ -1748,9 +2050,7 @@
       "chosen": "{total} में से {count} ने चुना",
       "instructionSave": "बचाने के लिए एक आइटम चुनें। बाकी सभी बाहर हो जाएँगे।",
       "instructionSacrifice": "बलिदान के लिए एक आइटम चुनें। जिसे कोई नहीं चुनता वह बच जाता है।",
-      "claimSave": "{name} को बचाएँ",
       "claimSacrifice": "{name} का बलिदान करें",
-      "claimedBySave": "{name} ने रखा",
       "claimedBySacrifice": "{name} द्वारा बलिदान",
       "survivorSave": "बचाया गया",
       "survivorSacrifice": "बचा हुआ",
@@ -1777,11 +2077,13 @@
     "results": {
       "heading": "परिणाम",
       "roundLabel": "राउंड {index}",
-      "backToPack": "पैक पर वापस"
+      "backToPack": "पैक पर वापस",
+      "playAgain": "फिर से खेलें"
     },
     "ended": {
       "heading": "यह कमरा समाप्त हो गया है",
-      "description": "यह कमरा अब उपलब्ध नहीं है। पैक पेज से नया शुरू करें।"
+      "description": "यह कमरा अब उपलब्ध नहीं है। पैक पेज से नया शुरू करें।",
+      "leave": "पैक पर वापस"
     },
     "joinLink": {
       "joining": "रूम में शामिल हो रहे हैं…",
@@ -1818,25 +2120,42 @@
     },
     "guessWho": {
       "roundInstruction": "अपना जवाब चुनें",
-      "pickInstruction": "बिना देखे चुनें — जब तक सब लॉक न हो जाएँ, कोई आपकी पसंद नहीं देखेगा।",
+      "pickInstruction": "एक चुनें — सभी को वह अक्षर दिखता है जिसने इसे चुना, पर यह नहीं कि अक्षर किसका है।",
+      "pickHint": "अक्षर तुरंत दिखते हैं",
+      "pickLabel": "{name} चुनें",
+      "pickedByLabels": "{labels} ने चुना",
+      "maskedRosterNote": "खुलासे तक हर कोई एक अक्षर के रूप में खेलता है।",
       "rankInstruction": "हर आइटम को क्रम में रखें, सबसे अच्छा पहले — जब तक सब लॉक न हों, कोई आपकी रैंकिंग नहीं देखेगा।",
       "revealHeading": "खुलासा",
       "trajectoryHeading": "अब तक सभी ने क्या जवाब दिया",
-      "roundColumn": "राउंड"
+      "roundColumn": "राउंड",
+      "trajectoryHint": "{count, plural, one {# राउंड} other {# राउंड}} के चुनाव",
+      "stillAnonymous": "?",
+      "columnHint": "एक राउंड से किसी की पहचान नहीं होती — दो लोग अक्सर एक ही चीज़ चुनते हैं। असली पहचान पूरे कॉलम से होती है।"
     },
     "guessing": {
       "heading": "अंतिम राउंड",
       "title": "कौन कौन है?",
       "instruction": "हर खिलाड़ी को उस लेबल पर लगाएँ जो आपको लगता है वे थे।",
-      "chooseSomeone": "एक खिलाड़ी चुनें…",
       "submit": "अनुमान जमा करें",
-      "waitingForOthers": "{count} / {total} ने जमा किया है"
+      "waitingForOthers": "{count} / {total} ने जमा किया है",
+      "assignedCount": "{total} में से {count} तय",
+      "whoIs": "{label} कौन है?",
+      "revealsAtOnce": "सब कुछ एक साथ खुलता है, ताकि कोई झाँक न सके।",
+      "deadline": "खुलासा"
     },
     "identityReveal": {
       "heading": "खुलासा",
       "correct": "सही अनुमान",
       "incorrect": "ग़लत अनुमान",
-      "scoresPending": "हर खिलाड़ी का कुल स्कोर उपलब्ध होने पर पूरे स्कोर दिखेंगे।"
+      "winner": "विजेता",
+      "winnerNote": "सबसे अच्छा पढ़ा — {total} में से {count} लेबल सही",
+      "points": "अंक",
+      "sharedWin": "साझा जीत — {names} ने {count} सही किए",
+      "yourGuess": "आपका अंदाज़ा",
+      "youSaid": "आपने {name} कहा",
+      "nobody": "कोई नहीं",
+      "pointPerMatch": "हर सही मिलान पर 1 अंक"
     },
     "turnBasedCut": {
       "instruction": "अपनी बारी में, एक आइटम काटें। जो आखिर तक बचे वह जीतता है।",
@@ -1854,7 +2173,11 @@
       "aggregateHeading": "समेकित",
       "groupRanking": "समूह की रैंकिंग",
       "pointsLabel": "{count} अंक",
-      "tiedNote": "{count} तरफ़ा बराबरी"
+      "tiedNote": "{count} तरफ़ा बराबरी",
+      "aggregateHint": "सबकी पर्चियाँ, मिलाकर गिनी गईं",
+      "alignment": "मेल",
+      "alignmentHint": "समूह से कितना क़रीब",
+      "alignmentNote": "कोई जीतता नहीं — मेल सिर्फ़ दिखाता है कि किसकी पसंद कमरे से मिली।"
     },
     "relay": {
       "instruction": "मौजूदा आइटम को साझा रैंकिंग में डालें।",
@@ -1864,7 +2187,17 @@
       "currentItem": "अभी रखा जा रहा है",
       "finalOrderHeading": "अंतिम क्रम",
       "placementHistoryHeading": "प्लेसमेंट इतिहास",
-      "placedVerb": "ने रखा"
+      "placedVerb": "ने रखा",
+      "nobodyKnowsNext": "इसके बाद क्या आएगा, किसी को नहीं पता।",
+      "stillHidden": "{count} अभी छिपे हैं",
+      "sharedRanking": "साझा क्रम",
+      "sharedRankingHint": "एक-एक करके, सब मिलकर",
+      "placedBy": "रखा",
+      "nothingPlacedYet": "अभी कुछ नहीं रखा गया।",
+      "turnOrder": "बारी का क्रम",
+      "placingBadge": "रख रहे हैं",
+      "placeItemHere": "{name} को यहाँ रखें",
+      "placeAtRank": "रैंक {rank} पर रखें"
     },
     "lockedIn": {
       "playerLocked": "{name} — लॉक हो गया",
@@ -1881,7 +2214,84 @@
     },
     "leaderboard": {
       "winner": "विजेता",
-      "points": "{count, plural, one {# अंक} other {# अंक}}"
+      "points": "{count, plural, one {# अंक} other {# अंक}}",
+      "heading": "लीडरबोर्ड"
+    },
+    "header": {
+      "rounds": "{count, plural, one {# राउंड} other {# राउंड}}",
+      "inRound": "राउंड चल रहा है",
+      "between": "राउंड का नतीजा",
+      "guessing": "अंदाज़ा लगाना"
+    },
+    "board": {
+      "room": "कमरा",
+      "here": "{count} यहाँ",
+      "outOfPlay": "बाहर हो गया",
+      "voted": "वोट दिया",
+      "deciding": "सोच रहे हैं…",
+      "waiting": "इंतज़ार में",
+      "cut": "हटाया",
+      "cuttingNow": "अभी हटा रहे हैं",
+      "progressVotes": "{total} में से {count} वोट आए",
+      "progressLeft": "बोर्ड पर {count} बचे",
+      "tapToVote": "जिसे चुनना है उस पर टैप करें",
+      "voteLocked": "वोट दर्ज — अब भी बदल सकते हैं",
+      "resolvesWhenAllVote": "सबके वोट आने पर नतीजा",
+      "noTakebacks": "एक बार हटा दिया तो वापस नहीं",
+      "voteFor": "{name} को वोट दें",
+      "cutItem": "{name} को हटाएँ",
+      "yourVote": "आपका वोट",
+      "cutBadge": "हटाया",
+      "liveTally": "लाइव गिनती",
+      "tallyHint": "लॉक होने तक बदल सकते हैं",
+      "tieTitle": "बराबरी — {name} की प्राथमिकता तय करेगी",
+      "tieBody": "आख़िरी वोट पड़ने से पहले उन्हें मना लें।",
+      "cutSoFar": "अब तक हटाए गए",
+      "cutEmpty": "अभी कुछ नहीं हटा — {name} पहले हैं।",
+      "claimed": "दावा किया",
+      "claimPrompt": "जिसे हटाना है उसे ले लें",
+      "claimHint": "जो पहले पहुँचे, उसी का",
+      "sideItemCount": "{count} खेल में",
+      "lockedIn": "लॉक कर दिया",
+      "lockInPrompt": "अपना जवाब लॉक करें",
+      "lockedWaiting": "लॉक — कमरे का इंतज़ार",
+      "blindHint": "सबके देने तक किसी को नहीं दिखता",
+      "placed": "रख दिया",
+      "placingNow": "अभी रख रहे हैं",
+      "progressPlaced": "{total} में से {count} रखे गए",
+      "rankNowPlacing": "इसे रखें",
+      "rankSlotEmpty": "रैंक {rank} पर रखें",
+      "rankSlotFilled": "रैंक {rank}: {title}",
+      "rankPlaceHere": "{name} को यहाँ रखें",
+      "rankHiddenAfter": "इसके बाद {count} अब भी छिपे हैं"
     }
+  },
+  "reviewOutcome": {
+    "crumb": "समीक्षा परिणाम",
+    "loading": "समीक्षा परिणाम लोड हो रहा है…",
+    "notFound": "यह पैक मौजूद नहीं है, या आपका नहीं है।",
+    "loginRequired": "यह समीक्षा परिणाम देखने के लिए लॉग इन करें।",
+    "heroTitle": "लगभग हो गया — कुछ चीज़ें ठीक करनी हैं",
+    "heroWhen": "{date} को समीक्षा की गई",
+    "heroBody": "आपका पैक अभी प्रकाशित नहीं हुआ है। एक मॉडरेटर ने इसे देखा और नीचे दिए गए बदलाव माँगे हैं। कुछ भी मिटाया नहीं गया — बदलाव करके फिर से भेजें, और यह कतार में लौट आएगा।",
+    "openEditor": "एडिटर खोलें",
+    "viewPack": "पैक देखें",
+    "moderatorSaid": "मॉडरेटर ने क्या कहा",
+    "marksHeading": "क्या ठीक करना है",
+    "marksCount": "{count, plural, one {# चीज़ चिह्नित} other {# चीज़ें चिह्नित}}",
+    "needsEdit": "संपादन चाहिए",
+    "doThis": "यह करें",
+    "inPool": "पूल: {pool}",
+    "nextHeading": "आगे क्या होगा",
+    "step1": "एडिटर खोलें और ऊपर बताए गए बदलाव करें।",
+    "step2": "सहेजें। पैक सीधे मॉडरेशन कतार में लौट जाएगा।",
+    "step3": "जब मॉडरेटर इसे देख लेगा तब आपको फिर सूचित किया जाएगा।",
+    "thePack": "पैक",
+    "metaPools": "पूल",
+    "metaRounds": "राउंड",
+    "metaSubmitted": "भेजा गया",
+    "mistakeTitle": "लगता है यह गलती थी?",
+    "mistakeBody": "एक सुझाव भेजें, टीम फिर से देखेगी। पैक का नाम ज़रूर लिखें।",
+    "mistakeLink": "मॉडरेशन से संपर्क करें →"
   }
 }

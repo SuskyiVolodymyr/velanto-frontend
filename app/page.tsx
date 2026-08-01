@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { getTranslations } from "next-intl/server";
-import { Text } from "@/src/shared/components/Text";
 import { HomeFeed } from "@/src/features/home/HomeFeed";
-import { JoinRoomCard } from "@/src/features/home/JoinRoomCard";
+import { DashboardHero } from "@/src/features/home/DashboardHero";
 import { ContinuePlayingRail } from "@/src/features/home/ContinuePlayingRail";
 import { getHomeFeedServer } from "@/src/features/home/get-home-feed-server";
+import { cn } from "@/src/shared/lib/cn";
+import { PAGE_CONTAINER_FULL } from "@/src/shared/lib/page-container";
 
 /** Reads a single `q` value from the (possibly repeated/absent) search param. */
 function readQuery(q: string | string[] | undefined): string {
@@ -27,38 +27,31 @@ export default async function Home({
 }: {
   searchParams: Promise<{ q?: string | string[] }>;
 }) {
-  const t = await getTranslations("home");
   const query = readQuery((await searchParams).q);
   // Seed the feed server-side for indexable landing content; null on failure
-  // falls back to HomeFeed's own client fetch. Keyed on the query so a new
-  // top-bar search remounts the feed with the fresh seed.
+  // falls back to HomeFeed's own client fetch. This runs for a fresh visit or a
+  // shared `/?q=…` link; typing in the top bar does NOT come back through here
+  // (see SearchQueryProvider), so there's no server round-trip per keystroke.
   const initialFeed = await getHomeFeedServer(query || undefined);
 
   return (
-    <main className="flex flex-1 flex-col gap-8 px-7 py-10">
-      <div>
-        <Text as="h1" variant="title" className="mb-2 text-3xl">
-          {t("title")}
-        </Text>
-        <Text variant="secondary" className="max-w-lg">
-          {t("subtitle")}
-        </Text>
-      </div>
-      {/* Join-by-code hero. Self-hides while rooms are dormant (ROOMS_DORMANT),
-          so there is no dead-end join flow; revives when multiplayer returns.
-          The speculative "every pack plays with friends" promo from the mock is
-          deferred until multiplayer-for-all is built. */}
-      <JoinRoomCard />
+    <main
+      className={cn(PAGE_CONTAINER_FULL, "flex flex-1 flex-col gap-8 py-10")}
+    >
+      {/* Promo hero + join-by-code card (mock: Dashboard.dc.html). Both halves
+          self-hide while rooms are dormant (ROOMS_DORMANT) — see
+          DashboardHero's own doc comment — so there is no dead-end room pitch
+          or join flow; both revive together when multiplayer returns. */}
+      <DashboardHero />
       {/* Personal, client-only resume rail — renders nothing on the server or
           when the browser has no in-progress plays, so it never affects the
           indexable home content. Sits between the hero and the browse grid,
           matching the dashboard mock. */}
       <ContinuePlayingRail />
-      <HomeFeed
-        key={query}
-        initialFeed={initialFeed ?? undefined}
-        initialQuery={query}
-      />
+      {/* No `key={query}`: the feed now re-queries in place as the shared
+          search term changes. Remounting on every search would throw away the
+          filter bar's format/tag/sort selection mid-type. */}
+      <HomeFeed initialFeed={initialFeed ?? undefined} initialQuery={query} />
     </main>
   );
 }

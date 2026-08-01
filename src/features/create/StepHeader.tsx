@@ -3,21 +3,22 @@ import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
 
 /**
- * The mock's numbered section header, reused across the four Create Pack
- * steps (Basics/Format/Pools/Rounds). Purely presentational — every string is
- * supplied by the caller, so it carries no i18n dependency of its own.
+ * The mock's section header, reused across the four Create Pack sections
+ * (Format/Basics/Pools/Rounds): a small-caps accent-colored label, no
+ * numbered badge. Purely presentational — every string is supplied by the
+ * caller, so it carries no i18n dependency of its own.
  *
- * Owns the vertical gap down to whatever body follows: 18px when there's no
- * hint, or 8px down to the hint paragraph (which then supplies the remaining
- * 18px itself) — so callers don't need to add their own spacing after it.
+ * Plain `<h2>`, not `Text` — `Text`'s own default `variant="body"` class
+ * (`text-foreground`) always wins a color fight against a className-supplied
+ * color like `text-acc` (cn() is a plain join, not tailwind-merge; see
+ * Text.tsx's own doc comment), which silently rendered this heading white
+ * instead of the mock's cyan.
  */
 export function StepHeader({
-  step,
   title,
   aside,
   hint,
 }: {
-  step: number;
   title: string;
   aside?: ReactNode;
   hint?: string;
@@ -25,20 +26,11 @@ export function StepHeader({
   return (
     <div>
       <div
-        className={cn(
-          "flex items-center gap-[11px]",
-          hint ? "mb-2" : "mb-[18px]",
-        )}
+        className={cn("flex items-center gap-[10px]", hint ? "mb-2" : "mb-[13px]")}
       >
-        <span
-          aria-hidden
-          className="flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-[8px] border border-border bg-white/[0.06] text-[13px] font-semibold text-foreground-secondary"
-        >
-          {step}
-        </span>
-        <Text as="h2" className="text-[18px] font-semibold tracking-[-0.01em]">
+        <h2 className="m-0 text-[12px] font-bold uppercase tracking-[.14em] text-acc">
           {title}
-        </Text>
+        </h2>
         {aside && (
           <Text variant="tertiary" className="ms-auto text-[12.5px]">
             {aside}
@@ -46,7 +38,7 @@ export function StepHeader({
         )}
       </div>
       {hint && (
-        <Text variant="tertiary" className="ms-[37px] mb-[18px] text-[13px]">
+        <Text variant="tertiary" className="mb-[13px] text-[12.5px]">
           {hint}
         </Text>
       )}

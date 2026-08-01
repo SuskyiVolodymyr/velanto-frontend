@@ -2,11 +2,12 @@
 
 import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslations } from "next-intl";
+import { Check } from "lucide-react";
 import type { PackFormat } from "@/src/shared/types/pack";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
 import { StepHeader } from "@/src/features/create/StepHeader";
-import { FormatGlyph } from "@/src/features/create/FormatGlyph";
+import { FormatGlyph, FORMAT_HUE } from "@/src/features/create/FormatGlyph";
 import { type CreatePackValues } from "@/src/features/create/create-pack.schema";
 
 // Each option's display name comes from the shared `formats` namespace (keyed by
@@ -45,13 +46,14 @@ export function FormatSection({
 
   return (
     <section className="flex flex-col gap-3">
-      <StepHeader step={1} title={t("formatHeading")} hint={t("formatHint")} />
+      <StepHeader title={t("formatHeading")} hint={t("formatHint")} />
       <div
         className="grid gap-3"
         style={{ gridTemplateColumns: "repeat(auto-fill, minmax(215px, 1fr))" }}
       >
         {FORMAT_OPTIONS.map((option) => {
           const selected = format === option.value;
+          const hue = FORMAT_HUE[option.value];
           return (
             <button
               key={option.value}
@@ -69,27 +71,44 @@ export function FormatSection({
               aria-disabled={locked && selected ? "true" : undefined}
               title={locked ? t("formatLockedTooltip") : undefined}
               className={cn(
-                "flex flex-col gap-3 rounded-tile border p-4 text-start transition-colors",
+                "flex flex-col gap-[7px] rounded-tile border p-[14px] text-start transition-colors",
                 locked
                   ? "cursor-not-allowed disabled:opacity-45"
                   : "cursor-pointer",
-                selected
-                  ? "border-acc bg-white/[0.055]"
-                  : "border-border bg-surface-card",
+                // Unselected cards use the plain surface-card tokens (already
+                // pixel-identical to the mock's own #171A22/rgba(255,255,255,.07)
+                // literals); only the selected card's own hue overrides them,
+                // via inline style below — Tailwind can't express "whichever
+                // color this format happens to be" as a static class.
+                !selected && "border-border bg-surface-card",
               )}
+              style={
+                selected
+                  ? {
+                      borderColor: `rgba(${hue},.5)`,
+                      backgroundColor: `rgba(${hue},.1)`,
+                    }
+                  : undefined
+              }
             >
-              <FormatGlyph format={option.value} selected={selected} />
-              <div>
-                <Text className="text-[15px] font-semibold">
+              <div className="flex items-center gap-[9px]">
+                <FormatGlyph format={option.value} />
+                <Text className="text-[14px] font-bold">
                   {tFormat(option.value)}
                 </Text>
-                <Text
-                  variant="secondary"
-                  className="mt-[3px] text-[12.5px] leading-[1.45]"
-                >
-                  {t(option.blurbKey)}
-                </Text>
+                {selected && (
+                  <span
+                    aria-hidden="true"
+                    data-testid="format-selected-check"
+                    className="ms-auto flex h-[19px] w-[19px] flex-none items-center justify-center rounded-full bg-acc text-[#07131a]"
+                  >
+                    <Check size={11} strokeWidth={3.4} />
+                  </span>
+                )}
               </div>
+              <Text variant="secondary" className="text-[12.5px] leading-[1.45]">
+                {t(option.blurbKey)}
+              </Text>
             </button>
           );
         })}

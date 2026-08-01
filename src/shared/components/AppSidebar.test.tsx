@@ -98,13 +98,21 @@ describe("SidebarContent", () => {
     );
   });
 
-  it("renders not-yet-built destinations as disabled 'Soon' items, not links", () => {
+  it("routes History to the real /history page, with no 'Soon' items left", () => {
     renderSidebar();
-    expect(screen.queryByRole("link", { name: /History/ })).toBeNull();
-    expect(screen.queryByRole("link", { name: /Suggestions/ })).toBeNull();
-    expect(screen.getByText("History")).toBeInTheDocument();
-    expect(screen.getByText("Suggestions")).toBeInTheDocument();
-    expect(screen.getAllByText("Soon")).toHaveLength(2);
+    expect(screen.getByRole("link", { name: /History/ })).toHaveAttribute(
+      "href",
+      "/history",
+    );
+    // Every nav slot now has a page behind it — the "Soon" affordance is kept
+    // in the component for the next unbuilt destination, but nothing uses it.
+    expect(screen.queryAllByText("Soon")).toHaveLength(0);
+  });
+
+  it("routes Suggestions to the real /feedback page, not a 'Soon' item", () => {
+    renderSidebar();
+    const link = screen.getByRole("link", { name: /Suggestions/ });
+    expect(link).toHaveAttribute("href", "/feedback");
   });
 
   it("routes the auth-gated destination to /auth when signed out", () => {

@@ -12,8 +12,17 @@ vi.mock("@/src/shared/lib/packs-client", () => ({
 
 // useAuthorPacks now reads auth (to refetch as the viewer on sign-in); a stable
 // signed-out session keeps these list-rendering tests focused and refetch-free.
+// The same signed-out `user: null` also satisfies each rendered PackCard's own
+// useAuth() call for its Friends button.
 vi.mock("@/src/shared/lib/auth-context", () => ({
   useAuth: () => ({ status: "unauthenticated", user: null }),
+}));
+
+// PackCard's Friends button needs a mounted router + the room-create client —
+// unused by these list-rendering tests, but required for PackCard to mount.
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
+vi.mock("@/src/features/friends-rooms/friends-rooms-client", () => ({
+  friendsRoomsClient: { create: vi.fn() },
 }));
 
 function pack(

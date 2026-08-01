@@ -8,6 +8,7 @@ import {
   listPlayResumes,
   type PlayResumeRecord,
 } from "@/src/features/play/play-resume-storage";
+import { setPlayIntent } from "@/src/features/play/play-intent-storage";
 
 /**
  * The "Continue playing" dashboard section: a grid of the packs this browser has
@@ -91,6 +92,10 @@ function ContinuePlayingCard({ record }: { record: PlayResumeRecord }) {
       </div>
       <Link
         href={`/packs/${record.packId}/play`}
+        // This card's whole point is resuming exactly where the player left
+        // off — clicking it must never route through the resume-choice modal.
+        // See play-intent-storage.ts.
+        onClick={() => setPlayIntent(record.packId, "continue")}
         aria-label={t("resume", { title })}
         className="flex size-9 shrink-0 items-center justify-center rounded-[10px] bg-white/[0.08] text-foreground transition-colors hover:bg-acc hover:text-[#07131A]"
       >

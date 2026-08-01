@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
+import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { UpdatesScreen } from "./UpdatesScreen";
 import type { UpdateEntry } from "./updates-data";
@@ -26,6 +27,7 @@ describe("UpdatesScreen", () => {
   ];
 
   const props = {
+    browseLabel: "Browse",
     heading: "What's new",
     intro: "The latest features, improvements, and fixes on Velanto.",
     emptyLabel: "No updates yet — check back soon.",
@@ -37,10 +39,17 @@ describe("UpdatesScreen", () => {
     missingNote:
       "Suggestions get read and voted on — a lot of the list above started there.",
     openSuggestionsLabel: "Open suggestions",
-    formatChangesCount: (count: number) =>
-      count === 1 ? "1 change" : `${count} changes`,
-    formatShowMore: (count: number) => `Show ${count} more`,
+    docsLabel: "Docs",
   };
+
+  it("renders a back-to-browse link in the header, not the brand mark", () => {
+    render(<UpdatesScreen {...props} />);
+    expect(screen.getByRole("link", { name: "Browse" })).toHaveAttribute(
+      "href",
+      "/",
+    );
+    expect(screen.queryByText("VELANTO")).not.toBeInTheDocument();
+  });
 
   it("renders each entry with its version, date, title, and bullets", () => {
     render(<UpdatesScreen {...props} />);
@@ -52,8 +61,9 @@ describe("UpdatesScreen", () => {
     ).toBeInTheDocument();
     // "v1.1.0" also appears in the releases rail, so there are two.
     expect(screen.getAllByText("v1.1.0")).toHaveLength(2);
-    // Rendered dd-mm-yyyy via formatDate, not the raw ISO date.
-    expect(screen.getByText("18-07-2026")).toBeInTheDocument();
+    // Rendered dd-mm-yyyy via formatDate, not the raw ISO date. Twice: the
+    // entry's own meta line and its jump-link in the releases rail.
+    expect(screen.getAllByText("18-07-2026")).toHaveLength(2);
     expect(
       screen.getByText("Change your username any time from Settings."),
     ).toBeInTheDocument();
@@ -98,11 +108,13 @@ describe("UpdatesScreen", () => {
   it("renders a sticky releases rail with a jump-link per entry by version", () => {
     render(<UpdatesScreen {...props} />);
     const nav = screen.getByRole("navigation", { name: "Releases" });
-    expect(within(nav).getByRole("link", { name: "v1.1.0" })).toHaveAttribute(
+    // Each rail link reads "v1.1.0 18-07-2026" — the mock pairs the version
+    // with its release date — so match on the version rather than exactly.
+    expect(within(nav).getByRole("link", { name: /v1\.1\.0/ })).toHaveAttribute(
       "href",
       "#v1-1-0",
     );
-    expect(within(nav).getByRole("link", { name: "v1.0.0" })).toHaveAttribute(
+    expect(within(nav).getByRole("link", { name: /v1\.0\.0/ })).toHaveAttribute(
       "href",
       "#v1-0-0",
     );

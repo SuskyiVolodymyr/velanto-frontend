@@ -1,13 +1,23 @@
 import Link from "next/link";
 import { Clock, Mail } from "lucide-react";
-import { Text } from "@/src/shared/components/Text";
-import { Card } from "@/src/shared/components/Card";
+import { PageHeader } from "@/src/shared/components/PageHeader";
 import { cn } from "@/src/shared/lib/cn";
+import { pageContainer } from "@/src/shared/lib/page-container";
 
 export type LegalDocId = "terms" | "privacy";
 
 /** The one inbox address for every legal document's contact treatment. */
 const SUPPORT_EMAIL = "support@playvelanto.com";
+
+/** One segment of the header's Terms/Privacy switch (mock: 32px, 8px radius). */
+const TAB_CLASS =
+  "h-8 rounded-lg px-3.5 text-[12.5px] font-[650] leading-8 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc";
+
+function tabTone(active: boolean): string {
+  return active
+    ? "bg-white/10 text-foreground"
+    : "text-white/50 hover:text-foreground-secondary";
+}
 
 export interface LegalSection {
   title: string;
@@ -25,12 +35,16 @@ export interface LegalSection {
 export interface LegalScreenProps {
   /** Which document is on screen — drives the toggle's active state. */
   activeDoc: LegalDocId;
+  /** Label for the header's back-to-browse pill (shared `header` namespace). */
+  browseLabel: string;
   heading: string;
   intro: string;
   /** e.g. "Last updated" — paired with {@link lastUpdated} for the date line. */
   lastUpdatedLabel: string;
   /** Locale-neutral date the document last changed, e.g. "2026-07-15". */
   lastUpdated: string;
+  /** Pluralized "N sections" line beside the last-updated chip. */
+  sectionCountLabel: string;
   sections: LegalSection[];
   /** UI chrome (shared `legal` namespace) — labels for the doc-toggle. */
   termsTabLabel: string;
@@ -68,10 +82,12 @@ function slugify(title: string, index: number): string {
  */
 export function LegalScreen({
   activeDoc,
+  browseLabel,
   heading,
   intro,
   lastUpdatedLabel,
   lastUpdated,
+  sectionCountLabel,
   sections,
   termsTabLabel,
   privacyTabLabel,
@@ -84,142 +100,137 @@ export function LegalScreen({
   );
 
   return (
-    <main className="mx-auto w-full max-w-[1040px] px-6 py-12">
-      <div className="mb-10 flex flex-col gap-5 min-[560px]:flex-row min-[560px]:items-start min-[560px]:justify-between">
-        <div className="min-w-0">
-          <Text as="h1" variant="title" className="mb-3 text-3xl">
-            {heading}
-          </Text>
-          <Text
-            variant="secondary"
-            className="max-w-[62ch] text-base leading-relaxed"
-          >
-            {intro}
-          </Text>
-        </div>
-
-        <div className="flex flex-none flex-col items-start gap-3 min-[560px]:items-end">
+    <>
+      <PageHeader
+        back={{ href: "/", label: browseLabel }}
+        crumb={heading}
+        // Mock: the Terms/Privacy switch lives in the header bar, not in the
+        // page body — it belongs to the pair of documents rather than to
+        // either one's prose.
+        trailing={
           <div
             role="group"
             aria-label={`${termsTabLabel} / ${privacyTabLabel}`}
-            className="inline-flex gap-1 rounded-control border border-white/[0.08] bg-background p-[3px]"
+            className="inline-flex gap-1 rounded-[11px] border border-white/[0.08] bg-white/[0.04] p-1"
           >
             <Link
               href="/terms"
               aria-current={activeDoc === "terms" ? "page" : undefined}
-              className={cn(
-                "h-[34px] rounded-[9px] px-4 text-[13px] font-semibold leading-[34px] transition-colors",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
-                activeDoc === "terms"
-                  ? "bg-white/10 text-foreground"
-                  : "text-white/50 hover:text-foreground-secondary",
-              )}
+              className={cn(TAB_CLASS, tabTone(activeDoc === "terms"))}
             >
               {termsTabLabel}
             </Link>
             <Link
               href="/privacy"
               aria-current={activeDoc === "privacy" ? "page" : undefined}
-              className={cn(
-                "h-[34px] rounded-[9px] px-4 text-[13px] font-semibold leading-[34px] transition-colors",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
-                activeDoc === "privacy"
-                  ? "bg-white/10 text-foreground"
-                  : "text-white/50 hover:text-foreground-secondary",
-              )}
+              className={cn(TAB_CLASS, tabTone(activeDoc === "privacy"))}
             >
               {privacyTabLabel}
             </Link>
           </div>
+        }
+      />
+      <main className={cn(pageContainer(1320), "pb-20 pt-8")}>
+        <div className="grid grid-cols-1 items-start gap-9 min-[900px]:grid-cols-[minmax(0,1fr)_250px]">
+          <article className="flex min-w-0 flex-col">
+            <h1 className="mb-3 text-[32px] font-bold leading-tight tracking-[-0.025em] text-foreground">
+              {heading}
+            </h1>
+            <p className="mb-2.5 text-[15.5px] leading-[1.7] text-pretty text-foreground-secondary">
+              {intro}
+            </p>
+            <div className="mb-[34px] flex flex-wrap items-center gap-[9px]">
+              <span className="inline-flex items-center gap-[7px] rounded-lg border border-white/[0.08] bg-white/[0.05] px-[11px] py-[5px] font-mono text-xs text-foreground-secondary">
+                <Clock size={12} strokeWidth={2} aria-hidden />
+                {lastUpdatedLabel}: {lastUpdated}
+              </span>
+              <span className="text-xs text-foreground-tertiary">
+                {sectionCountLabel}
+              </span>
+            </div>
 
-          <Text
-            as="span"
-            variant="tertiary"
-            className="inline-flex items-center gap-1.5 rounded-full border border-white/10 px-2.5 py-1 font-mono text-[11px]"
-          >
-            <Clock size={12} strokeWidth={2} aria-hidden />
-            {lastUpdatedLabel}: {lastUpdated}
-          </Text>
-        </div>
-      </div>
+            <div className="flex flex-col gap-8">
+              {sections.map((section, index) => (
+                <section
+                  key={index}
+                  id={sectionIds[index]}
+                  className="flex scroll-mt-[88px] flex-col gap-2.5"
+                >
+                  <h2 className="text-xl font-bold tracking-[-0.015em] text-pretty text-foreground">
+                    {section.title}
+                  </h2>
+                  <p className="text-[15px] leading-[1.75] text-pretty text-foreground-secondary">
+                    {section.body}
+                  </p>
+                  {section.bullets && (
+                    <ul className="mt-1.5 flex flex-col gap-2.5">
+                      {section.bullets.map((bullet, bulletIndex) => (
+                        <li key={bulletIndex} className="flex gap-[11px]">
+                          <span
+                            aria-hidden
+                            className="mt-[9px] h-[5px] w-[5px] flex-none rounded-full bg-acc/60"
+                          />
+                          <span className="text-[14.5px] leading-[1.7] text-pretty text-foreground-secondary">
+                            {bullet}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </section>
+              ))}
+            </div>
 
-      <div className="grid grid-cols-1 gap-8 min-[900px]:grid-cols-[minmax(0,1fr)_250px] min-[900px]:items-start">
-        <div className="flex min-w-0 flex-col gap-8">
-          {sections.map((section, index) => (
-            <section key={index} id={sectionIds[index]}>
-              <Text as="h2" variant="title" className="mb-2 text-xl">
-                {section.title}
-              </Text>
-              <Text variant="secondary" className="text-base leading-relaxed">
-                {section.body}
-              </Text>
-              {section.bullets && (
-                <ul className="mt-3 flex list-disc flex-col gap-2 ps-6">
-                  {section.bullets.map((bullet, bulletIndex) => (
-                    <li key={bulletIndex}>
-                      <Text
-                        variant="secondary"
-                        className="text-base leading-relaxed"
-                      >
-                        {bullet}
-                      </Text>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </section>
-          ))}
-
-          {/* Additional visual treatment alongside the existing Contact
+            {/* Additional visual treatment alongside the existing Contact
               section above — it does not replace that section's body copy. */}
-          <Card className="flex items-start gap-4">
-            <span
-              aria-hidden
-              className="grid h-10 w-10 flex-none place-items-center rounded-control bg-acc/[0.12] text-acc"
-            >
-              <Mail size={18} strokeWidth={2} />
-            </span>
-            <div className="min-w-0">
-              <Text as="h2" variant="title" className="mb-1.5 text-lg">
-                {questionsTitle}
-              </Text>
-              <Text
-                variant="secondary"
-                className="mb-2 text-sm leading-relaxed"
+            <div className="mt-[38px] flex flex-wrap items-center gap-3 rounded-[16px] border border-border bg-surface-card p-[18px]">
+              <span
+                aria-hidden
+                className="grid h-9 w-9 flex-none place-items-center rounded-xl bg-acc/10 text-acc"
               >
-                {questionsNote}
-              </Text>
+                <Mail size={18} strokeWidth={1.9} />
+              </span>
+              <div className="flex min-w-0 flex-col gap-0.5">
+                {/* Styled as the mock's plain label, but kept a real heading —
+                    it names a landmark block in the document outline. */}
+                <h2 className="text-[13.5px] font-[650] text-foreground">
+                  {questionsTitle}
+                </h2>
+                <span className="text-[12.5px] text-foreground-tertiary">
+                  {questionsNote}
+                </span>
+              </div>
               <a
                 href={`mailto:${SUPPORT_EMAIL}`}
-                className="text-sm font-semibold text-acc hover:text-acc-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
+                className="ms-auto flex-none text-[13px] font-[650] text-acc hover:text-acc-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
               >
                 {SUPPORT_EMAIL}
               </a>
             </div>
-          </Card>
-        </div>
+          </article>
 
-        <nav
-          aria-label={onThisPageLabel}
-          className="flex flex-col gap-0.5 min-[900px]:sticky min-[900px]:top-[80px]"
-        >
-          <Text
-            variant="tertiary"
-            className="mb-1 ps-3 text-[11px] font-semibold tracking-[0.12em]"
+          {/* Scrolls independently once the list outgrows the viewport — the
+              privacy policy has enough sections that a plain sticky nav would
+              run off the bottom of the screen with no way to reach the rest. */}
+          <nav
+            aria-label={onThisPageLabel}
+            className="flex flex-col gap-[3px] pe-1 min-[900px]:sticky min-[900px]:top-[88px] min-[900px]:max-h-[calc(100vh-110px)] min-[900px]:overflow-y-auto"
           >
-            {onThisPageLabel}
-          </Text>
-          {sections.map((section, index) => (
-            <a
-              key={index}
-              href={`#${sectionIds[index]}`}
-              className="truncate rounded-lg px-3 py-1.5 text-[13px] font-medium text-foreground-secondary transition-colors hover:bg-white/[0.06] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
-            >
-              {section.title}
-            </a>
-          ))}
-        </nav>
-      </div>
-    </main>
+            <span className="px-2.5 pb-2 text-[11px] font-bold uppercase tracking-[0.12em] text-foreground-tertiary">
+              {onThisPageLabel}
+            </span>
+            {sections.map((section, index) => (
+              <a
+                key={index}
+                href={`#${sectionIds[index]}`}
+                className="rounded-lg px-2.5 py-[7px] text-[12.5px] font-medium leading-[1.4] text-foreground-secondary transition-colors hover:bg-white/[0.05] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
+              >
+                {section.title}
+              </a>
+            ))}
+          </nav>
+        </div>
+      </main>
+    </>
   );
 }

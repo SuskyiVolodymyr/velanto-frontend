@@ -1,5 +1,4 @@
 import { useTranslations } from "next-intl";
-import { Card } from "@/src/shared/components/Card";
 import { Text } from "@/src/shared/components/Text";
 import { Username } from "@/src/shared/components/Username";
 import { UserAvatar } from "@/src/shared/components/UserAvatar";
@@ -38,28 +37,32 @@ export function ProfileEditPreview({
   const t = useTranslations("profile");
 
   return (
-    <Card>
-      <Text
-        variant="tertiary"
-        className="mb-4 text-xs font-semibold uppercase tracking-[0.06em]"
-      >
+    <section className="flex flex-col gap-[11px] rounded-card border border-white/[0.07] bg-white/[0.02] p-[18px]">
+      <h2 className="text-[11.5px] font-[650] tracking-[0.06em] text-foreground-tertiary">
         {t("previewHeading")}
-      </Text>
-      <div className="flex items-center gap-3">
-        <UserAvatar username={username} avatarKey={avatarKey} size="lg" />
-        <Username
-          username={username}
-          role={role}
-          trusted={trusted}
-          showRole
-          className="text-lg"
-        />
+      </h2>
+      {/* Avatar beside a name+bio column, not name-row-then-bio-underneath —
+          this is a miniature of the profile hero it's previewing. */}
+      <div className="flex items-center gap-[13px]">
+        <UserAvatar username={username} avatarKey={avatarKey} size="lg" tone />
+        <div className="flex min-w-0 flex-col gap-[3px]">
+          <Username
+            username={username}
+            role={role}
+            trusted={trusted}
+            showRole
+            className="text-base"
+          />
+          {bio && (
+            <Text
+              variant="secondary"
+              className="text-[13px] leading-[1.5] text-wrap-pretty"
+            >
+              {bio}
+            </Text>
+          )}
+        </div>
       </div>
-      {bio && (
-        <Text variant="secondary" className="mt-3 text-sm">
-          {bio}
-        </Text>
-      )}
-    </Card>
+    </section>
   );
 }

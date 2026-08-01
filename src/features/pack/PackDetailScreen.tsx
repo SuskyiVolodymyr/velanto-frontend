@@ -1,16 +1,17 @@
 import type { ReactNode } from "react";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { pageContainer } from "@/src/shared/lib/page-container";
 import { cn } from "@/src/shared/lib/cn";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Badge } from "@/src/shared/components/Badge";
-import { BackButton } from "@/src/shared/components/BackButton";
+import { PageHeader } from "@/src/shared/components/PageHeader";
 import { PackCoverBanner } from "@/src/features/pack/PackCoverBanner";
 import { PackHeroStats } from "@/src/features/pack/PackHeroStats";
 import { PackHowItPlays } from "@/src/features/pack/PackHowItPlays";
+import { PackModesPanel } from "@/src/features/pack/PackModesPanel";
+import { PackTopItemsList } from "@/src/features/pack/PackTopItemsList";
 import { RoundChips } from "@/src/features/pack/RoundChips";
 import { PackStats } from "@/src/features/pack/PackStats";
-import { TopPickedTable } from "@/src/features/result/TopPickedTable";
 import { PodiumTable } from "@/src/features/result/PodiumTable";
 import { PackCreatorCard } from "@/src/features/pack/PackCreatorCard";
 import { PackPlayButton } from "@/src/features/pack/PackPlayButton";
@@ -20,11 +21,14 @@ import { ROOMS_DORMANT } from "@/src/features/friends-rooms/room-types";
 import { PackOwnerActions } from "@/src/features/pack/PackOwnerActions";
 import { PackOwnerStatusBadge } from "@/src/features/pack/PackOwnerStatusBadge";
 import { PackRejectionReason } from "@/src/features/pack/PackRejectionReason";
+import { PackChangesRequestedBanner } from "@/src/features/pack/PackChangesRequestedBanner";
 import { CommentSection } from "@/src/features/pack/CommentSection";
+import { ReportPackDialog } from "@/src/features/pack/ReportPackDialog";
 import { VoteButtons } from "@/src/features/pack/VoteButtons";
 import { ShareButton } from "@/src/features/share/ShareButton";
 import { type Pack } from "@/src/shared/types/pack";
 import type { PackResults, RankResults } from "@/src/shared/types/play-results";
+import type { AvailableMode } from "@/src/features/friends-rooms/room-types";
 
 function SectionHeading({
   children,
@@ -73,17 +77,21 @@ function Panel({
 export function PackDetailScreen({
   pack,
   results,
+  availableModes,
 }: {
   pack: Pack;
   results: PackResults | RankResults;
+  availableModes: AvailableMode[];
 }) {
   const t = useTranslations("pack");
   const tFormat = useTranslations("formats");
   const tResult = useTranslations("result");
+  const tNav = useTranslations("shell.nav");
 
   // The pack-wide ranking, in whichever shape this format has one (see below).
   // Null until there is something to rank — the per-round breakdown stands in.
-  let ranking: { heading: string; table: ReactNode } | null = null;
+  let ranking: { heading: string; aside?: string; table: ReactNode } | null =
+    null;
   if (results.format === "rank_blind") {
     const podium = results.podium ?? [];
     if (podium.length > 0) {
@@ -104,7 +112,14 @@ export function PackDetailScreen({
       );
       ranking = {
         heading,
-        table: <TopPickedTable items={topItems} label={heading} />,
+        aside: t("acrossPlays", { count: pack.totalPlays }),
+        table: (
+          <PackTopItemsList
+            items={topItems}
+            coverTone={pack.coverTone}
+            label={heading}
+          />
+        ),
       };
     }
   }
@@ -114,38 +129,40 @@ export function PackDetailScreen({
 
   return (
     <>
-      {/* Sticky action bar: back to browse on the left, share + the (secondary)
-          vote control on the right. */}
-      <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
-        <div
-          className={cn(
-            PACK_CONTAINER,
-            "flex items-center gap-3 py-3 max-[720px]:px-4",
-          )}
-        >
-          <BackButton href="/" />
-          <div className="ms-auto flex items-center gap-2.5">
-            {isApproved && <ShareButton path={`/packs/${pack.id}`} />}
+      <PageHeader
+        back={{ href: "/", label: tNav("browse") }}
+        trailing={
+          <>
+            {isApproved && <ShareButton path={`/packs/${pack.id}`} compact />}
+            <ReportPackDialog packId={pack.id} />
             <VoteButtons
               packId={pack.id}
               initialLikes={pack.likes}
               initialDislikes={pack.dislikes}
               initialMyVote={pack.myVote}
             />
-          </div>
-        </div>
-      </div>
+          </>
+        }
+      />
 
-      <main className={cn(PACK_CONTAINER, "flex-1 pb-16 pt-[18px]")}>
+      <main
+        className={cn(
+          pageContainer(1320),
+          "flex-1 pb-16 pt-[18px] max-[720px]:px-4 max-[720px]:pb-10",
+        )}
+      >
         <PackCoverBanner pack={pack} />
 
-        <div className="mt-6 grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_368px]">
+        {/* The mock's own two-column breakpoint is 1080px, not Tailwind's
+            standard 1024px `lg` — min-[1081px]: matches it exactly rather than
+            stacking ~56px early. */}
+        <div className="mt-6 grid items-start gap-6 min-[1081px]:grid-cols-[minmax(0,1fr)_368px]">
           {/* Sticky sidebar — DOM-FIRST on purpose: on mobile it stacks above
               the main column (the design's play-panel-first order), and keeping
               it first in the DOM means visual order matches reading/focus order.
-              lg:order-2 moves it to the right column on desktop, where the main
-              content (lg:order-1) sits on the left. */}
-          <aside className="flex flex-col gap-3.5 lg:sticky lg:top-[82px] lg:order-2">
+              min-[1081px]:order-2 moves it to the right column on desktop,
+              where the main content (min-[1081px]:order-1) sits on the left. */}
+          <aside className="flex flex-col gap-3.5 min-[1081px]:sticky min-[1081px]:top-[82px] min-[1081px]:order-2">
             {/* Play panel. Every pack is played solo today; room play for all
                 formats is the unbuilt multiplayer redesign and is deliberately
                 not faked here. */}
@@ -160,6 +177,8 @@ export function PackDetailScreen({
               {!ROOMS_DORMANT && <FriendsRoomEntry packId={pack.id} />}
             </Panel>
 
+            <PackModesPanel modes={availableModes} />
+
             <PackCreatorCard pack={pack} />
 
             <PackOwnerActions
@@ -170,7 +189,7 @@ export function PackDetailScreen({
           </aside>
 
           {/* Main column */}
-          <div className="flex min-w-0 flex-col gap-8 lg:order-1">
+          <div className="flex min-w-0 flex-col gap-8 min-[1081px]:order-1">
             <section className="flex flex-col gap-4">
               <PackOwnerStatusBadge
                 packAuthorId={pack.authorId}
@@ -181,6 +200,7 @@ export function PackDetailScreen({
                 status={pack.status}
                 rejectionReason={pack.rejectionReason}
               />
+              <PackChangesRequestedBanner pack={pack} />
               {pack.description && (
                 <Text
                   variant="secondary"
@@ -215,7 +235,9 @@ export function PackDetailScreen({
 
             {ranking ? (
               <section className="flex flex-col gap-3.5">
-                <SectionHeading>{ranking.heading}</SectionHeading>
+                <SectionHeading aside={ranking.aside}>
+                  {ranking.heading}
+                </SectionHeading>
                 <Panel className="rounded-[18px] p-[18px]">
                   {ranking.table}
                 </Panel>

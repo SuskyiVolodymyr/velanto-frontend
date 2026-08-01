@@ -47,16 +47,80 @@ export function PlayRoundHeader({
   const isCentered = align === "center";
   const roundNumber = roundIndex + 1;
 
+  // The dash row + "N rounds done" note (mock: a column pinned to the far
+  // right of the header row via margin-left:auto, not a full-width row under
+  // the title) — shared by both alignments below.
+  const progressRail = totalRounds > 0 && (
+    <div className="flex min-w-[170px] flex-col gap-[7px]">
+      <div className="flex gap-1">
+        {Array.from({ length: totalRounds }, (_, index) => (
+          <span
+            key={index}
+            aria-hidden="true"
+            className={cn(
+              "h-[3px] flex-1 rounded-pill",
+              index < roundIndex
+                ? "bg-acc"
+                : index === roundIndex
+                  ? "bg-acc/50"
+                  : "bg-white/[0.08]",
+            )}
+          />
+        ))}
+      </div>
+      <Text variant="tertiary" className="text-end text-[11.5px] tabular-nums">
+        {t("roundsDoneNote", { count: roundIndex })}
+      </Text>
+    </div>
+  );
+
+  if (!isCentered) {
+    return (
+      <div>
+        <div className="flex flex-wrap items-center gap-4 text-start">
+          <div
+            aria-hidden="true"
+            className="flex h-14 w-14 shrink-0 items-center justify-center rounded-tile border border-acc/30 bg-acc/[0.12] font-mono text-xl font-bold text-acc"
+          >
+            {roundNumber}
+          </div>
+
+          <div className="min-w-0">
+            <div className="flex items-center gap-[9px]">
+              <span
+                aria-hidden="true"
+                className="h-[6px] w-[6px] rounded-pill bg-acc animate-livedot"
+              />
+              <Text
+                variant="tertiary"
+                className="text-[12.5px] font-medium uppercase tracking-[0.16em]"
+              >
+                {eyebrow}
+              </Text>
+            </div>
+            <Text
+              as="h2"
+              variant="title"
+              className="text-[clamp(26px,3.6vw,40px)] leading-[1.06] tracking-[-0.02em] max-[720px]:text-[22px]"
+            >
+              {title}
+            </Text>
+            {instruction && (
+              <Text variant="secondary" className="mt-2 text-[14.5px]">
+                {instruction}
+              </Text>
+            )}
+          </div>
+
+          {progressRail && <div className="ms-auto">{progressRail}</div>}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div>
-      <div
-        className={cn(
-          "flex gap-4",
-          isCentered
-            ? "flex-col items-center text-center"
-            : "items-start text-start",
-        )}
-      >
+      <div className="flex flex-col items-center gap-4 text-center">
         <div
           aria-hidden="true"
           className="flex h-14 w-14 shrink-0 items-center justify-center rounded-tile border border-acc/30 bg-acc/[0.12] font-mono text-xl font-bold text-acc"
@@ -64,15 +128,8 @@ export function PlayRoundHeader({
           {roundNumber}
         </div>
 
-        <div
-          className={cn("min-w-0", isCentered && "flex flex-col items-center")}
-        >
-          <div
-            className={cn(
-              "flex items-center gap-[9px]",
-              isCentered && "justify-center",
-            )}
-          >
+        <div className="flex min-w-0 flex-col items-center">
+          <div className="flex items-center justify-center gap-[9px]">
             <span
               aria-hidden="true"
               className="h-[6px] w-[6px] rounded-pill bg-acc animate-livedot"
@@ -87,7 +144,7 @@ export function PlayRoundHeader({
           <Text
             as="h2"
             variant="title"
-            className="text-[clamp(26px,3.6vw,40px)] leading-[1.06] tracking-[-0.02em]"
+            className="text-[clamp(26px,3.6vw,40px)] leading-[1.06] tracking-[-0.02em] max-[720px]:text-[22px]"
           >
             {title}
           </Text>
@@ -99,36 +156,8 @@ export function PlayRoundHeader({
         </div>
       </div>
 
-      {totalRounds > 0 && (
-        <div
-          className={cn(
-            "mt-4 flex items-center gap-3",
-            isCentered && "mx-auto max-w-[420px] justify-center",
-          )}
-        >
-          <div className="flex flex-1 gap-1">
-            {Array.from({ length: totalRounds }, (_, index) => (
-              <span
-                key={index}
-                aria-hidden="true"
-                className={cn(
-                  "h-[3px] flex-1 rounded-pill",
-                  index < roundIndex
-                    ? "bg-acc"
-                    : index === roundIndex
-                      ? "bg-acc/50"
-                      : "bg-white/[0.08]",
-                )}
-              />
-            ))}
-          </div>
-          <Text
-            variant="tertiary"
-            className="shrink-0 text-[11.5px] tabular-nums"
-          >
-            {t("roundsDoneNote", { count: roundIndex })}
-          </Text>
-        </div>
+      {progressRail && (
+        <div className="mx-auto mt-4 max-w-[420px]">{progressRail}</div>
       )}
     </div>
   );

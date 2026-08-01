@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import { cn } from "@/src/shared/lib/cn";
+import { useHorizontalClamp } from "@/src/shared/lib/use-horizontal-clamp";
 
 /**
  * A lightweight disclosure popover: a trigger button that toggles a floating
@@ -48,26 +49,36 @@ export function Popover({
   const [open, setOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const panelId = useId();
+  // Corrective nudge for a corner-anchored panel whose trigger sits close
+  // enough to the opposite edge that the panel would otherwise render
+  // partly off-screen — see the hook's own doc comment.
+  const clampStyle = useHorizontalClamp(panelRef, open);
 
   const close = useCallback(() => setOpen(false), []);
 
   useEffect(() => {
     if (!open) return;
 
+    // A Modal renders through a portal into <body>, so a modal opened FROM this
+    // panel is not a DOM descendant of it even though it is logically inside.
+    // Both handlers below therefore consult the open modal by role rather than
+    // by containment — without this, clicking anything in that modal counted as
+    // an outside click and tore down the popover (and the modal with it).
+    const openModal = () => document.querySelector('[aria-modal="true"]');
+
     function handlePointerDown(event: MouseEvent) {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(event.target as Node)
-      ) {
-        setOpen(false);
-      }
+      const target = event.target as Node;
+      if (containerRef.current?.contains(target)) return;
+      if (openModal()?.contains(target)) return;
+      setOpen(false);
     }
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key !== "Escape") return;
-      // A modal open inside the panel owns Escape — let it dismiss itself first
-      // rather than tearing down the whole popover from under it.
-      if (containerRef.current?.querySelector('[aria-modal="true"]')) return;
+      // An open modal owns Escape — let it dismiss itself first rather than
+      // tearing down the whole popover from under it.
+      if (openModal()) return;
       setOpen(false);
       triggerRef.current?.focus();
     }
@@ -96,9 +107,11 @@ export function Popover({
       </button>
       {open && (
         <div
+          ref={panelRef}
           id={panelId}
           role="dialog"
           aria-label={panelLabel}
+          style={clampStyle}
           className={cn(
             "absolute top-[calc(100%+8px)] z-30",
             align === "end" ? "end-0" : "start-0",

@@ -1,5 +1,10 @@
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
+import {
+  MarkForEditButton,
+  MarkRequestField,
+} from "@/src/features/moderation/MarkForEdit";
+import type { PackMarks } from "@/src/features/moderation/use-pack-marks";
 import type { Pack } from "@/src/shared/types/pack";
 
 /**
@@ -9,7 +14,18 @@ import type { Pack } from "@/src/shared/types/pack";
  * breakdown lives in `PackContentsPreview`/D10, this list is just the
  * at-a-glance mapping). Renders nothing for a pack with zero rounds.
  */
-export function PackRoundMapping({ pack }: { pack: Pack }) {
+export function PackRoundMapping({
+  pack,
+  marks,
+}: {
+  pack: Pack;
+  /**
+   * Approval mode: each round can be marked for edit, which is how a moderator
+   * asks for a round to be renamed or re-pointed without rejecting the pack.
+   * Omitted on the report screens, where marking is not an outcome.
+   */
+  marks?: PackMarks;
+}) {
   const t = useTranslations("moderation");
 
   if (pack.rounds.length === 0) return null;
@@ -39,12 +55,27 @@ export function PackRoundMapping({ pack }: { pack: Pack }) {
           return (
             <li
               key={round.id}
-              className="flex items-center justify-between gap-3 rounded-[12px] border border-border bg-white/[0.02] px-4 py-2.5 text-sm"
+              className="flex flex-col gap-2 rounded-[12px] border border-border bg-white/[0.02] px-4 py-2.5 text-sm"
             >
-              <span className="font-medium text-foreground">{label}</span>
-              <span className="text-foreground-tertiary">
-                {poolNames.join(" vs ")}
-              </span>
+              <div className="flex items-center gap-3">
+                <span className="font-medium text-foreground">{label}</span>
+                <span className="ms-auto text-foreground-tertiary">
+                  {poolNames.join(" vs ")}
+                </span>
+                {marks && (
+                  <MarkForEditButton
+                    marks={marks}
+                    target={{ kind: "round", id: round.id, label }}
+                  />
+                )}
+              </div>
+              {marks && (
+                <MarkRequestField
+                  marks={marks}
+                  target={{ kind: "round", id: round.id, label }}
+                  placeholder={t("markRoundPlaceholder")}
+                />
+              )}
             </li>
           );
         })}

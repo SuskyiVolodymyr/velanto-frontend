@@ -1,11 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import { QueryClientProvider } from "@tanstack/react-query";
 import messages from "@/messages/en.json";
 import { createTestQueryClient } from "@/src/shared/test/test-query-client";
 import { AppTopBar } from "./AppTopBar";
+import {
+  SearchQueryProvider,
+  useSearchQuery,
+} from "@/src/features/home/search-query-context";
 import { notificationsClient } from "@/src/shared/lib/notifications-client";
 
 const { push } = vi.hoisted(() => ({ push: vi.fn() }));
@@ -19,7 +23,9 @@ const auth = vi.hoisted(() => ({
     logout,
   },
 }));
-vi.mock("@/src/shared/lib/auth-context", () => ({ useAuth: () => auth.current }));
+vi.mock("@/src/shared/lib/auth-context", () => ({
+  useAuth: () => auth.current,
+}));
 
 // The bell polls this on mount when authenticated — stub it so these tests
 // don't make real network calls.
@@ -42,11 +48,20 @@ const authedUser = {
   createdAt: "2026-01-01T00:00:00.000Z",
 };
 
+/** Reports the shared, debounced term the feed would fetch on. */
+function QueryProbe() {
+  const { query } = useSearchQuery();
+  return <p data-testid="shared-query">{query}</p>;
+}
+
 function renderTopBar(onMenuToggle = vi.fn()) {
   return render(
     <QueryClientProvider client={createTestQueryClient()}>
       <NextIntlClientProvider locale="en" messages={messages}>
-        <AppTopBar onMenuToggle={onMenuToggle} />
+        <SearchQueryProvider>
+          <AppTopBar onMenuToggle={onMenuToggle} />
+          <QueryProbe />
+        </SearchQueryProvider>
       </NextIntlClientProvider>
     </QueryClientProvider>,
   );
@@ -90,24 +105,42 @@ describe("AppTopBar", () => {
       "/settings",
     );
     expect(screen.queryByRole("link", { name: "Create pack" })).toBeNull();
-    expect(
-      screen.queryByRole("button", { name: /notifications/i }),
-    ).toBeNull();
+    expect(screen.queryByRole("button", { name: /notifications/i })).toBeNull();
   });
 
   it("shows only the brand while the session is loading", () => {
     auth.current = { status: "loading", user: null, logout };
     renderTopBar();
-    expect(screen.getByText("VELANTO")).toBeInTheDocument();
+    // Icon-only mobile brand mark (mock has no wordmark span here, and the
+    // full "VELANTO" text alongside the hamburger/create/bell/account cluster
+    // overflowed the header on a phone-width viewport).
+    expect(screen.getByRole("link", { name: "Velanto" })).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Log in" })).toBeNull();
     expect(screen.queryByRole("link", { name: "Create pack" })).toBeNull();
   });
 
-  it("routes search submissions to the browse page with a q query", async () => {
+  // Search filters as you type now — Enter is a shortcut past the debounce,
+  // not the trigger, and it must not navigate (that would remount the feed
+  // and throw away the filter bar's selection).
+  it("publishes the search term without navigating", async () => {
     const user = userEvent.setup();
     renderTopBar();
+
+    await user.type(screen.getByRole("searchbox"), "anime");
+    await waitFor(() =>
+      expect(screen.getByTestId("shared-query")).toHaveTextContent("anime"),
+    );
+    expect(push).not.toHaveBeenCalled();
+  });
+
+  it("publishes immediately on Enter, and still does not navigate", async () => {
+    const user = userEvent.setup();
+    renderTopBar();
+
     await user.type(screen.getByRole("searchbox"), "anime{Enter}");
-    expect(push).toHaveBeenCalledWith("/?q=anime");
+
+    expect(screen.getByTestId("shared-query")).toHaveTextContent("anime");
+    expect(push).not.toHaveBeenCalled();
   });
 
   it("invokes onMenuToggle when the menu button is pressed", async () => {

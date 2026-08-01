@@ -1,7 +1,5 @@
 "use client";
 
-import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
 import { BlindRankBoard } from "./BlindRankBoard";
 import { LockedInRoster } from "./LockedInRoster";
 import type { RoomState } from "./room-types";
@@ -30,7 +28,6 @@ export function SharedGridRankSubmission({
   onSubmitRanking,
   rejectionToken = 0,
 }: SharedGridRankSubmissionProps) {
-  const t = useTranslations("room");
   const round = state.round;
   if (!round || !round.optionIds) return null;
 
@@ -40,18 +37,6 @@ export function SharedGridRankSubmission({
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-2">
-        <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-          {t("round.heading", {
-            index: round.index + 1,
-            total: state.totalRounds,
-          })}
-        </Text>
-        <Text as="h2" variant="title" className="text-2xl">
-          {round.name || t("sharedGrid.instruction")}
-        </Text>
-      </header>
-
       <BlindRankBoard
         key={`${round.index}:${rejectionToken}`}
         optionIds={round.optionIds}

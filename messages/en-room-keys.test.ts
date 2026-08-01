@@ -77,9 +77,13 @@ describe("room i18n keys exist in every locale catalog", () => {
       };
       expect(localeRoom.round.instructionSave).toBeTruthy();
       expect(localeRoom.round.instructionSacrifice).toBeTruthy();
-      expect(localeRoom.round.claimSave).toBeTruthy();
+      // No Save half for the CLAIM itself: a claim is a sacrifice in both
+      // formats (claim.engine.ts), so `claimSave`/`claimedBySave` were dead
+      // copy that read as the opposite game. The pairs below are about the
+      // SURVIVOR, which the pack's format does still name.
+      expect(localeRoom.round.claimSave).toBeUndefined();
+      expect(localeRoom.round.claimedBySave).toBeUndefined();
       expect(localeRoom.round.claimSacrifice).toBeTruthy();
-      expect(localeRoom.round.claimedBySave).toBeTruthy();
       expect(localeRoom.round.claimedBySacrifice).toBeTruthy();
       expect(localeRoom.round.survivorSave).toBeTruthy();
       expect(localeRoom.round.survivorSacrifice).toBeTruthy();

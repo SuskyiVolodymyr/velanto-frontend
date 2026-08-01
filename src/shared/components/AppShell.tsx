@@ -15,14 +15,27 @@ import { BannedBanner } from "@/src/shared/components/BannedBanner";
 import { SiteFooter } from "@/src/shared/components/SiteFooter";
 import { MobileBottomNav } from "@/src/shared/components/MobileBottomNav";
 import { RoomPresenceIndicator } from "@/src/features/friends-rooms/RoomPresenceIndicator";
+import { SearchQueryProvider } from "@/src/features/home/search-query-context";
 import { cn } from "@/src/shared/lib/cn";
 
-// Routes that render full-screen without the app chrome (sidebar/top bar/nav).
+// Routes that render full-screen without ANY app chrome (sidebar/top bar/nav).
 // Currently just /auth, whose design is a standalone split screen with its own
 // branding. The optional locale prefix keeps it correct if URL localization is
 // ever turned on.
 function isFullScreenRoute(pathname: string): boolean {
   return /^(?:\/[a-z]{2})?\/auth(?:\/|$)/.test(pathname);
+}
+
+// The persistent left nav rail (Browse/My packs/People/History/Suggestions/
+// Rules) is Dashboard-only chrome, per the mocks: Dashboard.dc.html is the
+// only screen carrying `data-el="sidebar"` — Admin.dc.html, Rules.dc.html,
+// Docs.dc.html etc. each have their own simple top header with no rail at
+// all. Every other route keeps the top bar (search/create/notifications/
+// account) but not the rail. The optional locale prefix mirrors
+// isFullScreenRoute above — trailing slash is optional too, since
+// next-intl's localePrefix emits the root as `/en` with no slash.
+function isDashboardRoute(pathname: string): boolean {
+  return /^(?:\/[a-z]{2})?\/?$/.test(pathname);
 }
 
 // Below this width the rail is hidden and the mobile bottom nav + drawer take
@@ -75,8 +88,26 @@ export function AppShell({ children }: { children: ReactNode }) {
     return <>{children}</>;
   }
 
+  // Gates the WHOLE global chrome bundle now, not just the rail: the top bar
+  // (search/create/notifications/account) is global chrome too, and stacking
+  // it above a page's own local header (Pack Detail's Back/Share/Vote bar,
+  // both `sticky top-0`) produced a visible double-header. A handful of pages
+  // already own a local `sticky top-0` header of their own (Pack Detail,
+  // Profile Edit, Create Pack, Result, Play) and the global bar no longer
+  // layers on top of those. KNOWN GAP, not yet fixed: most other pages
+  // (Rules, Docs, People, My Packs, Settings, Feedback, Admin, ...) have a
+  // page heading but no real header/account cluster, so on desktop they now
+  // render with NO way to reach Create/Notifications/Account/Log out except
+  // navigating back to `/` first — this is a real usability regression, only
+  // accepted because the mocks call for entirely per-page headers that
+  // haven't been built yet (separate, larger job). Mobile is unaffected
+  // (MobileBottomNav always carries Create/Notifications/Profile regardless
+  // of route).
+  const onDashboard = isDashboardRoute(pathname);
+
   // The menu toggle opens the drawer on phones and collapses the rail on
-  // desktop — read the viewport at click time rather than tracking it.
+  // desktop — read the viewport at click time rather than tracking it. Not
+  // rendered at all off the dashboard, where there's no rail/drawer to open.
   const onMenuToggle = () => {
     if (window.matchMedia(`(max-width: ${MOBILE_MAX}px)`).matches) {
       setDrawerOpen((open) => !open);
@@ -86,27 +117,42 @@ export function AppShell({ children }: { children: ReactNode }) {
   };
 
   return (
-    <div className="flex min-h-full">
-      <AppSidebar collapsed={collapsed || narrowDesktop} />
-      <MobileDrawer open={drawerOpen} onClose={closeDrawer} />
+    // The search term is shared between AppTopBar (the input) and the
+    // dashboard feed (the results), which sit in different trees — the
+    // provider is the seam. Wraps the whole shell, but only the dashboard
+    // mounts a search box, so it's inert everywhere else.
+    <SearchQueryProvider>
+      <div className="flex min-h-full">
+        {onDashboard && (
+          <>
+            <AppSidebar collapsed={collapsed || narrowDesktop} />
+            <MobileDrawer open={drawerOpen} onClose={closeDrawer} />
+          </>
+        )}
 
-      {/* Content column. Bottom padding clears the fixed MobileBottomNav (its
-          emphasized Create button makes it ~4.5rem) plus the safe-area inset,
-          dropping away from 881px up where the nav is gone. */}
-      <div className="flex min-h-full min-w-0 flex-1 flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] min-[881px]:pb-0">
-        <AppTopBar onMenuToggle={onMenuToggle} />
-        <BannedBanner />
-        {children}
-        <SiteFooter />
-      </div>
+        {/* Content column. Bottom padding clears the fixed MobileBottomNav (its
+            emphasized Create button makes it ~4.5rem) plus the safe-area inset,
+            dropping away from 881px up where the nav is gone. */}
+        <div className="flex min-h-full min-w-0 flex-1 flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] min-[881px]:pb-0">
+          {onDashboard && <AppTopBar onMenuToggle={onMenuToggle} />}
+          <BannedBanner />
+          {children}
+          {onDashboard && <SiteFooter />}
+        </div>
 
-      <MobileBottomNav />
-      {/* Floating "you're in a room" affordance — constrained to mobile so it
-          never doubles up with the sidebar's room pill on desktop. */}
-      <div className="contents min-[881px]:hidden">
-        <RoomPresenceIndicator />
+        <MobileBottomNav />
+        {/* Floating "you're in a room" affordance. On the dashboard it's
+            constrained to mobile, since the sidebar's own room pill covers
+            desktop there; everywhere else the sidebar (and its pill) is gone
+            entirely, so this becomes the only "you're in a room" affordance at
+            any width. */}
+        <div
+          className={onDashboard ? "contents min-[881px]:hidden" : "contents"}
+        >
+          <RoomPresenceIndicator />
+        </div>
       </div>
-    </div>
+    </SearchQueryProvider>
   );
 }
 

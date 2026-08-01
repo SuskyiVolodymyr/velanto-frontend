@@ -59,7 +59,7 @@ describe("FeedbackComments", () => {
 
     render(<FeedbackComments feedbackId="f1" />);
 
-    expect(await screen.findByText("bob")).toBeInTheDocument();
+    expect(await screen.findByText("@bob")).toBeInTheDocument();
     expect(screen.getByText("Loved this.")).toBeInTheDocument();
     expect(mockedFeedbackClient.listComments).toHaveBeenCalledWith("f1", {
       page: 1,

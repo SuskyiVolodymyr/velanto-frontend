@@ -42,18 +42,20 @@ describe("RecentlyPlayedSection", () => {
     expect(screen.getByText("Second pack")).toBeInTheDocument();
   });
 
-  it("renders each row's format badge, title link, and a Play again action link", () => {
+  it("renders each row's format detail, title link, and a Play again action link", () => {
     mockPages([pack("p1", "First pack")]);
     render(<RecentlyPlayedSection userId="u1" visible />);
 
-    expect(screen.getByText("Save One")).toBeInTheDocument();
+    // The format now shares a detail line with the play count.
+    expect(screen.getByText(/Save One/)).toBeInTheDocument();
 
     const titleLink = screen.getByRole("link", { name: "First pack" });
     expect(titleLink).toHaveAttribute("href", "/packs/p1");
 
     const playAgainLinks = screen.getAllByRole("link", { name: "Play again" });
     expect(playAgainLinks).toHaveLength(1);
-    expect(playAgainLinks[0]).toHaveAttribute("href", "/packs/p1");
+    // Straight into the session, matching PackCard's own Play action.
+    expect(playAgainLinks[0]).toHaveAttribute("href", "/packs/p1/play");
   });
 
   it("renders nothing when the viewer may not see the history", () => {

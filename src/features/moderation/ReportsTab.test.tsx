@@ -16,6 +16,7 @@ const REPORT: ReportWithReporter = {
   reason: "spam",
   comment: null,
   targetId: "pack-abcdef12",
+  targetLabel: "Best Anime Openings",
   roundIndex: null,
   reporterId: "u1",
   reporterUsername: "watchdog",
@@ -38,9 +39,43 @@ describe("ReportsTab", () => {
   it("lists reports with a link into the detail screen's new home", async () => {
     render(<ReportsTab />);
 
-    const link = await screen.findByRole("link", { name: /Pack pack-abc/ });
+    const link = await screen.findByRole("link", {
+      name: "Best Anime Openings",
+    });
     expect(link).toHaveAttribute("href", "/moderation/reports/r1");
     expect(screen.getByText("watchdog")).toBeInTheDocument();
+  });
+
+  // The target used to render as a truncated id ("Pack pack-abc"), which told a
+  // moderator nothing. The backend names it now; the id is only a fallback for
+  // a target that has since been deleted.
+  it("names the reported account, falling back to the id when it is gone", async () => {
+    vi.mocked(reportsClient.list).mockResolvedValue(
+      page([
+        {
+          ...REPORT,
+          id: "r2",
+          type: "user",
+          targetId: "user-abcdef12",
+          targetLabel: "suspect",
+        },
+        {
+          ...REPORT,
+          id: "r3",
+          type: "user",
+          targetId: "user-99999999",
+          targetLabel: null,
+        },
+      ]),
+    );
+    render(<ReportsTab />);
+
+    expect(
+      await screen.findByRole("link", { name: "@suspect" }),
+    ).toHaveAttribute("href", "/moderation/reports/r2");
+    expect(
+      screen.getByRole("link", { name: "User user-999" }),
+    ).toBeInTheDocument();
   });
 
   it("filters by status", async () => {

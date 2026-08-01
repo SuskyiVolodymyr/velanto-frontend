@@ -1,14 +1,17 @@
 import { describe, expect, it } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
+import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { LegalScreen } from "./LegalScreen";
 
 describe("LegalScreen", () => {
   const props = {
     activeDoc: "terms" as const,
+    browseLabel: "Browse",
     heading: "Terms of Service",
     intro: "These Terms govern your use of Velanto.",
     lastUpdatedLabel: "Last updated",
     lastUpdated: "2026-07-15",
+    sectionCountLabel: "2 sections",
     termsTabLabel: "Terms",
     privacyTabLabel: "Privacy",
     onThisPageLabel: "On this page",
@@ -36,6 +39,15 @@ describe("LegalScreen", () => {
       },
     ],
   };
+
+  it("renders a back-to-browse link in the header, not the brand mark", () => {
+    render(<LegalScreen {...props} />);
+    expect(screen.getByRole("link", { name: "Browse" })).toHaveAttribute(
+      "href",
+      "/",
+    );
+    expect(screen.queryByText("VELANTO")).not.toBeInTheDocument();
+  });
 
   it("renders the heading, intro, and the last-updated date", () => {
     render(<LegalScreen {...props} />);
@@ -98,9 +110,9 @@ describe("LegalScreen", () => {
       "aria-current",
       "page",
     );
-    expect(
-      screen.getByRole("link", { name: "Terms" }),
-    ).not.toHaveAttribute("aria-current");
+    expect(screen.getByRole("link", { name: "Terms" })).not.toHaveAttribute(
+      "aria-current",
+    );
   });
 
   it("renders a sticky 'on this page' TOC with a jump-link per section", () => {
@@ -116,9 +128,7 @@ describe("LegalScreen", () => {
     expect(contactLink.getAttribute("href")).toBe("#contact");
     // The href targets a real element on the page.
     expect(
-      document.getElementById(
-        acceptanceLink.getAttribute("href")!.slice(1),
-      ),
+      document.getElementById(acceptanceLink.getAttribute("href")!.slice(1)),
     ).toBeInTheDocument();
   });
 
@@ -133,7 +143,9 @@ describe("LegalScreen", () => {
       }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("One person reads that inbox, and answers within 30 days."),
+      screen.getByText(
+        "One person reads that inbox, and answers within 30 days.",
+      ),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("link", { name: "support@playvelanto.com" }),

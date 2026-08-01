@@ -7,7 +7,11 @@ import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { PackCard } from "@/src/features/home/PackCard";
 import { FilterChipRow } from "@/src/features/home/FilterChipRow";
-import { PACK_STATUSES, type Pack, type PackStatus } from "@/src/shared/types/pack";
+import {
+  PACK_STATUSES,
+  type PackSummary,
+  type PackStatus,
+} from "@/src/shared/types/pack";
 import { useAuthorPacks } from "./api/author-packs.queries";
 
 // "all" is the UI sentinel for "no status filter" (every status) — same
@@ -20,6 +24,7 @@ const STATUS_LABEL_KEY: Record<PackStatus, string> = {
   draft: "packDraft",
   pending: "packPending",
   approved: "packApproved",
+  changes_requested: "packChangesRequested",
   rejected: "packRejected",
 };
 
@@ -48,7 +53,7 @@ export function AuthorPackList({
   own = false,
 }: {
   authorId: string;
-  initialPacks: Pack[];
+  initialPacks: PackSummary[];
   initialTotal: number;
   own?: boolean;
 }) {
@@ -87,7 +92,10 @@ export function AuthorPackList({
   ];
 
   const isFilteredEmpty =
-    own && statusFilter !== "all" && packs.length > 0 && visiblePacks.length === 0;
+    own &&
+    statusFilter !== "all" &&
+    packs.length > 0 &&
+    visiblePacks.length === 0;
 
   return (
     <>

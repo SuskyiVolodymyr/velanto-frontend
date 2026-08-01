@@ -26,6 +26,15 @@ vi.mock("@/src/shared/lib/packs-client", () => ({
   packsClient: { create: vi.fn(), update: vi.fn() },
 }));
 
+// EditPackScreen mounts the real CreatePackForm, whose aside now includes
+// CreateFeasibilityPanel — unmocked, it fires a real fetch after a 400ms
+// debounce. These tests are short enough to unmount before that ever fires,
+// but see CreatePackForm.test.tsx's identical mock for why leaving it
+// unmocked is a real bug waiting to happen, not just noise.
+vi.mock("@/src/features/friends-rooms/friends-rooms-client", () => ({
+  friendsRoomsClient: { previewModes: vi.fn(() => new Promise(() => {})) },
+}));
+
 const PACK: Pack = {
   id: "pack-1",
   title: "Original Title",

@@ -90,6 +90,8 @@
     "contentsNoMatches": "Нет элементов, соответствующих поиску.",
     "packNotFound": "Этот пак не существует.",
     "packCrumb": "Проверка пака",
+    "reportCrumb": "Проверка жалобы",
+    "queueBack": "Очередь",
     "packSubmittedBy": "Отправлено {author} {date}",
     "packSummarySentence": "{pools, plural, one {# пул} few {# пула} many {# пулов} other {# пула}} · {rounds, plural, one {# раунд} few {# раунда} many {# раундов} other {# раунда}}",
     "contentsHeading": "Содержимое пака",
@@ -105,7 +107,50 @@
     "reportedUserComments": "Комментарии",
     "reportedUserReportsAgainst": "Жалобы на него",
     "reportedUserReportsFiled": "Поданные жалобы",
-    "reportedUserRestricted": "Просматривать данные аккаунта под жалобой могут только менеджеры и администраторы."
+    "reportedUserRestricted": "Просматривать данные аккаунта под жалобой могут только менеджеры и администраторы.",
+    "otherReportsHeading": "Другие жалобы на этот объект",
+    "otherReportsLoading": "Загрузка истории жалоб…",
+    "otherReportsError": "Не удалось загрузить историю жалоб.",
+    "otherReportsNone": "Других жалоб на этот объект нет.",
+    "otherReportsBy": "от {reporter}",
+    "otherReportsMore": "Показано {shown} из {total} других жалоб.",
+    "approvalHeading": "Проверка перед публикацией — каждый элемент пака",
+    "approvalIntro": "За одну игру из каждого пула выпадает лишь часть элементов. Ниже — всё, что отправил автор, чтобы ничто не попало к игрокам без проверки.",
+    "decisionHeading": "Решение",
+    "approvePack": "Одобрить пак",
+    "requestChanges": "Запросить правки",
+    "rejectPack": "Отклонить пак",
+    "changesRequestedHeading": "Запрошены правки",
+    "changesNoMarks": "Отметьте то, что надо исправить — кнопкой «Отметить к правке» выше — и напишите, что автору нужно изменить.",
+    "changesMessageLabel": "Сообщение автору",
+    "changesMessagePlaceholder": "Что нужно изменить перед публикацией?",
+    "sendChangeRequest": "Отправить запрос",
+    "changesOutcomeNote": "Пак вернётся автору вместе с вашими замечаниями. Ничего не удаляется, а повторная отправка вернёт его в очередь.",
+    "rejectReasonLabel": "Причина отклонения",
+    "markForEdit": "Отметить к правке",
+    "marked": "Отмечено",
+    "unmark": "Снять отметку с {label}",
+    "markNoRequest": "Без замечания — автор увидит только саму отметку.",
+    "markAskedOfAuthor": "Что требуется от автора",
+    "markItemPlaceholder": "Что автору сделать с этим элементом?",
+    "markRoundPlaceholder": "Что изменить в этом раунде?",
+    "markFieldPlaceholder": "Что автору написать вместо этого?",
+    "markKind": {
+      "title": "Название",
+      "description": "Описание",
+      "cover": "Обложка",
+      "tags": "Теги",
+      "item": "Элемент",
+      "round": "Раунд"
+    },
+    "fieldsHeading": "Данные пака — отметьте то, что надо переписать",
+    "fieldTitle": "Название",
+    "fieldDescription": "Описание",
+    "fieldCover": "Обложка",
+    "fieldTags": "Теги",
+    "fieldEmpty": "Не задано",
+    "fieldCoverUploaded": "Загруженное изображение",
+    "fieldCoverTone": "Цвет {tone}"
   },
   "admin": {
     "panelEyebrow": "Панель администратора",
@@ -208,6 +253,7 @@
     "untrustError": "Не удалось снять доверие с этого пользователя. Повторите попытку.",
     "loadMoreUsersError": "Не удалось загрузить больше пользователей. Повторите попытку.",
     "detailBack": "К пользователям",
+    "detailCrumb": "Профиль пользователя",
     "detailLoading": "Загрузка пользователя…",
     "detailError": "Не удалось загрузить пользователя.",
     "detailStatusBanned": "Заблокирован",
@@ -266,14 +312,12 @@
     "newCount": "{count} новых",
     "loadOlder": "Загрузить старые",
     "commentReply": "<user>@{username}</user> <muted>ответил на ваш комментарий в</muted> <obj>{packTitle}</obj>",
-    "kindReply": "Ответ"
+    "kindReply": "Ответ",
+    "packChangesRequested": "<muted>Модератор запросил правки к</muted> <obj>{packTitle}</obj>"
   },
   "bottomNav": {
     "label": "Главное",
-    "discovery": "Обзор",
-    "feedback": "Отзывы",
     "create": "Создать",
-    "notifications": "Уведомления",
     "profile": "Профиль"
   },
   "shell": {
@@ -299,7 +343,8 @@
     "logInToFollow": "Войдите, чтобы подписаться",
     "logInToComment": "Войдите, чтобы комментировать",
     "logInToPlay": "Войдите, чтобы играть",
-    "logInToCreateTokens": "Войдите, чтобы создавать токены API"
+    "logInToCreateTokens": "Войдите, чтобы создавать токены API",
+    "logInToReport": "Войдите, чтобы пожаловаться"
   },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
@@ -388,7 +433,8 @@
     "addEmailConfirmButton": "Добавить почту",
     "addEmailTaken": "Эта почта уже используется другим аккаунтом.",
     "addEmailError": "Не удалось добавить эту почту. Пожалуйста, попробуйте ещё раз.",
-    "notifCommentReply": "Кто-то ответил на ваш комментарий"
+    "notifCommentReply": "Кто-то ответил на ваш комментарий",
+    "notifPackChangesRequested": "Модератор запросил правки к моему паку"
   },
   "streamerMode": {
     "hiddenHint": "Скрыто из-за режима стримера",
@@ -449,7 +495,7 @@
     },
     "errors": {
       "loginRequired": "Введите эл. почту или имя пользователя и пароль.",
-      "username": "Имя пользователя: от 2 до 16 символов, только латинские буквы и цифры.",
+      "username": "Имя пользователя: от 2 до 16 символов, только буквы, цифры и подчёркивание.",
       "email": "Введите корректный адрес эл. почты.",
       "passwordLength": "Пароль должен содержать не менее 8 символов.",
       "passwordMax": "Пароль должен содержать не более 72 символов.",
@@ -479,6 +525,8 @@
     "noMatch": "Ни одно правило не соответствует запросу «{query}»",
     "tryPlainer": "Попробуйте более простое слово — «спам», «копия», «бан».",
     "categoriesHeading": "Категории",
+    "matchCount": "{count, plural, one {# совпадение} few {# совпадения} many {# совпадений} other {# совпадения}}",
+    "ruleCount": "{count, plural, one {# правило} few {# правила} many {# правил} other {# правила}}",
     "reportTitle": "Кто-то нарушил правило?",
     "reportNote": "Пожалуйтесь на пак, комментарий или профиль — выберите нарушенное правило, и жалоба сразу попадёт к модератору.",
     "wrongRuleTitle": "Считаете правило неверным?",
@@ -599,6 +647,7 @@
     "termsTab": "Условия",
     "privacyTab": "Конфиденциальность",
     "onThisPage": "На этой странице",
+    "sectionCount": "{count, plural, one {# раздел} few {# раздела} many {# разделов} other {# раздела}}",
     "questionsTitle": "Есть вопросы по этому документу?",
     "questionsNote": "Этот ящик читает один человек и отвечает в течение 30 дней."
   },
@@ -887,8 +936,11 @@
     "other": "Другое"
   },
   "home": {
-    "title": "Во что сыграем?",
-    "subtitle": "Ищи паки по формату или тегу и запускай любой, чтобы узнать, кто окажется лучшим.",
+    "hero": {
+      "badge": "НОВОЕ · РЕЖИМЫ",
+      "title": "Теперь любой пак можно играть с друзьями",
+      "subtitle": "Открой комнату для любого пака и выбери режим — голосуй за вылет, клейми, режь по очереди или играй в «Угадай, кто» и зарабатывай очки."
+    },
     "searchPlaceholder": "Поиск паков…",
     "searchLabel": "Поиск паков",
     "filters": "Фильтры",
@@ -920,8 +972,12 @@
     "showingRange": "Показано {first}–{last} из {total, plural, one {# пак} few {# пака} many {# паков} other {# пака}}",
     "card": {
       "hot": "HOT",
+      "playedAt": "Сыграно {when}",
       "roundsPlays": "{rounds, plural, one {# раунд} few {# раунда} many {# раундов} other {# раунда}} · {plays, plural, one {# игра} few {# игры} many {# игр} other {# игры}}",
-      "play": "Играть"
+      "playsCount": "{plays, plural, one {# игра} few {# игры} many {# игр} other {# игры}}",
+      "play": "Играть",
+      "friends": "Друзья",
+      "friendsTitle": "Играть с друзьями"
     },
     "joinRoom": {
       "title": "Присоединиться к комнате",
@@ -1079,7 +1135,44 @@
     "submittingPack": "Отправка…",
     "submitPackError": "Не удалось отправить пак. Попробуйте ещё раз.",
     "rejectionReasonHeading": "Почему пак отклонён",
-    "randomPoolLabel": "Случайный пул"
+    "randomPoolLabel": "Случайный пул",
+    "acrossPlays": "{count, plural, one {# игра} few {# игры} many {# игр} other {# игры}} всего",
+    "report": {
+      "title": "Пожаловаться на этот пак",
+      "reasons": {
+        "inappropriate": "Неприемлемый или оскорбительный контент",
+        "copyright": "Проблема с авторскими правами или владением",
+        "spam": "Спам или вводит в заблуждение",
+        "other": "Что-то другое"
+      }
+    },
+    "reportComment": {
+      "scopeNote": "Жалоба подаётся на аккаунт. Комментарий процитирован ниже, чтобы модератор его нашёл.",
+      "quote": "О комментарии {id}:\n\n«{body}»"
+    },
+    "changesRequestedHeading": "Запрошены правки",
+    "changesRequestedMarks": "{count, plural, one {отмечен # элемент} few {отмечено # элемента} many {отмечено # элементов} other {отмечено # элемента}} — прочтите, что просит модератор.",
+    "changesRequestedNoMarks": "Прочтите замечания модератора перед правками.",
+    "changesRequestedCta": "Смотреть, что исправить"
+  },
+  "report": {
+    "button": "Пожаловаться",
+    "buttonReported": "Жалоба отправлена",
+    "reasonLabel": "Причина",
+    "reasonPlaceholder": "Выберите причину",
+    "commentLabel": "Дополнительные детали (необязательно)",
+    "commentPlaceholder": "Всё, что поможет модератору разобраться",
+    "submit": "Отправить жалобу",
+    "error": "Не удалось отправить жалобу. Попробуйте ещё раз.",
+    "buttonUser": "Пожаловаться на пользователя",
+    "userTitle": "Пожаловаться на @{username}",
+    "userNote": "Жалобы рассматривает команда модерации. К жалобе прикрепляется ваше имя пользователя.",
+    "userReasons": {
+      "harassment": "Травля или оскорбления",
+      "impersonation": "Выдача себя за другого",
+      "spam": "Спам или мошенничество",
+      "other": "Что-то другое"
+    }
   },
   "share": {
     "trigger": "Поделиться",
@@ -1100,14 +1193,17 @@
     "confirmPendingTitle": "Пока ничего не выбрано",
     "confirmNote": "Твой выбор будет записан, когда ты перейдёшь к следующему раунду.",
     "picksCountNote": "{done} готово, {toGo} осталось",
-    "sideSelected": "Выбрано",
     "pick": "Выбрать {name}",
+    "pickThisOne": "Выбрать этот",
+    "yourPick": "Ваш выбор",
     "nextRound": "Следующий раунд",
     "instructionSave": "Выбери, кого спасти. Отметь ниже и подтверди.",
     "instructionSacrifice": "Выбери, кем пожертвовать. Отметь ниже и подтверди.",
     "instructionNxn": "Выбери, какую сторону спасти. Отметь ниже и подтверди.",
+    "instruction1v1": "Выберите один.",
     "savedSoFar": "Спасены",
     "sacrificedSoFar": "Пожертвованы",
+    "yourRunSoFar": "Ваш прогресс",
     "finishedTitle": "Все раунды пройдены",
     "finishedSave": "Ты сделал {count, plural, one {# спасение} few {# спасения} many {# спасений} other {# спасения}}, по одному за раунд.",
     "finishedSacrifice": "Ты принёс {count, plural, one {# жертву} few {# жертвы} many {# жертв} other {# жертвы}}, по одной за раунд.",
@@ -1117,6 +1213,8 @@
     "rankSlotEmpty": "Поставить на место {rank}",
     "rankPendingEyebrow": "Поставь этот",
     "rankPendingFlavor": "Ты не видишь, что будет дальше — в этом вся суть игры. Выбери место и подтверди.",
+    "rankPlaceItemPrompt": "Разместите {current}-й из {total}",
+    "rankAllPlacedPrompt": "Все места заполнены — это ваш порядок",
     "rankRemainingNote": "{count, plural, one {ещё # скрытый элемент} few {ещё # скрытых элемента} many {ещё # скрытых элементов} other {ещё # скрытого элемента}}",
     "rankDoneFlavor": "Теперь уже ничего не изменить — в этом суть слепого ранжирования. Переходи к следующему раунду.",
     "rankDoneFooter": "Все {count} размещены",
@@ -1127,7 +1225,11 @@
     "loadingResult": "Загрузка результатов…",
     "finishRound": "Смотреть результаты",
     "versusSideA": "Сторона A",
-    "versusSideB": "Сторона B"
+    "versusSideB": "Сторона B",
+    "resumeModalTitle": "Продолжить с того места?",
+    "resumeModalBody": "Продолжите ровно с того места, где остановились, или начните заново с новой раздачей.",
+    "resumeContinue": "Продолжить",
+    "resumeRestart": "Начать заново"
   },
   "result": {
     "label": "Прохождение завершено",
@@ -1135,6 +1237,8 @@
     "heroSubtitleFixedShared": "Их выборы записаны и добавлены в статистику этого набора.",
     "statRoundsCompact": "Раунды",
     "statPlaysCompact": "Всего игр",
+    "resultBarMeta": "{count, plural, one {# раунд} few {# раунда} many {# раундов} other {# раунда}} · ваш заезд",
+    "resultBarMetaShared": "{count, plural, one {# раунд} few {# раунда} many {# раундов} other {# раунда}} · общий заезд",
     "heroTitleSave": "Вот кого ты спас",
     "heroTitleSaveShared": "Вот кого они спасли",
     "heroTitleSacrifice": "Вот кем ты пожертвовал",
@@ -1195,6 +1299,9 @@
     "topPickedItemColumn": "Элемент",
     "topPickedPickedColumn": "Выбран",
     "topPickedShareColumn": "Доля",
+    "topPickedYours": "Ваш выбор",
+    "boardAcrossPlays": "{count, plural, one {за # игру} few {за # игры} many {за # игр} other {за # игры}}",
+    "boardShowMore": "Показать ещё {count}",
     "pickedOfAppeared": "{picked} из {appeared}",
     "loadMore": "Показать ещё",
     "eliminationRoundLabel": "{heading}: выбрано {picked}",
@@ -1225,6 +1332,8 @@
     "coverToneSwatch": "Цвет обложки {tone}",
     "coverImage": "Изображение обложки",
     "coverImageHint": "PNG или JPG, до 1 МБ. Показывается вместо цвета.",
+    "coverDragHint": "Перетащите изображение сюда",
+    "coverDropToUpload": "Отпустите, чтобы загрузить",
     "removeCoverImage": "Удалить изображение обложки",
     "tags": "Теги",
     "tagsCount": "{count}/{max} выбрано",
@@ -1241,6 +1350,10 @@
     "random": "Случайно",
     "manual": "Вручную",
     "removeGroup": "Удалить группу {index}",
+    "deletePool": "Удалить пул",
+    "collapsePool": "Свернуть пул {index}",
+    "expandPool": "Развернуть пул {index}",
+    "clickItemToEdit": "Нажмите на элемент, чтобы изменить",
     "remove": "Удалить",
     "itemCount": "{count, plural, one {# элемент} few {# элемента} many {# элементов} other {# элемента}}",
     "text": "Текст",
@@ -1271,6 +1384,8 @@
     "roundModeRandom": "Раунд {index} случайно",
     "roundModeManual": "Раунд {index} вручную",
     "roundCountLabel": "Количество в раунде {index}",
+    "roundDone": "Готово",
+    "roundDoneAria": "Готово, раунд {index}",
     "roundDraws": "{count, plural, one {Берёт # элемент} few {Берёт # элемента} many {Берёт # элементов} other {Берёт # элемента}}",
     "roundUnderfill": "Осталось только {count} — в этом раунде будет показано {count}.",
     "setCountAll": "Задать количество для всех раундов",
@@ -1291,6 +1406,9 @@
     "addPlace": "Добавить позицию",
     "removePlace": "Убрать позицию",
     "setCountAllLabel": "Задать розыгрыш для всех раундов",
+    "bulkCountHintMatch": "Каждый раунд использует это число. Откройте раунд, чтобы задать другое.",
+    "bulkCountHintDrift": "Раунды сейчас отличаются ({list}). Применить, чтобы сбросить их все.",
+    "bulkApplied": "Применено",
     "image": "Изображение",
     "chooseImage": "Выбрать изображение",
     "uploading": "Загрузка…",
@@ -1324,6 +1442,20 @@
     "editItemAria": "Изменить {title}",
     "saveItem": "Сохранить",
     "cancelEdit": "Отмена",
+    "itemTypeLabel": "Тип элемента",
+    "newItemLabel": "Новый элемент",
+    "itemHintText": "Просто название на карточке",
+    "itemHintVideo": "Воспроизводится прямо в раунде",
+    "itemHintImage": "Отображается как миниатюра 16:9",
+    "itemNameLabel": "Название",
+    "itemTextOnCardLabel": "Текст на карточке",
+    "youtubeLinkLabel": "Ссылка на YouTube",
+    "itemImageLabel": "Изображение",
+    "itemImageDragHint": "Перетащите или загрузите",
+    "replaceImage": "Заменить",
+    "previewNoteText": "Текстовые элементы делают раунды быстрыми для чтения.",
+    "previewNoteVideo": "Будет получено из ссылки при сохранении.",
+    "previewNoteImage": "16:9 — всё остальное будет обрезано.",
     "randomPoolOption": "Случайный пул (доступно: {count})",
     "cancel": "Отмена",
     "groupNamePlaceholder": "Название группы",
@@ -1339,6 +1471,10 @@
       "saved": "Сохранено",
       "draftNoteUnsaved": "Черновик · есть несохранённые изменения",
       "draftNoteSaved": "Черновик · только что сохранён"
+    },
+    "feasibility": {
+      "heading": "Режимы с друзьями открыты",
+      "subtitle": "Просто справка — пак в любом случае сохранится и играется. Это лишь то, что сможет запустить комната."
     },
     "checklist": {
       "eyebrow": "ПЕРЕД ОТПРАВКОЙ",
@@ -1361,6 +1497,7 @@
     "editProfile": "Редактировать профиль",
     "backToProfile": "Назад к профилю",
     "usernameChangedPill": "Изменено",
+    "usernameHint": "После изменения обновятся все ссылки на ваш профиль.",
     "cancel": "Отмена",
     "editSaved": "Сохранено",
     "addBioPrompt": "Добавь описание, чтобы рассказать, о чём твои паки.",
@@ -1382,6 +1519,8 @@
     "noPacks": "Пока нет паков.",
     "recentlyPlayed": "Недавно сыгранные",
     "recentlyPlayedEmpty": "Вы ещё не сыграли ни в один пак.",
+    "recentlyPlayedEmptyNote": "Здесь появятся пройденные паки и комнаты.",
+    "browsePacks": "К пакам",
     "avatarHeading": "Фото профиля",
     "avatarDropLabel": "Перетащите фото сюда или нажмите",
     "avatarDropActive": "Отпустите, чтобы загрузить",
@@ -1401,7 +1540,9 @@
     "people": "Люди",
     "history": "История",
     "noFollowers": "Пока нет подписчиков.",
+    "noFollowersNote": "Когда кто-то на вас подпишется, он появится здесь.",
     "noFollowing": "Пока ни на кого не подписан.",
+    "noFollowingNote": "Подписывайтесь, чтобы первыми видеть новые паки.",
     "followsLoadMore": "Показать ещё",
     "followsError": "Не удалось загрузить список. Попробуйте ещё раз.",
     "followsLoading": "Загрузка…",
@@ -1450,13 +1591,15 @@
     "feedbackDeclined": "Отклонён",
     "reportNew": "Новая",
     "reportReviewing": "На рассмотрении",
-    "reportClosed": "Закрыта"
+    "reportClosed": "Закрыта",
+    "packChangesRequested": "Запрошены правки"
   },
   "feedback": {
-    "pageTitle": "Отзывы и предложения",
-    "newPost": "Новый пост",
-    "searchAria": "Поиск по отзывам",
-    "searchPlaceholder": "Поиск по отзывам…",
+    "pageTitle": "Предложения",
+    "pageSubtitle": "Попросите функцию, сообщите об ошибке или исправьте перевод. Голосуйте, чтобы мы знали, что делать дальше.",
+    "newPost": "Новое предложение",
+    "searchAria": "Поиск предложений",
+    "searchPlaceholder": "Поиск предложений…",
     "filterAll": "Все",
     "topicBug": "Баг",
     "topicFeature": "Функция",
@@ -1464,26 +1607,40 @@
     "topicOther": "Другое",
     "sortTop": "Топ",
     "sortNewest": "Новые",
-    "loadMoreError": "Не удалось загрузить ещё отзывы. Попробуй снова.",
-    "topSidebarHeading": "Топ отзывов",
-    "noFeedbackYet": "Пока нет отзывов.",
+    "countShowing": "Показано {shown} из {total}",
+    "countNone": "Ничего не найдено",
+    "clearFilters": "Сбросить фильтры",
+    "loadMoreError": "Не удалось загрузить ещё предложения. Попробуйте ещё раз.",
+    "mostWanted": "Самое желанное",
+    "noFeedbackYet": "Предложений пока нет.",
+    "legendHeading": "Что означают статусы",
+    "legendNew": "Прочитано, но ещё не разобрано.",
+    "legendInProgress": "Прямо сейчас над этим работают.",
+    "legendDone": "Выпущено — смотрите страницу обновлений.",
+    "legendDeclined": "Не планируется. Причина — в комментариях.",
     "scoreLabel": "рейтинг",
     "by": "от",
     "commentCount": "{count, plural, one {# комментарий} few {# комментария} many {# комментариев} other {# комментария}}",
-    "loadingList": "Загрузка отзывов…",
-    "listError": "Не удалось загрузить отзывы. Попробуй снова.",
-    "noMatches": "Под эти фильтры нет отзывов.",
+    "loadingList": "Загрузка предложений…",
+    "listError": "Не удалось загрузить предложения. Попробуйте ещё раз.",
+    "emptyTitle": "Предложений пока нет",
+    "emptyNote": "Станьте первым, кто что-нибудь предложит.",
+    "emptyFilteredTitle": "Ничего не подходит под эти фильтры",
+    "emptyFilteredNote": "Попробуйте другую тему или очистите поиск.",
+    "postFirst": "Опубликовать первое",
     "loadingMore": "Загрузка…",
     "loadMore": "Показать ещё",
+    "showMore": "Показать ещё {count}",
     "voteError": "Не удалось учесть голос. Попробуй снова.",
     "like": "Нравится",
     "dislike": "Не нравится",
     "detailNotFound": "Этот отзыв не существует или недоступен тебе.",
-    "backToFeedback": "К отзывам",
+    "backToFeedback": "К предложениям",
+    "detailCrumb": "Предложение",
     "detailLoadError": "Не удалось загрузить этот отзыв. Попробуй снова.",
     "loading": "Загрузка…",
     "statusUpdateError": "Не удалось изменить статус. Попробуй снова.",
-    "deleteConfirm": "Удалить этот отзыв?",
+    "deleteConfirm": "Удалить это предложение?",
     "deleteError": "Не удалось удалить этот отзыв. Попробуй снова.",
     "translationHeading": "Перевод",
     "languageValueLabel": "Язык:",
@@ -1494,7 +1651,7 @@
     "delete": "Удалить",
     "edited": "изменено",
     "commentsHeading": "Комментарии · {count}",
-    "commentPlaceholder": "Поделись мыслями об этом отзыве…",
+    "commentPlaceholder": "Поделитесь мнением об этом предложении…",
     "commentAria": "Комментарий",
     "postComment": "Опубликовать",
     "loginToComment": "<link>Войди</link>, чтобы оставить комментарий.",
@@ -1503,28 +1660,32 @@
     "commentsLoadError": "Не удалось загрузить комментарии. Попробуй позже.",
     "noComments": "Пока нет комментариев.",
     "loadMoreCommentsError": "Не удалось загрузить ещё комментарии. Попробуй снова.",
-    "newFeedbackTitle": "Новый отзыв",
+    "newFeedbackTitle": "Новое предложение",
     "topicLabel": "Тема",
     "titleLabel": "Заголовок",
-    "titlePlaceholder": "Краткая суть",
+    "titlePlaceholder": "Одна строка — что нужно изменить?",
     "detailsLabel": "Подробности",
-    "detailsPlaceholder": "Опиши баг, идею или предложение",
+    "detailsPlaceholder": "Какую вашу проблему это решает?",
+    "detailsPlaceholderBug": "Что вы сделали, что произошло и чего вы ожидали?",
+    "detailsPlaceholderTranslation": "Какой язык, какой экран и как должно быть написано.",
     "visibilityLabel": "Видимость",
     "visibilityEveryone": "Все",
     "visibilityStaffOnly": "Только для команды",
-    "staffOnlyHint": "Посты только для команды видны лишь тебе и команде.",
+    "visibilityHintEveryone": "Публично — кто угодно может прочитать и проголосовать.",
+    "visibilityHintStaffOnly": "Это видит только команда Velanto. Голосовать нельзя.",
     "translationSuggestionHeading": "Предложение по переводу",
     "languageFieldLabel": "Язык",
     "chooseLanguage": "Выбери язык…",
-    "contextFieldLabel": "Какой текст / где ты его видел (необязательно)",
-    "contextPlaceholder": "например, кнопка «Играть» на главном экране",
+    "contextFieldLabel": "Где это встречается · необязательно",
+    "contextPlaceholder": "например, заголовок раунда в sacrifice_one",
     "suggestionFieldLabel": "Твой вариант формулировки",
     "suggestionPlaceholder": "Как должно быть вместо этого",
     "posting": "Публикуем…",
-    "postFeedback": "Опубликовать отзыв",
-    "metaListTitle": "Отзывы и предложения — Velanto",
+    "postFeedback": "Опубликовать",
+    "duplicateHint": "Сначала поищите — голос за существующую запись помогает больше, чем дубль.",
+    "metaListTitle": "Предложения — Velanto",
     "metaListDescription": "Сообщай о багах, предлагай функции и улучшения перевода.",
-    "metaNewTitle": "Новый отзыв — Velanto"
+    "metaNewTitle": "Новое предложение — Velanto"
   },
   "docs": {
     "metaTitle": "Документация — Velanto",
@@ -1560,6 +1721,8 @@
     "statsTitle": "Статистика и сравнения",
     "statsBody": "Пока вы играете, вам ничего не подсказывает, как выбирали остальные, поэтому решения остаются вашими собственными. Как только вы закончите, каждый раунд раскрывается: элементы, которые игроки выбирали чаще всего, и процент тех, кто согласился с вашим выбором. Общий уровень совпадений пака также показан на его карточке и странице ещё до игры.",
     "jumpTo": "Перейти к теме",
+    "nextTopic": "Далее",
+    "previousTopic": "Назад",
     "tokenNameLabel": "Название",
     "tokenNamePlaceholder": "например, Claude Desktop",
     "tokenScopesLabel": "Разрешения",
@@ -1655,6 +1818,24 @@
     "emptyFiltered": "Нет паков по этому фильтру.",
     "all": "Все"
   },
+  "history": {
+    "title": "История",
+    "subtitle": "Паки, в которые вы играли, — сначала последние.",
+    "loading": "Загрузка вашей истории…",
+    "emptyFiltered": "Вы ещё не играли в паки этого формата.",
+    "progress": "Раунд {current} из {total}",
+    "continue": "Продолжить",
+    "inProgressBadge": "В процессе",
+    "inProgressTitle": "Ещё играете",
+    "playedTitle": "Сыграно",
+    "sortOldest": "Давно сыграно",
+    "sortRecent": "Недавно сыграно",
+    "metaTitle": "История — Velanto",
+    "metaDescription": "Паки, в которые вы играли, в порядке последней игры.",
+    "empty": "Вы ещё ни во что не играли. Сыграйте в пак, и он появится здесь.",
+    "error": "Не удалось загрузить историю. Попробуйте ещё раз.",
+    "loginRequired": "Войдите, чтобы увидеть историю игр."
+  },
   "people": {
     "title": "Люди",
     "subtitle": "Ищите авторов и игроков и подписывайтесь на тех, кто вам нравится.",
@@ -1662,7 +1843,6 @@
     "metaDescription": "Ищите в Velanto авторов паков и игроков, на которых можно подписаться.",
     "searchLabel": "Поиск людей",
     "searchPlaceholder": "Поиск по имени пользователя",
-    "hint": "Введите минимум 2 символа для поиска.",
     "loading": "Поиск…",
     "error": "Не удалось выполнить поиск. Повторите попытку.",
     "empty": "Никого не найдено."
@@ -1675,38 +1855,126 @@
       "hostIsChoosing": "Хост выбирает режим игры…",
       "playerRange": "{min}–{max} игроков"
     },
+    "packModes": {
+      "heading": "Режимы, доступные в этом паке",
+      "caption": "Хост выбирает режим в лобби. Затемнённые режимы требуют другого размера комнаты."
+    },
     "modes": {
       "claim": {
         "name": "Захват",
-        "blurb": "Успейте забрать предмет быстрее всех."
+        "blurb": "Успейте забрать предмет быстрее всех.",
+        "steps": {
+          "1": {
+            "title": "Хватайте быстро",
+            "body": "В каждом раунде выпадает на один вариант больше, чем игроков."
+          },
+          "2": {
+            "title": "Делить нельзя",
+            "body": "Занятый вариант уже не отдадут — вы боретесь за тот, который хотите убрать."
+          },
+          "3": {
+            "title": "Один остаётся",
+            "body": "Единственный незанятый вариант и есть спасённый."
+          }
+        }
       },
       "guess_who": {
         "name": "Угадай кто",
-        "blurb": "Выбирайте вслепую, затем угадывайте, кто что выбрал."
+        "blurb": "Выбирайте вслепую, затем угадывайте, кто что выбрал.",
+        "steps": {
+          "1": {
+            "title": "Выбор вслепую",
+            "body": "Определитесь со своим ответом до того, как раскроют чужие."
+          },
+          "2": {
+            "title": "Читайте почерк",
+            "body": "Игроки X, Y, Z за игру набирают каждый свой столбец выборов."
+          },
+          "3": {
+            "title": "Догадка и очки",
+            "body": "Сопоставьте каждую метку с живым человеком. Побеждает самый точный."
+          }
+        }
       },
       "turn_based_cut": {
         "name": "Пошаговое отсечение",
-        "blurb": "По очереди убирайте по одному предмету, пока не останется один."
+        "blurb": "По очереди убирайте по одному предмету, пока не останется один.",
+        "steps": {
+          "1": {
+            "title": "Ваш ход",
+            "body": "В свой ход вы убираете с доски ровно один вариант."
+          },
+          "2": {
+            "title": "Доска редеет",
+            "body": "Все видят, как варианты исчезают один за другим."
+          },
+          "3": {
+            "title": "Последний уцелевший",
+            "body": "Ни голосов, ни ничьих — итог решает последний оставшийся."
+          }
+        }
       },
       "voting": {
         "name": "Голосование",
-        "blurb": "Голосуйте вживую — все видят счёт в реальном времени."
+        "blurb": "Голосуйте вживую — все видят счёт в реальном времени.",
+        "steps": {
+          "1": {
+            "title": "Голосуйте",
+            "body": "Нажмите на свой вариант. Пока другие думают, его можно поменять."
+          },
+          "2": {
+            "title": "Следите за счётом",
+            "body": "Голоса видны сразу, так что можно поспорить и переубедить комнату."
+          },
+          "3": {
+            "title": "Решает большинство",
+            "body": "При ничьей решает владелец приоритета — никакой монетки."
+          }
+        }
       },
       "shared_grid": {
         "name": "Общая сетка",
-        "blurb": "Ранжируйте вслепую, затем смотрите общий совместный рейтинг."
+        "blurb": "Ранжируйте вслепую, затем смотрите общий совместный рейтинг.",
+        "steps": {
+          "1": {
+            "title": "Ранжируйте вслепую",
+            "body": "Расставьте всю доску сами, не видя чужих рейтингов."
+          },
+          "2": {
+            "title": "Сдают все",
+            "body": "Раунд ждёт, пока каждый за столом не закрепит свой порядок."
+          },
+          "3": {
+            "title": "Один общий порядок",
+            "body": "Все бюллетени считаются вместе и дают рейтинг комнаты."
+          }
+        }
       },
       "relay": {
         "name": "Эстафета",
-        "blurb": "Стройте один общий рейтинг вместе, по очереди расставляя предметы."
+        "blurb": "Стройте один общий рейтинг вместе, по очереди расставляя предметы.",
+        "steps": {
+          "1": {
+            "title": "По одному",
+            "body": "Раунд открывает варианты в заданном порядке, по одному за ход."
+          },
+          "2": {
+            "title": "Вставьте на место",
+            "body": "В свой ход поставьте его в любое место уже собранного списка."
+          },
+          "3": {
+            "title": "Собрано вместе",
+            "body": "Итог не принадлежит никому — комната собирает один общий порядок."
+          }
+        }
       }
     },
     "entry": {
       "createRoom": "Создать комнату",
       "joinByCode": "Войти по коду",
+      "orWithFriends": "Или с друзьями",
       "signInToPlay": "Войдите, чтобы играть с друзьями",
       "createError": "Не удалось создать комнату. Попробуйте ещё раз.",
-      "joinTitle": "Присоединиться к комнате",
       "codeLabel": "Код комнаты",
       "codePlaceholder": "Введите код",
       "join": "Войти",
@@ -1740,7 +2008,41 @@
       "lock": "Закрыть комнату",
       "unlock": "Открыть комнату",
       "lockedNote": "Закрыто — новые игроки не могут войти.",
-      "unlockedNote": "Открыто — друзья с кодом могут войти."
+      "unlockedNote": "Открыто — друзья с кодом могут войти.",
+      "open": "Лобби открыто",
+      "chooseHeading": "Выберите, как будете играть",
+      "hostHint": "Выберите режим — от него зависят механика раунда и размер комнаты.",
+      "guestHint": "Хост выбирает режим. Как только выберет, он появится здесь.",
+      "roleHost": "ВЫ ХОСТ",
+      "roleGuest": "РЕШАЕТ ХОСТ",
+      "howARoundGoes": "как проходит раунд",
+      "resultShared": "Общий вердикт",
+      "resultScored": "Со счётом · победитель",
+      "priorityTitle": "Ничью решает приоритет",
+      "priorityBody": "При равенстве голосов решает выбор одного игрока. Каждый раунд приоритет переходит к следующему.",
+      "capacityRoomFor": "Есть место ещё для {count}",
+      "capacityFull": "Комната заполнена",
+      "capacityNeeds": "Нужно минимум {min}",
+      "stillDeciding": "Ещё решает",
+      "tapReadyWhenYouAre": "Нажмите, когда будете готовы",
+      "inviteSomeone": "Позвать друга",
+      "inviteCode": "Код приглашения",
+      "codeHidden": "скрыт на экране",
+      "codeVisible": "виден",
+      "everyoneReady": "Все готовы",
+      "waitingOn": "Ждём ещё {count}",
+      "start": "Начать: {mode}",
+      "startGeneric": "Начать игру",
+      "waitingForHost": "Ждём хоста",
+      "imReady": "Я готов",
+      "unready": "Не готов",
+      "startNoteGuest": "Начать может только хост. Отметьтесь готовым, чтобы он смог.",
+      "startNoteAllReady": "Все готовы — после старта режим закрепится на всю игру.",
+      "startNoteWaiting": "Старт откроется, когда все в комнате будут готовы.",
+      "startNoteNeedsMore": "Старт откроется при {min} игроках.",
+      "startNoteNoMode": "Сначала выберите режим выше.",
+      "seatCount": "{count}/{max}",
+      "readyCount": "{ready}/{total}"
     },
     "round": {
       "heading": "Раунд {index} из {total}",
@@ -1748,9 +2050,7 @@
       "chosen": "{count, plural, one {Выбрал} other {Выбрали}} {count} из {total}",
       "instructionSave": "Выберите один предмет, чтобы спасти его. Все остальные выбывают.",
       "instructionSacrifice": "Выберите один предмет, чтобы пожертвовать им. Предмет, который никто не выбрал, выживает.",
-      "claimSave": "Спасти {name}",
       "claimSacrifice": "Пожертвовать {name}",
-      "claimedBySave": "Оставил(а) {name}",
       "claimedBySacrifice": "Пожертвовал {name}",
       "survivorSave": "Спасён",
       "survivorSacrifice": "Выживший",
@@ -1777,11 +2077,13 @@
     "results": {
       "heading": "Результаты",
       "roundLabel": "Раунд {index}",
-      "backToPack": "Назад к паку"
+      "backToPack": "Назад к паку",
+      "playAgain": "Сыграть ещё"
     },
     "ended": {
       "heading": "Эта комната завершена",
-      "description": "Эта комната больше недоступна. Создайте новую со страницы пака."
+      "description": "Эта комната больше недоступна. Создайте новую со страницы пака.",
+      "leave": "Назад к паку"
     },
     "joinLink": {
       "joining": "Подключение к комнате…",
@@ -1818,25 +2120,42 @@
     },
     "guessWho": {
       "roundInstruction": "Сделайте выбор",
-      "pickInstruction": "Выбирайте вслепую — никто не увидит ваш выбор, пока все не подтвердят свои.",
+      "pickInstruction": "Выберите один — все видят букву, которая его выбрала, но не знают, чья она.",
+      "pickHint": "Буквы появляются сразу",
+      "pickLabel": "Выбрать {name}",
+      "pickedByLabels": "Выбрали: {labels}",
+      "maskedRosterNote": "До раскрытия все играют под буквой.",
       "rankInstruction": "Расставьте все предметы по порядку, лучший — первым — никто не увидит ваш рейтинг, пока все не подтвердят свои.",
       "revealHeading": "Раскрытие",
       "trajectoryHeading": "Кто что отвечал до сих пор",
-      "roundColumn": "Раунд"
+      "roundColumn": "Раунд",
+      "trajectoryHint": "выборы за {count, plural, one {# раунд} few {# раунда} many {# раундов} other {# раунда}}",
+      "stillAnonymous": "?",
+      "columnHint": "По одному раунду никого не вычислить — двое часто выбирают одно и то же. Уникален весь столбец целиком."
     },
     "guessing": {
       "heading": "Финальный раунд",
       "title": "Кто есть кто?",
       "instruction": "Сопоставьте каждого игрока с меткой, под которой, как вы думаете, он играл.",
-      "chooseSomeone": "Выберите игрока…",
       "submit": "Отправить догадки",
-      "waitingForOthers": "Отправили {count} / {total}"
+      "waitingForOthers": "Отправили {count} / {total}",
+      "assignedCount": "Назначено {count} из {total}",
+      "whoIs": "Кто такой {label}?",
+      "revealsAtOnce": "Всё раскрывается разом, чтобы никто не подсмотрел.",
+      "deadline": "Раскрытие через"
     },
     "identityReveal": {
       "heading": "Раскрытие",
       "correct": "Угадано верно",
       "incorrect": "Угадано неверно",
-      "scoresPending": "Полный подсчёт очков станет доступен, когда итоговый счёт каждого игрока появится на сервере."
+      "winner": "Победитель",
+      "winnerNote": "Лучше всех прочитал комнату — угадано {count} из {total}",
+      "points": "очков",
+      "sharedWin": "Победа на двоих — {names} угадали по {count}",
+      "yourGuess": "Ваша догадка",
+      "youSaid": "Вы назвали: {name}",
+      "nobody": "никого",
+      "pointPerMatch": "1 очко за каждое совпадение"
     },
     "turnBasedCut": {
       "instruction": "В свой ход отсеките один предмет. Побеждает тот, что остался последним.",
@@ -1854,7 +2173,11 @@
       "aggregateHeading": "Итог",
       "groupRanking": "Общий рейтинг группы",
       "pointsLabel": "{count} очк.",
-      "tiedNote": "Ничья — {count} {count, plural, one {позиция делит} few {позиции делят} many {позиций делят} other {позиции делят}} это место"
+      "tiedNote": "Ничья — {count} {count, plural, one {позиция делит} few {позиции делят} many {позиций делят} other {позиции делят}} это место",
+      "aggregateHint": "все бюллетени, посчитанные вместе",
+      "alignment": "Совпадение",
+      "alignmentHint": "насколько близко к комнате",
+      "alignmentNote": "Никто не выигрывает — совпадение просто показывает, чей вкус совпал с комнатой."
     },
     "relay": {
       "instruction": "Вставьте текущий предмет в общий рейтинг.",
@@ -1864,7 +2187,17 @@
       "currentItem": "Сейчас размещается",
       "finalOrderHeading": "Итоговый порядок",
       "placementHistoryHeading": "История размещений",
-      "placedVerb": "разместил(а)"
+      "placedVerb": "разместил(а)",
+      "nobodyKnowsNext": "Никто не знает, что будет следующим.",
+      "stillHidden": "Ещё {count} скрыто",
+      "sharedRanking": "Общий список",
+      "sharedRankingHint": "собираем вместе, по одному",
+      "placedBy": "поставил",
+      "nothingPlacedYet": "Пока ничего не поставлено.",
+      "turnOrder": "Порядок ходов",
+      "placingBadge": "СТАВИТ",
+      "placeItemHere": "Поставить «{name}» сюда",
+      "placeAtRank": "Поставить на место {rank}"
     },
     "lockedIn": {
       "playerLocked": "{name} — подтвердил(а) выбор",
@@ -1881,7 +2214,84 @@
     },
     "leaderboard": {
       "winner": "Победитель",
-      "points": "{count, plural, one {# очко} few {# очка} many {# очков} other {# очка}}"
+      "points": "{count, plural, one {# очко} few {# очка} many {# очков} other {# очка}}",
+      "heading": "Таблица результатов"
+    },
+    "header": {
+      "rounds": "{count, plural, one {# раунд} few {# раунда} many {# раундов} other {# раунда}}",
+      "inRound": "Идёт раунд",
+      "between": "Раунд сыгран",
+      "guessing": "Угадываем"
+    },
+    "board": {
+      "room": "Комната",
+      "here": "{count} на связи",
+      "outOfPlay": "Выбыл",
+      "voted": "Проголосовал",
+      "deciding": "Решает…",
+      "waiting": "Ждёт",
+      "cut": "Убрал",
+      "cuttingNow": "Сейчас убирает",
+      "progressVotes": "Голосов: {count} из {total}",
+      "progressLeft": "На доске осталось {count}",
+      "tapToVote": "Нажмите на свой вариант",
+      "voteLocked": "Голос учтён — его ещё можно поменять",
+      "resolvesWhenAllVote": "Итог, когда проголосуют все",
+      "noTakebacks": "Убрали — назад не вернуть",
+      "voteFor": "Голос за {name}",
+      "cutItem": "Убрать {name}",
+      "yourVote": "ВАШ ГОЛОС",
+      "cutBadge": "УБРАНО",
+      "liveTally": "Счёт вживую",
+      "tallyHint": "можно менять до закрытия",
+      "tieTitle": "Ничья — решает приоритет: {name}",
+      "tieBody": "Переубедите их, пока не лёг последний голос.",
+      "cutSoFar": "Уже убрано",
+      "cutEmpty": "Пока ничего не убрано — первым ходит {name}.",
+      "claimed": "Занял",
+      "claimPrompt": "Займите тот, который хотите убрать",
+      "claimHint": "Кто успел, тот и занял",
+      "sideItemCount": "{count} в игре",
+      "lockedIn": "Готово",
+      "lockInPrompt": "Зафиксируйте свой ответ",
+      "lockedWaiting": "Зафиксировано — ждём комнату",
+      "blindHint": "Никто не увидит, пока не сдадут все",
+      "placed": "Поставил",
+      "placingNow": "Сейчас ставит",
+      "progressPlaced": "Поставлено {count} из {total}",
+      "rankNowPlacing": "Размести этот",
+      "rankSlotEmpty": "Поставить на место {rank}",
+      "rankSlotFilled": "Место {rank}: {title}",
+      "rankPlaceHere": "Поставить «{name}» сюда",
+      "rankHiddenAfter": "Ещё скрыто: {count}"
     }
+  },
+  "reviewOutcome": {
+    "crumb": "Результат проверки",
+    "loading": "Загрузка результата проверки…",
+    "notFound": "Этого пака нет, либо он не ваш.",
+    "loginRequired": "Войдите, чтобы увидеть результат проверки.",
+    "heroTitle": "Почти готово — осталось несколько правок",
+    "heroWhen": "Проверено {date}",
+    "heroBody": "Ваш пак ещё не опубликован. Модератор прошёл по нему и запросил правки ниже. Ничего не удалено — внесите правки и отправьте снова, пак вернётся в очередь.",
+    "openEditor": "Открыть редактор",
+    "viewPack": "Открыть пак",
+    "moderatorSaid": "Что сказал модератор",
+    "marksHeading": "Что исправить",
+    "marksCount": "{count, plural, one {отмечен # элемент} few {отмечено # элемента} many {отмечено # элементов} other {отмечено # элемента}}",
+    "needsEdit": "НУЖНА ПРАВКА",
+    "doThis": "Сделайте так",
+    "inPool": "Пул: {pool}",
+    "nextHeading": "Что дальше",
+    "step1": "Откройте редактор и внесите правки выше.",
+    "step2": "Сохраните. Пак сразу вернётся в очередь модерации.",
+    "step3": "Когда модератор снова его посмотрит, вы получите уведомление.",
+    "thePack": "Пак",
+    "metaPools": "Пулы",
+    "metaRounds": "Раунды",
+    "metaSubmitted": "Отправлен",
+    "mistakeTitle": "Считаете, это ошибка?",
+    "mistakeBody": "Отправьте предложение, и команда посмотрит ещё раз. Укажите название пака.",
+    "mistakeLink": "Связаться с модерацией →"
   }
 }

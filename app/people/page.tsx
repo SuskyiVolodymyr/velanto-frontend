@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Text } from "@/src/shared/components/Text";
+import { PageHeader } from "@/src/shared/components/PageHeader";
+import { cn } from "@/src/shared/lib/cn";
+import { PAGE_CONTAINER_FULL } from "@/src/shared/lib/page-container";
 import { PeopleFeed } from "@/src/features/home/PeopleFeed";
 import { buildOpenGraph } from "@/src/shared/lib/open-graph";
 import { SITE_URL } from "@/src/shared/lib/site-url";
@@ -26,15 +29,25 @@ export async function generateMetadata(): Promise<Metadata> {
  */
 export default async function PeoplePage() {
   const t = await getTranslations("people");
+  const th = await getTranslations("header");
   return (
-    <main className="flex-1 px-7 py-10">
-      <Text as="h1" variant="title" className="mb-2 text-3xl">
-        {t("title")}
-      </Text>
-      <Text variant="secondary" className="mb-8 max-w-lg">
-        {t("subtitle")}
-      </Text>
-      <PeopleFeed />
-    </main>
+    <>
+      {/* Same back-pill bar as the other top-level listings reached from the
+          sidebar (my-packs, rules, suggestions) — /people was the one left
+          without any header at all. */}
+      <PageHeader
+        back={{ href: "/", label: th("browse") }}
+        crumb={t("title")}
+      />
+      <main className={cn(PAGE_CONTAINER_FULL, "flex-1 py-10")}>
+        <Text as="h1" variant="title" className="mb-2 text-3xl">
+          {t("title")}
+        </Text>
+        <Text variant="secondary" className="mb-8 max-w-lg">
+          {t("subtitle")}
+        </Text>
+        <PeopleFeed />
+      </main>
+    </>
   );
 }

@@ -86,7 +86,9 @@ describe("ApiTokensSection", () => {
     render(<ApiTokensSection />);
 
     await user.type(screen.getByPlaceholderText(/claude desktop/i), "My token");
-    await user.click(screen.getByLabelText(/create and edit packs/i));
+    await user.click(
+      screen.getByRole("checkbox", { name: /create and edit packs/i }),
+    );
     await user.click(screen.getByRole("button", { name: /create token/i }));
 
     expect(createMutate).not.toHaveBeenCalled();
@@ -132,15 +134,14 @@ describe("ApiTokensSection", () => {
     authAs("authenticated", "moderator");
     render(<ApiTokensSection />);
 
-    // The raw scope id renders in a <code> beside each checkbox label; their
-    // DOM order is the checkbox order.
-    const scopeCodes = screen
-      .getAllByText(
-        /^(profile:read|packs:read|packs:write|packs:delete|moderation)$/,
-      )
-      .map((el) => el.textContent);
+    // Each scope is one role="checkbox" row carrying its id in data-scope
+    // (the mock prints a human label + description on the row, not the raw
+    // id). DOM order is the checkbox order.
+    const scopeIds = screen
+      .getAllByRole("checkbox")
+      .map((el) => el.getAttribute("data-scope"));
 
-    expect(scopeCodes).toEqual([
+    expect(scopeIds).toEqual([
       "profile:read",
       "packs:read",
       "packs:write",
@@ -177,7 +178,9 @@ describe("ApiTokensSection", () => {
     await user.type(screen.getByPlaceholderText(/claude desktop/i), "My token");
     expect(createBtn).toBeDisabled(); // still no scope
 
-    await user.click(screen.getByLabelText(/create and edit packs/i));
+    await user.click(
+      screen.getByRole("checkbox", { name: /create and edit packs/i }),
+    );
     expect(createBtn).toBeEnabled();
   });
 
@@ -196,9 +199,12 @@ describe("ApiTokensSection", () => {
     render(<ApiTokensSection />);
 
     await user.type(screen.getByPlaceholderText(/claude desktop/i), "My token");
-    await user.click(screen.getByLabelText(/read packs/i));
-    await user.click(screen.getByLabelText(/create and edit packs/i));
-    await user.selectOptions(screen.getByRole("combobox"), "365");
+    await user.click(screen.getByRole("checkbox", { name: /^read packs/i }));
+    await user.click(
+      screen.getByRole("checkbox", { name: /create and edit packs/i }),
+    );
+    // Expiry is a chip row (mock), not a <select>.
+    await user.click(screen.getByRole("radio", { name: /1 year/i }));
     await user.click(screen.getByRole("button", { name: /create token/i }));
 
     await waitFor(() =>

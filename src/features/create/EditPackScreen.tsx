@@ -4,8 +4,6 @@ import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { CreatePackForm } from "@/src/features/create/CreatePackForm";
 import { packToFormValues } from "@/src/features/create/pack-to-form-values";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
-import { cn } from "@/src/shared/lib/cn";
 import { Text } from "@/src/shared/components/Text";
 import type { Pack } from "@/src/shared/types/pack";
 
@@ -24,12 +22,9 @@ export function EditPackScreen({ pack }: { pack: Pack }) {
 
   if (status === "authenticated" && user && user.id !== pack.authorId) {
     return (
-      <Text
-        variant="secondary"
-        className={cn(PACK_CONTAINER, "py-10 text-center")}
-      >
-        {t("editOthersForbidden")}
-      </Text>
+      <div className="mx-auto max-w-md py-16 text-center">
+        <Text variant="secondary">{t("editOthersForbidden")}</Text>
+      </div>
     );
   }
 
@@ -40,12 +35,9 @@ export function EditPackScreen({ pack }: { pack: Pack }) {
   const initialValues = packToFormValues(pack);
   if (!initialValues) {
     return (
-      <Text
-        variant="secondary"
-        className={cn(PACK_CONTAINER, "py-10 text-center")}
-      >
-        {t("editFormatUnsupported")}
-      </Text>
+      <div className="mx-auto max-w-md py-16 text-center">
+        <Text variant="secondary">{t("editFormatUnsupported")}</Text>
+      </div>
     );
   }
 

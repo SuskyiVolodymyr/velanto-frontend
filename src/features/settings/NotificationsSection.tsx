@@ -26,6 +26,7 @@ const LABEL_KEYS: Record<NotificationType, string> = {
   comment_mention: "notifCommentMention",
   comment_reply: "notifCommentReply",
   pack_deleted_warning: "notifPackDeleted",
+  pack_changes_requested: "notifPackChangesRequested",
 };
 
 export function NotificationsSection() {

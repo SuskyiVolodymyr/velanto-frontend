@@ -43,6 +43,14 @@ const IDENTICAL_ALLOWED = new Set([
   "formats.1v1",
   // Pure placeholder/punctuation, no translatable words: "{item} — {pct}%".
   "pack.topItemPct",
+  // Same: the lobby's seat and ready counters are "{count}/{max}" and
+  // "{ready}/{total}" — two placeholders and a slash.
+  "room.lobby.seatCount",
+  "room.lobby.readyCount",
+  // A bare question mark: the placeholder under a guess-who column whose
+  // player has not been revealed yet. Latin-script locales borrow the glyph;
+  // ar/ur/zh use their own and are not exempted by this entry.
+  "room.guessWho.stillAnonymous",
   // Loanword: "Email" is borrowed as-is in some locales.
   "auth.email",
   // Proper noun (T5): the item-kind toggle's YouTube option is the brand

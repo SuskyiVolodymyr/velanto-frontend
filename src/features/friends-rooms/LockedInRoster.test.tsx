@@ -13,6 +13,7 @@ const PLAYERS = [
     ready: true,
     next: false,
     claimedItemId: null,
+    label: null,
   },
   {
     userId: "u2",
@@ -23,6 +24,7 @@ const PLAYERS = [
     ready: true,
     next: false,
     claimedItemId: null,
+    label: null,
   },
 ];
 

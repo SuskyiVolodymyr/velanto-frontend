@@ -6,6 +6,7 @@ import { Share2 } from "lucide-react";
 import { Button, type ButtonVariant } from "@/src/shared/components/Button";
 import { Input } from "@/src/shared/components/Input";
 import { buildShareUrl } from "@/src/shared/lib/share-url";
+import { useHorizontalClamp } from "@/src/shared/lib/use-horizontal-clamp";
 import type { RecordedPick } from "@/src/shared/types/play-results";
 
 export function ShareButton({
@@ -14,6 +15,8 @@ export function ShareButton({
   resolvePlayId,
   label,
   variant = "secondary",
+  compact = false,
+  icon,
   className,
 }: {
   path: string;
@@ -31,6 +34,21 @@ export function ShareButton({
    * primary cyan treatment; every other caller keeps the original secondary
    * look by omitting this). */
   variant?: ButtonVariant;
+  /**
+   * Collapse the visible label to icon-only below 481px, keeping the full
+   * label as the button's aria-label so it never loses its accessible name.
+   * Opt-in — a caller like Pack Detail's crowded sticky header (Back/Share/
+   * Report/Vote all fighting for the same row) wants this; a standalone Share
+   * CTA elsewhere doesn't, so the default keeps the label always visible.
+   */
+  compact?: boolean;
+  /**
+   * Overrides the trigger's leading glyph. The default share-node icon is what
+   * every "share this page" trigger uses; the result page's share CARD mocks
+   * an upload glyph instead (`Results.dc.html`), because there the button is
+   * the card's own primary action rather than a share affordance in a toolbar.
+   */
+  icon?: React.ReactNode;
   className?: string;
 }) {
   const t = useTranslations("share");
@@ -39,8 +57,14 @@ export function ShareButton({
   const [copied, setCopied] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const copyTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Corrective nudge so the fixed-width, right-anchored panel below can't
+  // render off-screen when the trigger sits well left of the viewport's
+  // right edge — the crowded Pack Detail sticky bar (Back/Share/Report/Vote
+  // in one row) is exactly that case on a narrow screen.
+  const clampStyle = useHorizontalClamp(panelRef, open);
 
   // Built lazily on open: buildShareUrl reads window.location.origin, which only
   // exists client-side, and the input only renders after a click — so no SSR/
@@ -105,15 +129,24 @@ export function ShareButton({
         className={className}
         aria-haspopup="dialog"
         aria-expanded={open}
+        aria-label={compact ? triggerLabel : undefined}
         onClick={() => (open ? close() : setOpen(true))}
       >
-        <Share2 size={16} aria-hidden />
-        {triggerLabel}
+        {icon ?? <Share2 size={16} aria-hidden />}
+        {compact ? (
+          <span aria-hidden className="hidden min-[481px]:inline">
+            {triggerLabel}
+          </span>
+        ) : (
+          triggerLabel
+        )}
       </Button>
       {open && (
         <div
+          ref={panelRef}
           role="dialog"
           aria-label={t("dialogLabel")}
+          style={clampStyle}
           className="absolute right-0 top-12 z-10 flex w-[300px] items-center gap-2 rounded-xl border border-border bg-surface p-3 shadow-[0_16px_40px_rgba(0,0,0,0.5)]"
         >
           <Input

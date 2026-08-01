@@ -1,145 +1,53 @@
 import type { PackFormat } from "@/src/shared/types/pack";
-import { cn } from "@/src/shared/lib/cn";
 
 /**
- * Pure-CSS-shape icon per pack format, 26px tall. Decorative only — the
- * format's name renders as real text right next to it (in `FormatSection`),
- * so this carries `aria-hidden` rather than any accessible label of its own.
- *
- * Accent-colored pieces mark the format's "selected" affordance; "mute"
- * pieces use a fixed low-alpha white regardless of selection, matching the
- * mock's `rgba(243,245,248,.16)` literal exactly (not a text-* token, since
- * no token in the palette sits at that specific alpha).
+ * Each format's identity color (mock: Create Pack.dc.html's FORMATS array,
+ * `hue` field — an RGB triple). Tints the icon badge always, and (see
+ * FormatSection) the selected card's own border/background — not a single
+ * shared accent color across every card.
  */
-const MUTE_COLOR = "rgba(243,245,248,.16)";
+export const FORMAT_HUE: Record<PackFormat, string> = {
+  save_one: "57,217,138",
+  sacrifice_one: "255,90,90",
+  "1v1": "0,229,255",
+  nxn: "255,92,192",
+  rank_blind: "255,194,75",
+};
 
-export function FormatGlyph({
-  format,
-  selected,
-}: {
-  format: PackFormat;
-  selected: boolean;
-}) {
+const FORMAT_ICON_PATH: Record<PackFormat, string> = {
+  save_one: "M12 3l8 4v5c0 4.6-3.2 8.2-8 9-4.8-.8-8-4.4-8-9V7z",
+  sacrifice_one: "M6 4l12 16M18 4L6 20",
+  "1v1": "M7 5v14M17 5v14M10.5 12h3",
+  nxn: "M4 6h6M4 12h6M4 18h6M14 6h6M14 12h6M14 18h6",
+  rank_blind: "M4 6h16M4 12h11M4 18h6",
+};
+
+/**
+ * The format's 28px icon badge — decorative only, the format's name renders
+ * as real text right next to it (in `FormatSection`), so this carries
+ * `aria-hidden` rather than any accessible label of its own.
+ */
+export function FormatGlyph({ format }: { format: PackFormat }) {
+  const hue = FORMAT_HUE[format];
   return (
-    <span aria-hidden="true" className="inline-flex h-[26px] items-center">
-      {renderGlyph(format, selected)}
-    </span>
-  );
-}
-
-function renderGlyph(format: PackFormat, selected: boolean) {
-  switch (format) {
-    case "save_one":
-      return <SaveOneGlyph selected={selected} />;
-    case "sacrifice_one":
-      return <SacrificeOneGlyph selected={selected} />;
-    case "rank_blind":
-      return <RankBlindGlyph selected={selected} />;
-    case "nxn":
-      return <NxNGlyph selected={selected} />;
-    case "1v1":
-      return <OneVOneGlyph selected={selected} />;
-  }
-}
-
-// Accent when selected, else the muted-secondary reading of `text-foreground-
-// secondary` the plan calls for (no existing call site pins an exact opacity
-// for this "muted but not as-muted-as-mute" state, so `/70` is the literal
-// reading of "at 70% opacity-ish").
-const accentOrSecondaryClass = (selected: boolean) =>
-  selected ? "bg-acc" : "bg-foreground-secondary/70";
-
-function SaveOneGlyph({ selected }: { selected: boolean }) {
-  return (
-    <span className="flex items-end gap-[6px]">
-      <span
-        className="h-[16px] w-[16px] rounded-[3px]"
-        style={{ backgroundColor: MUTE_COLOR }}
-      />
-      <span
-        className={cn("w-[16px] rounded-[3px]", accentOrSecondaryClass(selected))}
-        style={{ height: "22px" }}
-      />
-      <span
-        className="h-[16px] w-[16px] rounded-[3px]"
-        style={{ backgroundColor: MUTE_COLOR }}
-      />
-    </span>
-  );
-}
-
-function SacrificeOneGlyph({ selected }: { selected: boolean }) {
-  return (
-    <span className="flex items-end gap-[6px]">
-      <span
-        className={cn("h-[16px] w-[16px] rounded-[3px]", accentOrSecondaryClass(selected))}
-      />
-      <span
-        className={cn("h-[16px] w-[16px] rounded-[3px]", accentOrSecondaryClass(selected))}
-      />
-      <span
-        className="relative h-[16px] w-[16px] rounded-[3px]"
-        style={{ backgroundColor: MUTE_COLOR }}
+    <span
+      aria-hidden="true"
+      data-testid={`format-icon-${format}`}
+      className="flex h-7 w-7 flex-none items-center justify-center rounded-[9px]"
+      style={{ backgroundColor: `rgba(${hue},.14)`, color: `rgb(${hue})` }}
+    >
+      <svg
+        width="15"
+        height="15"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
       >
-        <span
-          className="absolute left-1/2 top-1/2 h-[2px] w-[14px] -translate-x-1/2 -translate-y-1/2 rotate-45 bg-danger"
-        />
-      </span>
-    </span>
-  );
-}
-
-function RankBlindGlyph({ selected }: { selected: boolean }) {
-  const widths = [26, 20, 14];
-  return (
-    <span className="flex flex-col gap-[4px]">
-      {widths.map((width, i) => (
-        <span
-          key={width}
-          className={cn(
-            "h-[4px] rounded-[3px]",
-            i === 0 ? accentOrSecondaryClass(selected) : "",
-          )}
-          style={{
-            width: `${width}px`,
-            backgroundColor: i === 0 ? undefined : MUTE_COLOR,
-          }}
-        />
-      ))}
-    </span>
-  );
-}
-
-function NxNGlyph({ selected }: { selected: boolean }) {
-  // Diagonal pair (top-left, bottom-right) is accent; the other diagonal is
-  // muted — which diagonal doesn't matter per the spec, this just picks one.
-  const cells = [true, false, false, true];
-  return (
-    <span className="grid grid-cols-2 gap-[5px]">
-      {cells.map((accent, i) => (
-        <span
-          key={i}
-          className={cn(
-            "h-[14px] w-[14px] rounded-[3px]",
-            accent ? accentOrSecondaryClass(selected) : "",
-          )}
-          style={{ backgroundColor: accent ? undefined : MUTE_COLOR }}
-        />
-      ))}
-    </span>
-  );
-}
-
-function OneVOneGlyph({ selected }: { selected: boolean }) {
-  return (
-    <span className="flex flex-row items-center gap-[8px]">
-      <span
-        className={cn("h-[18px] w-[18px] rounded-[3px]", accentOrSecondaryClass(selected))}
-      />
-      <span className="text-[11px] text-foreground-tertiary">vs</span>
-      <span
-        className={cn("h-[18px] w-[18px] rounded-[3px]", accentOrSecondaryClass(selected))}
-      />
+        <path d={FORMAT_ICON_PATH[format]} />
+      </svg>
     </span>
   );
 }

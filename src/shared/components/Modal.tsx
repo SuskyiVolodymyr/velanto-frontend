@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useId, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
 import { cn } from "@/src/shared/lib/cn";
 import { Text } from "@/src/shared/components/Text";
@@ -34,9 +35,20 @@ export function Modal({
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [open, onClose]);
 
-  if (!open) return null;
+  // No `document` during SSR. A modal is only ever opened by a client
+  // interaction, so bailing here can't produce a hydration mismatch — the
+  // server and the first client render both see `open: false`.
+  if (!open || typeof document === "undefined") return null;
 
-  return (
+  /**
+   * Rendered into `document.body` rather than in place. `position: fixed` is
+   * only relative to the viewport while no ancestor establishes a containing
+   * block — and `backdrop-filter` does, which the sticky page header uses. A
+   * modal opened from a control in that header (Report a pack) was therefore
+   * anchored to the header instead of the page: no full-screen dim, and the top
+   * of the dialog clipped off. Portalling puts it outside every such ancestor.
+   */
+  return createPortal(
     <div
       data-testid="modal-backdrop"
       onClick={onClose}
@@ -67,6 +79,7 @@ export function Modal({
         </div>
         <div className="overflow-y-auto">{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

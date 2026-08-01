@@ -19,6 +19,7 @@ const ALL_ON = {
   comment_mention: true,
   comment_reply: true,
   pack_deleted_warning: true,
+  pack_changes_requested: true,
 };
 
 function mockAuth(status: "authenticated" | "unauthenticated" | "loading") {
@@ -112,7 +113,9 @@ describe("NotificationsSection", () => {
       comment_mention: false,
     });
     render(<NotificationsSection />);
-    await waitFor(() => expect(screen.getByText("4 of 6 on")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("5 of 7 on")).toBeInTheDocument(),
+    );
   });
 
   it("updates the enabled-count header after a successful toggle", async () => {
@@ -121,11 +124,15 @@ describe("NotificationsSection", () => {
       new_comment: false,
     });
     render(<NotificationsSection />);
-    await waitFor(() => expect(screen.getByText("6 of 6 on")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("7 of 7 on")).toBeInTheDocument(),
+    );
     await userEvent.click(
       screen.getByRole("switch", { name: "New comment on your pack" }),
     );
-    await waitFor(() => expect(screen.getByText("5 of 6 on")).toBeInTheDocument());
+    await waitFor(() =>
+      expect(screen.getByText("6 of 7 on")).toBeInTheDocument(),
+    );
   });
 
   it("toggling one calls setPreferences with only that key", async () => {

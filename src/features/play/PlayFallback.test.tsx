@@ -44,6 +44,7 @@ describe("PlayFallback", () => {
       status: "ready",
       pack: PACK,
       results: null,
+      availableModes: null,
     });
     render(<PlayFallback packId="p1" />);
     expect(screen.getByText("PlayRouter")).toBeInTheDocument();

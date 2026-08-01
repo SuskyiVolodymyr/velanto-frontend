@@ -90,6 +90,8 @@
     "contentsNoMatches": "Немає елементів, що відповідають пошуку.",
     "packNotFound": "Цього пака не існує.",
     "packCrumb": "Перевірка пака",
+    "reportCrumb": "Перевірка скарги",
+    "queueBack": "Черга",
     "packSubmittedBy": "Надіслано {author} {date}",
     "packSummarySentence": "{pools, plural, one {# пул} few {# пули} many {# пулів} other {# пулу}} · {rounds, plural, one {# раунд} few {# раунди} many {# раундів} other {# раунду}}",
     "contentsHeading": "Вміст пака",
@@ -105,7 +107,50 @@
     "reportedUserComments": "Коментарі",
     "reportedUserReportsAgainst": "Скарги на нього",
     "reportedUserReportsFiled": "Подані скарги",
-    "reportedUserRestricted": "Переглядати дані акаунта під скаргою можуть лише менеджери та адміністратори."
+    "reportedUserRestricted": "Переглядати дані акаунта під скаргою можуть лише менеджери та адміністратори.",
+    "otherReportsHeading": "Інші скарги на цей обʼєкт",
+    "otherReportsLoading": "Завантаження історії скарг…",
+    "otherReportsError": "Не вдалося завантажити історію скарг.",
+    "otherReportsNone": "Інших скарг на цей обʼєкт немає.",
+    "otherReportsBy": "від {reporter}",
+    "otherReportsMore": "Показано {shown} із {total} інших скарг.",
+    "approvalHeading": "Перевірка перед публікацією — кожен елемент пака",
+    "approvalIntro": "За одну гру з кожного пулу випадає лише частина елементів. Нижче — усе, що надіслав автор, щоб ніщо не потрапило до гравців без перевірки.",
+    "decisionHeading": "Рішення",
+    "approvePack": "Схвалити пак",
+    "requestChanges": "Запитати правки",
+    "rejectPack": "Відхилити пак",
+    "changesRequestedHeading": "Запитано правки",
+    "changesNoMarks": "Позначте те, що потребує роботи — кнопкою «Позначити для правки» вище — і напишіть, що автору треба змінити.",
+    "changesMessageLabel": "Повідомлення автору",
+    "changesMessagePlaceholder": "Що має змінитися перед публікацією?",
+    "sendChangeRequest": "Надіслати запит",
+    "changesOutcomeNote": "Пак повертається автору разом із вашими нотатками. Нічого не видаляється, а повторне подання повертає його в чергу.",
+    "rejectReasonLabel": "Причина відхилення",
+    "markForEdit": "Позначити для правки",
+    "marked": "Позначено",
+    "unmark": "Зняти позначку з {label}",
+    "markNoRequest": "Без нотатки — автор побачить лише саму позначку.",
+    "markAskedOfAuthor": "Що потрібно від автора",
+    "markItemPlaceholder": "Що автору зробити з цим елементом?",
+    "markRoundPlaceholder": "Що змінити в цьому раунді?",
+    "markFieldPlaceholder": "Що автору написати натомість?",
+    "markKind": {
+      "title": "Назва",
+      "description": "Опис",
+      "cover": "Обкладинка",
+      "tags": "Теги",
+      "item": "Елемент",
+      "round": "Раунд"
+    },
+    "fieldsHeading": "Дані пака — позначте те, що треба переписати",
+    "fieldTitle": "Назва",
+    "fieldDescription": "Опис",
+    "fieldCover": "Обкладинка",
+    "fieldTags": "Теги",
+    "fieldEmpty": "Не задано",
+    "fieldCoverUploaded": "Завантажене зображення",
+    "fieldCoverTone": "Колір {tone}"
   },
   "admin": {
     "panelEyebrow": "Панель адміністратора",
@@ -208,6 +253,7 @@
     "untrustError": "Не вдалося зняти довіру з цього користувача. Спробуйте ще раз.",
     "loadMoreUsersError": "Не вдалося завантажити більше користувачів. Спробуйте ще раз.",
     "detailBack": "До користувачів",
+    "detailCrumb": "Профіль користувача",
     "detailLoading": "Завантаження користувача…",
     "detailError": "Не вдалося завантажити користувача.",
     "detailStatusBanned": "Заблокований",
@@ -266,14 +312,12 @@
     "newCount": "{count} нових",
     "loadOlder": "Завантажити старіші",
     "commentReply": "<user>@{username}</user> <muted>відповів на твій коментар у</muted> <obj>{packTitle}</obj>",
-    "kindReply": "Відповідь"
+    "kindReply": "Відповідь",
+    "packChangesRequested": "<muted>Модератор запитав правки до</muted> <obj>{packTitle}</obj>"
   },
   "bottomNav": {
     "label": "Головна",
-    "discovery": "Огляд",
-    "feedback": "Відгуки",
     "create": "Створити",
-    "notifications": "Сповіщення",
     "profile": "Профіль"
   },
   "shell": {
@@ -299,7 +343,8 @@
     "logInToFollow": "Увійдіть, щоб стежити",
     "logInToComment": "Увійдіть, щоб коментувати",
     "logInToPlay": "Увійдіть, щоб грати",
-    "logInToCreateTokens": "Увійдіть, щоб створювати токени API"
+    "logInToCreateTokens": "Увійдіть, щоб створювати токени API",
+    "logInToReport": "Увійдіть, щоб поскаржитися"
   },
   "_note": "AI-translated UI strings, refined for natural phrasing. Report wording issues at velanto-frontend#44.",
   "header": {
@@ -388,7 +433,8 @@
     "addEmailConfirmButton": "Додати пошту",
     "addEmailTaken": "Ця пошта вже використовується іншим обліковим записом.",
     "addEmailError": "Не вдалося додати цю пошту. Будь ласка, спробуйте ще раз.",
-    "notifCommentReply": "Хтось відповів на твій коментар"
+    "notifCommentReply": "Хтось відповів на твій коментар",
+    "notifPackChangesRequested": "Модератор запитав правки до мого пака"
   },
   "streamerMode": {
     "hiddenHint": "Приховано через режим стримера",
@@ -449,7 +495,7 @@
     },
     "errors": {
       "loginRequired": "Введіть ел. пошту або ім’я користувача та пароль.",
-      "username": "Ім’я користувача: від 2 до 16 символів, лише латинські літери та цифри.",
+      "username": "Ім’я користувача: від 2 до 16 символів, лише літери, цифри та підкреслення.",
       "email": "Введіть коректну адресу ел. пошти.",
       "passwordLength": "Пароль має містити щонайменше 8 символів.",
       "passwordMax": "Пароль має містити щонайбільше 72 символи.",
@@ -479,6 +525,8 @@
     "noMatch": "Жодне правило не відповідає запиту «{query}»",
     "tryPlainer": "Спробуйте простіше слово — «спам», «копія», «бан».",
     "categoriesHeading": "Категорії",
+    "matchCount": "{count, plural, one {# збіг} few {# збіги} many {# збігів} other {# збігу}}",
+    "ruleCount": "{count, plural, one {# правило} few {# правила} many {# правил} other {# правила}}",
     "reportTitle": "Хтось порушив правило?",
     "reportNote": "Поскаржтеся на пак, коментар або профіль — виберіть правило, яке порушено, і скарга одразу піде модератору.",
     "wrongRuleTitle": "Вважаєте, що правило неправильне?",
@@ -599,6 +647,7 @@
     "termsTab": "Умови",
     "privacyTab": "Конфіденційність",
     "onThisPage": "На цій сторінці",
+    "sectionCount": "{count, plural, one {# розділ} few {# розділи} many {# розділів} other {# розділу}}",
     "questionsTitle": "Є запитання щодо цього документа?",
     "questionsNote": "Цю скриньку читає одна людина і відповідає протягом 30 днів."
   },
@@ -887,8 +936,11 @@
     "other": "Інше"
   },
   "home": {
-    "title": "Знайди свій пак",
-    "subtitle": "Гортай паки за форматом чи тегом, а потім зіграй і дізнайся, хто виявиться найкращим.",
+    "hero": {
+      "badge": "НОВЕ · РЕЖИМИ",
+      "title": "Тепер кожен пак можна грати з друзями",
+      "subtitle": "Відкрий кімнату для будь-якого паку й обери режим — голосуй за виліт, клейми, зрізай по черзі або грай у «Вгадай, хто» й заробляй очки."
+    },
     "searchPlaceholder": "Пошук паків…",
     "searchLabel": "Пошук паків",
     "filters": "Фільтри",
@@ -920,8 +972,12 @@
     "showingRange": "Показано {first}–{last} з {total, plural, one {# пак} few {# паки} many {# паків} other {# пака}}",
     "card": {
       "hot": "HOT",
+      "playedAt": "Зіграно {when}",
       "roundsPlays": "{rounds, plural, one {# раунд} few {# раунди} many {# раундів} other {# раунда}} · {plays, plural, one {# гра} few {# гри} many {# ігор} other {# гри}}",
-      "play": "Грати"
+      "playsCount": "{plays, plural, one {# гра} few {# гри} many {# ігор} other {# гри}}",
+      "play": "Грати",
+      "friends": "Друзі",
+      "friendsTitle": "Грати з друзями"
     },
     "joinRoom": {
       "title": "Приєднатися до кімнати",
@@ -1079,7 +1135,44 @@
     "submittingPack": "Надсилання…",
     "submitPackError": "Не вдалося надіслати пак. Спробуйте ще раз.",
     "rejectionReasonHeading": "Чому пак відхилено",
-    "randomPoolLabel": "Випадковий пул"
+    "randomPoolLabel": "Випадковий пул",
+    "acrossPlays": "{count, plural, one {# гра} few {# ігри} many {# ігор} other {# гри}} усього",
+    "report": {
+      "title": "Поскаржитися на цей пак",
+      "reasons": {
+        "inappropriate": "Неприйнятний або образливий вміст",
+        "copyright": "Проблема з авторськими правами чи власністю",
+        "spam": "Спам або оманливий вміст",
+        "other": "Щось інше"
+      }
+    },
+    "reportComment": {
+      "scopeNote": "Скарга подається на обліковий запис. Коментар процитовано нижче, щоб модератор його знайшов.",
+      "quote": "Про коментар {id}:\n\n«{body}»"
+    },
+    "changesRequestedHeading": "Запитано правки",
+    "changesRequestedMarks": "{count, plural, one {позначено # елемент} few {позначено # елементи} many {позначено # елементів} other {позначено # елемента}} — прочитайте, що просить модератор.",
+    "changesRequestedNoMarks": "Прочитайте зауваження модератора перед редагуванням.",
+    "changesRequestedCta": "Подивитися, що виправити"
+  },
+  "report": {
+    "button": "Поскаржитись",
+    "buttonReported": "Скаргу надіслано",
+    "reasonLabel": "Причина",
+    "reasonPlaceholder": "Оберіть причину",
+    "commentLabel": "Додаткові деталі (необов'язково)",
+    "commentPlaceholder": "Усе, що допоможе модератору розібратися",
+    "submit": "Надіслати скаргу",
+    "error": "Не вдалося надіслати скаргу. Спробуйте ще раз.",
+    "buttonUser": "Поскаржитися на користувача",
+    "userTitle": "Поскаржитися на @{username}",
+    "userNote": "Скарги розглядає команда модерації. До скарги додається ваше імʼя користувача.",
+    "userReasons": {
+      "harassment": "Цькування або образи",
+      "impersonation": "Видавання себе за іншого",
+      "spam": "Спам або шахрайство",
+      "other": "Щось інше"
+    }
   },
   "share": {
     "trigger": "Поділитися",
@@ -1100,14 +1193,17 @@
     "confirmPendingTitle": "Ще нічого не обрано",
     "confirmNote": "Твій вибір буде записано, коли ти перейдеш до наступного раунду.",
     "picksCountNote": "{done} готово, {toGo} залишилось",
-    "sideSelected": "Обрано",
     "pick": "Обрати {name}",
+    "pickThisOne": "Обрати цей",
+    "yourPick": "Ваш вибір",
     "nextRound": "Наступний раунд",
     "instructionSave": "Обери того, кого врятуєш. Познач нижче й підтверди.",
     "instructionSacrifice": "Обери того, ким пожертвуєш. Познач нижче й підтверди.",
     "instructionNxn": "Обери бік, який врятуєш. Познач нижче й підтверди.",
+    "instruction1v1": "Оберіть один.",
     "savedSoFar": "Уже врятовано",
     "sacrificedSoFar": "Уже пожертвувано",
+    "yourRunSoFar": "Ваш прогрес",
     "finishedTitle": "Усі раунди пройдено",
     "finishedSave": "Ти врятував {count, plural, one {# фаворита} few {# фаворитів} many {# фаворитів} other {# фаворита}} — по одному за раунд.",
     "finishedSacrifice": "Ти пожертвував {count, plural, one {# фаворитом} few {# фаворитами} many {# фаворитами} other {# фаворита}} — по одному за раунд.",
@@ -1117,6 +1213,8 @@
     "rankSlotEmpty": "Поставити на місце {rank}",
     "rankPendingEyebrow": "Постав цей",
     "rankPendingFlavor": "Ти не бачиш, що буде далі — у цьому й гра. Обери місце й підтверди.",
+    "rankPlaceItemPrompt": "Розмістіть {current} з {total}",
+    "rankAllPlacedPrompt": "Усі місця заповнено — це ваш порядок",
     "rankRemainingNote": "{count, plural, one {ще # прихований елемент} few {ще # приховані елементи} many {ще # прихованих елементів} other {ще # прихованого елемента}}",
     "rankDoneFlavor": "Тепер уже нічого не змінити — це і є суть сліпого рейтингування. Переходь до наступного раунду.",
     "rankDoneFooter": "Усі {count} розміщено",
@@ -1127,7 +1225,11 @@
     "loadingResult": "Завантаження результатів…",
     "finishRound": "Переглянути результати",
     "versusSideA": "Сторона A",
-    "versusSideB": "Сторона B"
+    "versusSideB": "Сторона B",
+    "resumeModalTitle": "Продовжити з того місця?",
+    "resumeModalBody": "Продовжте рівно з того місця, де зупинились, або почніть заново з новою роздачею.",
+    "resumeContinue": "Продовжити",
+    "resumeRestart": "Почати заново"
   },
   "result": {
     "label": "Проходження завершено",
@@ -1135,6 +1237,8 @@
     "heroSubtitleFixedShared": "Їхні вибори записано й додано до статистики цього набору.",
     "statRoundsCompact": "Раунди",
     "statPlaysCompact": "Усього ігор",
+    "resultBarMeta": "{count, plural, one {# раунд} few {# раунди} many {# раундів} other {# раунду}} · ваш забіг",
+    "resultBarMetaShared": "{count, plural, one {# раунд} few {# раунди} many {# раундів} other {# раунду}} · спільний забіг",
     "heroTitleSave": "Ось кого ти врятував",
     "heroTitleSaveShared": "Ось кого вони врятували",
     "heroTitleSacrifice": "Ось ким ти пожертвував",
@@ -1195,6 +1299,9 @@
     "topPickedItemColumn": "Елемент",
     "topPickedPickedColumn": "Обрано",
     "topPickedShareColumn": "Частка",
+    "topPickedYours": "Ваш вибір",
+    "boardAcrossPlays": "{count, plural, one {за # гру} few {за # гри} many {за # ігор} other {за # гри}}",
+    "boardShowMore": "Показати ще {count}",
     "pickedOfAppeared": "{picked} з {appeared}",
     "loadMore": "Показати ще",
     "eliminationRoundLabel": "{heading}: обрано {picked}",
@@ -1225,6 +1332,8 @@
     "coverToneSwatch": "Тон обкладинки {tone}",
     "coverImage": "Зображення обкладинки",
     "coverImageHint": "PNG або JPG, до 1 МБ. Показується замість тону.",
+    "coverDragHint": "Перетягніть зображення сюди",
+    "coverDropToUpload": "Відпустіть, щоб завантажити",
     "removeCoverImage": "Видалити зображення обкладинки",
     "tags": "Теги",
     "tagsCount": "{count}/{max} вибрано",
@@ -1241,6 +1350,10 @@
     "random": "Випадково",
     "manual": "Вручну",
     "removeGroup": "Видалити групу {index}",
+    "deletePool": "Видалити пул",
+    "collapsePool": "Згорнути пул {index}",
+    "expandPool": "Розгорнути пул {index}",
+    "clickItemToEdit": "Клацніть елемент, щоб редагувати",
     "remove": "Видалити",
     "itemCount": "{count, plural, one {# елемент} few {# елементи} many {# елементів} other {# елемента}}",
     "text": "Текст",
@@ -1271,6 +1384,8 @@
     "roundModeRandom": "Раунд {index} випадково",
     "roundModeManual": "Раунд {index} вручну",
     "roundCountLabel": "Кількість у раунді {index}",
+    "roundDone": "Готово",
+    "roundDoneAria": "Готово, раунд {index}",
     "roundDraws": "{count, plural, one {Бере # елемент} few {Бере # елементи} many {Бере # елементів} other {Бере # елемента}}",
     "roundUnderfill": "Залишилося лише {count} — цей раунд покаже {count}.",
     "setCountAll": "Задати кількість для всіх раундів",
@@ -1291,6 +1406,9 @@
     "addPlace": "Додати позицію",
     "removePlace": "Прибрати позицію",
     "setCountAllLabel": "Задати розіграш для всіх раундів",
+    "bulkCountHintMatch": "Кожен раунд використовує це число. Відкрийте раунд, щоб задати інше.",
+    "bulkCountHintDrift": "Раунди зараз відрізняються ({list}). Застосувати, щоб скинути їх усі.",
+    "bulkApplied": "Застосовано",
     "image": "Зображення",
     "chooseImage": "Вибрати зображення",
     "uploading": "Завантаження…",
@@ -1324,6 +1442,20 @@
     "editItemAria": "Редагувати {title}",
     "saveItem": "Зберегти",
     "cancelEdit": "Скасувати",
+    "itemTypeLabel": "Тип елемента",
+    "newItemLabel": "Новий елемент",
+    "itemHintText": "Просто назва на картці",
+    "itemHintVideo": "Відтворюється прямо в раунді",
+    "itemHintImage": "Відображається як мініатюра 16:9",
+    "itemNameLabel": "Назва",
+    "itemTextOnCardLabel": "Текст на картці",
+    "youtubeLinkLabel": "Посилання на YouTube",
+    "itemImageLabel": "Зображення",
+    "itemImageDragHint": "Перетягніть або завантажте",
+    "replaceImage": "Замінити",
+    "previewNoteText": "Текстові елементи роблять раунди швидкими для читання.",
+    "previewNoteVideo": "Буде отримано з посилання під час збереження.",
+    "previewNoteImage": "16:9 — усе інше буде обрізано.",
     "randomPoolOption": "Випадковий пул (доступно: {count})",
     "cancel": "Скасувати",
     "groupNamePlaceholder": "Назва групи",
@@ -1339,6 +1471,10 @@
       "saved": "Збережено",
       "draftNoteUnsaved": "Чернетка · незбережені зміни",
       "draftNoteSaved": "Чернетка · щойно збережено"
+    },
+    "feasibility": {
+      "heading": "Режими з друзями розблоковано",
+      "subtitle": "Просто довідково — пак у будь-якому разі збережеться й грається. Це лише те, що зможе запустити кімната."
     },
     "checklist": {
       "eyebrow": "ПЕРЕД ПУБЛІКАЦІЄЮ",
@@ -1361,6 +1497,7 @@
     "editProfile": "Редагувати профіль",
     "backToProfile": "Назад до профілю",
     "usernameChangedPill": "Змінено",
+    "usernameHint": "Після зміни оновляться всі посилання на ваш профіль.",
     "cancel": "Скасувати",
     "editSaved": "Збережено",
     "addBioPrompt": "Додай біо, щоб розповісти людям, про що твої паки.",
@@ -1382,6 +1519,8 @@
     "noPacks": "Паків поки немає.",
     "recentlyPlayed": "Нещодавно зіграні",
     "recentlyPlayedEmpty": "Ви ще не зіграли жодного паку.",
+    "recentlyPlayedEmptyNote": "Тут з'являться пройдені паки та кімнати.",
+    "browsePacks": "До паків",
     "avatarHeading": "Фото профілю",
     "avatarDropLabel": "Перетягни фото сюди або натисни",
     "avatarDropActive": "Відпусти, щоб завантажити",
@@ -1401,7 +1540,9 @@
     "people": "Люди",
     "history": "Історія",
     "noFollowers": "Поки що немає підписників.",
+    "noFollowersNote": "Коли хтось на вас підпишеться, він з'явиться тут.",
     "noFollowing": "Поки що ні на кого не підписаний.",
+    "noFollowingNote": "Підписуйтесь, щоб першими бачити нові паки.",
     "followsLoadMore": "Показати ще",
     "followsError": "Не вдалося завантажити список. Спробуйте ще раз.",
     "followsLoading": "Завантаження…",
@@ -1450,13 +1591,15 @@
     "feedbackDeclined": "Відхилено",
     "reportNew": "Новий",
     "reportReviewing": "Розглядаємо",
-    "reportClosed": "Закрито"
+    "reportClosed": "Закрито",
+    "packChangesRequested": "Запитано правки"
   },
   "feedback": {
-    "pageTitle": "Відгуки та пропозиції",
-    "newPost": "Новий допис",
-    "searchAria": "Пошук відгуків",
-    "searchPlaceholder": "Пошук відгуків…",
+    "pageTitle": "Пропозиції",
+    "pageSubtitle": "Попросіть функцію, повідомте про помилку або виправте переклад. Голосуйте, щоб ми знали, що робити далі.",
+    "newPost": "Нова пропозиція",
+    "searchAria": "Пошук пропозицій",
+    "searchPlaceholder": "Пошук пропозицій…",
     "filterAll": "Усі",
     "topicBug": "Помилка",
     "topicFeature": "Функція",
@@ -1464,26 +1607,40 @@
     "topicOther": "Інше",
     "sortTop": "Популярні",
     "sortNewest": "Найновіші",
-    "loadMoreError": "Не вдалося завантажити більше відгуків. Спробуй ще раз.",
-    "topSidebarHeading": "Популярні відгуки",
-    "noFeedbackYet": "Відгуків поки немає.",
+    "countShowing": "Показано {shown} із {total}",
+    "countNone": "Нічого не знайдено",
+    "clearFilters": "Скинути фільтри",
+    "loadMoreError": "Не вдалося завантажити ще пропозиції. Спробуйте ще раз.",
+    "mostWanted": "Найбажаніше",
+    "noFeedbackYet": "Пропозицій поки немає.",
+    "legendHeading": "Що означають статуси",
+    "legendNew": "Прочитано, але ще не розсортовано.",
+    "legendInProgress": "Просто зараз над цим працюють.",
+    "legendDone": "Випущено — дивіться сторінку оновлень.",
+    "legendDeclined": "Не планується. Причина — у коментарях.",
     "scoreLabel": "бали",
     "by": "від",
     "commentCount": "{count, plural, one {# коментар} few {# коментарі} many {# коментарів} other {# коментаря}}",
-    "loadingList": "Завантаження відгуків…",
-    "listError": "Не вдалося завантажити відгуки. Спробуй ще раз.",
-    "noMatches": "Немає відгуків за цими фільтрами.",
+    "loadingList": "Завантаження пропозицій…",
+    "listError": "Не вдалося завантажити пропозиції. Спробуйте ще раз.",
+    "emptyTitle": "Пропозицій поки немає",
+    "emptyNote": "Станьте першим, хто щось запропонує.",
+    "emptyFilteredTitle": "Ніщо не відповідає цим фільтрам",
+    "emptyFilteredNote": "Спробуйте іншу тему або очистіть пошук.",
+    "postFirst": "Опублікувати першу",
     "loadingMore": "Завантаження…",
     "loadMore": "Завантажити більше",
+    "showMore": "Показати ще {count}",
     "voteError": "Не вдалося зарахувати твій голос. Спробуй ще раз.",
     "like": "Подобається",
     "dislike": "Не подобається",
     "detailNotFound": "Цього допису не існує або він тобі недоступний.",
-    "backToFeedback": "Назад до відгуків",
+    "backToFeedback": "До пропозицій",
+    "detailCrumb": "Пропозиція",
     "detailLoadError": "Не вдалося завантажити цей допис. Спробуй ще раз.",
     "loading": "Завантаження…",
     "statusUpdateError": "Не вдалося оновити статус. Спробуй ще раз.",
-    "deleteConfirm": "Видалити цей допис?",
+    "deleteConfirm": "Видалити цю пропозицію?",
     "deleteError": "Не вдалося видалити цей допис. Спробуй ще раз.",
     "translationHeading": "Переклад",
     "languageValueLabel": "Мова:",
@@ -1494,7 +1651,7 @@
     "delete": "Видалити",
     "edited": "змінено",
     "commentsHeading": "Коментарі · {count}",
-    "commentPlaceholder": "Поділися думками про цей відгук…",
+    "commentPlaceholder": "Поділіться думкою про цю пропозицію…",
     "commentAria": "Коментар",
     "postComment": "Опублікувати",
     "loginToComment": "<link>Увійди</link>, щоб залишити коментар.",
@@ -1503,28 +1660,32 @@
     "commentsLoadError": "Не вдалося завантажити коментарі. Спробуй пізніше.",
     "noComments": "Коментарів поки немає.",
     "loadMoreCommentsError": "Не вдалося завантажити більше коментарів. Спробуй ще раз.",
-    "newFeedbackTitle": "Новий відгук",
+    "newFeedbackTitle": "Нова пропозиція",
     "topicLabel": "Тема",
     "titleLabel": "Заголовок",
-    "titlePlaceholder": "Короткий підсумок",
+    "titlePlaceholder": "Один рядок — що треба змінити?",
     "detailsLabel": "Деталі",
-    "detailsPlaceholder": "Опиши свою помилку, ідею чи пропозицію",
+    "detailsPlaceholder": "Яку вашу проблему це вирішує?",
+    "detailsPlaceholderBug": "Що ви зробили, що сталося і чого ви очікували?",
+    "detailsPlaceholderTranslation": "Яка мова, який екран і як має бути написано.",
     "visibilityLabel": "Видимість",
     "visibilityEveryone": "Усі",
     "visibilityStaffOnly": "Лише команда",
-    "staffOnlyHint": "Дописи «лише команда» бачиш тільки ти та команда.",
+    "visibilityHintEveryone": "Публічно — будь-хто може прочитати й проголосувати.",
+    "visibilityHintStaffOnly": "Це бачить лише команда Velanto. Голосувати не можна.",
     "translationSuggestionHeading": "Пропозиція перекладу",
     "languageFieldLabel": "Мова",
     "chooseLanguage": "Обери мову…",
-    "contextFieldLabel": "Який текст / де ти його побачив (необов’язково)",
-    "contextPlaceholder": "напр. кнопка «Грати» на головному екрані",
+    "contextFieldLabel": "Де це трапляється · необовʼязково",
+    "contextPlaceholder": "наприклад, заголовок раунду в sacrifice_one",
     "suggestionFieldLabel": "Твій варіант формулювання",
     "suggestionPlaceholder": "Як має бути натомість",
     "posting": "Публікація…",
-    "postFeedback": "Опублікувати відгук",
-    "metaListTitle": "Відгуки та пропозиції — Velanto",
+    "postFeedback": "Опублікувати",
+    "duplicateHint": "Спочатку пошукайте — голос за наявний допис корисніший, ніж дублікат.",
+    "metaListTitle": "Пропозиції — Velanto",
     "metaListDescription": "Повідомляй про помилки, пропонуй функції та покращення перекладу.",
-    "metaNewTitle": "Новий відгук — Velanto"
+    "metaNewTitle": "Нова пропозиція — Velanto"
   },
   "docs": {
     "metaTitle": "Документація — Velanto",
@@ -1560,6 +1721,8 @@
     "statsTitle": "Статистика та порівняння",
     "statsBody": "Поки ви граєте, ніщо не підказує, як обирали інші, тож ваш вибір лишається вашим. Щойно ви завершите, кожен раунд розкриється: елементи, які гравці обирали найчастіше, і відсоток тих, хто збігся з вашим вибором. Загальний показник збігів пака також видно на його картці та сторінці ще до гри.",
     "jumpTo": "Перейти до теми",
+    "nextTopic": "Далі",
+    "previousTopic": "Назад",
     "tokenNameLabel": "Назва",
     "tokenNamePlaceholder": "наприклад, Claude Desktop",
     "tokenScopesLabel": "Дозволи",
@@ -1655,6 +1818,24 @@
     "emptyFiltered": "Немає паків за цим фільтром.",
     "all": "Усі"
   },
+  "history": {
+    "title": "Історія",
+    "subtitle": "Паки, у які ви грали, — спочатку останні.",
+    "loading": "Завантаження вашої історії…",
+    "emptyFiltered": "Ви ще не грали в паки цього формату.",
+    "progress": "Раунд {current} з {total}",
+    "continue": "Продовжити",
+    "inProgressBadge": "У процесі",
+    "inProgressTitle": "Ще граєте",
+    "playedTitle": "Зіграно",
+    "sortOldest": "Давно зіграно",
+    "sortRecent": "Нещодавно зіграно",
+    "metaTitle": "Історія — Velanto",
+    "metaDescription": "Паки, у які ви грали, у порядку останньої гри.",
+    "empty": "Ви ще ні в що не грали. Зіграйте в пак, і він з'явиться тут.",
+    "error": "Не вдалося завантажити історію. Спробуйте ще раз.",
+    "loginRequired": "Увійдіть, щоб побачити історію ігор."
+  },
   "people": {
     "title": "Люди",
     "subtitle": "Шукайте авторів і гравців та стежте за тими, хто вам подобається.",
@@ -1662,7 +1843,6 @@
     "metaDescription": "Шукайте у Velanto авторів паків і гравців, за якими можна стежити.",
     "searchLabel": "Пошук людей",
     "searchPlaceholder": "Пошук за іменем користувача",
-    "hint": "Введіть щонайменше 2 символи для пошуку.",
     "loading": "Пошук…",
     "error": "Не вдалося виконати пошук. Спробуйте ще раз.",
     "empty": "Нікого не знайдено."
@@ -1675,38 +1855,126 @@
       "hostIsChoosing": "Ведучий обирає режим гри…",
       "playerRange": "{min}–{max} гравців"
     },
+    "packModes": {
+      "heading": "Режими, які підтримує цей пак",
+      "caption": "Хост обирає режим у лобі. Затемнені режими потребують іншого розміру кімнати."
+    },
     "modes": {
       "claim": {
         "name": "Захоплення",
-        "blurb": "Встигніть забрати елемент швидше за інших."
+        "blurb": "Встигніть забрати елемент швидше за інших.",
+        "steps": {
+          "1": {
+            "title": "Хапайте швидко",
+            "body": "У кожному раунді випадає на один варіант більше, ніж гравців."
+          },
+          "2": {
+            "title": "Ділити не можна",
+            "body": "Зайнятий варіант уже не віддадуть — ви змагаєтесь за той, який хочете прибрати."
+          },
+          "3": {
+            "title": "Один лишається",
+            "body": "Єдиний незайнятий варіант і є врятованим."
+          }
+        }
       },
       "guess_who": {
         "name": "Вгадай хто",
-        "blurb": "Обирайте наосліп, а потім вгадуйте, хто що обрав."
+        "blurb": "Обирайте наосліп, а потім вгадуйте, хто що обрав.",
+        "steps": {
+          "1": {
+            "title": "Вибір наосліп",
+            "body": "Визначтесь із власною відповіддю, доки чужі ще не розкрито."
+          },
+          "2": {
+            "title": "Читайте почерк",
+            "body": "Гравці X, Y, Z за гру набирають кожен свій стовпчик виборів."
+          },
+          "3": {
+            "title": "Здогад і бали",
+            "body": "Зіставте кожну мітку з живою людиною. Перемагає найточніший."
+          }
+        }
       },
       "turn_based_cut": {
         "name": "Почергове вирізання",
-        "blurb": "По черзі прибирайте по одному елементу, поки не залишиться один."
+        "blurb": "По черзі прибирайте по одному елементу, поки не залишиться один.",
+        "steps": {
+          "1": {
+            "title": "Ваш хід",
+            "body": "У свій хід ви прибираєте з дошки рівно один варіант."
+          },
+          "2": {
+            "title": "Дошка рідшає",
+            "body": "Усі бачать, як варіанти зникають один за одним."
+          },
+          "3": {
+            "title": "Останній, хто лишився",
+            "body": "Ні голосів, ні нічиїх — підсумок вирішує останній варіант."
+          }
+        }
       },
       "voting": {
         "name": "Голосування",
-        "blurb": "Голосуйте наживо — усі бачать підрахунок одразу."
+        "blurb": "Голосуйте наживо — усі бачать підрахунок одразу.",
+        "steps": {
+          "1": {
+            "title": "Голосуйте",
+            "body": "Натисніть свій варіант. Доки інші думають, його можна змінити."
+          },
+          "2": {
+            "title": "Стежте за лічбою",
+            "body": "Голоси видно одразу, тож можна посперечатись і переконати кімнату."
+          },
+          "3": {
+            "title": "Вирішує більшість",
+            "body": "За нічиєї вирішує власник пріоритету — жодних монеток."
+          }
+        }
       },
       "shared_grid": {
         "name": "Спільна сітка",
-        "blurb": "Ранжуйте наосліп, потім перегляньте спільний зведений рейтинг."
+        "blurb": "Ранжуйте наосліп, потім перегляньте спільний зведений рейтинг.",
+        "steps": {
+          "1": {
+            "title": "Ранжуйте наосліп",
+            "body": "Розставте всю дошку самі, не бачачи чужих рейтингів."
+          },
+          "2": {
+            "title": "Здають усі",
+            "body": "Раунд чекає, доки кожен за столом не закріпить свій порядок."
+          },
+          "3": {
+            "title": "Один спільний порядок",
+            "body": "Усі бюлетені рахуються разом і дають рейтинг кімнати."
+          }
+        }
       },
       "relay": {
         "name": "Естафета",
-        "blurb": "Будуйте один спільний рейтинг разом, по черзі розставляючи елементи."
+        "blurb": "Будуйте один спільний рейтинг разом, по черзі розставляючи елементи.",
+        "steps": {
+          "1": {
+            "title": "По одному",
+            "body": "Раунд відкриває варіанти в заданому порядку, по одному за хід."
+          },
+          "2": {
+            "title": "Вставте на місце",
+            "body": "У свій хід поставте його в будь-яке місце вже зібраного списку."
+          },
+          "3": {
+            "title": "Зібрано разом",
+            "body": "Підсумок не належить нікому — кімната збирає один спільний порядок."
+          }
+        }
       }
     },
     "entry": {
       "createRoom": "Створити кімнату",
       "joinByCode": "Приєднатися за кодом",
+      "orWithFriends": "Або з друзями",
       "signInToPlay": "Увійдіть, щоб грати з друзями",
       "createError": "Не вдалося створити кімнату. Спробуйте ще раз.",
-      "joinTitle": "Приєднатися до кімнати",
       "codeLabel": "Код кімнати",
       "codePlaceholder": "Введіть код",
       "join": "Приєднатися",
@@ -1740,7 +2008,41 @@
       "lock": "Закрити кімнату",
       "unlock": "Відкрити кімнату",
       "lockedNote": "Закрито — нові гравці не можуть приєднатися.",
-      "unlockedNote": "Відкрито — друзі з кодом можуть приєднатися."
+      "unlockedNote": "Відкрито — друзі з кодом можуть приєднатися.",
+      "open": "Лобі відкрите",
+      "chooseHeading": "Оберіть, як гратимете",
+      "hostHint": "Оберіть режим — від нього залежать механіка раунду й розмір кімнати.",
+      "guestHint": "Господар обирає режим. Щойно обере, він з’явиться тут.",
+      "roleHost": "ВИ ГОСПОДАР",
+      "roleGuest": "ВИРІШУЄ ГОСПОДАР",
+      "howARoundGoes": "як минає раунд",
+      "resultShared": "Спільний вердикт",
+      "resultScored": "З рахунком · переможець",
+      "priorityTitle": "Нічию вирішує пріоритет",
+      "priorityBody": "За рівності голосів вирішує вибір одного гравця. Щораунду пріоритет переходить до наступного.",
+      "capacityRoomFor": "Є місце ще для {count}",
+      "capacityFull": "Кімната заповнена",
+      "capacityNeeds": "Потрібно щонайменше {min}",
+      "stillDeciding": "Ще вирішує",
+      "tapReadyWhenYouAre": "Натисніть, коли будете готові",
+      "inviteSomeone": "Покликати друга",
+      "inviteCode": "Код запрошення",
+      "codeHidden": "приховано на екрані",
+      "codeVisible": "видно",
+      "everyoneReady": "Усі готові",
+      "waitingOn": "Чекаємо ще на {count}",
+      "start": "Почати: {mode}",
+      "startGeneric": "Почати гру",
+      "waitingForHost": "Чекаємо на господаря",
+      "imReady": "Я готовий",
+      "unready": "Не готовий",
+      "startNoteGuest": "Почати може лише господар. Позначтесь готовим, щоб він міг.",
+      "startNoteAllReady": "Усі готові — після старту режим закріпиться на всю гру.",
+      "startNoteWaiting": "Старт відкриється, коли всі в кімнаті будуть готові.",
+      "startNoteNeedsMore": "Старт відкриється за {min} гравців.",
+      "startNoteNoMode": "Спершу оберіть режим вище.",
+      "seatCount": "{count}/{max}",
+      "readyCount": "{ready}/{total}"
     },
     "round": {
       "heading": "Раунд {index} із {total}",
@@ -1748,9 +2050,7 @@
       "chosen": "{count, plural, one {Обрав} other {Обрали}} {count} з {total}",
       "instructionSave": "Оберіть один елемент, щоб врятувати його. Усі інші вибувають.",
       "instructionSacrifice": "Оберіть один елемент, щоб пожертвувати ним. Елемент, який ніхто не обрав, виживає.",
-      "claimSave": "Врятувати {name}",
       "claimSacrifice": "Пожертвувати {name}",
-      "claimedBySave": "Залишив(ла) {name}",
       "claimedBySacrifice": "Пожертвував {name}",
       "survivorSave": "Врятовано",
       "survivorSacrifice": "Той, що вцілів",
@@ -1777,11 +2077,13 @@
     "results": {
       "heading": "Результати",
       "roundLabel": "Раунд {index}",
-      "backToPack": "Назад до паку"
+      "backToPack": "Назад до паку",
+      "playAgain": "Зіграти ще"
     },
     "ended": {
       "heading": "Ця кімната завершена",
-      "description": "Ця кімната більше недоступна. Створіть нову зі сторінки паку."
+      "description": "Ця кімната більше недоступна. Створіть нову зі сторінки паку.",
+      "leave": "Назад до паку"
     },
     "joinLink": {
       "joining": "Приєднання до кімнати…",
@@ -1818,25 +2120,42 @@
     },
     "guessWho": {
       "roundInstruction": "Зробіть вибір",
-      "pickInstruction": "Обирайте наосліп — ніхто не побачить ваш вибір, поки всі не підтвердять свої.",
+      "pickInstruction": "Оберіть один — усі бачать літеру, яка його обрала, але не бачать, чия вона.",
+      "pickHint": "Літери з’являються одразу",
+      "pickLabel": "Обрати {name}",
+      "pickedByLabels": "Обрали: {labels}",
+      "maskedRosterNote": "До розкриття всі грають під літерою.",
       "rankInstruction": "Розставте всі елементи за порядком, найкращий — першим — ніхто не побачить ваш рейтинг, поки всі не підтвердять свої.",
       "revealHeading": "Розкриття",
       "trajectoryHeading": "Хто що відповідав досі",
-      "roundColumn": "Раунд"
+      "roundColumn": "Раунд",
+      "trajectoryHint": "вибори за {count, plural, one {# раунд} few {# раунди} many {# раундів} other {# раунду}}",
+      "stillAnonymous": "?",
+      "columnHint": "За одним раундом нікого не вирахувати — двоє часто обирають те саме. Унікальний саме весь стовпчик."
     },
     "guessing": {
       "heading": "Фінальний раунд",
       "title": "Хто є хто?",
       "instruction": "Зіставте кожного гравця з міткою, під якою, на вашу думку, він грав.",
-      "chooseSomeone": "Оберіть гравця…",
       "submit": "Надіслати здогадки",
-      "waitingForOthers": "Надіслали {count} / {total}"
+      "waitingForOthers": "Надіслали {count} / {total}",
+      "assignedCount": "Призначено {count} із {total}",
+      "whoIs": "Хто такий {label}?",
+      "revealsAtOnce": "Усе розкривається одразу, щоб ніхто не підглянув.",
+      "deadline": "Розкриття через"
     },
     "identityReveal": {
       "heading": "Розкриття",
       "correct": "Вгадано правильно",
       "incorrect": "Вгадано неправильно",
-      "scoresPending": "Повний підрахунок очок стане доступним, коли підсумковий рахунок кожного гравця з'явиться на сервері."
+      "winner": "Переможець",
+      "winnerNote": "Найкраще прочитав кімнату — вгадано {count} із {total}",
+      "points": "балів",
+      "sharedWin": "Спільна перемога — {names} вгадали по {count}",
+      "yourGuess": "Ваш здогад",
+      "youSaid": "Ви назвали: {name}",
+      "nobody": "нікого",
+      "pointPerMatch": "1 бал за кожен збіг"
     },
     "turnBasedCut": {
       "instruction": "У свій хід виріжте один елемент. Перемагає той, що залишився останнім.",
@@ -1854,7 +2173,11 @@
       "aggregateHeading": "Підсумок",
       "groupRanking": "Спільний рейтинг групи",
       "pointsLabel": "{count} {count, plural, one {очко} few {очки} many {очок} other {очка}}",
-      "tiedNote": "Нічия — {count} {count, plural, one {позиція ділить} few {позиції ділять} many {позицій ділять} other {позиції ділять}} це місце"
+      "tiedNote": "Нічия — {count} {count, plural, one {позиція ділить} few {позиції ділять} many {позицій ділять} other {позиції ділять}} це місце",
+      "aggregateHint": "усі бюлетені, пораховані разом",
+      "alignment": "Збіг",
+      "alignmentHint": "наскільки близько до кімнати",
+      "alignmentNote": "Ніхто не виграє — збіг просто показує, чий смак збігся з кімнатою."
     },
     "relay": {
       "instruction": "Вставте поточний елемент у спільний рейтинг.",
@@ -1864,7 +2187,17 @@
       "currentItem": "Зараз розміщується",
       "finalOrderHeading": "Підсумковий порядок",
       "placementHistoryHeading": "Історія розміщень",
-      "placedVerb": "розмістив(ла)"
+      "placedVerb": "розмістив(ла)",
+      "nobodyKnowsNext": "Ніхто не знає, що буде наступним.",
+      "stillHidden": "Ще {count} приховано",
+      "sharedRanking": "Спільний список",
+      "sharedRankingHint": "збираємо разом, по одному",
+      "placedBy": "поставив",
+      "nothingPlacedYet": "Поки нічого не поставлено.",
+      "turnOrder": "Порядок ходів",
+      "placingBadge": "СТАВИТЬ",
+      "placeItemHere": "Поставити «{name}» сюди",
+      "placeAtRank": "Поставити на місце {rank}"
     },
     "lockedIn": {
       "playerLocked": "{name} — підтвердив(ла) вибір",
@@ -1881,7 +2214,84 @@
     },
     "leaderboard": {
       "winner": "Переможець",
-      "points": "{count, plural, one {# очко} few {# очки} many {# очок} other {# очка}}"
+      "points": "{count, plural, one {# очко} few {# очки} many {# очок} other {# очка}}",
+      "heading": "Таблиця результатів"
+    },
+    "header": {
+      "rounds": "{count, plural, one {# раунд} few {# раунди} many {# раундів} other {# раунду}}",
+      "inRound": "Триває раунд",
+      "between": "Раунд зіграно",
+      "guessing": "Вгадуємо"
+    },
+    "board": {
+      "room": "Кімната",
+      "here": "{count} на зв’язку",
+      "outOfPlay": "Вибув",
+      "voted": "Проголосував",
+      "deciding": "Вирішує…",
+      "waiting": "Чекає",
+      "cut": "Прибрав",
+      "cuttingNow": "Зараз прибирає",
+      "progressVotes": "Голосів: {count} із {total}",
+      "progressLeft": "На дошці лишилося {count}",
+      "tapToVote": "Натисніть свій варіант",
+      "voteLocked": "Голос зараховано — його ще можна змінити",
+      "resolvesWhenAllVote": "Підсумок, коли проголосують усі",
+      "noTakebacks": "Прибрали — назад не повернути",
+      "voteFor": "Голос за {name}",
+      "cutItem": "Прибрати {name}",
+      "yourVote": "ВАШ ГОЛОС",
+      "cutBadge": "ПРИБРАНО",
+      "liveTally": "Лічба наживо",
+      "tallyHint": "можна змінювати до закриття",
+      "tieTitle": "Нічия — вирішує пріоритет: {name}",
+      "tieBody": "Переконайте їх, доки не ліг останній голос.",
+      "cutSoFar": "Уже прибрано",
+      "cutEmpty": "Поки нічого не прибрано — першим ходить {name}.",
+      "claimed": "Зайняв",
+      "claimPrompt": "Займіть той, який хочете прибрати",
+      "claimHint": "Хто встиг, той і зайняв",
+      "sideItemCount": "{count} у грі",
+      "lockedIn": "Готово",
+      "lockInPrompt": "Зафіксуйте свою відповідь",
+      "lockedWaiting": "Зафіксовано — чекаємо на кімнату",
+      "blindHint": "Ніхто не побачить, доки не здадуть усі",
+      "placed": "Поставив",
+      "placingNow": "Зараз ставить",
+      "progressPlaced": "Поставлено {count} із {total}",
+      "rankNowPlacing": "Розмісти цей",
+      "rankSlotEmpty": "Поставити на місце {rank}",
+      "rankSlotFilled": "Місце {rank}: {title}",
+      "rankPlaceHere": "Поставити «{name}» сюди",
+      "rankHiddenAfter": "Ще приховано: {count}"
     }
+  },
+  "reviewOutcome": {
+    "crumb": "Результат перевірки",
+    "loading": "Завантаження результату перевірки…",
+    "notFound": "Такого пака немає, або він не ваш.",
+    "loginRequired": "Увійдіть, щоб побачити результат перевірки.",
+    "heroTitle": "Майже готово — залишилося кілька правок",
+    "heroWhen": "Перевірено {date}",
+    "heroBody": "Ваш пак ще не опубліковано. Модератор переглянув його й запитав правки нижче. Нічого не видалено — внесіть зміни й подайте знову, і він повернеться в чергу.",
+    "openEditor": "Відкрити редактор",
+    "viewPack": "Переглянути пак",
+    "moderatorSaid": "Що сказав модератор",
+    "marksHeading": "Що виправити",
+    "marksCount": "{count, plural, one {позначено # елемент} few {позначено # елементи} many {позначено # елементів} other {позначено # елемента}}",
+    "needsEdit": "ПОТРЕБУЄ ПРАВКИ",
+    "doThis": "Зробіть так",
+    "inPool": "Пул: {pool}",
+    "nextHeading": "Що далі",
+    "step1": "Відкрийте редактор і внесіть зміни вище.",
+    "step2": "Збережіть. Пак одразу повернеться в чергу модерації.",
+    "step3": "Коли модератор знову його перегляне, ви отримаєте сповіщення.",
+    "thePack": "Пак",
+    "metaPools": "Пули",
+    "metaRounds": "Раунди",
+    "metaSubmitted": "Подано",
+    "mistakeTitle": "Вважаєте, це помилка?",
+    "mistakeBody": "Надішліть пропозицію — команда перегляне ще раз. Зазначте назву пака.",
+    "mistakeLink": "Зв'язатися з модерацією →"
   }
 }

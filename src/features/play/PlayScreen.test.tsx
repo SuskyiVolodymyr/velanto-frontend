@@ -7,6 +7,8 @@ import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { playsClient } from "@/src/shared/lib/plays-client";
 import { ApiError } from "@/src/shared/lib/api-client";
+import { packStructureHash } from "@/src/features/play/pack-structure-hash";
+import { readPlayResume } from "@/src/features/play/play-resume-storage";
 import type { Pack } from "@/src/shared/types/pack";
 
 const push = vi.fn();
@@ -261,9 +263,10 @@ describe("PlayScreen", () => {
     await user.click(screen.getByRole("button", { name: "Pick Boys" }));
     await user.click(screen.getByRole("button", { name: "Next round" }));
 
-    // Appears twice now: PlayChrome's round counter AND PlayRoundHeader's
-    // round-position eyebrow (T2).
-    expect(await screen.findAllByText("Round 2 of 2")).toHaveLength(2);
+    // Exactly once: the round-position eyebrow on PlayRoundHeader. PlayChrome's
+    // bar opts out of the counter (showRoundCounter={false}) — the mock only
+    // ever draws it in the round header.
+    expect(await screen.findAllByText("Round 2 of 2")).toHaveLength(1);
     await user.click(screen.getByRole("button", { name: "Pick Girls" }));
     await user.click(screen.getByRole("button", { name: "See results" }));
 
@@ -316,9 +319,9 @@ describe("PlayScreen", () => {
   // The count→columns mapping is real layout logic: ≤4 in one row, 6 as two
   // rows of three, 8 as two rows of four.
   it.each([
-    [4, "lg:grid-cols-4"],
-    [6, "lg:grid-cols-3"],
-    [8, "lg:grid-cols-4"],
+    [4, "min-[1000px]:grid-cols-4"],
+    [6, "min-[1000px]:grid-cols-3"],
+    [8, "min-[1000px]:grid-cols-4"],
   ])(
     "lays %i candidates out with the %s grid on wide screens",
     async (count, gridClass) => {
@@ -338,9 +341,8 @@ describe("PlayScreen", () => {
     await user.click(screen.getByRole("button", { name: "Next round" }));
 
     expect(await screen.findByText("Silhouette")).toBeInTheDocument();
-    // Appears twice now: PlayChrome's round counter AND PlayRoundHeader's
-    // round-position eyebrow (T2).
-    expect(screen.getAllByText("Round 2 of 2")).toHaveLength(2);
+    // Exactly once — see the note above.
+    expect(screen.getAllByText("Round 2 of 2")).toHaveLength(1);
     await user.click(screen.getByText("Silhouette"));
     await user.click(screen.getByRole("button", { name: "See results" }));
 
@@ -531,5 +533,61 @@ describe("PlayScreen", () => {
       { roundIndex: 0, groupId: "g1", itemId: "2", chosen: true },
       { roundIndex: 1, groupId: "g2", itemId: "3", chosen: true },
     ]);
+  });
+
+  describe("resume choice", () => {
+    // Advances round 0 (choosing "Redo") to create a real saved record, then
+    // unmounts — a fresh mount of the same pack is what a page refresh or a
+    // "Continue playing" navigation both produce.
+    async function playRoundOneAndUnmount() {
+      const user = userEvent.setup();
+      const first = renderScreen(SAVE_ONE_PACK);
+      await screen.findByText("Guren no Yumiya");
+      await user.click(screen.getByText("Redo"));
+      await user.click(screen.getByRole("button", { name: "Next round" }));
+      await screen.findByText("Silhouette");
+      first.unmount();
+      return user;
+    }
+
+    it("shows the resume-choice modal instead of any round content on a fresh mount", async () => {
+      await playRoundOneAndUnmount();
+
+      renderScreen(SAVE_ONE_PACK);
+
+      expect(await screen.findByRole("alertdialog")).toBeInTheDocument();
+      expect(screen.getByText("1 round done")).toBeInTheDocument();
+      expect(screen.queryByTestId("candidate-grid")).not.toBeInTheDocument();
+    });
+
+    it("Continue resumes on the saved round without replaying the first", async () => {
+      await playRoundOneAndUnmount();
+
+      const user = userEvent.setup();
+      renderScreen(SAVE_ONE_PACK);
+      await user.click(
+        await screen.findByRole("button", { name: "Continue" }),
+      );
+
+      await screen.findByText("Silhouette");
+      expect(screen.queryByText("Guren no Yumiya")).toBeNull();
+    });
+
+    it("Start over discards the saved play and re-draws from round 1", async () => {
+      await playRoundOneAndUnmount();
+      const version = packStructureHash(SAVE_ONE_PACK);
+
+      const user = userEvent.setup();
+      renderScreen(SAVE_ONE_PACK);
+      await user.click(
+        await screen.findByRole("button", { name: "Start over" }),
+      );
+
+      // Back on round 1's pool, not round 2's.
+      await screen.findByText("Guren no Yumiya");
+      // Discarded outright, not just superseded in memory — a reload right
+      // after must not re-offer the discarded play.
+      expect(readPlayResume("pack-a", version)).toBeNull();
+    });
   });
 });

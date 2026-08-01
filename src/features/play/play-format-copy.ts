@@ -1,9 +1,11 @@
 import type { Pack } from "@/src/shared/types/pack";
 
 /**
- * Maps each format to its key in the `play` message namespace. Only
- * save_one/sacrifice_one/nxn actually reach PlayScreen; rank_blind and 1v1 are
- * routed to sibling screens (see PlayRouter) and map to "" purely to satisfy
+ * Maps each format to its key in the `play` message namespace.
+ * save_one/sacrifice_one/nxn reach PlayScreen; 1v1 is routed to
+ * HeadToHeadPlayScreen (see PlayRouter) but reads the same two lookups, so its
+ * copy stays beside its siblings' rather than inline in that screen. rank_blind
+ * builds its own copy from the pool name and maps to "" purely to satisfy
  * Record<PackFormat, ...>'s exhaustiveness.
  */
 export const INSTRUCTION_KEY: Record<Pack["format"], string> = {
@@ -11,7 +13,7 @@ export const INSTRUCTION_KEY: Record<Pack["format"], string> = {
   sacrifice_one: "instructionSacrifice",
   nxn: "instructionNxn",
   rank_blind: "",
-  "1v1": "",
+  "1v1": "instruction1v1",
 };
 
 export const PICKED_LABEL_KEY: Record<Pack["format"], string> = {
@@ -19,7 +21,9 @@ export const PICKED_LABEL_KEY: Record<Pack["format"], string> = {
   sacrifice_one: "sacrificedSoFar",
   nxn: "savedSoFar",
   rank_blind: "",
-  "1v1": "",
+  // 1v1 keeps every round's winner, so the mock heads this row "Your run so
+  // far" rather than the elimination formats' "Saved so far".
+  "1v1": "yourRunSoFar",
 };
 
 /**

@@ -218,14 +218,23 @@ describe("ProfileEditForm", () => {
     const usernameInput = await screen.findByRole("textbox", {
       name: "Username",
     });
-    expect(screen.queryByText(/2-16 characters/i)).not.toBeInTheDocument();
+    // The rule is now visible at rest as a hint, alongside the consequence of
+    // changing your handle — so "is the rule on screen?" no longer separates
+    // the two states. The consequence sentence does: it belongs to the hint
+    // only, and the error replaces the whole line.
+    expect(
+      screen.getByText(/Changing it updates every link/i),
+    ).toBeInTheDocument();
 
     await user.clear(usernameInput);
     await user.type(usernameInput, "a");
 
     await waitFor(() =>
-      expect(screen.getByText(/2-16 characters/i)).toBeInTheDocument(),
+      expect(
+        screen.queryByText(/Changing it updates every link/i),
+      ).not.toBeInTheDocument(),
     );
+    expect(screen.getByText(/2-16 characters/i)).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /save/i })).toBeDisabled();
     expect(usersClient.changeUsername).not.toHaveBeenCalled();
     expect(push).not.toHaveBeenCalled();
@@ -318,9 +327,12 @@ describe("ProfileEditForm", () => {
     expect(
       screen.getByRole("link", { name: "Back to profile" }),
     ).toHaveAttribute("href", "/users/u1");
+    // Exactly one heading named "Edit profile": the page's own <h1>. The bar's
+    // crumb repeats the words but is a breadcrumb, not a second heading.
     expect(
       screen.getByRole("heading", { name: "Edit profile" }),
     ).toBeInTheDocument();
+    expect(screen.getAllByText("Edit profile")).toHaveLength(2);
   });
 
   it("shows a fixed @ prefix beside the username input without it being part of the value", async () => {
@@ -346,7 +358,9 @@ describe("ProfileEditForm", () => {
     await user.clear(usernameInput);
     await user.type(usernameInput, "alice2");
     expect(await screen.findByText("alice2")).toBeInTheDocument();
-    expect(screen.queryByText("alice", { exact: true })).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("alice", { exact: true }),
+    ).not.toBeInTheDocument();
 
     const textarea = screen.getByDisplayValue("Old bio");
     await user.clear(textarea);

@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { SlidersHorizontal, ChevronDown } from "lucide-react";
+import { SlidersIcon, ChevronDownIcon } from "@/src/shared/components/icons";
 import { Text } from "@/src/shared/components/Text";
 import { Popover } from "@/src/shared/components/Popover";
 import type { PackTag } from "@/src/shared/types/pack";
@@ -91,11 +91,16 @@ export function BrowseFilterBar({
     <div className="flex flex-wrap items-center gap-2">
       <FormatFilter value={format} onSelect={onFormatChange} />
 
-      <div className="ms-auto flex items-center gap-2">
+      {/* ms-auto right-aligns this pair against the format chips on one row —
+          but once it wraps to its own row on a narrow phone, the auto margin
+          still pushes it to the right, stranding it behind a dead gap instead
+          of sitting with the chips it wrapped away from. Drop it below the
+          chip-row's own wrap point so both groups flow left-aligned there. */}
+      <div className="ms-auto flex items-center gap-2 max-[480px]:ms-0">
         <Popover
           label={
             <>
-              <SlidersHorizontal size={15} strokeWidth={2} aria-hidden />
+              <SlidersIcon size={15} strokeWidth={2} />
               {t("filters")}
             </>
           }
@@ -119,7 +124,7 @@ export function BrowseFilterBar({
           label={
             <>
               {t(SORT_LABEL_KEYS[sort])}
-              <ChevronDown size={15} strokeWidth={2} aria-hidden />
+              <ChevronDownIcon size={15} strokeWidth={2} />
             </>
           }
           triggerAriaLabel={t("groupSort")}

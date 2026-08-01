@@ -45,7 +45,7 @@ describe("VersusRound", () => {
     expect(screen.getByText("Sasuke")).toBeInTheDocument();
   });
 
-  it("labels the side badges A / B by slot index, not by pool name", () => {
+  it("stacks the two sides in one column, VS between them — the mock has no side-by-side nxn layout", () => {
     render(
       <VersusRound
         sideA={SIDE_A}
@@ -56,10 +56,24 @@ describe("VersusRound", () => {
       />,
     );
 
-    // The letter badges sit beside each side's name; both letters are on
-    // screen exactly once each, independent of what the pools are named.
-    expect(screen.getByText("A")).toBeInTheDocument();
-    expect(screen.getByText("B")).toBeInTheDocument();
+    const grid = screen.getByText("VS").parentElement;
+    expect(grid).toHaveClass("grid-cols-1");
+    expect(grid?.className).not.toMatch(/grid-cols-\[1fr_auto_1fr\]/);
+  });
+
+  it("shows no A/B letter badge — the two sides are already disambiguated by name upstream", () => {
+    render(
+      <VersusRound
+        sideA={SIDE_A}
+        sideB={SIDE_B}
+        selectedSide={null}
+        onSelect={vi.fn()}
+        packCoverTone={PACK_COVER_TONE}
+      />,
+    );
+
+    expect(screen.queryByText("A")).not.toBeInTheDocument();
+    expect(screen.queryByText("B")).not.toBeInTheDocument();
   });
 
   it("reflects the selected side via aria-pressed", async () => {
@@ -160,6 +174,28 @@ describe("VersusRound", () => {
     ).toBeInTheDocument();
   });
 
+  it("sizes a video item's media to 16:9 rather than a fixed pixel height", () => {
+    // Regression guard, same trap as HeadToHeadRound: an h-[Npx] alongside
+    // YouTubeCard's own aspect-video would beat aspect-ratio and letterbox it.
+    const sideWithVideo = {
+      name: "Boys",
+      items: [youtubeItem("v1", "Opening", "https://youtu.be/KsF_hdjWJjo")],
+    };
+    render(
+      <VersusRound
+        sideA={sideWithVideo}
+        sideB={SIDE_B}
+        selectedSide={null}
+        onSelect={vi.fn()}
+        packCoverTone={PACK_COVER_TONE}
+      />,
+    );
+
+    const media = screen.getByTestId("youtube-card");
+    expect(media.className).toContain("aspect-video");
+    expect(media.className).not.toMatch(/\bh-\[/);
+  });
+
   it("renders an image item within a side and still selects the side on click", async () => {
     vi.stubEnv("NEXT_PUBLIC_MEDIA_BASE_URL", "https://cdn.example.com");
     const user = userEvent.setup();
@@ -250,10 +286,12 @@ describe("VersusRound", () => {
     expect(onSelect).toHaveBeenCalledWith(0);
   });
 
-  // Code review fix: a fixed column count equal to the item count squeezed
-  // every tile down to a sliver for an 8-item nxn side (create-pack allows up
-  // to 8 per side). auto-fit wraps onto more rows instead, keeping tiles at
-  // a legible minimum width regardless of how many items a side has.
+  // Deliberate deviation from the mock's literal `repeat(count, 1fr)`: the
+  // mock's own demo never shows more than 2 items a side, but create-pack
+  // allows up to 8. A fixed column count equal to the item count squeezes
+  // every tile down to a sliver at 8 (the page column's own width divided 8
+  // ways falls under the auto-fit floor below) — auto-fit instead wraps onto
+  // more rows, keeping tiles at a legible minimum width regardless of N.
   it("lays a side's items out in an auto-fit grid, not one column per item", () => {
     render(
       <VersusRound
@@ -272,21 +310,23 @@ describe("VersusRound", () => {
     });
   });
 
-  it("shows a footer 'Selected' row under a side's items once picked", () => {
+  it("forces a single column of items on mobile — auto-fit still allows 2-up under 720px, too cramped for a video", () => {
     render(
       <VersusRound
         sideA={SIDE_A}
         sideB={SIDE_B}
-        selectedSide={0}
+        selectedSide={null}
         onSelect={vi.fn()}
         packCoverTone={PACK_COVER_TONE}
       />,
     );
 
-    expect(screen.getByText("Selected")).toBeInTheDocument();
+    const naruto = screen.getByText("Naruto");
+    const grid = naruto.closest('[style*="grid-template-columns"]');
+    expect(grid?.className).toContain("max-[720px]:!grid-cols-1");
   });
 
-  it("omits the footer row for the unselected side", () => {
+  it("shows a trailing check beside the label of the selected side only", () => {
     render(
       <VersusRound
         sideA={SIDE_A}
@@ -297,7 +337,46 @@ describe("VersusRound", () => {
       />,
     );
 
-    // Only sideA (index 0) is selected, so exactly one footer row renders.
-    expect(screen.getAllByText("Selected")).toHaveLength(1);
+    const boysButton = screen.getByRole("button", { name: "Pick Boys" });
+    const girlsButton = screen.getByRole("button", { name: "Pick Girls" });
+    expect(
+      boysButton.querySelector('[aria-hidden="true"] svg'),
+    ).toBeInTheDocument();
+    expect(
+      girlsButton.querySelector('[aria-hidden="true"] svg'),
+    ).not.toBeInTheDocument();
+  });
+
+  it("has no separate footer 'Selected' row — the mock's only selected signal is the label check and the panel wash", () => {
+    render(
+      <VersusRound
+        sideA={SIDE_A}
+        sideB={SIDE_B}
+        selectedSide={0}
+        onSelect={vi.fn()}
+        packCoverTone={PACK_COVER_TONE}
+      />,
+    );
+
+    expect(screen.queryByText("Selected")).not.toBeInTheDocument();
+  });
+
+  it("washes the selected side's panel in accent and leaves the other plain", () => {
+    render(
+      <VersusRound
+        sideA={SIDE_A}
+        sideB={SIDE_B}
+        selectedSide={0}
+        onSelect={vi.fn()}
+        packCoverTone={PACK_COVER_TONE}
+      />,
+    );
+
+    const boysButton = screen.getByRole("button", { name: "Pick Boys" });
+    const girlsButton = screen.getByRole("button", { name: "Pick Girls" });
+    expect(boysButton.className).toContain("border-acc/50");
+    expect(boysButton.className).toContain("bg-acc/[0.08]");
+    expect(girlsButton.className).toContain("border-border");
+    expect(girlsButton.className).not.toContain("bg-acc/[0.08]");
   });
 });

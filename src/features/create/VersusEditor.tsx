@@ -15,8 +15,10 @@ import {
 } from "@/src/features/create/random-pool-option";
 import { Input } from "@/src/shared/components/Input";
 import { Select } from "@/src/shared/components/Select";
-import { RoundsToolbar } from "@/src/features/create/RoundsToolbar";
-import { Button } from "@/src/shared/components/Button";
+import {
+  RoundsBulkBar,
+  RoundsAddButton,
+} from "@/src/features/create/RoundsToolbar";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
 import { StepHeader } from "@/src/features/create/StepHeader";
@@ -77,13 +79,11 @@ export function VersusEditor() {
   const currentPerSide = isHeadToHead
     ? 1
     : (rounds[0]?.slots[0]?.count ?? NXN_SIDE_COUNT_MIN);
-  // Feeds RoundsToolbar's "drifted" amber flag — every round's own per-side
-  // count (both its sides already share one, via setPerSide) compared
-  // against currentPerSide.
+  // Feeds RoundsBulkBar's live stepper + "drifted" flag — every round's own
+  // per-side count (both its sides already share one, via setPerSide).
   const perSideCounts = rounds.map(
     (round) => round.slots[0]?.count ?? NXN_SIDE_COUNT_MIN,
   );
-  const perSideAllMatch = perSideCounts.every((c) => c === currentPerSide);
 
   // A side either names a pool or asks for one at play time — two different
   // slot shapes, so the whole slot is replaced rather than one field patched,
@@ -167,7 +167,28 @@ export function VersusEditor() {
       {/* Same heading + hint as RoundsEditor (both editors converged on one
           consistent "Rounds" label per the real mock) — VersusEditor used to
           say "Matchup" with no hint. */}
-      <StepHeader step={4} title={t("roundsHeading")} hint={t("roundsHint")} />
+      <StepHeader title={t("roundsHeading")} hint={t("roundsHint")} />
+
+      {/* Mock: this bar sits right under the section header, before the
+          round list — see RoundsEditor's identical comment. */}
+      <RoundsBulkBar
+        bulk={
+          isHeadToHead
+            ? undefined
+            : {
+                label: t("versusSetAllLabel"),
+                applyLabel: t("versusSetAll"),
+                min: NXN_SIDE_COUNT_MIN,
+                max: NXN_SIDE_COUNT_MAX,
+                placeholder: "3",
+                current: currentPerSide,
+                counts: perSideCounts,
+                onApply: (value) =>
+                  rounds.forEach((_, index) => setPerSide(index, value)),
+              }
+        }
+        note={isHeadToHead ? t("versusPerSideFixed") : undefined}
+      />
 
       {rounds.map((round, index) => {
         const slotA = round.slots[0];
@@ -210,80 +231,62 @@ export function VersusEditor() {
               // on round 1's own header re-pin it instead of collapsing it.
               onClick={() => setExpandedRoundId(expanded ? null : round.id)}
               aria-expanded={expanded}
-              className="flex w-full items-center gap-2.5 text-start"
+              className="flex w-full items-center gap-[11px] text-start"
             >
+              <span
+                aria-hidden
+                className="flex h-[26px] w-[26px] flex-none items-center justify-center rounded-[8px] border border-border bg-white/[0.06] text-[11.5px] font-bold text-foreground-secondary"
+              >
+                {index + 1}
+              </span>
+              <span className="flex min-w-0 flex-col gap-[2px]">
+                <Text className="truncate text-[13.5px] font-semibold">
+                  {round.name?.trim() || t("roundLabel", { index: index + 1 })}
+                </Text>
+                <Text variant="tertiary" className="truncate text-[11.5px]">
+                  {matchupLabel} · {t("versusDrawHint", { a: drawA, b: drawB })}
+                </Text>
+              </span>
               <ChevronDown
                 aria-hidden
                 className={cn(
-                  "h-4 w-4 shrink-0 text-foreground-tertiary transition-transform",
+                  "ms-auto h-[14px] w-[14px] flex-none text-foreground-tertiary transition-transform",
                   expanded && "rotate-180",
                 )}
-                strokeWidth={1.8}
+                strokeWidth={2.2}
               />
-              <Text className="text-[14px] font-semibold">
-                {round.name?.trim() || t("roundLabel", { index: index + 1 })}
-              </Text>
-              <Text
-                variant="tertiary"
-                className="ms-auto truncate text-[12.5px]"
-              >
-                {matchupLabel} · {t("versusDrawHint", { a: drawA, b: drawB })}
-              </Text>
             </button>
 
             {!expanded && slotError && (
-              <Text variant="danger" role="alert" className="ms-[26px] text-sm">
+              <Text variant="danger" role="alert" className="ms-[37px] text-sm">
                 {slotError}
               </Text>
             )}
 
             {expanded && (
-              <>
-                <div className="flex items-center justify-between gap-2">
-                  <Text variant="tertiary" className="text-xs uppercase">
-                    {t("roundLabel", { index: index + 1 })}
+              // Mock: nested cyan-bordered #0F1116 sub-panel, matching
+              // RoundsEditor's identical fix — see its comment for why.
+              <div className="flex flex-col gap-[13px] rounded-[13px] border border-acc/35 bg-[#0F1116] p-[14px]">
+                <div className="flex flex-col gap-1">
+                  <Text variant="tertiary" className="text-[11.5px] font-semibold">
+                    {t("roundName", { index: index + 1 })}
                   </Text>
-                  {rounds.length > 1 && (
-                    <Button
-                      variant="ghost"
-                      type="button"
-                      onClick={() => {
-                        roundsArray.remove(index);
-                        // Expand whichever survivor now sits in the removed
-                        // round's place — see RoundsEditor's identical
-                        // comment (the Remove control only ever removes the
-                        // expanded round, so leaving `expandedRoundId` at
-                        // its old value would collapse everything).
-                        const remaining = rounds.filter(
-                          (_, i) => i !== index,
-                        );
-                        setExpandedRoundId(
-                          remaining[Math.min(index, remaining.length - 1)]
-                            ?.id ?? null,
-                        );
-                      }}
-                      aria-label={t("removeRound", { index: index + 1 })}
-                    >
-                      {t("remove")}
-                    </Button>
-                  )}
+                  <Input
+                    value={round.name ?? ""}
+                    onChange={(e) =>
+                      setValue(`rounds.${index}.name`, e.target.value, {
+                        shouldValidate: false,
+                        shouldDirty: true,
+                      })
+                    }
+                    aria-label={t("roundName", { index: index + 1 })}
+                    placeholder={t("versusRoundNamePlaceholder")}
+                  />
                 </div>
-
-                <Input
-                  value={round.name ?? ""}
-                  onChange={(e) =>
-                    setValue(`rounds.${index}.name`, e.target.value, {
-                      shouldValidate: false,
-                      shouldDirty: true,
-                    })
-                  }
-                  aria-label={t("roundName", { index: index + 1 })}
-                  placeholder={t("versusRoundNamePlaceholder")}
-                />
 
                 <div className="flex flex-wrap items-end gap-3">
                   <div className="flex min-w-[130px] flex-1 flex-col gap-1">
-                    <Text variant="secondary" className="text-xs">
+                    <Text variant="tertiary" className="text-[11.5px] font-semibold">
                       {t("versusSideA")}
                     </Text>
                     <Select
@@ -294,7 +297,7 @@ export function VersusEditor() {
                     />
                   </div>
                   <div className="flex min-w-[130px] flex-1 flex-col gap-1">
-                    <Text variant="secondary" className="text-xs">
+                    <Text variant="tertiary" className="text-[11.5px] font-semibold">
                       {t("versusSideB")}
                     </Text>
                     <Select
@@ -305,46 +308,137 @@ export function VersusEditor() {
                     />
                   </div>
                   {!isHeadToHead && (
-                    <div className="flex w-24 flex-col gap-1">
-                      <Text variant="secondary" className="text-xs">
+                    // Real stepper, not a bare number input — see
+                    // RoundsEditor's identical fix/comment (same `cn()`
+                    // append-not-override collision with Input's own
+                    // `w-full` rendered this as a huge, uncapped-width box).
+                    <div className="flex w-[150px] flex-none flex-col gap-1">
+                      <Text variant="tertiary" className="text-[11.5px] font-semibold">
                         {t("versusPerSide")}
                       </Text>
-                      <Input
-                        type="number"
-                        min={NXN_SIDE_COUNT_MIN}
-                        max={NXN_SIDE_COUNT_MAX}
-                        value={slotA?.count ?? ""}
-                        onChange={(e) =>
-                          setPerSide(
-                            index,
-                            e.target.value === ""
-                              ? undefined
-                              : Number(e.target.value),
-                          )
-                        }
-                        aria-label={t("versusPerSideRound", {
-                          index: index + 1,
-                        })}
-                        className="h-[46px] w-[54px] text-center font-semibold text-acc tabular-nums"
-                      />
+                      <div className="flex h-10 items-center gap-[9px] rounded-control border border-white/10 bg-surface-card px-[6px]">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setPerSide(
+                              index,
+                              Math.max(
+                                NXN_SIDE_COUNT_MIN,
+                                (slotA?.count ?? NXN_SIDE_COUNT_MIN) - 1,
+                              ),
+                            )
+                          }
+                          aria-label={t("decreaseCount")}
+                          className="flex h-7 w-7 flex-none items-center justify-center rounded-[8px] text-foreground-secondary transition-colors hover:bg-white/[0.08] hover:text-foreground"
+                        >
+                          −
+                        </button>
+                        <input
+                          type="number"
+                          min={NXN_SIDE_COUNT_MIN}
+                          max={NXN_SIDE_COUNT_MAX}
+                          value={slotA?.count ?? ""}
+                          onChange={(e) =>
+                            setPerSide(
+                              index,
+                              e.target.value === ""
+                                ? undefined
+                                : Number(e.target.value),
+                            )
+                          }
+                          aria-label={t("versusPerSideRound", {
+                            index: index + 1,
+                          })}
+                          className="min-w-0 flex-1 border-0 bg-transparent text-center text-[15px] font-bold text-foreground outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                        />
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setPerSide(
+                              index,
+                              Math.min(
+                                NXN_SIDE_COUNT_MAX,
+                                (slotA?.count ?? NXN_SIDE_COUNT_MIN) + 1,
+                              ),
+                            )
+                          }
+                          aria-label={t("increaseCount")}
+                          className="flex h-7 w-7 flex-none items-center justify-center rounded-[8px] text-foreground-secondary transition-colors hover:bg-white/[0.08] hover:text-foreground"
+                        >
+                          +
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
 
-                <Text variant="tertiary" className="text-xs">
-                  {t("versusDrawHint", { a: drawA, b: drawB })}
-                </Text>
-                {singlePool && (
-                  <Text variant="tertiary" role="status" className="text-xs">
-                    {t("versusSamePoolNote")}
-                  </Text>
-                )}
-                {slotError && (
-                  <Text variant="danger" role="alert" className="text-sm">
-                    {slotError}
-                  </Text>
-                )}
-              </>
+                <div className="flex flex-wrap items-center gap-2 border-t border-border pt-3">
+                  <div className="flex flex-col gap-1">
+                    <Text variant="tertiary" className="text-xs">
+                      {t("versusDrawHint", { a: drawA, b: drawB })}
+                    </Text>
+                    {singlePool && (
+                      <Text variant="tertiary" role="status" className="text-xs">
+                        {t("versusSamePoolNote")}
+                      </Text>
+                    )}
+                    {slotError && (
+                      <Text variant="danger" role="alert" className="text-sm">
+                        {slotError}
+                      </Text>
+                    )}
+                  </div>
+                  <div className="ms-auto flex items-center gap-2">
+                    {rounds.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          roundsArray.remove(index);
+                          // Expand whichever survivor now sits in the removed
+                          // round's place — see RoundsEditor's identical
+                          // comment (the Remove control only ever removes the
+                          // expanded round, so leaving `expandedRoundId` at
+                          // its old value would collapse everything).
+                          const remaining = rounds.filter(
+                            (_, i) => i !== index,
+                          );
+                          setExpandedRoundId(
+                            remaining[Math.min(index, remaining.length - 1)]
+                              ?.id ?? null,
+                          );
+                        }}
+                        aria-label={t("removeRound", { index: index + 1 })}
+                        className="flex h-10 w-10 flex-none items-center justify-center rounded-[11px] border border-danger/30 bg-danger/10 text-[#ff8c8c] transition-colors hover:bg-danger/[0.18]"
+                      >
+                        <svg
+                          aria-hidden
+                          width="15"
+                          height="15"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.9"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path d="M4 7h16M9 7V5h6v2M6.5 7l1 13h9l1-13" />
+                        </svg>
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => setExpandedRoundId(null)}
+                      // Distinct accessible name from the visible "Done"
+                      // label — see RoundsEditor's identical comment (avoids
+                      // colliding with the tag picker's own "Done" button).
+                      aria-label={t("roundDoneAria", { index: index + 1 })}
+                      className="h-10 rounded-[11px] bg-acc px-4 text-[13px] font-bold text-[#07131a] transition-colors hover:brightness-110"
+                    >
+                      {t("roundDone")}
+                    </button>
+                  </div>
+                </div>
+              </div>
             )}
           </div>
         );
@@ -356,26 +450,7 @@ export function VersusEditor() {
         </Text>
       )}
 
-      <RoundsToolbar
-        addLabel={t("addRound")}
-        onAddRound={addRound}
-        bulk={
-          isHeadToHead
-            ? undefined
-            : {
-                label: t("versusSetAllLabel"),
-                applyLabel: t("versusSetAll"),
-                min: NXN_SIDE_COUNT_MIN,
-                max: NXN_SIDE_COUNT_MAX,
-                placeholder: "3",
-                current: currentPerSide,
-                allMatch: perSideAllMatch,
-                onApply: (value) =>
-                  rounds.forEach((_, index) => setPerSide(index, value)),
-              }
-        }
-        note={isHeadToHead ? t("versusPerSideFixed") : undefined}
-      />
+      <RoundsAddButton addLabel={t("addRound")} onAddRound={addRound} />
     </section>
   );
 }

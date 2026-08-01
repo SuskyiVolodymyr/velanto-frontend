@@ -32,7 +32,9 @@ describe("RoomBetweenBoard", () => {
     expect(screen.getAllByText(/survivor/i).length).toBeGreaterThan(0);
   });
 
-  it("mode guess_who renders the reveal history table", () => {
+  // Guess-who's between beat is the round's own cards with the labels landed
+  // on them, not a chronology table — the history lives on the results screen.
+  it("mode guess_who renders the closed round's marked cards", () => {
     render(
       <RoomBetweenBoard
         state={baseRoomState({
@@ -51,6 +53,7 @@ describe("RoomBetweenBoard", () => {
         onNext={vi.fn()}
       />,
     );
+    expect(screen.queryByRole("table")).toBeNull();
     expect(screen.getByText("P1")).toBeInTheDocument();
   });
 

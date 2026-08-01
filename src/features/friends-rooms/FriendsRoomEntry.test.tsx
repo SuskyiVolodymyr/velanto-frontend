@@ -35,21 +35,24 @@ function asUser(): User {
   };
 }
 
+function codeField() {
+  return screen.getByPlaceholderText("Enter code");
+}
+
 beforeEach(() => {
   vi.clearAllMocks();
   currentUser = asUser();
 });
 
 describe("FriendsRoomEntry — create", () => {
-  it("offers Create room and Join by code", () => {
+  it("offers Create room and an inline code + Join field, no modal", () => {
     render(<FriendsRoomEntry packId="pack-1" />);
 
     expect(
       screen.getByRole("button", { name: "Create room" }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole("button", { name: "Join by code" }),
-    ).toBeInTheDocument();
+    expect(codeField()).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Join" })).toBeInTheDocument();
   });
 
   it("creates a room for this pack and routes the host into it", async () => {
@@ -87,32 +90,25 @@ describe("FriendsRoomEntry — create", () => {
     expect(push).not.toHaveBeenCalled();
   });
 
-  it("blocks a signed-out visitor: Join by code does not open the modal", async () => {
+  it("blocks a signed-out visitor: the code field is read-only and Join does not fire", async () => {
     const user = userEvent.setup();
     currentUser = null;
     render(<FriendsRoomEntry packId="pack-1" />);
 
-    await user.click(screen.getByRole("button", { name: "Join by code" }));
+    expect(codeField()).toHaveAttribute("readonly");
+    await user.click(screen.getByRole("button", { name: "Join" }));
 
-    // The modal title never appears — the control is gated, not opened.
-    expect(screen.queryByText("Join a room")).not.toBeInTheDocument();
+    expect(join).not.toHaveBeenCalled();
   });
 });
 
 describe("FriendsRoomEntry — join", () => {
-  async function openJoin() {
+  it("uppercases and trims the code, and routes in on success", async () => {
     const user = userEvent.setup();
-    render(<FriendsRoomEntry packId="pack-1" />);
-    await user.click(screen.getByRole("button", { name: "Join by code" }));
-    return user;
-  }
-
-  it("opens the modal, uppercases and trims the code, and routes in on success", async () => {
     join.mockResolvedValue({ id: "room-3" });
-    const user = await openJoin();
+    render(<FriendsRoomEntry packId="pack-1" />);
 
-    expect(screen.getByText("Join a room")).toBeInTheDocument();
-    await user.type(screen.getByPlaceholderText("Enter code"), "  abc12  ");
+    await user.type(codeField(), "  abc12  ");
     await user.click(screen.getByRole("button", { name: "Join" }));
 
     expect(join).toHaveBeenCalledWith("ABC12");
@@ -120,10 +116,11 @@ describe("FriendsRoomEntry — join", () => {
   });
 
   it("shows a friendly error and does not navigate when the code is unknown (404)", async () => {
+    const user = userEvent.setup();
     join.mockRejectedValue(new ApiError(404, "Not Found", null));
-    const user = await openJoin();
+    render(<FriendsRoomEntry packId="pack-1" />);
 
-    await user.type(screen.getByPlaceholderText("Enter code"), "NOPE1");
+    await user.type(codeField(), "NOPE1");
     await user.click(screen.getByRole("button", { name: "Join" }));
 
     expect(
@@ -135,10 +132,11 @@ describe("FriendsRoomEntry — join", () => {
   });
 
   it("shows a friendly error and does not navigate when the room is full/started/locked (409)", async () => {
+    const user = userEvent.setup();
     join.mockRejectedValue(new ApiError(409, "Conflict", null));
-    const user = await openJoin();
+    render(<FriendsRoomEntry packId="pack-1" />);
 
-    await user.type(screen.getByPlaceholderText("Enter code"), "FULL1");
+    await user.type(codeField(), "FULL1");
     await user.click(screen.getByRole("button", { name: "Join" }));
 
     expect(
@@ -148,7 +146,8 @@ describe("FriendsRoomEntry — join", () => {
   });
 
   it("validates an empty code before calling the API", async () => {
-    const user = await openJoin();
+    const user = userEvent.setup();
+    render(<FriendsRoomEntry packId="pack-1" />);
 
     await user.click(screen.getByRole("button", { name: "Join" }));
 
@@ -157,12 +156,13 @@ describe("FriendsRoomEntry — join", () => {
   });
 
   it("lets the user retry after a rejected join", async () => {
+    const user = userEvent.setup();
     join
       .mockRejectedValueOnce(new ApiError(404, "Not Found", null))
       .mockResolvedValueOnce({ id: "room-7" });
-    const user = await openJoin();
+    render(<FriendsRoomEntry packId="pack-1" />);
 
-    await user.type(screen.getByPlaceholderText("Enter code"), "wrong");
+    await user.type(codeField(), "wrong");
     await user.click(screen.getByRole("button", { name: "Join" }));
     expect(
       await screen.findByText(
@@ -170,8 +170,8 @@ describe("FriendsRoomEntry — join", () => {
       ),
     ).toBeInTheDocument();
 
-    await user.clear(screen.getByPlaceholderText("Enter code"));
-    await user.type(screen.getByPlaceholderText("Enter code"), "right");
+    await user.clear(codeField());
+    await user.type(codeField(), "right");
     await user.click(screen.getByRole("button", { name: "Join" }));
 
     expect(join).toHaveBeenLastCalledWith("RIGHT");

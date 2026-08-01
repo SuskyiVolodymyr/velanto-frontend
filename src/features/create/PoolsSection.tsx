@@ -58,7 +58,6 @@ export function PoolsSection() {
   return (
     <section className="flex flex-col gap-3">
       <StepHeader
-        step={3}
         title={t("poolsHeading")}
         aside={t("itemCount", { count: totalItemCount })}
         hint={t("poolsHint")}
@@ -87,8 +86,20 @@ export function PoolsSection() {
       <button
         type="button"
         onClick={() => groupsArray.append(newGroup())}
-        className="flex h-[46px] w-full items-center justify-center rounded-control border border-dashed border-white/[0.14] text-sm font-semibold text-foreground-secondary transition-colors hover:border-acc hover:text-foreground"
+        className="flex h-12 w-full items-center justify-center gap-[9px] rounded-tile border border-dashed border-white/[0.16] text-[13.5px] font-semibold text-foreground-secondary transition-colors hover:border-white/30 hover:bg-white/[0.03] hover:text-foreground"
       >
+        <svg
+          aria-hidden
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.2"
+          strokeLinecap="round"
+        >
+          <path d="M12 5v14M5 12h14" />
+        </svg>
         {t("addPool")}
       </button>
     </section>

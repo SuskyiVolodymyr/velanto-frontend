@@ -2,8 +2,6 @@
 
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
 import type { ClaimRejection, RoomPlayerState, RoomState } from "./room-types";
 import { RoomItemCard } from "./RoomItemCard";
@@ -34,8 +32,6 @@ export function RoomRound({
 }: RoomRoundProps) {
   const t = useTranslations("room");
   const round = state.round;
-  const instructionKey =
-    packFormat === "save_one" ? "round.instructionSave" : "round.instructionSacrifice";
 
   // itemId → the player sacrificing it, inverted from { userId: itemId }.
   const claimantByItem = useMemo(() => {
@@ -51,37 +47,9 @@ export function RoomRound({
 
   if (!round) return null;
 
-  const chosen = Object.keys(round.claims).length;
-  // Total SEATED players, not just the connected ones. A disconnected player
-  // keeps their seat and the round waits for them — the backend resolves only
-  // once every seated player has claimed, never skipping a dropped one. Counting
-  // connected players would imply the round can resolve while a seat is empty,
-  // which it can't.
-  const total = state.players.length;
 
   return (
     <div className="flex flex-col gap-6">
-      {/* The counter alone made every round look the same, which players read
-          as the rounds repeating. The author's round name (or its pool's) is
-          the title when there is one, and the instruction steps down a line;
-          with no name the instruction stays the heading as before. */}
-      <header className="flex flex-col gap-2">
-        <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-          {t("round.heading", {
-            index: round.index + 1,
-            total: state.totalRounds,
-          })}
-        </Text>
-        <Text as="h2" variant="title" className="text-2xl">
-          {round.name || t(instructionKey)}
-        </Text>
-        {round.name && (
-          <Text variant="secondary" className="text-sm">
-            {t(instructionKey)}
-          </Text>
-        )}
-      </header>
-
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {round.items.map((item, index) => {
           const claimant = claimantByItem.get(item.id) ?? null;
@@ -114,14 +82,6 @@ export function RoomRound({
           {t("round.tooFastNote")}
         </p>
       )}
-
-      <Text
-        variant="secondary"
-        aria-live="polite"
-        className={cn("text-sm", chosen === total && "text-success")}
-      >
-        {t("round.chosen", { count: chosen, total })}
-      </Text>
     </div>
   );
 }

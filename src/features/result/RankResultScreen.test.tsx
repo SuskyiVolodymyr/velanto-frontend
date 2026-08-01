@@ -1,5 +1,5 @@
 import { describe, expect, it, beforeEach, vi } from "vitest";
-import { screen, within } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { RankResultScreen } from "./RankResultScreen";
 import type { Pack } from "@/src/shared/types/pack";
@@ -217,56 +217,8 @@ describe("RankResultScreen", () => {
     expect(screen.queryByText(/Shown #/)).toBeNull();
   });
 
-  it("ranks the pack's podium finishes by first, second and third combined", () => {
-    render(
-      <RankResultScreen
-        pack={RANK_PACK}
-        results={{
-          ...RANK_RESULTS,
-          podium: [
-            {
-              itemId: "i1",
-              itemTitle: "Kaikai Kitan",
-              first: 2,
-              second: 1,
-              third: 0,
-              total: 3,
-            },
-            {
-              itemId: "i2",
-              itemTitle: "Redo",
-              first: 0,
-              second: 1,
-              third: 1,
-              total: 2,
-            },
-          ],
-        }}
-        ownPicks={null}
-        shared={false}
-      />,
-    );
-
-    const table = screen.getByRole("table");
-    const rows = within(table).getAllByRole("row").slice(1); // drop the header
-    expect(rows[0]).toHaveTextContent("Kaikai Kitan");
-    expect(rows[0]).toHaveAttribute("data-rank", "1");
-    expect(rows[1]).toHaveTextContent("Redo");
-    expect(rows[1]).toHaveAttribute("data-rank", "2");
-  });
-
-  it("shows no podium table before anyone has reached one", () => {
-    render(
-      <RankResultScreen
-        pack={RANK_PACK}
-        results={{ ...RANK_RESULTS, podium: [] }}
-        ownPicks={null}
-        shared={false}
-      />,
-    );
-
-    expect(screen.queryByRole("table")).toBeNull();
-  });
+  // The podium (pack-wide ranking) moved to ResultScreen's own aside board
+  // and is PodiumTable's own behavior now — see PodiumTable.test.tsx.
 
   it("hides items that weren't in the player's own play for a round they played", () => {
     render(

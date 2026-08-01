@@ -5,12 +5,15 @@ import { useTranslations } from "next-intl";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
+import { PageHeader } from "@/src/shared/components/PageHeader";
+import { UserMenu } from "@/src/shared/components/UserMenu";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { cn } from "@/src/shared/lib/cn";
 import { IdentityPillBadge } from "@/src/shared/components/IdentityPillBadge";
 import { ReportsTab } from "@/src/features/moderation/ReportsTab";
 import { PackApprovalsTab } from "@/src/features/moderation/PackApprovalsTab";
 import { useModerationCounts } from "@/src/features/moderation/api/moderation.queries";
+import { pageContainer } from "@/src/shared/lib/page-container";
 
 const TABS = ["reports", "packs"] as const;
 type Tab = (typeof TABS)[number];
@@ -33,7 +36,7 @@ export function ModerationPanel() {
   const t = useTranslations("moderation");
   const tCommon = useTranslations("common");
   const tHeader = useTranslations("header");
-  const { user, status } = useAuth();
+  const { user, status, logout } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -56,17 +59,23 @@ export function ModerationPanel() {
 
   if (status === "unauthenticated") {
     return (
-      <div className="mx-auto max-w-md py-16 text-center">
-        <Text variant="secondary">{tCommon("loginRequired")}</Text>
-        <Button
-          className="mt-4"
-          onClick={() =>
-            router.push(`/auth?next=${encodeURIComponent(pathname)}`)
-          }
-        >
-          {tHeader("logIn")}
-        </Button>
-      </div>
+      <>
+        <PageHeader
+          back={{ href: "/", label: tHeader("browse") }}
+          crumb={tHeader("moderation")}
+        />
+        <div className="mx-auto max-w-md py-16 text-center">
+          <Text variant="secondary">{tCommon("loginRequired")}</Text>
+          <Button
+            className="mt-4"
+            onClick={() =>
+              router.push(`/auth?next=${encodeURIComponent(pathname)}`)
+            }
+          >
+            {tHeader("logIn")}
+          </Button>
+        </div>
+      </>
     );
   }
 
@@ -88,68 +97,86 @@ export function ModerationPanel() {
   }
 
   return (
-    <main className="mx-auto flex w-full max-w-[1180px] flex-1 flex-col gap-7 px-7 py-11">
-      <section>
-        <div className="mb-2.5 flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.14em] text-foreground-tertiary">
-          <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-acc" />
-          {t("panelEyebrow")}
-          {/* The viewer's own role, per the mock's header pill (D2/T4) —
-              reuses Username's IDENTITY_PILL tokens rather than a hardcoded
-              "STAFF" literal, so a moderator/manager/admin viewer each get
-              their own role's tier pill. */}
+    <>
+      <PageHeader
+        back={{ href: "/", label: tHeader("browse") }}
+        crumb={tHeader("moderation")}
+        badge={
+          // Reuses Username's IDENTITY_PILL tokens rather than a hardcoded
+          // "STAFF" literal, so a moderator/manager/admin viewer each get
+          // their own role's tier pill.
           <IdentityPillBadge role={user?.role} className="normal-case" />
-        </div>
-        {/* The mock's heading was "Support queue", but that named a
+        }
+        trailing={
+          user && <UserMenu user={user} onLogout={() => void logout()} />
+        }
+      />
+      <main
+        className={cn(
+          pageContainer(1180),
+          "flex flex-1 flex-col gap-[26px] pt-[34px] pb-[70px]",
+        )}
+      >
+        <section>
+          <div className="mb-2.5 flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.14em] text-foreground-tertiary">
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-acc" />
+            {t("panelEyebrow")}
+          </div>
+          {/* The mock's heading was "Support queue", but that named a
             reports-only screen; this panel also holds pack approvals. */}
-        <Text as="h1" variant="title" className="text-[32px]">
-          {t("queueHeading")}
-        </Text>
-      </section>
+          <Text as="h1" variant="title" className="text-[32px]">
+            {t("queueHeading")}
+          </Text>
+        </section>
 
-      <div role="tablist" className="flex gap-2 border-b border-border">
-        {TABS.map((value) => {
-          const badge = badges[value];
-          const waiting = badge !== undefined && badge > 0 ? badge : null;
-          return (
-            <button
-              key={value}
-              type="button"
-              role="tab"
-              aria-selected={tab === value}
-              // Spell the name out: the badge is a bare number next to the label,
-              // which a screen reader would otherwise read as "Reports7".
-              aria-label={
-                waiting === null
-                  ? labels[value]
-                  : `${labels[value]}, ${waiting} waiting`
-              }
-              onClick={() => selectTab(value)}
-              className={cn(
-                "mr-[22px] flex items-center gap-2 border-b-2 px-1 py-2.5 text-sm font-semibold transition-colors",
-                tab === value
-                  ? "border-acc text-foreground"
-                  : "border-transparent text-foreground-tertiary hover:text-foreground-secondary",
-              )}
-            >
-              {labels[value]}
-              {/* The badge is what makes the merged panel worth having: a
+        {/* No `gap`: the mock spaces the tabs with a 22px margin on each
+            button, so a gap here would add to it rather than replace it. */}
+        <div role="tablist" className="flex border-b border-border">
+          {TABS.map((value) => {
+            const badge = badges[value];
+            const waiting = badge !== undefined && badge > 0 ? badge : null;
+            return (
+              <button
+                key={value}
+                type="button"
+                role="tab"
+                aria-selected={tab === value}
+                // Spell the name out: the badge is a bare number next to the label,
+                // which a screen reader would otherwise read as "Reports7".
+                aria-label={
+                  waiting === null
+                    ? labels[value]
+                    : `${labels[value]}, ${waiting} waiting`
+                }
+                onClick={() => selectTab(value)}
+                className={cn(
+                  "mr-[22px] flex items-center gap-[9px] border-b-2 px-1 py-2.5 text-sm font-[650] transition-colors",
+                  tab === value
+                    ? "border-acc text-foreground"
+                    : "border-transparent text-foreground-tertiary hover:text-foreground-secondary",
+                )}
+              >
+                {labels[value]}
+                {/* The badge is what makes the merged panel worth having: a
                 moderator sees where the work is without opening both tabs.
                 Hidden at zero — an empty queue is not news. */}
-              {waiting !== null && (
-                <span
-                  aria-hidden
-                  className="rounded-full bg-acc/15 px-2 py-0.5 text-[11px] font-semibold tabular-nums text-acc"
-                >
-                  {waiting}
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
+                {waiting !== null && (
+                  <span
+                    aria-hidden
+                    data-mono
+                    className="rounded-full bg-acc/15 px-2 py-0.5 text-[11px] font-bold tabular-nums text-acc"
+                  >
+                    {waiting}
+                  </span>
+                )}
+              </button>
+            );
+          })}
+        </div>
 
-      {tab === "reports" && <ReportsTab />}
-      {tab === "packs" && <PackApprovalsTab />}
-    </main>
+        {tab === "reports" && <ReportsTab />}
+        {tab === "packs" && <PackApprovalsTab />}
+      </main>
+    </>
   );
 }

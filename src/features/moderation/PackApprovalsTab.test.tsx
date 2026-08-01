@@ -10,6 +10,17 @@ vi.mock("@/src/shared/lib/packs-client", () => ({
   packsClient: { moderationQueue: vi.fn(), approve: vi.fn(), reject: vi.fn() },
 }));
 
+/**
+ * The format filter is the design's listbox {@link Dropdown}, not a native
+ * <select>: its options only exist in the DOM while the panel is open, so a
+ * test has to open the trigger before it can see or click one.
+ */
+async function openFormatFilter(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(
+    await screen.findByRole("combobox", { name: "Filter by format" }),
+  );
+}
+
 const { mockPush } = vi.hoisted(() => ({ mockPush: vi.fn() }));
 
 vi.mock("next/navigation", () => ({
@@ -101,10 +112,8 @@ describe("PackApprovalsTab", () => {
     const user = userEvent.setup();
     render(<PackApprovalsTab />);
 
-    await user.selectOptions(
-      await screen.findByLabelText("Filter by format"),
-      "nxn",
-    );
+    await openFormatFilter(user);
+    await user.click(screen.getByRole("option", { name: "NxN" }));
 
     await vi.waitFor(() =>
       expect(packsClient.moderationQueue).toHaveBeenLastCalledWith(
@@ -258,11 +267,12 @@ describe("PackApprovalsTab", () => {
   // dropping a format from the filter fail — asserting only "1v1 is present"
   // would stay green.
   it("offers every named format in the filter", async () => {
+    const user = userEvent.setup();
     render(<PackApprovalsTab />);
     await screen.findByText("Best Anime Openings");
 
-    const select = screen.getByRole("combobox", { name: "Filter by format" });
-    const options = within(select).getAllByRole("option");
+    await openFormatFilter(user);
+    const options = screen.getAllByRole("option");
 
     expect(options).toHaveLength(6); // "All formats" + 5 named formats
     expect(options.map((option) => option.textContent)).toEqual([

@@ -44,6 +44,7 @@ export function YouTubeCard({
 }: YouTubeCardProps) {
   const t = useTranslations("media");
   const mountRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
   const playerRef = useRef<YouTubePlayer | null>(null);
   // Flips true once the player reports buffering/playing — proof that commanded
   // playback actually took, so the watchdog below knows not to fall back.
@@ -166,6 +167,38 @@ export function YouTubeCard({
     return () => clearTimeout(watchdog);
   }, [hovered, playerReady, failed]);
 
+  // `mouseleave` only fires when the POINTER MOVES off the card, which leaves
+  // two everyday ways to walk away from a playing video and have it keep
+  // playing: scroll the card off-screen under a stationary cursor, or switch
+  // tab/window. Neither moves the pointer, so neither fires the event, and the
+  // audio just carries on somewhere off-screen. Treat both as un-hovering.
+  useEffect(() => {
+    if (!activated) return;
+    const stop = () => setHovered(false);
+    const onVisibilityChange = () => {
+      if (document.hidden) stop();
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+    window.addEventListener("blur", stop);
+    // Guarded: jsdom has no IntersectionObserver, and the scroll case is a
+    // progressive enhancement — the listeners above still stand without it.
+    let observer: IntersectionObserver | undefined;
+    if (cardRef.current && typeof IntersectionObserver !== "undefined") {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (!entry.isIntersecting) stop();
+        },
+        { threshold: 0 },
+      );
+      observer.observe(cardRef.current);
+    }
+    return () => {
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      window.removeEventListener("blur", stop);
+      observer?.disconnect();
+    };
+  }, [activated]);
+
   // Engaging the card builds the player (if not already) and plays it.
   function activate() {
     setActivated(true);
@@ -174,6 +207,7 @@ export function YouTubeCard({
 
   return (
     <div
+      ref={cardRef}
       data-testid="youtube-card"
       className={cn(
         "relative aspect-video overflow-hidden bg-black",

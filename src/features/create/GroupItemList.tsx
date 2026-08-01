@@ -24,6 +24,12 @@ interface GroupItemListProps {
    * docked in one shared spot at the bottom of the pool.
    */
   renderEditPanel?: (item: Item) => ReactNode;
+  /**
+   * The "+ Add item" trigger, rendered as the last chip in the same
+   * flex-wrap row as the item chips (mock: inline with the chips, not a
+   * separate full-width row below them).
+   */
+  trailing?: ReactNode;
 }
 
 /**
@@ -88,14 +94,20 @@ export function GroupItemList({
   onEdit,
   onRemove,
   renderEditPanel,
+  trailing,
 }: GroupItemListProps) {
   const t = useTranslations("create");
   if (items.length === 0) {
-    return <EmptyState title={t("poolEmpty")} />;
+    return (
+      <div className="flex flex-col gap-[11px]">
+        <EmptyState title={t("poolEmpty")} />
+        {trailing}
+      </div>
+    );
   }
 
   return (
-    <ul className="flex flex-wrap gap-[7px]">
+    <ul className="flex flex-wrap items-center gap-[7px]">
       {items.map((item) => {
         const editing = item.id === editingItemId;
         return (
@@ -107,7 +119,7 @@ export function GroupItemList({
           <Fragment key={item.id}>
             <li
               className={cn(
-                "inline-flex items-center gap-2 rounded-chip border px-[9px] py-[5px] text-[13px] transition-colors",
+                "inline-flex h-8 items-center gap-2 rounded-pill border px-[11px] py-0 text-[13px] transition-colors",
                 editing
                   ? "border-acc bg-acc/10 text-foreground-tertiary"
                   : "border-border bg-white/[0.04] text-foreground",
@@ -153,6 +165,7 @@ export function GroupItemList({
           </Fragment>
         );
       })}
+      {trailing && <li className="list-none">{trailing}</li>}
     </ul>
   );
 }

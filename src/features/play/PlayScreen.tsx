@@ -14,23 +14,26 @@ import {
 import { PlayChrome } from "@/src/features/play/PlayChrome";
 import { PlayRoundHeader } from "@/src/features/play/PlayRoundHeader";
 import { PlayConfirmBar } from "@/src/features/play/PlayConfirmBar";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { pageContainer } from "@/src/shared/lib/page-container";
 import { CandidateCard } from "@/src/features/play/CandidateCard";
 import { PicksSummary } from "@/src/features/play/PicksSummary";
+import { ResumePlayModal } from "@/src/features/play/ResumePlayModal";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 
 // How many columns a groups-format round lays its candidates out in, chosen by
 // candidate count so they fill the row instead of leaving fixed-width gaps: up
-// to 4 sit in one row; more split across two balanced rows (6→3, 8→4). Drops to
-// two columns below `lg` so cards stay legible on narrow viewports. Keys are the
-// resolved column target (1–6); values are literal classes so Tailwind emits them.
+// to 4 sit in one row; more split across two balanced rows (6→3, 8→4). Breakpoints
+// match the mock (`Solo Play.dc.html`'s `[data-el="grid"]` media queries) exactly:
+// 2 columns below 1000px, 1 column below 560px — not Tailwind's default `sm`/`lg`.
+// Keys are the resolved column target (1–6); values are literal classes so
+// Tailwind emits them.
 const CANDIDATE_GRID_COLS: Record<number, string> = {
   1: "grid-cols-1",
-  2: "grid-cols-2",
-  3: "grid-cols-2 lg:grid-cols-3",
-  4: "grid-cols-2 lg:grid-cols-4",
-  5: "grid-cols-2 lg:grid-cols-5",
-  6: "grid-cols-2 lg:grid-cols-6",
+  2: "grid-cols-1 min-[560px]:grid-cols-2",
+  3: "grid-cols-1 min-[560px]:grid-cols-2 min-[1000px]:grid-cols-3",
+  4: "grid-cols-1 min-[560px]:grid-cols-2 min-[1000px]:grid-cols-4",
+  5: "grid-cols-1 min-[560px]:grid-cols-2 min-[1000px]:grid-cols-5",
+  6: "grid-cols-1 min-[560px]:grid-cols-2 min-[1000px]:grid-cols-6",
 };
 
 function candidateGridCols(count: number): string {
@@ -54,14 +57,24 @@ export function PlayScreen({ pack }: { pack: Pack }) {
 
   return (
     <>
+      {/* No counter in the bar: the round header's eyebrow below is
+          `play.roundOf`, and the mock only ever draws it there. */}
       <PlayChrome
         pack={pack}
         isFinished={session.isFinished}
         roundIndex={session.roundIndex}
         totalRounds={session.totalRounds}
+        showRoundCounter={false}
       />
 
-      <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
+      <ResumePlayModal
+        open={session.needsChoice}
+        onContinue={session.chooseContinue}
+        onRestart={session.chooseRestart}
+        roundsDone={session.savedRoundsDone}
+      />
+
+      <div className={cn(pageContainer(1120), "flex-1 py-10")}>
         {session.showRound && (
           <>
             <div className="mb-6">
@@ -130,7 +143,9 @@ export function PlayScreen({ pack }: { pack: Pack }) {
               ready={session.canConfirm}
               disabled={!session.canConfirm}
               onConfirm={session.confirmPick}
-              confirmLabel={session.isLastRound ? t("finishRound") : t("nextRound")}
+              confirmLabel={
+                session.isLastRound ? t("finishRound") : t("nextRound")
+              }
             />
           </>
         )}
@@ -142,6 +157,10 @@ export function PlayScreen({ pack }: { pack: Pack }) {
             label={t(PICKED_LABEL_KEY[pack.format])}
             picks={session.displayPicks}
             totalRounds={session.totalRounds}
+            // nxn's displayPicks holds every item of the WINNING side, not
+            // one per round — group them so a 3-item side reads as one
+            // round's container of 3, not 3 indistinguishable flat chips.
+            groupByRound={pack.format === "nxn"}
           />
         )}
       </div>

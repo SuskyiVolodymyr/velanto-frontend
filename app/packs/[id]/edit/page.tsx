@@ -23,10 +23,13 @@ export default async function EditPackPage({
   const pack = await getPackServer(id);
 
   return (
-    // No PACK_CONTAINER here — same reasoning as app/create/page.tsx: it
+    // No page container here — same reasoning as app/create/page.tsx: it
     // would double up with the one CreatePackForm applies to its own sticky
-    // bar / body internally, since that bar needs to sit full-bleed.
-    <main className="flex-1 pt-10">
+    // bar / body internally, since that bar needs to sit full-bleed. No
+    // `pt-10` either — same fix as app/create/page.tsx: dead clearance for a
+    // since-removed header block, now just pushing the sticky bar itself
+    // down 40px and opening a bare gap above it at scroll 0.
+    <main className="flex-1">
       {/* The real mock's sticky bar carries the visible title now (T1) —
           this h1 stays sr-only purely for a11y/SEO landmark purposes. The
           sticky action bar's own icon back-button (inside CreatePackForm,

@@ -14,6 +14,11 @@ import { Text } from "@/src/shared/components/Text";
 import { SearchField } from "@/src/shared/components/SearchField";
 import { FilterChip } from "@/src/shared/components/FilterChip";
 import { EmptyState } from "@/src/shared/components/EmptyState";
+import {
+  MarkForEditButton,
+  MarkRequestField,
+} from "@/src/features/moderation/MarkForEdit";
+import type { PackMarks } from "@/src/features/moderation/use-pack-marks";
 
 const ITEM_TYPES: ItemType[] = ["text", "youtube", "image"];
 
@@ -33,6 +38,13 @@ interface PackContentsPreviewProps {
    * (Task 7).
    */
   roundIndex?: number;
+  /**
+   * Approval mode: every item gets a "Mark for edit" toggle and, once marked,
+   * a note field for what the author has to do with it. Omitted on the report
+   * screens — a report is about content that is already public, where marking
+   * items for the author is not one of the outcomes on offer.
+   */
+  marks?: PackMarks;
 }
 
 /** One section of the preview: a pool's items, in the order they should render. */
@@ -199,6 +211,7 @@ function matchesFilters(
 export function PackContentsPreview({
   pack,
   roundIndex,
+  marks,
 }: PackContentsPreviewProps) {
   const t = useTranslations("moderation");
   const [query, setQuery] = useState("");
@@ -286,21 +299,66 @@ export function PackContentsPreview({
                   {t("contentsNoMatches")}
                 </Text>
               ) : (
-                <ul className="flex flex-wrap gap-2.5">
-                  {filteredItems.map((item) => (
-                    <li
-                      key={item.id}
-                      className="flex items-center gap-2.5 rounded-chip border border-border bg-white/[0.03] px-2.5 py-1.5"
-                    >
-                      <ItemVisual
-                        item={item}
-                        typeLabel={t(`contentsItemType.${item.type}`)}
-                      />
-                      <span className="max-w-[220px] truncate text-sm text-foreground">
-                        {item.title}
-                      </span>
-                    </li>
-                  ))}
+                // Markable items need room for a toggle and a note, so they
+                // lay out as the mock's card grid; the read-only report view
+                // keeps its compact chip row.
+                <ul
+                  className={cn(
+                    marks
+                      ? "grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-2.5"
+                      : "flex flex-wrap gap-2.5",
+                  )}
+                >
+                  {filteredItems.map((item) =>
+                    marks ? (
+                      <li
+                        key={item.id}
+                        className="flex flex-col gap-2.5 rounded-[13px] border border-border bg-background p-3"
+                      >
+                        <MarkForEditButton
+                          marks={marks}
+                          target={{
+                            kind: "item",
+                            id: item.id,
+                            label: item.title,
+                          }}
+                          className="self-start"
+                        />
+                        <div className="flex items-center gap-2.5">
+                          <ItemVisual
+                            item={item}
+                            typeLabel={t(`contentsItemType.${item.type}`)}
+                          />
+                          <span className="min-w-0 truncate text-sm text-foreground">
+                            {item.title}
+                          </span>
+                        </div>
+                        <MarkRequestField
+                          marks={marks}
+                          target={{
+                            kind: "item",
+                            id: item.id,
+                            label: item.title,
+                          }}
+                          label={t("markAskedOfAuthor")}
+                          placeholder={t("markItemPlaceholder")}
+                        />
+                      </li>
+                    ) : (
+                      <li
+                        key={item.id}
+                        className="flex items-center gap-2.5 rounded-chip border border-border bg-white/[0.03] px-2.5 py-1.5"
+                      >
+                        <ItemVisual
+                          item={item}
+                          typeLabel={t(`contentsItemType.${item.type}`)}
+                        />
+                        <span className="max-w-[220px] truncate text-sm text-foreground">
+                          {item.title}
+                        </span>
+                      </li>
+                    ),
+                  )}
                 </ul>
               )}
             </section>

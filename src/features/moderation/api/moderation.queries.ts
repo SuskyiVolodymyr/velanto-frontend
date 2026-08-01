@@ -8,6 +8,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { packsClient } from "@/src/shared/lib/packs-client";
+import type { ChangeRequestMark } from "@/src/shared/types/pack";
 import {
   fetchModerationCounts,
   fetchPackQueuePage,
@@ -85,6 +86,27 @@ export function useRejectPack() {
   return useMutation({
     mutationFn: ({ id, reason }: { id: string; reason: string }) =>
       packsClient.reject(id, reason),
+    onSuccess: invalidate,
+  });
+}
+
+/**
+ * The third outcome. Same invalidation as approve/reject — it takes the pack
+ * out of the queue just as they do, so a badge that still counts it would be
+ * wrong in exactly the same way.
+ */
+export function useRequestPackChanges() {
+  const invalidate = useModerationInvalidation();
+  return useMutation({
+    mutationFn: ({
+      id,
+      message,
+      marks,
+    }: {
+      id: string;
+      message: string;
+      marks: ChangeRequestMark[];
+    }) => packsClient.requestChanges(id, { message, marks }),
     onSuccess: invalidate,
   });
 }

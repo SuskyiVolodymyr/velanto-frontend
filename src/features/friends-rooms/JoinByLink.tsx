@@ -9,7 +9,7 @@ import { LoadingState } from "@/src/shared/components/LoadingState";
 import { Text } from "@/src/shared/components/Text";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { ApiError } from "@/src/shared/lib/api-client";
-import { PACK_CONTAINER } from "@/src/shared/lib/pack-container";
+import { pageContainer } from "@/src/shared/lib/page-container";
 import { cn } from "@/src/shared/lib/cn";
 import { friendsRoomsClient } from "./friends-rooms-client";
 import { ROOMS_DORMANT } from "./room-types";
@@ -97,7 +97,7 @@ export function JoinByLink({ code }: { code: string }) {
 
   if (error) {
     return (
-      <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
+      <div className={cn(pageContainer(1320), "flex-1 py-10")}>
         <div className="flex flex-col items-center gap-4 py-16 text-center">
           <Text as="h1" variant="title" className="text-2xl">
             {t(`joinLink.${error}Title`)}
@@ -114,7 +114,7 @@ export function JoinByLink({ code }: { code: string }) {
   }
 
   return (
-    <div className={cn(PACK_CONTAINER, "flex-1 py-10")}>
+    <div className={cn(pageContainer(1320), "flex-1 py-10")}>
       <LoadingState label={t("joinLink.joining")} showLabel size={28} />
     </div>
   );

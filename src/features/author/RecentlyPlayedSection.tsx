@@ -1,18 +1,19 @@
 "use client";
 
 import Link from "next/link";
-import { useTranslations } from "next-intl";
-import { Badge } from "@/src/shared/components/Badge";
-import { Button } from "@/src/shared/components/Button";
+import { Clock } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { Button, buttonClassName } from "@/src/shared/components/Button";
+import { EmptyState } from "@/src/shared/components/EmptyState";
 import { PlayHistoryToggle } from "@/src/shared/components/PlayHistoryToggle";
-import { Text } from "@/src/shared/components/Text";
+import { cn } from "@/src/shared/lib/cn";
+import { packFormatTone } from "@/src/shared/lib/pack-format-tone";
+import { formatRelativeTimeIntl } from "@/src/shared/lib/relative-time";
 import { useRecentlyPlayed } from "./api/recently-played.queries";
 
 /**
  * A user's recently-played packs as a vertical row list — the History tab's
- * body (2.0.0 redesign, replacing the earlier horizontal `PackScrollRail`).
- * Not yet wired into `ProfileTabs`/`AuthorScreen` (that's T7); this task only
- * restyles the presentation of the same query.
+ * body.
  *
  * `visible` is the caller's privacy decision — render (and fetch) only when the
  * viewer is allowed to see this history (the profile is public, or the viewer
@@ -23,23 +24,16 @@ import { useRecentlyPlayed } from "./api/recently-played.queries";
  * so it's reused here rather than threading a second, redundant prop. When
  * true, the section also renders the shared {@link PlayHistoryToggle} ("Show
  * play history publicly") above the list — the exact same `useSetPlayHistory`
- * mutation `PrivacySection` uses, so the two surfaces can never disagree (see
- * the profile/preferences plan's D5/T5). On your OWN profile, an empty result
- * still renders (placeholder copy + the toggle) once the query settles, so the
- * section is discoverable before you've played anything; elsewhere (or while
- * the first page is still loading) it collapses entirely.
+ * mutation `PrivacySection` uses, so the two surfaces can never disagree. On
+ * your OWN profile, an empty result still renders (placeholder + the toggle)
+ * once the query settles, so the section is discoverable before you've played
+ * anything; elsewhere (or while the first page is still loading) it collapses.
  *
- * Row content is deliberately minimal: a real `Pack` carries no "kind"
- * (solo/scored/room/resume) and no "played at" timestamp — only the pack
- * itself, the same shape `AuthorPackList`/`PackCard` already render. The
- * mock's icon-by-kind / detail-line / relative-time treatment isn't
- * derivable from that and is cut here rather than faked (matching D7/D11's
- * "drop rather than fabricate" discipline elsewhere in that plan) — in
- * particular, `pack.createdAt` is NOT reused as a stand-in "played at" time,
- * since that would mislabel when the pack was published as when this viewer
- * played it. Each row shows the pack's format (the same `tFormat` badge
- * `PackCard` renders), its title (linking to the pack), and a "Play again"
- * action link.
+ * Each row carries the mock's four parts: a format-toned glyph tile, the pack
+ * title, a detail line, and when you played it. The played-at time is real —
+ * `/users/:id/recently-played` returns `lastPlayedAt` per pack — and is NOT
+ * `pack.createdAt`, which would mislabel when the pack was published as when
+ * this viewer played it.
  */
 export function RecentlyPlayedSection({
   userId,
@@ -53,6 +47,8 @@ export function RecentlyPlayedSection({
   const t = useTranslations("profile");
   const tFormat = useTranslations("formats");
   const tResult = useTranslations("result");
+  const tHome = useTranslations("home.card");
+  const locale = useLocale();
   const query = useRecentlyPlayed(userId, visible);
 
   if (!visible) return null;
@@ -64,11 +60,21 @@ export function RecentlyPlayedSection({
     // elsewhere (or while the first page is still loading) collapse entirely.
     if (showEmptyState && !query.isLoading) {
       return (
-        <section className="flex flex-col gap-4">
+        <section className="flex flex-col gap-3">
           <PlayHistoryToggle />
-          <Text variant="secondary" className="text-sm">
-            {t("recentlyPlayedEmpty")}
-          </Text>
+          <EmptyState
+            icon={<Clock size={21} strokeWidth={1.8} />}
+            title={t("recentlyPlayedEmpty")}
+            description={t("recentlyPlayedEmptyNote")}
+            action={
+              <Link
+                href="/"
+                className={buttonClassName("outline", undefined, "sm")}
+              >
+                {t("browsePacks")}
+              </Link>
+            }
+          />
         </section>
       );
     }
@@ -76,37 +82,70 @@ export function RecentlyPlayedSection({
   }
 
   return (
-    <section className="flex flex-col gap-4">
+    <section className="flex flex-col gap-3">
       {showEmptyState && <PlayHistoryToggle />}
 
-      <ul className="flex flex-col gap-2">
-        {packs.map((pack) => (
-          <li
-            key={pack.id}
-            className="flex items-center gap-3 rounded-tile border border-border bg-surface-card p-3"
-          >
-            <Badge variant="default" className="shrink-0">
-              {tFormat(pack.format)}
-            </Badge>
-            <Link
-              href={`/packs/${pack.id}`}
-              className="min-w-0 flex-1 truncate text-sm font-semibold text-foreground hover:text-acc"
+      <ul className="flex flex-col gap-3">
+        {packs.map((pack) => {
+          const { Icon, tile } = packFormatTone(pack.format);
+          const playedLabel = formatRelativeTimeIntl(pack.lastPlayedAt, locale);
+          return (
+            <li
+              key={pack.id}
+              className="flex items-center gap-[13px] rounded-[15px] border border-white/[0.07] bg-surface-card px-[15px] py-[13px]"
             >
-              {pack.title}
-            </Link>
-            <Link
-              href={`/packs/${pack.id}`}
-              className="shrink-0 text-[13px] font-semibold text-acc hover:text-acc-hover"
-            >
-              {tResult("playAgain")}
-            </Link>
-          </li>
-        ))}
+              <span
+                aria-hidden
+                className={cn(
+                  "grid h-[38px] w-[38px] flex-none place-items-center rounded-[11px]",
+                  tile,
+                )}
+              >
+                <Icon size={18} strokeWidth={2} />
+              </span>
+
+              <div className="flex min-w-0 flex-col gap-[3px]">
+                <Link
+                  href={`/packs/${pack.id}`}
+                  className="truncate text-[13.5px] font-[650] text-foreground hover:text-acc"
+                >
+                  {pack.title}
+                </Link>
+                <span className="truncate text-[11.5px] text-foreground-tertiary">
+                  {tFormat(pack.format)} ·{" "}
+                  {tHome("playsCount", { plays: pack.totalPlays })}
+                </span>
+              </div>
+
+              <span className="ms-auto flex flex-none items-center gap-3">
+                {playedLabel && (
+                  <time
+                    dateTime={pack.lastPlayedAt}
+                    suppressHydrationWarning
+                    className="hidden text-[11.5px] whitespace-nowrap text-foreground-tertiary min-[480px]:inline"
+                  >
+                    {playedLabel}
+                  </time>
+                )}
+                {/* Straight into the session, matching PackCard's own Play
+                    action — a "Play again" that lands on a description page
+                    with another Play button costs a click. */}
+                <Link
+                  href={`/packs/${pack.id}/play`}
+                  className="text-[12.5px] font-[650] whitespace-nowrap text-acc hover:text-acc-hover"
+                >
+                  {tResult("playAgain")}
+                </Link>
+              </span>
+            </li>
+          );
+        })}
       </ul>
 
       {query.hasNextPage && (
         <Button
-          variant="secondary"
+          variant="outline"
+          className="self-center"
           loading={query.isFetchingNextPage}
           onClick={() => void query.fetchNextPage()}
         >

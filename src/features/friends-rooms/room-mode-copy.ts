@@ -21,6 +21,42 @@ export const MODE_BLURB_KEY: Record<RoomMode, string> = {
   relay: "modes.relay.blurb",
 };
 
+/**
+ * The three-step "how a round goes" explainer under the picker —
+ * `room.modes.<mode>.steps.<n>.title` / `.body`. Three for every mode, so the
+ * panel is a fixed shape rather than a variable-length list.
+ */
+export const MODE_STEP_KEYS: Record<RoomMode, string[]> = Object.fromEntries(
+  (
+    [
+      "claim",
+      "guess_who",
+      "turn_based_cut",
+      "voting",
+      "shared_grid",
+      "relay",
+    ] as RoomMode[]
+  ).map((mode) => [
+    mode,
+    ["1", "2", "3"].map((n) => `modes.${mode}.steps.${n}`),
+  ]),
+) as Record<RoomMode, string[]>;
+
+/**
+ * What a mode hands back at the end: one verdict the whole room shares, or per
+ * player scores with a winner. Only Guess-who scores — everything else resolves
+ * to a single shared outcome per round — and the picker card colours the chip
+ * on this, so it is the one thing distinguishing a competitive mode at a glance.
+ */
+export const MODE_RESULT_KIND: Record<RoomMode, "shared" | "scored"> = {
+  claim: "shared",
+  guess_who: "scored",
+  turn_based_cut: "shared",
+  voting: "shared",
+  shared_grid: "shared",
+  relay: "shared",
+};
+
 /** lucide-react icon name per mode, for the mode picker card. Resolved by the
  * caller (ModePicker.tsx) — kept as a string here, not a component reference,
  * so this stays a plain data module with no React/JSX dependency. */

@@ -7,17 +7,21 @@ import { usePackFallback } from "./use-pack-fallback";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import { playsClient } from "@/src/shared/lib/plays-client";
+import { friendsRoomsClient } from "@/src/features/friends-rooms/friends-rooms-client";
 import { ApiError } from "@/src/shared/lib/api-client";
 import type { Pack } from "@/src/shared/types/pack";
 import type { PackResults } from "@/src/shared/types/play-results";
+import type { AvailableMode } from "@/src/features/friends-rooms/room-types";
 
 vi.mock("@/src/shared/lib/auth-context");
 vi.mock("@/src/shared/lib/packs-client");
 vi.mock("@/src/shared/lib/plays-client");
+vi.mock("@/src/features/friends-rooms/friends-rooms-client");
 
 const mockedUseAuth = vi.mocked(useAuth);
 const mockedPacksClient = vi.mocked(packsClient);
 const mockedPlaysClient = vi.mocked(playsClient);
+const mockedFriendsRoomsClient = vi.mocked(friendsRoomsClient);
 
 function mockAuthStatus(
   status: "loading" | "authenticated" | "unauthenticated",
@@ -111,9 +115,11 @@ describe("usePackFallback", () => {
         status: "ready",
         pack: PACK,
         results: null,
+        availableModes: null,
       }),
     );
     expect(mockedPlaysClient.getResults).not.toHaveBeenCalled();
+    expect(mockedFriendsRoomsClient.availableModes).not.toHaveBeenCalled();
   });
 
   it("resolves to ready with pack and results when authenticated and needsResults is true", async () => {
@@ -129,8 +135,35 @@ describe("usePackFallback", () => {
         status: "ready",
         pack: PACK,
         results: RESULTS,
+        availableModes: null,
       }),
     );
+  });
+
+  it("resolves to ready with available modes when needsAvailableModes is true", async () => {
+    mockAuthStatus("authenticated");
+    mockedPacksClient.getById.mockResolvedValue(PACK);
+    const MODES: AvailableMode[] = [
+      { mode: "claim", available: true, maxPlayers: 4 },
+    ];
+    mockedFriendsRoomsClient.availableModes.mockResolvedValue(MODES);
+    const { result } = renderHook(
+      () =>
+        usePackFallback("p1", {
+          needsResults: false,
+          needsAvailableModes: true,
+        }),
+      { wrapper },
+    );
+    await waitFor(() =>
+      expect(result.current).toEqual({
+        status: "ready",
+        pack: PACK,
+        results: null,
+        availableModes: MODES,
+      }),
+    );
+    expect(mockedFriendsRoomsClient.availableModes).toHaveBeenCalledWith("p1");
   });
 
   it("resolves to notfound when the authenticated retry itself 404s", async () => {

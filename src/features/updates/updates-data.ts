@@ -167,3 +167,15 @@ export const UPDATES: UpdateEntry[] = [
     ],
   },
 ];
+
+/**
+ * The newest shipped version, derived from {@link UPDATES} rather than pinned
+ * anywhere — the Docs header shows it as a pill, and a hardcoded copy would go
+ * stale the first time a release was added here and nowhere else. Sorted by
+ * date for the same reason UpdatesScreen does: authoring order is not a
+ * contract.
+ */
+export function latestVersion(): string | null {
+  const newest = [...UPDATES].sort((a, b) => b.date.localeCompare(a.date))[0];
+  return newest?.version ?? null;
+}

@@ -125,59 +125,74 @@ export function AvatarSection({
       : pickLabel;
 
   return (
-    <section className="mb-8">
-      <Text as="h2" variant="secondary" className="mb-3 text-xs">
+    // The whole card is the drop target. The file input lives in a <label> that
+    // wraps ONLY the pick button — wrapping the row would make a click on
+    // "Remove photo" also open the file picker.
+    <section
+      className={cn(
+        "flex flex-col gap-[13px] rounded-card border p-5 transition-colors",
+        dragging
+          ? "border-dashed border-acc bg-acc/[0.04]"
+          : "border-white/[0.07] bg-surface-card",
+        busy && "opacity-60",
+      )}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      <h2 className="text-[11.5px] font-[650] tracking-[0.06em] text-foreground-tertiary">
         {t("avatarHeading")}
-      </Text>
-      <label
-        className={cn(
-          "flex items-center gap-4 rounded-tile border border-dashed border-white/[0.14] px-4 py-4 transition-colors",
-          dragging
-            ? "border-solid border-acc"
-            : "hover:border-white/[0.18]",
-          busy ? "pointer-events-none opacity-60" : "cursor-pointer",
-        )}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-      >
+      </h2>
+
+      <div className="flex items-center gap-4">
         <UserAvatar
           username={username}
           avatarKey={avatarKey}
-          className="h-16 w-16 flex-none rounded-full border border-border bg-surface text-xl text-foreground-secondary"
+          tone
+          className="h-16 w-16 flex-none rounded-full border border-white/10 text-[22px]"
         />
-        <div className="flex flex-col gap-1">
-          <Text className="text-sm font-medium text-foreground-secondary">
-            {zoneCopy}
-          </Text>
+        <div className="flex min-w-0 flex-col gap-[9px]">
+          <div className="flex flex-wrap items-center gap-[9px]">
+            <label
+              className={cn(
+                "inline-flex h-[38px] items-center rounded-[10px] border border-white/[0.12] bg-white/[0.03] px-[13px] text-[13px] text-foreground-secondary transition-colors",
+                busy
+                  ? "pointer-events-none"
+                  : "cursor-pointer hover:border-white/25 hover:text-foreground",
+              )}
+            >
+              {zoneCopy}
+              <input
+                ref={inputRef}
+                type="file"
+                accept="image/*"
+                disabled={busy}
+                aria-label={pickLabel}
+                onChange={(e) => handleFile(e.target.files?.[0] ?? null)}
+                className="sr-only"
+              />
+            </label>
+            {avatarKey && (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                disabled={busy}
+                loading={removeAvatar.isPending}
+                onClick={handleRemove}
+              >
+                {t("avatarRemove")}
+              </Button>
+            )}
+          </div>
           <Text variant="tertiary" className="text-xs">
             {t("avatarHint")}
           </Text>
         </div>
-        <input
-          ref={inputRef}
-          type="file"
-          accept="image/*"
-          disabled={busy}
-          aria-label={pickLabel}
-          onChange={(e) => handleFile(e.target.files?.[0] ?? null)}
-          className="sr-only"
-        />
-      </label>
-      {avatarKey && (
-        <Button
-          type="button"
-          variant="secondary"
-          className="mt-2"
-          disabled={busy}
-          loading={removeAvatar.isPending}
-          onClick={handleRemove}
-        >
-          {t("avatarRemove")}
-        </Button>
-      )}
+      </div>
+
       {error && (
-        <Text variant="danger" className="mt-3 text-sm">
+        <Text variant="danger" className="text-sm">
           {error}
         </Text>
       )}
