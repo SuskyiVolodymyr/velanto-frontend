@@ -35,6 +35,9 @@ export function GuessWhoLabelTable({
     state.players.map((p) => [p.userId, p.username]),
   );
   const mapping = state.endgame?.mapping ?? {};
+  // rank_blind's pick is a whole ordering, which changes both what a cell
+  // holds and how much room it needs.
+  const ranked = state.packFormat === "rank_blind";
 
   return (
     <section
@@ -51,10 +54,16 @@ export function GuessWhoLabelTable({
       </div>
 
       <div className="overflow-x-auto">
+        {/* A ranked cell holds a whole ordering, not one title, so its column
+            gets a readable floor and the wrapper scrolls sideways instead —
+            `minmax(0, …)` lets a column shrink to nothing, which turns every
+            row of a five-item ranking into an ellipsis. */}
         <div
           className="grid min-w-[320px] gap-1.5"
           style={{
-            gridTemplateColumns: `auto repeat(${labels.length}, minmax(0, 1fr))`,
+            gridTemplateColumns: `auto repeat(${labels.length}, minmax(${
+              ranked ? "150px" : "0"
+            }, 1fr))`,
           }}
         >
           <span className="px-1 py-1.5 text-[11px] font-bold tracking-[0.1em] text-foreground-tertiary uppercase">
@@ -89,6 +98,7 @@ export function GuessWhoLabelTable({
               index={round.index}
               labels={labels}
               round={round}
+              ranked={ranked}
             />
           ))}
         </div>
@@ -111,12 +121,16 @@ function FragmentRow({
   index,
   labels,
   round,
+  ranked,
 }: {
   index: number;
   labels: string[];
   round: Extract<RoomState["results"][number], { kind: "reveal" }>;
+  /** rank_blind: a pick is a whole ordering rather than one choice. */
+  ranked: boolean;
 }) {
   const itemsById = new Map(round.items.map((item) => [item.id, item]));
+  const sidesById = new Map((round.sides ?? []).map((side) => [side.id, side]));
   return (
     <>
       <span className="grid place-items-center px-1.5 font-mono text-[11.5px] font-semibold text-foreground-tertiary">
@@ -125,21 +139,111 @@ function FragmentRow({
       {labels.map((label) => {
         const picks = round.picks[label] ?? [];
         const tone = labelTone(labels, label);
+        // A rank_blind round's "pick" is a whole ordering; its FIRST entry is
+        // the one that reads as a choice, and the rest would make the cell
+        // unreadable.
+        const pickedId = picks[0];
+        const side = pickedId ? sidesById.get(pickedId) : undefined;
+
+        // rank_blind: the pick IS an ordering, so the cell is the whole
+        // ranking. Showing only its first entry threw away nearly everything
+        // the round revealed — and this table is precisely what the guessing
+        // screen is read from.
+        if (ranked) {
+          return (
+            <ol
+              key={label}
+              className={cn(
+                "flex flex-col gap-1 rounded-[9px] px-1.5 py-2",
+                tone.cell,
+              )}
+            >
+              {picks.map((id, position) => {
+                const title = itemsById.get(id)?.title ?? id;
+                return (
+                  <li
+                    key={`${id}-${position}`}
+                    className="flex items-center gap-1.5"
+                  >
+                    <span
+                      aria-hidden
+                      className="grid h-[18px] w-[18px] flex-none place-items-center rounded-[6px] bg-white/[0.08] font-mono text-[10px] font-bold tabular-nums text-foreground-tertiary"
+                    >
+                      {position + 1}
+                    </span>
+                    {/* A block, not a flex child: text as a direct flex item
+                        will not shrink, so a long title would spill over the
+                        column instead of ellipsising. */}
+                    <span
+                      title={title}
+                      className="min-w-0 flex-1 truncate text-start text-[11.5px] font-semibold text-foreground-secondary"
+                    >
+                      {title}
+                    </span>
+                  </li>
+                );
+              })}
+            </ol>
+          );
+        }
+
+        // nxn: the pick named a POOL. Its name is the choice, and the items it
+        // drew are what that choice actually meant on the board — a pool name
+        // on its own tells you nothing about what was in front of the player.
+        if (side) {
+          const titles = side.itemIds
+            .map((id) => itemsById.get(id)?.title)
+            .filter((title): title is string => Boolean(title));
+          return (
+            <span
+              key={label}
+              className={cn(
+                "flex flex-col gap-1 rounded-[9px] px-2 py-[9px] text-center",
+                tone.cell,
+              )}
+            >
+              <span
+                title={side.name}
+                className="truncate text-[12.5px] font-bold text-foreground"
+              >
+                {side.name}
+              </span>
+              {titles.map((title, i) => (
+                <span
+                  key={`${side.id}-${i}`}
+                  title={title}
+                  className="truncate text-[11.5px] font-medium text-foreground-tertiary"
+                >
+                  {title}
+                </span>
+              ))}
+            </span>
+          );
+        }
+
+        const title = pickedId
+          ? (itemsById.get(pickedId)?.title ?? pickedId)
+          : "";
         return (
+          // A plain block, not a flex row: `truncate` hides overflow on the
+          // CONTAINER, and text inside a flex container is a flex item that
+          // will not shrink — so a long title spilled out of both sides of its
+          // column and over its neighbours instead of ellipsising. The full
+          // name stays reachable on hover, since truncation eats the end of it
+          // and a column IS what you are reading.
+          //
+          // The nxn branch above CAN use flex, because there every line is its
+          // own block-level child with its own `truncate` — the thing that
+          // fails is text as a direct flex item.
           <span
             key={label}
+            title={title || undefined}
             className={cn(
-              "flex items-center justify-center truncate rounded-[9px] px-2 py-[9px] text-[12.5px] font-semibold text-foreground-secondary",
+              "truncate rounded-[9px] px-2 py-[9px] text-center text-[12.5px] font-semibold text-foreground-secondary",
               tone.cell,
             )}
           >
-            {/* A rank_blind round's "pick" is a whole ordering; its FIRST
-                entry is the one that reads as a choice, and the rest would
-                make the cell unreadable. */}
-            {picks
-              .slice(0, 1)
-              .map((id) => itemsById.get(id)?.title ?? id)
-              .join("") || "—"}
+            {title || "—"}
           </span>
         );
       })}

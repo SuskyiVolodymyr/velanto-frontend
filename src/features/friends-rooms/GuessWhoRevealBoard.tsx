@@ -1,11 +1,15 @@
 "use client";
 
+import { Fragment } from "react";
 import { useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { labelTone } from "./guess-who-labels";
 import { RoundItemTile } from "./RoundItemTile";
+import { RevealSideRow } from "./RevealSideRow";
+import { RevealRankingTable } from "./RevealRankingTable";
+import { VsDivider } from "./VsDivider";
 import type { RevealRoundResult, RoomState } from "./room-types";
 
 interface GuessWhoRevealBoardProps {
@@ -15,11 +19,14 @@ interface GuessWhoRevealBoardProps {
 }
 
 /**
- * Guess-who's between-round beat (design brief §4.3(d)/§3.5): a chronology
- * table — rows are rounds, columns are the stable anonymous labels — so the
- * whole game's trajectory is reviewable at a glance. Every cell resolves the
- * label's raw item id back to its title via that round's own `items`, since
- * `picks` only ever carries ids.
+ * Guess-who's reveal (design brief §4.3(d)): the round you were just looking at,
+ * with each anonymous label's pick landed on the card it took.
+ *
+ * Deliberately NOT a screen of its own. It used to render a chronology table of
+ * every round so far, which pulled the room off the board mid-game to read a
+ * spreadsheet — and the results screen already carries that history
+ * (GuessWhoLabelTable), where reviewing it is the actual task. Here the job is
+ * one beat: see who took what, and move on.
  */
 export function GuessWhoRevealBoard({
   state,
@@ -37,7 +44,10 @@ export function GuessWhoRevealBoard({
   // The round that just closed — the last reveal, which is the one whose cards
   // are still fresh in everyone's head.
   const closed = reveals.length > 0 ? reveals[reveals.length - 1] : null;
-  const labelsByItem = new Map<string, { label: string; className: string }[]>();
+  const labelsByItem = new Map<
+    string,
+    { label: string; className: string }[]
+  >();
   for (const [label, ids] of Object.entries(closed?.picks ?? {})) {
     // A rank_blind round's "pick" is a whole ordering; only its FIRST entry
     // reads as a choice, exactly as the label table treats it.
@@ -49,9 +59,18 @@ export function GuessWhoRevealBoard({
     ]);
   }
 
+  const itemsById = new Map(
+    (closed?.items ?? []).map((item) => [item.id, item]),
+  );
+
   const me = state.players.find((p) => p.userId === currentUserId) ?? null;
+  const myLabel = me?.label ?? null;
   const ready = state.players.filter((p) => p.next).length;
   const total = state.players.length;
+
+  // A rank_blind pick is a whole ordering rather than a choice, so this round
+  // has no card to mark — it has N orderings to compare.
+  const isRanked = state.packFormat === "rank_blind";
 
   return (
     <div className="flex flex-col gap-6">
@@ -69,7 +88,51 @@ export function GuessWhoRevealBoard({
           this is the round still fresh in everyone's head, with the media they
           picked from. Only reachable once every player is locked in, so
           revealing here cannot help anyone copy. */}
-      {closed && (
+      {closed && isRanked ? (
+        // rank_blind: a pick is a whole ORDERING, so there is no card to mark
+        // — one table per label, laid side by side. Comparing them IS the
+        // deduction this mode is for.
+        <div className="grid gap-3 [grid-template-columns:repeat(auto-fit,minmax(200px,1fr))]">
+          {labels.map((label) => {
+            const ranked = (closed.picks[label] ?? [])
+              .map((id) => itemsById.get(id))
+              .filter((item): item is NonNullable<typeof item> =>
+                Boolean(item),
+              );
+            if (ranked.length === 0) return null;
+            return (
+              <RevealRankingTable
+                key={label}
+                label={label}
+                className={labelTone(labels, label).chip}
+                items={ranked}
+                mine={label === myLabel}
+              />
+            );
+          })}
+        </div>
+      ) : closed && state.round?.sides ? (
+        // nxn: a pick names a SIDE, so the chips are keyed by side id and never
+        // matched an item — the reveal showed every video and not one pick.
+        // Two stacked rows with a VS between, exactly as a solo nxn round
+        // reads, each row carrying the labels that took that side.
+        <div className="flex flex-col gap-[14px]">
+          {state.round.sides.map((side, index) => (
+            <Fragment key={side.id}>
+              {index > 0 && <VsDivider />}
+              <RevealSideRow
+                side={side}
+                items={side.itemIds
+                  .map((id) => itemsById.get(id))
+                  .filter((item): item is NonNullable<typeof item> =>
+                    Boolean(item),
+                  )}
+                pickLabels={labelsByItem.get(side.id)}
+              />
+            </Fragment>
+          ))}
+        </div>
+      ) : closed ? (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {closed.items.map((item) => (
             <RoundItemTile
@@ -80,56 +143,7 @@ export function GuessWhoRevealBoard({
             />
           ))}
         </div>
-      )}
-
-      <div className="overflow-x-auto rounded-card border border-border">
-        <table className="w-full min-w-[420px] border-collapse text-sm">
-          <thead>
-            <tr className="border-b border-border bg-surface">
-              <th className="p-3 text-start font-semibold text-foreground-secondary">
-                {t("guessWho.roundColumn")}
-              </th>
-              {labels.map((label) => (
-                <th
-                  key={label}
-                  className="p-3 text-start font-semibold text-foreground-secondary"
-                >
-                  {label}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {reveals.map((round) => {
-              const itemsById = new Map(
-                round.items.map((item) => [item.id, item]),
-              );
-              return (
-                <tr
-                  key={round.index}
-                  className="border-b border-border last:border-0"
-                >
-                  <td className="p-3 font-medium text-foreground-tertiary">
-                    {round.name ||
-                      t("results.roundLabel", { index: round.index + 1 })}
-                  </td>
-                  {labels.map((label) => {
-                    const ids = round.picks[label] ?? [];
-                    const titles = ids
-                      .map((id) => itemsById.get(id)?.title ?? id)
-                      .join(", ");
-                    return (
-                      <td key={label} className="p-3">
-                        {titles || "—"}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      ) : null}
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <Text variant="secondary" aria-live="polite" className="text-sm">

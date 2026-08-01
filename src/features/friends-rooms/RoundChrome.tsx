@@ -6,6 +6,7 @@ import { Check, Crown, Info } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
 import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { cn } from "@/src/shared/lib/cn";
+import { labelTone } from "./guess-who-labels";
 import { MODE_STEP_KEYS } from "./room-mode-copy";
 import type { RoomPlayerState, RoomState } from "./room-types";
 
@@ -43,6 +44,9 @@ interface RoundChromeProps {
   /** A mode-specific panel under Room (live tally, cut log). */
   asidePanel?: ReactNode;
   status: (player: RoomPlayerState) => RoundPlayerStatus;
+  /** Marks the viewer's own row — the only place guess-who's masked roster
+   * says which label is yours. */
+  currentUserId: string | null;
 }
 
 /**
@@ -63,6 +67,7 @@ export function RoundChrome({
   children,
   asidePanel,
   status,
+  currentUserId,
 }: RoundChromeProps) {
   const t = useTranslations("room");
   const round = state.round;
@@ -134,7 +139,13 @@ export function RoundChrome({
         </div>
       </section>
 
-      <div className="grid items-start gap-[18px] min-[1080px]:grid-cols-[minmax(0,1.45fr)_minmax(0,1fr)]">
+      {/* The aside is CAPPED rather than proportional. As `1fr` against the
+          board's `1.45fr` it kept growing with the viewport, so on a wide
+          screen a list of three names and a one-line note took ~40% of the
+          page while the videos — the thing being decided — were squeezed into
+          what was left. It holds a roster and a hint; past ~320px it is only
+          padding, and every pixel it gives back goes to the board. */}
+      <div className="grid items-start gap-[18px] min-[1080px]:grid-cols-[minmax(0,1fr)_minmax(0,320px)]">
         <section className="flex flex-col gap-3.5 max-[1079px]:order-2">
           <div
             className={cn(
@@ -186,6 +197,14 @@ export function RoundChrome({
             <ul className="flex flex-col gap-2">
               {state.players.map((player) => {
                 const s = status(player);
+                // Guess-who plays under anonymous labels, so the row keeps its
+                // whole shape — status, tick, tint — and only the two things
+                // that name a person are swapped for the letter. Your own row
+                // is marked: you can read your label off your own picks at the
+                // reveal anyway, so hiding it costs you the ability to follow
+                // your own column and buys nothing.
+                const label = player.label;
+                const isMe = player.userId === currentUserId;
                 return (
                   <li
                     key={player.userId}
@@ -199,14 +218,25 @@ export function RoundChrome({
                     )}
                   >
                     <span className="relative flex-none">
-                      <UserAvatar
-                        username={player.username}
-                        avatarKey={player.avatarKey}
-                        className={cn(
-                          "h-[34px] w-[34px] rounded-full bg-surface-raised text-xs font-bold text-foreground",
-                          s.priority && "ring-2 ring-score",
-                        )}
-                      />
+                      {label ? (
+                        <span
+                          className={cn(
+                            "grid h-[34px] w-[34px] place-items-center rounded-full text-[13px] font-extrabold",
+                            labelTone(state.labels ?? [label], label).chip,
+                          )}
+                        >
+                          {label}
+                        </span>
+                      ) : (
+                        <UserAvatar
+                          username={player.username}
+                          avatarKey={player.avatarKey}
+                          className={cn(
+                            "h-[34px] w-[34px] rounded-full bg-surface-raised text-xs font-bold text-foreground",
+                            s.priority && "ring-2 ring-score",
+                          )}
+                        />
+                      )}
                       {/* Named, not decorative: the crown is the only thing
                           saying who a tie favours, and "why is that one gold?"
                           is not a question the board should leave open. */}
@@ -226,8 +256,15 @@ export function RoundChrome({
                       )}
                     </span>
                     <span className="flex min-w-0 flex-col gap-0.5">
-                      <span className="truncate text-[13px] font-semibold text-foreground">
-                        {player.username}
+                      <span className="flex items-center gap-1.5">
+                        <span className="truncate text-[13px] font-semibold text-foreground">
+                          {label ?? player.username}
+                        </span>
+                        {label && isMe && (
+                          <span className="flex-none rounded-chip bg-white/[0.08] px-1.5 py-px text-[10px] font-bold tracking-[0.04em] text-foreground-secondary uppercase">
+                            {t("lobby.you")}
+                          </span>
+                        )}
                       </span>
                       <span
                         className={cn(

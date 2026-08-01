@@ -1,12 +1,15 @@
 "use client";
 
-import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Check, Crown, X } from "lucide-react";
+import { BackButton } from "@/src/shared/components/BackButton";
 import { Text } from "@/src/shared/components/Text";
 import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { cn } from "@/src/shared/lib/cn";
 import { GuessWhoLabelTable } from "./GuessWhoLabelTable";
+import { friendsRoomsClient } from "./friends-rooms-client";
 import type { RoomState } from "./room-types";
 
 /**
@@ -21,6 +24,22 @@ import type { RoomState } from "./room-types";
  */
 export function IdentityRevealScreen({ state }: { state: RoomState }) {
   const t = useTranslations("room");
+  const router = useRouter();
+  const [opening, setOpening] = useState(false);
+
+  async function playAgain() {
+    if (opening) return;
+    setOpening(true);
+    try {
+      const room = await friendsRoomsClient.create(state.packId);
+      // Left busy on purpose: we are navigating away, and flashing back to
+      // idle before the route changes reads as a click that did nothing.
+      router.push(`/rooms/${room.id}`);
+    } catch {
+      router.push(`/packs/${state.packId}`);
+    }
+  }
+
   const mapping = state.endgame?.mapping ?? {};
   const scores = state.endgame?.scores;
   const myGuess = state.myGuess ?? {};
@@ -44,6 +63,16 @@ export function IdentityRevealScreen({ state }: { state: RoomState }) {
 
   return (
     <div className="flex flex-col gap-[18px]">
+      {/* Like RoomResults, this is a terminal state that does NOT leave on its
+          own, and RoomScreen renders no room header over it — so without this
+          the page's only exit was the pair down in the aside. A real link, so
+          middle-click and open-in-new-tab work. */}
+      <BackButton
+        href={`/packs/${state.packId}`}
+        label={t("results.backToPack")}
+        className="self-start"
+      />
+
       {soleWinner && (
         <section className="flex flex-wrap items-center gap-[18px] rounded-[20px] border border-score/35 bg-[linear-gradient(135deg,rgba(255,194,75,.16),rgba(255,194,75,.03))] p-[22px]">
           <span className="relative flex-none">
@@ -231,22 +260,25 @@ export function IdentityRevealScreen({ state }: { state: RoomState }) {
                   );
                 })}
               </ol>
-              <div className="grid grid-cols-2 gap-[9px] pt-1">
-                <Link
-                  href={`/packs/${state.packId}/play`}
-                  className="grid h-11 place-items-center rounded-control bg-acc text-[13.5px] font-bold text-background transition-colors hover:bg-acc-hover"
-                >
-                  {t("results.playAgain")}
-                </Link>
-                <Link
-                  href={`/packs/${state.packId}`}
-                  className="grid h-11 place-items-center rounded-control border border-border-strong text-[13.5px] font-semibold text-foreground transition-colors hover:bg-white/[0.06]"
-                >
-                  {t("results.backToPack")}
-                </Link>
-              </div>
             </section>
           )}
+
+          {/* OUTSIDE the leaderboard, which only renders when somebody scored:
+              `scores` is keyed on players who submitted a guess, so a game whose
+              deadline passed with nobody guessing rendered no leaderboard — and
+              took the only way off this screen down with it. Where you go next
+              cannot depend on how the game went.
+
+              Play again ALONE: "Back to pack" is the header link above, and the
+              same destination twice on one screen is a choice that isn't one. */}
+          <button
+            type="button"
+            disabled={opening}
+            onClick={() => void playAgain()}
+            className="grid h-11 place-items-center rounded-control bg-acc text-[13.5px] font-bold text-background transition-colors hover:bg-acc-hover disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {t("results.playAgain")}
+          </button>
         </aside>
       </div>
     </div>

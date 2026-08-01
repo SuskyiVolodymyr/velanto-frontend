@@ -32,13 +32,18 @@ export interface RoundItemTileProps {
   /** Who is publicly attached to this item — voters, or the player who cut it. */
   people?: RoomPlayerState[];
   /**
-   * Guess-who's anonymous labels that picked this item, once the round has
-   * revealed — one lettered chip each, in the same corner {@link people} would
-   * use. Labels, not names and not a count: a single round attributes nothing
-   * (two people often pick the same option), and it is a label's trajectory
-   * ACROSS rounds that the mode asks you to read.
+   * Guess-who's anonymous labels that have picked this item — one lettered
+   * chip each, under the title. Labels, not names and not a count: a single
+   * round attributes nothing (two people often pick the same option), and it is
+   * a label's trajectory ACROSS rounds that the mode asks you to read.
    */
   pickLabels?: { label: string; className: string }[];
+  /**
+   * Who chose this, NAMED — the between-round view, where the round is over and
+   * there is nothing left to protect. Distinct from {@link people}, which is
+   * the live corner stack of avatars with no names attached.
+   */
+  voters?: RoomPlayerState[];
 }
 
 /**
@@ -61,6 +66,7 @@ export function RoundItemTile({
   tally,
   people,
   pickLabels,
+  voters,
 }: RoundItemTileProps) {
   const t = useTranslations("room");
   const videoId = item.type === "youtube" ? extractYouTubeId(item.value) : null;
@@ -100,6 +106,46 @@ export function RoundItemTile({
       >
         {item.title}
       </span>
+      {/* Under the title, not over the media: on a video tile the corner
+          overlay sat on the thumbnail — competing with the play button and
+          unreadable against a bright frame. */}
+      {pickLabels && pickLabels.length > 0 && (
+        <span
+          aria-label={t("guessWho.pickedByLabels", {
+            labels: pickLabels.map((p) => p.label).join(", "),
+          })}
+          className="flex flex-wrap gap-1"
+        >
+          {pickLabels.map((pick) => (
+            <span
+              key={pick.label}
+              className={cn(
+                "grid h-[22px] min-w-[22px] place-items-center rounded-full px-1.5 text-[10.5px] font-extrabold",
+                pick.className,
+              )}
+            >
+              {pick.label}
+            </span>
+          ))}
+        </span>
+      )}
+      {voters && voters.length > 0 && (
+        <span className="flex flex-wrap gap-1.5">
+          {voters.map((voter) => (
+            <span
+              key={voter.userId}
+              className="flex items-center gap-1.5 rounded-full border border-border bg-white/[0.04] py-0.5 pe-2 ps-0.5 text-[11.5px] font-semibold text-foreground-secondary"
+            >
+              <UserAvatar
+                username={voter.username}
+                avatarKey={voter.avatarKey}
+                className="h-[18px] w-[18px] flex-none rounded-full bg-surface-raised text-[8px] font-bold text-foreground"
+              />
+              {voter.username}
+            </span>
+          ))}
+        </span>
+      )}
       {tally && (
         <span className="flex items-center gap-2">
           <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/[0.07]">
@@ -138,26 +184,6 @@ export function RoundItemTile({
           {badge.label}
         </span>
       )}
-      {pickLabels && pickLabels.length > 0 && (
-        <span
-          aria-label={t("guessWho.pickedByLabels", {
-            labels: pickLabels.map((p) => p.label).join(", "),
-          })}
-          className="absolute top-[9px] right-[9px] z-10 flex gap-1"
-        >
-          {pickLabels.map((pick) => (
-            <span
-              key={pick.label}
-              className={cn(
-                "grid h-6 min-w-6 place-items-center rounded-full border-2 border-surface-card px-1 text-[10px] font-extrabold",
-                pick.className,
-              )}
-            >
-              {pick.label}
-            </span>
-          ))}
-        </span>
-      )}
       {people && people.length > 0 && (
         <span className="absolute top-[9px] right-[9px] z-10 flex">
           {people.map((person) => (
@@ -194,7 +220,11 @@ export function RoundItemTile({
           onClick={onPick}
           aria-pressed={mine}
           aria-label={actionLabel}
-          className="w-full text-start"
+          // Grows with the tile: a row stretches every card to the tallest, so
+          // a short title — or one card without the pick chips its neighbours
+          // have — leaves a strip under the body that looks clickable and,
+          // without this, isn't.
+          className="w-full flex-1 text-start"
         >
           {body}
         </button>

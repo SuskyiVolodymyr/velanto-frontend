@@ -83,6 +83,7 @@ function player(
     ready: overrides.ready ?? false,
     next: overrides.next ?? false,
     claimedItemId: overrides.claimedItemId ?? null,
+    label: overrides.label ?? null,
   };
 }
 
@@ -108,6 +109,7 @@ function snapshot(players: RoomPlayerState[], hostId = "host"): RoomState {
     players,
     round: null,
     results: [],
+    labels: null,
     guessing: null,
     endgame: null,
     myGuess: null,
@@ -191,6 +193,32 @@ describe("useFriendsRoom round events", () => {
     expect(result.current.state?.totalRounds).toBe(16);
     expect(result.current.state?.round?.name).toBe("Semifinals");
     expect(result.current.state?.phase).toBe("round");
+  });
+
+  // Guess-who's labels are assigned at game START, so a client that connected
+  // in the lobby has none in its snapshot. They ride round.started for exactly
+  // the reason totalRounds does — without folding them in, the room panel, which
+  // shows the labels instead of anyone's name for this mode, has nothing to draw
+  // and falls back to naming everyone: the one thing the mode must not do.
+  it("takes guess-who's anonymous labels from round.started", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", {
+      ...snapshot([player("host")]),
+      mode: "guess_who",
+    });
+    expect(result.current.state?.labels).toBeNull();
+
+    serverEmit("round.started", {
+      index: 0,
+      name: "Round 1",
+      items: [item("a"), item("b")],
+      totalRounds: 5,
+      labels: ["P1", "P2", "P3"],
+      optionIds: ["a", "b"],
+      actionKind: "pick",
+    });
+
+    expect(result.current.state?.labels).toEqual(["P1", "P2", "P3"]);
   });
 
   it("round.started keeps every mode-specific field, not just Claim's", async () => {
@@ -455,6 +483,63 @@ describe("useFriendsRoom mode lifecycle + guess-who endgame", () => {
     expect(result.current.state?.myGuess).toEqual({ P1: "u2", P2: "u1" });
   });
 
+  // finishGuessing hands each player their own guess, then finish() broadcasts
+  // the final snapshot — and a room-wide snapshot ALWAYS carries myGuess: null
+  // (it has no single viewer). Replacing state wholesale therefore wiped the
+  // guess microseconds after it arrived, and every player reached the results
+  // screen with an empty one, every label marked wrong.
+  it("keeps the viewer's own guess when the room-wide snapshot lands after it", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", {
+      ...snapshot([player("host")]),
+      mode: "guess_who",
+      phase: "guessing",
+    });
+
+    serverEmit("identity.revealed", {
+      mapping: { P1: "host" },
+      yourGuess: { P1: "host" },
+    });
+    expect(result.current.state?.myGuess).toEqual({ P1: "host" });
+
+    serverEmit("room.state", {
+      ...snapshot([player("host")]),
+      mode: "guess_who",
+      phase: "finished",
+      endgame: { kind: "identity", mapping: { P1: "host" }, scores: {} },
+      myGuess: null,
+    });
+
+    expect(result.current.state?.myGuess).toEqual({ P1: "host" });
+  });
+
+  // finish() broadcasts `game.finished`, not `room.state` — the SAME wipe, one
+  // event over. This is the one that actually reached the reveal screen: every
+  // label read "You said nobody" while the leaderboard, computed server-side
+  // from the real guesses, showed everyone scoring.
+  it("keeps the viewer's own guess when game.finished lands after the reveal", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", {
+      ...snapshot([player("host")]),
+      mode: "guess_who",
+      phase: "guessing",
+    });
+    serverEmit("identity.revealed", {
+      mapping: { P1: "host" },
+      yourGuess: { P1: "host" },
+    });
+
+    serverEmit("game.finished", {
+      ...snapshot([player("host")]),
+      mode: "guess_who",
+      phase: "finished",
+      endgame: { kind: "identity", mapping: { P1: "host" }, scores: {} },
+      myGuess: null,
+    });
+
+    expect(result.current.state?.myGuess).toEqual({ P1: "host" });
+  });
+
   it("guess emits the guess command with the submitted mapping", async () => {
     const { result } = await connected();
     act(() => result.current.guess({ P1: "u2", P2: "u1" }));
@@ -588,7 +673,7 @@ describe("useFriendsRoom per-mode round actions", () => {
         claims: {},
         survivorItemId: null,
         relayOrder: ["a", "b"],
-        relayPlaced: [],
+        relayPlaced: [null, null],
         relayCurrentItemId: "a",
         relayPlacements: [],
       },
@@ -599,7 +684,7 @@ describe("useFriendsRoom per-mode round actions", () => {
       position: 0,
       turnUserId: "u2",
     });
-    expect(result.current.state?.round?.relayPlaced).toEqual(["a"]);
+    expect(result.current.state?.round?.relayPlaced).toEqual(["a", null]);
     expect(result.current.state?.round?.relayPlacements).toEqual([
       { userId: "u1", itemId: "a" },
     ]);
@@ -607,12 +692,11 @@ describe("useFriendsRoom per-mode round actions", () => {
     expect(result.current.state?.round?.turnUserId).toBe("u2");
   });
 
-  it("item.placed INSERTS at the reported position rather than appending", async () => {
-    // The test above places into an empty list, where append and insert-at-0
-    // are indistinguishable — which is why it passed while the handler
-    // ignored `position` entirely. Insert-at-a-gap IS Relay's mechanic, and
-    // getting it wrong diverges every client's shared ranking from the
-    // server's for the rest of the round.
+  it("item.placed FILLS the reported slot rather than inserting", async () => {
+    // The board is a fixed set of slots, so a placement writes into one. While
+    // this handler still spliced, the board GREW by a row on every placement —
+    // six slots became nine — and every client diverged from the server for
+    // the rest of the round.
     const { result } = await connected();
     serverEmit("room.state", {
       ...snapshot([player("host")]),
@@ -625,12 +709,12 @@ describe("useFriendsRoom per-mode round actions", () => {
         claims: {},
         survivorItemId: null,
         relayOrder: ["a", "b", "c"],
-        relayPlaced: ["a", "b"],
+        relayPlaced: ["a", null, "b"],
         relayCurrentItemId: "c",
         relayPlacements: [],
       },
     });
-    // Position 1 == the gap between "a" and "b", not the end.
+    // Slot 1 is the free one between "a" and "b".
     serverEmit("item.placed", {
       userId: "u1",
       itemId: "c",
@@ -638,10 +722,12 @@ describe("useFriendsRoom per-mode round actions", () => {
       turnUserId: null,
     });
     expect(result.current.state?.round?.relayPlaced).toEqual(["a", "c", "b"]);
+    // ...and the board is the same LENGTH it started at.
+    expect(result.current.state?.round?.relayPlaced).toHaveLength(3);
     expect(result.current.state?.round?.relayCurrentItemId).toBeNull();
   });
 
-  it("item.placed at position 0 goes to the FRONT of a non-empty ranking", async () => {
+  it("item.placed can claim a slot far from everything placed so far", async () => {
     const { result } = await connected();
     serverEmit("room.state", {
       ...snapshot([player("host")]),
@@ -654,7 +740,7 @@ describe("useFriendsRoom per-mode round actions", () => {
         claims: {},
         survivorItemId: null,
         relayOrder: ["a", "b"],
-        relayPlaced: ["a"],
+        relayPlaced: [null, null, "a"],
         relayCurrentItemId: "b",
         relayPlacements: [],
       },
@@ -665,7 +751,7 @@ describe("useFriendsRoom per-mode round actions", () => {
       position: 0,
       turnUserId: null,
     });
-    expect(result.current.state?.round?.relayPlaced).toEqual(["b", "a"]);
+    expect(result.current.state?.round?.relayPlaced).toEqual(["b", null, "a"]);
   });
 
   it("cutRejected/pickRejected/voteRejected/rankingRejected/placeRejected all store the actor's lastRejection without crashing on other modes' state", async () => {

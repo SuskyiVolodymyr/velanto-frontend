@@ -1,8 +1,18 @@
 import { screen, within } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { IdentityRevealScreen } from "./IdentityRevealScreen";
 import { baseRoomState } from "./test-fixtures";
+import { friendsRoomsClient } from "./friends-rooms-client";
+
+const push = vi.fn();
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
+vi.mock("./friends-rooms-client", () => ({
+  friendsRoomsClient: { create: vi.fn() },
+}));
+
+beforeEach(() => vi.clearAllMocks());
 
 function revealState(overrides: Record<string, unknown> = {}) {
   return baseRoomState({
@@ -84,5 +94,114 @@ describe("IdentityRevealScreen", () => {
       screen.queryByRole("region", { name: "Leaderboard" }),
     ).not.toBeInTheDocument();
     expect(screen.queryByText("Winner")).not.toBeInTheDocument();
+  });
+
+  // "Play again" pointed at /packs/:id/play — the SOLO route. You finished a
+  // game with three people and were dropped into a single-player run of the
+  // same pack. It opens a new room over the same pack instead, which is what
+  // playing again means from here.
+  it("opens a new room rather than a solo game", async () => {
+    vi.mocked(friendsRoomsClient.create).mockResolvedValue({
+      id: "room-2",
+    } as never);
+    // The leaderboard — which carries these controls — needs scores.
+    render(
+      <IdentityRevealScreen
+        state={revealState({
+          endgame: {
+            kind: "identity_reveal",
+            mapping: { P1: "u1", P2: "u2" },
+            scores: { u1: 1, u2: 2 },
+          },
+        })}
+      />,
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: /play again/i }));
+
+    expect(friendsRoomsClient.create).toHaveBeenCalledWith("pack-1");
+    expect(push).toHaveBeenCalledWith("/rooms/room-2");
+  });
+
+  // A room can fail to open — you may already be in one, or the pack may have
+  // been pulled. Falling back to the pack page beats stranding the player on a
+  // dead button.
+  it("falls back to the pack when the room cannot be opened", async () => {
+    vi.mocked(friendsRoomsClient.create).mockRejectedValue(new Error("nope"));
+    render(
+      <IdentityRevealScreen
+        state={revealState({
+          endgame: {
+            kind: "identity_reveal",
+            mapping: { P1: "u1", P2: "u2" },
+            scores: { u1: 1, u2: 2 },
+          },
+        })}
+      />,
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: /play again/i }));
+
+    expect(push).toHaveBeenCalledWith("/packs/pack-1");
+  });
+
+  // The way out lived INSIDE the leaderboard block, and the leaderboard only
+  // renders when somebody scored. `scores` is keyed on players who SUBMITTED a
+  // guess, so a game whose deadline fired with nobody guessing produced an
+  // empty board — and a results screen with no way off it. This screen is also
+  // the one terminal state that renders no room header, so there was nothing
+  // else on the page to leave by.
+  describe("the way out", () => {
+    it("offers a way back even when nobody scored", () => {
+      render(
+        <IdentityRevealScreen
+          state={revealState({
+            endgame: {
+              kind: "identity_reveal",
+              mapping: { P1: "u1", P2: "u2" },
+              scores: {},
+            },
+          })}
+        />,
+      );
+
+      expect(
+        screen.getByRole("link", { name: /back to pack/i }),
+      ).toHaveAttribute("href", "/packs/pack-1");
+      expect(
+        screen.getByRole("button", { name: /play again/i }),
+      ).toBeInTheDocument();
+    });
+
+    it("still offers it when the leaderboard is there", () => {
+      render(
+        <IdentityRevealScreen
+          state={revealState({
+            endgame: {
+              kind: "identity_reveal",
+              mapping: { P1: "u1", P2: "u2" },
+              scores: { u1: 1, u2: 2 },
+            },
+          })}
+        />,
+      );
+
+      expect(
+        screen.getByRole("link", { name: /back to pack/i }),
+      ).toHaveAttribute("href", "/packs/pack-1");
+      expect(
+        screen.getByRole("button", { name: /play again/i }),
+      ).toBeInTheDocument();
+    });
+
+    // The same destination offered twice on one screen is a choice that isn't
+    // one — the aside kept a duplicate of the header's link.
+    it("offers the pack link exactly once", () => {
+      render(<IdentityRevealScreen state={revealState()} />);
+
+      expect(
+        screen.getAllByRole("link", { name: /back to pack/i }),
+      ).toHaveLength(1);
+    });
   });
 });

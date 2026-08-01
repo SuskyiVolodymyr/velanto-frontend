@@ -57,6 +57,35 @@ describe("roundResultFromResolved", () => {
     ).toMatchObject({ kind: "reveal", picks: { A: ["a"], B: ["b"] } });
   });
 
+  // On an nxn round a pick names a POOL, so the reveal has to carry what those
+  // pools ARE or nothing downstream can name a choice. The event doesn't ship
+  // them and doesn't need to: the client already holds the board — the same
+  // reason `name` and `items` come from the round rather than the payload.
+  // Without this the live guessing-phase table printed raw group ids all game,
+  // while the results screen (rebuilt server-side from the pack) read fine.
+  it("carries the round's nxn sides onto a reveal result", () => {
+    const sides = [
+      { id: "ca", name: "Side A", itemIds: ["a"] },
+      { id: "cb", name: "Side B", itemIds: ["b"] },
+    ];
+    expect(
+      roundResultFromResolved(
+        "guess_who",
+        { ...ROUND, sides },
+        { index: 2, autoNextAt: null, picks: { A: ["ca"], B: ["cb"] } },
+      ),
+    ).toMatchObject({ kind: "reveal", sides });
+  });
+
+  it("leaves sides off a reveal for a format that has none", () => {
+    const result = roundResultFromResolved("guess_who", ROUND, {
+      index: 2,
+      autoNextAt: null,
+      picks: { A: ["a"] },
+    });
+    expect(result && "sides" in result && result.sides).toBeFalsy();
+  });
+
   it("voting -> a vote result with its tally and tie-break fields", () => {
     expect(
       roundResultFromResolved("voting", ROUND, {

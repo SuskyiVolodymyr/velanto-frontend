@@ -156,7 +156,17 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
       // any stale `kicked` flag (this hook instance can be reused across a
       // roomId change without remounting).
       socket.on(ROOM_EVENTS.state, (next: RoomState) => {
-        setState(next);
+        // Wholesale replace — EXCEPT the viewer's own guess. A room-wide
+        // snapshot always carries `myGuess: null` (it has no single viewer),
+        // and finishGuessing hands each player their guess and THEN calls
+        // finish(), whose broadcast landed microseconds later and wiped it: the
+        // results screen opened with an empty guess and every label marked
+        // wrong, for everyone. Only ever restores — a snapshot that carries a
+        // guess (the per-caller HTTP read) still wins.
+        setState((prev) => ({
+          ...next,
+          myGuess: next.myGuess ?? prev?.myGuess ?? null,
+        }));
         setLastRejection(null);
         setLastModeRejection(null);
         setKicked(false);
@@ -284,10 +294,15 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
         ROOM_EVENTS.roundStarted,
         ({
           totalRounds,
+          labels,
           ...started
         }: Pick<RoundState, "index" | "name" | "items"> &
           Partial<RoundState> & {
             totalRounds: number;
+            // Guess-who's anonymous labels, for the same reason: they are
+            // assigned at game START, so a lobby snapshot has none, and the
+            // room panel shows them instead of anyone's name all game.
+            labels?: string[] | null;
           }) => {
           // Last round's rejection ("not your turn", "this round has ended")
           // is spent the moment a new round starts; leaving it set would
@@ -300,6 +315,9 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
                   phase: "round",
                   roundIndex: started.index,
                   totalRounds,
+                  // Fixed for the game, so keep what we have if a later round
+                  // ever omits them.
+                  labels: labels ?? s.labels,
                   // The previous round's deadline is spent the moment this one
                   // starts; leaving it set would keep a countdown on screen.
                   autoNextAt: null,
@@ -412,8 +430,16 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
         patchPlayer(setState, userId, { next: true }),
       );
 
+      // Same wholesale-replace caveat as `room.state` above, and the same
+      // reason: this broadcast is room-wide, so it carries `myGuess: null`, and
+      // it lands right after the per-player reveal that just delivered it. Left
+      // alone it wiped the guess and the reveal screen read "You said nobody"
+      // on every label while the leaderboard scored everyone correctly.
       socket.on(ROOM_EVENTS.gameFinished, (final: RoomState) =>
-        setState(final),
+        setState((prev) => ({
+          ...final,
+          myGuess: final.myGuess ?? prev?.myGuess ?? null,
+        })),
       );
       socket.on(ROOM_EVENTS.roomClosed, () => setConnection("closed"));
 
@@ -450,20 +476,37 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
         noteModeRejection({ ...rejection, kind: "cut" }),
       );
 
-      socket.on(ROOM_EVENTS.pickLocked, ({ userId }: { userId: string }) =>
-        setState((s) =>
-          s && s.round
-            ? {
-                ...s,
-                round: {
-                  ...s.round,
-                  lockedIn: s.round.lockedIn?.includes(userId)
-                    ? s.round.lockedIn
-                    : [...(s.round.lockedIn ?? []), userId],
-                },
-              }
-            : s,
-        ),
+      // The pick rides this event under the actor's LABEL, so the board can
+      // mark the card the moment someone locks in rather than only when the
+      // round closes. `label` is absent outside guess-who.
+      socket.on(
+        ROOM_EVENTS.pickLocked,
+        ({
+          userId,
+          label,
+          selection,
+        }: {
+          userId: string;
+          label?: string | null;
+          selection?: string[];
+        }) =>
+          setState((s) =>
+            s && s.round
+              ? {
+                  ...s,
+                  round: {
+                    ...s.round,
+                    lockedIn: s.round.lockedIn?.includes(userId)
+                      ? s.round.lockedIn
+                      : [...(s.round.lockedIn ?? []), userId],
+                    picks:
+                      label && selection
+                        ? { ...(s.round.picks ?? {}), [label]: selection }
+                        : s.round.picks,
+                  },
+                }
+              : s,
+          ),
       );
       socket.on(ROOM_EVENTS.pickRejected, (rejection: GuessWhoRejection) =>
         noteModeRejection({ ...rejection, kind: "pick" }),
@@ -524,24 +567,17 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
           setLastModeRejection(null);
           setState((s) => {
             if (!s || !s.round) return s;
-            // Insert AT `position`, don't append. Insert-at-a-gap is Relay's
-            // entire mechanic — RelayInsertBoard calls
-            // `onPlaceItem(itemId, i)` for gap `i`, the gateway validates
-            // position 0 explicitly, and the engine echoes the accepted
-            // position back on this event. Appending regardless meant any
-            // placement other than at the very end left every client's
-            // shared ranking permanently diverged from the server's, and
-            // every later player then inserted against a board they were
-            // seeing wrong. `position` is absent only on the roster-shrink
-            // broadcast, which carries a null itemId and is skipped anyway.
+            // FILL the slot at `position`. The board is a fixed set of slots,
+            // one per item, so a placement writes into one — it does not grow
+            // the list. While this spliced, the board gained a row on every
+            // placement (six slots became nine) and every client diverged
+            // from the server for the rest of the round. `position` is absent
+            // only on the roster-shrink broadcast, which carries a null itemId
+            // and is skipped anyway.
             const placedBefore = s.round.relayPlaced;
             const relayPlaced =
-              itemId && placedBefore
-                ? [
-                    ...placedBefore.slice(0, position ?? placedBefore.length),
-                    itemId,
-                    ...placedBefore.slice(position ?? placedBefore.length),
-                  ]
+              itemId && placedBefore && position !== undefined
+                ? placedBefore.map((id, i) => (i === position ? itemId : id))
                 : placedBefore;
             const relayPlacements =
               userId && itemId

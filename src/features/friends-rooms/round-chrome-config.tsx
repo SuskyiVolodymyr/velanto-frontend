@@ -88,7 +88,13 @@ export function roundChromeConfig(
             <Eye size={15} aria-hidden />
           ),
           title: iAmLocked ? t("board.lockedWaiting") : t("board.lockInPrompt"),
-          hint: t("board.blindHint"),
+          // A guess-who PICK round is no longer blind — each label's choice
+          // shows as it lands — so it must not promise that nobody sees it.
+          // Rank rounds and shared-grid still are, and keep the old line.
+          hint:
+            blind && round.actionKind === "pick"
+              ? t("guessWho.pickHint")
+              : t("board.blindHint"),
         },
         status: (player) => {
           const done = locked.includes(player.userId);

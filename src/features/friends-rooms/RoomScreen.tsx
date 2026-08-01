@@ -201,7 +201,11 @@ export function RoomScreen({ roomId }: { roomId: string }) {
           />
         )}
         {state.phase === "guessing" && (
-          <GuessingPhaseScreen state={state} onSubmit={guess} />
+          <GuessingPhaseScreen
+            state={state}
+            currentUserId={userId}
+            onSubmit={guess}
+          />
         )}
         {/* phase "finished" is handled above, before the connection checks, so a
           torn-down socket still shows results. */}

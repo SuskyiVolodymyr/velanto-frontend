@@ -2120,9 +2120,11 @@
     },
     "guessWho": {
       "roundInstruction": "Сделайте выбор",
-      "pickInstruction": "Выбирайте вслепую — никто не увидит ваш выбор, пока все не подтвердят свои.",
+      "pickInstruction": "Выберите один — все видят букву, которая его выбрала, но не знают, чья она.",
+      "pickHint": "Буквы появляются сразу",
       "pickLabel": "Выбрать {name}",
       "pickedByLabels": "Выбрали: {labels}",
+      "maskedRosterNote": "До раскрытия все играют под буквой.",
       "rankInstruction": "Расставьте все предметы по порядку, лучший — первым — никто не увидит ваш рейтинг, пока все не подтвердят свои.",
       "revealHeading": "Раскрытие",
       "trajectoryHeading": "Кто что отвечал до сих пор",
@@ -2139,7 +2141,8 @@
       "waitingForOthers": "Отправили {count} / {total}",
       "assignedCount": "Назначено {count} из {total}",
       "whoIs": "Кто такой {label}?",
-      "revealsAtOnce": "Всё раскрывается разом, чтобы никто не подсмотрел."
+      "revealsAtOnce": "Всё раскрывается разом, чтобы никто не подсмотрел.",
+      "deadline": "Раскрытие через"
     },
     "identityReveal": {
       "heading": "Раскрытие",
@@ -2192,7 +2195,9 @@
       "placedBy": "поставил",
       "nothingPlacedYet": "Пока ничего не поставлено.",
       "turnOrder": "Порядок ходов",
-      "placingBadge": "СТАВИТ"
+      "placingBadge": "СТАВИТ",
+      "placeItemHere": "Поставить «{name}» сюда",
+      "placeAtRank": "Поставить на место {rank}"
     },
     "lockedIn": {
       "playerLocked": "{name} — подтвердил(а) выбор",
@@ -2246,13 +2251,19 @@
       "claimed": "Занял",
       "claimPrompt": "Займите тот, который хотите убрать",
       "claimHint": "Кто успел, тот и занял",
+      "sideItemCount": "{count} в игре",
       "lockedIn": "Готово",
       "lockInPrompt": "Зафиксируйте свой ответ",
       "lockedWaiting": "Зафиксировано — ждём комнату",
       "blindHint": "Никто не увидит, пока не сдадут все",
       "placed": "Поставил",
       "placingNow": "Сейчас ставит",
-      "progressPlaced": "Поставлено {count} из {total}"
+      "progressPlaced": "Поставлено {count} из {total}",
+      "rankNowPlacing": "Размести этот",
+      "rankSlotEmpty": "Поставить на место {rank}",
+      "rankSlotFilled": "Место {rank}: {title}",
+      "rankPlaceHere": "Поставить «{name}» сюда",
+      "rankHiddenAfter": "Ещё скрыто: {count}"
     }
   },
   "reviewOutcome": {

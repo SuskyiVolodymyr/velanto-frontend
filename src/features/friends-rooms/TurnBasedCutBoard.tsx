@@ -57,6 +57,7 @@ export function TurnBasedCutBoard({
   return (
     <RoundChrome
       state={state}
+      currentUserId={currentUserId}
       question={t("turnBasedCut.instruction")}
       progressNote={t("board.progressLeft", { count: remaining.size })}
       call={{

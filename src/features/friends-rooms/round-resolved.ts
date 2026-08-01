@@ -52,7 +52,7 @@ export interface RoundResolvedPayload {
  */
 export function roundResultFromResolved(
   mode: RoomMode | null,
-  round: Pick<RoundState, "index" | "name" | "items">,
+  round: Pick<RoundState, "index" | "name" | "items" | "sides">,
   payload: RoundResolvedPayload,
 ): RoundResult | null {
   const base = { index: payload.index, name: round.name, items: round.items };
@@ -72,7 +72,17 @@ export function roundResultFromResolved(
       };
     case "guess_who":
       if (payload.picks === undefined) return null;
-      return { ...base, kind: "reveal", picks: payload.picks };
+      // `sides` comes from the ROUND, not the payload — an nxn pick names a
+      // pool, and the event ships only the picks. Same reason `name`/`items`
+      // are taken from the round: the client already holds the board. Without
+      // it every live table printed raw group ids, while the results screen
+      // (which the server rebuilds from the pack) read correctly.
+      return {
+        ...base,
+        kind: "reveal",
+        picks: payload.picks,
+        ...(round.sides ? { sides: round.sides } : {}),
+      };
     case "voting":
       if (payload.winnerOptionId === undefined) return null;
       return {

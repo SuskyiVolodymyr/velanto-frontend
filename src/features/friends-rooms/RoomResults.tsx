@@ -170,11 +170,58 @@ function VoteResultBlock({
   byId: Map<string, RoomPlayerState>;
 }) {
   const t = useTranslations("room");
-  const winner = result.items.find((item) => item.id === result.winnerOptionId);
+  const itemsById = new Map(result.items.map((item) => [item.id, item]));
   const priorityPlayer = byId.get(result.priorityUserId);
   return (
     <div className="flex flex-col gap-2">
-      <Text className="text-lg font-semibold text-live">{winner?.title}</Text>
+      {/* EVERY option, not just the winner. Naming only what won never said
+          what it beat — and on a 1v1 pack, whose entire round is one item
+          against another, that is half the outcome missing. `optionIds` rather
+          than `items`, because on an nxn round an option is a POOL and the
+          items are only its context. */}
+      <ul className="flex flex-col gap-1.5">
+        {result.optionIds.map((optionId) => {
+          const won = optionId === result.winnerOptionId;
+          // An nxn option is a pool id that resolves to no item; the id is a
+          // poor label but beats dropping the row and under-reporting the
+          // round. (Carrying `sides` on a vote result the way a reveal now
+          // does would name these properly — not done here.)
+          const title = itemsById.get(optionId)?.title ?? optionId;
+          const count = result.tally[optionId] ?? 0;
+          return (
+            <li
+              key={optionId}
+              aria-label={title}
+              className={cn(
+                "flex items-center gap-2.5 rounded-tile border p-[9px_11px]",
+                won ? "border-live/40 bg-live/[0.08]" : "border-border",
+              )}
+            >
+              <Text
+                className={cn(
+                  "min-w-0 flex-1 truncate text-sm",
+                  won ? "font-semibold text-live" : "text-foreground-secondary",
+                )}
+              >
+                {title}
+              </Text>
+              {won && (
+                <span className="flex-none rounded-chip bg-live/[0.16] px-2 py-0.5 text-[10.5px] font-bold tracking-[0.04em] text-live uppercase">
+                  {t("voting.winnerHeading")}
+                </span>
+              )}
+              <span
+                className={cn(
+                  "min-w-4 flex-none text-end font-mono text-[12.5px] font-bold tabular-nums",
+                  won ? "text-live" : "text-foreground-tertiary",
+                )}
+              >
+                {count}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
       {result.tieBroken && priorityPlayer && (
         <Text variant="tertiary" className="text-xs">
           {t("voting.tieBrokenNote", { name: priorityPlayer.username })}

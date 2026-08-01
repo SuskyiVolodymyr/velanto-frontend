@@ -12,6 +12,10 @@ const ITEM = (id: string, title: string) => ({
   value: title,
 });
 
+/** A rank slot by its position — the board is what you click, not the item. */
+const slot = (rank: number) =>
+  screen.getByRole("button", { name: new RegExp(`rank ${rank}`, "i") });
+
 describe("SharedGridRankSubmission", () => {
   it("ranking every item in order submits the full ranking", async () => {
     const onSubmitRanking = vi.fn();
@@ -33,8 +37,10 @@ describe("SharedGridRankSubmission", () => {
         onSubmitRanking={onSubmitRanking}
       />,
     );
-    await userEvent.click(screen.getByRole("button", { name: /a/i }));
-    await userEvent.click(screen.getByRole("button", { name: /b/i }));
+    // Items are revealed one at a time and dropped into a numbered slot, so
+    // the ranking is the BOARD's order: A into #1, then B into #2.
+    await userEvent.click(slot(1));
+    await userEvent.click(slot(2));
     expect(onSubmitRanking).toHaveBeenCalledWith(["i1", "i2"]);
   });
 
@@ -90,9 +96,10 @@ describe("SharedGridRankSubmission — rejected ranking", () => {
         rejectionToken={0}
       />,
     );
-    await userEvent.click(screen.getByRole("button", { name: /a/i }));
-    await userEvent.click(screen.getByRole("button", { name: /b/i }));
-    expect(screen.getByRole("button", { name: /a/i })).toBeDisabled();
+    await userEvent.click(slot(1));
+    await userEvent.click(slot(2));
+    // Every slot is taken, so the board is frozen.
+    expect(slot(1)).toBeDisabled();
 
     rerender(
       <SharedGridRankSubmission
@@ -103,9 +110,10 @@ describe("SharedGridRankSubmission — rejected ranking", () => {
       />,
     );
 
-    expect(screen.getByRole("button", { name: /a/i })).not.toBeDisabled();
-    await userEvent.click(screen.getByRole("button", { name: /b/i }));
-    await userEvent.click(screen.getByRole("button", { name: /a/i }));
+    expect(slot(1)).not.toBeDisabled();
+    // Ranking again the other way round: A into #2, then B into #1.
+    await userEvent.click(slot(2));
+    await userEvent.click(slot(1));
     expect(onSubmitRanking).toHaveBeenLastCalledWith(["i2", "i1"]);
   });
 });

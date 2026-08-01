@@ -143,4 +143,69 @@ describe("VotingBoard", () => {
     );
     expect(screen.queryByText(/It's tied/)).not.toBeInTheDocument();
   });
+
+  // A 1v1 round IS a matchup, and it was drawn as two cards in an auto-fill
+  // grid — no relationship shown between them. Solo play and Guess-who's own
+  // 1v1 board both draw this format as a versus pair.
+  describe("a 1v1 round", () => {
+    function pairState() {
+      return baseRoomState({
+        mode: "voting",
+        packFormat: "1v1",
+        round: {
+          index: 0,
+          name: "",
+          items: [ITEM("i1", "Lover"), ITEM("i2", "Contradicting")],
+          claims: {},
+          survivorItemId: null,
+          optionIds: ["i1", "i2"],
+          votes: {},
+        },
+      });
+    }
+
+    it("puts a VS between the two contenders", () => {
+      render(
+        <VotingBoard state={pairState()} currentUserId="u1" onVote={vi.fn()} />,
+      );
+
+      expect(screen.getByText("VS", { exact: true })).toBeInTheDocument();
+    });
+
+    it("still votes for the option that was clicked", async () => {
+      const onVote = vi.fn();
+      render(
+        <VotingBoard state={pairState()} currentUserId="u1" onVote={onVote} />,
+      );
+
+      await userEvent.click(screen.getByRole("button", { name: /lover/i }));
+      expect(onVote).toHaveBeenCalledWith("i1");
+    });
+
+    it("draws no VS for a format whose round is not a matchup", () => {
+      render(
+        <VotingBoard
+          state={baseRoomState({
+            mode: "voting",
+            packFormat: "save_one",
+            round: {
+              index: 0,
+              name: "",
+              // Two drawn items is not a versus — a VS would claim a
+              // relationship the round does not have.
+              items: [ITEM("i1", "Pizza"), ITEM("i2", "Sushi")],
+              claims: {},
+              survivorItemId: null,
+              optionIds: ["i1", "i2"],
+              votes: {},
+            },
+          })}
+          currentUserId="u1"
+          onVote={vi.fn()}
+        />,
+      );
+
+      expect(screen.queryByText("VS", { exact: true })).toBeNull();
+    });
+  });
 });

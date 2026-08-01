@@ -2120,9 +2120,11 @@
     },
     "guessWho": {
       "roundInstruction": "做出你的选择",
-      "pickInstruction": "盲选一项——在所有人锁定之前，没人能看到你的选择。",
+      "pickInstruction": "选择一项——所有人都看到选它的字母，但看不到字母属于谁。",
+      "pickHint": "字母即时显示",
       "pickLabel": "选择 {name}",
       "pickedByLabels": "{labels} 选择",
+      "maskedRosterNote": "揭晓之前，每个人都只是一个字母。",
       "rankInstruction": "对每一项排序，最佳在前——在所有人锁定之前，没人能看到你的排名。",
       "revealHeading": "揭晓",
       "trajectoryHeading": "大家目前的选择",
@@ -2139,7 +2141,8 @@
       "waitingForOthers": "已有 {count} / {total} 人提交",
       "assignedCount": "已分配 {count}/{total}",
       "whoIs": "{label} 是谁？",
-      "revealsAtOnce": "所有答案同时揭晓，谁也偷看不了。"
+      "revealsAtOnce": "所有答案同时揭晓，谁也偷看不了。",
+      "deadline": "揭晓倒计时"
     },
     "identityReveal": {
       "heading": "揭晓",
@@ -2192,7 +2195,9 @@
       "placedBy": "放置者",
       "nothingPlacedYet": "还没有人放置。",
       "turnOrder": "出手顺序",
-      "placingBadge": "正在放置"
+      "placingBadge": "正在放置",
+      "placeItemHere": "把《{name}》放这里",
+      "placeAtRank": "放到第 {rank} 位"
     },
     "lockedIn": {
       "playerLocked": "{name} 已锁定",
@@ -2246,13 +2251,19 @@
       "claimed": "已抢到",
       "claimPrompt": "抢下你想淘汰的那个",
       "claimHint": "先到先得",
+      "sideItemCount": "{count} 项参战",
       "lockedIn": "已锁定",
       "lockInPrompt": "锁定你的答案",
       "lockedWaiting": "已锁定——等待其他人",
       "blindHint": "所有人都提交前谁也看不到",
       "placed": "已放置",
       "placingNow": "正在放置",
-      "progressPlaced": "已放置 {count} / {total}"
+      "progressPlaced": "已放置 {count} / {total}",
+      "rankNowPlacing": "放置这一个",
+      "rankSlotEmpty": "放到第 {rank} 位",
+      "rankSlotFilled": "第 {rank} 位：{title}",
+      "rankPlaceHere": "把《{name}》放这里",
+      "rankHiddenAfter": "之后还有 {count} 个未显示"
     }
   },
   "reviewOutcome": {

@@ -1,5 +1,6 @@
 "use client";
 
+import { Fragment } from "react";
 import { useTranslations } from "next-intl";
 import { Crown, Vote } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
@@ -7,6 +8,8 @@ import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { cn } from "@/src/shared/lib/cn";
 import { RoundChrome, type RoundPlayerStatus } from "./RoundChrome";
 import { RoundItemTile } from "./RoundItemTile";
+import { RoundSideTile } from "./RoundSideTile";
+import { VsDivider } from "./VsDivider";
 import type { RoomPlayerState, RoomState } from "./room-types";
 
 interface VotingBoardProps {
@@ -62,6 +65,13 @@ export function VotingBoard({
     .filter(([, n]) => n > 0)
     .sort((a, b) => b[1] - a[1]);
 
+  // Gated on the FORMAT, not on "there happen to be two options": a save_one
+  // round can draw two items, and a VS between them would claim a matchup the
+  // round does not have. The length check is defensive — 1v1 is validated to
+  // exactly one item a side.
+  const isVersusPair =
+    state.packFormat === "1v1" && round.optionIds.length === 2;
+
   const status = (player: RoomPlayerState): RoundPlayerStatus => {
     const voted = votes[player.userId] !== undefined;
     return {
@@ -74,6 +84,7 @@ export function VotingBoard({
   return (
     <RoundChrome
       state={state}
+      currentUserId={currentUserId}
       question={t("voting.instruction")}
       progressNote={t("board.progressVotes", {
         count: totalVotes,
@@ -156,33 +167,76 @@ export function VotingBoard({
         ) : undefined
       }
     >
-      <div className="grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(248px,1fr))]">
-        {round.optionIds.map((optionId) => {
-          const item = itemsById.get(optionId);
-          if (!item) return null;
-          const count = counts.get(optionId) ?? 0;
-          const mine = myVote === optionId;
-          return (
-            <RoundItemTile
-              key={optionId}
-              item={item}
-              actionLabel={t("board.voteFor", { name: item.title })}
-              onPick={() => onVote(optionId)}
-              mine={mine}
-              leading={count === maxCount && count > 0}
-              badge={
-                mine ? { label: t("board.yourVote"), tone: "acc" } : undefined
-              }
-              tally={{ count, max: maxCount }}
-              // The viewer's own vote is already announced by the badge; the
-              // avatars are for reading the ROOM.
-              people={votersFor(optionId).filter(
-                (p) => p.userId !== currentUserId,
-              )}
-            />
-          );
-        })}
-      </div>
+      {round.sides ? (
+        // nxn: a vote names a SIDE, not an item. Without this arm the board had
+        // two option ids it could resolve to nothing and rendered raw uuids.
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {round.sides.map((side) => {
+            const count = counts.get(side.id) ?? 0;
+            return (
+              <RoundSideTile
+                key={side.id}
+                side={side}
+                items={side.itemIds
+                  .map((id) => itemsById.get(id))
+                  .filter((item): item is NonNullable<typeof item> =>
+                    Boolean(item),
+                  )}
+                actionLabel={t("board.voteFor", { name: side.name })}
+                onPick={() => onVote(side.id)}
+                mine={myVote === side.id}
+                leading={count === maxCount && count > 0}
+                tally={{ count, max: maxCount }}
+              />
+            );
+          })}
+        </div>
+      ) : (
+        // 1v1 gets the versus row — two contenders at full half-width with a VS
+        // between them, the way solo play and Guess-who's own 1v1 board draw
+        // this format. Every other format keeps the auto-fill grid, which is
+        // what an option set of 3+ actually wants.
+        <div
+          className={cn(
+            isVersusPair
+              ? "grid items-center gap-4 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]"
+              : "grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(248px,1fr))]",
+          )}
+        >
+          {round.optionIds.map((optionId, index) => {
+            const item = itemsById.get(optionId);
+            if (!item) return null;
+            const count = counts.get(optionId) ?? 0;
+            const mine = myVote === optionId;
+            const tile = (
+              <RoundItemTile
+                item={item}
+                actionLabel={t("board.voteFor", { name: item.title })}
+                onPick={() => onVote(optionId)}
+                mine={mine}
+                leading={count === maxCount && count > 0}
+                badge={
+                  mine ? { label: t("board.yourVote"), tone: "acc" } : undefined
+                }
+                tally={{ count, max: maxCount }}
+                // The viewer's own vote is already announced by the badge; the
+                // avatars are for reading the ROOM.
+                people={votersFor(optionId).filter(
+                  (p) => p.userId !== currentUserId,
+                )}
+              />
+            );
+            return isVersusPair ? (
+              <Fragment key={optionId}>
+                {index > 0 && <VsDivider />}
+                {tile}
+              </Fragment>
+            ) : (
+              <Fragment key={optionId}>{tile}</Fragment>
+            );
+          })}
+        </div>
+      )}
 
       {tied && priorityPlayer && (
         <div className="flex items-center gap-2.5 rounded-[13px] border border-score/[0.28] bg-score/[0.08] p-[12px_14px]">

@@ -110,6 +110,7 @@ function claimant(username = "Fiona"): RoomPlayerState {
     ready: true,
     next: false,
     claimedItemId: "t1",
+    label: null,
   };
 }
 

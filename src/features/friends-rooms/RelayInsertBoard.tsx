@@ -4,6 +4,13 @@ import { useTranslations } from "next-intl";
 import { Plus } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
 import { UserAvatar } from "@/src/shared/components/UserAvatar";
+import { YouTubeCard } from "@/src/shared/components/YouTubeCard";
+import { ImageCard } from "@/src/shared/components/ImageCard";
+import {
+  extractYouTubeId,
+  extractYouTubeStart,
+} from "@/src/shared/lib/youtube";
+import { mediaUrl } from "@/src/shared/lib/media-url";
 import { cn } from "@/src/shared/lib/cn";
 import type { RoomState } from "./room-types";
 
@@ -41,7 +48,12 @@ export function RelayInsertBoard({
   const currentItemId = round.relayCurrentItemId;
   const currentItem = currentItemId ? itemsById.get(currentItemId) : null;
   const isMyTurn = round.turnUserId === currentUserId;
-  const remaining = round.items.length - placed.length - (currentItem ? 1 : 0);
+  const filled = placed.filter((id) => id !== null).length;
+  const remaining = round.items.length - filled - (currentItem ? 1 : 0);
+  const currentVideoId =
+    currentItem?.type === "youtube"
+      ? extractYouTubeId(currentItem.value)
+      : null;
 
   // Who placed which item. `relayPlacements` is in placement order, not slot
   // order, so it is indexed by item rather than by position.
@@ -50,60 +62,102 @@ export function RelayInsertBoard({
   );
 
   // A plain render-helper function, not a nested component definition —
-  // deliberately lowercase and called directly (`renderGap(0)`, never
-  // `<Gap .../>`) so nothing gets remounted (and loses state) on every
-  // parent re-render, which is what defining a component inside another
-  // component's render body would otherwise cause.
-  function renderGap(position: number) {
-    if (!isMyTurn || !currentItemId) {
-      return <div aria-hidden className="h-1.5 w-full" />;
+  // deliberately lowercase and called directly so nothing gets remounted (and
+  // loses state) on every parent re-render, which is what defining a component
+  // inside another component's render body would otherwise cause.
+  //
+  // One row per SLOT, numbered #1..#N, exactly like BlindRankBoard's board:
+  // filled slots show their item, free ones are targets. The list used to be
+  // built by insertion, which offered only `placed.length + 1` positions — so
+  // the first item of a round had exactly one place it could go, which is no
+  // ranking decision at all.
+  function renderSlot(position: number) {
+    const filledId = placed[position];
+    if (filledId) {
+      const placer = placerByItem.get(filledId);
+      const player = placer ? playerById.get(placer) : undefined;
+      return (
+        <div
+          key={position}
+          className="flex items-center gap-3 rounded-tile border border-border bg-background p-[11px_13px]"
+        >
+          <span className="grid h-[30px] w-[30px] flex-none place-items-center rounded-[9px] bg-white/[0.06] font-mono text-[13px] font-bold tabular-nums">
+            #{position + 1}
+          </span>
+          <Text className="min-w-0 flex-1 truncate text-sm font-semibold">
+            {itemsById.get(filledId)?.title ?? filledId}
+          </Text>
+          {player && (
+            <span className="flex flex-none items-center gap-[7px]">
+              <Text variant="tertiary" className="text-[11px]">
+                {t("relay.placedBy")}
+              </Text>
+              <UserAvatar
+                username={player.username}
+                avatarKey={player.avatarKey}
+                className="h-6 w-6 rounded-full bg-surface-raised text-[9.5px] font-bold text-foreground"
+              />
+            </span>
+          )}
+        </div>
+      );
     }
-    // Every gap used to share the one label "Insert here", leaving N+1
-    // buttons indistinguishable to screen-reader and voice-control users
-    // ("click Insert here" — which one?). Name each gap by the item it lands
-    // in front of, and the trailing gap by where it lands.
-    const before = placed[position];
-    const label =
-      placed.length === 0
-        ? t("relay.insertHere")
-        : before !== undefined
-          ? t("relay.insertBefore", {
-              title: itemsById.get(before)?.title ?? before,
-            })
-          : t("relay.insertAtEnd");
+
+    // A free slot someone else is deciding on: still drawn, so the board keeps
+    // its full shape and everyone can see what is left to fill.
+    if (!isMyTurn || !currentItemId) {
+      return (
+        <div
+          key={position}
+          className="flex items-center gap-3 rounded-tile border border-dashed border-border p-[11px_13px]"
+        >
+          <span className="grid h-[30px] w-[30px] flex-none place-items-center rounded-[9px] bg-white/[0.04] font-mono text-[13px] font-bold tabular-nums text-foreground-tertiary">
+            #{position + 1}
+          </span>
+        </div>
+      );
+    }
+
     return (
       <button
+        key={position}
         type="button"
         onClick={() => onPlaceItem(currentItemId, position)}
-        aria-label={label}
-        className="group relative flex h-6 w-full items-center justify-center"
+        // Named by its rank, so the N targets are distinguishable to
+        // screen-reader and voice-control users ("click Place at rank 3").
+        aria-label={t("relay.placeAtRank", { rank: position + 1 })}
+        className="flex w-full items-center gap-3 rounded-tile border border-dashed border-acc/45 p-[11px_13px] text-start text-[12.5px] font-semibold text-acc-hover transition-colors hover:border-acc hover:bg-acc/[0.08]"
       >
-        <span className="h-[2px] w-full rounded-pill bg-white/[0.08] transition-colors group-hover:bg-acc" />
-        <Plus
-          size={14}
+        <span
           aria-hidden
-          className="absolute text-foreground-tertiary opacity-0 transition-opacity group-hover:text-acc group-hover:opacity-100"
-        />
+          className="grid h-[30px] w-[30px] flex-none place-items-center rounded-[9px] bg-acc/[0.12] font-mono text-[13px] font-bold tabular-nums"
+        >
+          #{position + 1}
+        </span>
+        <span className="min-w-0 flex-1 truncate">
+          {t("relay.placeItemHere", { name: currentItem?.title ?? "" })}
+        </span>
+        <Plus size={15} aria-hidden className="flex-none" />
       </button>
     );
   }
 
   return (
-    <>
+    // The item on the left, the ranking it goes into on the right — the same
+    // two-column shape BlindRankBoard uses for the other rank_blind boards, at
+    // the same 900px breakpoint. Full-width media made the video the whole
+    // screen; a 132px thumbnail made it the smallest thing on it.
+    <div className="grid items-start gap-4 min-[901px]:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)]">
       {currentItem && (
         <div
           className={cn(
-            "flex flex-wrap items-center gap-3.5 rounded-card border p-4",
+            "flex flex-col gap-3 rounded-card border p-4",
             isMyTurn
               ? "border-acc/40 bg-acc/[0.07]"
               : "border-border bg-surface-card",
           )}
         >
-          <span
-            aria-hidden
-            className="aspect-video w-[132px] flex-none overflow-hidden rounded-control bg-[linear-gradient(150deg,#20303a,#0b0c0f)]"
-          />
-          <div className="flex min-w-0 flex-col gap-1">
+          <div className="flex items-baseline gap-3">
             {/* Plain <p> via `as`, with the colour on the element: `variant`
                 would win over a text-* className (cn() is a plain join). */}
             <Text
@@ -112,16 +166,45 @@ export function RelayInsertBoard({
             >
               {t("relay.currentItem")}
             </Text>
-            <Text className="text-[19px] font-bold tracking-[-0.015em]">
+            <span className="ms-auto flex-none rounded-full bg-white/[0.06] px-3 py-1.5 text-xs font-semibold text-foreground-secondary">
+              {t("relay.stillHidden", { count: Math.max(0, remaining) })}
+            </span>
+          </div>
+
+          {/* The item's own media. This was a hardcoded gradient block that
+              never looked at the item, so relay placed a pack of music videos
+              by title alone while every other board played them. A flex COLUMN,
+              because as a flex row the player sizes to its content and
+              collapses to nothing. */}
+          <div className="flex flex-col">
+            {currentVideoId ? (
+              <YouTubeCard
+                videoId={currentVideoId}
+                startSeconds={extractYouTubeStart(currentItem.value)}
+                className="rounded-control"
+              />
+            ) : currentItem.type === "image" ? (
+              <ImageCard
+                src={mediaUrl(currentItem.value)}
+                alt={currentItem.title}
+                className="rounded-control"
+              />
+            ) : (
+              <span
+                aria-hidden
+                className="aspect-video w-full overflow-hidden rounded-control bg-[linear-gradient(150deg,#20303a,#0b0c0f)]"
+              />
+            )}
+          </div>
+
+          <div className="flex min-w-0 flex-col gap-1">
+            <Text className="text-[19px] font-bold tracking-[-0.015em] text-pretty">
               {currentItem.title}
             </Text>
             <Text variant="tertiary" className="text-[12.5px]">
               {t("relay.nobodyKnowsNext")}
             </Text>
           </div>
-          <span className="ms-auto rounded-full bg-white/[0.06] px-3 py-1.5 text-xs font-semibold text-foreground-secondary">
-            {t("relay.stillHidden", { count: Math.max(0, remaining) })}
-          </span>
         </div>
       )}
 
@@ -138,43 +221,8 @@ export function RelayInsertBoard({
           </Text>
         </div>
 
-        {renderGap(0)}
-        {placed.map((itemId, index) => {
-          const placer = placerByItem.get(itemId);
-          const player = placer ? playerById.get(placer) : undefined;
-          return (
-            <div key={itemId} className="flex flex-col">
-              <div className="flex items-center gap-3 rounded-tile border border-border bg-background p-[11px_13px]">
-                <span className="grid h-[30px] w-[30px] flex-none place-items-center rounded-[9px] bg-white/[0.06] font-mono text-[13px] font-bold tabular-nums">
-                  {index + 1}
-                </span>
-                <Text className="min-w-0 truncate text-sm font-semibold">
-                  {itemsById.get(itemId)?.title ?? itemId}
-                </Text>
-                {player && (
-                  <span className="ms-auto flex flex-none items-center gap-[7px]">
-                    <Text variant="tertiary" className="text-[11px]">
-                      {t("relay.placedBy")}
-                    </Text>
-                    <UserAvatar
-                      username={player.username}
-                      avatarKey={player.avatarKey}
-                      className="h-6 w-6 rounded-full bg-surface-raised text-[9.5px] font-bold text-foreground"
-                    />
-                  </span>
-                )}
-              </div>
-              {renderGap(index + 1)}
-            </div>
-          );
-        })}
-
-        {placed.length === 0 && !isMyTurn && (
-          <Text variant="tertiary" className="py-3.5 text-center text-xs">
-            {t("relay.nothingPlacedYet")}
-          </Text>
-        )}
+        {placed.map((_, position) => renderSlot(position))}
       </section>
-    </>
+    </div>
   );
 }

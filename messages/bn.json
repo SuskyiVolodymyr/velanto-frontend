@@ -2120,9 +2120,11 @@
     },
     "guessWho": {
       "roundInstruction": "আপনার উত্তর বেছে নিন",
-      "pickInstruction": "গোপনে বেছে নিন — সবাই লক না করা পর্যন্ত কেউ আপনার পছন্দ দেখবে না।",
+      "pickInstruction": "একটি বেছে নিন — সবাই দেখে কোন অক্ষর সেটি বেছে নিয়েছে, কিন্তু অক্ষরটি কার তা নয়।",
+      "pickHint": "অক্ষর সঙ্গে সঙ্গেই দেখা যায়",
       "pickLabel": "{name} বেছে নিন",
       "pickedByLabels": "{labels} বেছে নিয়েছেন",
+      "maskedRosterNote": "প্রকাশ না হওয়া পর্যন্ত সবাই একটি অক্ষর হিসেবে খেলে।",
       "rankInstruction": "প্রতিটি আইটেম ক্রমে সাজান, সেরাটি প্রথমে — সবাই লক না করা পর্যন্ত কেউ আপনার র‍্যাঙ্কিং দেখবে না।",
       "revealHeading": "প্রকাশ",
       "trajectoryHeading": "এখন পর্যন্ত সবাই কী উত্তর দিয়েছে",
@@ -2139,7 +2141,8 @@
       "waitingForOthers": "{count} / {total} জন জমা দিয়েছেন",
       "assignedCount": "{total}-এর মধ্যে {count} মেলানো",
       "whoIs": "{label} কে?",
-      "revealsAtOnce": "সব একসঙ্গে খোলে, যাতে কেউ উঁকি দিতে না পারে।"
+      "revealsAtOnce": "সব একসঙ্গে খোলে, যাতে কেউ উঁকি দিতে না পারে।",
+      "deadline": "প্রকাশ হবে"
     },
     "identityReveal": {
       "heading": "প্রকাশ",
@@ -2192,7 +2195,9 @@
       "placedBy": "বসিয়েছেন",
       "nothingPlacedYet": "এখনও কিছু বসানো হয়নি।",
       "turnOrder": "পালার ক্রম",
-      "placingBadge": "বসাচ্ছেন"
+      "placingBadge": "বসাচ্ছেন",
+      "placeItemHere": "{name} এখানে বসান",
+      "placeAtRank": "{rank} নম্বরে বসান"
     },
     "lockedIn": {
       "playerLocked": "{name} — লক হয়েছে",
@@ -2246,13 +2251,19 @@
       "claimed": "দখল করেছেন",
       "claimPrompt": "যেটি সরাতে চান সেটি নিন",
       "claimHint": "যে আগে পায়, তারই",
+      "sideItemCount": "{count} খেলায়",
       "lockedIn": "লক করেছেন",
       "lockInPrompt": "নিজের উত্তর লক করুন",
       "lockedWaiting": "লক করা — ঘরের অপেক্ষা",
       "blindHint": "সবাই না দেওয়া পর্যন্ত কেউ দেখতে পায় না",
       "placed": "বসিয়েছেন",
       "placingNow": "এখন বসাচ্ছেন",
-      "progressPlaced": "{total}-এর মধ্যে {count} বসানো"
+      "progressPlaced": "{total}-এর মধ্যে {count} বসানো",
+      "rankNowPlacing": "এটি বসান",
+      "rankSlotEmpty": "{rank} নম্বরে বসান",
+      "rankSlotFilled": "{rank} নম্বর: {title}",
+      "rankPlaceHere": "{name} এখানে বসান",
+      "rankHiddenAfter": "এরপর আরও {count} লুকানো"
     }
   },
   "reviewOutcome": {

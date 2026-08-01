@@ -2120,9 +2120,11 @@
     },
     "guessWho": {
       "roundInstruction": "Зробіть вибір",
-      "pickInstruction": "Обирайте наосліп — ніхто не побачить ваш вибір, поки всі не підтвердять свої.",
+      "pickInstruction": "Оберіть один — усі бачать літеру, яка його обрала, але не бачать, чия вона.",
+      "pickHint": "Літери з’являються одразу",
       "pickLabel": "Обрати {name}",
       "pickedByLabels": "Обрали: {labels}",
+      "maskedRosterNote": "До розкриття всі грають під літерою.",
       "rankInstruction": "Розставте всі елементи за порядком, найкращий — першим — ніхто не побачить ваш рейтинг, поки всі не підтвердять свої.",
       "revealHeading": "Розкриття",
       "trajectoryHeading": "Хто що відповідав досі",
@@ -2139,7 +2141,8 @@
       "waitingForOthers": "Надіслали {count} / {total}",
       "assignedCount": "Призначено {count} із {total}",
       "whoIs": "Хто такий {label}?",
-      "revealsAtOnce": "Усе розкривається одразу, щоб ніхто не підглянув."
+      "revealsAtOnce": "Усе розкривається одразу, щоб ніхто не підглянув.",
+      "deadline": "Розкриття через"
     },
     "identityReveal": {
       "heading": "Розкриття",
@@ -2192,7 +2195,9 @@
       "placedBy": "поставив",
       "nothingPlacedYet": "Поки нічого не поставлено.",
       "turnOrder": "Порядок ходів",
-      "placingBadge": "СТАВИТЬ"
+      "placingBadge": "СТАВИТЬ",
+      "placeItemHere": "Поставити «{name}» сюди",
+      "placeAtRank": "Поставити на місце {rank}"
     },
     "lockedIn": {
       "playerLocked": "{name} — підтвердив(ла) вибір",
@@ -2246,13 +2251,19 @@
       "claimed": "Зайняв",
       "claimPrompt": "Займіть той, який хочете прибрати",
       "claimHint": "Хто встиг, той і зайняв",
+      "sideItemCount": "{count} у грі",
       "lockedIn": "Готово",
       "lockInPrompt": "Зафіксуйте свою відповідь",
       "lockedWaiting": "Зафіксовано — чекаємо на кімнату",
       "blindHint": "Ніхто не побачить, доки не здадуть усі",
       "placed": "Поставив",
       "placingNow": "Зараз ставить",
-      "progressPlaced": "Поставлено {count} із {total}"
+      "progressPlaced": "Поставлено {count} із {total}",
+      "rankNowPlacing": "Розмісти цей",
+      "rankSlotEmpty": "Поставити на місце {rank}",
+      "rankSlotFilled": "Місце {rank}: {title}",
+      "rankPlaceHere": "Поставити «{name}» сюди",
+      "rankHiddenAfter": "Ще приховано: {count}"
     }
   },
   "reviewOutcome": {

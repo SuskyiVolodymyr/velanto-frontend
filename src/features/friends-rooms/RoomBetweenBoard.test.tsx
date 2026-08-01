@@ -1,4 +1,4 @@
-import { screen, within } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { RoomBetweenBoard } from "./RoomBetweenBoard";
@@ -32,7 +32,9 @@ describe("RoomBetweenBoard", () => {
     expect(screen.getAllByText(/survivor/i).length).toBeGreaterThan(0);
   });
 
-  it("mode guess_who renders the reveal history table", () => {
+  // Guess-who's between beat is the round's own cards with the labels landed
+  // on them, not a chronology table — the history lives on the results screen.
+  it("mode guess_who renders the closed round's marked cards", () => {
     render(
       <RoomBetweenBoard
         state={baseRoomState({
@@ -51,11 +53,8 @@ describe("RoomBetweenBoard", () => {
         onNext={vi.fn()}
       />,
     );
-    // The label rides both the history table and the closed round's own card
-    // now, so scope to the table this test is about.
-    expect(
-      within(screen.getByRole("table")).getByText("P1"),
-    ).toBeInTheDocument();
+    expect(screen.queryByRole("table")).toBeNull();
+    expect(screen.getByText("P1")).toBeInTheDocument();
   });
 
   it("mode turn_based_cut with a cuts history renders it as an ordered strip", () => {

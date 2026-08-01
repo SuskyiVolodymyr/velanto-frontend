@@ -60,6 +60,7 @@ function player(
     ready: overrides.ready ?? false,
     next: overrides.next ?? false,
     claimedItemId: overrides.claimedItemId ?? null,
+    label: overrides.label ?? null,
   };
 }
 
@@ -88,6 +89,7 @@ function baseState(overrides: Partial<RoomState> = {}): RoomState {
     ],
     round: null,
     results: [],
+    labels: null,
     guessing: null,
     endgame: null,
     myGuess: null,

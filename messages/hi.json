@@ -2120,9 +2120,11 @@
     },
     "guessWho": {
       "roundInstruction": "अपना जवाब चुनें",
-      "pickInstruction": "बिना देखे चुनें — जब तक सब लॉक न हो जाएँ, कोई आपकी पसंद नहीं देखेगा।",
+      "pickInstruction": "एक चुनें — सभी को वह अक्षर दिखता है जिसने इसे चुना, पर यह नहीं कि अक्षर किसका है।",
+      "pickHint": "अक्षर तुरंत दिखते हैं",
       "pickLabel": "{name} चुनें",
       "pickedByLabels": "{labels} ने चुना",
+      "maskedRosterNote": "खुलासे तक हर कोई एक अक्षर के रूप में खेलता है।",
       "rankInstruction": "हर आइटम को क्रम में रखें, सबसे अच्छा पहले — जब तक सब लॉक न हों, कोई आपकी रैंकिंग नहीं देखेगा।",
       "revealHeading": "खुलासा",
       "trajectoryHeading": "अब तक सभी ने क्या जवाब दिया",
@@ -2139,7 +2141,8 @@
       "waitingForOthers": "{count} / {total} ने जमा किया है",
       "assignedCount": "{total} में से {count} तय",
       "whoIs": "{label} कौन है?",
-      "revealsAtOnce": "सब कुछ एक साथ खुलता है, ताकि कोई झाँक न सके।"
+      "revealsAtOnce": "सब कुछ एक साथ खुलता है, ताकि कोई झाँक न सके।",
+      "deadline": "खुलासा"
     },
     "identityReveal": {
       "heading": "खुलासा",
@@ -2192,7 +2195,9 @@
       "placedBy": "रखा",
       "nothingPlacedYet": "अभी कुछ नहीं रखा गया।",
       "turnOrder": "बारी का क्रम",
-      "placingBadge": "रख रहे हैं"
+      "placingBadge": "रख रहे हैं",
+      "placeItemHere": "{name} को यहाँ रखें",
+      "placeAtRank": "रैंक {rank} पर रखें"
     },
     "lockedIn": {
       "playerLocked": "{name} — लॉक हो गया",
@@ -2246,13 +2251,19 @@
       "claimed": "दावा किया",
       "claimPrompt": "जिसे हटाना है उसे ले लें",
       "claimHint": "जो पहले पहुँचे, उसी का",
+      "sideItemCount": "{count} खेल में",
       "lockedIn": "लॉक कर दिया",
       "lockInPrompt": "अपना जवाब लॉक करें",
       "lockedWaiting": "लॉक — कमरे का इंतज़ार",
       "blindHint": "सबके देने तक किसी को नहीं दिखता",
       "placed": "रख दिया",
       "placingNow": "अभी रख रहे हैं",
-      "progressPlaced": "{total} में से {count} रखे गए"
+      "progressPlaced": "{total} में से {count} रखे गए",
+      "rankNowPlacing": "इसे रखें",
+      "rankSlotEmpty": "रैंक {rank} पर रखें",
+      "rankSlotFilled": "रैंक {rank}: {title}",
+      "rankPlaceHere": "{name} को यहाँ रखें",
+      "rankHiddenAfter": "इसके बाद {count} अब भी छिपे हैं"
     }
   },
   "reviewOutcome": {

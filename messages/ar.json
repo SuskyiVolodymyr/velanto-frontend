@@ -2120,9 +2120,11 @@
     },
     "guessWho": {
       "roundInstruction": "اختر إجابتك",
-      "pickInstruction": "اختر خفية — لن يرى أحد اختيارك حتى يقفل الجميع اختياراتهم.",
+      "pickInstruction": "اختر واحدًا — يرى الجميع الحرف الذي اختاره، دون أن يعرفوا لمن هذا الحرف.",
+      "pickHint": "تظهر الحروف فور اختيارها",
       "pickLabel": "اختر {name}",
       "pickedByLabels": "اختاره {labels}",
+      "maskedRosterNote": "يلعب الجميع بحرف إلى أن يحين الكشف.",
       "rankInstruction": "رتّب كل عنصر خفية، بالترتيب — لن يرى أحد ترتيبك حتى يقفل الجميع اختياراتهم.",
       "revealHeading": "الكشف",
       "trajectoryHeading": "ما اختاره الجميع حتى الآن",
@@ -2139,7 +2141,8 @@
       "waitingForOthers": "أرسل {count} / {total}",
       "assignedCount": "عُيّن {count} من {total}",
       "whoIs": "من هو {label}؟",
-      "revealsAtOnce": "يُكشف كل شيء دفعة واحدة كي لا يسترق أحد النظر."
+      "revealsAtOnce": "يُكشف كل شيء دفعة واحدة كي لا يسترق أحد النظر.",
+      "deadline": "الكشف خلال"
     },
     "identityReveal": {
       "heading": "الكشف",
@@ -2192,7 +2195,9 @@
       "placedBy": "أدرجه",
       "nothingPlacedYet": "لم يُدرج شيء بعد.",
       "turnOrder": "ترتيب الأدوار",
-      "placingBadge": "يُدرج"
+      "placingBadge": "يُدرج",
+      "placeItemHere": "ضع {name} هنا",
+      "placeAtRank": "ضع في المرتبة {rank}"
     },
     "lockedIn": {
       "playerLocked": "{name} — أقفل اختياره",
@@ -2246,13 +2251,19 @@
       "claimed": "حجز",
       "claimPrompt": "احجز ما تريد استبعاده",
       "claimHint": "من يسبق يفز به",
+      "sideItemCount": "{count} في اللعب",
       "lockedIn": "ثبّت اختياره",
       "lockInPrompt": "ثبّت إجابتك",
       "lockedWaiting": "مُثبّت — بانتظار الغرفة",
       "blindHint": "لا يراه أحد حتى يسلّم الجميع",
       "placed": "أدرج",
       "placingNow": "يُدرج الآن",
-      "progressPlaced": "أُدرج {count} من {total}"
+      "progressPlaced": "أُدرج {count} من {total}",
+      "rankNowPlacing": "ضع هذا",
+      "rankSlotEmpty": "ضع في المرتبة {rank}",
+      "rankSlotFilled": "المرتبة {rank}: {title}",
+      "rankPlaceHere": "ضع {name} هنا",
+      "rankHiddenAfter": "لا يزال {count} مخفيًا بعد هذا"
     }
   },
   "reviewOutcome": {

@@ -2120,9 +2120,11 @@
     },
     "guessWho": {
       "roundInstruction": "اپنا جواب منتخب کریں",
-      "pickInstruction": "خفیہ طور پر منتخب کریں — جب تک سب لاک نہ ہو جائیں، کوئی آپ کا انتخاب نہیں دیکھے گا۔",
+      "pickInstruction": "ایک منتخب کریں — سب کو وہ حرف نظر آتا ہے جس نے اسے چنا، مگر یہ نہیں کہ حرف کس کا ہے۔",
+      "pickHint": "حروف فوراً ظاہر ہوتے ہیں",
       "pickLabel": "{name} منتخب کریں",
       "pickedByLabels": "{labels} نے منتخب کیا",
+      "maskedRosterNote": "انکشاف تک ہر کوئی ایک حرف کے طور پر کھیلتا ہے۔",
       "rankInstruction": "ہر آئٹم کو ترتیب دیں، بہترین پہلے — جب تک سب لاک نہ ہوں، کوئی آپ کی درجہ بندی نہیں دیکھے گا۔",
       "revealHeading": "انکشاف",
       "trajectoryHeading": "اب تک سب نے کیا جواب دیا",
@@ -2139,7 +2141,8 @@
       "waitingForOthers": "{count} / {total} نے جمع کروا دیا ہے",
       "assignedCount": "{total} میں سے {count} طے",
       "whoIs": "{label} کون ہے؟",
-      "revealsAtOnce": "سب کچھ ایک ساتھ کھلتا ہے تاکہ کوئی جھانک نہ سکے۔"
+      "revealsAtOnce": "سب کچھ ایک ساتھ کھلتا ہے تاکہ کوئی جھانک نہ سکے۔",
+      "deadline": "انکشاف"
     },
     "identityReveal": {
       "heading": "انکشاف",
@@ -2192,7 +2195,9 @@
       "placedBy": "رکھا",
       "nothingPlacedYet": "ابھی کچھ نہیں رکھا گیا۔",
       "turnOrder": "باری کی ترتیب",
-      "placingBadge": "رکھ رہے ہیں"
+      "placingBadge": "رکھ رہے ہیں",
+      "placeItemHere": "{name} یہاں رکھیں",
+      "placeAtRank": "درجہ {rank} پر رکھیں"
     },
     "lockedIn": {
       "playerLocked": "{name} — لاک ہو گیا",
@@ -2246,13 +2251,19 @@
       "claimed": "دعویٰ کیا",
       "claimPrompt": "جسے ہٹانا ہے اسے لے لیں",
       "claimHint": "جو پہلے پہنچے، اسی کا",
+      "sideItemCount": "{count} کھیل میں",
       "lockedIn": "لاک کر دیا",
       "lockInPrompt": "اپنا جواب لاک کریں",
       "lockedWaiting": "لاک — کمرے کا انتظار",
       "blindHint": "سب کے دینے تک کسی کو نظر نہیں آتا",
       "placed": "رکھ دیا",
       "placingNow": "ابھی رکھ رہے ہیں",
-      "progressPlaced": "{total} میں سے {count} رکھے گئے"
+      "progressPlaced": "{total} میں سے {count} رکھے گئے",
+      "rankNowPlacing": "اسے رکھیں",
+      "rankSlotEmpty": "درجہ {rank} پر رکھیں",
+      "rankSlotFilled": "درجہ {rank}: {title}",
+      "rankPlaceHere": "{name} یہاں رکھیں",
+      "rankHiddenAfter": "اس کے بعد {count} اب بھی پوشیدہ"
     }
   },
   "reviewOutcome": {
