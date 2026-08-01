@@ -27,6 +27,21 @@ export interface UpdateEntry {
  */
 export const UPDATES: UpdateEntry[] = [
   {
+    date: "2026-08-01",
+    version: "2.0.0",
+    title: "Play any pack with friends, six different ways",
+    bullets: [
+      "Playing with friends is no longer one format's privilege. Open any pack, start a room, share the code, and pick how you want to play it — Claim, Voting, Guess Who, Turn-based cut, Shared grid or Relay. The host chooses the mode in the lobby, and the picker greys out any mode the pack is too small for and says why.",
+      "Guess Who is the new headline mode. Everyone plays as an anonymous letter, and each round shows what P1, P2 and P3 picked without saying who they are. After a few rounds you assign every letter to a real person, everyone reveals at once, and the leaderboard scores who read the room best.",
+      "The other new modes: Voting counts everyone's vote in the open, with a rotating priority holder who breaks ties. Turn-based cut hands the board round one player at a time until one item is left. Shared grid takes everyone's blind ranking and merges them into the group's order. Relay builds a single ranking together — you place the item in front of you, blind to what's still coming.",
+      "Save One with Friends is now the Claim mode rather than a separate format, so it works on any Save One or Sacrifice One pack instead of only on packs authored for it. If you built one of the old friends-only packs, it is no longer listed.",
+      "The whole app has been redesigned. Play, results, profiles, settings, moderation, the pack creator and every reading page were rebuilt — consistent headers, real loading skeletons instead of spinners, and layouts that hold together on a phone.",
+      "Two new pages: History shows every pack you've played and lets you pick up the ones you didn't finish, and People is a browsable directory of everyone on the site.",
+      "Moderators can now ask for changes instead of only approving or rejecting, and authors see exactly what was asked — and the reason, if a pack was turned down. You can also report an account, not just a pack.",
+      "Play is steadier: refreshing mid-game offers to resume where you left off, videos pause when you switch tabs, and the 1v1, NxN and Rank Blind screens were rebuilt to be readable on small screens.",
+    ],
+  },
+  {
     date: "2026-07-24",
     version: "1.8.1",
     title: "Rooms tell you where you are",
