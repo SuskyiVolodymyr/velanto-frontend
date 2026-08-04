@@ -125,7 +125,9 @@ describe("VoteButtons", () => {
     expect(mockedPacksClient.getById).not.toHaveBeenCalled();
   });
 
-  it("blocks an anonymous viewer with a reason tooltip instead of voting", async () => {
+  // Was a hover tooltip; a phone never hovers, so the reason was unreachable
+  // there. Clicking now opens the sign-in prompt anchored to the control.
+  it("blocks an anonymous viewer and explains why on click instead of voting", async () => {
     mockAuth(false);
     render(
       <VoteButtons
@@ -138,10 +140,8 @@ describe("VoteButtons", () => {
     const up = screen.getByRole("button", { name: "Upvote" });
     expect(up).toHaveAttribute("aria-disabled", "true");
 
-    await userEvent.hover(up);
-    expect(screen.getByRole("tooltip")).toHaveTextContent("Log in to vote");
-
     await userEvent.click(up);
     expect(mockedPacksClient.vote).not.toHaveBeenCalled();
+    expect(screen.getByRole("dialog")).toHaveTextContent("Log in to vote");
   });
 });

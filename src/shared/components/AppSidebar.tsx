@@ -23,7 +23,7 @@ interface NavItem {
   /** Destination, or null for a not-yet-built ("soon") destination. */
   href: string | null;
   icon: (props: IconProps) => React.JSX.Element;
-  /** Signed-out users are routed to /auth instead of href. */
+  /** Hidden entirely from signed-out users (it used to fall back to /auth). */
   requiresAuth?: boolean;
   /** Active when the current pathname satisfies this (query-agnostic). */
   isActive?: (pathname: string) => boolean;
@@ -122,73 +122,84 @@ export function SidebarContent({
         )}
       </Link>
 
+      {/* Signed out, the auth-only destinations are dropped rather than shown
+          pointing at /auth. Offering "My packs" to someone with no account is
+          an invitation to a dead end — the sign-in routes that matter are the
+          account control in the header and the prompt raised by whatever the
+          visitor actually tried to do. */}
       <nav aria-label={t("nav.label")} className="flex flex-col gap-1">
-        {NAV_ITEMS.map((item) => {
-          const soon = item.href === null;
-          const active = !soon && item.isActive?.(pathname) === true;
-          const href =
-            item.requiresAuth && !isAuthed ? "/auth" : (item.href as string);
-          const Icon = item.icon;
+        {NAV_ITEMS.filter((item) => isAuthed || !item.requiresAuth).map(
+          (item) => {
+            const soon = item.href === null;
+            const active = !soon && item.isActive?.(pathname) === true;
+            // No /auth fallback: an auth-only item is filtered out above when
+            // signed out, so this is only ever reached for a real destination.
+            const href = item.href as string;
+            const Icon = item.icon;
 
-          const inner = (
-            <>
-              <Icon size={19} strokeWidth={2} className="flex-none" />
-              {!collapsed && (
-                <span className="min-w-0 flex-1 truncate">
-                  {t(`nav.${item.key}`)}
+            const inner = (
+              <>
+                <Icon size={19} strokeWidth={2} className="flex-none" />
+                {!collapsed && (
+                  <span className="min-w-0 flex-1 truncate">
+                    {t(`nav.${item.key}`)}
+                  </span>
+                )}
+                {!collapsed && soon && (
+                  <span className="flex-none rounded-full bg-white/[0.06] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-foreground-tertiary">
+                    {t("soon")}
+                  </span>
+                )}
+              </>
+            );
+
+            const base = cn(
+              "flex items-center gap-3 rounded-[11px] py-[11px] text-[14px] font-medium transition-colors",
+              collapsed ? "justify-center px-0" : "px-3",
+            );
+
+            const label = t(`nav.${item.key}`);
+
+            if (soon) {
+              return (
+                <span
+                  key={item.key}
+                  aria-disabled
+                  // The collapsed rail hides the label text and the "soon" badge,
+                  // so name it for assistive tech.
+                  aria-label={collapsed ? `${label} — ${t("soon")}` : undefined}
+                  title={collapsed ? label : t("soon")}
+                  className={cn(
+                    base,
+                    "cursor-default text-foreground-tertiary",
+                  )}
+                >
+                  {inner}
                 </span>
-              )}
-              {!collapsed && soon && (
-                <span className="flex-none rounded-full bg-white/[0.06] px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-foreground-tertiary">
-                  {t("soon")}
-                </span>
-              )}
-            </>
-          );
+              );
+            }
 
-          const base = cn(
-            "flex items-center gap-3 rounded-[11px] py-[11px] text-[14px] font-medium transition-colors",
-            collapsed ? "justify-center px-0" : "px-3",
-          );
-
-          const label = t(`nav.${item.key}`);
-
-          if (soon) {
             return (
-              <span
+              <Link
                 key={item.key}
-                aria-disabled
-                // The collapsed rail hides the label text and the "soon" badge,
-                // so name it for assistive tech.
-                aria-label={collapsed ? `${label} — ${t("soon")}` : undefined}
-                title={collapsed ? label : t("soon")}
-                className={cn(base, "cursor-default text-foreground-tertiary")}
+                href={href}
+                onClick={onNavigate}
+                aria-current={active ? "page" : undefined}
+                // Label text is hidden when collapsed, so supply the name.
+                aria-label={collapsed ? label : undefined}
+                title={collapsed ? label : undefined}
+                className={cn(
+                  base,
+                  active
+                    ? "bg-acc/[0.14] text-foreground"
+                    : "text-foreground-secondary hover:bg-white/[0.04] hover:text-foreground",
+                )}
               >
                 {inner}
-              </span>
+              </Link>
             );
-          }
-
-          return (
-            <Link
-              key={item.key}
-              href={href}
-              onClick={onNavigate}
-              aria-current={active ? "page" : undefined}
-              // Label text is hidden when collapsed, so supply the name.
-              aria-label={collapsed ? label : undefined}
-              title={collapsed ? label : undefined}
-              className={cn(
-                base,
-                active
-                  ? "bg-acc/[0.14] text-foreground"
-                  : "text-foreground-secondary hover:bg-white/[0.04] hover:text-foreground",
-              )}
-            >
-              {inner}
-            </Link>
-          );
-        })}
+          },
+        )}
       </nav>
 
       {/* Pushed to the bottom; renders nothing unless the signed-in user holds a

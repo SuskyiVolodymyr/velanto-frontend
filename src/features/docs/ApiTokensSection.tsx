@@ -1,5 +1,6 @@
 "use client";
 
+import { SignInGate } from "@/src/shared/components/SignInGate";
 import { useMemo, useState } from "react";
 import { useTranslations, useFormatter } from "next-intl";
 import { Check } from "lucide-react";
@@ -183,14 +184,16 @@ export function ApiTokensSection() {
       loading={createMutation.isPending}
       aria-disabled={blocked || undefined}
       disabled={blocked ? undefined : !canSubmit}
-      className={cn("self-start", blocked && "cursor-not-allowed opacity-45")}
+      className={cn("self-start")}
     >
       {t("tokenCreateButton")}
     </Button>
   );
 
   const createButtonWithReason = (
-    <Tooltip content={tAuth("logInToCreateTokens")}>{createButton}</Tooltip>
+    <SignInGate message={tAuth("logInToCreateTokens")}>
+      {createButton}
+    </SignInGate>
   );
 
   return (

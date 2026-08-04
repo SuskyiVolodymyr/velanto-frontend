@@ -152,7 +152,9 @@ describe("AuthorScreen", () => {
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() =>
-      expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+      expect(
+        screen.getByRole("heading", { name: "quizmaster" }),
+      ).toBeInTheDocument(),
     );
     // Merged /profile view: manage your own page instead of following it.
     expect(
@@ -441,7 +443,9 @@ describe("AuthorScreen", () => {
     mockedUsersClient.getProfile.mockResolvedValue(profile);
     renderScreen(<AuthorScreen authorId="author-1" />);
     await waitFor(() =>
-      expect(screen.getByText("quizmaster")).toBeInTheDocument(),
+      expect(
+        screen.getByRole("heading", { name: "quizmaster" }),
+      ).toBeInTheDocument(),
     );
     expect(mockedUsersClient.banHistory).not.toHaveBeenCalled();
     expect(

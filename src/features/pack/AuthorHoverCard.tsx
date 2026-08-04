@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { SignInGate } from "@/src/shared/components/SignInGate";
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { Username } from "@/src/shared/components/Username";
-import { Tooltip } from "@/src/shared/components/Tooltip";
 import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import type { PublicUserProfile } from "@/src/shared/types/user";
 
@@ -50,7 +50,8 @@ export function AuthorHoverCard({
       variant={isFollowing ? "secondary" : "primary"}
       aria-disabled={followBlocked || undefined}
       loading={followBusy}
-      className={followBlocked ? "cursor-not-allowed opacity-45" : undefined}
+      // No dimming while blocked — the click opens the sign-in prompt, so the
+      // button is interactive and should look it.
       onClick={onFollowToggle}
     >
       {isFollowing ? t("following") : t("follow")}
@@ -110,7 +111,9 @@ export function AuthorHoverCard({
         {!isOwnProfile && (
           <div className="mt-3.5 flex flex-col gap-1">
             {followBlocked ? (
-              <Tooltip content={tAuth("logInToFollow")}>{followButton}</Tooltip>
+              <SignInGate message={tAuth("logInToFollow")}>
+                {followButton}
+              </SignInGate>
             ) : (
               followButton
             )}

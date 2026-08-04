@@ -80,7 +80,9 @@ describe("FeedbackVote", () => {
     expect(mockedFeedbackClient.vote).toHaveBeenCalledWith("f1", -1);
   });
 
-  it("blocks an anonymous viewer with a reason tooltip instead of voting", async () => {
+  // Was a hover tooltip; a phone never hovers, so the reason was unreachable
+  // there. Clicking now opens the sign-in prompt anchored to the control.
+  it("blocks an anonymous viewer and explains why on click instead of voting", async () => {
     mockAuth(false);
     render(
       <FeedbackVote
@@ -93,10 +95,8 @@ describe("FeedbackVote", () => {
     const like = screen.getByRole("button", { name: /^like$/i });
     expect(like).toHaveAttribute("aria-disabled", "true");
 
-    await userEvent.hover(like);
-    expect(screen.getByRole("tooltip")).toHaveTextContent("Log in to vote");
-
     await userEvent.click(like);
     expect(mockedFeedbackClient.vote).not.toHaveBeenCalled();
+    expect(screen.getByRole("dialog")).toHaveTextContent("Log in to vote");
   });
 });

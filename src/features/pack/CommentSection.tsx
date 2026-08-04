@@ -1,5 +1,6 @@
 "use client";
 
+import { SignInGate } from "@/src/shared/components/SignInGate";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Reply, Trash2 } from "lucide-react";
@@ -371,7 +372,6 @@ export function CommentSection({
             disabled={posting}
             className={cn(
               "min-h-[38px] min-w-0 flex-1 resize-y rounded-[11px] border border-white/10 bg-background px-3.5 py-2 text-[13.5px] leading-[1.55] text-foreground outline-none focus-visible:border-acc disabled:opacity-45",
-              blocked && "cursor-not-allowed opacity-60",
             )}
           />
           {/* `size="sm"` rather than a height in className: cn() is a plain
@@ -379,10 +379,7 @@ export function CommentSection({
           <Button
             variant="secondary"
             size="sm"
-            className={cn(
-              "flex-none",
-              blocked && "cursor-not-allowed opacity-45",
-            )}
+            className={cn("flex-none")}
             aria-disabled={blocked || undefined}
             disabled={blocked ? false : !draft.trim() || posting}
             loading={posting}
@@ -493,9 +490,9 @@ export function CommentSection({
 
       {status !== "loading" &&
         (blocked ? (
-          <Tooltip content={tAuth("logInToComment")} block>
+          <SignInGate message={tAuth("logInToComment")} block>
             {composer}
-          </Tooltip>
+          </SignInGate>
         ) : (
           composer
         ))}

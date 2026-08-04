@@ -1,5 +1,6 @@
 "use client";
 
+import { SignInGate } from "@/src/shared/components/SignInGate";
 import { useState, type ReactElement } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -89,7 +90,7 @@ export function FriendsRoomEntry({ packId }: { packId: string }) {
   // Wrap a blocked control in the sign-in tooltip; leave it bare otherwise.
   const withGate = (node: ReactElement) =>
     blocked ? (
-      <Tooltip content={t("entry.signInToPlay")}>{node}</Tooltip>
+      <SignInGate message={t("entry.signInToPlay")}>{node}</SignInGate>
     ) : (
       node
     );
@@ -114,10 +115,7 @@ export function FriendsRoomEntry({ packId }: { packId: string }) {
           onClick={handleCreate}
           loading={creating}
           aria-disabled={blocked || undefined}
-          className={cn(
-            "w-full gap-2.5 rounded-[13px] text-[14.5px]",
-            blocked && "cursor-not-allowed opacity-45",
-          )}
+          className={cn("w-full gap-2.5 rounded-[13px] text-[14.5px]")}
         >
           <Users size={17} aria-hidden />
           {t("entry.createRoom")}
@@ -148,7 +146,6 @@ export function FriendsRoomEntry({ packId }: { packId: string }) {
             spellCheck={false}
             className={cn(
               "min-w-0 flex-1 rounded-[12px] border border-border bg-surface px-3.5 py-2.5 font-mono text-[15px] font-semibold uppercase tracking-[0.16em] text-foreground outline-none focus-visible:ring-2 focus-visible:ring-acc disabled:opacity-45",
-              blocked && "cursor-not-allowed opacity-45",
             )}
           />
           <Button
@@ -156,7 +153,6 @@ export function FriendsRoomEntry({ packId }: { packId: string }) {
             variant="secondary"
             loading={joining}
             aria-disabled={blocked || undefined}
-            className={cn(blocked && "cursor-not-allowed opacity-45")}
           >
             {t("entry.join")}
           </Button>
