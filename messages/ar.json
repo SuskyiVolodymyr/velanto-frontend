@@ -512,7 +512,9 @@
     "continueWithGoogle": "المتابعة باستخدام Google",
     "continueWithDiscord": "المتابعة باستخدام Discord",
     "oauthError": "تعذّر تسجيل الدخول عبر هذا المزوّد. حاول مرة أخرى.",
-    "oauthPopupBlocked": "اسمح بالنوافذ المنبثقة لهذا الموقع للمتابعة."
+    "oauthPopupBlocked": "اسمح بالنوافذ المنبثقة لهذا الموقع للمتابعة.",
+    "gateHeading": "هل تريد المشاركة؟",
+    "logInToSeeNotifications": "سجّل الدخول لعرض إشعاراتك."
   },
   "rules": {
     "metaTitle": "قواعد المجتمع — Velanto",
@@ -988,7 +990,12 @@
       "title": "متابعة اللعب",
       "progress": "الجولة {current} من {total}",
       "resume": "متابعة {title}"
-    }
+    },
+    "activeFilters": "عوامل التصفية النشطة",
+    "clearFilters": "مسح الكل",
+    "removeLanguageFilter": "إزالة عامل تصفية {language}",
+    "groupWindow": "النطاق الزمني",
+    "groupOrder": "الترتيب"
   },
   "formats": {
     "save_one": "أنقذ واحدًا",

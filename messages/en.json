@@ -610,7 +610,9 @@
       "code": "Enter the 6-digit code sent to your email.",
       "currentPasswordRequired": "Enter your current password.",
       "emailRequired": "Enter a valid email address."
-    }
+    },
+    "gateHeading": "Want to join in?",
+    "logInToSeeNotifications": "Log in to see your notifications."
   },
   "rules": {
     "metaTitle": "Community Rules — Velanto",
@@ -1086,7 +1088,12 @@
       "title": "Continue playing",
       "progress": "Round {current} of {total}",
       "resume": "Resume {title}"
-    }
+    },
+    "activeFilters": "Active filters",
+    "clearFilters": "Clear all",
+    "removeLanguageFilter": "Remove {language} filter",
+    "groupWindow": "Time range",
+    "groupOrder": "Order"
   },
   "formats": {
     "save_one": "Save One",

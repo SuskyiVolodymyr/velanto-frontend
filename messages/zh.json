@@ -512,7 +512,9 @@
     "continueWithGoogle": "使用 Google 继续",
     "continueWithDiscord": "使用 Discord 继续",
     "oauthError": "无法通过该服务登录。请重试。",
-    "oauthPopupBlocked": "请允许本站弹出窗口以继续。"
+    "oauthPopupBlocked": "请允许本站弹出窗口以继续。",
+    "gateHeading": "想要参与吗？",
+    "logInToSeeNotifications": "登录后即可查看通知。"
   },
   "rules": {
     "metaTitle": "社区规则 — Velanto",
@@ -988,7 +990,12 @@
       "title": "继续游戏",
       "progress": "第 {current} 轮 / 共 {total} 轮",
       "resume": "继续玩《{title}》"
-    }
+    },
+    "activeFilters": "已启用的筛选",
+    "clearFilters": "全部清除",
+    "removeLanguageFilter": "移除{language}筛选",
+    "groupWindow": "时间范围",
+    "groupOrder": "排列顺序"
   },
   "formats": {
     "save_one": "留一个",

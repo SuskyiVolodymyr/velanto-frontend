@@ -512,7 +512,9 @@
     "continueWithGoogle": "Продовжити через Google",
     "continueWithDiscord": "Продовжити через Discord",
     "oauthError": "Не вдалося увійти через цей сервіс. Спробуйте ще раз.",
-    "oauthPopupBlocked": "Дозвольте спливаючі вікна для цього сайту, щоб продовжити."
+    "oauthPopupBlocked": "Дозвольте спливаючі вікна для цього сайту, щоб продовжити.",
+    "gateHeading": "Хочете долучитися?",
+    "logInToSeeNotifications": "Увійдіть, щоб побачити свої сповіщення."
   },
   "rules": {
     "metaTitle": "Правила спільноти — Velanto",
@@ -988,7 +990,12 @@
       "title": "Продовжити гру",
       "progress": "Раунд {current} з {total}",
       "resume": "Продовжити «{title}»"
-    }
+    },
+    "activeFilters": "Активні фільтри",
+    "clearFilters": "Очистити все",
+    "removeLanguageFilter": "Прибрати фільтр «{language}»",
+    "groupWindow": "Період",
+    "groupOrder": "Порядок"
   },
   "formats": {
     "save_one": "Врятуй одного",

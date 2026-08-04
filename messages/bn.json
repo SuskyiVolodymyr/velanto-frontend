@@ -512,7 +512,9 @@
     "continueWithGoogle": "Google দিয়ে চালিয়ে যান",
     "continueWithDiscord": "Discord দিয়ে চালিয়ে যান",
     "oauthError": "সেই প্রদানকারীর মাধ্যমে সাইন ইন করা যায়নি। আবার চেষ্টা করুন।",
-    "oauthPopupBlocked": "চালিয়ে যেতে এই সাইটের জন্য পপ-আপ অনুমতি দিন।"
+    "oauthPopupBlocked": "চালিয়ে যেতে এই সাইটের জন্য পপ-আপ অনুমতি দিন।",
+    "gateHeading": "যোগ দিতে চান?",
+    "logInToSeeNotifications": "আপনার বিজ্ঞপ্তি দেখতে লগ ইন করুন।"
   },
   "rules": {
     "metaTitle": "কমিউনিটি নিয়মাবলী — Velanto",
@@ -988,7 +990,12 @@
       "title": "খেলা চালিয়ে যান",
       "progress": "রাউন্ড {total} এর মধ্যে {current}",
       "resume": "{title} চালিয়ে যান"
-    }
+    },
+    "activeFilters": "সক্রিয় ফিল্টার",
+    "clearFilters": "সব মুছুন",
+    "removeLanguageFilter": "{language} ফিল্টার সরান",
+    "groupWindow": "সময়সীমা",
+    "groupOrder": "ক্রম"
   },
   "formats": {
     "save_one": "একজনকে বাঁচাও",

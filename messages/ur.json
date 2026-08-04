@@ -512,7 +512,9 @@
     "continueWithGoogle": "Google کے ساتھ جاری رکھیں",
     "continueWithDiscord": "Discord کے ساتھ جاری رکھیں",
     "oauthError": "اس فراہم کنندہ کے ذریعے سائن اِن نہیں ہو سکا۔ دوبارہ کوشش کریں۔",
-    "oauthPopupBlocked": "جاری رکھنے کے لیے اس سائٹ کے پاپ اپ کی اجازت دیں۔"
+    "oauthPopupBlocked": "جاری رکھنے کے لیے اس سائٹ کے پاپ اپ کی اجازت دیں۔",
+    "gateHeading": "شامل ہونا چاہتے ہیں؟",
+    "logInToSeeNotifications": "اپنی اطلاعات دیکھنے کے لیے لاگ ان کریں۔"
   },
   "rules": {
     "metaTitle": "کمیونٹی قواعد — Velanto",
@@ -988,7 +990,12 @@
       "title": "کھیل جاری رکھیں",
       "progress": "راؤنڈ {current} از {total}",
       "resume": "{title} جاری رکھیں"
-    }
+    },
+    "activeFilters": "فعال فلٹرز",
+    "clearFilters": "سب صاف کریں",
+    "removeLanguageFilter": "{language} فلٹر ہٹائیں",
+    "groupWindow": "وقت کی حد",
+    "groupOrder": "ترتیب"
   },
   "formats": {
     "save_one": "ایک بچاؤ",

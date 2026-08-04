@@ -512,7 +512,9 @@
     "continueWithGoogle": "Google के साथ जारी रखें",
     "continueWithDiscord": "Discord के साथ जारी रखें",
     "oauthError": "उस प्रदाता से साइन इन नहीं हो सका। कृपया पुनः प्रयास करें।",
-    "oauthPopupBlocked": "जारी रखने के लिए इस साइट के लिए पॉप-अप की अनुमति दें।"
+    "oauthPopupBlocked": "जारी रखने के लिए इस साइट के लिए पॉप-अप की अनुमति दें।",
+    "gateHeading": "शामिल होना चाहते हैं?",
+    "logInToSeeNotifications": "अपनी सूचनाएँ देखने के लिए लॉग इन करें।"
   },
   "rules": {
     "metaTitle": "समुदाय नियम — Velanto",
@@ -988,7 +990,12 @@
       "title": "खेलना जारी रखें",
       "progress": "राउंड {total} में से {current}",
       "resume": "{title} जारी रखें"
-    }
+    },
+    "activeFilters": "सक्रिय फ़िल्टर",
+    "clearFilters": "सभी हटाएँ",
+    "removeLanguageFilter": "{language} फ़िल्टर हटाएँ",
+    "groupWindow": "समय अवधि",
+    "groupOrder": "क्रम"
   },
   "formats": {
     "save_one": "एक बचाओ",
