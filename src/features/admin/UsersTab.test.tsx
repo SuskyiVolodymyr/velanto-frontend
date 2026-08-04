@@ -3,6 +3,7 @@ import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import { renderWithQueryClient as render } from "@/src/shared/test/render-with-query-client";
 import userEvent from "@testing-library/user-event";
+import { pickFromDropdown } from "@/src/shared/test/pick-from-dropdown";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { UsersTab } from "./UsersTab";
@@ -124,16 +125,13 @@ describe("UsersTab", () => {
     renderAsAdmin();
     await screen.findByText("bob");
 
-    const staffFilter = screen.getByRole("combobox", {
-      name: "Filter by staff status",
-    });
-    await user.selectOptions(staffFilter, "staff");
+    await pickFromDropdown(user, "Filter by staff status", "Staff");
     await waitFor(() => {
       const last = vi.mocked(adminClient.listUsers).mock.calls.at(-1)?.[0];
       expect(last).toMatchObject({ staff: true });
     });
 
-    await user.selectOptions(staffFilter, "nonstaff");
+    await pickFromDropdown(user, "Filter by staff status", "Non-staff");
     await waitFor(() => {
       const last = vi.mocked(adminClient.listUsers).mock.calls.at(-1)?.[0];
       expect(last).toMatchObject({ staff: false });
@@ -155,10 +153,7 @@ describe("UsersTab", () => {
     renderAsAdmin();
 
     await screen.findByText("bob");
-    await user.selectOptions(
-      screen.getByRole("combobox", { name: "Change role for bob" }),
-      "moderator",
-    );
+    await pickFromDropdown(user, "Change role for bob", "moderator");
 
     await waitFor(() =>
       expect(usersClient.changeRole).toHaveBeenCalledWith("u2", "moderator"),
@@ -176,14 +171,8 @@ describe("UsersTab", () => {
     renderAsAdmin();
     await screen.findByText("bob");
 
-    await user.selectOptions(
-      screen.getByRole("combobox", { name: "Filter by ban status" }),
-      "banned",
-    );
-    await user.selectOptions(
-      screen.getByRole("combobox", { name: "Sort by registration date" }),
-      "oldest",
-    );
+    await pickFromDropdown(user, "Filter by ban status", "Banned");
+    await pickFromDropdown(user, "Sort by registration date", "Oldest first");
 
     await waitFor(() => {
       const last = vi.mocked(adminClient.listUsers).mock.calls.at(-1)?.[0];
@@ -210,11 +199,7 @@ describe("UsersTab", () => {
     await screen.findByText("bob");
     await user.click(screen.getByRole("button", { name: "Ban" }));
     // Reason options come from the rules fetch — a category, no detail needed.
-    await screen.findByRole("option", { name: "Spam & Manipulation" });
-    await user.selectOptions(
-      screen.getByLabelText("Reason"),
-      "spam_manipulation",
-    );
+    await pickFromDropdown(user, "Reason", "Spam & Manipulation");
     await user.click(screen.getByRole("button", { name: "Confirm ban" }));
 
     await waitFor(() =>
@@ -244,8 +229,7 @@ describe("UsersTab", () => {
 
     await screen.findByText("bob");
     await user.click(screen.getByRole("button", { name: "Ban" }));
-    await screen.findByRole("option", { name: "Other" });
-    await user.selectOptions(screen.getByLabelText("Reason"), "other");
+    await pickFromDropdown(user, "Reason", "Other");
 
     // Confirm stays disabled until required detail is supplied.
     expect(screen.getByRole("button", { name: "Confirm ban" })).toBeDisabled();

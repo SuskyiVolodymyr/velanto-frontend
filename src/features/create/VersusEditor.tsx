@@ -14,7 +14,7 @@ import {
   availablePoolCount,
 } from "@/src/features/create/random-pool-option";
 import { Input } from "@/src/shared/components/Input";
-import { Select } from "@/src/shared/components/Select";
+import { Dropdown } from "@/src/shared/components/Dropdown";
 import {
   RoundsBulkBar,
   RoundsAddButton,
@@ -295,10 +295,10 @@ export function VersusEditor() {
                     >
                       {t("versusSideA")}
                     </Text>
-                    <Select
+                    <Dropdown
                       value={sideValue(slotA)}
-                      onChange={(e) => setSide(index, 0, e.target.value)}
-                      aria-label={t("versusSideARound", { index: index + 1 })}
+                      onChange={(value) => setSide(index, 0, value)}
+                      ariaLabel={t("versusSideARound", { index: index + 1 })}
                       options={optionsForSide(index, 0)}
                     />
                   </div>
@@ -309,10 +309,10 @@ export function VersusEditor() {
                     >
                       {t("versusSideB")}
                     </Text>
-                    <Select
+                    <Dropdown
                       value={sideValue(slotB)}
-                      onChange={(e) => setSide(index, 1, e.target.value)}
-                      aria-label={t("versusSideBRound", { index: index + 1 })}
+                      onChange={(value) => setSide(index, 1, value)}
+                      ariaLabel={t("versusSideBRound", { index: index + 1 })}
                       options={optionsForSide(index, 1)}
                     />
                   </div>

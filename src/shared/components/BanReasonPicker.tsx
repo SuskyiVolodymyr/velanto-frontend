@@ -2,7 +2,10 @@
 
 import { useTranslations } from "next-intl";
 import { useRules } from "@/src/shared/api/rules.queries";
-import { Select, type SelectOption } from "@/src/shared/components/Select";
+import {
+  Dropdown,
+  type DropdownOption,
+} from "@/src/shared/components/Dropdown";
 import { Textarea } from "@/src/shared/components/Textarea";
 import { Text } from "@/src/shared/components/Text";
 import type { BanReason } from "@/src/shared/types/rules";
@@ -56,7 +59,7 @@ export interface BanReasonPickerProps {
 /**
  * Reusable ban-reason picker shared by every moderator ban UI. Fetches the
  * rule categories (single source of truth for the labels — never hardcoded)
- * and renders a `Select` of `{id → title}` plus an `'Other'` catch-all, with a
+ * and renders a `Dropdown` of `{id → title}` plus an `'Other'` catch-all, with a
  * conditional detail `Textarea` that is required only for `'Other'`. Fully
  * controlled: it emits `{ reason, reasonDetail }` and never bans by itself.
  */
@@ -73,13 +76,13 @@ export function BanReasonPicker({
   const isOther = value.reason === "other";
   const detailMissing = isOther && value.reasonDetail.trim().length === 0;
 
-  const categoryOptions: SelectOption[] = (rules.data?.categories ?? []).map(
-    (c) => ({
-      value: c.id,
-      label: c.title,
-    }),
-  );
-  const options: SelectOption[] = [
+  const categoryOptions: DropdownOption<string>[] = (
+    rules.data?.categories ?? []
+  ).map((c) => ({
+    value: c.id,
+    label: c.title,
+  }));
+  const options: DropdownOption<string>[] = [
     { value: "", label: t("placeholder"), disabled: true },
     ...categoryOptions,
     { value: "other", label: t("other") },
@@ -87,19 +90,21 @@ export function BanReasonPicker({
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="flex flex-col gap-1 text-xs text-foreground-secondary">
+      {/* A div, not a <label>: the control is a button-plus-listbox, which a
+          <label> cannot name — the accessible name comes from ariaLabel. */}
+      <div className="flex flex-col gap-1 text-xs text-foreground-secondary">
         {t("label")}
-        <Select
-          aria-label={t("label")}
-          className="h-9"
+        <Dropdown
+          ariaLabel={t("label")}
+          size="sm"
           value={value.reason}
           disabled={rules.isLoading}
           options={options}
-          onChange={(e) =>
-            onChange({ ...value, reason: e.target.value as BanReason | "" })
+          onChange={(reason) =>
+            onChange({ ...value, reason: reason as BanReason | "" })
           }
         />
-      </label>
+      </div>
 
       {rules.isError && (
         <Text variant="danger" role="alert" className="text-xs">

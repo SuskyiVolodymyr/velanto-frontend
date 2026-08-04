@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { screen } from "@testing-library/react";
+import { screen, within } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
+import { pickFromDropdown } from "@/src/shared/test/pick-from-dropdown";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { VersusEditor } from "./VersusEditor";
 import { versusRounds } from "./create-pack.defaults";
@@ -87,6 +88,23 @@ function readRounds() {
   return JSON.parse(screen.getByTestId("rounds").textContent || "[]");
 }
 
+/**
+ * The first option of a side's pool picker. The picker is the app's listbox
+ * Dropdown, whose options exist only while it is open — so this opens it,
+ * reads, and closes it again rather than querying the trigger's children.
+ */
+async function firstOptionOf(
+  user: ReturnType<typeof userEvent.setup>,
+  label: string,
+): Promise<HTMLElement> {
+  await user.click(await screen.findByRole("combobox", { name: label }));
+  const [first] = within(await screen.findByRole("listbox")).getAllByRole(
+    "option",
+  );
+  await user.keyboard("{Escape}");
+  return first;
+}
+
 describe("VersusEditor", () => {
   it("renders a matchup per round with both side selects", async () => {
     const user = userEvent.setup();
@@ -94,22 +112,27 @@ describe("VersusEditor", () => {
 
     // T6: rounds render collapsed by default, one open at a time — round 1
     // starts expanded, round 2 needs its own header clicked open first.
-    expect(screen.getByLabelText("Side A for round 1")).toHaveValue("boys");
-    expect(screen.getByLabelText("Side B for round 1")).toHaveValue("girls");
+    // The pool pickers are listboxes: their selected value shows as the
+    // trigger's own text, not as a form value.
+    expect(
+      screen.getByRole("combobox", { name: "Side A for round 1" }),
+    ).toHaveTextContent("Boys");
+    expect(
+      screen.getByRole("combobox", { name: "Side B for round 1" }),
+    ).toHaveTextContent("Girls");
     expect(screen.getByLabelText("Items per side for round 1")).toHaveValue(2);
 
     await user.click(screen.getByRole("button", { name: /^Round 2/ }));
-    expect(screen.getByLabelText("Side A for round 2")).toHaveValue("boys");
+    expect(
+      screen.getByRole("combobox", { name: "Side A for round 2" }),
+    ).toHaveTextContent("Boys");
   });
 
   it("changes only the edited round's side", async () => {
     const user = userEvent.setup();
     render(<Harness format="nxn" perSide={1} />);
 
-    await user.selectOptions(
-      screen.getByLabelText("Side B for round 1"),
-      "boys",
-    );
+    await pickFromDropdown(user, "Side B for round 1", "Boys");
 
     const rounds = readRounds();
     expect(rounds[0].b).toBe("boys");
@@ -120,10 +143,7 @@ describe("VersusEditor", () => {
     const user = userEvent.setup();
     render(<Harness format="nxn" perSide={1} />);
 
-    await user.selectOptions(
-      screen.getByLabelText("Side B for round 1"),
-      "boys",
-    );
+    await pickFromDropdown(user, "Side B for round 1", "Boys");
 
     expect(readRounds()[0]).toMatchObject({ a: "boys", b: "boys" });
     expect(
@@ -190,14 +210,14 @@ describe("VersusEditor", () => {
   // carries how many are still free, so the capacity rule reads as a countdown
   // in the dropdown rather than an error at submit.
   describe("random pool", () => {
-    it("offers Random pool first, counting the pools still free", () => {
+    it("offers Random pool first, counting the pools still free", async () => {
+      const user = userEvent.setup();
       render(<Harness format="nxn" perSide={2} />);
 
-      const sideA = screen.getByLabelText("Side A for round 1");
-      const [first] = Array.from(sideA.querySelectorAll("option"));
       // Both pools are pinned across the two rounds, so none are free.
-      expect(first).toHaveTextContent("Random pool (0 available)");
-      expect(first).toHaveValue("__random__");
+      expect(await firstOptionOf(user, "Side A for round 1")).toHaveTextContent(
+        "Random pool (0 available)",
+      );
     });
 
     // #362: the count must fall the moment another side becomes random. The
@@ -207,35 +227,26 @@ describe("VersusEditor", () => {
     it("recounts as soon as another side becomes random", async () => {
       const user = userEvent.setup();
       render(<Harness format="nxn" perSide={2} rounds={1} pools={4} />);
-      const firstOption = (label: string) =>
-        screen.getByLabelText(label).querySelector("option")!;
-
       // 4 pools; side A pins "boys" and side B pins "girls". Side B excludes
       // itself, so it sees 4 - 1 pinned = 3.
-      expect(firstOption("Side B for round 1")).toHaveTextContent(
+      expect(await firstOptionOf(user, "Side B for round 1")).toHaveTextContent(
         "Random pool (3 available)",
       );
 
-      await user.selectOptions(
-        screen.getByLabelText("Side A for round 1"),
-        "__random__",
-      );
+      await pickFromDropdown(user, "Side A for round 1", /^Random pool/);
 
       // Unchanged, and correctly so: side A released "boys" from the pinned set
       // and took a random pool instead, so what side B could be handed is the
       // same 3 pools. The number only moves when the pack's demand does.
-      expect(firstOption("Side B for round 1")).toHaveTextContent(
+      expect(await firstOptionOf(user, "Side B for round 1")).toHaveTextContent(
         "Random pool (3 available)",
       );
 
-      await user.selectOptions(
-        screen.getByLabelText("Side B for round 1"),
-        "__random__",
-      );
+      await pickFromDropdown(user, "Side B for round 1", /^Random pool/);
 
       // Now nothing is pinned and two slots are random, so a third random slot
       // would have 2 pools to choose from.
-      expect(firstOption("Side A for round 1")).toHaveTextContent(
+      expect(await firstOptionOf(user, "Side A for round 1")).toHaveTextContent(
         "Random pool (3 available)",
       );
     });
@@ -244,10 +255,7 @@ describe("VersusEditor", () => {
       const user = userEvent.setup();
       render(<Harness format="nxn" perSide={2} />);
 
-      await user.selectOptions(
-        screen.getByLabelText("Side A for round 1"),
-        "__random__",
-      );
+      await pickFromDropdown(user, "Side A for round 1", /^Random pool/);
 
       const [round1] = readRounds();
       expect(round1.a).toBeUndefined();
@@ -259,10 +267,8 @@ describe("VersusEditor", () => {
     it("goes back to a named pool cleanly", async () => {
       const user = userEvent.setup();
       render(<Harness format="nxn" perSide={2} />);
-      const sideA = screen.getByLabelText("Side A for round 1");
-
-      await user.selectOptions(sideA, "__random__");
-      await user.selectOptions(sideA, "girls");
+      await pickFromDropdown(user, "Side A for round 1", /^Random pool/);
+      await pickFromDropdown(user, "Side A for round 1", "Girls");
 
       const [round1] = readRounds();
       expect(round1.a).toBe("girls");

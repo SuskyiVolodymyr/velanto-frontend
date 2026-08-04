@@ -1,25 +1,30 @@
-import type { ReactNode, SelectHTMLAttributes } from "react";
-import { useFormContext } from "react-hook-form";
-import { Select, type SelectOption } from "@/src/shared/components/Select";
+import { Controller, useFormContext } from "react-hook-form";
+import {
+  Dropdown,
+  type DropdownOption,
+} from "@/src/shared/components/Dropdown";
 import { FormField } from "@/src/shared/components/form/FormField";
 import { getFieldError } from "@/src/shared/components/form/getFieldError";
 
-export interface SelectFieldProps extends Omit<
-  SelectHTMLAttributes<HTMLSelectElement>,
-  "name"
-> {
+export interface SelectFieldProps {
   name: string;
   label: string;
   srOnlyLabel?: boolean;
-  /** Data-driven options; alternatively pass `<option>` children. */
-  options?: SelectOption[];
-  children?: ReactNode;
+  options: DropdownOption<string>[];
+  placeholder?: string;
+  disabled?: boolean;
+  id?: string;
+  "aria-describedby"?: string;
 }
 
 /**
- * Native `Select` wired to react-hook-form via `register` (native controls
- * register directly — no `Controller` needed), with label + inline error
+ * The app's {@link Dropdown} wired to react-hook-form, with label + inline error
  * through {@link FormField}.
+ *
+ * Driven by `Controller` rather than `register`: this control is a button plus
+ * a listbox, not a native `<select>`, so there is no change event for RHF to
+ * bind to. It was a native select — which opens an OS menu that ignores every
+ * token in the app, rendering as a light system list on a dark page.
  */
 export function SelectField({
   name,
@@ -27,12 +32,12 @@ export function SelectField({
   srOnlyLabel,
   id,
   options,
-  children,
+  placeholder,
+  disabled,
   "aria-describedby": ariaDescribedby,
-  ...rest
 }: SelectFieldProps) {
   const {
-    register,
+    control,
     formState: { errors },
   } = useFormContext();
   const fieldId = id ?? name;
@@ -51,16 +56,22 @@ export function SelectField({
       error={error}
       srOnlyLabel={srOnlyLabel}
     >
-      <Select
-        id={fieldId}
-        options={options}
-        aria-invalid={error ? true : undefined}
-        {...rest}
-        {...register(name)}
-        aria-describedby={describedBy}
-      >
-        {children}
-      </Select>
+      <Controller
+        control={control}
+        name={name}
+        render={({ field }) => (
+          <Dropdown
+            id={fieldId}
+            options={options}
+            placeholder={placeholder}
+            disabled={disabled}
+            value={(field.value as string) ?? ""}
+            onChange={field.onChange}
+            aria-invalid={error ? true : undefined}
+            aria-describedby={describedBy}
+          />
+        )}
+      />
     </FormField>
   );
 }

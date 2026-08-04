@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/src/shared/lib/cn";
 import { Text } from "@/src/shared/components/Text";
 import { Input } from "@/src/shared/components/Input";
-import { Select } from "@/src/shared/components/Select";
+import { Dropdown } from "@/src/shared/components/Dropdown";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { useAdminLogs } from "@/src/features/admin/api/admin.queries";
 import {
@@ -83,10 +83,11 @@ export function LogsTab() {
           />
         </div>
         <div className="w-[190px]">
-          <Select
-            aria-label={t("filterActionAria")}
+          <Dropdown
+            ariaLabel={t("filterActionAria")}
             value={filters.action}
-            onChange={(event) => patch({ action: event.target.value })}
+            onChange={(action) => patch({ action })}
+            surface="card"
             options={[
               { value: "", label: t("allActions") },
               ...Object.entries(AUDIT_ACTIONS).map(([value, { labelKey }]) => ({

@@ -7,6 +7,7 @@
 import type { ReactElement } from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { pickFromDropdown } from "@/src/shared/test/pick-from-dropdown";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextIntlClientProvider } from "next-intl";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -483,11 +484,7 @@ describe("AuthorScreen", () => {
     );
     await userEvent.click(screen.getByRole("button", { name: /^ban$/i }));
     // Pick a rule-category reason from the picker (populated by the rules fetch).
-    await screen.findByRole("option", { name: "Spam & Manipulation" });
-    await userEvent.selectOptions(
-      screen.getByLabelText("Reason"),
-      "spam_manipulation",
-    );
+    await pickFromDropdown(userEvent, "Reason", "Spam & Manipulation");
     await userEvent.click(screen.getByRole("button", { name: /confirm ban/i }));
 
     // First attempt rejects: the error shows and the form stays open (the

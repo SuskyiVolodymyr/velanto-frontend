@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
+import { pickFromDropdown } from "@/src/shared/test/pick-from-dropdown";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { RoundsEditor } from "./RoundsEditor";
 import type { CreatePackValues } from "./create-pack.schema";
@@ -123,7 +124,7 @@ describe("RoundsEditor", () => {
     await user.click(screen.getByLabelText("Round 1 manual"));
 
     // Two places seeded (a0, a1); a2 is still unpinned, so place 1 can take it.
-    await user.selectOptions(screen.getByLabelText("Item for place 1"), "a2");
+    await pickFromDropdown(user, "Item for place 1", "a2");
     expect(readRounds()[0].items).toEqual(["a2", "a1"]);
   });
 
@@ -141,7 +142,7 @@ describe("RoundsEditor", () => {
     const user = userEvent.setup();
     render(<Harness />);
 
-    await user.selectOptions(screen.getByLabelText("Round 1 pool"), "b");
+    await pickFromDropdown(user, "Round 1 pool", "Pool B");
 
     expect(readRounds()[0].g).toBe("b");
   });

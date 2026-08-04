@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Input } from "@/src/shared/components/Input";
-import { Select } from "@/src/shared/components/Select";
+import { Dropdown } from "@/src/shared/components/Dropdown";
 import { Button } from "@/src/shared/components/Button";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { useAuth } from "@/src/shared/lib/auth-context";
@@ -72,12 +72,11 @@ export function UsersTab() {
           />
         </div>
         <div className="w-[150px]">
-          <Select
-            aria-label={t("filterStaffAria")}
+          <Dropdown
+            ariaLabel={t("filterStaffAria")}
             value={staffFilter}
-            onChange={(event) =>
-              setStaffFilter(event.target.value as StaffFilter)
-            }
+            onChange={(value) => setStaffFilter(value as StaffFilter)}
+            surface="card"
             options={[
               { value: "all", label: t("staffAll") },
               { value: "staff", label: t("staffOnly") },
@@ -86,12 +85,11 @@ export function UsersTab() {
           />
         </div>
         <div className="w-[150px]">
-          <Select
-            aria-label={t("filterBanAria")}
+          <Dropdown
+            ariaLabel={t("filterBanAria")}
             value={bannedFilter}
-            onChange={(event) =>
-              setBannedFilter(event.target.value as BannedFilter)
-            }
+            onChange={(value) => setBannedFilter(value as BannedFilter)}
+            surface="card"
             options={[
               { value: "all", label: t("banAll") },
               { value: "banned", label: t("banBanned") },
@@ -100,10 +98,11 @@ export function UsersTab() {
           />
         </div>
         <div className="w-[160px]">
-          <Select
-            aria-label={t("sortRegAria")}
+          <Dropdown
+            ariaLabel={t("sortRegAria")}
             value={sort}
-            onChange={(event) => setSort(event.target.value as AdminUserSort)}
+            onChange={(value) => setSort(value as AdminUserSort)}
+            surface="card"
             options={[
               { value: "newest", label: t("sortNewest") },
               { value: "oldest", label: t("sortOldest") },

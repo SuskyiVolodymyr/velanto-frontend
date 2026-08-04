@@ -1,5 +1,6 @@
 "use client";
 
+import { Dropdown } from "@/src/shared/components/Dropdown";
 import type { Role } from "@/src/shared/types/user";
 import {
   assignableRolesFor,
@@ -46,24 +47,21 @@ export function RoleSelect({
   }
 
   return (
-    <select
+    <Dropdown<Role>
       value={targetRole}
       disabled={pending}
-      onChange={(event) => onChange(event.target.value as AssignableRole)}
-      aria-label={ariaLabel}
-      className="h-8 w-fit rounded-lg border border-border bg-white/[0.05] px-2 text-[12.5px] text-foreground disabled:opacity-50"
-    >
-      {/* The current role must be present as the selected option, or the control
-          renders blank whenever the target holds a role above what this actor
-          may grant. It's disabled so it can't be re-selected as a no-op. */}
-      <option value={targetRole} disabled>
-        {targetRole}
-      </option>
-      {options.map((role) => (
-        <option key={role} value={role}>
-          {role}
-        </option>
-      ))}
-    </select>
+      onChange={(role) => onChange(role as AssignableRole)}
+      ariaLabel={ariaLabel}
+      size="sm"
+      surface="card"
+      className="w-fit"
+      options={[
+        // The current role must be present as the selected option, or the
+        // control renders blank whenever the target holds a role above what
+        // this actor may grant. Disabled so it can't be re-picked as a no-op.
+        { value: targetRole, label: targetRole, disabled: true },
+        ...options.map((role) => ({ value: role, label: role })),
+      ]}
+    />
   );
 }
