@@ -164,11 +164,20 @@ describe("AppShell", () => {
     expect(screen.getByTestId("site-footer")).toBeInTheDocument();
   });
 
-  it("hides the site footer on every other route", () => {
+  it("shows the site footer on every other chromed route too", () => {
     pathname.current = "/people";
     renderShell(<div>content</div>);
-    expect(screen.queryByTestId("site-footer")).not.toBeInTheDocument();
+    expect(screen.getByTestId("site-footer")).toBeInTheDocument();
   });
+
+  it.each(["/create", "/packs/abc123/edit"])(
+    "hides the site footer on the authoring route %s",
+    (path) => {
+      pathname.current = path;
+      renderShell(<div>content</div>);
+      expect(screen.queryByTestId("site-footer")).not.toBeInTheDocument();
+    },
+  );
 
   it("hides the site footer on the full-screen /auth route", () => {
     pathname.current = "/auth";
