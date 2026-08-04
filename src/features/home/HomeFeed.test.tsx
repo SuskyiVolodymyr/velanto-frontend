@@ -47,13 +47,27 @@ const PACK_A: Pack = {
   myVote: null,
 };
 
-// The secondary filters (tags + language) live behind the "Filters" popover and
-// the sort behind its own popover — open them before driving those controls.
-function openFilters(user: ReturnType<typeof userEvent.setup>) {
-  return user.click(screen.getByRole("button", { name: "Filters" }));
+// Tags, language and sort each have their own named trigger in the row now —
+// there is no longer a shared "Filters" popover to open first. Tags goes
+// straight to the picker modal; language is the app's Dropdown (button +
+// listbox, so not `selectOptions`); sort keeps its popover.
+function tagsTrigger() {
+  return screen.getByRole("button", { name: /^Tags/ });
+}
+function openTags(user: ReturnType<typeof userEvent.setup>) {
+  return user.click(tagsTrigger());
+}
+async function pickLanguage(
+  user: ReturnType<typeof userEvent.setup>,
+  label: string,
+) {
+  await user.click(
+    screen.getByRole("combobox", { name: /filter by language/i }),
+  );
+  await user.click(screen.getByRole("option", { name: label }));
 }
 function openSort(user: ReturnType<typeof userEvent.setup>) {
-  return user.click(screen.getByRole("button", { name: "Sort by" }));
+  return user.click(screen.getByRole("button", { name: /sort by/i }));
 }
 
 beforeEach(() => {
@@ -141,11 +155,7 @@ describe("HomeFeed", () => {
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
 
-    await openFilters(user);
-    await user.selectOptions(
-      screen.getByRole("combobox", { name: /filter by language/i }),
-      "Українська",
-    );
+    await pickLanguage(user, "Українська");
 
     await waitFor(() =>
       expect(packsClient.list).toHaveBeenLastCalledWith(
@@ -165,12 +175,8 @@ describe("HomeFeed", () => {
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
 
-    await openFilters(user);
-    const language = screen.getByRole("combobox", {
-      name: /filter by language/i,
-    });
-    await user.selectOptions(language, "Українська");
-    await user.selectOptions(language, "All");
+    await pickLanguage(user, "Українська");
+    await pickLanguage(user, "All");
     // Selecting a format after clearing the language moves us to a filter
     // combination that has NOT been fetched yet, so a real request fires and
     // we can still assert what the cleared language serialises to. Without it,
@@ -294,8 +300,7 @@ describe("HomeFeed", () => {
     await screen.findByText("Best Anime Openings");
     await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
 
-    await openFilters(user);
-    await user.click(screen.getByRole("button", { name: "Filter by tags" }));
+    await openTags(user);
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
     await user.click(screen.getByRole("checkbox", { name: "Music" }));
 
@@ -313,7 +318,8 @@ describe("HomeFeed", () => {
         limit: 25,
       }),
     );
-    expect(screen.getByRole("button", { name: "2 tags" })).toBeInTheDocument();
+    // The count rides on the Tags trigger as a badge.
+    expect(tagsTrigger()).toHaveTextContent("2");
   });
 
   it("re-opening the picker and applying a removal updates the fetch", async () => {
@@ -327,8 +333,7 @@ describe("HomeFeed", () => {
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
 
-    await openFilters(user);
-    await user.click(screen.getByRole("button", { name: "Filter by tags" }));
+    await openTags(user);
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
     await user.click(screen.getByRole("checkbox", { name: "Music" }));
     await user.click(screen.getByRole("button", { name: "Done" }));
@@ -343,7 +348,7 @@ describe("HomeFeed", () => {
       }),
     );
 
-    await user.click(screen.getByRole("button", { name: "2 tags" }));
+    await openTags(user);
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
     await user.click(screen.getByRole("button", { name: "Done" }));
     await waitFor(() =>
@@ -356,7 +361,7 @@ describe("HomeFeed", () => {
         limit: 25,
       }),
     );
-    expect(screen.getByRole("button", { name: "1 tag" })).toBeInTheDocument();
+    expect(tagsTrigger()).toHaveTextContent("1");
   });
 
   it("discarding the picker with Cancel does not change the fetch", async () => {
@@ -371,15 +376,12 @@ describe("HomeFeed", () => {
     await screen.findByText("Best Anime Openings");
     await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
 
-    await openFilters(user);
-    await user.click(screen.getByRole("button", { name: "Filter by tags" }));
+    await openTags(user);
     await user.click(screen.getByRole("checkbox", { name: "Anime" }));
     await user.click(screen.getByRole("button", { name: "Cancel" }));
 
     expect(packsClient.list).toHaveBeenCalledTimes(1);
-    expect(
-      screen.getByRole("button", { name: "Filter by tags" }),
-    ).toBeInTheDocument();
+    expect(tagsTrigger()).toBeInTheDocument();
   });
 
   it("includes a 1v1 filter chip", async () => {
