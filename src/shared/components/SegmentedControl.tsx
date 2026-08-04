@@ -12,6 +12,14 @@ export interface SegmentedControlOption<T extends string> {
    * the short visible label.
    */
   ariaLabel?: string;
+  /**
+   * How this option fills when it is the selected one. `neutral` (default) is
+   * the plain raised chip; `accent` gives it the app's cyan, for an option that
+   * means "this is switched ON" rather than merely "this is the current
+   * choice" — an On/Off pair reads as a switch, and a switch should show its
+   * live state in the same colour every other live control uses.
+   */
+  tone?: "neutral" | "accent";
 }
 
 export interface SegmentedControlProps<T extends string> {
@@ -27,6 +35,13 @@ export interface SegmentedControlProps<T extends string> {
   "aria-describedby"?: string;
   /** Marks the radiogroup invalid for assistive tech when the field is errored. */
   "aria-invalid"?: boolean;
+  /**
+   * Split the group's width evenly between its options instead of sizing each
+   * to its own label. For a caller that gives the group a fixed width: without
+   * this the content-sized segments leave the slack as dead space at the end,
+   * which reads as a lopsided gap on one side.
+   */
+  stretch?: boolean;
 }
 
 // Single-select toggle-button group. Uses radiogroup/radio semantics
@@ -44,6 +59,7 @@ export function SegmentedControl<T extends string>({
   id,
   "aria-describedby": ariaDescribedby,
   "aria-invalid": ariaInvalid,
+  stretch = false,
 }: SegmentedControlProps<T>) {
   const buttonsRef = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -110,12 +126,19 @@ export function SegmentedControl<T extends string>({
             onClick={() => onChange(option.value)}
             onKeyDown={(event) => handleKeyDown(event, index)}
             className={cn(
-              "h-[34px] rounded-[9px] px-4 text-[13px] font-semibold transition-colors",
+              "h-[34px] rounded-[9px] text-[13px] font-semibold transition-colors",
               "outline-none focus-visible:ring-2 focus-visible:ring-acc",
               "disabled:opacity-45 disabled:pointer-events-none",
-              selected
-                ? "bg-white/10 text-foreground"
-                : "bg-transparent text-white/50 hover:text-foreground-secondary",
+              // Exactly one width rule: cn() is a plain join, so a stretched
+              // segment must not also carry the content padding, or both would
+              // emit and Tailwind's order would pick the winner.
+              stretch ? "flex-1 px-2" : "px-4",
+              !selected &&
+                "bg-transparent text-white/50 hover:text-foreground-secondary",
+              selected &&
+                (option.tone === "accent"
+                  ? "bg-acc text-[#07131a]"
+                  : "bg-white/10 text-foreground"),
             )}
           >
             {option.label}
