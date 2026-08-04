@@ -1877,11 +1877,11 @@
           },
           "2": {
             "title": "لا مشاركة",
-            "body": "العنصر المحجوز يخرج من المتناول — فأنت تسابق على ما تريد استبعاده."
+            "body": "العنصر المحجوز يخرج من المتناول — لا يمكن لأحد آخر أخذه."
           },
           "3": {
-            "title": "واحد ينجو",
-            "body": "العنصر الوحيد الذي لم يحجزه أحد هو الناجي."
+            "title": "يبقى واحد",
+            "body": "العنصر الوحيد الذي لم يحجزه أحد هو ما تُحسم به الجولة."
           }
         }
       },
@@ -2055,12 +2055,14 @@
       "heading": "الجولة {index} من {total}",
       "taken": "مأخوذ",
       "chosen": "اختار {count} من {total}",
-      "instructionSave": "اختر عنصرًا واحدًا لإنقاذه. سيُقصى كل من عداه.",
-      "instructionSacrifice": "اختر عنصرًا واحدًا للتضحية به. العنصر الذي لا يختاره أحد ينجو.",
+      "instructionSave": "اختر عنصرًا واحدًا للتضحية به. العنصر الذي لا يختاره أحد هو الذي يُنقَذ.",
+      "instructionSacrifice": "اختر عنصرًا واحدًا لإنقاذه. العنصر الذي لا يختاره أحد هو الذي يُضحَّى به.",
       "claimSacrifice": "التضحية بـ {name}",
+      "claimSave": "إنقاذ {name}",
       "claimedBySacrifice": "ضحّى به {name}",
+      "claimedBySave": "أنقذه {name}",
       "survivorSave": "تم إنقاذه",
-      "survivorSacrifice": "الناجي",
+      "survivorSacrifice": "تمت التضحية به",
       "tooFastNote": "أنت تعيد الاختيار بسرعة كبيرة — انتظر لحظة وحاول مرة أخرى."
     },
     "rejection": {
@@ -2075,11 +2077,11 @@
       "ready": "{count} / {total} جاهزون",
       "autoNext": "الجولة التالية خلال {seconds} ثانية",
       "survivorHeadingSave": "تم إنقاذه",
-      "survivorHeadingSacrifice": "الناجي",
+      "survivorHeadingSacrifice": "تمت التضحية به",
       "survivorNoteSave": "تم إنقاذ هذا العنصر.",
-      "survivorNoteSacrifice": "نجا هذا العنصر في هذه الجولة.",
+      "survivorNoteSacrifice": "تمت التضحية بهذا العنصر.",
       "boardHeadingSave": "اختيارات هذه الجولة",
-      "boardHeadingSacrifice": "تضحيات هذه الجولة"
+      "boardHeadingSacrifice": "اختيارات هذه الجولة"
     },
     "results": {
       "heading": "النتائج",
@@ -2256,7 +2258,7 @@
       "cutSoFar": "ما حُذف حتى الآن",
       "cutEmpty": "لم يُحذف شيء بعد — {name} يبدأ.",
       "claimed": "حجز",
-      "claimPrompt": "احجز ما تريد استبعاده",
+      "claimPrompt": "احجز عنصرًا قبل أن يسبقك أحد",
       "claimHint": "من يسبق يفز به",
       "sideItemCount": "{count} في اللعب",
       "lockedIn": "ثبّت اختياره",

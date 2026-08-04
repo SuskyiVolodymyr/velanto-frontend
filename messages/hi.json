@@ -1877,11 +1877,11 @@
           },
           "2": {
             "title": "बाँटना नहीं",
-            "body": "जिस पर दावा हो गया वह गया — आप उसी के लिए दौड़ते हैं जिसे हटाना है।"
+            "body": "जिस पर दावा हो गया वह गया — कोई और उसे नहीं ले सकता।"
           },
           "3": {
             "title": "एक बचता है",
-            "body": "जिस अकेले आइटम पर किसी ने दावा नहीं किया, वही बच जाता है।"
+            "body": "जिस अकेले आइटम पर किसी ने दावा नहीं किया, वही राउंड तय करता है।"
           }
         }
       },
@@ -2055,12 +2055,14 @@
       "heading": "राउंड {index} / {total}",
       "taken": "लिया गया",
       "chosen": "{total} में से {count} ने चुना",
-      "instructionSave": "बचाने के लिए एक आइटम चुनें। बाकी सभी बाहर हो जाएँगे।",
-      "instructionSacrifice": "बलिदान के लिए एक आइटम चुनें। जिसे कोई नहीं चुनता वह बच जाता है।",
+      "instructionSave": "बलिदान के लिए एक आइटम चुनें। जिसे कोई नहीं चुनता वही बच जाता है।",
+      "instructionSacrifice": "बचाने के लिए एक आइटम चुनें। जिसे कोई नहीं चुनता उसी का बलिदान होता है।",
       "claimSacrifice": "{name} का बलिदान करें",
+      "claimSave": "{name} को बचाएँ",
       "claimedBySacrifice": "{name} द्वारा बलिदान",
+      "claimedBySave": "{name} ने बचाया",
       "survivorSave": "बचाया गया",
-      "survivorSacrifice": "बचा हुआ",
+      "survivorSacrifice": "बलिदान किया गया",
       "tooFastNote": "आप बहुत तेज़ी से दोबारा चुन रहे हैं — थोड़ा रुकें और फिर कोशिश करें।"
     },
     "rejection": {
@@ -2075,11 +2077,11 @@
       "ready": "{count} / {total} तैयार",
       "autoNext": "अगला राउंड {seconds} सेकंड में",
       "survivorHeadingSave": "बचाया गया",
-      "survivorHeadingSacrifice": "बचा हुआ",
+      "survivorHeadingSacrifice": "बलिदान किया गया",
       "survivorNoteSave": "यह आइटम बचा लिया गया।",
-      "survivorNoteSacrifice": "यह आइटम इस राउंड में बच गया।",
+      "survivorNoteSacrifice": "इस आइटम का बलिदान कर दिया गया।",
       "boardHeadingSave": "इस राउंड की पसंद",
-      "boardHeadingSacrifice": "इस राउंड के बलिदान"
+      "boardHeadingSacrifice": "इस राउंड की पसंद"
     },
     "results": {
       "heading": "परिणाम",
@@ -2256,7 +2258,7 @@
       "cutSoFar": "अब तक हटाए गए",
       "cutEmpty": "अभी कुछ नहीं हटा — {name} पहले हैं।",
       "claimed": "दावा किया",
-      "claimPrompt": "जिसे हटाना है उसे ले लें",
+      "claimPrompt": "किसी और के लेने से पहले एक चुनें",
       "claimHint": "जो पहले पहुँचे, उसी का",
       "sideItemCount": "{count} खेल में",
       "lockedIn": "लॉक कर दिया",

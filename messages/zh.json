@@ -1877,11 +1877,11 @@
           },
           "2": {
             "title": "不能共享",
-            "body": "被抢走的条目就没了——你要抢的是你最想淘汰的那个。"
+            "body": "被抢走的条目就没了——别人再也拿不到。"
           },
           "3": {
             "title": "只有一个留下",
-            "body": "唯一没被抢的那个条目就是被保住的。"
+            "body": "唯一没被抢的那一项决定本轮结果。"
           }
         }
       },
@@ -2055,12 +2055,14 @@
       "heading": "第 {index} 轮，共 {total} 轮",
       "taken": "已被认领",
       "chosen": "已有 {count}/{total} 人选择",
-      "instructionSave": "认领一项以保留。其他所有项都将被淘汰。",
-      "instructionSacrifice": "认领一项进行淘汰。无人认领的那一项将存活。",
+      "instructionSave": "认领一项进行淘汰。无人认领的那一项将被保留。",
+      "instructionSacrifice": "认领一项以保留。无人认领的那一项将被淘汰。",
       "claimSacrifice": "淘汰 {name}",
+      "claimSave": "保留 {name}",
       "claimedBySacrifice": "由 {name} 淘汰",
+      "claimedBySave": "由 {name} 保留",
       "survivorSave": "已保留",
-      "survivorSacrifice": "存活",
+      "survivorSacrifice": "已淘汰",
       "tooFastNote": "你重新认领得太快了——请稍等片刻再试。"
     },
     "rejection": {
@@ -2075,11 +2077,11 @@
       "ready": "{count}/{total} 已准备",
       "autoNext": "{seconds} 秒后进入下一轮",
       "survivorHeadingSave": "已保留",
-      "survivorHeadingSacrifice": "存活项",
+      "survivorHeadingSacrifice": "已淘汰",
       "survivorNoteSave": "此项已被保留。",
-      "survivorNoteSacrifice": "此项在本轮中存活。",
+      "survivorNoteSacrifice": "此项已被淘汰。",
       "boardHeadingSave": "本轮的选择",
-      "boardHeadingSacrifice": "本轮的淘汰"
+      "boardHeadingSacrifice": "本轮的选择"
     },
     "results": {
       "heading": "结果",
@@ -2256,7 +2258,7 @@
       "cutSoFar": "已划掉的",
       "cutEmpty": "还没有人划掉——{name} 先手。",
       "claimed": "已抢到",
-      "claimPrompt": "抢下你想淘汰的那个",
+      "claimPrompt": "抢在别人之前认领一项",
       "claimHint": "先到先得",
       "sideItemCount": "{count} 项参战",
       "lockedIn": "已锁定",

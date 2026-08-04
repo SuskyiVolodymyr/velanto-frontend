@@ -1877,11 +1877,11 @@
           },
           "2": {
             "title": "Делить нельзя",
-            "body": "Занятый вариант уже не отдадут — вы боретесь за тот, который хотите убрать."
+            "body": "Занятый вариант уже не отдадут — никто другой его не возьмёт."
           },
           "3": {
             "title": "Один остаётся",
-            "body": "Единственный незанятый вариант и есть спасённый."
+            "body": "Единственный незанятый вариант и решает раунд."
           }
         }
       },
@@ -2055,12 +2055,14 @@
       "heading": "Раунд {index} из {total}",
       "taken": "Занято",
       "chosen": "{count, plural, one {Выбрал} other {Выбрали}} {count} из {total}",
-      "instructionSave": "Выберите один предмет, чтобы спасти его. Все остальные выбывают.",
-      "instructionSacrifice": "Выберите один предмет, чтобы пожертвовать им. Предмет, который никто не выбрал, выживает.",
+      "instructionSave": "Выберите один предмет, чтобы пожертвовать им. Тот, который никто не выбрал, будет спасён.",
+      "instructionSacrifice": "Выберите один предмет, чтобы спасти его. Тем, который никто не выбрал, пожертвуют.",
       "claimSacrifice": "Пожертвовать {name}",
+      "claimSave": "Спасти {name}",
       "claimedBySacrifice": "Пожертвовал {name}",
+      "claimedBySave": "Спас {name}",
       "survivorSave": "Спасён",
-      "survivorSacrifice": "Выживший",
+      "survivorSacrifice": "Принесён в жертву",
       "tooFastNote": "Вы слишком быстро меняете выбор — подождите немного и попробуйте снова."
     },
     "rejection": {
@@ -2075,11 +2077,11 @@
       "ready": "{count} / {total} готовы",
       "autoNext": "Следующий раунд через {seconds} с",
       "survivorHeadingSave": "Спасён",
-      "survivorHeadingSacrifice": "Выживший",
+      "survivorHeadingSacrifice": "Принесён в жертву",
       "survivorNoteSave": "Этот предмет был спасён.",
-      "survivorNoteSacrifice": "Этот предмет пережил раунд.",
+      "survivorNoteSacrifice": "Этим предметом пожертвовали.",
       "boardHeadingSave": "Выборы этого раунда",
-      "boardHeadingSacrifice": "Жертвы этого раунда"
+      "boardHeadingSacrifice": "Выборы этого раунда"
     },
     "results": {
       "heading": "Результаты",
@@ -2256,7 +2258,7 @@
       "cutSoFar": "Уже убрано",
       "cutEmpty": "Пока ничего не убрано — первым ходит {name}.",
       "claimed": "Занял",
-      "claimPrompt": "Займите тот, который хотите убрать",
+      "claimPrompt": "Займите один, пока его не забрали",
       "claimHint": "Кто успел, тот и занял",
       "sideItemCount": "{count} в игре",
       "lockedIn": "Готово",

@@ -77,12 +77,14 @@ describe("room i18n keys exist in every locale catalog", () => {
       };
       expect(localeRoom.round.instructionSave).toBeTruthy();
       expect(localeRoom.round.instructionSacrifice).toBeTruthy();
-      // No Save half for the CLAIM itself: a claim is a sacrifice in both
-      // formats (claim.engine.ts), so `claimSave`/`claimedBySave` were dead
-      // copy that read as the opposite game. The pairs below are about the
-      // SURVIVOR, which the pack's format does still name.
-      expect(localeRoom.round.claimSave).toBeUndefined();
-      expect(localeRoom.round.claimedBySave).toBeUndefined();
+      // BOTH halves of the claim, not just the sacrifice one. This used to
+      // assert the Save half was absent, on the reading that a claim is a
+      // sacrifice whatever the pack — which told a sacrifice_one room to
+      // sacrifice one item PER PLAYER. A claim takes the opposite verb to the
+      // format (room-mode-copy.ts): save_one claims sacrifice, sacrifice_one
+      // claims save. Both halves are live copy.
+      expect(localeRoom.round.claimSave).toBeTruthy();
+      expect(localeRoom.round.claimedBySave).toBeTruthy();
       expect(localeRoom.round.claimSacrifice).toBeTruthy();
       expect(localeRoom.round.claimedBySacrifice).toBeTruthy();
       expect(localeRoom.round.survivorSave).toBeTruthy();

@@ -8,6 +8,7 @@ import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { cn } from "@/src/shared/lib/cn";
 import type { RoundCall, RoundPlayerStatus } from "./RoundChrome";
 import type { RoomPlayerState, RoomState } from "./room-types";
+import { outcomeVerb } from "./room-mode-copy";
 
 type T = ReturnType<typeof useTranslations>;
 
@@ -47,7 +48,11 @@ export function roundChromeConfig(
       const claimed = Object.keys(round.claims).length;
       const mine = currentUserId ? round.claims[currentUserId] : undefined;
       return {
-        question: t("round.instructionSacrifice"),
+        // Per FORMAT, not hardcoded: a save_one room claims to sacrifice and
+        // saves the odd one out; a sacrifice_one room claims to save and
+        // sacrifices it. This line used to say "sacrifice" to both, which told
+        // a sacrifice_one room to sacrifice one item per player.
+        question: t(`round.instruction${outcomeVerb(state.packFormat)}`),
         progressNote: t("round.chosen", { count: claimed, total: seated }),
         call: {
           yours: mine === undefined,

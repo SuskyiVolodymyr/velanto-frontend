@@ -1876,11 +1876,11 @@
           },
           "2": {
             "title": "No sharing",
-            "body": "A claimed item is gone — you race for the one you want out."
+            "body": "A claimed item is off the table — nobody else can take it."
           },
           "3": {
-            "title": "One survives",
-            "body": "The single unclaimed item is the one that's saved."
+            "title": "One is left over",
+            "body": "The single unclaimed item is the one the round decides."
           }
         }
       },
@@ -2151,13 +2151,15 @@
     },
     "round": {
       "heading": "Round {index} of {total}",
-      "instructionSave": "Claim one item to save. Everyone else is eliminated.",
-      "instructionSacrifice": "Claim one item to sacrifice. The item nobody claims survives.",
+      "instructionSave": "Claim one item to sacrifice. The item nobody claims is the one saved.",
+      "instructionSacrifice": "Claim one item to save. The item nobody claims is the one sacrificed.",
       "claimSacrifice": "Sacrifice {name}",
+      "claimSave": "Save {name}",
       "taken": "Taken",
       "claimedBySacrifice": "Sacrificed by {name}",
+      "claimedBySave": "Saved by {name}",
       "survivorSave": "Saved",
-      "survivorSacrifice": "Survivor",
+      "survivorSacrifice": "Sacrificed",
       "chosen": "{count} of {total} chosen",
       "tooFastNote": "You're re-claiming too fast — wait a moment and try again."
     },
@@ -2170,11 +2172,11 @@
     },
     "between": {
       "survivorHeadingSave": "Saved",
-      "survivorHeadingSacrifice": "Survivor",
+      "survivorHeadingSacrifice": "Sacrificed",
       "survivorNoteSave": "This item was saved.",
-      "survivorNoteSacrifice": "This item survived the round.",
+      "survivorNoteSacrifice": "This item was sacrificed.",
       "boardHeadingSave": "This round's picks",
-      "boardHeadingSacrifice": "This round's sacrifices",
+      "boardHeadingSacrifice": "This round's picks",
       "next": "Next",
       "ready": "{count} / {total} ready",
       "autoNext": "Next round in {seconds}s"
@@ -2255,7 +2257,7 @@
       "cutSoFar": "Cut so far",
       "cutEmpty": "Nothing cut yet — {name} goes first.",
       "claimed": "Claimed",
-      "claimPrompt": "Take the one you want out",
+      "claimPrompt": "Claim one before it's taken",
       "claimHint": "First to it keeps it",
       "sideItemCount": "{count} in play",
       "lockedIn": "Locked in",

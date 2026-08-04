@@ -1877,11 +1877,11 @@
           },
           "2": {
             "title": "بانٹنا نہیں",
-            "body": "جس پر دعویٰ ہو گیا وہ گیا — آپ اسی کے لیے دوڑتے ہیں جسے ہٹانا ہے۔"
+            "body": "جس پر دعویٰ ہو گیا وہ گیا — کوئی اور اسے نہیں لے سکتا۔"
           },
           "3": {
             "title": "ایک بچ جاتا ہے",
-            "body": "جس اکیلے آئٹم پر کسی نے دعویٰ نہ کیا، وہی بچ جاتا ہے۔"
+            "body": "جس اکیلے آئٹم پر کسی نے دعویٰ نہ کیا، وہی راؤنڈ طے کرتا ہے۔"
           }
         }
       },
@@ -2055,12 +2055,14 @@
       "heading": "راؤنڈ {index} از {total}",
       "taken": "لے لیا گیا",
       "chosen": "{total} میں سے {count} نے منتخب کیا",
-      "instructionSave": "بچانے کے لیے ایک آئٹم منتخب کریں۔ باقی سب باہر ہو جائیں گے۔",
-      "instructionSacrifice": "قربان کرنے کے لیے ایک آئٹم منتخب کریں۔ جسے کوئی منتخب نہیں کرتا وہ بچ جاتا ہے۔",
+      "instructionSave": "قربان کرنے کے لیے ایک آئٹم منتخب کریں۔ جسے کوئی منتخب نہیں کرتا وہی بچ جاتا ہے۔",
+      "instructionSacrifice": "بچانے کے لیے ایک آئٹم منتخب کریں۔ جسے کوئی منتخب نہیں کرتا اُسی کو قربان کیا جاتا ہے۔",
       "claimSacrifice": "{name} کو قربان کریں",
+      "claimSave": "{name} کو بچائیں",
       "claimedBySacrifice": "{name} نے قربان کیا",
+      "claimedBySave": "{name} نے بچایا",
       "survivorSave": "بچا لیا گیا",
-      "survivorSacrifice": "بچا ہوا",
+      "survivorSacrifice": "قربان کر دیا گیا",
       "tooFastNote": "آپ بہت تیزی سے دوبارہ منتخب کر رہے ہیں — تھوڑا انتظار کریں اور دوبارہ کوشش کریں۔"
     },
     "rejection": {
@@ -2075,11 +2077,11 @@
       "ready": "{count} / {total} تیار",
       "autoNext": "اگلا راؤنڈ {seconds} سیکنڈ میں",
       "survivorHeadingSave": "بچا لیا گیا",
-      "survivorHeadingSacrifice": "بچا ہوا",
+      "survivorHeadingSacrifice": "قربان کر دیا گیا",
       "survivorNoteSave": "یہ آئٹم بچا لیا گیا۔",
-      "survivorNoteSacrifice": "یہ آئٹم اس راؤنڈ میں بچ گیا۔",
+      "survivorNoteSacrifice": "یہ آئٹم قربان کر دیا گیا۔",
       "boardHeadingSave": "اس راؤنڈ کے انتخاب",
-      "boardHeadingSacrifice": "اس راؤنڈ کی قربانیاں"
+      "boardHeadingSacrifice": "اس راؤنڈ کے انتخاب"
     },
     "results": {
       "heading": "نتائج",
@@ -2256,7 +2258,7 @@
       "cutSoFar": "اب تک ہٹائے گئے",
       "cutEmpty": "ابھی کچھ نہیں ہٹا — {name} پہلے ہیں۔",
       "claimed": "دعویٰ کیا",
-      "claimPrompt": "جسے ہٹانا ہے اسے لے لیں",
+      "claimPrompt": "کسی اور کے لینے سے پہلے ایک منتخب کریں",
       "claimHint": "جو پہلے پہنچے، اسی کا",
       "sideItemCount": "{count} کھیل میں",
       "lockedIn": "لاک کر دیا",

@@ -1877,11 +1877,11 @@
           },
           "2": {
             "title": "ভাগাভাগি নেই",
-            "body": "দখল হয়ে গেলে সেটি শেষ — যেটিকে সরাতে চান তার জন্যই দৌড়।"
+            "body": "দখল হয়ে গেলে সেটি শেষ — অন্য কেউ আর নিতে পারবে না।"
           },
           "3": {
             "title": "একটি টিকে যায়",
-            "body": "যে একটিমাত্র আইটেম কেউ দখল করেনি, সেটিই রক্ষা পায়।"
+            "body": "যে একটিমাত্র আইটেম কেউ দখল করেনি, সেটিই রাউন্ড ঠিক করে।"
           }
         }
       },
@@ -2055,12 +2055,14 @@
       "heading": "রাউন্ড {index} / {total}",
       "taken": "নেওয়া হয়েছে",
       "chosen": "{total} জনের মধ্যে {count} জন বেছে নিয়েছেন",
-      "instructionSave": "বাঁচানোর জন্য একটি আইটেম বেছে নিন। বাকি সবাই বাদ পড়ে যাবে।",
-      "instructionSacrifice": "উৎসর্গ করার জন্য একটি আইটেম বেছে নিন। যেটি কেউ বেছে নেয় না সেটি টিকে থাকে।",
+      "instructionSave": "উৎসর্গ করার জন্য একটি আইটেম বেছে নিন। যেটি কেউ বেছে নেয় না সেটিই বাঁচে।",
+      "instructionSacrifice": "বাঁচানোর জন্য একটি আইটেম বেছে নিন। যেটি কেউ বেছে নেয় না সেটিই উৎসর্গ হয়।",
       "claimSacrifice": "{name} উৎসর্গ করুন",
+      "claimSave": "{name} বাঁচান",
       "claimedBySacrifice": "{name} উৎসর্গ করেছেন",
+      "claimedBySave": "{name} বাঁচিয়েছেন",
       "survivorSave": "বাঁচানো হয়েছে",
-      "survivorSacrifice": "টিকে থাকা",
+      "survivorSacrifice": "উৎসর্গ করা হয়েছে",
       "tooFastNote": "আপনি খুব দ্রুত আবার বেছে নিচ্ছেন — একটু অপেক্ষা করে আবার চেষ্টা করুন।"
     },
     "rejection": {
@@ -2075,11 +2077,11 @@
       "ready": "{count} / {total} প্রস্তুত",
       "autoNext": "পরবর্তী রাউন্ড {seconds} সেকেন্ডে",
       "survivorHeadingSave": "বাঁচানো হয়েছে",
-      "survivorHeadingSacrifice": "টিকে থাকা",
+      "survivorHeadingSacrifice": "উৎসর্গ করা হয়েছে",
       "survivorNoteSave": "এই আইটেমটি বাঁচানো হয়েছে।",
-      "survivorNoteSacrifice": "এই আইটেমটি এই রাউন্ডে টিকে গেছে।",
+      "survivorNoteSacrifice": "এই আইটেমটি উৎসর্গ করা হয়েছে।",
       "boardHeadingSave": "এই রাউন্ডের পছন্দ",
-      "boardHeadingSacrifice": "এই রাউন্ডের উৎসর্গ"
+      "boardHeadingSacrifice": "এই রাউন্ডের পছন্দ"
     },
     "results": {
       "heading": "ফলাফল",
@@ -2256,7 +2258,7 @@
       "cutSoFar": "এ পর্যন্ত সরানো",
       "cutEmpty": "এখনও কিছু সরানো হয়নি — {name} প্রথমে।",
       "claimed": "দখল করেছেন",
-      "claimPrompt": "যেটি সরাতে চান সেটি নিন",
+      "claimPrompt": "কেউ নেওয়ার আগে একটি দখল করুন",
       "claimHint": "যে আগে পায়, তারই",
       "sideItemCount": "{count} খেলায়",
       "lockedIn": "লক করেছেন",

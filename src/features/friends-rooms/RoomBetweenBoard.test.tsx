@@ -31,7 +31,8 @@ describe("RoomBetweenBoard", () => {
         onNext={vi.fn()}
       />,
     );
-    expect(screen.getAllByText(/survivor/i).length).toBeGreaterThan(0);
+    // sacrifice_one: the odd one out is the item that got sacrificed.
+    expect(screen.getAllByText(/sacrificed/i).length).toBeGreaterThan(0);
   });
 
   // Guess-who's between beat is the round's own cards with the labels landed
