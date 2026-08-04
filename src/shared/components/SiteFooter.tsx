@@ -27,29 +27,37 @@ export function SiteFooter() {
   const year = new Date().getFullYear();
 
   return (
+    // Single tier. This used to be two — a tall brand/nav block over its own
+    // bordered copyright bar, ~210px — which was affordable as Dashboard-only
+    // chrome and is not now that it sits under every page. Folding the
+    // copyright up into the brand column removes a border, a wrapper and a
+    // second set of vertical padding without dropping any content.
     <footer className="mt-auto border-t border-border bg-background/60">
-      <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-6 px-7 py-10 sm:flex-row sm:items-start sm:justify-between">
+      <div className="mx-auto flex w-full max-w-[1120px] flex-col gap-5 px-7 py-6 sm:flex-row sm:items-start sm:justify-between">
         <div className="max-w-xs">
-          <Link href="/" className="flex items-center gap-2.5">
-            <BrandMark className="h-5 w-5" />
+          <Link href="/" className="flex items-center gap-2">
+            <BrandMark className="h-[18px] w-[18px]" />
             <Text
               as="span"
               variant="title"
-              className="text-[17px] tracking-[0.2em]"
+              className="text-[15px] tracking-[0.2em]"
             >
               VELANTO
             </Text>
           </Link>
-          <Text variant="tertiary" className="mt-3 text-sm">
+          <Text variant="tertiary" className="mt-2 text-xs">
             {tFooter("tagline")}
           </Text>
           {/*
             The only contact route on the platform, and what both legal
             documents point at — so it has to be reachable from any page, not
             just from inside those documents. Not a nav link: it's an address,
-            and the address is the information.
+            and the address is the information. Now shares a line with the
+            copyright, which is why the separator is decorative-only.
           */}
-          <Text variant="tertiary" className="mt-3 text-sm">
+          <Text variant="tertiary" className="mt-2 text-xs">
+            {tFooter("copyright", { year })}
+            <span aria-hidden> · </span>
             {tFooter("contactLabel")}{" "}
             <a
               href={`mailto:${SUPPORT_EMAIL}`}
@@ -62,7 +70,7 @@ export function SiteFooter() {
 
         <nav
           aria-label={tFooter("navLabel")}
-          className="grid grid-cols-2 gap-x-10 gap-y-2.5 text-sm"
+          className="grid grid-cols-2 gap-x-10 gap-y-1.5 text-[13px]"
         >
           {NAV_LINKS.map(({ href, ns, key }) => (
             <Link
@@ -74,15 +82,6 @@ export function SiteFooter() {
             </Link>
           ))}
         </nav>
-      </div>
-
-      <div className="border-t border-border/60 px-7 py-5">
-        <Text
-          variant="tertiary"
-          className="mx-auto w-full max-w-[1120px] text-xs"
-        >
-          {tFooter("copyright", { year })}
-        </Text>
       </div>
     </footer>
   );

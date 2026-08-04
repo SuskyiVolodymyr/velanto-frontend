@@ -180,7 +180,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             {onDashboard && <AppTopBar onMenuToggle={onMenuToggle} />}
             <BannedBanner />
             {children}
-            {onDashboard && <SiteFooter />}
+            {/* Same reach as the rail: global chrome on every chromed route,
+                absent from /auth and the authoring surface, where a footer
+                under a focused editor is noise. */}
+            {hasRail && <SiteFooter />}
           </div>
 
           <MobileBottomNav />
