@@ -179,7 +179,25 @@ export function AppShell({ children }: { children: ReactNode }) {
           <div className="flex min-h-full min-w-0 flex-1 flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] min-[881px]:pb-0">
             {onDashboard && <AppTopBar onMenuToggle={onMenuToggle} />}
             <BannedBanner />
-            {children}
+            {/* The page fills the viewport before the footer begins, so the
+                footer always starts just below the fold and is reached by
+                scrolling — rather than riding up to sit under a short page's
+                content, which read as "the page ended early".
+
+                `mt-auto` on the footer cannot do this: it pins the footer to
+                the BOTTOM of the column, so on a short page it lands on screen
+                immediately. The height has to come from the content instead.
+
+                Kept as a flex column that itself grows, so a child using
+                `flex-1` (the play and room screens do) still stretches exactly
+                as it did when it was a direct child of the column. */}
+            <div
+              className={
+                hasRail ? "flex min-h-screen flex-1 flex-col" : "contents"
+              }
+            >
+              {children}
+            </div>
             {/* Same reach as the rail: global chrome on every chromed route,
                 absent from /auth and the authoring surface, where a footer
                 under a focused editor is noise. */}
