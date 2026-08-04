@@ -3,6 +3,7 @@ import Link from "next/link";
 import { BackButton } from "@/src/shared/components/BackButton";
 import { BrandMark } from "@/src/shared/components/BrandMark";
 import { SidebarToggle } from "@/src/shared/components/SidebarToggle";
+import { HeaderUserCluster } from "@/src/shared/components/HeaderUserCluster";
 import { cn } from "@/src/shared/lib/cn";
 import { STICKY_HEADER_SHELL_CLASS } from "@/src/shared/lib/sticky-header-shell";
 
@@ -101,11 +102,15 @@ export function PageHeader({
       )}
       {badge}
       {meta}
-      {trailing && (
-        <div className="ms-auto flex flex-wrap items-center gap-2.5">
-          {trailing}
-        </div>
-      )}
+      {/* Always rendered, where it used to depend on `trailing`: the account
+          controls live at the far right of every header now, so the group is
+          no longer optional. Page-specific actions come first and the global
+          cluster is last, so the account controls stay in the same place on
+          every route regardless of what the page itself puts here. */}
+      <div className="ms-auto flex flex-wrap items-center gap-2.5">
+        {trailing}
+        <HeaderUserCluster />
+      </div>
     </header>
   );
 }

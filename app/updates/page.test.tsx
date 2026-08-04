@@ -4,6 +4,14 @@ import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import messages from "@/messages/en.json";
 import UpdatesPage, { generateMetadata } from "./page";
 
+// PageHeader carries the account controls now, and they call useAuth, which
+// throws without a provider. These screens are auth-agnostic, so they get a
+// signed-out stub rather than a real AuthProvider (which would fire an
+// on-mount refresh request none of these tests want to make).
+vi.mock("@/src/shared/lib/auth-context", () => ({
+  useAuth: () => ({ user: null, status: "unauthenticated", logout: vi.fn() }),
+}));
+
 // getTranslations needs a request context we don't have in unit tests; back it
 // with the real English catalog (including ICU plural resolution for
 // changesCount/showMore) so this exercises the same interpolation the real

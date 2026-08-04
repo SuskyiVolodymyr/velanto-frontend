@@ -1,7 +1,16 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { PageHeader } from "./PageHeader";
+
+// PageHeader now renders HeaderUserCluster (the notifications bell + account
+// popup), which calls useAuth. Stubbed signed-out here rather than mounting a
+// real AuthProvider, which would fire the on-mount POST /auth/refresh these
+// tests have no business making — and pinning it keeps the header's two
+// states explicit instead of leaning on useAuth's no-provider fallback.
+vi.mock("@/src/shared/lib/auth-context", () => ({
+  useAuth: () => ({ user: null, status: "unauthenticated", logout: vi.fn() }),
+}));
 
 describe("PageHeader", () => {
   it("renders a back pill linking to the given href with the given label", () => {

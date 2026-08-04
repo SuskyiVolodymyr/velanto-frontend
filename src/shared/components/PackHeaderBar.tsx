@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
+import { SidebarToggle } from "@/src/shared/components/SidebarToggle";
+import { HeaderUserCluster } from "@/src/shared/components/HeaderUserCluster";
 import { STICKY_HEADER_SHELL_CLASS } from "@/src/shared/lib/sticky-header-shell";
 import type { Pack } from "@/src/shared/types/pack";
 
@@ -46,6 +48,11 @@ export function PackHeaderBar({
 }: PackHeaderBarProps) {
   return (
     <div className={STICKY_HEADER_SHELL_CLASS}>
+      {/* Leftmost, matching PageHeader: this bar is the only header on the
+          play and result screens, so without it those routes get a collapsed
+          rail they cannot expand. */}
+      <SidebarToggle />
+
       <Link
         href={backHref}
         aria-label={backLabel}
@@ -93,7 +100,14 @@ export function PackHeaderBar({
         </div>
       </div>
 
-      {end && <div className="ms-auto shrink-0">{end}</div>}
+      {/* Global chrome, mirroring PageHeader's right-hand group so the account
+          controls sit in the same place on the play and result screens as on
+          every other route. The page's own `end` slot (round counter, play
+          again) keeps its position ahead of them. */}
+      <div className="ms-auto flex shrink-0 items-center gap-2.5">
+        {end}
+        <HeaderUserCluster />
+      </div>
     </div>
   );
 }
