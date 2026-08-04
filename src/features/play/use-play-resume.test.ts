@@ -182,6 +182,9 @@ describe("usePlayResume", () => {
     // The pack display snapshot is written for the Continue-playing rail.
     expect(stored?.pack).toEqual({
       title: "Test Pack",
+      // Snapshotted alongside the tone so the Continue-playing rail shows the
+      // pack's real cover; null for a pack that has none.
+      coverImageKey: null,
       coverTone: "#2b2a3a",
       totalRounds: 2,
     });

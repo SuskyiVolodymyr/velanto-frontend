@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+import { CoverImage } from "@/src/shared/components/CoverImage";
 import { Text } from "@/src/shared/components/Text";
 import { SidebarToggle } from "@/src/shared/components/SidebarToggle";
 import { HeaderUserCluster } from "@/src/shared/components/HeaderUserCluster";
@@ -64,13 +65,20 @@ export function PackHeaderBar({
         <ChevronLeft size={16} strokeWidth={2.2} aria-hidden />
       </Link>
 
+      {/* `relative` + `overflow-hidden` so a real cover can fill the tile: the
+          gradient stays as the ground beneath it, which is what shows for a
+          pack with no cover and what CoverImage falls back to when the stored
+          key 404s. Play and Result showed the tone alone, so a pack with a
+          cover lost it the moment you started playing it. */}
       <div
         aria-hidden="true"
-        className="h-9 w-9 shrink-0 rounded-[10px]"
+        className="relative h-9 w-9 shrink-0 overflow-hidden rounded-[10px]"
         style={{
           background: `linear-gradient(150deg, ${pack.coverTone}, #0b0c0f)`,
         }}
-      />
+      >
+        {pack.coverImageKey && <CoverImage coverKey={pack.coverImageKey} />}
+      </div>
 
       <div className="flex min-w-0 flex-col gap-[3px]">
         <Text

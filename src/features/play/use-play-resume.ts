@@ -148,12 +148,21 @@ export function usePlayResume(pack: Pack): PlayResume {
         pack: {
           title: pack.title,
           coverTone: pack.coverTone,
+          coverImageKey: pack.coverImageKey ?? null,
           totalRounds: (pack.rounds ?? []).length,
         },
         updatedAt: Date.now(),
       });
     },
-    [seed, pack.id, pack.title, pack.coverTone, pack.rounds, packVersion],
+    [
+      seed,
+      pack.id,
+      pack.title,
+      pack.coverTone,
+      pack.coverImageKey,
+      pack.rounds,
+      packVersion,
+    ],
   );
 
   const clearProgress = useCallback(() => {
