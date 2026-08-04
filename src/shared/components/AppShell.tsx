@@ -17,6 +17,7 @@ import { MobileBottomNav } from "@/src/shared/components/MobileBottomNav";
 import { RoomPresenceIndicator } from "@/src/features/friends-rooms/RoomPresenceIndicator";
 import { SearchQueryProvider } from "@/src/features/home/search-query-context";
 import { SidebarProvider } from "@/src/shared/lib/sidebar-context";
+import { setPreviousPath } from "@/src/shared/lib/in-app-history";
 import { cn } from "@/src/shared/lib/cn";
 
 // Routes that render full-screen without ANY app chrome (sidebar/top bar/nav).
@@ -93,6 +94,20 @@ export function AppShell({ children }: { children: ReactNode }) {
     mq.addEventListener("change", update);
     return () => mq.removeEventListener("change", update);
   }, []);
+
+  // Remember the page being navigated AWAY from, so a page's back pill can
+  // offer it when that page is one it accepts (see use-back-target). Nothing is
+  // recorded for the first pathname this shell sees — that one is the landing
+  // page, whose predecessor is outside the app. Lives here rather than in the
+  // pill, because the navigation to record usually happens on a page that has
+  // no back pill at all (the dashboard, a profile).
+  const previous = useRef<string | null>(null);
+  useEffect(() => {
+    if (previous.current !== null && previous.current !== pathname) {
+      setPreviousPath(previous.current);
+    }
+    previous.current = pathname;
+  }, [pathname]);
 
   // Crossing up to the desktop rail closes any open drawer, so it can't linger
   // (still scroll-locking the body) behind the now-visible rail.

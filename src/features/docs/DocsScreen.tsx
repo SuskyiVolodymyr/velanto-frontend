@@ -42,6 +42,7 @@ export function DocsScreen() {
     <>
       <PageHeader
         back={{ href: "/", label: th("browse") }}
+        backFrom={["dashboard", "updates"]}
         crumb={th("docs")}
         trailing={
           <Link
