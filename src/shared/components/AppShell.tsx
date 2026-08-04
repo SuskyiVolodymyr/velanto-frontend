@@ -16,6 +16,7 @@ import { SiteFooter } from "@/src/shared/components/SiteFooter";
 import { MobileBottomNav } from "@/src/shared/components/MobileBottomNav";
 import { RoomPresenceIndicator } from "@/src/features/friends-rooms/RoomPresenceIndicator";
 import { SearchQueryProvider } from "@/src/features/home/search-query-context";
+import { SidebarProvider } from "@/src/shared/lib/sidebar-context";
 import { cn } from "@/src/shared/lib/cn";
 
 // Routes that render full-screen without ANY app chrome (sidebar/top bar/nav).
@@ -26,14 +27,32 @@ function isFullScreenRoute(pathname: string): boolean {
   return /^(?:\/[a-z]{2})?\/auth(?:\/|$)/.test(pathname);
 }
 
-// The persistent left nav rail (Browse/My packs/People/History/Suggestions/
-// Rules) is Dashboard-only chrome, per the mocks: Dashboard.dc.html is the
-// only screen carrying `data-el="sidebar"` — Admin.dc.html, Rules.dc.html,
-// Docs.dc.html etc. each have their own simple top header with no rail at
-// all. Every other route keeps the top bar (search/create/notifications/
-// account) but not the rail. The optional locale prefix mirrors
-// isFullScreenRoute above — trailing slash is optional too, since
-// next-intl's localePrefix emits the root as `/en` with no slash.
+// Chromed routes that still get NO nav rail: the pack authoring surface
+// (`/create` and `/packs/:id/edit`, both the same CreatePackForm). It is a
+// focused editor with its own sticky action bar and a two-line title block,
+// and it keeps the pre-2.1.0 dashboard-only behaviour deliberately — unlike
+// /auth it still gets the bottom nav and the rest of the chrome, so this is a
+// separate check rather than another full-screen route.
+function isNoRailRoute(pathname: string): boolean {
+  return /^(?:\/[a-z]{2})?\/(?:create|packs\/[^/]+\/edit)(?:\/|$)/.test(
+    pathname,
+  );
+}
+
+// The dashboard is the only route that keeps the global top bar (search /
+// create / notifications / account) and the site footer. It is also the only
+// route where the nav rail starts EXPANDED — everywhere else it starts in its
+// icon-only form, so a page's own content keeps the width the mocks give it.
+//
+// The rail itself is no longer dashboard-only. The mocks put it on
+// Dashboard.dc.html alone, and following that literally left every other
+// desktop page with no global navigation at all — you had to go back to `/`
+// to reach anything. This is a deliberate departure from the mocks on that
+// one point.
+//
+// The optional locale prefix mirrors isFullScreenRoute above — trailing slash
+// is optional too, since next-intl's localePrefix emits the root as `/en`
+// with no slash.
 function isDashboardRoute(pathname: string): boolean {
   return /^(?:\/[a-z]{2})?\/?$/.test(pathname);
 }
@@ -54,8 +73,12 @@ const NARROW_DESKTOP = "(min-width: 881px) and (max-width: 1180px)";
  */
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
-  // User's desktop rail preference (only meaningful >=1181px).
-  const [collapsed, setCollapsed] = useState(false);
+  // The user's desktop rail preference (only meaningful >=1181px), or null
+  // while they haven't expressed one — in which case the route decides. Held
+  // as a tri-state rather than a boolean so "hasn't chosen yet" is
+  // distinguishable from "chose expanded": a plain boolean cannot express a
+  // per-route default and a sticky user choice at the same time.
+  const [userCollapsed, setUserCollapsed] = useState<boolean | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   // 881-1180px forces the collapsed rail; tracked in JS because the icon-only
   // content (not just the width) depends on it.
@@ -104,15 +127,26 @@ export function AppShell({ children }: { children: ReactNode }) {
   // (MobileBottomNav always carries Create/Notifications/Profile regardless
   // of route).
   const onDashboard = isDashboardRoute(pathname);
+  const hasRail = !isNoRailRoute(pathname);
+
+  // Expanded on the dashboard, collapsed everywhere else — until the user says
+  // otherwise, after which their choice travels with them across navigations
+  // instead of snapping back on every route change.
+  const collapsed = userCollapsed ?? !onDashboard;
+  // 881-1180px pins the rail collapsed regardless of the preference above.
+  const railCollapsed = collapsed || narrowDesktop;
 
   // The menu toggle opens the drawer on phones and collapses the rail on
-  // desktop — read the viewport at click time rather than tracking it. Not
-  // rendered at all off the dashboard, where there's no rail/drawer to open.
+  // desktop — read the viewport at click time rather than tracking it. Driven
+  // from AppTopBar on the dashboard and from each page's PageHeader elsewhere,
+  // via SidebarProvider below.
+  // NOT useCallback: this is declared after the `isFullScreenRoute` early
+  // return above, so a hook here would run conditionally.
   const onMenuToggle = () => {
     if (window.matchMedia(`(max-width: ${MOBILE_MAX}px)`).matches) {
       setDrawerOpen((open) => !open);
     } else {
-      setCollapsed((c) => !c);
+      setUserCollapsed((current) => !(current ?? !onDashboard));
     }
   };
 
@@ -122,36 +156,49 @@ export function AppShell({ children }: { children: ReactNode }) {
     // provider is the seam. Wraps the whole shell, but only the dashboard
     // mounts a search box, so it's inert everywhere else.
     <SearchQueryProvider>
-      <div className="flex min-h-full">
-        {onDashboard && (
-          <>
-            <AppSidebar collapsed={collapsed || narrowDesktop} />
-            <MobileDrawer open={drawerOpen} onClose={closeDrawer} />
-          </>
-        )}
+      <SidebarProvider
+        value={{
+          collapsed: railCollapsed,
+          toggle: onMenuToggle,
+          // Drives SidebarToggle's self-hiding: on a no-rail route the header
+          // renders no button rather than one that controls nothing.
+          available: hasRail,
+        }}
+      >
+        <div className="flex min-h-full">
+          {hasRail && (
+            <>
+              <AppSidebar collapsed={railCollapsed} />
+              <MobileDrawer open={drawerOpen} onClose={closeDrawer} />
+            </>
+          )}
 
-        {/* Content column. Bottom padding clears the fixed MobileBottomNav (its
+          {/* Content column. Bottom padding clears the fixed MobileBottomNav (its
             emphasized Create button makes it ~4.5rem) plus the safe-area inset,
             dropping away from 881px up where the nav is gone. */}
-        <div className="flex min-h-full min-w-0 flex-1 flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] min-[881px]:pb-0">
-          {onDashboard && <AppTopBar onMenuToggle={onMenuToggle} />}
-          <BannedBanner />
-          {children}
-          {onDashboard && <SiteFooter />}
-        </div>
+          <div className="flex min-h-full min-w-0 flex-1 flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] min-[881px]:pb-0">
+            {onDashboard && <AppTopBar onMenuToggle={onMenuToggle} />}
+            <BannedBanner />
+            {children}
+            {onDashboard && <SiteFooter />}
+          </div>
 
-        <MobileBottomNav />
-        {/* Floating "you're in a room" affordance. On the dashboard it's
-            constrained to mobile, since the sidebar's own room pill covers
-            desktop there; everywhere else the sidebar (and its pill) is gone
-            entirely, so this becomes the only "you're in a room" affordance at
-            any width. */}
-        <div
-          className={onDashboard ? "contents min-[881px]:hidden" : "contents"}
-        >
-          <RoomPresenceIndicator />
+          <MobileBottomNav />
+          {/* Floating "you're in a room" affordance, shown wherever the rail's
+            own room pill is not. That pill is dropped from the collapsed rail
+            (no room for its text), so the tracking condition is the rail's
+            state, not the route: expanded desktop rail => the pill covers it
+            and this stays mobile-only; collapsed => this is the only such
+            affordance at any width. */}
+          <div
+            className={
+              railCollapsed ? "contents" : "contents min-[881px]:hidden"
+            }
+          >
+            <RoomPresenceIndicator />
+          </div>
         </div>
-      </div>
+      </SidebarProvider>
     </SearchQueryProvider>
   );
 }

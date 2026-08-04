@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { BackButton } from "@/src/shared/components/BackButton";
 import { BrandMark } from "@/src/shared/components/BrandMark";
+import { SidebarToggle } from "@/src/shared/components/SidebarToggle";
 import { cn } from "@/src/shared/lib/cn";
 import { STICKY_HEADER_SHELL_CLASS } from "@/src/shared/lib/sticky-header-shell";
 
@@ -61,6 +62,10 @@ export function PageHeader({
 }: PageHeaderProps) {
   return (
     <header className={cn(STICKY_HEADER_SHELL_CLASS, className)}>
+      {/* Leftmost, before the back pill / brand: the rail's toggle. Off the
+          dashboard there is no AppTopBar to carry it, so each page's own
+          header does. Desktop-only and self-hiding when no rail exists. */}
+      <SidebarToggle />
       {back && (
         <BackButton
           href={back.href}
