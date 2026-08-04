@@ -3,9 +3,14 @@ import type { PackFormat, PackSummary, PackTag } from "@/src/shared/types/pack";
 import type { PackLanguage } from "@/src/shared/types/pack-language";
 import type { WindowFilterValue } from "@/src/features/home/filter-options";
 
-// One page of the discovery feed. The backend caps `limit` at 50; 25 keeps each
+// One page of the discovery feed. The backend caps `limit` at 50; 15 keeps each
 // page skimmable and gives the pager something to page through.
-export const PACKS_FEED_PAGE_SIZE = 25;
+//
+// Shared by the three feeds that use the same card grid and the same pager —
+// discovery, My packs and History — so they page in step. Splitting it would
+// mean three constants for one visual pattern, and a reader moving between the
+// tabs would meet a different page length in each.
+export const PACKS_FEED_PAGE_SIZE = 15;
 
 /**
  * The home feed's request shape, already resolved from the UI filter state

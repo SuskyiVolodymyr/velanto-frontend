@@ -83,7 +83,7 @@ describe("HomeFeed", () => {
       items: [PACK_A],
       total: 1,
       page: 1,
-      limit: 25,
+      limit: 15,
     });
     render(<HomeFeed />);
 
@@ -94,7 +94,7 @@ describe("HomeFeed", () => {
       languages: [],
       sort: "popular",
       window: "month",
-      limit: 25,
+      limit: 15,
     });
   });
 
@@ -103,7 +103,7 @@ describe("HomeFeed", () => {
       items: [PACK_A],
       total: 1,
       page: 1,
-      limit: 25,
+      limit: 15,
     });
 
     // The seed the home route passes down. It comes out of Next's Data Cache
@@ -123,7 +123,7 @@ describe("HomeFeed", () => {
       items: [],
       total: 0,
       page: 1,
-      limit: 25,
+      limit: 15,
     });
     render(<HomeFeed />);
 
@@ -150,7 +150,7 @@ describe("HomeFeed", () => {
       items: [PACK_A],
       total: 1,
       page: 1,
-      limit: 25,
+      limit: 15,
     });
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
@@ -170,7 +170,7 @@ describe("HomeFeed", () => {
       items: [PACK_A],
       total: 1,
       page: 1,
-      limit: 25,
+      limit: 15,
     });
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
@@ -197,7 +197,7 @@ describe("HomeFeed", () => {
       items: [PACK_A],
       total: 1,
       page: 1,
-      limit: 25,
+      limit: 15,
     });
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
@@ -212,7 +212,7 @@ describe("HomeFeed", () => {
         languages: [],
         sort: "popular",
         window: "month",
-        limit: 25,
+        limit: 15,
       }),
     );
   });
@@ -224,7 +224,7 @@ describe("HomeFeed", () => {
         items: [PACK_A],
         total: 1,
         page: 1,
-        limit: 25,
+        limit: 15,
       });
       render(<HomeFeed />);
       await screen.findByText("Best Anime Openings");
@@ -243,7 +243,7 @@ describe("HomeFeed", () => {
           languages: [],
           sort: "newest",
           window: undefined,
-          limit: 25,
+          limit: 15,
         }),
       );
     });
@@ -260,7 +260,7 @@ describe("HomeFeed", () => {
           languages: [],
           sort: "oldest",
           window: undefined,
-          limit: 25,
+          limit: 15,
         }),
       );
     });
@@ -294,7 +294,7 @@ describe("HomeFeed", () => {
       items: [PACK_A],
       total: 1,
       page: 1,
-      limit: 25,
+      limit: 15,
     });
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
@@ -315,7 +315,7 @@ describe("HomeFeed", () => {
         languages: [],
         sort: "popular",
         window: "month",
-        limit: 25,
+        limit: 15,
       }),
     );
     // The count rides on the Tags trigger as a badge.
@@ -328,7 +328,7 @@ describe("HomeFeed", () => {
       items: [PACK_A],
       total: 1,
       page: 1,
-      limit: 25,
+      limit: 15,
     });
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
@@ -344,7 +344,7 @@ describe("HomeFeed", () => {
         languages: [],
         sort: "popular",
         window: "month",
-        limit: 25,
+        limit: 15,
       }),
     );
 
@@ -358,7 +358,7 @@ describe("HomeFeed", () => {
         languages: [],
         sort: "popular",
         window: "month",
-        limit: 25,
+        limit: 15,
       }),
     );
     expect(tagsTrigger()).toHaveTextContent("1");
@@ -370,7 +370,7 @@ describe("HomeFeed", () => {
       items: [PACK_A],
       total: 1,
       page: 1,
-      limit: 25,
+      limit: 15,
     });
     render(<HomeFeed />);
     await screen.findByText("Best Anime Openings");
@@ -389,7 +389,7 @@ describe("HomeFeed", () => {
       items: [],
       total: 0,
       page: 1,
-      limit: 25,
+      limit: 15,
     });
     render(<HomeFeed />);
     expect(
@@ -405,7 +405,7 @@ describe("HomeFeed", () => {
         items: [PACK_A],
         total: 1,
         page: 1,
-        limit: 25,
+        limit: 15,
       });
       render(<HomeFeed />);
       await screen.findByText("Best Anime Openings");
@@ -418,7 +418,7 @@ describe("HomeFeed", () => {
         items: [PACK_A],
         total: 1,
         page: 1,
-        limit: 25,
+        limit: 15,
       });
       render(<HomeFeed initialQuery="anime" />);
       await screen.findByText("Best Anime Openings");
@@ -431,7 +431,7 @@ describe("HomeFeed", () => {
           q: "anime",
           sort: "popular",
           window: "month",
-          limit: 25,
+          limit: 15,
         }),
       );
     });
@@ -444,7 +444,7 @@ describe("HomeFeed", () => {
         items: [],
         total: 0,
         page: 1,
-        limit: 25,
+        limit: 15,
       });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
@@ -472,7 +472,7 @@ describe("HomeFeed", () => {
         items: [],
         total: 0,
         page: 1,
-        limit: 25,
+        limit: 15,
       });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
@@ -493,7 +493,7 @@ describe("HomeFeed", () => {
         items: [],
         total: 0,
         page: 1,
-        limit: 25,
+        limit: 15,
       });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
@@ -514,7 +514,7 @@ describe("HomeFeed", () => {
         items: [],
         total: 0,
         page: 1,
-        limit: 25,
+        limit: 15,
       });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
@@ -559,7 +559,7 @@ describe("HomeFeed", () => {
         items: [PACK_A],
         total: 1,
         page: 1,
-        limit: 25,
+        limit: 15,
       });
       render(<HomeFeed />);
 
@@ -575,7 +575,7 @@ describe("HomeFeed", () => {
         items: [],
         total: 0,
         page: 1,
-        limit: 25,
+        limit: 15,
       });
       render(<HomeFeed />);
       await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
@@ -603,7 +603,7 @@ describe("HomeFeed", () => {
         items: [PACK_A],
         total: 1,
         page: 1,
-        limit: 25,
+        limit: 15,
       });
       render(<HomeFeed />);
       await screen.findByText("Best Anime Openings");
@@ -620,16 +620,16 @@ describe("HomeFeed", () => {
         items: [PACK_A],
         total: 60,
         page: 1,
-        limit: 25,
+        limit: 15,
       });
       render(<HomeFeed />);
       await screen.findByText("Best Anime Openings");
-      expect(screen.getByText("Showing 1–25 of 60 packs")).toBeInTheDocument();
+      expect(screen.getByText("Showing 1–15 of 60 packs")).toBeInTheDocument();
 
       await user.click(screen.getByRole("button", { name: "2" }));
       await waitFor(() =>
         expect(
-          screen.getByText("Showing 26–50 of 60 packs"),
+          screen.getByText("Showing 16–30 of 60 packs"),
         ).toBeInTheDocument(),
       );
     });
@@ -640,7 +640,7 @@ describe("HomeFeed", () => {
         items: [PACK_A],
         total: 60,
         page: 1,
-        limit: 25,
+        limit: 15,
       });
       render(<HomeFeed />);
       await screen.findByText("Best Anime Openings");
@@ -661,7 +661,7 @@ describe("HomeFeed", () => {
         items: [PACK_A],
         total: 60,
         page: 1,
-        limit: 25,
+        limit: 15,
       });
       render(<HomeFeed />);
       await screen.findByText("Best Anime Openings");

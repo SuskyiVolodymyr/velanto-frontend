@@ -259,7 +259,12 @@ export function Dropdown<T extends string>({
           tabIndex={-1}
           onKeyDown={handleKeyDown}
           className={cn(
-            "absolute inset-x-0 top-[calc(100%+4px)] z-30 overflow-y-auto rounded-control border border-white/[0.12] bg-surface-raised p-1.5 shadow-[0_18px_44px_rgba(0,0,0,0.55)]",
+            // no-scrollbar: still scrolls, just without the native bar, which
+            // on a 200px-wide floating panel eats a visible slice of the row
+            // and renders in OS chrome that matches nothing else here. The
+            // panel is short enough that a long list reads as clipped, so the
+            // bar is not carrying the "there is more" signal on its own.
+            "no-scrollbar absolute inset-x-0 top-[calc(100%+4px)] z-30 overflow-y-auto rounded-control border border-white/[0.12] bg-surface-raised p-1.5 shadow-[0_18px_44px_rgba(0,0,0,0.55)]",
             PANEL_HEIGHT_CLASS[panelHeight],
           )}
         >

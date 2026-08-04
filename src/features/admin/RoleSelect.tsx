@@ -54,7 +54,11 @@ export function RoleSelect({
       ariaLabel={ariaLabel}
       size="sm"
       surface="card"
-      className="w-fit"
+      // A fixed width, not w-fit: this sits in a table column, one per row, and
+      // sizing each trigger to its own current label made the control a
+      // different width on every line — "moderator" wider than "user". Wide
+      // enough for the longest grantable role.
+      className="w-[132px]"
       options={[
         // The current role must be present as the selected option, or the
         // control renders blank whenever the target holds a role above what
