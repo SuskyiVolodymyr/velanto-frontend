@@ -9,6 +9,7 @@ import { RoomRound } from "./RoomRound";
 import { GuessWhoRoundBoard } from "./GuessWhoRoundBoard";
 import { TurnBasedCutBoard } from "./TurnBasedCutBoard";
 import { VotingBoard } from "./VotingBoard";
+import { SpyBoard } from "./SpyBoard";
 import { SharedGridRankSubmission } from "./SharedGridRankSubmission";
 import { RelayInsertBoard } from "./RelayInsertBoard";
 import { RoundRejectionNotice } from "./RoundRejectionNotice";
@@ -24,6 +25,8 @@ export interface RoomRoundActions {
   vote: (optionId: string) => void;
   submitRanking: (ranking: string[]) => void;
   placeItem: (itemId: string, position: number) => void;
+  /** Spy: pick one option. For the SPY the id may be an opaque token. */
+  spyPick: (optionId: string) => void;
   lastRejection: ClaimRejection | null;
   /** Sourced from the hook rather than restated, so a new mode's rejection
    * cannot be added there and silently not reach a board. */
@@ -70,6 +73,19 @@ export function RoomRoundBoard({
           state={state}
           currentUserId={currentUserId}
           onVote={actions.vote}
+        />
+      </>
+    );
+  }
+
+  if (state.mode === "spy") {
+    return (
+      <>
+        {rejection}
+        <SpyBoard
+          state={state}
+          currentUserId={currentUserId}
+          onPick={actions.spyPick}
         />
       </>
     );
