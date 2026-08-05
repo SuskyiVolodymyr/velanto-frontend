@@ -2082,11 +2082,17 @@
       "createError": "Couldn't create the room. Try again.",
       "codeLabel": "Room code",
       "codePlaceholder": "Enter code",
+      "nicknameLabel": "Your nickname",
+      "nicknamePlaceholder": "Pick a nickname",
       "join": "Join",
       "emptyCode": "Enter a room code.",
       "errorNotFound": "No room with that code. Check it and try again.",
       "errorUnavailable": "This room isn't taking new players — it may be full, locked, or already started.",
-      "errorGeneric": "Couldn't join the room. Try again."
+      "errorGeneric": "Couldn't join the room. Try again.",
+      "guestHint": "No account needed — just pick a name.",
+      "emptyNickname": "Pick a nickname first.",
+      "errorNickname": "That nickname will not work. Use 2-16 letters, numbers or underscores.",
+      "errorRateLimited": "Too many join attempts from here. Try again later."
     },
     "lobby": {
       "heading": "Lobby",
@@ -2094,6 +2100,7 @@
       "emptySeat": "Empty seat",
       "you": "You",
       "host": "Host",
+      "guest": "Guest",
       "ready": "Ready",
       "notReady": "Not ready",
       "away": "Away",
@@ -2200,7 +2207,10 @@
       "unavailableBody": "This room isn't taking new players — it may be full, locked, or already started.",
       "genericTitle": "Couldn't join the room",
       "genericBody": "Something went wrong joining this room. Please try again.",
-      "browse": "Browse packs"
+      "browse": "Browse packs",
+      "guestTitle": "Join the game",
+      "guestBody": "Pick a name your friends will recognise. No account needed.",
+      "guestSignIn": "Or log in to your account"
     },
     "leave": "Leave",
     "leaveConfirm": {

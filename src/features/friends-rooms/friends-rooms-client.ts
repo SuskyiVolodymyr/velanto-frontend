@@ -1,6 +1,12 @@
-import { apiClient } from "@/src/shared/lib/api-client";
+import { apiClient, getAccessToken } from "@/src/shared/lib/api-client";
 import type { Group, PackFormat, Round } from "@/src/shared/types/pack";
-import type { AvailableMode, MyRoomSummary, RoomState } from "./room-types";
+import { getGuestSession } from "./guest-session";
+import type {
+  AvailableMode,
+  GuestJoinResult,
+  MyRoomSummary,
+  RoomState,
+} from "./room-types";
 
 /**
  * REST surface for friends rooms. The realtime game runs over the socket (see
@@ -23,8 +29,37 @@ export const friendsRoomsClient = {
   join: (code: string) =>
     apiClient.post<RoomState>("/friends-rooms/join", { code }),
 
-  /** A snapshot for a member — the initial load before the socket connects. */
-  getById: (id: string) => apiClient.get<RoomState>(`/friends-rooms/${id}`),
+  /**
+   * Join without an account: a code and a nickname, in exchange for a token
+   * good for that one room and nothing else.
+   *
+   * Unauthenticated — the response is what creates the caller. The token it
+   * returns is NOT a session: there is no refresh behind it, so when it expires
+   * (12h) the guest re-joins as a new one. Store it with saveGuestSession.
+   */
+  joinAsGuest: (code: string, nickname: string) =>
+    apiClient.post<GuestJoinResult>("/friends-rooms/join-guest", {
+      code,
+      nickname,
+    }),
+
+  /**
+   * A snapshot for a member — the initial load before the socket connects.
+   *
+   * A guest presents their room token explicitly, because they have no ambient
+   * identity — the api-client's Authorization header comes from the in-memory
+   * access token, which a signed-out guest does not have.
+   *
+   * A real session always wins. Someone who guested into a room and later
+   * signed in still has that guest entry in sessionStorage, and sending it
+   * would hand them the throwaway seat instead of their own.
+   */
+  getById: (id: string) => {
+    const guest = getAccessToken() === null ? getGuestSession(id) : null;
+    return apiClient.get<RoomState>(`/friends-rooms/${id}`, {
+      headers: guest ? { Authorization: `Bearer ${guest.token}` } : undefined,
+    });
+  },
 
   /**
    * The rooms the signed-in user still holds a seat in, including ones they have

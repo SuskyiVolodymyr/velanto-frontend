@@ -125,6 +125,27 @@ export interface RoomPlayerState {
    * masking is for the screen, not against someone reading the socket.
    */
   label: string | null;
+  /**
+   * True for a player who joined with a nickname rather than an account.
+   *
+   * The roster marks them, because a guest is a name typed into a box: there is
+   * no profile behind it, and nothing stops a second person typing the same
+   * one. Absent on snapshots from a backend that predates guests, so treat a
+   * missing value as false rather than assuming it.
+   */
+  guest?: boolean;
+}
+
+/** What POST /friends-rooms/join-guest hands back. */
+export interface GuestJoinResult {
+  /**
+   * A JWT bound to this one room. Not a session — no refresh, 12h, and every
+   * other endpoint refuses it.
+   */
+  token: string;
+  /** The guest's own user id, so the room can find itself in the roster. */
+  guestId: string;
+  room: RoomState;
 }
 
 /**

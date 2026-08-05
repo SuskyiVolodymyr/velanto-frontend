@@ -5,10 +5,10 @@ import { useTranslations } from "next-intl";
 import { Loader2, WifiOff } from "lucide-react";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
-import { useAuth } from "@/src/shared/lib/auth-context";
 import { pageContainer } from "@/src/shared/lib/page-container";
 import { cn } from "@/src/shared/lib/cn";
 import { useFriendsRoom } from "./use-friends-room";
+import { useRoomViewerId } from "./use-room-viewer-id";
 import { RoomLobby } from "./RoomLobby";
 import { RoomRoundBoard } from "./RoomRoundBoard";
 import { RoomBetweenBoard } from "./RoomBetweenBoard";
@@ -30,7 +30,6 @@ import { useExitToPack } from "./use-exit-to-pack";
  */
 export function RoomScreen({ roomId }: { roomId: string }) {
   const t = useTranslations("room");
-  const { user } = useAuth();
   const {
     state,
     connection,
@@ -53,7 +52,9 @@ export function RoomScreen({ roomId }: { roomId: string }) {
     guess,
     start,
   } = useFriendsRoom(roomId);
-  const userId = user?.id ?? null;
+  // The account id, or — for someone who joined with a nickname — the guest
+  // the join created. See useRoomViewerId.
+  const userId = useRoomViewerId(roomId);
 
   // Claim and Turn-based cut caption themselves "Save" or "Sacrifice" after
   // the PACK's format. It rides the room snapshot (the live room already holds

@@ -1984,11 +1984,17 @@
       "createError": "无法创建房间，请重试。",
       "codeLabel": "房间代码",
       "codePlaceholder": "输入代码",
+      "nicknameLabel": "你的昵称",
+      "nicknamePlaceholder": "取个昵称",
       "join": "加入",
       "emptyCode": "请输入房间代码。",
       "errorNotFound": "找不到该代码对应的房间。请检查后重试。",
       "errorUnavailable": "该房间暂不接受新玩家——可能已满、已锁定或已开始。",
-      "errorGeneric": "无法加入房间，请重试。"
+      "errorGeneric": "无法加入房间，请重试。",
+      "guestHint": "无需账号 — 取个名字即可。",
+      "emptyNickname": "请先取个昵称。",
+      "errorNickname": "该昵称不可用。请使用 2-16 个字母、数字或下划线。",
+      "errorRateLimited": "此处的加入尝试过多，请稍后再试。"
     },
     "lobby": {
       "heading": "房间大厅",
@@ -1996,6 +2002,7 @@
       "emptySeat": "空座位",
       "you": "你",
       "host": "房主",
+      "guest": "访客",
       "ready": "已准备",
       "notReady": "未准备",
       "away": "离开",
@@ -2102,7 +2109,10 @@
       "unavailableBody": "该房间暂不接受新玩家——可能已满、已锁定或已开始。",
       "genericTitle": "无法加入房间",
       "genericBody": "加入此房间时出错。请重试。",
-      "browse": "浏览卡包"
+      "browse": "浏览卡包",
+      "guestTitle": "加入游戏",
+      "guestBody": "取一个朋友们认得出的名字。无需账号。",
+      "guestSignIn": "或登录你的账号"
     },
     "leave": "离开",
     "leaveConfirm": {
