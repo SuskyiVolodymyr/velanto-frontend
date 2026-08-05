@@ -34,7 +34,7 @@ export const UPDATES: UpdateEntry[] = [
       "Spy is a new way to play any Save One, Sacrifice One, 1v1 or NxN pack with friends. One player is secretly the spy, and half of every round is blacked out for them — on a versus pack they see one side and not even the other side's name. Everyone else sees the whole board.",
       "Every pick is public, live, under your real name. The spy has to keep choosing something plausible from half a board, and everyone else is watching for the person whose choices don't quite add up. A blacked-out option stays blacked out for the spy even after somebody picks it, so they learn that three people liked something without ever learning what it was.",
       "After the last round everyone except the spy names who they think it was. Calling it right scores a point; the spy scores a point for everyone who looked somewhere else. The reveal then shows the whole game back to you — every pick by every player, and, for the first time, exactly which options the spy was blind to in each round.",
-      "Needs four players and a pack with at least three rounds. The spy's own picks don't count toward the pack's statistics — they were choosing from half a board.",
+      "Needs three players and a pack with at least three rounds. The spy's own picks don't count toward the pack's statistics — they were choosing from half a board.",
     ],
   },
   {
