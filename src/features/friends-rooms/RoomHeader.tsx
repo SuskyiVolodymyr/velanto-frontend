@@ -2,9 +2,17 @@
 
 import { useTranslations } from "next-intl";
 import { STICKY_HEADER_SHELL_CLASS } from "@/src/shared/lib/sticky-header-shell";
+import { CoverImage } from "@/src/shared/components/CoverImage";
 import { cn } from "@/src/shared/lib/cn";
 import { RoomLeaveButton } from "./RoomLeaveButton";
 import type { RoomState } from "./room-types";
+
+/**
+ * The tone a room snapshot from a pre-cover backend falls back to — the exact
+ * gradient this header hardcoded before covers rode the snapshot, so an
+ * unupgraded gateway looks the way it always did rather than broken.
+ */
+const FALLBACK_TONE = "#2b2a3a";
 
 /**
  * The room's own sticky header (Room Lobby.dc.html / Room Round.dc.html): Leave,
@@ -44,10 +52,22 @@ export function RoomHeader({
       <RoomLeaveButton state={state} onLeave={onLeave} />
 
       <div className="flex min-w-0 items-center gap-[11px]">
+        {/* The pack's real cover, not a placeholder: this thumbnail plus the
+            title is the whole answer to "what are we playing?" for someone who
+            arrived from a shared link. `relative` positions CoverImage, which
+            fills it and unmounts itself on a load error so the tone gradient
+            underneath shows through. */}
         <span
           aria-hidden
-          className="h-9 w-9 flex-none rounded-[10px] bg-[linear-gradient(150deg,#2b2a3a,#0b0c0f)]"
-        />
+          className="relative h-9 w-9 flex-none overflow-hidden rounded-[10px]"
+          style={{
+            background: `linear-gradient(150deg, ${state.packCoverTone || FALLBACK_TONE}, #0b0c0f)`,
+          }}
+        >
+          {state.packCoverImageKey && (
+            <CoverImage coverKey={state.packCoverImageKey} />
+          )}
+        </span>
         <div className="flex min-w-0 flex-col gap-0.5">
           <span className="truncate text-[14.5px] font-semibold text-foreground">
             {state.packTitle}
