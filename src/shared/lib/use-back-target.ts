@@ -52,6 +52,12 @@ export function useBackTarget(
   const [previousPath, setPreviousPath] = useState<string | null>(null);
 
   useEffect(() => {
+    // A set-state-in-effect, and deliberately so — same call the resume rails
+    // make (see InProgressSection): reading during render would run on the
+    // server and diverge on hydration. useSyncExternalStore is not the answer
+    // either, because nothing notifies when the stored path changes, so its
+    // snapshot would go stale without React ever being told.
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
     setPreviousPath(getPreviousPath());
   }, []);
 
