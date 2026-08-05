@@ -34,7 +34,11 @@ export function GuessWhoLabelTable({
   const usernameById = new Map(
     state.players.map((p) => [p.userId, p.username]),
   );
-  const mapping = state.endgame?.mapping ?? {};
+  // Narrowed: the public endgame is a union now that Spy has its own reveal,
+  // and this table is Guess-who's alone.
+  const endgame =
+    state.endgame?.kind === "identity_reveal" ? state.endgame : null;
+  const mapping = endgame?.mapping ?? {};
   // rank_blind's pick is a whole ordering, which changes both what a cell
   // holds and how much room it needs.
   const ranked = state.packFormat === "rank_blind";

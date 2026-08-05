@@ -1,4 +1,5 @@
 import {
+  EyeOff,
   LayoutGrid,
   Repeat,
   Scissors,
@@ -21,4 +22,5 @@ export const ICON_BY_NAME: Record<string, LucideIcon> = {
   Vote,
   LayoutGrid,
   Repeat,
+  EyeOff,
 };
