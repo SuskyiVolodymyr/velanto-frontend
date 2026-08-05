@@ -62,12 +62,11 @@ export const ROOM_MODE_BOUNDS: Record<
   },
   shared_grid: { formats: ["rank_blind"], minPlayers: 2, maxPlayers: 12 },
   relay: { formats: ["rank_blind"], minPlayers: 2, maxPlayers: 6 },
-  // Four is the highest floor of any mode: at three players the accusation is
-  // one spy and two accusers guessing between two names, which is a coin flip
-  // rather than a deduction.
+  // Three, tying guess_who: below that there is no room to read at all — one
+  // accuser facing one suspect is an accusation, not a deduction.
   spy: {
     formats: ["save_one", "sacrifice_one", "nxn", "1v1"],
-    minPlayers: 4,
+    minPlayers: 3,
     maxPlayers: 8,
   },
 };
