@@ -29,10 +29,21 @@ export const UPDATES: UpdateEntry[] = [
   {
     date: "2026-08-05",
     version: "2.1.0",
-    title: "Friends can join without an account",
+    title: "Join without an account, and find your way around",
     bullets: [
       "Someone you send a room code or an invite link to no longer needs to sign up first. They pick a nickname, and they're in the game — same seat, same reconnect if their phone drops, same everything a signed-in player gets. Guests show a small badge in the roster so you can tell who has an account and who typed a name into a box.",
       "Starting a room still needs an account, and a guest can only play the one room they were invited to — nothing else on the site opens up to them.",
+      "There's a sidebar on every screen now. It starts collapsed as a strip of icons and opens when you want it, so you can get to your packs, history, people or the rules from wherever you are instead of going back to the dashboard first.",
+      "Every page has a proper header. Your notifications bell and your account menu are in the same place on every screen, so unread notices no longer wait for you to wander back to the home page. Pages that need one now carry a back button that returns you where you actually came from — open a profile from the People list and back goes to People, not to the dashboard.",
+      "The footer is on every page instead of a few, and it's compact enough to stay out of the way. Short pages fill the screen properly now, so the footer sits below the fold rather than floating halfway up an empty page.",
+      "Browsing packs is easier to read. Each filter is its own labelled control — format, language, tag, sort — instead of a row of unlabelled boxes you had to open to find out what they were.",
+      "Every dropdown on the site is now the same one. Language, format, sort, report reasons, moderation and admin controls all open the same way, look the same, and work with the keyboard — previously about half of them were the browser's own picker and looked different on every device.",
+      "Signed out and clicking something that needs an account? You now get a small sign-in panel anchored to whatever you clicked, explaining what it's for. It used to be a tooltip that was easy to miss and impossible to use on a phone.",
+      "Pack pages open on what you came for: the rounds list starts folded away, so the description, the modes and the play button are visible without scrolling past a long list first.",
+      "Settings behaves. The on/off switches sit where they should and turn your accent colour when they're on, and the sections that only make sense with an account are hidden when you're signed out instead of showing you controls that do nothing.",
+      "Your dashboard shows 15 packs a page instead of 12.",
+      'Packs keep their cover everywhere. The play screen, the results, the room header and the "continue playing" rails all show the pack\'s own artwork instead of a plain gradient, so a pack looks like itself wherever you meet it.',
+      'Fixed what a pick means in a Sacrifice One room. The game said "sacrifice one" and then asked every player to sacrifice something, which would have left nothing standing — a round only ever singles out one item. Claiming now means saving, and the item nobody claims is the one sacrificed. Save One rooms are unchanged, and read the opposite way round, as they always did.',
     ],
   },
   {
