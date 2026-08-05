@@ -15,6 +15,8 @@ import { RoomBetweenBoard } from "./RoomBetweenBoard";
 import { GuessingPhaseScreen } from "./GuessingPhaseScreen";
 import { RoomResults } from "./RoomResults";
 import { IdentityRevealScreen } from "./IdentityRevealScreen";
+import { SpyAccusationScreen } from "./SpyAccusationScreen";
+import { SpyRevealScreen } from "./SpyRevealScreen";
 import { RoomHeader } from "./RoomHeader";
 import { RoomKicked } from "./RoomKicked";
 import { useExitToPack } from "./use-exit-to-pack";
@@ -41,6 +43,8 @@ export function RoomScreen({ roomId }: { roomId: string }) {
     cut,
     pick,
     vote,
+    spyPick,
+    accuse,
     submitRanking,
     placeItem,
     ready,
@@ -74,6 +78,8 @@ export function RoomScreen({ roomId }: { roomId: string }) {
       <Shell>
         {state.mode === "guess_who" && state.endgame ? (
           <IdentityRevealScreen state={state} />
+        ) : state.mode === "spy" && state.endgame ? (
+          <SpyRevealScreen state={state} currentUserId={userId} />
         ) : (
           <RoomResults state={state} packFormat={packFormat} />
         )}
@@ -185,6 +191,7 @@ export function RoomScreen({ roomId }: { roomId: string }) {
               cut,
               pick,
               vote,
+              spyPick,
               submitRanking,
               placeItem,
               lastRejection,
@@ -201,13 +208,20 @@ export function RoomScreen({ roomId }: { roomId: string }) {
             onNext={next}
           />
         )}
-        {state.phase === "guessing" && (
-          <GuessingPhaseScreen
-            state={state}
-            currentUserId={userId}
-            onSubmit={guess}
-          />
-        )}
+        {state.phase === "guessing" &&
+          (state.mode === "spy" ? (
+            <SpyAccusationScreen
+              state={state}
+              currentUserId={userId}
+              onAccuse={accuse}
+            />
+          ) : (
+            <GuessingPhaseScreen
+              state={state}
+              currentUserId={userId}
+              onSubmit={guess}
+            />
+          ))}
         {/* phase "finished" is handled above, before the connection checks, so a
           torn-down socket still shows results. */}
       </Shell>

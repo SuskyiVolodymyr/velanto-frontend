@@ -40,8 +40,12 @@ export function IdentityRevealScreen({ state }: { state: RoomState }) {
     }
   }
 
-  const mapping = state.endgame?.mapping ?? {};
-  const scores = state.endgame?.scores;
+  // Narrowed: the public endgame is a union now that Spy has its own reveal.
+  // This screen renders Guess-who's; RoomScreen only routes here for it.
+  const endgame =
+    state.endgame?.kind === "identity_reveal" ? state.endgame : null;
+  const mapping = endgame?.mapping ?? {};
+  const scores = endgame?.scores;
   const myGuess = state.myGuess ?? {};
   const playerById = new Map(state.players.map((p) => [p.userId, p]));
   const labels = Object.keys(mapping).sort();

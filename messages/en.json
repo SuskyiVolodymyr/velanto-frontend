@@ -1976,6 +1976,24 @@
             "body": "Nobody owns the result — the room assembles one shared order."
           }
         }
+      },
+      "spy": {
+        "name": "Spy",
+        "blurb": "One player sees half the board. Find them before the game ends.",
+        "steps": {
+          "1": {
+            "title": "One secret spy",
+            "body": "Half of every round is redacted for them — and only they know."
+          },
+          "2": {
+            "title": "Pick in the open",
+            "body": "Every pick is public, under a real name. Watch for choices that don't add up."
+          },
+          "3": {
+            "title": "Accuse and score",
+            "body": "Everyone names the spy. Right calls score; the spy scores off wrong ones."
+          }
+        }
       }
     },
     "lockedIn": {
@@ -2178,7 +2196,9 @@
       "not_in_round": "That option isn't part of this round.",
       "round_not_active": "This round has already ended.",
       "not_a_player": "You don't hold a seat in this room.",
-      "malformed": "That submission wasn't valid — try again."
+      "malformed": "That submission wasn't valid — try again.",
+      "not_accusing": "The room isn't accusing right now.",
+      "is_spy": "You're the spy — you don't get to accuse."
     },
     "between": {
       "survivorHeadingSave": "Saved",
@@ -2285,6 +2305,60 @@
       "rankSlotFilled": "Rank {rank}: {title}",
       "rankPlaceHere": "Place {name} here",
       "rankHiddenAfter": "{count} still hidden after this"
+    },
+    "spy": {
+      "instruction": "Which one do you pick?",
+      "spyTitle": "{count} of {total} options are hidden from you",
+      "spySideTitle": "You can see one side. Pick anyway.",
+      "spyHint": "You may pick a redacted option blind — and you'll have to, or your pattern gives you away.",
+      "hunterTitle": "One of you is the spy",
+      "hunterHint": "Everyone sees the same full board. Watch for the person whose picks don't add up.",
+      "badge": "SPY",
+      "youAreSpy": "You're the spy",
+      "redacted": "Redacted option",
+      "redactedPool": "Redacted pool",
+      "redactedBadge": "HIDDEN FROM YOU",
+      "slot": "Slot {index}",
+      "pickFor": "Pick {name}",
+      "pickHidden": "Pick the hidden option in slot {index}",
+      "yourPick": "YOUR PICK",
+      "yourBlindPick": "YOUR BLIND PICK",
+      "picked": "Picked",
+      "pickedBlind": "Picked blind",
+      "progress": "{count} of {total} picks in",
+      "picksHeading": "Picks so far",
+      "picksHint": "public, under real names",
+      "spyRule": "A slot hidden from you stays hidden even after somebody picks it — you see that two players chose a slot, never what the slot is.",
+      "hunterRule": "Nothing is hidden from you, and the spy's board is redrawn every round — so a run of odd picks means more than one odd pick.",
+      "rosterSpy": "Only you are told you're the spy. Nobody else is told anything until the reveal.",
+      "rosterHunter": "Everyone knows a spy exists. Nobody is told who — that's the whole hunt.",
+      "accuse": {
+        "heading": "Accusation",
+        "title": "Who was the spy?",
+        "instruction": "Name the player you think was working with half a board.",
+        "submit": "Accuse {name}",
+        "choose": "Accuse {name}",
+        "waiting": "{count} / {total} have accused",
+        "spyWaiting": "You're the spy — sit tight while the room decides.",
+        "deadline": "Reveal in"
+      },
+      "reveal": {
+        "heading": "Reveal",
+        "spyWas": "{name} was the spy",
+        "youWere": "You were the spy",
+        "escaped": "{count} of {total} never worked it out",
+        "caught": "The room caught them",
+        "yourAccusation": "You named {name}",
+        "noAccusation": "You didn't accuse anyone",
+        "correct": "Correct call",
+        "incorrect": "Wrong call",
+        "historyHeading": "Every pick, every round",
+        "historyHint": "Nothing was hidden from the room. Somebody here was working with half a board.",
+        "recapHeading": "What the spy could see",
+        "sawCount": "Saw {count} of {total}",
+        "hiddenBadge": "Hidden",
+        "spyPick": "Spy's pick"
+      }
     }
   },
   "reviewOutcome": {

@@ -73,4 +73,27 @@ describe("RoomHeader", () => {
     expect(background).toContain("rgb(43, 42, 58)");
     expect(background).not.toContain("undefined");
   });
+
+  it("marks the spy", () => {
+    render(
+      <RoomHeader
+        state={baseRoomState({ mode: "spy", iAmSpy: true })}
+        onLeave={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByText("SPY")).toBeInTheDocument();
+  });
+
+  it("marks nobody else — iAmSpy is per-caller and null for everyone else", () => {
+    // So there is nothing here to read off somebody's shared screen.
+    render(
+      <RoomHeader
+        state={baseRoomState({ mode: "spy", iAmSpy: false })}
+        onLeave={vi.fn()}
+      />,
+    );
+
+    expect(screen.queryByText("SPY")).not.toBeInTheDocument();
+  });
 });

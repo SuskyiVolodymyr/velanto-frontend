@@ -80,6 +80,14 @@
    * as an accent on a dark surface rather than as warning colours — a literal
    * #ffd700 next to --danger looks like two alerts.
    */
+  /*
+   * The Spy mode's own hue. Its whole visual job is "this is withheld from
+   * you", which no existing token says: --danger reads as an error, --score as
+   * a reward, and --acc is the ordinary interactive accent every other board
+   * already uses for a pick. A violet keeps redaction legible as a third thing.
+   */
+  --spy: #a855f7;
+
   --medal-gold: #e8c26a;
   --medal-silver: #c2c9d1;
   --medal-bronze: #cd8f5a;
@@ -117,6 +125,7 @@
   --color-status-pending: var(--status-pending);
   --color-status-approved: var(--status-approved);
   --color-status-rejected: var(--status-rejected);
+  --color-spy: var(--spy);
   --color-medal-gold: var(--medal-gold);
   --color-medal-silver: var(--medal-silver);
   --color-medal-bronze: var(--medal-bronze);

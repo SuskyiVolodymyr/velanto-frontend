@@ -25,6 +25,7 @@ export const ROOM_MODES = [
   "voting",
   "shared_grid",
   "relay",
+  "spy",
 ] as const;
 export type RoomMode = (typeof ROOM_MODES)[number];
 
@@ -61,6 +62,14 @@ export const ROOM_MODE_BOUNDS: Record<
   },
   shared_grid: { formats: ["rank_blind"], minPlayers: 2, maxPlayers: 12 },
   relay: { formats: ["rank_blind"], minPlayers: 2, maxPlayers: 6 },
+  // Four is the highest floor of any mode: at three players the accusation is
+  // one spy and two accusers guessing between two names, which is a coin flip
+  // rather than a deduction.
+  spy: {
+    formats: ["save_one", "sacrifice_one", "nxn", "1v1"],
+    minPlayers: 4,
+    maxPlayers: 8,
+  },
 };
 
 /** Whether a specific pack can run a mode, and up to what roster size. */
@@ -167,7 +176,16 @@ export interface RoundState {
   claims: Record<string, string>;
   /** Claim mode: null until the round resolves. */
   survivorItemId: string | null;
-  /** Guess-who mode: the ids a player selects among, and how. Absent otherwise. */
+  /**
+   * Guess-who, Voting, Shared-grid and Spy: the ids a player acts on, and how.
+   * Absent otherwise.
+   *
+   * SPY is the one mode where this is not simply a slice of `items`: an option
+   * the spy cannot see arrives as an opaque per-round TOKEN in its real slot,
+   * and its item is absent from `items` entirely. So a board reads the shape of
+   * the round from HERE and treats a missing item as "redacted" — which is why
+   * the spy still knows how many options exist without learning what they are.
+   */
   optionIds?: string[];
   actionKind?: "pick" | "rank";
   /** Guess-who and Voting on an NXN pack: what each option IS, since there an
@@ -273,12 +291,33 @@ export interface RelayRoundResult {
   placements: { userId: string; itemId: string }[];
 }
 
+/**
+ * Spy's resolved round - every seated player's pick, under their REAL userId.
+ *
+ * Not a reuse of `reveal`, whose picks are keyed by anonymous label: the two
+ * look identical on the wire and mean opposite things. There is no winner
+ * either - a Spy round has no shared verdict, so anything a screen shows as
+ * "what the room went with" is the majority of `picks`, derived on the client.
+ */
+export interface SpyRoundResult {
+  kind: "spy_round";
+  index: number;
+  name: string;
+  items: Item[];
+  /** userId -> a length-1 array. Always REAL option ids: a token from the
+   * spy's redacted board is translated back before the round resolves. */
+  picks: Record<string, string[]>;
+  /** nxn only: what each picked id IS, since there a pick names a pool. */
+  sides?: RoundSide[];
+}
+
 export type RoundResult =
   | SurvivorRoundResult
   | RevealRoundResult
   | VoteRoundResult
   | BordaRoundResult
-  | RelayRoundResult;
+  | RelayRoundResult
+  | SpyRoundResult;
 
 /** The live guessing phase's public board. */
 export interface GuessingState {
@@ -290,14 +329,38 @@ export interface GuessingState {
   submitted: string[];
 }
 
-/** The endgame reveal's public half — the true mapping only, never anyone's guess. */
-export interface PublicEndgameState {
+/** Guess-who's reveal — the true mapping only, never anyone's guess. */
+export interface PublicIdentityRevealState {
   kind: "identity_reveal";
   mapping: Record<string, string>;
   /** guesser userId → how many labels they matched. The leaderboard. Absent
    * when the game ended without a reveal, which is not "zero for everyone". */
   scores?: Record<string, number>;
 }
+
+/**
+ * Spy's reveal — who it was, what they could see each round, and the scores.
+ *
+ * `hiddenByRound` is held back for the whole GAME and arrives only here: mid-
+ * game it would be the loudest possible tell ("the spy could only see A and B"
+ * narrows the room to one or two people instantly). It is what makes the
+ * results recap worth reading.
+ *
+ * Individual accusations never travel — a wrong one names a specific person.
+ */
+export interface PublicSpyRevealState {
+  kind: "spy_reveal";
+  spyUserId: string;
+  /** Plan round index → the option ids the spy could not see that round. */
+  hiddenByRound: string[][];
+  /** userId → points: 1 for naming the spy, and for the spy 1 per accuser who
+   * named somebody else. Absent when the game ended without a reveal. */
+  scores?: Record<string, number>;
+}
+
+export type PublicEndgameState =
+  | PublicIdentityRevealState
+  | PublicSpyRevealState;
 
 export interface RoomState {
   id: string;
@@ -355,6 +418,19 @@ export interface RoomState {
   /** THE CALLER'S OWN submitted mapping, and nobody else's. Populated only on
    * the per-caller read (initial `room.state`), never on a room-wide event. */
   myGuess: Record<string, string> | null;
+  /**
+   * Is the VIEWER the spy? Per-caller like `myGuess`, and null both outside a
+   * spy game and on any room-wide payload — the two are indistinguishable on
+   * purpose, so a non-spy cannot tell a room before the role is assigned from
+   * one where somebody else holds it.
+   */
+  iAmSpy?: boolean | null;
+  /**
+   * THE VIEWER'S OWN accusation, and nobody else's — arrives only with the
+   * spy reveal. A wrong accusation names a specific person, so it is never on
+   * a room-wide payload, exactly like `myGuess`.
+   */
+  myAccusation?: string | null;
 }
 
 export interface MyRoomSummary {
@@ -412,6 +488,25 @@ export interface RelayRejection {
   turnUserId: string | null;
 }
 
+export type SpyPickRejectionReason =
+  | "not_in_round"
+  | "round_not_active"
+  | "not_a_player";
+export interface SpyPickRejection {
+  optionId: string;
+  reason: SpyPickRejectionReason;
+}
+
+export type SpyAccusationRejectionReason =
+  | "not_a_player"
+  | "not_accusing"
+  | "malformed"
+  | "is_spy";
+export interface SpyAccusationRejection {
+  userId: string;
+  reason: SpyAccusationRejectionReason;
+}
+
 export type GuessRejectionReason =
   "not_a_player" | "not_guessing" | "malformed";
 export interface GuessRejection {
@@ -450,6 +545,18 @@ export const ROOM_EVENTS = {
   guessSubmitted: "guess.submitted",
   guessRejected: "guess.rejected",
   identityRevealed: "identity.revealed",
+  /**
+   * Spy: a player locked their pick — `{ userId, optionId }`, public and under
+   * the real name. The ONE event whose payload differs per recipient: an
+   * optionId the spy cannot see reaches them as that option's opaque token.
+   */
+  spyPicked: "spy.picked",
+  spyPickRejected: "spy.pickRejected",
+  /** Spy: somebody submitted an accusation — `{ userId }`, never whom. */
+  accusationSubmitted: "accusation.submitted",
+  accusationRejected: "accusation.rejected",
+  /** Spy's reveal, per player: `{ spyUserId, hiddenByRound, yourAccusation }`. */
+  spyRevealed: "spy.revealed",
 } as const;
 
 /** Client → server verbs. */
@@ -469,4 +576,8 @@ export const ROOM_COMMANDS = {
   kick: "kick",
   setMode: "setMode",
   guess: "guess",
+  /** Spy: pick one option. What the SPY sends may be a token, not an item id. */
+  spyPick: "spyPick",
+  /** Spy: name one player as the spy. Non-spies only. */
+  accuse: "accuse",
 } as const;
