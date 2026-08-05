@@ -20,6 +20,8 @@ import {
   type RoundResult,
   type RoundState,
   type SharedGridRejection,
+  type SpyAccusationRejection,
+  type SpyPickRejection,
   type VoteRejection,
 } from "./room-types";
 import {
@@ -62,6 +64,10 @@ export interface FriendsRoom {
   vote: (optionId: string) => void;
   submitRanking: (ranking: string[]) => void;
   placeItem: (itemId: string, position: number) => void;
+  /** Spy: pick one option. For the SPY the id may be an opaque token. */
+  spyPick: (optionId: string) => void;
+  /** Spy endgame: name one player as the spy. Non-spies only. */
+  accuse: (userId: string) => void;
   /** The most recent per-mode action rejection (cut/pick/vote/ranking/place),
    * kept distinct from `lastRejection` (Claim's own) so a mode never has to
    * guess which shape a shared field holds. */
@@ -71,6 +77,8 @@ export interface FriendsRoom {
     | (VoteRejection & { kind: "vote" })
     | (SharedGridRejection & { kind: "ranking" })
     | (RelayRejection & { kind: "place" })
+    | (SpyPickRejection & { kind: "spyPick" })
+    | (SpyAccusationRejection & { kind: "accusation" })
     | null;
   /** Increments on every mode rejection. Lets a board distinguish a REPEAT
    * rejection from the same one still being displayed — needed because the
@@ -545,6 +553,80 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
         noteModeRejection({ ...rejection, kind: "vote" }),
       );
 
+      // Spy's pick — public, like a vote, and stored the same way. The one
+      // difference is invisible from here: for the SPY this payload carries an
+      // opaque token in place of any option they cannot see, so the board can
+      // key on it exactly as it keys on a real option id.
+      socket.on(
+        ROOM_EVENTS.spyPicked,
+        ({ userId, optionId }: { userId: string; optionId: string }) =>
+          setState((s) =>
+            s && s.round
+              ? {
+                  ...s,
+                  round: {
+                    ...s.round,
+                    picks: { ...s.round.picks, [userId]: [optionId] },
+                  },
+                }
+              : s,
+          ),
+      );
+      socket.on(ROOM_EVENTS.spyPickRejected, (rejection: SpyPickRejection) =>
+        noteModeRejection({ ...rejection, kind: "spyPick" }),
+      );
+
+      // Only THAT somebody accused — never whom. Reuses the guessing phase's
+      // own `submitted` roster, which is the same "who has acted" question.
+      socket.on(
+        ROOM_EVENTS.accusationSubmitted,
+        ({ userId }: { userId: string }) =>
+          setState((s) =>
+            s && s.guessing
+              ? {
+                  ...s,
+                  guessing: {
+                    ...s.guessing,
+                    submitted: s.guessing.submitted.includes(userId)
+                      ? s.guessing.submitted
+                      : [...s.guessing.submitted, userId],
+                  },
+                }
+              : s,
+          ),
+      );
+      socket.on(
+        ROOM_EVENTS.accusationRejected,
+        (rejection: SpyAccusationRejection) =>
+          noteModeRejection({ ...rejection, kind: "accusation" }),
+      );
+
+      // The reveal, per player: the answer plus YOUR OWN accusation and
+      // nobody else's — the same split identity.revealed makes.
+      socket.on(
+        ROOM_EVENTS.spyRevealed,
+        ({
+          spyUserId,
+          hiddenByRound,
+          yourAccusation,
+        }: {
+          spyUserId: string;
+          hiddenByRound: string[][];
+          yourAccusation: string | null;
+        }) =>
+          setState((s) =>
+            s
+              ? {
+                  ...s,
+                  phase: "finished",
+                  autoNextAt: null,
+                  endgame: { kind: "spy_reveal", spyUserId, hiddenByRound },
+                  myAccusation: yourAccusation,
+                }
+              : s,
+          ),
+      );
+
       socket.on(ROOM_EVENTS.rankingLocked, ({ userId }: { userId: string }) =>
         setState((s) =>
           s && s.round
@@ -663,6 +745,15 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
     ),
     vote: useCallback(
       (optionId: string) => send(ROOM_COMMANDS.vote, { optionId }),
+      [send],
+    ),
+    spyPick: useCallback(
+      // May be an opaque token rather than an item id — see ROOM_EVENTS.spyPicked.
+      (optionId: string) => send(ROOM_COMMANDS.spyPick, { optionId }),
+      [send],
+    ),
+    accuse: useCallback(
+      (userId: string) => send(ROOM_COMMANDS.accuse, { userId }),
       [send],
     ),
     submitRanking: useCallback(

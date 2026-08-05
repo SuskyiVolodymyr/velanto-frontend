@@ -3,15 +3,8 @@
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import type { Pack } from "@/src/shared/types/pack";
-import type {
-  ClaimRejection,
-  CutRejection,
-  GuessWhoRejection,
-  RelayRejection,
-  RoomState,
-  SharedGridRejection,
-  VoteRejection,
-} from "./room-types";
+import type { ClaimRejection, RoomState } from "./room-types";
+import type { FriendsRoom } from "./use-friends-room";
 import { RoomRound } from "./RoomRound";
 import { GuessWhoRoundBoard } from "./GuessWhoRoundBoard";
 import { TurnBasedCutBoard } from "./TurnBasedCutBoard";
@@ -32,13 +25,9 @@ export interface RoomRoundActions {
   submitRanking: (ranking: string[]) => void;
   placeItem: (itemId: string, position: number) => void;
   lastRejection: ClaimRejection | null;
-  lastModeRejection:
-    | (CutRejection & { kind: "cut" })
-    | (GuessWhoRejection & { kind: "pick" })
-    | (VoteRejection & { kind: "vote" })
-    | (SharedGridRejection & { kind: "ranking" })
-    | (RelayRejection & { kind: "place" })
-    | null;
+  /** Sourced from the hook rather than restated, so a new mode's rejection
+   * cannot be added there and silently not reach a board. */
+  lastModeRejection: FriendsRoom["lastModeRejection"];
   /** Increments on every rejection, so a repeat refusal is distinguishable
    * from the one already on screen. Shared-grid keys its rank board on it. */
   modeRejectionSeq: number;

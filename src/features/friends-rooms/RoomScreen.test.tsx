@@ -24,6 +24,8 @@ const leave = vi.fn();
 const kick = vi.fn();
 const setMode = vi.fn();
 const guess = vi.fn();
+const spyPick = vi.fn();
+const accuse = vi.fn();
 const push = vi.fn();
 
 let room: FriendsRoom;
@@ -124,6 +126,8 @@ function setRoom(
     kick,
     setMode,
     guess,
+    spyPick,
+    accuse,
   };
 }
 

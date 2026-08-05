@@ -425,6 +425,12 @@ export interface RoomState {
    * one where somebody else holds it.
    */
   iAmSpy?: boolean | null;
+  /**
+   * THE VIEWER'S OWN accusation, and nobody else's — arrives only with the
+   * spy reveal. A wrong accusation names a specific person, so it is never on
+   * a room-wide payload, exactly like `myGuess`.
+   */
+  myAccusation?: string | null;
 }
 
 export interface MyRoomSummary {
