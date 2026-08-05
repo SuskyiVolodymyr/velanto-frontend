@@ -5,7 +5,8 @@ import type userEvent from "@testing-library/user-event";
  * Either a `userEvent.setup()` instance or the bare default export — suites use
  * both, and the two differ only in return types this helper never reads.
  */
-type User = Pick<ReturnType<typeof userEvent.setup>, "click"> | typeof userEvent;
+type User =
+  Pick<ReturnType<typeof userEvent.setup>, "click"> | typeof userEvent;
 
 /**
  * Choose an option from the app's {@link Dropdown}.
