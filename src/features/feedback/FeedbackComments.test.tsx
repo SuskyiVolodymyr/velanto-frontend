@@ -67,7 +67,7 @@ describe("FeedbackComments", () => {
     });
   });
 
-  it("shows a blocked composer with a reason tooltip when unauthenticated", async () => {
+  it("shows a blocked composer that explains why on click when unauthenticated", async () => {
     mockAuth(false);
     mockedFeedbackClient.listComments.mockResolvedValue({
       items: [],
@@ -85,11 +85,9 @@ describe("FeedbackComments", () => {
     const post = screen.getByRole("button", { name: "Post" });
     expect(post).toHaveAttribute("aria-disabled", "true");
 
-    await userEvent.hover(textarea);
-    expect(screen.getByRole("tooltip")).toHaveTextContent("Log in to comment");
-
     await userEvent.click(post);
     expect(mockedFeedbackClient.addComment).not.toHaveBeenCalled();
+    expect(screen.getByRole("dialog")).toHaveTextContent("Log in to comment");
   });
 
   it("posts a comment and prepends it, clearing the draft", async () => {

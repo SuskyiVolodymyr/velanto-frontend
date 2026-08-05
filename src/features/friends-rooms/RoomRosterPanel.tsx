@@ -118,6 +118,14 @@ export function RoomRosterPanel({
                       {t("lobby.host")}
                     </span>
                   )}
+                  {/* A guest is a name someone typed into a box: no profile
+                      behind it, and nothing stops a second person typing the
+                      same one. The host is entitled to see which is which. */}
+                  {player.guest && (
+                    <span className="flex-none rounded-md bg-white/[0.08] px-[7px] py-0.5 text-[10px] font-bold tracking-[0.04em] text-foreground-tertiary">
+                      {t("lobby.guest")}
+                    </span>
+                  )}
                 </div>
                 <Text
                   className={cn(

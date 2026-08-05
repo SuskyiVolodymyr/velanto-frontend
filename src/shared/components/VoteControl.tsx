@@ -6,7 +6,7 @@ import {
   useVoteMutation,
   type VoteTally,
 } from "@/src/shared/api/vote.mutations";
-import { Tooltip } from "@/src/shared/components/Tooltip";
+import { SignInGate } from "@/src/shared/components/SignInGate";
 import { cn } from "@/src/shared/lib/cn";
 
 export interface VoteControlProps {
@@ -19,7 +19,7 @@ export interface VoteControlProps {
   /** aria-labels for the two reactions (e.g. "Upvote"/"Like"). */
   upvoteLabel: string;
   downvoteLabel: string;
-  /** Tooltip shown to a signed-out viewer over the disabled reactions. */
+  /** Why a signed-out viewer cannot react; shown in the sign-in prompt. */
   blockedReason: string;
   /** Inline message shown when a vote request fails. */
   errorLabel: string;
@@ -48,8 +48,8 @@ export interface VoteControlProps {
  *
  * Your own reaction is filled and tinted (magenta for a like, plain foreground
  * for a dislike); `aria-pressed` carries the same state for assistive tech.
- * Anonymous viewers see it disabled with a reason tooltip rather than a
- * surprise sign-in redirect — the vote itself is a no-op via
+ * Anonymous viewers see it disabled; clicking opens the sign-in prompt with
+ * the reason, rather than a surprise redirect — the vote itself is a no-op via
  * {@link useVoteMutation}.
  */
 export function VoteControl({
@@ -77,8 +77,10 @@ export function VoteControl({
   const blocked = voter.blocked;
   const error = voter.isError ? errorLabel : "";
 
+  // SignInGate, not Tooltip: a hover-only explanation never appears on a phone,
+  // so tapping a like simply did nothing with no reason given anywhere.
   const withReason = (node: ReactElement) =>
-    blocked ? <Tooltip content={blockedReason}>{node}</Tooltip> : node;
+    blocked ? <SignInGate message={blockedReason}>{node}</SignInGate> : node;
 
   function reaction(direction: "up" | "down") {
     const up = direction === "up";
@@ -97,7 +99,10 @@ export function VoteControl({
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
           "disabled:cursor-not-allowed disabled:opacity-50",
           framed ? "text-[13px]" : "text-xs",
-          blocked && "cursor-not-allowed opacity-50",
+          // Deliberately NOT dimmed or not-allowed when blocked. The reaction
+          // is still clickable — it opens the sign-in prompt — and greying it
+          // out advertised a dead end, which is the opposite of what a click
+          // now does. It reads as a normal control because it is one.
           active
             ? up
               ? "text-hot"

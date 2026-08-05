@@ -177,6 +177,32 @@ describe("message catalogs", () => {
         }
       }
     });
+
+    /**
+     * The same hazard as the retention check above, for the processor list.
+     *
+     * Naming a company we no longer send data to is worse than vague — it is a
+     * false statement about who receives personal data, which is the one thing
+     * the "Who else touches your data" section exists to answer. And a
+     * provider swap is a find-and-replace, exactly the edit most likely to be
+     * applied to English and forgotten in seven scripts nobody on the project
+     * reads.
+     *
+     * Matching the whole catalog rather than one bullet on purpose: a provider
+     * can be named anywhere (Terms, a support article), and a proper noun needs
+     * no per-language variants — it is spelled the same in every locale.
+     */
+    it("names no retired data processor", () => {
+      const RETIRED = ["Amazon SES", "AWS SES"];
+      const catalog = JSON.stringify(CATALOGS[locale]);
+
+      for (const name of RETIRED) {
+        expect(
+          catalog.includes(name),
+          `${locale} still names "${name}" as a processor — transactional email moved to MailerSend`,
+        ).toBe(false);
+      }
+    });
   });
 });
 

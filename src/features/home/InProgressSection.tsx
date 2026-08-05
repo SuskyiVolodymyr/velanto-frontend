@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
 import { PlayIcon } from "@/src/shared/components/icons";
+import { CoverImage } from "@/src/shared/components/CoverImage";
 import { Text } from "@/src/shared/components/Text";
 import { formatRelativeTimeIntl } from "@/src/shared/lib/relative-time";
 import {
@@ -64,9 +65,9 @@ export function InProgressSection({ className }: { className?: string }) {
 
 /**
  * Shaped like {@link PackCard} — same 18px radius, same 16:10 head, same
- * full-width action button — so the two grids read as one page. The head is a
- * tone swatch rather than the real cover: the resume snapshot stores
- * `coverTone` but not `coverImageKey`.
+ * full-width action button — so the two grids read as one page, cover included:
+ * the resume snapshot carries `coverImageKey` alongside `coverTone`, so a
+ * half-finished pack keeps the face it had in the feed.
  */
 function InProgressCard({ record }: { record: PlayResumeRecord }) {
   const t = useTranslations("history");
@@ -75,6 +76,9 @@ function InProgressCard({ record }: { record: PlayResumeRecord }) {
   // coverTone is a required Pack field, but this is untrusted storage — fall
   // back so a malformed snapshot never renders an invalid gradient.
   const coverTone = record.pack.coverTone || "#2b2a3a";
+  // Absent on records written before the snapshot carried it — those keep the
+  // plain gradient rather than being dropped.
+  const coverImageKey = record.pack.coverImageKey;
   // roundIndex is completed rounds; the player resumes into the next one. The
   // record is only saved with roundIndex < totalRounds, so `current` is in range.
   const safeTotal = Math.max(totalRounds, 1);
@@ -89,6 +93,7 @@ function InProgressCard({ record }: { record: PlayResumeRecord }) {
         className="relative isolate aspect-[16/10]"
         style={{ background: `linear-gradient(150deg, ${coverTone}, #0b0c0f)` }}
       >
+        {coverImageKey && <CoverImage coverKey={coverImageKey} />}
         <span className="absolute start-3 top-3 rounded-[7px] bg-black/50 px-2 py-[3px] text-[11px] font-bold uppercase tracking-[0.04em] text-acc backdrop-blur-sm">
           {t("inProgressBadge")}
         </span>

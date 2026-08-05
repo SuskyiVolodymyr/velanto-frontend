@@ -3,6 +3,7 @@ import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { screen, waitFor, within } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
+import { pickFromDropdown } from "@/src/shared/test/pick-from-dropdown";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { StaffTab } from "./StaffTab";
@@ -123,13 +124,18 @@ describe("StaffTab", () => {
     renderAs(ADMIN);
 
     await screen.findByText("bob");
-    const select = screen.getByLabelText("Change role for bob");
-    const values = Array.from(select.querySelectorAll("option")).map((o) =>
-      o.getAttribute("value"),
+    // A listbox, not a native select — the options exist only once opened.
+    await userEvent.click(
+      screen.getByRole("combobox", {
+        name: "Change role for bob",
+      }),
     );
+    const labels = screen
+      .getAllByRole("option")
+      .map((option) => option.textContent);
     // 'user' is the Remove button's job, not a dropdown entry.
-    expect(values).not.toContain("user");
-    expect(values).toContain("manager");
+    expect(labels).not.toContain("user");
+    expect(labels).toContain("manager");
   });
 
   // A manager cannot grant its own rank, and demotion lives on Remove — so there
@@ -155,10 +161,7 @@ describe("StaffTab", () => {
     renderAs(ADMIN);
 
     await screen.findByText("bob");
-    await user.selectOptions(
-      screen.getByLabelText("Change role for bob"),
-      "manager",
-    );
+    await pickFromDropdown(user, "Change role for bob", "manager");
 
     await waitFor(() =>
       expect(usersClient.changeRole).toHaveBeenCalledWith("u2", "manager"),

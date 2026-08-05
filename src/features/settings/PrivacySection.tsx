@@ -43,10 +43,11 @@ export function PrivacySection() {
           ariaLabel={t("settingsLabel")}
           aria-describedby={labelId}
           className="w-[140px] shrink-0"
+          stretch
           value={enabled ? "on" : "off"}
           onChange={(value) => setEnabled(value === "on")}
           options={[
-            { value: "on", label: t("on") },
+            { value: "on", label: t("on"), tone: "accent" as const },
             { value: "off", label: t("off") },
           ]}
         />

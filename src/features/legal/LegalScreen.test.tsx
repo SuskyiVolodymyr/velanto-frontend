@@ -1,7 +1,15 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { screen, within } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { LegalScreen } from "./LegalScreen";
+
+// PageHeader carries the account controls now, and they call useAuth, which
+// throws without a provider. These screens are auth-agnostic, so they get a
+// signed-out stub rather than a real AuthProvider (which would fire an
+// on-mount refresh request none of these tests want to make).
+vi.mock("@/src/shared/lib/auth-context", () => ({
+  useAuth: () => ({ user: null, status: "unauthenticated", logout: vi.fn() }),
+}));
 
 describe("LegalScreen", () => {
   const props = {

@@ -13,7 +13,7 @@ import {
 import { mediaUrl } from "@/src/shared/lib/media-url";
 import { cn } from "@/src/shared/lib/cn";
 import type { Item, Pack } from "@/src/shared/types/pack";
-import { claimVerbKey } from "./room-mode-copy";
+import { claimVerb, outcomeVerb } from "./room-mode-copy";
 import type { RoomPlayerState } from "./room-types";
 
 /**
@@ -43,11 +43,21 @@ interface RoomItemCardProps {
 
 // Exactly one value per CSS property per state — cn() is a plain join here, not
 // tailwind-merge, so a later class never overrides an earlier one (see cn.ts).
-const STATUS_FRAME: Record<RoomItemStatus, string> = {
-  free: "border-border bg-surface",
-  claimed: "border-danger bg-danger/10",
-  sacrificed: "border-danger/60 bg-danger/5",
-  survivor: "border-success bg-success/10",
+// Two palettes, picked by what the odd one out MEANS in this format. `good` is
+// the outcome to celebrate (green), `bad` the one to warn about (red).
+const STATUS_FRAME: Record<"good" | "bad", Record<RoomItemStatus, string>> = {
+  good: {
+    free: "border-border bg-surface",
+    claimed: "border-danger bg-danger/10",
+    sacrificed: "border-danger/60 bg-danger/5",
+    survivor: "border-success bg-success/10",
+  },
+  bad: {
+    free: "border-border bg-surface",
+    claimed: "border-success bg-success/10",
+    sacrificed: "border-success/60 bg-success/5",
+    survivor: "border-danger bg-danger/10",
+  },
 };
 
 /**
@@ -71,13 +81,15 @@ export function RoomItemCard({
   format,
 }: RoomItemCardProps) {
   const t = useTranslations("room");
-  // A claim is ALWAYS a sacrifice. The engine has each player claim one item to
-  // give up and the single unclaimed item survive (claim.engine.ts), and a
-  // save_one pack does not invert that — its saved item IS that survivor. The
-  // format decides only what the survivor is called.
-  const survivorVerb = claimVerbKey(format).endsWith("Save")
-    ? "Save"
-    : "Sacrifice";
+  // The odd one out takes the format's own verb, and a claim takes the other
+  // one — see outcomeVerb/claimVerb. A sacrifice_one board asks everyone to
+  // SAVE one item, and sacrifices the one nobody protected.
+  const survivorVerb = outcomeVerb(format);
+  const claimedVerb = claimVerb(format);
+  // Whether the item singled out at the end is the good outcome. It decides the
+  // colours as well as the words: painting the odd one out green on a
+  // sacrifice_one board would celebrate the item that just got sacrificed.
+  const oddOneOutIsGood = survivorVerb === "Save";
   const videoId = item.type === "youtube" ? extractYouTubeId(item.value) : null;
   const startSeconds =
     item.type === "youtube" ? extractYouTubeStart(item.value) : null;
@@ -90,7 +102,7 @@ export function RoomItemCard({
   // dead space inside a card that reads as clickable everywhere.
   const frame = cn(
     "relative flex w-full flex-col overflow-hidden rounded-2xl border text-start transition-colors",
-    STATUS_FRAME[status],
+    STATUS_FRAME[oddOneOutIsGood ? "good" : "bad"][status],
     isOwn && "ring-2 ring-acc",
     flash && "room-item-flash",
   );
@@ -101,7 +113,7 @@ export function RoomItemCard({
       : status === "free"
         ? null
         : claimant
-          ? t("round.claimedBySacrifice", { name: claimant.username })
+          ? t(`round.claimedBy${claimedVerb}`, { name: claimant.username })
           : t("round.taken");
 
   const media = videoId ? (
@@ -128,7 +140,7 @@ export function RoomItemCard({
             avatarKey={claimant.avatarKey}
             className={cn(
               "h-6 w-6 flex-none rounded-full border text-[11px]",
-              status === "survivor"
+              (status === "survivor") === oddOneOutIsGood
                 ? "border-success text-foreground-secondary"
                 : "border-danger text-foreground-secondary",
             )}
@@ -145,10 +157,12 @@ export function RoomItemCard({
       </div>
       {statusLabel && (
         <Text
-          variant={status === "survivor" ? "body" : "danger"}
+          variant={
+            (status === "survivor") === oddOneOutIsGood ? "body" : "danger"
+          }
           className={cn(
             "text-xs font-medium",
-            status === "survivor" && "text-success",
+            (status === "survivor") === oddOneOutIsGood && "text-success",
           )}
         >
           {statusLabel}
@@ -161,7 +175,9 @@ export function RoomItemCard({
     <span
       className={cn(
         "absolute end-2 top-2 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full border-2",
-        status === "survivor" ? "border-success" : "border-danger",
+        (status === "survivor") === oddOneOutIsGood
+          ? "border-success"
+          : "border-danger",
       )}
     >
       <UserAvatar
@@ -173,7 +189,7 @@ export function RoomItemCard({
   );
 
   if (claimable) {
-    const claimLabel = t("round.claimSacrifice", { name: item.title });
+    const claimLabel = t(`round.claim${claimedVerb}`, { name: item.title });
     // A resolvable youtube item renders YouTubeCard's OWN play button. Wrapping
     // the whole card in the claim <button> would nest a button inside a button —
     // invalid HTML that breaks hydration. Mirror CandidateCard: the media sits

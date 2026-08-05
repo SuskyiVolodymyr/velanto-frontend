@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
+import { CoverImage } from "@/src/shared/components/CoverImage";
 import { Text } from "@/src/shared/components/Text";
+import { SidebarToggle } from "@/src/shared/components/SidebarToggle";
+import { HeaderUserCluster } from "@/src/shared/components/HeaderUserCluster";
 import { STICKY_HEADER_SHELL_CLASS } from "@/src/shared/lib/sticky-header-shell";
 import type { Pack } from "@/src/shared/types/pack";
 
@@ -46,6 +49,11 @@ export function PackHeaderBar({
 }: PackHeaderBarProps) {
   return (
     <div className={STICKY_HEADER_SHELL_CLASS}>
+      {/* Leftmost, matching PageHeader: this bar is the only header on the
+          play and result screens, so without it those routes get a collapsed
+          rail they cannot expand. */}
+      <SidebarToggle />
+
       <Link
         href={backHref}
         aria-label={backLabel}
@@ -57,13 +65,20 @@ export function PackHeaderBar({
         <ChevronLeft size={16} strokeWidth={2.2} aria-hidden />
       </Link>
 
+      {/* `relative` + `overflow-hidden` so a real cover can fill the tile: the
+          gradient stays as the ground beneath it, which is what shows for a
+          pack with no cover and what CoverImage falls back to when the stored
+          key 404s. Play and Result showed the tone alone, so a pack with a
+          cover lost it the moment you started playing it. */}
       <div
         aria-hidden="true"
-        className="h-9 w-9 shrink-0 rounded-[10px]"
+        className="relative h-9 w-9 shrink-0 overflow-hidden rounded-[10px]"
         style={{
           background: `linear-gradient(150deg, ${pack.coverTone}, #0b0c0f)`,
         }}
-      />
+      >
+        {pack.coverImageKey && <CoverImage coverKey={pack.coverImageKey} />}
+      </div>
 
       <div className="flex min-w-0 flex-col gap-[3px]">
         <Text
@@ -93,7 +108,14 @@ export function PackHeaderBar({
         </div>
       </div>
 
-      {end && <div className="ms-auto shrink-0">{end}</div>}
+      {/* Global chrome, mirroring PageHeader's right-hand group so the account
+          controls sit in the same place on the play and result screens as on
+          every other route. The page's own `end` slot (round counter, play
+          again) keeps its position ahead of them. */}
+      <div className="ms-auto flex shrink-0 items-center gap-2.5">
+        {end}
+        <HeaderUserCluster />
+      </div>
     </div>
   );
 }

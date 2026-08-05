@@ -1,6 +1,7 @@
 import type { ReactElement } from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { pickFromDropdown } from "@/src/shared/test/pick-from-dropdown";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextIntlClientProvider } from "next-intl";
 import { QueryClientProvider } from "@tanstack/react-query";
@@ -335,11 +336,7 @@ describe("ReportDetailScreen", () => {
       screen.queryByRole("button", { name: /delete pack/i }),
     ).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole("button", { name: /^ban user$/i }));
-    await screen.findByRole("option", { name: "Harassment & Bullying" });
-    await userEvent.selectOptions(
-      screen.getByLabelText("Reason"),
-      "harassment_bullying",
-    );
+    await pickFromDropdown(userEvent, "Reason", "Harassment & Bullying");
     await userEvent.click(screen.getByRole("button", { name: /confirm ban/i }));
     await waitFor(() =>
       expect(mockedUsersClient.ban).toHaveBeenCalledWith("user-1", {
@@ -402,11 +399,7 @@ describe("ReportDetailScreen", () => {
       ).toBeInTheDocument(),
     );
     await userEvent.click(screen.getByRole("button", { name: /^ban user$/i }));
-    await screen.findByRole("option", { name: "Harassment & Bullying" });
-    await userEvent.selectOptions(
-      screen.getByLabelText("Reason"),
-      "harassment_bullying",
-    );
+    await pickFromDropdown(userEvent, "Reason", "Harassment & Bullying");
     await userEvent.click(screen.getByRole("button", { name: /confirm ban/i }));
     await waitFor(() =>
       expect(screen.getByText(/couldn't ban this user/i)).toBeInTheDocument(),

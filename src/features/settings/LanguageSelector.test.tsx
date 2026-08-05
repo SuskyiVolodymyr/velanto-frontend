@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { pickFromDropdown } from "@/src/shared/test/pick-from-dropdown";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { LanguageSelector } from "./LanguageSelector";
@@ -20,10 +21,17 @@ function renderSelector(locale = "en") {
 beforeEach(() => vi.clearAllMocks());
 
 describe("LanguageSelector", () => {
-  it("lists all 11 languages by native name and reflects the current locale", () => {
+  // The picker is the app's listbox Dropdown, so the options exist only while
+  // the panel is open — the trigger alone carries the current value.
+  it("lists every interface language by native name and reflects the current locale", async () => {
+    const user = userEvent.setup();
     renderSelector("uk");
-    const select = screen.getByRole("combobox", { name: "Interface language" });
-    expect(select).toHaveValue("uk");
+    const trigger = screen.getByRole("combobox", {
+      name: "Interface language",
+    });
+    expect(trigger).toHaveTextContent("Українська");
+
+    await user.click(trigger);
     expect(
       screen.getByRole("option", { name: "Українська" }),
     ).toBeInTheDocument();
@@ -34,16 +42,17 @@ describe("LanguageSelector", () => {
   it("calls setUserLocale with the chosen locale on change", async () => {
     const user = userEvent.setup();
     renderSelector("en");
-    await user.selectOptions(
-      screen.getByRole("combobox", { name: "Interface language" }),
-      "uk",
-    );
+    await pickFromDropdown(user, "Interface language", "Українська");
     expect(setUserLocale).toHaveBeenCalledWith("uk");
   });
 
   // Dropped from the interface in #226 — the picker must not offer them.
-  it("does not offer the dropped EU locales", () => {
+  it("does not offer the dropped EU locales", async () => {
+    const user = userEvent.setup();
     renderSelector("en");
+    await user.click(
+      screen.getByRole("combobox", { name: "Interface language" }),
+    );
     for (const name of ["Español", "Français", "Português"]) {
       expect(screen.queryByRole("option", { name })).not.toBeInTheDocument();
     }

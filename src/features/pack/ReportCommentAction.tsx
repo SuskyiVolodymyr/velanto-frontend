@@ -1,5 +1,6 @@
 "use client";
 
+import { SignInGate } from "@/src/shared/components/SignInGate";
 import { useState, type ReactElement } from "react";
 import { useTranslations } from "next-intl";
 import { ReportModal } from "@/src/shared/components/ReportModal";
@@ -65,20 +66,17 @@ export function ReportCommentAction({
       variant={variant}
       aria-disabled={blocked || reported || undefined}
       onClick={openDialog}
-      className={
-        reported
-          ? "text-danger"
-          : blocked
-            ? "cursor-not-allowed opacity-50"
-            : "hover:text-danger"
-      }
+      // `blocked` gets the ordinary hover treatment, not a dimmed dead-end
+      // look: clicking it opens the sign-in prompt, so it IS interactive.
+      // `reported` stays distinct — that one really is finished.
+      className={reported ? "text-danger" : "hover:text-danger"}
     >
       {reported ? t("buttonReported") : t("button")}
     </CommentAction>
   );
 
   const gated: ReactElement = blocked ? (
-    <Tooltip content={tAuth("logInToReport")}>{trigger}</Tooltip>
+    <SignInGate message={tAuth("logInToReport")}>{trigger}</SignInGate>
   ) : (
     trigger
   );

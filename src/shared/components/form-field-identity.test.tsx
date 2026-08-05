@@ -2,7 +2,6 @@ import { describe, expect, it } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { Input } from "./Input";
 import { Textarea } from "./Textarea";
-import { Select } from "./Select";
 
 /**
  * Every form control must reach the DOM carrying an `id` or a `name`.
@@ -11,6 +10,10 @@ import { Select } from "./Select";
  * element should have an id or name attribute"), and a control the browser
  * can't identify is also one a password manager can't fill and an automated
  * test can't select by anything but its label.
+ *
+ * Covers Input and Textarea — the app's two native form controls. The picker
+ * is the Dropdown listbox (a button, not a native select), which carries no
+ * autofill surface for this rule to be about.
  *
  * Solved in the PRIMITIVES rather than at ~40 call sites: the identity is a
  * property of being a form control, not of any particular form. Callers that
@@ -23,7 +26,6 @@ describe("form control identity", () => {
   const CASES = [
     ["Input", <Input key="i" aria-label="field" />],
     ["Textarea", <Textarea key="t" aria-label="field" />],
-    ["Select", <Select key="s" aria-label="field" options={[]} />],
   ] as const;
 
   for (const [label, element] of CASES) {
@@ -35,22 +37,20 @@ describe("form control identity", () => {
 
     it(`${label} does not override a caller's own name`, () => {
       const { container } = render(element);
-      const generated = container.querySelector("input, textarea, select")!.id;
+      const generated = container.querySelector("input, textarea")!.id;
 
       render(
         <div data-testid="named">
           {label === "Input" ? (
             <Input aria-label="named" name="email" />
-          ) : label === "Textarea" ? (
-            <Textarea aria-label="named" name="bio" />
           ) : (
-            <Select aria-label="named" name="role" options={[]} />
+            <Textarea aria-label="named" name="bio" />
           )}
         </div>,
       );
       const field = screen.getByLabelText("named");
       expect(field.getAttribute("name")).toBe(
-        label === "Input" ? "email" : label === "Textarea" ? "bio" : "role",
+        label === "Input" ? "email" : "bio",
       );
       // A caller-supplied name is identity enough — don't also stamp an id on
       // it, or a `<label htmlFor>` elsewhere could bind to the wrong control.
@@ -62,10 +62,8 @@ describe("form control identity", () => {
       render(
         label === "Input" ? (
           <Input aria-label="own-id" id="chosen" />
-        ) : label === "Textarea" ? (
-          <Textarea aria-label="own-id" id="chosen" />
         ) : (
-          <Select aria-label="own-id" id="chosen" options={[]} />
+          <Textarea aria-label="own-id" id="chosen" />
         ),
       );
       expect(screen.getByLabelText("own-id").id).toBe("chosen");

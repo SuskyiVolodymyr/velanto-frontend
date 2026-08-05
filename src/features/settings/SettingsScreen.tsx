@@ -2,6 +2,7 @@
 
 import type { ComponentType } from "react";
 import { useTranslations } from "next-intl";
+import { useAuth } from "@/src/shared/lib/auth-context";
 import { cn } from "@/src/shared/lib/cn";
 import { Text } from "@/src/shared/components/Text";
 import { PageHeader } from "@/src/shared/components/PageHeader";
@@ -21,6 +22,19 @@ interface SettingsSectionEntry {
   id: string;
   label: string;
   Component: ComponentType;
+  /**
+   * Nothing in this section does anything without an account, so a signed-out
+   * visitor doesn't get it at all — neither the section nor its TOC entry.
+   *
+   * Distinct from the anon-gate rule elsewhere in the app, which blocks a
+   * control in place and says why rather than hiding it. That rule is about an
+   * action someone reached for and can't complete; these are whole settings for
+   * an account that doesn't exist yet, and listing five of them as "log in to
+   * manage this" is a page of dead ends rather than an explanation. Language,
+   * appearance and privacy DO work signed out (they are local preferences), so
+   * the page still has something to be.
+   */
+  requiresAuth?: true;
 }
 
 /**
@@ -46,6 +60,11 @@ export function SettingsScreen() {
   const tPrivacy = useTranslations("streamerMode");
   const tPages = useTranslations("pages");
 
+  const { status } = useAuth();
+  // Hidden only once auth is KNOWN to be absent. While it resolves the sections
+  // stay put and render their own skeletons — that is what those skeletons are
+  // for, and dropping five sections out of the page and then putting them back
+  // a moment later is a worse jump than a skeleton settling into content.
   const SECTIONS: SettingsSectionEntry[] = [
     {
       id: "language",
@@ -59,6 +78,7 @@ export function SettingsScreen() {
     },
     {
       id: "connected-accounts",
+      requiresAuth: true,
       label: t("connectedAccountsHeading"),
       Component: ConnectedAccountsSection,
     },
@@ -69,16 +89,19 @@ export function SettingsScreen() {
     },
     {
       id: "notifications",
+      requiresAuth: true,
       label: t("notificationsHeading"),
       Component: NotificationsSection,
     },
     {
       id: "account",
+      requiresAuth: true,
       label: t("accountHeading"),
       Component: AccountSection,
     },
     {
       id: "password",
+      requiresAuth: true,
       label: t("passwordHeading"),
       Component: PasswordSection,
     },
@@ -89,15 +112,21 @@ export function SettingsScreen() {
     },
     {
       id: "danger-zone",
+      requiresAuth: true,
       label: t("dangerHeading"),
       Component: DangerZoneSection,
     },
   ];
 
+  const sections = SECTIONS.filter(
+    (section) => status !== "unauthenticated" || !section.requiresAuth,
+  );
+
   return (
     <>
       <PageHeader
         back={{ href: "/", label: tPages("back") }}
+        backFrom={["dashboard", "profile"]}
         crumb={t("title")}
       />
       <main className={cn(pageContainer(1180), "flex-1 py-10")}>
@@ -113,9 +142,13 @@ export function SettingsScreen() {
         <div className="flex flex-col gap-8 min-[900px]:flex-row min-[900px]:items-start">
           <nav
             aria-label={t("title")}
-            className="flex gap-2 overflow-x-auto no-scrollbar pb-1 min-[900px]:w-[216px] min-[900px]:flex-none min-[900px]:sticky min-[900px]:top-6 min-[900px]:flex-col min-[900px]:gap-0.5 min-[900px]:overflow-visible min-[900px]:pb-0"
+            // top-[87px], not top-6: the page header is sticky at top-0 and
+            // 63px tall, so a 24px offset parked the first third of this list
+            // underneath it. 63 + 24 keeps the gap that top-6 was reaching for,
+            // measured from the header's bottom edge instead of the viewport's.
+            className="flex gap-2 overflow-x-auto no-scrollbar pb-1 min-[900px]:w-[216px] min-[900px]:flex-none min-[900px]:sticky min-[900px]:top-[87px] min-[900px]:flex-col min-[900px]:gap-0.5 min-[900px]:overflow-visible min-[900px]:pb-0"
           >
-            {SECTIONS.map((section) => (
+            {sections.map((section) => (
               <a
                 key={section.id}
                 href={`#${section.id}`}
@@ -135,7 +168,7 @@ export function SettingsScreen() {
           </nav>
 
           <div className="flex min-w-0 flex-1 flex-col gap-10">
-            {SECTIONS.map(({ id, Component }) => (
+            {sections.map(({ id, Component }) => (
               <div id={id} key={id}>
                 <Component />
               </div>

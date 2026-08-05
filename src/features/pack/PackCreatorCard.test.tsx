@@ -228,7 +228,9 @@ describe("PackCreatorCard", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("blocks an unauthenticated viewer with a reason tooltip instead of redirecting", async () => {
+  // Was a hover tooltip; a phone never hovers, so the reason was unreachable
+  // there. Clicking now opens the sign-in prompt anchored to the control.
+  it("blocks an unauthenticated viewer and explains why on click instead of redirecting", async () => {
     mockAuth(null);
     renderCard(<PackCreatorCard pack={makePack()} />);
     const handle = await screen.findByText("@quizmaster");
@@ -236,12 +238,12 @@ describe("PackCreatorCard", () => {
     const followButton = await screen.findByRole("button", { name: "Follow" });
     expect(followButton).toHaveAttribute("aria-disabled", "true");
 
-    await userEvent.hover(followButton);
-    expect(screen.getByRole("tooltip")).toHaveTextContent("Log in to follow");
-
     await userEvent.click(followButton);
     expect(mockedUsersClient.follow).not.toHaveBeenCalled();
     expect(push).not.toHaveBeenCalled();
+    // getByText, not getByRole("dialog"): the hover card is itself a dialog, so
+    // the prompt is the second one on screen.
+    expect(screen.getByText("Log in to follow")).toBeInTheDocument();
   });
 
   it("omits the follow button on the viewer's own pack", async () => {

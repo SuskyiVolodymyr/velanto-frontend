@@ -3,6 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
+import { Dropdown } from "@/src/shared/components/Dropdown";
 import { BAN_DURATIONS } from "@/src/shared/lib/ban-durations";
 import {
   BanReasonPicker,
@@ -75,20 +76,16 @@ export function ReportModerationPanel({
               <div className="flex flex-wrap items-start gap-3">
                 <label className="flex flex-col gap-1 text-xs text-foreground-secondary">
                   {tBan("duration")}
-                  <select
+                  <Dropdown
                     value={banDuration}
-                    onChange={(e) =>
-                      setBanDuration(e.target.value as BanDuration)
-                    }
-                    aria-label={tBan("durationAria")}
-                    className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground"
-                  >
-                    {BAN_DURATIONS.map((d) => (
-                      <option key={d.value} value={d.value}>
-                        {d.label}
-                      </option>
-                    ))}
-                  </select>
+                    onChange={(value) => setBanDuration(value as BanDuration)}
+                    ariaLabel={tBan("durationAria")}
+                    size="sm"
+                    options={BAN_DURATIONS.map((d) => ({
+                      value: d.value,
+                      label: d.label,
+                    }))}
+                  />
                 </label>
                 <div className="min-w-[16rem] max-w-sm flex-1">
                   <BanReasonPicker

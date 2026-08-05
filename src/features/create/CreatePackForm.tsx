@@ -9,6 +9,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/src/shared/lib/auth-context";
+import { useBackTarget } from "@/src/shared/lib/use-back-target";
+import { FROM } from "@/src/shared/lib/back-origins";
 import { packsClient } from "@/src/shared/lib/packs-client";
 import type { CreatePackInput } from "@/src/shared/lib/packs-client";
 import { messageFromError } from "@/src/shared/lib/messageFromError";
@@ -99,6 +101,13 @@ export function CreatePackForm({
   const queryClient = useQueryClient();
   const { status } = useAuth();
   const isEdit = mode === "edit";
+  // Declared up here, above the early returns further down: a hook after a
+  // conditional return runs conditionally. A fresh draft is reachable from the
+  // dashboard and from My packs, and Cancel goes back to whichever it was.
+  const draftCancel = useBackTarget({ href: "/", label: t("cancel") }, [
+    FROM.dashboard,
+    FROM.myPacks,
+  ]);
   // The author's interface language, used as the initial guess for the pack's
   // CONTENT language. Narrowed rather than cast: LOCALES ⊆ PACK_LANGUAGES holds
   // (asserted in cross-repo-drift.test.ts), so this is always true — the guard
@@ -293,9 +302,10 @@ export function CreatePackForm({
     );
   }
 
-  // Cancel always names a fixed destination (same rationale as BackButton):
-  // back to the pack being edited, or back to the feed for a fresh draft.
-  const cancelHref = isEdit && packId ? `/packs/${packId}` : "/";
+  // Cancel names a fixed destination (same rationale as BackButton): back to
+  // the pack being edited, or — for a fresh draft — back to the listing it was
+  // started from, defaulting to the feed.
+  const cancelHref = isEdit && packId ? `/packs/${packId}` : draftCancel.href;
 
   return (
     <FormProvider {...methods}>

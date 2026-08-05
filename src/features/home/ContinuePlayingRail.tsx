@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { CoverImage } from "@/src/shared/components/CoverImage";
 import { Text } from "@/src/shared/components/Text";
 import {
   listPlayResumes,
@@ -64,6 +65,9 @@ function ContinuePlayingCard({ record }: { record: PlayResumeRecord }) {
   // coverTone is a required Pack field, but this is untrusted storage — fall
   // back so a malformed snapshot never renders an invalid gradient.
   const coverTone = record.pack.coverTone || "#2b2a3a";
+  // Absent on records written before the snapshot carried it — those keep the
+  // plain gradient rather than being dropped.
+  const coverImageKey = record.pack.coverImageKey;
   // roundIndex is completed rounds; the player resumes into the next one. The
   // record is only saved with roundIndex < totalRounds, so `current` is in range.
   const safeTotal = Math.max(totalRounds, 1);
@@ -72,12 +76,17 @@ function ContinuePlayingCard({ record }: { record: PlayResumeRecord }) {
 
   return (
     <li className="flex items-center gap-3 rounded-[15px] border border-white/[0.07] bg-surface-card p-3 transition-colors hover:border-white/[0.16]">
-      {/* A tone swatch, not the pack's full cover — matches the compact rail. */}
+      {/* The pack's real cover when it has one, over its tone as the ground —
+          the same image the feed card shows, so a pack doesn't lose its face
+          the moment it lands in this rail. CoverImage unmounts itself if the
+          key 404s, leaving the gradient. */}
       <span
         aria-hidden
-        className="size-[52px] shrink-0 rounded-[11px]"
+        className="relative size-[52px] shrink-0 overflow-hidden rounded-[11px]"
         style={{ background: `linear-gradient(150deg, ${coverTone}, #0b0c0f)` }}
-      />
+      >
+        {coverImageKey && <CoverImage coverKey={coverImageKey} />}
+      </span>
       <div className="flex min-w-0 flex-1 flex-col gap-1.5">
         <Text className="truncate text-[13.5px] font-semibold">{title}</Text>
         <div className="h-1 w-full overflow-hidden rounded-full bg-white/[0.08]">

@@ -39,36 +39,37 @@ describe("BrowseFilterBar", () => {
     expect(onFormatChange).toHaveBeenCalledWith("sacrifice_one");
   });
 
-  it("keeps tags and language behind the Filters popover", async () => {
-    const user = userEvent.setup();
+  // Tags and language used to share one unnamed "Filters" popover. Each
+  // dimension now has its own named trigger in the row, so what a control does
+  // is readable without opening anything.
+  it("gives tags and language their own named triggers in the row", () => {
     renderBar();
 
-    // Closed by default.
-    expect(
-      screen.queryByRole("button", { name: "Filter by tags" }),
-    ).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole("combobox", { name: /filter by language/i }),
-    ).not.toBeInTheDocument();
-
-    await user.click(screen.getByRole("button", { name: "Filters" }));
-
-    expect(
-      screen.getByRole("button", { name: "Filter by tags" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /tags/i })).toBeInTheDocument();
+    // The language control is the app's Dropdown (a combobox), sitting in the
+    // row itself rather than nested inside another popover.
     expect(
       screen.getByRole("combobox", { name: /filter by language/i }),
     ).toBeInTheDocument();
+  });
+
+  it("shows the tag count on the Tags trigger once tags are picked", () => {
+    renderBar({ tags: ["Anime", "Music"] });
+
+    expect(screen.getByRole("button", { name: /tags/i })).toHaveTextContent(
+      "2",
+    );
   });
 
   it("keeps the sort choices behind the sort popover and lifts a change", async () => {
     const user = userEvent.setup();
     const { onSortChange } = renderBar();
 
-    // The trigger's accessible name is the group; the active sort shows as text.
-    const trigger = screen.getByRole("button", { name: "Sort by" });
-    expect(trigger).toHaveTextContent("Popular");
-    // Sort options are hidden until opened (the trigger text is not a choice).
+    // The trigger carries BOTH halves of the current sort, so neither has to be
+    // read out of an opened panel.
+    const trigger = screen.getByRole("button", { name: /sort by/i });
+    expect(trigger).toHaveTextContent("Sort by: Popular · Month");
+    // The choices themselves stay hidden until it is opened.
     expect(
       screen.queryByRole("button", { name: "Date" }),
     ).not.toBeInTheDocument();
@@ -83,7 +84,7 @@ describe("BrowseFilterBar", () => {
     const user = userEvent.setup();
     renderBar({ sort: "date" });
 
-    await user.click(screen.getByRole("button", { name: "Sort by" }));
+    await user.click(screen.getByRole("button", { name: /sort by/i }));
     expect(
       screen.queryByRole("button", { name: "Month" }),
     ).not.toBeInTheDocument();

@@ -200,8 +200,47 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
+/**
+ * Signed-out stand-in used when there is no provider above. Module-level (not
+ * rebuilt per call) so it is referentially stable — a fresh object each render
+ * would defeat every `useMemo`/`useEffect` that depends on the auth value.
+ */
+const NO_PROVIDER: AuthContextValue = {
+  user: null,
+  status: "unauthenticated",
+  requestEmailCode: async () => {
+    throw new Error("No AuthProvider");
+  },
+  register: async () => {
+    throw new Error("No AuthProvider");
+  },
+  login: async () => {
+    throw new Error("No AuthProvider");
+  },
+  logout: async () => {},
+  setAvatarKey: () => {},
+  patchUser: () => {},
+  revalidate: async () => null,
+};
+
 export function useAuth(): AuthContextValue {
   const ctx = useContext(AuthContext);
-  if (!ctx) throw new Error("useAuth must be used within an AuthProvider");
+  // Degrades to signed-out instead of throwing. This used to throw, which was
+  // a fine guard while only feature screens read auth — but the account
+  // cluster now sits in the header of ~30 screens, so a missing provider took
+  // the whole page down over a piece of chrome. The provider is mounted in the
+  // root layout, so in the app this branch is unreachable; what it really
+  // covers is a unit test rendering a screen in isolation, where signed-out
+  // chrome is the correct thing to show. The write actions still throw rather
+  // than silently no-op, so a genuinely missing provider is loud where it
+  // matters.
+  if (!ctx) {
+    if (process.env.NODE_ENV === "development") {
+      console.warn(
+        "useAuth used outside an AuthProvider — assuming signed out",
+      );
+    }
+    return NO_PROVIDER;
+  }
   return ctx;
 }

@@ -115,12 +115,29 @@ describe("SidebarContent", () => {
     expect(link).toHaveAttribute("href", "/feedback");
   });
 
-  it("routes the auth-gated destination to /auth when signed out", () => {
+  // These used to render pointing at /auth. Sending someone with no account to
+  // a sign-in wall from a nav item they can't use is a dead end, so the items
+  // are dropped instead; signing in is offered by the header's account control
+  // and by the prompt raised by whatever the visitor actually tried to do.
+  it("hides the auth-gated destinations entirely when signed out", () => {
     authState = { status: "unauthenticated", user: null };
+    renderSidebar();
+    expect(screen.queryByRole("link", { name: "My packs" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "History" })).toBeNull();
+    // The public ones stay.
+    expect(screen.getByRole("link", { name: /Browse/ })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /People/ })).toBeInTheDocument();
+  });
+
+  it("shows the auth-gated destinations to a signed-in user", () => {
     renderSidebar();
     expect(screen.getByRole("link", { name: "My packs" })).toHaveAttribute(
       "href",
-      "/auth",
+      "/my-packs",
+    );
+    expect(screen.getByRole("link", { name: "History" })).toHaveAttribute(
+      "href",
+      "/history",
     );
   });
 

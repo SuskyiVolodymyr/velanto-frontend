@@ -6,6 +6,7 @@ import { VoteControl } from "./VoteControl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 
 vi.mock("@/src/shared/lib/auth-context");
+
 const mockedUseAuth = vi.mocked(useAuth);
 
 function mockAuth(authenticated: boolean) {
@@ -168,7 +169,10 @@ describe("VoteControl", () => {
     );
   });
 
-  it("blocks an anonymous viewer with a reason tooltip instead of voting", async () => {
+  // Was a hover tooltip. Hover does not exist on a phone, so the reaction just
+  // did nothing there with the reason unreachable; clicking now opens the
+  // sign-in prompt beside the control.
+  it("blocks an anonymous viewer and explains why on click instead of voting", async () => {
     mockAuth(false);
     const vote = vi.fn();
     render(
@@ -183,11 +187,11 @@ describe("VoteControl", () => {
     const up = screen.getByRole("button", { name: "Upvote" });
     expect(up).toHaveAttribute("aria-disabled", "true");
 
-    await userEvent.hover(up);
-    expect(screen.getByRole("tooltip")).toHaveTextContent("Log in to vote");
-
+    // The gate wraps the reaction and swallows the click, so the vote never
+    // fires and the prompt appears anchored to it.
     await userEvent.click(up);
     expect(vote).not.toHaveBeenCalled();
+    expect(screen.getByRole("dialog")).toHaveTextContent("Log in to vote");
   });
 
   it("shows an inline error and keeps the counts when the vote fails", async () => {

@@ -1,5 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { JoinByLink } from "./JoinByLink";
 import { ApiError } from "@/src/shared/lib/api-client";
@@ -11,9 +12,11 @@ vi.mock("next/navigation", () => ({
 }));
 
 const join = vi.fn();
+const joinAsGuest = vi.fn();
 vi.mock("./friends-rooms-client", () => ({
   friendsRoomsClient: {
     join: (...args: unknown[]) => join(...args),
+    joinAsGuest: (...args: unknown[]) => joinAsGuest(...args),
   },
 }));
 
@@ -67,19 +70,80 @@ describe("JoinByLink — rooms dormant", () => {
 });
 
 describe("JoinByLink — signed out", () => {
-  it("redirects to sign-in preserving the join path, and does not join", async () => {
+  // Deliberately NOT a redirect to sign-in. Someone opening an invite link is
+  // being invited to a game their friends are already in; a registration wall
+  // at that exact moment is where the group falls apart.
+  it("asks for a nickname instead of bouncing through sign-in", async () => {
     currentUser = null;
     currentStatus = "unauthenticated";
     render(<JoinByLink code="ABC123" />);
 
-    await waitFor(() =>
-      expect(replace).toHaveBeenCalledWith(
-        "/auth?next=" + encodeURIComponent("/rooms/join/ABC123"),
-      ),
-    );
+    expect(
+      await screen.findByPlaceholderText("Pick a nickname"),
+    ).toBeInTheDocument();
+    expect(replace).not.toHaveBeenCalled();
     expect(join).not.toHaveBeenCalled();
   });
 
+  it("joins as a guest with the link's code and replaces into the room", async () => {
+    const user = userEvent.setup();
+    currentUser = null;
+    currentStatus = "unauthenticated";
+    joinAsGuest.mockResolvedValue({
+      token: "guest.jwt",
+      guestId: "guest-1",
+      room: { id: "room-9" },
+    });
+    render(<JoinByLink code="ABC123" />);
+
+    await user.type(
+      await screen.findByPlaceholderText("Pick a nickname"),
+      "Sam",
+    );
+    await user.click(screen.getByRole("button", { name: "Join" }));
+
+    expect(joinAsGuest).toHaveBeenCalledWith("ABC123", "Sam");
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/rooms/room-9"));
+  });
+
+  // An account is still on offer, just not as a toll gate.
+  it("keeps a sign-in link that returns here", async () => {
+    currentUser = null;
+    currentStatus = "unauthenticated";
+    render(<JoinByLink code="ABC123" />);
+
+    const link = await screen.findByRole("link", {
+      name: "Or log in to your account",
+    });
+    expect(link).toHaveAttribute(
+      "href",
+      "/auth?next=" + encodeURIComponent("/rooms/join/ABC123"),
+    );
+  });
+
+  it("shows the guest error inline and stays put on a bad nickname", async () => {
+    const user = userEvent.setup();
+    currentUser = null;
+    currentStatus = "unauthenticated";
+    joinAsGuest.mockRejectedValue(new ApiError(400, "Bad Request", null));
+    render(<JoinByLink code="ABC123" />);
+
+    await user.type(
+      await screen.findByPlaceholderText("Pick a nickname"),
+      "xx",
+    );
+    await user.click(screen.getByRole("button", { name: "Join" }));
+
+    expect(
+      await screen.findByText(
+        "That nickname will not work. Use 2-16 letters, numbers or underscores.",
+      ),
+    ).toBeInTheDocument();
+    expect(replace).not.toHaveBeenCalled();
+  });
+
+  // During "loading" a signed-in visitor's user is momentarily null; acting
+  // then would flash the guest form at someone who has an account.
   it("does nothing while auth is still loading", () => {
     currentUser = null;
     currentStatus = "loading";
@@ -87,6 +151,7 @@ describe("JoinByLink — signed out", () => {
 
     expect(replace).not.toHaveBeenCalled();
     expect(join).not.toHaveBeenCalled();
+    expect(screen.queryByPlaceholderText("Pick a nickname")).toBeNull();
   });
 });
 

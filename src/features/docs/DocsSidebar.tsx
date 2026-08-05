@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Select } from "@/src/shared/components/Select";
+import { Dropdown } from "@/src/shared/components/Dropdown";
 import { cn } from "@/src/shared/lib/cn";
 
 export type TopicId =
@@ -55,24 +55,28 @@ export function DocsSidebar({
   return (
     <>
       {/* Mobile: a compact dropdown instead of the full stacked list, so the
-          article isn't pushed way down the page. Native <select> keeps the
-          section grouping (optgroups) and is a11y/SSR-safe. */}
-      <Select
+          article isn't pushed way down the page. The app's own listbox, not a
+          native <select>, whose OS menu ignores every token on this page.
+          Sections survive as disabled header rows — the listbox has no
+          optgroup, and losing the grouping entirely would leave one flat run
+          of a dozen topics with no sense of where each belongs. */}
+      <Dropdown
         className="min-[820px]:hidden"
-        aria-label={t("jumpTo")}
+        ariaLabel={t("jumpTo")}
         value={activeTopic}
-        onChange={(event) => onSelect(event.target.value as TopicId)}
-      >
-        {NAV.map((section) => (
-          <optgroup key={section.labelKey} label={t(section.labelKey)}>
-            {section.topics.map((topic) => (
-              <option key={topic.id} value={topic.id}>
-                {t(topic.labelKey)}
-              </option>
-            ))}
-          </optgroup>
-        ))}
-      </Select>
+        onChange={(id) => onSelect(id as TopicId)}
+        options={NAV.flatMap((section) => [
+          {
+            value: `section:${section.labelKey}`,
+            label: t(section.labelKey),
+            disabled: true,
+          },
+          ...section.topics.map((topic) => ({
+            value: topic.id,
+            label: t(topic.labelKey),
+          })),
+        ])}
+      />
 
       {/* Desktop: the sticky sidebar list. `top-20` clears the sticky page
           header — at the old `top-6` the nav slid underneath it on scroll. */}

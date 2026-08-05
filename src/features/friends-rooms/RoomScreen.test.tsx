@@ -294,7 +294,7 @@ describe("RoomScreen — round", () => {
     setRoom(roundState());
     render(<RoomScreen roomId="room-1" />);
 
-    await user.click(screen.getByRole("button", { name: "Sacrifice Apple" }));
+    await user.click(screen.getByRole("button", { name: "Save Apple" }));
     expect(claim).toHaveBeenCalledWith("i1");
   });
 
@@ -377,7 +377,7 @@ describe("RoomScreen — round", () => {
     // The instruction still shows — it steps down to a subheading, it isn't lost.
     expect(
       screen.getByText(
-        "Claim one item to sacrifice. The item nobody claims survives.",
+        "Claim one item to save. The item nobody claims is the one sacrificed.",
       ),
     ).toBeInTheDocument();
   });
@@ -392,7 +392,7 @@ describe("RoomScreen — round", () => {
     expect(
       screen.getByRole("heading", {
         level: 2,
-        name: "Claim one item to sacrifice. The item nobody claims survives.",
+        name: "Claim one item to save. The item nobody claims is the one sacrificed.",
       }),
     ).toBeInTheDocument();
   });
@@ -478,9 +478,7 @@ describe("RoomScreen — between", () => {
     setRoom(betweenState());
     render(<RoomScreen roomId="room-1" />);
 
-    expect(
-      screen.getByText("This item survived the round."),
-    ).toBeInTheDocument();
+    expect(screen.getByText("This item was sacrificed.")).toBeInTheDocument();
     // Cherry is the survivor; it appears in the survivor card and the board.
     expect(screen.getAllByText("Cherry").length).toBeGreaterThan(0);
   });
@@ -512,12 +510,12 @@ describe("RoomScreen — between", () => {
     expect(screen.queryByText(/Next round in/)).not.toBeInTheDocument();
   });
 
-  it("labels eliminated items with who sacrificed them", () => {
+  it("credits each claim to the player who made it", () => {
     setRoom(betweenState());
     render(<RoomScreen roomId="room-1" />);
 
-    expect(screen.getByText("Sacrificed by Alice")).toBeInTheDocument();
-    expect(screen.getByText("Sacrificed by Bob")).toBeInTheDocument();
+    expect(screen.getByText("Saved by Alice")).toBeInTheDocument();
+    expect(screen.getByText("Saved by Bob")).toBeInTheDocument();
   });
 
   it("presses Next", async () => {
@@ -681,9 +679,9 @@ describe("RoomScreen — results", () => {
 
     // Each round's survivor carries the "Survivor" label inside its own block.
     expect(within(round1).getByText("Banana")).toBeInTheDocument();
-    expect(within(round1).getByText("Survivor")).toBeInTheDocument();
+    expect(within(round1).getByText("Sacrificed")).toBeInTheDocument();
     expect(within(round2).getByText("Date")).toBeInTheDocument();
-    expect(within(round2).getByText("Survivor")).toBeInTheDocument();
+    expect(within(round2).getByText("Sacrificed")).toBeInTheDocument();
   });
 
   // The end screen is where a player reviews the whole game, so a named round
