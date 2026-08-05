@@ -70,22 +70,35 @@ export const MODE_ICON: Record<RoomMode, string> = {
 };
 
 /**
- * Claim now serves both save_one and sacrifice_one packs (it used to be
- * exclusively the save_one_friends format's one gameplay) — the verb the
- * board/results copy uses ("Save" vs "Sacrifice") must follow the PACK's
- * format, exactly like the solo play screens' own CHOSEN_LABEL_KEY
- * (src/features/play/play-format-copy.ts). Every format needs a key for
- * Record<PackFormat, ...>'s exhaustiveness even though only Claim's two
- * formats ever reach this helper.
+ * Claim's two verbs, per pack format.
+ *
+ * The engine is format-blind: it draws `players + 1` items, claims are
+ * exclusive, and the single UNCLAIMED item is the one the round singles out
+ * (claim.engine.ts). What that item MEANS is the format's to say — and the
+ * claim then means the opposite:
+ *
+ *   save_one       one item ends up saved      → the odd one out is SAVED,
+ *                                                 so claiming sacrifices
+ *   sacrifice_one  one item ends up sacrificed → the odd one out is SACRIFICED,
+ *                                                 so claiming saves
+ *
+ * This is the bug this pair exists to prevent. The board previously called
+ * every claim a sacrifice regardless of format, which told a sacrifice_one
+ * room to sacrifice one item EACH — a round with as many sacrifices as there
+ * are players, in a format whose whole premise is one. Everyone protects one
+ * item; the one nobody protected is the sacrifice.
+ *
+ * Both helpers return a key SUFFIX ("Save" | "Sacrifice"), because the copy
+ * they select is a family of `…Save`/`…Sacrifice` message keys.
  */
-const CLAIM_VERB_KEY: Record<Pack["format"], string> = {
-  save_one: "claimVerbSave",
-  sacrifice_one: "claimVerbSacrifice",
-  nxn: "",
-  rank_blind: "",
-  "1v1": "",
-};
+export type ClaimVerb = "Save" | "Sacrifice";
 
-export function claimVerbKey(format: Pack["format"]): string {
-  return CLAIM_VERB_KEY[format];
+/** What happens to the item nobody claimed — the format's own verb. */
+export function outcomeVerb(format: Pack["format"]): ClaimVerb {
+  return format === "sacrifice_one" ? "Sacrifice" : "Save";
+}
+
+/** What a claim does — always the opposite of {@link outcomeVerb}. */
+export function claimVerb(format: Pack["format"]): ClaimVerb {
+  return format === "sacrifice_one" ? "Save" : "Sacrifice";
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { SignInGate } from "@/src/shared/components/SignInGate";
 import { useState, type ReactElement } from "react";
 import { useTranslations } from "next-intl";
 import { Flag } from "lucide-react";
@@ -61,7 +62,8 @@ export function ReportPackDialog({ packId }: { packId: string }) {
         reported
           ? "cursor-default border-danger/35 bg-danger/10 text-[#ff8c8c]"
           : "border-border bg-surface-card text-foreground-secondary hover:border-border-strong hover:text-danger",
-        blocked && "cursor-not-allowed opacity-45",
+        // Not dimmed while blocked: clicking opens the sign-in prompt, so
+        // greying it out advertises a dead end the click no longer is.
       )}
     >
       <Flag size={15} aria-hidden />
@@ -77,7 +79,7 @@ export function ReportPackDialog({ packId }: { packId: string }) {
   // Wrap the trigger in the sign-in tooltip only while blocked — once
   // reported, the button explains itself and needs no tooltip.
   const gated: ReactElement = blocked ? (
-    <Tooltip content={tAuth("logInToReport")}>{trigger}</Tooltip>
+    <SignInGate message={tAuth("logInToReport")}>{trigger}</SignInGate>
   ) : (
     trigger
   );

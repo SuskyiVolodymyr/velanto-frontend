@@ -16,6 +16,16 @@ export interface DropdownProps<T extends string> {
   onChange: (value: T) => void;
   /** Shown on the trigger while nothing is selected. */
   placeholder?: string;
+  /**
+   * Names the dimension on the trigger, ahead of the selected value
+   * ("Language: All"). For filter bars, where a trigger showing only its value
+   * reads as a statement about the results rather than a control — "Popular"
+   * gives no hint that anything else is on offer.
+   *
+   * Trigger only: the options themselves stay unprefixed, so the list is not
+   * eleven repetitions of the same word.
+   */
+  prefix?: string;
   /** Accessible name for the control. */
   ariaLabel?: string;
   /** Points the trigger at an inline error/description element. */
@@ -25,12 +35,14 @@ export interface DropdownProps<T extends string> {
   id?: string;
   className?: string;
   /**
-   * Trigger height. `md` (42px) is the app's standard field; `lg` (44px) is the
+   * Trigger height, radius and text size — one prop, because they vary
+   * together. `sm` (34px, pill) is the browse bar's filter row; `md` (42px) is
+   * the app's standard field; `lg` (44px) is the
    * taller staff filter bar (Moderation.dc.html sizes search + format + sort
    * together at 44). The floating panel positions itself off the trigger, so it
    * follows either.
    */
-  size?: "md" | "lg";
+  size?: "sm" | "md" | "lg";
   /**
    * Which step of the elevation ladder the trigger sits on — `background`
    * (default) for a field in a form, `card` for one in a filter bar sitting on
@@ -41,11 +53,31 @@ export interface DropdownProps<T extends string> {
    * values in the class list and let Tailwind's emit order decide.
    */
   surface?: "background" | "card";
+  /**
+   * How tall the floating panel may get before it scrolls. `default` (280px)
+   * suits the short lists this was built for; `tall` (440px) fits the eleven
+   * pack languages plus "All" without a scrollbar.
+   *
+   * A prop, not a className: the panel is an inner element, and cn() is a plain
+   * join, so two max-heights would both emit.
+   */
+  panelHeight?: "default" | "tall";
 }
 
-const TRIGGER_SIZE_CLASS: Record<"md" | "lg", string> = {
-  md: "h-[42px]",
-  lg: "h-11",
+// Radius lives here rather than in the shared base class because it is not
+// independent of size: `sm` is the browse bar's filter pill, which is fully
+// round to sit level with the format chips beside it, while the field sizes
+// keep the form control radius. cn() is a plain join, so the two radii must
+// never both be emitted.
+const TRIGGER_SIZE_CLASS: Record<"sm" | "md" | "lg", string> = {
+  sm: "h-[34px] rounded-pill text-[13px]",
+  md: "h-[42px] rounded-control",
+  lg: "h-11 rounded-control",
+};
+
+const PANEL_HEIGHT_CLASS: Record<"default" | "tall", string> = {
+  default: "max-h-[280px]",
+  tall: "max-h-[440px]",
 };
 
 const TRIGGER_SURFACE_CLASS: Record<"background" | "card", string> = {
@@ -70,6 +102,7 @@ export function Dropdown<T extends string>({
   value,
   onChange,
   placeholder,
+  prefix,
   ariaLabel,
   "aria-describedby": ariaDescribedby,
   "aria-invalid": ariaInvalid,
@@ -78,6 +111,7 @@ export function Dropdown<T extends string>({
   className,
   size = "md",
   surface = "background",
+  panelHeight = "default",
 }: DropdownProps<T>) {
   const [open, setOpen] = useState(false);
   // Which option the keyboard is on. Kept apart from `value`: moving through the
@@ -189,7 +223,7 @@ export function Dropdown<T extends string>({
         onClick={() => (open ? setOpen(false) : openList())}
         onKeyDown={handleKeyDown}
         className={cn(
-          "flex w-full cursor-pointer items-center justify-between gap-2 rounded-control border px-[13px] text-[13.5px] font-semibold transition-colors",
+          "flex w-full cursor-pointer items-center justify-between gap-2 border px-[13px] font-semibold transition-colors",
           TRIGGER_SIZE_CLASS[size],
           TRIGGER_SURFACE_CLASS[surface],
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
@@ -198,7 +232,14 @@ export function Dropdown<T extends string>({
           selected ? "text-foreground" : "text-foreground-tertiary",
         )}
       >
-        {selected ? selected.label : placeholder}
+        <span className="truncate">
+          {prefix && (
+            <span className="font-medium text-foreground-secondary">
+              {prefix}:{" "}
+            </span>
+          )}
+          {selected ? selected.label : placeholder}
+        </span>
         <ChevronDown
           aria-hidden
           size={14}
@@ -217,7 +258,15 @@ export function Dropdown<T extends string>({
           aria-label={ariaLabel}
           tabIndex={-1}
           onKeyDown={handleKeyDown}
-          className="absolute inset-x-0 top-[calc(100%+4px)] z-30 max-h-[280px] overflow-y-auto rounded-control border border-white/[0.12] bg-surface-raised p-1.5 shadow-[0_18px_44px_rgba(0,0,0,0.55)]"
+          className={cn(
+            // no-scrollbar: still scrolls, just without the native bar, which
+            // on a 200px-wide floating panel eats a visible slice of the row
+            // and renders in OS chrome that matches nothing else here. The
+            // panel is short enough that a long list reads as clipped, so the
+            // bar is not carrying the "there is more" signal on its own.
+            "no-scrollbar absolute inset-x-0 top-[calc(100%+4px)] z-30 overflow-y-auto rounded-control border border-white/[0.12] bg-surface-raised p-1.5 shadow-[0_18px_44px_rgba(0,0,0,0.55)]",
+            PANEL_HEIGHT_CLASS[panelHeight],
+          )}
         >
           {options.map((option, index) => {
             const isSelected = option.value === value;

@@ -3,7 +3,11 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Share2 } from "lucide-react";
-import { Button, type ButtonVariant } from "@/src/shared/components/Button";
+import {
+  Button,
+  type ButtonVariant,
+  type ButtonSize,
+} from "@/src/shared/components/Button";
 import { Input } from "@/src/shared/components/Input";
 import { buildShareUrl } from "@/src/shared/lib/share-url";
 import { useHorizontalClamp } from "@/src/shared/lib/use-horizontal-clamp";
@@ -15,6 +19,7 @@ export function ShareButton({
   resolvePlayId,
   label,
   variant = "secondary",
+  size = "md",
   compact = false,
   icon,
   className,
@@ -34,6 +39,10 @@ export function ShareButton({
    * primary cyan treatment; every other caller keeps the original secondary
    * look by omitting this). */
   variant?: ButtonVariant;
+  /** Passed through rather than set via className: Button owns height AND
+   *  radius per size, and cn() is a plain join, so an outside h-[38px] would
+   *  leave both heights in the class list. */
+  size?: ButtonSize;
   /**
    * Collapse the visible label to icon-only below 481px, keeping the full
    * label as the button's aria-label so it never loses its accessible name.
@@ -126,6 +135,7 @@ export function ShareButton({
       <Button
         ref={triggerRef}
         variant={variant}
+        size={size}
         className={className}
         aria-haspopup="dialog"
         aria-expanded={open}

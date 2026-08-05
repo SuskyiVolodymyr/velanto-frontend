@@ -80,6 +80,7 @@ export function UpdatesScreen({
     <>
       <PageHeader
         back={{ href: "/", label: browseLabel }}
+        backFrom={["dashboard", "docs"]}
         crumb={heading}
         trailing={
           <Link

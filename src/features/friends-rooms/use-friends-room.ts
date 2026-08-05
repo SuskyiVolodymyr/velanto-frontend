@@ -6,6 +6,7 @@ import {
   ensureFreshAccessToken,
   getAccessToken,
 } from "@/src/shared/lib/api-client";
+import { getGuestSession } from "./guest-session";
 import {
   ROOM_COMMANDS,
   ROOM_EVENTS,
@@ -78,6 +79,19 @@ export interface FriendsRoom {
 }
 
 /**
+ * Which credential this socket presents for `roomId`.
+ *
+ * A real session always wins: someone who guested into a room and later signed
+ * in still has that guest entry in sessionStorage, and offering it would seat
+ * them in the throwaway chair instead of their own. Read fresh on every
+ * reconnect (socket.io calls `auth` again each attempt), so a session that
+ * appears mid-game takes over from the next connect.
+ */
+function roomToken(roomId: string): string | null {
+  return getAccessToken() ?? getGuestSession(roomId)?.token ?? null;
+}
+
+/**
  * One live room over one socket. The server is the single source of truth: this
  * holds the last `room.state` snapshot and folds every subsequent event into it,
  * so the reducer here mirrors — but never re-derives — the engine's decisions.
@@ -118,7 +132,7 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
       if (cancelled) return;
       socket = io(`${API_BASE_URL}/friends-rooms`, {
         transports: ["websocket"],
-        auth: (cb) => cb({ token: getAccessToken(), roomId }),
+        auth: (cb) => cb({ token: roomToken(roomId), roomId }),
         query: { roomId },
       });
       socketRef.current = socket;

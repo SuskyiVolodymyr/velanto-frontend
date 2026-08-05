@@ -103,6 +103,9 @@ export function LegalScreen({
     <>
       <PageHeader
         back={{ href: "/", label: browseLabel }}
+        // Terms and Privacy link to each other, so either can be the origin;
+        // the current page can never be its own previous path.
+        backFrom={["dashboard", "terms", "privacy"]}
         crumb={heading}
         // Mock: the Terms/Privacy switch lives in the header bar, not in the
         // page body — it belongs to the pair of documents rather than to

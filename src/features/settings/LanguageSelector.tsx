@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { Select } from "@/src/shared/components/Select";
+import { Dropdown } from "@/src/shared/components/Dropdown";
 import { LOCALES, LOCALE_NAMES, type Locale } from "@/src/i18n/config";
 import { setUserLocale } from "@/src/i18n/locale";
 
@@ -14,17 +14,15 @@ export function LanguageSelector() {
   // (via max-w, which doesn't fight Select's own `w-full`) keeps it compact in
   // the settings row rather than stretching across the card.
   return (
-    <Select
-      aria-label={t("languageSelectAria")}
+    <Dropdown
+      ariaLabel={t("languageSelectAria")}
       value={locale}
-      onChange={(event) => void setUserLocale(event.target.value as Locale)}
+      onChange={(code) => void setUserLocale(code as Locale)}
       className="max-w-[190px]"
-    >
-      {LOCALES.map((code) => (
-        <option key={code} value={code}>
-          {LOCALE_NAMES[code]}
-        </option>
-      ))}
-    </Select>
+      options={LOCALES.map((code) => ({
+        value: code,
+        label: LOCALE_NAMES[code],
+      }))}
+    />
   );
 }

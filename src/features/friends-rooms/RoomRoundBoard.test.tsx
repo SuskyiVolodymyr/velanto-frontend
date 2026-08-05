@@ -22,26 +22,42 @@ function claimRoundState() {
 // player claim one item TO SACRIFICE and the single unclaimed item survive
 // (claim.engine.ts). A save_one pack does not invert that — its saved item is
 // the survivor — so the chrome must not offer a save_one room a save.
-describe("RoomRoundBoard — a claim is a sacrifice in both formats", () => {
-  it.each(["save_one", "sacrifice_one"] as const)(
-    "asks a %s room what to give up",
-    (packFormat) => {
-      render(
-        <RoomRoundBoard
-          state={{ ...claimRoundState(), packFormat }}
-          currentUserId="u1"
-          actions={{} as never}
-        />,
-      );
+describe("RoomRoundBoard — the round's question follows the pack format", () => {
+  // The instruction used to be hardcoded to the sacrifice wording for both
+  // formats, so a sacrifice_one room was told to sacrifice one item EACH —
+  // as many sacrifices per round as there are players, in a format built on
+  // one. Everyone protects one; the unprotected item is the sacrifice.
+  it("asks a save_one room what to give up", () => {
+    render(
+      <RoomRoundBoard
+        state={{ ...claimRoundState(), packFormat: "save_one" }}
+        currentUserId="u1"
+        actions={{} as never}
+      />,
+    );
 
-      expect(
-        screen.getByText(
-          "Claim one item to sacrifice. The item nobody claims survives.",
-        ),
-      ).toBeInTheDocument();
-      expect(screen.getByText("Take the one you want out")).toBeInTheDocument();
-    },
-  );
+    expect(
+      screen.getByText(
+        "Claim one item to sacrifice. The item nobody claims is the one saved.",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("asks a sacrifice_one room what to SAVE", () => {
+    render(
+      <RoomRoundBoard
+        state={{ ...claimRoundState(), packFormat: "sacrifice_one" }}
+        currentUserId="u1"
+        actions={{} as never}
+      />,
+    );
+
+    expect(
+      screen.getByText(
+        "Claim one item to save. The item nobody claims is the one sacrificed.",
+      ),
+    ).toBeInTheDocument();
+  });
 });
 
 describe("RoomRoundBoard", () => {

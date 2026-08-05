@@ -1,5 +1,6 @@
 "use client";
 
+import { SignInGate } from "@/src/shared/components/SignInGate";
 import { useState, type ReactElement } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -11,6 +12,7 @@ import { useAuth } from "@/src/shared/lib/auth-context";
 import { ApiError } from "@/src/shared/lib/api-client";
 import { cn } from "@/src/shared/lib/cn";
 import { friendsRoomsClient } from "./friends-rooms-client";
+import { useGuestJoin } from "./use-guest-join";
 
 /** Which inline error to show under the join form. `null` = none. */
 type JoinErrorKey =
@@ -19,15 +21,19 @@ type JoinErrorKey =
 /**
  * The room play entry points for a pack: a full-width Create-room button plus
  * an always-visible inline code field + Join button (matches the pack detail
- * mock — no modal). Two registered-users-only actions:
+ * mock — no modal).
  *
- *  - **Create room** opens a fresh room over this pack and routes the host to it.
- *  - **Join by code** submits the inline code field and routes into that room.
+ *  - **Create room** opens a fresh room over this pack and routes the host to
+ *    it. Registered users only: room creation is what bounds the whole abuse
+ *    surface, so a signed-out visitor sees it blocked with a sign-in tooltip
+ *    (the app's anon-gate pattern — same as the vote and comment controls).
+ *  - **Join by code** works signed out. A signed-out visitor gets a nickname
+ *    field beside the code and joins as a guest — a friend who was handed a
+ *    code should be able to play, and being made to register first is where
+ *    those groups fall apart.
  *
- * Signed-out visitors see both controls blocked with a sign-in tooltip rather
- * than a surprise redirect (the app's anon-gate pattern — same as the vote and
- * comment controls). The room itself runs over the socket once you land on
- * `/rooms/[id]`; these calls are just the REST create/join handshake.
+ * The room itself runs over the socket once you land on `/rooms/[id]`; these
+ * calls are just the REST create/join handshake.
  */
 export function FriendsRoomEntry({ packId }: { packId: string }) {
   const t = useTranslations("room");
@@ -39,8 +45,10 @@ export function FriendsRoomEntry({ packId }: { packId: string }) {
   const [createFailed, setCreateFailed] = useState(false);
 
   const [code, setCode] = useState("");
+  const [nickname, setNickname] = useState("");
   const [joining, setJoining] = useState(false);
   const [joinError, setJoinError] = useState<JoinErrorKey | null>(null);
+  const guestJoin = useGuestJoin();
 
   async function handleCreate() {
     if (blocked || creating) return;
@@ -59,7 +67,16 @@ export function FriendsRoomEntry({ packId }: { packId: string }) {
 
   async function handleJoin(event: React.FormEvent) {
     event.preventDefault();
-    if (blocked || joining) return;
+    if (joining || guestJoin.joining) return;
+
+    // Signed out: the nickname field is showing, so this is a guest join. The
+    // hook owns validation and error mapping for that path.
+    if (blocked) {
+      const room = await guestJoin.join(code, nickname);
+      if (room) router.push(`/rooms/${room.id}`);
+      return;
+    }
+
     // A code is read aloud or typed from a friend's screen, so normalize for a
     // clean UX before sending — the backend normalizes too, but this keeps the
     // input forgiving of stray spaces and lowercase.
@@ -89,7 +106,7 @@ export function FriendsRoomEntry({ packId }: { packId: string }) {
   // Wrap a blocked control in the sign-in tooltip; leave it bare otherwise.
   const withGate = (node: ReactElement) =>
     blocked ? (
-      <Tooltip content={t("entry.signInToPlay")}>{node}</Tooltip>
+      <SignInGate message={t("entry.signInToPlay")}>{node}</SignInGate>
     ) : (
       node
     );
@@ -114,10 +131,7 @@ export function FriendsRoomEntry({ packId }: { packId: string }) {
           onClick={handleCreate}
           loading={creating}
           aria-disabled={blocked || undefined}
-          className={cn(
-            "w-full gap-2.5 rounded-[13px] text-[14.5px]",
-            blocked && "cursor-not-allowed opacity-45",
-          )}
+          className={cn("w-full gap-2.5 rounded-[13px] text-[14.5px]")}
         >
           <Users size={17} aria-hidden />
           {t("entry.createRoom")}
@@ -130,41 +144,53 @@ export function FriendsRoomEntry({ packId }: { packId: string }) {
         </Text>
       )}
 
-      {withGate(
-        <form onSubmit={handleJoin} className="flex gap-2.5">
-          {/* readOnly, not disabled, while blocked — same reasoning as
-              CommentSection's composer: a truly `disabled` field drops out of
-              the tab order, so a keyboard-only signed-out visitor could never
-              tab to it and discover the sign-in tooltip. */}
+      {/* NOT gated: joining is the one room action a signed-out visitor can
+          take. The nickname field appears alongside the code for them, and is
+          absent for a signed-in user, whose username the room already knows. */}
+      <form onSubmit={handleJoin} className="flex flex-col gap-2.5">
+        {blocked && (
+          <input
+            value={nickname}
+            onChange={(e) => setNickname(e.target.value)}
+            placeholder={t("entry.nicknamePlaceholder")}
+            aria-label={t("entry.nicknameLabel")}
+            disabled={guestJoin.joining}
+            maxLength={16}
+            autoComplete="nickname"
+            className="min-w-0 rounded-[12px] border border-border bg-surface px-3.5 py-2.5 text-[15px] text-foreground outline-none focus-visible:ring-2 focus-visible:ring-acc disabled:opacity-45"
+          />
+        )}
+        <div className="flex gap-2.5">
           <input
             value={code}
             onChange={(e) => setCode(e.target.value)}
             placeholder={t("entry.codePlaceholder")}
             aria-label={t("entry.codeLabel")}
-            readOnly={blocked}
-            disabled={joining}
+            disabled={joining || guestJoin.joining}
             autoCapitalize="characters"
             autoCorrect="off"
             spellCheck={false}
             className={cn(
               "min-w-0 flex-1 rounded-[12px] border border-border bg-surface px-3.5 py-2.5 font-mono text-[15px] font-semibold uppercase tracking-[0.16em] text-foreground outline-none focus-visible:ring-2 focus-visible:ring-acc disabled:opacity-45",
-              blocked && "cursor-not-allowed opacity-45",
             )}
           />
           <Button
             type="submit"
             variant="secondary"
-            loading={joining}
-            aria-disabled={blocked || undefined}
-            className={cn(blocked && "cursor-not-allowed opacity-45")}
+            loading={joining || guestJoin.joining}
           >
             {t("entry.join")}
           </Button>
-        </form>,
+        </div>
+      </form>
+      {blocked && !guestJoin.error && (
+        <Text variant="tertiary" className="text-[12.5px]">
+          {t("entry.guestHint")}
+        </Text>
       )}
-      {joinError && (
+      {(joinError ?? guestJoin.error) && (
         <Text variant="danger" className="text-sm">
-          {t(`entry.${joinError}`)}
+          {t(`entry.${joinError ?? guestJoin.error}`)}
         </Text>
       )}
     </div>

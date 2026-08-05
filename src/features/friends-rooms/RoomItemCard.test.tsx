@@ -35,7 +35,7 @@ describe("RoomItemCard — claimable", () => {
       />,
     );
 
-    const claim = screen.getByRole("button", { name: "Sacrifice Silhouette" });
+    const claim = screen.getByRole("button", { name: "Save Silhouette" });
     const play = screen.getByRole("button", { name: "Play video preview" });
 
     expect(claim).not.toContainElement(play);
@@ -76,9 +76,7 @@ describe("RoomItemCard — claimable", () => {
       />,
     );
 
-    await user.click(
-      screen.getByRole("button", { name: "Sacrifice Silhouette" }),
-    );
+    await user.click(screen.getByRole("button", { name: "Save Silhouette" }));
     expect(onClaim).toHaveBeenCalledTimes(1);
   });
 
@@ -95,7 +93,7 @@ describe("RoomItemCard — claimable", () => {
       />,
     );
 
-    await user.click(screen.getByRole("button", { name: "Sacrifice Apple" }));
+    await user.click(screen.getByRole("button", { name: "Save Apple" }));
     expect(onClaim).toHaveBeenCalledTimes(1);
   });
 });
@@ -132,7 +130,7 @@ describe("RoomItemCard — claimant", () => {
 
     // UserAvatar with no avatarKey falls back to the initial.
     expect(screen.getAllByText("F")).toHaveLength(1);
-    expect(screen.getByText("Sacrificed by Fiona")).toBeInTheDocument();
+    expect(screen.getByText("Saved by Fiona")).toBeInTheDocument();
   });
 
   it("shows the claimant once on a media item", () => {
@@ -168,6 +166,7 @@ describe("RoomItemCard — claimant", () => {
     const title = screen.getByText(
       "Spirited Away - Joe Hisaishi / One Summer's Day",
     );
+    // save_one: a claim is the sacrifice.
     const label = screen.getByText("Sacrificed by Fiona");
     expect(title.parentElement).not.toContainElement(label);
   });
@@ -185,67 +184,88 @@ describe("RoomItemCard — claimant", () => {
   });
 });
 
-describe("RoomItemCard — a claim is a sacrifice in both formats", () => {
-  // The engine has every player claim one item TO SACRIFICE, and the single
-  // unclaimed item survive (claim.engine.ts) — that does not flip with the
-  // pack's format. Labelling a save_one claim "Kept by <name>" described the
-  // opposite game to the chrome directly above it, which asks the room to take
-  // the one they want OUT. The pack's format still names the SURVIVOR (below).
-  it.each(["save_one", "sacrifice_one"] as const)(
-    "offers a %s room a sacrifice, not a save",
-    (format) => {
-      const item = {
-        id: "i1",
-        title: "Pizza",
-        type: "text" as const,
-        value: "Pizza",
-      };
-      render(
-        <RoomItemCard
-          item={item}
-          index={0}
-          status="free"
-          format={format}
-          onClaim={vi.fn()}
-        />,
-      );
-      expect(
-        screen.getByRole("button", { name: /sacrifice pizza/i }),
-      ).toBeInTheDocument();
-    },
-  );
-
-  it.each(["save_one", "sacrifice_one"] as const)(
-    "names the claimant of a %s item the one who sacrificed it",
-    (format) => {
-      render(
-        <RoomItemCard
-          item={textItem()}
-          index={0}
-          status="sacrificed"
-          format={format}
-          claimant={claimant()}
-        />,
-      );
-      expect(screen.getByText("Sacrificed by Fiona")).toBeInTheDocument();
-    },
-  );
-
-  it("the survivor badge also flips: 'Saved' for save_one, 'Survivor' for sacrifice_one", () => {
-    const item = {
-      id: "i1",
-      title: "Pizza",
-      type: "text" as const,
-      value: "Pizza",
-    };
+describe("RoomItemCard — the claim verb is the OPPOSITE of the format's", () => {
+  // The engine only singles out the item nobody claimed (claim.engine.ts); the
+  // format says what that means, and the claim then means the other thing.
+  // Calling every claim a sacrifice told a sacrifice_one room to sacrifice one
+  // item EACH — as many sacrifices per round as there are players, in a format
+  // whose premise is one.
+  it("asks a save_one room to sacrifice, so one item is left saved", () => {
     render(
       <RoomItemCard
-        item={item}
+        item={textItem({ title: "Pizza" })}
+        index={0}
+        status="free"
+        format="save_one"
+        onClaim={vi.fn()}
+      />,
+    );
+    expect(
+      screen.getByRole("button", { name: /sacrifice pizza/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("asks a sacrifice_one room to SAVE, so one item is left sacrificed", () => {
+    render(
+      <RoomItemCard
+        item={textItem({ title: "Pizza" })}
+        index={0}
+        status="free"
+        format="sacrifice_one"
+        onClaim={vi.fn()}
+      />,
+    );
+    expect(
+      screen.getByRole("button", { name: /save pizza/i }),
+    ).toBeInTheDocument();
+  });
+
+  it("credits a save_one claimant with the sacrifice", () => {
+    render(
+      <RoomItemCard
+        item={textItem({ title: "Pizza" })}
+        index={0}
+        status="sacrificed"
+        format="save_one"
+        claimant={claimant()}
+      />,
+    );
+    expect(screen.getByText("Sacrificed by Fiona")).toBeInTheDocument();
+  });
+
+  it("credits a sacrifice_one claimant with the save", () => {
+    render(
+      <RoomItemCard
+        item={textItem({ title: "Pizza" })}
+        index={0}
+        status="claimed"
+        format="sacrifice_one"
+        claimant={claimant()}
+      />,
+    );
+    expect(screen.getByText("Saved by Fiona")).toBeInTheDocument();
+  });
+
+  it("names the odd one out for what the format makes it", () => {
+    const { unmount } = render(
+      <RoomItemCard
+        item={textItem({ title: "Pizza" })}
         index={0}
         status="survivor"
         format="save_one"
       />,
     );
     expect(screen.getByText(/saved/i)).toBeInTheDocument();
+    unmount();
+
+    render(
+      <RoomItemCard
+        item={textItem({ title: "Pizza" })}
+        index={0}
+        status="survivor"
+        format="sacrifice_one"
+      />,
+    );
+    expect(screen.getByText(/sacrificed/i)).toBeInTheDocument();
   });
 });

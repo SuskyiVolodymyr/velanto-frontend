@@ -3,6 +3,7 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor, within } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
+import { pickFromDropdown } from "@/src/shared/test/pick-from-dropdown";
 import { LogsTab } from "./LogsTab";
 import { adminClient } from "@/src/shared/lib/admin-client";
 import type { AuditLogEntry } from "@/src/shared/types/admin";
@@ -64,10 +65,7 @@ describe("LogsTab", () => {
     render(<LogsTab />);
     await screen.findByText("No log entries match these filters.");
 
-    await user.selectOptions(
-      screen.getByLabelText("Filter by action"),
-      "ban_user",
-    );
+    await pickFromDropdown(user, "Filter by action", "Ban user");
     await waitFor(() =>
       expect(adminClient.auditLogs).toHaveBeenLastCalledWith({
         ...BASE_REQUEST,
@@ -140,10 +138,7 @@ describe("LogsTab", () => {
       ),
     );
 
-    await user.selectOptions(
-      screen.getByLabelText("Filter by action"),
-      "ban_user",
-    );
+    await pickFromDropdown(user, "Filter by action", "Ban user");
 
     await waitFor(() =>
       expect(adminClient.auditLogs).toHaveBeenLastCalledWith({

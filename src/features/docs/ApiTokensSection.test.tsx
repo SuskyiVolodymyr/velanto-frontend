@@ -61,8 +61,8 @@ describe("ApiTokensSection", () => {
     const createBtn = screen.getByRole("button", { name: /create token/i });
     expect(createBtn).toBeInTheDocument();
     expect(createBtn).toHaveAttribute("aria-disabled", "true");
-    // aria-disabled, not `disabled` — a disabled button fires neither hover nor
-    // focus, which would suppress the reason tooltip entirely.
+    // aria-disabled, not `disabled` — a natively disabled button swallows the
+    // click, so the sign-in prompt would never open.
     expect(createBtn).not.toBeDisabled();
   });
 
@@ -71,9 +71,9 @@ describe("ApiTokensSection", () => {
     const user = userEvent.setup();
     render(<ApiTokensSection />);
 
-    await user.hover(screen.getByRole("button", { name: /create token/i }));
+    await user.click(screen.getByRole("button", { name: /create token/i }));
 
-    expect(await screen.findByRole("tooltip")).toHaveTextContent(
+    expect(await screen.findByRole("dialog")).toHaveTextContent(
       /log in to create api tokens/i,
     );
   });

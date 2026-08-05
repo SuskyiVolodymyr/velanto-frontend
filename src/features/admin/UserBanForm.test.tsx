@@ -3,6 +3,7 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import { renderWithQueryClient as render } from "@/src/shared/test/render-with-query-client";
 import userEvent from "@testing-library/user-event";
+import { pickFromDropdown } from "@/src/shared/test/pick-from-dropdown";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { useState } from "react";
@@ -86,7 +87,7 @@ describe("UserBanForm", () => {
 
     const reasonSelect = screen.getByRole("combobox", { name: "Reason" });
     await waitFor(() => expect(reasonSelect).toBeEnabled());
-    await user.selectOptions(reasonSelect, "spam_manipulation");
+    await pickFromDropdown(user, "Reason", "Spam & Manipulation");
     expect(confirmButton).toBeEnabled();
 
     await user.click(confirmButton);

@@ -72,6 +72,13 @@ export function useNotifications({ alwaysOpen = false } = {}) {
     queryFn: () => notificationsClient.unreadCount(),
     enabled: authenticated,
     refetchOnWindowFocus: false,
+    // Load-bearing, same argument as the comment above. The bell used to be
+    // dashboard-only chrome; it now sits in every page's header, so without a
+    // staleTime a signed-in user spends one DB-touching request per navigation
+    // and the compute never gets its 5-minute idle window. Five minutes
+    // matches the feed's staleTime; the badge is refreshed by markAllRead's
+    // invalidation anyway, so this only affects passive staleness.
+    staleTime: 5 * 60 * 1000,
   });
   const unreadCount = unreadQuery.data?.count ?? 0;
 

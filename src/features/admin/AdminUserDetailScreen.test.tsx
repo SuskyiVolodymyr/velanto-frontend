@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { pickFromDropdown } from "@/src/shared/test/pick-from-dropdown";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { AdminUserDetailScreen } from "./AdminUserDetailScreen";
 import { useAdminUserDetail } from "@/src/features/admin/api/admin.queries";
@@ -302,11 +303,8 @@ describe("AdminUserDetailScreen", () => {
       const confirmButton = screen.getByRole("button", { name: "Confirm ban" });
       expect(confirmButton).toBeDisabled();
 
-      await user.selectOptions(screen.getByLabelText("Ban duration"), "month");
-      await user.selectOptions(
-        screen.getByLabelText("Reason"),
-        "harassment_bullying",
-      );
+      await pickFromDropdown(user, "Ban duration", "1 month");
+      await pickFromDropdown(user, "Reason", "Harassment & Bullying");
 
       expect(confirmButton).not.toBeDisabled();
       await user.click(confirmButton);
@@ -327,13 +325,7 @@ describe("AdminUserDetailScreen", () => {
       render(<AdminUserDetailScreen userId="u1" />);
 
       await user.click(screen.getByRole("button", { name: "Ban" }));
-      await waitFor(() =>
-        expect(screen.getByLabelText("Reason")).toBeInTheDocument(),
-      );
-      await user.selectOptions(
-        screen.getByLabelText("Reason"),
-        "harassment_bullying",
-      );
+      await pickFromDropdown(user, "Reason", "Harassment & Bullying");
       await user.click(screen.getByRole("button", { name: "Confirm ban" }));
 
       expect(

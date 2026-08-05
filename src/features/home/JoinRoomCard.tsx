@@ -1,5 +1,6 @@
 "use client";
 
+import { SignInGate } from "@/src/shared/components/SignInGate";
 import { useState, type ReactElement } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
@@ -87,7 +88,11 @@ function JoinRoomCardInner() {
   }
 
   const withGate = (node: ReactElement) =>
-    blocked ? <Tooltip content={tEntry("signInToPlay")}>{node}</Tooltip> : node;
+    blocked ? (
+      <SignInGate message={tEntry("signInToPlay")}>{node}</SignInGate>
+    ) : (
+      node
+    );
 
   return (
     <section className="flex flex-col gap-3 rounded-[16px] border border-white/[0.08] bg-background/[0.55] p-[18px]">
@@ -130,10 +135,7 @@ function JoinRoomCardInner() {
               // can't reach the reason. handleJoin already no-ops when blocked
               // and the input is disabled, so submit stays inert. Mirrors
               // FriendsRoomEntry's anon-gate.
-              className={cn(
-                "h-[46px] flex-none px-5",
-                blocked && "cursor-not-allowed opacity-45",
-              )}
+              className={cn("h-[46px] flex-none px-5")}
               loading={joining}
               aria-disabled={blocked || undefined}
             >

@@ -70,9 +70,16 @@ describe("NotificationsScreen", () => {
     expect(replace).not.toHaveBeenCalled();
   });
 
-  it("redirects a definitively signed-out visitor to /auth", () => {
+  // Was a redirect to /auth. The anon-gate rule is block-in-place: a signed-out
+  // visitor keeps the page and is told what signing in would get them, rather
+  // than being thrown somewhere they did not ask to go.
+  it("blocks a definitively signed-out visitor in place instead of redirecting", () => {
     mockAuth("unauthenticated");
     render(<NotificationsScreen />);
-    expect(replace).toHaveBeenCalledWith("/auth");
+    expect(replace).not.toHaveBeenCalled();
+    expect(
+      screen.getByText("Log in to see your notifications."),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Log in" })).toBeInTheDocument();
   });
 });

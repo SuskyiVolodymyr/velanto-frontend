@@ -7,7 +7,7 @@ import { ChevronDown } from "lucide-react";
 import type { GroupMode, SlotMode } from "@/src/shared/types/pack";
 import { resolveRoundDraws } from "@/src/shared/lib/round-draw";
 import { Input } from "@/src/shared/components/Input";
-import { Select } from "@/src/shared/components/Select";
+import { Dropdown } from "@/src/shared/components/Dropdown";
 import { SegmentedControl } from "@/src/shared/components/SegmentedControl";
 import {
   RoundsBulkBar,
@@ -447,12 +447,12 @@ export function RoundsEditor() {
                   >
                     {t("roundGroup")}
                   </Text>
-                  <Select
+                  <Dropdown
                     value={
                       randomPool ? RANDOM_POOL_VALUE : (slot.groupId ?? "")
                     }
-                    onChange={(e) => changeGroup(index, e.target.value)}
-                    aria-label={t("roundPool", { index: index + 1 })}
+                    onChange={(value) => changeGroup(index, value)}
+                    ariaLabel={t("roundPool", { index: index + 1 })}
                     className="font-medium"
                     options={[
                       {
@@ -553,12 +553,12 @@ export function RoundsEditor() {
                           >
                             {t("placeLabel", { index: placeIndex + 1 })}
                           </Text>
-                          <Select
+                          <Dropdown
                             value={itemId}
-                            onChange={(e) =>
-                              setPlaceItem(index, placeIndex, e.target.value)
+                            onChange={(value) =>
+                              setPlaceItem(index, placeIndex, value)
                             }
-                            aria-label={t("placeItemLabel", {
+                            ariaLabel={t("placeItemLabel", {
                               index: placeIndex + 1,
                             })}
                             className="flex-1"

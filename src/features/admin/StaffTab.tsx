@@ -9,7 +9,7 @@ import { Username } from "@/src/shared/components/Username";
 import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { Input } from "@/src/shared/components/Input";
 import { Button } from "@/src/shared/components/Button";
-import { Select } from "@/src/shared/components/Select";
+import { Dropdown } from "@/src/shared/components/Dropdown";
 import { Hidden } from "@/src/shared/components/Hidden";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { useAuth } from "@/src/shared/lib/auth-context";
@@ -273,12 +273,13 @@ export function StaffTab() {
             {addKindLabel}
           </span>
         )}
-        <Select
-          aria-label={t("roleToGrantAria")}
+        <Dropdown
+          ariaLabel={t("roleToGrantAria")}
           value={addRole}
-          onChange={(event) => setAddRole(event.target.value as AssignableRole)}
+          onChange={(role) => setAddRole(role as AssignableRole)}
           options={addableRoles.map((role) => ({ value: role, label: role }))}
-          className="h-10 w-auto"
+          surface="card"
+          className="w-auto"
         />
         <Button
           ref={addButtonRef}
@@ -375,33 +376,30 @@ export function StaffTab() {
                 </div>
 
                 {options.length > 0 ? (
-                  <select
+                  <Dropdown
                     value={row.role}
-                    onChange={(event) =>
+                    onChange={(role) =>
                       changeRole.mutate({
                         id: row.id,
-                        role: event.target.value as AssignableRole,
+                        role: role as AssignableRole,
                       })
                     }
-                    aria-label={
+                    ariaLabel={
                       streamerMode
                         ? t("changeRoleGenericAria")
                         : t("changeRoleNamedAria", { username: row.username })
                     }
-                    className="h-8 w-fit rounded-lg border border-border bg-white/[0.05] px-2 text-[12.5px] text-foreground"
-                  >
-                    {/* Their current role must be present as the selected option,
-                        or the control would render blank whenever they hold a
-                        role this actor may not grant. */}
-                    <option value={row.role} disabled>
-                      {row.role}
-                    </option>
-                    {options.map((role) => (
-                      <option key={role} value={role}>
-                        {role}
-                      </option>
-                    ))}
-                  </select>
+                    size="sm"
+                    surface="card"
+                    className="w-fit"
+                    options={[
+                      // Their current role must be present as the selected
+                      // option, or the control would render blank whenever they
+                      // hold a role this actor may not grant.
+                      { value: row.role, label: row.role, disabled: true },
+                      ...options.map((role) => ({ value: role, label: role })),
+                    ]}
+                  />
                 ) : (
                   <span className="w-fit rounded-md bg-white/[0.06] px-2 py-1 text-[11px] font-bold uppercase tracking-[0.05em] text-foreground-secondary">
                     {row.role}

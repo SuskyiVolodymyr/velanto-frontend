@@ -4,6 +4,14 @@ import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import messages from "@/messages/en.json";
 import PrivacyPage, { generateMetadata } from "./page";
 
+// PageHeader carries the account controls now, and they call useAuth, which
+// throws without a provider. These screens are auth-agnostic, so they get a
+// signed-out stub rather than a real AuthProvider (which would fire an
+// on-mount refresh request none of these tests want to make).
+vi.mock("@/src/shared/lib/auth-context", () => ({
+  useAuth: () => ({ user: null, status: "unauthenticated", logout: vi.fn() }),
+}));
+
 // See app/terms/page.test.tsx for why this mock dispatches by namespace.
 vi.mock("next-intl/server", () => ({
   getTranslations: vi.fn(async (namespace: string) => {

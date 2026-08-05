@@ -7,7 +7,6 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { PageHeader } from "@/src/shared/components/PageHeader";
-import { UserMenu } from "@/src/shared/components/UserMenu";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { cn } from "@/src/shared/lib/cn";
 import { IdentityPillBadge } from "@/src/shared/components/IdentityPillBadge";
@@ -35,7 +34,7 @@ export function AdminScreen() {
   const t = useTranslations("admin");
   const tCommon = useTranslations("common");
   const tHeader = useTranslations("header");
-  const { user, status, logout } = useAuth();
+  const { user, status } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -61,6 +60,7 @@ export function AdminScreen() {
       <>
         <PageHeader
           back={{ href: "/", label: tHeader("browse") }}
+          backFrom={["dashboard", "moderation"]}
           crumb={tHeader("admin")}
         />
         <div className="mx-auto max-w-md py-16 text-center">
@@ -84,6 +84,7 @@ export function AdminScreen() {
     <>
       <PageHeader
         back={{ href: "/", label: tHeader("browse") }}
+        backFrom={["dashboard", "moderation"]}
         crumb={tHeader("admin")}
         badge={<IdentityPillBadge role={user?.role} />}
         trailing={
@@ -94,7 +95,9 @@ export function AdminScreen() {
             >
               {tHeader("moderation")}
             </Link>
-            {user && <UserMenu user={user} onLogout={() => void logout()} />}
+            {/* No UserMenu here: PageHeader carries the shared account
+                cluster (bell + menu) on every page now, and keeping this
+                one drew the account menu twice side by side. */}
           </>
         }
       />

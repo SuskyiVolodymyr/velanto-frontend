@@ -1,6 +1,6 @@
 // src/features/admin/AdminScreen.test.tsx
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { AdminScreen } from "./AdminScreen";
@@ -84,7 +84,9 @@ describe("AdminScreen", () => {
       </AuthProvider>,
     );
 
-    expect(await screen.findByText("Registered users")).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByText("Registered users")).toBeInTheDocument(),
+    );
   });
 
   // The tab is derived from the URL, so a click writes ?tab= rather than
@@ -101,7 +103,12 @@ describe("AdminScreen", () => {
       </AuthProvider>,
     );
 
-    await screen.findByText("Registered users");
+    // Gate on the auth-dependent pill, not the table: the table can be on
+    // screen while the auth refresh is still in flight, and the tree swap that
+    // follows detaches the tab we just grabbed.
+    await waitFor(() =>
+      expect(screen.getByText("MANAGER")).toBeInTheDocument(),
+    );
     await user.click(screen.getByRole("tab", { name: "Logs" }));
 
     expect(replace).toHaveBeenCalledWith("/admin?tab=logs", { scroll: false });
@@ -127,9 +134,11 @@ describe("AdminScreen", () => {
       </AuthProvider>,
     );
 
-    expect(
-      await screen.findByLabelText("Search actor, target, details"),
-    ).toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        screen.getByLabelText("Search actor, target, details"),
+      ).toBeInTheDocument(),
+    );
   });
 
   it("falls back to Overview for an unknown ?tab= value", async () => {
@@ -144,7 +153,9 @@ describe("AdminScreen", () => {
       </AuthProvider>,
     );
 
-    expect(await screen.findByText("Registered users")).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByText("Registered users")).toBeInTheDocument(),
+    );
   });
 
   // D2/T4: the header shows the *viewer's own* role, reusing Username's
@@ -161,8 +172,11 @@ describe("AdminScreen", () => {
       </AuthProvider>,
     );
 
-    await screen.findByText("Registered users");
-    expect(screen.getByText("ADMIN")).toBeInTheDocument();
+    // waitFor, not findByText: the screen renders a login-required tree while
+    // the auth refresh is in flight and swaps to the authed one when it
+    // resolves, so a node found mid-swap can be detached by the time the
+    // assertion runs. Retrying the whole assertion rides that out.
+    await waitFor(() => expect(screen.getByText("ADMIN")).toBeInTheDocument());
   });
 
   it("shows a MANAGER role pill in the header for a manager viewer", async () => {
@@ -176,8 +190,9 @@ describe("AdminScreen", () => {
       </AuthProvider>,
     );
 
-    await screen.findByText("Registered users");
-    expect(screen.getByText("MANAGER")).toBeInTheDocument();
+    await waitFor(() =>
+      expect(screen.getByText("MANAGER")).toBeInTheDocument(),
+    );
   });
 
   it("redirects home for an authenticated user without admin/manager role", async () => {
@@ -209,9 +224,11 @@ describe("AdminScreen", () => {
       </AuthProvider>,
     );
 
-    expect(
-      await screen.findByText("You need to be logged in to view this page."),
-    ).toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        screen.getByText("You need to be logged in to view this page."),
+      ).toBeInTheDocument(),
+    );
 
     await user.click(screen.getByRole("button", { name: "Log in" }));
     expect(push).toHaveBeenCalledWith("/auth?next=%2Fadmin");

@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Text } from "@/src/shared/components/Text";
+import Link from "next/link";
+import { buttonClassName } from "@/src/shared/components/Button";
+import { PlusIcon } from "@/src/shared/components/icons";
 import { PageHeader } from "@/src/shared/components/PageHeader";
 import { cn } from "@/src/shared/lib/cn";
 import { PAGE_CONTAINER_FULL } from "@/src/shared/lib/page-container";
@@ -31,6 +34,19 @@ export default async function MyPacksPage() {
       <PageHeader
         back={{ href: "/", label: th("browse") }}
         crumb={t("title")}
+        // Authoring starts here as much as it does on the dashboard, and until
+        // now the only Create button lived in the dashboard's top bar — so
+        // from your own packs list there was no way to start another one
+        // without going home first.
+        trailing={
+          <Link
+            href="/create"
+            className={`${buttonClassName("primary", undefined, "sm")} hidden min-[881px]:inline-flex`}
+          >
+            <PlusIcon size={15} strokeWidth={2.4} />
+            {th("create")}
+          </Link>
+        }
       />
       <main className={cn(PAGE_CONTAINER_FULL, "flex-1 py-10")}>
         <Text as="h1" variant="title" className="mb-2 text-3xl">

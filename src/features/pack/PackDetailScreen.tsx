@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ChevronDown } from "lucide-react";
 import { pageContainer } from "@/src/shared/lib/page-container";
 import { cn } from "@/src/shared/lib/cn";
 import { useTranslations } from "next-intl";
@@ -52,6 +53,43 @@ function SectionHeading({
         </Text>
       )}
     </div>
+  );
+}
+
+/**
+ * A section whose body is folded away until the reader asks for it, headed by
+ * the same {@link SectionHeading} as its always-open neighbours.
+ *
+ * Native `<details>` rather than a `useState` island: this screen is a Server
+ * Component, so a stateful disclosure would mean marking a client boundary
+ * around it for behaviour the platform already has — and this way it opens with
+ * no JS and is findable by the browser's own in-page search.
+ *
+ * The default marker is removed (`list-none` plus the WebKit pseudo-element,
+ * which ignores it) in favour of a chevron on the right, so the control reads
+ * as part of the heading row rather than a bullet in front of it.
+ */
+function CollapsibleSection({
+  heading,
+  aside,
+  children,
+}: {
+  heading: ReactNode;
+  aside?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <details className="group">
+      <summary className="flex cursor-pointer list-none items-baseline gap-2.5 [&::-webkit-details-marker]:hidden">
+        <SectionHeading aside={aside}>{heading}</SectionHeading>
+        <ChevronDown
+          size={15}
+          aria-hidden
+          className="ms-auto self-center text-foreground-tertiary transition-transform group-open:rotate-180"
+        />
+      </summary>
+      <div className="mt-3.5">{children}</div>
+    </details>
   );
 }
 
@@ -131,9 +169,12 @@ export function PackDetailScreen({
     <>
       <PageHeader
         back={{ href: "/", label: tNav("browse") }}
+        backFrom={["dashboard", "myPacks", "history", "profile", "people"]}
         trailing={
           <>
-            {isApproved && <ShareButton path={`/packs/${pack.id}`} compact />}
+            {isApproved && (
+              <ShareButton path={`/packs/${pack.id}`} compact size="sm" />
+            )}
             <ReportPackDialog packId={pack.id} />
             <VoteButtons
               packId={pack.id}
@@ -157,12 +198,13 @@ export function PackDetailScreen({
             standard 1024px `lg` — min-[1081px]: matches it exactly rather than
             stacking ~56px early. */}
         <div className="mt-6 grid items-start gap-6 min-[1081px]:grid-cols-[minmax(0,1fr)_368px]">
-          {/* Sticky sidebar — DOM-FIRST on purpose: on mobile it stacks above
-              the main column (the design's play-panel-first order), and keeping
-              it first in the DOM means visual order matches reading/focus order.
+          {/* DOM-FIRST on purpose: on mobile it stacks above the main column
+              (the design's play-panel-first order), and keeping it first in the
+              DOM means visual order matches reading/focus order.
               min-[1081px]:order-2 moves it to the right column on desktop,
-              where the main content (min-[1081px]:order-1) sits on the left. */}
-          <aside className="flex flex-col gap-3.5 min-[1081px]:sticky min-[1081px]:top-[82px] min-[1081px]:order-2">
+              where the main content (min-[1081px]:order-1) sits on the left.
+              It scrolls away with the page rather than sticking. */}
+          <aside className="flex flex-col gap-3.5 min-[1081px]:order-2">
             {/* Play panel. Every pack is played solo today; room play for all
                 formats is the unbuilt multiplayer redesign and is deliberately
                 not faked here. */}
@@ -226,11 +268,17 @@ export function PackDetailScreen({
               <PackHowItPlays format={pack.format} />
             </section>
 
-            <section className="flex flex-col gap-3.5">
-              <SectionHeading>
-                {t("roundsHeading", { section: sectionLabel })}
-              </SectionHeading>
-              <RoundChips pack={pack} />
+            {/* Closed by default: the chip grid is one card per round, so a
+                20-round pack pushed everything below it — modes, the ranking,
+                comments — off the first couple of screens. The count in the
+                heading carries what most readers wanted from it anyway. */}
+            <section>
+              <CollapsibleSection
+                heading={t("roundsHeading", { section: sectionLabel })}
+                aside={t("roundsCount", { count: pack.rounds?.length ?? 0 })}
+              >
+                <RoundChips pack={pack} />
+              </CollapsibleSection>
             </section>
 
             {ranking ? (

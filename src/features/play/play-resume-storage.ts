@@ -24,6 +24,16 @@
 export interface PlayResumePackSummary {
   title: string;
   coverTone: string;
+  /**
+   * The pack's custom cover, when it has one, so the rail can show the same
+   * image the feed does instead of a bare tone swatch.
+   *
+   * Optional, and read defensively: records written before this field existed
+   * are still valid and simply have no cover, and the key can 404 later anyway
+   * (the object swept, the pack re-covered) — CoverImage handles that by
+   * unmounting itself and letting `coverTone` show through.
+   */
+  coverImageKey?: string | null;
   totalRounds: number;
 }
 

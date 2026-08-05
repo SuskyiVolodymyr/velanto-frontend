@@ -8,6 +8,7 @@ import {
 } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
+import { pickFromDropdown } from "@/src/shared/test/pick-from-dropdown";
 import { CreatePackForm } from "./CreatePackForm";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { authClient } from "@/src/shared/lib/auth-client";
@@ -293,10 +294,18 @@ describe("CreatePackForm", () => {
   it("offers every pack language, defaulting to the interface language", async () => {
     renderForm();
 
-    const select = await screen.findByLabelText("Pack language");
-    // Scoped to this select: the form has other selects (round pool, slot mode)
-    // whose options a page-wide query would sweep up.
-    const options = within(select).getAllByRole("option");
+    // The picker is the app's listbox Dropdown, so its options exist only once
+    // it is opened — which also scopes them: the form has other dropdowns
+    // (round pool, slot mode) a page-wide query would otherwise sweep up.
+    const user = userEvent.setup();
+    await user.click(
+      await screen.findByRole("combobox", {
+        name: "Pack language",
+      }),
+    );
+    const options = within(await screen.findByRole("listbox")).getAllByRole(
+      "option",
+    );
 
     // All 11 — es/fr/pt included, which is the point of PACK_LANGUAGES being a
     // superset of LOCALES: an English UI must still be able to label a pack
@@ -307,7 +316,9 @@ describe("CreatePackForm", () => {
       PACK_LANGUAGES.map((code) => PACK_LANGUAGE_NAMES[code]),
     );
     // The harness renders under locale="en".
-    expect(select).toHaveValue("en");
+    expect(
+      screen.getByRole("combobox", { name: "Pack language" }),
+    ).toHaveTextContent("English");
   });
 
   it("defaults the language to the author's interface language, not English", async () => {
@@ -322,7 +333,10 @@ describe("CreatePackForm", () => {
       </NextIntlClientProvider>,
     );
 
-    expect(await screen.findByLabelText("Мова паку")).toHaveValue("uk");
+    // The trigger carries the selected option's own label, not its code.
+    expect(
+      await screen.findByRole("combobox", { name: "Мова паку" }),
+    ).toHaveTextContent("Українська");
   });
 
   // The failure this guards against is silent and destructive: open a Spanish
@@ -334,7 +348,9 @@ describe("CreatePackForm", () => {
     vi.mocked(packsClient.update).mockResolvedValue(makePack({ id: "pack-1" }));
     renderEditForm();
 
-    expect(await screen.findByLabelText("Pack language")).toHaveValue("es");
+    expect(
+      await screen.findByRole("combobox", { name: "Pack language" }),
+    ).toHaveTextContent("Español");
 
     await user.click(screen.getByRole("button", { name: "Save changes" }));
 
@@ -365,7 +381,7 @@ describe("CreatePackForm", () => {
     renderForm();
     await fillMinimalValidPack(user);
 
-    await user.selectOptions(screen.getByLabelText("Pack language"), "es");
+    await pickFromDropdown(user, "Pack language", "Español");
     await user.click(screen.getByRole("button", { name: "Submit for review" }));
 
     await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-1"));

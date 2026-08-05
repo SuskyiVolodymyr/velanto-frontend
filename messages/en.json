@@ -610,7 +610,9 @@
       "code": "Enter the 6-digit code sent to your email.",
       "currentPasswordRequired": "Enter your current password.",
       "emailRequired": "Enter a valid email address."
-    }
+    },
+    "gateHeading": "Want to join in?",
+    "logInToSeeNotifications": "Log in to see your notifications."
   },
   "rules": {
     "metaTitle": "Community Rules — Velanto",
@@ -865,7 +867,8 @@
           "Plays — which packs were played and what was picked. Tied to your account only when you are logged in; a signed-out play is saved with no player attached to it.",
           "Follows, notifications, and any API tokens you create — for a token we keep its name, the scopes you gave it, when it expires and when it was last used, never the token itself.",
           "The version of the Community Rules you accepted when you registered, and any moderation flags on your account — whether we have marked you trusted, and whether you are banned and why.",
-          "Technical — a login session, and a crash report if something breaks."
+          "Technical — a login session, and a crash report if something breaks.",
+          "Room guests — if you join a friends room without an account, we create a throwaway record holding the nickname you typed and a scrambled fingerprint of your IP address, never the address itself. It exists to hold your seat and to stop one person flooding rooms with fake players. It is not an account and cannot be logged into."
         ]
       },
       {
@@ -882,7 +885,7 @@
       },
       {
         "title": "If you are not logged in, we do not know who you are",
-        "body": "You can browse and play packs without an account. Your play does count toward the pack’s public stats, but it is saved with no player attached: no account, no name, nothing that links it back to you. It never appears in anyone’s play history, because there is nothing to attach it to. If you are signed in, your play is saved with your account instead, and you can hide your play history from other people in your settings."
+        "body": "You can browse and play packs without an account. Your play does count toward the pack’s public stats, but it is saved with no player attached: no account, no name, nothing that links it back to you. It never appears in anyone’s play history, because there is nothing to attach it to. If you are signed in, your play is saved with your account instead, and you can hide your play history from other people in your settings. Joining a friends room without an account is the one exception worth naming: you type a nickname, and that nickname — with a scrambled fingerprint of your IP address — is stored while the game runs, so the room can hold your seat when your connection drops. It is still not an account, it cannot be logged into, and it is deleted once the games it was in are over."
       },
       {
         "title": "What we do not do",
@@ -905,6 +908,7 @@
           "velanto:accent, velanto:streamer-mode, velanto:pack-filters — display settings you chose. They never leave your browser.",
           "velanto:last-play — your picks from the pack you just played, so the result screen can show them. Cleared when you close the tab.",
           "velanto:otp-sent — a sixty-second timer that stops you requesting another code too quickly. It holds a scrambled fingerprint of the address rather than the address itself, and expired entries are dropped the next time the page reads or writes the timer.",
+          "velanto:room-guest:… — your pass for a friends room you joined without an account, so reloading the page does not lose your seat. It works only for that one room. Cleared when you close the tab.",
           "Your access token is kept in memory only. It is never written to disk."
         ]
       },
@@ -926,7 +930,7 @@
         "body": "A few companies, each doing one job. This is the complete list — nobody else receives anything. The last two only come into it if you choose to sign in with them:",
         "bullets": [
           "Amazon Web Services (S3 and CloudFront) — stores and delivers uploaded images. Frankfurt, in the EU.",
-          "Amazon SES — sends the only two emails we send. Each contains a six-digit code and nothing else: no username, no link, no IP address.",
+          "MailerSend — sends the only two emails we send. Each contains a six-digit code and nothing else: no username, no link, no IP address.",
           "Sentry — receives a report when something crashes. Germany, in the EU. A report carries your user id and username, plus a short trail of what you had just done: the pages you visited, what you clicked, and which addresses the app called (some of which name a pack). It does not carry your email address, your cookies, or what you typed, and there is no video-style session recording. One limit on that promise: like any server your browser talks to, Sentry's sees the connection itself, so it can observe the address you connect from even though we never put it in the report.",
           "Cloudflare — DNS, and the traffic to the site passes through it. Like any provider sitting in front of a website, it sees the address every visitor connects from. We do not receive it and we do not store it, but we will not pretend it is invisible to everyone.",
           "Google — only if you choose “Continue with Google”. During that sign-in Google sees that you are logging into Velanto and confirms your email address to us, so we can create or find your account; we receive nothing else about you. What Google does with the sign-in is governed by Google's privacy policy.",
@@ -950,6 +954,7 @@
           "The action log — kept indefinitely, and it survives your account being deleted. It records moderation decisions: bans, pack approvals, and a staff member taking down something that is not theirs. Editing or deleting your own pack or your own comment is not recorded. Keeping the moderation entries is the entire point of it: being the subject of a moderation action does not let you erase the record of it. If you were staff, deleting your account takes your name off the entries you made, but not the entries themselves.",
           "Verification and password-reset codes — deleted the moment they are used, a day after they expire if you never use them, and with your account if one is still in flight when you leave.",
           "Login sessions — they stop working when they expire, and we delete the expired ones within a day.",
+          "Room guests — the temporary record created when you join a room without an account is deleted a day after the last game it was in ends. The plays it made stay, detached from it, exactly as a deleted account's plays do.",
           "In one line: deleting your account removes you from Velanto and unlinks your name from what you left behind. It does not erase everything you ever wrote."
         ]
       },
@@ -1086,7 +1091,12 @@
       "title": "Continue playing",
       "progress": "Round {current} of {total}",
       "resume": "Resume {title}"
-    }
+    },
+    "activeFilters": "Active filters",
+    "clearFilters": "Clear all",
+    "removeLanguageFilter": "Remove {language} filter",
+    "groupWindow": "Time range",
+    "groupOrder": "Order"
   },
   "formats": {
     "save_one": "Save One",
@@ -1869,11 +1879,11 @@
           },
           "2": {
             "title": "No sharing",
-            "body": "A claimed item is gone — you race for the one you want out."
+            "body": "A claimed item is off the table — nobody else can take it."
           },
           "3": {
-            "title": "One survives",
-            "body": "The single unclaimed item is the one that's saved."
+            "title": "One is left over",
+            "body": "The single unclaimed item is the one the round decides."
           }
         }
       },
@@ -2075,11 +2085,17 @@
       "createError": "Couldn't create the room. Try again.",
       "codeLabel": "Room code",
       "codePlaceholder": "Enter code",
+      "nicknameLabel": "Your nickname",
+      "nicknamePlaceholder": "Pick a nickname",
       "join": "Join",
       "emptyCode": "Enter a room code.",
       "errorNotFound": "No room with that code. Check it and try again.",
       "errorUnavailable": "This room isn't taking new players — it may be full, locked, or already started.",
-      "errorGeneric": "Couldn't join the room. Try again."
+      "errorGeneric": "Couldn't join the room. Try again.",
+      "guestHint": "No account needed — just pick a name.",
+      "emptyNickname": "Pick a nickname first.",
+      "errorNickname": "That nickname will not work. Use 2-16 letters, numbers or underscores.",
+      "errorRateLimited": "Too many join attempts from here. Try again later."
     },
     "lobby": {
       "heading": "Lobby",
@@ -2087,6 +2103,7 @@
       "emptySeat": "Empty seat",
       "you": "You",
       "host": "Host",
+      "guest": "Guest",
       "ready": "Ready",
       "notReady": "Not ready",
       "away": "Away",
@@ -2144,13 +2161,15 @@
     },
     "round": {
       "heading": "Round {index} of {total}",
-      "instructionSave": "Claim one item to save. Everyone else is eliminated.",
-      "instructionSacrifice": "Claim one item to sacrifice. The item nobody claims survives.",
+      "instructionSave": "Claim one item to sacrifice. The item nobody claims is the one saved.",
+      "instructionSacrifice": "Claim one item to save. The item nobody claims is the one sacrificed.",
       "claimSacrifice": "Sacrifice {name}",
+      "claimSave": "Save {name}",
       "taken": "Taken",
       "claimedBySacrifice": "Sacrificed by {name}",
+      "claimedBySave": "Saved by {name}",
       "survivorSave": "Saved",
-      "survivorSacrifice": "Survivor",
+      "survivorSacrifice": "Sacrificed",
       "chosen": "{count} of {total} chosen",
       "tooFastNote": "You're re-claiming too fast — wait a moment and try again."
     },
@@ -2163,11 +2182,11 @@
     },
     "between": {
       "survivorHeadingSave": "Saved",
-      "survivorHeadingSacrifice": "Survivor",
+      "survivorHeadingSacrifice": "Sacrificed",
       "survivorNoteSave": "This item was saved.",
-      "survivorNoteSacrifice": "This item survived the round.",
+      "survivorNoteSacrifice": "This item was sacrificed.",
       "boardHeadingSave": "This round's picks",
-      "boardHeadingSacrifice": "This round's sacrifices",
+      "boardHeadingSacrifice": "This round's picks",
       "next": "Next",
       "ready": "{count} / {total} ready",
       "autoNext": "Next round in {seconds}s"
@@ -2191,7 +2210,10 @@
       "unavailableBody": "This room isn't taking new players — it may be full, locked, or already started.",
       "genericTitle": "Couldn't join the room",
       "genericBody": "Something went wrong joining this room. Please try again.",
-      "browse": "Browse packs"
+      "browse": "Browse packs",
+      "guestTitle": "Join the game",
+      "guestBody": "Pick a name your friends will recognise. No account needed.",
+      "guestSignIn": "Or log in to your account"
     },
     "leave": "Leave",
     "leaveConfirm": {
@@ -2248,7 +2270,7 @@
       "cutSoFar": "Cut so far",
       "cutEmpty": "Nothing cut yet — {name} goes first.",
       "claimed": "Claimed",
-      "claimPrompt": "Take the one you want out",
+      "claimPrompt": "Claim one before it's taken",
       "claimHint": "First to it keeps it",
       "sideItemCount": "{count} in play",
       "lockedIn": "Locked in",

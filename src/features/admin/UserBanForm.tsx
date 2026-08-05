@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Button } from "@/src/shared/components/Button";
+import { Dropdown } from "@/src/shared/components/Dropdown";
 import { type BanDuration } from "@/src/shared/lib/users-client";
 import { BAN_DURATIONS } from "@/src/shared/lib/ban-durations";
 import {
@@ -39,18 +40,16 @@ export function UserBanForm({
       <div className="flex flex-wrap items-start gap-3">
         <label className="flex flex-col gap-1 text-xs text-foreground-secondary">
           {t("duration")}
-          <select
+          <Dropdown
             value={banDuration}
-            onChange={(e) => onDurationChange(e.target.value as BanDuration)}
-            aria-label={t("durationAria")}
-            className="h-9 rounded-[8px] border border-border bg-surface px-2 text-sm text-foreground"
-          >
-            {BAN_DURATIONS.map((d) => (
-              <option key={d.value} value={d.value}>
-                {d.label}
-              </option>
-            ))}
-          </select>
+            onChange={(value) => onDurationChange(value as BanDuration)}
+            ariaLabel={t("durationAria")}
+            size="sm"
+            options={BAN_DURATIONS.map((d) => ({
+              value: d.value,
+              label: d.label,
+            }))}
+          />
         </label>
         <div className="min-w-[16rem] max-w-sm flex-1">
           <BanReasonPicker

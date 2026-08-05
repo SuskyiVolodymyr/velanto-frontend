@@ -85,6 +85,36 @@ describe("ContinuePlayingRail", () => {
     expect(screen.getAllByRole("listitem")).toHaveLength(1);
   });
 
+  // The rail used to show a bare tone swatch because the resume snapshot never
+  // stored the cover key — so a pack lost its face the moment you half-played
+  // it, while the same pack in the feed beside it kept it.
+  it("shows the pack's real cover when the snapshot has one", async () => {
+    writePlayResume(
+      record({
+        pack: {
+          title: "Save one anime",
+          coverTone: "#2b2a3a",
+          coverImageKey: "covers/abc.webp",
+          totalRounds: 8,
+        },
+      }),
+    );
+    render(<ContinuePlayingRail />);
+
+    await screen.findByText("Save one anime");
+    const cover = document.querySelector("img[src*='covers/abc.webp']");
+    expect(cover).toBeInTheDocument();
+  });
+
+  // Records written before the field existed are still perfectly good plays.
+  it("falls back to the tone swatch for a snapshot with no cover", async () => {
+    writePlayResume(record());
+    render(<ContinuePlayingRail />);
+
+    await screen.findByText("Save one anime");
+    expect(document.querySelector("img")).not.toBeInTheDocument();
+  });
+
   it("shows round progress and links each card to its play route to resume", async () => {
     writePlayResume(
       record({

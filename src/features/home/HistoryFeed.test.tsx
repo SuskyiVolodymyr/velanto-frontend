@@ -55,7 +55,7 @@ beforeEach(() => {
     items: [playedPack("p1", "2026-07-30T10:00:00.000Z")],
     total: 1,
     page: 1,
-    limit: 25,
+    limit: 15,
   } as never);
 });
 

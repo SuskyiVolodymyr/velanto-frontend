@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { Text } from "@/src/shared/components/Text";
 import { FilterChipRow } from "@/src/features/home/FilterChipRow";
 import {
   DATE_ORDER_LABEL_KEYS,
@@ -14,10 +15,17 @@ import {
   type WindowFilterValue,
 } from "@/src/features/home/filter-options";
 
-// The two top-level sorts are a single-select chip row (they live inside the
-// browse bar's sort popover), while whichever sub-choice the active sort owns
-// stays a chip row underneath: the popularity time window under "Popular", the
-// newest/oldest direction under "Date". At most one sub-row is ever visible.
+/**
+ * The feed's sort: the top-level choice, then whichever sub-choice that choice
+ * owns — the popularity window under "Popular", the direction under "Date".
+ *
+ * The two rows used to sit unlabelled and flush against each other, which made
+ * seven chips look like one set with two of them lit, and gave no clue that the
+ * second row's meaning changed with the first. They are two questions, so each
+ * now carries its own heading, and a rule separates them. The sub-heading is
+ * named for the sort it belongs to ("Time range" vs "Order") rather than
+ * something generic, so the dependency is visible rather than inferred.
+ */
 export function SortFilter({
   sort,
   onSortChange,
@@ -35,42 +43,65 @@ export function SortFilter({
 }) {
   const t = useTranslations("home");
 
-  const sortOptions = SORT_VALUES.map((value) => ({
-    value,
-    label: t(SORT_LABEL_KEYS[value]),
-  }));
-
-  const windowOptions = WINDOW_VALUES.map((value) => ({
-    value,
-    label: t(WINDOW_LABEL_KEYS[value]),
-  }));
-
-  const dateOrderOptions = DATE_ORDER_VALUES.map((value) => ({
-    value,
-    label: t(DATE_ORDER_LABEL_KEYS[value]),
-  }));
-
   return (
     <div className="flex flex-col gap-3">
-      <FilterChipRow
-        options={sortOptions}
-        value={sort}
-        onSelect={onSortChange}
-      />
-      {sort === "popular" && (
+      <Group label={t("groupSort")}>
         <FilterChipRow
-          options={windowOptions}
-          value={window}
-          onSelect={onWindowChange}
+          options={SORT_VALUES.map((value) => ({
+            value,
+            label: t(SORT_LABEL_KEYS[value]),
+          }))}
+          value={sort}
+          onSelect={onSortChange}
         />
+      </Group>
+
+      <div className="border-t border-border" />
+
+      {sort === "popular" ? (
+        <Group label={t("groupWindow")}>
+          <FilterChipRow
+            options={WINDOW_VALUES.map((value) => ({
+              value,
+              label: t(WINDOW_LABEL_KEYS[value]),
+            }))}
+            value={window}
+            onSelect={onWindowChange}
+          />
+        </Group>
+      ) : (
+        <Group label={t("groupOrder")}>
+          <FilterChipRow
+            options={DATE_ORDER_VALUES.map((value) => ({
+              value,
+              label: t(DATE_ORDER_LABEL_KEYS[value]),
+            }))}
+            value={dateOrder}
+            onSelect={onDateOrderChange}
+          />
+        </Group>
       )}
-      {sort === "date" && (
-        <FilterChipRow
-          options={dateOrderOptions}
-          value={dateOrder}
-          onSelect={onDateOrderChange}
-        />
-      )}
+    </div>
+  );
+}
+
+function Group({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-2">
+      <Text
+        as="h3"
+        variant="tertiary"
+        className="text-[11px] font-bold uppercase tracking-[0.08em]"
+      >
+        {label}
+      </Text>
+      {children}
     </div>
   );
 }

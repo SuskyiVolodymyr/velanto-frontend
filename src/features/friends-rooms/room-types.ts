@@ -125,6 +125,27 @@ export interface RoomPlayerState {
    * masking is for the screen, not against someone reading the socket.
    */
   label: string | null;
+  /**
+   * True for a player who joined with a nickname rather than an account.
+   *
+   * The roster marks them, because a guest is a name typed into a box: there is
+   * no profile behind it, and nothing stops a second person typing the same
+   * one. Absent on snapshots from a backend that predates guests, so treat a
+   * missing value as false rather than assuming it.
+   */
+  guest?: boolean;
+}
+
+/** What POST /friends-rooms/join-guest hands back. */
+export interface GuestJoinResult {
+  /**
+   * A JWT bound to this one room. Not a session — no refresh, 12h, and every
+   * other endpoint refuses it.
+   */
+  token: string;
+  /** The guest's own user id, so the room can find itself in the roster. */
+  guestId: string;
+  room: RoomState;
 }
 
 /**
@@ -289,6 +310,19 @@ export interface RoomState {
   packFormat: PackFormat;
   packRounds: number;
   packAuthorUsername: string | null;
+  /**
+   * The pack's cover, so the room header shows the pack you are playing.
+   * `packCoverTone` seeds the gradient and is always sent; `packCoverImageKey`
+   * is an uploaded cover's storage key, null when the author never set one.
+   *
+   * Both optional on the type, not because the server omits them, but because a
+   * room snapshot can arrive from a backend that predates them — during a
+   * deploy, the frontend is live before every socket has reconnected to the new
+   * gateway. The header falls back to its old gradient rather than rendering
+   * `linear-gradient(150deg, undefined, …)`.
+   */
+  packCoverTone?: string;
+  packCoverImageKey?: string | null;
   hostId: string;
   status: FriendsRoomStatus;
   phase: RoomPhase;

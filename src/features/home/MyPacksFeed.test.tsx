@@ -85,7 +85,7 @@ describe("MyPacksFeed", () => {
       items: [draftPack("p1")],
       total: 1,
       page: 1,
-      limit: 25,
+      limit: 15,
     });
 
     renderFeed();
@@ -104,7 +104,7 @@ describe("MyPacksFeed", () => {
       items: [],
       total: 0,
       page: 1,
-      limit: 25,
+      limit: 15,
     });
 
     renderFeed();
@@ -125,7 +125,7 @@ describe("MyPacksFeed", () => {
       items: [],
       total: 0,
       page: 1,
-      limit: 25,
+      limit: 15,
     });
 
     renderFeed();
@@ -141,7 +141,7 @@ describe("MyPacksFeed", () => {
       items: [draftPack("p1")],
       total: 1,
       page: 1,
-      limit: 25,
+      limit: 15,
     });
 
     renderFeed();
@@ -167,7 +167,7 @@ describe("MyPacksFeed", () => {
       items: [draftPack("p1")],
       total: 30,
       page: 1,
-      limit: 25,
+      limit: 15,
     });
 
     renderFeed();

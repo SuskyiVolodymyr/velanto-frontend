@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { screen, waitFor } from "@testing-library/react";
+import { screen, waitFor, within } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { ProfileEditForm } from "./ProfileEditForm";
@@ -18,6 +18,19 @@ vi.mock("@/src/shared/lib/auth-client", () => ({
     login: vi.fn(),
     logout: vi.fn(),
     refresh: vi.fn(),
+  },
+}));
+// The page header now carries the notifications bell, which fires an
+// unread-count request as soon as auth resolves. Left unmocked it hits the real
+// client, and the resulting failure knocks the AuthProvider back to signed-out
+// mid-test — the form is then replaced by "You need to be logged in".
+vi.mock("@/src/shared/lib/notifications-client", () => ({
+  notificationsClient: {
+    unreadCount: vi.fn().mockResolvedValue({ count: 0 }),
+    list: vi
+      .fn()
+      .mockResolvedValue({ items: [], total: 0, page: 1, limit: 20 }),
+    markAllRead: vi.fn().mockResolvedValue(undefined),
   },
 }));
 vi.mock("@/src/shared/lib/users-client", () => ({
@@ -347,19 +360,24 @@ describe("ProfileEditForm", () => {
   it("renders a live 'How it looks' preview that updates as the username/bio drafts change", async () => {
     const user = userEvent.setup();
     renderForm();
-    expect(await screen.findByText("How it looks")).toBeInTheDocument();
-    // The preview's Username renders "alice" as text content; the input's
-    // own "alice" is a form value, not text content, so getByText only ever
-    // matches the preview — confirming the preview is a real, separate
-    // render fed by the same live state.
-    expect(screen.getByText("alice")).toBeInTheDocument();
+    const heading = await screen.findByText("How it looks");
+    // Scoped to the preview section. The username used to be unique in the
+    // document — the input's copy is a form value, not text content — but the
+    // page header now carries the account menu, which renders the signed-in
+    // username too. Scoping keeps the original point of the assertion: that
+    // the preview is a real, separate render fed by the same live state.
+    const preview = within(heading.parentElement as HTMLElement);
+    expect(preview.getByText("alice")).toBeInTheDocument();
 
     const usernameInput = screen.getByRole("textbox", { name: "Username" });
     await user.clear(usernameInput);
     await user.type(usernameInput, "alice2");
     expect(await screen.findByText("alice2")).toBeInTheDocument();
+    // Scoped as well: the account menu in the page header keeps showing the
+    // SAVED username ("alice") while this is only a draft, so the old value is
+    // legitimately still on the page — just not in the preview.
     expect(
-      screen.queryByText("alice", { exact: true }),
+      preview.queryByText("alice", { exact: true }),
     ).not.toBeInTheDocument();
 
     const textarea = screen.getByDisplayValue("Old bio");

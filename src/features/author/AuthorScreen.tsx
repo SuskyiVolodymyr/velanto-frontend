@@ -93,7 +93,10 @@ export function AuthorScreen({
   if (authorQuery.isError || !authorQuery.data) {
     return (
       <>
-        <PageHeader back={{ href: "/", label: th("browse") }} />
+        <PageHeader
+          back={{ href: "/", label: th("browse") }}
+          backFrom={["people", "packDetail", "suggestionDetail", "dashboard"]}
+        />
         <div className="mx-auto max-w-md py-16 text-center">
           <Text variant="danger">{t("userNotFound")}</Text>
         </div>
@@ -107,6 +110,7 @@ export function AuthorScreen({
     <>
       <PageHeader
         back={{ href: "/", label: th("browse") }}
+        backFrom={["people", "packDetail", "suggestionDetail", "dashboard"]}
         trailing={
           isOwnProfile ? (
             <Link

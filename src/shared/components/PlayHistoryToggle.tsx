@@ -65,10 +65,11 @@ export function PlayHistoryToggle({ className }: { className?: string }) {
         ariaLabel={tSettings("playHistoryLabel")}
         aria-describedby={labelId}
         className="w-[140px] shrink-0"
+        stretch
         value={showPlayHistory ? "on" : "off"}
         onChange={(value) => setPlayHistory.mutate(value === "on")}
         options={[
-          { value: "on", label: tOnOff("on") },
+          { value: "on", label: tOnOff("on"), tone: "accent" as const },
           { value: "off", label: tOnOff("off") },
         ]}
       />

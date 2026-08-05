@@ -6,7 +6,6 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { PageHeader } from "@/src/shared/components/PageHeader";
-import { UserMenu } from "@/src/shared/components/UserMenu";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { cn } from "@/src/shared/lib/cn";
 import { IdentityPillBadge } from "@/src/shared/components/IdentityPillBadge";
@@ -36,7 +35,7 @@ export function ModerationPanel() {
   const t = useTranslations("moderation");
   const tCommon = useTranslations("common");
   const tHeader = useTranslations("header");
-  const { user, status, logout } = useAuth();
+  const { user, status } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -62,6 +61,7 @@ export function ModerationPanel() {
       <>
         <PageHeader
           back={{ href: "/", label: tHeader("browse") }}
+          backFrom={["dashboard", "admin"]}
           crumb={tHeader("moderation")}
         />
         <div className="mx-auto max-w-md py-16 text-center">
@@ -100,6 +100,7 @@ export function ModerationPanel() {
     <>
       <PageHeader
         back={{ href: "/", label: tHeader("browse") }}
+        backFrom={["dashboard", "admin"]}
         crumb={tHeader("moderation")}
         badge={
           // Reuses Username's IDENTITY_PILL tokens rather than a hardcoded
@@ -107,9 +108,9 @@ export function ModerationPanel() {
           // their own role's tier pill.
           <IdentityPillBadge role={user?.role} className="normal-case" />
         }
-        trailing={
-          user && <UserMenu user={user} onLogout={() => void logout()} />
-        }
+        // No `trailing`: PageHeader carries the shared account cluster (bell +
+        // menu) on every page now, and this page's own UserMenu drew the
+        // account menu twice side by side.
       />
       <main
         className={cn(

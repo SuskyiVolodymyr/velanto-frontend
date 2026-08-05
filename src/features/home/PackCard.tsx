@@ -1,5 +1,6 @@
 "use client";
 
+import { SignInGate } from "@/src/shared/components/SignInGate";
 import Link from "next/link";
 import { useState, type ReactElement } from "react";
 import { useRouter } from "next/navigation";
@@ -85,7 +86,7 @@ export function PackCard({
   // pattern as FriendsRoomEntry (block + explain, never a surprise redirect).
   const withGate = (node: ReactElement) =>
     blocked ? (
-      <Tooltip content={tRoom("entry.signInToPlay")}>{node}</Tooltip>
+      <SignInGate message={tRoom("entry.signInToPlay")}>{node}</SignInGate>
     ) : (
       node
     );
@@ -195,7 +196,6 @@ export function PackCard({
               onClick={handleCreateRoom}
               className={cn(
                 "flex h-[38px] items-center gap-[7px] rounded-[11px] border border-border px-[13px] text-[13px] font-semibold text-foreground-secondary transition-colors hover:border-border-strong hover:bg-white/[0.05] hover:text-foreground",
-                blocked && "cursor-not-allowed opacity-45",
               )}
             >
               <FriendsIcon />
