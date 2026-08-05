@@ -27,6 +27,15 @@ export interface UpdateEntry {
  */
 export const UPDATES: UpdateEntry[] = [
   {
+    date: "2026-08-05",
+    version: "2.1.0",
+    title: "Friends can join without an account",
+    bullets: [
+      "Someone you send a room code or an invite link to no longer needs to sign up first. They pick a nickname, and they're in the game — same seat, same reconnect if their phone drops, same everything a signed-in player gets. Guests show a small badge in the roster so you can tell who has an account and who typed a name into a box.",
+      "Starting a room still needs an account, and a guest can only play the one room they were invited to — nothing else on the site opens up to them.",
+    ],
+  },
+  {
     date: "2026-08-01",
     version: "2.0.0",
     title: "Play any pack with friends, six different ways",
