@@ -11,6 +11,8 @@ export function baseRoomState(overrides: Partial<RoomState> = {}): RoomState {
     packFormat: "sacrifice_one",
     packRounds: 3,
     packAuthorUsername: "packsmith",
+    packCoverTone: "#7c3aed",
+    packCoverImageKey: null,
     hostId: "u1",
     status: "playing",
     phase: "round",

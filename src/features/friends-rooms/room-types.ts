@@ -310,6 +310,19 @@ export interface RoomState {
   packFormat: PackFormat;
   packRounds: number;
   packAuthorUsername: string | null;
+  /**
+   * The pack's cover, so the room header shows the pack you are playing.
+   * `packCoverTone` seeds the gradient and is always sent; `packCoverImageKey`
+   * is an uploaded cover's storage key, null when the author never set one.
+   *
+   * Both optional on the type, not because the server omits them, but because a
+   * room snapshot can arrive from a backend that predates them — during a
+   * deploy, the frontend is live before every socket has reconnected to the new
+   * gateway. The header falls back to its old gradient rather than rendering
+   * `linear-gradient(150deg, undefined, …)`.
+   */
+  packCoverTone?: string;
+  packCoverImageKey?: string | null;
   hostId: string;
   status: FriendsRoomStatus;
   phase: RoomPhase;
