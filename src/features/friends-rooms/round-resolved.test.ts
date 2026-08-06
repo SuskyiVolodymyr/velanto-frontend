@@ -16,7 +16,6 @@ const ROUND = { index: 2, name: "Round three", items: ITEMS };
  * and rendered a blank screen.
  */
 describe("roundResultFromResolved", () => {
-
   it("assembles a spy round, which had no case at all and produced null", () => {
     // Without this every spy game's `results` stayed empty: the between-round
     // board, the accusation evidence table and the reveal history all render

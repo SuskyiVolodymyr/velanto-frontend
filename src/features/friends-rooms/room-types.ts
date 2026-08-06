@@ -259,6 +259,16 @@ export interface VoteRoundResult {
   name: string;
   items: Item[];
   optionIds: string[];
+  /**
+   * nxn only: what each option IS, since there an option names a POOL and
+   * resolves to nothing in `items` — exactly as `RevealRoundResult.sides` and
+   * `SpyRoundResult.sides` already carry. Absent for every other format.
+   *
+   * The live board could read `state.round.sides` instead, but a FINISHED game
+   * has no `round` left, so a results screen has only the result to name a
+   * winner from — without this it printed raw pool uuids.
+   */
+  sides?: RoundSide[];
   votes: Record<string, string>;
   tally: Record<string, number>;
   winnerOptionId: string;
@@ -358,8 +368,7 @@ export interface PublicSpyRevealState {
 }
 
 export type PublicEndgameState =
-  | PublicIdentityRevealState
-  | PublicSpyRevealState;
+  PublicIdentityRevealState | PublicSpyRevealState;
 
 export interface RoomState {
   id: string;
@@ -488,19 +497,14 @@ export interface RelayRejection {
 }
 
 export type SpyPickRejectionReason =
-  | "not_in_round"
-  | "round_not_active"
-  | "not_a_player";
+  "not_in_round" | "round_not_active" | "not_a_player";
 export interface SpyPickRejection {
   optionId: string;
   reason: SpyPickRejectionReason;
 }
 
 export type SpyAccusationRejectionReason =
-  | "not_a_player"
-  | "not_accusing"
-  | "malformed"
-  | "is_spy";
+  "not_a_player" | "not_accusing" | "malformed" | "is_spy";
 export interface SpyAccusationRejection {
   userId: string;
   reason: SpyAccusationRejectionReason;

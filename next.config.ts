@@ -1,3 +1,4 @@
+import path from "path";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import { withSentryConfig } from "@sentry/nextjs";
@@ -6,6 +7,17 @@ import { securityHeaders } from "./src/shared/lib/security-headers";
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
+  // Pin Turbopack's root to THIS repo. Left to infer it, Next walks up looking
+  // for a lockfile and finds `D:\Velanto\package-lock.json` — an empty stray
+  // one sitting in the workspace folder, which is not a package root at all —
+  // so it took the whole workspace as the root and had Turbopack resolving and
+  // watching across both repos, `design/` and the backend's node_modules. A
+  // first-time route compile was taking over a minute.
+  //
+  // Explicit rather than deleting the stray lockfile: this holds even if one
+  // reappears, and the two repos are independent — neither should ever be
+  // resolving through the other.
+  turbopack: { root: __dirname },
   // sharp is a native module used by the dynamic OG cards (opengraph-image /
   // twitter-image) to transcode WebP media to a PNG next/og can rasterise. Left
   // to Next's default bundling it gets webpack-bundled into the serverless

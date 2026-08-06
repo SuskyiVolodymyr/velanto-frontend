@@ -75,7 +75,10 @@ export function SpyBoard({ state, currentUserId, onPick }: SpyBoardProps) {
     // it is derived from their own board, which nobody else receives.
     const blind =
       iAmSpy && player.userId === currentUserId && !itemsById.has(chosen);
-    return { label: blind ? t("spy.pickedBlind") : t("spy.picked"), done: true };
+    return {
+      label: blind ? t("spy.pickedBlind") : t("spy.picked"),
+      done: true,
+    };
   };
 
   const tally = [...counts.entries()]
@@ -87,10 +90,17 @@ export function SpyBoard({ state, currentUserId, onPick }: SpyBoardProps) {
       state={state}
       currentUserId={currentUserId}
       question={t("spy.instruction")}
-      progressNote={t("spy.progress", {
-        count: totalPicks,
-        total: present.length,
-      })}
+      // `totalPicks` counts the spy's OWN pick and nothing else now, so the
+      // usual "N of M picks in" would be a claim about the room made from a
+      // number that never leaves 0 or 1.
+      progressNote={
+        iAmSpy
+          ? t("spy.progressBlind")
+          : t("spy.progress", {
+              count: totalPicks,
+              total: present.length,
+            })
+      }
       call={{
         yours: myPick === undefined,
         icon: iAmSpy ? (
@@ -110,7 +120,31 @@ export function SpyBoard({ state, currentUserId, onPick }: SpyBoardProps) {
       }}
       status={status}
       asidePanel={
-        tally.length > 0 ? (
+        // The spy is sent nobody else's pick at all (spec §13 Amendment 1), so
+        // there is no tally to draw — only their own, under a heading that
+        // would claim to be the room's. This panel takes its place and says
+        // the silence is deliberate, and one-directional: a screen that simply
+        // stopped updating would be reported as a bug.
+        iAmSpy ? (
+          <section
+            aria-label={t("spy.picksHiddenHeading")}
+            className="flex flex-col gap-2 rounded-card border border-border bg-surface-card p-[18px]"
+          >
+            <div className="flex items-center gap-2">
+              <EyeOff
+                size={15}
+                aria-hidden
+                className="flex-none text-foreground-tertiary"
+              />
+              <Text as="h3" className="text-[15px] font-bold">
+                {t("spy.picksHiddenHeading")}
+              </Text>
+            </div>
+            <Text variant="secondary" className="text-[12.5px] leading-[1.55]">
+              {t("spy.picksHiddenNote")}
+            </Text>
+          </section>
+        ) : tally.length > 0 ? (
           <section
             aria-label={t("spy.picksHeading")}
             className="flex flex-col gap-3 rounded-card border border-border bg-surface-card p-[18px]"

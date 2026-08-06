@@ -24,6 +24,14 @@ export interface RoundSideTileProps {
   mine?: boolean;
   /** Leading the tally — a brighter frame without claiming the choice. */
   leading?: boolean;
+  /**
+   * How the round ENDED for this side — a settled verdict, not a live lead.
+   * Green for the one the room went with, red for the one it dropped. Same
+   * prop, same meaning and same precedence as {@link RoundItemTile}'s: only a
+   * between-round or results board passes it, because on a live board a red
+   * frame would read as "this side is out" while people are still choosing it.
+   */
+  outcome?: "won" | "lost";
   /** Live tally under the items. Omit for modes with no public count. */
   tally?: { count: number; max: number };
   /** Guess-who's anonymous labels that picked this side. */
@@ -51,6 +59,7 @@ export function RoundSideTile({
   onPick,
   mine = false,
   leading = false,
+  outcome,
   tally,
   pickLabels,
   voters,
@@ -62,11 +71,18 @@ export function RoundSideTile({
 
   const frame = cn(
     "flex w-full flex-col gap-2.5 rounded-[16px] border p-2.5 text-start transition-[transform,border-color] duration-200 ease-signature",
-    mine
-      ? "border-acc/50 bg-surface-card"
-      : leading
-        ? "border-border-strong bg-surface-card"
-        : "border-border bg-surface-card",
+    // A settled verdict outranks every live treatment below it: once the round
+    // is over, "you picked this" and "this was ahead" are both stale, and only
+    // won/lost is still true.
+    outcome === "won"
+      ? "border-success bg-success/[0.06] ring-1 ring-success/35"
+      : outcome === "lost"
+        ? "border-danger/70 bg-danger/[0.04]"
+        : mine
+          ? "border-acc/50 bg-surface-card"
+          : leading
+            ? "border-border-strong bg-surface-card"
+            : "border-border bg-surface-card",
     onPick && "cursor-pointer hover:-translate-y-[3px] hover:border-acc/40",
     !onPick && "cursor-default",
   );

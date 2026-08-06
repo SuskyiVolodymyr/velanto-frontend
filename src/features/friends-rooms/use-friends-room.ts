@@ -178,16 +178,20 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
       // any stale `kicked` flag (this hook instance can be reused across a
       // roomId change without remounting).
       socket.on(ROOM_EVENTS.state, (next: RoomState) => {
-        // Wholesale replace — EXCEPT the viewer's own guess. A room-wide
-        // snapshot always carries `myGuess: null` (it has no single viewer),
-        // and finishGuessing hands each player their guess and THEN calls
+        // Wholesale replace — EXCEPT the viewer's own guess and accusation. A
+        // room-wide snapshot always carries both as null (it has no single
+        // viewer), and finishGuessing hands each player theirs and THEN calls
         // finish(), whose broadcast landed microseconds later and wiped it: the
         // results screen opened with an empty guess and every label marked
         // wrong, for everyone. Only ever restores — a snapshot that carries a
-        // guess (the per-caller HTTP read) still wins.
+        // value (the per-caller HTTP read) still wins.
+        //
+        // `myAccusation` is Spy's twin of the same problem, and had the same
+        // symptom: the reveal read "You accused nobody" for a player who had.
         setState((prev) => ({
           ...next,
           myGuess: next.myGuess ?? prev?.myGuess ?? null,
+          myAccusation: next.myAccusation ?? prev?.myAccusation ?? null,
         }));
         setLastRejection(null);
         setLastModeRejection(null);
@@ -453,14 +457,16 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
       );
 
       // Same wholesale-replace caveat as `room.state` above, and the same
-      // reason: this broadcast is room-wide, so it carries `myGuess: null`, and
-      // it lands right after the per-player reveal that just delivered it. Left
-      // alone it wiped the guess and the reveal screen read "You said nobody"
-      // on every label while the leaderboard scored everyone correctly.
+      // reason: this broadcast is room-wide, so it carries both per-viewer
+      // fields as null, and it lands right after the per-player reveal that
+      // just delivered them. Left alone it wiped the guess and the reveal
+      // screen read "You said nobody" on every label while the leaderboard
+      // scored everyone correctly — and, for Spy, "You accused nobody".
       socket.on(ROOM_EVENTS.gameFinished, (final: RoomState) =>
         setState((prev) => ({
           ...final,
           myGuess: final.myGuess ?? prev?.myGuess ?? null,
+          myAccusation: final.myAccusation ?? prev?.myAccusation ?? null,
         })),
       );
       socket.on(ROOM_EVENTS.roomClosed, () => setConnection("closed"));

@@ -32,9 +32,12 @@ export const UPDATES: UpdateEntry[] = [
     title: "One of you is lying",
     bullets: [
       "Spy is a new way to play any Save One, Sacrifice One, 1v1 or NxN pack with friends. One player is secretly the spy, and half of every round is blacked out for them — on a versus pack they see one side and not even the other side's name. Everyone else sees the whole board.",
-      "Every pick is public, live, under your real name. The spy has to keep choosing something plausible from half a board, and everyone else is watching for the person whose choices don't quite add up. A blacked-out option stays blacked out for the spy even after somebody picks it, so they learn that three people liked something without ever learning what it was.",
+      "Every pick is public, live, under your real name — except to the spy, who sees none of them. They choose from half a board in silence while everyone else watches each other, so they can't blend in by following the crowd, and everyone else is watching for the person whose choices don't quite add up. Once a round closes it's public to everyone, spy included.",
       "After the last round everyone except the spy names who they think it was. Calling it right scores a point; the spy scores a point for everyone who looked somewhere else. The reveal then shows the whole game back to you — every pick by every player, and, for the first time, exactly which options the spy was blind to in each round.",
       "Needs three players and a pack with at least three rounds. The spy's own picks don't count toward the pack's statistics — they were choosing from half a board.",
+      "Every room screen has been redesigned. Between rounds you see the round you just played rather than a summary of it — the two contenders side by side at full size with who took each, and the Next button up on the title row instead of below everything you have to scroll past.",
+      "Room results now read like the single-player ones: the game's headline up top, then a round-by-round recap, with the leaderboard and a Top picked board of everything the room chose alongside it. Voting rounds show the faces of who voted for what instead of a percentage.",
+      "The history tables in Guess Who and Spy show every option each round, not just the one that was taken — the pick in green and what it passed up in red, so a player's pattern is readable at a glance. In a Sacrifice One room the colours read the other way round, because there a pick is what you got rid of.",
     ],
   },
   {

@@ -1,11 +1,14 @@
 "use client";
 
+import { Fragment } from "react";
 import { useTranslations } from "next-intl";
-import { ArrowRight } from "lucide-react";
-import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
+import { cn } from "@/src/shared/lib/cn";
+import { BetweenNextButton } from "./BetweenNextButton";
 import { RoundItemTile } from "./RoundItemTile";
-import { RoundSideTile } from "./RoundSideTile";
+import { RevealSideRow } from "./RevealSideRow";
+import { BetweenVsRow } from "./BetweenVsRow";
+import { VsDivider } from "./VsDivider";
 import type { RoomPlayerState, RoomState, VoteRoundResult } from "./room-types";
 
 /**
@@ -52,73 +55,115 @@ export function VotingBetweenBoard({
   const priorityPlayer = state.players.find(
     (p) => p.userId === result.priorityUserId,
   );
-  const me = state.players.find((p) => p.userId === currentUserId);
-  const ready = state.players.filter((p) => p.next).length;
+
+  // 1v1 keeps the matchup framing it was played under. The round board draws
+  // this format as two contenders with a VS between them and then, the instant
+  // the round closed, the reveal used to collapse it into a grid of small
+  // cards — the head-to-head reading of it disappeared exactly when the answer
+  // arrived. The length check is defensive; 1v1 is validated to two options.
+  const isVersusPair =
+    state.packFormat === "1v1" && result.optionIds.length === 2;
 
   return (
     <div className="flex flex-col gap-[18px]">
-      <header className="flex flex-col gap-1">
-        <Text variant="tertiary" className="text-xs tracking-wide uppercase">
-          {t("voting.winnerHeading")}
-        </Text>
-        <Text as="h2" variant="title" className="text-2xl text-live">
-          {winnerName}
-        </Text>
-        {result.tieBroken && priorityPlayer && (
-          <Text variant="secondary" className="text-sm">
-            {t("voting.tieBrokenNote", { name: priorityPlayer.username })}
+      <header className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col gap-1">
+          <Text variant="tertiary" className="text-xs tracking-wide uppercase">
+            {t("voting.winnerHeading")}
           </Text>
+          <Text as="h2" variant="title" className="text-2xl text-live">
+            {winnerName}
+          </Text>
+          {result.tieBroken && priorityPlayer && (
+            <Text variant="secondary" className="text-sm">
+              {t("voting.tieBrokenNote", { name: priorityPlayer.username })}
+            </Text>
+          )}
+        </div>
+        {/* On the title row, not under the board: the nxn arm puts this on
+            its VS row for the same reason, and a grid of media has no divider
+            row to share. Rendered here only for the arms that need it — the
+            `sides` arm's copy lives in BetweenVsRow. */}
+        {!round.sides && (
+          <div className="ms-auto flex flex-wrap items-center justify-end gap-3">
+            <BetweenNextButton
+              state={state}
+              currentUserId={currentUserId}
+              onNext={onNext}
+            />
+          </div>
         )}
       </header>
 
       {/* The same two-up shape the round board used, so this reads as the round
           settling rather than as a different page. */}
       {round.sides ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {round.sides.map((side) => (
-            <RoundSideTile
-              key={side.id}
-              side={side}
-              items={side.itemIds
-                .map((id) => itemsById.get(id))
-                .filter((item): item is NonNullable<typeof item> =>
-                  Boolean(item),
-                )}
-              actionLabel={side.name}
-              leading={side.id === result.winnerOptionId}
-              tally={{ count: result.tally[side.id] ?? 0, max: maxCount }}
-              voters={votersFor(side.id)}
-            />
+        // The same stacked rows Guess-who's reveal and Spy's between board
+        // draw, with the room's real names in the chip slot their labels take
+        // — one screen family, one nxn shape. Two half-width side tiles put
+        // the pool names on opposite edges and squeezed every video; this
+        // reads down the page the way a versus round actually resolves.
+        <div className="flex flex-col gap-[14px]">
+          {round.sides.map((side, index) => (
+            <Fragment key={side.id}>
+              {index > 0 && (
+                <BetweenVsRow
+                  state={state}
+                  currentUserId={currentUserId}
+                  onNext={onNext}
+                />
+              )}
+              <RevealSideRow
+                side={side}
+                items={side.itemIds
+                  .map((id) => itemsById.get(id))
+                  .filter((item): item is NonNullable<typeof item> =>
+                    Boolean(item),
+                  )}
+                outcome={side.id === result.winnerOptionId ? "won" : "lost"}
+                voters={votersFor(side.id)}
+              />
+            </Fragment>
           ))}
         </div>
       ) : (
-        <div className="grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(248px,1fr))]">
-          {result.optionIds.map((optionId) => {
+        <div
+          className={cn(
+            isVersusPair
+              ? "grid items-center gap-5 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]"
+              : "grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(248px,1fr))]",
+          )}
+        >
+          {result.optionIds.map((optionId, index) => {
             const item = itemsById.get(optionId);
             if (!item) return null;
-            return (
+            const won = optionId === result.winnerOptionId;
+            const tile = (
               <RoundItemTile
-                key={optionId}
                 item={item}
                 actionLabel={item.title}
-                leading={optionId === result.winnerOptionId}
+                // On a versus pair the verdict is the whole point of the
+                // screen, so it is carried in the frame — green for the one
+                // the room went with, red for the one it dropped. An option
+                // set of 3+ has one winner and N losers, where painting every
+                // also-ran red would be noise rather than information.
+                outcome={isVersusPair ? (won ? "won" : "lost") : undefined}
+                leading={!isVersusPair && won}
                 tally={{ count: result.tally[optionId] ?? 0, max: maxCount }}
                 voters={votersFor(optionId)}
               />
             );
+            return isVersusPair ? (
+              <Fragment key={optionId}>
+                {index > 0 && <VsDivider />}
+                {tile}
+              </Fragment>
+            ) : (
+              <Fragment key={optionId}>{tile}</Fragment>
+            );
           })}
         </div>
       )}
-
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Text variant="secondary" aria-live="polite" className="text-sm">
-          {t("between.ready", { count: ready, total: state.players.length })}
-        </Text>
-        <Button disabled={Boolean(me?.next)} onClick={onNext}>
-          {t("between.next")}
-          <ArrowRight size={16} aria-hidden />
-        </Button>
-      </div>
     </div>
   );
 }

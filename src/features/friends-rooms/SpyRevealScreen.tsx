@@ -2,11 +2,14 @@
 
 import { useTranslations } from "next-intl";
 import { Check, EyeOff, X } from "lucide-react";
-import { BackButton } from "@/src/shared/components/BackButton";
 import { Text } from "@/src/shared/components/Text";
-import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { cn } from "@/src/shared/lib/cn";
 import { RoomLeaderboard } from "./RoomLeaderboard";
+import {
+  RoomResultAgainPanel,
+  RoomResultHero,
+  RoomTopPickedBoard,
+} from "./RoomResultAside";
 import { SpyPickTable } from "./SpyPickTable";
 import type { RoomState } from "./room-types";
 
@@ -24,7 +27,10 @@ interface SpyRevealScreenProps {
  * narrows a room to one or two people instantly); afterwards it is what makes
  * the game readable in hindsight.
  */
-export function SpyRevealScreen({ state, currentUserId }: SpyRevealScreenProps) {
+export function SpyRevealScreen({
+  state,
+  currentUserId,
+}: SpyRevealScreenProps) {
   const t = useTranslations("room");
   const endgame = state.endgame?.kind === "spy_reveal" ? state.endgame : null;
   if (!endgame) return null;
@@ -53,28 +59,18 @@ export function SpyRevealScreen({ state, currentUserId }: SpyRevealScreenProps) 
             score,
           };
         })
-        .sort((a, b) => b.score - a.score || a.username.localeCompare(b.username))
+        .sort(
+          (a, b) => b.score - a.score || a.username.localeCompare(b.username),
+        )
     : [];
 
   return (
     <div className="flex flex-col gap-[18px]">
-      {/* This screen heads itself and offers its own way out, because the room
-          header (with Leave) is gone by the time a game is finished. Without
-          both, a finished room was a page with no title and no exit — the same
-          reason RoomResults carries them. */}
-      <header className="flex flex-col gap-1">
-        <Text variant="tertiary" className="text-xs tracking-wide uppercase">
-          {t("results.heading")}
-        </Text>
-        <Text as="h1" variant="title" className="text-2xl">
-          {state.packTitle}
-        </Text>
-      </header>
-
-      <BackButton
-        href={`/packs/${state.packId}`}
-        label={t("results.backToPack")}
-      />
+      {/* The same opening statement Voting's and Guess-who's results screens
+          get — one screen family, one header. It replaces this screen's own
+          eyebrow-and-title pair plus a lone back link; the aside now carries
+          the way out, beside Play again. */}
+      <RoomResultHero state={state} />
 
       <section
         aria-label={t("spy.reveal.heading")}
@@ -84,8 +80,7 @@ export function SpyRevealScreen({ state, currentUserId }: SpyRevealScreenProps) 
           <EyeOff size={24} aria-hidden />
         </span>
         <div className="flex min-w-0 flex-col gap-1">
-          {/* h2: the pack title above is the page's h1 now that this screen
-              heads itself. */}
+          {/* h2: the hero above carries the page's h1. */}
           <Text as="h2" variant="title" className="text-2xl">
             {iAmSpy
               ? t("spy.reveal.youWere")
@@ -138,55 +133,41 @@ export function SpyRevealScreen({ state, currentUserId }: SpyRevealScreenProps) 
         )}
       </section>
 
-      {board.length > 0 && <RoomLeaderboard entries={board} />}
+      {/* The same column split every room results screen uses. */}
+      <div className="grid grid-cols-1 items-start gap-[18px] min-[1040px]:grid-cols-[minmax(0,1fr)_minmax(0,330px)]">
+        <div className="flex min-w-0 flex-col gap-[14px]">
+          <SpyPickTable
+            state={state}
+            reveal={{
+              spyUserId: endgame.spyUserId,
+              hiddenByRound: endgame.hiddenByRound,
+            }}
+          />
+        </div>
 
-      <SpyPickTable
-        state={state}
-        reveal={{
-          spyUserId: endgame.spyUserId,
-          hiddenByRound: endgame.hiddenByRound,
-        }}
-      />
+        <aside className="flex flex-col gap-[14px] max-[1039px]:contents">
+          <RoomResultAgainPanel
+            packId={state.packId}
+            className="max-[1039px]:order-first"
+          />
 
-      <section
-        aria-label={t("spy.reveal.recapHeading")}
-        className="flex flex-col gap-[13px] rounded-card border border-border bg-surface-card p-5"
-      >
-        <Text as="h2" className="text-base font-bold tracking-[-0.01em]">
-          {t("spy.reveal.recapHeading")}
-        </Text>
-        <ul className="flex flex-col gap-2">
-          {endgame.hiddenByRound.map((hiddenIds, index) => {
-            const round = state.results.find(
-              (result) => result.kind === "spy_round" && result.index === index,
-            );
-            const total =
-              round && round.kind === "spy_round"
-                ? Math.max(round.items.length, hiddenIds.length)
-                : hiddenIds.length;
-            return (
-              <li
-                key={index}
-                className="flex items-center gap-3 rounded-[12px] border border-border bg-surface px-[13px] py-2.5"
-              >
-                <span className="font-mono text-[11px] font-bold text-foreground-tertiary tabular-nums">
-                  {index + 1}
-                </span>
-                <Text variant="secondary" className="text-[12.5px]">
-                  {t("spy.reveal.sawCount", {
-                    count: Math.max(0, total - hiddenIds.length),
-                    total,
-                  })}
-                </Text>
-                <span className="ms-auto inline-flex items-center gap-1 rounded-full bg-spy/15 px-2 py-0.5 text-[10.5px] font-bold text-spy">
-                  <EyeOff size={10} aria-hidden />
-                  {hiddenIds.length}
-                </span>
-              </li>
-            );
-          })}
-        </ul>
-      </section>
+          {board.length > 0 && (
+            <section
+              aria-label={t("leaderboard.heading")}
+              className="flex flex-col gap-3 rounded-[20px] border border-border bg-surface-card p-5"
+            >
+              <Text as="h2" className="text-base font-bold tracking-[-0.01em]">
+                {t("leaderboard.heading")}
+              </Text>
+              <RoomLeaderboard entries={board} />
+            </section>
+          )}
+
+          {/* Under the leaderboard, so the aside reads next-step → how it went
+              → what the room picked, exactly as Guess-who's does. */}
+          <RoomTopPickedBoard state={state} currentUserId={currentUserId} />
+        </aside>
+      </div>
     </div>
   );
 }
