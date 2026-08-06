@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Check, EyeOff, X } from "lucide-react";
+import { BackButton } from "@/src/shared/components/BackButton";
 import { Text } from "@/src/shared/components/Text";
 import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { cn } from "@/src/shared/lib/cn";
@@ -57,6 +58,24 @@ export function SpyRevealScreen({ state, currentUserId }: SpyRevealScreenProps) 
 
   return (
     <div className="flex flex-col gap-[18px]">
+      {/* This screen heads itself and offers its own way out, because the room
+          header (with Leave) is gone by the time a game is finished. Without
+          both, a finished room was a page with no title and no exit — the same
+          reason RoomResults carries them. */}
+      <header className="flex flex-col gap-1">
+        <Text variant="tertiary" className="text-xs tracking-wide uppercase">
+          {t("results.heading")}
+        </Text>
+        <Text as="h1" variant="title" className="text-2xl">
+          {state.packTitle}
+        </Text>
+      </header>
+
+      <BackButton
+        href={`/packs/${state.packId}`}
+        label={t("results.backToPack")}
+      />
+
       <section
         aria-label={t("spy.reveal.heading")}
         className="flex flex-wrap items-center gap-[14px] rounded-card border border-spy/30 bg-spy/[0.07] p-[18px]"
@@ -65,7 +84,9 @@ export function SpyRevealScreen({ state, currentUserId }: SpyRevealScreenProps) 
           <EyeOff size={24} aria-hidden />
         </span>
         <div className="flex min-w-0 flex-col gap-1">
-          <Text as="h1" variant="title" className="text-2xl">
+          {/* h2: the pack title above is the page's h1 now that this screen
+              heads itself. */}
+          <Text as="h2" variant="title" className="text-2xl">
             {iAmSpy
               ? t("spy.reveal.youWere")
               : t("spy.reveal.spyWas", { name: spy?.username ?? "" })}

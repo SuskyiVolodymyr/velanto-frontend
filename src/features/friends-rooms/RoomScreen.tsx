@@ -20,6 +20,7 @@ import { SpyRevealScreen } from "./SpyRevealScreen";
 import { RoomHeader } from "./RoomHeader";
 import { RoomKicked } from "./RoomKicked";
 import { useExitToPack } from "./use-exit-to-pack";
+import { usePlayFocus } from "@/src/shared/lib/play-focus-context";
 
 /**
  * The single entry point for a friends room. Subscribes to the live room over
@@ -59,6 +60,13 @@ export function RoomScreen({ roomId }: { roomId: string }) {
   // The account id, or — for someone who joined with a nickname — the guest
   // the join created. See useRoomViewerId.
   const userId = useRoomViewerId(roomId);
+
+  // A round owns the whole width; the results afterwards are a page you have
+  // finished with and want to leave, so the rail comes back for them. Both
+  // live at this same url, which is why the shell cannot decide it by path.
+  const playing =
+    state !== null && state.phase !== "finished" && state.phase !== "abandoned";
+  usePlayFocus(playing && !kicked);
 
   // Claim and Turn-based cut caption themselves "Save" or "Sacrifice" after
   // the PACK's format. It rides the room snapshot (the live room already holds
