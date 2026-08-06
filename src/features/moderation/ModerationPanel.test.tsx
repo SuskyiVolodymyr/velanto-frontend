@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { screen } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { ModerationPanel } from "./ModerationPanel";
@@ -136,7 +136,14 @@ describe("ModerationPanel", () => {
         selected: true,
       }),
     ).toBeInTheDocument();
-    expect(vi.mocked(packsClient.moderationQueue)).toHaveBeenCalled();
+    // Awaited, not asserted outright: the tab reads `selected` straight from
+    // the URL, so it is already on screen while the queue behind it is still
+    // being requested. A bare assertion here raced that fetch and failed with
+    // "expected vi.fn() to be called at least once" on a panel that was
+    // loading perfectly well.
+    await waitFor(() =>
+      expect(vi.mocked(packsClient.moderationQueue)).toHaveBeenCalled(),
+    );
   });
 
   it("puts the tab in the URL when it is switched", async () => {
@@ -243,7 +250,10 @@ describe("ModerationPanel", () => {
       </AuthProvider>,
     );
 
-    await vi.waitFor(() => expect(replace).toHaveBeenCalledWith("/"));
+    // Testing Library's waitFor, not vi.waitFor: the two keep separate
+    // deadlines, and only this one honours the `asyncUtilTimeout` the rest of
+    // the file's `findBy*` calls are budgeted against.
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/"));
     expect(
       screen.queryByRole("tab", { name: /Reports/ }),
     ).not.toBeInTheDocument();
