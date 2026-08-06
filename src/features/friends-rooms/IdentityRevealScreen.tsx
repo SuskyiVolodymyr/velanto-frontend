@@ -1,15 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Check, Crown, X } from "lucide-react";
-import { BackButton } from "@/src/shared/components/BackButton";
 import { Text } from "@/src/shared/components/Text";
 import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { cn } from "@/src/shared/lib/cn";
 import { GuessWhoLabelTable } from "./GuessWhoLabelTable";
-import { friendsRoomsClient } from "./friends-rooms-client";
+import {
+  RoomResultAgainPanel,
+  RoomResultHero,
+  RoomTopPickedBoard,
+} from "./RoomResultAside";
 import type { RoomState } from "./room-types";
 
 /**
@@ -22,23 +23,15 @@ import type { RoomState } from "./room-types";
  * grading is the VIEWER'S OWN, from `myGuess`; the server never sends anyone
  * else's guess to this client, because a wrong guess names a specific person.
  */
-export function IdentityRevealScreen({ state }: { state: RoomState }) {
+export function IdentityRevealScreen({
+  state,
+  currentUserId,
+}: {
+  state: RoomState;
+  /** Marks the viewer's own picks on the aside's board. */
+  currentUserId?: string | null;
+}) {
   const t = useTranslations("room");
-  const router = useRouter();
-  const [opening, setOpening] = useState(false);
-
-  async function playAgain() {
-    if (opening) return;
-    setOpening(true);
-    try {
-      const room = await friendsRoomsClient.create(state.packId);
-      // Left busy on purpose: we are navigating away, and flashing back to
-      // idle before the route changes reads as a click that did nothing.
-      router.push(`/rooms/${room.id}`);
-    } catch {
-      router.push(`/packs/${state.packId}`);
-    }
-  }
 
   // Narrowed: the public endgame is a union now that Spy has its own reveal.
   // This screen renders Guess-who's; RoomScreen only routes here for it.
@@ -67,15 +60,11 @@ export function IdentityRevealScreen({ state }: { state: RoomState }) {
 
   return (
     <div className="flex flex-col gap-[18px]">
-      {/* Like RoomResults, this is a terminal state that does NOT leave on its
-          own, and RoomScreen renders no room header over it — so without this
-          the page's only exit was the pair down in the aside. A real link, so
-          middle-click and open-in-new-tab work. */}
-      <BackButton
-        href={`/packs/${state.packId}`}
-        label={t("results.backToPack")}
-        className="self-start"
-      />
+      {/* The same opening statement Voting's results screen gets — this is one
+          screen family, and only one of them saying "the game is over, here is
+          how big it was" would be an inconsistency, not a design. It replaces a
+          lone back link: the aside carries the way out, beside Play again. */}
+      <RoomResultHero state={state} />
 
       {soleWinner && (
         <section className="flex flex-wrap items-center gap-[18px] rounded-[20px] border border-score/35 bg-[linear-gradient(135deg,rgba(255,194,75,.16),rgba(255,194,75,.03))] p-[22px]">
@@ -136,12 +125,9 @@ export function IdentityRevealScreen({ state }: { state: RoomState }) {
         </section>
       )}
 
-      <div className="grid items-start gap-[18px] min-[1080px]:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
-        <div className="max-[1079px]:order-2">
-          <GuessWhoLabelTable state={state} revealed />
-        </div>
-
-        <aside className="flex flex-col gap-3.5 max-[1079px]:order-1">
+      {/* The same column split every room results screen uses. */}
+      <div className="grid grid-cols-1 items-start gap-[18px] min-[1040px]:grid-cols-[minmax(0,1fr)_minmax(0,330px)]">
+        <div className="flex min-w-0 flex-col gap-[14px]">
           <section
             aria-label={t("identityReveal.yourGuess")}
             className="flex flex-col gap-[13px] rounded-[20px] border border-border bg-surface-card p-5"
@@ -149,7 +135,12 @@ export function IdentityRevealScreen({ state }: { state: RoomState }) {
             <Text as="h2" className="text-base font-bold tracking-[-0.01em]">
               {t("identityReveal.yourGuess")}
             </Text>
-            <ol className="flex flex-col gap-2">
+            {/* One row directly over the table it is read against, not a
+                stack down the aside: each card is a label, the table's
+                columns are those same labels, and side by side you had to
+                carry the mapping across the page in your head. Wraps rather
+                than scrolls — eight labels is a legal room. */}
+            <ol className="grid gap-2 [grid-template-columns:repeat(auto-fit,minmax(190px,1fr))]">
               {labels.map((label) => {
                 const truth = playerById.get(mapping[label]);
                 const correct = myGuess[label] === mapping[label];
@@ -206,6 +197,15 @@ export function IdentityRevealScreen({ state }: { state: RoomState }) {
               })}
             </ol>
           </section>
+
+          <GuessWhoLabelTable state={state} revealed />
+        </div>
+
+        <aside className="flex flex-col gap-[14px] max-[1039px]:contents">
+          <RoomResultAgainPanel
+            packId={state.packId}
+            className="max-[1039px]:order-first"
+          />
 
           {board.length > 0 && (
             <section
@@ -267,22 +267,12 @@ export function IdentityRevealScreen({ state }: { state: RoomState }) {
             </section>
           )}
 
-          {/* OUTSIDE the leaderboard, which only renders when somebody scored:
-              `scores` is keyed on players who submitted a guess, so a game whose
-              deadline passed with nobody guessing rendered no leaderboard — and
-              took the only way off this screen down with it. Where you go next
-              cannot depend on how the game went.
-
-              Play again ALONE: "Back to pack" is the header link above, and the
-              same destination twice on one screen is a choice that isn't one. */}
-          <button
-            type="button"
-            disabled={opening}
-            onClick={() => void playAgain()}
-            className="grid h-11 place-items-center rounded-control bg-acc text-[13.5px] font-bold text-background transition-colors hover:bg-acc-hover disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {t("results.playAgain")}
-          </button>
+          {/* Under the leaderboard, so the aside reads next-step → how it went
+              → what the room picked. Both ways off this screen live in the
+              panel at the top, ABOVE the leaderboard, which only renders when
+              somebody scored — a game whose deadline passed with nobody
+              guessing must not lose its exit along with its scores. */}
+          <RoomTopPickedBoard state={state} currentUserId={currentUserId} />
         </aside>
       </div>
     </div>

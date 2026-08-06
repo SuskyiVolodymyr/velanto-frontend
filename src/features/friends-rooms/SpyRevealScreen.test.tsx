@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
@@ -6,6 +6,10 @@ import type { Item } from "@/src/shared/types/pack";
 import { SpyRevealScreen } from "./SpyRevealScreen";
 import { baseRoomState } from "./test-fixtures";
 import type { RoomPlayerState, RoomState } from "./room-types";
+
+// The results aside carries a Play again panel, which routes — the screen now
+// shares the same shape solo's results have.
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
 function item(id: string): Item {
   return { id, type: "text", title: `Title ${id}`, value: `Title ${id}` };
@@ -71,10 +75,14 @@ describe("SpyRevealScreen", () => {
     // The room header (with Leave) is gone once a game is finished, and the
     // nav rail comes back only because this phase asks for it. Without a title
     // and a link, a finished room was a page with neither.
+    //
+    // The h1 is the shared results HERO's — the same one solo play opens with,
+    // which says the game is over rather than naming the pack again. The way
+    // back to the pack moved into the aside's Play again panel with it.
     renderReveal(revealedRoom());
 
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
-      "Test Pack",
+      "Here's what the room picked",
     );
     expect(screen.getByRole("link", { name: /back to pack/i })).toHaveAttribute(
       "href",
@@ -120,12 +128,10 @@ describe("SpyRevealScreen", () => {
     expect(screen.getByText("The room caught them")).toBeInTheDocument();
   });
 
-  it("recaps what the spy could see, which was secret until now", () => {
-    renderReveal(revealedRoom());
-
-    // Four options, three hidden — the spy played that round on one card.
-    expect(screen.getByText("Saw 1 of 4")).toBeInTheDocument();
-  });
+  // The "what the spy could see" recap ("Saw 1 of 4") is deliberately gone.
+  // It restated what the pick history already shows — a spy whose picks came
+  // from one card is visible in the table itself — and sat where the
+  // leaderboard now does.
 
   it("shows the whole pick history with the spy's column marked", () => {
     renderReveal(revealedRoom());

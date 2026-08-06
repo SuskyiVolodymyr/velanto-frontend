@@ -61,6 +61,8 @@ Live reveal and redaction collide, and the collision has exactly one coherent re
 
 The spy sees *"3 players picked option 2"* where option 2 is a card they cannot read. They learn the crowd's shape without learning the board — and must decide whether to follow a favourite they cannot see. This is better tension than either alternative (un-redacting on pick would hand the spy the whole board by the third pick; hiding others' picks entirely would contradict "everyone sees all picks").
 
+> ⚠ **Superseded — see [§13 Amendment 1](#13-amendments).** The owner has since chosen the third option this paragraph rejected: the spy sees no live picks at all. That is the shipped behaviour as of 2.2.0; the rule above is history.
+
 ### 2.5 The endgame
 - After the last round the room enters an **accusation phase**.
 - Every **non-spy** submits exactly one userId: who they think the spy is. Candidates are the roster minus themselves.
@@ -113,7 +115,7 @@ This is the finding that shapes the implementation. Room boards carry the pack's
 | Payload | Redacted for the spy? |
 |---|---|
 | The **live** round board (`state.round`, `round.started`) | **Yes** |
-| Live pick events (`pick.locked`) for hidden options | **Yes** — token, not id |
+| Live pick events (`pick.locked`) — ANY option, hidden or not | **Withheld entirely** — the spy is sent no other player's pick at all (Amendment 1). Their own still travels, so they can see their click register. |
 | **Resolved** rounds (`results[]`) | **No** — a finished round is fully public to everyone, spy included. There is no decision left in it, and the projection stays small. |
 | Which options were hidden, in any given round | **Secret from everyone** until the final reveal — see below |
 | The roster, lobby, phase, countdowns, presence | No |
@@ -288,3 +290,25 @@ Backend deploys before the frontend merges; the frontend cannot select a mode th
 - **More than one spy** at 7–8 players (accusation becomes a set, scoring becomes partial credit). Real, and a different game.
 - **Spy-specific copy per format** ("you can only see one side") — frontend polish, slice C.
 - **A spy-side objective beyond evading** (e.g. bonus for landing on the crowd favourite blind). Would deepen the mode; not needed to ship it.
+
+---
+
+## 13. Amendments
+
+Changes to the rules above, made after the spec was first agreed. Each says what shipped, what replaces it, and whether it is built yet.
+
+### Amendment 1 — the spy sees no live picks
+
+*Raised 2026-08-06, during the 2.2.0 design pass. **Implemented** in 2.2.0, superseding §2.4.*
+
+**The change.** While a round is open, the spy is shown nobody else's pick. Not a tokenised pick, not a count against an unreadable card — nothing. They choose from their half-board in silence. Non-spies are unaffected and keep seeing every pick live, exactly as now.
+
+**What it supersedes.** §2.4 chose "a hidden slot stays hidden even after someone picks it" and explicitly rejected hiding others' picks entirely, on the grounds that it contradicts the product line *"everyone sees all picks"*. That reasoning still stands as written — it is the requirement that has changed, not the logic. Resolved rounds are untouched: they stay fully public to everyone including the spy (§3.3), so nothing about the recap or the evidence table changes.
+
+**Why it is better.** §2.4's rule keeps the *board* secret but still hands the spy the crowd's *shape* — "three people took option 2" is enough to follow the room without being able to read it, which is precisely the camouflage the mode is trying to deny them. Removing it means a spy cannot blend in by copying; their picks have to come from half a board and nothing else, so they diverge more, and the pick table that the accusation is read from gets sharper. The mode's whole detection surface improves.
+
+**What it costs.** The spy's screen goes quiet mid-round while everyone else's fills up, and quiet reads as broken. This needs copy — one line on the spy's board saying the room's picks are hidden *from them*, deliberately — or it will be reported as a bug. That copy is the real work here; the mechanic is small.
+
+**How it was built.** `projectSpyPickEvent` returns `undefined` for a pick that is not the spy's own, and `emitPerViewer` now treats `undefined` as "send this viewer nothing" — a stronger redaction than any projection can express, since an empty payload would still say somebody moved. `spyRoundFields` drops the same picks from the SNAPSHOT, or a reconnect would hand back exactly what the live wire refuses. `round.resolved` is not touched. The e2e anti-leak scan should gain the reciprocal case: `liveSeenBy(spy)` must contain no other player's `spy.picked` at all, which is a strictly stronger assertion than the current "no real id for a hidden option".
+
+**Resolved: no bare count.** A count is the crowd signal in its weakest form, and the amendment exists to remove that signal — keeping it would have left the spy able to time their pick to the room's. The board carries an explicit panel instead (`spy.picksHiddenHeading` / `picksHiddenNote`) and drops the "N of M picks in" progress line, which counted only the spy themselves once the picks stopped arriving.

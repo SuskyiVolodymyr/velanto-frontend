@@ -118,18 +118,42 @@ describe("SpyBoard", () => {
   });
 
   it("shows picks publicly, under real names", () => {
-    renderBoard(hunterRoom({ round: { ...hunterRoom().round!, picks: { u2: ["c"] } } }));
+    renderBoard(
+      hunterRoom({ round: { ...hunterRoom().round!, picks: { u2: ["c"] } } }),
+    );
 
     // Bob's pick is attributed to Bob — the mode's whole social layer.
     expect(screen.getByLabelText("Picks so far")).toHaveTextContent("Bob");
   });
 
-  it("keeps a hidden slot hidden for the spy even once somebody picks it", () => {
-    // The spy sees THAT a slot was chosen and never what the slot is.
-    renderBoard(spyRoom({ round: { ...spyRoom().round!, picks: { u2: ["tok1"] } } }));
+  // Spec §13 Amendment 1. The server no longer sends the spy anybody else's
+  // pick — not even a tokenised one — so the tally would be a panel showing
+  // only themselves under a heading that says "Picks so far". The board says
+  // outright that it is hiding them, because silence reads as broken.
+  it("tells the spy the room's picks are hidden from them, rather than showing an empty tally", () => {
+    renderBoard(spyRoom({ round: { ...spyRoom().round!, picks: {} } }));
 
-    const tally = screen.getByLabelText("Picks so far");
-    expect(tally).toHaveTextContent("Redacted option");
-    expect(tally).toHaveTextContent("Bob");
+    expect(screen.queryByLabelText("Picks so far")).toBeNull();
+    expect(
+      screen.getByLabelText("The room's picks are hidden from you"),
+    ).toBeInTheDocument();
+  });
+
+  // "1 of 4 picks in" would be a claim about the ROOM built from a number that
+  // now only ever counts the spy themselves.
+  it("never counts the room's picks for the spy", () => {
+    renderBoard(
+      spyRoom({ round: { ...spyRoom().round!, picks: { u1: ["a"] } } }),
+    );
+
+    expect(screen.queryByText(/picks in/)).toBeNull();
+  });
+
+  it("still shows a hunter the tally, which is unchanged", () => {
+    renderBoard(
+      hunterRoom({ round: { ...hunterRoom().round!, picks: { u2: ["c"] } } }),
+    );
+
+    expect(screen.getByLabelText("Picks so far")).toHaveTextContent("Bob");
   });
 });

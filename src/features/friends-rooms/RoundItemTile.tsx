@@ -25,6 +25,16 @@ export interface RoundItemTileProps {
   mine?: boolean;
   /** Leading the tally — a brighter frame and bar without claiming the pick. */
   leading?: boolean;
+  /**
+   * How the round ENDED for this option — a settled verdict, not a live lead.
+   * Green for the one the room went with, red for the one it dropped.
+   *
+   * Distinct from {@link leading}, which says "ahead right now" in a round
+   * still open and deliberately stays neutral about it. Only a between-round
+   * or results board should pass this; on a live board a red frame would read
+   * as "this option is out" while people are still choosing it.
+   */
+  outcome?: "won" | "lost";
   /** Corner badge: "YOUR VOTE", "CUT". */
   badge?: { label: string; tone: "acc" | "danger" };
   /** Live tally under the name. Omit for modes with no public count. */
@@ -62,6 +72,7 @@ export function RoundItemTile({
   spent = false,
   mine = false,
   leading = false,
+  outcome,
   badge,
   tally,
   people,
@@ -80,11 +91,18 @@ export function RoundItemTile({
     "relative flex w-full flex-col overflow-hidden rounded-[16px] border text-start transition-[transform,border-color,opacity] duration-200 ease-signature",
     spent
       ? "border-border opacity-40 grayscale"
-      : mine
-        ? "border-acc/50 bg-surface-card"
-        : leading
-          ? "border-border-strong bg-surface-card"
-          : "border-border bg-surface-card",
+      : // A settled verdict outranks every live treatment below it: once the
+        // round is over, "you picked this" and "this was ahead" are both
+        // stale, and only won/lost is still true.
+        outcome === "won"
+        ? "border-success bg-success/[0.06] ring-1 ring-success/35"
+        : outcome === "lost"
+          ? "border-danger/70 bg-danger/[0.04]"
+          : mine
+            ? "border-acc/50 bg-surface-card"
+            : leading
+              ? "border-border-strong bg-surface-card"
+              : "border-border bg-surface-card",
     onPick && !spent && "hover:-translate-y-[3px] hover:border-acc/40",
     !onPick && !spent && "cursor-default",
   );
@@ -97,7 +115,12 @@ export function RoundItemTile({
     ) : null;
 
   const body = (
-    <span className="flex flex-col gap-[7px] p-[11px_12px_12px]">
+    // `flex-1` so the body takes the card's slack, which is what lets the tally
+    // sit on the floor: a row stretches every card to the tallest, and without
+    // it a short title left the bar floating mid-card while its neighbours'
+    // sat lower. Bars that do not share a baseline cannot be compared, which
+    // is the only thing a tally bar is for.
+    <span className="flex flex-1 flex-col gap-[7px] p-[11px_12px_12px]">
       <span
         className={cn(
           "text-[13.5px] font-semibold",
@@ -147,12 +170,16 @@ export function RoundItemTile({
         </span>
       )}
       {tally && (
-        <span className="flex items-center gap-2">
+        <span className="mt-auto flex items-center gap-2 pt-1">
           <span className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/[0.07]">
             <span
               className={cn(
                 "block h-full rounded-full transition-[width] duration-300 ease-signature motion-reduce:transition-none",
-                leading ? "bg-acc" : "bg-white/20",
+                outcome === "won"
+                  ? "bg-success"
+                  : leading
+                    ? "bg-acc"
+                    : "bg-white/20",
               )}
               style={{ width: `${pct}%` }}
             />
@@ -160,7 +187,11 @@ export function RoundItemTile({
           <span
             className={cn(
               "font-mono text-xs font-bold tabular-nums",
-              leading ? "text-acc-hover" : "text-foreground-tertiary",
+              outcome === "won"
+                ? "text-success"
+                : leading
+                  ? "text-acc-hover"
+                  : "text-foreground-tertiary",
             )}
           >
             {tally.count}

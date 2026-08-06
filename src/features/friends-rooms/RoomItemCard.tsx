@@ -64,8 +64,9 @@ const STATUS_FRAME: Record<"good" | "bad", Record<RoomItemStatus, string>> = {
  * One item on a friends-room board. Renders the same media the play screens use
  * — a real player for a resolvable youtube item ({@link YouTubeCard}), the
  * still-image slot for an image item ({@link ImageCard}), a plain card for text
- * — then layers room state on top: a claimant's avatar rides the top-right
- * corner in red for a sacrifice, the surviving item turns green.
+ * — then layers room state on top: the claimant is named (with their face) on
+ * the card's own status line, and the item singled out at the end turns green
+ * or red depending on what the format's odd-one-out MEANS.
  *
  * A free item in the round is a single claim button. Anything already claimed or
  * resolved is inert (a div), so a taken item can't be clicked.
@@ -122,70 +123,64 @@ export function RoomItemCard({
     <ImageCard src={mediaUrl(item.value)} alt={item.title} />
   ) : null;
 
-  // The corner badge overlays the media, so it only exists when there IS media.
-  // Without this split the claimant was drawn twice on a text item — once here
-  // and once by the badge, which fell onto this same row for want of anything
-  // to sit on.
-  const hasMedia = media !== null;
-
   // The status label gets its own line rather than a column beside the title:
   // sharing the row left a long title a narrow gutter and broke it one word per
   // line, while "Kept by <name>" sat in the space it needed.
   const body = (
     <div className="flex flex-col gap-1.5 p-4">
       <div className="flex items-center gap-2">
-        {claimant && !hasMedia ? (
-          <UserAvatar
-            username={claimant.username}
-            avatarKey={claimant.avatarKey}
-            className={cn(
-              "h-6 w-6 flex-none rounded-full border text-[11px]",
-              (status === "survivor") === oddOneOutIsGood
-                ? "border-success text-foreground-secondary"
-                : "border-danger text-foreground-secondary",
-            )}
-          />
-        ) : (
-          <span
-            aria-hidden
-            className="flex-none text-xs font-semibold text-foreground-tertiary"
-          >
-            {number}
-          </span>
-        )}
+        <span
+          aria-hidden
+          className="flex-none text-xs font-semibold text-foreground-tertiary"
+        >
+          {number}
+        </span>
         <Text className="min-w-0 flex-1 font-semibold">{item.title}</Text>
       </div>
       {statusLabel && (
-        <Text
-          variant={
-            (status === "survivor") === oddOneOutIsGood ? "body" : "danger"
-          }
+        // The claimant's face sits HERE, on the line that already names them,
+        // rather than as a badge over the media. On the corner it covered the
+        // top-right of every video and read as a watermark; beside the words
+        // "Saved by Bogdan" it is the same fact told once.
+        <span
           className={cn(
-            "text-xs font-medium",
-            (status === "survivor") === oddOneOutIsGood && "text-success",
+            "flex items-center gap-1.5",
+            // A bare verdict ("this item was sacrificed") is the card's
+            // conclusion and centres under it; one that names somebody is a
+            // chip — avatar then name — and reads from the start like any
+            // other label.
+            claimant ? "justify-start" : "justify-center",
           )}
         >
-          {statusLabel}
-        </Text>
+          {claimant && (
+            <UserAvatar
+              username={claimant.username}
+              avatarKey={claimant.avatarKey}
+              className={cn(
+                "h-[22px] w-[22px] flex-none rounded-full border text-[9px]",
+                (status === "survivor") === oddOneOutIsGood
+                  ? "border-success"
+                  : "border-danger",
+              )}
+            />
+          )}
+          <Text
+            variant={
+              (status === "survivor") === oddOneOutIsGood ? "body" : "danger"
+            }
+            className={cn(
+              "min-w-0 truncate text-xs font-semibold",
+              // Text's own variant sets a colour and cn() is a plain join, so
+              // the good case has to override it explicitly while the bad case
+              // rides `variant="danger"` — see Text's doc comment.
+              (status === "survivor") === oddOneOutIsGood && "text-success",
+            )}
+          >
+            {statusLabel}
+          </Text>
+        </span>
       )}
     </div>
-  );
-
-  const cornerAvatar = claimant && hasMedia && (
-    <span
-      className={cn(
-        "absolute end-2 top-2 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full border-2",
-        (status === "survivor") === oddOneOutIsGood
-          ? "border-success"
-          : "border-danger",
-      )}
-    >
-      <UserAvatar
-        username={claimant.username}
-        avatarKey={claimant.avatarKey}
-        className="h-full w-full rounded-full bg-surface text-xs text-foreground-secondary"
-      />
-    </span>
   );
 
   if (claimable) {
@@ -232,7 +227,6 @@ export function RoomItemCard({
 
   return (
     <div className={frame} aria-label={item.title}>
-      {cornerAvatar}
       {media}
       {item.type === "youtube" && !videoId && (
         <div className="px-4 pt-4">

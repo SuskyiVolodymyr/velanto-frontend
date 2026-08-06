@@ -109,7 +109,7 @@ export function roundResultFromResolved(
         // un-redacts the round they just played half-blind.
         items: payload.items ?? round.items,
         picks: payload.picks,
-        ...(payload.sides ?? round.sides
+        ...((payload.sides ?? round.sides)
           ? { sides: payload.sides ?? round.sides }
           : {}),
       };

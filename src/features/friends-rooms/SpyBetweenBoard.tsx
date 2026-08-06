@@ -2,11 +2,12 @@
 
 import { Fragment } from "react";
 import { useTranslations } from "next-intl";
-import { ArrowRight } from "lucide-react";
-import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
+import { cn } from "@/src/shared/lib/cn";
+import { BetweenNextButton } from "./BetweenNextButton";
 import { RoundItemTile } from "./RoundItemTile";
 import { RevealSideRow } from "./RevealSideRow";
+import { BetweenVsRow } from "./BetweenVsRow";
 import { VsDivider } from "./VsDivider";
 import type { RoomPlayerState, RoomState, SpyRoundResult } from "./room-types";
 
@@ -50,18 +51,38 @@ export function SpyBetweenBoard({
   }
 
   const itemsById = new Map((closed?.items ?? []).map((i) => [i.id, i]));
-  const me = state.players.find((p) => p.userId === currentUserId) ?? null;
-  const ready = state.players.filter((p) => p.next).length;
+
+  // 1v1 keeps the head-to-head shape it was played under. No won/lost frame,
+  // unlike Voting's: a Spy round has no shared verdict — the picks ARE the
+  // evidence, and painting one card as "the answer" would put the room's
+  // majority where the mode only ever shows individual choices.
+  const isVersusPair =
+    state.packFormat === "1v1" && (closed?.items.length ?? 0) === 2;
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-1">
-        <Text variant="tertiary" className="text-xs tracking-wide uppercase">
-          {t("spy.picksHeading")}
-        </Text>
-        <Text as="h2" variant="title" className="text-2xl">
-          {closed?.name ?? t("spy.reveal.historyHeading")}
-        </Text>
+      <header className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col gap-1">
+          <Text variant="tertiary" className="text-xs tracking-wide uppercase">
+            {t("spy.picksHeading")}
+          </Text>
+          <Text as="h2" variant="title" className="text-2xl">
+            {closed?.name ?? t("spy.reveal.historyHeading")}
+          </Text>
+        </div>
+        {/* On the title row, not under the board: the nxn arm puts this on
+            its VS row for the same reason, and a grid of media has no divider
+            row to share. Rendered here only for the arms that need it — the
+            `sides` arm's copy lives in BetweenVsRow. */}
+        {!closed?.sides && (
+          <div className="ms-auto flex flex-wrap items-center justify-end gap-3">
+            <BetweenNextButton
+              state={state}
+              currentUserId={currentUserId}
+              onNext={onNext}
+            />
+          </div>
+        )}
       </header>
 
       {closed && closed.sides ? (
@@ -70,7 +91,13 @@ export function SpyBetweenBoard({
         <div className="flex flex-col gap-[14px]">
           {closed.sides.map((side, index) => (
             <Fragment key={side.id}>
-              {index > 0 && <VsDivider />}
+              {index > 0 && (
+                <BetweenVsRow
+                  state={state}
+                  currentUserId={currentUserId}
+                  onNext={onNext}
+                />
+              )}
               <RevealSideRow
                 side={side}
                 items={side.itemIds
@@ -78,43 +105,43 @@ export function SpyBetweenBoard({
                   .filter((item): item is NonNullable<typeof item> =>
                     Boolean(item),
                   )}
-                // Real usernames in the chip slot Guess-who fills with its
-                // anonymous labels. Same affordance, and here the names ARE
-                // the point — nothing about a Spy round is anonymous.
-                pickLabels={(pickersByOption.get(side.id) ?? []).map(
-                  (player) => ({
-                    label: player.username,
-                    className: "bg-white/10 text-foreground",
-                  }),
-                )}
+                // Named and faced, in the slot Guess-who fills with anonymous
+                // labels: nothing about a Spy round is anonymous, and who took
+                // which side is the mode's entire evidence base.
+                voters={pickersByOption.get(side.id)}
               />
             </Fragment>
           ))}
         </div>
       ) : closed ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {closed.items.map((item) => (
-            <RoundItemTile
-              key={item.id}
-              item={item}
-              actionLabel={item.title}
-              // Named, not a stack of anonymous avatars: the round is over, and
-              // who chose what is the entire evidence base of the mode.
-              voters={pickersByOption.get(item.id)}
-            />
-          ))}
+        <div
+          className={cn(
+            isVersusPair
+              ? "grid items-center gap-5 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]"
+              : "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3",
+          )}
+        >
+          {closed.items.map((item, index) => {
+            const tile = (
+              <RoundItemTile
+                item={item}
+                actionLabel={item.title}
+                // Named, not a stack of anonymous avatars: the round is over,
+                // and who chose what is the entire evidence base of the mode.
+                voters={pickersByOption.get(item.id)}
+              />
+            );
+            return isVersusPair ? (
+              <Fragment key={item.id}>
+                {index > 0 && <VsDivider />}
+                {tile}
+              </Fragment>
+            ) : (
+              <Fragment key={item.id}>{tile}</Fragment>
+            );
+          })}
         </div>
       ) : null}
-
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Text variant="secondary" aria-live="polite" className="text-sm">
-          {t("between.ready", { count: ready, total: state.players.length })}
-        </Text>
-        <Button disabled={me?.next ?? false} onClick={onNext}>
-          {t("between.next")}
-          <ArrowRight size={16} aria-hidden />
-        </Button>
-      </div>
     </div>
   );
 }

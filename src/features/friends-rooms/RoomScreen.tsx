@@ -85,11 +85,15 @@ export function RoomScreen({ roomId }: { roomId: string }) {
     return (
       <Shell>
         {state.mode === "guess_who" && state.endgame ? (
-          <IdentityRevealScreen state={state} />
+          <IdentityRevealScreen state={state} currentUserId={userId} />
         ) : state.mode === "spy" && state.endgame ? (
           <SpyRevealScreen state={state} currentUserId={userId} />
         ) : (
-          <RoomResults state={state} packFormat={packFormat} />
+          <RoomResults
+            state={state}
+            currentUserId={userId}
+            packFormat={packFormat}
+          />
         )}
       </Shell>
     );

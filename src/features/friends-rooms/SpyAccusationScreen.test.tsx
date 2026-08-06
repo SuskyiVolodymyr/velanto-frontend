@@ -99,7 +99,15 @@ describe("SpyAccusationScreen", () => {
   it("sends the accusation", async () => {
     const onAccuse = renderScreen(accusingRoom());
 
+    // Two steps, not one: naming someone moves them into the centre panel,
+    // and only Confirm sends it. An accusation is the one irreversible move in
+    // the mode, and a single mis-click used to be the whole of it.
     await userEvent.click(screen.getByRole("button", { name: "Accuse Cara" }));
+    expect(onAccuse).not.toHaveBeenCalled();
+
+    await userEvent.click(
+      screen.getByRole("button", { name: "Confirm accusation" }),
+    );
 
     expect(onAccuse).toHaveBeenCalledWith("u3");
   });
