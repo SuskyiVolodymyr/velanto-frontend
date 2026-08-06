@@ -45,6 +45,12 @@ describe("robots", () => {
     }
   });
 
+  // Not a database concern — the lab renders fabricated rooms and invented
+  // players, which have no business in a search result.
+  it("keeps the design lab out of the index", () => {
+    expect(rules.disallow).toContain("/design/");
+  });
+
   it("still points crawlers at the sitemap", () => {
     expect(robots().sitemap).toBe(`${SITE_URL}/sitemap.xml`);
   });

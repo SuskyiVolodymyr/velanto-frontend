@@ -64,6 +64,11 @@ export default function robots(): MetadataRoute.Robots {
         "/rooms/",
         "/people",
         "/feedback",
+        // The design lab (src/features/design-lab): real screens fed mock
+        // state, for working on a layout without a backend. It costs no query,
+        // but it is internal tooling showing fabricated content — indexing it
+        // would put fake rooms and invented players in search results.
+        "/design/",
       ],
     },
     sitemap: `${SITE_URL}/sitemap.xml`,
