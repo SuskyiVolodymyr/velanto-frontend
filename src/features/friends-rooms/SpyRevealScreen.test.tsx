@@ -67,6 +67,21 @@ function renderReveal(state: RoomState, currentUserId = "u1") {
 }
 
 describe("SpyRevealScreen", () => {
+  it("heads itself and offers a way out", () => {
+    // The room header (with Leave) is gone once a game is finished, and the
+    // nav rail comes back only because this phase asks for it. Without a title
+    // and a link, a finished room was a page with neither.
+    renderReveal(revealedRoom());
+
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(
+      "Test Pack",
+    );
+    expect(screen.getByRole("link", { name: /back to pack/i })).toHaveAttribute(
+      "href",
+      "/packs/pack-1",
+    );
+  });
+
   it("names the spy", () => {
     renderReveal(revealedRoom());
 

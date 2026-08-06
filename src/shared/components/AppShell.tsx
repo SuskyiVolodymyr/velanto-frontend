@@ -17,6 +17,7 @@ import { MobileBottomNav } from "@/src/shared/components/MobileBottomNav";
 import { RoomPresenceIndicator } from "@/src/features/friends-rooms/RoomPresenceIndicator";
 import { SearchQueryProvider } from "@/src/features/home/search-query-context";
 import { SidebarProvider } from "@/src/shared/lib/sidebar-context";
+import { PlayFocusProvider } from "@/src/shared/lib/play-focus-context";
 import { setPreviousPath } from "@/src/shared/lib/in-app-history";
 import { cn } from "@/src/shared/lib/cn";
 
@@ -33,15 +34,19 @@ function isFullScreenRoute(pathname: string): boolean {
 //  - the pack authoring surface (`/create`, `/packs/:id/edit` — both the same
 //    CreatePackForm): a focused editor with its own sticky action bar and a
 //    two-line title block, keeping its pre-2.1.0 dashboard-only behaviour;
-//  - the PLAY surfaces (`/packs/:id/play`, `/rooms/:id`): a round owns the
-//    whole width, and the rail is navigation you are not meant to be reaching
-//    for mid-game. `/packs/:id/result` is deliberately NOT here — you have
+//  - the solo PLAY screen (`/packs/:id/play`): a round owns the whole width,
+//    and the rail is navigation you are not meant to be reaching for
+//    mid-game. `/packs/:id/result` is deliberately NOT here — you have
 //    finished playing by then and the next thing you want is to go elsewhere.
+//
+// A live ROOM is not here either, and cannot be: it plays AND shows its
+// results at the same `/rooms/:id`, so no path test can separate them. It
+// asks for focus per phase instead — see usePlayFocus.
 //
 // Unlike /auth these still get the bottom nav and the rest of the chrome, so
 // this is a separate check rather than another full-screen route.
 function isNoRailRoute(pathname: string): boolean {
-  return /^(?:\/[a-z]{2})?\/(?:create|rooms\/[^/]+|packs\/[^/]+\/(?:edit|play))(?:\/|$)/.test(
+  return /^(?:\/[a-z]{2})?\/(?:create|packs\/[^/]+\/(?:edit|play))(?:\/|$)/.test(
     pathname,
   );
 }
@@ -90,6 +95,10 @@ export function AppShell({ children }: { children: ReactNode }) {
   // 881-1180px forces the collapsed rail; tracked in JS because the icon-only
   // content (not just the width) depends on it.
   const [narrowDesktop, setNarrowDesktop] = useState(false);
+  // Set by a page that is mid-play — see usePlayFocus. A live room plays
+  // and shows its results at the SAME url, so the route alone cannot tell
+  // the two apart.
+  const [playFocused, setPlayFocused] = useState(false);
 
   const closeDrawer = useCallback(() => setDrawerOpen(false), []);
 
@@ -148,7 +157,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   // (MobileBottomNav always carries Create/Notifications/Profile regardless
   // of route).
   const onDashboard = isDashboardRoute(pathname);
-  const hasRail = !isNoRailRoute(pathname);
+  const hasRail = !isNoRailRoute(pathname) && !playFocused;
 
   // Expanded on the dashboard, collapsed everywhere else — until the user says
   // otherwise, after which their choice travels with them across navigations
@@ -177,30 +186,33 @@ export function AppShell({ children }: { children: ReactNode }) {
     // provider is the seam. Wraps the whole shell, but only the dashboard
     // mounts a search box, so it's inert everywhere else.
     <SearchQueryProvider>
-      <SidebarProvider
-        value={{
-          collapsed: railCollapsed,
-          toggle: onMenuToggle,
-          // Drives SidebarToggle's self-hiding: on a no-rail route the header
-          // renders no button rather than one that controls nothing.
-          available: hasRail,
-        }}
+      <PlayFocusProvider
+        value={{ focused: playFocused, setFocused: setPlayFocused }}
       >
-        <div className="flex min-h-full">
-          {hasRail && (
-            <>
-              <AppSidebar collapsed={railCollapsed} />
-              <MobileDrawer open={drawerOpen} onClose={closeDrawer} />
-            </>
-          )}
+        <SidebarProvider
+          value={{
+            collapsed: railCollapsed,
+            toggle: onMenuToggle,
+            // Drives SidebarToggle's self-hiding: on a no-rail route the header
+            // renders no button rather than one that controls nothing.
+            available: hasRail,
+          }}
+        >
+          <div className="flex min-h-full">
+            {hasRail && (
+              <>
+                <AppSidebar collapsed={railCollapsed} />
+                <MobileDrawer open={drawerOpen} onClose={closeDrawer} />
+              </>
+            )}
 
-          {/* Content column. Bottom padding clears the fixed MobileBottomNav (its
+            {/* Content column. Bottom padding clears the fixed MobileBottomNav (its
             emphasized Create button makes it ~4.5rem) plus the safe-area inset,
             dropping away from 881px up where the nav is gone. */}
-          <div className="flex min-h-full min-w-0 flex-1 flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] min-[881px]:pb-0">
-            {onDashboard && <AppTopBar onMenuToggle={onMenuToggle} />}
-            <BannedBanner />
-            {/* The page fills the viewport before the footer begins, so the
+            <div className="flex min-h-full min-w-0 flex-1 flex-col pb-[calc(4.5rem+env(safe-area-inset-bottom))] min-[881px]:pb-0">
+              {onDashboard && <AppTopBar onMenuToggle={onMenuToggle} />}
+              <BannedBanner />
+              {/* The page fills the viewport before the footer begins, so the
                 footer always starts just below the fold and is reached by
                 scrolling — rather than riding up to sit under a short page's
                 content, which read as "the page ended early".
@@ -212,35 +224,36 @@ export function AppShell({ children }: { children: ReactNode }) {
                 Kept as a flex column that itself grows, so a child using
                 `flex-1` (the play and room screens do) still stretches exactly
                 as it did when it was a direct child of the column. */}
-            <div
-              className={
-                hasRail ? "flex min-h-screen flex-1 flex-col" : "contents"
-              }
-            >
-              {children}
-            </div>
-            {/* Same reach as the rail: global chrome on every chromed route,
+              <div
+                className={
+                  hasRail ? "flex min-h-screen flex-1 flex-col" : "contents"
+                }
+              >
+                {children}
+              </div>
+              {/* Same reach as the rail: global chrome on every chromed route,
                 absent from /auth and the authoring surface, where a footer
                 under a focused editor is noise. */}
-            {hasRail && <SiteFooter />}
-          </div>
+              {hasRail && <SiteFooter />}
+            </div>
 
-          <MobileBottomNav />
-          {/* Floating "you're in a room" affordance, shown wherever the rail's
+            <MobileBottomNav />
+            {/* Floating "you're in a room" affordance, shown wherever the rail's
             own room pill is not. That pill is dropped from the collapsed rail
             (no room for its text), so the tracking condition is the rail's
             state, not the route: expanded desktop rail => the pill covers it
             and this stays mobile-only; collapsed => this is the only such
             affordance at any width. */}
-          <div
-            className={
-              railCollapsed ? "contents" : "contents min-[881px]:hidden"
-            }
-          >
-            <RoomPresenceIndicator />
+            <div
+              className={
+                railCollapsed ? "contents" : "contents min-[881px]:hidden"
+              }
+            >
+              <RoomPresenceIndicator />
+            </div>
           </div>
-        </div>
-      </SidebarProvider>
+        </SidebarProvider>
+      </PlayFocusProvider>
     </SearchQueryProvider>
   );
 }

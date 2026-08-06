@@ -5,8 +5,15 @@ import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { AppShell } from "./AppShell";
 import { useSidebar } from "@/src/shared/lib/sidebar-context";
+import { usePlayFocus } from "@/src/shared/lib/play-focus-context";
 
 /** Stands in for a page's PageHeader toggle: any descendant can flip the rail. */
+/** Stands in for RoomScreen, which declares focus from inside the shell. */
+function PlayFocusProbe({ active }: { active: boolean }) {
+  usePlayFocus(active);
+  return <div>content</div>;
+}
+
 function SidebarToggleProbe() {
   const { toggle } = useSidebar();
   return (
@@ -144,24 +151,34 @@ describe("AppShell", () => {
     },
   );
 
-  // Playing is a focused surface: a live room and a solo playthrough both own
-  // the whole width, and the rail is navigation you are not meant to be using
-  // mid-round.
-  it.each(["/packs/abc123/play", "/rooms/room-1"])(
-    "renders no rail on the play surface %s",
-    (path) => {
-      pathname.current = path;
-      renderShell(<div>content</div>);
-      expect(screen.queryByTestId("app-sidebar")).not.toBeInTheDocument();
-      expect(screen.getByText("content")).toBeInTheDocument();
-    },
-  );
+  // Playing is a focused surface: a round owns the whole width, and the rail
+  // is navigation you are not meant to be using mid-round.
+  it("renders no rail on the solo play screen", () => {
+    pathname.current = "/packs/abc123/play";
+    renderShell(<div>content</div>);
+    expect(screen.queryByTestId("app-sidebar")).not.toBeInTheDocument();
+    expect(screen.getByText("content")).toBeInTheDocument();
+  });
 
   it("keeps the rail on the result screen, which is a reading page", () => {
     // You are done playing there and the next thing you want is to go
     // somewhere else.
     pathname.current = "/packs/abc123/result";
     renderShell(<div>content</div>);
+    expect(screen.getByTestId("app-sidebar")).toBeInTheDocument();
+  });
+
+  // A live room plays AND shows its results at the same url, so no path test
+  // can separate them — the page says which it is.
+  it("drops the rail while a page declares itself mid-play", () => {
+    pathname.current = "/rooms/room-1";
+    renderShell(<PlayFocusProbe active />);
+    expect(screen.queryByTestId("app-sidebar")).not.toBeInTheDocument();
+  });
+
+  it("keeps the rail on that same url once the page stops asking", () => {
+    pathname.current = "/rooms/room-1";
+    renderShell(<PlayFocusProbe active={false} />);
     expect(screen.getByTestId("app-sidebar")).toBeInTheDocument();
   });
 
