@@ -28,14 +28,20 @@ function isFullScreenRoute(pathname: string): boolean {
   return /^(?:\/[a-z]{2})?\/auth(?:\/|$)/.test(pathname);
 }
 
-// Chromed routes that still get NO nav rail: the pack authoring surface
-// (`/create` and `/packs/:id/edit`, both the same CreatePackForm). It is a
-// focused editor with its own sticky action bar and a two-line title block,
-// and it keeps the pre-2.1.0 dashboard-only behaviour deliberately — unlike
-// /auth it still gets the bottom nav and the rest of the chrome, so this is a
-// separate check rather than another full-screen route.
+// Chromed routes that still get NO nav rail. Two kinds:
+//
+//  - the pack authoring surface (`/create`, `/packs/:id/edit` — both the same
+//    CreatePackForm): a focused editor with its own sticky action bar and a
+//    two-line title block, keeping its pre-2.1.0 dashboard-only behaviour;
+//  - the PLAY surfaces (`/packs/:id/play`, `/rooms/:id`): a round owns the
+//    whole width, and the rail is navigation you are not meant to be reaching
+//    for mid-game. `/packs/:id/result` is deliberately NOT here — you have
+//    finished playing by then and the next thing you want is to go elsewhere.
+//
+// Unlike /auth these still get the bottom nav and the rest of the chrome, so
+// this is a separate check rather than another full-screen route.
 function isNoRailRoute(pathname: string): boolean {
-  return /^(?:\/[a-z]{2})?\/(?:create|packs\/[^/]+\/edit)(?:\/|$)/.test(
+  return /^(?:\/[a-z]{2})?\/(?:create|rooms\/[^/]+|packs\/[^/]+\/(?:edit|play))(?:\/|$)/.test(
     pathname,
   );
 }

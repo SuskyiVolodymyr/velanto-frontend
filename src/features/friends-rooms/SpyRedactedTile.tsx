@@ -17,6 +17,15 @@ interface SpyRedactedTileProps {
   onPick: () => void;
   /** The viewer picked this one, blind. */
   mine?: boolean;
+  /**
+   * Stretch to the row's height with no fixed media ratio.
+   *
+   * For nxn, where the sibling is a whole SIDE — a pool name plus its drawn
+   * items — so a tile sized to a 16:9 thumbnail sits as a stub next to it and
+   * reads as a broken card rather than a withheld one. What is hidden here is
+   * a side, so it should occupy a side.
+   */
+  fill?: boolean;
   /** Who else picked it — the crowd's shape, which is not hidden. */
   people?: RoomPlayerState[];
   tally?: { count: number; max: number };
@@ -39,6 +48,7 @@ export function SpyRedactedTile({
   slotLabel,
   onPick,
   mine = false,
+  fill = false,
   people = [],
   tally,
 }: SpyRedactedTileProps) {
@@ -51,6 +61,7 @@ export function SpyRedactedTile({
       aria-pressed={mine}
       className={cn(
         "relative flex flex-col overflow-hidden rounded-card border text-start",
+        fill && "h-full",
         "transition-transform duration-200 ease-signature motion-reduce:transition-none",
         "hover:-translate-y-[3px] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-spy",
         mine ? "border-spy" : "border-spy/30",
@@ -58,7 +69,11 @@ export function SpyRedactedTile({
     >
       <span
         aria-hidden
-        className="relative grid aspect-video place-items-center bg-spy/[0.07]"
+        className={cn(
+          "relative grid place-items-center bg-spy/[0.07]",
+          // Fills the leftover height instead of claiming a thumbnail's ratio.
+          fill ? "min-h-[120px] flex-1" : "aspect-video",
+        )}
         style={{
           // Hatching, so a redacted slot reads as deliberately withheld rather
           // than as an image that failed to load.

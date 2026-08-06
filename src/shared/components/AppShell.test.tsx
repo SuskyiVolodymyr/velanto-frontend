@@ -144,6 +144,27 @@ describe("AppShell", () => {
     },
   );
 
+  // Playing is a focused surface: a live room and a solo playthrough both own
+  // the whole width, and the rail is navigation you are not meant to be using
+  // mid-round.
+  it.each(["/packs/abc123/play", "/rooms/room-1"])(
+    "renders no rail on the play surface %s",
+    (path) => {
+      pathname.current = path;
+      renderShell(<div>content</div>);
+      expect(screen.queryByTestId("app-sidebar")).not.toBeInTheDocument();
+      expect(screen.getByText("content")).toBeInTheDocument();
+    },
+  );
+
+  it("keeps the rail on the result screen, which is a reading page", () => {
+    // You are done playing there and the next thing you want is to go
+    // somewhere else.
+    pathname.current = "/packs/abc123/result";
+    renderShell(<div>content</div>);
+    expect(screen.getByTestId("app-sidebar")).toBeInTheDocument();
+  });
+
   it("renders no chrome at all on the full-screen /auth route", () => {
     pathname.current = "/auth";
     renderShell(<div>auth content</div>);
