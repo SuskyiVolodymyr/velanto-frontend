@@ -7,6 +7,7 @@ import { GuessWhoRevealBoard } from "./GuessWhoRevealBoard";
 import { VotingBetweenBoard } from "./VotingBetweenBoard";
 import { BordaRevealBoard } from "./BordaRevealBoard";
 import { RelayBetweenBoard } from "./RelayBetweenBoard";
+import { SpyBetweenBoard } from "./SpyBetweenBoard";
 
 interface RoomBetweenBoardProps {
   state: RoomState;
@@ -64,6 +65,14 @@ export function RoomBetweenBoard({
     case "shared_grid":
       return (
         <BordaRevealBoard
+          state={state}
+          currentUserId={currentUserId}
+          onNext={onNext}
+        />
+      );
+    case "spy":
+      return (
+        <SpyBetweenBoard
           state={state}
           currentUserId={currentUserId}
           onNext={onNext}

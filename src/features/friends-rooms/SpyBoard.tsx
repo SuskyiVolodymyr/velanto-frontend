@@ -186,7 +186,7 @@ export function SpyBoard({ state, currentUserId, onPick }: SpyBoardProps) {
         // nxn: a pick names a SIDE. The side the spy cannot see arrives with
         // its pool NAME blanked and no items — hiding the contents while
         // leaving the name would give the round away on its own.
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="grid grid-cols-1 items-stretch gap-4 sm:grid-cols-2">
           {round.sides.map((side, index) => {
             const count = counts.get(side.id) ?? 0;
             const hidden = side.name === "";
@@ -198,6 +198,10 @@ export function SpyBoard({ state, currentUserId, onPick }: SpyBoardProps) {
                   actionLabel={t("spy.pickHidden", { index: index + 1 })}
                   onPick={() => onPick(side.id)}
                   mine={myPick === side.id}
+                  // A whole SIDE is hidden here, so it takes a whole side —
+                  // a thumbnail-sized card beside a full pool reads as broken
+                  // rather than withheld.
+                  fill
                   people={pickersFor(side.id)}
                   tally={{ count, max: maxCount }}
                 />
@@ -242,7 +246,11 @@ export function SpyBoard({ state, currentUserId, onPick }: SpyBoardProps) {
                   mine ? { label: t("spy.yourPick"), tone: "acc" } : undefined
                 }
                 tally={{ count, max: maxCount }}
-                people={pickersFor(optionId).filter(
+                // `voters`, not `people`: named chips UNDER the tile rather
+                // than a stack of bare initials floating over the artwork.
+                // The overlay competes with the media and says nothing to a
+                // screen reader, and in this mode who picked what is the game.
+                voters={pickersFor(optionId).filter(
                   (p) => p.userId !== currentUserId,
                 )}
               />

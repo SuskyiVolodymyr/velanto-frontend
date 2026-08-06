@@ -112,20 +112,32 @@ describe("JoinRoomCard", () => {
     ).toBeInTheDocument();
   });
 
-  it("blocks join for a signed-out visitor (disabled, no redirect)", async () => {
+  // Signed-out joining became legal when guests shipped: a visitor with a code
+  // is exactly who guest join is for. The card used to disable itself here,
+  // which predated that and left the one flow guests exist for unreachable
+  // from the dashboard.
+  it("lets a signed-out visitor type a code", async () => {
+    auth.current = { user: null };
+    renderCard();
+
+    expect(screen.getByLabelText("Room code")).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Join" })).not.toHaveAttribute(
+      "aria-disabled",
+      "true",
+    );
+  });
+
+  it("sends a signed-out visitor to the nickname flow rather than the API", async () => {
     const user = userEvent.setup();
     auth.current = { user: null };
     renderCard();
 
-    // The input is natively disabled, but the button is gated with
-    // aria-disabled (not native `disabled`) so the sign-in tooltip stays
-    // reachable by keyboard/AT — clicking it must still no-op.
-    expect(screen.getByLabelText("Room code")).toBeDisabled();
-    const joinButton = screen.getByRole("button", { name: "Join" });
-    expect(joinButton).toHaveAttribute("aria-disabled", "true");
+    await user.type(screen.getByLabelText("Room code"), " abc123 ");
+    await user.click(screen.getByRole("button", { name: "Join" }));
 
-    await user.click(joinButton);
+    // The authenticated join would 401; /rooms/join/:code is the landing that
+    // already asks for a nickname and joins as a guest.
     expect(join).not.toHaveBeenCalled();
-    expect(push).not.toHaveBeenCalled();
+    expect(push).toHaveBeenCalledWith("/rooms/join/ABC123");
   });
 });
