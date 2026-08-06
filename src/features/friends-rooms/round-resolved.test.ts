@@ -16,6 +16,41 @@ const ROUND = { index: 2, name: "Round three", items: ITEMS };
  * and rendered a blank screen.
  */
 describe("roundResultFromResolved", () => {
+
+  it("assembles a spy round, which had no case at all and produced null", () => {
+    // Without this every spy game's `results` stayed empty: the between-round
+    // board, the accusation evidence table and the reveal history all render
+    // off `results`, so three screens went blank at once.
+    const result = roundResultFromResolved("spy", ROUND, {
+      index: 0,
+      autoNextAt: null,
+      picks: { u1: ["a"], u2: ["b"] },
+    });
+
+    expect(result).toMatchObject({
+      kind: "spy_round",
+      index: 0,
+      picks: { u1: ["a"], u2: ["b"] },
+    });
+  });
+
+  it("prefers the resolved board over the viewer's own, so the spy un-redacts", () => {
+    // The spy's live round is the redacted one. A resolved round is public, so
+    // the event carries the real board and it wins — otherwise the spy's recap
+    // of the round they just played is still full of holes.
+    const result = roundResultFromResolved("spy", ROUND, {
+      index: 0,
+      autoNextAt: null,
+      picks: { u1: ["a"] },
+      items: [
+        { id: "a", type: "text", title: "Real A", value: "Real A" },
+        { id: "z", type: "text", title: "Real Z", value: "Real Z" },
+      ],
+    });
+
+    expect(result?.items.map((i) => i.id)).toEqual(["a", "z"]);
+  });
+
   it("claim -> a survivor result carrying the round's own name and items", () => {
     expect(
       roundResultFromResolved("claim", ROUND, {

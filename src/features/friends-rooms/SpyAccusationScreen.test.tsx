@@ -58,6 +58,33 @@ function renderScreen(state: RoomState, onAccuse = vi.fn()) {
 }
 
 describe("SpyAccusationScreen", () => {
+  it("shows the pick history — it is what the accusation is read from", () => {
+    // This screen shipped with an empty left column because the results the
+    // table reads never arrived (roundResultFromResolved had no spy case), so
+    // the accusation panel sat alone with nothing to reason about.
+    renderScreen(
+      accusingRoom({
+        results: [
+          {
+            kind: "spy_round",
+            index: 0,
+            name: "Round one",
+            items: [
+              { id: "a", type: "text", title: "Title a", value: "Title a" },
+              { id: "b", type: "text", title: "Title b", value: "Title b" },
+            ],
+            picks: { u1: ["a"], u2: ["b"], u3: ["a"], u4: ["a"] },
+          },
+        ],
+      }),
+    );
+
+    const table = screen.getByLabelText("Every pick, every round");
+    expect(table).toHaveTextContent("Title a");
+    expect(table).toHaveTextContent("Title b");
+    expect(table).toHaveTextContent("Bob");
+  });
+
   it("offers everyone except yourself", () => {
     renderScreen(accusingRoom());
 
