@@ -33,9 +33,15 @@ describe("GuessWhoLabelTable", () => {
   it("truncates a long title inside its own cell", () => {
     render(<GuessWhoLabelTable state={stateWithPick()} />);
 
-    const cell = screen.getByText(LONG);
-    expect(cell).toHaveClass("truncate");
-    expect(cell.className).not.toMatch(/\bflex\b/);
+    // Every label's cell lists EVERY option (the one they took in green, the
+    // rest in red), so a two-option round prints each title once per label —
+    // which is the point: you read a label's answer against what it passed up.
+    const cells = screen.getAllByText(LONG);
+    expect(cells).toHaveLength(2);
+    for (const cell of cells) {
+      expect(cell).toHaveClass("truncate");
+      expect(cell.className).not.toMatch(/\bflex\b/);
+    }
   });
 
   // Truncation loses the end of the name, and a column IS the thing you are
@@ -43,7 +49,9 @@ describe("GuessWhoLabelTable", () => {
   it("keeps the full title readable on hover", () => {
     render(<GuessWhoLabelTable state={stateWithPick()} />);
 
-    expect(screen.getByText(LONG)).toHaveAttribute("title", LONG);
+    for (const cell of screen.getAllByText(LONG)) {
+      expect(cell).toHaveAttribute("title", LONG);
+    }
   });
 
   // An nxn pick names a POOL, so it resolved to nothing in `items` and every
@@ -95,8 +103,9 @@ describe("GuessWhoLabelTable", () => {
     it("names the picked side instead of printing its group id", () => {
       render(<GuessWhoLabelTable state={nxnState()} />);
 
-      expect(screen.getByText("Romance")).toBeInTheDocument();
-      expect(screen.getByText("Dark")).toBeInTheDocument();
+      // Once per label, since each cell lists both sides.
+      expect(screen.getAllByText("Romance")).toHaveLength(2);
+      expect(screen.getAllByText("Dark")).toHaveLength(2);
       expect(screen.queryByText("grp_romance")).toBeNull();
       expect(screen.queryByText("grp_dark")).toBeNull();
     });
@@ -108,10 +117,10 @@ describe("GuessWhoLabelTable", () => {
         "Horimiya",
         "Rent-a-Girlfriend",
         "Bunny Girl Senpai",
+        "Berserk",
       ]) {
-        expect(screen.getByText(title)).toBeInTheDocument();
+        expect(screen.getAllByText(title)).toHaveLength(2);
       }
-      expect(screen.getByText("Berserk")).toBeInTheDocument();
     });
   });
 

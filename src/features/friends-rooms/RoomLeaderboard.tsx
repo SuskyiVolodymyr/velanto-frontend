@@ -36,20 +36,34 @@ export function RoomLeaderboard({ entries }: { entries: LeaderboardEntry[] }) {
   const sorted = [...entries].sort((a, b) => b.score - a.score);
   const topScore = sorted[0]?.score;
 
+  // COMPETITION rank (1, 1, 1, 4), not row position. Toned by row index, three
+  // players tied on one point each got gold, silver and bronze — three
+  // different verdicts on one identical score, and the medal colours flatly
+  // contradicted the "Winner" crown beside them. Equal scores now share a
+  // rank, and therefore a colour.
+  const rankOf: number[] = [];
+  sorted.forEach((entry, index) => {
+    rankOf[index] =
+      index > 0 && entry.score === sorted[index - 1].score
+        ? rankOf[index - 1]
+        : index + 1;
+  });
+
   return (
     <ol className="flex flex-col gap-2">
       {sorted.map((entry, index) => {
         const isWinner = entry.score === topScore;
+        const rank = rankOf[index];
         return (
           <li
             key={entry.userId}
             className={cn(
               "flex items-center gap-3 rounded-tile border p-3",
-              index < 3 ? RANK_TONE[index] : "border-border bg-surface-card",
+              rank <= 3 ? RANK_TONE[rank - 1] : "border-border bg-surface-card",
             )}
           >
             <span className="w-6 flex-none text-center text-sm font-bold tabular-nums text-foreground-tertiary">
-              {index + 1}
+              {rank}
             </span>
             <UserAvatar
               username={entry.username}

@@ -1,7 +1,6 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { useTranslations } from "next-intl";
 import { Text } from "@/src/shared/components/Text";
 import { Button } from "@/src/shared/components/Button";
 import { cn } from "@/src/shared/lib/cn";
@@ -17,6 +16,13 @@ import { cn } from "@/src/shared/lib/cn";
  * sideways inside the 330px aside and wrapped every item title to five lines;
  * there is no mock for rank_blind's board specifically, so it takes the shape
  * the mock DOES define for this slot.
+ *
+ * Promoted out of `features/result` when the friends-room results screen needed
+ * the same board. Its two pieces of chrome copy — the "Show N more" button and
+ * the YOURS pill — arrive as props rather than being read from the `result`
+ * catalog, because the room reads its own. Everything else is identical by
+ * construction, which is the point: the room's first version was a hand-built
+ * lookalike and it read as a different app.
  */
 export function BoardCard({
   title,
@@ -26,6 +32,7 @@ export function BoardCard({
   children,
   remaining,
   onShowMore,
+  showMoreLabel,
 }: {
   /** Visible bold card title (the mock's `boardTitle`, e.g. "Most saved"). */
   title?: string;
@@ -40,8 +47,10 @@ export function BoardCard({
   /** Rows not yet shown; the button is hidden at 0. */
   remaining: number;
   onShowMore: () => void;
+  /** Already interpolated with `remaining` by the caller, which owns the
+   * catalog the count is pluralised in. */
+  showMoreLabel?: string;
 }) {
-  const t = useTranslations("result");
   return (
     <div className="flex flex-col gap-3 rounded-[20px] border border-border bg-surface-card p-5">
       {title && (
@@ -64,7 +73,7 @@ export function BoardCard({
           className="self-center border border-white/[0.12] px-4"
           onClick={onShowMore}
         >
-          {t("boardShowMore", { count: remaining })}
+          {showMoreLabel}
         </Button>
       )}
       {subtitle && (
@@ -97,6 +106,7 @@ export function BoardRow({
   headline,
   detail,
   fill,
+  mineLabel,
 }: {
   rank: number;
   name: string;
@@ -107,8 +117,10 @@ export function BoardRow({
   detail: string;
   /** Bar width, 0–100. */
   fill: number;
+  /** The pill on the viewer's own row ("YOURS"). Required whenever `mine`
+   * can be true; the caller owns the catalog it comes from. */
+  mineLabel?: string;
 }) {
-  const t = useTranslations("result");
   const isFirst = rank === 1;
 
   return (
@@ -132,7 +144,7 @@ export function BoardRow({
         </span>
         {mine && (
           <span className="shrink-0 rounded-[6px] bg-acc/[0.16] px-[7px] py-[2px] text-[9.5px] font-bold uppercase tracking-[0.04em] text-acc-hover">
-            {t("topPickedYours")}
+            {mineLabel}
           </span>
         )}
         <span

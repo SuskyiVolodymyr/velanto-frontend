@@ -310,6 +310,7 @@ describe("cross-repo mirrored constants (velanto-backend contract)", () => {
       "voting",
       "shared_grid",
       "relay",
+      "spy",
     ]);
   });
 
@@ -342,6 +343,11 @@ describe("cross-repo mirrored constants (velanto-backend contract)", () => {
       },
       shared_grid: { formats: ["rank_blind"], minPlayers: 2, maxPlayers: 12 },
       relay: { formats: ["rank_blind"], minPlayers: 2, maxPlayers: 6 },
+      spy: {
+        formats: ["save_one", "sacrifice_one", "nxn", "1v1"],
+        minPlayers: 3,
+        maxPlayers: 8,
+      },
     });
   });
 });

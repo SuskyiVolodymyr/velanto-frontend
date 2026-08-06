@@ -9,6 +9,7 @@ export const MODE_NAME_KEY: Record<RoomMode, string> = {
   voting: "modes.voting.name",
   shared_grid: "modes.shared_grid.name",
   relay: "modes.relay.name",
+  spy: "modes.spy.name",
 };
 
 /** The mode picker card's one-line blurb. */
@@ -19,6 +20,7 @@ export const MODE_BLURB_KEY: Record<RoomMode, string> = {
   voting: "modes.voting.blurb",
   shared_grid: "modes.shared_grid.blurb",
   relay: "modes.relay.blurb",
+  spy: "modes.spy.blurb",
 };
 
 /**
@@ -35,6 +37,7 @@ export const MODE_STEP_KEYS: Record<RoomMode, string[]> = Object.fromEntries(
       "voting",
       "shared_grid",
       "relay",
+      "spy",
     ] as RoomMode[]
   ).map((mode) => [
     mode,
@@ -44,9 +47,10 @@ export const MODE_STEP_KEYS: Record<RoomMode, string[]> = Object.fromEntries(
 
 /**
  * What a mode hands back at the end: one verdict the whole room shares, or per
- * player scores with a winner. Only Guess-who scores — everything else resolves
- * to a single shared outcome per round — and the picker card colours the chip
- * on this, so it is the one thing distinguishing a competitive mode at a glance.
+ * player scores with a winner. Guess-who and Spy score; everything else
+ * resolves to a single shared outcome per round. The picker card colours its
+ * chip on this, so it is the one thing distinguishing a competitive mode at a
+ * glance.
  */
 export const MODE_RESULT_KIND: Record<RoomMode, "shared" | "scored"> = {
   claim: "shared",
@@ -55,6 +59,9 @@ export const MODE_RESULT_KIND: Record<RoomMode, "shared" | "scored"> = {
   voting: "shared",
   shared_grid: "shared",
   relay: "shared",
+  // Both roles compete on one leaderboard: an accuser scores for naming the
+  // spy, the spy for every accuser who looked elsewhere.
+  spy: "scored",
 };
 
 /** lucide-react icon name per mode, for the mode picker card. Resolved by the
@@ -67,6 +74,7 @@ export const MODE_ICON: Record<RoomMode, string> = {
   voting: "Vote",
   shared_grid: "LayoutGrid",
   relay: "Repeat",
+  spy: "EyeOff",
 };
 
 /**

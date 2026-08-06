@@ -27,12 +27,37 @@ export interface UpdateEntry {
  */
 export const UPDATES: UpdateEntry[] = [
   {
+    date: "2026-08-06",
+    version: "2.2.0",
+    title: "One of you is lying",
+    bullets: [
+      "Spy is a new way to play any Save One, Sacrifice One, 1v1 or NxN pack with friends. One player is secretly the spy, and half of every round is blacked out for them — on a versus pack they see one side and not even the other side's name. Everyone else sees the whole board.",
+      "Every pick is public, live, under your real name — except to the spy, who sees none of them. They choose from half a board in silence while everyone else watches each other, so they can't blend in by following the crowd, and everyone else is watching for the person whose choices don't quite add up. Once a round closes it's public to everyone, spy included.",
+      "After the last round everyone except the spy names who they think it was. Calling it right scores a point; the spy scores a point for everyone who looked somewhere else. The reveal then shows the whole game back to you — every pick by every player, and, for the first time, exactly which options the spy was blind to in each round.",
+      "Needs three players and a pack with at least three rounds. The spy's own picks don't count toward the pack's statistics — they were choosing from half a board.",
+      "Every room screen has been redesigned. Between rounds you see the round you just played rather than a summary of it — the two contenders side by side at full size with who took each, and the Next button up on the title row instead of below everything you have to scroll past.",
+      "Room results now read like the single-player ones: the game's headline up top, then a round-by-round recap, with the leaderboard and a Top picked board of everything the room chose alongside it. Voting rounds show the faces of who voted for what instead of a percentage.",
+      "The history tables in Guess Who and Spy show every option each round, not just the one that was taken — the pick in green and what it passed up in red, so a player's pattern is readable at a glance. In a Sacrifice One room the colours read the other way round, because there a pick is what you got rid of.",
+    ],
+  },
+  {
     date: "2026-08-05",
     version: "2.1.0",
-    title: "Friends can join without an account",
+    title: "Join without an account, and find your way around",
     bullets: [
       "Someone you send a room code or an invite link to no longer needs to sign up first. They pick a nickname, and they're in the game — same seat, same reconnect if their phone drops, same everything a signed-in player gets. Guests show a small badge in the roster so you can tell who has an account and who typed a name into a box.",
       "Starting a room still needs an account, and a guest can only play the one room they were invited to — nothing else on the site opens up to them.",
+      "There's a sidebar on every screen now. It starts collapsed as a strip of icons and opens when you want it, so you can get to your packs, history, people or the rules from wherever you are instead of going back to the dashboard first.",
+      "Every page has a proper header. Your notifications bell and your account menu are in the same place on every screen, so unread notices no longer wait for you to wander back to the home page. Pages that need one now carry a back button that returns you where you actually came from — open a profile from the People list and back goes to People, not to the dashboard.",
+      "The footer is on every page instead of a few, and it's compact enough to stay out of the way. Short pages fill the screen properly now, so the footer sits below the fold rather than floating halfway up an empty page.",
+      "Browsing packs is easier to read. Each filter is its own labelled control — format, language, tag, sort — instead of a row of unlabelled boxes you had to open to find out what they were.",
+      "Every dropdown on the site is now the same one. Language, format, sort, report reasons, moderation and admin controls all open the same way, look the same, and work with the keyboard — previously about half of them were the browser's own picker and looked different on every device.",
+      "Signed out and clicking something that needs an account? You now get a small sign-in panel anchored to whatever you clicked, explaining what it's for. It used to be a tooltip that was easy to miss and impossible to use on a phone.",
+      "Pack pages open on what you came for: the rounds list starts folded away, so the description, the modes and the play button are visible without scrolling past a long list first.",
+      "Settings behaves. The on/off switches sit where they should and turn your accent colour when they're on, and the sections that only make sense with an account are hidden when you're signed out instead of showing you controls that do nothing.",
+      "Your dashboard shows 15 packs a page instead of 12.",
+      'Packs keep their cover everywhere. The play screen, the results, the room header and the "continue playing" rails all show the pack\'s own artwork instead of a plain gradient, so a pack looks like itself wherever you meet it.',
+      'Fixed what a pick means in a Sacrifice One room. The game said "sacrifice one" and then asked every player to sacrifice something, which would have left nothing standing — a round only ever singles out one item. Claiming now means saving, and the item nobody claims is the one sacrificed. Save One rooms are unchanged, and read the opposite way round, as they always did.',
     ],
   },
   {

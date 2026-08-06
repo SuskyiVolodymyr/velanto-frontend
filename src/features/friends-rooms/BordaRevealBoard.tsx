@@ -1,13 +1,12 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { ArrowRight } from "lucide-react";
-import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { cn } from "@/src/shared/lib/cn";
 import { bordaAlignment } from "./borda-alignment";
 import type { BordaRoundResult, RoomState } from "./room-types";
+import { BetweenNextButton } from "./BetweenNextButton";
 
 /**
  * Shared-grid's resolved round (Rank Modes.dc.html, grid arm): the ranking the
@@ -37,8 +36,6 @@ export function BordaRevealBoard({
 
   const itemsById = new Map(result.items.map((item) => [item.id, item]));
   const playerById = new Map(state.players.map((p) => [p.userId, p]));
-  const me = state.players.find((p) => p.userId === currentUserId);
-  const ready = state.players.filter((p) => p.next).length;
 
   const alignment = Object.entries(bordaAlignment(result)).sort(
     (a, b) => b[1] - a[1],
@@ -104,8 +101,16 @@ export function BordaRevealBoard({
                   >
                     {rowRank}
                   </span>
+                  {/* Titles only. A ranked round is a LIST — the whole task is
+                      comparing five rows against each other and against your
+                      own ballot — and a thumbnail per row turned a five-line
+                      comparison into a page of scrolling. The clips are on the
+                      round board, which is where they were being judged. */}
                   {tier.map((itemId) => (
-                    <Text key={itemId} className="text-sm font-semibold">
+                    <Text
+                      key={itemId}
+                      className="min-w-0 text-sm font-semibold"
+                    >
                       {itemsById.get(itemId)?.title ?? itemId}
                     </Text>
                   ))}
@@ -138,14 +143,12 @@ export function BordaRevealBoard({
           })}
         </ol>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
-          <Text variant="secondary" aria-live="polite" className="text-sm">
-            {t("between.ready", { count: ready, total: state.players.length })}
-          </Text>
-          <Button disabled={Boolean(me?.next)} onClick={onNext}>
-            {t("between.next")}
-            <ArrowRight size={16} aria-hidden />
-          </Button>
+        <div className="flex flex-wrap items-center justify-end gap-3 pt-2">
+          <BetweenNextButton
+            state={state}
+            currentUserId={currentUserId}
+            onNext={onNext}
+          />
         </div>
       </section>
 

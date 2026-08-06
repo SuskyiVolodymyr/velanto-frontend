@@ -1977,6 +1977,24 @@
             "body": "结果不属于某个人——是全房间共同拼出的一份排名。"
           }
         }
+      },
+      "spy": {
+        "name": "卧底",
+        "blurb": "有一位玩家只能看到一半的选项。在游戏结束前把他找出来。",
+        "steps": {
+          "1": {
+            "title": "一位秘密卧底",
+            "body": "每一轮都有一半选项对他隐藏——而且只有他自己知道。"
+          },
+          "2": {
+            "title": "公开选择",
+            "body": "每次选择都以真实姓名公开。留意那些说不通的选择。"
+          },
+          "3": {
+            "title": "指认并计分",
+            "body": "所有人指认卧底。猜对得分；卧底靠别人猜错得分。"
+          }
+        }
       }
     },
     "entry": {
@@ -2080,7 +2098,9 @@
       "not_in_round": "该选项不属于本轮。",
       "round_not_active": "本轮已经结束。",
       "not_a_player": "你在该房间中没有座位。",
-      "malformed": "提交无效，请重试。"
+      "malformed": "提交无效，请重试。",
+      "not_accusing": "房间现在不在指认阶段。",
+      "is_spy": "你是卧底——你不能指认。"
     },
     "between": {
       "next": "下一步",
@@ -2097,7 +2117,24 @@
       "heading": "结果",
       "roundLabel": "第 {index} 轮",
       "backToPack": "返回卡包",
-      "playAgain": "再玩一次"
+      "playAgain": "再玩一次",
+      "againCardTitle": "本局结束",
+      "againCardNote": "用同一个包再来一局，或回去看看里面还有什么。",
+      "topPickedHeading": "最多人选",
+      "topPickedSubtitle": "房间里有多少人选了每一项。",
+      "topPickedSubtitleBorda": "房间里有多少人把每个条目排在第一位。",
+      "topPickedSubtitleRelay": "房间把每个条目排到了多高的位置。",
+      "heroEyebrow": "本局结束",
+      "heroTitle": "房间选出了这些",
+      "heroNote": "每一轮，以及谁站在哪一边。",
+      "heroRounds": "轮次",
+      "heroPlayers": "玩家",
+      "topPickedNote": "{count, plural, other {共 # 轮}}",
+      "boardShowMore": "再显示 {count} 个",
+      "topPickedYours": "你的",
+      "roundByRoundHeading": "逐轮回顾",
+      "roundByRoundNote": "房间每轮的选择",
+      "roundVoted": "{count, plural, other {# 票}}"
     },
     "ended": {
       "heading": "该房间已结束",
@@ -2150,7 +2187,6 @@
       "rankInstruction": "对每一项排序，最佳在前——在所有人锁定之前，没人能看到你的排名。",
       "revealHeading": "揭晓",
       "trajectoryHeading": "大家目前的选择",
-      "roundColumn": "轮次",
       "trajectoryHint": "{count, plural, other {# 轮}}的选择",
       "stillAnonymous": "？",
       "columnHint": "单看一轮谁也认不出来——两个人常常选同一个。真正独特的是一整列。"
@@ -2286,6 +2322,64 @@
       "rankSlotFilled": "第 {rank} 位：{title}",
       "rankPlaceHere": "把《{name}》放这里",
       "rankHiddenAfter": "之后还有 {count} 个未显示"
+    },
+    "spy": {
+      "instruction": "你选哪一个？",
+      "spyTitle": "{total} 个选项中有 {count} 个对你隐藏",
+      "spySideTitle": "你只能看到一边。仍然要做出选择。",
+      "spyHint": "你可以盲选被隐藏的选项——而且你必须这么做，否则你的规律会暴露你。",
+      "hunterTitle": "你们中有一个是卧底",
+      "hunterHint": "所有人看到的是同一个完整棋盘。留意那个选择说不通的人。",
+      "badge": "卧底",
+      "youAreSpy": "你是卧底",
+      "redacted": "被隐藏的选项",
+      "redactedPool": "被隐藏的池",
+      "redactedBadge": "对你隐藏",
+      "slot": "第 {index} 位",
+      "pickFor": "选择 {name}",
+      "pickHidden": "选择第 {index} 位的隐藏选项",
+      "yourPick": "你的选择",
+      "yourBlindPick": "你的盲选",
+      "picked": "已选择",
+      "pickedBlind": "已盲选",
+      "progress": "已有 {count} / {total} 人选择",
+      "picksHeading": "目前的选择",
+      "picksHint": "公开，使用真实姓名",
+      "picksHiddenHeading": "房间的选择对你隐藏",
+      "picksHiddenNote": "你只能从半块板面上选择——看到别人选了什么就能照着混过去。其他人仍然看得见彼此，也看得见你。",
+      "progressBlind": "他人的选择对你隐藏",
+      "spyRule": "对你隐藏的位置在别人选择之后依然隐藏——你只会看到有两位玩家选了某个位置，而永远不知道那是什么。",
+      "hunterRule": "对你没有任何隐藏，而卧底的棋盘每轮都会重新抽取——所以连续几次奇怪的选择才说明问题。",
+      "rosterSpy": "只有你被告知自己是卧底。在揭晓之前，没有人会被告知任何事。",
+      "rosterHunter": "所有人都知道有一个卧底，但没有人知道是谁——这正是这场追捕的全部。",
+      "accuse": {
+        "heading": "指认",
+        "title": "谁是卧底？",
+        "instruction": "说出你认为只看到一半棋盘的那位玩家。",
+        "submit": "指认 {name}",
+        "confirm": "确认指认",
+        "choose": "指认 {name}",
+        "waiting": "已有 {count} / {total} 人指认",
+        "spyWaiting": "你是卧底——安心等着房间做决定。",
+        "deadline": "揭晓倒计时"
+      },
+      "reveal": {
+        "heading": "揭晓",
+        "spyWas": "{name} 是卧底",
+        "youWere": "你就是卧底",
+        "escaped": "{total} 人中有 {count} 人始终没有看穿",
+        "caught": "房间抓到了他",
+        "yourAccusation": "你指认了 {name}",
+        "noAccusation": "你没有指认任何人",
+        "correct": "指认正确",
+        "incorrect": "指认错误",
+        "historyHeading": "每一轮的每一次选择",
+        "historyHint": "房间里没有任何隐藏。这里有人只看到了一半的棋盘。",
+        "recapHeading": "卧底能看到什么",
+        "sawCount": "看到 {total} 个中的 {count} 个",
+        "hiddenBadge": "已隐藏",
+        "spyPick": "卧底的选择"
+      }
     }
   },
   "reviewOutcome": {
