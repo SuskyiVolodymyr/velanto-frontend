@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { BoardCard, BoardRow } from "@/src/features/result/BoardCard";
+import { BoardCard, BoardRow } from "@/src/shared/components/BoardCard";
 import { withCompetitionRanks } from "@/src/features/result/result-table";
 import type {
   PodiumTally,
@@ -62,6 +62,7 @@ export function PodiumTable({
     [items],
   );
   const visible = ranked.slice(0, shown);
+  const remaining = Math.min(PAGE, ranked.length - visible.length);
   // Ranked is pre-sorted best-first, so the top row's total is the scale's max
   // — stable as more rows load, unlike scaling against only the visible slice.
   // Podium totals have no natural percentage, so unlike TopPickedTable's
@@ -84,7 +85,8 @@ export function PodiumTable({
       note={note}
       subtitle={subtitle}
       listLabel={title ?? t("podiumHeading")}
-      remaining={Math.min(PAGE, ranked.length - visible.length)}
+      remaining={remaining}
+      showMoreLabel={t("boardShowMore", { count: remaining })}
       onShowMore={() => setShown((n) => n + PAGE)}
     >
       {visible.map((item) => (
@@ -92,6 +94,7 @@ export function PodiumTable({
           <BoardRow
             name={item.itemTitle}
             rank={item.rank}
+            mineLabel={t("topPickedYours")}
             mine={mine.has(item.itemId)}
             headline={String(item.total)}
             detail={`${item.first}/${item.second}/${item.third}`}

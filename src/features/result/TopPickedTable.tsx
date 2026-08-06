@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { BoardCard, BoardRow } from "@/src/features/result/BoardCard";
+import { BoardCard, BoardRow } from "@/src/shared/components/BoardCard";
 import { withCompetitionRanks } from "@/src/features/result/result-table";
 import type { ItemTally, RecordedPick } from "@/src/shared/types/play-results";
 
@@ -64,6 +64,7 @@ export function TopPickedTable({
   const [shown, setShown] = useState(PAGE);
   const ranked = useMemo(() => rankTallies(items), [items]);
   const visible = ranked.slice(0, shown);
+  const remaining = Math.min(PAGE, ranked.length - visible.length);
   const mine = useMemo(
     () =>
       new Set(
@@ -80,7 +81,8 @@ export function TopPickedTable({
       note={note}
       subtitle={subtitle}
       listLabel={listLabel}
-      remaining={Math.min(PAGE, ranked.length - visible.length)}
+      remaining={remaining}
+      showMoreLabel={t("boardShowMore", { count: remaining })}
       onShowMore={() => setShown((n) => n + PAGE)}
     >
       {visible.map((item) => (
@@ -88,6 +90,7 @@ export function TopPickedTable({
           <BoardRow
             name={item.itemTitle}
             rank={item.rank}
+            mineLabel={t("topPickedYours")}
             mine={mine.has(item.itemId)}
             // Mock rounds the share to a whole percent — a raw 58.06 reads as
             // false precision next to a two-figure bar.

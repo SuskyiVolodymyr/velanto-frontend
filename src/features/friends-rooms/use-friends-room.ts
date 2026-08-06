@@ -20,6 +20,8 @@ import {
   type RoundResult,
   type RoundState,
   type SharedGridRejection,
+  type SpyAccusationRejection,
+  type SpyPickRejection,
   type VoteRejection,
 } from "./room-types";
 import {
@@ -62,6 +64,10 @@ export interface FriendsRoom {
   vote: (optionId: string) => void;
   submitRanking: (ranking: string[]) => void;
   placeItem: (itemId: string, position: number) => void;
+  /** Spy: pick one option. For the SPY the id may be an opaque token. */
+  spyPick: (optionId: string) => void;
+  /** Spy endgame: name one player as the spy. Non-spies only. */
+  accuse: (userId: string) => void;
   /** The most recent per-mode action rejection (cut/pick/vote/ranking/place),
    * kept distinct from `lastRejection` (Claim's own) so a mode never has to
    * guess which shape a shared field holds. */
@@ -71,6 +77,8 @@ export interface FriendsRoom {
     | (VoteRejection & { kind: "vote" })
     | (SharedGridRejection & { kind: "ranking" })
     | (RelayRejection & { kind: "place" })
+    | (SpyPickRejection & { kind: "spyPick" })
+    | (SpyAccusationRejection & { kind: "accusation" })
     | null;
   /** Increments on every mode rejection. Lets a board distinguish a REPEAT
    * rejection from the same one still being displayed — needed because the
@@ -170,16 +178,20 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
       // any stale `kicked` flag (this hook instance can be reused across a
       // roomId change without remounting).
       socket.on(ROOM_EVENTS.state, (next: RoomState) => {
-        // Wholesale replace — EXCEPT the viewer's own guess. A room-wide
-        // snapshot always carries `myGuess: null` (it has no single viewer),
-        // and finishGuessing hands each player their guess and THEN calls
+        // Wholesale replace — EXCEPT the viewer's own guess and accusation. A
+        // room-wide snapshot always carries both as null (it has no single
+        // viewer), and finishGuessing hands each player theirs and THEN calls
         // finish(), whose broadcast landed microseconds later and wiped it: the
         // results screen opened with an empty guess and every label marked
         // wrong, for everyone. Only ever restores — a snapshot that carries a
-        // guess (the per-caller HTTP read) still wins.
+        // value (the per-caller HTTP read) still wins.
+        //
+        // `myAccusation` is Spy's twin of the same problem, and had the same
+        // symptom: the reveal read "You accused nobody" for a player who had.
         setState((prev) => ({
           ...next,
           myGuess: next.myGuess ?? prev?.myGuess ?? null,
+          myAccusation: next.myAccusation ?? prev?.myAccusation ?? null,
         }));
         setLastRejection(null);
         setLastModeRejection(null);
@@ -445,14 +457,16 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
       );
 
       // Same wholesale-replace caveat as `room.state` above, and the same
-      // reason: this broadcast is room-wide, so it carries `myGuess: null`, and
-      // it lands right after the per-player reveal that just delivered it. Left
-      // alone it wiped the guess and the reveal screen read "You said nobody"
-      // on every label while the leaderboard scored everyone correctly.
+      // reason: this broadcast is room-wide, so it carries both per-viewer
+      // fields as null, and it lands right after the per-player reveal that
+      // just delivered them. Left alone it wiped the guess and the reveal
+      // screen read "You said nobody" on every label while the leaderboard
+      // scored everyone correctly — and, for Spy, "You accused nobody".
       socket.on(ROOM_EVENTS.gameFinished, (final: RoomState) =>
         setState((prev) => ({
           ...final,
           myGuess: final.myGuess ?? prev?.myGuess ?? null,
+          myAccusation: final.myAccusation ?? prev?.myAccusation ?? null,
         })),
       );
       socket.on(ROOM_EVENTS.roomClosed, () => setConnection("closed"));
@@ -543,6 +557,80 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
       );
       socket.on(ROOM_EVENTS.voteRejected, (rejection: VoteRejection) =>
         noteModeRejection({ ...rejection, kind: "vote" }),
+      );
+
+      // Spy's pick — public, like a vote, and stored the same way. The one
+      // difference is invisible from here: for the SPY this payload carries an
+      // opaque token in place of any option they cannot see, so the board can
+      // key on it exactly as it keys on a real option id.
+      socket.on(
+        ROOM_EVENTS.spyPicked,
+        ({ userId, optionId }: { userId: string; optionId: string }) =>
+          setState((s) =>
+            s && s.round
+              ? {
+                  ...s,
+                  round: {
+                    ...s.round,
+                    picks: { ...s.round.picks, [userId]: [optionId] },
+                  },
+                }
+              : s,
+          ),
+      );
+      socket.on(ROOM_EVENTS.spyPickRejected, (rejection: SpyPickRejection) =>
+        noteModeRejection({ ...rejection, kind: "spyPick" }),
+      );
+
+      // Only THAT somebody accused — never whom. Reuses the guessing phase's
+      // own `submitted` roster, which is the same "who has acted" question.
+      socket.on(
+        ROOM_EVENTS.accusationSubmitted,
+        ({ userId }: { userId: string }) =>
+          setState((s) =>
+            s && s.guessing
+              ? {
+                  ...s,
+                  guessing: {
+                    ...s.guessing,
+                    submitted: s.guessing.submitted.includes(userId)
+                      ? s.guessing.submitted
+                      : [...s.guessing.submitted, userId],
+                  },
+                }
+              : s,
+          ),
+      );
+      socket.on(
+        ROOM_EVENTS.accusationRejected,
+        (rejection: SpyAccusationRejection) =>
+          noteModeRejection({ ...rejection, kind: "accusation" }),
+      );
+
+      // The reveal, per player: the answer plus YOUR OWN accusation and
+      // nobody else's — the same split identity.revealed makes.
+      socket.on(
+        ROOM_EVENTS.spyRevealed,
+        ({
+          spyUserId,
+          hiddenByRound,
+          yourAccusation,
+        }: {
+          spyUserId: string;
+          hiddenByRound: string[][];
+          yourAccusation: string | null;
+        }) =>
+          setState((s) =>
+            s
+              ? {
+                  ...s,
+                  phase: "finished",
+                  autoNextAt: null,
+                  endgame: { kind: "spy_reveal", spyUserId, hiddenByRound },
+                  myAccusation: yourAccusation,
+                }
+              : s,
+          ),
       );
 
       socket.on(ROOM_EVENTS.rankingLocked, ({ userId }: { userId: string }) =>
@@ -663,6 +751,15 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
     ),
     vote: useCallback(
       (optionId: string) => send(ROOM_COMMANDS.vote, { optionId }),
+      [send],
+    ),
+    spyPick: useCallback(
+      // May be an opaque token rather than an item id — see ROOM_EVENTS.spyPicked.
+      (optionId: string) => send(ROOM_COMMANDS.spyPick, { optionId }),
+      [send],
+    ),
+    accuse: useCallback(
+      (userId: string) => send(ROOM_COMMANDS.accuse, { userId }),
       [send],
     ),
     submitRanking: useCallback(

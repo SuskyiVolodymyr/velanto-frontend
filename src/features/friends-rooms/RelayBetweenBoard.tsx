@@ -1,10 +1,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { ArrowRight } from "lucide-react";
-import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
+import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import type { RelayRoundResult, RoomState } from "./room-types";
+import { BetweenNextButton } from "./BetweenNextButton";
 
 export function RelayBetweenBoard({
   state,
@@ -25,34 +25,72 @@ export function RelayBetweenBoard({
 
   const itemsById = new Map(result.items.map((item) => [item.id, item]));
   const playerByUserId = new Map(state.players.map((p) => [p.userId, p]));
-  const me = state.players.find((p) => p.userId === currentUserId);
-  const ready = state.players.filter((p) => p.next).length;
+  // itemId -> whoever placed it. A relay round places each item exactly once,
+  // so the last writer wins is the only writer.
+  const placedByItem = new Map(
+    result.placements.map((placement) => [placement.itemId, placement.userId]),
+  );
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-1">
-        <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-          {t("relay.finalOrderHeading")}
-        </Text>
+      {/* An eyebrow with nothing under it: this screen's only heading was a
+          caps label, so the page opened with no title at all. The round's own
+          name is what it is — the same thing every other between board heads
+          itself with — and the advance control rides the row, because down in
+          a footer it sat below the whole ranking. */}
+      <header className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col gap-1">
+          <Text variant="tertiary" className="text-xs tracking-wide uppercase">
+            {t("relay.finalOrderHeading")}
+          </Text>
+          <Text as="h2" variant="title" className="text-2xl">
+            {round.name || t("relay.finalOrderHeading")}
+          </Text>
+        </div>
+        <div className="ms-auto flex flex-wrap items-center justify-end gap-3">
+          <BetweenNextButton
+            state={state}
+            currentUserId={currentUserId}
+            onNext={onNext}
+          />
+        </div>
       </header>
 
       <ol
         aria-label={t("relay.finalOrderHeading")}
         className="flex flex-col gap-2"
       >
-        {result.order.map((itemId, index) => (
-          <li
-            key={itemId}
-            className="flex items-center gap-3 rounded-tile border border-border bg-surface-card p-3"
-          >
-            <span className="flex h-7 w-7 flex-none items-center justify-center rounded-chip bg-white/[0.06] text-xs font-bold tabular-nums">
-              {index + 1}
-            </span>
-            <Text className="font-semibold">
-              {itemsById.get(itemId)?.title ?? itemId}
-            </Text>
-          </li>
-        ))}
+        {result.order.map((itemId, index) => {
+          const item = itemsById.get(itemId);
+          const placedBy = playerByUserId.get(placedByItem.get(itemId) ?? "");
+          return (
+            <li
+              key={itemId}
+              className="flex items-center gap-3 rounded-tile border border-border bg-surface-card p-3"
+            >
+              <span className="flex h-7 w-7 flex-none items-center justify-center rounded-chip bg-white/[0.06] text-xs font-bold tabular-nums">
+                {index + 1}
+              </span>
+              <Text className="min-w-0 flex-1 font-semibold">
+                {item?.title ?? itemId}
+              </Text>
+              {/* Who put it there, on the row it belongs to — the history list
+                  below says the same thing in prose, but this is where you are
+                  looking. */}
+              {placedBy && (
+                <span className="flex flex-none items-center gap-1.5 rounded-full border border-border bg-white/[0.04] py-0.5 pe-2 ps-0.5 text-[11.5px] font-semibold text-foreground-secondary">
+                  <UserAvatar
+                    username={placedBy.username}
+                    avatarKey={placedBy.avatarKey}
+                    tone
+                    className="h-[18px] w-[18px] flex-none rounded-full text-[8px]"
+                  />
+                  {placedBy.username}
+                </span>
+              )}
+            </li>
+          );
+        })}
       </ol>
 
       <div className="flex flex-col gap-2">
@@ -81,16 +119,6 @@ export function RelayBetweenBoard({
             </li>
           ))}
         </ol>
-      </div>
-
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Text variant="secondary" aria-live="polite" className="text-sm">
-          {t("between.ready", { count: ready, total: state.players.length })}
-        </Text>
-        <Button disabled={Boolean(me?.next)} onClick={onNext}>
-          {t("between.next")}
-          <ArrowRight size={16} aria-hidden />
-        </Button>
       </div>
     </div>
   );

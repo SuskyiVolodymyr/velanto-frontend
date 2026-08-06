@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
+import { EyeOff } from "lucide-react";
 import { STICKY_HEADER_SHELL_CLASS } from "@/src/shared/lib/sticky-header-shell";
 import { CoverImage } from "@/src/shared/components/CoverImage";
 import { cn } from "@/src/shared/lib/cn";
@@ -69,8 +70,21 @@ export function RoomHeader({
           )}
         </span>
         <div className="flex min-w-0 flex-col gap-0.5">
-          <span className="truncate text-[14.5px] font-semibold text-foreground">
-            {state.packTitle}
+          <span className="flex min-w-0 items-center gap-2">
+            <span className="truncate text-[14.5px] font-semibold text-foreground">
+              {state.packTitle}
+            </span>
+            {/* Only ever rendered for the spy, and only because the server told
+                THIS viewer they are one — `iAmSpy` is per-caller and null for
+                everyone else, so there is nothing here to read off a shared
+                screen. It sits by the title because the role has to be
+                unmissable from any phase, not just the board that explains it. */}
+            {state.iAmSpy === true && (
+              <span className="inline-flex flex-none items-center gap-1 rounded-chip bg-spy/[0.16] px-2 py-0.5 text-[10.5px] font-bold tracking-[0.04em] text-spy">
+                <EyeOff size={10} aria-hidden />
+                {t("spy.badge")}
+              </span>
+            )}
           </span>
           {/* Hidden on phones, where the title alone has to fit beside two
               controls — the mock drops it at the same breakpoint. */}

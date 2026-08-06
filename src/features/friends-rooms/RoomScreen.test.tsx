@@ -24,6 +24,8 @@ const leave = vi.fn();
 const kick = vi.fn();
 const setMode = vi.fn();
 const guess = vi.fn();
+const spyPick = vi.fn();
+const accuse = vi.fn();
 const push = vi.fn();
 
 let room: FriendsRoom;
@@ -124,6 +126,8 @@ function setRoom(
     kick,
     setMode,
     guess,
+    spyPick,
+    accuse,
   };
 }
 
@@ -563,7 +567,10 @@ describe("RoomScreen — results by RoundResult kind", () => {
       }),
     );
     render(<RoomScreen roomId="room-1" />);
-    expect(screen.getByText("Pizza")).toBeInTheDocument();
+    // Named in the round's own matchup card AND in the aside's Top picked
+    // board, so this asserts the recap rather than either one incidentally.
+    const matchup = screen.getByRole("group", { name: /Round 1/ });
+    expect(within(matchup).getByTestId("winner")).toHaveTextContent("Pizza");
   });
 
   it("renders a borda-kind round with its tiered order", () => {

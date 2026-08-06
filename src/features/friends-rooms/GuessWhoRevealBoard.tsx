@@ -2,13 +2,14 @@
 
 import { Fragment } from "react";
 import { useTranslations } from "next-intl";
-import { ArrowRight } from "lucide-react";
-import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
+import { cn } from "@/src/shared/lib/cn";
 import { labelTone } from "./guess-who-labels";
+import { BetweenNextButton } from "./BetweenNextButton";
 import { RoundItemTile } from "./RoundItemTile";
 import { RevealSideRow } from "./RevealSideRow";
 import { RevealRankingTable } from "./RevealRankingTable";
+import { BetweenVsRow } from "./BetweenVsRow";
 import { VsDivider } from "./VsDivider";
 import type { RevealRoundResult, RoomState } from "./room-types";
 
@@ -63,24 +64,44 @@ export function GuessWhoRevealBoard({
     (closed?.items ?? []).map((item) => [item.id, item]),
   );
 
-  const me = state.players.find((p) => p.userId === currentUserId) ?? null;
-  const myLabel = me?.label ?? null;
-  const ready = state.players.filter((p) => p.next).length;
-  const total = state.players.length;
+  const myLabel =
+    state.players.find((p) => p.userId === currentUserId)?.label ?? null;
 
   // A rank_blind pick is a whole ordering rather than a choice, so this round
   // has no card to mark — it has N orderings to compare.
   const isRanked = state.packFormat === "rank_blind";
 
+  // 1v1 keeps the head-to-head shape it was played under. No won/lost frame
+  // here, unlike Voting's: a Guess-who round has no verdict at all — the two
+  // cards are evidence, and colouring one would invent a winner the mode
+  // never declares.
+  const isVersusPair =
+    state.packFormat === "1v1" && (closed?.items.length ?? 0) === 2;
+
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-1">
-        <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-          {t("guessWho.revealHeading")}
-        </Text>
-        <Text as="h2" variant="title" className="text-2xl">
-          {t("guessWho.trajectoryHeading")}
-        </Text>
+      <header className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col gap-1">
+          <Text variant="tertiary" className="text-xs uppercase tracking-wide">
+            {t("guessWho.revealHeading")}
+          </Text>
+          <Text as="h2" variant="title" className="text-2xl">
+            {t("guessWho.trajectoryHeading")}
+          </Text>
+        </div>
+        {/* On the title row, not under the board: the nxn arm puts this on
+            its VS row for the same reason, and a grid of media has no divider
+            row to share. Rendered here only for the arms that need it — the
+            `sides` arm's copy lives in BetweenVsRow. */}
+        {!state.round?.sides && (
+          <div className="ms-auto flex flex-wrap items-center justify-end gap-3">
+            <BetweenNextButton
+              state={state}
+              currentUserId={currentUserId}
+              onNext={onNext}
+            />
+          </div>
+        )}
       </header>
 
       {/* The round's own cards, marked with the label that took each — the
@@ -119,7 +140,13 @@ export function GuessWhoRevealBoard({
         <div className="flex flex-col gap-[14px]">
           {state.round.sides.map((side, index) => (
             <Fragment key={side.id}>
-              {index > 0 && <VsDivider />}
+              {index > 0 && (
+                <BetweenVsRow
+                  state={state}
+                  currentUserId={currentUserId}
+                  onNext={onNext}
+                />
+              )}
               <RevealSideRow
                 side={side}
                 items={side.itemIds
@@ -133,27 +160,32 @@ export function GuessWhoRevealBoard({
           ))}
         </div>
       ) : closed ? (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {closed.items.map((item) => (
-            <RoundItemTile
-              key={item.id}
-              item={item}
-              actionLabel={item.title}
-              pickLabels={labelsByItem.get(item.id)}
-            />
-          ))}
+        <div
+          className={cn(
+            isVersusPair
+              ? "grid items-center gap-5 md:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)]"
+              : "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3",
+          )}
+        >
+          {closed.items.map((item, index) => {
+            const tile = (
+              <RoundItemTile
+                item={item}
+                actionLabel={item.title}
+                pickLabels={labelsByItem.get(item.id)}
+              />
+            );
+            return isVersusPair ? (
+              <Fragment key={item.id}>
+                {index > 0 && <VsDivider />}
+                {tile}
+              </Fragment>
+            ) : (
+              <Fragment key={item.id}>{tile}</Fragment>
+            );
+          })}
         </div>
       ) : null}
-
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Text variant="secondary" aria-live="polite" className="text-sm">
-          {t("between.ready", { count: ready, total })}
-        </Text>
-        <Button disabled={me?.next ?? false} onClick={onNext}>
-          {t("between.next")}
-          <ArrowRight size={16} aria-hidden />
-        </Button>
-      </div>
     </div>
   );
 }

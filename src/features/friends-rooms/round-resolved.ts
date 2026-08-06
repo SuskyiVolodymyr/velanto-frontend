@@ -1,10 +1,16 @@
-import type { RoomMode, RoundResult, RoundState } from "./room-types";
+import type { Item } from "@/src/shared/types/pack";
+import type {
+  RoomMode,
+  RoundResult,
+  RoundSide,
+  RoundState,
+} from "./room-types";
 
 /**
- * The `round.resolved` wire payload — FIVE different shapes behind one event
+ * The `round.resolved` wire payload — SIX different shapes behind one event
  * name, and deliberately UNTAGGED (the backend's `roundResolvedPayload`
  * switches on the result kind but does not put a `kind` on the wire). Only the
- * `index`/`autoNextAt` pair is common to all five, so every other field is
+ * `index`/`autoNextAt` pair is common to all six, so every other field is
  * optional here and the room's own `mode` is what discriminates them.
  */
 export interface RoundResolvedPayload {
@@ -31,6 +37,16 @@ export interface RoundResolvedPayload {
   order?: string[][] | string[];
   /** relay */
   placements?: { userId: string; itemId: string }[];
+  /**
+   * spy only: the resolved round's REAL board.
+   *
+   * Every other mode's client already holds the full round it was playing and
+   * can name a winner from what it has. The spy's copy has holes in it — the
+   * server sends the whole thing here because a resolved round is public, and
+   * this is the moment those holes are allowed to be filled.
+   */
+  items?: Item[];
+  sides?: RoundSide[];
 }
 
 /**
@@ -82,6 +98,20 @@ export function roundResultFromResolved(
         kind: "reveal",
         picks: payload.picks,
         ...(round.sides ? { sides: round.sides } : {}),
+      };
+    case "spy":
+      if (payload.picks === undefined) return null;
+      return {
+        ...base,
+        kind: "spy_round",
+        // The RESOLVED board wins over the one the viewer was playing. For
+        // everyone but the spy they are the same; for the spy this is what
+        // un-redacts the round they just played half-blind.
+        items: payload.items ?? round.items,
+        picks: payload.picks,
+        ...((payload.sides ?? round.sides)
+          ? { sides: payload.sides ?? round.sides }
+          : {}),
       };
     case "voting":
       if (payload.winnerOptionId === undefined) return null;

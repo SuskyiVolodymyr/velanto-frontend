@@ -540,6 +540,58 @@ describe("useFriendsRoom mode lifecycle + guess-who endgame", () => {
     expect(result.current.state?.myGuess).toEqual({ P1: "host" });
   });
 
+  // Spy's twin of the two tests above, and it had the identical symptom: the
+  // reveal read "You accused nobody" for a player who had accused someone,
+  // because `spy.revealed` delivers `yourAccusation` per player and the
+  // room-wide snapshot that lands right after carries it as null.
+  it("keeps the viewer's own accusation when the room-wide snapshot lands after the reveal", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", {
+      ...snapshot([player("host")]),
+      mode: "spy",
+      phase: "guessing",
+    });
+
+    serverEmit("spy.revealed", {
+      spyUserId: "u2",
+      hiddenByRound: [["i1"]],
+      yourAccusation: "u2",
+    });
+    expect(result.current.state?.myAccusation).toBe("u2");
+
+    serverEmit("room.state", {
+      ...snapshot([player("host")]),
+      mode: "spy",
+      phase: "finished",
+      myAccusation: null,
+    });
+
+    expect(result.current.state?.myAccusation).toBe("u2");
+  });
+
+  it("keeps the viewer's own accusation when game.finished lands after the reveal", async () => {
+    const { result } = await connected();
+    serverEmit("room.state", {
+      ...snapshot([player("host")]),
+      mode: "spy",
+      phase: "guessing",
+    });
+    serverEmit("spy.revealed", {
+      spyUserId: "u2",
+      hiddenByRound: [["i1"]],
+      yourAccusation: "u2",
+    });
+
+    serverEmit("game.finished", {
+      ...snapshot([player("host")]),
+      mode: "spy",
+      phase: "finished",
+      myAccusation: null,
+    });
+
+    expect(result.current.state?.myAccusation).toBe("u2");
+  });
+
   it("guess emits the guess command with the submitted mapping", async () => {
     const { result } = await connected();
     act(() => result.current.guess({ P1: "u2", P2: "u1" }));

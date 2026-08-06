@@ -1,13 +1,11 @@
 "use client";
 
-import { SignInGate } from "@/src/shared/components/SignInGate";
-import { useState, type ReactElement } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { RoomIcon } from "@/src/shared/components/icons";
 import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
-import { Tooltip } from "@/src/shared/components/Tooltip";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { ApiError } from "@/src/shared/lib/api-client";
 import { cn } from "@/src/shared/lib/cn";
@@ -51,7 +49,11 @@ function JoinRoomCardInner() {
   const tEntry = useTranslations("room.entry");
   const router = useRouter();
   const { user } = useAuth();
-  const blocked = user === null;
+  // Signed out is no longer blocked. Guests shipped in 2.1.0 and a visitor
+  // holding a code is precisely who they are for — the card just cannot use
+  // the AUTHENTICATED join for them, so it hands them to the landing page that
+  // already asks for a nickname (see JoinByLink).
+  const signedOut = user === null;
 
   const [code, setCode] = useState("");
   const [joining, setJoining] = useState(false);
@@ -59,7 +61,7 @@ function JoinRoomCardInner() {
 
   async function handleJoin(event: React.FormEvent) {
     event.preventDefault();
-    if (blocked || joining) return;
+    if (joining) return;
     // A code is read aloud or typed from a friend's screen; normalize before
     // sending (the backend normalizes too, but this keeps input forgiving).
     const normalized = code.trim().toUpperCase();
@@ -68,6 +70,13 @@ function JoinRoomCardInner() {
       return;
     }
     setError(null);
+    if (signedOut) {
+      // Not an error state and not a sign-in prompt: the same URL a shared
+      // invite link points at, which greets a visitor with a nickname box.
+      setJoining(true);
+      router.push(`/rooms/join/${normalized}`);
+      return;
+    }
     setJoining(true);
     try {
       const room = await friendsRoomsClient.join(normalized);
@@ -86,13 +95,6 @@ function JoinRoomCardInner() {
       }
     }
   }
-
-  const withGate = (node: ReactElement) =>
-    blocked ? (
-      <SignInGate message={tEntry("signInToPlay")}>{node}</SignInGate>
-    ) : (
-      node
-    );
 
   return (
     <section className="flex flex-col gap-3 rounded-[16px] border border-white/[0.08] bg-background/[0.55] p-[18px]">
@@ -119,29 +121,20 @@ function JoinRoomCardInner() {
             autoCapitalize="characters"
             autoCorrect="off"
             spellCheck={false}
-            disabled={blocked || joining}
+            disabled={joining}
             maxLength={12}
             className={cn(
               "h-[46px] min-w-0 flex-1 rounded-[12px] border border-white/[0.1] bg-background px-3.5 font-mono text-base font-semibold uppercase tracking-[0.18em] text-foreground outline-none transition-colors focus-visible:border-acc disabled:opacity-45",
             )}
           />
-          {withGate(
-            <Button
-              type="submit"
-              variant="primary"
-              // Gate with aria-disabled, NOT the native `disabled` attribute:
-              // `disabled` drops the button from the tab order, so the sign-in
-              // Tooltip's focus/hover linkage never fires and a keyboard user
-              // can't reach the reason. handleJoin already no-ops when blocked
-              // and the input is disabled, so submit stays inert. Mirrors
-              // FriendsRoomEntry's anon-gate.
-              className={cn("h-[46px] flex-none px-5")}
-              loading={joining}
-              aria-disabled={blocked || undefined}
-            >
-              {tEntry("join")}
-            </Button>,
-          )}
+          <Button
+            type="submit"
+            variant="primary"
+            className={cn("h-[46px] flex-none px-5")}
+            loading={joining}
+          >
+            {tEntry("join")}
+          </Button>
         </form>
         {error && (
           <Text variant="danger" className="text-xs">

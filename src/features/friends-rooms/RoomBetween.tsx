@@ -2,12 +2,11 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { ArrowRight } from "lucide-react";
-import { Button } from "@/src/shared/components/Button";
 import { Text } from "@/src/shared/components/Text";
 import { cn } from "@/src/shared/lib/cn";
 import type { Pack } from "@/src/shared/types/pack";
 import type { RoomPlayerState, RoomState } from "./room-types";
+import { BetweenNextButton } from "./BetweenNextButton";
 import { RoomItemCard } from "./RoomItemCard";
 
 interface RoomBetweenProps {
@@ -51,28 +50,62 @@ export function RoomBetween({
   const survivorIndex = round.items.findIndex(
     (i) => i.id === round.survivorItemId,
   );
-
-  const me = state.players.find((p) => p.userId === currentUserId) ?? null;
-  // The room advances only once EVERY seated player has pressed Next
-  // (advanceIfAllNext waits on the full roster, not just connected players), so
-  // the denominator is the whole seated roster — same rule as the round's
-  // "chosen" counter.
-  const ready = state.players.filter((p) => p.next).length;
-  const total = state.players.length;
+  // Everything else, keeping each item's ORIGINAL board position: the number
+  // on a card is where it sat in the round, so re-indexing the filtered list
+  // would renumber the board.
+  const others = round.items
+    .map((item, index) => ({ item, index }))
+    .filter(({ item }) => item.id !== round.survivorItemId);
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-1">
-        <Text variant="tertiary" className="text-xs uppercase tracking-wide">
-          {t(`between.survivorHeading${verb}`)}
-        </Text>
-        <Text as="h2" variant="title" className="text-2xl text-success">
-          {t(`between.survivorNote${verb}`)}
-        </Text>
+      {/* The verdict centred over the card it describes, with the advance
+          control on the same row. Down in a footer the button sat below a full
+          board of media — on any real round you had to scroll past everything
+          to reach the only thing you could do. */}
+      <header className="flex flex-wrap items-center gap-3">
+        {/* Balances the controls so the heading lands on the row's true
+            centre. Hidden below the wrap point, where there is no second
+            column to balance against. */}
+        <span aria-hidden className="flex-1 max-[720px]:hidden" />
+        <div className="flex flex-col items-center gap-1 text-center">
+          <Text variant="tertiary" className="text-xs tracking-wide uppercase">
+            {t(`between.survivorHeading${verb}`)}
+          </Text>
+          {/* A plain h2, not `<Text as="h2" variant="title">`: every Text
+              variant sets a colour and cn() is a plain join, so a colour handed
+              in from outside loses to the variant's own and this rendered
+              white. Same reason RecapHeading hand-rolls its heading. */}
+          <h2
+            className={cn(
+              "text-2xl font-bold tracking-[-0.01em]",
+              // The odd one out is the GOOD outcome only on a save_one board.
+              // Green on sacrifice_one celebrated the item that had just been
+              // sacrificed.
+              verb === "Save" ? "text-success" : "text-danger",
+            )}
+          >
+            {t(`between.survivorNote${verb}`)}
+          </h2>
+        </div>
+        <div className="flex flex-1 flex-wrap items-center justify-end gap-3">
+          <AutoNextCountdown
+            key={state.autoNextAt ?? "none"}
+            at={state.autoNextAt}
+          />
+          <BetweenNextButton
+            state={state}
+            currentUserId={currentUserId}
+            onNext={onNext}
+          />
+        </div>
       </header>
 
+      {/* The item the round settled on, centred and alone. It used to sit at
+          the left edge above a grid that repeated it, so the one card the
+          screen exists to show was the least prominent thing on it. */}
       {survivor && (
-        <div className="max-w-md">
+        <div className="mx-auto w-full max-w-[460px]">
           <RoomItemCard
             item={survivor}
             index={survivorIndex}
@@ -122,41 +155,29 @@ export function RoomBetween({
         <Text variant="secondary" className="text-sm">
           {t(`between.boardHeading${verb}`)}
         </Text>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {round.items.map((item, index) => {
-            const isSurvivor = item.id === round.survivorItemId;
-            return (
-              <RoomItemCard
-                key={item.id}
-                item={item}
-                index={index}
-                status={isSurvivor ? "survivor" : "sacrificed"}
-                claimant={isSurvivor ? null : claimantByItem.get(item.id)}
-                format={packFormat}
-              />
-            );
-          })}
+        {/* One row, not a wrapping grid: the survivor above is the answer and
+            these are what it beat, so they read as a single strip of evidence
+            under it rather than as a second board. An elimination round draws
+            at most eight, which is why the columns are counted rather than
+            capped — and below the mobile threshold they fall to two, where a
+            row of eight would be a row of slivers. */}
+        <div
+          className="grid gap-4 max-[720px]:!grid-cols-2"
+          style={{
+            gridTemplateColumns: `repeat(${Math.max(1, others.length)}, minmax(0, 1fr))`,
+          }}
+        >
+          {others.map(({ item, index }) => (
+            <RoomItemCard
+              key={item.id}
+              item={item}
+              index={index}
+              status="sacrificed"
+              claimant={claimantByItem.get(item.id)}
+              format={packFormat}
+            />
+          ))}
         </div>
-      </div>
-
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-col gap-1">
-          <Text
-            variant="secondary"
-            aria-live="polite"
-            className={cn("text-sm", ready === total && "text-success")}
-          >
-            {t("between.ready", { count: ready, total })}
-          </Text>
-          <AutoNextCountdown
-            key={state.autoNextAt ?? "none"}
-            at={state.autoNextAt}
-          />
-        </div>
-        <Button disabled={me?.next ?? false} onClick={onNext}>
-          {t("between.next")}
-          <ArrowRight size={16} aria-hidden />
-        </Button>
       </div>
     </div>
   );
@@ -172,9 +193,9 @@ export function RoomBetween({
  * jumps when it does. Neither is worth correcting for a five-second window.
  *
  * Plain text rather than a progress ring because it is a reassurance ("the game
- * isn't stuck"), not the main action — and deliberately OUTSIDE the aria-live
- * region beside it, since announcing a per-second tick would drown out the
- * "N / M ready" updates that actually matter.
+ * isn't stuck"), not the main action — and deliberately outside the aria-live
+ * region BetweenNextButton carries, since announcing a per-second tick would
+ * drown out the "N / M ready" updates that actually matter.
  */
 function AutoNextCountdown({ at }: { at: number | null }) {
   const t = useTranslations("room");

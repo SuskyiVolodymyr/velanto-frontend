@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Clock, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { Text } from "@/src/shared/components/Text";
 import { UserAvatar } from "@/src/shared/components/UserAvatar";
 import { cn } from "@/src/shared/lib/cn";
 import { labelTone } from "./guess-who-labels";
 import { GuessWhoLabelTable } from "./GuessWhoLabelTable";
+import { PhaseDeadline } from "./PhaseDeadline";
 import type { RoomState } from "./room-types";
 
 interface GuessingPhaseScreenProps {
@@ -87,12 +88,13 @@ export function GuessingPhaseScreen({
   }
 
   return (
-    <div className="grid items-start gap-[18px] min-[1080px]:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
-      <div className="max-[1079px]:order-2">
-        <GuessWhoLabelTable state={state} />
-      </div>
-
-      <aside className="flex flex-col gap-3.5 max-[1079px]:order-1">
+    // Stacked, not two columns. Side by side, the panel had a narrow column of
+    // its own while the table — the thing you are actually reading — was
+    // squeezed into the rest, and on 1v1 that meant eight titles fighting for
+    // half the width. The order is the order of the task: decide up here, read
+    // the evidence below.
+    <div className="flex flex-col gap-[18px]">
+      <aside className="flex flex-col gap-3.5">
         <section
           aria-label={t("guessing.title")}
           className="flex flex-col gap-[13px] rounded-[20px] border border-border bg-surface-card p-5"
@@ -116,100 +118,108 @@ export function GuessingPhaseScreen({
 
           {/* Keyed on the deadline so a new one remounts the clock rather than
               animating down from a stale reading. */}
-          <GuessDeadline
+          <PhaseDeadline
             key={state.autoNextAt ?? "none"}
             at={state.autoNextAt}
+            label={t("guessing.deadline")}
           />
 
-          {guessing.labels.map((label) => {
-            const chosen = filled[label];
-            const isMine = label === myLabel && Boolean(fixed[label]);
-            return (
-              <fieldset
-                key={label}
-                className={cn(
-                  "flex flex-col gap-[9px] rounded-tile border p-3",
-                  chosen
-                    ? "border-acc/35 bg-acc/[0.06]"
-                    : "border-border bg-background",
-                )}
-              >
-                <legend className="flex items-center gap-2.5">
-                  {/* The label's own colour, the same one it wears on the
+          {/* Across, not down: the panel spans the page now, and a single
+              column of label cards would leave most of that width empty while
+              pushing the table — the thing this panel is answered FROM — below
+              the fold. */}
+          <div className="grid gap-[9px] sm:grid-cols-2 min-[1080px]:grid-cols-4">
+            {guessing.labels.map((label) => {
+              const chosen = filled[label];
+              const isMine = label === myLabel && Boolean(fixed[label]);
+              return (
+                <fieldset
+                  key={label}
+                  className={cn(
+                    "flex flex-col gap-[9px] rounded-tile border p-3",
+                    chosen
+                      ? "border-acc/35 bg-acc/[0.06]"
+                      : "border-border bg-background",
+                  )}
+                >
+                  <legend className="flex items-center gap-2.5">
+                    {/* The label's own colour, the same one it wears on the
                       round cards and in the table above. Every chip here was
                       the same accent, which makes the colouring elsewhere
                       pointless — following one label across the game is the
                       only thing this screen asks you to do. */}
-                  <span
-                    className={cn(
-                      "grid h-[34px] w-[34px] flex-none place-items-center rounded-[11px] text-sm font-extrabold",
-                      labelTone(guessing.labels, label).chip,
-                    )}
-                  >
-                    {label}
-                  </span>
-                  <Text className="text-[13px] font-semibold">
-                    {t("guessing.whoIs", { label })}
-                  </Text>
-                </legend>
-
-                {isMine ? (
-                  // Fixed, not a disabled chip row: there is no choice to
-                  // present, and a greyed-out set of people you cannot pick
-                  // reads as something broken rather than something settled.
-                  <div className="flex items-center gap-[7px]">
-                    <UserAvatar
-                      username={
-                        playerById.get(currentUserId!)?.username ??
-                        currentUserId!
-                      }
-                      avatarKey={
-                        playerById.get(currentUserId!)?.avatarKey ?? null
-                      }
-                      className="h-[26px] w-[26px] flex-none rounded-full bg-surface-raised text-[10px] font-bold text-foreground"
-                    />
-                    <Text className="text-[12.5px] font-semibold">
-                      {playerById.get(currentUserId!)?.username ??
-                        currentUserId}
-                    </Text>
-                    <span className="rounded-chip bg-white/[0.08] px-1.5 py-px text-[10px] font-bold tracking-[0.04em] text-foreground-secondary uppercase">
-                      {t("lobby.you")}
+                    <span
+                      className={cn(
+                        "grid h-[34px] w-[34px] flex-none place-items-center rounded-[11px] text-sm font-extrabold",
+                        labelTone(guessing.labels, label).chip,
+                      )}
+                    >
+                      {label}
                     </span>
-                  </div>
-                ) : (
-                  <div className="flex flex-wrap gap-[7px]">
-                    {candidates.map((userId) => {
-                      const player = playerById.get(userId);
-                      const picked = chosen === userId;
-                      return (
-                        <button
-                          key={userId}
-                          type="button"
-                          aria-pressed={picked}
-                          disabled={alreadySubmitted}
-                          onClick={() => assign(label, userId)}
-                          className={cn(
-                            "flex h-9 items-center gap-[7px] rounded-full border py-0 ps-[5px] pe-3 text-[12.5px] font-semibold transition-colors",
-                            picked
-                              ? "border-acc bg-acc/[0.16] text-foreground"
-                              : "border-border-strong text-foreground-secondary hover:text-foreground",
-                            alreadySubmitted && "cursor-not-allowed opacity-50",
-                          )}
-                        >
-                          <UserAvatar
-                            username={player?.username ?? userId}
-                            avatarKey={player?.avatarKey ?? null}
-                            className="h-[26px] w-[26px] flex-none rounded-full bg-surface-raised text-[10px] font-bold text-foreground"
-                          />
-                          {player?.username ?? userId}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </fieldset>
-            );
-          })}
+                    <Text className="text-[13px] font-semibold">
+                      {t("guessing.whoIs", { label })}
+                    </Text>
+                  </legend>
+
+                  {isMine ? (
+                    // Fixed, not a disabled chip row: there is no choice to
+                    // present, and a greyed-out set of people you cannot pick
+                    // reads as something broken rather than something settled.
+                    <div className="flex items-center gap-[7px]">
+                      <UserAvatar
+                        username={
+                          playerById.get(currentUserId!)?.username ??
+                          currentUserId!
+                        }
+                        avatarKey={
+                          playerById.get(currentUserId!)?.avatarKey ?? null
+                        }
+                        className="h-[26px] w-[26px] flex-none rounded-full bg-surface-raised text-[10px] font-bold text-foreground"
+                      />
+                      <Text className="text-[12.5px] font-semibold">
+                        {playerById.get(currentUserId!)?.username ??
+                          currentUserId}
+                      </Text>
+                      <span className="rounded-chip bg-white/[0.08] px-1.5 py-px text-[10px] font-bold tracking-[0.04em] text-foreground-secondary uppercase">
+                        {t("lobby.you")}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex flex-wrap gap-[7px]">
+                      {candidates.map((userId) => {
+                        const player = playerById.get(userId);
+                        const picked = chosen === userId;
+                        return (
+                          <button
+                            key={userId}
+                            type="button"
+                            aria-pressed={picked}
+                            disabled={alreadySubmitted}
+                            onClick={() => assign(label, userId)}
+                            className={cn(
+                              "flex h-9 items-center gap-[7px] rounded-full border py-0 ps-[5px] pe-3 text-[12.5px] font-semibold transition-colors",
+                              picked
+                                ? "border-acc bg-acc/[0.16] text-foreground"
+                                : "border-border-strong text-foreground-secondary hover:text-foreground",
+                              alreadySubmitted &&
+                                "cursor-not-allowed opacity-50",
+                            )}
+                          >
+                            <UserAvatar
+                              username={player?.username ?? userId}
+                              avatarKey={player?.avatarKey ?? null}
+                              className="h-[26px] w-[26px] flex-none rounded-full bg-surface-raised text-[10px] font-bold text-foreground"
+                            />
+                            {player?.username ?? userId}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </fieldset>
+              );
+            })}
+          </div>
 
           <button
             type="button"
@@ -259,80 +269,8 @@ export function GuessingPhaseScreen({
           </div>
         )}
       </aside>
-    </div>
-  );
-}
 
-/** Under a minute left — the point at which "plenty of time" stops being true
- * and the clock should start reading as a warning rather than as furniture. */
-const URGENT_MS = 60_000;
-
-/**
- * How long the room will wait before revealing without you.
- *
- * The phase has always had a server deadline; the screen never drew it, so a
- * game could end mid-thought with nothing having said a clock was running. The
- * deadline is the server's and only the server acts on it — this just draws it,
- * so a client whose clock runs fast reveals nothing early.
- *
- * m:ss rather than raw seconds: this window is minutes long (see
- * GUESS_DEADLINE_MS), and "in 287s" is not a length of time anyone reads.
- *
- * Deliberately outside any aria-live region — a per-second tick announced aloud
- * would bury the "N / M have submitted" updates that actually matter. Screen
- * readers still reach it on demand.
- */
-function GuessDeadline({ at }: { at: number | null }) {
-  const t = useTranslations("room");
-  const [now, setNow] = useState(() => Date.now());
-
-  useEffect(() => {
-    if (at === null) return;
-    const id = setInterval(() => {
-      const tick = Date.now();
-      setNow(tick);
-      // Stop at the deadline. The screen normally unmounts within a second of
-      // it, but a dropped socket keeps the last board mounted under the
-      // reconnecting banner — without this it would re-render 4x/s forever,
-      // showing a frozen 0:00.
-      if (tick >= at) clearInterval(id);
-    }, 250);
-    return () => clearInterval(id);
-  }, [at]);
-
-  if (at === null) return null;
-  const remaining = Math.max(0, at - now);
-  const seconds = Math.ceil(remaining / 1000);
-  const urgent = remaining <= URGENT_MS;
-
-  return (
-    <div
-      className={cn(
-        "flex items-center gap-2 rounded-control border px-3 py-2",
-        urgent
-          ? "border-danger/30 bg-danger/[0.08]"
-          : "border-border bg-white/[0.04]",
-      )}
-    >
-      <Clock
-        size={13}
-        aria-hidden
-        className={cn(
-          "flex-none",
-          urgent ? "text-danger" : "text-foreground-tertiary",
-        )}
-      />
-      <Text variant="tertiary" className="text-[11.5px] font-semibold">
-        {t("guessing.deadline")}
-      </Text>
-      <span
-        className={cn(
-          "ms-auto font-mono text-[13px] font-bold tabular-nums",
-          urgent ? "text-danger" : "text-foreground-secondary",
-        )}
-      >
-        {Math.floor(seconds / 60)}:{String(seconds % 60).padStart(2, "0")}
-      </span>
+      <GuessWhoLabelTable state={state} />
     </div>
   );
 }

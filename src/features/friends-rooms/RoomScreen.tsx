@@ -15,9 +15,12 @@ import { RoomBetweenBoard } from "./RoomBetweenBoard";
 import { GuessingPhaseScreen } from "./GuessingPhaseScreen";
 import { RoomResults } from "./RoomResults";
 import { IdentityRevealScreen } from "./IdentityRevealScreen";
+import { SpyAccusationScreen } from "./SpyAccusationScreen";
+import { SpyRevealScreen } from "./SpyRevealScreen";
 import { RoomHeader } from "./RoomHeader";
 import { RoomKicked } from "./RoomKicked";
 import { useExitToPack } from "./use-exit-to-pack";
+import { usePlayFocus } from "@/src/shared/lib/play-focus-context";
 
 /**
  * The single entry point for a friends room. Subscribes to the live room over
@@ -41,6 +44,8 @@ export function RoomScreen({ roomId }: { roomId: string }) {
     cut,
     pick,
     vote,
+    spyPick,
+    accuse,
     submitRanking,
     placeItem,
     ready,
@@ -55,6 +60,13 @@ export function RoomScreen({ roomId }: { roomId: string }) {
   // The account id, or — for someone who joined with a nickname — the guest
   // the join created. See useRoomViewerId.
   const userId = useRoomViewerId(roomId);
+
+  // A round owns the whole width; the results afterwards are a page you have
+  // finished with and want to leave, so the rail comes back for them. Both
+  // live at this same url, which is why the shell cannot decide it by path.
+  const playing =
+    state !== null && state.phase !== "finished" && state.phase !== "abandoned";
+  usePlayFocus(playing && !kicked);
 
   // Claim and Turn-based cut caption themselves "Save" or "Sacrifice" after
   // the PACK's format. It rides the room snapshot (the live room already holds
@@ -73,9 +85,15 @@ export function RoomScreen({ roomId }: { roomId: string }) {
     return (
       <Shell>
         {state.mode === "guess_who" && state.endgame ? (
-          <IdentityRevealScreen state={state} />
+          <IdentityRevealScreen state={state} currentUserId={userId} />
+        ) : state.mode === "spy" && state.endgame ? (
+          <SpyRevealScreen state={state} currentUserId={userId} />
         ) : (
-          <RoomResults state={state} packFormat={packFormat} />
+          <RoomResults
+            state={state}
+            currentUserId={userId}
+            packFormat={packFormat}
+          />
         )}
       </Shell>
     );
@@ -185,6 +203,7 @@ export function RoomScreen({ roomId }: { roomId: string }) {
               cut,
               pick,
               vote,
+              spyPick,
               submitRanking,
               placeItem,
               lastRejection,
@@ -201,13 +220,20 @@ export function RoomScreen({ roomId }: { roomId: string }) {
             onNext={next}
           />
         )}
-        {state.phase === "guessing" && (
-          <GuessingPhaseScreen
-            state={state}
-            currentUserId={userId}
-            onSubmit={guess}
-          />
-        )}
+        {state.phase === "guessing" &&
+          (state.mode === "spy" ? (
+            <SpyAccusationScreen
+              state={state}
+              currentUserId={userId}
+              onAccuse={accuse}
+            />
+          ) : (
+            <GuessingPhaseScreen
+              state={state}
+              currentUserId={userId}
+              onSubmit={guess}
+            />
+          ))}
         {/* phase "finished" is handled above, before the connection checks, so a
           torn-down socket still shows results. */}
       </Shell>

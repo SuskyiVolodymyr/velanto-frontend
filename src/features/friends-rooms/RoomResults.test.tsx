@@ -1,8 +1,11 @@
-import { screen } from "@testing-library/react";
-import { describe, it, expect } from "vitest";
+import { screen, within } from "@testing-library/react";
+import { describe, it, expect, vi } from "vitest";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { RoomResults } from "./RoomResults";
 import { baseRoomState } from "./test-fixtures";
+
+// The results aside carries a Play again panel, which routes.
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
 const ITEMS = [
   { id: "i1", title: "Pizza", type: "text" as const, value: "Pizza" },
@@ -36,10 +39,13 @@ describe("RoomResults", () => {
       />,
     );
 
-    expect(screen.getByText("A")).toBeInTheDocument();
-    expect(screen.getByText("Pizza")).toBeInTheDocument();
-    expect(screen.getByText("B")).toBeInTheDocument();
-    expect(screen.getByText("Sushi")).toBeInTheDocument();
+    // Scoped to the round's own card: the aside's Top picked board ranks the
+    // same items, so an unscoped getByText now matches twice.
+    const round = within(screen.getByRole("region", { name: "Round 1" }));
+    expect(round.getByText("A")).toBeInTheDocument();
+    expect(round.getByText("Pizza")).toBeInTheDocument();
+    expect(round.getByText("B")).toBeInTheDocument();
+    expect(round.getByText("Sushi")).toBeInTheDocument();
   });
 
   // A vote round named only its winner, so the results screen never said what
@@ -68,22 +74,32 @@ describe("RoomResults", () => {
       });
     }
 
+    /** The round's own matchup row — the aside's Top picked board ranks the
+     * same items, so every assertion here is scoped to the recap. */
+    function matchup() {
+      return within(screen.getByRole("group", { name: /Round one/ }));
+    }
+
     it("names what lost, not only what won", () => {
       render(<RoomResults state={voteState()} />);
 
-      expect(screen.getByText("Pizza")).toBeInTheDocument();
-      expect(screen.getByText("Sushi")).toBeInTheDocument();
+      expect(matchup().getByText("Pizza")).toBeInTheDocument();
+      expect(matchup().getByText("Sushi")).toBeInTheDocument();
     });
 
     it("says which one won, so the two are not just a list", () => {
       render(<RoomResults state={voteState()} />);
 
-      const won = screen.getByRole("listitem", { name: /pizza/i });
+      // A mirrored pair rather than a list: the winner is the green card, and
+      // the label is rendered on BOTH sides (hidden on the loser) so the two
+      // titles sit on one baseline across the VS.
+      const won = matchup().getByTestId("winner");
+      expect(won).toHaveTextContent("Pizza");
       expect(won).toHaveTextContent("2");
       // The loser carries its own count too — "0 votes" is a real outcome.
-      expect(
-        screen.getByRole("listitem", { name: /sushi/i }),
-      ).toHaveTextContent("0");
+      const lost = matchup().getByTestId("loser");
+      expect(lost).toHaveTextContent("Sushi");
+      expect(lost).toHaveTextContent("0");
     });
   });
 });
