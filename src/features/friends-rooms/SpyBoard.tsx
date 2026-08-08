@@ -165,7 +165,7 @@ export function SpyBoard({ state, currentUserId, onPick }: SpyBoardProps) {
                     <div className="flex items-center gap-2">
                       <span
                         className={cn(
-                          "min-w-0 truncate text-[13px] font-semibold",
+                          "min-w-0 break-words text-[13px] font-semibold",
                           hidden
                             ? "text-spy italic"
                             : "text-foreground-secondary",

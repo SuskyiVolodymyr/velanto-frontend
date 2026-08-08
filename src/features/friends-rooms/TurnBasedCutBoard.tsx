@@ -106,7 +106,7 @@ export function TurnBasedCutBoard({
                     <span className="text-[12.5px] text-foreground-secondary">
                       {t("turnBasedCut.cutVerb")}
                     </span>
-                    <span className="truncate text-[12.5px] font-semibold text-foreground/75 line-through">
+                    <span className="min-w-0 break-words text-[12.5px] font-semibold text-foreground/75 line-through">
                       {itemsById.get(cut.itemId)?.title ?? cut.itemId}
                     </span>
                   </li>

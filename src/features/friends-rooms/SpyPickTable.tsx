@@ -224,7 +224,7 @@ function RoundRow({
                       )}
                     >
                       <span className="flex items-center justify-center gap-1">
-                        <span className="min-w-0 truncate">
+                        <span className="min-w-0 break-words">
                           {titleById.get(id) ?? id}
                         </span>
                         {blind && (
@@ -260,7 +260,9 @@ function RoundRow({
                                 aria-hidden
                                 className="h-1 w-1 flex-none rounded-full bg-current opacity-60"
                               />
-                              <span className="min-w-0 truncate">{title}</span>
+                              <span className="min-w-0 break-words">
+                                {title}
+                              </span>
                             </span>
                           ))}
                         </span>
@@ -285,7 +287,7 @@ function RoundRow({
                   : "border-border bg-white/[0.02] text-foreground-secondary",
               )}
             >
-              <span className="min-w-0 truncate">
+              <span className="min-w-0 break-words">
                 {picked ? (titleById.get(picked) ?? picked) : "—"}
               </span>
               {blind && (

@@ -54,7 +54,7 @@ export function RankedList({
             <span className="flex h-7 w-7 flex-none items-center justify-center rounded-lg bg-white/[0.06] text-xs font-bold tabular-nums">
               {index + 1}
             </span>
-            <Text className="flex-1 truncate text-sm font-semibold">
+            <Text className="min-w-0 flex-1 break-words text-sm font-semibold">
               {row.title}
             </Text>
             {row.drawIndex !== undefined && (
