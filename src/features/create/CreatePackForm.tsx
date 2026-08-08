@@ -325,13 +325,37 @@ export function CreatePackForm({
         targetId = pack.id;
       }
 
-      // The home feed holds its cached list for several minutes
-      // (packs-feed.queries.ts) so a visitor's hydration doesn't refetch it —
-      // a deliberate Neon-compute saving. That would otherwise hide the
-      // author's own just-saved change from them, which reads as a bug rather
-      // than as staleness, so drop the cached feed on the one action that
-      // makes it wrong for THIS user. Once, after either branch above.
-      await queryClient.invalidateQueries({ queryKey: ["packs-feed"] });
+      // Every cached view of what just changed, dropped on the one action that
+      // makes them all wrong for THIS user. Once, after either branch above.
+      //
+      // The home feed holds its list for several minutes
+      // (packs-feed.queries.ts) so a visitor's hydration doesn't refetch it — a
+      // deliberate Neon-compute saving that would otherwise hide the author's
+      // own change from them, reading as a bug rather than as staleness. The
+      // pack's own fetches are the same story on a 30s timer: reopening the
+      // editor right after saving re-served the pre-save pack, and the only way
+      // out was reloading the page by hand.
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["packs-feed"] }),
+        // The authed re-fetch behind EditPackFallback / PackDetailFallback —
+        // the one an author's own draft or pending pack always goes through,
+        // since the anonymous Server fetch can't see it.
+        queryClient.invalidateQueries({
+          queryKey: ["pack-fallback", targetId],
+        }),
+        // Saving re-enters moderation, so the review banner is stale too.
+        queryClient.invalidateQueries({
+          queryKey: ["pack-review-outcome", targetId],
+        }),
+        // The author's own listing shows the title and status that just moved.
+        queryClient.invalidateQueries({ queryKey: ["my-packs"] }),
+      ]);
+
+      // TanStack isn't the only cache in play: /packs/[id] and its /edit child
+      // are Server Components, and Next serves their already-rendered RSC
+      // payload from the client router cache. Without this the editor reopens
+      // on the pre-save render however fresh the query cache is.
+      router.refresh();
 
       // The "Saved" flash is only meaningful for the draft action — Publish
       // navigates straight to the new/reviewed pack regardless. The

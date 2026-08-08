@@ -34,6 +34,7 @@ export const UPDATES: UpdateEntry[] = [
       "Adding pictures to a pack no longer loses them. A picture only became part of a pack when you pressed Add or Save on that item, and there was nothing to tell you otherwise — so a picture dropped in and left there was quietly gone, however many times you saved the pack afterwards.",
       "Pressing Save while a picture is still uploading now waits for it and saves the item, instead of doing nothing. Clicking straight through to the next item saves the picture you just added rather than dropping it. And if a picture is still sitting unadded when you save the pack, the pack won't save until you deal with it — it tells you instead of pretending everything went in.",
       "Dropping a second picture while the first is still uploading now replaces it, rather than being ignored.",
+      "Saving a pack now updates it everywhere at once. Reopening the editor straight after a save used to show you the version from before it, and the only way out was reloading the page.",
     ],
   },
   {
