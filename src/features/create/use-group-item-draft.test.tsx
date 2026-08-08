@@ -100,6 +100,184 @@ describe("useGroupItemDraft image upload", () => {
   });
 });
 
+// velanto-frontend#437: an author put images on 150 items over ~70 minutes and
+// none of them reached the pack. Every upload succeeded — 162 media objects,
+// all left unreferenced — because a staged image is only committed by pressing
+// Add/Save, and both ways of pressing on lost it silently: Save was a no-op
+// while the upload was still in flight, and clicking the next item bumped the
+// upload token so the result was discarded on arrival. Dragging from a remote
+// page (Google Images) makes the upload slow enough for both to be routine.
+describe("useGroupItemDraft does not silently discard an uploaded image", () => {
+  function deferredUpload() {
+    let resolve!: (v: { key: string; url: string; byteSize: number }) => void;
+    vi.mocked(uploadMedia).mockReturnValue(
+      new Promise((res) => {
+        resolve = res;
+      }),
+    );
+    return { resolve: () => resolve({ key: "k1", url: "u1", byteSize: 8 }) };
+  }
+
+  it("waits for an in-flight upload instead of no-oping the save", async () => {
+    const upload = deferredUpload();
+    const onChange = vi.fn();
+    const { result } = renderHook(() => useGroupItemDraft(GROUP, onChange), {
+      wrapper,
+    });
+
+    act(() => result.current.selectType("image"));
+    act(() => result.current.setDraftTitle("Beta"));
+    let uploadPromise!: Promise<void>;
+    act(() => {
+      uploadPromise = result.current.selectImageFile(imageFile());
+    });
+    await waitFor(() => expect(result.current.uploading).toBe(true));
+
+    // The author presses Save while the upload is still going.
+    let added!: Promise<boolean>;
+    act(() => {
+      added = result.current.addItem();
+    });
+    await act(async () => {
+      upload.resolve();
+      await uploadPromise;
+    });
+
+    expect(await added).toBe(true);
+    const next = onChange.mock.calls[0][0] as Group;
+    expect(next.items[0]).toMatchObject({
+      type: "image",
+      title: "Beta",
+      value: "k1",
+    });
+  });
+
+  it("commits a staged image when the author moves straight to another item", async () => {
+    vi.mocked(uploadMedia).mockResolvedValue({
+      key: "media/item/new.webp",
+      url: "https://cdn/new.webp",
+      byteSize: 8,
+    });
+    const onChange = vi.fn();
+    const { result } = renderHook(() => useGroupItemDraft(FILLED, onChange), {
+      wrapper,
+    });
+
+    // The real flow: an existing TEXT item is switched to image, so its body
+    // carries across as the title and only the picture is new.
+    act(() => result.current.beginEdit(TEXT_ITEM));
+    act(() => result.current.selectType("image"));
+    await act(async () => {
+      await result.current.selectImageFile(imageFile());
+    });
+
+    let moved: boolean | undefined;
+    await act(async () => {
+      moved = await result.current.commitPendingImage();
+    });
+
+    expect(moved).toBe(true);
+    const next = onChange.mock.calls[0][0] as Group;
+    expect(next.items[0]).toEqual({
+      id: "i1",
+      type: "image",
+      title: "Alpha",
+      value: "media/item/new.webp",
+    });
+  });
+
+  it("blocks the move and shows why when the staged image can't be saved", async () => {
+    vi.mocked(uploadMedia).mockResolvedValue({
+      key: "k1",
+      url: "u1",
+      byteSize: 8,
+    });
+    const onChange = vi.fn();
+    const { result } = renderHook(() => useGroupItemDraft(GROUP, onChange), {
+      wrapper,
+    });
+
+    act(() => result.current.selectType("image"));
+    await act(async () => {
+      await result.current.selectImageFile(imageFile());
+    });
+
+    let moved: boolean | undefined;
+    await act(async () => {
+      moved = await result.current.commitPendingImage();
+    });
+
+    expect(moved).toBe(false);
+    expect(onChange).not.toHaveBeenCalled();
+    expect(result.current.addError).not.toBe("");
+  });
+
+  it("has nothing pending once the image is committed", async () => {
+    vi.mocked(uploadMedia).mockResolvedValue({
+      key: "k1",
+      url: "u1",
+      byteSize: 8,
+    });
+    const { result } = renderHook(() => useGroupItemDraft(GROUP, vi.fn()), {
+      wrapper,
+    });
+
+    act(() => result.current.selectType("image"));
+    act(() => result.current.setDraftTitle("Beta"));
+    await act(async () => {
+      await result.current.selectImageFile(imageFile());
+    });
+    expect(result.current.hasUncommittedImage).toBe(true);
+
+    await act(async () => {
+      await result.current.addItem();
+    });
+    expect(result.current.hasUncommittedImage).toBe(false);
+  });
+
+  it("reports nothing pending for an image item opened but not changed", () => {
+    const { result } = renderHook(() => useGroupItemDraft(FILLED, vi.fn()), {
+      wrapper,
+    });
+
+    act(() => result.current.beginEdit(IMAGE_ITEM));
+
+    expect(result.current.hasUncommittedImage).toBe(false);
+  });
+
+  it("supersedes an in-flight upload when a second image is dropped", async () => {
+    const first = deferredUpload();
+    const { result } = renderHook(() => useGroupItemDraft(GROUP, vi.fn()), {
+      wrapper,
+    });
+
+    act(() => result.current.selectType("image"));
+    let firstPromise!: Promise<void>;
+    act(() => {
+      firstPromise = result.current.selectImageFile(imageFile());
+    });
+    await waitFor(() => expect(result.current.uploading).toBe(true));
+
+    // Dropping again mid-upload used to be ignored outright, so the author saw
+    // nothing happen and the second picture was never uploaded at all.
+    vi.mocked(uploadMedia).mockResolvedValue({
+      key: "second",
+      url: "u2",
+      byteSize: 8,
+    });
+    await act(async () => {
+      await result.current.selectImageFile(imageFile());
+    });
+    await act(async () => {
+      first.resolve();
+      await firstPromise;
+    });
+
+    expect(result.current.draftValue).toBe("second");
+    expect(result.current.uploading).toBe(false);
+  });
+});
+
 describe("useGroupItemDraft crop adjust", () => {
   it("keeps the picked file and re-uploads a cropped replacement", async () => {
     vi.mocked(uploadMedia)
