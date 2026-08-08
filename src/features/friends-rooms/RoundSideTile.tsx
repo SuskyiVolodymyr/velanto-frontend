@@ -138,14 +138,15 @@ export function RoundSideTile({
                 {media}
               </div>
             )}
-            {/* A fixed two-line box, so every panel is the same height and the
-                two sides' videos line up row for row. Left to size itself, a
-                one-line title on one side and a two-line title on the other
-                pushed the columns out of step for the rest of the card. The
-                full name stays on hover, since two lines can clip a long one. */}
+            {/* A two-line FLOOR, not a fixed height (#442). It was fixed so
+                every panel matched and the two sides' videos lined up row for
+                row — but that clipped any title longer than two lines, and an
+                unreadable name is a worse trade than a row of videos sitting a
+                line out of step. The floor still keeps the common case (one-
+                and two-line titles) aligned exactly as before. */}
             <span
               title={item.title}
-              className="line-clamp-2 h-[53px] p-[8px_10px_9px] text-[13px] leading-[1.35] font-semibold text-foreground-secondary"
+              className="min-h-[53px] break-words p-[8px_10px_9px] text-[13px] leading-[1.35] font-semibold text-foreground-secondary"
             >
               {item.title}
             </span>

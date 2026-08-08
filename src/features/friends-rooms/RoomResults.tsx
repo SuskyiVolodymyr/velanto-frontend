@@ -196,7 +196,7 @@ function SurvivorResultBlock({
                   : "border-danger/50 bg-danger/[0.05]",
               )}
             >
-              <Text className="min-w-0 truncate text-[13px] font-semibold">
+              <Text className="min-w-0 break-words text-[13px] font-semibold">
                 {item.title}
               </Text>
               {claimant ? (
@@ -430,7 +430,7 @@ function VoteContenderCard({
         >
           {t("voting.winnerHeading")}
         </Text>
-        <Text className="w-full min-w-0 truncate text-sm font-semibold">
+        <Text className="w-full min-w-0 break-words text-sm font-semibold">
           {title}
         </Text>
         {/* The pool's items, bulleted and behind a hairline — the same
@@ -462,7 +462,7 @@ function VoteContenderCard({
                   aria-hidden
                   className="h-1 w-1 flex-none rounded-full bg-current opacity-60"
                 />
-                <span className="min-w-0 truncate">{item}</span>
+                <span className="min-w-0 break-words">{item}</span>
               </span>
             ))}
           </span>
@@ -652,7 +652,7 @@ function VoteResultBlock({
             >
               <Text
                 className={cn(
-                  "min-w-0 flex-1 truncate text-sm",
+                  "min-w-0 flex-1 break-words text-sm",
                   won ? "font-semibold text-live" : "text-foreground-secondary",
                 )}
               >

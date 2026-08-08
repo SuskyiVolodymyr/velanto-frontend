@@ -190,7 +190,7 @@ function RoundCard({
               verdict/"LOST" tags beside it. */}
           <Text
             variant="secondary"
-            className="truncate text-[13px] font-semibold"
+            className="min-w-0 break-words text-[13px] font-semibold"
           >
             {heading}
           </Text>

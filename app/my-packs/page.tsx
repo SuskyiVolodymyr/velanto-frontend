@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { Text } from "@/src/shared/components/Text";
 import Link from "next/link";
@@ -55,7 +56,12 @@ export default async function MyPacksPage() {
         <Text variant="secondary" className="mb-8 max-w-lg">
           {t("subtitle")}
         </Text>
-        <MyPacksFeed />
+        {/* MyPacksFeed reads the current page from the query string via
+            useSearchParams, which Next requires be wrapped in a Suspense
+            boundary (same as the docs reader's `?topic=`). */}
+        <Suspense>
+          <MyPacksFeed />
+        </Suspense>
       </main>
     </>
   );

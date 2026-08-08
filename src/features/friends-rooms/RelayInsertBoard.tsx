@@ -84,7 +84,7 @@ export function RelayInsertBoard({
           <span className="grid h-[30px] w-[30px] flex-none place-items-center rounded-[9px] bg-white/[0.06] font-mono text-[13px] font-bold tabular-nums">
             #{position + 1}
           </span>
-          <Text className="min-w-0 flex-1 truncate text-sm font-semibold">
+          <Text className="min-w-0 flex-1 break-words text-sm font-semibold">
             {itemsById.get(filledId)?.title ?? filledId}
           </Text>
           {player && (
@@ -134,7 +134,7 @@ export function RelayInsertBoard({
         >
           #{position + 1}
         </span>
-        <span className="min-w-0 flex-1 truncate">
+        <span className="min-w-0 flex-1 break-words">
           {t("relay.placeItemHere", { name: currentItem?.title ?? "" })}
         </span>
         <Plus size={15} aria-hidden className="flex-none" />
