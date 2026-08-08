@@ -27,6 +27,16 @@ export interface UpdateEntry {
  */
 export const UPDATES: UpdateEntry[] = [
   {
+    date: "2026-08-08",
+    version: "2.2.1",
+    title: "Your pictures stay where you put them",
+    bullets: [
+      "Adding pictures to a pack no longer loses them. A picture only became part of a pack when you pressed Add or Save on that item, and there was nothing to tell you otherwise — so a picture dropped in and left there was quietly gone, however many times you saved the pack afterwards.",
+      "Pressing Save while a picture is still uploading now waits for it and saves the item, instead of doing nothing. Clicking straight through to the next item saves the picture you just added rather than dropping it. And if a picture is still sitting unadded when you save the pack, the pack won't save until you deal with it — it tells you instead of pretending everything went in.",
+      "Dropping a second picture while the first is still uploading now replaces it, rather than being ignored.",
+    ],
+  },
+  {
     date: "2026-08-06",
     version: "2.2.0",
     title: "One of you is lying",

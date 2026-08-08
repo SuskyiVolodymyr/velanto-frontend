@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronDown } from "lucide-react";
 import type { Group, Item } from "@/src/shared/types/pack";
@@ -9,6 +9,7 @@ import { cn } from "@/src/shared/lib/cn";
 import { useGroupItemDraft } from "@/src/features/create/use-group-item-draft";
 import { GroupItemList } from "@/src/features/create/GroupItemList";
 import { GroupItemAdder } from "@/src/features/create/GroupItemAdder";
+import { usePendingImageDrafts } from "@/src/features/create/pending-image-drafts";
 
 // Mock (Create Pack.dc.html): each pool's identity color, cycled by its
 // position — the color bar next to its name, distinguishing pools at a
@@ -58,6 +59,16 @@ export function GroupEditor({
   const [collapsed, setCollapsed] = useState(false);
   const hue = POOL_HUES[index % POOL_HUES.length];
 
+  // Tell the form when this pool is holding an image that Save can't see, so it
+  // can refuse to save silently over it (#437). Unmounting clears the report —
+  // a removed pool has nothing pending by definition.
+  const pendingImageDrafts = usePendingImageDrafts();
+  const { hasUncommittedImage } = draft;
+  useEffect(() => {
+    pendingImageDrafts?.report(index, hasUncommittedImage);
+    return () => pendingImageDrafts?.report(index, false);
+  }, [pendingImageDrafts, index, hasUncommittedImage]);
+
   function removeItem(itemId: string) {
     // Removing the item currently lifted into the form row would leave the row
     // editing something that no longer exists, so drop back to composing.
@@ -73,7 +84,13 @@ export function GroupEditor({
     setExpandedFor("new");
   }
 
-  function openEditPanel(item: Item) {
+  // Clicking straight through to another item reads as "done with this one",
+  // so an image already uploaded into the open panel is saved rather than
+  // dropped on the floor (#437). If it can't be saved — no title yet — the move
+  // is refused and the panel stays put with its error showing, which is the
+  // only way the author finds out at all.
+  async function openEditPanel(item: Item) {
+    if (!(await draft.commitPendingImage())) return;
     draft.beginEdit(item);
     setExpandedFor(item.id);
   }
@@ -81,6 +98,16 @@ export function GroupEditor({
   async function commit() {
     const added = await draft.addItem();
     if (added) setExpandedFor(null);
+  }
+
+  // Collapsing hides the item panel without unmounting its draft state, so a
+  // staged image would go on blocking the pack save from behind a panel the
+  // author can no longer see (#437). Save it on the way out, exactly as
+  // clicking another item does; refuse the collapse if it can't be saved, so
+  // the error stays on screen next to the control that caused it.
+  async function toggleCollapsed() {
+    if (!collapsed && !(await draft.commitPendingImage())) return;
+    setCollapsed((current) => !current);
   }
 
   function collapseAdder() {
@@ -150,7 +177,7 @@ export function GroupEditor({
         </Text>
         <button
           type="button"
-          onClick={() => setCollapsed((c) => !c)}
+          onClick={() => void toggleCollapsed()}
           aria-label={
             collapsed
               ? t("expandPool", { index: index + 1 })
@@ -198,7 +225,7 @@ export function GroupEditor({
           <GroupItemList
             items={group.items}
             editingItemId={expandedFor === "new" ? null : expandedFor}
-            onEdit={openEditPanel}
+            onEdit={(item) => void openEditPanel(item)}
             onRemove={removeItem}
             renderEditPanel={() => renderAdder(true)}
             trailing={

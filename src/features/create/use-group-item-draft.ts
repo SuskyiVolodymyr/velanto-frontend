@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import type { Group, Item, ItemType } from "@/src/shared/types/pack";
 import { extractYouTubeId } from "@/src/shared/lib/youtube";
@@ -46,6 +46,33 @@ export function useGroupItemDraft(
   // against the current token and discarded, so its storage key never leaks
   // into an unrelated (text/youtube) draft value.
   const uploadToken = useRef(0);
+  // The upload currently in flight, resolving to the storage key it staged (or
+  // null if it was superseded or failed). `addItem` awaits it rather than
+  // refusing to run, so pressing Save mid-upload commits the image once it
+  // lands instead of doing nothing at all (#437). It also resolves the stale
+  // closure: `draftValue` captured at render time is still "" when the upload
+  // completes, so the key has to come back through this promise.
+  const pendingUpload = useRef<Promise<string | null> | null>(null);
+  // Token of the upload that currently owns the `uploading` flag. Separate from
+  // `uploadToken` because that one is also bumped by a type switch or an edit,
+  // and only the request that still owns the flag may clear it — otherwise a
+  // superseded upload resolving first would report "done" while a newer one is
+  // still running.
+  const activeUpload = useRef<number | null>(null);
+  // The current pool and its onChange. `addItem` now awaits an in-flight
+  // upload, and the props captured by the click handler's render can be
+  // seconds stale by the time it resumes — committing against that snapshot
+  // would resurrect an item the author deleted while waiting, or undo a rename
+  // they typed. Written after every commit, so it is always the live pair.
+  const latest = useRef({ group, onChange });
+  useEffect(() => {
+    latest.current = { group, onChange };
+  });
+  // True between entering `addItem` and its commit. Save is live during upload
+  // now, so it can be pressed twice; without this both presses would await the
+  // same upload, resume in the same microtask drain (no re-render between) and
+  // append the item twice.
+  const committing = useRef(false);
 
   function selectType(type: ItemType) {
     if (type === draftType) return;
@@ -89,19 +116,20 @@ export function useGroupItemDraft(
    * its position in the list), or append a new one.
    */
   function pushItem(fields: Omit<Item, "id">) {
+    const { group: current, onChange: commit } = latest.current;
     if (editingItemId) {
-      onChange({
-        ...group,
-        items: group.items.map((existing) =>
+      commit({
+        ...current,
+        items: current.items.map((existing) =>
           existing.id === editingItemId
             ? { id: editingItemId, ...fields }
             : existing,
         ),
       });
     } else {
-      onChange({
-        ...group,
-        items: [...group.items, { id: crypto.randomUUID(), ...fields }],
+      commit({
+        ...current,
+        items: [...current.items, { id: crypto.randomUUID(), ...fields }],
       });
     }
     resetDraft();
@@ -134,8 +162,38 @@ export function useGroupItemDraft(
     resetDraft();
   }
 
+  /**
+   * Upload a file and stage its key, unless the author has moved on in the
+   * meantime. Resolves to the staged key so a caller that started the upload
+   * (or `addItem`, waiting on it) can use the value without waiting for the
+   * `draftValue` state to come back around through a re-render.
+   */
+  async function runUpload(file: File, token: number): Promise<string | null> {
+    try {
+      const { key, url } = await uploadMedia(file, "item");
+      // Discard a result the user has moved on from (type switched, or another
+      // image picked) — writing its key now would corrupt the current draft.
+      if (token !== uploadToken.current) return null;
+      setDraftValue(key);
+      setImagePreviewUrl(url);
+      return key;
+    } catch {
+      if (token !== uploadToken.current) return null;
+      setAddError(t("imageUploadFailed"));
+      return null;
+    } finally {
+      // Only the newest upload owns these — an older one resolving late must
+      // not clear the flag (or the pending promise) out from under it.
+      if (activeUpload.current === token) {
+        activeUpload.current = null;
+        pendingUpload.current = null;
+        setUploading(false);
+      }
+    }
+  }
+
   async function selectImageFile(file: File | null) {
-    if (!file || uploading) return;
+    if (!file) return;
     const token = (uploadToken.current += 1);
     setAddError("");
     setImagePreviewUrl("");
@@ -152,19 +210,14 @@ export function useGroupItemDraft(
     // Retain the source file for the optional 16:9 cropper (see applyCroppedImage).
     setImageFile(file);
     setUploading(true);
-    try {
-      const { key, url } = await uploadMedia(file, "item");
-      // Discard a result the user has moved on from (type switched, or another
-      // image picked) — writing its key now would corrupt the current draft.
-      if (token !== uploadToken.current) return;
-      setDraftValue(key);
-      setImagePreviewUrl(url);
-    } catch {
-      if (token !== uploadToken.current) return;
-      setAddError(t("imageUploadFailed"));
-    } finally {
-      setUploading(false);
-    }
+    // Dropping a second picture while the first is still uploading used to be
+    // ignored outright, which looked exactly like a drop that hadn't
+    // registered. The token bump makes the first result harmless, so the
+    // newer file simply wins.
+    activeUpload.current = token;
+    const upload = runUpload(file, token);
+    pendingUpload.current = upload;
+    await upload;
   }
 
   /**
@@ -179,17 +232,10 @@ export function useGroupItemDraft(
     const token = (uploadToken.current += 1);
     setAddError("");
     setUploading(true);
-    try {
-      const { key, url } = await uploadMedia(cropped, "item");
-      if (token !== uploadToken.current) return;
-      setDraftValue(key);
-      setImagePreviewUrl(url);
-    } catch {
-      if (token !== uploadToken.current) return;
-      setAddError(t("imageUploadFailed"));
-    } finally {
-      setUploading(false);
-    }
+    activeUpload.current = token;
+    const upload = runUpload(cropped, token);
+    pendingUpload.current = upload;
+    await upload;
   }
 
   /**
@@ -199,22 +245,50 @@ export function useGroupItemDraft(
    * leaves the panel open with its error showing instead.
    */
   async function addItem(): Promise<boolean> {
-    if (validating || uploading) return false;
+    if (committing.current) return false;
     setAddError("");
 
     if (draftType === "image") {
-      if (!draftValue) {
-        setAddError(t("imageRequired"));
-        return false;
+      committing.current = true;
+      try {
+        return await addImageItem();
+      } finally {
+        committing.current = false;
       }
-      if (!draftTitle.trim()) {
-        setAddError(t("imageTitleRequired"));
-        return false;
-      }
-      pushItem({ type: "image", title: draftTitle.trim(), value: draftValue });
-      return true;
     }
 
+    // Only the youtube path can be validating, and only its own oEmbed check
+    // is worth waiting on. Bailing here for an IMAGE draft was a silent
+    // refusal — the exact failure mode this fix exists to remove.
+    if (validating) return false;
+    return addNonImageItem();
+  }
+
+  /** The image branch of {@link addItem} — the one that can wait on an upload. */
+  async function addImageItem(): Promise<boolean> {
+    // Save pressed mid-upload used to return false without saying anything,
+    // and the author's next click discarded the upload it was waiting on
+    // (#437). Wait for it instead — the key comes back from the promise
+    // because this closure's `draftValue` predates it.
+    const uploadedKey = pendingUpload.current
+      ? await pendingUpload.current
+      : null;
+    const value = uploadedKey ?? draftValue;
+    if (!value) {
+      setAddError(t("imageRequired"));
+      return false;
+    }
+    if (!draftTitle.trim()) {
+      setAddError(t("imageTitleRequired"));
+      return false;
+    }
+    pushItem({ type: "image", title: draftTitle.trim(), value });
+    return true;
+  }
+
+  /** The text/youtube branch of {@link addItem} — no upload to wait on. */
+
+  async function addNonImageItem(): Promise<boolean> {
     // Empty is a silent no-op when composing (the author just hasn't typed yet),
     // but a real error when editing: they cleared an item that already exists,
     // and saying nothing would look like the save had worked.
@@ -264,7 +338,40 @@ export function useGroupItemDraft(
     }
   }
 
+  // The open panel is holding image work that no pack-level Save can reach: an
+  // upload in flight, or a staged key that isn't already what the stored item
+  // holds. Items only enter the pack through addItem, so anything true here is
+  // one careless click away from being lost silently (#437).
+  const storedEditingItem = editingItemId
+    ? group.items.find((existing) => existing.id === editingItemId)
+    : undefined;
+  const hasUncommittedImage =
+    draftType === "image" &&
+    (uploading ||
+      (draftValue !== "" &&
+        !(
+          storedEditingItem?.type === "image" &&
+          storedEditingItem.value === draftValue
+        )));
+
+  /**
+   * Save a staged image before the panel is taken away from the author, and
+   * report whether it's safe to proceed. Called when they click straight
+   * through to another item — the click reads as "done with this one", but the
+   * panel closing used to discard the upload with it.
+   *
+   * Only IMAGE work is rescued this way. A half-typed text draft abandoned by
+   * clicking elsewhere is still discarded, as before: it costs nothing, and
+   * committing it would save words the author never confirmed.
+   */
+  async function commitPendingImage(): Promise<boolean> {
+    if (!hasUncommittedImage) return true;
+    return addItem();
+  }
+
   return {
+    hasUncommittedImage,
+    commitPendingImage,
     draftType,
     draftTitle,
     draftValue,

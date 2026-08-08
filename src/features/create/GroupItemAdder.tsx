@@ -94,7 +94,6 @@ export function GroupItemAdder({
 
   function onDragEnter(e: DragEvent) {
     e.preventDefault();
-    if (uploading) return;
     dragDepth.current += 1;
     setDragOver(true);
   }
@@ -110,7 +109,8 @@ export function GroupItemAdder({
     e.preventDefault();
     dragDepth.current = 0;
     setDragOver(false);
-    if (uploading) return;
+    // A drop mid-upload supersedes the one in flight rather than being ignored
+    // (#437) — being ignored looked exactly like a drop that never registered.
     onSelectImage(e.dataTransfer.files?.[0] ?? null);
   }
 
@@ -181,7 +181,9 @@ export function GroupItemAdder({
               onDrop={onDrop}
               className={cn(
                 "relative flex h-10 cursor-pointer items-center gap-[9px] overflow-hidden rounded-[11px] border border-dashed px-[14px] text-[12.5px] font-semibold transition-colors",
-                uploading && "pointer-events-none opacity-60",
+                // Dimmed while uploading, but still live: picking again
+                // replaces the picture in flight instead of being swallowed.
+                uploading && "opacity-60",
               )}
               style={
                 imagePreviewUrl
@@ -201,7 +203,6 @@ export function GroupItemAdder({
               <input
                 type="file"
                 accept="image/*"
-                disabled={uploading}
                 aria-label={t("groupNewItemImage", { index: index + 1 })}
                 onChange={(e) => {
                   onSelectImage(e.target.files?.[0] ?? null);
@@ -356,10 +357,18 @@ export function GroupItemAdder({
           <button
             type="button"
             onClick={() => onAdd()}
-            disabled={validating || uploading}
+            // Deliberately LIVE while an image is uploading (#437). Disabling
+            // it here is what made Save a no-op mid-upload: the author pressed
+            // it, nothing happened, and their next click discarded the upload.
+            // The commit now waits for the upload instead.
+            disabled={validating}
             className="h-10 rounded-[11px] bg-acc px-4 text-[13px] font-bold text-[#07131a] transition-[filter] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {validating ? t("checking") : commitLabel}
+            {validating
+              ? t("checking")
+              : uploading
+                ? t("uploading")
+                : commitLabel}
           </button>
         </div>
       </div>

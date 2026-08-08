@@ -856,3 +856,171 @@ describe("GroupEditor progressive disclosure (T5)", () => {
     expect(screen.getAllByRole("button", { name: "Save" })).toHaveLength(1);
   });
 });
+
+// velanto-frontend#437 — the author's real flow, at the level it broke: a pool
+// of text items, each opened and switched to an image, clicking straight
+// through to the next chip. 162 pictures were uploaded that way and none
+// reached the pack.
+describe("GroupEditor keeps an image the author uploaded into an open panel", () => {
+  const TEXT_ITEMS: Group = {
+    id: "g1",
+    name: "Pool",
+    items: [
+      { id: "i1", type: "text", title: "Alpha", value: "Alpha" },
+      { id: "i2", type: "text", title: "Beta", value: "Beta" },
+    ],
+  };
+
+  it("saves the staged image when the author clicks the next item", async () => {
+    vi.mocked(uploadMedia).mockResolvedValue({
+      key: "media/item/alpha.webp",
+      url: "https://cdn.example.com/media/item/alpha.webp",
+      byteSize: 900,
+    });
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<StatefulGroupEditor initial={TEXT_ITEMS} onChange={onChange} />);
+
+    await user.click(screen.getByRole("button", { name: "Edit Alpha" }));
+    await user.click(
+      screen.getByRole("radio", { name: "Pool 1 item type: Image" }),
+    );
+    await user.upload(screen.getByLabelText("Pool 1 new image"), imageFile());
+    await waitFor(() =>
+      expect(
+        document.querySelector(
+          'img[src="https://cdn.example.com/media/item/alpha.webp"]',
+        ),
+      ).toBeInTheDocument(),
+    );
+
+    // Straight to the next item, without pressing Save.
+    await user.click(screen.getByRole("button", { name: "Edit Beta" }));
+
+    await waitFor(() => expect(onChange).toHaveBeenCalled());
+    const next = onChange.mock.calls.at(-1)![0] as Group;
+    expect(next.items[0]).toEqual({
+      id: "i1",
+      type: "image",
+      // The text body carried across the format switch as the title.
+      title: "Alpha",
+      value: "media/item/alpha.webp",
+    });
+  });
+
+  it("saves an image still uploading when Save is pressed", async () => {
+    let resolveUpload!: (v: {
+      key: string;
+      url: string;
+      byteSize: number;
+    }) => void;
+    vi.mocked(uploadMedia).mockReturnValue(
+      new Promise((res) => {
+        resolveUpload = res;
+      }),
+    );
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<StatefulGroupEditor initial={TEXT_ITEMS} onChange={onChange} />);
+
+    await user.click(screen.getByRole("button", { name: "Edit Alpha" }));
+    await user.click(
+      screen.getByRole("radio", { name: "Pool 1 item type: Image" }),
+    );
+    await user.upload(screen.getByLabelText("Pool 1 new image"), imageFile());
+
+    // Save while the upload is still in flight — the button must be live, not
+    // greyed out into a click that does nothing.
+    await user.click(screen.getByRole("button", { name: "Uploading…" }));
+    resolveUpload({
+      key: "media/item/slow.webp",
+      url: "https://cdn.example.com/media/item/slow.webp",
+      byteSize: 900,
+    });
+
+    await waitFor(() => expect(onChange).toHaveBeenCalled());
+    const next = onChange.mock.calls.at(-1)![0] as Group;
+    expect(next.items[0]).toMatchObject({
+      type: "image",
+      value: "media/item/slow.webp",
+    });
+  });
+
+  // Collapsing hides the panel without unmounting its state, so a staged image
+  // left behind one would block every pack save from somewhere the author
+  // can't see. Saving it on the way out keeps the pool collapsible AND the
+  // picture safe.
+  it("saves the staged image when the pool is collapsed", async () => {
+    vi.mocked(uploadMedia).mockResolvedValue({
+      key: "media/item/collapsed.webp",
+      url: "https://cdn.example.com/media/item/collapsed.webp",
+      byteSize: 900,
+    });
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<StatefulGroupEditor initial={TEXT_ITEMS} onChange={onChange} />);
+
+    await user.click(screen.getByRole("button", { name: "Edit Alpha" }));
+    await user.click(
+      screen.getByRole("radio", { name: "Pool 1 item type: Image" }),
+    );
+    await user.upload(screen.getByLabelText("Pool 1 new image"), imageFile());
+    await waitFor(() =>
+      expect(
+        document.querySelector(
+          'img[src="https://cdn.example.com/media/item/collapsed.webp"]',
+        ),
+      ).toBeInTheDocument(),
+    );
+
+    await user.click(screen.getByRole("button", { name: "Collapse pool 1" }));
+
+    await waitFor(() => expect(onChange).toHaveBeenCalled());
+    const next = onChange.mock.calls.at(-1)![0] as Group;
+    expect(next.items[0]).toMatchObject({
+      type: "image",
+      value: "media/item/collapsed.webp",
+    });
+  });
+
+  // The regression the review caught: `addItem` now awaits the upload, so the
+  // pool prop captured when Save was pressed can be seconds stale by the time
+  // it commits. Committing against that snapshot would put a deleted item back.
+  it("does not resurrect an item deleted while the upload was in flight", async () => {
+    let resolveUpload!: (v: {
+      key: string;
+      url: string;
+      byteSize: number;
+    }) => void;
+    vi.mocked(uploadMedia).mockReturnValue(
+      new Promise((res) => {
+        resolveUpload = res;
+      }),
+    );
+    const user = userEvent.setup();
+    const onChange = vi.fn();
+    render(<StatefulGroupEditor initial={TEXT_ITEMS} onChange={onChange} />);
+
+    await user.click(screen.getByRole("button", { name: "+ Add item" }));
+    await user.click(
+      screen.getByRole("radio", { name: "Pool 1 item type: Image" }),
+    );
+    await user.type(screen.getByLabelText("Pool 1 new item title"), "Gamma");
+    await user.upload(screen.getByLabelText("Pool 1 new image"), imageFile());
+    await user.click(screen.getByRole("button", { name: "Uploading…" }));
+
+    // While the save waits on the upload, the author deletes an existing item.
+    await user.click(screen.getByRole("button", { name: "Remove Beta" }));
+    resolveUpload({
+      key: "media/item/late.webp",
+      url: "https://cdn.example.com/media/item/late.webp",
+      byteSize: 900,
+    });
+
+    await waitFor(() =>
+      expect(onChange.mock.calls.at(-1)![0].items).toHaveLength(2),
+    );
+    const next = onChange.mock.calls.at(-1)![0] as Group;
+    expect(next.items.map((item) => item.title)).toEqual(["Alpha", "Gamma"]);
+  });
+});

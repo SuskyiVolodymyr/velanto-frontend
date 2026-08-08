@@ -1431,6 +1431,7 @@
     "imageUploadFailed": "فشل الرفع. حاول مرة أخرى.",
     "imageTitleRequired": "أضف عنوانًا لهذه الصورة.",
     "imageRequired": "اختر صورة أولاً.",
+    "unsavedItemImage": "المجموعة {pool} تحتوي على عنصر بصورة لم تُضف بعد. اضغط «إضافة» (أو «حفظ») على ذلك العنصر أولاً، وإلا فلن تكون الصورة ضمن الحزمة.",
     "coverCropTitle": "قص الغلاف",
     "coverCropZoom": "تكبير",
     "coverCropCancel": "إلغاء",

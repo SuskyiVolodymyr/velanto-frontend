@@ -13,6 +13,7 @@ import { CreatePackForm } from "./CreatePackForm";
 import { AuthProvider } from "@/src/shared/lib/auth-context";
 import { authClient } from "@/src/shared/lib/auth-client";
 import { packsClient } from "@/src/shared/lib/packs-client";
+import { uploadMedia } from "@/src/shared/lib/media-client";
 import { ApiError } from "@/src/shared/lib/api-client";
 import type { Pack } from "@/src/shared/types/pack";
 import {
@@ -44,6 +45,20 @@ vi.mock("@/src/shared/lib/auth-client", () => ({
     refresh: vi.fn(),
   },
 }));
+
+vi.mock("@/src/shared/lib/media-client", async (importOriginal) => {
+  const actual =
+    await importOriginal<typeof import("@/src/shared/lib/media-client")>();
+  return { ...actual, uploadMedia: vi.fn() };
+});
+
+function imageFile() {
+  const file = new File(["x"], "poster.png", { type: "image/png" });
+  // File.size is read-only; jsdom derives it from the blob parts, so pin it
+  // under the 1MB client-side cap without allocating a real buffer.
+  Object.defineProperty(file, "size", { value: 1000 });
+  return file;
+}
 
 vi.mock("@/src/shared/lib/packs-client", () => ({
   packsClient: {
@@ -790,5 +805,136 @@ describe("CreatePackForm", () => {
     expect(
       await screen.findByText("Give your pack a title."),
     ).toBeInTheDocument();
+  });
+});
+
+// velanto-frontend#437. The author pressed Save draft repeatedly over an
+// evening precisely to protect their pictures — and every one of those saves
+// wrote a pack the pictures weren't in, because an item only enters the pack
+// through its own Add/Save. Saving must not look like it worked.
+describe("CreatePackForm guards an uncommitted item image", () => {
+  it("refuses to save while a pool holds an image that was never added", async () => {
+    vi.mocked(uploadMedia).mockResolvedValue({
+      key: "media/item/orphan.webp",
+      url: "https://cdn.example.com/media/item/orphan.webp",
+      byteSize: 900,
+    });
+    const user = userEvent.setup();
+    renderEditForm();
+
+    await user.click(await screen.findByRole("button", { name: "Edit AoT" }));
+    await user.click(
+      screen.getByRole("radio", { name: "Pool 1 item type: Image" }),
+    );
+    await user.upload(screen.getByLabelText("Pool 1 new image"), imageFile());
+    await waitFor(() =>
+      expect(
+        document.querySelector(
+          'img[src="https://cdn.example.com/media/item/orphan.webp"]',
+        ),
+      ).toBeInTheDocument(),
+    );
+
+    await user.click(screen.getByRole("button", { name: "Save draft" }));
+
+    expect(
+      await screen.findByText(/image that hasn't been added yet/i),
+    ).toBeInTheDocument();
+    expect(packsClient.update).not.toHaveBeenCalled();
+  });
+
+  // The refusal must be temporary. A regression that leaves a pool reporting
+  // forever makes the pack PERMANENTLY unsaveable — strictly worse than #437
+  // itself — and the refusal test above would stay green through it.
+  it("saves once the image has been added", async () => {
+    vi.mocked(uploadMedia).mockResolvedValue({
+      key: "media/item/kept.webp",
+      url: "https://cdn.example.com/media/item/kept.webp",
+      byteSize: 900,
+    });
+    vi.mocked(packsClient.update).mockResolvedValue(makePack({ id: "pack-1" }));
+    const user = userEvent.setup();
+    renderEditForm();
+
+    await user.click(await screen.findByRole("button", { name: "Edit AoT" }));
+    await user.click(
+      screen.getByRole("radio", { name: "Pool 1 item type: Image" }),
+    );
+    await user.upload(screen.getByLabelText("Pool 1 new image"), imageFile());
+    await waitFor(() =>
+      expect(
+        document.querySelector(
+          'img[src="https://cdn.example.com/media/item/kept.webp"]',
+        ),
+      ).toBeInTheDocument(),
+    );
+    await user.click(screen.getByRole("button", { name: /^Save$/ }));
+
+    await user.click(screen.getByRole("button", { name: "Save draft" }));
+
+    await waitFor(() => expect(packsClient.update).toHaveBeenCalled());
+    const [, body] = vi.mocked(packsClient.update).mock.calls[0];
+    expect(body.groups?.[0].items[0]).toMatchObject({
+      type: "image",
+      value: "media/item/kept.webp",
+    });
+  });
+
+  // Cancelling the panel throws the upload away deliberately — that's the
+  // author's call — but it must not leave the pack unsaveable afterwards.
+  it("saves after the pending panel is cancelled", async () => {
+    vi.mocked(uploadMedia).mockResolvedValue({
+      key: "media/item/dropped.webp",
+      url: "https://cdn.example.com/media/item/dropped.webp",
+      byteSize: 900,
+    });
+    vi.mocked(packsClient.update).mockResolvedValue(makePack({ id: "pack-1" }));
+    const user = userEvent.setup();
+    renderEditForm();
+
+    await user.click(await screen.findByRole("button", { name: "Edit AoT" }));
+    await user.click(
+      screen.getByRole("radio", { name: "Pool 1 item type: Image" }),
+    );
+    await user.upload(screen.getByLabelText("Pool 1 new image"), imageFile());
+    await waitFor(() =>
+      expect(
+        document.querySelector(
+          'img[src="https://cdn.example.com/media/item/dropped.webp"]',
+        ),
+      ).toBeInTheDocument(),
+    );
+    await user.click(screen.getByRole("button", { name: "Cancel" }));
+
+    await user.click(screen.getByRole("button", { name: "Save draft" }));
+
+    await waitFor(() => expect(packsClient.update).toHaveBeenCalled());
+  });
+
+  it("names the pool that is holding the image", async () => {
+    vi.mocked(uploadMedia).mockResolvedValue({
+      key: "media/item/orphan.webp",
+      url: "https://cdn.example.com/media/item/orphan.webp",
+      byteSize: 900,
+    });
+    const user = userEvent.setup();
+    renderEditForm();
+
+    await user.click(await screen.findByRole("button", { name: "Edit AoT" }));
+    await user.click(
+      screen.getByRole("radio", { name: "Pool 1 item type: Image" }),
+    );
+    await user.upload(screen.getByLabelText("Pool 1 new image"), imageFile());
+    await waitFor(() =>
+      expect(
+        document.querySelector(
+          'img[src="https://cdn.example.com/media/item/orphan.webp"]',
+        ),
+      ).toBeInTheDocument(),
+    );
+
+    await user.click(screen.getByRole("button", { name: "Save draft" }));
+
+    expect(await screen.findByText(/Pool 1 has an item/i)).toBeInTheDocument();
   });
 });

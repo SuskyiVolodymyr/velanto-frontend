@@ -1533,6 +1533,7 @@
     "imageUploadFailed": "Upload failed. Try again.",
     "imageTitleRequired": "Add a title for this image.",
     "imageRequired": "Choose an image first.",
+    "unsavedItemImage": "Pool {pool} has an item with an image that hasn't been added yet. Press Add (or Save) on that item first — otherwise the picture won't be part of the pack.",
     "coverCropTitle": "Crop your cover",
     "coverCropZoom": "Zoom",
     "coverCropCancel": "Cancel",

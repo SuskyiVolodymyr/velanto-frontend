@@ -1431,6 +1431,7 @@
     "imageUploadFailed": "上传失败，请重试。",
     "imageTitleRequired": "为此图片添加标题。",
     "imageRequired": "请先选择图片。",
+    "unsavedItemImage": "池 {pool} 中有一个条目的图片尚未添加。请先在该条目上点击「添加」（或「保存」），否则图片不会包含在卡包中。",
     "coverCropTitle": "裁剪封面",
     "coverCropZoom": "缩放",
     "coverCropCancel": "取消",
