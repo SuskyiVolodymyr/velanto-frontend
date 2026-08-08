@@ -37,13 +37,16 @@ afterEach(() => vi.unstubAllEnvs());
  * easy to mistake for each other.
  */
 describe("design lab reachability", () => {
-  it.each(PAGES)("serves /design/rooms/%s outside production", (_name, Page) => {
-    vi.stubEnv("NODE_ENV", "development");
+  it.each(PAGES)(
+    "serves /design/rooms/%s outside production",
+    (_name, Page) => {
+      vi.stubEnv("NODE_ENV", "development");
 
-    Page();
+      Page();
 
-    expect(vi.mocked(notFound)).not.toHaveBeenCalled();
-  });
+      expect(vi.mocked(notFound)).not.toHaveBeenCalled();
+    },
+  );
 
   it.each(PAGES)("404s /design/rooms/%s in production", (_name, Page) => {
     vi.stubEnv("NODE_ENV", "production");

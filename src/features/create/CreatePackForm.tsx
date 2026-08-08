@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
@@ -27,6 +27,10 @@ import { Text } from "@/src/shared/components/Text";
 import { PackMetaFields } from "@/src/features/create/PackMetaFields";
 import { FormatSection } from "@/src/features/create/FormatSection";
 import { PoolsSection } from "@/src/features/create/PoolsSection";
+import {
+  PendingImageDraftsProvider,
+  type PendingImageDrafts,
+} from "@/src/features/create/pending-image-drafts";
 import { RoundsEditor } from "@/src/features/create/RoundsEditor";
 import { VersusEditor } from "@/src/features/create/VersusEditor";
 import { CreateChecklistPanel } from "@/src/features/create/CreateChecklistPanel";
@@ -120,6 +124,42 @@ export function CreatePackForm({
   // True while a cover image is uploading; blocks submit so a pending cover
   // isn't silently dropped (see CoverImageField).
   const [coverUploading, setCoverUploading] = useState(false);
+  // Indexes of pools whose open item panel is holding an uploaded-but-
+  // uncommitted image (#437). State rather than a ref for the same reason
+  // `justSaved` is: `onValid` is reachable from the `handleSubmit(...)` call
+  // made during render, and react-hooks/refs rejects a ref read from there.
+  // It costs nothing — this changes when an image is staged or committed, not
+  // per keystroke, and the update is a no-op when the status is unchanged.
+  const [pendingImagePools, setPendingImagePools] = useState<readonly number[]>(
+    [],
+  );
+  // The form-level error node, so a refusal the author can't see can be
+  // scrolled to and focused. Driven by a counter + effect rather than touched
+  // directly in `onValid`, for the same reason `justSaved` is: onValid is
+  // reachable from the `handleSubmit(...)` call made during render, and
+  // react-hooks/refs rejects a ref read from there. A counter, not a boolean,
+  // so a second refused save re-focuses instead of doing nothing.
+  const rootErrorRef = useRef<HTMLDivElement>(null);
+  const [rootErrorShown, setRootErrorShown] = useState(0);
+  useEffect(() => {
+    if (rootErrorShown === 0) return;
+    // Optional-called: jsdom doesn't implement scrollIntoView, and an
+    // exception here would take the error message down with it.
+    rootErrorRef.current?.scrollIntoView?.({ block: "center" });
+    rootErrorRef.current?.focus();
+  }, [rootErrorShown]);
+  const pendingImageDrafts = useMemo<PendingImageDrafts>(
+    () => ({
+      report: (index, pending) =>
+        setPendingImagePools((current) => {
+          if (pending === current.includes(index)) return current;
+          return pending
+            ? [...current, index]
+            : current.filter((pool) => pool !== index);
+        }),
+    }),
+    [],
+  );
   // Which button initiated the in-flight submit, so only that one shows its
   // spinner/label (both actions run the same validation + mutation).
   const [submitMode, setSubmitMode] = useState<"publish" | "draft">("publish");
@@ -243,6 +283,25 @@ export function CreatePackForm({
   }, [format, getValues, setValue]);
 
   async function onValid(formValues: CreatePackValues, draft: boolean) {
+    // A pool's open item panel can hold an uploaded image that isn't in
+    // `formValues` at all — items only enter the pack through their own
+    // Add/Save. Saving anyway looks like it worked and quietly leaves the
+    // picture behind, which is exactly how #437 cost an author an evening's
+    // worth of them. Refuse, and say so.
+    if (pendingImagePools.length > 0) {
+      setError("root", {
+        message: t("unsavedItemImage", {
+          pool: Math.min(...pendingImagePools) + 1,
+        }),
+      });
+      // The submit buttons live in the sticky bar, so on a 150-item pack this
+      // error renders far above where the author is looking — a refusal they
+      // can't see is the same silent no-op the fix exists to remove. Put it in
+      // front of them and give it focus.
+      setRootErrorShown((shown) => shown + 1);
+      return;
+    }
+
     const input: CreatePackInput = {
       title: formValues.title,
       description: formValues.description,
@@ -266,13 +325,37 @@ export function CreatePackForm({
         targetId = pack.id;
       }
 
-      // The home feed holds its cached list for several minutes
-      // (packs-feed.queries.ts) so a visitor's hydration doesn't refetch it —
-      // a deliberate Neon-compute saving. That would otherwise hide the
-      // author's own just-saved change from them, which reads as a bug rather
-      // than as staleness, so drop the cached feed on the one action that
-      // makes it wrong for THIS user. Once, after either branch above.
-      await queryClient.invalidateQueries({ queryKey: ["packs-feed"] });
+      // Every cached view of what just changed, dropped on the one action that
+      // makes them all wrong for THIS user. Once, after either branch above.
+      //
+      // The home feed holds its list for several minutes
+      // (packs-feed.queries.ts) so a visitor's hydration doesn't refetch it — a
+      // deliberate Neon-compute saving that would otherwise hide the author's
+      // own change from them, reading as a bug rather than as staleness. The
+      // pack's own fetches are the same story on a 30s timer: reopening the
+      // editor right after saving re-served the pre-save pack, and the only way
+      // out was reloading the page by hand.
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["packs-feed"] }),
+        // The authed re-fetch behind EditPackFallback / PackDetailFallback —
+        // the one an author's own draft or pending pack always goes through,
+        // since the anonymous Server fetch can't see it.
+        queryClient.invalidateQueries({
+          queryKey: ["pack-fallback", targetId],
+        }),
+        // Saving re-enters moderation, so the review banner is stale too.
+        queryClient.invalidateQueries({
+          queryKey: ["pack-review-outcome", targetId],
+        }),
+        // The author's own listing shows the title and status that just moved.
+        queryClient.invalidateQueries({ queryKey: ["my-packs"] }),
+      ]);
+
+      // TanStack isn't the only cache in play: /packs/[id] and its /edit child
+      // are Server Components, and Next serves their already-rendered RSC
+      // payload from the client router cache. Without this the editor reopens
+      // on the pre-save render however fresh the query cache is.
+      router.refresh();
 
       // The "Saved" flash is only meaningful for the draft action — Publish
       // navigates straight to the new/reviewed pack regardless. The
@@ -309,27 +392,28 @@ export function CreatePackForm({
 
   return (
     <FormProvider {...methods}>
-      <form
-        onSubmit={handleSubmit((values) => onValid(values, false))}
-        // A browser implicitly submits a form when Enter is pressed in a
-        // single-line field, and this form's submit PUBLISHES — or sends a
-        // draft to moderation. Typing a title and pressing Enter out of habit
-        // was one keystroke from an irreversible-feeling action, with no
-        // confirmation. Nothing here wants implicit submission: the pool item
-        // adder has its own Enter handler (which still runs — this only stops
-        // the default), and Publish / Save draft are explicit buttons.
-        //
-        // A textarea keeps Enter, where it means a newline. A focused button
-        // keeps it, because activating a button IS the deliberate action.
-        onKeyDown={(event) => {
-          if (event.key !== "Enter") return;
-          const tag = (event.target as HTMLElement).tagName;
-          if (tag === "TEXTAREA" || tag === "BUTTON") return;
-          event.preventDefault();
-        }}
-        noValidate
-      >
-        {/* Sticky action bar: icon back-button + live title/draft-status on
+      <PendingImageDraftsProvider value={pendingImageDrafts}>
+        <form
+          onSubmit={handleSubmit((values) => onValid(values, false))}
+          // A browser implicitly submits a form when Enter is pressed in a
+          // single-line field, and this form's submit PUBLISHES — or sends a
+          // draft to moderation. Typing a title and pressing Enter out of habit
+          // was one keystroke from an irreversible-feeling action, with no
+          // confirmation. Nothing here wants implicit submission: the pool item
+          // adder has its own Enter handler (which still runs — this only stops
+          // the default), and Publish / Save draft are explicit buttons.
+          //
+          // A textarea keeps Enter, where it means a newline. A focused button
+          // keeps it, because activating a button IS the deliberate action.
+          onKeyDown={(event) => {
+            if (event.key !== "Enter") return;
+            const tag = (event.target as HTMLElement).tagName;
+            if (tag === "TEXTAREA" || tag === "BUTTON") return;
+            event.preventDefault();
+          }}
+          noValidate
+        >
+          {/* Sticky action bar: icon back-button + live title/draft-status on
             the start side, Save draft + the single submit button on the end
             side — at every breakpoint (D2 in the previous design: two
             same-named Publish controls would break e2e strict-mode
@@ -340,153 +424,153 @@ export function CreatePackForm({
             sticky bar, but the CONTENT row is not run through the page
             container — the mock's own header (`padding:13px 30px`, no width
             cap) spans the full bar, not just the 1320px page column. */}
-        <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
-          <div className="flex items-center gap-3 px-7 py-3 max-[720px]:px-4">
-            {/* Boxed back button matching PlayChrome's / the pack surfaces'
+          <div className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-md">
+            <div className="flex items-center gap-3 px-7 py-3 max-[720px]:px-4">
+              {/* Boxed back button matching PlayChrome's / the pack surfaces'
                 own sticky-bar precedent (38x38, bordered tile) — this was
                 bare (no border, no background) before. */}
-            <Link
-              href={cancelHref}
-              aria-label={t("cancel")}
-              className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-tile border border-border bg-white/[0.03] text-foreground-secondary transition-colors hover:border-white/[0.18] hover:text-foreground"
-            >
-              <ArrowLeft size={18} aria-hidden />
-            </Link>
-            <div className="flex min-w-0 flex-col">
-              <Text
-                as="span"
-                className="truncate text-[14px] font-semibold leading-tight"
+              <Link
+                href={cancelHref}
+                aria-label={t("cancel")}
+                className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-tile border border-border bg-white/[0.03] text-foreground-secondary transition-colors hover:border-white/[0.18] hover:text-foreground"
               >
-                {barTitle}
-              </Text>
-              {draftNote && (
+                <ArrowLeft size={18} aria-hidden />
+              </Link>
+              <div className="flex min-w-0 flex-col">
                 <Text
-                  variant="tertiary"
-                  role="status"
-                  className="truncate text-[11.5px] leading-tight"
+                  as="span"
+                  className="truncate text-[14px] font-semibold leading-tight"
                 >
-                  {draftNote}
+                  {barTitle}
                 </Text>
-              )}
-            </div>
-            <div className="ms-auto flex items-center gap-2.5">
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                loading={isSubmitting && submitMode === "draft"}
-                disabled={coverUploading || isSubmitting}
-                onClick={() => {
-                  setSubmitMode("draft");
-                  void handleSubmit((values) => onValid(values, true))();
-                }}
-                // Mock: this button's own color communicates draft state
-                // (amber = unsaved changes, green = just saved), not just its
-                // label — a plain gray secondary button said the same thing
-                // twice as quietly as it should. `!` (Tailwind's importance
-                // modifier) is required, not decorative: `cn()` is a plain
-                // join, not tailwind-merge, so this className is appended
-                // after (not instead of) variant="secondary"'s own
-                // `bg-white/[0.09] text-foreground` — without `!`, those win
-                // the cascade regardless of source order (see Text.tsx's
-                // identical documented gotcha; confirmed here the same way,
-                // via getComputedStyle before adding `!`).
-                className={
-                  justSaved
-                    ? "!border !border-[#39d98a]/45 !bg-[#39d98a]/[0.16] !text-[#7ee7b4] hover:!bg-[#39d98a]/[0.16]"
-                    : "!border !border-[#ffc24b]/35 !bg-[#ffc24b]/10 !text-[#ffd27a] hover:!bg-[#ffc24b]/10"
-                }
-              >
-                {!(isSubmitting && submitMode === "draft") && (
-                  <svg
-                    aria-hidden
-                    width="15"
-                    height="15"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.9"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
+                {draftNote && (
+                  <Text
+                    variant="tertiary"
+                    role="status"
+                    className="truncate text-[11.5px] leading-tight"
                   >
-                    <path d="M5 4h11l3 3v13H5z" />
-                    <path d="M8 4v5h7M8 19v-6h8v6" />
-                  </svg>
+                    {draftNote}
+                  </Text>
                 )}
-                {isSubmitting && submitMode === "draft"
-                  ? t("savingDraft")
-                  : justSaved
-                    ? t("bar.saved")
-                    : t("saveDraft")}
-              </Button>
-              <Button
-                type="submit"
-                size="sm"
-                loading={isSubmitting && submitMode === "publish"}
-                disabled={coverUploading || isSubmitting}
-                onClick={() => setSubmitMode("publish")}
-                // The blocked-state copy stays a title/tooltip rather than
-                // replacing the button's label — swapping label text on
-                // disable would break the stable accessible-name e2e
-                // selectors below.
-                title={blocked ? t("bar.blockedTooltip") : undefined}
-                // Display-only gate (never native `disabled`): a blocked
-                // click still submits and surfaces the real per-field zod
-                // errors instead of dead-ending, matching the JoinRoomCard
-                // anon-gate precedent this mirrors from the old preview CTA.
-                aria-disabled={blocked ? "true" : undefined}
-                // Pins the accessible name to the FULL label regardless of
-                // which of the two spans below CSS currently shows — see the
-                // comment on them.
-                aria-label={
-                  !isEdit && !(isSubmitting && submitMode === "publish")
-                    ? t("bar.submit")
-                    : undefined
-                }
-                // Visual echo of aria-disabled — the button stays natively
-                // enabled (see above), so this is cosmetic only.
-                className={blocked ? "opacity-70" : undefined}
-              >
-                {isEdit ? (
-                  isSubmitting ? (
-                    t("saving")
+              </div>
+              <div className="ms-auto flex items-center gap-2.5">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  size="sm"
+                  loading={isSubmitting && submitMode === "draft"}
+                  disabled={coverUploading || isSubmitting}
+                  onClick={() => {
+                    setSubmitMode("draft");
+                    void handleSubmit((values) => onValid(values, true))();
+                  }}
+                  // Mock: this button's own color communicates draft state
+                  // (amber = unsaved changes, green = just saved), not just its
+                  // label — a plain gray secondary button said the same thing
+                  // twice as quietly as it should. `!` (Tailwind's importance
+                  // modifier) is required, not decorative: `cn()` is a plain
+                  // join, not tailwind-merge, so this className is appended
+                  // after (not instead of) variant="secondary"'s own
+                  // `bg-white/[0.09] text-foreground` — without `!`, those win
+                  // the cascade regardless of source order (see Text.tsx's
+                  // identical documented gotcha; confirmed here the same way,
+                  // via getComputedStyle before adding `!`).
+                  className={
+                    justSaved
+                      ? "!border !border-[#39d98a]/45 !bg-[#39d98a]/[0.16] !text-[#7ee7b4] hover:!bg-[#39d98a]/[0.16]"
+                      : "!border !border-[#ffc24b]/35 !bg-[#ffc24b]/10 !text-[#ffd27a] hover:!bg-[#ffc24b]/10"
+                  }
+                >
+                  {!(isSubmitting && submitMode === "draft") && (
+                    <svg
+                      aria-hidden
+                      width="15"
+                      height="15"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.9"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <path d="M5 4h11l3 3v13H5z" />
+                      <path d="M8 4v5h7M8 19v-6h8v6" />
+                    </svg>
+                  )}
+                  {isSubmitting && submitMode === "draft"
+                    ? t("savingDraft")
+                    : justSaved
+                      ? t("bar.saved")
+                      : t("saveDraft")}
+                </Button>
+                <Button
+                  type="submit"
+                  size="sm"
+                  loading={isSubmitting && submitMode === "publish"}
+                  disabled={coverUploading || isSubmitting}
+                  onClick={() => setSubmitMode("publish")}
+                  // The blocked-state copy stays a title/tooltip rather than
+                  // replacing the button's label — swapping label text on
+                  // disable would break the stable accessible-name e2e
+                  // selectors below.
+                  title={blocked ? t("bar.blockedTooltip") : undefined}
+                  // Display-only gate (never native `disabled`): a blocked
+                  // click still submits and surfaces the real per-field zod
+                  // errors instead of dead-ending, matching the JoinRoomCard
+                  // anon-gate precedent this mirrors from the old preview CTA.
+                  aria-disabled={blocked ? "true" : undefined}
+                  // Pins the accessible name to the FULL label regardless of
+                  // which of the two spans below CSS currently shows — see the
+                  // comment on them.
+                  aria-label={
+                    !isEdit && !(isSubmitting && submitMode === "publish")
+                      ? t("bar.submit")
+                      : undefined
+                  }
+                  // Visual echo of aria-disabled — the button stays natively
+                  // enabled (see above), so this is cosmetic only.
+                  className={blocked ? "opacity-70" : undefined}
+                >
+                  {isEdit ? (
+                    isSubmitting ? (
+                      t("saving")
+                    ) : (
+                      t("saveChanges")
+                    )
+                  ) : isSubmitting && submitMode === "publish" ? (
+                    t("bar.submitting")
                   ) : (
-                    t("saveChanges")
-                  )
-                ) : isSubmitting && submitMode === "publish" ? (
-                  t("bar.submitting")
-                ) : (
-                  // Two spans swapped by a CSS breakpoint rather than JS, so
-                  // there's no layout-shift flash on resize. The button's
-                  // accessible name is pinned to the full label via
-                  // `aria-label` below regardless of which span is visible —
-                  // a screen reader announcing a different name depending on
-                  // viewport width would be its own bug, and it keeps every
-                  // `getByRole("button", { name: "Submit for review" })`
-                  // selector stable across breakpoints.
-                  <>
-                    <span className="max-[720px]:hidden" aria-hidden>
-                      {t("bar.submit")}
-                    </span>
-                    <span className="hidden max-[720px]:inline" aria-hidden>
-                      {t("bar.submitShort")}
-                    </span>
-                  </>
-                )}
-              </Button>
+                    // Two spans swapped by a CSS breakpoint rather than JS, so
+                    // there's no layout-shift flash on resize. The button's
+                    // accessible name is pinned to the full label via
+                    // `aria-label` below regardless of which span is visible —
+                    // a screen reader announcing a different name depending on
+                    // viewport width would be its own bug, and it keeps every
+                    // `getByRole("button", { name: "Submit for review" })`
+                    // selector stable across breakpoints.
+                    <>
+                      <span className="max-[720px]:hidden" aria-hidden>
+                        {t("bar.submit")}
+                      </span>
+                      <span className="hidden max-[720px]:inline" aria-hidden>
+                        {t("bar.submitShort")}
+                      </span>
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className={cn(pageContainer(1320), "flex-1 pb-16 pt-8")}>
-          {/* Builder column first in the DOM, live-preview aside second — the
+          <div className={cn(pageContainer(1320), "flex-1 pb-16 pt-8")}>
+            {/* Builder column first in the DOM, live-preview aside second — the
               opposite of PackDetailScreen's aside-first precedent. There, the
               aside is the play panel, the primary action for a visitor. Here
               the aside is a supplementary "here's what it'll look like"; an
               author opening this on a phone wants the form first, so DOM
               order already matches the desired mobile stacking order without
               needing an `lg:order-*` override. */}
-          {/*
+            {/*
             No `items-start` here (default `items-stretch`): the sticky aside
             column's containing block must span the SAME height as the main
             column for `position: sticky` to have room to stay pinned while
@@ -494,8 +578,8 @@ export function CreatePackForm({
             own content height, so the aside wrapper was only as tall as the
             aside itself and the sticky child had nowhere to travel.
           */}
-          <div className="flex flex-wrap gap-[34px]">
-            {/*
+            <div className="flex flex-wrap gap-[34px]">
+              {/*
               `basis-0` (not a large aspirational basis like 540px): the main
               column only needs a `min-width` floor — a real flex-basis here
               was fighting the aside's fixed basis for space and silently
@@ -503,44 +587,50 @@ export function CreatePackForm({
               2-column layout AND the sticky positioning that depends on it)
               at any viewport under ~1357px, which is most desktop widths.
             */}
-            <div className="flex min-w-[300px] flex-1 basis-0 flex-col gap-[34px]">
-              {errors.root?.message && (
-                <Text variant="danger" role="alert" className="text-sm">
-                  {errors.root.message}
-                </Text>
-              )}
+              <div className="flex min-w-[300px] flex-1 basis-0 flex-col gap-[34px]">
+                {errors.root?.message && (
+                  // The ref/tabIndex sit on a wrapper, not on Text: Text takes
+                  // no ref, and its `danger` variant is the only way to get the
+                  // error colour (see the note in Text.tsx).
+                  <div ref={rootErrorRef} tabIndex={-1}>
+                    <Text variant="danger" role="alert" className="text-sm">
+                      {errors.root.message}
+                    </Text>
+                  </div>
+                )}
 
-              <FormatSection locked={isEdit} />
+                <FormatSection locked={isEdit} />
 
-              <PackMetaFields onCoverUploadingChange={setCoverUploading} />
+                <PackMetaFields onCoverUploadingChange={setCoverUploading} />
 
-              <PoolsSection />
+                <PoolsSection />
 
-              {familyOf(format) === "versus" ? (
-                <VersusEditor />
-              ) : (
-                <RoundsEditor />
-              )}
-            </div>
+                {familyOf(format) === "versus" ? (
+                  <VersusEditor />
+                ) : (
+                  <RoundsEditor />
+                )}
+              </div>
 
-            <div className="max-w-[380px] flex-1 basis-[320px]">
-              {/* One sticky boundary for the whole aside stack, matching the
+              <div className="max-w-[380px] flex-1 basis-[320px]">
+                {/* One sticky boundary for the whole aside stack, matching the
                   mock's single `position:sticky` on the aside container
                   (gap:14px) rather than one per panel. */}
-              <div className="flex flex-col gap-[14px] lg:sticky lg:top-[82px]">
-                <CreateFeasibilityPanel
-                  draft={{
-                    format: values.format,
-                    groups: values.groups,
-                    rounds: values.rounds,
-                  }}
-                />
-                <CreateChecklistPanel values={values} />
+                <div className="flex flex-col gap-[14px] lg:sticky lg:top-[82px]">
+                  <CreateFeasibilityPanel
+                    draft={{
+                      format: values.format,
+                      groups: values.groups,
+                      rounds: values.rounds,
+                    }}
+                  />
+                  <CreateChecklistPanel values={values} />
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </form>
+        </form>
+      </PendingImageDraftsProvider>
     </FormProvider>
   );
 }
