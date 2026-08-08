@@ -218,7 +218,7 @@ function RoundRow({
                         column instead of ellipsising. */}
                       <span
                         title={title}
-                        className="min-w-0 flex-1 truncate text-start text-[11.5px] font-semibold text-foreground-secondary"
+                        className="min-w-0 flex-1 break-words text-start text-[11.5px] font-semibold text-foreground-secondary"
                       >
                         {title}
                       </span>
@@ -283,7 +283,7 @@ function RoundRow({
                           not on the cell around it: on the cell it also fired
                           over the item list below, captioning an item with
                           the pool's name. */}
-                      <span className="truncate" title={option.title}>
+                      <span className="break-words" title={option.title}>
                         {option.title}
                       </span>
                       {/* The items under their pool, behind a hairline. The
@@ -305,7 +305,9 @@ function RoundRow({
                                 aria-hidden
                                 className="h-1 w-1 flex-none rounded-full bg-current opacity-60"
                               />
-                              <span className="min-w-0 truncate">{title}</span>
+                              <span className="min-w-0 break-words">
+                                {title}
+                              </span>
                             </span>
                           ))}
                         </span>
@@ -337,7 +339,7 @@ function RoundRow({
               >
                 <span
                   title={side.name}
-                  className="truncate text-[12.5px] font-bold text-foreground"
+                  className="break-words text-[12.5px] font-bold text-foreground"
                 >
                   {side.name}
                 </span>
@@ -345,7 +347,7 @@ function RoundRow({
                   <span
                     key={`${side.id}-${i}`}
                     title={title}
-                    className="truncate text-[11.5px] font-medium text-foreground-tertiary"
+                    className="break-words text-[11.5px] font-medium text-foreground-tertiary"
                   >
                     {title}
                   </span>
@@ -358,21 +360,17 @@ function RoundRow({
             ? (itemsById.get(pickedId)?.title ?? pickedId)
             : "";
           return (
-            // A plain block, not a flex row: `truncate` hides overflow on the
-            // CONTAINER, and text inside a flex container is a flex item that
-            // will not shrink — so a long title spilled out of both sides of its
-            // column and over its neighbours instead of ellipsising. The full
-            // name stays reachable on hover, since truncation eats the end of it
-            // and a column IS what you are reading.
-            //
-            // The nxn branch above CAN use flex, because there every line is its
-            // own block-level child with its own `truncate` — the thing that
-            // fails is text as a direct flex item.
+            // A plain block, not a flex row: text inside a flex container is a
+            // flex item that will not shrink, so a long title spilled out of
+            // both sides of its column and over its neighbours. As a block it
+            // wraps inside the column instead (#442 — it used to ellipsise
+            // here, which made a long title unreadable). The `title` attribute
+            // is kept as a convenience, not as the only way to read it.
             <span
               key={label}
               title={title || undefined}
               className={cn(
-                "truncate rounded-[9px] px-2 py-[9px] text-center text-[12.5px] font-semibold text-foreground-secondary",
+                "break-words rounded-[9px] px-2 py-[9px] text-center text-[12.5px] font-semibold text-foreground-secondary",
                 tone.cell,
               )}
             >

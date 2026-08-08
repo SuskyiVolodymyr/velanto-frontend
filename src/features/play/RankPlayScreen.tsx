@@ -394,11 +394,11 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
                             #{slotIndex + 1}
                           </span>
                           {filled ? (
-                            <Text className="line-clamp-1 flex-1 text-sm font-[650]">
+                            <Text className="min-w-0 flex-1 break-words text-sm font-[650]">
                               {filled.title}
                             </Text>
                           ) : (
-                            <p className="line-clamp-1 flex-1 text-[14px] font-semibold text-foreground/50">
+                            <p className="min-w-0 flex-1 break-words text-[14px] font-semibold text-foreground/50">
                               {t("rankPlaceItemHere", {
                                 name: currentItem?.title ?? "",
                               })}

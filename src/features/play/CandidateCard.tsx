@@ -60,8 +60,11 @@ function SelectBar({
     >
       {/* min-h reserves a full 2-line slot regardless of the actual title's
           line count, so a card's title container is the same height whether
-          its neighbor's title wraps to one line or two. */}
-      <Text className="line-clamp-2 min-h-[2.6em] flex-1 text-[14.5px] font-semibold leading-[1.3]">
+          its neighbor's title wraps to one line or two. A FLOOR only: the
+          title wraps to as many lines as it needs (#442). A grid row already
+          stretches every card to the tallest, so a long title makes the whole
+          row taller rather than getting cut off. */}
+      <Text className="min-h-[2.6em] flex-1 break-words text-[14.5px] font-semibold leading-[1.3]">
         {title}
       </Text>
       <Text variant="tertiary" className="text-[11px]">

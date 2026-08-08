@@ -101,7 +101,7 @@ export function PackTopItemsList({
             as="span"
             role="cell"
             className={cn(
-              "min-w-0 truncate text-[13.5px]",
+              "min-w-0 break-words text-[13.5px]",
               mine.has(item.itemId) ? "font-bold" : "font-semibold",
             )}
           >

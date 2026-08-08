@@ -136,7 +136,11 @@ export function BoardRow({
         </span>
         <span
           className={cn(
-            "min-w-0 truncate text-[12.5px] font-semibold tracking-[-0.01em]",
+            // Wraps rather than ellipsising (#442): this row carries ITEM
+            // titles in the Top picked boards, not just player names, and a
+            // cut-off title is one the reader can't reach at all. The figure
+            // on the right keeps its own column either way.
+            "min-w-0 break-words text-[12.5px] font-semibold tracking-[-0.01em]",
             mine ? "text-foreground" : "text-foreground-secondary",
           )}
         >
