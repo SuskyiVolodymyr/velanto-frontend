@@ -237,7 +237,7 @@ function SideCard({
           >
             <Text
               className={cn(
-                "truncate text-sm font-semibold",
+                "break-words text-sm font-semibold",
                 position === "right" && "text-end",
               )}
             >

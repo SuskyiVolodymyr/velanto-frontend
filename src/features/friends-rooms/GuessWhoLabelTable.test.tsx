@@ -26,11 +26,14 @@ function stateWithPick() {
 }
 
 describe("GuessWhoLabelTable", () => {
-  // The cell was `flex … truncate`: truncate hides overflow on the CONTAINER,
-  // but the text inside a flex container is a flex item that will not shrink,
+  // A long title WRAPS inside its column now (#442) rather than ellipsising —
+  // a clamped title in a history table is one you simply cannot read.
+  //
+  // The not-a-flex-row half of this is still load-bearing and predates that
+  // change: text inside a flex container is a flex item that will not shrink,
   // so a long title spilled out of both sides of its column and over its
-  // neighbours instead of ellipsising.
-  it("truncates a long title inside its own cell", () => {
+  // neighbours. As a block it stays in its column whether it wraps or clips.
+  it("wraps a long title inside its own cell", () => {
     render(<GuessWhoLabelTable state={stateWithPick()} />);
 
     // Every label's cell lists EVERY option (the one they took in green, the
@@ -39,13 +42,14 @@ describe("GuessWhoLabelTable", () => {
     const cells = screen.getAllByText(LONG);
     expect(cells).toHaveLength(2);
     for (const cell of cells) {
-      expect(cell).toHaveClass("truncate");
+      expect(cell).toHaveClass("break-words");
+      expect(cell.className).not.toMatch(/\btruncate\b/);
       expect(cell.className).not.toMatch(/\bflex\b/);
     }
   });
 
-  // Truncation loses the end of the name, and a column IS the thing you are
-  // reading — so the full title stays reachable on hover.
+  // The title now wraps, so hover is a convenience rather than the only way to
+  // read it — but it is cheap and the tooltip is still worth keeping.
   it("keeps the full title readable on hover", () => {
     render(<GuessWhoLabelTable state={stateWithPick()} />);
 

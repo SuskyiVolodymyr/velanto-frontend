@@ -119,7 +119,7 @@ export function VotingBoard({
                     <div className="flex items-center gap-2">
                       <span
                         className={cn(
-                          "min-w-0 truncate text-[13px] font-semibold",
+                          "min-w-0 break-words text-[13px] font-semibold",
                           leading
                             ? "text-foreground"
                             : "text-foreground-secondary",

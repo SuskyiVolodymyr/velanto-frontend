@@ -96,7 +96,7 @@ export function SpyRedactedTile({
 
       <span className="flex flex-col gap-2 px-3 pt-[11px] pb-3">
         <span className="flex items-center gap-[7px]">
-          <Text className="min-w-0 truncate text-[13.5px] font-semibold text-spy italic">
+          <Text className="min-w-0 break-words text-[13.5px] font-semibold text-spy italic">
             {label}
           </Text>
           {mine && (
