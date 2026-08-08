@@ -20,6 +20,7 @@ import {
   PACK_LANGUAGES,
   PACK_LANGUAGE_NAMES,
 } from "@/src/shared/types/pack-language";
+import { QueryClient } from "@tanstack/react-query";
 import { NextIntlClientProvider } from "next-intl";
 import ukMessages from "@/messages/uk.json";
 
@@ -30,9 +31,10 @@ import ukMessages from "@/messages/uk.json";
 vi.setConfig({ testTimeout: 20000 });
 
 const push = vi.fn();
+const refresh = vi.fn();
 
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push }),
+  useRouter: () => ({ push, refresh }),
   usePathname: () => "/create",
 }));
 
@@ -936,5 +938,31 @@ describe("CreatePackForm guards an uncommitted item image", () => {
     await user.click(screen.getByRole("button", { name: "Save draft" }));
 
     expect(await screen.findByText(/Pool 1 has an item/i)).toBeInTheDocument();
+  });
+});
+
+// Saving used to leave every cached view of the pack untouched, so reopening
+// the editor showed the version from before the save until the page was
+// reloaded by hand. Both caches are involved: TanStack holds the authed
+// pack-fallback fetch for 30s (query-client.ts), and Next's router cache holds
+// the already-rendered RSC payload for /packs/[id] and its /edit child.
+describe("CreatePackForm refreshes what it just changed", () => {
+  it("drops the cached copies of the pack and refreshes the route after saving", async () => {
+    const invalidate = vi.spyOn(QueryClient.prototype, "invalidateQueries");
+    vi.mocked(packsClient.update).mockResolvedValue(makePack({ id: "pack-1" }));
+    const user = userEvent.setup();
+    renderEditForm();
+
+    await user.click(await screen.findByRole("button", { name: "Save draft" }));
+
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/packs/pack-1"));
+    const keys = invalidate.mock.calls.map(([filters]) => filters?.queryKey);
+    expect(keys).toContainEqual(["pack-fallback", "pack-1"]);
+    expect(keys).toContainEqual(["pack-review-outcome", "pack-1"]);
+    expect(keys).toContainEqual(["my-packs"]);
+    expect(keys).toContainEqual(["packs-feed"]);
+    // The edit and detail routes are Server Components — invalidating the
+    // TanStack cache alone leaves Next serving its own cached RSC payload.
+    expect(refresh).toHaveBeenCalled();
   });
 });
