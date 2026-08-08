@@ -35,6 +35,8 @@ export const UPDATES: UpdateEntry[] = [
       "Pressing Save while a picture is still uploading now waits for it and saves the item, instead of doing nothing. Clicking straight through to the next item saves the picture you just added rather than dropping it. And if a picture is still sitting unadded when you save the pack, the pack won't save until you deal with it — it tells you instead of pretending everything went in.",
       "Dropping a second picture while the first is still uploading now replaces it, rather than being ignored.",
       "Saving a pack now updates it everywhere at once. Reopening the editor straight after a save used to show you the version from before it, and the only way out was reloading the page.",
+      "Your unfinished packs come first in My packs. Drafts, packs in review and rejected ones used to sort behind everything you've published, so the draft you were editing ten minutes ago could be pages away.",
+      "My packs remembers which page you were on. Opening a pack from page three and coming back used to drop you at the top of page one — the page is part of the address now, so back, refresh and a copied link all land where you left off.",
       "Long item names are readable everywhere now. A name that ran past a line or two used to be cut off with no way to see the rest of it — on the cards you pick from, on every room board, in the round-by-round history tables and in the results. They wrap to as many lines as they need instead.",
     ],
   },

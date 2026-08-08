@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/src/shared/lib/auth-context";
 import { FilterChipRow } from "@/src/features/home/FilterChipRow";
@@ -25,6 +26,18 @@ import type { PackStatus } from "@/src/shared/types/pack";
 type StatusChoice = "all" | PackStatus;
 
 /**
+ * The page the URL is asking for, or 1 for anything that isn't a page number.
+ * `?page=` is reader-editable and survives being pasted around, so a missing,
+ * negative, fractional or non-numeric value has to mean page 1 rather than
+ * reaching the API — the backend rejects a non-positive page outright.
+ */
+function pageFromParam(value: string | null): number {
+  const parsed = Number(value);
+  if (!Number.isInteger(parsed) || parsed < 1) return 1;
+  return parsed;
+}
+
+/**
  * The signed-in author's own packs across every moderation status, filterable
  * by a status chip row. Each card carries a status badge (via `showStatus`) so
  * drafts / pending / rejected read at a glance. Mounted by the `/my-packs`
@@ -40,13 +53,44 @@ export function MyPacksFeed() {
   const [status, setStatus] = useState<StatusChoice>("all");
   const [dateOrder, setDateOrder] =
     useState<DateOrderValue>(DEFAULT_DATE_ORDER);
-  const [page, setPage] = useState(1);
+
+  // The page lives in the URL, not in component state. It was state, so
+  // opening a pack from page 3 and pressing Back landed you on page 1 — the
+  // component remounted with its initial value and the list re-fetched from
+  // the top. In the URL it survives Back, a reload and a copied link alike.
+  //
+  // `replace`, not `push`: paging isn't a navigation step worth its own
+  // history entry (same call the docs reader makes for `?topic=`). Back still
+  // returns you to the page you left from, because that IS the URL you left.
+  //
+  // The status and sort chips are deliberately still state. Putting them in
+  // the URL too is a reasonable follow-up, but it is a separate decision about
+  // what a shared /my-packs link should mean, and this page is noindex and
+  // per-user anyway.
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const page = pageFromParam(searchParams.get("page"));
+
+  function setPage(next: number) {
+    const params = new URLSearchParams(searchParams.toString());
+    // Page 1 is the default, so it says nothing — a bare /my-packs is tidier
+    // than /my-packs?page=1 and means exactly the same thing.
+    if (next <= 1) params.delete("page");
+    else params.set("page", String(next));
+    const query = params.toString();
+    router.replace(query ? `${pathname}?${query}` : pathname, {
+      scroll: false,
+    });
+  }
 
   const filters = useMemo(
     () => ({
       status: status === "all" ? undefined : status,
       sort: dateOrder,
-      page,
+      // Page 1 is the API default; sending it explicitly would only split the
+      // cache between two keys that mean the same request.
+      page: page > 1 ? page : undefined,
     }),
     [status, dateOrder, page],
   );
