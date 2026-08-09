@@ -45,7 +45,8 @@ export const MAX_PASSWORD_LENGTH = 72;
  * Still exported so the form and the tests reference one source of truth.
  */
 export const AUTH_MESSAGES = {
-  loginRequired: "auth.errors.loginRequired",
+  identifierRequired: "auth.errors.identifierRequired",
+  passwordRequired: "auth.errors.passwordRequired",
   username: "auth.errors.username",
   email: "auth.errors.email",
   passwordLength: "auth.errors.passwordLength",
@@ -150,13 +151,31 @@ const authFields = z.object({
 
 export type AuthFormValues = z.infer<typeof authFields>;
 
-// Login: both fields required, one combined message on the identifier field.
+// Login: both fields required, each reporting on ITSELF
+// (velanto-frontend#449).
+//
+// It used to be one combined "email/username and password" message pinned to
+// `identifier` regardless of which field was missing. With `mode: "onTouched"`
+// a field is validated the moment it is blurred, so tabbing out of a correctly
+// typed username and into the password box lit that username up red —
+// accusing the one field the user had just got right, before they had typed a
+// character of the thing that was actually missing.
+//
+// Per-field also fixes what the combined message did on submit with BOTH empty:
+// two identical sentences, one under each box.
 export const loginSchema = authFields.superRefine((data, ctx) => {
-  if (!data.identifier.trim() || !data.password) {
+  if (!data.identifier.trim()) {
     ctx.addIssue({
       code: "custom",
-      message: AUTH_MESSAGES.loginRequired,
+      message: AUTH_MESSAGES.identifierRequired,
       path: ["identifier"],
+    });
+  }
+  if (!data.password) {
+    ctx.addIssue({
+      code: "custom",
+      message: AUTH_MESSAGES.passwordRequired,
+      path: ["password"],
     });
   }
 });

@@ -60,22 +60,34 @@ describe("loginSchema", () => {
     ).toBe(true);
   });
 
-  it("rejects a blank identifier with the combined message", () => {
+  // Each field reports on ITSELF (#449). A single combined message pinned to
+  // `identifier` meant blurring a correctly typed username faulted it, because
+  // the password box hadn't been reached yet.
+  it("faults a blank identifier on the identifier field", () => {
     const r = loginSchema.safeParse(
       values({ identifier: "   ", password: "pw" }),
     );
+    expect(r.success ? null : r.error.issues[0].path).toEqual(["identifier"]);
     expect(r.success ? null : r.error.issues[0].message).toBe(
-      AUTH_MESSAGES.loginRequired,
+      AUTH_MESSAGES.identifierRequired,
     );
   });
 
-  it("rejects an empty password with the combined message", () => {
+  it("faults an empty password on the password field, not the identifier", () => {
     const r = loginSchema.safeParse(
       values({ identifier: "alice", password: "" }),
     );
+    expect(r.success ? null : r.error.issues[0].path).toEqual(["password"]);
     expect(r.success ? null : r.error.issues[0].message).toBe(
-      AUTH_MESSAGES.loginRequired,
+      AUTH_MESSAGES.passwordRequired,
     );
+  });
+
+  it("leaves a fully typed login alone", () => {
+    expect(
+      loginSchema.safeParse(values({ identifier: "alice", password: "pw" }))
+        .success,
+    ).toBe(true);
   });
 });
 

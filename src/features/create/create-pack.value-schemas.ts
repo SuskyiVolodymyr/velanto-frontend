@@ -33,7 +33,14 @@ const ITEM_TYPES = ["text", "youtube", "image"] as const;
 export const itemValueSchema = z.object({
   id: z.string(),
   type: z.enum(ITEM_TYPES),
-  title: z.string(),
+  // Trimmed, not merely structural. `addItem` already trims what an author
+  // types, but a pack can reach the editor already padded — authored through
+  // the API or the MCP server, or from before that trim existed — and padding
+  // reads as a misaligned card or a stray gap before an ellipsis everywhere the
+  // title is shown. The editor is the last thing to touch a pack before it is
+  // saved, so it normalises whatever it was handed. Inner spacing is the
+  // author's business and is left alone.
+  title: z.string().trim(),
   value: z.string(),
 });
 

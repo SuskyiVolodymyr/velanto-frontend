@@ -665,3 +665,48 @@ describe("format", () => {
     },
   );
 });
+
+// An item title carrying leading or trailing whitespace looks identical in the
+// editor and then reads wrong everywhere it's shown — an off-centre card, a
+// stray gap before the ellipsis in a history table. `addItem` trims what the
+// author types, but a pack can arrive here already padded: one authored through
+// the API or the MCP server, or one whose items predate that trim. The editor is
+// the last thing to touch a pack before it's saved, so it normalises the lot.
+describe("item titles are trimmed on save", () => {
+  function packWith(itemTitle: string) {
+    return makeValues({
+      groups: [
+        {
+          id: "g1",
+          name: "Pool",
+          items: [
+            { id: "i1", type: "text" as const, title: itemTitle, value: "a" },
+            { id: "i2", type: "text" as const, title: "Beta", value: "b" },
+          ],
+        },
+      ],
+      rounds: [
+        {
+          id: "r1",
+          slots: [{ groupId: "g1", mode: "manual", itemIds: ["i1", "i2"] }],
+        },
+      ],
+    });
+  }
+
+  it("strips the padding an author never meant to type", () => {
+    const parsed = createPackSchema.safeParse(packWith("  Alpha  "));
+
+    expect(parsed.success).toBe(true);
+    if (!parsed.success) return;
+    expect(parsed.data.groups[0].items[0].title).toBe("Alpha");
+  });
+
+  it("leaves inner spacing alone", () => {
+    const parsed = createPackSchema.safeParse(packWith("  Two  words  "));
+
+    expect(parsed.success).toBe(true);
+    if (!parsed.success) return;
+    expect(parsed.data.groups[0].items[0].title).toBe("Two  words");
+  });
+});
