@@ -27,6 +27,17 @@ export interface UpdateEntry {
  */
 export const UPDATES: UpdateEntry[] = [
   {
+    date: "2026-08-09",
+    version: "2.2.3",
+    title: "The browser's back button finally works",
+    bullets: [
+      "The dashboard keeps your filters and your page in the address bar. Refresh, press back from a pack, or send someone the link — you all land on the same view instead of page one of everything. A bare visit still restores whatever you were last browsing.",
+      "My packs remembers its page the same way.",
+      "Signing in no longer accuses you of getting your username wrong. Moving from the username box to the password box marked the username red, before you had typed a password at all. Each box now speaks for itself.",
+      "Item names lose stray spaces when a pack is saved, so a name never sits slightly off-centre on its card.",
+    ],
+  },
+  {
     date: "2026-08-08",
     version: "2.2.1",
     title: "Your pictures stay where you put them",

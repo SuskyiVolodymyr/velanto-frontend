@@ -597,7 +597,8 @@
       "socialProofFallback": "Join the community"
     },
     "errors": {
-      "loginRequired": "Enter your email/username and password.",
+      "identifierRequired": "Enter your email or username.",
+      "passwordRequired": "Enter your password.",
       "username": "Username must be 2-16 characters: letters, numbers and underscores.",
       "email": "Enter a valid email address.",
       "passwordLength": "Password must be at least 8 characters.",
