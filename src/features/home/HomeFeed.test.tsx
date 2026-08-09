@@ -804,6 +804,49 @@ describe("HomeFeed keeps its filters and page in the URL", () => {
     expect(url).toContain("sort=date");
   });
 
+  // Measured on production: a reader whose saved filter isn't the default paid
+  // TWO feed queries per dashboard load. The SSR seed is deliberately marked
+  // stale (see packs-feed.queries) so first paint always refetches — and that
+  // refetch used the DEFAULT filters, because the stored ones only land a tick
+  // later. The first result was discarded the moment they did.
+  //
+  // Neon bills the compute's awake time, so a wasted query on the one
+  // database-backed public route is worth removing.
+  it("does not fetch the default view it is about to replace", async () => {
+    localStorage.setItem("velanto:pack-filters", STORED);
+    vi.mocked(packsClient.list).mockResolvedValue(feedPage(1));
+
+    render(<HomeFeed />);
+
+    await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
+    // Exactly one, and it's the reader's own filter — never the default.
+    expect(packsClient.list).toHaveBeenCalledTimes(1);
+    expect(packsClient.list).toHaveBeenCalledWith(
+      expect.objectContaining({ format: "save_one" }),
+    );
+  });
+
+  // The gate must open even when the stored filters ARE the defaults, or the
+  // feed would sit disabled forever with nothing to seed.
+  it("still fetches when the stored filters are the defaults", async () => {
+    localStorage.setItem(
+      "velanto:pack-filters",
+      JSON.stringify({
+        format: "all",
+        tags: [],
+        languages: [],
+        sort: "popular",
+        window: "month",
+        dateOrder: "newest",
+      }),
+    );
+    vi.mocked(packsClient.list).mockResolvedValue(feedPage(1));
+
+    render(<HomeFeed />);
+
+    await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
+  });
+
   // A hand-typed or stale value must never reach the API, which 400s on one.
   it("falls back on a junk filter value", async () => {
     initialParams = new URLSearchParams("format=nonsense&page=-4");

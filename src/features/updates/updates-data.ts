@@ -35,6 +35,7 @@ export const UPDATES: UpdateEntry[] = [
       "My packs remembers its page the same way.",
       "Signing in no longer accuses you of getting your username wrong. Moving from the username box to the password box marked the username red, before you had typed a password at all. Each box now speaks for itself.",
       "Item names lose stray spaces when a pack is saved, so a name never sits slightly off-centre on its card.",
+      "The dashboard loads with half the database work it used to. If you had a saved filter, it fetched the default list first and threw it away the moment your own filter loaded — it now waits and asks once.",
     ],
   },
   {

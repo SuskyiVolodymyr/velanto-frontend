@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import type { PackTag } from "@/src/shared/types/pack";
 import type { PackLanguage } from "@/src/shared/types/pack-language";
@@ -102,6 +102,22 @@ export function useHomeFeed(initialFeed?: PacksFeedResult, initialQuery = "") {
     [searchParams, replaceParams],
   );
 
+  // Whether a seed is still coming. Decided once, on the first render, and
+  // only ever true on the client: on the server there is no localStorage, and
+  // `initialData` renders regardless, so first paint is identical either way.
+  //
+  // This exists to stop the wasted fetch. The SSR seed is deliberately marked
+  // stale so mounting always refetches (see packs-feed.queries) — and until the
+  // stored filters land a tick later, that refetch asks for the DEFAULT view,
+  // whose result is discarded the moment they do. Measured on production: two
+  // `/packs` queries per dashboard load for a reader with a saved filter.
+  const [seedPending, setSeedPending] = useState(
+    () =>
+      typeof globalThis.window !== "undefined" &&
+      !hasFilterParams(searchParams) &&
+      readPackFilters() !== null,
+  );
+
   // Seed a bare `/` from the last-used filters, once. Only when the URL
   // expresses no filter of its own — a link that carries one always wins, so a
   // shared URL means the same thing for whoever opens it.
@@ -109,10 +125,12 @@ export function useHomeFeed(initialFeed?: PacksFeedResult, initialQuery = "") {
   useEffect(() => {
     if (seeded.current) return;
     seeded.current = true;
-    if (hasFilterParams(searchParams)) return;
-    const stored = readPackFilters();
-    if (!stored) return;
-    replaceParams(writeFiltersToParams(searchParams, stored));
+    const stored = hasFilterParams(searchParams) ? null : readPackFilters();
+    if (stored) replaceParams(writeFiltersToParams(searchParams, stored));
+    // Always released, even when there was nothing to seed or the stored
+    // filters were the defaults (which writes no params and so leaves
+    // `searchParams` untouched) — otherwise the feed would stay switched off.
+    setSeedPending(false);
   }, [searchParams, replaceParams]);
 
   const setFormat = useCallback(
@@ -169,6 +187,7 @@ export function useHomeFeed(initialFeed?: PacksFeedResult, initialQuery = "") {
   const feedQuery = usePacksFeed(
     filters,
     isDefaultFilters ? initialFeed : undefined,
+    !seedPending,
   );
 
   const packs = feedQuery.data?.items ?? [];
