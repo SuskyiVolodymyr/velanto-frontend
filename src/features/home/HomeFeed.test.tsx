@@ -1,4 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
+import { useState } from "react";
 import { screen, waitFor } from "@testing-library/react";
 import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
@@ -17,7 +18,26 @@ vi.mock("@/src/shared/lib/packs-client", () => ({
 // Each rendered PackCard's Friends button needs a mounted router, an auth
 // session, and the room-create client — signed-out by default so the button
 // renders blocked; unused by these feed-behaviour tests otherwise.
-vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
+// A working router, not a pair of spies: the page number lives in the query
+// string now, so `replace` has to actually change what `useSearchParams`
+// returns and that change has to re-render, or paging would appear to do
+// nothing. See MyPacksFeed.test.tsx for the same harness.
+const replace = vi.fn((url: string) => {
+  const query = url.includes("?") ? url.slice(url.indexOf("?") + 1) : "";
+  applyParams?.(new URLSearchParams(query));
+});
+let applyParams: ((next: URLSearchParams) => void) | null = null;
+let initialParams = new URLSearchParams();
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: vi.fn(), replace }),
+  usePathname: () => "/",
+  useSearchParams: () => {
+    const [params, setParams] = useState(initialParams);
+    applyParams = setParams;
+    return params;
+  },
+}));
 vi.mock("@/src/shared/lib/auth-context", () => ({
   useAuth: () => ({ user: null }),
 }));
@@ -75,6 +95,8 @@ beforeEach(() => {
   // The feed now persists filters to localStorage; clear it so each test starts
   // from a clean slate and stored state never leaks between cases.
   localStorage.clear();
+  applyParams = null;
+  initialParams = new URLSearchParams();
 });
 
 describe("HomeFeed", () => {
@@ -681,5 +703,161 @@ describe("HomeFeed", () => {
         expect(lastCall?.page).toBeUndefined();
       });
     });
+  });
+});
+
+// velanto-frontend#450 — the dashboard's page was component state, so a reload
+// (or coming back from a pack) dropped you at page 1. It is `?page=` now, the
+// same as /my-packs.
+//
+// The dashboard is the harder case: it restores its filters from localStorage
+// after mount, and an effect snaps back to page 1 whenever the filters change.
+// Naively, that effect fires on arrival and wipes the page out of the URL
+// before the reader sees it.
+describe("HomeFeed keeps its filters and page in the URL", () => {
+  function feedPage(n: number) {
+    return { items: [PACK_A], total: 100, page: n, limit: 15 };
+  }
+
+  const STORED = JSON.stringify({
+    format: "save_one",
+    tags: [],
+    languages: [],
+    sort: "popular",
+    window: "month",
+    dateOrder: "newest",
+  });
+
+  it("honours ?page= on arrival instead of snapping back to page 1", async () => {
+    initialParams = new URLSearchParams("page=3");
+    vi.mocked(packsClient.list).mockResolvedValue(feedPage(3));
+
+    render(<HomeFeed />);
+
+    await waitFor(() =>
+      expect(packsClient.list).toHaveBeenCalledWith(
+        expect.objectContaining({ page: 3 }),
+      ),
+    );
+    // Nothing stored, nothing to seed — the URL is left exactly as it arrived.
+    expect(replace).not.toHaveBeenCalled();
+  });
+
+  it("reads its filters from the URL", async () => {
+    initialParams = new URLSearchParams("format=nxn&sort=date&order=oldest");
+    vi.mocked(packsClient.list).mockResolvedValue(feedPage(1));
+
+    render(<HomeFeed />);
+
+    await waitFor(() =>
+      expect(packsClient.list).toHaveBeenCalledWith(
+        expect.objectContaining({ format: "nxn", sort: "oldest" }),
+      ),
+    );
+  });
+
+  it("seeds a bare / from the stored filters, keeping the page", async () => {
+    localStorage.setItem("velanto:pack-filters", STORED);
+    initialParams = new URLSearchParams("page=2");
+    vi.mocked(packsClient.list).mockResolvedValue(feedPage(2));
+
+    render(<HomeFeed />);
+
+    await waitFor(() => expect(replace).toHaveBeenCalled());
+    const [url] = replace.mock.calls[0] as [string];
+    expect(url).toContain("format=save_one");
+    // Seeding a filter must not throw the reader back to page 1.
+    expect(url).toContain("page=2");
+  });
+
+  // A shared link has to mean the same thing for whoever opens it, whatever
+  // they happen to have been browsing last.
+  it("lets a URL filter beat the stored one", async () => {
+    localStorage.setItem("velanto:pack-filters", STORED);
+    initialParams = new URLSearchParams("format=nxn");
+    vi.mocked(packsClient.list).mockResolvedValue(feedPage(1));
+
+    render(<HomeFeed />);
+
+    await waitFor(() =>
+      expect(packsClient.list).toHaveBeenCalledWith(
+        expect.objectContaining({ format: "nxn" }),
+      ),
+    );
+    expect(replace).not.toHaveBeenCalled();
+  });
+
+  it("drops the page when the reader changes a filter", async () => {
+    initialParams = new URLSearchParams("page=3");
+    vi.mocked(packsClient.list).mockResolvedValue(feedPage(3));
+    const user = userEvent.setup();
+
+    render(<HomeFeed />);
+    await screen.findByText("Best Anime Openings");
+
+    await openSort(user);
+    await user.click(screen.getByRole("button", { name: "Date" }));
+
+    await waitFor(() => expect(replace).toHaveBeenCalled());
+    const [url] = replace.mock.calls.at(-1) as [string];
+    expect(url).not.toContain("page=");
+    expect(url).toContain("sort=date");
+  });
+
+  // Measured on production: a reader whose saved filter isn't the default paid
+  // TWO feed queries per dashboard load. The SSR seed is deliberately marked
+  // stale (see packs-feed.queries) so first paint always refetches — and that
+  // refetch used the DEFAULT filters, because the stored ones only land a tick
+  // later. The first result was discarded the moment they did.
+  //
+  // Neon bills the compute's awake time, so a wasted query on the one
+  // database-backed public route is worth removing.
+  it("does not fetch the default view it is about to replace", async () => {
+    localStorage.setItem("velanto:pack-filters", STORED);
+    vi.mocked(packsClient.list).mockResolvedValue(feedPage(1));
+
+    render(<HomeFeed />);
+
+    await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
+    // Exactly one, and it's the reader's own filter — never the default.
+    expect(packsClient.list).toHaveBeenCalledTimes(1);
+    expect(packsClient.list).toHaveBeenCalledWith(
+      expect.objectContaining({ format: "save_one" }),
+    );
+  });
+
+  // The gate must open even when the stored filters ARE the defaults, or the
+  // feed would sit disabled forever with nothing to seed.
+  it("still fetches when the stored filters are the defaults", async () => {
+    localStorage.setItem(
+      "velanto:pack-filters",
+      JSON.stringify({
+        format: "all",
+        tags: [],
+        languages: [],
+        sort: "popular",
+        window: "month",
+        dateOrder: "newest",
+      }),
+    );
+    vi.mocked(packsClient.list).mockResolvedValue(feedPage(1));
+
+    render(<HomeFeed />);
+
+    await waitFor(() => expect(packsClient.list).toHaveBeenCalledTimes(1));
+  });
+
+  // A hand-typed or stale value must never reach the API, which 400s on one.
+  it("falls back on a junk filter value", async () => {
+    initialParams = new URLSearchParams("format=nonsense&page=-4");
+    vi.mocked(packsClient.list).mockResolvedValue(feedPage(1));
+
+    render(<HomeFeed />);
+
+    await waitFor(() => expect(packsClient.list).toHaveBeenCalled());
+    // page 1 goes on the wire as "no page" — the API's own default.
+    expect(packsClient.list).toHaveBeenCalledWith(
+      expect.objectContaining({ format: undefined, page: undefined }),
+    );
   });
 });

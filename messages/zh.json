@@ -494,7 +494,8 @@
       "socialProofFallback": "加入社区"
     },
     "errors": {
-      "loginRequired": "请输入你的邮箱／用户名和密码。",
+      "identifierRequired": "请输入邮箱或用户名。",
+      "passwordRequired": "请输入密码。",
       "username": "用户名必须为 2 到 16 个字符，只能包含字母、数字和下划线。",
       "email": "请输入有效的电子邮箱地址。",
       "passwordLength": "密码至少需要 8 个字符。",

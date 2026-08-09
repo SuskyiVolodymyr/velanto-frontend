@@ -61,9 +61,20 @@ const SSR_SEED_UPDATED_AT = 0;
 export function usePacksFeed(
   filters: PacksFeedFilters,
   initialData?: PacksFeedResult,
+  /**
+   * Hold the request while the caller still expects `filters` to change —
+   * `useHomeFeed` sets this false for the one render before a reader's saved
+   * filters are seeded in from localStorage. Without it the seed's own
+   * always-stale refetch (above) fires for the DEFAULT filters and is thrown
+   * away a tick later: two feed queries per dashboard load for anyone whose
+   * saved filter isn't the default. Any `initialData` still RENDERS while
+   * disabled, so first paint is unchanged.
+   */
+  enabled = true,
 ) {
   return useQuery({
     ...packsFeedQueryOptions(filters),
+    enabled,
     initialData,
     initialDataUpdatedAt: initialData ? SSR_SEED_UPDATED_AT : undefined,
     placeholderData: keepPreviousData,
