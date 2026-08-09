@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { HomeFeed } from "@/src/features/home/HomeFeed";
 import { DashboardHero } from "@/src/features/home/DashboardHero";
@@ -51,7 +52,12 @@ export default async function Home({
       {/* No `key={query}`: the feed now re-queries in place as the shared
           search term changes. Remounting on every search would throw away the
           filter bar's format/tag/sort selection mid-type. */}
-      <HomeFeed initialFeed={initialFeed ?? undefined} initialQuery={query} />
+      {/* HomeFeed reads its filters and page from the query string via
+          useSearchParams, which Next requires be wrapped in a Suspense
+          boundary (same as the docs reader's `?topic=`). */}
+      <Suspense>
+        <HomeFeed initialFeed={initialFeed ?? undefined} initialQuery={query} />
+      </Suspense>
     </main>
   );
 }

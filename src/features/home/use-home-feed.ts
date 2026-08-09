@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import type { PackTag } from "@/src/shared/types/pack";
 import type { PackLanguage } from "@/src/shared/types/pack-language";
 import {
@@ -21,6 +22,13 @@ import {
   readPackFilters,
   writePackFilters,
 } from "@/src/features/home/pack-filters-storage";
+import { pageFromParam } from "@/src/features/home/use-page-param";
+import {
+  hasFilterParams,
+  readFiltersFromParams,
+  writeFiltersToParams,
+} from "@/src/features/home/feed-filter-params";
+import type { StoredPackFilters } from "@/src/features/home/pack-filters-storage";
 import { useSearchQuery } from "@/src/features/home/search-query-context";
 
 export type FeedStatus = "loading" | "ready" | "error";
@@ -35,9 +43,19 @@ export type FeedStatus = "loading" | "ready" | "error";
 // first paint (and matches `initialFeed`) until the provider's client-side
 // value takes over, so a shared `/?q=…` link still arrives with results.
 export function useHomeFeed(initialFeed?: PacksFeedResult, initialQuery = "") {
-  const [format, setFormat] = useState<FormatFilterValue>("all");
-  const [tags, setTags] = useState<PackTag[]>([]);
-  const [languages, setLanguages] = useState<PackLanguage[]>([]);
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+
+  // The URL is the whole filter state (#450). No local copies: a second source
+  // of truth is what made the old restore-from-localStorage dance necessary,
+  // and what let a reload lose the reader's place.
+  const { format, tags, languages, sort, window, dateOrder } = useMemo(
+    () => readFiltersFromParams(searchParams),
+    [searchParams],
+  );
+  const page = pageFromParam(searchParams.get("page"));
+
   const { query: liveQuery, hydrated: searchHydrated } = useSearchQuery();
   // Until the provider has read `?q=` (one tick after mount) its term is
   // empty for a reason we can't act on, so keep the server's — otherwise a
@@ -45,62 +63,96 @@ export function useHomeFeed(initialFeed?: PacksFeedResult, initialQuery = "") {
   // provider is authoritative, including when the user CLEARS the box: falling
   // back on emptiness alone would resurrect the old search.
   const query = searchHydrated ? liveQuery : initialQuery;
-  const [page, setPage] = useState(1);
-  // Default to Popular / this month so the landing feed leads with what people
-  // are actually playing, not the newest upload.
-  const [sort, setSort] = useState<SortFilterValue>("popular");
-  const [window, setWindow] = useState<WindowFilterValue>(
-    DEFAULT_POPULAR_WINDOW,
+
+  const replaceParams = useCallback(
+    (params: URLSearchParams) => {
+      const next = params.toString();
+      router.replace(next ? `${pathname}?${next}` : pathname, {
+        scroll: false,
+      });
+    },
+    [router, pathname],
   );
-  const [dateOrder, setDateOrder] =
-    useState<DateOrderValue>(DEFAULT_DATE_ORDER);
-  const [hydrated, setHydrated] = useState(false);
 
-  // Restore the last-used filters once, after mount rather than during render,
-  // so the server-rendered default feed hydrates without a mismatch. The search
-  // query is intentionally not persisted (see pack-filters-storage).
+  /**
+   * Apply a filter change. `page` is dropped rather than carried: narrowing the
+   * results while deep in the list would otherwise strand the reader on a page
+   * the new filter no longer has. Also mirrored to localStorage, which is what
+   * seeds a bare `/` on the next visit.
+   */
+  const applyFilters = useCallback(
+    (patch: Partial<StoredPackFilters>) => {
+      const current = readFiltersFromParams(searchParams);
+      const merged = { ...current, ...patch };
+      const params = writeFiltersToParams(searchParams, merged);
+      params.delete("page");
+      writePackFilters(merged);
+      replaceParams(params);
+    },
+    [searchParams, replaceParams],
+  );
+
+  const setPage = useCallback(
+    (next: number) => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (next <= 1) params.delete("page");
+      else params.set("page", String(next));
+      replaceParams(params);
+    },
+    [searchParams, replaceParams],
+  );
+
+  // Whether a seed is still coming. Decided once, on the first render, and
+  // only ever true on the client: on the server there is no localStorage, and
+  // `initialData` renders regardless, so first paint is identical either way.
   //
-  // useHydratedValue doesn't fit here — readPackFilters builds a fresh object
-  // each call, which breaks the Object.is-stable-snapshot contract
-  // useSyncExternalStore requires (same reasoning as use-result-picks). A
-  // narrowly scoped mounted read is the simplest safe shape, so the
-  // set-state-in-effect disable is kept deliberately.
-  useEffect(() => {
-    const stored = readPackFilters();
-    /* eslint-disable react-hooks/set-state-in-effect */
-    if (stored) {
-      setFormat(stored.format);
-      setTags(stored.tags);
-      setLanguages(stored.languages);
-      setSort(stored.sort);
-      setWindow(stored.window);
-      setDateOrder(stored.dateOrder);
-    }
-    setHydrated(true);
-    /* eslint-enable react-hooks/set-state-in-effect */
-  }, []);
+  // This exists to stop the wasted fetch. The SSR seed is deliberately marked
+  // stale so mounting always refetches (see packs-feed.queries) — and until the
+  // stored filters land a tick later, that refetch asks for the DEFAULT view,
+  // whose result is discarded the moment they do. Measured on production: two
+  // `/packs` queries per dashboard load for a reader with a saved filter.
+  const [seedPending, setSeedPending] = useState(
+    () =>
+      typeof globalThis.window !== "undefined" &&
+      !hasFilterParams(searchParams) &&
+      readPackFilters() !== null,
+  );
 
-  // Persist filter changes — gated on `hydrated` so the initial defaults never
-  // clobber a stored selection before the restore above runs.
+  // Seed a bare `/` from the last-used filters, once. Only when the URL
+  // expresses no filter of its own — a link that carries one always wins, so a
+  // shared URL means the same thing for whoever opens it.
+  const seeded = useRef(false);
   useEffect(() => {
-    if (!hydrated) return;
-    writePackFilters({ format, tags, languages, sort, window, dateOrder });
-  }, [hydrated, format, tags, languages, sort, window, dateOrder]);
+    if (seeded.current) return;
+    seeded.current = true;
+    const stored = hasFilterParams(searchParams) ? null : readPackFilters();
+    if (stored) replaceParams(writeFiltersToParams(searchParams, stored));
+    // Always released, even when there was nothing to seed or the stored
+    // filters were the defaults (which writes no params and so leaves
+    // `searchParams` untouched) — otherwise the feed would stay switched off.
+    setSeedPending(false);
+  }, [searchParams, replaceParams]);
 
-  // Snap back to the first page whenever the active filters change, so
-  // narrowing the results while deep in the list doesn't leave the user on a
-  // now-out-of-range page. Done as an effect (not wrapped setters) to keep the
-  // reset in one place. Trade-off: when the filters change while on page > 1,
-  // the render commits with the new filter + old page for one tick, so a single
-  // extra fetch for that (never-shown) combination fires before the reset lands
-  // — `keepPreviousData` hides it and the final state is correct. On page 1
-  // (the common case) React bails on the identical setState, so no extra fetch.
-  // Note this only covers filter changes, not a same-filter refetch whose total
-  // shrank below the current page.
-  useEffect(() => {
-    /* eslint-disable-next-line react-hooks/set-state-in-effect */
-    setPage(1);
-  }, [format, tags, languages, query, sort, window, dateOrder]);
+  const setFormat = useCallback(
+    (value: FormatFilterValue) => applyFilters({ format: value }),
+    [applyFilters],
+  );
+  const setTags = useCallback(
+    (value: PackTag[]) => applyFilters({ tags: value }),
+    [applyFilters],
+  );
+  const setLanguages = useCallback(
+    (value: PackLanguage[]) => applyFilters({ languages: value }),
+    [applyFilters],
+  );
+  const setWindow = useCallback(
+    (value: WindowFilterValue) => applyFilters({ window: value }),
+    [applyFilters],
+  );
+  const setDateOrder = useCallback(
+    (value: DateOrderValue) => applyFilters({ dateOrder: value }),
+    [applyFilters],
+  );
 
   // Resolve the UI filter state into the request/query key: the "all" format
   // sentinel and an empty query collapse to undefined; the "date" sort flattens
@@ -135,6 +187,7 @@ export function useHomeFeed(initialFeed?: PacksFeedResult, initialQuery = "") {
   const feedQuery = usePacksFeed(
     filters,
     isDefaultFilters ? initialFeed : undefined,
+    !seedPending,
   );
 
   const packs = feedQuery.data?.items ?? [];
@@ -150,9 +203,12 @@ export function useHomeFeed(initialFeed?: PacksFeedResult, initialQuery = "") {
   // remembering the last-chosen one across a round-trip through another sort —
   // the default is the expected starting point each time you opt back in.
   function selectSort(value: SortFilterValue) {
-    setSort(value);
-    if (value === "popular") setWindow(DEFAULT_POPULAR_WINDOW);
-    if (value === "date") setDateOrder(DEFAULT_DATE_ORDER);
+    applyFilters({
+      sort: value,
+      ...(value === "popular"
+        ? { window: DEFAULT_POPULAR_WINDOW }
+        : { dateOrder: DEFAULT_DATE_ORDER }),
+    });
   }
 
   return {

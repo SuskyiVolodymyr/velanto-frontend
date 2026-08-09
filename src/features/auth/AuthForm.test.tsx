@@ -239,6 +239,37 @@ describe("AuthForm", () => {
     ).toHaveAttribute("href", "/privacy");
   });
 
+  // velanto-frontend#449. `mode: "onTouched"` validates a field the moment it
+  // is blurred, and the login schema's "both fields required" rule reported
+  // itself on `identifier` — so tabbing from a CORRECTLY filled username into
+  // the password box lit that username up red, accusing the one field the user
+  // had already got right. The rule is about the form, not that field.
+  it("does not fault a filled username when focus moves to the password", async () => {
+    const user = userEvent.setup();
+    renderAuthForm();
+
+    await user.type(screen.getByLabelText("Email or username"), "Volodka");
+    await user.click(screen.getByLabelText("Password"));
+
+    expect(
+      screen.queryByText("Enter your email/username and password."),
+    ).not.toBeInTheDocument();
+  });
+
+  // The other half of the same rule: an EMPTY identifier that has been visited
+  // and left is a real mistake, and still says so.
+  it("still faults an identifier left empty", async () => {
+    const user = userEvent.setup();
+    renderAuthForm();
+
+    await user.click(screen.getByLabelText("Email or username"));
+    await user.click(screen.getByLabelText("Password"));
+
+    expect(
+      await screen.findByText("Enter your email or username."),
+    ).toBeInTheDocument();
+  });
+
   it("rejects an empty login submission without calling the API", async () => {
     const user = userEvent.setup();
     renderAuthForm();
@@ -246,7 +277,7 @@ describe("AuthForm", () => {
     await user.click(screen.getByRole("button", { name: "Log in" }));
 
     expect(
-      screen.getByText("Enter your email/username and password."),
+      screen.getByText("Enter your email or username."),
     ).toBeInTheDocument();
     expect(authClient.login).not.toHaveBeenCalled();
   });
@@ -282,7 +313,7 @@ describe("AuthForm", () => {
 
     await user.click(screen.getByRole("button", { name: "Log in" }));
     expect(
-      screen.getByText("Enter your email/username and password."),
+      screen.getByText("Enter your email or username."),
     ).toBeInTheDocument();
 
     await user.click(screen.getByRole("tab", { name: "Sign up" }));
