@@ -29,7 +29,12 @@ vi.mock("@/src/shared/lib/auth-client", () => ({
   },
 }));
 vi.mock("@/src/shared/lib/admin-client", () => ({
-  adminClient: { overview: vi.fn(), listUsers: vi.fn(), auditLogs: vi.fn() },
+  adminClient: {
+    activity: vi.fn(),
+    overview: vi.fn(),
+    listUsers: vi.fn(),
+    auditLogs: vi.fn(),
+  },
 }));
 
 const MANAGER: User = {
@@ -62,6 +67,7 @@ beforeEach(() => {
     packs: 0,
     plays: 0,
     onlineUsers: 3,
+    livePlayers: { unique: 0, registered: 0, guests: 0, anonymous: 0 },
     pendingReports: 0,
     newUsersThisWeek: 0,
     newPacksThisWeek: 0,
