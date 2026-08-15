@@ -1,3 +1,4 @@
+import { SSR_HEADERS } from "./ssr-request";
 import type { AvailableMode } from "@/src/features/friends-rooms/room-types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
@@ -11,6 +12,7 @@ export async function getAvailableModesServer(
   packId: string,
 ): Promise<AvailableMode[]> {
   const res = await fetch(`${API_BASE_URL}/packs/${packId}/modes`, {
+    headers: SSR_HEADERS,
     cache: "no-store",
   });
   if (!res.ok) throw new Error(`Failed to load available modes: ${res.status}`);
