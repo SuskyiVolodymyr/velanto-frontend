@@ -1,3 +1,4 @@
+import type { ActivityRange } from "@/src/shared/types/admin";
 import {
   adminClient,
   type AdminUserSort,
@@ -79,6 +80,10 @@ export function fetchLogsPage(filters: AuditLogFilters, page: number) {
 
 export function fetchOverview() {
   return adminClient.overview();
+}
+
+export function fetchActivity(range: ActivityRange) {
+  return adminClient.activity(range);
 }
 
 export function fetchUserDetail(id: string) {

@@ -23,6 +23,21 @@ export interface AdminOverview {
   // have no account to attribute, so they never appear here. Was `null` until
   // presence tracking shipped in velanto-backend release/1.5.0.
   onlineUsers: number;
+  /**
+   * Unique visitors present right now — accounts, room guests and anonymous
+   * browsers alike (velanto-backend#312). This is the honest "people on the
+   * site" figure; `onlineUsers` above counts accounts only and is kept beside
+   * it because it is the one number backed by durable per-account data rather
+   * than an in-memory window.
+   *
+   * The three parts are disjoint and always sum to `unique`.
+   *
+   * Close, not exact: visitors behind one NAT on the same browser collapse
+   * into one, and one person on a phone and a laptop counts as two. Label it
+   * "unique players", never "online" — the wording must not promise a headcount
+   * the number cannot deliver.
+   */
+  livePlayers: LivePlayers;
   // Real count of open (unresolved) reports. Was null before the report
   // feature shipped — see velanto-backend#71.
   pendingReports: number;
@@ -133,4 +148,28 @@ export interface AuditLogList {
   total: number;
   page: number;
   limit: number;
+}
+
+export interface LivePlayers {
+  unique: number;
+  registered: number;
+  guests: number;
+  anonymous: number;
+}
+
+/** Which span the activity chart shows. Mirrors the backend's own enum. */
+export const ACTIVITY_RANGES = ["day", "week", "month"] as const;
+export type ActivityRange = (typeof ACTIVITY_RANGES)[number];
+
+/**
+ * One point on the activity chart, oldest first, with quiet periods
+ * zero-filled by the backend so the axis stays continuous.
+ *
+ * For `week` and `month` a point is a DAY reported by its busiest hour, not a
+ * daily total — unique visitors cannot be summed across hours without
+ * inventing people. See ActivityHistoryService.range in the backend.
+ */
+export interface ActivityPoint extends LivePlayers {
+  /** ISO instant: the start of the hour (day range) or of the day. */
+  at: string;
 }
