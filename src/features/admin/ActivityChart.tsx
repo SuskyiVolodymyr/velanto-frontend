@@ -33,6 +33,14 @@ export function rangeFromParam(value: string | null): ActivityRange {
  * so the bucket IS a UTC day. Relabelling it locally would name it after a day
  * whose hours it does not contain, sliding every point for readers away from
  * Greenwich. It therefore stays UTC, matching how it was cut.
+ *
+ * ⚠️ Reading the machine's own timezone during render is normally a hydration
+ * hazard: Next renders this on the server too, where the zone is UTC, and the
+ * browser would then produce different text. It is safe ONLY because the chart
+ * has no SSR seed — `useAdminActivity` fetches client-side, so the server
+ * render has no points and emits no labels at all. Give this query
+ * `initialData` and the labels start mismatching; render them in an effect (or
+ * suppress hydration warnings) if you ever do.
  */
 function pointLabel(at: string, range: ActivityRange): string {
   const date = new Date(at);
