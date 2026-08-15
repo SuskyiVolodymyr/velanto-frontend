@@ -175,6 +175,8 @@
     "activityPeakNote": "يعرض كل يوم أكثر ساعاته ازدحامًا. لا يمكن جمع اللاعبين الفريدين عبر الساعات.",
     "activityError": "تعذّر تحميل النشاط.",
     "metricPendingReports": "بلاغات معلّقة",
+    "metricPendingPacks": "حزم قيد المراجعة",
+    "awaitingModeration": "في انتظار مشرف",
     "activeRecently": "نشطون مؤخرًا",
     "awaitingReview": "بانتظار المراجعة",
     "newThisWeek": "+{count} جديد هذا الأسبوع",

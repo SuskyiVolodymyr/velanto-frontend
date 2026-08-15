@@ -41,6 +41,13 @@ export interface AdminOverview {
   // Real count of open (unresolved) reports. Was null before the report
   // feature shipped — see velanto-backend#71.
   pendingReports: number;
+  /**
+   * Packs sitting in the moderation queue. Separate from `pendingReports` on
+   * purpose: a report is someone flagging published content, a pending pack is
+   * an author waiting to be let through. One being zero says nothing about the
+   * other, so a single "needs attention" number would hide whichever is smaller.
+   */
+  pendingPacks: number;
   // Trailing-7-day deltas behind each metric card's sub-line.
   newUsersThisWeek: number;
   newPacksThisWeek: number;
