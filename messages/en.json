@@ -175,6 +175,8 @@
     "activityPeakNote": "Each day shows its busiest hour. Unique players cannot be added up across hours.",
     "activityError": "Could not load activity.",
     "metricPendingReports": "Pending reports",
+    "metricPendingPacks": "Packs in review",
+    "awaitingModeration": "Waiting for a moderator",
     "activeRecently": "Signed in recently",
     "awaitingReview": "Awaiting review",
     "newThisWeek": "+{count} new this week",

@@ -175,6 +175,8 @@
     "activityPeakNote": "প্রতিটি দিনের ব্যস্ততম ঘণ্টা দেখানো হয়েছে। অনন্য খেলোয়াড়দের ঘণ্টা ধরে যোগ করা যায় না।",
     "activityError": "কার্যকলাপ লোড করা যায়নি।",
     "metricPendingReports": "মুলতুবি রিপোর্ট",
+    "metricPendingPacks": "পর্যালোচনাধীন প্যাক",
+    "awaitingModeration": "মডারেটরের অপেক্ষায়",
     "activeRecently": "সম্প্রতি সক্রিয়",
     "awaitingReview": "পর্যালোচনার অপেক্ষায়",
     "newThisWeek": "+{count} এই সপ্তাহে নতুন",

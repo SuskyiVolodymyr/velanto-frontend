@@ -69,6 +69,7 @@ beforeEach(() => {
     onlineUsers: 3,
     livePlayers: { unique: 0, registered: 0, guests: 0, anonymous: 0 },
     pendingReports: 0,
+    pendingPacks: 0,
     newUsersThisWeek: 0,
     newPacksThisWeek: 0,
     playsThisWeek: 0,

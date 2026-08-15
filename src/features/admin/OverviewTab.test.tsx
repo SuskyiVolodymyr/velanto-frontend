@@ -36,6 +36,7 @@ describe("OverviewTab — plays chart", () => {
       onlineUsers: 0,
       livePlayers: { unique: 0, registered: 0, guests: 0, anonymous: 0 },
       pendingReports: 0,
+      pendingPacks: 0,
       newUsersThisWeek: 0,
       newPacksThisWeek: 0,
       playsThisWeek: 5,
@@ -81,6 +82,7 @@ describe("OverviewTab", () => {
       onlineUsers: 9,
       livePlayers: { unique: 9, registered: 6, guests: 2, anonymous: 1 },
       pendingReports: 4,
+      pendingPacks: 0,
       newUsersThisWeek: 0,
       newPacksThisWeek: 0,
       playsThisWeek: 0,
@@ -126,6 +128,7 @@ describe("OverviewTab — storage", () => {
       onlineUsers: 0,
       livePlayers: { unique: 0, registered: 0, guests: 0, anonymous: 0 },
       pendingReports: 0,
+      pendingPacks: 0,
       newUsersThisWeek: 0,
       newPacksThisWeek: 0,
       playsThisWeek: 0,
@@ -157,6 +160,7 @@ describe("OverviewTab — unique players", () => {
     onlineUsers: 0,
     livePlayers,
     pendingReports: 0,
+    pendingPacks: 0,
     newUsersThisWeek: 0,
     newPacksThisWeek: 0,
     playsThisWeek: 0,
@@ -199,5 +203,33 @@ describe("OverviewTab — unique players", () => {
     render(<OverviewTab />);
 
     expect(await screen.findByText("Unique players")).toBeInTheDocument();
+  });
+});
+
+describe("OverviewTab — moderation queue", () => {
+  // Separate from pending REPORTS on purpose: a report is someone flagging
+  // published content, a pending pack is an author waiting to be let through.
+  // One being zero says nothing about the other, so they get their own cards.
+  it("shows packs waiting for a moderator, apart from reports", async () => {
+    vi.mocked(adminClient.overview).mockResolvedValue({
+      registeredUsers: 0,
+      packs: 0,
+      plays: 0,
+      onlineUsers: 0,
+      livePlayers: { unique: 0, registered: 0, guests: 0, anonymous: 0 },
+      pendingReports: 2,
+      pendingPacks: 6,
+      newUsersThisWeek: 0,
+      newPacksThisWeek: 0,
+      playsThisWeek: 0,
+      playsLast7Days: [],
+      topPacksToday: [],
+      storage: { usedBytes: 0, ceilingBytes: 5 * 1024 * 1024 * 1024 },
+    });
+    render(<OverviewTab />);
+
+    expect(await screen.findByText("Packs in review")).toBeInTheDocument();
+    expect(screen.getByText("6")).toBeInTheDocument();
+    expect(screen.getByText("2")).toBeInTheDocument();
   });
 });
