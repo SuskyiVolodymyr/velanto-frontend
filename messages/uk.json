@@ -175,6 +175,8 @@
     "activityPeakNote": "Для кожного дня показано найактивнішу годину. Унікальних гравців не можна додавати за годинами.",
     "activityError": "Не вдалося завантажити активність.",
     "metricPendingReports": "Скарги в очікуванні",
+    "metricPendingPacks": "Паки на розгляді",
+    "awaitingModeration": "Чекають на модератора",
     "activeRecently": "Нещодавно заходили",
     "awaitingReview": "Очікує перевірки",
     "newThisWeek": "+{count} нових за тиждень",

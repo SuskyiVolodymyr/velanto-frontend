@@ -175,6 +175,8 @@
     "activityPeakNote": "Для каждого дня показан самый активный час. Уникальных игроков нельзя суммировать по часам.",
     "activityError": "Не удалось загрузить активность.",
     "metricPendingReports": "Жалобы в ожидании",
+    "metricPendingPacks": "Паки на рассмотрении",
+    "awaitingModeration": "Ждут модератора",
     "activeRecently": "Недавно заходили",
     "awaitingReview": "Ожидает проверки",
     "newThisWeek": "+{count} новых за неделю",

@@ -175,6 +175,8 @@
     "activityPeakNote": "हर दिन का सबसे व्यस्त घंटा दिखाया गया है। अद्वितीय खिलाड़ियों को घंटों में जोड़ा नहीं जा सकता।",
     "activityError": "गतिविधि लोड नहीं हो सकी।",
     "metricPendingReports": "लंबित रिपोर्ट",
+    "metricPendingPacks": "समीक्षाधीन पैक",
+    "awaitingModeration": "मॉडरेटर की प्रतीक्षा में",
     "activeRecently": "हाल ही में सक्रिय",
     "awaitingReview": "समीक्षा की प्रतीक्षा में",
     "newThisWeek": "+{count} इस सप्ताह नए",
