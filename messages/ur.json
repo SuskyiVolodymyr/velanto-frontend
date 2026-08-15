@@ -175,6 +175,8 @@
     "activityPeakNote": "ہر دن کا مصروف ترین گھنٹہ دکھایا گیا ہے۔ منفرد کھلاڑیوں کو گھنٹوں میں جمع نہیں کیا جا سکتا۔",
     "activityError": "سرگرمی لوڈ نہیں ہو سکی۔",
     "metricPendingReports": "زیرِ التوا رپورٹس",
+    "metricPendingPacks": "زیرِ جائزہ پیک",
+    "awaitingModeration": "ماڈریٹر کے منتظر",
     "activeRecently": "حال هی میں سرگرم",
     "awaitingReview": "جائزے کے منتظر",
     "newThisWeek": "+{count} اس ہفتے نئے",

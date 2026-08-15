@@ -175,6 +175,8 @@
     "activityPeakNote": "每天显示最忙的一小时。独立玩家无法按小时累加。",
     "activityError": "无法加载活动数据。",
     "metricPendingReports": "待处理举报",
+    "metricPendingPacks": "待审核卡包",
+    "awaitingModeration": "等待审核员处理",
     "activeRecently": "最近活跃",
     "awaitingReview": "等待审核",
     "newThisWeek": "本周新增 +{count}",

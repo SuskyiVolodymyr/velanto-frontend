@@ -130,6 +130,15 @@ export function useAdminActivity(range: ActivityRange) {
       queryKey: ["admin-activity", range] as const,
       queryFn: () => fetchActivity(range),
       placeholderData: keepPreviousData,
+      // The history only gains a point when an HOUR completes, so refetching on
+      // every mount bought nothing and cost real latency: Neon suspends after 5
+      // idle minutes, so a cold dashboard paid a compute wake just to redraw
+      // the same bars. Fifteen minutes is well inside the hourly cadence and
+      // still refreshes several times an hour if the tab stays open.
+      staleTime: 15 * 60 * 1000,
+      // The live tile above IS realtime and has no staleTime; this chart is
+      // not, so re-focusing the tab should not re-fetch it.
+      refetchOnWindowFocus: false,
     }),
   );
 }

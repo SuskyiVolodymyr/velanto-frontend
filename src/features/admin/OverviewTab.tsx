@@ -65,6 +65,11 @@ function buildMetrics(overview: AdminOverview, t: AdminTranslator): Metric[] {
       sub: t("awaitingReview"),
     },
     {
+      label: t("metricPendingPacks"),
+      value: overview.pendingPacks,
+      sub: t("awaitingModeration"),
+    },
+    {
       label: t("metricStorage"),
       // What every user is holding right now, summed — the same number uploads
       // are enforced against, so this card can never disagree with the wall a
@@ -91,7 +96,11 @@ export function OverviewTab() {
 
   return (
     <div className="flex flex-col gap-4">
-      <section className="grid grid-cols-[repeat(auto-fit,minmax(160px,1fr))] gap-3.5">
+      {/* Fixed column counts rather than auto-fit: with seven cards, auto-fit
+          packed them into one long row on a wide screen and the numbers got
+          lost in it. Two rows of four (the last row short) keeps each card
+          wide enough to read and gives the section a shape. */}
+      <section className="grid grid-cols-2 gap-3.5 md:grid-cols-3 xl:grid-cols-4">
         {buildMetrics(overview, t).map((metric) => (
           <div
             key={metric.label}
