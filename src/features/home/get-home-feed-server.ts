@@ -1,3 +1,4 @@
+import { SSR_HEADERS } from "@/src/shared/lib/ssr-request";
 import type { PacksFeedResult } from "@/src/features/home/api/packs-feed";
 import { PACKS_FEED_PAGE_SIZE } from "@/src/features/home/api/packs-feed";
 
@@ -56,6 +57,7 @@ export async function getHomeFeedServer(
     // Publishing search links would multiply the wake count by the number of
     // distinct queries crawled.
     const res = await fetch(`${API_BASE_URL}/packs?${query}`, {
+      headers: SSR_HEADERS,
       next: { revalidate: 21600 },
     });
     if (!res.ok) return null;

@@ -21,18 +21,23 @@ export function rangeFromParam(value: string | null): ActivityRange {
 /**
  * Axis label for a point: the hour on the day view, the calendar day otherwise.
  *
- * Rendered in UTC, matching the buckets the backend cut. Reading them back in
- * local time would slide a point into the neighbouring hour or day for every
- * reader west of Greenwich, which on a 24-point chart is a visible lie.
+ * The two ranges are deliberately rendered in DIFFERENT zones, because they are
+ * different kinds of thing.
+ *
+ * An hourly point is an instant, so it is shown in the reader's own time — the
+ * first version printed UTC here and an admin in Kyiv saw the latest bar
+ * labelled three hours before their own clock, which reads as a broken chart
+ * rather than as a timezone.
+ *
+ * A daily point is not an instant: the backend groups hours into days in UTC,
+ * so the bucket IS a UTC day. Relabelling it locally would name it after a day
+ * whose hours it does not contain, sliding every point for readers away from
+ * Greenwich. It therefore stays UTC, matching how it was cut.
  */
 function pointLabel(at: string, range: ActivityRange): string {
   const date = new Date(at);
   return range === "day"
-    ? date.toLocaleTimeString("en-GB", {
-        hour: "2-digit",
-        minute: "2-digit",
-        timeZone: "UTC",
-      })
+    ? date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
     : date.toLocaleDateString("en-GB", {
         day: "numeric",
         month: "short",
@@ -81,6 +86,11 @@ export function ActivityChart() {
   // every bar would divide by zero; with it they all sit at the 2px floor.
   const peak = Math.max(...points.map((p) => p.unique), 0) || 1;
 
+  // How often to print an axis label. A 24-hour day and a 30-day month cannot
+  // carry one per bar at this width without overlapping into a smear; a week
+  // can, and every day of it is worth naming.
+  const labelEvery = range === "day" ? 4 : range === "month" ? 5 : 1;
+
   return (
     <div className="rounded-[16px] border border-border bg-white/[0.02] px-[22px] py-5">
       <div className="mb-[18px] flex flex-wrap items-center gap-3">
@@ -126,12 +136,21 @@ export function ActivityChart() {
                 // of anywhere in it, not just the (possibly 2px-tall) bar.
                 className="group relative flex h-full flex-1 flex-col items-center justify-end gap-2"
               >
+                {/* The moment leads the tooltip: the axis below can only
+                    afford a label every few bars, so hovering is how you find
+                    out exactly when a spike happened. */}
                 <div className="pointer-events-none absolute -top-1 left-1/2 z-10 -translate-x-1/2 whitespace-nowrap rounded-md border border-border bg-surface px-2 py-1 text-[11px] font-semibold tabular-nums text-foreground opacity-0 shadow-lg transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">
-                  {t("livePlayersBreakdown", {
-                    registered: point.registered,
-                    guests: point.guests,
-                    anonymous: point.anonymous,
-                  })}
+                  <span className="me-2">{pointLabel(point.at, range)}</span>
+                  <span className="text-foreground-secondary">
+                    {point.unique}
+                  </span>
+                  <span className="ms-2 font-normal text-foreground-tertiary">
+                    {t("livePlayersBreakdown", {
+                      registered: point.registered,
+                      guests: point.guests,
+                      anonymous: point.anonymous,
+                    })}
+                  </span>
                 </div>
                 <button
                   type="button"
@@ -156,14 +175,25 @@ export function ActivityChart() {
               </div>
             ))}
           </div>
-          <div className="mt-2 flex justify-between">
-            <Text variant="tertiary" className="text-[10.5px]">
-              {points.length > 0 && pointLabel(points[0].at, range)}
-            </Text>
-            <Text variant="tertiary" className="text-[10.5px]">
-              {points.length > 0 &&
-                pointLabel(points[points.length - 1].at, range)}
-            </Text>
+          {/* A second row of the same flex-1 columns and the same gap, so each
+              label sits under its own bar. Only every Nth is printed — 24
+              hourly labels at this width overlap into an unreadable smear —
+              and the last point always gets one, since "how recent is this
+              chart" is the first thing a reader checks. The exact moment of
+              every other bar is one hover away. */}
+          <div className="mt-2 flex gap-1.5">
+            {points.map((point, index) => (
+              <div key={point.at} className="min-w-0 flex-1 text-center">
+                {(index % labelEvery === 0 || index === points.length - 1) && (
+                  <Text
+                    variant="tertiary"
+                    className="block truncate text-[10.5px] tabular-nums"
+                  >
+                    {pointLabel(point.at, range)}
+                  </Text>
+                )}
+              </div>
+            ))}
           </div>
           {range !== "day" && (
             <Text variant="tertiary" className="mt-2 text-[11px]">
