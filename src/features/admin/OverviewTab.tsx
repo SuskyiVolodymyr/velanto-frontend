@@ -5,6 +5,7 @@ import { Text } from "@/src/shared/components/Text";
 import { LoadingState } from "@/src/shared/components/LoadingState";
 import { useAdminOverview } from "@/src/features/admin/api/admin.queries";
 import { PlaysChart } from "@/src/features/admin/PlaysChart";
+import { ActivityChart } from "@/src/features/admin/ActivityChart";
 import { TopPacksToday } from "@/src/features/admin/TopPacksToday";
 import type { AdminOverview } from "@/src/shared/types/admin";
 import { formatBytes } from "@/src/shared/lib/format-bytes";
@@ -42,12 +43,20 @@ function buildMetrics(overview: AdminOverview, t: AdminTranslator): Metric[] {
       sub: t("playsThisWeek", { count: overview.playsThisWeek }),
     },
     {
-      label: t("metricOnlineUsers"),
-      value: overview.onlineUsers,
-      // The sub-line names WHO is counted, not how many minutes: the window is
-      // the backend's constant, and restating it here would be a number that
-      // silently goes stale the moment that constant moves.
-      sub: t("activeRecently"),
+      // "Unique players", never "online": shared addresses collapse into one
+      // and one person on two devices counts as two, so the label must not
+      // promise a headcount the number cannot deliver.
+      label: t("metricUniquePlayers"),
+      value: overview.livePlayers.unique,
+      // The breakdown, not the window length. The three parts are disjoint and
+      // sum to the headline, which is the reassurance a reader needs; the
+      // window is the backend's constant and restating it here would be a
+      // number that silently goes stale the moment that constant moves.
+      sub: t("livePlayersBreakdown", {
+        registered: overview.livePlayers.registered,
+        guests: overview.livePlayers.guests,
+        anonymous: overview.livePlayers.anonymous,
+      }),
       live: true,
     },
     {
@@ -113,6 +122,8 @@ export function OverviewTab() {
         <PlaysChart buckets={overview.playsLast7Days} />
         <TopPacksToday packs={overview.topPacksToday} />
       </section>
+
+      <ActivityChart />
     </div>
   );
 }

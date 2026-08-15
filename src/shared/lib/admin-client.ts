@@ -1,5 +1,7 @@
 import { apiClient } from "@/src/shared/lib/api-client";
 import type {
+  ActivityPoint,
+  ActivityRange,
   AdminOverview,
   AdminUserDetail,
   AdminUserList,
@@ -76,6 +78,8 @@ function buildAuditQuery(filters: ListAuditLogsFilters): string {
 
 export const adminClient = {
   overview: () => apiClient.get<AdminOverview>("/admin/overview"),
+  activity: (range: ActivityRange) =>
+    apiClient.get<ActivityPoint[]>(`/admin/activity?range=${range}`),
   listUsers: (filters: ListAdminUsersFilters = {}) =>
     apiClient.get<AdminUserList>(`/admin/users${buildUsersQuery(filters)}`),
   userDetail: (id: string) =>
