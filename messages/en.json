@@ -917,7 +917,7 @@
         "title": "Cookies and what is stored in your browser",
         "body": "There is no cookie banner. Everything stored is either needed to make the site work or is a setting you chose, and none of it follows you to other websites — so there is nothing here we would ask you to opt into. One honest note before the list: the login cookie lasts 30 days rather than clearing when you close the browser, and reasonable people think a cookie that persistent should be your choice rather than our default. We think so too, and a \"keep me signed in\" option is on our list. Here is the complete list:",
         "bullets": [
-          "Your login cookie — this is what keeps you signed in. It lasts 30 days and it survives closing your browser, so on a shared computer, log out rather than just closing the tab. JavaScript cannot read it.",
+          "Your login cookie — this is what keeps you signed in. It lasts 30 days and it survives closing your browser, so on a shared computer, log out rather than just closing the tab. JavaScript cannot read it. It is set together with a second, empty cookie that says only \"this browser is signed in\" — no name, no id, nothing about you — which is what lets us count you once rather than twice. Both are deleted when you log out.",
           "NEXT_LOCALE — your interface language. One year.",
           "velanto:accent, velanto:streamer-mode, velanto:pack-filters — display settings you chose. They never leave your browser.",
           "velanto:last-play — your picks from the pack you just played, so the result screen can show them. Cleared when you close the tab.",
