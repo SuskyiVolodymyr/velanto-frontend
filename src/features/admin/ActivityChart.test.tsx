@@ -99,15 +99,37 @@ describe("ActivityChart", () => {
   });
 
   it("names every bar with its count and its moment", async () => {
+    const at = "2026-08-15T09:00:00.000Z";
+    const local = new Date(at).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
     vi.mocked(adminClient.activity).mockResolvedValue([
-      point("2026-08-15T09:00:00.000Z", 4),
+      point(at, 4),
       point("2026-08-15T10:00:00.000Z", 7),
     ]);
     render(<ActivityChart />);
 
     expect(
-      await screen.findByRole("button", { name: "4 unique players at 09:00" }),
+      await screen.findByRole("button", {
+        name: `4 unique players at ${local}`,
+      }),
     ).toBeInTheDocument();
+  });
+
+  // "So I know when it was" — the axis can only afford a label every few bars,
+  // so the moment leads the hover tooltip on every one of them.
+  it("puts the moment in each bar's tooltip", async () => {
+    const at = "2026-08-15T09:00:00.000Z";
+    const local = new Date(at).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    vi.mocked(adminClient.activity).mockResolvedValue([point(at, 4)]);
+    render(<ActivityChart />);
+
+    await screen.findByRole("button", { name: `4 unique players at ${local}` });
+    expect(screen.getAllByText(local).length).toBeGreaterThan(0);
   });
 
   // Unique visitors cannot be summed across hours, so an aggregated point is a
@@ -133,29 +155,54 @@ describe("ActivityChart", () => {
   // The day view IS a real hourly reading, so the peak caveat would be a lie
   // there — it must not appear.
   it("does not claim a peak on the hourly view", async () => {
-    vi.mocked(adminClient.activity).mockResolvedValue([
-      point("2026-08-15T09:00:00.000Z", 4),
-    ]);
+    const at = "2026-08-15T09:00:00.000Z";
+    const local = new Date(at).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    vi.mocked(adminClient.activity).mockResolvedValue([point(at, 4)]);
     render(<ActivityChart />);
 
-    await screen.findByRole("button", { name: "4 unique players at 09:00" });
+    await screen.findByRole("button", { name: `4 unique players at ${local}` });
     expect(
       screen.queryByText(/cannot be added up across hours/),
     ).not.toBeInTheDocument();
   });
 
-  // Buckets are cut in UTC by the backend. Reading them back in local time
-  // would slide every point into the neighbouring hour or day for readers west
-  // of Greenwich — on a 24-point chart that is a visible lie, not a rounding.
-  it("labels points in UTC, matching the buckets the backend cut", async () => {
-    process.env.TZ = "America/New_York";
+  // An hourly point is an INSTANT, so it belongs in the reader's own clock.
+  // The first version printed UTC and an admin in Kyiv saw the latest bar
+  // labelled three hours before their own time, which reads as a broken chart
+  // (#315 follow-up).
+  it("labels hourly points in the reader's own time, not UTC", async () => {
+    const at = "2026-08-15T02:00:00.000Z";
+    const expected = new Date(at).toLocaleTimeString([], {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    vi.mocked(adminClient.activity).mockResolvedValue([point(at, 3)]);
+    render(<ActivityChart />);
+
+    expect(
+      await screen.findByRole("button", {
+        name: `3 unique players at ${expected}`,
+      }),
+    ).toBeInTheDocument();
+  });
+
+  // A DAILY point is not an instant: the backend groups hours into days in UTC,
+  // so the bucket is a UTC day. Relabelling it locally would name it after a
+  // day whose hours it does not contain.
+  it("keeps daily points on the UTC day they were cut from", async () => {
+    searchParams = new URLSearchParams("range=week");
     vi.mocked(adminClient.activity).mockResolvedValue([
-      point("2026-08-15T02:00:00.000Z", 3),
+      point("2026-08-14T00:00:00.000Z", 5),
     ]);
     render(<ActivityChart />);
 
     expect(
-      await screen.findByRole("button", { name: "3 unique players at 02:00" }),
+      await screen.findByRole("button", {
+        name: "5 unique players at the busiest hour of 14 Aug",
+      }),
     ).toBeInTheDocument();
   });
 
