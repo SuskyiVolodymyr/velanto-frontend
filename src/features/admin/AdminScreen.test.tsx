@@ -29,7 +29,12 @@ vi.mock("@/src/shared/lib/auth-client", () => ({
   },
 }));
 vi.mock("@/src/shared/lib/admin-client", () => ({
-  adminClient: { activity: vi.fn(), overview: vi.fn(), listUsers: vi.fn(), auditLogs: vi.fn() },
+  adminClient: {
+    activity: vi.fn(),
+    overview: vi.fn(),
+    listUsers: vi.fn(),
+    auditLogs: vi.fn(),
+  },
 }));
 
 const MANAGER: User = {

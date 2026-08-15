@@ -90,7 +90,11 @@ export function ActivityChart() {
         >
           {t("activityChartTitle")}
         </Text>
-        <div role="tablist" aria-label={t("activityRangeLabel")} className="ms-auto flex gap-1">
+        <div
+          role="tablist"
+          aria-label={t("activityRangeLabel")}
+          className="ms-auto flex gap-1"
+        >
           {ACTIVITY_RANGES.map((option) => (
             <button
               key={option}
@@ -136,9 +140,7 @@ export function ActivityChart() {
                   // aggregated ranges — a screen-reader user must not be left
                   // to infer it from a footnote they may never reach.
                   aria-label={t(
-                    range === "day"
-                      ? "activityBarHour"
-                      : "activityBarDayPeak",
+                    range === "day" ? "activityBarHour" : "activityBarDayPeak",
                     {
                       count: point.unique,
                       at: pointLabel(point.at, range),
