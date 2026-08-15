@@ -5,12 +5,24 @@ import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
 import { OverviewTab } from "./OverviewTab";
 import { adminClient } from "@/src/shared/lib/admin-client";
 
+// OverviewTab embeds ActivityChart, which keeps its range in the URL — so the
+// tab now needs a router even in tests that never touch the chart.
+const replace = vi.fn();
+let searchParams = new URLSearchParams();
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ replace, push: vi.fn() }),
+  usePathname: () => "/admin",
+  useSearchParams: () => searchParams,
+}));
+
 vi.mock("@/src/shared/lib/admin-client", () => ({
-  adminClient: { overview: vi.fn() },
+  adminClient: { overview: vi.fn(), activity: vi.fn() },
 }));
 
 beforeEach(() => {
   vi.clearAllMocks();
+  vi.mocked(adminClient.activity).mockResolvedValue([]);
+  searchParams = new URLSearchParams();
 });
 
 describe("OverviewTab — plays chart", () => {
@@ -22,6 +34,7 @@ describe("OverviewTab — plays chart", () => {
       packs: 0,
       plays: 0,
       onlineUsers: 0,
+      livePlayers: { unique: 0, registered: 0, guests: 0, anonymous: 0 },
       pendingReports: 0,
       newUsersThisWeek: 0,
       newPacksThisWeek: 0,
@@ -66,6 +79,7 @@ describe("OverviewTab", () => {
       packs: 7,
       plays: 130,
       onlineUsers: 9,
+      livePlayers: { unique: 9, registered: 6, guests: 2, anonymous: 1 },
       pendingReports: 4,
       newUsersThisWeek: 0,
       newPacksThisWeek: 0,
@@ -81,6 +95,9 @@ describe("OverviewTab", () => {
     expect(screen.getByText("7")).toBeInTheDocument();
     expect(screen.getByText("130")).toBeInTheDocument();
     expect(screen.getByText("4")).toBeInTheDocument();
+    // The presence card now reports UNIQUE PLAYERS, not signed-in accounts —
+    // `onlineUsers` is still on the wire but no longer the number shown, since
+    // it misses everyone playing signed-out (velanto-backend#312).
     expect(screen.getByText("9")).toBeInTheDocument();
     // onlineUsers was the last null metric. With presence tracking shipped every
     // card carries a real number, so a dash now means a genuine load problem.
@@ -107,6 +124,7 @@ describe("OverviewTab — storage", () => {
       packs: 0,
       plays: 0,
       onlineUsers: 0,
+      livePlayers: { unique: 0, registered: 0, guests: 0, anonymous: 0 },
       pendingReports: 0,
       newUsersThisWeek: 0,
       newPacksThisWeek: 0,
@@ -123,5 +141,63 @@ describe("OverviewTab — storage", () => {
 
     expect(await screen.findByText("1.4 GB")).toBeInTheDocument();
     expect(screen.getByText("of 5 GB")).toBeInTheDocument();
+  });
+});
+
+describe("OverviewTab — unique players", () => {
+  const overviewWith = (livePlayers: {
+    unique: number;
+    registered: number;
+    guests: number;
+    anonymous: number;
+  }) => ({
+    registeredUsers: 0,
+    packs: 0,
+    plays: 0,
+    onlineUsers: 0,
+    livePlayers,
+    pendingReports: 0,
+    newUsersThisWeek: 0,
+    newPacksThisWeek: 0,
+    playsThisWeek: 0,
+    playsLast7Days: [],
+    topPacksToday: [],
+    storage: { usedBytes: 0, ceilingBytes: 5 * 1024 * 1024 * 1024 },
+  });
+
+  // The headline figure is the whole point of velanto-backend#312: before it,
+  // only signed-in accounts were visible and everyone playing signed-out —
+  // which is most of a party-game audience — was missing from the dashboard.
+  it("shows the unique-player total, not just signed-in accounts", async () => {
+    vi.mocked(adminClient.overview).mockResolvedValue(
+      overviewWith({ unique: 17, registered: 12, guests: 5, anonymous: 0 }),
+    );
+    render(<OverviewTab />);
+
+    expect(await screen.findByText("17")).toBeInTheDocument();
+  });
+
+  // A breakdown that does not add up to its own headline is worse than none.
+  it("breaks the total into parts that sum to it", async () => {
+    vi.mocked(adminClient.overview).mockResolvedValue(
+      overviewWith({ unique: 20, registered: 12, guests: 5, anonymous: 3 }),
+    );
+    render(<OverviewTab />);
+
+    expect(
+      await screen.findByText("12 accounts · 5 guests · 3 anonymous"),
+    ).toBeInTheDocument();
+  });
+
+  // "Online" would promise a headcount this number cannot deliver: shared IPs
+  // collapse and one person on two devices counts twice. The label has to stay
+  // honest about what was actually measured.
+  it("labels the figure as players rather than as people online", async () => {
+    vi.mocked(adminClient.overview).mockResolvedValue(
+      overviewWith({ unique: 3, registered: 3, guests: 0, anonymous: 0 }),
+    );
+    render(<OverviewTab />);
+
+    expect(await screen.findByText("Unique players")).toBeInTheDocument();
   });
 });

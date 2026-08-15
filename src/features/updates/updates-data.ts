@@ -27,6 +27,15 @@ export interface UpdateEntry {
  */
 export const UPDATES: UpdateEntry[] = [
   {
+    date: "2026-08-15",
+    version: "2.3.0",
+    title: "A change to what the Privacy Policy promises",
+    bullets: [
+      "We now count how many people are on the site at once — including people who are not signed in, who were invisible to us before. To count you without knowing who you are, the server scrambles your address into a short code, keeps it in memory for fifteen minutes, and never writes it down. The scrambling key is thrown away every time the server restarts, so a code cannot be traced back to an address or matched against an older one. Only the hourly totals are kept: how many, never who.",
+      'This softens something the Privacy Policy used to say. It read "no analytics", and it said an address is only ever held for sixty seconds. Both sentences have been rewritten rather than quietly left standing — the policy now states the fifteen minutes, the discarded key, and that we still use no analytics product of any kind. It is worth a read if the old wording is part of why you are here.',
+    ],
+  },
+  {
     date: "2026-08-09",
     version: "2.2.3",
     title: "The browser's back button finally works",

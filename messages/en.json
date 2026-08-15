@@ -163,6 +163,17 @@
     "metricPacks": "Packs",
     "metricPlays": "Plays",
     "metricOnlineUsers": "Online users",
+    "metricUniquePlayers": "Unique players",
+    "livePlayersBreakdown": "{registered} accounts · {guests} guests · {anonymous} anonymous",
+    "activityChartTitle": "Unique players over time",
+    "activityRangeLabel": "Time range",
+    "activityRange_day": "Day",
+    "activityRange_week": "Week",
+    "activityRange_month": "Month",
+    "activityBarHour": "{count} unique players at {at}",
+    "activityBarDayPeak": "{count} unique players at the busiest hour of {at}",
+    "activityPeakNote": "Each day shows its busiest hour. Unique players cannot be added up across hours.",
+    "activityError": "Could not load activity.",
     "metricPendingReports": "Pending reports",
     "activeRecently": "Signed in recently",
     "awaitingReview": "Awaiting review",
@@ -847,8 +858,8 @@
         "body": "The detail is below, but if you read only this much:",
         "bullets": [
           "We collect what you give us and what the site needs to work. Nothing else.",
-          "No ads, no analytics, no tracking, no profiling. Nothing is sold to anyone.",
-          "We do not store your IP address.",
+          "No ads, no tracking, no profiling. We count how many people are on the site, never who they are. Nothing is sold to anyone.",
+          "We never store your IP address. A scrambled, short-lived fingerprint of it is held in memory so we can count visitors, and it is forgotten within fifteen minutes.",
           "If you are not logged in, your play is still counted, but it is saved with nothing that links it to you.",
           "You can export your data, or delete your account, yourself — buttons in settings, no request needed.",
           "Deleting your account does not erase everything you ever wrote. What survives, and in what form, is listed below."
@@ -893,10 +904,10 @@
         "body": "This list is as much a part of the policy as the rest:",
         "bullets": [
           "No advertising, and no ad networks.",
-          "No analytics. Not Google Analytics, not a privacy-friendly alternative, not anything. We do not measure you.",
+          "No analytics product. Not Google Analytics, not a privacy-friendly alternative, not anything. We count visitors ourselves and keep only the totals — how many, by the hour, and never who.",
           "No profiling and no personalized feed. What is popular is popular for everyone, calculated the same way for every viewer.",
           "No special-category data. We never ask your date of birth, gender, location, politics, religion, or health, and there is nowhere to put them.",
-          "No IP address stored. Our server does not log requests and there is no IP column in the database. Rate limiting holds an address in memory for sixty seconds and then forgets it. Cloudflare, which passes traffic to the site, does see visitors' addresses — see the list of processors below.",
+          "No IP address stored. Our server does not log requests and there is no IP column in the database. Rate limiting holds an address in memory for sixty seconds and then forgets it; counting visitors holds a scrambled fingerprint of it, in memory only, for fifteen minutes. The scrambling key is thrown away and made anew every time the server restarts, so a fingerprint cannot be traced back to an address or matched against an older one. Cloudflare, which passes traffic to the site, does see visitors' addresses — see the list of processors below.",
           "Fonts are served from our own server, so loading a Velanto page tells Google nothing."
         ]
       },

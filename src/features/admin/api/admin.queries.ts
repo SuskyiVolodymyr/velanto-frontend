@@ -9,9 +9,10 @@ import {
   type InfiniteData,
   type QueryClient,
 } from "@tanstack/react-query";
-import type { AdminUserRow } from "@/src/shared/types/admin";
+import type { ActivityRange, AdminUserRow } from "@/src/shared/types/admin";
 import {
   fetchLogsPage,
+  fetchActivity,
   fetchOverview,
   fetchStaffPage,
   fetchUserDetail,
@@ -114,6 +115,23 @@ export function adminLogsQueryOptions(filters: AuditLogFilters, page: number) {
 
 export function useAdminLogs(filters: AuditLogFilters, page: number) {
   return useQuery(adminLogsQueryOptions(filters, page));
+}
+
+/**
+ * The activity chart's points for one range.
+ *
+ * `keepPreviousData` so flipping day/week/month redraws the chart in place
+ * rather than collapsing it to a loading state and back — the ranges are three
+ * views of one thing, not three separate screens.
+ */
+export function useAdminActivity(range: ActivityRange) {
+  return useQuery(
+    queryOptions({
+      queryKey: ["admin-activity", range] as const,
+      queryFn: () => fetchActivity(range),
+      placeholderData: keepPreviousData,
+    }),
+  );
 }
 
 export function useAdminOverview() {
