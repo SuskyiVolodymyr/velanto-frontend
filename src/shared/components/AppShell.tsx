@@ -20,6 +20,7 @@ import { SidebarProvider } from "@/src/shared/lib/sidebar-context";
 import { PlayFocusProvider } from "@/src/shared/lib/play-focus-context";
 import { setPreviousPath } from "@/src/shared/lib/in-app-history";
 import { cn } from "@/src/shared/lib/cn";
+import { usePresenceBeacon } from "@/src/shared/lib/presence-beacon";
 
 // Routes that render full-screen without ANY app chrome (sidebar/top bar/nav).
 // Currently just /auth, whose design is a standalone split screen with its own
@@ -85,6 +86,10 @@ const NARROW_DESKTOP = "(min-width: 881px) and (max-width: 1180px)";
  */
 export function AppShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
+  // Mounted once, at the shell, so every page counts as presence — and only
+  // once per browser tab however deep the route tree goes. It is the ONLY
+  // thing that tells the API a person is here (velanto-backend#328).
+  usePresenceBeacon();
   // The user's desktop rail preference (only meaningful >=1181px), or null
   // while they haven't expressed one — in which case the route decides. Held
   // as a tri-state rather than a boolean so "hasn't chosen yet" is
