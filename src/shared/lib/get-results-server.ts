@@ -1,4 +1,3 @@
-import { SSR_HEADERS } from "./ssr-request";
 import type { PackResults, RankResults } from "@/src/shared/types/play-results";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
@@ -11,7 +10,6 @@ export async function getResultsServer(
   packId: string,
 ): Promise<PackResults | RankResults> {
   const res = await fetch(`${API_BASE_URL}/packs/${packId}/results`, {
-    headers: SSR_HEADERS,
     cache: "no-store",
   });
   if (!res.ok) throw new Error(`Failed to load results: ${res.status}`);
