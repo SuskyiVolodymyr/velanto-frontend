@@ -1,4 +1,3 @@
-import { SSR_HEADERS } from "./ssr-request";
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 /**
@@ -12,7 +11,6 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 export async function getUserCountServer(): Promise<number | null> {
   try {
     const res = await fetch(`${API_BASE_URL}/users/count`, {
-      headers: SSR_HEADERS,
       next: { revalidate: 300 },
     });
     if (!res.ok) return null;

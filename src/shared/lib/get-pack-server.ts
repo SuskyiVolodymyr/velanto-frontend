@@ -1,4 +1,3 @@
-import { SSR_HEADERS } from "./ssr-request";
 import type { Pack } from "@/src/shared/types/pack";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
@@ -11,7 +10,6 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 export async function getPackServer(id: string): Promise<Pack | null> {
   const res = await fetch(`${API_BASE_URL}/packs/${id}`, {
     cache: "no-store",
-    headers: SSR_HEADERS,
   });
   if (res.status === 404) return null;
   if (!res.ok) throw new Error(`Failed to load pack: ${res.status}`);
