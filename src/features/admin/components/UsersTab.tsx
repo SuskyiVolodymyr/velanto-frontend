@@ -14,8 +14,8 @@ import {
   isCurrentlyBanned,
   type BannedFilter,
   type StaffFilter,
-} from "@/features/admin/use-users-admin";
-import { UserRow } from "@/features/admin/UserRow";
+} from "@/features/admin/hooks/use-users-admin";
+import { UserRow } from "@/features/admin/components/UserRow";
 import { DataTable } from "@/ui/DataTable";
 
 const COLUMNS = "1.3fr 110px 80px 80px 100px 110px 130px";

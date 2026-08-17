@@ -13,8 +13,8 @@ import { type AssignableRole } from "@/utils/staff-permissions";
 import { useStreamerModeOrDefault } from "@/contexts/streamer-mode-context";
 import type { Role } from "@/types/user";
 import type { AdminUserRow } from "@/types/admin";
-import { UserBanForm } from "@/features/admin/UserBanForm";
-import { RoleSelect } from "@/features/admin/RoleSelect";
+import { UserBanForm } from "@/features/admin/components/UserBanForm";
+import { RoleSelect } from "@/features/admin/components/RoleSelect";
 import { DataTableRow } from "@/ui/DataTable";
 
 interface UserRowProps {

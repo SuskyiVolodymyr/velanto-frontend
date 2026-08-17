@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { AdminUserDetailScreen } from "@/features/admin/AdminUserDetailScreen";
+import { AdminUserDetailScreen } from "@/features/admin/components/AdminUserDetailScreen";
 
 export const metadata: Metadata = {
   title: "User — Admin",

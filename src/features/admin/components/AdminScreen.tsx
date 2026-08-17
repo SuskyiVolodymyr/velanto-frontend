@@ -10,10 +10,10 @@ import { PageHeader } from "@/ui/PageHeader";
 import { useAuth } from "@/contexts/auth-context";
 import { cn } from "@/utils/cn";
 import { IdentityPillBadge } from "@/components/IdentityPillBadge";
-import { OverviewTab } from "@/features/admin/OverviewTab";
-import { StaffTab } from "@/features/admin/StaffTab";
-import { UsersTab } from "@/features/admin/UsersTab";
-import { LogsTab } from "@/features/admin/LogsTab";
+import { OverviewTab } from "@/features/admin/components/OverviewTab";
+import { StaffTab } from "@/features/admin/components/StaffTab";
+import { UsersTab } from "@/features/admin/components/UsersTab";
+import { LogsTab } from "@/features/admin/components/LogsTab";
 import { pageContainer } from "@/constants/page-container";
 
 type Tab = "overview" | "staff" | "users" | "logs";

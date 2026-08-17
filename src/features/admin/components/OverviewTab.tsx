@@ -4,9 +4,9 @@ import { useTranslations } from "next-intl";
 import { Text } from "@/ui/Text";
 import { LoadingState } from "@/ui/LoadingState";
 import { useAdminOverview } from "@/features/admin/api/admin.queries";
-import { PlaysChart } from "@/features/admin/PlaysChart";
-import { ActivityChart } from "@/features/admin/ActivityChart";
-import { TopPacksToday } from "@/features/admin/TopPacksToday";
+import { PlaysChart } from "@/features/admin/components/PlaysChart";
+import { ActivityChart } from "@/features/admin/components/ActivityChart";
+import { TopPacksToday } from "@/features/admin/components/TopPacksToday";
 import type { AdminOverview } from "@/types/admin";
 import { formatBytes } from "@/utils/format-bytes";
 
