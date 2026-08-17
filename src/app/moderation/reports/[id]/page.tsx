@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ReportDetailScreen } from "@/features/moderation/ReportDetailScreen";
+import { ReportDetailScreen } from "@/features/moderation/components/ReportDetailScreen";
 
 export const metadata: Metadata = {
   title: "Report",

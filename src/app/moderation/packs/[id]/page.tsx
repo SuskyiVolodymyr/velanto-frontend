@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PackReviewScreen } from "@/features/moderation/PackReviewScreen";
+import { PackReviewScreen } from "@/features/moderation/components/PackReviewScreen";
 
 export const metadata: Metadata = {
   title: "Pack review",

@@ -9,8 +9,8 @@ import { PageHeader } from "@/ui/PageHeader";
 import { useAuth } from "@/contexts/auth-context";
 import { cn } from "@/utils/cn";
 import { IdentityPillBadge } from "@/components/IdentityPillBadge";
-import { ReportsTab } from "@/features/moderation/ReportsTab";
-import { PackApprovalsTab } from "@/features/moderation/PackApprovalsTab";
+import { ReportsTab } from "@/features/moderation/components/ReportsTab";
+import { PackApprovalsTab } from "@/features/moderation/components/PackApprovalsTab";
 import { useModerationCounts } from "@/features/moderation/api/moderation.queries";
 import { pageContainer } from "@/constants/page-container";
 

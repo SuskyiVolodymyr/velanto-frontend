@@ -3,8 +3,8 @@ import { Text } from "@/ui/Text";
 import {
   MarkForEditButton,
   MarkRequestField,
-} from "@/features/moderation/MarkForEdit";
-import type { PackMarks } from "@/features/moderation/use-pack-marks";
+} from "@/features/moderation/components/MarkForEdit";
+import type { PackMarks } from "@/features/moderation/hooks/use-pack-marks";
 import type { Pack } from "@/types/pack";
 
 /**

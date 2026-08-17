@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { ModerationPanel } from "@/features/moderation/ModerationPanel";
+import { ModerationPanel } from "@/features/moderation/components/ModerationPanel";
 
 export const metadata: Metadata = {
   title: "Moderation",

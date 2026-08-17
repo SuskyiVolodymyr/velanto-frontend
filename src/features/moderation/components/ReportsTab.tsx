@@ -16,7 +16,7 @@ import { cn } from "@/utils/cn";
 import { TablePagination } from "@/ui/TablePagination";
 import { reportReasonLabel } from "@/constants/report-reasons";
 import { reportTargetLabel } from "@/utils/report-display";
-import { ReportFilters } from "@/features/moderation/ReportFilters";
+import { ReportFilters } from "@/features/moderation/components/ReportFilters";
 import { useReportsList } from "@/features/moderation/api/reports-list.queries";
 import { MODERATION_PAGE_SIZE } from "@/features/moderation/api/moderation";
 import type { ReportsListFilters } from "@/features/moderation/api/reports-list";

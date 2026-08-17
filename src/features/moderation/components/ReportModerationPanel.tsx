@@ -11,7 +11,7 @@ import {
 } from "@/components/BanReasonPicker";
 import type { BanDuration } from "@/api/users-client";
 import type { ReportWithReporter } from "@/types/report";
-import type { useReportModeration } from "@/features/moderation/use-report-moderation";
+import type { useReportModeration } from "@/features/moderation/hooks/use-report-moderation";
 
 interface ReportModerationPanelProps {
   report: ReportWithReporter;

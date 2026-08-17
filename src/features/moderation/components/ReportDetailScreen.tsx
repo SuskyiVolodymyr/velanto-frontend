@@ -7,12 +7,12 @@ import { useAuth } from "@/contexts/auth-context";
 import { Text } from "@/ui/Text";
 import { Button } from "@/ui/Button";
 import { PageHeader } from "@/ui/PageHeader";
-import { ReportedContentPreview } from "@/features/moderation/ReportedContentPreview";
-import { ReportDetailSummary } from "@/features/moderation/ReportDetailSummary";
-import { ReportsAgainstTarget } from "@/features/moderation/ReportsAgainstTarget";
-import { ReportQueueActions } from "@/features/moderation/ReportQueueActions";
-import { ReportModerationPanel } from "@/features/moderation/ReportModerationPanel";
-import { useReportModeration } from "@/features/moderation/use-report-moderation";
+import { ReportedContentPreview } from "@/features/moderation/components/ReportedContentPreview";
+import { ReportDetailSummary } from "@/features/moderation/components/ReportDetailSummary";
+import { ReportsAgainstTarget } from "@/features/moderation/components/ReportsAgainstTarget";
+import { ReportQueueActions } from "@/features/moderation/components/ReportQueueActions";
+import { ReportModerationPanel } from "@/features/moderation/components/ReportModerationPanel";
+import { useReportModeration } from "@/features/moderation/hooks/use-report-moderation";
 import { useReport } from "@/features/moderation/api/report-detail.queries";
 import {
   useReviewReport,

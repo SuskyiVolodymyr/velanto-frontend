@@ -7,7 +7,7 @@ import { cn } from "@/utils/cn";
 import type {
   PackMarks,
   MarkTarget,
-} from "@/features/moderation/use-pack-marks";
+} from "@/features/moderation/hooks/use-pack-marks";
 
 /**
  * "Mark for edit" / "Marked" toggle. Shared by the item grid, the round list

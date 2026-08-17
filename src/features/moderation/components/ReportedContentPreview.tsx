@@ -6,8 +6,8 @@ import { packsClient } from "@/api/packs-client";
 import { adminClient } from "@/api/admin-client";
 import { Text } from "@/ui/Text";
 import { LoadingState } from "@/ui/LoadingState";
-import { PackContentsPreview } from "@/features/moderation/PackContentsPreview";
-import { ReportedUserSummary } from "@/features/moderation/ReportedUserSummary";
+import { PackContentsPreview } from "@/features/moderation/components/PackContentsPreview";
+import { ReportedUserSummary } from "@/features/moderation/components/ReportedUserSummary";
 import type { Report } from "@/types/report";
 import type { Role } from "@/types/user";
 
