@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getPackServer } from "@/server/get-pack-server";
-import { ResultScreen } from "@/features/result/ResultScreen";
-import { ResultFallback } from "@/features/result/ResultFallback";
+import { ResultScreen } from "@/features/result/components/ResultScreen";
+import { ResultFallback } from "@/features/result/components/ResultFallback";
 
 export async function generateMetadata({
   params,

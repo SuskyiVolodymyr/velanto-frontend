@@ -2,7 +2,7 @@
 
 import { notFound } from "next/navigation";
 import { usePackFallback } from "@/hooks/use-pack-fallback";
-import { ResultScreen } from "@/features/result/ResultScreen";
+import { ResultScreen } from "@/features/result/components/ResultScreen";
 
 /**
  * Recovers the pack when the Server Component's anonymous fetch returned null —

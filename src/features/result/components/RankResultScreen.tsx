@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Text } from "@/ui/Text";
-import { RecapHeading } from "@/features/result/RecapHeading";
+import { RecapHeading } from "@/features/result/components/RecapHeading";
 import { RankedList } from "@/ui/RankedList";
 import { roundHeading } from "@/utils/round-heading";
 import type { Pack } from "@/types/pack";

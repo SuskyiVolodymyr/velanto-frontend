@@ -13,7 +13,7 @@ import { PackModesPanel } from "@/features/pack/components/PackModesPanel";
 import { PackTopItemsList } from "@/features/pack/components/PackTopItemsList";
 import { RoundChips } from "@/features/pack/components/RoundChips";
 import { PackStats } from "@/features/pack/components/PackStats";
-import { PodiumTable } from "@/features/result/PodiumTable";
+import { PodiumTable } from "@/features/result/components/PodiumTable";
 import { PackCreatorCard } from "@/features/pack/components/PackCreatorCard";
 import { PackPlayButton } from "@/features/pack/components/PackPlayButton";
 import { PackPlayEstimate } from "@/features/pack/components/PackPlayEstimate";

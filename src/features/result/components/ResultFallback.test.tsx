@@ -8,7 +8,7 @@ import type { PackResults } from "@/types/play-results";
 
 vi.mock("@/hooks/use-pack-fallback");
 vi.mock("next/navigation", () => ({ notFound: vi.fn() }));
-vi.mock("@/features/result/ResultScreen", () => ({
+vi.mock("@/features/result/components/ResultScreen", () => ({
   ResultScreen: () => <div>ResultScreen</div>,
 }));
 

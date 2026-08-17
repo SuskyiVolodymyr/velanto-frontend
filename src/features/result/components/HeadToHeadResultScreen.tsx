@@ -4,7 +4,7 @@ import { useMemo } from "react";
 import { useTranslations } from "next-intl";
 import { Card } from "@/ui/Card";
 import { Text } from "@/ui/Text";
-import { RecapHeading } from "@/features/result/RecapHeading";
+import { RecapHeading } from "@/features/result/components/RecapHeading";
 import { roundHeading } from "@/utils/round-heading";
 import { cn } from "@/utils/cn";
 import type { Pack } from "@/types/pack";
