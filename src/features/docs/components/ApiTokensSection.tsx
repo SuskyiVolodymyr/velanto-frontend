@@ -19,7 +19,7 @@ import {
   type ApiToken,
   type CreatedApiToken,
 } from "@/api/tokens-client";
-import { SCOPE_KEY } from "./scope-keys";
+import { SCOPE_KEY } from "../scope-keys";
 import {
   useApiTokens,
   useCreateToken,

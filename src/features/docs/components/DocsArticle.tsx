@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { BarChart3, EyeOff, Pencil } from "lucide-react";
 import { ApiDocs } from "./ApiDocs";
-import { DocsNote, H1, PANEL, PROSE } from "./docs-primitives";
+import { DocsNote, H1, PANEL, PROSE } from "../docs-primitives";
 import { DocsPager } from "./DocsPager";
 import type { TopicId } from "./DocsSidebar";
 

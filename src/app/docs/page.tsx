@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
-import { DocsScreen } from "@/features/docs/DocsScreen";
+import { DocsScreen } from "@/features/docs/components/DocsScreen";
 import { buildOpenGraph } from "@/utils/open-graph";
 import { SITE_URL } from "@/constants/site-url";
 

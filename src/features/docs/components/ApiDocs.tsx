@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { ExternalLink, Package } from "lucide-react";
 import { ApiTokensSection } from "./ApiTokensSection";
-import { DocsNote, H1, H2, PROSE } from "./docs-primitives";
+import { DocsNote, H1, H2, PROSE } from "../docs-primitives";
 
 /** npm package name — appears in the promo panel and the MCP client config. */
 const MCP_PACKAGE = "velanto-mcp";
