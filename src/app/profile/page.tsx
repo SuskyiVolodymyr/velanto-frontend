@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { ProfileRedirect } from "@/features/profile/ProfileRedirect";
+import { ProfileRedirect } from "@/features/profile/components/ProfileRedirect";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("pages");

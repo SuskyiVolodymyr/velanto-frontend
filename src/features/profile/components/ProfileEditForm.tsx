@@ -16,8 +16,8 @@ import { USERNAME_PATTERN } from "@/features/auth/auth.schema";
 import { Text } from "@/ui/Text";
 import { Button, buttonClassName } from "@/ui/Button";
 import { PageHeader } from "@/ui/PageHeader";
-import { AvatarSection } from "@/features/profile/AvatarSection";
-import { ProfileEditPreview } from "@/features/profile/ProfileEditPreview";
+import { AvatarSection } from "@/features/profile/components/AvatarSection";
+import { ProfileEditPreview } from "@/features/profile/components/ProfileEditPreview";
 import { cn } from "@/utils/cn";
 import { pageContainer } from "@/constants/page-container";
 

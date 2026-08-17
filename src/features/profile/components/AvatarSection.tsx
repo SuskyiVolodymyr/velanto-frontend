@@ -9,7 +9,7 @@ import { Text } from "@/ui/Text";
 import { Button } from "@/ui/Button";
 import { UserAvatar } from "@/components/UserAvatar";
 import { cn } from "@/utils/cn";
-import { useUpdateAvatar, useRemoveAvatar } from "./api/avatar.mutations";
+import { useUpdateAvatar, useRemoveAvatar } from "../api/avatar.mutations";
 import { AvatarCropModal } from "./AvatarCropModal";
 
 /**

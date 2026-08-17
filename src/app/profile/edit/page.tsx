@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { ProfileEditForm } from "@/features/profile/ProfileEditForm";
+import { ProfileEditForm } from "@/features/profile/components/ProfileEditForm";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("pages");
