@@ -1,66 +1,17 @@
 "use client";
 
-import { SignInGate } from "@/components/SignInGate";
-import { useMemo, useState } from "react";
-import { useTranslations, useFormatter } from "next-intl";
-import { Check } from "lucide-react";
-import { Text } from "@/ui/Text";
-import { Button } from "@/ui/Button";
-import { Modal } from "@/ui/Modal";
+import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { ConfirmModal } from "@/ui/ConfirmModal";
-import { Tooltip } from "@/ui/Tooltip";
-import { Skeleton } from "@/ui/Skeleton";
-import { cn } from "@/utils/cn";
 import { useAuth } from "@/contexts/auth-context";
-import { isStaff } from "@/utils/user-role";
-import {
-  PAT_SCOPES,
-  type PatScope,
-  type ApiToken,
-  type CreatedApiToken,
-} from "@/api/tokens-client";
-import { SCOPE_KEY } from "../scope-keys";
+import type { ApiToken, CreatedApiToken } from "@/api/tokens-client";
+import { CreateTokenPanel } from "@/features/docs/components/CreateTokenPanel";
+import { TokenList } from "@/features/docs/components/TokenList";
+import { TokenCreatedModal } from "@/features/docs/components/TokenCreatedModal";
 import {
   useApiTokens,
-  useCreateToken,
   useRevokeToken,
 } from "@/features/docs/api/tokens.queries";
-
-/**
- * Order the scope checkboxes are shown in — safest/most common first
- * (`profile:read`), most powerful last (`moderation`, staff-only). This is a UI
- * concern only and is deliberately separate from PAT_SCOPES (the wire taxonomy,
- * whose order the stored scopes preserve). Any scope not listed here still
- * renders, appended after these — so a newly-added scope can never silently
- * vanish from the form.
- */
-const SCOPE_DISPLAY_ORDER: PatScope[] = [
-  "profile:read",
-  "packs:read",
-  "packs:write",
-  "packs:delete",
-  "moderation",
-];
-
-/** Mock's token panels: 18px padding, 16px radius, hairline border. */
-const PANEL_CLASS =
-  "flex flex-col gap-[13px] rounded-[16px] border border-border bg-surface-card p-[18px]";
-
-/** Field caption above an input / group. */
-const FIELD_LABEL_CLASS = "text-xs font-[650] text-foreground-secondary";
-
-/** One row in the "Your tokens" list — inset on the page background. */
-const TOKEN_ROW_CLASS =
-  "flex flex-wrap items-center gap-2.5 rounded-xl border border-white/[0.06] bg-background p-[12px_13px]";
-
-/** Expiry presets offered in the create form; "never" maps to null days. */
-const EXPIRY_CHOICES = ["30", "90", "365", "never"] as const;
-type ExpiryChoice = (typeof EXPIRY_CHOICES)[number];
-const DEFAULT_EXPIRY: ExpiryChoice = "90";
-
-function expiryToDays(choice: ExpiryChoice): number | null {
-  return choice === "never" ? null : Number(choice);
-}
 
 /**
  * The token manager embedded in the API docs topic: mint, list, and revoke
@@ -70,14 +21,14 @@ function expiryToDays(choice: ExpiryChoice): number | null {
  * Lives on the public docs page, so a signed-out reader still sees the form —
  * blocked with a reason on the submit button, never hidden and never a surprise
  * redirect. Only the token list (which needs an account to mean anything) is
- * withheld. The `moderation` scope is offered only to staff, since a non-staff
- * token could never exercise it.
+ * withheld.
+ *
+ * This composes the three panels and owns only the revoke confirmation, which
+ * spans the list and the modal.
  */
 export function ApiTokensSection() {
   const t = useTranslations("docs");
-  const tAuth = useTranslations("authGate");
-  const format = useFormatter();
-  const { status, user } = useAuth();
+  const { status } = useAuth();
   const authed = status === "authenticated";
   // Only a KNOWN signed-out viewer is "blocked". While the session is still
   // resolving, `authed` is false but we don't yet know why — claiming "log in to
@@ -85,83 +36,11 @@ export function ApiTokensSection() {
   const blocked = status === "unauthenticated";
 
   const tokensQuery = useApiTokens({ enabled: authed });
-  const createMutation = useCreateToken();
   const revokeMutation = useRevokeToken();
 
-  const [name, setName] = useState("");
-  const [scopes, setScopes] = useState<Set<PatScope>>(new Set());
-  const [expiry, setExpiry] = useState<ExpiryChoice>(DEFAULT_EXPIRY);
-  const [createError, setCreateError] = useState(false);
-
   const [created, setCreated] = useState<CreatedApiToken | null>(null);
-  const [copied, setCopied] = useState(false);
-
   const [toRevoke, setToRevoke] = useState<ApiToken | null>(null);
   const [revokeError, setRevokeError] = useState(false);
-
-  const availableScopes = useMemo(
-    () =>
-      PAT_SCOPES.filter(
-        (scope) => scope !== "moderation" || isStaff(user?.role),
-      ),
-    [user?.role],
-  );
-
-  // Same set as availableScopes, ordered for the checkbox list (see
-  // SCOPE_DISPLAY_ORDER). Any scope missing from that order is appended, so it
-  // never disappears from the form.
-  const displayScopes = useMemo(() => {
-    const ordered = SCOPE_DISPLAY_ORDER.filter((scope) =>
-      availableScopes.includes(scope),
-    );
-    const rest = availableScopes.filter(
-      (scope) => !SCOPE_DISPLAY_ORDER.includes(scope),
-    );
-    return [...ordered, ...rest];
-  }, [availableScopes]);
-
-  const canSubmit = authed && name.trim().length > 0 && scopes.size > 0;
-
-  const toggleScope = (scope: PatScope) => {
-    setScopes((prev) => {
-      const next = new Set(prev);
-      if (next.has(scope)) next.delete(scope);
-      else next.add(scope);
-      return next;
-    });
-  };
-
-  const handleCreate = async () => {
-    // Also guards the blocked (signed-out) button, which is only aria-disabled
-    // and therefore still clickable.
-    if (!canSubmit) return;
-    setCreateError(false);
-    try {
-      const token = await createMutation.mutateAsync({
-        name: name.trim(),
-        // Preserve the taxonomy order rather than Set insertion order.
-        scopes: availableScopes.filter((s) => scopes.has(s)),
-        expiresInDays: expiryToDays(expiry),
-      });
-      setCreated(token);
-      setName("");
-      setScopes(new Set());
-      setExpiry(DEFAULT_EXPIRY);
-    } catch {
-      setCreateError(true);
-    }
-  };
-
-  const handleCopy = async () => {
-    if (!created) return;
-    try {
-      await navigator.clipboard.writeText(created.plaintext);
-      setCopied(true);
-    } catch {
-      // Clipboard denied (e.g. insecure context) — the token is visible for
-      // manual selection, so this is a non-fatal degradation.
-    }
-  };
 
   const handleRevoke = async () => {
     if (!toRevoke) return;
@@ -174,250 +53,26 @@ export function ApiTokensSection() {
     }
   };
 
-  const tokens = tokensQuery.data ?? [];
-
-  // Signed out: dimmed and non-functional with the reason on hover/focus — not
-  // the real `disabled` attribute, which would suppress the Tooltip.
-  const createButton = (
-    <Button
-      onClick={handleCreate}
-      loading={createMutation.isPending}
-      aria-disabled={blocked || undefined}
-      disabled={blocked ? undefined : !canSubmit}
-      className={cn("self-start")}
-    >
-      {t("tokenCreateButton")}
-    </Button>
-  );
-
-  const createButtonWithReason = (
-    <SignInGate message={tAuth("logInToCreateTokens")}>
-      {createButton}
-    </SignInGate>
-  );
-
   return (
     <>
       {/* Mock: "Create a token" and "Your tokens" are two separate 16px-radius
           panels, not one card with a divider. */}
-      <div className={PANEL_CLASS}>
-        <h2 className="text-sm font-bold text-foreground">
-          {t("tokensHeading")}
-        </h2>
-
-        <label className="flex flex-col gap-[7px]">
-          <span className={FIELD_LABEL_CLASS}>{t("tokenNameLabel")}</span>
-          <input
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder={t("tokenNamePlaceholder")}
-            maxLength={100}
-            disabled={createMutation.isPending}
-            className="h-11 rounded-[11px] border border-white/10 bg-background px-[13px] text-sm text-foreground outline-none transition-colors placeholder:text-foreground-tertiary focus:border-acc disabled:opacity-60"
-          />
-        </label>
-
-        {/* A real <fieldset>/<legend> can't be used here: the browser takes
-            <legend> out of the flex flow and paints it over the box's top
-            border, so the label collided with the first row. A labelled group
-            gives the same semantics with normal layout. */}
-        <div
-          role="group"
-          aria-labelledby="token-scopes-label"
-          className="flex flex-col gap-[9px]"
-        >
-          <span id="token-scopes-label" className={FIELD_LABEL_CLASS}>
-            {t("tokenScopesLabel")}
-          </span>
-          {/* Each scope's own description lives on its row — the mock has no
-              separate scope reference above, so the checkbox IS the docs. */}
-          {displayScopes.map((scope) => {
-            const on = scopes.has(scope);
-            return (
-              <button
-                key={scope}
-                type="button"
-                role="checkbox"
-                // The raw scope id is no longer printed on the row (the mock
-                // shows a human label + description), so it's exposed here for
-                // the ordering test rather than adding UI nothing reads.
-                data-scope={scope}
-                aria-checked={on}
-                onClick={() => toggleScope(scope)}
-                disabled={createMutation.isPending}
-                className={cn(
-                  "flex w-full items-start gap-[11px] rounded-[11px] border p-[11px_12px] text-start transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
-                  on
-                    ? "border-acc/30 bg-acc/[0.05]"
-                    : "border-white/[0.07] bg-background hover:border-white/20",
-                )}
-              >
-                <span
-                  aria-hidden
-                  className={cn(
-                    "mt-px grid h-[19px] w-[19px] flex-none place-items-center rounded-md border-[1.5px]",
-                    on
-                      ? "border-acc bg-acc text-[#07131A]"
-                      : "border-white/20 bg-transparent",
-                  )}
-                >
-                  {on && <Check size={12} strokeWidth={3.2} />}
-                </span>
-                <span className="flex min-w-0 flex-col gap-0.5">
-                  <span className="text-[13.5px] font-[650] text-foreground">
-                    {t(`scopeLabel_${SCOPE_KEY[scope]}`)}
-                  </span>
-                  <span className="text-xs leading-[1.5] text-pretty text-foreground-tertiary">
-                    {t(`scopeDesc_${SCOPE_KEY[scope]}`)}
-                  </span>
-                </span>
-              </button>
-            );
-          })}
-        </div>
-
-        <div className="flex flex-col gap-[7px]">
-          <span className={FIELD_LABEL_CLASS}>{t("tokenExpiryLabel")}</span>
-          {/* Mock uses a chip row, not a <select> — four choices read faster
-              laid out than collapsed behind a dropdown. */}
-          <div role="radiogroup" className="flex flex-wrap gap-[7px]">
-            {EXPIRY_CHOICES.map((choice) => {
-              const on = expiry === choice;
-              return (
-                <button
-                  key={choice}
-                  type="button"
-                  role="radio"
-                  aria-checked={on}
-                  onClick={() => setExpiry(choice)}
-                  disabled={createMutation.isPending}
-                  className={cn(
-                    "h-9 rounded-[10px] border px-[13px] text-[12.5px] font-[650] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
-                    on
-                      ? "border-acc/40 bg-acc/[0.12] text-acc"
-                      : "border-white/[0.12] text-foreground-secondary hover:text-foreground",
-                  )}
-                >
-                  {t(`tokenExpiry_${choice}`)}
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {blocked ? createButtonWithReason : createButton}
-        {createError && (
-          <Text variant="danger" role="alert" className="text-sm">
-            {t("tokenCreateError")}
-          </Text>
-        )}
-      </div>
+      <CreateTokenPanel blocked={blocked} onCreated={setCreated} />
 
       {/* Existing tokens — withheld while signed out, where the list would
           always be empty and the heading just noise. */}
       {authed && (
-        <div className={PANEL_CLASS}>
-          <h2 className="text-sm font-bold text-foreground">
-            {t("tokenListHeading")}
-          </h2>
-          {tokensQuery.isLoading ? (
-            <ul className="flex flex-col gap-[11px]" aria-hidden>
-              {[0, 1].map((row) => (
-                <li key={row} className={TOKEN_ROW_CLASS}>
-                  <div className="flex min-w-0 flex-1 flex-col gap-1.5">
-                    <Skeleton className="h-4 w-32" />
-                    <Skeleton className="h-3 w-44" />
-                  </div>
-                  <Skeleton className="h-8 w-20 shrink-0" />
-                </li>
-              ))}
-            </ul>
-          ) : tokens.length === 0 ? (
-            <Text variant="secondary" className="text-sm">
-              {t("tokenListEmpty")}
-            </Text>
-          ) : (
-            <ul className="flex flex-col gap-[11px]">
-              {tokens.map((token) => (
-                <li key={token.id} className={TOKEN_ROW_CLASS}>
-                  <div className="flex min-w-0 flex-col gap-[3px]">
-                    <span className="truncate text-[13.5px] font-[650] text-foreground">
-                      {token.name}
-                    </span>
-                    <span className="font-mono text-[11.5px] text-foreground-tertiary">
-                      {token.lastUsedAt
-                        ? t("tokenLastUsed", {
-                            date: format.dateTime(new Date(token.lastUsedAt), {
-                              dateStyle: "medium",
-                            }),
-                          })
-                        : t("tokenNeverUsed")}
-                      {" · "}
-                      {token.expiresAt
-                        ? t("tokenExpiresOn", {
-                            date: format.dateTime(new Date(token.expiresAt), {
-                              dateStyle: "medium",
-                            }),
-                          })
-                        : t("tokenNeverExpires")}
-                    </span>
-                  </div>
-                  <div className="ms-auto flex flex-wrap gap-1.5">
-                    {token.scopes.map((scope) => (
-                      <span
-                        key={scope}
-                        className="rounded-md bg-acc/10 px-2 py-0.5 font-mono text-[10px] font-[650] text-[#7FEBFF]"
-                      >
-                        {scope}
-                      </span>
-                    ))}
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setRevokeError(false);
-                      setToRevoke(token);
-                    }}
-                    className="h-8 flex-none rounded-[9px] bg-danger/10 px-3 text-[12.5px] font-semibold text-[#FF8C8C] transition-colors hover:bg-danger/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc"
-                  >
-                    {t("tokenRevokeButton")}
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
+        <TokenList
+          tokens={tokensQuery.data ?? []}
+          isLoading={tokensQuery.isLoading}
+          onRevoke={(token) => {
+            setRevokeError(false);
+            setToRevoke(token);
+          }}
+        />
       )}
 
-      {/* Once-shown secret */}
-      <Modal
-        open={created !== null}
-        onClose={() => {
-          setCreated(null);
-          setCopied(false);
-        }}
-        title={t("tokenCreatedTitle")}
-      >
-        <Text variant="secondary" className="text-sm leading-relaxed">
-          {t("tokenCreatedWarning")}
-        </Text>
-        <code className="mt-4 block w-full break-all rounded-[10px] border border-border bg-surface px-3 py-2.5 text-sm">
-          {created?.plaintext}
-        </code>
-        <div className="mt-4 flex justify-end gap-3">
-          <Button variant="secondary" onClick={() => void handleCopy()}>
-            {copied ? t("tokenCopied") : t("tokenCopy")}
-          </Button>
-          <Button
-            onClick={() => {
-              setCreated(null);
-              setCopied(false);
-            }}
-          >
-            {t("tokenCreatedDone")}
-          </Button>
-        </div>
-      </Modal>
+      <TokenCreatedModal token={created} onClose={() => setCreated(null)} />
 
       <ConfirmModal
         open={toRevoke !== null}

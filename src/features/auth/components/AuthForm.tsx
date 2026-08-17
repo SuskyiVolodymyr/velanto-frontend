@@ -1,13 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
-import { authClient } from "@/api/auth-client";
 import { messageFromError } from "@/utils/messageFromError";
 import { Lock } from "lucide-react";
 import { Button } from "@/ui/Button";
@@ -32,61 +30,28 @@ import { OtpStep } from "@/features/auth/components/OtpStep";
 import { OAuthButtons } from "@/features/auth/components/OAuthButtons";
 import { ForgotPasswordForm } from "@/features/auth/components/ForgotPasswordForm";
 import {
-  markCodeSent,
-  getResendCooldownRemaining,
-} from "@/features/auth/otp-cooldown";
-
-type Mode = "login" | "register";
-// Register is two steps: fill the form, then enter the emailed code.
-type Step = "form" | "otp";
-
-// Fields validated before leaving the register form for the OTP step (the
-// `code` isn't entered yet, so it's excluded here).
-const FORM_STEP_FIELDS = [
-  "username",
-  "email",
-  "password",
-  "confirmPassword",
-  "acceptedRules",
-] as const;
+  AuthModeTabs,
+  type AuthMode,
+} from "@/features/auth/components/AuthModeTabs";
+import { AuthTermsNote } from "@/features/auth/components/AuthTermsNote";
+import { useEmailVerification } from "@/features/auth/hooks/use-email-verification";
+import { useRegisterOtp } from "@/features/auth/hooks/use-register-otp";
 
 export function AuthForm() {
   const t = useTranslations("auth");
   const router = useRouter();
   const searchParams = useSearchParams();
   const { status, requestEmailCode, login, register } = useAuth();
-  const [mode, setMode] = useState<Mode>("login");
-  const [step, setStep] = useState<Step>("form");
-  const [devCode, setDevCode] = useState<string | undefined>(undefined);
-  const [sending, setSending] = useState(false);
+  const [mode, setMode] = useState<AuthMode>("login");
   const [shake, setShake] = useState(false);
   // The forgot-password flow replaces the login/register card when active.
   const [forgot, setForgot] = useState(false);
-  // Whether register uses the two-step email-ownership code. Reported by the
-  // backend (GET /auth/providers) and off by default, so we start in the
-  // one-step state — matching production — and never flash the code step for the
-  // common case. Only flips to two-step if the backend says the gate is on.
-  const [emailVerification, setEmailVerification] = useState(false);
+  const emailVerification = useEmailVerification();
 
   const isRegister = mode === "register";
   // Register is two-step (fill form → emailed code) only when the backend
   // requires it; otherwise a single submit creates the account.
   const twoStep = isRegister && emailVerification;
-
-  useEffect(() => {
-    let cancelled = false;
-    authClient
-      .oauthProviders()
-      .then((p) => {
-        if (!cancelled) setEmailVerification(p.emailVerification ?? false);
-      })
-      // Unreachable/older backend → leave the one-step default; the backend
-      // enforces the code itself if its gate is actually on.
-      .catch(() => {});
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   // react-hook-form re-reads the resolver each render, so swapping schemas on a
   // mode change is enough — no need to recreate the form. `onTouched` validates
@@ -114,12 +79,21 @@ export function AuthForm() {
   const {
     handleSubmit,
     reset,
-    trigger,
     getValues,
-    setValue,
     setError,
     formState: { isSubmitting, errors },
   } = methods;
+
+  function triggerShake() {
+    setShake(true);
+    setTimeout(() => setShake(false), 400);
+  }
+
+  const otp = useRegisterOtp({
+    methods,
+    requestEmailCode,
+    onFailure: triggerShake,
+  });
 
   // An already-signed-in visitor has no business on the auth screen; send them
   // where they were headed (or home). Covers landing here directly and the case
@@ -130,53 +104,13 @@ export function AuthForm() {
     }
   }, [status, router, searchParams]);
 
-  function triggerShake() {
-    setShake(true);
-    setTimeout(() => setShake(false), 400);
-  }
-
-  function switchMode(next: Mode) {
+  function switchMode(next: AuthMode) {
     setMode(next);
-    setStep("form");
-    setDevCode(undefined);
+    otp.reset();
     // Full reset (not just clearErrors) so the new mode starts with a clean
     // slate: no carried-over values, touched, or submitted state that would
     // otherwise make the other mode's fields show errors before they're touched.
     reset();
-  }
-
-  // Send a code unless one was sent recently (cooldown persists across refresh),
-  // so re-entering the form for the same email reuses the still-valid code
-  // instead of tripping the backend's resend throttle.
-  async function sendCode(email: string) {
-    if (getResendCooldownRemaining(email) > 0) return;
-    const { devCode: dev } = await requestEmailCode(email);
-    markCodeSent(email);
-    setDevCode(dev);
-  }
-
-  async function handleContinue() {
-    const ok = await trigger(FORM_STEP_FIELDS);
-    if (!ok) {
-      // Continue is a submit-like action, so reveal every blocking error — even
-      // on fields the user never focused (e.g. an unchecked rules box), which
-      // the touched-gated display would otherwise keep hidden.
-      for (const name of FORM_STEP_FIELDS) {
-        setValue(name, getValues(name), { shouldTouch: true });
-      }
-      return;
-    }
-    const email = getValues("email").trim();
-    setSending(true);
-    try {
-      await sendCode(email);
-      setStep("otp");
-    } catch (err) {
-      setError("root", { message: messageFromError(err) });
-      triggerShake();
-    } finally {
-      setSending(false);
-    }
   }
 
   async function onValid(values: AuthFormValues) {
@@ -222,39 +156,7 @@ export function AuthForm() {
 
   return (
     <div className="w-full max-w-[400px]">
-      <div
-        className="mb-6 flex gap-1 rounded-[13px] border border-white/[0.08] bg-white/[0.04] p-1"
-        role="tablist"
-      >
-        <button
-          type="button"
-          role="tab"
-          aria-selected={!isRegister}
-          onClick={() => switchMode("login")}
-          className={cn(
-            "flex-1 h-[38px] rounded-[9px] text-[13.5px] font-[650] transition-colors duration-200",
-            !isRegister
-              ? "bg-white/[0.12] text-foreground"
-              : "text-foreground-secondary",
-          )}
-        >
-          {t("logIn")}
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={isRegister}
-          onClick={() => switchMode("register")}
-          className={cn(
-            "flex-1 h-[38px] rounded-[9px] text-[13.5px] font-[650] transition-colors duration-200",
-            isRegister
-              ? "bg-white/[0.12] text-foreground"
-              : "text-foreground-secondary",
-          )}
-        >
-          {t("tabSignup")}
-        </button>
-      </div>
+      <AuthModeTabs mode={mode} onChange={switchMode} />
 
       <Text as="h1" variant="title" className="mb-1.5 text-center text-[23px]">
         {isRegister ? t("headingRegister") : t("headingLogin")}
@@ -269,10 +171,10 @@ export function AuthForm() {
           // to the OTP step rather than registering — the code isn't entered yet.
           // One-step register (verification off) submits straight through.
           onSubmit={
-            twoStep && step === "form"
+            twoStep && otp.step === "form"
               ? (e) => {
                   e.preventDefault();
-                  void handleContinue();
+                  void otp.handleContinue();
                 }
               : handleSubmit(onValid, triggerShake)
           }
@@ -307,9 +209,9 @@ export function AuthForm() {
             </>
           )}
 
-          {isRegister && step === "form" && (
+          {isRegister && otp.step === "form" && (
             <>
-              <RegisterFields disabled={sending} />
+              <RegisterFields disabled={otp.sending} />
               <PasswordField
                 name="password"
                 label={t("password")}
@@ -320,20 +222,20 @@ export function AuthForm() {
                 autoComplete="new-password"
                 showLabel={t("showPassword")}
                 hideLabel={t("hidePassword")}
-                disabled={sending}
+                disabled={otp.sending}
               />
-              <ConfirmPasswordField disabled={sending} />
-              <AcceptRulesField disabled={sending} />
+              <ConfirmPasswordField disabled={otp.sending} />
+              <AcceptRulesField disabled={otp.sending} />
             </>
           )}
 
-          {isRegister && step === "otp" && (
+          {isRegister && otp.step === "otp" && (
             <OtpStep
               email={getValues("email").trim()}
-              onResend={() => sendCode(getValues("email").trim())}
-              onChangeEmail={() => setStep("form")}
+              onResend={() => otp.sendCode(getValues("email").trim())}
+              onChangeEmail={otp.backToForm}
               disabled={isSubmitting}
-              devCode={devCode}
+              devCode={otp.devCode}
             />
           )}
 
@@ -345,14 +247,14 @@ export function AuthForm() {
 
           <Button
             type="submit"
-            loading={isSubmitting || sending}
+            loading={isSubmitting || otp.sending}
             className="w-full h-[50px] mt-2"
           >
-            {isSubmitting || sending
+            {isSubmitting || otp.sending
               ? t("pleaseWait")
               : !isRegister
                 ? t("logIn")
-                : twoStep && step === "form"
+                : twoStep && otp.step === "form"
                   ? t("continueStep")
                   : t("createAccount")}
           </Button>
@@ -361,35 +263,9 @@ export function AuthForm() {
 
       {/* OAuth is an alternative to the form above, so it's hidden once the
           register flow has advanced to entering the emailed code. */}
-      {step === "form" && <OAuthButtons />}
+      {otp.step === "form" && <OAuthButtons />}
 
-      <Text
-        variant="tertiary"
-        className="text-center text-xs mt-5 leading-relaxed"
-      >
-        {t.rich("terms", {
-          terms: (chunks) => (
-            <Link
-              href="/terms"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-acc underline hover:no-underline"
-            >
-              {chunks}
-            </Link>
-          ),
-          privacy: (chunks) => (
-            <Link
-              href="/privacy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-acc underline hover:no-underline"
-            >
-              {chunks}
-            </Link>
-          ),
-        })}
-      </Text>
+      <AuthTermsNote />
     </div>
   );
 }
