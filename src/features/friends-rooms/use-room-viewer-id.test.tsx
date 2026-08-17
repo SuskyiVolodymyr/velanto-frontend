@@ -4,7 +4,7 @@ import { useRoomViewerId } from "./use-room-viewer-id";
 import type { User } from "@/shared/types/user";
 
 let currentUser: User | null;
-vi.mock("@/shared/lib/auth-context", () => ({
+vi.mock("@/shared/contexts/auth-context", () => ({
   useAuth: () => ({ user: currentUser }),
 }));
 

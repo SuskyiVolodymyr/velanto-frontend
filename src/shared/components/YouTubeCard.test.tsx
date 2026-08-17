@@ -3,17 +3,17 @@ import { screen, fireEvent, waitFor, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { YouTubeCard } from "./YouTubeCard";
-import { loadYouTubeIframeApi } from "@/shared/lib/youtube-iframe-api";
+import { loadYouTubeIframeApi } from "@/shared/utils/youtube-iframe-api";
 import type {
   YouTubeIframeApi,
   YouTubePlayer,
-} from "@/shared/lib/youtube-iframe-api";
+} from "@/shared/utils/youtube-iframe-api";
 
 // Only loadYouTubeIframeApi is mocked; the YT_STATE_* constants stay real so the
 // component's state-change comparison uses the true values.
-vi.mock("@/shared/lib/youtube-iframe-api", async (importActual) => ({
+vi.mock("@/shared/utils/youtube-iframe-api", async (importActual) => ({
   ...(await importActual<
-    typeof import("@/shared/lib/youtube-iframe-api")
+    typeof import("@/shared/utils/youtube-iframe-api")
   >()),
   loadYouTubeIframeApi: vi.fn(),
 }));

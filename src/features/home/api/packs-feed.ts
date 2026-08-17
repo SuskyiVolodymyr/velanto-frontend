@@ -1,4 +1,4 @@
-import { packsClient } from "@/shared/lib/packs-client";
+import { packsClient } from "@/shared/api/packs-client";
 import type { PackFormat, PackSummary, PackTag } from "@/shared/types/pack";
 import type { PackLanguage } from "@/shared/types/pack-language";
 import type { WindowFilterValue } from "@/features/home/filter-options";

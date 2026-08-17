@@ -8,8 +8,8 @@ import { Card } from "@/shared/components/Card";
 import { Text } from "@/shared/components/Text";
 import { Button } from "@/shared/components/Button";
 import { PasswordField } from "@/shared/components/form/PasswordField";
-import { useAuth } from "@/shared/lib/auth-context";
-import { authClient } from "@/shared/lib/auth-client";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { authClient } from "@/shared/api/auth-client";
 import {
   setPasswordSchema,
   type SetPasswordValues,

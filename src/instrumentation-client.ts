@@ -4,7 +4,7 @@
 // dev/prod tagging, the enable toggle, and sample rates behave identically
 // across the client/server/edge runtimes.
 import * as Sentry from "@sentry/nextjs";
-import { resolveSentryConfig } from "@/shared/lib/sentry-config";
+import { resolveSentryConfig } from "@/shared/utils/sentry-config";
 
 const config = resolveSentryConfig({
   dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,

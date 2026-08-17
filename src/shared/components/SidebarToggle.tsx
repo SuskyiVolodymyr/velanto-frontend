@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { MenuIcon } from "@/shared/components/icons";
-import { useSidebar } from "@/shared/lib/sidebar-context";
+import { useSidebar } from "@/shared/contexts/sidebar-context";
 
 /**
  * The rail's expand/collapse control, for pages that carry their own sticky

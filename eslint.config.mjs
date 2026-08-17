@@ -22,7 +22,7 @@ const eslintConfig = defineConfig([
           selector:
             "Property[key.name='openGraph'] > ObjectExpression, Property[key.value='openGraph'] > ObjectExpression",
           message:
-            "Build openGraph metadata with buildOpenGraph() from @/shared/lib/open-graph. An inline object silently disinherits src/app/opengraph-image.tsx and the page previews with no image (velanto-frontend#235).",
+            "Build openGraph metadata with buildOpenGraph() from @/shared/utils/open-graph. An inline object silently disinherits src/app/opengraph-image.tsx and the page previews with no image (velanto-frontend#235).",
         },
       ],
     },

@@ -5,7 +5,7 @@ import { Check, UserPlus, X } from "lucide-react";
 import { Text } from "@/shared/components/Text";
 import { UserAvatar } from "@/shared/components/UserAvatar";
 import { Username } from "@/shared/components/Username";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import type { RoomPlayerState } from "./room-types";
 
 interface RoomRosterPanelProps {

@@ -1,11 +1,11 @@
 "use client";
-import { formatDate } from "@/shared/lib/format-date";
+import { formatDate } from "@/shared/utils/format-date";
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Text } from "@/shared/components/Text";
-import { isActiveBan, isPermanentBan } from "@/shared/lib/ban-display";
-import { resolveBanReasonTitle } from "@/shared/lib/ban-reason-title";
+import { isActiveBan, isPermanentBan } from "@/shared/utils/ban-display";
+import { resolveBanReasonTitle } from "@/shared/utils/ban-reason-title";
 import type { RuleCategory } from "@/shared/types/rules";
 
 export interface BannedNoticeProps {

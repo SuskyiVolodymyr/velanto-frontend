@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { MenuIcon, PlusIcon } from "@/shared/components/icons";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import { buttonClassName } from "@/shared/components/Button";
 import { BrandMark } from "@/shared/components/BrandMark";
 import { SearchField } from "@/shared/components/SearchField";

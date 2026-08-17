@@ -9,8 +9,8 @@ import {
   type ButtonSize,
 } from "@/shared/components/Button";
 import { Input } from "@/shared/components/Input";
-import { buildShareUrl } from "@/shared/lib/share-url";
-import { useHorizontalClamp } from "@/shared/lib/use-horizontal-clamp";
+import { buildShareUrl } from "@/shared/utils/share-url";
+import { useHorizontalClamp } from "@/shared/hooks/use-horizontal-clamp";
 import type { RecordedPick } from "@/shared/types/play-results";
 
 export function ShareButton({

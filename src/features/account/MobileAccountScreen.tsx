@@ -15,7 +15,7 @@ import {
   ChevronRight,
   type LucideIcon,
 } from "lucide-react";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import { UserAvatar } from "@/shared/components/UserAvatar";
 import { Text } from "@/shared/components/Text";
 import { Hidden } from "@/shared/components/Hidden";

@@ -3,15 +3,15 @@ import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { VoteButtons } from "./VoteButtons";
-import { packsClient } from "@/shared/lib/packs-client";
-import { useAuth } from "@/shared/lib/auth-context";
+import { packsClient } from "@/shared/api/packs-client";
+import { useAuth } from "@/shared/contexts/auth-context";
 import type { Pack } from "@/shared/types/pack";
 
 // VoteButtons is a thin wrapper over the shared VoteControl (see
 // VoteControl.test.tsx for the full tally/score/blocked behaviour). These tests
 // only cover the wiring: the packs client, the pack id, and the labels.
-vi.mock("@/shared/lib/packs-client");
-vi.mock("@/shared/lib/auth-context");
+vi.mock("@/shared/api/packs-client");
+vi.mock("@/shared/contexts/auth-context");
 
 const mockedPacksClient = vi.mocked(packsClient);
 const mockedUseAuth = vi.mocked(useAuth);

@@ -1,4 +1,4 @@
-import { packsClient } from "@/shared/lib/packs-client";
+import { packsClient } from "@/shared/api/packs-client";
 import type { PackStatus } from "@/shared/types/pack";
 import type { DateOrderValue } from "@/features/home/filter-options";
 import {

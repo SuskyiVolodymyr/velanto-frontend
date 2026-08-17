@@ -2,8 +2,8 @@
 
 import type { ComponentType } from "react";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/lib/auth-context";
-import { cn } from "@/shared/lib/cn";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { cn } from "@/shared/utils/cn";
 import { Text } from "@/shared/components/Text";
 import { PageHeader } from "@/shared/components/PageHeader";
 import { LanguageSection } from "@/features/settings/LanguageSection";
@@ -15,7 +15,7 @@ import { PasswordSection } from "@/features/settings/PasswordSection";
 import { ConnectedAccountsSection } from "@/features/settings/ConnectedAccountsSection";
 import { ApiTokensPointer } from "@/features/settings/ApiTokensPointer";
 import { DangerZoneSection } from "@/features/settings/DangerZoneSection";
-import { pageContainer } from "@/shared/lib/page-container";
+import { pageContainer } from "@/shared/constants/page-container";
 
 interface SettingsSectionEntry {
   /** Stable anchor id (T15/D12) — the TOC link's `href` target. */

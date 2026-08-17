@@ -3,7 +3,7 @@ import {
   OG_CARD_ALT,
   OG_CARD_CONTENT_TYPE,
   OG_CARD_SIZE,
-} from "@/shared/lib/open-graph";
+} from "@/shared/utils/open-graph";
 
 // Static default social-share card for the whole site (Open Graph + Twitter).
 // Rendered by Satori from the JSX below — no binary asset to maintain. Per-page

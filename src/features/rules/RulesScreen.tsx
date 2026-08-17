@@ -13,10 +13,10 @@ import { SearchField } from "@/shared/components/SearchField";
 import { EmptyState } from "@/shared/components/EmptyState";
 import { Button, buttonClassName } from "@/shared/components/Button";
 import { PageHeader } from "@/shared/components/PageHeader";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import type { RulesDocument } from "@/features/rules/get-rules-server";
 import { ruleCategoryTone } from "@/features/rules/rule-category-tone";
-import { pageContainer } from "@/shared/lib/page-container";
+import { pageContainer } from "@/shared/constants/page-container";
 
 export interface RulesScreenProps {
   /** Fetched rules, or `null` when the server fetch failed. */

@@ -10,7 +10,7 @@ import {
   SearchQueryProvider,
   useSearchQuery,
 } from "@/features/home/search-query-context";
-import { notificationsClient } from "@/shared/lib/notifications-client";
+import { notificationsClient } from "@/shared/api/notifications-client";
 
 const { push } = vi.hoisted(() => ({ push: vi.fn() }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
@@ -23,13 +23,13 @@ const auth = vi.hoisted(() => ({
     logout,
   },
 }));
-vi.mock("@/shared/lib/auth-context", () => ({
+vi.mock("@/shared/contexts/auth-context", () => ({
   useAuth: () => auth.current,
 }));
 
 // The bell polls this on mount when authenticated — stub it so these tests
 // don't make real network calls.
-vi.mock("@/shared/lib/notifications-client", () => ({
+vi.mock("@/shared/api/notifications-client", () => ({
   notificationsClient: {
     unreadCount: vi.fn(),
     list: vi.fn(),

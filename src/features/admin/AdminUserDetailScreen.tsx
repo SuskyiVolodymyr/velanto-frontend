@@ -1,11 +1,11 @@
 "use client";
-import { formatDate, formatDateTime } from "@/shared/lib/format-date";
+import { formatDate, formatDateTime } from "@/shared/utils/format-date";
 
 import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import { Text } from "@/shared/components/Text";
 import { Card } from "@/shared/components/Card";
 import { Badge } from "@/shared/components/Badge";
@@ -20,10 +20,10 @@ import { useAdminUserDetail } from "@/features/admin/api/admin.queries";
 import { isCurrentlyBanned } from "@/features/admin/use-users-admin";
 import { useAdminUserModeration } from "@/features/admin/use-admin-user-moderation";
 import { UserBanForm } from "@/features/admin/UserBanForm";
-import { canActOn } from "@/shared/lib/staff-permissions";
-import { formatBytes } from "@/shared/lib/format-bytes";
-import { cn } from "@/shared/lib/cn";
-import { pageContainer } from "@/shared/lib/page-container";
+import { canActOn } from "@/shared/utils/staff-permissions";
+import { formatBytes } from "@/shared/utils/format-bytes";
+import { cn } from "@/shared/utils/cn";
+import { pageContainer } from "@/shared/constants/page-container";
 
 /** A single labelled number tile in the stats grid. */
 // `value` is a ReactNode, not a number: storage reads as a formatted size

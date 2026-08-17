@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import robots from "./robots";
-import { SITE_URL } from "@/shared/lib/site-url";
+import { SITE_URL } from "@/shared/constants/site-url";
 
 /**
  * This file is the cheapest guard on the single highest-leverage change in the

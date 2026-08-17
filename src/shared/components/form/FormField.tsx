@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { FieldError } from "@/shared/components/form/FieldError";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 
 export interface FormFieldProps {
   /** Must match the `id` of the control rendered as `children`. */

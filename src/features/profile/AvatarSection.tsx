@@ -2,13 +2,13 @@
 
 import { useRef, useState, type DragEvent } from "react";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/lib/auth-context";
-import { MEDIA_MAX_BYTES } from "@/shared/lib/media-client";
-import { messageFromError } from "@/shared/lib/messageFromError";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { MEDIA_MAX_BYTES } from "@/shared/api/media-client";
+import { messageFromError } from "@/shared/utils/messageFromError";
 import { Text } from "@/shared/components/Text";
 import { Button } from "@/shared/components/Button";
 import { UserAvatar } from "@/shared/components/UserAvatar";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import { useUpdateAvatar, useRemoveAvatar } from "./api/avatar.mutations";
 import { AvatarCropModal } from "./AvatarCropModal";
 

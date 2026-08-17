@@ -5,8 +5,8 @@ import {
   useQueryClient,
   type QueryKey,
 } from "@tanstack/react-query";
-import { useAuth } from "@/shared/lib/auth-context";
-import { usersClient } from "@/shared/lib/users-client";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { usersClient } from "@/shared/api/users-client";
 import type { PublicUserProfile } from "@/shared/types/user";
 
 export interface UseFollowMutationResult {

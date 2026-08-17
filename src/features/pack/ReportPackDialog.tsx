@@ -7,9 +7,9 @@ import { Flag } from "lucide-react";
 import { ReportModal } from "@/shared/components/ReportModal";
 import type { DropdownOption } from "@/shared/components/Dropdown";
 import { Tooltip } from "@/shared/components/Tooltip";
-import { useAuth } from "@/shared/lib/auth-context";
-import { cn } from "@/shared/lib/cn";
-import { REPORT_REASON_LABELS } from "@/shared/lib/report-reasons";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { cn } from "@/shared/utils/cn";
+import { REPORT_REASON_LABELS } from "@/shared/constants/report-reasons";
 
 // The reason ids valid for a pack report — sourced from report-reasons.ts's
 // own hand-mirror of the backend's REPORT_REASONS.pack (velanto-backend

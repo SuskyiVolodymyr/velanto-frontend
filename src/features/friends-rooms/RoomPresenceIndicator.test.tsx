@@ -16,7 +16,7 @@ vi.mock("next/navigation", () => ({
   usePathname: () => pathname,
 }));
 
-vi.mock("@/shared/lib/auth-context", () => ({
+vi.mock("@/shared/contexts/auth-context", () => ({
   useAuth: () => ({ user: currentUser }),
 }));
 

@@ -3,31 +3,31 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import { Text } from "@/shared/components/Text";
 import { LoadingState } from "@/shared/components/LoadingState";
-import { cn } from "@/shared/lib/cn";
-import { playsClient } from "@/shared/lib/plays-client";
+import { cn } from "@/shared/utils/cn";
+import { playsClient } from "@/shared/api/plays-client";
 import {
   writeLastPlayPicks,
   writeLastPlayId,
-} from "@/shared/lib/last-play-storage";
+} from "@/shared/utils/last-play-storage";
 import { YouTubeCard } from "@/shared/components/YouTubeCard";
 import { ImageCard } from "@/shared/components/ImageCard";
 import {
   extractYouTubeId,
   extractYouTubeStart,
-} from "@/shared/lib/youtube";
-import { mediaUrl } from "@/shared/lib/media-url";
+} from "@/shared/utils/youtube";
+import { mediaUrl } from "@/shared/utils/media-url";
 import { useRoundSelections } from "@/features/play/use-round-selections";
 import { usePlayResume } from "@/features/play/use-play-resume";
 import { RankedList, type RankedRow } from "@/shared/components/RankedList";
-import { pageContainer } from "@/shared/lib/page-container";
+import { pageContainer } from "@/shared/constants/page-container";
 import { PlayChrome } from "@/features/play/PlayChrome";
 import { PlayRoundHeader } from "@/features/play/PlayRoundHeader";
 import { PlayConfirmBar } from "@/features/play/PlayConfirmBar";
 import { ResumePlayModal } from "@/features/play/ResumePlayModal";
-import { roundHeading } from "@/shared/lib/round-heading";
+import { roundHeading } from "@/shared/utils/round-heading";
 import {
   toneFor,
   HAIRLINE_OVERLAY_STYLE,

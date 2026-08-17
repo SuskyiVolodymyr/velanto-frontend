@@ -11,7 +11,7 @@ let authState: { status: string; user: { id: string } | null } = {
   status: "authenticated",
   user: { id: "u1" },
 };
-vi.mock("@/shared/lib/auth-context", () => ({ useAuth: () => authState }));
+vi.mock("@/shared/contexts/auth-context", () => ({ useAuth: () => authState }));
 
 let rooms: Array<{
   id: string;

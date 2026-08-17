@@ -7,7 +7,7 @@ import type { MyRoomSummary } from "@/features/friends-rooms/room-types";
 let rooms: MyRoomSummary[] = [];
 let currentUser: { id: string } | null = { id: "u1" };
 
-vi.mock("@/shared/lib/auth-context", () => ({
+vi.mock("@/shared/contexts/auth-context", () => ({
   useAuth: () => ({ user: currentUser }),
 }));
 vi.mock("@/features/friends-rooms/friends-rooms-presence-context", () => ({

@@ -4,7 +4,7 @@ import { useTranslations } from "next-intl";
 import { Check, Crown, X } from "lucide-react";
 import { Text } from "@/shared/components/Text";
 import { UserAvatar } from "@/shared/components/UserAvatar";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import { GuessWhoLabelTable } from "./GuessWhoLabelTable";
 import {
   RoomResultAgainPanel,

@@ -4,8 +4,8 @@ import { Upload } from "lucide-react";
 import { Text } from "@/shared/components/Text";
 import { buttonClassName } from "@/shared/components/Button";
 import { ShareButton } from "@/features/share/ShareButton";
-import { cn } from "@/shared/lib/cn";
-import { readLastPlayId } from "@/shared/lib/last-play-storage";
+import { cn } from "@/shared/utils/cn";
+import { readLastPlayId } from "@/shared/utils/last-play-storage";
 import type { Pack } from "@/shared/types/pack";
 import type { RecordedPick } from "@/shared/types/play-results";
 

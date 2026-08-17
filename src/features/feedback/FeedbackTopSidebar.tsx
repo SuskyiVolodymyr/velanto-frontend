@@ -1,6 +1,6 @@
 import { BarChart3 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import { FeedbackCard } from "@/features/feedback/FeedbackCard";
 import { feedbackStatusTone } from "@/features/feedback/feedback-tone";
 import {

@@ -5,7 +5,7 @@ import Cropper from "react-easy-crop";
 import { Modal } from "@/shared/components/Modal";
 import { Button } from "@/shared/components/Button";
 import { Text } from "@/shared/components/Text";
-import { cropImage, type CropArea } from "@/shared/lib/crop-image";
+import { cropImage, type CropArea } from "@/shared/utils/crop-image";
 
 export interface ImageCropModalProps {
   file: File;

@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
 import { Text } from "@/shared/components/Text";
 import { UserAvatar } from "@/shared/components/UserAvatar";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import { labelTone } from "./guess-who-labels";
 import { GuessWhoLabelTable } from "./GuessWhoLabelTable";
 import { PhaseDeadline } from "./PhaseDeadline";

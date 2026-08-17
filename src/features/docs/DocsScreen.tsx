@@ -12,8 +12,8 @@ import {
 } from "./DocsSidebar";
 import { DocsArticle } from "./DocsArticle";
 import { latestVersion } from "@/features/updates/updates-data";
-import { cn } from "@/shared/lib/cn";
-import { pageContainer } from "@/shared/lib/page-container";
+import { cn } from "@/shared/utils/cn";
+import { pageContainer } from "@/shared/constants/page-container";
 
 function topicFromParam(value: string | null): TopicId {
   return TOPICS.includes(value as TopicId) ? (value as TopicId) : DEFAULT_TOPIC;

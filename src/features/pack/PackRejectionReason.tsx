@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import { Card } from "@/shared/components/Card";
 import { Text } from "@/shared/components/Text";
 import type { PackStatus } from "@/shared/types/pack";

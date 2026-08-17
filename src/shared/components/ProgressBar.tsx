@@ -1,4 +1,4 @@
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 
 export interface ProgressBarProps {
   /** Completion percentage, 0–100 (clamped). */

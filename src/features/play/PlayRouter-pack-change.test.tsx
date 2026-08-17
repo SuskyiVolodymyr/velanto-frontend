@@ -3,9 +3,9 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { PlayRouter } from "@/features/play/PlayRouter";
-import { AuthProvider } from "@/shared/lib/auth-context";
-import { authClient } from "@/shared/lib/auth-client";
-import { playsClient } from "@/shared/lib/plays-client";
+import { AuthProvider } from "@/shared/contexts/auth-context";
+import { authClient } from "@/shared/api/auth-client";
+import { playsClient } from "@/shared/api/plays-client";
 import type { Pack } from "@/shared/types/pack";
 
 vi.mock("next/navigation", () => ({
@@ -13,7 +13,7 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/packs/pack/play",
 }));
 
-vi.mock("@/shared/lib/auth-client", () => ({
+vi.mock("@/shared/api/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),
@@ -23,7 +23,7 @@ vi.mock("@/shared/lib/auth-client", () => ({
   },
 }));
 
-vi.mock("@/shared/lib/plays-client", () => ({
+vi.mock("@/shared/api/plays-client", () => ({
   playsClient: {
     record: vi.fn().mockResolvedValue({ id: "play-1" }),
   },

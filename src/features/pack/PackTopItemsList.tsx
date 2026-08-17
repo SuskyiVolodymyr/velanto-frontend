@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Text } from "@/shared/components/Text";
 import { Button } from "@/shared/components/Button";
 import { ProgressBar } from "@/shared/components/ProgressBar";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import { toneFor } from "@/features/play/candidate-tone";
 import { withCompetitionRanks } from "@/features/result/result-table";
 import type { ItemTally, RecordedPick } from "@/shared/types/play-results";

@@ -8,24 +8,24 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import messages from "@/messages/en.json";
 import { createTestQueryClient } from "@/shared/test/test-query-client";
 import { ReportDetailScreen } from "./ReportDetailScreen";
-import { reportsClient } from "@/shared/lib/reports-client";
-import { packsClient } from "@/shared/lib/packs-client";
-import { usersClient } from "@/shared/lib/users-client";
-import { adminClient } from "@/shared/lib/admin-client";
-import { rulesClient } from "@/shared/lib/rules-client";
-import { useAuth } from "@/shared/lib/auth-context";
+import { reportsClient } from "@/shared/api/reports-client";
+import { packsClient } from "@/shared/api/packs-client";
+import { usersClient } from "@/shared/api/users-client";
+import { adminClient } from "@/shared/api/admin-client";
+import { rulesClient } from "@/shared/api/rules-client";
+import { useAuth } from "@/shared/contexts/auth-context";
 import type { RulesDocument } from "@/shared/types/rules";
 import type { Pack } from "@/shared/types/pack";
 import type { AdminUserDetail } from "@/shared/types/admin";
 
-vi.mock("@/shared/lib/reports-client");
-vi.mock("@/shared/lib/packs-client");
-vi.mock("@/shared/lib/users-client");
-vi.mock("@/shared/lib/admin-client");
-vi.mock("@/shared/lib/rules-client", () => ({
+vi.mock("@/shared/api/reports-client");
+vi.mock("@/shared/api/packs-client");
+vi.mock("@/shared/api/users-client");
+vi.mock("@/shared/api/admin-client");
+vi.mock("@/shared/api/rules-client", () => ({
   rulesClient: { getRules: vi.fn() },
 }));
-vi.mock("@/shared/lib/auth-context");
+vi.mock("@/shared/contexts/auth-context");
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: vi.fn(), push: vi.fn() }),
   usePathname: () => "/support/r1",

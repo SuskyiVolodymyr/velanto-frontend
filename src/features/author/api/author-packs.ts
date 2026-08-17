@@ -1,4 +1,4 @@
-import { packsClient, type PackList } from "@/shared/lib/packs-client";
+import { packsClient, type PackList } from "@/shared/api/packs-client";
 import type { PackSummary } from "@/shared/types/pack";
 
 // One page of an author's packs. Small on purpose: the profile leads with a

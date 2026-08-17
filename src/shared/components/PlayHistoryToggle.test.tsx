@@ -3,12 +3,12 @@ import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { PlayHistoryToggle } from "./PlayHistoryToggle";
-import { useAuth } from "@/shared/lib/auth-context";
-import { usersClient } from "@/shared/lib/users-client";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { usersClient } from "@/shared/api/users-client";
 import type { MyProfile } from "@/shared/types/user";
 
-vi.mock("@/shared/lib/auth-context");
-vi.mock("@/shared/lib/users-client");
+vi.mock("@/shared/contexts/auth-context");
+vi.mock("@/shared/api/users-client");
 
 const mockedUseAuth = vi.mocked(useAuth);
 const mockedUsersClient = vi.mocked(usersClient);

@@ -6,10 +6,10 @@ import {
   getUserServer,
   getAuthorPacksServer,
 } from "@/features/author/get-user-server";
-import { buildJsonLd, jsonLdScript } from "@/shared/lib/jsonld";
+import { buildJsonLd, jsonLdScript } from "@/shared/utils/jsonld";
 import { BackButton } from "@/shared/components/BackButton";
-import { buildOpenGraph } from "@/shared/lib/open-graph";
-import { SITE_URL } from "@/shared/lib/site-url";
+import { buildOpenGraph } from "@/shared/utils/open-graph";
+import { SITE_URL } from "@/shared/constants/site-url";
 
 export async function generateMetadata({
   params,

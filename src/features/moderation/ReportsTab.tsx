@@ -1,5 +1,5 @@
 "use client";
-import { formatDate } from "@/shared/lib/format-date";
+import { formatDate } from "@/shared/utils/format-date";
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -12,10 +12,10 @@ import {
   DataTableRow,
   ROW_LINK_CLASS,
 } from "@/shared/components/DataTable";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import { TablePagination } from "@/shared/components/TablePagination";
-import { reportReasonLabel } from "@/shared/lib/report-reasons";
-import { reportTargetLabel } from "@/shared/lib/report-display";
+import { reportReasonLabel } from "@/shared/constants/report-reasons";
+import { reportTargetLabel } from "@/shared/utils/report-display";
 import { ReportFilters } from "@/features/moderation/ReportFilters";
 import { useReportsList } from "@/features/moderation/api/reports-list.queries";
 import { MODERATION_PAGE_SIZE } from "@/features/moderation/api/moderation";

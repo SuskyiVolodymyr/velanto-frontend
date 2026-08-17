@@ -3,11 +3,11 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { ModerationPanel } from "./ModerationPanel";
-import { AuthProvider } from "@/shared/lib/auth-context";
-import { authClient } from "@/shared/lib/auth-client";
-import { reportsClient } from "@/shared/lib/reports-client";
-import { packsClient } from "@/shared/lib/packs-client";
-import { moderationClient } from "@/shared/lib/moderation-client";
+import { AuthProvider } from "@/shared/contexts/auth-context";
+import { authClient } from "@/shared/api/auth-client";
+import { reportsClient } from "@/shared/api/reports-client";
+import { packsClient } from "@/shared/api/packs-client";
+import { moderationClient } from "@/shared/api/moderation-client";
 import type { User } from "@/shared/types/user";
 
 const push = vi.fn();
@@ -20,7 +20,7 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => searchParams,
 }));
 
-vi.mock("@/shared/lib/auth-client", () => ({
+vi.mock("@/shared/api/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),
@@ -29,13 +29,13 @@ vi.mock("@/shared/lib/auth-client", () => ({
     refresh: vi.fn(),
   },
 }));
-vi.mock("@/shared/lib/reports-client", () => ({
+vi.mock("@/shared/api/reports-client", () => ({
   reportsClient: { list: vi.fn(), getById: vi.fn() },
 }));
-vi.mock("@/shared/lib/packs-client", () => ({
+vi.mock("@/shared/api/packs-client", () => ({
   packsClient: { moderationQueue: vi.fn(), approve: vi.fn(), reject: vi.fn() },
 }));
-vi.mock("@/shared/lib/moderation-client", () => ({
+vi.mock("@/shared/api/moderation-client", () => ({
   moderationClient: { counts: vi.fn() },
 }));
 

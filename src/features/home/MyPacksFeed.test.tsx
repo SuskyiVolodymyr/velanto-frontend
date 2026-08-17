@@ -4,12 +4,12 @@ import { screen, waitFor } from "@testing-library/react";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { MyPacksFeed } from "./MyPacksFeed";
-import { AuthProvider } from "@/shared/lib/auth-context";
-import { authClient } from "@/shared/lib/auth-client";
-import { packsClient } from "@/shared/lib/packs-client";
+import { AuthProvider } from "@/shared/contexts/auth-context";
+import { authClient } from "@/shared/api/auth-client";
+import { packsClient } from "@/shared/api/packs-client";
 import type { Pack } from "@/shared/types/pack";
 
-vi.mock("@/shared/lib/auth-client", () => ({
+vi.mock("@/shared/api/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),
@@ -19,7 +19,7 @@ vi.mock("@/shared/lib/auth-client", () => ({
   },
 }));
 
-vi.mock("@/shared/lib/packs-client", () => ({
+vi.mock("@/shared/api/packs-client", () => ({
   packsClient: { list: vi.fn() },
 }));
 

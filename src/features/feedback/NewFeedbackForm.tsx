@@ -5,9 +5,9 @@ import { useRouter } from "next/navigation";
 import { Controller, useForm, useWatch, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/lib/auth-context";
-import { feedbackClient } from "@/shared/lib/feedback-client";
-import { messageFromError } from "@/shared/lib/messageFromError";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { feedbackClient } from "@/shared/api/feedback-client";
+import { messageFromError } from "@/shared/utils/messageFromError";
 import { LOCALES, LOCALE_NAMES, type Locale } from "@/i18n/config";
 import type {
   CreateFeedbackInput,
@@ -31,8 +31,8 @@ import { TextField } from "@/shared/components/form/TextField";
 import { TextareaField } from "@/shared/components/form/TextareaField";
 import { SegmentedField } from "@/shared/components/form/SegmentedField";
 import { getFieldError } from "@/shared/components/form/getFieldError";
-import { cn } from "@/shared/lib/cn";
-import { pageContainer } from "@/shared/lib/page-container";
+import { cn } from "@/shared/utils/cn";
+import { pageContainer } from "@/shared/constants/page-container";
 
 const TOPIC_ORDER: FeedbackTopic[] = ["bug", "feature", "translation", "other"];
 const VISIBILITY_ORDER: FeedbackVisibility[] = ["everyone", "staff_only"];

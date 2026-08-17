@@ -2,8 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { useQuery } from "@tanstack/react-query";
-import { packsClient } from "@/shared/lib/packs-client";
-import { useAuth } from "@/shared/lib/auth-context";
+import { packsClient } from "@/shared/api/packs-client";
+import { useAuth } from "@/shared/contexts/auth-context";
 import { VoteControl } from "@/shared/components/VoteControl";
 
 /**

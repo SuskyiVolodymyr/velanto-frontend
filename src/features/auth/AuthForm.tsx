@@ -6,16 +6,16 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useAuth } from "@/shared/lib/auth-context";
-import { authClient } from "@/shared/lib/auth-client";
-import { messageFromError } from "@/shared/lib/messageFromError";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { authClient } from "@/shared/api/auth-client";
+import { messageFromError } from "@/shared/utils/messageFromError";
 import { Lock } from "lucide-react";
 import { Button } from "@/shared/components/Button";
 import { Text } from "@/shared/components/Text";
 import { PasswordField } from "@/shared/components/form/PasswordField";
 import { FormBanner } from "@/shared/components/form/FormBanner";
-import { cn } from "@/shared/lib/cn";
-import { sanitizeNextPath } from "@/shared/lib/safe-redirect";
+import { cn } from "@/shared/utils/cn";
+import { sanitizeNextPath } from "@/shared/utils/safe-redirect";
 import {
   loginSchema,
   registerSchema,

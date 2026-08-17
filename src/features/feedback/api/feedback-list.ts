@@ -1,4 +1,4 @@
-import { feedbackClient } from "@/shared/lib/feedback-client";
+import { feedbackClient } from "@/shared/api/feedback-client";
 import type {
   FeedbackList,
   FeedbackSort,

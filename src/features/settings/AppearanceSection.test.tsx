@@ -3,7 +3,7 @@ import { screen } from "@testing-library/react";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { AppearanceSection } from "./AppearanceSection";
-import * as theme from "@/shared/lib/theme";
+import * as theme from "@/shared/utils/theme";
 
 beforeEach(() => {
   localStorage.clear();

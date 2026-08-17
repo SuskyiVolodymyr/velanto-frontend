@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import { Text } from "@/shared/components/Text";
 import { Card } from "@/shared/components/Card";
 import { buttonClassName } from "@/shared/components/Button";

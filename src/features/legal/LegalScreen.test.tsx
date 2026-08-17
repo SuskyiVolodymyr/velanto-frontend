@@ -7,7 +7,7 @@ import { LegalScreen } from "./LegalScreen";
 // throws without a provider. These screens are auth-agnostic, so they get a
 // signed-out stub rather than a real AuthProvider (which would fire an
 // on-mount refresh request none of these tests want to make).
-vi.mock("@/shared/lib/auth-context", () => ({
+vi.mock("@/shared/contexts/auth-context", () => ({
   useAuth: () => ({ user: null, status: "unauthenticated", logout: vi.fn() }),
 }));
 

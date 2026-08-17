@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 
 /** `chip` = the compact rounded rectangle (sort sub-rows, My-packs status).
  *  `pill` = the UI-kit v1 browse format pill (taller, fully round). */

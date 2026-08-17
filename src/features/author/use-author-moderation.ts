@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { usersClient } from "@/shared/lib/users-client";
+import { usersClient } from "@/shared/api/users-client";
 import {
   isBanReasonValid,
   buildBanReasonPayload,
   type BanReasonState,
 } from "@/shared/components/BanReasonPicker";
-import type { BanDuration } from "@/shared/lib/users-client";
+import type { BanDuration } from "@/shared/api/users-client";
 
 export interface AuthorModeration {
   showBanForm: boolean;

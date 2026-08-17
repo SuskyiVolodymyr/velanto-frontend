@@ -3,11 +3,11 @@ import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NotificationsSection } from "./NotificationsSection";
-import { notificationsClient } from "@/shared/lib/notifications-client";
-import { useAuth } from "@/shared/lib/auth-context";
+import { notificationsClient } from "@/shared/api/notifications-client";
+import { useAuth } from "@/shared/contexts/auth-context";
 
-vi.mock("@/shared/lib/notifications-client");
-vi.mock("@/shared/lib/auth-context");
+vi.mock("@/shared/api/notifications-client");
+vi.mock("@/shared/contexts/auth-context");
 
 const mockedClient = vi.mocked(notificationsClient);
 const mockedUseAuth = vi.mocked(useAuth);

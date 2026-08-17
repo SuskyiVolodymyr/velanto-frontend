@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { buttonClassName } from "@/shared/components/Button";
 import { Text } from "@/shared/components/Text";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 
 /**
  * Wraps a control a signed-out visitor cannot use, and explains why on click —

@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Clock } from "lucide-react";
 import { Text } from "@/shared/components/Text";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 
 /** Under a minute left — the point at which "plenty of time" stops being true
  * and the clock should start reading as a warning rather than as furniture. */

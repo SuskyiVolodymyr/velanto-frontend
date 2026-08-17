@@ -6,14 +6,14 @@ import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { AdminUserDetailScreen } from "./AdminUserDetailScreen";
 import { useAdminUserDetail } from "@/features/admin/api/admin.queries";
 import { useAuthorBanHistory } from "@/features/author/api/author.queries";
-import { useAuth } from "@/shared/lib/auth-context";
-import { usersClient } from "@/shared/lib/users-client";
-import { rulesClient } from "@/shared/lib/rules-client";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { usersClient } from "@/shared/api/users-client";
+import { rulesClient } from "@/shared/api/rules-client";
 import type { AdminUserDetail } from "@/shared/types/admin";
 import type { RulesDocument } from "@/shared/types/rules";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ replace: vi.fn() }) }));
-vi.mock("@/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
+vi.mock("@/shared/contexts/auth-context", () => ({ useAuth: vi.fn() }));
 // Real `adminUserDetailQueryOptions` is needed too — the moderation hook
 // (exercised for real, only its network calls are mocked below) invalidates
 // its query key on success.
@@ -27,10 +27,10 @@ vi.mock("@/features/admin/api/admin.queries", async (importOriginal) => {
 vi.mock("@/features/author/api/author.queries", () => ({
   useAuthorBanHistory: vi.fn(),
 }));
-vi.mock("@/shared/lib/users-client");
+vi.mock("@/shared/api/users-client");
 // BanReasonPicker (rendered once the inline ban form opens) fetches the rule
 // categories for its own dropdown.
-vi.mock("@/shared/lib/rules-client", () => ({
+vi.mock("@/shared/api/rules-client", () => ({
   rulesClient: { getRules: vi.fn() },
 }));
 // The two rails fetch on their own; stub them so this test stays about the

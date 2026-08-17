@@ -1,4 +1,4 @@
-import { reportsClient } from "@/shared/lib/reports-client";
+import { reportsClient } from "@/shared/api/reports-client";
 import type { ReportStatus, ReportType } from "@/shared/types/report";
 
 import { MODERATION_PAGE_SIZE } from "./moderation";

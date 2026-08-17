@@ -9,9 +9,9 @@ import { ImageCard } from "@/shared/components/ImageCard";
 import {
   extractYouTubeId,
   extractYouTubeStart,
-} from "@/shared/lib/youtube";
-import { mediaUrl } from "@/shared/lib/media-url";
-import { cn } from "@/shared/lib/cn";
+} from "@/shared/utils/youtube";
+import { mediaUrl } from "@/shared/utils/media-url";
+import { cn } from "@/shared/utils/cn";
 import type { Item, Pack } from "@/shared/types/pack";
 import { claimVerb, outcomeVerb } from "./room-mode-copy";
 import type { RoomPlayerState } from "./room-types";

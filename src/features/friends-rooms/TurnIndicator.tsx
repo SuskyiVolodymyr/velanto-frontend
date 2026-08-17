@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { UserAvatar } from "@/shared/components/UserAvatar";
 import { Text } from "@/shared/components/Text";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import type { RoomPlayerState } from "./room-types";
 
 interface TurnIndicatorProps {

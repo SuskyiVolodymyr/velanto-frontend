@@ -1,7 +1,7 @@
 "use client";
 
 import { Children, type ReactNode } from "react";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 
 /**
  * The bordered, header-topped table shell the admin and moderation panels share.

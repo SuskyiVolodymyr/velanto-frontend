@@ -12,8 +12,8 @@ import {
   PlusIcon,
   type IconProps,
 } from "@/shared/components/icons";
-import { useAuth } from "@/shared/lib/auth-context";
-import { cn } from "@/shared/lib/cn";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { cn } from "@/shared/utils/cn";
 
 interface Tab {
   key: string;

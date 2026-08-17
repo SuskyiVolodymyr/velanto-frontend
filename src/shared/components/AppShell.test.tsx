@@ -4,8 +4,8 @@ import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { AppShell } from "./AppShell";
-import { useSidebar } from "@/shared/lib/sidebar-context";
-import { usePlayFocus } from "@/shared/lib/play-focus-context";
+import { useSidebar } from "@/shared/contexts/sidebar-context";
+import { usePlayFocus } from "@/shared/contexts/play-focus-context";
 
 /** Stands in for a page's PageHeader toggle: any descendant can flip the rail. */
 /** Stands in for RoomScreen, which declares focus from inside the shell. */

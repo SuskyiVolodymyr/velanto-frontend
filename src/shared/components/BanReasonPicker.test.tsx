@@ -13,10 +13,10 @@ import {
   buildBanReasonPayload,
   type BanReasonState,
 } from "./BanReasonPicker";
-import { rulesClient } from "@/shared/lib/rules-client";
+import { rulesClient } from "@/shared/api/rules-client";
 import type { RulesDocument } from "@/shared/types/rules";
 
-vi.mock("@/shared/lib/rules-client", () => ({
+vi.mock("@/shared/api/rules-client", () => ({
   rulesClient: { getRules: vi.fn() },
 }));
 

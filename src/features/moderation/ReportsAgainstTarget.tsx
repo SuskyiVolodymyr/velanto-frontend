@@ -6,9 +6,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Text } from "@/shared/components/Text";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import { LoadingState } from "@/shared/components/LoadingState";
-import { formatDate } from "@/shared/lib/format-date";
-import { reportsClient } from "@/shared/lib/reports-client";
-import { reportReasonLabel } from "@/shared/lib/report-reasons";
+import { formatDate } from "@/shared/utils/format-date";
+import { reportsClient } from "@/shared/api/reports-client";
+import { reportReasonLabel } from "@/shared/constants/report-reasons";
 import type { ReportWithReporter } from "@/shared/types/report";
 
 /**

@@ -9,7 +9,7 @@ import { Text } from "@/shared/components/Text";
 import { buttonClassName } from "@/shared/components/Button";
 import { BoardCard, BoardRow } from "@/shared/components/BoardCard";
 import { HeroCard } from "@/shared/components/HeroCard";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import { friendsRoomsClient } from "./friends-rooms-client";
 
 import type { RoomState } from "./room-types";

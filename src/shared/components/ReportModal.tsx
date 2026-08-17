@@ -10,8 +10,8 @@ import {
 import { Textarea } from "@/shared/components/Textarea";
 import { Text } from "@/shared/components/Text";
 import { Button } from "@/shared/components/Button";
-import { ApiError } from "@/shared/lib/api-client";
-import { reportsClient } from "@/shared/lib/reports-client";
+import { ApiError } from "@/shared/api/api-client";
+import { reportsClient } from "@/shared/api/reports-client";
 import type { ReportType } from "@/shared/types/report";
 
 /**

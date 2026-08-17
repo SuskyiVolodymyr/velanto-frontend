@@ -7,7 +7,7 @@ import { Text } from "@/shared/components/Text";
 import { Button } from "@/shared/components/Button";
 import { LoadingState } from "@/shared/components/LoadingState";
 import { EmptyState } from "@/shared/components/EmptyState";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import { useFollowList, type FollowListKind } from "./api/follow-list.queries";
 import { FollowUserRow } from "./FollowUserRow";
 import type { PeopleSubTab } from "./AuthorProfileHeader";

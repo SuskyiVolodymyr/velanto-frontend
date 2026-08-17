@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
 import { Text } from "@/shared/components/Text";
 import { Textarea } from "@/shared/components/Textarea";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import type { PackMarks } from "@/features/moderation/use-pack-marks";
 
 export interface PackReviewSidebarProps {

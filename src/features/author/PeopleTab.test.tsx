@@ -3,11 +3,11 @@ import { screen, waitFor } from "@testing-library/react";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { PeopleTab } from "./PeopleTab";
-import { StreamerModeProvider } from "@/shared/lib/streamer-mode-context";
-import { usersClient } from "@/shared/lib/users-client";
+import { StreamerModeProvider } from "@/shared/contexts/streamer-mode-context";
+import { usersClient } from "@/shared/api/users-client";
 import type { PeopleSubTab } from "./AuthorProfileHeader";
 
-vi.mock("@/shared/lib/users-client", () => ({
+vi.mock("@/shared/api/users-client", () => ({
   usersClient: {
     followers: vi.fn(),
     following: vi.fn(),

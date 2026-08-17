@@ -1,18 +1,18 @@
 "use client";
-import { formatDateTime } from "@/shared/lib/format-date";
+import { formatDateTime } from "@/shared/utils/format-date";
 
 import Link from "next/link";
 import { useState } from "react";
 import { Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import { useFeedback } from "@/features/feedback/api/feedback-detail.queries";
 import {
   useSetFeedbackStatus,
   useDeleteFeedback,
 } from "@/features/feedback/api/feedback-detail.mutations";
-import { ApiError } from "@/shared/lib/api-client";
+import { ApiError } from "@/shared/api/api-client";
 import { Text } from "@/shared/components/Text";
 import { LoadingState } from "@/shared/components/LoadingState";
 import { Username } from "@/shared/components/Username";
@@ -26,8 +26,8 @@ import { FeedbackVote } from "@/features/feedback/FeedbackVote";
 import { FeedbackComments } from "@/features/feedback/FeedbackComments";
 import type { FeedbackStatus } from "@/shared/types/feedback";
 import { LOCALE_NAMES, type Locale } from "@/i18n/config";
-import { cn } from "@/shared/lib/cn";
-import { pageContainer } from "@/shared/lib/page-container";
+import { cn } from "@/shared/utils/cn";
+import { pageContainer } from "@/shared/constants/page-container";
 
 // status value → key in the shared `status` ns (matches the badge labels).
 const STATUS_OPTIONS: { value: FeedbackStatus; key: string }[] = [

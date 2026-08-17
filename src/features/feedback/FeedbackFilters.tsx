@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import { SearchField } from "@/shared/components/SearchField";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import {
   feedbackStatusTone,
   feedbackTopicTone,

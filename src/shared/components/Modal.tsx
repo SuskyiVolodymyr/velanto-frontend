@@ -3,7 +3,7 @@
 import { useEffect, useId, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import { Text } from "@/shared/components/Text";
 
 export interface ModalProps {

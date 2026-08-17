@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Dropdown } from "@/shared/components/Dropdown";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 
 export type TopicId =
   "start" | "creating" | "formats" | "playing" | "stats" | "api";

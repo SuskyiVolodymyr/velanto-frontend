@@ -16,7 +16,7 @@ export const PACK_FORMATS = [
 export type PackFormat = (typeof PACK_FORMATS)[number];
 
 // 'image' items store the S3 media KEY (e.g. "media/item/<uuid>.webp") as their
-// value; the render URL is built from it via shared/lib/media-url.
+// value; the render URL is built from it via shared/utils/media-url.
 export type ItemType = "text" | "youtube" | "image";
 
 export interface Item {
@@ -188,7 +188,7 @@ export interface Pack {
   description: string;
   coverTone: string;
   // Optional custom cover: the S3 media KEY of an uploaded image (resolved to a
-  // URL via shared/lib/media-url). When present it renders instead of the
+  // URL via shared/utils/media-url). When present it renders instead of the
   // `coverTone` gradient; null/absent falls back to the gradient. The backend
   // always sends `string | null`; kept optional here so the many inline Pack
   // fixtures that predate covers stay valid.

@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { ChevronDown } from "lucide-react";
 import type { Group, Item } from "@/shared/types/pack";
 import { Text } from "@/shared/components/Text";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import { useGroupItemDraft } from "@/features/create/use-group-item-draft";
 import { GroupItemList } from "@/features/create/GroupItemList";
 import { GroupItemAdder } from "@/features/create/GroupItemAdder";

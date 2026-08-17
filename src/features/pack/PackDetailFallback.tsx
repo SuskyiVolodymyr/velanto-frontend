@@ -2,7 +2,7 @@
 
 import { notFound } from "next/navigation";
 import { usePackFallback } from "@/shared/hooks/use-pack-fallback";
-import { packsClient } from "@/shared/lib/packs-client";
+import { packsClient } from "@/shared/api/packs-client";
 import { PackDetailScreen } from "@/features/pack/PackDetailScreen";
 
 export function PackDetailFallback({ packId }: { packId: string }) {

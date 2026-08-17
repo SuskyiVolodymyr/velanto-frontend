@@ -4,18 +4,18 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { createTestQueryClient } from "@/shared/test/test-query-client";
 import { usePackFallback } from "./use-pack-fallback";
-import { useAuth } from "@/shared/lib/auth-context";
-import { packsClient } from "@/shared/lib/packs-client";
-import { playsClient } from "@/shared/lib/plays-client";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { packsClient } from "@/shared/api/packs-client";
+import { playsClient } from "@/shared/api/plays-client";
 import { friendsRoomsClient } from "@/features/friends-rooms/friends-rooms-client";
-import { ApiError } from "@/shared/lib/api-client";
+import { ApiError } from "@/shared/api/api-client";
 import type { Pack } from "@/shared/types/pack";
 import type { PackResults } from "@/shared/types/play-results";
 import type { AvailableMode } from "@/features/friends-rooms/room-types";
 
-vi.mock("@/shared/lib/auth-context");
-vi.mock("@/shared/lib/packs-client");
-vi.mock("@/shared/lib/plays-client");
+vi.mock("@/shared/contexts/auth-context");
+vi.mock("@/shared/api/packs-client");
+vi.mock("@/shared/api/plays-client");
 vi.mock("@/features/friends-rooms/friends-rooms-client");
 
 const mockedUseAuth = vi.mocked(useAuth);

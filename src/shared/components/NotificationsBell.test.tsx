@@ -13,8 +13,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { createTestQueryClient } from "@/shared/test/test-query-client";
 import messages from "@/messages/en.json";
 import { NotificationsBell } from "./NotificationsBell";
-import { notificationsClient } from "@/shared/lib/notifications-client";
-import { useAuth } from "@/shared/lib/auth-context";
+import { notificationsClient } from "@/shared/api/notifications-client";
+import { useAuth } from "@/shared/contexts/auth-context";
 
 // Fresh QueryClient per render so a query key isn't served from a prior test's
 // cache; wrapped in the intl provider since the bell now localizes its labels.
@@ -31,8 +31,8 @@ function render(ui: ReactElement) {
   });
 }
 
-vi.mock("@/shared/lib/notifications-client");
-vi.mock("@/shared/lib/auth-context");
+vi.mock("@/shared/api/notifications-client");
+vi.mock("@/shared/contexts/auth-context");
 
 const mockedClient = vi.mocked(notificationsClient);
 const mockedUseAuth = vi.mocked(useAuth);

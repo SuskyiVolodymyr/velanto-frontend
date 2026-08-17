@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import type {
   Feedback,
   FeedbackSort,
@@ -22,8 +22,8 @@ import {
   useTopFeedback,
 } from "@/features/feedback/api/feedback-list.queries";
 import type { FeedbackListFilters } from "@/features/feedback/api/feedback-list";
-import { cn } from "@/shared/lib/cn";
-import { pageContainer } from "@/shared/lib/page-container";
+import { cn } from "@/shared/utils/cn";
+import { pageContainer } from "@/shared/constants/page-container";
 
 const SEARCH_DEBOUNCE_MS = 300;
 

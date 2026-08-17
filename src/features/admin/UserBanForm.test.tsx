@@ -8,12 +8,12 @@ import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { useState } from "react";
 import { UserBanForm } from "./UserBanForm";
-import { rulesClient } from "@/shared/lib/rules-client";
-import type { BanDuration } from "@/shared/lib/users-client";
+import { rulesClient } from "@/shared/api/rules-client";
+import type { BanDuration } from "@/shared/api/users-client";
 import type { BanReasonState } from "@/shared/components/BanReasonPicker";
 import type { RulesDocument } from "@/shared/types/rules";
 
-vi.mock("@/shared/lib/rules-client", () => ({
+vi.mock("@/shared/api/rules-client", () => ({
   rulesClient: { getRules: vi.fn() },
 }));
 

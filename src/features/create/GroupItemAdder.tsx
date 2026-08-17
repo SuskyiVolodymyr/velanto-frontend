@@ -7,7 +7,7 @@ import { ITEM_TITLE_MAX } from "@/features/create/create-pack.schema";
 import { Input } from "@/shared/components/Input";
 import { Text } from "@/shared/components/Text";
 import { SegmentedControl } from "@/shared/components/SegmentedControl";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import { ItemImageCropModal } from "@/features/create/ItemImageCropModal";
 
 const fieldCaptionClassName =

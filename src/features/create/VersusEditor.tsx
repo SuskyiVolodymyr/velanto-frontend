@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useFormContext, useWatch, useFieldArray } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import { ChevronDown } from "lucide-react";
-import { resolveRoundDraws } from "@/shared/lib/round-draw";
+import { resolveRoundDraws } from "@/shared/utils/round-draw";
 import {
   newVersusRound,
   randomSlot,
@@ -20,7 +20,7 @@ import {
   RoundsAddButton,
 } from "@/features/create/RoundsToolbar";
 import { Text } from "@/shared/components/Text";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import { StepHeader } from "@/features/create/StepHeader";
 import { getFieldError } from "@/shared/components/form/getFieldError";
 import {

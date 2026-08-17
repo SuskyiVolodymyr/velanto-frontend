@@ -1,6 +1,6 @@
 import { forwardRef, InputHTMLAttributes } from "react";
 import { SearchIcon } from "@/shared/components/icons";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 
 // `size` is omitted from the native attributes and redefined below: the HTML
 // `size` on an <input> is a character-count width, which this control (a styled

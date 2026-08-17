@@ -7,16 +7,16 @@ import { pickFromDropdown } from "@/shared/test/pick-from-dropdown";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { StaffTab } from "./StaffTab";
-import { AuthProvider } from "@/shared/lib/auth-context";
-import { formatDate } from "@/shared/lib/format-date";
-import { StreamerModeProvider } from "@/shared/lib/streamer-mode-context";
-import { authClient } from "@/shared/lib/auth-client";
-import { adminClient } from "@/shared/lib/admin-client";
-import { usersClient } from "@/shared/lib/users-client";
+import { AuthProvider } from "@/shared/contexts/auth-context";
+import { formatDate } from "@/shared/utils/format-date";
+import { StreamerModeProvider } from "@/shared/contexts/streamer-mode-context";
+import { authClient } from "@/shared/api/auth-client";
+import { adminClient } from "@/shared/api/admin-client";
+import { usersClient } from "@/shared/api/users-client";
 import type { User } from "@/shared/types/user";
 import type { AdminUserRow } from "@/shared/types/admin";
 
-vi.mock("@/shared/lib/auth-client", () => ({
+vi.mock("@/shared/api/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),
@@ -25,10 +25,10 @@ vi.mock("@/shared/lib/auth-client", () => ({
     refresh: vi.fn(),
   },
 }));
-vi.mock("@/shared/lib/admin-client", () => ({
+vi.mock("@/shared/api/admin-client", () => ({
   adminClient: { listUsers: vi.fn(), userDetail: vi.fn() },
 }));
-vi.mock("@/shared/lib/users-client", () => ({
+vi.mock("@/shared/api/users-client", () => ({
   usersClient: { changeRole: vi.fn() },
 }));
 

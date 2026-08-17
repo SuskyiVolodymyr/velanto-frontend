@@ -39,9 +39,9 @@ import {
   FEEDBACK_SORTS,
 } from "@/shared/types/feedback";
 import { REPORT_TYPES, REPORT_STATUSES } from "@/shared/types/report";
-import { REPORT_REASON_LABELS } from "@/shared/lib/report-reasons";
+import { REPORT_REASON_LABELS } from "@/shared/constants/report-reasons";
 import { BAN_REASONS } from "@/shared/types/rules";
-import { BAN_DURATIONS } from "@/shared/lib/ban-durations";
+import { BAN_DURATIONS } from "@/shared/constants/ban-durations";
 import { NOTIFICATION_TYPES } from "@/shared/types/notification";
 import { LOCALES, DEFAULT_LOCALE } from "@/i18n/config";
 import {

@@ -7,10 +7,10 @@ import {
   useQueryClient,
   type InfiniteData,
 } from "@tanstack/react-query";
-import { feedbackClient } from "@/shared/lib/feedback-client";
+import { feedbackClient } from "@/shared/api/feedback-client";
 import type { FeedbackCommentList } from "@/shared/types/feedback";
 import { fetchCommentsPage } from "./feedback-comments";
-import { useRefetchOnSignIn } from "@/shared/lib/use-refetch-on-sign-in";
+import { useRefetchOnSignIn } from "@/shared/hooks/use-refetch-on-sign-in";
 
 export function feedbackCommentsQueryOptions(feedbackId: string) {
   return infiniteQueryOptions({

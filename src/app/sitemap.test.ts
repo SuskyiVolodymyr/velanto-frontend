@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import sitemap from "./sitemap";
-import { SITE_URL } from "@/shared/lib/site-url";
+import { SITE_URL } from "@/shared/constants/site-url";
 
 describe("sitemap", () => {
   beforeEach(() => {

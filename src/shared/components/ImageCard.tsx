@@ -1,4 +1,4 @@
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import { Badge } from "@/shared/components/Badge";
 
 interface ImageCardProps {

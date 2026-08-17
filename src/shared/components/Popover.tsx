@@ -8,8 +8,8 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { cn } from "@/shared/lib/cn";
-import { useHorizontalClamp } from "@/shared/lib/use-horizontal-clamp";
+import { cn } from "@/shared/utils/cn";
+import { useHorizontalClamp } from "@/shared/hooks/use-horizontal-clamp";
 
 /**
  * A lightweight disclosure popover: a trigger button that toggles a floating

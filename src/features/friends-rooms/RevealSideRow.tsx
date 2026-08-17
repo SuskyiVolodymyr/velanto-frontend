@@ -3,7 +3,7 @@
 import { Text } from "@/shared/components/Text";
 import { UserAvatar } from "@/shared/components/UserAvatar";
 import { RoundMedia } from "./RoundMedia";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import type { Item } from "@/shared/types/pack";
 import type { RoomPlayerState, RoundSide } from "./room-types";
 

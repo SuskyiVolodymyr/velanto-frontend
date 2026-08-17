@@ -3,18 +3,18 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { ReportPackDialog } from "./ReportPackDialog";
-import { ApiError } from "@/shared/lib/api-client";
+import { ApiError } from "@/shared/api/api-client";
 import type { User } from "@/shared/types/user";
 
 const create = vi.fn();
-vi.mock("@/shared/lib/reports-client", () => ({
+vi.mock("@/shared/api/reports-client", () => ({
   reportsClient: {
     create: (...args: unknown[]) => create(...args),
   },
 }));
 
 let currentUser: User | null;
-vi.mock("@/shared/lib/auth-context", () => ({
+vi.mock("@/shared/contexts/auth-context", () => ({
   useAuth: () => ({ user: currentUser }),
 }));
 

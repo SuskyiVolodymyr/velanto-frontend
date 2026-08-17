@@ -3,8 +3,8 @@
 import { useTranslations } from "next-intl";
 import { Button } from "@/shared/components/Button";
 import { Dropdown } from "@/shared/components/Dropdown";
-import { type BanDuration } from "@/shared/lib/users-client";
-import { BAN_DURATIONS } from "@/shared/lib/ban-durations";
+import { type BanDuration } from "@/shared/api/users-client";
+import { BAN_DURATIONS } from "@/shared/constants/ban-durations";
 import {
   BanReasonPicker,
   isBanReasonValid,

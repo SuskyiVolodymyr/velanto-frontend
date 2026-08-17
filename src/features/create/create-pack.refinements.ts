@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { resolveRoundDraws } from "@/shared/lib/round-draw";
+import { resolveRoundDraws } from "@/shared/utils/round-draw";
 import {
   ELIMINATION_MIN_DRAW,
   ELIMINATION_MAX_DRAW,

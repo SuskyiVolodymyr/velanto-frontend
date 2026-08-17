@@ -8,7 +8,7 @@ import { Button, buttonClassName } from "@/shared/components/Button";
 import { Hidden } from "@/shared/components/Hidden";
 import { Username } from "@/shared/components/Username";
 import { AvatarLightbox } from "@/shared/components/AvatarLightbox";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import type { PublicUserProfile } from "@/shared/types/user";
 
 /** Which People sub-tab a stat button deep-links into (`ProfileTabs`, later task). */

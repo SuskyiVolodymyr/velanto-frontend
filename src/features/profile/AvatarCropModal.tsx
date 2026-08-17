@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { ImageCropModal } from "@/shared/components/ImageCropModal";
-import { MAX_AVATAR_CROP } from "@/shared/lib/crop-image";
+import { MAX_AVATAR_CROP } from "@/shared/utils/crop-image";
 
 /**
  * Avatar-configured {@link ImageCropModal}: a square, circular crop capped at

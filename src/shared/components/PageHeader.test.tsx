@@ -8,7 +8,7 @@ import { PageHeader } from "./PageHeader";
 // real AuthProvider, which would fire the on-mount POST /auth/refresh these
 // tests have no business making — and pinning it keeps the header's two
 // states explicit instead of leaning on useAuth's no-provider fallback.
-vi.mock("@/shared/lib/auth-context", () => ({
+vi.mock("@/shared/contexts/auth-context", () => ({
   useAuth: () => ({ user: null, status: "unauthenticated", logout: vi.fn() }),
 }));
 

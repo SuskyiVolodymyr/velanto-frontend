@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Check, Crown, Info } from "lucide-react";
 import { Text } from "@/shared/components/Text";
 import { UserAvatar } from "@/shared/components/UserAvatar";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import { labelTone } from "./guess-who-labels";
 import { MODE_STEP_KEYS } from "./room-mode-copy";
 import type { RoomPlayerState, RoomState } from "./room-types";

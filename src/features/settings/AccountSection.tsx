@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Card } from "@/shared/components/Card";
 import { Text } from "@/shared/components/Text";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import { AddEmailForm } from "@/features/settings/AddEmailForm";
 import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
 

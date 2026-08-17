@@ -2,11 +2,11 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { Text } from "@/shared/components/Text";
 import { PageHeader } from "@/shared/components/PageHeader";
-import { cn } from "@/shared/lib/cn";
-import { PAGE_CONTAINER_FULL } from "@/shared/lib/page-container";
+import { cn } from "@/shared/utils/cn";
+import { PAGE_CONTAINER_FULL } from "@/shared/constants/page-container";
 import { PeopleFeed } from "@/features/home/PeopleFeed";
-import { buildOpenGraph } from "@/shared/lib/open-graph";
-import { SITE_URL } from "@/shared/lib/site-url";
+import { buildOpenGraph } from "@/shared/utils/open-graph";
+import { SITE_URL } from "@/shared/constants/site-url";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("people");

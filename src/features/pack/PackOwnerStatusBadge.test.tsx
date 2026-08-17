@@ -2,12 +2,12 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { PackOwnerStatusBadge } from "@/features/pack/PackOwnerStatusBadge";
-import { AuthProvider } from "@/shared/lib/auth-context";
-import { authClient } from "@/shared/lib/auth-client";
+import { AuthProvider } from "@/shared/contexts/auth-context";
+import { authClient } from "@/shared/api/auth-client";
 import type { Role } from "@/shared/types/user";
 import type { PackStatus } from "@/shared/types/pack";
 
-vi.mock("@/shared/lib/auth-client", () => ({
+vi.mock("@/shared/api/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),

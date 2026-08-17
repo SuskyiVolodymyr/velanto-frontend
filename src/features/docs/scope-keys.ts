@@ -1,4 +1,4 @@
-import type { PatScope } from "@/shared/lib/tokens-client";
+import type { PatScope } from "@/shared/api/tokens-client";
 
 /**
  * Scope → i18n key fragment. Scope ids carry colons (`packs:read`), which can't

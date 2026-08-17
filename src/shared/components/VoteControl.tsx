@@ -7,7 +7,7 @@ import {
   type VoteTally,
 } from "@/shared/api/vote.mutations";
 import { SignInGate } from "@/shared/components/SignInGate";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 
 export interface VoteControlProps {
   /** Casts a vote and resolves to the new server tally, e.g.

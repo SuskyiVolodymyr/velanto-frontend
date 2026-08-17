@@ -1,10 +1,10 @@
 "use client";
-import { formatDateTime } from "@/shared/lib/format-date";
+import { formatDateTime } from "@/shared/utils/format-date";
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { reportReasonLabel } from "@/shared/lib/report-reasons";
-import { reportTargetLabel } from "@/shared/lib/report-display";
+import { reportReasonLabel } from "@/shared/constants/report-reasons";
+import { reportTargetLabel } from "@/shared/utils/report-display";
 import { Text } from "@/shared/components/Text";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import type { ReportWithReporter } from "@/shared/types/report";

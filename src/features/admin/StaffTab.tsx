@@ -1,5 +1,5 @@
 "use client";
-import { formatDate } from "@/shared/lib/format-date";
+import { formatDate } from "@/shared/utils/format-date";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
@@ -12,16 +12,16 @@ import { Button } from "@/shared/components/Button";
 import { Dropdown } from "@/shared/components/Dropdown";
 import { Hidden } from "@/shared/components/Hidden";
 import { LoadingState } from "@/shared/components/LoadingState";
-import { useAuth } from "@/shared/lib/auth-context";
-import { useStreamerModeOrDefault } from "@/shared/lib/streamer-mode-context";
-import { usersClient } from "@/shared/lib/users-client";
-import { adminClient } from "@/shared/lib/admin-client";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { useStreamerModeOrDefault } from "@/shared/contexts/streamer-mode-context";
+import { usersClient } from "@/shared/api/users-client";
+import { adminClient } from "@/shared/api/admin-client";
 import { useAdminStaff } from "@/features/admin/api/admin.queries";
 import { DataTable, DataTableRow } from "@/shared/components/DataTable";
 import {
   assignableRolesFor,
   type AssignableRole,
-} from "@/shared/lib/staff-permissions";
+} from "@/shared/utils/staff-permissions";
 import type { AdminUserRow } from "@/shared/types/admin";
 
 const SEARCH_DEBOUNCE_MS = 300;

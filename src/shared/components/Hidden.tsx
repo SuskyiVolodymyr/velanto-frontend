@@ -3,8 +3,8 @@
 import { useId } from "react";
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { useStreamerModeOrDefault } from "@/shared/lib/streamer-mode-context";
-import { cn } from "@/shared/lib/cn";
+import { useStreamerModeOrDefault } from "@/shared/contexts/streamer-mode-context";
+import { cn } from "@/shared/utils/cn";
 
 export type HiddenKind = "avatar" | "name" | "comment";
 

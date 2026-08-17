@@ -3,10 +3,10 @@ import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { PackApprovalsTab } from "./PackApprovalsTab";
-import { packsClient } from "@/shared/lib/packs-client";
+import { packsClient } from "@/shared/api/packs-client";
 import type { Pack } from "@/shared/types/pack";
 
-vi.mock("@/shared/lib/packs-client", () => ({
+vi.mock("@/shared/api/packs-client", () => ({
   packsClient: { moderationQueue: vi.fn(), approve: vi.fn(), reject: vi.fn() },
 }));
 

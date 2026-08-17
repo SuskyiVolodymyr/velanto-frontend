@@ -7,9 +7,9 @@ import { Flag } from "lucide-react";
 import { ReportModal } from "@/shared/components/ReportModal";
 import type { DropdownOption } from "@/shared/components/Dropdown";
 import { Tooltip } from "@/shared/components/Tooltip";
-import { useAuth } from "@/shared/lib/auth-context";
-import { cn } from "@/shared/lib/cn";
-import { REPORT_REASON_LABELS } from "@/shared/lib/report-reasons";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { cn } from "@/shared/utils/cn";
+import { REPORT_REASON_LABELS } from "@/shared/constants/report-reasons";
 
 // Mirrors the backend's REPORT_REASONS.user via report-reasons.ts rather than
 // listing the ids a second time; the visible labels come from `report.userReasons.*`.

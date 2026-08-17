@@ -3,15 +3,15 @@ import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { ApiTokensSection } from "./ApiTokensSection";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import {
   useApiTokens,
   useCreateToken,
   useRevokeToken,
 } from "@/features/docs/api/tokens.queries";
-import type { ApiToken } from "@/shared/lib/tokens-client";
+import type { ApiToken } from "@/shared/api/tokens-client";
 
-vi.mock("@/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
+vi.mock("@/shared/contexts/auth-context", () => ({ useAuth: vi.fn() }));
 vi.mock("@/features/docs/api/tokens.queries", () => ({
   useApiTokens: vi.fn(),
   useCreateToken: vi.fn(),

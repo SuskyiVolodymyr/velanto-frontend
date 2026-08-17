@@ -3,13 +3,13 @@ import { getUserServer } from "@/features/author/get-user-server";
 import {
   ogImageSourceFromKey,
   OG_AVATAR_FIT,
-} from "@/shared/lib/og-image-source";
-import { profileOgCard } from "@/shared/lib/og-card";
+} from "@/shared/utils/og-image-source";
+import { profileOgCard } from "@/shared/utils/og-card";
 import {
   OG_CARD_SIZE,
   OG_CARD_CONTENT_TYPE,
   OG_CARD_CACHE_CONTROL,
-} from "@/shared/lib/open-graph";
+} from "@/shared/utils/open-graph";
 
 // Node runtime + metadata FILE CONVENTION (see the pack card for why): a plain
 // route handler on node doesn't get next/og's font/wasm traced into the Vercel

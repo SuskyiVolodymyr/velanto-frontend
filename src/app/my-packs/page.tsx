@@ -6,8 +6,8 @@ import Link from "next/link";
 import { buttonClassName } from "@/shared/components/Button";
 import { PlusIcon } from "@/shared/components/icons";
 import { PageHeader } from "@/shared/components/PageHeader";
-import { cn } from "@/shared/lib/cn";
-import { PAGE_CONTAINER_FULL } from "@/shared/lib/page-container";
+import { cn } from "@/shared/utils/cn";
+import { PAGE_CONTAINER_FULL } from "@/shared/constants/page-container";
 import { MyPacksFeed } from "@/features/home/MyPacksFeed";
 
 export async function generateMetadata(): Promise<Metadata> {

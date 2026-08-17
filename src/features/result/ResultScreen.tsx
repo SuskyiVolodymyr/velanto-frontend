@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { pageContainer } from "@/shared/lib/page-container";
+import { pageContainer } from "@/shared/constants/page-container";
 import { PackHeaderBar } from "@/shared/components/PackHeaderBar";
 import { Text } from "@/shared/components/Text";
 import { LoadingState } from "@/shared/components/LoadingState";
@@ -18,8 +18,8 @@ import { TopPickedTable } from "@/features/result/TopPickedTable";
 import { PodiumTable } from "@/features/result/PodiumTable";
 import { usePackResults } from "@/features/result/api/results.queries";
 import { useResultPicks } from "@/features/result/use-result-picks";
-import { getRoundsCount } from "@/shared/lib/pack-display";
-import { cn } from "@/shared/lib/cn";
+import { getRoundsCount } from "@/shared/utils/pack-display";
+import { cn } from "@/shared/utils/cn";
 import type { Pack } from "@/shared/types/pack";
 
 /**

@@ -3,14 +3,14 @@ import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { DangerZoneSection } from "./DangerZoneSection";
-import { authClient } from "@/shared/lib/auth-client";
-import { useAuth } from "@/shared/lib/auth-context";
-import { ApiError } from "@/shared/lib/api-client";
+import { authClient } from "@/shared/api/auth-client";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { ApiError } from "@/shared/api/api-client";
 
 const push = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
-vi.mock("@/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
-vi.mock("@/shared/lib/auth-client", () => ({
+vi.mock("@/shared/contexts/auth-context", () => ({ useAuth: vi.fn() }));
+vi.mock("@/shared/api/auth-client", () => ({
   authClient: { deleteAccount: vi.fn(), exportMyData: vi.fn() },
 }));
 

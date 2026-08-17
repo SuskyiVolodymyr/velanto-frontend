@@ -1,6 +1,6 @@
 "use client";
 import { SignInGate } from "@/shared/components/SignInGate";
-import { formatDateTime } from "@/shared/lib/format-date";
+import { formatDateTime } from "@/shared/utils/format-date";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
@@ -22,10 +22,10 @@ import { AuthorHoverTrigger } from "@/features/pack/AuthorHoverTrigger";
 import { Button } from "@/shared/components/Button";
 import { Hidden } from "@/shared/components/Hidden";
 import { Tooltip } from "@/shared/components/Tooltip";
-import { useAuth } from "@/shared/lib/auth-context";
-import { cn } from "@/shared/lib/cn";
-import { isStaff } from "@/shared/lib/user-role";
-import { messageFromError } from "@/shared/lib/messageFromError";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { cn } from "@/shared/utils/cn";
+import { isStaff } from "@/shared/utils/user-role";
+import { messageFromError } from "@/shared/utils/messageFromError";
 import type { FeedbackComment } from "@/shared/types/feedback";
 import {
   useFeedbackComments,

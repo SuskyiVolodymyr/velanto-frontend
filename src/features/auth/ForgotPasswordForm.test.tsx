@@ -3,9 +3,9 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
-import { authClient } from "@/shared/lib/auth-client";
+import { authClient } from "@/shared/api/auth-client";
 
-vi.mock("@/shared/lib/auth-client", () => ({
+vi.mock("@/shared/api/auth-client", () => ({
   authClient: {
     requestPasswordReset: vi.fn(),
     resetPassword: vi.fn(),

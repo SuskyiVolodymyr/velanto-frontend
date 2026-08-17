@@ -3,15 +3,15 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ExternalLink } from "lucide-react";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import { Badge } from "@/shared/components/Badge";
-import { youtubeThumbnailUrl } from "@/shared/lib/youtube";
-import { loadYouTubeIframeApi } from "@/shared/lib/youtube-iframe-api";
+import { youtubeThumbnailUrl } from "@/shared/utils/youtube";
+import { loadYouTubeIframeApi } from "@/shared/utils/youtube-iframe-api";
 import {
   YT_STATE_PLAYING,
   YT_STATE_BUFFERING,
-} from "@/shared/lib/youtube-iframe-api";
-import type { YouTubePlayer } from "@/shared/lib/youtube-iframe-api";
+} from "@/shared/utils/youtube-iframe-api";
+import type { YouTubePlayer } from "@/shared/utils/youtube-iframe-api";
 
 // How long to wait, after commanding playback, for the video to actually reach
 // buffering/playing before we treat it as failed. YouTube's server-side "try

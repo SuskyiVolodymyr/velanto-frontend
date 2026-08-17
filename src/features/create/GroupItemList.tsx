@@ -3,12 +3,12 @@
 import { Fragment, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import type { Item } from "@/shared/types/pack";
-import { cn } from "@/shared/lib/cn";
-import { mediaUrl } from "@/shared/lib/media-url";
+import { cn } from "@/shared/utils/cn";
+import { mediaUrl } from "@/shared/utils/media-url";
 import {
   extractYouTubeId,
   youtubeThumbnailUrl,
-} from "@/shared/lib/youtube";
+} from "@/shared/utils/youtube";
 import { EmptyState } from "@/shared/components/EmptyState";
 
 interface GroupItemListProps {

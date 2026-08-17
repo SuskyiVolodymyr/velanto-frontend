@@ -1,9 +1,9 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/shared/lib/auth-context";
-import { packsClient } from "@/shared/lib/packs-client";
-import { playsClient } from "@/shared/lib/plays-client";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { packsClient } from "@/shared/api/packs-client";
+import { playsClient } from "@/shared/api/plays-client";
 import { friendsRoomsClient } from "@/features/friends-rooms/friends-rooms-client";
 import type { AvailableMode } from "@/features/friends-rooms/room-types";
 import type { Pack, PackOverview } from "@/shared/types/pack";

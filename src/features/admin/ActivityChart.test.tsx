@@ -3,7 +3,7 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { ActivityChart, rangeFromParam } from "./ActivityChart";
-import { adminClient } from "@/shared/lib/admin-client";
+import { adminClient } from "@/shared/api/admin-client";
 import type { ActivityPoint } from "@/shared/types/admin";
 
 const replace = vi.fn();
@@ -15,7 +15,7 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => searchParams,
 }));
 
-vi.mock("@/shared/lib/admin-client", () => ({
+vi.mock("@/shared/api/admin-client", () => ({
   adminClient: { activity: vi.fn() },
 }));
 

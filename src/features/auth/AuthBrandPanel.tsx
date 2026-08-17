@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { Check } from "lucide-react";
 import { BrandMark } from "@/shared/components/BrandMark";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 
 // The pitch list's three accents map 1:1 to the semantic tokens (cyan = acc,
 // green = live, magenta = hot), so no hardcoded hex here.

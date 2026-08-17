@@ -8,9 +8,9 @@ import { Text } from "@/shared/components/Text";
 import { Button } from "@/shared/components/Button";
 import { Input } from "@/shared/components/Input";
 import { Modal } from "@/shared/components/Modal";
-import { useAuth } from "@/shared/lib/auth-context";
-import { authClient } from "@/shared/lib/auth-client";
-import { ApiError } from "@/shared/lib/api-client";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { authClient } from "@/shared/api/auth-client";
+import { ApiError } from "@/shared/api/api-client";
 import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
 
 /**

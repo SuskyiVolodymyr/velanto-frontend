@@ -7,8 +7,8 @@ import {
   usersClient,
   type BanDuration,
   type BanUserInput,
-} from "@/shared/lib/users-client";
-import type { AssignableRole } from "@/shared/lib/staff-permissions";
+} from "@/shared/api/users-client";
+import type { AssignableRole } from "@/shared/utils/staff-permissions";
 import {
   isBanReasonValid,
   buildBanReasonPayload,
@@ -20,7 +20,7 @@ import {
 } from "@/features/admin/api/admin.queries";
 import type { UsersPageFilters } from "@/features/admin/api/admin";
 import type { AdminUserRow } from "@/shared/types/admin";
-import type { AdminUserSort } from "@/shared/lib/admin-client";
+import type { AdminUserSort } from "@/shared/api/admin-client";
 
 const SEARCH_DEBOUNCE_MS = 300;
 

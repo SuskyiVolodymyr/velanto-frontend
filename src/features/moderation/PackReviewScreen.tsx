@@ -4,8 +4,8 @@ import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/shared/lib/auth-context";
-import { packsClient } from "@/shared/lib/packs-client";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { packsClient } from "@/shared/api/packs-client";
 import { Text } from "@/shared/components/Text";
 import { Button } from "@/shared/components/Button";
 import { PageHeader } from "@/shared/components/PageHeader";
@@ -17,15 +17,15 @@ import { PackReviewSidebar } from "@/features/moderation/PackReviewSidebar";
 import { PackReviewFields } from "@/features/moderation/PackReviewFields";
 import { usePackMarks } from "@/features/moderation/use-pack-marks";
 import { StatusBadge } from "@/shared/components/StatusBadge";
-import { formatDateTime } from "@/shared/lib/format-date";
+import { formatDateTime } from "@/shared/utils/format-date";
 import { usePackAuthor } from "@/features/pack/api/pack-author.queries";
 import {
   useApprovePack,
   useRejectPack,
   useRequestPackChanges,
 } from "@/features/moderation/api/moderation.queries";
-import { cn } from "@/shared/lib/cn";
-import { pageContainer } from "@/shared/lib/page-container";
+import { cn } from "@/shared/utils/cn";
+import { pageContainer } from "@/shared/constants/page-container";
 
 /**
  * Query key for a single pack fetched for review. Deliberately its own key

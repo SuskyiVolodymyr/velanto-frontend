@@ -3,7 +3,7 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { JoinByLink } from "./JoinByLink";
-import { ApiError } from "@/shared/lib/api-client";
+import { ApiError } from "@/shared/api/api-client";
 import type { User } from "@/shared/types/user";
 
 const replace = vi.fn();
@@ -22,7 +22,7 @@ vi.mock("./friends-rooms-client", () => ({
 
 let currentUser: User | null;
 let currentStatus: "loading" | "authenticated" | "unauthenticated";
-vi.mock("@/shared/lib/auth-context", () => ({
+vi.mock("@/shared/contexts/auth-context", () => ({
   useAuth: () => ({ user: currentUser, status: currentStatus }),
 }));
 

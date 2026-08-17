@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { BannedNotice } from "./BannedNotice";
-import { formatDate } from "@/shared/lib/format-date";
+import { formatDate } from "@/shared/utils/format-date";
 import type { RuleCategory } from "@/shared/types/rules";
 
 const CATEGORIES: RuleCategory[] = [

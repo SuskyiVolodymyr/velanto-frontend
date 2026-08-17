@@ -4,8 +4,8 @@ import {
   type InfiniteData,
 } from "@tanstack/react-query";
 import type { PackSummary } from "@/shared/types/pack";
-import type { PackList } from "@/shared/lib/packs-client";
-import { useRefetchOnSignIn } from "@/shared/lib/use-refetch-on-sign-in";
+import type { PackList } from "@/shared/api/packs-client";
+import { useRefetchOnSignIn } from "@/shared/hooks/use-refetch-on-sign-in";
 import { AUTHOR_PACKS_PAGE_SIZE, fetchAuthorPacksPage } from "./author-packs";
 
 /**

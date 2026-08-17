@@ -1,8 +1,8 @@
 "use client";
 
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import { useRules } from "@/shared/api/rules.queries";
-import { isActiveBan } from "@/shared/lib/ban-display";
+import { isActiveBan } from "@/shared/utils/ban-display";
 import { BannedNotice } from "@/shared/components/BannedNotice";
 
 /**

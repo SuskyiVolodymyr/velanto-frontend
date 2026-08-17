@@ -1,6 +1,6 @@
 import { InputHTMLAttributes, ReactNode, forwardRef } from "react";
-import { useFieldIdentity } from "@/shared/lib/use-field-identity";
-import { cn } from "@/shared/lib/cn";
+import { useFieldIdentity } from "@/shared/hooks/use-field-identity";
+import { cn } from "@/shared/utils/cn";
 
 export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   /** Leading icon rendered inside the field (UI-kit v1 auth style). Presence of

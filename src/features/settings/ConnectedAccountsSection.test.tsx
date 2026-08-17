@@ -3,15 +3,15 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { ConnectedAccountsSection } from "./ConnectedAccountsSection";
-import { useAuth } from "@/shared/lib/auth-context";
-import { authClient } from "@/shared/lib/auth-client";
-import { openOAuthPopup } from "@/shared/lib/oauth-popup";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { authClient } from "@/shared/api/auth-client";
+import { openOAuthPopup } from "@/shared/utils/oauth-popup";
 
-vi.mock("@/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
-vi.mock("@/shared/lib/auth-client", () => ({
+vi.mock("@/shared/contexts/auth-context", () => ({ useAuth: vi.fn() }));
+vi.mock("@/shared/api/auth-client", () => ({
   authClient: { oauthProviders: vi.fn(), startOAuthLink: vi.fn() },
 }));
-vi.mock("@/shared/lib/oauth-popup", () => ({ openOAuthPopup: vi.fn() }));
+vi.mock("@/shared/utils/oauth-popup", () => ({ openOAuthPopup: vi.fn() }));
 
 const mockedUseAuth = vi.mocked(useAuth);
 const mockedClient = vi.mocked(authClient);

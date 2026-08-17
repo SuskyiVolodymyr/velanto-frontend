@@ -2,8 +2,8 @@ import { describe, expect, it, beforeEach, vi } from "vitest";
 import { screen, within } from "@testing-library/react";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { ResultScreen } from "./ResultScreen";
-import { encodePicks } from "@/shared/lib/share-url";
-import { playsClient } from "@/shared/lib/plays-client";
+import { encodePicks } from "@/shared/utils/share-url";
+import { playsClient } from "@/shared/api/plays-client";
 import type { Pack } from "@/shared/types/pack";
 import type {
   PackResults,
@@ -19,7 +19,7 @@ vi.mock("next/navigation", () => ({ useSearchParams: () => searchParams }));
 // tests keep asserting on a known aggregate — and it is also what proves the
 // gate works: `expect(playsClient.getResults).not.toHaveBeenCalled()` is only
 // meaningful because the fetch is reachable from here.
-vi.mock("@/shared/lib/plays-client", () => ({
+vi.mock("@/shared/api/plays-client", () => ({
   playsClient: { getResults: vi.fn(), record: vi.fn() },
 }));
 

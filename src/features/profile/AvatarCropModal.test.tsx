@@ -3,7 +3,7 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { AvatarCropModal } from "./AvatarCropModal";
-import { cropImage } from "@/shared/lib/crop-image";
+import { cropImage } from "@/shared/utils/crop-image";
 
 // react-easy-crop is browser-only (measures DOM, drags). Stub it to report a
 // fixed crop area via an effect (not during render) so Save is enabled without a
@@ -23,7 +23,7 @@ vi.mock("react-easy-crop", async () => {
   return { default: CropperStub };
 });
 
-vi.mock("@/shared/lib/crop-image", () => ({
+vi.mock("@/shared/utils/crop-image", () => ({
   cropImage: vi.fn(),
   MAX_AVATAR_CROP: 512,
 }));

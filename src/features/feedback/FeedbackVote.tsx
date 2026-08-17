@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { feedbackClient } from "@/shared/lib/feedback-client";
+import { feedbackClient } from "@/shared/api/feedback-client";
 import { VoteControl } from "@/shared/components/VoteControl";
 
 /**

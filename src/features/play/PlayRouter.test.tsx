@@ -10,7 +10,7 @@ const notFound = vi.hoisted(() =>
 );
 
 vi.mock("next/navigation", () => ({ notFound }));
-vi.mock("@/shared/lib/plays-client", () => ({
+vi.mock("@/shared/api/plays-client", () => ({
   playsClient: {
     record: vi.fn(),
     getResults: vi.fn(),

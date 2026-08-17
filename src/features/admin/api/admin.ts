@@ -3,7 +3,7 @@ import {
   adminClient,
   type AdminUserSort,
   type AuditLogSort,
-} from "@/shared/lib/admin-client";
+} from "@/shared/api/admin-client";
 
 export const ADMIN_PAGE_SIZE = 20;
 

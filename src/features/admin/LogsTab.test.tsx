@@ -5,10 +5,10 @@ import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { pickFromDropdown } from "@/shared/test/pick-from-dropdown";
 import { LogsTab } from "./LogsTab";
-import { adminClient } from "@/shared/lib/admin-client";
+import { adminClient } from "@/shared/api/admin-client";
 import type { AuditLogEntry } from "@/shared/types/admin";
 
-vi.mock("@/shared/lib/admin-client", () => ({
+vi.mock("@/shared/api/admin-client", () => ({
   adminClient: { auditLogs: vi.fn() },
 }));
 

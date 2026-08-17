@@ -5,8 +5,8 @@ import { useTranslations } from "next-intl";
 import { Card } from "@/shared/components/Card";
 import { Text } from "@/shared/components/Text";
 import { RecapHeading } from "@/features/result/RecapHeading";
-import { roundHeading } from "@/shared/lib/round-heading";
-import { cn } from "@/shared/lib/cn";
+import { roundHeading } from "@/shared/utils/round-heading";
+import { cn } from "@/shared/utils/cn";
 import type { Pack } from "@/shared/types/pack";
 import type {
   PackResults,

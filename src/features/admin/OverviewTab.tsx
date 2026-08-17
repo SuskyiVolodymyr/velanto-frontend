@@ -8,7 +8,7 @@ import { PlaysChart } from "@/features/admin/PlaysChart";
 import { ActivityChart } from "@/features/admin/ActivityChart";
 import { TopPacksToday } from "@/features/admin/TopPacksToday";
 import type { AdminOverview } from "@/shared/types/admin";
-import { formatBytes } from "@/shared/lib/format-bytes";
+import { formatBytes } from "@/shared/utils/format-bytes";
 
 interface Metric {
   label: string;

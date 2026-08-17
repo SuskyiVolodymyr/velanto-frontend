@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { getRoundsCount } from "@/shared/lib/pack-display";
+import { getRoundsCount } from "@/shared/utils/pack-display";
 import { Text } from "@/shared/components/Text";
 import type { Pack, PackOverview } from "@/shared/types/pack";
 

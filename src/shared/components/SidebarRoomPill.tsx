@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import { useFriendsRoomsPresence } from "@/features/friends-rooms/friends-rooms-presence-context";
 
 /**

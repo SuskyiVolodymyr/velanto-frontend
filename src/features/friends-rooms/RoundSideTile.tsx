@@ -6,9 +6,9 @@ import { ImageCard } from "@/shared/components/ImageCard";
 import {
   extractYouTubeId,
   extractYouTubeStart,
-} from "@/shared/lib/youtube";
-import { mediaUrl } from "@/shared/lib/media-url";
-import { cn } from "@/shared/lib/cn";
+} from "@/shared/utils/youtube";
+import { mediaUrl } from "@/shared/utils/media-url";
+import { cn } from "@/shared/utils/cn";
 import { UserAvatar } from "@/shared/components/UserAvatar";
 import type { Item } from "@/shared/types/pack";
 import type { RoomPlayerState, RoundSide } from "./room-types";

@@ -11,7 +11,7 @@ import {
   usersClient,
   type FollowUser,
   type FollowUserPage,
-} from "@/shared/lib/users-client";
+} from "@/shared/api/users-client";
 
 export type FollowListKind = "followers" | "following";
 

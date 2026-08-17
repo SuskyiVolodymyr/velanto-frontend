@@ -7,15 +7,15 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import messages from "@/messages/en.json";
 import { createTestQueryClient } from "@/shared/test/test-query-client";
 import { PackReviewScreen } from "./PackReviewScreen";
-import { packsClient } from "@/shared/lib/packs-client";
-import { usersClient } from "@/shared/lib/users-client";
-import { useAuth } from "@/shared/lib/auth-context";
+import { packsClient } from "@/shared/api/packs-client";
+import { usersClient } from "@/shared/api/users-client";
+import { useAuth } from "@/shared/contexts/auth-context";
 import type { Pack } from "@/shared/types/pack";
 import type { PublicUserProfile } from "@/shared/types/user";
 
-vi.mock("@/shared/lib/packs-client");
-vi.mock("@/shared/lib/users-client");
-vi.mock("@/shared/lib/auth-context");
+vi.mock("@/shared/api/packs-client");
+vi.mock("@/shared/api/users-client");
+vi.mock("@/shared/contexts/auth-context");
 
 const { mockPush, mockReplace } = vi.hoisted(() => ({
   mockPush: vi.fn(),

@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import type { Pack } from "@/shared/types/pack";
 import { VersusRound } from "@/features/play/VersusRound";
 import { usePlaySession } from "@/features/play/use-play-session";
@@ -14,7 +14,7 @@ import {
 import { PlayChrome } from "@/features/play/PlayChrome";
 import { PlayRoundHeader } from "@/features/play/PlayRoundHeader";
 import { PlayConfirmBar } from "@/features/play/PlayConfirmBar";
-import { pageContainer } from "@/shared/lib/page-container";
+import { pageContainer } from "@/shared/constants/page-container";
 import { CandidateCard } from "@/features/play/CandidateCard";
 import { PicksSummary } from "@/features/play/PicksSummary";
 import { ResumePlayModal } from "@/features/play/ResumePlayModal";

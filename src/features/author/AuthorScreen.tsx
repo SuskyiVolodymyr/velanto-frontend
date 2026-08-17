@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import { useFollowMutation } from "@/shared/api/follow.mutations";
 import { useRules } from "@/shared/api/rules.queries";
 import { Text } from "@/shared/components/Text";
@@ -23,8 +23,8 @@ import {
   authorQueryOptions,
 } from "./api/author.queries";
 import type { AuthorData } from "./api/author";
-import { cn } from "@/shared/lib/cn";
-import { pageContainer } from "@/shared/lib/page-container";
+import { cn } from "@/shared/utils/cn";
+import { pageContainer } from "@/shared/constants/page-container";
 
 export type { AuthorData };
 

@@ -6,9 +6,9 @@ import { useLocale, useTranslations } from "next-intl";
 import { Button, buttonClassName } from "@/shared/components/Button";
 import { EmptyState } from "@/shared/components/EmptyState";
 import { PlayHistoryToggle } from "@/shared/components/PlayHistoryToggle";
-import { cn } from "@/shared/lib/cn";
-import { packFormatTone } from "@/shared/lib/pack-format-tone";
-import { formatRelativeTimeIntl } from "@/shared/lib/relative-time";
+import { cn } from "@/shared/utils/cn";
+import { packFormatTone } from "@/shared/constants/pack-format-tone";
+import { formatRelativeTimeIntl } from "@/shared/utils/relative-time";
 import { useRecentlyPlayed } from "./api/recently-played.queries";
 
 /**

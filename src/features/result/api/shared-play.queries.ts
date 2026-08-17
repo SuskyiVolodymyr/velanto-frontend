@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { playsClient } from "@/shared/lib/plays-client";
+import { playsClient } from "@/shared/api/plays-client";
 
 /**
  * Resolves a `?play=<id>` result-share link to its recorded picks. Disabled when

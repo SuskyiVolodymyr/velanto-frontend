@@ -15,8 +15,8 @@ import { ChevronDownIcon } from "@/shared/components/icons";
 import { Hidden } from "@/shared/components/Hidden";
 import { UserAvatar } from "@/shared/components/UserAvatar";
 import { Username } from "@/shared/components/Username";
-import { useStreamerModeOrDefault } from "@/shared/lib/streamer-mode-context";
-import { cn } from "@/shared/lib/cn";
+import { useStreamerModeOrDefault } from "@/shared/contexts/streamer-mode-context";
+import { cn } from "@/shared/utils/cn";
 import type { User } from "@/shared/types/user";
 
 // Shared layout for every row in the menu: a leading icon and the label, so the

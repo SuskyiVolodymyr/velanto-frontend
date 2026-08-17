@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { UserAvatar } from "./UserAvatar";
 
-vi.mock("@/shared/lib/media-url", () => ({
+vi.mock("@/shared/utils/media-url", () => ({
   mediaUrl: (key: string) => `https://cdn.test/${key}`,
 }));
 

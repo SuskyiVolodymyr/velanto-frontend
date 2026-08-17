@@ -6,9 +6,9 @@ import { Input } from "@/shared/components/Input";
 import { Dropdown } from "@/shared/components/Dropdown";
 import { Button } from "@/shared/components/Button";
 import { LoadingState } from "@/shared/components/LoadingState";
-import { useAuth } from "@/shared/lib/auth-context";
-import { canActOn } from "@/shared/lib/staff-permissions";
-import type { AdminUserSort } from "@/shared/lib/admin-client";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { canActOn } from "@/shared/utils/staff-permissions";
+import type { AdminUserSort } from "@/shared/api/admin-client";
 import {
   useUsersAdmin,
   isCurrentlyBanned,

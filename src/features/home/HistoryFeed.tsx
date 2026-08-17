@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import { FilterChipRow } from "@/features/home/FilterChipRow";
 import { FormatFilter } from "@/features/home/FormatFilter";
 import { HomePagination } from "@/features/home/HomePagination";

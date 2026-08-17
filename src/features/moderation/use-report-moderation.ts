@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { packsClient } from "@/shared/lib/packs-client";
-import { usersClient, type BanDuration } from "@/shared/lib/users-client";
+import { packsClient } from "@/shared/api/packs-client";
+import { usersClient, type BanDuration } from "@/shared/api/users-client";
 import { useModerationInvalidation } from "@/features/moderation/api/moderation.queries";
 import {
   isBanReasonValid,

@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { Text } from "@/shared/components/Text";
 import { Button } from "@/shared/components/Button";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 
 /**
  * The result aside's ranking card, and the one row shape inside it — the

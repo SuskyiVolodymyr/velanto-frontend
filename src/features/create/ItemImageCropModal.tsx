@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { ImageCropModal } from "@/shared/components/ImageCropModal";
-import { MAX_ITEM_CROP } from "@/shared/lib/crop-image";
+import { MAX_ITEM_CROP } from "@/shared/utils/crop-image";
 
 /**
  * Item-configured {@link ImageCropModal}: a 16:9 rectangular crop matching the

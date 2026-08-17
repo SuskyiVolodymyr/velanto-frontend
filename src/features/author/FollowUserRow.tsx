@@ -6,7 +6,7 @@ import { Button } from "@/shared/components/Button";
 import { Hidden } from "@/shared/components/Hidden";
 import { Username } from "@/shared/components/Username";
 import { UserAvatar } from "@/shared/components/UserAvatar";
-import type { FollowUser } from "@/shared/lib/users-client";
+import type { FollowUser } from "@/shared/api/users-client";
 import { useFollowListRowMutation } from "./api/follow-list.queries";
 
 /**

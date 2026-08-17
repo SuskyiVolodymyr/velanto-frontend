@@ -10,15 +10,15 @@ import { Modal } from "@/shared/components/Modal";
 import { ConfirmModal } from "@/shared/components/ConfirmModal";
 import { Tooltip } from "@/shared/components/Tooltip";
 import { Skeleton } from "@/shared/components/Skeleton";
-import { cn } from "@/shared/lib/cn";
-import { useAuth } from "@/shared/lib/auth-context";
-import { isStaff } from "@/shared/lib/user-role";
+import { cn } from "@/shared/utils/cn";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { isStaff } from "@/shared/utils/user-role";
 import {
   PAT_SCOPES,
   type PatScope,
   type ApiToken,
   type CreatedApiToken,
-} from "@/shared/lib/tokens-client";
+} from "@/shared/api/tokens-client";
 import { SCOPE_KEY } from "./scope-keys";
 import {
   useApiTokens,

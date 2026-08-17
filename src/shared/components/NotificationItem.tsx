@@ -3,9 +3,9 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { describeNotification } from "@/shared/lib/notification-display";
-import { formatRelativeTime } from "@/shared/lib/relative-time";
-import { cn } from "@/shared/lib/cn";
+import { describeNotification } from "@/shared/utils/notification-display";
+import { formatRelativeTime } from "@/shared/utils/relative-time";
+import { cn } from "@/shared/utils/cn";
 import {
   avatarGradient,
   avatarInitial,

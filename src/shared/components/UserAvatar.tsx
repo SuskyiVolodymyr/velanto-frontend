@@ -1,6 +1,6 @@
-import { cn } from "@/shared/lib/cn";
-import { mediaUrl } from "@/shared/lib/media-url";
-import { avatarGradient } from "@/shared/lib/avatar-gradient";
+import { cn } from "@/shared/utils/cn";
+import { mediaUrl } from "@/shared/utils/media-url";
+import { avatarGradient } from "@/shared/utils/avatar-gradient";
 import { AvatarImage } from "./AvatarImage";
 
 /** Canonical UI-kit v1 avatar sizes (diameter / initial font): xs 20, sm 26,

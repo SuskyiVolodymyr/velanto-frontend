@@ -2,7 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import type { PeopleSubTab } from "./AuthorProfileHeader";
 
 export type ProfileTab = "packs" | "people" | "history";

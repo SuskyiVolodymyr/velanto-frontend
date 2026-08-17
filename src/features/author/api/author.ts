@@ -1,5 +1,5 @@
-import { usersClient } from "@/shared/lib/users-client";
-import { packsClient } from "@/shared/lib/packs-client";
+import { usersClient } from "@/shared/api/users-client";
+import { packsClient } from "@/shared/api/packs-client";
 import type { PublicUserProfile } from "@/shared/types/user";
 import type { PackSummary } from "@/shared/types/pack";
 import { AUTHOR_PACKS_PAGE_SIZE } from "./author-packs";

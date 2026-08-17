@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
-import { getRoundsCount } from "@/shared/lib/pack-display";
-import { cn } from "@/shared/lib/cn";
+import { getRoundsCount } from "@/shared/utils/pack-display";
+import { cn } from "@/shared/utils/cn";
 import type { Pack, PackOverview } from "@/shared/types/pack";
 
 // Compact number formatting for the stat tiles: 1_280 -> "1.3k", 128_000 -> "128k".

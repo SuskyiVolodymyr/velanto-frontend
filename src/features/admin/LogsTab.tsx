@@ -1,9 +1,9 @@
 "use client";
-import { formatDateTime } from "@/shared/lib/format-date";
+import { formatDateTime } from "@/shared/utils/format-date";
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import { Text } from "@/shared/components/Text";
 import { Input } from "@/shared/components/Input";
 import { Dropdown } from "@/shared/components/Dropdown";

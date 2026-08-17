@@ -8,9 +8,9 @@ import { Users } from "lucide-react";
 import { Button } from "@/shared/components/Button";
 import { Text } from "@/shared/components/Text";
 import { Tooltip } from "@/shared/components/Tooltip";
-import { useAuth } from "@/shared/lib/auth-context";
-import { ApiError } from "@/shared/lib/api-client";
-import { cn } from "@/shared/lib/cn";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { ApiError } from "@/shared/api/api-client";
+import { cn } from "@/shared/utils/cn";
 import { friendsRoomsClient } from "./friends-rooms-client";
 import { useGuestJoin } from "./use-guest-join";
 

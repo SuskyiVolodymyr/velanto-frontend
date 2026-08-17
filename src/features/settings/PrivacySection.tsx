@@ -7,8 +7,8 @@ import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkel
 import { Text } from "@/shared/components/Text";
 import { SegmentedControl } from "@/shared/components/SegmentedControl";
 import { PlayHistoryToggle } from "@/shared/components/PlayHistoryToggle";
-import { useStreamerMode } from "@/shared/lib/streamer-mode-context";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useStreamerMode } from "@/shared/contexts/streamer-mode-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 
 type ToggleValue = "on" | "off";
 

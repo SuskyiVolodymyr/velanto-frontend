@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import messages from "@/messages/en.json";
 import { generateMetadata } from "./page";
-import { getPackServer } from "@/shared/lib/get-pack-server";
+import { getPackServer } from "@/shared/server/get-pack-server";
 import type { Pack } from "@/shared/types/pack";
 
-vi.mock("@/shared/lib/get-pack-server", () => ({
+vi.mock("@/shared/server/get-pack-server", () => ({
   getPackServer: vi.fn(),
 }));
 

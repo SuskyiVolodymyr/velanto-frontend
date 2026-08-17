@@ -1,12 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useAuth } from "@/shared/lib/auth-context";
-import { playsClient } from "@/shared/lib/plays-client";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { playsClient } from "@/shared/api/plays-client";
 import {
   writeLastPlayPicks,
   writeLastPlayId,
-} from "@/shared/lib/last-play-storage";
+} from "@/shared/utils/last-play-storage";
 import { useRoundSelections } from "@/features/play/use-round-selections";
 import { usePlayResume } from "@/features/play/use-play-resume";
 import type { Item, Pack } from "@/shared/types/pack";

@@ -7,8 +7,8 @@ import { Text } from "@/shared/components/Text";
 import { Skeleton } from "@/shared/components/Skeleton";
 import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
 import { notificationVisual } from "@/shared/components/notification-visual";
-import { cn } from "@/shared/lib/cn";
-import { useAuth } from "@/shared/lib/auth-context";
+import { cn } from "@/shared/utils/cn";
+import { useAuth } from "@/shared/contexts/auth-context";
 import {
   useNotificationPreferences,
   useSetNotificationPreference,

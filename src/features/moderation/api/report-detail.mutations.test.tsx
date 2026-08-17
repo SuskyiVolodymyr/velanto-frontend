@@ -2,16 +2,16 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import type { ReactNode } from "react";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { reportsClient } from "@/shared/lib/reports-client";
-import { moderationClient } from "@/shared/lib/moderation-client";
+import { reportsClient } from "@/shared/api/reports-client";
+import { moderationClient } from "@/shared/api/moderation-client";
 import { useCloseReport, useReviewReport } from "./report-detail.mutations";
 import { moderationCountsQueryOptions } from "./moderation.queries";
 import type { Report } from "@/shared/types/report";
 
-vi.mock("@/shared/lib/reports-client", () => ({
+vi.mock("@/shared/api/reports-client", () => ({
   reportsClient: { review: vi.fn(), close: vi.fn(), list: vi.fn() },
 }));
-vi.mock("@/shared/lib/moderation-client", () => ({
+vi.mock("@/shared/api/moderation-client", () => ({
   moderationClient: { counts: vi.fn() },
 }));
 

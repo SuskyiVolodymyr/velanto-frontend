@@ -2,8 +2,8 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { readLastPlayPicks } from "@/shared/lib/last-play-storage";
-import { decodePicks } from "@/shared/lib/share-url";
+import { readLastPlayPicks } from "@/shared/utils/last-play-storage";
+import { decodePicks } from "@/shared/utils/share-url";
 import { useSharedPlay } from "@/features/result/api/shared-play.queries";
 import type { RecordedPick } from "@/shared/types/play-results";
 

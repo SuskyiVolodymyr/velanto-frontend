@@ -7,7 +7,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { packsClient } from "@/shared/lib/packs-client";
+import { packsClient } from "@/shared/api/packs-client";
 import type { ChangeRequestMark } from "@/shared/types/pack";
 import {
   fetchModerationCounts,

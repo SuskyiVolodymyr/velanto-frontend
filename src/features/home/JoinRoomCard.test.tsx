@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
-import { ApiError } from "@/shared/lib/api-client";
+import { ApiError } from "@/shared/api/api-client";
 import { JoinRoomCard } from "./JoinRoomCard";
 
 const { push } = vi.hoisted(() => ({ push: vi.fn() }));
@@ -12,7 +12,7 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
 const auth = vi.hoisted(() => ({
   current: { user: { id: "u1" } as { id: string } | null },
 }));
-vi.mock("@/shared/lib/auth-context", () => ({
+vi.mock("@/shared/contexts/auth-context", () => ({
   useAuth: () => auth.current,
 }));
 

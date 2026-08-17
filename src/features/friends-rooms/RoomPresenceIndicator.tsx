@@ -3,7 +3,7 @@
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { AvatarStack } from "@/shared/components/AvatarStack";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import { useFriendsRoomsPresence } from "./friends-rooms-presence-context";
 import type { MyRoomSummary } from "./room-types";
 

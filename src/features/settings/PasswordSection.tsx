@@ -8,10 +8,10 @@ import { Card } from "@/shared/components/Card";
 import { Text } from "@/shared/components/Text";
 import { Button } from "@/shared/components/Button";
 import { PasswordField } from "@/shared/components/form/PasswordField";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
-import { authClient } from "@/shared/lib/auth-client";
-import { ApiError } from "@/shared/lib/api-client";
+import { authClient } from "@/shared/api/auth-client";
+import { ApiError } from "@/shared/api/api-client";
 import { SetPasswordSection } from "@/features/settings/SetPasswordSection";
 import {
   changePasswordSchema,

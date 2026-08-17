@@ -4,12 +4,12 @@ import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { FileText } from "lucide-react";
 import type { Item, ItemType, Pack, SlotMode } from "@/shared/types/pack";
-import { cn } from "@/shared/lib/cn";
-import { mediaUrl } from "@/shared/lib/media-url";
+import { cn } from "@/shared/utils/cn";
+import { mediaUrl } from "@/shared/utils/media-url";
 import {
   extractYouTubeId,
   youtubeThumbnailUrl,
-} from "@/shared/lib/youtube";
+} from "@/shared/utils/youtube";
 import { Text } from "@/shared/components/Text";
 import { SearchField } from "@/shared/components/SearchField";
 import { FilterChip } from "@/shared/components/FilterChip";

@@ -9,7 +9,7 @@ import {
 import { Textarea } from "@/shared/components/Textarea";
 import { Text } from "@/shared/components/Text";
 import type { BanReason } from "@/shared/types/rules";
-import type { BanUserInput } from "@/shared/lib/users-client";
+import type { BanUserInput } from "@/shared/api/users-client";
 
 /** Max length of the free-text ban detail — mirrors the backend's cap. */
 export const REASON_DETAIL_MAX = 500;

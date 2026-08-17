@@ -2,8 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { useQuery } from "@tanstack/react-query";
-import { packsClient } from "@/shared/lib/packs-client";
-import { adminClient } from "@/shared/lib/admin-client";
+import { packsClient } from "@/shared/api/packs-client";
+import { adminClient } from "@/shared/api/admin-client";
 import { Text } from "@/shared/components/Text";
 import { LoadingState } from "@/shared/components/LoadingState";
 import { PackContentsPreview } from "@/features/moderation/PackContentsPreview";

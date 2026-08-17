@@ -3,10 +3,10 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { MobileAccountScreen } from "./MobileAccountScreen";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import type { User } from "@/shared/types/user";
 
-vi.mock("@/shared/lib/auth-context");
+vi.mock("@/shared/contexts/auth-context");
 const replace = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ replace }) }));
 

@@ -1,5 +1,5 @@
-import { packsClient } from "@/shared/lib/packs-client";
-import { moderationClient } from "@/shared/lib/moderation-client";
+import { packsClient } from "@/shared/api/packs-client";
+import { moderationClient } from "@/shared/api/moderation-client";
 import type { PackFormat } from "@/shared/types/pack";
 
 /** Both tabs page at the same size, so the two tables line up visually. */

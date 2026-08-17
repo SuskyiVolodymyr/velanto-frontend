@@ -5,8 +5,8 @@ import {
   type LegalSection,
 } from "@/features/legal/LegalScreen";
 import { LEGAL_LAST_UPDATED } from "@/features/legal/legal-meta";
-import { buildOpenGraph } from "@/shared/lib/open-graph";
-import { SITE_URL } from "@/shared/lib/site-url";
+import { buildOpenGraph } from "@/shared/utils/open-graph";
+import { SITE_URL } from "@/shared/constants/site-url";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("terms");

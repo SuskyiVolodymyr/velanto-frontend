@@ -5,8 +5,8 @@ import { ImageCard } from "@/shared/components/ImageCard";
 import {
   extractYouTubeId,
   extractYouTubeStart,
-} from "@/shared/lib/youtube";
-import { mediaUrl } from "@/shared/lib/media-url";
+} from "@/shared/utils/youtube";
+import { mediaUrl } from "@/shared/utils/media-url";
 import type { Item } from "@/shared/types/pack";
 
 /**

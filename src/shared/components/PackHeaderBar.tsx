@@ -4,7 +4,7 @@ import { CoverImage } from "@/shared/components/CoverImage";
 import { Text } from "@/shared/components/Text";
 import { SidebarToggle } from "@/shared/components/SidebarToggle";
 import { HeaderUserCluster } from "@/shared/components/HeaderUserCluster";
-import { STICKY_HEADER_SHELL_CLASS } from "@/shared/lib/sticky-header-shell";
+import { STICKY_HEADER_SHELL_CLASS } from "@/shared/constants/sticky-header-shell";
 import type { Pack } from "@/shared/types/pack";
 
 export interface PackHeaderBarProps {

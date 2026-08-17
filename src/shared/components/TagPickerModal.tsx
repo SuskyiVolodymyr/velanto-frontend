@@ -7,7 +7,7 @@ import type { PackTag } from "@/shared/types/pack";
 import { Modal } from "@/shared/components/Modal";
 import { Button } from "@/shared/components/Button";
 import { Text } from "@/shared/components/Text";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 
 export interface TagPickerModalProps {
   open: boolean;

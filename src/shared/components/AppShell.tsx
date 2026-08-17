@@ -16,11 +16,11 @@ import { SiteFooter } from "@/shared/components/SiteFooter";
 import { MobileBottomNav } from "@/shared/components/MobileBottomNav";
 import { RoomPresenceIndicator } from "@/features/friends-rooms/RoomPresenceIndicator";
 import { SearchQueryProvider } from "@/features/home/search-query-context";
-import { SidebarProvider } from "@/shared/lib/sidebar-context";
-import { PlayFocusProvider } from "@/shared/lib/play-focus-context";
-import { setPreviousPath } from "@/shared/lib/in-app-history";
-import { cn } from "@/shared/lib/cn";
-import { usePresenceBeacon } from "@/shared/lib/presence-beacon";
+import { SidebarProvider } from "@/shared/contexts/sidebar-context";
+import { PlayFocusProvider } from "@/shared/contexts/play-focus-context";
+import { setPreviousPath } from "@/shared/utils/in-app-history";
+import { cn } from "@/shared/utils/cn";
+import { usePresenceBeacon } from "@/shared/hooks/presence-beacon";
 
 // Routes that render full-screen without ANY app chrome (sidebar/top bar/nav).
 // Currently just /auth, whose design is a standalone split screen with its own

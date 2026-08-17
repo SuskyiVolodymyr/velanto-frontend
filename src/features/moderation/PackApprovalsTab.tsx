@@ -12,8 +12,8 @@ import { Dropdown } from "@/shared/components/Dropdown";
 import { LoadingState } from "@/shared/components/LoadingState";
 import { DataTable, DataTableRow } from "@/shared/components/DataTable";
 import { TablePagination } from "@/shared/components/TablePagination";
-import { FORMAT_LABELS, formatLabel } from "@/shared/lib/pack-display";
-import { formatRelativeTimeIntl } from "@/shared/lib/relative-time";
+import { FORMAT_LABELS, formatLabel } from "@/shared/utils/pack-display";
+import { formatRelativeTimeIntl } from "@/shared/utils/relative-time";
 import { PACK_FORMATS } from "@/shared/types/pack";
 import {
   usePackQueue,

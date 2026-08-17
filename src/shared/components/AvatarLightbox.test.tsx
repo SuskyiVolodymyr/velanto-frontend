@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { AvatarLightbox } from "./AvatarLightbox";
 
-vi.mock("@/shared/lib/media-url", () => ({
+vi.mock("@/shared/utils/media-url", () => ({
   mediaUrl: (key: string) => `https://cdn.test/${key}`,
 }));
 

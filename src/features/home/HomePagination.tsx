@@ -5,7 +5,7 @@ import {
   ChevronRightIcon,
 } from "@/shared/components/icons";
 import { useTranslations } from "next-intl";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import { buildPaginationRange } from "@/features/home/pagination-range";
 
 /** The "Showing X–Y of Z packs" range shown beside the pager on the browse feed. */

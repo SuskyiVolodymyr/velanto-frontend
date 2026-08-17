@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Text } from "@/shared/components/Text";
-import { formatDate } from "@/shared/lib/format-date";
+import { formatDate } from "@/shared/utils/format-date";
 import { Hidden } from "@/shared/components/Hidden";
 import { Username } from "@/shared/components/Username";
 import { UserAvatar } from "@/shared/components/UserAvatar";

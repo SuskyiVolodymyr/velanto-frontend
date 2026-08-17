@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import { Text } from "@/shared/components/Text";
 import { Button } from "@/shared/components/Button";
 import { PageHeader } from "@/shared/components/PageHeader";
@@ -18,8 +18,8 @@ import {
   useReviewReport,
   useCloseReport,
 } from "@/features/moderation/api/report-detail.mutations";
-import { cn } from "@/shared/lib/cn";
-import { pageContainer } from "@/shared/lib/page-container";
+import { cn } from "@/shared/utils/cn";
+import { pageContainer } from "@/shared/constants/page-container";
 
 export function ReportDetailScreen({ reportId }: { reportId: string }) {
   const t = useTranslations("moderation");

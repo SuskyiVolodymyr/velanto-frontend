@@ -1,6 +1,6 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
-import { usersClient } from "@/shared/lib/users-client";
-import { useRefetchOnSignIn } from "@/shared/lib/use-refetch-on-sign-in";
+import { usersClient } from "@/shared/api/users-client";
+import { useRefetchOnSignIn } from "@/shared/hooks/use-refetch-on-sign-in";
 import { getAuthor, type AuthorData } from "./author";
 
 export function authorQueryOptions(authorId: string) {

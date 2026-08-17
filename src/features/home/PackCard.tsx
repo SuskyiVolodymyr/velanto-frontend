@@ -13,10 +13,10 @@ import { UserAvatar } from "@/shared/components/UserAvatar";
 import { Username } from "@/shared/components/Username";
 import { Text } from "@/shared/components/Text";
 import { Tooltip } from "@/shared/components/Tooltip";
-import { formatRelativeTimeIntl } from "@/shared/lib/relative-time";
+import { formatRelativeTimeIntl } from "@/shared/utils/relative-time";
 import { isHotPack } from "@/features/home/hot-pack";
-import { useAuth } from "@/shared/lib/auth-context";
-import { cn } from "@/shared/lib/cn";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { cn } from "@/shared/utils/cn";
 import { friendsRoomsClient } from "@/features/friends-rooms/friends-rooms-client";
 import { type PackSummary } from "@/shared/types/pack";
 

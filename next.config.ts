@@ -2,7 +2,7 @@ import path from "path";
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import { withSentryConfig } from "@sentry/nextjs";
-import { securityHeaders } from "./src/shared/lib/security-headers";
+import { securityHeaders } from "./src/shared/utils/security-headers";
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 

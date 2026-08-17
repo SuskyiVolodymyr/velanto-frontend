@@ -3,12 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/shared/lib/auth-context";
-import { playsClient } from "@/shared/lib/plays-client";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { playsClient } from "@/shared/api/plays-client";
 import {
   writeLastPlayId,
   writeLastPlayPicks,
-} from "@/shared/lib/last-play-storage";
+} from "@/shared/utils/last-play-storage";
 import { useRoundSelections } from "@/features/play/use-round-selections";
 import { usePlayResume } from "@/features/play/use-play-resume";
 import { HeadToHeadRound } from "@/features/play/HeadToHeadRound";
@@ -25,8 +25,8 @@ import {
 // inside this module.
 import type { Pick as SessionPick } from "@/features/play/use-play-session";
 import { LoadingState } from "@/shared/components/LoadingState";
-import { pageContainer } from "@/shared/lib/page-container";
-import { cn } from "@/shared/lib/cn";
+import { pageContainer } from "@/shared/constants/page-container";
+import { cn } from "@/shared/utils/cn";
 import type { Pack } from "@/shared/types/pack";
 import type { RecordedPick } from "@/shared/types/play-results";
 

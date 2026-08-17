@@ -10,11 +10,11 @@ import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { pickFromDropdown } from "@/shared/test/pick-from-dropdown";
 import { CreatePackForm } from "./CreatePackForm";
-import { AuthProvider } from "@/shared/lib/auth-context";
-import { authClient } from "@/shared/lib/auth-client";
-import { packsClient } from "@/shared/lib/packs-client";
-import { uploadMedia } from "@/shared/lib/media-client";
-import { ApiError } from "@/shared/lib/api-client";
+import { AuthProvider } from "@/shared/contexts/auth-context";
+import { authClient } from "@/shared/api/auth-client";
+import { packsClient } from "@/shared/api/packs-client";
+import { uploadMedia } from "@/shared/api/media-client";
+import { ApiError } from "@/shared/api/api-client";
 import type { Pack } from "@/shared/types/pack";
 import {
   PACK_LANGUAGES,
@@ -38,7 +38,7 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/create",
 }));
 
-vi.mock("@/shared/lib/auth-client", () => ({
+vi.mock("@/shared/api/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),
@@ -48,9 +48,9 @@ vi.mock("@/shared/lib/auth-client", () => ({
   },
 }));
 
-vi.mock("@/shared/lib/media-client", async (importOriginal) => {
+vi.mock("@/shared/api/media-client", async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import("@/shared/lib/media-client")>();
+    await importOriginal<typeof import("@/shared/api/media-client")>();
   return { ...actual, uploadMedia: vi.fn() };
 });
 
@@ -62,7 +62,7 @@ function imageFile() {
   return file;
 }
 
-vi.mock("@/shared/lib/packs-client", () => ({
+vi.mock("@/shared/api/packs-client", () => ({
   packsClient: {
     create: vi.fn(),
     update: vi.fn(),

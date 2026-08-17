@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { NotificationsBell } from "@/shared/components/NotificationsBell";
 import { UserMenu } from "@/shared/components/UserMenu";
 import { buttonClassName } from "@/shared/components/Button";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 
 /**
  * The account controls — notifications bell and user popup — for pages that

@@ -5,8 +5,8 @@ import { useTranslations } from "next-intl";
 import { Card } from "@/shared/components/Card";
 import { Text } from "@/shared/components/Text";
 import { SegmentedControl } from "@/shared/components/SegmentedControl";
-import { cn } from "@/shared/lib/cn";
-import { useAuth } from "@/shared/lib/auth-context";
+import { cn } from "@/shared/utils/cn";
+import { useAuth } from "@/shared/contexts/auth-context";
 import {
   useMyProfile,
   useSetPlayHistory,

@@ -6,7 +6,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { notificationsClient } from "@/shared/lib/notifications-client";
+import { notificationsClient } from "@/shared/api/notifications-client";
 import type {
   NotificationPreferences,
   NotificationType,

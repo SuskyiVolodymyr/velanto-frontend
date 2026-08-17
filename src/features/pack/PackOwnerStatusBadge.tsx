@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import { StatusBadge } from "@/shared/components/StatusBadge";
 import type { PackStatus } from "@/shared/types/pack";
 

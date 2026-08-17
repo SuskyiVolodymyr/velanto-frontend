@@ -7,14 +7,14 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Text } from "@/shared/components/Text";
 import { Button } from "@/shared/components/Button";
 import { PageHeader } from "@/shared/components/PageHeader";
-import { useAuth } from "@/shared/lib/auth-context";
-import { cn } from "@/shared/lib/cn";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { cn } from "@/shared/utils/cn";
 import { IdentityPillBadge } from "@/shared/components/IdentityPillBadge";
 import { OverviewTab } from "@/features/admin/OverviewTab";
 import { StaffTab } from "@/features/admin/StaffTab";
 import { UsersTab } from "@/features/admin/UsersTab";
 import { LogsTab } from "@/features/admin/LogsTab";
-import { pageContainer } from "@/shared/lib/page-container";
+import { pageContainer } from "@/shared/constants/page-container";
 
 type Tab = "overview" | "staff" | "users" | "logs";
 

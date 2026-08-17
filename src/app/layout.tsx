@@ -3,14 +3,14 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
 import { isRtl, type Locale } from "@/i18n/config";
-import { AuthProvider } from "@/shared/lib/auth-context";
-import { StreamerModeProvider } from "@/shared/lib/streamer-mode-context";
+import { AuthProvider } from "@/shared/contexts/auth-context";
+import { StreamerModeProvider } from "@/shared/contexts/streamer-mode-context";
 import { FriendsRoomsPresenceProvider } from "@/features/friends-rooms/friends-rooms-presence-context";
-import { QueryProvider } from "@/shared/lib/query-provider";
+import { QueryProvider } from "@/shared/contexts/query-provider";
 import { AppShell } from "@/shared/components/AppShell";
-import { getThemeInitScript } from "@/shared/lib/theme";
-import { getStreamerModeInitScript } from "@/shared/lib/streamer-mode";
-import { SITE_URL } from "@/shared/lib/site-url";
+import { getThemeInitScript } from "@/shared/utils/theme";
+import { getStreamerModeInitScript } from "@/shared/utils/streamer-mode";
+import { SITE_URL } from "@/shared/constants/site-url";
 import "./globals.css";
 
 const geistSans = Geist({

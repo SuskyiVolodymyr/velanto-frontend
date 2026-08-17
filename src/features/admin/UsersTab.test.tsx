@@ -7,18 +7,18 @@ import { pickFromDropdown } from "@/shared/test/pick-from-dropdown";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { UsersTab } from "./UsersTab";
-import { AuthProvider } from "@/shared/lib/auth-context";
-import { formatDate } from "@/shared/lib/format-date";
-import { StreamerModeProvider } from "@/shared/lib/streamer-mode-context";
-import { authClient } from "@/shared/lib/auth-client";
-import { adminClient } from "@/shared/lib/admin-client";
-import { usersClient } from "@/shared/lib/users-client";
-import { rulesClient } from "@/shared/lib/rules-client";
+import { AuthProvider } from "@/shared/contexts/auth-context";
+import { formatDate } from "@/shared/utils/format-date";
+import { StreamerModeProvider } from "@/shared/contexts/streamer-mode-context";
+import { authClient } from "@/shared/api/auth-client";
+import { adminClient } from "@/shared/api/admin-client";
+import { usersClient } from "@/shared/api/users-client";
+import { rulesClient } from "@/shared/api/rules-client";
 import type { User } from "@/shared/types/user";
 import type { AdminUserRow } from "@/shared/types/admin";
 import type { RulesDocument } from "@/shared/types/rules";
 
-vi.mock("@/shared/lib/auth-client", () => ({
+vi.mock("@/shared/api/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),
@@ -27,10 +27,10 @@ vi.mock("@/shared/lib/auth-client", () => ({
     refresh: vi.fn(),
   },
 }));
-vi.mock("@/shared/lib/admin-client", () => ({
+vi.mock("@/shared/api/admin-client", () => ({
   adminClient: { listUsers: vi.fn() },
 }));
-vi.mock("@/shared/lib/users-client", () => ({
+vi.mock("@/shared/api/users-client", () => ({
   usersClient: {
     ban: vi.fn(),
     unban: vi.fn(),
@@ -38,7 +38,7 @@ vi.mock("@/shared/lib/users-client", () => ({
     changeRole: vi.fn(),
   },
 }));
-vi.mock("@/shared/lib/rules-client", () => ({
+vi.mock("@/shared/api/rules-client", () => ({
   rulesClient: { getRules: vi.fn() },
 }));
 

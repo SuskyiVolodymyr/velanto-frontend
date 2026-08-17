@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Text } from "@/shared/components/Text";
 import { UserAvatar } from "@/shared/components/UserAvatar";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import type { Item, Pack } from "@/shared/types/pack";
 import type {
   BordaRoundResult,

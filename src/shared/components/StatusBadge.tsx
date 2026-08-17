@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
-import { cn } from "@/shared/lib/cn";
-import { REPORT_STATUS_BADGE_CLASS } from "@/shared/lib/report-display";
+import { cn } from "@/shared/utils/cn";
+import { REPORT_STATUS_BADGE_CLASS } from "@/shared/utils/report-display";
 import type { PackStatus } from "@/shared/types/pack";
 import type { FeedbackStatus } from "@/shared/types/feedback";
 import type { ReportStatus } from "@/shared/types/report";

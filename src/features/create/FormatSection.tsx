@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import type { PackFormat } from "@/shared/types/pack";
 import { Text } from "@/shared/components/Text";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import { StepHeader } from "@/features/create/StepHeader";
 import { FormatGlyph, FORMAT_HUE } from "@/features/create/FormatGlyph";
 import { type CreatePackValues } from "@/features/create/create-pack.schema";

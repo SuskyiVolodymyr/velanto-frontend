@@ -7,10 +7,10 @@ import { Lightbulb } from "lucide-react";
 import { Text } from "@/shared/components/Text";
 import { buttonClassName } from "@/shared/components/Button";
 import { PageHeader } from "@/shared/components/PageHeader";
-import { formatDate } from "@/shared/lib/format-date";
-import { cn } from "@/shared/lib/cn";
+import { formatDate } from "@/shared/utils/format-date";
+import { cn } from "@/shared/utils/cn";
 import type { UpdateEntry } from "./updates-data";
-import { pageContainer } from "@/shared/lib/page-container";
+import { pageContainer } from "@/shared/constants/page-container";
 
 /**
  * Cap on visible bullets per entry before a "Show N more" toggle takes over —

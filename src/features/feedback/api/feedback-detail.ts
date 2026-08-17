@@ -1,4 +1,4 @@
-import { feedbackClient } from "@/shared/lib/feedback-client";
+import { feedbackClient } from "@/shared/api/feedback-client";
 import type { Feedback } from "@/shared/types/feedback";
 
 /** Fetch function (no React) for a single feedback post. */

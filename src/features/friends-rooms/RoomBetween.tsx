@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Text } from "@/shared/components/Text";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import type { Pack } from "@/shared/types/pack";
 import type { RoomPlayerState, RoomState } from "./room-types";
 import { BetweenNextButton } from "./BetweenNextButton";

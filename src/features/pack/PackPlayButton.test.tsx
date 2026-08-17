@@ -3,10 +3,10 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { PackPlayButton } from "./PackPlayButton";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import { consumePlayIntent } from "@/features/play/play-intent-storage";
 
-vi.mock("@/shared/lib/auth-context");
+vi.mock("@/shared/contexts/auth-context");
 
 const mockedUseAuth = vi.mocked(useAuth);
 

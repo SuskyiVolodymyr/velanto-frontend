@@ -3,11 +3,11 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { SetPasswordSection } from "./SetPasswordSection";
-import { authClient } from "@/shared/lib/auth-client";
-import { useAuth } from "@/shared/lib/auth-context";
+import { authClient } from "@/shared/api/auth-client";
+import { useAuth } from "@/shared/contexts/auth-context";
 
-vi.mock("@/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
-vi.mock("@/shared/lib/auth-client", () => ({
+vi.mock("@/shared/contexts/auth-context", () => ({ useAuth: vi.fn() }));
+vi.mock("@/shared/api/auth-client", () => ({
   authClient: { setPassword: vi.fn() },
 }));
 

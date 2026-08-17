@@ -10,8 +10,8 @@ import {
   type InfiniteData,
 } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/lib/auth-context";
-import { notificationsClient } from "@/shared/lib/notifications-client";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { notificationsClient } from "@/shared/api/notifications-client";
 import type { NotificationList } from "@/shared/types/notification";
 
 const LIST_KEY = ["notifications-list"] as const;

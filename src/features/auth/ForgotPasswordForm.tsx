@@ -10,7 +10,7 @@ import { Button } from "@/shared/components/Button";
 import { TextField } from "@/shared/components/form/TextField";
 import { PasswordField } from "@/shared/components/form/PasswordField";
 import { FormBanner } from "@/shared/components/form/FormBanner";
-import { authClient } from "@/shared/lib/auth-client";
+import { authClient } from "@/shared/api/auth-client";
 import {
   resetPasswordSchema,
   type ResetPasswordValues,

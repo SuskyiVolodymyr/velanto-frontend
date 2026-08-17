@@ -2,10 +2,10 @@
 
 import { useId, useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/lib/auth-context";
-import { useStreamerModeOrDefault } from "@/shared/lib/streamer-mode-context";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { useStreamerModeOrDefault } from "@/shared/contexts/streamer-mode-context";
 import { useFollowMutation } from "@/shared/api/follow.mutations";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 import {
   usePackAuthor,
   packAuthorQueryOptions,

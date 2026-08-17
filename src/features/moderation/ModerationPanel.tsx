@@ -6,13 +6,13 @@ import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { Text } from "@/shared/components/Text";
 import { Button } from "@/shared/components/Button";
 import { PageHeader } from "@/shared/components/PageHeader";
-import { useAuth } from "@/shared/lib/auth-context";
-import { cn } from "@/shared/lib/cn";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { cn } from "@/shared/utils/cn";
 import { IdentityPillBadge } from "@/shared/components/IdentityPillBadge";
 import { ReportsTab } from "@/features/moderation/ReportsTab";
 import { PackApprovalsTab } from "@/features/moderation/PackApprovalsTab";
 import { useModerationCounts } from "@/features/moderation/api/moderation.queries";
-import { pageContainer } from "@/shared/lib/page-container";
+import { pageContainer } from "@/shared/constants/page-container";
 
 const TABS = ["reports", "packs"] as const;
 type Tab = (typeof TABS)[number];

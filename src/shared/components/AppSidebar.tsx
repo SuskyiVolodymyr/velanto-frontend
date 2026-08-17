@@ -12,11 +12,11 @@ import {
   RulesIcon,
   type IconProps,
 } from "@/shared/components/icons";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import { BrandMark } from "@/shared/components/BrandMark";
 import { Text } from "@/shared/components/Text";
 import { SidebarRoomPill } from "@/shared/components/SidebarRoomPill";
-import { cn } from "@/shared/lib/cn";
+import { cn } from "@/shared/utils/cn";
 
 interface NavItem {
   key: string;

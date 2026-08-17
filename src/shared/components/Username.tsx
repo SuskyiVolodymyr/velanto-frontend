@@ -1,5 +1,5 @@
-import { cn } from "@/shared/lib/cn";
-import { nicknameClass } from "@/shared/lib/user-role";
+import { cn } from "@/shared/utils/cn";
+import { nicknameClass } from "@/shared/utils/user-role";
 import { IdentityPillBadge } from "@/shared/components/IdentityPillBadge";
 import type { Role } from "@/shared/types/user";
 

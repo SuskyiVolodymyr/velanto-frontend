@@ -6,7 +6,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { PlayIcon } from "@/shared/components/icons";
 import { CoverImage } from "@/shared/components/CoverImage";
 import { Text } from "@/shared/components/Text";
-import { formatRelativeTimeIntl } from "@/shared/lib/relative-time";
+import { formatRelativeTimeIntl } from "@/shared/utils/relative-time";
 import {
   listPlayResumes,
   type PlayResumeRecord,

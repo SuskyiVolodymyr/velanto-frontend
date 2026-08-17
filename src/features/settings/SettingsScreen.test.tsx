@@ -8,9 +8,9 @@ import { render, screen, within } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { SettingsScreen } from "./SettingsScreen";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 
-vi.mock("@/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
+vi.mock("@/shared/contexts/auth-context", () => ({ useAuth: vi.fn() }));
 
 vi.mock("@/features/settings/LanguageSection", () => ({
   LanguageSection: () => <div>Language section stub</div>,

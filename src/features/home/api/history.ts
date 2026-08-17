@@ -1,5 +1,5 @@
-import { usersClient } from "@/shared/lib/users-client";
-import type { PackList } from "@/shared/lib/packs-client";
+import { usersClient } from "@/shared/api/users-client";
+import type { PackList } from "@/shared/api/packs-client";
 import type { PackFormat, RecentlyPlayedPack } from "@/shared/types/pack";
 
 /**

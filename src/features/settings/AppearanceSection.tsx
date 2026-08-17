@@ -11,7 +11,7 @@ import {
   DEFAULT_ACCENT,
   getStoredAccent,
   setStoredAccent,
-} from "@/shared/lib/theme";
+} from "@/shared/utils/theme";
 
 export function AppearanceSection() {
   const t = useTranslations("settings");

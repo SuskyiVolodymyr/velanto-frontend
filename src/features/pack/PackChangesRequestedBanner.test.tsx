@@ -7,7 +7,7 @@ import type { User } from "@/shared/types/user";
 import { toOverview } from "@/shared/test/pack-overview";
 
 let currentUser: User | null;
-vi.mock("@/shared/lib/auth-context", () => ({
+vi.mock("@/shared/contexts/auth-context", () => ({
   useAuth: () => ({ user: currentUser }),
 }));
 

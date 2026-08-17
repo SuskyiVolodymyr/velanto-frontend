@@ -1,22 +1,22 @@
 "use client";
-import { formatDate, formatDateTime } from "@/shared/lib/format-date";
+import { formatDate, formatDateTime } from "@/shared/utils/format-date";
 
 import { useTranslations } from "next-intl";
 import { Text } from "@/shared/components/Text";
 import { Button } from "@/shared/components/Button";
 import { Dropdown } from "@/shared/components/Dropdown";
 import { LoadingState } from "@/shared/components/LoadingState";
-import { BAN_DURATIONS } from "@/shared/lib/ban-durations";
+import { BAN_DURATIONS } from "@/shared/constants/ban-durations";
 import {
   BanReasonPicker,
   isBanReasonValid,
 } from "@/shared/components/BanReasonPicker";
-import { resolveBanReasonTitle } from "@/shared/lib/ban-reason-title";
+import { resolveBanReasonTitle } from "@/shared/utils/ban-reason-title";
 import type { UseQueryResult } from "@tanstack/react-query";
 import type {
   BanHistoryPage,
   BanDuration,
-} from "@/shared/lib/users-client";
+} from "@/shared/api/users-client";
 import type { RuleCategory } from "@/shared/types/rules";
 import type { AuthorModeration } from "./use-author-moderation";
 

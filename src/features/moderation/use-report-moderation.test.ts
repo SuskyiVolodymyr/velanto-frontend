@@ -6,14 +6,14 @@ import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { createTestQueryClient } from "@/shared/test/test-query-client";
 import { useReportModeration } from "./use-report-moderation";
-import { packsClient } from "@/shared/lib/packs-client";
-import { usersClient } from "@/shared/lib/users-client";
+import { packsClient } from "@/shared/api/packs-client";
+import { usersClient } from "@/shared/api/users-client";
 import type { ReportWithReporter } from "@/shared/types/report";
 
-vi.mock("@/shared/lib/packs-client", () => ({
+vi.mock("@/shared/api/packs-client", () => ({
   packsClient: { delete: vi.fn() },
 }));
-vi.mock("@/shared/lib/users-client", () => ({
+vi.mock("@/shared/api/users-client", () => ({
   usersClient: { ban: vi.fn() },
 }));
 

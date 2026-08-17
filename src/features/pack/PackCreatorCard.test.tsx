@@ -9,18 +9,18 @@ import { createTestQueryClient } from "@/shared/test/test-query-client";
 import {
   StreamerModeProvider,
   useStreamerMode,
-} from "@/shared/lib/streamer-mode-context";
+} from "@/shared/contexts/streamer-mode-context";
 import { PackCreatorCard } from "./PackCreatorCard";
-import { usersClient } from "@/shared/lib/users-client";
-import { packsClient } from "@/shared/lib/packs-client";
-import { useAuth } from "@/shared/lib/auth-context";
+import { usersClient } from "@/shared/api/users-client";
+import { packsClient } from "@/shared/api/packs-client";
+import { useAuth } from "@/shared/contexts/auth-context";
 import type { Pack } from "@/shared/types/pack";
 import type { User } from "@/shared/types/user";
 import { useEffect } from "react";
 
-vi.mock("@/shared/lib/users-client");
-vi.mock("@/shared/lib/packs-client");
-vi.mock("@/shared/lib/auth-context");
+vi.mock("@/shared/api/users-client");
+vi.mock("@/shared/api/packs-client");
+vi.mock("@/shared/contexts/auth-context");
 
 const push = vi.fn();
 vi.mock("next/navigation", () => ({

@@ -2,12 +2,12 @@ import { render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
-import { useAuth } from "@/shared/lib/auth-context";
+import { useAuth } from "@/shared/contexts/auth-context";
 import { ProfileRedirect } from "./ProfileRedirect";
 
 const replace = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ replace }) }));
-vi.mock("@/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
+vi.mock("@/shared/contexts/auth-context", () => ({ useAuth: vi.fn() }));
 
 function setAuth(
   status: "loading" | "authenticated" | "unauthenticated",

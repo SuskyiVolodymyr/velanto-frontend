@@ -8,8 +8,8 @@ import type { DropdownOption } from "@/shared/components/Dropdown";
 import { Tooltip } from "@/shared/components/Tooltip";
 import { CommentAction } from "@/shared/components/CommentCard";
 import type { CommentRowVariant } from "@/shared/components/CommentCard";
-import { useAuth } from "@/shared/lib/auth-context";
-import { REPORT_REASON_LABELS } from "@/shared/lib/report-reasons";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { REPORT_REASON_LABELS } from "@/shared/constants/report-reasons";
 
 const USER_REPORT_REASONS = Object.keys(REPORT_REASON_LABELS.user);
 

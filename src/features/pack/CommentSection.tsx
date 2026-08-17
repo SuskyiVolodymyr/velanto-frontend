@@ -27,15 +27,15 @@ import { Username } from "@/shared/components/Username";
 import { UserAvatar } from "@/shared/components/UserAvatar";
 import { Tooltip } from "@/shared/components/Tooltip";
 import { VoteControl } from "@/shared/components/VoteControl";
-import { useAuth } from "@/shared/lib/auth-context";
-import { isStaff } from "@/shared/lib/user-role";
-import { cn } from "@/shared/lib/cn";
-import { formatRelativeTimeIntl } from "@/shared/lib/relative-time";
-import { messageFromError } from "@/shared/lib/messageFromError";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { isStaff } from "@/shared/utils/user-role";
+import { cn } from "@/shared/utils/cn";
+import { formatRelativeTimeIntl } from "@/shared/utils/relative-time";
+import { messageFromError } from "@/shared/utils/messageFromError";
 import {
   commentsClient,
   type CommentSort,
-} from "@/shared/lib/comments-client";
+} from "@/shared/api/comments-client";
 import type { Comment } from "@/shared/types/comment";
 import {
   usePackComments,

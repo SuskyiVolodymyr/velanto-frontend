@@ -8,10 +8,10 @@ import {
   OAuthProviderIcon,
   OAUTH_BRAND_CLASS,
 } from "@/shared/components/oauth-branding";
-import { useAuth } from "@/shared/lib/auth-context";
-import { authClient, type OAuthProviders } from "@/shared/lib/auth-client";
-import { openOAuthPopup } from "@/shared/lib/oauth-popup";
-import { cn } from "@/shared/lib/cn";
+import { useAuth } from "@/shared/contexts/auth-context";
+import { authClient, type OAuthProviders } from "@/shared/api/auth-client";
+import { openOAuthPopup } from "@/shared/utils/oauth-popup";
+import { cn } from "@/shared/utils/cn";
 import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
 
 const PROVIDERS = [

@@ -3,10 +3,10 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { ReportsTab } from "./ReportsTab";
-import { reportsClient } from "@/shared/lib/reports-client";
+import { reportsClient } from "@/shared/api/reports-client";
 import type { ReportWithReporter } from "@/shared/types/report";
 
-vi.mock("@/shared/lib/reports-client", () => ({
+vi.mock("@/shared/api/reports-client", () => ({
   reportsClient: { list: vi.fn() },
 }));
 

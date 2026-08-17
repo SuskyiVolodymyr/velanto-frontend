@@ -3,12 +3,12 @@ import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { FeedbackScreen } from "./FeedbackScreen";
-import { feedbackClient } from "@/shared/lib/feedback-client";
-import { useAuth } from "@/shared/lib/auth-context";
+import { feedbackClient } from "@/shared/api/feedback-client";
+import { useAuth } from "@/shared/contexts/auth-context";
 import type { Feedback } from "@/shared/types/feedback";
 
-vi.mock("@/shared/lib/feedback-client");
-vi.mock("@/shared/lib/auth-context");
+vi.mock("@/shared/api/feedback-client");
+vi.mock("@/shared/contexts/auth-context");
 
 const push = vi.fn();
 vi.mock("next/navigation", () => ({

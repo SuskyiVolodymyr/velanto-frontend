@@ -4,12 +4,12 @@ import { useTranslations } from "next-intl";
 import { Text } from "@/shared/components/Text";
 import { Button } from "@/shared/components/Button";
 import { Dropdown } from "@/shared/components/Dropdown";
-import { BAN_DURATIONS } from "@/shared/lib/ban-durations";
+import { BAN_DURATIONS } from "@/shared/constants/ban-durations";
 import {
   BanReasonPicker,
   isBanReasonValid,
 } from "@/shared/components/BanReasonPicker";
-import type { BanDuration } from "@/shared/lib/users-client";
+import type { BanDuration } from "@/shared/api/users-client";
 import type { ReportWithReporter } from "@/shared/types/report";
 import type { useReportModeration } from "@/features/moderation/use-report-moderation";
 

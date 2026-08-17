@@ -4,8 +4,8 @@ import { HomeFeed } from "@/features/home/HomeFeed";
 import { DashboardHero } from "@/features/home/DashboardHero";
 import { ContinuePlayingRail } from "@/features/home/ContinuePlayingRail";
 import { getHomeFeedServer } from "@/features/home/get-home-feed-server";
-import { cn } from "@/shared/lib/cn";
-import { PAGE_CONTAINER_FULL } from "@/shared/lib/page-container";
+import { cn } from "@/shared/utils/cn";
+import { PAGE_CONTAINER_FULL } from "@/shared/constants/page-container";
 
 /** Reads a single `q` value from the (possibly repeated/absent) search param. */
 function readQuery(q: string | string[] | undefined): string {

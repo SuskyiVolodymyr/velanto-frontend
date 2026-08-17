@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { getPackServer } from "@/shared/lib/get-pack-server";
+import { getPackServer } from "@/shared/server/get-pack-server";
 import { ResultScreen } from "@/features/result/ResultScreen";
 import { ResultFallback } from "@/features/result/ResultFallback";
 

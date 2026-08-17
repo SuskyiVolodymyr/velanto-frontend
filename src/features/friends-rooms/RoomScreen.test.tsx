@@ -35,7 +35,7 @@ vi.mock("./use-friends-room", () => ({
   useFriendsRoom: () => room,
 }));
 
-vi.mock("@/shared/lib/auth-context", () => ({
+vi.mock("@/shared/contexts/auth-context", () => ({
   useAuth: () => ({ user: currentUser }),
 }));
 

@@ -5,9 +5,9 @@ import { NextIntlClientProvider } from "next-intl";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import messages from "@/messages/en.json";
 import { useAdminUserModeration } from "./use-admin-user-moderation";
-import { usersClient } from "@/shared/lib/users-client";
+import { usersClient } from "@/shared/api/users-client";
 
-vi.mock("@/shared/lib/users-client", () => ({
+vi.mock("@/shared/api/users-client", () => ({
   usersClient: { ban: vi.fn(), unban: vi.fn(), setTrusted: vi.fn() },
 }));
 

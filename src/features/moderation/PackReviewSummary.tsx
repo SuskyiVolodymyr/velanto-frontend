@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { formatLabel } from "@/shared/lib/pack-display";
+import { formatLabel } from "@/shared/utils/pack-display";
 import { PACK_LANGUAGE_NAMES } from "@/shared/types/pack-language";
 import { Text } from "@/shared/components/Text";
 import { Badge } from "@/shared/components/Badge";

@@ -2,14 +2,14 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 // The overview shape, not the full pack: this page draws round CHIPS, never the
 // items behind them. See PackOverview in shared/types/pack.
-import { getPackOverviewServer } from "@/shared/lib/get-pack-server";
-import { getResultsServer } from "@/shared/lib/get-results-server";
-import { getAvailableModesServer } from "@/shared/lib/get-available-modes-server";
+import { getPackOverviewServer } from "@/shared/server/get-pack-server";
+import { getResultsServer } from "@/shared/server/get-results-server";
+import { getAvailableModesServer } from "@/shared/server/get-available-modes-server";
 import { PackDetailScreen } from "@/features/pack/PackDetailScreen";
 import { PackDetailFallback } from "@/features/pack/PackDetailFallback";
-import { buildOpenGraph } from "@/shared/lib/open-graph";
-import { buildJsonLd, jsonLdScript } from "@/shared/lib/jsonld";
-import { SITE_URL } from "@/shared/lib/site-url";
+import { buildOpenGraph } from "@/shared/utils/open-graph";
+import { buildJsonLd, jsonLdScript } from "@/shared/utils/jsonld";
+import { SITE_URL } from "@/shared/constants/site-url";
 
 export async function generateMetadata({
   params,

@@ -1,5 +1,5 @@
-import { cn } from "@/shared/lib/cn";
-import { identityPill } from "@/shared/lib/user-role";
+import { cn } from "@/shared/utils/cn";
+import { identityPill } from "@/shared/utils/user-role";
 import type { Role } from "@/shared/types/user";
 
 export interface IdentityPillBadgeProps {

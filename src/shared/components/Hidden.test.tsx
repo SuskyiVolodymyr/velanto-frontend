@@ -5,7 +5,7 @@ import { NextIntlClientProvider } from "next-intl";
 import type { ReactNode } from "react";
 import messages from "@/messages/en.json";
 import { Hidden, type HiddenKind } from "./Hidden";
-import { StreamerModeProvider } from "@/shared/lib/streamer-mode-context";
+import { StreamerModeProvider } from "@/shared/contexts/streamer-mode-context";
 
 const STORAGE_KEY = "velanto:streamer-mode";
 

@@ -5,7 +5,7 @@ import type { Role } from "@/shared/types/user";
 import {
   assignableRolesFor,
   type AssignableRole,
-} from "@/shared/lib/staff-permissions";
+} from "@/shared/utils/staff-permissions";
 
 interface RoleSelectProps {
   /** The acting admin/manager's role — decides what can be granted. */

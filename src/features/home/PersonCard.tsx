@@ -9,7 +9,7 @@ import { Username } from "@/shared/components/Username";
 import { COVER_TONES } from "@/shared/types/pack";
 import { HAIRLINE_OVERLAY_STYLE } from "@/features/play/candidate-tone";
 import { useFollowListRowMutation } from "@/features/author/api/follow-list.queries";
-import type { FollowUser } from "@/shared/lib/users-client";
+import type { FollowUser } from "@/shared/api/users-client";
 
 /**
  * A person tile in the /people directory — deliberately the same shell as
