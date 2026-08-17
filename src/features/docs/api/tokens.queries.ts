@@ -6,10 +6,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import {
-  tokensClient,
-  type CreateTokenInput,
-} from "@/src/shared/lib/tokens-client";
+import { tokensClient, type CreateTokenInput } from "@/api/tokens-client";
 
 export function tokensQueryOptions() {
   return queryOptions({

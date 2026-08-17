@@ -1,0 +1,386 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens — see .claude/docs/design-tokens.md.
+ * Velanto is a dark-first product (no light theme planned yet), so the
+ * dark values are the only values: no `prefers-color-scheme` branch.
+ * --acc is the themeable accent color — reference it via `var(--acc)` /
+ * the `acc` Tailwind color, never hardcode #00e5ff in a component.
+ * --danger is the error/destructive red (error text, active downvote,
+ * remove/ban affordances) — reference it via the `danger` Tailwind color
+ * (`text-danger`, `border-danger/40`), never hardcode #ff5a5a in a component.
+ * --success is the positive/live green (the admin overview's "live" metric
+ * dot) — reference it via the `success` Tailwind color, never hardcode
+ * #39d98a in a component.
+ */
+:root {
+  /* Dark-only product: tell the browser so native controls (the OS-rendered
+   * <select> option popup, scrollbars, form controls) use dark chrome instead
+   * of the default light theme. Without this the role/ban <select> dropdowns
+   * open as white OS menus against the dark UI. */
+  color-scheme: dark;
+
+  /*
+   * Surface elevation ladder (UI-kit v1). Four steps from the page base up to
+   * an input sitting on a card, instead of the single --surface we had. Pick by
+   * how "lifted" the element is: --background page → --surface chrome (rail, top
+   * bar, bottom nav) → --surface-card cards/panels → --surface-raised controls
+   * resting on a card.
+   */
+  --background: #0f1116;
+  --surface: #13161d;
+  --surface-card: #171a22;
+  --surface-raised: #20242e;
+  /* A fifth, narrower tier: icon buttons and the search field sitting directly
+   * on the top bar (menu toggle, notification bell, account trigger) — one
+   * step up from --surface but distinct from --surface-raised, which is for
+   * inputs/avatars sitting on a --surface-card. Matches Dashboard.dc.html /
+   * Admin.dc.html / Moderation.dc.html's own controls, which are consistently
+   * a shade lighter than --surface and darker than --surface-raised. */
+  --surface-control: #181b23;
+
+  --border: rgba(255, 255, 255, 0.07);
+  --border-strong: rgba(255, 255, 255, 0.14);
+
+  /* Text ladder — one near-white, stepped by opacity. */
+  --foreground: #eef1f6;
+  --foreground-secondary: rgba(238, 241, 246, 0.62);
+  --foreground-tertiary: rgba(238, 241, 246, 0.45);
+
+  /*
+   * Semantic accents — ONE meaning each (design rule 3). Reference via the
+   * matching Tailwind colour (`text-acc`, `bg-hot/10`, `text-score`…), never a
+   * hardcoded hex in a component.
+   *   --acc      cyan    — primary action, selection, focus
+   *   --live     green   — presence, "survived", ready  (alias: --success)
+   *   --hot      magenta — new / hot / count badges
+   *   --score    amber   — score, priority, winner (GAME amber)
+   *   --danger   red     — leave / wrong / destructive
+   */
+  --acc: #00e5ff;
+  --acc-hover: #8cf3ff;
+  --live: #39d98a;
+  --success: var(--live);
+  --hot: #ff5cc0;
+  --score: #ffc24b;
+  --danger: #ff5a5a;
+
+  /*
+   * Moderation status family — a DISTINCT amber (--status-pending) from the
+   * game --score amber. Deliberately kept separate: review states are not game
+   * scoring. Do not unify them.
+   */
+  --status-pending: #facc15;
+  --status-approved: #4ade80;
+  --status-rejected: #f87171;
+
+  /*
+   * Podium colours for a top-three ranking (the 1v1 result's "top picked"
+   * table). Deliberately desaturated against the reference metals so they read
+   * as an accent on a dark surface rather than as warning colours — a literal
+   * #ffd700 next to --danger looks like two alerts.
+   */
+  /*
+   * The Spy mode's own hue. Its whole visual job is "this is withheld from
+   * you", which no existing token says: --danger reads as an error, --score as
+   * a reward, and --acc is the ordinary interactive accent every other board
+   * already uses for a pick. A violet keeps redaction legible as a third thing.
+   */
+  --spy: #a855f7;
+
+  --medal-gold: #e8c26a;
+  --medal-silver: #c2c9d1;
+  --medal-bronze: #cd8f5a;
+
+  --radius-chip: 8px;
+  /* Buttons/inputs render at 12px in the mocks (the radii table's "11" is the
+   * stated scale, but the actual control markup is 12 — mocks win). */
+  --radius-control: 12px;
+  --radius-tile: 14px;
+  --radius-card: 18px;
+  --radius-pill: 999px;
+
+  /* Signature easing for hover/press/tally transitions (design motion). */
+  --ease-signature: cubic-bezier(0.2, 0.7, 0.3, 1);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-card: var(--surface-card);
+  --color-surface-raised: var(--surface-raised);
+  --color-surface-control: var(--surface-control);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-foreground: var(--foreground);
+  --color-foreground-secondary: var(--foreground-secondary);
+  --color-foreground-tertiary: var(--foreground-tertiary);
+  --color-acc: var(--acc);
+  --color-acc-hover: var(--acc-hover);
+  --color-live: var(--live);
+  --color-success: var(--success);
+  --color-hot: var(--hot);
+  --color-score: var(--score);
+  --color-danger: var(--danger);
+  --color-status-pending: var(--status-pending);
+  --color-status-approved: var(--status-approved);
+  --color-status-rejected: var(--status-rejected);
+  --color-spy: var(--spy);
+  --color-medal-gold: var(--medal-gold);
+  --color-medal-silver: var(--medal-silver);
+  --color-medal-bronze: var(--medal-bronze);
+  --radius-chip: var(--radius-chip);
+  --radius-control: var(--radius-control);
+  --radius-tile: var(--radius-tile);
+  --radius-card: var(--radius-card);
+  --radius-pill: var(--radius-pill);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+/*
+ * Interactive pointer affordance. Tailwind v4's Preflight no longer forces a
+ * pointer on buttons (it defers to the browser default, which is the arrow), so
+ * enabled buttons, selects, and role-based controls otherwise read as
+ * non-clickable. Restore the pointer once, centrally, instead of scattering
+ * `cursor-pointer` across every call site. Scoped to enabled controls, and kept
+ * in `@layer base` so an explicit `cursor-*` utility (e.g. a `cursor-not-allowed`
+ * override) still wins.
+ */
+@layer base {
+  button:not(:disabled),
+  select:not(:disabled),
+  summary,
+  label:has(> input[type="checkbox"]:not(:disabled)),
+  [role="button"]:not([aria-disabled="true"]),
+  [role="radio"]:not([aria-disabled="true"]),
+  [role="switch"]:not([aria-disabled="true"]),
+  [role="tab"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+}
+
+/*
+ * Streamer mode pre-hydration guard. The init script in <head> stamps
+ * data-streamer-mode="on" before first paint; the StreamerModeProvider stamps
+ * data-streamer-hydrated once React controls rendering. In the window between
+ * (SSR markup + hydration render, where enabled reads false and real children
+ * are emitted) this blunt rule keeps every [data-streamer-hideable] element
+ * invisible, so a streamer never sees a real name/avatar/comment for one frame.
+ * visibility (not display) preserves layout to avoid a reflow when React swaps
+ * in the placeholder. After hydration React alone governs visibility.
+ */
+html[data-streamer-mode="on"]:not([data-streamer-hydrated])
+  [data-streamer-hideable] {
+  visibility: hidden !important;
+}
+
+/*
+ * Play-round candidate reveal — every candidate renders at once, then grows in
+ * one-by-one, each starting 900ms after the previous, via a per-card
+ * `animation-delay` (set inline from the card's index). Each card takes 1s to
+ * scale up from smaller (0.7) to its normal size while fading in, at a LINEAR
+ * rate so the motion fills the whole second and the next card picks up just as
+ * this one lands — no perceived gap (an ease-out finishes visibly early and
+ * reads as a pause before the next). `both` fill-mode holds the card hidden
+ * through its delay, so nothing flashes before its turn. The card is also
+ * `pointer-events: none` until the animation finishes, so a mouse resting where
+ * a not-yet-revealed (opacity:0) card sits can't hover-start its preloaded
+ * video before the card is actually visible. prefers-reduced-motion below shows
+ * them all immediately, no animation. Applied by CandidateCard / VersusRound.
+ */
+@keyframes play-card-fade-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+    pointer-events: none;
+  }
+  99% {
+    pointer-events: none;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    pointer-events: auto;
+  }
+}
+.play-card-appear {
+  animation: play-card-fade-in 1000ms linear both;
+}
+
+/* Form-error micro-interaction — see design-tokens.md's motion section. */
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-6px);
+  }
+  75% {
+    transform: translateX(6px);
+  }
+}
+
+/*
+ * Friends-room claim contention — flashes an item's frame red when someone
+ * claimed it a beat before you did (a rejected claim). Applied by
+ * <RoomItemCard> (src/features/friends-rooms/RoomItemCard.tsx) off lastRejection.
+ */
+@keyframes room-item-flash {
+  0%,
+  100% {
+    border-color: var(--border);
+  }
+  30%,
+  60% {
+    border-color: var(--danger);
+  }
+}
+.room-item-flash {
+  animation: room-item-flash 700ms ease-in-out 2;
+}
+
+/*
+ * Presence pulse — the green "IN A ROOM" / live dot fades in and out. Applied
+ * via `.animate-livedot` on a presence dot. Frozen under reduced-motion below.
+ */
+@keyframes livedot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+.animate-livedot {
+  animation: livedot 1.6s ease-in-out infinite;
+}
+
+/*
+ * Skeleton shimmer — a highlight band scrolls across a placeholder. The
+ * consumer sets the gradient background (a 320px-wide 3-stop band); this just
+ * drives the sweep. Applied via `.animate-shimmer`. Frozen under reduced-motion.
+ */
+@keyframes shimmer {
+  0% {
+    background-position: -320px 0;
+  }
+  100% {
+    background-position: 320px 0;
+  }
+}
+.animate-shimmer {
+  animation: shimmer 1.4s linear infinite;
+}
+
+/*
+ * Staff & trusted nicknames — moderator/manager/admin and trusted users render
+ * their handle as an animated gradient: a lighter band sweeps left→right across
+ * the role's hue (moderator cyan, manager periwinkle, admin violet, trusted
+ * green). Each role sets its own gradient + sweep duration; the base class owns
+ * the text-clip and animation. Applied by <Username>
+ * (src/components/Username.tsx). prefers-reduced-motion freezes it to a
+ * legible static frame (the lighter band resting mid-handle).
+ */
+@keyframes nicknamesweep {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+.nickname-gradient {
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: nicknamesweep var(--nick-dur, 3.4s) linear infinite;
+}
+.nickname-moderator {
+  background-image: linear-gradient(
+    90deg,
+    var(--acc),
+    var(--acc-hover),
+    var(--acc)
+  );
+  --nick-dur: 3.4s;
+}
+.nickname-manager {
+  background-image: linear-gradient(90deg, #7c8cff, #c2cbff, #7c8cff);
+  --nick-dur: 3.4s;
+}
+.nickname-admin {
+  background-image: linear-gradient(90deg, #a855f7, #e9c7ff, #a855f7);
+  --nick-dur: 2.8s;
+}
+.nickname-trusted {
+  background-image: linear-gradient(90deg, #39d98a, #9cf3c6, #39d98a);
+  --nick-dur: 4.6s;
+}
+
+/*
+ * Hide the native scrollbar on a horizontally-scrolled row (e.g. the
+ * recently-played rail) that provides its own arrow controls instead.
+ */
+/*
+ * Browser autofill paints its own light background (and dark text) on filled
+ * inputs. Over the transparent input inside an icon "shell" that shows as a
+ * mismatched light box — the "light lines" a filled field would otherwise get.
+ * Keep the autofilled text on our foreground colour and stall the background
+ * repaint indefinitely so the field keeps its own surface.
+ */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-text-fill-color: var(--foreground);
+  caret-color: var(--foreground);
+  transition: background-color 100000s ease-in-out 0s;
+}
+
+@utility no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /*
+   * Freeze the sweep with the lighter band resting mid-handle, so every role
+   * stays legible without motion (each gradient is hue → lighter → hue, so the
+   * midpoint is the readable light tint rather than a dark edge).
+   */
+  .nickname-gradient {
+    animation: none;
+    background-position: 50% 50%;
+  }
+
+  /* Show every candidate immediately — no staggered fade. */
+  .play-card-appear {
+    animation: none;
+  }
+
+  /* Keep the contended-item cue as a static red frame, no pulse. */
+  .room-item-flash {
+    animation: none;
+    border-color: var(--danger);
+  }
+
+  /* Presence dot rests fully opaque; skeletons rest with no sweep. */
+  .animate-livedot,
+  .animate-shimmer {
+    animation: none;
+  }
+}

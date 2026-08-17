@@ -1,0 +1,166 @@
+"use client";
+
+import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Card } from "@/ui/Card";
+import { Text } from "@/ui/Text";
+import { Skeleton } from "@/ui/Skeleton";
+import { SettingsSectionSkeleton } from "@/features/settings/components/SettingsSectionSkeleton";
+import { notificationVisual } from "@/components/notification-visual";
+import { cn } from "@/utils/cn";
+import { useAuth } from "@/contexts/auth-context";
+import {
+  useNotificationPreferences,
+  useSetNotificationPreference,
+} from "@/features/settings/api/notifications.queries";
+import {
+  NOTIFICATION_TYPES,
+  type NotificationType,
+} from "@/types/notification";
+
+// Each notification type maps to a `settings` translation key for its label.
+const LABEL_KEYS: Record<NotificationType, string> = {
+  new_follower: "notifNewFollower",
+  new_pack_from_followed: "notifNewPack",
+  new_comment: "notifNewComment",
+  comment_mention: "notifCommentMention",
+  comment_reply: "notifCommentReply",
+  pack_deleted_warning: "notifPackDeleted",
+  pack_changes_requested: "notifPackChangesRequested",
+};
+
+export function NotificationsSection() {
+  const t = useTranslations("settings");
+  const { status } = useAuth();
+
+  const prefsQuery = useNotificationPreferences({
+    enabled: status === "authenticated",
+  });
+  const prefs = prefsQuery.data ?? null;
+  const fetchError = prefsQuery.isError;
+
+  const setPref = useSetNotificationPreference();
+  // A single mutation is in flight at a time; `variables.type` scopes the
+  // busy/error indicators to the row that was toggled.
+  const pendingType = setPref.isPending ? setPref.variables?.type : undefined;
+  const erroredType = setPref.isError ? setPref.variables?.type : undefined;
+
+  const enabledCount = prefs
+    ? NOTIFICATION_TYPES.filter((type) => prefs[type]).length
+    : 0;
+
+  function handleToggle(type: NotificationType) {
+    if (!prefs) return;
+    setPref.mutate({ type, value: !prefs[type] });
+  }
+
+  if (status === "loading") return <SettingsSectionSkeleton />;
+
+  return (
+    <section className="flex flex-col gap-4">
+      <Text
+        as="h2"
+        variant="tertiary"
+        className="text-xs uppercase tracking-wide"
+      >
+        {t("notificationsHeading")}
+      </Text>
+      {status === "unauthenticated" && (
+        <div className="rounded-xl border border-dashed border-border-strong px-4 py-4 text-sm text-foreground-secondary">
+          {t.rich("loginToManageNotifications", {
+            link: (chunks) => (
+              <Link href="/auth" className="text-acc">
+                {chunks}
+              </Link>
+            ),
+          })}
+        </div>
+      )}
+      {status === "authenticated" && fetchError && (
+        <Text variant="danger" className="text-sm">
+          {t("notificationsLoadError")}
+        </Text>
+      )}
+      {status === "authenticated" && !fetchError && !prefs && (
+        <div className="flex flex-col gap-2" aria-hidden>
+          {NOTIFICATION_TYPES.map((type) => (
+            <Card key={type}>
+              <div className="flex items-center justify-between gap-4">
+                <div className="flex min-w-0 items-center gap-3">
+                  <Skeleton className="h-10 w-10 shrink-0 rounded-[13px]" />
+                  <Skeleton className="h-5 w-44" />
+                </div>
+                <Skeleton className="h-6 w-11 shrink-0 rounded-full" />
+              </div>
+            </Card>
+          ))}
+        </div>
+      )}
+      {status === "authenticated" && prefs && (
+        <>
+          <Text variant="secondary" className="text-sm">
+            {t("notifEnabledCount", {
+              count: enabledCount,
+              total: NOTIFICATION_TYPES.length,
+            })}
+          </Text>
+          <div className="flex flex-col gap-2">
+            {NOTIFICATION_TYPES.map((type) => {
+              const { tone, Icon } = notificationVisual(type);
+              return (
+                <Card key={type} className="flex flex-col gap-1">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span
+                        aria-hidden
+                        className="grid h-10 w-10 shrink-0 place-items-center rounded-[13px]"
+                        style={{
+                          color: tone,
+                          backgroundColor: `${tone}24`,
+                          border: `1px solid ${tone}4d`,
+                        }}
+                      >
+                        <Icon className="h-[18px] w-[18px]" strokeWidth={2} />
+                      </span>
+                      <Text className="min-w-0 font-semibold">
+                        {t(LABEL_KEYS[type])}
+                      </Text>
+                    </div>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={prefs[type]}
+                      aria-label={t(LABEL_KEYS[type])}
+                      disabled={pendingType === type}
+                      onClick={() => handleToggle(type)}
+                      className={cn(
+                        "h-6 w-11 shrink-0 rounded-full border transition-colors",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-acc",
+                        "focus-visible:ring-offset-2 focus-visible:ring-offset-background",
+                        prefs[type]
+                          ? "border-acc bg-acc/30"
+                          : "border-border bg-white/5",
+                      )}
+                    >
+                      <span
+                        className={cn(
+                          "block h-4 w-4 rounded-full bg-foreground transition-transform",
+                          prefs[type] ? "translate-x-6" : "translate-x-1",
+                        )}
+                      />
+                    </button>
+                  </div>
+                  {erroredType === type && (
+                    <Text variant="danger" className="text-xs">
+                      {t("notificationUpdateError")}
+                    </Text>
+                  )}
+                </Card>
+              );
+            })}
+          </div>
+        </>
+      )}
+    </section>
+  );
+}

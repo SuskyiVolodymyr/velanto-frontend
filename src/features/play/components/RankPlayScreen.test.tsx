@@ -1,0 +1,714 @@
+import { describe, expect, it, vi, beforeEach } from "vitest";
+import { screen, waitFor } from "@testing-library/react";
+import { renderWithIntl as render } from "@/test/render-with-intl";
+import userEvent from "@testing-library/user-event";
+import { RankPlayScreen } from "./RankPlayScreen";
+import { packStructureHash } from "../pack-structure-hash";
+import { readPlayResume } from "../play-resume-storage";
+import { AuthProvider } from "@/contexts/auth-context";
+import { authClient } from "@/api/auth-client";
+import { playsClient } from "@/api/plays-client";
+import { ApiError } from "@/api/api-client";
+import type { Pack } from "@/types/pack";
+
+const push = vi.fn();
+const replace = vi.fn();
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push, replace }),
+  usePathname: () => "/packs/pack-rank/play",
+}));
+
+vi.mock("@/api/auth-client", () => ({
+  authClient: {
+    requestEmailCode: vi.fn(),
+    register: vi.fn(),
+    login: vi.fn(),
+    logout: vi.fn(),
+    refresh: vi.fn(),
+  },
+}));
+
+vi.mock("@/api/plays-client", () => ({
+  playsClient: {
+    record: vi.fn().mockResolvedValue({ id: "play-1" }),
+  },
+}));
+
+const MOCK_USER = {
+  id: "u1",
+  email: "a@example.com",
+  username: "alice",
+  role: "user" as const,
+  createdAt: "2026-01-01T00:00:00.000Z",
+};
+
+function textItem(id: string, title: string) {
+  return { id, type: "text" as const, title, value: title };
+}
+
+const RANK_BLIND_PACK: Pack = {
+  id: "pack-rank",
+  title: "Anime Openers, Ranked",
+  description: "Place each pick blind into a growing ranked list.",
+  coverTone: "#2b2a3a",
+  language: "en",
+  format: "rank_blind",
+  tags: ["Anime"],
+  groups: [
+    {
+      id: "g1",
+      name: "Openers",
+      items: [textItem("i1", "Kaikai Kitan"), textItem("i2", "Redo")],
+    },
+    {
+      id: "g2",
+      name: "Closers",
+      items: [textItem("i3", "Silhouette")],
+    },
+  ],
+  rounds: [
+    {
+      id: "r1",
+      slots: [{ groupId: "g1", mode: "manual", itemIds: ["i1", "i2"] }],
+    },
+    { id: "r2", slots: [{ groupId: "g2", mode: "manual", itemIds: ["i3"] }] },
+  ],
+  authorId: "u1",
+  createdAt: "2026-01-01T00:00:00.000Z",
+  totalPlays: 0,
+  avgAgreementPercent: 0,
+  status: "approved",
+  rejectionReason: null,
+  likes: 0,
+  dislikes: 0,
+  myVote: null,
+};
+
+function renderScreen(pack: Pack) {
+  return render(
+    <AuthProvider>
+      <RankPlayScreen pack={pack} />
+    </AuthProvider>,
+  );
+}
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  vi.mocked(authClient.refresh).mockResolvedValue({
+    accessToken: "t",
+    user: MOCK_USER,
+  });
+  vi.mocked(playsClient.record).mockResolvedValue({ id: "play-1" });
+  sessionStorage.clear();
+  // Resume records live in localStorage; clear so a test that advances a round
+  // doesn't leave a saved play that makes the next test resume mid-pack. The
+  // rank pack uses manual slots, so its draw is deterministic regardless of the
+  // seed — the real usePlayResume hook is exercised here.
+  localStorage.clear();
+});
+
+describe("RankPlayScreen", () => {
+  it("renders the current pick as an image when it is an image item", async () => {
+    vi.stubEnv("NEXT_PUBLIC_MEDIA_BASE_URL", "https://cdn.example.com");
+    vi.mocked(authClient.refresh).mockRejectedValue(
+      new ApiError(401, "Unauthorized", null),
+    );
+    const imagePack: Pack = {
+      ...RANK_BLIND_PACK,
+      groups: [
+        {
+          id: "g1",
+          name: "Openers",
+          items: [
+            {
+              id: "i1",
+              type: "image",
+              title: "Poster",
+              value: "media/item/p.webp",
+            },
+            textItem("i2", "Redo"),
+          ],
+        },
+      ],
+      rounds: [
+        {
+          id: "r1",
+          slots: [{ groupId: "g1", mode: "manual", itemIds: ["i1", "i2"] }],
+        },
+      ],
+    };
+    renderScreen(imagePack);
+
+    const img = await screen.findByRole("img", { name: "Poster" });
+    expect(img).toHaveAttribute(
+      "src",
+      "https://cdn.example.com/media/item/p.webp",
+    );
+    vi.unstubAllEnvs();
+  });
+
+  // #221: this used to assert the play was NOT recorded. A signed-out visitor
+  // can play any pack, so dropping their run silently made the pack's stats a
+  // lie. The backend now takes an optional JWT and stores a null player.
+  it("lets a signed-out visitor play and records the play", async () => {
+    vi.mocked(authClient.refresh).mockRejectedValue(
+      new ApiError(401, "Unauthorized", null),
+    );
+    const user = userEvent.setup();
+    renderScreen(RANK_BLIND_PACK);
+
+    // No login wall — the ranking UI renders for anon.
+    await screen.findByText("Kaikai Kitan");
+    expect(
+      screen.queryByText("You need to be logged in to play a pack."),
+    ).toBeNull();
+
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await user.click(await screen.findByRole("button", { name: "Next round" }));
+    await screen.findByText("Silhouette");
+    await user.click(screen.getByText("#1"));
+
+    // Anon play is recorded on the backend…
+    await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
+    expect(vi.mocked(playsClient.record).mock.calls[0][0]).toBe("pack-rank");
+    // …and the local picks are stashed for the result screen.
+    await waitFor(() =>
+      expect(
+        JSON.parse(sessionStorage.getItem("velanto:last-play:pack-rank")!),
+      ).toEqual([
+        {
+          roundIndex: 0,
+          groupId: "g1",
+          itemId: "i1",
+          position: 0,
+          drawIndex: 0,
+        },
+        {
+          roundIndex: 0,
+          groupId: "g1",
+          itemId: "i2",
+          position: 1,
+          drawIndex: 1,
+        },
+        {
+          roundIndex: 1,
+          groupId: "g2",
+          itemId: "i3",
+          position: 0,
+          drawIndex: 0,
+        },
+      ]),
+    );
+  });
+
+  // The last format still sharing its result as the whole `?p=` picks payload:
+  // a rank_blind play records every drawn item with its placement AND its draw
+  // index, so that URL is the longest of the five. ResultActions prefers a
+  // short `?play=<id>` link whenever this id is stashed.
+  it("stashes the recorded play id for a short share link", async () => {
+    const user = userEvent.setup();
+    renderScreen(RANK_BLIND_PACK);
+    await screen.findByText("Kaikai Kitan");
+
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await user.click(await screen.findByRole("button", { name: "Next round" }));
+    await screen.findByText("Silhouette");
+    await user.click(screen.getByText("#1"));
+
+    await waitFor(() =>
+      expect(sessionStorage.getItem("velanto:last-play-id:pack-rank")).toBe(
+        "play-1",
+      ),
+    );
+  });
+
+  // The id is a nicety; the play still counts without it. A failed request must
+  // not take the result screen down with it (#222 gates that screen on the
+  // picks, which are stashed before the request goes out).
+  it("survives a record request that never returns an id", async () => {
+    vi.mocked(playsClient.record).mockRejectedValue(new Error("network"));
+    const user = userEvent.setup();
+    renderScreen(RANK_BLIND_PACK);
+    await screen.findByText("Kaikai Kitan");
+
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await user.click(await screen.findByRole("button", { name: "Next round" }));
+    await screen.findByText("Silhouette");
+    await user.click(screen.getByText("#1"));
+
+    // A failed record must not strand the player on the play screen — the
+    // redirect waits for the request to settle, not to succeed.
+    await waitFor(() =>
+      expect(replace).toHaveBeenCalledWith("/packs/pack-rank/result"),
+    );
+    expect(
+      JSON.parse(sessionStorage.getItem("velanto:last-play:pack-rank")!),
+    ).toHaveLength(3);
+    expect(sessionStorage.getItem("velanto:last-play-id:pack-rank")).toBeNull();
+  });
+
+  it("shows the first item and one empty numbered slot per item in a manual-mode round", async () => {
+    renderScreen(RANK_BLIND_PACK);
+
+    expect(await screen.findByText("Kaikai Kitan")).toBeInTheDocument();
+    expect(screen.getByText("Round 1 of 2")).toBeInTheDocument();
+    // T7: the empty-slot placeholder now names the current (blind) item —
+    // both empty rows show the same text, since only one item is "in play"
+    // at a time.
+    expect(screen.getAllByText("Place Kaikai Kitan here")).toHaveLength(2);
+  });
+
+  it("places the current item into the slot the player clicks, out of numeric order", async () => {
+    const user = userEvent.setup();
+    renderScreen(RANK_BLIND_PACK);
+    await screen.findByText("Kaikai Kitan");
+
+    // Place the first item ("Kaikai Kitan") into slot #2, not #1.
+    await user.click(screen.getByText("#2"));
+
+    expect(screen.getByText("Redo")).toBeInTheDocument(); // now showing the 2nd item
+    const slot2 = screen.getByText("#2").closest("button")!;
+    expect(slot2).toHaveTextContent("Kaikai Kitan");
+  });
+
+  // #338: the result screen replays the order items came at you, which is the
+  // whole point of ranking blind. `position` cannot carry it — it says where an
+  // item ended up — so the draw order is recorded separately.
+  it("records where each item came in the draw, not just where it was placed", async () => {
+    const user = userEvent.setup();
+    renderScreen(RANK_BLIND_PACK);
+    await screen.findByText("Kaikai Kitan");
+
+    // First item shown goes LAST; second goes first.
+    await user.click(screen.getByText("#2"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#1"));
+    await user.click(await screen.findByRole("button", { name: "Next round" }));
+    await screen.findByText("Silhouette");
+    await user.click(screen.getByText("#1"));
+
+    await waitFor(() => expect(playsClient.record).toHaveBeenCalled());
+    expect(playsClient.record).toHaveBeenCalledWith("pack-rank", {
+      picks: [
+        // Placement order, as before — but i2 (shown second) took first place
+        // and i1 (shown first) took second, which only drawIndex records.
+        {
+          roundIndex: 0,
+          groupId: "g1",
+          itemId: "i2",
+          position: 0,
+          drawIndex: 1,
+        },
+        {
+          roundIndex: 0,
+          groupId: "g1",
+          itemId: "i1",
+          position: 1,
+          drawIndex: 0,
+        },
+        {
+          roundIndex: 1,
+          groupId: "g2",
+          itemId: "i3",
+          position: 0,
+          drawIndex: 0,
+        },
+      ],
+    });
+  });
+
+  it("shows a round-complete summary and advances to the next round", async () => {
+    const user = userEvent.setup();
+    renderScreen(RANK_BLIND_PACK);
+    await screen.findByText("Kaikai Kitan");
+
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+
+    expect(await screen.findByText("Openers ranked")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "Next round" }));
+
+    expect(await screen.findByText("Silhouette")).toBeInTheDocument();
+    expect(screen.getByText("Round 2 of 2")).toBeInTheDocument();
+  });
+
+  // T7: the round-complete interstitial (eyebrow + "Next up: {name}", the
+  // real shipped screen between rounds — not the retired terminal COMPLETE
+  // mechanic) had no coverage. `nextUp` names the round via `roundHeading`,
+  // which for round 2 of this fixture falls back to "Round 2" (r2 has no
+  // author-given `name`).
+  it("shows the round-complete eyebrow and names the next round via roundHeading", async () => {
+    const user = userEvent.setup();
+    renderScreen(RANK_BLIND_PACK);
+    await screen.findByText("Kaikai Kitan");
+
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+
+    expect(await screen.findByText("Round ranked")).toBeInTheDocument();
+    expect(screen.getByText("Next up: Round 2")).toBeInTheDocument();
+  });
+
+  // The interstitial must be ABSENT on the actual final round — `isFinished`
+  // (not `isRoundComplete`) gates the last round, since `roundHeading(pack,
+  // roundIndex + 1)` would otherwise try to name a round that doesn't exist.
+  // The screen instead goes straight to the loading state (see the "records
+  // the accumulated picks…" test for the redirect itself).
+  it("does not show the round-complete interstitial on the final round", async () => {
+    const user = userEvent.setup();
+    renderScreen(RANK_BLIND_PACK);
+    await screen.findByText("Kaikai Kitan");
+
+    // Finish round 1 and advance.
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await screen.findByText("Round ranked");
+    await user.click(screen.getByRole("button", { name: "Next round" }));
+
+    // Finish round 2, the last round.
+    await screen.findByText("Silhouette");
+    await user.click(screen.getByText("#1"));
+
+    expect(
+      await screen.findByText("Loading your results…"),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Round ranked")).toBeNull();
+    expect(screen.queryByText(/^Next up:/)).toBeNull();
+  });
+
+  // The recap between rounds is the same list the result screen shows, so what
+  // a player reads mid-play matches what they get at the end — including where
+  // each item came in the draw, which is the whole point of ranking blind.
+  it("recaps the finished round with each item's draw position", async () => {
+    const user = userEvent.setup();
+    renderScreen(RANK_BLIND_PACK);
+    await screen.findByText("Kaikai Kitan");
+
+    await user.click(screen.getByText("#2")); // shown first, placed second
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#1")); // shown second, placed first
+
+    await screen.findByText("Openers ranked");
+    const rows = screen.getAllByRole("listitem");
+    expect(rows).toHaveLength(2);
+    expect(rows[0]).toHaveTextContent("Redo");
+    expect(rows[0]).toHaveTextContent("Shown #2");
+    expect(rows[1]).toHaveTextContent("Kaikai Kitan");
+    expect(rows[1]).toHaveTextContent("Shown #1");
+  });
+
+  it("records the accumulated picks once, after the last round, then goes to the result", async () => {
+    const user = userEvent.setup();
+    renderScreen(RANK_BLIND_PACK);
+    await screen.findByText("Kaikai Kitan");
+
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await user.click(await screen.findByRole("button", { name: "Next round" }));
+
+    await screen.findByText("Silhouette");
+    await user.click(screen.getByText("#1"));
+
+    await waitFor(() => expect(playsClient.record).toHaveBeenCalledTimes(1));
+    expect(playsClient.record).toHaveBeenCalledWith("pack-rank", {
+      picks: [
+        {
+          roundIndex: 0,
+          groupId: "g1",
+          itemId: "i1",
+          position: 0,
+          drawIndex: 0,
+        },
+        {
+          roundIndex: 0,
+          groupId: "g1",
+          itemId: "i2",
+          position: 1,
+          drawIndex: 1,
+        },
+        {
+          roundIndex: 1,
+          groupId: "g2",
+          itemId: "i3",
+          position: 0,
+          drawIndex: 0,
+        },
+      ],
+    });
+    await waitFor(() =>
+      expect(
+        JSON.parse(sessionStorage.getItem("velanto:last-play:pack-rank")!),
+      ).toEqual([
+        {
+          roundIndex: 0,
+          groupId: "g1",
+          itemId: "i1",
+          position: 0,
+          drawIndex: 0,
+        },
+        {
+          roundIndex: 0,
+          groupId: "g1",
+          itemId: "i2",
+          position: 1,
+          drawIndex: 1,
+        },
+        {
+          roundIndex: 1,
+          groupId: "g2",
+          itemId: "i3",
+          position: 0,
+          drawIndex: 0,
+        },
+      ]),
+    );
+    // Placing the last item ends the play — there is no interstitial step
+    // asking the player to click through to their own result.
+    await waitFor(() =>
+      expect(replace).toHaveBeenCalledWith("/packs/pack-rank/result"),
+    );
+    expect(screen.queryByRole("link", { name: /result/i })).toBeNull();
+    expect(screen.getByText("Loading your results…")).toBeInTheDocument();
+  });
+
+  it("embeds the video for the current item when it is a youtube item", async () => {
+    const videoPack: Pack = {
+      ...RANK_BLIND_PACK,
+      groups: [
+        {
+          id: "g1",
+          name: "Openers",
+          items: [
+            {
+              id: "i1",
+              type: "youtube" as const,
+              title: "Kaikai Kitan",
+              value: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
+            },
+            textItem("i2", "Redo"),
+          ],
+        },
+      ],
+      rounds: [
+        {
+          id: "r1",
+          slots: [{ groupId: "g1", mode: "manual", itemIds: ["i1", "i2"] }],
+        },
+      ],
+    };
+    renderScreen(videoPack);
+
+    // The current item is the youtube one — its video must be embedded, not
+    // shown as bare title text.
+    expect(await screen.findByTestId("youtube-card")).toBeInTheDocument();
+    expect(screen.getByText("Kaikai Kitan")).toBeInTheDocument();
+  });
+
+  it("sizes a random-mode round's slots to the slot's draw count, not the full pool", async () => {
+    const randomPack: Pack = {
+      ...RANK_BLIND_PACK,
+      groups: [
+        {
+          id: "g1",
+          name: "Closers",
+          items: [
+            textItem("i1", "A"),
+            textItem("i2", "B"),
+            textItem("i3", "C"),
+          ],
+        },
+      ],
+      rounds: [
+        { id: "r1", slots: [{ groupId: "g1", mode: "random", count: 2 }] },
+      ],
+    };
+    renderScreen(randomPack);
+
+    await screen.findByText("Round 1 of 1");
+    // T7: the empty-slot placeholder now names the current item, which for a
+    // random-mode slot is seed-dependent — assert the count via a pattern
+    // instead of a literal item name.
+    expect(screen.getAllByText(/^Place .+ here$/)).toHaveLength(2);
+  });
+
+  it("saves progress on advancing a round and resumes there on a fresh mount", async () => {
+    const version = packStructureHash(RANK_BLIND_PACK);
+    const user = userEvent.setup();
+    const first = renderScreen(RANK_BLIND_PACK);
+
+    // Rank round 1, then advance — this saves progress at round 1.
+    await screen.findByText("Kaikai Kitan");
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await user.click(await screen.findByRole("button", { name: "Next round" }));
+    await screen.findByText("Silhouette");
+    expect(readPlayResume("pack-rank", version)?.roundIndex).toBe(1);
+
+    first.unmount();
+
+    // A fresh mount asks first, and only resumes on round 2 (without
+    // replaying round 1) once the player continues.
+    renderScreen(RANK_BLIND_PACK);
+    await user.click(await screen.findByRole("button", { name: "Continue" }));
+    await screen.findByText("Round 2 of 2");
+    expect(screen.queryByText("Kaikai Kitan")).toBeNull();
+    await screen.findByText("Silhouette");
+  });
+
+  it("shows the resume-choice modal on a fresh mount when a saved play exists", async () => {
+    const user = userEvent.setup();
+    const first = renderScreen(RANK_BLIND_PACK);
+
+    await screen.findByText("Kaikai Kitan");
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await user.click(await screen.findByRole("button", { name: "Next round" }));
+    first.unmount();
+
+    renderScreen(RANK_BLIND_PACK);
+
+    expect(await screen.findByRole("alertdialog")).toBeInTheDocument();
+    expect(screen.getByText("1 round done")).toBeInTheDocument();
+    // No round content behind it until a choice is made.
+    expect(screen.queryByText("Silhouette")).toBeNull();
+  });
+
+  it("Start over discards the saved play and re-draws from round 1", async () => {
+    const version = packStructureHash(RANK_BLIND_PACK);
+    const user = userEvent.setup();
+    const first = renderScreen(RANK_BLIND_PACK);
+
+    await screen.findByText("Kaikai Kitan");
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await user.click(await screen.findByRole("button", { name: "Next round" }));
+    first.unmount();
+
+    renderScreen(RANK_BLIND_PACK);
+    await user.click(await screen.findByRole("button", { name: "Start over" }));
+
+    await screen.findByText("Round 1 of 2");
+    // Discarded outright, not just superseded in memory — a reload right
+    // after must not re-offer the discarded play.
+    expect(readPlayResume("pack-rank", version)).toBeNull();
+  });
+
+  it("clears the resume record when the play completes", async () => {
+    const version = packStructureHash(RANK_BLIND_PACK);
+    const user = userEvent.setup();
+    renderScreen(RANK_BLIND_PACK);
+
+    await screen.findByText("Kaikai Kitan");
+    await user.click(screen.getByText("#1"));
+    await screen.findByText("Redo");
+    await user.click(screen.getByText("#2"));
+    await user.click(await screen.findByRole("button", { name: "Next round" }));
+    expect(readPlayResume("pack-rank", version)).not.toBeNull();
+
+    // Finish the last round.
+    await screen.findByText("Silhouette");
+    await user.click(screen.getByText("#1"));
+    await waitFor(() =>
+      expect(readPlayResume("pack-rank", version)).toBeNull(),
+    );
+  });
+
+  describe("mock fidelity (Solo Play.dc.html's isRank branch)", () => {
+    it("tints the status panel's border by state — accent while pending, success once ranked", async () => {
+      const user = userEvent.setup();
+      renderScreen(RANK_BLIND_PACK);
+
+      await screen.findByText("Kaikai Kitan");
+      expect(screen.getByTestId("rank-status-panel").className).toContain(
+        "border-acc/30",
+      );
+
+      await user.click(screen.getByText("#1"));
+      await user.click(screen.getByText("#2"));
+
+      await screen.findByText("Openers");
+      expect(screen.getByTestId("rank-status-panel").className).toContain(
+        "border-success/30",
+      );
+    });
+
+    it("stacks the two columns below the mock's own 900px breakpoint", async () => {
+      renderScreen(RANK_BLIND_PACK);
+
+      await screen.findByText("Kaikai Kitan");
+      expect(screen.getByTestId("rank-columns").className).toContain(
+        "min-[901px]:grid-cols-",
+      );
+    });
+
+    it("sizes the pending item's media as a full-width 16:9 tile, not a fixed-width box", async () => {
+      renderScreen(RANK_BLIND_PACK);
+
+      await screen.findByText("Kaikai Kitan");
+      const media = screen.getByTestId("rank-current-media");
+      expect(media.className).toContain("aspect-video");
+      expect(media.className).not.toMatch(/max-w-\[230px\]/);
+    });
+
+    it("does not float the media — a real video shouldn't drift under the pointer", async () => {
+      renderScreen(RANK_BLIND_PACK);
+
+      await screen.findByText("Kaikai Kitan");
+      expect(screen.getByTestId("rank-current-media").className).not.toMatch(
+        /animate-card-float/,
+      );
+    });
+
+    it("shows the shared left-aligned round header — 'Round N of M' eyebrow, the round's own title, and the in-round placement prompt", async () => {
+      renderScreen(RANK_BLIND_PACK);
+
+      await screen.findByText("Kaikai Kitan");
+      expect(screen.getByText("Round 1 of 2")).toBeInTheDocument();
+      expect(screen.getByText("Place item 1 of 2")).toBeInTheDocument();
+      // Left-aligned, matching PlayScreen/HeadToHeadPlayScreen — not the old
+      // centered layout.
+      const heading = screen.getByRole("heading", { name: "Openers" });
+      expect(heading.closest("div")?.parentElement?.className).toContain(
+        "text-start",
+      );
+    });
+
+    it("updates the placement prompt as items are placed, then swaps to the all-placed message", async () => {
+      const user = userEvent.setup();
+      renderScreen(RANK_BLIND_PACK);
+
+      await screen.findByText("Kaikai Kitan");
+      await user.click(screen.getByText("#1"));
+
+      await screen.findByText("Redo");
+      expect(screen.getByText("Place item 2 of 2")).toBeInTheDocument();
+
+      await user.click(screen.getByText("#2"));
+      expect(
+        await screen.findByText("Every slot filled — this is your order"),
+      ).toBeInTheDocument();
+    });
+
+    it("omits the round counter from the sticky bar — it's carried by the round header now", async () => {
+      renderScreen(RANK_BLIND_PACK);
+
+      await screen.findByText("Kaikai Kitan");
+      // Exactly one match: the round header's own eyebrow.
+      expect(screen.getAllByText("Round 1 of 2")).toHaveLength(1);
+    });
+  });
+});

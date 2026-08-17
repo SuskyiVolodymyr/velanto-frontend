@@ -1,4 +1,4 @@
-import type { PackSummary } from "@/src/shared/types/pack";
+import type { PackSummary } from "@/types/pack";
 
 /**
  * Play count at which a pack earns the "HOT" badge on its browse card.

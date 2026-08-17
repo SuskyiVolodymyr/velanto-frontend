@@ -1,6 +1,6 @@
-import { packsClient } from "@/src/shared/lib/packs-client";
-import { moderationClient } from "@/src/shared/lib/moderation-client";
-import type { PackFormat } from "@/src/shared/types/pack";
+import { packsClient } from "@/api/packs-client";
+import { moderationClient } from "@/api/moderation-client";
+import type { PackFormat } from "@/types/pack";
 
 /** Both tabs page at the same size, so the two tables line up visually. */
 export const MODERATION_PAGE_SIZE = 20;

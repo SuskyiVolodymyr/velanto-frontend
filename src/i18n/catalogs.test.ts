@@ -248,10 +248,9 @@ function sourceFiles(dir: string): string[] {
  */
 describe("i18n key references resolve", () => {
   const root = process.cwd();
-  const files = [
-    ...sourceFiles(join(root, "src")),
-    ...sourceFiles(join(root, "app")),
-  ];
+  // One root now that the router lives at src/app — this used to scan src/ and
+  // a sibling app/ separately.
+  const files = sourceFiles(join(root, "src"));
 
   const missing: string[] = [];
   for (const file of files) {

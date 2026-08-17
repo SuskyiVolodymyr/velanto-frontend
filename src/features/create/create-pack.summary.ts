@@ -1,4 +1,4 @@
-import type { CreatePackValues } from "@/src/features/create/create-pack.schema";
+import type { CreatePackValues } from "@/features/create/create-pack.schema";
 
 export type PackSummary = {
   elementCount: number;

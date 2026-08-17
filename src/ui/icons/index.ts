@@ -1,0 +1,18 @@
+export type { IconProps } from "@/ui/icons/icon-types";
+export { BrowseIcon } from "@/ui/icons/BrowseIcon";
+export { MyPacksIcon } from "@/ui/icons/MyPacksIcon";
+export { PeopleIcon } from "@/ui/icons/PeopleIcon";
+export { HistoryIcon } from "@/ui/icons/HistoryIcon";
+export { SuggestionsIcon } from "@/ui/icons/SuggestionsIcon";
+export { RulesIcon } from "@/ui/icons/RulesIcon";
+export { MenuIcon } from "@/ui/icons/MenuIcon";
+export { SearchIcon } from "@/ui/icons/SearchIcon";
+export { PlusIcon } from "@/ui/icons/PlusIcon";
+export { BellIcon } from "@/ui/icons/BellIcon";
+export { ChevronDownIcon } from "@/ui/icons/ChevronDownIcon";
+export { ChevronLeftIcon } from "@/ui/icons/ChevronLeftIcon";
+export { ChevronRightIcon } from "@/ui/icons/ChevronRightIcon";
+export { PlayIcon } from "@/ui/icons/PlayIcon";
+export { FriendsIcon } from "@/ui/icons/FriendsIcon";
+export { RoomIcon } from "@/ui/icons/RoomIcon";
+export { SlidersIcon } from "@/ui/icons/SlidersIcon";

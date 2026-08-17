@@ -1,0 +1,509 @@
+import { describe, expect, it, vi, beforeEach } from "vitest";
+import { act, renderHook, waitFor } from "@testing-library/react";
+import { usePlaySession } from "./use-play-session";
+import { packStructureHash } from "../pack-structure-hash";
+import { readPlayResume } from "../play-resume-storage";
+import { playsClient } from "@/api/plays-client";
+import { useAuth } from "@/contexts/auth-context";
+import type { Pack } from "@/types/pack";
+
+vi.mock("@/api/plays-client", () => ({
+  playsClient: {
+    record: vi.fn().mockResolvedValue({ id: "play-1" }),
+  },
+}));
+
+vi.mock("@/contexts/auth-context");
+
+const mockedUseAuth = vi.mocked(useAuth);
+
+function setAuth(status: "loading" | "authenticated" | "unauthenticated") {
+  mockedUseAuth.mockReturnValue({
+    user:
+      status === "authenticated"
+        ? {
+            id: "u1",
+            email: "a@x.com",
+            username: "a",
+            role: "user",
+            createdAt: "",
+          }
+        : null,
+    status,
+    login: vi.fn(),
+    requestEmailCode: vi.fn(),
+    register: vi.fn(),
+    logout: vi.fn(),
+    setAvatarKey: vi.fn(),
+    patchUser: vi.fn(),
+    revalidate: vi.fn(),
+  } as ReturnType<typeof useAuth>);
+}
+
+function textItem(id: string, title: string) {
+  return { id, type: "text" as const, title, value: title };
+}
+
+const BASE: Omit<Pack, "format" | "groups" | "rounds"> = {
+  id: "pack-a",
+  title: "T",
+  description: "D",
+  coverTone: "#2b2a3a",
+  language: "en",
+  tags: [],
+  authorId: "u1",
+  createdAt: "2026-01-01T00:00:00.000Z",
+  totalPlays: 0,
+  avgAgreementPercent: 0,
+  status: "approved",
+  rejectionReason: null,
+  likes: 0,
+  dislikes: 0,
+  myVote: null,
+};
+
+const GROUPS_PACK: Pack = {
+  ...BASE,
+  format: "save_one",
+  groups: [
+    {
+      id: "g1",
+      name: "Round 1",
+      items: [textItem("1", "A"), textItem("2", "B")],
+    },
+    { id: "g2", name: "Round 2", items: [textItem("3", "C")] },
+  ],
+  rounds: [
+    {
+      id: "r1",
+      slots: [{ groupId: "g1", mode: "manual", itemIds: ["1", "2"] }],
+    },
+    { id: "r2", slots: [{ groupId: "g2", mode: "manual", itemIds: ["3"] }] },
+  ],
+};
+
+const VERSUS_PACK: Pack = {
+  ...BASE,
+  format: "nxn",
+  groups: [
+    {
+      id: "ca",
+      name: "Boys",
+      items: [textItem("1", "Naruto"), textItem("2", "Sasuke")],
+    },
+    {
+      id: "cb",
+      name: "Girls",
+      items: [textItem("3", "Sakura"), textItem("4", "Hinata")],
+    },
+  ],
+  rounds: [
+    {
+      id: "r1",
+      slots: [
+        { groupId: "ca", mode: "manual", itemIds: ["1", "2"] },
+        { groupId: "cb", mode: "manual", itemIds: ["3", "4"] },
+      ],
+    },
+    {
+      id: "r2",
+      slots: [
+        { groupId: "ca", mode: "manual", itemIds: ["1", "2"] },
+        { groupId: "cb", mode: "manual", itemIds: ["3", "4"] },
+      ],
+    },
+  ],
+};
+
+// Single-pool versus: both sides draw from ONE pool. Manual slots pin disjoint
+// items per side so the draw is deterministic (side A = p1/p2, side B = p3/p4).
+const SINGLE_POOL_PACK: Pack = {
+  ...BASE,
+  format: "nxn",
+  groups: [
+    {
+      id: "pool",
+      name: "Anime",
+      items: [
+        textItem("p1", "P1"),
+        textItem("p2", "P2"),
+        textItem("p3", "P3"),
+        textItem("p4", "P4"),
+      ],
+    },
+  ],
+  rounds: [
+    {
+      id: "r1",
+      slots: [
+        { groupId: "pool", mode: "manual", itemIds: ["p1", "p2"] },
+        { groupId: "pool", mode: "manual", itemIds: ["p3", "p4"] },
+      ],
+    },
+  ],
+};
+
+// GROUPS_PACK played through: round 0 picks item 1 of the two it drew, round 1
+// has a single candidate. Recorded picks carry no itemTitle — that is display
+// state, not part of the wire shape.
+const FINISHED_PICKS = [
+  { roundIndex: 0, groupId: "g1", itemId: "1", chosen: true },
+  { roundIndex: 0, groupId: "g1", itemId: "2", chosen: false },
+  { roundIndex: 1, groupId: "g2", itemId: "3", chosen: true },
+];
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  vi.mocked(playsClient.record).mockResolvedValue({ id: "play-1" });
+  setAuth("authenticated");
+  sessionStorage.clear();
+  // Resume records persist in localStorage; clear so each test starts fresh
+  // rather than resuming a play a previous test left mid-pack.
+  localStorage.clear();
+});
+
+describe("usePlaySession", () => {
+  it("starts on round 0 with confirm gated until a selection", () => {
+    const { result } = renderHook(() => usePlaySession(GROUPS_PACK));
+    expect(result.current.roundIndex).toBe(0);
+    expect(result.current.canConfirm).toBe(false);
+  });
+
+  it("gates confirm until something is selected", () => {
+    const { result } = renderHook(() => usePlaySession(GROUPS_PACK));
+
+    expect(result.current.canConfirm).toBe(false);
+    act(() => result.current.setSelectedId("1"));
+    expect(result.current.canConfirm).toBe(true);
+  });
+
+  it("advances the round, records the pick with round index, and resets the selection on confirm", () => {
+    const { result } = renderHook(() => usePlaySession(GROUPS_PACK));
+
+    act(() => result.current.setSelectedId("2"));
+    act(() => result.current.confirmPick());
+
+    expect(result.current.roundIndex).toBe(1);
+    expect(result.current.selectedId).toBe(null); // reset
+    // Every item the round DREW, in draw order, `chosen` marking the one
+    // picked — the shape the versus formats already record. The others are
+    // what the result screen shows the pick against, and a random slot draws a
+    // different subset each play, so nothing else can recover them.
+    expect(result.current.picks).toEqual([
+      {
+        roundIndex: 0,
+        groupId: "g1",
+        itemId: "1",
+        itemTitle: "A",
+        chosen: false,
+      },
+      {
+        roundIndex: 0,
+        groupId: "g1",
+        itemId: "2",
+        itemTitle: "B",
+        chosen: true,
+      },
+    ]);
+  });
+
+  it("resolves a two-pool versus pick per drawn item, in slot order", () => {
+    const { result } = renderHook(() => usePlaySession(VERSUS_PACK));
+
+    // Selection is by SIDE INDEX now ("0" = side A = ca).
+    act(() => result.current.setSelectedId("0"));
+    act(() => result.current.confirmPick());
+
+    // Both sides' items, each under the pool it was drawn from. Recording only
+    // the winning pool named the side but not what was on it, so the result
+    // screen could never show the matchup the player was looking at.
+    expect(result.current.picks).toEqual([
+      {
+        roundIndex: 0,
+        groupId: "ca",
+        itemId: "1",
+        itemTitle: "Naruto",
+        chosen: true,
+      },
+      {
+        roundIndex: 0,
+        groupId: "ca",
+        itemId: "2",
+        itemTitle: "Sasuke",
+        chosen: true,
+      },
+      {
+        roundIndex: 0,
+        groupId: "cb",
+        itemId: "3",
+        itemTitle: "Sakura",
+        chosen: false,
+      },
+      {
+        roundIndex: 0,
+        groupId: "cb",
+        itemId: "4",
+        itemTitle: "Hinata",
+        chosen: false,
+      },
+    ]);
+  });
+
+  it("records a single-pool versus pick per drawn item, chosen on the picked side", () => {
+    const { result } = renderHook(() => usePlaySession(SINGLE_POOL_PACK));
+
+    expect(result.current.versusSinglePool).toBe(true);
+    // Pick side A (slot 0).
+    act(() => result.current.setSelectedId("0"));
+    act(() => result.current.confirmPick());
+
+    // One pick per drawn item across both sides; chosen marks side A's items.
+    // (Side A's manual slot pins p1/p2; side B's pins p3/p4.)
+    expect(result.current.picks).toEqual([
+      {
+        roundIndex: 0,
+        groupId: "pool",
+        itemId: "p1",
+        itemTitle: "P1",
+        chosen: true,
+      },
+      {
+        roundIndex: 0,
+        groupId: "pool",
+        itemId: "p2",
+        itemTitle: "P2",
+        chosen: true,
+      },
+      {
+        roundIndex: 0,
+        groupId: "pool",
+        itemId: "p3",
+        itemTitle: "P3",
+        chosen: false,
+      },
+      {
+        roundIndex: 0,
+        groupId: "pool",
+        itemId: "p4",
+        itemTitle: "P4",
+        chosen: false,
+      },
+    ]);
+    // The "your picks" summary shows only the chosen side.
+    expect(result.current.displayPicks.map((p) => p.itemId)).toEqual([
+      "p1",
+      "p2",
+    ]);
+  });
+
+  it("records the single-pool play with chosen flags on finish", async () => {
+    const { result } = renderHook(() => usePlaySession(SINGLE_POOL_PACK));
+
+    act(() => result.current.setSelectedId("1")); // pick side B (p3/p4)
+    act(() => result.current.confirmPick());
+
+    await waitFor(() => expect(playsClient.record).toHaveBeenCalledTimes(1));
+    // Slot order, not chosen-first: side A's drawn items then side B's. The
+    // array order is what tells the result screen which side each item was on,
+    // and for a single-pool round the group ids cannot.
+    expect(playsClient.record).toHaveBeenCalledWith("pack-a", {
+      picks: [
+        { roundIndex: 0, groupId: "pool", itemId: "p1", chosen: false },
+        { roundIndex: 0, groupId: "pool", itemId: "p2", chosen: false },
+        { roundIndex: 0, groupId: "pool", itemId: "p3", chosen: true },
+        { roundIndex: 0, groupId: "pool", itemId: "p4", chosen: true },
+      ],
+    });
+  });
+
+  // The "only after the record resolves" half of this used to be the contract;
+  // it is now the bug (#222 gates the result screen on these picks, so a
+  // pending request meant a locked screen). What still matters and is asserted
+  // here: the record fires EXACTLY once, with the right payload.
+  it("records exactly once on finish, with the picks stashed immediately", async () => {
+    let resolveRecord!: (value: { id: string }) => void;
+    vi.mocked(playsClient.record).mockReturnValue(
+      new Promise<{ id: string }>((resolve) => {
+        resolveRecord = resolve;
+      }),
+    );
+    const { result } = renderHook(() => usePlaySession(GROUPS_PACK));
+
+    // Round 1.
+    act(() => result.current.setSelectedId("1"));
+    act(() => result.current.confirmPick());
+    // Round 2 (single item).
+    act(() => result.current.setSelectedId("3"));
+    act(() => result.current.confirmPick());
+
+    expect(result.current.isFinished).toBe(true);
+    await waitFor(() => expect(playsClient.record).toHaveBeenCalledTimes(1));
+    expect(playsClient.record).toHaveBeenCalledWith("pack-a", {
+      picks: FINISHED_PICKS,
+    });
+    // Record still pending, picks already persisted — the player can click
+    // through to the result screen without waiting on the round-trip.
+    expect(
+      JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
+    ).toEqual(FINISHED_PICKS);
+    expect(result.current.recordSettled).toBe(false);
+
+    await act(async () => {
+      resolveRecord({ id: "play-1" });
+    });
+    await waitFor(() => expect(result.current.recordSettled).toBe(true));
+    // Resolving must not re-fire it, nor disturb what was stashed.
+    expect(playsClient.record).toHaveBeenCalledTimes(1);
+    expect(
+      JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
+    ).toHaveLength(FINISHED_PICKS.length);
+  });
+
+  // #221: this used to assert that a signed-out play was NOT recorded — the
+  // bug. A signed-out visitor can play any pack, so silently dropping their run
+  // made the pack's stats a lie and told the player nothing. The backend now
+  // takes an optional JWT and stores a null player (backend#176).
+  it("records a signed-out play and stashes the local picks", async () => {
+    setAuth("unauthenticated");
+    const { result } = renderHook(() => usePlaySession(GROUPS_PACK));
+
+    act(() => result.current.setSelectedId("1"));
+    act(() => result.current.confirmPick());
+    act(() => result.current.setSelectedId("3"));
+    act(() => result.current.confirmPick());
+
+    expect(result.current.isFinished).toBe(true);
+    await waitFor(() => expect(result.current.recordSettled).toBe(true));
+
+    expect(playsClient.record).toHaveBeenCalledWith("pack-a", {
+      picks: FINISHED_PICKS,
+    });
+    expect(
+      JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
+    ).toEqual(FINISHED_PICKS);
+  });
+
+  // The result screen is GATED on these picks (#222), so writing them only
+  // after the record request resolved locked out the player who just finished:
+  // RankPlayScreen/HeadToHeadPlayScreen render their "see result" link in the
+  // same commit that fires the request, so a prompt click beats the round-trip.
+  it("stashes the picks before the record request resolves", async () => {
+    setAuth("unauthenticated");
+    // A request that never settles — the state during the whole in-flight window.
+    vi.mocked(playsClient.record).mockReturnValue(new Promise(() => {}));
+    const { result } = renderHook(() => usePlaySession(GROUPS_PACK));
+
+    act(() => result.current.setSelectedId("1"));
+    act(() => result.current.confirmPick());
+    act(() => result.current.setSelectedId("3"));
+    act(() => result.current.confirmPick());
+
+    expect(result.current.isFinished).toBe(true);
+    expect(result.current.recordSettled).toBe(false);
+    // Already stashed, with the request still in flight.
+    expect(
+      JSON.parse(sessionStorage.getItem("velanto:last-play:pack-a")!),
+    ).toEqual(FINISHED_PICKS);
+  });
+
+  it("stashes the picks even when the record request fails", async () => {
+    setAuth("unauthenticated");
+    vi.mocked(playsClient.record).mockRejectedValue(new Error("network"));
+    const { result } = renderHook(() => usePlaySession(GROUPS_PACK));
+
+    act(() => result.current.setSelectedId("1"));
+    act(() => result.current.confirmPick());
+    act(() => result.current.setSelectedId("3"));
+    act(() => result.current.confirmPick());
+
+    await waitFor(() => expect(result.current.recordSettled).toBe(true));
+    // A failed request costs the pack a stat, not the player their result.
+    expect(sessionStorage.getItem("velanto:last-play:pack-a")).not.toBeNull();
+  });
+
+  // The wait-for-auth guard is what keeps a signed-in player's run from being
+  // attributed to nobody: recording before the token resolves would send it
+  // anonymously and lose it from their history.
+  it("does not record until auth has resolved", async () => {
+    setAuth("loading");
+    const { result } = renderHook(() => usePlaySession(GROUPS_PACK));
+
+    act(() => result.current.setSelectedId("1"));
+    act(() => result.current.confirmPick());
+    act(() => result.current.setSelectedId("3"));
+    act(() => result.current.confirmPick());
+
+    expect(result.current.isFinished).toBe(true);
+    expect(playsClient.record).not.toHaveBeenCalled();
+  });
+
+  describe("resume", () => {
+    it("saves progress after a finished round and restores it on a fresh mount, once continued", async () => {
+      const version = packStructureHash(GROUPS_PACK);
+
+      // First mount: finish round 0 of the two-round pack.
+      const first = renderHook(() => usePlaySession(GROUPS_PACK));
+      await waitFor(() => expect(first.result.current.showRound).toBe(true));
+      act(() => first.result.current.setSelectedId("1"));
+      act(() => first.result.current.confirmPick());
+      expect(first.result.current.roundIndex).toBe(1);
+
+      // A resume record now exists at round 1 with round 0's picks.
+      const saved = readPlayResume("pack-a", version);
+      expect(saved?.roundIndex).toBe(1);
+      expect((saved?.choices as unknown[]).length).toBe(2);
+      first.unmount();
+
+      // Second mount finds it and asks for a decision — nothing draws or
+      // restores yet.
+      const second = renderHook(() => usePlaySession(GROUPS_PACK));
+      await waitFor(() => expect(second.result.current.needsChoice).toBe(true));
+      expect(second.result.current.showRound).toBe(false);
+      expect(second.result.current.roundIndex).toBe(0);
+
+      // Continuing picks up on round 1 with the picks restored.
+      act(() => second.result.current.chooseContinue());
+      await waitFor(() => expect(second.result.current.roundIndex).toBe(1));
+      expect(second.result.current.picks).toHaveLength(2);
+      expect(second.result.current.showRound).toBe(true);
+    });
+
+    it("chooseRestart discards the saved play and starts over from round 0", async () => {
+      const version = packStructureHash(GROUPS_PACK);
+
+      const first = renderHook(() => usePlaySession(GROUPS_PACK));
+      await waitFor(() => expect(first.result.current.showRound).toBe(true));
+      act(() => first.result.current.setSelectedId("1"));
+      act(() => first.result.current.confirmPick());
+      expect(readPlayResume("pack-a", version)).not.toBeNull();
+      first.unmount();
+
+      const second = renderHook(() => usePlaySession(GROUPS_PACK));
+      await waitFor(() => expect(second.result.current.needsChoice).toBe(true));
+
+      act(() => second.result.current.chooseRestart());
+
+      await waitFor(() => expect(second.result.current.showRound).toBe(true));
+      expect(second.result.current.roundIndex).toBe(0);
+      expect(second.result.current.picks).toHaveLength(0);
+      // Discarded outright, not just superseded in memory.
+      expect(readPlayResume("pack-a", version)).toBeNull();
+    });
+
+    it("deletes the resume record when the play completes", async () => {
+      const version = packStructureHash(GROUPS_PACK);
+      const { result } = renderHook(() => usePlaySession(GROUPS_PACK));
+      await waitFor(() => expect(result.current.showRound).toBe(true));
+
+      act(() => result.current.setSelectedId("1"));
+      act(() => result.current.confirmPick());
+      expect(readPlayResume("pack-a", version)).not.toBeNull();
+
+      // Finish the last round.
+      act(() => result.current.setSelectedId("3"));
+      act(() => result.current.confirmPick());
+
+      await waitFor(() => expect(readPlayResume("pack-a", version)).toBeNull());
+    });
+  });
+});

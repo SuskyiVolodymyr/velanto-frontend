@@ -1,9 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import { Bug, Languages, MoreHorizontal, Sparkles } from "lucide-react";
-import type {
-  FeedbackStatus,
-  FeedbackTopic,
-} from "@/src/shared/types/feedback";
+import type { FeedbackStatus, FeedbackTopic } from "@/types/feedback";
 
 /**
  * Per-topic and per-status colour for the Suggestions surface, keyed by the wire

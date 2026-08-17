@@ -1,0 +1,1074 @@
+import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
+import { screen, waitFor, within } from "@testing-library/react";
+import { renderWithQueryClient as render } from "@/test/render-with-query-client";
+import userEvent from "@testing-library/user-event";
+import { NextIntlClientProvider } from "next-intl";
+import messages from "@/messages/en.json";
+import { CommentSection } from "./CommentSection";
+import { AuthProvider } from "@/contexts/auth-context";
+import { StreamerModeProvider } from "@/contexts/streamer-mode-context";
+import { authClient } from "@/api/auth-client";
+import { commentsClient } from "@/api/comments-client";
+import { ApiError } from "@/api/api-client";
+import type { Comment } from "@/types/comment";
+import type { User } from "@/types/user";
+
+vi.mock("@/api/auth-client", () => ({
+  authClient: {
+    requestEmailCode: vi.fn(),
+    register: vi.fn(),
+    login: vi.fn(),
+    logout: vi.fn(),
+    refresh: vi.fn(),
+  },
+}));
+
+vi.mock("@/api/comments-client", () => ({
+  commentsClient: {
+    list: vi.fn(),
+    create: vi.fn(),
+    vote: vi.fn(),
+    delete: vi.fn(),
+  },
+}));
+
+const USER: User = {
+  id: "u1",
+  email: "alice@example.com",
+  username: "alice",
+  role: "user",
+  createdAt: "2026-01-01T00:00:00.000Z",
+};
+
+const COMMENT_A: Comment = {
+  id: "c1",
+  packId: "pack-1",
+  authorId: "u2",
+  authorUsername: "bob",
+  body: "Loved this pack.",
+  createdAt: "2026-01-01T00:00:00.000Z",
+};
+
+function renderAsAuthenticated() {
+  vi.mocked(authClient.refresh).mockResolvedValue({
+    accessToken: "token",
+    user: USER,
+  });
+  return render(
+    <NextIntlClientProvider locale="en" messages={messages}>
+      <AuthProvider>
+        <CommentSection packId="pack-1" />
+      </AuthProvider>
+    </NextIntlClientProvider>,
+  );
+}
+
+function renderAsUnauthenticated() {
+  vi.mocked(authClient.refresh).mockRejectedValue(new Error("no session"));
+  return render(
+    <NextIntlClientProvider locale="en" messages={messages}>
+      <AuthProvider>
+        <CommentSection packId="pack-1" />
+      </AuthProvider>
+    </NextIntlClientProvider>,
+  );
+}
+
+// Render authenticated as a chosen user, with an explicit pack author id — used
+// by the delete-affordance tests to exercise the author/pack-author/staff paths.
+function renderAuthedAs(user: User, packAuthorId?: string) {
+  vi.mocked(authClient.refresh).mockResolvedValue({
+    accessToken: "token",
+    user,
+  });
+  return render(
+    <NextIntlClientProvider locale="en" messages={messages}>
+      <AuthProvider>
+        <CommentSection packId="pack-1" packAuthorId={packAuthorId} />
+      </AuthProvider>
+    </NextIntlClientProvider>,
+  );
+}
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
+
+describe("CommentSection", () => {
+  it("shows a comment skeleton while comments load, then clears it, keeping the busy announcement", async () => {
+    // Hold the fetch open so the section stays in its loading state.
+    let resolve: (v: {
+      items: Comment[];
+      total: number;
+      page: number;
+      limit: number;
+    }) => void = () => {};
+    vi.mocked(commentsClient.list).mockReturnValue(
+      new Promise((r) => {
+        resolve = r;
+      }),
+    );
+    renderAsUnauthenticated();
+
+    // A pulsing placeholder stands in for the list (not a spinner), and the
+    // busy state is still announced to screen readers.
+    expect(await screen.findByTestId("comments-skeleton")).toBeInTheDocument();
+    expect(screen.getByRole("status")).toHaveTextContent(/loading comments/i);
+
+    resolve({ items: [], total: 0, page: 1, limit: 10 });
+
+    await waitFor(() =>
+      expect(screen.queryByTestId("comments-skeleton")).not.toBeInTheDocument(),
+    );
+  });
+
+  it("fetches page 1 with limit 10 and renders the list: body, count, author avatar and author-page link", async () => {
+    vi.mocked(commentsClient.list).mockResolvedValue({
+      items: [{ ...COMMENT_A, authorAvatarKey: "media/avatar/bob.webp" }],
+      total: 1,
+      page: 1,
+      limit: 10,
+    });
+    const { container } = renderAsUnauthenticated();
+
+    expect(await screen.findByText("@bob")).toBeInTheDocument();
+    expect(screen.getByText("Loved this pack.")).toBeInTheDocument();
+    expect(commentsClient.list).toHaveBeenCalledWith("pack-1", {
+      page: 1,
+      limit: 10,
+      sort: "new",
+    });
+    expect(screen.getByText("Comments · 1")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "@bob" })).toHaveAttribute(
+      "href",
+      "/users/u2",
+    );
+    expect(container.querySelector('img[src*="bob.webp"]')).toBeInTheDocument();
+  });
+
+  it("shows an empty state when there are no comments yet", async () => {
+    vi.mocked(commentsClient.list).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 10,
+    });
+    renderAsUnauthenticated();
+
+    expect(await screen.findByText("No comments yet.")).toBeInTheDocument();
+  });
+
+  it("shows a blocked composer that explains why on click when unauthenticated", async () => {
+    vi.mocked(commentsClient.list).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 10,
+    });
+    renderAsUnauthenticated();
+
+    // The composer is shown but inert: the textarea is read-only and shows the
+    // reason as its placeholder, Post is blocked, and clicking anywhere in the
+    // composer (not just the button) surfaces the reason. Nothing posts.
+    const textarea = await screen.findByRole("textbox");
+    expect(textarea).toHaveAttribute("readonly");
+    expect(textarea).toHaveAttribute("placeholder", "Log in to comment");
+
+    const post = screen.getByRole("button", { name: "Post" });
+    expect(post).toHaveAttribute("aria-disabled", "true");
+
+    await userEvent.click(post);
+    expect(commentsClient.create).not.toHaveBeenCalled();
+    expect(screen.getByRole("dialog")).toHaveTextContent("Log in to comment");
+  });
+
+  it("disables the Post button while the draft is empty", async () => {
+    vi.mocked(commentsClient.list).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 10,
+    });
+    renderAsAuthenticated();
+
+    const postButton = await screen.findByRole("button", { name: "Post" });
+    expect(postButton).toBeDisabled();
+  });
+
+  it("posts a comment and prepends it to the list, then clears the draft", async () => {
+    const user = userEvent.setup();
+    vi.mocked(commentsClient.list).mockResolvedValue({
+      items: [COMMENT_A],
+      total: 1,
+      page: 1,
+      limit: 10,
+    });
+    const newComment: Comment = {
+      id: "c2",
+      packId: "pack-1",
+      authorId: "u1",
+      authorUsername: "alice",
+      body: "My take too.",
+      createdAt: "2026-01-02T00:00:00.000Z",
+    };
+    vi.mocked(commentsClient.create).mockResolvedValue(newComment);
+    renderAsAuthenticated();
+
+    const textbox = await screen.findByRole("textbox");
+    await user.type(textbox, "My take too.");
+    await user.click(screen.getByRole("button", { name: "Post" }));
+
+    await waitFor(() =>
+      expect(commentsClient.create).toHaveBeenCalledWith("pack-1", {
+        body: "My take too.",
+      }),
+    );
+    expect(await screen.findByText("My take too.")).toBeInTheDocument();
+    expect(textbox).toHaveValue("");
+  });
+
+  it("shows an error and keeps the draft when posting fails", async () => {
+    const user = userEvent.setup();
+    vi.mocked(commentsClient.list).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 10,
+    });
+    vi.mocked(commentsClient.create).mockRejectedValue(
+      new Error("network error"),
+    );
+    renderAsAuthenticated();
+
+    const textbox = await screen.findByRole("textbox");
+    await user.type(textbox, "My take too.");
+    await user.click(screen.getByRole("button", { name: "Post" }));
+
+    expect(
+      await screen.findByText("Couldn't post your comment. Try again."),
+    ).toBeInTheDocument();
+    expect(textbox).toHaveValue("My take too.");
+  });
+
+  it("surfaces the backend's blocked-term rejection inline and keeps the draft", async () => {
+    const user = userEvent.setup();
+    vi.mocked(commentsClient.list).mockResolvedValue({
+      items: [],
+      total: 0,
+      page: 1,
+      limit: 10,
+    });
+    // Real nestjs-zod validation 400 shape: the moderation rejection lives
+    // under `errors[]`. The comment text itself is innocuous.
+    vi.mocked(commentsClient.create).mockRejectedValue(
+      new ApiError(400, "Bad Request", {
+        statusCode: 400,
+        message: "Validation failed",
+        errors: [
+          {
+            code: "custom",
+            path: ["body"],
+            message:
+              "This text contains language that isn't allowed on Velanto.",
+          },
+        ],
+      }),
+    );
+    renderAsAuthenticated();
+
+    const textbox = await screen.findByRole("textbox");
+    await user.type(textbox, "My take too.");
+    await user.click(screen.getByRole("button", { name: "Post" }));
+
+    expect(
+      await screen.findByText(
+        "This text contains language that isn't allowed on Velanto.",
+      ),
+    ).toBeInTheDocument();
+    expect(textbox).toHaveValue("My take too.");
+  });
+
+  it("does not show a Load more button when all comments already fit", async () => {
+    vi.mocked(commentsClient.list).mockResolvedValue({
+      items: [COMMENT_A],
+      total: 1,
+      page: 1,
+      limit: 10,
+    });
+    renderAsUnauthenticated();
+
+    await screen.findByText("Loved this pack.");
+    expect(
+      screen.queryByRole("button", { name: "Load more" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows a Load more button when more comments exist, and appends the next page on click", async () => {
+    const user = userEvent.setup();
+    const secondComment: Comment = {
+      id: "c2",
+      packId: "pack-1",
+      authorId: "u3",
+      authorUsername: "carol",
+      body: "Second comment.",
+      createdAt: "2026-01-02T00:00:00.000Z",
+    };
+    vi.mocked(commentsClient.list).mockResolvedValueOnce({
+      items: [COMMENT_A],
+      total: 2,
+      page: 1,
+      limit: 1,
+    });
+    renderAsUnauthenticated();
+
+    await screen.findByText("Loved this pack.");
+    const loadMoreButton = screen.getByRole("button", { name: "Load more" });
+
+    vi.mocked(commentsClient.list).mockResolvedValueOnce({
+      items: [secondComment],
+      total: 2,
+      page: 2,
+      limit: 1,
+    });
+    await user.click(loadMoreButton);
+
+    expect(commentsClient.list).toHaveBeenLastCalledWith("pack-1", {
+      page: 2,
+      limit: 10,
+      sort: "new",
+    });
+    expect(await screen.findByText("Second comment.")).toBeInTheDocument();
+    expect(screen.getByText("Loved this pack.")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Load more" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("filters out a comment the next page re-returns after a post shifted server offsets", async () => {
+    const user = userEvent.setup();
+    const thirdComment: Comment = {
+      id: "c3",
+      packId: "pack-1",
+      authorId: "u4",
+      authorUsername: "dave",
+      body: "Third comment.",
+      createdAt: "2026-01-03T00:00:00.000Z",
+    };
+    vi.mocked(commentsClient.list).mockResolvedValueOnce({
+      items: [COMMENT_A],
+      total: 2,
+      page: 1,
+      limit: 1,
+    });
+    renderAsUnauthenticated();
+
+    await screen.findByText("Loved this pack.");
+
+    // Simulate the next page re-returning COMMENT_A (already shown) alongside
+    // a genuinely new comment — the offset-shift scenario found in review.
+    vi.mocked(commentsClient.list).mockResolvedValueOnce({
+      items: [COMMENT_A, thirdComment],
+      total: 3,
+      page: 2,
+      limit: 1,
+    });
+    await user.click(screen.getByRole("button", { name: "Load more" }));
+
+    expect(await screen.findByText("Third comment.")).toBeInTheDocument();
+    expect(screen.getAllByText("Loved this pack.")).toHaveLength(1);
+  });
+
+  it("shows an error when Load more fails", async () => {
+    const user = userEvent.setup();
+    vi.mocked(commentsClient.list).mockResolvedValueOnce({
+      items: [COMMENT_A],
+      total: 2,
+      page: 1,
+      limit: 1,
+    });
+    renderAsUnauthenticated();
+
+    await screen.findByText("Loved this pack.");
+    vi.mocked(commentsClient.list).mockRejectedValueOnce(
+      new Error("network error"),
+    );
+    await user.click(screen.getByRole("button", { name: "Load more" }));
+
+    expect(
+      await screen.findByText("Couldn't load more comments. Try again."),
+    ).toBeInTheDocument();
+  });
+
+  describe("delete affordance", () => {
+    const MODERATOR: User = { ...USER, id: "mod-1", role: "moderator" };
+    const OWN_COMMENT: Comment = { ...COMMENT_A, id: "c-own", authorId: "u1" };
+
+    function listOnce(items: Comment[]) {
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items,
+        total: items.length,
+        page: 1,
+        limit: 10,
+      });
+    }
+
+    it("shows a delete button when the viewer is the pack author", async () => {
+      listOnce([COMMENT_A]); // authored by u2
+      renderAuthedAs(USER, "u1"); // u1 owns the pack
+
+      expect(
+        await screen.findByRole("button", { name: "Delete comment" }),
+      ).toBeInTheDocument();
+    });
+
+    it("shows a delete button on the viewer's own comment", async () => {
+      listOnce([OWN_COMMENT]); // authored by u1
+      renderAuthedAs(USER, "someone-else");
+
+      expect(
+        await screen.findByRole("button", { name: "Delete comment" }),
+      ).toBeInTheDocument();
+    });
+
+    it("shows a delete button for a staff viewer on anyone's comment", async () => {
+      listOnce([COMMENT_A]); // authored by u2
+      renderAuthedAs(MODERATOR, "someone-else");
+
+      expect(
+        await screen.findByRole("button", { name: "Delete comment" }),
+      ).toBeInTheDocument();
+    });
+
+    it("hides the delete button from a regular viewer who is neither author, pack author, nor staff", async () => {
+      listOnce([COMMENT_A]); // authored by u2
+      renderAuthedAs(USER, "someone-else"); // u1, plain user, not pack author
+
+      await screen.findByText("Loved this pack.");
+      expect(
+        screen.queryByRole("button", { name: "Delete comment" }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("hides the delete button when unauthenticated", async () => {
+      listOnce([COMMENT_A]);
+      renderAsUnauthenticated();
+
+      await screen.findByText("Loved this pack.");
+      expect(
+        screen.queryByRole("button", { name: "Delete comment" }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("deletes a comment on confirm and removes it from the list", async () => {
+      const user = userEvent.setup();
+      const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
+      listOnce([COMMENT_A]);
+      vi.mocked(commentsClient.delete).mockResolvedValue(undefined);
+      renderAuthedAs(MODERATOR, "someone-else");
+
+      await user.click(
+        await screen.findByRole("button", { name: "Delete comment" }),
+      );
+
+      await waitFor(() =>
+        expect(commentsClient.delete).toHaveBeenCalledWith("pack-1", "c1"),
+      );
+      await waitFor(() =>
+        expect(screen.queryByText("Loved this pack.")).not.toBeInTheDocument(),
+      );
+      // The header count reflects the drop (total decremented in the cache).
+      expect(screen.getByText("Comments · 0")).toBeInTheDocument();
+      confirm.mockRestore();
+    });
+
+    it("does not delete when the confirmation is cancelled", async () => {
+      const user = userEvent.setup();
+      const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
+      listOnce([COMMENT_A]);
+      renderAuthedAs(MODERATOR, "someone-else");
+
+      await user.click(
+        await screen.findByRole("button", { name: "Delete comment" }),
+      );
+
+      expect(commentsClient.delete).not.toHaveBeenCalled();
+      expect(screen.getByText("Loved this pack.")).toBeInTheDocument();
+      confirm.mockRestore();
+    });
+
+    it("shows an inline error when deletion fails and keeps the comment", async () => {
+      const user = userEvent.setup();
+      const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
+      listOnce([COMMENT_A]);
+      vi.mocked(commentsClient.delete).mockRejectedValue(new Error("boom"));
+      renderAuthedAs(MODERATOR, "someone-else");
+
+      await user.click(
+        await screen.findByRole("button", { name: "Delete comment" }),
+      );
+
+      expect(
+        await screen.findByText("Couldn't delete the comment. Try again."),
+      ).toBeInTheDocument();
+      expect(screen.getByText("Loved this pack.")).toBeInTheDocument();
+      confirm.mockRestore();
+    });
+  });
+
+  describe("creator badge", () => {
+    function listOnce(items: Comment[]) {
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items,
+        total: items.length,
+        page: 1,
+        limit: 10,
+      });
+    }
+
+    it("shows a Creator badge on a comment authored by the pack's own author", async () => {
+      listOnce([COMMENT_A]); // authored by u2
+      renderAuthedAs(USER, "u2"); // u2 owns the pack
+
+      await screen.findByText("Loved this pack.");
+      expect(screen.getByText("Creator")).toBeInTheDocument();
+    });
+
+    it("hides the Creator badge on a comment from anyone else", async () => {
+      listOnce([COMMENT_A]); // authored by u2
+      renderAuthedAs(USER, "someone-else");
+
+      await screen.findByText("Loved this pack.");
+      expect(screen.queryByText("Creator")).not.toBeInTheDocument();
+    });
+
+    it("badges only the reply that's the pack author, not the root, when they differ", async () => {
+      // Root (c1) authored by u2; reply authored by u3, the pack's owner —
+      // guards against a copy-paste slip that checks root.authorId on both rows.
+      const reply: Comment = {
+        id: "reply-1",
+        packId: "pack-1",
+        authorId: "u3",
+        authorUsername: "carol",
+        body: "I agree with this.",
+        createdAt: "2026-01-02T00:00:00.000Z",
+        parentId: "c1",
+      };
+      listOnce([{ ...COMMENT_A, replyCount: 1, replies: [reply] }]);
+      renderAuthedAs(USER, "u3"); // u3 owns the pack
+
+      await screen.findByText("I agree with this.");
+      expect(screen.getAllByText("Creator")).toHaveLength(1);
+    });
+  });
+
+  describe("threading (replies)", () => {
+    const MODERATOR: User = { ...USER, id: "mod-1", role: "moderator" };
+    const REPLY: Comment = {
+      id: "reply-1",
+      packId: "pack-1",
+      authorId: "u3",
+      authorUsername: "carol",
+      body: "I agree with this.",
+      createdAt: "2026-01-02T00:00:00.000Z",
+      parentId: "c1",
+    };
+    // COMMENT_A (id c1, body "Loved this pack.") with one embedded reply.
+    const ROOT_WITH_REPLY: Comment = {
+      ...COMMENT_A,
+      replyCount: 1,
+      replies: [REPLY],
+    };
+
+    function listOnce(items: Comment[]) {
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items,
+        total: items.length,
+        page: 1,
+        limit: 10,
+      });
+    }
+
+    it("renders a root's replies nested beneath it", async () => {
+      listOnce([ROOT_WITH_REPLY]);
+      renderAsUnauthenticated();
+
+      expect(await screen.findByText("Loved this pack.")).toBeInTheDocument();
+      expect(screen.getByText("I agree with this.")).toBeInTheDocument();
+      expect(screen.getByText("@carol")).toBeInTheDocument();
+    });
+
+    it("does not show Reply buttons when unauthenticated", async () => {
+      listOnce([ROOT_WITH_REPLY]);
+      renderAsUnauthenticated();
+
+      await screen.findByText("I agree with this.");
+      expect(
+        screen.queryByRole("button", { name: "Reply" }),
+      ).not.toBeInTheDocument();
+    });
+
+    it("posts a reply with the parent id and appends it under the root", async () => {
+      const user = userEvent.setup();
+      listOnce([COMMENT_A]); // a root with no replies yet
+      const createdReply: Comment = {
+        id: "reply-2",
+        packId: "pack-1",
+        authorId: "u1",
+        authorUsername: "alice",
+        body: "My reply.",
+        createdAt: "2026-01-03T00:00:00.000Z",
+        parentId: "c1",
+      };
+      vi.mocked(commentsClient.create).mockResolvedValue(createdReply);
+      renderAsAuthenticated();
+
+      await user.click(await screen.findByRole("button", { name: "Reply" }));
+      const replyBox = screen.getByRole("textbox", {
+        name: "Reply to comment",
+      });
+      await user.type(replyBox, "My reply.");
+      const composer = screen.getByTestId("reply-composer");
+      await user.click(within(composer).getByRole("button", { name: "Reply" }));
+
+      await waitFor(() =>
+        expect(commentsClient.create).toHaveBeenCalledWith("pack-1", {
+          body: "My reply.",
+          parentId: "c1",
+        }),
+      );
+      expect(await screen.findByText("My reply.")).toBeInTheDocument();
+    });
+
+    it("pre-fills an @mention of the reply's author when replying to a reply", async () => {
+      const user = userEvent.setup();
+      listOnce([ROOT_WITH_REPLY]);
+      renderAsAuthenticated();
+
+      await screen.findByText("I agree with this.");
+      // Two Reply buttons — the root's, then the reply's.
+      const replyButtons = screen.getAllByRole("button", { name: "Reply" });
+      await user.click(replyButtons[1]);
+
+      const replyBox = screen.getByRole("textbox", {
+        name: "Reply to comment",
+      });
+      expect(replyBox).toHaveValue("@carol ");
+    });
+
+    it("confirms deleting the whole thread when a root has replies", async () => {
+      const user = userEvent.setup();
+      const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
+      listOnce([ROOT_WITH_REPLY]);
+      renderAuthedAs(MODERATOR, "someone-else");
+
+      const deleteButtons = await screen.findAllByRole("button", {
+        name: "Delete comment",
+      });
+      await user.click(deleteButtons[0]); // the root's delete
+
+      expect(confirm).toHaveBeenCalledWith(
+        "Delete this comment and all its replies?",
+      );
+      confirm.mockRestore();
+    });
+
+    it("deletes a reply and drops it from its root without touching the count", async () => {
+      const user = userEvent.setup();
+      const confirm = vi.spyOn(window, "confirm").mockReturnValue(true);
+      listOnce([ROOT_WITH_REPLY]);
+      vi.mocked(commentsClient.delete).mockResolvedValue(undefined);
+      renderAuthedAs(MODERATOR, "someone-else");
+
+      await screen.findByText("I agree with this.");
+      // Root delete is [0], reply delete is [1].
+      const deleteButtons = screen.getAllByRole("button", {
+        name: "Delete comment",
+      });
+      await user.click(deleteButtons[1]);
+
+      await waitFor(() =>
+        expect(commentsClient.delete).toHaveBeenCalledWith("pack-1", "reply-1"),
+      );
+      await waitFor(() =>
+        expect(
+          screen.queryByText("I agree with this."),
+        ).not.toBeInTheDocument(),
+      );
+      // Roots-only total is unchanged by a reply delete.
+      expect(screen.getByText("Comments · 1")).toBeInTheDocument();
+      expect(screen.getByText("Loved this pack.")).toBeInTheDocument();
+      confirm.mockRestore();
+    });
+
+    it("clears a failed reply's error when the composer is reopened", async () => {
+      const user = userEvent.setup();
+      listOnce([COMMENT_A]);
+      vi.mocked(commentsClient.create).mockRejectedValueOnce(
+        new Error("network"),
+      );
+      renderAsAuthenticated();
+
+      await user.click(await screen.findByRole("button", { name: "Reply" }));
+      const box = screen.getByRole("textbox", { name: "Reply to comment" });
+      await user.type(box, "oops");
+      const composer = screen.getByTestId("reply-composer");
+      await user.click(within(composer).getByRole("button", { name: "Reply" }));
+      expect(
+        await screen.findByText("Couldn't post your comment. Try again."),
+      ).toBeInTheDocument();
+
+      // Cancel, then reopen — the stale error must not carry over.
+      await user.click(
+        within(composer).getByRole("button", { name: "Cancel" }),
+      );
+      await user.click(screen.getByRole("button", { name: "Reply" }));
+      expect(
+        screen.queryByText("Couldn't post your comment. Try again."),
+      ).not.toBeInTheDocument();
+    });
+  });
+
+  describe("voting and sort", () => {
+    it("re-fetches with sort=new when the New toggle is chosen", async () => {
+      const user = userEvent.setup();
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items: [COMMENT_A],
+        total: 1,
+        page: 1,
+        limit: 10,
+      });
+      renderAsUnauthenticated();
+
+      await screen.findByText("Loved this pack.");
+      await user.click(screen.getByRole("button", { name: "New" }));
+
+      await waitFor(() =>
+        expect(commentsClient.list).toHaveBeenLastCalledWith("pack-1", {
+          page: 1,
+          limit: 10,
+          sort: "new",
+        }),
+      );
+    });
+
+    // Each reaction shows its own count. A single net used to render here, and
+    // a net of 0 from 1↑/1↓ was indistinguishable from a net of 0 from silence.
+    it("shows the like and dislike counts on their own reactions", async () => {
+      const scored: Comment = { ...COMMENT_A, likes: 5, dislikes: 2 };
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items: [scored],
+        total: 1,
+        page: 1,
+        limit: 10,
+      });
+      renderAsUnauthenticated();
+
+      await screen.findByText("Loved this pack.");
+      expect(screen.getByRole("button", { name: "Upvote" })).toHaveTextContent(
+        "5",
+      );
+      expect(
+        screen.getByRole("button", { name: "Downvote" }),
+      ).toHaveTextContent("2");
+      expect(screen.queryByText("3")).not.toBeInTheDocument();
+    });
+
+    it("casts an upvote on a comment and reflects the returned tally", async () => {
+      const user = userEvent.setup();
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items: [COMMENT_A],
+        total: 1,
+        page: 1,
+        limit: 10,
+      });
+      vi.mocked(commentsClient.vote).mockResolvedValue({
+        likes: 6,
+        dislikes: 2,
+        myVote: 1,
+      });
+      renderAsAuthenticated();
+
+      await screen.findByText("Loved this pack.");
+      await user.click(screen.getByRole("button", { name: "Upvote" }));
+
+      await waitFor(() =>
+        expect(commentsClient.vote).toHaveBeenCalledWith("pack-1", "c1", 1),
+      );
+      await waitFor(() =>
+        expect(
+          screen.getByRole("button", { name: "Upvote" }),
+        ).toHaveTextContent("6"),
+      );
+      expect(screen.getByRole("button", { name: "Upvote" })).toHaveAttribute(
+        "aria-pressed",
+        "true",
+      );
+    });
+
+    it("does not fire a vote for a signed-out viewer", async () => {
+      const user = userEvent.setup();
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items: [COMMENT_A],
+        total: 1,
+        page: 1,
+        limit: 10,
+      });
+      renderAsUnauthenticated();
+
+      await screen.findByText("Loved this pack.");
+      await user.click(screen.getByRole("button", { name: "Upvote" }));
+
+      expect(commentsClient.vote).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("posted-at timestamp", () => {
+    // Freeze the clock so the relative label is deterministic: COMMENT_A was
+    // posted 2026-01-01T00:00:00Z, "now" is three hours later.
+    beforeEach(() => {
+      vi.useFakeTimers({ shouldAdvanceTime: true });
+      vi.setSystemTime(new Date("2026-01-01T03:00:00.000Z"));
+    });
+    afterEach(() => vi.useRealTimers());
+
+    it("renders each comment's posted-at as a relative <time> carrying the exact ISO instant", async () => {
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items: [COMMENT_A],
+        total: 1,
+        page: 1,
+        limit: 10,
+      });
+      const { container } = renderAsUnauthenticated();
+
+      await screen.findByText("Loved this pack.");
+      const posted = container.querySelector("time");
+      expect(posted).not.toBeNull();
+      // Machine-readable instant is the raw ISO string, not the label.
+      expect(posted).toHaveAttribute("datetime", COMMENT_A.createdAt);
+      expect(posted).toHaveTextContent("3 hours ago");
+    });
+
+    it("renders a timestamp for a reply as well as for its root", async () => {
+      const reply: Comment = {
+        id: "reply-1",
+        packId: "pack-1",
+        authorId: "u3",
+        authorUsername: "carol",
+        body: "I agree with this.",
+        // One hour after the root, i.e. two hours before "now".
+        createdAt: "2026-01-01T01:00:00.000Z",
+        parentId: "c1",
+      };
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items: [{ ...COMMENT_A, replyCount: 1, replies: [reply] }],
+        total: 1,
+        page: 1,
+        limit: 10,
+      });
+      const { container } = renderAsUnauthenticated();
+
+      await screen.findByText("I agree with this.");
+      const times = [...container.querySelectorAll("time")];
+      expect(times.map((el) => el.getAttribute("datetime"))).toEqual([
+        COMMENT_A.createdAt,
+        reply.createdAt,
+      ]);
+      expect(times[1]).toHaveTextContent("2 hours ago");
+    });
+
+    it("renders the comment without a <time> when the timestamp is unusable", async () => {
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items: [{ ...COMMENT_A, createdAt: "not-a-date" }],
+        total: 1,
+        page: 1,
+        limit: 10,
+      });
+      const { container } = renderAsUnauthenticated();
+
+      // The comment still renders — a bad timestamp must not take the entry
+      // down (Intl.RelativeTimeFormat throws a RangeError on NaN).
+      expect(await screen.findByText("Loved this pack.")).toBeInTheDocument();
+      expect(container.querySelector("time")).toBeNull();
+    });
+  });
+
+  // The rule (Pack Detail.dc.html): ONE CARD PER TOP-LEVEL THREAD. A root and
+  // everything hanging off it live in the same card, the gap between cards is
+  // what separates two conversations, and there are no horizontal rules
+  // anywhere. Each fixture below pins one way an implementation could get that
+  // wrong — including the previous shape, which was one card around the whole
+  // list with an <hr> between threads.
+  describe("thread cards", () => {
+    const REPLY_ONE: Comment = {
+      id: "reply-1",
+      packId: "pack-1",
+      authorId: "u3",
+      authorUsername: "carol",
+      body: "First reply.",
+      createdAt: "2026-01-02T00:00:00.000Z",
+      parentId: "c1",
+    };
+    const REPLY_TWO: Comment = {
+      ...REPLY_ONE,
+      id: "reply-2",
+      authorId: "u4",
+      authorUsername: "dave",
+      body: "Second reply.",
+      createdAt: "2026-01-03T00:00:00.000Z",
+    };
+    const SECOND_ROOT: Comment = {
+      id: "c2",
+      packId: "pack-1",
+      authorId: "u5",
+      authorUsername: "erin",
+      body: "A separate thread.",
+      createdAt: "2026-01-04T00:00:00.000Z",
+    };
+
+    function listOnce(items: Comment[]) {
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items,
+        total: items.length,
+        page: 1,
+        limit: 10,
+      });
+    }
+
+    const cards = () => screen.queryAllByTestId("comment-thread");
+
+    it("gives one thread one card", async () => {
+      listOnce([COMMENT_A]);
+      renderAsUnauthenticated();
+
+      await screen.findByText("Loved this pack.");
+      expect(cards()).toHaveLength(1);
+    });
+
+    it("gives two top-level threads a card each", async () => {
+      listOnce([COMMENT_A, SECOND_ROOT]);
+      renderAsUnauthenticated();
+
+      await screen.findByText("A separate thread.");
+      const [first, second] = cards();
+      expect(cards()).toHaveLength(2);
+      // Each conversation is wholly inside its own card — the previous shape
+      // put both in one shared card with a rule between them.
+      expect(first).toHaveTextContent("Loved this pack.");
+      expect(second).toHaveTextContent("A separate thread.");
+      expect(first).not.toHaveTextContent("A separate thread.");
+    });
+
+    it("counts cards by thread, not by entry — replies live inside their root's card", async () => {
+      listOnce([
+        { ...COMMENT_A, replyCount: 2, replies: [REPLY_ONE, REPLY_TWO] },
+        SECOND_ROOT,
+      ]);
+      renderAsUnauthenticated();
+
+      await screen.findByText("A separate thread.");
+      // Four entries, two threads → two cards. A per-entry implementation
+      // would render four.
+      expect(cards()).toHaveLength(2);
+      expect(cards()[0]).toHaveTextContent("Second reply.");
+    });
+
+    it("draws no horizontal rules at all — the gap between cards is the separation", async () => {
+      listOnce([
+        { ...COMMENT_A, replyCount: 2, replies: [REPLY_ONE, REPLY_TWO] },
+        SECOND_ROOT,
+      ]);
+      renderAsUnauthenticated();
+
+      await screen.findByText("A separate thread.");
+      expect(screen.queryAllByRole("separator")).toHaveLength(0);
+    });
+  });
+
+  it("highlights an @mention in a comment body", async () => {
+    const mentioning: Comment = { ...COMMENT_A, body: "great point @alice" };
+    vi.mocked(commentsClient.list).mockResolvedValue({
+      items: [mentioning],
+      total: 1,
+      page: 1,
+      limit: 10,
+    });
+    renderAsUnauthenticated();
+
+    const mention = await screen.findByText("@alice");
+    expect(mention.tagName).toBe("SPAN");
+    expect(mention).toHaveClass("text-acc");
+  });
+
+  describe("streamer mode", () => {
+    afterEach(() => localStorage.clear());
+
+    function renderWithStreamerMode() {
+      vi.mocked(authClient.refresh).mockRejectedValue(new Error("no session"));
+      return render(
+        <NextIntlClientProvider locale="en" messages={messages}>
+          <AuthProvider>
+            <StreamerModeProvider>
+              <CommentSection packId="pack-1" />
+            </StreamerModeProvider>
+          </AuthProvider>
+        </NextIntlClientProvider>,
+      );
+    }
+
+    it("hides a comment's author name and body until each is revealed", async () => {
+      const user = userEvent.setup();
+      localStorage.setItem("velanto:streamer-mode", "on");
+      vi.mocked(commentsClient.list).mockResolvedValue({
+        items: [COMMENT_A],
+        total: 1,
+        page: 1,
+        limit: 10,
+      });
+      renderWithStreamerMode();
+
+      // Wait for the fetch to resolve (header shows the count) then assert the
+      // identity + body are redacted rather than shown.
+      await screen.findByText("Comments · 1");
+      expect(screen.queryByText("@bob")).not.toBeInTheDocument();
+      expect(screen.queryByText("Loved this pack.")).not.toBeInTheDocument();
+
+      const revealButtons = screen.getAllByRole("button", { name: /reveal/i });
+      expect(revealButtons).toHaveLength(2); // one for the identity, one for the body
+
+      await user.click(revealButtons[0]);
+      await user.click(screen.getAllByRole("button", { name: /reveal/i })[0]);
+
+      expect(screen.getByText("@bob")).toBeInTheDocument();
+      expect(screen.getByText("Loved this pack.")).toBeInTheDocument();
+    });
+  });
+
+  it("keeps the Load more button correctly visible after posting a new comment", async () => {
+    const user = userEvent.setup();
+    vi.mocked(commentsClient.list).mockResolvedValue({
+      items: [COMMENT_A],
+      total: 2,
+      page: 1,
+      limit: 1,
+    });
+    const newComment: Comment = {
+      id: "c3",
+      packId: "pack-1",
+      authorId: "u1",
+      authorUsername: "alice",
+      body: "New one.",
+      createdAt: "2026-01-03T00:00:00.000Z",
+    };
+    vi.mocked(commentsClient.create).mockResolvedValue(newComment);
+    renderAsAuthenticated();
+
+    const textbox = await screen.findByRole("textbox");
+    await user.type(textbox, "New one.");
+    await user.click(screen.getByRole("button", { name: "Post" }));
+
+    expect(await screen.findByText("New one.")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Load more" }),
+    ).toBeInTheDocument();
+  });
+});

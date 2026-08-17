@@ -6,11 +6,11 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { notificationsClient } from "@/src/shared/lib/notifications-client";
+import { notificationsClient } from "@/api/notifications-client";
 import type {
   NotificationPreferences,
   NotificationType,
-} from "@/src/shared/types/notification";
+} from "@/types/notification";
 
 export function notificationPreferencesQueryOptions() {
   return queryOptions({

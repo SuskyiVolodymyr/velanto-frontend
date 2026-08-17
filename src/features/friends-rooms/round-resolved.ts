@@ -1,4 +1,4 @@
-import type { Item } from "@/src/shared/types/pack";
+import type { Item } from "@/types/pack";
 import type {
   RoomMode,
   RoundResult,

@@ -1,0 +1,125 @@
+"use client";
+import { formatDate } from "@/utils/format-date";
+
+import { useEffect, useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
+import Link from "next/link";
+import { Text } from "@/ui/Text";
+import { LoadingState } from "@/ui/LoadingState";
+import { StatusBadge } from "@/components/StatusBadge";
+import { DataTable, DataTableRow, ROW_LINK_CLASS } from "@/ui/DataTable";
+import { cn } from "@/utils/cn";
+import { TablePagination } from "@/ui/TablePagination";
+import { reportReasonLabel } from "@/constants/report-reasons";
+import { reportTargetLabel } from "@/utils/report-display";
+import { ReportFilters } from "@/features/moderation/components/ReportFilters";
+import { useReportsList } from "@/features/moderation/api/reports-list.queries";
+import { MODERATION_PAGE_SIZE } from "@/features/moderation/api/moderation";
+import type { ReportsListFilters } from "@/features/moderation/api/reports-list";
+
+const COLUMNS = "70px 1.4fr 1.1fr 1fr 100px 110px";
+
+export function ReportsTab() {
+  const t = useTranslations("moderation");
+  const [status, setStatus] = useState<ReportsListFilters["status"]>(undefined);
+  const [type, setType] = useState<ReportsListFilters["type"]>(undefined);
+  const [page, setPage] = useState(1);
+
+  const filters = useMemo<ReportsListFilters>(
+    () => ({ status, type }),
+    [status, type],
+  );
+
+  // A filter change re-scopes the list, so a page number carried over from the
+  // old result set would be meaningless (and can be past the end).
+  useEffect(() => {
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
+    setPage(1);
+  }, [filters]);
+
+  const reportsQuery = useReportsList(filters, page, { enabled: true });
+  const reports = reportsQuery.data?.items ?? [];
+  const total = reportsQuery.data?.total ?? 0;
+
+  return (
+    <div className="flex flex-col gap-4">
+      <ReportFilters
+        statusFilter={status}
+        onStatusChange={setStatus}
+        typeFilter={type}
+        onTypeChange={setType}
+      />
+
+      {reportsQuery.isLoading && (
+        <LoadingState label={t("loadingReports")} showLabel />
+      )}
+      {reportsQuery.isError && (
+        <Text variant="danger">{t("reportsError")}</Text>
+      )}
+
+      {!reportsQuery.isLoading && !reportsQuery.isError && (
+        <>
+          <DataTable
+            columns={COLUMNS}
+            headers={[
+              t("hType"),
+              t("hTarget"),
+              t("hReason"),
+              t("hReporter"),
+              t("hDate"),
+              t("hStatus"),
+            ]}
+            empty={t("noReports")}
+            isEmpty={reports.length === 0}
+          >
+            {reports.map((report) => {
+              const target = reportTargetLabel(report);
+              return (
+                // Clicking anywhere in the row opens the report, per the mock,
+                // via the target cell's stretched link — the row itself stays a
+                // role="row" div so the link keeps being announced as one.
+                <DataTableRow key={report.id} columns={COLUMNS} linked>
+                  <span
+                    data-mono
+                    className="text-[11px] font-bold uppercase tracking-[0.05em] text-foreground-secondary"
+                  >
+                    {report.type}
+                  </span>
+                  <Link
+                    href={`/moderation/reports/${report.id}`}
+                    className={cn(
+                      "block truncate text-[13px] font-[650] text-foreground",
+                      ROW_LINK_CLASS,
+                    )}
+                  >
+                    {target.text}
+                  </Link>
+                  <Text variant="secondary" className="truncate text-[13px]">
+                    {reportReasonLabel(report.type, report.reason)}
+                  </Text>
+                  <Text variant="tertiary" className="truncate text-[13px]">
+                    {report.reporterUsername}
+                  </Text>
+                  <span
+                    data-mono
+                    className="text-[12px] text-foreground-tertiary"
+                  >
+                    {formatDate(report.createdAt)}
+                  </span>
+                  <StatusBadge kind="report" status={report.status} />
+                </DataTableRow>
+              );
+            })}
+          </DataTable>
+
+          <TablePagination
+            page={page}
+            total={total}
+            pageSize={MODERATION_PAGE_SIZE}
+            onPageChange={setPage}
+          />
+        </>
+      )}
+    </div>
+  );
+}

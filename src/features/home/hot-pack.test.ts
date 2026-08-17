@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import type { Pack } from "@/src/shared/types/pack";
+import type { Pack } from "@/types/pack";
 import { HOT_PLAYS_THRESHOLD, isHotPack } from "./hot-pack";
 
 function packWithPlays(totalPlays: number): Pack {

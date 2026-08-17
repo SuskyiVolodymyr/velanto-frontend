@@ -1,0 +1,149 @@
+"use client";
+
+import { useEffect } from "react";
+import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { Text } from "@/ui/Text";
+import { Button } from "@/ui/Button";
+import { PageHeader } from "@/ui/PageHeader";
+import { useAuth } from "@/contexts/auth-context";
+import { cn } from "@/utils/cn";
+import { IdentityPillBadge } from "@/components/IdentityPillBadge";
+import { OverviewTab } from "@/features/admin/components/OverviewTab";
+import { StaffTab } from "@/features/admin/components/StaffTab";
+import { UsersTab } from "@/features/admin/components/UsersTab";
+import { LogsTab } from "@/features/admin/components/LogsTab";
+import { pageContainer } from "@/constants/page-container";
+
+type Tab = "overview" | "staff" | "users" | "logs";
+
+const TABS: { value: Tab; labelKey: string }[] = [
+  { value: "overview", labelKey: "tabOverview" },
+  { value: "staff", labelKey: "tabStaff" },
+  { value: "users", labelKey: "tabUsers" },
+  { value: "logs", labelKey: "tabLogs" },
+];
+
+/** Unknown or missing `?tab=` falls back to the first tab. */
+function tabFromParam(value: string | null): Tab {
+  return TABS.some((tab) => tab.value === value) ? (value as Tab) : "overview";
+}
+
+export function AdminScreen() {
+  const t = useTranslations("admin");
+  const tCommon = useTranslations("common");
+  const tHeader = useTranslations("header");
+  const { user, status } = useAuth();
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  // The active tab lives in the URL, not component state, so /admin?tab=users
+  // opens on Users and a refresh or a shared link lands back on the same tab
+  // (it used to reset to Overview). `replace`, not `push`: switching tabs isn't
+  // a navigation step worth a back-button entry. Mirrors the docs reader's
+  // ?topic= handling.
+  const tab = tabFromParam(searchParams.get("tab"));
+
+  const allowed = user?.role === "admin" || user?.role === "manager";
+
+  useEffect(() => {
+    if (status === "authenticated" && !allowed) {
+      router.replace("/");
+    }
+  }, [status, allowed, router]);
+
+  if (status === "loading") return null;
+
+  if (status === "unauthenticated") {
+    return (
+      <>
+        <PageHeader
+          back={{ href: "/", label: tHeader("browse") }}
+          backFrom={["dashboard", "moderation"]}
+          crumb={tHeader("admin")}
+        />
+        <div className="mx-auto max-w-md py-16 text-center">
+          <Text variant="secondary">{tCommon("loginRequired")}</Text>
+          <Button
+            className="mt-4"
+            onClick={() =>
+              router.push(`/auth?next=${encodeURIComponent(pathname)}`)
+            }
+          >
+            {tHeader("logIn")}
+          </Button>
+        </div>
+      </>
+    );
+  }
+
+  if (!allowed) return null;
+
+  return (
+    <>
+      <PageHeader
+        back={{ href: "/", label: tHeader("browse") }}
+        backFrom={["dashboard", "moderation"]}
+        crumb={tHeader("admin")}
+        badge={<IdentityPillBadge role={user?.role} />}
+        trailing={
+          <>
+            <Link
+              href="/moderation"
+              className="flex h-[38px] items-center rounded-[11px] border border-white/[0.12] px-[14px] text-[13px] font-semibold text-foreground transition-colors hover:bg-white/[0.06]"
+            >
+              {tHeader("moderation")}
+            </Link>
+            {/* No UserMenu here: PageHeader carries the shared account
+                cluster (bell + menu) on every page now, and keeping this
+                one drew the account menu twice side by side. */}
+          </>
+        }
+      />
+      <main
+        className={cn(pageContainer(1180), "flex flex-1 flex-col gap-7 py-11")}
+      >
+        <section>
+          <div className="mb-2.5 flex items-center gap-2.5 text-xs font-medium uppercase tracking-[0.14em] text-foreground-tertiary">
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-acc" />
+            {t("panelEyebrow")}
+          </div>
+          <Text as="h1" variant="title" className="text-[32px]">
+            {t("overviewHeading")}
+          </Text>
+        </section>
+
+        {/* Underline tabs, per the design — not the pill/chip row used elsewhere. */}
+        <div role="tablist" className="flex gap-2 border-b border-border">
+          {TABS.map((tabItem) => (
+            <button
+              key={tabItem.value}
+              type="button"
+              role="tab"
+              aria-selected={tab === tabItem.value}
+              onClick={() =>
+                router.replace(`${pathname}?tab=${tabItem.value}`, {
+                  scroll: false,
+                })
+              }
+              className={cn(
+                "mr-[22px] border-b-2 px-1 py-2.5 text-sm font-semibold transition-colors",
+                tab === tabItem.value
+                  ? "border-acc text-foreground"
+                  : "border-transparent text-foreground-tertiary hover:text-foreground-secondary",
+              )}
+            >
+              {t(tabItem.labelKey)}
+            </button>
+          ))}
+        </div>
+
+        {tab === "overview" && <OverviewTab />}
+        {tab === "staff" && <StaffTab />}
+        {tab === "users" && <UsersTab />}
+        {tab === "logs" && <LogsTab />}
+      </main>
+    </>
+  );
+}

@@ -1,0 +1,317 @@
+import { describe, expect, it, beforeEach, vi } from "vitest";
+import { screen } from "@testing-library/react";
+import { renderWithIntl as render } from "@/test/render-with-intl";
+import { RankResultScreen } from "./RankResultScreen";
+import type { Pack } from "@/types/pack";
+import type { RankResults } from "@/types/play-results";
+
+const searchParams = new URLSearchParams();
+vi.mock("next/navigation", () => ({ useSearchParams: () => searchParams }));
+
+const RANK_PACK: Pack = {
+  id: "pack-rank",
+  title: "Anime Openers, Ranked",
+  description: "Place each pick blind into a growing ranked list.",
+  coverTone: "#2b2a3a",
+  format: "rank_blind",
+  language: "en",
+  tags: [],
+  groups: [
+    {
+      id: "g1",
+      name: "Openers",
+      items: [
+        {
+          id: "i1",
+          type: "text",
+          title: "Kaikai Kitan",
+          value: "Kaikai Kitan",
+        },
+        { id: "i2", type: "text", title: "Redo", value: "Redo" },
+      ],
+    },
+  ],
+  rounds: [{ id: "r1", slots: [{ groupId: "g1", mode: "manual" }] }],
+  authorId: "u1",
+  createdAt: "2026-01-01T00:00:00.000Z",
+  totalPlays: 0,
+  avgAgreementPercent: 0,
+  status: "approved",
+  rejectionReason: null,
+  likes: 0,
+  dislikes: 0,
+  myVote: null,
+};
+
+const RANK_RESULTS: RankResults = {
+  packId: "pack-rank",
+  format: "rank_blind",
+  totalPlays: 2,
+  rounds: [
+    {
+      roundIndex: 0,
+      items: [
+        {
+          itemId: "i1",
+          itemTitle: "Kaikai Kitan",
+          timesRanked: 2,
+          averagePosition: 1,
+          positionCounts: [2, 0],
+        },
+        {
+          itemId: "i2",
+          itemTitle: "Redo",
+          timesRanked: 2,
+          averagePosition: 2,
+          positionCounts: [0, 2],
+        },
+      ],
+    },
+  ],
+};
+
+// The screen takes ownPicks/shared as props since #243, so it reads neither
+// sessionStorage nor the ?p= param. The next/navigation mock stays because
+// ShareButton still reaches for the router.
+beforeEach(() => {
+  sessionStorage.clear();
+});
+
+describe("RankResultScreen", () => {
+  // The fallback list, shown when there is no play to replay: the crowd's
+  // average is the only order available there.
+  it("sorts an unplayed round by averagePosition, best first", () => {
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        ownPicks={null}
+        shared={false}
+      />,
+    );
+
+    const titles = screen
+      .getAllByText(/Kaikai Kitan|Redo/)
+      .map((el) => el.textContent);
+    expect(titles).toEqual(["Kaikai Kitan", "Redo"]);
+  });
+
+  // The round is a recap of YOUR ranking. The crowd's average placement, the
+  // per-item histogram and the "N other plays agreed" line all went with the
+  // rework — the podium table below is where the crowd lives now.
+  it("shows no crowd figures beside the items", () => {
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        ownPicks={[{ roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 }]}
+        shared={false}
+      />,
+    );
+
+    expect(screen.queryByText(/avg/)).toBeNull();
+    expect(screen.queryByText(/agreed/)).toBeNull();
+    expect(screen.queryByText(/ranked 2x/)).toBeNull();
+  });
+
+  // #355 reversed this: an unnamed round is numbered, not named after its pool.
+  // A random-pool round has no pool name to borrow, and naming half a pack's
+  // rounds while numbering the rest read as a bug.
+  it("numbers an unnamed round instead of naming it after its pool", () => {
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        ownPicks={null}
+        shared={false}
+      />,
+    );
+    expect(screen.getByText("Round 1")).toBeInTheDocument();
+    expect(screen.queryByText("Openers")).not.toBeInTheDocument();
+  });
+
+  it("uses the author-given round name when the round has one", () => {
+    const named: Pack = {
+      ...RANK_PACK,
+      rounds: [{ ...RANK_PACK.rounds[0], name: "Semifinals" }],
+    };
+    render(
+      <RankResultScreen
+        pack={named}
+        results={RANK_RESULTS}
+        ownPicks={null}
+        shared={false}
+      />,
+    );
+    expect(screen.getByText("Semifinals")).toBeInTheDocument();
+  });
+
+  // #338: a round you played reads as YOUR ranking, first place to last. The
+  // crowd's average orders the fallback below, but it is not your result.
+  it("orders a played round by the viewer's own placement", () => {
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        // The crowd puts Kaikai Kitan first; this player put Redo there.
+        ownPicks={[
+          { roundIndex: 0, groupId: "g1", itemId: "i1", position: 1 },
+          { roundIndex: 0, groupId: "g1", itemId: "i2", position: 0 },
+        ]}
+        shared={false}
+      />,
+    );
+
+    // Scoped to the RankedList's own rows: T9 added a "You ranked #1: {name}"
+    // verdict line above the list, whose text also contains the item name and
+    // would otherwise double-match the same getAllByText query.
+    expect(screen.getAllByRole("listitem").map((li) => li.textContent)).toEqual(
+      [
+        expect.stringContaining("Redo"),
+        expect.stringContaining("Kaikai Kitan"),
+      ],
+    );
+  });
+
+  it("shows where each item came in the draw", () => {
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        ownPicks={[
+          // Shown second, ranked first — the pairing the marker exists for.
+          {
+            roundIndex: 0,
+            groupId: "g1",
+            itemId: "i2",
+            position: 0,
+            drawIndex: 1,
+          },
+          {
+            roundIndex: 0,
+            groupId: "g1",
+            itemId: "i1",
+            position: 1,
+            drawIndex: 0,
+          },
+        ]}
+        shared={false}
+      />,
+    );
+
+    expect(screen.getByText("Shown #2")).toBeInTheDocument();
+    expect(screen.getByText("Shown #1")).toBeInTheDocument();
+  });
+
+  it("says nothing about the draw for a play that never recorded it", () => {
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        ownPicks={[{ roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 }]}
+        shared={false}
+      />,
+    );
+
+    expect(screen.queryByText(/Shown #/)).toBeNull();
+  });
+
+  // The podium (pack-wide ranking) moved to ResultScreen's own aside board
+  // and is PodiumTable's own behavior now — see PodiumTable.test.tsx.
+
+  it("hides items that weren't in the player's own play for a round they played", () => {
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        ownPicks={[{ roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 }]}
+        shared={false}
+      />,
+    );
+
+    // The player ranked i1 but never saw i2 in their play — i2 is dropped
+    // rather than shown with a "not in your play" note.
+    expect(screen.getByText("Kaikai Kitan")).toBeInTheDocument();
+    expect(screen.queryByText("Redo")).not.toBeInTheDocument();
+  });
+
+  it("shows the full pool for a round the player never played", () => {
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        ownPicks={null}
+        shared={false}
+      />,
+    );
+
+    // No recorded play for this pack → fall back to the aggregate pool so the
+    // round isn't blank.
+    expect(screen.getByText("Kaikai Kitan")).toBeInTheDocument();
+    expect(screen.getByText("Redo")).toBeInTheDocument();
+    expect(screen.queryByText(/You placed this/)).not.toBeInTheDocument();
+  });
+
+  it("renders without crashing when there are no recorded plays yet", () => {
+    const emptyResults: RankResults = {
+      packId: "pack-rank",
+      format: "rank_blind",
+      totalPlays: 0,
+      rounds: [
+        {
+          roundIndex: 0,
+          items: [
+            {
+              itemId: "i1",
+              itemTitle: "Kaikai Kitan",
+              timesRanked: 0,
+              averagePosition: 0,
+              positionCounts: [0, 0],
+            },
+            {
+              itemId: "i2",
+              itemTitle: "Redo",
+              timesRanked: 0,
+              averagePosition: 0,
+              positionCounts: [0, 0],
+            },
+          ],
+        },
+      ],
+    };
+
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={emptyResults}
+        ownPicks={null}
+        shared={false}
+      />,
+    );
+
+    // "N plays recorded" now lives in ResultHero, rendered by ResultScreen
+    // (T11) — not this screen. Nothing was ever ranked, so there is no round
+    // to show and no podium; the meaningful assertion left at this level is
+    // that it renders without crashing and without a podium table.
+    expect(screen.queryByRole("table")).toBeNull();
+  });
+
+  // The approved/non-approved Share-button rule is owned by
+  // ResultAgainPanel.test (T12 moved the Share button out of ResultActions).
+
+  it("recaps the sharer's picks the same as it would the viewer's own", () => {
+    // The shared-result note itself now renders in ResultScreen (T11), not
+    // here — `shared` has no visible effect on RankResultScreen's own markup
+    // (see the eslint-disabled unused prop above), it recaps whatever picks
+    // it's given regardless of whose they are.
+    render(
+      <RankResultScreen
+        pack={RANK_PACK}
+        results={RANK_RESULTS}
+        ownPicks={[{ roundIndex: 0, groupId: "g1", itemId: "i1", position: 0 }]}
+        shared
+      />,
+    );
+    expect(screen.getByText("Kaikai Kitan")).toBeInTheDocument();
+  });
+});

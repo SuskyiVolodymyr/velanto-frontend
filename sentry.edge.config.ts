@@ -3,7 +3,7 @@
 // the client/server configs so environment tagging, the enable toggle, and
 // sample rates stay consistent.
 import * as Sentry from "@sentry/nextjs";
-import { resolveSentryConfig } from "@/src/shared/lib/sentry-config";
+import { resolveSentryConfig } from "@/utils/sentry-config";
 
 const config = resolveSentryConfig({
   dsn: process.env.SENTRY_DSN,
