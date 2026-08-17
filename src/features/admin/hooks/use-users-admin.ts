@@ -1,6 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import {
+  useDebouncedValue,
+  SEARCH_DEBOUNCE_MS,
+} from "@/hooks/use-debounced-value";
 import { useTranslations } from "next-intl";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
@@ -22,7 +26,6 @@ import type { UsersPageFilters } from "@/features/admin/api/admin";
 import type { AdminUserRow } from "@/types/admin";
 import type { AdminUserSort } from "@/api/admin-client";
 
-const SEARCH_DEBOUNCE_MS = 300;
 
 /** The banned-filter's three states as a single select value. */
 export type BannedFilter = "all" | "banned" | "active";
@@ -51,7 +54,7 @@ export function useUsersAdmin() {
   const t = useTranslations("admin");
   const queryClient = useQueryClient();
   const [searchInput, setSearchInput] = useState("");
-  const [query, setQuery] = useState("");
+  const query = useDebouncedValue(searchInput.trim(), SEARCH_DEBOUNCE_MS);
   const [sort, setSort] = useState<AdminUserSort>("newest");
   const [bannedFilter, setBannedFilter] = useState<BannedFilter>("all");
   const [staffFilter, setStaffFilter] = useState<StaffFilter>("all");
@@ -62,13 +65,6 @@ export function useUsersAdmin() {
     reasonDetail: "",
   });
 
-  useEffect(() => {
-    const timeout = setTimeout(
-      () => setQuery(searchInput.trim()),
-      SEARCH_DEBOUNCE_MS,
-    );
-    return () => clearTimeout(timeout);
-  }, [searchInput]);
 
   const filters: UsersPageFilters = useMemo(
     () => ({

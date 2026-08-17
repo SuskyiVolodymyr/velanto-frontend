@@ -1,11 +1,15 @@
 "use client";
 import { formatDateTime } from "@/utils/format-date";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "@/utils/cn";
 import { Text } from "@/ui/Text";
 import { Input } from "@/ui/Input";
+import {
+  useDebouncedValue,
+  SEARCH_DEBOUNCE_MS,
+} from "@/hooks/use-debounced-value";
 import { Dropdown } from "@/ui/Dropdown";
 import { LoadingState } from "@/ui/LoadingState";
 import { useAdminLogs } from "@/features/admin/api/admin.queries";
@@ -20,8 +24,6 @@ import {
   AUDIT_ACTIONS,
   auditActionStyle,
 } from "@/features/admin/audit-actions";
-
-const FILTER_DEBOUNCE_MS = 300;
 const COLUMNS = "150px 1.1fr 150px 1fr 1.2fr";
 
 /** Audit `meta` is an arbitrary JSON blob; render it as a compact one-liner. */
@@ -34,8 +36,22 @@ function formatMeta(meta: unknown): string {
 export function LogsTab() {
   const t = useTranslations("admin");
   const [searchInput, setSearchInput] = useState("");
+  const debouncedQ = useDebouncedValue(
+    searchInput.trim(),
+    SEARCH_DEBOUNCE_MS,
+  );
   const [filters, setFilters] = useState<AuditLogFilters>(EMPTY_AUDIT_FILTERS);
   const [page, setPage] = useState(1);
+
+  // The debounced term is MERGED in rather than stored back into `filters`.
+  // useMemo keeps this object's identity stable unless the term or another
+  // filter actually changes — which is exactly what the reset-to-page-1 effect
+  // below watches, so a debounce tick that changes nothing can no longer knock
+  // the user back to page 1 after they paged forward.
+  const activeFilters = useMemo(
+    () => ({ ...filters, q: debouncedQ }),
+    [filters, debouncedQ],
+  );
 
   // Only the free-text box is debounced; the selects and date pickers commit
   // immediately (each changes in one discrete step, not per keystroke).
@@ -44,22 +60,15 @@ export function LogsTab() {
   // micro-optimisation: `filters` identity is what the reset-to-page-1 effect
   // below watches, so minting a new object on every debounce tick would knock
   // the user back to page 1 ~300ms after they paged forward.
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      const q = searchInput.trim();
-      setFilters((prev) => (prev.q === q ? prev : { ...prev, q }));
-    }, FILTER_DEBOUNCE_MS);
-    return () => clearTimeout(timeout);
-  }, [searchInput]);
 
   // Any filter change re-scopes the list, so a page number carried over from the
   // old result set would be meaningless (and can be past the end).
   useEffect(() => {
     /* eslint-disable-next-line react-hooks/set-state-in-effect */
     setPage(1);
-  }, [filters]);
+  }, [activeFilters]);
 
-  const logsQuery = useAdminLogs(filters, page);
+  const logsQuery = useAdminLogs(activeFilters, page);
   const logs = logsQuery.data?.items ?? [];
   const total = logsQuery.data?.total ?? 0;
 

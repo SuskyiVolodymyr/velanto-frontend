@@ -1,11 +1,15 @@
 "use client";
 
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Check } from "lucide-react";
 import { Text } from "@/ui/Text";
+import {
+  useDebouncedValue,
+  SEARCH_DEBOUNCE_MS,
+} from "@/hooks/use-debounced-value";
 import { Input } from "@/ui/Input";
 import { SearchField } from "@/ui/SearchField";
 import { Dropdown } from "@/ui/Dropdown";
@@ -26,8 +30,6 @@ import {
   type PackQueueFilters,
 } from "@/features/moderation/api/moderation";
 import type { PackFormat } from "@/types/pack";
-
-const FILTER_DEBOUNCE_MS = 300;
 const COLUMNS = "1.5fr 1fr 120px 130px 200px";
 
 export function PackApprovalsTab() {
@@ -36,10 +38,24 @@ export function PackApprovalsTab() {
   const locale = useLocale();
   const router = useRouter();
   const [searchInput, setSearchInput] = useState("");
+  const debouncedQ = useDebouncedValue(
+    searchInput.trim(),
+    SEARCH_DEBOUNCE_MS,
+  );
   const [filters, setFilters] = useState<PackQueueFilters>(
     EMPTY_PACK_QUEUE_FILTERS,
   );
   const [page, setPage] = useState(1);
+
+  // The debounced term is MERGED in rather than stored back into `filters`.
+  // useMemo keeps this object's identity stable unless the term or another
+  // filter actually changes — which is exactly what the reset-to-page-1 effect
+  // below watches, so a debounce tick that changes nothing can no longer knock
+  // the user back to page 1 after they paged forward.
+  const activeFilters = useMemo(
+    () => ({ ...filters, q: debouncedQ }),
+    [filters, debouncedQ],
+  );
   const [rejectingId, setRejectingId] = useState<string | null>(null);
   const [rejectReason, setRejectReason] = useState("");
 
@@ -47,20 +63,13 @@ export function PackApprovalsTab() {
   // term is identical is load-bearing: `filters` identity is what the
   // reset-to-page-1 effect watches, so minting a new object every debounce tick
   // would knock the moderator back to page 1 shortly after they paged forward.
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      const q = searchInput.trim();
-      setFilters((prev) => (prev.q === q ? prev : { ...prev, q }));
-    }, FILTER_DEBOUNCE_MS);
-    return () => clearTimeout(timeout);
-  }, [searchInput]);
 
   useEffect(() => {
     /* eslint-disable-next-line react-hooks/set-state-in-effect */
     setPage(1);
-  }, [filters]);
+  }, [activeFilters]);
 
-  const queueQuery = usePackQueue(filters, page, { enabled: true });
+  const queueQuery = usePackQueue(activeFilters, page, { enabled: true });
   const approve = useApprovePack();
   const reject = useRejectPack();
 

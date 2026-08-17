@@ -1,6 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
+import {
+  useDebouncedValue,
+  SEARCH_DEBOUNCE_MS,
+} from "@/hooks/use-debounced-value";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/contexts/auth-context";
@@ -25,8 +29,6 @@ import type { FeedbackListFilters } from "@/features/feedback/api/feedback-list"
 import { cn } from "@/utils/cn";
 import { pageContainer } from "@/constants/page-container";
 
-const SEARCH_DEBOUNCE_MS = 300;
-
 export function FeedbackScreen() {
   const t = useTranslations("feedback");
   const th = useTranslations("header");
@@ -34,22 +36,13 @@ export function FeedbackScreen() {
   const router = useRouter();
 
   const [searchInput, setSearchInput] = useState("");
-  const [q, setQ] = useState("");
+  const q = useDebouncedValue(searchInput.trim(), SEARCH_DEBOUNCE_MS);
   const [topic, setTopic] = useState<FeedbackTopic | undefined>(undefined);
   const [statusFilter, setStatusFilter] = useState<FeedbackStatus | undefined>(
     undefined,
   );
   const [sort, setSort] = useState<FeedbackSort>("new");
 
-  // Debounce the raw search input into `q` (setState in the async timeout
-  // callback, so it isn't the flagged synchronous set-state-in-effect pattern).
-  useEffect(() => {
-    const timeout = setTimeout(
-      () => setQ(searchInput.trim()),
-      SEARCH_DEBOUNCE_MS,
-    );
-    return () => clearTimeout(timeout);
-  }, [searchInput]);
 
   // Top-3 sidebar, fetched once. Non-critical — a failed fetch just leaves the
   // list empty, which renders the same "No feedback yet" state.
@@ -101,11 +94,13 @@ export function FeedbackScreen() {
   // Sort is deliberately excluded: it reorders the board, it doesn't narrow it,
   // so "Clear filters" leaving your chosen ordering alone is the correct
   // surprise-free behaviour.
-  const filtering = Boolean(q || topic || statusFilter);
+  // Reads the RAW input, not the debounced `q`: the button reflects what is in
+  // the box right now, so clearing hides it immediately instead of lingering
+  // for the debounce interval.
+  const filtering = Boolean(searchInput || topic || statusFilter);
 
   function handleClearFilters() {
     setSearchInput("");
-    setQ("");
     setTopic(undefined);
     setStatusFilter(undefined);
   }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Text } from "@/ui/Text";
@@ -19,8 +19,10 @@ import {
   type AssignableRole,
 } from "@/utils/staff-permissions";
 import type { AdminUserRow } from "@/types/admin";
-
-const SEARCH_DEBOUNCE_MS = 300;
+import {
+  useDebouncedValue,
+  SEARCH_DEBOUNCE_MS,
+} from "@/hooks/use-debounced-value";
 
 export function StaffTab() {
   const t = useTranslations("admin");
@@ -31,16 +33,8 @@ export function StaffTab() {
   const { enabled: streamerMode } = useStreamerModeOrDefault();
   const queryClient = useQueryClient();
   const [searchInput, setSearchInput] = useState("");
-  const [query, setQuery] = useState("");
+  const query = useDebouncedValue(searchInput.trim(), SEARCH_DEBOUNCE_MS);
   const add = useAddStaff();
-
-  useEffect(() => {
-    const timeout = setTimeout(
-      () => setQuery(searchInput.trim()),
-      SEARCH_DEBOUNCE_MS,
-    );
-    return () => clearTimeout(timeout);
-  }, [searchInput]);
 
   const staffQuery = useAdminStaff(query);
 

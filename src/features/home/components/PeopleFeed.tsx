@@ -1,6 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  useDebouncedValue,
+  SEARCH_DEBOUNCE_MS,
+} from "@/hooks/use-debounced-value";
 import { useTranslations } from "next-intl";
 import { Input } from "@/ui/Input";
 import { Text } from "@/ui/Text";
@@ -11,8 +15,6 @@ import { useUserSearch } from "@/features/home/api/user-search.queries";
 import { PEOPLE_SEARCH_PAGE_SIZE } from "@/features/home/api/user-search";
 
 // Avoids firing a search per keystroke.
-const SEARCH_DEBOUNCE_MS = 300;
-
 /**
  * The `/people` route body: a browsable directory of everyone, with a search
  * box over it. Public — a signed-out visitor can browse and open profiles; the
@@ -27,16 +29,9 @@ const SEARCH_DEBOUNCE_MS = 300;
 export function PeopleFeed() {
   const t = useTranslations("people");
   const [input, setInput] = useState("");
-  const [query, setQuery] = useState("");
+  const query = useDebouncedValue(input.trim(), SEARCH_DEBOUNCE_MS);
   const [page, setPage] = useState(1);
 
-  useEffect(() => {
-    const timeout = setTimeout(
-      () => setQuery(input.trim()),
-      SEARCH_DEBOUNCE_MS,
-    );
-    return () => clearTimeout(timeout);
-  }, [input]);
 
   // A new query is a fresh result set — restart at page 1.
   useEffect(() => {
