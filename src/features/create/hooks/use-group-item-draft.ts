@@ -5,20 +5,19 @@ import { useTranslations } from "next-intl";
 import type { Group, Item, ItemType } from "@/types/pack";
 import { extractYouTubeId } from "@/utils/youtube";
 import { fetchYouTubeOEmbed } from "@/utils/youtube-oembed";
-import { uploadMedia, MEDIA_MAX_BYTES } from "@/api/media-client";
 import { mediaUrl } from "@/utils/media-url";
+import { useItemImageUpload } from "@/features/create/hooks/use-item-image-upload";
 
 /**
  * Owns the "add an item" draft state for a single {@link GroupEditor} — the
- * text/youtube/image toggle, the draft fields, in-flight oEmbed/upload
- * validation, and the add-error message. Lifted out of the editor so the
- * group-level controls can share the busy flags (they disable while an add is in
- * flight).
+ * text/youtube/image toggle, the draft fields, in-flight oEmbed validation, and
+ * the add-error message. Lifted out of the editor so the group-level controls
+ * can share the busy flags (they disable while an add is in flight).
  *
- * For an image item the file is uploaded to the media endpoint the moment it's
- * picked (client-validated as an image ≤1MB first); the returned storage KEY is
- * staged in `draftValue` and its URL in `imagePreviewUrl`, then committed as the
- * item value when Add is pressed.
+ * For an image item the file is uploaded the moment it's picked; that whole
+ * race — token, in-flight promise, superseded results — lives in
+ * {@link useItemImageUpload}. Here the staged KEY simply arrives as
+ * `draftValue`, and is committed as the item value when Add is pressed.
  */
 export function useGroupItemDraft(
   group: Group,
@@ -28,12 +27,6 @@ export function useGroupItemDraft(
   const [draftTitle, setDraftTitle] = useState("");
   const [draftValue, setDraftValue] = useState("");
   const [validating, setValidating] = useState(false);
-  const [uploading, setUploading] = useState(false);
-  const [imagePreviewUrl, setImagePreviewUrl] = useState("");
-  // The original picked file, kept after upload so the author can re-open the
-  // 16:9 cropper and re-frame it (always cropping from the source, never a
-  // previous crop). Null when there's no staged image.
-  const [imageFile, setImageFile] = useState<File | null>(null);
   const [addError, setAddError] = useState("");
   // Id of the already-added item being edited, or null when composing a new one.
   // The item deliberately STAYS in `group.items` while it's edited — the chip is
@@ -41,24 +34,12 @@ export function useGroupItemDraft(
   // submitting the form) leaves the original intact instead of dropping it.
   const [editingItemId, setEditingItemId] = useState<string | null>(null);
   const t = useTranslations("create");
-  // Monotonic token, bumped whenever the draft type changes or a new image is
-  // picked. A slow upload that resolves after the user has moved on is compared
-  // against the current token and discarded, so its storage key never leaks
-  // into an unrelated (text/youtube) draft value.
-  const uploadToken = useRef(0);
-  // The upload currently in flight, resolving to the storage key it staged (or
-  // null if it was superseded or failed). `addItem` awaits it rather than
-  // refusing to run, so pressing Save mid-upload commits the image once it
-  // lands instead of doing nothing at all (#437). It also resolves the stale
-  // closure: `draftValue` captured at render time is still "" when the upload
-  // completes, so the key has to come back through this promise.
-  const pendingUpload = useRef<Promise<string | null> | null>(null);
-  // Token of the upload that currently owns the `uploading` flag. Separate from
-  // `uploadToken` because that one is also bumped by a type switch or an edit,
-  // and only the request that still owns the flag may clear it — otherwise a
-  // superseded upload resolving first would report "done" while a newer one is
-  // still running.
-  const activeUpload = useRef<number | null>(null);
+
+  const image = useItemImageUpload({
+    onValue: setDraftValue,
+    onError: setAddError,
+  });
+
   // The current pool and its onChange. `addItem` now awaits an in-flight
   // upload, and the props captured by the click handler's render can be
   // seconds stale by the time it resumes — committing against that snapshot
@@ -76,7 +57,7 @@ export function useGroupItemDraft(
 
   function selectType(type: ItemType) {
     if (type === draftType) return;
-    uploadToken.current += 1;
+    image.invalidate();
     setAddError("");
 
     // Carry whatever the author has typed across the switch, so changing your
@@ -99,15 +80,13 @@ export function useGroupItemDraft(
     }
 
     setDraftType(type);
-    setImagePreviewUrl("");
-    setImageFile(null);
+    image.clearStaged();
   }
 
   function resetDraft() {
     setDraftTitle("");
     setDraftValue("");
-    setImagePreviewUrl("");
-    setImageFile(null);
+    image.clearStaged();
     setEditingItemId(null);
   }
 
@@ -141,101 +120,22 @@ export function useGroupItemDraft(
    * which is why nothing is written to the group here.
    */
   function beginEdit(item: Item) {
-    uploadToken.current += 1;
+    image.invalidate();
     setAddError("");
     setEditingItemId(item.id);
     setDraftType(item.type);
     // A text item carries its body in `value` and has no separate title.
     setDraftTitle(item.type === "text" ? "" : item.title);
     setDraftValue(item.value);
-    setImagePreviewUrl(item.type === "image" ? mediaUrl(item.value) : "");
-    // No source file for a stored image — re-cropping needs a fresh pick, which
-    // is what the Replace control is for.
-    setImageFile(null);
+    image.showStored(item.type === "image" ? mediaUrl(item.value) : "");
   }
 
   /** Abandon an in-progress edit, leaving the stored item exactly as it was. */
   function cancelEdit() {
-    uploadToken.current += 1;
+    image.invalidate();
     setAddError("");
     setDraftType("text");
     resetDraft();
-  }
-
-  /**
-   * Upload a file and stage its key, unless the author has moved on in the
-   * meantime. Resolves to the staged key so a caller that started the upload
-   * (or `addItem`, waiting on it) can use the value without waiting for the
-   * `draftValue` state to come back around through a re-render.
-   */
-  async function runUpload(file: File, token: number): Promise<string | null> {
-    try {
-      const { key, url } = await uploadMedia(file, "item");
-      // Discard a result the user has moved on from (type switched, or another
-      // image picked) — writing its key now would corrupt the current draft.
-      if (token !== uploadToken.current) return null;
-      setDraftValue(key);
-      setImagePreviewUrl(url);
-      return key;
-    } catch {
-      if (token !== uploadToken.current) return null;
-      setAddError(t("imageUploadFailed"));
-      return null;
-    } finally {
-      // Only the newest upload owns these — an older one resolving late must
-      // not clear the flag (or the pending promise) out from under it.
-      if (activeUpload.current === token) {
-        activeUpload.current = null;
-        pendingUpload.current = null;
-        setUploading(false);
-      }
-    }
-  }
-
-  async function selectImageFile(file: File | null) {
-    if (!file) return;
-    const token = (uploadToken.current += 1);
-    setAddError("");
-    setImagePreviewUrl("");
-    setDraftValue("");
-    setImageFile(null);
-    if (!file.type.startsWith("image/")) {
-      setAddError(t("notAnImage"));
-      return;
-    }
-    if (file.size > MEDIA_MAX_BYTES) {
-      setAddError(t("imageTooLarge"));
-      return;
-    }
-    // Retain the source file for the optional 16:9 cropper (see applyCroppedImage).
-    setImageFile(file);
-    setUploading(true);
-    // Dropping a second picture while the first is still uploading used to be
-    // ignored outright, which looked exactly like a drop that hadn't
-    // registered. The token bump makes the first result harmless, so the
-    // newer file simply wins.
-    activeUpload.current = token;
-    const upload = runUpload(file, token);
-    pendingUpload.current = upload;
-    await upload;
-  }
-
-  /**
-   * Replace the staged image with an author-cropped (16:9) version: uploads the
-   * cropped file and swaps in its key + preview. The default center-crop already
-   * works, so this is opt-in — used by the "Adjust crop" control. The source
-   * `imageFile` is left in place so the cropper can be re-opened from the
-   * original. Guarded by the same token as selectImageFile so a slow crop upload
-   * the author has moved on from is discarded.
-   */
-  async function applyCroppedImage(cropped: File) {
-    const token = (uploadToken.current += 1);
-    setAddError("");
-    setUploading(true);
-    activeUpload.current = token;
-    const upload = runUpload(cropped, token);
-    pendingUpload.current = upload;
-    await upload;
   }
 
   /**
@@ -270,9 +170,7 @@ export function useGroupItemDraft(
     // and the author's next click discarded the upload it was waiting on
     // (#437). Wait for it instead — the key comes back from the promise
     // because this closure's `draftValue` predates it.
-    const uploadedKey = pendingUpload.current
-      ? await pendingUpload.current
-      : null;
+    const uploadedKey = await image.awaitPending();
     const value = uploadedKey ?? draftValue;
     if (!value) {
       setAddError(t("imageRequired"));
@@ -287,7 +185,6 @@ export function useGroupItemDraft(
   }
 
   /** The text/youtube branch of {@link addItem} — no upload to wait on. */
-
   async function addNonImageItem(): Promise<boolean> {
     // Empty is a silent no-op when composing (the author just hasn't typed yet),
     // but a real error when editing: they cleared an item that already exists,
@@ -347,7 +244,7 @@ export function useGroupItemDraft(
     : undefined;
   const hasUncommittedImage =
     draftType === "image" &&
-    (uploading ||
+    (image.uploading ||
       (draftValue !== "" &&
         !(
           storedEditingItem?.type === "image" &&
@@ -376,16 +273,16 @@ export function useGroupItemDraft(
     draftTitle,
     draftValue,
     validating,
-    uploading,
-    imagePreviewUrl,
-    imageFile,
+    uploading: image.uploading,
+    imagePreviewUrl: image.previewUrl,
+    imageFile: image.file,
     addError,
     editingItemId,
     selectType,
     setDraftTitle,
     setDraftValue,
-    selectImageFile,
-    applyCroppedImage,
+    selectImageFile: image.pick,
+    applyCroppedImage: image.applyCrop,
     addItem,
     beginEdit,
     cancelEdit,
