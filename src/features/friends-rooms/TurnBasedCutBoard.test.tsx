@@ -1,7 +1,7 @@
 import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { TurnBasedCutBoard } from "./TurnBasedCutBoard";
 import { baseRoomState } from "./test-fixtures";
 

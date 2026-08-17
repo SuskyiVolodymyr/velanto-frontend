@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { PageHeader } from "@/src/shared/components/PageHeader";
+import { PageHeader } from "@/shared/components/PageHeader";
 import {
   DocsSidebar,
   TOPICS,
@@ -11,9 +11,9 @@ import {
   type TopicId,
 } from "./DocsSidebar";
 import { DocsArticle } from "./DocsArticle";
-import { latestVersion } from "@/src/features/updates/updates-data";
-import { cn } from "@/src/shared/lib/cn";
-import { pageContainer } from "@/src/shared/lib/page-container";
+import { latestVersion } from "@/features/updates/updates-data";
+import { cn } from "@/shared/lib/cn";
+import { pageContainer } from "@/shared/lib/page-container";
 
 function topicFromParam(value: string | null): TopicId {
   return TOPICS.includes(value as TopicId) ? (value as TopicId) : DEFAULT_TOPIC;

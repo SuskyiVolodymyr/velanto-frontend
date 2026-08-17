@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { cn } from "@/src/shared/lib/cn";
+import { cn } from "@/shared/lib/cn";
 
 /**
  * The comment presentation shared by every thread in the app — pack comments and

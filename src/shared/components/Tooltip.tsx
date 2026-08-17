@@ -1,7 +1,7 @@
 "use client";
 
 import { cloneElement, useId, useState, type ReactElement } from "react";
-import { cn } from "@/src/shared/lib/cn";
+import { cn } from "@/shared/lib/cn";
 
 /**
  * A small hover/focus tooltip that states a reason. Used to explain why an

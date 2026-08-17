@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { encodePicks, decodePicks, buildShareUrl } from "./share-url";
-import type { RecordedPick } from "@/src/shared/types/play-results";
+import type { RecordedPick } from "@/shared/types/play-results";
 
 describe("share-url", () => {
   it("round-trips group picks", () => {

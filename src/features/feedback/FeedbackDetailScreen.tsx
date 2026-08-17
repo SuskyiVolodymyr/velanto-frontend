@@ -1,33 +1,33 @@
 "use client";
-import { formatDateTime } from "@/src/shared/lib/format-date";
+import { formatDateTime } from "@/shared/lib/format-date";
 
 import Link from "next/link";
 import { useState } from "react";
 import { Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { useFeedback } from "@/src/features/feedback/api/feedback-detail.queries";
+import { useAuth } from "@/shared/lib/auth-context";
+import { useFeedback } from "@/features/feedback/api/feedback-detail.queries";
 import {
   useSetFeedbackStatus,
   useDeleteFeedback,
-} from "@/src/features/feedback/api/feedback-detail.mutations";
-import { ApiError } from "@/src/shared/lib/api-client";
-import { Text } from "@/src/shared/components/Text";
-import { LoadingState } from "@/src/shared/components/LoadingState";
-import { Username } from "@/src/shared/components/Username";
-import { Button } from "@/src/shared/components/Button";
-import { Hidden } from "@/src/shared/components/Hidden";
-import { StatusBadge } from "@/src/shared/components/StatusBadge";
-import { Dropdown } from "@/src/shared/components/Dropdown";
-import { PageHeader } from "@/src/shared/components/PageHeader";
-import { TOPIC_KEYS } from "@/src/features/feedback/FeedbackCard";
-import { FeedbackVote } from "@/src/features/feedback/FeedbackVote";
-import { FeedbackComments } from "@/src/features/feedback/FeedbackComments";
-import type { FeedbackStatus } from "@/src/shared/types/feedback";
-import { LOCALE_NAMES, type Locale } from "@/src/i18n/config";
-import { cn } from "@/src/shared/lib/cn";
-import { pageContainer } from "@/src/shared/lib/page-container";
+} from "@/features/feedback/api/feedback-detail.mutations";
+import { ApiError } from "@/shared/lib/api-client";
+import { Text } from "@/shared/components/Text";
+import { LoadingState } from "@/shared/components/LoadingState";
+import { Username } from "@/shared/components/Username";
+import { Button } from "@/shared/components/Button";
+import { Hidden } from "@/shared/components/Hidden";
+import { StatusBadge } from "@/shared/components/StatusBadge";
+import { Dropdown } from "@/shared/components/Dropdown";
+import { PageHeader } from "@/shared/components/PageHeader";
+import { TOPIC_KEYS } from "@/features/feedback/FeedbackCard";
+import { FeedbackVote } from "@/features/feedback/FeedbackVote";
+import { FeedbackComments } from "@/features/feedback/FeedbackComments";
+import type { FeedbackStatus } from "@/shared/types/feedback";
+import { LOCALE_NAMES, type Locale } from "@/i18n/config";
+import { cn } from "@/shared/lib/cn";
+import { pageContainer } from "@/shared/lib/page-container";
 
 // status value → key in the shared `status` ns (matches the badge labels).
 const STATUS_OPTIONS: { value: FeedbackStatus; key: string }[] = [

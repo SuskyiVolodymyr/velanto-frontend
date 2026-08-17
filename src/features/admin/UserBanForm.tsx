@@ -1,15 +1,15 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Button } from "@/src/shared/components/Button";
-import { Dropdown } from "@/src/shared/components/Dropdown";
-import { type BanDuration } from "@/src/shared/lib/users-client";
-import { BAN_DURATIONS } from "@/src/shared/lib/ban-durations";
+import { Button } from "@/shared/components/Button";
+import { Dropdown } from "@/shared/components/Dropdown";
+import { type BanDuration } from "@/shared/lib/users-client";
+import { BAN_DURATIONS } from "@/shared/lib/ban-durations";
 import {
   BanReasonPicker,
   isBanReasonValid,
   type BanReasonState,
-} from "@/src/shared/components/BanReasonPicker";
+} from "@/shared/components/BanReasonPicker";
 
 interface UserBanFormProps {
   userId: string;

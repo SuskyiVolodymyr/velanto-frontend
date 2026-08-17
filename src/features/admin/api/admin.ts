@@ -1,9 +1,9 @@
-import type { ActivityRange } from "@/src/shared/types/admin";
+import type { ActivityRange } from "@/shared/types/admin";
 import {
   adminClient,
   type AdminUserSort,
   type AuditLogSort,
-} from "@/src/shared/lib/admin-client";
+} from "@/shared/lib/admin-client";
 
 export const ADMIN_PAGE_SIZE = 20;
 

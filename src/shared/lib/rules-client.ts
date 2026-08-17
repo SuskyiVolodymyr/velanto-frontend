@@ -1,5 +1,5 @@
-import { apiClient } from "@/src/shared/lib/api-client";
-import type { RulesDocument } from "@/src/shared/types/rules";
+import { apiClient } from "@/shared/lib/api-client";
+import type { RulesDocument } from "@/shared/types/rules";
 
 /**
  * Client-side fetch of the public Community Rules, for Client Components that

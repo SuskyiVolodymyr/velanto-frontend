@@ -1,15 +1,15 @@
 import { useTranslations } from "next-intl";
-import { SearchField } from "@/src/shared/components/SearchField";
-import { cn } from "@/src/shared/lib/cn";
+import { SearchField } from "@/shared/components/SearchField";
+import { cn } from "@/shared/lib/cn";
 import {
   feedbackStatusTone,
   feedbackTopicTone,
-} from "@/src/features/feedback/feedback-tone";
+} from "@/features/feedback/feedback-tone";
 import type {
   FeedbackSort,
   FeedbackStatus,
   FeedbackTopic,
-} from "@/src/shared/types/feedback";
+} from "@/shared/types/feedback";
 
 const TOPIC_ORDER: FeedbackTopic[] = ["bug", "feature", "translation", "other"];
 const TOPIC_LABEL_KEY: Record<FeedbackTopic, string> = {

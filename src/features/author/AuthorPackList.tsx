@@ -2,16 +2,16 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { cn } from "@/src/shared/lib/cn";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
-import { PackCard } from "@/src/features/home/PackCard";
-import { FilterChipRow } from "@/src/features/home/FilterChipRow";
+import { cn } from "@/shared/lib/cn";
+import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/components/Button";
+import { PackCard } from "@/features/home/PackCard";
+import { FilterChipRow } from "@/features/home/FilterChipRow";
 import {
   PACK_STATUSES,
   type PackSummary,
   type PackStatus,
-} from "@/src/shared/types/pack";
+} from "@/shared/types/pack";
 import { useAuthorPacks } from "./api/author-packs.queries";
 
 // "all" is the UI sentinel for "no status filter" (every status) — same

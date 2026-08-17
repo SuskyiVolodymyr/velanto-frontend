@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { SlidersIcon, ChevronDownIcon } from "@/src/shared/components/icons";
-import { Popover } from "@/src/shared/components/Popover";
-import type { PackTag } from "@/src/shared/types/pack";
-import type { PackLanguage } from "@/src/shared/types/pack-language";
-import { FormatFilter } from "@/src/features/home/FormatFilter";
-import { SortFilter } from "@/src/features/home/SortFilter";
-import { TagPickerModal } from "@/src/shared/components/TagPickerModal";
-import { LanguageFilter } from "@/src/features/home/LanguageFilter";
-import { ActiveFilterChips } from "@/src/features/home/ActiveFilterChips";
+import { SlidersIcon, ChevronDownIcon } from "@/shared/components/icons";
+import { Popover } from "@/shared/components/Popover";
+import type { PackTag } from "@/shared/types/pack";
+import type { PackLanguage } from "@/shared/types/pack-language";
+import { FormatFilter } from "@/features/home/FormatFilter";
+import { SortFilter } from "@/features/home/SortFilter";
+import { TagPickerModal } from "@/shared/components/TagPickerModal";
+import { LanguageFilter } from "@/features/home/LanguageFilter";
+import { ActiveFilterChips } from "@/features/home/ActiveFilterChips";
 import {
   SORT_LABEL_KEYS,
   WINDOW_LABEL_KEYS,
@@ -19,7 +19,7 @@ import {
   type FormatFilterValue,
   type SortFilterValue,
   type WindowFilterValue,
-} from "@/src/features/home/filter-options";
+} from "@/features/home/filter-options";
 
 const PANEL_CLASS =
   "flex flex-col rounded-[14px] border border-border bg-surface p-4 " +

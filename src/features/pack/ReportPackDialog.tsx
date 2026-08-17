@@ -1,15 +1,15 @@
 "use client";
 
-import { SignInGate } from "@/src/shared/components/SignInGate";
+import { SignInGate } from "@/shared/components/SignInGate";
 import { useState, type ReactElement } from "react";
 import { useTranslations } from "next-intl";
 import { Flag } from "lucide-react";
-import { ReportModal } from "@/src/shared/components/ReportModal";
-import type { DropdownOption } from "@/src/shared/components/Dropdown";
-import { Tooltip } from "@/src/shared/components/Tooltip";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { cn } from "@/src/shared/lib/cn";
-import { REPORT_REASON_LABELS } from "@/src/shared/lib/report-reasons";
+import { ReportModal } from "@/shared/components/ReportModal";
+import type { DropdownOption } from "@/shared/components/Dropdown";
+import { Tooltip } from "@/shared/components/Tooltip";
+import { useAuth } from "@/shared/lib/auth-context";
+import { cn } from "@/shared/lib/cn";
+import { REPORT_REASON_LABELS } from "@/shared/lib/report-reasons";
 
 // The reason ids valid for a pack report — sourced from report-reasons.ts's
 // own hand-mirror of the backend's REPORT_REASONS.pack (velanto-backend

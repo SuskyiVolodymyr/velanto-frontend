@@ -15,10 +15,10 @@ import {
   ChevronRight,
   type LucideIcon,
 } from "lucide-react";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { UserAvatar } from "@/src/shared/components/UserAvatar";
-import { Text } from "@/src/shared/components/Text";
-import { Hidden } from "@/src/shared/components/Hidden";
+import { useAuth } from "@/shared/lib/auth-context";
+import { UserAvatar } from "@/shared/components/UserAvatar";
+import { Text } from "@/shared/components/Text";
+import { Hidden } from "@/shared/components/Hidden";
 
 interface Row {
   key: string;

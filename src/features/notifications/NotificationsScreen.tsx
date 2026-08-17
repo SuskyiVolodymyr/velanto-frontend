@@ -2,12 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { useNotifications } from "@/src/shared/components/use-notifications";
-import { NotificationList } from "@/src/shared/components/NotificationList";
-import { NotificationsPanelHeader } from "@/src/shared/components/NotificationsPanelHeader";
+import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/components/Button";
+import { useAuth } from "@/shared/lib/auth-context";
+import { useNotifications } from "@/shared/components/use-notifications";
+import { NotificationList } from "@/shared/components/NotificationList";
+import { NotificationsPanelHeader } from "@/shared/components/NotificationsPanelHeader";
 
 /**
  * Full-page notifications list — the phone bottom nav's Notifications tab (the

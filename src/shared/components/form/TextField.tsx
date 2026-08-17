@@ -1,8 +1,8 @@
 import type { InputHTMLAttributes, ReactNode } from "react";
 import { useFormContext } from "react-hook-form";
-import { Input } from "@/src/shared/components/Input";
-import { FormField } from "@/src/shared/components/form/FormField";
-import { useFieldError } from "@/src/shared/components/form/useFieldError";
+import { Input } from "@/shared/components/Input";
+import { FormField } from "@/shared/components/form/FormField";
+import { useFieldError } from "@/shared/components/form/useFieldError";
 
 export interface TextFieldProps extends Omit<
   InputHTMLAttributes<HTMLInputElement>,

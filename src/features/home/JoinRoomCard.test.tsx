@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
-import { ApiError } from "@/src/shared/lib/api-client";
+import { ApiError } from "@/shared/lib/api-client";
 import { JoinRoomCard } from "./JoinRoomCard";
 
 const { push } = vi.hoisted(() => ({ push: vi.fn() }));
@@ -12,12 +12,12 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
 const auth = vi.hoisted(() => ({
   current: { user: { id: "u1" } as { id: string } | null },
 }));
-vi.mock("@/src/shared/lib/auth-context", () => ({
+vi.mock("@/shared/lib/auth-context", () => ({
   useAuth: () => auth.current,
 }));
 
 const { join } = vi.hoisted(() => ({ join: vi.fn() }));
-vi.mock("@/src/features/friends-rooms/friends-rooms-client", () => ({
+vi.mock("@/features/friends-rooms/friends-rooms-client", () => ({
   friendsRoomsClient: { join },
 }));
 
@@ -25,10 +25,10 @@ vi.mock("@/src/features/friends-rooms/friends-rooms-client", () => ({
 // exports (MAX_PLAYERS, the wire types). Default: rooms LIVE, so the behaviour
 // tests below exercise the revived join flow; one test flips it to dormant.
 const flag = vi.hoisted(() => ({ dormant: false }));
-vi.mock("@/src/features/friends-rooms/room-types", async (importOriginal) => {
+vi.mock("@/features/friends-rooms/room-types", async (importOriginal) => {
   const actual =
     await importOriginal<
-      typeof import("@/src/features/friends-rooms/room-types")
+      typeof import("@/features/friends-rooms/room-types")
     >();
   return {
     ...actual,

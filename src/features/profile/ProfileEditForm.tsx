@@ -4,22 +4,22 @@ import { useState } from "react";
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/src/shared/lib/auth-context";
+import { useAuth } from "@/shared/lib/auth-context";
 import {
   useMyProfile,
   useUpdateBio,
   useChangeUsername,
-} from "@/src/features/profile/api/profile.queries";
-import { messageFromError } from "@/src/shared/lib/messageFromError";
-import { ApiError } from "@/src/shared/lib/api-client";
-import { USERNAME_PATTERN } from "@/src/features/auth/auth.schema";
-import { Text } from "@/src/shared/components/Text";
-import { Button, buttonClassName } from "@/src/shared/components/Button";
-import { PageHeader } from "@/src/shared/components/PageHeader";
-import { AvatarSection } from "@/src/features/profile/AvatarSection";
-import { ProfileEditPreview } from "@/src/features/profile/ProfileEditPreview";
-import { cn } from "@/src/shared/lib/cn";
-import { pageContainer } from "@/src/shared/lib/page-container";
+} from "@/features/profile/api/profile.queries";
+import { messageFromError } from "@/shared/lib/messageFromError";
+import { ApiError } from "@/shared/lib/api-client";
+import { USERNAME_PATTERN } from "@/features/auth/auth.schema";
+import { Text } from "@/shared/components/Text";
+import { Button, buttonClassName } from "@/shared/components/Button";
+import { PageHeader } from "@/shared/components/PageHeader";
+import { AvatarSection } from "@/features/profile/AvatarSection";
+import { ProfileEditPreview } from "@/features/profile/ProfileEditPreview";
+import { cn } from "@/shared/lib/cn";
+import { pageContainer } from "@/shared/lib/page-container";
 
 const BIO_MAX = 280;
 const USERNAME_MAX = 16;

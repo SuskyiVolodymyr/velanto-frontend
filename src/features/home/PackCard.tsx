@@ -1,24 +1,24 @@
 "use client";
 
-import { SignInGate } from "@/src/shared/components/SignInGate";
+import { SignInGate } from "@/shared/components/SignInGate";
 import Link from "next/link";
 import { useState, type ReactElement } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { PlayIcon, FriendsIcon } from "@/src/shared/components/icons";
-import { Badge } from "@/src/shared/components/Badge";
-import { StatusBadge } from "@/src/shared/components/StatusBadge";
-import { CoverImage } from "@/src/shared/components/CoverImage";
-import { UserAvatar } from "@/src/shared/components/UserAvatar";
-import { Username } from "@/src/shared/components/Username";
-import { Text } from "@/src/shared/components/Text";
-import { Tooltip } from "@/src/shared/components/Tooltip";
-import { formatRelativeTimeIntl } from "@/src/shared/lib/relative-time";
-import { isHotPack } from "@/src/features/home/hot-pack";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { cn } from "@/src/shared/lib/cn";
-import { friendsRoomsClient } from "@/src/features/friends-rooms/friends-rooms-client";
-import { type PackSummary } from "@/src/shared/types/pack";
+import { PlayIcon, FriendsIcon } from "@/shared/components/icons";
+import { Badge } from "@/shared/components/Badge";
+import { StatusBadge } from "@/shared/components/StatusBadge";
+import { CoverImage } from "@/shared/components/CoverImage";
+import { UserAvatar } from "@/shared/components/UserAvatar";
+import { Username } from "@/shared/components/Username";
+import { Text } from "@/shared/components/Text";
+import { Tooltip } from "@/shared/components/Tooltip";
+import { formatRelativeTimeIntl } from "@/shared/lib/relative-time";
+import { isHotPack } from "@/features/home/hot-pack";
+import { useAuth } from "@/shared/lib/auth-context";
+import { cn } from "@/shared/lib/cn";
+import { friendsRoomsClient } from "@/features/friends-rooms/friends-rooms-client";
+import { type PackSummary } from "@/shared/types/pack";
 
 /**
  * A pack tile in the browse grid (2.0.0 redesign). The cover + body link to the

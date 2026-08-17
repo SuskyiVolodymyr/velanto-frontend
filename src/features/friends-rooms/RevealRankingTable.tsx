@@ -1,8 +1,8 @@
 "use client";
 
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
-import type { Item } from "@/src/shared/types/pack";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
+import type { Item } from "@/shared/types/pack";
 
 /**
  * One anonymous label's whole ordering from a closed rank_blind round.

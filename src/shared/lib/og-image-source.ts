@@ -1,4 +1,4 @@
-import { mediaUrl } from "@/src/shared/lib/media-url";
+import { mediaUrl } from "@/shared/lib/media-url";
 
 /** The card background (`BG` in og-card.tsx), as channels sharp can flatten to. */
 export const OG_CARD_BACKGROUND_RGB = { r: 10, g: 11, b: 14 } as const;

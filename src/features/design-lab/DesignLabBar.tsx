@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { FlaskConical } from "lucide-react";
-import { SegmentedControl } from "@/src/shared/components/SegmentedControl";
-import { pageContainer } from "@/src/shared/lib/page-container";
-import { cn } from "@/src/shared/lib/cn";
+import { SegmentedControl } from "@/shared/components/SegmentedControl";
+import { pageContainer } from "@/shared/lib/page-container";
+import { cn } from "@/shared/lib/cn";
 import { LAB_SCREENS } from "./screens";
 
 /**

@@ -5,11 +5,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { RotateCcw } from "lucide-react";
-import { Text } from "@/src/shared/components/Text";
-import { buttonClassName } from "@/src/shared/components/Button";
-import { BoardCard, BoardRow } from "@/src/shared/components/BoardCard";
-import { HeroCard } from "@/src/shared/components/HeroCard";
-import { cn } from "@/src/shared/lib/cn";
+import { Text } from "@/shared/components/Text";
+import { buttonClassName } from "@/shared/components/Button";
+import { BoardCard, BoardRow } from "@/shared/components/BoardCard";
+import { HeroCard } from "@/shared/components/HeroCard";
+import { cn } from "@/shared/lib/cn";
 import { friendsRoomsClient } from "./friends-rooms-client";
 
 import type { RoomState } from "./room-types";

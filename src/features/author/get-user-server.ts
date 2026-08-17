@@ -1,5 +1,5 @@
-import type { PublicUserProfile } from "@/src/shared/types/user";
-import type { PackSummary } from "@/src/shared/types/pack";
+import type { PublicUserProfile } from "@/shared/types/user";
+import type { PackSummary } from "@/shared/types/pack";
 import { AUTHOR_PACKS_PAGE_SIZE } from "./api/author-packs";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";

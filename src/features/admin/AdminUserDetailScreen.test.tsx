@@ -1,44 +1,44 @@
 import { describe, expect, it, vi } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { pickFromDropdown } from "@/src/shared/test/pick-from-dropdown";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { pickFromDropdown } from "@/shared/test/pick-from-dropdown";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { AdminUserDetailScreen } from "./AdminUserDetailScreen";
-import { useAdminUserDetail } from "@/src/features/admin/api/admin.queries";
-import { useAuthorBanHistory } from "@/src/features/author/api/author.queries";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { usersClient } from "@/src/shared/lib/users-client";
-import { rulesClient } from "@/src/shared/lib/rules-client";
-import type { AdminUserDetail } from "@/src/shared/types/admin";
-import type { RulesDocument } from "@/src/shared/types/rules";
+import { useAdminUserDetail } from "@/features/admin/api/admin.queries";
+import { useAuthorBanHistory } from "@/features/author/api/author.queries";
+import { useAuth } from "@/shared/lib/auth-context";
+import { usersClient } from "@/shared/lib/users-client";
+import { rulesClient } from "@/shared/lib/rules-client";
+import type { AdminUserDetail } from "@/shared/types/admin";
+import type { RulesDocument } from "@/shared/types/rules";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ replace: vi.fn() }) }));
-vi.mock("@/src/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
+vi.mock("@/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
 // Real `adminUserDetailQueryOptions` is needed too — the moderation hook
 // (exercised for real, only its network calls are mocked below) invalidates
 // its query key on success.
-vi.mock("@/src/features/admin/api/admin.queries", async (importOriginal) => {
+vi.mock("@/features/admin/api/admin.queries", async (importOriginal) => {
   const actual =
     await importOriginal<
-      typeof import("@/src/features/admin/api/admin.queries")
+      typeof import("@/features/admin/api/admin.queries")
     >();
   return { ...actual, useAdminUserDetail: vi.fn() };
 });
-vi.mock("@/src/features/author/api/author.queries", () => ({
+vi.mock("@/features/author/api/author.queries", () => ({
   useAuthorBanHistory: vi.fn(),
 }));
-vi.mock("@/src/shared/lib/users-client");
+vi.mock("@/shared/lib/users-client");
 // BanReasonPicker (rendered once the inline ban form opens) fetches the rule
 // categories for its own dropdown.
-vi.mock("@/src/shared/lib/rules-client", () => ({
+vi.mock("@/shared/lib/rules-client", () => ({
   rulesClient: { getRules: vi.fn() },
 }));
 // The two rails fetch on their own; stub them so this test stays about the
 // detail screen's own stats rendering.
-vi.mock("@/src/features/author/AuthorPacksRail", () => ({
+vi.mock("@/features/author/AuthorPacksRail", () => ({
   AuthorPacksRail: () => null,
 }));
-vi.mock("@/src/features/author/RecentlyPlayedSection", () => ({
+vi.mock("@/features/author/RecentlyPlayedSection", () => ({
   RecentlyPlayedSection: () => null,
 }));
 

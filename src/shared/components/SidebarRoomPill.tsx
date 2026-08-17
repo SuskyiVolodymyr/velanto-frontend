@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { useFriendsRoomsPresence } from "@/src/features/friends-rooms/friends-rooms-presence-context";
+import { useAuth } from "@/shared/lib/auth-context";
+import { useFriendsRoomsPresence } from "@/features/friends-rooms/friends-rooms-presence-context";
 
 /**
  * "You're in a room" pill for the sidebar footer. Shows the first room the

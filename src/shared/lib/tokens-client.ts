@@ -1,4 +1,4 @@
-import { apiClient } from "@/src/shared/lib/api-client";
+import { apiClient } from "@/shared/lib/api-client";
 
 /**
  * Personal Access Token scopes. Mirrors the backend PAT_SCOPES taxonomy

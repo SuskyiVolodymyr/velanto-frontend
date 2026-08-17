@@ -3,25 +3,25 @@
 import { useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslations } from "next-intl";
-import { COVER_TONES } from "@/src/shared/types/pack";
+import { COVER_TONES } from "@/shared/types/pack";
 import {
   PACK_LANGUAGES,
   PACK_LANGUAGE_NAMES,
-} from "@/src/shared/types/pack-language";
-import { Text } from "@/src/shared/components/Text";
-import { TagPickerModal } from "@/src/shared/components/TagPickerModal";
-import { TextField } from "@/src/shared/components/form/TextField";
-import { TextareaField } from "@/src/shared/components/form/TextareaField";
-import { SelectField } from "@/src/shared/components/form/SelectField";
-import { CoverImageField } from "@/src/features/create/CoverImageField";
-import { SwatchPicker } from "@/src/shared/components/SwatchPicker";
-import { StepHeader } from "@/src/features/create/StepHeader";
+} from "@/shared/types/pack-language";
+import { Text } from "@/shared/components/Text";
+import { TagPickerModal } from "@/shared/components/TagPickerModal";
+import { TextField } from "@/shared/components/form/TextField";
+import { TextareaField } from "@/shared/components/form/TextareaField";
+import { SelectField } from "@/shared/components/form/SelectField";
+import { CoverImageField } from "@/features/create/CoverImageField";
+import { SwatchPicker } from "@/shared/components/SwatchPicker";
+import { StepHeader } from "@/features/create/StepHeader";
 import {
   type CreatePackValues,
   MAX_TAGS,
   TITLE_MAX,
   DESCRIPTION_MAX,
-} from "@/src/features/create/create-pack.schema";
+} from "@/features/create/create-pack.schema";
 
 /**
  * The "Basics" section: title, description, cover tone, cover image, pack

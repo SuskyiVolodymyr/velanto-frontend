@@ -1,22 +1,22 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { Input } from "@/src/shared/components/Input";
-import { Dropdown } from "@/src/shared/components/Dropdown";
-import { Button } from "@/src/shared/components/Button";
-import { LoadingState } from "@/src/shared/components/LoadingState";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { canActOn } from "@/src/shared/lib/staff-permissions";
-import type { AdminUserSort } from "@/src/shared/lib/admin-client";
+import { Text } from "@/shared/components/Text";
+import { Input } from "@/shared/components/Input";
+import { Dropdown } from "@/shared/components/Dropdown";
+import { Button } from "@/shared/components/Button";
+import { LoadingState } from "@/shared/components/LoadingState";
+import { useAuth } from "@/shared/lib/auth-context";
+import { canActOn } from "@/shared/lib/staff-permissions";
+import type { AdminUserSort } from "@/shared/lib/admin-client";
 import {
   useUsersAdmin,
   isCurrentlyBanned,
   type BannedFilter,
   type StaffFilter,
-} from "@/src/features/admin/use-users-admin";
-import { UserRow } from "@/src/features/admin/UserRow";
-import { DataTable } from "@/src/shared/components/DataTable";
+} from "@/features/admin/use-users-admin";
+import { UserRow } from "@/features/admin/UserRow";
+import { DataTable } from "@/shared/components/DataTable";
 
 const COLUMNS = "1.3fr 110px 80px 80px 100px 110px 130px";
 

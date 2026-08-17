@@ -3,13 +3,13 @@
 import { useTranslations } from "next-intl";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
-import { Text } from "@/src/shared/components/Text";
-import { StatusBadge } from "@/src/shared/components/StatusBadge";
-import { LoadingState } from "@/src/shared/components/LoadingState";
-import { formatDate } from "@/src/shared/lib/format-date";
-import { reportsClient } from "@/src/shared/lib/reports-client";
-import { reportReasonLabel } from "@/src/shared/lib/report-reasons";
-import type { ReportWithReporter } from "@/src/shared/types/report";
+import { Text } from "@/shared/components/Text";
+import { StatusBadge } from "@/shared/components/StatusBadge";
+import { LoadingState } from "@/shared/components/LoadingState";
+import { formatDate } from "@/shared/lib/format-date";
+import { reportsClient } from "@/shared/lib/reports-client";
+import { reportReasonLabel } from "@/shared/lib/report-reasons";
+import type { ReportWithReporter } from "@/shared/types/report";
 
 /**
  * How much history to pull. A moderator deciding on one report needs the shape

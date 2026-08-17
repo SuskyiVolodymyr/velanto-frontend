@@ -1,16 +1,16 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { playsClient } from "@/src/shared/lib/plays-client";
+import { useAuth } from "@/shared/lib/auth-context";
+import { playsClient } from "@/shared/lib/plays-client";
 import {
   writeLastPlayPicks,
   writeLastPlayId,
-} from "@/src/shared/lib/last-play-storage";
-import { useRoundSelections } from "@/src/features/play/use-round-selections";
-import { usePlayResume } from "@/src/features/play/use-play-resume";
-import type { Item, Pack } from "@/src/shared/types/pack";
-import type { RecordedPick } from "@/src/shared/types/play-results";
+} from "@/shared/lib/last-play-storage";
+import { useRoundSelections } from "@/features/play/use-round-selections";
+import { usePlayResume } from "@/features/play/use-play-resume";
+import type { Item, Pack } from "@/shared/types/pack";
+import type { RecordedPick } from "@/shared/types/play-results";
 
 export interface Pick {
   roundIndex: number;

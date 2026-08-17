@@ -1,20 +1,20 @@
 import { useTranslations } from "next-intl";
-import type { Item } from "@/src/shared/types/pack";
-import { Text } from "@/src/shared/components/Text";
-import { Badge } from "@/src/shared/components/Badge";
-import { YouTubeCard } from "@/src/shared/components/YouTubeCard";
-import { ImageCard } from "@/src/shared/components/ImageCard";
+import type { Item } from "@/shared/types/pack";
+import { Text } from "@/shared/components/Text";
+import { Badge } from "@/shared/components/Badge";
+import { YouTubeCard } from "@/shared/components/YouTubeCard";
+import { ImageCard } from "@/shared/components/ImageCard";
 import {
   extractYouTubeId,
   extractYouTubeStart,
-} from "@/src/shared/lib/youtube";
-import { mediaUrl } from "@/src/shared/lib/media-url";
-import { cn } from "@/src/shared/lib/cn";
+} from "@/shared/lib/youtube";
+import { mediaUrl } from "@/shared/lib/media-url";
+import { cn } from "@/shared/lib/cn";
 import {
   toneFor,
   HAIRLINE_OVERLAY_STYLE,
-} from "@/src/features/play/candidate-tone";
-import { VsBadge } from "@/src/features/play/VsBadge";
+} from "@/features/play/candidate-tone";
+import { VsBadge } from "@/features/play/VsBadge";
 
 interface VersusSide {
   name: string;

@@ -1,18 +1,18 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { PeopleFeed } from "./PeopleFeed";
-import { usersClient } from "@/src/shared/lib/users-client";
-import type { FollowUser } from "@/src/shared/lib/users-client";
+import { usersClient } from "@/shared/lib/users-client";
+import type { FollowUser } from "@/shared/lib/users-client";
 
-vi.mock("@/src/shared/lib/users-client", () => ({
+vi.mock("@/shared/lib/users-client", () => ({
   usersClient: { search: vi.fn() },
 }));
 
 // Isolate PeopleFeed from the card's own dependencies (auth, follow mutation,
 // streamer-mode) — a marker that echoes the username is enough here.
-vi.mock("@/src/features/home/PersonCard", () => ({
+vi.mock("@/features/home/PersonCard", () => ({
   PersonCard: ({ user }: { user: FollowUser }) => <div>{user.username}</div>,
 }));
 

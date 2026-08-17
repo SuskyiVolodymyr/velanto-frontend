@@ -2,13 +2,13 @@
 
 import { useRef, useState, type DragEvent } from "react";
 import { useTranslations } from "next-intl";
-import type { ItemType } from "@/src/shared/types/pack";
-import { ITEM_TITLE_MAX } from "@/src/features/create/create-pack.schema";
-import { Input } from "@/src/shared/components/Input";
-import { Text } from "@/src/shared/components/Text";
-import { SegmentedControl } from "@/src/shared/components/SegmentedControl";
-import { cn } from "@/src/shared/lib/cn";
-import { ItemImageCropModal } from "@/src/features/create/ItemImageCropModal";
+import type { ItemType } from "@/shared/types/pack";
+import { ITEM_TITLE_MAX } from "@/features/create/create-pack.schema";
+import { Input } from "@/shared/components/Input";
+import { Text } from "@/shared/components/Text";
+import { SegmentedControl } from "@/shared/components/SegmentedControl";
+import { cn } from "@/shared/lib/cn";
+import { ItemImageCropModal } from "@/features/create/ItemImageCropModal";
 
 const fieldCaptionClassName =
   "text-[11.5px] font-semibold text-foreground-tertiary";

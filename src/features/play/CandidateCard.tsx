@@ -1,20 +1,20 @@
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { Badge } from "@/src/shared/components/Badge";
-import { YouTubeCard } from "@/src/shared/components/YouTubeCard";
-import { ImageCard } from "@/src/shared/components/ImageCard";
+import { Text } from "@/shared/components/Text";
+import { Badge } from "@/shared/components/Badge";
+import { YouTubeCard } from "@/shared/components/YouTubeCard";
+import { ImageCard } from "@/shared/components/ImageCard";
 import {
   extractYouTubeId,
   extractYouTubeStart,
-} from "@/src/shared/lib/youtube";
-import { mediaUrl } from "@/src/shared/lib/media-url";
-import { cn } from "@/src/shared/lib/cn";
+} from "@/shared/lib/youtube";
+import { mediaUrl } from "@/shared/lib/media-url";
+import { cn } from "@/shared/lib/cn";
 import {
   toneFor,
   HAIRLINE_OVERLAY_STYLE,
-} from "@/src/features/play/candidate-tone";
-import { CHOSEN_LABEL_KEY } from "@/src/features/play/play-format-copy";
-import type { Item, Pack } from "@/src/shared/types/pack";
+} from "@/features/play/candidate-tone";
+import { CHOSEN_LABEL_KEY } from "@/features/play/play-format-copy";
+import type { Item, Pack } from "@/shared/types/pack";
 
 interface CandidateCardProps {
   item: Item;

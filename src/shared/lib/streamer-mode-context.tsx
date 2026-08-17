@@ -9,12 +9,12 @@ import {
   useState,
 } from "react";
 import type { ReactNode } from "react";
-import { useHydratedValue } from "@/src/shared/hooks/useHydratedValue";
+import { useHydratedValue } from "@/shared/hooks/useHydratedValue";
 import {
   STREAMER_MODE_HYDRATED_ATTR,
   getStoredStreamerMode,
   setStoredStreamerMode,
-} from "@/src/shared/lib/streamer-mode";
+} from "@/shared/lib/streamer-mode";
 
 export interface StreamerModeContextValue {
   /** Whether streamer mode is currently active. */

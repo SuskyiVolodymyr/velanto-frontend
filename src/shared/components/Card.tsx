@@ -1,5 +1,5 @@
 import { HTMLAttributes } from "react";
-import { cn } from "@/src/shared/lib/cn";
+import { cn } from "@/shared/lib/cn";
 
 export interface CardProps extends HTMLAttributes<HTMLDivElement> {
   /**

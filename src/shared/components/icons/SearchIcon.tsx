@@ -1,4 +1,4 @@
-import type { IconProps } from "@/src/shared/components/icons/icon-types";
+import type { IconProps } from "@/shared/components/icons/icon-types";
 
 /** Top bar / pack search field — a magnifying glass. */
 export function SearchIcon({

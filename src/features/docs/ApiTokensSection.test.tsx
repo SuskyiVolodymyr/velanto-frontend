@@ -1,18 +1,18 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { ApiTokensSection } from "./ApiTokensSection";
-import { useAuth } from "@/src/shared/lib/auth-context";
+import { useAuth } from "@/shared/lib/auth-context";
 import {
   useApiTokens,
   useCreateToken,
   useRevokeToken,
-} from "@/src/features/docs/api/tokens.queries";
-import type { ApiToken } from "@/src/shared/lib/tokens-client";
+} from "@/features/docs/api/tokens.queries";
+import type { ApiToken } from "@/shared/lib/tokens-client";
 
-vi.mock("@/src/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
-vi.mock("@/src/features/docs/api/tokens.queries", () => ({
+vi.mock("@/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
+vi.mock("@/features/docs/api/tokens.queries", () => ({
   useApiTokens: vi.fn(),
   useCreateToken: vi.fn(),
   useRevokeToken: vi.fn(),

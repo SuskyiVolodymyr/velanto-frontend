@@ -1,9 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Card } from "@/src/shared/components/Card";
-import { Text } from "@/src/shared/components/Text";
-import { LanguageSelector } from "@/src/features/settings/LanguageSelector";
+import { Card } from "@/shared/components/Card";
+import { Text } from "@/shared/components/Text";
+import { LanguageSelector } from "@/features/settings/LanguageSelector";
 
 export function LanguageSection() {
   const t = useTranslations("settings");

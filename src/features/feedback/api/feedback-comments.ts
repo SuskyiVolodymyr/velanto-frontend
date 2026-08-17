@@ -1,5 +1,5 @@
-import { feedbackClient } from "@/src/shared/lib/feedback-client";
-import type { FeedbackCommentList } from "@/src/shared/types/feedback";
+import { feedbackClient } from "@/shared/lib/feedback-client";
+import type { FeedbackCommentList } from "@/shared/types/feedback";
 
 export const FEEDBACK_COMMENTS_PAGE_SIZE = 10;
 

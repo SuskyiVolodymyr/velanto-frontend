@@ -1,4 +1,4 @@
-import { apiClient } from "@/src/shared/lib/api-client";
+import { apiClient } from "@/shared/lib/api-client";
 import type {
   ActivityPoint,
   ActivityRange,
@@ -6,7 +6,7 @@ import type {
   AdminUserDetail,
   AdminUserList,
   AuditLogList,
-} from "@/src/shared/types/admin";
+} from "@/shared/types/admin";
 
 /** Newest-first is the backend default; the Logs tab can flip it. */
 export type AuditLogSort = "newest" | "oldest";

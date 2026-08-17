@@ -1,16 +1,16 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { SidebarRoomPill } from "./SidebarRoomPill";
-import type { MyRoomSummary } from "@/src/features/friends-rooms/room-types";
+import type { MyRoomSummary } from "@/features/friends-rooms/room-types";
 
 let rooms: MyRoomSummary[] = [];
 let currentUser: { id: string } | null = { id: "u1" };
 
-vi.mock("@/src/shared/lib/auth-context", () => ({
+vi.mock("@/shared/lib/auth-context", () => ({
   useAuth: () => ({ user: currentUser }),
 }));
-vi.mock("@/src/features/friends-rooms/friends-rooms-presence-context", () => ({
+vi.mock("@/features/friends-rooms/friends-rooms-presence-context", () => ({
   useFriendsRoomsPresence: () => ({ rooms, refresh: vi.fn() }),
 }));
 

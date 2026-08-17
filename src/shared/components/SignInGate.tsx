@@ -3,9 +3,9 @@
 import { useEffect, useId, useRef, useState, type ReactElement } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { buttonClassName } from "@/src/shared/components/Button";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
+import { buttonClassName } from "@/shared/components/Button";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
 
 /**
  * Wraps a control a signed-out visitor cannot use, and explains why on click —

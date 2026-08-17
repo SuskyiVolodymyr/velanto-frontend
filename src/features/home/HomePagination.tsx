@@ -3,10 +3,10 @@
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
-} from "@/src/shared/components/icons";
+} from "@/shared/components/icons";
 import { useTranslations } from "next-intl";
-import { cn } from "@/src/shared/lib/cn";
-import { buildPaginationRange } from "@/src/features/home/pagination-range";
+import { cn } from "@/shared/lib/cn";
+import { buildPaginationRange } from "@/features/home/pagination-range";
 
 /** The "Showing X–Y of Z packs" range shown beside the pager on the browse feed. */
 export interface PaginationRange {

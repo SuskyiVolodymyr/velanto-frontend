@@ -2,10 +2,10 @@
 
 import { Bell } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { Spinner } from "@/src/shared/components/Spinner";
-import { NotificationItem } from "@/src/shared/components/NotificationItem";
-import type { Notification } from "@/src/shared/types/notification";
+import { Text } from "@/shared/components/Text";
+import { Spinner } from "@/shared/components/Spinner";
+import { NotificationItem } from "@/shared/components/NotificationItem";
+import type { Notification } from "@/shared/types/notification";
 
 interface NotificationListProps {
   notifications: Notification[];

@@ -2,14 +2,14 @@
 
 import { Fragment, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import type { Item } from "@/src/shared/types/pack";
-import { cn } from "@/src/shared/lib/cn";
-import { mediaUrl } from "@/src/shared/lib/media-url";
+import type { Item } from "@/shared/types/pack";
+import { cn } from "@/shared/lib/cn";
+import { mediaUrl } from "@/shared/lib/media-url";
 import {
   extractYouTubeId,
   youtubeThumbnailUrl,
-} from "@/src/shared/lib/youtube";
-import { EmptyState } from "@/src/shared/components/EmptyState";
+} from "@/shared/lib/youtube";
+import { EmptyState } from "@/shared/components/EmptyState";
 
 interface GroupItemListProps {
   items: Item[];

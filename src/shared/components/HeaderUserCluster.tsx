@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { NotificationsBell } from "@/src/shared/components/NotificationsBell";
-import { UserMenu } from "@/src/shared/components/UserMenu";
-import { buttonClassName } from "@/src/shared/components/Button";
-import { useAuth } from "@/src/shared/lib/auth-context";
+import { NotificationsBell } from "@/shared/components/NotificationsBell";
+import { UserMenu } from "@/shared/components/UserMenu";
+import { buttonClassName } from "@/shared/components/Button";
+import { useAuth } from "@/shared/lib/auth-context";
 
 /**
  * The account controls — notifications bell and user popup — for pages that

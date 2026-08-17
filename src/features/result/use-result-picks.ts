@@ -2,10 +2,10 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { readLastPlayPicks } from "@/src/shared/lib/last-play-storage";
-import { decodePicks } from "@/src/shared/lib/share-url";
-import { useSharedPlay } from "@/src/features/result/api/shared-play.queries";
-import type { RecordedPick } from "@/src/shared/types/play-results";
+import { readLastPlayPicks } from "@/shared/lib/last-play-storage";
+import { decodePicks } from "@/shared/lib/share-url";
+import { useSharedPlay } from "@/features/result/api/shared-play.queries";
+import type { RecordedPick } from "@/shared/types/play-results";
 
 /**
  * The picks to overlay on a result screen. A share link wins (someone shared

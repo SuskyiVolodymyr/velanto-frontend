@@ -2,8 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { AlertCircle, Check } from "lucide-react";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
 import {
   MODE_NAME_KEY,
   MODE_BLURB_KEY,

@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { KeyRound } from "lucide-react";
-import { Text } from "@/src/shared/components/Text";
-import { TextField } from "@/src/shared/components/form/TextField";
+import { Text } from "@/shared/components/Text";
+import { TextField } from "@/shared/components/form/TextField";
 import { getResendCooldownRemaining } from "./otp-cooldown";
 
 /**

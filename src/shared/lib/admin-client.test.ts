@@ -1,10 +1,10 @@
 // src/shared/lib/admin-client.test.ts
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { apiClient } from "@/src/shared/lib/api-client";
-import { adminClient } from "@/src/shared/lib/admin-client";
-import type { AdminUserList, AuditLogList } from "@/src/shared/types/admin";
+import { apiClient } from "@/shared/lib/api-client";
+import { adminClient } from "@/shared/lib/admin-client";
+import type { AdminUserList, AuditLogList } from "@/shared/types/admin";
 
-vi.mock("@/src/shared/lib/api-client", () => ({
+vi.mock("@/shared/lib/api-client", () => ({
   apiClient: { get: vi.fn() },
 }));
 

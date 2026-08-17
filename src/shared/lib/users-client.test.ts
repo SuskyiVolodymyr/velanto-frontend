@@ -1,9 +1,9 @@
 // src/shared/lib/users-client.test.ts
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { apiClient } from "@/src/shared/lib/api-client";
-import { usersClient } from "@/src/shared/lib/users-client";
+import { apiClient } from "@/shared/lib/api-client";
+import { usersClient } from "@/shared/lib/users-client";
 
-vi.mock("@/src/shared/lib/api-client", () => ({
+vi.mock("@/shared/lib/api-client", () => ({
   apiClient: { post: vi.fn(), patch: vi.fn(), get: vi.fn() },
 }));
 

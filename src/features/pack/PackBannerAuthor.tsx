@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Hidden } from "@/src/shared/components/Hidden";
-import { Username } from "@/src/shared/components/Username";
-import { UserAvatar } from "@/src/shared/components/UserAvatar";
+import { Hidden } from "@/shared/components/Hidden";
+import { Username } from "@/shared/components/Username";
+import { UserAvatar } from "@/shared/components/UserAvatar";
 import { AuthorHoverTrigger } from "./AuthorHoverTrigger";
-import type { PackOverview } from "@/src/shared/types/pack";
+import type { PackOverview } from "@/shared/types/pack";
 
 /**
  * The author line overlaid on the pack hero banner. Shows the author's @handle

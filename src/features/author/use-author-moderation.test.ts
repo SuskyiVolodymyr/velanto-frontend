@@ -4,9 +4,9 @@ import { createElement, type ReactNode } from "react";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { useAuthorModeration } from "./use-author-moderation";
-import { usersClient } from "@/src/shared/lib/users-client";
+import { usersClient } from "@/shared/lib/users-client";
 
-vi.mock("@/src/shared/lib/users-client", () => ({
+vi.mock("@/shared/lib/users-client", () => ({
   usersClient: { ban: vi.fn() },
 }));
 

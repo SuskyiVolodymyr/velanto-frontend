@@ -2,12 +2,12 @@
 
 import { useTranslations } from "next-intl";
 import { Check, Pencil } from "lucide-react";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
 import type {
   PackMarks,
   MarkTarget,
-} from "@/src/features/moderation/use-pack-marks";
+} from "@/features/moderation/use-pack-marks";
 
 /**
  * "Mark for edit" / "Marked" toggle. Shared by the item grid, the round list

@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { BrandMark } from "@/src/shared/components/BrandMark";
-import { SUPPORT_EMAIL } from "@/src/shared/lib/contact";
+import { Text } from "@/shared/components/Text";
+import { BrandMark } from "@/shared/components/BrandMark";
+import { SUPPORT_EMAIL } from "@/shared/lib/contact";
 
 // Reuses the header's nav labels so the two never drift; only the footer-only
 // bits (tagline, copyright, legal links) come from the `footer` namespace.

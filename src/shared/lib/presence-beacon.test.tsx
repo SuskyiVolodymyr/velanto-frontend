@@ -3,14 +3,14 @@ import { render, act } from "@testing-library/react";
 import {
   BEACON_INTERVAL_MS,
   usePresenceBeacon,
-} from "@/src/shared/lib/presence-beacon";
-import { apiClient } from "@/src/shared/lib/api-client";
-import { useAuth } from "@/src/shared/lib/auth-context";
+} from "@/shared/lib/presence-beacon";
+import { apiClient } from "@/shared/lib/api-client";
+import { useAuth } from "@/shared/lib/auth-context";
 
-vi.mock("@/src/shared/lib/api-client", () => ({
+vi.mock("@/shared/lib/api-client", () => ({
   apiClient: { post: vi.fn() },
 }));
-vi.mock("@/src/shared/lib/auth-context", () => ({
+vi.mock("@/shared/lib/auth-context", () => ({
   useAuth: vi.fn(),
 }));
 

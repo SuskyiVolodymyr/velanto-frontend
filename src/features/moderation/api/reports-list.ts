@@ -1,5 +1,5 @@
-import { reportsClient } from "@/src/shared/lib/reports-client";
-import type { ReportStatus, ReportType } from "@/src/shared/types/report";
+import { reportsClient } from "@/shared/lib/reports-client";
+import type { ReportStatus, ReportType } from "@/shared/types/report";
 
 import { MODERATION_PAGE_SIZE } from "./moderation";
 

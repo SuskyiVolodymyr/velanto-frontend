@@ -1,4 +1,4 @@
-import { apiClient } from "@/src/shared/lib/api-client";
+import { apiClient } from "@/shared/lib/api-client";
 
 /** How much untouched work each moderation queue is holding. Staff-only. */
 export interface ModerationCounts {

@@ -4,16 +4,16 @@ import { createElement, type ReactNode } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
-import { createTestQueryClient } from "@/src/shared/test/test-query-client";
+import { createTestQueryClient } from "@/shared/test/test-query-client";
 import { useReportModeration } from "./use-report-moderation";
-import { packsClient } from "@/src/shared/lib/packs-client";
-import { usersClient } from "@/src/shared/lib/users-client";
-import type { ReportWithReporter } from "@/src/shared/types/report";
+import { packsClient } from "@/shared/lib/packs-client";
+import { usersClient } from "@/shared/lib/users-client";
+import type { ReportWithReporter } from "@/shared/types/report";
 
-vi.mock("@/src/shared/lib/packs-client", () => ({
+vi.mock("@/shared/lib/packs-client", () => ({
   packsClient: { delete: vi.fn() },
 }));
-vi.mock("@/src/shared/lib/users-client", () => ({
+vi.mock("@/shared/lib/users-client", () => ({
   usersClient: { ban: vi.fn() },
 }));
 

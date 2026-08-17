@@ -1,18 +1,18 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { Badge } from "@/src/shared/components/Badge";
-import { UserAvatar } from "@/src/shared/components/UserAvatar";
-import { YouTubeCard } from "@/src/shared/components/YouTubeCard";
-import { ImageCard } from "@/src/shared/components/ImageCard";
+import { Text } from "@/shared/components/Text";
+import { Badge } from "@/shared/components/Badge";
+import { UserAvatar } from "@/shared/components/UserAvatar";
+import { YouTubeCard } from "@/shared/components/YouTubeCard";
+import { ImageCard } from "@/shared/components/ImageCard";
 import {
   extractYouTubeId,
   extractYouTubeStart,
-} from "@/src/shared/lib/youtube";
-import { mediaUrl } from "@/src/shared/lib/media-url";
-import { cn } from "@/src/shared/lib/cn";
-import type { Item, Pack } from "@/src/shared/types/pack";
+} from "@/shared/lib/youtube";
+import { mediaUrl } from "@/shared/lib/media-url";
+import { cn } from "@/shared/lib/cn";
+import type { Item, Pack } from "@/shared/types/pack";
 import { claimVerb, outcomeVerb } from "./room-mode-copy";
 import type { RoomPlayerState } from "./room-types";
 

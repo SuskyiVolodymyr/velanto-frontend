@@ -1,17 +1,17 @@
 import { z } from "zod";
-import { PACK_FORMATS, PACK_TAGS } from "@/src/shared/types/pack";
-import { PACK_LANGUAGES } from "@/src/shared/types/pack-language";
+import { PACK_FORMATS, PACK_TAGS } from "@/shared/types/pack";
+import { PACK_LANGUAGES } from "@/shared/types/pack-language";
 import {
   DESCRIPTION_MAX,
   MAX_TAGS,
   TITLE_MAX,
   groupValueSchema,
   roundValueSchema,
-} from "@/src/features/create/create-pack.value-schemas";
+} from "@/features/create/create-pack.value-schemas";
 import {
   validateElimination,
   validateVersus,
-} from "@/src/features/create/create-pack.refinements";
+} from "@/features/create/create-pack.refinements";
 
 /**
  * Client-side validation for the create-pack form. Mirrors velanto-backend's
@@ -33,7 +33,7 @@ export {
   ELIMINATION_MAX_DRAW,
   NXN_SIDE_COUNT_MIN,
   NXN_SIDE_COUNT_MAX,
-} from "@/src/features/create/create-pack.value-schemas";
+} from "@/features/create/create-pack.value-schemas";
 
 export const createPackSchema = z
   .object({

@@ -1,18 +1,18 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
-import { EditPackScreen } from "@/src/features/create/EditPackScreen";
-import { AuthProvider } from "@/src/shared/lib/auth-context";
-import { authClient } from "@/src/shared/lib/auth-client";
-import type { Pack } from "@/src/shared/types/pack";
-import type { Role } from "@/src/shared/types/user";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { EditPackScreen } from "@/features/create/EditPackScreen";
+import { AuthProvider } from "@/shared/lib/auth-context";
+import { authClient } from "@/shared/lib/auth-client";
+import type { Pack } from "@/shared/types/pack";
+import type { Role } from "@/shared/types/user";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
   usePathname: () => "/packs/pack-1/edit",
 }));
 
-vi.mock("@/src/shared/lib/auth-client", () => ({
+vi.mock("@/shared/lib/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),
@@ -22,7 +22,7 @@ vi.mock("@/src/shared/lib/auth-client", () => ({
   },
 }));
 
-vi.mock("@/src/shared/lib/packs-client", () => ({
+vi.mock("@/shared/lib/packs-client", () => ({
   packsClient: { create: vi.fn(), update: vi.fn() },
 }));
 
@@ -31,7 +31,7 @@ vi.mock("@/src/shared/lib/packs-client", () => ({
 // debounce. These tests are short enough to unmount before that ever fires,
 // but see CreatePackForm.test.tsx's identical mock for why leaving it
 // unmocked is a real bug waiting to happen, not just noise.
-vi.mock("@/src/features/friends-rooms/friends-rooms-client", () => ({
+vi.mock("@/features/friends-rooms/friends-rooms-client", () => ({
   friendsRoomsClient: { previewModes: vi.fn(() => new Promise(() => {})) },
 }));
 

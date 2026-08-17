@@ -2,13 +2,13 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
-import { ProgressBar } from "@/src/shared/components/ProgressBar";
-import { cn } from "@/src/shared/lib/cn";
-import { toneFor } from "@/src/features/play/candidate-tone";
-import { withCompetitionRanks } from "@/src/features/result/result-table";
-import type { ItemTally, RecordedPick } from "@/src/shared/types/play-results";
+import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/components/Button";
+import { ProgressBar } from "@/shared/components/ProgressBar";
+import { cn } from "@/shared/lib/cn";
+import { toneFor } from "@/features/play/candidate-tone";
+import { withCompetitionRanks } from "@/features/result/result-table";
+import type { ItemTally, RecordedPick } from "@/shared/types/play-results";
 
 /** How many rows a press of "Load more" adds — matches TopPickedTable's own. */
 const PAGE = 5;

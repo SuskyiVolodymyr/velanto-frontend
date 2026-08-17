@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { resolveRoundDraws } from "@/src/shared/lib/round-draw";
+import { resolveRoundDraws } from "@/shared/lib/round-draw";
 
 // Mirrors velanto-backend src/modules/packs/round-draw.spec.ts — the two engines
 // must agree (cross-repo-drift can't snapshot logic, so keep these in lockstep).

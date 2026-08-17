@@ -11,10 +11,10 @@ import {
 import {
   commentsClient,
   type CommentSort,
-} from "@/src/shared/lib/comments-client";
-import type { Comment } from "@/src/shared/types/comment";
+} from "@/shared/lib/comments-client";
+import type { Comment } from "@/shared/types/comment";
 import { fetchPackCommentsPage } from "./pack-comments";
-import { useRefetchOnSignIn } from "@/src/shared/lib/use-refetch-on-sign-in";
+import { useRefetchOnSignIn } from "@/shared/lib/use-refetch-on-sign-in";
 
 type PackCommentsPage = Awaited<ReturnType<typeof commentsClient.list>>;
 type PackCommentsData = InfiniteData<PackCommentsPage, number>;

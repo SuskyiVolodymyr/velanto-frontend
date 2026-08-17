@@ -1,12 +1,12 @@
 import { MessageSquare } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { LoadingState } from "@/src/shared/components/LoadingState";
-import { Button } from "@/src/shared/components/Button";
-import { EmptyState } from "@/src/shared/components/EmptyState";
-import { FeedbackCard } from "@/src/features/feedback/FeedbackCard";
-import { FEEDBACK_PAGE_SIZE } from "@/src/features/feedback/api/feedback-list";
-import type { Feedback } from "@/src/shared/types/feedback";
+import { Text } from "@/shared/components/Text";
+import { LoadingState } from "@/shared/components/LoadingState";
+import { Button } from "@/shared/components/Button";
+import { EmptyState } from "@/shared/components/EmptyState";
+import { FeedbackCard } from "@/features/feedback/FeedbackCard";
+import { FEEDBACK_PAGE_SIZE } from "@/features/feedback/api/feedback-list";
+import type { Feedback } from "@/shared/types/feedback";
 
 interface FeedbackListProps {
   loading: boolean;

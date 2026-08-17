@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Button } from "@/src/shared/components/Button";
-import { Text } from "@/src/shared/components/Text";
+import { Button } from "@/shared/components/Button";
+import { Text } from "@/shared/components/Text";
 import { useFriendsRoomsPresenceOrDefault } from "./friends-rooms-presence-context";
 import { useExitToPack } from "./use-exit-to-pack";
 

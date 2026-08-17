@@ -1,10 +1,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { UserAvatar } from "@/src/shared/components/UserAvatar";
-import { cn } from "@/src/shared/lib/cn";
-import type { Item, Pack } from "@/src/shared/types/pack";
+import { Text } from "@/shared/components/Text";
+import { UserAvatar } from "@/shared/components/UserAvatar";
+import { cn } from "@/shared/lib/cn";
+import type { Item, Pack } from "@/shared/types/pack";
 import type {
   BordaRoundResult,
   RelayRoundResult,

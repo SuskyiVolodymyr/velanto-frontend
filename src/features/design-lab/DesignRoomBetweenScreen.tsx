@@ -2,11 +2,11 @@
 
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { pageContainer } from "@/src/shared/lib/page-container";
-import { cn } from "@/src/shared/lib/cn";
-import { usePlayFocus } from "@/src/shared/lib/play-focus-context";
-import { RoomHeader } from "@/src/features/friends-rooms/RoomHeader";
-import { RoomBetweenBoard } from "@/src/features/friends-rooms/RoomBetweenBoard";
+import { pageContainer } from "@/shared/lib/page-container";
+import { cn } from "@/shared/lib/cn";
+import { usePlayFocus } from "@/shared/lib/play-focus-context";
+import { RoomHeader } from "@/features/friends-rooms/RoomHeader";
+import { RoomBetweenBoard } from "@/features/friends-rooms/RoomBetweenBoard";
 import { DesignLabBar } from "./DesignLabBar";
 import { MOCK_VIEWER_ID, mockBetweenRoom } from "./mock-room";
 import { useLabSelection } from "./use-lab-selection";

@@ -1,4 +1,4 @@
-import { ApiError } from "@/src/shared/lib/api-client";
+import { ApiError } from "@/shared/lib/api-client";
 
 const DEFAULT_FALLBACK = "Something went wrong. Please try again.";
 

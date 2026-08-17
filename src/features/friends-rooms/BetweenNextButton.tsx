@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { ArrowRight } from "lucide-react";
-import { Button } from "@/src/shared/components/Button";
+import { Button } from "@/shared/components/Button";
 import type { RoomState } from "./room-types";
 
 /**

@@ -1,8 +1,8 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { apiClient } from "@/src/shared/lib/api-client";
-import { uploadMedia } from "@/src/shared/lib/media-client";
+import { apiClient } from "@/shared/lib/api-client";
+import { uploadMedia } from "@/shared/lib/media-client";
 
-vi.mock("@/src/shared/lib/api-client", () => ({
+vi.mock("@/shared/lib/api-client", () => ({
   apiClient: {
     postForm: vi.fn(),
   },

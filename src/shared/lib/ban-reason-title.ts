@@ -1,4 +1,4 @@
-import type { RuleCategory } from "@/src/shared/types/rules";
+import type { RuleCategory } from "@/shared/types/rules";
 
 /**
  * Resolves a ban `reason` id to a human-readable title, shared by every surface

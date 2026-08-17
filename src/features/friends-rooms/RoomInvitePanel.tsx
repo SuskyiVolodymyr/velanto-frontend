@@ -3,8 +3,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Check, Copy, Eye, EyeOff } from "lucide-react";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
 
 interface RoomInvitePanelProps {
   /** Null once the room has released its code (locked, started, or over). */

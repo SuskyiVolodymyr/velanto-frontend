@@ -1,14 +1,14 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { LoadingState } from "@/src/shared/components/LoadingState";
-import { useAdminOverview } from "@/src/features/admin/api/admin.queries";
-import { PlaysChart } from "@/src/features/admin/PlaysChart";
-import { ActivityChart } from "@/src/features/admin/ActivityChart";
-import { TopPacksToday } from "@/src/features/admin/TopPacksToday";
-import type { AdminOverview } from "@/src/shared/types/admin";
-import { formatBytes } from "@/src/shared/lib/format-bytes";
+import { Text } from "@/shared/components/Text";
+import { LoadingState } from "@/shared/components/LoadingState";
+import { useAdminOverview } from "@/features/admin/api/admin.queries";
+import { PlaysChart } from "@/features/admin/PlaysChart";
+import { ActivityChart } from "@/features/admin/ActivityChart";
+import { TopPacksToday } from "@/features/admin/TopPacksToday";
+import type { AdminOverview } from "@/shared/types/admin";
+import { formatBytes } from "@/shared/lib/format-bytes";
 
 interface Metric {
   label: string;

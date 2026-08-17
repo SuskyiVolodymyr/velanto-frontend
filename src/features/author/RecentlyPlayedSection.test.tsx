@@ -1,13 +1,13 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { RecentlyPlayedSection } from "./RecentlyPlayedSection";
 import { useRecentlyPlayed } from "./api/recently-played.queries";
-import type { Pack } from "@/src/shared/types/pack";
+import type { Pack } from "@/shared/types/pack";
 
 vi.mock("./api/recently-played.queries");
-vi.mock("@/src/shared/components/PlayHistoryToggle", () => ({
+vi.mock("@/shared/components/PlayHistoryToggle", () => ({
   PlayHistoryToggle: () => <div data-testid="play-history-toggle" />,
 }));
 

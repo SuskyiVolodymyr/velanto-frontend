@@ -1,4 +1,4 @@
-import type { PackResults, RankResults } from "@/src/shared/types/play-results";
+import type { PackResults, RankResults } from "@/shared/types/play-results";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 

@@ -1,17 +1,17 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
-import { Dropdown } from "@/src/shared/components/Dropdown";
-import { BAN_DURATIONS } from "@/src/shared/lib/ban-durations";
+import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/components/Button";
+import { Dropdown } from "@/shared/components/Dropdown";
+import { BAN_DURATIONS } from "@/shared/lib/ban-durations";
 import {
   BanReasonPicker,
   isBanReasonValid,
-} from "@/src/shared/components/BanReasonPicker";
-import type { BanDuration } from "@/src/shared/lib/users-client";
-import type { ReportWithReporter } from "@/src/shared/types/report";
-import type { useReportModeration } from "@/src/features/moderation/use-report-moderation";
+} from "@/shared/components/BanReasonPicker";
+import type { BanDuration } from "@/shared/lib/users-client";
+import type { ReportWithReporter } from "@/shared/types/report";
+import type { useReportModeration } from "@/features/moderation/use-report-moderation";
 
 interface ReportModerationPanelProps {
   report: ReportWithReporter;

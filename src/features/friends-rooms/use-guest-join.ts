@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ApiError } from "@/src/shared/lib/api-client";
+import { ApiError } from "@/shared/lib/api-client";
 import { friendsRoomsClient } from "./friends-rooms-client";
 import { saveGuestSession } from "./guest-session";
 import type { RoomState } from "./room-types";

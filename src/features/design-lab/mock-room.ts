@@ -1,9 +1,9 @@
-import type { PackFormat } from "@/src/shared/types/pack";
+import type { PackFormat } from "@/shared/types/pack";
 import type {
   RoomMode,
   RoomPlayerState,
   RoomState,
-} from "@/src/features/friends-rooms/room-types";
+} from "@/features/friends-rooms/room-types";
 import {
   ROUND_COUNT,
   closedRound,

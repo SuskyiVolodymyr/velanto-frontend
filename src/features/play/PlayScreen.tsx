@@ -3,22 +3,22 @@
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { cn } from "@/src/shared/lib/cn";
-import type { Pack } from "@/src/shared/types/pack";
-import { VersusRound } from "@/src/features/play/VersusRound";
-import { usePlaySession } from "@/src/features/play/use-play-session";
+import { cn } from "@/shared/lib/cn";
+import type { Pack } from "@/shared/types/pack";
+import { VersusRound } from "@/features/play/VersusRound";
+import { usePlaySession } from "@/features/play/use-play-session";
 import {
   INSTRUCTION_KEY,
   PICKED_LABEL_KEY,
-} from "@/src/features/play/play-format-copy";
-import { PlayChrome } from "@/src/features/play/PlayChrome";
-import { PlayRoundHeader } from "@/src/features/play/PlayRoundHeader";
-import { PlayConfirmBar } from "@/src/features/play/PlayConfirmBar";
-import { pageContainer } from "@/src/shared/lib/page-container";
-import { CandidateCard } from "@/src/features/play/CandidateCard";
-import { PicksSummary } from "@/src/features/play/PicksSummary";
-import { ResumePlayModal } from "@/src/features/play/ResumePlayModal";
-import { LoadingState } from "@/src/shared/components/LoadingState";
+} from "@/features/play/play-format-copy";
+import { PlayChrome } from "@/features/play/PlayChrome";
+import { PlayRoundHeader } from "@/features/play/PlayRoundHeader";
+import { PlayConfirmBar } from "@/features/play/PlayConfirmBar";
+import { pageContainer } from "@/shared/lib/page-container";
+import { CandidateCard } from "@/features/play/CandidateCard";
+import { PicksSummary } from "@/features/play/PicksSummary";
+import { ResumePlayModal } from "@/features/play/ResumePlayModal";
+import { LoadingState } from "@/shared/components/LoadingState";
 
 // How many columns a groups-format round lays its candidates out in, chosen by
 // candidate count so they fill the row instead of leaving fixed-width gaps: up

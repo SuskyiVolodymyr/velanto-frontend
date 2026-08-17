@@ -1,12 +1,12 @@
 import { z } from "zod";
-import { resolveRoundDraws } from "@/src/shared/lib/round-draw";
+import { resolveRoundDraws } from "@/shared/lib/round-draw";
 import {
   ELIMINATION_MIN_DRAW,
   ELIMINATION_MAX_DRAW,
   NXN_SIDE_COUNT_MAX,
   NXN_SIDE_COUNT_MIN,
   type PackDraft,
-} from "@/src/features/create/create-pack.value-schemas";
+} from "@/features/create/create-pack.value-schemas";
 
 // Mirrors velanto-backend create-pack.dto.ts `.superRefine()`: the client
 // rejects exactly the packs the API rejects. Groups are reusable pools; rounds

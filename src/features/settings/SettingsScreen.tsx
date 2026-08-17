@@ -2,20 +2,20 @@
 
 import type { ComponentType } from "react";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { cn } from "@/src/shared/lib/cn";
-import { Text } from "@/src/shared/components/Text";
-import { PageHeader } from "@/src/shared/components/PageHeader";
-import { LanguageSection } from "@/src/features/settings/LanguageSection";
-import { AppearanceSection } from "@/src/features/settings/AppearanceSection";
-import { PrivacySection } from "@/src/features/settings/PrivacySection";
-import { NotificationsSection } from "@/src/features/settings/NotificationsSection";
-import { AccountSection } from "@/src/features/settings/AccountSection";
-import { PasswordSection } from "@/src/features/settings/PasswordSection";
-import { ConnectedAccountsSection } from "@/src/features/settings/ConnectedAccountsSection";
-import { ApiTokensPointer } from "@/src/features/settings/ApiTokensPointer";
-import { DangerZoneSection } from "@/src/features/settings/DangerZoneSection";
-import { pageContainer } from "@/src/shared/lib/page-container";
+import { useAuth } from "@/shared/lib/auth-context";
+import { cn } from "@/shared/lib/cn";
+import { Text } from "@/shared/components/Text";
+import { PageHeader } from "@/shared/components/PageHeader";
+import { LanguageSection } from "@/features/settings/LanguageSection";
+import { AppearanceSection } from "@/features/settings/AppearanceSection";
+import { PrivacySection } from "@/features/settings/PrivacySection";
+import { NotificationsSection } from "@/features/settings/NotificationsSection";
+import { AccountSection } from "@/features/settings/AccountSection";
+import { PasswordSection } from "@/features/settings/PasswordSection";
+import { ConnectedAccountsSection } from "@/features/settings/ConnectedAccountsSection";
+import { ApiTokensPointer } from "@/features/settings/ApiTokensPointer";
+import { DangerZoneSection } from "@/features/settings/DangerZoneSection";
+import { pageContainer } from "@/shared/lib/page-container";
 
 interface SettingsSectionEntry {
   /** Stable anchor id (T15/D12) — the TOC link's `href` target. */

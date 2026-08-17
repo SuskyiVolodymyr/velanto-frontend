@@ -1,6 +1,6 @@
 import { screen, within } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { BordaRevealBoard } from "./BordaRevealBoard";
 import { baseRoomState } from "./test-fixtures";
 

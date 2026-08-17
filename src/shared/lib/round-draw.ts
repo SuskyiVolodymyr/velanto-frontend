@@ -1,4 +1,4 @@
-import type { SlotMode } from "@/src/shared/types/pack";
+import type { SlotMode } from "@/shared/types/pack";
 
 // Frontend mirror of velanto-backend src/modules/packs/round-draw.ts. Given a
 // pack's groups (pools) and rounds (ordered slots), resolves how many items each

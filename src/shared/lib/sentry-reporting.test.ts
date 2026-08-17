@@ -13,7 +13,7 @@ import {
   captureNetworkError,
   isUnexpectedApiStatus,
   setSentryUser,
-} from "@/src/shared/lib/sentry-reporting";
+} from "@/shared/lib/sentry-reporting";
 
 beforeEach(() => {
   setUser.mockClear();

@@ -1,8 +1,8 @@
 import { useTranslations } from "next-intl";
-import { CoverImage } from "@/src/shared/components/CoverImage";
-import { isHotPack } from "@/src/features/home/hot-pack";
+import { CoverImage } from "@/shared/components/CoverImage";
+import { isHotPack } from "@/features/home/hot-pack";
 import { PackBannerAuthor } from "./PackBannerAuthor";
-import type { PackOverview } from "@/src/shared/types/pack";
+import type { PackOverview } from "@/shared/types/pack";
 
 // Hero banner for the pack page: a tinted gradient fading to near-black, with
 // the format pill (+ a derived HOT pill) and the title/author overlaid along the

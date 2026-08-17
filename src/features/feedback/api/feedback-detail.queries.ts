@@ -1,6 +1,6 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
 import { getFeedback } from "./feedback-detail";
-import { useRefetchOnSignIn } from "@/src/shared/lib/use-refetch-on-sign-in";
+import { useRefetchOnSignIn } from "@/shared/lib/use-refetch-on-sign-in";
 
 export function feedbackQueryOptions(id: string) {
   return queryOptions({

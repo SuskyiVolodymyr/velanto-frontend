@@ -4,8 +4,8 @@ import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { AppShell } from "./AppShell";
-import { useSidebar } from "@/src/shared/lib/sidebar-context";
-import { usePlayFocus } from "@/src/shared/lib/play-focus-context";
+import { useSidebar } from "@/shared/lib/sidebar-context";
+import { usePlayFocus } from "@/shared/lib/play-focus-context";
 
 /** Stands in for a page's PageHeader toggle: any descendant can flip the rail. */
 /** Stands in for RoomScreen, which declares focus from inside the shell. */
@@ -47,29 +47,29 @@ vi.mock("next/navigation", () => ({
   usePathname: () => pathname.current,
 }));
 
-vi.mock("@/src/shared/components/AppSidebar", () => ({
+vi.mock("@/shared/components/AppSidebar", () => ({
   AppSidebar: ({ collapsed }: { collapsed: boolean }) => (
     <div data-testid="app-sidebar" data-collapsed={String(collapsed)} />
   ),
   SidebarContent: () => <div data-testid="sidebar-content" />,
 }));
 
-vi.mock("@/src/shared/components/AppTopBar", () => ({
+vi.mock("@/shared/components/AppTopBar", () => ({
   AppTopBar: ({ onMenuToggle }: { onMenuToggle: () => void }) => (
     <div data-testid="app-topbar" data-has-menu-toggle={!!onMenuToggle} />
   ),
 }));
 
-vi.mock("@/src/shared/components/BannedBanner", () => ({
+vi.mock("@/shared/components/BannedBanner", () => ({
   BannedBanner: () => null,
 }));
-vi.mock("@/src/shared/components/SiteFooter", () => ({
+vi.mock("@/shared/components/SiteFooter", () => ({
   SiteFooter: () => <div data-testid="site-footer" />,
 }));
-vi.mock("@/src/shared/components/MobileBottomNav", () => ({
+vi.mock("@/shared/components/MobileBottomNav", () => ({
   MobileBottomNav: () => <div data-testid="mobile-bottom-nav" />,
 }));
-vi.mock("@/src/features/friends-rooms/RoomPresenceIndicator", () => ({
+vi.mock("@/features/friends-rooms/RoomPresenceIndicator", () => ({
   RoomPresenceIndicator: () => <div data-testid="room-presence" />,
 }));
 

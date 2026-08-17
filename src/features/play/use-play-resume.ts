@@ -1,15 +1,15 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { packStructureHash } from "@/src/features/play/pack-structure-hash";
-import { randomSeed } from "@/src/features/play/seeded-rng";
+import { packStructureHash } from "@/features/play/pack-structure-hash";
+import { randomSeed } from "@/features/play/seeded-rng";
 import {
   deletePlayResume,
   readPlayResume,
   writePlayResume,
-} from "@/src/features/play/play-resume-storage";
-import { consumePlayIntent } from "@/src/features/play/play-intent-storage";
-import type { Pack } from "@/src/shared/types/pack";
+} from "@/features/play/play-resume-storage";
+import { consumePlayIntent } from "@/features/play/play-intent-storage";
+import type { Pack } from "@/shared/types/pack";
 
 export interface PlayResume {
   /** True once the post-mount storage read has run (seed is set). */

@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { PackContentsPreview } from "./PackContentsPreview";
-import type { Pack } from "@/src/shared/types/pack";
+import type { Pack } from "@/shared/types/pack";
 
 function pack(overrides: Partial<Pack> = {}): Pack {
   return {

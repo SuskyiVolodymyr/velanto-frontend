@@ -1,4 +1,4 @@
-import { apiClient } from "@/src/shared/lib/api-client";
+import { apiClient } from "@/shared/lib/api-client";
 import type {
   ChangeRequestMark,
   Pack,
@@ -9,8 +9,8 @@ import type {
   PackTag,
   Group,
   Round,
-} from "@/src/shared/types/pack";
-import type { PackLanguage } from "@/src/shared/types/pack-language";
+} from "@/shared/types/pack";
+import type { PackLanguage } from "@/shared/types/pack-language";
 
 export interface CreatePackInput {
   title: string;

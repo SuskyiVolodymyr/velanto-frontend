@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import type { Pack, Round, Slot } from "@/src/shared/types/pack";
-import { roundHeading } from "@/src/shared/lib/round-heading";
+import type { Pack, Round, Slot } from "@/shared/types/pack";
+import { roundHeading } from "@/shared/lib/round-heading";
 
 const slot = (groupId: string): Slot => ({ groupId, mode: "random", count: 1 });
 const round = (over: Partial<Round> & Pick<Round, "id" | "slots">): Round =>

@@ -2,25 +2,25 @@
 
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { pageContainer } from "@/src/shared/lib/page-container";
-import { PackHeaderBar } from "@/src/shared/components/PackHeaderBar";
-import { Text } from "@/src/shared/components/Text";
-import { LoadingState } from "@/src/shared/components/LoadingState";
-import { RankResultScreen } from "@/src/features/result/RankResultScreen";
-import { HeadToHeadResultScreen } from "@/src/features/result/HeadToHeadResultScreen";
-import { NxNResultScreen } from "@/src/features/result/NxNResultScreen";
-import { EliminationResultScreen } from "@/src/features/result/EliminationResultScreen";
-import { ResultLocked } from "@/src/features/result/ResultLocked";
-import { ResultHero } from "@/src/features/result/ResultHero";
-import { ResultAgainPanel } from "@/src/features/result/ResultAgainPanel";
-import { SharedResultNote } from "@/src/features/result/SharedResultNote";
-import { TopPickedTable } from "@/src/features/result/TopPickedTable";
-import { PodiumTable } from "@/src/features/result/PodiumTable";
-import { usePackResults } from "@/src/features/result/api/results.queries";
-import { useResultPicks } from "@/src/features/result/use-result-picks";
-import { getRoundsCount } from "@/src/shared/lib/pack-display";
-import { cn } from "@/src/shared/lib/cn";
-import type { Pack } from "@/src/shared/types/pack";
+import { pageContainer } from "@/shared/lib/page-container";
+import { PackHeaderBar } from "@/shared/components/PackHeaderBar";
+import { Text } from "@/shared/components/Text";
+import { LoadingState } from "@/shared/components/LoadingState";
+import { RankResultScreen } from "@/features/result/RankResultScreen";
+import { HeadToHeadResultScreen } from "@/features/result/HeadToHeadResultScreen";
+import { NxNResultScreen } from "@/features/result/NxNResultScreen";
+import { EliminationResultScreen } from "@/features/result/EliminationResultScreen";
+import { ResultLocked } from "@/features/result/ResultLocked";
+import { ResultHero } from "@/features/result/ResultHero";
+import { ResultAgainPanel } from "@/features/result/ResultAgainPanel";
+import { SharedResultNote } from "@/features/result/SharedResultNote";
+import { TopPickedTable } from "@/features/result/TopPickedTable";
+import { PodiumTable } from "@/features/result/PodiumTable";
+import { usePackResults } from "@/features/result/api/results.queries";
+import { useResultPicks } from "@/features/result/use-result-picks";
+import { getRoundsCount } from "@/shared/lib/pack-display";
+import { cn } from "@/shared/lib/cn";
+import type { Pack } from "@/shared/types/pack";
 
 /**
  * #222: the community breakdown is gated on evidence that you finished this

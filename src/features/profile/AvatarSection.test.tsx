@@ -1,23 +1,23 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { AvatarSection } from "./AvatarSection";
-import { uploadMedia, MEDIA_MAX_BYTES } from "@/src/shared/lib/media-client";
-import { usersClient } from "@/src/shared/lib/users-client";
-import { useAuth } from "@/src/shared/lib/auth-context";
+import { uploadMedia, MEDIA_MAX_BYTES } from "@/shared/lib/media-client";
+import { usersClient } from "@/shared/lib/users-client";
+import { useAuth } from "@/shared/lib/auth-context";
 
-vi.mock("@/src/shared/lib/media-client", async () => {
+vi.mock("@/shared/lib/media-client", async () => {
   const actual = await vi.importActual<
-    typeof import("@/src/shared/lib/media-client")
-  >("@/src/shared/lib/media-client");
+    typeof import("@/shared/lib/media-client")
+  >("@/shared/lib/media-client");
   return { ...actual, uploadMedia: vi.fn() };
 });
-vi.mock("@/src/shared/lib/users-client", () => ({
+vi.mock("@/shared/lib/users-client", () => ({
   usersClient: { setAvatar: vi.fn(), removeAvatar: vi.fn() },
 }));
-vi.mock("@/src/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
-vi.mock("@/src/shared/lib/media-url", () => ({
+vi.mock("@/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
+vi.mock("@/shared/lib/media-url", () => ({
   mediaUrl: (key: string) => `https://cdn.test/${key}`,
 }));
 // Stub the crop modal: expose a "confirm crop" button that hands back the

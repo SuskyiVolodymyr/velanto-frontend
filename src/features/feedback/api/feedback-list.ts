@@ -1,10 +1,10 @@
-import { feedbackClient } from "@/src/shared/lib/feedback-client";
+import { feedbackClient } from "@/shared/lib/feedback-client";
 import type {
   FeedbackList,
   FeedbackSort,
   FeedbackStatus,
   FeedbackTopic,
-} from "@/src/shared/types/feedback";
+} from "@/shared/types/feedback";
 
 export const FEEDBACK_PAGE_SIZE = 20;
 export const FEEDBACK_TOP_LIMIT = 3;

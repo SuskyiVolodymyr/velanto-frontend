@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { AvatarLightbox } from "./AvatarLightbox";
 
-vi.mock("@/src/shared/lib/media-url", () => ({
+vi.mock("@/shared/lib/media-url", () => ({
   mediaUrl: (key: string) => `https://cdn.test/${key}`,
 }));
 

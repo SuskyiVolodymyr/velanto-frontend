@@ -1,5 +1,5 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
-import { playsClient } from "@/src/shared/lib/plays-client";
+import { playsClient } from "@/shared/lib/plays-client";
 
 /**
  * A pack's community results, fetched client-side.

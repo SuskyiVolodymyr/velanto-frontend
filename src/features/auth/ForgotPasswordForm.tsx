@@ -5,16 +5,16 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { Mail, KeyRound, Lock } from "lucide-react";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
-import { TextField } from "@/src/shared/components/form/TextField";
-import { PasswordField } from "@/src/shared/components/form/PasswordField";
-import { FormBanner } from "@/src/shared/components/form/FormBanner";
-import { authClient } from "@/src/shared/lib/auth-client";
+import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/components/Button";
+import { TextField } from "@/shared/components/form/TextField";
+import { PasswordField } from "@/shared/components/form/PasswordField";
+import { FormBanner } from "@/shared/components/form/FormBanner";
+import { authClient } from "@/shared/lib/auth-client";
 import {
   resetPasswordSchema,
   type ResetPasswordValues,
-} from "@/src/features/auth/auth.schema";
+} from "@/features/auth/auth.schema";
 
 type Step = "request" | "confirm" | "done";
 

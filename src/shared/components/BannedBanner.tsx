@@ -1,9 +1,9 @@
 "use client";
 
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { useRules } from "@/src/shared/api/rules.queries";
-import { isActiveBan } from "@/src/shared/lib/ban-display";
-import { BannedNotice } from "@/src/shared/components/BannedNotice";
+import { useAuth } from "@/shared/lib/auth-context";
+import { useRules } from "@/shared/api/rules.queries";
+import { isActiveBan } from "@/shared/lib/ban-display";
+import { BannedNotice } from "@/shared/components/BannedNotice";
 
 /**
  * App-shell wiring for {@link BannedNotice}: reads the current user's ban fields

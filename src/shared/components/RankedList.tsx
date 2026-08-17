@@ -2,7 +2,7 @@
 
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
+import { Text } from "@/shared/components/Text";
 
 export interface RankedRow {
   /** The item's id — a stable key, never rendered. */

@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { FilterChipRow } from "@/src/features/home/FilterChipRow";
+import { Text } from "@/shared/components/Text";
+import { FilterChipRow } from "@/features/home/FilterChipRow";
 import {
   DATE_ORDER_LABEL_KEYS,
   DATE_ORDER_VALUES,
@@ -13,7 +13,7 @@ import {
   type DateOrderValue,
   type SortFilterValue,
   type WindowFilterValue,
-} from "@/src/features/home/filter-options";
+} from "@/features/home/filter-options";
 
 /**
  * The feed's sort: the top-level choice, then whichever sub-choice that choice

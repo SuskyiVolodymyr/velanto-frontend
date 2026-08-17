@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { reportTargetLabel } from "./report-display";
-import type { ReportWithReporter } from "@/src/shared/types/report";
+import type { ReportWithReporter } from "@/shared/types/report";
 
 function report(
   overrides: Partial<ReportWithReporter> = {},

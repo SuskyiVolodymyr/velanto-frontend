@@ -2,17 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Card } from "@/src/shared/components/Card";
-import { Text } from "@/src/shared/components/Text";
+import { Card } from "@/shared/components/Card";
+import { Text } from "@/shared/components/Text";
 import {
   OAuthProviderIcon,
   OAUTH_BRAND_CLASS,
-} from "@/src/shared/components/oauth-branding";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { authClient, type OAuthProviders } from "@/src/shared/lib/auth-client";
-import { openOAuthPopup } from "@/src/shared/lib/oauth-popup";
-import { cn } from "@/src/shared/lib/cn";
-import { SettingsSectionSkeleton } from "@/src/features/settings/SettingsSectionSkeleton";
+} from "@/shared/components/oauth-branding";
+import { useAuth } from "@/shared/lib/auth-context";
+import { authClient, type OAuthProviders } from "@/shared/lib/auth-client";
+import { openOAuthPopup } from "@/shared/lib/oauth-popup";
+import { cn } from "@/shared/lib/cn";
+import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
 
 const PROVIDERS = [
   { key: "google", label: "Google" },

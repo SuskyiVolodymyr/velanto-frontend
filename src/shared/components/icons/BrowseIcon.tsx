@@ -1,4 +1,4 @@
-import type { IconProps } from "@/src/shared/components/icons/icon-types";
+import type { IconProps } from "@/shared/components/icons/icon-types";
 
 /** Sidebar nav — Browse (a 2×2 grid). */
 export function BrowseIcon({

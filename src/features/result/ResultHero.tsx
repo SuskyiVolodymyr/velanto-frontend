@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
-import { HeroCard } from "@/src/shared/components/HeroCard";
-import { HERO_TITLE_KEY } from "@/src/features/result/result-format-copy";
-import type { Pack } from "@/src/shared/types/pack";
+import { HeroCard } from "@/shared/components/HeroCard";
+import { HERO_TITLE_KEY } from "@/features/result/result-format-copy";
+import type { Pack } from "@/shared/types/pack";
 
 export interface ResultHeroProps {
   /** Picks the h1's per-format phrasing (T10) — save_one reads differently

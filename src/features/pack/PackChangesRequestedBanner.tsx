@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { PencilLine } from "lucide-react";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { Text } from "@/src/shared/components/Text";
-import type { PackOverview } from "@/src/shared/types/pack";
+import { useAuth } from "@/shared/lib/auth-context";
+import { Text } from "@/shared/components/Text";
+import type { PackOverview } from "@/shared/types/pack";
 
 /**
  * The pack page's second entry point into the review outcome (the first is the

@@ -3,23 +3,23 @@
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
-import { PageHeader } from "@/src/shared/components/PageHeader";
-import { ReportedContentPreview } from "@/src/features/moderation/ReportedContentPreview";
-import { ReportDetailSummary } from "@/src/features/moderation/ReportDetailSummary";
-import { ReportsAgainstTarget } from "@/src/features/moderation/ReportsAgainstTarget";
-import { ReportQueueActions } from "@/src/features/moderation/ReportQueueActions";
-import { ReportModerationPanel } from "@/src/features/moderation/ReportModerationPanel";
-import { useReportModeration } from "@/src/features/moderation/use-report-moderation";
-import { useReport } from "@/src/features/moderation/api/report-detail.queries";
+import { useAuth } from "@/shared/lib/auth-context";
+import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/components/Button";
+import { PageHeader } from "@/shared/components/PageHeader";
+import { ReportedContentPreview } from "@/features/moderation/ReportedContentPreview";
+import { ReportDetailSummary } from "@/features/moderation/ReportDetailSummary";
+import { ReportsAgainstTarget } from "@/features/moderation/ReportsAgainstTarget";
+import { ReportQueueActions } from "@/features/moderation/ReportQueueActions";
+import { ReportModerationPanel } from "@/features/moderation/ReportModerationPanel";
+import { useReportModeration } from "@/features/moderation/use-report-moderation";
+import { useReport } from "@/features/moderation/api/report-detail.queries";
 import {
   useReviewReport,
   useCloseReport,
-} from "@/src/features/moderation/api/report-detail.mutations";
-import { cn } from "@/src/shared/lib/cn";
-import { pageContainer } from "@/src/shared/lib/page-container";
+} from "@/features/moderation/api/report-detail.mutations";
+import { cn } from "@/shared/lib/cn";
+import { pageContainer } from "@/shared/lib/page-container";
 
 export function ReportDetailScreen({ reportId }: { reportId: string }) {
   const t = useTranslations("moderation");

@@ -1,8 +1,8 @@
 import { useTranslations } from "next-intl";
-import { formatDate } from "@/src/shared/lib/format-date";
-import { Text } from "@/src/shared/components/Text";
-import { Username } from "@/src/shared/components/Username";
-import type { AdminUserDetail } from "@/src/shared/types/admin";
+import { formatDate } from "@/shared/lib/format-date";
+import { Text } from "@/shared/components/Text";
+import { Username } from "@/shared/components/Username";
+import type { AdminUserDetail } from "@/shared/types/admin";
 
 /** One labelled number tile in the summary's stat row. */
 function Stat({ label, value }: { label: string; value: number }) {

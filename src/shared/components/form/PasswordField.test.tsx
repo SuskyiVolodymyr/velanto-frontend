@@ -3,7 +3,7 @@ import { screen } from "@testing-library/react";
 // #236: useFieldError now resolves catalog keys through next-intl, so any
 // component rendering a field error needs the provider. renderWithIntl is
 // aliased to `render` so the call sites below are unchanged.
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { useForm, FormProvider } from "react-hook-form";
 import { PasswordField } from "./PasswordField";

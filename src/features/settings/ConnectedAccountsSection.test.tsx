@@ -1,17 +1,17 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { ConnectedAccountsSection } from "./ConnectedAccountsSection";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { authClient } from "@/src/shared/lib/auth-client";
-import { openOAuthPopup } from "@/src/shared/lib/oauth-popup";
+import { useAuth } from "@/shared/lib/auth-context";
+import { authClient } from "@/shared/lib/auth-client";
+import { openOAuthPopup } from "@/shared/lib/oauth-popup";
 
-vi.mock("@/src/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
-vi.mock("@/src/shared/lib/auth-client", () => ({
+vi.mock("@/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
+vi.mock("@/shared/lib/auth-client", () => ({
   authClient: { oauthProviders: vi.fn(), startOAuthLink: vi.fn() },
 }));
-vi.mock("@/src/shared/lib/oauth-popup", () => ({ openOAuthPopup: vi.fn() }));
+vi.mock("@/shared/lib/oauth-popup", () => ({ openOAuthPopup: vi.fn() }));
 
 const mockedUseAuth = vi.mocked(useAuth);
 const mockedClient = vi.mocked(authClient);

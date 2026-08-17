@@ -1,8 +1,8 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { apiClient } from "@/src/shared/lib/api-client";
-import { commentsClient } from "@/src/shared/lib/comments-client";
+import { apiClient } from "@/shared/lib/api-client";
+import { commentsClient } from "@/shared/lib/comments-client";
 
-vi.mock("@/src/shared/lib/api-client", () => ({
+vi.mock("@/shared/lib/api-client", () => ({
   apiClient: {
     get: vi.fn(),
     post: vi.fn(),

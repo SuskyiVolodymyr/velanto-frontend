@@ -1,8 +1,8 @@
 import type { ReactNode, TextareaHTMLAttributes } from "react";
 import { useFormContext } from "react-hook-form";
-import { Textarea } from "@/src/shared/components/Textarea";
-import { FormField } from "@/src/shared/components/form/FormField";
-import { getFieldError } from "@/src/shared/components/form/getFieldError";
+import { Textarea } from "@/shared/components/Textarea";
+import { FormField } from "@/shared/components/form/FormField";
+import { getFieldError } from "@/shared/components/form/getFieldError";
 
 export interface TextareaFieldProps extends Omit<
   TextareaHTMLAttributes<HTMLTextAreaElement>,

@@ -3,15 +3,15 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
-import { PlayIcon } from "@/src/shared/components/icons";
-import { CoverImage } from "@/src/shared/components/CoverImage";
-import { Text } from "@/src/shared/components/Text";
-import { formatRelativeTimeIntl } from "@/src/shared/lib/relative-time";
+import { PlayIcon } from "@/shared/components/icons";
+import { CoverImage } from "@/shared/components/CoverImage";
+import { Text } from "@/shared/components/Text";
+import { formatRelativeTimeIntl } from "@/shared/lib/relative-time";
 import {
   listPlayResumes,
   type PlayResumeRecord,
-} from "@/src/features/play/play-resume-storage";
-import { setPlayIntent } from "@/src/features/play/play-intent-storage";
+} from "@/features/play/play-resume-storage";
+import { setPlayIntent } from "@/features/play/play-intent-storage";
 
 /**
  * The packs this browser has an unfinished play for, shown above the History

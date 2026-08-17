@@ -2,13 +2,13 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { notFound } from "next/navigation";
 import { ResultFallback } from "./ResultFallback";
-import { usePackFallback } from "@/src/shared/hooks/use-pack-fallback";
-import type { Pack } from "@/src/shared/types/pack";
-import type { PackResults } from "@/src/shared/types/play-results";
+import { usePackFallback } from "@/shared/hooks/use-pack-fallback";
+import type { Pack } from "@/shared/types/pack";
+import type { PackResults } from "@/shared/types/play-results";
 
-vi.mock("@/src/shared/hooks/use-pack-fallback");
+vi.mock("@/shared/hooks/use-pack-fallback");
 vi.mock("next/navigation", () => ({ notFound: vi.fn() }));
-vi.mock("@/src/features/result/ResultScreen", () => ({
+vi.mock("@/features/result/ResultScreen", () => ({
   ResultScreen: () => <div>ResultScreen</div>,
 }));
 

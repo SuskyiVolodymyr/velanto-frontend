@@ -1,12 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { AuthorPackList } from "./AuthorPackList";
-import { packsClient } from "@/src/shared/lib/packs-client";
-import type { Pack } from "@/src/shared/types/pack";
+import { packsClient } from "@/shared/lib/packs-client";
+import type { Pack } from "@/shared/types/pack";
 
-vi.mock("@/src/shared/lib/packs-client", () => ({
+vi.mock("@/shared/lib/packs-client", () => ({
   packsClient: { list: vi.fn() },
 }));
 
@@ -14,14 +14,14 @@ vi.mock("@/src/shared/lib/packs-client", () => ({
 // signed-out session keeps these list-rendering tests focused and refetch-free.
 // The same signed-out `user: null` also satisfies each rendered PackCard's own
 // useAuth() call for its Friends button.
-vi.mock("@/src/shared/lib/auth-context", () => ({
+vi.mock("@/shared/lib/auth-context", () => ({
   useAuth: () => ({ status: "unauthenticated", user: null }),
 }));
 
 // PackCard's Friends button needs a mounted router + the room-create client —
 // unused by these list-rendering tests, but required for PackCard to mount.
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
-vi.mock("@/src/features/friends-rooms/friends-rooms-client", () => ({
+vi.mock("@/features/friends-rooms/friends-rooms-client", () => ({
   friendsRoomsClient: { create: vi.fn() },
 }));
 

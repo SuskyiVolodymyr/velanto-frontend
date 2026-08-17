@@ -1,8 +1,8 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { reportsClient } from "@/src/shared/lib/reports-client";
-import type { Report } from "@/src/shared/types/report";
+import { reportsClient } from "@/shared/lib/reports-client";
+import type { Report } from "@/shared/types/report";
 import { reportQueryOptions } from "./report-detail.queries";
 import { useModerationInvalidation } from "./moderation.queries";
 

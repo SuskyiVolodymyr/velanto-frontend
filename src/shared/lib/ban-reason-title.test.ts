@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { resolveBanReasonTitle } from "./ban-reason-title";
-import type { RuleCategory } from "@/src/shared/types/rules";
+import type { RuleCategory } from "@/shared/types/rules";
 
 const CATEGORIES: RuleCategory[] = [
   { id: "spam_manipulation", title: "Spam & Manipulation", rules: [] },

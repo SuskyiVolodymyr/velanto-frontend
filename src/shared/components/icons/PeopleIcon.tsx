@@ -1,4 +1,4 @@
-import type { IconProps } from "@/src/shared/components/icons/icon-types";
+import type { IconProps } from "@/shared/components/icons/icon-types";
 
 /** Sidebar nav — People (a head + shoulders, with a checkmark). */
 export function PeopleIcon({

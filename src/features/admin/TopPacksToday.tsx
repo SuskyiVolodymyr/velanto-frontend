@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import type { TopPackToday } from "@/src/shared/types/admin";
+import { Text } from "@/shared/components/Text";
+import type { TopPackToday } from "@/shared/types/admin";
 
 /** The overview's "top packs today" ranked list. */
 export function TopPacksToday({ packs }: { packs: TopPackToday[] }) {

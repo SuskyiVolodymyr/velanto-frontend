@@ -8,43 +8,43 @@ import { useForm, useWatch, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { useBackTarget } from "@/src/shared/lib/use-back-target";
-import { FROM } from "@/src/shared/lib/back-origins";
-import { packsClient } from "@/src/shared/lib/packs-client";
-import type { CreatePackInput } from "@/src/shared/lib/packs-client";
-import { messageFromError } from "@/src/shared/lib/messageFromError";
-import { COVER_TONES } from "@/src/shared/types/pack";
+import { useAuth } from "@/shared/lib/auth-context";
+import { useBackTarget } from "@/shared/lib/use-back-target";
+import { FROM } from "@/shared/lib/back-origins";
+import { packsClient } from "@/shared/lib/packs-client";
+import type { CreatePackInput } from "@/shared/lib/packs-client";
+import { messageFromError } from "@/shared/lib/messageFromError";
+import { COVER_TONES } from "@/shared/types/pack";
 import {
   DEFAULT_PACK_LANGUAGE,
   isPackLanguage,
   type PackLanguage,
-} from "@/src/shared/types/pack-language";
-import { pageContainer } from "@/src/shared/lib/page-container";
-import { cn } from "@/src/shared/lib/cn";
-import { Button } from "@/src/shared/components/Button";
-import { Text } from "@/src/shared/components/Text";
-import { PackMetaFields } from "@/src/features/create/PackMetaFields";
-import { FormatSection } from "@/src/features/create/FormatSection";
-import { PoolsSection } from "@/src/features/create/PoolsSection";
+} from "@/shared/types/pack-language";
+import { pageContainer } from "@/shared/lib/page-container";
+import { cn } from "@/shared/lib/cn";
+import { Button } from "@/shared/components/Button";
+import { Text } from "@/shared/components/Text";
+import { PackMetaFields } from "@/features/create/PackMetaFields";
+import { FormatSection } from "@/features/create/FormatSection";
+import { PoolsSection } from "@/features/create/PoolsSection";
 import {
   PendingImageDraftsProvider,
   type PendingImageDrafts,
-} from "@/src/features/create/pending-image-drafts";
-import { RoundsEditor } from "@/src/features/create/RoundsEditor";
-import { VersusEditor } from "@/src/features/create/VersusEditor";
-import { CreateChecklistPanel } from "@/src/features/create/CreateChecklistPanel";
-import { CreateFeasibilityPanel } from "@/src/features/create/CreateFeasibilityPanel";
-import { summarizePack } from "@/src/features/create/create-pack.summary";
+} from "@/features/create/pending-image-drafts";
+import { RoundsEditor } from "@/features/create/RoundsEditor";
+import { VersusEditor } from "@/features/create/VersusEditor";
+import { CreateChecklistPanel } from "@/features/create/CreateChecklistPanel";
+import { CreateFeasibilityPanel } from "@/features/create/CreateFeasibilityPanel";
+import { summarizePack } from "@/features/create/create-pack.summary";
 import {
   newGroup,
   newRound,
   versusRounds,
-} from "@/src/features/create/create-pack.defaults";
+} from "@/features/create/create-pack.defaults";
 import {
   createPackSchema,
   type CreatePackValues,
-} from "@/src/features/create/create-pack.schema";
+} from "@/features/create/create-pack.schema";
 
 // How long the sticky bar's draft-status subtitle shows "Draft · saved just
 // now" before reverting. A save-draft click still navigates away immediately

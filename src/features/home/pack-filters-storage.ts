@@ -1,8 +1,8 @@
-import { PACK_TAGS, type PackTag } from "@/src/shared/types/pack";
+import { PACK_TAGS, type PackTag } from "@/shared/types/pack";
 import {
   PACK_LANGUAGES,
   type PackLanguage,
-} from "@/src/shared/types/pack-language";
+} from "@/shared/types/pack-language";
 import {
   DATE_ORDER_VALUES,
   DEFAULT_DATE_ORDER,
@@ -14,7 +14,7 @@ import {
   type FormatFilterValue,
   type SortFilterValue,
   type WindowFilterValue,
-} from "@/src/features/home/filter-options";
+} from "@/features/home/filter-options";
 
 const STORAGE_KEY = "velanto:pack-filters";
 

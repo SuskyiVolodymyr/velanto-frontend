@@ -1,5 +1,5 @@
-import { apiClient, getAccessToken } from "@/src/shared/lib/api-client";
-import type { Group, PackFormat, Round } from "@/src/shared/types/pack";
+import { apiClient, getAccessToken } from "@/shared/lib/api-client";
+import type { Group, PackFormat, Round } from "@/shared/types/pack";
 import { getGuestSession } from "./guest-session";
 import type {
   AvailableMode,

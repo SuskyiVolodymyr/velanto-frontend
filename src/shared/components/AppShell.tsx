@@ -9,18 +9,18 @@ import {
   type ReactNode,
 } from "react";
 import { useTranslations } from "next-intl";
-import { AppSidebar, SidebarContent } from "@/src/shared/components/AppSidebar";
-import { AppTopBar } from "@/src/shared/components/AppTopBar";
-import { BannedBanner } from "@/src/shared/components/BannedBanner";
-import { SiteFooter } from "@/src/shared/components/SiteFooter";
-import { MobileBottomNav } from "@/src/shared/components/MobileBottomNav";
-import { RoomPresenceIndicator } from "@/src/features/friends-rooms/RoomPresenceIndicator";
-import { SearchQueryProvider } from "@/src/features/home/search-query-context";
-import { SidebarProvider } from "@/src/shared/lib/sidebar-context";
-import { PlayFocusProvider } from "@/src/shared/lib/play-focus-context";
-import { setPreviousPath } from "@/src/shared/lib/in-app-history";
-import { cn } from "@/src/shared/lib/cn";
-import { usePresenceBeacon } from "@/src/shared/lib/presence-beacon";
+import { AppSidebar, SidebarContent } from "@/shared/components/AppSidebar";
+import { AppTopBar } from "@/shared/components/AppTopBar";
+import { BannedBanner } from "@/shared/components/BannedBanner";
+import { SiteFooter } from "@/shared/components/SiteFooter";
+import { MobileBottomNav } from "@/shared/components/MobileBottomNav";
+import { RoomPresenceIndicator } from "@/features/friends-rooms/RoomPresenceIndicator";
+import { SearchQueryProvider } from "@/features/home/search-query-context";
+import { SidebarProvider } from "@/shared/lib/sidebar-context";
+import { PlayFocusProvider } from "@/shared/lib/play-focus-context";
+import { setPreviousPath } from "@/shared/lib/in-app-history";
+import { cn } from "@/shared/lib/cn";
+import { usePresenceBeacon } from "@/shared/lib/presence-beacon";
 
 // Routes that render full-screen without ANY app chrome (sidebar/top bar/nav).
 // Currently just /auth, whose design is a standalone split screen with its own

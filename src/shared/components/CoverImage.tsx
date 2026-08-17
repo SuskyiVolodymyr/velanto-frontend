@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { mediaUrl } from "@/src/shared/lib/media-url";
-import { cn } from "@/src/shared/lib/cn";
+import { mediaUrl } from "@/shared/lib/media-url";
+import { cn } from "@/shared/lib/cn";
 
 /**
  * Decorative custom pack cover, mirroring {@link AvatarImage}: a client `<img>`

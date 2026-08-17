@@ -1,20 +1,20 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { ReportPackDialog } from "./ReportPackDialog";
-import { ApiError } from "@/src/shared/lib/api-client";
-import type { User } from "@/src/shared/types/user";
+import { ApiError } from "@/shared/lib/api-client";
+import type { User } from "@/shared/types/user";
 
 const create = vi.fn();
-vi.mock("@/src/shared/lib/reports-client", () => ({
+vi.mock("@/shared/lib/reports-client", () => ({
   reportsClient: {
     create: (...args: unknown[]) => create(...args),
   },
 }));
 
 let currentUser: User | null;
-vi.mock("@/src/shared/lib/auth-context", () => ({
+vi.mock("@/shared/lib/auth-context", () => ({
   useAuth: () => ({ user: currentUser }),
 }));
 

@@ -4,8 +4,8 @@ import { useTranslations } from "next-intl";
 import {
   PACK_LANGUAGE_NAMES,
   type PackLanguage,
-} from "@/src/shared/types/pack-language";
-import type { PackTag } from "@/src/shared/types/pack";
+} from "@/shared/types/pack-language";
+import type { PackTag } from "@/shared/types/pack";
 
 /**
  * The strip of currently-applied tag/language filters, each removable, plus a

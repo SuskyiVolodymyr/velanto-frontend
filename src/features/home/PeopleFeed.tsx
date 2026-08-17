@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Input } from "@/src/shared/components/Input";
-import { Text } from "@/src/shared/components/Text";
-import { Skeleton } from "@/src/shared/components/Skeleton";
-import { PersonCard } from "@/src/features/home/PersonCard";
-import { HomePagination } from "@/src/features/home/HomePagination";
-import { useUserSearch } from "@/src/features/home/api/user-search.queries";
-import { PEOPLE_SEARCH_PAGE_SIZE } from "@/src/features/home/api/user-search";
+import { Input } from "@/shared/components/Input";
+import { Text } from "@/shared/components/Text";
+import { Skeleton } from "@/shared/components/Skeleton";
+import { PersonCard } from "@/features/home/PersonCard";
+import { HomePagination } from "@/features/home/HomePagination";
+import { useUserSearch } from "@/features/home/api/user-search.queries";
+import { PEOPLE_SEARCH_PAGE_SIZE } from "@/features/home/api/user-search";
 
 // Avoids firing a search per keystroke.
 const SEARCH_DEBOUNCE_MS = 300;

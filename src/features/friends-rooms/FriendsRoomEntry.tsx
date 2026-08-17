@@ -1,16 +1,16 @@
 "use client";
 
-import { SignInGate } from "@/src/shared/components/SignInGate";
+import { SignInGate } from "@/shared/components/SignInGate";
 import { useState, type ReactElement } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Users } from "lucide-react";
-import { Button } from "@/src/shared/components/Button";
-import { Text } from "@/src/shared/components/Text";
-import { Tooltip } from "@/src/shared/components/Tooltip";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { ApiError } from "@/src/shared/lib/api-client";
-import { cn } from "@/src/shared/lib/cn";
+import { Button } from "@/shared/components/Button";
+import { Text } from "@/shared/components/Text";
+import { Tooltip } from "@/shared/components/Tooltip";
+import { useAuth } from "@/shared/lib/auth-context";
+import { ApiError } from "@/shared/lib/api-client";
+import { cn } from "@/shared/lib/cn";
 import { friendsRoomsClient } from "./friends-rooms-client";
 import { useGuestJoin } from "./use-guest-join";
 

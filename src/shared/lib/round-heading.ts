@@ -1,4 +1,4 @@
-import type { Pack } from "@/src/shared/types/pack";
+import type { Pack } from "@/shared/types/pack";
 
 /**
  * The heading for a round, shared by the play and result screens so the two

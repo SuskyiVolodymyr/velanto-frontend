@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect } from "react";
-import { apiClient } from "@/src/shared/lib/api-client";
-import { useAuth } from "@/src/shared/lib/auth-context";
+import { apiClient } from "@/shared/lib/api-client";
+import { useAuth } from "@/shared/lib/auth-context";
 
 /**
  * How often a visible tab says "still here".

@@ -1,9 +1,9 @@
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { UserAvatar } from "@/src/shared/components/UserAvatar";
-import { Username } from "@/src/shared/components/Username";
-import type { PackAuthorSummary } from "@/src/shared/types/pack";
-import type { PackAuthor } from "@/src/features/pack/api/pack-author";
+import { Text } from "@/shared/components/Text";
+import { UserAvatar } from "@/shared/components/UserAvatar";
+import { Username } from "@/shared/components/Username";
+import type { PackAuthorSummary } from "@/shared/types/pack";
+import type { PackAuthor } from "@/features/pack/api/pack-author";
 
 /**
  * The pack-review screen's author card: avatar, role-badged handle, and

@@ -4,19 +4,19 @@ import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { Card } from "@/src/shared/components/Card";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
-import { PasswordField } from "@/src/shared/components/form/PasswordField";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { SettingsSectionSkeleton } from "@/src/features/settings/SettingsSectionSkeleton";
-import { authClient } from "@/src/shared/lib/auth-client";
-import { ApiError } from "@/src/shared/lib/api-client";
-import { SetPasswordSection } from "@/src/features/settings/SetPasswordSection";
+import { Card } from "@/shared/components/Card";
+import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/components/Button";
+import { PasswordField } from "@/shared/components/form/PasswordField";
+import { useAuth } from "@/shared/lib/auth-context";
+import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
+import { authClient } from "@/shared/lib/auth-client";
+import { ApiError } from "@/shared/lib/api-client";
+import { SetPasswordSection } from "@/features/settings/SetPasswordSection";
 import {
   changePasswordSchema,
   type ChangePasswordValues,
-} from "@/src/features/auth/auth.schema";
+} from "@/features/auth/auth.schema";
 
 /**
  * Change-password section on /settings: current + new + confirm, validated with

@@ -5,9 +5,9 @@ import { Heart, ThumbsDown } from "lucide-react";
 import {
   useVoteMutation,
   type VoteTally,
-} from "@/src/shared/api/vote.mutations";
-import { SignInGate } from "@/src/shared/components/SignInGate";
-import { cn } from "@/src/shared/lib/cn";
+} from "@/shared/api/vote.mutations";
+import { SignInGate } from "@/shared/components/SignInGate";
+import { cn } from "@/shared/lib/cn";
 
 export interface VoteControlProps {
   /** Casts a vote and resolves to the new server tally, e.g.

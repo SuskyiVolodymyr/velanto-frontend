@@ -1,5 +1,5 @@
-import { cn } from "@/src/shared/lib/cn";
-import { Badge } from "@/src/shared/components/Badge";
+import { cn } from "@/shared/lib/cn";
+import { Badge } from "@/shared/components/Badge";
 
 interface ImageCardProps {
   /** Fully-resolved render URL (build it from a stored key via mediaUrl). */

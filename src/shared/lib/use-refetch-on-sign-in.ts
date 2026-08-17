@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useAuth } from "@/src/shared/lib/auth-context";
+import { useAuth } from "@/shared/lib/auth-context";
 
 /**
  * Refetch a viewer-specific query the moment the session finishes resolving to

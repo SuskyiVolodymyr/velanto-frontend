@@ -5,9 +5,17 @@ import path from "node:path";
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "."),
-    },
+    // Mirrors tsconfig `paths`. Vitest does not read tsconfig, so these two
+    // must be changed together — otherwise every spec fails to resolve at once.
+    // Array form (not object) because order matters: the longer `@/messages/`
+    // prefix has to be tried before the catch-all `@/` that maps to src/.
+    alias: [
+      {
+        find: /^@\/messages\//,
+        replacement: path.resolve(__dirname, "messages") + "/",
+      },
+      { find: /^@\//, replacement: path.resolve(__dirname, "src") + "/" },
+    ],
   },
   test: {
     environment: "jsdom",

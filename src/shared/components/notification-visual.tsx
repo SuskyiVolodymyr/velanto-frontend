@@ -9,7 +9,7 @@ import {
   UserPlus,
   type LucideIcon,
 } from "lucide-react";
-import type { NotificationType } from "@/src/shared/types/notification";
+import type { NotificationType } from "@/shared/types/notification";
 
 export interface NotificationVisual {
   /** The type's accent colour (hex) — drives the icon, avatar badge, unread

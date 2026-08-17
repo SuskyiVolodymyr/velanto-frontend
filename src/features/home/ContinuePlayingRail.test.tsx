@@ -1,13 +1,13 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { ContinuePlayingRail } from "./ContinuePlayingRail";
 import {
   writePlayResume,
   type PlayResumeRecord,
-} from "@/src/features/play/play-resume-storage";
-import { consumePlayIntent } from "@/src/features/play/play-intent-storage";
+} from "@/features/play/play-resume-storage";
+import { consumePlayIntent } from "@/features/play/play-intent-storage";
 
 function record(over: Partial<PlayResumeRecord> = {}): PlayResumeRecord {
   return {

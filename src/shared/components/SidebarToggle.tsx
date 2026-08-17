@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { MenuIcon } from "@/src/shared/components/icons";
-import { useSidebar } from "@/src/shared/lib/sidebar-context";
+import { MenuIcon } from "@/shared/components/icons";
+import { useSidebar } from "@/shared/lib/sidebar-context";
 
 /**
  * The rail's expand/collapse control, for pages that carry their own sticky

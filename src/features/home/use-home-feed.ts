@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import type { PackTag } from "@/src/shared/types/pack";
-import type { PackLanguage } from "@/src/shared/types/pack-language";
+import type { PackTag } from "@/shared/types/pack";
+import type { PackLanguage } from "@/shared/types/pack-language";
 import {
   DEFAULT_DATE_ORDER,
   DEFAULT_POPULAR_WINDOW,
@@ -11,25 +11,25 @@ import {
   type FormatFilterValue,
   type SortFilterValue,
   type WindowFilterValue,
-} from "@/src/features/home/filter-options";
-import { usePacksFeed } from "@/src/features/home/api/packs-feed.queries";
+} from "@/features/home/filter-options";
+import { usePacksFeed } from "@/features/home/api/packs-feed.queries";
 import {
   PACKS_FEED_PAGE_SIZE,
   type PacksFeedFilters,
   type PacksFeedResult,
-} from "@/src/features/home/api/packs-feed";
+} from "@/features/home/api/packs-feed";
 import {
   readPackFilters,
   writePackFilters,
-} from "@/src/features/home/pack-filters-storage";
-import { pageFromParam } from "@/src/features/home/use-page-param";
+} from "@/features/home/pack-filters-storage";
+import { pageFromParam } from "@/features/home/use-page-param";
 import {
   hasFilterParams,
   readFiltersFromParams,
   writeFiltersToParams,
-} from "@/src/features/home/feed-filter-params";
-import type { StoredPackFilters } from "@/src/features/home/pack-filters-storage";
-import { useSearchQuery } from "@/src/features/home/search-query-context";
+} from "@/features/home/feed-filter-params";
+import type { StoredPackFilters } from "@/features/home/pack-filters-storage";
+import { useSearchQuery } from "@/features/home/search-query-context";
 
 export type FeedStatus = "loading" | "ready" | "error";
 

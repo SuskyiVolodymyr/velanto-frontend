@@ -1,23 +1,23 @@
 "use client";
-import { formatDate, formatDateTime } from "@/src/shared/lib/format-date";
+import { formatDate, formatDateTime } from "@/shared/lib/format-date";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
-import { Dropdown } from "@/src/shared/components/Dropdown";
-import { LoadingState } from "@/src/shared/components/LoadingState";
-import { BAN_DURATIONS } from "@/src/shared/lib/ban-durations";
+import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/components/Button";
+import { Dropdown } from "@/shared/components/Dropdown";
+import { LoadingState } from "@/shared/components/LoadingState";
+import { BAN_DURATIONS } from "@/shared/lib/ban-durations";
 import {
   BanReasonPicker,
   isBanReasonValid,
-} from "@/src/shared/components/BanReasonPicker";
-import { resolveBanReasonTitle } from "@/src/shared/lib/ban-reason-title";
+} from "@/shared/components/BanReasonPicker";
+import { resolveBanReasonTitle } from "@/shared/lib/ban-reason-title";
 import type { UseQueryResult } from "@tanstack/react-query";
 import type {
   BanHistoryPage,
   BanDuration,
-} from "@/src/shared/lib/users-client";
-import type { RuleCategory } from "@/src/shared/types/rules";
+} from "@/shared/lib/users-client";
+import type { RuleCategory } from "@/shared/types/rules";
 import type { AuthorModeration } from "./use-author-moderation";
 
 /**

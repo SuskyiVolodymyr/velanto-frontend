@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { packToFormValues } from "@/src/features/create/pack-to-form-values";
-import type { Pack } from "@/src/shared/types/pack";
+import { packToFormValues } from "@/features/create/pack-to-form-values";
+import type { Pack } from "@/shared/types/pack";
 
 const PACK: Pack = {
   id: "pack-1",

@@ -1,29 +1,29 @@
 "use client";
-import { formatDate, formatDateTime } from "@/src/shared/lib/format-date";
+import { formatDate, formatDateTime } from "@/shared/lib/format-date";
 
 import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { Text } from "@/src/shared/components/Text";
-import { Card } from "@/src/shared/components/Card";
-import { Badge } from "@/src/shared/components/Badge";
-import { Button } from "@/src/shared/components/Button";
-import { Username } from "@/src/shared/components/Username";
-import { LoadingState } from "@/src/shared/components/LoadingState";
-import { PageHeader } from "@/src/shared/components/PageHeader";
-import { AuthorPacksRail } from "@/src/features/author/AuthorPacksRail";
-import { RecentlyPlayedSection } from "@/src/features/author/RecentlyPlayedSection";
-import { useAuthorBanHistory } from "@/src/features/author/api/author.queries";
-import { useAdminUserDetail } from "@/src/features/admin/api/admin.queries";
-import { isCurrentlyBanned } from "@/src/features/admin/use-users-admin";
-import { useAdminUserModeration } from "@/src/features/admin/use-admin-user-moderation";
-import { UserBanForm } from "@/src/features/admin/UserBanForm";
-import { canActOn } from "@/src/shared/lib/staff-permissions";
-import { formatBytes } from "@/src/shared/lib/format-bytes";
-import { cn } from "@/src/shared/lib/cn";
-import { pageContainer } from "@/src/shared/lib/page-container";
+import { useAuth } from "@/shared/lib/auth-context";
+import { Text } from "@/shared/components/Text";
+import { Card } from "@/shared/components/Card";
+import { Badge } from "@/shared/components/Badge";
+import { Button } from "@/shared/components/Button";
+import { Username } from "@/shared/components/Username";
+import { LoadingState } from "@/shared/components/LoadingState";
+import { PageHeader } from "@/shared/components/PageHeader";
+import { AuthorPacksRail } from "@/features/author/AuthorPacksRail";
+import { RecentlyPlayedSection } from "@/features/author/RecentlyPlayedSection";
+import { useAuthorBanHistory } from "@/features/author/api/author.queries";
+import { useAdminUserDetail } from "@/features/admin/api/admin.queries";
+import { isCurrentlyBanned } from "@/features/admin/use-users-admin";
+import { useAdminUserModeration } from "@/features/admin/use-admin-user-moderation";
+import { UserBanForm } from "@/features/admin/UserBanForm";
+import { canActOn } from "@/shared/lib/staff-permissions";
+import { formatBytes } from "@/shared/lib/format-bytes";
+import { cn } from "@/shared/lib/cn";
+import { pageContainer } from "@/shared/lib/page-container";
 
 /** A single labelled number tile in the stats grid. */
 // `value` is a ReactNode, not a number: storage reads as a formatted size

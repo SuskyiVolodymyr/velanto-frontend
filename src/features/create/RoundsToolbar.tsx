@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
 
 export interface RoundsBulkCount {
   /** Names what the number sets, beside the field. */

@@ -2,9 +2,9 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { UserAvatar } from "@/src/shared/components/UserAvatar";
-import { Modal } from "@/src/shared/components/Modal";
-import { mediaUrl } from "@/src/shared/lib/media-url";
+import { UserAvatar } from "@/shared/components/UserAvatar";
+import { Modal } from "@/shared/components/Modal";
+import { mediaUrl } from "@/shared/lib/media-url";
 
 /**
  * A {@link UserAvatar} that opens an enlarged view when clicked — but only when

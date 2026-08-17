@@ -1,6 +1,6 @@
-import { cn } from "@/src/shared/lib/cn";
-import { identityPill } from "@/src/shared/lib/user-role";
-import type { Role } from "@/src/shared/types/user";
+import { cn } from "@/shared/lib/cn";
+import { identityPill } from "@/shared/lib/user-role";
+import type { Role } from "@/shared/types/user";
 
 export interface IdentityPillBadgeProps {
   role?: Role | null;

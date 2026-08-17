@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronDown } from "lucide-react";
-import type { Group, Item } from "@/src/shared/types/pack";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
-import { useGroupItemDraft } from "@/src/features/create/use-group-item-draft";
-import { GroupItemList } from "@/src/features/create/GroupItemList";
-import { GroupItemAdder } from "@/src/features/create/GroupItemAdder";
-import { usePendingImageDrafts } from "@/src/features/create/pending-image-drafts";
+import type { Group, Item } from "@/shared/types/pack";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
+import { useGroupItemDraft } from "@/features/create/use-group-item-draft";
+import { GroupItemList } from "@/features/create/GroupItemList";
+import { GroupItemAdder } from "@/features/create/GroupItemAdder";
+import { usePendingImageDrafts } from "@/features/create/pending-image-drafts";
 
 // Mock (Create Pack.dc.html): each pool's identity color, cycled by its
 // position — the color bar next to its name, distinguishing pools at a

@@ -1,9 +1,9 @@
-import { apiClient } from "@/src/shared/lib/api-client";
+import { apiClient } from "@/shared/lib/api-client";
 import type {
   Notification,
   NotificationList,
   NotificationPreferences,
-} from "@/src/shared/types/notification";
+} from "@/shared/types/notification";
 
 function buildListQuery(filters: { page?: number; limit?: number }): string {
   const params = new URLSearchParams();

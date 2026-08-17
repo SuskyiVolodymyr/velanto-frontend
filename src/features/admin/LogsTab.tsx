@@ -1,25 +1,25 @@
 "use client";
-import { formatDateTime } from "@/src/shared/lib/format-date";
+import { formatDateTime } from "@/shared/lib/format-date";
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { cn } from "@/src/shared/lib/cn";
-import { Text } from "@/src/shared/components/Text";
-import { Input } from "@/src/shared/components/Input";
-import { Dropdown } from "@/src/shared/components/Dropdown";
-import { LoadingState } from "@/src/shared/components/LoadingState";
-import { useAdminLogs } from "@/src/features/admin/api/admin.queries";
+import { cn } from "@/shared/lib/cn";
+import { Text } from "@/shared/components/Text";
+import { Input } from "@/shared/components/Input";
+import { Dropdown } from "@/shared/components/Dropdown";
+import { LoadingState } from "@/shared/components/LoadingState";
+import { useAdminLogs } from "@/features/admin/api/admin.queries";
 import {
   ADMIN_PAGE_SIZE,
   EMPTY_AUDIT_FILTERS,
   type AuditLogFilters,
-} from "@/src/features/admin/api/admin";
-import { DataTable, DataTableRow } from "@/src/shared/components/DataTable";
-import { TablePagination } from "@/src/shared/components/TablePagination";
+} from "@/features/admin/api/admin";
+import { DataTable, DataTableRow } from "@/shared/components/DataTable";
+import { TablePagination } from "@/shared/components/TablePagination";
 import {
   AUDIT_ACTIONS,
   auditActionStyle,
-} from "@/src/features/admin/audit-actions";
+} from "@/features/admin/audit-actions";
 
 const FILTER_DEBOUNCE_MS = 300;
 const COLUMNS = "150px 1.1fr 150px 1fr 1.2fr";

@@ -18,17 +18,17 @@ vi.mock("next-intl/server", () => ({
 // The gate under test lives in DashboardHero itself; JoinRoomCard has its own
 // full test suite (including its own copy of this same ROOMS_DORMANT gate),
 // so it's stubbed here to keep this test focused on the hero's own behavior.
-vi.mock("@/src/features/home/JoinRoomCard", () => ({
+vi.mock("@/features/home/JoinRoomCard", () => ({
   JoinRoomCard: () => <div data-testid="join-room-card-stub" />,
 }));
 
 // Same pattern as JoinRoomCard.test.tsx: control the dormancy flag per test
 // without disturbing room-types' other exports.
 const flag = vi.hoisted(() => ({ dormant: false }));
-vi.mock("@/src/features/friends-rooms/room-types", async (importOriginal) => {
+vi.mock("@/features/friends-rooms/room-types", async (importOriginal) => {
   const actual =
     await importOriginal<
-      typeof import("@/src/features/friends-rooms/room-types")
+      typeof import("@/features/friends-rooms/room-types")
     >();
   return {
     ...actual,

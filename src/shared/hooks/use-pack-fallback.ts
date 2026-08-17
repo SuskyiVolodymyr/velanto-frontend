@@ -1,13 +1,13 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { packsClient } from "@/src/shared/lib/packs-client";
-import { playsClient } from "@/src/shared/lib/plays-client";
-import { friendsRoomsClient } from "@/src/features/friends-rooms/friends-rooms-client";
-import type { AvailableMode } from "@/src/features/friends-rooms/room-types";
-import type { Pack, PackOverview } from "@/src/shared/types/pack";
-import type { PackResults, RankResults } from "@/src/shared/types/play-results";
+import { useAuth } from "@/shared/lib/auth-context";
+import { packsClient } from "@/shared/lib/packs-client";
+import { playsClient } from "@/shared/lib/plays-client";
+import { friendsRoomsClient } from "@/features/friends-rooms/friends-rooms-client";
+import type { AvailableMode } from "@/features/friends-rooms/room-types";
+import type { Pack, PackOverview } from "@/shared/types/pack";
+import type { PackResults, RankResults } from "@/shared/types/play-results";
 
 export type PackFallbackState<T extends Pack | PackOverview = Pack> =
   | { status: "loading" }

@@ -3,8 +3,8 @@
 import { useEffect, useId, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { useTranslations } from "next-intl";
-import { cn } from "@/src/shared/lib/cn";
-import { Text } from "@/src/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
+import { Text } from "@/shared/components/Text";
 
 export interface ModalProps {
   open: boolean;

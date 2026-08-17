@@ -1,8 +1,8 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { usePackFallback } from "@/src/shared/hooks/use-pack-fallback";
-import { ResultScreen } from "@/src/features/result/ResultScreen";
+import { usePackFallback } from "@/shared/hooks/use-pack-fallback";
+import { ResultScreen } from "@/features/result/ResultScreen";
 
 /**
  * Recovers the pack when the Server Component's anonymous fetch returned null —

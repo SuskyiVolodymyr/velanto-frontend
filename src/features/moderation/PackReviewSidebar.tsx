@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
-import { Text } from "@/src/shared/components/Text";
-import { Textarea } from "@/src/shared/components/Textarea";
-import { cn } from "@/src/shared/lib/cn";
-import type { PackMarks } from "@/src/features/moderation/use-pack-marks";
+import { Text } from "@/shared/components/Text";
+import { Textarea } from "@/shared/components/Textarea";
+import { cn } from "@/shared/lib/cn";
+import type { PackMarks } from "@/features/moderation/use-pack-marks";
 
 export interface PackReviewSidebarProps {
   packTitle: string;

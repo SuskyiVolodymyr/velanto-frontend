@@ -2,7 +2,7 @@
 
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
-import type { Pack } from "@/src/shared/types/pack";
+import type { Pack } from "@/shared/types/pack";
 import type { ClaimRejection, RoomPlayerState, RoomState } from "./room-types";
 import { RoomItemCard } from "./RoomItemCard";
 

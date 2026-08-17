@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { feedbackClient } from "@/src/shared/lib/feedback-client";
-import { VoteControl } from "@/src/shared/components/VoteControl";
+import { feedbackClient } from "@/shared/lib/feedback-client";
+import { VoteControl } from "@/shared/components/VoteControl";
 
 /**
  * Feedback like/dislike voter — a thin wrapper that wires {@link VoteControl} to

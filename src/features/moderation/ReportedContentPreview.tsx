@@ -2,14 +2,14 @@
 
 import { useTranslations } from "next-intl";
 import { useQuery } from "@tanstack/react-query";
-import { packsClient } from "@/src/shared/lib/packs-client";
-import { adminClient } from "@/src/shared/lib/admin-client";
-import { Text } from "@/src/shared/components/Text";
-import { LoadingState } from "@/src/shared/components/LoadingState";
-import { PackContentsPreview } from "@/src/features/moderation/PackContentsPreview";
-import { ReportedUserSummary } from "@/src/features/moderation/ReportedUserSummary";
-import type { Report } from "@/src/shared/types/report";
-import type { Role } from "@/src/shared/types/user";
+import { packsClient } from "@/shared/lib/packs-client";
+import { adminClient } from "@/shared/lib/admin-client";
+import { Text } from "@/shared/components/Text";
+import { LoadingState } from "@/shared/components/LoadingState";
+import { PackContentsPreview } from "@/features/moderation/PackContentsPreview";
+import { ReportedUserSummary } from "@/features/moderation/ReportedUserSummary";
+import type { Report } from "@/shared/types/report";
+import type { Role } from "@/shared/types/user";
 
 /**
  * Query key for the target pack fetched to render a `pack`/`round` report's

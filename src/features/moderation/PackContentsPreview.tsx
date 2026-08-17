@@ -3,22 +3,22 @@
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { FileText } from "lucide-react";
-import type { Item, ItemType, Pack, SlotMode } from "@/src/shared/types/pack";
-import { cn } from "@/src/shared/lib/cn";
-import { mediaUrl } from "@/src/shared/lib/media-url";
+import type { Item, ItemType, Pack, SlotMode } from "@/shared/types/pack";
+import { cn } from "@/shared/lib/cn";
+import { mediaUrl } from "@/shared/lib/media-url";
 import {
   extractYouTubeId,
   youtubeThumbnailUrl,
-} from "@/src/shared/lib/youtube";
-import { Text } from "@/src/shared/components/Text";
-import { SearchField } from "@/src/shared/components/SearchField";
-import { FilterChip } from "@/src/shared/components/FilterChip";
-import { EmptyState } from "@/src/shared/components/EmptyState";
+} from "@/shared/lib/youtube";
+import { Text } from "@/shared/components/Text";
+import { SearchField } from "@/shared/components/SearchField";
+import { FilterChip } from "@/shared/components/FilterChip";
+import { EmptyState } from "@/shared/components/EmptyState";
 import {
   MarkForEditButton,
   MarkRequestField,
-} from "@/src/features/moderation/MarkForEdit";
-import type { PackMarks } from "@/src/features/moderation/use-pack-marks";
+} from "@/features/moderation/MarkForEdit";
+import type { PackMarks } from "@/features/moderation/use-pack-marks";
 
 const ITEM_TYPES: ItemType[] = ["text", "youtube", "image"];
 

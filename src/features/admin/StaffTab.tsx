@@ -1,28 +1,28 @@
 "use client";
-import { formatDate } from "@/src/shared/lib/format-date";
+import { formatDate } from "@/shared/lib/format-date";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Text } from "@/src/shared/components/Text";
-import { Username } from "@/src/shared/components/Username";
-import { UserAvatar } from "@/src/shared/components/UserAvatar";
-import { Input } from "@/src/shared/components/Input";
-import { Button } from "@/src/shared/components/Button";
-import { Dropdown } from "@/src/shared/components/Dropdown";
-import { Hidden } from "@/src/shared/components/Hidden";
-import { LoadingState } from "@/src/shared/components/LoadingState";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { useStreamerModeOrDefault } from "@/src/shared/lib/streamer-mode-context";
-import { usersClient } from "@/src/shared/lib/users-client";
-import { adminClient } from "@/src/shared/lib/admin-client";
-import { useAdminStaff } from "@/src/features/admin/api/admin.queries";
-import { DataTable, DataTableRow } from "@/src/shared/components/DataTable";
+import { Text } from "@/shared/components/Text";
+import { Username } from "@/shared/components/Username";
+import { UserAvatar } from "@/shared/components/UserAvatar";
+import { Input } from "@/shared/components/Input";
+import { Button } from "@/shared/components/Button";
+import { Dropdown } from "@/shared/components/Dropdown";
+import { Hidden } from "@/shared/components/Hidden";
+import { LoadingState } from "@/shared/components/LoadingState";
+import { useAuth } from "@/shared/lib/auth-context";
+import { useStreamerModeOrDefault } from "@/shared/lib/streamer-mode-context";
+import { usersClient } from "@/shared/lib/users-client";
+import { adminClient } from "@/shared/lib/admin-client";
+import { useAdminStaff } from "@/features/admin/api/admin.queries";
+import { DataTable, DataTableRow } from "@/shared/components/DataTable";
 import {
   assignableRolesFor,
   type AssignableRole,
-} from "@/src/shared/lib/staff-permissions";
-import type { AdminUserRow } from "@/src/shared/types/admin";
+} from "@/shared/lib/staff-permissions";
+import type { AdminUserRow } from "@/shared/types/admin";
 
 const SEARCH_DEBOUNCE_MS = 300;
 const COLUMNS = "1.3fr 130px 1fr 110px 90px";

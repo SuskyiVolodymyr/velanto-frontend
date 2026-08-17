@@ -24,35 +24,35 @@ import path from "node:path";
 
 import { describe, expect, it } from "vitest";
 
-import { ROLES } from "@/src/shared/types/user";
+import { ROLES } from "@/shared/types/user";
 import {
   PACK_FORMATS,
   PACK_STATUSES,
   PACK_TAGS,
   SLOT_MODES,
   GROUP_MODES,
-} from "@/src/shared/types/pack";
+} from "@/shared/types/pack";
 import {
   FEEDBACK_TOPICS,
   FEEDBACK_VISIBILITIES,
   FEEDBACK_STATUSES,
   FEEDBACK_SORTS,
-} from "@/src/shared/types/feedback";
-import { REPORT_TYPES, REPORT_STATUSES } from "@/src/shared/types/report";
-import { REPORT_REASON_LABELS } from "@/src/shared/lib/report-reasons";
-import { BAN_REASONS } from "@/src/shared/types/rules";
-import { BAN_DURATIONS } from "@/src/shared/lib/ban-durations";
-import { NOTIFICATION_TYPES } from "@/src/shared/types/notification";
-import { LOCALES, DEFAULT_LOCALE } from "@/src/i18n/config";
+} from "@/shared/types/feedback";
+import { REPORT_TYPES, REPORT_STATUSES } from "@/shared/types/report";
+import { REPORT_REASON_LABELS } from "@/shared/lib/report-reasons";
+import { BAN_REASONS } from "@/shared/types/rules";
+import { BAN_DURATIONS } from "@/shared/lib/ban-durations";
+import { NOTIFICATION_TYPES } from "@/shared/types/notification";
+import { LOCALES, DEFAULT_LOCALE } from "@/i18n/config";
 import {
   PACK_LANGUAGES,
   DEFAULT_PACK_LANGUAGE,
   PACK_LANGUAGE_NAMES,
-} from "@/src/shared/types/pack-language";
+} from "@/shared/types/pack-language";
 import {
   ROOM_MODES,
   ROOM_MODE_BOUNDS,
-} from "@/src/features/friends-rooms/room-types";
+} from "@/features/friends-rooms/room-types";
 
 describe("cross-repo mirrored constants (velanto-backend contract)", () => {
   // ROLES — MIRRORED in velanto-backend src/modules/users/role.ts (ROLES).

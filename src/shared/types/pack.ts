@@ -1,9 +1,9 @@
-import type { PackLanguage } from "@/src/shared/types/pack-language";
+import type { PackLanguage } from "@/shared/types/pack-language";
 /**
  * Local, independent type definitions (this repo does not import types from
  * velanto-backend — see coding-conventions.md).
  */
-import type { Role } from "@/src/shared/types/user";
+import type { Role } from "@/shared/types/user";
 
 export const PACK_FORMATS = [
   "save_one",

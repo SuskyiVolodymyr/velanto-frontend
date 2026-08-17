@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
-import { Button } from "@/src/shared/components/Button";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
+import { Button } from "@/shared/components/Button";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
 
 export interface PlayConfirmBarProps {
   /** Whether a selection has been made — drives the default status copy

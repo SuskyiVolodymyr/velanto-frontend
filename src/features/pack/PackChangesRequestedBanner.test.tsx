@@ -1,13 +1,13 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { PackChangesRequestedBanner } from "./PackChangesRequestedBanner";
-import type { Pack } from "@/src/shared/types/pack";
-import type { User } from "@/src/shared/types/user";
-import { toOverview } from "@/src/shared/test/pack-overview";
+import type { Pack } from "@/shared/types/pack";
+import type { User } from "@/shared/types/user";
+import { toOverview } from "@/shared/test/pack-overview";
 
 let currentUser: User | null;
-vi.mock("@/src/shared/lib/auth-context", () => ({
+vi.mock("@/shared/lib/auth-context", () => ({
   useAuth: () => ({ user: currentUser }),
 }));
 

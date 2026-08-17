@@ -1,5 +1,5 @@
-import { apiClient, refreshSession } from "@/src/shared/lib/api-client";
-import type { User } from "@/src/shared/types/user";
+import { apiClient, refreshSession } from "@/shared/lib/api-client";
+import type { User } from "@/shared/types/user";
 
 export interface AuthResult {
   accessToken: string;

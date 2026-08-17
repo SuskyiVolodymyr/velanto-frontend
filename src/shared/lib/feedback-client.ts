@@ -1,4 +1,4 @@
-import { apiClient } from "@/src/shared/lib/api-client";
+import { apiClient } from "@/shared/lib/api-client";
 import type {
   CreateFeedbackInput,
   Feedback,
@@ -8,7 +8,7 @@ import type {
   FeedbackStatus,
   FeedbackVoteResult,
   ListFeedbackFilters,
-} from "@/src/shared/types/feedback";
+} from "@/shared/types/feedback";
 
 function buildListQuery(filters: ListFeedbackFilters): string {
   const params = new URLSearchParams();

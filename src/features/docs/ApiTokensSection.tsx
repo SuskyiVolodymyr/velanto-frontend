@@ -1,30 +1,30 @@
 "use client";
 
-import { SignInGate } from "@/src/shared/components/SignInGate";
+import { SignInGate } from "@/shared/components/SignInGate";
 import { useMemo, useState } from "react";
 import { useTranslations, useFormatter } from "next-intl";
 import { Check } from "lucide-react";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
-import { Modal } from "@/src/shared/components/Modal";
-import { ConfirmModal } from "@/src/shared/components/ConfirmModal";
-import { Tooltip } from "@/src/shared/components/Tooltip";
-import { Skeleton } from "@/src/shared/components/Skeleton";
-import { cn } from "@/src/shared/lib/cn";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { isStaff } from "@/src/shared/lib/user-role";
+import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/components/Button";
+import { Modal } from "@/shared/components/Modal";
+import { ConfirmModal } from "@/shared/components/ConfirmModal";
+import { Tooltip } from "@/shared/components/Tooltip";
+import { Skeleton } from "@/shared/components/Skeleton";
+import { cn } from "@/shared/lib/cn";
+import { useAuth } from "@/shared/lib/auth-context";
+import { isStaff } from "@/shared/lib/user-role";
 import {
   PAT_SCOPES,
   type PatScope,
   type ApiToken,
   type CreatedApiToken,
-} from "@/src/shared/lib/tokens-client";
+} from "@/shared/lib/tokens-client";
 import { SCOPE_KEY } from "./scope-keys";
 import {
   useApiTokens,
   useCreateToken,
   useRevokeToken,
-} from "@/src/features/docs/api/tokens.queries";
+} from "@/features/docs/api/tokens.queries";
 
 /**
  * Order the scope checkboxes are shown in — safest/most common first

@@ -2,21 +2,21 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Card } from "@/src/shared/components/Card";
-import { Text } from "@/src/shared/components/Text";
-import { Skeleton } from "@/src/shared/components/Skeleton";
-import { SettingsSectionSkeleton } from "@/src/features/settings/SettingsSectionSkeleton";
-import { notificationVisual } from "@/src/shared/components/notification-visual";
-import { cn } from "@/src/shared/lib/cn";
-import { useAuth } from "@/src/shared/lib/auth-context";
+import { Card } from "@/shared/components/Card";
+import { Text } from "@/shared/components/Text";
+import { Skeleton } from "@/shared/components/Skeleton";
+import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
+import { notificationVisual } from "@/shared/components/notification-visual";
+import { cn } from "@/shared/lib/cn";
+import { useAuth } from "@/shared/lib/auth-context";
 import {
   useNotificationPreferences,
   useSetNotificationPreference,
-} from "@/src/features/settings/api/notifications.queries";
+} from "@/features/settings/api/notifications.queries";
 import {
   NOTIFICATION_TYPES,
   type NotificationType,
-} from "@/src/shared/types/notification";
+} from "@/shared/types/notification";
 
 // Each notification type maps to a `settings` translation key for its label.
 const LABEL_KEYS: Record<NotificationType, string> = {

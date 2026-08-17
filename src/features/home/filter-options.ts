@@ -1,4 +1,4 @@
-import { PACK_FORMATS, type PackFormat } from "@/src/shared/types/pack";
+import { PACK_FORMATS, type PackFormat } from "@/shared/types/pack";
 
 // Filter value unions for the home feed. "all" is the sentinel meaning "no
 // format constraint"; the fetch layer maps it to `undefined`. Human-readable

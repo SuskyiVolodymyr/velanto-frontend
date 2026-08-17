@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { Users } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
-import { LoadingState } from "@/src/shared/components/LoadingState";
-import { EmptyState } from "@/src/shared/components/EmptyState";
-import { cn } from "@/src/shared/lib/cn";
+import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/components/Button";
+import { LoadingState } from "@/shared/components/LoadingState";
+import { EmptyState } from "@/shared/components/EmptyState";
+import { cn } from "@/shared/lib/cn";
 import { useFollowList, type FollowListKind } from "./api/follow-list.queries";
 import { FollowUserRow } from "./FollowUserRow";
 import type { PeopleSubTab } from "./AuthorProfileHeader";

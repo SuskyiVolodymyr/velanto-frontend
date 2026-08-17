@@ -2,25 +2,25 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { FilterChipRow } from "@/src/features/home/FilterChipRow";
-import { HomePagination } from "@/src/features/home/HomePagination";
-import { PackCard } from "@/src/features/home/PackCard";
+import { useAuth } from "@/shared/lib/auth-context";
+import { FilterChipRow } from "@/features/home/FilterChipRow";
+import { HomePagination } from "@/features/home/HomePagination";
+import { PackCard } from "@/features/home/PackCard";
 import {
   PACK_GRID_CLASS,
   PackGridSkeleton,
-} from "@/src/features/home/PackGridSkeleton";
-import { Text } from "@/src/shared/components/Text";
-import { useMyPacks } from "@/src/features/home/api/my-packs.queries";
-import { PACKS_FEED_PAGE_SIZE } from "@/src/features/home/api/packs-feed";
+} from "@/features/home/PackGridSkeleton";
+import { Text } from "@/shared/components/Text";
+import { useMyPacks } from "@/features/home/api/my-packs.queries";
+import { PACKS_FEED_PAGE_SIZE } from "@/features/home/api/packs-feed";
 import {
   DATE_ORDER_LABEL_KEYS,
   DATE_ORDER_VALUES,
   DEFAULT_DATE_ORDER,
   type DateOrderValue,
-} from "@/src/features/home/filter-options";
-import { usePageParam } from "@/src/features/home/use-page-param";
-import type { PackStatus } from "@/src/shared/types/pack";
+} from "@/features/home/filter-options";
+import { usePageParam } from "@/features/home/use-page-param";
+import type { PackStatus } from "@/shared/types/pack";
 
 // "all" is the UI sentinel for "no status filter" (every status).
 type StatusChoice = "all" | PackStatus;

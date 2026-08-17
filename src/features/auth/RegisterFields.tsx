@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { User, Mail, Lock } from "lucide-react";
-import { TextField } from "@/src/shared/components/form/TextField";
-import { PasswordField } from "@/src/shared/components/form/PasswordField";
-import { CheckboxField } from "@/src/shared/components/form/CheckboxField";
+import { TextField } from "@/shared/components/form/TextField";
+import { PasswordField } from "@/shared/components/form/PasswordField";
+import { CheckboxField } from "@/shared/components/form/CheckboxField";
 
 /**
  * Register-only field block that sits above the shared password field: the

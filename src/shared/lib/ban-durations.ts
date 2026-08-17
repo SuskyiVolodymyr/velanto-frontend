@@ -1,4 +1,4 @@
-import type { BanDuration } from "@/src/shared/lib/users-client";
+import type { BanDuration } from "@/shared/lib/users-client";
 
 export const BAN_DURATIONS: { value: BanDuration; label: string }[] = [
   { value: "week", label: "1 week" },

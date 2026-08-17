@@ -5,7 +5,7 @@ import { io, type Socket } from "socket.io-client";
 import {
   ensureFreshAccessToken,
   getAccessToken,
-} from "@/src/shared/lib/api-client";
+} from "@/shared/lib/api-client";
 import { getGuestSession } from "./guest-session";
 import {
   ROOM_COMMANDS,

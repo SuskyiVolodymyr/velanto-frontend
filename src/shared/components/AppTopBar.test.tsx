@@ -4,13 +4,13 @@ import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import { QueryClientProvider } from "@tanstack/react-query";
 import messages from "@/messages/en.json";
-import { createTestQueryClient } from "@/src/shared/test/test-query-client";
+import { createTestQueryClient } from "@/shared/test/test-query-client";
 import { AppTopBar } from "./AppTopBar";
 import {
   SearchQueryProvider,
   useSearchQuery,
-} from "@/src/features/home/search-query-context";
-import { notificationsClient } from "@/src/shared/lib/notifications-client";
+} from "@/features/home/search-query-context";
+import { notificationsClient } from "@/shared/lib/notifications-client";
 
 const { push } = vi.hoisted(() => ({ push: vi.fn() }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
@@ -23,13 +23,13 @@ const auth = vi.hoisted(() => ({
     logout,
   },
 }));
-vi.mock("@/src/shared/lib/auth-context", () => ({
+vi.mock("@/shared/lib/auth-context", () => ({
   useAuth: () => auth.current,
 }));
 
 // The bell polls this on mount when authenticated — stub it so these tests
 // don't make real network calls.
-vi.mock("@/src/shared/lib/notifications-client", () => ({
+vi.mock("@/shared/lib/notifications-client", () => ({
   notificationsClient: {
     unreadCount: vi.fn(),
     list: vi.fn(),

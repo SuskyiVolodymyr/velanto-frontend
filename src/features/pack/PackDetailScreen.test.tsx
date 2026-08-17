@@ -1,37 +1,37 @@
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { describe, it, expect, vi } from "vitest";
 import { PackDetailScreen } from "./PackDetailScreen";
-import type { Pack } from "@/src/shared/types/pack";
-import type { PackResults } from "@/src/shared/types/play-results";
-import type { AvailableMode } from "@/src/features/friends-rooms/room-types";
-import { toOverview } from "@/src/shared/test/pack-overview";
+import type { Pack } from "@/shared/types/pack";
+import type { PackResults } from "@/shared/types/play-results";
+import type { AvailableMode } from "@/features/friends-rooms/room-types";
+import { toOverview } from "@/shared/test/pack-overview";
 
-vi.mock("@/src/features/pack/VoteButtons", () => ({
+vi.mock("@/features/pack/VoteButtons", () => ({
   VoteButtons: () => <div>VoteButtons</div>,
 }));
-vi.mock("@/src/features/pack/CommentSection", () => ({
+vi.mock("@/features/pack/CommentSection", () => ({
   CommentSection: () => <div>CommentSection</div>,
 }));
-vi.mock("@/src/features/pack/PackCreatorCard", () => ({
+vi.mock("@/features/pack/PackCreatorCard", () => ({
   PackCreatorCard: () => <div>PackCreatorCard</div>,
 }));
 // PackPlayButton is a client island with its own auth gating + tests; here we
 // stand in a plain link so the screen's layout assertions stay focused.
-vi.mock("@/src/features/pack/PackPlayButton", () => ({
+vi.mock("@/features/pack/PackPlayButton", () => ({
   PackPlayButton: ({ packId }: { packId: string }) => (
     <a href={`/packs/${packId}/play`}>Play now</a>
   ),
 }));
 // The banner's author line is an auth-gated client island (own tests); stub it
 // so PackCoverBanner (which renders the asserted title) stays real.
-vi.mock("@/src/features/pack/PackBannerAuthor", () => ({
+vi.mock("@/features/pack/PackBannerAuthor", () => ({
   PackBannerAuthor: () => <div>PackBannerAuthor</div>,
 }));
 // Auth-gated owner/moderator actions (Edit/Delete) — own tests in
 // PackOwnerActions.test. Stub so it's not pulling in the auth context here, and
 // echo its props so we can assert the screen wires it to this pack.
-vi.mock("@/src/features/pack/PackOwnerActions", () => ({
+vi.mock("@/features/pack/PackOwnerActions", () => ({
   PackOwnerActions: ({
     packId,
     packAuthorId,
@@ -43,29 +43,29 @@ vi.mock("@/src/features/pack/PackOwnerActions", () => ({
 
 // Also an auth-context client island (see PackOwnerStatusBadge.test); stub it so
 // this screen test doesn't need an AuthProvider.
-vi.mock("@/src/features/pack/PackOwnerStatusBadge", () => ({
+vi.mock("@/features/pack/PackOwnerStatusBadge", () => ({
   PackOwnerStatusBadge: () => null,
 }));
-vi.mock("@/src/features/pack/PackRejectionReason", () => ({
+vi.mock("@/features/pack/PackRejectionReason", () => ({
   PackRejectionReason: () => null,
 }));
 // Same treatment, same reason: an author-gated island whose useAuth() throws
 // outside an AuthProvider. Its own gating is covered in its own test.
-vi.mock("@/src/features/pack/PackChangesRequestedBanner", () => ({
+vi.mock("@/features/pack/PackChangesRequestedBanner", () => ({
   PackChangesRequestedBanner: () => null,
 }));
 // FriendsRoomEntry is an auth-gated client island (own tests in
 // FriendsRoomEntry.test.tsx — useAuth() throws outside an AuthProvider).
 // Stub it so this screen's own wiring assertion (does it render, with the
 // right packId) stays independent of the auth context.
-vi.mock("@/src/features/friends-rooms/FriendsRoomEntry", () => ({
+vi.mock("@/features/friends-rooms/FriendsRoomEntry", () => ({
   FriendsRoomEntry: ({ packId }: { packId: string }) => (
     <button type="button">{`Create room (${packId})`}</button>
   ),
 }));
 // ReportPackDialog is another auth-gated client island (own tests in
 // ReportPackDialog.test.tsx). Stub it the same way.
-vi.mock("@/src/features/pack/ReportPackDialog", () => ({
+vi.mock("@/features/pack/ReportPackDialog", () => ({
   ReportPackDialog: ({ packId }: { packId: string }) => (
     <button type="button">{`Report (${packId})`}</button>
   ),

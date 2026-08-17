@@ -2,17 +2,17 @@
 
 import { useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { Modal } from "@/src/shared/components/Modal";
+import { Modal } from "@/shared/components/Modal";
 import {
   Dropdown,
   type DropdownOption,
-} from "@/src/shared/components/Dropdown";
-import { Textarea } from "@/src/shared/components/Textarea";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
-import { ApiError } from "@/src/shared/lib/api-client";
-import { reportsClient } from "@/src/shared/lib/reports-client";
-import type { ReportType } from "@/src/shared/types/report";
+} from "@/shared/components/Dropdown";
+import { Textarea } from "@/shared/components/Textarea";
+import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/components/Button";
+import { ApiError } from "@/shared/lib/api-client";
+import { reportsClient } from "@/shared/lib/reports-client";
+import type { ReportType } from "@/shared/types/report";
 
 /**
  * The report form itself — reason picker, optional details, submit — plus the

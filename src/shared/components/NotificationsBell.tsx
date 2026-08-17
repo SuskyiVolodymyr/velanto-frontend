@@ -1,10 +1,10 @@
 "use client";
 
-import { BellIcon } from "@/src/shared/components/icons";
+import { BellIcon } from "@/shared/components/icons";
 import { useTranslations } from "next-intl";
-import { useNotifications } from "@/src/shared/components/use-notifications";
-import { NotificationList } from "@/src/shared/components/NotificationList";
-import { NotificationsPanelHeader } from "@/src/shared/components/NotificationsPanelHeader";
+import { useNotifications } from "@/shared/components/use-notifications";
+import { NotificationList } from "@/shared/components/NotificationList";
+import { NotificationsPanelHeader } from "@/shared/components/NotificationsPanelHeader";
 
 export function NotificationsBell() {
   const {

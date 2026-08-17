@@ -8,15 +8,15 @@ import {
   ShieldCheck,
   X as ClearIcon,
 } from "lucide-react";
-import { Text } from "@/src/shared/components/Text";
-import { SearchField } from "@/src/shared/components/SearchField";
-import { EmptyState } from "@/src/shared/components/EmptyState";
-import { Button, buttonClassName } from "@/src/shared/components/Button";
-import { PageHeader } from "@/src/shared/components/PageHeader";
-import { cn } from "@/src/shared/lib/cn";
-import type { RulesDocument } from "@/src/features/rules/get-rules-server";
-import { ruleCategoryTone } from "@/src/features/rules/rule-category-tone";
-import { pageContainer } from "@/src/shared/lib/page-container";
+import { Text } from "@/shared/components/Text";
+import { SearchField } from "@/shared/components/SearchField";
+import { EmptyState } from "@/shared/components/EmptyState";
+import { Button, buttonClassName } from "@/shared/components/Button";
+import { PageHeader } from "@/shared/components/PageHeader";
+import { cn } from "@/shared/lib/cn";
+import type { RulesDocument } from "@/features/rules/get-rules-server";
+import { ruleCategoryTone } from "@/features/rules/rule-category-tone";
+import { pageContainer } from "@/shared/lib/page-container";
 
 export interface RulesScreenProps {
   /** Fetched rules, or `null` when the server fetch failed. */

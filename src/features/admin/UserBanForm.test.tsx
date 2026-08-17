@@ -1,19 +1,19 @@
 // src/features/admin/UserBanForm.test.tsx
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithQueryClient as render } from "@/src/shared/test/render-with-query-client";
+import { renderWithQueryClient as render } from "@/shared/test/render-with-query-client";
 import userEvent from "@testing-library/user-event";
-import { pickFromDropdown } from "@/src/shared/test/pick-from-dropdown";
+import { pickFromDropdown } from "@/shared/test/pick-from-dropdown";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { useState } from "react";
 import { UserBanForm } from "./UserBanForm";
-import { rulesClient } from "@/src/shared/lib/rules-client";
-import type { BanDuration } from "@/src/shared/lib/users-client";
-import type { BanReasonState } from "@/src/shared/components/BanReasonPicker";
-import type { RulesDocument } from "@/src/shared/types/rules";
+import { rulesClient } from "@/shared/lib/rules-client";
+import type { BanDuration } from "@/shared/lib/users-client";
+import type { BanReasonState } from "@/shared/components/BanReasonPicker";
+import type { RulesDocument } from "@/shared/types/rules";
 
-vi.mock("@/src/shared/lib/rules-client", () => ({
+vi.mock("@/shared/lib/rules-client", () => ({
   rulesClient: { getRules: vi.fn() },
 }));
 

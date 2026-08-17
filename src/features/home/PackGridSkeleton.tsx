@@ -1,5 +1,5 @@
-import { Skeleton } from "@/src/shared/components/Skeleton";
-import { PACKS_FEED_PAGE_SIZE } from "@/src/features/home/api/packs-feed";
+import { Skeleton } from "@/shared/components/Skeleton";
+import { PACKS_FEED_PAGE_SIZE } from "@/features/home/api/packs-feed";
 
 /** Shared by every pack grid and its skeleton so the two can't drift apart. */
 export const PACK_GRID_CLASS =

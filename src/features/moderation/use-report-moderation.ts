@@ -2,15 +2,15 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { packsClient } from "@/src/shared/lib/packs-client";
-import { usersClient, type BanDuration } from "@/src/shared/lib/users-client";
-import { useModerationInvalidation } from "@/src/features/moderation/api/moderation.queries";
+import { packsClient } from "@/shared/lib/packs-client";
+import { usersClient, type BanDuration } from "@/shared/lib/users-client";
+import { useModerationInvalidation } from "@/features/moderation/api/moderation.queries";
 import {
   isBanReasonValid,
   buildBanReasonPayload,
   type BanReasonState,
-} from "@/src/shared/components/BanReasonPicker";
-import type { ReportWithReporter } from "@/src/shared/types/report";
+} from "@/shared/components/BanReasonPicker";
+import type { ReportWithReporter } from "@/shared/types/report";
 
 /**
  * Owns the moderation-action state for a single report detail: the pack-delete

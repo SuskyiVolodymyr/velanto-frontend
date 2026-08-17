@@ -1,11 +1,11 @@
 "use client";
 
-import { useHomeFeed } from "@/src/features/home/use-home-feed";
-import { HomeFeedResults } from "@/src/features/home/HomeFeedResults";
-import { BrowseFilterBar } from "@/src/features/home/BrowseFilterBar";
-import { HomePagination } from "@/src/features/home/HomePagination";
-import { PACKS_FEED_PAGE_SIZE } from "@/src/features/home/api/packs-feed";
-import type { PacksFeedResult } from "@/src/features/home/api/packs-feed";
+import { useHomeFeed } from "@/features/home/use-home-feed";
+import { HomeFeedResults } from "@/features/home/HomeFeedResults";
+import { BrowseFilterBar } from "@/features/home/BrowseFilterBar";
+import { HomePagination } from "@/features/home/HomePagination";
+import { PACKS_FEED_PAGE_SIZE } from "@/features/home/api/packs-feed";
+import type { PacksFeedResult } from "@/features/home/api/packs-feed";
 
 export function HomeFeed({
   initialFeed,

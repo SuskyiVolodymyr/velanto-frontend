@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { PlayRouter } from "./PlayRouter";
-import type { Pack } from "@/src/shared/types/pack";
+import type { Pack } from "@/shared/types/pack";
 
 const notFound = vi.hoisted(() =>
   vi.fn(() => {
@@ -10,20 +10,20 @@ const notFound = vi.hoisted(() =>
 );
 
 vi.mock("next/navigation", () => ({ notFound }));
-vi.mock("@/src/shared/lib/plays-client", () => ({
+vi.mock("@/shared/lib/plays-client", () => ({
   playsClient: {
     record: vi.fn(),
     getResults: vi.fn(),
     getSharedPicks: vi.fn(),
   },
 }));
-vi.mock("@/src/features/play/PlayScreen", () => ({
+vi.mock("@/features/play/PlayScreen", () => ({
   PlayScreen: () => <div>PlayScreen</div>,
 }));
-vi.mock("@/src/features/play/RankPlayScreen", () => ({
+vi.mock("@/features/play/RankPlayScreen", () => ({
   RankPlayScreen: () => <div>RankPlayScreen</div>,
 }));
-vi.mock("@/src/features/play/HeadToHeadPlayScreen", () => ({
+vi.mock("@/features/play/HeadToHeadPlayScreen", () => ({
   HeadToHeadPlayScreen: () => <div>HeadToHeadPlayScreen</div>,
 }));
 

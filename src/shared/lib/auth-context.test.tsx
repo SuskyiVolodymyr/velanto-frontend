@@ -1,6 +1,6 @@
 import { render, screen, act, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { User } from "@/src/shared/types/user";
+import type { User } from "@/shared/types/user";
 
 // Capture the callbacks AuthProvider hands to the api-client so we can drive
 // them the way a silent 401-refresh would, and assert the provider reacts.
@@ -10,7 +10,7 @@ let captured: {
 } | null = null;
 
 const setAccessToken = vi.fn();
-vi.mock("@/src/shared/lib/api-client", () => ({
+vi.mock("@/shared/lib/api-client", () => ({
   setAccessToken: (...args: unknown[]) => setAccessToken(...args),
   setSessionCallbacks: (cb: typeof captured) => {
     captured = cb;
@@ -18,15 +18,15 @@ vi.mock("@/src/shared/lib/api-client", () => ({
 }));
 
 const refresh = vi.fn();
-vi.mock("@/src/shared/lib/auth-client", () => ({
+vi.mock("@/shared/lib/auth-client", () => ({
   authClient: { refresh: () => refresh() },
 }));
 
-vi.mock("@/src/shared/lib/sentry-reporting", () => ({
+vi.mock("@/shared/lib/sentry-reporting", () => ({
   setSentryUser: vi.fn(),
 }));
 
-import { AuthProvider, useAuth } from "@/src/shared/lib/auth-context";
+import { AuthProvider, useAuth } from "@/shared/lib/auth-context";
 
 function Probe() {
   const { status, user } = useAuth();

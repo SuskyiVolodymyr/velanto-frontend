@@ -2,8 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { Info } from "lucide-react";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
 import { labelTone } from "./guess-who-labels";
 import type { RoomState } from "./room-types";
 

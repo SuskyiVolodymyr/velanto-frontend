@@ -1,10 +1,10 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { MobileBottomNav } from "./MobileBottomNav";
-import { useAuth } from "@/src/shared/lib/auth-context";
+import { useAuth } from "@/shared/lib/auth-context";
 
-vi.mock("@/src/shared/lib/auth-context");
+vi.mock("@/shared/lib/auth-context");
 vi.mock("next/navigation", () => ({ usePathname: () => "/" }));
 
 const mockedUseAuth = vi.mocked(useAuth);

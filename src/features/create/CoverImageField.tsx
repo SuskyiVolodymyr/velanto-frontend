@@ -3,12 +3,12 @@
 import { useEffect, useRef, useState, type DragEvent } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslations } from "next-intl";
-import { uploadMedia, MEDIA_MAX_BYTES } from "@/src/shared/lib/media-client";
-import { mediaUrl } from "@/src/shared/lib/media-url";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
-import { CoverCropModal } from "@/src/features/create/CoverCropModal";
-import type { CreatePackValues } from "@/src/features/create/create-pack.schema";
+import { uploadMedia, MEDIA_MAX_BYTES } from "@/shared/lib/media-client";
+import { mediaUrl } from "@/shared/lib/media-url";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
+import { CoverCropModal } from "@/features/create/CoverCropModal";
+import type { CreatePackValues } from "@/features/create/create-pack.schema";
 
 /**
  * Optional custom cover-image control for the create/edit form. Uploads the

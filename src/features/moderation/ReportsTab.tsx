@@ -1,25 +1,25 @@
 "use client";
-import { formatDate } from "@/src/shared/lib/format-date";
+import { formatDate } from "@/shared/lib/format-date";
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { Text } from "@/src/shared/components/Text";
-import { LoadingState } from "@/src/shared/components/LoadingState";
-import { StatusBadge } from "@/src/shared/components/StatusBadge";
+import { Text } from "@/shared/components/Text";
+import { LoadingState } from "@/shared/components/LoadingState";
+import { StatusBadge } from "@/shared/components/StatusBadge";
 import {
   DataTable,
   DataTableRow,
   ROW_LINK_CLASS,
-} from "@/src/shared/components/DataTable";
-import { cn } from "@/src/shared/lib/cn";
-import { TablePagination } from "@/src/shared/components/TablePagination";
-import { reportReasonLabel } from "@/src/shared/lib/report-reasons";
-import { reportTargetLabel } from "@/src/shared/lib/report-display";
-import { ReportFilters } from "@/src/features/moderation/ReportFilters";
-import { useReportsList } from "@/src/features/moderation/api/reports-list.queries";
-import { MODERATION_PAGE_SIZE } from "@/src/features/moderation/api/moderation";
-import type { ReportsListFilters } from "@/src/features/moderation/api/reports-list";
+} from "@/shared/components/DataTable";
+import { cn } from "@/shared/lib/cn";
+import { TablePagination } from "@/shared/components/TablePagination";
+import { reportReasonLabel } from "@/shared/lib/report-reasons";
+import { reportTargetLabel } from "@/shared/lib/report-display";
+import { ReportFilters } from "@/features/moderation/ReportFilters";
+import { useReportsList } from "@/features/moderation/api/reports-list.queries";
+import { MODERATION_PAGE_SIZE } from "@/features/moderation/api/moderation";
+import type { ReportsListFilters } from "@/features/moderation/api/reports-list";
 
 const COLUMNS = "70px 1.4fr 1.1fr 1fr 100px 110px";
 

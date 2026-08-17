@@ -1,7 +1,7 @@
-import { cn } from "@/src/shared/lib/cn";
-import { nicknameClass } from "@/src/shared/lib/user-role";
-import { IdentityPillBadge } from "@/src/shared/components/IdentityPillBadge";
-import type { Role } from "@/src/shared/types/user";
+import { cn } from "@/shared/lib/cn";
+import { nicknameClass } from "@/shared/lib/user-role";
+import { IdentityPillBadge } from "@/shared/components/IdentityPillBadge";
+import type { Role } from "@/shared/types/user";
 
 export interface UsernameProps {
   username: string;

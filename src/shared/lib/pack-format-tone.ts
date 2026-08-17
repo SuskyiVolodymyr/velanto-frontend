@@ -1,6 +1,6 @@
 import type { LucideIcon } from "lucide-react";
 import { Flame, LayoutGrid, ListOrdered, Shield, Swords } from "lucide-react";
-import type { PackFormat } from "@/src/shared/types/pack";
+import type { PackFormat } from "@/shared/types/pack";
 
 export interface PackFormatTone {
   Icon: LucideIcon;

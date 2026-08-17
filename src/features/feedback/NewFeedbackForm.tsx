@@ -5,34 +5,34 @@ import { useRouter } from "next/navigation";
 import { Controller, useForm, useWatch, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { feedbackClient } from "@/src/shared/lib/feedback-client";
-import { messageFromError } from "@/src/shared/lib/messageFromError";
-import { LOCALES, LOCALE_NAMES, type Locale } from "@/src/i18n/config";
+import { useAuth } from "@/shared/lib/auth-context";
+import { feedbackClient } from "@/shared/lib/feedback-client";
+import { messageFromError } from "@/shared/lib/messageFromError";
+import { LOCALES, LOCALE_NAMES, type Locale } from "@/i18n/config";
 import type {
   CreateFeedbackInput,
   FeedbackTopic,
   FeedbackVisibility,
-} from "@/src/shared/types/feedback";
-import { TOPIC_KEYS } from "@/src/features/feedback/FeedbackCard";
-import { feedbackTopicTone } from "@/src/features/feedback/feedback-tone";
-import { ComposerChoiceRow } from "@/src/features/feedback/ComposerChoiceRow";
+} from "@/shared/types/feedback";
+import { TOPIC_KEYS } from "@/features/feedback/FeedbackCard";
+import { feedbackTopicTone } from "@/features/feedback/feedback-tone";
+import { ComposerChoiceRow } from "@/features/feedback/ComposerChoiceRow";
 import {
   newFeedbackSchema,
   type NewFeedbackValues,
   BODY_MAX,
   TITLE_MAX,
-} from "@/src/features/feedback/new-feedback.schema";
-import { Button } from "@/src/shared/components/Button";
-import { Text } from "@/src/shared/components/Text";
-import { LoadingState } from "@/src/shared/components/LoadingState";
-import { FieldError } from "@/src/shared/components/form/FieldError";
-import { TextField } from "@/src/shared/components/form/TextField";
-import { TextareaField } from "@/src/shared/components/form/TextareaField";
-import { SegmentedField } from "@/src/shared/components/form/SegmentedField";
-import { getFieldError } from "@/src/shared/components/form/getFieldError";
-import { cn } from "@/src/shared/lib/cn";
-import { pageContainer } from "@/src/shared/lib/page-container";
+} from "@/features/feedback/new-feedback.schema";
+import { Button } from "@/shared/components/Button";
+import { Text } from "@/shared/components/Text";
+import { LoadingState } from "@/shared/components/LoadingState";
+import { FieldError } from "@/shared/components/form/FieldError";
+import { TextField } from "@/shared/components/form/TextField";
+import { TextareaField } from "@/shared/components/form/TextareaField";
+import { SegmentedField } from "@/shared/components/form/SegmentedField";
+import { getFieldError } from "@/shared/components/form/getFieldError";
+import { cn } from "@/shared/lib/cn";
+import { pageContainer } from "@/shared/lib/page-container";
 
 const TOPIC_ORDER: FeedbackTopic[] = ["bug", "feature", "translation", "other"];
 const VISIBILITY_ORDER: FeedbackVisibility[] = ["everyone", "staff_only"];

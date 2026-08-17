@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { render } from "@testing-library/react";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { useRefetchOnSignIn } from "@/src/shared/lib/use-refetch-on-sign-in";
+import { useAuth } from "@/shared/lib/auth-context";
+import { useRefetchOnSignIn } from "@/shared/lib/use-refetch-on-sign-in";
 
-vi.mock("@/src/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
+vi.mock("@/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
 
 function setStatus(status: "loading" | "authenticated" | "unauthenticated") {
   vi.mocked(useAuth).mockReturnValue({

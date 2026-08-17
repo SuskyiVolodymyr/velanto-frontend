@@ -3,32 +3,32 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { playsClient } from "@/src/shared/lib/plays-client";
+import { useAuth } from "@/shared/lib/auth-context";
+import { playsClient } from "@/shared/lib/plays-client";
 import {
   writeLastPlayId,
   writeLastPlayPicks,
-} from "@/src/shared/lib/last-play-storage";
-import { useRoundSelections } from "@/src/features/play/use-round-selections";
-import { usePlayResume } from "@/src/features/play/use-play-resume";
-import { HeadToHeadRound } from "@/src/features/play/HeadToHeadRound";
-import { PlayChrome } from "@/src/features/play/PlayChrome";
-import { PlayRoundHeader } from "@/src/features/play/PlayRoundHeader";
-import { PlayConfirmBar } from "@/src/features/play/PlayConfirmBar";
-import { PicksSummary } from "@/src/features/play/PicksSummary";
-import { ResumePlayModal } from "@/src/features/play/ResumePlayModal";
+} from "@/shared/lib/last-play-storage";
+import { useRoundSelections } from "@/features/play/use-round-selections";
+import { usePlayResume } from "@/features/play/use-play-resume";
+import { HeadToHeadRound } from "@/features/play/HeadToHeadRound";
+import { PlayChrome } from "@/features/play/PlayChrome";
+import { PlayRoundHeader } from "@/features/play/PlayRoundHeader";
+import { PlayConfirmBar } from "@/features/play/PlayConfirmBar";
+import { PicksSummary } from "@/features/play/PicksSummary";
+import { ResumePlayModal } from "@/features/play/ResumePlayModal";
 import {
   INSTRUCTION_KEY,
   PICKED_LABEL_KEY,
-} from "@/src/features/play/play-format-copy";
+} from "@/features/play/play-format-copy";
 // Aliased: a bare `Pick` would shadow TypeScript's own Pick<T, K> utility
 // inside this module.
-import type { Pick as SessionPick } from "@/src/features/play/use-play-session";
-import { LoadingState } from "@/src/shared/components/LoadingState";
-import { pageContainer } from "@/src/shared/lib/page-container";
-import { cn } from "@/src/shared/lib/cn";
-import type { Pack } from "@/src/shared/types/pack";
-import type { RecordedPick } from "@/src/shared/types/play-results";
+import type { Pick as SessionPick } from "@/features/play/use-play-session";
+import { LoadingState } from "@/shared/components/LoadingState";
+import { pageContainer } from "@/shared/lib/page-container";
+import { cn } from "@/shared/lib/cn";
+import type { Pack } from "@/shared/types/pack";
+import type { RecordedPick } from "@/shared/types/play-results";
 
 export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
   const { status } = useAuth();

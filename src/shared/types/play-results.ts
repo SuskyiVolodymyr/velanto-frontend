@@ -1,4 +1,4 @@
-import type { PackFormat } from "@/src/shared/types/pack";
+import type { PackFormat } from "@/shared/types/pack";
 
 export interface RecordedPick {
   // Which round of the pack this pick belongs to (0-indexed). Rounds — not

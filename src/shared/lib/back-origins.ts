@@ -1,4 +1,4 @@
-import type { BackOrigin } from "@/src/shared/lib/use-back-target";
+import type { BackOrigin } from "@/shared/lib/use-back-target";
 
 // Every path may carry an optional locale prefix (next-intl's localePrefix
 // emits the root as `/en`), so each pattern allows one.

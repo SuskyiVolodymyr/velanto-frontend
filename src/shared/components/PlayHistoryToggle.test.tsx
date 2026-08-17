@@ -1,14 +1,14 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { PlayHistoryToggle } from "./PlayHistoryToggle";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { usersClient } from "@/src/shared/lib/users-client";
-import type { MyProfile } from "@/src/shared/types/user";
+import { useAuth } from "@/shared/lib/auth-context";
+import { usersClient } from "@/shared/lib/users-client";
+import type { MyProfile } from "@/shared/types/user";
 
-vi.mock("@/src/shared/lib/auth-context");
-vi.mock("@/src/shared/lib/users-client");
+vi.mock("@/shared/lib/auth-context");
+vi.mock("@/shared/lib/users-client");
 
 const mockedUseAuth = vi.mocked(useAuth);
 const mockedUsersClient = vi.mocked(usersClient);

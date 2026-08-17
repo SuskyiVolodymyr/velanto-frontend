@@ -2,8 +2,8 @@
 
 import { Fragment } from "react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
 import { BetweenNextButton } from "./BetweenNextButton";
 import { RoundItemTile } from "./RoundItemTile";
 import { RevealSideRow } from "./RevealSideRow";

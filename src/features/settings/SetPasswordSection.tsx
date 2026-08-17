@@ -4,16 +4,16 @@ import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { Card } from "@/src/shared/components/Card";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
-import { PasswordField } from "@/src/shared/components/form/PasswordField";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { authClient } from "@/src/shared/lib/auth-client";
+import { Card } from "@/shared/components/Card";
+import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/components/Button";
+import { PasswordField } from "@/shared/components/form/PasswordField";
+import { useAuth } from "@/shared/lib/auth-context";
+import { authClient } from "@/shared/lib/auth-client";
 import {
   setPasswordSchema,
   type SetPasswordValues,
-} from "@/src/features/auth/auth.schema";
+} from "@/features/auth/auth.schema";
 
 /**
  * Set a FIRST password on an OAuth-only account (no current password exists to

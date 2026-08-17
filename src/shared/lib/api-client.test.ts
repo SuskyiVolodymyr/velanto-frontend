@@ -3,7 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 const captureApiError = vi.fn();
 const captureNetworkError = vi.fn();
 
-vi.mock("@/src/shared/lib/sentry-reporting", () => ({
+vi.mock("@/shared/lib/sentry-reporting", () => ({
   captureApiError: (...args: unknown[]) => captureApiError(...args),
   captureNetworkError: (...args: unknown[]) => captureNetworkError(...args),
 }));
@@ -13,10 +13,10 @@ import {
   ApiError,
   setAccessToken,
   setSessionCallbacks,
-} from "@/src/shared/lib/api-client";
+} from "@/shared/lib/api-client";
 // Imported to prove the auth-client's refresh shares the same single-flight
 // promise as the api-client's own 401 renewal (see the regression test below).
-import { authClient } from "@/src/shared/lib/auth-client";
+import { authClient } from "@/shared/lib/auth-client";
 
 function jsonResponse(status: number, body: unknown): Response {
   return new Response(JSON.stringify(body), {

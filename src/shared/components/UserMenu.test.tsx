@@ -5,8 +5,8 @@ import { NextIntlClientProvider } from "next-intl";
 import type { ReactNode } from "react";
 import messages from "@/messages/en.json";
 import { UserMenu } from "./UserMenu";
-import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
-import type { User } from "@/src/shared/types/user";
+import { StreamerModeProvider } from "@/shared/lib/streamer-mode-context";
+import type { User } from "@/shared/types/user";
 
 const STREAMER_MODE_STORAGE_KEY = "velanto:streamer-mode";
 

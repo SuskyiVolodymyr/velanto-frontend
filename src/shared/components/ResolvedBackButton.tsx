@@ -1,8 +1,8 @@
 "use client";
 
-import { BackButton } from "@/src/shared/components/BackButton";
-import { FROM } from "@/src/shared/lib/back-origins";
-import { useBackTarget } from "@/src/shared/lib/use-back-target";
+import { BackButton } from "@/shared/components/BackButton";
+import { FROM } from "@/shared/lib/back-origins";
+import { useBackTarget } from "@/shared/lib/use-back-target";
 
 /**
  * A back pill that returns to the page it was opened from, when that page is

@@ -1,16 +1,16 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { YouTubeCard } from "@/src/shared/components/YouTubeCard";
-import { ImageCard } from "@/src/shared/components/ImageCard";
+import { YouTubeCard } from "@/shared/components/YouTubeCard";
+import { ImageCard } from "@/shared/components/ImageCard";
 import {
   extractYouTubeId,
   extractYouTubeStart,
-} from "@/src/shared/lib/youtube";
-import { mediaUrl } from "@/src/shared/lib/media-url";
-import { cn } from "@/src/shared/lib/cn";
-import { UserAvatar } from "@/src/shared/components/UserAvatar";
-import type { Item } from "@/src/shared/types/pack";
+} from "@/shared/lib/youtube";
+import { mediaUrl } from "@/shared/lib/media-url";
+import { cn } from "@/shared/lib/cn";
+import { UserAvatar } from "@/shared/components/UserAvatar";
+import type { Item } from "@/shared/types/pack";
 import type { RoomPlayerState, RoundSide } from "./room-types";
 
 export interface RoundSideTileProps {

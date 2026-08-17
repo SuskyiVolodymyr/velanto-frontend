@@ -1,7 +1,7 @@
 import { getTranslations } from "next-intl/server";
-import { JoinRoomCard } from "@/src/features/home/JoinRoomCard";
-import { Text } from "@/src/shared/components/Text";
-import { ROOMS_DORMANT } from "@/src/features/friends-rooms/room-types";
+import { JoinRoomCard } from "@/features/home/JoinRoomCard";
+import { Text } from "@/shared/components/Text";
+import { ROOMS_DORMANT } from "@/features/friends-rooms/room-types";
 
 /**
  * The dashboard's top hero (mock: Dashboard.dc.html): one gradient card

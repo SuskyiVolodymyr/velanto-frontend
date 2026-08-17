@@ -1,9 +1,9 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { Dropdown } from "@/src/shared/components/Dropdown";
-import { LOCALES, LOCALE_NAMES, type Locale } from "@/src/i18n/config";
-import { setUserLocale } from "@/src/i18n/locale";
+import { Dropdown } from "@/shared/components/Dropdown";
+import { LOCALES, LOCALE_NAMES, type Locale } from "@/i18n/config";
+import { setUserLocale } from "@/i18n/locale";
 
 export function LanguageSelector() {
   const locale = useLocale();

@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { pickFromDropdown } from "@/src/shared/test/pick-from-dropdown";
+import { pickFromDropdown } from "@/shared/test/pick-from-dropdown";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { LanguageSelector } from "./LanguageSelector";
-import { setUserLocale } from "@/src/i18n/locale";
-import { LOCALES } from "@/src/i18n/config";
+import { setUserLocale } from "@/i18n/locale";
+import { LOCALES } from "@/i18n/config";
 
-vi.mock("@/src/i18n/locale", () => ({ setUserLocale: vi.fn() }));
+vi.mock("@/i18n/locale", () => ({ setUserLocale: vi.fn() }));
 
 function renderSelector(locale = "en") {
   return render(

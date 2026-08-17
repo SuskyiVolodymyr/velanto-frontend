@@ -1,13 +1,13 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
-import { PackOwnerStatusBadge } from "@/src/features/pack/PackOwnerStatusBadge";
-import { AuthProvider } from "@/src/shared/lib/auth-context";
-import { authClient } from "@/src/shared/lib/auth-client";
-import type { Role } from "@/src/shared/types/user";
-import type { PackStatus } from "@/src/shared/types/pack";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { PackOwnerStatusBadge } from "@/features/pack/PackOwnerStatusBadge";
+import { AuthProvider } from "@/shared/lib/auth-context";
+import { authClient } from "@/shared/lib/auth-client";
+import type { Role } from "@/shared/types/user";
+import type { PackStatus } from "@/shared/types/pack";
 
-vi.mock("@/src/shared/lib/auth-client", () => ({
+vi.mock("@/shared/lib/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),

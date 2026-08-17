@@ -1,21 +1,21 @@
 "use client";
-import { formatDate } from "@/src/shared/lib/format-date";
+import { formatDate } from "@/shared/lib/format-date";
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { Username } from "@/src/shared/components/Username";
-import { Hidden } from "@/src/shared/components/Hidden";
-import { formatBanStatus } from "@/src/shared/lib/ban-display";
-import { type BanDuration } from "@/src/shared/lib/users-client";
-import { type BanReasonState } from "@/src/shared/components/BanReasonPicker";
-import { type AssignableRole } from "@/src/shared/lib/staff-permissions";
-import { useStreamerModeOrDefault } from "@/src/shared/lib/streamer-mode-context";
-import type { Role } from "@/src/shared/types/user";
-import type { AdminUserRow } from "@/src/shared/types/admin";
-import { UserBanForm } from "@/src/features/admin/UserBanForm";
-import { RoleSelect } from "@/src/features/admin/RoleSelect";
-import { DataTableRow } from "@/src/shared/components/DataTable";
+import { Text } from "@/shared/components/Text";
+import { Username } from "@/shared/components/Username";
+import { Hidden } from "@/shared/components/Hidden";
+import { formatBanStatus } from "@/shared/lib/ban-display";
+import { type BanDuration } from "@/shared/lib/users-client";
+import { type BanReasonState } from "@/shared/components/BanReasonPicker";
+import { type AssignableRole } from "@/shared/lib/staff-permissions";
+import { useStreamerModeOrDefault } from "@/shared/lib/streamer-mode-context";
+import type { Role } from "@/shared/types/user";
+import type { AdminUserRow } from "@/shared/types/admin";
+import { UserBanForm } from "@/features/admin/UserBanForm";
+import { RoleSelect } from "@/features/admin/RoleSelect";
+import { DataTableRow } from "@/shared/components/DataTable";
 
 interface UserRowProps {
   row: AdminUserRow;

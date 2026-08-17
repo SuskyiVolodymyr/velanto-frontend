@@ -1,4 +1,4 @@
-import { apiClient } from "@/src/shared/lib/api-client";
+import { apiClient } from "@/shared/lib/api-client";
 
 /**
  * Media kinds the backend `POST /media` endpoint accepts. FE-LOCAL: the backend

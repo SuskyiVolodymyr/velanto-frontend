@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import type { PackFormat } from "@/src/shared/types/pack";
+import { Text } from "@/shared/components/Text";
+import type { PackFormat } from "@/shared/types/pack";
 
 type Step = { title: string; desc: string };
 

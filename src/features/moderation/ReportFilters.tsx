@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { cn } from "@/src/shared/lib/cn";
-import type { ReportStatus, ReportType } from "@/src/shared/types/report";
+import { cn } from "@/shared/lib/cn";
+import type { ReportStatus, ReportType } from "@/shared/types/report";
 
 const STATUS_FILTERS: { value: ReportStatus | undefined; labelKey: string }[] =
   [

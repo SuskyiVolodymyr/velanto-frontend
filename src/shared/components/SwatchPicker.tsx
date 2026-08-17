@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/src/shared/lib/cn";
+import { cn } from "@/shared/lib/cn";
 
 export interface SwatchPickerProps {
   /** Colours to offer, as CSS colour strings (the current use passes hex).

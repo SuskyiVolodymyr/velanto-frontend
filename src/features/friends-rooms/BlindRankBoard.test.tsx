@@ -1,9 +1,9 @@
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi } from "vitest";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { BlindRankBoard } from "./BlindRankBoard";
-import type { Item } from "@/src/shared/types/pack";
+import type { Item } from "@/shared/types/pack";
 
 const YOUTUBE_ITEM: Item = {
   id: "y1",

@@ -1,10 +1,10 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { usersClient } from "@/src/shared/lib/users-client";
-import { uploadMedia } from "@/src/shared/lib/media-client";
-import { myProfileQueryOptions } from "@/src/features/profile/api/profile.queries";
-import { authorQueryOptions } from "@/src/features/author/api/author.queries";
+import { usersClient } from "@/shared/lib/users-client";
+import { uploadMedia } from "@/shared/lib/media-client";
+import { myProfileQueryOptions } from "@/features/profile/api/profile.queries";
+import { authorQueryOptions } from "@/features/author/api/author.queries";
 
 /** Invalidate every cache that renders this user's avatar so it refetches. */
 function invalidateProfileCaches(

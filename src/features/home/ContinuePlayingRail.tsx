@@ -3,13 +3,13 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { CoverImage } from "@/src/shared/components/CoverImage";
-import { Text } from "@/src/shared/components/Text";
+import { CoverImage } from "@/shared/components/CoverImage";
+import { Text } from "@/shared/components/Text";
 import {
   listPlayResumes,
   type PlayResumeRecord,
-} from "@/src/features/play/play-resume-storage";
-import { setPlayIntent } from "@/src/features/play/play-intent-storage";
+} from "@/features/play/play-resume-storage";
+import { setPlayIntent } from "@/features/play/play-intent-storage";
 
 /**
  * The "Continue playing" dashboard section: a grid of the packs this browser has

@@ -3,27 +3,27 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/src/shared/lib/auth-context";
+import { useAuth } from "@/shared/lib/auth-context";
 import type {
   Feedback,
   FeedbackSort,
   FeedbackStatus,
   FeedbackTopic,
-} from "@/src/shared/types/feedback";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
-import { PageHeader } from "@/src/shared/components/PageHeader";
-import { PlusIcon } from "@/src/shared/components/icons";
-import { FeedbackFilters } from "@/src/features/feedback/FeedbackFilters";
-import { FeedbackList } from "@/src/features/feedback/FeedbackList";
-import { FeedbackTopSidebar } from "@/src/features/feedback/FeedbackTopSidebar";
+} from "@/shared/types/feedback";
+import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/components/Button";
+import { PageHeader } from "@/shared/components/PageHeader";
+import { PlusIcon } from "@/shared/components/icons";
+import { FeedbackFilters } from "@/features/feedback/FeedbackFilters";
+import { FeedbackList } from "@/features/feedback/FeedbackList";
+import { FeedbackTopSidebar } from "@/features/feedback/FeedbackTopSidebar";
 import {
   useFeedbackList,
   useTopFeedback,
-} from "@/src/features/feedback/api/feedback-list.queries";
-import type { FeedbackListFilters } from "@/src/features/feedback/api/feedback-list";
-import { cn } from "@/src/shared/lib/cn";
-import { pageContainer } from "@/src/shared/lib/page-container";
+} from "@/features/feedback/api/feedback-list.queries";
+import type { FeedbackListFilters } from "@/features/feedback/api/feedback-list";
+import { cn } from "@/shared/lib/cn";
+import { pageContainer } from "@/shared/lib/page-container";
 
 const SEARCH_DEBOUNCE_MS = 300;
 

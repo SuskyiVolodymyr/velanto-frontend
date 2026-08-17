@@ -1,8 +1,8 @@
 "use client";
 
-import { Modal } from "@/src/shared/components/Modal";
-import { Button } from "@/src/shared/components/Button";
-import { Text } from "@/src/shared/components/Text";
+import { Modal } from "@/shared/components/Modal";
+import { Button } from "@/shared/components/Button";
+import { Text } from "@/shared/components/Text";
 
 export interface ConfirmModalProps {
   open: boolean;

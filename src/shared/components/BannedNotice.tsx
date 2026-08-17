@@ -1,12 +1,12 @@
 "use client";
-import { formatDate } from "@/src/shared/lib/format-date";
+import { formatDate } from "@/shared/lib/format-date";
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { isActiveBan, isPermanentBan } from "@/src/shared/lib/ban-display";
-import { resolveBanReasonTitle } from "@/src/shared/lib/ban-reason-title";
-import type { RuleCategory } from "@/src/shared/types/rules";
+import { Text } from "@/shared/components/Text";
+import { isActiveBan, isPermanentBan } from "@/shared/lib/ban-display";
+import { resolveBanReasonTitle } from "@/shared/lib/ban-reason-title";
+import type { RuleCategory } from "@/shared/types/rules";
 
 export interface BannedNoticeProps {
   /** `/me.bannedUntil` — ISO string, or null when not banned. */

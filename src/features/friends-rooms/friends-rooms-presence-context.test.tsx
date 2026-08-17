@@ -9,7 +9,7 @@ import type { MyRoomSummary } from "./room-types";
 const auth = vi.hoisted(() => ({
   current: { user: { id: "u1" } as { id: string } | null },
 }));
-vi.mock("@/src/shared/lib/auth-context", () => ({
+vi.mock("@/shared/lib/auth-context", () => ({
   useAuth: () => auth.current,
 }));
 

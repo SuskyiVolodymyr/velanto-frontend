@@ -1,4 +1,4 @@
-import type { Notification } from "@/src/shared/types/notification";
+import type { Notification } from "@/shared/types/notification";
 
 /**
  * A notification resolved to a translation KEY (in the `notifications`

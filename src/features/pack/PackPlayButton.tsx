@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Play } from "lucide-react";
-import { setPlayIntent } from "@/src/features/play/play-intent-storage";
+import { setPlayIntent } from "@/features/play/play-intent-storage";
 
 /**
  * The pack "Play now" call to action — the full-width primary button at the top

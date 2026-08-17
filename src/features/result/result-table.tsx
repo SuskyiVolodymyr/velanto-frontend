@@ -1,5 +1,5 @@
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
 
 /**
  * The shared parts of the result screens' ranking tables — the podium colours

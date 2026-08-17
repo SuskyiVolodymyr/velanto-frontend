@@ -4,17 +4,17 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
-import { PageHeader } from "@/src/shared/components/PageHeader";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { cn } from "@/src/shared/lib/cn";
-import { IdentityPillBadge } from "@/src/shared/components/IdentityPillBadge";
-import { OverviewTab } from "@/src/features/admin/OverviewTab";
-import { StaffTab } from "@/src/features/admin/StaffTab";
-import { UsersTab } from "@/src/features/admin/UsersTab";
-import { LogsTab } from "@/src/features/admin/LogsTab";
-import { pageContainer } from "@/src/shared/lib/page-container";
+import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/components/Button";
+import { PageHeader } from "@/shared/components/PageHeader";
+import { useAuth } from "@/shared/lib/auth-context";
+import { cn } from "@/shared/lib/cn";
+import { IdentityPillBadge } from "@/shared/components/IdentityPillBadge";
+import { OverviewTab } from "@/features/admin/OverviewTab";
+import { StaffTab } from "@/features/admin/StaffTab";
+import { UsersTab } from "@/features/admin/UsersTab";
+import { LogsTab } from "@/features/admin/LogsTab";
+import { pageContainer } from "@/shared/lib/page-container";
 
 type Tab = "overview" | "staff" | "users" | "logs";
 

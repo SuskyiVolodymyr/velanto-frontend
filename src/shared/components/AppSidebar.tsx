@@ -11,12 +11,12 @@ import {
   SuggestionsIcon,
   RulesIcon,
   type IconProps,
-} from "@/src/shared/components/icons";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { BrandMark } from "@/src/shared/components/BrandMark";
-import { Text } from "@/src/shared/components/Text";
-import { SidebarRoomPill } from "@/src/shared/components/SidebarRoomPill";
-import { cn } from "@/src/shared/lib/cn";
+} from "@/shared/components/icons";
+import { useAuth } from "@/shared/lib/auth-context";
+import { BrandMark } from "@/shared/components/BrandMark";
+import { Text } from "@/shared/components/Text";
+import { SidebarRoomPill } from "@/shared/components/SidebarRoomPill";
+import { cn } from "@/shared/lib/cn";
 
 interface NavItem {
   key: string;

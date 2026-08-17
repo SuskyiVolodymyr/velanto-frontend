@@ -1,10 +1,10 @@
 import { useTranslations } from "next-intl";
-import { formatLabel } from "@/src/shared/lib/pack-display";
-import { PACK_LANGUAGE_NAMES } from "@/src/shared/types/pack-language";
-import { Text } from "@/src/shared/components/Text";
-import { Badge } from "@/src/shared/components/Badge";
-import { CoverImage } from "@/src/shared/components/CoverImage";
-import type { Pack } from "@/src/shared/types/pack";
+import { formatLabel } from "@/shared/lib/pack-display";
+import { PACK_LANGUAGE_NAMES } from "@/shared/types/pack-language";
+import { Text } from "@/shared/components/Text";
+import { Badge } from "@/shared/components/Badge";
+import { CoverImage } from "@/shared/components/CoverImage";
+import type { Pack } from "@/shared/types/pack";
 
 /**
  * The pack-review screen's identity card: cover, title, description, tags,

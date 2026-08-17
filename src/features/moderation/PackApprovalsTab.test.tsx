@@ -1,12 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { PackApprovalsTab } from "./PackApprovalsTab";
-import { packsClient } from "@/src/shared/lib/packs-client";
-import type { Pack } from "@/src/shared/types/pack";
+import { packsClient } from "@/shared/lib/packs-client";
+import type { Pack } from "@/shared/types/pack";
 
-vi.mock("@/src/shared/lib/packs-client", () => ({
+vi.mock("@/shared/lib/packs-client", () => ({
   packsClient: { moderationQueue: vi.fn(), approve: vi.fn(), reject: vi.fn() },
 }));
 

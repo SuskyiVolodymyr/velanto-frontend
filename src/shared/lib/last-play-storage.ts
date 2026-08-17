@@ -1,4 +1,4 @@
-import type { RecordedPick } from "@/src/shared/types/play-results";
+import type { RecordedPick } from "@/shared/types/play-results";
 
 function lastPlayStorageKey(packId: string): string {
   return `velanto:last-play:${packId}`;

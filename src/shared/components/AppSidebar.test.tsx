@@ -11,14 +11,14 @@ let authState: { status: string; user: { id: string } | null } = {
   status: "authenticated",
   user: { id: "u1" },
 };
-vi.mock("@/src/shared/lib/auth-context", () => ({ useAuth: () => authState }));
+vi.mock("@/shared/lib/auth-context", () => ({ useAuth: () => authState }));
 
 let rooms: Array<{
   id: string;
   packTitle: string;
   players: Array<{ username: string; avatarKey: string | null }>;
 }> = [];
-vi.mock("@/src/features/friends-rooms/friends-rooms-presence-context", () => ({
+vi.mock("@/features/friends-rooms/friends-rooms-presence-context", () => ({
   useFriendsRoomsPresence: () => ({ rooms }),
 }));
 

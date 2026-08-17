@@ -8,35 +8,35 @@ import { render, screen, within } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { SettingsScreen } from "./SettingsScreen";
-import { useAuth } from "@/src/shared/lib/auth-context";
+import { useAuth } from "@/shared/lib/auth-context";
 
-vi.mock("@/src/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
+vi.mock("@/shared/lib/auth-context", () => ({ useAuth: vi.fn() }));
 
-vi.mock("@/src/features/settings/LanguageSection", () => ({
+vi.mock("@/features/settings/LanguageSection", () => ({
   LanguageSection: () => <div>Language section stub</div>,
 }));
-vi.mock("@/src/features/settings/AppearanceSection", () => ({
+vi.mock("@/features/settings/AppearanceSection", () => ({
   AppearanceSection: () => <div>Appearance section stub</div>,
 }));
-vi.mock("@/src/features/settings/ConnectedAccountsSection", () => ({
+vi.mock("@/features/settings/ConnectedAccountsSection", () => ({
   ConnectedAccountsSection: () => <div>Connected accounts section stub</div>,
 }));
-vi.mock("@/src/features/settings/PrivacySection", () => ({
+vi.mock("@/features/settings/PrivacySection", () => ({
   PrivacySection: () => <div>Privacy section stub</div>,
 }));
-vi.mock("@/src/features/settings/NotificationsSection", () => ({
+vi.mock("@/features/settings/NotificationsSection", () => ({
   NotificationsSection: () => <div>Notifications section stub</div>,
 }));
-vi.mock("@/src/features/settings/AccountSection", () => ({
+vi.mock("@/features/settings/AccountSection", () => ({
   AccountSection: () => <div>Account section stub</div>,
 }));
-vi.mock("@/src/features/settings/PasswordSection", () => ({
+vi.mock("@/features/settings/PasswordSection", () => ({
   PasswordSection: () => <div>Password section stub</div>,
 }));
-vi.mock("@/src/features/settings/ApiTokensPointer", () => ({
+vi.mock("@/features/settings/ApiTokensPointer", () => ({
   ApiTokensPointer: () => <div>API tokens section stub</div>,
 }));
-vi.mock("@/src/features/settings/DangerZoneSection", () => ({
+vi.mock("@/features/settings/DangerZoneSection", () => ({
   DangerZoneSection: () => <div>Danger zone section stub</div>,
 }));
 

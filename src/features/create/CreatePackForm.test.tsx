@@ -6,20 +6,20 @@ import {
   fireEvent,
   createEvent,
 } from "@testing-library/react";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
-import { pickFromDropdown } from "@/src/shared/test/pick-from-dropdown";
+import { pickFromDropdown } from "@/shared/test/pick-from-dropdown";
 import { CreatePackForm } from "./CreatePackForm";
-import { AuthProvider } from "@/src/shared/lib/auth-context";
-import { authClient } from "@/src/shared/lib/auth-client";
-import { packsClient } from "@/src/shared/lib/packs-client";
-import { uploadMedia } from "@/src/shared/lib/media-client";
-import { ApiError } from "@/src/shared/lib/api-client";
-import type { Pack } from "@/src/shared/types/pack";
+import { AuthProvider } from "@/shared/lib/auth-context";
+import { authClient } from "@/shared/lib/auth-client";
+import { packsClient } from "@/shared/lib/packs-client";
+import { uploadMedia } from "@/shared/lib/media-client";
+import { ApiError } from "@/shared/lib/api-client";
+import type { Pack } from "@/shared/types/pack";
 import {
   PACK_LANGUAGES,
   PACK_LANGUAGE_NAMES,
-} from "@/src/shared/types/pack-language";
+} from "@/shared/types/pack-language";
 import { QueryClient } from "@tanstack/react-query";
 import { NextIntlClientProvider } from "next-intl";
 import ukMessages from "@/messages/uk.json";
@@ -38,7 +38,7 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/create",
 }));
 
-vi.mock("@/src/shared/lib/auth-client", () => ({
+vi.mock("@/shared/lib/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),
@@ -48,9 +48,9 @@ vi.mock("@/src/shared/lib/auth-client", () => ({
   },
 }));
 
-vi.mock("@/src/shared/lib/media-client", async (importOriginal) => {
+vi.mock("@/shared/lib/media-client", async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import("@/src/shared/lib/media-client")>();
+    await importOriginal<typeof import("@/shared/lib/media-client")>();
   return { ...actual, uploadMedia: vi.fn() };
 });
 
@@ -62,7 +62,7 @@ function imageFile() {
   return file;
 }
 
-vi.mock("@/src/shared/lib/packs-client", () => ({
+vi.mock("@/shared/lib/packs-client", () => ({
   packsClient: {
     create: vi.fn(),
     update: vi.fn(),
@@ -79,7 +79,7 @@ vi.mock("@/src/shared/lib/packs-client", () => ({
 // unauthenticated mid-test. Never resolving keeps the panel in its
 // loading (renders null) state, which is exactly what every test here wants
 // — none of them assert on feasibility content.
-vi.mock("@/src/features/friends-rooms/friends-rooms-client", () => ({
+vi.mock("@/features/friends-rooms/friends-rooms-client", () => ({
   friendsRoomsClient: { previewModes: vi.fn(() => new Promise(() => {})) },
 }));
 

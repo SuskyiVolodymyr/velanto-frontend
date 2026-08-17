@@ -11,9 +11,9 @@ import {
   SuggestionsIcon,
   PlusIcon,
   type IconProps,
-} from "@/src/shared/components/icons";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { cn } from "@/src/shared/lib/cn";
+} from "@/shared/components/icons";
+import { useAuth } from "@/shared/lib/auth-context";
+import { cn } from "@/shared/lib/cn";
 
 interface Tab {
   key: string;

@@ -1,4 +1,4 @@
-import type { Role } from "@/src/shared/types/user";
+import type { Role } from "@/shared/types/user";
 
 /** One bar of the overview's "plays — last 7 days" chart. */
 export interface PlaysDayBucket {

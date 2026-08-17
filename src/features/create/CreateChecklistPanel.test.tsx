@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { CreateChecklistPanel } from "./CreateChecklistPanel";
 import type { CreatePackValues } from "./create-pack.schema";
 

@@ -1,13 +1,13 @@
-import { apiClient } from "@/src/shared/lib/api-client";
-import type { PackList } from "@/src/shared/lib/packs-client";
-import type { PackFormat, RecentlyPlayedPack } from "@/src/shared/types/pack";
-import type { AssignableRole } from "@/src/shared/lib/staff-permissions";
+import { apiClient } from "@/shared/lib/api-client";
+import type { PackList } from "@/shared/lib/packs-client";
+import type { PackFormat, RecentlyPlayedPack } from "@/shared/types/pack";
+import type { AssignableRole } from "@/shared/lib/staff-permissions";
 import type {
   MyProfile,
   PublicUserProfile,
   Role,
-} from "@/src/shared/types/user";
-import type { BanReason } from "@/src/shared/types/rules";
+} from "@/shared/types/user";
+import type { BanReason } from "@/shared/types/rules";
 
 /** A compact user row in a followers / following list. */
 export interface FollowUser {

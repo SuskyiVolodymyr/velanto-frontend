@@ -4,10 +4,10 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { Text } from "@/src/shared/components/Text";
-import { Card } from "@/src/shared/components/Card";
-import { buttonClassName } from "@/src/shared/components/Button";
+import { useAuth } from "@/shared/lib/auth-context";
+import { Text } from "@/shared/components/Text";
+import { Card } from "@/shared/components/Card";
+import { buttonClassName } from "@/shared/components/Button";
 
 /**
  * `/profile` is now just an entry point to the owner's own public profile at

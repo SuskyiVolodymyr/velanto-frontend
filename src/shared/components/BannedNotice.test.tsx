@@ -3,8 +3,8 @@ import { render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { BannedNotice } from "./BannedNotice";
-import { formatDate } from "@/src/shared/lib/format-date";
-import type { RuleCategory } from "@/src/shared/types/rules";
+import { formatDate } from "@/shared/lib/format-date";
+import type { RuleCategory } from "@/shared/types/rules";
 
 const CATEGORIES: RuleCategory[] = [
   { id: "spam_manipulation", title: "Spam & Manipulation", rules: [] },

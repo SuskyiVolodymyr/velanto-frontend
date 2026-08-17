@@ -1,13 +1,13 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { useState } from "react";
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { HomeFeed } from "./HomeFeed";
-import { packsClient } from "@/src/shared/lib/packs-client";
-import type { Pack } from "@/src/shared/types/pack";
+import { packsClient } from "@/shared/lib/packs-client";
+import type { Pack } from "@/shared/types/pack";
 
-vi.mock("@/src/shared/lib/packs-client", () => ({
+vi.mock("@/shared/lib/packs-client", () => ({
   packsClient: {
     create: vi.fn(),
     getById: vi.fn(),
@@ -38,10 +38,10 @@ vi.mock("next/navigation", () => ({
     return params;
   },
 }));
-vi.mock("@/src/shared/lib/auth-context", () => ({
+vi.mock("@/shared/lib/auth-context", () => ({
   useAuth: () => ({ user: null }),
 }));
-vi.mock("@/src/features/friends-rooms/friends-rooms-client", () => ({
+vi.mock("@/features/friends-rooms/friends-rooms-client", () => ({
   friendsRoomsClient: { create: vi.fn() },
 }));
 

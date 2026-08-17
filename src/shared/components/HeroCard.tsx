@@ -1,6 +1,6 @@
 import { useFormatter } from "next-intl";
 import { Check } from "lucide-react";
-import { Text } from "@/src/shared/components/Text";
+import { Text } from "@/shared/components/Text";
 
 export interface HeroStat {
   label: string;

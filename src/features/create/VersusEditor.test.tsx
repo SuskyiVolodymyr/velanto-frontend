@@ -1,13 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { screen, within } from "@testing-library/react";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
-import { pickFromDropdown } from "@/src/shared/test/pick-from-dropdown";
+import { pickFromDropdown } from "@/shared/test/pick-from-dropdown";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { VersusEditor } from "./VersusEditor";
 import { versusRounds } from "./create-pack.defaults";
 import type { CreatePackValues } from "./create-pack.schema";
-import type { Item, PackFormat } from "@/src/shared/types/pack";
+import type { Item, PackFormat } from "@/shared/types/pack";
 
 function items(n: number, prefix: string): Item[] {
   return Array.from({ length: n }, (_, i) => ({

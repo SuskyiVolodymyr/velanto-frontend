@@ -1,5 +1,5 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
-import { rulesClient } from "@/src/shared/lib/rules-client";
+import { rulesClient } from "@/shared/lib/rules-client";
 
 /**
  * Shared query for the community-rules document (category titles + rule text).

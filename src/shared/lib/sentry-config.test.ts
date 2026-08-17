@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { resolveSentryConfig } from "@/src/shared/lib/sentry-config";
+import { resolveSentryConfig } from "@/shared/lib/sentry-config";
 
 describe("resolveSentryConfig", () => {
   const DSN = "https://key@o1.ingest.de.sentry.io/1";

@@ -2,10 +2,10 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Cropper from "react-easy-crop";
-import { Modal } from "@/src/shared/components/Modal";
-import { Button } from "@/src/shared/components/Button";
-import { Text } from "@/src/shared/components/Text";
-import { cropImage, type CropArea } from "@/src/shared/lib/crop-image";
+import { Modal } from "@/shared/components/Modal";
+import { Button } from "@/shared/components/Button";
+import { Text } from "@/shared/components/Text";
+import { cropImage, type CropArea } from "@/shared/lib/crop-image";
 
 export interface ImageCropModalProps {
   file: File;

@@ -2,16 +2,16 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { YouTubeCard } from "@/src/shared/components/YouTubeCard";
-import { ImageCard } from "@/src/shared/components/ImageCard";
+import { Text } from "@/shared/components/Text";
+import { YouTubeCard } from "@/shared/components/YouTubeCard";
+import { ImageCard } from "@/shared/components/ImageCard";
 import {
   extractYouTubeId,
   extractYouTubeStart,
-} from "@/src/shared/lib/youtube";
-import { mediaUrl } from "@/src/shared/lib/media-url";
-import { cn } from "@/src/shared/lib/cn";
-import type { Item } from "@/src/shared/types/pack";
+} from "@/shared/lib/youtube";
+import { mediaUrl } from "@/shared/lib/media-url";
+import { cn } from "@/shared/lib/cn";
+import type { Item } from "@/shared/types/pack";
 
 interface BlindRankBoardProps {
   /** The round's drawn options, in the order they are revealed one by one. */

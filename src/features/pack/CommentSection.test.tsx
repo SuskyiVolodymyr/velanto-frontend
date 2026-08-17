@@ -1,19 +1,19 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { screen, waitFor, within } from "@testing-library/react";
-import { renderWithQueryClient as render } from "@/src/shared/test/render-with-query-client";
+import { renderWithQueryClient as render } from "@/shared/test/render-with-query-client";
 import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { CommentSection } from "./CommentSection";
-import { AuthProvider } from "@/src/shared/lib/auth-context";
-import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
-import { authClient } from "@/src/shared/lib/auth-client";
-import { commentsClient } from "@/src/shared/lib/comments-client";
-import { ApiError } from "@/src/shared/lib/api-client";
-import type { Comment } from "@/src/shared/types/comment";
-import type { User } from "@/src/shared/types/user";
+import { AuthProvider } from "@/shared/lib/auth-context";
+import { StreamerModeProvider } from "@/shared/lib/streamer-mode-context";
+import { authClient } from "@/shared/lib/auth-client";
+import { commentsClient } from "@/shared/lib/comments-client";
+import { ApiError } from "@/shared/lib/api-client";
+import type { Comment } from "@/shared/types/comment";
+import type { User } from "@/shared/types/user";
 
-vi.mock("@/src/shared/lib/auth-client", () => ({
+vi.mock("@/shared/lib/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),
@@ -23,7 +23,7 @@ vi.mock("@/src/shared/lib/auth-client", () => ({
   },
 }));
 
-vi.mock("@/src/shared/lib/comments-client", () => ({
+vi.mock("@/shared/lib/comments-client", () => ({
   commentsClient: {
     list: vi.fn(),
     create: vi.fn(),

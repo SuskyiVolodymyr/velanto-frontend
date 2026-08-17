@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Crown } from "lucide-react";
-import { Text } from "@/src/shared/components/Text";
+import { Text } from "@/shared/components/Text";
 import { MODE_ICON, MODE_NAME_KEY, MODE_STEP_KEYS } from "./room-mode-copy";
 import { ICON_BY_NAME } from "./mode-icons";
 import type { RoomMode } from "./room-types";

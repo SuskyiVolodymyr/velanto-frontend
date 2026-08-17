@@ -1,8 +1,8 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { feedbackClient } from "@/src/shared/lib/feedback-client";
-import type { Feedback, FeedbackStatus } from "@/src/shared/types/feedback";
+import { feedbackClient } from "@/shared/lib/feedback-client";
+import type { Feedback, FeedbackStatus } from "@/shared/types/feedback";
 import { feedbackQueryOptions } from "./feedback-detail.queries";
 
 /**

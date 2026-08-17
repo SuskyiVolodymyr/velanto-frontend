@@ -1,7 +1,7 @@
 import {
   usersClient,
   type FollowUserPage,
-} from "@/src/shared/lib/users-client";
+} from "@/shared/lib/users-client";
 
 export const PEOPLE_SEARCH_PAGE_SIZE = 20;
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { useAuth } from "@/src/shared/lib/auth-context";
+import { useAuth } from "@/shared/lib/auth-context";
 
 // What every vote endpoint answers with. No net score — feedback derives its
 // own for the rank badge; nothing else displays one.

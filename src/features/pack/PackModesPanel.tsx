@@ -1,15 +1,15 @@
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
-import { ICON_BY_NAME } from "@/src/features/friends-rooms/mode-icons";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
+import { ICON_BY_NAME } from "@/features/friends-rooms/mode-icons";
 import {
   MODE_NAME_KEY,
   MODE_ICON,
-} from "@/src/features/friends-rooms/room-mode-copy";
+} from "@/features/friends-rooms/room-mode-copy";
 import {
   ROOM_MODE_BOUNDS,
   type AvailableMode,
-} from "@/src/features/friends-rooms/room-types";
+} from "@/features/friends-rooms/room-types";
 
 /**
  * The pack detail page's room-mode preview, shown before any room exists —

@@ -5,7 +5,7 @@
  * what the backend currently exposes over its API, but is redeclared here
  * on purpose so the two repos can evolve independently.
  */
-import type { BanReason } from "@/src/shared/types/rules";
+import type { BanReason } from "@/shared/types/rules";
 
 export const ROLES = ["user", "moderator", "admin", "manager"] as const;
 export type Role = (typeof ROLES)[number];

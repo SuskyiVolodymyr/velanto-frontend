@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
+import { Text } from "@/shared/components/Text";
 
 /** Note shown on a result screen when picks come from a shared `?p=` link
  *  (the viewer is looking at someone else's result, not their own). */

@@ -1,13 +1,13 @@
 // src/features/admin/AdminScreen.test.tsx
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { AdminScreen } from "./AdminScreen";
-import { AuthProvider } from "@/src/shared/lib/auth-context";
-import { authClient } from "@/src/shared/lib/auth-client";
-import { adminClient } from "@/src/shared/lib/admin-client";
-import type { User } from "@/src/shared/types/user";
+import { AuthProvider } from "@/shared/lib/auth-context";
+import { authClient } from "@/shared/lib/auth-client";
+import { adminClient } from "@/shared/lib/admin-client";
+import type { User } from "@/shared/types/user";
 
 const push = vi.fn();
 const replace = vi.fn();
@@ -19,7 +19,7 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => searchParams,
 }));
 
-vi.mock("@/src/shared/lib/auth-client", () => ({
+vi.mock("@/shared/lib/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),
@@ -28,7 +28,7 @@ vi.mock("@/src/shared/lib/auth-client", () => ({
     refresh: vi.fn(),
   },
 }));
-vi.mock("@/src/shared/lib/admin-client", () => ({
+vi.mock("@/shared/lib/admin-client", () => ({
   adminClient: {
     activity: vi.fn(),
     overview: vi.fn(),

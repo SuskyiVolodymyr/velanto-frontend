@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { friendsRoomsClient } from "@/src/features/friends-rooms/friends-rooms-client";
-import type { AvailableMode } from "@/src/features/friends-rooms/room-types";
-import type { Group, PackFormat, Round } from "@/src/shared/types/pack";
+import { friendsRoomsClient } from "@/features/friends-rooms/friends-rooms-client";
+import type { AvailableMode } from "@/features/friends-rooms/room-types";
+import type { Group, PackFormat, Round } from "@/shared/types/pack";
 
 export interface PreviewModesDraft {
   format: PackFormat;

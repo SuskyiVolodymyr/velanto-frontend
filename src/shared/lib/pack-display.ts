@@ -1,4 +1,4 @@
-import type { Pack, PackFormat, PackOverview } from "@/src/shared/types/pack";
+import type { Pack, PackFormat, PackOverview } from "@/shared/types/pack";
 
 // Staff-facing English labels for the moderation/admin tables, which are not
 // localized. (Player-facing surfaces use the `formats` i18n namespace instead.)

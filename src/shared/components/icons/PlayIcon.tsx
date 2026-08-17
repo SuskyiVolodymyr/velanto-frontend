@@ -1,4 +1,4 @@
-import type { IconProps } from "@/src/shared/components/icons/icon-types";
+import type { IconProps } from "@/shared/components/icons/icon-types";
 
 /**
  * A filled play triangle — pack cards, resume rail, play buttons. Fill-only

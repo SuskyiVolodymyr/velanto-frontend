@@ -1,11 +1,11 @@
-import { apiClient } from "@/src/shared/lib/api-client";
+import { apiClient } from "@/shared/lib/api-client";
 import type {
   Report,
   ReportList,
   ReportStatus,
   ReportType,
   ReportWithReporter,
-} from "@/src/shared/types/report";
+} from "@/shared/types/report";
 
 export interface CreateReportInput {
   type: ReportType;

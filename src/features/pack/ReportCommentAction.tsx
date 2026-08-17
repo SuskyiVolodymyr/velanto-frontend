@@ -1,15 +1,15 @@
 "use client";
 
-import { SignInGate } from "@/src/shared/components/SignInGate";
+import { SignInGate } from "@/shared/components/SignInGate";
 import { useState, type ReactElement } from "react";
 import { useTranslations } from "next-intl";
-import { ReportModal } from "@/src/shared/components/ReportModal";
-import type { DropdownOption } from "@/src/shared/components/Dropdown";
-import { Tooltip } from "@/src/shared/components/Tooltip";
-import { CommentAction } from "@/src/shared/components/CommentCard";
-import type { CommentRowVariant } from "@/src/shared/components/CommentCard";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { REPORT_REASON_LABELS } from "@/src/shared/lib/report-reasons";
+import { ReportModal } from "@/shared/components/ReportModal";
+import type { DropdownOption } from "@/shared/components/Dropdown";
+import { Tooltip } from "@/shared/components/Tooltip";
+import { CommentAction } from "@/shared/components/CommentCard";
+import type { CommentRowVariant } from "@/shared/components/CommentCard";
+import { useAuth } from "@/shared/lib/auth-context";
+import { REPORT_REASON_LABELS } from "@/shared/lib/report-reasons";
 
 const USER_REPORT_REASONS = Object.keys(REPORT_REASON_LABELS.user);
 

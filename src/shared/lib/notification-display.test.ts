@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { describeNotification } from "./notification-display";
-import type { Notification } from "@/src/shared/types/notification";
+import type { Notification } from "@/shared/types/notification";
 
 function makeNotification(overrides: Partial<Notification>): Notification {
   return {

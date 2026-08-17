@@ -11,13 +11,13 @@ import {
   LayoutDashboard,
   LogOut,
 } from "lucide-react";
-import { ChevronDownIcon } from "@/src/shared/components/icons";
-import { Hidden } from "@/src/shared/components/Hidden";
-import { UserAvatar } from "@/src/shared/components/UserAvatar";
-import { Username } from "@/src/shared/components/Username";
-import { useStreamerModeOrDefault } from "@/src/shared/lib/streamer-mode-context";
-import { cn } from "@/src/shared/lib/cn";
-import type { User } from "@/src/shared/types/user";
+import { ChevronDownIcon } from "@/shared/components/icons";
+import { Hidden } from "@/shared/components/Hidden";
+import { UserAvatar } from "@/shared/components/UserAvatar";
+import { Username } from "@/shared/components/Username";
+import { useStreamerModeOrDefault } from "@/shared/lib/streamer-mode-context";
+import { cn } from "@/shared/lib/cn";
+import type { User } from "@/shared/types/user";
 
 // Shared layout for every row in the menu: a leading icon and the label, so the
 // links and the log-out button line up on the same grid.

@@ -6,35 +6,35 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { authClient } from "@/src/shared/lib/auth-client";
-import { messageFromError } from "@/src/shared/lib/messageFromError";
+import { useAuth } from "@/shared/lib/auth-context";
+import { authClient } from "@/shared/lib/auth-client";
+import { messageFromError } from "@/shared/lib/messageFromError";
 import { Lock } from "lucide-react";
-import { Button } from "@/src/shared/components/Button";
-import { Text } from "@/src/shared/components/Text";
-import { PasswordField } from "@/src/shared/components/form/PasswordField";
-import { FormBanner } from "@/src/shared/components/form/FormBanner";
-import { cn } from "@/src/shared/lib/cn";
-import { sanitizeNextPath } from "@/src/shared/lib/safe-redirect";
+import { Button } from "@/shared/components/Button";
+import { Text } from "@/shared/components/Text";
+import { PasswordField } from "@/shared/components/form/PasswordField";
+import { FormBanner } from "@/shared/components/form/FormBanner";
+import { cn } from "@/shared/lib/cn";
+import { sanitizeNextPath } from "@/shared/lib/safe-redirect";
 import {
   loginSchema,
   registerSchema,
   registerSchemaNoCode,
   type AuthFormValues,
-} from "@/src/features/auth/auth.schema";
-import { LoginFields } from "@/src/features/auth/LoginFields";
+} from "@/features/auth/auth.schema";
+import { LoginFields } from "@/features/auth/LoginFields";
 import {
   RegisterFields,
   ConfirmPasswordField,
   AcceptRulesField,
-} from "@/src/features/auth/RegisterFields";
-import { OtpStep } from "@/src/features/auth/OtpStep";
-import { OAuthButtons } from "@/src/features/auth/OAuthButtons";
-import { ForgotPasswordForm } from "@/src/features/auth/ForgotPasswordForm";
+} from "@/features/auth/RegisterFields";
+import { OtpStep } from "@/features/auth/OtpStep";
+import { OAuthButtons } from "@/features/auth/OAuthButtons";
+import { ForgotPasswordForm } from "@/features/auth/ForgotPasswordForm";
 import {
   markCodeSent,
   getResendCooldownRemaining,
-} from "@/src/features/auth/otp-cooldown";
+} from "@/features/auth/otp-cooldown";
 
 type Mode = "login" | "register";
 // Register is two steps: fill the form, then enter the emailed code.

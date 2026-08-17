@@ -7,12 +7,12 @@ import {
   type FieldErrors,
 } from "react-hook-form";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { getFieldError } from "@/src/shared/components/form/getFieldError";
-import { StepHeader } from "@/src/features/create/StepHeader";
-import { GroupEditor } from "@/src/features/create/GroupEditor";
-import { newGroup } from "@/src/features/create/create-pack.defaults";
-import { type CreatePackValues } from "@/src/features/create/create-pack.schema";
+import { Text } from "@/shared/components/Text";
+import { getFieldError } from "@/shared/components/form/getFieldError";
+import { StepHeader } from "@/features/create/StepHeader";
+import { GroupEditor } from "@/features/create/GroupEditor";
+import { newGroup } from "@/features/create/create-pack.defaults";
+import { type CreatePackValues } from "@/features/create/create-pack.schema";
 
 // A pool's validation error can attach to its name, an index-level issue, or its
 // item list. Surface the first in that priority order — matching the

@@ -1,7 +1,7 @@
 // Local re-declaration of the backend feedback API shapes. NOT imported from
 // the backend (the repos share no types package).
 
-import type { Role } from "@/src/shared/types/user";
+import type { Role } from "@/shared/types/user";
 
 export const FEEDBACK_TOPICS = [
   "bug",

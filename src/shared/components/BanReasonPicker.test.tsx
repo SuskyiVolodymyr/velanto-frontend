@@ -2,21 +2,21 @@ import { useState } from "react";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { pickFromDropdown } from "@/src/shared/test/pick-from-dropdown";
+import { pickFromDropdown } from "@/shared/test/pick-from-dropdown";
 import { NextIntlClientProvider } from "next-intl";
 import { QueryClientProvider } from "@tanstack/react-query";
 import messages from "@/messages/en.json";
-import { createTestQueryClient } from "@/src/shared/test/test-query-client";
+import { createTestQueryClient } from "@/shared/test/test-query-client";
 import {
   BanReasonPicker,
   isBanReasonValid,
   buildBanReasonPayload,
   type BanReasonState,
 } from "./BanReasonPicker";
-import { rulesClient } from "@/src/shared/lib/rules-client";
-import type { RulesDocument } from "@/src/shared/types/rules";
+import { rulesClient } from "@/shared/lib/rules-client";
+import type { RulesDocument } from "@/shared/types/rules";
 
-vi.mock("@/src/shared/lib/rules-client", () => ({
+vi.mock("@/shared/lib/rules-client", () => ({
   rulesClient: { getRules: vi.fn() },
 }));
 

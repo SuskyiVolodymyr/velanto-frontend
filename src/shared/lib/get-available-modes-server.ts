@@ -1,4 +1,4 @@
-import type { AvailableMode } from "@/src/features/friends-rooms/room-types";
+import type { AvailableMode } from "@/features/friends-rooms/room-types";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 

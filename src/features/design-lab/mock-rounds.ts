@@ -1,11 +1,11 @@
-import type { Item } from "@/src/shared/types/pack";
+import type { Item } from "@/shared/types/pack";
 import type {
   RoomMode,
   RoundResult,
   RoundSide,
   RoundState,
-} from "@/src/features/friends-rooms/room-types";
-import { ROOM_MODE_BOUNDS } from "@/src/features/friends-rooms/room-types";
+} from "@/features/friends-rooms/room-types";
+import { ROOM_MODE_BOUNDS } from "@/features/friends-rooms/room-types";
 import type { LabFormat } from "./mock-room";
 import { LAB_PLAYERS, PICK_SEED } from "./mock-room";
 

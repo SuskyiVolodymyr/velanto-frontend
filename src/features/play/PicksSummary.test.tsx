@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
-import { PicksSummary } from "@/src/features/play/PicksSummary";
-import type { Pick } from "@/src/features/play/use-play-session";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { PicksSummary } from "@/features/play/PicksSummary";
+import type { Pick } from "@/features/play/use-play-session";
 
 function makePick(overrides: Partial<Pick>): Pick {
   return {

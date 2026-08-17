@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { CircleAlert } from "lucide-react";
-import { Text } from "@/src/shared/components/Text";
+import { Text } from "@/shared/components/Text";
 
 export interface FieldErrorProps {
   /**

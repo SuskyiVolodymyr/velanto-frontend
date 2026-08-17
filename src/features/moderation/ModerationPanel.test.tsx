@@ -1,14 +1,14 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { ModerationPanel } from "./ModerationPanel";
-import { AuthProvider } from "@/src/shared/lib/auth-context";
-import { authClient } from "@/src/shared/lib/auth-client";
-import { reportsClient } from "@/src/shared/lib/reports-client";
-import { packsClient } from "@/src/shared/lib/packs-client";
-import { moderationClient } from "@/src/shared/lib/moderation-client";
-import type { User } from "@/src/shared/types/user";
+import { AuthProvider } from "@/shared/lib/auth-context";
+import { authClient } from "@/shared/lib/auth-client";
+import { reportsClient } from "@/shared/lib/reports-client";
+import { packsClient } from "@/shared/lib/packs-client";
+import { moderationClient } from "@/shared/lib/moderation-client";
+import type { User } from "@/shared/types/user";
 
 const push = vi.fn();
 const replace = vi.fn();
@@ -20,7 +20,7 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => searchParams,
 }));
 
-vi.mock("@/src/shared/lib/auth-client", () => ({
+vi.mock("@/shared/lib/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),
@@ -29,13 +29,13 @@ vi.mock("@/src/shared/lib/auth-client", () => ({
     refresh: vi.fn(),
   },
 }));
-vi.mock("@/src/shared/lib/reports-client", () => ({
+vi.mock("@/shared/lib/reports-client", () => ({
   reportsClient: { list: vi.fn(), getById: vi.fn() },
 }));
-vi.mock("@/src/shared/lib/packs-client", () => ({
+vi.mock("@/shared/lib/packs-client", () => ({
   packsClient: { moderationQueue: vi.fn(), approve: vi.fn(), reject: vi.fn() },
 }));
-vi.mock("@/src/shared/lib/moderation-client", () => ({
+vi.mock("@/shared/lib/moderation-client", () => ({
   moderationClient: { counts: vi.fn() },
 }));
 

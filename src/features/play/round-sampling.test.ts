@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { resolveRoundSelections } from "./round-sampling";
 import { mulberry32 } from "./seeded-rng";
-import type { Group, Round } from "@/src/shared/types/pack";
+import type { Group, Round } from "@/shared/types/pack";
 
 function textItem(id: string, title: string) {
   return { id, type: "text" as const, title, value: title };

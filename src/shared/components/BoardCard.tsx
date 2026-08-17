@@ -1,9 +1,9 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
-import { cn } from "@/src/shared/lib/cn";
+import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/components/Button";
+import { cn } from "@/shared/lib/cn";
 
 /**
  * The result aside's ranking card, and the one row shape inside it — the

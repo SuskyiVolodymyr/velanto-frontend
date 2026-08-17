@@ -1,6 +1,6 @@
-import { apiClient } from "@/src/shared/lib/api-client";
-import type { Comment } from "@/src/shared/types/comment";
-import type { VoteTally } from "@/src/shared/api/vote.mutations";
+import { apiClient } from "@/shared/lib/api-client";
+import type { Comment } from "@/shared/types/comment";
+import type { VoteTally } from "@/shared/api/vote.mutations";
 
 export type CommentSort = "top" | "new";
 

@@ -9,7 +9,7 @@ import {
 import {
   tokensClient,
   type CreateTokenInput,
-} from "@/src/shared/lib/tokens-client";
+} from "@/shared/lib/tokens-client";
 
 export function tokensQueryOptions() {
   return queryOptions({

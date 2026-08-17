@@ -3,14 +3,14 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useResultPicks } from "./use-result-picks";
-import { encodePicks } from "@/src/shared/lib/share-url";
-import { readLastPlayPicks } from "@/src/shared/lib/last-play-storage";
-import { playsClient } from "@/src/shared/lib/plays-client";
+import { encodePicks } from "@/shared/lib/share-url";
+import { readLastPlayPicks } from "@/shared/lib/last-play-storage";
+import { playsClient } from "@/shared/lib/plays-client";
 
 let searchParams = new URLSearchParams();
 vi.mock("next/navigation", () => ({ useSearchParams: () => searchParams }));
-vi.mock("@/src/shared/lib/last-play-storage");
-vi.mock("@/src/shared/lib/plays-client", () => ({
+vi.mock("@/shared/lib/last-play-storage");
+vi.mock("@/shared/lib/plays-client", () => ({
   playsClient: { getSharedPicks: vi.fn() },
 }));
 

@@ -2,10 +2,10 @@
 
 import { Check } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
-import { COVER_TONES } from "@/src/shared/types/pack";
-import type { CreatePackValues } from "@/src/features/create/create-pack.schema";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
+import { COVER_TONES } from "@/shared/types/pack";
+import type { CreatePackValues } from "@/features/create/create-pack.schema";
 
 export interface CreateChecklistPanelProps {
   /** The whole live form value, already watched by the caller (CreatePackForm

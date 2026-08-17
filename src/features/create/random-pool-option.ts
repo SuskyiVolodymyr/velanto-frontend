@@ -1,4 +1,4 @@
-import type { Group, Round } from "@/src/shared/types/pack";
+import type { Group, Round } from "@/shared/types/pack";
 
 /**
  * The `<Select>` value that means "don't name a pool — draw one at play time".

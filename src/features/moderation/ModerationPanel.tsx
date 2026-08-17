@@ -3,16 +3,16 @@
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
-import { PageHeader } from "@/src/shared/components/PageHeader";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { cn } from "@/src/shared/lib/cn";
-import { IdentityPillBadge } from "@/src/shared/components/IdentityPillBadge";
-import { ReportsTab } from "@/src/features/moderation/ReportsTab";
-import { PackApprovalsTab } from "@/src/features/moderation/PackApprovalsTab";
-import { useModerationCounts } from "@/src/features/moderation/api/moderation.queries";
-import { pageContainer } from "@/src/shared/lib/page-container";
+import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/components/Button";
+import { PageHeader } from "@/shared/components/PageHeader";
+import { useAuth } from "@/shared/lib/auth-context";
+import { cn } from "@/shared/lib/cn";
+import { IdentityPillBadge } from "@/shared/components/IdentityPillBadge";
+import { ReportsTab } from "@/features/moderation/ReportsTab";
+import { PackApprovalsTab } from "@/features/moderation/PackApprovalsTab";
+import { useModerationCounts } from "@/features/moderation/api/moderation.queries";
+import { pageContainer } from "@/shared/lib/page-container";
 
 const TABS = ["reports", "packs"] as const;
 type Tab = (typeof TABS)[number];

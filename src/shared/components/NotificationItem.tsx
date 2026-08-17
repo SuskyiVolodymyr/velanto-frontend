@@ -3,15 +3,15 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { describeNotification } from "@/src/shared/lib/notification-display";
-import { formatRelativeTime } from "@/src/shared/lib/relative-time";
-import { cn } from "@/src/shared/lib/cn";
+import { describeNotification } from "@/shared/lib/notification-display";
+import { formatRelativeTime } from "@/shared/lib/relative-time";
+import { cn } from "@/shared/lib/cn";
 import {
   avatarGradient,
   avatarInitial,
   notificationVisual,
-} from "@/src/shared/components/notification-visual";
-import type { Notification } from "@/src/shared/types/notification";
+} from "@/shared/components/notification-visual";
+import type { Notification } from "@/shared/types/notification";
 
 interface NotificationItemProps {
   notification: Notification;

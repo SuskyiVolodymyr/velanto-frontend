@@ -1,14 +1,14 @@
 "use client";
-import { SignInGate } from "@/src/shared/components/SignInGate";
-import { formatDateTime } from "@/src/shared/lib/format-date";
+import { SignInGate } from "@/shared/components/SignInGate";
+import { formatDateTime } from "@/shared/lib/format-date";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { LoadingState } from "@/src/shared/components/LoadingState";
-import { Username } from "@/src/shared/components/Username";
-import { UserAvatar } from "@/src/shared/components/UserAvatar";
+import { Text } from "@/shared/components/Text";
+import { LoadingState } from "@/shared/components/LoadingState";
+import { Username } from "@/shared/components/Username";
+import { UserAvatar } from "@/shared/components/UserAvatar";
 import {
   CommentComposerCard,
   CommentIdentityBadge,
@@ -17,20 +17,20 @@ import {
   COMMENT_CARD_CLASS,
   COMMENT_LIST_CLASS,
   commentAvatarSize,
-} from "@/src/shared/components/CommentCard";
-import { AuthorHoverTrigger } from "@/src/features/pack/AuthorHoverTrigger";
-import { Button } from "@/src/shared/components/Button";
-import { Hidden } from "@/src/shared/components/Hidden";
-import { Tooltip } from "@/src/shared/components/Tooltip";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { cn } from "@/src/shared/lib/cn";
-import { isStaff } from "@/src/shared/lib/user-role";
-import { messageFromError } from "@/src/shared/lib/messageFromError";
-import type { FeedbackComment } from "@/src/shared/types/feedback";
+} from "@/shared/components/CommentCard";
+import { AuthorHoverTrigger } from "@/features/pack/AuthorHoverTrigger";
+import { Button } from "@/shared/components/Button";
+import { Hidden } from "@/shared/components/Hidden";
+import { Tooltip } from "@/shared/components/Tooltip";
+import { useAuth } from "@/shared/lib/auth-context";
+import { cn } from "@/shared/lib/cn";
+import { isStaff } from "@/shared/lib/user-role";
+import { messageFromError } from "@/shared/lib/messageFromError";
+import type { FeedbackComment } from "@/shared/types/feedback";
 import {
   useFeedbackComments,
   useAddComment,
-} from "@/src/features/feedback/api/feedback-comments.queries";
+} from "@/features/feedback/api/feedback-comments.queries";
 
 export function FeedbackComments({ feedbackId }: { feedbackId: string }) {
   const t = useTranslations("feedback");

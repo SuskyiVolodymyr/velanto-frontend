@@ -4,13 +4,13 @@ import { useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Lightbulb } from "lucide-react";
-import { Text } from "@/src/shared/components/Text";
-import { buttonClassName } from "@/src/shared/components/Button";
-import { PageHeader } from "@/src/shared/components/PageHeader";
-import { formatDate } from "@/src/shared/lib/format-date";
-import { cn } from "@/src/shared/lib/cn";
+import { Text } from "@/shared/components/Text";
+import { buttonClassName } from "@/shared/components/Button";
+import { PageHeader } from "@/shared/components/PageHeader";
+import { formatDate } from "@/shared/lib/format-date";
+import { cn } from "@/shared/lib/cn";
 import type { UpdateEntry } from "./updates-data";
-import { pageContainer } from "@/src/shared/lib/page-container";
+import { pageContainer } from "@/shared/lib/page-container";
 
 /**
  * Cap on visible bullets per entry before a "Show N more" toggle takes over —

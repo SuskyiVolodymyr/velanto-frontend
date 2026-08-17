@@ -4,16 +4,16 @@ import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
-import { TextField } from "@/src/shared/components/form/TextField";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { authClient } from "@/src/shared/lib/auth-client";
-import { ApiError } from "@/src/shared/lib/api-client";
+import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/components/Button";
+import { TextField } from "@/shared/components/form/TextField";
+import { useAuth } from "@/shared/lib/auth-context";
+import { authClient } from "@/shared/lib/auth-client";
+import { ApiError } from "@/shared/lib/api-client";
 import {
   addEmailSchema,
   type AddEmailValues,
-} from "@/src/features/auth/auth.schema";
+} from "@/features/auth/auth.schema";
 
 /**
  * Attach an email to an account that has none (e.g. a Discord sign-up). Two

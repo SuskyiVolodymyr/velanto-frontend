@@ -2,7 +2,7 @@ import type { ComponentProps } from "react";
 import { describe, it, expect } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { ProfileTabs } from "./ProfileTabs";
 
 function renderTabs(props: Partial<ComponentProps<typeof ProfileTabs>> = {}) {

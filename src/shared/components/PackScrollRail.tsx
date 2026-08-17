@@ -9,8 +9,8 @@ import {
 } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
 
 // Circular arrow overlay, in the app's control style (surface fill + border
 // that strengthens on hover, accent focus ring). Vertically centered on the

@@ -1,15 +1,15 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { FeedbackComments } from "./FeedbackComments";
-import { feedbackClient } from "@/src/shared/lib/feedback-client";
-import { ApiError } from "@/src/shared/lib/api-client";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import type { FeedbackComment } from "@/src/shared/types/feedback";
+import { feedbackClient } from "@/shared/lib/feedback-client";
+import { ApiError } from "@/shared/lib/api-client";
+import { useAuth } from "@/shared/lib/auth-context";
+import type { FeedbackComment } from "@/shared/types/feedback";
 
-vi.mock("@/src/shared/lib/feedback-client");
-vi.mock("@/src/shared/lib/auth-context");
+vi.mock("@/shared/lib/feedback-client");
+vi.mock("@/shared/lib/auth-context");
 
 const mockedFeedbackClient = vi.mocked(feedbackClient);
 const mockedUseAuth = vi.mocked(useAuth);

@@ -2,9 +2,9 @@ import { Controller, useFormContext } from "react-hook-form";
 import {
   SegmentedControl,
   type SegmentedControlOption,
-} from "@/src/shared/components/SegmentedControl";
-import { FormField } from "@/src/shared/components/form/FormField";
-import { getFieldError } from "@/src/shared/components/form/getFieldError";
+} from "@/shared/components/SegmentedControl";
+import { FormField } from "@/shared/components/form/FormField";
+import { getFieldError } from "@/shared/components/form/getFieldError";
 
 export interface SegmentedFieldProps<T extends string> {
   name: string;

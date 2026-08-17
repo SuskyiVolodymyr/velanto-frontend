@@ -4,7 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { describe, it, expect } from "vitest";
 import messages from "@/messages/en.json";
 import { NotificationItem } from "./NotificationItem";
-import type { Notification } from "@/src/shared/types/notification";
+import type { Notification } from "@/shared/types/notification";
 
 function renderItem(ui: ReactElement) {
   return render(

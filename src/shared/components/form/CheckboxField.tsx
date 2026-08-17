@@ -1,8 +1,8 @@
 import type { InputHTMLAttributes, ReactNode } from "react";
 import { useFormContext } from "react-hook-form";
-import { FieldError } from "@/src/shared/components/form/FieldError";
-import { useFieldError } from "@/src/shared/components/form/useFieldError";
-import { cn } from "@/src/shared/lib/cn";
+import { FieldError } from "@/shared/components/form/FieldError";
+import { useFieldError } from "@/shared/components/form/useFieldError";
+import { cn } from "@/shared/lib/cn";
 
 export interface CheckboxFieldProps extends Omit<
   InputHTMLAttributes<HTMLInputElement>,

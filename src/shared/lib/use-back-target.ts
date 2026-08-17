@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { getPreviousPath } from "@/src/shared/lib/in-app-history";
+import { getPreviousPath } from "@/shared/lib/in-app-history";
 
 /**
  * One page a back control is willing to return to, and what to call it.

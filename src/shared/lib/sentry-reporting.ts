@@ -5,7 +5,7 @@
  * (the SDK swallows calls when there's no DSN), so callers don't need to guard.
  */
 import * as Sentry from "@sentry/nextjs";
-import type { User } from "@/src/shared/types/user";
+import type { User } from "@/shared/types/user";
 
 /** Where an API call was going, for request-failure breadcrumbs/context. */
 export interface ApiErrorContext {

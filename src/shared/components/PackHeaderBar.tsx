@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { ChevronLeft } from "lucide-react";
-import { CoverImage } from "@/src/shared/components/CoverImage";
-import { Text } from "@/src/shared/components/Text";
-import { SidebarToggle } from "@/src/shared/components/SidebarToggle";
-import { HeaderUserCluster } from "@/src/shared/components/HeaderUserCluster";
-import { STICKY_HEADER_SHELL_CLASS } from "@/src/shared/lib/sticky-header-shell";
-import type { Pack } from "@/src/shared/types/pack";
+import { CoverImage } from "@/shared/components/CoverImage";
+import { Text } from "@/shared/components/Text";
+import { SidebarToggle } from "@/shared/components/SidebarToggle";
+import { HeaderUserCluster } from "@/shared/components/HeaderUserCluster";
+import { STICKY_HEADER_SHELL_CLASS } from "@/shared/lib/sticky-header-shell";
+import type { Pack } from "@/shared/types/pack";
 
 export interface PackHeaderBarProps {
   /** Where the back button returns to, and the cover-tone thumbnail source. */

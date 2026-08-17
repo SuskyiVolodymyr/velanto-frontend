@@ -1,4 +1,4 @@
-import type { RecordedPick } from "@/src/shared/types/play-results";
+import type { RecordedPick } from "@/shared/types/play-results";
 
 /**
  * Encodes recorded picks into a URL-safe (base64url) string for the `?p=`

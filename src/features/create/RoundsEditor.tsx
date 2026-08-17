@@ -4,33 +4,33 @@ import { useState } from "react";
 import { useFormContext, useWatch, useFieldArray } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import { ChevronDown } from "lucide-react";
-import type { GroupMode, SlotMode } from "@/src/shared/types/pack";
-import { resolveRoundDraws } from "@/src/shared/lib/round-draw";
-import { Input } from "@/src/shared/components/Input";
-import { Dropdown } from "@/src/shared/components/Dropdown";
-import { SegmentedControl } from "@/src/shared/components/SegmentedControl";
+import type { GroupMode, SlotMode } from "@/shared/types/pack";
+import { resolveRoundDraws } from "@/shared/lib/round-draw";
+import { Input } from "@/shared/components/Input";
+import { Dropdown } from "@/shared/components/Dropdown";
+import { SegmentedControl } from "@/shared/components/SegmentedControl";
 import {
   RoundsBulkBar,
   RoundsAddButton,
-} from "@/src/features/create/RoundsToolbar";
-import { Button } from "@/src/shared/components/Button";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
-import { StepHeader } from "@/src/features/create/StepHeader";
-import { getFieldError } from "@/src/shared/components/form/getFieldError";
+} from "@/features/create/RoundsToolbar";
+import { Button } from "@/shared/components/Button";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
+import { StepHeader } from "@/features/create/StepHeader";
+import { getFieldError } from "@/shared/components/form/getFieldError";
 import {
   newRound,
   randomSlot,
-} from "@/src/features/create/create-pack.defaults";
+} from "@/features/create/create-pack.defaults";
 import {
   RANDOM_POOL_VALUE,
   availablePoolCount,
-} from "@/src/features/create/random-pool-option";
+} from "@/features/create/random-pool-option";
 import {
   type CreatePackValues,
   ELIMINATION_MIN_DRAW,
   ELIMINATION_MAX_DRAW,
-} from "@/src/features/create/create-pack.schema";
+} from "@/features/create/create-pack.schema";
 
 /**
  * The elimination-format body (save_one / sacrifice_one / rank_blind): an

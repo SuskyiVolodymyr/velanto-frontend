@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { FORMAT_LABELS, formatLabel, getRoundsCount } from "./pack-display";
-import { PACK_FORMATS, type Pack } from "@/src/shared/types/pack";
+import { PACK_FORMATS, type Pack } from "@/shared/types/pack";
 
 describe("formatLabel", () => {
   it("resolves every format the UI has a label for", () => {

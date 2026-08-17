@@ -1,4 +1,4 @@
-import type { Pack } from "@/src/shared/types/pack";
+import type { Pack } from "@/shared/types/pack";
 
 /**
  * Maps each format to its key in the `play` message namespace.

@@ -1,12 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { CreateFeasibilityPanel } from "./CreateFeasibilityPanel";
-import { friendsRoomsClient } from "@/src/features/friends-rooms/friends-rooms-client";
-import type { AvailableMode } from "@/src/features/friends-rooms/room-types";
+import { friendsRoomsClient } from "@/features/friends-rooms/friends-rooms-client";
+import type { AvailableMode } from "@/features/friends-rooms/room-types";
 import type { PreviewModesDraft } from "./use-preview-modes";
 
-vi.mock("@/src/features/friends-rooms/friends-rooms-client", () => ({
+vi.mock("@/features/friends-rooms/friends-rooms-client", () => ({
   friendsRoomsClient: { previewModes: vi.fn() },
 }));
 

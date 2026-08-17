@@ -1,10 +1,10 @@
-import { packsClient } from "@/src/shared/lib/packs-client";
-import type { PackStatus } from "@/src/shared/types/pack";
-import type { DateOrderValue } from "@/src/features/home/filter-options";
+import { packsClient } from "@/shared/lib/packs-client";
+import type { PackStatus } from "@/shared/types/pack";
+import type { DateOrderValue } from "@/features/home/filter-options";
 import {
   PACKS_FEED_PAGE_SIZE,
   type PacksFeedResult,
-} from "@/src/features/home/api/packs-feed";
+} from "@/features/home/api/packs-feed";
 
 /**
  * The "My packs" request shape, already resolved from the UI. Also serves as

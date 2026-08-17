@@ -3,12 +3,12 @@
 import Link from "next/link";
 import { Clock } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { Button, buttonClassName } from "@/src/shared/components/Button";
-import { EmptyState } from "@/src/shared/components/EmptyState";
-import { PlayHistoryToggle } from "@/src/shared/components/PlayHistoryToggle";
-import { cn } from "@/src/shared/lib/cn";
-import { packFormatTone } from "@/src/shared/lib/pack-format-tone";
-import { formatRelativeTimeIntl } from "@/src/shared/lib/relative-time";
+import { Button, buttonClassName } from "@/shared/components/Button";
+import { EmptyState } from "@/shared/components/EmptyState";
+import { PlayHistoryToggle } from "@/shared/components/PlayHistoryToggle";
+import { cn } from "@/shared/lib/cn";
+import { packFormatTone } from "@/shared/lib/pack-format-tone";
+import { formatRelativeTimeIntl } from "@/shared/lib/relative-time";
 import { useRecentlyPlayed } from "./api/recently-played.queries";
 
 /**

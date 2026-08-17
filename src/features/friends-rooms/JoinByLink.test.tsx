@@ -1,10 +1,10 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { JoinByLink } from "./JoinByLink";
-import { ApiError } from "@/src/shared/lib/api-client";
-import type { User } from "@/src/shared/types/user";
+import { ApiError } from "@/shared/lib/api-client";
+import type { User } from "@/shared/types/user";
 
 const replace = vi.fn();
 vi.mock("next/navigation", () => ({
@@ -22,7 +22,7 @@ vi.mock("./friends-rooms-client", () => ({
 
 let currentUser: User | null;
 let currentStatus: "loading" | "authenticated" | "unauthenticated";
-vi.mock("@/src/shared/lib/auth-context", () => ({
+vi.mock("@/shared/lib/auth-context", () => ({
   useAuth: () => ({ user: currentUser, status: currentStatus }),
 }));
 

@@ -1,13 +1,13 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
-import { BackButton } from "@/src/shared/components/BackButton";
-import { ResolvedBackButton } from "@/src/shared/components/ResolvedBackButton";
-import type { FROM } from "@/src/shared/lib/back-origins";
-import { BrandMark } from "@/src/shared/components/BrandMark";
-import { SidebarToggle } from "@/src/shared/components/SidebarToggle";
-import { HeaderUserCluster } from "@/src/shared/components/HeaderUserCluster";
-import { cn } from "@/src/shared/lib/cn";
-import { STICKY_HEADER_SHELL_CLASS } from "@/src/shared/lib/sticky-header-shell";
+import { BackButton } from "@/shared/components/BackButton";
+import { ResolvedBackButton } from "@/shared/components/ResolvedBackButton";
+import type { FROM } from "@/shared/lib/back-origins";
+import { BrandMark } from "@/shared/components/BrandMark";
+import { SidebarToggle } from "@/shared/components/SidebarToggle";
+import { HeaderUserCluster } from "@/shared/components/HeaderUserCluster";
+import { cn } from "@/shared/lib/cn";
+import { STICKY_HEADER_SHELL_CLASS } from "@/shared/lib/sticky-header-shell";
 
 export interface PageHeaderProps {
   /**

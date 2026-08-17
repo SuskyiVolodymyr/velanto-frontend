@@ -3,12 +3,12 @@
 import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
-import type { PackFormat } from "@/src/shared/types/pack";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
-import { StepHeader } from "@/src/features/create/StepHeader";
-import { FormatGlyph, FORMAT_HUE } from "@/src/features/create/FormatGlyph";
-import { type CreatePackValues } from "@/src/features/create/create-pack.schema";
+import type { PackFormat } from "@/shared/types/pack";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
+import { StepHeader } from "@/features/create/StepHeader";
+import { FormatGlyph, FORMAT_HUE } from "@/features/create/FormatGlyph";
+import { type CreatePackValues } from "@/features/create/create-pack.schema";
 
 // Each option's display name comes from the shared `formats` namespace (keyed by
 // the format value); the blurb is a create-form-only key. Every one of the five

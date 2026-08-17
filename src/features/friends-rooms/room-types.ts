@@ -1,4 +1,4 @@
-import type { Item, PackFormat } from "@/src/shared/types/pack";
+import type { Item, PackFormat } from "@/shared/types/pack";
 
 /**
  * The friends-room wire contract, hand-mirrored from velanto-backend

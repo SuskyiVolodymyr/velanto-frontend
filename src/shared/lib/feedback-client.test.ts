@@ -1,8 +1,8 @@
 import { describe, it, expect, vi } from "vitest";
-import { apiClient } from "@/src/shared/lib/api-client";
-import { feedbackClient } from "@/src/shared/lib/feedback-client";
+import { apiClient } from "@/shared/lib/api-client";
+import { feedbackClient } from "@/shared/lib/feedback-client";
 
-vi.mock("@/src/shared/lib/api-client");
+vi.mock("@/shared/lib/api-client");
 const mockedApiClient = vi.mocked(apiClient);
 
 describe("feedbackClient", () => {

@@ -3,14 +3,14 @@
 import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { MenuIcon, PlusIcon } from "@/src/shared/components/icons";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { buttonClassName } from "@/src/shared/components/Button";
-import { BrandMark } from "@/src/shared/components/BrandMark";
-import { SearchField } from "@/src/shared/components/SearchField";
-import { UserMenu } from "@/src/shared/components/UserMenu";
-import { NotificationsBell } from "@/src/shared/components/NotificationsBell";
-import { useSearchQuery } from "@/src/features/home/search-query-context";
+import { MenuIcon, PlusIcon } from "@/shared/components/icons";
+import { useAuth } from "@/shared/lib/auth-context";
+import { buttonClassName } from "@/shared/components/Button";
+import { BrandMark } from "@/shared/components/BrandMark";
+import { SearchField } from "@/shared/components/SearchField";
+import { UserMenu } from "@/shared/components/UserMenu";
+import { NotificationsBell } from "@/shared/components/NotificationsBell";
+import { useSearchQuery } from "@/features/home/search-query-context";
 
 /**
  * Global top bar: menu toggle (collapses the desktop rail / opens the mobile

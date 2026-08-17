@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Card } from "@/src/shared/components/Card";
-import { Text } from "@/src/shared/components/Text";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { AddEmailForm } from "@/src/features/settings/AddEmailForm";
-import { SettingsSectionSkeleton } from "@/src/features/settings/SettingsSectionSkeleton";
+import { Card } from "@/shared/components/Card";
+import { Text } from "@/shared/components/Text";
+import { useAuth } from "@/shared/lib/auth-context";
+import { AddEmailForm } from "@/features/settings/AddEmailForm";
+import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
 
 export function AccountSection() {
   const t = useTranslations("settings");

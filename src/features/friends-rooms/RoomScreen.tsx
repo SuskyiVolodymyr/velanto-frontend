@@ -3,10 +3,10 @@
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Loader2, WifiOff } from "lucide-react";
-import { Button } from "@/src/shared/components/Button";
-import { Text } from "@/src/shared/components/Text";
-import { pageContainer } from "@/src/shared/lib/page-container";
-import { cn } from "@/src/shared/lib/cn";
+import { Button } from "@/shared/components/Button";
+import { Text } from "@/shared/components/Text";
+import { pageContainer } from "@/shared/lib/page-container";
+import { cn } from "@/shared/lib/cn";
 import { useFriendsRoom } from "./use-friends-room";
 import { useRoomViewerId } from "./use-room-viewer-id";
 import { RoomLobby } from "./RoomLobby";
@@ -20,7 +20,7 @@ import { SpyRevealScreen } from "./SpyRevealScreen";
 import { RoomHeader } from "./RoomHeader";
 import { RoomKicked } from "./RoomKicked";
 import { useExitToPack } from "./use-exit-to-pack";
-import { usePlayFocus } from "@/src/shared/lib/play-focus-context";
+import { usePlayFocus } from "@/shared/lib/play-focus-context";
 
 /**
  * The single entry point for a friends room. Subscribes to the live room over

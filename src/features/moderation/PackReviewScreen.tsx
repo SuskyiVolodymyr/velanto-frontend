@@ -4,28 +4,28 @@ import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { packsClient } from "@/src/shared/lib/packs-client";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
-import { PageHeader } from "@/src/shared/components/PageHeader";
-import { PackContentsPreview } from "@/src/features/moderation/PackContentsPreview";
-import { PackReviewSummary } from "@/src/features/moderation/PackReviewSummary";
-import { PackReviewAuthorCard } from "@/src/features/moderation/PackReviewAuthorCard";
-import { PackRoundMapping } from "@/src/features/moderation/PackRoundMapping";
-import { PackReviewSidebar } from "@/src/features/moderation/PackReviewSidebar";
-import { PackReviewFields } from "@/src/features/moderation/PackReviewFields";
-import { usePackMarks } from "@/src/features/moderation/use-pack-marks";
-import { StatusBadge } from "@/src/shared/components/StatusBadge";
-import { formatDateTime } from "@/src/shared/lib/format-date";
-import { usePackAuthor } from "@/src/features/pack/api/pack-author.queries";
+import { useAuth } from "@/shared/lib/auth-context";
+import { packsClient } from "@/shared/lib/packs-client";
+import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/components/Button";
+import { PageHeader } from "@/shared/components/PageHeader";
+import { PackContentsPreview } from "@/features/moderation/PackContentsPreview";
+import { PackReviewSummary } from "@/features/moderation/PackReviewSummary";
+import { PackReviewAuthorCard } from "@/features/moderation/PackReviewAuthorCard";
+import { PackRoundMapping } from "@/features/moderation/PackRoundMapping";
+import { PackReviewSidebar } from "@/features/moderation/PackReviewSidebar";
+import { PackReviewFields } from "@/features/moderation/PackReviewFields";
+import { usePackMarks } from "@/features/moderation/use-pack-marks";
+import { StatusBadge } from "@/shared/components/StatusBadge";
+import { formatDateTime } from "@/shared/lib/format-date";
+import { usePackAuthor } from "@/features/pack/api/pack-author.queries";
 import {
   useApprovePack,
   useRejectPack,
   useRequestPackChanges,
-} from "@/src/features/moderation/api/moderation.queries";
-import { cn } from "@/src/shared/lib/cn";
-import { pageContainer } from "@/src/shared/lib/page-container";
+} from "@/features/moderation/api/moderation.queries";
+import { cn } from "@/shared/lib/cn";
+import { pageContainer } from "@/shared/lib/page-container";
 
 /**
  * Query key for a single pack fetched for review. Deliberately its own key

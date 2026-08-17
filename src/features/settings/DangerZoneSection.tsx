@@ -3,15 +3,15 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Card } from "@/src/shared/components/Card";
-import { Text } from "@/src/shared/components/Text";
-import { Button } from "@/src/shared/components/Button";
-import { Input } from "@/src/shared/components/Input";
-import { Modal } from "@/src/shared/components/Modal";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { authClient } from "@/src/shared/lib/auth-client";
-import { ApiError } from "@/src/shared/lib/api-client";
-import { SettingsSectionSkeleton } from "@/src/features/settings/SettingsSectionSkeleton";
+import { Card } from "@/shared/components/Card";
+import { Text } from "@/shared/components/Text";
+import { Button } from "@/shared/components/Button";
+import { Input } from "@/shared/components/Input";
+import { Modal } from "@/shared/components/Modal";
+import { useAuth } from "@/shared/lib/auth-context";
+import { authClient } from "@/shared/lib/auth-client";
+import { ApiError } from "@/shared/lib/api-client";
+import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
 
 /**
  * "Danger zone" on /settings: export ("download my data") and account deletion.

@@ -1,4 +1,4 @@
-import type { Pack } from "@/src/shared/types/pack";
+import type { Pack } from "@/shared/types/pack";
 
 /**
  * The result hero's format-aware h1 (T10): "Here's what you saved" for

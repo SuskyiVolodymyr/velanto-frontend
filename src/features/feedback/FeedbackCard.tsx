@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { MessageSquare } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { StatusBadge } from "@/src/shared/components/StatusBadge";
-import { Username } from "@/src/shared/components/Username";
-import { cn } from "@/src/shared/lib/cn";
-import { formatRelativeTimeIntl } from "@/src/shared/lib/relative-time";
-import { isStaff } from "@/src/shared/lib/user-role";
-import { feedbackTopicTone } from "@/src/features/feedback/feedback-tone";
-import type { Feedback, FeedbackTopic } from "@/src/shared/types/feedback";
+import { StatusBadge } from "@/shared/components/StatusBadge";
+import { Username } from "@/shared/components/Username";
+import { cn } from "@/shared/lib/cn";
+import { formatRelativeTimeIntl } from "@/shared/lib/relative-time";
+import { isStaff } from "@/shared/lib/user-role";
+import { feedbackTopicTone } from "@/features/feedback/feedback-tone";
+import type { Feedback, FeedbackTopic } from "@/shared/types/feedback";
 
 // Feedback topic value → key in the `feedback` i18n namespace.
 export const TOPIC_KEYS: Record<FeedbackTopic, string> = {

@@ -1,15 +1,15 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useRules } from "@/src/shared/api/rules.queries";
+import { useRules } from "@/shared/api/rules.queries";
 import {
   Dropdown,
   type DropdownOption,
-} from "@/src/shared/components/Dropdown";
-import { Textarea } from "@/src/shared/components/Textarea";
-import { Text } from "@/src/shared/components/Text";
-import type { BanReason } from "@/src/shared/types/rules";
-import type { BanUserInput } from "@/src/shared/lib/users-client";
+} from "@/shared/components/Dropdown";
+import { Textarea } from "@/shared/components/Textarea";
+import { Text } from "@/shared/components/Text";
+import type { BanReason } from "@/shared/types/rules";
+import type { BanUserInput } from "@/shared/lib/users-client";
 
 /** Max length of the free-text ban detail — mirrors the backend's cap. */
 export const REASON_DETAIL_MAX = 500;

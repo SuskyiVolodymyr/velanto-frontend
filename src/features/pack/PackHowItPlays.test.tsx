@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { PackHowItPlays } from "./PackHowItPlays";
-import type { PackFormat } from "@/src/shared/types/pack";
+import type { PackFormat } from "@/shared/types/pack";
 
 describe("PackHowItPlays", () => {
   it("renders the catalog's numbered steps for a format that has them", () => {

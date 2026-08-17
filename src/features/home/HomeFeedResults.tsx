@@ -1,13 +1,13 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { PackSummary } from "@/src/shared/types/pack";
-import { Text } from "@/src/shared/components/Text";
-import { PackCard } from "@/src/features/home/PackCard";
+import type { PackSummary } from "@/shared/types/pack";
+import { Text } from "@/shared/components/Text";
+import { PackCard } from "@/features/home/PackCard";
 import {
   PACK_GRID_CLASS,
   PackGridSkeleton,
-} from "@/src/features/home/PackGridSkeleton";
+} from "@/features/home/PackGridSkeleton";
 
 export function HomeFeedResults({
   status,

@@ -1,16 +1,16 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { RecapHeading } from "@/src/features/result/RecapHeading";
-import { RankedList } from "@/src/shared/components/RankedList";
-import { roundHeading } from "@/src/shared/lib/round-heading";
-import type { Pack } from "@/src/shared/types/pack";
+import { Text } from "@/shared/components/Text";
+import { RecapHeading } from "@/features/result/RecapHeading";
+import { RankedList } from "@/shared/components/RankedList";
+import { roundHeading } from "@/shared/lib/round-heading";
+import type { Pack } from "@/shared/types/pack";
 import type {
   RankResults,
   RankResultItem,
   RecordedPick,
-} from "@/src/shared/types/play-results";
+} from "@/shared/types/play-results";
 
 /**
  * The rank_blind result: each round you played as one card, your ranking from

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { useRoundSelections } from "./use-round-selections";
-import type { SelectedRound } from "@/src/features/play/round-sampling";
-import type { Group, Round } from "@/src/shared/types/pack";
+import type { SelectedRound } from "@/features/play/round-sampling";
+import type { Group, Round } from "@/shared/types/pack";
 
 const GROUPS: Group[] = [
   {

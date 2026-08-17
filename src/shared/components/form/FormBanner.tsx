@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { CircleAlert, Check } from "lucide-react";
-import { cn } from "@/src/shared/lib/cn";
+import { cn } from "@/shared/lib/cn";
 
 export type FormBannerTone = "danger" | "success";
 

@@ -1,9 +1,9 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { UserAvatar } from "@/src/shared/components/UserAvatar";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
+import { UserAvatar } from "@/shared/components/UserAvatar";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
 import type { RoomPlayerState } from "./room-types";
 
 interface TurnIndicatorProps {

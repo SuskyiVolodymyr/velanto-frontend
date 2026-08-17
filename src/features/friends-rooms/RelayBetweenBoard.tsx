@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { UserAvatar } from "@/src/shared/components/UserAvatar";
+import { Text } from "@/shared/components/Text";
+import { UserAvatar } from "@/shared/components/UserAvatar";
 import type { RelayRoundResult, RoomState } from "./room-types";
 import { BetweenNextButton } from "./BetweenNextButton";
 

@@ -1,6 +1,6 @@
 import { TextareaHTMLAttributes, forwardRef } from "react";
-import { useFieldIdentity } from "@/src/shared/lib/use-field-identity";
-import { cn } from "@/src/shared/lib/cn";
+import { useFieldIdentity } from "@/shared/lib/use-field-identity";
+import { cn } from "@/shared/lib/cn";
 
 export type TextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement>;
 

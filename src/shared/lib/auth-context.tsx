@@ -12,16 +12,16 @@ import type { ReactNode } from "react";
 import {
   setAccessToken,
   setSessionCallbacks,
-} from "@/src/shared/lib/api-client";
-import { setSentryUser } from "@/src/shared/lib/sentry-reporting";
-import { setSessionHint } from "@/src/shared/lib/session-hint";
+} from "@/shared/lib/api-client";
+import { setSentryUser } from "@/shared/lib/sentry-reporting";
+import { setSessionHint } from "@/shared/lib/session-hint";
 import {
   authClient,
   type LoginInput,
   type RegisterInput,
   type EmailCodeResult,
-} from "@/src/shared/lib/auth-client";
-import type { User } from "@/src/shared/types/user";
+} from "@/shared/lib/auth-client";
+import type { User } from "@/shared/types/user";
 
 type AuthStatus = "loading" | "authenticated" | "unauthenticated";
 

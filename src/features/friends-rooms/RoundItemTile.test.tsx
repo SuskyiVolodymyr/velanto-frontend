@@ -1,8 +1,8 @@
 import { describe, expect, it, vi } from "vitest";
 import { screen, within } from "@testing-library/react";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { RoundItemTile } from "./RoundItemTile";
-import type { Item } from "@/src/shared/types/pack";
+import type { Item } from "@/shared/types/pack";
 
 const YOUTUBE: Item = {
   id: "y1",

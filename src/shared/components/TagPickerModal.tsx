@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { PACK_TAGS } from "@/src/shared/types/pack";
-import type { PackTag } from "@/src/shared/types/pack";
-import { Modal } from "@/src/shared/components/Modal";
-import { Button } from "@/src/shared/components/Button";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
+import { PACK_TAGS } from "@/shared/types/pack";
+import type { PackTag } from "@/shared/types/pack";
+import { Modal } from "@/shared/components/Modal";
+import { Button } from "@/shared/components/Button";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
 
 export interface TagPickerModalProps {
   open: boolean;

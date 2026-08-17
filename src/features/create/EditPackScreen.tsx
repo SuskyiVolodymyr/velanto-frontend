@@ -1,11 +1,11 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { CreatePackForm } from "@/src/features/create/CreatePackForm";
-import { packToFormValues } from "@/src/features/create/pack-to-form-values";
-import { Text } from "@/src/shared/components/Text";
-import type { Pack } from "@/src/shared/types/pack";
+import { useAuth } from "@/shared/lib/auth-context";
+import { CreatePackForm } from "@/features/create/CreatePackForm";
+import { packToFormValues } from "@/features/create/pack-to-form-values";
+import { Text } from "@/shared/components/Text";
+import type { Pack } from "@/shared/types/pack";
 
 /**
  * Client boundary for the edit page. Editing is author-only: a signed-in user

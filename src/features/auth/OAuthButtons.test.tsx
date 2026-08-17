@@ -1,24 +1,24 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { OAuthButtons } from "./OAuthButtons";
-import { authClient } from "@/src/shared/lib/auth-client";
-import { openOAuthPopup } from "@/src/shared/lib/oauth-popup";
+import { authClient } from "@/shared/lib/auth-client";
+import { openOAuthPopup } from "@/shared/lib/oauth-popup";
 
 const push = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
 
 const revalidate = vi.fn().mockResolvedValue(null);
-vi.mock("@/src/shared/lib/auth-context", () => ({
+vi.mock("@/shared/lib/auth-context", () => ({
   useAuth: () => ({ revalidate }),
 }));
 
-vi.mock("@/src/shared/lib/auth-client", () => ({
+vi.mock("@/shared/lib/auth-client", () => ({
   authClient: { oauthProviders: vi.fn() },
 }));
 
-vi.mock("@/src/shared/lib/oauth-popup", () => ({
+vi.mock("@/shared/lib/oauth-popup", () => ({
   openOAuthPopup: vi.fn(),
 }));
 

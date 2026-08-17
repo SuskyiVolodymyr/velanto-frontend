@@ -3,10 +3,10 @@
 import { Fragment } from "react";
 import { useTranslations } from "next-intl";
 import { EyeOff, Search } from "lucide-react";
-import type { Item } from "@/src/shared/types/pack";
-import { Text } from "@/src/shared/components/Text";
-import { UserAvatar } from "@/src/shared/components/UserAvatar";
-import { cn } from "@/src/shared/lib/cn";
+import type { Item } from "@/shared/types/pack";
+import { Text } from "@/shared/components/Text";
+import { UserAvatar } from "@/shared/components/UserAvatar";
+import { cn } from "@/shared/lib/cn";
 import { RoundChrome, type RoundPlayerStatus } from "./RoundChrome";
 import { RoundItemTile } from "./RoundItemTile";
 import { RoundSideTile } from "./RoundSideTile";

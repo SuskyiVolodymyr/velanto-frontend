@@ -2,15 +2,15 @@
 
 import { useId } from "react";
 import { useTranslations } from "next-intl";
-import { Card } from "@/src/shared/components/Card";
-import { Text } from "@/src/shared/components/Text";
-import { SegmentedControl } from "@/src/shared/components/SegmentedControl";
-import { cn } from "@/src/shared/lib/cn";
-import { useAuth } from "@/src/shared/lib/auth-context";
+import { Card } from "@/shared/components/Card";
+import { Text } from "@/shared/components/Text";
+import { SegmentedControl } from "@/shared/components/SegmentedControl";
+import { cn } from "@/shared/lib/cn";
+import { useAuth } from "@/shared/lib/auth-context";
 import {
   useMyProfile,
   useSetPlayHistory,
-} from "@/src/features/settings/api/preferences.queries";
+} from "@/features/settings/api/preferences.queries";
 
 type ToggleValue = "on" | "off";
 

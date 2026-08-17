@@ -1,4 +1,4 @@
-import type { Pack, PackOverview } from "@/src/shared/types/pack";
+import type { Pack, PackOverview } from "@/shared/types/pack";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 

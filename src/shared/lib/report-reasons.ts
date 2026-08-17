@@ -1,4 +1,4 @@
-import type { ReportType } from "@/src/shared/types/report";
+import type { ReportType } from "@/shared/types/report";
 
 // Fixed taxonomy, not free text — mirrors velanto-backend's
 // src/modules/reports/types/reasons.ts exactly (short canonical ids); this

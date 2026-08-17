@@ -1,54 +1,54 @@
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { notFound } from "next/navigation";
 import { PackDetailFallback } from "./PackDetailFallback";
-import { usePackFallback } from "@/src/shared/hooks/use-pack-fallback";
-import type { Pack } from "@/src/shared/types/pack";
-import type { PackResults } from "@/src/shared/types/play-results";
+import { usePackFallback } from "@/shared/hooks/use-pack-fallback";
+import type { Pack } from "@/shared/types/pack";
+import type { PackResults } from "@/shared/types/play-results";
 
-vi.mock("@/src/shared/hooks/use-pack-fallback");
+vi.mock("@/shared/hooks/use-pack-fallback");
 vi.mock("next/navigation", () => ({ notFound: vi.fn() }));
-vi.mock("@/src/features/pack/VoteButtons", () => ({
+vi.mock("@/features/pack/VoteButtons", () => ({
   VoteButtons: () => <div>VoteButtons</div>,
 }));
-vi.mock("@/src/features/pack/CommentSection", () => ({
+vi.mock("@/features/pack/CommentSection", () => ({
   CommentSection: () => <div>CommentSection</div>,
 }));
-vi.mock("@/src/features/pack/PackCreatorCard", () => ({
+vi.mock("@/features/pack/PackCreatorCard", () => ({
   PackCreatorCard: () => <div>PackCreatorCard</div>,
 }));
-vi.mock("@/src/features/pack/PackPlayButton", () => ({
+vi.mock("@/features/pack/PackPlayButton", () => ({
   PackPlayButton: () => <div>PackPlayButton</div>,
 }));
-vi.mock("@/src/features/pack/PackBannerAuthor", () => ({
+vi.mock("@/features/pack/PackBannerAuthor", () => ({
   PackBannerAuthor: () => <div>PackBannerAuthor</div>,
 }));
-vi.mock("@/src/features/pack/PackOwnerActions", () => ({
+vi.mock("@/features/pack/PackOwnerActions", () => ({
   PackOwnerActions: () => <div>PackOwnerActions</div>,
 }));
 // Auth-context client island (see PackOwnerStatusBadge.test); stub so this
 // fallback test doesn't need an AuthProvider.
-vi.mock("@/src/features/pack/PackOwnerStatusBadge", () => ({
+vi.mock("@/features/pack/PackOwnerStatusBadge", () => ({
   PackOwnerStatusBadge: () => null,
 }));
-vi.mock("@/src/features/pack/PackRejectionReason", () => ({
+vi.mock("@/features/pack/PackRejectionReason", () => ({
   PackRejectionReason: () => null,
 }));
 // Same treatment, same reason: an author-gated island whose useAuth() throws
 // outside an AuthProvider.
-vi.mock("@/src/features/pack/PackChangesRequestedBanner", () => ({
+vi.mock("@/features/pack/PackChangesRequestedBanner", () => ({
   PackChangesRequestedBanner: () => null,
 }));
 // FriendsRoomEntry is an auth-gated client island (own tests in
 // FriendsRoomEntry.test.tsx — useAuth()/useRouter() need a real provider/
 // next/navigation mock this fallback test doesn't otherwise set up). Stub it
 // the same way PackDetailScreen.test.tsx does.
-vi.mock("@/src/features/friends-rooms/FriendsRoomEntry", () => ({
+vi.mock("@/features/friends-rooms/FriendsRoomEntry", () => ({
   FriendsRoomEntry: () => <div>FriendsRoomEntry</div>,
 }));
 // ReportPackDialog is another auth-gated client island — stub the same way.
-vi.mock("@/src/features/pack/ReportPackDialog", () => ({
+vi.mock("@/features/pack/ReportPackDialog", () => ({
   ReportPackDialog: () => <div>ReportPackDialog</div>,
 }));
 

@@ -1,12 +1,12 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Dropdown } from "@/src/shared/components/Dropdown";
+import { Dropdown } from "@/shared/components/Dropdown";
 import {
   PACK_LANGUAGES,
   PACK_LANGUAGE_NAMES,
   type PackLanguage,
-} from "@/src/shared/types/pack-language";
+} from "@/shared/types/pack-language";
 
 const ALL = "all";
 

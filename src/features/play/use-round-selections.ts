@@ -4,9 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import {
   resolveRoundSelections,
   type SelectedRound,
-} from "@/src/features/play/round-sampling";
-import { mulberry32 } from "@/src/features/play/seeded-rng";
-import type { Group, Round } from "@/src/shared/types/pack";
+} from "@/features/play/round-sampling";
+import { mulberry32 } from "@/features/play/seeded-rng";
+import type { Group, Round } from "@/shared/types/pack";
 
 /**
  * A play's drawn items, resolved once — on the CLIENT only.

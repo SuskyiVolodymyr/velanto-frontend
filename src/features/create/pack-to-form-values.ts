@@ -1,6 +1,6 @@
-import { PACK_FORMATS, type Pack } from "@/src/shared/types/pack";
-import type { CreatePackValues } from "@/src/features/create/create-pack.schema";
-import { DEFAULT_PACK_LANGUAGE } from "@/src/shared/types/pack-language";
+import { PACK_FORMATS, type Pack } from "@/shared/types/pack";
+import type { CreatePackValues } from "@/features/create/create-pack.schema";
+import { DEFAULT_PACK_LANGUAGE } from "@/shared/types/pack-language";
 
 /**
  * Project a fetched {@link Pack} onto the create-form's value shape so the same

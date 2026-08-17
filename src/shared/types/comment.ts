@@ -1,4 +1,4 @@
-import type { Role } from "@/src/shared/types/user";
+import type { Role } from "@/shared/types/user";
 
 export interface Comment {
   id: string;

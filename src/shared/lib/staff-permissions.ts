@@ -1,4 +1,4 @@
-import { ROLES, type Role } from "@/src/shared/types/user";
+import { ROLES, type Role } from "@/shared/types/user";
 
 const ROLE_RANK: Record<Role, number> = {
   user: 0,

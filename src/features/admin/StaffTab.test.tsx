@@ -1,22 +1,22 @@
 // src/features/admin/StaffTab.test.tsx
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { screen, waitFor, within } from "@testing-library/react";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
-import { pickFromDropdown } from "@/src/shared/test/pick-from-dropdown";
+import { pickFromDropdown } from "@/shared/test/pick-from-dropdown";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { StaffTab } from "./StaffTab";
-import { AuthProvider } from "@/src/shared/lib/auth-context";
-import { formatDate } from "@/src/shared/lib/format-date";
-import { StreamerModeProvider } from "@/src/shared/lib/streamer-mode-context";
-import { authClient } from "@/src/shared/lib/auth-client";
-import { adminClient } from "@/src/shared/lib/admin-client";
-import { usersClient } from "@/src/shared/lib/users-client";
-import type { User } from "@/src/shared/types/user";
-import type { AdminUserRow } from "@/src/shared/types/admin";
+import { AuthProvider } from "@/shared/lib/auth-context";
+import { formatDate } from "@/shared/lib/format-date";
+import { StreamerModeProvider } from "@/shared/lib/streamer-mode-context";
+import { authClient } from "@/shared/lib/auth-client";
+import { adminClient } from "@/shared/lib/admin-client";
+import { usersClient } from "@/shared/lib/users-client";
+import type { User } from "@/shared/types/user";
+import type { AdminUserRow } from "@/shared/types/admin";
 
-vi.mock("@/src/shared/lib/auth-client", () => ({
+vi.mock("@/shared/lib/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),
@@ -25,10 +25,10 @@ vi.mock("@/src/shared/lib/auth-client", () => ({
     refresh: vi.fn(),
   },
 }));
-vi.mock("@/src/shared/lib/admin-client", () => ({
+vi.mock("@/shared/lib/admin-client", () => ({
   adminClient: { listUsers: vi.fn(), userDetail: vi.fn() },
 }));
-vi.mock("@/src/shared/lib/users-client", () => ({
+vi.mock("@/shared/lib/users-client", () => ({
   usersClient: { changeRole: vi.fn() },
 }));
 

@@ -2,8 +2,8 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { AvatarStack } from "@/src/shared/components/AvatarStack";
-import { useAuth } from "@/src/shared/lib/auth-context";
+import { AvatarStack } from "@/shared/components/AvatarStack";
+import { useAuth } from "@/shared/lib/auth-context";
 import { useFriendsRoomsPresence } from "./friends-rooms-presence-context";
 import type { MyRoomSummary } from "./room-types";
 

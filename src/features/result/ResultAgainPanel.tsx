@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { Upload } from "lucide-react";
-import { Text } from "@/src/shared/components/Text";
-import { buttonClassName } from "@/src/shared/components/Button";
-import { ShareButton } from "@/src/features/share/ShareButton";
-import { cn } from "@/src/shared/lib/cn";
-import { readLastPlayId } from "@/src/shared/lib/last-play-storage";
-import type { Pack } from "@/src/shared/types/pack";
-import type { RecordedPick } from "@/src/shared/types/play-results";
+import { Text } from "@/shared/components/Text";
+import { buttonClassName } from "@/shared/components/Button";
+import { ShareButton } from "@/features/share/ShareButton";
+import { cn } from "@/shared/lib/cn";
+import { readLastPlayId } from "@/shared/lib/last-play-storage";
+import type { Pack } from "@/shared/types/pack";
+import type { RecordedPick } from "@/shared/types/play-results";
 
 /**
  * The result aside's Share/CTA card — the sticky bar carries no action of its

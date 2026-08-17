@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Dropdown } from "@/src/shared/components/Dropdown";
-import { cn } from "@/src/shared/lib/cn";
+import { Dropdown } from "@/shared/components/Dropdown";
+import { cn } from "@/shared/lib/cn";
 
 export type TopicId =
   "start" | "creating" | "formats" | "playing" | "stats" | "api";

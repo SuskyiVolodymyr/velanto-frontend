@@ -1,5 +1,5 @@
 import { Loader2 } from "lucide-react";
-import { cn } from "@/src/shared/lib/cn";
+import { cn } from "@/shared/lib/cn";
 
 export interface SpinnerProps {
   /** Diameter in px. Defaults to 18 (inline / button size). */

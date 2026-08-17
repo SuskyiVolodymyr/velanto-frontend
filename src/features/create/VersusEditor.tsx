@@ -4,30 +4,30 @@ import { useState } from "react";
 import { useFormContext, useWatch, useFieldArray } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import { ChevronDown } from "lucide-react";
-import { resolveRoundDraws } from "@/src/shared/lib/round-draw";
+import { resolveRoundDraws } from "@/shared/lib/round-draw";
 import {
   newVersusRound,
   randomSlot,
-} from "@/src/features/create/create-pack.defaults";
+} from "@/features/create/create-pack.defaults";
 import {
   RANDOM_POOL_VALUE,
   availablePoolCount,
-} from "@/src/features/create/random-pool-option";
-import { Input } from "@/src/shared/components/Input";
-import { Dropdown } from "@/src/shared/components/Dropdown";
+} from "@/features/create/random-pool-option";
+import { Input } from "@/shared/components/Input";
+import { Dropdown } from "@/shared/components/Dropdown";
 import {
   RoundsBulkBar,
   RoundsAddButton,
-} from "@/src/features/create/RoundsToolbar";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
-import { StepHeader } from "@/src/features/create/StepHeader";
-import { getFieldError } from "@/src/shared/components/form/getFieldError";
+} from "@/features/create/RoundsToolbar";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
+import { StepHeader } from "@/features/create/StepHeader";
+import { getFieldError } from "@/shared/components/form/getFieldError";
 import {
   type CreatePackValues,
   NXN_SIDE_COUNT_MIN,
   NXN_SIDE_COUNT_MAX,
-} from "@/src/features/create/create-pack.schema";
+} from "@/features/create/create-pack.schema";
 
 /**
  * The versus-format body (nxn / 1v1). Each round is an INDEPENDENT 2-side

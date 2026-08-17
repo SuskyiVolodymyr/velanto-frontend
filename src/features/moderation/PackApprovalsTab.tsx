@@ -5,27 +5,27 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Check } from "lucide-react";
-import { Text } from "@/src/shared/components/Text";
-import { Input } from "@/src/shared/components/Input";
-import { SearchField } from "@/src/shared/components/SearchField";
-import { Dropdown } from "@/src/shared/components/Dropdown";
-import { LoadingState } from "@/src/shared/components/LoadingState";
-import { DataTable, DataTableRow } from "@/src/shared/components/DataTable";
-import { TablePagination } from "@/src/shared/components/TablePagination";
-import { FORMAT_LABELS, formatLabel } from "@/src/shared/lib/pack-display";
-import { formatRelativeTimeIntl } from "@/src/shared/lib/relative-time";
-import { PACK_FORMATS } from "@/src/shared/types/pack";
+import { Text } from "@/shared/components/Text";
+import { Input } from "@/shared/components/Input";
+import { SearchField } from "@/shared/components/SearchField";
+import { Dropdown } from "@/shared/components/Dropdown";
+import { LoadingState } from "@/shared/components/LoadingState";
+import { DataTable, DataTableRow } from "@/shared/components/DataTable";
+import { TablePagination } from "@/shared/components/TablePagination";
+import { FORMAT_LABELS, formatLabel } from "@/shared/lib/pack-display";
+import { formatRelativeTimeIntl } from "@/shared/lib/relative-time";
+import { PACK_FORMATS } from "@/shared/types/pack";
 import {
   usePackQueue,
   useApprovePack,
   useRejectPack,
-} from "@/src/features/moderation/api/moderation.queries";
+} from "@/features/moderation/api/moderation.queries";
 import {
   EMPTY_PACK_QUEUE_FILTERS,
   MODERATION_PAGE_SIZE,
   type PackQueueFilters,
-} from "@/src/features/moderation/api/moderation";
-import type { PackFormat } from "@/src/shared/types/pack";
+} from "@/features/moderation/api/moderation";
+import type { PackFormat } from "@/shared/types/pack";
 
 const FILTER_DEBOUNCE_MS = 300;
 const COLUMNS = "1.5fr 1fr 120px 130px 200px";

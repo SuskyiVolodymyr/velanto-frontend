@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
 
 /**
  * The mock's section header, reused across the four Create Pack sections

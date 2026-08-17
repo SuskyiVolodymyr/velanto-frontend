@@ -1,8 +1,8 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { usePackFallback } from "@/src/shared/hooks/use-pack-fallback";
-import { EditPackScreen } from "@/src/features/create/EditPackScreen";
+import { usePackFallback } from "@/shared/hooks/use-pack-fallback";
+import { EditPackScreen } from "@/features/create/EditPackScreen";
 
 /**
  * Edit-page counterpart to {@link PackDetailFallback}. When the Server

@@ -1,12 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { apiClient } from "@/src/shared/lib/api-client";
+import { apiClient } from "@/shared/lib/api-client";
 import {
   packsClient,
   type ListPacksFilters,
-} from "@/src/shared/lib/packs-client";
-import type { Pack } from "@/src/shared/types/pack";
+} from "@/shared/lib/packs-client";
+import type { Pack } from "@/shared/types/pack";
 
-vi.mock("@/src/shared/lib/api-client", () => ({
+vi.mock("@/shared/lib/api-client", () => ({
   apiClient: {
     get: vi.fn(),
     post: vi.fn(),

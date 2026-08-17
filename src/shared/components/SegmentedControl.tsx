@@ -1,5 +1,5 @@
 import { KeyboardEvent, useRef } from "react";
-import { cn } from "@/src/shared/lib/cn";
+import { cn } from "@/shared/lib/cn";
 
 export interface SegmentedControlOption<T extends string> {
   value: T;

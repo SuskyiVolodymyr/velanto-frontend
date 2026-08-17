@@ -1,12 +1,12 @@
 "use client";
 
-import { SignInGate } from "@/src/shared/components/SignInGate";
+import { SignInGate } from "@/shared/components/SignInGate";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Reply, Trash2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { Skeleton } from "@/src/shared/components/Skeleton";
+import { Text } from "@/shared/components/Text";
+import { Skeleton } from "@/shared/components/Skeleton";
 import {
   CommentAction,
   CommentComposerCard,
@@ -19,30 +19,30 @@ import {
   REPLY_RAIL_CLASS,
   commentAvatarSize,
   type CommentRowVariant,
-} from "@/src/shared/components/CommentCard";
-import { Button } from "@/src/shared/components/Button";
-import { Spinner } from "@/src/shared/components/Spinner";
-import { Hidden } from "@/src/shared/components/Hidden";
-import { Username } from "@/src/shared/components/Username";
-import { UserAvatar } from "@/src/shared/components/UserAvatar";
-import { Tooltip } from "@/src/shared/components/Tooltip";
-import { VoteControl } from "@/src/shared/components/VoteControl";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { isStaff } from "@/src/shared/lib/user-role";
-import { cn } from "@/src/shared/lib/cn";
-import { formatRelativeTimeIntl } from "@/src/shared/lib/relative-time";
-import { messageFromError } from "@/src/shared/lib/messageFromError";
+} from "@/shared/components/CommentCard";
+import { Button } from "@/shared/components/Button";
+import { Spinner } from "@/shared/components/Spinner";
+import { Hidden } from "@/shared/components/Hidden";
+import { Username } from "@/shared/components/Username";
+import { UserAvatar } from "@/shared/components/UserAvatar";
+import { Tooltip } from "@/shared/components/Tooltip";
+import { VoteControl } from "@/shared/components/VoteControl";
+import { useAuth } from "@/shared/lib/auth-context";
+import { isStaff } from "@/shared/lib/user-role";
+import { cn } from "@/shared/lib/cn";
+import { formatRelativeTimeIntl } from "@/shared/lib/relative-time";
+import { messageFromError } from "@/shared/lib/messageFromError";
 import {
   commentsClient,
   type CommentSort,
-} from "@/src/shared/lib/comments-client";
-import type { Comment } from "@/src/shared/types/comment";
+} from "@/shared/lib/comments-client";
+import type { Comment } from "@/shared/types/comment";
 import {
   usePackComments,
   useAddPackComment,
   useReplyToComment,
   useDeletePackComment,
-} from "@/src/features/pack/api/pack-comments.queries";
+} from "@/features/pack/api/pack-comments.queries";
 import { AuthorHoverTrigger } from "./AuthorHoverTrigger";
 import { ReportCommentAction } from "./ReportCommentAction";
 import { renderCommentBody } from "./mention-text";

@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { ImageCropModal } from "@/src/shared/components/ImageCropModal";
-import { MAX_AVATAR_CROP } from "@/src/shared/lib/crop-image";
+import { ImageCropModal } from "@/shared/components/ImageCropModal";
+import { MAX_AVATAR_CROP } from "@/shared/lib/crop-image";
 
 /**
  * Avatar-configured {@link ImageCropModal}: a square, circular crop capped at

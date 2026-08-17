@@ -2,9 +2,9 @@ import { Controller, useFormContext } from "react-hook-form";
 import {
   Dropdown,
   type DropdownOption,
-} from "@/src/shared/components/Dropdown";
-import { FormField } from "@/src/shared/components/form/FormField";
-import { getFieldError } from "@/src/shared/components/form/getFieldError";
+} from "@/shared/components/Dropdown";
+import { FormField } from "@/shared/components/form/FormField";
+import { getFieldError } from "@/shared/components/form/getFieldError";
 
 export interface SelectFieldProps {
   name: string;

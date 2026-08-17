@@ -1,8 +1,8 @@
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { Username } from "@/src/shared/components/Username";
-import { UserAvatar } from "@/src/shared/components/UserAvatar";
-import type { Role } from "@/src/shared/types/user";
+import { Text } from "@/shared/components/Text";
+import { Username } from "@/shared/components/Username";
+import { UserAvatar } from "@/shared/components/UserAvatar";
+import type { Role } from "@/shared/types/user";
 
 /**
  * "How it looks" live preview card on `/profile/edit` (T10, plan D-decision:

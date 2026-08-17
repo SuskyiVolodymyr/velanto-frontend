@@ -7,8 +7,8 @@
 import {
   captureApiError,
   captureNetworkError,
-} from "@/src/shared/lib/sentry-reporting";
-import type { User } from "@/src/shared/types/user";
+} from "@/shared/lib/sentry-reporting";
+import type { User } from "@/shared/types/user";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 

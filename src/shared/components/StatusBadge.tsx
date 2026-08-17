@@ -1,9 +1,9 @@
 import { useTranslations } from "next-intl";
-import { cn } from "@/src/shared/lib/cn";
-import { REPORT_STATUS_BADGE_CLASS } from "@/src/shared/lib/report-display";
-import type { PackStatus } from "@/src/shared/types/pack";
-import type { FeedbackStatus } from "@/src/shared/types/feedback";
-import type { ReportStatus } from "@/src/shared/types/report";
+import { cn } from "@/shared/lib/cn";
+import { REPORT_STATUS_BADGE_CLASS } from "@/shared/lib/report-display";
+import type { PackStatus } from "@/shared/types/pack";
+import type { FeedbackStatus } from "@/shared/types/feedback";
+import type { ReportStatus } from "@/shared/types/report";
 
 // Moderation-status tones use the dedicated --status-* family (a distinct amber
 // from the game --score), so review states never read as game scoring.

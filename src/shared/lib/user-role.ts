@@ -1,4 +1,4 @@
-import type { Role } from "@/src/shared/types/user";
+import type { Role } from "@/shared/types/user";
 
 /** Elevated roles that get the animated gradient nickname + role pill. */
 const STAFF_ROLES = new Set<Role>(["admin", "manager", "moderator"]);

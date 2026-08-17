@@ -3,14 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { RoomIcon } from "@/src/shared/components/icons";
-import { Button } from "@/src/shared/components/Button";
-import { Text } from "@/src/shared/components/Text";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { ApiError } from "@/src/shared/lib/api-client";
-import { cn } from "@/src/shared/lib/cn";
-import { friendsRoomsClient } from "@/src/features/friends-rooms/friends-rooms-client";
-import { ROOMS_DORMANT } from "@/src/features/friends-rooms/room-types";
+import { RoomIcon } from "@/shared/components/icons";
+import { Button } from "@/shared/components/Button";
+import { Text } from "@/shared/components/Text";
+import { useAuth } from "@/shared/lib/auth-context";
+import { ApiError } from "@/shared/lib/api-client";
+import { cn } from "@/shared/lib/cn";
+import { friendsRoomsClient } from "@/features/friends-rooms/friends-rooms-client";
+import { ROOMS_DORMANT } from "@/features/friends-rooms/room-types";
 
 /** Which inline error to show under the code field. `null` = none. */
 type JoinErrorKey =

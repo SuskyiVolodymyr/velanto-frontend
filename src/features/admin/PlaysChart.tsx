@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import type { PlaysDayBucket } from "@/src/shared/types/admin";
+import { Text } from "@/shared/components/Text";
+import type { PlaysDayBucket } from "@/shared/types/admin";
 
 /** Weekday initial(s) for a YYYY-MM-DD day, e.g. "Mon". */
 function dayLabel(date: string): string {

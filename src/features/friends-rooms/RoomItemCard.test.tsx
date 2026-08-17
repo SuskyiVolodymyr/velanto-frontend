@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { RoomItemCard } from "./RoomItemCard";
-import type { Item } from "@/src/shared/types/pack";
+import type { Item } from "@/shared/types/pack";
 import type { RoomPlayerState } from "./room-types";
 
 function youtubeItem(): Item {

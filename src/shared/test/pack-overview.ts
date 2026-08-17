@@ -1,4 +1,4 @@
-import type { Pack, PackOverview } from "@/src/shared/types/pack";
+import type { Pack, PackOverview } from "@/shared/types/pack";
 
 /**
  * Turn a full `Pack` fixture into the `PackOverview` the pack page actually

@@ -3,11 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import { useFollowMutation } from "@/src/shared/api/follow.mutations";
-import { useRules } from "@/src/shared/api/rules.queries";
-import { Text } from "@/src/shared/components/Text";
-import { PageHeader } from "@/src/shared/components/PageHeader";
+import { useAuth } from "@/shared/lib/auth-context";
+import { useFollowMutation } from "@/shared/api/follow.mutations";
+import { useRules } from "@/shared/api/rules.queries";
+import { Text } from "@/shared/components/Text";
+import { PageHeader } from "@/shared/components/PageHeader";
 import { AuthorProfileHeader } from "./AuthorProfileHeader";
 import type { PeopleSubTab } from "./AuthorProfileHeader";
 import { ProfileTabs } from "./ProfileTabs";
@@ -23,8 +23,8 @@ import {
   authorQueryOptions,
 } from "./api/author.queries";
 import type { AuthorData } from "./api/author";
-import { cn } from "@/src/shared/lib/cn";
-import { pageContainer } from "@/src/shared/lib/page-container";
+import { cn } from "@/shared/lib/cn";
+import { pageContainer } from "@/shared/lib/page-container";
 
 export type { AuthorData };
 

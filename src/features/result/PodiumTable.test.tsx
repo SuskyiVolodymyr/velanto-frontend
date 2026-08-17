@@ -1,12 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/shared/test/render-with-intl";
 import { PodiumTable } from "./PodiumTable";
 import type {
   PodiumTally,
   RecordedPick,
-} from "@/src/shared/types/play-results";
+} from "@/shared/types/play-results";
 
 function podium(n: number): PodiumTally {
   return {

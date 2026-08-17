@@ -2,10 +2,10 @@
 
 import { Check } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/src/shared/components/Text";
-import { cn } from "@/src/shared/lib/cn";
-import { MODE_NAME_KEY } from "@/src/features/friends-rooms/room-mode-copy";
-import { ROOM_MODE_BOUNDS } from "@/src/features/friends-rooms/room-types";
+import { Text } from "@/shared/components/Text";
+import { cn } from "@/shared/lib/cn";
+import { MODE_NAME_KEY } from "@/features/friends-rooms/room-mode-copy";
+import { ROOM_MODE_BOUNDS } from "@/features/friends-rooms/room-types";
 import { usePreviewModes, type PreviewModesDraft } from "./use-preview-modes";
 
 /**
