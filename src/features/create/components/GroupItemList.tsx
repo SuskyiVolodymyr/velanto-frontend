@@ -5,10 +5,7 @@ import { useTranslations } from "next-intl";
 import type { Item } from "@/types/pack";
 import { cn } from "@/utils/cn";
 import { mediaUrl } from "@/utils/media-url";
-import {
-  extractYouTubeId,
-  youtubeThumbnailUrl,
-} from "@/utils/youtube";
+import { extractYouTubeId, youtubeThumbnailUrl } from "@/utils/youtube";
 import { EmptyState } from "@/ui/EmptyState";
 
 interface GroupItemListProps {

@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import {
-  LegalScreen,
-  type LegalSection,
-} from "@/features/legal/LegalScreen";
+import { LegalScreen, type LegalSection } from "@/features/legal/LegalScreen";
 import { LEGAL_LAST_UPDATED } from "@/features/legal/legal-meta";
 import { buildOpenGraph } from "@/utils/open-graph";
 import { SITE_URL } from "@/constants/site-url";

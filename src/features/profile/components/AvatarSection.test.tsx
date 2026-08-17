@@ -8,9 +8,10 @@ import { usersClient } from "@/api/users-client";
 import { useAuth } from "@/contexts/auth-context";
 
 vi.mock("@/api/media-client", async () => {
-  const actual = await vi.importActual<
-    typeof import("@/api/media-client")
-  >("@/api/media-client");
+  const actual =
+    await vi.importActual<typeof import("@/api/media-client")>(
+      "@/api/media-client",
+    );
   return { ...actual, uploadMedia: vi.fn() };
 });
 vi.mock("@/api/users-client", () => ({

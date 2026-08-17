@@ -1,10 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import type {
-  ChangeRequestMark,
-  ChangeRequestMarkKind,
-} from "@/types/pack";
+import type { ChangeRequestMark, ChangeRequestMarkKind } from "@/types/pack";
 
 /**
  * Identity of a mark. `id` is empty for the single-valued pack fields (title,

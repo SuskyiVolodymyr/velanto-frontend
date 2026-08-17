@@ -2,11 +2,7 @@ import { apiClient } from "@/api/api-client";
 import type { PackList } from "@/api/packs-client";
 import type { PackFormat, RecentlyPlayedPack } from "@/types/pack";
 import type { AssignableRole } from "@/utils/staff-permissions";
-import type {
-  MyProfile,
-  PublicUserProfile,
-  Role,
-} from "@/types/user";
+import type { MyProfile, PublicUserProfile, Role } from "@/types/user";
 import type { BanReason } from "@/types/rules";
 
 /** A compact user row in a followers / following list. */

@@ -2,10 +2,7 @@
 
 import { YouTubeCard } from "@/components/YouTubeCard";
 import { ImageCard } from "@/ui/ImageCard";
-import {
-  extractYouTubeId,
-  extractYouTubeStart,
-} from "@/utils/youtube";
+import { extractYouTubeId, extractYouTubeStart } from "@/utils/youtube";
 import { mediaUrl } from "@/utils/media-url";
 import type { Item } from "@/types/pack";
 

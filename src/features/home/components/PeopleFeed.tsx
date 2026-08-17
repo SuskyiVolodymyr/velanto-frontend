@@ -32,7 +32,6 @@ export function PeopleFeed() {
   const query = useDebouncedValue(input.trim(), SEARCH_DEBOUNCE_MS);
   const [page, setPage] = useState(1);
 
-
   // A new query is a fresh result set — restart at page 1.
   useEffect(() => {
     /* eslint-disable-next-line react-hooks/set-state-in-effect */

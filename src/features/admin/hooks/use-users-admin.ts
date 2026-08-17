@@ -26,7 +26,6 @@ import type { UsersPageFilters } from "@/features/admin/api/admin";
 import type { AdminUserRow } from "@/types/admin";
 import type { AdminUserSort } from "@/api/admin-client";
 
-
 /** The banned-filter's three states as a single select value. */
 export type BannedFilter = "all" | "banned" | "active";
 
@@ -64,7 +63,6 @@ export function useUsersAdmin() {
     reason: "",
     reasonDetail: "",
   });
-
 
   const filters: UsersPageFilters = useMemo(
     () => ({

@@ -7,7 +7,10 @@ import type { PackFormat } from "@/types/pack";
 import { Text } from "@/ui/Text";
 import { cn } from "@/utils/cn";
 import { StepHeader } from "@/features/create/components/StepHeader";
-import { FormatGlyph, FORMAT_HUE } from "@/features/create/components/FormatGlyph";
+import {
+  FormatGlyph,
+  FORMAT_HUE,
+} from "@/features/create/components/FormatGlyph";
 import { type CreatePackValues } from "@/features/create/create-pack.schema";
 
 // Each option's display name comes from the shared `formats` namespace (keyed by

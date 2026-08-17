@@ -10,10 +10,7 @@ import {
   OAuthProviderIcon,
   OAUTH_BRAND_CLASS,
 } from "@/components/oauth-branding";
-import {
-  openOAuthPopup,
-  type OAuthProvider,
-} from "@/utils/oauth-popup";
+import { openOAuthPopup, type OAuthProvider } from "@/utils/oauth-popup";
 import { useAuth } from "@/contexts/auth-context";
 import { cn } from "@/utils/cn";
 

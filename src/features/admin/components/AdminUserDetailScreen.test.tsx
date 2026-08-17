@@ -19,9 +19,7 @@ vi.mock("@/contexts/auth-context", () => ({ useAuth: vi.fn() }));
 // its query key on success.
 vi.mock("@/features/admin/api/admin.queries", async (importOriginal) => {
   const actual =
-    await importOriginal<
-      typeof import("@/features/admin/api/admin.queries")
-    >();
+    await importOriginal<typeof import("@/features/admin/api/admin.queries")>();
   return { ...actual, useAdminUserDetail: vi.fn() };
 });
 vi.mock("@/features/author/api/author.queries", () => ({

@@ -43,7 +43,6 @@ export function FeedbackScreen() {
   );
   const [sort, setSort] = useState<FeedbackSort>("new");
 
-
   // Top-3 sidebar, fetched once. Non-critical — a failed fetch just leaves the
   // list empty, which renders the same "No feedback yet" state.
   const top3Query = useTopFeedback();

@@ -18,10 +18,7 @@ import { Text } from "@/ui/Text";
 import { cn } from "@/utils/cn";
 import { StepHeader } from "@/features/create/components/StepHeader";
 import { getFieldError } from "@/ui/form/getFieldError";
-import {
-  newRound,
-  randomSlot,
-} from "@/features/create/create-pack.defaults";
+import { newRound, randomSlot } from "@/features/create/create-pack.defaults";
 import {
   RANDOM_POOL_VALUE,
   availablePoolCount,

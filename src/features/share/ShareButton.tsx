@@ -3,11 +3,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Share2 } from "lucide-react";
-import {
-  Button,
-  type ButtonVariant,
-  type ButtonSize,
-} from "@/ui/Button";
+import { Button, type ButtonVariant, type ButtonSize } from "@/ui/Button";
 import { Input } from "@/ui/Input";
 import { buildShareUrl } from "@/utils/share-url";
 import { useHorizontalClamp } from "@/hooks/use-horizontal-clamp";

@@ -86,7 +86,9 @@ export function StaffTable({
             {options.length > 0 ? (
               <Dropdown
                 value={row.role}
-                onChange={(role) => onChangeRole(row.id, role as AssignableRole)}
+                onChange={(role) =>
+                  onChangeRole(row.id, role as AssignableRole)
+                }
                 ariaLabel={
                   streamerMode
                     ? t("changeRoleGenericAria")

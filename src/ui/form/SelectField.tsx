@@ -1,8 +1,5 @@
 import { Controller, useFormContext } from "react-hook-form";
-import {
-  Dropdown,
-  type DropdownOption,
-} from "@/ui/Dropdown";
+import { Dropdown, type DropdownOption } from "@/ui/Dropdown";
 import { FormField } from "@/ui/form/FormField";
 import { getFieldError } from "@/ui/form/getFieldError";
 

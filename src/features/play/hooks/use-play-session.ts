@@ -3,10 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
 import { playsClient } from "@/api/plays-client";
-import {
-  writeLastPlayPicks,
-  writeLastPlayId,
-} from "@/utils/last-play-storage";
+import { writeLastPlayPicks, writeLastPlayId } from "@/utils/last-play-storage";
 import { useRoundSelections } from "@/features/play/hooks/use-round-selections";
 import { usePlayResume } from "@/features/play/hooks/use-play-resume";
 import type { Item, Pack } from "@/types/pack";

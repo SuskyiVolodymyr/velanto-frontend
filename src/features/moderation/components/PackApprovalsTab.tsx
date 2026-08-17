@@ -38,10 +38,7 @@ export function PackApprovalsTab() {
   const locale = useLocale();
   const router = useRouter();
   const [searchInput, setSearchInput] = useState("");
-  const debouncedQ = useDebouncedValue(
-    searchInput.trim(),
-    SEARCH_DEBOUNCE_MS,
-  );
+  const debouncedQ = useDebouncedValue(searchInput.trim(), SEARCH_DEBOUNCE_MS);
   const [filters, setFilters] = useState<PackQueueFilters>(
     EMPTY_PACK_QUEUE_FILTERS,
   );

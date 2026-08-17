@@ -36,10 +36,7 @@ function formatMeta(meta: unknown): string {
 export function LogsTab() {
   const t = useTranslations("admin");
   const [searchInput, setSearchInput] = useState("");
-  const debouncedQ = useDebouncedValue(
-    searchInput.trim(),
-    SEARCH_DEBOUNCE_MS,
-  );
+  const debouncedQ = useDebouncedValue(searchInput.trim(), SEARCH_DEBOUNCE_MS);
   const [filters, setFilters] = useState<AuditLogFilters>(EMPTY_AUDIT_FILTERS);
   const [page, setPage] = useState(1);
 

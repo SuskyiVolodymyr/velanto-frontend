@@ -3,10 +3,7 @@ import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/test/render-with-intl";
 import { PodiumTable } from "./PodiumTable";
-import type {
-  PodiumTally,
-  RecordedPick,
-} from "@/types/play-results";
+import type { PodiumTally, RecordedPick } from "@/types/play-results";
 
 function podium(n: number): PodiumTally {
   return {

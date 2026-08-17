@@ -8,10 +8,7 @@ import type { RankedRow } from "@/ui/RankedList";
 import { playsClient } from "@/api/plays-client";
 import { extractYouTubeId, extractYouTubeStart } from "@/utils/youtube";
 import { mediaUrl } from "@/utils/media-url";
-import {
-  writeLastPlayPicks,
-  writeLastPlayId,
-} from "@/utils/last-play-storage";
+import { writeLastPlayPicks, writeLastPlayId } from "@/utils/last-play-storage";
 import { usePlayResume } from "@/features/play/hooks/use-play-resume";
 import { useRoundSelections } from "@/features/play/hooks/use-round-selections";
 import type { RecordedPick } from "@/types/play-results";

@@ -8,9 +8,10 @@ import { uploadMedia } from "@/api/media-client";
 import type { Group } from "@/types/pack";
 
 vi.mock("@/api/media-client", async () => {
-  const actual = await vi.importActual<
-    typeof import("@/api/media-client")
-  >("@/api/media-client");
+  const actual =
+    await vi.importActual<typeof import("@/api/media-client")>(
+      "@/api/media-client",
+    );
   return { ...actual, uploadMedia: vi.fn() };
 });
 

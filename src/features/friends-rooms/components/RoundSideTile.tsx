@@ -3,10 +3,7 @@
 import { useTranslations } from "next-intl";
 import { YouTubeCard } from "@/components/YouTubeCard";
 import { ImageCard } from "@/ui/ImageCard";
-import {
-  extractYouTubeId,
-  extractYouTubeStart,
-} from "@/utils/youtube";
+import { extractYouTubeId, extractYouTubeStart } from "@/utils/youtube";
 import { mediaUrl } from "@/utils/media-url";
 import { cn } from "@/utils/cn";
 import { UserAvatar } from "@/components/UserAvatar";

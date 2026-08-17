@@ -1,10 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import {
-  PACK_LANGUAGE_NAMES,
-  type PackLanguage,
-} from "@/types/pack-language";
+import { PACK_LANGUAGE_NAMES, type PackLanguage } from "@/types/pack-language";
 import type { PackTag } from "@/types/pack";
 
 /**

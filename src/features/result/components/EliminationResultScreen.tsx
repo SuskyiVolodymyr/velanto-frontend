@@ -8,10 +8,7 @@ import { RecapHeading } from "@/features/result/components/RecapHeading";
 import { roundHeading } from "@/utils/round-heading";
 import { cn } from "@/utils/cn";
 import type { Pack } from "@/types/pack";
-import type {
-  PackResults,
-  RecordedPick,
-} from "@/types/play-results";
+import type { PackResults, RecordedPick } from "@/types/play-results";
 
 interface PlayedItem {
   itemId: string;

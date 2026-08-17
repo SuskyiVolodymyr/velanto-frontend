@@ -3,10 +3,7 @@
 import { useState, type ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Modal } from "@/ui/Modal";
-import {
-  Dropdown,
-  type DropdownOption,
-} from "@/ui/Dropdown";
+import { Dropdown, type DropdownOption } from "@/ui/Dropdown";
 import { Textarea } from "@/ui/Textarea";
 import { Text } from "@/ui/Text";
 import { Button } from "@/ui/Button";

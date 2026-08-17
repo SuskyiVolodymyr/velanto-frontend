@@ -1,9 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { apiClient } from "@/api/api-client";
-import {
-  packsClient,
-  type ListPacksFilters,
-} from "@/api/packs-client";
+import { packsClient, type ListPacksFilters } from "@/api/packs-client";
 import type { Pack } from "@/types/pack";
 
 vi.mock("@/api/api-client", () => ({

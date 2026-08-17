@@ -1,7 +1,4 @@
-import type {
-  ReportStatus,
-  ReportWithReporter,
-} from "@/types/report";
+import type { ReportStatus, ReportWithReporter } from "@/types/report";
 
 // Shared between the moderation panel's Reports tab (queue) and the report
 // detail screen so both surfaces render report status/target consistently.

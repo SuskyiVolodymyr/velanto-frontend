@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-} from "@/ui/icons";
+import { ChevronLeftIcon, ChevronRightIcon } from "@/ui/icons";
 import { useTranslations } from "next-intl";
 import { cn } from "@/utils/cn";
 import { buildPaginationRange } from "@/features/home/pagination-range";

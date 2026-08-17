@@ -2,10 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useRules } from "@/api/rules.queries";
-import {
-  Dropdown,
-  type DropdownOption,
-} from "@/ui/Dropdown";
+import { Dropdown, type DropdownOption } from "@/ui/Dropdown";
 import { Textarea } from "@/ui/Textarea";
 import { Text } from "@/ui/Text";
 import type { BanReason } from "@/types/rules";

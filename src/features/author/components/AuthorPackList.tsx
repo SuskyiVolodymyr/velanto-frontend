@@ -7,11 +7,7 @@ import { Text } from "@/ui/Text";
 import { Button } from "@/ui/Button";
 import { PackCard } from "@/features/home/components/PackCard";
 import { FilterChipRow } from "@/features/home/components/FilterChipRow";
-import {
-  PACK_STATUSES,
-  type PackSummary,
-  type PackStatus,
-} from "@/types/pack";
+import { PACK_STATUSES, type PackSummary, type PackStatus } from "@/types/pack";
 import { useAuthorPacks } from "../api/author-packs.queries";
 
 // "all" is the UI sentinel for "no status filter" (every status) — same

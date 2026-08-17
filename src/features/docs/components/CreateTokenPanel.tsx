@@ -56,7 +56,10 @@ export interface CreateTokenPanelProps {
  * Mint form: name, scopes, expiry. The `moderation` scope is offered only to
  * staff, since a non-staff token could never exercise it.
  */
-export function CreateTokenPanel({ blocked, onCreated }: CreateTokenPanelProps) {
+export function CreateTokenPanel({
+  blocked,
+  onCreated,
+}: CreateTokenPanelProps) {
   const t = useTranslations("docs");
   const tAuth = useTranslations("authGate");
   const { status, user } = useAuth();
@@ -137,7 +140,9 @@ export function CreateTokenPanel({ blocked, onCreated }: CreateTokenPanelProps) 
 
   return (
     <div className={TOKEN_PANEL_CLASS}>
-      <h2 className="text-sm font-bold text-foreground">{t("tokensHeading")}</h2>
+      <h2 className="text-sm font-bold text-foreground">
+        {t("tokensHeading")}
+      </h2>
 
       <label className="flex flex-col gap-[7px]">
         <span className={FIELD_LABEL_CLASS}>{t("tokenNameLabel")}</span>

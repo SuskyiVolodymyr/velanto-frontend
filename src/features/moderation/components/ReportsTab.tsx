@@ -7,11 +7,7 @@ import Link from "next/link";
 import { Text } from "@/ui/Text";
 import { LoadingState } from "@/ui/LoadingState";
 import { StatusBadge } from "@/components/StatusBadge";
-import {
-  DataTable,
-  DataTableRow,
-  ROW_LINK_CLASS,
-} from "@/ui/DataTable";
+import { DataTable, DataTableRow, ROW_LINK_CLASS } from "@/ui/DataTable";
 import { cn } from "@/utils/cn";
 import { TablePagination } from "@/ui/TablePagination";
 import { reportReasonLabel } from "@/constants/report-reasons";

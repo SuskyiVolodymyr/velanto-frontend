@@ -2,10 +2,7 @@
 
 import type { ReactElement } from "react";
 import { Heart, ThumbsDown } from "lucide-react";
-import {
-  useVoteMutation,
-  type VoteTally,
-} from "@/api/vote.mutations";
+import { useVoteMutation, type VoteTally } from "@/api/vote.mutations";
 import { SignInGate } from "@/components/SignInGate";
 import { cn } from "@/utils/cn";
 

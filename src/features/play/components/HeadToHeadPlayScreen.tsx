@@ -5,10 +5,7 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
 import { playsClient } from "@/api/plays-client";
-import {
-  writeLastPlayId,
-  writeLastPlayPicks,
-} from "@/utils/last-play-storage";
+import { writeLastPlayId, writeLastPlayPicks } from "@/utils/last-play-storage";
 import { useRoundSelections } from "@/features/play/hooks/use-round-selections";
 import { usePlayResume } from "@/features/play/hooks/use-play-resume";
 import { HeadToHeadRound } from "@/features/play/components/HeadToHeadRound";

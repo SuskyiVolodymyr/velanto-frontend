@@ -6,10 +6,7 @@ import { FileText } from "lucide-react";
 import type { Item, ItemType, Pack, SlotMode } from "@/types/pack";
 import { cn } from "@/utils/cn";
 import { mediaUrl } from "@/utils/media-url";
-import {
-  extractYouTubeId,
-  youtubeThumbnailUrl,
-} from "@/utils/youtube";
+import { extractYouTubeId, youtubeThumbnailUrl } from "@/utils/youtube";
 import { Text } from "@/ui/Text";
 import { SearchField } from "@/ui/SearchField";
 import { FilterChip } from "@/ui/FilterChip";

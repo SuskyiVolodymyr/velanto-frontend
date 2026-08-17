@@ -9,7 +9,11 @@ import { RoundItemTile } from "./RoundItemTile";
 import { RevealSideRow } from "./RevealSideRow";
 import { BetweenVsRow } from "./BetweenVsRow";
 import { VsDivider } from "./VsDivider";
-import type { RoomPlayerState, RoomState, VoteRoundResult } from "../room-types";
+import type {
+  RoomPlayerState,
+  RoomState,
+  VoteRoundResult,
+} from "../room-types";
 
 /**
  * Voting's between-round screen: what the room actually did.

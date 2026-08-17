@@ -38,8 +38,7 @@ vi.mock("@/utils/youtube-oembed", () => ({
 }));
 
 vi.mock("@/api/media-client", async (importOriginal) => {
-  const actual =
-    await importOriginal<typeof import("@/api/media-client")>();
+  const actual = await importOriginal<typeof import("@/api/media-client")>();
   return { ...actual, uploadMedia: vi.fn() };
 });
 

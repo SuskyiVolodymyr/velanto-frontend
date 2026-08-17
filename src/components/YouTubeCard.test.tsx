@@ -12,9 +12,7 @@ import type {
 // Only loadYouTubeIframeApi is mocked; the YT_STATE_* constants stay real so the
 // component's state-change comparison uses the true values.
 vi.mock("@/utils/youtube-iframe-api", async (importActual) => ({
-  ...(await importActual<
-    typeof import("@/utils/youtube-iframe-api")
-  >()),
+  ...(await importActual<typeof import("@/utils/youtube-iframe-api")>()),
   loadYouTubeIframeApi: vi.fn(),
 }));
 

@@ -8,10 +8,7 @@ import {
   useQueryClient,
   type InfiniteData,
 } from "@tanstack/react-query";
-import {
-  commentsClient,
-  type CommentSort,
-} from "@/api/comments-client";
+import { commentsClient, type CommentSort } from "@/api/comments-client";
 import type { Comment } from "@/types/comment";
 import { fetchPackCommentsPage } from "./pack-comments";
 import { useRefetchOnSignIn } from "@/hooks/use-refetch-on-sign-in";

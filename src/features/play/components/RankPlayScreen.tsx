@@ -54,7 +54,7 @@ export function RankPlayScreen({ pack }: { pack: Pack }) {
 
   if (status === "loading") return null;
 
-    return (
+  return (
     <>
       {/* No counter in the bar: the round header's eyebrow below is
           `play.roundOf`, and the mock only ever draws it there. */}

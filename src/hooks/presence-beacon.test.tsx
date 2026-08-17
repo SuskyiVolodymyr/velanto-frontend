@@ -1,9 +1,6 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { render, act } from "@testing-library/react";
-import {
-  BEACON_INTERVAL_MS,
-  usePresenceBeacon,
-} from "@/hooks/presence-beacon";
+import { BEACON_INTERVAL_MS, usePresenceBeacon } from "@/hooks/presence-beacon";
 import { apiClient } from "@/api/api-client";
 import { useAuth } from "@/contexts/auth-context";
 

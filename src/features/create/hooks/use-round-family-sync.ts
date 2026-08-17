@@ -1,9 +1,6 @@
 import { useEffect } from "react";
 import type { UseFormGetValues, UseFormSetValue } from "react-hook-form";
-import {
-  newRound,
-  versusRounds,
-} from "@/features/create/create-pack.defaults";
+import { newRound, versusRounds } from "@/features/create/create-pack.defaults";
 import type { CreatePackValues } from "@/features/create/create-pack.schema";
 
 // A fresh versus pack starts with ONE matchup; the per-round VersusEditor adds

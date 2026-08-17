@@ -8,10 +8,7 @@ import {
   registerModeHandlers,
 } from "@/features/friends-rooms/hooks/room-socket-handlers";
 import { io, type Socket } from "socket.io-client";
-import {
-  ensureFreshAccessToken,
-  getAccessToken,
-} from "@/api/api-client";
+import { ensureFreshAccessToken, getAccessToken } from "@/api/api-client";
 import { getGuestSession } from "../guest-session";
 import {
   ROOM_COMMANDS,
@@ -237,4 +234,3 @@ export function useFriendsRoom(roomId: string | null): FriendsRoom {
     modeRejectionSeq,
   };
 }
-

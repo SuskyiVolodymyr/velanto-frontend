@@ -57,7 +57,10 @@ export function useItemImageUpload({
    * (or `addItem`, waiting on it) can use the value without waiting for the
    * `draftValue` state to come back around through a re-render.
    */
-  async function runUpload(source: File, token: number): Promise<string | null> {
+  async function runUpload(
+    source: File,
+    token: number,
+  ): Promise<string | null> {
     try {
       const { key, url } = await uploadMedia(source, "item");
       // Discard a result the user has moved on from (type switched, or another

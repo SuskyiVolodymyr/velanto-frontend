@@ -19,7 +19,10 @@ import {
   roundResultFromResolved,
   type RoundResolvedPayload,
 } from "../round-resolved";
-import type { RoomConnection, FriendsRoom } from "@/features/friends-rooms/hooks/use-friends-room";
+import type {
+  RoomConnection,
+  FriendsRoom,
+} from "@/features/friends-rooms/hooks/use-friends-room";
 
 /**
  * Everything the socket handlers may touch. Passing it explicitly — rather
@@ -49,9 +52,7 @@ export function registerConnectionHandlers(
   socket: Socket,
   ctx: RoomHandlerContext,
 ): void {
-  const {
-    setConnection,
-  } = ctx;
+  const { setConnection } = ctx;
   socket.on("connect", () => setConnection("open"));
   socket.io.on("reconnect_attempt", () => setConnection("connecting"));
   socket.on("disconnect", (reason: string) => {
@@ -63,9 +64,7 @@ export function registerConnectionHandlers(
     // when you returned to a room that had been swept or never existed.
     // Any other reason (transport close, ping timeout) is a network blip
     // socket.io will retry — stay "connecting" and keep the last board up.
-    setConnection(
-      reason === "io server disconnect" ? "closed" : "connecting",
-    );
+    setConnection(reason === "io server disconnect" ? "closed" : "connecting");
   });
   socket.on("connect_error", () => setConnection("connecting"));
 
@@ -80,12 +79,7 @@ export function registerRoomHandlers(
   socket: Socket,
   ctx: RoomHandlerContext,
 ): void {
-  const {
-    setState,
-    setKicked,
-    setLastRejection,
-    setLastModeRejection,
-  } = ctx;
+  const { setState, setKicked, setLastRejection, setLastModeRejection } = ctx;
   socket.on(ROOM_EVENTS.state, (next: RoomState) => {
     // Wholesale replace — EXCEPT the viewer's own guess and accusation. A
     // room-wide snapshot always carries both as null (it has no single
@@ -198,7 +192,6 @@ export function registerRoomHandlers(
         : s,
     ),
   );
-
 }
 
 /** Round lifecycle: started, resolved, advanced, finished, closed. */
@@ -206,12 +199,8 @@ export function registerRoundHandlers(
   socket: Socket,
   ctx: RoomHandlerContext,
 ): void {
-  const {
-    setState,
-    setConnection,
-    setLastRejection,
-    setLastModeRejection,
-  } = ctx;
+  const { setState, setConnection, setLastRejection, setLastModeRejection } =
+    ctx;
   socket.on(
     ROOM_EVENTS.identityRevealed,
     ({
@@ -392,7 +381,6 @@ export function registerRoundHandlers(
     })),
   );
   socket.on(ROOM_EVENTS.roomClosed, () => setConnection("closed"));
-
 }
 
 /** Per-mode submissions and their rejections — claim, cut, guess-who, voting, spy, ranking, relay. */
@@ -400,11 +388,7 @@ export function registerModeHandlers(
   socket: Socket,
   ctx: RoomHandlerContext,
 ): void {
-  const {
-    setState,
-    setLastModeRejection,
-    noteModeRejection,
-  } = ctx;
+  const { setState, setLastModeRejection, noteModeRejection } = ctx;
   socket.on(
     ROOM_EVENTS.itemCut,
     ({
@@ -518,22 +502,20 @@ export function registerModeHandlers(
 
   // Only THAT somebody accused — never whom. Reuses the guessing phase's
   // own `submitted` roster, which is the same "who has acted" question.
-  socket.on(
-    ROOM_EVENTS.accusationSubmitted,
-    ({ userId }: { userId: string }) =>
-      setState((s) =>
-        s && s.guessing
-          ? {
-              ...s,
-              guessing: {
-                ...s.guessing,
-                submitted: s.guessing.submitted.includes(userId)
-                  ? s.guessing.submitted
-                  : [...s.guessing.submitted, userId],
-              },
-            }
-          : s,
-      ),
+  socket.on(ROOM_EVENTS.accusationSubmitted, ({ userId }: { userId: string }) =>
+    setState((s) =>
+      s && s.guessing
+        ? {
+            ...s,
+            guessing: {
+              ...s.guessing,
+              submitted: s.guessing.submitted.includes(userId)
+                ? s.guessing.submitted
+                : [...s.guessing.submitted, userId],
+            },
+          }
+        : s,
+    ),
   );
   socket.on(
     ROOM_EVENTS.accusationRejected,

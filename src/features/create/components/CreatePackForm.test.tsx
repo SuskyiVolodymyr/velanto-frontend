@@ -16,10 +16,7 @@ import { packsClient } from "@/api/packs-client";
 import { uploadMedia } from "@/api/media-client";
 import { ApiError } from "@/api/api-client";
 import type { Pack } from "@/types/pack";
-import {
-  PACK_LANGUAGES,
-  PACK_LANGUAGE_NAMES,
-} from "@/types/pack-language";
+import { PACK_LANGUAGES, PACK_LANGUAGE_NAMES } from "@/types/pack-language";
 import { QueryClient } from "@tanstack/react-query";
 import { NextIntlClientProvider } from "next-intl";
 import ukMessages from "@/messages/uk.json";
@@ -49,8 +46,7 @@ vi.mock("@/api/auth-client", () => ({
 }));
 
 vi.mock("@/api/media-client", async (importOriginal) => {
-  const actual =
-    await importOriginal<typeof import("@/api/media-client")>();
+  const actual = await importOriginal<typeof import("@/api/media-client")>();
   return { ...actual, uploadMedia: vi.fn() };
 });
 

@@ -32,10 +32,7 @@ import { isStaff } from "@/utils/user-role";
 import { cn } from "@/utils/cn";
 import { formatRelativeTimeIntl } from "@/utils/relative-time";
 import { messageFromError } from "@/utils/messageFromError";
-import {
-  commentsClient,
-  type CommentSort,
-} from "@/api/comments-client";
+import { commentsClient, type CommentSort } from "@/api/comments-client";
 import type { Comment } from "@/types/comment";
 import {
   usePackComments,

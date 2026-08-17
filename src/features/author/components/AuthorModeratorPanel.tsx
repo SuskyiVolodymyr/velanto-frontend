@@ -13,10 +13,7 @@ import {
 } from "@/components/BanReasonPicker";
 import { resolveBanReasonTitle } from "@/utils/ban-reason-title";
 import type { UseQueryResult } from "@tanstack/react-query";
-import type {
-  BanHistoryPage,
-  BanDuration,
-} from "@/api/users-client";
+import type { BanHistoryPage, BanDuration } from "@/api/users-client";
 import type { RuleCategory } from "@/types/rules";
 import type { AuthorModeration } from "../hooks/use-author-moderation";
 

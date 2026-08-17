@@ -11,7 +11,10 @@ export function AuthTermsNote() {
   const t = useTranslations("auth");
 
   return (
-    <Text variant="tertiary" className="text-center text-xs mt-5 leading-relaxed">
+    <Text
+      variant="tertiary"
+      className="text-center text-xs mt-5 leading-relaxed"
+    >
       {t.rich("terms", {
         terms: (chunks) => (
           <Link

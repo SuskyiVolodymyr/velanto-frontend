@@ -1,10 +1,7 @@
 import { ImageResponse } from "next/og";
 // Overview, not the full pack: this card draws a title and a cover.
 import { getPackOverviewServer } from "@/server/get-pack-server";
-import {
-  ogImageSourceFromKey,
-  OG_COVER_FIT,
-} from "@/utils/og-image-source";
+import { ogImageSourceFromKey, OG_COVER_FIT } from "@/utils/og-image-source";
 import { packOgCard } from "@/utils/og-card";
 import {
   OG_CARD_SIZE,

@@ -1,9 +1,6 @@
 import { z } from "zod";
 import { LOCALES } from "@/i18n/config";
-import {
-  FEEDBACK_TOPICS,
-  FEEDBACK_VISIBILITIES,
-} from "@/types/feedback";
+import { FEEDBACK_TOPICS, FEEDBACK_VISIBILITIES } from "@/types/feedback";
 
 // Character limits mirror the old module-level constants (and the backend
 // create-feedback.dto's title/body caps).

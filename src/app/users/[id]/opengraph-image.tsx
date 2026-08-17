@@ -1,9 +1,6 @@
 import { ImageResponse } from "next/og";
 import { getUserServer } from "@/features/author/get-user-server";
-import {
-  ogImageSourceFromKey,
-  OG_AVATAR_FIT,
-} from "@/utils/og-image-source";
+import { ogImageSourceFromKey, OG_AVATAR_FIT } from "@/utils/og-image-source";
 import { profileOgCard } from "@/utils/og-card";
 import {
   OG_CARD_SIZE,

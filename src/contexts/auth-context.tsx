@@ -9,10 +9,7 @@ import {
   useState,
 } from "react";
 import type { ReactNode } from "react";
-import {
-  setAccessToken,
-  setSessionCallbacks,
-} from "@/api/api-client";
+import { setAccessToken, setSessionCallbacks } from "@/api/api-client";
 import { setSentryUser } from "@/utils/sentry-reporting";
 import { setSessionHint } from "@/utils/session-hint";
 import {

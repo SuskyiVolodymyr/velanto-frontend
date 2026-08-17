@@ -1,10 +1,4 @@
-import type {
-  Group,
-  Item,
-  Round,
-  Slot,
-  SlotMode,
-} from "@/types/pack";
+import type { Group, Item, Round, Slot, SlotMode } from "@/types/pack";
 
 function shuffle<T>(items: readonly T[], rng: () => number): T[] {
   const result = [...items];

@@ -4,10 +4,7 @@
  * directly from components/pages.
  */
 
-import {
-  captureApiError,
-  captureNetworkError,
-} from "@/utils/sentry-reporting";
+import { captureApiError, captureNetworkError } from "@/utils/sentry-reporting";
 import type { User } from "@/types/user";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
