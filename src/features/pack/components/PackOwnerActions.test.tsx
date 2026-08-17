@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import { renderWithIntl as render } from "@/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
-import { PackOwnerActions } from "@/features/pack/PackOwnerActions";
+import { PackOwnerActions } from "@/features/pack/components/PackOwnerActions";
 import { AuthProvider } from "@/contexts/auth-context";
 import { authClient } from "@/api/auth-client";
 import { packsClient } from "@/api/packs-client";

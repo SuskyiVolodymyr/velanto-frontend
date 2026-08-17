@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import { renderWithIntl as render } from "@/test/render-with-intl";
-import { PackOwnerStatusBadge } from "@/features/pack/PackOwnerStatusBadge";
+import { PackOwnerStatusBadge } from "@/features/pack/components/PackOwnerStatusBadge";
 import { AuthProvider } from "@/contexts/auth-context";
 import { authClient } from "@/api/auth-client";
 import type { Role } from "@/types/user";

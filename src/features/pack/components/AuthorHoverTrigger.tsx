@@ -9,9 +9,9 @@ import { cn } from "@/utils/cn";
 import {
   usePackAuthor,
   packAuthorQueryOptions,
-} from "./api/pack-author.queries";
+} from "../api/pack-author.queries";
 import { AuthorHoverCard } from "./AuthorHoverCard";
-import type { PackAuthor } from "./api/pack-author";
+import type { PackAuthor } from "../api/pack-author";
 
 /** ARIA wiring for the trigger element that owns the hover card. */
 export interface AuthorTriggerProps {

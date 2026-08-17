@@ -9,35 +9,35 @@ import type { PackResults } from "@/types/play-results";
 
 vi.mock("@/hooks/use-pack-fallback");
 vi.mock("next/navigation", () => ({ notFound: vi.fn() }));
-vi.mock("@/features/pack/VoteButtons", () => ({
+vi.mock("@/features/pack/components/VoteButtons", () => ({
   VoteButtons: () => <div>VoteButtons</div>,
 }));
-vi.mock("@/features/pack/CommentSection", () => ({
+vi.mock("@/features/pack/components/CommentSection", () => ({
   CommentSection: () => <div>CommentSection</div>,
 }));
-vi.mock("@/features/pack/PackCreatorCard", () => ({
+vi.mock("@/features/pack/components/PackCreatorCard", () => ({
   PackCreatorCard: () => <div>PackCreatorCard</div>,
 }));
-vi.mock("@/features/pack/PackPlayButton", () => ({
+vi.mock("@/features/pack/components/PackPlayButton", () => ({
   PackPlayButton: () => <div>PackPlayButton</div>,
 }));
-vi.mock("@/features/pack/PackBannerAuthor", () => ({
+vi.mock("@/features/pack/components/PackBannerAuthor", () => ({
   PackBannerAuthor: () => <div>PackBannerAuthor</div>,
 }));
-vi.mock("@/features/pack/PackOwnerActions", () => ({
+vi.mock("@/features/pack/components/PackOwnerActions", () => ({
   PackOwnerActions: () => <div>PackOwnerActions</div>,
 }));
 // Auth-context client island (see PackOwnerStatusBadge.test); stub so this
 // fallback test doesn't need an AuthProvider.
-vi.mock("@/features/pack/PackOwnerStatusBadge", () => ({
+vi.mock("@/features/pack/components/PackOwnerStatusBadge", () => ({
   PackOwnerStatusBadge: () => null,
 }));
-vi.mock("@/features/pack/PackRejectionReason", () => ({
+vi.mock("@/features/pack/components/PackRejectionReason", () => ({
   PackRejectionReason: () => null,
 }));
 // Same treatment, same reason: an author-gated island whose useAuth() throws
 // outside an AuthProvider.
-vi.mock("@/features/pack/PackChangesRequestedBanner", () => ({
+vi.mock("@/features/pack/components/PackChangesRequestedBanner", () => ({
   PackChangesRequestedBanner: () => null,
 }));
 // FriendsRoomEntry is an auth-gated client island (own tests in
@@ -48,7 +48,7 @@ vi.mock("@/features/friends-rooms/FriendsRoomEntry", () => ({
   FriendsRoomEntry: () => <div>FriendsRoomEntry</div>,
 }));
 // ReportPackDialog is another auth-gated client island — stub the same way.
-vi.mock("@/features/pack/ReportPackDialog", () => ({
+vi.mock("@/features/pack/components/ReportPackDialog", () => ({
   ReportPackDialog: () => <div>ReportPackDialog</div>,
 }));
 

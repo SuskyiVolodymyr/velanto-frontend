@@ -1,7 +1,7 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import { renderWithIntl as render } from "@/test/render-with-intl";
-import { PackRejectionReason } from "@/features/pack/PackRejectionReason";
+import { PackRejectionReason } from "@/features/pack/components/PackRejectionReason";
 import { AuthProvider } from "@/contexts/auth-context";
 import { authClient } from "@/api/auth-client";
 import type { Role } from "@/types/user";

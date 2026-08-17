@@ -45,7 +45,7 @@ import {
 } from "@/features/pack/api/pack-comments.queries";
 import { AuthorHoverTrigger } from "./AuthorHoverTrigger";
 import { ReportCommentAction } from "./ReportCommentAction";
-import { renderCommentBody } from "./mention-text";
+import { renderCommentBody } from "../mention-text";
 
 /** A single comment's identity + body + row actions, shared by roots and
  *  replies. The Reply affordance renders only when `onReply` is supplied. */

@@ -18,7 +18,7 @@ import {
   COMMENT_LIST_CLASS,
   commentAvatarSize,
 } from "@/components/CommentCard";
-import { AuthorHoverTrigger } from "@/features/pack/AuthorHoverTrigger";
+import { AuthorHoverTrigger } from "@/features/pack/components/AuthorHoverTrigger";
 import { Button } from "@/ui/Button";
 import { Hidden } from "@/components/Hidden";
 import { Tooltip } from "@/ui/Tooltip";

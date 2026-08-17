@@ -7,31 +7,31 @@ import type { PackResults } from "@/types/play-results";
 import type { AvailableMode } from "@/features/friends-rooms/room-types";
 import { toOverview } from "@/test/pack-overview";
 
-vi.mock("@/features/pack/VoteButtons", () => ({
+vi.mock("@/features/pack/components/VoteButtons", () => ({
   VoteButtons: () => <div>VoteButtons</div>,
 }));
-vi.mock("@/features/pack/CommentSection", () => ({
+vi.mock("@/features/pack/components/CommentSection", () => ({
   CommentSection: () => <div>CommentSection</div>,
 }));
-vi.mock("@/features/pack/PackCreatorCard", () => ({
+vi.mock("@/features/pack/components/PackCreatorCard", () => ({
   PackCreatorCard: () => <div>PackCreatorCard</div>,
 }));
 // PackPlayButton is a client island with its own auth gating + tests; here we
 // stand in a plain link so the screen's layout assertions stay focused.
-vi.mock("@/features/pack/PackPlayButton", () => ({
+vi.mock("@/features/pack/components/PackPlayButton", () => ({
   PackPlayButton: ({ packId }: { packId: string }) => (
     <a href={`/packs/${packId}/play`}>Play now</a>
   ),
 }));
 // The banner's author line is an auth-gated client island (own tests); stub it
 // so PackCoverBanner (which renders the asserted title) stays real.
-vi.mock("@/features/pack/PackBannerAuthor", () => ({
+vi.mock("@/features/pack/components/PackBannerAuthor", () => ({
   PackBannerAuthor: () => <div>PackBannerAuthor</div>,
 }));
 // Auth-gated owner/moderator actions (Edit/Delete) — own tests in
 // PackOwnerActions.test. Stub so it's not pulling in the auth context here, and
 // echo its props so we can assert the screen wires it to this pack.
-vi.mock("@/features/pack/PackOwnerActions", () => ({
+vi.mock("@/features/pack/components/PackOwnerActions", () => ({
   PackOwnerActions: ({
     packId,
     packAuthorId,
@@ -43,15 +43,15 @@ vi.mock("@/features/pack/PackOwnerActions", () => ({
 
 // Also an auth-context client island (see PackOwnerStatusBadge.test); stub it so
 // this screen test doesn't need an AuthProvider.
-vi.mock("@/features/pack/PackOwnerStatusBadge", () => ({
+vi.mock("@/features/pack/components/PackOwnerStatusBadge", () => ({
   PackOwnerStatusBadge: () => null,
 }));
-vi.mock("@/features/pack/PackRejectionReason", () => ({
+vi.mock("@/features/pack/components/PackRejectionReason", () => ({
   PackRejectionReason: () => null,
 }));
 // Same treatment, same reason: an author-gated island whose useAuth() throws
 // outside an AuthProvider. Its own gating is covered in its own test.
-vi.mock("@/features/pack/PackChangesRequestedBanner", () => ({
+vi.mock("@/features/pack/components/PackChangesRequestedBanner", () => ({
   PackChangesRequestedBanner: () => null,
 }));
 // FriendsRoomEntry is an auth-gated client island (own tests in
@@ -65,7 +65,7 @@ vi.mock("@/features/friends-rooms/FriendsRoomEntry", () => ({
 }));
 // ReportPackDialog is another auth-gated client island (own tests in
 // ReportPackDialog.test.tsx). Stub it the same way.
-vi.mock("@/features/pack/ReportPackDialog", () => ({
+vi.mock("@/features/pack/components/ReportPackDialog", () => ({
   ReportPackDialog: ({ packId }: { packId: string }) => (
     <button type="button">{`Report (${packId})`}</button>
   ),
