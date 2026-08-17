@@ -26,19 +26,19 @@ import { join } from "node:path";
  */
 const SURFACES = [
   // Solo play
-  "src/features/play/CandidateCard.tsx",
-  "src/features/play/RankPlayScreen.tsx",
+  "src/features/play/components/CandidateCard.tsx",
+  "src/features/play/components/RankPlayScreen.tsx",
   // Room boards
-  "src/features/friends-rooms/BlindRankBoard.tsx",
-  "src/features/friends-rooms/RelayInsertBoard.tsx",
-  "src/features/friends-rooms/TurnBasedCutBoard.tsx",
-  "src/features/friends-rooms/VotingBoard.tsx",
-  "src/features/friends-rooms/SpyBoard.tsx",
-  "src/features/friends-rooms/SpyRedactedTile.tsx",
+  "src/features/friends-rooms/components/BlindRankBoard.tsx",
+  "src/features/friends-rooms/components/RelayInsertBoard.tsx",
+  "src/features/friends-rooms/components/TurnBasedCutBoard.tsx",
+  "src/features/friends-rooms/components/VotingBoard.tsx",
+  "src/features/friends-rooms/components/SpyBoard.tsx",
+  "src/features/friends-rooms/components/SpyRedactedTile.tsx",
   // Results and history
-  "src/features/friends-rooms/RevealRankingTable.tsx",
-  "src/features/result/NxNResultScreen.tsx",
-  "src/features/pack/PackTopItemsList.tsx",
+  "src/features/friends-rooms/components/RevealRankingTable.tsx",
+  "src/features/result/components/NxNResultScreen.tsx",
+  "src/features/pack/components/PackTopItemsList.tsx",
   "src/ui/RankedList.tsx",
   // Carries ITEM titles in the Top picked boards, not just player names.
   "src/ui/BoardCard.tsx",
@@ -60,7 +60,7 @@ describe("item titles are never clamped", () => {
   // text item, so the title strip is the whole content.
   it("gives the elimination card's title a floor, not a fixed height", () => {
     const source = readFileSync(
-      join(process.cwd(), "src/features/play/CandidateCard.tsx"),
+      join(process.cwd(), "src/features/play/components/CandidateCard.tsx"),
       "utf8",
     );
     expect(source).toContain("min-h-[2.6em]");
