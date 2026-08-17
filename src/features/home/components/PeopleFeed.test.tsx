@@ -12,7 +12,7 @@ vi.mock("@/api/users-client", () => ({
 
 // Isolate PeopleFeed from the card's own dependencies (auth, follow mutation,
 // streamer-mode) — a marker that echoes the username is enough here.
-vi.mock("@/features/home/PersonCard", () => ({
+vi.mock("@/features/home/components/PersonCard", () => ({
   PersonCard: ({ user }: { user: FollowUser }) => <div>{user.username}</div>,
 }));
 

@@ -1,9 +1,9 @@
 "use client";
 
-import { useHomeFeed } from "@/features/home/use-home-feed";
-import { HomeFeedResults } from "@/features/home/HomeFeedResults";
-import { BrowseFilterBar } from "@/features/home/BrowseFilterBar";
-import { HomePagination } from "@/features/home/HomePagination";
+import { useHomeFeed } from "@/features/home/hooks/use-home-feed";
+import { HomeFeedResults } from "@/features/home/components/HomeFeedResults";
+import { BrowseFilterBar } from "@/features/home/components/BrowseFilterBar";
+import { HomePagination } from "@/features/home/components/HomePagination";
 import { PACKS_FEED_PAGE_SIZE } from "@/features/home/api/packs-feed";
 import type { PacksFeedResult } from "@/features/home/api/packs-feed";
 

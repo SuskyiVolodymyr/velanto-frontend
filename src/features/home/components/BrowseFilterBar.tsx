@@ -6,11 +6,11 @@ import { SlidersIcon, ChevronDownIcon } from "@/ui/icons";
 import { Popover } from "@/ui/Popover";
 import type { PackTag } from "@/types/pack";
 import type { PackLanguage } from "@/types/pack-language";
-import { FormatFilter } from "@/features/home/FormatFilter";
-import { SortFilter } from "@/features/home/SortFilter";
+import { FormatFilter } from "@/features/home/components/FormatFilter";
+import { SortFilter } from "@/features/home/components/SortFilter";
 import { TagPickerModal } from "@/components/TagPickerModal";
-import { LanguageFilter } from "@/features/home/LanguageFilter";
-import { ActiveFilterChips } from "@/features/home/ActiveFilterChips";
+import { LanguageFilter } from "@/features/home/components/LanguageFilter";
+import { ActiveFilterChips } from "@/features/home/components/ActiveFilterChips";
 import {
   SORT_LABEL_KEYS,
   WINDOW_LABEL_KEYS,

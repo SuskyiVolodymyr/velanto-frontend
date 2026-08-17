@@ -18,7 +18,7 @@ vi.mock("next-intl/server", () => ({
 // The gate under test lives in DashboardHero itself; JoinRoomCard has its own
 // full test suite (including its own copy of this same ROOMS_DORMANT gate),
 // so it's stubbed here to keep this test focused on the hero's own behavior.
-vi.mock("@/features/home/JoinRoomCard", () => ({
+vi.mock("@/features/home/components/JoinRoomCard", () => ({
   JoinRoomCard: () => <div data-testid="join-room-card-stub" />,
 }));
 

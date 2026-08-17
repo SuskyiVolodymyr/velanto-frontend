@@ -3,7 +3,7 @@ import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/test/render-with-intl";
 import { PackCard } from "./PackCard";
-import { HOT_PLAYS_THRESHOLD } from "./hot-pack";
+import { HOT_PLAYS_THRESHOLD } from "../hot-pack";
 import type { PackSummary } from "@/types/pack";
 
 const { push } = vi.hoisted(() => ({ push: vi.fn() }));

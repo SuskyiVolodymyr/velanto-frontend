@@ -1,8 +1,8 @@
 import { Suspense } from "react";
 import type { Metadata } from "next";
-import { HomeFeed } from "@/features/home/HomeFeed";
-import { DashboardHero } from "@/features/home/DashboardHero";
-import { ContinuePlayingRail } from "@/features/home/ContinuePlayingRail";
+import { HomeFeed } from "@/features/home/components/HomeFeed";
+import { DashboardHero } from "@/features/home/components/DashboardHero";
+import { ContinuePlayingRail } from "@/features/home/components/ContinuePlayingRail";
 import { getHomeFeedServer } from "@/features/home/get-home-feed-server";
 import { cn } from "@/utils/cn";
 import { PAGE_CONTAINER_FULL } from "@/constants/page-container";

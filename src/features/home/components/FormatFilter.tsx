@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { FilterChipRow } from "@/features/home/FilterChipRow";
+import { FilterChipRow } from "@/features/home/components/FilterChipRow";
 import {
   FORMAT_FILTER_VALUES,
   type FormatFilterValue,

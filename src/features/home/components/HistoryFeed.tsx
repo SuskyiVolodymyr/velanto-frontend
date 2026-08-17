@@ -3,15 +3,15 @@
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/contexts/auth-context";
-import { FilterChipRow } from "@/features/home/FilterChipRow";
-import { FormatFilter } from "@/features/home/FormatFilter";
-import { HomePagination } from "@/features/home/HomePagination";
-import { InProgressSection } from "@/features/home/InProgressSection";
-import { PackCard } from "@/features/home/PackCard";
+import { FilterChipRow } from "@/features/home/components/FilterChipRow";
+import { FormatFilter } from "@/features/home/components/FormatFilter";
+import { HomePagination } from "@/features/home/components/HomePagination";
+import { InProgressSection } from "@/features/home/components/InProgressSection";
+import { PackCard } from "@/features/home/components/PackCard";
 import {
   PACK_GRID_CLASS,
   PackGridSkeleton,
-} from "@/features/home/PackGridSkeleton";
+} from "@/features/home/components/PackGridSkeleton";
 import { Text } from "@/ui/Text";
 import { useHistory } from "@/features/home/api/history.queries";
 import type { HistorySort } from "@/features/home/api/history";

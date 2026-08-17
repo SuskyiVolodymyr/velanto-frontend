@@ -1,5 +1,5 @@
 import { getTranslations } from "next-intl/server";
-import { JoinRoomCard } from "@/features/home/JoinRoomCard";
+import { JoinRoomCard } from "@/features/home/components/JoinRoomCard";
 import { Text } from "@/ui/Text";
 import { ROOMS_DORMANT } from "@/features/friends-rooms/room-types";
 

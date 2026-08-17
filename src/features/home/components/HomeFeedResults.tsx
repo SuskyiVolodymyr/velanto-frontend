@@ -3,11 +3,11 @@
 import { useTranslations } from "next-intl";
 import type { PackSummary } from "@/types/pack";
 import { Text } from "@/ui/Text";
-import { PackCard } from "@/features/home/PackCard";
+import { PackCard } from "@/features/home/components/PackCard";
 import {
   PACK_GRID_CLASS,
   PackGridSkeleton,
-} from "@/features/home/PackGridSkeleton";
+} from "@/features/home/components/PackGridSkeleton";
 
 export function HomeFeedResults({
   status,

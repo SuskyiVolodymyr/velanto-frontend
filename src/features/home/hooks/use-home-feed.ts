@@ -22,7 +22,7 @@ import {
   readPackFilters,
   writePackFilters,
 } from "@/features/home/pack-filters-storage";
-import { pageFromParam } from "@/features/home/use-page-param";
+import { pageFromParam } from "@/features/home/hooks/use-page-param";
 import {
   hasFilterParams,
   readFiltersFromParams,

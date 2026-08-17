@@ -4,7 +4,7 @@ import { Text } from "@/ui/Text";
 import { PageHeader } from "@/ui/PageHeader";
 import { cn } from "@/utils/cn";
 import { PAGE_CONTAINER_FULL } from "@/constants/page-container";
-import { PeopleFeed } from "@/features/home/PeopleFeed";
+import { PeopleFeed } from "@/features/home/components/PeopleFeed";
 import { buildOpenGraph } from "@/utils/open-graph";
 import { SITE_URL } from "@/constants/site-url";
 

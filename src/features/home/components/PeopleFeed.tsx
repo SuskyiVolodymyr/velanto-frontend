@@ -5,8 +5,8 @@ import { useTranslations } from "next-intl";
 import { Input } from "@/ui/Input";
 import { Text } from "@/ui/Text";
 import { Skeleton } from "@/ui/Skeleton";
-import { PersonCard } from "@/features/home/PersonCard";
-import { HomePagination } from "@/features/home/HomePagination";
+import { PersonCard } from "@/features/home/components/PersonCard";
+import { HomePagination } from "@/features/home/components/HomePagination";
 import { useUserSearch } from "@/features/home/api/user-search.queries";
 import { PEOPLE_SEARCH_PAGE_SIZE } from "@/features/home/api/user-search";
 

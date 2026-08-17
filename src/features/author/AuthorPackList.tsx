@@ -5,8 +5,8 @@ import { useTranslations } from "next-intl";
 import { cn } from "@/utils/cn";
 import { Text } from "@/ui/Text";
 import { Button } from "@/ui/Button";
-import { PackCard } from "@/features/home/PackCard";
-import { FilterChipRow } from "@/features/home/FilterChipRow";
+import { PackCard } from "@/features/home/components/PackCard";
+import { FilterChipRow } from "@/features/home/components/FilterChipRow";
 import {
   PACK_STATUSES,
   type PackSummary,

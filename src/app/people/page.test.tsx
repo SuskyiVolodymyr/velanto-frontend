@@ -14,7 +14,7 @@ vi.mock("@/contexts/auth-context", () => ({
 
 // PeopleFeed is a client island with its own tests (search + follow). Stub it so
 // this test only asserts the route mounts it and frames it with a heading.
-vi.mock("@/features/home/PeopleFeed", () => ({
+vi.mock("@/features/home/components/PeopleFeed", () => ({
   PeopleFeed: () => <div>PeopleFeed island</div>,
 }));
 

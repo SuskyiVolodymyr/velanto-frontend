@@ -14,7 +14,7 @@ vi.mock("@/contexts/auth-context", () => ({
 
 // MyPacksFeed is an auth-gated client island with its own tests. Stub it so this
 // test only asserts the route mounts it and frames it with a heading.
-vi.mock("@/features/home/MyPacksFeed", () => ({
+vi.mock("@/features/home/components/MyPacksFeed", () => ({
   MyPacksFeed: () => <div>MyPacksFeed island</div>,
 }));
 

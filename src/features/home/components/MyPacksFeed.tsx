@@ -3,13 +3,13 @@
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/contexts/auth-context";
-import { FilterChipRow } from "@/features/home/FilterChipRow";
-import { HomePagination } from "@/features/home/HomePagination";
-import { PackCard } from "@/features/home/PackCard";
+import { FilterChipRow } from "@/features/home/components/FilterChipRow";
+import { HomePagination } from "@/features/home/components/HomePagination";
+import { PackCard } from "@/features/home/components/PackCard";
 import {
   PACK_GRID_CLASS,
   PackGridSkeleton,
-} from "@/features/home/PackGridSkeleton";
+} from "@/features/home/components/PackGridSkeleton";
 import { Text } from "@/ui/Text";
 import { useMyPacks } from "@/features/home/api/my-packs.queries";
 import { PACKS_FEED_PAGE_SIZE } from "@/features/home/api/packs-feed";
@@ -19,7 +19,7 @@ import {
   DEFAULT_DATE_ORDER,
   type DateOrderValue,
 } from "@/features/home/filter-options";
-import { usePageParam } from "@/features/home/use-page-param";
+import { usePageParam } from "@/features/home/hooks/use-page-param";
 import type { PackStatus } from "@/types/pack";
 
 // "all" is the UI sentinel for "no status filter" (every status).

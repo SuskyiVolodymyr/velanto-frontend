@@ -8,7 +8,7 @@ import { PlusIcon } from "@/ui/icons";
 import { PageHeader } from "@/ui/PageHeader";
 import { cn } from "@/utils/cn";
 import { PAGE_CONTAINER_FULL } from "@/constants/page-container";
-import { MyPacksFeed } from "@/features/home/MyPacksFeed";
+import { MyPacksFeed } from "@/features/home/components/MyPacksFeed";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("myPacks");

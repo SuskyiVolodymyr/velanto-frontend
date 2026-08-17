@@ -4,7 +4,7 @@ import { Text } from "@/ui/Text";
 import { PageHeader } from "@/ui/PageHeader";
 import { cn } from "@/utils/cn";
 import { PAGE_CONTAINER_FULL } from "@/constants/page-container";
-import { HistoryFeed } from "@/features/home/HistoryFeed";
+import { HistoryFeed } from "@/features/home/components/HistoryFeed";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("history");

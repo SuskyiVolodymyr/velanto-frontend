@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Text } from "@/ui/Text";
-import { FilterChipRow } from "@/features/home/FilterChipRow";
+import { FilterChipRow } from "@/features/home/components/FilterChipRow";
 import {
   DATE_ORDER_LABEL_KEYS,
   DATE_ORDER_VALUES,
