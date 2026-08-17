@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getPackServer } from "@/server/get-pack-server";
-import { EditPackScreen } from "@/features/create/EditPackScreen";
-import { EditPackFallback } from "@/features/create/EditPackFallback";
+import { EditPackScreen } from "@/features/create/components/EditPackScreen";
+import { EditPackFallback } from "@/features/create/components/EditPackFallback";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("pages");

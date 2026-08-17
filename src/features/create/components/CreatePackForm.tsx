@@ -24,17 +24,17 @@ import { pageContainer } from "@/constants/page-container";
 import { cn } from "@/utils/cn";
 import { Button } from "@/ui/Button";
 import { Text } from "@/ui/Text";
-import { PackMetaFields } from "@/features/create/PackMetaFields";
-import { FormatSection } from "@/features/create/FormatSection";
-import { PoolsSection } from "@/features/create/PoolsSection";
+import { PackMetaFields } from "@/features/create/components/PackMetaFields";
+import { FormatSection } from "@/features/create/components/FormatSection";
+import { PoolsSection } from "@/features/create/components/PoolsSection";
 import {
   PendingImageDraftsProvider,
   type PendingImageDrafts,
 } from "@/features/create/pending-image-drafts";
-import { RoundsEditor } from "@/features/create/RoundsEditor";
-import { VersusEditor } from "@/features/create/VersusEditor";
-import { CreateChecklistPanel } from "@/features/create/CreateChecklistPanel";
-import { CreateFeasibilityPanel } from "@/features/create/CreateFeasibilityPanel";
+import { RoundsEditor } from "@/features/create/components/RoundsEditor";
+import { VersusEditor } from "@/features/create/components/VersusEditor";
+import { CreateChecklistPanel } from "@/features/create/components/CreateChecklistPanel";
+import { CreateFeasibilityPanel } from "@/features/create/components/CreateFeasibilityPanel";
 import { summarizePack } from "@/features/create/create-pack.summary";
 import {
   newGroup,

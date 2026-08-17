@@ -7,7 +7,7 @@ import { uploadMedia, MEDIA_MAX_BYTES } from "@/api/media-client";
 import { mediaUrl } from "@/utils/media-url";
 import { Text } from "@/ui/Text";
 import { cn } from "@/utils/cn";
-import { CoverCropModal } from "@/features/create/CoverCropModal";
+import { CoverCropModal } from "@/features/create/components/CoverCropModal";
 import type { CreatePackValues } from "@/features/create/create-pack.schema";
 
 /**

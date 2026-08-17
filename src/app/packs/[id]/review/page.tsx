@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { PackReviewOutcomeScreen } from "@/features/create/PackReviewOutcomeScreen";
+import { PackReviewOutcomeScreen } from "@/features/create/components/PackReviewOutcomeScreen";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("reviewOutcome");

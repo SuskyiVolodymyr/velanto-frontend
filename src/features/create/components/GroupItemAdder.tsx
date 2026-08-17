@@ -8,7 +8,7 @@ import { Input } from "@/ui/Input";
 import { Text } from "@/ui/Text";
 import { SegmentedControl } from "@/ui/SegmentedControl";
 import { cn } from "@/utils/cn";
-import { ItemImageCropModal } from "@/features/create/ItemImageCropModal";
+import { ItemImageCropModal } from "@/features/create/components/ItemImageCropModal";
 
 const fieldCaptionClassName =
   "text-[11.5px] font-semibold text-foreground-tertiary";

@@ -2,7 +2,7 @@
 
 import { notFound } from "next/navigation";
 import { usePackFallback } from "@/hooks/use-pack-fallback";
-import { EditPackScreen } from "@/features/create/EditPackScreen";
+import { EditPackScreen } from "@/features/create/components/EditPackScreen";
 
 /**
  * Edit-page counterpart to {@link PackDetailFallback}. When the Server

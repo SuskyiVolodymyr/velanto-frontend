@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { pickFromDropdown } from "@/test/pick-from-dropdown";
 import { FormProvider, useForm, useWatch } from "react-hook-form";
 import { RoundsEditor } from "./RoundsEditor";
-import type { CreatePackValues } from "./create-pack.schema";
+import type { CreatePackValues } from "../create-pack.schema";
 import type { Item } from "@/types/pack";
 
 function items(n: number, prefix: string): Item[] {

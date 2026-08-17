@@ -6,9 +6,9 @@ import { ChevronDown } from "lucide-react";
 import type { Group, Item } from "@/types/pack";
 import { Text } from "@/ui/Text";
 import { cn } from "@/utils/cn";
-import { useGroupItemDraft } from "@/features/create/use-group-item-draft";
-import { GroupItemList } from "@/features/create/GroupItemList";
-import { GroupItemAdder } from "@/features/create/GroupItemAdder";
+import { useGroupItemDraft } from "@/features/create/hooks/use-group-item-draft";
+import { GroupItemList } from "@/features/create/components/GroupItemList";
+import { GroupItemAdder } from "@/features/create/components/GroupItemAdder";
 import { usePendingImageDrafts } from "@/features/create/pending-image-drafts";
 
 // Mock (Create Pack.dc.html): each pool's identity color, cycled by its

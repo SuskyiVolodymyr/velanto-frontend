@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { screen } from "@testing-library/react";
 import { renderWithIntl as render } from "@/test/render-with-intl";
 import { CreateChecklistPanel } from "./CreateChecklistPanel";
-import type { CreatePackValues } from "./create-pack.schema";
+import type { CreatePackValues } from "../create-pack.schema";
 
 // One empty pool, title/description blank, no cover — every row false except
 // "Format chosen" (which is always true once a format is selected, and one

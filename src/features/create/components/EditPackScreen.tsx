@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useAuth } from "@/contexts/auth-context";
-import { CreatePackForm } from "@/features/create/CreatePackForm";
+import { CreatePackForm } from "@/features/create/components/CreatePackForm";
 import { packToFormValues } from "@/features/create/pack-to-form-values";
 import { Text } from "@/ui/Text";
 import type { Pack } from "@/types/pack";

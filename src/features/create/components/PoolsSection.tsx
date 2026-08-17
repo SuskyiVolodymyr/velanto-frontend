@@ -9,8 +9,8 @@ import {
 import { useTranslations } from "next-intl";
 import { Text } from "@/ui/Text";
 import { getFieldError } from "@/ui/form/getFieldError";
-import { StepHeader } from "@/features/create/StepHeader";
-import { GroupEditor } from "@/features/create/GroupEditor";
+import { StepHeader } from "@/features/create/components/StepHeader";
+import { GroupEditor } from "@/features/create/components/GroupEditor";
 import { newGroup } from "@/features/create/create-pack.defaults";
 import { type CreatePackValues } from "@/features/create/create-pack.schema";
 

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { CreatePackForm } from "@/features/create/CreatePackForm";
+import { CreatePackForm } from "@/features/create/components/CreatePackForm";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("pages");

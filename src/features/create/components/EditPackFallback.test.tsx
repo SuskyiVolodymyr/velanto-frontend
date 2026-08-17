@@ -2,14 +2,14 @@ import { screen } from "@testing-library/react";
 import { render } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { notFound } from "next/navigation";
-import { EditPackFallback } from "@/features/create/EditPackFallback";
+import { EditPackFallback } from "@/features/create/components/EditPackFallback";
 import { usePackFallback } from "@/hooks/use-pack-fallback";
 import type { Pack } from "@/types/pack";
 
 vi.mock("@/hooks/use-pack-fallback");
 vi.mock("next/navigation", () => ({ notFound: vi.fn() }));
 // Stub the seeded form — its own behavior is covered in EditPackScreen.test.
-vi.mock("@/features/create/EditPackScreen", () => ({
+vi.mock("@/features/create/components/EditPackScreen", () => ({
   EditPackScreen: ({ pack }: { pack: Pack }) => <div>{`edit:${pack.id}`}</div>,
 }));
 

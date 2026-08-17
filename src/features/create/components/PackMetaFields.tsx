@@ -13,9 +13,9 @@ import { TagPickerModal } from "@/components/TagPickerModal";
 import { TextField } from "@/ui/form/TextField";
 import { TextareaField } from "@/ui/form/TextareaField";
 import { SelectField } from "@/ui/form/SelectField";
-import { CoverImageField } from "@/features/create/CoverImageField";
+import { CoverImageField } from "@/features/create/components/CoverImageField";
 import { SwatchPicker } from "@/ui/SwatchPicker";
-import { StepHeader } from "@/features/create/StepHeader";
+import { StepHeader } from "@/features/create/components/StepHeader";
 import {
   type CreatePackValues,
   MAX_TAGS,

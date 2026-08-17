@@ -3,7 +3,7 @@ import { screen } from "@testing-library/react";
 import { renderWithIntl as render } from "@/test/render-with-intl";
 import { FormProvider, useForm } from "react-hook-form";
 import { PackMetaFields } from "./PackMetaFields";
-import type { CreatePackValues } from "./create-pack.schema";
+import type { CreatePackValues } from "../create-pack.schema";
 import type { PackTag } from "@/types/pack";
 
 function baseValues(tags: PackTag[] = []): CreatePackValues {
