@@ -3,7 +3,7 @@ import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/test/render-with-intl";
 import { RecentlyPlayedSection } from "./RecentlyPlayedSection";
-import { useRecentlyPlayed } from "./api/recently-played.queries";
+import { useRecentlyPlayed } from "../api/recently-played.queries";
 import type { Pack } from "@/types/pack";
 
 vi.mock("./api/recently-played.queries");

@@ -2,7 +2,7 @@
 
 import { PackCard } from "@/features/home/components/PackCard";
 import { PackScrollRail } from "@/components/PackScrollRail";
-import { useAuthorPacks } from "./api/author-packs.queries";
+import { useAuthorPacks } from "../api/author-packs.queries";
 
 /**
  * An author's created packs as a horizontal {@link PackScrollRail} — the rail

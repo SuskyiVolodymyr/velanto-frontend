@@ -12,7 +12,7 @@ import {
   type PackSummary,
   type PackStatus,
 } from "@/types/pack";
-import { useAuthorPacks } from "./api/author-packs.queries";
+import { useAuthorPacks } from "../api/author-packs.queries";
 
 // "all" is the UI sentinel for "no status filter" (every status) — same
 // convention as MyPacksFeed's StatusChoice.

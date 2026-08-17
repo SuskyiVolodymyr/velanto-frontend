@@ -8,7 +8,7 @@ import { Button } from "@/ui/Button";
 import { LoadingState } from "@/ui/LoadingState";
 import { EmptyState } from "@/ui/EmptyState";
 import { cn } from "@/utils/cn";
-import { useFollowList, type FollowListKind } from "./api/follow-list.queries";
+import { useFollowList, type FollowListKind } from "../api/follow-list.queries";
 import { FollowUserRow } from "./FollowUserRow";
 import type { PeopleSubTab } from "./AuthorProfileHeader";
 

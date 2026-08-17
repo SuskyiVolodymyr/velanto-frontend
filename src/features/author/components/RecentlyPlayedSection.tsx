@@ -9,7 +9,7 @@ import { PlayHistoryToggle } from "@/components/PlayHistoryToggle";
 import { cn } from "@/utils/cn";
 import { packFormatTone } from "@/constants/pack-format-tone";
 import { formatRelativeTimeIntl } from "@/utils/relative-time";
-import { useRecentlyPlayed } from "./api/recently-played.queries";
+import { useRecentlyPlayed } from "../api/recently-played.queries";
 
 /**
  * A user's recently-played packs as a vertical row list — the History tab's

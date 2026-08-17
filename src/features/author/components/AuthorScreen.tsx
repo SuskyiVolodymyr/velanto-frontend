@@ -21,8 +21,8 @@ import {
   useAuthor,
   useAuthorBanHistory,
   authorQueryOptions,
-} from "./api/author.queries";
-import type { AuthorData } from "./api/author";
+} from "../api/author.queries";
+import type { AuthorData } from "../api/author";
 import { cn } from "@/utils/cn";
 import { pageContainer } from "@/constants/page-container";
 

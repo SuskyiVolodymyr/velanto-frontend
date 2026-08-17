@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
-import { AuthorScreen } from "@/features/author/AuthorScreen";
+import { AuthorScreen } from "@/features/author/components/AuthorScreen";
 import {
   getUserServer,
   getAuthorPacksServer,

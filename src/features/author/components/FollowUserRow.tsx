@@ -7,7 +7,7 @@ import { Hidden } from "@/components/Hidden";
 import { Username } from "@/components/Username";
 import { UserAvatar } from "@/components/UserAvatar";
 import type { FollowUser } from "@/api/users-client";
-import { useFollowListRowMutation } from "./api/follow-list.queries";
+import { useFollowListRowMutation } from "../api/follow-list.queries";
 
 /**
  * One user row in a followers / following list: avatar + @handle (both link to

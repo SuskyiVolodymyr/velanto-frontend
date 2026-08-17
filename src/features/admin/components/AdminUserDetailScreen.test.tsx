@@ -35,10 +35,10 @@ vi.mock("@/api/rules-client", () => ({
 }));
 // The two rails fetch on their own; stub them so this test stays about the
 // detail screen's own stats rendering.
-vi.mock("@/features/author/AuthorPacksRail", () => ({
+vi.mock("@/features/author/components/AuthorPacksRail", () => ({
   AuthorPacksRail: () => null,
 }));
-vi.mock("@/features/author/RecentlyPlayedSection", () => ({
+vi.mock("@/features/author/components/RecentlyPlayedSection", () => ({
   RecentlyPlayedSection: () => null,
 }));
 
