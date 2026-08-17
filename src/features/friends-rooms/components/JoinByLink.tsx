@@ -11,9 +11,9 @@ import { useAuth } from "@/contexts/auth-context";
 import { ApiError } from "@/api/api-client";
 import { pageContainer } from "@/constants/page-container";
 import { cn } from "@/utils/cn";
-import { friendsRoomsClient } from "./friends-rooms-client";
+import { friendsRoomsClient } from "../api/friends-rooms-client";
 import { ROOMS_DORMANT } from "../room-types";
-import { useGuestJoin } from "./use-guest-join";
+import { useGuestJoin } from "../hooks/use-guest-join";
 
 /** Which inline error state to show. `null` = still working (spinner). */
 type JoinLinkError = "notFound" | "unavailable" | "generic";

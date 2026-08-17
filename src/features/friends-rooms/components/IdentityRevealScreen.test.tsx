@@ -4,11 +4,11 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderWithIntl as render } from "@/test/render-with-intl";
 import { IdentityRevealScreen } from "./IdentityRevealScreen";
 import { baseRoomState } from "../test-fixtures";
-import { friendsRoomsClient } from "./friends-rooms-client";
+import { friendsRoomsClient } from "../api/friends-rooms-client";
 
 const push = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
-vi.mock("./friends-rooms-client", () => ({
+vi.mock("../api/friends-rooms-client", () => ({
   friendsRoomsClient: { create: vi.fn() },
 }));
 

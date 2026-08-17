@@ -11,8 +11,8 @@ import { Tooltip } from "@/ui/Tooltip";
 import { useAuth } from "@/contexts/auth-context";
 import { ApiError } from "@/api/api-client";
 import { cn } from "@/utils/cn";
-import { friendsRoomsClient } from "./friends-rooms-client";
-import { useGuestJoin } from "./use-guest-join";
+import { friendsRoomsClient } from "../api/friends-rooms-client";
+import { useGuestJoin } from "../hooks/use-guest-join";
 
 /** Which inline error to show under the join form. `null` = none. */
 type JoinErrorKey =

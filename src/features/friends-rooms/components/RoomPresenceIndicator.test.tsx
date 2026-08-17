@@ -20,7 +20,7 @@ vi.mock("@/contexts/auth-context", () => ({
   useAuth: () => ({ user: currentUser }),
 }));
 
-vi.mock("./friends-rooms-presence-context", () => ({
+vi.mock("../friends-rooms-presence-context", () => ({
   useFriendsRoomsPresence: () => ({ rooms, refresh: vi.fn() }),
 }));
 

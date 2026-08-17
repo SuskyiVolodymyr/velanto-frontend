@@ -14,7 +14,7 @@ vi.mock("next/navigation", () => ({
 const create = vi.fn();
 const join = vi.fn();
 const joinAsGuest = vi.fn();
-vi.mock("./friends-rooms-client", () => ({
+vi.mock("../api/friends-rooms-client", () => ({
   friendsRoomsClient: {
     create: (...args: unknown[]) => create(...args),
     join: (...args: unknown[]) => join(...args),

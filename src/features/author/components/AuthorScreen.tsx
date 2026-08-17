@@ -16,7 +16,7 @@ import { PeopleTab } from "./PeopleTab";
 import { RecentlyPlayedSection } from "./RecentlyPlayedSection";
 import { AuthorModeratorPanel } from "./AuthorModeratorPanel";
 import { ReportUserButton } from "./ReportUserButton";
-import { useAuthorModeration } from "./use-author-moderation";
+import { useAuthorModeration } from "../hooks/use-author-moderation";
 import {
   useAuthor,
   useAuthorBanHistory,

@@ -6,7 +6,7 @@ import { Text } from "@/ui/Text";
 import { cn } from "@/utils/cn";
 import { MODE_NAME_KEY } from "@/features/friends-rooms/room-mode-copy";
 import { ROOM_MODE_BOUNDS } from "@/features/friends-rooms/room-types";
-import { usePreviewModes, type PreviewModesDraft } from "./use-preview-modes";
+import { usePreviewModes, type PreviewModesDraft } from "../hooks/use-preview-modes";
 
 /**
  * The Create/Edit Pack form's live "Friend modes unlocked" panel — the real

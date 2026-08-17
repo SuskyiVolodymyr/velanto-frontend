@@ -10,7 +10,7 @@ import { buttonClassName } from "@/ui/Button";
 import { BoardCard, BoardRow } from "@/ui/BoardCard";
 import { HeroCard } from "@/ui/HeroCard";
 import { cn } from "@/utils/cn";
-import { friendsRoomsClient } from "./friends-rooms-client";
+import { friendsRoomsClient } from "../api/friends-rooms-client";
 
 import type { RoomState } from "../room-types";
 

@@ -3,7 +3,7 @@ import { act, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/test/render-with-intl";
 import { RoomScreen } from "./RoomScreen";
-import type { FriendsRoom, RoomConnection } from "./use-friends-room";
+import type { FriendsRoom, RoomConnection } from "../hooks/use-friends-room";
 import type { ClaimRejection, RoomPlayerState, RoomState } from "../room-types";
 import type { Item } from "@/types/pack";
 import type { User } from "@/types/user";
@@ -31,7 +31,7 @@ const push = vi.fn();
 let room: FriendsRoom;
 let currentUser: User | null;
 
-vi.mock("./use-friends-room", () => ({
+vi.mock("../hooks/use-friends-room", () => ({
   useFriendsRoom: () => room,
 }));
 

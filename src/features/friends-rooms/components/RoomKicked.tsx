@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import { Button } from "@/ui/Button";
 import { Text } from "@/ui/Text";
 import { useFriendsRoomsPresenceOrDefault } from "../friends-rooms-presence-context";
-import { useExitToPack } from "./use-exit-to-pack";
+import { useExitToPack } from "../hooks/use-exit-to-pack";
 
 /**
  * Shown when the host has removed the viewer from the room (the `player.kicked`

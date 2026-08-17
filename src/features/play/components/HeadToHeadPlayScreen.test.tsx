@@ -3,7 +3,7 @@ import { screen, waitFor } from "@testing-library/react";
 import { renderWithIntl as render } from "@/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { HeadToHeadPlayScreen } from "./HeadToHeadPlayScreen";
-import { usePlayResume } from "./use-play-resume";
+import { usePlayResume } from "../hooks/use-play-resume";
 import { AuthProvider } from "@/contexts/auth-context";
 import { authClient } from "@/api/auth-client";
 import { playsClient } from "@/api/plays-client";
@@ -38,7 +38,7 @@ vi.mock("@/api/plays-client", () => ({
 // tests. Here it's stubbed with `seed: undefined` so the draw keeps using the
 // Math.random identity shuffle these matchup assertions rely on, while the
 // save/clear spies let us assert the screen wires them at the right moments.
-vi.mock("./use-play-resume", () => ({ usePlayResume: vi.fn() }));
+vi.mock("../hooks/use-play-resume", () => ({ usePlayResume: vi.fn() }));
 const resumeSave = vi.fn();
 const resumeClear = vi.fn();
 const resumeContinue = vi.fn();

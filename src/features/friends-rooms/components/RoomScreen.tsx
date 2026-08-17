@@ -7,8 +7,8 @@ import { Button } from "@/ui/Button";
 import { Text } from "@/ui/Text";
 import { pageContainer } from "@/constants/page-container";
 import { cn } from "@/utils/cn";
-import { useFriendsRoom } from "./use-friends-room";
-import { useRoomViewerId } from "./use-room-viewer-id";
+import { useFriendsRoom } from "../hooks/use-friends-room";
+import { useRoomViewerId } from "../hooks/use-room-viewer-id";
 import { RoomLobby } from "./RoomLobby";
 import { RoomRoundBoard } from "./RoomRoundBoard";
 import { RoomBetweenBoard } from "./RoomBetweenBoard";
@@ -19,7 +19,7 @@ import { SpyAccusationScreen } from "./SpyAccusationScreen";
 import { SpyRevealScreen } from "./SpyRevealScreen";
 import { RoomHeader } from "./RoomHeader";
 import { RoomKicked } from "./RoomKicked";
-import { useExitToPack } from "./use-exit-to-pack";
+import { useExitToPack } from "../hooks/use-exit-to-pack";
 import { usePlayFocus } from "@/contexts/play-focus-context";
 
 /**

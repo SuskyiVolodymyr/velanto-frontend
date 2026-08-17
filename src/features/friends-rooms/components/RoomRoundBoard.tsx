@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import type { Pack } from "@/types/pack";
 import type { ClaimRejection, RoomState } from "../room-types";
-import type { FriendsRoom } from "./use-friends-room";
+import type { FriendsRoom } from "../hooks/use-friends-room";
 import { RoomRound } from "./RoomRound";
 import { GuessWhoRoundBoard } from "./GuessWhoRoundBoard";
 import { TurnBasedCutBoard } from "./TurnBasedCutBoard";

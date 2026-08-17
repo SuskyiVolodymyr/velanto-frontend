@@ -16,7 +16,7 @@ vi.mock("@/contexts/auth-context", () => ({
 vi.mock("next/navigation", () => ({ usePathname: () => "/" }));
 
 const { mine } = vi.hoisted(() => ({ mine: vi.fn() }));
-vi.mock("./friends-rooms-client", () => ({
+vi.mock("./api/friends-rooms-client", () => ({
   friendsRoomsClient: { mine },
 }));
 

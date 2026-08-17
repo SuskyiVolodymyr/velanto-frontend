@@ -4,7 +4,7 @@ import { renderWithIntl as render } from "@/test/render-with-intl";
 import { CreateFeasibilityPanel } from "./CreateFeasibilityPanel";
 import { friendsRoomsClient } from "@/features/friends-rooms/api/friends-rooms-client";
 import type { AvailableMode } from "@/features/friends-rooms/room-types";
-import type { PreviewModesDraft } from "./use-preview-modes";
+import type { PreviewModesDraft } from "../hooks/use-preview-modes";
 
 vi.mock("@/features/friends-rooms/api/friends-rooms-client", () => ({
   friendsRoomsClient: { previewModes: vi.fn() },

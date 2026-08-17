@@ -13,7 +13,7 @@ vi.mock("next/navigation", () => ({
 
 const join = vi.fn();
 const joinAsGuest = vi.fn();
-vi.mock("./friends-rooms-client", () => ({
+vi.mock("../api/friends-rooms-client", () => ({
   friendsRoomsClient: {
     join: (...args: unknown[]) => join(...args),
     joinAsGuest: (...args: unknown[]) => joinAsGuest(...args),
@@ -29,8 +29,8 @@ vi.mock("@/contexts/auth-context", () => ({
 // Toggle dormancy per test while preserving room-types' other exports. Default:
 // rooms LIVE, so the flows below exercise the revived join/redirect behaviour.
 const flag = vi.hoisted(() => ({ dormant: false }));
-vi.mock("./room-types", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("./room-types")>();
+vi.mock("../room-types", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("../room-types")>();
   return {
     ...actual,
     get ROOMS_DORMANT() {

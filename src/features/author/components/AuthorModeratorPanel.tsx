@@ -18,7 +18,7 @@ import type {
   BanDuration,
 } from "@/api/users-client";
 import type { RuleCategory } from "@/types/rules";
-import type { AuthorModeration } from "./use-author-moderation";
+import type { AuthorModeration } from "../hooks/use-author-moderation";
 
 /**
  * Moderator-only block on the author screen: the inline ban form (duration +
