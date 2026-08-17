@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { Card } from "@/ui/Card";
 import { Text } from "@/ui/Text";
 import { Skeleton } from "@/ui/Skeleton";
-import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
+import { SettingsSectionSkeleton } from "@/features/settings/components/SettingsSectionSkeleton";
 import { notificationVisual } from "@/components/notification-visual";
 import { cn } from "@/utils/cn";
 import { useAuth } from "@/contexts/auth-context";

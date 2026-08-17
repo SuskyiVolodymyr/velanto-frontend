@@ -3,7 +3,7 @@
 import { useTranslations } from "next-intl";
 import { Card } from "@/ui/Card";
 import { Text } from "@/ui/Text";
-import { LanguageSelector } from "@/features/settings/LanguageSelector";
+import { LanguageSelector } from "@/features/settings/components/LanguageSelector";
 
 export function LanguageSection() {
   const t = useTranslations("settings");

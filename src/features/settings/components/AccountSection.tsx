@@ -5,8 +5,8 @@ import { useTranslations } from "next-intl";
 import { Card } from "@/ui/Card";
 import { Text } from "@/ui/Text";
 import { useAuth } from "@/contexts/auth-context";
-import { AddEmailForm } from "@/features/settings/AddEmailForm";
-import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
+import { AddEmailForm } from "@/features/settings/components/AddEmailForm";
+import { SettingsSectionSkeleton } from "@/features/settings/components/SettingsSectionSkeleton";
 
 export function AccountSection() {
   const t = useTranslations("settings");

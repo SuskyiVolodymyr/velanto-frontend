@@ -3,7 +3,7 @@
 import { useId } from "react";
 import { useTranslations } from "next-intl";
 import { Card } from "@/ui/Card";
-import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
+import { SettingsSectionSkeleton } from "@/features/settings/components/SettingsSectionSkeleton";
 import { Text } from "@/ui/Text";
 import { SegmentedControl } from "@/ui/SegmentedControl";
 import { PlayHistoryToggle } from "@/components/PlayHistoryToggle";

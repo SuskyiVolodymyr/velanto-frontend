@@ -6,15 +6,15 @@ import { useAuth } from "@/contexts/auth-context";
 import { cn } from "@/utils/cn";
 import { Text } from "@/ui/Text";
 import { PageHeader } from "@/ui/PageHeader";
-import { LanguageSection } from "@/features/settings/LanguageSection";
-import { AppearanceSection } from "@/features/settings/AppearanceSection";
-import { PrivacySection } from "@/features/settings/PrivacySection";
-import { NotificationsSection } from "@/features/settings/NotificationsSection";
-import { AccountSection } from "@/features/settings/AccountSection";
-import { PasswordSection } from "@/features/settings/PasswordSection";
-import { ConnectedAccountsSection } from "@/features/settings/ConnectedAccountsSection";
-import { ApiTokensPointer } from "@/features/settings/ApiTokensPointer";
-import { DangerZoneSection } from "@/features/settings/DangerZoneSection";
+import { LanguageSection } from "@/features/settings/components/LanguageSection";
+import { AppearanceSection } from "@/features/settings/components/AppearanceSection";
+import { PrivacySection } from "@/features/settings/components/PrivacySection";
+import { NotificationsSection } from "@/features/settings/components/NotificationsSection";
+import { AccountSection } from "@/features/settings/components/AccountSection";
+import { PasswordSection } from "@/features/settings/components/PasswordSection";
+import { ConnectedAccountsSection } from "@/features/settings/components/ConnectedAccountsSection";
+import { ApiTokensPointer } from "@/features/settings/components/ApiTokensPointer";
+import { DangerZoneSection } from "@/features/settings/components/DangerZoneSection";
 import { pageContainer } from "@/constants/page-container";
 
 interface SettingsSectionEntry {

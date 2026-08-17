@@ -9,10 +9,10 @@ import { Text } from "@/ui/Text";
 import { Button } from "@/ui/Button";
 import { PasswordField } from "@/ui/form/PasswordField";
 import { useAuth } from "@/contexts/auth-context";
-import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
+import { SettingsSectionSkeleton } from "@/features/settings/components/SettingsSectionSkeleton";
 import { authClient } from "@/api/auth-client";
 import { ApiError } from "@/api/api-client";
-import { SetPasswordSection } from "@/features/settings/SetPasswordSection";
+import { SetPasswordSection } from "@/features/settings/components/SetPasswordSection";
 import {
   changePasswordSchema,
   type ChangePasswordValues,

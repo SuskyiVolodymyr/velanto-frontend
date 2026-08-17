@@ -11,7 +11,7 @@ import { Modal } from "@/ui/Modal";
 import { useAuth } from "@/contexts/auth-context";
 import { authClient } from "@/api/auth-client";
 import { ApiError } from "@/api/api-client";
-import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
+import { SettingsSectionSkeleton } from "@/features/settings/components/SettingsSectionSkeleton";
 
 /**
  * "Danger zone" on /settings: export ("download my data") and account deletion.

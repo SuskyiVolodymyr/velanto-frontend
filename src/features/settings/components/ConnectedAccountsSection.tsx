@@ -12,7 +12,7 @@ import { useAuth } from "@/contexts/auth-context";
 import { authClient, type OAuthProviders } from "@/api/auth-client";
 import { openOAuthPopup } from "@/utils/oauth-popup";
 import { cn } from "@/utils/cn";
-import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
+import { SettingsSectionSkeleton } from "@/features/settings/components/SettingsSectionSkeleton";
 
 const PROVIDERS = [
   { key: "google", label: "Google" },

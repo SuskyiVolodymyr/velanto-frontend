@@ -12,31 +12,31 @@ import { useAuth } from "@/contexts/auth-context";
 
 vi.mock("@/contexts/auth-context", () => ({ useAuth: vi.fn() }));
 
-vi.mock("@/features/settings/LanguageSection", () => ({
+vi.mock("@/features/settings/components/LanguageSection", () => ({
   LanguageSection: () => <div>Language section stub</div>,
 }));
-vi.mock("@/features/settings/AppearanceSection", () => ({
+vi.mock("@/features/settings/components/AppearanceSection", () => ({
   AppearanceSection: () => <div>Appearance section stub</div>,
 }));
-vi.mock("@/features/settings/ConnectedAccountsSection", () => ({
+vi.mock("@/features/settings/components/ConnectedAccountsSection", () => ({
   ConnectedAccountsSection: () => <div>Connected accounts section stub</div>,
 }));
-vi.mock("@/features/settings/PrivacySection", () => ({
+vi.mock("@/features/settings/components/PrivacySection", () => ({
   PrivacySection: () => <div>Privacy section stub</div>,
 }));
-vi.mock("@/features/settings/NotificationsSection", () => ({
+vi.mock("@/features/settings/components/NotificationsSection", () => ({
   NotificationsSection: () => <div>Notifications section stub</div>,
 }));
-vi.mock("@/features/settings/AccountSection", () => ({
+vi.mock("@/features/settings/components/AccountSection", () => ({
   AccountSection: () => <div>Account section stub</div>,
 }));
-vi.mock("@/features/settings/PasswordSection", () => ({
+vi.mock("@/features/settings/components/PasswordSection", () => ({
   PasswordSection: () => <div>Password section stub</div>,
 }));
-vi.mock("@/features/settings/ApiTokensPointer", () => ({
+vi.mock("@/features/settings/components/ApiTokensPointer", () => ({
   ApiTokensPointer: () => <div>API tokens section stub</div>,
 }));
-vi.mock("@/features/settings/DangerZoneSection", () => ({
+vi.mock("@/features/settings/components/DangerZoneSection", () => ({
   DangerZoneSection: () => <div>Danger zone section stub</div>,
 }));
 
