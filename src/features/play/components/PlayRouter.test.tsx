@@ -17,13 +17,13 @@ vi.mock("@/api/plays-client", () => ({
     getSharedPicks: vi.fn(),
   },
 }));
-vi.mock("@/features/play/PlayScreen", () => ({
+vi.mock("@/features/play/components/PlayScreen", () => ({
   PlayScreen: () => <div>PlayScreen</div>,
 }));
-vi.mock("@/features/play/RankPlayScreen", () => ({
+vi.mock("@/features/play/components/RankPlayScreen", () => ({
   RankPlayScreen: () => <div>RankPlayScreen</div>,
 }));
-vi.mock("@/features/play/HeadToHeadPlayScreen", () => ({
+vi.mock("@/features/play/components/HeadToHeadPlayScreen", () => ({
   HeadToHeadPlayScreen: () => <div>HeadToHeadPlayScreen</div>,
 }));
 

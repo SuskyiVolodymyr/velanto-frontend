@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/test/render-with-intl";
-import { ResumePlayModal } from "@/features/play/ResumePlayModal";
+import { ResumePlayModal } from "@/features/play/components/ResumePlayModal";
 
 describe("ResumePlayModal", () => {
   it("renders nothing when closed", () => {

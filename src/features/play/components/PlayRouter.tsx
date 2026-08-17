@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import type { Pack, PackFormat } from "@/types/pack";
-import { PlayScreen } from "@/features/play/PlayScreen";
-import { RankPlayScreen } from "@/features/play/RankPlayScreen";
-import { HeadToHeadPlayScreen } from "@/features/play/HeadToHeadPlayScreen";
+import { PlayScreen } from "@/features/play/components/PlayScreen";
+import { RankPlayScreen } from "@/features/play/components/RankPlayScreen";
+import { HeadToHeadPlayScreen } from "@/features/play/components/HeadToHeadPlayScreen";
 
 /**
  * A format this build has no play path for. `format: never` is the compile-time

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { getPackServer } from "@/server/get-pack-server";
-import { PlayRouter } from "@/features/play/PlayRouter";
-import { PlayFallback } from "@/features/play/PlayFallback";
+import { PlayRouter } from "@/features/play/components/PlayRouter";
+import { PlayFallback } from "@/features/play/components/PlayFallback";
 
 export async function generateMetadata({
   params,

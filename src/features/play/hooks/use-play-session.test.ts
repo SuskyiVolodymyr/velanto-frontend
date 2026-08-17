@@ -1,8 +1,8 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { usePlaySession } from "./use-play-session";
-import { packStructureHash } from "./pack-structure-hash";
-import { readPlayResume } from "./play-resume-storage";
+import { packStructureHash } from "../pack-structure-hash";
+import { readPlayResume } from "../play-resume-storage";
 import { playsClient } from "@/api/plays-client";
 import { useAuth } from "@/contexts/auth-context";
 import type { Pack } from "@/types/pack";

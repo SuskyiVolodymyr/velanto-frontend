@@ -2,7 +2,7 @@
 
 import { notFound } from "next/navigation";
 import { usePackFallback } from "@/hooks/use-pack-fallback";
-import { PlayRouter } from "@/features/play/PlayRouter";
+import { PlayRouter } from "@/features/play/components/PlayRouter";
 
 export function PlayFallback({ packId }: { packId: string }) {
   const state = usePackFallback(packId, { needsResults: false });

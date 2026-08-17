@@ -14,7 +14,7 @@ import {
   toneFor,
   HAIRLINE_OVERLAY_STYLE,
 } from "@/features/play/candidate-tone";
-import { VsBadge } from "@/features/play/VsBadge";
+import { VsBadge } from "@/features/play/components/VsBadge";
 
 interface VersusSide {
   name: string;

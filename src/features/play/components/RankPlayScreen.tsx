@@ -19,14 +19,14 @@ import {
   extractYouTubeStart,
 } from "@/utils/youtube";
 import { mediaUrl } from "@/utils/media-url";
-import { useRoundSelections } from "@/features/play/use-round-selections";
-import { usePlayResume } from "@/features/play/use-play-resume";
+import { useRoundSelections } from "@/features/play/hooks/use-round-selections";
+import { usePlayResume } from "@/features/play/hooks/use-play-resume";
 import { RankedList, type RankedRow } from "@/ui/RankedList";
 import { pageContainer } from "@/constants/page-container";
-import { PlayChrome } from "@/features/play/PlayChrome";
-import { PlayRoundHeader } from "@/features/play/PlayRoundHeader";
-import { PlayConfirmBar } from "@/features/play/PlayConfirmBar";
-import { ResumePlayModal } from "@/features/play/ResumePlayModal";
+import { PlayChrome } from "@/features/play/components/PlayChrome";
+import { PlayRoundHeader } from "@/features/play/components/PlayRoundHeader";
+import { PlayConfirmBar } from "@/features/play/components/PlayConfirmBar";
+import { ResumePlayModal } from "@/features/play/components/ResumePlayModal";
 import { roundHeading } from "@/utils/round-heading";
 import {
   toneFor,

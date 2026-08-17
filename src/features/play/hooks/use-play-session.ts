@@ -7,8 +7,8 @@ import {
   writeLastPlayPicks,
   writeLastPlayId,
 } from "@/utils/last-play-storage";
-import { useRoundSelections } from "@/features/play/use-round-selections";
-import { usePlayResume } from "@/features/play/use-play-resume";
+import { useRoundSelections } from "@/features/play/hooks/use-round-selections";
+import { usePlayResume } from "@/features/play/hooks/use-play-resume";
 import type { Item, Pack } from "@/types/pack";
 import type { RecordedPick } from "@/types/play-results";
 

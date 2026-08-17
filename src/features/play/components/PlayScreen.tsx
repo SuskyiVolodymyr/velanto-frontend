@@ -5,19 +5,19 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import { cn } from "@/utils/cn";
 import type { Pack } from "@/types/pack";
-import { VersusRound } from "@/features/play/VersusRound";
-import { usePlaySession } from "@/features/play/use-play-session";
+import { VersusRound } from "@/features/play/components/VersusRound";
+import { usePlaySession } from "@/features/play/hooks/use-play-session";
 import {
   INSTRUCTION_KEY,
   PICKED_LABEL_KEY,
 } from "@/features/play/play-format-copy";
-import { PlayChrome } from "@/features/play/PlayChrome";
-import { PlayRoundHeader } from "@/features/play/PlayRoundHeader";
-import { PlayConfirmBar } from "@/features/play/PlayConfirmBar";
+import { PlayChrome } from "@/features/play/components/PlayChrome";
+import { PlayRoundHeader } from "@/features/play/components/PlayRoundHeader";
+import { PlayConfirmBar } from "@/features/play/components/PlayConfirmBar";
 import { pageContainer } from "@/constants/page-container";
-import { CandidateCard } from "@/features/play/CandidateCard";
-import { PicksSummary } from "@/features/play/PicksSummary";
-import { ResumePlayModal } from "@/features/play/ResumePlayModal";
+import { CandidateCard } from "@/features/play/components/CandidateCard";
+import { PicksSummary } from "@/features/play/components/PicksSummary";
+import { ResumePlayModal } from "@/features/play/components/ResumePlayModal";
 import { LoadingState } from "@/ui/LoadingState";
 
 // How many columns a groups-format round lays its candidates out in, chosen by

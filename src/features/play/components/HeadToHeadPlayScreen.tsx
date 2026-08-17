@@ -9,21 +9,21 @@ import {
   writeLastPlayId,
   writeLastPlayPicks,
 } from "@/utils/last-play-storage";
-import { useRoundSelections } from "@/features/play/use-round-selections";
-import { usePlayResume } from "@/features/play/use-play-resume";
-import { HeadToHeadRound } from "@/features/play/HeadToHeadRound";
-import { PlayChrome } from "@/features/play/PlayChrome";
-import { PlayRoundHeader } from "@/features/play/PlayRoundHeader";
-import { PlayConfirmBar } from "@/features/play/PlayConfirmBar";
-import { PicksSummary } from "@/features/play/PicksSummary";
-import { ResumePlayModal } from "@/features/play/ResumePlayModal";
+import { useRoundSelections } from "@/features/play/hooks/use-round-selections";
+import { usePlayResume } from "@/features/play/hooks/use-play-resume";
+import { HeadToHeadRound } from "@/features/play/components/HeadToHeadRound";
+import { PlayChrome } from "@/features/play/components/PlayChrome";
+import { PlayRoundHeader } from "@/features/play/components/PlayRoundHeader";
+import { PlayConfirmBar } from "@/features/play/components/PlayConfirmBar";
+import { PicksSummary } from "@/features/play/components/PicksSummary";
+import { ResumePlayModal } from "@/features/play/components/ResumePlayModal";
 import {
   INSTRUCTION_KEY,
   PICKED_LABEL_KEY,
 } from "@/features/play/play-format-copy";
 // Aliased: a bare `Pick` would shadow TypeScript's own Pick<T, K> utility
 // inside this module.
-import type { Pick as SessionPick } from "@/features/play/use-play-session";
+import type { Pick as SessionPick } from "@/features/play/hooks/use-play-session";
 import { LoadingState } from "@/ui/LoadingState";
 import { pageContainer } from "@/constants/page-container";
 import { cn } from "@/utils/cn";

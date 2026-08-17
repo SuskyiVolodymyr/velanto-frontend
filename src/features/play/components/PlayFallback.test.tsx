@@ -7,7 +7,7 @@ import type { Pack } from "@/types/pack";
 
 vi.mock("@/hooks/use-pack-fallback");
 vi.mock("next/navigation", () => ({ notFound: vi.fn() }));
-vi.mock("@/features/play/PlayRouter", () => ({
+vi.mock("@/features/play/components/PlayRouter", () => ({
   PlayRouter: () => <div>PlayRouter</div>,
 }));
 

@@ -2,7 +2,7 @@ import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { renderWithIntl as render } from "@/test/render-with-intl";
-import { PlayRouter } from "@/features/play/PlayRouter";
+import { PlayRouter } from "@/features/play/components/PlayRouter";
 import { AuthProvider } from "@/contexts/auth-context";
 import { authClient } from "@/api/auth-client";
 import { playsClient } from "@/api/plays-client";

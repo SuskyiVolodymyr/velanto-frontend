@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
 import { Text } from "@/ui/Text";
-import type { Pick } from "@/features/play/use-play-session";
+import type { Pick } from "@/features/play/hooks/use-play-session";
 
 interface PicksSummaryProps {
   label: string;
