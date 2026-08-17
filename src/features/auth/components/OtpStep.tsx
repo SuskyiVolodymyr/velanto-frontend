@@ -5,7 +5,7 @@ import { useTranslations } from "next-intl";
 import { KeyRound } from "lucide-react";
 import { Text } from "@/ui/Text";
 import { TextField } from "@/ui/form/TextField";
-import { getResendCooldownRemaining } from "./otp-cooldown";
+import { getResendCooldownRemaining } from "../otp-cooldown";
 
 /**
  * Second step of registration (verify-before-create): the one-time password

@@ -22,15 +22,15 @@ import {
   registerSchemaNoCode,
   type AuthFormValues,
 } from "@/features/auth/auth.schema";
-import { LoginFields } from "@/features/auth/LoginFields";
+import { LoginFields } from "@/features/auth/components/LoginFields";
 import {
   RegisterFields,
   ConfirmPasswordField,
   AcceptRulesField,
-} from "@/features/auth/RegisterFields";
-import { OtpStep } from "@/features/auth/OtpStep";
-import { OAuthButtons } from "@/features/auth/OAuthButtons";
-import { ForgotPasswordForm } from "@/features/auth/ForgotPasswordForm";
+} from "@/features/auth/components/RegisterFields";
+import { OtpStep } from "@/features/auth/components/OtpStep";
+import { OAuthButtons } from "@/features/auth/components/OAuthButtons";
+import { ForgotPasswordForm } from "@/features/auth/components/ForgotPasswordForm";
 import {
   markCodeSent,
   getResendCooldownRemaining,

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { AuthForm } from "@/features/auth/AuthForm";
-import { AuthBrandPanel } from "@/features/auth/AuthBrandPanel";
+import { AuthForm } from "@/features/auth/components/AuthForm";
+import { AuthBrandPanel } from "@/features/auth/components/AuthBrandPanel";
 import { getUserCountServer } from "@/server/get-user-count-server";
 
 export const metadata: Metadata = {
