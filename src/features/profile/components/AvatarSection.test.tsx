@@ -1,0 +1,269 @@
+import { describe, expect, it, vi, beforeEach } from "vitest";
+import { screen, waitFor, fireEvent } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { renderWithIntl as render } from "@/test/render-with-intl";
+import { AvatarSection } from "./AvatarSection";
+import { uploadMedia, MEDIA_MAX_BYTES } from "@/api/media-client";
+import { usersClient } from "@/api/users-client";
+import { useAuth } from "@/contexts/auth-context";
+
+vi.mock("@/api/media-client", async () => {
+  const actual = await vi.importActual<
+    typeof import("@/api/media-client")
+  >("@/api/media-client");
+  return { ...actual, uploadMedia: vi.fn() };
+});
+vi.mock("@/api/users-client", () => ({
+  usersClient: { setAvatar: vi.fn(), removeAvatar: vi.fn() },
+}));
+vi.mock("@/contexts/auth-context", () => ({ useAuth: vi.fn() }));
+vi.mock("@/utils/media-url", () => ({
+  mediaUrl: (key: string) => `https://cdn.test/${key}`,
+}));
+// Stub the crop modal: expose a "confirm crop" button that hands back the
+// original file, and a "cancel" button. Keeps these tests focused on
+// AvatarSection's orchestration, not the cropper internals (covered separately).
+vi.mock("./AvatarCropModal", () => ({
+  AvatarCropModal: ({
+    file,
+    onCropped,
+    onCancel,
+  }: {
+    file: File;
+    onCropped: (f: File) => void;
+    onCancel: () => void;
+  }) => (
+    <div data-testid="crop-modal">
+      <button type="button" onClick={() => onCropped(file)}>
+        confirm-crop
+      </button>
+      <button type="button" onClick={onCancel}>
+        cancel-crop
+      </button>
+    </div>
+  ),
+}));
+
+const setAvatarKey = vi.fn();
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  vi.mocked(useAuth).mockReturnValue({
+    setAvatarKey,
+  } as unknown as ReturnType<typeof useAuth>);
+});
+
+function renderSection(avatarKey: string | null = null) {
+  return render(
+    <AvatarSection userId="u1" username="alice" avatarKey={avatarKey} />,
+  );
+}
+
+function pngFile(bytes = 10): File {
+  return new File([new Uint8Array(bytes)], "pic.png", { type: "image/png" });
+}
+
+describe("AvatarSection", () => {
+  it("uploads a valid image, sets it, and patches the header avatar", async () => {
+    vi.mocked(uploadMedia).mockResolvedValue({
+      key: "media/avatar/new.webp",
+      url: "https://cdn.test/media/avatar/new.webp",
+      byteSize: 10,
+    });
+    vi.mocked(usersClient.setAvatar).mockResolvedValue({
+      id: "u1",
+      avatarKey: "media/avatar/new.webp",
+    });
+    const user = userEvent.setup();
+    renderSection(null);
+
+    await user.upload(
+      screen.getByLabelText("Drag a photo here or click"),
+      pngFile(),
+    );
+    // Picking a file opens the crop modal; upload runs on crop-confirm.
+    await user.click(screen.getByText("confirm-crop"));
+
+    await waitFor(() =>
+      expect(uploadMedia).toHaveBeenCalledWith(expect.any(File), "avatar"),
+    );
+    expect(usersClient.setAvatar).toHaveBeenCalledWith("media/avatar/new.webp");
+    await waitFor(() =>
+      expect(setAvatarKey).toHaveBeenCalledWith("media/avatar/new.webp"),
+    );
+  });
+
+  it("opens the crop modal on a valid pick and doesn't upload until confirmed", async () => {
+    const user = userEvent.setup();
+    renderSection(null);
+
+    await user.upload(
+      screen.getByLabelText("Drag a photo here or click"),
+      pngFile(),
+    );
+
+    expect(screen.getByTestId("crop-modal")).toBeInTheDocument();
+    expect(uploadMedia).not.toHaveBeenCalled();
+  });
+
+  it("cancelling the crop closes the modal without uploading", async () => {
+    const user = userEvent.setup();
+    renderSection(null);
+
+    await user.upload(
+      screen.getByLabelText("Drag a photo here or click"),
+      pngFile(),
+    );
+    await user.click(screen.getByText("cancel-crop"));
+
+    expect(screen.queryByTestId("crop-modal")).not.toBeInTheDocument();
+    expect(uploadMedia).not.toHaveBeenCalled();
+  });
+
+  it("rejects a non-image without uploading", async () => {
+    renderSection(null);
+
+    // fireEvent (not userEvent.upload) so the non-image file isn't filtered out
+    // by the input's accept="image/*" — we're testing the component's own
+    // client-side type check, which is the defense behind that attribute.
+    fireEvent.change(screen.getByLabelText("Drag a photo here or click"), {
+      target: {
+        files: [new File(["x"], "notes.txt", { type: "text/plain" })],
+      },
+    });
+
+    expect(
+      await screen.findByText("Choose an image file."),
+    ).toBeInTheDocument();
+    expect(uploadMedia).not.toHaveBeenCalled();
+  });
+
+  it("rejects an image over 1 MB without uploading", async () => {
+    const user = userEvent.setup();
+    renderSection(null);
+
+    await user.upload(
+      screen.getByLabelText("Drag a photo here or click"),
+      pngFile(MEDIA_MAX_BYTES + 1),
+    );
+
+    expect(
+      await screen.findByText("Image must be 1 MB or smaller."),
+    ).toBeInTheDocument();
+    expect(uploadMedia).not.toHaveBeenCalled();
+  });
+
+  it("surfaces an upload failure to the user", async () => {
+    vi.mocked(uploadMedia).mockRejectedValue(new Error("network"));
+    const user = userEvent.setup();
+    renderSection(null);
+
+    await user.upload(
+      screen.getByLabelText("Drag a photo here or click"),
+      pngFile(),
+    );
+    await user.click(screen.getByText("confirm-crop"));
+
+    expect(
+      await screen.findByText("Upload failed. Try again."),
+    ).toBeInTheDocument();
+    expect(setAvatarKey).not.toHaveBeenCalled();
+  });
+
+  it("removes an existing avatar and clears the header copy", async () => {
+    vi.mocked(usersClient.removeAvatar).mockResolvedValue({
+      id: "u1",
+      avatarKey: null,
+    });
+    const user = userEvent.setup();
+    renderSection("media/avatar/old.webp");
+
+    await user.click(screen.getByRole("button", { name: "Remove photo" }));
+
+    await waitFor(() => expect(usersClient.removeAvatar).toHaveBeenCalled());
+    await waitFor(() => expect(setAvatarKey).toHaveBeenCalledWith(null));
+  });
+
+  it("hides the remove button when no avatar is set", () => {
+    renderSection(null);
+    expect(
+      screen.queryByRole("button", { name: "Remove photo" }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows the default drag-a-photo copy when no avatar is set", () => {
+    renderSection(null);
+    expect(screen.getByText("Drag a photo here or click")).toBeInTheDocument();
+  });
+
+  it("shows the replace-photo copy once an avatar is set", () => {
+    renderSection("media/avatar/old.webp");
+    expect(screen.getByText("Replace photo")).toBeInTheDocument();
+    expect(screen.getByLabelText("Replace photo")).toBeInTheDocument();
+  });
+
+  it("solidifies the border and shows drop-to-upload copy while dragging over the zone", () => {
+    renderSection(null);
+    // The whole card is the drop target now (the <label> wraps only the pick
+    // button, so a click on "Remove photo" can't open the file picker).
+    const zone = screen
+      .getByText("Drag a photo here or click")
+      .closest("section") as HTMLElement;
+
+    fireEvent.dragOver(zone);
+
+    expect(screen.getByText("Drop to upload")).toBeInTheDocument();
+    expect(zone.className).toContain("border-acc");
+  });
+
+  it("reverts to the default copy when the drag leaves the zone", () => {
+    renderSection(null);
+    // The whole card is the drop target now (the <label> wraps only the pick
+    // button, so a click on "Remove photo" can't open the file picker).
+    const zone = screen
+      .getByText("Drag a photo here or click")
+      .closest("section") as HTMLElement;
+
+    fireEvent.dragOver(zone);
+    expect(screen.getByText("Drop to upload")).toBeInTheDocument();
+
+    fireEvent.dragLeave(zone);
+    expect(screen.getByText("Drag a photo here or click")).toBeInTheDocument();
+  });
+
+  it("routes a dropped file through the same validation as a picked one", async () => {
+    renderSection(null);
+    // The whole card is the drop target now (the <label> wraps only the pick
+    // button, so a click on "Remove photo" can't open the file picker).
+    const zone = screen
+      .getByText("Drag a photo here or click")
+      .closest("section") as HTMLElement;
+
+    fireEvent.drop(zone, {
+      dataTransfer: {
+        files: [new File(["x"], "notes.txt", { type: "text/plain" })],
+      },
+    });
+
+    expect(
+      await screen.findByText("Choose an image file."),
+    ).toBeInTheDocument();
+    expect(uploadMedia).not.toHaveBeenCalled();
+  });
+
+  it("opens the crop modal for a valid dropped image", async () => {
+    renderSection(null);
+    // The whole card is the drop target now (the <label> wraps only the pick
+    // button, so a click on "Remove photo" can't open the file picker).
+    const zone = screen
+      .getByText("Drag a photo here or click")
+      .closest("section") as HTMLElement;
+
+    fireEvent.drop(zone, {
+      dataTransfer: { files: [pngFile()] },
+    });
+
+    expect(screen.getByTestId("crop-modal")).toBeInTheDocument();
+    expect(uploadMedia).not.toHaveBeenCalled();
+  });
+});

@@ -1,0 +1,178 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+import { Text } from "@/ui/Text";
+import { Input } from "@/ui/Input";
+import { Dropdown } from "@/ui/Dropdown";
+import { Button } from "@/ui/Button";
+import { LoadingState } from "@/ui/LoadingState";
+import { useAuth } from "@/contexts/auth-context";
+import { canActOn } from "@/utils/staff-permissions";
+import type { AdminUserSort } from "@/api/admin-client";
+import {
+  useUsersAdmin,
+  isCurrentlyBanned,
+  type BannedFilter,
+  type StaffFilter,
+} from "@/features/admin/hooks/use-users-admin";
+import { UserRow } from "@/features/admin/components/UserRow";
+import { DataTable } from "@/ui/DataTable";
+
+const COLUMNS = "1.3fr 110px 80px 80px 100px 110px 130px";
+
+export function UsersTab() {
+  const t = useTranslations("admin");
+  const tCommon = useTranslations("common");
+  const { user } = useAuth();
+  const {
+    searchInput,
+    setSearchInput,
+    sort,
+    setSort,
+    bannedFilter,
+    setBannedFilter,
+    staffFilter,
+    setStaffFilter,
+    users,
+    total,
+    status,
+    loadingMore,
+    banTargetId,
+    banDuration,
+    setBanDuration,
+    banReason,
+    setBanReason,
+    actionError,
+    banPending,
+    trustPendingId,
+    unbanPendingId,
+    roleChangePendingId,
+    handleLoadMore,
+    handleBan,
+    handleUnban,
+    handleSetTrusted,
+    handleChangeRole,
+    toggleBanForm,
+  } = useUsersAdmin();
+
+  if (!user) return null;
+
+  return (
+    <div className="flex flex-col gap-6">
+      {/* Input/Select hardcode w-full (cn() is a plain joiner), so the sizing
+          lives on wrapper divs or the controls would each stack full-width. */}
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="min-w-[220px] flex-1">
+          <Input
+            type="search"
+            aria-label={t("searchUsersAria")}
+            placeholder={t("searchUsersPlaceholder")}
+            value={searchInput}
+            onChange={(event) => setSearchInput(event.target.value)}
+          />
+        </div>
+        <div className="w-[150px]">
+          <Dropdown
+            ariaLabel={t("filterStaffAria")}
+            value={staffFilter}
+            onChange={(value) => setStaffFilter(value as StaffFilter)}
+            surface="card"
+            options={[
+              { value: "all", label: t("staffAll") },
+              { value: "staff", label: t("staffOnly") },
+              { value: "nonstaff", label: t("staffNonStaff") },
+            ]}
+          />
+        </div>
+        <div className="w-[150px]">
+          <Dropdown
+            ariaLabel={t("filterBanAria")}
+            value={bannedFilter}
+            onChange={(value) => setBannedFilter(value as BannedFilter)}
+            surface="card"
+            options={[
+              { value: "all", label: t("banAll") },
+              { value: "banned", label: t("banBanned") },
+              { value: "active", label: t("banActive") },
+            ]}
+          />
+        </div>
+        <div className="w-[160px]">
+          <Dropdown
+            ariaLabel={t("sortRegAria")}
+            value={sort}
+            onChange={(value) => setSort(value as AdminUserSort)}
+            surface="card"
+            options={[
+              { value: "newest", label: t("sortNewest") },
+              { value: "oldest", label: t("sortOldest") },
+            ]}
+          />
+        </div>
+      </div>
+
+      {status === "loading" && (
+        <LoadingState label={t("loadingUsers")} showLabel />
+      )}
+      {status === "error" && <Text variant="danger">{t("usersError")}</Text>}
+
+      {status === "ready" && (
+        <DataTable
+          columns={COLUMNS}
+          headers={[
+            t("hUser"),
+            t("hRole"),
+            t("hPacks"),
+            t("hPlays"),
+            t("hRegistered"),
+            t("hStatus"),
+            "",
+          ]}
+          empty={t("noUsers")}
+          isEmpty={users.length === 0}
+        >
+          {users.map((row) => (
+            <UserRow
+              key={row.id}
+              row={row}
+              columns={COLUMNS}
+              actorRole={user.role}
+              canAct={canActOn(user.role, row.role)}
+              banned={isCurrentlyBanned(row.bannedUntil)}
+              banFormOpen={banTargetId === row.id}
+              banDuration={banDuration}
+              banReason={banReason}
+              trustPending={trustPendingId === row.id}
+              unbanPending={unbanPendingId === row.id}
+              banPending={banPending && banTargetId === row.id}
+              roleChangePending={roleChangePendingId === row.id}
+              onSetTrusted={handleSetTrusted}
+              onUnban={handleUnban}
+              onToggleBanForm={toggleBanForm}
+              onBanDurationChange={setBanDuration}
+              onBanReasonChange={setBanReason}
+              onConfirmBan={handleBan}
+              onChangeRole={handleChangeRole}
+            />
+          ))}
+        </DataTable>
+      )}
+
+      {actionError && (
+        <Text variant="danger" className="text-sm">
+          {actionError}
+        </Text>
+      )}
+
+      {status === "ready" && users.length < total && (
+        <Button
+          variant="secondary"
+          loading={loadingMore}
+          onClick={() => void handleLoadMore()}
+        >
+          {loadingMore ? tCommon("loading") : tCommon("loadMore")}
+        </Button>
+      )}
+    </div>
+  );
+}

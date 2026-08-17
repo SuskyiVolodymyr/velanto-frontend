@@ -3,7 +3,7 @@
 // come from the shared resolver (see instrumentation-client.ts) for consistent
 // environment tagging, the enable toggle, and sample rates.
 import * as Sentry from "@sentry/nextjs";
-import { resolveSentryConfig } from "@/src/shared/lib/sentry-config";
+import { resolveSentryConfig } from "@/utils/sentry-config";
 
 const config = resolveSentryConfig({
   dsn: process.env.SENTRY_DSN,

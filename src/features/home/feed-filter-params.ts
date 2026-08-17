@@ -1,5 +1,5 @@
-import { PACK_TAGS } from "@/src/shared/types/pack";
-import { PACK_LANGUAGES } from "@/src/shared/types/pack-language";
+import { PACK_TAGS } from "@/types/pack";
+import { PACK_LANGUAGES } from "@/types/pack-language";
 import {
   DATE_ORDER_VALUES,
   DEFAULT_DATE_ORDER,
@@ -7,8 +7,8 @@ import {
   FORMAT_FILTER_VALUES,
   SORT_VALUES,
   WINDOW_VALUES,
-} from "@/src/features/home/filter-options";
-import type { StoredPackFilters } from "@/src/features/home/pack-filters-storage";
+} from "@/features/home/filter-options";
+import type { StoredPackFilters } from "@/features/home/pack-filters-storage";
 
 /**
  * The home feed's filters, encoded in the query string.

@@ -1,7 +1,7 @@
-import { usersClient } from "@/src/shared/lib/users-client";
-import { packsClient } from "@/src/shared/lib/packs-client";
-import type { PublicUserProfile } from "@/src/shared/types/user";
-import type { PackSummary } from "@/src/shared/types/pack";
+import { usersClient } from "@/api/users-client";
+import { packsClient } from "@/api/packs-client";
+import type { PublicUserProfile } from "@/types/user";
+import type { PackSummary } from "@/types/pack";
 import { AUTHOR_PACKS_PAGE_SIZE } from "./author-packs";
 
 export interface AuthorData {

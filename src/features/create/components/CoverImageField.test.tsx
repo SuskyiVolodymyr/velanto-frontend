@@ -1,0 +1,240 @@
+import { describe, expect, it, vi, beforeEach } from "vitest";
+import { screen, waitFor, fireEvent } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { useForm, FormProvider } from "react-hook-form";
+import { renderWithIntl as render } from "@/test/render-with-intl";
+import { CoverImageField } from "./CoverImageField";
+import { uploadMedia, MEDIA_MAX_BYTES } from "@/api/media-client";
+import type { CreatePackValues } from "@/features/create/create-pack.schema";
+
+vi.mock("@/api/media-client", () => ({
+  uploadMedia: vi.fn(),
+  MEDIA_MAX_BYTES: 1024 * 1024,
+}));
+// Stub the crop modal: a "confirm crop" button that hands back the original
+// file, and a "cancel" button. Keeps these tests on CoverImageField's
+// orchestration; the cropper itself is covered by ImageCropModal's tests.
+vi.mock("./CoverCropModal", () => ({
+  CoverCropModal: ({
+    file,
+    onCropped,
+    onCancel,
+  }: {
+    file: File;
+    onCropped: (f: File) => void;
+    onCancel: () => void;
+  }) => (
+    <div data-testid="cover-crop-modal">
+      <button type="button" onClick={() => onCropped(file)}>
+        confirm-crop
+      </button>
+      <button type="button" onClick={onCancel}>
+        cancel-crop
+      </button>
+    </div>
+  ),
+}));
+
+function Harness({
+  initialKey,
+  onUploadingChange,
+}: {
+  initialKey?: string;
+  onUploadingChange?: (uploading: boolean) => void;
+} = {}) {
+  const methods = useForm<CreatePackValues>({
+    defaultValues: { coverImageKey: initialKey } as CreatePackValues,
+  });
+  return (
+    <FormProvider {...methods}>
+      <CoverImageField onUploadingChange={onUploadingChange} />
+    </FormProvider>
+  );
+}
+
+const pngFile = () =>
+  new File([new Uint8Array([1, 2, 3])], "cover.png", { type: "image/png" });
+
+beforeEach(() => {
+  vi.clearAllMocks();
+});
+
+describe("CoverImageField", () => {
+  it("shows the dropzone, with no preview or remove when empty", () => {
+    render(<Harness />);
+
+    expect(screen.getByText("Drag an image here")).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Remove cover image" }),
+    ).not.toBeInTheDocument();
+  });
+
+  // Mock (Create Pack.dc.html): the empty state is a real drop target, not
+  // just a click-to-browse button — dragging a file over it swaps the label
+  // to "Drop to upload" and dropping it feeds the same crop/upload pipeline
+  // a clicked-and-picked file does.
+  it("shows a drop-to-upload label while a file is dragged over the empty dropzone", () => {
+    render(<Harness />);
+
+    const dropzone = screen.getByText("Drag an image here").closest("label")!;
+    fireEvent.dragEnter(dropzone);
+
+    expect(screen.getByText("Drop to upload")).toBeInTheDocument();
+
+    fireEvent.dragLeave(dropzone);
+
+    expect(screen.getByText("Drag an image here")).toBeInTheDocument();
+  });
+
+  it("uploads a dropped image the same way a picked one is uploaded", async () => {
+    vi.mocked(uploadMedia).mockResolvedValue({
+      key: "media/cover/dropped.webp",
+      url: "https://cdn.example.com/media/cover/dropped.webp",
+      byteSize: 100,
+    });
+    const user = userEvent.setup();
+    const { container } = render(<Harness />);
+
+    const dropzone = screen.getByText("Drag an image here").closest("label")!;
+    fireEvent.drop(dropzone, { dataTransfer: { files: [pngFile()] } });
+
+    expect(screen.getByTestId("cover-crop-modal")).toBeInTheDocument();
+    await user.click(screen.getByText("confirm-crop"));
+
+    await waitFor(() =>
+      expect(uploadMedia).toHaveBeenCalledWith(expect.any(File), "cover"),
+    );
+    await waitFor(() => {
+      const img = container.querySelector("img");
+      expect(img?.getAttribute("src")).toContain("media/cover/dropped.webp");
+    });
+  });
+
+  it("uploads a picked image as a cover and previews the returned key", async () => {
+    vi.mocked(uploadMedia).mockResolvedValue({
+      key: "media/cover/new.webp",
+      url: "https://cdn.example.com/media/cover/new.webp",
+      byteSize: 100,
+    });
+    const user = userEvent.setup();
+    const { container } = render(<Harness />);
+
+    await user.upload(screen.getByLabelText("Cover image"), pngFile());
+    // Picking a file opens the crop modal; upload runs on crop-confirm.
+    await user.click(screen.getByText("confirm-crop"));
+
+    await waitFor(() =>
+      expect(uploadMedia).toHaveBeenCalledWith(expect.any(File), "cover"),
+    );
+    await waitFor(() => {
+      const img = container.querySelector("img");
+      expect(img?.getAttribute("src")).toContain("media/cover/new.webp");
+    });
+    expect(
+      screen.getByRole("button", { name: "Remove cover image" }),
+    ).toBeInTheDocument();
+  });
+
+  it("opens the crop modal on a valid pick and doesn't upload until confirmed", async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+
+    await user.upload(screen.getByLabelText("Cover image"), pngFile());
+
+    expect(screen.getByTestId("cover-crop-modal")).toBeInTheDocument();
+    expect(uploadMedia).not.toHaveBeenCalled();
+  });
+
+  it("cancelling the crop closes the modal without uploading", async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+
+    await user.upload(screen.getByLabelText("Cover image"), pngFile());
+    await user.click(screen.getByText("cancel-crop"));
+
+    expect(screen.queryByTestId("cover-crop-modal")).not.toBeInTheDocument();
+    expect(uploadMedia).not.toHaveBeenCalled();
+  });
+
+  it("removes the cover, clearing the preview back to the gradient", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<Harness initialKey="media/cover/old.webp" />);
+
+    expect(container.querySelector("img")).not.toBeNull();
+    await user.click(
+      screen.getByRole("button", { name: "Remove cover image" }),
+    );
+
+    expect(container.querySelector("img")).toBeNull();
+    expect(uploadMedia).not.toHaveBeenCalled();
+  });
+
+  it("rejects a non-image file without uploading", async () => {
+    render(<Harness />);
+
+    // fireEvent (not userEvent.upload) so the accept="image/*" filter doesn't
+    // drop the file before onChange — this exercises the client-side guard.
+    fireEvent.change(screen.getByLabelText("Cover image"), {
+      target: { files: [new File(["x"], "notes.txt", { type: "text/plain" })] },
+    });
+
+    expect(
+      await screen.findByText("Choose an image file."),
+    ).toBeInTheDocument();
+    expect(uploadMedia).not.toHaveBeenCalled();
+  });
+
+  it("rejects an image larger than the size cap without uploading", async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+
+    const big = new File([new Uint8Array(MEDIA_MAX_BYTES + 1)], "big.png", {
+      type: "image/png",
+    });
+    await user.upload(screen.getByLabelText("Cover image"), big);
+
+    expect(
+      await screen.findByText("Image must be 1 MB or smaller."),
+    ).toBeInTheDocument();
+    expect(uploadMedia).not.toHaveBeenCalled();
+  });
+
+  it("reports the in-flight upload to the parent so the form can gate submit", async () => {
+    let resolveUpload!: (v: {
+      key: string;
+      url: string;
+      byteSize: number;
+    }) => void;
+    vi.mocked(uploadMedia).mockReturnValue(
+      new Promise((res) => {
+        resolveUpload = res;
+      }),
+    );
+    const onUploadingChange = vi.fn();
+    const user = userEvent.setup();
+    render(<Harness onUploadingChange={onUploadingChange} />);
+
+    await user.upload(screen.getByLabelText("Cover image"), pngFile());
+    await user.click(screen.getByText("confirm-crop"));
+    await waitFor(() => expect(onUploadingChange).toHaveBeenCalledWith(true));
+
+    resolveUpload({ key: "media/cover/x.webp", url: "u", byteSize: 8 });
+    await waitFor(() =>
+      expect(onUploadingChange).toHaveBeenLastCalledWith(false),
+    );
+  });
+
+  it("surfaces an upload failure and keeps no cover set", async () => {
+    vi.mocked(uploadMedia).mockRejectedValue(new Error("network"));
+    const user = userEvent.setup();
+    const { container } = render(<Harness />);
+
+    await user.upload(screen.getByLabelText("Cover image"), pngFile());
+    await user.click(screen.getByText("confirm-crop"));
+
+    expect(
+      await screen.findByText("Upload failed. Try again."),
+    ).toBeInTheDocument();
+    expect(container.querySelector("img")).toBeNull();
+  });
+});

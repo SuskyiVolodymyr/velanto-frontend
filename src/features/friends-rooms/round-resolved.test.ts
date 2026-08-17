@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { roundResultFromResolved } from "./round-resolved";
-import type { Item } from "@/src/shared/types/pack";
+import type { Item } from "@/types/pack";
 
 const ITEMS: Item[] = [
   { id: "a", type: "text", title: "A", value: "A" },

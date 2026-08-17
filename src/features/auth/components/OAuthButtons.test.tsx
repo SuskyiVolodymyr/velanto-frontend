@@ -1,0 +1,136 @@
+import { describe, expect, it, vi, beforeEach } from "vitest";
+import { screen, waitFor } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { renderWithIntl as render } from "@/test/render-with-intl";
+import { OAuthButtons } from "./OAuthButtons";
+import { authClient } from "@/api/auth-client";
+import { openOAuthPopup } from "@/utils/oauth-popup";
+
+const push = vi.fn();
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
+
+const revalidate = vi.fn().mockResolvedValue(null);
+vi.mock("@/contexts/auth-context", () => ({
+  useAuth: () => ({ revalidate }),
+}));
+
+vi.mock("@/api/auth-client", () => ({
+  authClient: { oauthProviders: vi.fn() },
+}));
+
+vi.mock("@/utils/oauth-popup", () => ({
+  openOAuthPopup: vi.fn(),
+}));
+
+const mockedProviders = vi.mocked(authClient.oauthProviders);
+const mockedPopup = vi.mocked(openOAuthPopup);
+
+describe("OAuthButtons", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("renders both provider buttons when both are configured", async () => {
+    mockedProviders.mockResolvedValue({ google: true, discord: true });
+    render(<OAuthButtons />);
+
+    expect(
+      await screen.findByRole("button", { name: "Continue with Google" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Continue with Discord" }),
+    ).toBeInTheDocument();
+  });
+
+  it("renders nothing when no provider is configured", async () => {
+    mockedProviders.mockResolvedValue({ google: false, discord: false });
+    render(<OAuthButtons />);
+
+    // The fetch resolves in an effect; wait for it to have been consumed.
+    await waitFor(() => expect(mockedProviders).toHaveBeenCalled());
+
+    expect(
+      screen.queryByRole("button", { name: "Continue with Google" }),
+    ).toBeNull();
+    expect(
+      screen.queryByRole("button", { name: "Continue with Discord" }),
+    ).toBeNull();
+  });
+
+  it("renders only the Google button when Discord is disabled", async () => {
+    mockedProviders.mockResolvedValue({ google: true, discord: false });
+    render(<OAuthButtons />);
+
+    expect(
+      await screen.findByRole("button", { name: "Continue with Google" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Continue with Discord" }),
+    ).toBeNull();
+  });
+
+  it("opens the provider popup, revalidates the session and lands home on success", async () => {
+    mockedProviders.mockResolvedValue({ google: true, discord: false });
+    mockedPopup.mockResolvedValue({ ok: true });
+    const user = userEvent.setup();
+    render(<OAuthButtons />);
+
+    await user.click(
+      await screen.findByRole("button", { name: "Continue with Google" }),
+    );
+
+    await waitFor(() => expect(mockedPopup).toHaveBeenCalledWith("google"));
+    await waitFor(() => expect(revalidate).toHaveBeenCalled());
+    expect(push).toHaveBeenCalledWith("/");
+  });
+
+  // A closed popup is ambiguous: the user may have cancelled, OR the flow may
+  // have completed and its postMessage been lost (an extension, a bfcache quirk,
+  // the window closing a beat early). In the second case the refresh cookie is
+  // ALREADY set, so treating "closed" as certain cancellation strands a user who
+  // did in fact sign in — the reported "OAuth doesn't log me in" symptom. Ask the
+  // server which it was instead of guessing.
+  it("still signs in when the popup closed but the session is actually live", async () => {
+    mockedProviders.mockResolvedValue({ google: true, discord: false });
+    mockedPopup.mockResolvedValue({ ok: false, error: "closed" });
+    revalidate.mockResolvedValue({ id: "u1", username: "vol" });
+    const user = userEvent.setup();
+    render(<OAuthButtons />);
+
+    await user.click(
+      await screen.findByRole("button", { name: "Continue with Google" }),
+    );
+
+    await waitFor(() => expect(push).toHaveBeenCalledWith("/"));
+    expect(screen.queryByRole("alert")).toBeNull();
+  });
+
+  it("treats a closed popup with no session as a plain cancellation", async () => {
+    mockedProviders.mockResolvedValue({ google: true, discord: false });
+    mockedPopup.mockResolvedValue({ ok: false, error: "closed" });
+    revalidate.mockResolvedValue(null);
+    const user = userEvent.setup();
+    render(<OAuthButtons />);
+
+    await user.click(
+      await screen.findByRole("button", { name: "Continue with Google" }),
+    );
+
+    await waitFor(() => expect(revalidate).toHaveBeenCalled());
+    expect(push).not.toHaveBeenCalled();
+    // Cancelling is not an error — no alert for a user who changed their mind.
+    expect(screen.queryByRole("alert")).toBeNull();
+  });
+
+  it("surfaces an error and does not navigate when the popup is blocked", async () => {
+    mockedProviders.mockResolvedValue({ google: true, discord: false });
+    mockedPopup.mockResolvedValue({ ok: false, error: "blocked" });
+    const user = userEvent.setup();
+    render(<OAuthButtons />);
+
+    await user.click(
+      await screen.findByRole("button", { name: "Continue with Google" }),
+    );
+
+    expect(await screen.findByRole("alert")).toBeInTheDocument();
+    expect(push).not.toHaveBeenCalled();
+  });
+});

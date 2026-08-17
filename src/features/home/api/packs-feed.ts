@@ -1,7 +1,7 @@
-import { packsClient } from "@/src/shared/lib/packs-client";
-import type { PackFormat, PackSummary, PackTag } from "@/src/shared/types/pack";
-import type { PackLanguage } from "@/src/shared/types/pack-language";
-import type { WindowFilterValue } from "@/src/features/home/filter-options";
+import { packsClient } from "@/api/packs-client";
+import type { PackFormat, PackSummary, PackTag } from "@/types/pack";
+import type { PackLanguage } from "@/types/pack-language";
+import type { WindowFilterValue } from "@/features/home/filter-options";
 
 // One page of the discovery feed. The backend caps `limit` at 50; 15 keeps each
 // page skimmable and gives the pager something to page through.

@@ -1,0 +1,343 @@
+"use client";
+
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useAuth } from "@/contexts/auth-context";
+import { playsClient } from "@/api/plays-client";
+import {
+  writeLastPlayPicks,
+  writeLastPlayId,
+} from "@/utils/last-play-storage";
+import { useRoundSelections } from "@/features/play/hooks/use-round-selections";
+import { usePlayResume } from "@/features/play/hooks/use-play-resume";
+import type { Item, Pack } from "@/types/pack";
+import type { RecordedPick } from "@/types/play-results";
+
+export interface Pick {
+  roundIndex: number;
+  groupId: string;
+  // Two-pool versus picks carry no itemId (a side is chosen). Elimination and
+  // single-pool versus picks carry the chosen/drawn item.
+  itemId?: string;
+  // Display label: the item title, or the side name for two-pool versus picks.
+  itemTitle: string;
+  // Single-pool versus only: whether this drawn item was on the chosen side.
+  chosen?: boolean;
+}
+
+// A versus side, derived per round from the current round's two slots.
+export interface VersusSide {
+  id: string;
+  name: string;
+}
+
+export interface PlaySession {
+  isVersus: boolean;
+  roundIndex: number;
+  totalRounds: number;
+  isFinished: boolean;
+  // True once the finish record has settled (resolved or failed); PlayScreen
+  // navigates straight to the result page on this, so there's no interstitial
+  // "all rounds done" step.
+  recordSettled: boolean;
+  showRound: boolean;
+  roundTitle: string;
+  // True on the final round, so the confirm button can read "see results"
+  // instead of "next round".
+  isLastRound: boolean;
+  // Versus selection is the chosen SIDE index ("0" | "1") — not a group id, so
+  // the two sides stay distinguishable even when they draw from one pool.
+  canConfirm: boolean;
+  selectedId: string | null;
+  setSelectedId: (id: string | null) => void;
+  // Every recorded pick (single-pool versus records one per drawn item on both
+  // sides). Fed to the record request and the local stash.
+  picks: Pick[];
+  // What to SHOW as "your picks" — the chosen items only (single-pool versus
+  // records the unchosen side too, which shouldn't appear in the summary).
+  displayPicks: Pick[];
+  confirmPick: () => void;
+  // Groups format: the drawn candidates for the current round's single slot.
+  candidates: Item[];
+  // Versus (nxn/1v1): the current round's two sides and their drawn items.
+  sideA?: VersusSide;
+  sideB?: VersusSide;
+  versusCandidatesA: Item[];
+  versusCandidatesB: Item[];
+  // True when the current versus round draws both sides from one pool.
+  versusSinglePool: boolean;
+  /** True while a saved play awaits a continue/restart decision — see
+   * usePlayResume's own doc. PlayScreen shows ResumePlayModal instead of any
+   * round content while this is true. */
+  needsChoice: boolean;
+  chooseContinue: () => void;
+  chooseRestart: () => void;
+  /** Rounds completed in a saved-but-undecided play, for the modal's context
+   * line. Independent of `roundIndex` (which stays 0 until the choice
+   * resolves) — sourced straight from the resume record. */
+  savedRoundsDone: number;
+}
+
+function toRecordedPick(pick: Pick): RecordedPick {
+  return {
+    roundIndex: pick.roundIndex,
+    groupId: pick.groupId,
+    ...(pick.itemId !== undefined ? { itemId: pick.itemId } : {}),
+    ...(pick.chosen !== undefined ? { chosen: pick.chosen } : {}),
+  };
+}
+
+/**
+ * Owns the save_one/sacrifice_one/nxn play state machine over the pools-and-
+ * rounds model: it draws the whole session's items once (dedup spans rounds),
+ * tracks the round cursor and per-round selection, unifies the versus (nxn) and
+ * groups formats behind one shape, and records the play once on finish. Returns
+ * a flat interface so PlayScreen can stay a thin presentational shell.
+ */
+export function usePlaySession(pack: Pack): PlaySession {
+  const { status } = useAuth();
+  // 1v1 has its own head-to-head screen (HeadToHeadPlayScreen); this hook drives
+  // the nxn versus path and the elimination formats.
+  const isVersus = pack.format === "nxn";
+  const groups = pack.groups ?? [];
+  const rounds = pack.rounds ?? [];
+  const totalRounds = rounds.length;
+
+  // Resume support: the seed makes the draw deterministic so a reload replays
+  // the identical rounds/items, and any saved progress (round cursor + picks so
+  // far) is restored below. Both are read from storage after mount, so `seed`
+  // starts null and the draw waits for it.
+  const resume = usePlayResume(pack);
+  // Destructured so the completion effect can depend on the stable
+  // `clearProgress` callback directly — a `resume.clearProgress` dep reads as
+  // depending on the whole, freshly-built `resume` object every render.
+  const { saveProgress, clearProgress } = resume;
+
+  // Drawn items for every round, resolved once after mount — the per-group
+  // dedup spans rounds, so the whole walk has to happen together (not
+  // per-round). Null until the client has drawn; see useRoundSelections.
+  const resolved = useRoundSelections(groups, rounds, resume.seed);
+  const selections = resolved ?? [];
+  const groupNameById = useMemo(
+    () => new Map(groups.map((group) => [group.id, group.name])),
+    [groups],
+  );
+
+  const [roundIndex, setRoundIndex] = useState(0);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [picks, setPicks] = useState<Pick[]>([]);
+  const [recordSettled, setRecordSettled] = useState(false);
+
+  // Restore a saved play ONCE, after the resume read settles — the same
+  // deferred, guarded shape as the draw itself, so nothing changes during the
+  // server/first-client render. A record only exists mid-play (it's deleted on
+  // completion), so initialRoundIndex is always in range for the seeded draw.
+  const restoredRef = useRef(false);
+  useEffect(() => {
+    if (restoredRef.current || !resume.ready || resume.needsChoice) return;
+    restoredRef.current = true;
+    if (resume.initialRoundIndex > 0 && Array.isArray(resume.initialChoices)) {
+      /* eslint-disable react-hooks/set-state-in-effect */
+      setRoundIndex(resume.initialRoundIndex);
+      setPicks(resume.initialChoices as Pick[]);
+      /* eslint-enable react-hooks/set-state-in-effect */
+    }
+  }, [
+    resume.ready,
+    resume.needsChoice,
+    resume.initialRoundIndex,
+    resume.initialChoices,
+  ]);
+
+  const isFinished = roundIndex >= totalRounds;
+  const isLastRound = !isFinished && roundIndex === totalRounds - 1;
+  const currentRound = !isFinished ? selections[roundIndex] : undefined;
+
+  // Versus sides are per ROUND now (matchups may vary) — read them off the
+  // CURRENT round's two slots. Undefined once play is finished (no round).
+  const currentSlots = currentRound?.slots ?? [];
+  // A resolved slot has no pool only when a random one found none free, which
+  // create-time validation makes unreachable — but the side is then genuinely
+  // unknown, so it is left undefined rather than faked with an empty id that
+  // would be recorded and rejected by the API.
+  const sideA: VersusSide | undefined =
+    isVersus && currentSlots[0]?.groupId
+      ? {
+          id: currentSlots[0].groupId,
+          name: groupNameById.get(currentSlots[0].groupId) ?? "",
+        }
+      : undefined;
+  const sideB: VersusSide | undefined =
+    isVersus && currentSlots[1]?.groupId
+      ? {
+          id: currentSlots[1].groupId,
+          name: groupNameById.get(currentSlots[1].groupId) ?? "",
+        }
+      : undefined;
+  // Both sides drawing from one pool → a single-pool matchup, recorded per item.
+  const versusSinglePool = Boolean(
+    isVersus && sideA && sideB && sideA.id === sideB.id,
+  );
+
+  const candidates = !isVersus ? (currentRound?.slots[0]?.items ?? []) : [];
+  const versusCandidatesA = isVersus ? (currentSlots[0]?.items ?? []) : [];
+  const versusCandidatesB = isVersus ? (currentSlots[1]?.items ?? []) : [];
+
+  // A single per-round model unifies the formats so the rest of the code reads
+  // one shape. `title` drives the heading; `resolvePicks` turns the current
+  // `selectedId` into the pick(s) to record (empty if invalid). The author-given
+  // round name wins; otherwise the round falls back to its group's name
+  // (elimination) or "Round N" (versus).
+  const roundName = rounds[roundIndex]?.name?.trim() ?? "";
+
+  const round = isVersus
+    ? {
+        title: roundName || `Round ${roundIndex + 1}`,
+        // Versus selection is the chosen SIDE INDEX ("0" | "1"), recorded as one
+        // pick per DRAWN ITEM across both sides — each under the pool it was
+        // drawn from, `chosen` marking the picked side.
+        //
+        // Two-pool rounds used to record only the winning pool. That named the
+        // side but not what was on it, so a result could never show the player
+        // the matchup they were looking at; single-pool always recorded per
+        // item because both sides share a group id. This is now the one shape.
+        //
+        // Emitted in SLOT order (side A then side B), not chosen-first: the
+        // array order is what tells the result screen which side each item was
+        // on, and for a single-pool round the group ids can't.
+        resolvePicks(id: string): Pick[] {
+          const sideIndex = id === "0" ? 0 : id === "1" ? 1 : -1;
+          if (!currentSlots[sideIndex]) return [];
+          // A side with no resolved pool can't be recorded — its group id is
+          // what the API counts the side by. Unreachable in practice (see the
+          // sides above); dropping the round beats sending a pick the API will
+          // reject and silently lose the whole play.
+          if (currentSlots.some((slot) => !slot.groupId)) return [];
+          return currentSlots.flatMap((slot, side) =>
+            slot.items.map((item) => ({
+              roundIndex,
+              groupId: slot.groupId!,
+              itemId: item.id,
+              itemTitle: item.title,
+              chosen: side === sideIndex,
+            })),
+          );
+        },
+      }
+    : {
+        title:
+          roundName ||
+          (currentRound
+            ? (groupNameById.get(currentRound.slots[0]?.groupId ?? "") ?? "")
+            : ""),
+        // One pick per DRAWN item, in draw order, `chosen` marking the one
+        // saved (save_one) or sacrificed (sacrifice_one) — the same shape the
+        // versus rounds record.
+        //
+        // Recording only the chosen item named the pick but not what it was
+        // chosen from, so the result screen could never show the slate the
+        // player was looking at. It can't be recovered from the pack either: a
+        // random slot draws a different subset every play.
+        resolvePicks(id: string): Pick[] {
+          const slot = currentRound?.slots[0];
+          if (!slot || !candidates.some((candidate) => candidate.id === id)) {
+            return [];
+          }
+          if (!slot.groupId) return [];
+          const groupId = slot.groupId;
+          return candidates.map((item) => ({
+            roundIndex,
+            groupId,
+            itemId: item.id,
+            itemTitle: item.title,
+            chosen: item.id === id,
+          }));
+        },
+      };
+
+  // Every candidate is shown at once (they fade in staggered in the UI), so a
+  // pick is confirmable as soon as something is selected.
+  const canConfirm = selectedId !== null;
+
+  function confirmPick() {
+    if (!canConfirm || selectedId === null) return;
+    const roundPicks = round.resolvePicks(selectedId);
+    if (roundPicks.length === 0) return;
+    const nextPicks = [...picks, ...roundPicks];
+    const nextRoundIndex = roundIndex + 1;
+    setPicks(nextPicks);
+    setRoundIndex(nextRoundIndex);
+    // Save progress after each FINISHED round so a reload resumes here. The
+    // final round writes nothing — the completion effect deletes the record
+    // instead, so a completed pack never lingers in "Continue playing".
+    if (nextRoundIndex < totalRounds) {
+      saveProgress(nextRoundIndex, nextPicks);
+    }
+    setSelectedId(null);
+  }
+
+  // Fires once when the last round is confirmed. Anonymous plays ARE recorded
+  // (velanto-frontend#221 / backend#176) — the endpoint takes an optional JWT
+  // and stores a null player. We still wait for auth to resolve first: sending
+  // before the token is available would record a signed-in player's run as
+  // anonymous, losing it from their history.
+  //
+  // The picks are stashed FIRST, and never conditionally on the request. They
+  // used to be written in .then() so "your pick" could never show a percentage
+  // that excluded your own vote — a cosmetic guarantee that stopped being worth
+  // its cost once #222 gated the result screen on these picks: a slow or failed
+  // request would lock out the player who just finished the pack. The redirect
+  // below still waits for recordSettled, so the aggregate normally does include
+  // your vote; if the request fails, a slightly stale percentage beats no
+  // result screen at all.
+  const recordedRef = useRef(false);
+  useEffect(() => {
+    if (!isFinished || status === "loading" || recordedRef.current) return;
+    recordedRef.current = true;
+    // The play is complete — drop the resume record so the pack leaves the
+    // "Continue playing" rail and a reopen is a fresh play.
+    clearProgress();
+    const recordedPicks = picks.map(toRecordedPick);
+    writeLastPlayPicks(pack.id, recordedPicks);
+    playsClient
+      .record(pack.id, { picks: recordedPicks })
+      // Stash the play id so the result screen can build a short `?play=` share
+      // link. Best-effort: a failed record just falls back to the `?p=` payload.
+      .then(({ id }) => {
+        if (id) writeLastPlayId(pack.id, id);
+      })
+      .catch(() => undefined)
+      .finally(() => setRecordSettled(true));
+  }, [isFinished, pack.id, picks, status, clearProgress]);
+
+  const showRound = isVersus
+    ? Boolean(currentRound && sideA && sideB)
+    : Boolean(currentRound);
+
+  return {
+    isVersus,
+    roundIndex,
+    totalRounds,
+    isFinished,
+    recordSettled,
+    showRound,
+    roundTitle: round.title,
+    isLastRound,
+    canConfirm,
+    selectedId,
+    setSelectedId,
+    picks,
+    // Hide the unchosen side of a single-pool round from the "your picks" list.
+    displayPicks: picks.filter((pick) => pick.chosen !== false),
+    confirmPick,
+    candidates,
+    sideA,
+    sideB,
+    versusCandidatesA,
+    versusCandidatesB,
+    versusSinglePool,
+    needsChoice: resume.needsChoice,
+    chooseContinue: resume.chooseContinue,
+    chooseRestart: resume.chooseRestart,
+    savedRoundsDone: resume.initialRoundIndex,
+  };
+}

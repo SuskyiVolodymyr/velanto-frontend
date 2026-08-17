@@ -1,4 +1,4 @@
-import { USERNAME_CHARS } from "@/src/features/auth/auth.schema";
+import { USERNAME_CHARS } from "@/features/auth/auth.schema";
 import type { ReactNode } from "react";
 
 // Built from the username charset rather than restating it, and mirroring the

@@ -1,4 +1,4 @@
-import type { Pack } from "@/src/shared/types/pack";
+import type { Pack } from "@/types/pack";
 import type { RoomMode } from "./room-types";
 
 /** The mode picker card's title — `room.modes.<mode>.name` in the `room` catalog. */

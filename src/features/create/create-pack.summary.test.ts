@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { summarizePack } from "./create-pack.summary";
 import type { CreatePackValues } from "./create-pack.schema";
-import type { Item } from "@/src/shared/types/pack";
+import type { Item } from "@/types/pack";
 
 function textItem(title: string): Item {
   return { id: `i-${title}`, type: "text", title, value: title };

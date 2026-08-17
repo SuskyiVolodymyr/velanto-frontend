@@ -1,5 +1,5 @@
-import { packsClient, type PackList } from "@/src/shared/lib/packs-client";
-import type { PackSummary } from "@/src/shared/types/pack";
+import { packsClient, type PackList } from "@/api/packs-client";
+import type { PackSummary } from "@/types/pack";
 
 // One page of an author's packs. Small on purpose: the profile leads with a
 // handful and reveals the rest on demand via "Load more". Mirrored by the SSR

@@ -1,0 +1,286 @@
+import { describe, expect, it, vi, beforeEach } from "vitest";
+import { screen, within } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import { renderWithIntl as render } from "@/test/render-with-intl";
+import { PackApprovalsTab } from "./PackApprovalsTab";
+import { packsClient } from "@/api/packs-client";
+import type { Pack } from "@/types/pack";
+
+vi.mock("@/api/packs-client", () => ({
+  packsClient: { moderationQueue: vi.fn(), approve: vi.fn(), reject: vi.fn() },
+}));
+
+/**
+ * The format filter is the design's listbox {@link Dropdown}, not a native
+ * <select>: its options only exist in the DOM while the panel is open, so a
+ * test has to open the trigger before it can see or click one.
+ */
+async function openFormatFilter(user: ReturnType<typeof userEvent.setup>) {
+  await user.click(
+    await screen.findByRole("combobox", { name: "Filter by format" }),
+  );
+}
+
+const { mockPush } = vi.hoisted(() => ({ mockPush: vi.fn() }));
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ push: mockPush, replace: vi.fn() }),
+}));
+
+function pack(overrides: Partial<Pack> = {}): Pack {
+  return {
+    id: "p1",
+    title: "Best Anime Openings",
+    description: "…",
+    coverTone: "violet",
+    format: "save_one",
+    language: "en",
+    tags: ["Anime"],
+    groups: [],
+    rounds: [],
+    authorId: "a1",
+    author: {
+      id: "a1",
+      username: "packsmith",
+      avatarKey: null,
+      role: "user",
+      trusted: false,
+    },
+    createdAt: "2020-01-01T00:00:00.000Z",
+    submittedAt: "2026-07-14T00:00:00.000Z",
+    totalPlays: 0,
+    avgAgreementPercent: 0,
+    status: "pending",
+    rejectionReason: null,
+    likes: 0,
+    dislikes: 0,
+    myVote: null,
+    ...overrides,
+  };
+}
+
+function queuePage(items: Pack[], total = items.length) {
+  return { items, total, page: 1, limit: 20 };
+}
+
+beforeEach(() => {
+  vi.clearAllMocks();
+  vi.mocked(packsClient.moderationQueue).mockResolvedValue(queuePage([pack()]));
+  vi.mocked(packsClient.approve).mockResolvedValue(
+    pack({ status: "approved" }),
+  );
+  vi.mocked(packsClient.reject).mockResolvedValue(pack({ status: "rejected" }));
+});
+
+describe("PackApprovalsTab", () => {
+  it("requests the oldest submissions first — the backlog, not the newest arrivals", async () => {
+    render(<PackApprovalsTab />);
+
+    await screen.findByText("Best Anime Openings");
+    expect(packsClient.moderationQueue).toHaveBeenCalledWith(
+      expect.objectContaining({ sort: "oldest", page: 1 }),
+    );
+  });
+
+  it("shows the author and the submission date, not the creation date", async () => {
+    render(<PackApprovalsTab />);
+
+    await screen.findByText("Best Anime Openings");
+    expect(screen.getByText("packsmith")).toBeInTheDocument();
+    // createdAt is 2020 and submittedAt is 2026: a pack edited today re-enters
+    // the queue, and the column has to agree with the order it is sorted in.
+    expect(
+      screen.queryByText(/5 years ago|6 years ago/),
+    ).not.toBeInTheDocument();
+  });
+
+  it("flips to newest-first on the sort toggle", async () => {
+    const user = userEvent.setup();
+    render(<PackApprovalsTab />);
+
+    await user.click(await screen.findByRole("button", { name: /Sort:/ }));
+
+    await vi.waitFor(() =>
+      expect(packsClient.moderationQueue).toHaveBeenLastCalledWith(
+        expect.objectContaining({ sort: "newest" }),
+      ),
+    );
+  });
+
+  it("narrows the queue by format", async () => {
+    const user = userEvent.setup();
+    render(<PackApprovalsTab />);
+
+    await openFormatFilter(user);
+    await user.click(screen.getByRole("option", { name: "NxN" }));
+
+    await vi.waitFor(() =>
+      expect(packsClient.moderationQueue).toHaveBeenLastCalledWith(
+        expect.objectContaining({ format: "nxn" }),
+      ),
+    );
+  });
+
+  it("approves a pack and refetches the queue without it", async () => {
+    const user = userEvent.setup();
+    render(<PackApprovalsTab />);
+
+    await screen.findByText("Best Anime Openings");
+    vi.mocked(packsClient.moderationQueue).mockResolvedValue(queuePage([]));
+    await user.click(screen.getByRole("button", { name: "Approve" }));
+
+    expect(packsClient.approve).toHaveBeenCalledWith("p1");
+    expect(
+      await screen.findByText("No packs waiting for review."),
+    ).toBeInTheDocument();
+  });
+
+  // The API requires a reason, so the button must not be able to send an empty
+  // one — a rejected author is owed an explanation.
+  it("will not submit a rejection without a reason", async () => {
+    const user = userEvent.setup();
+    render(<PackApprovalsTab />);
+
+    await screen.findByText("Best Anime Openings");
+    await user.click(screen.getByRole("button", { name: "Reject" }));
+
+    const confirm = screen.getByRole("button", { name: "Confirm reject" });
+    expect(confirm).toBeDisabled();
+
+    await user.type(
+      screen.getByLabelText("Rejection reason for Best Anime Openings"),
+      "  ",
+    );
+    expect(confirm).toBeDisabled();
+  });
+
+  it("rejects a pack with the typed reason", async () => {
+    const user = userEvent.setup();
+    render(<PackApprovalsTab />);
+
+    await screen.findByText("Best Anime Openings");
+    await user.click(screen.getByRole("button", { name: "Reject" }));
+    await user.type(
+      screen.getByLabelText("Rejection reason for Best Anime Openings"),
+      "Low effort",
+    );
+    await user.click(screen.getByRole("button", { name: "Confirm reject" }));
+
+    expect(packsClient.reject).toHaveBeenCalledWith("p1", "Low effort");
+  });
+
+  it("surfaces a failed action instead of silently doing nothing", async () => {
+    vi.mocked(packsClient.approve).mockRejectedValue(new Error("boom"));
+    const user = userEvent.setup();
+    render(<PackApprovalsTab />);
+
+    await screen.findByText("Best Anime Openings");
+    await user.click(screen.getByRole("button", { name: "Approve" }));
+
+    expect(
+      await screen.findByText("Couldn't update this pack. Try again."),
+    ).toBeInTheDocument();
+  });
+
+  it("pages through the queue", async () => {
+    vi.mocked(packsClient.moderationQueue).mockResolvedValue(
+      queuePage([pack()], 40),
+    );
+    const user = userEvent.setup();
+    render(<PackApprovalsTab />);
+
+    await screen.findByText("Best Anime Openings");
+    await user.click(screen.getByRole("button", { name: "Next" }));
+
+    await vi.waitFor(() =>
+      expect(packsClient.moderationQueue).toHaveBeenLastCalledWith(
+        expect.objectContaining({ page: 2 }),
+      ),
+    );
+  });
+
+  it("renders an em dash for a pack whose author could not be resolved", async () => {
+    vi.mocked(packsClient.moderationQueue).mockResolvedValue(
+      queuePage([pack({ author: undefined })]),
+    );
+    render(<PackApprovalsTab />);
+
+    const row = await screen.findByText("Best Anime Openings");
+    expect(
+      within(row.closest('[role="row"]') as HTMLElement).getByText("—"),
+    ).toBeInTheDocument();
+  });
+
+  it("links a row's title to the pack's review screen, not the public pack page", async () => {
+    render(<PackApprovalsTab />);
+
+    const link = await screen.findByRole("link", {
+      name: "Best Anime Openings",
+    });
+    expect(link).toHaveAttribute("href", "/moderation/packs/p1");
+  });
+
+  it("navigates to the review screen when the row is clicked", async () => {
+    const user = userEvent.setup();
+    render(<PackApprovalsTab />);
+
+    await screen.findByText("Best Anime Openings");
+    // Click a cell that isn't the title link or an action button — the
+    // author cell — to prove the WHOLE row opens the review screen, not
+    // just its title link.
+    await user.click(screen.getByText("packsmith"));
+
+    expect(mockPush).toHaveBeenCalledWith("/moderation/packs/p1");
+  });
+
+  it("does not navigate when Approve is clicked — the button stops the row's click from also firing", async () => {
+    const user = userEvent.setup();
+    render(<PackApprovalsTab />);
+
+    await screen.findByText("Best Anime Openings");
+    await user.click(screen.getByRole("button", { name: "Approve" }));
+
+    expect(packsClient.approve).toHaveBeenCalledWith("p1");
+    expect(mockPush).not.toHaveBeenCalled();
+  });
+
+  it("does not navigate when Reject (or the reject-form controls) is clicked", async () => {
+    const user = userEvent.setup();
+    render(<PackApprovalsTab />);
+
+    await screen.findByText("Best Anime Openings");
+    await user.click(screen.getByRole("button", { name: "Reject" }));
+    expect(mockPush).not.toHaveBeenCalled();
+
+    await user.type(
+      screen.getByLabelText("Rejection reason for Best Anime Openings"),
+      "Low effort",
+    );
+    await user.click(screen.getByRole("button", { name: "Confirm reject" }));
+
+    expect(packsClient.reject).toHaveBeenCalledWith("p1", "Low effort");
+    expect(mockPush).not.toHaveBeenCalled();
+  });
+
+  // Every format is a named filter option. Counting the options is what makes
+  // dropping a format from the filter fail — asserting only "1v1 is present"
+  // would stay green.
+  it("offers every named format in the filter", async () => {
+    const user = userEvent.setup();
+    render(<PackApprovalsTab />);
+    await screen.findByText("Best Anime Openings");
+
+    await openFormatFilter(user);
+    const options = screen.getAllByRole("option");
+
+    expect(options).toHaveLength(6); // "All formats" + 5 named formats
+    expect(options.map((option) => option.textContent)).toEqual([
+      "All formats",
+      "Save One",
+      "Sacrifice One",
+      "NxN",
+      "Rank Blind",
+      "1v1",
+    ]);
+  });
+});

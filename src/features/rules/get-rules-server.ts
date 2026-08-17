@@ -1,13 +1,13 @@
-import type { RulesDocument } from "@/src/shared/types/rules";
+import type { RulesDocument } from "@/types/rules";
 
-// Canonical rules types now live in `@/src/shared/types/rules` (resolves the
+// Canonical rules types now live in `@/types/rules` (resolves the
 // #91 review Minor about them being defined inline here). Re-exported so the
 // existing `import ... from "./get-rules-server"` call sites keep working.
 export type {
   RuleItem,
   RuleCategory,
   RulesDocument,
-} from "@/src/shared/types/rules";
+} from "@/types/rules";
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 

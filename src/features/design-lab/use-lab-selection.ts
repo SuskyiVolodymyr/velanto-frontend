@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { RoomMode } from "@/src/features/friends-rooms/room-types";
+import type { RoomMode } from "@/features/friends-rooms/room-types";
 import type { LabSwitcher } from "./DesignLabBar";
 import {
   FORMAT_LABEL,

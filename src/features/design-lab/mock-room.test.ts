@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { ROOM_MODE_BOUNDS } from "@/src/features/friends-rooms/room-types";
-import type { RoomMode } from "@/src/features/friends-rooms/room-types";
+import { ROOM_MODE_BOUNDS } from "@/features/friends-rooms/room-types";
+import type { RoomMode } from "@/features/friends-rooms/room-types";
 import {
   LAB_FORMATS,
   labModes,

@@ -1,12 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/src/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { MobileAccountScreen } from "./MobileAccountScreen";
-import { useAuth } from "@/src/shared/lib/auth-context";
-import type { User } from "@/src/shared/types/user";
+import { useAuth } from "@/contexts/auth-context";
+import type { User } from "@/types/user";
 
-vi.mock("@/src/shared/lib/auth-context");
+vi.mock("@/contexts/auth-context");
 const replace = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ replace }) }));
 
