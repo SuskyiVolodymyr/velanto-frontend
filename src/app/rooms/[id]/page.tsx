@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { RoomScreen } from "@/features/friends-rooms/RoomScreen";
+import { RoomScreen } from "@/features/friends-rooms/components/RoomScreen";
 
 // A live room is private, transient, and members-only — it holds no indexable
 // content and its URL leaks nothing useful to a crawler, so keep it out of the

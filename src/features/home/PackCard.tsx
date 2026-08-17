@@ -17,7 +17,7 @@ import { formatRelativeTimeIntl } from "@/utils/relative-time";
 import { isHotPack } from "@/features/home/hot-pack";
 import { useAuth } from "@/contexts/auth-context";
 import { cn } from "@/utils/cn";
-import { friendsRoomsClient } from "@/features/friends-rooms/friends-rooms-client";
+import { friendsRoomsClient } from "@/features/friends-rooms/api/friends-rooms-client";
 import { type PackSummary } from "@/types/pack";
 
 /**

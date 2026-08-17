@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/auth-context";
 import { packsClient } from "@/api/packs-client";
 import { playsClient } from "@/api/plays-client";
-import { friendsRoomsClient } from "@/features/friends-rooms/friends-rooms-client";
+import { friendsRoomsClient } from "@/features/friends-rooms/api/friends-rooms-client";
 import type { AvailableMode } from "@/features/friends-rooms/room-types";
 import type { Pack, PackOverview } from "@/types/pack";
 import type { PackResults, RankResults } from "@/types/play-results";

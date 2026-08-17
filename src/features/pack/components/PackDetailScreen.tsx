@@ -17,7 +17,7 @@ import { PodiumTable } from "@/features/result/PodiumTable";
 import { PackCreatorCard } from "@/features/pack/components/PackCreatorCard";
 import { PackPlayButton } from "@/features/pack/components/PackPlayButton";
 import { PackPlayEstimate } from "@/features/pack/components/PackPlayEstimate";
-import { FriendsRoomEntry } from "@/features/friends-rooms/FriendsRoomEntry";
+import { FriendsRoomEntry } from "@/features/friends-rooms/components/FriendsRoomEntry";
 import { ROOMS_DORMANT } from "@/features/friends-rooms/room-types";
 import { PackOwnerActions } from "@/features/pack/components/PackOwnerActions";
 import { PackOwnerStatusBadge } from "@/features/pack/components/PackOwnerStatusBadge";

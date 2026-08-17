@@ -58,7 +58,7 @@ vi.mock("@/features/pack/components/PackChangesRequestedBanner", () => ({
 // FriendsRoomEntry.test.tsx — useAuth() throws outside an AuthProvider).
 // Stub it so this screen's own wiring assertion (does it render, with the
 // right packId) stays independent of the auth context.
-vi.mock("@/features/friends-rooms/FriendsRoomEntry", () => ({
+vi.mock("@/features/friends-rooms/components/FriendsRoomEntry", () => ({
   FriendsRoomEntry: ({ packId }: { packId: string }) => (
     <button type="button">{`Create room (${packId})`}</button>
   ),

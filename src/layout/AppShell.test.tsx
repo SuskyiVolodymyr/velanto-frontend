@@ -69,7 +69,7 @@ vi.mock("@/layout/SiteFooter", () => ({
 vi.mock("@/layout/MobileBottomNav", () => ({
   MobileBottomNav: () => <div data-testid="mobile-bottom-nav" />,
 }));
-vi.mock("@/features/friends-rooms/RoomPresenceIndicator", () => ({
+vi.mock("@/features/friends-rooms/components/RoomPresenceIndicator", () => ({
   RoomPresenceIndicator: () => <div data-testid="room-presence" />,
 }));
 

@@ -14,7 +14,7 @@ import { AppTopBar } from "@/layout/AppTopBar";
 import { BannedBanner } from "@/components/BannedBanner";
 import { SiteFooter } from "@/layout/SiteFooter";
 import { MobileBottomNav } from "@/layout/MobileBottomNav";
-import { RoomPresenceIndicator } from "@/features/friends-rooms/RoomPresenceIndicator";
+import { RoomPresenceIndicator } from "@/features/friends-rooms/components/RoomPresenceIndicator";
 import { SearchQueryProvider } from "@/features/home/search-query-context";
 import { SidebarProvider } from "@/contexts/sidebar-context";
 import { PlayFocusProvider } from "@/contexts/play-focus-context";

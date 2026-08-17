@@ -41,7 +41,7 @@ vi.mock("next/navigation", () => ({
 vi.mock("@/contexts/auth-context", () => ({
   useAuth: () => ({ user: null }),
 }));
-vi.mock("@/features/friends-rooms/friends-rooms-client", () => ({
+vi.mock("@/features/friends-rooms/api/friends-rooms-client", () => ({
   friendsRoomsClient: { create: vi.fn() },
 }));
 

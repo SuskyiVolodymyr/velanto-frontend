@@ -7,7 +7,7 @@ import { usePackFallback } from "./use-pack-fallback";
 import { useAuth } from "@/contexts/auth-context";
 import { packsClient } from "@/api/packs-client";
 import { playsClient } from "@/api/plays-client";
-import { friendsRoomsClient } from "@/features/friends-rooms/friends-rooms-client";
+import { friendsRoomsClient } from "@/features/friends-rooms/api/friends-rooms-client";
 import { ApiError } from "@/api/api-client";
 import type { Pack } from "@/types/pack";
 import type { PackResults } from "@/types/play-results";
@@ -16,7 +16,7 @@ import type { AvailableMode } from "@/features/friends-rooms/room-types";
 vi.mock("@/contexts/auth-context");
 vi.mock("@/api/packs-client");
 vi.mock("@/api/plays-client");
-vi.mock("@/features/friends-rooms/friends-rooms-client");
+vi.mock("@/features/friends-rooms/api/friends-rooms-client");
 
 const mockedUseAuth = vi.mocked(useAuth);
 const mockedPacksClient = vi.mocked(packsClient);

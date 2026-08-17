@@ -6,7 +6,7 @@ import JoinRoomPage, { generateMetadata } from "./page";
 // JoinByLink is a client island that talks to the room client and router (its
 // own tests). Stub it to echo the code so we can assert the route threads the
 // URL param through.
-vi.mock("@/features/friends-rooms/JoinByLink", () => ({
+vi.mock("@/features/friends-rooms/components/JoinByLink", () => ({
   JoinByLink: ({ code }: { code: string }) => <div>JoinByLink:{code}</div>,
 }));
 

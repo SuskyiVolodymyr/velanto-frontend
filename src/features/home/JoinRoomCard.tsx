@@ -9,7 +9,7 @@ import { Text } from "@/ui/Text";
 import { useAuth } from "@/contexts/auth-context";
 import { ApiError } from "@/api/api-client";
 import { cn } from "@/utils/cn";
-import { friendsRoomsClient } from "@/features/friends-rooms/friends-rooms-client";
+import { friendsRoomsClient } from "@/features/friends-rooms/api/friends-rooms-client";
 import { ROOMS_DORMANT } from "@/features/friends-rooms/room-types";
 
 /** Which inline error to show under the code field. `null` = none. */

@@ -50,7 +50,7 @@ vi.mock("next/navigation", () => ({
     return params;
   },
 }));
-vi.mock("@/features/friends-rooms/friends-rooms-client", () => ({
+vi.mock("@/features/friends-rooms/api/friends-rooms-client", () => ({
   friendsRoomsClient: { create: vi.fn() },
 }));
 

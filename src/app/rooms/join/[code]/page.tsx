@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { JoinByLink } from "@/features/friends-rooms/JoinByLink";
+import { JoinByLink } from "@/features/friends-rooms/components/JoinByLink";
 
 // The join route is a transient handoff — it holds no indexable content and its
 // URL carries a room code, so keep it out of the index entirely (like the live

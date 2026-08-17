@@ -44,7 +44,7 @@ vi.mock("@/features/pack/components/PackChangesRequestedBanner", () => ({
 // FriendsRoomEntry.test.tsx — useAuth()/useRouter() need a real provider/
 // next/navigation mock this fallback test doesn't otherwise set up). Stub it
 // the same way PackDetailScreen.test.tsx does.
-vi.mock("@/features/friends-rooms/FriendsRoomEntry", () => ({
+vi.mock("@/features/friends-rooms/components/FriendsRoomEntry", () => ({
   FriendsRoomEntry: () => <div>FriendsRoomEntry</div>,
 }));
 // ReportPackDialog is another auth-gated client island — stub the same way.

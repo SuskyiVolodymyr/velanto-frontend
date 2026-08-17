@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
-import { friendsRoomsClient } from "@/features/friends-rooms/friends-rooms-client";
+import { friendsRoomsClient } from "@/features/friends-rooms/api/friends-rooms-client";
 import type { AvailableMode } from "@/features/friends-rooms/room-types";
 import type { Group, PackFormat, Round } from "@/types/pack";
 

@@ -3,9 +3,9 @@
 import { useMemo, useState } from "react";
 import { pageContainer } from "@/constants/page-container";
 import { cn } from "@/utils/cn";
-import { RoomResults } from "@/features/friends-rooms/RoomResults";
-import { IdentityRevealScreen } from "@/features/friends-rooms/IdentityRevealScreen";
-import { SpyRevealScreen } from "@/features/friends-rooms/SpyRevealScreen";
+import { RoomResults } from "@/features/friends-rooms/components/RoomResults";
+import { IdentityRevealScreen } from "@/features/friends-rooms/components/IdentityRevealScreen";
+import { SpyRevealScreen } from "@/features/friends-rooms/components/SpyRevealScreen";
 import { DesignLabBar } from "./DesignLabBar";
 import { MOCK_SPY_USER_ID, MOCK_VIEWER_ID, mockResultsRoom } from "./mock-room";
 import { useLabSelection } from "./use-lab-selection";

@@ -5,7 +5,7 @@ import RoomPage, { generateMetadata } from "./page";
 
 // RoomScreen is a client island wired to the socket (its own tests). Stub it to
 // echo the roomId so we can assert the route threads the URL param through.
-vi.mock("@/features/friends-rooms/RoomScreen", () => ({
+vi.mock("@/features/friends-rooms/components/RoomScreen", () => ({
   RoomScreen: ({ roomId }: { roomId: string }) => (
     <div>RoomScreen:{roomId}</div>
   ),

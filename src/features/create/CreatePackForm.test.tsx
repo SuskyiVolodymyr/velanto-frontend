@@ -79,7 +79,7 @@ vi.mock("@/api/packs-client", () => ({
 // unauthenticated mid-test. Never resolving keeps the panel in its
 // loading (renders null) state, which is exactly what every test here wants
 // — none of them assert on feasibility content.
-vi.mock("@/features/friends-rooms/friends-rooms-client", () => ({
+vi.mock("@/features/friends-rooms/api/friends-rooms-client", () => ({
   friendsRoomsClient: { previewModes: vi.fn(() => new Promise(() => {})) },
 }));
 

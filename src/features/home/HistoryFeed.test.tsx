@@ -7,7 +7,7 @@ import { usersClient } from "@/api/users-client";
 import { listPlayResumes } from "@/features/play/play-resume-storage";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
-vi.mock("@/features/friends-rooms/friends-rooms-client", () => ({
+vi.mock("@/features/friends-rooms/api/friends-rooms-client", () => ({
   friendsRoomsClient: { create: vi.fn() },
 }));
 

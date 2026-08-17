@@ -4,10 +4,10 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { createTestQueryClient } from "@/test/test-query-client";
 import { usePreviewModes, type PreviewModesDraft } from "./use-preview-modes";
-import { friendsRoomsClient } from "@/features/friends-rooms/friends-rooms-client";
+import { friendsRoomsClient } from "@/features/friends-rooms/api/friends-rooms-client";
 import type { AvailableMode } from "@/features/friends-rooms/room-types";
 
-vi.mock("@/features/friends-rooms/friends-rooms-client", () => ({
+vi.mock("@/features/friends-rooms/api/friends-rooms-client", () => ({
   friendsRoomsClient: { previewModes: vi.fn() },
 }));
 

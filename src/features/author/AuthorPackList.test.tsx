@@ -21,7 +21,7 @@ vi.mock("@/contexts/auth-context", () => ({
 // PackCard's Friends button needs a mounted router + the room-create client —
 // unused by these list-rendering tests, but required for PackCard to mount.
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
-vi.mock("@/features/friends-rooms/friends-rooms-client", () => ({
+vi.mock("@/features/friends-rooms/api/friends-rooms-client", () => ({
   friendsRoomsClient: { create: vi.fn() },
 }));
 

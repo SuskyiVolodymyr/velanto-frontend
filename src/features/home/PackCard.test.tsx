@@ -17,7 +17,7 @@ vi.mock("@/contexts/auth-context", () => ({
 }));
 
 const { create } = vi.hoisted(() => ({ create: vi.fn() }));
-vi.mock("@/features/friends-rooms/friends-rooms-client", () => ({
+vi.mock("@/features/friends-rooms/api/friends-rooms-client", () => ({
   friendsRoomsClient: { create },
 }));
 
