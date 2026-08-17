@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { pickFromDropdown } from "@/shared/test/pick-from-dropdown";
+import { pickFromDropdown } from "@/test/pick-from-dropdown";
 import { RoleSelect } from "./RoleSelect";
 
 // The control is the app's listbox Dropdown, not a native <select>: its options

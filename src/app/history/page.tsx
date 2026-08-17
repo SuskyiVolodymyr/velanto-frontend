@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { Text } from "@/shared/ui/Text";
-import { PageHeader } from "@/shared/ui/PageHeader";
-import { cn } from "@/shared/utils/cn";
-import { PAGE_CONTAINER_FULL } from "@/shared/constants/page-container";
+import { Text } from "@/ui/Text";
+import { PageHeader } from "@/ui/PageHeader";
+import { cn } from "@/utils/cn";
+import { PAGE_CONTAINER_FULL } from "@/constants/page-container";
 import { HistoryFeed } from "@/features/home/HistoryFeed";
 
 export async function generateMetadata(): Promise<Metadata> {

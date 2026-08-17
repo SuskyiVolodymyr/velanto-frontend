@@ -2,16 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Card } from "@/shared/ui/Card";
-import { Text } from "@/shared/ui/Text";
+import { Card } from "@/ui/Card";
+import { Text } from "@/ui/Text";
 import {
   OAuthProviderIcon,
   OAUTH_BRAND_CLASS,
-} from "@/shared/components/oauth-branding";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { authClient, type OAuthProviders } from "@/shared/api/auth-client";
-import { openOAuthPopup } from "@/shared/utils/oauth-popup";
-import { cn } from "@/shared/utils/cn";
+} from "@/components/oauth-branding";
+import { useAuth } from "@/contexts/auth-context";
+import { authClient, type OAuthProviders } from "@/api/auth-client";
+import { openOAuthPopup } from "@/utils/oauth-popup";
+import { cn } from "@/utils/cn";
 import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
 
 const PROVIDERS = [

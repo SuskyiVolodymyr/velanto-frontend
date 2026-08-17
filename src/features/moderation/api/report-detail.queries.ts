@@ -1,5 +1,5 @@
 import { queryOptions, useQuery } from "@tanstack/react-query";
-import { reportsClient } from "@/shared/api/reports-client";
+import { reportsClient } from "@/api/reports-client";
 
 export function reportQueryOptions(reportId: string) {
   return queryOptions({

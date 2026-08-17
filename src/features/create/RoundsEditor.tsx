@@ -4,20 +4,20 @@ import { useState } from "react";
 import { useFormContext, useWatch, useFieldArray } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import { ChevronDown } from "lucide-react";
-import type { GroupMode, SlotMode } from "@/shared/types/pack";
-import { resolveRoundDraws } from "@/shared/utils/round-draw";
-import { Input } from "@/shared/ui/Input";
-import { Dropdown } from "@/shared/ui/Dropdown";
-import { SegmentedControl } from "@/shared/ui/SegmentedControl";
+import type { GroupMode, SlotMode } from "@/types/pack";
+import { resolveRoundDraws } from "@/utils/round-draw";
+import { Input } from "@/ui/Input";
+import { Dropdown } from "@/ui/Dropdown";
+import { SegmentedControl } from "@/ui/SegmentedControl";
 import {
   RoundsBulkBar,
   RoundsAddButton,
 } from "@/features/create/RoundsToolbar";
-import { Button } from "@/shared/ui/Button";
-import { Text } from "@/shared/ui/Text";
-import { cn } from "@/shared/utils/cn";
+import { Button } from "@/ui/Button";
+import { Text } from "@/ui/Text";
+import { cn } from "@/utils/cn";
 import { StepHeader } from "@/features/create/StepHeader";
-import { getFieldError } from "@/shared/ui/form/getFieldError";
+import { getFieldError } from "@/ui/form/getFieldError";
 import {
   newRound,
   randomSlot,

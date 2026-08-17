@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, fireEvent, waitFor } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { ShareButton } from "./ShareButton";
 
 const writeText = vi.fn().mockResolvedValue(undefined);

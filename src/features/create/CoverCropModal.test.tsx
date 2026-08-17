@@ -1,9 +1,9 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { CoverCropModal } from "./CoverCropModal";
-import { cropImage } from "@/shared/utils/crop-image";
+import { cropImage } from "@/utils/crop-image";
 
 // react-easy-crop is browser-only; stub it to report a fixed 4:3 crop area.
 vi.mock("react-easy-crop", async () => {
@@ -21,7 +21,7 @@ vi.mock("react-easy-crop", async () => {
   return { default: CropperStub };
 });
 
-vi.mock("@/shared/utils/crop-image", () => ({
+vi.mock("@/utils/crop-image", () => ({
   cropImage: vi.fn(),
   MAX_COVER_CROP: 1200,
 }));

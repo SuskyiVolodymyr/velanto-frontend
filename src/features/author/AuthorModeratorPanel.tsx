@@ -1,23 +1,23 @@
 "use client";
-import { formatDate, formatDateTime } from "@/shared/utils/format-date";
+import { formatDate, formatDateTime } from "@/utils/format-date";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
-import { Button } from "@/shared/ui/Button";
-import { Dropdown } from "@/shared/ui/Dropdown";
-import { LoadingState } from "@/shared/ui/LoadingState";
-import { BAN_DURATIONS } from "@/shared/constants/ban-durations";
+import { Text } from "@/ui/Text";
+import { Button } from "@/ui/Button";
+import { Dropdown } from "@/ui/Dropdown";
+import { LoadingState } from "@/ui/LoadingState";
+import { BAN_DURATIONS } from "@/constants/ban-durations";
 import {
   BanReasonPicker,
   isBanReasonValid,
-} from "@/shared/components/BanReasonPicker";
-import { resolveBanReasonTitle } from "@/shared/utils/ban-reason-title";
+} from "@/components/BanReasonPicker";
+import { resolveBanReasonTitle } from "@/utils/ban-reason-title";
 import type { UseQueryResult } from "@tanstack/react-query";
 import type {
   BanHistoryPage,
   BanDuration,
-} from "@/shared/api/users-client";
-import type { RuleCategory } from "@/shared/types/rules";
+} from "@/api/users-client";
+import type { RuleCategory } from "@/types/rules";
 import type { AuthorModeration } from "./use-author-moderation";
 
 /**

@@ -1,7 +1,7 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { Dropdown } from "@/shared/ui/Dropdown";
+import { Dropdown } from "@/ui/Dropdown";
 import { LOCALES, LOCALE_NAMES, type Locale } from "@/i18n/config";
 import { setUserLocale } from "@/i18n/locale";
 

@@ -4,7 +4,7 @@ import type {
   Round,
   Slot,
   SlotMode,
-} from "@/shared/types/pack";
+} from "@/types/pack";
 
 function shuffle<T>(items: readonly T[], rng: () => number): T[] {
   const result = [...items];

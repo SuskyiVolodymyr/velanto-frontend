@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import { DocsScreen } from "@/features/docs/DocsScreen";
-import { buildOpenGraph } from "@/shared/utils/open-graph";
-import { SITE_URL } from "@/shared/constants/site-url";
+import { buildOpenGraph } from "@/utils/open-graph";
+import { SITE_URL } from "@/constants/site-url";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("docs");

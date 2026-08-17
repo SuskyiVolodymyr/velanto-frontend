@@ -5,14 +5,14 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { Pencil, Send, Trash2 } from "lucide-react";
-import { Text } from "@/shared/ui/Text";
-import type { PackStatus } from "@/shared/types/pack";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { isStaff } from "@/shared/utils/user-role";
-import { packsClient } from "@/shared/api/packs-client";
-import { buttonClassName } from "@/shared/ui/Button";
-import { Button } from "@/shared/ui/Button";
-import { ConfirmModal } from "@/shared/ui/ConfirmModal";
+import { Text } from "@/ui/Text";
+import type { PackStatus } from "@/types/pack";
+import { useAuth } from "@/contexts/auth-context";
+import { isStaff } from "@/utils/user-role";
+import { packsClient } from "@/api/packs-client";
+import { buttonClassName } from "@/ui/Button";
+import { Button } from "@/ui/Button";
+import { ConfirmModal } from "@/ui/ConfirmModal";
 
 /**
  * Author/moderator actions on a pack detail page. The author sees Edit + Delete;

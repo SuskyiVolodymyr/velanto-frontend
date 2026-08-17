@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Card } from "@/shared/ui/Card";
-import { Text } from "@/shared/ui/Text";
-import { useAuth } from "@/shared/contexts/auth-context";
+import { Card } from "@/ui/Card";
+import { Text } from "@/ui/Text";
+import { useAuth } from "@/contexts/auth-context";
 import { AddEmailForm } from "@/features/settings/AddEmailForm";
 import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
 

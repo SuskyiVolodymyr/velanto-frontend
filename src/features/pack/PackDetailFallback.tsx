@@ -1,8 +1,8 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { usePackFallback } from "@/shared/hooks/use-pack-fallback";
-import { packsClient } from "@/shared/api/packs-client";
+import { usePackFallback } from "@/hooks/use-pack-fallback";
+import { packsClient } from "@/api/packs-client";
 import { PackDetailScreen } from "@/features/pack/PackDetailScreen";
 
 export function PackDetailFallback({ packId }: { packId: string }) {

@@ -1,10 +1,10 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { ActivityChart, rangeFromParam } from "./ActivityChart";
-import { adminClient } from "@/shared/api/admin-client";
-import type { ActivityPoint } from "@/shared/types/admin";
+import { adminClient } from "@/api/admin-client";
+import type { ActivityPoint } from "@/types/admin";
 
 const replace = vi.fn();
 let searchParams = new URLSearchParams();
@@ -15,7 +15,7 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => searchParams,
 }));
 
-vi.mock("@/shared/api/admin-client", () => ({
+vi.mock("@/api/admin-client", () => ({
   adminClient: { activity: vi.fn() },
 }));
 

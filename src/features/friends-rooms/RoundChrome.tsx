@@ -3,9 +3,9 @@
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
 import { Check, Crown, Info } from "lucide-react";
-import { Text } from "@/shared/ui/Text";
-import { UserAvatar } from "@/shared/components/UserAvatar";
-import { cn } from "@/shared/utils/cn";
+import { Text } from "@/ui/Text";
+import { UserAvatar } from "@/components/UserAvatar";
+import { cn } from "@/utils/cn";
 import { labelTone } from "./guess-who-labels";
 import { MODE_STEP_KEYS } from "./room-mode-copy";
 import type { RoomPlayerState, RoomState } from "./room-types";

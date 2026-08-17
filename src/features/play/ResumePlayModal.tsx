@@ -2,8 +2,8 @@
 
 import { useId } from "react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/shared/ui/Button";
-import { Text } from "@/shared/ui/Text";
+import { Button } from "@/ui/Button";
+import { Text } from "@/ui/Text";
 
 export interface ResumePlayModalProps {
   open: boolean;

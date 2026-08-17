@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { Clock, Mail } from "lucide-react";
-import { PageHeader } from "@/shared/ui/PageHeader";
-import { cn } from "@/shared/utils/cn";
-import { pageContainer } from "@/shared/constants/page-container";
+import { PageHeader } from "@/ui/PageHeader";
+import { cn } from "@/utils/cn";
+import { pageContainer } from "@/constants/page-container";
 
 export type LegalDocId = "terms" | "privacy";
 

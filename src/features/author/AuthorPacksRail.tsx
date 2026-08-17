@@ -1,7 +1,7 @@
 "use client";
 
 import { PackCard } from "@/features/home/PackCard";
-import { PackScrollRail } from "@/shared/components/PackScrollRail";
+import { PackScrollRail } from "@/components/PackScrollRail";
 import { useAuthorPacks } from "./api/author-packs.queries";
 
 /**

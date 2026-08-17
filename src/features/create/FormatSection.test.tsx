@@ -1,11 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { FormProvider, useForm } from "react-hook-form";
 import { FormatSection } from "./FormatSection";
 import type { CreatePackValues } from "./create-pack.schema";
-import type { PackFormat } from "@/shared/types/pack";
+import type { PackFormat } from "@/types/pack";
 
 function baseValues(format: PackFormat = "save_one"): CreatePackValues {
   return {

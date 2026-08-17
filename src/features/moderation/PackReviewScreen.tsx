@@ -4,11 +4,11 @@ import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter, usePathname } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { packsClient } from "@/shared/api/packs-client";
-import { Text } from "@/shared/ui/Text";
-import { Button } from "@/shared/ui/Button";
-import { PageHeader } from "@/shared/ui/PageHeader";
+import { useAuth } from "@/contexts/auth-context";
+import { packsClient } from "@/api/packs-client";
+import { Text } from "@/ui/Text";
+import { Button } from "@/ui/Button";
+import { PageHeader } from "@/ui/PageHeader";
 import { PackContentsPreview } from "@/features/moderation/PackContentsPreview";
 import { PackReviewSummary } from "@/features/moderation/PackReviewSummary";
 import { PackReviewAuthorCard } from "@/features/moderation/PackReviewAuthorCard";
@@ -16,16 +16,16 @@ import { PackRoundMapping } from "@/features/moderation/PackRoundMapping";
 import { PackReviewSidebar } from "@/features/moderation/PackReviewSidebar";
 import { PackReviewFields } from "@/features/moderation/PackReviewFields";
 import { usePackMarks } from "@/features/moderation/use-pack-marks";
-import { StatusBadge } from "@/shared/components/StatusBadge";
-import { formatDateTime } from "@/shared/utils/format-date";
+import { StatusBadge } from "@/components/StatusBadge";
+import { formatDateTime } from "@/utils/format-date";
 import { usePackAuthor } from "@/features/pack/api/pack-author.queries";
 import {
   useApprovePack,
   useRejectPack,
   useRequestPackChanges,
 } from "@/features/moderation/api/moderation.queries";
-import { cn } from "@/shared/utils/cn";
-import { pageContainer } from "@/shared/constants/page-container";
+import { cn } from "@/utils/cn";
+import { pageContainer } from "@/constants/page-container";
 
 /**
  * Query key for a single pack fetched for review. Deliberately its own key

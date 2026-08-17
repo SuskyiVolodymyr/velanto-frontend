@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { CoverImage } from "@/shared/components/CoverImage";
-import { Text } from "@/shared/ui/Text";
+import { CoverImage } from "@/components/CoverImage";
+import { Text } from "@/ui/Text";
 import {
   listPlayResumes,
   type PlayResumeRecord,

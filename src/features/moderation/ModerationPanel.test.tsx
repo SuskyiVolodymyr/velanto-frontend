@@ -1,14 +1,14 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { ModerationPanel } from "./ModerationPanel";
-import { AuthProvider } from "@/shared/contexts/auth-context";
-import { authClient } from "@/shared/api/auth-client";
-import { reportsClient } from "@/shared/api/reports-client";
-import { packsClient } from "@/shared/api/packs-client";
-import { moderationClient } from "@/shared/api/moderation-client";
-import type { User } from "@/shared/types/user";
+import { AuthProvider } from "@/contexts/auth-context";
+import { authClient } from "@/api/auth-client";
+import { reportsClient } from "@/api/reports-client";
+import { packsClient } from "@/api/packs-client";
+import { moderationClient } from "@/api/moderation-client";
+import type { User } from "@/types/user";
 
 const push = vi.fn();
 const replace = vi.fn();
@@ -20,7 +20,7 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => searchParams,
 }));
 
-vi.mock("@/shared/api/auth-client", () => ({
+vi.mock("@/api/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),
@@ -29,13 +29,13 @@ vi.mock("@/shared/api/auth-client", () => ({
     refresh: vi.fn(),
   },
 }));
-vi.mock("@/shared/api/reports-client", () => ({
+vi.mock("@/api/reports-client", () => ({
   reportsClient: { list: vi.fn(), getById: vi.fn() },
 }));
-vi.mock("@/shared/api/packs-client", () => ({
+vi.mock("@/api/packs-client", () => ({
   packsClient: { moderationQueue: vi.fn(), approve: vi.fn(), reject: vi.fn() },
 }));
-vi.mock("@/shared/api/moderation-client", () => ({
+vi.mock("@/api/moderation-client", () => ({
   moderationClient: { counts: vi.fn() },
 }));
 

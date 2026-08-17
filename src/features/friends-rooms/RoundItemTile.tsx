@@ -1,17 +1,17 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Badge } from "@/shared/ui/Badge";
-import { UserAvatar } from "@/shared/components/UserAvatar";
-import { YouTubeCard } from "@/shared/components/YouTubeCard";
-import { ImageCard } from "@/shared/ui/ImageCard";
+import { Badge } from "@/ui/Badge";
+import { UserAvatar } from "@/components/UserAvatar";
+import { YouTubeCard } from "@/components/YouTubeCard";
+import { ImageCard } from "@/ui/ImageCard";
 import {
   extractYouTubeId,
   extractYouTubeStart,
-} from "@/shared/utils/youtube";
-import { mediaUrl } from "@/shared/utils/media-url";
-import { cn } from "@/shared/utils/cn";
-import type { Item } from "@/shared/types/pack";
+} from "@/utils/youtube";
+import { mediaUrl } from "@/utils/media-url";
+import { cn } from "@/utils/cn";
+import type { Item } from "@/types/pack";
 import type { RoomPlayerState } from "./room-types";
 
 export interface RoundItemTileProps {

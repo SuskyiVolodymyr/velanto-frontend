@@ -1,4 +1,4 @@
-import { Skeleton } from "@/shared/ui/Skeleton";
+import { Skeleton } from "@/ui/Skeleton";
 import { PACKS_FEED_PAGE_SIZE } from "@/features/home/api/packs-feed";
 
 /** Shared by every pack grid and its skeleton so the two can't drift apart. */

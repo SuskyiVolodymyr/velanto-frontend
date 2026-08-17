@@ -2,11 +2,11 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Button } from "@/shared/ui/Button";
-import { Hidden } from "@/shared/components/Hidden";
-import { Username } from "@/shared/components/Username";
-import { UserAvatar } from "@/shared/components/UserAvatar";
-import type { FollowUser } from "@/shared/api/users-client";
+import { Button } from "@/ui/Button";
+import { Hidden } from "@/components/Hidden";
+import { Username } from "@/components/Username";
+import { UserAvatar } from "@/components/UserAvatar";
+import type { FollowUser } from "@/api/users-client";
 import { useFollowListRowMutation } from "./api/follow-list.queries";
 
 /**

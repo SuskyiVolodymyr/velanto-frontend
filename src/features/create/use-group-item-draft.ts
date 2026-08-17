@@ -2,11 +2,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import type { Group, Item, ItemType } from "@/shared/types/pack";
-import { extractYouTubeId } from "@/shared/utils/youtube";
-import { fetchYouTubeOEmbed } from "@/shared/utils/youtube-oembed";
-import { uploadMedia, MEDIA_MAX_BYTES } from "@/shared/api/media-client";
-import { mediaUrl } from "@/shared/utils/media-url";
+import type { Group, Item, ItemType } from "@/types/pack";
+import { extractYouTubeId } from "@/utils/youtube";
+import { fetchYouTubeOEmbed } from "@/utils/youtube-oembed";
+import { uploadMedia, MEDIA_MAX_BYTES } from "@/api/media-client";
+import { mediaUrl } from "@/utils/media-url";
 
 /**
  * Owns the "add an item" draft state for a single {@link GroupEditor} — the

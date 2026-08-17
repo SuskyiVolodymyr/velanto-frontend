@@ -1,9 +1,9 @@
 import { describe, expect, it, vi } from "vitest";
 import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { RoundSideTile } from "./RoundSideTile";
-import type { Item } from "@/shared/types/pack";
+import type { Item } from "@/types/pack";
 
 const SIDE = { id: "ca", name: "Side A", itemIds: ["i1", "i2"] };
 const ITEMS: Item[] = [

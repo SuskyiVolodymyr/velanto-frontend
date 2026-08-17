@@ -5,16 +5,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
 import { Check } from "lucide-react";
-import { Text } from "@/shared/ui/Text";
-import { Input } from "@/shared/ui/Input";
-import { SearchField } from "@/shared/ui/SearchField";
-import { Dropdown } from "@/shared/ui/Dropdown";
-import { LoadingState } from "@/shared/ui/LoadingState";
-import { DataTable, DataTableRow } from "@/shared/ui/DataTable";
-import { TablePagination } from "@/shared/ui/TablePagination";
-import { FORMAT_LABELS, formatLabel } from "@/shared/utils/pack-display";
-import { formatRelativeTimeIntl } from "@/shared/utils/relative-time";
-import { PACK_FORMATS } from "@/shared/types/pack";
+import { Text } from "@/ui/Text";
+import { Input } from "@/ui/Input";
+import { SearchField } from "@/ui/SearchField";
+import { Dropdown } from "@/ui/Dropdown";
+import { LoadingState } from "@/ui/LoadingState";
+import { DataTable, DataTableRow } from "@/ui/DataTable";
+import { TablePagination } from "@/ui/TablePagination";
+import { FORMAT_LABELS, formatLabel } from "@/utils/pack-display";
+import { formatRelativeTimeIntl } from "@/utils/relative-time";
+import { PACK_FORMATS } from "@/types/pack";
 import {
   usePackQueue,
   useApprovePack,
@@ -25,7 +25,7 @@ import {
   MODERATION_PAGE_SIZE,
   type PackQueueFilters,
 } from "@/features/moderation/api/moderation";
-import type { PackFormat } from "@/shared/types/pack";
+import type { PackFormat } from "@/types/pack";
 
 const FILTER_DEBOUNCE_MS = 300;
 const COLUMNS = "1.5fr 1fr 120px 130px 200px";

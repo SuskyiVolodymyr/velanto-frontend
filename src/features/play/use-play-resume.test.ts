@@ -4,7 +4,7 @@ import { usePlayResume } from "./use-play-resume";
 import { packStructureHash } from "./pack-structure-hash";
 import { readPlayResume, writePlayResume } from "./play-resume-storage";
 import { setPlayIntent } from "./play-intent-storage";
-import type { Pack } from "@/shared/types/pack";
+import type { Pack } from "@/types/pack";
 
 function makePack(over: Partial<Pack> = {}): Pack {
   return {

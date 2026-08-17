@@ -1,13 +1,13 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
-import { Text } from "@/shared/ui/Text";
+import { Text } from "@/ui/Text";
 import Link from "next/link";
-import { buttonClassName } from "@/shared/ui/Button";
-import { PlusIcon } from "@/shared/ui/icons";
-import { PageHeader } from "@/shared/ui/PageHeader";
-import { cn } from "@/shared/utils/cn";
-import { PAGE_CONTAINER_FULL } from "@/shared/constants/page-container";
+import { buttonClassName } from "@/ui/Button";
+import { PlusIcon } from "@/ui/icons";
+import { PageHeader } from "@/ui/PageHeader";
+import { cn } from "@/utils/cn";
+import { PAGE_CONTAINER_FULL } from "@/constants/page-container";
 import { MyPacksFeed } from "@/features/home/MyPacksFeed";
 
 export async function generateMetadata(): Promise<Metadata> {

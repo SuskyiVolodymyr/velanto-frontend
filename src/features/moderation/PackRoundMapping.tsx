@@ -1,11 +1,11 @@
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
+import { Text } from "@/ui/Text";
 import {
   MarkForEditButton,
   MarkRequestField,
 } from "@/features/moderation/MarkForEdit";
 import type { PackMarks } from "@/features/moderation/use-pack-marks";
-import type { Pack } from "@/shared/types/pack";
+import type { Pack } from "@/types/pack";
 
 /**
  * The pack-review screen's round→pool mapping list: for each round, which

@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Dropdown } from "@/shared/ui/Dropdown";
-import { cn } from "@/shared/utils/cn";
+import { Dropdown } from "@/ui/Dropdown";
+import { cn } from "@/utils/cn";
 
 export type TopicId =
   "start" | "creating" | "formats" | "playing" | "stats" | "api";

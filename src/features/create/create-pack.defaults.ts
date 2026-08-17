@@ -1,4 +1,4 @@
-import type { Group, Round, Slot } from "@/shared/types/pack";
+import type { Group, Round, Slot } from "@/types/pack";
 
 // Fresh, empty draft entries for the create form. Shared by the form's
 // `defaultValues` and the editors' "add" actions so new entries always start in

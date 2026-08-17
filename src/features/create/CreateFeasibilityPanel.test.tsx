@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { CreateFeasibilityPanel } from "./CreateFeasibilityPanel";
 import { friendsRoomsClient } from "@/features/friends-rooms/friends-rooms-client";
 import type { AvailableMode } from "@/features/friends-rooms/room-types";

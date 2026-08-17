@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState, type DragEvent } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslations } from "next-intl";
-import { uploadMedia, MEDIA_MAX_BYTES } from "@/shared/api/media-client";
-import { mediaUrl } from "@/shared/utils/media-url";
-import { Text } from "@/shared/ui/Text";
-import { cn } from "@/shared/utils/cn";
+import { uploadMedia, MEDIA_MAX_BYTES } from "@/api/media-client";
+import { mediaUrl } from "@/utils/media-url";
+import { Text } from "@/ui/Text";
+import { cn } from "@/utils/cn";
 import { CoverCropModal } from "@/features/create/CoverCropModal";
 import type { CreatePackValues } from "@/features/create/create-pack.schema";
 

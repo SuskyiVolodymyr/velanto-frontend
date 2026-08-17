@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
-import { getRoundsCount } from "@/shared/utils/pack-display";
-import { Text } from "@/shared/ui/Text";
-import type { Pack, PackOverview } from "@/shared/types/pack";
+import { getRoundsCount } from "@/utils/pack-display";
+import { Text } from "@/ui/Text";
+import type { Pack, PackOverview } from "@/types/pack";
 
 /**
  * The length-of-run line under the Play button ("N rounds"). Deliberately just

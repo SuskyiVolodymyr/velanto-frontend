@@ -1,10 +1,10 @@
 import { describe, it, expect, vi } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
-import { StreamerModeProvider } from "@/shared/contexts/streamer-mode-context";
+import { renderWithIntl as render } from "@/test/render-with-intl";
+import { StreamerModeProvider } from "@/contexts/streamer-mode-context";
 import { AuthorProfileHeader } from "./AuthorProfileHeader";
-import type { PublicUserProfile } from "@/shared/types/user";
+import type { PublicUserProfile } from "@/types/user";
 
 const profile: PublicUserProfile = {
   id: "author-1",

@@ -4,13 +4,13 @@ import { renderHook, act, waitFor } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { useGroupItemDraft } from "./use-group-item-draft";
-import { uploadMedia } from "@/shared/api/media-client";
-import type { Group } from "@/shared/types/pack";
+import { uploadMedia } from "@/api/media-client";
+import type { Group } from "@/types/pack";
 
-vi.mock("@/shared/api/media-client", async () => {
+vi.mock("@/api/media-client", async () => {
   const actual = await vi.importActual<
-    typeof import("@/shared/api/media-client")
-  >("@/shared/api/media-client");
+    typeof import("@/api/media-client")
+  >("@/api/media-client");
   return { ...actual, uploadMedia: vi.fn() };
 });
 

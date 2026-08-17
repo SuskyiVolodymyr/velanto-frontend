@@ -1,13 +1,13 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { PackOwnerActions } from "@/features/pack/PackOwnerActions";
-import { AuthProvider } from "@/shared/contexts/auth-context";
-import { authClient } from "@/shared/api/auth-client";
-import { packsClient } from "@/shared/api/packs-client";
-import { ApiError } from "@/shared/api/api-client";
-import type { Role } from "@/shared/types/user";
+import { AuthProvider } from "@/contexts/auth-context";
+import { authClient } from "@/api/auth-client";
+import { packsClient } from "@/api/packs-client";
+import { ApiError } from "@/api/api-client";
+import type { Role } from "@/types/user";
 
 const push = vi.fn();
 const refresh = vi.fn();
@@ -16,7 +16,7 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push, refresh }),
 }));
 
-vi.mock("@/shared/api/auth-client", () => ({
+vi.mock("@/api/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),
@@ -26,7 +26,7 @@ vi.mock("@/shared/api/auth-client", () => ({
   },
 }));
 
-vi.mock("@/shared/api/packs-client", () => ({
+vi.mock("@/api/packs-client", () => ({
   packsClient: { delete: vi.fn(), submit: vi.fn() },
 }));
 

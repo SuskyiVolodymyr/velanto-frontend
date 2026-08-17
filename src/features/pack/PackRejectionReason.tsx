@@ -1,10 +1,10 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { Card } from "@/shared/ui/Card";
-import { Text } from "@/shared/ui/Text";
-import type { PackStatus } from "@/shared/types/pack";
+import { useAuth } from "@/contexts/auth-context";
+import { Card } from "@/ui/Card";
+import { Text } from "@/ui/Text";
+import type { PackStatus } from "@/types/pack";
 
 /**
  * Surfaces WHY a pack was rejected to its author — the one piece of "pack

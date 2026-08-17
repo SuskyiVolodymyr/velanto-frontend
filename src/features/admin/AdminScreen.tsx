@@ -4,17 +4,17 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { Text } from "@/shared/ui/Text";
-import { Button } from "@/shared/ui/Button";
-import { PageHeader } from "@/shared/ui/PageHeader";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { cn } from "@/shared/utils/cn";
-import { IdentityPillBadge } from "@/shared/components/IdentityPillBadge";
+import { Text } from "@/ui/Text";
+import { Button } from "@/ui/Button";
+import { PageHeader } from "@/ui/PageHeader";
+import { useAuth } from "@/contexts/auth-context";
+import { cn } from "@/utils/cn";
+import { IdentityPillBadge } from "@/components/IdentityPillBadge";
 import { OverviewTab } from "@/features/admin/OverviewTab";
 import { StaffTab } from "@/features/admin/StaffTab";
 import { UsersTab } from "@/features/admin/UsersTab";
 import { LogsTab } from "@/features/admin/LogsTab";
-import { pageContainer } from "@/shared/constants/page-container";
+import { pageContainer } from "@/constants/page-container";
 
 type Tab = "overview" | "staff" | "users" | "logs";
 

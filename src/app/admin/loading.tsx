@@ -1,4 +1,4 @@
-import { Skeleton } from "@/shared/ui/Skeleton";
+import { Skeleton } from "@/ui/Skeleton";
 
 /** Route-level skeleton for the admin panel: title, tab bar, and a stack of
  * rows, matching AdminScreen's max-w-4xl layout. */

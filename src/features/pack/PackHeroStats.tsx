@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
-import { getRoundsCount } from "@/shared/utils/pack-display";
-import { cn } from "@/shared/utils/cn";
-import type { Pack, PackOverview } from "@/shared/types/pack";
+import { getRoundsCount } from "@/utils/pack-display";
+import { cn } from "@/utils/cn";
+import type { Pack, PackOverview } from "@/types/pack";
 
 // Compact number formatting for the stat tiles: 1_280 -> "1.3k", 128_000 -> "128k".
 function humanize(n: number): string {

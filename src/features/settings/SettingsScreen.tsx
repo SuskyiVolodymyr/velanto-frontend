@@ -2,10 +2,10 @@
 
 import type { ComponentType } from "react";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { cn } from "@/shared/utils/cn";
-import { Text } from "@/shared/ui/Text";
-import { PageHeader } from "@/shared/ui/PageHeader";
+import { useAuth } from "@/contexts/auth-context";
+import { cn } from "@/utils/cn";
+import { Text } from "@/ui/Text";
+import { PageHeader } from "@/ui/PageHeader";
 import { LanguageSection } from "@/features/settings/LanguageSection";
 import { AppearanceSection } from "@/features/settings/AppearanceSection";
 import { PrivacySection } from "@/features/settings/PrivacySection";
@@ -15,7 +15,7 @@ import { PasswordSection } from "@/features/settings/PasswordSection";
 import { ConnectedAccountsSection } from "@/features/settings/ConnectedAccountsSection";
 import { ApiTokensPointer } from "@/features/settings/ApiTokensPointer";
 import { DangerZoneSection } from "@/features/settings/DangerZoneSection";
-import { pageContainer } from "@/shared/constants/page-container";
+import { pageContainer } from "@/constants/page-container";
 
 interface SettingsSectionEntry {
   /** Stable anchor id (T15/D12) — the TOC link's `href` target. */

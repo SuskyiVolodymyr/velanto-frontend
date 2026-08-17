@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
-import { HeroCard } from "@/shared/ui/HeroCard";
+import { HeroCard } from "@/ui/HeroCard";
 import { HERO_TITLE_KEY } from "@/features/result/result-format-copy";
-import type { Pack } from "@/shared/types/pack";
+import type { Pack } from "@/types/pack";
 
 export interface ResultHeroProps {
   /** Picks the h1's per-format phrasing (T10) — save_one reads differently
@@ -17,7 +17,7 @@ export interface ResultHeroProps {
  * Solo play's copy for the shared {@link HeroCard} — the per-format h1, the
  * "picks recorded" note, and the rounds/plays pair.
  *
- * The card itself lives in `shared/` because the friends-room results screen
+ * The card itself lives in `ui/` because the friends-room results screen
  * opens with the same panel. All that is left here is which strings go in it.
  *
  * The pack's own title is NOT rendered (the mock never puts it in the hero,

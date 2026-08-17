@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { packStructureHash } from "./pack-structure-hash";
-import type { Group, Round } from "@/shared/types/pack";
+import type { Group, Round } from "@/types/pack";
 
 function textItem(id: string, title: string, value = title) {
   return { id, type: "text" as const, title, value };

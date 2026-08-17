@@ -1,5 +1,5 @@
 import { useTranslations } from "next-intl";
-import type { PackOverview } from "@/shared/types/pack";
+import type { PackOverview } from "@/types/pack";
 
 // Compact overview of the pack's ordered rounds as chips, each showing the
 // round's name and how many items it draws. An unnamed round falls back to its

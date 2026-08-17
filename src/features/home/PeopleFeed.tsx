@@ -2,9 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Input } from "@/shared/ui/Input";
-import { Text } from "@/shared/ui/Text";
-import { Skeleton } from "@/shared/ui/Skeleton";
+import { Input } from "@/ui/Input";
+import { Text } from "@/ui/Text";
+import { Skeleton } from "@/ui/Skeleton";
 import { PersonCard } from "@/features/home/PersonCard";
 import { HomePagination } from "@/features/home/HomePagination";
 import { useUserSearch } from "@/features/home/api/user-search.queries";

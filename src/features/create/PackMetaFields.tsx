@@ -3,18 +3,18 @@
 import { useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
 import { useTranslations } from "next-intl";
-import { COVER_TONES } from "@/shared/types/pack";
+import { COVER_TONES } from "@/types/pack";
 import {
   PACK_LANGUAGES,
   PACK_LANGUAGE_NAMES,
-} from "@/shared/types/pack-language";
-import { Text } from "@/shared/ui/Text";
-import { TagPickerModal } from "@/shared/components/TagPickerModal";
-import { TextField } from "@/shared/ui/form/TextField";
-import { TextareaField } from "@/shared/ui/form/TextareaField";
-import { SelectField } from "@/shared/ui/form/SelectField";
+} from "@/types/pack-language";
+import { Text } from "@/ui/Text";
+import { TagPickerModal } from "@/components/TagPickerModal";
+import { TextField } from "@/ui/form/TextField";
+import { TextareaField } from "@/ui/form/TextareaField";
+import { SelectField } from "@/ui/form/SelectField";
 import { CoverImageField } from "@/features/create/CoverImageField";
-import { SwatchPicker } from "@/shared/ui/SwatchPicker";
+import { SwatchPicker } from "@/ui/SwatchPicker";
 import { StepHeader } from "@/features/create/StepHeader";
 import {
   type CreatePackValues,

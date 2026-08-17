@@ -1,10 +1,10 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { useRoomViewerId } from "./use-room-viewer-id";
-import type { User } from "@/shared/types/user";
+import type { User } from "@/types/user";
 
 let currentUser: User | null;
-vi.mock("@/shared/contexts/auth-context", () => ({
+vi.mock("@/contexts/auth-context", () => ({
   useAuth: () => ({ user: currentUser }),
 }));
 

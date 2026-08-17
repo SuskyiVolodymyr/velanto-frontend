@@ -1,6 +1,6 @@
 "use client";
 
-import type { Pack } from "@/shared/types/pack";
+import type { Pack } from "@/types/pack";
 import type { RoomState } from "./room-types";
 import { RoomBetween } from "./RoomBetween";
 import { GuessWhoRevealBoard } from "./GuessWhoRevealBoard";

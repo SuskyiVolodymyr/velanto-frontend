@@ -1,8 +1,8 @@
-import { PACK_TAGS, type PackTag } from "@/shared/types/pack";
+import { PACK_TAGS, type PackTag } from "@/types/pack";
 import {
   PACK_LANGUAGES,
   type PackLanguage,
-} from "@/shared/types/pack-language";
+} from "@/types/pack-language";
 import {
   DATE_ORDER_VALUES,
   DEFAULT_DATE_ORDER,

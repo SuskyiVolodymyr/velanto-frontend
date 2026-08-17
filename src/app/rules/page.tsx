@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { RulesScreen } from "@/features/rules/RulesScreen";
 import { getRulesServer } from "@/features/rules/get-rules-server";
-import { buildOpenGraph } from "@/shared/utils/open-graph";
-import { SITE_URL } from "@/shared/constants/site-url";
+import { buildOpenGraph } from "@/utils/open-graph";
+import { SITE_URL } from "@/constants/site-url";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("rules");

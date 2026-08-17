@@ -1,14 +1,14 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
-import { LoadingState } from "@/shared/ui/LoadingState";
+import { Text } from "@/ui/Text";
+import { LoadingState } from "@/ui/LoadingState";
 import { useAdminOverview } from "@/features/admin/api/admin.queries";
 import { PlaysChart } from "@/features/admin/PlaysChart";
 import { ActivityChart } from "@/features/admin/ActivityChart";
 import { TopPacksToday } from "@/features/admin/TopPacksToday";
-import type { AdminOverview } from "@/shared/types/admin";
-import { formatBytes } from "@/shared/utils/format-bytes";
+import type { AdminOverview } from "@/types/admin";
+import { formatBytes } from "@/utils/format-bytes";
 
 interface Metric {
   label: string;

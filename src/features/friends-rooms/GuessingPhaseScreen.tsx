@@ -3,9 +3,9 @@
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { Loader2 } from "lucide-react";
-import { Text } from "@/shared/ui/Text";
-import { UserAvatar } from "@/shared/components/UserAvatar";
-import { cn } from "@/shared/utils/cn";
+import { Text } from "@/ui/Text";
+import { UserAvatar } from "@/components/UserAvatar";
+import { cn } from "@/utils/cn";
 import { labelTone } from "./guess-who-labels";
 import { GuessWhoLabelTable } from "./GuessWhoLabelTable";
 import { PhaseDeadline } from "./PhaseDeadline";

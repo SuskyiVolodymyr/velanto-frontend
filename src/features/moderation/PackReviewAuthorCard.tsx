@@ -1,8 +1,8 @@
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
-import { UserAvatar } from "@/shared/components/UserAvatar";
-import { Username } from "@/shared/components/Username";
-import type { PackAuthorSummary } from "@/shared/types/pack";
+import { Text } from "@/ui/Text";
+import { UserAvatar } from "@/components/UserAvatar";
+import { Username } from "@/components/Username";
+import type { PackAuthorSummary } from "@/types/pack";
 import type { PackAuthor } from "@/features/pack/api/pack-author";
 
 /**

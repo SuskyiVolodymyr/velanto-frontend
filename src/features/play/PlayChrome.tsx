@@ -1,7 +1,7 @@
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
-import { PackHeaderBar } from "@/shared/components/PackHeaderBar";
-import type { Pack } from "@/shared/types/pack";
+import { Text } from "@/ui/Text";
+import { PackHeaderBar } from "@/components/PackHeaderBar";
+import type { Pack } from "@/types/pack";
 
 export interface PlayChromeProps {
   /** The pack being played — where the back button returns to. Also supplies

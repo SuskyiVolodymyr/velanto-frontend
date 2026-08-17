@@ -2,16 +2,16 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { Card } from "@/shared/ui/Card";
-import { Text } from "@/shared/ui/Text";
-import { SwatchPicker } from "@/shared/ui/SwatchPicker";
-import { useHydratedValue } from "@/shared/hooks/useHydratedValue";
+import { Card } from "@/ui/Card";
+import { Text } from "@/ui/Text";
+import { SwatchPicker } from "@/ui/SwatchPicker";
+import { useHydratedValue } from "@/hooks/useHydratedValue";
 import {
   ACCENTS,
   DEFAULT_ACCENT,
   getStoredAccent,
   setStoredAccent,
-} from "@/shared/utils/theme";
+} from "@/utils/theme";
 
 export function AppearanceSection() {
   const t = useTranslations("settings");

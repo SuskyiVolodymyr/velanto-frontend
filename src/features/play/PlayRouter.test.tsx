@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { PlayRouter } from "./PlayRouter";
-import type { Pack } from "@/shared/types/pack";
+import type { Pack } from "@/types/pack";
 
 const notFound = vi.hoisted(() =>
   vi.fn(() => {
@@ -10,7 +10,7 @@ const notFound = vi.hoisted(() =>
 );
 
 vi.mock("next/navigation", () => ({ notFound }));
-vi.mock("@/shared/api/plays-client", () => ({
+vi.mock("@/api/plays-client", () => ({
   playsClient: {
     record: vi.fn(),
     getResults: vi.fn(),

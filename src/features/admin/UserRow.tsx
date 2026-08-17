@@ -1,21 +1,21 @@
 "use client";
-import { formatDate } from "@/shared/utils/format-date";
+import { formatDate } from "@/utils/format-date";
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
-import { Username } from "@/shared/components/Username";
-import { Hidden } from "@/shared/components/Hidden";
-import { formatBanStatus } from "@/shared/utils/ban-display";
-import { type BanDuration } from "@/shared/api/users-client";
-import { type BanReasonState } from "@/shared/components/BanReasonPicker";
-import { type AssignableRole } from "@/shared/utils/staff-permissions";
-import { useStreamerModeOrDefault } from "@/shared/contexts/streamer-mode-context";
-import type { Role } from "@/shared/types/user";
-import type { AdminUserRow } from "@/shared/types/admin";
+import { Text } from "@/ui/Text";
+import { Username } from "@/components/Username";
+import { Hidden } from "@/components/Hidden";
+import { formatBanStatus } from "@/utils/ban-display";
+import { type BanDuration } from "@/api/users-client";
+import { type BanReasonState } from "@/components/BanReasonPicker";
+import { type AssignableRole } from "@/utils/staff-permissions";
+import { useStreamerModeOrDefault } from "@/contexts/streamer-mode-context";
+import type { Role } from "@/types/user";
+import type { AdminUserRow } from "@/types/admin";
 import { UserBanForm } from "@/features/admin/UserBanForm";
 import { RoleSelect } from "@/features/admin/RoleSelect";
-import { DataTableRow } from "@/shared/ui/DataTable";
+import { DataTableRow } from "@/ui/DataTable";
 
 interface UserRowProps {
   row: AdminUserRow;

@@ -1,21 +1,21 @@
 "use client";
-import { formatDate } from "@/shared/utils/format-date";
+import { formatDate } from "@/utils/format-date";
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
-import { Text } from "@/shared/ui/Text";
-import { LoadingState } from "@/shared/ui/LoadingState";
-import { StatusBadge } from "@/shared/components/StatusBadge";
+import { Text } from "@/ui/Text";
+import { LoadingState } from "@/ui/LoadingState";
+import { StatusBadge } from "@/components/StatusBadge";
 import {
   DataTable,
   DataTableRow,
   ROW_LINK_CLASS,
-} from "@/shared/ui/DataTable";
-import { cn } from "@/shared/utils/cn";
-import { TablePagination } from "@/shared/ui/TablePagination";
-import { reportReasonLabel } from "@/shared/constants/report-reasons";
-import { reportTargetLabel } from "@/shared/utils/report-display";
+} from "@/ui/DataTable";
+import { cn } from "@/utils/cn";
+import { TablePagination } from "@/ui/TablePagination";
+import { reportReasonLabel } from "@/constants/report-reasons";
+import { reportTargetLabel } from "@/utils/report-display";
 import { ReportFilters } from "@/features/moderation/ReportFilters";
 import { useReportsList } from "@/features/moderation/api/reports-list.queries";
 import { MODERATION_PAGE_SIZE } from "@/features/moderation/api/moderation";

@@ -2,9 +2,9 @@
 
 import { useTranslations } from "next-intl";
 import { EyeOff } from "lucide-react";
-import { STICKY_HEADER_SHELL_CLASS } from "@/shared/constants/sticky-header-shell";
-import { CoverImage } from "@/shared/components/CoverImage";
-import { cn } from "@/shared/utils/cn";
+import { STICKY_HEADER_SHELL_CLASS } from "@/constants/sticky-header-shell";
+import { CoverImage } from "@/components/CoverImage";
+import { cn } from "@/utils/cn";
 import { RoomLeaveButton } from "./RoomLeaveButton";
 import type { RoomState } from "./room-types";
 

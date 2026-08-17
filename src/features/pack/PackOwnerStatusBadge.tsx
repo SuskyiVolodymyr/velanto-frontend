@@ -1,8 +1,8 @@
 "use client";
 
-import { useAuth } from "@/shared/contexts/auth-context";
-import { StatusBadge } from "@/shared/components/StatusBadge";
-import type { PackStatus } from "@/shared/types/pack";
+import { useAuth } from "@/contexts/auth-context";
+import { StatusBadge } from "@/components/StatusBadge";
+import type { PackStatus } from "@/types/pack";
 
 /**
  * Surfaces a pack's moderation status to its author while the pack isn't public

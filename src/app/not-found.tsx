@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
+import { Text } from "@/ui/Text";
 
 // App-wide 404, shown for any unmatched route (and for a `notFound()` call that
 // no closer not-found boundary catches). Mirrors the per-route not-found pages.

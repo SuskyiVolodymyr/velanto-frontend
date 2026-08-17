@@ -2,7 +2,7 @@ import { renderHook, waitFor, act } from "@testing-library/react";
 import { createElement, type ReactNode } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { createTestQueryClient } from "@/shared/test/test-query-client";
+import { createTestQueryClient } from "@/test/test-query-client";
 import { usePreviewModes, type PreviewModesDraft } from "./use-preview-modes";
 import { friendsRoomsClient } from "@/features/friends-rooms/friends-rooms-client";
 import type { AvailableMode } from "@/features/friends-rooms/room-types";

@@ -8,22 +8,22 @@ import { useForm, useWatch, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { ArrowLeft } from "lucide-react";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { useBackTarget } from "@/shared/hooks/use-back-target";
-import { FROM } from "@/shared/utils/back-origins";
-import { packsClient } from "@/shared/api/packs-client";
-import type { CreatePackInput } from "@/shared/api/packs-client";
-import { messageFromError } from "@/shared/utils/messageFromError";
-import { COVER_TONES } from "@/shared/types/pack";
+import { useAuth } from "@/contexts/auth-context";
+import { useBackTarget } from "@/hooks/use-back-target";
+import { FROM } from "@/utils/back-origins";
+import { packsClient } from "@/api/packs-client";
+import type { CreatePackInput } from "@/api/packs-client";
+import { messageFromError } from "@/utils/messageFromError";
+import { COVER_TONES } from "@/types/pack";
 import {
   DEFAULT_PACK_LANGUAGE,
   isPackLanguage,
   type PackLanguage,
-} from "@/shared/types/pack-language";
-import { pageContainer } from "@/shared/constants/page-container";
-import { cn } from "@/shared/utils/cn";
-import { Button } from "@/shared/ui/Button";
-import { Text } from "@/shared/ui/Text";
+} from "@/types/pack-language";
+import { pageContainer } from "@/constants/page-container";
+import { cn } from "@/utils/cn";
+import { Button } from "@/ui/Button";
+import { Text } from "@/ui/Text";
 import { PackMetaFields } from "@/features/create/PackMetaFields";
 import { FormatSection } from "@/features/create/FormatSection";
 import { PoolsSection } from "@/features/create/PoolsSection";

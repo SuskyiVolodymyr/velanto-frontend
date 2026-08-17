@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import type { Pack, PackFormat } from "@/shared/types/pack";
+import type { Pack, PackFormat } from "@/types/pack";
 import { PlayScreen } from "@/features/play/PlayScreen";
 import { RankPlayScreen } from "@/features/play/RankPlayScreen";
 import { HeadToHeadPlayScreen } from "@/features/play/HeadToHeadPlayScreen";

@@ -1,12 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { AuthorPackList } from "./AuthorPackList";
-import { packsClient } from "@/shared/api/packs-client";
-import type { Pack } from "@/shared/types/pack";
+import { packsClient } from "@/api/packs-client";
+import type { Pack } from "@/types/pack";
 
-vi.mock("@/shared/api/packs-client", () => ({
+vi.mock("@/api/packs-client", () => ({
   packsClient: { list: vi.fn() },
 }));
 
@@ -14,7 +14,7 @@ vi.mock("@/shared/api/packs-client", () => ({
 // signed-out session keeps these list-rendering tests focused and refetch-free.
 // The same signed-out `user: null` also satisfies each rendered PackCard's own
 // useAuth() call for its Friends button.
-vi.mock("@/shared/contexts/auth-context", () => ({
+vi.mock("@/contexts/auth-context", () => ({
   useAuth: () => ({ status: "unauthenticated", user: null }),
 }));
 

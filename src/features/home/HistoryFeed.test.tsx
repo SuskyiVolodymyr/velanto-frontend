@@ -1,9 +1,9 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { HistoryFeed } from "./HistoryFeed";
-import { usersClient } from "@/shared/api/users-client";
+import { usersClient } from "@/api/users-client";
 import { listPlayResumes } from "@/features/play/play-resume-storage";
 
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
@@ -11,7 +11,7 @@ vi.mock("@/features/friends-rooms/friends-rooms-client", () => ({
   friendsRoomsClient: { create: vi.fn() },
 }));
 
-vi.mock("@/shared/api/users-client", () => ({
+vi.mock("@/api/users-client", () => ({
   usersClient: { recentlyPlayed: vi.fn() },
 }));
 vi.mock("@/features/play/play-resume-storage", () => ({
@@ -22,7 +22,7 @@ let authState: { status: string; user: { id: string } | null } = {
   status: "authenticated",
   user: { id: "u1" },
 };
-vi.mock("@/shared/contexts/auth-context", () => ({ useAuth: () => authState }));
+vi.mock("@/contexts/auth-context", () => ({ useAuth: () => authState }));
 
 function playedPack(id: string, lastPlayedAt: string, format = "save_one") {
   return {

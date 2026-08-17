@@ -1,11 +1,11 @@
 import type { ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
-import { pageContainer } from "@/shared/constants/page-container";
-import { cn } from "@/shared/utils/cn";
+import { pageContainer } from "@/constants/page-container";
+import { cn } from "@/utils/cn";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
-import { Badge } from "@/shared/ui/Badge";
-import { PageHeader } from "@/shared/ui/PageHeader";
+import { Text } from "@/ui/Text";
+import { Badge } from "@/ui/Badge";
+import { PageHeader } from "@/ui/PageHeader";
 import { PackCoverBanner } from "@/features/pack/PackCoverBanner";
 import { PackHeroStats } from "@/features/pack/PackHeroStats";
 import { PackHowItPlays } from "@/features/pack/PackHowItPlays";
@@ -27,8 +27,8 @@ import { CommentSection } from "@/features/pack/CommentSection";
 import { ReportPackDialog } from "@/features/pack/ReportPackDialog";
 import { VoteButtons } from "@/features/pack/VoteButtons";
 import { ShareButton } from "@/features/share/ShareButton";
-import { type PackOverview } from "@/shared/types/pack";
-import type { PackResults, RankResults } from "@/shared/types/play-results";
+import { type PackOverview } from "@/types/pack";
+import type { PackResults, RankResults } from "@/types/play-results";
 import type { AvailableMode } from "@/features/friends-rooms/room-types";
 
 function SectionHeading({

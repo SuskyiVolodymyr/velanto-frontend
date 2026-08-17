@@ -1,21 +1,21 @@
 "use client";
-import { formatDateTime } from "@/shared/utils/format-date";
+import { formatDateTime } from "@/utils/format-date";
 
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
-import { cn } from "@/shared/utils/cn";
-import { Text } from "@/shared/ui/Text";
-import { Input } from "@/shared/ui/Input";
-import { Dropdown } from "@/shared/ui/Dropdown";
-import { LoadingState } from "@/shared/ui/LoadingState";
+import { cn } from "@/utils/cn";
+import { Text } from "@/ui/Text";
+import { Input } from "@/ui/Input";
+import { Dropdown } from "@/ui/Dropdown";
+import { LoadingState } from "@/ui/LoadingState";
 import { useAdminLogs } from "@/features/admin/api/admin.queries";
 import {
   ADMIN_PAGE_SIZE,
   EMPTY_AUDIT_FILTERS,
   type AuditLogFilters,
 } from "@/features/admin/api/admin";
-import { DataTable, DataTableRow } from "@/shared/ui/DataTable";
-import { TablePagination } from "@/shared/ui/TablePagination";
+import { DataTable, DataTableRow } from "@/ui/DataTable";
+import { TablePagination } from "@/ui/TablePagination";
 import {
   AUDIT_ACTIONS,
   auditActionStyle,

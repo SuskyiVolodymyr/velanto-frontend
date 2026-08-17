@@ -1,4 +1,4 @@
-import type { PackFormat } from "@/shared/types/pack";
+import type { PackFormat } from "@/types/pack";
 
 /**
  * Each format's identity color (mock: Create Pack.dc.html's FORMATS array,

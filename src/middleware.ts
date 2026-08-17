@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { sanitizeNextPath } from "@/shared/utils/safe-redirect";
-import { SESSION_HINT_COOKIE } from "@/shared/utils/session-hint";
+import { sanitizeNextPath } from "@/utils/safe-redirect";
+import { SESSION_HINT_COOKIE } from "@/utils/session-hint";
 
 /**
  * Redirect an already-signed-in visitor away from /auth on the server, before

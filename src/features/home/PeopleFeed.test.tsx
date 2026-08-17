@@ -1,12 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { PeopleFeed } from "./PeopleFeed";
-import { usersClient } from "@/shared/api/users-client";
-import type { FollowUser } from "@/shared/api/users-client";
+import { usersClient } from "@/api/users-client";
+import type { FollowUser } from "@/api/users-client";
 
-vi.mock("@/shared/api/users-client", () => ({
+vi.mock("@/api/users-client", () => ({
   usersClient: { search: vi.fn() },
 }));
 

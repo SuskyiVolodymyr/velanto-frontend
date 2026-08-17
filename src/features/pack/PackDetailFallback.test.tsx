@@ -1,13 +1,13 @@
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { notFound } from "next/navigation";
 import { PackDetailFallback } from "./PackDetailFallback";
-import { usePackFallback } from "@/shared/hooks/use-pack-fallback";
-import type { Pack } from "@/shared/types/pack";
-import type { PackResults } from "@/shared/types/play-results";
+import { usePackFallback } from "@/hooks/use-pack-fallback";
+import type { Pack } from "@/types/pack";
+import type { PackResults } from "@/types/play-results";
 
-vi.mock("@/shared/hooks/use-pack-fallback");
+vi.mock("@/hooks/use-pack-fallback");
 vi.mock("next/navigation", () => ({ notFound: vi.fn() }));
 vi.mock("@/features/pack/VoteButtons", () => ({
   VoteButtons: () => <div>VoteButtons</div>,

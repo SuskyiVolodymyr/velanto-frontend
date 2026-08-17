@@ -2,8 +2,8 @@
 
 import { Fragment } from "react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
-import { cn } from "@/shared/utils/cn";
+import { Text } from "@/ui/Text";
+import { cn } from "@/utils/cn";
 import { labelTone } from "./guess-who-labels";
 import { BetweenNextButton } from "./BetweenNextButton";
 import { RoundItemTile } from "./RoundItemTile";

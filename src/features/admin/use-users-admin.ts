@@ -7,20 +7,20 @@ import {
   usersClient,
   type BanDuration,
   type BanUserInput,
-} from "@/shared/api/users-client";
-import type { AssignableRole } from "@/shared/utils/staff-permissions";
+} from "@/api/users-client";
+import type { AssignableRole } from "@/utils/staff-permissions";
 import {
   isBanReasonValid,
   buildBanReasonPayload,
   type BanReasonState,
-} from "@/shared/components/BanReasonPicker";
+} from "@/components/BanReasonPicker";
 import {
   useAdminUsers,
   patchAdminUser,
 } from "@/features/admin/api/admin.queries";
 import type { UsersPageFilters } from "@/features/admin/api/admin";
-import type { AdminUserRow } from "@/shared/types/admin";
-import type { AdminUserSort } from "@/shared/api/admin-client";
+import type { AdminUserRow } from "@/types/admin";
+import type { AdminUserSort } from "@/api/admin-client";
 
 const SEARCH_DEBOUNCE_MS = 300;
 

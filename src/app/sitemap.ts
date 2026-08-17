@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { SITE_URL } from "@/shared/constants/site-url";
+import { SITE_URL } from "@/constants/site-url";
 import { LEGAL_LAST_UPDATED } from "@/features/legal/legal-meta";
 
 // Public, indexable app routes that always exist regardless of API state.

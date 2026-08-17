@@ -1,13 +1,13 @@
 import Link from "next/link";
 import { MessageSquare } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { StatusBadge } from "@/shared/components/StatusBadge";
-import { Username } from "@/shared/components/Username";
-import { cn } from "@/shared/utils/cn";
-import { formatRelativeTimeIntl } from "@/shared/utils/relative-time";
-import { isStaff } from "@/shared/utils/user-role";
+import { StatusBadge } from "@/components/StatusBadge";
+import { Username } from "@/components/Username";
+import { cn } from "@/utils/cn";
+import { formatRelativeTimeIntl } from "@/utils/relative-time";
+import { isStaff } from "@/utils/user-role";
 import { feedbackTopicTone } from "@/features/feedback/feedback-tone";
-import type { Feedback, FeedbackTopic } from "@/shared/types/feedback";
+import type { Feedback, FeedbackTopic } from "@/types/feedback";
 
 // Feedback topic value → key in the `feedback` i18n namespace.
 export const TOPIC_KEYS: Record<FeedbackTopic, string> = {

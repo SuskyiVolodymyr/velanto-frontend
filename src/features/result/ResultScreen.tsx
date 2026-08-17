@@ -2,10 +2,10 @@
 
 import type { ReactNode } from "react";
 import { useTranslations } from "next-intl";
-import { pageContainer } from "@/shared/constants/page-container";
-import { PackHeaderBar } from "@/shared/components/PackHeaderBar";
-import { Text } from "@/shared/ui/Text";
-import { LoadingState } from "@/shared/ui/LoadingState";
+import { pageContainer } from "@/constants/page-container";
+import { PackHeaderBar } from "@/components/PackHeaderBar";
+import { Text } from "@/ui/Text";
+import { LoadingState } from "@/ui/LoadingState";
 import { RankResultScreen } from "@/features/result/RankResultScreen";
 import { HeadToHeadResultScreen } from "@/features/result/HeadToHeadResultScreen";
 import { NxNResultScreen } from "@/features/result/NxNResultScreen";
@@ -18,9 +18,9 @@ import { TopPickedTable } from "@/features/result/TopPickedTable";
 import { PodiumTable } from "@/features/result/PodiumTable";
 import { usePackResults } from "@/features/result/api/results.queries";
 import { useResultPicks } from "@/features/result/use-result-picks";
-import { getRoundsCount } from "@/shared/utils/pack-display";
-import { cn } from "@/shared/utils/cn";
-import type { Pack } from "@/shared/types/pack";
+import { getRoundsCount } from "@/utils/pack-display";
+import { cn } from "@/utils/cn";
+import type { Pack } from "@/types/pack";
 
 /**
  * #222: the community breakdown is gated on evidence that you finished this

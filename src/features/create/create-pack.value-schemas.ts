@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { GROUP_MODES, PACK_FORMATS, SLOT_MODES } from "@/shared/types/pack";
+import { GROUP_MODES, PACK_FORMATS, SLOT_MODES } from "@/types/pack";
 
 /**
  * Field-limit constants and structural leaf/collection schemas for the

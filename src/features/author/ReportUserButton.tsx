@@ -1,15 +1,15 @@
 "use client";
 
-import { SignInGate } from "@/shared/components/SignInGate";
+import { SignInGate } from "@/components/SignInGate";
 import { useState, type ReactElement } from "react";
 import { useTranslations } from "next-intl";
 import { Flag } from "lucide-react";
-import { ReportModal } from "@/shared/components/ReportModal";
-import type { DropdownOption } from "@/shared/ui/Dropdown";
-import { Tooltip } from "@/shared/ui/Tooltip";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { cn } from "@/shared/utils/cn";
-import { REPORT_REASON_LABELS } from "@/shared/constants/report-reasons";
+import { ReportModal } from "@/components/ReportModal";
+import type { DropdownOption } from "@/ui/Dropdown";
+import { Tooltip } from "@/ui/Tooltip";
+import { useAuth } from "@/contexts/auth-context";
+import { cn } from "@/utils/cn";
+import { REPORT_REASON_LABELS } from "@/constants/report-reasons";
 
 // Mirrors the backend's REPORT_REASONS.user via report-reasons.ts rather than
 // listing the ids a second time; the visible labels come from `report.userReasons.*`.

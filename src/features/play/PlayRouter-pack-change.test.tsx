@@ -1,19 +1,19 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { PlayRouter } from "@/features/play/PlayRouter";
-import { AuthProvider } from "@/shared/contexts/auth-context";
-import { authClient } from "@/shared/api/auth-client";
-import { playsClient } from "@/shared/api/plays-client";
-import type { Pack } from "@/shared/types/pack";
+import { AuthProvider } from "@/contexts/auth-context";
+import { authClient } from "@/api/auth-client";
+import { playsClient } from "@/api/plays-client";
+import type { Pack } from "@/types/pack";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),
   usePathname: () => "/packs/pack/play",
 }));
 
-vi.mock("@/shared/api/auth-client", () => ({
+vi.mock("@/api/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),
@@ -23,7 +23,7 @@ vi.mock("@/shared/api/auth-client", () => ({
   },
 }));
 
-vi.mock("@/shared/api/plays-client", () => ({
+vi.mock("@/api/plays-client", () => ({
   playsClient: {
     record: vi.fn().mockResolvedValue({ id: "play-1" }),
   },

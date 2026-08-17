@@ -3,7 +3,7 @@ import { LOCALES } from "@/i18n/config";
 import {
   FEEDBACK_TOPICS,
   FEEDBACK_VISIBILITIES,
-} from "@/shared/types/feedback";
+} from "@/types/feedback";
 
 // Character limits mirror the old module-level constants (and the backend
 // create-feedback.dto's title/body caps).

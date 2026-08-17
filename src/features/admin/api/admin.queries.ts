@@ -9,7 +9,7 @@ import {
   type InfiniteData,
   type QueryClient,
 } from "@tanstack/react-query";
-import type { ActivityRange, AdminUserRow } from "@/shared/types/admin";
+import type { ActivityRange, AdminUserRow } from "@/types/admin";
 import {
   fetchLogsPage,
   fetchActivity,

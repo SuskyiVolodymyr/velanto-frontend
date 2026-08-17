@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Button } from "@/shared/ui/Button";
-import { Hidden } from "@/shared/components/Hidden";
-import { UserAvatar } from "@/shared/components/UserAvatar";
-import { Username } from "@/shared/components/Username";
-import { COVER_TONES } from "@/shared/types/pack";
+import { Button } from "@/ui/Button";
+import { Hidden } from "@/components/Hidden";
+import { UserAvatar } from "@/components/UserAvatar";
+import { Username } from "@/components/Username";
+import { COVER_TONES } from "@/types/pack";
 import { HAIRLINE_OVERLAY_STYLE } from "@/features/play/candidate-tone";
 import { useFollowListRowMutation } from "@/features/author/api/follow-list.queries";
-import type { FollowUser } from "@/shared/api/users-client";
+import type { FollowUser } from "@/api/users-client";
 
 /**
  * A person tile in the /people directory — deliberately the same shell as

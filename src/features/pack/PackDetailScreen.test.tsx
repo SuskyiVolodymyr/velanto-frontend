@@ -1,11 +1,11 @@
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { describe, it, expect, vi } from "vitest";
 import { PackDetailScreen } from "./PackDetailScreen";
-import type { Pack } from "@/shared/types/pack";
-import type { PackResults } from "@/shared/types/play-results";
+import type { Pack } from "@/types/pack";
+import type { PackResults } from "@/types/play-results";
 import type { AvailableMode } from "@/features/friends-rooms/room-types";
-import { toOverview } from "@/shared/test/pack-overview";
+import { toOverview } from "@/test/pack-overview";
 
 vi.mock("@/features/pack/VoteButtons", () => ({
   VoteButtons: () => <div>VoteButtons</div>,

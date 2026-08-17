@@ -1,6 +1,6 @@
 import { screen, within } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { GuessWhoRevealBoard } from "./GuessWhoRevealBoard";
 import { baseRoomState } from "./test-fixtures";
 

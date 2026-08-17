@@ -1,13 +1,13 @@
 import { BarChart3 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/utils/cn";
 import { FeedbackCard } from "@/features/feedback/FeedbackCard";
 import { feedbackStatusTone } from "@/features/feedback/feedback-tone";
 import {
   FEEDBACK_STATUSES,
   type Feedback,
   type FeedbackStatus,
-} from "@/shared/types/feedback";
+} from "@/types/feedback";
 
 const PANEL =
   "flex flex-col rounded-card border border-white/[0.07] bg-surface-card p-[18px]";

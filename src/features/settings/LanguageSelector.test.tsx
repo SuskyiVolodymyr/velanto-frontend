@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { pickFromDropdown } from "@/shared/test/pick-from-dropdown";
+import { pickFromDropdown } from "@/test/pick-from-dropdown";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { LanguageSelector } from "./LanguageSelector";

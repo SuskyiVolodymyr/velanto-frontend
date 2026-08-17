@@ -1,6 +1,6 @@
-import { usersClient } from "@/shared/api/users-client";
-import { packsClient } from "@/shared/api/packs-client";
-import type { PublicUserProfile } from "@/shared/types/user";
+import { usersClient } from "@/api/users-client";
+import { packsClient } from "@/api/packs-client";
+import type { PublicUserProfile } from "@/types/user";
 
 export interface PackAuthor {
   profile: PublicUserProfile;

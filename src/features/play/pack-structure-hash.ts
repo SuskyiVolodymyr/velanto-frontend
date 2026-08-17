@@ -1,4 +1,4 @@
-import type { Group, Round } from "@/shared/types/pack";
+import type { Group, Round } from "@/types/pack";
 
 /**
  * A content fingerprint of the part of a pack that determines a play: its pools'

@@ -1,33 +1,33 @@
 "use client";
-import { formatDateTime } from "@/shared/utils/format-date";
+import { formatDateTime } from "@/utils/format-date";
 
 import Link from "next/link";
 import { useState } from "react";
 import { Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/contexts/auth-context";
+import { useAuth } from "@/contexts/auth-context";
 import { useFeedback } from "@/features/feedback/api/feedback-detail.queries";
 import {
   useSetFeedbackStatus,
   useDeleteFeedback,
 } from "@/features/feedback/api/feedback-detail.mutations";
-import { ApiError } from "@/shared/api/api-client";
-import { Text } from "@/shared/ui/Text";
-import { LoadingState } from "@/shared/ui/LoadingState";
-import { Username } from "@/shared/components/Username";
-import { Button } from "@/shared/ui/Button";
-import { Hidden } from "@/shared/components/Hidden";
-import { StatusBadge } from "@/shared/components/StatusBadge";
-import { Dropdown } from "@/shared/ui/Dropdown";
-import { PageHeader } from "@/shared/ui/PageHeader";
+import { ApiError } from "@/api/api-client";
+import { Text } from "@/ui/Text";
+import { LoadingState } from "@/ui/LoadingState";
+import { Username } from "@/components/Username";
+import { Button } from "@/ui/Button";
+import { Hidden } from "@/components/Hidden";
+import { StatusBadge } from "@/components/StatusBadge";
+import { Dropdown } from "@/ui/Dropdown";
+import { PageHeader } from "@/ui/PageHeader";
 import { TOPIC_KEYS } from "@/features/feedback/FeedbackCard";
 import { FeedbackVote } from "@/features/feedback/FeedbackVote";
 import { FeedbackComments } from "@/features/feedback/FeedbackComments";
-import type { FeedbackStatus } from "@/shared/types/feedback";
+import type { FeedbackStatus } from "@/types/feedback";
 import { LOCALE_NAMES, type Locale } from "@/i18n/config";
-import { cn } from "@/shared/utils/cn";
-import { pageContainer } from "@/shared/constants/page-container";
+import { cn } from "@/utils/cn";
+import { pageContainer } from "@/constants/page-container";
 
 // status value → key in the shared `status` ns (matches the badge labels).
 const STATUS_OPTIONS: { value: FeedbackStatus; key: string }[] = [

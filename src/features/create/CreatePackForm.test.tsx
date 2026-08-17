@@ -6,20 +6,20 @@ import {
   fireEvent,
   createEvent,
 } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
-import { pickFromDropdown } from "@/shared/test/pick-from-dropdown";
+import { pickFromDropdown } from "@/test/pick-from-dropdown";
 import { CreatePackForm } from "./CreatePackForm";
-import { AuthProvider } from "@/shared/contexts/auth-context";
-import { authClient } from "@/shared/api/auth-client";
-import { packsClient } from "@/shared/api/packs-client";
-import { uploadMedia } from "@/shared/api/media-client";
-import { ApiError } from "@/shared/api/api-client";
-import type { Pack } from "@/shared/types/pack";
+import { AuthProvider } from "@/contexts/auth-context";
+import { authClient } from "@/api/auth-client";
+import { packsClient } from "@/api/packs-client";
+import { uploadMedia } from "@/api/media-client";
+import { ApiError } from "@/api/api-client";
+import type { Pack } from "@/types/pack";
 import {
   PACK_LANGUAGES,
   PACK_LANGUAGE_NAMES,
-} from "@/shared/types/pack-language";
+} from "@/types/pack-language";
 import { QueryClient } from "@tanstack/react-query";
 import { NextIntlClientProvider } from "next-intl";
 import ukMessages from "@/messages/uk.json";
@@ -38,7 +38,7 @@ vi.mock("next/navigation", () => ({
   usePathname: () => "/create",
 }));
 
-vi.mock("@/shared/api/auth-client", () => ({
+vi.mock("@/api/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),
@@ -48,9 +48,9 @@ vi.mock("@/shared/api/auth-client", () => ({
   },
 }));
 
-vi.mock("@/shared/api/media-client", async (importOriginal) => {
+vi.mock("@/api/media-client", async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import("@/shared/api/media-client")>();
+    await importOriginal<typeof import("@/api/media-client")>();
   return { ...actual, uploadMedia: vi.fn() };
 });
 
@@ -62,7 +62,7 @@ function imageFile() {
   return file;
 }
 
-vi.mock("@/shared/api/packs-client", () => ({
+vi.mock("@/api/packs-client", () => ({
   packsClient: {
     create: vi.fn(),
     update: vi.fn(),

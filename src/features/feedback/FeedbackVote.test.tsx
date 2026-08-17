@@ -1,16 +1,16 @@
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { FeedbackVote } from "./FeedbackVote";
-import { feedbackClient } from "@/shared/api/feedback-client";
-import { useAuth } from "@/shared/contexts/auth-context";
+import { feedbackClient } from "@/api/feedback-client";
+import { useAuth } from "@/contexts/auth-context";
 
 // FeedbackVote is a thin wrapper over the shared VoteControl (see
 // VoteControl.test.tsx for the full tally/score/blocked behaviour). These tests
 // only cover the wiring: the feedback client, the feedback id, and the labels.
-vi.mock("@/shared/api/feedback-client");
-vi.mock("@/shared/contexts/auth-context");
+vi.mock("@/api/feedback-client");
+vi.mock("@/contexts/auth-context");
 
 const mockedFeedbackClient = vi.mocked(feedbackClient);
 const mockedUseAuth = vi.mocked(useAuth);

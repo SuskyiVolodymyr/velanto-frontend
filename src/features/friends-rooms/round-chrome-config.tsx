@@ -3,9 +3,9 @@
 import type { ReactNode } from "react";
 import { ArrowRight, Eye, Hand, ListOrdered, Lock } from "lucide-react";
 import type { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
-import { UserAvatar } from "@/shared/components/UserAvatar";
-import { cn } from "@/shared/utils/cn";
+import { Text } from "@/ui/Text";
+import { UserAvatar } from "@/components/UserAvatar";
+import { cn } from "@/utils/cn";
 import type { RoundCall, RoundPlayerStatus } from "./RoundChrome";
 import type { RoomPlayerState, RoomState } from "./room-types";
 import { outcomeVerb } from "./room-mode-copy";

@@ -3,9 +3,9 @@
 import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { ChevronDown } from "lucide-react";
-import type { Group, Item } from "@/shared/types/pack";
-import { Text } from "@/shared/ui/Text";
-import { cn } from "@/shared/utils/cn";
+import type { Group, Item } from "@/types/pack";
+import { Text } from "@/ui/Text";
+import { cn } from "@/utils/cn";
 import { useGroupItemDraft } from "@/features/create/use-group-item-draft";
 import { GroupItemList } from "@/features/create/GroupItemList";
 import { GroupItemAdder } from "@/features/create/GroupItemAdder";

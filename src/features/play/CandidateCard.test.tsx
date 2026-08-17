@@ -1,9 +1,9 @@
 import { describe, expect, it, vi, afterEach } from "vitest";
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { CandidateCard } from "./CandidateCard";
-import type { Item } from "@/shared/types/pack";
+import type { Item } from "@/types/pack";
 
 afterEach(() => {
   vi.unstubAllEnvs();

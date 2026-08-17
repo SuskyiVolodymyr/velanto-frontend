@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/utils/cn";
 
 export interface ComposerChoice<T extends string> {
   value: T;

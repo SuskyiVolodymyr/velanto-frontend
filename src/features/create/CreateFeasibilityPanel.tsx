@@ -2,8 +2,8 @@
 
 import { Check } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
-import { cn } from "@/shared/utils/cn";
+import { Text } from "@/ui/Text";
+import { cn } from "@/utils/cn";
 import { MODE_NAME_KEY } from "@/features/friends-rooms/room-mode-copy";
 import { ROOM_MODE_BOUNDS } from "@/features/friends-rooms/room-types";
 import { usePreviewModes, type PreviewModesDraft } from "./use-preview-modes";

@@ -3,13 +3,13 @@
 import { useCallback } from "react";
 import { useTranslations } from "next-intl";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Text } from "@/shared/ui/Text";
+import { Text } from "@/ui/Text";
 import { useAdminActivity } from "@/features/admin/api/admin.queries";
 import {
   ACTIVITY_RANGES,
   type ActivityPoint,
   type ActivityRange,
-} from "@/shared/types/admin";
+} from "@/types/admin";
 
 /** Unknown or missing `?range=` falls back to the narrowest view. */
 export function rangeFromParam(value: string | null): ActivityRange {

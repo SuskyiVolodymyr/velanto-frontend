@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/contexts/auth-context";
+import { useAuth } from "@/contexts/auth-context";
 import { FilterChipRow } from "@/features/home/FilterChipRow";
 import { FormatFilter } from "@/features/home/FormatFilter";
 import { HomePagination } from "@/features/home/HomePagination";
@@ -12,7 +12,7 @@ import {
   PACK_GRID_CLASS,
   PackGridSkeleton,
 } from "@/features/home/PackGridSkeleton";
-import { Text } from "@/shared/ui/Text";
+import { Text } from "@/ui/Text";
 import { useHistory } from "@/features/home/api/history.queries";
 import type { HistorySort } from "@/features/home/api/history";
 import { PACKS_FEED_PAGE_SIZE } from "@/features/home/api/packs-feed";

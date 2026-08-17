@@ -10,7 +10,7 @@ import {
 } from "react";
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
-import { useAuth } from "@/shared/contexts/auth-context";
+import { useAuth } from "@/contexts/auth-context";
 import { friendsRoomsClient } from "./friends-rooms-client";
 import { ROOMS_DORMANT, type MyRoomSummary } from "./room-types";
 

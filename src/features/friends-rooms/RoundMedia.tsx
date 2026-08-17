@@ -1,13 +1,13 @@
 "use client";
 
-import { YouTubeCard } from "@/shared/components/YouTubeCard";
-import { ImageCard } from "@/shared/ui/ImageCard";
+import { YouTubeCard } from "@/components/YouTubeCard";
+import { ImageCard } from "@/ui/ImageCard";
 import {
   extractYouTubeId,
   extractYouTubeStart,
-} from "@/shared/utils/youtube";
-import { mediaUrl } from "@/shared/utils/media-url";
-import type { Item } from "@/shared/types/pack";
+} from "@/utils/youtube";
+import { mediaUrl } from "@/utils/media-url";
+import type { Item } from "@/types/pack";
 
 /**
  * An item's media band, and nothing else — the one place a room board turns an

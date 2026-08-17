@@ -1,28 +1,28 @@
 "use client";
-import { formatDate } from "@/shared/utils/format-date";
+import { formatDate } from "@/utils/format-date";
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Text } from "@/shared/ui/Text";
-import { Username } from "@/shared/components/Username";
-import { UserAvatar } from "@/shared/components/UserAvatar";
-import { Input } from "@/shared/ui/Input";
-import { Button } from "@/shared/ui/Button";
-import { Dropdown } from "@/shared/ui/Dropdown";
-import { Hidden } from "@/shared/components/Hidden";
-import { LoadingState } from "@/shared/ui/LoadingState";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { useStreamerModeOrDefault } from "@/shared/contexts/streamer-mode-context";
-import { usersClient } from "@/shared/api/users-client";
-import { adminClient } from "@/shared/api/admin-client";
+import { Text } from "@/ui/Text";
+import { Username } from "@/components/Username";
+import { UserAvatar } from "@/components/UserAvatar";
+import { Input } from "@/ui/Input";
+import { Button } from "@/ui/Button";
+import { Dropdown } from "@/ui/Dropdown";
+import { Hidden } from "@/components/Hidden";
+import { LoadingState } from "@/ui/LoadingState";
+import { useAuth } from "@/contexts/auth-context";
+import { useStreamerModeOrDefault } from "@/contexts/streamer-mode-context";
+import { usersClient } from "@/api/users-client";
+import { adminClient } from "@/api/admin-client";
 import { useAdminStaff } from "@/features/admin/api/admin.queries";
-import { DataTable, DataTableRow } from "@/shared/ui/DataTable";
+import { DataTable, DataTableRow } from "@/ui/DataTable";
 import {
   assignableRolesFor,
   type AssignableRole,
-} from "@/shared/utils/staff-permissions";
-import type { AdminUserRow } from "@/shared/types/admin";
+} from "@/utils/staff-permissions";
+import type { AdminUserRow } from "@/types/admin";
 
 const SEARCH_DEBOUNCE_MS = 300;
 const COLUMNS = "1.3fr 130px 1fr 110px 90px";

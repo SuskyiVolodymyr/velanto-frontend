@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { pageContainer } from "@/shared/constants/page-container";
-import { cn } from "@/shared/utils/cn";
+import { pageContainer } from "@/constants/page-container";
+import { cn } from "@/utils/cn";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
-import { buttonClassName } from "@/shared/ui/Button";
+import { Text } from "@/ui/Text";
+import { buttonClassName } from "@/ui/Button";
 
 /**
  * Shown instead of the community breakdown to someone who hasn't finished this

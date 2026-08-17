@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { ReportedUserSummary } from "./ReportedUserSummary";
-import type { AdminUserDetail } from "@/shared/types/admin";
+import type { AdminUserDetail } from "@/types/admin";
 
 function userDetail(overrides: Partial<AdminUserDetail> = {}): AdminUserDetail {
   return {

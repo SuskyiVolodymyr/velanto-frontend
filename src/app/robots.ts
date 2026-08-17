@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { SITE_URL } from "@/shared/constants/site-url";
+import { SITE_URL } from "@/constants/site-url";
 
 /**
  * Crawlers are allowed only on routes that do NOT query the database.

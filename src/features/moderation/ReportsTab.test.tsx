@@ -1,12 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { ReportsTab } from "./ReportsTab";
-import { reportsClient } from "@/shared/api/reports-client";
-import type { ReportWithReporter } from "@/shared/types/report";
+import { reportsClient } from "@/api/reports-client";
+import type { ReportWithReporter } from "@/types/report";
 
-vi.mock("@/shared/api/reports-client", () => ({
+vi.mock("@/api/reports-client", () => ({
   reportsClient: { list: vi.fn() },
 }));
 

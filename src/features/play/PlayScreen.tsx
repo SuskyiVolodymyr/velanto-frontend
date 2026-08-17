@@ -3,8 +3,8 @@
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { cn } from "@/shared/utils/cn";
-import type { Pack } from "@/shared/types/pack";
+import { cn } from "@/utils/cn";
+import type { Pack } from "@/types/pack";
 import { VersusRound } from "@/features/play/VersusRound";
 import { usePlaySession } from "@/features/play/use-play-session";
 import {
@@ -14,11 +14,11 @@ import {
 import { PlayChrome } from "@/features/play/PlayChrome";
 import { PlayRoundHeader } from "@/features/play/PlayRoundHeader";
 import { PlayConfirmBar } from "@/features/play/PlayConfirmBar";
-import { pageContainer } from "@/shared/constants/page-container";
+import { pageContainer } from "@/constants/page-container";
 import { CandidateCard } from "@/features/play/CandidateCard";
 import { PicksSummary } from "@/features/play/PicksSummary";
 import { ResumePlayModal } from "@/features/play/ResumePlayModal";
-import { LoadingState } from "@/shared/ui/LoadingState";
+import { LoadingState } from "@/ui/LoadingState";
 
 // How many columns a groups-format round lays its candidates out in, chosen by
 // candidate count so they fill the row instead of leaving fixed-width gaps: up

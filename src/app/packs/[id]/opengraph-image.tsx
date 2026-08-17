@@ -1,16 +1,16 @@
 import { ImageResponse } from "next/og";
 // Overview, not the full pack: this card draws a title and a cover.
-import { getPackOverviewServer } from "@/shared/server/get-pack-server";
+import { getPackOverviewServer } from "@/server/get-pack-server";
 import {
   ogImageSourceFromKey,
   OG_COVER_FIT,
-} from "@/shared/utils/og-image-source";
-import { packOgCard } from "@/shared/utils/og-card";
+} from "@/utils/og-image-source";
+import { packOgCard } from "@/utils/og-card";
 import {
   OG_CARD_SIZE,
   OG_CARD_CONTENT_TYPE,
   OG_CARD_CACHE_CONTROL,
-} from "@/shared/utils/open-graph";
+} from "@/utils/open-graph";
 
 // Node runtime: the card fetches the cover from our CDN and base64-encodes it
 // with Buffer (see ogImageSourceFromKey). This is the METADATA FILE CONVENTION

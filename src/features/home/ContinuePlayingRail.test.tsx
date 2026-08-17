@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { ContinuePlayingRail } from "./ContinuePlayingRail";
 import {
   writePlayResume,

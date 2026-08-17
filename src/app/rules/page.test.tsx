@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import messages from "@/messages/en.json";
-import { OG_IMAGE_PATH } from "@/shared/utils/open-graph";
+import { OG_IMAGE_PATH } from "@/utils/open-graph";
 import { generateMetadata } from "./page";
 
 // getTranslations needs a request context we don't have in unit tests; back it

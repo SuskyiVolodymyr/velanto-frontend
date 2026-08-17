@@ -1,11 +1,11 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { ForgotPasswordForm } from "./ForgotPasswordForm";
-import { authClient } from "@/shared/api/auth-client";
+import { authClient } from "@/api/auth-client";
 
-vi.mock("@/shared/api/auth-client", () => ({
+vi.mock("@/api/auth-client", () => ({
   authClient: {
     requestPasswordReset: vi.fn(),
     resetPassword: vi.fn(),

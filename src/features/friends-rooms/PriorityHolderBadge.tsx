@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { Crown } from "lucide-react";
-import { Text } from "@/shared/ui/Text";
+import { Text } from "@/ui/Text";
 
 /**
  * The rotating tiebreak role's badge (design brief §3.2) — shown BEFORE

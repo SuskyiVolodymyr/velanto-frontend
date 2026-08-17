@@ -1,5 +1,5 @@
-import { packsClient } from "@/shared/api/packs-client";
-import type { PackStatus } from "@/shared/types/pack";
+import { packsClient } from "@/api/packs-client";
+import type { PackStatus } from "@/types/pack";
 import type { DateOrderValue } from "@/features/home/filter-options";
 import {
   PACKS_FEED_PAGE_SIZE,

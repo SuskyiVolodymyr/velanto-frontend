@@ -1,9 +1,9 @@
 import { describe, expect, it, beforeEach, vi } from "vitest";
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { RankResultScreen } from "./RankResultScreen";
-import type { Pack } from "@/shared/types/pack";
-import type { RankResults } from "@/shared/types/play-results";
+import type { Pack } from "@/types/pack";
+import type { RankResults } from "@/types/play-results";
 
 const searchParams = new URLSearchParams();
 vi.mock("next/navigation", () => ({ useSearchParams: () => searchParams }));

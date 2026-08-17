@@ -2,12 +2,12 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useForm, FormProvider } from "react-hook-form";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { CoverImageField } from "./CoverImageField";
-import { uploadMedia, MEDIA_MAX_BYTES } from "@/shared/api/media-client";
+import { uploadMedia, MEDIA_MAX_BYTES } from "@/api/media-client";
 import type { CreatePackValues } from "@/features/create/create-pack.schema";
 
-vi.mock("@/shared/api/media-client", () => ({
+vi.mock("@/api/media-client", () => ({
   uploadMedia: vi.fn(),
   MEDIA_MAX_BYTES: 1024 * 1024,
 }));

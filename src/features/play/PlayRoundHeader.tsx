@@ -1,6 +1,6 @@
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
-import { cn } from "@/shared/utils/cn";
+import { Text } from "@/ui/Text";
+import { cn } from "@/utils/cn";
 
 export type PlayRoundHeaderAlign = "start" | "center";
 

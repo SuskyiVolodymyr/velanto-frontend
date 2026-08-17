@@ -1,12 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { useState } from "react";
 import { screen, waitFor, fireEvent } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { GroupEditor } from "./GroupEditor";
-import { fetchYouTubeOEmbed } from "@/shared/utils/youtube-oembed";
-import { uploadMedia } from "@/shared/api/media-client";
-import type { Group } from "@/shared/types/pack";
+import { fetchYouTubeOEmbed } from "@/utils/youtube-oembed";
+import { uploadMedia } from "@/api/media-client";
+import type { Group } from "@/types/pack";
 
 // GroupEditor's name input is controlled by the `group` prop, so a rename only
 // sticks when the parent feeds the updated value back — this wrapper mirrors how
@@ -33,13 +33,13 @@ function StatefulGroupEditor({
   );
 }
 
-vi.mock("@/shared/utils/youtube-oembed", () => ({
+vi.mock("@/utils/youtube-oembed", () => ({
   fetchYouTubeOEmbed: vi.fn(),
 }));
 
-vi.mock("@/shared/api/media-client", async (importOriginal) => {
+vi.mock("@/api/media-client", async (importOriginal) => {
   const actual =
-    await importOriginal<typeof import("@/shared/api/media-client")>();
+    await importOriginal<typeof import("@/api/media-client")>();
   return { ...actual, uploadMedia: vi.fn() };
 });
 

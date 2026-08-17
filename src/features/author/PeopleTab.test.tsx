@@ -1,13 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { PeopleTab } from "./PeopleTab";
-import { StreamerModeProvider } from "@/shared/contexts/streamer-mode-context";
-import { usersClient } from "@/shared/api/users-client";
+import { StreamerModeProvider } from "@/contexts/streamer-mode-context";
+import { usersClient } from "@/api/users-client";
 import type { PeopleSubTab } from "./AuthorProfileHeader";
 
-vi.mock("@/shared/api/users-client", () => ({
+vi.mock("@/api/users-client", () => ({
   usersClient: {
     followers: vi.fn(),
     following: vi.fn(),

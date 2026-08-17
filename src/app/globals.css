@@ -287,7 +287,7 @@ html[data-streamer-mode="on"]:not([data-streamer-hydrated])
  * the role's hue (moderator cyan, manager periwinkle, admin violet, trusted
  * green). Each role sets its own gradient + sweep duration; the base class owns
  * the text-clip and animation. Applied by <Username>
- * (src/shared/components/Username.tsx). prefers-reduced-motion freezes it to a
+ * (src/components/Username.tsx). prefers-reduced-motion freezes it to a
  * legible static frame (the lighter band resting mid-handle).
  */
 @keyframes nicknamesweep {

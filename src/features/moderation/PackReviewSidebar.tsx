@@ -3,9 +3,9 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { X } from "lucide-react";
-import { Text } from "@/shared/ui/Text";
-import { Textarea } from "@/shared/ui/Textarea";
-import { cn } from "@/shared/utils/cn";
+import { Text } from "@/ui/Text";
+import { Textarea } from "@/ui/Textarea";
+import { cn } from "@/utils/cn";
 import type { PackMarks } from "@/features/moderation/use-pack-marks";
 
 export interface PackReviewSidebarProps {

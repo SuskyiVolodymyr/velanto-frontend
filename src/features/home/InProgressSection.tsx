@@ -3,10 +3,10 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useLocale, useTranslations } from "next-intl";
-import { PlayIcon } from "@/shared/ui/icons";
-import { CoverImage } from "@/shared/components/CoverImage";
-import { Text } from "@/shared/ui/Text";
-import { formatRelativeTimeIntl } from "@/shared/utils/relative-time";
+import { PlayIcon } from "@/ui/icons";
+import { CoverImage } from "@/components/CoverImage";
+import { Text } from "@/ui/Text";
+import { formatRelativeTimeIntl } from "@/utils/relative-time";
 import {
   listPlayResumes,
   type PlayResumeRecord,

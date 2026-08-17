@@ -3,9 +3,9 @@
 import { Fragment } from "react";
 import { useTranslations } from "next-intl";
 import { Crown, Vote } from "lucide-react";
-import { Text } from "@/shared/ui/Text";
-import { UserAvatar } from "@/shared/components/UserAvatar";
-import { cn } from "@/shared/utils/cn";
+import { Text } from "@/ui/Text";
+import { UserAvatar } from "@/components/UserAvatar";
+import { cn } from "@/utils/cn";
 import { RoundChrome, type RoundPlayerStatus } from "./RoundChrome";
 import { RoundItemTile } from "./RoundItemTile";
 import { RoundSideTile } from "./RoundSideTile";

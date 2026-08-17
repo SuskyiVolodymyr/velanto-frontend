@@ -2,7 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { User } from "lucide-react";
-import { TextField } from "@/shared/ui/form/TextField";
+import { TextField } from "@/ui/form/TextField";
 
 /**
  * Login-only field block: the single identifier (email-or-username) field.

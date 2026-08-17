@@ -1,24 +1,24 @@
 // src/features/admin/UsersTab.test.tsx
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithQueryClient as render } from "@/shared/test/render-with-query-client";
+import { renderWithQueryClient as render } from "@/test/render-with-query-client";
 import userEvent from "@testing-library/user-event";
-import { pickFromDropdown } from "@/shared/test/pick-from-dropdown";
+import { pickFromDropdown } from "@/test/pick-from-dropdown";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { UsersTab } from "./UsersTab";
-import { AuthProvider } from "@/shared/contexts/auth-context";
-import { formatDate } from "@/shared/utils/format-date";
-import { StreamerModeProvider } from "@/shared/contexts/streamer-mode-context";
-import { authClient } from "@/shared/api/auth-client";
-import { adminClient } from "@/shared/api/admin-client";
-import { usersClient } from "@/shared/api/users-client";
-import { rulesClient } from "@/shared/api/rules-client";
-import type { User } from "@/shared/types/user";
-import type { AdminUserRow } from "@/shared/types/admin";
-import type { RulesDocument } from "@/shared/types/rules";
+import { AuthProvider } from "@/contexts/auth-context";
+import { formatDate } from "@/utils/format-date";
+import { StreamerModeProvider } from "@/contexts/streamer-mode-context";
+import { authClient } from "@/api/auth-client";
+import { adminClient } from "@/api/admin-client";
+import { usersClient } from "@/api/users-client";
+import { rulesClient } from "@/api/rules-client";
+import type { User } from "@/types/user";
+import type { AdminUserRow } from "@/types/admin";
+import type { RulesDocument } from "@/types/rules";
 
-vi.mock("@/shared/api/auth-client", () => ({
+vi.mock("@/api/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),
@@ -27,10 +27,10 @@ vi.mock("@/shared/api/auth-client", () => ({
     refresh: vi.fn(),
   },
 }));
-vi.mock("@/shared/api/admin-client", () => ({
+vi.mock("@/api/admin-client", () => ({
   adminClient: { listUsers: vi.fn() },
 }));
-vi.mock("@/shared/api/users-client", () => ({
+vi.mock("@/api/users-client", () => ({
   usersClient: {
     ban: vi.fn(),
     unban: vi.fn(),
@@ -38,7 +38,7 @@ vi.mock("@/shared/api/users-client", () => ({
     changeRole: vi.fn(),
   },
 }));
-vi.mock("@/shared/api/rules-client", () => ({
+vi.mock("@/api/rules-client", () => ({
   rulesClient: { getRules: vi.fn() },
 }));
 

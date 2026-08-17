@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { PlayChrome } from "./PlayChrome";
-import type { Pack } from "@/shared/types/pack";
+import type { Pack } from "@/types/pack";
 
 const PACK: Pack = {
   id: "pack-a",

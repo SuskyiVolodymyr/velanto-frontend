@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { FormProvider, useForm } from "react-hook-form";
 import { PackMetaFields } from "./PackMetaFields";
 import type { CreatePackValues } from "./create-pack.schema";
-import type { PackTag } from "@/shared/types/pack";
+import type { PackTag } from "@/types/pack";
 
 function baseValues(tags: PackTag[] = []): CreatePackValues {
   return {

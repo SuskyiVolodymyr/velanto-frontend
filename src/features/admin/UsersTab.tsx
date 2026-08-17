@@ -1,14 +1,14 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
-import { Input } from "@/shared/ui/Input";
-import { Dropdown } from "@/shared/ui/Dropdown";
-import { Button } from "@/shared/ui/Button";
-import { LoadingState } from "@/shared/ui/LoadingState";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { canActOn } from "@/shared/utils/staff-permissions";
-import type { AdminUserSort } from "@/shared/api/admin-client";
+import { Text } from "@/ui/Text";
+import { Input } from "@/ui/Input";
+import { Dropdown } from "@/ui/Dropdown";
+import { Button } from "@/ui/Button";
+import { LoadingState } from "@/ui/LoadingState";
+import { useAuth } from "@/contexts/auth-context";
+import { canActOn } from "@/utils/staff-permissions";
+import type { AdminUserSort } from "@/api/admin-client";
 import {
   useUsersAdmin,
   isCurrentlyBanned,
@@ -16,7 +16,7 @@ import {
   type StaffFilter,
 } from "@/features/admin/use-users-admin";
 import { UserRow } from "@/features/admin/UserRow";
-import { DataTable } from "@/shared/ui/DataTable";
+import { DataTable } from "@/ui/DataTable";
 
 const COLUMNS = "1.3fr 110px 80px 80px 100px 110px 130px";
 

@@ -3,17 +3,17 @@
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import { FileText } from "lucide-react";
-import type { Item, ItemType, Pack, SlotMode } from "@/shared/types/pack";
-import { cn } from "@/shared/utils/cn";
-import { mediaUrl } from "@/shared/utils/media-url";
+import type { Item, ItemType, Pack, SlotMode } from "@/types/pack";
+import { cn } from "@/utils/cn";
+import { mediaUrl } from "@/utils/media-url";
 import {
   extractYouTubeId,
   youtubeThumbnailUrl,
-} from "@/shared/utils/youtube";
-import { Text } from "@/shared/ui/Text";
-import { SearchField } from "@/shared/ui/SearchField";
-import { FilterChip } from "@/shared/ui/FilterChip";
-import { EmptyState } from "@/shared/ui/EmptyState";
+} from "@/utils/youtube";
+import { Text } from "@/ui/Text";
+import { SearchField } from "@/ui/SearchField";
+import { FilterChip } from "@/ui/FilterChip";
+import { EmptyState } from "@/ui/EmptyState";
 import {
   MarkForEditButton,
   MarkRequestField,

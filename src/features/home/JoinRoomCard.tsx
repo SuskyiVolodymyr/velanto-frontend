@@ -3,12 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { RoomIcon } from "@/shared/ui/icons";
-import { Button } from "@/shared/ui/Button";
-import { Text } from "@/shared/ui/Text";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { ApiError } from "@/shared/api/api-client";
-import { cn } from "@/shared/utils/cn";
+import { RoomIcon } from "@/ui/icons";
+import { Button } from "@/ui/Button";
+import { Text } from "@/ui/Text";
+import { useAuth } from "@/contexts/auth-context";
+import { ApiError } from "@/api/api-client";
+import { cn } from "@/utils/cn";
 import { friendsRoomsClient } from "@/features/friends-rooms/friends-rooms-client";
 import { ROOMS_DORMANT } from "@/features/friends-rooms/room-types";
 

@@ -1,14 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { SignInGate } from "@/shared/components/SignInGate";
+import { SignInGate } from "@/components/SignInGate";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
-import { Button } from "@/shared/ui/Button";
-import { Hidden } from "@/shared/components/Hidden";
-import { Username } from "@/shared/components/Username";
-import { UserAvatar } from "@/shared/components/UserAvatar";
-import type { PublicUserProfile } from "@/shared/types/user";
+import { Text } from "@/ui/Text";
+import { Button } from "@/ui/Button";
+import { Hidden } from "@/components/Hidden";
+import { Username } from "@/components/Username";
+import { UserAvatar } from "@/components/UserAvatar";
+import type { PublicUserProfile } from "@/types/user";
 
 /**
  * Floating mini-profile shown when hovering/focusing an author handle: avatar,

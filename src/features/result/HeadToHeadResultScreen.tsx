@@ -2,17 +2,17 @@
 
 import { useMemo } from "react";
 import { useTranslations } from "next-intl";
-import { Card } from "@/shared/ui/Card";
-import { Text } from "@/shared/ui/Text";
+import { Card } from "@/ui/Card";
+import { Text } from "@/ui/Text";
 import { RecapHeading } from "@/features/result/RecapHeading";
-import { roundHeading } from "@/shared/utils/round-heading";
-import { cn } from "@/shared/utils/cn";
-import type { Pack } from "@/shared/types/pack";
+import { roundHeading } from "@/utils/round-heading";
+import { cn } from "@/utils/cn";
+import type { Pack } from "@/types/pack";
 import type {
   MatchupResult,
   PackResults,
   RecordedPick,
-} from "@/shared/types/play-results";
+} from "@/types/play-results";
 
 interface Contender {
   title: string;

@@ -1,8 +1,8 @@
 "use client";
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { usersClient } from "@/shared/api/users-client";
-import { uploadMedia } from "@/shared/api/media-client";
+import { usersClient } from "@/api/users-client";
+import { uploadMedia } from "@/api/media-client";
 import { myProfileQueryOptions } from "@/features/profile/api/profile.queries";
 import { authorQueryOptions } from "@/features/author/api/author.queries";
 

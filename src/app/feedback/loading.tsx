@@ -1,4 +1,4 @@
-import { Skeleton } from "@/shared/ui/Skeleton";
+import { Skeleton } from "@/ui/Skeleton";
 
 /** Route-level skeleton for the feedback list: heading, filter chips, and a
  * stack of post rows, matching FeedbackScreen's max-w-5xl layout. */

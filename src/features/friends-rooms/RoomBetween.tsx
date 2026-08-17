@@ -2,9 +2,9 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
-import { cn } from "@/shared/utils/cn";
-import type { Pack } from "@/shared/types/pack";
+import { Text } from "@/ui/Text";
+import { cn } from "@/utils/cn";
+import type { Pack } from "@/types/pack";
 import type { RoomPlayerState, RoomState } from "./room-types";
 import { BetweenNextButton } from "./BetweenNextButton";
 import { RoomItemCard } from "./RoomItemCard";

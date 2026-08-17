@@ -3,7 +3,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
-import type { Item } from "@/shared/types/pack";
+import type { Item } from "@/types/pack";
 import { SpyBetweenBoard } from "./SpyBetweenBoard";
 import { baseRoomState } from "./test-fixtures";
 import type { RoomPlayerState, RoomState } from "./room-types";

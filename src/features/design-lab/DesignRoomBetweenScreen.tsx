@@ -2,9 +2,9 @@
 
 import { useMemo } from "react";
 import { useRouter } from "next/navigation";
-import { pageContainer } from "@/shared/constants/page-container";
-import { cn } from "@/shared/utils/cn";
-import { usePlayFocus } from "@/shared/contexts/play-focus-context";
+import { pageContainer } from "@/constants/page-container";
+import { cn } from "@/utils/cn";
+import { usePlayFocus } from "@/contexts/play-focus-context";
 import { RoomHeader } from "@/features/friends-rooms/RoomHeader";
 import { RoomBetweenBoard } from "@/features/friends-rooms/RoomBetweenBoard";
 import { DesignLabBar } from "./DesignLabBar";

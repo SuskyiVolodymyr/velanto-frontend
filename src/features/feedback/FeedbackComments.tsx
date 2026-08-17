@@ -1,14 +1,14 @@
 "use client";
-import { SignInGate } from "@/shared/components/SignInGate";
-import { formatDateTime } from "@/shared/utils/format-date";
+import { SignInGate } from "@/components/SignInGate";
+import { formatDateTime } from "@/utils/format-date";
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
-import { LoadingState } from "@/shared/ui/LoadingState";
-import { Username } from "@/shared/components/Username";
-import { UserAvatar } from "@/shared/components/UserAvatar";
+import { Text } from "@/ui/Text";
+import { LoadingState } from "@/ui/LoadingState";
+import { Username } from "@/components/Username";
+import { UserAvatar } from "@/components/UserAvatar";
 import {
   CommentComposerCard,
   CommentIdentityBadge,
@@ -17,16 +17,16 @@ import {
   COMMENT_CARD_CLASS,
   COMMENT_LIST_CLASS,
   commentAvatarSize,
-} from "@/shared/components/CommentCard";
+} from "@/components/CommentCard";
 import { AuthorHoverTrigger } from "@/features/pack/AuthorHoverTrigger";
-import { Button } from "@/shared/ui/Button";
-import { Hidden } from "@/shared/components/Hidden";
-import { Tooltip } from "@/shared/ui/Tooltip";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { cn } from "@/shared/utils/cn";
-import { isStaff } from "@/shared/utils/user-role";
-import { messageFromError } from "@/shared/utils/messageFromError";
-import type { FeedbackComment } from "@/shared/types/feedback";
+import { Button } from "@/ui/Button";
+import { Hidden } from "@/components/Hidden";
+import { Tooltip } from "@/ui/Tooltip";
+import { useAuth } from "@/contexts/auth-context";
+import { cn } from "@/utils/cn";
+import { isStaff } from "@/utils/user-role";
+import { messageFromError } from "@/utils/messageFromError";
+import type { FeedbackComment } from "@/types/feedback";
 import {
   useFeedbackComments,
   useAddComment,

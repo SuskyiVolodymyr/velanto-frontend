@@ -2,9 +2,9 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import { BoardCard, BoardRow } from "@/shared/ui/BoardCard";
+import { BoardCard, BoardRow } from "@/ui/BoardCard";
 import { withCompetitionRanks } from "@/features/result/result-table";
-import type { ItemTally, RecordedPick } from "@/shared/types/play-results";
+import type { ItemTally, RecordedPick } from "@/types/play-results";
 
 /** How many rows a press of "Show N more" adds — mock starts at 5, was 10 (T11). */
 const PAGE = 5;

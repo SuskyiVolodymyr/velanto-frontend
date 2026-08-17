@@ -5,15 +5,15 @@ import { useRouter } from "next/navigation";
 import { Controller, useForm, useWatch, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { feedbackClient } from "@/shared/api/feedback-client";
-import { messageFromError } from "@/shared/utils/messageFromError";
+import { useAuth } from "@/contexts/auth-context";
+import { feedbackClient } from "@/api/feedback-client";
+import { messageFromError } from "@/utils/messageFromError";
 import { LOCALES, LOCALE_NAMES, type Locale } from "@/i18n/config";
 import type {
   CreateFeedbackInput,
   FeedbackTopic,
   FeedbackVisibility,
-} from "@/shared/types/feedback";
+} from "@/types/feedback";
 import { TOPIC_KEYS } from "@/features/feedback/FeedbackCard";
 import { feedbackTopicTone } from "@/features/feedback/feedback-tone";
 import { ComposerChoiceRow } from "@/features/feedback/ComposerChoiceRow";
@@ -23,16 +23,16 @@ import {
   BODY_MAX,
   TITLE_MAX,
 } from "@/features/feedback/new-feedback.schema";
-import { Button } from "@/shared/ui/Button";
-import { Text } from "@/shared/ui/Text";
-import { LoadingState } from "@/shared/ui/LoadingState";
-import { FieldError } from "@/shared/ui/form/FieldError";
-import { TextField } from "@/shared/ui/form/TextField";
-import { TextareaField } from "@/shared/ui/form/TextareaField";
-import { SegmentedField } from "@/shared/ui/form/SegmentedField";
-import { getFieldError } from "@/shared/ui/form/getFieldError";
-import { cn } from "@/shared/utils/cn";
-import { pageContainer } from "@/shared/constants/page-container";
+import { Button } from "@/ui/Button";
+import { Text } from "@/ui/Text";
+import { LoadingState } from "@/ui/LoadingState";
+import { FieldError } from "@/ui/form/FieldError";
+import { TextField } from "@/ui/form/TextField";
+import { TextareaField } from "@/ui/form/TextareaField";
+import { SegmentedField } from "@/ui/form/SegmentedField";
+import { getFieldError } from "@/ui/form/getFieldError";
+import { cn } from "@/utils/cn";
+import { pageContainer } from "@/constants/page-container";
 
 const TOPIC_ORDER: FeedbackTopic[] = ["bug", "feature", "translation", "other"];
 const VISIBILITY_ORDER: FeedbackVisibility[] = ["everyone", "staff_only"];

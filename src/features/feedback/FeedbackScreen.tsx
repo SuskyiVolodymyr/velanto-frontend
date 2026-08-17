@@ -3,17 +3,17 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/contexts/auth-context";
+import { useAuth } from "@/contexts/auth-context";
 import type {
   Feedback,
   FeedbackSort,
   FeedbackStatus,
   FeedbackTopic,
-} from "@/shared/types/feedback";
-import { Text } from "@/shared/ui/Text";
-import { Button } from "@/shared/ui/Button";
-import { PageHeader } from "@/shared/ui/PageHeader";
-import { PlusIcon } from "@/shared/ui/icons";
+} from "@/types/feedback";
+import { Text } from "@/ui/Text";
+import { Button } from "@/ui/Button";
+import { PageHeader } from "@/ui/PageHeader";
+import { PlusIcon } from "@/ui/icons";
 import { FeedbackFilters } from "@/features/feedback/FeedbackFilters";
 import { FeedbackList } from "@/features/feedback/FeedbackList";
 import { FeedbackTopSidebar } from "@/features/feedback/FeedbackTopSidebar";
@@ -22,8 +22,8 @@ import {
   useTopFeedback,
 } from "@/features/feedback/api/feedback-list.queries";
 import type { FeedbackListFilters } from "@/features/feedback/api/feedback-list";
-import { cn } from "@/shared/utils/cn";
-import { pageContainer } from "@/shared/constants/page-container";
+import { cn } from "@/utils/cn";
+import { pageContainer } from "@/constants/page-container";
 
 const SEARCH_DEBOUNCE_MS = 300;
 

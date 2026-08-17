@@ -1,9 +1,9 @@
 // src/features/admin/OverviewTab.test.tsx
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { OverviewTab } from "./OverviewTab";
-import { adminClient } from "@/shared/api/admin-client";
+import { adminClient } from "@/api/admin-client";
 
 // OverviewTab embeds ActivityChart, which keeps its range in the URL — so the
 // tab now needs a router even in tests that never touch the chart.
@@ -15,7 +15,7 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => searchParams,
 }));
 
-vi.mock("@/shared/api/admin-client", () => ({
+vi.mock("@/api/admin-client", () => ({
   adminClient: { overview: vi.fn(), activity: vi.fn() },
 }));
 

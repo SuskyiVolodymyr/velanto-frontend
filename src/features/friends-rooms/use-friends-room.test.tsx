@@ -25,7 +25,7 @@ function serverEmit(event: string, payload?: unknown) {
 }
 
 vi.mock("socket.io-client", () => ({ io: () => fakeSocket }));
-vi.mock("@/shared/api/api-client", () => ({
+vi.mock("@/api/api-client", () => ({
   ensureFreshAccessToken: () => Promise.resolve("token"),
   getAccessToken: () => "token",
 }));

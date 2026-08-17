@@ -3,16 +3,16 @@
 import { useEffect } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { Text } from "@/shared/ui/Text";
-import { Button } from "@/shared/ui/Button";
-import { PageHeader } from "@/shared/ui/PageHeader";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { cn } from "@/shared/utils/cn";
-import { IdentityPillBadge } from "@/shared/components/IdentityPillBadge";
+import { Text } from "@/ui/Text";
+import { Button } from "@/ui/Button";
+import { PageHeader } from "@/ui/PageHeader";
+import { useAuth } from "@/contexts/auth-context";
+import { cn } from "@/utils/cn";
+import { IdentityPillBadge } from "@/components/IdentityPillBadge";
 import { ReportsTab } from "@/features/moderation/ReportsTab";
 import { PackApprovalsTab } from "@/features/moderation/PackApprovalsTab";
 import { useModerationCounts } from "@/features/moderation/api/moderation.queries";
-import { pageContainer } from "@/shared/constants/page-container";
+import { pageContainer } from "@/constants/page-container";
 
 const TABS = ["reports", "packs"] as const;
 type Tab = (typeof TABS)[number];

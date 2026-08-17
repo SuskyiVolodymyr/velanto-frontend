@@ -1,12 +1,12 @@
 "use client";
 
-import { SignInGate } from "@/shared/components/SignInGate";
+import { SignInGate } from "@/components/SignInGate";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { Reply, Trash2 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
-import { Skeleton } from "@/shared/ui/Skeleton";
+import { Text } from "@/ui/Text";
+import { Skeleton } from "@/ui/Skeleton";
 import {
   CommentAction,
   CommentComposerCard,
@@ -19,24 +19,24 @@ import {
   REPLY_RAIL_CLASS,
   commentAvatarSize,
   type CommentRowVariant,
-} from "@/shared/components/CommentCard";
-import { Button } from "@/shared/ui/Button";
-import { Spinner } from "@/shared/ui/Spinner";
-import { Hidden } from "@/shared/components/Hidden";
-import { Username } from "@/shared/components/Username";
-import { UserAvatar } from "@/shared/components/UserAvatar";
-import { Tooltip } from "@/shared/ui/Tooltip";
-import { VoteControl } from "@/shared/components/VoteControl";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { isStaff } from "@/shared/utils/user-role";
-import { cn } from "@/shared/utils/cn";
-import { formatRelativeTimeIntl } from "@/shared/utils/relative-time";
-import { messageFromError } from "@/shared/utils/messageFromError";
+} from "@/components/CommentCard";
+import { Button } from "@/ui/Button";
+import { Spinner } from "@/ui/Spinner";
+import { Hidden } from "@/components/Hidden";
+import { Username } from "@/components/Username";
+import { UserAvatar } from "@/components/UserAvatar";
+import { Tooltip } from "@/ui/Tooltip";
+import { VoteControl } from "@/components/VoteControl";
+import { useAuth } from "@/contexts/auth-context";
+import { isStaff } from "@/utils/user-role";
+import { cn } from "@/utils/cn";
+import { formatRelativeTimeIntl } from "@/utils/relative-time";
+import { messageFromError } from "@/utils/messageFromError";
 import {
   commentsClient,
   type CommentSort,
-} from "@/shared/api/comments-client";
-import type { Comment } from "@/shared/types/comment";
+} from "@/api/comments-client";
+import type { Comment } from "@/types/comment";
 import {
   usePackComments,
   useAddPackComment,

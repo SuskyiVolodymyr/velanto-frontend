@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { PackSummary } from "@/shared/types/pack";
-import { Text } from "@/shared/ui/Text";
+import type { PackSummary } from "@/types/pack";
+import { Text } from "@/ui/Text";
 import { PackCard } from "@/features/home/PackCard";
 import {
   PACK_GRID_CLASS,

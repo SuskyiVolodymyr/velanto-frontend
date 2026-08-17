@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
-import { Button } from "@/shared/ui/Button";
+import { Text } from "@/ui/Text";
+import { Button } from "@/ui/Button";
 
 export default function UserProfileError({
   reset,

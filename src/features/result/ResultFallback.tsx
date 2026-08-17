@@ -1,7 +1,7 @@
 "use client";
 
 import { notFound } from "next/navigation";
-import { usePackFallback } from "@/shared/hooks/use-pack-fallback";
+import { usePackFallback } from "@/hooks/use-pack-fallback";
 import { ResultScreen } from "@/features/result/ResultScreen";
 
 /**

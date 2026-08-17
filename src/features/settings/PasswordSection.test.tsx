@@ -1,14 +1,14 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { PasswordSection } from "./PasswordSection";
-import { authClient } from "@/shared/api/auth-client";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { ApiError } from "@/shared/api/api-client";
+import { authClient } from "@/api/auth-client";
+import { useAuth } from "@/contexts/auth-context";
+import { ApiError } from "@/api/api-client";
 
-vi.mock("@/shared/contexts/auth-context", () => ({ useAuth: vi.fn() }));
-vi.mock("@/shared/api/auth-client", () => ({
+vi.mock("@/contexts/auth-context", () => ({ useAuth: vi.fn() }));
+vi.mock("@/api/auth-client", () => ({
   authClient: { changePassword: vi.fn(), setPassword: vi.fn() },
 }));
 

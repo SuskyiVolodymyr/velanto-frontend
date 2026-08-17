@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { PicksSummary } from "@/features/play/PicksSummary";
 import type { Pick } from "@/features/play/use-play-session";
 

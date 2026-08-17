@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { pageContainer } from "@/shared/constants/page-container";
-import { cn } from "@/shared/utils/cn";
+import { pageContainer } from "@/constants/page-container";
+import { cn } from "@/utils/cn";
 import { RoomResults } from "@/features/friends-rooms/RoomResults";
 import { IdentityRevealScreen } from "@/features/friends-rooms/IdentityRevealScreen";
 import { SpyRevealScreen } from "@/features/friends-rooms/SpyRevealScreen";

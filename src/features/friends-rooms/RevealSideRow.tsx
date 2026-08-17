@@ -1,10 +1,10 @@
 "use client";
 
-import { Text } from "@/shared/ui/Text";
-import { UserAvatar } from "@/shared/components/UserAvatar";
+import { Text } from "@/ui/Text";
+import { UserAvatar } from "@/components/UserAvatar";
 import { RoundMedia } from "./RoundMedia";
-import { cn } from "@/shared/utils/cn";
-import type { Item } from "@/shared/types/pack";
+import { cn } from "@/utils/cn";
+import type { Item } from "@/types/pack";
 import type { RoomPlayerState, RoundSide } from "./room-types";
 
 /**

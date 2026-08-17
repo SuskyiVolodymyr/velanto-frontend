@@ -1,9 +1,9 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { AppearanceSection } from "./AppearanceSection";
-import * as theme from "@/shared/utils/theme";
+import * as theme from "@/utils/theme";
 
 beforeEach(() => {
   localStorage.clear();

@@ -3,9 +3,9 @@
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
-} from "@/shared/ui/icons";
+} from "@/ui/icons";
 import { useTranslations } from "next-intl";
-import { cn } from "@/shared/utils/cn";
+import { cn } from "@/utils/cn";
 import { buildPaginationRange } from "@/features/home/pagination-range";
 
 /** The "Showing X–Y of Z packs" range shown beside the pager on the browse feed. */

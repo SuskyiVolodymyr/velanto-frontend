@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { getPackServer } from "@/shared/server/get-pack-server";
+import { getPackServer } from "@/server/get-pack-server";
 import { EditPackScreen } from "@/features/create/EditPackScreen";
 import { EditPackFallback } from "@/features/create/EditPackFallback";
 

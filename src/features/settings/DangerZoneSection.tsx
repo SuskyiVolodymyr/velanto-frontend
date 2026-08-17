@@ -3,14 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { Card } from "@/shared/ui/Card";
-import { Text } from "@/shared/ui/Text";
-import { Button } from "@/shared/ui/Button";
-import { Input } from "@/shared/ui/Input";
-import { Modal } from "@/shared/ui/Modal";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { authClient } from "@/shared/api/auth-client";
-import { ApiError } from "@/shared/api/api-client";
+import { Card } from "@/ui/Card";
+import { Text } from "@/ui/Text";
+import { Button } from "@/ui/Button";
+import { Input } from "@/ui/Input";
+import { Modal } from "@/ui/Modal";
+import { useAuth } from "@/contexts/auth-context";
+import { authClient } from "@/api/auth-client";
+import { ApiError } from "@/api/api-client";
 import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
 
 /**

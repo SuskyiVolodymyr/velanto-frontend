@@ -2,13 +2,13 @@
 
 import { useId } from "react";
 import { useTranslations } from "next-intl";
-import { Card } from "@/shared/ui/Card";
+import { Card } from "@/ui/Card";
 import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
-import { Text } from "@/shared/ui/Text";
-import { SegmentedControl } from "@/shared/ui/SegmentedControl";
-import { PlayHistoryToggle } from "@/shared/components/PlayHistoryToggle";
-import { useStreamerMode } from "@/shared/contexts/streamer-mode-context";
-import { useAuth } from "@/shared/contexts/auth-context";
+import { Text } from "@/ui/Text";
+import { SegmentedControl } from "@/ui/SegmentedControl";
+import { PlayHistoryToggle } from "@/components/PlayHistoryToggle";
+import { useStreamerMode } from "@/contexts/streamer-mode-context";
+import { useAuth } from "@/contexts/auth-context";
 
 type ToggleValue = "on" | "off";
 

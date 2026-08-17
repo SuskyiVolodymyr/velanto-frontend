@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
-import type { Item } from "@/shared/types/pack";
+import type { Item } from "@/types/pack";
 import { SpyRevealScreen } from "./SpyRevealScreen";
 import { baseRoomState } from "./test-fixtures";
 import type { RoomPlayerState, RoomState } from "./room-types";

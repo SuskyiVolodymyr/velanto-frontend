@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { PACK_FORMATS, PACK_TAGS } from "@/shared/types/pack";
-import { PACK_LANGUAGES } from "@/shared/types/pack-language";
+import { PACK_FORMATS, PACK_TAGS } from "@/types/pack";
+import { PACK_LANGUAGES } from "@/types/pack-language";
 import {
   DESCRIPTION_MAX,
   MAX_TAGS,

@@ -1,10 +1,10 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { RoomPresenceIndicator } from "./RoomPresenceIndicator";
 import type { MyRoomSummary } from "./room-types";
-import type { User } from "@/shared/types/user";
+import type { User } from "@/types/user";
 
 const push = vi.fn();
 let pathname = "/";
@@ -16,7 +16,7 @@ vi.mock("next/navigation", () => ({
   usePathname: () => pathname,
 }));
 
-vi.mock("@/shared/contexts/auth-context", () => ({
+vi.mock("@/contexts/auth-context", () => ({
   useAuth: () => ({ user: currentUser }),
 }));
 

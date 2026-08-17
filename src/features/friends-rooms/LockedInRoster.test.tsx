@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { LockedInRoster } from "./LockedInRoster";
 
 const PLAYERS = [

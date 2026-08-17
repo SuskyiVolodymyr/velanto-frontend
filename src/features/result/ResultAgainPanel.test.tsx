@@ -1,9 +1,9 @@
 import { describe, it, expect, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { ResultAgainPanel } from "./ResultAgainPanel";
-import { writeLastPlayId } from "@/shared/utils/last-play-storage";
+import { writeLastPlayId } from "@/utils/last-play-storage";
 
 beforeEach(() => {
   sessionStorage.clear();

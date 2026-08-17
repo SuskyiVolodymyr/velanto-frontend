@@ -1,10 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { PackCard } from "./PackCard";
 import { HOT_PLAYS_THRESHOLD } from "./hot-pack";
-import type { PackSummary } from "@/shared/types/pack";
+import type { PackSummary } from "@/types/pack";
 
 const { push } = vi.hoisted(() => ({ push: vi.fn() }));
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
@@ -12,7 +12,7 @@ vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
 const auth = vi.hoisted(() => ({
   current: { user: { id: "u1" } as { id: string } | null },
 }));
-vi.mock("@/shared/contexts/auth-context", () => ({
+vi.mock("@/contexts/auth-context", () => ({
   useAuth: () => auth.current,
 }));
 

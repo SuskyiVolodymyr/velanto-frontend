@@ -1,7 +1,7 @@
 import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { IdentityRevealScreen } from "./IdentityRevealScreen";
 import { baseRoomState } from "./test-fixtures";
 import { friendsRoomsClient } from "./friends-rooms-client";

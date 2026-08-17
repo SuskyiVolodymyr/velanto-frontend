@@ -3,37 +3,37 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { Text } from "@/shared/ui/Text";
-import { LoadingState } from "@/shared/ui/LoadingState";
-import { cn } from "@/shared/utils/cn";
-import { playsClient } from "@/shared/api/plays-client";
+import { useAuth } from "@/contexts/auth-context";
+import { Text } from "@/ui/Text";
+import { LoadingState } from "@/ui/LoadingState";
+import { cn } from "@/utils/cn";
+import { playsClient } from "@/api/plays-client";
 import {
   writeLastPlayPicks,
   writeLastPlayId,
-} from "@/shared/utils/last-play-storage";
-import { YouTubeCard } from "@/shared/components/YouTubeCard";
-import { ImageCard } from "@/shared/ui/ImageCard";
+} from "@/utils/last-play-storage";
+import { YouTubeCard } from "@/components/YouTubeCard";
+import { ImageCard } from "@/ui/ImageCard";
 import {
   extractYouTubeId,
   extractYouTubeStart,
-} from "@/shared/utils/youtube";
-import { mediaUrl } from "@/shared/utils/media-url";
+} from "@/utils/youtube";
+import { mediaUrl } from "@/utils/media-url";
 import { useRoundSelections } from "@/features/play/use-round-selections";
 import { usePlayResume } from "@/features/play/use-play-resume";
-import { RankedList, type RankedRow } from "@/shared/ui/RankedList";
-import { pageContainer } from "@/shared/constants/page-container";
+import { RankedList, type RankedRow } from "@/ui/RankedList";
+import { pageContainer } from "@/constants/page-container";
 import { PlayChrome } from "@/features/play/PlayChrome";
 import { PlayRoundHeader } from "@/features/play/PlayRoundHeader";
 import { PlayConfirmBar } from "@/features/play/PlayConfirmBar";
 import { ResumePlayModal } from "@/features/play/ResumePlayModal";
-import { roundHeading } from "@/shared/utils/round-heading";
+import { roundHeading } from "@/utils/round-heading";
 import {
   toneFor,
   HAIRLINE_OVERLAY_STYLE,
 } from "@/features/play/candidate-tone";
-import type { Pack, Item } from "@/shared/types/pack";
-import type { RecordedPick } from "@/shared/types/play-results";
+import type { Pack, Item } from "@/types/pack";
+import type { RecordedPick } from "@/types/play-results";
 
 export function RankPlayScreen({ pack }: { pack: Pack }) {
   const { status } = useAuth();

@@ -1,12 +1,12 @@
 import { describe, expect, it, vi } from "vitest";
 import { screen, within } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { NxNResultScreen } from "./NxNResultScreen";
-import type { Pack } from "@/shared/types/pack";
+import type { Pack } from "@/types/pack";
 import type {
   PackResults,
   RecordedPick,
-} from "@/shared/types/play-results";
+} from "@/types/play-results";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn(), replace: vi.fn() }),

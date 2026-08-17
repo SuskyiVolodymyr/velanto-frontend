@@ -4,14 +4,14 @@ import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { Card } from "@/shared/ui/Card";
-import { Text } from "@/shared/ui/Text";
-import { Button } from "@/shared/ui/Button";
-import { PasswordField } from "@/shared/ui/form/PasswordField";
-import { useAuth } from "@/shared/contexts/auth-context";
+import { Card } from "@/ui/Card";
+import { Text } from "@/ui/Text";
+import { Button } from "@/ui/Button";
+import { PasswordField } from "@/ui/form/PasswordField";
+import { useAuth } from "@/contexts/auth-context";
 import { SettingsSectionSkeleton } from "@/features/settings/SettingsSectionSkeleton";
-import { authClient } from "@/shared/api/auth-client";
-import { ApiError } from "@/shared/api/api-client";
+import { authClient } from "@/api/auth-client";
+import { ApiError } from "@/api/api-client";
 import { SetPasswordSection } from "@/features/settings/SetPasswordSection";
 import {
   changePasswordSchema,

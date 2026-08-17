@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { AuthForm } from "@/features/auth/AuthForm";
 import { AuthBrandPanel } from "@/features/auth/AuthBrandPanel";
-import { getUserCountServer } from "@/shared/server/get-user-count-server";
+import { getUserCountServer } from "@/server/get-user-count-server";
 
 export const metadata: Metadata = {
   title: "Log in or sign up",

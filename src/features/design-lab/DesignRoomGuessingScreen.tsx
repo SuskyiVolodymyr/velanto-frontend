@@ -2,10 +2,10 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { pageContainer } from "@/shared/constants/page-container";
-import { Text } from "@/shared/ui/Text";
-import { cn } from "@/shared/utils/cn";
-import { usePlayFocus } from "@/shared/contexts/play-focus-context";
+import { pageContainer } from "@/constants/page-container";
+import { Text } from "@/ui/Text";
+import { cn } from "@/utils/cn";
+import { usePlayFocus } from "@/contexts/play-focus-context";
 import { RoomHeader } from "@/features/friends-rooms/RoomHeader";
 import { GuessingPhaseScreen } from "@/features/friends-rooms/GuessingPhaseScreen";
 import { SpyAccusationScreen } from "@/features/friends-rooms/SpyAccusationScreen";

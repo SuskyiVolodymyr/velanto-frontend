@@ -1,13 +1,13 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
+import { Text } from "@/ui/Text";
 import {
   MarkForEditButton,
   MarkRequestField,
 } from "@/features/moderation/MarkForEdit";
 import type { PackMarks } from "@/features/moderation/use-pack-marks";
-import type { ChangeRequestMarkKind, Pack } from "@/shared/types/pack";
+import type { ChangeRequestMarkKind, Pack } from "@/types/pack";
 
 /**
  * The pack's own text — title, description, cover, tags — each markable for

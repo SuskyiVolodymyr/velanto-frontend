@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { UpdatesScreen } from "@/features/updates/UpdatesScreen";
 import { UPDATES } from "@/features/updates/updates-data";
-import { buildOpenGraph } from "@/shared/utils/open-graph";
-import { SITE_URL } from "@/shared/constants/site-url";
+import { buildOpenGraph } from "@/utils/open-graph";
+import { SITE_URL } from "@/constants/site-url";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("updates");

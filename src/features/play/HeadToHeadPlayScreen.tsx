@@ -3,12 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { playsClient } from "@/shared/api/plays-client";
+import { useAuth } from "@/contexts/auth-context";
+import { playsClient } from "@/api/plays-client";
 import {
   writeLastPlayId,
   writeLastPlayPicks,
-} from "@/shared/utils/last-play-storage";
+} from "@/utils/last-play-storage";
 import { useRoundSelections } from "@/features/play/use-round-selections";
 import { usePlayResume } from "@/features/play/use-play-resume";
 import { HeadToHeadRound } from "@/features/play/HeadToHeadRound";
@@ -24,11 +24,11 @@ import {
 // Aliased: a bare `Pick` would shadow TypeScript's own Pick<T, K> utility
 // inside this module.
 import type { Pick as SessionPick } from "@/features/play/use-play-session";
-import { LoadingState } from "@/shared/ui/LoadingState";
-import { pageContainer } from "@/shared/constants/page-container";
-import { cn } from "@/shared/utils/cn";
-import type { Pack } from "@/shared/types/pack";
-import type { RecordedPick } from "@/shared/types/play-results";
+import { LoadingState } from "@/ui/LoadingState";
+import { pageContainer } from "@/constants/page-container";
+import { cn } from "@/utils/cn";
+import type { Pack } from "@/types/pack";
+import type { RecordedPick } from "@/types/play-results";
 
 export function HeadToHeadPlayScreen({ pack }: { pack: Pack }) {
   const { status } = useAuth();

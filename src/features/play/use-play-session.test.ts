@@ -3,17 +3,17 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { usePlaySession } from "./use-play-session";
 import { packStructureHash } from "./pack-structure-hash";
 import { readPlayResume } from "./play-resume-storage";
-import { playsClient } from "@/shared/api/plays-client";
-import { useAuth } from "@/shared/contexts/auth-context";
-import type { Pack } from "@/shared/types/pack";
+import { playsClient } from "@/api/plays-client";
+import { useAuth } from "@/contexts/auth-context";
+import type { Pack } from "@/types/pack";
 
-vi.mock("@/shared/api/plays-client", () => ({
+vi.mock("@/api/plays-client", () => ({
   playsClient: {
     record: vi.fn().mockResolvedValue({ id: "play-1" }),
   },
 }));
 
-vi.mock("@/shared/contexts/auth-context");
+vi.mock("@/contexts/auth-context");
 
 const mockedUseAuth = vi.mocked(useAuth);
 

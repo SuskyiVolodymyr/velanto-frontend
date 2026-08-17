@@ -1,10 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { PackCoverBanner } from "./PackCoverBanner";
 import { HOT_PLAYS_THRESHOLD } from "@/features/home/hot-pack";
-import type { Pack } from "@/shared/types/pack";
-import { toOverview } from "@/shared/test/pack-overview";
+import type { Pack } from "@/types/pack";
+import { toOverview } from "@/test/pack-overview";
 
 // The author line is a client island with its own auth-gated hover-card fetch
 // and dedicated tests; stub it so these hero-layout assertions stay focused.

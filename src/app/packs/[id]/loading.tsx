@@ -1,6 +1,6 @@
-import { Skeleton } from "@/shared/ui/Skeleton";
-import { pageContainer } from "@/shared/constants/page-container";
-import { cn } from "@/shared/utils/cn";
+import { Skeleton } from "@/ui/Skeleton";
+import { pageContainer } from "@/constants/page-container";
+import { cn } from "@/utils/cn";
 
 /** Route-level skeleton for a pack detail page: back button, title/meta, cover,
  * and the play/sidebar column, matching the page's own 1320px column. */

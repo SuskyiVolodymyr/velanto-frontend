@@ -4,9 +4,9 @@ import userEvent from "@testing-library/user-event";
 import { NextIntlClientProvider } from "next-intl";
 import messages from "@/messages/en.json";
 import { AuthForm } from "./AuthForm";
-import { AuthProvider } from "@/shared/contexts/auth-context";
-import { authClient } from "@/shared/api/auth-client";
-import { ApiError } from "@/shared/api/api-client";
+import { AuthProvider } from "@/contexts/auth-context";
+import { authClient } from "@/api/auth-client";
+import { ApiError } from "@/api/api-client";
 
 const push = vi.fn();
 const replace = vi.fn();
@@ -17,7 +17,7 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => searchParams,
 }));
 
-vi.mock("@/shared/api/auth-client", () => ({
+vi.mock("@/api/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),
@@ -434,7 +434,7 @@ describe("AuthForm", () => {
     const user = userEvent.setup();
     let resolveLogin: (value: {
       accessToken: string;
-      user: import("@/shared/types/user").User;
+      user: import("@/types/user").User;
     }) => void;
     vi.mocked(authClient.login).mockReturnValue(
       new Promise((resolve) => {

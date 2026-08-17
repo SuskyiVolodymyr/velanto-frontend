@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { ImageCropModal } from "@/shared/ui/ImageCropModal";
-import { MAX_COVER_CROP } from "@/shared/utils/crop-image";
+import { ImageCropModal } from "@/ui/ImageCropModal";
+import { MAX_COVER_CROP } from "@/utils/crop-image";
 
 /**
  * Cover-configured {@link ImageCropModal}: a 4:3 rectangular crop (matching the

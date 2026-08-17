@@ -2,9 +2,9 @@
 
 import { useTranslations } from "next-intl";
 import { Check } from "lucide-react";
-import { Text } from "@/shared/ui/Text";
-import { UserAvatar } from "@/shared/components/UserAvatar";
-import { cn } from "@/shared/utils/cn";
+import { Text } from "@/ui/Text";
+import { UserAvatar } from "@/components/UserAvatar";
+import { cn } from "@/utils/cn";
 import type { RoomPlayerState } from "./room-types";
 
 interface LockedInRosterProps {

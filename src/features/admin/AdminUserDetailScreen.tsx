@@ -1,18 +1,18 @@
 "use client";
-import { formatDate, formatDateTime } from "@/shared/utils/format-date";
+import { formatDate, formatDateTime } from "@/utils/format-date";
 
 import { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { Text } from "@/shared/ui/Text";
-import { Card } from "@/shared/ui/Card";
-import { Badge } from "@/shared/ui/Badge";
-import { Button } from "@/shared/ui/Button";
-import { Username } from "@/shared/components/Username";
-import { LoadingState } from "@/shared/ui/LoadingState";
-import { PageHeader } from "@/shared/ui/PageHeader";
+import { useAuth } from "@/contexts/auth-context";
+import { Text } from "@/ui/Text";
+import { Card } from "@/ui/Card";
+import { Badge } from "@/ui/Badge";
+import { Button } from "@/ui/Button";
+import { Username } from "@/components/Username";
+import { LoadingState } from "@/ui/LoadingState";
+import { PageHeader } from "@/ui/PageHeader";
 import { AuthorPacksRail } from "@/features/author/AuthorPacksRail";
 import { RecentlyPlayedSection } from "@/features/author/RecentlyPlayedSection";
 import { useAuthorBanHistory } from "@/features/author/api/author.queries";
@@ -20,10 +20,10 @@ import { useAdminUserDetail } from "@/features/admin/api/admin.queries";
 import { isCurrentlyBanned } from "@/features/admin/use-users-admin";
 import { useAdminUserModeration } from "@/features/admin/use-admin-user-moderation";
 import { UserBanForm } from "@/features/admin/UserBanForm";
-import { canActOn } from "@/shared/utils/staff-permissions";
-import { formatBytes } from "@/shared/utils/format-bytes";
-import { cn } from "@/shared/utils/cn";
-import { pageContainer } from "@/shared/constants/page-container";
+import { canActOn } from "@/utils/staff-permissions";
+import { formatBytes } from "@/utils/format-bytes";
+import { cn } from "@/utils/cn";
+import { pageContainer } from "@/constants/page-container";
 
 /** A single labelled number tile in the stats grid. */
 // `value` is a ReactNode, not a number: storage reads as a formatted size

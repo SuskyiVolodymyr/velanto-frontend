@@ -1,24 +1,24 @@
 "use client";
 
-import { SignInGate } from "@/shared/components/SignInGate";
+import { SignInGate } from "@/components/SignInGate";
 import { useMemo, useState } from "react";
 import { useTranslations, useFormatter } from "next-intl";
 import { Check } from "lucide-react";
-import { Text } from "@/shared/ui/Text";
-import { Button } from "@/shared/ui/Button";
-import { Modal } from "@/shared/ui/Modal";
-import { ConfirmModal } from "@/shared/ui/ConfirmModal";
-import { Tooltip } from "@/shared/ui/Tooltip";
-import { Skeleton } from "@/shared/ui/Skeleton";
-import { cn } from "@/shared/utils/cn";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { isStaff } from "@/shared/utils/user-role";
+import { Text } from "@/ui/Text";
+import { Button } from "@/ui/Button";
+import { Modal } from "@/ui/Modal";
+import { ConfirmModal } from "@/ui/ConfirmModal";
+import { Tooltip } from "@/ui/Tooltip";
+import { Skeleton } from "@/ui/Skeleton";
+import { cn } from "@/utils/cn";
+import { useAuth } from "@/contexts/auth-context";
+import { isStaff } from "@/utils/user-role";
 import {
   PAT_SCOPES,
   type PatScope,
   type ApiToken,
   type CreatedApiToken,
-} from "@/shared/api/tokens-client";
+} from "@/api/tokens-client";
 import { SCOPE_KEY } from "./scope-keys";
 import {
   useApiTokens,

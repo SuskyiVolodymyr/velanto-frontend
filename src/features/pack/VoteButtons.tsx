@@ -2,9 +2,9 @@
 
 import { useTranslations } from "next-intl";
 import { useQuery } from "@tanstack/react-query";
-import { packsClient } from "@/shared/api/packs-client";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { VoteControl } from "@/shared/components/VoteControl";
+import { packsClient } from "@/api/packs-client";
+import { useAuth } from "@/contexts/auth-context";
+import { VoteControl } from "@/components/VoteControl";
 
 /**
  * Pack like/dislike voter — a thin wrapper that wires {@link VoteControl} to the

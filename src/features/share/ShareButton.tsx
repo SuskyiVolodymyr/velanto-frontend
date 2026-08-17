@@ -7,11 +7,11 @@ import {
   Button,
   type ButtonVariant,
   type ButtonSize,
-} from "@/shared/ui/Button";
-import { Input } from "@/shared/ui/Input";
-import { buildShareUrl } from "@/shared/utils/share-url";
-import { useHorizontalClamp } from "@/shared/hooks/use-horizontal-clamp";
-import type { RecordedPick } from "@/shared/types/play-results";
+} from "@/ui/Button";
+import { Input } from "@/ui/Input";
+import { buildShareUrl } from "@/utils/share-url";
+import { useHorizontalClamp } from "@/hooks/use-horizontal-clamp";
+import type { RecordedPick } from "@/types/play-results";
 
 export function ShareButton({
   path,

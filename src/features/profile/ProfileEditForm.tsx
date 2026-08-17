@@ -4,22 +4,22 @@ import { useState } from "react";
 import Link from "next/link";
 import { Check } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { useAuth } from "@/shared/contexts/auth-context";
+import { useAuth } from "@/contexts/auth-context";
 import {
   useMyProfile,
   useUpdateBio,
   useChangeUsername,
 } from "@/features/profile/api/profile.queries";
-import { messageFromError } from "@/shared/utils/messageFromError";
-import { ApiError } from "@/shared/api/api-client";
+import { messageFromError } from "@/utils/messageFromError";
+import { ApiError } from "@/api/api-client";
 import { USERNAME_PATTERN } from "@/features/auth/auth.schema";
-import { Text } from "@/shared/ui/Text";
-import { Button, buttonClassName } from "@/shared/ui/Button";
-import { PageHeader } from "@/shared/ui/PageHeader";
+import { Text } from "@/ui/Text";
+import { Button, buttonClassName } from "@/ui/Button";
+import { PageHeader } from "@/ui/PageHeader";
 import { AvatarSection } from "@/features/profile/AvatarSection";
 import { ProfileEditPreview } from "@/features/profile/ProfileEditPreview";
-import { cn } from "@/shared/utils/cn";
-import { pageContainer } from "@/shared/constants/page-container";
+import { cn } from "@/utils/cn";
+import { pageContainer } from "@/constants/page-container";
 
 const BIO_MAX = 280;
 const USERNAME_MAX = 16;

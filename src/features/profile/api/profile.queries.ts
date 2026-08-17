@@ -6,7 +6,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { usersClient } from "@/shared/api/users-client";
+import { usersClient } from "@/api/users-client";
 import { authorQueryOptions } from "@/features/author/api/author.queries";
 
 export function myProfileQueryOptions(userId: string) {

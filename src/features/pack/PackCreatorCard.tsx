@@ -2,13 +2,13 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
-import { formatDate } from "@/shared/utils/format-date";
-import { Hidden } from "@/shared/components/Hidden";
-import { Username } from "@/shared/components/Username";
-import { UserAvatar } from "@/shared/components/UserAvatar";
+import { Text } from "@/ui/Text";
+import { formatDate } from "@/utils/format-date";
+import { Hidden } from "@/components/Hidden";
+import { Username } from "@/components/Username";
+import { UserAvatar } from "@/components/UserAvatar";
 import { AuthorHoverTrigger } from "./AuthorHoverTrigger";
-import type { Pack, PackOverview } from "@/shared/types/pack";
+import type { Pack, PackOverview } from "@/types/pack";
 
 // Deterministic dd-mm-yyyy (see format-date.ts) so the server and the client
 // fallback render identical markup and don't trip a hydration mismatch.

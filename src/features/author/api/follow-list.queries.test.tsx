@@ -3,9 +3,9 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { renderHook, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFollowListRowMutation } from "./follow-list.queries";
-import { usersClient } from "@/shared/api/users-client";
+import { usersClient } from "@/api/users-client";
 
-vi.mock("@/shared/api/users-client", () => ({
+vi.mock("@/api/users-client", () => ({
   usersClient: { follow: vi.fn(), unfollow: vi.fn() },
 }));
 

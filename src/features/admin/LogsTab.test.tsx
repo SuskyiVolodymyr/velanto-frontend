@@ -1,14 +1,14 @@
 // src/features/admin/LogsTab.test.tsx
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor, within } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
-import { pickFromDropdown } from "@/shared/test/pick-from-dropdown";
+import { pickFromDropdown } from "@/test/pick-from-dropdown";
 import { LogsTab } from "./LogsTab";
-import { adminClient } from "@/shared/api/admin-client";
-import type { AuditLogEntry } from "@/shared/types/admin";
+import { adminClient } from "@/api/admin-client";
+import type { AuditLogEntry } from "@/types/admin";
 
-vi.mock("@/shared/api/admin-client", () => ({
+vi.mock("@/api/admin-client", () => ({
   adminClient: { auditLogs: vi.fn() },
 }));
 

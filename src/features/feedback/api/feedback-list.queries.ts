@@ -9,7 +9,7 @@ import {
   fetchTopFeedback,
   type FeedbackListFilters,
 } from "./feedback-list";
-import { useRefetchOnSignIn } from "@/shared/hooks/use-refetch-on-sign-in";
+import { useRefetchOnSignIn } from "@/hooks/use-refetch-on-sign-in";
 
 /**
  * The paginated board list, keyed on the active filters. Each page appends via

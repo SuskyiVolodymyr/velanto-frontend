@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { COVER_TONES } from "@/shared/types/pack";
+import { COVER_TONES } from "@/types/pack";
 
 /**
  * Derives a deterministic gradient tone from `COVER_TONES` for one media tile:

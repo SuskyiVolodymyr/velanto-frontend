@@ -2,8 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { Play } from "lucide-react";
-import { Text } from "@/shared/ui/Text";
-import { cn } from "@/shared/utils/cn";
+import { Text } from "@/ui/Text";
+import { cn } from "@/utils/cn";
 
 export interface RoomStartState {
   isHost: boolean;

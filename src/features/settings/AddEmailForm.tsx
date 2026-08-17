@@ -4,12 +4,12 @@ import { useState } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
-import { Button } from "@/shared/ui/Button";
-import { TextField } from "@/shared/ui/form/TextField";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { authClient } from "@/shared/api/auth-client";
-import { ApiError } from "@/shared/api/api-client";
+import { Text } from "@/ui/Text";
+import { Button } from "@/ui/Button";
+import { TextField } from "@/ui/form/TextField";
+import { useAuth } from "@/contexts/auth-context";
+import { authClient } from "@/api/auth-client";
+import { ApiError } from "@/api/api-client";
 import {
   addEmailSchema,
   type AddEmailValues,

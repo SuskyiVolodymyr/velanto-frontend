@@ -1,6 +1,6 @@
-import { usersClient } from "@/shared/api/users-client";
-import type { PackList } from "@/shared/api/packs-client";
-import type { RecentlyPlayedPack } from "@/shared/types/pack";
+import { usersClient } from "@/api/users-client";
+import type { PackList } from "@/api/packs-client";
+import type { RecentlyPlayedPack } from "@/types/pack";
 
 // One page of a user's recently-played packs. The section is a horizontal
 // scroller that appends the next page as it nears the end, so the page size is

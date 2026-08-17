@@ -1,17 +1,17 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor, within } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import userEvent from "@testing-library/user-event";
 import { ProfileEditForm } from "./ProfileEditForm";
-import { AuthProvider } from "@/shared/contexts/auth-context";
-import { authClient } from "@/shared/api/auth-client";
-import { usersClient } from "@/shared/api/users-client";
-import { ApiError } from "@/shared/api/api-client";
+import { AuthProvider } from "@/contexts/auth-context";
+import { authClient } from "@/api/auth-client";
+import { usersClient } from "@/api/users-client";
+import { ApiError } from "@/api/api-client";
 
 const push = vi.fn();
 vi.mock("next/navigation", () => ({ useRouter: () => ({ push }) }));
 
-vi.mock("@/shared/api/auth-client", () => ({
+vi.mock("@/api/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),
@@ -24,7 +24,7 @@ vi.mock("@/shared/api/auth-client", () => ({
 // unread-count request as soon as auth resolves. Left unmocked it hits the real
 // client, and the resulting failure knocks the AuthProvider back to signed-out
 // mid-test — the form is then replaced by "You need to be logged in".
-vi.mock("@/shared/api/notifications-client", () => ({
+vi.mock("@/api/notifications-client", () => ({
   notificationsClient: {
     unreadCount: vi.fn().mockResolvedValue({ count: 0 }),
     list: vi
@@ -33,7 +33,7 @@ vi.mock("@/shared/api/notifications-client", () => ({
     markAllRead: vi.fn().mockResolvedValue(undefined),
   },
 }));
-vi.mock("@/shared/api/users-client", () => ({
+vi.mock("@/api/users-client", () => ({
   usersClient: {
     getProfile: vi.fn(),
     updateProfile: vi.fn(),

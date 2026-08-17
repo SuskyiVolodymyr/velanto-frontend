@@ -7,26 +7,26 @@
 import type { ReactElement } from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { pickFromDropdown } from "@/shared/test/pick-from-dropdown";
+import { pickFromDropdown } from "@/test/pick-from-dropdown";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { NextIntlClientProvider } from "next-intl";
 import { QueryClientProvider } from "@tanstack/react-query";
 import messages from "@/messages/en.json";
-import { createTestQueryClient } from "@/shared/test/test-query-client";
-import { StreamerModeProvider } from "@/shared/contexts/streamer-mode-context";
+import { createTestQueryClient } from "@/test/test-query-client";
+import { StreamerModeProvider } from "@/contexts/streamer-mode-context";
 import { AuthorScreen } from "./AuthorScreen";
-import { usersClient } from "@/shared/api/users-client";
-import { packsClient } from "@/shared/api/packs-client";
-import { rulesClient } from "@/shared/api/rules-client";
-import { useAuth } from "@/shared/contexts/auth-context";
-import type { RulesDocument } from "@/shared/types/rules";
+import { usersClient } from "@/api/users-client";
+import { packsClient } from "@/api/packs-client";
+import { rulesClient } from "@/api/rules-client";
+import { useAuth } from "@/contexts/auth-context";
+import type { RulesDocument } from "@/types/rules";
 
-vi.mock("@/shared/api/users-client");
-vi.mock("@/shared/api/packs-client");
-vi.mock("@/shared/api/rules-client", () => ({
+vi.mock("@/api/users-client");
+vi.mock("@/api/packs-client");
+vi.mock("@/api/rules-client", () => ({
   rulesClient: { getRules: vi.fn() },
 }));
-vi.mock("@/shared/contexts/auth-context");
+vi.mock("@/contexts/auth-context");
 
 const RULES: RulesDocument = {
   version: 1,

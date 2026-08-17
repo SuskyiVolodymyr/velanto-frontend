@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { Card } from "@/shared/ui/Card";
-import { Text } from "@/shared/ui/Text";
+import { Card } from "@/ui/Card";
+import { Text } from "@/ui/Text";
 
 /**
  * A signpost where the API tokens manager used to live. The manager itself moved

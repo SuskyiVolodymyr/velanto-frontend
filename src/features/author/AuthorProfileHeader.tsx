@@ -3,13 +3,13 @@
 import Link from "next/link";
 import { Pencil } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
-import { Button, buttonClassName } from "@/shared/ui/Button";
-import { Hidden } from "@/shared/components/Hidden";
-import { Username } from "@/shared/components/Username";
-import { AvatarLightbox } from "@/shared/components/AvatarLightbox";
-import { cn } from "@/shared/utils/cn";
-import type { PublicUserProfile } from "@/shared/types/user";
+import { Text } from "@/ui/Text";
+import { Button, buttonClassName } from "@/ui/Button";
+import { Hidden } from "@/components/Hidden";
+import { Username } from "@/components/Username";
+import { AvatarLightbox } from "@/components/AvatarLightbox";
+import { cn } from "@/utils/cn";
+import type { PublicUserProfile } from "@/types/user";
 
 /** Which People sub-tab a stat button deep-links into (`ProfileTabs`, later task). */
 export type PeopleSubTab = "followers" | "following";

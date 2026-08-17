@@ -1,5 +1,5 @@
-import { Card } from "@/shared/ui/Card";
-import { Skeleton } from "@/shared/ui/Skeleton";
+import { Card } from "@/ui/Card";
+import { Skeleton } from "@/ui/Skeleton";
 
 /**
  * Placeholder for a Settings section while auth is still resolving

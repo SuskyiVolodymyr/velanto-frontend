@@ -1,24 +1,24 @@
 "use client";
 
-import { SignInGate } from "@/shared/components/SignInGate";
+import { SignInGate } from "@/components/SignInGate";
 import Link from "next/link";
 import { useState, type ReactElement } from "react";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { PlayIcon, FriendsIcon } from "@/shared/ui/icons";
-import { Badge } from "@/shared/ui/Badge";
-import { StatusBadge } from "@/shared/components/StatusBadge";
-import { CoverImage } from "@/shared/components/CoverImage";
-import { UserAvatar } from "@/shared/components/UserAvatar";
-import { Username } from "@/shared/components/Username";
-import { Text } from "@/shared/ui/Text";
-import { Tooltip } from "@/shared/ui/Tooltip";
-import { formatRelativeTimeIntl } from "@/shared/utils/relative-time";
+import { PlayIcon, FriendsIcon } from "@/ui/icons";
+import { Badge } from "@/ui/Badge";
+import { StatusBadge } from "@/components/StatusBadge";
+import { CoverImage } from "@/components/CoverImage";
+import { UserAvatar } from "@/components/UserAvatar";
+import { Username } from "@/components/Username";
+import { Text } from "@/ui/Text";
+import { Tooltip } from "@/ui/Tooltip";
+import { formatRelativeTimeIntl } from "@/utils/relative-time";
 import { isHotPack } from "@/features/home/hot-pack";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { cn } from "@/shared/utils/cn";
+import { useAuth } from "@/contexts/auth-context";
+import { cn } from "@/utils/cn";
 import { friendsRoomsClient } from "@/features/friends-rooms/friends-rooms-client";
-import { type PackSummary } from "@/shared/types/pack";
+import { type PackSummary } from "@/types/pack";
 
 /**
  * A pack tile in the browse grid (2.0.0 redesign). The cover + body link to the

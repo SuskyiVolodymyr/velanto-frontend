@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { LogOut } from "lucide-react";
-import { ConfirmModal } from "@/shared/ui/ConfirmModal";
+import { ConfirmModal } from "@/ui/ConfirmModal";
 import { useFriendsRoomsPresenceOrDefault } from "./friends-rooms-presence-context";
 import type { RoomState } from "./room-types";
 

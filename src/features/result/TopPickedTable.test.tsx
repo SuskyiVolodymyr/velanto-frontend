@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { TopPickedTable } from "./TopPickedTable";
-import type { ItemTally, RecordedPick } from "@/shared/types/play-results";
+import type { ItemTally, RecordedPick } from "@/types/play-results";
 
 function tally(n: number): ItemTally {
   return {

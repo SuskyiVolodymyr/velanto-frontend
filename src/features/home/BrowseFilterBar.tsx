@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import { useTranslations } from "next-intl";
-import { SlidersIcon, ChevronDownIcon } from "@/shared/ui/icons";
-import { Popover } from "@/shared/ui/Popover";
-import type { PackTag } from "@/shared/types/pack";
-import type { PackLanguage } from "@/shared/types/pack-language";
+import { SlidersIcon, ChevronDownIcon } from "@/ui/icons";
+import { Popover } from "@/ui/Popover";
+import type { PackTag } from "@/types/pack";
+import type { PackLanguage } from "@/types/pack-language";
 import { FormatFilter } from "@/features/home/FormatFilter";
 import { SortFilter } from "@/features/home/SortFilter";
-import { TagPickerModal } from "@/shared/components/TagPickerModal";
+import { TagPickerModal } from "@/components/TagPickerModal";
 import { LanguageFilter } from "@/features/home/LanguageFilter";
 import { ActiveFilterChips } from "@/features/home/ActiveFilterChips";
 import {

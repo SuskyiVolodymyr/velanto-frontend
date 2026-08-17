@@ -2,12 +2,12 @@
 
 import { useRef, useState, type DragEvent } from "react";
 import { useTranslations } from "next-intl";
-import type { ItemType } from "@/shared/types/pack";
+import type { ItemType } from "@/types/pack";
 import { ITEM_TITLE_MAX } from "@/features/create/create-pack.schema";
-import { Input } from "@/shared/ui/Input";
-import { Text } from "@/shared/ui/Text";
-import { SegmentedControl } from "@/shared/ui/SegmentedControl";
-import { cn } from "@/shared/utils/cn";
+import { Input } from "@/ui/Input";
+import { Text } from "@/ui/Text";
+import { SegmentedControl } from "@/ui/SegmentedControl";
+import { cn } from "@/utils/cn";
 import { ItemImageCropModal } from "@/features/create/ItemImageCropModal";
 
 const fieldCaptionClassName =

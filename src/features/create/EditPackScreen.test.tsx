@@ -1,18 +1,18 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen, waitFor } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { EditPackScreen } from "@/features/create/EditPackScreen";
-import { AuthProvider } from "@/shared/contexts/auth-context";
-import { authClient } from "@/shared/api/auth-client";
-import type { Pack } from "@/shared/types/pack";
-import type { Role } from "@/shared/types/user";
+import { AuthProvider } from "@/contexts/auth-context";
+import { authClient } from "@/api/auth-client";
+import type { Pack } from "@/types/pack";
+import type { Role } from "@/types/user";
 
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: vi.fn() }),
   usePathname: () => "/packs/pack-1/edit",
 }));
 
-vi.mock("@/shared/api/auth-client", () => ({
+vi.mock("@/api/auth-client", () => ({
   authClient: {
     requestEmailCode: vi.fn(),
     register: vi.fn(),
@@ -22,7 +22,7 @@ vi.mock("@/shared/api/auth-client", () => ({
   },
 }));
 
-vi.mock("@/shared/api/packs-client", () => ({
+vi.mock("@/api/packs-client", () => ({
   packsClient: { create: vi.fn(), update: vi.fn() },
 }));
 

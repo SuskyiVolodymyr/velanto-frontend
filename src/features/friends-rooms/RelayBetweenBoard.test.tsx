@@ -1,6 +1,6 @@
 import { screen } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { RelayBetweenBoard } from "./RelayBetweenBoard";
 import { baseRoomState } from "./test-fixtures";
 

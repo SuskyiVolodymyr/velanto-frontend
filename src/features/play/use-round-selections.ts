@@ -6,7 +6,7 @@ import {
   type SelectedRound,
 } from "@/features/play/round-sampling";
 import { mulberry32 } from "@/features/play/seeded-rng";
-import type { Group, Round } from "@/shared/types/pack";
+import type { Group, Round } from "@/types/pack";
 
 /**
  * A play's drawn items, resolved once — on the CLIENT only.

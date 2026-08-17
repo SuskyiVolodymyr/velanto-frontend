@@ -3,14 +3,14 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { useQueryClient } from "@tanstack/react-query";
-import { usersClient } from "@/shared/api/users-client";
+import { usersClient } from "@/api/users-client";
 import {
   isBanReasonValid,
   buildBanReasonPayload,
   type BanReasonState,
-} from "@/shared/components/BanReasonPicker";
+} from "@/components/BanReasonPicker";
 import { adminUserDetailQueryOptions } from "@/features/admin/api/admin.queries";
-import type { BanDuration } from "@/shared/api/users-client";
+import type { BanDuration } from "@/api/users-client";
 
 export interface AdminUserModeration {
   showBanForm: boolean;

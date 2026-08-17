@@ -1,6 +1,6 @@
-import { usersClient } from "@/shared/api/users-client";
-import type { PackList } from "@/shared/api/packs-client";
-import type { PackFormat, RecentlyPlayedPack } from "@/shared/types/pack";
+import { usersClient } from "@/api/users-client";
+import type { PackList } from "@/api/packs-client";
+import type { PackFormat, RecentlyPlayedPack } from "@/types/pack";
 
 /**
  * Which end of the history to page from. Mirrors `RECENTLY_PLAYED_SORTS` in the

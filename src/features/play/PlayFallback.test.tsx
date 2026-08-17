@@ -2,10 +2,10 @@ import { render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { notFound } from "next/navigation";
 import { PlayFallback } from "./PlayFallback";
-import { usePackFallback } from "@/shared/hooks/use-pack-fallback";
-import type { Pack } from "@/shared/types/pack";
+import { usePackFallback } from "@/hooks/use-pack-fallback";
+import type { Pack } from "@/types/pack";
 
-vi.mock("@/shared/hooks/use-pack-fallback");
+vi.mock("@/hooks/use-pack-fallback");
 vi.mock("next/navigation", () => ({ notFound: vi.fn() }));
 vi.mock("@/features/play/PlayRouter", () => ({
   PlayRouter: () => <div>PlayRouter</div>,

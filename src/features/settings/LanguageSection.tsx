@@ -1,8 +1,8 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { Card } from "@/shared/ui/Card";
-import { Text } from "@/shared/ui/Text";
+import { Card } from "@/ui/Card";
+import { Text } from "@/ui/Text";
 import { LanguageSelector } from "@/features/settings/LanguageSelector";
 
 export function LanguageSection() {

@@ -1,11 +1,11 @@
 "use client";
 
-import { Dropdown } from "@/shared/ui/Dropdown";
-import type { Role } from "@/shared/types/user";
+import { Dropdown } from "@/ui/Dropdown";
+import type { Role } from "@/types/user";
 import {
   assignableRolesFor,
   type AssignableRole,
-} from "@/shared/utils/staff-permissions";
+} from "@/utils/staff-permissions";
 
 interface RoleSelectProps {
   /** The acting admin/manager's role — decides what can be granted. */

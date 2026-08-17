@@ -1,13 +1,13 @@
 "use client";
-import { formatDateTime } from "@/shared/utils/format-date";
+import { formatDateTime } from "@/utils/format-date";
 
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { reportReasonLabel } from "@/shared/constants/report-reasons";
-import { reportTargetLabel } from "@/shared/utils/report-display";
-import { Text } from "@/shared/ui/Text";
-import { StatusBadge } from "@/shared/components/StatusBadge";
-import type { ReportWithReporter } from "@/shared/types/report";
+import { reportReasonLabel } from "@/constants/report-reasons";
+import { reportTargetLabel } from "@/utils/report-display";
+import { Text } from "@/ui/Text";
+import { StatusBadge } from "@/components/StatusBadge";
+import type { ReportWithReporter } from "@/types/report";
 
 export function ReportDetailSummary({
   report,

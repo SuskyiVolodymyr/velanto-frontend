@@ -1,7 +1,7 @@
 import {
   commentsClient,
   type CommentSort,
-} from "@/shared/api/comments-client";
+} from "@/api/comments-client";
 
 export const PACK_COMMENTS_PAGE_SIZE = 10;
 

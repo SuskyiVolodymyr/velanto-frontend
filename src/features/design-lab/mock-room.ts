@@ -1,4 +1,4 @@
-import type { PackFormat } from "@/shared/types/pack";
+import type { PackFormat } from "@/types/pack";
 import type {
   RoomMode,
   RoomPlayerState,

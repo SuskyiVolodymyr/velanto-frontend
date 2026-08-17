@@ -1,12 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { PackPlayButton } from "./PackPlayButton";
-import { useAuth } from "@/shared/contexts/auth-context";
+import { useAuth } from "@/contexts/auth-context";
 import { consumePlayIntent } from "@/features/play/play-intent-storage";
 
-vi.mock("@/shared/contexts/auth-context");
+vi.mock("@/contexts/auth-context");
 
 const mockedUseAuth = vi.mocked(useAuth);
 

@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import type { PackTag } from "@/shared/types/pack";
-import type { PackLanguage } from "@/shared/types/pack-language";
+import type { PackTag } from "@/types/pack";
+import type { PackLanguage } from "@/types/pack-language";
 import {
   DEFAULT_DATE_ORDER,
   DEFAULT_POPULAR_WINDOW,

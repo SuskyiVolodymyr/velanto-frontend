@@ -1,12 +1,12 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { act, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { RoomScreen } from "./RoomScreen";
 import type { FriendsRoom, RoomConnection } from "./use-friends-room";
 import type { ClaimRejection, RoomPlayerState, RoomState } from "./room-types";
-import type { Item } from "@/shared/types/pack";
-import type { User } from "@/shared/types/user";
+import type { Item } from "@/types/pack";
+import type { User } from "@/types/user";
 
 // The room hook and auth are the whole surface RoomScreen sits on; drive both
 // from fixtures so each phase can be rendered in isolation.
@@ -35,7 +35,7 @@ vi.mock("./use-friends-room", () => ({
   useFriendsRoom: () => room,
 }));
 
-vi.mock("@/shared/contexts/auth-context", () => ({
+vi.mock("@/contexts/auth-context", () => ({
   useAuth: () => ({ user: currentUser }),
 }));
 

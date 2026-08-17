@@ -7,8 +7,8 @@ import {
   type FieldErrors,
 } from "react-hook-form";
 import { useTranslations } from "next-intl";
-import { Text } from "@/shared/ui/Text";
-import { getFieldError } from "@/shared/ui/form/getFieldError";
+import { Text } from "@/ui/Text";
+import { getFieldError } from "@/ui/form/getFieldError";
 import { StepHeader } from "@/features/create/StepHeader";
 import { GroupEditor } from "@/features/create/GroupEditor";
 import { newGroup } from "@/features/create/create-pack.defaults";

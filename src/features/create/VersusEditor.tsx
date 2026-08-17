@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useFormContext, useWatch, useFieldArray } from "react-hook-form";
 import { useTranslations } from "next-intl";
 import { ChevronDown } from "lucide-react";
-import { resolveRoundDraws } from "@/shared/utils/round-draw";
+import { resolveRoundDraws } from "@/utils/round-draw";
 import {
   newVersusRound,
   randomSlot,
@@ -13,16 +13,16 @@ import {
   RANDOM_POOL_VALUE,
   availablePoolCount,
 } from "@/features/create/random-pool-option";
-import { Input } from "@/shared/ui/Input";
-import { Dropdown } from "@/shared/ui/Dropdown";
+import { Input } from "@/ui/Input";
+import { Dropdown } from "@/ui/Dropdown";
 import {
   RoundsBulkBar,
   RoundsAddButton,
 } from "@/features/create/RoundsToolbar";
-import { Text } from "@/shared/ui/Text";
-import { cn } from "@/shared/utils/cn";
+import { Text } from "@/ui/Text";
+import { cn } from "@/utils/cn";
 import { StepHeader } from "@/features/create/StepHeader";
-import { getFieldError } from "@/shared/ui/form/getFieldError";
+import { getFieldError } from "@/ui/form/getFieldError";
 import {
   type CreatePackValues,
   NXN_SIDE_COUNT_MIN,

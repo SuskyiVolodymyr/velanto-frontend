@@ -7,7 +7,7 @@ import {
   outcomeVerb,
 } from "./room-mode-copy";
 import { ROOM_MODES } from "./room-types";
-import { PACK_FORMATS } from "@/shared/types/pack";
+import { PACK_FORMATS } from "@/types/pack";
 
 describe("room-mode-copy", () => {
   it("has a name and blurb key for every mode", () => {

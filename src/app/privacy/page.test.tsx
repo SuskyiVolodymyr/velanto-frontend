@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import messages from "@/messages/en.json";
 import PrivacyPage, { generateMetadata } from "./page";
 
@@ -8,7 +8,7 @@ import PrivacyPage, { generateMetadata } from "./page";
 // throws without a provider. These screens are auth-agnostic, so they get a
 // signed-out stub rather than a real AuthProvider (which would fire an
 // on-mount refresh request none of these tests want to make).
-vi.mock("@/shared/contexts/auth-context", () => ({
+vi.mock("@/contexts/auth-context", () => ({
   useAuth: () => ({ user: null, status: "unauthenticated", logout: vi.fn() }),
 }));
 

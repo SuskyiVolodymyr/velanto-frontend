@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { screen } from "@testing-library/react";
-import { renderWithIntl as render } from "@/shared/test/render-with-intl";
+import { renderWithIntl as render } from "@/test/render-with-intl";
 import { PackStats } from "./PackStats";
-import type { PackResults, RankResults } from "@/shared/types/play-results";
+import type { PackResults, RankResults } from "@/types/play-results";
 
 describe("PackStats", () => {
   it("shows a no-plays message when nobody has played yet", () => {

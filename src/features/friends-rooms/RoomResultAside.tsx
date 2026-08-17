@@ -5,11 +5,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { RotateCcw } from "lucide-react";
-import { Text } from "@/shared/ui/Text";
-import { buttonClassName } from "@/shared/ui/Button";
-import { BoardCard, BoardRow } from "@/shared/ui/BoardCard";
-import { HeroCard } from "@/shared/ui/HeroCard";
-import { cn } from "@/shared/utils/cn";
+import { Text } from "@/ui/Text";
+import { buttonClassName } from "@/ui/Button";
+import { BoardCard, BoardRow } from "@/ui/BoardCard";
+import { HeroCard } from "@/ui/HeroCard";
+import { cn } from "@/utils/cn";
 import { friendsRoomsClient } from "./friends-rooms-client";
 
 import type { RoomState } from "./room-types";
@@ -21,7 +21,7 @@ const PAGE = 5;
  * The room result's aside — the same two blocks solo play's result screen puts
  * beside its recap: what to do next, then a board summarising the whole game.
  *
- * The two cards themselves come from `shared/` — this file is only the room's
+ * The two cards themselves come from `ui/` — this file is only the room's
  * copy and the room's data. Solo's board ranks items across every recorded play
  * of the PACK; this one ranks them across the single game these people just
  * had, read straight from `state.results` with no fetch.
@@ -90,7 +90,7 @@ export function RoomResultAgainPanel({
  * took it.
  *
  * The SAME card solo play ranks items in (`BoardCard`/`BoardRow` from
- * `shared/`), because it is the same claim at a different scale: solo's
+ * `ui/`), because it is the same claim at a different scale: solo's
  * denominator is every recorded play of the pack, this one's is the people who
  * were actually in the room. Read straight from `state.results` — no fetch.
  *
@@ -322,7 +322,7 @@ function pickedRows(state: RoomState, viewerId: string | null): PickedRow[] {
 
 /**
  * The screen's opening statement — the SAME hero solo play opens with, which is
- * why it is `HeroCard` from `shared/` and not a lookalike built here. Only the
+ * why it is `HeroCard` from `ui/` and not a lookalike built here. Only the
  * copy and the two figures differ.
  *
  * A results page that starts straight into round one never says the game is

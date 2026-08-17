@@ -3,19 +3,19 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { authClient, type OAuthProviders } from "@/shared/api/auth-client";
-import { Text } from "@/shared/ui/Text";
-import { FormBanner } from "@/shared/ui/form/FormBanner";
+import { authClient, type OAuthProviders } from "@/api/auth-client";
+import { Text } from "@/ui/Text";
+import { FormBanner } from "@/ui/form/FormBanner";
 import {
   OAuthProviderIcon,
   OAUTH_BRAND_CLASS,
-} from "@/shared/components/oauth-branding";
+} from "@/components/oauth-branding";
 import {
   openOAuthPopup,
   type OAuthProvider,
-} from "@/shared/utils/oauth-popup";
-import { useAuth } from "@/shared/contexts/auth-context";
-import { cn } from "@/shared/utils/cn";
+} from "@/utils/oauth-popup";
+import { useAuth } from "@/contexts/auth-context";
+import { cn } from "@/utils/cn";
 
 // Shared shape for both brand buttons; each brand supplies its own colors.
 const BUTTON_BASE =

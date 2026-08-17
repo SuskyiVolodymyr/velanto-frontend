@@ -9,7 +9,7 @@ import {
   writePlayResume,
 } from "@/features/play/play-resume-storage";
 import { consumePlayIntent } from "@/features/play/play-intent-storage";
-import type { Pack } from "@/shared/types/pack";
+import type { Pack } from "@/types/pack";
 
 export interface PlayResume {
   /** True once the post-mount storage read has run (seed is set). */

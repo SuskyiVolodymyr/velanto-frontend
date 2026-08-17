@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import messages from "@/messages/en.json";
 import { generateMetadata } from "./page";
 import { getUserServer } from "@/features/author/get-user-server";
-import type { PublicUserProfile } from "@/shared/types/user";
+import type { PublicUserProfile } from "@/types/user";
 
 vi.mock("@/features/author/get-user-server", () => ({
   getUserServer: vi.fn(),
