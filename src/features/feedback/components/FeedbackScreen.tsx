@@ -14,9 +14,9 @@ import { Text } from "@/ui/Text";
 import { Button } from "@/ui/Button";
 import { PageHeader } from "@/ui/PageHeader";
 import { PlusIcon } from "@/ui/icons";
-import { FeedbackFilters } from "@/features/feedback/FeedbackFilters";
-import { FeedbackList } from "@/features/feedback/FeedbackList";
-import { FeedbackTopSidebar } from "@/features/feedback/FeedbackTopSidebar";
+import { FeedbackFilters } from "@/features/feedback/components/FeedbackFilters";
+import { FeedbackList } from "@/features/feedback/components/FeedbackList";
+import { FeedbackTopSidebar } from "@/features/feedback/components/FeedbackTopSidebar";
 import {
   useFeedbackList,
   useTopFeedback,

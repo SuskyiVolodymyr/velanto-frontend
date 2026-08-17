@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import { FeedbackDetailScreen } from "@/features/feedback/FeedbackDetailScreen";
+import { FeedbackDetailScreen } from "@/features/feedback/components/FeedbackDetailScreen";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("feedback");

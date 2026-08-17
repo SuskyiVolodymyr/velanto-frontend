@@ -14,9 +14,9 @@ import type {
   FeedbackTopic,
   FeedbackVisibility,
 } from "@/types/feedback";
-import { TOPIC_KEYS } from "@/features/feedback/FeedbackCard";
+import { TOPIC_KEYS } from "@/features/feedback/components/FeedbackCard";
 import { feedbackTopicTone } from "@/features/feedback/feedback-tone";
-import { ComposerChoiceRow } from "@/features/feedback/ComposerChoiceRow";
+import { ComposerChoiceRow } from "@/features/feedback/components/ComposerChoiceRow";
 import {
   newFeedbackSchema,
   type NewFeedbackValues,
